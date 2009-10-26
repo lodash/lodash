@@ -16,22 +16,6 @@ $(document).ready(function() {
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
   });
   
-  test('collections: all', function() {
-    ok(_.all([]), 'the empty set');
-    ok(_.all([true, true, true]), 'all true values');
-    ok(!_.all([true, false, true]), 'one false value');
-    ok(_.all([0, 10, 28], function(num){ return num % 2 == 0; }), 'even numbers');
-    ok(!_.all([0, 11, 28], function(num){ return num % 2 == 0; }), 'an odd number');
-  });
-  
-  test('collections: any', function() {
-    ok(!_.any([]), 'the empty set');
-    ok(!_.any([false, false, false]), 'all false values');
-    ok(_.any([false, false, true]), 'one true value');
-    ok(!_.any([1, 11, 29], function(num){ return num % 2 == 0; }), 'all odd numbers');
-    ok(_.any([1, 10, 29], function(num){ return num % 2 == 0; }), 'an even number');
-  });
-  
   test('collections: map', function() {
     var doubled = _.map([1, 2, 3], function(num){ return num * 2; });
     equals(doubled.join(', '), '2, 4, 6', 'doubled numbers');
@@ -58,6 +42,22 @@ $(document).ready(function() {
   test('collections: reject', function() {
     var odds = _.reject([1,2,3,4,5,6], function(num){ return num % 2 == 0; });
     equals(odds.join(', '), '1, 3, 5', 'rejected each even number');
+  });
+  
+  test('collections: all', function() {
+    ok(_.all([]), 'the empty set');
+    ok(_.all([true, true, true]), 'all true values');
+    ok(!_.all([true, false, true]), 'one false value');
+    ok(_.all([0, 10, 28], function(num){ return num % 2 == 0; }), 'even numbers');
+    ok(!_.all([0, 11, 28], function(num){ return num % 2 == 0; }), 'an odd number');
+  });
+  
+  test('collections: any', function() {
+    ok(!_.any([]), 'the empty set');
+    ok(!_.any([false, false, false]), 'all false values');
+    ok(_.any([false, false, true]), 'one true value');
+    ok(!_.any([1, 11, 29], function(num){ return num % 2 == 0; }), 'all odd numbers');
+    ok(_.any([1, 10, 29], function(num){ return num % 2 == 0; }), 'an even number');
   });
   
   test('collections: include', function() {

@@ -3,24 +3,16 @@ $(document).ready(function() {
   module("Collection functions (each, any, select, and so on...)");
     
   test("collections: each", function() {
-    _.each([1, 2, 3], function(num, i){
+    _.each([1, 2, 3], function(num, i) {
       equals(num, i + 1, 'each iterators provide value and iteration count');
     });
-  });
-  
-  test('collections: each and throwing "__break__"', function() {
+    
     var answer = null;
-    _.each([1, 2, 3], function(num){
-      if ((answer = num) == 2) throw '__break__';
-    });
+    _.each([1, 2, 3], function(num){ if ((answer = num) == 2) throw '__break__'; });
     equals(answer, 2, 'the loop broke in the middle');
-  });
-  
-  test('collections: each can take a context object', function() {
+    
     var answers = [];
-    _.each([1, 2, 3], function(num) {
-      answers.push(num * this.multiplier);
-    }, {multiplier : 5});
+    _.each([1, 2, 3], function(num) { answers.push(num * this.multiplier);}, {multiplier : 5});
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
   });
   
@@ -43,6 +35,7 @@ $(document).ready(function() {
   test('collections: map', function() {
     var doubled = _.map([1, 2, 3], function(num){ return num * 2; });
     equals(doubled.join(', '), '2, 4, 6', 'doubled numbers');
+    
     var tripled = _.map([1, 2, 3], function(num){ return num * this.multiplier; }, {multiplier : 3});
     equals(tripled.join(', '), '3, 6, 9', 'tripled numbers with context');
   });
@@ -87,12 +80,14 @@ $(document).ready(function() {
   
   test('collections: max', function() {
     equals(3, _.max([1, 2, 3]), 'can perform a regular Math.max');
+    
     var neg = _.max([1, 2, 3], function(num){ return -num; });
     equals(neg, 1, 'can perform a computation-based max');
   });
   
   test('collections: min', function() {
     equals(1, _.min([1, 2, 3]), 'can perform a regular Math.min');
+    
     var neg = _.min([1, 2, 3], function(num){ return -num; });
     equals(neg, 3, 'can perform a computation-based min');
   });
@@ -112,6 +107,7 @@ $(document).ready(function() {
   test('collections: toArray', function() {
     ok(!_.isArray(arguments), 'arguments object is not an array');
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');
+    
     var numbers = _.toArray({one : 1, two : 2, three : 3});
     equals(_.pluck(numbers, '0').join(', '), 'one, two, three', 'object flattened into array');
   });

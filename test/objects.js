@@ -20,8 +20,10 @@ $(document).ready(function() {
     var moe = {name : 'moe', lucky : [13, 27, 34]};
     var clone = _.clone(moe);
     equals(clone.name, 'moe', 'the clone as the attributes of the original');
+    
     clone.name = 'curly';
     ok(clone.name == 'curly' && moe.name == 'moe', 'clones can change shallow attributes without affecting the original');
+    
     clone.lucky.push(101);
     equals(_.last(moe.lucky), 101, 'changes to deep attributes are shared with the original');
   });

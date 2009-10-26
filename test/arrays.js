@@ -27,6 +27,7 @@ $(document).ready(function() {
   test("arrays: uniq", function() {
     var list = [1, 2, 1, 3, 1, 4];
     equals(_.uniq(list).join(', '), '1, 2, 3, 4', 'can find the unique values of an unsorted array');
+    
     var list = [1, 1, 1, 2, 2, 3];
     equals(_.uniq(list, true).join(', '), '1, 2, 3', 'can find the unique values of a sorted array faster');
   });

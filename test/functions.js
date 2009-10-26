@@ -29,4 +29,23 @@ $(document).ready(function() {
     equals(curly.sayHi(), 'hi: moe', 'bound function is still bound to original object');
   });
   
+  asyncTest("functions: delay", function() {
+    var delayed = false;
+    _.delay(function(){ delayed = true; }, 100);
+    _.delay(function(){ ok(!delayed, "didn't delay the function quite yet"); }, 50);
+    _.delay(function(){ ok(delayed, 'delayed the function'); start(); }, 150);
+  });
+  
+  asyncTest("functions: defer", function() {
+    var deferred = false;
+    _.defer(function(bool){ deferred = bool; }, true);
+    _.delay(function(){ ok(deferred, "deferred the function"); start(); }, 50);
+  });
+  
+  test("functions: wrap", function() {
+    var greet = function(name){ return "hi: " + name; };
+    var backwards = _.wrap(greet, function(func, name){ return func(name) + ' ' + name.split('').reverse().join(''); });
+    equals(backwards('moe'), 'hi: moe eom', 'wrapped the saluation function');
+  });
+  
 });

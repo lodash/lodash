@@ -10,13 +10,9 @@ window._ = {
       if (obj.forEach) {
         obj.forEach(iterator, context);
       } else if (obj.length) {
-        for (var i=0; i<obj.length; i++) {
-          iterator.call(context, obj[i], i);
-        }
-      } else if (obj._each) {
-        obj._each(function(value) {
-          iterator.call(context, value, index++);
-        });
+        for (var i=0; i<obj.length; i++) iterator.call(context, obj[i], i);
+      } else if (obj.each) {
+        obj.each(function(value) { iterator.call(context, value, index++); });
       } else {
         var i = 0;
         for (var key in obj) {
@@ -68,6 +64,14 @@ window._ = {
     return results;
   },
   
+  // Aka reduce. Inject builds up a single result from a list of values.
+  inject : function(obj, memo, iterator, context) {
+    _.each(obj, function(value, index) {
+      memo = iterator.call(context, memo, value, index);
+    });
+    return memo;
+  },
+  
   // Return the first value which passes a truth test.
   detect : function(obj, iterator, context) {
     var result;
@@ -91,25 +95,27 @@ window._ = {
     return results;
   },
   
-  // Determine if a given value is included in the object, based on '=='.
+  // Return all the elements for which a truth test fails.
+  reject : function(obj, iterator, context) {
+    var results = [];
+    _.each(obj, function(value, index) {
+      if (!iterator.call(context, value, index)) results.push(value);
+    });
+    return results;
+  },
+  
+  // Determine if a given value is included in the array or object, 
+  // based on '=='.
   include : function(obj, target) {
-    if (_.isArray(obj)) if (obj.indexOf(target) != -1) return true;
+    if (_.isArray(obj)) return _.indexOf(obj, target) != -1;
     var found = false;
-    _.each(obj, function(value) {
-      if (value == target) {
+    _.each(obj, function(pair) {
+      if (pair.value == target) {
         found = true;
         throw '__break__';
       }
     });
     return found;
-  },
-  
-  // Aka reduce. Inject builds up a single result from a list of values.
-  inject : function(obj, memo, iterator, context) {
-    _.each(obj, function(value, index) {
-      memo = iterator.call(context, memo, value, index);
-    });
-    return memo;
   },
   
   // Invoke a method with arguments on every item in a collection.
@@ -120,26 +126,6 @@ window._ = {
     });
   },
   
-  // Return the maximum item or (item-based computation).
-  max : function(obj, iterator, context) {
-    var result;
-    _.each(obj, function(value, index) {
-      value = iterator ? iterator.call(context, value, index) : value;
-      if (result == null || value >= result) result = value;
-    });
-    return result;
-  },
-  
-  // Return the minimum element (or element-based computation).
-  min : function(obj, iterator, context) {
-    var result;
-    _.each(obj, function(value, index) {
-      value = iterator ? iterator.call(context, value, index) : value;
-      if (result == null || value < result) result = value;
-    });
-    return result;
-  },
-  
   // Optimized version of a common use case of map: fetching a property.
   pluck : function(obj, key) {
     var results = [];
@@ -147,13 +133,26 @@ window._ = {
     return results;
   },
   
-  // Return all the elements for which a truth test fails.
-  reject : function(obj, iterator, context) {
-    var results = [];
+  // Return the maximum item or (item-based computation).
+  max : function(obj, iterator, context) {
+    if (!iterator && _.isArray(obj)) return Math.max.apply(Math, obj);
+    var result;
     _.each(obj, function(value, index) {
-      if (!iterator.call(context, value, index)) results.push(value);
+      var computed = iterator ? iterator.call(context, value, index) : value;
+      if (result == null || computed >= result.computed) result = {value : value, computed : computed};
     });
-    return results;
+    return result.value;
+  },
+  
+  // Return the minimum element (or element-based computation).
+  min : function(obj, iterator, context) {
+    if (!iterator && _.isArray(obj)) return Math.min.apply(Math, obj);
+    var result;
+    _.each(obj, function(value, index) {
+      var computed = iterator ? iterator.call(context, value, index) : value;
+      if (result == null || computed < result.computed) result = {value : value, computed : computed};
+    });
+    return result.value;
   },
   
   // Sort the object's values by a criteria produced by an iterator.
@@ -189,7 +188,7 @@ window._ = {
   
   // Return the number of elements in an object.
   size : function(obj) {
-    _.toArray(obj).length;
+    return _.toArray(obj).length;
   },
   
   //------------- The following methods only apply to arrays. -----------------
@@ -218,10 +217,10 @@ window._ = {
     });
   },
   
-  // Return a version of the array that does not contain the specified value.
+  // Return a version of the array that does not contain the specified value(s).
   without : function(array) {
     var values = array.slice.call(arguments, 0);
-    return _.select(function(value){ return !_.include(values, value); });
+    return _.select(array, function(value){ return !_.include(values, value); });
   },
   
   // Produce a duplicate-free version of the array. If the array has already
@@ -240,14 +239,38 @@ window._ = {
     });
   },
   
-  // If the browser doesn't supply us with indexOf, we might need this function.
-  // Return the position of the first occurence of an item in an array,
-  // or -1 if the item is not included in the array.
-  // indexOf : function(array, item) {
-  //   var length = array.length;
-  //   for (i=0; i<length; i++) if (array[i] === item) return i;
-  //   return -1;
-  // }
+  // If the browser doesn't supply us with indexOf (I'm looking at you, MSIE), 
+  // we need this function. Return the position of the first occurence of an 
+  // item in an array, or -1 if the item is not included in the array.
+  indexOf : function(array, item) {
+    if (array.indexOf) return array.indexOf(item);
+    var length = array.length;
+    for (i=0; i<length; i++) if (array[i] === item) return i;
+    return -1;
+  },
+  
+  /* -------------- The following methods apply to functions -----------------*/
+  
+  // Create a function bound to a given object (assigning 'this', and arguments,
+  // optionally).
+  bind : function(func, context) {
+    if (!context) return func;
+    var args = _.toArray(arguments).slice(2);
+    return function() {
+      var a = args.concat(_.toArray(arguments));
+      return func.apply(context, a);
+    };
+  },
+  
+  // Bind all of an object's methods to that object. Useful for ensuring that 
+  // all callbacks defined on an object belong to it.
+  bindAll : function() {
+    var args = _.toArray(arguments);
+    var context = args.pop();
+    _.each(args, function(methodName) {
+      context[methodName] = _.bind(context[methodName], context);
+    });
+  },
   
   /* ---------------- The following methods apply to objects ---------------- */
   
@@ -270,6 +293,30 @@ window._ = {
   // Create a (shallow-cloned) duplicate of an object.
   clone : function(obj) {
     return _.extend({}, obj);
+  },
+  
+  // Perform a deep comparison to check if two objects are equal.
+  isEqual : function(a, b) {
+    // Check object identity.
+    if (a === b) return true;
+    // Different types?
+    var atype = typeof(a), btype = typeof(b);
+    if (atype != btype) return false;
+    // Basic equality test (watch out for coercions).
+    if (a == b) return true;
+    // One of them implements an isEqual()?
+    if (a.isEqual) return a.isEqual(b);
+    // Nothing else worked, deep compare the contents.
+    return atype === 'object' && _._isEqualContents(a, b);
+  },
+  
+  // Objects have equal contents if they have the same keys, and all the values
+  // are equal (as defined by _.isEqual).
+  _isEqualContents : function(a, b) {
+    var aKeys = _.keys(a), bKeys = _.keys(b);
+    if (aKeys.length != bKeys.length) return false;
+    for (var key in a) if (!_.isEqual(a[key], b[key])) return false;
+    return true; 
   },
   
   // Is a given value a DOM element?
@@ -297,56 +344,13 @@ window._ = {
     return obj == null ? '' : String(obj);
   },
   
-  // Create a function bound to a given object (assigning 'this', and arguments,
-  // optionally).
-  bind : function(func, context) {
-    if (!context) return func;
-    var args = _.toArray(arguments).slice(2);
-    return function() {
-      var a = args.concat(_.toArray(arguments));
-      return func.apply(context, a);
-    };
-  },
-  
-  // Bind all of an object's methods to that object. Useful for ensuring that 
-  // all callbacks defined on an object belong to it.
-  bindAll : function() {
-    var args = _.toArray(arguments);
-    var context = args.pop();
-    _.each(args, function(methodName) {
-      context[methodName] = _.bind(context[methodName], context);
-    });
-  },
+  /* -------------- The following methods are utility methods --------------- */
   
   // Generate a unique integer id (unique within the entire client session).
   // Useful for temporary DOM ids.
   uniqueId : function(prefix) {
     var id = this._idCounter = (this._idCounter || 0) + 1;
     return prefix ? prefix + id : id;
-  },
-  
-  // Perform a deep comparison to check if two objects are equal.
-  isEqual : function(a, b) {
-    // Check object identity.
-    if (a === b) return true;
-    // Different types?
-    var at = typeof(a), bt = typeof(b);
-    if (at != bt) return false;
-    // Basic equality test (watch out for coercions).
-    if (a == b) return true;
-    // One of them implements an isEqual()?
-    if (a.isEqual) return a.isEqual(b);
-    // Nothing else worked, deep compare the contents.
-    return at === 'object' && _.isEqualContents(a, b);
-  },
-  
-  // Objects have equal contents if they have the same keys, and all the values
-  // are equal (as defined by _.isEqual).
-  _isEqualContents : function(a, b) {
-    var aKeys = _.keys(a), bKeys = _.keys(b);
-    if (aKeys.length != bKeys.length) return false;
-    for (var key in a) if (!_.isEqual(a[key], b[key])) return false;
-    return true; 
   },
   
   // Javascript templating a-la ERB, pilfered from John Resig's 

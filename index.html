@@ -19,7 +19,7 @@
       width: 550px;
     }
       #documentation p {
-        margin-bottom: 8px;
+        margin-bottom: 4px;
       }
     a, a:visited {
       padding: 0 2px;
@@ -34,7 +34,7 @@
     h1, h2, h3, h4, h5, h6 {
       margin-top: 35px;
     }
-    code, pre {
+    code, pre, tt {
       font-family: Monaco, Consolas, "Lucida Console", monospace;
       font-size: 12px;
       line-height: 18px;
@@ -45,7 +45,7 @@
       }
       pre {
         font-size: 12px;
-        padding-left: 12px;
+        padding: 2px 0 2px 12px;
         border-left: 6px solid #aaaa99;
         margin: 0px 0 35px;
       }
@@ -105,6 +105,13 @@
     </p>
     
     <p>
+      <b>Functions</b>
+      <br />
+      <span class="methods"><a href="#bind">bind</a>, <a href="#bindAll">bindAll</a>, <a href="#delay">delay</a>, 
+      <a href="#defer">defer</a>, <a href="#wrap">wrap</a></span>
+    </p>
+    
+    <p>
       <b>Objects</b>
       <br />
       <span class="methods"><a href="#keys">keys</a>, <a href="#values">values</a>, 
@@ -114,20 +121,14 @@
     </p>
     
     <p>
-      <b>Functions</b>
-      <br />
-      <span class="methods"><a href="#bind">bind</a>, <a href="#bindAll">bindAll</a>, <a href="#delay">delay</a>, 
-      <a href="#defer">defer</a>, <a href="#wrap">wrap</a></span>
-    </p>
-    
-    <p>
       <b>Utility</b>
       <br />
       <span class="methods"><a href="#uniqueId">uniqueId</a>, <a href="#template">template</a></span>
     </p>
     
     <div id="documentation">
-      <h2>Collections</h2>
+      
+      <h2>Collection Functions (Arrays or Objects)</h2>
       
       <p id="each">
         <b>each</b><code>_.each(list, iterator, [context])</code>
@@ -135,8 +136,9 @@
         Iterates over a <b>list</b> of elements, yielding each in turn to an <b>iterator</b>
         function. The <b>iterator</b> is bound to the <b>context</b> object, if one is
         passed. If <b>list</b> is a Javascript object, a pair with <b>key</b>
-        and <b>value</b> properties will be yielded. Delegates to the native 
-        <b>forEach</b> method if it exists.
+        and <b>value</b> properties will be yielded. If the list has an <b>each</b> 
+        method of its own defined, it will be used. Delegates to the native 
+        <b>forEach</b> function if it exists.
       </p>
       <pre>
 _.each([1, 2, 3], function(num){ alert(num); });
@@ -216,7 +218,7 @@ _.all([true, 1, null, 'yes']);
 </pre>
 
       <p id="any">
-        <b>any</b><code>_.any(list, iterator, [context])</code>
+        <b>any</b><code>_.any(list, [iterator], [context])</code>
         <br />
         Returns <i>true</i> if any of the values in the <b>list</b> pass the
         <b>iterator</b> truth test. Short-circuits and stops traversing the list
@@ -241,7 +243,7 @@ _.include([1, 2, 3], 3);
 </pre>
 
       <p id="invoke">
-        <b>invoke</b><code>_.invoke(list, methodName)</code>
+        <b>invoke</b><code>_.invoke(list, methodName, [*arguments])</code>
         <br />
         Calls the method named by <b>methodName</b> on each value in the <b>list</b>.
         Any extra arguments passed to <b>invoke</b> will be forwarded on to the
@@ -314,21 +316,318 @@ _.sortedIndex([10, 20, 30, 40, 50], 35);
 => 3
 </pre>
 
-      <p id="">
-        <b>toArray</b><code>_.(list, iterator, [context])</code>
+      <p id="toArray">
+        <b>toArray</b><code>_.toArray(list)</code>
         <br />
+        Converts the <b>list</b> (anything that can be iterated over), into a
+        real Array. Useful for transmuting the <b>arguments</b> object.
+      </p>
+      <pre>
+(function(){ return _.toArray(arguments).slice(0); })(1, 2, 3);
+=> [1, 2, 3]
+</pre>
 
+      <p id="size">
+        <b>size</b><code>_.size(list)</code>
+        <br />
+        Return the number of values in the <b>list</b>.
+      </p>
+      <pre>
+_.size({one : 1, two : 2, three : 3});
+=> 3
+</pre>
+  
+      <h2>Array Functions</h2>
+      
+      <p id="first">
+        <b>first</b><code>_.first(array)</code>
+        <br />
+        Convenience to return the first element of an <b>array</b> (identical to <tt>array[0]</tt>).
+      </p>
+      <pre>
+_.first([3, 2, 1]);
+=> 3
+</pre>
+
+      <p id="last">
+        <b>last</b><code>_.last(array)</code>
+        <br />
+        Returns the last element of an <b>array</b>.
+      </p>
+      <pre>
+_.last([3, 2, 1]);
+=> 1
+</pre>
+
+      <p id="compact">
+        <b>compact</b><code>_.compact(array)</code>
+        <br />
+        Returns a copy of the <b>array</b> with all falsy values removed. 
+        In Javascript, <i>false</i>, <i>null</i>, <i>0</i>, <i>""</i>, 
+        <i>undefined</i> and <i>NaN</i> are all falsy.
+      </p>
+      <pre>
+_.compact([0, 1, false, 2, '', 3]);
+=> [1, 2, 3]
+</pre>
+
+      <p id="flatten">
+        <b>flatten</b><code>_.flatten(array)</code>
+        <br />
+        Flattens a nested <b>array</b> (the nesting can be to any depth).
+      </p>
+      <pre>
+_.flatten([1, [2], [3, [[[4]]]]]);
+=> [1, 2, 3, 4];
+</pre>
+
+      <p id="without">
+        <b>without</b><code>_.without(array, [*values])</code>
+        <br />
+        Returns a copy of the <b>array</b> with all instances of the <b>values</b>
+        removed. <i>==</i> is used for the equality test.
+      </p>
+      <pre>
+_.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
+=> [2, 3, 4]
+</pre>
+
+      <p id="uniq">
+        <b>uniq</b><code>_.uniq(array, [isSorted])</code>
+        <br />
+        Produces a duplicate-free version of the <b>array</b>, using <i>==</i> to test
+        object equality. If you know in advance that the <b>array</b> is sorted,
+        passing <i>true</i> for <b>isSorted</b> will run a much faster algorithm.
+      </p>
+      <pre>
+_.uniq([1, 2, 1, 3, 1, 4]);
+=> [1, 2, 3, 4]
+</pre>
+
+      <p id="intersect">
+        <b>intersect</b><code>_.intersect(*arrays)</code>
+        <br />
+        Computes the list of values that are the intersection of all the <b>arrays</b>.
+        Each value in the result is present in each of the <b>arrays</b>.
+      </p>
+      <pre>
+_.intersect([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+=> [1, 2]
+</pre>
+
+      <p id="zip">
+        <b>zip</b><code>_.zip(*arrays)</code>
+        <br />
+        Merges together the values of each of the <b>arrays</b> with the
+        values at the corresponding position. Useful when you have separate
+        data sources that are coordinated through matching array indexes.
+      </p>
+      <pre>
+_.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
+=> [["moe", 30, true], ["larry", 40, false], ["curly", 50, false]]
+</pre>
+
+      <p id="indexOf">
+        <b>indexOf</b><code>_.indexOf(array, value)</code>
+        <br />
+        Returns the index at which <b>value</b> can be found in the <b>array</b>, 
+        or <i>-1</i> if value is not present in the <b>array</b>. Uses the native
+        <b>indexOf</b> function unless it's missing.
+      </p>
+      <pre>
+_.indexOf([1, 2, 3], 2);
+=> 1
+</pre>
+
+      <h2>Function (uh, ahem) Functions</h2>
+
+      <p id="bind">
+        <b>bind</b><code>_.bind(function, context, [*arguments])</code>
+        <br />
+        Bind a <b>function</b> to a <b>context</b> object, meaning that whenever
+        the function is called, the value of <i>this</i> will be the <b>context</b>.
+        Optionally, bind <b>arguments</b> to the <b>function</b> to pre-fill them,
+        also known as <b>currying</b>. 
+      </p>
+      <pre>
+var func = function(greeting){ return greeting + ': ' + this.name };
+func = _.bind(func, {name : 'moe'}, 'hi');
+func();
+=> 'hi: moe'
+</pre>
+
+      <p id="bindAll">
+        <b>bindAll</b><code>_.bindAll(*methodNames, context)</code>
+        <br />
+        Binds a number of methods on the <b>context</b> object, specified by 
+        <b>methodNames</b>, to be run in the context of that object whenever they
+        are invoked. Very handy for binding functions that are going to be used
+        as event handlers, which would otherwise be invoked with a fairly useless 
+        <i>this</i>.
+      </p>
+      <pre>
+var buttonView = {
+  label   : 'underscore', 
+  onClick : function(){ alert('clicked: ' + this.label); },
+  onHover : function(){ console.log('hovering: ' + this.label); }
+};
+_.bindAll('onClick', 'onHover', buttonView);
+jQuery('#underscore_button').bind('click', buttonView.onClick);
+=> When the button is clicked, this.label will have the correct value...
+</pre>
+
+      <p id="delay">
+        <b>delay</b><code>_.delay(function, wait, [*arguments])</code>
+        <br />
+        Much like <b>setTimeout</b>, invokes <b>function</b> after <b>wait</b>
+        milliseconds. If you pass the optional <b>arguments</b>, they will be
+        forwarded on to the <b>function</b> when it is invoked.
+      </p>
+      <pre>
+var log = _.bind(console.log, console);
+_.delay(log, 1000, 'logged later');
+=> 'logged later' // Appears after one second.
+</pre>
+
+      <p id="defer">
+        <b>defer</b><code>_.defer(function)</code>
+        <br />
+        Defers invoking the <b>function</b> until the current call stack has cleared,
+        similar to using <b>setTimeout</b> with a delay of 0. Useful for performing
+        expensive computations or HTML rendering in chunks without blocking the UI thread
+        from updating.
+      </p>
+      <pre>
+_.defer(function(){ alert('deferred'); });
+// Returns from the function before the alert runs.
+</pre>
+
+      <p id="wrap">
+        <b>wrap</b><code>_.wrap(function, wrapper)</code>
+        <br />
+        Wraps the first <b>function</b> inside of the <b>wrapper</b> function, 
+        passing it as the first argument. This allows the <b>wrapper</b> to 
+        execute code before and after the <b>function</b> runs, adjust the arguments,
+        and execute it conditionally.
+      </p>
+      <pre>
+var hello = function(name) { return "hello: " + name; };
+hello = _.wrap(hello, function(func) {
+  return "before, " + func("moe") + ", after";
+});
+hello();
+=> before, hello: moe, after
+</pre>
+
+      <h2>Object Functions</h2>
+
+      <p id="keys">
+        <b>keys</b><code>_.keys(object)</code>
+        <br />
+        Retrieve all the names of the <b>object</b>'s properties.
+      </p>
+      <pre>
+_.keys({one : 1, two : 2, three : 3});
+=> ["one", "two", "three"]
+</pre>
+
+      <p id="values">
+        <b>values</b><code>_.values(object)</code>
+        <br />
+        Return all of the values of the <b>object</b>'s properties.
+      </p>
+      <pre>
+_.values({one : 1, two : 2, three : 3});
+=> [1, 2, 3]
+</pre>
+
+      <p id="extend">
+        <b>extend</b><code>_.extend(destination, source)</code>
+        <br />
+        Copy all of the properties in the <b>source</b> object over to the 
+        <b>destination</b> object.
+      </p>
+      <pre>
+_.extend({name : 'moe'}, {age : 50});
+=> {name : 'moe', age : 50}
+</pre>
+
+      <p id="clone">
+        <b>clone</b><code>_.clone(object)</code>
+        <br />
+        Create a shallow-copied clone of the <b>object</b>. Any nested objects
+        or arrays will be copied by reference, not duplicated.
+      </p>
+      <pre>
+_.clone({name : 'moe'});
+=> {name : 'moe'};
+</pre>
+
+      <p id="isEqual">
+        <b>isEqual</b><code>_.isEqual(object, other)</code>
+        <br />
+        Performs an optimized deep comparison between the two objects, to determine
+        if they should be considered equal.
+      </p>
+      <pre>
+var moe   = {name : 'moe', luckyNumbers : [13, 27, 34]};
+var clone = {name : 'moe', luckyNumbers : [13, 27, 34]};
+moe == clone;
+=> false
+_.isEqual(moe, clone);
+=> true
+</pre>
+
+      <p id="">
+        <b>isElement</b><code>_.()</code>
+        <br />
       </p>
       <pre>
 </pre>
 
       <p id="">
-        <b>size</b><code>_.(list, iterator, [context])</code>
+        <b>isArray</b><code>_.()</code>
         <br />
-
       </p>
       <pre>
 </pre>
+
+      <p id="">
+        <b>isFunction</b><code>_.()</code>
+        <br />
+      </p>
+      <pre>
+</pre>
+
+      <p id="">
+        <b>isUndefined</b><code>_.()</code>
+        <br />
+      </p>
+      <pre>
+</pre>
+
+      <p id="">
+        <b>toString</b><code>_.()</code>
+        <br />
+      </p>
+      <pre>
+</pre>
+
+      <h2>Utility Functions</h2>
+
+      <p id="">
+        <b>uniqueId</b><code>_.()</code>
+        <br />
+      </p>
+      <pre>
+</pre>
+
+      <p id="">
+        <b>template</b><code>_.()</code>
+        <br />
+      </p>
+      <pre>
+</pre>  
       
     </div>
     

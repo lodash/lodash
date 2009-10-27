@@ -227,17 +227,21 @@ window._ = {
   
   // Produce a duplicate-free version of the array. If the array has already
   // been sorted, you have the option of using a faster algorithm.
-  uniq : function(array, sorted) {
+  uniq : function(array, isSorted) {
     return _.inject(array, [], function(memo, el, i) {
-      if (0 == i || (sorted ? _.last(memo) != el : !_.include(memo, el))) memo.push(el);
+      if (0 == i || (isSorted ? _.last(memo) != el : !_.include(memo, el))) memo.push(el);
       return memo;
     });
   },
   
-  // Produce an array that contains every item shared between two given arrays.
-  intersect : function(array1, array2) {
-    return _.select(_.uniq(array1), function(item1) {
-      return _.detect(array2, function(item2) { return item1 === item2; });
+  // Produce an array that contains every item shared between all the 
+  // passed-in arrays.
+  intersect : function(array) {
+    var rest = _.toArray(arguments).slice(1);
+    return _.select(_.uniq(array), function(item1) {
+      return _.all(rest, function(other) { 
+        return _.detect(other, function(item2){ return item1 === item2; });
+      });
     });
   },
   

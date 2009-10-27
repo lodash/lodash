@@ -100,7 +100,7 @@ $(document).ready(function() {
   
   test('collections: sortedIndex', function() {
     var numbers = [10, 20, 30, 40, 50], num = 35;
-    var index = _.sortedIndex(numbers, function(a, b) { return a < b ? -1 : a > b ? 1 : 0; }, num);
+    var index = _.sortedIndex(numbers, num);
     equals(index, 3, '35 should be inserted at index 3');
   });
   

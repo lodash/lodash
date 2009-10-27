@@ -71,12 +71,12 @@
       Underscore provides 43-odd functions that support both the usual 
       functional suspects: <b>map</b>, <b>select</b>, <b>invoke</b> &mdash; 
       as well as more specialized helpers: function binding, javascript 
-      templating, deep equality testing, and so on. It delegates to the built-in 
+      templating, deep equality testing, and so on. It delegates to built-in 
       functions, if present, so 
       <a href="https://developer.mozilla.org/en/New_in_JavaScript_1.6">Javascript 1.6</a> 
       compliant browsers will use the 
       native implementations of <b>forEach</b>, <b>map</b>, <b>filter</b>, 
-      <b>every</b> and <b>some</b>.
+      <b>every</b>, <b>some</b> and <b>indexOf</b>.
     </p>
     
     <p>
@@ -203,7 +203,7 @@ var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 </pre>
 
       <p id="all">
-        <b>all</b><code>_.(list, [iterator], [context])</code>
+        <b>all</b><code>_.all(list, [iterator], [context])</code>
         <br />
         Returns <i>true</i> if all of the values in the <b>list</b> pass the <b>iterator</b>
         truth test. If an <b>iterator</b> is not provided, the truthy value of 
@@ -216,7 +216,7 @@ _.all([true, 1, null, 'yes']);
 </pre>
 
       <p id="any">
-        <b>any</b><code>_.(list, iterator, [context])</code>
+        <b>any</b><code>_.any(list, iterator, [context])</code>
         <br />
         Returns <i>true</i> if any of the values in the <b>list</b> pass the
         <b>iterator</b> truth test. Short-circuits and stops traversing the list
@@ -228,60 +228,90 @@ _.any([null, 0, 'yes', false]);
 => true
 </pre>
 
-      <p id="">
-        <b>include</b><code>_.(list, iterator, [context])</code>
+      <p id="include">
+        <b>include</b><code>_.include(list, value)</code>
         <br />
-
+        Returns <i>true</i> if the <b>value</b> is present in the <b>list</b>, using
+        <i>==</i> to test equality. Uses <b>indexOf</b> internally, if <b>list</b>
+        is an Array.
       </p>
       <pre>
+_.include([1, 2, 3], 3);
+=> true
 </pre>
 
-      <p id="">
-        <b>invoke</b><code>_.(list, iterator, [context])</code>
+      <p id="invoke">
+        <b>invoke</b><code>_.invoke(list, methodName)</code>
         <br />
-
+        Calls the method named by <b>methodName</b> on each value in the <b>list</b>.
+        Any extra arguments passed to <b>invoke</b> will be forwarded on to the
+        method invocation.
       </p>
       <pre>
+_.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
+=> [[1, 5, 7], [1, 2, 3]]
 </pre>
 
-      <p id="">
-        <b>pluck</b><code>_.(list, iterator, [context])</code>
+      <p id="pluck">
+        <b>pluck</b><code>_.pluck(list, propertyName)</code>
         <br />
-
+        An optimized version of what is perhaps the most common use-case for 
+        <b>map</b>: returning a list of property values.
       </p>
       <pre>
+var stooges = [{name : 'moe', age : 40}, {name : 'larry', age : 50}, {name : 'curly', age : 60}];
+_.pluck(stooges, 'name');
+=> ["moe", "larry", "curly"]
 </pre>
 
-      <p id="">
-        <b>max</b><code>_.(list, iterator, [context])</code>
+      <p id="max">
+        <b>max</b><code>_.max(list, [iterator], [context])</code>
         <br />
-
+        Returns the maximum value in <b>list</b>. If <b>iterator</b> is passed,
+        it will be used on each value to generate the criterion by which the
+        value is ranked.
       </p>
       <pre>
+var stooges = [{name : 'moe', age : 40}, {name : 'larry', age : 50}, {name : 'curly', age : 60}];
+_.max(stooges, function(stooge){ return stooge.age; });
+=> {name : 'curly', age : 60};
 </pre>
 
-      <p id="">
-        <b>min</b><code>_.(list, iterator, [context])</code>
+      <p id="min">
+        <b>min</b><code>_.min(list, [iterator], [context])</code>
         <br />
-
+        Returns the minimum value in <b>list</b>. If <b>iterator</b> is passed,
+        it will be used on each value to generate the criterion by which the
+        value is ranked.
       </p>
       <pre>
+var numbers = [10, 5, 100, 2, 1000];
+_.min(numbers);
+=> 2
 </pre>
 
-      <p id="">
-        <b>sortBy</b><code>_.(list, iterator, [context])</code>
+      <p id="sortBy">
+        <b>sortBy</b><code>_.sortBy(list, iterator, [context])</code>
         <br />
-
+        Returns a sorted <b>list</b>, ranked by the results of running each
+        value through <b>iterator</b>.
       </p>
       <pre>
+_.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
+=> [5, 4, 6, 3, 1, 2]
 </pre>
 
-      <p id="">
-        <b>sortedIndex</b><code>_.(list, iterator, [context])</code>
+      <p id="sortedIndex">
+        <b>sortedIndex</b><code>_.sortedIndex(list, value, [iterator])</code>
         <br />
-
+        Uses a binary search to determine the index at which the <b>value</b>
+        should be inserted into the <b>list</b> in order to maintain the <b>list</b>'s
+        sorted order. If an <b>iterator</b> is passed, it will be used to compute
+        the sort ranking of each value.
       </p>
       <pre>
+_.sortedIndex([10, 20, 30, 40, 50], 35);
+=> 3
 </pre>
 
       <p id="">

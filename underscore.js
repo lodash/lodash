@@ -171,11 +171,12 @@ window._ = {
   
   // Use a comparator function to figure out at what index an object should
   // be inserted so as to maintain order. Uses binary search.
-  sortedIndex : function(array, comparator, obj) {
+  sortedIndex : function(array, obj, iterator) {
+    iterator = iterator || function(val) { return val; };
     var low = 0, high = array.length;
     while (low < high) {
       var mid = (low + high) >> 1;
-      comparator(array[mid], obj) < 0 ? low = mid + 1 : high = mid;
+      iterator(array[mid]) < iterator(obj) ? low = mid + 1 : high = mid;
     }
     return low;
   },

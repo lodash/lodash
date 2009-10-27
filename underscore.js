@@ -1,6 +1,11 @@
-// Javascript can be so much more pleasant when it's functional -- re-implement
-// a bunch of utility methods from Prototype and Steele's Functional...
+// Underscore.js
+// (c) 2009 Jeremy Ashkenas, DocumentCloud Inc.
+// Underscore is freely distributable under the terms of the MIT license.
+// For all details and documentation:
+// http://fdjklsafjsdalk
 window._ = {
+  
+  VERSION : '0.1.0',
       
   // The cornerstone, an each implementation.
   // Handles objects implementing forEach, _each, arrays, and raw objects.
@@ -345,17 +350,15 @@ window._ = {
     if (a == b) return true;
     // One of them implements an isEqual()?
     if (a.isEqual) return a.isEqual(b);
+    // If a is not an object by this point, we can't handle it.
+    if (atype !== 'object') return false;
     // Nothing else worked, deep compare the contents.
-    return atype === 'object' && _._isEqualContents(a, b);
-  },
-  
-  // Objects have equal contents if they have the same keys, and all the values
-  // are equal (as defined by _.isEqual).
-  _isEqualContents : function(a, b) {
     var aKeys = _.keys(a), bKeys = _.keys(b);
+    // Different object sizes?
     if (aKeys.length != bKeys.length) return false;
+    // Recursive comparison of contents.
     for (var key in a) if (!_.isEqual(a[key], b[key])) return false;
-    return true; 
+    return true;
   },
   
   // Is a given value a DOM element?
@@ -376,11 +379,6 @@ window._ = {
   // Is a given variable undefined?
   isUndefined : function(obj) {
     return typeof obj == 'undefined';
-  },
-  
-  // Convert any value into printable string form.
-  toString : function(obj) {
-    return obj == null ? '' : String(obj);
   },
   
   /* -------------- The following methods are utility methods --------------- */

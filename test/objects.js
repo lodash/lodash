@@ -58,9 +58,5 @@ $(document).ready(function() {
     ok(_.isUndefined(), 'nothing is undefined');
     ok(_.isUndefined(undefined), 'undefined is undefined');
   });
-  
-  test("objects: toString", function() {
-    equals(_.toString([1, 2, 3]), '1,2,3', 'object can be converted to printable strings');
-  });
 
 });

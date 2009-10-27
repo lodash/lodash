@@ -10,7 +10,7 @@ window._ = {
   VERSION : '0.1.0',
     
   // The cornerstone, an each implementation.
-  // Handles objects implementing forEach, _each, arrays, and raw objects.
+  // Handles objects implementing forEach, each, arrays, and raw objects.
   each : function(obj, iterator, context) {
     var index = 0;
     try {
@@ -47,7 +47,7 @@ window._ = {
   },
   
   // Inject builds up a single result from a list of values. Also known as
-  // reduce, and foldl.
+  // reduce, or foldl.
   inject : function(obj, memo, iterator, context) {
     _.each(obj, function(value, index) {
       memo = iterator.call(context, memo, value, index);
@@ -113,12 +113,12 @@ window._ = {
   },
   
   // Determine if a given value is included in the array or object, 
-  // based on '=='.
+  // based on '==='.
   include : function(obj, target) {
     if (_.isArray(obj)) return _.indexOf(obj, target) != -1;
     var found = false;
     _.each(obj, function(pair) {
-      if (pair.value == target) {
+      if (pair.value === target) {
         found = true;
         throw '__break__';
       }

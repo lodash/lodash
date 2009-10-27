@@ -160,7 +160,7 @@
         function. The <b>iterator</b> is bound to the <b>context</b> object, if one is
         passed. If <b>list</b> is a Javascript object, a pair with <b>key</b>
         and <b>value</b> properties will be yielded. If the list has an <b>each</b> 
-        method of its own defined, it will be used. Delegates to the native 
+        method of its own, it will be used instead. Delegates to the native 
         <b>forEach</b> function if it exists.
       </p>
       <pre>
@@ -196,8 +196,8 @@ var sum = _.inject([1, 2, 3], 0, function(memo, num){ return memo + num });
         <br />
         Looks through each value in the <b>list</b>, returning the first one that 
         passes a truth test (<b>iterator</b>). The function returns as 
-        soon as it finds the true element, and doesn't continue to traverse 
-        the list.
+        soon as it finds the first acceptable element, and doesn't continue to 
+        traverse the list.
       </p>
       <pre>
 var even = _.detect([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
@@ -257,7 +257,7 @@ _.any([null, 0, 'yes', false]);
         <b class="method_name">include</b><code>_.include(list, value)</code>
         <br />
         Returns <i>true</i> if the <b>value</b> is present in the <b>list</b>, using
-        <i>==</i> to test equality. Uses <b>indexOf</b> internally, if <b>list</b>
+        <i>===</i> to test equality. Uses <b>indexOf</b> internally, if <b>list</b>
         is an Array.
       </p>
       <pre>
@@ -408,7 +408,7 @@ _.flatten([1, [2], [3, [[[4]]]]]);
         <b class="method_name">without</b><code>_.without(array, [*values])</code>
         <br />
         Returns a copy of the <b>array</b> with all instances of the <b>values</b>
-        removed. <i>==</i> is used for the equality test.
+        removed. <i>===</i> is used for the equality test.
       </p>
       <pre>
 _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
@@ -418,7 +418,7 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
       <p id="uniq">
         <b class="method_name">uniq</b><code>_.uniq(array, [isSorted])</code>
         <br />
-        Produces a duplicate-free version of the <b>array</b>, using <i>==</i> to test
+        Produces a duplicate-free version of the <b>array</b>, using <i>===</i> to test
         object equality. If you know in advance that the <b>array</b> is sorted,
         passing <i>true</i> for <b>isSorted</b> will run a much faster algorithm.
       </p>
@@ -677,7 +677,11 @@ compiled({name : 'moe'});
 var list = "&lt;% _.each(people, function(name) { %&gt; &lt;li&gt;&lt;%= name %&gt;&lt;/li&gt; &lt;% }); %&gt;";
 _.template(list, {people : ['moe', 'curly', 'larry']});
 =&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"
-</pre>  
+</pre> 
+
+      <p>
+        <i><b>Underscore</b> is a <a href="http://documentcloud.org/">DocumentCloud</a> production.</i>
+      </p>
       
     </div>
     

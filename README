@@ -1,10 +1,17 @@
-            __           
-           /\_\    ____  
-           \/\ \  /',__\ 
-         __ \ \ \/\__, `\
-        /\_\_\ \ \/\____/
- _______\/_/\ \_\ \/___/ 
-/\______\  \ \____/      
-\/______/   \/___/
+                   __                                                         
+                  /\ \                                                         __           
+ __  __    ___    \_\ \     __   _ __   ____    ___    ___   _ __    __       /\_\    ____  
+/\ \/\ \ /' _ `\  /'_` \  /'__`\/\`'__\/',__\  /'___\ / __`\/\`'__\/'__`\     \/\ \  /',__\ 
+\ \ \_\ \/\ \/\ \/\ \L\ \/\  __/\ \ \//\__, `\/\ \__//\ \L\ \ \ \//\  __/  __  \ \ \/\__, `\
+ \ \____/\ \_\ \_\ \___,_\ \____\\ \_\\/\____/\ \____\ \____/\ \_\\ \____\/\_\ _\ \ \/\____/
+  \/___/  \/_/\/_/\/__,_ /\/____/ \/_/ \/___/  \/____/\/___/  \/_/ \/____/\/_//\ \_\ \/___/ 
+                                                                              \ \____/      
+                                                                               \/___/
 
-See: documentcloud.github.com/underscore
+Underscore is a utility-belt library for Javascript that provides 
+a lot of the functional programming support that you would expect 
+in Prototype.js (or Ruby), but without extending any of the built-
+in Javascript objects. It's the tie to go along with jQuery's tux.
+
+For Docs, License, Tests, and pre-packed downloads, see:
+http://documentcloud.github.com/underscore/

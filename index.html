@@ -12,8 +12,7 @@
     }
     div.container {
       width: 720px;
-      margin: 0 auto;
-      margin-top: 50px;  
+      margin: 50px 0 50px 50px;
     }
     p {
       width: 550px;
@@ -32,7 +31,10 @@
       background: #f0c095;
     }
     h1, h2, h3, h4, h5, h6 {
-      margin-top: 35px;
+      margin-top: 40px;
+    }
+    b.method_name {
+      font-size: 18px;
     }
     code, pre, tt {
       font-family: Monaco, Consolas, "Lucida Console", monospace;
@@ -47,7 +49,7 @@
         font-size: 12px;
         padding: 2px 0 2px 12px;
         border-left: 6px solid #aaaa99;
-        margin: 0px 0 35px;
+        margin: 0px 0 30px;
       }
   </style>
 </head>
@@ -131,7 +133,7 @@
       <h2>Collection Functions (Arrays or Objects)</h2>
       
       <p id="each">
-        <b>each</b><code>_.each(list, iterator, [context])</code>
+        <b class="method_name">each</b><code>_.each(list, iterator, [context])</code>
         <br />
         Iterates over a <b>list</b> of elements, yielding each in turn to an <b>iterator</b>
         function. The <b>iterator</b> is bound to the <b>context</b> object, if one is
@@ -145,7 +147,7 @@ _.each([1, 2, 3], function(num){ alert(num); });
 =&gt; alerts each number in turn...</pre>
       
       <p id="map">
-        <b>map</b><code>_.map(list, iterator, [context])</code>
+        <b class="method_name">map</b><code>_.map(list, iterator, [context])</code>
         <br />
         Produces a new array of values by mapping each value in <b>list</b> 
         through a transformation function (<b>iterator</b>). If the native 
@@ -156,7 +158,7 @@ _.map([1, 2, 3], function(num){ return num * 3 });
 =&gt; [3, 6, 9]</pre>
 
       <p id="inject">
-        <b>inject</b><code>_.inject(list, memo, iterator, [context])</code>
+        <b class="method_name">inject</b><code>_.inject(list, memo, iterator, [context])</code>
         <br />
         Also known as <b>reduce</b> and <b>foldl</b>, <b>inject</b> reduces a 
         <b>list</b> of values into a single value. <b>Memo</b> is the initial state
@@ -169,7 +171,7 @@ var sum = _.inject([1, 2, 3], 0, function(memo, num){ return memo + num });
 </pre>
 
       <p id="detect">
-        <b>detect</b><code>_.detect(list, iterator, [context])</code>
+        <b class="method_name">detect</b><code>_.detect(list, iterator, [context])</code>
         <br />
         Looks through each value in the <b>list</b>, returning the first one that 
         passes a truth test (<b>iterator</b>). The function returns as 
@@ -182,7 +184,7 @@ var even = _.detect([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 </pre>
 
       <p id="select">
-        <b>select</b><code>_.select(list, iterator, [context])</code>
+        <b class="method_name">select</b><code>_.select(list, iterator, [context])</code>
         <br />
         Looks through each value in the <b>list</b>, returning an array of all
         the values that pass a truth test (<b>iterator</b>). Delegates to the
@@ -194,7 +196,7 @@ var evens = _.select([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 </pre>
 
       <p id="reject">
-        <b>reject</b><code>_.reject(list, iterator, [context])</code>
+        <b class="method_name">reject</b><code>_.reject(list, iterator, [context])</code>
         <br />
         Returns the values in <b>list</b> without the elements that the truth
         test (<b>iterator</b>) passes. The opposite of <b>select</b>.
@@ -205,7 +207,7 @@ var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 </pre>
 
       <p id="all">
-        <b>all</b><code>_.all(list, [iterator], [context])</code>
+        <b class="method_name">all</b><code>_.all(list, [iterator], [context])</code>
         <br />
         Returns <i>true</i> if all of the values in the <b>list</b> pass the <b>iterator</b>
         truth test. If an <b>iterator</b> is not provided, the truthy value of 
@@ -218,7 +220,7 @@ _.all([true, 1, null, 'yes']);
 </pre>
 
       <p id="any">
-        <b>any</b><code>_.any(list, [iterator], [context])</code>
+        <b class="method_name">any</b><code>_.any(list, [iterator], [context])</code>
         <br />
         Returns <i>true</i> if any of the values in the <b>list</b> pass the
         <b>iterator</b> truth test. Short-circuits and stops traversing the list
@@ -231,7 +233,7 @@ _.any([null, 0, 'yes', false]);
 </pre>
 
       <p id="include">
-        <b>include</b><code>_.include(list, value)</code>
+        <b class="method_name">include</b><code>_.include(list, value)</code>
         <br />
         Returns <i>true</i> if the <b>value</b> is present in the <b>list</b>, using
         <i>==</i> to test equality. Uses <b>indexOf</b> internally, if <b>list</b>
@@ -243,7 +245,7 @@ _.include([1, 2, 3], 3);
 </pre>
 
       <p id="invoke">
-        <b>invoke</b><code>_.invoke(list, methodName, [*arguments])</code>
+        <b class="method_name">invoke</b><code>_.invoke(list, methodName, [*arguments])</code>
         <br />
         Calls the method named by <b>methodName</b> on each value in the <b>list</b>.
         Any extra arguments passed to <b>invoke</b> will be forwarded on to the
@@ -255,7 +257,7 @@ _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
 </pre>
 
       <p id="pluck">
-        <b>pluck</b><code>_.pluck(list, propertyName)</code>
+        <b class="method_name">pluck</b><code>_.pluck(list, propertyName)</code>
         <br />
         An optimized version of what is perhaps the most common use-case for 
         <b>map</b>: returning a list of property values.
@@ -267,7 +269,7 @@ _.pluck(stooges, 'name');
 </pre>
 
       <p id="max">
-        <b>max</b><code>_.max(list, [iterator], [context])</code>
+        <b class="method_name">max</b><code>_.max(list, [iterator], [context])</code>
         <br />
         Returns the maximum value in <b>list</b>. If <b>iterator</b> is passed,
         it will be used on each value to generate the criterion by which the
@@ -280,7 +282,7 @@ _.max(stooges, function(stooge){ return stooge.age; });
 </pre>
 
       <p id="min">
-        <b>min</b><code>_.min(list, [iterator], [context])</code>
+        <b class="method_name">min</b><code>_.min(list, [iterator], [context])</code>
         <br />
         Returns the minimum value in <b>list</b>. If <b>iterator</b> is passed,
         it will be used on each value to generate the criterion by which the
@@ -293,7 +295,7 @@ _.min(numbers);
 </pre>
 
       <p id="sortBy">
-        <b>sortBy</b><code>_.sortBy(list, iterator, [context])</code>
+        <b class="method_name">sortBy</b><code>_.sortBy(list, iterator, [context])</code>
         <br />
         Returns a sorted <b>list</b>, ranked by the results of running each
         value through <b>iterator</b>.
@@ -304,7 +306,7 @@ _.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
 </pre>
 
       <p id="sortedIndex">
-        <b>sortedIndex</b><code>_.sortedIndex(list, value, [iterator])</code>
+        <b class="method_name">sortedIndex</b><code>_.sortedIndex(list, value, [iterator])</code>
         <br />
         Uses a binary search to determine the index at which the <b>value</b>
         should be inserted into the <b>list</b> in order to maintain the <b>list</b>'s
@@ -317,7 +319,7 @@ _.sortedIndex([10, 20, 30, 40, 50], 35);
 </pre>
 
       <p id="toArray">
-        <b>toArray</b><code>_.toArray(list)</code>
+        <b class="method_name">toArray</b><code>_.toArray(list)</code>
         <br />
         Converts the <b>list</b> (anything that can be iterated over), into a
         real Array. Useful for transmuting the <b>arguments</b> object.
@@ -328,7 +330,7 @@ _.sortedIndex([10, 20, 30, 40, 50], 35);
 </pre>
 
       <p id="size">
-        <b>size</b><code>_.size(list)</code>
+        <b class="method_name">size</b><code>_.size(list)</code>
         <br />
         Return the number of values in the <b>list</b>.
       </p>
@@ -340,7 +342,7 @@ _.size({one : 1, two : 2, three : 3});
       <h2>Array Functions</h2>
       
       <p id="first">
-        <b>first</b><code>_.first(array)</code>
+        <b class="method_name">first</b><code>_.first(array)</code>
         <br />
         Convenience to return the first element of an <b>array</b> (identical to <tt>array[0]</tt>).
       </p>
@@ -350,7 +352,7 @@ _.first([3, 2, 1]);
 </pre>
 
       <p id="last">
-        <b>last</b><code>_.last(array)</code>
+        <b class="method_name">last</b><code>_.last(array)</code>
         <br />
         Returns the last element of an <b>array</b>.
       </p>
@@ -360,7 +362,7 @@ _.last([3, 2, 1]);
 </pre>
 
       <p id="compact">
-        <b>compact</b><code>_.compact(array)</code>
+        <b class="method_name">compact</b><code>_.compact(array)</code>
         <br />
         Returns a copy of the <b>array</b> with all falsy values removed. 
         In Javascript, <i>false</i>, <i>null</i>, <i>0</i>, <i>""</i>, 
@@ -372,7 +374,7 @@ _.compact([0, 1, false, 2, '', 3]);
 </pre>
 
       <p id="flatten">
-        <b>flatten</b><code>_.flatten(array)</code>
+        <b class="method_name">flatten</b><code>_.flatten(array)</code>
         <br />
         Flattens a nested <b>array</b> (the nesting can be to any depth).
       </p>
@@ -382,7 +384,7 @@ _.flatten([1, [2], [3, [[[4]]]]]);
 </pre>
 
       <p id="without">
-        <b>without</b><code>_.without(array, [*values])</code>
+        <b class="method_name">without</b><code>_.without(array, [*values])</code>
         <br />
         Returns a copy of the <b>array</b> with all instances of the <b>values</b>
         removed. <i>==</i> is used for the equality test.
@@ -393,7 +395,7 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 </pre>
 
       <p id="uniq">
-        <b>uniq</b><code>_.uniq(array, [isSorted])</code>
+        <b class="method_name">uniq</b><code>_.uniq(array, [isSorted])</code>
         <br />
         Produces a duplicate-free version of the <b>array</b>, using <i>==</i> to test
         object equality. If you know in advance that the <b>array</b> is sorted,
@@ -405,7 +407,7 @@ _.uniq([1, 2, 1, 3, 1, 4]);
 </pre>
 
       <p id="intersect">
-        <b>intersect</b><code>_.intersect(*arrays)</code>
+        <b class="method_name">intersect</b><code>_.intersect(*arrays)</code>
         <br />
         Computes the list of values that are the intersection of all the <b>arrays</b>.
         Each value in the result is present in each of the <b>arrays</b>.
@@ -416,7 +418,7 @@ _.intersect([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 </pre>
 
       <p id="zip">
-        <b>zip</b><code>_.zip(*arrays)</code>
+        <b class="method_name">zip</b><code>_.zip(*arrays)</code>
         <br />
         Merges together the values of each of the <b>arrays</b> with the
         values at the corresponding position. Useful when you have separate
@@ -428,7 +430,7 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 </pre>
 
       <p id="indexOf">
-        <b>indexOf</b><code>_.indexOf(array, value)</code>
+        <b class="method_name">indexOf</b><code>_.indexOf(array, value)</code>
         <br />
         Returns the index at which <b>value</b> can be found in the <b>array</b>, 
         or <i>-1</i> if value is not present in the <b>array</b>. Uses the native
@@ -442,7 +444,7 @@ _.indexOf([1, 2, 3], 2);
       <h2>Function (uh, ahem) Functions</h2>
 
       <p id="bind">
-        <b>bind</b><code>_.bind(function, context, [*arguments])</code>
+        <b class="method_name">bind</b><code>_.bind(function, context, [*arguments])</code>
         <br />
         Bind a <b>function</b> to a <b>context</b> object, meaning that whenever
         the function is called, the value of <i>this</i> will be the <b>context</b>.
@@ -457,7 +459,7 @@ func();
 </pre>
 
       <p id="bindAll">
-        <b>bindAll</b><code>_.bindAll(*methodNames, context)</code>
+        <b class="method_name">bindAll</b><code>_.bindAll(*methodNames, context)</code>
         <br />
         Binds a number of methods on the <b>context</b> object, specified by 
         <b>methodNames</b>, to be run in the context of that object whenever they
@@ -477,7 +479,7 @@ jQuery('#underscore_button').bind('click', buttonView.onClick);
 </pre>
 
       <p id="delay">
-        <b>delay</b><code>_.delay(function, wait, [*arguments])</code>
+        <b class="method_name">delay</b><code>_.delay(function, wait, [*arguments])</code>
         <br />
         Much like <b>setTimeout</b>, invokes <b>function</b> after <b>wait</b>
         milliseconds. If you pass the optional <b>arguments</b>, they will be
@@ -490,7 +492,7 @@ _.delay(log, 1000, 'logged later');
 </pre>
 
       <p id="defer">
-        <b>defer</b><code>_.defer(function)</code>
+        <b class="method_name">defer</b><code>_.defer(function)</code>
         <br />
         Defers invoking the <b>function</b> until the current call stack has cleared,
         similar to using <b>setTimeout</b> with a delay of 0. Useful for performing
@@ -503,7 +505,7 @@ _.defer(function(){ alert('deferred'); });
 </pre>
 
       <p id="wrap">
-        <b>wrap</b><code>_.wrap(function, wrapper)</code>
+        <b class="method_name">wrap</b><code>_.wrap(function, wrapper)</code>
         <br />
         Wraps the first <b>function</b> inside of the <b>wrapper</b> function, 
         passing it as the first argument. This allows the <b>wrapper</b> to 
@@ -522,7 +524,7 @@ hello();
       <h2>Object Functions</h2>
 
       <p id="keys">
-        <b>keys</b><code>_.keys(object)</code>
+        <b class="method_name">keys</b><code>_.keys(object)</code>
         <br />
         Retrieve all the names of the <b>object</b>'s properties.
       </p>
@@ -532,7 +534,7 @@ _.keys({one : 1, two : 2, three : 3});
 </pre>
 
       <p id="values">
-        <b>values</b><code>_.values(object)</code>
+        <b class="method_name">values</b><code>_.values(object)</code>
         <br />
         Return all of the values of the <b>object</b>'s properties.
       </p>
@@ -542,7 +544,7 @@ _.values({one : 1, two : 2, three : 3});
 </pre>
 
       <p id="extend">
-        <b>extend</b><code>_.extend(destination, source)</code>
+        <b class="method_name">extend</b><code>_.extend(destination, source)</code>
         <br />
         Copy all of the properties in the <b>source</b> object over to the 
         <b>destination</b> object.
@@ -553,7 +555,7 @@ _.extend({name : 'moe'}, {age : 50});
 </pre>
 
       <p id="clone">
-        <b>clone</b><code>_.clone(object)</code>
+        <b class="method_name">clone</b><code>_.clone(object)</code>
         <br />
         Create a shallow-copied clone of the <b>object</b>. Any nested objects
         or arrays will be copied by reference, not duplicated.
@@ -564,7 +566,7 @@ _.clone({name : 'moe'});
 </pre>
 
       <p id="isEqual">
-        <b>isEqual</b><code>_.isEqual(object, other)</code>
+        <b class="method_name">isEqual</b><code>_.isEqual(object, other)</code>
         <br />
         Performs an optimized deep comparison between the two objects, to determine
         if they should be considered equal.
@@ -579,7 +581,7 @@ _.isEqual(moe, clone);
 </pre>
 
       <p id="isElement">
-        <b>isElement</b><code>_.isElement(object)</code>
+        <b class="method_name">isElement</b><code>_.isElement(object)</code>
         <br />
         Returns <i>true</i> if <b>object</b> is a DOM element.
       </p>
@@ -589,7 +591,7 @@ _.isElement(jQuery('body')[0]);
 </pre>
 
       <p id="isArray">
-        <b>isArray</b><code>_.isArray(object)</code>
+        <b class="method_name">isArray</b><code>_.isArray(object)</code>
         <br />
         Returns <i>true</i> if <b>object</b> is an Array.
       </p>
@@ -601,7 +603,7 @@ _.isArray([1,2,3]);
 </pre>
 
       <p id="isFunction">
-        <b>isFunction</b><code>_.isFunction(object)</code>
+        <b class="method_name">isFunction</b><code>_.isFunction(object)</code>
         <br />
         Returns <i>true</i> if <b>object</b> is a Function.
       </p>
@@ -611,7 +613,7 @@ _.isFunction(alert);
 </pre>
 
       <p id="isUndefined">
-        <b>isUndefined</b><code>_.isUndefined(variable)</code>
+        <b class="method_name">isUndefined</b><code>_.isUndefined(variable)</code>
         <br />
         Returns <i>true</i> if <b>variable</b> is <i>undefined</i>.
       </p>
@@ -623,7 +625,7 @@ _.isUndefined(window.missingVariable);
       <h2>Utility Functions</h2>
 
       <p id="uniqueId">
-        <b>uniqueId</b><code>_.uniqueId([prefix])</code>
+        <b class="method_name">uniqueId</b><code>_.uniqueId([prefix])</code>
         <br />
         Generate a globally-unique id for client-side models or DOM elements 
         that need one. If <b>prefix</b> is passed, the id will be appended to it.
@@ -634,15 +636,17 @@ _.uniqueId('contact_');
 </pre>
 
       <p id="template">
-        <b>template</b><code>_.template(templateString)</code>
+        <b class="method_name">template</b><code>_.template(templateString, [context])</code>
         <br />
         Compiles Javascript templates into functions that can be evaluated
         for rendering. Useful for rendering complicated bits of HTML from JSON
         data sources. Template functions can both interpolate variables, using<br />
         <i>&lt;%= &hellip; %&gt;</i>, as well as execute arbitrary Javascript code, with 
-        <i>&lt;% &hellip; %&gt;</i>. When you evaluate a template, pass in a
-        context object that has properties corresponding to the template's free
-        variables.
+        <i>&lt;% &hellip; %&gt;</i>. When you evaluate a template function, pass in a
+        <b>context</b> object that has properties corresponding to the template's free
+        variables. If you're writing a one-off, you can pass the <b>context</b>
+        object as the second parameter to <b>template</b> in order to render
+        immediately instead of returning a template function.
       </p>
       <pre>
 var compiled = _.template("hello: &lt;%= name %&gt;");

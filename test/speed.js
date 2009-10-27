@@ -27,8 +27,24 @@
     return _.uniq(numbers, true);
   });
   
+  JSLitmus.test('_.sortBy()', function() {
+    return _.sortBy(numbers, function(num){ return -num; });
+  });
+  
   JSLitmus.test('_.isEqual()', function() {
     return _.isEqual(numbers, randomized);
+  });
+  
+  JSLitmus.test('_.keys()', function() {
+    return _.keys(objects);
+  });
+  
+  JSLitmus.test('_.values()', function() {
+    return _.values(objects);
+  });
+  
+  JSLitmus.test('_.intersect()', function() {
+    return _.intersect(numbers, randomized);
   });
 
 })();

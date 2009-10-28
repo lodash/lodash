@@ -5,9 +5,11 @@
 // Oliver Steele's Functional, And John Resig's Micro-Templating.
 // For all details and documentation:
 // http://documentcloud.github.com/underscore/
-window._ = {
+window.Underscore = {
   
-  VERSION : '0.1.0',
+  VERSION : '0.1.1',
+  
+  PREVIOUS_UNDERSCORE : window._,
   
   /*------------------------ Collection Functions: ---------------------------*/
     
@@ -387,6 +389,13 @@ window._ = {
   
   /* -------------------------- Utility Functions: -------------------------- */
   
+  // Run Underscore.js in noConflict mode, returning the '_' variable to its
+  // previous owner. Returns a reference to the Underscore object.
+  noConflict : function() {
+    window._ = Underscore.PREVIOUS_UNDERSCORE;
+    return this;
+  },
+  
   // Generate a unique integer id (unique within the entire client session).
   // Useful for temporary DOM ids.
   uniqueId : function(prefix) {
@@ -413,3 +422,5 @@ window._ = {
   }
   
 };
+
+window._ = Underscore;

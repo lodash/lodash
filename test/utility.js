@@ -1,6 +1,12 @@
 $(document).ready(function() {
   
   module("Utility functions (uniqueId, template)");
+  
+  test("utility: noConflict", function() {
+    var underscore = _.noConflict();
+    ok(underscore.isUndefined(_), "The '_' variable has been returned to its previous state.");
+    window._ = underscore;
+  });
     
   test("utility: uniqueId", function() {
     var ids = [], i = 0;

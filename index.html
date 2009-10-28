@@ -102,11 +102,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version</a></td>
+          <td><a href="underscore.js">Development Version (0.1.1)</a></td>
           <td><i>16kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version</a></td>
+          <td><a href="underscore-min.js">Production Version (0.1.1)</a></td>
           <td><i>4kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -151,7 +151,8 @@
     <p>
       <b>Utility</b>
       <br />
-      <span class="methods"><a href="#uniqueId">uniqueId</a>, <a href="#template">template</a></span>
+      <span class="methods"><a href="#noConflict">noConflict</a>,
+      <a href="#uniqueId">uniqueId</a>, <a href="#template">template</a></span>
     </p>
     
     <div id="documentation">
@@ -649,6 +650,15 @@ _.isUndefined(window.missingVariable);
 </pre>
 
       <h2>Utility Functions</h2>
+      
+      <p id="noConflict">
+        <b class="method_name">noConflict</b><code>_.noConflict()</code>
+        <br />
+        Give control of the "_" variable back to its previous owner. Returns
+        a reference to the <b>Underscore</b> object.
+      </p>
+      <pre>
+var underscore = _.noConflict();</pre>
 
       <p id="uniqueId">
         <b class="method_name">uniqueId</b><code>_.uniqueId([prefix])</code>

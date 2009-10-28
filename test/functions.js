@@ -48,4 +48,14 @@ $(document).ready(function() {
     equals(backwards('moe'), 'hi: moe eom', 'wrapped the saluation function');
   });
   
+  test("functions: compose", function() {
+    var greet = function(name){ return "hi: " + name; };
+    var exclaim = function(sentence){ return sentence + '!'; };
+    var composed = _.compose(exclaim, greet);
+    equals(composed('moe'), 'hi: moe!', 'can compose a function that takes another');
+    
+    composed = _.compose(greet, exclaim);
+    equals(composed('moe'), 'hi: moe!', 'in this case, the functions are also commutative');
+  });
+  
 });

@@ -14,6 +14,10 @@ $(document).ready(function() {
     var answers = [];
     _.each([1, 2, 3], function(num) { answers.push(num * this.multiplier);}, {multiplier : 5});
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
+    
+    answers = [];
+    _.forEach([1, 2, 3], function(num){ answers.push(num); });
+    equals(answers.join(', '), '1, 2, 3', 'aliased as "forEach"');
   });
   
   test('collections: map', function() {
@@ -24,9 +28,12 @@ $(document).ready(function() {
     equals(tripled.join(', '), '3, 6, 9', 'tripled numbers with context');
   });
   
-  test('collections: inject', function() {
-    var sum = _.inject([1,2,3], 0, function(sum, num){ return sum + num; });
+  test('collections: reduce', function() {
+    var sum = _.reduce([1, 2, 3], 0, function(sum, num){ return sum + num; });
     equals(sum, 6, 'can sum up an array');
+    
+    sum = _.inject([1, 2, 3], 0, function(sum, num){ return sum + num; });
+    equals(sum, 6, 'aliased as "inject"');
   });
   
   test('collections: detect', function() {
@@ -35,12 +42,15 @@ $(document).ready(function() {
   });
   
   test('collections: select', function() {
-    var evens = _.select([1,2,3,4,5,6], function(num){ return num % 2 == 0; });
+    var evens = _.select([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
     equals(evens.join(', '), '2, 4, 6', 'selected each even number');
+    
+    evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+    equals(evens.join(', '), '2, 4, 6', 'aliased as "filter"');
   });
   
   test('collections: reject', function() {
-    var odds = _.reject([1,2,3,4,5,6], function(num){ return num % 2 == 0; });
+    var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
     equals(odds.join(', '), '1, 3, 5', 'rejected each even number');
   });
   
@@ -50,6 +60,7 @@ $(document).ready(function() {
     ok(!_.all([true, false, true]), 'one false value');
     ok(_.all([0, 10, 28], function(num){ return num % 2 == 0; }), 'even numbers');
     ok(!_.all([0, 11, 28], function(num){ return num % 2 == 0; }), 'an odd number');
+    ok(_.every([true, true, true]), 'aliased as "every"');
   });
   
   test('collections: any', function() {
@@ -58,6 +69,7 @@ $(document).ready(function() {
     ok(_.any([false, false, true]), 'one true value');
     ok(!_.any([1, 11, 29], function(num){ return num % 2 == 0; }), 'all odd numbers');
     ok(_.any([1, 10, 29], function(num){ return num % 2 == 0; }), 'an even number');
+    ok(_.some([false, false, true]), 'aliased as "some"');
   });
   
   test('collections: include', function() {

@@ -49,4 +49,11 @@ $(document).ready(function() {
     equals(_.indexOf(numbers, 2), 1, 'can compute indexOf, even without the native function');
   });
   
+  test("arrays: lastIndexOf", function() {
+    var numbers = [1, 0, 1, 0, 0, 1, 0, 0, 0];
+    numbers.lastIndexOf = null;
+    equals(_.lastIndexOf(numbers, 1), 5, 'can compute lastIndexOf, even without the native function');
+    equals(_.lastIndexOf(numbers, 0), 8, 'lastIndexOf the other element');
+  });
+  
 });

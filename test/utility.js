@@ -12,7 +12,7 @@ $(document).ready(function() {
   
   test("utility: identity", function() {
     var moe = {name : 'moe'};
-    equals(_.identity(moe), moe, 'moe is the same has his identity');
+    equals(_.identity(moe), moe, 'moe is the same as his identity');
   });
     
   test("utility: uniqueId", function() {

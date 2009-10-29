@@ -29,6 +29,10 @@ $(document).ready(function() {
     _.each(obj, function(pair){ answers.push(pair.key); });
     equals(answers.join(", "), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
     delete obj.constructor.prototype.four;
+    
+    answer = null;
+    _.each([1, 2, 3], function(num, index, arr){ if (_.include(arr, num)) answer = true; });
+    ok(answer, 'can reference the original collection from inside the iterator');
   });
   
   test('collections: map', function() {

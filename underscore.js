@@ -26,12 +26,12 @@
       if (obj.forEach) {
         obj.forEach(iterator, context);
       } else if (obj.length) {
-        for (var i=0; i<obj.length; i++) iterator.call(context, obj[i], i);
+        for (var i=0, ii = obj.length; i<ii; i++) iterator.call(context, obj[i], i);
       } else if (obj.each) {
         obj.each(function(value) { iterator.call(context, value, index++); });
       } else {
         var i = 0;
-        for (var key in obj) {
+        for (var key in obj) if (obj.hasOwnProperty(key)) {
           var value = obj[key], pair = [key, value];
           pair.key = key;
           pair.value = value;
@@ -44,7 +44,7 @@
     return obj;
   };
   
-  // Return the results of applying the iterator to each element. Use Javascript
+  // Return the results of applying the iterator to each element. Use JavaScript
   // 1.6's version of map, if possible.
   _.map = function(obj, iterator, context) {
     if (obj && obj.map) return obj.map(iterator, context);
@@ -76,13 +76,13 @@
     return result;
   };
   
-  // Return all the elements that pass a truth test. Use Javascript 1.6's
+  // Return all the elements that pass a truth test. Use JavaScript 1.6's
   // filter(), if it exists.
   _.select = function(obj, iterator, context) {
     if (obj.filter) return obj.filter(iterator, context);
     var results = [];
     _.each(obj, function(value, index) {
-      if (iterator.call(context, value, index)) results.push(value);
+      iterator.call(context, value, index) && results.push(value);
     });
     return results;
   };
@@ -91,32 +91,30 @@
   _.reject = function(obj, iterator, context) {
     var results = [];
     _.each(obj, function(value, index) {
-      if (!iterator.call(context, value, index)) results.push(value);
+      !iterator.call(context, value, index) && results.push(value);
     });
     return results;
   };
   
   // Determine whether all of the elements match a truth test. Delegate to
-  // Javascript 1.6's every(), if it is present.
+  // JavaScript 1.6's every(), if it is present.
   _.all = function(obj, iterator, context) {
-    iterator = iterator || function(v){ return v; };
     if (obj.every) return obj.every(iterator, context);
     var result = true;
     _.each(obj, function(value, index) {
-      result = result && !!iterator.call(context, value, index);
-      if (!result) throw '__break__';
+      if (!(result = result && iterator ? iterator.call(context, value, index) : value)) throw '__break__';
     });
     return result;
   };
   
   // Determine if at least one element in the object matches a truth test. Use
-  // Javascript 1.6's some(), if it exists.
+  // JavaScript 1.6's some(), if it exists.
   _.any = function(obj, iterator, context) {
     iterator = iterator || function(v) { return v; };
     if (obj.some) return obj.some(iterator, context);
     var result = false;
     _.each(obj, function(value, index) {
-      if (result = !!iterator.call(context, value, index)) throw '__break__';
+      if (result = iterator ? iterator.call(context, value, index) : value) throw '__break__';
     });
     return result;
   };
@@ -127,8 +125,7 @@
     if (_.isArray(obj)) return _.indexOf(obj, target) != -1;
     var found = false;
     _.each(obj, function(pair) {
-      if (pair.value === target) {
-        found = true;
+      if (found = pair.value === target) {
         throw '__break__';
       }
     });
@@ -153,10 +150,10 @@
   // Return the maximum item or (item-based computation).
   _.max = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.max.apply(Math, obj);
-    var result;
+    var result = {computed : -Infinity};
     _.each(obj, function(value, index) {
       var computed = iterator ? iterator.call(context, value, index) : value;
-      if (result == null || computed >= result.computed) result = {value : value, computed : computed};
+      computed >= result.computed && (result = {value : value, computed : computed});
     });
     return result.value;
   };
@@ -164,10 +161,10 @@
   // Return the minimum element (or element-based computation).
   _.min = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.min.apply(Math, obj);
-    var result;
+    var result = {computed : Infinity};
     _.each(obj, function(value, index) {
       var computed = iterator ? iterator.call(context, value, index) : value;
-      if (result == null || computed < result.computed) result = {value : value, computed : computed};
+      computed < result.computed && (result = {value : value, computed : computed});
     });
     return result.value;
   };
@@ -276,15 +273,16 @@
   // item in an array, or -1 if the item is not included in the array.
   _.indexOf = function(array, item) {
     if (array.indexOf) return array.indexOf(item);
-    for (i=0; i<array.length; i++) if (array[i] === item) return i;
+    for (i=0, ii=array.length; i<ii; i++) if (array[i] === item) return i;
     return -1;
   };
   
-  // Provide Javascript 1.6's lastIndexOf, delegating to the native function,
+  // Provide JavaScript 1.6's lastIndexOf, delegating to the native function,
   // if possible.
   _.lastIndexOf = function(array, item) {
     if (array.lastIndexOf) return array.lastIndexOf(item);
-    for (i=array.length - 1; i>=0; i--) if (array[i] === item) return i;
+    var i = array.length;
+    while (i--) if (array[i] === item) return i;
     return -1;
   };
   
@@ -403,7 +401,7 @@
   
   // Is a given value a Function?
   _.isFunction = function(obj) {
-    return typeof obj == 'function';
+    return Object.prototype.toString.call(obj) == '[object Function]';
   };
   
   // Is a given variable undefined?
@@ -427,8 +425,8 @@
     return prefix ? prefix + id : id;
   };
   
-  // Javascript templating a-la ERB, pilfered from John Resig's 
-  // "Secrets of the Javascript Ninja", page 83.
+  // JavaScript templating a-la ERB, pilfered from John Resig's 
+  // "Secrets of the JavaScript Ninja", page 83.
   _.template = function(str, data) {
     var fn = new Function('obj', 
       'var p=[],print=function(){p.push.apply(p,arguments);};' +

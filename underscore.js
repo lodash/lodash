@@ -10,23 +10,20 @@
   
   /*------------------------- Baseline setup ---------------------------------*/
   
-  // Are we running in CommonJS or in the browser?
-  var commonJS = (typeof window === 'undefined' && typeof exports !== 'undefined');
+  // Establish the root object, "window" in the browser, or "global" on the server.
+  var root = this;
   
   // Save the previous value of the "_" variable.
-  var previousUnderscore = commonJS ? null : window._;
-  
-  // Keep the identity function around for default iterators.
-  var identity = function(value) { return value; };
+  var previousUnderscore = root._;
   
   // Create a safe reference to the Underscore object for the functions below.
-  var _ = {};
+  var _ = root._ = {};
   
-  // Export the Underscore object for CommonJS, assign it globally otherwise.
-  commonJS ? _ = exports : window._ = _;
+  // Export the Underscore object for CommonJS.
+  if (typeof exports !== 'undefined') _ = exports;
   
   // Current version.
-  _.VERSION = '0.3.1';
+  _.VERSION = '0.3.2';
       
   /*------------------------ Collection Functions: ---------------------------*/
     
@@ -107,7 +104,7 @@
   // Determine whether all of the elements match a truth test. Delegate to
   // JavaScript 1.6's every(), if it is present.
   _.all = function(obj, iterator, context) {
-    iterator = iterator || identity;
+    iterator = iterator || _.identity;
     if (obj.every) return obj.every(iterator, context);
     var result = true;
     _.each(obj, function(value, index, list) {
@@ -119,7 +116,7 @@
   // Determine if at least one element in the object matches a truth test. Use
   // JavaScript 1.6's some(), if it exists.
   _.any = function(obj, iterator, context) {
-    iterator = iterator || identity;
+    iterator = iterator || _.identity;
     if (obj.some) return obj.some(iterator, context);
     var result = false;
     _.each(obj, function(value, index, list) {
@@ -192,7 +189,7 @@
   // Use a comparator function to figure out at what index an object should
   // be inserted so as to maintain order. Uses binary search.
   _.sortedIndex = function(array, obj, iterator) {
-    iterator = iterator || identity;
+    iterator = iterator || _.identity;
     var low = 0, high = array.length;
     while (low < high) {
       var mid = (low + high) >> 1;
@@ -360,7 +357,7 @@
   
   // Retrieve the values of an object's properties.
   _.values = function(obj) {
-    return _.map(obj, identity);
+    return _.map(obj, _.identity);
   };
   
   // Extend a given object with all of the properties in a source object.
@@ -421,8 +418,13 @@
   // Run Underscore.js in noConflict mode, returning the '_' variable to its
   // previous owner. Returns a reference to the Underscore object.
   _.noConflict = function() {
-    if (!commonJS) window._ = previousUnderscore;
+    root._ = previousUnderscore;
     return this;
+  };
+  
+  // Keep the identity function around for default iterators.
+  _.identity = function(value) { 
+    return value;
   };
   
   // Generate a unique integer id (unique within the entire client session).

@@ -8,10 +8,10 @@
                                                                               \ \____/      
                                                                                \/___/
 
-Underscore is a utility-belt library for Javascript that provides 
+Underscore is a utility-belt library for JavaScript that provides 
 a lot of the functional programming support that you would expect 
 in Prototype.js (or Ruby), but without extending any of the built-
-in Javascript objects. It's the tie to go along with jQuery's tux.
+in JavaScript objects. It's the tie to go along with jQuery's tux.
 
 For Docs, License, Tests, and pre-packed downloads, see:
 http://documentcloud.github.com/underscore/

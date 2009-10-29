@@ -1,12 +1,11 @@
 {
-  "!": "This is a Narwhal package descriptor.", 
-  "name": "underscore",
-  "description": "Functional programming aid for Javascript. Works well with jQuery.",
-  "url": "http://documentcloud.github.com/underscore/",
-  "keywords": ["util", "functional", "server", "client", "browser"],
-  "author": "Jeremy Ashkenas <jeremy@documentcloud.org>",
-  "maintainer": "Kris Kowal <kris.kowal@cixar.com>",
-  "contributors": [],
-  "dependencies": [],
-  "lib": "."
+  "name"          : "underscore",
+  "description"   : "Functional programming aid for JavaScript. Works well with jQuery.",
+  "url"           : "http://documentcloud.github.com/underscore/",
+  "keywords"      : ["util", "functional", "server", "client", "browser"],
+  "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
+  "maintainer"    : "Kris Kowal <kris.kowal@cixar.com>",
+  "contributors"  : [],
+  "dependencies"  : [],
+  "lib"           : "."
 }

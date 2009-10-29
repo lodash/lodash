@@ -12,6 +12,8 @@
   
   var previousUnderscore = root._;
   
+  var identity = function(value) { return value; };
+    
   var _ = root._ = {};
   
   _.VERSION = '0.2.0';
@@ -26,7 +28,7 @@
       if (obj.forEach) {
         obj.forEach(iterator, context);
       } else if (obj.length) {
-        for (var i=0, ii = obj.length; i<ii; i++) iterator.call(context, obj[i], i);
+        for (var i=0, l = obj.length; i<l; i++) iterator.call(context, obj[i], i);
       } else if (obj.each) {
         obj.each(function(value) { iterator.call(context, value, index++); });
       } else {
@@ -99,10 +101,11 @@
   // Determine whether all of the elements match a truth test. Delegate to
   // JavaScript 1.6's every(), if it is present.
   _.all = function(obj, iterator, context) {
+    iterator = iterator || identity;
     if (obj.every) return obj.every(iterator, context);
     var result = true;
     _.each(obj, function(value, index) {
-      if (!(result = result && iterator ? iterator.call(context, value, index) : value)) throw '__break__';
+      if (!(result = result && iterator.call(context, value, index))) throw '__break__';
     });
     return result;
   };
@@ -110,11 +113,11 @@
   // Determine if at least one element in the object matches a truth test. Use
   // JavaScript 1.6's some(), if it exists.
   _.any = function(obj, iterator, context) {
-    iterator = iterator || function(v) { return v; };
+    iterator = iterator || identity;
     if (obj.some) return obj.some(iterator, context);
     var result = false;
     _.each(obj, function(value, index) {
-      if (result = iterator ? iterator.call(context, value, index) : value) throw '__break__';
+      if (result = iterator.call(context, value, index)) throw '__break__';
     });
     return result;
   };
@@ -185,7 +188,7 @@
   // Use a comparator function to figure out at what index an object should
   // be inserted so as to maintain order. Uses binary search.
   _.sortedIndex = function(array, obj, iterator) {
-    iterator = iterator || function(val) { return val; };
+    iterator = iterator || identity;
     var low = 0, high = array.length;
     while (low < high) {
       var mid = (low + high) >> 1;
@@ -273,7 +276,7 @@
   // item in an array, or -1 if the item is not included in the array.
   _.indexOf = function(array, item) {
     if (array.indexOf) return array.indexOf(item);
-    for (i=0, ii=array.length; i<ii; i++) if (array[i] === item) return i;
+    for (i=0, l=array.length; i<l; i++) if (array[i] === item) return i;
     return -1;
   };
   
@@ -453,6 +456,6 @@
   
   /*------------------------- Export for ServerJS ----------------------------*/
   
-  if (!_.isUndefined(exports)) exports = _;
+  if (typeof exports != 'undefined') exports = _;
 
 })();

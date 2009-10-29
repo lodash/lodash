@@ -72,11 +72,11 @@
     
     <p>
       <a href="http://github.com/documentcloud/underscore/">Underscore</a> is a 
-      utility-belt library for Javascript that provides a lot of the
+      utility-belt library for JavaScript that provides a lot of the
       functional programming support that you would expect in
       <a href="http://prototypejs.org/api">Prototype.js</a> 
       (or <a href="http://www.ruby-doc.org/core/classes/Enumerable.html">Ruby</a>), 
-      but without extending any of the built-in Javascript objects. It's the 
+      but without extending any of the built-in JavaScript objects. It's the 
       tie to go along with <a href="http://docs.jquery.com">jQuery</a>'s tux.
     </p>
     
@@ -86,7 +86,7 @@
       as well as more specialized helpers: function binding, javascript 
       templating, deep equality testing, and so on. It delegates to built-in 
       functions, if present, so 
-      <a href="https://developer.mozilla.org/en/New_in_JavaScript_1.6">Javascript 1.6</a> 
+      <a href="https://developer.mozilla.org/en/New_in_JavaScript_1.6">JavaScript 1.6</a> 
       compliant browsers will use the 
       native implementations of <b>forEach</b>, <b>map</b>, <b>filter</b>, 
       <b>every</b>, <b>some</b> and <b>indexOf</b>.
@@ -171,7 +171,7 @@
         <br />
         Iterates over a <b>list</b> of elements, yielding each in turn to an <b>iterator</b>
         function. The <b>iterator</b> is bound to the <b>context</b> object, if one is
-        passed. If <b>list</b> is a Javascript object, a pair with <b>key</b>
+        passed. If <b>list</b> is a JavaScript object, a pair with <b>key</b>
         and <b>value</b> properties will be yielded. If the list has an <b>each</b> 
         method of its own, it will be used instead. Delegates to the native 
         <b>forEach</b> function if it exists.
@@ -403,7 +403,7 @@ _.last([3, 2, 1]);
         <b class="header">compact</b><code>_.compact(array)</code>
         <br />
         Returns a copy of the <b>array</b> with all falsy values removed. 
-        In Javascript, <i>false</i>, <i>null</i>, <i>0</i>, <i>""</i>, 
+        In JavaScript, <i>false</i>, <i>null</i>, <i>0</i>, <i>""</i>, 
         <i>undefined</i> and <i>NaN</i> are all falsy.
       </p>
       <pre>
@@ -713,10 +713,10 @@ _.uniqueId('contact_');
       <p id="template">
         <b class="header">template</b><code>_.template(templateString, [context])</code>
         <br />
-        Compiles Javascript templates into functions that can be evaluated
+        Compiles JavaScript templates into functions that can be evaluated
         for rendering. Useful for rendering complicated bits of HTML from JSON
         data sources. Template functions can both interpolate variables, using<br />
-        <i>&lt;%= &hellip; %&gt;</i>, as well as execute arbitrary Javascript code, with 
+        <i>&lt;%= &hellip; %&gt;</i>, as well as execute arbitrary JavaScript code, with 
         <i>&lt;% &hellip; %&gt;</i>. When you evaluate a template function, pass in a
         <b>context</b> object that has properties corresponding to the template's free
         variables. If you're writing a one-off, you can pass the <b>context</b>

@@ -18,6 +18,13 @@ $(document).ready(function() {
     answers = [];
     _.forEach([1, 2, 3], function(num){ answers.push(num); });
     equals(answers.join(', '), '1, 2, 3', 'aliased as "forEach"');
+    
+    answers = [];
+    var obj = {one : 1, two : 2, three : 3};
+    obj.constructor.prototype.four = 4;
+    _.each(obj, function(pair){ answers.push(pair.key); });
+    equals(answers.join(", "), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
+    delete obj.constructor.prototype.four;
   });
   
   test('collections: map', function() {

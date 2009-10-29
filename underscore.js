@@ -149,11 +149,9 @@
     });
   };
   
-  // Optimized version of a common use case of map: fetching a property.
+  // Convenience version of a common use case of map: fetching a property.
   _.pluck = function(obj, key) {
-    var results = [];
-    _.each(obj, function(value){ results.push(value[key]); });
-    return results;
+    return _.map(obj, function(value){ return value[key]; });
   };
   
   // Return the maximum item or (item-based computation).
@@ -357,18 +355,12 @@
   
   // Retrieve the names of an object's properties.
   _.keys = function(obj) {
-    return _.reduce(obj, [], function(memo, value, key) { 
-      memo.push(key);
-      return memo;
-    });
+    return _.map(obj, function(value, key){ return key; });
   };
   
   // Retrieve the values of an object's properties.
   _.values = function(obj) {
-    return _.reduce(obj, [], function(memo, value) { 
-      memo.push(value); 
-      return memo; 
-    });
+    return _.map(obj, identity);
   };
   
   // Extend a given object with all of the properties in a source object.

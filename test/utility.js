@@ -9,6 +9,11 @@ $(document).ready(function() {
     equals(intersection.join(', '), '1, 2', 'but the intersection function still works');
     window._ = underscore;
   });
+  
+  test("utility: identity", function() {
+    var moe = {name : 'moe'};
+    equals(_.identity(moe), moe, 'moe is the same has his identity');
+  });
     
   test("utility: uniqueId", function() {
     var ids = [], i = 0;

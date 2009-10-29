@@ -31,7 +31,7 @@
         obj.each(function(value) { iterator.call(context, value, index++); });
       } else {
         var i = 0;
-        for (var key in obj) if (obj.hasOwnProperty(key)) {
+        for (var key in obj) if (Object.prototype.hasOwnProperty.call(obj, key)) {
           var value = obj[key], pair = [key, value];
           pair.key = key;
           pair.value = value;

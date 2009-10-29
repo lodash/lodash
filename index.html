@@ -107,11 +107,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.3.0)</a></td>
+          <td><a href="underscore.js">Development Version (0.3.1)</a></td>
           <td><i>16kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.3.0)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.3.1)</a></td>
           <td><i>4kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -735,6 +735,14 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
 </pre> 
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.3.1</b><br />
+        All iterators are now passed in the original collection as their third
+        argument, the same as JavaScript 1.6's <b>forEach</b>. Iterating over
+        objects is now called with <tt>(value, key, collection)</tt>, for details
+        see <a href="#each">_.each</a>.
+      </p>
       
       <p>
         <b class="header">0.3.0</b><br />

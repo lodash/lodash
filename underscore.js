@@ -26,7 +26,7 @@
   commonJS ? _ = exports : window._ = _;
   
   // Current version.
-  _.VERSION = '0.2.1';
+  _.VERSION = '0.3.0';
       
   /*------------------------ Collection Functions: ---------------------------*/
     

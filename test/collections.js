@@ -12,8 +12,12 @@ $(document).ready(function() {
     equals(answer, 2, 'the loop broke in the middle');
     
     var answers = [];
-    _.each([1, 2, 3], function(num) { answers.push(num * this.multiplier);}, {multiplier : 5});
+    _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier);}, {multiplier : 5});
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
+    
+    answers = [];
+    _.each("moe", function(letter){ answers.push(letter); });
+    equals(answers.join(', '), 'm, o, e', 'iterates over the letters in strings');
     
     answers = [];
     _.forEach([1, 2, 3], function(num){ answers.push(num); });

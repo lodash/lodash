@@ -2,7 +2,7 @@
 // (c) 2009 Jeremy Ashkenas, DocumentCloud Inc.
 // Underscore is freely distributable under the terms of the MIT license.
 // Portions of Underscore are inspired by or borrowed from Prototype.js, 
-// Oliver Steele's Functional, And John Resig's Micro-Templating.
+// Oliver Steele's Functional, and John Resig's Micro-Templating.
 // For all details and documentation:
 // http://documentcloud.github.com/underscore/
 

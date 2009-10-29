@@ -1,5 +1,5 @@
-// ServerJS package specification.
 {
+  "!": "This is a Narwhal package descriptor.", 
   "name": "underscore",
   "description": "Functional programming aid for Javascript. Works well with jQuery.",
   "url": "http://documentcloud.github.com/underscore/",
@@ -8,5 +8,5 @@
   "maintainer": "Kris Kowal <kris.kowal@cixar.com>",
   "contributors": [],
   "dependencies": [],
-  "lib", "."
+  "lib": "."
 }

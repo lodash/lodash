@@ -42,12 +42,8 @@
       } else if (obj.each) {
         obj.each(function(value) { iterator.call(context, value, index++, obj); });
       } else {
-        var i = 0;
         for (var key in obj) if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          var value = obj[key], pair = [key, value];
-          pair.key = key;
-          pair.value = value;
-          iterator.call(context, pair, i++, obj);
+          iterator.call(context, obj[key], key, obj);
         }
       }
     } catch(e) {
@@ -61,8 +57,8 @@
   _.map = function(obj, iterator, context) {
     if (obj && obj.map) return obj.map(iterator, context);
     var results = [];
-    _.each(obj, function(value, index) {
-      results.push(iterator.call(context, value, index));
+    _.each(obj, function(value, index, list) {
+      results.push(iterator.call(context, value, index, list));
     });
     return results;
   };
@@ -137,8 +133,8 @@
   _.include = function(obj, target) {
     if (_.isArray(obj)) return _.indexOf(obj, target) != -1;
     var found = false;
-    _.each(obj, function(pair) {
-      if (found = pair.value === target) {
+    _.each(obj, function(value) {
+      if (found = value === target) {
         throw '__break__';
       }
     });
@@ -361,12 +357,18 @@
   
   // Retrieve the names of an object's properties.
   _.keys = function(obj) {
-    return _.pluck(obj, 'key');
+    return _.reduce(obj, [], function(memo, value, key) { 
+      memo.push(key);
+      return memo;
+    });
   };
   
   // Retrieve the values of an object's properties.
   _.values = function(obj) {
-    return _.pluck(obj, 'value');
+    return _.reduce(obj, [], function(memo, value) { 
+      memo.push(value); 
+      return memo; 
+    });
   };
   
   // Extend a given object with all of the properties in a source object.

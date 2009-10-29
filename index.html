@@ -171,10 +171,9 @@
         <br />
         Iterates over a <b>list</b> of elements, yielding each in turn to an <b>iterator</b>
         function. The <b>iterator</b> is bound to the <b>context</b> object, if one is
-        passed. Each invocation of <b>iterator</b> is called with three arguments,
-        <i>element</i>, <i>index</i>, and the <b>list</b>. 
-        If <b>list</b> is a JavaScript object, a pair with <b>key</b>
-        and <b>value</b> properties will be yielded. If the list has an <b>each</b> 
+        passed. Each invocation of <b>iterator</b> is called with three arguments:
+        <tt>(element, index, list)</tt>. If <b>list</b> is a JavaScript object, <b>iterator</b>'s
+        arguments will be <tt>(value, key, list)</tt>. If the <b>list</b> has an <b>each</b> 
         method of its own, it will be used instead. Delegates to the native 
         <b>forEach</b> function if it exists.
       </p>

@@ -66,8 +66,8 @@
   // Reduce builds up a single result from a list of values. Also known as
   // inject, or foldl.
   _.reduce = function(obj, memo, iterator, context) {
-    _.each(obj, function(value, index) {
-      memo = iterator.call(context, memo, value, index);
+    _.each(obj, function(value, index, list) {
+      memo = iterator.call(context, memo, value, index, list);
     });
     return memo;
   };
@@ -75,8 +75,8 @@
   // Return the first value which passes a truth test.
   _.detect = function(obj, iterator, context) {
     var result;
-    _.each(obj, function(value, index) {
-      if (iterator.call(context, value, index)) {
+    _.each(obj, function(value, index, list) {
+      if (iterator.call(context, value, index, list)) {
         result = value;
         throw '__break__';
       }
@@ -89,8 +89,8 @@
   _.select = function(obj, iterator, context) {
     if (obj.filter) return obj.filter(iterator, context);
     var results = [];
-    _.each(obj, function(value, index) {
-      iterator.call(context, value, index) && results.push(value);
+    _.each(obj, function(value, index, list) {
+      iterator.call(context, value, index, list) && results.push(value);
     });
     return results;
   };
@@ -98,8 +98,8 @@
   // Return all the elements for which a truth test fails.
   _.reject = function(obj, iterator, context) {
     var results = [];
-    _.each(obj, function(value, index) {
-      !iterator.call(context, value, index) && results.push(value);
+    _.each(obj, function(value, index, list) {
+      !iterator.call(context, value, index, list) && results.push(value);
     });
     return results;
   };
@@ -110,8 +110,8 @@
     iterator = iterator || identity;
     if (obj.every) return obj.every(iterator, context);
     var result = true;
-    _.each(obj, function(value, index) {
-      if (!(result = result && iterator.call(context, value, index))) throw '__break__';
+    _.each(obj, function(value, index, list) {
+      if (!(result = result && iterator.call(context, value, index, list))) throw '__break__';
     });
     return result;
   };
@@ -122,8 +122,8 @@
     iterator = iterator || identity;
     if (obj.some) return obj.some(iterator, context);
     var result = false;
-    _.each(obj, function(value, index) {
-      if (result = iterator.call(context, value, index)) throw '__break__';
+    _.each(obj, function(value, index, list) {
+      if (result = iterator.call(context, value, index, list)) throw '__break__';
     });
     return result;
   };
@@ -160,8 +160,8 @@
   _.max = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.max.apply(Math, obj);
     var result = {computed : -Infinity};
-    _.each(obj, function(value, index) {
-      var computed = iterator ? iterator.call(context, value, index) : value;
+    _.each(obj, function(value, index, list) {
+      var computed = iterator ? iterator.call(context, value, index, list) : value;
       computed >= result.computed && (result = {value : value, computed : computed});
     });
     return result.value;
@@ -171,8 +171,8 @@
   _.min = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.min.apply(Math, obj);
     var result = {computed : Infinity};
-    _.each(obj, function(value, index) {
-      var computed = iterator ? iterator.call(context, value, index) : value;
+    _.each(obj, function(value, index, list) {
+      var computed = iterator ? iterator.call(context, value, index, list) : value;
       computed < result.computed && (result = {value : value, computed : computed});
     });
     return result.value;
@@ -180,10 +180,10 @@
   
   // Sort the object's values by a criteria produced by an iterator.
   _.sortBy = function(obj, iterator, context) {
-    return _.pluck(_.map(obj, function(value, index) {
+    return _.pluck(_.map(obj, function(value, index, list) {
       return {
         value : value,
-        criteria : iterator.call(context, value, index)
+        criteria : iterator.call(context, value, index, list)
       };
     }).sort(function(left, right) {
       var a = left.criteria, b = right.criteria;

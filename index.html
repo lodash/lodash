@@ -123,10 +123,14 @@
       <b>Collections</b>
       <br /> 
       <span class="methods"><a href="#each">each</a>, <a href="#map">map</a>, 
-      <a href="#reduce">reduce</a>, <a href="#detect">detect</a>, <a href="#select">select</a>, <a href="#reject">reject</a>, <a href="#all">all</a>, 
-      <a href="#any">any</a>, <a href="#include">include</a>, <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>, <a href="#max">max</a>, 
-      <a href="#min">min</a>, <a href="#sortBy">sortBy</a>, <a href="#sortedIndex">sortedIndex</a>, <a href="#toArray">toArray</a>, 
-      <a href="#size">size</a></span>
+      <a href="#reduce">reduce</a>, <a href="#reduceRight">reduceRight</a>, 
+      <a href="#detect">detect</a>, <a href="#select">select</a>, 
+      <a href="#reject">reject</a>, <a href="#all">all</a>, 
+      <a href="#any">any</a>, <a href="#include">include</a>, 
+      <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>, 
+      <a href="#max">max</a>, <a href="#min">min</a>, 
+      <a href="#sortBy">sortBy</a>, <a href="#sortedIndex">sortedIndex</a>, 
+      <a href="#toArray">toArray</a>, <a href="#size">size</a></span>
     </p>
     
     <p>
@@ -195,7 +199,7 @@ _.map([1, 2, 3], function(num){ return num * 3 });
 
       <p id="reduce">
         <b class="header">reduce</b><code>_.reduce(list, memo, iterator, [context])</code>
-        <span class="alias">Alias: <b>inject</b></span>
+        <span class="alias">Aliases: <b>inject, foldl</b></span>
         <br />
         Also known as <b>inject</b> and <b>foldl</b>, <b>reduce</b> boils down a 
         <b>list</b> of values into a single value. <b>Memo</b> is the initial state
@@ -205,6 +209,19 @@ _.map([1, 2, 3], function(num){ return num * 3 });
       <pre>
 var sum = _.reduce([1, 2, 3], 0, function(memo, num){ return memo + num });
 =&gt; 6
+</pre>
+
+      <p id="reduceRight">
+        <b class="header">reduceRight</b><code>_.reduceRight(list, memo, iterator, [context])</code>
+        <span class="alias">Alias: <b>foldr</b></span>
+        <br />
+        The right-associative version of <b>reduce</b>. Delegates to the 
+        JavaScript 1.8 version of <b>reduceRight</b>, if it exists.
+      </p>
+      <pre>
+var list = [[0, 1], [2, 3], [4, 5]];
+var flat = _.reduceRight(list, [], function(a, b) { return a.concat(b); });
+=&gt; [4, 5, 2, 3, 0, 1]
 </pre>
 
       <p id="detect">

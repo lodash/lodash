@@ -61,10 +61,22 @@
   };
   
   // Reduce builds up a single result from a list of values. Also known as
-  // inject, or foldl.
+  // inject, or foldl. Uses JavaScript 1.8's version of reduce, if possible.
   _.reduce = function(obj, memo, iterator, context) {
+    if (obj && obj.reduce) return obj.reduce(_.bind(iterator, context), memo);
     _.each(obj, function(value, index, list) {
       memo = iterator.call(context, memo, value, index, list);
+    });
+    return memo;
+  };
+  
+  // The right-associative version of reduce, also known as foldr. Uses 
+  // JavaScript 1.8's version of reduceRight, if available.
+  _.reduceRight = function(obj, memo, iterator, context) {
+    if (obj && obj.reduceRight) return obj.reduceRight(_.bind(iterator, context), memo);
+    var reversed = _.clone(_.toArray(obj)).reverse();
+    _.each(reversed, function(value, index) {
+      memo = iterator.call(context, memo, value, index, obj);
     });
     return memo;
   };
@@ -368,6 +380,7 @@
   
   // Create a (shallow-cloned) duplicate of an object.
   _.clone = function(obj) {
+    if (_.isArray(obj)) return obj.slice(0);
     return _.extend({}, obj);
   };
   
@@ -455,7 +468,8 @@
   /*------------------------------- Aliases ----------------------------------*/
 
   _.forEach  = _.each;
-  _.inject   = _.reduce;
+  _.foldl    = _.inject       = _.reduce;
+  _.foldr    = _.reduceRight;
   _.filter   = _.select;
   _.every    = _.all;
   _.some     = _.any;  

@@ -47,8 +47,17 @@ $(document).ready(function() {
     var sum = _.reduce([1, 2, 3], 0, function(sum, num){ return sum + num; });
     equals(sum, 6, 'can sum up an array');
     
+    var context = {multiplier : 3};
+    sum = _.reduce([1, 2, 3], 0, function(sum, num){ return sum + num * this.multiplier; }, context);
+    equals(sum, 18, 'can reduce with a context object');
+    
     sum = _.inject([1, 2, 3], 0, function(sum, num){ return sum + num; });
     equals(sum, 6, 'aliased as "inject"');
+  });
+  
+  test('collections: reduceRight', function() {
+    var list = _.foldr([1, 2, 3], '', function(memo, num){ return memo + num; });
+    equals(list, '321', 'can perform right folds');
   });
   
   test('collections: detect', function() {

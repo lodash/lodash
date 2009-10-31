@@ -107,11 +107,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.3.2)</a></td>
+          <td><a href="underscore.js">Development Version (0.3.3)</a></td>
           <td><i>16kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.3.2)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.3.3)</a></td>
           <td><i>4kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -216,7 +216,9 @@ var sum = _.reduce([1, 2, 3], 0, function(memo, num){ return memo + num });
         <span class="alias">Alias: <b>foldr</b></span>
         <br />
         The right-associative version of <b>reduce</b>. Delegates to the 
-        JavaScript 1.8 version of <b>reduceRight</b>, if it exists.
+        JavaScript 1.8 version of <b>reduceRight</b>, if it exists. <b>Foldr</b>
+        is not as useful in JavaScript as it would be in a language with lazy
+        evaluation.
       </p>
       <pre>
 var list = [[0, 1], [2, 3], [4, 5]];
@@ -229,8 +231,8 @@ var flat = _.reduceRight(list, [], function(a, b) { return a.concat(b); });
         <br />
         Looks through each value in the <b>list</b>, returning the first one that 
         passes a truth test (<b>iterator</b>). The function returns as 
-        soon as it finds the first acceptable element, and doesn't continue to 
-        traverse the list.
+        soon as it finds an acceptable element, and doesn't traverse the
+        entire list.
       </p>
       <pre>
 var even = _.detect([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
@@ -766,6 +768,12 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
 </pre> 
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.3.3</b><br />
+        Added the JavaScript 1.8 function <tt>reduceRight</tt>. Aliased it
+        as <tt>foldr</tt>, and aliased <tt>reduce</tt> as <tt>foldl</tt>.
+      </p>
       
       <p>
         <b class="header">0.3.2</b><br />

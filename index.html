@@ -107,15 +107,54 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.3.3)</a></td>
+          <td><a href="underscore.js">Development Version (0.4.0)</a></td>
           <td><i>16kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.3.3)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.4.0)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
     </p>
+    
+    <h2>Object-Oriented and Functional Styles</h2>
+    
+    <p>
+      You can use Underscore in either an object-oriented or a functional style, 
+      depending on your preference. The following two lines of code are 
+      identical ways to double a list of numbers.
+    </p>
+    
+    <pre>
+_.map([1, 2, 3], function(n){ return n * 2; });
+_([1, 2, 3]).map(function(n){ return n * 2; });</pre>
+
+    <p>
+      Using the object-oriented style allows you to chain together methods. Calling
+      <tt>chain</tt> on a wrapped object will cause all future method calls to 
+      return wrapped objects as well. When you've finished the computation, 
+      use <tt>get</tt> to retrieve the final value. Here's an example of chaining
+      together a <b>map/flatten/reduce</b>, in order to get the word count of 
+      every word in a song.
+    </p>
+    
+<pre>
+var lyrics = [
+  {line : 1, words : "I'm a lumberjack and I'm okay"},
+  {line : 2, words : "I sleep all night and I work all day"},
+  {line : 3, words : "He's a lumberjack and he's okay"},
+  {line : 4, words : "He sleeps all night and he works all day"}
+];
+
+_(lyrics).chain()
+  .map(function(line) { return line.words.split(' '); })
+  .flatten()
+  .reduce({}, function(counts, word) { 
+    counts[word] = (counts[word] || 0) + 1;
+    return counts;
+}).get();
+
+=&gt; returns a hash containing the word counts...</pre>
     
     <h2>Table of Contents</h2>
     
@@ -744,6 +783,17 @@ _.uniqueId('contact_');
 =&gt; 'contact_104'
 </pre>
 
+      <p id="functions">
+        <b class="header">functions</b><code>_.functions([prefix])</code>
+        <span class="alias">Alias: <b>methods</b></span>
+        <br />
+        Returns a sorted list of the name of every function in Underscore.
+      </p>
+      <pre>
+_.functions();
+=&gt; ["all", "any", "bind", "bindAll", "clone", "compact", "compose" ...
+</pre>
+
       <p id="template">
         <b class="header">template</b><code>_.template(templateString, [context])</code>
         <br />
@@ -770,6 +820,16 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
       <h2>Change Log</h2>
       
       <p>
+        <b class="header">0.4.0</b><br />
+        All Underscore functions can now be called in an object-oriented style, 
+        like so: <tt>_([1, 2, 3]).map(...);</tt>. Original patch provided by
+        <a href="http://macournoyer.com/">Marc-André Cournoyer</a>. 
+        Wrapped objects can be chained through multiple
+        method invocations. A <a href="#functions"><tt>functions</tt></a> method 
+        was added, providing a sorted list of all the functions in Underscore.
+      </p>
+      
+      <p>
         <b class="header">0.3.3</b><br />
         Added the JavaScript 1.8 function <tt>reduceRight</tt>. Aliased it
         as <tt>foldr</tt>, and aliased <tt>reduce</tt> as <tt>foldl</tt>.
@@ -787,7 +847,7 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
         All iterators are now passed in the original collection as their third
         argument, the same as JavaScript 1.6's <b>forEach</b>. Iterating over
         objects is now called with <tt>(value, key, collection)</tt>, for details
-        see <a href="#each">_.each</a>.
+        see <a href="#each"><tt>_.each</tt></a>.
       </p>
       
       <p>

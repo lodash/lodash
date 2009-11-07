@@ -21,6 +21,18 @@ $(document).ready(function() {
     equals(_.uniq(ids).length, ids.length, 'can generate a globally-unique stream of ids');
   });
   
+  test("utility: functions", function() {
+    var expected = ["all", "any", "bind", "bindAll", "clone", "compact", "compose", 
+    "defer", "delay", "detect", "each", "every", "extend", "filter", "first", 
+    "flatten", "foldl", "foldr", "forEach", "functions", "identity", "include", 
+    "indexOf", "inject", "intersect", "invoke", "isArray", "isElement", "isEqual", 
+    "isFunction", "isUndefined", "keys", "last", "lastIndexOf", "map", "max", 
+    "methods", "min", "pluck", "reduce", "reduceRight", "reject", "select", 
+    "size", "some", "sortBy", "sortedIndex", "template", "toArray", "uniq", 
+    "uniqueId", "values", "without", "wrap", "zip"];
+    ok(_(expected).isEqual(_.methods()), 'provides a sorted list of functions');
+  });
+  
   test("utility: template", function() {
     var basicTemplate = _.template("<%= thing %> is gettin' on my noives!");
     var result = basicTemplate({thing : 'This'});

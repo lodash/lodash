@@ -108,7 +108,7 @@
       <table>
         <tr>
           <td><a href="underscore.js">Development Version (0.4.0)</a></td>
-          <td><i>16kb, Uncompressed with Comments</i></td>
+          <td><i>18kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
           <td><a href="underscore-min.js">Production Version (0.4.0)</a></td>
@@ -117,7 +117,7 @@
       </table>
     </p>
     
-    <h2>Object-Oriented and Functional Styles</h2>
+    <h2 id="styles">Object-Oriented and Functional Styles</h2>
     
     <p>
       You can use Underscore in either an object-oriented or a functional style, 
@@ -203,6 +203,12 @@ _(lyrics).chain()
       <span class="methods"><a href="#noConflict">noConflict</a>,
       <a href="#identity">identity</a>, <a href="#uniqueId">uniqueId</a>, 
       <a href="#template">template</a></span>
+    </p>
+    
+    <p>
+      <b>Chaining</b>
+      <br />
+      <span class="methods"><a href="#chain">chain</a>, <a href="#get">get</a>
     </p>
     
     <div id="documentation">
@@ -816,6 +822,30 @@ var list = "&lt;% _.each(people, function(name) { %&gt; &lt;li&gt;&lt;%= name %&
 _.template(list, {people : ['moe', 'curly', 'larry']});
 =&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"
 </pre> 
+
+      <h2>Chaining</h2>
+      
+      <p id="chain">
+        <b class="header">chain</b><code>_(obj).chain()</code>
+        <br />
+        Returns a wrapped object. Calling methods on this object will continue
+        to return wrapped objects until <tt>get</tt> is used. (
+        <a href="#styles">A more realistic example.</a>)
+      </p>
+      <pre>
+_({moe : false, curly : true}).chain().values().any().isEqual(true).get();
+=&gt; true
+</pre>
+
+      <p id="get">
+        <b class="header">get</b><code>_(obj).get()</code>
+        <br />
+        Extracts the value of a wrapped object.
+      </p>
+      <pre>
+_([1, 2, 3]).get();
+=&gt; [1, 2, 3]
+</pre>
 
       <h2>Change Log</h2>
       

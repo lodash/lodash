@@ -4,6 +4,7 @@ $(document).ready(function() {
     
   test("arrays: first", function() {
     equals(_.first([1,2,3]), 1, 'can pull out the first element of an array');
+    equals(_([1, 2, 3]).first(), 1, 'can perform OO-style "first()"');
   });
   
   test("arrays: last", function() {
@@ -35,6 +36,7 @@ $(document).ready(function() {
   test("arrays: intersect", function() {
     var stooges = ['moe', 'curly', 'larry'], leaders = ['moe', 'groucho'];
     equals(_.intersect(stooges, leaders).join(''), 'moe', 'can take the set intersection of two arrays');
+    equals(_(stooges).intersect(leaders).join(''), 'moe', 'can perform an OO-style intersection');
   });
   
   test('arrays: zip', function() {

@@ -16,15 +16,20 @@
   // Save the previous value of the "_" variable.
   var previousUnderscore = root._;
   
-  // Create a safe reference to the Underscore object for the functions below.
-  var _ = root._ = {};
+  // If Underscore is called as a function, it returns a wrapped object that
+  // can be used OO-style. This wrapper holds altered versions of all the 
+  // underscore functions.
+  var wrapper = function(obj) { this.wrapped = obj; };
+  
+  // Create a safe reference to the Underscore object for reference below.
+  var _ = root._ = function(obj) { return new wrapper(obj); };
   
   // Export the Underscore object for CommonJS.
   if (typeof exports !== 'undefined') _ = exports;
   
   // Current version.
-  _.VERSION = '0.3.3';
-      
+  _.VERSION = '0.3.3';  
+  
   /*------------------------ Collection Functions: ---------------------------*/
     
   // The cornerstone, an each implementation.
@@ -447,6 +452,13 @@
     return prefix ? prefix + id : id;
   };
   
+  // Return a sorted list of the function names available in Underscore.
+  _.functions = function() {
+    var functions = [];
+    for (var key in _) if (Object.prototype.hasOwnProperty.call(_, key)) functions.push(key);
+    return _.without(functions, 'VERSION', 'prototype', 'noConflict');
+  };
+  
   // JavaScript templating a-la ERB, pilfered from John Resig's 
   // "Secrets of the JavaScript Ninja", page 83.
   _.template = function(str, data) {
@@ -472,6 +484,16 @@
   _.foldr    = _.reduceRight;
   _.filter   = _.select;
   _.every    = _.all;
-  _.some     = _.any;  
+  _.some     = _.any;
+  _.methods  = _.functions;
+  
+  /*------------------- Add all Functions to the Wrapper: --------------------*/
+
+  _.each(_.functions(), function(name) {
+    wrapper.prototype[name] = function() {
+      Array.prototype.unshift.call(arguments, this.wrapped);
+      return _[name].apply(_, arguments);
+    };
+  });
 
 })();

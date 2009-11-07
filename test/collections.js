@@ -32,7 +32,7 @@ $(document).ready(function() {
     
     answer = null;
     _.each([1, 2, 3], function(num, index, arr){ if (_.include(arr, num)) answer = true; });
-    ok(answer, 'can reference the original collection from inside the iterator');
+    ok(answer, 'can reference the original collection from inside the iterator');    
   });
   
   test('collections: map', function() {
@@ -41,6 +41,9 @@ $(document).ready(function() {
     
     var tripled = _.map([1, 2, 3], function(num){ return num * this.multiplier; }, {multiplier : 3});
     equals(tripled.join(', '), '3, 6, 9', 'tripled numbers with context');
+    
+    var doubled = _([1, 2, 3]).map(function(num){ return num * 2; });
+    equals(doubled.join(', '), '2, 4, 6', 'OO-style doubled numbers');
   });
   
   test('collections: reduce', function() {
@@ -53,6 +56,9 @@ $(document).ready(function() {
     
     sum = _.inject([1, 2, 3], 0, function(sum, num){ return sum + num; });
     equals(sum, 6, 'aliased as "inject"');
+    
+    sum = _([1, 2, 3]).reduce(0, function(sum, num){ return sum + num; });
+    equals(sum, 6, 'OO-style reduce');
   });
   
   test('collections: reduceRight', function() {
@@ -100,6 +106,7 @@ $(document).ready(function() {
     ok(_.include([1,2,3], 2), 'two is in the array');
     ok(!_.include([1,3,9], 2), 'two is not in the array');
     ok(_.include({moe:1, larry:3, curly:9}, 3), '_.include on objects checks their values');
+    ok(_([1,2,3]).include(2), 'OO-style include');
   });
   
   test('collections: invoke', function() {

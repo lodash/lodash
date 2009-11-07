@@ -8,12 +8,15 @@ $(document).ready(function() {
     var bound = _.bind(func, context);
     equals(bound(), 'name: moe', 'can bind a function to a context');
     
-    var func = function(salutation, name) { return salutation + ': ' + name; };
+    bound = _(func).bind(context);
+    equals(bound(), 'name: moe', 'can do OO-style binding');
+    
+    func = function(salutation, name) { return salutation + ': ' + name; };
     func = _.bind(func, this, 'hello');
     equals(func('moe'), 'hello: moe', 'the function was partially applied in advance');
     
-    func = _.bind(func, this, 'curly');
-    equals(func(), 'hello: curly', 'the function was completely applied in advance');
+    var func = _.bind(func, this, 'curly');
+    equals(func(), 'hello: curly', 'the function was completely applied in advance');    
   });
   
   test("functions: bindAll", function() {

@@ -11,6 +11,12 @@
     return timesTwo;
   });
   
+  JSLitmus.test('_(list).each()', function() {
+    var timesTwo = [];
+    _(numbers).each(function(num){ timesTwo.push(num * 2); });
+    return timesTwo;
+  });
+  
   JSLitmus.test('_.map()', function() {
     return _.map(objects, function(obj){ return obj.num; });
   });

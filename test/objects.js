@@ -33,6 +33,7 @@ $(document).ready(function() {
     var clone = {name : 'moe', lucky : [13, 27, 34]};
     ok(moe != clone, 'basic equality between objects is false');
     ok(_.isEqual(moe, clone), 'deep equality is true');
+    ok(_(moe).isEqual(clone), 'OO-style deep equality works');
   });
   
   test("objects: isElement", function() {

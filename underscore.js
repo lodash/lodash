@@ -308,7 +308,7 @@
   // Create a function bound to a given object (assigning 'this', and arguments,
   // optionally). Binding with arguments is also known as 'curry'.
   _.bind = function(func, context) {
-    if (!context) return func;
+    context = context || root;
     var args = _.toArray(arguments).slice(2);
     return function() {
       var a = args.concat(_.toArray(arguments));

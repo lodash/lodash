@@ -81,7 +81,7 @@
     </p>
 
     <p>
-      Underscore provides 45-odd functions that support both the usual
+      Underscore provides 50-odd functions that support both the usual
       functional suspects: <b>map</b>, <b>select</b>, <b>invoke</b> &mdash;
       as well as more specialized helpers: function binding, javascript
       templating, deep equality testing, and so on. It delegates to built-in
@@ -107,11 +107,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.4.0)</a></td>
+          <td><a href="underscore.js">Development Version (0.4.1)</a></td>
           <td><i>18kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.4.0)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.4.1)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -155,6 +155,14 @@ _(lyrics).chain()
 }).get();
 
 =&gt; {lumberjack : 2, all : 4, night : 2 ... }</pre>
+
+    <p>
+      In addition, the 
+      <a href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array">Array prototype's methods</a> 
+      are proxied through the chained Underscore object, so you can slip a 
+      <tt>reverse</tt> or a <tt>push</tt> into your chain, and continue to 
+      modify the array.
+    </p>
 
     <h2>Table of Contents</h2>
 
@@ -860,8 +868,13 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
         <a href="#styles">A more realistic example.</a>)
       </p>
       <pre>
-_({moe : false, curly : true}).chain().values().any().isEqual(true).get();
-=&gt; true
+var stooges = [{name : 'curly', age : 25}, {name : 'moe', age : 21}, {name : 'larry', age : 23}];
+var youngest = _(stooges).chain()
+  .sortBy(function(stooge){ return stooge.age; })
+  .map(function(stooge){ return stooge.name + ' is ' + stooge.age; })
+  .first()
+  .get();
+=&gt; "moe is 21"
 </pre>
 
       <p id="get">
@@ -875,6 +888,15 @@ _([1, 2, 3]).get();
 </pre>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.4.1</b><br />
+        Chained Underscore objects now support the Array prototype methods, so
+        that you can perform the full range of operations on a wrapped array
+        without having to break your chain. Added a <tt>breakLoop</tt> method
+        to <b>break</b> in the middle of any Underscore iteration. Added an 
+        <tt>isEmpty</tt> function that works on arrays and objects.
+      </p>
 
       <p>
         <b class="header">0.4.0</b><br />

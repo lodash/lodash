@@ -28,7 +28,7 @@
   if (typeof exports !== 'undefined') _ = exports;
 
   // Current version.
-  _.VERSION = '0.4.0';
+  _.VERSION = '0.4.1';
 
   /*------------------------ Collection Functions: ---------------------------*/
 
@@ -496,12 +496,31 @@
 
   /*------------------------ Setup the OOP Wrapper: --------------------------*/
 
+  // Helper function to continue chaining intermediate results.
+  var result = function(obj, chain) {
+    return chain ? _(obj).chain() : obj;
+  };
+
   // Add all of the Underscore functions to the wrapper object.
   _.each(_.functions(), function(name) {
     wrapper.prototype[name] = function() {
       Array.prototype.unshift.call(arguments, this._wrapped);
-      var result = _[name].apply(_, arguments);
-      return this._chain ? _(result).chain() : result;
+      return result(_[name].apply(_, arguments), this._chain);
+    };
+  });
+
+  // Add all mutator Array functions to the wrapper.
+  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+    wrapper.prototype[name] = function() {
+      Array.prototype[name].apply(this._wrapped, arguments);
+      return result(this._wrapped, this._chain);
+    };
+  });
+
+  // Add all accessor Array functions to the wrapper.
+  _.each(['concat', 'join', 'slice'], function(name) {
+    wrapper.prototype[name] = function() {
+      return result(Array.prototype[name].apply(this._wrapped, arguments), this._chain);
     };
   });
 

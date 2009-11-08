@@ -14,6 +14,15 @@ $(document).ready(function() {
     var moe = {name : 'moe'};
     equals(_.identity(moe), moe, 'moe is the same as his identity');
   });
+  
+  test('utility: breakLoop', function() {
+    var result = null;
+    _([1,2,3,4,5,6]).each(function(num) {
+      result = num;
+      if (num == 3) _.breakLoop();
+    });
+    equals(result, 3, 'broke out of a loop');
+  });
     
   test("utility: uniqueId", function() {
     var ids = [], i = 0;
@@ -22,7 +31,7 @@ $(document).ready(function() {
   });
   
   test("utility: functions", function() {
-    var expected = ["all", "any", "bind", "bindAll", "clone", "compact", "compose", 
+    var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact", "compose", 
     "defer", "delay", "detect", "each", "every", "extend", "filter", "first", 
     "flatten", "foldl", "foldr", "forEach", "functions", "identity", "include", 
     "indexOf", "inject", "intersect", "invoke", "isArray", "isElement", "isEmpty", "isEqual", 

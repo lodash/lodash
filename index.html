@@ -232,8 +232,8 @@ _(lyrics).chain()
         function. The <b>iterator</b> is bound to the <b>context</b> object, if one is
         passed. Each invocation of <b>iterator</b> is called with three arguments:
         <tt>(element, index, list)</tt>. If <b>list</b> is a JavaScript object, <b>iterator</b>'s
-        arguments will be <tt>(value, key, list)</tt>. If the <b>list</b> has an <b>each</b>
-        method of its own, it will be used instead. Delegates to the native
+        arguments will be <tt>(value, key, list)</tt>. Use <a href="#breakLoop"><tt>breakLoop</tt></a> 
+        to break out of the iteration. Delegates to the native
         <b>forEach</b> function if it exists.
       </p>
       <pre>

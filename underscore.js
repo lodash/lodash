@@ -33,7 +33,7 @@
   /*------------------------ Collection Functions: ---------------------------*/
     
   // The cornerstone, an each implementation.
-  // Handles objects implementing forEach, each, arrays, and raw objects.
+  // Handles objects implementing forEach, arrays, and raw objects.
   _.each = function(obj, iterator, context) {
     var index = 0;
     try {
@@ -41,8 +41,6 @@
         obj.forEach(iterator, context);
       } else if (obj.length) {
         for (var i=0, l = obj.length; i<l; i++) iterator.call(context, obj[i], i, obj);
-      } else if (obj.each) {
-        obj.each(function(value) { iterator.call(context, value, index++, obj); });
       } else {
         for (var key in obj) if (Object.prototype.hasOwnProperty.call(obj, key)) {
           iterator.call(context, obj[key], key, obj);

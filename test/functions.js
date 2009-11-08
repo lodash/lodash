@@ -4,19 +4,22 @@ $(document).ready(function() {
     
   test("functions: bind", function() {
     var context = {name : 'moe'};
-    var func = function() { return "name: " + this.name; };
+    var func = function(arg) { return "name: " + (this.name || arg); };
     var bound = _.bind(func, context);
     equals(bound(), 'name: moe', 'can bind a function to a context');
     
     bound = _(func).bind(context);
     equals(bound(), 'name: moe', 'can do OO-style binding');
     
+    bound = _.bind(func, null, 'curly');
+    equals(bound(), 'name: curly', 'can bind without specifying a context');
+    
     func = function(salutation, name) { return salutation + ': ' + name; };
     func = _.bind(func, this, 'hello');
     equals(func('moe'), 'hello: moe', 'the function was partially applied in advance');
     
     var func = _.bind(func, this, 'curly');
-    equals(func(), 'hello: curly', 'the function was completely applied in advance');    
+    equals(func(), 'hello: curly', 'the function was completely applied in advance');   
   });
   
   test("functions: bindAll", function() {

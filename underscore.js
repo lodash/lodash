@@ -146,9 +146,7 @@
     if (_.isArray(obj)) return _.indexOf(obj, target) != -1;
     var found = false;
     _.each(obj, function(value) {
-      if (found = value === target) {
-        throw '__break__';
-      }
+      if (found = value === target) throw '__break__';
     });
     return found;
   };
@@ -407,6 +405,11 @@
     // Recursive comparison of contents.
     for (var key in a) if (!_.isEqual(a[key], b[key])) return false;
     return true;
+  };
+  
+  // Is a given array or object empty?
+  _.isEmpty = function(obj) {
+    return (_.isArray(obj) ? obj : _.values(obj)).length == 0;
   };
   
   // Is a given value a DOM element?

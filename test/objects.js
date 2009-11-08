@@ -36,6 +36,17 @@ $(document).ready(function() {
     ok(_(moe).isEqual(clone), 'OO-style deep equality works');
   });
   
+  test("objects: isEmpty", function() {
+    ok(!_([1]).isEmpty(), '[1] is not empty');
+    ok(_.isEmpty([]), '[] is empty');
+    ok(!_.isEmpty({one : 1}), '{one : 1} is not empty');
+    ok(_.isEmpty({}), '{} is empty');
+    
+    var obj = {one : 1};
+    delete obj.one;
+    ok(_.isEmpty(obj), 'deleting all the keys from an object empties it');
+  });
+  
   test("objects: isElement", function() {
     ok(!_.isElement('div'), 'strings are not dom elements');
     ok(_.isElement($('html')[0]), 'the html tag is a DOM element');

@@ -192,7 +192,8 @@ _(lyrics).chain()
       <b>Objects</b>
       <br />
       <span class="methods"><a href="#keys">keys</a>, <a href="#values">values</a>, 
-      <a href="#extend">extend</a>, <a href="#clone">clone</a>, <a href="#isEqual">isEqual</a>, <a href="#isElement">isElement</a>, 
+      <a href="#extend">extend</a>, <a href="#clone">clone</a>, 
+      <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>, 
       <a href="#isArray">isArray</a>, <a href="#isFunction">isFunction</a>, <a href="#isUndefined">isUndefined</a>
       </span>
     </p>
@@ -709,6 +710,18 @@ var clone = {name : 'moe', luckyNumbers : [13, 27, 34]};
 moe == clone;
 =&gt; false
 _.isEqual(moe, clone);
+=&gt; true
+</pre>
+
+      <p id="isEmpty">
+        <b class="header">isEmpty</b><code>_.isEmpty(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> contains no values.
+      </p>
+      <pre>
+_.isEmpty([1, 2, 3]);
+=&gt; false
+_.isEmpty({});
 =&gt; true
 </pre>
 

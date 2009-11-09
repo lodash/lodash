@@ -16,7 +16,7 @@ $(document).ready(function() {
         hash[l] = hash[l] || 0;
         hash[l]++;
         return hash;
-    }).get();
+    }).value();
     ok(counts['a'] == 16 && counts['e'] == 10, 'counted all the letters in the song');
   });
 
@@ -28,7 +28,7 @@ $(document).ready(function() {
       return n % 4 == 0;
     }).sortBy(function(n) {
       return -n;
-    }).get();
+    }).value();
     equals(numbers.join(', '), "10, 6, 2", "filtered and reversed the numbers");
   });
 
@@ -40,7 +40,7 @@ $(document).ready(function() {
       .unshift(17)
       .pop()
       .map(function(n){ return n * 2; })
-      .get();
+      .value();
     equals(numbers.join(', '), "34, 10, 8, 6, 4, 2, 10, 10", 'can chain together array functions.');
   });
 

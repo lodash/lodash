@@ -107,11 +107,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.4.1)</a></td>
+          <td><a href="underscore.js">Development Version (0.4.2)</a></td>
           <td><i>18kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.4.1)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.4.2)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -133,7 +133,7 @@ _([1, 2, 3]).map(function(n){ return n * 2; });</pre>
       Using the object-oriented style allows you to chain together methods. Calling
       <tt>chain</tt> on a wrapped object will cause all future method calls to
       return wrapped objects as well. When you've finished the computation,
-      use <tt>get</tt> to retrieve the final value. Here's an example of chaining
+      use <tt>value</tt> to retrieve the final value. Here's an example of chaining
       together a <b>map/flatten/reduce</b>, in order to get the word count of
       every word in a song.
     </p>
@@ -152,7 +152,7 @@ _(lyrics).chain()
   .reduce({}, function(counts, word) {
     counts[word] = (counts[word] || 0) + 1;
     return counts;
-}).get();
+}).value();
 
 =&gt; {lumberjack : 2, all : 4, night : 2 ... }</pre>
 
@@ -217,7 +217,7 @@ _(lyrics).chain()
     <p>
       <b>Chaining</b>
       <br />
-      <span class="methods"><a href="#chain">chain</a>, <a href="#get">get</a>
+      <span class="methods"><a href="#chain">chain</a>, <a href="#value">value</a>
     </p>
 
     <div id="documentation">
@@ -864,7 +864,7 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
         <b class="header">chain</b><code>_(obj).chain()</code>
         <br />
         Returns a wrapped object. Calling methods on this object will continue
-        to return wrapped objects until <tt>get</tt> is used. (
+        to return wrapped objects until <tt>value</tt> is used. (
         <a href="#styles">A more realistic example.</a>)
       </p>
       <pre>
@@ -873,21 +873,26 @@ var youngest = _(stooges).chain()
   .sortBy(function(stooge){ return stooge.age; })
   .map(function(stooge){ return stooge.name + ' is ' + stooge.age; })
   .first()
-  .get();
+  .value();
 =&gt; "moe is 21"
 </pre>
 
-      <p id="get">
-        <b class="header">get</b><code>_(obj).get()</code>
+      <p id="value">
+        <b class="header">value</b><code>_(obj).value()</code>
         <br />
         Extracts the value of a wrapped object.
       </p>
       <pre>
-_([1, 2, 3]).get();
+_([1, 2, 3]).value();
 =&gt; [1, 2, 3]
 </pre>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.4.2</b><br />
+        Renamed the unwrapping function to <tt>value</tt>, for clarity.
+      </p>
       
       <p>
         <b class="header">0.4.1</b><br />

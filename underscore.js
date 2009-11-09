@@ -25,7 +25,12 @@
   var _ = root._ = function(obj) { return new wrapper(obj); };
 
   // Export the Underscore object for CommonJS.
-  if (typeof exports !== 'undefined') _ = exports;
+  if (module && typeof module.exports !== 'undefined') {
+    // richer binding for systems that allow it (node.js for example)
+    module.exports = _;
+  } else {
+    if (typeof exports !== 'undefined') _ = exports;
+  }
 
   // Current version.
   _.VERSION = '0.4.2';

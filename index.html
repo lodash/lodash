@@ -107,11 +107,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.4.2)</a></td>
+          <td><a href="underscore.js">Development Version (0.4.3)</a></td>
           <td><i>18kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.4.2)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.4.3)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -803,7 +803,9 @@ moe === _.identity(moe);
         <b class="header">breakLoop</b><code>_.breakLoop()</code>
         <br />
         Breaks out of the current loop iteration. Similar to the <tt>break</tt>
-        keyword in regular "for" loop, but works within an iterator function.
+        keyword in regular "for" loop, but works within an iterator function. 
+        Uses the native <tt>StopIteration</tt> object in JavaScript 1.7 compliant
+        browsers.
       </p>
       <pre>
 var result = null;
@@ -888,6 +890,12 @@ _([1, 2, 3]).value();
 </pre>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.4.3</b><br />
+        Started using the native StopIteration object in browsers that support it.
+        Fixed Underscore setup for CommonJS environments.
+      </p>
       
       <p>
         <b class="header">0.4.2</b><br />

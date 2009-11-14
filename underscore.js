@@ -293,7 +293,7 @@
   // item in an array, or -1 if the item is not included in the array.
   _.indexOf = function(array, item) {
     if (array.indexOf) return array.indexOf(item);
-    for (i=0, l=array.length; i<l; i++) if (array[i] === item) return i;
+    for (var i=0, l=array.length; i<l; i++) if (array[i] === item) return i;
     return -1;
   };
 

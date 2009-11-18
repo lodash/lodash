@@ -31,7 +31,7 @@
   if (typeof exports !== 'undefined') exports._ = _;
 
   // Current version.
-  _.VERSION = '0.4.3';
+  _.VERSION = '0.4.4';
 
   /*------------------------ Collection Functions: ---------------------------*/
 
@@ -399,6 +399,8 @@
     if (a == b) return true;
     // One of them implements an isEqual()?
     if (a.isEqual) return a.isEqual(b);
+    // Both are NaN?
+    if (_.isNumber(a) && _.isNumber(b) && isNaN(a) && isNaN(b)) return true;
     // If a is not an object by this point, we can't handle it.
     if (atype !== 'object') return false;
     // Nothing else worked, deep compare the contents.
@@ -428,6 +430,16 @@
   // Is a given value a Function?
   _.isFunction = function(obj) {
     return Object.prototype.toString.call(obj) == '[object Function]';
+  };
+
+  // Is a given value a String?
+  _.isString = function(obj) {
+    return Object.prototype.toString.call(obj) == '[object String]';
+  };
+
+  // Is a given value a Number?
+  _.isNumber = function(obj) {
+    return Object.prototype.toString.call(obj) == '[object Number]';
   };
 
   // Is a given variable undefined?

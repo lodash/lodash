@@ -107,11 +107,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.4.3)</a></td>
+          <td><a href="underscore.js">Development Version (0.4.4)</a></td>
           <td><i>18kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.4.3)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.4.4)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -202,7 +202,8 @@ _(lyrics).chain()
       <span class="methods"><a href="#keys">keys</a>, <a href="#values">values</a>,
       <a href="#extend">extend</a>, <a href="#clone">clone</a>,
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
-      <a href="#isArray">isArray</a>, <a href="#isFunction">isFunction</a>, <a href="#isUndefined">isUndefined</a>
+      <a href="#isArray">isArray</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
+      <a href="#isNumber">isNumber</a>, <a href="#isUndefined">isUndefined</a>
       </span>
     </p>
 
@@ -765,6 +766,26 @@ _.isFunction(alert);
 =&gt; true
 </pre>
 
+      <p id="isString">
+        <b class="header">isString</b><code>_.isString(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> is a String.
+      </p>
+      <pre>
+_.isFunction("moe");
+=&gt; true
+</pre>
+
+      <p id="isNumber">
+        <b class="header">isNumber</b><code>_.isNumber(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> is a Number.
+      </p>
+      <pre>
+_.isNumber(8.4 * 5);
+=&gt; true
+</pre>
+
       <p id="isUndefined">
         <b class="header">isUndefined</b><code>_.isUndefined(variable)</code>
         <br />
@@ -890,6 +911,12 @@ _([1, 2, 3]).value();
 </pre>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.4.4</b><br />
+        Added <tt>isString</tt>, and <tt>isNumber</tt>, for consistency. Fixed
+        <tt>_.isEqual(NaN, NaN)</tt> to return <i>true</i> (which is debatable). 
+      </p>
       
       <p>
         <b class="header">0.4.3</b><br />

@@ -31,13 +31,13 @@ $(document).ready(function() {
   });
 
   test("utility: functions", function() {
-    var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact", "compose",
-    "defer", "delay", "detect", "each", "every", "extend", "filter", "first",
-    "flatten", "foldl", "foldr", "forEach", "functions", "identity", "include",
-    "indexOf", "inject", "intersect", "invoke", "isArray", "isElement", "isEmpty", "isEqual",
+    var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact", 
+    "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
+    "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
+    "indexOf", "init", "inject", "intersect", "invoke", "isArray", "isElement", "isEmpty", "isEqual",
     "isFunction", "isNumber", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
-    "methods", "min", "pluck", "reduce", "reduceRight", "reject", "select",
-    "size", "some", "sortBy", "sortedIndex", "template", "toArray", "uniq",
+    "methods", "min", "pluck", "reduce", "reduceRight", "reject", "reverse", "select",
+    "size", "some", "sortBy", "sortedIndex", "tail", "template", "toArray", "uniq",
     "uniqueId", "values", "without", "wrap", "zip"];
     ok(_(expected).isEqual(_.methods()), 'provides a sorted list of functions');
   });

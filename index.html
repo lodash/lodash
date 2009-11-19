@@ -107,11 +107,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.4.4)</a></td>
+          <td><a href="underscore.js">Development Version (0.4.5)</a></td>
           <td><i>18kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.4.4)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.4.5)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -183,7 +183,7 @@ _(lyrics).chain()
     <p>
       <b>Arrays</b>
       <br />
-      <span class="methods"><a href="#first">first</a>, <a href="#last">last</a>,
+      <span class="methods"><a href="#first">first</a>, <a href="#rest">rest</a>, <a href="#last">last</a>,
       <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, <a href="#uniq">uniq</a>,
       <a href="#intersect">intersect</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a></span>,
       <a href="#lastIndexOf">lastIndexOf</a></span>
@@ -454,15 +454,33 @@ _.size({one : 1, two : 2, three : 3});
 </pre>
 
       <h2>Array Functions</h2>
+      
+      <p>
+        <i>Note: All array functions will also work on the <b>arguments</b> object.</i>
+      </p>
 
       <p id="first">
-        <b class="header">first</b><code>_.first(array)</code>
+        <b class="header">first</b><code>_.first(array, [n])</code>
+        <span class="alias">Alias: <b>head</b></span>
         <br />
-        Convenience to return the first element of an <b>array</b> (identical to <tt>array[0]</tt>).
+        Returns the first element of an <b>array</b>. Passing <b>n</b> will 
+        return the first <b>n</b> elements of the array.
       </p>
       <pre>
-_.first([3, 2, 1]);
-=&gt; 3
+_.first([5, 4, 3, 2, 1]);
+=&gt; 5
+</pre>
+
+      <p id="rest">
+        <b class="header">rest</b><code>_.rest(array, [index])</code>
+        <span class="alias">Alias: <b>tail</b></span>
+        <br />
+        Returns the <b>rest</b> of the elements in an array. Pass an <b>index</b>
+        to return the values of the array from that index onward.
+      </p>
+      <pre>
+_.rest([5, 4, 3, 2, 1]);
+=&gt; [4, 3, 2, 1]
 </pre>
 
       <p id="last">
@@ -471,7 +489,7 @@ _.first([3, 2, 1]);
         Returns the last element of an <b>array</b>.
       </p>
       <pre>
-_.last([3, 2, 1]);
+_.last([5, 4, 3, 2, 1]);
 =&gt; 1
 </pre>
 
@@ -911,6 +929,15 @@ _([1, 2, 3]).value();
 </pre>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.4.5</b><br />
+        Added <tt>rest</tt> for Arrays and arguments objects, and aliased 
+        <tt>first</tt> as <tt>head</tt>, and <tt>rest</tt> as <tt>tail</tt>,
+        thanks to <a href="http://github.com/lukesutton/">Luke Sutton</a>'s patches.
+        Added tests ensuring that all Underscore Array functions also work on
+        <i>arguments</i> objects.
+      </p>
       
       <p>
         <b class="header">0.4.4</b><br />

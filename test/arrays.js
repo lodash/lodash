@@ -58,4 +58,19 @@ $(document).ready(function() {
     equals(_.lastIndexOf(numbers, 0), 8, 'lastIndexOf the other element');
   });
   
+  test("arrays: tail", function() {
+    var numbers = [1, 2, 3, 4];
+    equals(_.tail(numbers).join(", "), "2, 3, 4");
+  });
+  
+  test("arrays: init", function() {
+    var numbers = [1, 2, 3, 4];
+    equals(_.init(numbers).join(", "), "1, 2, 3");
+  });
+  
+  test("arrays: reverse", function() {
+    var numbers = [1, 2, 4, 6];
+    equals(_.reverse(numbers).join(", "), "6, 4, 2, 1");
+  });
+  
 });

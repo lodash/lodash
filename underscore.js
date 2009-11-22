@@ -217,6 +217,7 @@
   // Convert anything iterable into a real, live array.
   _.toArray = function(iterable) {
     if (!iterable) return [];
+    if (iterable.toArray) return iterable.toArray();
     if (_.isArray(iterable)) return iterable;
     return _.map(iterable, function(val){ return val; });
   };

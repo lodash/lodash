@@ -36,7 +36,7 @@ $(document).ready(function() {
     "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
     "indexOf", "inject", "intersect", "invoke", "isArray", "isElement", "isEmpty", "isEqual",
     "isFunction", "isNumber", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
-    "methods", "min", "pluck", "reduce", "reduceRight", "reject", "rest", "select",
+    "methods", "min", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
     "size", "some", "sortBy", "sortedIndex", "tail", "template", "toArray", "uniq",
     "uniqueId", "values", "without", "wrap", "zip"];
     ok(_(expected).isEqual(_.methods()), 'provides a sorted list of functions');

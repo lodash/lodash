@@ -2,10 +2,6 @@ $(document).ready(function() {
 
   module("Collection functions (each, any, select, and so on...)");
 
-  test("generators: range", function() {
-    equals(_.range(4).join(' '), '0 1 2 3 4', 'range with positive number generates an array of of elements 0,1,2,...,n');
-  });
-
   test("collections: each", function() {
     _.each([1, 2, 3], function(num, i) {
       equals(num, i + 1, 'each iterators provide value and iteration count');

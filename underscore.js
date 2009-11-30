@@ -33,6 +33,20 @@
   // Current version.
   _.VERSION = '0.4.5';
 
+  /*------------------------ Generator Functions: ----------------------------*/
+  _.range = function(upper, lower, step) {
+    if (!lower) var lower = 0;
+    if (!step) var step = 1;
+
+    var result = new Array(((upper - lower) / step) + 1));
+
+    for (var i = lower; i <= upper; i += step) {
+        result[i] = i;
+    }
+
+    return result;
+  }
+
   /*------------------------ Collection Functions: ---------------------------*/
 
   // The cornerstone, an each implementation.

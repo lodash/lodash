@@ -63,4 +63,8 @@
     return _.intersect(numbers, randomized);
   });
 
+  JSLitmus.test('_.range()', function() {
+    return _.range(1000);
+  });
+
 })();

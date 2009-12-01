@@ -107,11 +107,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.4.5)</a></td>
+          <td><a href="underscore.js">Development Version (0.4.6)</a></td>
           <td><i>18kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.4.5)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.4.6)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -186,7 +186,7 @@ _(lyrics).chain()
       <span class="methods"><a href="#first">first</a>, <a href="#rest">rest</a>, <a href="#last">last</a>,
       <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, <a href="#uniq">uniq</a>,
       <a href="#intersect">intersect</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a></span>,
-      <a href="#lastIndexOf">lastIndexOf</a></span>
+      <a href="#lastIndexOf">lastIndexOf</a>, <a href="#range">range</a></span>
     </p>
 
     <p>
@@ -585,6 +585,28 @@ _.lastIndexOf([1, 2, 3, 1, 2, 3], 2);
 =&gt; 4
 </pre>
 
+      <p id="range">
+        <b class="header">range</b><code>_.range([start], stop, [step])</code>
+        <br />
+        A function to create flexibly-numbered lists of integers, handy for
+        <tt>each</tt> and <tt>map</tt> loops. <b>start</b>, if omitted, defaults
+        to <i>0</i>; <b>step</b> defaults to <i>1</i>. Returns a list of integers
+        from <b>start</b> to <b>stop</b>, incremented (or decremented) by <b>step</b>,
+        exclusive.
+      </p>
+      <pre>
+_.range(10);
+=&gt; [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+_.range(1, 11);
+=&gt; [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+_.range(0, 30, 5);
+=&gt; [0, 5, 10, 15, 20, 25]
+_.range(0, -10, -1);
+=&gt; [0, -1, -2, -3, -4, -5, -6, -7, -8, -9]
+_.range(0);
+=&gt; []
+</pre>
+
       <h2>Function (uh, ahem) Functions</h2>
 
       <p id="bind">
@@ -929,6 +951,15 @@ _([1, 2, 3]).value();
 </pre>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.4.6</b><br />
+        Added the <tt>range</tt> function, a port of the 
+        <a href="http://docs.python.org/library/functions.html#range">Python 
+        function of the same name</a>, for generating flexibly-numbered lists
+        of integers. Original patch contributed by 
+        <a href="http://github.com/kylichuku">Kirill Ishanov</a>.
+      </p>
       
       <p>
         <b class="header">0.4.5</b><br />

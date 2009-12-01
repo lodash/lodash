@@ -31,35 +31,7 @@
   if (typeof exports !== 'undefined') exports._ = _;
 
   // Current version.
-  _.VERSION = '0.4.5';
-
-  /*------------------------ Generator Functions: ---------------------------*/
-
-  // Generates an Array, containing an arithmetic progressions
-  // Analog of python's built-in function 'range'
-  _.range = function(start, stop, step) {
-    if (!stop) {
-      var stop = start;
-      start = 0;
-    }
-
-    if (!step) var step = 1;
-
-    var length = Math.ceil((stop - start) / step);
-
-    if (length < 0) {
-      return [];
-    }
-
-    var results = new Array(length);
-    var resIdx = 0;
-
-    for (var i = start; (start <= stop ? stop - i > 0 : i - stop > 0); i += step) {
-      results[resIdx++] = i;
-    }
-
-    return results;
-  };
+  _.VERSION = '0.4.6';
 
   /*------------------------ Collection Functions: ---------------------------*/
 
@@ -341,6 +313,22 @@
     var i = array.length;
     while (i--) if (array[i] === item) return i;
     return -1;
+  };
+
+  // Generate an integer Array containing an arithmetic progression. A port of
+  // the native Python range() function. See:
+  // http://docs.python.org/library/functions.html#range
+  _.range = function(start, stop, step) {
+    var a     = _.toArray(arguments);
+    var solo  = a.length <= 1;
+    var start = solo ? 0 : a[0], stop = solo ? a[0] : a[1], step = a[2] || 1;
+    var len   = Math.ceil((stop - start) / step);
+    if (len <= 0) return [];
+    var range = new Array(len);
+    for (var i = start, idx = 0; true; i += step) {
+      if ((step > 0 ? i - stop : stop - i) >= 0) return range;
+      range[idx++] = i;
+    }
   };
 
   /* ----------------------- Function Functions: -----------------------------*/

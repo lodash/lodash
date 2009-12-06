@@ -30,6 +30,9 @@
   // Export the Underscore object for CommonJS.
   if (typeof exports !== 'undefined') exports._ = _;
 
+  // Maintain a reference to the Object prototype for quick access.
+  var oproto = Object.prototype;
+
   // Current version.
   _.VERSION = '0.4.6';
 
@@ -392,7 +395,7 @@
   _.keys = function(obj) {
     if(_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
-    for (var key in obj) if (Object.prototype.hasOwnProperty.call(obj, key)) keys.push(key);
+    for (var key in obj) if (oproto.hasOwnProperty.call(obj, key)) keys.push(key);
     return keys;
   };
 
@@ -453,22 +456,22 @@
 
   // Is a given value a real Array?
   _.isArray = function(obj) {
-    return Object.prototype.toString.call(obj) == '[object Array]';
+    return oproto.toString.call(obj) == '[object Array]';
   };
 
   // Is a given value a Function?
   _.isFunction = function(obj) {
-    return Object.prototype.toString.call(obj) == '[object Function]';
+    return oproto.toString.call(obj) == '[object Function]';
   };
 
   // Is a given value a String?
   _.isString = function(obj) {
-    return Object.prototype.toString.call(obj) == '[object String]';
+    return oproto.toString.call(obj) == '[object String]';
   };
 
   // Is a given value a Number?
   _.isNumber = function(obj) {
-    return Object.prototype.toString.call(obj) == '[object Number]';
+    return oproto.toString.call(obj) == '[object Number]';
   };
 
   // Is a given variable undefined?

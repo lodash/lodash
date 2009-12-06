@@ -998,7 +998,10 @@ _([1, 2, 3]).value();
       
       <p>
         <b class="header">0.4.7</b><br />
-        
+        Added <tt>isDate</tt>, <tt>isNaN</tt>, and <tt>isNull</tt>, for completeness.
+        Optimizations for <tt>isEqual</tt> when checking equality between Arrays
+        or Dates. <tt>_.keys</tt> is now <small><i><b>25%&ndash;2X</b></i></small> faster (depending on your
+        browser) which speeds up the functions that rely on it, such as <tt>_.each</tt>.
       </p>
       
       <p>

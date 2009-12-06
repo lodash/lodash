@@ -31,7 +31,7 @@
   if (typeof exports !== 'undefined') exports._ = _;
 
   // Maintain a reference to the Object prototype for quick access.
-  var oproto = Object.prototype;
+  var objPro = Object.prototype;
 
   // Current version.
   _.VERSION = '0.4.7';
@@ -395,7 +395,7 @@
   _.keys = function(obj) {
     if(_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
-    for (var key in obj) if (oproto.hasOwnProperty.call(obj, key)) keys.push(key);
+    for (var key in obj) if (objPro.hasOwnProperty.call(obj, key)) keys.push(key);
     return keys;
   };
 
@@ -456,27 +456,27 @@
 
   // Is a given value a real Array?
   _.isArray = function(obj) {
-    return oproto.toString.call(obj) == '[object Array]';
+    return objPro.toString.call(obj) == '[object Array]';
   };
 
   // Is a given value a Function?
   _.isFunction = function(obj) {
-    return oproto.toString.call(obj) == '[object Function]';
+    return objPro.toString.call(obj) == '[object Function]';
   };
 
   // Is a given value a String?
   _.isString = function(obj) {
-    return oproto.toString.call(obj) == '[object String]';
+    return objPro.toString.call(obj) == '[object String]';
   };
 
   // Is a given value a Number?
   _.isNumber = function(obj) {
-    return oproto.toString.call(obj) == '[object Number]';
+    return objPro.toString.call(obj) == '[object Number]';
   };
 
   // Is a given value a Date?
   _.isDate = function(obj) {
-    return oproto.toString.call(obj) == '[object Date]';
+    return objPro.toString.call(obj) == '[object Date]';
   };
 
   // Is the given value NaN -- this one is interesting. NaN != NaN, and

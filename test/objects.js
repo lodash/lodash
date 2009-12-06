@@ -36,6 +36,7 @@ $(document).ready(function() {
     ok(_(moe).isEqual(clone), 'OO-style deep equality works');
     ok(!_.isEqual(5, NaN), '5 is not equal to NaN');
     ok(_.isEqual(NaN, NaN), 'NaN is equal to NaN');
+    ok(_.isEqual(new Date(100), new Date(100)), 'identical dates are equal');
   });
 
   test("objects: isEmpty", function() {
@@ -73,6 +74,25 @@ $(document).ready(function() {
     ok(!_.isFunction([1, 2, 3]), 'arrays are not functions');
     ok(!_.isFunction('moe'), 'strings are not functions');
     ok(_.isFunction(_.isFunction), 'but functions are');
+  });
+
+  test("objects: isDate", function() {
+    ok(!_.isDate(100), 'numbers are not dates');
+    ok(!_.isDate({}), 'objects are not dates');
+    ok(_.isDate(new Date()), 'but dates are');
+  });
+
+  test("objects: isNaN", function() {
+    ok(!_.isNaN(undefined), 'undefined is not NaN');
+    ok(!_.isNaN(null), 'null is not NaN');
+    ok(!_.isNaN(0), '0 is not NaN');
+    ok(_.isNaN(NaN), 'but NaN is');
+  });
+
+  test("objects: isNull", function() {
+    ok(!_.isNull(undefined), 'undefined is not null');
+    ok(!_.isNull(NaN), 'NaN is not null');
+    ok(_.isNull(null), 'but null is');
   });
 
   test("objects: isUndefined", function() {

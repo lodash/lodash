@@ -81,7 +81,7 @@
     </p>
 
     <p>
-      Underscore provides 50-odd functions that support both the usual
+      Underscore provides 60-odd functions that support both the usual
       functional suspects: <b>map</b>, <b>select</b>, <b>invoke</b> &mdash;
       as well as more specialized helpers: function binding, javascript
       templating, deep equality testing, and so on. It delegates to built-in
@@ -111,11 +111,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.4.6)</a></td>
+          <td><a href="underscore.js">Development Version (0.4.7)</a></td>
           <td><i>20kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.4.6)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.4.7)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -207,7 +207,9 @@ _(lyrics).chain()
       <a href="#extend">extend</a>, <a href="#clone">clone</a>,
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
       <a href="#isArray">isArray</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
-      <a href="#isNumber">isNumber</a>, <a href="#isUndefined">isUndefined</a>
+      <a href="#isNumber">isNumber</a>, <a href="#isDate">isDate</a>
+      <a href="#isNaN">isNaN</a>, <a href="#isNull">isNull</a>, 
+      <a href="#isUndefined">isUndefined</a>
       </span>
     </p>
 
@@ -830,6 +832,44 @@ _.isNumber(8.4 * 5);
 =&gt; true
 </pre>
 
+      <p id="isDate">
+        <b class="header">isDate</b><code>_.isDate(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> is a Date.
+      </p>
+      <pre>
+_.isDate(new Date());
+=&gt; true
+</pre>
+
+      <p id="isNaN">
+        <b class="header">isNaN</b><code>_.isNaN(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> is <i>NaN</i>.<br /> Note: this is not
+        the same as the native <b>isNaN</b> function, which will also return
+        true if the variable is <i>undefined</i>.
+      </p>
+      <pre>
+_.isNaN(NaN);
+=&gt; true
+isNaN(undefined);
+=&gt; true
+_.isNaN(undefined);
+=&gt; false
+</pre>
+
+      <p id="isNull">
+        <b class="header">isNull</b><code>_.isNull(object)</code>
+        <br />
+        Returns <i>true</i> if the value of <b>object</b> is <i>null</i>.
+      </p>
+      <pre>
+_.isNull(null);
+=&gt; true
+_.isNull(undefined);
+=&gt; false
+</pre>
+
       <p id="isUndefined">
         <b class="header">isUndefined</b><code>_.isUndefined(variable)</code>
         <br />
@@ -955,6 +995,11 @@ _([1, 2, 3]).value();
 </pre>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.4.7</b><br />
+        
+      </p>
       
       <p>
         <b class="header">0.4.6</b><br />

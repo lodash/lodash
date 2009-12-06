@@ -34,7 +34,7 @@
   var oproto = Object.prototype;
 
   // Current version.
-  _.VERSION = '0.4.6';
+  _.VERSION = '0.4.7';
 
   /*------------------------ Collection Functions: ---------------------------*/
 
@@ -426,11 +426,11 @@
     // Basic equality test (watch out for coercions).
     if (a == b) return true;
     // Check dates' integer values.
-    if (a instanceof Date && b instanceof Date) return a.getTime() === b.getTime();
+    if (_.isDate(a) && _.isDate(b)) return a.getTime() === b.getTime();
     // One of them implements an isEqual()?
     if (a.isEqual) return a.isEqual(b);
     // Both are NaN?
-    if (_.isNumber(a) && _.isNumber(b) && isNaN(a) && isNaN(b)) return true;
+    if (_.isNaN(a) && _.isNaN(b)) return true;
     // If a is not an object by this point, we can't handle it.
     if (atype !== 'object') return false;
     // Check for different array lengths before comparing contents.
@@ -472,6 +472,22 @@
   // Is a given value a Number?
   _.isNumber = function(obj) {
     return oproto.toString.call(obj) == '[object Number]';
+  };
+
+  // Is a given value a Date?
+  _.isDate = function(obj) {
+    return oproto.toString.call(obj) == '[object Date]';
+  };
+
+  // Is the given value NaN -- this one is interesting. NaN != NaN, and
+  // isNaN(undefined) == true, so we make sure it's a number first.
+  _.isNaN = function(obj) {
+    return _.isNumber(obj) && isNaN(obj);
+  };
+
+  // Is a given value equal to null?
+  _.isNull = function(obj) {
+    return obj === null;
   };
 
   // Is a given variable undefined?

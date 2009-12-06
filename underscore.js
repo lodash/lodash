@@ -420,12 +420,16 @@
     if (atype != btype) return false;
     // Basic equality test (watch out for coercions).
     if (a == b) return true;
+    // Check dates' integer values.
+    if (a instanceof Date && b instanceof Date) return a.getTime() === b.getTime();
     // One of them implements an isEqual()?
     if (a.isEqual) return a.isEqual(b);
     // Both are NaN?
     if (_.isNumber(a) && _.isNumber(b) && isNaN(a) && isNaN(b)) return true;
     // If a is not an object by this point, we can't handle it.
     if (atype !== 'object') return false;
+    // Check for different array lengths before comparing contents.
+    if (!_.isUndefined(a.length) && a.length !== b.length) return false;
     // Nothing else worked, deep compare the contents.
     var aKeys = _.keys(a), bKeys = _.keys(b);
     // Different object sizes?

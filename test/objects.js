@@ -83,6 +83,11 @@ $(document).ready(function() {
     ok(_.isDate(new Date()), 'but dates are');
   });
 
+  test("objects: isRegExp", function() {
+    ok(!_.isRegExp(_.identity), 'functions are not RegExps');
+    ok(_.isRegExp(/identity/), 'but RegExps are');
+  });
+
   test("objects: isNaN", function() {
     ok(!_.isNaN(undefined), 'undefined is not NaN');
     ok(!_.isNaN(null), 'null is not NaN');

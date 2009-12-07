@@ -646,11 +646,7 @@ var buttonView = {
   onClick : function(){ alert('clicked: ' + this.label); },
   onHover : function(){ console.log('hovering: ' + this.label); }
 };
-
-// In this case, the following two lines have the same effect.
-_.bindAll(buttonView, 'onClick', 'onHover');
-_(buttonView).bindAll();
-
+_.bindAll(buttonView);
 jQuery('#underscore_button').bind('click', buttonView.onClick);
 =&gt; When the button is clicked, this.label will have the correct value...
 </pre>

@@ -207,7 +207,7 @@ _(lyrics).chain()
       <a href="#extend">extend</a>, <a href="#clone">clone</a>,
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
       <a href="#isArray">isArray</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
-      <a href="#isNumber">isNumber</a>, <a href="#isDate">isDate</a>
+      <a href="#isNumber">isNumber</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>
       <a href="#isNaN">isNaN</a>, <a href="#isNull">isNull</a>, 
       <a href="#isUndefined">isUndefined</a>
       </span>
@@ -839,6 +839,16 @@ _.isNumber(8.4 * 5);
       </p>
       <pre>
 _.isDate(new Date());
+=&gt; true
+</pre>
+
+      <p id="isRegExp">
+        <b class="header">isRegExp</b><code>_.isRegExp(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> is a RegExp.
+      </p>
+      <pre>
+_.isRegExp(/moe/);
 =&gt; true
 </pre>
 

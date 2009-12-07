@@ -31,7 +31,7 @@
   if (typeof exports !== 'undefined') exports._ = _;
 
   // Current version.
-  _.VERSION = '0.4.7';
+  _.VERSION = '0.5.0';
 
   /*------------------------ Collection Functions: ---------------------------*/
 
@@ -347,6 +347,7 @@
     var funcs = _.rest(arguments);
     if (funcs.length == 0) funcs = _.functions(obj);
     _.each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
+    return obj;
   };
 
   // Delays a function for the given number of milliseconds, and then calls

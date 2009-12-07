@@ -111,11 +111,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.4.7)</a></td>
+          <td><a href="underscore.js">Development Version (0.5.0)</a></td>
           <td><i>20kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.4.7)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.5.0)</a></td>
           <td><i>2kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -1040,6 +1040,19 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.5.0</b><br />
+        <b>[API Changes]</b> <tt>_.bindAll</tt> now takes the context object as 
+        its first parameter. If no method names are passed, all of the context 
+        object's methods are bound to it, enabling chaining and easier binding.
+        <tt>_.functions</tt> now takes a single argument and returns the names 
+        of its Function properties. Calling <tt>_.functions(_)</tt> will get you
+        the previous behavior.
+        Added <tt>_.isRegExp</tt> so that <tt>isEqual</tt> can now test for RegExp equality.
+        All of the "is" functions have been shrunk down into a single definition.
+        <a href="http://github.com/grayrest/">Karl Guertin</a> contributed patches.
+      </p>
       
       <p>
         <b class="header">0.4.7</b><br />

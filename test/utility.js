@@ -35,7 +35,7 @@ $(document).ready(function() {
     "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
     "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
     "indexOf", "inject", "intersect", "invoke", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
-    "isFunction", "isNaN", "isNull", "isNumber", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
+    "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
     "methods", "min", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
     "size", "some", "sortBy", "sortedIndex", "tail", "template", "toArray", "uniq",
     "uniqueId", "values", "without", "wrap", "zip"];

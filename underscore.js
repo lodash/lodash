@@ -334,20 +334,19 @@
 
   // Create a function bound to a given object (assigning 'this', and arguments,
   // optionally). Binding with arguments is also known as 'curry'.
-  _.bind = function(func, context) {
+  _.bind = function(func, obj) {
     var args = _.rest(arguments, 2);
     return function() {
-      return func.apply(context || root, args.concat(_.toArray(arguments)));
+      return func.apply(obj || root, args.concat(_.toArray(arguments)));
     };
   };
 
   // Bind all of an object's methods to that object. Useful for ensuring that
   // all callbacks defined on an object belong to it.
-  _.bindAll = function() {
-    var context = Array.prototype.pop.call(arguments);
-    _.each(arguments, function(methodName) {
-      context[methodName] = _.bind(context[methodName], context);
-    });
+  _.bindAll = function(obj) {
+    var funcs = _.rest(arguments);
+    if (funcs.length == 0) funcs = _.functions(obj);
+    _.each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -509,8 +508,8 @@
   };
 
   // Return a sorted list of the function names available in Underscore.
-  _.functions = function() {
-    return _.without(_.keys(_), 'VERSION', 'prototype', 'noConflict').sort();
+  _.functions = function(obj) {
+    return _.select(_.keys(obj), function(key){ return _.isFunction(obj[key]); }).sort();
   };
 
   // JavaScript templating a-la ERB, pilfered from John Resig's
@@ -551,7 +550,7 @@
   };
 
   // Add all of the Underscore functions to the wrapper object.
-  _.each(_.functions(), function(name) {
+  _.each(_.functions(_), function(name) {
     wrapper.prototype[name] = function() {
       Array.prototype.unshift.call(arguments, this._wrapped);
       return result(_[name].apply(_, arguments), this._chain);

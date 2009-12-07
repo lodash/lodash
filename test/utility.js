@@ -30,18 +30,6 @@ $(document).ready(function() {
     equals(_.uniq(ids).length, ids.length, 'can generate a globally-unique stream of ids');
   });
 
-  test("utility: functions", function() {
-    var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
-    "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
-    "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
-    "indexOf", "inject", "intersect", "invoke", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
-    "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
-    "methods", "min", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
-    "size", "some", "sortBy", "sortedIndex", "tail", "template", "toArray", "uniq",
-    "uniqueId", "values", "without", "wrap", "zip"];
-    ok(_(expected).isEqual(_.methods()), 'provides a sorted list of functions');
-  });
-
   test("utility: template", function() {
     var basicTemplate = _.template("<%= thing %> is gettin' on my noives!");
     var result = basicTemplate({thing : 'This'});

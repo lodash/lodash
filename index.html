@@ -204,7 +204,7 @@ _(lyrics).chain()
       <b>Objects</b>
       <br />
       <span class="methods"><a href="#keys">keys</a>, <a href="#values">values</a>,
-      <a href="#extend">extend</a>, <a href="#clone">clone</a>,
+      <a href="#functions">functions</a>, <a href="#extend">extend</a>, <a href="#clone">clone</a>,
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
       <a href="#isArray">isArray</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
       <a href="#isNumber">isNumber</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>
@@ -616,10 +616,10 @@ _.range(0);
       <h2>Function (uh, ahem) Functions</h2>
 
       <p id="bind">
-        <b class="header">bind</b><code>_.bind(function, context, [*arguments])</code>
+        <b class="header">bind</b><code>_.bind(function, object, [*arguments])</code>
         <br />
-        Bind a <b>function</b> to a <b>context</b> object, meaning that whenever
-        the function is called, the value of <i>this</i> will be the <b>context</b>.
+        Bind a <b>function</b> to an <b>object</b>, meaning that whenever
+        the function is called, the value of <i>this</i> will be the <b>object</b>.
         Optionally, bind <b>arguments</b> to the <b>function</b> to pre-fill them,
         also known as <b>currying</b>.
       </p>
@@ -631,13 +631,14 @@ func();
 </pre>
 
       <p id="bindAll">
-        <b class="header">bindAll</b><code>_.bindAll(*methodNames, context)</code>
+        <b class="header">bindAll</b><code>_.bindAll(object, [*methodNames])</code>
         <br />
-        Binds a number of methods on the <b>context</b> object, specified by
+        Binds a number of methods on the <b>object</b>, specified by
         <b>methodNames</b>, to be run in the context of that object whenever they
         are invoked. Very handy for binding functions that are going to be used
         as event handlers, which would otherwise be invoked with a fairly useless
-        <i>this</i>.
+        <i>this</i>. If no <b>methodNames</b> are provided, all of the object's
+        function properties will be bound to it.
       </p>
       <pre>
 var buttonView = {
@@ -645,7 +646,11 @@ var buttonView = {
   onClick : function(){ alert('clicked: ' + this.label); },
   onHover : function(){ console.log('hovering: ' + this.label); }
 };
-_.bindAll('onClick', 'onHover', buttonView);
+
+// In this case, the following two lines have the same effect.
+_.bindAll(buttonView, 'onClick', 'onHover');
+_(buttonView).bindAll();
+
 jQuery('#underscore_button').bind('click', buttonView.onClick);
 =&gt; When the button is clicked, this.label will have the correct value...
 </pre>
@@ -729,6 +734,18 @@ _.keys({one : 1, two : 2, three : 3});
       <pre>
 _.values({one : 1, two : 2, three : 3});
 =&gt; [1, 2, 3]
+</pre>
+
+      <p id="functions">
+        <b class="header">functions</b><code>_.functions(object)</code>
+        <span class="alias">Alias: <b>methods</b></span>
+        <br />
+        Returns a sorted list of the names of every method in an object &mdash;
+        that is to say, the name of every function property of the object. 
+      </p>
+      <pre>
+_.functions(_);
+=&gt; ["all", "any", "bind", "bindAll", "clone", "compact", "compose" ...
 </pre>
 
       <p id="extend">
@@ -939,17 +956,6 @@ result;
       <pre>
 _.uniqueId('contact_');
 =&gt; 'contact_104'
-</pre>
-
-      <p id="functions">
-        <b class="header">functions</b><code>_.functions([prefix])</code>
-        <span class="alias">Alias: <b>methods</b></span>
-        <br />
-        Returns a sorted list of the name of every function in Underscore.
-      </p>
-      <pre>
-_.functions();
-=&gt; ["all", "any", "bind", "bindAll", "clone", "compact", "compose" ...
 </pre>
 
       <p id="template">

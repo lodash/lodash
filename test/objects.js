@@ -10,6 +10,20 @@ $(document).ready(function() {
     equals(_.values({one : 1, two : 2}).join(', '), '1, 2', 'can extract the values from an object');
   });
 
+  test("objects: functions", function() {
+    var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
+    "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
+    "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
+    "indexOf", "inject", "intersect", "invoke", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
+    "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
+    "methods", "min", "noConflict", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
+    "size", "some", "sortBy", "sortedIndex", "tail", "template", "toArray", "uniq",
+    "uniqueId", "values", "without", "wrap", "zip"];
+    ok(_(expected).isEqual(_.methods(_)), 'provides a sorted list of functions');
+    var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
+    ok(_.isEqual(['b', 'd'], _.functions(obj)), 'can grab the function names of any passed-in object');
+  });
+
   test("objects: extend", function() {
     var source = {name : 'moe'}, dest = {age : 50};
     _.extend(dest, source);

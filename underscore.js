@@ -478,8 +478,9 @@
   // Define the isArray, isDate, isFunction, isNumber, isRegExp, and
   // isString functions based on their toString identifiers.
   _.each(['Array', 'Date', 'Function', 'Number', 'RegExp', 'String'], function(type) {
+	var toString = Object.prototype.toString, typeString = '[object ' + type + ']';
     _['is' + type] = function(obj) {
-      return Object.prototype.toString.call(obj) == '[object ' + type + ']';
+      return toString.call(obj) == typeString;
     };
   });
 

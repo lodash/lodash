@@ -8,6 +8,8 @@ $(document).ready(function() {
     equals(_.first([1,2,3], 2).join(', '), '1, 2', 'can pass an index to first');
     var result = (function(){ return _.first(arguments); })(4, 3, 2, 1);
     equals(result, 4, 'works on an arguments object.');
+    result = _.map([[1,2,3],[1,2,3]], _.first);
+    equals(result.join(','), '1,1', 'works well with _.map');
   });
 
   test("arrays: rest", function() {
@@ -16,6 +18,8 @@ $(document).ready(function() {
     equals(_.rest(numbers, 2).join(', '), '3, 4', 'rest can take an index');
     var result = (function(){ return _(arguments).tail(); })(1, 2, 3, 4);
     equals(result.join(', '), '2, 3, 4', 'aliased as tail and works on arguments object');
+    result = _.map([[1,2,3],[1,2,3]], _.rest);
+    equals(_.flatten(result).join(','), '2,3,2,3', 'works well with _.map');
   });
 
   test("arrays: last", function() {

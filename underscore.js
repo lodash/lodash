@@ -229,16 +229,18 @@
   /*-------------------------- Array Functions: ------------------------------*/
 
   // Get the first element of an array. Passing "n" will return the first N
-  // values in the array. Aliased as "head".
-  _.first = function(array, n) {
-    return n ? Array.prototype.slice.call(array, 0, n) : array[0];
+  // values in the array. Aliased as "head". The "guard" check allows it to work
+  // with _.map.
+  _.first = function(array, n, guard) {
+    return n && !guard ? Array.prototype.slice.call(array, 0, n) : array[0];
   };
 
   // Returns everything but the first entry of the array. Aliased as "tail".
   // Especially useful on the arguments object. Passing an "index" will return
-  // the rest of the values in the array from that index onward.
-  _.rest = function(array, index) {
-    return Array.prototype.slice.call(array, _.isUndefined(index) ? 1 : index);
+  // the rest of the values in the array from that index onward. The "guard"
+   //check allows it to work with _.map.
+  _.rest = function(array, index, guard) {
+    return Array.prototype.slice.call(array, _.isUndefined(index) || guard ? 1 : index);
   };
 
   // Get the last element of an array.
@@ -270,7 +272,7 @@
   // been sorted, you have the option of using a faster algorithm.
   _.uniq = function(array, isSorted) {
     return _.reduce(array, [], function(memo, el, i) {
-      if (0 == i || (isSorted ? _.last(memo) != el : !_.include(memo, el))) memo.push(el);
+      if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) memo.push(el);
       return memo;
     });
   };

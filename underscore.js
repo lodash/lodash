@@ -42,7 +42,7 @@
     try {
       if (obj.forEach) {
         obj.forEach(iterator, context);
-      } else if (obj.length || obj.length === 0) {
+      } else if (_.isNumber(obj.length)) {
         for (var i=0, l=obj.length; i<l; i++) iterator.call(context, obj[i], i, obj);
       } else {
         var keys = _.keys(obj), l = keys.length;
@@ -57,7 +57,7 @@
   // Return the results of applying the iterator to each element. Use JavaScript
   // 1.6's version of map, if possible.
   _.map = function(obj, iterator, context) {
-    if (obj && obj.map) return obj.map(iterator, context);
+    if (obj && _.isFunction(obj.map)) return obj.map(iterator, context);
     var results = [];
     _.each(obj, function(value, index, list) {
       results.push(iterator.call(context, value, index, list));
@@ -68,7 +68,7 @@
   // Reduce builds up a single result from a list of values. Also known as
   // inject, or foldl. Uses JavaScript 1.8's version of reduce, if possible.
   _.reduce = function(obj, memo, iterator, context) {
-    if (obj && obj.reduce) return obj.reduce(_.bind(iterator, context), memo);
+    if (obj && _.isFunction(obj.reduce)) return obj.reduce(_.bind(iterator, context), memo);
     _.each(obj, function(value, index, list) {
       memo = iterator.call(context, memo, value, index, list);
     });
@@ -78,7 +78,7 @@
   // The right-associative version of reduce, also known as foldr. Uses
   // JavaScript 1.8's version of reduceRight, if available.
   _.reduceRight = function(obj, memo, iterator, context) {
-    if (obj && obj.reduceRight) return obj.reduceRight(_.bind(iterator, context), memo);
+    if (obj && _.isFunction(obj.reduceRight)) return obj.reduceRight(_.bind(iterator, context), memo);
     var reversed = _.clone(_.toArray(obj)).reverse();
     _.each(reversed, function(value, index) {
       memo = iterator.call(context, memo, value, index, obj);
@@ -101,7 +101,7 @@
   // Return all the elements that pass a truth test. Use JavaScript 1.6's
   // filter(), if it exists.
   _.select = function(obj, iterator, context) {
-    if (obj.filter) return obj.filter(iterator, context);
+    if (obj && _.isFunction(obj.filter)) return obj.filter(iterator, context);
     var results = [];
     _.each(obj, function(value, index, list) {
       iterator.call(context, value, index, list) && results.push(value);
@@ -122,7 +122,7 @@
   // JavaScript 1.6's every(), if it is present.
   _.all = function(obj, iterator, context) {
     iterator = iterator || _.identity;
-    if (obj.every) return obj.every(iterator, context);
+    if (obj && _.isFunction(obj.every)) return obj.every(iterator, context);
     var result = true;
     _.each(obj, function(value, index, list) {
       if (!(result = result && iterator.call(context, value, index, list))) _.breakLoop();
@@ -134,7 +134,7 @@
   // JavaScript 1.6's some(), if it exists.
   _.any = function(obj, iterator, context) {
     iterator = iterator || _.identity;
-    if (obj.some) return obj.some(iterator, context);
+    if (obj && _.isFunction(obj.some)) return obj.some(iterator, context);
     var result = false;
     _.each(obj, function(value, index, list) {
       if (result = iterator.call(context, value, index, list)) _.breakLoop();

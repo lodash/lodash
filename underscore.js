@@ -555,24 +555,28 @@
 
   // Add all of the Underscore functions to the wrapper object.
   _.each(_.functions(_), function(name) {
+    var unshift = Array.prototype.unshift,
+      method = _[name];
     wrapper.prototype[name] = function() {
-      Array.prototype.unshift.call(arguments, this._wrapped);
-      return result(_[name].apply(_, arguments), this._chain);
+      unshift.call(arguments, this._wrapped);
+      return result(method.apply(_, arguments), this._chain);
     };
   });
 
   // Add all mutator Array functions to the wrapper.
   _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+    var method = Array.prototype[name];
     wrapper.prototype[name] = function() {
-      Array.prototype[name].apply(this._wrapped, arguments);
+      method.apply(this._wrapped, arguments);
       return result(this._wrapped, this._chain);
     };
   });
 
   // Add all accessor Array functions to the wrapper.
   _.each(['concat', 'join', 'slice'], function(name) {
+    var method = Array.prototype[name];
     wrapper.prototype[name] = function() {
-      return result(Array.prototype[name].apply(this._wrapped, arguments), this._chain);
+      return result(method.apply(this._wrapped, arguments), this._chain);
     };
   });
 

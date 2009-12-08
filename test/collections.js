@@ -16,10 +16,6 @@ $(document).ready(function() {
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
 
     answers = [];
-    _.each("moe", function(letter){ answers.push(letter); });
-    equals(answers.join(', '), 'm, o, e', 'iterates over the letters in strings');
-
-    answers = [];
     _.forEach([1, 2, 3], function(num){ answers.push(num); });
     equals(answers.join(', '), '1, 2, 3', 'aliased as "forEach"');
 

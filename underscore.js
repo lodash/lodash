@@ -391,10 +391,11 @@
   /* ------------------------- Object Functions: ---------------------------- */
 
   // Retrieve the names of an object's properties.
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
   _.keys = function(obj) {
     if(_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
-    for (var key in obj) if (Object.prototype.hasOwnProperty.call(obj, key)) keys.push(key);
+    for (var key in obj) if (hasOwnProperty.call(obj, key)) keys.push(key);
     return keys;
   };
 

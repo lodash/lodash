@@ -478,7 +478,7 @@
   
   // have to define isNumber before _.each will work in IE
   _.isNumber = function(obj) {
-    return Object.prototype.toString == '[object Number]';
+    return Object.prototype.toString.call(obj) == '[object Number]';
   };
 
   // Define the isArray, isDate, isFunction, isRegExp, and

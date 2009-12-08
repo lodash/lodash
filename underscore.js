@@ -475,10 +475,15 @@
   _.isUndefined = function(obj) {
     return typeof obj == 'undefined';
   };
+  
+  // have to define isNumber before _.each will work in IE
+  _.isNumber = function(obj) {
+    return Object.prototype.toString == '[object Number]';
+  };
 
-  // Define the isArray, isDate, isFunction, isNumber, isRegExp, and
+  // Define the isArray, isDate, isFunction, isRegExp, and
   // isString functions based on their toString identifiers.
-  _.each(['Array', 'Date', 'Function', 'Number', 'RegExp', 'String'], function(type) {
+  _.each(['Array', 'Date', 'Function', 'RegExp', 'String'], function(type) {
 	var toString = Object.prototype.toString, typeString = '[object ' + type + ']';
     _['is' + type] = function(obj) {
       return toString.call(obj) == typeString;

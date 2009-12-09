@@ -815,6 +815,18 @@ _.isArray([1,2,3]);
 =&gt; true
 </pre>
 
+      <p id="isArguments">
+        <b class="header">isArguments</b><code>_.isArguments(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> is an Arguments object.
+      </p>
+      <pre>
+(function(){ return _.isArguments(arguments); })(1, 2, 3);
+=&gt; true
+_.isArguments([1,2,3]);
+=&gt; false
+</pre>
+
       <p id="isFunction">
         <b class="header">isFunction</b><code>_.isFunction(object)</code>
         <br />

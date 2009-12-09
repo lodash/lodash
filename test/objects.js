@@ -14,7 +14,7 @@ $(document).ready(function() {
     var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
     "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
     "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
-    "indexOf", "inject", "intersect", "invoke", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
+    "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
     "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
     "methods", "min", "noConflict", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
     "size", "some", "sortBy", "sortedIndex", "tail", "template", "toArray", "uniq",
@@ -69,6 +69,13 @@ $(document).ready(function() {
   test("objects: isElement", function() {
     ok(!_.isElement('div'), 'strings are not dom elements');
     ok(_.isElement($('html')[0]), 'the html tag is a DOM element');
+  });
+
+  test("objects: isArguments", function() {
+    var args = (function(){ return arguments; })(1, 2, 3);
+    ok(_.isArguments(args), 'the arguments object is an arguments object');
+    ok(!_.isArguments(_.toArray(args)), 'but not when it\'s converted into an array');
+    ok(!_.isArguments([1,2,3]), 'and not vanilla arrays.');
   });
 
   test("objects: isArray", function() {

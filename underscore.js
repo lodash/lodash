@@ -495,20 +495,15 @@
     return typeof obj == 'undefined';
   };
 
-  // isNumber needs to be defined before the rest of the isType functions,
-  // because _.each uses it in IE (and we want to use _.each for the closure).
-  _.isNumber = function(obj) {
-    return toString.call(obj) == '[object Number]';
-  };
-
-  // Define the isArray, isDate, isFunction, isRegExp, and isString functions
-  // based on their toString identifiers.
-  _.each(['Array', 'Date', 'Function', 'RegExp', 'String'], function(type) {
-    var identifier = '[object ' + type + ']';
-    _['is' + type] = function(obj) {
-      return toString.call(obj) == identifier;
-    };
-  });
+  // Define the isArray, isDate, isFunction, isNumber, isRegExp, and isString
+  // functions based on their toString identifiers.
+  var types = ['Array', 'Date', 'Function', 'Number', 'RegExp', 'String'];
+  for (var i=0, l=types.length; i<l; i++) {
+    (function() {
+      var identifier = '[object ' + types[i] + ']';
+      _['is' + types[i]] = function(obj) { return toString.call(obj) == identifier; };
+    })();
+  }
 
   /* -------------------------- Utility Functions: -------------------------- */
 

@@ -391,10 +391,11 @@
   /* ------------------------- Object Functions: ---------------------------- */
 
   // Retrieve the names of an object's properties.
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
   _.keys = function(obj) {
     if(_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
-    for (var key in obj) if (Object.prototype.hasOwnProperty.call(obj, key)) keys.push(key);
+    for (var key in obj) if (hasOwnProperty.call(obj, key)) keys.push(key);
     return keys;
   };
 
@@ -476,12 +477,18 @@
   _.isUndefined = function(obj) {
     return typeof obj == 'undefined';
   };
+  
+  // have to define isNumber before _.each will work in IE
+  _.isNumber = function(obj) {
+    return Object.prototype.toString.call(obj) == '[object Number]';
+  };
 
-  // Define the isArray, isDate, isFunction, isNumber, isRegExp, and
+  // Define the isArray, isDate, isFunction, isRegExp, and
   // isString functions based on their toString identifiers.
-  _.each(['Array', 'Date', 'Function', 'Number', 'RegExp', 'String'], function(type) {
+  _.each(['Array', 'Date', 'Function', 'RegExp', 'String'], function(type) {
+	var toString = Object.prototype.toString, typeString = '[object ' + type + ']';
     _['is' + type] = function(obj) {
-      return Object.prototype.toString.call(obj) == '[object ' + type + ']';
+      return toString.call(obj) == typeString;
     };
   });
 
@@ -556,24 +563,28 @@
 
   // Add all of the Underscore functions to the wrapper object.
   _.each(_.functions(_), function(name) {
+    var unshift = Array.prototype.unshift,
+      method = _[name];
     wrapper.prototype[name] = function() {
-      Array.prototype.unshift.call(arguments, this._wrapped);
-      return result(_[name].apply(_, arguments), this._chain);
+      unshift.call(arguments, this._wrapped);
+      return result(method.apply(_, arguments), this._chain);
     };
   });
 
   // Add all mutator Array functions to the wrapper.
   _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+    var method = Array.prototype[name];
     wrapper.prototype[name] = function() {
-      Array.prototype[name].apply(this._wrapped, arguments);
+      method.apply(this._wrapped, arguments);
       return result(this._wrapped, this._chain);
     };
   });
 
   // Add all accessor Array functions to the wrapper.
   _.each(['concat', 'join', 'slice'], function(name) {
+    var method = Array.prototype[name];
     wrapper.prototype[name] = function() {
-      return result(Array.prototype[name].apply(this._wrapped, arguments), this._chain);
+      return result(method.apply(this._wrapped, arguments), this._chain);
     };
   });
 

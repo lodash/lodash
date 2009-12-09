@@ -30,6 +30,9 @@
   // Export the Underscore object for CommonJS.
   if (typeof exports !== 'undefined') exports._ = _;
 
+  // Create quick reference variables for speed access to Object.prototype.
+  var toString = Object.prototype.toString, hasOwnProperty = Object.prototype.hasOwnProperty;
+
   // Current version.
   _.VERSION = '0.5.0';
 
@@ -391,7 +394,6 @@
   /* ------------------------- Object Functions: ---------------------------- */
 
   // Retrieve the names of an object's properties.
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
   _.keys = function(obj) {
     if(_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
@@ -477,18 +479,19 @@
   _.isUndefined = function(obj) {
     return typeof obj == 'undefined';
   };
-  
-  // have to define isNumber before _.each will work in IE
+
+  // isNumber needs to be defined before the rest of the isType functions,
+  // because _.each uses it in IE (and we want to use _.each for the closure).
   _.isNumber = function(obj) {
-    return Object.prototype.toString.call(obj) == '[object Number]';
+    return toString.call(obj) == '[object Number]';
   };
 
-  // Define the isArray, isDate, isFunction, isRegExp, and
-  // isString functions based on their toString identifiers.
+  // Define the isArray, isDate, isFunction, isRegExp, and isString functions
+  // based on their toString identifiers.
   _.each(['Array', 'Date', 'Function', 'RegExp', 'String'], function(type) {
-	var toString = Object.prototype.toString, typeString = '[object ' + type + ']';
+    var identifier = '[object ' + type + ']';
     _['is' + type] = function(obj) {
-      return toString.call(obj) == typeString;
+      return toString.call(obj) == identifier;
     };
   });
 
@@ -563,8 +566,7 @@
 
   // Add all of the Underscore functions to the wrapper object.
   _.each(_.functions(_), function(name) {
-    var unshift = Array.prototype.unshift,
-      method = _[name];
+    var method = _[name], unshift = Array.prototype.unshift;
     wrapper.prototype[name] = function() {
       unshift.call(arguments, this._wrapped);
       return result(method.apply(_, arguments), this._chain);

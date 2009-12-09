@@ -5,31 +5,6 @@
   var objects = _.map(numbers, function(n){ return {num : n}; });
   var randomized = _.sortBy(numbers, function(){ return Math.random(); });
 
-  JSLitmus.test('_.isNumber()', function() {
-    _.isNumber(123);
-    _.isNumber(null);
-    _.isNumber(NaN);        
-    _.isNumber(/foo/);    
-    _.isNumber("abc");
-  });
-
-  JSLitmus.test('_.isString()', function() {
-    _.isString(123);
-    _.isString(null);
-    _.isString(NaN);        
-    _.isString(/foo/);
-    _.isString("abc");
-  });  
-
-  JSLitmus.test('_.isDate()', function() {
-    _.isDate(123);
-    _.isDate(null);
-    _.isDate(NaN);        
-    _.isDate(/foo/);
-    _.isDate("abc");
-    _.isDate(new Date());  
-  });  
-
   JSLitmus.test('_.each()', function() {
     var timesTwo = [];
     _.each(numbers, function(num){ timesTwo.push(num * 2); });

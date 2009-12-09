@@ -424,6 +424,8 @@
     if (atype != btype) return false;
     // Basic equality test (watch out for coercions).
     if (a == b) return true;
+    // One is falsy and the other truthy.
+    if ((!a && b) || (a && !b)) return false;
     // One of them implements an isEqual()?
     if (a.isEqual) return a.isEqual(b);
     // Check dates' integer values.

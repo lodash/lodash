@@ -111,12 +111,12 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.5.0)</a></td>
-          <td><i>20kb, Uncompressed with Comments</i></td>
+          <td><a href="underscore.js">Development Version (0.5.1)</a></td>
+          <td><i>21kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.5.0)</a></td>
-          <td><i>2kb, Packed and Gzipped</i></td>
+          <td><a href="underscore-min.js">Production Version (0.5.1)</a></td>
+          <td><i>3kb, Packed and Gzipped</i></td>
         </tr>
       </table>
     </p>
@@ -206,7 +206,7 @@ _(lyrics).chain()
       <span class="methods"><a href="#keys">keys</a>, <a href="#values">values</a>,
       <a href="#functions">functions</a>, <a href="#extend">extend</a>, <a href="#clone">clone</a>,
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
-      <a href="#isArray">isArray</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
+      <a href="#isArray">isArray</a>, <a href="#isArguments">isArguments</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
       <a href="#isNumber">isNumber</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>
       <a href="#isNaN">isNaN</a>, <a href="#isNull">isNull</a>, 
       <a href="#isUndefined">isUndefined</a>
@@ -1048,6 +1048,13 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.5.1</b><br />
+        Added an <tt>_.isArguments</tt> function. Lots of little safety checks
+        and optimizations contributed by 
+        <a href="http://github.com/iamnoah/">Noah Sloan</a> and Andri Möll.
+      </p>
       
       <p>
         <b class="header">0.5.0</b><br />

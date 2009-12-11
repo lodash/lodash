@@ -206,7 +206,7 @@ _(lyrics).chain()
       <b>Objects</b>
       <br />
       <span class="methods"><a href="#keys">keys</a>, <a href="#values">values</a>,
-      <a href="#functions">functions</a>, <a href="#extend">extend</a>, <a href="#clone">clone</a>,
+      <a href="#functions">functions</a>, <a href="#extend">extend</a>, <a href="#clone">clone</a>, <a href="#tap">tap</a>,
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
       <a href="#isArray">isArray</a>, <a href="#isArguments">isArguments</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
       <a href="#isNumber">isNumber</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>
@@ -766,6 +766,22 @@ _.extend({name : 'moe'}, {age : 50});
       <pre>
 _.clone({name : 'moe'});
 =&gt; {name : 'moe'};
+</pre>
+
+      <p id="tap">
+        <b class="header">tap</b><code>_.tap(object, interceptor)</code>
+        <br />
+        Invokes <b>interceptor</b> with the <b>object</b>, and then returns <b>object</b>. 
+        The primary purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
+      </p>
+      <pre>
+_([1,2,3,200]).chain().
+  select(function(num) { return num % 2 == 0; }).
+  tap(console.log).
+  map(function(num) { return num * num }).
+  value();
+=&gt; [2, 200]
+=&gt; [4, 40000]
 </pre>
 
       <p id="isEqual">

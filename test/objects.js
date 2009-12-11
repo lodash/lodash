@@ -17,7 +17,7 @@ $(document).ready(function() {
     "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
     "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
     "methods", "min", "noConflict", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
-    "size", "some", "sortBy", "sortedIndex", "tail", "template", "toArray", "uniq",
+    "size", "some", "sortBy", "sortedIndex", "tail", "tap", "template", "toArray", "uniq",
     "uniqueId", "values", "without", "wrap", "zip"];
     ok(_(expected).isEqual(_.methods(_)), 'provides a sorted list of functions');
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
@@ -131,4 +131,18 @@ $(document).ready(function() {
     ok(_.isUndefined(undefined), 'undefined is undefined');
   });
 
+  test("objects: tap", function() {
+    var intercepted = null;
+    var interceptor = function(obj) { intercepted = obj; };
+    var returned = _.tap(1, interceptor);
+    equals(intercepted, 1, "passes tapped object to interceptor");
+    equals(returned, 1, "returns tapped object");
+
+    returned = _([1,2,3]).chain().
+      map(function(n){ return n * 2; }).
+      max().
+      tap(interceptor).
+      value();
+    ok(returned == 6 && intercepted == 6, 'can use tapped objects in a chain');
+  });
 });

@@ -428,6 +428,13 @@
     return _.extend({}, obj);
   };
 
+  // Invokes interceptor with the obj, and then returns obj.
+  // The primary purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
+  _.tap = function(obj, interceptor) {
+    interceptor(obj);
+    return obj;
+  };
+
   // Perform a deep comparison to check if two objects are equal.
   _.isEqual = function(a, b) {
     // Check object identity.
@@ -474,9 +481,39 @@
     return !!(obj && obj.nodeType == 1);
   };
 
+  // Is a given value an array?
+  _.isArray = function(obj) {
+    return obj && obj.concat && obj.unshift;
+  };
+
   // Is a given variable an arguments object?
   _.isArguments = function(obj) {
     return obj && _.isNumber(obj.length) && !_.isArray(obj) && !propertyIsEnumerable.call(obj, 'length');
+  };
+
+  // Is a given value a function?
+  _.isFunction = function(obj) {
+    return obj && obj.constructor && obj.call && obj.apply;
+  };
+
+  // Is a given value a string?
+  _.isString = function(obj) {
+    return obj === '' || (obj && obj.charCodeAt && obj.substr);
+  };
+
+  // Is a given value a number?
+  _.isNumber = function(obj) {
+    return toString.call(obj) === '[object Number]';
+  };
+
+  // Is a given value a date?
+  _.isDate = function(obj) {
+    return obj && obj.getTimezoneOffset && obj.setUTCFullYear;
+  };
+
+  // Is the given value a regular expression?
+  _.isRegExp = function(obj) {
+    return obj && obj.test && obj.exec && (obj.ignoreCase || obj.ignoreCase === false);
   };
 
   // Is the given value NaN -- this one is interesting. NaN != NaN, and
@@ -494,23 +531,6 @@
   _.isUndefined = function(obj) {
     return typeof obj == 'undefined';
   };
-
-  // Invokes interceptor with the obj, and then returns obj. 
-  // The primary purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
-  _.tap = function(obj, interceptor) {
-    interceptor(obj);
-    return obj;
-  }
-
-  // Define the isArray, isDate, isFunction, isNumber, isRegExp, and isString
-  // functions based on their toString identifiers.
-  var types = ['Array', 'Date', 'Function', 'Number', 'RegExp', 'String'];
-  for (var i=0, l=types.length; i<l; i++) {
-    (function() {
-      var identifier = '[object ' + types[i] + ']';
-      _['is' + types[i]] = function(obj) { return toString.call(obj) == identifier; };
-    })();
-  }
 
   /* -------------------------- Utility Functions: -------------------------- */
 

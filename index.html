@@ -113,11 +113,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.5.1)</a></td>
+          <td><a href="underscore.js">Development Version (0.5.2)</a></td>
           <td><i>21kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.5.1)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.5.2)</a></td>
           <td><i>3kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -1066,6 +1066,22 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.5.2</b><br />
+        New implementations of <tt>isArray</tt>, <tt>isDate</tt>, <tt>isFunction</tt>, 
+        <tt>isNumber</tt>, <tt>isRegExp</tt>, and <tt>isString</tt>, thanks to 
+        a suggestion from 
+        <a href="http://www.broofa.com/">Robert Kieffer</a>. 
+        Instead of doing <tt>Object#toString</tt>
+        comparisons, they now check for expected properties, which is less safe, 
+        but more than an order of magnitude faster. Most other Underscore 
+        functions saw minor speed improvements as a result. 
+        <a href="http://dolzhenko.org/">Evgeniy Dolzhenko</a>
+        contributed <tt>_.tap</tt>, 
+        <a href="http://ruby-doc.org/core-1.9/classes/Object.html#M000191">similar to Ruby 1.9's</a>, 
+        which is handy for injecting side effects (like logging) into chained calls.
+      </p>
       
       <p>
         <b class="header">0.5.1</b><br />

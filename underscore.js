@@ -226,7 +226,7 @@
     if (iterable.toArray)         return iterable.toArray();
     if (_.isArray(iterable))      return iterable;
     if (_.isArguments(iterable))  return slice.call(iterable);
-    return _.map(iterable, function(val){ return val; });
+    return _.values(iterable);
   };
 
   // Return the number of elements in an object.

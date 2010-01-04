@@ -38,7 +38,7 @@
       propertyIsEnumerable  = Object.prototype.propertyIsEnumerable;
 
   // Current version.
-  _.VERSION = '0.5.2';
+  _.VERSION = '0.5.3';
 
   // ------------------------ Collection Functions: ---------------------------
 

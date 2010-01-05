@@ -38,7 +38,7 @@
       propertyIsEnumerable  = Object.prototype.propertyIsEnumerable;
 
   // Current version.
-  _.VERSION = '0.5.3';
+  _.VERSION = '0.5.4';
 
   // ------------------------ Collection Functions: ---------------------------
 
@@ -561,19 +561,19 @@
 
   // JavaScript templating a-la ERB, pilfered from John Resig's
   // "Secrets of the JavaScript Ninja", page 83.
+  // Single-quote fix from Rick Strahl's version.
   _.template = function(str, data) {
     var fn = new Function('obj',
       'var p=[],print=function(){p.push.apply(p,arguments);};' +
       'with(obj){p.push(\'' +
-      str
-        .replace(/[\r\t\n]/g, " ")
-        .split("<%").join("\t")
-        .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-        .replace(/\t=(.*?)%>/g, "',$1,'")
-        .split("\t").join("');")
-        .split("%>").join("p.push('")
-        .split("\r").join("\\'")
-    + "');}return p.join('');");
+      str.replace(/[\r\t\n]/g, " ")
+         .replace(/'(?=[^%]*%>)/g,"\t")
+         .split("'").join("\\'")
+         .split("\t").join("'")
+         .replace(/<%=(.+?)%>/g, "',$1,'")
+         .split("<%").join("');")
+         .split("%>").join("p.push('")
+         + "');}return p.join('');");
     return data ? fn(data) : fn;
   };
 

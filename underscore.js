@@ -38,7 +38,7 @@
       propertyIsEnumerable  = Object.prototype.propertyIsEnumerable;
 
   // Current version.
-  _.VERSION = '0.5.4';
+  _.VERSION = '0.5.5';
 
   // ------------------------ Collection Functions: ---------------------------
 
@@ -600,8 +600,9 @@
   _.each(_.functions(_), function(name) {
     var method = _[name];
     wrapper.prototype[name] = function() {
-      unshift.call(arguments, this._wrapped);
-      return result(method.apply(_, arguments), this._chain);
+      var args = _.toArray(arguments);
+      unshift.call(args, this._wrapped);
+      return result(method.apply(_, args), this._chain);
     };
   });
 

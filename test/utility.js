@@ -39,8 +39,23 @@ $(document).ready(function() {
     result = fancyTemplate({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
     equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
 
+    var custom = _.template({
+    	template: "<ul>{{ for (key in people) { }}<li>{{= people[key] }}</li>{{ } }}</ul>",
+    	start: "{{",	end: "}}",
+    	interpolate: /\{\{=(.+?)\}\}/g
+	});
+    result = custom({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
+    equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
+
     var quoteTemplate = _.template("It's its, not it's");
     equals(quoteTemplate({}), "It's its, not it's");
+
+    var customQuote = _.template({
+    	template: "It's its, not it's",
+    	start: "{{",	end: "}}",
+    	interpolate: /\{\{=(.+?)\}\}/g
+	});
+    equals(customQuote({}), "It's its, not it's");
   });
 
 });

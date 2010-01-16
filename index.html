@@ -994,6 +994,11 @@ _.uniqueId('contact_');
         variables. If you're writing a one-off, you can pass the <b>context</b>
         object as the second parameter to <b>template</b> in order to render
         immediately instead of returning a template function.
+        <br />
+        If the <i>&lt;% &hellip; %&gt;</i> syntax is not convenient because 
+        your templating languages assigns special meaning to it, the delimeters
+        can be customized by passing an object as the first argument. See the
+        code sample below for options.
       </p>
       <pre>
 var compiled = _.template("hello: &lt;%= name %&gt;");
@@ -1002,6 +1007,15 @@ compiled({name : 'moe'});
 
 var list = "&lt;% _.each(people, function(name) { %&gt; &lt;li&gt;&lt;%= name %&gt;&lt;/li&gt; &lt;% }); %&gt;";
 _.template(list, {people : ['moe', 'curly', 'larry']});
+=&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"
+
+var custom = "{{ _.each(people, function(name) { }} &lt;li&gt;{{= name }}&lt;/li&gt; {{ }); }}";
+_.template({
+	template: custom,
+	start: '{{', // the code start delimeter
+	end: '}}', // the code end delimeter
+	interpolate: /\{\{=(.+?)\}\}/g // a regex with 1 capture group for the var name
+}, {people : ['moe', 'curly', 'larry']});
 =&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"
 </pre>
 

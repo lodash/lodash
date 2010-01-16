@@ -563,16 +563,24 @@
   // "Secrets of the JavaScript Ninja", page 83.
   // Single-quote fix from Rick Strahl's version.
   _.template = function(str, data) {
+	var start = '<%', end = '%>',
+	  interpolate = /<%=(.+?)%>/g;
+	if(str && !_.isString(str)) {
+	  start = str.start || start;
+	  end = str.end || end;
+	  interpolate = str.interpolate || interpolate;  		
+	  str = str.template;
+	}
     var fn = new Function('obj',
       'var p=[],print=function(){p.push.apply(p,arguments);};' +
       'with(obj){p.push(\'' +
       str.replace(/[\r\t\n]/g, " ")
-         .replace(/'(?=[^%]*%>)/g,"\t")
+         .replace(new RegExp("'(?=[^"+end[0]+"]*"+end+")","g"),"\t")
          .split("'").join("\\'")
          .split("\t").join("'")
-         .replace(/<%=(.+?)%>/g, "',$1,'")
-         .split("<%").join("');")
-         .split("%>").join("p.push('")
+         .replace(interpolate, "',$1,'")
+         .split(start).join("');")
+         .split(end).join("p.push('")
          + "');}return p.join('');");
     return data ? fn(data) : fn;
   };

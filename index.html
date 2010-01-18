@@ -111,11 +111,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.5.5)</a></td>
+          <td><a href="underscore.js">Development Version (0.5.6)</a></td>
           <td><i>22kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.5.5)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.5.6)</a></td>
           <td><i>3kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -979,8 +979,7 @@ result;
       </p>
       <pre>
 _.uniqueId('contact_');
-=&gt; 'contact_104'
-</pre>
+=&gt; 'contact_104'</pre>
 
       <p id="template">
         <b class="header">template</b><code>_.template(templateString, [context])</code>
@@ -988,17 +987,12 @@ _.uniqueId('contact_');
         Compiles JavaScript templates into functions that can be evaluated
         for rendering. Useful for rendering complicated bits of HTML from JSON
         data sources. Template functions can both interpolate variables, using<br />
-        <i>&lt;%= &hellip; %&gt;</i>, as well as execute arbitrary JavaScript code, with
-        <i>&lt;% &hellip; %&gt;</i>. When you evaluate a template function, pass in a
+        <tt>&lt;%= &hellip; %&gt;</tt>, as well as execute arbitrary JavaScript code, with
+        <tt>&lt;% &hellip; %&gt;</tt>. When you evaluate a template function, pass in a
         <b>context</b> object that has properties corresponding to the template's free
         variables. If you're writing a one-off, you can pass the <b>context</b>
         object as the second parameter to <b>template</b> in order to render
         immediately instead of returning a template function.
-        <br />
-        If the <i>&lt;% &hellip; %&gt;</i> syntax is not convenient because 
-        your templating languages assigns special meaning to it, the delimeters
-        can be customized by passing an object as the first argument. See the
-        code sample below for options.
       </p>
       <pre>
 var compiled = _.template("hello: &lt;%= name %&gt;");
@@ -1007,17 +1001,28 @@ compiled({name : 'moe'});
 
 var list = "&lt;% _.each(people, function(name) { %&gt; &lt;li&gt;&lt;%= name %&gt;&lt;/li&gt; &lt;% }); %&gt;";
 _.template(list, {people : ['moe', 'curly', 'larry']});
-=&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"
+=&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"</pre>
 
-var custom = "{{ _.each(people, function(name) { }} &lt;li&gt;{{= name }}&lt;/li&gt; {{ }); }}";
-_.template({
-	template: custom,
-	start: '{{', // the code start delimeter
-	end: '}}', // the code end delimeter
-	interpolate: /\{\{=(.+?)\}\}/g // a regex with 1 capture group for the var name
-}, {people : ['moe', 'curly', 'larry']});
-=&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"
-</pre>
+      <p>
+        If ERB-style delimiters aren't your cup of tea, you can change Underscore's
+        template settings to use different symbols to set off interpolated code.
+        Define <b>start</b> and <b>end</b> tokens, and an <b>interpolate</b> regex
+        to match expressions that should be evaluated and inserted. For example,
+        to perform 
+        <a href="http://github.com/janl/mustache.js#readme">Mustache.js</a> 
+        style templating:
+      </p>
+      
+      <pre>
+_.templateSettings = {
+  start       : '{{',
+  end         : '}}',
+  interpolate : /\{\{(.+?)\}\}/g
+};
+        
+var template = _.template("Hello {{ name }}!");
+template({name : "Mustache"});
+=&gt; "Hello Mustache!"</pre>
 
       <h2>Chaining</h2>
 
@@ -1078,6 +1083,12 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">0.5.6</b><br />
+        Customizable delimiters for <tt>_.template</tt>, contributed by
+        <a href="http://github.com/iamnoah">Noah Sloan</a>.
+      </p>
       
       <p>
         <b class="header">0.5.5</b><br />

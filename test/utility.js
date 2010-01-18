@@ -39,23 +39,30 @@ $(document).ready(function() {
     result = fancyTemplate({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
     equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
 
-    var custom = _.template({
-    	template: "<ul>{{ for (key in people) { }}<li>{{= people[key] }}</li>{{ } }}</ul>",
-    	start: "{{",	end: "}}",
-    	interpolate: /\{\{=(.+?)\}\}/g
-	});
-    result = custom({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
-    equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
-
     var quoteTemplate = _.template("It's its, not it's");
     equals(quoteTemplate({}), "It's its, not it's");
 
-    var customQuote = _.template({
-    	template: "It's its, not it's",
-    	start: "{{",	end: "}}",
-    	interpolate: /\{\{=(.+?)\}\}/g
-	});
+    _.templateSettings = {
+      start       : '{{',
+      end         : '}}',
+      interpolate : /\{\{=(.+?)\}\}/g
+    };
+
+    var custom = _.template("<ul>{{ for (key in people) { }}<li>{{= people[key] }}</li>{{ } }}</ul>");
+    result = custom({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
+    equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
+
+    var customQuote = _.template("It's its, not it's");
     equals(customQuote({}), "It's its, not it's");
+
+    _.templateSettings = {
+      start       : '{{',
+      end         : '}}',
+      interpolate : /\{\{(.+?)\}\}/g
+    };
+
+    var mustache = _.template("Hello {{planet}}!");
+    equals(mustache({planet : "World"}), "Hello World!", "can mimic mustache.js");
   });
 
 });

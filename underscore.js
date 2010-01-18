@@ -38,7 +38,7 @@
       propertyIsEnumerable  = Object.prototype.propertyIsEnumerable;
 
   // Current version.
-  _.VERSION = '0.5.5';
+  _.VERSION = '0.5.6';
 
   // ------------------------ Collection Functions: ---------------------------
 
@@ -559,28 +559,29 @@
     return prefix ? prefix + id : id;
   };
 
+  // By default, Underscore uses ERB-style template delimiters, change the
+  // following template settings to use alternative delimiters.
+  _.templateSettings = {
+    start       : '<%',
+    end         : '%>',
+    interpolate : /<%=(.+?)%>/g
+  };
+
   // JavaScript templating a-la ERB, pilfered from John Resig's
   // "Secrets of the JavaScript Ninja", page 83.
   // Single-quote fix from Rick Strahl's version.
   _.template = function(str, data) {
-	var start = '<%', end = '%>',
-	  interpolate = /<%=(.+?)%>/g;
-	if(str && !_.isString(str)) {
-	  start = str.start || start;
-	  end = str.end || end;
-	  interpolate = str.interpolate || interpolate;  		
-	  str = str.template;
-	}
+    var c  = _.templateSettings;
     var fn = new Function('obj',
       'var p=[],print=function(){p.push.apply(p,arguments);};' +
       'with(obj){p.push(\'' +
       str.replace(/[\r\t\n]/g, " ")
-         .replace(new RegExp("'(?=[^"+end[0]+"]*"+end+")","g"),"\t")
+         .replace(new RegExp("'(?=[^"+c.end[0]+"]*"+c.end+")","g"),"\t")
          .split("'").join("\\'")
          .split("\t").join("'")
-         .replace(interpolate, "',$1,'")
-         .split(start).join("');")
-         .split(end).join("p.push('")
+         .replace(c.interpolate, "',$1,'")
+         .split(c.start).join("');")
+         .split(c.end).join("p.push('")
          + "');}return p.join('');");
     return data ? fn(data) : fn;
   };

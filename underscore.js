@@ -1,10 +1,10 @@
 // Underscore.js
-// (c) 2009 Jeremy Ashkenas, DocumentCloud Inc.
+// (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
 // Underscore is freely distributable under the terms of the MIT license.
 // Portions of Underscore are inspired by or borrowed from Prototype.js,
 // Oliver Steele's Functional, and John Resig's Micro-Templating.
 // For all details and documentation:
-// http://documentcloud.github.com/underscore/
+// http://documentcloud.github.com/underscore
 
 (function() {
 
@@ -38,7 +38,7 @@
       propertyIsEnumerable  = Object.prototype.propertyIsEnumerable;
 
   // Current version.
-  _.VERSION = '0.5.6';
+  _.VERSION = '0.5.7';
 
   // ------------------------ Collection Functions: ---------------------------
 

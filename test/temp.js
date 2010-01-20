@@ -8,18 +8,20 @@
   var objects = _.map(numbers, function(n){ return {num : n}; });
   var randomized = _.sortBy(numbers, function(){ return Math.random(); });
 
-  JSLitmus.test('_.each()', function() {
-    var timesTwo = [];
-    _.each(numbers, function(num){ timesTwo.push(num * 2); });
-    return timesTwo;
+  JSLitmus.test('_.isNumber', function() {
+    return _.isNumber(1000)
   });
 
-  JSLitmus.test('_.isString', function() {
-    return _.isString(str);
+  JSLitmus.test('_.newIsNumber', function() {
+    return _.newIsNumber(1000)
   });
 
-  JSLitmus.test('_.isStringNew', function() {
-    return _.isStringNew(str);
+  JSLitmus.test('_.isNumber(NaN)', function() {
+    return _.isNumber(NaN)
+  });
+
+  JSLitmus.test('_.newIsNumber(NaN)', function() {
+    return _.newIsNumber(NaN)
   });
 
 })();

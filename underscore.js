@@ -503,7 +503,7 @@
 
   // Is a given value a number?
   _.isNumber = function(obj) {
-    return toString.call(obj) === '[object Number]';
+    return (obj === +obj) || (toString.call(obj) === '[object Number]');
   };
 
   // Is a given value a date?

@@ -73,7 +73,9 @@ $(document).ready(function() {
 
   test("objects: isArguments", function() {
     var args = (function(){ return arguments; })(1, 2, 3);
-    ok(_.isArguments(args), 'the arguments object is an arguments object');
+    ok(!_.isArguments('string'), 'a string is not an arguments object');
+    ok(!_.isArguments(_.isArguments), 'a function is not an arguments object');
+    ok(_.isArguments(args), 'but the arguments object is an arguments object');
     ok(!_.isArguments(_.toArray(args)), 'but not when it\'s converted into an array');
     ok(!_.isArguments([1,2,3]), 'and not vanilla arrays.');
   });
@@ -89,8 +91,12 @@ $(document).ready(function() {
   });
 
   test("objects: isNumber", function() {
+    ok(!_.isNumber('string'), 'a string is not a number');
     ok(!_.isNumber(arguments), 'the arguments object is not a number');
+    ok(!_.isNumber(undefined), 'undefined is not a number');
     ok(_.isNumber(3 * 4 - 7 / 10), 'but numbers are');
+    ok(_.isNumber(NaN), 'NaN is a number');
+    ok(_.isNumber(Infinity), 'Infinity is a number');
   });
 
   test("objects: isFunction", function() {

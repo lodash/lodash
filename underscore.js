@@ -432,10 +432,13 @@
     return _.filter(_.keys(obj), function(key){ return _.isFunction(obj[key]); }).sort();
   };
 
-  // Extend a given object with all of the properties in a source object.
-  _.extend = function(destination, source) {
-    for (var property in source) destination[property] = source[property];
-    return destination;
+  // Extend a given object with all the properties in given object(s)
+  _.extend = function(obj) {
+    var prop;
+    each(_.rest(arguments), function (source) {
+      for (prop in source) obj[prop] = source[prop];  
+    });
+    return obj;
   };
 
   // Create a (shallow-cloned) duplicate of an object.

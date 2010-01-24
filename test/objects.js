@@ -25,9 +25,14 @@ $(document).ready(function() {
   });
 
   test("objects: extend", function() {
-    var source = {name : 'moe'}, dest = {age : 50};
-    _.extend(dest, source);
-    equals(dest.name, 'moe', 'can extend an object with the attributes of another');
+    var result;
+    equals(_.extend({}, {a:'b'}).a, 'b', 'can extend an object with the attributes of another');
+    equals(_.extend({a:'x'}, {a:'b'}).a, 'b', 'properties in source override destination');
+    equals(_.extend({x:'x'}, {a:'b'}).x, 'x', 'properties not in source dont get overriden');
+    result = _.extend({x:'x'}, {a:'a'}, {b:'b'});
+    ok(_.isEqual(result, {x:'x', a:'a', b:'b'}), 'can extend from multiple source objects');
+    result = _.extend({x:'x'}, {a:'a', x:2}, {a:'b'});
+    ok(_.isEqual(result, {x:2, a:'b'}), 'extending from multiple source objects last property trumps');
   });
 
   test("objects: clone", function() {

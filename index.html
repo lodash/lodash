@@ -1053,6 +1053,19 @@ _([1, 2, 3]).value();
 =&gt; [1, 2, 3]
 </pre>
 
+      <h2 id="duck_typing">Duck Typing</h2>
+      
+      <p>
+        The <b>isType</b> (<tt>isArray</tt>, <tt>isFunction</tt>, <tt>isString</tt> ...) family of type-checking
+        functions use property detection to do their work, which, although
+        orders of magnitude faster than the alternative, isn't entirely safe when dealing 
+        with objects that are used as hashes, where arbitrary strings are being 
+        set for the keys. It's entirely possible for an object to masquerade as 
+        another type, if you're setting properties with names like "concat" and 
+        "charCodeAt". So be aware.
+      </p>
+      
+
       <h2>Links &amp; Suggested Reading</h2>
       
       <p>

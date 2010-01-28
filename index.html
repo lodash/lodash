@@ -111,11 +111,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (0.5.7)</a></td>
+          <td><a href="underscore.js">Development Version (0.5.8)</a></td>
           <td><i>22kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (0.5.7)</a></td>
+          <td><a href="underscore-min.js">Production Version (0.5.8)</a></td>
           <td><i>3kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -1098,9 +1098,18 @@ _([1, 2, 3]).value();
       <h2>Change Log</h2>
       
       <p>
+        <b class="header">0.5.8</b><br />
+        Fixed Underscore's collection functions to work on 
+        <a href="https://developer.mozilla.org/En/DOM/NodeList">NodeLists</a> and 
+        <a href="https://developer.mozilla.org/En/DOM/HTMLCollection">HTMLCollections</a>
+        once more, thanks to 
+        <a href="http://github.com/jmtulloss">Justin Tulloss</a>.
+      </p>
+      
+      <p>
         <b class="header">0.5.7</b><br />
         A safer implementation of <tt>_.isArguments</tt>, and a 
-        faster <tt>_.isNumber</tt>, thanks to 
+        faster <tt>_.isNumber</tt>,<br />thanks to 
         <a href="http://jedschmidt.com/">Jed Schmidt</a>.
       </p>
       

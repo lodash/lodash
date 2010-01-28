@@ -44,6 +44,12 @@ $(document).ready(function() {
 
     var doubled = _([1, 2, 3]).map(function(num){ return num * 2; });
     equals(doubled.join(', '), '2, 4, 6', 'OO-style doubled numbers');
+
+    var ids = _.map(document.body.childNodes, function(n){ return n.id; });
+    ok(_.include(ids, 'qunit-header'), 'can use collection methods on NodeLists');
+
+    var ids = _.map(document.images, function(n){ return n.id; });
+    ok(ids[0] == 'chart_image', 'can use collection methods on HTMLCollections');
   });
 
   test('collections: reduce', function() {

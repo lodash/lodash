@@ -66,9 +66,30 @@ $(document).ready(function() {
     ok(_.isEmpty(obj), 'deleting all the keys from an object empties it');
   });
 
+  // Setup remote variables for iFrame tests.
+  var iframe = document.createElement('iframe');
+  jQuery(iframe).appendTo(document.body);
+  var iDoc = iframe.contentDocument || iframe.contentWindow.document;
+  iDoc.write(
+    "<script>\
+      parent.iElement   = document.createElement('div');\
+      parent.iArguments = (function(){ return arguments; })(1, 2, 3);\
+      parent.iArray     = [1, 2, 3];\
+      parent.iString    = 'hello';\
+      parent.iNumber    = 100;\
+      parent.iFunction  = (function(){});\
+      parent.iDate      = new Date();\
+      parent.iRegExp    = /hi/;\
+      parent.iNaN       = NaN;\
+      parent.iNull      = null;\
+      parent.iUndefined = undefined;\
+    </script>"
+  );
+
   test("objects: isElement", function() {
     ok(!_.isElement('div'), 'strings are not dom elements');
     ok(_.isElement($('html')[0]), 'the html tag is a DOM element');
+    ok(_.isElement(iElement), 'even from another frame');
   });
 
   test("objects: isArguments", function() {
@@ -78,16 +99,19 @@ $(document).ready(function() {
     ok(_.isArguments(args), 'but the arguments object is an arguments object');
     ok(!_.isArguments(_.toArray(args)), 'but not when it\'s converted into an array');
     ok(!_.isArguments([1,2,3]), 'and not vanilla arrays.');
+    ok(_.isArguments(iArguments), 'event from another frame');
   });
 
   test("objects: isArray", function() {
     ok(!_.isArray(arguments), 'the arguments object is not an array');
     ok(_.isArray([1, 2, 3]), 'but arrays are');
+    ok(_.isArray(iArray), 'even from another frame');
   });
 
   test("objects: isString", function() {
     ok(!_.isString(document.body), 'the document body is not a string');
     ok(_.isString([1, 2, 3].join(', ')), 'but strings are');
+    ok(_.isString(iString), 'even from another frame');
   });
 
   test("objects: isNumber", function() {
@@ -97,23 +121,27 @@ $(document).ready(function() {
     ok(_.isNumber(3 * 4 - 7 / 10), 'but numbers are');
     ok(_.isNumber(NaN), 'NaN is a number');
     ok(_.isNumber(Infinity), 'Infinity is a number');
+    ok(_.isNumber(iNumber), 'even from another frame');
   });
 
   test("objects: isFunction", function() {
     ok(!_.isFunction([1, 2, 3]), 'arrays are not functions');
     ok(!_.isFunction('moe'), 'strings are not functions');
     ok(_.isFunction(_.isFunction), 'but functions are');
+    ok(_.isFunction(iFunction), 'even from another frame');
   });
 
   test("objects: isDate", function() {
     ok(!_.isDate(100), 'numbers are not dates');
     ok(!_.isDate({}), 'objects are not dates');
     ok(_.isDate(new Date()), 'but dates are');
+    ok(_.isDate(iDate), 'even from another frame');
   });
 
   test("objects: isRegExp", function() {
     ok(!_.isRegExp(_.identity), 'functions are not RegExps');
     ok(_.isRegExp(/identity/), 'but RegExps are');
+    ok(_.isRegExp(iRegExp), 'even from another frame');
   });
 
   test("objects: isNaN", function() {
@@ -121,12 +149,14 @@ $(document).ready(function() {
     ok(!_.isNaN(null), 'null is not NaN');
     ok(!_.isNaN(0), '0 is not NaN');
     ok(_.isNaN(NaN), 'but NaN is');
+    ok(_.isNaN(iNaN), 'even from another frame');
   });
 
   test("objects: isNull", function() {
     ok(!_.isNull(undefined), 'undefined is not null');
     ok(!_.isNull(NaN), 'NaN is not null');
     ok(_.isNull(null), 'but null is');
+    ok(_.isNull(iNull), 'even from another frame');
   });
 
   test("objects: isUndefined", function() {
@@ -135,6 +165,7 @@ $(document).ready(function() {
     ok(!_.isUndefined(false), 'false is defined');
     ok(_.isUndefined(), 'nothing is undefined');
     ok(_.isUndefined(undefined), 'undefined is undefined');
+    ok(_.isUndefined(iUndefined), 'even from another frame');
   });
 
   test("objects: tap", function() {

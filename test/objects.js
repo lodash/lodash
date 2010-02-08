@@ -85,6 +85,7 @@ $(document).ready(function() {
       parent.iUndefined = undefined;\
     </script>"
   );
+  iDoc.close();
 
   test("objects: isElement", function() {
     ok(!_.isElement('div'), 'strings are not dom elements');

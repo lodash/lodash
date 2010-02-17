@@ -11,7 +11,7 @@ $(document).ready(function() {
   });
 
   test("objects: functions", function() {
-    var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
+    var expected = ["alias", "all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
     "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
     "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
     "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
@@ -183,4 +183,19 @@ $(document).ready(function() {
       value();
     ok(returned == 6 && intercepted == 6, 'can use tapped objects in a chain');
   });
+  
+
+  test("objects: alias", function() {
+    _.alias('isEqual', 'isTheSame');
+    ok(_.isTheSame(9, 9), 'by default aliases methods on underscore');
+    delete _.isTheSame;
+    //
+    var o = { hi: function () {return 9;} };
+    _.alias(o, 'hi', 'ho');
+    equals(o.ho(), 9, 'can add an alias on another object');
+    _.alias(o, 'hi', 'there', 'sir');
+    ok(o.hi==o.sir, 'can add multiple aliases');
+  });
+  
+  
 });

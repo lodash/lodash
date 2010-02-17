@@ -90,10 +90,7 @@
   _.reduceRight = function(obj, memo, iterator, context) {
     if (obj && _.isFunction(obj.reduceRight)) return obj.reduceRight(_.bind(iterator, context), memo);
     var reversed = _.clone(_.toArray(obj)).reverse();
-    each(reversed, function(value, index) {
-      memo = iterator.call(context, memo, value, index, obj);
-    });
-    return memo;
+    return reduce(reversed, memo, iterator, context);
   };
 
   // Return the first value which passes a truth test.

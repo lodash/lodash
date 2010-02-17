@@ -17,7 +17,7 @@ $(document).ready(function() {
     "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
     "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
     "methods", "min", "noConflict", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
-    "size", "some", "sortBy", "sortedIndex", "tail", "tap", "template", "toArray", "uniq",
+    "size", "some", "sortBy", "sortedIndex", "tail", "tap", "template", "times", "toArray", "uniq",
     "uniqueId", "values", "without", "wrap", "zip"];
     ok(_(expected).isEqual(_.methods(_)), 'provides a sorted list of functions');
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};

@@ -589,6 +589,13 @@
   _.identity = function(value) {
     return value;
   };
+  
+  // run a function n times.  
+  // looks good in wrapper form:
+  //    _(3).times(alert)
+  _.times = function (n, fn, context) {
+    for (var i=0; i < n; i++)  fn.call(context, i)
+  };
 
   // Break out of the middle of an iteration.
   _.breakLoop = function() {

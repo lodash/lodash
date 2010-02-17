@@ -149,15 +149,12 @@
     return result;
   };
 
-  // Determine if a given value is included in the array or object,
-  // based on '==='.
+  // Determine if a given value is included in the array or object using '==='.
   _.include = function(obj, target) {
     if (obj && _.isFunction(obj.indexOf)) return _.indexOf(obj, target) != -1;
-    var found = false;
-    each(obj, function(value) {
-      if (found = value === target) _.breakLoop();
+    return !! _.detect(obj, function(value) {
+      return value === target;
     });
-    return found;
   };
 
   // Invoke a method with arguments on every item in a collection.

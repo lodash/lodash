@@ -164,5 +164,12 @@ $(document).ready(function() {
   test('collections: size', function() {
     equals(_.size({one : 1, two : 2, three : 3}), 3, 'can compute the size of an object');
   });
+  
+  test('collections: buildLookup', function() {
+    same(_.buildLookup([1,'hi']), {1:true, 'hi':true}, 'defaults values to true');
+    same(_.buildLookup([1,'hi'], 1), {1:1, 'hi':1}, 'can override value');
+    same(_.buildLookup({5:'five'}), {five: true}, 'making a map from an object uses its values');
+  });
+  
 
 });

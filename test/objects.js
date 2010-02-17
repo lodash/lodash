@@ -11,7 +11,7 @@ $(document).ready(function() {
   });
 
   test("objects: functions", function() {
-    var expected = ["alias", "all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
+    var expected = ["alias", "all", "any", "bind", "bindAll", "breakLoop", "buildLookup", "clone", "compact",
     "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
     "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
     "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isDate", "isElement", "isEmpty", "isEqual",

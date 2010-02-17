@@ -44,8 +44,9 @@
 
   // The cornerstone, an each implementation.
   // Handles objects implementing forEach, arrays, and raw objects.
+  // Delegates to JavaScript 1.6's native forEach if available.
   var each = 
-  _.each = function(obj, iterator, context) {
+  _.forEach = function(obj, iterator, context) {
     var index = 0;
     try {
       if (obj.forEach) {
@@ -62,8 +63,8 @@
     return obj;
   };
 
-  // Return the results of applying the iterator to each element. Use JavaScript
-  // 1.6's version of map, if possible.
+  // Return the results of applying the iterator to each element. 
+  // Delegates to JavaScript 1.6's native map if available.
   _.map = function(obj, iterator, context) {
     if (obj && _.isFunction(obj.map)) return obj.map(iterator, context);
     var results = [];
@@ -74,7 +75,8 @@
   };
 
   // Reduce builds up a single result from a list of values. Also known as
-  // inject, or foldl. Uses JavaScript 1.8's version of reduce, if possible.
+  // inject, or foldl.
+  // Delegates to JavaScript 1.8's native reduce if available.
   _.reduce = function(obj, memo, iterator, context) {
     if (obj && _.isFunction(obj.reduce)) return obj.reduce(_.bind(iterator, context), memo);
     each(obj, function(value, index, list) {
@@ -84,7 +86,7 @@
   };
 
   // The right-associative version of reduce, also known as foldr. Uses
-  // JavaScript 1.8's version of reduceRight, if available.
+  // Delegates to JavaScript 1.8's native reduceRight if available.
   _.reduceRight = function(obj, memo, iterator, context) {
     if (obj && _.isFunction(obj.reduceRight)) return obj.reduceRight(_.bind(iterator, context), memo);
     var reversed = _.clone(_.toArray(obj)).reverse();
@@ -106,9 +108,9 @@
     return result;
   };
 
-  // Return all the elements that pass a truth test. Use JavaScript 1.6's
-  // filter(), if it exists.
-  _.select = function(obj, iterator, context) {
+  // Return all the elements that pass a truth test. 
+  // Delegates to JavaScript 1.6's native filter if available.
+  _.filter = function(obj, iterator, context) {
     if (obj && _.isFunction(obj.filter)) return obj.filter(iterator, context);
     var results = [];
     each(obj, function(value, index, list) {
@@ -126,9 +128,9 @@
     return results;
   };
 
-  // Determine whether all of the elements match a truth test. Delegate to
-  // JavaScript 1.6's every(), if it is present.
-  _.all = function(obj, iterator, context) {
+  // Determine whether all of the elements match a truth test. 
+  // Delegates to JavaScript 1.6's native every if available.
+  _.every = function(obj, iterator, context) {
     iterator = iterator || _.identity;
     if (obj && _.isFunction(obj.every)) return obj.every(iterator, context);
     var result = true;
@@ -138,9 +140,9 @@
     return result;
   };
 
-  // Determine if at least one element in the object matches a truth test. Use
-  // JavaScript 1.6's some(), if it exists.
-  _.any = function(obj, iterator, context) {
+  // Determine if at least one element in the object matches a truth test.
+  // Delegates to JavaScript 1.6's native some if available.
+  _.some = function(obj, iterator, context) {
     iterator = iterator || _.identity;
     if (obj && _.isFunction(obj.some)) return obj.some(iterator, context);
     var result = false;
@@ -310,14 +312,15 @@
   // If the browser doesn't supply us with indexOf (I'm looking at you, MSIE),
   // we need this function. Return the position of the first occurence of an
   // item in an array, or -1 if the item is not included in the array.
+  // Delegates to JavaScript 1.8's native indexOf if available.
   _.indexOf = function(array, item) {
     if (array.indexOf) return array.indexOf(item);
     for (var i=0, l=array.length; i<l; i++) if (array[i] === item) return i;
     return -1;
   };
 
-  // Provide JavaScript 1.6's lastIndexOf, delegating to the native function,
-  // if possible.
+
+  // Delegates to JavaScript 1.6's native lastIndexOf if available.
   _.lastIndexOf = function(array, item) {
     if (array.lastIndexOf) return array.lastIndexOf(item);
     var i = array.length;
@@ -589,12 +592,12 @@
 
   // ------------------------------- Aliases ----------------------------------
 
-  _.forEach  = _.each;
+  _.each     = _.forEach;
   _.foldl    = _.inject       = _.reduce;
   _.foldr    = _.reduceRight;
-  _.filter   = _.select;
-  _.every    = _.all;
-  _.some     = _.any;
+  _.select   = _.filter;
+  _.all      = _.every;
+  _.any      = _.some;
   _.head     = _.first;
   _.tail     = _.rest;
   _.methods  = _.functions;

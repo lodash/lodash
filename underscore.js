@@ -403,7 +403,8 @@
   // ------------------------- Object Functions: ------------------------------
 
   // Retrieve the names of an object's properties.
-  _.keys = function(obj) {
+  // ECMA5 has Object.keys(obj) in webkit nightlies 
+  _.keys = Object.keys || function(obj) {
     if (_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
     for (var key in obj) if (hasOwnProperty.call(obj, key)) keys.push(key);

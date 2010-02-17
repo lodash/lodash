@@ -44,6 +44,7 @@
 
   // The cornerstone, an each implementation.
   // Handles objects implementing forEach, arrays, and raw objects.
+  var each = 
   _.each = function(obj, iterator, context) {
     var index = 0;
     try {
@@ -66,7 +67,7 @@
   _.map = function(obj, iterator, context) {
     if (obj && _.isFunction(obj.map)) return obj.map(iterator, context);
     var results = [];
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       results.push(iterator.call(context, value, index, list));
     });
     return results;
@@ -76,7 +77,7 @@
   // inject, or foldl. Uses JavaScript 1.8's version of reduce, if possible.
   _.reduce = function(obj, memo, iterator, context) {
     if (obj && _.isFunction(obj.reduce)) return obj.reduce(_.bind(iterator, context), memo);
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       memo = iterator.call(context, memo, value, index, list);
     });
     return memo;
@@ -87,7 +88,7 @@
   _.reduceRight = function(obj, memo, iterator, context) {
     if (obj && _.isFunction(obj.reduceRight)) return obj.reduceRight(_.bind(iterator, context), memo);
     var reversed = _.clone(_.toArray(obj)).reverse();
-    _.each(reversed, function(value, index) {
+    each(reversed, function(value, index) {
       memo = iterator.call(context, memo, value, index, obj);
     });
     return memo;
@@ -96,7 +97,7 @@
   // Return the first value which passes a truth test.
   _.detect = function(obj, iterator, context) {
     var result;
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       if (iterator.call(context, value, index, list)) {
         result = value;
         _.breakLoop();
@@ -110,7 +111,7 @@
   _.select = function(obj, iterator, context) {
     if (obj && _.isFunction(obj.filter)) return obj.filter(iterator, context);
     var results = [];
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       iterator.call(context, value, index, list) && results.push(value);
     });
     return results;
@@ -119,7 +120,7 @@
   // Return all the elements for which a truth test fails.
   _.reject = function(obj, iterator, context) {
     var results = [];
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       !iterator.call(context, value, index, list) && results.push(value);
     });
     return results;
@@ -131,7 +132,7 @@
     iterator = iterator || _.identity;
     if (obj && _.isFunction(obj.every)) return obj.every(iterator, context);
     var result = true;
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       if (!(result = result && iterator.call(context, value, index, list))) _.breakLoop();
     });
     return result;
@@ -143,7 +144,7 @@
     iterator = iterator || _.identity;
     if (obj && _.isFunction(obj.some)) return obj.some(iterator, context);
     var result = false;
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       if (result = iterator.call(context, value, index, list)) _.breakLoop();
     });
     return result;
@@ -154,7 +155,7 @@
   _.include = function(obj, target) {
     if (obj && _.isFunction(obj.indexOf)) return _.indexOf(obj, target) != -1;
     var found = false;
-    _.each(obj, function(value) {
+    each(obj, function(value) {
       if (found = value === target) _.breakLoop();
     });
     return found;
@@ -177,7 +178,7 @@
   _.max = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.max.apply(Math, obj);
     var result = {computed : -Infinity};
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       var computed = iterator ? iterator.call(context, value, index, list) : value;
       computed >= result.computed && (result = {value : value, computed : computed});
     });
@@ -188,7 +189,7 @@
   _.min = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.min.apply(Math, obj);
     var result = {computed : Infinity};
-    _.each(obj, function(value, index, list) {
+    each(obj, function(value, index, list) {
       var computed = iterator ? iterator.call(context, value, index, list) : value;
       computed < result.computed && (result = {value : value, computed : computed});
     });
@@ -356,7 +357,7 @@
   _.bindAll = function(obj) {
     var funcs = _.rest(arguments);
     if (funcs.length == 0) funcs = _.functions(obj);
-    _.each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
+    each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
     return obj;
   };
 
@@ -606,7 +607,7 @@
   };
 
   // Add all of the Underscore functions to the wrapper object.
-  _.each(_.functions(_), function(name) {
+  each(_.functions(_), function(name) {
     var method = _[name];
     wrapper.prototype[name] = function() {
       var args = _.toArray(arguments);
@@ -616,7 +617,7 @@
   });
 
   // Add all mutator Array functions to the wrapper.
-  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
     var method = Array.prototype[name];
     wrapper.prototype[name] = function() {
       method.apply(this._wrapped, arguments);
@@ -625,7 +626,7 @@
   });
 
   // Add all accessor Array functions to the wrapper.
-  _.each(['concat', 'join', 'slice'], function(name) {
+  each(['concat', 'join', 'slice'], function(name) {
     var method = Array.prototype[name];
     wrapper.prototype[name] = function() {
       return result(method.apply(this._wrapped, arguments), this._chain);

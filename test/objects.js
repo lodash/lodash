@@ -60,6 +60,8 @@ $(document).ready(function() {
     ok(_.isEmpty([]), '[] is empty');
     ok(!_.isEmpty({one : 1}), '{one : 1} is not empty');
     ok(_.isEmpty({}), '{} is empty');
+    ok(_.isEmpty(null), 'null is empty');
+    ok(_.isEmpty(), 'undefined is empty');
 
     var obj = {one : 1};
     delete obj.one;

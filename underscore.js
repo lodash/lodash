@@ -503,7 +503,9 @@
 
   // Is a given array or object empty?
   _.isEmpty = function(obj) {
-    return _.keys(obj).length == 0;
+    if (_.isArray(obj)) return obj.length===0;
+    for (var k in obj) return false;
+    return true;
   };
 
   // Is a given value a DOM element?

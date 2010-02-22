@@ -415,7 +415,7 @@
   // ------------------------- Object Functions: ------------------------------
 
   // Retrieve the names of an object's properties.
-  // ECMA5 has Object.keys(obj) in webkit nightlies 
+  // Delegates to ECMA5's native Object.keys
   _.keys = Object.keys || function(obj) {
     if (_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
@@ -526,7 +526,8 @@
   };
 
   // Is a given value an array?
-  _.isArray = function(obj) {
+  // Delegates to ECMA5's native Array.isArray
+  _.isArray = Array.isArray || function(obj) {
     return !!(obj && obj.concat && obj.unshift);
   };
 

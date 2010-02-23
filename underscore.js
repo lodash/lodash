@@ -7,7 +7,6 @@
 // http://documentcloud.github.com/underscore
 
 (function() {
-
   // ------------------------- Baseline setup ---------------------------------
 
   // Establish the root object, "window" in the browser, or "global" on the server.
@@ -16,21 +15,9 @@
   // Save the previous value of the "_" variable.
   var previousUnderscore = root._;
 
-  // If Underscore is called as a function, it returns a wrapped object that
-  // can be used OO-style. This wrapper holds altered versions of all the
-  // underscore functions. Wrapped objects may be chained.
-  var wrapper = function(obj) { this._wrapped = obj; };
-
   // Establish the object that gets thrown to break out of a loop iteration.
   var breaker = typeof StopIteration !== 'undefined' ? StopIteration : '__break__';
-
-  // Create a safe reference to the Underscore object for reference below.
-  var _ = function(obj) { return new wrapper(obj); };
-  root._ = _;
   
-  // Export the Underscore object for CommonJS.
-  if (typeof exports !== 'undefined') exports._ = _;
-
   // Save bytes in the minified (but not gzipped) version:
   var Array_Prototype = Array.prototype;
   
@@ -52,12 +39,21 @@
     native_some         = Array_Prototype.some,
     native_indexOf      = Array_Prototype.indexOf,
     native_lastIndexOf  = Array_Prototype.lastIndexOf,
-    native_isArray      = Array['isArray'],
+    native_isArray      = Array['isArray'],  // use [] notation since not in closure's externs
     native_keys         = Object['keys'];
+  
+  // Create a safe reference to the Underscore object for reference below.
+  var _ = function(obj) { return new wrapper(obj); };
+
+  // Export the Underscore object for CommonJS.
+  if (typeof exports !== 'undefined') exports._ = _;
+
+  // Export underscore to global scope.
+  root._ = _;
   
   // Current version.
   _.VERSION = '0.5.8';
-
+  
   // ------------------------ Collection Functions: ---------------------------
 
   // The cornerstone, an each implementation.
@@ -92,8 +88,7 @@
     return results;
   };
 
-  // Reduce builds up a single result from a list of values. Also known as
-  // inject, or foldl.
+  // Reduce builds up a single result from a list of values, aka inject, or foldl.
   // Delegates to JavaScript 1.8's native reduce if available.
   _.reduce = function(obj, memo, iterator, context) {
     if (obj.reduce === native_reduce) return obj.reduce(_.bind(iterator, context), memo);
@@ -645,6 +640,11 @@
 
   // ------------------------ Setup the OOP Wrapper: --------------------------
 
+  // If Underscore is called as a function, it returns a wrapped object that
+  // can be used OO-style. This wrapper holds altered versions of all the
+  // underscore functions. Wrapped objects may be chained.
+  var wrapper = function(obj) { this._wrapped = obj; };
+  
   // Helper function to continue chaining intermediate results.
   var result = function(obj, chain) {
     return chain ? _(obj).chain() : obj;

@@ -470,31 +470,6 @@
     return obj;
   };
 
-  // Alias a method on an object to another name(s).
-  // If the first argument is NOT an object, then the object is assumed to 
-  // be underscore.
-  // The first string argument is the existing method name, any following
-  // strings will be aliased to that name.  
-  // Returns the object for chainability.
-  //
-  // Examples:
-  //
-  // Alias isEquals to isSame and eql on underscore:
-  //    _.alias('isEqual', 'isSame', 'eql');
-  //
-  // Alias `toString` to `to_s` on a given object: 
-  //    _.alias({}, 'toString', 'to_s')
-  //
-  // Implementation: explicitly cast arguments to array as calling mutating
-  // array methods on arguments object has strange behavior (at least in FF 3.6) 
-  _.alias = function () {
-    var args = _.toArray(arguments), 
-        obj = (typeof args[0] === 'string')?  _ : args.shift(),
-        fn = obj[args.shift()];
-    each(args, function (alias) {  obj[alias] = fn;  });
-    return obj;
-  };
-
   // Perform a deep comparison to check if two objects are equal.
   _.isEqual = function(a, b) {
     // Check object identity.
@@ -658,15 +633,15 @@
 
   // ------------------------------- Aliases ----------------------------------
 
-  _.alias('forEach', 'each').
-    alias('reduce', 'foldl', 'inject').
-    alias('reduceRight', 'foldr').
-    alias('filter', 'select').
-    alias('every', 'all').
-    alias('some', 'any').
-    alias('first', 'head').
-    alias('rest', 'tail').
-    alias('functions', 'methods');
+  _.each     = _.forEach;
+  _.foldl    = _.inject       = _.reduce;
+  _.foldr    = _.reduceRight;
+  _.select   = _.filter;
+  _.all      = _.every;
+  _.any      = _.some;
+  _.head     = _.first;
+  _.tail     = _.rest;
+  _.methods  = _.functions;
 
   // ------------------------ Setup the OOP Wrapper: --------------------------
 

@@ -25,8 +25,9 @@
   var breaker = typeof StopIteration !== 'undefined' ? StopIteration : '__break__';
 
   // Create a safe reference to the Underscore object for reference below.
-  var _ = root._ = function(obj) { return new wrapper(obj); };
-
+  var _ = function(obj) { return new wrapper(obj); };
+  root._ = _;
+  
   // Export the Underscore object for CommonJS.
   if (typeof exports !== 'undefined') exports._ = _;
 

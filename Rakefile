@@ -13,7 +13,7 @@ task :build_advanced do
   # remove wrapping anonymous function as this messes with closure compiler
   # see
   # http://groups.google.com/group/closure-compiler-discuss/browse_thread/thread/b59b54c1a0073aa5
-  js.sub!('(function() {', '').chomp!("})();\n")
+  js.sub!('(function() {', '').chomp!("_.initWrapper();\n})();\n")
   compiler = Closure::Compiler.new \
     :compilation_level => 'ADVANCED_OPTIMIZATIONS', 
     :formatting => 'PRETTY_PRINT'

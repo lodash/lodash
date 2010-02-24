@@ -11,7 +11,7 @@ $(document).ready(function() {
   });
 
   test("objects: functions", function() {
-    var expected = ["alias", "all", "any", "bind", "bindAll", "breakLoop", "buildLookup", "clone", "compact",
+    var expected = ["all", "any", "bind", "bindAll", "breakLoop", "buildLookup", "clone", "compact",
     "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
     "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
     "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
@@ -19,7 +19,7 @@ $(document).ready(function() {
     "methods", "min", "noConflict", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
     "size", "some", "sortBy", "sortedIndex", "tail", "tap", "template", "times", "toArray", "uniq",
     "uniqueId", "values", "without", "wrap", "zip"];
-    ok(_(expected).isEqual(_.methods(_)), 'provides a sorted list of functions');
+    same(expected, _.methods(_), 'provides a sorted list of functions');
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
     ok(_.isEqual(['b', 'd'], _.functions(obj)), 'can grab the function names of any passed-in object');
   });
@@ -185,19 +185,4 @@ $(document).ready(function() {
       value();
     ok(returned == 6 && intercepted == 6, 'can use tapped objects in a chain');
   });
-  
-
-  test("objects: alias", function() {
-    _.alias('isEqual', 'isTheSame');
-    ok(_.isTheSame(9, 9), 'by default aliases methods on underscore');
-    delete _.isTheSame;
-    //
-    var o = { hi: function () {return 9;} };
-    _.alias(o, 'hi', 'ho');
-    equals(o.ho(), 9, 'can add an alias on another object');
-    _.alias(o, 'hi', 'there', 'sir');
-    ok(o.hi==o.sir, 'can add multiple aliases');
-  });
-  
-  
 });

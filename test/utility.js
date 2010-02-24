@@ -29,6 +29,17 @@ $(document).ready(function() {
     while(i++ < 100) ids.push(_.uniqueId());
     equals(_.uniq(ids).length, ids.length, 'can generate a globally-unique stream of ids');
   });
+  
+  test("utility: times", function() {
+    var vals = [];
+    _.times(3, function (i) { vals.push(i); });
+    ok(_.isEqual(vals, [0,1,2]), "is 0 indexed");
+    //
+    vals = [];
+    _(3).times(function (i) { vals.push(i); });
+    ok(_.isEqual(vals, [0,1,2]), "works as a wrapper");
+  });
+  
 
   test("utility: template", function() {
     var basicTemplate = _.template("<%= thing %> is gettin' on my noives!");

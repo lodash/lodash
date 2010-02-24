@@ -366,7 +366,7 @@
   _.bind = function(func, obj) {
     var args = _.rest(arguments, 2);
     return function() {
-      return func.apply(obj || root, args.concat(_.toArray(arguments)));
+      return func.apply(obj || {}, args.concat(_.toArray(arguments)));
     };
   };
 

@@ -45,20 +45,6 @@
     nativeIsArray      = Array.isArray,
     nativeKeys         = Object.keys;
 
-  // If Underscore is called as a function, it returns a wrapped object that
-  // can be used OO-style. This wrapper holds altered versions of all the
-  // underscore functions. Wrapped objects may be chained.
-  var wrapper = function(obj) { this._wrapped = obj; };
-
-  // A method to easily add functions to the OOP wrapper.
-  var addToWrapper = function(name, func) {
-    wrapper.prototype[name] = function() {
-      var args = _.toArray(arguments);
-      unshift.call(args, this._wrapped);
-      return result(func.apply(_, args), this._chain);
-    };
-  };
-
   // Create a safe reference to the Underscore object for reference below.
   var _ = function(obj) { return new wrapper(obj); };
 
@@ -645,9 +631,23 @@
 
   // ------------------------ Setup the OOP Wrapper: --------------------------
 
+  // If Underscore is called as a function, it returns a wrapped object that
+  // can be used OO-style. This wrapper holds altered versions of all the
+  // underscore functions. Wrapped objects may be chained.
+  var wrapper = function(obj) { this._wrapped = obj; };
+
   // Helper function to continue chaining intermediate results.
   var result = function(obj, chain) {
     return chain ? _(obj).chain() : obj;
+  };
+
+  // A method to easily add functions to the OOP wrapper.
+  var addToWrapper = function(name, func) {
+    wrapper.prototype[name] = function() {
+      var args = _.toArray(arguments);
+      unshift.call(args, this._wrapped);
+      return result(func.apply(_, args), this._chain);
+    };
   };
 
   // Add all of the Underscore functions to the wrapper object.

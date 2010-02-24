@@ -33,17 +33,17 @@
 
   // All native implementations we hope to use are declared here.
   var
-    native_forEach      = ArrayProto.forEach,
-    native_map          = ArrayProto.map,
-    native_reduce       = ArrayProto.reduce,
-    native_reduceRight  = ArrayProto.reduceRight,
-    native_filter       = ArrayProto.filter,
-    native_every        = ArrayProto.every,
-    native_some         = ArrayProto.some,
-    native_indexOf      = ArrayProto.indexOf,
-    native_lastIndexOf  = ArrayProto.lastIndexOf,
-    native_isArray      = Array['isArray'],  // use [] notation since not in closure's externs
-    native_keys         = Object['keys'];
+    nativeForEach      = ArrayProto.forEach,
+    nativeMap          = ArrayProto.map,
+    nativeReduce       = ArrayProto.reduce,
+    nativeReduceRight  = ArrayProto.reduceRight,
+    nativeFilter       = ArrayProto.filter,
+    nativeEvery        = ArrayProto.every,
+    nativeSome         = ArrayProto.some,
+    nativeIndexOf      = ArrayProto.indexOf,
+    nativeLastIndexOf  = ArrayProto.lastIndexOf,
+    nativeIsArray      = Array.isArray,
+    nativeKeys         = Object.keys;
 
   // Create a safe reference to the Underscore object for reference below.
   var _ = function(obj) { return _.buildWrapper(obj); };
@@ -66,7 +66,7 @@
   _.forEach = function(obj, iterator, context) {
     var index = 0;
     try {
-      if (obj.forEach === native_forEach) {
+      if (obj.forEach === nativeForEach) {
         obj.forEach(iterator, context);
       } else if (_.isNumber(obj.length)) {
         for (var i=0, l=obj.length; i<l; i++) iterator.call(context, obj[i], i, obj);
@@ -84,7 +84,7 @@
   // Return the results of applying the iterator to each element.
   // Delegates to JavaScript 1.6's native map if available.
   _.map = function(obj, iterator, context) {
-    if (obj.map === native_map) return obj.map(iterator, context);
+    if (obj.map === nativeMap) return obj.map(iterator, context);
     var results = [];
     each(obj, function(value, index, list) {
       results.push(iterator.call(context, value, index, list));
@@ -95,7 +95,7 @@
   // Reduce builds up a single result from a list of values, aka inject, or foldl.
   // Delegates to JavaScript 1.8's native reduce if available.
   _.reduce = function(obj, memo, iterator, context) {
-    if (obj.reduce === native_reduce) return obj.reduce(_.bind(iterator, context), memo);
+    if (obj.reduce === nativeReduce) return obj.reduce(_.bind(iterator, context), memo);
     each(obj, function(value, index, list) {
       memo = iterator.call(context, memo, value, index, list);
     });
@@ -105,7 +105,7 @@
   // The right-associative version of reduce, also known as foldr. Uses
   // Delegates to JavaScript 1.8's native reduceRight if available.
   _.reduceRight = function(obj, memo, iterator, context) {
-    if (obj.reduceRight === native_reduceRight) return obj.reduceRight(_.bind(iterator, context), memo);
+    if (obj.reduceRight === nativeReduceRight) return obj.reduceRight(_.bind(iterator, context), memo);
     var reversed = _.clone(_.toArray(obj)).reverse();
     return reduce(reversed, memo, iterator, context);
   };
@@ -125,7 +125,7 @@
   // Return all the elements that pass a truth test.
   // Delegates to JavaScript 1.6's native filter if available.
   _.filter = function(obj, iterator, context) {
-    if (obj.filter === native_filter) return obj.filter(iterator, context);
+    if (obj.filter === nativeFilter) return obj.filter(iterator, context);
     var results = [];
     each(obj, function(value, index, list) {
       iterator.call(context, value, index, list) && results.push(value);
@@ -146,7 +146,7 @@
   // Delegates to JavaScript 1.6's native every if available.
   _.every = function(obj, iterator, context) {
     iterator = iterator || _.identity;
-    if (obj.every === native_every) return obj.every(iterator, context);
+    if (obj.every === nativeEvery) return obj.every(iterator, context);
     var result = true;
     each(obj, function(value, index, list) {
       if (!(result = result && iterator.call(context, value, index, list))) _.breakLoop();
@@ -158,7 +158,7 @@
   // Delegates to JavaScript 1.6's native some if available.
   _.some = function(obj, iterator, context) {
     iterator = iterator || _.identity;
-    if (obj.some === native_some) return obj.some(iterator, context);
+    if (obj.some === nativeSome) return obj.some(iterator, context);
     var result = false;
     each(obj, function(value, index, list) {
       if (result = iterator.call(context, value, index, list)) _.breakLoop();
@@ -343,7 +343,7 @@
   // item in an array, or -1 if the item is not included in the array.
   // Delegates to JavaScript 1.8's native indexOf if available.
   _.indexOf = function(array, item) {
-    if (array.indexOf === native_indexOf) return array.indexOf(item);
+    if (array.indexOf === nativeIndexOf) return array.indexOf(item);
     for (var i=0, l=array.length; i<l; i++) if (array[i] === item) return i;
     return -1;
   };
@@ -351,7 +351,7 @@
 
   // Delegates to JavaScript 1.6's native lastIndexOf if available.
   _.lastIndexOf = function(array, item) {
-    if (array.lastIndexOf === native_lastIndexOf) return array.lastIndexOf(item);
+    if (array.lastIndexOf === nativeLastIndexOf) return array.lastIndexOf(item);
     var i = array.length;
     while (i--) if (array[i] === item) return i;
     return -1;
@@ -433,7 +433,7 @@
 
   // Retrieve the names of an object's properties.
   // Delegates to ECMA5's native Object.keys
-  _.keys = native_keys || function(obj) {
+  _.keys = nativeKeys || function(obj) {
     if (_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
     for (var key in obj) if (hasOwnProperty.call(obj, key)) keys.push(key);
@@ -519,7 +519,7 @@
 
   // Is a given value an array?
   // Delegates to ECMA5's native Array.isArray
-  _.isArray = native_isArray || function(obj) {
+  _.isArray = nativeIsArray || function(obj) {
     return !!(obj && obj.concat && obj.unshift);
   };
 

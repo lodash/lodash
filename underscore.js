@@ -645,10 +645,16 @@
   _.buildWrapper = function () { throw "Call _.initWrapper() to enable OO wrapping" }
   
   _.initWrapper = function () {
+    if (_._wrapper) return; // Already initialized
+      
     // If Underscore is called as a function, it returns a wrapped object that
     // can be used OO-style. This wrapper holds altered versions of all the
     // underscore functions. Wrapped objects may be chained.
     var wrapper = function(obj) { this._wrapped = obj; };
+    
+    // Make wrapper object public so user code can extend it.
+    // Otherwise, there is no way to modify its prototype
+    _._wrapper = wrapper;
     
     // Overwrite method called from _()
     _.buildWrapper = function (obj) { return new wrapper(obj) };
@@ -698,5 +704,6 @@
   }
   
   // For backwards compatability, init the OO wrapper
+  // the advanced minifying rake task will strip this out
   _.initWrapper();
 })();

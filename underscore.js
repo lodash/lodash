@@ -45,8 +45,13 @@
     nativeIsArray      = Array.isArray,
     nativeKeys         = Object.keys;
 
+  // If Underscore is called as a function, it returns a wrapped object that
+  // can be used OO-style. This wrapper holds altered versions of all the
+  // underscore functions. Wrapped objects may be chained.
+  var wrapper = function(obj) { this._wrapped = obj; };
+
   // Create a safe reference to the Underscore object for reference below.
-  var _ = function(obj) { return _.buildWrapper(obj); };
+  var _ = function(obj) { return new wrapper(obj); };
 
   // Export the Underscore object for CommonJS.
   if (typeof exports !== 'undefined') exports._ = _;
@@ -643,68 +648,48 @@
   _.methods  = _.functions;
 
   // ------------------------ Setup the OOP Wrapper: --------------------------
-  _.buildWrapper = function() { throw "Call _.initWrapper() to enable OO wrapping"; };
 
-  _.initWrapper = function() {
-    if (_._wrapper) return; // Already initialized
-
-    // If Underscore is called as a function, it returns a wrapped object that
-    // can be used OO-style. This wrapper holds altered versions of all the
-    // underscore functions. Wrapped objects may be chained.
-    var wrapper = function(obj) { this._wrapped = obj; };
-
-    // Make wrapper object public so user code can extend it.
-    // Otherwise, there is no way to modify its prototype
-    _._wrapper = wrapper;
-
-    // Overwrite method called from _()
-    _.buildWrapper = function (obj) { return new wrapper(obj); };
-
-    // Helper function to continue chaining intermediate results.
-    var result = function(obj, chain) {
-      return chain ? _(obj).chain() : obj;
-    };
-
-    // Add all of the Underscore functions to the wrapper object.
-    each(_.functions(_), function(name) {
-      var method = _[name];
-      wrapper.prototype[name] = function() {
-        var args = _.toArray(arguments);
-        unshift.call(args, this._wrapped);
-        return result(method.apply(_, args), this._chain);
-      };
-    });
-
-    // Add all mutator Array functions to the wrapper.
-    each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-      var method = ArrayProto[name];
-      wrapper.prototype[name] = function() {
-        method.apply(this._wrapped, arguments);
-        return result(this._wrapped, this._chain);
-      };
-    });
-
-    // Add all accessor Array functions to the wrapper.
-    each(['concat', 'join', 'slice'], function(name) {
-      var method = ArrayProto[name];
-      wrapper.prototype[name] = function() {
-        return result(method.apply(this._wrapped, arguments), this._chain);
-      };
-    });
-
-    // Start chaining a wrapped Underscore object.
-    wrapper.prototype.chain = function() {
-      this._chain = true;
-      return this;
-    };
-
-    // Extracts the result from a wrapped and chained object.
-    wrapper.prototype.value = function() {
-      return this._wrapped;
-    };
+  // Helper function to continue chaining intermediate results.
+  var result = function(obj, chain) {
+    return chain ? _(obj).chain() : obj;
   };
 
-  // For backwards compatability, init the OO wrapper
-  // the advanced minifying rake task will strip this out
-  _.initWrapper();
+  // Add all of the Underscore functions to the wrapper object.
+  each(_.functions(_), function(name) {
+    var method = _[name];
+    wrapper.prototype[name] = function() {
+      var args = _.toArray(arguments);
+      unshift.call(args, this._wrapped);
+      return result(method.apply(_, args), this._chain);
+    };
+  });
+
+  // Add all mutator Array functions to the wrapper.
+  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+    var method = ArrayProto[name];
+    wrapper.prototype[name] = function() {
+      method.apply(this._wrapped, arguments);
+      return result(this._wrapped, this._chain);
+    };
+  });
+
+  // Add all accessor Array functions to the wrapper.
+  each(['concat', 'join', 'slice'], function(name) {
+    var method = ArrayProto[name];
+    wrapper.prototype[name] = function() {
+      return result(method.apply(this._wrapped, arguments), this._chain);
+    };
+  });
+
+  // Start chaining a wrapped Underscore object.
+  wrapper.prototype.chain = function() {
+    this._chain = true;
+    return this;
+  };
+
+  // Extracts the result from a wrapped and chained object.
+  wrapper.prototype.value = function() {
+    return this._wrapped;
+  };
+
 })();

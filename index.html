@@ -173,8 +173,8 @@
       <br />
       <span class="methods"><a href="#noConflict">noConflict</a>,
       <a href="#identity">identity</a>, <a href="#times">times</a>, 
-      <a href="#breakLoop">breakLoop</a></span>, <a href="#uniqueId">uniqueId</a>, 
-      <a href="#template">template</a></span>
+      <a href="#breakLoop">breakLoop</a></span>, <a href="#mixin">mixin</a></span>, 
+      <a href="#uniqueId">uniqueId</a>, <a href="#template">template</a></span>
     </p>
 
     <p>
@@ -981,6 +981,23 @@ _.each([1, 2, 3], function(num) {
 });
 result;
 =&gt; 2</pre>
+
+      <p id="mixin">
+        <b class="header">mixin</b><code>_.mixin(object)</code>
+        <br />
+        Allows you to extend Underscore with your own utility functions. Pass
+        a hash of <tt>{name: function}</tt> definitions to have your functions 
+        added to the Underscore object, as well as the OOP wrapper.
+      </p>
+      <pre>
+_.mixin({
+  capitalize : function(string) {
+    return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
+  }
+});
+_("fabio").capitalize();
+=&gt; "Fabio"
+</pre>
 
       <p id="uniqueId">
         <b class="header">uniqueId</b><code>_.uniqueId([prefix])</code>

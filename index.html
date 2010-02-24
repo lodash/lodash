@@ -121,54 +121,9 @@
       </table>
     </p>
 
-    <h2 id="styles">Object-Oriented and Functional Styles</h2>
-
-    <p>
-      You can use Underscore in either an object-oriented or a functional style,
-      depending on your preference. The following two lines of code are
-      identical ways to double a list of numbers.
-    </p>
-
-    <pre>
-_.map([1, 2, 3], function(n){ return n * 2; });
-_([1, 2, 3]).map(function(n){ return n * 2; });</pre>
-
-    <p>
-      Using the object-oriented style allows you to chain together methods. Calling
-      <tt>chain</tt> on a wrapped object will cause all future method calls to
-      return wrapped objects as well. When you've finished the computation,
-      use <tt>value</tt> to retrieve the final value. Here's an example of chaining
-      together a <b>map/flatten/reduce</b>, in order to get the word count of
-      every word in a song.
-    </p>
-
-<pre>
-var lyrics = [
-  {line : 1, words : "I'm a lumberjack and I'm okay"},
-  {line : 2, words : "I sleep all night and I work all day"},
-  {line : 3, words : "He's a lumberjack and he's okay"},
-  {line : 4, words : "He sleeps all night and he works all day"}
-];
-
-_(lyrics).chain()
-  .map(function(line) { return line.words.split(' '); })
-  .flatten()
-  .reduce({}, function(counts, word) {
-    counts[word] = (counts[word] || 0) + 1;
-    return counts;
-}).value();
-
-=&gt; {lumberjack : 2, all : 4, night : 2 ... }</pre>
-
-    <p>
-      In addition, the
-      <a href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array">Array prototype's methods</a>
-      are proxied through the chained Underscore object, so you can slip a
-      <tt>reverse</tt> or a <tt>push</tt> into your chain, and continue to
-      modify the array.
-    </p>
-
     <h2>Table of Contents</h2>
+    
+    <a href="#styles">Object-Oriented and Functional Styles</a>
 
     <p>
       <b>Collections</b>
@@ -217,8 +172,9 @@ _(lyrics).chain()
       <b>Utility</b>
       <br />
       <span class="methods"><a href="#noConflict">noConflict</a>,
-      <a href="#identity">identity</a>, <a href="#breakLoop">breakLoop</a></span>,
-      <a href="#uniqueId">uniqueId</a>, <a href="#template">template</a></span>
+      <a href="#identity">identity</a>, <a href="#times">times</a>, 
+      <a href="#breakLoop">breakLoop</a></span>, <a href="#uniqueId">uniqueId</a>, 
+      <a href="#template">template</a></span>
     </p>
 
     <p>
@@ -228,6 +184,53 @@ _(lyrics).chain()
     </p>
 
     <div id="documentation">
+      
+      <h2 id="styles">Object-Oriented and Functional Styles</h2>
+
+      <p>
+        You can use Underscore in either an object-oriented or a functional style,
+        depending on your preference. The following two lines of code are
+        identical ways to double a list of numbers.
+      </p>
+
+    <pre>
+_.map([1, 2, 3], function(n){ return n * 2; });
+_([1, 2, 3]).map(function(n){ return n * 2; });</pre>
+
+      <p>
+        Using the object-oriented style allows you to chain together methods. Calling
+        <tt>chain</tt> on a wrapped object will cause all future method calls to
+        return wrapped objects as well. When you've finished the computation,
+        use <tt>value</tt> to retrieve the final value. Here's an example of chaining
+        together a <b>map/flatten/reduce</b>, in order to get the word count of
+        every word in a song.
+      </p>
+
+<pre>
+var lyrics = [
+  {line : 1, words : "I'm a lumberjack and I'm okay"},
+  {line : 2, words : "I sleep all night and I work all day"},
+  {line : 3, words : "He's a lumberjack and he's okay"},
+  {line : 4, words : "He sleeps all night and he works all day"}
+];
+
+_(lyrics).chain()
+  .map(function(line) { return line.words.split(' '); })
+  .flatten()
+  .reduce({}, function(counts, word) {
+    counts[word] = (counts[word] || 0) + 1;
+    return counts;
+}).value();
+
+=&gt; {lumberjack : 2, all : 4, night : 2 ... }</pre>
+
+      <p>
+        In addition, the
+        <a href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array">Array prototype's methods</a>
+        are proxied through the chained Underscore object, so you can slip a
+        <tt>reverse</tt> or a <tt>push</tt> into your chain, and continue to
+        modify the array.
+      </p>
 
       <h2>Collection Functions (Arrays or Objects)</h2>
 
@@ -954,6 +957,14 @@ var underscore = _.noConflict();</pre>
 var moe = {name : 'moe'};
 moe === _.identity(moe);
 =&gt; true</pre>
+
+      <p id="times">
+        <b class="header">times</b><code>_.times(n, iterator)</code>
+        <br />
+        Invokes the given iterator function <b>n</b> times.
+      </p>
+      <pre>
+_(3).times(function(){ genie.grantWish(); });</pre>
 
       <p id="breakLoop">
         <b class="header">breakLoop</b><code>_.breakLoop()</code>

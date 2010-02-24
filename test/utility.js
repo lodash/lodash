@@ -42,6 +42,9 @@ $(document).ready(function() {
     var quoteTemplate = _.template("It's its, not it's");
     equals(quoteTemplate({}), "It's its, not it's");
 
+    var quoteInStatementAndBody = _.template("<% if(foo == 'bar'){ %>Statement quotes and 'quotes'.<% } %>");
+    equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
+
     _.templateSettings = {
       start       : '{{',
       end         : '}}',
@@ -55,6 +58,9 @@ $(document).ready(function() {
     var customQuote = _.template("It's its, not it's");
     equals(customQuote({}), "It's its, not it's");
 
+    var quoteInStatementAndBody = _.template("{{ if(foo == 'bar'){ }}Statement quotes and 'quotes'.{{ } }}");
+    equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
+
     _.templateSettings = {
       start       : '<?',
       end         : '?>',
@@ -67,6 +73,9 @@ $(document).ready(function() {
 
     var customWithSpecialCharsQuote = _.template("It's its, not it's");
     equals(customWithSpecialCharsQuote({}), "It's its, not it's");
+
+    var quoteInStatementAndBody = _.template("<? if(foo == 'bar'){ ?>Statement quotes and 'quotes'.<? } ?>");
+    equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
       start       : '{{',

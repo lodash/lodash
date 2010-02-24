@@ -20,49 +20,49 @@
 
   // Quick regexp-escaping function, because JS doesn't have RegExp.escape().
   var escapeRegExp = function(s) { return s.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1'); };
-  
+
   // Save bytes in the minified (but not gzipped) version:
-  var Array_Prototype = Array.prototype;
-  
+  var ArrayProto = Array.prototype, ObjProto = Object.prototype;
+
   // Create quick reference variables for speed access to core prototypes.
-  var slice                 = Array_Prototype.slice,
-      unshift               = Array_Prototype.unshift,
-      toString              = Object.prototype.toString,
-      hasOwnProperty        = Object.prototype.hasOwnProperty,
-      propertyIsEnumerable  = Object.prototype.propertyIsEnumerable;
+  var slice                 = ArrayProto.slice,
+      unshift               = ArrayProto.unshift,
+      toString              = ObjProto.toString,
+      hasOwnProperty        = ObjProto.hasOwnProperty,
+      propertyIsEnumerable  = ObjProto.propertyIsEnumerable;
 
   // All native implementations we hope to use are declared here.
-  var 
-    native_forEach      = Array_Prototype.forEach,
-    native_map          = Array_Prototype.map,
-    native_reduce       = Array_Prototype.reduce,
-    native_reduceRight  = Array_Prototype.reduceRight,
-    native_filter       = Array_Prototype.filter,
-    native_every        = Array_Prototype.every,
-    native_some         = Array_Prototype.some,
-    native_indexOf      = Array_Prototype.indexOf,
-    native_lastIndexOf  = Array_Prototype.lastIndexOf,
+  var
+    native_forEach      = ArrayProto.forEach,
+    native_map          = ArrayProto.map,
+    native_reduce       = ArrayProto.reduce,
+    native_reduceRight  = ArrayProto.reduceRight,
+    native_filter       = ArrayProto.filter,
+    native_every        = ArrayProto.every,
+    native_some         = ArrayProto.some,
+    native_indexOf      = ArrayProto.indexOf,
+    native_lastIndexOf  = ArrayProto.lastIndexOf,
     native_isArray      = Array['isArray'],  // use [] notation since not in closure's externs
     native_keys         = Object['keys'];
-  
+
   // Create a safe reference to the Underscore object for reference below.
-  var _ = function(obj) { return _.buildWrapper(obj) };
+  var _ = function(obj) { return _.buildWrapper(obj); };
 
   // Export the Underscore object for CommonJS.
   if (typeof exports !== 'undefined') exports._ = _;
 
   // Export underscore to global scope.
   root._ = _;
-  
+
   // Current version.
   _.VERSION = '0.5.8';
-  
+
   // ------------------------ Collection Functions: ---------------------------
 
   // The cornerstone, an each implementation.
   // Handles objects implementing forEach, arrays, and raw objects.
   // Delegates to JavaScript 1.6's native forEach if available.
-  var each = 
+  var each =
   _.forEach = function(obj, iterator, context) {
     var index = 0;
     try {
@@ -71,11 +71,9 @@
       } else if (_.isNumber(obj.length)) {
         for (var i=0, l=obj.length; i<l; i++) iterator.call(context, obj[i], i, obj);
       } else {
-        for (var key in obj) 
-          if (hasOwnProperty.call(obj, key)) 
+        for (var key in obj)
+          if (hasOwnProperty.call(obj, key))
             iterator.call(context, obj[key], key, obj);
-        // var keys = _.keys(obj), l = keys.length;
-        // for (var i=0; i<l; i++) iterator.call(context, obj[keys[i]], keys[i], obj);
       }
     } catch(e) {
       if (e != breaker) throw e;
@@ -83,7 +81,7 @@
     return obj;
   };
 
-  // Return the results of applying the iterator to each element. 
+  // Return the results of applying the iterator to each element.
   // Delegates to JavaScript 1.6's native map if available.
   _.map = function(obj, iterator, context) {
     if (obj.map === native_map) return obj.map(iterator, context);
@@ -124,7 +122,7 @@
     return result;
   };
 
-  // Return all the elements that pass a truth test. 
+  // Return all the elements that pass a truth test.
   // Delegates to JavaScript 1.6's native filter if available.
   _.filter = function(obj, iterator, context) {
     if (obj.filter === native_filter) return obj.filter(iterator, context);
@@ -144,7 +142,7 @@
     return results;
   };
 
-  // Determine whether all of the elements match a truth test. 
+  // Determine whether all of the elements match a truth test.
   // Delegates to JavaScript 1.6's native every if available.
   _.every = function(obj, iterator, context) {
     iterator = iterator || _.identity;
@@ -249,9 +247,9 @@
   _.size = function(obj) {
     return _.toArray(obj).length;
   };
-  
+
   // Build a lookup map from a collection.
-  // Pay a little memory upfront to make searching a collection for a 
+  // Pay a little memory upfront to make searching a collection for a
   // value faster later
   // e.g:
   //
@@ -262,11 +260,11 @@
   // By default sets the value to true, can pass in a value to use instead
   _.buildLookup = function (obj, useValue) {
     useValue = (useValue === undefined)?  true :  useValue;
-    return _.reduce(obj, {}, function (memo, value) {  
-      memo[value] = useValue;  
+    return _.reduce(obj, {}, function (memo, value) {
+      memo[value] = useValue;
       return memo;
     });
-  };   
+  };
 
   // -------------------------- Array Functions: ------------------------------
 
@@ -584,12 +582,12 @@
   _.identity = function(value) {
     return value;
   };
-  
-  // run a function n times.  
+
+  // run a function n times.
   // looks good in wrapper form:
   //    _(3).times(alert)
   _.times = function (n, fn, context) {
-    for (var i=0; i < n; i++)  fn.call(context, i)
+    for (var i = 0; i < n; i++) fn.call(context, i);
   };
 
   // Break out of the middle of an iteration.
@@ -645,23 +643,23 @@
   _.methods  = _.functions;
 
   // ------------------------ Setup the OOP Wrapper: --------------------------
-  _.buildWrapper = function () { throw "Call _.initWrapper() to enable OO wrapping" }
-  
-  _.initWrapper = function () {
+  _.buildWrapper = function() { throw "Call _.initWrapper() to enable OO wrapping"; };
+
+  _.initWrapper = function() {
     if (_._wrapper) return; // Already initialized
-      
+
     // If Underscore is called as a function, it returns a wrapped object that
     // can be used OO-style. This wrapper holds altered versions of all the
     // underscore functions. Wrapped objects may be chained.
     var wrapper = function(obj) { this._wrapped = obj; };
-    
+
     // Make wrapper object public so user code can extend it.
     // Otherwise, there is no way to modify its prototype
     _._wrapper = wrapper;
-    
+
     // Overwrite method called from _()
-    _.buildWrapper = function (obj) { return new wrapper(obj) };
-        
+    _.buildWrapper = function (obj) { return new wrapper(obj); };
+
     // Helper function to continue chaining intermediate results.
     var result = function(obj, chain) {
       return chain ? _(obj).chain() : obj;
@@ -679,7 +677,7 @@
 
     // Add all mutator Array functions to the wrapper.
     each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-      var method = Array_Prototype[name];
+      var method = ArrayProto[name];
       wrapper.prototype[name] = function() {
         method.apply(this._wrapped, arguments);
         return result(this._wrapped, this._chain);
@@ -688,7 +686,7 @@
 
     // Add all accessor Array functions to the wrapper.
     each(['concat', 'join', 'slice'], function(name) {
-      var method = Array_Prototype[name];
+      var method = ArrayProto[name];
       wrapper.prototype[name] = function() {
         return result(method.apply(this._wrapped, arguments), this._chain);
       };
@@ -704,8 +702,8 @@
     wrapper.prototype.value = function() {
       return this._wrapped;
     };
-  }
-  
+  };
+
   // For backwards compatability, init the OO wrapper
   // the advanced minifying rake task will strip this out
   _.initWrapper();

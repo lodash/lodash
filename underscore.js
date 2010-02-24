@@ -576,7 +576,7 @@
       'var p=[],print=function(){p.push.apply(p,arguments);};' +
       'with(obj){p.push(\'' +
       str.replace(/[\r\t\n]/g, " ")
-         .replace(new RegExp("'(?=[^"+c.end[0]+"]*"+c.end+")","g"),"\t")
+         .replace(new RegExp("'(?=[^"+c.end[0]+"]*\\"+c.end.split('').join("\\")+")","g"),"\t")
          .split("'").join("\\'")
          .split("\t").join("'")
          .replace(c.interpolate, "',$1,'")

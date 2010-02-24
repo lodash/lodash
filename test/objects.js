@@ -60,6 +60,7 @@ $(document).ready(function() {
     ok(_.isEmpty([]), '[] is empty');
     ok(!_.isEmpty({one : 1}), '{one : 1} is not empty');
     ok(_.isEmpty({}), '{} is empty');
+    ok(_.isEmpty(new RegExp('')), 'objects with prototype properties are empty');
     ok(_.isEmpty(null), 'null is empty');
     ok(_.isEmpty(), 'undefined is empty');
 
@@ -102,7 +103,7 @@ $(document).ready(function() {
     ok(_.isArguments(args), 'but the arguments object is an arguments object');
     ok(!_.isArguments(_.toArray(args)), 'but not when it\'s converted into an array');
     ok(!_.isArguments([1,2,3]), 'and not vanilla arrays.');
-    ok(_.isArguments(iArguments), 'event from another frame');
+    ok(_.isArguments(iArguments), 'even from another frame');
   });
 
   test("objects: isArray", function() {

@@ -67,18 +67,17 @@
   // The cornerstone, an each implementation.
   // Handles objects implementing forEach, arrays, and raw objects.
   // Delegates to JavaScript 1.6's native forEach if available.
-  var each =
-  _.forEach = function(obj, iterator, context) {
+  var each = _.forEach = function(obj, iterator, context) {
     var index = 0;
     try {
       if (obj.forEach === nativeForEach) {
         obj.forEach(iterator, context);
       } else if (_.isNumber(obj.length)) {
-        for (var i=0, l=obj.length; i<l; i++) iterator.call(context, obj[i], i, obj);
+        for (var i = 0, l = obj.length; i < l; i++) iterator.call(context, obj[i], i, obj);
       } else {
-        for (var key in obj)
-          if (hasOwnProperty.call(obj, key))
-            iterator.call(context, obj[key], key, obj);
+        for (var key in obj) {
+          if (hasOwnProperty.call(obj, key)) iterator.call(context, obj[key], key, obj);
+        }
       }
     } catch(e) {
       if (e != breaker) throw e;
@@ -339,7 +338,7 @@
     var args = _.toArray(arguments);
     var length = _.max(_.pluck(args, 'length'));
     var results = new Array(length);
-    for (var i=0; i<length; i++) results[i] = _.pluck(args, String(i));
+    for (var i = 0; i < length; i++) results[i] = _.pluck(args, String(i));
     return results;
   };
 
@@ -349,7 +348,7 @@
   // Delegates to JavaScript 1.8's native indexOf if available.
   _.indexOf = function(array, item) {
     if (array.indexOf === nativeIndexOf) return array.indexOf(item);
-    for (var i=0, l=array.length; i<l; i++) if (array[i] === item) return i;
+    for (var i = 0, l = array.length; i < l; i++) if (array[i] === item) return i;
     return -1;
   };
 
@@ -513,7 +512,7 @@
   // Is a given array or object empty?
   _.isEmpty = function(obj) {
     if (_.isArray(obj)) return obj.length === 0;
-    for (var k in obj) return false;
+    for (var key in obj) if (hasOwnProperty.call(obj, key)) return false;
     return true;
   };
 
@@ -588,11 +587,9 @@
     return value;
   };
 
-  // run a function n times.
-  // looks good in wrapper form:
-  //    _(3).times(alert)
-  _.times = function (n, fn, context) {
-    for (var i = 0; i < n; i++) fn.call(context, i);
+  // Run a function n times.
+  _.times = function (n, iterator, context) {
+    for (var i = 0; i < n; i++) iterator.call(context, i);
   };
 
   // Break out of the middle of an iteration.

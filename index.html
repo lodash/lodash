@@ -4,7 +4,6 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <title>Underscore.js</title>
-  <script src="underscore.js"></script>
   <style>
     body {
       font-size: 16px;
@@ -89,7 +88,7 @@
       as well as more specialized helpers: function binding, javascript
       templating, deep equality testing, and so on. It delegates to built-in
       functions, if present, so modern browsers will use the
-      native implementations of <b>forEach</b>, <b>map</b>, <b>reduce</b>, 
+      native implementations of <b>forEach</b>, <b>map</b>, <b>reduce</b>,
       <b>filter</b>, <b>every</b>, <b>some</b> and <b>indexOf</b>.
     </p>
 
@@ -102,7 +101,7 @@
       The unabridged source code is
       <a href="http://github.com/documentcloud/underscore/">available on GitHub</a>.
     </p>
-    
+
     <p>
       <i>Underscore is an open-source component of <a href="http://documentcloud.org/">DocumentCloud</a>.</i>
     </p>
@@ -162,10 +161,10 @@ _(lyrics).chain()
 =&gt; {lumberjack : 2, all : 4, night : 2 ... }</pre>
 
     <p>
-      In addition, the 
-      <a href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array">Array prototype's methods</a> 
-      are proxied through the chained Underscore object, so you can slip a 
-      <tt>reverse</tt> or a <tt>push</tt> into your chain, and continue to 
+      In addition, the
+      <a href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array">Array prototype's methods</a>
+      are proxied through the chained Underscore object, so you can slip a
+      <tt>reverse</tt> or a <tt>push</tt> into your chain, and continue to
       modify the array.
     </p>
 
@@ -209,7 +208,7 @@ _(lyrics).chain()
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
       <a href="#isArray">isArray</a>, <a href="#isArguments">isArguments</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
       <a href="#isNumber">isNumber</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>
-      <a href="#isNaN">isNaN</a>, <a href="#isNull">isNull</a>, 
+      <a href="#isNaN">isNaN</a>, <a href="#isNull">isNull</a>,
       <a href="#isUndefined">isUndefined</a>
       </span>
     </p>
@@ -240,7 +239,7 @@ _(lyrics).chain()
         function. The <b>iterator</b> is bound to the <b>context</b> object, if one is
         passed. Each invocation of <b>iterator</b> is called with three arguments:
         <tt>(element, index, list)</tt>. If <b>list</b> is a JavaScript object, <b>iterator</b>'s
-        arguments will be <tt>(value, key, list)</tt>. Use <a href="#breakLoop"><tt>breakLoop</tt></a> 
+        arguments will be <tt>(value, key, list)</tt>. Use <a href="#breakLoop"><tt>breakLoop</tt></a>
         to break out of the iteration. Delegates to the native
         <b>forEach</b> function if it exists.
       </p>
@@ -461,7 +460,7 @@ _.size({one : 1, two : 2, three : 3});
 </pre>
 
       <h2>Array Functions</h2>
-      
+
       <p>
         <i>Note: All array functions will also work on the <b>arguments</b> object.</i>
       </p>
@@ -470,7 +469,7 @@ _.size({one : 1, two : 2, three : 3});
         <b class="header">first</b><code>_.first(array, [n])</code>
         <span class="alias">Alias: <b>head</b></span>
         <br />
-        Returns the first element of an <b>array</b>. Passing <b>n</b> will 
+        Returns the first element of an <b>array</b>. Passing <b>n</b> will
         return the first <b>n</b> elements of the array.
       </p>
       <pre>
@@ -738,7 +737,7 @@ _.values({one : 1, two : 2, three : 3});
         <span class="alias">Alias: <b>methods</b></span>
         <br />
         Returns a sorted list of the names of every method in an object &mdash;
-        that is to say, the name of every function property of the object. 
+        that is to say, the name of every function property of the object.
       </p>
       <pre>
 _.functions(_);
@@ -770,7 +769,7 @@ _.clone({name : 'moe'});
       <p id="tap">
         <b class="header">tap</b><code>_.tap(object, interceptor)</code>
         <br />
-        Invokes <b>interceptor</b> with the <b>object</b>, and then returns <b>object</b>. 
+        Invokes <b>interceptor</b> with the <b>object</b>, and then returns <b>object</b>.
         The primary purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
       </p>
       <pre>
@@ -960,14 +959,14 @@ moe === _.identity(moe);
         <b class="header">breakLoop</b><code>_.breakLoop()</code>
         <br />
         Breaks out of the current loop iteration. Similar to the <tt>break</tt>
-        keyword in regular "for" loop, but works within an iterator function. 
+        keyword in regular "for" loop, but works within an iterator function.
         Uses the native <tt>StopIteration</tt> object in JavaScript 1.7 compliant
         browsers.
       </p>
       <pre>
 var result = null;
-_.each([1, 2, 3], function(num) { 
-  if ((result = num) == 2) _.breakLoop(); 
+_.each([1, 2, 3], function(num) {
+  if ((result = num) == 2) _.breakLoop();
 });
 result;
 =&gt; 2</pre>
@@ -1009,18 +1008,18 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
         template settings to use different symbols to set off interpolated code.
         Define <b>start</b> and <b>end</b> tokens, and an <b>interpolate</b> regex
         to match expressions that should be evaluated and inserted. For example,
-        to perform 
-        <a href="http://github.com/janl/mustache.js#readme">Mustache.js</a> 
+        to perform
+        <a href="http://github.com/janl/mustache.js#readme">Mustache.js</a>
         style templating:
       </p>
-      
+
       <pre>
 _.templateSettings = {
   start       : '{{',
   end         : '}}',
   interpolate : /\{\{(.+?)\}\}/g
 };
-        
+
 var template = _.template("Hello {{ name }}!");
 template({name : "Mustache"});
 =&gt; "Hello Mustache!"</pre>
@@ -1055,119 +1054,119 @@ _([1, 2, 3]).value();
 </pre>
 
       <h2 id="duck_typing">Duck Typing</h2>
-      
+
       <p>
         The <b>isType</b> (<tt>isArray</tt>, <tt>isFunction</tt>, <tt>isString</tt> ...) family of type-checking
         functions use property detection to do their work, which, although
-        orders of magnitude faster than the alternative, isn't entirely safe when dealing 
-        with objects that are used as hashes, where arbitrary strings are being 
-        set for the keys. It's entirely possible for an object to masquerade as 
-        another type, if you're setting properties with names like "concat" and 
+        orders of magnitude faster than the alternative, isn't entirely safe when dealing
+        with objects that are used as hashes, where arbitrary strings are being
+        set for the keys. It's entirely possible for an object to masquerade as
+        another type, if you're setting properties with names like "concat" and
         "charCodeAt". So be aware.
       </p>
-      
+
 
       <h2>Links &amp; Suggested Reading</h2>
-      
+
       <p>
         <a href="http://mirven.github.com/underscore.lua/">Underscore.lua</a>,
-        a Lua port of the functions that are applicable in both languages. 
+        a Lua port of the functions that are applicable in both languages.
         Includes OOP-wrapping and chaining.
-        The <a href="http://github.com/mirven/underscore.lua">source</a> is 
+        The <a href="http://github.com/mirven/underscore.lua">source</a> is
         available on GitHub.
       </p>
-      
+
       <p>
         Ruby's <a href="http://ruby-doc.org/core/classes/Enumerable.html">Enumerable</a> module.
       </p>
-      
+
       <p>
         <a href="http://www.prototypejs.org/">Prototype.js</a>, which provides
         JavaScript with collection functions in the manner closest to Ruby's Enumerable.
       </p>
-        
+
       <p>
-        Oliver Steele's 
+        Oliver Steele's
         <a href="http://osteele.com/sources/javascript/functional/">Functional JavaScript</a>,
         which includes comprehensive higher-order function support as well as string lambdas.
       </p>
-      
+
       <p>
         Python's <a href="http://docs.python.org/library/itertools.html">itertools</a>.
       </p>
 
       <h2>Change Log</h2>
-      
+
       <p>
         <b class="header">0.5.8</b><br />
-        Fixed Underscore's collection functions to work on 
-        <a href="https://developer.mozilla.org/En/DOM/NodeList">NodeLists</a> and 
+        Fixed Underscore's collection functions to work on
+        <a href="https://developer.mozilla.org/En/DOM/NodeList">NodeLists</a> and
         <a href="https://developer.mozilla.org/En/DOM/HTMLCollection">HTMLCollections</a>
-        once more, thanks to 
+        once more, thanks to
         <a href="http://github.com/jmtulloss">Justin Tulloss</a>.
       </p>
-      
+
       <p>
         <b class="header">0.5.7</b><br />
-        A safer implementation of <tt>_.isArguments</tt>, and a 
-        faster <tt>_.isNumber</tt>,<br />thanks to 
+        A safer implementation of <tt>_.isArguments</tt>, and a
+        faster <tt>_.isNumber</tt>,<br />thanks to
         <a href="http://jedschmidt.com/">Jed Schmidt</a>.
       </p>
-      
+
       <p>
         <b class="header">0.5.6</b><br />
         Customizable delimiters for <tt>_.template</tt>, contributed by
         <a href="http://github.com/iamnoah">Noah Sloan</a>.
       </p>
-      
+
       <p>
         <b class="header">0.5.5</b><br />
         Fix for a bug in MobileSafari's OOP-wrapper, with the arguments object.
       </p>
-      
+
       <p>
         <b class="header">0.5.4</b><br />
-        Fix for multiple single quotes within a template string for 
-        <tt>_.template</tt>. See: 
+        Fix for multiple single quotes within a template string for
+        <tt>_.template</tt>. See:
         <a href="http://www.west-wind.com/Weblog/posts/509108.aspx">Rick Strahl's blog post</a>.
       </p>
-      
+
       <p>
         <b class="header">0.5.2</b><br />
-        New implementations of <tt>isArray</tt>, <tt>isDate</tt>, <tt>isFunction</tt>, 
-        <tt>isNumber</tt>, <tt>isRegExp</tt>, and <tt>isString</tt>, thanks to 
-        a suggestion from 
-        <a href="http://www.broofa.com/">Robert Kieffer</a>. 
+        New implementations of <tt>isArray</tt>, <tt>isDate</tt>, <tt>isFunction</tt>,
+        <tt>isNumber</tt>, <tt>isRegExp</tt>, and <tt>isString</tt>, thanks to
+        a suggestion from
+        <a href="http://www.broofa.com/">Robert Kieffer</a>.
         Instead of doing <tt>Object#toString</tt>
-        comparisons, they now check for expected properties, which is less safe, 
-        but more than an order of magnitude faster. Most other Underscore 
-        functions saw minor speed improvements as a result. 
+        comparisons, they now check for expected properties, which is less safe,
+        but more than an order of magnitude faster. Most other Underscore
+        functions saw minor speed improvements as a result.
         <a href="http://dolzhenko.org/">Evgeniy Dolzhenko</a>
-        contributed <tt>_.tap</tt>, 
-        <a href="http://ruby-doc.org/core-1.9/classes/Object.html#M000191">similar to Ruby 1.9's</a>, 
+        contributed <tt>_.tap</tt>,
+        <a href="http://ruby-doc.org/core-1.9/classes/Object.html#M000191">similar to Ruby 1.9's</a>,
         which is handy for injecting side effects (like logging) into chained calls.
       </p>
-      
+
       <p>
         <b class="header">0.5.1</b><br />
         Added an <tt>_.isArguments</tt> function. Lots of little safety checks
-        and optimizations contributed by 
+        and optimizations contributed by
         <a href="http://github.com/iamnoah/">Noah Sloan</a> and Andri Möll.
       </p>
-      
+
       <p>
         <b class="header">0.5.0</b><br />
-        <b>[API Changes]</b> <tt>_.bindAll</tt> now takes the context object as 
-        its first parameter. If no method names are passed, all of the context 
+        <b>[API Changes]</b> <tt>_.bindAll</tt> now takes the context object as
+        its first parameter. If no method names are passed, all of the context
         object's methods are bound to it, enabling chaining and easier binding.
-        <tt>_.functions</tt> now takes a single argument and returns the names 
+        <tt>_.functions</tt> now takes a single argument and returns the names
         of its Function properties. Calling <tt>_.functions(_)</tt> will get you
         the previous behavior.
         Added <tt>_.isRegExp</tt> so that <tt>isEqual</tt> can now test for RegExp equality.
         All of the "is" functions have been shrunk down into a single definition.
         <a href="http://github.com/grayrest/">Karl Guertin</a> contributed patches.
       </p>
-      
+
       <p>
         <b class="header">0.4.7</b><br />
         Added <tt>isDate</tt>, <tt>isNaN</tt>, and <tt>isNull</tt>, for completeness.
@@ -1175,48 +1174,48 @@ _([1, 2, 3]).value();
         or Dates. <tt>_.keys</tt> is now <small><i><b>25%&ndash;2X</b></i></small> faster (depending on your
         browser) which speeds up the functions that rely on it, such as <tt>_.each</tt>.
       </p>
-      
+
       <p>
         <b class="header">0.4.6</b><br />
-        Added the <tt>range</tt> function, a port of the 
-        <a href="http://docs.python.org/library/functions.html#range">Python 
+        Added the <tt>range</tt> function, a port of the
+        <a href="http://docs.python.org/library/functions.html#range">Python
         function of the same name</a>, for generating flexibly-numbered lists
-        of integers. Original patch contributed by 
+        of integers. Original patch contributed by
         <a href="http://github.com/kylichuku">Kirill Ishanov</a>.
       </p>
-      
+
       <p>
         <b class="header">0.4.5</b><br />
-        Added <tt>rest</tt> for Arrays and arguments objects, and aliased 
+        Added <tt>rest</tt> for Arrays and arguments objects, and aliased
         <tt>first</tt> as <tt>head</tt>, and <tt>rest</tt> as <tt>tail</tt>,
         thanks to <a href="http://github.com/lukesutton/">Luke Sutton</a>'s patches.
         Added tests ensuring that all Underscore Array functions also work on
         <i>arguments</i> objects.
       </p>
-      
+
       <p>
         <b class="header">0.4.4</b><br />
         Added <tt>isString</tt>, and <tt>isNumber</tt>, for consistency. Fixed
-        <tt>_.isEqual(NaN, NaN)</tt> to return <i>true</i> (which is debatable). 
+        <tt>_.isEqual(NaN, NaN)</tt> to return <i>true</i> (which is debatable).
       </p>
-      
+
       <p>
         <b class="header">0.4.3</b><br />
         Started using the native <tt>StopIteration</tt> object in browsers that support it.
         Fixed Underscore setup for CommonJS environments.
       </p>
-      
+
       <p>
         <b class="header">0.4.2</b><br />
         Renamed the unwrapping function to <tt>value</tt>, for clarity.
       </p>
-      
+
       <p>
         <b class="header">0.4.1</b><br />
         Chained Underscore objects now support the Array prototype methods, so
         that you can perform the full range of operations on a wrapped array
         without having to break your chain. Added a <tt>breakLoop</tt> method
-        to <b>break</b> in the middle of any Underscore iteration. Added an 
+        to <b>break</b> in the middle of any Underscore iteration. Added an
         <tt>isEmpty</tt> function that works on arrays and objects.
       </p>
 
@@ -1287,6 +1286,9 @@ _([1, 2, 3]).value();
     </div>
 
   </div>
+
+  <!-- Include Underscore, so you can play with it in the console. -->
+  <script type="text/javascript" src="underscore.js"></script>
 
 </body>
 </html>

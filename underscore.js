@@ -31,7 +31,7 @@
       hasOwnProperty        = ObjProto.hasOwnProperty,
       propertyIsEnumerable  = ObjProto.propertyIsEnumerable;
 
-  // All native implementations we hope to use are declared here.
+  // All ECMA5 native implementations we hope to use are declared here.
   var
     nativeForEach      = ArrayProto.forEach,
     nativeMap          = ArrayProto.map,
@@ -49,6 +49,15 @@
   // can be used OO-style. This wrapper holds altered versions of all the
   // underscore functions. Wrapped objects may be chained.
   var wrapper = function(obj) { this._wrapped = obj; };
+
+  // A method to easily add functions to the OOP wrapper.
+  var addToWrapper = function(name, func) {
+    wrapper.prototype[name] = function() {
+      var args = _.toArray(arguments);
+      unshift.call(args, this._wrapped);
+      return result(func.apply(_, args), this._chain);
+    };
+  };
 
   // Create a safe reference to the Underscore object for reference below.
   var _ = function(obj) { return new wrapper(obj); };
@@ -431,7 +440,7 @@
     return _.map(obj, _.identity);
   };
 
-  // Return a sorted list of the function names available in Underscore.
+  // Return a sorted list of the function names available on the object.
   _.functions = function(obj) {
     return _.select(_.keys(obj), function(key){ return _.isFunction(obj[key]); }).sort();
   };
@@ -579,6 +588,14 @@
     throw breaker;
   };
 
+  // Add your own custom functions to the Underscore object, ensuring that
+  // they're correctly added to the OOP wrapper as well.
+  _.mixin = function(obj) {
+    _.each(_.functions(obj), function(name){
+      addToWrapper(name, _[name] = obj[name]);
+    });
+  };
+
   // Generate a unique integer id (unique within the entire client session).
   // Useful for temporary DOM ids.
   var idCounter = 0;
@@ -634,14 +651,7 @@
   };
 
   // Add all of the Underscore functions to the wrapper object.
-  each(_.functions(_), function(name) {
-    var method = _[name];
-    wrapper.prototype[name] = function() {
-      var args = _.toArray(arguments);
-      unshift.call(args, this._wrapped);
-      return result(method.apply(_, args), this._chain);
-    };
-  });
+  _.mixin(_);
 
   // Add all mutator Array functions to the wrapper.
   each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {

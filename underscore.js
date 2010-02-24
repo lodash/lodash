@@ -252,24 +252,6 @@
     return _.toArray(obj).length;
   };
 
-  // Build a lookup map from a collection.
-  // Pay a little memory upfront to make searching a collection for a
-  // value faster later
-  // e.g:
-  //
-  //  var lookup = _.buildLookup([1,2,8])  // {1: true, 2: true, 8: true}
-  //  lookup[key]   // instead of: _.include(array, key)
-  //
-  // See example usage in #without
-  // By default sets the value to true, can pass in a value to use instead
-  _.buildLookup = function (obj, useValue) {
-    useValue = (useValue === undefined)?  true :  useValue;
-    return _.reduce(obj, {}, function (memo, value) {
-      memo[value] = useValue;
-      return memo;
-    });
-  };
-
   // -------------------------- Array Functions: ------------------------------
 
   // Get the first element of an array. Passing "n" will return the first N
@@ -308,8 +290,8 @@
 
   // Return a version of the array that does not contain the specified value(s).
   _.without = function(array) {
-    var lookup = _.buildLookup(_.rest(arguments));
-    return _.filter(array, function(value){ return !lookup[value]; });
+    var values = _.rest(arguments);
+    return _.select(array, function(value){ return !_.include(values, value); });
   };
 
   // Produce a duplicate-free version of the array. If the array has already

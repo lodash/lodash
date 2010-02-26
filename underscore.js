@@ -63,7 +63,6 @@
   // Handles objects implementing forEach, arrays, and raw objects.
   // Delegates to JavaScript 1.6's native forEach if available.
   var each = _.forEach = function(obj, iterator, context) {
-    var index = 0;
     try {
       if (nativeForEach && obj.forEach === nativeForEach) {
         obj.forEach(iterator, context);

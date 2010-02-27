@@ -527,7 +527,7 @@
 
   // Is a given value a boolean?
   _.isBoolean = function(obj) {
-    return (toString.call(obj) === '[object Boolean]');
+    return obj === true || obj === false;
   };
 
   // Is a given value a date?

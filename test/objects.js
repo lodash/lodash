@@ -14,7 +14,7 @@ $(document).ready(function() {
     var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
     "compose","defer", "delay", "detect", "each", "every", "extend", "filter", "first",
     "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
-    "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isDate", "isElement", "isEmpty", "isEqual",
+    "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isBoolean", "isDate", "isElement", "isEmpty", "isEqual",
     "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
     "methods", "min", "mixin", "noConflict", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
     "size", "some", "sortBy", "sortedIndex", "tail", "tap", "template", "times", "toArray", "uniq",
@@ -136,6 +136,8 @@ $(document).ready(function() {
     ok(!_.isBoolean("true"), 'the string "true" is not a boolean');
     ok(!_.isBoolean(arguments), 'the arguments object is not a boolean');
     ok(!_.isBoolean(undefined), 'undefined is not a boolean');
+    ok(!_.isBoolean(NaN), 'NaN is not a boolean');
+    ok(!_.isBoolean(null), 'null is not a boolean');
     ok(_.isBoolean(true), 'but true is');
     ok(_.isBoolean(false), 'and so is false');
     ok(_.isBoolean(iBoolean), 'even from another frame');

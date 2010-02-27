@@ -162,7 +162,7 @@
       <a href="#functions">functions</a>, <a href="#extend">extend</a>, <a href="#clone">clone</a>, <a href="#tap">tap</a>,
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
       <a href="#isArray">isArray</a>, <a href="#isArguments">isArguments</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
-      <a href="#isNumber">isNumber</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>
+      <a href="#isNumber">isNumber</a>, <a href="#isBoolean">isBoolean</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>
       <a href="#isNaN">isNaN</a>, <a href="#isNull">isNull</a>,
       <a href="#isUndefined">isUndefined</a>
       </span>
@@ -874,6 +874,16 @@ _.isFunction("moe");
       <pre>
 _.isNumber(8.4 * 5);
 =&gt; true
+</pre>
+
+      <p id="isBoolean">
+        <b class="header">isBoolean</b><code>_.isBoolean(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> is either <i>true</i> or <i>false</i>.
+      </p>
+      <pre>
+_.isBoolean(null);
+=&gt; false
 </pre>
 
       <p id="isDate">

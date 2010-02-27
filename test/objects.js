@@ -85,6 +85,7 @@ $(document).ready(function() {
       parent.iRegExp    = /hi/;\
       parent.iNaN       = NaN;\
       parent.iNull      = null;\
+	  parent.iBoolean   = false;\
       parent.iUndefined = undefined;\
     </script>"
   );
@@ -126,6 +127,18 @@ $(document).ready(function() {
     ok(_.isNumber(NaN), 'NaN is a number');
     ok(_.isNumber(Infinity), 'Infinity is a number');
     ok(_.isNumber(iNumber), 'even from another frame');
+  });
+
+  test("objects: isBoolean", function() {
+    ok(!_.isBoolean(2), 'a number is not a boolean');
+   	ok(!_.isBoolean("string"), 'a string is not a boolean');
+    ok(!_.isBoolean("false"), 'the string "false" is not a boolean');
+    ok(!_.isBoolean("true"), 'the string "true" is not a boolean');
+    ok(!_.isBoolean(arguments), 'the arguments object is not a boolean');
+    ok(!_.isBoolean(undefined), 'undefined is not a boolean');
+    ok(_.isBoolean(true), 'but true is');
+    ok(_.isBoolean(false), 'and so is false');
+    ok(_.isBoolean(iBoolean), 'even from another frame');
   });
 
   test("objects: isFunction", function() {

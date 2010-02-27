@@ -525,6 +525,11 @@
     return (obj === +obj) || (toString.call(obj) === '[object Number]');
   };
 
+  // Is a given value a boolean?
+  _.isBoolean = function(obj) {
+    return (toString.call(obj) === '[object Boolean]');
+  };
+
   // Is a given value a date?
   _.isDate = function(obj) {
     return !!(obj && obj.getTimezoneOffset && obj.setUTCFullYear);

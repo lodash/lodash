@@ -45,7 +45,7 @@
     nativeIsArray      = Array.isArray,
     nativeKeys         = Object.keys;
 
-  // Create a safe reference to the Underscore object for reference below.
+  // Create a safe reference to the Underscore object for use below.
   var _ = function(obj) { return new wrapper(obj); };
 
   // Export the Underscore object for CommonJS.
@@ -209,7 +209,7 @@
     return result.value;
   };
 
-  // Sort the object's values by a criteria produced by an iterator.
+  // Sort the object's values by a criterion produced by an iterator.
   _.sortBy = function(obj, iterator, context) {
     return _.pluck(_.map(obj, function(value, index, list) {
       return {

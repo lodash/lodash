@@ -432,11 +432,10 @@
     return _.filter(_.keys(obj), function(key){ return _.isFunction(obj[key]); }).sort();
   };
 
-  // Extend a given object with all the properties in given object(s)
+  // Extend a given object with all the properties in passed-in object(s).
   _.extend = function(obj) {
-    var prop;
-    each(_.rest(arguments), function (source) {
-      for (prop in source) obj[prop] = source[prop];  
+    each(_.rest(arguments), function(source) {
+      for (var prop in source) obj[prop] = source[prop];
     });
     return obj;
   };

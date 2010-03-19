@@ -111,11 +111,11 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (1.0.0)</a></td>
+          <td><a href="underscore.js">Development Version (1.0.1)</a></td>
           <td><i>25kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (1.0.0)</a></td>
+          <td><a href="underscore-min.js">Production Version (1.0.1)</a></td>
           <td><i>2.5kb, Packed and Gzipped</i></td>
         </tr>
       </table>
@@ -1135,6 +1135,12 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">1.0.1</b><br />
+        Bugfix for <tt>_.isEqual</tt>, when comparing two objects with the same 
+        number of undefined keys, but with different names.
+      </p>
       
       <p>
         <b class="header">1.0.0</b><br />

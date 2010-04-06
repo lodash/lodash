@@ -69,6 +69,8 @@ $(document).ready(function() {
     ok(_.isEmpty(new RegExp('')), 'objects with prototype properties are empty');
     ok(_.isEmpty(null), 'null is empty');
     ok(_.isEmpty(), 'undefined is empty');
+    ok(_.isEmpty(''), 'the empty string is empty');
+    ok(!_.isEmpty('moe'), 'but other strings are not');
 
     var obj = {one : 1};
     delete obj.one;

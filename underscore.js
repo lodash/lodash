@@ -469,7 +469,7 @@
     // Check dates' integer values.
     if (_.isDate(a) && _.isDate(b)) return a.getTime() === b.getTime();
     // Both are NaN?
-    if (_.isNaN(a) && _.isNaN(b)) return true;
+    if (_.isNaN(a) && _.isNaN(b)) return false;
     // Compare regular expressions.
     if (_.isRegExp(a) && _.isRegExp(b))
       return a.source     === b.source &&

@@ -111,12 +111,12 @@
     <p>
       <table>
         <tr>
-          <td><a href="underscore.js">Development Version (1.0.2)</a></td>
-          <td><i>25kb, Uncompressed with Comments</i></td>
+          <td><a href="underscore.js">Development Version (1.0.3)</a></td>
+          <td><i>24kb, Uncompressed with Comments</i></td>
         </tr>
         <tr>
-          <td><a href="underscore-min.js">Production Version (1.0.2)</a></td>
-          <td><i>2.5kb, Packed and Gzipped</i></td>
+          <td><a href="underscore-min.js">Production Version (1.0.3)</a></td>
+          <td><i>2.9kb, Packed and Gzipped</i></td>
         </tr>
       </table>
     </p>
@@ -1135,6 +1135,13 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">1.0.3</b><br />
+        Patch that makes <tt>_.isEqual</tt> return <tt>false</tt> if any property
+        of the compared object has a <tt>NaN</tt> value. Technically the correct
+        thing to do, but of questionable semantics. Watch out for NaN comparisons.
+      </p>
       
       <p>
         <b class="header">1.0.2</b><br />

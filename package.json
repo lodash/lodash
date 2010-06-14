@@ -7,5 +7,6 @@
   "contributors"  : [],
   "dependencies"  : [],
   "lib"           : ".",
+  "main"          : "underscore.js",
   "version"       : "1.0.3"
 }

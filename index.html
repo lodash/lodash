@@ -108,18 +108,16 @@
 
     <h2>Downloads <i style="padding-left: 12px; font-size:12px;">(Right-click, and use "Save As")</i></h2>
 
-    <p>
-      <table>
-        <tr>
-          <td><a href="underscore.js">Development Version (1.0.3)</a></td>
-          <td><i>24kb, Uncompressed with Comments</i></td>
-        </tr>
-        <tr>
-          <td><a href="underscore-min.js">Production Version (1.0.3)</a></td>
-          <td><i>2.9kb, Packed and Gzipped</i></td>
-        </tr>
-      </table>
-    </p>
+    <table>
+      <tr>
+        <td><a href="underscore.js">Development Version (1.0.4)</a></td>
+        <td><i>24kb, Uncompressed with Comments</i></td>
+      </tr>
+      <tr>
+        <td><a href="underscore-min.js">Production Version (1.0.4)</a></td>
+        <td><i>2.9kb, Packed and Gzipped</i></td>
+      </tr>
+    </table>
 
     <h2>Table of Contents</h2>
     
@@ -144,15 +142,16 @@
       <br />
       <span class="methods"><a href="#first">first</a>, <a href="#rest">rest</a>, <a href="#last">last</a>,
       <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, <a href="#uniq">uniq</a>,
-      <a href="#intersect">intersect</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a></span>,
+      <a href="#intersect">intersect</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
       <a href="#lastIndexOf">lastIndexOf</a>, <a href="#range">range</a></span>
     </p>
 
     <p>
       <b>Functions</b>
       <br />
-      <span class="methods"><a href="#bind">bind</a>, <a href="#bindAll">bindAll</a>, <a href="#delay">delay</a>,
-      <a href="#defer">defer</a>, <a href="#wrap">wrap</a></span>, <a href="#compose">compose</a></span>
+      <span class="methods"><a href="#bind">bind</a>, <a href="#bindAll">bindAll</a>, 
+      <a href="#memoize">memoize</a>, <a href="#delay">delay</a>, <a href="#defer">defer</a>, 
+      <a href="#wrap">wrap</a>, <a href="#compose">compose</a></span>
     </p>
 
     <p>
@@ -173,7 +172,7 @@
       <br />
       <span class="methods"><a href="#noConflict">noConflict</a>,
       <a href="#identity">identity</a>, <a href="#times">times</a>, 
-      <a href="#breakLoop">breakLoop</a></span>, <a href="#mixin">mixin</a></span>, 
+      <a href="#breakLoop">breakLoop</a>, <a href="#mixin">mixin</a>, 
       <a href="#uniqueId">uniqueId</a>, <a href="#template">template</a></span>
     </p>
 
@@ -652,6 +651,21 @@ var buttonView = {
 _.bindAll(buttonView);
 jQuery('#underscore_button').bind('click', buttonView.onClick);
 =&gt; When the button is clicked, this.label will have the correct value...
+</pre>
+
+      <p id="memoize">
+        <b class="header">memoize</b><code>_.memoize(function, [hashFunction])</code>
+        <br />
+        Memoizes a given <b>function</b> by caching the computed result. Useful
+        for speeding up slow-running computations. If passed an optional 
+        <b>hashFunction</b>, it will be used to compute the hash key for storing
+        the result, based on the arguments to the original function.
+      </p>
+      <pre>
+var fibonacci = function(n) {
+  return n &lt; 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+};
+var fastFibonacci = _.memoize(fibonacci);
 </pre>
 
       <p id="delay">
@@ -1135,6 +1149,12 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">1.0.4</b><br />
+        Andri Möll contributed the <tt>_.memoize</tt> function, which can be
+        used to speed up expensive repeated computations by caching the results.
+      </p>
       
       <p>
         <b class="header">1.0.3</b><br />

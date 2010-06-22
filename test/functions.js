@@ -45,6 +45,15 @@ $(document).ready(function() {
     equals(curly.sayHi(), 'hi: moe', 'calling bindAll with no arguments binds all functions to the object');
   });
 
+  test("functions: memoize", function() {
+    var fib = function(n) {
+      return n < 2 ? n : fib(n - 1) + fib(n - 2);
+    };
+    var fastFib = _.memoize(fib);
+    equals(fib(10), 55, 'a memoized version of fibonacci produces identical results');
+    equals(fastFib(10), 55, 'a memoized version of fibonacci produces identical results');
+  });
+
   asyncTest("functions: delay", function() {
     var delayed = false;
     _.delay(function(){ delayed = true; }, 100);

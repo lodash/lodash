@@ -625,7 +625,7 @@
     var endMatch = new RegExp("'(?=[^"+c.end.substr(0, 1)+"]*"+escapeRegExp(c.end)+")","g");
     var fn = new Function('obj',
       'var p=[],print=function(){p.push.apply(p,arguments);};' +
-      'with(obj){p.push(\'' +
+      'with(obj||{}){p.push(\'' +
       str.replace(/[\r\t\n]/g, " ")
          .replace(endMatch,"\t")
          .split("'").join("\\'")

@@ -651,6 +651,7 @@
   _.select   = _.filter;
   _.all      = _.every;
   _.any      = _.some;
+  _.contains = _.include;
   _.head     = _.first;
   _.tail     = _.rest;
   _.methods  = _.functions;

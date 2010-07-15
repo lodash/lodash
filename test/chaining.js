@@ -12,11 +12,11 @@ $(document).ready(function() {
     var counts = _(lyrics).chain()
       .map(function(line) { return line.split(''); })
       .flatten()
-      .reduce({}, function(hash, l) {
+      .reduce(function(hash, l) {
         hash[l] = hash[l] || 0;
         hash[l]++;
         return hash;
-    }).value();
+    }, {}).value();
     ok(counts['a'] == 16 && counts['e'] == 10, 'counted all the letters in the song');
   });
 

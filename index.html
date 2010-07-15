@@ -216,10 +216,10 @@ var lyrics = [
 _(lyrics).chain()
   .map(function(line) { return line.words.split(' '); })
   .flatten()
-  .reduce({}, function(counts, word) {
+  .reduce(function(counts, word) {
     counts[word] = (counts[word] || 0) + 1;
     return counts;
-}).value();
+}, {}).value();
 
 =&gt; {lumberjack : 2, all : 4, night : 2 ... }</pre>
 
@@ -261,7 +261,7 @@ _.map([1, 2, 3], function(num){ return num * 3 });
 =&gt; [3, 6, 9]</pre>
 
       <p id="reduce">
-        <b class="header">reduce</b><code>_.reduce(list, memo, iterator, [context])</code>
+        <b class="header">reduce</b><code>_.reduce(list, iterator, memo, [context])</code>
         <span class="alias">Aliases: <b>inject, foldl</b></span>
         <br />
         Also known as <b>inject</b> and <b>foldl</b>, <b>reduce</b> boils down a
@@ -270,12 +270,12 @@ _.map([1, 2, 3], function(num){ return num * 3 });
         <b>iterator</b>.
       </p>
       <pre>
-var sum = _.reduce([1, 2, 3], 0, function(memo, num){ return memo + num });
+var sum = _.reduce([1, 2, 3], function(memo, num){ return memo + num }, 0);
 =&gt; 6
 </pre>
 
       <p id="reduceRight">
-        <b class="header">reduceRight</b><code>_.reduceRight(list, memo, iterator, [context])</code>
+        <b class="header">reduceRight</b><code>_.reduceRight(list, iterator, memo, [context])</code>
         <span class="alias">Alias: <b>foldr</b></span>
         <br />
         The right-associative version of <b>reduce</b>. Delegates to the
@@ -285,7 +285,7 @@ var sum = _.reduce([1, 2, 3], 0, function(memo, num){ return memo + num });
       </p>
       <pre>
 var list = [[0, 1], [2, 3], [4, 5]];
-var flat = _.reduceRight(list, [], function(a, b) { return a.concat(b); });
+var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
 =&gt; [4, 5, 2, 3, 0, 1]
 </pre>
 

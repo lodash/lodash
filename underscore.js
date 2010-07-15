@@ -92,8 +92,11 @@
 
   // Reduce builds up a single result from a list of values, aka inject, or foldl.
   // Delegates to JavaScript 1.8's native reduce if available.
-  _.reduce = function(obj, memo, iterator, context) {
-    if (nativeReduce && obj.reduce === nativeReduce) return obj.reduce(_.bind(iterator, context), memo);
+  _.reduce = function(obj, iterator, memo, context) {
+    if (nativeReduce && obj.reduce === nativeReduce) {
+      if (context) iterator = _.bind(iterator, context);
+      return obj.reduce(iterator, memo);
+    }
     each(obj, function(value, index, list) {
       memo = iterator.call(context, memo, value, index, list);
     });
@@ -102,10 +105,13 @@
 
   // The right-associative version of reduce, also known as foldr. Uses
   // Delegates to JavaScript 1.8's native reduceRight if available.
-  _.reduceRight = function(obj, memo, iterator, context) {
-    if (nativeReduceRight && obj.reduceRight === nativeReduceRight) return obj.reduceRight(_.bind(iterator, context), memo);
+  _.reduceRight = function(obj, iterator, memo, context) {
+    if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
+      if (context) iterator = _.bind(iterator, context);
+      return obj.reduceRight(iterator, memo);
+    }
     var reversed = _.clone(_.toArray(obj)).reverse();
-    return _.reduce(reversed, memo, iterator, context);
+    return _.reduce(reversed, iterator, memo, context);
   };
 
   // Return the first value which passes a truth test.
@@ -277,11 +283,11 @@
 
   // Return a completely flattened version of an array.
   _.flatten = function(array) {
-    return _.reduce(array, [], function(memo, value) {
+    return _.reduce(array, function(memo, value) {
       if (_.isArray(value)) return memo.concat(_.flatten(value));
       memo.push(value);
       return memo;
-    });
+    }, []);
   };
 
   // Return a version of the array that does not contain the specified value(s).
@@ -293,10 +299,10 @@
   // Produce a duplicate-free version of the array. If the array has already
   // been sorted, you have the option of using a faster algorithm.
   _.uniq = function(array, isSorted) {
-    return _.reduce(array, [], function(memo, el, i) {
+    return _.reduce(array, function(memo, el, i) {
       if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) memo.push(el);
       return memo;
-    });
+    }, []);
   };
 
   // Produce an array that contains every item shared between all the

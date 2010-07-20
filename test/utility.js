@@ -69,6 +69,9 @@ $(document).ready(function() {
     var quoteInStatementAndBody = _.template("<% if(foo == 'bar'){ %>Statement quotes and 'quotes'.<% } %>");
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
+    var withNewlinesAndTabs = _.template('This\n\t\tis: <%= x %>.\n\tok.\nend.');
+    equals(withNewlinesAndTabs({x: 'that'}), 'This\n\t\tis: that.\n\tok.\nend.');
+
     _.templateSettings = {
       start       : '{{',
       end         : '}}',

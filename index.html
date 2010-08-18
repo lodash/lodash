@@ -110,12 +110,12 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.0.4)</a></td>
-        <td><i>24kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.1.0)</a></td>
+        <td><i>25kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.0.4)</a></td>
-        <td><i>2.9kb, Packed and Gzipped</i></td>
+        <td><a href="underscore-min.js">Production Version (1.1.0)</a></td>
+        <td><i>3kb, Packed and Gzipped</i></td>
       </tr>
     </table>
 
@@ -1157,6 +1157,15 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">1.1.0</b><br />
+        The method signature of <tt>_.reduce</tt> has been changed to match
+        the ECMAScript 5 signature, instead of the Ruby/Prototype.js version.
+        This is a backwards-incompatible change. <tt>_.template</tt> may now be
+        called with no arguments, and preserves whitespace. <tt>_.contains</tt>
+        is a new alias for <tt>_.include</tt>.
+      </p>
       
       <p>
         <b class="header">1.0.4</b><br />

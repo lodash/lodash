@@ -55,7 +55,7 @@
   root._ = _;
 
   // Current version.
-  _.VERSION = '1.0.4';
+  _.VERSION = '1.1.0';
 
   // ------------------------ Collection Functions: ---------------------------
 

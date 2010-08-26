@@ -630,7 +630,7 @@
     var c  = _.templateSettings;
     var endMatch = new RegExp("'(?=[^"+c.end.substr(0, 1)+"]*"+escapeRegExp(c.end)+")","g");
     var fn = new Function('obj',
-      'var p=[],print=function(){p.push.apply(p,arguments);};' +
+      'var p=[];' +
       'with(obj||{}){p.push(\'' +
       str.replace(/\r/g, '\\r')
          .replace(/\n/g, '\\n')
@@ -638,7 +638,7 @@
          .replace(endMatch,"✄")
          .split("'").join("\\'")
          .split("✄").join("'")
-         .replace(c.interpolate, "',$1,'")
+         .replace(c.interpolate, "' + $1 + '")
          .split(c.start).join("');")
          .split(c.end).join("p.push('")
          + "');}return p.join('');");

@@ -225,7 +225,7 @@ _(lyrics).chain()
 
       <p>
         In addition, the
-        <a href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array">Array prototype's methods</a>
+        <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/prototype">Array prototype's methods</a>
         are proxied through the chained Underscore object, so you can slip a
         <tt>reverse</tt> or a <tt>push</tt> into your chain, and continue to
         modify the array.
@@ -247,17 +247,22 @@ _(lyrics).chain()
       </p>
       <pre>
 _.each([1, 2, 3], function(num){ alert(num); });
+=&gt; alerts each number in turn...
+_.each({one : 1, two : 2, three : 3}, function(num, key){ alert(num); });
 =&gt; alerts each number in turn...</pre>
 
       <p id="map">
         <b class="header">map</b><code>_.map(list, iterator, [context])</code>
         <br />
         Produces a new array of values by mapping each value in <b>list</b>
-        through a transformation function (<b>iterator</b>). If the native
-        <b>map</b> method exists, it will be used instead.
+        through a transformation function (<b>iterator</b>). If the native <b>map</b> method
+        exists, it will be used instead. If <b>list</b> is a JavaScript object,
+        <b>iterator</b>'s arguments will be <tt>(value, key, list)</tt>.
       </p>
       <pre>
-_.map([1, 2, 3], function(num){ return num * 3 });
+_.map([1, 2, 3], function(num){ return num * 3; });
+=&gt; [3, 6, 9]
+_.map({one : 1, two : 2, three : 3}, function(num, key){ return num * 3; });
 =&gt; [3, 6, 9]</pre>
 
       <p id="reduce">
@@ -270,7 +275,7 @@ _.map([1, 2, 3], function(num){ return num * 3 });
         <b>iterator</b>.
       </p>
       <pre>
-var sum = _.reduce([1, 2, 3], function(memo, num){ return memo + num }, 0);
+var sum = _.reduce([1, 2, 3], function(memo, num){ return memo + num; }, 0);
 =&gt; 6
 </pre>
 

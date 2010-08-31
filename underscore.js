@@ -85,7 +85,7 @@
     if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
     var results = [];
     each(obj, function(value, index, list) {
-      results.push(iterator.call(context, value, index, list));
+      results[results.length] = iterator.call(context, value, index, list);
     });
     return results;
   };
@@ -132,7 +132,7 @@
     if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
     var results = [];
     each(obj, function(value, index, list) {
-      iterator.call(context, value, index, list) && results.push(value);
+      if (iterator.call(context, value, index, list)) results[results.length] = value;
     });
     return results;
   };
@@ -141,7 +141,7 @@
   _.reject = function(obj, iterator, context) {
     var results = [];
     each(obj, function(value, index, list) {
-      !iterator.call(context, value, index, list) && results.push(value);
+      if (!iterator.call(context, value, index, list)) results[results.length] = value;
     });
     return results;
   };
@@ -285,7 +285,7 @@
   _.flatten = function(array) {
     return _.reduce(array, function(memo, value) {
       if (_.isArray(value)) return memo.concat(_.flatten(value));
-      memo.push(value);
+      memo[memo.length] = value;
       return memo;
     }, []);
   };
@@ -300,7 +300,7 @@
   // been sorted, you have the option of using a faster algorithm.
   _.uniq = function(array, isSorted) {
     return _.reduce(array, function(memo, el, i) {
-      if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) memo.push(el);
+      if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) memo[memo.length] = el;
       return memo;
     }, []);
   };
@@ -321,8 +321,8 @@
   _.zip = function() {
     var args = _.toArray(arguments);
     var length = _.max(_.pluck(args, 'length'));
-    var results = new Array(length);
-    for (var i = 0; i < length; i++) results[i] = _.pluck(args, String(i));
+    var results = [];
+    for (var i = 0; i < length; i++) results[i] = _.pluck(args, "" + i);
     return results;
   };
 
@@ -354,7 +354,7 @@
     var start = solo ? 0 : a[0], stop = solo ? a[0] : a[1], step = a[2] || 1;
     var len   = Math.ceil((stop - start) / step);
     if (len <= 0) return [];
-    var range = new Array(len);
+    var range = [];
     for (var i = start, idx = 0; true; i += step) {
       if ((step > 0 ? i - stop : stop - i) >= 0) return range;
       range[idx++] = i;
@@ -434,7 +434,7 @@
   _.keys = nativeKeys || function(obj) {
     if (_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
-    for (var key in obj) if (hasOwnProperty.call(obj, key)) keys.push(key);
+    for (var key in obj) if (hasOwnProperty.call(obj, key)) keys[keys.length] = key;
     return keys;
   };
 

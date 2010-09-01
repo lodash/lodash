@@ -321,7 +321,7 @@
   _.zip = function() {
     var args = _.toArray(arguments);
     var length = _.max(_.pluck(args, 'length'));
-    var results = [];
+    var results = new Array(length);
     for (var i = 0; i < length; i++) results[i] = _.pluck(args, "" + i);
     return results;
   };
@@ -354,7 +354,7 @@
     var start = solo ? 0 : a[0], stop = solo ? a[0] : a[1], step = a[2] || 1;
     var len   = Math.ceil((stop - start) / step);
     if (len <= 0) return [];
-    var range = [];
+    var range = new Array(len);
     for (var i = start, idx = 0; true; i += step) {
       if ((step > 0 ? i - stop : stop - i) >= 0) return range;
       range[idx++] = i;

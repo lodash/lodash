@@ -68,7 +68,7 @@ $(document).ready(function() {
     equals(_.intersect(stooges, leaders).join(''), 'moe', 'can take the set intersection of two arrays');
     equals(_(stooges).intersect(leaders).join(''), 'moe', 'can perform an OO-style intersection');
     var result = (function(){ return _.intersect(arguments, leaders); })('moe', 'curly', 'larry');
-    equals(result.join(''), 'moe', 'works an an arguments object');
+    equals(result.join(''), 'moe', 'works on an arguments object');
   });
 
   test('arrays: zip', function() {

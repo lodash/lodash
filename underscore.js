@@ -630,8 +630,8 @@
     var c  = _.templateSettings;
     var endMatch = new RegExp("'(?=[^"+c.end.substr(0, 1)+"]*"+escapeRegExp(c.end)+")","g");
     var fn = new Function('obj',
-      'var p=[],print=function(){p.push.apply(p,arguments);};' +
-      'with(obj||{}){p.push(\'' +
+      'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +
+      'with(obj||{}){__p.push(\'' +
       str.replace(/\r/g, '\\r')
          .replace(/\n/g, '\\n')
          .replace(/\t/g, '\\t')
@@ -640,8 +640,8 @@
          .split("✄").join("'")
          .replace(c.interpolate, "',$1,'")
          .split(c.start).join("');")
-         .split(c.end).join("p.push('")
-         + "');}return p.join('');");
+         .split(c.end).join("__p.push('")
+         + "');}return __p.join('');");
     return data ? fn(data) : fn;
   };
 

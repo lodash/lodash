@@ -55,7 +55,9 @@ $(document).ready(function() {
     var result = basicTemplate({thing : 'This'});
     equals(result, "This is gettin' on my noives!", 'can do basic attribute interpolation');
 
-    var fancyTemplate = _.template("<ul><% for (key in people) { %><li><%= people[key] %></li><% } %></ul>");
+    var fancyTemplate = _.template("<ul><% \
+      for (key in people) { \
+    %><li><%= people[key] %></li><% } %></ul>");
     result = fancyTemplate({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
     equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
 
@@ -84,8 +86,7 @@ $(document).ready(function() {
     equals(withNewlinesAndTabs({x: 'that'}), 'This\n\t\tis: that.\n\tok.\nend.');
 
     _.templateSettings = {
-      start       : '{{',
-      end         : '}}',
+      evaluate    : /\{\{(.+?)\}\}/g,
       interpolate : /\{\{=(.+?)\}\}/g
     };
 
@@ -100,8 +101,7 @@ $(document).ready(function() {
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
-      start       : '<?',
-      end         : '?>',
+      evaluate    : /<\?(.+?)\?>/g,
       interpolate : /<\?=(.+?)\?>/g
     };
 
@@ -116,8 +116,6 @@ $(document).ready(function() {
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
-      start       : '{{',
-      end         : '}}',
       interpolate : /\{\{(.+?)\}\}/g
     };
 

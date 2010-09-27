@@ -58,8 +58,8 @@ $(document).ready(function() {
     var fancyTemplate = _.template("<ul><% for (key in people) { %><li><%= people[key] %></li><% } %></ul>");
     result = fancyTemplate({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
     equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
-    
-    var namespaceCollisionTemplate = _.template("<%= pageCount %> <%= thumbnails[pageCount] %> <% _.each(thumbnails, function(p) { %><div class=\"thumbnail\"><img src=\"<%= p %>\" /></div><% }); %>");
+
+    var namespaceCollisionTemplate = _.template("<%= pageCount %> <%= thumbnails[pageCount] %> <% _.each(thumbnails, function(p) { %><div class=\"thumbnail\" rel=\"<%= p %>\"></div><% }); %>");
     result = namespaceCollisionTemplate({
       pageCount: 3,
       thumbnails: {
@@ -68,7 +68,7 @@ $(document).ready(function() {
         3: "p3-thumbnail.gif"
       }
     });
-    equals(result, "3 p3-thumbnail.gif <div class=\"thumbnail\"><img src=\"p1-thumbnail.gif\" /></div><div class=\"thumbnail\"><img src=\"p2-thumbnail.gif\" /></div><div class=\"thumbnail\"><img src=\"p3-thumbnail.gif\" /></div>");
+    equals(result, "3 p3-thumbnail.gif <div class=\"thumbnail\" rel=\"p1-thumbnail.gif\"></div><div class=\"thumbnail\" rel=\"p2-thumbnail.gif\"></div><div class=\"thumbnail\" rel=\"p3-thumbnail.gif\"></div>");
 
     var noInterpolateTemplate = _.template("<div><p>Just some text. Hey, I know this is silly but it aids consistency.</p></div>");
     result = noInterpolateTemplate();

@@ -623,8 +623,8 @@
   // By default, Underscore uses ERB-style template delimiters, change the
   // following template settings to use alternative delimiters.
   _.templateSettings = {
-    evaluate    : /<%(.+?)%>/gm,
-    interpolate : /<%=(.+?)%>/gm
+    evaluate    : /<%([\s\S]+?)%>/g,
+    interpolate : /<%=([\s\S]+?)%>/g
   };
 
   // JavaScript templating a-la ERB, pilfered from John Resig's

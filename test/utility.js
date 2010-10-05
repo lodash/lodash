@@ -87,6 +87,9 @@ $(document).ready(function() {
     var withNewlinesAndTabs = _.template('This\n\t\tis: <%= x %>.\n\tok.\nend.');
     equals(withNewlinesAndTabs({x: 'that'}), 'This\n\t\tis: that.\n\tok.\nend.');
 
+    var fromHTML = _.template($('#template').html());
+    equals(fromHTML({data : 12345}).replace(/\s/g, ''), '<li>24690</li>');
+
     _.templateSettings = {
       evaluate    : /\{\{(.+?)\}\}/g,
       interpolate : /\{\{=(.+?)\}\}/g

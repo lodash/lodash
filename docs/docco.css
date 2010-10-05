@@ -89,10 +89,10 @@ table td {
       font-size: 12px;
       padding: 0 0.2em;
     }
-    .octowrap {
+    .pilwrap {
       position: relative;
     }
-      .octothorpe {
+      .pilcrow {
         font: 12px Arial;
         text-decoration: none;
         color: #454545;
@@ -102,11 +102,11 @@ table td {
         opacity: 0;
         -webkit-transition: opacity 0.2s linear;
       }
-        td.docs:hover .octothorpe {
+        td.docs:hover .pilcrow {
           opacity: 1;
         }
   td.code, th.code {
-    padding: 14px 15px 16px 50px;
+    padding: 14px 15px 16px 25px;
     width: 100%;
     vertical-align: top;
     background: #f5f5ff;

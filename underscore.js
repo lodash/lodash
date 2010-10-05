@@ -32,7 +32,8 @@
       hasOwnProperty        = ObjProto.hasOwnProperty,
       propertyIsEnumerable  = ObjProto.propertyIsEnumerable;
 
-  // All ECMA5 native implementations we hope to use are declared here.
+  // All **ECMAScript 5** native function implementations that we hope to use
+  // are declared here.
   var
     nativeForEach      = ArrayProto.forEach,
     nativeMap          = ArrayProto.map,
@@ -52,7 +53,7 @@
   // Export the Underscore object for **CommonJS**.
   if (typeof exports !== 'undefined') exports._ = _;
 
-  // Export Underscore to global scope.
+  // Export Underscore to the global scope.
   root._ = _;
 
   // Current version.
@@ -61,9 +62,9 @@
   // Collection Functions
   // --------------------
 
-  // The cornerstone, an each implementation.
+  // The cornerstone, an `each` implementation.
   // Handles objects implementing `forEach`, arrays, and raw objects.
-  // Delegates to JavaScript 1.6's native `forEach` if available.
+  // Delegates to **ECMAScript 5**'s native `forEach` if available.
   var each = _.forEach = function(obj, iterator, context) {
     try {
       if (nativeForEach && obj.forEach === nativeForEach) {
@@ -82,7 +83,7 @@
   };
 
   // Return the results of applying the iterator to each element.
-  // Delegates to JavaScript 1.6's native `map` if available.
+  // Delegates to **ECMAScript 5**'s native `map` if available.
   _.map = function(obj, iterator, context) {
     if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
     var results = [];
@@ -93,7 +94,7 @@
   };
 
   // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`. Delegates to JavaScript 1.8's native `reduce` if available.
+  // or `foldl`. Delegates to **ECMAScript 5**'s native `reduce` if available.
   _.reduce = function(obj, iterator, memo, context) {
     if (nativeReduce && obj.reduce === nativeReduce) {
       if (context) iterator = _.bind(iterator, context);
@@ -106,7 +107,7 @@
   };
 
   // The right-associative version of reduce, also known as `foldr`. Uses
-  // Delegates to JavaScript 1.8's native reduceRight if available.
+  // Delegates to **ECMAScript 5**'s native reduceRight if available.
   _.reduceRight = function(obj, iterator, memo, context) {
     if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
       if (context) iterator = _.bind(iterator, context);
@@ -129,7 +130,7 @@
   };
 
   // Return all the elements that pass a truth test.
-  // Delegates to JavaScript 1.6's native filter if available.
+  // Delegates to **ECMAScript 5**'s native `filter` if available.
   _.filter = function(obj, iterator, context) {
     if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
     var results = [];
@@ -149,7 +150,7 @@
   };
 
   // Determine whether all of the elements match a truth test.
-  // Delegates to JavaScript 1.6's native every if available.
+  // Delegates to **ECMAScript 5**'s native `every` if available.
   _.every = function(obj, iterator, context) {
     iterator = iterator || _.identity;
     if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
@@ -161,7 +162,7 @@
   };
 
   // Determine if at least one element in the object matches a truth test.
-  // Delegates to JavaScript 1.6's native some if available.
+  // Delegates to **ECMAScript 5**'s native `some` if available.
   _.some = function(obj, iterator, context) {
     iterator = iterator || _.identity;
     if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
@@ -172,7 +173,7 @@
     return result;
   };
 
-  // Determine if a given value is included in the array or object using '==='.
+  // Determine if a given value is included in the array or object using `===`.
   _.include = function(obj, target) {
     if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
     var found = false;
@@ -182,7 +183,7 @@
     return found;
   };
 
-  // Invoke a method with arguments on every item in a collection.
+  // Invoke a method (with arguments) on every item in a collection.
   _.invoke = function(obj, method) {
     var args = slice.call(arguments, 2);
     return _.map(obj, function(value) {
@@ -190,12 +191,12 @@
     });
   };
 
-  // Convenience version of a common use case of map: fetching a property.
+  // Convenience version of a common use case of `map`: fetching a property.
   _.pluck = function(obj, key) {
     return _.map(obj, function(value){ return value[key]; });
   };
 
-  // Return the maximum item or (item-based computation).
+  // Return the maximum element or (element-based computation).
   _.max = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.max.apply(Math, obj);
     var result = {computed : -Infinity};
@@ -242,7 +243,7 @@
     return low;
   };
 
-  // Convert anything iterable into a real, live array.
+  // Safely convert anything iterable into a real, live array.
   _.toArray = function(iterable) {
     if (!iterable)                return [];
     if (iterable.toArray)         return iterable.toArray();
@@ -259,17 +260,17 @@
   // Array Functions
   // ---------------
 
-  // Get the first element of an array. Passing "n" will return the first N
-  // values in the array. Aliased as "head". The "guard" check allows it to work
-  // with _.map.
+  // Get the first element of an array. Passing **n** will return the first N
+  // values in the array. Aliased as `head`. The **guard** check allows it to work
+  // with `_.map`.
   _.first = function(array, n, guard) {
     return n && !guard ? slice.call(array, 0, n) : array[0];
   };
 
-  // Returns everything but the first entry of the array. Aliased as "tail".
-  // Especially useful on the arguments object. Passing an "index" will return
-  // the rest of the values in the array from that index onward. The "guard"
-  // check allows it to work with _.map.
+  // Returns everything but the first entry of the array. Aliased as `tail`.
+  // Especially useful on the arguments object. Passing an **index** will return
+  // the rest of the values in the array from that index onward. The **guard**
+  // check allows it to work with `_.map`.
   _.rest = function(array, index, guard) {
     return slice.call(array, _.isUndefined(index) || guard ? 1 : index);
   };
@@ -332,7 +333,7 @@
   // If the browser doesn't supply us with indexOf (I'm looking at you, MSIE),
   // we need this function. Return the position of the first occurence of an
   // item in an array, or -1 if the item is not included in the array.
-  // Delegates to JavaScript 1.8's native indexOf if available.
+  // Delegates to **ECMAScript 5**'s native `indexOf` if available.
   _.indexOf = function(array, item) {
     if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item);
     for (var i = 0, l = array.length; i < l; i++) if (array[i] === item) return i;
@@ -340,7 +341,7 @@
   };
 
 
-  // Delegates to JavaScript 1.6's native lastIndexOf if available.
+  // Delegates to **ECMAScript 5**'s native `lastIndexOf` if available.
   _.lastIndexOf = function(array, item) {
     if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) return array.lastIndexOf(item);
     var i = array.length;
@@ -349,8 +350,8 @@
   };
 
   // Generate an integer Array containing an arithmetic progression. A port of
-  // the native Python range() function. See:
-  // http://docs.python.org/library/functions.html#range
+  // the native Python `range()` function. See
+  // [the Python documentation](http://docs.python.org/library/functions.html#range).
   _.range = function(start, stop, step) {
     var a     = slice.call(arguments);
     var solo  = a.length <= 1;
@@ -367,8 +368,8 @@
   // Function Functions
   // ------------------
 
-  // Create a function bound to a given object (assigning 'this', and arguments,
-  // optionally). Binding with arguments is also known as 'curry'.
+  // Create a function bound to a given object (assigning `this`, and arguments,
+  // optionally). Binding with arguments is also known as `curry`.
   _.bind = function(func, obj) {
     var args = slice.call(arguments, 2);
     return function() {
@@ -435,7 +436,7 @@
   // ----------------
 
   // Retrieve the names of an object's properties.
-  // Delegates to ECMA5's native Object.keys
+  // Delegates to **ECMAScript 5**'s native `Object.keys`
   _.keys = nativeKeys || function(obj) {
     if (_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
@@ -468,7 +469,8 @@
   };
 
   // Invokes interceptor with the obj, and then returns obj.
-  // The primary purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
+  // The primary purpose of this method is to "tap into" a method chain, in
+  // order to perform operations on intermediate results within the chain.
   _.tap = function(obj, interceptor) {
     interceptor(obj);
     return obj;
@@ -582,7 +584,7 @@
   // Utility Functions
   // -----------------
 
-  // Run Underscore.js in noConflict mode, returning the '_' variable to its
+  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
   // previous owner. Returns a reference to the Underscore object.
   _.noConflict = function() {
     root._ = previousUnderscore;
@@ -594,7 +596,7 @@
     return value;
   };
 
-  // Run a function n times.
+  // Run a function **n** times.
   _.times = function (n, iterator, context) {
     for (var i = 0; i < n; i++) iterator.call(context, i);
   };
@@ -627,10 +629,9 @@
     interpolate : /<%=([\s\S]+?)%>/g
   };
 
-  // JavaScript templating a-la ERB, pilfered from John Resig's
-  // "Secrets of the JavaScript Ninja", page 83.
-  // Single-quote fix from Rick Strahl's version.
-  // With alterations for arbitrary delimiters, and to preserve whitespace.
+  // JavaScript micro-templating, similar to John Resig's implementation.
+  // Underscore templating handles arbitrary delimiters, preserves whitespace,
+  // and correctly escapes quotes within interpolated code.
   _.template = function(str, data) {
     var c  = _.templateSettings;
     var tmpl = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +

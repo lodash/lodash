@@ -1,24 +1,25 @@
-// Underscore.js
-// (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
-// Underscore is freely distributable under the terms of the MIT license.
-// Portions of Underscore are inspired by or borrowed from Prototype.js,
-// Oliver Steele's Functional, and John Resig's Micro-Templating.
-// For all details and documentation:
-// http://documentcloud.github.com/underscore
+//     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
+//     Underscore is freely distributable under the terms of the MIT license.
+//     Portions of Underscore are inspired by or borrowed from Prototype.js,
+//     Oliver Steele's Functional, and John Resig's Micro-Templating.
+//     For all details and documentation:
+//     http://documentcloud.github.com/underscore
 
 (function() {
-  // ------------------------- Baseline setup ---------------------------------
 
-  // Establish the root object, "window" in the browser, or "global" on the server.
+  // Baseline setup
+  // --------------
+
+  // Establish the root object, `window` in the browser, or `global` on the server.
   var root = this;
 
-  // Save the previous value of the "_" variable.
+  // Save the previous value of the `_` variable.
   var previousUnderscore = root._;
 
   // Establish the object that gets thrown to break out of a loop iteration.
   var breaker = typeof StopIteration !== 'undefined' ? StopIteration : '__break__';
 
-  // Quick regexp-escaping function, because JS doesn't have RegExp.escape().
+  // Quick regexp-escaping function, because JS doesn't have a `RegExp.escape()`.
   var escapeRegExp = function(s) { return s.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1'); };
 
   // Save bytes in the minified (but not gzipped) version:
@@ -48,20 +49,21 @@
   // Create a safe reference to the Underscore object for use below.
   var _ = function(obj) { return new wrapper(obj); };
 
-  // Export the Underscore object for CommonJS.
+  // Export the Underscore object for **CommonJS**.
   if (typeof exports !== 'undefined') exports._ = _;
 
-  // Export underscore to global scope.
+  // Export Underscore to global scope.
   root._ = _;
 
   // Current version.
   _.VERSION = '1.1.0';
 
-  // ------------------------ Collection Functions: ---------------------------
+  // Collection Functions
+  // --------------------
 
   // The cornerstone, an each implementation.
-  // Handles objects implementing forEach, arrays, and raw objects.
-  // Delegates to JavaScript 1.6's native forEach if available.
+  // Handles objects implementing `forEach`, arrays, and raw objects.
+  // Delegates to JavaScript 1.6's native `forEach` if available.
   var each = _.forEach = function(obj, iterator, context) {
     try {
       if (nativeForEach && obj.forEach === nativeForEach) {
@@ -80,7 +82,7 @@
   };
 
   // Return the results of applying the iterator to each element.
-  // Delegates to JavaScript 1.6's native map if available.
+  // Delegates to JavaScript 1.6's native `map` if available.
   _.map = function(obj, iterator, context) {
     if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
     var results = [];
@@ -90,8 +92,8 @@
     return results;
   };
 
-  // Reduce builds up a single result from a list of values, aka inject, or foldl.
-  // Delegates to JavaScript 1.8's native reduce if available.
+  // **Reduce** builds up a single result from a list of values, aka `inject`,
+  // or `foldl`. Delegates to JavaScript 1.8's native `reduce` if available.
   _.reduce = function(obj, iterator, memo, context) {
     if (nativeReduce && obj.reduce === nativeReduce) {
       if (context) iterator = _.bind(iterator, context);
@@ -103,7 +105,7 @@
     return memo;
   };
 
-  // The right-associative version of reduce, also known as foldr. Uses
+  // The right-associative version of reduce, also known as `foldr`. Uses
   // Delegates to JavaScript 1.8's native reduceRight if available.
   _.reduceRight = function(obj, iterator, memo, context) {
     if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
@@ -254,7 +256,8 @@
     return _.toArray(obj).length;
   };
 
-  // -------------------------- Array Functions: ------------------------------
+  // Array Functions
+  // ---------------
 
   // Get the first element of an array. Passing "n" will return the first N
   // values in the array. Aliased as "head". The "guard" check allows it to work
@@ -361,7 +364,8 @@
     }
   };
 
-  // ----------------------- Function Functions: ------------------------------
+  // Function Functions
+  // ------------------
 
   // Create a function bound to a given object (assigning 'this', and arguments,
   // optionally). Binding with arguments is also known as 'curry'.
@@ -427,7 +431,8 @@
     };
   };
 
-  // ------------------------- Object Functions: ------------------------------
+  // Object Functions
+  // ----------------
 
   // Retrieve the names of an object's properties.
   // Delegates to ECMA5's native Object.keys
@@ -574,7 +579,8 @@
     return typeof obj == 'undefined';
   };
 
-  // -------------------------- Utility Functions: ----------------------------
+  // Utility Functions
+  // -----------------
 
   // Run Underscore.js in noConflict mode, returning the '_' variable to its
   // previous owner. Returns a reference to the Underscore object.
@@ -645,7 +651,8 @@
     return data ? func(data) : func;
   };
 
-  // ------------------------------- Aliases ----------------------------------
+  // Aliases:
+  // --------
 
   _.each     = _.forEach;
   _.foldl    = _.inject       = _.reduce;
@@ -658,7 +665,8 @@
   _.tail     = _.rest;
   _.methods  = _.functions;
 
-  // ------------------------ Setup the OOP Wrapper: --------------------------
+  // The OOP Wrapper
+  // ---------------
 
   // If Underscore is called as a function, it returns a wrapped object that
   // can be used OO-style. This wrapper holds altered versions of all the

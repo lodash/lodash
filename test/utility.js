@@ -79,7 +79,9 @@ $(document).ready(function() {
     var quoteTemplate = _.template("It's its, not it's");
     equals(quoteTemplate({}), "It's its, not it's");
 
-    var quoteInStatementAndBody = _.template("<% if(foo == 'bar'){ %>Statement quotes and 'quotes'.<% } %>");
+    var quoteInStatementAndBody = _.template("<%\
+      if(foo == 'bar'){ \
+    %>Statement quotes and 'quotes'.<% } %>");
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     var withNewlinesAndTabs = _.template('This\n\t\tis: <%= x %>.\n\tok.\nend.');

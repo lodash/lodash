@@ -184,7 +184,7 @@
 
   // Invoke a method with arguments on every item in a collection.
   _.invoke = function(obj, method) {
-    var args = _.rest(arguments, 2);
+    var args = slice.call(arguments, 2);
     return _.map(obj, function(value) {
       return (method ? value[method] : value).apply(value, args);
     });
@@ -269,7 +269,7 @@
   // Returns everything but the first entry of the array. Aliased as "tail".
   // Especially useful on the arguments object. Passing an "index" will return
   // the rest of the values in the array from that index onward. The "guard"
-   //check allows it to work with _.map.
+  // check allows it to work with _.map.
   _.rest = function(array, index, guard) {
     return slice.call(array, _.isUndefined(index) || guard ? 1 : index);
   };
@@ -295,7 +295,7 @@
 
   // Return a version of the array that does not contain the specified value(s).
   _.without = function(array) {
-    var values = _.rest(arguments);
+    var values = slice.call(arguments, 1);
     return _.filter(array, function(value){ return !_.include(values, value); });
   };
 
@@ -311,7 +311,7 @@
   // Produce an array that contains every item shared between all the
   // passed-in arrays.
   _.intersect = function(array) {
-    var rest = _.rest(arguments);
+    var rest = slice.call(arguments, 1);
     return _.filter(_.uniq(array), function(item) {
       return _.every(rest, function(other) {
         return _.indexOf(other, item) >= 0;
@@ -322,7 +322,7 @@
   // Zip together multiple lists into a single array -- elements that share
   // an index go together.
   _.zip = function() {
-    var args = _.toArray(arguments);
+    var args = slice.call(arguments);
     var length = _.max(_.pluck(args, 'length'));
     var results = new Array(length);
     for (var i = 0; i < length; i++) results[i] = _.pluck(args, "" + i);
@@ -352,7 +352,7 @@
   // the native Python range() function. See:
   // http://docs.python.org/library/functions.html#range
   _.range = function(start, stop, step) {
-    var a     = _.toArray(arguments);
+    var a     = slice.call(arguments);
     var solo  = a.length <= 1;
     var start = solo ? 0 : a[0], stop = solo ? a[0] : a[1], step = a[2] || 1;
     var len   = Math.ceil((stop - start) / step);
@@ -370,16 +370,16 @@
   // Create a function bound to a given object (assigning 'this', and arguments,
   // optionally). Binding with arguments is also known as 'curry'.
   _.bind = function(func, obj) {
-    var args = _.rest(arguments, 2);
+    var args = slice.call(arguments, 2);
     return function() {
-      return func.apply(obj || {}, args.concat(_.toArray(arguments)));
+      return func.apply(obj || {}, args.concat(slice.call(arguments)));
     };
   };
 
   // Bind all of an object's methods to that object. Useful for ensuring that
   // all callbacks defined on an object belong to it.
   _.bindAll = function(obj) {
-    var funcs = _.rest(arguments);
+    var funcs = slice.call(arguments, 1);
     if (funcs.length == 0) funcs = _.functions(obj);
     each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
     return obj;
@@ -398,14 +398,14 @@
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
   _.delay = function(func, wait) {
-    var args = _.rest(arguments, 2);
+    var args = slice.call(arguments, 2);
     return setTimeout(function(){ return func.apply(func, args); }, wait);
   };
 
   // Defers a function, scheduling it to run after the current call stack has
   // cleared.
   _.defer = function(func) {
-    return _.delay.apply(_, [func, 1].concat(_.rest(arguments)));
+    return _.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)));
   };
 
   // Returns the first function passed as an argument to the second,
@@ -413,7 +413,7 @@
   // conditionally execute the original function.
   _.wrap = function(func, wrapper) {
     return function() {
-      var args = [func].concat(_.toArray(arguments));
+      var args = [func].concat(slice.call(arguments));
       return wrapper.apply(wrapper, args);
     };
   };
@@ -421,9 +421,9 @@
   // Returns a function that is the composition of a list of functions, each
   // consuming the return value of the function that follows.
   _.compose = function() {
-    var funcs = _.toArray(arguments);
+    var funcs = slice.call(arguments);
     return function() {
-      var args = _.toArray(arguments);
+      var args = slice.call(arguments);
       for (var i=funcs.length-1; i >= 0; i--) {
         args = [funcs[i].apply(this, args)];
       }
@@ -455,7 +455,7 @@
 
   // Extend a given object with all the properties in passed-in object(s).
   _.extend = function(obj) {
-    each(_.rest(arguments), function(source) {
+    each(slice.call(arguments, 1), function(source) {
       for (var prop in source) obj[prop] = source[prop];
     });
     return obj;
@@ -681,7 +681,7 @@
   // A method to easily add functions to the OOP wrapper.
   var addToWrapper = function(name, func) {
     wrapper.prototype[name] = function() {
-      var args = _.toArray(arguments);
+      var args = slice.call(arguments);
       unshift.call(args, this._wrapped);
       return result(func.apply(_, args), this._chain);
     };

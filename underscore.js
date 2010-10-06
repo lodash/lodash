@@ -110,7 +110,7 @@
       if (context) iterator = _.bind(iterator, context);
       return obj.reduceRight(iterator, memo);
     }
-    var reversed = _.clone(_.toArray(obj)).reverse();
+    var reversed = (_.isArray(obj) ? obj.slice() : _.toArray(obj)).reverse();
     return _.reduce(reversed, iterator, memo, context);
   };
 

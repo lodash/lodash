@@ -93,8 +93,8 @@ $(document).ready(function() {
     }
 
     _.templateSettings = {
-      evaluate    : /\{\{(.+?)\}\}/g,
-      interpolate : /\{\{=(.+?)\}\}/g
+      evaluate    : /\{\{([\s\S]+?)\}\}/g,
+      interpolate : /\{\{=([\s\S]+?)\}\}/g
     };
 
     var custom = _.template("<ul>{{ for (key in people) { }}<li>{{= people[key] }}</li>{{ } }}</ul>");
@@ -108,8 +108,8 @@ $(document).ready(function() {
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
-      evaluate    : /<\?(.+?)\?>/g,
-      interpolate : /<\?=(.+?)\?>/g
+      evaluate    : /<%([\s\S]+?)%>/g,
+      interpolate : /<%=([\s\S]+?)%>/g
     };
 
     var customWithSpecialChars = _.template("<ul><? for (key in people) { ?><li><?= people[key] ?></li><? } ?></ul>");

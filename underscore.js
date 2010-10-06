@@ -468,7 +468,7 @@
 
   // Create a (shallow-cloned) duplicate of an object.
   _.clone = function(obj) {
-    return _.isArray(obj) ? obj.slice(0) : _.extend({}, obj);
+    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
   };
 
   // Invokes interceptor with the obj, and then returns obj.

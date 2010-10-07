@@ -108,8 +108,8 @@ $(document).ready(function() {
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
-      evaluate    : /<%([\s\S]+?)%>/g,
-      interpolate : /<%=([\s\S]+?)%>/g
+      evaluate    : /<\?([\s\S]+?)\?>/g,
+      interpolate : /<\?=([\s\S]+?)\?>/g
     };
 
     var customWithSpecialChars = _.template("<ul><? for (key in people) { ?><li><?= people[key] ?></li><? } ?></ul>");

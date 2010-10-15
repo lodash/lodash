@@ -174,7 +174,8 @@
   };
 
   // Determine if a given value is included in the array or object using `===`.
-  _.include = function(obj, target) {
+  // Aliased as `contains`.
+  _.include = _.contains = function(obj, target) {
     if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
     var found = false;
     each(obj, function(value) {
@@ -310,8 +311,8 @@
   };
 
   // Produce an array that contains every item shared between all the
-  // passed-in arrays. Aliased as `contains`.
-  _.intersect = _.contains = function(array) {
+  // passed-in arrays.
+  _.intersect = function(array) {
     var rest = slice.call(arguments, 1);
     return _.filter(_.uniq(array), function(item) {
       return _.every(rest, function(other) {

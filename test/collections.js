@@ -111,7 +111,7 @@ $(document).ready(function() {
   test('collections: include', function() {
     ok(_.include([1,2,3], 2), 'two is in the array');
     ok(!_.include([1,3,9], 2), 'two is not in the array');
-    ok(_.contains({moe:1, larry:3, curly:9}, 3), '_.include on objects checks their values');
+    ok(_.contains({moe:1, larry:3, curly:9}, 3) === true, '_.include on objects checks their values');
     ok(_([1,2,3]).include(2), 'OO-style include');
   });
 

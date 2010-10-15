@@ -54,7 +54,7 @@
   root._ = _;
 
   // Current version.
-  _.VERSION = '1.1.1';
+  _.VERSION = '1.1.2';
 
   // Collection Functions
   // --------------------
@@ -303,6 +303,7 @@
 
   // Produce a duplicate-free version of the array. If the array has already
   // been sorted, you have the option of using a faster algorithm.
+  // Aliased as `unique`.
   _.uniq = _.unique = function(array, isSorted) {
     return _.reduce(array, function(memo, el, i) {
       if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) memo[memo.length] = el;

@@ -114,11 +114,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.1.1)</a></td>
+        <td><a href="underscore.js">Development Version (1.1.2)</a></td>
         <td><i>25kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.1.1)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.1.2)</a></td>
         <td><i>3kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -546,6 +546,7 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 
       <p id="uniq">
         <b class="header">uniq</b><code>_.uniq(array, [isSorted])</code>
+        <span class="alias">Alias: <b>unique</b></span>
         <br />
         Produces a duplicate-free version of the <b>array</b>, using <i>===</i> to test
         object equality. If you know in advance that the <b>array</b> is sorted,
@@ -1164,6 +1165,13 @@ _([1, 2, 3]).value();
       </p>
 
       <h2>Change Log</h2>
+      
+      <p>
+        <b class="header">1.1.2</b><br />
+        Fixed <tt>_.contains</tt>, which was mistakenly pointing at 
+        <tt>_.intersect</tt> instead of <tt>_.include</tt>, like it should 
+        have been. Added <tt>_.unique</tt> as an alias for <tt>_.uniq</tt>.
+      </p>
       
       <p>
         <b class="header">1.1.1</b><br />

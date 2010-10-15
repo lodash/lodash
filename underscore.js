@@ -303,7 +303,7 @@
 
   // Produce a duplicate-free version of the array. If the array has already
   // been sorted, you have the option of using a faster algorithm.
-  _.uniq = function(array, isSorted) {
+  _.uniq = _.unique = function(array, isSorted) {
     return _.reduce(array, function(memo, el, i) {
       if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) memo[memo.length] = el;
       return memo;

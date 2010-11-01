@@ -92,14 +92,13 @@
   // **Reduce** builds up a single result from a list of values, aka `inject`,
   // or `foldl`. Delegates to **ECMAScript 5**'s native `reduce` if available.
   _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
+    var initial = memo !== void 0;
     if (nativeReduce && obj.reduce === nativeReduce) {
       if (context) iterator = _.bind(iterator, context);
-      var args = [iterator];
-      if (memo !== undefined) args.push(memo);
-      return obj.reduce.apply(obj, args);
+      return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
     }
     each(obj, function(value, index, list) {
-      if (memo === undefined && index == 0) {
+      if (!initial && index === 0) {
         memo = value;
       } else {
         memo = iterator.call(context, memo, value, index, list);

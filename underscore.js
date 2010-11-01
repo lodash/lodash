@@ -94,10 +94,16 @@
   _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
     if (nativeReduce && obj.reduce === nativeReduce) {
       if (context) iterator = _.bind(iterator, context);
-      return obj.reduce(iterator, memo);
+      var args = [iterator];
+      if (memo !== undefined) args.push(memo);
+      return obj.reduce.apply(obj, args);
     }
     each(obj, function(value, index, list) {
-      memo = iterator.call(context, memo, value, index, list);
+      if (memo === undefined && index == 0) {
+        memo = value;
+      } else {
+        memo = iterator.call(context, memo, value, index, list);
+      }
     });
     return memo;
   };

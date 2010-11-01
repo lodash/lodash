@@ -65,6 +65,9 @@ $(document).ready(function() {
 
     sum = _([1, 2, 3]).reduce(function(sum, num){ return sum + num; }, 0);
     equals(sum, 6, 'OO-style reduce');
+    
+    var sum = _.reduce([1, 2, 3], function(sum, num){ return sum + num; });
+    equals(sum, 6, 'default initial value');
   });
 
   test('collections: reduceRight', function() {

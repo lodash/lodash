@@ -71,8 +71,14 @@ $(document).ready(function() {
   });
 
   test('collections: reduceRight', function() {
-    var list = _.foldr([1, 2, 3], function(memo, num){ return memo + num; }, '');
-    equals(list, '321', 'can perform right folds');
+    var list = _.reduceRight(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
+    equals(list, 'bazbarfoo', 'can perform right folds');
+    
+    var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
+    equals(list, 'bazbarfoo', 'aliased as "foldr"');
+    
+    var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; });
+    equals(list, 'bazbarfoo', 'default initial value');
   });
 
   test('collections: detect', function() {

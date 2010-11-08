@@ -1,11 +1,16 @@
 require 'rubygems'
 require 'closure-compiler'
 
+HEADER = /((^\s*\/\/.*\n)+)/
+
 desc "Use the Closure Compiler to compress Underscore.js"
 task :build do
-  js  = File.open('underscore.js', 'r')
-  min = Closure::Compiler.new.compile(js)
-  File.open('underscore-min.js', 'w') {|f| f.write(min) }
+  source  = File.read('underscore.js')
+  header  = source.match(HEADER)
+  min     = Closure::Compiler.new.compress(source)
+  File.open('underscore-min.js', 'w') do |file|
+    file.write header[1].squeeze(' ') + min
+  end
 end
 
 desc "Build the docco documentation"

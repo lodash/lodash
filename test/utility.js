@@ -55,6 +55,9 @@ $(document).ready(function() {
     var result = basicTemplate({thing : 'This'});
     equals(result, "This is gettin' on my noives!", 'can do basic attribute interpolation');
 
+    var backslashTemplate = _.template("<%= thing %> is \\ridanculous");
+    equals(backslashTemplate({thing: 'This'}), "This is \\ridanculous");
+
     var fancyTemplate = _.template("<ul><% \
       for (key in people) { \
     %><li><%= people[key] %></li><% } %></ul>");

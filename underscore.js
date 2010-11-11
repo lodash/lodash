@@ -338,7 +338,7 @@
   };
 
   // If the browser doesn't supply us with indexOf (I'm looking at you, **MSIE**),
-  // we need this function. Return the position of the first occurence of an
+  // we need this function. Return the position of the first occurrence of an
   // item in an array, or -1 if the item is not included in the array.
   // Delegates to **ECMAScript 5**'s native `indexOf` if available.
   _.indexOf = function(array, item) {

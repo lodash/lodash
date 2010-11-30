@@ -54,17 +54,42 @@ $(document).ready(function() {
     equals(fastFib(10), 55, 'a memoized version of fibonacci produces identical results');
   });
 
-  asyncTest("functions: delay", function() {
+  asyncTest("functions: delay", 2, function() {
     var delayed = false;
     _.delay(function(){ delayed = true; }, 100);
     _.delay(function(){ ok(!delayed, "didn't delay the function quite yet"); }, 50);
     _.delay(function(){ ok(delayed, 'delayed the function'); start(); }, 150);
   });
 
-  asyncTest("functions: defer", function() {
+  asyncTest("functions: defer", 1, function() {
     var deferred = false;
     _.defer(function(bool){ deferred = bool; }, true);
     _.delay(function(){ ok(deferred, "deferred the function"); start(); }, 50);
+  });
+
+  asyncTest("functions: throttle", 1, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 50);
+    throttledIncr(); throttledIncr(); throttledIncr();
+    setTimeout(throttledIncr, 60);
+    setTimeout(throttledIncr, 70);
+    setTimeout(throttledIncr, 110);
+    setTimeout(throttledIncr, 120);
+    _.delay(function(){ ok(counter == 3, "incr was throttled"); start(); }, 180);
+  });
+
+  asyncTest("functions: debounce", 1, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var debouncedIncr = _.debounce(incr, 50);
+    debouncedIncr(); debouncedIncr(); debouncedIncr();
+    setTimeout(debouncedIncr, 30);
+    setTimeout(debouncedIncr, 60);
+    setTimeout(debouncedIncr, 90);
+    setTimeout(debouncedIncr, 120);
+    setTimeout(debouncedIncr, 150);
+    _.delay(function(){ ok(counter == 1, "incr was debounced"); start(); }, 220);
   });
 
   test("functions: wrap", function() {

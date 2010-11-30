@@ -9,26 +9,11 @@
                                                                                \/___/
 
 Underscore is a utility-belt library for JavaScript that provides 
-a lot of the functional programming support that you would expect 
-in Prototype.js (or Ruby), but without extending any of the built-
-in JavaScript objects. It's the tie to go along with jQuery's tux.
+support for the usual functional suspects (each, map, reduce, filter...) 
+without extending any core JavaScript objects.
 
 For Docs, License, Tests, and pre-packed downloads, see:
 http://documentcloud.github.com/underscore/
 
 Many thanks to our contributors:
-
-  Dmitry Baranovskiy
-  Tim Caswell
-  Samuel Clay
-  Mathieu D'Amours
-  Rick Fletcher
-  Mike Frawley
-  Kirill Ishanov
-  Kris Kowal
-  Jed Schmidt
-  Noah Sloan
-  Nick Stenning
-  Luke Sutton
-  Ryan Tenney
-  John Wright
+https://github.com/documentcloud/underscore/contributors

@@ -47,14 +47,13 @@
   // Create a safe reference to the Underscore object for use below.
   var _ = function(obj) { return new wrapper(obj); };
 
+  // Export the Underscore object for **CommonJS**, with backwards-compatibility
+  // for the old `require()` API. If we're not in CommonJS, add `_` to the
+  // global object.
   if (typeof module !== 'undefined') {
-    // Export the Underscore object for **CommonJS**.
     module.exports = _;
-
-    // Backwards compat with old requiring api
     _._ = _;
   } else {
-    // Export Underscore to the global scope.
     root._ = _;
   }
 

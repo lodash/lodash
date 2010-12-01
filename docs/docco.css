@@ -16,17 +16,17 @@ p {
   margin: 0 0 15px 0;
 }
 h1, h2, h3, h4, h5, h6 {
-  margin: 40px 0 15px 0;
+  margin: 0px 0 15px 0;
 }
-  h3, h4, h5, h6 {
-    margin-top: 20px;
+  h1 {
+    margin-top: 40px;
   }
 #container {
   position: relative;
 }
 #background {
   position: fixed;
-  top: 0; left: 575px; right: 0; bottom: 0;
+  top: 0; left: 525px; right: 0; bottom: 0;
   background: #f5f5ff;
   border-left: 1px solid #e5e5ee;
   z-index: -1;

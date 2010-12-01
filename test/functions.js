@@ -76,7 +76,7 @@ $(document).ready(function() {
     setTimeout(throttledIncr, 70);
     setTimeout(throttledIncr, 110);
     setTimeout(throttledIncr, 120);
-    _.delay(function(){ ok(counter == 3, "incr was throttled"); start(); }, 180);
+    _.delay(function(){ ok(counter == 3, "incr was throttled"); start(); }, 200);
   });
 
   asyncTest("functions: debounce", 1, function() {

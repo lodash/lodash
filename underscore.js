@@ -588,7 +588,13 @@
 
   // Is a given value a number?
   _.isNumber = function(obj) {
-    return (obj === +obj) || (toString.call(obj) === '[object Number]');
+    return !!(obj === 0 || (obj && obj.toExponential && obj.toFixed));
+  };
+
+  // Is the given value NaN -- this one is interesting. NaN != NaN, and
+  // isNaN(undefined) == true, so we make sure it's a number first.
+  _.isNaN = function(obj) {
+    return toString.call(obj) === '[object Number]' && isNaN(obj);
   };
 
   // Is a given value a boolean?
@@ -606,12 +612,6 @@
     return !!(obj && obj.test && obj.exec && (obj.ignoreCase || obj.ignoreCase === false));
   };
 
-  // Is the given value NaN -- this one is interesting. NaN != NaN, and
-  // isNaN(undefined) == true, so we make sure it's a number first.
-  _.isNaN = function(obj) {
-    return _.isNumber(obj) && isNaN(obj);
-  };
-
   // Is a given value equal to null?
   _.isNull = function(obj) {
     return obj === null;
@@ -619,7 +619,7 @@
 
   // Is a given variable undefined?
   _.isUndefined = function(obj) {
-    return typeof obj == 'undefined';
+    return obj === void 0;
   };
 
   // Utility Functions

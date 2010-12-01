@@ -86,7 +86,7 @@ $(document).ready(function() {
       parent.iRegExp    = /hi/;\
       parent.iNaN       = NaN;\
       parent.iNull      = null;\
-	  parent.iBoolean   = false;\
+      parent.iBoolean   = false;\
       parent.iUndefined = undefined;\
     </script>"
   );
@@ -125,7 +125,7 @@ $(document).ready(function() {
     ok(!_.isNumber(arguments), 'the arguments object is not a number');
     ok(!_.isNumber(undefined), 'undefined is not a number');
     ok(_.isNumber(3 * 4 - 7 / 10), 'but numbers are');
-    ok(_.isNumber(NaN), 'NaN is a number');
+    ok(!_.isNumber(NaN), 'NaN is not a number');
     ok(_.isNumber(Infinity), 'Infinity is a number');
     ok(_.isNumber(iNumber), 'even from another frame');
   });
@@ -183,10 +183,23 @@ $(document).ready(function() {
     ok(!_.isUndefined(1), 'numbers are defined');
     ok(!_.isUndefined(null), 'null is defined');
     ok(!_.isUndefined(false), 'false is defined');
+    ok(!_.isUndefined(NaN), 'NaN is defined');
     ok(_.isUndefined(), 'nothing is undefined');
     ok(_.isUndefined(undefined), 'undefined is undefined');
     ok(_.isUndefined(iUndefined), 'even from another frame');
   });
+
+  if (window.ActiveXObject) {
+    test("objects: IE host objects", function() {
+      var xml = new ActiveXObject("Msxml2.DOMDocument.3.0");
+      ok(!_.isNumber(xml));
+      ok(!_.isBoolean(xml));
+      ok(!_.isNaN(xml));
+      ok(!_.isFunction(xml));
+      ok(!_.isNull(xml));
+      ok(!_.isUndefined(xml));
+    });
+  }
 
   test("objects: tap", function() {
     var intercepted = null;

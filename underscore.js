@@ -50,7 +50,7 @@
   // Export the Underscore object for **CommonJS**, with backwards-compatibility
   // for the old `require()` API. If we're not in CommonJS, add `_` to the
   // global object.
-  if (typeof module !== 'undefined') {
+  if (typeof module !== 'undefined' && module.exports) {
     module.exports = _;
     _._ = _;
   } else {

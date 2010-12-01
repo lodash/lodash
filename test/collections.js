@@ -7,10 +7,6 @@ $(document).ready(function() {
       equals(num, i + 1, 'each iterators provide value and iteration count');
     });
 
-    var answer = null;
-    _.each([1, 2, 3], function(num){ if ((answer = num) == 2) _.breakLoop(); });
-    equals(answer, 2, 'the loop broke in the middle');
-
     var answers = [];
     _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier);}, {multiplier : 5});
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
@@ -65,7 +61,7 @@ $(document).ready(function() {
 
     sum = _([1, 2, 3]).reduce(function(sum, num){ return sum + num; }, 0);
     equals(sum, 6, 'OO-style reduce');
-    
+
     var sum = _.reduce([1, 2, 3], function(sum, num){ return sum + num; });
     equals(sum, 6, 'default initial value');
   });
@@ -73,10 +69,10 @@ $(document).ready(function() {
   test('collections: reduceRight', function() {
     var list = _.reduceRight(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
     equals(list, 'bazbarfoo', 'can perform right folds');
-    
+
     var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
     equals(list, 'bazbarfoo', 'aliased as "foldr"');
-    
+
     var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; });
     equals(list, 'bazbarfoo', 'default initial value');
   });

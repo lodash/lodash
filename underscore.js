@@ -519,9 +519,6 @@
 
   // Perform a deep comparison to check if two objects are equal.
   _.isEqual = function(a, b) {
-    // Unwrap any wrapped objects
-    if (a && a._chain) a = a.value();
-    if (b && b._chain) b = b.value();
     // Check object identity.
     if (a === b) return true;
     // Different types?
@@ -531,6 +528,9 @@
     if (a == b) return true;
     // One is falsy and the other truthy.
     if ((!a && b) || (a && !b)) return false;
+    // Unwrap any wrapped objects
+    if (a._chain) a = a.value();
+    if (b._chain) b = b.value();
     // One of them implements an isEqual()?
     if (a.isEqual) return a.isEqual(b);
     // Check dates' integer values.

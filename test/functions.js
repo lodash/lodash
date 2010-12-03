@@ -70,13 +70,13 @@ $(document).ready(function() {
   asyncTest("functions: throttle", 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
-    var throttledIncr = _.throttle(incr, 50);
+    var throttledIncr = _.throttle(incr, 100);
     throttledIncr(); throttledIncr(); throttledIncr();
-    setTimeout(throttledIncr, 60);
-    setTimeout(throttledIncr, 70);
-    setTimeout(throttledIncr, 110);
     setTimeout(throttledIncr, 120);
-    _.delay(function(){ ok(counter == 3, "incr was throttled"); start(); }, 200);
+    setTimeout(throttledIncr, 140);
+    setTimeout(throttledIncr, 220);
+    setTimeout(throttledIncr, 240);
+    _.delay(function(){ ok(counter == 3, "incr was throttled"); start(); }, 400);
   });
 
   asyncTest("functions: debounce", 1, function() {

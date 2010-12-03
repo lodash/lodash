@@ -529,8 +529,8 @@
     // One is falsy and the other truthy.
     if ((!a && b) || (a && !b)) return false;
     // Unwrap any wrapped objects.
-    if (a._chain) a = a.value();
-    if (b._chain) b = b.value();
+    if (a._chain) a = a._wrapped;
+    if (b._chain) b = b._wrapped;
     // One of them implements an isEqual()?
     if (a.isEqual) return a.isEqual(b);
     // Check dates' integer values.

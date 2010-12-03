@@ -528,7 +528,7 @@
     if (a == b) return true;
     // One is falsy and the other truthy.
     if ((!a && b) || (a && !b)) return false;
-    // Unwrap any wrapped objects
+    // Unwrap any wrapped objects.
     if (a._chain) a = a.value();
     if (b._chain) b = b.value();
     // One of them implements an isEqual()?

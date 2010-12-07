@@ -29,6 +29,10 @@ $(document).ready(function() {
     answers = [];
     _.each({range : 1, speed : 2, length : 3}, function(v){ answers.push(v); });
     ok(answers.join(', '), '1, 2, 3', 'can iterate over objects with numeric length properties');
+
+    answers = 0;
+    _.each(null, function(){ ++answers; });
+    equals(answers, 0, 'handles a null properly');
   });
 
   test('collections: map', function() {
@@ -46,6 +50,9 @@ $(document).ready(function() {
 
     var ids = _.map(document.images, function(n){ return n.id; });
     ok(ids[0] == 'chart_image', 'can use collection methods on HTMLCollections');
+
+    var ifnull = _.map(null, function(){});
+    ok(_.isArray(ifnull) && ifnull.length === 0, 'handles a null properly');
   });
 
   test('collections: reduce', function() {
@@ -64,6 +71,16 @@ $(document).ready(function() {
 
     var sum = _.reduce([1, 2, 3], function(sum, num){ return sum + num; });
     equals(sum, 6, 'default initial value');
+
+    var ifnull;
+    try {
+      _.reduce(null, function(){});
+    } catch (ex) {
+      ifnull = ex;
+    }
+    ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
+
+    ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
   });
 
   test('collections: reduceRight', function() {
@@ -75,6 +92,16 @@ $(document).ready(function() {
 
     var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; });
     equals(list, 'bazbarfoo', 'default initial value');
+
+    var ifnull;
+    try {
+      _.reduceRight(null, function(){});
+    } catch (ex) {
+      ifnull = ex;
+    }
+    ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
+
+    ok(_.reduceRight(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
   });
 
   test('collections: detect', function() {

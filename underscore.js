@@ -469,7 +469,7 @@
   _.wrap = function(func, wrapper) {
     return function() {
       var args = [func].concat(slice.call(arguments));
-      return wrapper.apply(wrapper, args);
+      return wrapper.apply(this, args);
     };
   };
 

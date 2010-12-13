@@ -96,6 +96,11 @@ $(document).ready(function() {
     var greet = function(name){ return "hi: " + name; };
     var backwards = _.wrap(greet, function(func, name){ return func(name) + ' ' + name.split('').reverse().join(''); });
     equals(backwards('moe'), 'hi: moe eom', 'wrapped the saluation function');
+
+    var inner = function(){ return "Hello "; };
+    var obj   = {name : "Moe"};
+    obj.hi    = _.wrap(inner, function(fn){ return fn() + this.name; });
+    equals(obj.hi(), "Hello Moe");
   });
 
   test("functions: compose", function() {

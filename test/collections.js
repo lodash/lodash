@@ -185,6 +185,20 @@ $(document).ready(function() {
     equals(index, 3, '35 should be inserted at index 3');
   });
 
+  test('collections: sortedIndexOf', function() {
+    var numbers = [10, 20, 30, 40, 50], num = 35;
+    var index = _.sortedIndexOf(numbers, num);
+    equals(index, -1, '35 is not in the list');
+
+    numbers = [10, 20, 30, 40, 50]; num = 40;
+    index = _.sortedIndexOf(numbers, num);
+    equals(index, 3, '40 is in the list');
+
+    numbers = [1, 40, 40, 40, 40, 40, 40, 40, 50, 60, 70]; num = 40;
+    index = _.sortedIndexOf(numbers, num);
+    equals(index, 1, '40 is in the list');
+  });
+
   test('collections: toArray', function() {
     ok(!_.isArray(arguments), 'arguments object is not an array');
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');

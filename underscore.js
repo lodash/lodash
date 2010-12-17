@@ -254,6 +254,8 @@
 
   // Use a comparator function to figure out at what index an object should
   // be inserted so as to maintain order. Uses binary search.
+  // Unlike `_.sortedIndexOf`, this function returns the array at which an
+  // element *should* be inserted, not where it actually is.
   _.sortedIndex = function(array, obj, iterator) {
     iterator = iterator || _.identity;
     var low = 0, high = array.length;
@@ -262,6 +264,14 @@
       iterator(array[mid]) < iterator(obj) ? low = mid + 1 : high = mid;
     }
     return low;
+  };
+
+  // Similar to native `indexOf`, but assumes that the array being searched
+  // is already sorted, giving much faster performance on large arrays.
+  // Not to be confused with `_.sortedIndex`.
+  _.sortedIndexOf = function(array, obj) {
+    var i = _.sortedIndex(array, obj);
+    return array[i] === obj ? i : -1;
   };
 
   // Safely convert anything iterable into a real, live array.

@@ -142,6 +142,7 @@
       <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
       <a href="#max">max</a>, <a href="#min">min</a>,
       <a href="#sortBy">sortBy</a>, <a href="#sortedIndex">sortedIndex</a>,
+      <a href="#sortedIndexOf">sortedIndexOf</a>,
       <a href="#toArray">toArray</a>, <a href="#size">size</a></span>
     </p>
 
@@ -445,13 +446,26 @@ _.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
         <b class="header">sortedIndex</b><code>_.sortedIndex(list, value, [iterator])</code>
         <br />
         Uses a binary search to determine the index at which the <b>value</b>
-        should be inserted into the <b>list</b> in order to maintain the <b>list</b>'s
+        <i>should</i> be inserted into the <b>list</b> in order to maintain the <b>list</b>'s
         sorted order. If an <b>iterator</b> is passed, it will be used to compute
         the sort ranking of each value.
       </p>
       <pre>
 _.sortedIndex([10, 20, 30, 40, 50], 35);
 =&gt; 3
+</pre>
+
+      <p id="sortedIndexOf">
+        <b class="header">sortedIndexOf</b><code>_.sortedIndexOf(list, value)</code>
+        <br />
+        Not to be confused with <tt>_.sortedIndex</tt>, this method works like 
+        the native <tt>indexOf</tt>, but uses binary search to efficiently
+        find the value in large, already-sorted arrays. Returns <tt>-1</tt>
+        if the value is not present.
+      </p>
+      <pre>
+_.sortedIndex([10, 20, 30, 40, 50], 30);
+=&gt; 2
 </pre>
 
       <p id="toArray">

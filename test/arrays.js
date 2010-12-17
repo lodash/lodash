@@ -84,6 +84,18 @@ $(document).ready(function() {
     var result = (function(){ return _.indexOf(arguments, 2); })(1, 2, 3);
     equals(result, 1, 'works on an arguments object');
     equals(_.indexOf(null, 2), -1, 'handles nulls properly');
+
+    var numbers = [10, 20, 30, 40, 50], num = 35;
+    var index = _.indexOf(numbers, num, true);
+    equals(index, -1, '35 is not in the list');
+
+    numbers = [10, 20, 30, 40, 50]; num = 40;
+    index = _.indexOf(numbers, num, true);
+    equals(index, 3, '40 is in the list');
+
+    numbers = [1, 40, 40, 40, 40, 40, 40, 40, 50, 60, 70]; num = 40;
+    index = _.indexOf(numbers, num, true);
+    equals(index, 1, '40 is in the list');
   });
 
   test("arrays: lastIndexOf", function() {

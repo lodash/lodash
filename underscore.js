@@ -590,7 +590,7 @@
   // Is a given value an array?
   // Delegates to ECMA5's native Array.isArray
   _.isArray = nativeIsArray || function(obj) {
-    return !!(obj && obj.concat && obj.unshift && !obj.callee);
+    return toString.call(obj) === '[object Array]';
   };
 
   // Is a given variable an arguments object?

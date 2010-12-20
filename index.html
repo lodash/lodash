@@ -734,7 +734,7 @@ $(window).scroll(throttled);
         layout after the window has stopped being resized...
       </p>
       <pre>
-var lazyLayout _.debounce(calculateLayout, 300);
+var lazyLayout = _.debounce(calculateLayout, 300);
 $(window).resize(lazyLayout);
 </pre>
 

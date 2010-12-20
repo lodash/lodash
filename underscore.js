@@ -613,8 +613,8 @@
     return !!(obj === 0 || (obj && obj.toExponential && obj.toFixed));
   };
 
-  // Is the given value NaN -- this one is interesting. NaN != NaN, and
-  // isNaN(undefined) == true, so we make sure it's a number first.
+  // Is the given value `NaN`? `NaN` happens to be the only value in JavaScript
+  // that does not equal itself.
   _.isNaN = function(obj) {
     return obj !== obj;
   };

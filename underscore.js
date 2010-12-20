@@ -616,7 +616,7 @@
   // Is the given value NaN -- this one is interesting. NaN != NaN, and
   // isNaN(undefined) == true, so we make sure it's a number first.
   _.isNaN = function(obj) {
-    return toString.call(obj) === '[object Number]' && isNaN(obj);
+    return obj !== obj;
   };
 
   // Is a given value a boolean?

@@ -118,11 +118,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.1.3)</a></td>
-        <td><i>26kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.1.4)</a></td>
+        <td><i>27kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.1.3)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.1.4)</a></td>
         <td><i>3kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -1184,6 +1184,16 @@ _([1, 2, 3]).value();
       <h2>Change Log</h2>
       
       <p>
+        <b class="header">1.1.4</b> &mdash; <small><i>Jan 9, 2011</i></small><br />
+        Improved compliance with ES5's Array methods when passing <tt>null</tt> 
+        as a value. <tt>_.wrap</tt> now correctly sets <tt>this</tt> for the
+        wrapped function. <tt>_.indexOf</tt> now takes an optional flag for
+        finding the insertion index in an array that is guaranteed to already
+        be sorted. Avoiding the use of <tt>.callee</tt>, to allow <tt>_.isArray</tt>
+        to work properly in ES5's strict mode.
+      </p>
+      
+      <p>
         <b class="header">1.1.3</b> &mdash; <small><i>Dec 1, 2010</i></small><br />
         In CommonJS, Underscore may now be required with just: <br />
         <tt>var _ = require("underscore")</tt>.
@@ -1197,7 +1207,7 @@ _([1, 2, 3]).value();
         Improved <tt>_.reduce</tt> compatibility with the ECMA5 version: 
         if you don't pass an initial value, the first item in the collection is used.
         <tt>_.each</tt> no longer returns the iterated collection, for improved
-        consistency with ECMA5's <tt>forEach</tt>.
+        consistency with ES5's <tt>forEach</tt>.
       </p>
       
       <p>

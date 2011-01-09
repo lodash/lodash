@@ -8,5 +8,5 @@
   "dependencies"  : [],
   "lib"           : ".",
   "main"          : "underscore.js",
-  "version"       : "1.1.3"
+  "version"       : "1.1.4"
 }

@@ -67,7 +67,6 @@
   // Handles objects implementing `forEach`, arrays, and raw objects.
   // Delegates to **ECMAScript 5**'s native `forEach` if available.
   var each = _.each = _.forEach = function(obj, iterator, context) {
-    var value;
     if (obj == null) return;
     if (nativeForEach && obj.forEach === nativeForEach) {
       obj.forEach(iterator, context);
@@ -360,12 +359,13 @@
   // for **isSorted** to use binary search.
   _.indexOf = function(array, item, isSorted) {
     if (array == null) return -1;
+    var i, l;
     if (isSorted) {
-      var i = _.sortedIndex(array, item);
+      i = _.sortedIndex(array, item);
       return array[i] === item ? i : -1;
     }
     if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item);
-    for (var i = 0, l = array.length; i < l; i++) if (array[i] === item) return i;
+    for (i = 0, l = array.length; i < l; i++) if (array[i] === item) return i;
     return -1;
   };
 
@@ -383,14 +383,15 @@
   // the native Python `range()` function. See
   // [the Python documentation](http://docs.python.org/library/functions.html#range).
   _.range = function(start, stop, step) {
-    var args  = slice.call(arguments),
-        solo  = args.length <= 1,
-        start = solo ? 0 : args[0],
-        stop  = solo ? args[0] : args[1],
-        step  = args[2] || 1,
-        len   = Math.max(Math.ceil((stop - start) / step), 0),
-        idx   = 0,
-        range = new Array(len);
+    var args  = slice.call(arguments);
+    var solo = args.length <= 1;
+    start = solo ? 0 : args[0];
+    stop = solo ? args[0] : args[1];
+    step = args[2] || 1;
+    var len = Math.max(Math.ceil((stop - start) / step), 0);
+    var idx = 0;
+    var range = new Array(len);
+
     while (idx < len) {
       range[idx++] = start;
       start += step;

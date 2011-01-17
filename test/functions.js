@@ -52,6 +52,13 @@ $(document).ready(function() {
     var fastFib = _.memoize(fib);
     equals(fib(10), 55, 'a memoized version of fibonacci produces identical results');
     equals(fastFib(10), 55, 'a memoized version of fibonacci produces identical results');
+
+    var o = function(str) {
+      return str;
+    };
+    var fastO = _.memoize(o);
+    equals(o('toString'), 'toString', 'checks hasOwnProperty');
+    equals(fastO('toString'), 'toString', 'checks hasOwnProperty');
   });
 
   asyncTest("functions: delay", 2, function() {

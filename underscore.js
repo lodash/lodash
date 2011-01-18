@@ -389,9 +389,9 @@
     }
     step = arguments[2] || 1;
 
-    var range = [];
     var len = Math.max(Math.ceil((stop - start) / step), 0);
     var idx = 0;
+    var range = new Array(len);
 
     while(idx < len) {
       range[idx++] = start;

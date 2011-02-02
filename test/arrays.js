@@ -5,6 +5,7 @@ $(document).ready(function() {
   test("arrays: first", function() {
     equals(_.first([1,2,3]), 1, 'can pull out the first element of an array');
     equals(_([1, 2, 3]).first(), 1, 'can perform OO-style "first()"');
+    equals(_.first([1,2,3], 0).join(', '), "", 'can pass an index to first');
     equals(_.first([1,2,3], 2).join(', '), '1, 2', 'can pass an index to first');
     var result = (function(){ return _.first(arguments); })(4, 3, 2, 1);
     equals(result, 4, 'works on an arguments object.');
@@ -15,6 +16,7 @@ $(document).ready(function() {
   test("arrays: rest", function() {
     var numbers = [1, 2, 3, 4];
     equals(_.rest(numbers).join(", "), "2, 3, 4", 'working rest()');
+    equals(_.rest(numbers, 0).join(", "), "1, 2, 3, 4", 'working rest(0)');
     equals(_.rest(numbers, 2).join(', '), '3, 4', 'rest can take an index');
     var result = (function(){ return _(arguments).tail(); })(1, 2, 3, 4);
     equals(result.join(', '), '2, 3, 4', 'aliased as tail and works on arguments object');

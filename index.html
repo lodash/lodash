@@ -766,7 +766,7 @@ hello();
       <pre>
 var greet    = function(name){ return "hi: " + name; };
 var exclaim  = function(statement){ return statement + "!"; };
-var welcome = _.compose(greet, exclaim);
+var welcome = _.compose(exclaim, greet);
 welcome('moe');
 =&gt; 'hi: moe!'
 </pre>

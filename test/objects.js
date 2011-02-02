@@ -26,6 +26,21 @@ $(document).ready(function() {
     ok(_.isEqual(result, {x:2, a:'b'}), 'extending from multiple source objects last property trumps');
   });
 
+  test("objects: defaults", function() {
+    var result;
+    var options = {zero: 0, one: 1, empty: "", nan: NaN, string: "string"};
+
+    _.defaults(options, {zero: 1, one: 10, twenty: 20});
+    equals(options.zero, 0, 'value exists');
+    equals(options.one, 1, 'value exists');
+    equals(options.twenty, 20, 'default applied');
+
+    _.defaults(options, {empty: "full"}, {nan: "nan"}, {word: "word"}, {word: "dog"});
+    equals(options.empty, "", 'value exists');
+    ok(_.isNaN(options.nan), "NaN isn't overridden");
+    equals(options.word, "word", 'new value is added, first one wins');
+  });
+
   test("objects: clone", function() {
     var moe = {name : 'moe', lucky : [13, 27, 34]};
     var clone = _.clone(moe);

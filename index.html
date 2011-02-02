@@ -167,7 +167,7 @@
       <b>Objects</b>
       <br />
       <span class="methods"><a href="#keys">keys</a>, <a href="#values">values</a>,
-      <a href="#functions">functions</a>, <a href="#extend">extend</a>, <a href="#clone">clone</a>, <a href="#tap">tap</a>,
+      <a href="#functions">functions</a>, <a href="#extend">extend</a>, <a href="#defaults">defaults</a>, <a href="#clone">clone</a>, <a href="#tap">tap</a>,
       <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
       <a href="#isArray">isArray</a>, <a href="#isArguments">isArguments</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
       <a href="#isNumber">isNumber</a>, <a href="#isBoolean">isBoolean</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>
@@ -815,6 +815,19 @@ _.functions(_);
       <pre>
 _.extend({name : 'moe'}, {age : 50});
 =&gt; {name : 'moe', age : 50}
+</pre>
+
+      <p id="defaults">
+        <b class="header">defaults</b><code>_.defaults(object, *defaults)</code>
+        <br />
+        Fill in missing properties in <b>object</b> with default values from the
+        <b>defaults</b> objects. As soon as the property is filled, further defaults
+        will have no effect.
+      </p>
+      <pre>
+var iceCream = {flavor : "chocolate"};
+_.defaults(iceCream, {flavor : "vanilla", sprinkles : "lots"});
+=&gt; {flavor : "chocolate", sprinkles : "lots"}
 </pre>
 
       <p id="clone">

@@ -525,6 +525,14 @@
     return obj;
   };
 
+  // Fill in a given object with default properties.
+  _.defaults = function(obj) {
+    each(slice.call(arguments, 1), function(source) {
+      for (var prop in source) if (obj[prop] == null) obj[prop] = source[prop];
+    });
+    return obj;
+  };
+
   // Create a (shallow-cloned) duplicate of an object.
   _.clone = function(obj) {
     return _.isArray(obj) ? obj.slice() : _.extend({}, obj);

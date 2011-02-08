@@ -1098,6 +1098,16 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
 =&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"</pre>
 
       <p>
+        You can also use <tt>print</tt> from within JavaScript code.  This is
+        sometimes more convenient than using <tt>&lt;%= ... %&gt;</tt>.
+      </p>
+      
+      <pre>
+var compiled = _.template("<% print('Hello ' + epithet); %>");
+compiled({epithet: "dude"});
+=&gt; "Hello dude."</pre>
+
+      <p>
         If ERB-style delimiters aren't your cup of tea, you can change Underscore's
         template settings to use different symbols to set off interpolated code.
         Define an <b>interpolate</b> regex, and an (optional) <b>evaluate</b> regex

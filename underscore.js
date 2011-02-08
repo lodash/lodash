@@ -471,6 +471,17 @@
   _.debounce = function(func, wait) {
     return limit(func, wait, true);
   };
+  
+  // Runs a function only if it's never been run before.
+  _.once = function(func) {
+    if (_.indexOf(onceRunFunctions, func)) {
+      onceRunFunctions.push(func);
+      return func.apply(func, slice.call(arguments, 1));
+    }
+  }
+  
+  // Internal record of functions that have been run via `_.once`.
+  var onceRunFunctions = [];
 
   // Returns the first function passed as an argument to the second,
   // allowing you to adjust arguments, run code before and after, and

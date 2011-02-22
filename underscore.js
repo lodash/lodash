@@ -409,7 +409,7 @@
   // optionally). Binding with arguments is also known as `curry`.
   // Delegates to **ECMAScript 5**'s native `Function.bind` if available.
   _.bind = function(func, obj) {
-    if(nativeBind && func.bind === nativeBind) return FuncProto.bind.apply(func, slice.call(arguments, 1));
+    if(nativeBind && func.bind === nativeBind) return func.bind.apply(func, slice.call(arguments, 1));
     var args = slice.call(arguments, 2);
     return function() {
       return func.apply(obj || {}, args.concat(slice.call(arguments)));

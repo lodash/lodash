@@ -1103,9 +1103,9 @@ _.template(list, {people : ['moe', 'curly', 'larry']});
       </p>
       
       <pre>
-var compiled = _.template("<% print('Hello ' + epithet); %>");
-compiled({epithet: "dude"});
-=&gt; "Hello dude."</pre>
+var compiled = _.template("&lt;% print('Hello ' + epithet); %&gt;");
+compiled({epithet: "stooge"});
+=&gt; "Hello stooge."</pre>
 
       <p>
         If ERB-style delimiters aren't your cup of tea, you can change Underscore's

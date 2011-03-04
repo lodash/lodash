@@ -4,6 +4,9 @@ $(document).ready(function() {
 
   test("objects: keys", function() {
     equals(_.keys({one : 1, two : 2}).join(', '), 'one, two', 'can extract the keys from an object');
+    // the test above is not safe because it relies on for-in enumeration order
+    var a = []; a[1] = 0;
+    equals(_.keys(a).join(', '), '1', 'is not fooled by sparse arrays; see issue #95');
   });
 
   test("objects: values", function() {

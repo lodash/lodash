@@ -107,6 +107,15 @@ $(document).ready(function() {
     setTimeout(debouncedIncr, 150);
     _.delay(function(){ ok(counter == 1, "incr was debounced"); start(); }, 220);
   });
+  
+  test("functions: once", function() {
+    var addBang = function(str) { return str + "!"; };
+    hi = "Hi";
+    hi2 = _.once(addBang, hi);
+    hi3 = _.once(addBang, hi);
+    equals(hi2, "Hi!");
+    equals(hi3, undefined);
+  });
 
   test("functions: wrap", function() {
     var greet = function(name){ return "hi: " + name; };

@@ -2,27 +2,8 @@ $(document).ready(function() {
 
   module("Object functions (values, extend, isEqual, and so on...)");
 
-  function raises(block, expected, message) {
-    var pass = typeof block == 'function',
-    isRegExp = expected && Object.prototype.toString.call(expected) == '[object RegExp]',
-    isFunction = !isRegExp && typeof expected == 'function';
-    if (!isFunction && !isRegExp && message == null) {
-      message = expected;
-      expected = null;
-    }
-    if (pass) {
-      try {
-        block();
-        pass = false;
-      } catch (error) {
-        pass = expected == null || (isRegExp && expected.test(error)) || (isFunction && expected.call(null, error));
-      }
-    }
-    ok(pass, typeof message == 'string' && message || 'error');
-  }
-
   test("objects: keys", function() {
-    var exception = /TypeError/;
+    var exception = /object/;
     equals(_.keys({one : 1, two : 2}).join(', '), 'one, two', 'can extract the keys from an object');
     raises(function() { _.keys(null); }, exception, 'throws an error for `null` values');
     raises(function() { _.keys(void 0); }, exception, 'throws an error for `undefined` values');

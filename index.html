@@ -118,11 +118,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.1.4)</a></td>
-        <td><i>27kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.1.5)</a></td>
+        <td><i>28kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.1.4)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.1.5)</a></td>
         <td><i>3kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -1223,7 +1223,20 @@ _([1, 2, 3]).value();
         Python's <a href="http://docs.python.org/library/itertools.html">itertools</a>.
       </p>
 
-      <h2>Change Log</h2>
+      <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.1.5</b> &mdash; <small><i>Mar 20, 2011</i></small><br />
+        Added an <tt>_.defaults</tt> function, for use merging together JS objects
+        representing default options.
+        Added an <tt>_.once</tt> function, for manufacturing functions that should
+        only ever execute a single time.
+        <tt>_.bind</tt> now delegates to the native ECMAScript 5 version, 
+        where available.
+        <tt>_.keys</tt> now throws an error when used on non-Object values, as in
+        ECMAScript 5.
+        Fixed a bug with <tt>_.keys</tt> when used over sparse arrays.
+      </p>
       
       <p>
         <b class="header">1.1.4</b> &mdash; <small><i>Jan 9, 2011</i></small><br />

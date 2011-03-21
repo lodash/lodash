@@ -1,12 +1,12 @@
 {
   "name"          : "underscore",
-  "description"   : "Functional programming aid for JavaScript. Works well with jQuery.",
-  "url"           : "http://documentcloud.github.com/underscore/",
+  "description"   : "JavaScript's functional programming helper library.",
+  "homepage"      : "http://documentcloud.github.com/underscore/",
   "keywords"      : ["util", "functional", "server", "client", "browser"],
   "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
   "contributors"  : [],
   "dependencies"  : [],
-  "lib"           : ".",
+  "repository"    : {"type": "git", "url": "git://github.com/documentcloud/underscore.git"},
   "main"          : "underscore.js",
-  "version"       : "1.1.4"
+  "version"       : "1.1.5"
 }

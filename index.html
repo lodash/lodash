@@ -160,7 +160,7 @@
       <span class="methods"><a href="#bind">bind</a>, <a href="#bindAll">bindAll</a>, 
       <a href="#memoize">memoize</a>, <a href="#delay">delay</a>, <a href="#defer">defer</a>, 
       <a href="#throttle">throttle</a>, <a href="#debounce">debounce</a>, 
-      <a href="#wrap">wrap</a>, <a href="#compose">compose</a></span>
+      <a href="#once">once</a>, <a href="#wrap">wrap</a>, <a href="#compose">compose</a></span>
     </p>
 
     <p>
@@ -738,6 +738,21 @@ $(window).scroll(throttled);
       <pre>
 var lazyLayout = _.debounce(calculateLayout, 300);
 $(window).resize(lazyLayout);
+</pre>
+
+      <p id="once">
+        <b class="header">once</b><code>_.once(function)</code>
+        <br />
+        Creates a version of the function that can only be called one time. 
+        Repeated calls to the modified function will have no effect, returning
+        the value from the original call. Useful for initialization functions,
+        instead of having to set a boolean flag and then check it later.
+      </p>
+      <pre>
+var initialize = _.once(createApplication);
+initialize();
+initialize();
+// Application is only created once.
 </pre>
 
       <p id="wrap">

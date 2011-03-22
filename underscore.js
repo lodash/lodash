@@ -410,7 +410,7 @@
   // Delegates to **ECMAScript 5**'s native `Function.bind` if available.
   // We check for `func.bind` first, to fail fast when `func` is undefined.
   _.bind = function(func, obj) {
-    if (func.bind === nativeBind && nativeBind) return func.bind.apply(func, slice.call(arguments, 1));
+    if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
     var args = slice.call(arguments, 2);
     return function() {
       return func.apply(obj, args.concat(slice.call(arguments)));

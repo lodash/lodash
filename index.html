@@ -578,6 +578,8 @@ _.intersect([1, 2, 3], [101, 2, 1, 10], [2, 1]);
         Merges together the values of each of the <b>arrays</b> with the
         values at the corresponding position. Useful when you have separate
         data sources that are coordinated through matching array indexes.
+        If you're working with a matrix of nested arrays, <b>zip.apply</b>
+        can transpose the matrix in a similar fashion.
       </p>
       <pre>
 _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);

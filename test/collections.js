@@ -122,13 +122,6 @@ $(document).ready(function() {
     equals(odds.join(', '), '1, 3, 5', 'rejected each even number');
   });
 
-  test('collections: count', function() {
-    var count = _.count([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-    equals(count, 3, 'counted even numbers');
-    var count = _.count([0, 1, 2, 3, 4, 5, 6]);
-    equals(count, 6, 'counted all truthy numbers');
-  });
-
   test('collections: all', function() {
     ok(_.all([]), 'the empty set');
     ok(_.all([true, true, true]), 'all true values');

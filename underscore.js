@@ -168,7 +168,7 @@
   // Delegates to **ECMAScript 5**'s native `every` if available.
   // Aliased as `all`.
   _.every = _.all = function(obj, iterator, context) {
-    iterator = iterator || _.identity;
+    iterator || (iterator = _.identity);
     var result = true;
     if (obj == null) return result;
     if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
@@ -182,7 +182,7 @@
   // Delegates to **ECMAScript 5**'s native `some` if available.
   // Aliased as `any`.
   var any = _.some = _.any = function(obj, iterator, context) {
-    iterator = iterator || _.identity;
+    iterator || (iterator = _.identity);
     var result = false;
     if (obj == null) return result;
     if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
@@ -255,7 +255,7 @@
   // Use a comparator function to figure out at what index an object should
   // be inserted so as to maintain order. Uses binary search.
   _.sortedIndex = function(array, obj, iterator) {
-    iterator = iterator || _.identity;
+    iterator || (iterator = _.identity);
     var low = 0, high = array.length;
     while (low < high) {
       var mid = (low + high) >> 1;
@@ -429,7 +429,7 @@
   // Memoize an expensive function by storing its results.
   _.memoize = function(func, hasher) {
     var memo = {};
-    hasher = hasher || _.identity;
+    hasher || (hasher = _.identity);
     return function() {
       var key = hasher.apply(this, arguments);
       return hasOwnProperty.call(memo, key) ? memo[key] : (memo[key] = func.apply(this, arguments));

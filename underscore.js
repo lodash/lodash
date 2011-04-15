@@ -208,7 +208,7 @@
   _.invoke = function(obj, method) {
     var args = slice.call(arguments, 2);
     return _.map(obj, function(value) {
-      return (method ? value[method] : value).apply(value, args);
+      return (method.call ? method || value : value[method]).apply(value, args);
     });
   };
 

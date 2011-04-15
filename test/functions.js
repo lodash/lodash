@@ -21,7 +21,7 @@ $(document).ready(function() {
     var func = _.bind(func, this, 'curly');
     equals(func(), 'hello: curly', 'the function was completely applied in advance');
 
-    var func = function(salutation, firstname, lastname) { return salutation + ': ' + firstname + ' ' + lastname };
+    var func = function(salutation, firstname, lastname) { return salutation + ': ' + firstname + ' ' + lastname; };
     func = _.bind(func, this, 'hello', 'moe', 'curly');
     equals(func(), 'hello: moe curly', 'the function was partially applied in advance and can accept multiple arguments');
 
@@ -137,22 +137,19 @@ $(document).ready(function() {
     equals(composed('moe'), 'hi: moe!', 'in this case, the functions are also commutative');
   });
 
-  test("functions: barrier", function() {
-    var testBarrier = function(barrierAmount, timesCalled) {
-      var barrierCalled = 0;
-      var barrier = _.barrier(function(){ barrierCalled++; }, barrierAmount);
+  test("functions: after", function() {
+    var testAfter = function(afterAmount, timesCalled) {
+      var afterCalled = 0;
+      var after = _.after(afterAmount, function() {
+        afterCalled++;
+      });
+      while (timesCalled--) after();
+      return afterCalled;
+    };
 
-
-      while (timesCalled--) {
-        barrier();
-      }
-
-      return barrierCalled;
-    }
-
-    equals(testBarrier(5, 5), 1, "barrier(N) should fire after being called N times");
-    equals(testBarrier(5, 4), 0, "barrier(N) should not fire unless called N times");
-    equals(testBarrier(5, 6), 1, "barrier(N) should fire only once even if called more than N times");
+    equals(testAfter(5, 5), 1, "after(N) should fire after being called N times");
+    equals(testAfter(5, 4), 0, "after(N) should not fire unless called N times");
+    equals(testAfter(5, 6), 1, "after(N) should fire only once even if called more than N times");
   });
 
 });

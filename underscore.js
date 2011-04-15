@@ -511,7 +511,7 @@
   };
 
   // Returns a function that will only be executed after being called N times.
-  _.barrier = function(func, times) {
+  _.after = function(times, func) {
     return function() {
       if (--times === 0) { return func.apply(this, arguments); }
     };

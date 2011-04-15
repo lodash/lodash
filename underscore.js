@@ -543,7 +543,9 @@
   // Extend a given object with all the properties in passed-in object(s).
   _.extend = function(obj) {
     each(slice.call(arguments, 1), function(source) {
-      for (var prop in source) obj[prop] = source[prop];
+      for (var prop in source) {
+        if (source[prop] !== void 0) obj[prop] = source[prop];
+      }
     });
     return obj;
   };
@@ -551,7 +553,9 @@
   // Fill in a given object with default properties.
   _.defaults = function(obj) {
     each(slice.call(arguments, 1), function(source) {
-      for (var prop in source) if (obj[prop] == null) obj[prop] = source[prop];
+      for (var prop in source) {
+        if (obj[prop] == null) obj[prop] = source[prop];
+      }
     });
     return obj;
   };

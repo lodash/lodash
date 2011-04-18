@@ -118,11 +118,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.1.5)</a></td>
-        <td><i>28kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.1.6)</a></td>
+        <td><i>27kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.1.5)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.1.6)</a></td>
         <td><i>3kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -160,7 +160,7 @@
       <span class="methods"><a href="#bind">bind</a>, <a href="#bindAll">bindAll</a>, 
       <a href="#memoize">memoize</a>, <a href="#delay">delay</a>, <a href="#defer">defer</a>, 
       <a href="#throttle">throttle</a>, <a href="#debounce">debounce</a>, 
-      <a href="#once">once</a>, <a href="#wrap">wrap</a>, <a href="#compose">compose</a></span>
+      <a href="#once">once</a>, <a href="#after">after</a>, <a href="#wrap">wrap</a>, <a href="#compose">compose</a></span>
     </p>
 
     <p>
@@ -757,6 +757,22 @@ initialize();
 // Application is only created once.
 </pre>
 
+      <p id="after">
+        <b class="header">after</b><code>_.after(count, function)</code>
+        <br />
+        Creates a version of the function that will only be run after first 
+        being called <b>count</b> times. Useful for grouping asynchronous responses,
+        where you want to be sure that all the async calls have finished, before
+        proceeding.
+      </p>
+      <pre>
+var renderNotes = _.after(notes.length, render);
+_.each(notes, function(note) {
+  note.asyncSave({success: renderNotes}); 
+});
+// renderNotes is run once, after all notes have saved.
+</pre>
+
       <p id="wrap">
         <b class="header">wrap</b><code>_.wrap(function, wrapper)</code>
         <br />
@@ -1226,6 +1242,17 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.1.6</b> &mdash; <small><i>April 18, 2011</i></small><br />
+        Added <tt>_.after</tt>, which will return a function that only runs after
+        first being called a specified number of times.
+        <tt>_.invoke</tt> can now take a direct function reference.
+        <tt>_.every</tt> now requires an iterator function to be passed, which
+        mirrors the ECMA5 API.
+        <tt>_.extend</tt> no longer copies keys when the value is undefined.
+        <tt>_.bind</tt> now errors when trying to bind an undefined value.
+      </p>
       
       <p>
         <b class="header">1.1.5</b> &mdash; <small><i>Mar 20, 2011</i></small><br />

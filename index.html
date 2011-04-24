@@ -340,16 +340,14 @@ var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 </pre>
 
       <p id="all">
-        <b class="header">all</b><code>_.all(list, [iterator], [context])</code>
+        <b class="header">all</b><code>_.all(list, iterator, [context])</code>
         <span class="alias">Alias: <b>every</b></span>
         <br />
         Returns <i>true</i> if all of the values in the <b>list</b> pass the <b>iterator</b>
-        truth test. If an <b>iterator</b> is not provided, the truthy value of
-        the element will be used instead. Delegates to the native method <b>every</b>, if
-        present.
+        truth test. Delegates to the native method <b>every</b>, if present.
       </p>
       <pre>
-_.all([true, 1, null, 'yes']);
+_.all([true, 1, null, 'yes'], _.identity);
 =&gt; false
 </pre>
 

@@ -547,16 +547,20 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 </pre>
 
       <p id="uniq">
-        <b class="header">uniq</b><code>_.uniq(array, [isSorted])</code>
+        <b class="header">uniq</b><code>_.uniq(array, [isSorted], [iterator])</code>
         <span class="alias">Alias: <b>unique</b></span>
         <br />
         Produces a duplicate-free version of the <b>array</b>, using <i>===</i> to test
         object equality. If you know in advance that the <b>array</b> is sorted,
         passing <i>true</i> for <b>isSorted</b> will run a much faster algorithm.
+        Can receive an iterator to determine which part of the element gets tested.
       </p>
       <pre>
 _.uniq([1, 2, 1, 3, 1, 4]);
 =&gt; [1, 2, 3, 4]
+
+_.uniq([{name:'moe'}, {name:'curly'}, {name:'larry'}, {name:'curly'}], false, function (value) { return value.name; })
+=&gt;[{name:'moe'}, {name:'curly'}, {name:'larry'}]
 </pre>
 
       <p id="intersect">

@@ -256,12 +256,7 @@
     var result = {};
     each(obj, function(value) {
       var key = iterator(value);
-      if (result.hasOwnProperty(key)) {
-        result[key].push(value);
-      }
-      else {
-        result[key] = [value];
-      }
+      (result[key] || (result[key] = [])).push(value)
     });
     return result;
   }

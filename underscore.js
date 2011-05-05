@@ -250,6 +250,16 @@
       return a < b ? -1 : a > b ? 1 : 0;
     }), 'value');
   };
+  
+  // Groups the object's values by a criterion produced by an iterator
+  _.groupBy = function(obj, iterator) {
+    var result = {};
+    each(obj, function(value, index) {
+      var key = iterator(value, index);
+      (result[key] || (result[key] = [])).push(value)
+    });
+    return result;
+  }
 
   // Use a comparator function to figure out at what index an object should
   // be inserted so as to maintain order. Uses binary search.

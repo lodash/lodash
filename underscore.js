@@ -254,8 +254,8 @@
   // Groups the object's values by a criterion produced by an iterator
   _.groupBy = function(obj, iterator) {
     var result = {};
-    each(obj, function(value) {
-      var key = iterator(value);
+    each(obj, function(value, index) {
+      var key = iterator(value, index);
       (result[key] || (result[key] = [])).push(value)
     });
     return result;

@@ -141,7 +141,7 @@
       <a href="#any">any</a>, <a href="#include">include</a>,
       <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
       <a href="#max">max</a>, <a href="#min">min</a>,
-      <a href="#sortBy">sortBy</a>, <a href="#sortedIndex">sortedIndex</a>,
+      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>, <a href="#sortedIndex">sortedIndex</a>,
       <a href="#toArray">toArray</a>, <a href="#size">size</a></span>
     </p>
 
@@ -437,6 +437,17 @@ _.min(numbers);
       <pre>
 _.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
 =&gt; [5, 4, 6, 3, 1, 2]
+</pre>
+
+      <p id="groupBy">
+        <b class="header">groupBy</b><code>_.groupBy(list, iterator)</code>
+        <br />
+        Splits a collection into sets, grouped by the result of running each
+        value through <b>iterator</b>.
+      </p>
+      <pre>
+_.groupBy([1.3, 2.1, 2.4], function(num){ return Math.floor(num); });
+=&gt; {1: [1.3], 2: [2.1, 2.4]}
 </pre>
 
       <p id="sortedIndex">

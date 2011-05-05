@@ -185,6 +185,12 @@ $(document).ready(function() {
     people = _.sortBy(people, function(person){ return person.age; });
     equals(_.pluck(people, 'name').join(', '), 'moe, curly', 'stooges sorted by age');
   });
+  
+  test('collections: groupBy', function() {
+    var parity = _.groupBy([1, 2, 3, 4, 5, 6], function(num){ return num % 2; });
+    equals(_.keys(parity).join(', '), '0, 1', 'created a group for each value');
+    equals(parity[0].join(', '), '2, 4, 6', 'put each even number in the right group');
+  })
 
   test('collections: sortedIndex', function() {
     var numbers = [10, 20, 30, 40, 50], num = 35;

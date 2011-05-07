@@ -186,7 +186,10 @@
     if (obj == null) return result;
     if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
     each(obj, function(value, index, list) {
-      if (result = iterator.call(context, value, index, list)) return breaker;
+      if (iterator.call(context, value, index, list)) {
+        result = true;
+        return breaker;
+      }
     });
     return result;
   };

@@ -73,7 +73,7 @@
       obj.forEach(iterator, context);
     } else if (_.isNumber(obj.length)) {
       for (var i = 0, l = obj.length; i < l; i++) {
-        if (iterator.call(context, obj[i], i, obj) === breaker) return;
+        if (i in obj && iterator.call(context, obj[i], i, obj) === breaker) return;
       }
     } else {
       for (var key in obj) {
@@ -250,7 +250,7 @@
       return a < b ? -1 : a > b ? 1 : 0;
     }), 'value');
   };
-  
+
   // Groups the object's values by a criterion produced by an iterator
   _.groupBy = function(obj, iterator) {
     var result = {};
@@ -512,7 +512,7 @@
     var funcs = slice.call(arguments);
     return function() {
       var args = slice.call(arguments);
-      for (var i=funcs.length-1; i >= 0; i--) {
+      for (var i = funcs.length - 1; i >= 0; i--) {
         args = [funcs[i].apply(this, args)];
       }
       return args[0];

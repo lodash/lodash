@@ -26,10 +26,6 @@ $(document).ready(function() {
     _.each([1, 2, 3], function(num, index, arr){ if (_.include(arr, num)) answer = true; });
     ok(answer, 'can reference the original collection from inside the iterator');
 
-    answers = [];
-    _.each({range : 1, speed : 2, length : 3}, function(v){ answers.push(v); });
-    ok(answers.join(', '), '1, 2, 3', 'can iterate over objects with numeric length properties');
-
     answers = 0;
     _.each(null, function(){ ++answers; });
     equals(answers, 0, 'handles a null properly');
@@ -185,7 +181,7 @@ $(document).ready(function() {
     people = _.sortBy(people, function(person){ return person.age; });
     equals(_.pluck(people, 'name').join(', '), 'moe, curly', 'stooges sorted by age');
   });
-  
+
   test('collections: groupBy', function() {
     var parity = _.groupBy([1, 2, 3, 4, 5, 6], function(num){ return num % 2; });
     ok('0' in parity && '1' in parity, 'created a group for each value');

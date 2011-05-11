@@ -55,7 +55,7 @@
     module.exports = _;
     _._ = _;
   } else {
-    root._ = _;
+    root['_'] = _;
   }
 
   // Current version.
@@ -250,7 +250,7 @@
       return a < b ? -1 : a > b ? 1 : 0;
     }), 'value');
   };
-  
+
   // Groups the object's values by a criterion produced by an iterator
   _.groupBy = function(obj, iterator) {
     var result = {};

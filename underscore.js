@@ -55,6 +55,7 @@
     module.exports = _;
     _._ = _;
   } else {
+    // Exported as a string, for Closure Compiler "advanced" mode.
     root['_'] = _;
   }
 
@@ -256,10 +257,10 @@
     var result = {};
     each(obj, function(value, index) {
       var key = iterator(value, index);
-      (result[key] || (result[key] = [])).push(value)
+      (result[key] || (result[key] = [])).push(value);
     });
     return result;
-  }
+  };
 
   // Use a comparator function to figure out at what index an object should
   // be inserted so as to maintain order. Uses binary search.

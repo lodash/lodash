@@ -73,8 +73,8 @@ $(document).ready(function() {
   asyncTest("functions: delay", 2, function() {
     var delayed = false;
     _.delay(function(){ delayed = true; }, 100);
-    _.delay(function(){ ok(!delayed, "didn't delay the function quite yet"); }, 50);
-    _.delay(function(){ ok(delayed, 'delayed the function'); start(); }, 150);
+    setTimeout(function(){ ok(!delayed, "didn't delay the function quite yet"); }, 50);
+    setTimeout(function(){ ok(delayed, 'delayed the function'); start(); }, 150);
   });
 
   asyncTest("functions: defer", 1, function() {

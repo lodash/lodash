@@ -41,7 +41,7 @@ $(document).ready(function() {
     var doubled = _([1, 2, 3]).map(function(num){ return num * 2; });
     equals(doubled.join(', '), '2, 4, 6', 'OO-style doubled numbers');
 
-    var ids = _.map(document.body.childNodes, function(n){ return n.id; });
+    var ids = _.map($('div.underscore-test').children(), function(n){ return n.id; });
     ok(_.include(ids, 'qunit-header'), 'can use collection methods on NodeLists');
 
     var ids = _.map(document.images, function(n){ return n.id; });
@@ -197,6 +197,9 @@ $(document).ready(function() {
   test('collections: toArray', function() {
     ok(!_.isArray(arguments), 'arguments object is not an array');
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');
+    var a = [1,2,3];
+    ok(_.toArray(a) !== a, 'array is cloned');
+    equals(_.toArray(a).join(', '), '1, 2, 3', 'cloned array contains same elements');
 
     var numbers = _.toArray({one : 1, two : 2, three : 3});
     equals(numbers.join(', '), '1, 2, 3', 'object flattened into array');

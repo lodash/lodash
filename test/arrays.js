@@ -65,12 +65,22 @@ $(document).ready(function() {
     equals(result.join(', '), '1, 2, 3, 4', 'works on an arguments object');
   });
 
-  test("arrays: intersect", function() {
+  test("arrays: intersection", function() {
     var stooges = ['moe', 'curly', 'larry'], leaders = ['moe', 'groucho'];
-    equals(_.intersect(stooges, leaders).join(''), 'moe', 'can take the set intersection of two arrays');
-    equals(_(stooges).intersect(leaders).join(''), 'moe', 'can perform an OO-style intersection');
-    var result = (function(){ return _.intersect(arguments, leaders); })('moe', 'curly', 'larry');
+    equals(_.intersection(stooges, leaders).join(''), 'moe', 'can take the set intersection of two arrays');
+    equals(_(stooges).intersection(leaders).join(''), 'moe', 'can perform an OO-style intersection');
+    var result = (function(){ return _.intersection(arguments, leaders); })('moe', 'curly', 'larry');
     equals(result.join(''), 'moe', 'works on an arguments object');
+  });
+
+  test("arrays: union", function() {
+    var result = _.union([1, 2, 3], [2, 30, 1], [1, 40]);
+    equals(result.join(' '), '1 2 3 30 40', 'takes the union of a list of arrays');
+  });
+
+  test("arrays: difference", function() {
+    var result = _.difference([1, 2, 3], [2, 30, 40]);
+    equals(result.join(' '), '1 3', 'takes the difference of two arrays');
   });
 
   test('arrays: zip', function() {

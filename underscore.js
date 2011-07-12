@@ -72,7 +72,7 @@
     if (obj == null) return;
     if (nativeForEach && obj.forEach === nativeForEach) {
       obj.forEach(iterator, context);
-    } else if (_.isNumber(obj.length)) {
+    } else if (obj.length) {
       for (var i = 0, l = obj.length; i < l; i++) {
         if (i in obj && iterator.call(context, obj[i], i, obj) === breaker) return;
       }

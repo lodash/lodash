@@ -596,7 +596,7 @@
   // Internal recursive comparison function.
   function eq(a, b, stack) {
     // Identical objects are equal.
-    if (a === b) return a != 0 || 1 / a == 1 / b;
+    if (a === b) return a !== 0 || 1 / a == 1 / b;
     // A strict comparison is necessary because `null == undefined`.
     if (a == null) return a === b;
     // Compare object types.

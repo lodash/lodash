@@ -387,7 +387,8 @@
       return array[i] === item ? i : -1;
     }
     if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item);
-    for (i = 0, l = array.length; i < l; i++) if (array[i] === item) return i;
+    var o,i=0;
+    while( o = array[i++] ) if (o === item) return i-1;
     return -1;
   };
 

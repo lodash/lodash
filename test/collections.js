@@ -77,6 +77,15 @@ $(document).ready(function() {
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
 
     ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
+
+    // Sparse arrays:
+    equals(_.reduce([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
+
+    var sparseArray  = [];
+    sparseArray[100] = 10;
+    sparseArray[200] = 20;
+
+    equals(_.reduce(sparseArray, function(a, b){ return a + b }), 30, 'initially-sparse arrays with no memo');
   });
 
   test('collections: reduceRight', function() {

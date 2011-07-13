@@ -82,6 +82,46 @@ $(document).ready(function() {
     ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), 'objects with the same number of undefined keys are not equal');
     ok(!_.isEqual(_({x: 1, y: undefined}).chain(), _({x: 1, z: 2}).chain()), 'wrapped objects are not equal');
     equals(_({x: 1, y: 2}).chain().isEqual(_({x: 1, y: 2}).chain()).value(), true, 'wrapped objects are equal');
+
+    // Objects with circular references.
+    var circularA = {'abc': null}, circularB = {'abc': null};
+    circularA.abc = circularA;
+    circularB.abc = circularB;
+    ok(_.isEqual(circularA, circularB), 'objects with a circular reference');
+    circularA.def = 1;
+    circularB.def = 1;
+    ok(_.isEqual(circularA, circularB), 'objects with identical properties and a circular reference');
+    circularA.def = 1;
+    circularB.def = 0;
+    ok(!_.isEqual(circularA, circularB), 'objects with different properties and a circular reference');
+
+    // Arrays with circular references.
+    circularA = [];
+    circularB = [];
+    circularA.push(circularA);
+    circularB.push(circularB);
+    ok(_.isEqual(circularA, circularB), 'arrays with a circular reference');
+    circularA.push('abc');
+    circularB.push('abc');
+    ok(_.isEqual(circularA, circularB), 'arrays with identical indices and a circular reference');
+    circularA.push('hello');
+    circularB.push('goodbye');
+    ok(!_.isEqual(circularA, circularB), 'arrays with different properties and a circular reference');
+
+    // Hybrid cyclic structures.
+    circularA = [{'abc': null}];
+    circularB = [{'abc': null}];
+    circularA[0].abc = circularA;
+    circularB[0].abc = circularB;
+    circularA.push(circularA);
+    circularB.push(circularB);
+    ok(_.isEqual(circularA, circularB), 'cyclic structure');
+    circularA[0].def = 1;
+    circularB[0].def = 1;
+    ok(_.isEqual(circularA, circularB), 'cyclic structure with identical properties');
+    circularA[0].def = 1;
+    circularB[0].def = 0;
+    ok(!_.isEqual(circularA, circularB), 'cyclic structure with different properties');
   });
 
   test("objects: isEmpty", function() {

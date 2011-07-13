@@ -79,9 +79,13 @@ $(document).ready(function() {
     ok(NaN != NaN, 'NaN is not equal to NaN (native equality)');
     ok(NaN !== NaN, 'NaN is not equal to NaN (native identity)');
     ok(_.isEqual(NaN, NaN), 'NaN is equal to NaN');
+    ok(!_.isEqual(5, NaN), '`5` is not equal to `NaN`');
+    ok(!_.isEqual(false, NaN), '`false` is not equal to `NaN`');
     ok(_.isEqual(new Date(100), new Date(100)), 'identical dates are equal');
     ok(_.isEqual((/hello/ig), (/hello/ig)), 'identical regexes are equal');
+    ok(!_.isEqual({source: '(?:)', global: true, multiline: true, ignoreCase: true}, /(?:)/gim), 'RegExp-like objects and RegExps are not equal');
     ok(!_.isEqual(null, [1]), 'a falsy is never equal to a truthy');
+    ok(!_.isEqual(undefined, null), '`undefined` is not equal to `null`');
     ok(_.isEqual({isEqual: function () { return true; }}, {}), 'first object implements `isEqual`');
     ok(_.isEqual({}, {isEqual: function () { return true; }}), 'second object implements `isEqual`');
     ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), 'objects with the same number of undefined keys are not equal');

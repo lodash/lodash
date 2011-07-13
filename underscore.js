@@ -595,7 +595,8 @@
 
   // Internal recursive comparison function.
   function eq(a, b, stack) {
-    // Identical objects are equal.
+    // Identical objects are equal. `0 === -0`, but they aren't identical.
+    // See the Harmony `egal` proposal: http://wiki.ecmascript.org/doku.php?id=harmony:egal.
     if (a === b) return a !== 0 || 1 / a == 1 / b;
     // A strict comparison is necessary because `null == undefined`.
     if (a == null) return a === b;
@@ -604,17 +605,21 @@
     if (typeA != typeof b) return false;
     // The type comparison above prevents unwanted type coercion.
     if (a == b) return true;
-    // Ensure that both values are truthy or falsy.
+    // Optimization; ensure that both values are truthy or falsy.
     if ((!a && b) || (a && !b)) return false;
     // `NaN` values are equal.
     if (_.isNaN(a)) return _.isNaN(b);
-    if (_.isDate(a)) return _.isDate(b) && a.getTime() == b.getTime();
+    // Compare dates by their millisecond values.
+    var isDateA = _.isDate(a), isDateB = _.isDate(b);
+    if (isDateA || isDateB) return isDateA && isDateB && a.getTime() == b.getTime();
     // Compare RegExps by their source patterns and flags.
-    if (_.isRegExp(a)) return _.isRegExp(b) && a.source == b.source &&
-                              a.global == b.global &&
-                              a.multiline == b.multiline &&
-                              a.ignoreCase == b.ignoreCase;
-    // Recursively compare objects and arrays.
+    var isRegExpA = _.isRegExp(a), isRegExpB = _.isRegExp(b);
+    if (isRegExpA || isRegExpB) return isRegExpA && isRegExpB &&
+                                       a.source == b.source &&
+                                       a.global == b.global &&
+                                       a.multiline == b.multiline &&
+                                       a.ignoreCase == b.ignoreCase;
+    // Ensure that both values are objects.
     if (typeA != 'object') return false;
     // Unwrap any wrapped objects.
     if (a._chain) a = a._wrapped;
@@ -629,9 +634,9 @@
     while (length--) {
       if (stack[length] == a) return true;
     }
-    // Add the object to the stack of traversed objects.
+    // Add the first object to the stack of traversed objects.
     stack.push(a);
-    // Deep compare the contents.
+    // Deep compare the two objects.
     var size = 0, sizeRight = 0, result = true, key;
     for (key in a) {
       // Count the expected number of properties.
@@ -646,7 +651,7 @@
       }
       result = size == sizeRight;
     }
-    // Remove the object from the stack of traversed objects.
+    // Remove the first object from the stack of traversed objects.
     stack.pop();
     return result;
   }

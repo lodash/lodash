@@ -600,9 +600,9 @@
       if (a === b) return true;
       // A strict comparison is necessary because `null == undefined`.
       if (a == null) return a === b;
-      // Compare `[[Class]]` names.
-      var className = toString.call(a);
-      if (className != toString.call(b)) return false;
+      // Compare object types.
+      var typeA = typeof a;
+      if (typeA != typeof b) return false;
       // Compare functions by reference.
       if (_.isFunction(a)) return _.isFunction(b) && a == b;
       // Compare strings, numbers, dates, and booleans by value.
@@ -616,7 +616,7 @@
                                 a.multiline == b.multiline &&
                                 a.ignoreCase == b.ignoreCase;
       // Recursively compare objects and arrays.
-      if (typeof a != 'object') return false;
+      if (typeA != 'object') return false;
       // Unwrap any wrapped objects.
       if (a._chain) a = a._wrapped;
       if (b._chain) b = b._wrapped;

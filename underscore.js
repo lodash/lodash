@@ -381,13 +381,14 @@
   // for **isSorted** to use binary search.
   _.indexOf = function(array, item, isSorted) {
     if (array == null) return -1;
-    var obj, i = 0;
+    var i, l;
     if (isSorted) {
       i = _.sortedIndex(array, item);
       return array[i] === item ? i : -1;
     }
     if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item);
-    while (obj = array[i++]) if (obj === item) return i - 1;
+    var o,i=0;
+    while( o = array[i++] ) if (o === item) return i-1;
     return -1;
   };
 

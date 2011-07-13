@@ -107,7 +107,7 @@
       return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
     }
     each(obj, function(value, index, list) {
-      if (!initial && index === 0) {
+      if (!initial) {
         memo = value;
         initial = true;
       } else {

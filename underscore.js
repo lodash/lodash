@@ -559,7 +559,11 @@
   // Return a sorted list of the function names available on the object.
   // Aliased as `methods`
   _.functions = _.methods = function(obj) {
-    return _.filter(_.keys(obj), function(key){ return _.isFunction(obj[key]); }).sort();
+    var names = [];
+    for (var key in obj) {
+      if (_.isFunction(obj[key])) names.push(key);
+    }
+    return names.sort();
   };
 
   // Extend a given object with all the properties in passed-in object(s).

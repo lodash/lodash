@@ -632,14 +632,19 @@
     // Add the object to the stack of traversed objects.
     stack.push(a);
     // Deep compare the contents.
-    var aKeys = _.keys(a), bKeys = _.keys(b);
+    var size = 0, sizeRight = 0, result = true, key;
+    for (key in a) {
+      // Count the expected number of properties.
+      size++;
+      // Deep compare each member.
+      if (!(result = key in b && eq(a[key], b[key], stack))) break;
+    }
     // Ensure that both objects contain the same number of properties.
-    var result = aKeys.length == bKeys.length;
     if (result) {
-      // Recursively compare properties.
-      for (var key in a) {
-        if (!(result = key in b && eq(a[key], b[key], stack))) break;
+      for (key in b) {
+        if (++sizeRight > size) break;
       }
+      result = size == sizeRight;
     }
     // Remove the object from the stack of traversed objects.
     stack.pop();

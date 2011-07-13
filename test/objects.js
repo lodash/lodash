@@ -65,6 +65,11 @@ $(document).ready(function() {
   });
 
   test("objects: isEqual", function() {
+    function Foo(){ this.own = 'a'; }
+    function Bar(){ this.own = 'a'; }
+    Foo.prototype.inherited = 1;
+    Bar.prototype.inherited = 2;
+
     var moe   = {name : 'moe', lucky : [13, 27, 34]};
     var clone = {name : 'moe', lucky : [13, 27, 34]};
     ok(moe != clone, 'basic equality between objects is false');
@@ -80,6 +85,7 @@ $(document).ready(function() {
     ok(_.isEqual({isEqual: function () { return true; }}, {}), 'first object implements `isEqual`');
     ok(_.isEqual({}, {isEqual: function () { return true; }}), 'second object implements `isEqual`');
     ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), 'objects with the same number of undefined keys are not equal');
+    ok(!_.isEqual(new Foo, new Bar), 'objects with different inherited properties are not equal');
     ok(!_.isEqual(_({x: 1, y: undefined}).chain(), _({x: 1, z: 2}).chain()), 'wrapped objects are not equal');
     equals(_({x: 1, y: 2}).chain().isEqual(_({x: 1, y: 2}).chain()).value(), true, 'wrapped objects are equal');
 

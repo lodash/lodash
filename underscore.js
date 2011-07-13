@@ -1,4 +1,4 @@
-//     Underscore.js 1.1.6
+//     Underscore.js 1.1.7
 //     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
@@ -55,25 +55,26 @@
     module.exports = _;
     _._ = _;
   } else {
-    root._ = _;
+    // Exported as a string, for Closure Compiler "advanced" mode.
+    root['_'] = _;
   }
 
   // Current version.
-  _.VERSION = '1.1.6';
+  _.VERSION = '1.1.7';
 
   // Collection Functions
   // --------------------
 
   // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles objects implementing `forEach`, arrays, and raw objects.
+  // Handles objects with the built-in `forEach`, arrays, and raw objects.
   // Delegates to **ECMAScript 5**'s native `forEach` if available.
   var each = _.each = _.forEach = function(obj, iterator, context) {
     if (obj == null) return;
     if (nativeForEach && obj.forEach === nativeForEach) {
       obj.forEach(iterator, context);
-    } else if (_.isNumber(obj.length)) {
+    } else if (obj.length === +obj.length) {
       for (var i = 0, l = obj.length; i < l; i++) {
-        if (iterator.call(context, obj[i], i, obj) === breaker) return;
+        if (i in obj && iterator.call(context, obj[i], i, obj) === breaker) return;
       }
     } else {
       for (var key in obj) {
@@ -106,7 +107,7 @@
       return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
     }
     each(obj, function(value, index, list) {
-      if (!initial && index === 0) {
+      if (!initial) {
         memo = value;
         initial = true;
       } else {
@@ -181,14 +182,14 @@
   // Delegates to **ECMAScript 5**'s native `some` if available.
   // Aliased as `any`.
   var any = _.some = _.any = function(obj, iterator, context) {
-    iterator || (iterator = _.identity);
+    iterator = iterator || _.identity;
     var result = false;
     if (obj == null) return result;
     if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
     each(obj, function(value, index, list) {
-      if (result = iterator.call(context, value, index, list)) return breaker;
+      if (result |= iterator.call(context, value, index, list)) return breaker;
     });
-    return result;
+    return !!result;
   };
 
   // Determine if a given value is included in the array or object using `===`.
@@ -251,6 +252,16 @@
     }), 'value');
   };
 
+  // Groups the object's values by a criterion produced by an iterator
+  _.groupBy = function(obj, iterator) {
+    var result = {};
+    each(obj, function(value, index) {
+      var key = iterator(value, index);
+      (result[key] || (result[key] = [])).push(value);
+    });
+    return result;
+  };
+
   // Use a comparator function to figure out at what index an object should
   // be inserted so as to maintain order. Uses binary search.
   _.sortedIndex = function(array, obj, iterator) {
@@ -267,7 +278,7 @@
   _.toArray = function(iterable) {
     if (!iterable)                return [];
     if (iterable.toArray)         return iterable.toArray();
-    if (_.isArray(iterable))      return iterable;
+    if (_.isArray(iterable))      return slice.call(iterable);
     if (_.isArguments(iterable))  return slice.call(iterable);
     return _.values(iterable);
   };
@@ -316,8 +327,7 @@
 
   // Return a version of the array that does not contain the specified value(s).
   _.without = function(array) {
-    var values = slice.call(arguments, 1);
-    return _.filter(array, function(value){ return !_.include(values, value); });
+    return _.difference(array, slice.call(arguments, 1));
   };
 
   // Produce a duplicate-free version of the array. If the array has already
@@ -330,15 +340,27 @@
     }, []);
   };
 
+  // Produce an array that contains the union: each distinct element from all of
+  // the passed-in arrays.
+  _.union = function() {
+    return _.uniq(_.flatten(arguments));
+  };
+
   // Produce an array that contains every item shared between all the
-  // passed-in arrays.
-  _.intersect = function(array) {
+  // passed-in arrays. (Aliased as "intersect" for back-compat.)
+  _.intersection = _.intersect = function(array) {
     var rest = slice.call(arguments, 1);
     return _.filter(_.uniq(array), function(item) {
       return _.every(rest, function(other) {
         return _.indexOf(other, item) >= 0;
       });
     });
+  };
+
+  // Take the difference between one array and another.
+  // Only the elements present in just the first array will remain.
+  _.difference = function(array, other) {
+    return _.filter(array, function(value){ return !_.include(other, value); });
   };
 
   // Zip together multiple lists into a single array -- elements that share
@@ -502,7 +524,7 @@
     var funcs = slice.call(arguments);
     return function() {
       var args = slice.call(arguments);
-      for (var i=funcs.length-1; i >= 0; i--) {
+      for (var i = funcs.length - 1; i >= 0; i--) {
         args = [funcs[i].apply(this, args)];
       }
       return args[0];
@@ -537,7 +559,11 @@
   // Return a sorted list of the function names available on the object.
   // Aliased as `methods`
   _.functions = _.methods = function(obj) {
-    return _.filter(_.keys(obj), function(key){ return _.isFunction(obj[key]); }).sort();
+    var names = [];
+    for (var key in obj) {
+      if (_.isFunction(obj[key])) names.push(key);
+    }
+    return names.sort();
   };
 
   // Extend a given object with all the properties in passed-in object(s).
@@ -589,6 +615,7 @@
     if (b._chain) b = b._wrapped;
     // One of them implements an isEqual()?
     if (a.isEqual) return a.isEqual(b);
+    if (b.isEqual) return b.isEqual(a);
     // Check dates' integer values.
     if (_.isDate(a) && _.isDate(b)) return a.getTime() === b.getTime();
     // Both are NaN?
@@ -628,6 +655,11 @@
   // Delegates to ECMA5's native Array.isArray
   _.isArray = nativeIsArray || function(obj) {
     return toString.call(obj) === '[object Array]';
+  };
+
+  // Is a given variable an object?
+  _.isObject = function(obj) {
+    return obj === Object(obj);
   };
 
   // Is a given variable an arguments object?

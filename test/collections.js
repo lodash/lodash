@@ -26,10 +26,6 @@ $(document).ready(function() {
     _.each([1, 2, 3], function(num, index, arr){ if (_.include(arr, num)) answer = true; });
     ok(answer, 'can reference the original collection from inside the iterator');
 
-    answers = [];
-    _.each({range : 1, speed : 2, length : 3}, function(v){ answers.push(v); });
-    ok(answers.join(', '), '1, 2, 3', 'can iterate over objects with numeric length properties');
-
     answers = 0;
     _.each(null, function(){ ++answers; });
     equals(answers, 0, 'handles a null properly');
@@ -45,7 +41,7 @@ $(document).ready(function() {
     var doubled = _([1, 2, 3]).map(function(num){ return num * 2; });
     equals(doubled.join(', '), '2, 4, 6', 'OO-style doubled numbers');
 
-    var ids = _.map(document.body.childNodes, function(n){ return n.id; });
+    var ids = _.map($('div.underscore-test').children(), function(n){ return n.id; });
     ok(_.include(ids, 'qunit-header'), 'can use collection methods on NodeLists');
 
     var ids = _.map(document.images, function(n){ return n.id; });
@@ -81,6 +77,13 @@ $(document).ready(function() {
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
 
     ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
+
+    // Sparse arrays:
+    var sparseArray  = [];
+    sparseArray[100] = 10;
+    sparseArray[200] = 20;
+
+    equals(_.reduce(sparseArray, function(a, b){ return a + b }), 30, 'initially-sparse arrays with no memo');
   });
 
   test('collections: reduceRight', function() {
@@ -132,12 +135,15 @@ $(document).ready(function() {
   });
 
   test('collections: any', function() {
+    var nativeSome = Array.prototype.some;
+    Array.prototype.some = null;
     ok(!_.any([]), 'the empty set');
     ok(!_.any([false, false, false]), 'all false values');
     ok(_.any([false, false, true]), 'one true value');
     ok(!_.any([1, 11, 29], function(num){ return num % 2 == 0; }), 'all odd numbers');
     ok(_.any([1, 10, 29], function(num){ return num % 2 == 0; }), 'an even number');
     ok(_.some([false, false, true]), 'aliased as "some"');
+    Array.prototype.some = nativeSome;
   });
 
   test('collections: include', function() {
@@ -186,6 +192,12 @@ $(document).ready(function() {
     equals(_.pluck(people, 'name').join(', '), 'moe, curly', 'stooges sorted by age');
   });
 
+  test('collections: groupBy', function() {
+    var parity = _.groupBy([1, 2, 3, 4, 5, 6], function(num){ return num % 2; });
+    ok('0' in parity && '1' in parity, 'created a group for each value');
+    equals(parity[0].join(', '), '2, 4, 6', 'put each even number in the right group');
+  });
+
   test('collections: sortedIndex', function() {
     var numbers = [10, 20, 30, 40, 50], num = 35;
     var index = _.sortedIndex(numbers, num);
@@ -195,6 +207,9 @@ $(document).ready(function() {
   test('collections: toArray', function() {
     ok(!_.isArray(arguments), 'arguments object is not an array');
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');
+    var a = [1,2,3];
+    ok(_.toArray(a) !== a, 'array is cloned');
+    equals(_.toArray(a).join(', '), '1, 2, 3', 'cloned array contains same elements');
 
     var numbers = _.toArray({one : 1, two : 2, three : 3});
     equals(numbers.join(', '), '1, 2, 3', 'object flattened into array');

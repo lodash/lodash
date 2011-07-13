@@ -22,6 +22,10 @@ $(document).ready(function() {
   test("objects: functions", function() {
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
     ok(_.isEqual(['b', 'd'], _.functions(obj)), 'can grab the function names of any passed-in object');
+
+    var Animal = function(){};
+    Animal.prototype.run = function(){};
+    equals(_.functions(new Animal).join(''), 'run', 'also looks up functions on the prototype');
   });
 
   test("objects: extend", function() {
@@ -77,6 +81,8 @@ $(document).ready(function() {
     ok(_.isEqual(new Date(100), new Date(100)), 'identical dates are equal');
     ok(_.isEqual((/hello/ig), (/hello/ig)), 'identical regexes are equal');
     ok(!_.isEqual(null, [1]), 'a falsy is never equal to a truthy');
+    ok(_.isEqual({isEqual: function () { return true; }}, {}), 'first object implements `isEqual`');
+    ok(_.isEqual({}, {isEqual: function () { return true; }}), 'second object implements `isEqual`');
     ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), 'objects with the same number of undefined keys are not equal');
     ok(!_.isEqual(_({x: 1, y: undefined}).chain(), _({x: 1, z: 2}).chain()), 'wrapped objects are not equal');
     equals(_({x: 1, y: 2}).chain().isEqual(_({x: 1, y: 2}).chain()).value(), true, 'wrapped objects are equal');
@@ -134,6 +140,21 @@ $(document).ready(function() {
     ok(!_.isArguments(_.toArray(args)), 'but not when it\'s converted into an array');
     ok(!_.isArguments([1,2,3]), 'and not vanilla arrays.');
     ok(_.isArguments(iArguments), 'even from another frame');
+  });
+
+  test("objects: isObject", function() {
+    ok(_.isObject(arguments), 'the arguments object is object');
+    ok(_.isObject([1, 2, 3]), 'and arrays');
+    ok(_.isObject($('html')[0]), 'and DOM element');
+    ok(_.isObject(iElement), 'even from another frame');
+    ok(_.isObject(function () {}), 'and functions');
+    ok(_.isObject(iFunction), 'even from another frame');
+    ok(!_.isObject(null), 'but not null');
+    ok(!_.isObject(undefined), 'and not undefined');
+    ok(!_.isObject('string'), 'and not string');
+    ok(!_.isObject(12), 'and not number');
+    ok(!_.isObject(true), 'and not boolean');
+    ok(_.isObject(new String('string')), 'but new String()');
   });
 
   test("objects: isArray", function() {

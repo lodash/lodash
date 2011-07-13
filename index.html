@@ -118,11 +118,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.1.6)</a></td>
-        <td><i>27kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.1.7)</a></td>
+        <td><i>28kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.1.6)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.1.7)</a></td>
         <td><i>3kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -141,7 +141,7 @@
       <a href="#any">any</a>, <a href="#include">include</a>,
       <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
       <a href="#max">max</a>, <a href="#min">min</a>,
-      <a href="#sortBy">sortBy</a>, <a href="#sortedIndex">sortedIndex</a>,
+      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>, <a href="#sortedIndex">sortedIndex</a>,
       <a href="#toArray">toArray</a>, <a href="#size">size</a></span>
     </p>
 
@@ -149,8 +149,9 @@
       <b>Arrays</b>
       <br />
       <span class="methods"><a href="#first">first</a>, <a href="#rest">rest</a>, <a href="#last">last</a>,
-      <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, <a href="#uniq">uniq</a>,
-      <a href="#intersect">intersect</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
+      <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, 
+      <a href="#union">union</a>, <a href="#intersection">intersection</a>, <a href="#difference">difference</a>, 
+      <a href="#uniq">uniq</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
       <a href="#lastIndexOf">lastIndexOf</a>, <a href="#range">range</a></span>
     </p>
 
@@ -393,7 +394,7 @@ _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
       <p id="pluck">
         <b class="header">pluck</b><code>_.pluck(list, propertyName)</code>
         <br />
-        An convenient version of what is perhaps the most common use-case for
+        A convenient version of what is perhaps the most common use-case for
         <b>map</b>: extracting a list of property values.
       </p>
       <pre>
@@ -431,12 +432,23 @@ _.min(numbers);
       <p id="sortBy">
         <b class="header">sortBy</b><code>_.sortBy(list, iterator, [context])</code>
         <br />
-        Returns a sorted <b>list</b>, ranked by the results of running each
-        value through <b>iterator</b>.
+        Returns a sorted copy of <b>list</b>, ranked by the results of running 
+        each value through <b>iterator</b>.
       </p>
       <pre>
 _.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
 =&gt; [5, 4, 6, 3, 1, 2]
+</pre>
+
+      <p id="groupBy">
+        <b class="header">groupBy</b><code>_.groupBy(list, iterator)</code>
+        <br />
+        Splits a collection into sets, grouped by the result of running each
+        value through <b>iterator</b>.
+      </p>
+      <pre>
+_.groupBy([1.3, 2.1, 2.4], function(num){ return Math.floor(num); });
+=&gt; {1: [1.3], 2: [2.1, 2.4]}
 </pre>
 
       <p id="sortedIndex">
@@ -546,6 +558,39 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 =&gt; [2, 3, 4]
 </pre>
 
+      <p id="union">
+        <b class="header">union</b><code>_.union(*arrays)</code>
+        <br />
+        Computes the union of the passed-in <b>arrays</b>: the list of unique items,
+        in order, that are present in one or more of the <b>arrays</b>.
+      </p>
+      <pre>
+_.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+=&gt; [1, 2, 3, 101, 10]
+</pre>
+
+      <p id="intersection">
+        <b class="header">intersection</b><code>_.intersection(*arrays)</code>
+        <br />
+        Computes the list of values that are the intersection of all the <b>arrays</b>.
+        Each value in the result is present in each of the <b>arrays</b>.
+      </p>
+      <pre>
+_.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+=&gt; [1, 2]
+</pre>
+
+      <p id="difference">
+        <b class="header">difference</b><code>_.difference(array, other)</code>
+        <br />
+        Similar to <b>without</b>, but returns the values from <b>array</b> that
+        are not present in <b>other</b>.
+      </p>
+      <pre>
+_.difference([1, 2, 3, 4, 5], [5, 2, 10]);
+=&gt; [1, 3, 4]
+</pre>
+
       <p id="uniq">
         <b class="header">uniq</b><code>_.uniq(array, [isSorted])</code>
         <span class="alias">Alias: <b>unique</b></span>
@@ -557,17 +602,6 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
       <pre>
 _.uniq([1, 2, 1, 3, 1, 4]);
 =&gt; [1, 2, 3, 4]
-</pre>
-
-      <p id="intersect">
-        <b class="header">intersect</b><code>_.intersect(*arrays)</code>
-        <br />
-        Computes the list of values that are the intersection of all the <b>arrays</b>.
-        Each value in the result is present in each of the <b>arrays</b>.
-      </p>
-      <pre>
-_.intersect([1, 2, 3], [101, 2, 1, 10], [2, 1]);
-=&gt; [1, 2]
 </pre>
 
       <p id="zip">
@@ -1234,6 +1268,11 @@ _([1, 2, 3]).value();
         <a href="http://osteele.com/sources/javascript/functional/">Functional JavaScript</a>,
         which includes comprehensive higher-order function support as well as string lambdas.
       </p>
+      
+      <p>
+        Michael Aufreiter's <a href="http://substance.io/#michael/data-js">Data.js</a>,
+        a data manipulation + persistence library for JavaScript.
+      </p>
 
       <p>
         Python's <a href="http://docs.python.org/library/itertools.html">itertools</a>.
@@ -1241,6 +1280,17 @@ _([1, 2, 3]).value();
 
       <h2 id="changelog">Change Log</h2>
       
+      <p>
+        <b class="header">1.1.7</b> &mdash; <small><i>July 13, 2011</i></small><br />
+        Added <tt>_.groupBy</tt>, which aggregates a collection into groups of like items.
+        Added <tt>_.untion</tt> and <tt>_.difference</tt>, to complement the 
+        (re-named) <tt>_.intersection</tt>.
+        Various improvements for support of sparse arrays.
+        <tt>_.toArray</tt> now returns a clone, if directly passed an array.
+        <tt>_.functions</tt> now also returns the names of functions that are present
+        in the prototype chain.
+      </p>
+            
       <p>
         <b class="header">1.1.6</b> &mdash; <small><i>April 18, 2011</i></small><br />
         Added <tt>_.after</tt>, which will return a function that only runs after

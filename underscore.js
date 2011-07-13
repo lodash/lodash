@@ -596,7 +596,7 @@
   // Internal recursive comparison function.
   function eq(a, b, stack) {
     // Identical objects are equal.
-    if (a === b) return true;
+    if (a === b) return a != 0 || 1 / a == 1 / b;
     // A strict comparison is necessary because `null == undefined`.
     if (a == null) return a === b;
     // Compare object types.
@@ -606,8 +606,8 @@
     if (a == b) return true;
     // Ensure that both values are truthy or falsy.
     if ((!a && b) || (a && !b)) return false;
-    // `NaN` values are toxic.
-    if (_.isNaN(a) || _.isNaN(b)) return false;
+    // `NaN` values are equal.
+    if (_.isNaN(a)) return _.isNaN(b);
     if (_.isDate(a)) return _.isDate(b) && a.getTime() == b.getTime();
     // Compare RegExps by their source patterns and flags.
     if (_.isRegExp(a)) return _.isRegExp(b) && a.source == b.source &&
@@ -631,11 +631,11 @@
     }
     // Add the object to the stack of traversed objects.
     stack.push(a);
-    var result = true;
-    // Deep comparse the contents.
+    // Deep compare the contents.
     var aKeys = _.keys(a), bKeys = _.keys(b);
     // Ensure that both objects contain the same number of properties.
-    if (result = aKeys.length == bKeys.length) {
+    var result = aKeys.length == bKeys.length;
+    if (result) {
       // Recursively compare properties.
       for (var key in a) {
         if (!(result = key in b && eq(a[key], b[key], stack))) break;

@@ -79,8 +79,6 @@ $(document).ready(function() {
     ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
 
     // Sparse arrays:
-    equals(_.reduce([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
-
     var sparseArray  = [];
     sparseArray[100] = 10;
     sparseArray[200] = 20;

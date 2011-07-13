@@ -593,64 +593,63 @@
     return obj;
   };
 
-  // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = (function() {
-    function eq(a, b, stack) {
-      // Identical objects are equal.
-      if (a === b) return true;
-      // A strict comparison is necessary because `null == undefined`.
-      if (a == null) return a === b;
-      // Compare object types.
-      var typeA = typeof a;
-      if (typeA != typeof b) return false;
-      // Compare functions by reference.
-      if (_.isFunction(a)) return _.isFunction(b) && a == b;
-      // Compare strings, numbers, dates, and booleans by value.
-      if (_.isString(a)) return _.isString(b) && String(a) == String(b);
-      if (_.isNumber(a)) return _.isNumber(b) && +a == +b;
-      if (_.isDate(a)) return _.isDate(b) && a.getTime() == b.getTime();
-      if (_.isBoolean(a)) return _.isBoolean(b) && +a == +b;
-      // Compare RegExps by their source patterns and flags.
-      if (_.isRegExp(a)) return _.isRegExp(b) && a.source == b.source &&
-                                a.global == b.global &&
-                                a.multiline == b.multiline &&
-                                a.ignoreCase == b.ignoreCase;
-      // Recursively compare objects and arrays.
-      if (typeA != 'object') return false;
-      // Unwrap any wrapped objects.
-      if (a._chain) a = a._wrapped;
-      if (b._chain) b = b._wrapped;
-      // Invoke a custom `isEqual` method if one is provided.
-      if (a.isEqual) return a.isEqual(b);
-      if (b.isEqual) return b.isEqual(a);
-      // Compare array lengths to determine if a deep comparison is necessary.
-      if (a.length && (a.length !== b.length)) return false;
-      // Assume equality for cyclic structures.
-      var length = stack.length;
-      while (length--) {
-        if (stack[length] == a) return true;
-      }
-      // Add the object to the stack of traversed objects.
-      stack.push(a);
-      var result = true;
-      // Deep comparse the contents.
-      var aKeys = _.keys(a), bKeys = _.keys(b);
-      // Ensure that both objects contain the same number of properties.
-      if (result = aKeys.length == bKeys.length) {
-        // Recursively compare properties.
-        for (var key in a) {
-          if (!(result = key in b && eq(a[key], b[key], stack))) break;
-        }
-      }
-      // Remove the object from the stack of traversed objects.
-      stack.pop();
-      return result;
+  // Internal recursive comparison function.
+  function eq(a, b, stack) {
+    // Identical objects are equal.
+    if (a === b) return true;
+    // A strict comparison is necessary because `null == undefined`.
+    if (a == null) return a === b;
+    // Compare object types.
+    var typeA = typeof a;
+    if (typeA != typeof b) return false;
+    // The type comparison above prevents unwanted type coercion.
+    if (a == b) return true;
+    // Ensure that both values are truthy or falsy.
+    if ((!a && b) || (a && !b)) return false;
+    // `NaN` values are toxic.
+    if (_.isNaN(a) || _.isNaN(b)) return false;
+    if (_.isDate(a)) return _.isDate(b) && a.getTime() == b.getTime();
+    // Compare RegExps by their source patterns and flags.
+    if (_.isRegExp(a)) return _.isRegExp(b) && a.source == b.source &&
+                              a.global == b.global &&
+                              a.multiline == b.multiline &&
+                              a.ignoreCase == b.ignoreCase;
+    // Recursively compare objects and arrays.
+    if (typeA != 'object') return false;
+    // Unwrap any wrapped objects.
+    if (a._chain) a = a._wrapped;
+    if (b._chain) b = b._wrapped;
+    // Invoke a custom `isEqual` method if one is provided.
+    if (a.isEqual) return a.isEqual(b);
+    if (b.isEqual) return b.isEqual(a);
+    // Compare array lengths to determine if a deep comparison is necessary.
+    if (a.length && (a.length !== b.length)) return false;
+    // Assume equality for cyclic structures.
+    var length = stack.length;
+    while (length--) {
+      if (stack[length] == a) return true;
     }
-    // Expose the recursive `isEqual` method.
-    return function(a, b) {
-      return eq(a, b, []);
-    };
-  })();
+    // Add the object to the stack of traversed objects.
+    stack.push(a);
+    var result = true;
+    // Deep comparse the contents.
+    var aKeys = _.keys(a), bKeys = _.keys(b);
+    // Ensure that both objects contain the same number of properties.
+    if (result = aKeys.length == bKeys.length) {
+      // Recursively compare properties.
+      for (var key in a) {
+        if (!(result = key in b && eq(a[key], b[key], stack))) break;
+      }
+    }
+    // Remove the object from the stack of traversed objects.
+    stack.pop();
+    return result;
+  }
+
+  // Perform a deep comparison to check if two objects are equal.
+  _.isEqual = function(a, b) {
+    return eq(a, b, []);
+  };
 
   // Is a given array or object empty?
   _.isEmpty = function(obj) {

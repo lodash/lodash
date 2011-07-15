@@ -606,29 +606,27 @@
     // The type comparison above prevents unwanted type coercion.
     if (a == b) return true;
     // Optimization; ensure that both values are truthy or falsy.
-    if ((!a && b) || (a && !b)) return false;
+    if (!a != !b) return false;
     // `NaN` values are equal.
     if (_.isNaN(a)) return _.isNaN(b);
     // Compare dates by their millisecond values.
-    var isDateA = _.isDate(a), isDateB = _.isDate(b);
-    if (isDateA || isDateB) return isDateA && isDateB && a.getTime() == b.getTime();
+    if (_.isDate(a)) return _.isDate(b) && a.getTime() == b.getTime();
     // Compare RegExps by their source patterns and flags.
-    var isRegExpA = _.isRegExp(a), isRegExpB = _.isRegExp(b);
-    if (isRegExpA || isRegExpB) return isRegExpA && isRegExpB &&
-                                       a.source == b.source &&
-                                       a.global == b.global &&
-                                       a.multiline == b.multiline &&
-                                       a.ignoreCase == b.ignoreCase;
+    if (_.isRegExp(a))
+      return _.isRegExp(b) &&
+        a.source == b.source &&
+        a.global == b.global &&
+        a.multiline == b.multiline &&
+        a.ignoreCase == b.ignoreCase;
     // Ensure that both values are objects.
     if (typeA != 'object') return false;
     // Unwrap any wrapped objects.
     if (a._chain) a = a._wrapped;
     if (b._chain) b = b._wrapped;
     // Invoke a custom `isEqual` method if one is provided.
-    if (a.isEqual) return a.isEqual(b);
-    if (b.isEqual) return b.isEqual(a);
+    if (typeof a.isEqual == 'function') return a.isEqual(b);
     // Compare array lengths to determine if a deep comparison is necessary.
-    if (a.length && (a.length !== b.length)) return false;
+    if ('length' in a && (a.length !== b.length)) return false;
     // Assume equality for cyclic structures.
     var length = stack.length;
     while (length--) {

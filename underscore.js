@@ -333,11 +333,17 @@
   // Produce a duplicate-free version of the array. If the array has already
   // been sorted, you have the option of using a faster algorithm.
   // Aliased as `unique`.
-  _.uniq = _.unique = function(array, isSorted) {
-    return _.reduce(array, function(memo, el, i) {
-      if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) memo[memo.length] = el;
+  _.uniq = _.unique = function(array, isSorted, iterator) {
+    var initial = iterator ? _.map(array, iterator) : array;
+    var result = [];
+    _.reduce(initial, function(memo, el, i) {
+      if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) {
+        memo[memo.length] = el;
+        result[result.length] = array[i];
+      }
       return memo;
     }, []);
+    return result;
   };
 
   // Produce an array that contains the union: each distinct element from all of

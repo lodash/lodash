@@ -61,6 +61,14 @@ $(document).ready(function() {
     var list = [1, 1, 1, 2, 2, 3];
     equals(_.uniq(list, true).join(', '), '1, 2, 3', 'can find the unique values of a sorted array faster');
 
+    var list = [{name:'moe'}, {name:'curly'}, {name:'larry'}, {name:'curly'}];
+    var iterator = function(value) { return value.name; };
+    equals(_.map(_.uniq(list, false, iterator), iterator).join(', '), 'moe, curly, larry', 'can find the unique values of an array using a custom iterator');
+
+    var iterator = function(value) { return value +1; };
+    var list = [1, 2, 2, 3, 4, 4];
+    equals(_.uniq(list, true, iterator).join(', '), '1, 2, 3, 4', 'iterator works with sorted array');
+
     var result = (function(){ return _.uniq(arguments); })(1, 2, 1, 3, 1, 4);
     equals(result.join(', '), '1, 2, 3, 4', 'works on an arguments object');
   });

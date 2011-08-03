@@ -1235,6 +1235,13 @@ _([1, 2, 3]).value();
         another type, if you're setting properties with names like "concat" and
         "charCodeAt". So be aware.
       </p>
+      
+      <p>
+        In a similar fashion, <tt>_.each</tt> and all of the other functions 
+        based on it are designed to be able to iterate over any Array-like
+        JavaScript object, including <tt>arguments</tt>, NodeLists, and more.
+        Passing hash-like objects with a numeric <tt>length</tt> key won't work.
+      </p>
 
 
       <h2>Links &amp; Suggested Reading</h2>

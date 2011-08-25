@@ -65,6 +65,7 @@
         margin: 0px 0 30px;
       }
   </style>
+  <script type="text/javascript" src="underscore-min.js"></script>
 </head>
 <body>
 
@@ -141,7 +142,8 @@
       <a href="#any">any</a>, <a href="#include">include</a>,
       <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
       <a href="#max">max</a>, <a href="#min">min</a>,
-      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>, <a href="#sortedIndex">sortedIndex</a>,
+      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>,
+      <a href="#sortedIndex">sortedIndex</a>, <a href="#shuffle">shuffle</a>,
       <a href="#toArray">toArray</a>, <a href="#size">size</a></span>
     </p>
 
@@ -463,6 +465,25 @@ _.groupBy([1.3, 2.1, 2.4], function(num){ return Math.floor(num); });
 _.sortedIndex([10, 20, 30, 40, 50], 35);
 =&gt; 3
 </pre>
+
+      <p id="shuffle">
+        <b class="header">shuffle</b><code>_.shuffle(list)</code>
+        <br />
+        Returns a shuffled <b>list</b>.
+      </p>
+      <pre>
+_.shuffle([1, 2, 3, 4, 5, 6]);
+=&gt; <span id="shuffled"></span>
+<small><i><b><a href="javascript:doShuffle();">(reshuffle)</a></b></i></small>
+</pre>
+      <script type="text/javascript">
+        function doShuffle() {
+          var el = document.getElementById("shuffled");
+          while (el.firstChild && el.removeChild(el.firstChild));
+          el.appendChild(document.createTextNode("[" + _.shuffle([1, 2, 3, 4, 5, 6]).join(', ') + "]"));
+        }
+        doShuffle();
+      </script>
 
       <p id="toArray">
         <b class="header">toArray</b><code>_.toArray(list)</code>

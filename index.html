@@ -65,7 +65,6 @@
         margin: 0px 0 30px;
       }
   </style>
-  <script type="text/javascript" src="underscore-min.js"></script>
 </head>
 <body>
 
@@ -469,21 +468,12 @@ _.sortedIndex([10, 20, 30, 40, 50], 35);
       <p id="shuffle">
         <b class="header">shuffle</b><code>_.shuffle(list)</code>
         <br />
-        Returns a shuffled <b>list</b>.
+        Returns a shuffled copy of <b>list</b>.
       </p>
       <pre>
 _.shuffle([1, 2, 3, 4, 5, 6]);
-=&gt; <span id="shuffled"></span>
-<small><i><b><a href="javascript:doShuffle();">(reshuffle)</a></b></i></small>
+=&gt; [4, 1, 6, 3, 5, 2]
 </pre>
-      <script type="text/javascript">
-        function doShuffle() {
-          var el = document.getElementById("shuffled");
-          while (el.firstChild && el.removeChild(el.firstChild));
-          el.appendChild(document.createTextNode("[" + _.shuffle([1, 2, 3, 4, 5, 6]).join(', ') + "]"));
-        }
-        doShuffle();
-      </script>
 
       <p id="toArray">
         <b class="header">toArray</b><code>_.toArray(list)</code>

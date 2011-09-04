@@ -72,8 +72,8 @@ $(document).ready(function() {
 
     var moe   = {name : 'moe', lucky : [13, 27, 34]};
     var clone = {name : 'moe', lucky : [13, 27, 34]};
-	var isEqualObj = {isEqual: function (o) { return o.isEqual == this.isEqual; }, unique: {}};
-	var isEqualObjClone = {isEqual: isEqualObj.isEqual, unique: {}};
+    var isEqualObj = {isEqual: function (o) { return o.isEqual == this.isEqual; }, unique: {}};
+    var isEqualObjClone = {isEqual: isEqualObj.isEqual, unique: {}};
     ok(moe != clone, 'basic equality between objects is false');
     ok(_.isEqual(moe, clone), 'deep equality is true');
     ok(_(moe).isEqual(clone), 'OO-style deep equality works');

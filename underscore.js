@@ -610,14 +610,16 @@
     // `NaN` values are equal.
     if (_.isNaN(a)) return _.isNaN(b);
     // Compare dates by their millisecond values.
-    if (_.isDate(a)) return _.isDate(b) && a.getTime() == b.getTime();
+    var isDateA = _.isDate(a), isDateB = _.isDate(b);
+    if (isDateA || isDateB) return isDateA && isDateB && a.getTime() == b.getTime();
     // Compare RegExps by their source patterns and flags.
-    if (_.isRegExp(a))
-      return _.isRegExp(b) &&
-        a.source == b.source &&
-        a.global == b.global &&
-        a.multiline == b.multiline &&
-        a.ignoreCase == b.ignoreCase;
+    var isRegExpA = _.isRegExp(a), isRegExpB = _.isRegExp(b);
+    if (isRegExpA || isRegExpB)
+        return isRegExpA && isRegExpB &&
+            a.source == b.source &&
+            a.global == b.global &&
+            a.multiline == b.multiline &&
+            a.ignoreCase == b.ignoreCase;
     // Ensure that both values are objects.
     if (typeA != 'object') return false;
     // Unwrap any wrapped objects.
@@ -625,6 +627,7 @@
     if (b._chain) b = b._wrapped;
     // Invoke a custom `isEqual` method if one is provided.
     if (typeof a.isEqual == 'function') return a.isEqual(b);
+    if (typeof b.isEqual == 'function') return b.isEqual(a);
     // Compare array lengths to determine if a deep comparison is necessary.
     if ('length' in a && (a.length !== b.length)) return false;
     // Assume equality for cyclic structures.

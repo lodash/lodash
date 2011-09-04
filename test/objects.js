@@ -72,6 +72,8 @@ $(document).ready(function() {
 
     var moe   = {name : 'moe', lucky : [13, 27, 34]};
     var clone = {name : 'moe', lucky : [13, 27, 34]};
+    var isEqualObj = {isEqual: function (o) { return o.isEqual == this.isEqual; }, unique: {}};
+    var isEqualObjClone = {isEqual: isEqualObj.isEqual, unique: {}};
     ok(moe != clone, 'basic equality between objects is false');
     ok(_.isEqual(moe, clone), 'deep equality is true');
     ok(_(moe).isEqual(clone), 'OO-style deep equality works');
@@ -86,8 +88,11 @@ $(document).ready(function() {
     ok(!_.isEqual({source: '(?:)', global: true, multiline: true, ignoreCase: true}, /(?:)/gim), 'RegExp-like objects and RegExps are not equal');
     ok(!_.isEqual(null, [1]), 'a falsy is never equal to a truthy');
     ok(!_.isEqual(undefined, null), '`undefined` is not equal to `null`');
-    ok(_.isEqual({isEqual: function () { return true; }}, {}), 'first object implements `isEqual`');
-    ok(_.isEqual({}, {isEqual: function () { return true; }}), 'second object implements `isEqual`');
+    ok(_.isEqual(isEqualObj, isEqualObj), 'both objects implement `isEqual`, same objects');
+    ok(_.isEqual(isEqualObj, isEqualObjClone), 'both objects implement `isEqual`, different objects');
+    ok(_.isEqual(isEqualObjClone, isEqualObj), 'both objects implement `isEqual`, different objects, swapped');
+    ok(!_.isEqual(isEqualObj, {}), 'first object implements `isEqual`');
+    ok(!_.isEqual({}, isEqualObj), 'second object implements `isEqual`');
     ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), 'objects with the same number of undefined keys are not equal');
     ok(!_.isEqual(new Foo, new Bar), 'objects with different inherited properties are not equal');
     ok(!_.isEqual(_({x: 1, y: undefined}).chain(), _({x: 1, z: 2}).chain()), 'wrapped objects are not equal');

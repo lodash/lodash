@@ -318,14 +318,14 @@ $(document).ready(function() {
       parent.iElement   = document.createElement('div');\
       parent.iArguments = (function(){ return arguments; })(1, 2, 3);\
       parent.iArray     = [1, 2, 3];\
-      parent.iString    = 'hello';\
-      parent.iNumber    = 100;\
+      parent.iString    = new String('hello');\
+      parent.iNumber    = new Number(100);\
       parent.iFunction  = (function(){});\
       parent.iDate      = new Date();\
       parent.iRegExp    = /hi/;\
       parent.iNaN       = NaN;\
       parent.iNull      = null;\
-      parent.iBoolean   = false;\
+      parent.iBoolean   = new Boolean(false);\
       parent.iUndefined = undefined;\
     </script>"
   );

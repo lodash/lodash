@@ -614,7 +614,7 @@
     var isNumberA = _.isNumber(a), isNumberB = _.isNumber(b);
     if (isNumberA || isNumberB) return isNumberA && isNumberB && +a == +b;
     // Compare boolean objects by value. The value of `true` is 1; the value of `false` is 0.
-    var isBooleanA = toString.call(a) == '[object Boolean]', isBooleanB = toString.call(b) == '[object Boolean]';
+    var isBooleanA = _.isBoolean(a), isBooleanB = _.isBoolean(b);
     if (isBooleanA || isBooleanB) return isBooleanA && isBooleanB && +a == +b;
     // Compare dates by their millisecond values.
     var isDateA = _.isDate(a), isDateB = _.isDate(b);
@@ -738,7 +738,7 @@
 
   // Is a given value a boolean?
   _.isBoolean = function(obj) {
-    return obj === true || obj === false;
+    return obj === true || obj === false || typeof obj == 'object' && toString.call(obj) == '[object Boolean]';
   };
 
   // Is a given value a date?

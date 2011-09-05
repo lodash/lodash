@@ -118,11 +118,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.1.6)</a></td>
-        <td><i>27kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.1.7)</a></td>
+        <td><i>28kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.1.6)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.1.7)</a></td>
         <td><i>3kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -149,8 +149,9 @@
       <b>Arrays</b>
       <br />
       <span class="methods"><a href="#first">first</a>, <a href="#rest">rest</a>, <a href="#last">last</a>,
-      <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, <a href="#uniq">uniq</a>,
-      <a href="#intersect">intersect</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
+      <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, 
+      <a href="#union">union</a>, <a href="#intersection">intersection</a>, <a href="#difference">difference</a>, 
+      <a href="#uniq">uniq</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
       <a href="#lastIndexOf">lastIndexOf</a>, <a href="#range">range</a></span>
     </p>
 
@@ -557,28 +558,52 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 =&gt; [2, 3, 4]
 </pre>
 
-      <p id="uniq">
-        <b class="header">uniq</b><code>_.uniq(array, [isSorted])</code>
-        <span class="alias">Alias: <b>unique</b></span>
+      <p id="union">
+        <b class="header">union</b><code>_.union(*arrays)</code>
         <br />
-        Produces a duplicate-free version of the <b>array</b>, using <i>===</i> to test
-        object equality. If you know in advance that the <b>array</b> is sorted,
-        passing <i>true</i> for <b>isSorted</b> will run a much faster algorithm.
+        Computes the union of the passed-in <b>arrays</b>: the list of unique items,
+        in order, that are present in one or more of the <b>arrays</b>.
       </p>
       <pre>
-_.uniq([1, 2, 1, 3, 1, 4]);
-=&gt; [1, 2, 3, 4]
+_.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+=&gt; [1, 2, 3, 101, 10]
 </pre>
 
-      <p id="intersect">
-        <b class="header">intersect</b><code>_.intersect(*arrays)</code>
+      <p id="intersection">
+        <b class="header">intersection</b><code>_.intersection(*arrays)</code>
         <br />
         Computes the list of values that are the intersection of all the <b>arrays</b>.
         Each value in the result is present in each of the <b>arrays</b>.
       </p>
       <pre>
-_.intersect([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+_.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 =&gt; [1, 2]
+</pre>
+
+      <p id="difference">
+        <b class="header">difference</b><code>_.difference(array, other)</code>
+        <br />
+        Similar to <b>without</b>, but returns the values from <b>array</b> that
+        are not present in <b>other</b>.
+      </p>
+      <pre>
+_.difference([1, 2, 3, 4, 5], [5, 2, 10]);
+=&gt; [1, 3, 4]
+</pre>
+
+      <p id="uniq">
+        <b class="header">uniq</b><code>_.uniq(array, [isSorted], [iterator])</code>
+        <span class="alias">Alias: <b>unique</b></span>
+        <br />
+        Produces a duplicate-free version of the <b>array</b>, using <i>===</i> to test
+        object equality. If you know in advance that the <b>array</b> is sorted,
+        passing <i>true</i> for <b>isSorted</b> will run a much faster algorithm.
+        If you want to compute unique items based on a transformation, pass an
+        <b>iterator</b> function.
+      </p>
+      <pre>
+_.uniq([1, 2, 1, 3, 1, 4]);
+=&gt; [1, 2, 3, 4]
 </pre>
 
       <p id="zip">
@@ -1212,6 +1237,13 @@ _([1, 2, 3]).value();
         another type, if you're setting properties with names like "concat" and
         "charCodeAt". So be aware.
       </p>
+      
+      <p>
+        In a similar fashion, <tt>_.each</tt> and all of the other functions 
+        based on it are designed to be able to iterate over any Array-like
+        JavaScript object, including <tt>arguments</tt>, NodeLists, and more.
+        Passing hash-like objects with a numeric <tt>length</tt> key won't work.
+      </p>
 
 
       <h2>Links &amp; Suggested Reading</h2>
@@ -1222,6 +1254,21 @@ _([1, 2, 3]).value();
         Includes OOP-wrapping and chaining.
         The <a href="http://github.com/mirven/underscore.lua">source</a> is
         available on GitHub.
+      </p>
+      
+      <p>
+        <a href="http://brianhaveri.github.com/Underscore.php/">Underscore.php</a>,
+        a PHP port of the functions that are applicable in both languages.
+        Includes OOP-wrapping and chaining.
+        The <a href="http://github.com/brianhaveri/Underscore.php">source</a> is
+        available on GitHub.
+      </p>
+      
+      <p>
+        <a href="http://vti.github.com/underscore-perl/">Underscore-perl</a>,
+        a Perl port of many of the Underscore.js functions, 
+        aimed at on Perl hashes and arrays, also 
+        <a href="https://github.com/vti/underscore-perl/">available on GitHub</a>.
       </p>
       
       <p>
@@ -1257,6 +1304,17 @@ _([1, 2, 3]).value();
 
       <h2 id="changelog">Change Log</h2>
       
+      <p>
+        <b class="header">1.1.7</b> &mdash; <small><i>July 13, 2011</i></small><br />
+        Added <tt>_.groupBy</tt>, which aggregates a collection into groups of like items.
+        Added <tt>_.union</tt> and <tt>_.difference</tt>, to complement the 
+        (re-named) <tt>_.intersection</tt>.
+        Various improvements for support of sparse arrays.
+        <tt>_.toArray</tt> now returns a clone, if directly passed an array.
+        <tt>_.functions</tt> now also returns the names of functions that are present
+        in the prototype chain.
+      </p>
+            
       <p>
         <b class="header">1.1.6</b> &mdash; <small><i>April 18, 2011</i></small><br />
         Added <tt>_.after</tt>, which will return a function that only runs after

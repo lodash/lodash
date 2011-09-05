@@ -22,6 +22,10 @@ $(document).ready(function() {
   test("objects: functions", function() {
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
     ok(_.isEqual(['b', 'd'], _.functions(obj)), 'can grab the function names of any passed-in object');
+
+    var Animal = function(){};
+    Animal.prototype.run = function(){};
+    equals(_.functions(new Animal).join(''), 'run', 'also looks up functions on the prototype');
   });
 
   test("objects: extend", function() {

@@ -77,6 +77,13 @@ $(document).ready(function() {
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
 
     ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
+
+    // Sparse arrays:
+    var sparseArray  = [];
+    sparseArray[100] = 10;
+    sparseArray[200] = 20;
+
+    equals(_.reduce(sparseArray, function(a, b){ return a + b }), 30, 'initially-sparse arrays with no memo');
   });
 
   test('collections: reduceRight', function() {
@@ -128,12 +135,15 @@ $(document).ready(function() {
   });
 
   test('collections: any', function() {
+    var nativeSome = Array.prototype.some;
+    Array.prototype.some = null;
     ok(!_.any([]), 'the empty set');
     ok(!_.any([false, false, false]), 'all false values');
     ok(_.any([false, false, true]), 'one true value');
     ok(!_.any([1, 11, 29], function(num){ return num % 2 == 0; }), 'all odd numbers');
     ok(_.any([1, 10, 29], function(num){ return num % 2 == 0; }), 'an even number');
     ok(_.some([false, false, true]), 'aliased as "some"');
+    Array.prototype.some = nativeSome;
   });
 
   test('collections: include', function() {

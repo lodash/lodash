@@ -605,12 +605,14 @@
     if (typeA != typeof b) return false;
     // Optimization; ensure that both values are truthy or falsy.
     if (!a != !b) return false;
+    // `NaN` values are equal.
+    if (_.isNaN(a)) return _.isNaN(b);
     // Compare string objects by value.
     var isStringA = _.isString(a), isStringB = _.isString(b);
     if (isStringA || isStringB) return isStringA && isStringB && String(a) == String(b);
-    // Compare number objects by value. `NaN` values are equal.
-    var isNumberA = toString.call(a) == '[object Number]', isNumberB = toString.call(b) == '[object Number]';
-    if (isNumberA || isNumberB) return isNumberA && isNumberB && (_.isNaN(a) ? _.isNaN(b) : +a == +b);
+    // Compare number objects by value.
+    var isNumberA = _.isNumber(a), isNumberB = _.isNumber(b);
+    if (isNumberA || isNumberB) return isNumberA && isNumberB && +a == +b;
     // Compare boolean objects by value. The value of `true` is 1; the value of `false` is 0.
     var isBooleanA = toString.call(a) == '[object Boolean]', isBooleanB = toString.call(b) == '[object Boolean]';
     if (isBooleanA || isBooleanB) return isBooleanA && isBooleanB && +a == +b;

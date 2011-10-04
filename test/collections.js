@@ -177,6 +177,9 @@ $(document).ready(function() {
 
     var neg = _.max([1, 2, 3], function(num){ return -num; });
     equals(neg, 1, 'can perform a computation-based max');
+
+    equals(-Infinity, _.max({}), 'Maximum value of an empty object');
+    equals(-Infinity, _.max([]), 'Maximum value of an empty array');
   });
 
   test('collections: min', function() {
@@ -184,6 +187,9 @@ $(document).ready(function() {
 
     var neg = _.min([1, 2, 3], function(num){ return -num; });
     equals(neg, 3, 'can perform a computation-based min');
+
+    equals(Infinity, _.min({}), 'Minimum value of an empty object');
+    equals(Infinity, _.min([]), 'Minimum value of an empty array');
   });
 
   test('collections: sortBy', function() {

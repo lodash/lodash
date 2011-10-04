@@ -631,22 +631,21 @@
     if (isDateA || isDateB) return isDateA && isDateB && a.getTime() == b.getTime();
     // Compare RegExps by their source patterns and flags.
     var isRegExpA = _.isRegExp(a), isRegExpB = _.isRegExp(b);
-    if (isRegExpA || isRegExpB)
+    if (isRegExpA || isRegExpB) {
       // Ensure commutative equality for RegExps.
       return isRegExpA && isRegExpB &&
              a.source == b.source &&
              a.global == b.global &&
              a.multiline == b.multiline &&
              a.ignoreCase == b.ignoreCase;
+    }
     // Ensure that both values are objects.
     if (typeA != 'object') return false;
     // Unwrap any wrapped objects.
     if (a._chain) a = a._wrapped;
     if (b._chain) b = b._wrapped;
     // Invoke a custom `isEqual` method if one is provided.
-    if (typeof a.isEqual == 'function') return a.isEqual(b);
-    // If only `b` provides an `isEqual` method, `a` and `b` are not equal.
-    if (typeof b.isEqual == 'function') return false;
+    if (_.isFunction(a.isEqual)) return a.isEqual(b);
     // Assume equality for cyclic structures. The algorithm for detecting cyclic structures is
     // adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
     var length = stack.length;
@@ -748,7 +747,7 @@
 
   // Is a given value a boolean?
   _.isBoolean = function(obj) {
-    return obj === true || obj === false || typeof obj == 'object' && toString.call(obj) == '[object Boolean]';
+    return obj === true || obj === false || toString.call(obj) == '[object Boolean]';
   };
 
   // Is a given value a date?

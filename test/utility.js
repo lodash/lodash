@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Utility functions (uniqueId, template)");
+  module("Utility");
 
   test("utility: noConflict", function() {
     var underscore = _.noConflict();

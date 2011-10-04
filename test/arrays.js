@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Array-only functions (last, compact, uniq, and so on...)");
+  module("Arrays");
 
   test("arrays: first", function() {
     equals(_.first([1,2,3]), 1, 'can pull out the first element of an array');

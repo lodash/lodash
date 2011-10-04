@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Underscore chaining.");
+  module("Chaining");
 
   test("chaining: map/flatten/reduce", function() {
     var lyrics = [

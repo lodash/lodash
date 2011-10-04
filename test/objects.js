@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Object functions (values, extend, isEqual, and so on...)");
+  module("Objects");
 
   test("objects: keys", function() {
     var exception = /object/;

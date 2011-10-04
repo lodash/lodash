@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Collection functions (each, any, select, and so on...)");
+  module("Collections");
 
   test("collections: each", function() {
     _.each([1, 2, 3], function(num, i) {

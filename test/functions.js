@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Function functions (bind, bindAll, and so on...)");
+  module("Functions");
 
   test("functions: bind", function() {
     var context = {name : 'moe'};

@@ -204,6 +204,13 @@ $(document).ready(function() {
     equals(index, 3, '35 should be inserted at index 3');
   });
 
+  test('collections: shuffle', function() {
+    var numbers = _.range(10);
+	var shuffled = _.shuffle(numbers).sort();
+	notStrictEqual(numbers, shuffled, 'original object is unmodified');
+    equals(shuffled.join(','), numbers.join(','), 'contains the same members before and after shuffle');
+  });
+
   test('collections: toArray', function() {
     ok(!_.isArray(arguments), 'arguments object is not an array');
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');

@@ -141,7 +141,8 @@
       <a href="#any">any</a>, <a href="#include">include</a>,
       <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
       <a href="#max">max</a>, <a href="#min">min</a>,
-      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>, <a href="#sortedIndex">sortedIndex</a>,
+      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>,
+      <a href="#sortedIndex">sortedIndex</a>, <a href="#shuffle">shuffle</a>,
       <a href="#toArray">toArray</a>, <a href="#size">size</a></span>
     </p>
 
@@ -462,6 +463,16 @@ _.groupBy([1.3, 2.1, 2.4], function(num){ return Math.floor(num); });
       <pre>
 _.sortedIndex([10, 20, 30, 40, 50], 35);
 =&gt; 3
+</pre>
+
+      <p id="shuffle">
+        <b class="header">shuffle</b><code>_.shuffle(list)</code>
+        <br />
+        Returns a shuffled copy of <b>list</b>.
+      </p>
+      <pre>
+_.shuffle([1, 2, 3, 4, 5, 6]);
+=&gt; [4, 1, 6, 3, 5, 2]
 </pre>
 
       <p id="toArray">

@@ -816,6 +816,11 @@
     for (var i = 0; i < n; i++) iterator.call(context, i);
   };
 
+  // Escape string for HTML
+  _.escape = function(string) {
+    return (''+string).replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
+  };
+
   // Add your own custom functions to the Underscore object, ensuring that
   // they're correctly added to the OOP wrapper as well.
   _.mixin = function(obj) {
@@ -836,7 +841,8 @@
   // following template settings to use alternative delimiters.
   _.templateSettings = {
     evaluate    : /<%([\s\S]+?)%>/g,
-    interpolate : /<%=([\s\S]+?)%>/g
+    interpolate : /<%=([\s\S]+?)%>/g,
+    encode      : /<%==([\s\S]+?)%>/g
   };
 
   // JavaScript micro-templating, similar to John Resig's implementation.
@@ -848,6 +854,9 @@
       'with(obj||{}){__p.push(\'' +
       str.replace(/\\/g, '\\\\')
          .replace(/'/g, "\\'")
+         .replace(c.encode, function(match, code) {
+           return "',_.escape(" + code.replace(/\\'/g, "'") + "),'";
+         })
          .replace(c.interpolate, function(match, code) {
            return "'," + code.replace(/\\'/g, "'") + ",'";
          })

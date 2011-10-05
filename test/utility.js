@@ -81,6 +81,10 @@ $(document).ready(function() {
     var withNewlinesAndTabs = _.template('This\n\t\tis: <%= x %>.\n\tok.\nend.');
     equals(withNewlinesAndTabs({x: 'that'}), 'This\n\t\tis: that.\n\tok.\nend.');
 
+    var template = _.template("<i><%- value %></i>");
+    var result = template({value: "<script>"});
+    equals(result, '<i>&lt;script&gt;</i>');
+
     if (!$.browser.msie) {
       var fromHTML = _.template($('#template').html());
       equals(fromHTML({data : 12345}).replace(/\s/g, ''), '<li>24690</li>');

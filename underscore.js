@@ -816,7 +816,7 @@
     for (var i = 0; i < n; i++) iterator.call(context, i);
   };
 
-  // Escape string for HTML
+  // Escape a string for HTML interpolation.
   _.escape = function(string) {
     return (''+string).replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   };
@@ -842,7 +842,7 @@
   _.templateSettings = {
     evaluate    : /<%([\s\S]+?)%>/g,
     interpolate : /<%=([\s\S]+?)%>/g,
-    encode      : /<%==([\s\S]+?)%>/g
+    escape      : /<%-([\s\S]+?)%>/g
   };
 
   // JavaScript micro-templating, similar to John Resig's implementation.
@@ -854,7 +854,7 @@
       'with(obj||{}){__p.push(\'' +
       str.replace(/\\/g, '\\\\')
          .replace(/'/g, "\\'")
-         .replace(c.encode, function(match, code) {
+         .replace(c.escape, function(match, code) {
            return "',_.escape(" + code.replace(/\\'/g, "'") + "),'";
          })
          .replace(c.interpolate, function(match, code) {

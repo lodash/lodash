@@ -327,7 +327,7 @@
   // the arguments object. Passing **n** will return all the values in
   // the array, excluding the last N. The **guard** check allows it to work with
   // `_.map`.
-  _.init = function(array, n, guard) {
+  _.initial = function(array, n, guard) {
     return slice.call(array, 0, array.length - ((n == null) || guard ? 1 : n));
   };
 

@@ -24,6 +24,15 @@ $(document).ready(function() {
     equals(_.flatten(result).join(','), '2,3,2,3', 'works well with _.map');
   });
 
+  test("arrays: init", function() {
+    equals(_.init([1,2,3,4,5]).join(", "), "1, 2, 3, 4", 'working init()');
+    equals(_.init([1,2,3,4],2).join(", "), "1, 2", 'init can take an index');
+    var result = (function(){ return _(arguments).init(); })(1, 2, 3, 4);
+    equals(result.join(", "), "1, 2, 3", 'init works on arguments object');
+    result = _.map([[1,2,3],[1,2,3]], _.init);
+    equals(_.flatten(result).join(','), '1,2,1,2', 'init works with _.map');
+  });
+
   test("arrays: last", function() {
     equals(_.last([1,2,3]), 3, 'can pull out the last element of an array');
     equals(_.last([1,2,3], 0).join(', '), "", 'can pass an index to last');

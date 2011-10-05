@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Array-only functions (last, compact, uniq, and so on...)");
+  module("Arrays");
 
   test("arrays: first", function() {
     equals(_.first([1,2,3]), 1, 'can pull out the first element of an array');
@@ -24,10 +24,23 @@ $(document).ready(function() {
     equals(_.flatten(result).join(','), '2,3,2,3', 'works well with _.map');
   });
 
+  test("arrays: initial", function() {
+    equals(_.initial([1,2,3,4,5]).join(", "), "1, 2, 3, 4", 'working initial()');
+    equals(_.initial([1,2,3,4],2).join(", "), "1, 2", 'initial can take an index');
+    var result = (function(){ return _(arguments).initial(); })(1, 2, 3, 4);
+    equals(result.join(", "), "1, 2, 3", 'initial works on arguments object');
+    result = _.map([[1,2,3],[1,2,3]], _.initial);
+    equals(_.flatten(result).join(','), '1,2,1,2', 'initial works with _.map');
+  });
+
   test("arrays: last", function() {
     equals(_.last([1,2,3]), 3, 'can pull out the last element of an array');
+    equals(_.last([1,2,3], 0).join(', '), "", 'can pass an index to last');
+    equals(_.last([1,2,3], 2).join(', '), '2, 3', 'can pass an index to last');
     var result = (function(){ return _(arguments).last(); })(1, 2, 3, 4);
     equals(result, 4, 'works on an arguments object');
+    result = _.map([[1,2,3],[1,2,3]], _.last);
+    equals(result.join(','), '3,3', 'works well with _.map');
   });
 
   test("arrays: compact", function() {
@@ -60,6 +73,14 @@ $(document).ready(function() {
 
     var list = [1, 1, 1, 2, 2, 3];
     equals(_.uniq(list, true).join(', '), '1, 2, 3', 'can find the unique values of a sorted array faster');
+
+    var list = [{name:'moe'}, {name:'curly'}, {name:'larry'}, {name:'curly'}];
+    var iterator = function(value) { return value.name; };
+    equals(_.map(_.uniq(list, false, iterator), iterator).join(', '), 'moe, curly, larry', 'can find the unique values of an array using a custom iterator');
+
+    var iterator = function(value) { return value +1; };
+    var list = [1, 2, 2, 3, 4, 4];
+    equals(_.uniq(list, true, iterator).join(', '), '1, 2, 3, 4', 'iterator works with sorted array');
 
     var result = (function(){ return _.uniq(arguments); })(1, 2, 1, 3, 1, 4);
     equals(result.join(', '), '1, 2, 3, 4', 'works on an arguments object');

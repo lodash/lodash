@@ -1,4 +1,4 @@
-//     Underscore.js 1.1.7
+//     Underscore.js 1.2.0
 //     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
@@ -60,7 +60,7 @@
   }
 
   // Current version.
-  _.VERSION = '1.1.7';
+  _.VERSION = '1.2.0';
 
   // Collection Functions
   // --------------------
@@ -220,6 +220,7 @@
   // Return the maximum element or (element-based computation).
   _.max = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.max.apply(Math, obj);
+    if (!iterator && _.isEmpty(obj)) return -Infinity;
     var result = {computed : -Infinity};
     each(obj, function(value, index, list) {
       var computed = iterator ? iterator.call(context, value, index, list) : value;
@@ -231,12 +232,28 @@
   // Return the minimum element (or element-based computation).
   _.min = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.min.apply(Math, obj);
+    if (!iterator && _.isEmpty(obj)) return Infinity;
     var result = {computed : Infinity};
     each(obj, function(value, index, list) {
       var computed = iterator ? iterator.call(context, value, index, list) : value;
       computed < result.computed && (result = {value : value, computed : computed});
     });
     return result.value;
+  };
+
+  // Shuffle an array.
+  _.shuffle = function(obj) {
+    var shuffled = [], rand;
+    each(obj, function(value, index, list) {
+      if (index == 0) {
+        shuffled[0] = value;
+      } else {
+        rand = Math.floor(Math.random() * (index + 1));
+        shuffled[index] = shuffled[rand];
+        shuffled[rand] = value;
+      }
+    });
+    return shuffled;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -298,17 +315,26 @@
     return (n != null) && !guard ? slice.call(array, 0, n) : array[0];
   };
 
+  // Returns everything but the last entry of the array. Especcialy useful on
+  // the arguments object. Passing **n** will return all the values in
+  // the array, excluding the last N. The **guard** check allows it to work with
+  // `_.map`.
+  _.initial = function(array, n, guard) {
+    return slice.call(array, 0, array.length - ((n == null) || guard ? 1 : n));
+  };
+
+  // Get the last element of an array. Passing **n** will return the last N
+  // values in the array. The **guard** check allows it to work with `_.map`.
+  _.last = function(array, n, guard) {
+    return (n != null) && !guard ? slice.call(array, array.length - n) : array[array.length - 1];
+  };
+
   // Returns everything but the first entry of the array. Aliased as `tail`.
   // Especially useful on the arguments object. Passing an **index** will return
   // the rest of the values in the array from that index onward. The **guard**
   // check allows it to work with `_.map`.
   _.rest = _.tail = function(array, index, guard) {
     return slice.call(array, (index == null) || guard ? 1 : index);
-  };
-
-  // Get the last element of an array.
-  _.last = function(array) {
-    return array[array.length - 1];
   };
 
   // Trim out all falsy values from an array.
@@ -333,11 +359,17 @@
   // Produce a duplicate-free version of the array. If the array has already
   // been sorted, you have the option of using a faster algorithm.
   // Aliased as `unique`.
-  _.uniq = _.unique = function(array, isSorted) {
-    return _.reduce(array, function(memo, el, i) {
-      if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) memo[memo.length] = el;
+  _.uniq = _.unique = function(array, isSorted, iterator) {
+    var initial = iterator ? _.map(array, iterator) : array;
+    var result = [];
+    _.reduce(initial, function(memo, el, i) {
+      if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) {
+        memo[memo.length] = el;
+        result[result.length] = array[i];
+      }
       return memo;
     }, []);
+    return result;
   };
 
   // Produce an array that contains the union: each distinct element from all of
@@ -390,7 +422,6 @@
     for (i = 0, l = array.length; i < l; i++) if (array[i] === item) return i;
     return -1;
   };
-
 
   // Delegates to **ECMAScript 5**'s native `lastIndexOf` if available.
   _.lastIndexOf = function(array, item) {
@@ -538,7 +569,6 @@
     };
   };
 
-
   // Object Functions
   // ----------------
 
@@ -599,44 +629,97 @@
     return obj;
   };
 
-  // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = function(a, b) {
-    // Check object identity.
-    if (a === b) return true;
-    // Different types?
-    var atype = typeof(a), btype = typeof(b);
-    if (atype != btype) return false;
-    // Basic equality test (watch out for coercions).
-    if (a == b) return true;
-    // One is falsy and the other truthy.
-    if ((!a && b) || (a && !b)) return false;
+  // Internal recursive comparison function.
+  function eq(a, b, stack) {
+    // Identical objects are equal. `0 === -0`, but they aren't identical.
+    // See the Harmony `egal` proposal: http://wiki.ecmascript.org/doku.php?id=harmony:egal.
+    if (a === b) return a !== 0 || 1 / a == 1 / b;
+    // A strict comparison is necessary because `null == undefined`.
+    if (a == null) return a === b;
+    // Compare object types.
+    var typeA = typeof a;
+    if (typeA != typeof b) return false;
+    // Optimization; ensure that both values are truthy or falsy.
+    if (!a != !b) return false;
+    // `NaN` values are equal.
+    if (_.isNaN(a)) return _.isNaN(b);
+    // Compare string objects by value.
+    var isStringA = _.isString(a), isStringB = _.isString(b);
+    if (isStringA || isStringB) return isStringA && isStringB && String(a) == String(b);
+    // Compare number objects by value.
+    var isNumberA = _.isNumber(a), isNumberB = _.isNumber(b);
+    if (isNumberA || isNumberB) return isNumberA && isNumberB && +a == +b;
+    // Compare boolean objects by value. The value of `true` is 1; the value of `false` is 0.
+    var isBooleanA = _.isBoolean(a), isBooleanB = _.isBoolean(b);
+    if (isBooleanA || isBooleanB) return isBooleanA && isBooleanB && +a == +b;
+    // Compare dates by their millisecond values.
+    var isDateA = _.isDate(a), isDateB = _.isDate(b);
+    if (isDateA || isDateB) return isDateA && isDateB && a.getTime() == b.getTime();
+    // Compare RegExps by their source patterns and flags.
+    var isRegExpA = _.isRegExp(a), isRegExpB = _.isRegExp(b);
+    if (isRegExpA || isRegExpB) {
+      // Ensure commutative equality for RegExps.
+      return isRegExpA && isRegExpB &&
+             a.source == b.source &&
+             a.global == b.global &&
+             a.multiline == b.multiline &&
+             a.ignoreCase == b.ignoreCase;
+    }
+    // Ensure that both values are objects.
+    if (typeA != 'object') return false;
     // Unwrap any wrapped objects.
     if (a._chain) a = a._wrapped;
     if (b._chain) b = b._wrapped;
-    // One of them implements an isEqual()?
-    if (a.isEqual) return a.isEqual(b);
-    if (b.isEqual) return b.isEqual(a);
-    // Check dates' integer values.
-    if (_.isDate(a) && _.isDate(b)) return a.getTime() === b.getTime();
-    // Both are NaN?
-    if (_.isNaN(a) && _.isNaN(b)) return false;
-    // Compare regular expressions.
-    if (_.isRegExp(a) && _.isRegExp(b))
-      return a.source     === b.source &&
-             a.global     === b.global &&
-             a.ignoreCase === b.ignoreCase &&
-             a.multiline  === b.multiline;
-    // If a is not an object by this point, we can't handle it.
-    if (atype !== 'object') return false;
-    // Check for different array lengths before comparing contents.
-    if (a.length && (a.length !== b.length)) return false;
-    // Nothing else worked, deep compare the contents.
-    var aKeys = _.keys(a), bKeys = _.keys(b);
-    // Different object sizes?
-    if (aKeys.length != bKeys.length) return false;
-    // Recursive comparison of contents.
-    for (var key in a) if (!(key in b) || !_.isEqual(a[key], b[key])) return false;
-    return true;
+    // Invoke a custom `isEqual` method if one is provided.
+    if (_.isFunction(a.isEqual)) return a.isEqual(b);
+    // Assume equality for cyclic structures. The algorithm for detecting cyclic structures is
+    // adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
+    var length = stack.length;
+    while (length--) {
+      // Linear search. Performance is inversely proportional to the number of unique nested
+      // structures.
+      if (stack[length] == a) return true;
+    }
+    // Add the first object to the stack of traversed objects.
+    stack.push(a);
+    var size = 0, result = true;
+    if (a.length === +a.length || b.length === +b.length) {
+      // Compare object lengths to determine if a deep comparison is necessary.
+      size = a.length;
+      result = size == b.length;
+      if (result) {
+        // Deep compare array-like object contents, ignoring non-numeric properties.
+        while (size--) {
+          // Ensure commutative equality for sparse arrays.
+          if (!(result = size in a == size in b && eq(a[size], b[size], stack))) break;
+        }
+      }
+    } else {
+      // Deep compare objects.
+      for (var key in a) {
+        if (hasOwnProperty.call(a, key)) {
+          // Count the expected number of properties.
+          size++;
+          // Deep compare each member.
+          if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) break;
+        }
+      }
+      // Ensure that both objects contain the same number of properties.
+      if (result) {
+        for (key in b) {
+          if (hasOwnProperty.call(b, key) && !size--) break;
+        }
+        result = !size;
+      }
+    }
+    // Remove the first object from the stack of traversed objects.
+    stack.pop();
+    return result;
+  }
+
+  // Perform a deep comparison to check if two objects are equal.
+  _.isEqual = function(a, b) {
+    return eq(a, b, []);
   };
 
   // Is a given array or object empty?
@@ -690,7 +773,7 @@
 
   // Is a given value a boolean?
   _.isBoolean = function(obj) {
-    return obj === true || obj === false;
+    return obj === true || obj === false || toString.call(obj) == '[object Boolean]';
   };
 
   // Is a given value a date?
@@ -733,6 +816,11 @@
     for (var i = 0; i < n; i++) iterator.call(context, i);
   };
 
+  // Escape a string for HTML interpolation.
+  _.escape = function(string) {
+    return (''+string).replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
+  };
+
   // Add your own custom functions to the Underscore object, ensuring that
   // they're correctly added to the OOP wrapper as well.
   _.mixin = function(obj) {
@@ -753,7 +841,8 @@
   // following template settings to use alternative delimiters.
   _.templateSettings = {
     evaluate    : /<%([\s\S]+?)%>/g,
-    interpolate : /<%=([\s\S]+?)%>/g
+    interpolate : /<%=([\s\S]+?)%>/g,
+    escape      : /<%-([\s\S]+?)%>/g
   };
 
   // JavaScript micro-templating, similar to John Resig's implementation.
@@ -765,6 +854,9 @@
       'with(obj||{}){__p.push(\'' +
       str.replace(/\\/g, '\\\\')
          .replace(/'/g, "\\'")
+         .replace(c.escape, function(match, code) {
+           return "',_.escape(" + code.replace(/\\'/g, "'") + "),'";
+         })
          .replace(c.interpolate, function(match, code) {
            return "'," + code.replace(/\\'/g, "'") + ",'";
          })

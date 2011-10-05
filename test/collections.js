@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Collection functions (each, any, select, and so on...)");
+  module("Collections");
 
   test("collections: each", function() {
     _.each([1, 2, 3], function(num, i) {
@@ -177,6 +177,9 @@ $(document).ready(function() {
 
     var neg = _.max([1, 2, 3], function(num){ return -num; });
     equals(neg, 1, 'can perform a computation-based max');
+
+    equals(-Infinity, _.max({}), 'Maximum value of an empty object');
+    equals(-Infinity, _.max([]), 'Maximum value of an empty array');
   });
 
   test('collections: min', function() {
@@ -184,6 +187,9 @@ $(document).ready(function() {
 
     var neg = _.min([1, 2, 3], function(num){ return -num; });
     equals(neg, 3, 'can perform a computation-based min');
+
+    equals(Infinity, _.min({}), 'Minimum value of an empty object');
+    equals(Infinity, _.min([]), 'Minimum value of an empty array');
   });
 
   test('collections: sortBy', function() {
@@ -202,6 +208,13 @@ $(document).ready(function() {
     var numbers = [10, 20, 30, 40, 50], num = 35;
     var index = _.sortedIndex(numbers, num);
     equals(index, 3, '35 should be inserted at index 3');
+  });
+
+  test('collections: shuffle', function() {
+    var numbers = _.range(10);
+	var shuffled = _.shuffle(numbers).sort();
+	notStrictEqual(numbers, shuffled, 'original object is unmodified');
+    equals(shuffled.join(','), numbers.join(','), 'contains the same members before and after shuffle');
   });
 
   test('collections: toArray', function() {

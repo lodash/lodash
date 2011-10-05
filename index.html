@@ -49,6 +49,14 @@
       td {
         padding: 2px 12px 2px 0;
       }
+    ul {
+      list-style-type: circle;
+      padding: 0 0 0 20px;
+    }
+      li {
+        width: 500px;
+        margin-bottom: 10px;
+      }
     code, pre, tt {
       font-family: Monaco, Consolas, "Lucida Console", monospace;
       font-size: 12px;
@@ -118,11 +126,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.1.7)</a></td>
+        <td><a href="underscore.js">Development Version (1.2.0)</a></td>
         <td><i>28kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.1.7)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.2.0)</a></td>
         <td><i>3kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -141,14 +149,15 @@
       <a href="#any">any</a>, <a href="#include">include</a>,
       <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
       <a href="#max">max</a>, <a href="#min">min</a>,
-      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>, <a href="#sortedIndex">sortedIndex</a>,
+      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>,
+      <a href="#sortedIndex">sortedIndex</a>, <a href="#shuffle">shuffle</a>,
       <a href="#toArray">toArray</a>, <a href="#size">size</a></span>
     </p>
 
     <p>
       <b>Arrays</b>
       <br />
-      <span class="methods"><a href="#first">first</a>, <a href="#rest">rest</a>, <a href="#last">last</a>,
+      <span class="methods"><a href="#first">first</a>, <a href="#initial">initial</a>, <a href="#last">last</a>, <a href="#rest">rest</a>,
       <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, 
       <a href="#union">union</a>, <a href="#intersection">intersection</a>, <a href="#difference">difference</a>, 
       <a href="#uniq">uniq</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
@@ -464,6 +473,17 @@ _.sortedIndex([10, 20, 30, 40, 50], 35);
 =&gt; 3
 </pre>
 
+      <p id="shuffle">
+        <b class="header">shuffle</b><code>_.shuffle(list)</code>
+        <br />
+        Returns a shuffled copy of the <b>list</b>, using a version of the 
+        <a href="http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle">Fisher-Yates shuffle</a>.
+      </p>
+      <pre>
+_.shuffle([1, 2, 3, 4, 5, 6]);
+=&gt; [4, 1, 6, 3, 5, 2]
+</pre>
+
       <p id="toArray">
         <b class="header">toArray</b><code>_.toArray(list)</code>
         <br />
@@ -503,6 +523,29 @@ _.first([5, 4, 3, 2, 1]);
 =&gt; 5
 </pre>
 
+      <p id="initial">
+        <b class="header">initial</b><code>_.initial(array, [n])</code>
+        <br />
+        Returns everything but the last entry of the array. Especially useful on
+        the arguments object. Pass <b>n</b> to exclude the last <b>n</b> elements
+        from the result.
+      </p>
+      <pre>
+_.initial([5, 4, 3, 2, 1]);
+=&gt; [5, 4, 3, 2]
+</pre>
+
+      <p id="last">
+        <b class="header">last</b><code>_.last(array, [n])</code>
+        <br />
+        Returns the last element of an <b>array</b>. Passing <b>n</b> will return
+        the last <b>n</b> elements of the array.
+      </p>
+      <pre>
+_.last([5, 4, 3, 2, 1]);
+=&gt; 1
+</pre>
+
       <p id="rest">
         <b class="header">rest</b><code>_.rest(array, [index])</code>
         <span class="alias">Alias: <b>tail</b></span>
@@ -513,16 +556,6 @@ _.first([5, 4, 3, 2, 1]);
       <pre>
 _.rest([5, 4, 3, 2, 1]);
 =&gt; [4, 3, 2, 1]
-</pre>
-
-      <p id="last">
-        <b class="header">last</b><code>_.last(array)</code>
-        <br />
-        Returns the last element of an <b>array</b>.
-      </p>
-      <pre>
-_.last([5, 4, 3, 2, 1]);
-=&gt; 1
 </pre>
 
       <p id="compact">
@@ -592,12 +625,14 @@ _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
 </pre>
 
       <p id="uniq">
-        <b class="header">uniq</b><code>_.uniq(array, [isSorted])</code>
+        <b class="header">uniq</b><code>_.uniq(array, [isSorted], [iterator])</code>
         <span class="alias">Alias: <b>unique</b></span>
         <br />
         Produces a duplicate-free version of the <b>array</b>, using <i>===</i> to test
         object equality. If you know in advance that the <b>array</b> is sorted,
         passing <i>true</i> for <b>isSorted</b> will run a much faster algorithm.
+        If you want to compute unique items based on a transformation, pass an
+        <b>iterator</b> function.
       </p>
       <pre>
 _.uniq([1, 2, 1, 3, 1, 4]);
@@ -1149,7 +1184,8 @@ _.uniqueId('contact_');
         for rendering. Useful for rendering complicated bits of HTML from JSON
         data sources. Template functions can both interpolate variables, using<br />
         <tt>&lt;%= &hellip; %&gt;</tt>, as well as execute arbitrary JavaScript code, with
-        <tt>&lt;% &hellip; %&gt;</tt>. When you evaluate a template function, pass in a
+        <tt>&lt;% &hellip; %&gt;</tt>. If you wish to interpolate a value, and have
+        it be HTML-escaped, use <tt>&lt;%- &hellip; %&gt;</tt> When you evaluate a template function, pass in a
         <b>context</b> object that has properties corresponding to the template's free
         variables. If you're writing a one-off, you can pass the <b>context</b>
         object as the second parameter to <b>template</b> in order to render
@@ -1162,7 +1198,11 @@ compiled({name : 'moe'});
 
 var list = "&lt;% _.each(people, function(name) { %&gt; &lt;li&gt;&lt;%= name %&gt;&lt;/li&gt; &lt;% }); %&gt;";
 _.template(list, {people : ['moe', 'curly', 'larry']});
-=&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"</pre>
+=&gt; "&lt;li&gt;moe&lt;/li&gt;&lt;li&gt;curly&lt;/li&gt;&lt;li&gt;larry&lt;/li&gt;"
+
+var template = _.template("&lt;b&gt;&lt;%- value %&gt;&lt;/b&gt;");
+template({value : '&lt;script&gt;'});
+=&gt; "&lt;b&gt;&amp;lt;script&amp;gt;&lt;/b&gt;"</pre>
 
       <p>
         You can also use <tt>print</tt> from within JavaScript code.  This is
@@ -1235,6 +1275,13 @@ _([1, 2, 3]).value();
         another type, if you're setting properties with names like "concat" and
         "charCodeAt". So be aware.
       </p>
+      
+      <p>
+        In a similar fashion, <tt>_.each</tt> and all of the other functions 
+        based on it are designed to be able to iterate over any Array-like
+        JavaScript object, including <tt>arguments</tt>, NodeLists, and more.
+        Passing hash-like objects with a numeric <tt>length</tt> key won't work.
+      </p>
 
 
       <h2>Links &amp; Suggested Reading</h2>
@@ -1294,6 +1341,34 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.2.0</b> &mdash; <small><i>Oct. 5, 2011</i></small><br />
+        <ul>
+          <li>
+            Underscore templates now support HTML escaping interpolations, using 
+            <tt>&lt;%- ... %&gt;</tt> syntax. The <tt>_.isEqual</tt> function now 
+            supports true deep equality comparisons, with checks for cyclic structures,
+            thanks to Kit Cambridge.
+          </li>
+          <li>
+            Ryan Tenney contributed <tt>_.shuffle</tt>, which uses a modified 
+            Fisher-Yates to give you a shuffled copy of an array. 
+          </li>
+          <li>
+            <tt>_.uniq</tt> can now be passed an optional iterator, to determine by 
+            what criteria an object should be considered unique.
+          </li>
+          <li>
+            <tt>_.last</tt> now takes an optional argument which will return the last
+            N elements of the list.
+          </li>
+          <li>
+            A new <tt>_.initial</tt> function was added, as a mirror of <tt>_.rest</tt>,
+            which returns all the initial values of a list (except the last N). 
+          </li>
+        </ul>
+      </p>
       
       <p>
         <b class="header">1.1.7</b> &mdash; <small><i>July 13, 2011</i></small><br />

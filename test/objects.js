@@ -295,6 +295,58 @@ $(document).ready(function() {
     ok(_.isEqual(isEqualObjClone, isEqualObj), 'Commutative equality is implemented for objects with custom `isEqual` methods');
     ok(!_.isEqual(isEqualObj, {}), 'Objects that do not implement equivalent `isEqual` methods are not equal');
     ok(!_.isEqual({}, isEqualObj), 'Commutative equality is implemented for objects with different `isEqual` methods');
+
+    // Custom `isEqual` methods - comparing different types
+    LocalizedString = (function() {
+      function LocalizedString(id) { this.id = id; this.string = (this.id===10)? 'Bonjour': ''; }
+      LocalizedString.prototype.isEqual = function(that) {
+        if (_.isString(that)) return this.string == that;
+        else if (that instanceof LocalizedString) return this.id == that.id;
+        return false;
+      };
+      return LocalizedString;
+    })();
+    var localized_string1 = new LocalizedString(10), localized_string2 = new LocalizedString(10), localized_string3 = new LocalizedString(11);
+    ok(_.isEqual(localized_string1, localized_string2), 'comparing same typed instances with same ids');
+    ok(!_.isEqual(localized_string1, localized_string3), 'comparing same typed instances with different ids');
+    ok(_.isEqual(localized_string1, 'Bonjour'), 'comparing different typed instances with same values');
+    ok(_.isEqual('Bonjour', localized_string1), 'comparing different typed instances with same values');
+    ok(!_.isEqual('Bonjour', localized_string3), 'comparing two localized strings with different ids');
+    ok(!_.isEqual(localized_string1, 'Au revoir'), 'comparing different typed instances with different values');
+    ok(!_.isEqual('Au revoir', localized_string1), 'comparing different typed instances with different values');
+
+    // Custom `isEqual` methods - comparing with serialized data
+    Date.prototype.toJSON = function() {
+      return {
+        _type:'Date',
+        year:this.getUTCFullYear(),
+        month:this.getUTCMonth(),
+        day:this.getUTCDate(),
+        hours:this.getUTCHours(),
+        minutes:this.getUTCMinutes(),
+        seconds:this.getUTCSeconds()
+      };
+    };
+    Date.prototype.isEqual = function(that) {
+      var this_date_components = this.toJSON();
+      var that_date_components = (that instanceof Date) ? that.toJSON() : that;
+      delete this_date_components['_type']; delete that_date_components['_type']
+      return _.isEqual(this_date_components, that_date_components);
+    };
+
+    var date = new Date();
+    var date_json = {
+      _type:'Date',
+      year:date.getUTCFullYear(),
+      month:date.getUTCMonth(),
+      day:date.getUTCDate(),
+      hours:date.getUTCHours(),
+      minutes:date.getUTCMinutes(),
+      seconds:date.getUTCSeconds()
+    };
+
+    ok(_.isEqual(date_json, date), 'serialized date matches date');
+    ok(_.isEqual(date, date_json), 'date matches serialized date');
   });
 
   test("objects: isEmpty", function() {

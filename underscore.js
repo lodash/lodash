@@ -641,9 +641,9 @@
     // Unwrap any wrapped objects.
     if (a._chain) a = a._wrapped;
     if (b._chain) b = b._wrapped;
-    // One of them implements an isEqual()
-    if (a.isEqual) return a.isEqual(b);
-    if (b.isEqual) return b.isEqual(a);
+    // Invoke a custom `isEqual` method if one is provided.
+    if (_.isFunction(a.isEqual)) return a.isEqual(b);
+    if (_.isFunction(b.isEqual)) return b.isEqual(a);
     // Compare object types.
     var typeA = typeof a;
     if (typeA != typeof b) return false;
@@ -675,8 +675,6 @@
     }
     // Ensure that both values are objects.
     if (typeA != 'object') return false;
-    // Invoke a custom `isEqual` method if one is provided.
-    if (_.isFunction(a.isEqual)) return a.isEqual(b);
     // Assume equality for cyclic structures. The algorithm for detecting cyclic structures is
     // adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
     var length = stack.length;

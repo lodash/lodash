@@ -154,8 +154,8 @@ $(document).ready(function() {
     ok(_.isEqual({}, {}), "Empty object literals are equal");
     ok(_.isEqual([], []), "Empty array literals are equal");
     ok(_.isEqual([{}], [{}]), "Empty nested arrays and objects are equal");
-    ok(_.isEqual({length: 0}, []), "Array-like objects and arrays are equal");
-    ok(_.isEqual([], {length: 0}), "Commutative equality is implemented for array-like objects");
+    ok(!_.isEqual({length: 0}, []), "Array-like objects and arrays are not equal.");
+    ok(!_.isEqual([], {length: 0}), "Commutative equality is implemented for array-like objects");
 
     ok(!_.isEqual({}, []), "Object literals and array literals are not equal");
     ok(!_.isEqual([], {}), "Commutative equality is implemented for objects and arrays");
@@ -174,7 +174,7 @@ $(document).ready(function() {
     b.join = b.pop = b.reverse = b.shift = b.slice = b.splice = b.concat = b.sort = b.unshift = null;
 
     // Array elements and properties.
-    ok(_.isEqual(a, b), "Arrays containing equivalent elements and different non-numeric properties are equal");
+    ok(!_.isEqual(a, b), "Arrays containing equivalent elements and different non-numeric properties are not equal");
     a.push("White Rocks");
     ok(!_.isEqual(a, b), "Arrays of different lengths are not equal");
     a.push("East Boulder");
@@ -183,7 +183,7 @@ $(document).ready(function() {
 
     // Sparse arrays.
     ok(_.isEqual(Array(3), Array(3)), "Sparse arrays of identical lengths are equal");
-    ok(!_.isEqual(Array(3), Array(6)), "Sparse arrays of different lengths are not equal");
+    ok(_.isEqual(Array(3), Array(6)), "Sparse arrays of different lengths are equal when both are empty");
 
     // According to the Microsoft deviations spec, section 2.1.26, JScript 5.x treats `undefined`
     // elements in arrays as elisions. Thus, sparse arrays and dense arrays containing `undefined`
@@ -235,8 +235,8 @@ $(document).ready(function() {
 
     // Instances.
     ok(_.isEqual(new First, new First), "Object instances are equal");
-    ok(_.isEqual(new First, new Second), "Objects with different constructors and identical own properties are equal");
-    ok(_.isEqual({value: 1}, new First), "Object instances and objects sharing equivalent properties are identical");
+    ok(!_.isEqual(new First, new Second), "Objects with different constructors and identical own properties are not equal");
+    ok(!_.isEqual({value: 1}, new First), "Object instances and objects sharing equivalent properties are not identical");
     ok(!_.isEqual({value: 2}, new Second), "The prototype chain of objects should not be examined");
 
     // Circular Arrays.

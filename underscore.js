@@ -57,6 +57,19 @@
   } else {
     // Exported as a string, for Closure Compiler "advanced" mode.
     root['_'] = _;
+
+    // Register as a module with AMD. Use a named module since underscore
+    // can be used in optimization schemes that do not understand anonymous
+    // modules, and the if it is used on a page with an AMD loader, a load
+    // error could occur. This work is done in addition to exporting a global
+    // on root since the web page could use an AMD loader to load the module
+    // but still want to use the global reference. Test pages are a good
+    // example.
+    if (typeof define === 'function' && define.amd) {
+      define('underscore', function() {
+        return _;
+      });
+    }
   }
 
   // Current version.

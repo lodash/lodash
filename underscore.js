@@ -54,6 +54,8 @@
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = _;
     _._ = _;
+  } else if (exports !== 'undefined') {
+    exports._ = _;
   } else {
     // Exported as a string, for Closure Compiler "advanced" mode.
     root['_'] = _;

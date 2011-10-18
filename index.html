@@ -144,7 +144,7 @@
       <br />
       <span class="methods"><a href="#each">each</a>, <a href="#map">map</a>,
       <a href="#reduce">reduce</a>, <a href="#reduceRight">reduceRight</a>,
-      <a href="#detect">detect</a>, <a href="#select">select</a>,
+      <a href="#find">find</a>, <a href="#filter">filter</a>,
       <a href="#reject">reject</a>, <a href="#all">all</a>,
       <a href="#any">any</a>, <a href="#include">include</a>,
       <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
@@ -312,8 +312,9 @@ var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
 =&gt; [4, 5, 2, 3, 0, 1]
 </pre>
 
-      <p id="detect">
-        <b class="header">detect</b><code>_.detect(list, iterator, [context])</code>
+      <p id="find">
+        <b class="header">find</b><code>_.find(list, iterator, [context])</code>
+        <span class="alias">Alias: <b>detect</b></span>
         <br />
         Looks through each value in the <b>list</b>, returning the first one that
         passes a truth test (<b>iterator</b>). The function returns as
@@ -321,20 +322,20 @@ var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
         entire list.
       </p>
       <pre>
-var even = _.detect([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+var even = _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 =&gt; 2
 </pre>
 
-      <p id="select">
-        <b class="header">select</b><code>_.select(list, iterator, [context])</code>
-        <span class="alias">Alias: <b>filter</b></span>
+      <p id="filter">
+        <b class="header">filter</b><code>_.filter(list, iterator, [context])</code>
+        <span class="alias">Alias: <b>select</b></span>
         <br />
         Looks through each value in the <b>list</b>, returning an array of all
         the values that pass a truth test (<b>iterator</b>). Delegates to the
         native <b>filter</b> method, if it exists.
       </p>
       <pre>
-var evens = _.select([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+var evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 =&gt; [2, 4, 6]
 </pre>
 
@@ -342,7 +343,7 @@ var evens = _.select([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
         <b class="header">reject</b><code>_.reject(list, iterator, [context])</code>
         <br />
         Returns the values in <b>list</b> without the elements that the truth
-        test (<b>iterator</b>) passes. The opposite of <b>select</b>.
+        test (<b>iterator</b>) passes. The opposite of <b>filter</b>.
       </p>
       <pre>
 var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
@@ -951,7 +952,7 @@ _.clone({name : 'moe'});
       </p>
       <pre>
 _([1,2,3,200]).chain().
-  select(function(num) { return num % 2 == 0; }).
+  filter(function(num) { return num % 2 == 0; }).
   tap(console.log).
   map(function(num) { return num * num }).
   value();

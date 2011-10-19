@@ -29,6 +29,13 @@ $(document).ready(function() {
     _.bind(func, 0, 0, 'can bind a function to `0`')();
     _.bind(func, '', '', 'can bind a function to an empty string')();
     _.bind(func, false, false, 'can bind a function to `false`')();
+
+    // These tests are only meaningful when using a browser without a native bind function
+    // To test this with a modern browser, set underscore's nativeBind to undefined
+    var F = function () { return this; };
+    var Boundf = _.bind(F, {hello: "moe curly"});
+    equal(new Boundf().hello, undefined, "function should not be bound to the context, to comply with ECMAScript 5");
+    equal(Boundf().hello, "moe curly", "When called without the new operator, it's OK to be bound to the context");
   });
 
   test("functions: bindAll", function() {

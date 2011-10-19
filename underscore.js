@@ -345,9 +345,9 @@
   };
 
   // Return a completely flattened version of an array.
-  _.flatten = function(array) {
+  _.flatten = function(array, shallow) {
     return _.reduce(array, function(memo, value) {
-      if (_.isArray(value)) return memo.concat(_.flatten(value));
+      if (_.isArray(value)) return memo.concat(shallow ? value : _.flatten(value));
       memo[memo.length] = value;
       return memo;
     }, []);
@@ -377,7 +377,7 @@
   // Produce an array that contains the union: each distinct element from all of
   // the passed-in arrays.
   _.union = function() {
-    return _.uniq(_.flatten(arguments));
+    return _.uniq(_.flatten(arguments, true));
   };
 
   // Produce an array that contains every item shared between all the

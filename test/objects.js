@@ -183,7 +183,7 @@ $(document).ready(function() {
 
     // Sparse arrays.
     ok(_.isEqual(Array(3), Array(3)), "Sparse arrays of identical lengths are equal");
-    ok(_.isEqual(Array(3), Array(6)), "Sparse arrays of different lengths are equal when both are empty");
+    ok(!_.isEqual(Array(3), Array(6)), "Sparse arrays of different lengths are not equal when both are empty");
 
     // According to the Microsoft deviations spec, section 2.1.26, JScript 5.x treats `undefined`
     // elements in arrays as elisions. Thus, sparse arrays and dense arrays containing `undefined`

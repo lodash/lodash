@@ -751,10 +751,9 @@ jQuery('#underscore_button').bind('click', buttonView.onClick);
         as the key.
       </p>
       <pre>
-var fibonacci = function(n) {
+var fibonacci = _.memoize(function(n) {
   return n &lt; 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
-};
-var fastFibonacci = _.memoize(fibonacci);
+});
 </pre>
 
       <p id="delay">

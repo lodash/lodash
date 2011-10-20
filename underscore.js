@@ -774,9 +774,9 @@
     return !!(obj === 0 || (obj && obj.toExponential && obj.toFixed));
   };
 
-  // Is the given value `NaN`? `NaN` happens to be the only value in JavaScript
-  // that does not equal itself.
+  // Is the given value `NaN`?
   _.isNaN = function(obj) {
+    // `NaN` is the only value for which `===` is not reflexive.
     return obj !== obj;
   };
 

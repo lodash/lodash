@@ -276,9 +276,11 @@
     }), 'value');
   };
 
-  // Groups the object's values by a criterion produced by an iterator
-  _.groupBy = function(obj, iterator) {
+  // Groups the object's values by a criterion. Pass either a string attribute
+  // to group by, or a function that returns the criterion.
+  _.groupBy = function(obj, val) {
     var result = {};
+    var iterator = _.isFunction(val) ? val : function(obj) { return obj[val]; };
     each(obj, function(value, index) {
       var key = iterator(value, index);
       (result[key] || (result[key] = [])).push(value);

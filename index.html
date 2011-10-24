@@ -126,11 +126,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.2.0)</a></td>
-        <td><i>32kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.2.1)</a></td>
+        <td><i>33kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.2.0)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.2.1)</a></td>
         <td><i>&lt; 4kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -144,7 +144,7 @@
       <br />
       <span class="methods"><a href="#each">each</a>, <a href="#map">map</a>,
       <a href="#reduce">reduce</a>, <a href="#reduceRight">reduceRight</a>,
-      <a href="#detect">detect</a>, <a href="#select">select</a>,
+      <a href="#find">find</a>, <a href="#filter">filter</a>,
       <a href="#reject">reject</a>, <a href="#all">all</a>,
       <a href="#any">any</a>, <a href="#include">include</a>,
       <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
@@ -312,8 +312,9 @@ var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
 =&gt; [4, 5, 2, 3, 0, 1]
 </pre>
 
-      <p id="detect">
-        <b class="header">detect</b><code>_.detect(list, iterator, [context])</code>
+      <p id="find">
+        <b class="header">find</b><code>_.find(list, iterator, [context])</code>
+        <span class="alias">Alias: <b>detect</b></span>
         <br />
         Looks through each value in the <b>list</b>, returning the first one that
         passes a truth test (<b>iterator</b>). The function returns as
@@ -321,20 +322,20 @@ var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
         entire list.
       </p>
       <pre>
-var even = _.detect([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+var even = _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 =&gt; 2
 </pre>
 
-      <p id="select">
-        <b class="header">select</b><code>_.select(list, iterator, [context])</code>
-        <span class="alias">Alias: <b>filter</b></span>
+      <p id="filter">
+        <b class="header">filter</b><code>_.filter(list, iterator, [context])</code>
+        <span class="alias">Alias: <b>select</b></span>
         <br />
         Looks through each value in the <b>list</b>, returning an array of all
         the values that pass a truth test (<b>iterator</b>). Delegates to the
         native <b>filter</b> method, if it exists.
       </p>
       <pre>
-var evens = _.select([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+var evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 =&gt; [2, 4, 6]
 </pre>
 
@@ -342,7 +343,7 @@ var evens = _.select([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
         <b class="header">reject</b><code>_.reject(list, iterator, [context])</code>
         <br />
         Returns the values in <b>list</b> without the elements that the truth
-        test (<b>iterator</b>) passes. The opposite of <b>select</b>.
+        test (<b>iterator</b>) passes. The opposite of <b>filter</b>.
       </p>
       <pre>
 var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
@@ -453,11 +454,16 @@ _.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
         <b class="header">groupBy</b><code>_.groupBy(list, iterator)</code>
         <br />
         Splits a collection into sets, grouped by the result of running each
-        value through <b>iterator</b>.
+        value through <b>iterator</b>. If <b>iterator</b> is a string instead of
+        a function, groups by the property named by <b>iterator</b> on each of
+        the values.
       </p>
       <pre>
 _.groupBy([1.3, 2.1, 2.4], function(num){ return Math.floor(num); });
 =&gt; {1: [1.3], 2: [2.1, 2.4]}
+
+_.groupBy(['one', 'two', 'three'], 'length');
+=&gt; {3: ["one", "two"], 5: ["three"]}
 </pre>
 
       <p id="sortedIndex">
@@ -750,10 +756,9 @@ jQuery('#underscore_button').bind('click', buttonView.onClick);
         as the key.
       </p>
       <pre>
-var fibonacci = function(n) {
+var fibonacci = _.memoize(function(n) {
   return n &lt; 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
-};
-var fastFibonacci = _.memoize(fibonacci);
+});
 </pre>
 
       <p id="delay">
@@ -798,11 +803,12 @@ $(window).scroll(throttled);
       <p id="debounce">
         <b class="header">debounce</b><code>_.debounce(function, wait)</code>
         <br />
-        Repeated calls to a debounced function will postpone it's execution
-        until after <b>wait</b> milliseconds have elapsed. Useful for implementing
-        behavior that should only happen <i>after</i> the input has stopped arriving.
-        For example: rendering a preview of a Markdown comment, recalculating a
-        layout after the window has stopped being resized...
+        Calling a debounced function will postpone its execution until after 
+        <b>wait</b> milliseconds have elapsed since the last time the function 
+        was invoked. Useful for implementing behavior that should only happen 
+        <i>after</i> the input has stopped arriving. For example: rendering a 
+        preview of a Markdown comment, recalculating a layout after the window 
+        has stopped being resized...
       </p>
       <pre>
 var lazyLayout = _.debounce(calculateLayout, 300);
@@ -911,7 +917,7 @@ _.functions(_);
         <b class="header">extend</b><code>_.extend(destination, *sources)</code>
         <br />
         Copy all of the properties in the <b>source</b> objects over to the
-        <b>destination</b> object. It's in-order, to the last source will override
+        <b>destination</b> object. It's in-order, so the last source will override
         properties of the same name in previous arguments.
       </p>
       <pre>
@@ -951,7 +957,7 @@ _.clone({name : 'moe'});
       </p>
       <pre>
 _([1,2,3,200]).chain().
-  select(function(num) { return num % 2 == 0; }).
+  filter(function(num) { return num % 2 == 0; }).
   tap(console.log).
   map(function(num) { return num * num }).
   value();
@@ -1264,26 +1270,6 @@ _([1, 2, 3]).value();
 =&gt; [1, 2, 3]
 </pre>
 
-      <h2 id="duck_typing">Duck Typing</h2>
-
-      <p>
-        The <b>isType</b> (<tt>isArray</tt>, <tt>isFunction</tt>, <tt>isString</tt> ...) family of type-checking
-        functions use property detection to do their work, which, although
-        orders of magnitude faster than the alternative, isn't entirely safe when dealing
-        with objects that are used as hashes, where arbitrary strings are being
-        set for the keys. It's entirely possible for an object to masquerade as
-        another type, if you're setting properties with names like "concat" and
-        "charCodeAt". So be aware.
-      </p>
-      
-      <p>
-        In a similar fashion, <tt>_.each</tt> and all of the other functions 
-        based on it are designed to be able to iterate over any Array-like
-        JavaScript object, including <tt>arguments</tt>, NodeLists, and more.
-        Passing hash-like objects with a numeric <tt>length</tt> key won't work.
-      </p>
-
-
       <h2>Links &amp; Suggested Reading</h2>
 
       <p>
@@ -1341,6 +1327,45 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.2.1</b> &mdash; <small><i>Oct. 24, 2011</i></small><br />
+        <ul>
+          <li>
+            Several important bug fixes for <tt>_.isEqual</tt>, which should now 
+            do better on mutated Arrays, and on non-Array objects with 
+            <tt>length</tt> properties. <small>(#329)</small>
+          </li>
+          <li>
+            <b>jrburke</b> contributed Underscore exporting for AMD module loaders,
+            and <b>tonylukasavage</b> for Appcelerator Titanium. 
+            <small>(#335, #338)</small>
+          </li>
+          <li>
+            You can now <tt>_.groupBy(list, 'property')</tt> as a shortcut for
+            grouping values by a particular common property.
+          </li>
+          <li>
+            <tt>_.throttle</tt>'d functions now fire immediately upon invocation, 
+            and are rate-limited thereafter <small>(#170, #266)</small>.
+          </li>
+          <li>
+            Most of the <tt>_.is[Type]</tt> checks no longer ducktype.
+          </li>
+          <li>
+            The <tt>_.bind</tt> function now also works on constructors, a-la
+            ES5 ... but you would never want to use <tt>_.bind</tt> on a 
+            constructor function.
+          </li>
+          <li>
+            <tt>_.clone</tt> no longer wraps non-object types in Objects.
+          </li>
+          <li>
+            <tt>_.find</tt> and <tt>_.filter</tt> are now the preferred names for
+            <tt>_.detect</tt> and <tt>_.select</tt>.
+          </li>
+        </ul>
+      </p>
       
       <p>
         <b class="header">1.2.0</b> &mdash; <small><i>Oct. 5, 2011</i></small><br />

@@ -1,4 +1,4 @@
-//     Underscore.js 1.2.0
+//     Underscore.js 1.2.1
 //     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
@@ -48,19 +48,26 @@
   // Create a safe reference to the Underscore object for use below.
   var _ = function(obj) { return new wrapper(obj); };
 
-  // Export the Underscore object for **CommonJS**, with backwards-compatibility
-  // for the old `require()` API. If we're not in CommonJS, add `_` to the
-  // global object.
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = _;
-    _._ = _;
+  // Export the Underscore object for **Node.js** and **"CommonJS"**, with
+  // backwards-compatibility for the old `require()` API. If we're not in
+  // CommonJS, add `_` to the global object.
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = _;
+    }
+    exports._ = _;
+  } else if (typeof define === 'function' && define.amd) {
+    // Register as a named module with AMD.
+    define('underscore', function() {
+      return _;
+    });
   } else {
     // Exported as a string, for Closure Compiler "advanced" mode.
     root['_'] = _;
   }
 
   // Current version.
-  _.VERSION = '1.2.0';
+  _.VERSION = '1.2.1';
 
   // Collection Functions
   // --------------------
@@ -198,8 +205,8 @@
     var found = false;
     if (obj == null) return found;
     if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
-    any(obj, function(value) {
-      if (found = value === target) return true;
+    found = any(obj, function(value) {
+      if (value === target) return true;
     });
     return found;
   };
@@ -269,9 +276,11 @@
     }), 'value');
   };
 
-  // Groups the object's values by a criterion produced by an iterator
-  _.groupBy = function(obj, iterator) {
+  // Groups the object's values by a criterion. Pass either a string attribute
+  // to group by, or a function that returns the criterion.
+  _.groupBy = function(obj, val) {
     var result = {};
+    var iterator = _.isFunction(val) ? val : function(obj) { return obj[val]; };
     each(obj, function(value, index) {
       var key = iterator(value, index);
       (result[key] || (result[key] = [])).push(value);
@@ -343,9 +352,9 @@
   };
 
   // Return a completely flattened version of an array.
-  _.flatten = function(array) {
+  _.flatten = function(array, shallow) {
     return _.reduce(array, function(memo, value) {
-      if (_.isArray(value)) return memo.concat(_.flatten(value));
+      if (_.isArray(value)) return memo.concat(shallow ? value : _.flatten(value));
       memo[memo.length] = value;
       return memo;
     }, []);
@@ -375,7 +384,7 @@
   // Produce an array that contains the union: each distinct element from all of
   // the passed-in arrays.
   _.union = function() {
-    return _.uniq(_.flatten(arguments));
+    return _.uniq(_.flatten(arguments, true));
   };
 
   // Produce an array that contains every item shared between all the
@@ -457,15 +466,25 @@
   // Function (ahem) Functions
   // ------------------
 
+  // Reusable constructor function for prototype setting.
+  var ctor = function(){};
+
   // Create a function bound to a given object (assigning `this`, and arguments,
   // optionally). Binding with arguments is also known as `curry`.
   // Delegates to **ECMAScript 5**'s native `Function.bind` if available.
   // We check for `func.bind` first, to fail fast when `func` is undefined.
-  _.bind = function(func, obj) {
+  _.bind = function bind(func, context) {
+    var bound, args;
     if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-    var args = slice.call(arguments, 2);
-    return function() {
-      return func.apply(obj, args.concat(slice.call(arguments)));
+    if (!_.isFunction(func)) throw new TypeError;
+    args = slice.call(arguments, 2);
+    return bound = function() {
+      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
+      ctor.prototype = func.prototype;
+      var self = new ctor;
+      var result = func.apply(self, args.concat(slice.call(arguments)));
+      if (Object(result) === result) return result;
+      return self;
     };
   };
 
@@ -501,8 +520,29 @@
     return _.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)));
   };
 
-  // Internal function used to implement `_.throttle` and `_.debounce`.
-  var limit = function(func, wait, debounce) {
+  // Returns a function, that, when invoked, will only be triggered at most once
+  // during a given window of time.
+  _.throttle = function(func, wait) {
+    var timeout, context, args, throttling, finishThrottle;
+    finishThrottle = _.debounce(function(){ throttling = false; }, wait);
+    return function() {
+      context = this; args = arguments;
+      var throttler = function() {
+        timeout = null;
+        func.apply(context, args);
+        finishThrottle();
+      };
+      if (!timeout) timeout = setTimeout(throttler, wait);
+      if (!throttling) func.apply(context, args);
+      if (finishThrottle) finishThrottle();
+      throttling = true;
+    };
+  };
+
+  // Returns a function, that, as long as it continues to be invoked, will not
+  // be triggered. The function will be called after it stops being called for
+  // N milliseconds.
+  _.debounce = function(func, wait) {
     var timeout;
     return function() {
       var context = this, args = arguments;
@@ -510,22 +550,9 @@
         timeout = null;
         func.apply(context, args);
       };
-      if (debounce) clearTimeout(timeout);
-      if (debounce || !timeout) timeout = setTimeout(throttler, wait);
+      clearTimeout(timeout);
+      timeout = setTimeout(throttler, wait);
     };
-  };
-
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time.
-  _.throttle = function(func, wait) {
-    return limit(func, wait, false);
-  };
-
-  // Returns a function, that, as long as it continues to be invoked, will not
-  // be triggered. The function will be called after it stops being called for
-  // N milliseconds.
-  _.debounce = function(func, wait) {
-    return limit(func, wait, true);
   };
 
   // Returns a function that will be executed at most one time, no matter how
@@ -618,6 +645,7 @@
 
   // Create a (shallow-cloned) duplicate of an object.
   _.clone = function(obj) {
+    if (!_.isObject(obj)) return obj;
     return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
   };
 
@@ -635,7 +663,13 @@
     // See the Harmony `egal` proposal: http://wiki.ecmascript.org/doku.php?id=harmony:egal.
     if (a === b) return a !== 0 || 1 / a == 1 / b;
     // A strict comparison is necessary because `null == undefined`.
-    if (a == null) return a === b;
+    if ((a == null) || (b == null)) return a === b;
+    // Unwrap any wrapped objects.
+    if (a._chain) a = a._wrapped;
+    if (b._chain) b = b._wrapped;
+    // Invoke a custom `isEqual` method if one is provided.
+    if (_.isFunction(a.isEqual)) return a.isEqual(b);
+    if (_.isFunction(b.isEqual)) return b.isEqual(a);
     // Compare object types.
     var typeA = typeof a;
     if (typeA != typeof b) return false;
@@ -667,50 +701,36 @@
     }
     // Ensure that both values are objects.
     if (typeA != 'object') return false;
-    // Unwrap any wrapped objects.
-    if (a._chain) a = a._wrapped;
-    if (b._chain) b = b._wrapped;
-    // Invoke a custom `isEqual` method if one is provided.
-    if (_.isFunction(a.isEqual)) return a.isEqual(b);
-    // Assume equality for cyclic structures. The algorithm for detecting cyclic structures is
-    // adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
+    // Arrays or Arraylikes with different lengths are not equal.
+    if (a.length !== b.length) return false;
+    // Objects with different constructors are not equal.
+    if (a.constructor !== b.constructor) return false;
+    // Assume equality for cyclic structures. The algorithm for detecting cyclic
+    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
     var length = stack.length;
     while (length--) {
-      // Linear search. Performance is inversely proportional to the number of unique nested
-      // structures.
+      // Linear search. Performance is inversely proportional to the number of
+      // unique nested structures.
       if (stack[length] == a) return true;
     }
     // Add the first object to the stack of traversed objects.
     stack.push(a);
     var size = 0, result = true;
-    if (a.length === +a.length || b.length === +b.length) {
-      // Compare object lengths to determine if a deep comparison is necessary.
-      size = a.length;
-      result = size == b.length;
-      if (result) {
-        // Deep compare array-like object contents, ignoring non-numeric properties.
-        while (size--) {
-          // Ensure commutative equality for sparse arrays.
-          if (!(result = size in a == size in b && eq(a[size], b[size], stack))) break;
-        }
+    // Deep compare objects.
+    for (var key in a) {
+      if (hasOwnProperty.call(a, key)) {
+        // Count the expected number of properties.
+        size++;
+        // Deep compare each member.
+        if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) break;
       }
-    } else {
-      // Deep compare objects.
-      for (var key in a) {
-        if (hasOwnProperty.call(a, key)) {
-          // Count the expected number of properties.
-          size++;
-          // Deep compare each member.
-          if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) break;
-        }
+    }
+    // Ensure that both objects contain the same number of properties.
+    if (result) {
+      for (key in b) {
+        if (hasOwnProperty.call(b, key) && !size--) break;
       }
-      // Ensure that both objects contain the same number of properties.
-      if (result) {
-        for (key in b) {
-          if (hasOwnProperty.call(b, key) && !size--) break;
-        }
-        result = !size;
-      }
+      result = !size;
     }
     // Remove the first object from the stack of traversed objects.
     stack.pop();
@@ -722,7 +742,8 @@
     return eq(a, b, []);
   };
 
-  // Is a given array or object empty?
+  // Is a given array, string, or object empty?
+  // An "empty" object has no enumerable own-properties.
   _.isEmpty = function(obj) {
     if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
     for (var key in obj) if (hasOwnProperty.call(obj, key)) return false;
@@ -737,7 +758,7 @@
   // Is a given value an array?
   // Delegates to ECMA5's native Array.isArray
   _.isArray = nativeIsArray || function(obj) {
-    return toString.call(obj) === '[object Array]';
+    return toString.call(obj) == '[object Array]';
   };
 
   // Is a given variable an object?
@@ -746,28 +767,34 @@
   };
 
   // Is a given variable an arguments object?
-  _.isArguments = function(obj) {
-    return !!(obj && hasOwnProperty.call(obj, 'callee'));
-  };
+  if (toString.call(arguments) == '[object Arguments]') {
+    _.isArguments = function(obj) {
+      return toString.call(obj) == '[object Arguments]';
+    };
+  } else {
+    _.isArguments = function(obj) {
+      return !!(obj && hasOwnProperty.call(obj, 'callee'));
+    };
+  }
 
   // Is a given value a function?
   _.isFunction = function(obj) {
-    return !!(obj && obj.constructor && obj.call && obj.apply);
+    return toString.call(obj) == '[object Function]';
   };
 
   // Is a given value a string?
   _.isString = function(obj) {
-    return !!(obj === '' || (obj && obj.charCodeAt && obj.substr));
+    return toString.call(obj) == '[object String]';
   };
 
   // Is a given value a number?
   _.isNumber = function(obj) {
-    return !!(obj === 0 || (obj && obj.toExponential && obj.toFixed));
+    return toString.call(obj) == '[object Number]';
   };
 
-  // Is the given value `NaN`? `NaN` happens to be the only value in JavaScript
-  // that does not equal itself.
+  // Is the given value `NaN`?
   _.isNaN = function(obj) {
+    // `NaN` is the only value for which `===` is not reflexive.
     return obj !== obj;
   };
 
@@ -778,12 +805,12 @@
 
   // Is a given value a date?
   _.isDate = function(obj) {
-    return !!(obj && obj.getTimezoneOffset && obj.setUTCFullYear);
+    return toString.call(obj) == '[object Date]';
   };
 
   // Is the given value a regular expression?
   _.isRegExp = function(obj) {
-    return !!(obj && obj.test && obj.exec && (obj.ignoreCase || obj.ignoreCase === false));
+    return toString.call(obj) == '[object RegExp]';
   };
 
   // Is a given value equal to null?

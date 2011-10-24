@@ -66,6 +66,10 @@ $(document).ready(function() {
 
     clone.lucky.push(101);
     equals(_.last(moe.lucky), 101, 'changes to deep attributes are shared with the original');
+
+    equals(_.clone(undefined), void 0, 'non objects should not be changed by clone');
+    equals(_.clone(1), 1, 'non objects should not be changed by clone');
+    equals(_.clone(null), null, 'non objects should not be changed by clone');
   });
 
   test("objects: isEqual", function() {
@@ -154,8 +158,8 @@ $(document).ready(function() {
     ok(_.isEqual({}, {}), "Empty object literals are equal");
     ok(_.isEqual([], []), "Empty array literals are equal");
     ok(_.isEqual([{}], [{}]), "Empty nested arrays and objects are equal");
-    ok(_.isEqual({length: 0}, []), "Array-like objects and arrays are equal");
-    ok(_.isEqual([], {length: 0}), "Commutative equality is implemented for array-like objects");
+    ok(!_.isEqual({length: 0}, []), "Array-like objects and arrays are not equal.");
+    ok(!_.isEqual([], {length: 0}), "Commutative equality is implemented for array-like objects");
 
     ok(!_.isEqual({}, []), "Object literals and array literals are not equal");
     ok(!_.isEqual([], {}), "Commutative equality is implemented for objects and arrays");
@@ -174,7 +178,7 @@ $(document).ready(function() {
     b.join = b.pop = b.reverse = b.shift = b.slice = b.splice = b.concat = b.sort = b.unshift = null;
 
     // Array elements and properties.
-    ok(_.isEqual(a, b), "Arrays containing equivalent elements and different non-numeric properties are equal");
+    ok(!_.isEqual(a, b), "Arrays containing equivalent elements and different non-numeric properties are not equal");
     a.push("White Rocks");
     ok(!_.isEqual(a, b), "Arrays of different lengths are not equal");
     a.push("East Boulder");
@@ -183,7 +187,7 @@ $(document).ready(function() {
 
     // Sparse arrays.
     ok(_.isEqual(Array(3), Array(3)), "Sparse arrays of identical lengths are equal");
-    ok(!_.isEqual(Array(3), Array(6)), "Sparse arrays of different lengths are not equal");
+    ok(!_.isEqual(Array(3), Array(6)), "Sparse arrays of different lengths are not equal when both are empty");
 
     // According to the Microsoft deviations spec, section 2.1.26, JScript 5.x treats `undefined`
     // elements in arrays as elisions. Thus, sparse arrays and dense arrays containing `undefined`
@@ -235,8 +239,8 @@ $(document).ready(function() {
 
     // Instances.
     ok(_.isEqual(new First, new First), "Object instances are equal");
-    ok(_.isEqual(new First, new Second), "Objects with different constructors and identical own properties are equal");
-    ok(_.isEqual({value: 1}, new First), "Object instances and objects sharing equivalent properties are identical");
+    ok(!_.isEqual(new First, new Second), "Objects with different constructors and identical own properties are not equal");
+    ok(!_.isEqual({value: 1}, new First), "Object instances and objects sharing equivalent properties are not identical");
     ok(!_.isEqual({value: 2}, new Second), "The prototype chain of objects should not be examined");
 
     // Circular Arrays.
@@ -295,6 +299,58 @@ $(document).ready(function() {
     ok(_.isEqual(isEqualObjClone, isEqualObj), 'Commutative equality is implemented for objects with custom `isEqual` methods');
     ok(!_.isEqual(isEqualObj, {}), 'Objects that do not implement equivalent `isEqual` methods are not equal');
     ok(!_.isEqual({}, isEqualObj), 'Commutative equality is implemented for objects with different `isEqual` methods');
+
+    // Custom `isEqual` methods - comparing different types
+    LocalizedString = (function() {
+      function LocalizedString(id) { this.id = id; this.string = (this.id===10)? 'Bonjour': ''; }
+      LocalizedString.prototype.isEqual = function(that) {
+        if (_.isString(that)) return this.string == that;
+        else if (that instanceof LocalizedString) return this.id == that.id;
+        return false;
+      };
+      return LocalizedString;
+    })();
+    var localized_string1 = new LocalizedString(10), localized_string2 = new LocalizedString(10), localized_string3 = new LocalizedString(11);
+    ok(_.isEqual(localized_string1, localized_string2), 'comparing same typed instances with same ids');
+    ok(!_.isEqual(localized_string1, localized_string3), 'comparing same typed instances with different ids');
+    ok(_.isEqual(localized_string1, 'Bonjour'), 'comparing different typed instances with same values');
+    ok(_.isEqual('Bonjour', localized_string1), 'comparing different typed instances with same values');
+    ok(!_.isEqual('Bonjour', localized_string3), 'comparing two localized strings with different ids');
+    ok(!_.isEqual(localized_string1, 'Au revoir'), 'comparing different typed instances with different values');
+    ok(!_.isEqual('Au revoir', localized_string1), 'comparing different typed instances with different values');
+
+    // Custom `isEqual` methods - comparing with serialized data
+    Date.prototype.toJSON = function() {
+      return {
+        _type:'Date',
+        year:this.getUTCFullYear(),
+        month:this.getUTCMonth(),
+        day:this.getUTCDate(),
+        hours:this.getUTCHours(),
+        minutes:this.getUTCMinutes(),
+        seconds:this.getUTCSeconds()
+      };
+    };
+    Date.prototype.isEqual = function(that) {
+      var this_date_components = this.toJSON();
+      var that_date_components = (that instanceof Date) ? that.toJSON() : that;
+      delete this_date_components['_type']; delete that_date_components['_type']
+      return _.isEqual(this_date_components, that_date_components);
+    };
+
+    var date = new Date();
+    var date_json = {
+      _type:'Date',
+      year:date.getUTCFullYear(),
+      month:date.getUTCMonth(),
+      day:date.getUTCDate(),
+      hours:date.getUTCHours(),
+      minutes:date.getUTCMinutes(),
+      seconds:date.getUTCSeconds()
+    };
+
+    ok(_.isEqual(date_json, date), 'serialized date matches date');
+    ok(_.isEqual(date, date_json), 'date matches serialized date');
   });
 
   test("objects: isEmpty", function() {
@@ -383,14 +439,15 @@ $(document).ready(function() {
     ok(!_.isNumber(arguments), 'the arguments object is not a number');
     ok(!_.isNumber(undefined), 'undefined is not a number');
     ok(_.isNumber(3 * 4 - 7 / 10), 'but numbers are');
-    ok(!_.isNumber(NaN), 'NaN is not a number');
+    ok(_.isNumber(NaN), 'NaN *is* a number');
     ok(_.isNumber(Infinity), 'Infinity is a number');
     ok(_.isNumber(iNumber), 'even from another frame');
+    ok(!_.isNumber('1'), 'numeric strings are not numbers');
   });
 
   test("objects: isBoolean", function() {
     ok(!_.isBoolean(2), 'a number is not a boolean');
-   	ok(!_.isBoolean("string"), 'a string is not a boolean');
+    ok(!_.isBoolean("string"), 'a string is not a boolean');
     ok(!_.isBoolean("false"), 'the string "false" is not a boolean');
     ok(!_.isBoolean("true"), 'the string "true" is not a boolean');
     ok(!_.isBoolean(arguments), 'the arguments object is not a boolean');

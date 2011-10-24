@@ -50,10 +50,13 @@ $(document).ready(function() {
   });
 
   test("arrays: flatten", function() {
-    var list = [1, [2], [3, [[[4]]]]];
-    equals(_.flatten(list).join(', '), '1, 2, 3, 4', 'can flatten nested arrays');
-    var result = (function(){ return _.flatten(arguments); })(1, [2], [3, [[[4]]]]);
-    equals(result.join(', '), '1, 2, 3, 4', 'works on an arguments object');
+    if (window.JSON) {
+      var list = [1, [2], [3, [[[4]]]]];
+      equals(JSON.stringify(_.flatten(list)), '[1,2,3,4]', 'can flatten nested arrays');
+      equals(JSON.stringify(_.flatten(list, true)), '[1,2,3,[[[4]]]]', 'can shallowly flatten nested arrays');
+      var result = (function(){ return _.flatten(arguments); })(1, [2], [3, [[[4]]]]);
+      equals(JSON.stringify(result), '[1,2,3,4]', 'works on an arguments object');
+    }
   });
 
   test("arrays: without", function() {
@@ -97,6 +100,9 @@ $(document).ready(function() {
   test("arrays: union", function() {
     var result = _.union([1, 2, 3], [2, 30, 1], [1, 40]);
     equals(result.join(' '), '1 2 3 30 40', 'takes the union of a list of arrays');
+
+    var result = _.union([1, 2, 3], [2, 30, 1], [1, 40, [1]]);
+    equals(result.join(' '), '1 2 3 30 40 1', 'takes the union of a list of nested arrays');
   });
 
   test("arrays: difference", function() {

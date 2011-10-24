@@ -8,5 +8,5 @@
   "dependencies"  : [],
   "repository"    : {"type": "git", "url": "git://github.com/documentcloud/underscore.git"},
   "main"          : "underscore.js",
-  "version"       : "1.2.0"
+  "version"       : "1.2.1"
 }

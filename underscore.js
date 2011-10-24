@@ -758,16 +758,15 @@
   };
 
   // Is a given variable an arguments object?
-  _.isArguments = toString.call(arguments) == '[object Arguments]'
-    ? function(obj) {
+  if (toString.call(arguments) == '[object Arguments]') {
+    _.isArguments = function(obj) {
       return toString.call(obj) == '[object Arguments]';
-    }
-    : function(obj) {
-      return obj
-        ? hasOwnProperty.call(obj, 'callee')
-          && hasOwnProperty.call(obj, 'length')
-        : false;
     };
+  } else {
+    _.isArguments = function(obj) {
+      return !!(obj && hasOwnProperty.call(obj, 'callee'));
+    };
+  }
 
   // Is a given value a function?
   _.isFunction = function(obj) {

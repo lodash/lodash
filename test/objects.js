@@ -435,14 +435,15 @@ $(document).ready(function() {
     ok(!_.isNumber(arguments), 'the arguments object is not a number');
     ok(!_.isNumber(undefined), 'undefined is not a number');
     ok(_.isNumber(3 * 4 - 7 / 10), 'but numbers are');
-    ok(!_.isNumber(NaN), 'NaN is not a number');
+    ok(_.isNumber(NaN), 'NaN *is* a number');
     ok(_.isNumber(Infinity), 'Infinity is a number');
     ok(_.isNumber(iNumber), 'even from another frame');
+    ok(!_.isNumber('1'), 'numeric strings are not numbers');
   });
 
   test("objects: isBoolean", function() {
     ok(!_.isBoolean(2), 'a number is not a boolean');
-   	ok(!_.isBoolean("string"), 'a string is not a boolean');
+    ok(!_.isBoolean("string"), 'a string is not a boolean');
     ok(!_.isBoolean("false"), 'the string "false" is not a boolean');
     ok(!_.isBoolean("true"), 'the string "true" is not a boolean');
     ok(!_.isBoolean(arguments), 'the arguments object is not a boolean');

@@ -66,6 +66,10 @@ $(document).ready(function() {
 
     clone.lucky.push(101);
     equals(_.last(moe.lucky), 101, 'changes to deep attributes are shared with the original');
+
+    equals(_.clone(undefined), void 0, 'non objects should not be changed by clone');
+    equals(_.clone(1), 1, 'non objects should not be changed by clone');
+    equals(_.clone(null), null, 'non objects should not be changed by clone');
   });
 
   test("objects: isEqual", function() {

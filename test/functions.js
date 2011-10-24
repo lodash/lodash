@@ -90,7 +90,7 @@ $(document).ready(function() {
     _.delay(function(){ ok(deferred, "deferred the function"); start(); }, 50);
   });
 
-  asyncTest("functions: throttle", 2, function() {
+  asyncTest("functions: throttle", 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 100);
@@ -99,7 +99,6 @@ $(document).ready(function() {
     setTimeout(throttledIncr, 140);
     setTimeout(throttledIncr, 220);
     setTimeout(throttledIncr, 240);
-    _.delay(function(){ ok(counter == 1, "incr throttle was called immediately"); }, 40);
     _.delay(function(){ ok(counter == 3, "incr was throttled"); start(); }, 400);
   });
 

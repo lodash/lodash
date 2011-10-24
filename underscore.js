@@ -1,4 +1,4 @@
-//     Underscore.js 1.2.0
+//     Underscore.js 1.2.1
 //     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
@@ -67,7 +67,7 @@
   }
 
   // Current version.
-  _.VERSION = '1.2.0';
+  _.VERSION = '1.2.1';
 
   // Collection Functions
   // --------------------

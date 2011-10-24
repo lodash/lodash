@@ -90,16 +90,32 @@ $(document).ready(function() {
     _.delay(function(){ ok(deferred, "deferred the function"); start(); }, 50);
   });
 
-  asyncTest("functions: throttle", 1, function() {
+  asyncTest("functions: throttle", 2, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 100);
     throttledIncr(); throttledIncr(); throttledIncr();
+    setTimeout(throttledIncr, 70);
     setTimeout(throttledIncr, 120);
     setTimeout(throttledIncr, 140);
+    setTimeout(throttledIncr, 190);
     setTimeout(throttledIncr, 220);
     setTimeout(throttledIncr, 240);
-    _.delay(function(){ ok(counter == 3, "incr was throttled"); start(); }, 400);
+    _.delay(function(){ ok(counter == 1, "incr was called immediately"); }, 30);
+    _.delay(function(){ ok(counter == 4, "incr was throttled"); start(); }, 400);
+  });
+
+  asyncTest("functions: throttle arguments", 2, function() {
+    var value = 0;
+    var update = function(val){ value = val; };
+    var throttledUpdate = _.throttle(update, 100);
+    throttledUpdate(1); throttledUpdate(2); throttledUpdate(3);
+    setTimeout(function(){ throttledUpdate(4); }, 120);
+    setTimeout(function(){ throttledUpdate(5); }, 140);
+    setTimeout(function(){ throttledUpdate(6); }, 260);
+    setTimeout(function(){ throttledUpdate(7); }, 270);
+    _.delay(function(){ ok(value == 1, "updated to latest value"); }, 40);
+    _.delay(function(){ ok(value == 7, "updated to latest value"); start(); }, 400);
   });
 
   asyncTest("functions: debounce", 1, function() {

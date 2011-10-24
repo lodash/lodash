@@ -118,6 +118,22 @@ $(document).ready(function() {
     _.delay(function(){ ok(value == 7, "updated to latest value"); start(); }, 400);
   });
 
+  asyncTest("functions: throttle once", 1, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 100);
+    throttledIncr();
+    _.delay(function(){ ok(counter == 1, "incr was called once"); start(); }, 220);
+  });
+
+  asyncTest("functions: throttle twice", 1, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 100);
+    throttledIncr(); throttledIncr();
+    _.delay(function(){ ok(counter == 2, "incr was called twice"); start(); }, 220);
+  });
+
   asyncTest("functions: debounce", 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };

@@ -523,17 +523,21 @@
   // Returns a function, that, when invoked, will only be triggered at most once
   // during a given window of time.
   _.throttle = function(func, wait) {
-    var context, args, timeout, throttling;
-    var whenDone = _.debounce(function(){ throttling = false; }, wait);
+    var context, args, timeout, throttling, more;
+    var whenDone = _.debounce(function(){ more = throttling = false; }, wait);
     return function() {
       context = this; args = arguments;
       var later = function() {
         timeout = null;
-        func.apply(context, args);
+        if (more) func.apply(context, args);
         whenDone();
       };
       if (!timeout) timeout = setTimeout(later, wait);
-      if (!throttling) func.apply(context, args);
+      if (throttling) {
+        more = true;
+      } else {
+        func.apply(context, args);
+      }
       whenDone();
       throttling = true;
     };

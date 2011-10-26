@@ -726,7 +726,7 @@
       }
     } else {
       // Objects with different constructors are not equivalent.
-      if ("constructor" in a == "constructor" in b && a.constructor != b.constructor) return false;
+      if ("constructor" in a != "constructor" in b || a.constructor != b.constructor) return false;
       // Deep compare objects.
       for (var key in a) {
         if (hasOwnProperty.call(a, key)) {

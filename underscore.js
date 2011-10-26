@@ -667,48 +667,40 @@
     // See the Harmony `egal` proposal: http://wiki.ecmascript.org/doku.php?id=harmony:egal.
     if (a === b) return a !== 0 || 1 / a == 1 / b;
     // A strict comparison is necessary because `null == undefined`.
-    if ((a == null) || (b == null)) return a === b;
+    if (a == null || b == null) return a === b;
     // Unwrap any wrapped objects.
     if (a._chain) a = a._wrapped;
     if (b._chain) b = b._wrapped;
     // Invoke a custom `isEqual` method if one is provided.
     if (_.isFunction(a.isEqual)) return a.isEqual(b);
     if (_.isFunction(b.isEqual)) return b.isEqual(a);
-    // Compare object types.
-    var typeA = typeof a;
-    if (typeA != typeof b) return false;
-    // Optimization; ensure that both values are truthy or falsy.
-    if (!a != !b) return false;
-    // `NaN` values are equal.
-    if (_.isNaN(a)) return _.isNaN(b);
-    // Compare string objects by value.
-    var isStringA = _.isString(a), isStringB = _.isString(b);
-    if (isStringA || isStringB) return isStringA && isStringB && String(a) == String(b);
-    // Compare number objects by value.
-    var isNumberA = _.isNumber(a), isNumberB = _.isNumber(b);
-    if (isNumberA || isNumberB) return isNumberA && isNumberB && +a == +b;
-    // Compare boolean objects by value. The value of `true` is 1; the value of `false` is 0.
-    var isBooleanA = _.isBoolean(a), isBooleanB = _.isBoolean(b);
-    if (isBooleanA || isBooleanB) return isBooleanA && isBooleanB && +a == +b;
-    // Compare dates by their millisecond values.
-    var isDateA = _.isDate(a), isDateB = _.isDate(b);
-    if (isDateA || isDateB) return isDateA && isDateB && a.getTime() == b.getTime();
-    // Compare RegExps by their source patterns and flags.
-    var isRegExpA = _.isRegExp(a), isRegExpB = _.isRegExp(b);
-    if (isRegExpA || isRegExpB) {
-      // Ensure commutative equality for RegExps.
-      return isRegExpA && isRegExpB &&
-             a.source == b.source &&
-             a.global == b.global &&
-             a.multiline == b.multiline &&
-             a.ignoreCase == b.ignoreCase;
+    // Compare `[[Class]]` names.
+    var className = toString.call(a);
+    if (className != toString.call(b)) return false;
+    switch (className) {
+      // Strings, numbers, dates, and booleans are compared by value.
+      case '[object String]':
+        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
+        // equivalent to `new String("5")`.
+        return String(a) == String(b);
+      case '[object Number]':
+      case '[object Boolean]':
+        // Coerce numbers, dates, and booleans to numeric primitive values.
+        a = +a;
+        b = +b;
+        // `NaN`s are equivalent, but non-reflexive.
+        return a != a ? b != b : a == b;
+      case '[object Date]':
+        // Compare dates by their millisecond representations. Invalid dates are not equivalent.
+        return +a == +b;
+      // RegExps are compared by their source patterns and flags.
+      case '[object RegExp]':
+        return a.source == b.source &&
+               a.global == b.global &&
+               a.multiline == b.multiline &&
+               a.ignoreCase == b.ignoreCase;
     }
-    // Ensure that both values are objects.
-    if (typeA != 'object') return false;
-    // Arrays or Arraylikes with different lengths are not equal.
-    if (a.length !== b.length) return false;
-    // Objects with different constructors are not equal.
-    if (a.constructor !== b.constructor) return false;
+    if (typeof a != 'object' || typeof b != 'object') return false;
     // Assume equality for cyclic structures. The algorithm for detecting cyclic
     // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
     var length = stack.length;
@@ -720,21 +712,37 @@
     // Add the first object to the stack of traversed objects.
     stack.push(a);
     var size = 0, result = true;
-    // Deep compare objects.
-    for (var key in a) {
-      if (hasOwnProperty.call(a, key)) {
-        // Count the expected number of properties.
-        size++;
-        // Deep compare each member.
-        if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) break;
+    // Recursively compare objects and arrays.
+    if (className == '[object Array]') {
+      // Compare array lengths to determine if a deep comparison is necessary.
+      size = a.length;
+      result = size == b.length;
+      if (result) {
+        // Deep compare the contents, ignoring non-numeric properties.
+        while (size--) {
+          // Ensure commutative equality for sparse arrays.
+          if (!(result = size in a == size in b && eq(a[size], b[size], stack))) break;
+        }
       }
-    }
-    // Ensure that both objects contain the same number of properties.
-    if (result) {
-      for (key in b) {
-        if (hasOwnProperty.call(b, key) && !size--) break;
+    } else {
+      // Objects with different constructors are not equivalent.
+      if ("constructor" in a == "constructor" in b && a.constructor != b.constructor) return false;
+      // Deep compare objects.
+      for (var key in a) {
+        if (hasOwnProperty.call(a, key)) {
+          // Count the expected number of properties.
+          size++;
+          // Deep compare each member.
+          if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) break;
+        }
       }
-      result = !size;
+      // Ensure that both objects contain the same number of properties.
+      if (result) {
+        for (key in b) {
+          if (hasOwnProperty.call(b, key) && !size--) break;
+        }
+        result = !size;
+      }
     }
     // Remove the first object from the stack of traversed objects.
     stack.pop();

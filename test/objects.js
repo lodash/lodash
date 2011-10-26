@@ -106,6 +106,8 @@ $(document).ready(function() {
     ok(_.isEqual(new Number(75), new Number(75)), "Number objects with identical primitive values are equal");
     ok(_.isEqual(75, new Number(75)), "Number primitives and their corresponding object wrappers are equal");
     ok(_.isEqual(new Number(75), 75), "Commutative equality is implemented for number objects and primitives");
+    ok(!_.isEqual(new Number(0), -0), "`new Number(0)` and `-0` are not equal");
+    ok(!_.isEqual(0, new Number(-0)), "Commutative equality is implemented for `new Number(0)` and `-0`");
 
     ok(!_.isEqual(new Number(75), new Number(63)), "Number objects with different primitive values are not equal");
     ok(!_.isEqual(new Number(63), {valueOf: function(){ return 63; }}), "Number objects and objects with a `valueOf` method are not equal");

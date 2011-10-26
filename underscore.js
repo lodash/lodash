@@ -684,14 +684,16 @@
         // equivalent to `new String("5")`.
         return String(a) == String(b);
       case '[object Number]':
-      case '[object Boolean]':
-        // Coerce numbers, dates, and booleans to numeric primitive values.
         a = +a;
         b = +b;
-        // `NaN`s are equivalent, but non-reflexive.
-        return a != a ? b != b : a == b;
+        // `NaN`s are equivalent, but non-reflexive. An `egal` comparison is performed for
+        // other numeric values.
+        return a != a ? b != b : (a == 0 ? 1 / a == 1 / b : a == b);
       case '[object Date]':
-        // Compare dates by their millisecond representations. Invalid dates are not equivalent.
+      case '[object Boolean]':
+        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
+        // millisecond representations. Note that invalid dates with millisecond representations
+        // of `NaN` are not equivalent.
         return +a == +b;
       // RegExps are compared by their source patterns and flags.
       case '[object RegExp]':

@@ -206,7 +206,7 @@
     if (obj == null) return found;
     if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
     found = any(obj, function(value) {
-      if (value === target) return true;
+      return value === target;
     });
     return found;
   };

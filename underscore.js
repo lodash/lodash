@@ -732,7 +732,7 @@
     // Ensure that both objects contain the same number of properties.
     if (result) {
       for (key in b) {
-        if (hasOwnProperty.call(b, key) && !size--) break;
+        if (hasOwnProperty.call(b, key) && !(size--)) break;
       }
       result = !size;
     }

@@ -41,6 +41,11 @@ $(document).ready(function() {
     equals(_('champ').myReverse(), 'pmahc', 'mixed in a function to the OOP wrapper');
   });
 
+  test("utility: _.escape", function() {
+    equals(_.escape("Curly & Moe"), "Curly &amp; Moe");
+    equals(_.escape("Curly &amp; Moe"), "Curly &amp;amp; Moe");
+  });
+
   test("utility: template", function() {
     var basicTemplate = _.template("<%= thing %> is gettin' on my noives!");
     var result = basicTemplate({thing : 'This'});

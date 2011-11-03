@@ -140,6 +140,8 @@ $(document).ready(function() {
     ok(!_.any([]), 'the empty set');
     ok(!_.any([false, false, false]), 'all false values');
     ok(_.any([false, false, true]), 'one true value');
+    ok(_.any([null, 0, 'yes', false]), 'a string');
+    ok(!_.any([null, 0, '', false]), 'falsy values');
     ok(!_.any([1, 11, 29], function(num){ return num % 2 == 0; }), 'all odd numbers');
     ok(_.any([1, 10, 29], function(num){ return num % 2 == 0; }), 'an even number');
     ok(_.some([false, false, true]), 'aliased as "some"');

@@ -595,9 +595,10 @@
 
   // Returns a function that will only be executed after being called N times.
   _.after = function(times, func) {
-    return times ? function() {
+    if (times <= 0) return func();
+    return function() {
       if (--times < 1) { return func.apply(this, arguments); }
-    } : func();
+    };
   };
 
   // Object Functions

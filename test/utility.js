@@ -51,6 +51,9 @@ $(document).ready(function() {
     var result = basicTemplate({thing : 'This'});
     equals(result, "This is gettin' on my noives!", 'can do basic attribute interpolation');
 
+    var sansSemicolonTemplate = _.template("A <% this %> B");
+    equals(sansSemicolonTemplate(), "A  B");
+
     var backslashTemplate = _.template("<%= thing %> is \\ridanculous");
     equals(backslashTemplate({thing: 'This'}), "This is \\ridanculous");
 

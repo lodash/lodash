@@ -94,19 +94,21 @@ $(document).ready(function() {
     // String object and primitive comparisons.
     ok(_.isEqual("Curly", "Curly"), "Identical string primitives are equal");
     ok(_.isEqual(new String("Curly"), new String("Curly")), "String objects with identical primitive values are equal");
+    ok(_.isEqual(new String("Curly"), "Curly"), "String primitives and their corresponding object wrappers are equal");
+    ok(_.isEqual("Curly", new String("Curly")), "Commutative equality is implemented for string objects and primitives");
 
     ok(!_.isEqual("Curly", "Larry"), "String primitives with different values are not equal");
-    ok(!_.isEqual(new String("Curly"), "Curly"), "String primitives and their corresponding object wrappers are not equal");
-    ok(!_.isEqual("Curly", new String("Curly")), "Commutative equality is implemented for string objects and primitives");
     ok(!_.isEqual(new String("Curly"), new String("Larry")), "String objects with different primitive values are not equal");
     ok(!_.isEqual(new String("Curly"), {toString: function(){ return "Curly"; }}), "String objects and objects with a custom `toString` method are not equal");
 
     // Number object and primitive comparisons.
     ok(_.isEqual(75, 75), "Identical number primitives are equal");
     ok(_.isEqual(new Number(75), new Number(75)), "Number objects with identical primitive values are equal");
+    ok(_.isEqual(75, new Number(75)), "Number primitives and their corresponding object wrappers are equal");
+    ok(_.isEqual(new Number(75), 75), "Commutative equality is implemented for number objects and primitives");
+    ok(!_.isEqual(new Number(0), -0), "`new Number(0)` and `-0` are not equal");
+    ok(!_.isEqual(0, new Number(-0)), "Commutative equality is implemented for `new Number(0)` and `-0`");
 
-    ok(!_.isEqual(75, new Number(75)), "Number primitives and their corresponding object wrappers are not equal");
-    ok(!_.isEqual(new Number(75), 75), "Commutative equality is implemented for number objects and primitives");
     ok(!_.isEqual(new Number(75), new Number(63)), "Number objects with different primitive values are not equal");
     ok(!_.isEqual(new Number(63), {valueOf: function(){ return 63; }}), "Number objects and objects with a `valueOf` method are not equal");
 
@@ -119,8 +121,8 @@ $(document).ready(function() {
     // Boolean object and primitive comparisons.
     ok(_.isEqual(true, true), "Identical boolean primitives are equal");
     ok(_.isEqual(new Boolean, new Boolean), "Boolean objects with identical primitive values are equal");
-    ok(!_.isEqual(true, new Boolean(true)), "Boolean primitives and their corresponding object wrappers are not equal");
-    ok(!_.isEqual(new Boolean(true), true), "Commutative equality is implemented for booleans");
+    ok(_.isEqual(true, new Boolean(true)), "Boolean primitives and their corresponding object wrappers are equal");
+    ok(_.isEqual(new Boolean(true), true), "Commutative equality is implemented for booleans");
     ok(!_.isEqual(new Boolean(true), new Boolean), "Boolean objects with different primitive values are not equal");
 
     // Common type coercions.
@@ -178,7 +180,7 @@ $(document).ready(function() {
     b.join = b.pop = b.reverse = b.shift = b.slice = b.splice = b.concat = b.sort = b.unshift = null;
 
     // Array elements and properties.
-    ok(!_.isEqual(a, b), "Arrays containing equivalent elements and different non-numeric properties are not equal");
+    ok(_.isEqual(a, b), "Arrays containing equivalent elements and different non-numeric properties are equal");
     a.push("White Rocks");
     ok(!_.isEqual(a, b), "Arrays of different lengths are not equal");
     a.push("East Boulder");
@@ -240,7 +242,7 @@ $(document).ready(function() {
     // Instances.
     ok(_.isEqual(new First, new First), "Object instances are equal");
     ok(!_.isEqual(new First, new Second), "Objects with different constructors and identical own properties are not equal");
-    ok(!_.isEqual({value: 1}, new First), "Object instances and objects sharing equivalent properties are not identical");
+    ok(!_.isEqual({value: 1}, new First), "Object instances and objects sharing equivalent properties are not equal");
     ok(!_.isEqual({value: 2}, new Second), "The prototype chain of objects should not be examined");
 
     // Circular Arrays.

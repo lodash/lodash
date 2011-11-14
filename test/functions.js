@@ -188,6 +188,7 @@ $(document).ready(function() {
 
     equals(testAfter(5, 5), 1, "after(N) should fire after being called N times");
     equals(testAfter(5, 4), 0, "after(N) should not fire unless called N times");
+    equals(testAfter(0, 0), 1, "after(0) should fire immediately");
   });
 
 });

@@ -126,11 +126,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.2.1)</a></td>
-        <td><i>33kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.2.2)</a></td>
+        <td><i>34kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.2.1)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.2.2)</a></td>
         <td><i>&lt; 4kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -1337,6 +1337,29 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.2.2</b> &mdash; <small><i>Nov. 14, 2011</i></small><br />
+        <ul>
+          <li>
+            Continued tweaks to <tt>_.isEqual</tt> semantics. Now JS primitives are
+            considered equivalent to their wrapped versions, and arrays are compared
+            by their numeric properties only <small>(#351)</small>.
+          </li>
+          <li>
+            <tt>_.escape</tt> no longer tries to be smart about not double-escaping
+            already-escaped HTML entities. Now it just escapes regardless <small>(#350)</small>.
+          </li>
+          <li>
+            In <tt>_.template</tt>, you may now leave semicolons out of evaluated
+            statements if you wish: <tt>&lt;% }) %&gt;</tt> <small>(#369)</small>.
+          </li>
+          <li>
+            <tt>_.after(callback, 0)</tt> will now trigger the callback immediately,
+            making "after" easier to use with asynchronous APIs <small>(#366)</small>. 
+          </li>
+        </ul>
+      </p>
       
       <p>
         <b class="header">1.2.1</b> &mdash; <small><i>Oct. 24, 2011</i></small><br />

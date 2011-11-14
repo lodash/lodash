@@ -192,7 +192,7 @@
       <span class="methods"><a href="#noConflict">noConflict</a>,
       <a href="#identity">identity</a>, <a href="#times">times</a>, 
       <a href="#mixin">mixin</a>, <a href="#uniqueId">uniqueId</a>, 
-      <a href="#template">template</a></span>
+      <a href="#escape">escape</a>, <a href="#template">template</a></span>
     </p>
 
     <p>
@@ -1182,6 +1182,16 @@ _("fabio").capitalize();
       <pre>
 _.uniqueId('contact_');
 =&gt; 'contact_104'</pre>
+
+      <p id="escape">
+        <b class="header">escape</b><code>_.escape(string)</code>
+        <br />
+        Escapes a string for insertion into HTML, replacing 
+        <tt>&amp;</tt>, <tt>&lt;</tt>, <tt>&gt;</tt>, <tt>&quot;</tt>, <tt>&#x27;</tt>, and <tt>&#x2F;</tt> characters.
+      </p>
+      <pre>
+_.escape('Curly, Larry &amp; Moe');
+=&gt; "Curly, Larry &amp;amp; Moe"</pre>
 
       <p id="template">
         <b class="header">template</b><code>_.template(templateString, [context])</code>

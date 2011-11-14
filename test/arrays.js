@@ -7,6 +7,7 @@ $(document).ready(function() {
     equals(_([1, 2, 3]).first(), 1, 'can perform OO-style "first()"');
     equals(_.first([1,2,3], 0).join(', '), "", 'can pass an index to first');
     equals(_.first([1,2,3], 2).join(', '), '1, 2', 'can pass an index to first');
+    equals(_.first([1,2,3], 5).join(', '), '1, 2, 3', 'can pass an index to first');
     var result = (function(){ return _.first(arguments); })(4, 3, 2, 1);
     equals(result, 4, 'works on an arguments object.');
     result = _.map([[1,2,3],[1,2,3]], _.first);
@@ -37,6 +38,7 @@ $(document).ready(function() {
     equals(_.last([1,2,3]), 3, 'can pull out the last element of an array');
     equals(_.last([1,2,3], 0).join(', '), "", 'can pass an index to last');
     equals(_.last([1,2,3], 2).join(', '), '2, 3', 'can pass an index to last');
+    equals(_.last([1,2,3], 5).join(', '), '1, 2, 3', 'can pass an index to last');
     var result = (function(){ return _(arguments).last(); })(1, 2, 3, 4);
     equals(result, 4, 'works on an arguments object');
     result = _.map([[1,2,3],[1,2,3]], _.last);

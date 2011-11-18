@@ -915,7 +915,7 @@
          .replace(/\t/g, '\\t')
          + "');}return __p.join('');";
     var func = new Function('obj', '_', tmpl);
-    return data ? func(data, _) : function(data) { return func(data, _) };
+    return data ? func(data, _) : function(data) { return func.call(this,data, _) };
   };
 
   // The OOP Wrapper

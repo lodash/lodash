@@ -93,6 +93,12 @@ $(document).ready(function() {
     var result = template({value: "<script>"});
     equals(result, '<i>&lt;script&gt;</i>');
 
+    var stooge = {
+      name: "Moe",
+      template: _.template("I'm <%= this.name %>")
+    };
+    equals(stooge.template(), "I'm Moe");
+
     if (!$.browser.msie) {
       var fromHTML = _.template($('#template').html());
       equals(fromHTML({data : 12345}).replace(/\s/g, ''), '<li>24690</li>');

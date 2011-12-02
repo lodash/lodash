@@ -73,38 +73,6 @@
   // Collection Functions
   // --------------------
 
-  // list of possible shadowed properties of Object.prototype
-  var shadowed = [
-    'constructor', 'hasOwnProperty', 'isPrototypeOf',
-    'propertyIsEnumerable', 'toLocaleString',
-    'toString', 'valueOf'
-  ];
-
-  // IE < 9 skips enumerable properties shadowing non-enumerable ones
-  var forShadowed = !{valueOf:0}.propertyIsEnumerable('valueOf') &&
-    function(obj, iterator) {
-      // because IE < 9 can't set the [[Enumerable]] attribute of an existing
-      // property and the `constructor` property of a prototype defaults to
-      // non-enumerable, we manually skip the `constructor` property when we
-      // think we are iterating over a `prototype` object.
-      var ctor = obj.constructor;
-      var skipCtor = ctor && ctor.prototype && ctor.prototype.constructor == ctor;
-      for (var key, i = 0; key = shadowed[i]; i++) {
-        if (!(skipCtor && key == 'constructor') &&
-            hasOwnProperty.call(obj, key) &&
-            iterator(obj[key], key, obj) === breaker) {
-          break;
-        }
-      }
-    };
-
-  var simpleEach = function(obj, iterator, index) {
-    index || (index = 0);
-    for(var l = obj.length; index < l; index++) {
-      iterator(obj[index]);
-    }
-  };
-
   // The cornerstone, an `each` implementation, aka `forEach`.
   // Handles objects with the built-in `forEach`, arrays, and raw objects.
   // Delegates to **ECMAScript 5**'s native `forEach` if available.
@@ -119,6 +87,7 @@
       if (context) {
         iterator = function() { return fn.call(context, obj[i], i, obj); };
       }
+      // If we're dealing with an array or array-like object...
       if (l === l >>> 0) {
         while (++i < l) {
           if (i in obj && iterator(obj[i], i, obj) == breaker) return;
@@ -128,6 +97,38 @@
       }
     }
   };
+
+  // A simple each, for when we know we're dealing with an array.
+  var simpleEach = function(obj, iterator, index) {
+    index || (index = 0);
+    for (var l = obj.length; index < l; index++) {
+      iterator(obj[index]);
+    }
+  };
+
+  // List of possible shadowed properties on Object.prototype.
+  var shadowed = [
+    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
+    'toLocaleString', 'toString', 'valueOf'
+  ];
+
+  // IE < 9 skips enumerable properties shadowing non-enumerable ones.
+  var forShadowed = !{valueOf:0}.propertyIsEnumerable('valueOf') &&
+    function(obj, iterator) {
+      // because IE < 9 can't set the `[[Enumerable]]` attribute of an existing
+      // property and the `constructor` property of a prototype defaults to
+      // non-enumerable, we manually skip the `constructor` property when we
+      // think we are iterating over a `prototype` object.
+      var ctor = obj.constructor;
+      var skipCtor = ctor && ctor.prototype && ctor.prototype.constructor == ctor;
+      for (var key, i = 0; key = shadowed[i]; i++) {
+        if (!(skipCtor && key == 'constructor') &&
+            hasOwnProperty.call(obj, key) &&
+            iterator(obj[key], key, obj) === breaker) {
+          break;
+        }
+      }
+    };
 
   // Iterates over an object's properties, executing the `callback` for each.
   var forProps = function(obj, iterator, ownOnly, context) {
@@ -287,7 +288,7 @@
   _.max = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.max.apply(Math, obj);
     if (!iterator && _.isEmpty(obj)) return -Infinity;
-    var result = { computed : -Infinity };
+    var result = {computed : -Infinity};
     each(obj, function(value, index, list) {
       var computed = iterator ? iterator.call(context, value, index, list) : value;
       computed >= result.computed && (result = {value : value, computed : computed});
@@ -299,7 +300,7 @@
   _.min = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.min.apply(Math, obj);
     if (!iterator && _.isEmpty(obj)) return Infinity;
-    var result = { computed : Infinity };
+    var result = {computed : Infinity};
     each(obj, function(value, index, list) {
       var computed = iterator ? iterator.call(context, value, index, list) : value;
       computed < result.computed && (result = {value : value, computed : computed});
@@ -326,8 +327,8 @@
   _.sortBy = function(obj, iterator, context) {
     return _.pluck(_.map(obj, function(value, index, list) {
       return {
-        value: value,
-        criteria: iterator.call(context, value, index, list)
+        value : value,
+        criteria : iterator.call(context, value, index, list)
       };
     }).sort(function(left, right) {
       var a = left.criteria;
@@ -1015,9 +1016,6 @@
   // A method to easily add functions to the OOP wrapper.
   var addToWrapper = function(name, func) {
     wrapper.prototype[name] = function() {
-      // avoid applying unshift generically to the arguments object because
-      // Opera < 9.50 will pave the value at index 0 without incrimenting the
-      // other index/values
       var args = slice.call(arguments);
       unshift.call(args, this._wrapped);
       return result(func.apply(_, args), this._chain);

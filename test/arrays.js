@@ -127,9 +127,12 @@ $(document).ready(function() {
   });
 
   test("arrays: indexOf", function() {
-    var numbers = [1, 2, 3];
+    var numbers = [1];
+    numbers[2] = 3;
     numbers.indexOf = null;
-    equals(_.indexOf(numbers, 2), 1, 'can compute indexOf, even without the native function');
+    equals(_.indexOf(numbers, 3), 2, 'can compute indexOf, even without the native function');
+    equals(_.indexOf(numbers, void 0), -1, 'handles sparse arrays correctly');
+
     var result = (function(){ return _.indexOf(arguments, 2); })(1, 2, 3);
     equals(result, 1, 'works on an arguments object');
     equals(_.indexOf(null, 2), -1, 'handles nulls properly');
@@ -148,10 +151,13 @@ $(document).ready(function() {
   });
 
   test("arrays: lastIndexOf", function() {
-    var numbers = [1, 0, 1, 0, 0, 1, 0, 0, 0];
+    var numbers = [1, 0, 1, 0, 0, 1, 0];
+    numbers[8] = 0;
     numbers.lastIndexOf = null;
     equals(_.lastIndexOf(numbers, 1), 5, 'can compute lastIndexOf, even without the native function');
     equals(_.lastIndexOf(numbers, 0), 8, 'lastIndexOf the other element');
+    equals(_.lastIndexOf(numbers, void 0), -1, 'handles sparse arrays correctly');
+
     var result = (function(){ return _.lastIndexOf(arguments, 1); })(1, 0, 1, 0, 0, 1, 0, 0, 0);
     equals(result, 5, 'works on an arguments object');
     equals(_.indexOf(null, 2), -1, 'handles nulls properly');

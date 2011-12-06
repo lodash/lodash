@@ -25,8 +25,8 @@
 
   // Create quick reference variables for speed access to core prototypes.
   var concat           = ArrayProto.concat,
+      push             = ArrayProto.push,
       slice            = ArrayProto.slice,
-      unshift          = ArrayProto.unshift,
       toString         = ObjProto.toString,
       hasOwnProperty   = ObjProto.hasOwnProperty;
 
@@ -84,6 +84,8 @@
       var fn = iterator;
       var i = -1;
       var l = obj.length;
+
+      // We optimize for common use by only binding a context when it's passed.
       if (context) {
         iterator = function() { return fn.call(context, obj[i], i, obj); };
       }
@@ -98,7 +100,7 @@
     }
   };
 
-  // A simple each, for when we know we're dealing with an array.
+  // A simple each, for dealing with non-sparse arrays and arguments objects.
   var simpleEach = function(obj, iterator, index) {
     index || (index = 0);
     for (var l = obj.length; index < l; index++) {
@@ -112,15 +114,15 @@
     'toLocaleString', 'toString', 'valueOf'
   ];
 
-  // IE < 9 skips enumerable properties shadowing non-enumerable ones.
+  // IE < 9 makes properties, shadowing non-enumerable ones, non-enumerable too.
   var forShadowed = !{valueOf:0}.propertyIsEnumerable('valueOf') &&
     function(obj, iterator) {
-      // because IE < 9 can't set the `[[Enumerable]]` attribute of an existing
+      // Because IE < 9 can't set the `[[Enumerable]]` attribute of an existing
       // property and the `constructor` property of a prototype defaults to
       // non-enumerable, we manually skip the `constructor` property when we
       // think we are iterating over a `prototype` object.
       var ctor = obj.constructor;
-      var skipCtor = ctor && ctor.prototype && ctor.prototype.constructor == ctor;
+      var skipCtor = ctor && ctor.prototype && ctor.prototype.constructor === ctor;
       for (var key, i = 0; key = shadowed[i]; i++) {
         if (!(skipCtor && key == 'constructor') &&
             hasOwnProperty.call(obj, key) &&
@@ -131,24 +133,25 @@
     };
 
   // Iterates over an object's properties, executing the `callback` for each.
-  var forProps = function(obj, iterator, ownOnly, context) {
+  var forProps = function(obj, iterator, ownOnly) {
     var done = !obj;
     var skipProto = typeof obj == 'function';
 
     for (var key in obj) {
-      // Opera < 12 and Safari < 5.1 (if the prototype or a property on the prototype has been set)
+      // Firefox < 3.6, Opera > 9.50 - Opera < 12, and Safari < 5.1
+      // (if the prototype or a property on the prototype has been set)
       // incorrectly set a function's `prototype` property [[Enumerable]] value
       // to true. Because of this we standardize on skipping the the `prototype`
       // property of functions regardless of their [[Enumerable]] value.
       if (done =
           !(skipProto && key == 'prototype') &&
           (!ownOnly || ownOnly && hasOwnProperty.call(obj, key)) &&
-          iterator.call(context, obj[key], key, obj) === breaker) {
+          iterator(obj[key], key, obj) === breaker) {
         break;
       }
     }
     if (!done && forShadowed) {
-      forShadowed(obj, iterator, context);
+      forShadowed(obj, iterator);
     }
   };
 
@@ -1018,8 +1021,8 @@
   // A method to easily add functions to the OOP wrapper.
   var addToWrapper = function(name, func) {
     wrapper.prototype[name] = function() {
-      var args = slice.call(arguments);
-      unshift.call(args, this._wrapped);
+      var args = [this._wrapped];
+      push.apply(args, arguments);
       return result(func.apply(_, args), this._chain);
     };
   };

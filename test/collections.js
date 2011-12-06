@@ -16,11 +16,11 @@ $(document).ready(function($, undefined) {
     equals(answers.join(', '), '1, 2, 3', 'aliased as "forEach"');
 
     answers = [];
-    var obj = {one : 1, two : 2, three : 3};
+    var obj = {one: 1, two: 2, three: 3, toString: 1};
     obj.constructor.prototype.four = 4;
     _.each(obj, function(value, key){ answers.push(key); });
-    equals(answers.join(", "), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
     delete obj.constructor.prototype.four;
+    equals(answers.sort().join(', '), 'one, three, toString, two', 'iterating over objects works, and ignores the object prototype.');
 
     answer = null;
     _.each([1, 2, 3], function(num, index, arr){ if (_.include(arr, num)) answer = true; });
@@ -238,7 +238,7 @@ $(document).ready(function($, undefined) {
     equals(_.toArray(a).join(', '), '1, 2, 3', 'cloned array contains same elements');
 
     var numbers = _.toArray({one : 1, two : 2, three : 3});
-    equals(numbers.join(', '), '1, 2, 3', 'object flattened into array');
+    equals(numbers.sort().join(', '), '1, 2, 3', 'object flattened into array');
   });
 
   test('collections: size', function() {

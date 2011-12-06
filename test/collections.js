@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function($, undefined) {
 
   module("Collections");
 
@@ -8,7 +8,7 @@ $(document).ready(function() {
     });
 
     var answers = [];
-    _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier);}, {multiplier : 5});
+    _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier); }, {multiplier : 5});
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
 
     answers = [];
@@ -75,15 +75,14 @@ $(document).ready(function() {
       ifnull = ex;
     }
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
-
     ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
+    equals(_.reduce([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
+    raises(function() { _.reduce([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');
 
-    // Sparse arrays:
-    var sparseArray  = [];
-    sparseArray[100] = 10;
-    sparseArray[200] = 20;
-
-    equals(_.reduce(sparseArray, function(a, b){ return a + b }), 30, 'initially-sparse arrays with no memo');
+    var sparseArray = [];
+    sparseArray[0] = 20;
+    sparseArray[2] = -5;
+    equals(_.reduce(sparseArray, function(a, b){ return a - b }), 25, 'initially-sparse arrays with no memo');
   });
 
   test('collections: reduceRight', function() {
@@ -103,8 +102,14 @@ $(document).ready(function() {
       ifnull = ex;
     }
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
-
     ok(_.reduceRight(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
+    equals(_.reduceRight([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
+    raises(function() { _.reduceRight([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');
+
+    var sparseArray = [];
+    sparseArray[0] = 20;
+    sparseArray[2] = -5;
+    equals(_.reduceRight(sparseArray, function(a, b){ return a - b }), -25, 'initially-sparse arrays with no memo');
   });
 
   test('collections: detect', function() {

@@ -1,9 +1,8 @@
-$(document).ready(function() {
+$(document).ready(function($, undefined) {
 
   module("Objects");
 
   test("objects: keys", function() {
-    var exception = /object/;
     equals(
       _.keys({one: 1, two: 2}).sort().join(', '),
       'one, two',
@@ -30,11 +29,11 @@ $(document).ready(function() {
 
     var a = []; a[1] = 0;
     equals(_.keys(a).join(', '), '1', 'is not fooled by sparse arrays; see issue #95');
-    raises(function() { _.keys(null); }, exception, 'throws an error for `null` values');
-    raises(function() { _.keys(void 0); }, exception, 'throws an error for `undefined` values');
-    raises(function() { _.keys(1); }, exception, 'throws an error for number primitives');
-    raises(function() { _.keys('a'); }, exception, 'throws an error for string primitives');
-    raises(function() { _.keys(true); }, exception, 'throws an error for boolean primitives');
+    raises(function() { _.keys(null); }, TypeError, 'throws an error for `null` values');
+    raises(function() { _.keys(void 0); }, TypeError, 'throws an error for `undefined` values');
+    raises(function() { _.keys(1); }, TypeError, 'throws an error for number primitives');
+    raises(function() { _.keys('a'); }, TypeError, 'throws an error for string primitives');
+    raises(function() { _.keys(true); }, TypeError, 'throws an error for boolean primitives');
   });
 
   test("objects: values", function() {

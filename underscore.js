@@ -25,8 +25,8 @@
 
   // Create quick reference variables for speed access to core prototypes.
   var concat           = ArrayProto.concat,
+      push             = ArrayProto.push,
       slice            = ArrayProto.slice,
-      unshift          = ArrayProto.unshift,
       toString         = ObjProto.toString,
       hasOwnProperty   = ObjProto.hasOwnProperty;
 
@@ -85,7 +85,7 @@
       var i = -1;
       var l = obj.length;
 
-      // We optimized for common use by only binding a context when it's passed
+      // We optimize for common use by only binding a context when it's passed.
       if (context) {
         iterator = function() { return fn.call(context, obj[i], i, obj); };
       }
@@ -100,7 +100,7 @@
     }
   };
 
-  // A simple each, for dealing with non-sparse arrays and arguments objects
+  // A simple each, for dealing with non-sparse arrays and arguments objects.
   var simpleEach = function(obj, iterator, index) {
     index || (index = 0);
     for (var l = obj.length; index < l; index++) {
@@ -114,7 +114,7 @@
     'toLocaleString', 'toString', 'valueOf'
   ];
 
-  // IE < 9 makes properties, shadowing non-enumerable ones, non-enumerable too
+  // IE < 9 makes properties, shadowing non-enumerable ones, non-enumerable too.
   var forShadowed = !{valueOf:0}.propertyIsEnumerable('valueOf') &&
     function(obj, iterator) {
       // Because IE < 9 can't set the `[[Enumerable]]` attribute of an existing
@@ -1021,8 +1021,9 @@
   // A method to easily add functions to the OOP wrapper.
   var addToWrapper = function(name, func) {
     wrapper.prototype[name] = function() {
-      unshift.call(arguments, this._wrapped);
-      return result(func.apply(_, arguments), this._chain);
+      var args = [this._wrapped];
+      push.apply(args, arguments);
+      return result(func.apply(_, args), this._chain);
     };
   };
 

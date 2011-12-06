@@ -262,7 +262,7 @@ $(document).ready(function($, undefined) {
     ok(!_.isEqual({a: 1}, {a: 1, b: 2}), "Commutative equality is implemented for objects");
     ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), "Objects with identical keys and different values are not equivalent");
 
-    // Objects with shadowing properties
+    // Objects with properties that shadow non-enumerable ones.
     ok(!_.isEqual({}, {toString: 1}), "Object with custom toString is not equal to {}");
     ok(_.isEqual({toString: 1, valueOf: 2}, {toString: 1, valueOf: 2}), "Objects with equivalent shadow properties");
 

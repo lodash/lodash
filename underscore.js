@@ -21,7 +21,9 @@
   var breaker = {};
 
   // Save bytes in the minified (but not gzipped) version:
-  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+  var ArrayProto = Array.prototype,
+      ObjProto = Object.prototype,
+      FuncProto = Function.prototype;
 
   // Create quick reference variables for speed access to core prototypes.
   var concat           = ArrayProto.concat,
@@ -46,6 +48,12 @@
     nativeKeys         = Object.keys,
     nativeBind         = FuncProto.bind;
 
+  // List of possible shadowed properties on Object.prototype.
+  var shadowed = [
+    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
+    'toLocaleString', 'toString', 'valueOf'
+  ];
+
   // Create a safe reference to the Underscore object for use below.
   var _ = function(obj) { return new wrapper(obj); };
 
@@ -57,13 +65,11 @@
       exports = module.exports = _;
     }
     exports._ = _;
+  // Register as a named module with AMD.
   } else if (typeof define === 'function' && define.amd) {
-    // Register as a named module with AMD.
-    define('underscore', function() {
-      return _;
-    });
+    define('underscore', function() { return _; });
+  // Exported as a string, for Closure Compiler "advanced" mode.
   } else {
-    // Exported as a string, for Closure Compiler "advanced" mode.
     root['_'] = _;
   }
 
@@ -79,24 +85,23 @@
   var each = _.each = _.forEach = function(obj, iterator, context) {
     if (obj == null) return;
     if (nativeForEach && obj.forEach === nativeForEach) {
-      obj.forEach(iterator, context);
+      return obj.forEach(iterator, context);
+    }
+    var fn = iterator;
+    var i = -1;
+    var l = obj.length;
+    // We optimize for common use by only binding a context when it's passed.
+    if (context) {
+      iterator = function() { return fn.call(context, obj[i], i, obj); };
+    }
+    // If we're dealing with an array or array-like object...
+    if (l === l >>> 0) {
+      while (++i < l) {
+        if (i in obj && iterator(obj[i], i, obj) == breaker) return;
+      }
+    // Otherwise, delegate to `forProps` over an object's keys and values.
     } else {
-      var fn = iterator;
-      var i = -1;
-      var l = obj.length;
-
-      // We optimize for common use by only binding a context when it's passed.
-      if (context) {
-        iterator = function() { return fn.call(context, obj[i], i, obj); };
-      }
-      // If we're dealing with an array or array-like object...
-      if (l === l >>> 0) {
-        while (++i < l) {
-          if (i in obj && iterator(obj[i], i, obj) == breaker) return;
-        }
-      } else {
-        forProps(obj, iterator, true);
-      }
+      forProps(obj, iterator, true);
     }
   };
 
@@ -107,12 +112,6 @@
       iterator(obj[index]);
     }
   };
-
-  // List of possible shadowed properties on Object.prototype.
-  var shadowed = [
-    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
-    'toLocaleString', 'toString', 'valueOf'
-  ];
 
   // IE < 9 makes properties, shadowing non-enumerable ones, non-enumerable too.
   var forShadowed = !{valueOf:0}.propertyIsEnumerable('valueOf') &&
@@ -136,13 +135,12 @@
   var forProps = function(obj, iterator, ownOnly) {
     var done = !obj;
     var skipProto = typeof obj == 'function';
-
     for (var key in obj) {
       // Firefox < 3.6, Opera > 9.50 - Opera < 12, and Safari < 5.1
       // (if the prototype or a property on the prototype has been set)
-      // incorrectly set a function's `prototype` property [[Enumerable]] value
+      // incorrectly set a function's `prototype` property `[[Enumerable]]` value
       // to true. Because of this we standardize on skipping the the `prototype`
-      // property of functions regardless of their [[Enumerable]] value.
+      // property of functions regardless of their `[[Enumerable]]` value.
       if (done =
           !(skipProto && key == 'prototype') &&
           (!ownOnly || ownOnly && hasOwnProperty.call(obj, key)) &&

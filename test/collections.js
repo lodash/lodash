@@ -1,4 +1,4 @@
-$(document).ready(function($, undefined) {
+$(document).ready(function() {
 
   module("Collections");
 
@@ -8,7 +8,7 @@ $(document).ready(function($, undefined) {
     });
 
     var answers = [];
-    _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier); }, {multiplier : 5});
+    _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier);}, {multiplier : 5});
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
 
     answers = [];
@@ -16,11 +16,11 @@ $(document).ready(function($, undefined) {
     equals(answers.join(', '), '1, 2, 3', 'aliased as "forEach"');
 
     answers = [];
-    var obj = {one: 1, two: 2, three: 3, toString: 1};
+    var obj = {one : 1, two : 2, three : 3};
     obj.constructor.prototype.four = 4;
     _.each(obj, function(value, key){ answers.push(key); });
+    equals(answers.join(", "), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
     delete obj.constructor.prototype.four;
-    equals(answers.sort().join(', '), 'one, three, toString, two', 'iterating over objects works, and ignores the object prototype.');
 
     answer = null;
     _.each([1, 2, 3], function(num, index, arr){ if (_.include(arr, num)) answer = true; });
@@ -75,14 +75,15 @@ $(document).ready(function($, undefined) {
       ifnull = ex;
     }
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
-    ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
-    equals(_.reduce([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
-    raises(function() { _.reduce([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');
 
-    var sparseArray = [];
-    sparseArray[0] = 20;
-    sparseArray[2] = -5;
-    equals(_.reduce(sparseArray, function(a, b){ return a - b }), 25, 'initially-sparse arrays with no memo');
+    ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
+
+    // Sparse arrays:
+    var sparseArray  = [];
+    sparseArray[100] = 10;
+    sparseArray[200] = 20;
+
+    equals(_.reduce(sparseArray, function(a, b){ return a + b }), 30, 'initially-sparse arrays with no memo');
   });
 
   test('collections: reduceRight', function() {
@@ -102,14 +103,8 @@ $(document).ready(function($, undefined) {
       ifnull = ex;
     }
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
-    ok(_.reduceRight(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
-    equals(_.reduceRight([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
-    raises(function() { _.reduceRight([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');
 
-    var sparseArray = [];
-    sparseArray[0] = 20;
-    sparseArray[2] = -5;
-    equals(_.reduceRight(sparseArray, function(a, b){ return a - b }), -25, 'initially-sparse arrays with no memo');
+    ok(_.reduceRight(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
   });
 
   test('collections: detect', function() {
@@ -238,7 +233,7 @@ $(document).ready(function($, undefined) {
     equals(_.toArray(a).join(', '), '1, 2, 3', 'cloned array contains same elements');
 
     var numbers = _.toArray({one : 1, two : 2, three : 3});
-    equals(numbers.sort().join(', '), '1, 2, 3', 'object flattened into array');
+    equals(numbers.join(', '), '1, 2, 3', 'object flattened into array');
   });
 
   test('collections: size', function() {

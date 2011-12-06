@@ -1,43 +1,22 @@
-$(document).ready(function($, undefined) {
+$(document).ready(function() {
 
   module("Objects");
 
   test("objects: keys", function() {
-    equals(
-      _.keys({one: 1, two: 2}).sort().join(', '),
-      'one, two',
-      'can extract the keys from an object'
-    );
-
-    equals(
-      _.keys({
-        constructor: 'a',
-        hasOwnProperty: 'b',
-        isPrototypeOf: 'c',
-        propertyIsEnumerable: 'd',
-        toLocaleString: 'e',
-        toString: 'f',
-        valueOf: 'g'
-      }).sort().join(', '),
-      'constructor, hasOwnProperty, isPrototypeOf, propertyIsEnumerable, toLocaleString, toString, valueOf',
-      'keys of shadowing properties'
-    );
-
-    var fn = function(){};
-    fn.x = fn.y = fn.z = fn.prototype.a = 1;
-    equals(_.keys(fn).sort().join(', '), 'x, y, z', 'keys of functions works, and ignores the prototype property');
-
+    var exception = /object/;
+    equals(_.keys({one : 1, two : 2}).join(', '), 'one, two', 'can extract the keys from an object');
+    // the test above is not safe because it relies on for-in enumeration order
     var a = []; a[1] = 0;
     equals(_.keys(a).join(', '), '1', 'is not fooled by sparse arrays; see issue #95');
-    raises(function() { _.keys(null); }, TypeError, 'throws an error for `null` values');
-    raises(function() { _.keys(void 0); }, TypeError, 'throws an error for `undefined` values');
-    raises(function() { _.keys(1); }, TypeError, 'throws an error for number primitives');
-    raises(function() { _.keys('a'); }, TypeError, 'throws an error for string primitives');
-    raises(function() { _.keys(true); }, TypeError, 'throws an error for boolean primitives');
+    raises(function() { _.keys(null); }, exception, 'throws an error for `null` values');
+    raises(function() { _.keys(void 0); }, exception, 'throws an error for `undefined` values');
+    raises(function() { _.keys(1); }, exception, 'throws an error for number primitives');
+    raises(function() { _.keys('a'); }, exception, 'throws an error for string primitives');
+    raises(function() { _.keys(true); }, exception, 'throws an error for boolean primitives');
   });
 
   test("objects: values", function() {
-    equals(_.values({one : 1, two : 2}).sort().join(', '), '1, 2', 'can extract the values from an object');
+    equals(_.values({one : 1, two : 2}).join(', '), '1, 2', 'can extract the values from an object');
   });
 
   test("objects: functions", function() {
@@ -51,38 +30,20 @@ $(document).ready(function($, undefined) {
 
   test("objects: extend", function() {
     var result;
-    var expected = {
-      constructor: 'a',
-      hasOwnProperty: 'b',
-      isPrototypeOf: 'c',
-      propertyIsEnumerable: 'd',
-      toLocaleString: 'e',
-      toString: 'f',
-      valueOf: 'g'
-    };
-
     equals(_.extend({}, {a:'b'}).a, 'b', 'can extend an object with the attributes of another');
     equals(_.extend({a:'x'}, {a:'b'}).a, 'b', 'properties in source override destination');
     equals(_.extend({x:'x'}, {a:'b'}).x, 'x', 'properties not in source dont get overriden');
-
-    result = _.extend({}, expected);
-    ok(_.isEqual(result, expected), 'extend with shadow properties');
-
     result = _.extend({x:'x'}, {a:'a'}, {b:'b'});
     ok(_.isEqual(result, {x:'x', a:'a', b:'b'}), 'can extend from multiple source objects');
-
     result = _.extend({x:'x'}, {a:'a', x:2}, {a:'b'});
     ok(_.isEqual(result, {x:2, a:'b'}), 'extending from multiple source objects last property trumps');
-
     result = _.extend({}, {a: void 0, b: null});
     equals(_.keys(result).join(''), 'b', 'extend does not copy undefined values');
   });
 
   test("objects: defaults", function() {
     var result;
-    var Options = function() { this.empty = ''; this.string = 'string'; this.zero = 0; };
-    _.extend(Options.prototype, {nan: NaN, one:1});
-    var options = new Options;
+    var options = {zero: 0, one: 1, empty: "", nan: NaN, string: "string"};
 
     _.defaults(options, {zero: 1, one: 10, twenty: 20});
     equals(options.zero, 0, 'value exists');
@@ -96,14 +57,9 @@ $(document).ready(function($, undefined) {
   });
 
   test("objects: clone", function() {
-    var toString = function() { return this.name; };
-    var valueOf = function() { return this.name; };
-    var moe = {name : 'moe', lucky : [13, 27, 34], toString: toString, valueOf: valueOf};
-
+    var moe = {name : 'moe', lucky : [13, 27, 34]};
     var clone = _.clone(moe);
     equals(clone.name, 'moe', 'the clone as the attributes of the original');
-    equals(clone.toString, toString, 'cloned own toString method');
-    equals(clone.valueOf, valueOf, 'cloned own valueOf method');
 
     clone.name = 'curly';
     ok(clone.name == 'curly' && moe.name == 'moe', 'clones can change shallow attributes without affecting the original');
@@ -125,16 +81,6 @@ $(document).ready(function($, undefined) {
       this.value = 1;
     }
     Second.prototype.value = 2;
-
-    var obj = {
-      constructor: 'a',
-      hasOwnProperty: 'b',
-      isPrototypeOf: 'c',
-      propertyIsEnumerable: 'd',
-      toLocaleString: 'e',
-      toString: 'f',
-      valueOf: 'g'
-    };
 
     // Basic equality and identity comparisons.
     ok(_.isEqual(null, null), "`null` is equal to `null`");
@@ -261,10 +207,6 @@ $(document).ready(function($, undefined) {
     ok(!_.isEqual({a: 1, b: 2}, {a: 1}), "Objects of different sizes are not equal");
     ok(!_.isEqual({a: 1}, {a: 1, b: 2}), "Commutative equality is implemented for objects");
     ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), "Objects with identical keys and different values are not equivalent");
-
-    // Objects with properties that shadow non-enumerable ones.
-    ok(!_.isEqual({}, {toString: 1}), "Object with custom toString is not equal to {}");
-    ok(_.isEqual({toString: 1, valueOf: 2}, {toString: 1, valueOf: 2}), "Objects with equivalent shadow properties");
 
     // `A` contains nested objects and arrays.
     a = {
@@ -416,7 +358,7 @@ $(document).ready(function($, undefined) {
   test("objects: isEmpty", function() {
     ok(!_([1]).isEmpty(), '[1] is not empty');
     ok(_.isEmpty([]), '[] is empty');
-    ok(!_.isEmpty({valueOf: 1}), '{valueOf: 1} is not empty');
+    ok(!_.isEmpty({one : 1}), '{one : 1} is not empty');
     ok(_.isEmpty({}), '{} is empty');
     ok(_.isEmpty(new RegExp('')), 'objects with prototype properties are empty');
     ok(_.isEmpty(null), 'null is empty');
@@ -446,7 +388,7 @@ $(document).ready(function($, undefined) {
       parent.iNaN       = NaN;\
       parent.iNull      = null;\
       parent.iBoolean   = new Boolean(false);\
-      parent.iUndefined = void 0;\
+      parent.iUndefined = undefined;\
     </script>"
   );
   iDoc.close();

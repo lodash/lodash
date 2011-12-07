@@ -189,7 +189,7 @@
   // Delegates to **ECMAScript 5**'s native `some` if available.
   // Aliased as `any`.
   var any = _.some = _.any = function(obj, iterator, context) {
-    iterator = iterator || _.identity;
+    iterator || (iterator = _.identity);
     var result = false;
     if (obj == null) return result;
     if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
@@ -588,7 +588,7 @@
   // conditionally execute the original function.
   _.wrap = function(func, wrapper) {
     return function() {
-      var args = [func].concat(slice.call(arguments));
+      var args = concat.apply([func], arguments);
       return wrapper.apply(this, args);
     };
   };
@@ -596,9 +596,9 @@
   // Returns a function that is the composition of a list of functions, each
   // consuming the return value of the function that follows.
   _.compose = function() {
-    var funcs = slice.call(arguments);
+    var funcs = arguments;
     return function() {
-      var args = slice.call(arguments);
+      var args = arguments;
       for (var i = funcs.length - 1; i >= 0; i--) {
         args = [funcs[i].apply(this, args)];
       }
@@ -686,8 +686,8 @@
     if (a._chain) a = a._wrapped;
     if (b._chain) b = b._wrapped;
     // Invoke a custom `isEqual` method if one is provided.
-    if (_.isFunction(a.isEqual)) return a.isEqual(b);
-    if (_.isFunction(b.isEqual)) return b.isEqual(a);
+    if (a.isEqual && _.isFunction(a.isEqual)) return a.isEqual(b);
+    if (b.isEqual && _.isFunction(b.isEqual)) return b.isEqual(a);
     // Compare `[[Class]]` names.
     var className = toString.call(a);
     if (className != toString.call(b)) return false;
@@ -696,13 +696,11 @@
       case '[object String]':
         // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
         // equivalent to `new String("5")`.
-        return String(a) == String(b);
+        return a == String(b);
       case '[object Number]':
-        a = +a;
-        b = +b;
         // `NaN`s are equivalent, but non-reflexive. An `egal` comparison is performed for
         // other numeric values.
-        return a != a ? b != b : (a == 0 ? 1 / a == 1 / b : a == b);
+        return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
       case '[object Date]':
       case '[object Boolean]':
         // Coerce dates and booleans to numeric primitive values. Dates are compared by their
@@ -742,7 +740,7 @@
       }
     } else {
       // Objects with different constructors are not equivalent.
-      if ("constructor" in a != "constructor" in b || a.constructor != b.constructor) return false;
+      if ('constructor' in a != 'constructor' in b || a.constructor != b.constructor) return false;
       // Deep compare objects.
       for (var key in a) {
         if (hasOwnProperty.call(a, key)) {
@@ -795,11 +793,10 @@
   };
 
   // Is a given variable an arguments object?
-  if (toString.call(arguments) == '[object Arguments]') {
-    _.isArguments = function(obj) {
-      return toString.call(obj) == '[object Arguments]';
-    };
-  } else {
+  _.isArguments = function(obj) {
+    return toString.call(obj) == '[object Arguments]';
+  };
+  if (!_.isArguments(arguments)) {
     _.isArguments = function(obj) {
       return !!(obj && hasOwnProperty.call(obj, 'callee'));
     };

@@ -1,5 +1,5 @@
-//     Underscore.js 1.2.2
-//     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
+//     Underscore.js 1.2.3
+//     (c) 2009-2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
 //     Oliver Steele's Functional, and John Resig's Micro-Templating.
@@ -68,7 +68,7 @@
   }
 
   // Current version.
-  _.VERSION = '1.2.2';
+  _.VERSION = '1.2.3';
 
   // Collection Functions
   // --------------------
@@ -410,14 +410,6 @@
   _.difference = function(array) {
     var rest = _.flatten(slice.call(arguments, 1));
     return _.filter(array, function(value){ return !_.include(rest, value); });
-  };
-
-  // Take the symmetric difference between a list of arrays. Only the elements
-  // present in one of the input arrays will remain.
-  _.symDifference = function() {
-    return _.reduce(arguments, function(memo, array) {
-      return _.union(_.difference(memo, array), _.difference(array, memo));
-    });
   };
 
   // Zip together multiple lists into a single array -- elements that share

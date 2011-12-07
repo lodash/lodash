@@ -126,11 +126,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.2.2)</a></td>
+        <td><a href="underscore.js">Development Version (1.2.3)</a></td>
         <td><i>34kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.2.2)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.2.3)</a></td>
         <td><i>&lt; 4kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -159,7 +159,7 @@
       <br />
       <span class="methods"><a href="#first">first</a>, <a href="#initial">initial</a>, <a href="#last">last</a>, <a href="#rest">rest</a>,
       <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, 
-      <a href="#union">union</a>, <a href="#intersection">intersection</a>, <a href="#difference">difference</a>, 
+      <a href="#union">union</a>, <a href="#intersection">intersection</a>, <a href="#difference">difference</a>,
       <a href="#uniq">uniq</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
       <a href="#lastIndexOf">lastIndexOf</a>, <a href="#range">range</a></span>
     </p>
@@ -620,10 +620,10 @@ _.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 </pre>
 
       <p id="difference">
-        <b class="header">difference</b><code>_.difference(array, other)</code>
+        <b class="header">difference</b><code>_.difference(array, *others)</code>
         <br />
         Similar to <b>without</b>, but returns the values from <b>array</b> that
-        are not present in <b>other</b>.
+        are not present in the <b>other</b> arrays.
       </p>
       <pre>
 _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
@@ -1337,6 +1337,24 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.2.3</b> &mdash; <small><i>Dec. 7, 2011</i></small><br />
+        <ul>
+          <li>
+            Dynamic scope is now preserved for compiled <tt>_.template</tt> functions,
+            so you can use the value of <tt>this</tt> if you like.
+          </li>
+          <li>
+            Sparse array support of <tt>_.indexOf</tt>, <tt>_.lastIndexOf</tt>.
+          </li>
+          <li>
+            Both <tt>_.reduce</tt> and <tt>_.reduceRight</tt> can now be passed an
+            explicitly <tt>undefined</tt> value. (There's no reason why you'd 
+            want to do this.)
+          </li>
+        </ul>
+      </p>
       
       <p>
         <b class="header">1.2.2</b> &mdash; <small><i>Nov. 14, 2011</i></small><br />

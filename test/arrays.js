@@ -115,11 +115,6 @@ $(document).ready(function() {
     equals(result.join(' '), '3 4', 'takes the difference of three arrays');
   });
 
-  test("arrays: symDifference", function() {
-    var result = _.symDifference([1, 2, 3], [2, 22, 222], [3, 33, 333], [222, 333, 444], [5]);
-    equals(result.join(' '), '1 22 33 444 5', 'takes the symmetric difference');
-  });
-
   test('arrays: zip', function() {
     var names = ['moe', 'larry', 'curly'], ages = [30, 40, 50], leaders = [true];
     var stooges = _.zip(names, ages, leaders);

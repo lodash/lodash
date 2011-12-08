@@ -63,6 +63,10 @@ $(document).ready(function() {
     result = fancyTemplate({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
     equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
 
+    var escapedCharsInJavascriptTemplate = _.template("<ul><% _.each(numbers.split('\\n'), function(item) { %><li><%= item %></li><% }) %></ul>");
+    result = escapedCharsInJavascriptTemplate({numbers: "one\ntwo\nthree\nfour"});
+    equals(result, "<ul><li>one</li><li>two</li><li>three</li><li>four</li></ul>", 'Can use escaped characters (e.g. \\n) in Javascript')
+
     var namespaceCollisionTemplate = _.template("<%= pageCount %> <%= thumbnails[pageCount] %> <% _.each(thumbnails, function(p) { %><div class=\"thumbnail\" rel=\"<%= p %>\"></div><% }); %>");
     result = namespaceCollisionTemplate({
       pageCount: 3,

@@ -955,8 +955,11 @@
   each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
     var method = ArrayProto[name];
     wrapper.prototype[name] = function() {
-      method.apply(this._wrapped, arguments);
-      return result(this._wrapped, this._chain);
+      var wrapped = this._wrapped;
+      method.apply(wrapped, arguments);
+      var length = wrapped.length;
+      if ((name == 'shift' || name == 'splice') && length === 0) delete wrapped[0];
+      return result(wrapped, this._chain);
     };
   });
 

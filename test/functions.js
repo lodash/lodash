@@ -112,10 +112,9 @@ $(document).ready(function() {
     throttledUpdate(1); throttledUpdate(2); throttledUpdate(3);
     setTimeout(function(){ throttledUpdate(4); }, 120);
     setTimeout(function(){ throttledUpdate(5); }, 140);
-    setTimeout(function(){ throttledUpdate(6); }, 260);
-    setTimeout(function(){ throttledUpdate(7); }, 270);
-    _.delay(function(){ ok(value == 1, "updated to latest value"); }, 40);
-    _.delay(function(){ ok(value == 7, "updated to latest value"); start(); }, 400);
+    setTimeout(function(){ throttledUpdate(6); }, 250);
+    _.delay(function(){ equals(value, 1, "updated to latest value"); }, 40);
+    _.delay(function(){ equals(value, 6, "updated to latest value"); start(); }, 400);
   });
 
   asyncTest("functions: throttle once", 1, function() {

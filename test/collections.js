@@ -49,6 +49,9 @@ $(document).ready(function() {
 
     var ifnull = _.map(null, function(){});
     ok(_.isArray(ifnull) && ifnull.length === 0, 'handles a null properly');
+
+    var length = _.map(Array(2), function(v) { return v; }).length;
+    equals(length, 2, "can preserve a sparse array's length");
   });
 
   test('collections: reduce', function() {
@@ -83,7 +86,7 @@ $(document).ready(function() {
     var sparseArray = [];
     sparseArray[0] = 20;
     sparseArray[2] = -5;
-    equals(_.reduce(sparseArray, function(a, b){ return a - b }), 25, 'initially-sparse arrays with no memo');
+    equals(_.reduce(sparseArray, function(a, b){ return a - b; }), 25, 'initially-sparse arrays with no memo');
   });
 
   test('collections: reduceRight', function() {
@@ -112,7 +115,7 @@ $(document).ready(function() {
     var sparseArray = [];
     sparseArray[0] = 20;
     sparseArray[2] = -5;
-    equals(_.reduceRight(sparseArray, function(a, b){ return a - b }), -25, 'initially-sparse arrays with no memo');
+    equals(_.reduceRight(sparseArray, function(a, b){ return a - b; }), -25, 'initially-sparse arrays with no memo');
   });
 
   test('collections: detect', function() {

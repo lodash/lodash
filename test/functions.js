@@ -163,6 +163,11 @@ $(document).ready(function() {
     var obj   = {name : "Moe"};
     obj.hi    = _.wrap(inner, function(fn){ return fn() + this.name; });
     equals(obj.hi(), "Hello Moe");
+
+    var noop    = function(){};
+    var wrapped = _.wrap(noop, function(fn){ return Array.prototype.slice.call(arguments, 0); });
+    var ret     = wrapped(['whats', 'your'], 'vector', 'victor');
+    same(ret, [noop, ['whats', 'your'], 'vector', 'victor']);
   });
 
   test("functions: compose", function() {

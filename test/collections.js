@@ -180,6 +180,19 @@ $(document).ready(function() {
     equals(result[1].join(', '), '1, 2, 3', 'second array sorted');
   });
 
+  // Relevant when using ClojureScript
+  test('collections: invoke when strings have a call method', function() {
+    String.prototype.call = function(){return 42;}
+    var list = [[5, 1, 7], [3, 2, 1]];
+    var s = "foo";
+    equals(s.call(), 42, "call function exists");
+    var result = _.invoke(list, 'sort');
+    equals(result[0].join(', '), '1, 5, 7', 'first array sorted');
+    equals(result[1].join(', '), '1, 2, 3', 'second array sorted');
+    delete String.prototype.call;
+    equals(s.call, undefined, "call function removed");
+  });
+
   test('collections: pluck', function() {
     var people = [{name : 'moe', age : 30}, {name : 'curly', age : 50}];
     equals(_.pluck(people, 'name').join(', '), 'moe, curly', 'pulls names out of objects');

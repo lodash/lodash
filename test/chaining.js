@@ -32,6 +32,18 @@ $(document).ready(function() {
     equals(numbers.join(', '), "10, 6, 2", "filtered and reversed the numbers");
   });
 
+  test("chaining: select/reject/sortBy in functional style", function() {
+    var numbers = [1,2,3,4,5,6,7,8,9,10];
+    numbers = _.chain(numbers).select(function(n) {
+      return n % 2 == 0;
+    }).reject(function(n) {
+      return n % 4 == 0;
+    }).sortBy(function(n) {
+      return -n;
+    }).value();
+    equals(numbers.join(', '), "10, 6, 2", "filtered and reversed the numbers");
+  });
+
   test("chaining: reverse/concat/unshift/pop/map", function() {
     var numbers = [1,2,3,4,5];
     numbers = _(numbers).chain()

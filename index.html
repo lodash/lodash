@@ -794,6 +794,13 @@ _.defer(function(){ alert('deferred'); });
         will only actually call the wrapped function at most once per every <b>wait</b>
         milliseconds. Useful for rate-limiting events that occur faster than you
         can keep up with.
+        <br />
+        <br />
+        This method returns a function; it does
+        not itself execute its first argument. You should call <code>_.throttle</code>
+        only <em>once</em> for each function you wish to throttle (not repeatedly!).
+        It is the function returned from that once call to <code>_.throttle</code>
+        that you should invoke on each occurrance of the event you wish to throttle.
       </p>
       <pre>
 var throttled = _.throttle(updatePosition, 100);
@@ -808,7 +815,18 @@ $(window).scroll(throttled);
         was invoked. Useful for implementing behavior that should only happen 
         <i>after</i> the input has stopped arriving. For example: rendering a 
         preview of a Markdown comment, recalculating a layout after the window 
-        has stopped being resized...
+        has stopped being resized, etc.
+        <br />
+        <br />
+        Please note that the first invocation of a debounced function will *not*
+        immediately execute it, but rather, the first execution will be at least <var>wait</var>
+        milliseconds later.
+        <br />
+        <br />
+        As with <code>throttle</code>, this method returns a function; it does
+        not itself execute its first argument. You should call <code>_.debounce</code>
+        only <em>once</em> for each function you wish to debounce, and you should
+        call the returned function every time the event you wish to debounce occurs.
       </p>
       <pre>
 var lazyLayout = _.debounce(calculateLayout, 300);

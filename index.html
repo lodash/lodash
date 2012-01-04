@@ -1235,10 +1235,11 @@ compiled({epithet: "stooge"});
       <p>
         If ERB-style delimiters aren't your cup of tea, you can change Underscore's
         template settings to use different symbols to set off interpolated code.
-        Define an <b>interpolate</b> regex, and an (optional) <b>evaluate</b> regex
-        to match expressions that should be inserted and evaluated, respectively.
-        If no <b>evaluate</b> regex is provided, your templates will only be 
-        capable of interpolating values. 
+        Define an <b>interpolate</b> regex to match expressions that should be 
+        interpolated verbatim, an <b>escape</b> regex to match expressions that should 
+        be inserted after being HTML escaped, and an <b>evaluate</b> regex to match
+        expressions that should be evaluated without insertion into the resulting
+        string. You may define or omit any combination of the three.
         For example, to perform
         <a href="http://github.com/janl/mustache.js#readme">Mustache.js</a>
         style templating:

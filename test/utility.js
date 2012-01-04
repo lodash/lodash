@@ -144,6 +144,9 @@ $(document).ready(function() {
 
     var mustache = _.template("Hello {{planet}}!");
     equals(mustache({planet : "World"}), "Hello World!", "can mimic mustache.js");
+
+    var templateWithNull = _.template("a null undefined {{planet}}");
+    equals(templateWithNull({planet : "world"}), "a null undefined world", "can handle missing escape and evaluate settings");
   });
 
 });

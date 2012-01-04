@@ -6,37 +6,81 @@
   <title>Underscore.js</title>
   <style>
     body {
-      font-size: 16px;
-      line-height: 24px;
-      background: #f0f0e5;
-      color: #252519;
-      font-family: "Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif;
+      font-size: 14px;
+      line-height: 22px;
+      background: #f4f4f4 url(docs/images/background.png);
+      color: #000;
+      font-family: Helvetica Neue, Helvetica, Arial;      
     }
+    .interface {
+      font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif !important;
+    }
+    div#sidebar {
+      background: #fff;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 200px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 15px 0 30px 30px;
+      border-right: 1px solid #bbb;
+      box-shadow: 0 0 20px #ccc; -webkit-box-shadow: 0 0 20px #ccc; -moz-box-shadow: 0 0 20px #ccc;
+    }
+    a.toc_title, a.toc_title:visited {
+      display: block;
+      color: black;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+      a.toc_title:hover {
+        text-decoration: underline;
+      }
+      #sidebar .version {
+        font-size: 10px;
+        font-weight: normal;
+      }
+    ul.toc_section {
+      font-size: 11px;
+      line-height: 14px;
+      margin: 5px 0 0 0;
+      padding-left: 0px;
+      list-style-type: none;
+      font-family: Lucida Grande;
+    }
+      .toc_section li {
+        cursor: pointer;
+        margin: 0 0 3px 0;
+      }
+        .toc_section li a {
+          text-decoration: none;
+          color: black;
+        }
+          .toc_section li a:hover {
+            text-decoration: underline;
+          }  
     div.container {
-      width: 720px;
-      margin: 50px 0 50px 50px;
+      width: 550px;
+      margin: 40px 0 50px 260px;
     }
     p {
+      margin: 20px 0;
       width: 550px;
     }
-      #documentation p {
-        margin-bottom: 4px;
-      }
     a, a:visited {
-      padding: 0 2px;
-      text-decoration: none;
-      background: #dadaba;
-      color: #252519;
+      color: #444;
     }
     a:active, a:hover {
       color: #000;
-      background: #f0c095;
     }
     h1, h2, h3, h4, h5, h6 {
-      margin-top: 40px;
+      padding-top: 20px;
     }
+      h2 {
+        font-size: 20px;
+      }
     b.header {
-      font-size: 18px;
+      font-size: 16px;
+      line-height: 30px;
     }
     span.alias {
       font-size: 14px;
@@ -57,28 +101,168 @@
         width: 500px;
         margin-bottom: 10px;
       }
-    code, pre, tt {
-      font-family: Monaco, Consolas, "Lucida Console", monospace;
-      font-size: 12px;
-      line-height: 18px;
-      color: #555529;
-    }
-      code {
-        margin-left: 20px;
-      }
-      pre {
+      code, pre, tt {
+        font-family: Monaco, Consolas, "Lucida Console", monospace;
         font-size: 12px;
-        padding: 2px 0 2px 12px;
-        border-left: 6px solid #aaaa99;
-        margin: 0px 0 30px;
+        line-height: 18px;
+        font-style: normal;
       }
+        tt {
+          padding: 0px 3px;
+          background: #fff;
+          border: 1px solid #ddd;
+          zoom: 1;
+        }
+        code {
+          margin-left: 20px;
+        }
+        pre {
+          font-size: 12px;
+          padding: 2px 0 2px 15px;
+          border-left: 5px solid #bbb;
+          margin: 0px 0 30px;
+        }
   </style>
 </head>
 <body>
+  
+  <div id="sidebar" class="interface">
+
+    <a class="toc_title" href="#">
+      Underscore.js <span class="version">(1.2.4)</span>
+    </a>
+    
+    <a class="toc_title" href="#">
+      Introduction
+    </a>
+
+    <a class="toc_title" href="#collections">
+      Collections
+    </a>
+    <ul class="toc_section">
+      <li>- <a href="#each">each</a></li>
+      <li>- <a href="#map">map</a></li>
+      <li>- <a href="#reduce">reduce</a></li>
+      <li>- <a href="#reduceRight">reduceRight</a></li>
+      <li>- <a href="#find">find</a></li>
+      <li>- <a href="#filter">filter</a></li>
+      <li>- <a href="#reject">reject</a></li>
+      <li>- <a href="#all">all</a></li>
+      <li>- <a href="#any">any</a></li>
+      <li>- <a href="#include">include</a></li>
+      <li>- <a href="#invoke">invoke</a></li>
+      <li>- <a href="#pluck">pluck</a></li>
+      <li>- <a href="#max">max</a></li>
+      <li>- <a href="#min">min</a></li>
+      <li>- <a href="#sortBy">sortBy</a></li>
+      <li>- <a href="#groupBy">groupBy</a></li>
+      <li>- <a href="#sortedIndex">sortedIndex</a></li>
+      <li>- <a href="#shuffle">shuffle</a></li>
+      <li>- <a href="#toArray">toArray</a></li>
+      <li>- <a href="#size">size</a></li>
+    </ul>
+
+    <a class="toc_title" href="#arrays">
+      Arrays
+    </a>
+    <ul class="toc_section">
+      <li>- <a href="#first">first</a></li>
+      <li>- <a href="#initial">initial</a></li>
+      <li>- <a href="#last">last</a></li>
+      <li>- <a href="#rest">rest</a></li>
+      <li>- <a href="#compact">compact</a></li>
+      <li>- <a href="#flatten">flatten</a></li>
+      <li>- <a href="#without">without</a></li>
+      <li>- <a href="#union">union</a></li>
+      <li>- <a href="#intersection">intersection</a></li>
+      <li>- <a href="#difference">difference</a></li>
+      <li>- <a href="#uniq">uniq</a></li>
+      <li>- <a href="#zip">zip</a></li>
+      <li>- <a href="#indexOf">indexOf</a></li>
+      <li>- <a href="#lastIndexOf">lastIndexOf</a></li>
+      <li>- <a href="#range">range</a></li>
+    </ul>
+
+    <a class="toc_title" href="#functions">
+      Functions
+    </a>
+    <ul class="toc_section">
+      <li>- <a href="#bind">bind</a></li>
+      <li>- <a href="#bindAll">bindAll</a></li>
+      <li>- <a href="#memoize">memoize</a></li>
+      <li>- <a href="#delay">delay</a></li>
+      <li>- <a href="#defer">defer</a></li>
+      <li>- <a href="#throttle">throttle</a></li>
+      <li>- <a href="#debounce">debounce</a></li>
+      <li>- <a href="#once">once</a></li>
+      <li>- <a href="#after">after</a></li>
+      <li>- <a href="#wrap">wrap</a></li>
+      <li>- <a href="#compose">compose</a></li>
+    </ul>
+
+    <a class="toc_title" href="#objects">
+      Objects
+    </a>
+    <ul class="toc_section">
+      <li>- <a href="#keys">keys</a></li>
+      <li>- <a href="#values">values</a></li>
+      <li>- <a href="#functions">functions</a></li>
+      <li>- <a href="#extend">extend</a></li>
+      <li>- <a href="#defaults">defaults</a></li>
+      <li>- <a href="#clone">clone</a></li>
+      <li>- <a href="#tap">tap</a></li>
+      <li>- <a href="#isEqual">isEqual</a></li>
+      <li>- <a href="#isEmpty">isEmpty</a></li>
+      <li>- <a href="#isElement">isElement</a></li>
+      <li>- <a href="#isArray">isArray</a></li>
+      <li>- <a href="#isArguments">isArguments</a></li>
+      <li>- <a href="#isFunction">isFunction</a></li>
+      <li>- <a href="#isString">isString</a></li>
+      <li>- <a href="#isNumber">isNumber</a></li>
+      <li>- <a href="#isBoolean">isBoolean</a></li>
+      <li>- <a href="#isDate">isDate</a></li>
+      <li>- <a href="#isRegExp">isRegExp</a></li>
+      <li>- <a href="#isNaN">isNaN</a></li>
+      <li>- <a href="#isNull">isNull</a></li>
+      <li>- <a href="#isUndefined">isUndefined</a></li>
+    </ul>
+
+    <a class="toc_title" href="#utility">
+      Utility
+    </a>    
+    <ul class="toc_section">
+      <li>- <a href="#noConflict">noConflict</a></li>
+      <li>- <a href="#identity">identity</a></li>
+      <li>- <a href="#times">times</a></li>
+      <li>- <a href="#mixin">mixin</a></li>
+      <li>- <a href="#uniqueId">uniqueId</a></li>
+      <li>- <a href="#escape">escape</a></li>
+      <li>- <a href="#template">template</a></li>
+    </ul>
+
+    <a class="toc_title" href="#chaining">
+      Chaining
+    </a>
+    <ul class="toc_section">
+      <li>- <a href="#chain">chain</a></li>
+      <li>- <a href="#value">value</a></li>
+    </ul>
+    
+    <a class="toc_title" href="#links">
+      Links
+    </a>
+    
+    <a class="toc_title" href="#changelog">
+      Change Log
+    </a>
+    
+  </div>
 
   <div class="container">
 
-    <h1>Underscore.js</h1>
+    <p id="introduction">
+      <img style="width: 396px; height: 69px;" src="docs/images/underscore.png" alt="Underscore.js" />
+    </p>
 
     <p>
       <a href="http://github.com/documentcloud/underscore/">Underscore</a> is a
@@ -135,122 +319,9 @@
       </tr>
     </table>
 
-    <h2>Table of Contents</h2>
-    
-    <a href="#styles">Object-Oriented and Functional Styles</a>
-
-    <p>
-      <b>Collections</b>
-      <br />
-      <span class="methods"><a href="#each">each</a>, <a href="#map">map</a>,
-      <a href="#reduce">reduce</a>, <a href="#reduceRight">reduceRight</a>,
-      <a href="#find">find</a>, <a href="#filter">filter</a>,
-      <a href="#reject">reject</a>, <a href="#all">all</a>,
-      <a href="#any">any</a>, <a href="#include">include</a>,
-      <a href="#invoke">invoke</a>, <a href="#pluck">pluck</a>,
-      <a href="#max">max</a>, <a href="#min">min</a>,
-      <a href="#sortBy">sortBy</a>, <a href="#groupBy">groupBy</a>,
-      <a href="#sortedIndex">sortedIndex</a>, <a href="#shuffle">shuffle</a>,
-      <a href="#toArray">toArray</a>, <a href="#size">size</a></span>
-    </p>
-
-    <p>
-      <b>Arrays</b>
-      <br />
-      <span class="methods"><a href="#first">first</a>, <a href="#initial">initial</a>, <a href="#last">last</a>, <a href="#rest">rest</a>,
-      <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, 
-      <a href="#union">union</a>, <a href="#intersection">intersection</a>, <a href="#difference">difference</a>,
-      <a href="#uniq">uniq</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
-      <a href="#lastIndexOf">lastIndexOf</a>, <a href="#range">range</a></span>
-    </p>
-
-    <p>
-      <b>Functions</b>
-      <br />
-      <span class="methods"><a href="#bind">bind</a>, <a href="#bindAll">bindAll</a>, 
-      <a href="#memoize">memoize</a>, <a href="#delay">delay</a>, <a href="#defer">defer</a>, 
-      <a href="#throttle">throttle</a>, <a href="#debounce">debounce</a>, 
-      <a href="#once">once</a>, <a href="#after">after</a>, <a href="#wrap">wrap</a>, <a href="#compose">compose</a></span>
-    </p>
-
-    <p>
-      <b>Objects</b>
-      <br />
-      <span class="methods"><a href="#keys">keys</a>, <a href="#values">values</a>,
-      <a href="#functions">functions</a>, <a href="#extend">extend</a>, <a href="#defaults">defaults</a>, <a href="#clone">clone</a>, <a href="#tap">tap</a>,
-      <a href="#isEqual">isEqual</a>, <a href="#isEmpty">isEmpty</a>, <a href="#isElement">isElement</a>,
-      <a href="#isArray">isArray</a>, <a href="#isArguments">isArguments</a>, <a href="#isFunction">isFunction</a>, <a href="#isString">isString</a>,
-      <a href="#isNumber">isNumber</a>, <a href="#isBoolean">isBoolean</a>, <a href="#isDate">isDate</a>, <a href="#isRegExp">isRegExp</a>,
-      <a href="#isNaN">isNaN</a>, <a href="#isNull">isNull</a>,
-      <a href="#isUndefined">isUndefined</a>
-      </span>
-    </p>
-
-    <p>
-      <b>Utility</b>
-      <br />
-      <span class="methods"><a href="#noConflict">noConflict</a>,
-      <a href="#identity">identity</a>, <a href="#times">times</a>, 
-      <a href="#mixin">mixin</a>, <a href="#uniqueId">uniqueId</a>, 
-      <a href="#escape">escape</a>, <a href="#template">template</a></span>
-    </p>
-
-    <p>
-      <b>Chaining</b>
-      <br />
-      <span class="methods"><a href="#chain">chain</a>, <a href="#value">value</a>
-    </p>
-
     <div id="documentation">
-      
-      <h2 id="styles">Object-Oriented and Functional Styles</h2>
 
-      <p>
-        You can use Underscore in either an object-oriented or a functional style,
-        depending on your preference. The following two lines of code are
-        identical ways to double a list of numbers.
-      </p>
-
-    <pre>
-_.map([1, 2, 3], function(n){ return n * 2; });
-_([1, 2, 3]).map(function(n){ return n * 2; });</pre>
-
-      <p>
-        Using the object-oriented style allows you to chain together methods. Calling
-        <tt>chain</tt> on a wrapped object will cause all future method calls to
-        return wrapped objects as well. When you've finished the computation,
-        use <tt>value</tt> to retrieve the final value. Here's an example of chaining
-        together a <b>map/flatten/reduce</b>, in order to get the word count of
-        every word in a song.
-      </p>
-
-<pre>
-var lyrics = [
-  {line : 1, words : "I'm a lumberjack and I'm okay"},
-  {line : 2, words : "I sleep all night and I work all day"},
-  {line : 3, words : "He's a lumberjack and he's okay"},
-  {line : 4, words : "He sleeps all night and he works all day"}
-];
-
-_.chain(lyrics)
-  .map(function(line) { return line.words.split(' '); })
-  .flatten()
-  .reduce(function(counts, word) {
-    counts[word] = (counts[word] || 0) + 1;
-    return counts;
-}, {}).value();
-
-=&gt; {lumberjack : 2, all : 4, night : 2 ... }</pre>
-
-      <p>
-        In addition, the
-        <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/prototype">Array prototype's methods</a>
-        are proxied through the chained Underscore object, so you can slip a
-        <tt>reverse</tt> or a <tt>push</tt> into your chain, and continue to
-        modify the array.
-      </p>
-
-      <h2>Collection Functions (Arrays or Objects)</h2>
+      <h2 id="collections">Collection Functions (Arrays or Objects)</h2>
 
       <p id="each">
         <b class="header">each</b><code>_.each(list, iterator, [context])</code>
@@ -511,7 +582,7 @@ _.size({one : 1, two : 2, three : 3});
 =&gt; 3
 </pre>
 
-      <h2>Array Functions</h2>
+      <h2 id="arrays">Array Functions</h2>
 
       <p>
         <i>Note: All array functions will also work on the <b>arguments</b> object.</i>
@@ -707,7 +778,7 @@ _.range(0);
 =&gt; []
 </pre>
 
-      <h2>Function (uh, ahem) Functions</h2>
+      <h2 id="functions">Function (uh, ahem) Functions</h2>
 
       <p id="bind">
         <b class="header">bind</b><code>_.bind(function, object, [*arguments])</code>
@@ -881,7 +952,7 @@ welcome('moe');
 =&gt; 'hi: moe!'
 </pre>
 
-      <h2>Object Functions</h2>
+      <h2 id="objects">Object Functions</h2>
 
       <p id="keys">
         <b class="header">keys</b><code>_.keys(object)</code>
@@ -1126,7 +1197,7 @@ _.isUndefined(window.missingVariable);
 =&gt; true
 </pre>
 
-      <h2>Utility Functions</h2>
+      <h2 id="utility">Utility Functions</h2>
 
       <p id="noConflict">
         <b class="header">noConflict</b><code>_.noConflict()</code>
@@ -1254,14 +1325,59 @@ var template = _.template("Hello {{ name }}!");
 template({name : "Mustache"});
 =&gt; "Hello Mustache!"</pre>
 
-      <h2>Chaining</h2>
+
+      <h2 id="chaining">Chaining</h2>
+
+      <p>
+        You can use Underscore in either an object-oriented or a functional style,
+        depending on your preference. The following two lines of code are
+        identical ways to double a list of numbers.
+      </p>
+
+    <pre>
+_.map([1, 2, 3], function(n){ return n * 2; });
+_([1, 2, 3]).map(function(n){ return n * 2; });</pre>
+
+      <p>
+        Using the object-oriented style allows you to chain together methods. Calling
+        <tt>chain</tt> on a wrapped object will cause all future method calls to
+        return wrapped objects as well. When you've finished the computation,
+        use <tt>value</tt> to retrieve the final value. Here's an example of chaining
+        together a <b>map/flatten/reduce</b>, in order to get the word count of
+        every word in a song.
+      </p>
+
+<pre>
+var lyrics = [
+  {line : 1, words : "I'm a lumberjack and I'm okay"},
+  {line : 2, words : "I sleep all night and I work all day"},
+  {line : 3, words : "He's a lumberjack and he's okay"},
+  {line : 4, words : "He sleeps all night and he works all day"}
+];
+
+_.chain(lyrics)
+  .map(function(line) { return line.words.split(' '); })
+  .flatten()
+  .reduce(function(counts, word) {
+    counts[word] = (counts[word] || 0) + 1;
+    return counts;
+}, {}).value();
+
+=&gt; {lumberjack : 2, all : 4, night : 2 ... }</pre>
+
+      <p>
+        In addition, the
+        <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/prototype">Array prototype's methods</a>
+        are proxied through the chained Underscore object, so you can slip a
+        <tt>reverse</tt> or a <tt>push</tt> into your chain, and continue to
+        modify the array.
+      </p>
 
       <p id="chain">
         <b class="header">chain</b><code>_.chain(obj)</code>
         <br />
         Returns a wrapped object. Calling methods on this object will continue
-        to return wrapped objects until <tt>value</tt> is used. (
-        <a href="#styles">A more realistic example.</a>)
+        to return wrapped objects until <tt>value</tt> is used.
       </p>
       <pre>
 var stooges = [{name : 'curly', age : 25}, {name : 'moe', age : 21}, {name : 'larry', age : 23}];
@@ -1283,7 +1399,7 @@ _([1, 2, 3]).value();
 =&gt; [1, 2, 3]
 </pre>
 
-      <h2>Links &amp; Suggested Reading</h2>
+      <h2 id="links">Links &amp; Suggested Reading</h2>
 
       <p>
         <a href="http://mirven.github.com/underscore.lua/">Underscore.lua</a>,

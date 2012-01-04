@@ -126,11 +126,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.2.3)</a></td>
+        <td><a href="underscore.js">Development Version (1.2.4)</a></td>
         <td><i>34kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.2.3)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.2.4)</a></td>
         <td><i>&lt; 4kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -232,7 +232,7 @@ var lyrics = [
   {line : 4, words : "He sleeps all night and he works all day"}
 ];
 
-_(lyrics).chain()
+_.chain(lyrics)
   .map(function(line) { return line.words.split(' '); })
   .flatten()
   .reduce(function(counts, word) {
@@ -958,11 +958,11 @@ _.clone({name : 'moe'});
         The primary purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
       </p>
       <pre>
-_([1,2,3,200]).chain().
-  filter(function(num) { return num % 2 == 0; }).
-  tap(console.log).
-  map(function(num) { return num * num }).
-  value();
+_.chain([1,2,3,200])
+  .filter(function(num) { return num % 2 == 0; })
+  .tap(console.log)
+  .map(function(num) { return num * num })
+  .value();
 =&gt; [2, 200]
 =&gt; [4, 40000]
 </pre>
@@ -1257,7 +1257,7 @@ template({name : "Mustache"});
       <h2>Chaining</h2>
 
       <p id="chain">
-        <b class="header">chain</b><code>_(obj).chain()</code>
+        <b class="header">chain</b><code>_.chain(obj)</code>
         <br />
         Returns a wrapped object. Calling methods on this object will continue
         to return wrapped objects until <tt>value</tt> is used. (
@@ -1265,7 +1265,7 @@ template({name : "Mustache"});
       </p>
       <pre>
 var stooges = [{name : 'curly', age : 25}, {name : 'moe', age : 21}, {name : 'larry', age : 23}];
-var youngest = _(stooges).chain()
+var youngest = _.chain(stooges)
   .sortBy(function(stooge){ return stooge.age; })
   .map(function(stooge){ return stooge.name + ' is ' + stooge.age; })
   .first()
@@ -1340,6 +1340,28 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.2.4</b> &mdash; <small><i>Jan. 4, 2012</i></small><br />
+        <ul>
+          <li>
+            You now can (and probably should) write <tt>_.chain(list)</tt> 
+            instead of <tt>_(list).chain()</tt>.
+          </li>
+          <li>
+            Fix for escaped characters in Underscore templates, and for supporting
+            customizations of <tt>_.templateSettings</tt> that only define one or
+            two of the required regexes.
+          </li>
+          <li>
+            Fix for passing an array as the first argument to an <tt>_.wrap</tt>'d function.
+          </li>
+          <li>
+            Improved compatibility with ClojureScript, which adds a <tt>call</tt>
+            function to <tt>String.prototype</tt>.
+          </li>
+        </ul>
+      </p>
       
       <p>
         <b class="header">1.2.3</b> &mdash; <small><i>Dec. 7, 2011</i></small><br />

@@ -35,6 +35,9 @@ $(document).ready(function() {
     var doubled = _.map([1, 2, 3], function(num){ return num * 2; });
     equals(doubled.join(', '), '2, 4, 6', 'doubled numbers');
 
+    doubled = _.collect([1, 2, 3], function(num){ return num * 2; });
+    equals(doubled.join(', '), '2, 4, 6', 'aliased as "collect"');
+
     var tripled = _.map([1, 2, 3], function(num){ return num * this.multiplier; }, {multiplier : 3});
     equals(tripled.join(', '), '3, 6, 9', 'tripled numbers with context');
 

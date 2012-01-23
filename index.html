@@ -656,13 +656,17 @@ _.compact([0, 1, false, 2, '', 3]);
 </pre>
 
       <p id="flatten">
-        <b class="header">flatten</b><code>_.flatten(array)</code>
+        <b class="header">flatten</b><code>_.flatten(array, [shallow])</code>
         <br />
-        Flattens a nested <b>array</b> (the nesting can be to any depth).
+        Flattens a nested <b>array</b> (the nesting can be to any depth). If you
+        pass <b>shallow</b>, the array will only be flattened a single level.
       </p>
       <pre>
-_.flatten([1, [2], [3, [[[4]]]]]);
+_.flatten([1, [2], [3, [[4]]]]);
 =&gt; [1, 2, 3, 4];
+
+_.flatten([1, [2], [3, [[4]]]], true);
+=&gt; [1, 2, 3, [[4]]];
 </pre>
 
       <p id="without">

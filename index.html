@@ -134,7 +134,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Underscore.js <span class="version">(1.3.0)</span>
+      Underscore.js <span class="version">(1.3.1)</span>
     </a>
     
     <a class="toc_title" href="#">
@@ -216,6 +216,7 @@
       <li>- <a href="#defaults">defaults</a></li>
       <li>- <a href="#clone">clone</a></li>
       <li>- <a href="#tap">tap</a></li>
+      <li>- <a href="#has">has</a></li>
       <li>- <a href="#isEqual">isEqual</a></li>
       <li>- <a href="#isEmpty">isEmpty</a></li>
       <li>- <a href="#isElement">isElement</a></li>
@@ -316,11 +317,11 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.3.0)</a></td>
+        <td><a href="underscore.js">Development Version (1.3.1)</a></td>
         <td><i>34kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.3.0)</a></td>
+        <td><a href="underscore-min.js">Production Version (1.3.1)</a></td>
         <td><i>&lt; 4kb, Minified and Gzipped</i></td>
       </tr>
     </table>
@@ -350,6 +351,7 @@ _.each({one : 1, two : 2, three : 3}, function(num, key){ alert(num); });
 
       <p id="map">
         <b class="header">map</b><code>_.map(list, iterator, [context])</code>
+        <span class="alias">Alias: <b>collect</b></span>
         <br />
         Produces a new array of values by mapping each value in <b>list</b>
         through a transformation function (<b>iterator</b>). If the native <b>map</b> method
@@ -1050,6 +1052,19 @@ _.chain([1,2,3,200])
 =&gt; [4, 40000]
 </pre>
 
+      <p id="has">
+        <b class="header">has</b><code>_.has(object, key)</code>
+        <br />
+        Does the object contain the given key? Identical to 
+        <tt>object.hasOwnProperty(key)</tt>, but uses a safe reference to the
+        <tt>hasOwnProperty</tt> function, in case it's been 
+        <a href="http://www.devthought.com/2012/01/18/an-object-is-not-a-hash/">overridden accidentally</a>.
+      </p>
+      <pre>
+_.has({a: 1, b: 2, c: 3}, "b");
+=&gt; true
+</pre>
+
       <p id="isEqual">
         <b class="header">isEqual</b><code>_.isEqual(object, other)</code>
         <br />
@@ -1468,6 +1483,25 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.3.1</b> &mdash; <small><i>Jan. 23, 2012</i></small><br />
+        <ul>
+          <li>
+            Added an <tt>_.has</tt> function, as a safer way to use <tt>hasOwnProperty</tt>.
+          </li>
+          <li>
+            Added <tt>_.collect</tt> as an alias for <tt>_.map</tt>. Smalltalkers, rejoice.
+          </li>
+          <li>
+            Reverted an old change so that <tt>_.extend</tt> will correctly copy 
+            over keys with undefined values again.
+          </li>
+          <li>
+            Bugfix to stop escaping slashes within interpolations in <tt>_.template</tt>.
+          </li>
+        </ul>
+      </p>
       
       <p>
         <b class="header">1.3.0</b> &mdash; <small><i>Jan. 11, 2012</i></small><br />

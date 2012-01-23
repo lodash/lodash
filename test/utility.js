@@ -57,6 +57,9 @@ $(document).ready(function() {
     var backslashTemplate = _.template("<%= thing %> is \\ridanculous");
     equals(backslashTemplate({thing: 'This'}), "This is \\ridanculous");
 
+    var escapeTemplate = _.template('<%= a ? "checked=\\"checked\\"" : "" %>');
+    equals(escapeTemplate({a: true}), 'checked="checked"', 'can handle slash escapes in interpolations.');
+
     var fancyTemplate = _.template("<ul><% \
       for (key in people) { \
     %><li><%= people[key] %></li><% } %></ul>");
@@ -65,7 +68,7 @@ $(document).ready(function() {
 
     var escapedCharsInJavascriptTemplate = _.template("<ul><% _.each(numbers.split('\\n'), function(item) { %><li><%= item %></li><% }) %></ul>");
     result = escapedCharsInJavascriptTemplate({numbers: "one\ntwo\nthree\nfour"});
-    equals(result, "<ul><li>one</li><li>two</li><li>three</li><li>four</li></ul>", 'Can use escaped characters (e.g. \\n) in Javascript')
+    equals(result, "<ul><li>one</li><li>two</li><li>three</li><li>four</li></ul>", 'Can use escaped characters (e.g. \\n) in Javascript');
 
     var namespaceCollisionTemplate = _.template("<%= pageCount %> <%= thumbnails[pageCount] %> <% _.each(thumbnails, function(p) { %><div class=\"thumbnail\" rel=\"<%= p %>\"></div><% }); %>");
     result = namespaceCollisionTemplate({

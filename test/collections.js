@@ -185,7 +185,9 @@ $(document).ready(function() {
 
   // Relevant when using ClojureScript
   test('collections: invoke when strings have a call method', function() {
-    String.prototype.call = function(){return 42;}
+    String.prototype.call = function() {
+      return 42;
+    };
     var list = [[5, 1, 7], [3, 2, 1]];
     var s = "foo";
     equals(s.call(), 42, "call function exists");
@@ -219,6 +221,10 @@ $(document).ready(function() {
 
     equals(Infinity, _.min({}), 'Minimum value of an empty object');
     equals(Infinity, _.min([]), 'Minimum value of an empty array');
+
+    var now = new Date(9999999999);
+    var then = new Date(0);
+    equals(_.min([now, then]), then);
   });
 
   test('collections: sortBy', function() {

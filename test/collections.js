@@ -4,22 +4,22 @@ $(document).ready(function() {
 
   test("collections: each", function() {
     _.each([1, 2, 3], function(num, i) {
-      equals(num, i + 1, 'each iterators provide value and iteration count');
+      equal(num, i + 1, 'each iterators provide value and iteration count');
     });
 
     var answers = [];
     _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier);}, {multiplier : 5});
-    equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
+    equal(answers.join(', '), '5, 10, 15', 'context object property accessed');
 
     answers = [];
     _.forEach([1, 2, 3], function(num){ answers.push(num); });
-    equals(answers.join(', '), '1, 2, 3', 'aliased as "forEach"');
+    equal(answers.join(', '), '1, 2, 3', 'aliased as "forEach"');
 
     answers = [];
     var obj = {one : 1, two : 2, three : 3};
     obj.constructor.prototype.four = 4;
     _.each(obj, function(value, key){ answers.push(key); });
-    equals(answers.join(", "), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
+    equal(answers.join(", "), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
     delete obj.constructor.prototype.four;
 
     answer = null;
@@ -28,21 +28,21 @@ $(document).ready(function() {
 
     answers = 0;
     _.each(null, function(){ ++answers; });
-    equals(answers, 0, 'handles a null properly');
+    equal(answers, 0, 'handles a null properly');
   });
 
   test('collections: map', function() {
     var doubled = _.map([1, 2, 3], function(num){ return num * 2; });
-    equals(doubled.join(', '), '2, 4, 6', 'doubled numbers');
+    equal(doubled.join(', '), '2, 4, 6', 'doubled numbers');
 
     doubled = _.collect([1, 2, 3], function(num){ return num * 2; });
-    equals(doubled.join(', '), '2, 4, 6', 'aliased as "collect"');
+    equal(doubled.join(', '), '2, 4, 6', 'aliased as "collect"');
 
     var tripled = _.map([1, 2, 3], function(num){ return num * this.multiplier; }, {multiplier : 3});
-    equals(tripled.join(', '), '3, 6, 9', 'tripled numbers with context');
+    equal(tripled.join(', '), '3, 6, 9', 'tripled numbers with context');
 
     var doubled = _([1, 2, 3]).map(function(num){ return num * 2; });
-    equals(doubled.join(', '), '2, 4, 6', 'OO-style doubled numbers');
+    equal(doubled.join(', '), '2, 4, 6', 'OO-style doubled numbers');
 
     var ids = _.map($('div.underscore-test').children(), function(n){ return n.id; });
     ok(_.include(ids, 'qunit-header'), 'can use collection methods on NodeLists');
@@ -54,25 +54,25 @@ $(document).ready(function() {
     ok(_.isArray(ifnull) && ifnull.length === 0, 'handles a null properly');
 
     var length = _.map(Array(2), function(v) { return v; }).length;
-    equals(length, 2, "can preserve a sparse array's length");
+    equal(length, 2, "can preserve a sparse array's length");
   });
 
   test('collections: reduce', function() {
     var sum = _.reduce([1, 2, 3], function(sum, num){ return sum + num; }, 0);
-    equals(sum, 6, 'can sum up an array');
+    equal(sum, 6, 'can sum up an array');
 
     var context = {multiplier : 3};
     sum = _.reduce([1, 2, 3], function(sum, num){ return sum + num * this.multiplier; }, 0, context);
-    equals(sum, 18, 'can reduce with a context object');
+    equal(sum, 18, 'can reduce with a context object');
 
     sum = _.inject([1, 2, 3], function(sum, num){ return sum + num; }, 0);
-    equals(sum, 6, 'aliased as "inject"');
+    equal(sum, 6, 'aliased as "inject"');
 
     sum = _([1, 2, 3]).reduce(function(sum, num){ return sum + num; }, 0);
-    equals(sum, 6, 'OO-style reduce');
+    equal(sum, 6, 'OO-style reduce');
 
     var sum = _.reduce([1, 2, 3], function(sum, num){ return sum + num; });
-    equals(sum, 6, 'default initial value');
+    equal(sum, 6, 'default initial value');
 
     var ifnull;
     try {
@@ -83,24 +83,24 @@ $(document).ready(function() {
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
 
     ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
-    equals(_.reduce([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
+    equal(_.reduce([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
     raises(function() { _.reduce([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');
 
     var sparseArray = [];
     sparseArray[0] = 20;
     sparseArray[2] = -5;
-    equals(_.reduce(sparseArray, function(a, b){ return a - b; }), 25, 'initially-sparse arrays with no memo');
+    equal(_.reduce(sparseArray, function(a, b){ return a - b; }), 25, 'initially-sparse arrays with no memo');
   });
 
   test('collections: reduceRight', function() {
     var list = _.reduceRight(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
-    equals(list, 'bazbarfoo', 'can perform right folds');
+    equal(list, 'bazbarfoo', 'can perform right folds');
 
     var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
-    equals(list, 'bazbarfoo', 'aliased as "foldr"');
+    equal(list, 'bazbarfoo', 'aliased as "foldr"');
 
     var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; });
-    equals(list, 'bazbarfoo', 'default initial value');
+    equal(list, 'bazbarfoo', 'default initial value');
 
     var ifnull;
     try {
@@ -112,31 +112,31 @@ $(document).ready(function() {
 
     ok(_.reduceRight(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
 
-    equals(_.reduceRight([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
+    equal(_.reduceRight([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
     raises(function() { _.reduceRight([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');
 
     var sparseArray = [];
     sparseArray[0] = 20;
     sparseArray[2] = -5;
-    equals(_.reduceRight(sparseArray, function(a, b){ return a - b; }), -25, 'initially-sparse arrays with no memo');
+    equal(_.reduceRight(sparseArray, function(a, b){ return a - b; }), -25, 'initially-sparse arrays with no memo');
   });
 
   test('collections: detect', function() {
     var result = _.detect([1, 2, 3], function(num){ return num * 2 == 4; });
-    equals(result, 2, 'found the first "2" and broke the loop');
+    equal(result, 2, 'found the first "2" and broke the loop');
   });
 
   test('collections: select', function() {
     var evens = _.select([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-    equals(evens.join(', '), '2, 4, 6', 'selected each even number');
+    equal(evens.join(', '), '2, 4, 6', 'selected each even number');
 
     evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-    equals(evens.join(', '), '2, 4, 6', 'aliased as "filter"');
+    equal(evens.join(', '), '2, 4, 6', 'aliased as "filter"');
   });
 
   test('collections: reject', function() {
     var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-    equals(odds.join(', '), '1, 3, 5', 'rejected each even number');
+    equal(odds.join(', '), '1, 3, 5', 'rejected each even number');
   });
 
   test('collections: all', function() {
@@ -172,15 +172,15 @@ $(document).ready(function() {
   test('collections: invoke', function() {
     var list = [[5, 1, 7], [3, 2, 1]];
     var result = _.invoke(list, 'sort');
-    equals(result[0].join(', '), '1, 5, 7', 'first array sorted');
-    equals(result[1].join(', '), '1, 2, 3', 'second array sorted');
+    equal(result[0].join(', '), '1, 5, 7', 'first array sorted');
+    equal(result[1].join(', '), '1, 2, 3', 'second array sorted');
   });
 
   test('collections: invoke w/ function reference', function() {
     var list = [[5, 1, 7], [3, 2, 1]];
     var result = _.invoke(list, Array.prototype.sort);
-    equals(result[0].join(', '), '1, 5, 7', 'first array sorted');
-    equals(result[1].join(', '), '1, 2, 3', 'second array sorted');
+    equal(result[0].join(', '), '1, 5, 7', 'first array sorted');
+    equal(result[1].join(', '), '1, 2, 3', 'second array sorted');
   });
 
   // Relevant when using ClojureScript
@@ -190,72 +190,72 @@ $(document).ready(function() {
     };
     var list = [[5, 1, 7], [3, 2, 1]];
     var s = "foo";
-    equals(s.call(), 42, "call function exists");
+    equal(s.call(), 42, "call function exists");
     var result = _.invoke(list, 'sort');
-    equals(result[0].join(', '), '1, 5, 7', 'first array sorted');
-    equals(result[1].join(', '), '1, 2, 3', 'second array sorted');
+    equal(result[0].join(', '), '1, 5, 7', 'first array sorted');
+    equal(result[1].join(', '), '1, 2, 3', 'second array sorted');
     delete String.prototype.call;
-    equals(s.call, undefined, "call function removed");
+    equal(s.call, undefined, "call function removed");
   });
 
   test('collections: pluck', function() {
     var people = [{name : 'moe', age : 30}, {name : 'curly', age : 50}];
-    equals(_.pluck(people, 'name').join(', '), 'moe, curly', 'pulls names out of objects');
+    equal(_.pluck(people, 'name').join(', '), 'moe, curly', 'pulls names out of objects');
   });
 
   test('collections: max', function() {
-    equals(3, _.max([1, 2, 3]), 'can perform a regular Math.max');
+    equal(3, _.max([1, 2, 3]), 'can perform a regular Math.max');
 
     var neg = _.max([1, 2, 3], function(num){ return -num; });
-    equals(neg, 1, 'can perform a computation-based max');
+    equal(neg, 1, 'can perform a computation-based max');
 
-    equals(-Infinity, _.max({}), 'Maximum value of an empty object');
-    equals(-Infinity, _.max([]), 'Maximum value of an empty array');
+    equal(-Infinity, _.max({}), 'Maximum value of an empty object');
+    equal(-Infinity, _.max([]), 'Maximum value of an empty array');
   });
 
   test('collections: min', function() {
-    equals(1, _.min([1, 2, 3]), 'can perform a regular Math.min');
+    equal(1, _.min([1, 2, 3]), 'can perform a regular Math.min');
 
     var neg = _.min([1, 2, 3], function(num){ return -num; });
-    equals(neg, 3, 'can perform a computation-based min');
+    equal(neg, 3, 'can perform a computation-based min');
 
-    equals(Infinity, _.min({}), 'Minimum value of an empty object');
-    equals(Infinity, _.min([]), 'Minimum value of an empty array');
+    equal(Infinity, _.min({}), 'Minimum value of an empty object');
+    equal(Infinity, _.min([]), 'Minimum value of an empty array');
 
     var now = new Date(9999999999);
     var then = new Date(0);
-    equals(_.min([now, then]), then);
+    equal(_.min([now, then]), then);
   });
 
   test('collections: sortBy', function() {
     var people = [{name : 'curly', age : 50}, {name : 'moe', age : 30}];
     people = _.sortBy(people, function(person){ return person.age; });
-    equals(_.pluck(people, 'name').join(', '), 'moe, curly', 'stooges sorted by age');
+    equal(_.pluck(people, 'name').join(', '), 'moe, curly', 'stooges sorted by age');
   });
 
   test('collections: groupBy', function() {
     var parity = _.groupBy([1, 2, 3, 4, 5, 6], function(num){ return num % 2; });
     ok('0' in parity && '1' in parity, 'created a group for each value');
-    equals(parity[0].join(', '), '2, 4, 6', 'put each even number in the right group');
+    equal(parity[0].join(', '), '2, 4, 6', 'put each even number in the right group');
 
     var list = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
     var grouped = _.groupBy(list, 'length');
-    equals(grouped['3'].join(' '), 'one two six ten');
-    equals(grouped['4'].join(' '), 'four five nine');
-    equals(grouped['5'].join(' '), 'three seven eight');
+    equal(grouped['3'].join(' '), 'one two six ten');
+    equal(grouped['4'].join(' '), 'four five nine');
+    equal(grouped['5'].join(' '), 'three seven eight');
   });
 
   test('collections: sortedIndex', function() {
     var numbers = [10, 20, 30, 40, 50], num = 35;
     var index = _.sortedIndex(numbers, num);
-    equals(index, 3, '35 should be inserted at index 3');
+    equal(index, 3, '35 should be inserted at index 3');
   });
 
   test('collections: shuffle', function() {
     var numbers = _.range(10);
 	var shuffled = _.shuffle(numbers).sort();
 	notStrictEqual(numbers, shuffled, 'original object is unmodified');
-    equals(shuffled.join(','), numbers.join(','), 'contains the same members before and after shuffle');
+    equal(shuffled.join(','), numbers.join(','), 'contains the same members before and after shuffle');
   });
 
   test('collections: toArray', function() {
@@ -263,14 +263,14 @@ $(document).ready(function() {
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');
     var a = [1,2,3];
     ok(_.toArray(a) !== a, 'array is cloned');
-    equals(_.toArray(a).join(', '), '1, 2, 3', 'cloned array contains same elements');
+    equal(_.toArray(a).join(', '), '1, 2, 3', 'cloned array contains same elements');
 
     var numbers = _.toArray({one : 1, two : 2, three : 3});
-    equals(numbers.join(', '), '1, 2, 3', 'object flattened into array');
+    equal(numbers.join(', '), '1, 2, 3', 'object flattened into array');
   });
 
   test('collections: size', function() {
-    equals(_.size({one : 1, two : 2, three : 3}), 3, 'can compute the size of an object');
+    equal(_.size({one : 1, two : 2, three : 3}), 3, 'can compute the size of an object');
   });
 
 });

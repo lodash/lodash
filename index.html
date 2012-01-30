@@ -231,6 +231,7 @@
       <li>- <a href="#isNaN">isNaN</a></li>
       <li>- <a href="#isNull">isNull</a></li>
       <li>- <a href="#isUndefined">isUndefined</a></li>
+      <li>- <a href="#isObject">isObject</a></li>
     </ul>
 
     <a class="toc_title" href="#utility">
@@ -1223,7 +1224,19 @@ _.isNull(undefined);
 _.isUndefined(window.missingVariable);
 =&gt; true
 </pre>
-
+      
+      <p id="isObject">
+        <b class="header">isObject</b><code>_.isObject(variable)</code>
+        <br />
+        Returns <i>true</i> if <b>variable</b> is an <i>object</i>.
+      </p>
+      <pre>
+_.isObject({});
+=&gt; true
+_.isObject('am I an object?');
+=&gt; false
+</pre>
+      
       <h2 id="utility">Utility Functions</h2>
 
       <p id="noConflict">

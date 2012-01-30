@@ -146,6 +146,20 @@ $(document).ready(function() {
     _.delay(function(){ ok(counter == 1, "incr was debounced"); start(); }, 220);
   });
 
+  asyncTest("functions: debounce asap", 2, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var debouncedIncr = _.debounce(incr, 50, true);
+    debouncedIncr(); debouncedIncr(); debouncedIncr();
+    equal(counter, 1, 'incr was called immediately');
+    setTimeout(debouncedIncr, 30);
+    setTimeout(debouncedIncr, 60);
+    setTimeout(debouncedIncr, 90);
+    setTimeout(debouncedIncr, 120);
+    setTimeout(debouncedIncr, 150);
+    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 220);
+  });
+
   test("functions: once", function() {
     var num = 0;
     var increment = _.once(function(){ num++; });

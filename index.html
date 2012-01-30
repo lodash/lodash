@@ -221,6 +221,7 @@
       <li>- <a href="#isEmpty">isEmpty</a></li>
       <li>- <a href="#isElement">isElement</a></li>
       <li>- <a href="#isArray">isArray</a></li>
+      <li>- <a href="#isObject">isObject</a></li>
       <li>- <a href="#isArguments">isArguments</a></li>
       <li>- <a href="#isFunction">isFunction</a></li>
       <li>- <a href="#isString">isString</a></li>
@@ -231,7 +232,6 @@
       <li>- <a href="#isNaN">isNaN</a></li>
       <li>- <a href="#isNull">isNull</a></li>
       <li>- <a href="#isUndefined">isUndefined</a></li>
-      <li>- <a href="#isObject">isObject</a></li>
     </ul>
 
     <a class="toc_title" href="#utility">
@@ -1115,6 +1115,18 @@ _.isArray([1,2,3]);
 =&gt; true
 </pre>
 
+      <p id="isObject">
+        <b class="header">isObject</b><code>_.isObject(value)</code>
+        <br />
+        Returns <i>true</i> if <b>value</b> is an Object.
+      </p>
+      <pre>
+_.isObject({});
+=&gt; true
+_.isObject(1);
+=&gt; false
+</pre>
+
       <p id="isArguments">
         <b class="header">isArguments</b><code>_.isArguments(object)</code>
         <br />
@@ -1223,18 +1235,6 @@ _.isNull(undefined);
       <pre>
 _.isUndefined(window.missingVariable);
 =&gt; true
-</pre>
-      
-      <p id="isObject">
-        <b class="header">isObject</b><code>_.isObject(variable)</code>
-        <br />
-        Returns <i>true</i> if <b>variable</b> is an <i>object</i>.
-      </p>
-      <pre>
-_.isObject({});
-=&gt; true
-_.isObject('am I an object?');
-=&gt; false
 </pre>
       
       <h2 id="utility">Utility Functions</h2>

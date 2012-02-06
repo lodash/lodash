@@ -1005,8 +1005,9 @@ _.functions(_);
         <b class="header">extend</b><code>_.extend(destination, *sources)</code>
         <br />
         Copy all of the properties in the <b>source</b> objects over to the
-        <b>destination</b> object. It's in-order, so the last source will override
-        properties of the same name in previous arguments.
+        <b>destination</b> object, and return the <b>destination</b> object.
+        It's in-order, so the last source will override properties of the same
+        name in previous arguments.
       </p>
       <pre>
 _.extend({name : 'moe'}, {age : 50});
@@ -1017,8 +1018,8 @@ _.extend({name : 'moe'}, {age : 50});
         <b class="header">defaults</b><code>_.defaults(object, *defaults)</code>
         <br />
         Fill in missing properties in <b>object</b> with default values from the
-        <b>defaults</b> objects. As soon as the property is filled, further defaults
-        will have no effect.
+        <b>defaults</b> objects, and return the <b>object</b>. As soon as the
+        property is filled, further defaults will have no effect.
       </p>
       <pre>
 var iceCream = {flavor : "chocolate"};

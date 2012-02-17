@@ -145,6 +145,8 @@ $(document).ready(function() {
     ok(!_.all([true, false, true], _.identity), 'one false value');
     ok(_.all([0, 10, 28], function(num){ return num % 2 == 0; }), 'even numbers');
     ok(!_.all([0, 11, 28], function(num){ return num % 2 == 0; }), 'an odd number');
+    ok(_.all([1], _.identity) === true, 'cast to boolean - true');
+    ok(_.all([0], _.identity) === false, 'cast to boolean - false');
     ok(_.every([true, true, true], _.identity), 'aliased as "every"');
   });
 
@@ -158,6 +160,8 @@ $(document).ready(function() {
     ok(!_.any([null, 0, '', false]), 'falsy values');
     ok(!_.any([1, 11, 29], function(num){ return num % 2 == 0; }), 'all odd numbers');
     ok(_.any([1, 10, 29], function(num){ return num % 2 == 0; }), 'an even number');
+    ok(_.any([1], _.identity) === true, 'cast to boolean - true');
+    ok(_.any([0], _.identity) === false, 'cast to boolean - false');
     ok(_.some([false, false, true]), 'aliased as "some"');
     Array.prototype.some = nativeSome;
   });

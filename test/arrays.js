@@ -89,6 +89,28 @@ $(document).ready(function() {
 
     var result = (function(){ return _.uniq(arguments); })(1, 2, 1, 3, 1, 4);
     equal(result.join(', '), '1, 2, 3, 4', 'works on an arguments object');
+
+    var list = [];
+    list[2] = list[3] = null;
+    list[8] = 2;
+    list[10] = 2;
+    list[11] = 5;
+    list[14] = 5;
+    list[16] = 8;
+    list[19] = 8;
+    list[26] = list[29] = undefined;
+    list[33] = "hi";
+
+    var result = _.uniq(list, true);
+    if (0 in [undefined]) {
+      // According to the JScript ES 3 spec, section 2.1.26, JScript 5.x (IE <=
+      // 8) treats `undefined` elements in arrays as elisions.
+      deepEqual(result, [null, 2, 5, 8, undefined, "hi"], "Works with sorted sparse arrays");
+      equal(result.length, 6, "The resulting array should not be sparse");
+    } else {
+      deepEqual(result, [null, 2, 5, 8, "hi"], "Works with sorted sparse arrays where `undefined` elements are elided");
+      equal(result.length, 5, "The resulting array should not be sparse");
+    }
   });
 
   test("arrays: intersection", function() {

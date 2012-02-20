@@ -371,10 +371,10 @@
   // been sorted, you have the option of using a faster algorithm.
   // Aliased as `unique`.
   _.uniq = _.unique = function(array, isSorted, iterator) {
-    var results = [], previous;
+    var results = [];
     _.reduce(iterator ? _.map(array, iterator) : array, function (memo, value, index) {
       if (array.length < 3 || isSorted ? _.last(memo) !== value || !memo.length : !_.include(memo, value)) {
-        memo.push(previous = value);
+        memo.push(value);
         results.push(array[index]);
       }
       return memo;

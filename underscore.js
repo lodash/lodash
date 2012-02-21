@@ -372,15 +372,17 @@
   // Aliased as `unique`.
   _.uniq = _.unique = function(array, isSorted, iterator) {
     var initial = iterator ? _.map(array, iterator) : array;
-    var result = [];
-    _.reduce(initial, function(memo, el, i) {
-      if (0 == i || (isSorted === true ? _.last(memo) != el : !_.include(memo, el))) {
-        memo[memo.length] = el;
-        result[result.length] = array[i];
+    var results = [];
+    // The `isSorted` flag is irrelevant if the array only contains two elements.
+    if (array.length < 3) isSorted = true;
+    _.reduce(initial, function (memo, value, index) {
+      if (isSorted ? _.last(memo) !== value || !memo.length : !_.include(memo, value)) {
+        memo.push(value);
+        results.push(array[index]);
       }
       return memo;
     }, []);
-    return result;
+    return results;
   };
 
   // Produce an array that contains the union: each distinct element from all of

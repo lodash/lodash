@@ -12,6 +12,8 @@ $(document).ready(function() {
     equal(result, 4, 'works on an arguments object.');
     result = _.map([[1,2,3],[1,2,3]], _.first);
     equal(result.join(','), '1,1', 'works well with _.map');
+    result = (function() { return _.take([1,2,3], 2); })();
+    equal(result.join(','), '1,2', 'aliased as take');
   });
 
   test("arrays: rest", function() {

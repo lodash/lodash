@@ -1,6 +1,14 @@
 $(document).ready(function() {
 
-  module("Utility");
+  var templateSettings = _.templateSettings;
+
+  module("Utility", {
+
+    teardown: function() {
+      _.templateSettings = templateSettings;
+    }
+
+  });
 
   test("utility: noConflict", function() {
     var underscore = _.noConflict();

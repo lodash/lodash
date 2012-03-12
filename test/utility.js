@@ -160,4 +160,9 @@ $(document).ready(function() {
     equal(templateWithNull({planet : "world"}), "a null undefined world", "can handle missing escape and evaluate settings");
   });
 
+  test('_.template handles \\u2028 & \\u2029', function() {
+    var tmpl = _.template('<p>\u2028<%= "\\u2028\\u2029" %>\u2029</p>');
+    strictEqual(tmpl(), '<p>\u2028\u2028\u2029\u2029</p>');
+  });
+
 });

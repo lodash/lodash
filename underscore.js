@@ -905,13 +905,15 @@
   // Within an interpolation, evaluation, or escaping, remove HTML escaping
   // that had been previously added.
   var unescape = function(code) {
-    return code.replace(/\\(\\|'|r|n|t)/g, function(match, char) {
+    return code.replace(/\\(\\|'|r|n|t|u2028|u2029)/g, function(match, char) {
       switch (char) {
         case '\\': return '\\';
         case "'": return "'";
         case 'r': return '\r';
         case 'n': return '\n';
         case 't': return '\t';
+        case 'u2028': return '\u2028';
+        case 'u2029': return '\u2029';
       }
     });
   };
@@ -928,6 +930,8 @@
          .replace(/\r/g, '\\r')
          .replace(/\n/g, '\\n')
          .replace(/\t/g, '\\t')
+         .replace(/\u2028/g, '\\u2028')
+         .replace(/\u2029/g, '\\u2029')
          .replace(c.escape || noMatch, function(match, code) {
            return "',_.escape(" + unescape(code) + "),\n'";
          })

@@ -873,6 +873,12 @@
     return (''+string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   };
 
+  // Get a value from an object as a property or as a function.
+  _.getValue = function(object, prop) {
+    if (object == null) return null;
+    return _.isFunction(object[prop]) ? object[prop]() : object[prop];
+  };
+
   // Add your own custom functions to the Underscore object, ensuring that
   // they're correctly added to the OOP wrapper as well.
   _.mixin = function(obj) {

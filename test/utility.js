@@ -165,4 +165,13 @@ $(document).ready(function() {
     strictEqual(tmpl(), '<p>\u2028\u2028\u2029\u2029</p>');
   });
 
+  test('getValue calls functions and returns primitives', function() {
+    var obj = {w: '', x: 'x', y: function(){ return 'y'; }};
+    strictEqual(_.getValue(obj, 'w'), '');
+    strictEqual(_.getValue(obj, 'x'), 'x');
+    strictEqual(_.getValue(obj, 'y'), 'y');
+    strictEqual(_.getValue(obj, 'z'), undefined);
+    strictEqual(_.getValue(null, 'x'), null);
+  });
+
 });

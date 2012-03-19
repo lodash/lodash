@@ -245,7 +245,7 @@
       <li>- <a href="#mixin">mixin</a></li>
       <li>- <a href="#uniqueId">uniqueId</a></li>
       <li>- <a href="#escape">escape</a></li>
-      <li>- <a href="#getValue">getValue</a></li>
+      <li>- <a href="#result">result</a></li>
       <li>- <a href="#template">template</a></li>
     </ul>
 
@@ -1310,16 +1310,16 @@ _.uniqueId('contact_');
 _.escape('Curly, Larry &amp; Moe');
 =&gt; "Curly, Larry &amp;amp; Moe"</pre>
 
-      <p id="getValue">
-        <b class="header">getValue</b><code>_.getValue(object, property)</code>
+      <p id="result">
+        <b class="header">result</b><code>_.result(object, property)</code>
         <br />
         Returns a value from an object as a property or as a function.
       </p>
       <pre>
 var object = {cheese: 'crumpets', stuff: function(){ return 'nonsense'; }};
-_.getValue(object, 'cheese');
+_.result(object, 'cheese');
 =&gt; "crumpets"
-_.getValue(object, 'stuff');
+_.result(object, 'stuff');
 =&gt; "nonsense"</pre>
 
       <p id="template">

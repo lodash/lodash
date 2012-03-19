@@ -874,7 +874,7 @@
   };
 
   // Get a value from an object as a property or as a function.
-  _.getValue = function(object, prop) {
+  _.result = function(object, prop) {
     if (object == null) return null;
     var value = object[prop];
     return _.isFunction(value) ? value() : value;

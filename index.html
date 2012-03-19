@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />  
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
   <title>Underscore.js</title>
   <style>
     body {
@@ -11,7 +11,7 @@
       line-height: 22px;
       background: #f4f4f4 url(docs/images/background.png);
       color: #000;
-      font-family: Helvetica Neue, Helvetica, Arial;      
+      font-family: Helvetica Neue, Helvetica, Arial;
     }
     .interface {
       font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif !important;
@@ -58,7 +58,7 @@
         }
           .toc_section li a:hover {
             text-decoration: underline;
-          }  
+          }
     div.container {
       width: 550px;
       margin: 40px 0 50px 260px;
@@ -131,13 +131,13 @@
   </style>
 </head>
 <body>
-  
+
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
       Underscore.js <span class="version">(1.3.1)</span>
     </a>
-    
+
     <a class="toc_title" href="#">
       Introduction
     </a>
@@ -237,7 +237,7 @@
 
     <a class="toc_title" href="#utility">
       Utility
-    </a>    
+    </a>
     <ul class="toc_section">
       <li>- <a href="#noConflict">noConflict</a></li>
       <li>- <a href="#identity">identity</a></li>
@@ -245,6 +245,7 @@
       <li>- <a href="#mixin">mixin</a></li>
       <li>- <a href="#uniqueId">uniqueId</a></li>
       <li>- <a href="#escape">escape</a></li>
+      <li>- <a href="#result">result</a></li>
       <li>- <a href="#template">template</a></li>
     </ul>
 
@@ -255,15 +256,15 @@
       <li>- <a href="#chain">chain</a></li>
       <li>- <a href="#value">value</a></li>
     </ul>
-    
+
     <a class="toc_title" href="#links">
       Links
     </a>
-    
+
     <a class="toc_title" href="#changelog">
       Change Log
     </a>
-    
+
   </div>
 
   <div class="container">
@@ -297,7 +298,7 @@
       A complete <a href="test/test.html">Test &amp; Benchmark Suite</a>
       is included for your perusal.
     </p>
-    
+
     <p>
       You may also read through the <a href="docs/underscore.html">annotated source code</a>.
     </p>
@@ -327,7 +328,7 @@
         <td><i>&lt; 4kb, Minified and Gzipped</i></td>
       </tr>
     </table>
-    
+
     <div class="warning">Upgrade warning: version 1.3.0 removes AMD (RequireJS) support.</div>
 
     <div id="documentation">
@@ -525,7 +526,7 @@ _.min(numbers);
       <p id="sortBy">
         <b class="header">sortBy</b><code>_.sortBy(list, iterator, [context])</code>
         <br />
-        Returns a sorted copy of <b>list</b>, ranked in ascending order by the 
+        Returns a sorted copy of <b>list</b>, ranked in ascending order by the
         results of running each value through <b>iterator</b>.
       </p>
       <pre>
@@ -565,7 +566,7 @@ _.sortedIndex([10, 20, 30, 40, 50], 35);
       <p id="shuffle">
         <b class="header">shuffle</b><code>_.shuffle(list)</code>
         <br />
-        Returns a shuffled copy of the <b>list</b>, using a version of the 
+        Returns a shuffled copy of the <b>list</b>, using a version of the
         <a href="http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle">Fisher-Yates shuffle</a>.
       </p>
       <pre>
@@ -751,7 +752,7 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
         <br />
         Returns the index at which <b>value</b> can be found in the <b>array</b>,
         or <i>-1</i> if value is not present in the <b>array</b>. Uses the native
-        <b>indexOf</b> function unless it's missing. If you're working with a 
+        <b>indexOf</b> function unless it's missing. If you're working with a
         large array, and you know that the array is already sorted, pass <tt>true</tt>
         for <b>isSorted</b> to use a faster binary search.
       </p>
@@ -836,7 +837,7 @@ jQuery('#underscore_button').bind('click', buttonView.onClick);
         <b class="header">memoize</b><code>_.memoize(function, [hashFunction])</code>
         <br />
         Memoizes a given <b>function</b> by caching the computed result. Useful
-        for speeding up slow-running computations. If passed an optional 
+        for speeding up slow-running computations. If passed an optional
         <b>hashFunction</b>, it will be used to compute the hash key for storing
         the result, based on the arguments to the original function. The default
         <b>hashFunction</b> just uses the first argument to the memoized function
@@ -877,8 +878,8 @@ _.defer(function(){ alert('deferred'); });
       <p id="throttle">
         <b class="header">throttle</b><code>_.throttle(function, wait)</code>
         <br />
-        Creates and returns a new, throttled version of the passed function, 
-        that, when invoked repeatedly, will only actually call the original function 
+        Creates and returns a new, throttled version of the passed function,
+        that, when invoked repeatedly, will only actually call the original function
         at most once per every <b>wait</b>
         milliseconds. Useful for rate-limiting events that occur faster than you
         can keep up with.
@@ -892,11 +893,11 @@ $(window).scroll(throttled);
         <b class="header">debounce</b><code>_.debounce(function, wait)</code>
         <br />
         Creates and returns a new debounced version of the passed function that
-        will postpone its execution until after 
-        <b>wait</b> milliseconds have elapsed since the last time it  
-        was invoked. Useful for implementing behavior that should only happen 
-        <i>after</i> the input has stopped arriving. For example: rendering a 
-        preview of a Markdown comment, recalculating a layout after the window 
+        will postpone its execution until after
+        <b>wait</b> milliseconds have elapsed since the last time it
+        was invoked. Useful for implementing behavior that should only happen
+        <i>after</i> the input has stopped arriving. For example: rendering a
+        preview of a Markdown comment, recalculating a layout after the window
         has stopped being resized, and so on.
       </p>
       <pre>
@@ -907,7 +908,7 @@ $(window).resize(lazyLayout);
       <p id="once">
         <b class="header">once</b><code>_.once(function)</code>
         <br />
-        Creates a version of the function that can only be called one time. 
+        Creates a version of the function that can only be called one time.
         Repeated calls to the modified function will have no effect, returning
         the value from the original call. Useful for initialization functions,
         instead of having to set a boolean flag and then check it later.
@@ -922,7 +923,7 @@ initialize();
       <p id="after">
         <b class="header">after</b><code>_.after(count, function)</code>
         <br />
-        Creates a version of the function that will only be run after first 
+        Creates a version of the function that will only be run after first
         being called <b>count</b> times. Useful for grouping asynchronous responses,
         where you want to be sure that all the async calls have finished, before
         proceeding.
@@ -930,7 +931,7 @@ initialize();
       <pre>
 var renderNotes = _.after(notes.length, render);
 _.each(notes, function(note) {
-  note.asyncSave({success: renderNotes}); 
+  note.asyncSave({success: renderNotes});
 });
 // renderNotes is run once, after all notes have saved.
 </pre>
@@ -1058,9 +1059,9 @@ _.chain([1,2,3,200])
       <p id="has">
         <b class="header">has</b><code>_.has(object, key)</code>
         <br />
-        Does the object contain the given key? Identical to 
+        Does the object contain the given key? Identical to
         <tt>object.hasOwnProperty(key)</tt>, but uses a safe reference to the
-        <tt>hasOwnProperty</tt> function, in case it's been 
+        <tt>hasOwnProperty</tt> function, in case it's been
         <a href="http://www.devthought.com/2012/01/18/an-object-is-not-a-hash/">overridden accidentally</a>.
       </p>
       <pre>
@@ -1238,7 +1239,7 @@ _.isNull(undefined);
 _.isUndefined(window.missingVariable);
 =&gt; true
 </pre>
-      
+
       <h2 id="utility">Utility Functions</h2>
 
       <p id="noConflict">
@@ -1275,7 +1276,7 @@ _(3).times(function(){ genie.grantWish(); });</pre>
         <b class="header">mixin</b><code>_.mixin(object)</code>
         <br />
         Allows you to extend Underscore with your own utility functions. Pass
-        a hash of <tt>{name: function}</tt> definitions to have your functions 
+        a hash of <tt>{name: function}</tt> definitions to have your functions
         added to the Underscore object, as well as the OOP wrapper.
       </p>
       <pre>
@@ -1302,12 +1303,24 @@ _.uniqueId('contact_');
       <p id="escape">
         <b class="header">escape</b><code>_.escape(string)</code>
         <br />
-        Escapes a string for insertion into HTML, replacing 
+        Escapes a string for insertion into HTML, replacing
         <tt>&amp;</tt>, <tt>&lt;</tt>, <tt>&gt;</tt>, <tt>&quot;</tt>, <tt>&#x27;</tt>, and <tt>&#x2F;</tt> characters.
       </p>
       <pre>
 _.escape('Curly, Larry &amp; Moe');
 =&gt; "Curly, Larry &amp;amp; Moe"</pre>
+
+      <p id="result">
+        <b class="header">result</b><code>_.result(object, property)</code>
+        <br />
+        Returns a value from an object as a property or as a function.
+      </p>
+      <pre>
+var object = {cheese: 'crumpets', stuff: function(){ return 'nonsense'; }};
+_.result(object, 'cheese');
+=&gt; "crumpets"
+_.result(object, 'stuff');
+=&gt; "nonsense"</pre>
 
       <p id="template">
         <b class="header">template</b><code>_.template(templateString, [context])</code>
@@ -1340,7 +1353,7 @@ template({value : '&lt;script&gt;'});
         You can also use <tt>print</tt> from within JavaScript code.  This is
         sometimes more convenient than using <tt>&lt;%= ... %&gt;</tt>.
       </p>
-      
+
       <pre>
 var compiled = _.template("&lt;% print('Hello ' + epithet); %&gt;");
 compiled({epithet: "stooge"});
@@ -1349,8 +1362,8 @@ compiled({epithet: "stooge"});
       <p>
         If ERB-style delimiters aren't your cup of tea, you can change Underscore's
         template settings to use different symbols to set off interpolated code.
-        Define an <b>interpolate</b> regex to match expressions that should be 
-        interpolated verbatim, an <b>escape</b> regex to match expressions that should 
+        Define an <b>interpolate</b> regex to match expressions that should be
+        interpolated verbatim, an <b>escape</b> regex to match expressions that should
         be inserted after being HTML escaped, and an <b>evaluate</b> regex to match
         expressions that should be evaluated without insertion into the resulting
         string. You may define or omit any combination of the three.
@@ -1451,7 +1464,7 @@ _([1, 2, 3]).value();
         The <a href="http://github.com/mirven/underscore.lua">source</a> is
         available on GitHub.
       </p>
-      
+
       <p>
         <a href="http://brianhaveri.github.com/Underscore.php/">Underscore.php</a>,
         a PHP port of the functions that are applicable in both languages.
@@ -1459,17 +1472,17 @@ _([1, 2, 3]).value();
         The <a href="http://github.com/brianhaveri/Underscore.php">source</a> is
         available on GitHub.
       </p>
-      
+
       <p>
         <a href="http://vti.github.com/underscore-perl/">Underscore-perl</a>,
-        a Perl port of many of the Underscore.js functions, 
-        aimed at on Perl hashes and arrays, also 
+        a Perl port of many of the Underscore.js functions,
+        aimed at on Perl hashes and arrays, also
         <a href="https://github.com/vti/underscore-perl/">available on GitHub</a>.
       </p>
-      
+
       <p>
         <a href="https://github.com/edtsech/underscore.string">Underscore.string</a>,
-        an Underscore extension that adds functions for string-manipulation: 
+        an Underscore extension that adds functions for string-manipulation:
         <tt>trim</tt>, <tt>startsWith</tt>, <tt>contains</tt>, <tt>capitalize</tt>,
         <tt>reverse</tt>, <tt>sprintf</tt>, and more.
       </p>
@@ -1488,7 +1501,7 @@ _([1, 2, 3]).value();
         <a href="http://osteele.com/sources/javascript/functional/">Functional JavaScript</a>,
         which includes comprehensive higher-order function support as well as string lambdas.
       </p>
-      
+
       <p>
         Michael Aufreiter's <a href="http://substance.io/#michael/data-js">Data.js</a>,
         a data manipulation + persistence library for JavaScript.
@@ -1499,7 +1512,7 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
-      
+
       <p>
         <b class="header">1.3.1</b> &mdash; <small><i>Jan. 23, 2012</i></small><br />
         <ul>
@@ -1510,7 +1523,7 @@ _([1, 2, 3]).value();
             Added <tt>_.collect</tt> as an alias for <tt>_.map</tt>. Smalltalkers, rejoice.
           </li>
           <li>
-            Reverted an old change so that <tt>_.extend</tt> will correctly copy 
+            Reverted an old change so that <tt>_.extend</tt> will correctly copy
             over keys with undefined values again.
           </li>
           <li>
@@ -1518,7 +1531,7 @@ _([1, 2, 3]).value();
           </li>
         </ul>
       </p>
-      
+
       <p>
         <b class="header">1.3.0</b> &mdash; <small><i>Jan. 11, 2012</i></small><br />
         <ul>
@@ -1529,12 +1542,12 @@ _([1, 2, 3]).value();
           </li>
         </ul>
       </p>
-      
+
       <p>
         <b class="header">1.2.4</b> &mdash; <small><i>Jan. 4, 2012</i></small><br />
         <ul>
           <li>
-            You now can (and probably should) write <tt>_.chain(list)</tt> 
+            You now can (and probably should) write <tt>_.chain(list)</tt>
             instead of <tt>_(list).chain()</tt>.
           </li>
           <li>
@@ -1551,7 +1564,7 @@ _([1, 2, 3]).value();
           </li>
         </ul>
       </p>
-      
+
       <p>
         <b class="header">1.2.3</b> &mdash; <small><i>Dec. 7, 2011</i></small><br />
         <ul>
@@ -1564,12 +1577,12 @@ _([1, 2, 3]).value();
           </li>
           <li>
             Both <tt>_.reduce</tt> and <tt>_.reduceRight</tt> can now be passed an
-            explicitly <tt>undefined</tt> value. (There's no reason why you'd 
+            explicitly <tt>undefined</tt> value. (There's no reason why you'd
             want to do this.)
           </li>
         </ul>
       </p>
-      
+
       <p>
         <b class="header">1.2.2</b> &mdash; <small><i>Nov. 14, 2011</i></small><br />
         <ul>
@@ -1588,22 +1601,22 @@ _([1, 2, 3]).value();
           </li>
           <li>
             <tt>_.after(callback, 0)</tt> will now trigger the callback immediately,
-            making "after" easier to use with asynchronous APIs <small>(#366)</small>. 
+            making "after" easier to use with asynchronous APIs <small>(#366)</small>.
           </li>
         </ul>
       </p>
-      
+
       <p>
         <b class="header">1.2.1</b> &mdash; <small><i>Oct. 24, 2011</i></small><br />
         <ul>
           <li>
-            Several important bug fixes for <tt>_.isEqual</tt>, which should now 
-            do better on mutated Arrays, and on non-Array objects with 
+            Several important bug fixes for <tt>_.isEqual</tt>, which should now
+            do better on mutated Arrays, and on non-Array objects with
             <tt>length</tt> properties. <small>(#329)</small>
           </li>
           <li>
             <b>jrburke</b> contributed Underscore exporting for AMD module loaders,
-            and <b>tonylukasavage</b> for Appcelerator Titanium. 
+            and <b>tonylukasavage</b> for Appcelerator Titanium.
             <small>(#335, #338)</small>
           </li>
           <li>
@@ -1611,7 +1624,7 @@ _([1, 2, 3]).value();
             grouping values by a particular common property.
           </li>
           <li>
-            <tt>_.throttle</tt>'d functions now fire immediately upon invocation, 
+            <tt>_.throttle</tt>'d functions now fire immediately upon invocation,
             and are rate-limited thereafter <small>(#170, #266)</small>.
           </li>
           <li>
@@ -1619,7 +1632,7 @@ _([1, 2, 3]).value();
           </li>
           <li>
             The <tt>_.bind</tt> function now also works on constructors, a-la
-            ES5 ... but you would never want to use <tt>_.bind</tt> on a 
+            ES5 ... but you would never want to use <tt>_.bind</tt> on a
             constructor function.
           </li>
           <li>
@@ -1631,25 +1644,25 @@ _([1, 2, 3]).value();
           </li>
         </ul>
       </p>
-      
+
       <p>
         <b class="header">1.2.0</b> &mdash; <small><i>Oct. 5, 2011</i></small><br />
         <ul>
           <li>
-            The <tt>_.isEqual</tt> function now 
+            The <tt>_.isEqual</tt> function now
             supports true deep equality comparisons, with checks for cyclic structures,
             thanks to Kit Cambridge.
           </li>
           <li>
-            Underscore templates now support HTML escaping interpolations, using 
-            <tt>&lt;%- ... %&gt;</tt> syntax. 
+            Underscore templates now support HTML escaping interpolations, using
+            <tt>&lt;%- ... %&gt;</tt> syntax.
           </li>
           <li>
-            Ryan Tenney contributed <tt>_.shuffle</tt>, which uses a modified 
-            Fisher-Yates to give you a shuffled copy of an array. 
+            Ryan Tenney contributed <tt>_.shuffle</tt>, which uses a modified
+            Fisher-Yates to give you a shuffled copy of an array.
           </li>
           <li>
-            <tt>_.uniq</tt> can now be passed an optional iterator, to determine by 
+            <tt>_.uniq</tt> can now be passed an optional iterator, to determine by
             what criteria an object should be considered unique.
           </li>
           <li>
@@ -1658,22 +1671,22 @@ _([1, 2, 3]).value();
           </li>
           <li>
             A new <tt>_.initial</tt> function was added, as a mirror of <tt>_.rest</tt>,
-            which returns all the initial values of a list (except the last N). 
+            which returns all the initial values of a list (except the last N).
           </li>
         </ul>
       </p>
-      
+
       <p>
         <b class="header">1.1.7</b> &mdash; <small><i>July 13, 2011</i></small><br />
         Added <tt>_.groupBy</tt>, which aggregates a collection into groups of like items.
-        Added <tt>_.union</tt> and <tt>_.difference</tt>, to complement the 
+        Added <tt>_.union</tt> and <tt>_.difference</tt>, to complement the
         (re-named) <tt>_.intersection</tt>.
         Various improvements for support of sparse arrays.
         <tt>_.toArray</tt> now returns a clone, if directly passed an array.
         <tt>_.functions</tt> now also returns the names of functions that are present
         in the prototype chain.
       </p>
-            
+
       <p>
         <b class="header">1.1.6</b> &mdash; <small><i>April 18, 2011</i></small><br />
         Added <tt>_.after</tt>, which will return a function that only runs after
@@ -1684,30 +1697,30 @@ _([1, 2, 3]).value();
         <tt>_.extend</tt> no longer copies keys when the value is undefined.
         <tt>_.bind</tt> now errors when trying to bind an undefined value.
       </p>
-      
+
       <p>
         <b class="header">1.1.5</b> &mdash; <small><i>Mar 20, 2011</i></small><br />
         Added an <tt>_.defaults</tt> function, for use merging together JS objects
         representing default options.
         Added an <tt>_.once</tt> function, for manufacturing functions that should
         only ever execute a single time.
-        <tt>_.bind</tt> now delegates to the native ECMAScript 5 version, 
+        <tt>_.bind</tt> now delegates to the native ECMAScript 5 version,
         where available.
         <tt>_.keys</tt> now throws an error when used on non-Object values, as in
         ECMAScript 5.
         Fixed a bug with <tt>_.keys</tt> when used over sparse arrays.
       </p>
-      
+
       <p>
         <b class="header">1.1.4</b> &mdash; <small><i>Jan 9, 2011</i></small><br />
-        Improved compliance with ES5's Array methods when passing <tt>null</tt> 
+        Improved compliance with ES5's Array methods when passing <tt>null</tt>
         as a value. <tt>_.wrap</tt> now correctly sets <tt>this</tt> for the
         wrapped function. <tt>_.indexOf</tt> now takes an optional flag for
         finding the insertion index in an array that is guaranteed to already
         be sorted. Avoiding the use of <tt>.callee</tt>, to allow <tt>_.isArray</tt>
         to work properly in ES5's strict mode.
       </p>
-      
+
       <p>
         <b class="header">1.1.3</b> &mdash; <small><i>Dec 1, 2010</i></small><br />
         In CommonJS, Underscore may now be required with just: <br />
@@ -1719,26 +1732,26 @@ _([1, 2, 3]).value();
         Improved the <b>isType</b> family of functions for better interoperability
         with Internet Explorer host objects.
         <tt>_.template</tt> now correctly escapes backslashes in templates.
-        Improved <tt>_.reduce</tt> compatibility with the ECMA5 version: 
+        Improved <tt>_.reduce</tt> compatibility with the ECMA5 version:
         if you don't pass an initial value, the first item in the collection is used.
         <tt>_.each</tt> no longer returns the iterated collection, for improved
         consistency with ES5's <tt>forEach</tt>.
       </p>
-      
+
       <p>
         <b class="header">1.1.2</b><br />
-        Fixed <tt>_.contains</tt>, which was mistakenly pointing at 
-        <tt>_.intersect</tt> instead of <tt>_.include</tt>, like it should 
+        Fixed <tt>_.contains</tt>, which was mistakenly pointing at
+        <tt>_.intersect</tt> instead of <tt>_.include</tt>, like it should
         have been. Added <tt>_.unique</tt> as an alias for <tt>_.uniq</tt>.
       </p>
-      
+
       <p>
         <b class="header">1.1.1</b><br />
         Improved the speed of <tt>_.template</tt>, and its handling of multiline
-        interpolations. Ryan Tenney contributed optimizations to many Underscore 
+        interpolations. Ryan Tenney contributed optimizations to many Underscore
         functions. An annotated version of the source code is now available.
       </p>
-      
+
       <p>
         <b class="header">1.1.0</b><br />
         The method signature of <tt>_.reduce</tt> has been changed to match
@@ -1747,33 +1760,33 @@ _([1, 2, 3]).value();
         called with no arguments, and preserves whitespace. <tt>_.contains</tt>
         is a new alias for <tt>_.include</tt>.
       </p>
-      
+
       <p>
         <b class="header">1.0.4</b><br />
-        <a href="http://themoell.com/">Andri Möll</a> contributed the <tt>_.memoize</tt> 
-        function, which can be used to speed up expensive repeated computations 
+        <a href="http://themoell.com/">Andri Möll</a> contributed the <tt>_.memoize</tt>
+        function, which can be used to speed up expensive repeated computations
         by caching the results.
       </p>
-      
+
       <p>
         <b class="header">1.0.3</b><br />
         Patch that makes <tt>_.isEqual</tt> return <tt>false</tt> if any property
         of the compared object has a <tt>NaN</tt> value. Technically the correct
         thing to do, but of questionable semantics. Watch out for NaN comparisons.
       </p>
-      
+
       <p>
         <b class="header">1.0.2</b><br />
         Fixes <tt>_.isArguments</tt> in recent versions of Opera, which have
         arguments objects as real Arrays.
       </p>
-      
+
       <p>
         <b class="header">1.0.1</b><br />
-        Bugfix for <tt>_.isEqual</tt>, when comparing two objects with the same 
+        Bugfix for <tt>_.isEqual</tt>, when comparing two objects with the same
         number of undefined keys, but with different names.
       </p>
-      
+
       <p>
         <b class="header">1.0.0</b><br />
         Things have been stable for many months now, so Underscore is now
@@ -1781,15 +1794,15 @@ _([1, 2, 3]).value();
         include <tt>_.isBoolean</tt>, and the ability to have <tt>_.extend</tt>
         take multiple source objects.
       </p>
-      
+
       <p>
         <b class="header">0.6.0</b><br />
-        Major release. Incorporates a number of 
+        Major release. Incorporates a number of
         <a href="http://github.com/ratbeard">Mile Frawley's</a> refactors for
         safer duck-typing on collection functions, and cleaner internals. A new
         <tt>_.mixin</tt> method that allows you to extend Underscore with utility
-        functions of your own. Added <tt>_.times</tt>, which works the same as in 
-        Ruby or Prototype.js. Native support for ECMAScript 5's <tt>Array.isArray</tt>, 
+        functions of your own. Added <tt>_.times</tt>, which works the same as in
+        Ruby or Prototype.js. Native support for ECMAScript 5's <tt>Array.isArray</tt>,
         and <tt>Object.keys</tt>.
       </p>
 
@@ -1847,7 +1860,7 @@ _([1, 2, 3]).value();
         <b class="header">0.5.1</b><br />
         Added an <tt>_.isArguments</tt> function. Lots of little safety checks
         and optimizations contributed by
-        <a href="http://github.com/iamnoah/">Noah Sloan</a> and 
+        <a href="http://github.com/iamnoah/">Noah Sloan</a> and
         <a href="http://themoell.com/">Andri Möll</a>.
       </p>
 

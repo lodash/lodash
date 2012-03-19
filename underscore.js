@@ -873,8 +873,8 @@
     return (''+string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   };
 
-  // If the value of the named property is a function then invoke it.
-  // Otherwise, return its value.
+  // If the value of the named property is a function then invoke it;
+  // otherwise, return it.
   _.result = function(object, property) {
     if (object == null) return null;
     var value = object[property];

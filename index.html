@@ -1313,7 +1313,8 @@ _.escape('Curly, Larry &amp; Moe');
       <p id="result">
         <b class="header">result</b><code>_.result(object, property)</code>
         <br />
-        Returns a value from an object as a property or as a function.
+        If the value of the named property is a function then invoke it.
+        Otherwise, return its value.
       </p>
       <pre>
 var object = {cheese: 'crumpets', stuff: function(){ return 'nonsense'; }};

@@ -309,7 +309,7 @@
 
   // Return the number of elements in an object.
   _.size = function(obj) {
-    return _.toArray(obj).length;
+    return _.isArray(obj) ? obj.length : _.keys(obj).length;
   };
 
   // Array Functions

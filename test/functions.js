@@ -101,8 +101,8 @@ $(document).ready(function() {
     setTimeout(throttledIncr, 190);
     setTimeout(throttledIncr, 220);
     setTimeout(throttledIncr, 240);
-    _.delay(function(){ ok(counter == 1, "incr was called immediately"); }, 30);
-    _.delay(function(){ ok(counter == 4, "incr was throttled"); start(); }, 400);
+    _.delay(function(){ equal(counter, 1, "incr was called immediately"); }, 30);
+    _.delay(function(){ equal(counter, 4, "incr was throttled"); start(); }, 400);
   });
 
   asyncTest("functions: throttle arguments", 2, function() {
@@ -122,7 +122,7 @@ $(document).ready(function() {
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 100);
     throttledIncr();
-    _.delay(function(){ ok(counter == 1, "incr was called once"); start(); }, 220);
+    _.delay(function(){ equal(counter, 1, "incr was called once"); start(); }, 220);
   });
 
   asyncTest("functions: throttle twice", 1, function() {
@@ -130,7 +130,7 @@ $(document).ready(function() {
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 100);
     throttledIncr(); throttledIncr();
-    _.delay(function(){ ok(counter == 2, "incr was called twice"); start(); }, 220);
+    _.delay(function(){ equal(counter, 2, "incr was called twice"); start(); }, 220);
   });
 
   asyncTest("functions: debounce", 1, function() {
@@ -143,7 +143,7 @@ $(document).ready(function() {
     setTimeout(debouncedIncr, 90);
     setTimeout(debouncedIncr, 120);
     setTimeout(debouncedIncr, 150);
-    _.delay(function(){ ok(counter == 1, "incr was debounced"); start(); }, 220);
+    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 220);
   });
 
   asyncTest("functions: debounce asap", 2, function() {

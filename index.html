@@ -1016,6 +1016,19 @@ _.extend({name : 'moe'}, {age : 50});
 =&gt; {name : 'moe', age : 50}
 </pre>
 
+      <p id="restrict">
+        <b class="header">restrict</b><code>_.restrict(source, *keys)</code>
+        <br />
+        Return a clone of the <b>source</b> with only the properties with the
+        property names, or arrays of property names, provided in <b>keys</b>.
+      </p>
+      <pre>
+_.restrict({name : 'moe', age: 50, userid : 'moe1'}, 'name', 'age');
+=&gt; {name : 'moe', age : 50}
+_.restrict({name : 'moe', age: 50, userid : 'moe1'}, ['name', 'age']);
+=&gt; {name : 'moe', age : 50}
+</pre>
+
       <p id="defaults">
         <b class="header">defaults</b><code>_.defaults(object, *defaults)</code>
         <br />

@@ -812,6 +812,11 @@
     return toString.call(obj) == '[object Number]';
   };
 
+  // Is a givin number finite?
+  _.isFinite = function(obj) {
+    return obj > -1/0 && obj < 1/0 && obj === -obj;
+  };
+
   // Is the given value `NaN`?
   _.isNaN = function(obj) {
     // `NaN` is the only value for which `===` is not reflexive.

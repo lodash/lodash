@@ -484,6 +484,7 @@ $(document).ready(function() {
   test("objects: isFinite", function() {
     ok(!_.isFinite(undefined), 'undefined is not Finite');
     ok(!_.isFinite(null), 'null is not Finite');
+    ok(!_.isFinite(NaN), 'NaN is not Finite');
     ok(!_.isFinite(Infinity), 'Infinity is not Finite');
     ok(!_.isFinite(-Infinity), '-Infinity is not Finite');
     ok(!_.isFinite('12'), 'Strings are not numbers');

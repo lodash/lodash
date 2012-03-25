@@ -490,7 +490,7 @@ $(document).ready(function() {
     ok(_.isFinite(0), '0 is Finite');
     ok(_.isFinite(123), 'Ints are Finite');
     ok(_.isFinite(-12.44), 'Floats are Finite');
-      });
+  });
 
   test("objects: isNaN", function() {
     ok(!_.isNaN(undefined), 'undefined is not NaN');

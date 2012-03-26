@@ -960,7 +960,7 @@
     var template = function(data) {
       return render.call(this, data, _);
     };
-    template.source = 'function(obj, _){\n' + source + '\n}';
+    template.source = 'function(obj){\n' + source + '\n}';
     return template;
   };
 

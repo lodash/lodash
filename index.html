@@ -1327,7 +1327,7 @@ _.result(object, 'stuff');
         <br />
         Compiles JavaScript templates into functions that can be evaluated
         for rendering. Useful for rendering complicated bits of HTML from JSON
-        data sources. Template functions can both interpolate variables, using<br />
+        data sources. Template functions can both interpolate variables, using
         <tt>&lt;%= &hellip; %&gt;</tt>, as well as execute arbitrary JavaScript code, with
         <tt>&lt;% &hellip; %&gt;</tt>. If you wish to interpolate a value, and have
         it be HTML-escaped, use <tt>&lt;%- &hellip; %&gt;</tt> When you evaluate a template function, pass in a
@@ -1380,6 +1380,18 @@ _.templateSettings = {
 var template = _.template("Hello {{ name }}!");
 template({name : "Mustache"});
 =&gt; "Hello Mustache!"</pre>
+
+      <p>
+        Precompiling your templates can be a big help when debugging errors you can't
+        reproduce.  This is because precompiled templates can provide line numbers and
+        a stack trace, something that is not possible when compiling templates on the client.
+        <b>template</b> provides the <b>source</b> property on the compiled template
+        function for easy precompilation.
+      </p>
+
+      <pre>&lt;script&gt;
+  JST.project = <%= _.template(jstText).source %>;
+&lt;/script&gt;</pre>
 
 
       <h2 id="chaining">Chaining</h2>

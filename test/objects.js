@@ -488,6 +488,8 @@ $(document).ready(function() {
     ok(!_.isFinite(Infinity), 'Infinity is not Finite');
     ok(!_.isFinite(-Infinity), '-Infinity is not Finite');
     ok(!_.isFinite('12'), 'Strings are not numbers');
+    var obj = new Number(5);
+    ok(_.isFinite(obj), 'Number instances can be finite');
     ok(_.isFinite(0), '0 is Finite');
     ok(_.isFinite(123), 'Ints are Finite');
     ok(_.isFinite(-12.44), 'Floats are Finite');

@@ -814,7 +814,7 @@
 
   // Is a givin number finite?
   _.isFinite = function(obj) {
-    return obj > -1/0 && obj < 1/0 && obj === +obj;
+    return _.isNumber(obj) && isFinite(obj);
   };
 
   // Is the given value `NaN`?

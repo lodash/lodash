@@ -938,28 +938,30 @@
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
   _.template = function(str, data) {
-    var c  = _.templateSettings;
-    var tmpl = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +
+    var settings  = _.templateSettings;
+    var source = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +
       'with(obj||{}){__p.push(\'' +
       str
         .replace(escaper, function(match) {
           return '\\' + escapes[match];
         })
-        .replace(c.escape || noMatch, function(match, code) {
-          return "',_.escape(" + unescape(code) + "),\n'";
+        .replace(settings.escape || noMatch, function(match, code) {
+          return "',\n_.escape(" + unescape(code) + "),\n'";
         })
-        .replace(c.interpolate || noMatch, function(match, code) {
-          return "'," + unescape(code) + ",\n'";
+        .replace(settings.interpolate || noMatch, function(match, code) {
+          return "',\n" + unescape(code) + ",\n'";
         })
-        .replace(c.evaluate || noMatch, function(match, code) {
-          return "');" + unescape(code) + ";\n__p.push('";
+        .replace(settings.evaluate || noMatch, function(match, code) {
+          return "');\n" + unescape(code) + "\n;__p.push('";
         })
-        + "');}return __p.join('');";
-    var func = new Function('obj', '_', tmpl);
-    if (data) return func(data, _);
-    return function(data) {
-      return func.call(this, data, _);
+        + "');\n}\nreturn __p.join('');";
+    var render = new Function('obj', '_', source);
+    if (data) return render(data, _);
+    var template = function(data) {
+      return render.call(this, data, _);
     };
+    template.source = 'function(obj){\n' + source + '\n}';
+    return template;
   };
 
   // Add a "chain" function, which will delegate to the wrapper.

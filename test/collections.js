@@ -235,6 +235,10 @@ $(document).ready(function() {
     var people = [{name : 'curly', age : 50}, {name : 'moe', age : 30}];
     people = _.sortBy(people, function(person){ return person.age; });
     equal(_.pluck(people, 'name').join(', '), 'moe, curly', 'stooges sorted by age');
+
+    var list = ["one", "two", "three", "four", "five"];
+    var sorted = _.sortBy(list, 'length');
+    equal(sorted.join(' '), 'one two four five three', 'sorted by length');
   });
 
   test('collections: groupBy', function() {

@@ -270,6 +270,8 @@
       };
     }).sort(function(left, right) {
       var a = left.criteria, b = right.criteria;
+      if (_.isUndefined(a)) return 1;
+      if (_.isUndefined(b)) return -1;
       return a < b ? -1 : a > b ? 1 : 0;
     }), 'value');
   };

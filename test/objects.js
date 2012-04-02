@@ -41,6 +41,16 @@ $(document).ready(function() {
     equal(_.keys(result).join(''), 'ab', 'extend does not copy undefined values');
   });
 
+  test("objects: restrict", function() {
+    var result;
+    result = _.restrict({a:1, b:2, c:3}, 'a', 'c');
+    ok(_.isEqual(result, {a:1, c:3}), 'can restrict properties to those named');
+    result = _.restrict({a:1, b:2, c:3}, ['b', 'c']);
+    ok(_.isEqual(result, {b:2, c:3}), 'can restrict properties to those named in an array');
+    result = _.restrict({a:1, b:2, c:3}, ['a'], 'b');
+    ok(_.isEqual(result, {a:1, b:2}), 'can restrict properties to those named in mixed args');
+  });
+
   test("objects: defaults", function() {
     var result;
     var options = {zero: 0, one: 1, empty: "", nan: NaN, string: "string"};

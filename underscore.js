@@ -648,6 +648,16 @@
     return obj;
   };
 
+  // Restrict a given object to the properties named
+  _.restrict = function(obj) {
+    if (obj !== Object(obj)) throw new TypeError('Invalid object');
+    var dest = {};
+    each(_.flatten(slice.call(arguments, 1)), function(prop) {
+      if (prop in obj) dest[prop] = obj[prop];
+    });
+    return dest;
+  };
+
   // Fill in a given object with default properties.
   _.defaults = function(obj) {
     each(slice.call(arguments, 1), function(source) {

@@ -238,6 +238,10 @@ $(document).ready(function() {
 
     var list = [undefined, 4, 1, undefined, 3, 2];
     equal(_.sortBy(list, _.identity).join(','), '1,2,3,4,,', 'sortBy with undefined values');
+
+    var list = ["one", "two", "three", "four", "five"];
+    var sorted = _.sortBy(list, 'length');
+    equal(sorted.join(' '), 'one two four five three', 'sorted by length');
   });
 
   test('collections: groupBy', function() {

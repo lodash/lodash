@@ -1,6 +1,14 @@
 $(document).ready(function() {
 
-  module("Utility");
+  var templateSettings = _.templateSettings;
+
+  module("Utility", {
+
+    teardown: function() {
+      _.templateSettings = templateSettings;
+    }
+
+  });
 
   test("utility: noConflict", function() {
     var underscore = _.noConflict();
@@ -150,6 +158,20 @@ $(document).ready(function() {
 
     var templateWithNull = _.template("a null undefined {{planet}}");
     equal(templateWithNull({planet : "world"}), "a null undefined world", "can handle missing escape and evaluate settings");
+  });
+
+  test('_.template handles \\u2028 & \\u2029', function() {
+    var tmpl = _.template('<p>\u2028<%= "\\u2028\\u2029" %>\u2029</p>');
+    strictEqual(tmpl(), '<p>\u2028\u2028\u2029\u2029</p>');
+  });
+
+  test('result calls functions and returns primitives', function() {
+    var obj = {w: '', x: 'x', y: function(){ return this.x; }};
+    strictEqual(_.result(obj, 'w'), '');
+    strictEqual(_.result(obj, 'x'), 'x');
+    strictEqual(_.result(obj, 'y'), 'x');
+    strictEqual(_.result(obj, 'z'), undefined);
+    strictEqual(_.result(null, 'x'), null);
   });
 
 });

@@ -235,6 +235,9 @@ $(document).ready(function() {
     var people = [{name : 'curly', age : 50}, {name : 'moe', age : 30}];
     people = _.sortBy(people, function(person){ return person.age; });
     equal(_.pluck(people, 'name').join(', '), 'moe, curly', 'stooges sorted by age');
+
+    var list = [undefined, 4, 1, undefined, 3, 2];
+    equal(_.sortBy(list, _.identity).join(','), '1,2,3,4,,', 'sortBy with undefined values');
   });
 
   test('collections: groupBy', function() {

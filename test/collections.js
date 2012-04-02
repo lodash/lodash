@@ -264,8 +264,8 @@ $(document).ready(function() {
 
   test('collections: shuffle', function() {
     var numbers = _.range(10);
-	var shuffled = _.shuffle(numbers).sort();
-	notStrictEqual(numbers, shuffled, 'original object is unmodified');
+    var shuffled = _.shuffle(numbers).sort();
+    notStrictEqual(numbers, shuffled, 'original object is unmodified');
     equal(shuffled.join(','), numbers.join(','), 'contains the same members before and after shuffle');
   });
 
@@ -278,6 +278,14 @@ $(document).ready(function() {
 
     var numbers = _.toArray({one : 1, two : 2, three : 3});
     equal(numbers.join(', '), '1, 2, 3', 'object flattened into array');
+    
+    var objectWithToArrayFunction = {toArray: function() {
+        return [1, 2, 3];
+    }};
+    equal(_.toArray(objectWithToArrayFunction).join(', '), '1, 2, 3', 'toArray method used if present');
+    
+    var objectWithToArrayValue = {toArray: 1};
+    equal(_.toArray(objectWithToArrayValue).join(', '), '1', 'toArray property ignored if not a function');
   });
 
   test('collections: size', function() {

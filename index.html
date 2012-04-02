@@ -214,6 +214,7 @@
       <li>- <a href="#values">values</a></li>
       <li>- <a href="#object-functions">functions</a></li>
       <li>- <a href="#extend">extend</a></li>
+      <li>- <a href="#pick">pick</a></li>
       <li>- <a href="#defaults">defaults</a></li>
       <li>- <a href="#clone">clone</a></li>
       <li>- <a href="#tap">tap</a></li>
@@ -1016,16 +1017,14 @@ _.extend({name : 'moe'}, {age : 50});
 =&gt; {name : 'moe', age : 50}
 </pre>
 
-      <p id="restrict">
-        <b class="header">restrict</b><code>_.restrict(source, *keys)</code>
+      <p id="pick">
+        <b class="header">pick</b><code>_.pick(object, *keys)</code>
         <br />
-        Return a clone of the <b>source</b> with only the properties with the
-        property names, or arrays of property names, provided in <b>keys</b>.
+        Return a copy of the <b>object</b>, filtered to only have values for
+        the whitelisted <b>keys</b> (or array of valid keys).
       </p>
       <pre>
-_.restrict({name : 'moe', age: 50, userid : 'moe1'}, 'name', 'age');
-=&gt; {name : 'moe', age : 50}
-_.restrict({name : 'moe', age: 50, userid : 'moe1'}, ['name', 'age']);
+_.pick({name : 'moe', age: 50, userid : 'moe1'}, 'name', 'age');
 =&gt; {name : 'moe', age : 50}
 </pre>
 

@@ -648,14 +648,13 @@
     return obj;
   };
 
-  // Restrict a given object to the properties named
-  _.restrict = function(obj) {
-    if (obj !== Object(obj)) throw new TypeError('Invalid object');
-    var dest = {};
-    each(_.flatten(slice.call(arguments, 1)), function(prop) {
-      if (prop in obj) dest[prop] = obj[prop];
+  // Return a copy of the object only containing the whitelisted properties.
+  _.pick = function(obj) {
+    var result = {};
+    each(_.flatten(slice.call(arguments, 1)), function(key) {
+      if (key in obj) result[key] = obj[key];
     });
-    return dest;
+    return result;
   };
 
   // Fill in a given object with default properties.

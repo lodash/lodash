@@ -41,13 +41,13 @@ $(document).ready(function() {
     equal(_.keys(result).join(''), 'ab', 'extend does not copy undefined values');
   });
 
-  test("objects: restrict", function() {
+  test("objects: pick", function() {
     var result;
-    result = _.restrict({a:1, b:2, c:3}, 'a', 'c');
+    result = _.pick({a:1, b:2, c:3}, 'a', 'c');
     ok(_.isEqual(result, {a:1, c:3}), 'can restrict properties to those named');
-    result = _.restrict({a:1, b:2, c:3}, ['b', 'c']);
+    result = _.pick({a:1, b:2, c:3}, ['b', 'c']);
     ok(_.isEqual(result, {b:2, c:3}), 'can restrict properties to those named in an array');
-    result = _.restrict({a:1, b:2, c:3}, ['a'], 'b');
+    result = _.pick({a:1, b:2, c:3}, ['a'], 'b');
     ok(_.isEqual(result, {a:1, b:2}), 'can restrict properties to those named in mixed args');
   });
 
@@ -178,7 +178,7 @@ $(document).ready(function() {
 
     // Arrays with primitive and object values.
     ok(_.isEqual([1, "Larry", true], [1, "Larry", true]), "Arrays containing identical primitives are equal");
-    ok(_.isEqual([/Moe/g, new Date(2009, 9, 25)], [/Moe/g, new Date(2009, 9, 25)]), "Arrays containing equivalent elements are equal");
+    ok(_.isEqual([(/Moe/g), new Date(2009, 9, 25)], [(/Moe/g), new Date(2009, 9, 25)]), "Arrays containing equivalent elements are equal");
 
     // Multi-dimensional arrays.
     var a = [new Number(47), false, "Larry", /Moe/, new Date(2009, 11, 13), ['running', 'biking', new String('programming')], {a: 47}];
@@ -346,7 +346,7 @@ $(document).ready(function() {
     Date.prototype.isEqual = function(that) {
       var this_date_components = this.toJSON();
       var that_date_components = (that instanceof Date) ? that.toJSON() : that;
-      delete this_date_components['_type']; delete that_date_components['_type']
+      delete this_date_components['_type']; delete that_date_components['_type'];
       return _.isEqual(this_date_components, that_date_components);
     };
 

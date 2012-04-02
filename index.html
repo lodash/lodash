@@ -1382,8 +1382,7 @@ _.map([1, 2, 3], function(n){ return n * 2; });
 _([1, 2, 3]).map(function(n){ return n * 2; });</pre>
 
       <p>
-        Using the object-oriented style allows you to chain together methods. Calling
-        <tt>chain</tt> on a wrapped object will cause all future method calls to
+        Calling <tt>chain</tt> on a wrapped object will cause all future method calls to
         return wrapped objects as well. When you've finished the computation,
         use <tt>value</tt> to retrieve the final value. Here's an example of chaining
         together a <b>map/flatten/reduce</b>, in order to get the word count of
@@ -1534,7 +1533,8 @@ _([1, 2, 3]).value();
         <b class="header">1.2.4</b> &mdash; <small><i>Jan. 4, 2012</i></small><br />
         <ul>
           <li>
-            You now can (and probably should) write <tt>_.chain(list)</tt> 
+            You now can (and probably should, as it's simpler) 
+            write <tt>_.chain(list)</tt> 
             instead of <tt>_(list).chain()</tt>.
           </li>
           <li>

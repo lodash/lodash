@@ -117,12 +117,15 @@ $(document).ready(function() {
     _.delay(function(){ equal(value, 6, "updated to latest value"); start(); }, 400);
   });
 
-  asyncTest("functions: throttle once", 1, function() {
+  asyncTest("functions: throttle once", 2, function() {
     var counter = 0;
-    var incr = function(){ counter++; };
+    var incr = function(){ return ++counter; };
     var throttledIncr = _.throttle(incr, 100);
-    throttledIncr();
-    _.delay(function(){ equal(counter, 1, "incr was called once"); start(); }, 220);
+    var result = throttledIncr();
+    _.delay(function(){
+      equal(result, 1, "throttled functions return their value");
+      equal(counter, 1, "incr was called once"); start();
+    }, 220);
   });
 
   asyncTest("functions: throttle twice", 1, function() {

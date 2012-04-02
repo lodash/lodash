@@ -531,7 +531,7 @@
   // Returns a function, that, when invoked, will only be triggered at most once
   // during a given window of time.
   _.throttle = function(func, wait) {
-    var context, args, timeout, throttling, more;
+    var context, args, timeout, throttling, more, result;
     var whenDone = _.debounce(function(){ more = throttling = false; }, wait);
     return function() {
       context = this; args = arguments;
@@ -544,10 +544,11 @@
       if (throttling) {
         more = true;
       } else {
-        func.apply(context, args);
+        result = func.apply(context, args);
       }
       whenDone();
       throttling = true;
+      return result;
     };
   };
 

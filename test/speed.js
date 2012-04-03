@@ -67,8 +67,4 @@
     return _.range(1000);
   });
 
-  JSLitmus.test('_.shuffle()', function() {
-    return _.shuffle(numbers);
-  });
-
 })();

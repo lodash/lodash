@@ -1,8 +1,12 @@
 $(document).ready(function() {
 
-  var templateSettings = _.templateSettings;
+  var templateSettings;
 
   module("Utility", {
+
+    setup: function() {
+      templateSettings = _.clone(_.templateSettings);
+    },
 
     teardown: function() {
       _.templateSettings = templateSettings;
@@ -172,6 +176,11 @@ $(document).ready(function() {
     strictEqual(_.result(obj, 'y'), 'x');
     strictEqual(_.result(obj, 'z'), undefined);
     strictEqual(_.result(null, 'x'), null);
+  });
+
+  test('_.templateSettings.varname', function() {
+    _.templateSettings.varname = 'data';
+    strictEqual(_.template('<%=data.x%>')({x: 'x'}), 'x');
   });
 
 });

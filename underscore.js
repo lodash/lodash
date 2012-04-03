@@ -951,30 +951,43 @@
   // JavaScript micro-templating, similar to John Resig's implementation.
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
-  _.template = function(str, data) {
+  _.template = function(source, data) {
     var settings  = _.templateSettings;
-    var source = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +
-      'with(obj||{}){__p.push(\'' +
-      str
-        .replace(escaper, function(match) {
-          return '\\' + escapes[match];
-        })
-        .replace(settings.escape || noMatch, function(match, code) {
-          return "',\n_.escape(" + unescape(code) + "),\n'";
-        })
-        .replace(settings.interpolate || noMatch, function(match, code) {
-          return "',\n" + unescape(code) + ",\n'";
-        })
-        .replace(settings.evaluate || noMatch, function(match, code) {
-          return "');\n" + unescape(code) + "\n;__p.push('";
-        })
-        + "');\n}\nreturn __p.join('');";
-    var render = new Function('obj', '_', source);
+    var varname = settings.varname || 'obj';
+
+    // Compile the template source, taking care to escape characters that
+    // cannot be included in a string literal and then unescape them in code
+    // blocks.
+    var compiled = "__p.push('" + source
+      .replace(escaper, function(match) {
+        return '\\' + escapes[match];
+      })
+      .replace(settings.escape || noMatch, function(match, code) {
+        return "',\n_.escape(" + unescape(code) + "),\n'";
+      })
+      .replace(settings.interpolate || noMatch, function(match, code) {
+        return "',\n" + unescape(code) + ",\n'";
+      })
+      .replace(settings.evaluate || noMatch, function(match, code) {
+        return "');\n" + unescape(code) + "\n;__p.push('";
+      }) + "');\n";
+
+    // If no varname is specified, place data values in local scope.
+    if (!settings.varname) compiled = 'with(obj||{}){\n' + compiled + '}\n';
+
+    compiled = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};\n' +
+      compiled + "return __p.join('');\n";
+
+    var render = new Function(varname, '_', compiled);
     if (data) return render(data, _);
     var template = function(data) {
       return render.call(this, data, _);
     };
-    template.source = 'function(obj){\n' + source + '\n}';
+
+    // Provide the compiled function source as a convenience for build time
+    // precompilation.
+    template.compiled = 'function(' + varname + '){\n' + compiled + '\n}';
+
     return template;
   };
 

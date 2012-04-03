@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />  
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
   <title>Underscore.js</title>
   <style>
     body {
@@ -1348,6 +1348,7 @@ _.result(object, 'stuff');
         object as the second parameter to <b>template</b> in order to render
         immediately instead of returning a template function.
       </p>
+
       <pre>
 var compiled = _.template("hello: &lt;%= name %&gt;");
 compiled({name : 'moe'});
@@ -1394,15 +1395,27 @@ template({name : "Mustache"});
 =&gt; "Hello Mustache!"</pre>
 
       <p>
+        By default, <b>template</b> places the values from your data in the local scope
+        via the <tt>with</tt> statement.  However, you can specify a single variable name
+        with the <b>varname</b> setting.
+      </p>
+
+      <pre>
+_.templateSettings.varname = 'data';
+var template = _.template("<%= data.hasWith %>");
+template({hasWith: 'no'});
+=&gt; "no"</pre>
+
+      <p>
         Precompiling your templates can be a big help when debugging errors you can't
         reproduce.  This is because precompiled templates can provide line numbers and
         a stack trace, something that is not possible when compiling templates on the client.
-        <b>template</b> provides the <b>source</b> property on the compiled template
+        <b>template</b> provides the <b>compiled</b> property on the compiled template
         function for easy precompilation.
       </p>
 
       <pre>&lt;script&gt;
-  JST.project = <%= _.template(jstText).source %>;
+  JST.project = <%= _.template(jstText).compiled %>;
 &lt;/script&gt;</pre>
 
 
@@ -1570,8 +1583,8 @@ _([1, 2, 3]).value();
         <b class="header">1.2.4</b> &mdash; <small><i>Jan. 4, 2012</i></small><br />
         <ul>
           <li>
-            You now can (and probably should, as it's simpler) 
-            write <tt>_.chain(list)</tt> 
+            You now can (and probably should, as it's simpler)
+            write <tt>_.chain(list)</tt>
             instead of <tt>_(list).chain()</tt>.
           </li>
           <li>

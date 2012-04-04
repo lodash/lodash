@@ -951,9 +951,8 @@
   // JavaScript micro-templating, similar to John Resig's implementation.
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
-  _.template = function(source, data) {
-    var settings  = _.templateSettings;
-    var varname = settings.varname || 'obj';
+  _.template = function(source, data, settings) {
+    settings = _.extend(_.templateSettings, settings);
 
     // Compile the template source, taking care to escape characters that
     // cannot be included in a string literal and then unescape them in code
@@ -978,7 +977,7 @@
     compiled = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};\n' +
       compiled + "return __p.join('');\n";
 
-    var render = new Function(varname, '_', compiled);
+    var render = new Function(settings.varname || 'obj', '_', compiled);
     if (data) return render(data, _);
     var template = function(data) {
       return render.call(this, data, _);
@@ -986,7 +985,8 @@
 
     // Provide the compiled function source as a convenience for build time
     // precompilation.
-    template.compiled = 'function(' + varname + '){\n' + compiled + '\n}';
+    template.compiled = 'function(' + (settings.varname || 'obj') + '){\n' +
+      compiled + '\n}';
 
     return template;
   };

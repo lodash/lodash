@@ -179,8 +179,11 @@ $(document).ready(function() {
   });
 
   test('_.templateSettings.varname', function() {
+    var s = '<%=data.x%>';
+    var data = {x: 'x'};
+    strictEqual(_.template(s, data, {varname: 'data'}), 'x')
     _.templateSettings.varname = 'data';
-    strictEqual(_.template('<%=data.x%>')({x: 'x'}), 'x');
+    strictEqual(_.template(s)(data), 'x')
   });
 
 });

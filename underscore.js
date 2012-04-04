@@ -951,13 +951,13 @@
   // JavaScript micro-templating, similar to John Resig's implementation.
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
-  _.template = function(source, data, settings) {
+  _.template = function(text, data, settings) {
     settings = _.extend(_.templateSettings, settings);
 
     // Compile the template source, taking care to escape characters that
     // cannot be included in a string literal and then unescape them in code
     // blocks.
-    var compiled = "__p.push('" + source
+    var source = "__p.push('" + text
       .replace(escaper, function(match) {
         return '\\' + escapes[match];
       })
@@ -971,13 +971,13 @@
         return "');\n" + unescape(code) + "\n;__p.push('";
       }) + "');\n";
 
-    // If no varname is specified, place data values in local scope.
-    if (!settings.varname) compiled = 'with(obj||{}){\n' + compiled + '}\n';
+    // If a variable is not specified, place data values in local scope.
+    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
 
-    compiled = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};\n' +
-      compiled + "return __p.join('');\n";
+    source = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};\n' +
+      source + "return __p.join('');\n";
 
-    var render = new Function(settings.varname || 'obj', '_', compiled);
+    var render = new Function(settings.variable || 'obj', '_', source);
     if (data) return render(data, _);
     var template = function(data) {
       return render.call(this, data, _);
@@ -985,8 +985,8 @@
 
     // Provide the compiled function source as a convenience for build time
     // precompilation.
-    template.compiled = 'function(' + (settings.varname || 'obj') + '){\n' +
-      compiled + '\n}';
+    template.source = 'function(' + (settings.variable || 'obj') + '){\n' +
+      source + '\n}';
 
     return template;
   };

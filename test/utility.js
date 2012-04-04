@@ -178,11 +178,11 @@ $(document).ready(function() {
     strictEqual(_.result(null, 'x'), null);
   });
 
-  test('_.templateSettings.varname', function() {
+  test('_.templateSettings.variable', function() {
     var s = '<%=data.x%>';
     var data = {x: 'x'};
-    strictEqual(_.template(s, data, {varname: 'data'}), 'x')
-    _.templateSettings.varname = 'data';
+    strictEqual(_.template(s, data, {variable: 'data'}), 'x')
+    _.templateSettings.variable = 'data';
     strictEqual(_.template(s)(data), 'x')
   });
 

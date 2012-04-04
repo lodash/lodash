@@ -1335,7 +1335,7 @@ _.result(object, 'stuff');
 =&gt; "nonsense"</pre>
 
       <p id="template">
-        <b class="header">template</b><code>_.template(templateString, [context])</code>
+        <b class="header">template</b><code>_.template(templateString, [data], [settings])</code>
         <br />
         Compiles JavaScript templates into functions that can be evaluated
         for rendering. Useful for rendering complicated bits of HTML from JSON
@@ -1343,10 +1343,11 @@ _.result(object, 'stuff');
         <tt>&lt;%= &hellip; %&gt;</tt>, as well as execute arbitrary JavaScript code, with
         <tt>&lt;% &hellip; %&gt;</tt>. If you wish to interpolate a value, and have
         it be HTML-escaped, use <tt>&lt;%- &hellip; %&gt;</tt> When you evaluate a template function, pass in a
-        <b>context</b> object that has properties corresponding to the template's free
-        variables. If you're writing a one-off, you can pass the <b>context</b>
+        <b>data</b> object that has properties corresponding to the template's free
+        variables. If you're writing a one-off, you can pass the <b>data</b>
         object as the second parameter to <b>template</b> in order to render
-        immediately instead of returning a template function.
+        immediately instead of returning a template function.  The <b>settings</b> argument
+        should be a hash containing any <tt>_.templateSettings</tt> that should be overriden.
       </p>
 
       <pre>
@@ -1397,25 +1398,23 @@ template({name : "Mustache"});
       <p>
         By default, <b>template</b> places the values from your data in the local scope
         via the <tt>with</tt> statement.  However, you can specify a single variable name
-        with the <b>varname</b> setting.
+        with the <b>variable</b> setting.
       </p>
 
       <pre>
-_.templateSettings.varname = 'data';
-var template = _.template("<%= data.hasWith %>");
-template({hasWith: 'no'});
+_.template("<%= data.hasWith %>", {hasWith: 'no'}, {variable: 'data'});
 =&gt; "no"</pre>
 
       <p>
         Precompiling your templates can be a big help when debugging errors you can't
         reproduce.  This is because precompiled templates can provide line numbers and
         a stack trace, something that is not possible when compiling templates on the client.
-        <b>template</b> provides the <b>compiled</b> property on the compiled template
+        <b>template</b> provides the <b>source</b> property on the compiled template
         function for easy precompilation.
       </p>
 
       <pre>&lt;script&gt;
-  JST.project = <%= _.template(jstText).compiled %>;
+  JST.project = <%= _.template(jstText).source %>;
 &lt;/script&gt;</pre>
 
 

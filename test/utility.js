@@ -1,8 +1,12 @@
 $(document).ready(function() {
 
-  var templateSettings = _.templateSettings;
+  var templateSettings;
 
   module("Utility", {
+
+    setup: function() {
+      templateSettings = _.clone(_.templateSettings);
+    },
 
     teardown: function() {
       _.templateSettings = templateSettings;
@@ -172,6 +176,14 @@ $(document).ready(function() {
     strictEqual(_.result(obj, 'y'), 'x');
     strictEqual(_.result(obj, 'z'), undefined);
     strictEqual(_.result(null, 'x'), null);
+  });
+
+  test('_.templateSettings.variable', function() {
+    var s = '<%=data.x%>';
+    var data = {x: 'x'};
+    strictEqual(_.template(s, data, {variable: 'data'}), 'x')
+    _.templateSettings.variable = 'data';
+    strictEqual(_.template(s)(data), 'x')
   });
 
 });

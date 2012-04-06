@@ -965,7 +965,7 @@
         return "'+\n_.escape(" + unescape(code) + ")+\n'";
       })
       .replace(settings.interpolate || noMatch, function(match, code) {
-        return "'+(\n" + unescape(code) + ")+\n'";
+        return "'+\n(" + unescape(code) + ")+\n'";
       })
       .replace(settings.evaluate || noMatch, function(match, code) {
         return "';\n" + unescape(code) + "\n;__p+='";
@@ -987,7 +987,7 @@
     // Provide the compiled function source as a convenience for build time
     // precompilation.
     template.source = 'function(' + (settings.variable || 'obj') + '){\n' +
-      source + '\n}';
+      source + '}';
 
     return template;
   };

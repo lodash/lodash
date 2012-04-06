@@ -1061,10 +1061,10 @@ _.clone({name : 'moe'});
       <pre>
 _.chain([1,2,3,200])
   .filter(function(num) { return num % 2 == 0; })
-  .tap(console.log)
+  .tap(alert)
   .map(function(num) { return num * num })
   .value();
-=&gt; [2, 200]
+=&gt; // [2, 200] (alerted)
 =&gt; [4, 40000]
 </pre>
 

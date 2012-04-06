@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />  
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
   <title>Underscore.js</title>
   <style>
     body {
@@ -1335,7 +1335,7 @@ _.result(object, 'stuff');
 =&gt; "nonsense"</pre>
 
       <p id="template">
-        <b class="header">template</b><code>_.template(templateString, [context])</code>
+        <b class="header">template</b><code>_.template(templateString, [data], [settings])</code>
         <br />
         Compiles JavaScript templates into functions that can be evaluated
         for rendering. Useful for rendering complicated bits of HTML from JSON
@@ -1343,11 +1343,13 @@ _.result(object, 'stuff');
         <tt>&lt;%= &hellip; %&gt;</tt>, as well as execute arbitrary JavaScript code, with
         <tt>&lt;% &hellip; %&gt;</tt>. If you wish to interpolate a value, and have
         it be HTML-escaped, use <tt>&lt;%- &hellip; %&gt;</tt> When you evaluate a template function, pass in a
-        <b>context</b> object that has properties corresponding to the template's free
-        variables. If you're writing a one-off, you can pass the <b>context</b>
+        <b>data</b> object that has properties corresponding to the template's free
+        variables. If you're writing a one-off, you can pass the <b>data</b>
         object as the second parameter to <b>template</b> in order to render
-        immediately instead of returning a template function.
+        immediately instead of returning a template function.  The <b>settings</b> argument
+        should be a hash containing any <tt>_.templateSettings</tt> that should be overriden.
       </p>
+
       <pre>
 var compiled = _.template("hello: &lt;%= name %&gt;");
 compiled({name : 'moe'});
@@ -1392,6 +1394,16 @@ _.templateSettings = {
 var template = _.template("Hello {{ name }}!");
 template({name : "Mustache"});
 =&gt; "Hello Mustache!"</pre>
+
+      <p>
+        By default, <b>template</b> places the values from your data in the local scope
+        via the <tt>with</tt> statement.  However, you can specify a single variable name
+        with the <b>variable</b> setting.
+      </p>
+
+      <pre>
+_.template("<%= data.hasWith %>", {hasWith: 'no'}, {variable: 'data'});
+=&gt; "no"</pre>
 
       <p>
         Precompiling your templates can be a big help when debugging errors you can't
@@ -1570,8 +1582,8 @@ _([1, 2, 3]).value();
         <b class="header">1.2.4</b> &mdash; <small><i>Jan. 4, 2012</i></small><br />
         <ul>
           <li>
-            You now can (and probably should, as it's simpler) 
-            write <tt>_.chain(list)</tt> 
+            You now can (and probably should, as it's simpler)
+            write <tt>_.chain(list)</tt>
             instead of <tt>_(list).chain()</tt>.
           </li>
           <li>

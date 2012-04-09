@@ -136,7 +136,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Underscore.js <span class="version">(1.3.1)</span>
+      Underscore.js <span class="version">(1.3.2)</span>
     </a>
 
     <a class="toc_title" href="#">
@@ -229,6 +229,7 @@
       <li>- <a href="#isFunction">isFunction</a></li>
       <li>- <a href="#isString">isString</a></li>
       <li>- <a href="#isNumber">isNumber</a></li>
+      <li>- <a href="#isFinite">isFinite</a></li>
       <li>- <a href="#isBoolean">isBoolean</a></li>
       <li>- <a href="#isDate">isDate</a></li>
       <li>- <a href="#isRegExp">isRegExp</a></li>
@@ -322,16 +323,16 @@
 
     <table>
       <tr>
-        <td><a href="underscore.js">Development Version (1.3.1)</a></td>
-        <td><i>34kb, Uncompressed with Comments</i></td>
+        <td><a href="underscore.js">Development Version (1.3.2)</a></td>
+        <td><i>37kb, Uncompressed with Plentiful Comments</i></td>
       </tr>
       <tr>
-        <td><a href="underscore-min.js">Production Version (1.3.1)</a></td>
-        <td><i>&lt; 4kb, Minified and Gzipped</i></td>
+        <td><a href="underscore-min.js">Production Version (1.3.2)</a></td>
+        <td><i>4kb, Minified and Gzipped</i></td>
       </tr>
     </table>
 
-    <div class="warning">Upgrade warning: version 1.3.0 removes AMD (RequireJS) support.</div>
+    <div class="warning">Upgrade warning: versions 1.3.0 and higher remove AMD (RequireJS) support.</div>
 
     <div id="documentation">
 
@@ -529,7 +530,8 @@ _.min(numbers);
         <b class="header">sortBy</b><code>_.sortBy(list, iterator, [context])</code>
         <br />
         Returns a sorted copy of <b>list</b>, ranked in ascending order by the
-        results of running each value through <b>iterator</b>.
+        results of running each value through <b>iterator</b>. Iterator may
+        also be the string name of the property to sort by (eg. <tt>length</tt>).
       </p>
       <pre>
 _.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
@@ -892,7 +894,7 @@ $(window).scroll(throttled);
 </pre>
 
       <p id="debounce">
-        <b class="header">debounce</b><code>_.debounce(function, wait)</code>
+        <b class="header">debounce</b><code>_.debounce(function, wait, [immediate])</code>
         <br />
         Creates and returns a new debounced version of the passed function that
         will postpone its execution until after
@@ -902,6 +904,15 @@ $(window).scroll(throttled);
         preview of a Markdown comment, recalculating a layout after the window
         has stopped being resized, and so on.
       </p>
+      
+      <p>
+        Pass <tt>true</tt> for the <b>immediate</b> parameter to cause 
+        <b>debounce</b> to trigger the function on the leading intead of the 
+        trailing edge of the <b>wait</b> interval. Useful in circumstances like 
+        preventing accidental double-clicks on a "submit" button from firing a 
+        second time.
+      </p>
+      
       <pre>
 var lazyLayout = _.debounce(calculateLayout, 300);
 $(window).resize(lazyLayout);
@@ -1185,6 +1196,19 @@ _.isNumber(8.4 * 5);
 =&gt; true
 </pre>
 
+      <p id="isFinite">
+        <b class="header">isFinite</b><code>_.isFinite(object)</code>
+        <br />
+        Returns <i>true</i> if <b>object</b> is a finite Number.
+      </p>
+      <pre>
+_.isFinite(-101);
+=&gt; true
+
+_.isFinite(-Infinity);
+=&gt; false
+</pre>
+
       <p id="isBoolean">
         <b class="header">isBoolean</b><code>_.isBoolean(object)</code>
         <br />
@@ -1399,7 +1423,8 @@ template({name : "Mustache"});
       <p>
         By default, <b>template</b> places the values from your data in the local scope
         via the <tt>with</tt> statement.  However, you can specify a single variable name
-        with the <b>variable</b> setting.
+        with the <b>variable</b> setting. This can significantly improve the speed
+        at which a template is able to render.
       </p>
 
       <pre>
@@ -1410,7 +1435,7 @@ _.template("<%= data.hasWith %>", {hasWith: 'no'}, {variable: 'data'});
         Precompiling your templates can be a big help when debugging errors you can't
         reproduce.  This is because precompiled templates can provide line numbers and
         a stack trace, something that is not possible when compiling templates on the client.
-        <b>template</b> provides the <b>source</b> property on the compiled template
+        The <b>source</b> property is available on the compiled template
         function for easy precompilation.
       </p>
 
@@ -1548,6 +1573,49 @@ _([1, 2, 3]).value();
       </p>
 
       <h2 id="changelog">Change Log</h2>
+      
+      <p>
+        <b class="header">1.3.2</b> &mdash; <small><i>April 9, 2012</i></small><br />
+        <ul>
+          <li>
+            Many improvements to <tt>_.template</tt>, which now provides the 
+            <tt>source</tt> of the template function as a property, for potentially
+            even more efficient pre-compilation on the server-side. You may now
+            also set the <tt>variable</tt> option when creating a template, 
+            which will cause your passed-in data to be made available under the 
+            variable you named, instead of using a <tt>with</tt> statement &mdash;
+            significantly improving the speed of rendering the template.
+          </li>
+          <li>
+            Added the <tt>pick</tt> function, which allows you to filter an 
+            object literal with a whitelist of allowed property names.
+          </li>
+          <li>
+            Added the <tt>result</tt> function, for convenience when working
+            with APIs that allow either functions or raw properties.
+          </li>
+          <li>
+            Added the <tt>isFinite</tt> function, because sometimes knowing that
+            a value is a number just ain't quite enough.
+          </li>
+          <li>
+            The <tt>sortBy</tt> function may now also be passed the string name
+            of a property to use as the sort order on each object.
+          </li>
+          <li>
+            Fixed <tt>uniq</tt> to work with sparse arrays.
+          </li>
+          <li>
+            The <tt>difference</tt> function now performs a shallow flatten
+            instead of a deep one when computing array differences.
+          </li>
+          <li>
+            The <tt>debounce</tt> function now takes an <tt>immediate</tt>
+            parameter, which will cause the callback to fire on the leading 
+            instead of the trailing edge.
+          </li>
+        </ul>
+      </p>
 
       <p>
         <b class="header">1.3.1</b> &mdash; <small><i>Jan. 23, 2012</i></small><br />

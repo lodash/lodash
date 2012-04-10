@@ -952,7 +952,7 @@
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
   _.template = function(text, data, settings) {
-    settings = _.extend(_.templateSettings, settings);
+    settings = _.defaults(settings || {}, _.templateSettings);
 
     // Compile the template source, taking care to escape characters that
     // cannot be included in a string literal and then unescape them in code

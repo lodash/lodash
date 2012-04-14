@@ -186,4 +186,10 @@ $(document).ready(function() {
     strictEqual(_.template(s)(data), 'x')
   });
 
+  test('#547 - _.templateSettings is unchanged by custom settings.', function() {
+    ok(!_.templateSettings.variable);
+    _.template('', {}, {variable: 'x'});
+    ok(!_.templateSettings.variable);
+  });
+
 });

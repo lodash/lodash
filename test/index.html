@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>LowDash.js Test Suite</title>
+		<link rel="stylesheet" href="../vendor/qunit/qunit/qunit.css">
+	</head>
+	<body>
+		<h1 id="qunit-header">LowDash.js Test Suite</h1>
+		<h2 id="qunit-banner"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<script src="../vendor/qunit/qunit/qunit.js"></script>
+		<script>var lowDash2, lowDash = 1;</script>
+		<script src="../lowdash.js"></script>
+		<script src="../vendor/requirejs/require.js"></script>
+		<script>
+			if (/[?&]norequire=true(?:&|$)/.test(location.search)) {
+				require = define = null;
+				document.write('<script src="test.js"><\/script>');
+			}
+			else {
+				define.amd.lowDash = true;
+				require({
+					'baseUrl': '../vendor/requirejs/',
+					'urlArgs': 't=' + (+new Date),
+					'paths': {
+						'lowdash': '../../lowdash'
+					}
+				},
+				['lowdash'], function(lowDash) {
+					lowDash2 = lowDash.noConflict();
+					require(['test.js']);
+				});
+			}
+		</script>
+	</body>
+</html>

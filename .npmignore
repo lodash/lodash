@@ -1,3 +1,4 @@
-test/
-Rakefile
-docs/
+.*
+vendor/
+doc/*.php
+test/*.html

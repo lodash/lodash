@@ -1,0 +1,15 @@
+[submodule "vendor/benchmark.js"]
+	path = vendor/benchmark.js
+	url = git://github.com/bestiejs/benchmark.js.git
+[submodule "vendor/docdown"]
+	path = vendor/docdown
+	url = git://github.com/jdalton/docdown.git
+[submodule "vendor/qunit"]
+	path = vendor/qunit
+	url = git://github.com/jquery/qunit.git
+[submodule "vendor/qunit-clib"]
+	path = vendor/qunit-clib
+	url = git://github.com/jdalton/qunit-clib.git
+[submodule "vendor/requirejs"]
+	path = vendor/requirejs
+	url = git://github.com/jrburke/requirejs.git

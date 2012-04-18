@@ -2,18 +2,18 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>LowDash.js Test Suite</title>
+		<title>Lo-Dash Test Suite</title>
 		<link rel="stylesheet" href="../vendor/qunit/qunit/qunit.css">
 	</head>
 	<body>
-		<h1 id="qunit-header">LowDash.js Test Suite</h1>
+		<h1 id="qunit-header">Lo-Dash Test Suite</h1>
 		<h2 id="qunit-banner"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
-		<script>var lowDash2, lowDash = 1;</script>
-		<script src="../lowdash.js"></script>
+		<script>var _2, _ = 1;</script>
+		<script src="../lodash.js"></script>
 		<script src="../vendor/requirejs/require.js"></script>
 		<script>
 			if (/[?&]norequire=true(?:&|$)/.test(location.search)) {
@@ -21,16 +21,16 @@
 				document.write('<script src="test.js"><\/script>');
 			}
 			else {
-				define.amd.lowDash = true;
+				define.amd.lodash = true;
 				require({
 					'baseUrl': '../vendor/requirejs/',
 					'urlArgs': 't=' + (+new Date),
 					'paths': {
-						'lowdash': '../../lowdash'
+						'lodash': '../../lodash'
 					}
 				},
-				['lowdash'], function(lowDash) {
-					lowDash2 = lowDash.noConflict();
+				['lodash'], function(_) {
+					_2 = _.noConflict();
 					require(['test.js']);
 				});
 			}

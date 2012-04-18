@@ -1,19 +1,88 @@
-                       __                                                         
-                      /\ \                                                         __           
-     __  __    ___    \_\ \     __   _ __   ____    ___    ___   _ __    __       /\_\    ____  
-    /\ \/\ \ /' _ `\  /'_  \  /'__`\/\  __\/ ,__\  / ___\ / __`\/\  __\/'__`\     \/\ \  /',__\ 
-    \ \ \_\ \/\ \/\ \/\ \ \ \/\  __/\ \ \//\__, `\/\ \__//\ \ \ \ \ \//\  __/  __  \ \ \/\__, `\
-     \ \____/\ \_\ \_\ \___,_\ \____\\ \_\\/\____/\ \____\ \____/\ \_\\ \____\/\_\ _\ \ \/\____/
-      \/___/  \/_/\/_/\/__,_ /\/____/ \/_/ \/___/  \/____/\/___/  \/_/ \/____/\/_//\ \_\ \/___/ 
-                                                                                  \ \____/      
-                                                                                   \/___/
-                                                                               
-Underscore.js is a utility-belt library for JavaScript that provides 
-support for the usual functional suspects (each, map, reduce, filter...) 
-without extending any core JavaScript objects.
+# Lo-Dash <sup>v0.1.0</sup>
 
-For Docs, License, Tests, and pre-packed downloads, see:
-http://documentcloud.github.com/underscore/
+TBD
 
-Many thanks to our contributors:
-https://github.com/documentcloud/underscore/contributors
+## BestieJS
+
+Lo-Dash is part of the BestieJS *"Best in Class"* module collection. This means we promote solid browser/environment support, ES5 precedents, unit testing, and plenty of documentation.
+
+## Documentation
+
+The documentation for Lo-Dash can be viewed here: [lodash/doc](https://github.com/bestiejs/lodash/doc/README.md)
+
+For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
+
+## Installation and usage
+
+In a browser:
+
+~~~ html
+<script src="lodash.js"></script>
+~~~
+
+Via [npm](http://npmjs.org/):
+
+~~~ bash
+npm install lodash
+~~~
+
+In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
+
+~~~ js
+var _ = require('lodash');
+~~~
+
+In [Narwhal](http://narwhaljs.org/) and [RingoJS v0.7.0-](http://ringojs.org/):
+
+~~~ js
+var _ = require('lodash')._;
+~~~
+
+In [Rhino](http://www.mozilla.org/rhino/):
+
+~~~ js
+load('lodash.js');
+~~~
+
+In an AMD loader like [RequireJS](http://requirejs.org/):
+
+~~~ js
+require({
+  'paths': {
+    'lodash': 'path/to/lodash'
+  }
+},
+['lodash'], function(_) {
+  console.log(_.VERSION);
+});
+~~~
+
+Usage example:
+
+~~~ js
+// TBD
+~~~
+
+## Cloning this repo
+
+To clone this repository including all submodules, using Git 1.6.5 or later:
+
+~~~ bash
+git clone --recursive https://github.com/bestiejs/lodash.git
+cd lodash.js
+~~~
+
+For older Git versions, just use:
+
+~~~ bash
+git clone https://github.com/bestiejs/lodash.git
+cd lodash
+git submodule update --init
+~~~
+
+Feel free to fork if you see possible improvements!
+
+## Author
+
+* [John-David Dalton](http://allyoucanleet.com/)
+  [![twitter/jdalton](http://gravatar.com/avatar/299a3d891ff1920b69c364d061007043?s=70)](https://twitter.com/jdalton "Follow @jdalton on Twitter")

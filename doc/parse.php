@@ -1,7 +1,7 @@
 <?php
 
   // cleanup requested filepath
-  $file = isset($_GET['f']) ? $_GET['f'] : 'lowdash';
+  $file = isset($_GET['f']) ? $_GET['f'] : 'lodash';
   $file = preg_replace('#(\.*[\/])+#', '', $file);
   $file .= preg_match('/\.[a-z]+$/', $file) ? '' : '.js';
 
@@ -21,8 +21,8 @@
   // generate Markdown
   $markdown = docdown(array(
     'path' => '../' . $file,
-    'title' => 'LowDash.js <sup>v0.1.0</sup>',
-    'url'  => 'https://github.com/bestiejs/lowdash/blob/master/lowdash.js'
+    'title' => 'Lo-Dash <sup>v0.1.0</sup>',
+    'url'  => 'https://github.com/bestiejs/lodash/blob/master/lodash.js'
   ));
 
   // save to a .md file

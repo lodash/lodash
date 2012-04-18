@@ -98,20 +98,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // Helper function to continue chaining intermediate results.
-  function resultWrapper(collection, chain) {
-    return chain ? lodash(collection).chain() : collection;
-  }
-
-  // A method to easily add functions to the OOP wrapper.
-  function addToWrapper(name, func) {
-    Wrapper.prototype[name] = function() {
-      var args = slice.call(arguments);
-      unshift.call(args, this._wrapped);
-      return resultWrapper(func.apply(lodash, args), this._chain);
-    };
-  }
-
   /**
    * Internal recursive comparison function
    *
@@ -371,7 +357,7 @@
    * _.forforEach([1, 2, 3], function(num) { alert(num); });
    * // => alerts each number in turn...
    *
-   * _.forforEach({ 'one' : 1, 'two' : 2, 'three' : 3}, function(num) { alert(num); });
+   * _.forforEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
    * // => alerts each number in turn...
    */
   function forEach(collection, callback, thisArg) {
@@ -474,7 +460,7 @@
    * _.map([1, 2, 3], function(num) { return num * 3; });
    * // => [3, 6, 9]
    *
-   * _.map({ 'one' : 1, 'two' : 2, 'three' : 3 }, function(num) { return num * 3; });
+   * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9]
    */
   function map(collection, callback, thisArg) {
@@ -506,23 +492,31 @@
    * @example
    *
    * var stooges = [
-   *   { 'name' : 'moe', 'age' : 40},
-   *   { 'name' : 'larry', 'age' : 50},
-   *   { 'name' : 'curly', 'age' : 60}
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
    * ];
    *
    * _.max(stooges, function(stooge) { return stooge.age; });
-   * // => { 'name' : 'curly', 'age' : 60 };
+   * // => { 'name': 'curly', 'age': 60 };
    */
   function max(collection, callback, thisArg) {
-    if (!callback && isArray(collection) && collection[0] === +collection[0])
-      return Math.max.apply(Math, collection);
-    if (!callback && isEmpty(collection))
-      return -Infinity;
-    var result = {computed : -Infinity};
+    if (!callback) {
+      if (isArray(collection) && collection[0] === +collection[0]) {
+        return Math.max.apply(Math, collection);
+      }
+      if (isEmpty(collection)) {
+        return -Infinity;
+      }
+    } else if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
+    var result = { 'computed': -Infinity };
     forEach(collection, function(value, index, array) {
-      var computed = callback ? callback.call(thisArg, value, index, array) : value;
-      computed >= result.computed && (result = { 'computed': computed, 'value': value });
+      var computed = callback ? callback(value, index, array) : value;
+      if (computed >= result.computed) {
+        result = { 'computed': computed, 'value': value };
+      }
     });
     return result.value;
   }
@@ -547,12 +541,22 @@
    * // => 2
    */
   function min(collection, callback, thisArg) {
-    if (!callback && isArray(collection) && collection[0] === +collection[0]) return Math.min.apply(Math, collection);
-    if (!callback && isEmpty(collection)) return Infinity;
-    var result = {computed : Infinity};
+    if (!callback) {
+      if (isArray(collection) && collection[0] === +collection[0]) {
+        return Math.min.apply(Math, collection);
+      }
+      if (isEmpty(collection)) {
+        return Infinity;
+      }
+    } else if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
+    var result = { 'computed': Infinity };
     forEach(collection, function(value, index, array) {
-      var computed = callback ? callback.call(thisArg, value, index, array) : value;
-      computed < result.computed && (result = { 'computed': computed, 'value': value });
+      var computed = callback ? callback(value, index, array) : value;
+      if (computed < result.computed) {
+        result = { 'computed': computed, 'value': value };
+      }
     });
     return result.value;
   }
@@ -569,16 +573,16 @@
    * @example
    *
    * var stooges = [
-   *   { 'name' : 'moe', 'age' : 40},
-   *   { 'name' : 'larry', 'age' : 50},
-   *   { 'name' : 'curly', 'age' : 60}
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
    * ];
    *
    * _.pluck(stooges, 'name');
    * // => ['moe', 'larry', 'curly']
    */
   function pluck(collection, key) {
-    return map(collection, function(value){ return value[key]; });
+    return map(collection, function(value) { return value[key]; });
   }
 
   /**
@@ -605,16 +609,17 @@
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var initial = arguments.length > 2;
-    if (collection == null) collection = [];
-    forEach(collection, function(value, index, array) {
+    if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
+    forEach(collection, function(value, index) {
       if (!initial) {
         accumulator = value;
         initial = true;
       } else {
-        accumulator = callback.call(thisArg, accumulator, value, index, array);
+        accumulator = callback(accumulator, value, index, collection);
       }
     });
-    if (!initial) throw new TypeError('Reduce of empty array with no initial value');
     return accumulator;
   }
 
@@ -640,10 +645,9 @@
    * // => [4, 5, 2, 3, 0, 1]
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
-    var initial = arguments.length > 2;
-    if (collection == null) collection = [];
-    var reversed = toArray(collection).reverse();
-    if (thisArg && !initial) callback = bind(callback, thisArg);
+    var initial = arguments.length > 2,
+        reversed = toArray(collection).reverse();
+
     return initial ? reduce(reversed, callback, accumulator, thisArg) : reduce(reversed, callback);
   }
 
@@ -689,13 +693,15 @@
    * // => [4, 1, 6, 3, 5, 2]
    */
   function shuffle(collection) {
-    var shuffled = [], rand;
+    var rand,
+        result = [];
+
     forEach(collection, function(value, index, array) {
       rand = Math.floor(Math.random() * (index + 1));
-      shuffled[index] = shuffled[rand];
-      shuffled[rand] = value;
+      result[index] = result[rand];
+      result[rand] = value;
     });
-    return shuffled;
+    return result;
   }
 
   /**
@@ -739,16 +745,24 @@
     if (!isFunction(callback)) {
       var key = callback;
       callback = function(collection) { return collection[key]; };
+    } else if (thisArg) {
+      callback = bind(callback, thisArg);
     }
-    return pluck(map(collection, function(value, index, array) {
+    return pluck(map(collection, function(value, index) {
       return {
-        'value' : value,
-        'criteria' : callback.call(thisArg, value, index, array)
+        'criteria': callback(value, index, collection),
+        'value': value
       };
     }).sort(function(left, right) {
-      var a = left.criteria, b = right.criteria;
-      if (a === void 0) return 1;
-      if (b === void 0) return -1;
+      var a = left.criteria,
+          b = right.criteria;
+
+      if (a === undefined) {
+        return 1;
+      }
+      if (b === undefined) {
+        return -1;
+      }
       return a < b ? -1 : a > b ? 1 : 0;
     }), 'value');
   }
@@ -774,8 +788,12 @@
    * // => true
    */
   function some(collection, callback, thisArg) {
-    callback || (callback = identity);
     var result = false;
+    if (!callback) {
+      callback = identity;
+    } else if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
     if (collection == null) return result;
     forEach(collection, function(value, index, array) {
       if (result || (result = callback.call(thisArg, value, index, array))) return breaker;
@@ -804,11 +822,13 @@
    * // => 3
    */
   function sortedIndex(array, object, callback) {
+    var low = 0,
+        high = array.length;
+
     callback || (callback = identity);
-    var low = 0, high = array.length;
     while (low < high) {
       var mid = (low + high) >> 1;
-      callback(array[mid]) < callback(object) ? low = mid + 1 : high = mid;
+      callback(array[mid]) < callback(object) ? (low = mid + 1) : (high = mid);
     }
     return low;
   }
@@ -931,7 +951,7 @@
         push.apply(accumulator, flatten(value));
         return accumulator;
       }
-      accumulator[accumulator.length] = value;
+      accumulator.push(value);
       return accumulator;
     }, []);
   }
@@ -1053,10 +1073,13 @@
    * // => 4
    */
   function lastIndexOf(array, value) {
-    if (array != null) {
-      var index = array.length;
-      while (index--) {
-        if (array[index] === value) return index;
+    if (array == null) {
+      return -1;
+    }
+    var index = array.length;
+    while (index--) {
+      if (array[index] === value) {
+        return index;
       }
     }
     return -1;
@@ -1092,17 +1115,17 @@
    * // => []
    */
   function range(start, end, step) {
-    if (arguments.length <= 1) {
+    step || (step = 1);
+    if (arguments.length < 2) {
       end = start || 0;
       start = 0;
     }
-    step = arguments[2] || 1;
 
-    var length = Math.max(Math.ceil((end - start) / step), 0);
-    var idx = 0;
-    var result = new Array(length);
+    var idx = 0,
+        length = Math.max(Math.ceil((end - start) / step), 0),
+        result = Array(length);
 
-    while(idx < length) {
+    while (idx < length) {
       result[idx++] = start;
       start += step;
     }
@@ -1185,6 +1208,7 @@
       }
       return accumulator;
     }, []);
+
     return result;
   }
 
@@ -1224,10 +1248,11 @@
    * // => [['moe', 30, true], ['larry', 40, false], ['curly', 50, false]]
    */
   function zip() {
-    var length = max(pluck(arguments, 'length')),
+    var index = -1,
+        length = max(pluck(arguments, 'length')),
         result = Array(length);
 
-    for (var index = 0; index < length; index++) {
+    while (++index < length) {
       result[index] = pluck(arguments, index);
     }
     return result;
@@ -1279,13 +1304,13 @@
    * @returns {Function} Returns the new bound function.
    * @example
    *
-   * var func = function(greeting){ return greeting + ': ' + this.name; };
+   * var func = function(greeting) { return greeting + ': ' + this.name; };
    * func = _.bind(func, { 'name': 'moe' }, 'hi');
    * func();
    * // => 'hi: moe'
    */
   function bind(func, thisArg) {
-    var args = args = slice.call(arguments, 2),
+    var args = slice.call(arguments, 2),
         argsLength = args.length;
 
     return function() {
@@ -1320,8 +1345,12 @@
    */
   function bindAll(object) {
     var funcs = slice.call(arguments, 1);
-    if (funcs.length == 0) funcs = functions(object);
-    forEach(funcs, function(f) { object[f] = bind(object[f], object); });
+    if (!funcs.length) {
+      funcs = functions(object);
+    }
+    forEach(funcs, function(methodName) {
+      object[methodName] = bind(object[methodName], object);
+    });
     return object;
   }
 
@@ -1376,14 +1405,19 @@
   function debounce(func, wait, immediate) {
     var timeout;
     return function() {
-      var thisArg = this, args = arguments;
-      var later = function() {
-        timeout = null;
-        if (!immediate) func.apply(thisArg, args);
-      };
-      if (immediate && !timeout) func.apply(thisArg, args);
+      var args = arguments,
+          thisArg = this;
+
+      if (immediate && !timeout) {
+        func.apply(thisArg, args);
+      }
       clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
+      timeout = setTimeout(function() {
+        timeout = null;
+        if (!immediate) {
+          func.apply(thisArg, args);
+        }
+      }, wait);
     };
   }
 
@@ -1406,7 +1440,7 @@
    */
   function delay(func, wait) {
     var args = slice.call(arguments, 2);
-    return setTimeout(function(){ return func.apply(null, args); }, wait);
+    return setTimeout(function() { return func.apply(null, args); }, wait);
   }
 
   /**
@@ -1421,7 +1455,7 @@
    * @returns {Number} Returns the `setTimeout` timeout id.
    * @example
    *
-   * _.defer(function(){ alert('deferred'); });
+   * _.defer(function() { alert('deferred'); });
    * // Returns from the function before the alert runs.
    */
   function defer(func) {
@@ -1453,7 +1487,9 @@
     hasher || (hasher = identity);
     return function() {
       var key = hasher.apply(this, arguments);
-      return hasOwnProperty.call(cache, key) ? cache[key] : (cache[key] = func.apply(this, arguments));
+      return hasOwnProperty.call(cache, key)
+        ? cache[key]
+        : (cache[key] = func.apply(this, arguments));
     };
   }
 
@@ -1482,7 +1518,8 @@
         return result;
       }
       ran = true;
-      return (result = func.apply(this, arguments));
+      result = func.apply(this, arguments);
+      return result;
     };
   }
 
@@ -1502,16 +1539,22 @@
    * jQuery(window).on('scroll', throttled);
    */
   function throttle(func, wait) {
-    var thisArg, args, timeout, throttling, more, result;
-    var whenDone = debounce(function(){ more = throttling = false; }, wait);
+    var args, more, result, thisArg, throttling, timeout,
+        whenDone = debounce(function() { more = throttling = false; }, wait);
+
     return function() {
-      thisArg = this; args = arguments;
-      var later = function() {
-        timeout = null;
-        if (more) func.apply(thisArg, args);
-        whenDone();
-      };
-      if (!timeout) timeout = setTimeout(later, wait);
+      args = arguments;
+      thisArg = this;
+
+      if (!timeout) {
+        timeout = setTimeout(function() {
+          timeout = null;
+          if (more) {
+            func.apply(thisArg, args);
+          }
+          whenDone();
+        }, wait);
+      }
       if (throttling) {
         more = true;
       } else {
@@ -1643,7 +1686,9 @@
   function functions(object) {
     var names = [];
     for (var key in object) {
-      if (isFunction(object[key])) names.push(key);
+      if (isFunction(object[key])) {
+        names.push(key);
+      }
     }
     return names.sort();
   }
@@ -2008,7 +2053,7 @@
     var result = [];
     for (var key in object) {
       if (hasOwnProperty.call(object, key)) {
-        result[result.length] = key;
+        result.push(key);
       }
     }
     return result;
@@ -2032,7 +2077,9 @@
   function pick(object) {
     var result = {};
     forEach(flatten(slice.call(arguments, 1)), function(key) {
-      if (key in object) result[key] = object[key];
+      if (key in object) {
+        result[key] = object[key];
+      }
     });
     return result;
   }
@@ -2098,7 +2145,8 @@
    * // => "Curly, Larry &amp; Moe"
    */
   function escape(string) {
-    return (string + '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    return (string + '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
       .replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   }
@@ -2145,8 +2193,20 @@
    * // => 'Larry'
    */
   function mixin(object) {
-    forEach(functions(object), function(name){
-      addToWrapper(name, lodash[name] = object[name]);
+    forEach(functions(object), function(methodName) {
+      var func = lodash[methodName] = object[methodName];
+
+      lodash.prototype[methodName] = function() {
+        // In Opera < 9.50 and some older/beta Mobile Safari versions using `unshift()`
+        // generically to augment the `arguments` object will pave the value at
+        // index `0` without incrimenting the other values's indexes.
+        // https://github.com/documentcloud/underscore/issues/9
+        var args = slice.call(arguments);
+        unshift.call(args, this._wrapped);
+
+        var result = func.apply(lodash, args);
+        return this._chain ? lodash(result).chain() : result;
+      };
     });
   }
 
@@ -2193,7 +2253,9 @@
    * // => 'nonsense'
    */
   function result(object, property) {
-    if (object == null) return null;
+    if (object == null) {
+      return null;
+    }
     var value = object[property];
     return isFunction(value) ? object[property]() : value;
   }
@@ -2212,8 +2274,11 @@
    * _.times(3, function() { genie.grantWish(); });
    */
   function times(n, callback, thisArg) {
+    if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
     for (var index = 0; index < n; index++) {
-      callback.call(thisArg, index);
+      callback(index);
     }
   }
 
@@ -2345,14 +2410,14 @@
    * @example
    *
    * var stooges = [
-   *   { 'name' : 'moe', 'age' : 40},
-   *   { 'name' : 'larry', 'age' : 50},
-   *   { 'name' : 'curly', 'age' : 60}
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
    * ];
    *
    * var youngest = _.chain(stooges)
-   *     .sortBy(function(stooge){ return stooge.age; })
-   *     .map(function(stooge){ return stooge.name + ' is ' + stooge.age; })
+   *     .sortBy(function(stooge) { return stooge.age; })
+   *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
    *     .first()
    *     .value();
    * // => 'moe is 40'
@@ -2544,22 +2609,31 @@
   lodash.mixin(lodash);
 
   // Add all mutator Array functions to the wrapper.
-  forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-    var method = ArrayProto[name];
-    Wrapper.prototype[name] = function() {
+  forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+    var func = ArrayProto[methodName];
+    Wrapper.prototype[methodName] = function() {
       var wrapped = this._wrapped;
-      method.apply(wrapped, arguments);
+      func.apply(wrapped, arguments);
+
+      // IE compatibility mode and IE < 9 have buggy Array `shift()` and `splice()`
+      // functions that fail to remove the last element, `object[0]`, of
+      // array-like-objects even though the `length` property is set to `0`.
+      // The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
+      // is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
       var length = wrapped.length;
-      if ((name == 'shift' || name == 'splice') && length === 0) delete wrapped[0];
-      return resultWrapper(wrapped, this._chain);
+      if (length === 0) {
+        delete wrapped[0];
+      }
+      return this._chain ? lodash(wrapped).chain() : wrapped;
     };
   });
 
   // Add all accessor Array functions to the wrapper.
-  forEach(['concat', 'join', 'slice'], function(name) {
-    var method = ArrayProto[name];
-    Wrapper.prototype[name] = function() {
-      return resultWrapper(method.apply(this._wrapped, arguments), this._chain);
+  forEach(['concat', 'join', 'slice'], function(methodName) {
+    var func = ArrayProto[methodName];
+    lodash.prototype[methodName] = function() {
+      var result = func.apply(this._wrapped, arguments);
+      return this._chain ? lodash(result).chain() : result;
     };
   });
 

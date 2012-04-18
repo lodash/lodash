@@ -394,6 +394,9 @@
    */
   var map = iterationFactory({
     'top': 'var result=[]',
+    'beforeLoop': {
+      'array': 'result=Array(length)'
+    },
     'inLoop': {
       'array': 'result[index]=callback(collection[index],index,collection)',
       'object': 'result[result.length]=callback(collection[index],index,collection)'
@@ -2490,16 +2493,14 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /*
-  _.keys = nativeKeys ||
+  keys = nativeKeys || keys;
+  isArray = nativeIsArray || isArray;
 
-  _.isArray = nativeIsArray || function(collection) {
   if (!isArguments(arguments)) {
-    _.isArguments = function(collection) {
-      return !!(collection && hasOwnProperty.call(collection, 'callee'));
+    isArguments = function(value) {
+      return !!(value && hasOwnProperty.call(value, 'callee'));
     };
   }
-  */
 
   /*--------------------------------------------------------------------------*/
 

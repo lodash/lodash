@@ -74,9 +74,8 @@
    *
    * @name _
    * @constructor
-   * @param {Mixed} value The value to wrap in a chainable `lowdash` object.
+   * @param {Mixed} value The value to wrap in a chainable `lodash` object.
    * @returns {Object} Returns a `lodash` instance.
-   * @example
    */
   function lodash(value) {
     // allow invoking `lodash` without the `new` operator
@@ -90,7 +89,6 @@
    * @private
    * @constructor
    * @param {Mixed} value The value to wrap in a chainable `lodash` object.
-   * @example
    */
   function Wrapper(collection) {
     this._wrapped = collection;
@@ -99,133 +97,90 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Internal recursive comparison function
+   * A simple iteration function.
    *
    * @private
-   * @param {Mixed} a A value.
-   * @param {Mixed} b Another value.
-   * @param {Array} stack Holds seen objects to avoid circular references.
-   * @example
+   * @param {Array} array The array or array-like-object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @param {Number} [start=0] The index to start the iterating.
    */
-  function eq(a, b, stack) {
-    // identical objects are equal. `0 === -0`, but they aren't identical
-    // See the Harmony `egal` proposal: http://wiki.ecmascript.org/doku.php?id=harmony:egal
-    if (a === b) {
-      return a !== 0 || (1 / a == 1 / b);
+  function _each(array, callback, start) {
+    for (var index = start || 0, length = array.length; index < length; index++) {
+      callback(array[index], index, array);
     }
-    // a strict comparison is necessary because `null == undefined`
-    if (a == null || b == null) {
-      return a === b;
-    }
-    // unwrap any wrapped objects
-    if (a._chain) {
-      a = a._wrapped;
-    }
-    if (b._chain) {
-      b = b._wrapped;
-    }
-    // invoke a custom `isEqual` method if one is provided
-    if (a.isEqual && isFunction(a.isEqual)) {
-      return a.isEqual(b);
-    }
-    if (b.isEqual && isFunction(b.isEqual)) {
-      return b.isEqual(a);
-    }
+  };
 
-    // compare `[[Class]]` names
-    var className = toString.call(a);
-    if (className != toString.call(b)) {
-      return false;
-    }
-    switch (className) {
-      // strings, numbers, dates, and booleans are compared by value
-      case '[object String]':
-        // primitives and their corresponding collection wrappers are equivalent; thus, `"5"` is
-        // equivalent to `new String("5")`
-        return a == String(b);
+  /**
+   * Compiles iteration functions.
+   *
+   * @private
+   * @param {Object} options The compile options object.
+   * @returns {Function} Returns the compiled function.
+   */
+  function iterationFactory(options) {
+    var args = options.args || (options.args = 'collection,callback,thisArg'),
+        array = {},
+        arrayBranch = options.array !== false,
+        object = {},
+        objectBranch = options.object !== false,
+        beforeLoop = options.beforeLoop || '',
+        breaker = options.breaker,
+        defaultInLoop =  'callback(collection[index],index,collection)',
+        inLoop = options.inLoop || '';
 
-      case '[object Number]':
-        // `NaN`s are equivalent, but non-reflexive;
-        // an `egal` comparison is performed for other numeric values
-        return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
-
-      case '[object Date]':
-      case '[object Boolean]':
-        // Coerce dates and booleans to numeric primitive values.
-        // Dates are compared by their millisecond representations.
-        // Note that invalid dates with millisecond representations of `NaN` are not equivalent.
-        return +a == +b;
-
-      // regexps are compared by their source and flags
-      case '[object RegExp]':
-        return a.source == b.source &&
-               a.global == b.global &&
-               a.multiline == b.multiline &&
-               a.ignoreCase == b.ignoreCase;
-    }
-
-    if (typeof a != 'object' || typeof b != 'object') {
-      return false;
-    }
-    // Assume equality for cyclic structures. The algorithm for detecting cyclic
-    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
-    var length = stack.length;
-    while (length--) {
-      // Linear search. Performance is inversely proportional to the number of
-      // unique nested structures.
-      if (stack[length] == a) {
-        return true;
-      }
-    }
-
-    // add the first collection to the stack of traversed objects
-    stack.push(a);
-    var size = 0, result = true;
-
-    // recursively compare objects and arrays
-    if (className == '[object Array]') {
-      // compare array lengths to determine if a deep comparison is necessary
-      size = a.length;
-      result = size == b.length;
-
-      if (result) {
-        // deep compare the contents, ignoring non-numeric properties
-        while (size--) {
-          // ensure commutative equality for sparse arrays
-          if (!(result = size in a == size in b && eq(a[size], b[size], stack))) {
-            break;
-          }
-        }
-      }
+    if (typeof beforeLoop == 'string') {
+      array.beforeLoop = object.beforeLoop = beforeLoop;
     } else {
-      // objects with different constructors are not equivalent
-      if ('constructor' in a != 'constructor' in b || a.constructor != b.constructor) {
-        return false;
-      }
-      // deep compare objects
-      for (var key in a) {
-        if (hasOwnProperty.call(a, key)) {
-          // count the expected number of properties
-          size++;
-          // deep compare each member
-          if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) {
-            break;
-          }
-        }
-      }
-      // ensure that both objects contain the same number of properties
-      if (result) {
-        for (key in b) {
-          if (hasOwnProperty.call(b, key) && !(size--)) {
-            break;
-          }
-        }
-        result = !size;
-      }
+      array.beforeLoop = beforeLoop.array;
+      object.beforeLoop = beforeLoop.object;
     }
-    // remove the first collection from the stack of traversed objects
-    stack.pop();
-    return result;
+    if (typeof inLoop == 'string') {
+      array.inLoop = object.inLoop = inLoop || defaultInLoop;
+    } else {
+      array.inLoop = inLoop.array || defaultInLoop;
+      object.inLoop = inLoop.object || defaultInLoop;
+    }
+    return Function('_,bind,breaker,hasOwnProperty,identity',
+      'return function(' + args + '){' +
+        (/\bcallback\b/.test(args)
+          ? 'if(!callback)callback=identity;' +
+            (/\bthisArg\b/.test(args)
+              ? 'else if(thisArg)callback=bind(callback,thisArg);'
+              : ''
+            )
+          : ''
+        ) +
+        (options.top || 'var result') + ';' +
+        'if(collection==null)return result;' +
+        'var index=-1,length=collection.length;' +
+        (arrayBranch
+          ? ((objectBranch ? 'if(length===+length){' : '') +
+            (array.beforeLoop || '') + ';' +
+            'while(' + (options['while'] || '++index<length') + '){' +
+              (breaker
+                ? 'if((' + array.inLoop + ')===breaker)break'
+                : array.inLoop
+              ) +
+            '}' +
+            (objectBranch ? '}' : ''))
+          : ''
+        ) +
+        (options.object !== false
+          ? ((arrayBranch ? 'else{' : '') +
+            (object.beforeLoop || '') + ';' +
+            'for(index in collection){' +
+              'if(hasOwnProperty.call(collection,index)' +
+              (breaker
+                ? '&&(' + object.inLoop + ')===breaker)break'
+                : ')' + object.inLoop + ';'
+              ) +
+            '}' +
+            (arrayBranch ? '}' : ''))
+          : ''
+        ) +
+        'return ' + (options.returns || 'result') +
+      '}'
+    )(lodash, bind, breaker, hasOwnProperty, identity);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -246,11 +201,11 @@
    * _.contains([1, 2, 3], 3);
    * // => true
    */
-  function contains(collection, target) {
-    return collection == null
-      ? false
-      : some(collection, function(value) { return value === target; });
-  }
+  var contains = iterationFactory({
+    'args': 'collection,target',
+    'top': 'var result=false',
+    'inLoop': 'if(collection[index]===target)return true'
+  });
 
   /**
    * Checks if the `callback` returns truthy for **all** values of a `collection`.
@@ -270,14 +225,13 @@
    * _.every([true, 1, null, 'yes'], Boolean);
    * => false
    */
-  function every(collection, callback, thisArg) {
-    var result = true;
-    if (collection == null) return result;
-    forEach(collection, function(value, index, array) {
-      if (!(result = result && callback.call(thisArg, value, index, array))) return breaker;
-    });
-    return !!result;
-  }
+
+  var every = iterationFactory({
+    'breaker': true,
+    'top': 'var result=true',
+    'inLoop': '!(result=result&&callback(collection[index],index,collection))&&breaker',
+    'returns': '!!result'
+  });
 
   /**
    * Examines each value in a `collection`, returning an array of all values the
@@ -298,14 +252,10 @@
    * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [2, 4, 6]
    */
-  function filter(collection, callback, thisArg) {
-    var result = [];
-    if (collection == null) return result;
-    forEach(collection, function(value, index, array) {
-      if (callback.call(thisArg, value, index, array)) result[result.length] = value;
-    });
-    return result;
-  }
+  var filter = iterationFactory({
+    'top': 'var result=[]',
+    'inLoop': 'callback(collection[index],index,collection)&&(result[result.length]=collection[index])'
+  });
 
   /**
    * Examines each value in a `collection`, returning the first one the `callback`
@@ -327,16 +277,10 @@
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => 2
    */
-  function find(collection, callback, thisArg) {
-    var result;
-    some(collection, function(value, index, array) {
-      if (callback.call(thisArg, value, index, array)) {
-        result = value;
-        return true;
-      }
-    });
-    return result;
-  }
+  var find = iterationFactory({
+    'breaker': true,
+    'inLoop': 'callback(collection[index],index,collection)?(result=collection[index],breaker):0'
+  });
 
   /**
    * Iterates over a `collection`, executing the `callback` for each value in the
@@ -354,32 +298,17 @@
    * @returns {Array|Object} Returns the `collection`.
    * @example
    *
-   * _.forforEach([1, 2, 3], function(num) { alert(num); });
+   * _.forEach([1, 2, 3], function(num) { alert(num); });
    * // => alerts each number in turn...
    *
-   * _.forforEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
+   * _.forEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
    * // => alerts each number in turn...
    */
-  function forEach(collection, callback, thisArg) {
-    if (collection != null) {
-      if (collection.length === +collection.length) {
-        for (var index = 0, length = collection.length; index < length; index++) {
-          if (index in collection && callback.call(thisArg, collection[index], index, collection) === breaker) {
-            break;
-          }
-        }
-      } else {
-        for (var key in collection) {
-          if (hasOwnProperty.call(collection, key)) {
-            if (callback.call(thisArg, collection[key], key, collection) === breaker) {
-              break;
-            }
-          }
-        }
-      }
-    }
-    return collection;
-  }
+  var forEach = iterationFactory({
+    'breaker': true,
+    'top': 'var result=collection',
+    'returns': 'collection'
+  });
 
   /**
    * Splits a `collection` into sets, grouped by the result of running each value
@@ -463,17 +392,13 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9]
    */
-  function map(collection, callback, thisArg) {
-    var result = [];
-    if (collection == null) {
-      return result;
+  var map = iterationFactory({
+    'top': 'var result=[]',
+    'inLoop': {
+      'array': 'result[index]=callback(collection[index],index,collection)',
+      'object': 'result[result.length]=callback(collection[index],index,collection)'
     }
-    forEach(collection, function(value, index, array) {
-      result[result.length] = callback.call(thisArg, value, index, array);
-    });
-    if (collection.length === +collection.length) result.length = collection.length;
-    return result;
-  }
+  });
 
   /**
    * Retrieves the maximum value of a `collection`. If `callback` is passed,
@@ -607,21 +532,11 @@
    * var sum = _.reduce([1, 2, 3], function(memo, num) { return memo + num; });
    * // => 6
    */
-  function reduce(collection, callback, accumulator, thisArg) {
-    var initial = arguments.length > 2;
-    if (thisArg) {
-      callback = bind(callback, thisArg);
-    }
-    forEach(collection, function(value, index) {
-      if (!initial) {
-        accumulator = value;
-        initial = true;
-      } else {
-        accumulator = callback(accumulator, value, index, collection);
-      }
-    });
-    return accumulator;
-  }
+  var reduce = iterationFactory({
+    'args': 'collection,callback,result,thisArg',
+    'top': 'var initial=arguments.length>2;',
+    'inLoop': 'result=initial?callback(result,collection[index],index,collection):(initial=true,collection[index])'
+  });
 
   /**
    * The right-associative version of `_.reduce`. The `callback` is bound to the
@@ -644,12 +559,12 @@
    * var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
    * // => [4, 5, 2, 3, 0, 1]
    */
-  function reduceRight(collection, callback, accumulator, thisArg) {
-    var initial = arguments.length > 2,
-        reversed = toArray(collection).reverse();
-
-    return initial ? reduce(reversed, callback, accumulator, thisArg) : reduce(reversed, callback);
-  }
+    var reduceRight = iterationFactory({
+    'args': 'collection,callback,result,thisArg',
+    'top': 'var initial=arguments.length>2;',
+    'while': 'length--',
+    'inLoop': 'result=initial?callback(result,collection[length],length,collection):(initial=true,collection[length])'
+  });
 
   /**
    * The opposite of `_.filter`, this method returns the values of a `collection`
@@ -669,14 +584,10 @@
    * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [1, 3, 5]
    */
-  function reject(collection, callback, thisArg) {
-    var result = [];
-    if (collection == null) return result;
-    forEach(collection, function(value, index, array) {
-      if (!callback.call(thisArg, value, index, array)) result[result.length] = value;
-    });
-    return result;
-  }
+  var reject = iterationFactory({
+    'top': 'var result=[]',
+    'inLoop': '!callback(collection[index],index,collection)&&(result[result.length]=collection[index])'
+  });
 
   /**
    * Produces a new array of shuffled `collection` values, using a version of the
@@ -787,19 +698,12 @@
    * _.some([null, 0, 'yes', false]);
    * // => true
    */
-  function some(collection, callback, thisArg) {
-    var result = false;
-    if (!callback) {
-      callback = identity;
-    } else if (thisArg) {
-      callback = bind(callback, thisArg);
-    }
-    if (collection == null) return result;
-    forEach(collection, function(value, index, array) {
-      if (result || (result = callback.call(thisArg, value, index, array))) return breaker;
-    });
-    return !!result;
-  }
+  var some = iterationFactory({
+    'breaker': true,
+    'top': 'var result=false',
+    'inLoop': '(result||(result=callback(collection[index],index,collection)))&&breaker',
+    'returns': '!!result'
+  });
 
   /**
    * Uses a binary search to determine the index at which the `value` should be
@@ -911,10 +815,10 @@
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
-   * @param {Object} [guard] Used to allow the function to work with other iteration
-   *  methods like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Mixed} Returns the first value or an array of the first `n`
-   *  values of the `array`.
+   * @param {Object} [guard] Allows this method to work with others like `_.map`
+   *  without using their callback `index` argument for `n`.
+   * @returns {Mixed} Returns the first value or an array of the first `n` values
+   *  of the `array`.
    * @example
    *
    * _.first([5, 4, 3, 2, 1]);
@@ -999,8 +903,8 @@
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
-   * @param {Object} [guard] Used to allow the function to work with other iteration
-   *  methods like `_.map` without using their callback `index` argument for `n`.
+   * @param {Object} [guard] Allows this method to work with others like `_.map`
+   *  without using their callback `index` argument for `n`.
    * @returns {Array} Returns all but the last value or `n` values of the `array`.
    * @example
    *
@@ -1044,8 +948,8 @@
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
-   * @param {Object} [guard] Used to allow the function to work with other iteration
-   *  methods like `_.map` without using their callback `index` argument for `n`.
+   * @param {Object} [guard] Allows this method to work with others like `_.map`
+   *  without using their callback `index` argument for `n`.
    * @returns {Array} Returns all but the last value or `n` values of the `array`.
    * @example
    *
@@ -1142,16 +1046,16 @@
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
-   * @param {Object} [guard] Used to allow the function to work with other iteration
-   *  methods like `_.map` without using their callback `index` argument for `n`.
+   * @param {Object} [guard] Allows this method to work with others like `_.map`
+   *  without using their callback `index` argument for `n`.
    * @returns {Array} Returns all but the first value or `n` values of the `array`.
    * @example
    *
    * _.rest([5, 4, 3, 2, 1]);
    * // => [4, 3, 2, 1]
    */
-  function rest(array, index, guard) {
-    return slice.call(array, (index == null || guard) ? 1 : index);
+  function rest(array, n, guard) {
+    return slice.call(array, (n == null || guard) ? 1 : n);
   }
 
   /**
@@ -1344,13 +1248,16 @@
    * // => When the button is clicked, `this.label` will have the correct value
    */
   function bindAll(object) {
-    var funcs = slice.call(arguments, 1);
-    if (!funcs.length) {
+    var funcs = arguments,
+        start = 1;
+
+    if (funcs.length == 1) {
+      start = 0;
       funcs = functions(object);
     }
-    forEach(funcs, function(methodName) {
+    _each(funcs, function(methodName) {
       object[methodName] = bind(object[methodName], object);
-    });
+    }, start);
     return object;
   }
 
@@ -1636,11 +1543,11 @@
    * // => { 'flavor': 'chocolate', 'sprinkles': 'lots' }
    */
   function defaults(object) {
-    forEach(slice.call(arguments, 1), function(source) {
+    _each(arguments, function(source) {
       for (var prop in source) {
         if (object[prop] == null) object[prop] = source[prop];
       }
-    });
+    }, 1);
     return object;
   }
 
@@ -1660,11 +1567,11 @@
    * // => { 'name': 'moe', 'age': 40 }
    */
   function extend(destination) {
-    forEach(slice.call(arguments, 1), function(source) {
+    _each(arguments, function(source) {
       for (var prop in source) {
         destination[prop] = source[prop];
       }
-    });
+    }, 1);
     return destination;
   }
 
@@ -1824,7 +1731,7 @@
       return true;
     }
     if (isArray(value) || isString(value)) {
-      return value.length === 0;
+      return !value.length;
     }
     for (var key in value) {
       if (hasOwnProperty.call(value, key)) {
@@ -1841,8 +1748,8 @@
    * @static
    * @memberOf _
    * @category Objects
-   * @param {Mixed} value The value to compare.
-   * @param {Mixed} other The other value to compare.
+   * @param {Mixed} a The value to compare.
+   * @param {Mixed} b The other value to compare.
    * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
    * @example
    *
@@ -1855,8 +1762,128 @@
    * _.isEqual(moe, clone);
    * // => true
    */
-  function isEqual(value, other) {
-    return eq(value, other, []);
+  function isEqual(a, b, stack) {
+    stack || (stack = []);
+
+    // exit early for identical values
+    if (a === b) {
+      // treat `+0` vs. `-0` as not equal
+      return a !== 0 || (1 / a == 1 / b);
+    }
+    // a strict comparison is necessary because `null == undefined`
+    if (a == null || b == null) {
+      return a === b;
+    }
+    // unwrap any wrapped objects
+    if (a._chain) {
+      a = a._wrapped;
+    }
+    if (b._chain) {
+      b = b._wrapped;
+    }
+    // invoke a custom `isEqual` method if one is provided
+    if (a.isEqual && isFunction(a.isEqual)) {
+      return a.isEqual(b);
+    }
+    if (b.isEqual && isFunction(b.isEqual)) {
+      return b.isEqual(a);
+    }
+    // compare `[[Class]]` names
+    var className = toString.call(a);
+    if (className != toString.call(b)) {
+      return false;
+    }
+    switch (className) {
+      // strings, numbers, dates, and booleans are compared by value
+      case '[object String]':
+        // primitives and their corresponding object instances are equivalent;
+        // thus, `'5'` is quivalent to `new String('5')`
+        return a == String(b);
+
+      case '[object Number]':
+        // treat `NaN` vs. `NaN` as equal
+        return a != +a
+          ? b != +b
+          // but treat `+0` vs. `-0` as not equal
+          : (a == 0 ? (1 / a == 1 / b) : a == +b);
+
+      case '[object Date]':
+      case '[object Boolean]':
+        // coerce dates and booleans to numeric values, dates to milliseconds and booleans to 1 or 0;
+        // treat invalid dates coerced to `NaN` as not equal
+        return +a == +b;
+
+      // regexps are compared by their source and flags
+      case '[object RegExp]':
+        return a.source == b.source &&
+               a.global == b.global &&
+               a.multiline == b.multiline &&
+               a.ignoreCase == b.ignoreCase;
+    }
+    if (typeof a != 'object' || typeof b != 'object') {
+      return false;
+    }
+    // Assume equality for cyclic structures. The algorithm for detecting cyclic
+    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
+    var length = stack.length;
+    while (length--) {
+      // Linear search. Performance is inversely proportional to the number of
+      // unique nested structures.
+      if (stack[length] == a) {
+        return true;
+      }
+    }
+
+    var result = true,
+        size = 0;
+
+    // add the first collection to the stack of traversed objects
+    stack.push(a);
+
+    // recursively compare objects and arrays
+    if (className == '[object Array]') {
+      // compare array lengths to determine if a deep comparison is necessary
+      size = a.length;
+      result = size == b.length;
+
+      if (result) {
+        // deep compare the contents, ignoring non-numeric properties
+        while (size--) {
+          // ensure commutative equality for sparse arrays
+          if (!(result = size in a == size in b && isEqual(a[size], b[size], stack))) {
+            break;
+          }
+        }
+      }
+    } else {
+      // objects with different constructors are not equivalent
+      if ('constructor' in a != 'constructor' in b || a.constructor != b.constructor) {
+        return false;
+      }
+      // deep compare objects
+      for (var key in a) {
+        if (hasOwnProperty.call(a, key)) {
+          // count the expected number of properties
+          size++;
+          // deep compare each member
+          if (!(result = hasOwnProperty.call(b, key) && isEqual(a[key], b[key], stack))) {
+            break;
+          }
+        }
+      }
+      // ensure that both objects contain the same number of properties
+      if (result) {
+        for (key in b) {
+          if (hasOwnProperty.call(b, key) && !(size--)) {
+            break;
+          }
+        }
+        result = !size;
+      }
+    }
+    // remove the first collection from the stack of traversed objects
+    stack.pop();
+    return result;
   }
 
   /**
@@ -1879,7 +1906,7 @@
    * // => false
    */
   function isFinite(value) {
-    return isNumber(value) && nativeIsFinite(value);
+    return nativeIsFinite(value) && toString.call(value) == '[object Number]';
   }
 
   /**
@@ -1934,6 +1961,9 @@
    * _.isNaN(NaN);
    * // => true
    *
+   * _.isNaN(new Number(NaN));
+   * // => true
+   *
    * isNaN(undefined);
    * // => true
    *
@@ -1941,8 +1971,8 @@
    * // => false
    */
   function isNaN(value) {
-    // `NaN` is the only value for which `===` is not reflexive.
-    return value !== value;
+    // `NaN` as a primitive is the only value that is not equal to itself
+    return toString.call(value) == '[object Number]' && value != +value;
   }
 
   /**
@@ -2030,7 +2060,7 @@
    * // => true
    */
   function isUndefined(value) {
-    return value === void 0;
+    return value === undefined;
   }
 
   /**
@@ -2193,7 +2223,7 @@
    * // => 'Larry'
    */
   function mixin(object) {
-    forEach(functions(object), function(methodName) {
+    _each(functions(object), function(methodName) {
       var func = lodash[methodName] = object[methodName];
 
       lodash.prototype[methodName] = function() {
@@ -2602,16 +2632,17 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // Expose `wrapper.prototype` as `_.prototype`
-  lodash.prototype = Wrapper.prototype;
+  // Hookup private Wrapper's prototype
+  Wrapper.prototype = lodash.prototype;
 
   // Add all of the Lo-Dash functions to the wrapper collection.
   lodash.mixin(lodash);
 
   // Add all mutator Array functions to the wrapper.
-  forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+  _each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = ArrayProto[methodName];
-    Wrapper.prototype[methodName] = function() {
+
+    lodash.prototype[methodName] = function() {
       var wrapped = this._wrapped;
       func.apply(wrapped, arguments);
 
@@ -2620,8 +2651,7 @@
       // array-like-objects even though the `length` property is set to `0`.
       // The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
       // is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
-      var length = wrapped.length;
-      if (length === 0) {
+      if (wrapped.length === 0) {
         delete wrapped[0];
       }
       return this._chain ? lodash(wrapped).chain() : wrapped;
@@ -2629,7 +2659,7 @@
   });
 
   // Add all accessor Array functions to the wrapper.
-  forEach(['concat', 'join', 'slice'], function(methodName) {
+  _each(['concat', 'join', 'slice'], function(methodName) {
     var func = ArrayProto[methodName];
     lodash.prototype[methodName] = function() {
       var result = func.apply(this._wrapped, arguments);

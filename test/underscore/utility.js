@@ -192,4 +192,32 @@ $(document).ready(function() {
     ok(!_.templateSettings.variable);
   });
 
+  test('#556 - undefined template variables.', function() {
+    var template = _.template('<%=x%>');
+    strictEqual(template({x: null}), '');
+    strictEqual(template({x: undefined}), '');
+
+    var templateEscaped = _.template('<%-x%>');
+    strictEqual(templateEscaped({x: null}), '');
+    strictEqual(templateEscaped({x: undefined}), '');
+
+    var templateWithProperty = _.template('<%=x.foo%>');
+    strictEqual(templateWithProperty({x: {} }), '');
+    strictEqual(templateWithProperty({x: {} }), '');
+
+    var templateWithPropertyEscaped = _.template('<%-x.foo%>');
+    strictEqual(templateWithPropertyEscaped({x: {} }), '');
+    strictEqual(templateWithPropertyEscaped({x: {} }), '');
+  });
+
+  test('interpolate evaluates code only once.', 2, function() {
+    var count = 0;
+    var template = _.template('<%= f() %>');
+    template({f: function(){ ok(!(count++)); }});
+
+    var countEscaped = 0;
+    var templateEscaped = _.template('<%- f() %>');
+    templateEscaped({f: function(){ ok(!(countEscaped++)); }});
+  });
+
 });

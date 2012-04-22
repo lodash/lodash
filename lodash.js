@@ -822,11 +822,11 @@
   });
 
   /**
-   * Uses a binary search to determine the index at which the `value` should be
-   * inserted into the `collection` in order to maintain the `collection`'s sorted
-   * order. If `callback` is passed, it will be executed for each value in the
-   * `collection` to compute their sort ranking. The `callback` is invoked with
-   * 1 arguments.
+   * Uses a binary search to determine the smallest  index at which the `value`
+   * should be inserted into the `collection` in order to maintain the sort order
+   * of the `collection`. If `callback` is passed, it will be executed for each
+   * value in the `collection` to compute their sort ranking. The `callback` is
+   * invoked with 1 argument.
    *
    * @static
    * @memberOf _
@@ -2456,10 +2456,10 @@
         return '\\' + escapes[match];
       })
       .replace(options.escape || reNoMatch, function(match, code) {
-        return "'+\n_.escape(" + unescape(code) + ")+\n'";
+        return "'+\n((__t=(" + unescape(code) + "))==null?'':_.escape(__t))+\n'";
       })
       .replace(options.interpolate || reNoMatch, function(match, code) {
-        return "'+\n(" + unescape(code) + ")+\n'";
+        return "'+\n((__t=(" + unescape(code) + "))==null?'':__t)+\n'";
       })
       .replace(options.evaluate || reNoMatch, function(match, code) {
         return "';\n" + unescape(code) + ";\n__p+='";
@@ -2470,8 +2470,8 @@
       source = 'with(object||{}){\n' + source + '\n}\n';
     }
 
-    source = 'var __p="";' +
-      'function print(){__p+=Array.prototype.join.call(arguments,"")}\n' +
+    source = 'var __t,__j=Array.prototype.join,__p="";' +
+      'function print(){__p+=__j.call(arguments,"")}\n' +
       source + 'return __p';
 
     var render = Function(options.variable || 'object', '_', source);

@@ -260,6 +260,9 @@ $(document).ready(function() {
     var numbers = [10, 20, 30, 40, 50], num = 35;
     var index = _.sortedIndex(numbers, num);
     equal(index, 3, '35 should be inserted at index 3');
+
+    var index2 = _.sortedIndex(numbers, 30);
+    equal(index2, 2, '30 should be inserted at index 2');
   });
 
   test('collections: shuffle', function() {

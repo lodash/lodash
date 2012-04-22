@@ -154,7 +154,7 @@
     // add `true` and `false` arguments to be minified
     if (/function iterationFactory/.test(snippet)) {
       result = result
-        .replace(/(Function\('[\w\s,]+)undefined/, '$1true,false,undefined')
+        .replace(/(Function\('[\s\S]+?)undefined/, '$1true,false,undefined')
         .replace(/\)\([^)]+/, '$&,true,false');
 
       // replace with modified snippet early and clip snippet

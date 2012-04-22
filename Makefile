@@ -26,6 +26,7 @@ core:
 	  --js ${LODASH_TMP} \
 	  --js_output_file ${LODASH_COMPILER}
 	${POST_COMPILER} ${LODASH_COMPILER}
+	gzip -9f -c ${LODASH_COMPILER} > ${LODASH_COMPILER}.gz
 
 	${UGLIFY} \
 	  --unsafe \
@@ -33,5 +34,6 @@ core:
 	  -o ${LODASH_UGLIFY} \
 	  ${LODASH_TMP}
 	${POST_COMPILER} ${LODASH_UGLIFY}
+	gzip -9f -c ${LODASH_UGLIFY} > ${LODASH_UGLIFY}.gz
 
 	rm -f ${LODASH_TMP}

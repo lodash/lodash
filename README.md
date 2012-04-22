@@ -1,6 +1,6 @@
 # Lo-Dash <sup>v0.1.0</sup>
 
-TBD
+A drop-in replacement for [Underscore.js](https://github.com/documentcloud/underscore/) that delivers **up to 8x performance improvements**, bug fixes, and additional features.
 
 ## BestieJS
 
@@ -9,6 +9,7 @@ Lo-Dash is part of the BestieJS *"Best in Class"* module collection. This means 
 ## Documentation
 
 The documentation for Lo-Dash can be viewed here: [/doc/README.md](https://github.com/bestiejs/lodash/blob/master/doc/README.md#readme)
+Underscore's [documentation](http://documentcloud.github.com/underscore/) may also be used.
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
 
@@ -47,6 +48,9 @@ load('lodash.js');
 In an AMD loader like [RequireJS](http://requirejs.org/):
 
 ~~~ js
+// opt-in
+define.amd.lodash = true;
+
 require({
   'paths': {
     'lodash': 'path/to/lodash'
@@ -55,12 +59,6 @@ require({
 ['lodash'], function(_) {
   console.log(_.VERSION);
 });
-~~~
-
-Usage example:
-
-~~~ js
-// TBD
 ~~~
 
 ## Cloning this repo
@@ -80,7 +78,7 @@ cd lodash
 git submodule update --init
 ~~~
 
-Feel free to fork if you see possible improvements!
+Feel free to fork and send pull requests if you see possible improvements!
 
 ## Author
 

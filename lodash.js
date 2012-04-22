@@ -2747,7 +2747,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // expose lodash
+  // expose Lo-Dash
   if (freeExports) {
     // in Node.js or RingoJS v0.8.0+
     if (typeof module == 'object' && module && module.exports == freeExports) {
@@ -2757,15 +2757,25 @@
     else {
       freeExports._ = lodash;
     }
-  }
-  // via an AMD loader
-  else if (typeof define == 'function' && typeof define.amd == 'object' && define.amd && define.amd.lodash) {
-    define('lodash', function() {
-      return lodash;
-    });
-  }
-  // in a browser or Rhino
-  else {
+  } else {
+    // in a browser or Rhino
     window._ = lodash;
+
+    // Expose Lo-Dash as an AMD module, but only for AMD loaders that understand
+    // the issues with loading multiple versions of Lo-Dash in a page that all
+    // might call `define()`. The loader will indicate they have special
+    // allowances for multiple Lo-Dash versions by specifying
+    // `define.amd.lodash=true`. Register as a named module, since Lo-Dash can
+    // be concatenated with other files that may use `define()`, but not use a
+    // proper concatenation script that understands anonymous AMD modules.
+    // Lowercase `lodash` is used because AMD module names are derived from
+    // file names, and Lo-Dash is normally delivered in a lowercase file name.
+    // Do this after assigning Lo-Dash the global so that if an AMD module wants
+    // to call `noConflict()` to hide this version of Lo-Dash, it will work.
+    if (typeof define == 'function' && typeof define.amd == 'object' && define.amd && define.amd.lodash) {
+      define('lodash', function() {
+        return lodash;
+      });
+    }
   }
 }(this));

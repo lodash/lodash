@@ -68,6 +68,66 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.forEach');
+
+  (function() {
+    test('returns the collection', function() {
+      var collection = [1, 2, 3, 4];
+      equal(_.forEach(collection, Boolean), collection);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.initial');
+
+  (function() {
+    test('returns an empty collection for `n` of `0`', function() {
+      var array = [1, 2, 3, 4];
+      deepEqual(_.initial(array, 0), []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isNaN');
+
+  (function() {
+    test('returns `true` for `new Number(NaN)`', function() {
+      equal(_.isNaN(new Number(NaN)), true)
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.reduceRight');
+
+  (function() {
+    test('should pass the correct `callback` arguments when iterating an object', function() {
+      var args,
+          object = { 'a': 'A', 'b': 'B', 'c': 'C' },
+          keys = _.keys(object);
+
+      _.reduceRight(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, ['C', 'B', 'b', object]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.size');
+
+  (function() {
+    test('should detect the size of a string value', function() {
+      equal(_.size('abc'), 3);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   // explicitly call `QUnit.start()` in a CLI environment
   if (!window.document) {
     QUnit.start();

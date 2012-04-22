@@ -77,7 +77,6 @@
   /** Used protect the specified properties from getting minified */
   var propWhitelist = [
     '_',
-    'VERSION',
     'amd',
     'chain',
     'clearInterval',

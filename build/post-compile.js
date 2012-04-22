@@ -18,7 +18,7 @@
   /*--------------------------------------------------------------------------*/
 
   // set the version
-  license = license.replace('@VERSION', /VERSION=([\'"])(.*?)\1/.exec(src).pop());
+  license = license.replace('@VERSION', /VERSION:([\'"])(.*?)\1/.exec(src).pop());
 
   // move vars exposed by Closure Compiler into the IIFE
   src = src.replace(/^([^(\n]+)\s*(\(function[^)]+\){)/, '$2$1');

@@ -8,67 +8,48 @@
 ;(function(window, undefined) {
   'use strict';
 
-  /** Used to assign each benchmark an incrimented id */
-  var idCounter = 0;
+  /** Used to escape and unescape characters in templates */
+  var escapes = {
+    '\\': '\\',
+    "'": "'",
+    'r': '\r',
+    'n': '\n',
+    't': '\t',
+    'u2028': '\u2028',
+    'u2029': '\u2029'
+  };
 
-  /** Detect free variable `exports` */
-  var freeExports = typeof exports == 'object' && exports &&
-    (typeof global == 'object' && global && global == global.global && (window = global), exports);
-
-  /** Used to restore the original `_` reference in `noConflict` */
-  var oldDash = window._;
-
-  var reEscaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-
-  // When customizing `templateSettings`, if you don't want to define an
-  // interpolation, evaluation or escaping regex, we need one that is
-  // guaranteed not to match.
-  var reNoMatch = /.^/;
-
-  var reUnescaper = /\\(\\|'|r|n|t|u2028|u2029)/g;
-
-  var clearInteval = window.clearInterval;
-
-  var setTimeout = window.setTimeout;
-
-  // Certain characters need to be escaped so that they can be put into a
-  // string literal.
-  var escapes;
+  // assign the result as keys and the keys as values
   (function() {
-    escapes = {
-      '\\': '\\',
-      "'": "'",
-      'r': '\r',
-      'n': '\n',
-      't': '\t',
-      'u2028': '\u2028',
-      'u2029': '\u2029'
-    };
-
-    // assign the values as keys and the keys as values
     for (var prop in escapes) {
       escapes[escapes[prop]] = prop;
     }
   }());
 
-  // Save bytes in the minified (but not gzipped) version:
-  var ArrayProto = Array.prototype,
-      ObjProto = Object.prototype;
+  /** Detect free variable `exports` */
+  var freeExports = typeof exports == 'object' && exports &&
+    (typeof global == 'object' && global && global == global.global && (window = global), exports);
 
-  // Create quick reference variables for speed access to core prototypes.
-  var concat = ArrayProto.concat,
-      hasOwnProperty = ObjProto.hasOwnProperty,
-      push = ArrayProto.push,
-      slice = ArrayProto.slice,
-      toString = ObjProto.toString,
-      unshift = ArrayProto.unshift;
+  /** Used to generate unique IDs */
+  var idCounter = 0;
 
-  // All **ECMAScript 5** native function implementations that we hope to use
-  // are declared here.
-  var nativeIsArray = Array.isArray,
-      nativeIsFinite = window.isFinite,
-      nativeKeys = Object.keys;
+  /** Used to restore the original `_` reference in `noConflict` */
+  var oldDash = window._;
 
+  /** Used to replace unescape characters with their escaped counterpart */
+  var reEscaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+
+  /**
+   * Used for `templateSettings` properties such as `escape`, `evaluate`,
+   * or `interpolate` with explicitly assigned falsey values to ensure no match
+   * is made.
+   */
+  var reNoMatch = /.^/;
+
+  /** Used to replace escaped characters with their unescaped counterpart */
+  var reUnescaper = /\\(\\|'|r|n|t|u2028|u2029)/g;
+
+  /** Object#toString result shortcuts */
   var arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
@@ -77,6 +58,28 @@
       regexpClass = '[object RegExp]',
       stringClass = '[object String]';
 
+  /** Native prototype shortcuts */
+  var ArrayProto = Array.prototype,
+      ObjProto = Object.prototype;
+
+  /** Native method shortcuts */
+  var concat = ArrayProto.concat,
+      hasOwnProperty = ObjProto.hasOwnProperty,
+      push = ArrayProto.push,
+      slice = ArrayProto.slice,
+      toString = ObjProto.toString,
+      unshift = ArrayProto.unshift;
+
+  /* Native method shortcuts for methods with the same name as a `lodash` method */
+  var nativeIsArray = Array.isArray,
+      nativeIsFinite = window.isFinite,
+      nativeKeys = Object.keys;
+
+  /** Timer shortcuts */
+  var clearInteval = window.clearInterval,
+      setTimeout = window.setTimeout;
+
+  /** Compilation options for `_.difference` */
   var differenceFactoryOptions = {
     'args': 'array',
     'top': 'var values=concat.apply([],slice.call(arguments,1))',
@@ -84,11 +87,13 @@
     'inLoop': 'indexOf(values,array[index])<0&&result.push(array[index])'
   };
 
+  /** Compilation options for `_.every` */
   var everyFactoryOptions = {
     'init': 'true',
     'inLoop': 'if(!callback(collection[index],index,collection))return !result'
   };
 
+  /** Compilation options for `_.extend` */
   var extendFactoryOptions = {
     'args': 'object',
     'init': 'object',
@@ -99,11 +104,13 @@
     'afterLoop': '}'
   };
 
+  /** Compilation options for `_.filter` */
   var filterFactoryOptions = {
     'init': '[]',
     'inLoop': 'callback(collection[index],index,collection)&&result.push(collection[index])'
   };
 
+  /** Compilation options for `_.forEach` */
   var forEachFactoryOptions = {
     'args': 'collection,callback,thisArg',
     'top': 'if(!callback){\ncallback=identity\n}\nelse if(thisArg){\ncallback=bind(callback,thisArg)\n}',
@@ -111,6 +118,7 @@
     'inLoop': 'callback(collection[index],index,collection)'
   };
 
+  /** Compilation options for `_.keys` */
   var keysFactoryOptions = {
     'args': 'object',
     'top': 'if(object!==Object(object))throw TypeError()',
@@ -118,6 +126,7 @@
     'inLoop': 'result.push(index)'
   };
 
+  /** Compilation options for `_.map` */
   var mapFactoryOptions = {
     'init': '',
     'exits': '[]',
@@ -131,6 +140,7 @@
     }
   };
 
+  /** Compilation options for `_.max` */
   var maxFactoryOptions = {
     'top':
       'var current,result=-Infinity,computed=result;\n' +
@@ -140,33 +150,32 @@
       '}else if(thisArg)callback=bind(callback,thisArg)',
     'inLoop':
         'current=callback?callback(collection[index],index,collection):collection[index];\n' +
-        'if(current>=computed){computed=current;result=collection[index]}'
+        'if(current>=computed)computed=current,result=collection[index]'
   };
 
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The Lodash function.
+   * The `lodash` function.
    *
    * @name _
-   * @param {Mixed} value The value to wrap in a chainable `lodash` object.
-   * @returns {Object} Returns a `lodash` instance.
+   * @param {Mixed} value The value to wrap in a `Lodash` instance.
+   * @returns {Object} Returns a `Lodash` instance.
    */
   function lodash(value) {
     // allow invoking `lodash` without the `new` operator
-    return new Wrapper(value);
+    return new Lodash(value);
   }
 
   /**
-   * Creates a wrapped collection that can be used OO-style. This wrapper holds
-   * altered versions of all the Lo-Dash functions. Wrapped objects may be chained.
+   * Creates a `Lodash` instance that wraps a value to allow chaining.
    *
    * @private
    * @constructor
-   * @param {Mixed} value The value to wrap in a chainable `lodash` object.
+   * @param {Mixed} value The value to wrap.
    */
-  function Wrapper(collection) {
-    this._wrapped = collection;
+  function Lodash(value) {
+    this._wrapped = value;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -223,7 +232,7 @@
    * Compiles iteration functions.
    *
    * @private
-   * @param {Object} [options1, options2, ..] The options objects.
+   * @param {Object} [options1, options2, ..] The compile options objects.
    * @returns {Function} Returns the compiled function.
    */
   function iterationFactory() {
@@ -293,13 +302,20 @@
       indexOf, Infinity, isArray, isEmpty, Math, slice, stringClass, toString);
   }
 
-  // Within an interpolation, evaluation, or escaping, remove HTML escaping
-  // that had been previously added.
-  function unescape(code) {
-    return code.replace(reUnescaper, function(match, escape) {
-      return escapes[escape];
+  /**
+   * Unescapes characters, previously escaped for inclusion in compiled string
+   * literals, so they may compiled into function bodies.
+   * (Used for template interpolation, evaluation, or escaping)
+   *
+   * @private
+   * @param {String} string The string to unescape.
+   * @returns {String} Returns the unescaped string.
+   */
+  function unescape(string) {
+    return string.replace(reUnescaper, function(match, escaped) {
+      return escapes[escaped];
     });
-  };
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -1747,6 +1763,7 @@
   var isArguments = function isArguments(value) {
     return toString.call(value) == '[object Arguments]';
   };
+  // fallback for browser like IE<9 which detect `arguments` as `[object Object]`
   if (!isArguments(arguments)) {
     isArguments = function isArguments(value) {
       return !!(value && hasOwnProperty.call(value, 'callee'));
@@ -2218,14 +2235,17 @@
    */
   function escape(string) {
     return (string + '')
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g,'&#x2F;');
   }
 
   /**
    * This function simply returns the first argument passed to it.
-   * Note: It is used throughout Lodash as a default callback.
+   * Note: It is used throughout Lo-Dash as a default callback.
    *
    * @static
    * @memberOf _
@@ -2277,7 +2297,7 @@
         unshift.call(args, this._wrapped);
 
         var result = func.apply(lodash, args);
-        return this._chain ? lodash(result).chain() : result;
+        return this._chain ? new Lodash(result).chain() : result;
       };
     });
   }
@@ -2376,19 +2396,21 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * JavaScript micro-templating, similar to John Resig's implementation.
-   * Lo-Dash templating handles arbitrary delimiters, preserves whitespace,
-   * and correctly escapes quotes within interpolated code.
+   * A JavaScript micro-templating method, similar to John Resig's implementation.
+   * Lo-Dash templating handles arbitrary delimiters, preserves whitespace, and
+   * correctly escapes quotes within interpolated code.
    *
    * @static
    * @memberOf _
    * @category Utilities
-   * @param {String} text The
-   * @param {Obect} data The
-   * @param {Object} settings
-   * @returns {String} Returns....
+   * @param {String} text The template text.
+   * @param {Obect} data The data object used to populate the text.
+   * @param {Object} options The options object.
+   * @returns {Function|String} Returns a compiled function when no `data` object
+   *  is given, else it returns the interpolated text.
    * @example
    *
+   * // using compiled template
    * var compiled = _.template('hello: <%= name %>');
    * compiled({ 'name': 'moe' });
    * // => 'hello: moe'
@@ -2401,12 +2423,12 @@
    * template({ 'value': '<script>' });
    * // => '<b>&lt;script&gt;</b>'
    *
-   *
+   * // using `print`
    * var compiled = _.template('<% print("Hello " + epithet); %>');
    * compiled({ 'epithet': 'stooge' });
    * // => 'Hello stooge.'
    *
-   *
+   * // using custom template settings
    * _.templateSettings = {
    *   'interpolate': /\{\{(.+?)\}\}/g
    * };
@@ -2416,44 +2438,45 @@
    * // => 'Hello Mustache!'
    *
    *
+   * // using the `variable` option
    * _.template('<%= data.hasWith %>', { 'hasWith': 'no' }, { 'variable': 'data' });
    * // => 'no'
    *
-   *
+   * // using the `source` property
    * <script>
    *   JST.project = <%= _.template(jstText).source %>;
    * </script>
    */
-  function template(text, data, settings) {
-    settings = defaults(settings || {}, lodash.templateSettings);
+  function template(text, data, options) {
+    options = defaults(options || {}, lodash.templateSettings);
 
     // Compile the template source, taking care to escape characters that
-    // cannot be included in a string literal and then unescape them in code
+    // cannot be included in string literals and then unescape them in code
     // blocks.
     var source = "__p+='" + text
       .replace(reEscaper, function(match) {
         return '\\' + escapes[match];
       })
-      .replace(settings.escape || reNoMatch, function(match, code) {
+      .replace(options.escape || reNoMatch, function(match, code) {
         return "'+\n_.escape(" + unescape(code) + ")+\n'";
       })
-      .replace(settings.interpolate || reNoMatch, function(match, code) {
+      .replace(options.interpolate || reNoMatch, function(match, code) {
         return "'+\n(" + unescape(code) + ")+\n'";
       })
-      .replace(settings.evaluate || reNoMatch, function(match, code) {
-        return "';\n" + unescape(code) + "\n;__p+='";
+      .replace(options.evaluate || reNoMatch, function(match, code) {
+        return "';\n" + unescape(code) + ";\n__p+='";
       }) + "';\n";
 
-    // If a variable is not specified, place data values in local scope.
-    if (!settings.variable) {
+    // if a variable is not specified, place data values in local scope
+    if (!options.variable) {
       source = 'with(object||{}){\n' + source + '\n}\n';
     }
 
-    source = "var __p='';" +
-      "function print(){__p+=Array.prototype.join.call(arguments,'')}\n" +
-      source + "return __p\n";
+    source = 'var __p="";' +
+      'function print(){__p+=Array.prototype.join.call(arguments,"")}\n' +
+      source + 'return __p';
 
-    var render = Function(settings.variable || 'object', '_', source);
+    var render = Function(options.variable || 'object', '_', source);
     if (data) {
       return render(data, lodash);
     }
@@ -2461,10 +2484,9 @@
     var template = function(data) {
       return render.call(this, data, lodash);
     };
-    // Provide the compiled function source as a convenience for build time
-    // precompilation.
-    template.source = 'function(' + (settings.variable || 'object') + '){\n' +
-      source + '}';
+
+    // provide the compiled function source as a convenience for build time precompilation
+    template.source = 'function(' + (options.variable || 'object') + '){\n' + source + '\n}';
 
     return template;
   }
@@ -2495,7 +2517,7 @@
    * // => 'moe is 40'
    */
   function chain(value) {
-    return lodash(value).chain();
+    return new Lodash(value).chain();
   }
 
   /**
@@ -2532,31 +2554,56 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /**
-   * The semantic version number.
-   *
-   * @static
-   * @memberOf _
-   * @type String
-   */
-  lodash.VERSION = '0.1.0';
-
-  /**
-   * By default, Lodash uses ERB-style template delimiters, change the following
-   * template settings to use alternative delimiters.
-   *
-   * @static
-   * @memberOf _
-   * @type Object
-   */
-  lodash.templateSettings = {
-    'escape': /<%-([\s\S]+?)%>/g,
-    'evaluate': /<%([\s\S]+?)%>/g,
-    'interpolate': /<%=([\s\S]+?)%>/g
-  };
-
-  // assign static properties
   extend(lodash, {
+
+    /**
+     * The semantic version number.
+     *
+     * @static
+     * @memberOf _
+     * @type String
+     */
+    'VERSION': '0.1.0',
+
+    /**
+     * By default, Lo-Dash uses ERB-style template delimiters, change the
+     * following template settings to use alternative delimiters.
+     *
+     * @static
+     * @memberOf _
+     * @type Object
+     */
+    'templateSettings': {
+
+      /**
+       * Used to detect `data` property values to be HTML-escaped.
+       *
+       * @static
+       * @memberOf _.templateSettings
+       * @type RegExp
+       */
+      'escape': /<%-([\s\S]+?)%>/g,
+
+      /**
+       * Used to detect code to be evaluated.
+       *
+       * @static
+       * @memberOf _.templateSettings
+       * @type RegExp
+       */
+      'evaluate': /<%([\s\S]+?)%>/g,
+
+      /**
+       * Used to detect `data` property values to inject.
+       *
+       * @static
+       * @memberOf _.templateSettings
+       * @type RegExp
+       */
+      'interpolate': /<%=([\s\S]+?)%>/g
+    },
+
+    // assign static methods
     'after': after,
     'bind': bind,
     'bindAll': bindAll,
@@ -2636,11 +2683,9 @@
     'values': values,
     'without': without,
     'wrap': wrap,
-    'zip': zip
-  });
+    'zip': zip,
 
-  // assign aliases
-  extend(lodash, {
+    // assign aliases
     'all': every,
     'any': some,
     'collect': map,
@@ -2661,42 +2706,43 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // Hookup private Wrapper's prototype
-  Wrapper.prototype = lodash.prototype;
+  // assign private `Lodash` constructor's prototype
+  Lodash.prototype = lodash.prototype;
 
-  // Add all of the Lo-Dash functions to the wrapper collection.
+  // add all of the static functions to `Lodash.prototype`
   mixin(lodash);
 
-  // Add all mutator Array functions to the wrapper.
+  // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = ArrayProto[methodName];
 
     lodash.prototype[methodName] = function() {
-      var wrapped = this._wrapped;
-      func.apply(wrapped, arguments);
+      var value = this._wrapped;
+      func.apply(value, arguments);
 
       // IE compatibility mode and IE < 9 have buggy Array `shift()` and `splice()`
       // functions that fail to remove the last element, `object[0]`, of
       // array-like-objects even though the `length` property is set to `0`.
       // The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
       // is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
-      if (wrapped.length === 0) {
-        delete wrapped[0];
+      if (value.length === 0) {
+        delete value[0];
       }
-      return this._chain ? lodash(wrapped).chain() : wrapped;
+      return this._chain ? new Lodash(value).chain() : value;
     };
   });
 
-  // Add all accessor Array functions to the wrapper.
+  // add all accessor Array functions to the wrapper.
   forEach(['concat', 'join', 'slice'], function(methodName) {
     var func = ArrayProto[methodName];
-    lodash.prototype[methodName] = function() {
+    Lodash.prototype[methodName] = function() {
       var result = func.apply(this._wrapped, arguments);
-      return this._chain ? lodash(result).chain() : result;
+      return this._chain ? new Lodash(result).chain() : result;
     };
   });
 
-  extend(lodash.prototype, {
+  // add `chain` and `value` after calling to `mixin()` to avoid getting wrapped
+  extend(Lodash.prototype, {
     'chain': chainWrapper,
     'value': value
   });

@@ -13,3 +13,6 @@
 [submodule "vendor/requirejs"]
 	path = vendor/requirejs
 	url = git://github.com/jrburke/requirejs.git
+[submodule "vendor/uglifyjs"]
+	path = vendor/uglifyjs
+	url = git://github.com/mishoo/UglifyJS.git

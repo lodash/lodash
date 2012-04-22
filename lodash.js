@@ -70,7 +70,7 @@
       toString = ObjProto.toString,
       unshift = ArrayProto.unshift;
 
-  /* Native method shortcuts for methods with the same name as a `lodash` method */
+  /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeIsArray = Array.isArray,
       nativeIsFinite = window.isFinite,
       nativeKeys = Object.keys;
@@ -617,7 +617,7 @@
    */
   var reduce = iterationFactory({
     'args': 'collection,callback,accumulator,thisArg',
-    'top': 'var initial=arguments.length>2;\n' + forEachFactoryOptions.top,
+    'top': 'var initial=arguments.length>2;\nif(thisArg)callback=bind(callback,thisArg)',
     'init': 'accumulator',
     'beforeLoop': {
       'array': 'if(!initial)result=collection[++index]'
@@ -654,9 +654,7 @@
     if (collection == undefined) {
       return result;
     }
-    if (!callback) {
-      callback = identity;
-    } else if(thisArg) {
+    if(thisArg) {
       callback = bind(callback, thisArg);
     }
     var length = collection.length;

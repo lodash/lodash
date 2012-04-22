@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "version": "0.1.0",
-  "description": "TBD",
+  "description": "A drop-in replacement for Underscore.js that delivers up to 8x performance improvements, bug fixes, and additional features.",
   "homepage": "https://github.com/bestiejs/lodash",
   "main": "lodash",
   "keywords": [

@@ -76,7 +76,7 @@
       nativeKeys = Object.keys;
 
   /** Timer shortcuts */
-  var clearInteval = window.clearInterval,
+  var clearInterval = window.clearInterval,
       setTimeout = window.setTimeout;
 
   /** Compilation options for `_.difference` */

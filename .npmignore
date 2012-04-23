@@ -1,4 +1,5 @@
 .*
-vendor/
+dist/*
 doc/*.php
 test/*.html
+vendor/

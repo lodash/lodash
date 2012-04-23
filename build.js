@@ -107,35 +107,6 @@
     compressor.stdin.end(source);
   }
 
-  /**
-   * Compresses a `source` string using UglifyJS. Yields the result to a
-   * `callback` function. This function is synchronous; the `callback` is used
-   * for symmetry.
-   *
-   * @private
-   * @param {String} source The JavaScript source to minify.
-   * @param {Function} callback The function called when minifying is complete.
-   */
-  function uglify(source, callback) {
-    var ugly = uglifyJS.uglify;
-
-    var result = ugly.gen_code(
-      // enable unsafe transformations.
-      ugly.ast_squeeze_more(
-        ugly.ast_squeeze(
-          // munge variable and function names, excluding the special `define`
-          // function exposed by AMD loaders.
-          ugly.ast_mangle(uglifyJS.parser.parse(source), {
-            'except': ['define']
-          }
-      ))), {
-      'ascii_only': true
-    });
-
-    // split lines at 500 characters to be consistent with Closure Compiler
-    callback(ugly.split_lines(result, 500));
-  }
-
   /*--------------------------------------------------------------------------*/
 
   // create the destination directory if it doesn't exist
@@ -144,35 +115,63 @@
   }
 
   // compress and `gzip` Lo-Dash using the Closure Compiler
-  compile(source, function(exception, result) {
+  compile(source, function(exception, compiledSource) {
     if (exception) {
       throw exception;
     }
-    // post-process the minified source
-    var source = postprocess(result);
 
-    // save the final minified version
-    fs.writeFileSync(path.join(distPath, 'lodash.compiler.js'), source);
+    // post-process the compiled source
+    compiledSource = postprocess(compiledSource);
 
-    // save the `gzip`-ed version
-    gzip(source, function(exception, result) {
+    // save the final compiled version
+    fs.writeFileSync(path.join(distPath, 'lodash.compiler.js'), compiledSource);
+
+    // `gzip` the compiled version
+    gzip(compiledSource, function gzipCompiled(exception, result) {
       if (exception) {
         throw exception;
       }
+
+      // record the size of the compiled version
+      var compiledSize = result.length;
+
       // explicit `binary` encoding is necessary to ensure that the stream is written correctly
       fs.writeFileSync(path.join(distPath, 'lodash.compiler.js.gz'), result, 'binary');
-    });
-  });
 
-  // compress and `gzip` Lo-Dash using UglifyJS
-  uglify(source, function(result) {
-    var source = postprocess(result);
-    fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), source);
-    gzip(source, function(exception, result) {
-      if (exception) {
-        throw exception;
-      }
-      fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), result, 'binary');
+      // compress Lo-Dash using UglifyJS
+      var ugly = uglifyJS.uglify,
+          uglifiedSource = ugly.gen_code(
+            // enable unsafe transformations
+            ugly.ast_squeeze_more(
+              ugly.ast_squeeze(
+                // munge variable and function names, excluding the special `define`
+                // function exposed by AMD loaders
+                ugly.ast_mangle(uglifyJS.parser.parse(source), {
+                  'except': ['define']
+                }
+              ))), {
+                'ascii_only': true
+          });
+
+      // post-process the uglified source and split lines at 500 characters for
+      // consistency with Closure Compiler
+      uglifiedSource = postprocess(ugly.split_lines(uglifiedSource, 500));
+
+      // save the uglified version
+      fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), uglifiedSource);
+
+      // `gzip` the uglified version
+      gzip(uglifiedSource, function gzipUglified(exception, result) {
+        if (exception) {
+          throw exception;
+        }
+        var uglifiedSize = result.length;
+        fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), result, 'binary');
+
+        // select the smallest minified distribution and use it as the official
+        // minified release
+        fs.writeFileSync(path.join(__dirname, "lodash.min.js"), compiledSize < uglifiedSize ? compiledSource : uglifiedSource);
+      });
     });
   });
 }());

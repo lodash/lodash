@@ -19,7 +19,7 @@
   preprocess = require(path.join(buildPath, 'pre-compile')),
   postprocess = require(path.join(buildPath, 'post-compile')),
 
-  /* The pre-processed Lodash source. */
+  /* The pre-processed Lo-Dash source. */
   source = preprocess(fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8'));
 
   /* Create the destination directory if it doesn't exist. */
@@ -27,7 +27,7 @@
     fs.mkdirSync(distPath);
   }
 
-  /* Compress and `gzip` Lodash using the Closure Compiler. */
+  /* Compress and `gzip` Lo-Dash using the Closure Compiler. */
   compile(source, function (exception, results) {
     if (exception) {
       throw exception;
@@ -46,7 +46,7 @@
     });
   });
 
-  /* Compress and `gzip` Lodash using UglifyJS. */
+  /* Compress and `gzip` Lo-Dash using UglifyJS. */
   uglify(source, function (results) {
     var source = postprocess(results);
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), source);

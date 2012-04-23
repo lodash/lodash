@@ -128,6 +128,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toArray');
+
+  (function() {
+    var args = arguments;
+
+    test('should call custom `toArray` method of an array', function() {
+      var array = [1, 2, 3];
+      array.toArray = function() { return [3, 2, 1] };
+      deepEqual(_.toArray(array), [3, 2, 1]);
+    });
+
+    test('should treat array-like-objects like arrays', function() {
+      var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
+      deepEqual(_.toArray(object), ['a', 'b', 'c']);
+      deepEqual(_.toArray(args), [1, 2, 3]);
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   // explicitly call `QUnit.start()` in a CLI environment
   if (!window.document) {
     QUnit.start();

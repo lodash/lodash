@@ -84,7 +84,7 @@
     'args': 'array',
     'top': 'var values=concat.apply([],slice.call(arguments,1))',
     'init': '[]',
-    'inLoop': 'indexOf(values,array[index])<0&&result.push(array[index])'
+    'inLoop': 'if(indexOf(values,array[index])<0)result.push(array[index])'
   };
 
   /** Compilation options for `_.every` */
@@ -113,7 +113,9 @@
   /** Compilation options for `_.forEach` */
   var forEachFactoryOptions = {
     'args': 'collection,callback,thisArg',
-    'top': 'if(!callback){\ncallback=identity\n}\nelse if(thisArg){\ncallback=bind(callback,thisArg)\n}',
+    'top':
+      'if(!callback){\ncallback=identity\n}\n' +
+      'else if(thisArg){\ncallback=bind(callback,thisArg)\n}',
     'init': 'collection',
     'inLoop': 'callback(collection[index],index,collection)'
   };
@@ -145,8 +147,8 @@
     'top':
       'var current,result=-Infinity,computed=result;\n' +
       'if(!callback){\n' +
-      'if(isArray(collection)&&collection[0]===+collection[0])return Math.max.apply(Math,collection);\n' +
-      'if(isEmpty(collection))return result;\n' +
+        'if(isArray(collection)&&collection[0]===+collection[0])return Math.max.apply(Math,collection);\n' +
+        'if(isEmpty(collection))return result;\n' +
       '}else if(thisArg)callback=bind(callback,thisArg)',
     'inLoop':
         'current=callback?callback(collection[index],index,collection):collection[index];\n' +
@@ -267,7 +269,7 @@
         useHas = options.useHas !== false;
 
     return Function('arrayClass,bind,concat,funcClass,hasOwnProperty,identity,' +
-                    'indexOf,Infinity,isArray,isEmpty,Math,slice,stringClass,'+
+                    'indexOf,Infinity,isArray,isEmpty,Math,slice,stringClass,' +
                     'toString,undefined',
       '"use strict";' +
       'return function(' + args + '){\n' +
@@ -616,15 +618,23 @@
    * // => 6
    */
   var reduce = iterationFactory({
-    'args': 'collection,callback,accumulator,thisArg',
-    'top': 'var initial=arguments.length>2;\nif(thisArg)callback=bind(callback,thisArg)',
-    'init': 'accumulator',
+    'args':
+      'collection,callback,accumulator,thisArg',
+    'top':
+      'var initial=arguments.length>2;\n' +
+      'if(thisArg)callback=bind(callback,thisArg)',
+    'init':
+      'accumulator',
     'beforeLoop': {
       'array': 'if(!initial)result=collection[++index]'
     },
     'inLoop': {
-      'array': 'result=callback(result,collection[index],index,collection)',
-      'object': 'result=initial\n?callback(result,collection[index],index,collection)\n:(initial=true,collection[index])'
+      'array':
+        'result=callback(result,collection[index],index,collection)',
+      'object':
+        'result=initial\n' +
+          '?callback(result,collection[index],index,collection)\n' +
+          ':(initial=true,collection[index])'
     }
   });
 
@@ -871,11 +881,12 @@
     if (!collection) {
       return [];
     }
-    if (isArray(collection) || isArguments(collection)) {
-      return slice.call(collection);
-    }
     if (isFunction(collection.toArray)) {
       return collection.toArray();
+    }
+    var length = collection.length;
+    if (length === +length) {
+      return slice.call(collection);
     }
     return values(collection);
   }

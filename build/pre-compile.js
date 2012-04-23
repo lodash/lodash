@@ -2,117 +2,119 @@
 ;(function() {
   'use strict';
 
-  var preprocess = module.exports = function preprocess(src) {
-    /** Used to minify variables embedded in compiled strings */
-    var compiledVars = [
-      'accumulator',
-      'array',
-      'arrayClass',
-      'bind',
-      'callback',
-      'className',
-      'collection',
-      'computed',
-      'concat',
-      'current',
-      'false',
-      'funcClass',
-      'hasOwnProperty',
-      'identity',
-      'index',
-      'indexOf',
-      'Infinity',
-      'initial',
-      'isArray',
-      'isEmpty',
-      'length',
-      'object',
-      'Math',
-      'property',
-      'result',
-      'slice',
-      'source',
-      'stringClass',
-      'target',
-      'thisArg',
-      'toString',
-      'true',
-      'undefined',
-      'value',
-      'values'
-    ];
+  /** The Node filesystem module */
+  var fs = require('fs');
 
-    /** Used to minify string values embedded in compiled strings */
-    var compiledValues = [
-      'arrays',
-      'objects'
-    ];
+  /** Used to minify string values embedded in compiled strings */
+  var compiledValues = [
+    'arrays',
+    'objects'
+  ];
 
-    /** Used to minify `iterationFactory` option properties */
-    var iterationFactoryOptions = [
-      'afterLoop',
-      'args',
-      'array',
-      'beforeLoop',
-      'bottom',
-      'exits',
-      'inLoop',
-      'init',
-      'iterate',
-      'loopExp',
-      'object',
-      'returns',
-      'top',
-      'useHas'
-    ];
+  /** Used to minify variables embedded in compiled strings */
+  var compiledVars = [
+    'accumulator',
+    'array',
+    'arrayClass',
+    'bind',
+    'callback',
+    'className',
+    'collection',
+    'computed',
+    'concat',
+    'current',
+    'false',
+    'funcClass',
+    'hasOwnProperty',
+    'identity',
+    'index',
+    'indexOf',
+    'Infinity',
+    'initial',
+    'isArray',
+    'isEmpty',
+    'length',
+    'object',
+    'Math',
+    'property',
+    'result',
+    'slice',
+    'source',
+    'stringClass',
+    'target',
+    'thisArg',
+    'toString',
+    'true',
+    'undefined',
+    'value',
+    'values'
+  ];
 
-    /** Used to minify variables and string values to a single character */
-    var minNames = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  /** Used to minify `iterationFactory` option properties */
+  var iterationFactoryOptions = [
+    'afterLoop',
+    'args',
+    'array',
+    'beforeLoop',
+    'bottom',
+    'exits',
+    'inLoop',
+    'init',
+    'iterate',
+    'loopExp',
+    'object',
+    'returns',
+    'top',
+    'useHas'
+  ];
 
-    /** Used protect the specified properties from getting minified */
-    var propWhitelist = [
-      '_',
-      'amd',
-      'chain',
-      'clearInterval',
-      'criteria',
-      'escape',
-      'evaluate',
-      'interpolate',
-      'isEqual',
-      'isFinite',
-      'lodash',
-      'setTimeout',
-      'templateSettings',
-      'toArray',
-      'value',
-      'variable'
-    ];
+  /** Used to minify variables and string values to a single character */
+  var minNames = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-    /*--------------------------------------------------------------------------*/
+  /** Used protect the specified properties from getting minified */
+  var propWhitelist = [
+    '_',
+    'amd',
+    'chain',
+    'clearInterval',
+    'criteria',
+    'escape',
+    'evaluate',
+    'interpolate',
+    'isEqual',
+    'isFinite',
+    'lodash',
+    'setTimeout',
+    'templateSettings',
+    'toArray',
+    'value',
+    'variable'
+  ];
 
-    /**
-     * Remove copyright to add later in post-compile.js
-     */
-    src = src.replace(/\/\*![\s\S]+?\*\//, '');
+  /*--------------------------------------------------------------------------*/
 
-    /**
-     * Correct JSDoc tags for Closure Compiler.
-     */
-    src = src.replace(/@(?:alias|category)[^\n]*/g, '');
+  /**
+   * Pre-process a given JavaScript `source`, preparing it for minification.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the processed source.
+   */
+  function preprocess(source) {
+    // remove copyright to add later in post-compile.js
+    source = source.replace(/\/\*![\s\S]+?\*\//, '');
 
-    /**
-     * Add brackets to whitelisted properties so Closure Compiler won't mung them.
-     * http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
-     */
-    src = src.replace(RegExp('\\.(' + iterationFactoryOptions.concat(propWhitelist).join('|') + ')\\b', 'g'), "['$1']");
+    // correct JSDoc tags for Closure Compiler
+    source = source.replace(/@(?:alias|category)[^\n]*/g, '');
 
-    /**
-     * Minify `sortBy` and `template` methods.
-     */
+    // add brackets to whitelisted properties so Closure Compiler won't mung them.
+    // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
+    source = source.replace(RegExp('\\.(' + iterationFactoryOptions.concat(propWhitelist).join('|') + ')\\b', 'g'), "['$1']");
+
+    // minify `sortBy` and `template` methods
     ['sortBy', 'template'].forEach(function(methodName) {
       var properties = ['criteria', 'value'],
-          snippet = src.match(RegExp('(\\n\\s*)function ' + methodName + '[\\s\\S]+?\\1}'))[0],
+          snippet = source.match(RegExp('(\\n\\s*)function ' + methodName + '[\\s\\S]+?\\1}'))[0],
           result = snippet;
 
       // minify property strings
@@ -124,15 +126,11 @@
       result = result.replace(/\\n/g, '');
 
       // replace with modified snippet
-      src = src.replace(snippet, result);
+      source = source.replace(snippet, result);
     });
 
-    /*--------------------------------------------------------------------------*/
-
-    /**
-     * Minify all `iterationFactory` related snippets.
-     */
-    src.match(
+    // minify all `iterationFactory` related snippets
+    source.match(
       RegExp([
         // match variables storing `iterationFactory` options
         'var [a-zA-Z]+FactoryOptions\\s*=\\s*\\{[\\s\\S]+?};\\n',
@@ -152,7 +150,7 @@
           .replace(/\)\([^)]+/, '$&,true,false');
 
         // replace with modified snippet early and clip snippet
-        src = src.replace(snippet, result);
+        source = source.replace(snippet, result);
         snippet = result = result.replace(/\)\([\s\S]+$/, '');
       }
 
@@ -189,22 +187,24 @@
       result = result.replace(/\\n/g, '');
 
       // replace with modified snippet
-      src = src.replace(snippet, result);
+      source = source.replace(snippet, result);
     });
-    return src;
-  };
+
+    return source;
+  }
 
   /*--------------------------------------------------------------------------*/
 
-  /** The filesystem module */
-  var fs = require('fs'), src;
-
-  if (module == require.main) {
-    // read the JavaScript source file from the first argument if the script
-    // was invoked directly (i.e., `node pre-compile.js source.js`)
-    src = fs.readFileSync(process.argv[2], 'utf8');
-
-    // write to the same file
-    fs.writeFileSync(process.argv[2], preprocess(src), 'utf8');
+  // expose `preprocess`
+  if (module != require.main) {
+    module.exports = preprocess;
+  } else {
+    // Read the JavaScript source file from the first argument if the script
+    // was invoked directly (e.g. `node pre-compile.js source.js`) and write to
+    // the same file.
+    (function() {
+      var source = fs.readFileSync(process.argv[2], 'utf8');
+      fs.writeFileSync(process.argv[2], preprocess(source), 'utf8');
+    }());
   }
 }());

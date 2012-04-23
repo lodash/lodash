@@ -9,6 +9,7 @@ Lo-Dash is part of the BestieJS *"Best in Class"* module collection. This means 
 ## Documentation
 
 The documentation for Lo-Dash can be viewed here: [/doc/README.md](https://github.com/bestiejs/lodash/blob/master/doc/README.md#readme)
+
 Underscore's [documentation](http://documentcloud.github.com/underscore/) may also be used.
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).

@@ -1868,7 +1868,7 @@
     if (b.isEqual && isFunction(b.isEqual)) {
       return b.isEqual(a);
     }
-    // compare `[[Class]]` names
+    // compare [[Class]] names
     var className = toString.call(a);
     if (className != toString.call(b)) {
       return false;
@@ -2052,7 +2052,8 @@
    */
   function isNaN(value) {
     // `NaN` as a primitive is the only value that is not equal to itself
-    return value != +value && toString.call(value) == numberClass;
+    // (perform the [[Class]] check first to avoid errors with some host objects in IE)
+    return toString.call(value) == numberClass && value != +value
   }
 
   /**

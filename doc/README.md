@@ -139,7 +139,7 @@ The `lodash` function.
 
 <!-- div -->
 
-### <a id="_.VERSION" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2564" title="View in source">`_.VERSION`</a>
+### <a id="_.VERSION" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2565" title="View in source">`_.VERSION`</a>
 *(String)*: The semantic version number.
 [&#9650;][1]
 
@@ -226,7 +226,7 @@ jQuery('#lodash_button').on('click', buttonView.onClick);
 
 <!-- div -->
 
-### <a id="_.chain" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2533" title="View in source">`_.chain()`</a>
+### <a id="_.chain" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2534" title="View in source">`_.chain()`</a>
 Extracts the value from a wrapped chainable object.
 [&#9650;][1]
 
@@ -244,7 +244,7 @@ _([1, 2, 3]).value();
 
 <!-- div -->
 
-### <a id="_.chain" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2517" title="View in source">`_.chain(value)`</a>
+### <a id="_.chain" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2518" title="View in source">`_.chain(value)`</a>
 Wraps the value in a `lodash` chainable object.
 [&#9650;][1]
 
@@ -477,7 +477,7 @@ _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
 
 <!-- div -->
 
-### <a id="_.escape" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2234" title="View in source">`_.escape(string)`</a>
+### <a id="_.escape" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2235" title="View in source">`_.escape(string)`</a>
 Escapes a string for insertion into HTML, replacing `&`, `<`, `>`, `"`, `'`, and `/` characters.
 [&#9650;][1]
 
@@ -732,7 +732,7 @@ _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
 
 <!-- div -->
 
-### <a id="_.identity" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2259" title="View in source">`_.identity(value)`</a>
+### <a id="_.identity" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2260" title="View in source">`_.identity(value)`</a>
 This function simply returns the first argument passed to it. Note: It is used throughout Lo-Dash as a default callback.
 [&#9650;][1]
 
@@ -1086,7 +1086,7 @@ _.isNaN(undefined);
 
 <!-- div -->
 
-### <a id="_.isNull" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2074" title="View in source">`_.isNull(value)`</a>
+### <a id="_.isNull" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2075" title="View in source">`_.isNull(value)`</a>
 Checks if a `value` is `null`.
 [&#9650;][1]
 
@@ -1110,7 +1110,7 @@ _.isNull(undefined);
 
 <!-- div -->
 
-### <a id="_.isNumber" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2091" title="View in source">`_.isNumber(value)`</a>
+### <a id="_.isNumber" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2092" title="View in source">`_.isNumber(value)`</a>
 Checks if a `value` is a number.
 [&#9650;][1]
 
@@ -1155,7 +1155,7 @@ _.isObject(1);
 
 <!-- div -->
 
-### <a id="_.isRegExp" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2108" title="View in source">`_.isRegExp(value)`</a>
+### <a id="_.isRegExp" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2109" title="View in source">`_.isRegExp(value)`</a>
 Checks if a `value` is a regular expression.
 [&#9650;][1]
 
@@ -1176,7 +1176,7 @@ _.isRegExp(/moe/);
 
 <!-- div -->
 
-### <a id="_.isString" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2125" title="View in source">`_.isString(value)`</a>
+### <a id="_.isString" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2126" title="View in source">`_.isString(value)`</a>
 Checks if a `value` is a string.
 [&#9650;][1]
 
@@ -1197,7 +1197,7 @@ _.isString('moe');
 
 <!-- div -->
 
-### <a id="_.isUndefined" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2142" title="View in source">`_.isUndefined(value)`</a>
+### <a id="_.isUndefined" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2143" title="View in source">`_.isUndefined(value)`</a>
 Checks if a `value` is `undefined`.
 [&#9650;][1]
 
@@ -1218,7 +1218,7 @@ _.isUndefined(void 0);
 
 <!-- div -->
 
-### <a id="_.keys" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2159" title="View in source">`_.keys(object)`</a>
+### <a id="_.keys" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2160" title="View in source">`_.keys(object)`</a>
 Produces an array of the `object`'s enumerable own property names.
 [&#9650;][1]
 
@@ -1385,7 +1385,7 @@ _.min([10, 5, 100, 2, 1000]);
 
 <!-- div -->
 
-### <a id="_.mixin" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2285" title="View in source">`_.mixin(object)`</a>
+### <a id="_.mixin" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2286" title="View in source">`_.mixin(object)`</a>
 Adds functions properties of `object` to the `lodash` function and chainable wrapper.
 [&#9650;][1]
 
@@ -1412,7 +1412,7 @@ _('larry').capitalize();
 
 <!-- div -->
 
-### <a id="_.noConflict" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2315" title="View in source">`_.noConflict()`</a>
+### <a id="_.noConflict" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2316" title="View in source">`_.noConflict()`</a>
 Reverts the '_' variable to its previous value and returns a reference to the `lodash` function.
 [&#9650;][1]
 
@@ -1452,7 +1452,7 @@ initialize();
 
 <!-- div -->
 
-### <a id="_.pick" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2176" title="View in source">`_.pick(object [, prop1, prop2, ..])`</a>
+### <a id="_.pick" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2177" title="View in source">`_.pick(object [, prop1, prop2, ..])`</a>
 Creates an object composed of the specified properties. Property names may be specified as individual arguments or as arrays of property names.
 [&#9650;][1]
 
@@ -1632,7 +1632,7 @@ _.rest([5, 4, 3, 2, 1]);
 
 <!-- div -->
 
-### <a id="_.result" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2345" title="View in source">`_.result(object, property)`</a>
+### <a id="_.result" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2346" title="View in source">`_.result(object, property)`</a>
 Resolves the value of `property` on `object`. If the property is a function it will be invoked and its result returned, else the property value is returned.
 [&#9650;][1]
 
@@ -1775,7 +1775,7 @@ _.sortedIndex([10, 20, 30, 40, 50], 35);
 
 <!-- div -->
 
-### <a id="_.tap" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2213" title="View in source">`_.tap(value, interceptor)`</a>
+### <a id="_.tap" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2214" title="View in source">`_.tap(value, interceptor)`</a>
 Invokes `interceptor` with the `value` as the first argument, and then returns `value`. The primary purpose of this method is to "tap into" a method chain, in order to performoperations on intermediate results within the chain.
 [&#9650;][1]
 
@@ -1802,7 +1802,7 @@ _.chain([1,2,3,200])
 
 <!-- div -->
 
-### <a id="_.template" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2448" title="View in source">`_.template(text, data, options)`</a>
+### <a id="_.template" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2449" title="View in source">`_.template(text, data, options)`</a>
 A JavaScript micro-templating method, similar to John Resig's implementation. Lo-Dash templating handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.
 [&#9650;][1]
 
@@ -1881,7 +1881,7 @@ jQuery(window).on('scroll', throttled);
 
 <!-- div -->
 
-### <a id="_.times" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2366" title="View in source">`_.times(n, callback [, thisArg])`</a>
+### <a id="_.times" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2367" title="View in source">`_.times(n, callback [, thisArg])`</a>
 Executes the `callback` function `n` times.
 [&#9650;][1]
 
@@ -1965,7 +1965,7 @@ _.uniq([1, 2, 1, 3, 1, 4]);
 
 <!-- div -->
 
-### <a id="_.uniqueId" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2389" title="View in source">`_.uniqueId([prefix])`</a>
+### <a id="_.uniqueId" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2390" title="View in source">`_.uniqueId([prefix])`</a>
 Generates a unique id. If `prefix` is passed, the id will be appended to it.
 [&#9650;][1]
 
@@ -1986,7 +1986,7 @@ _.uniqueId('contact_');
 
 <!-- div -->
 
-### <a id="_.value" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2549" title="View in source">`_.value()`</a>
+### <a id="_.value" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2550" title="View in source">`_.value()`</a>
 Extracts the value from a wrapped chainable object.
 [&#9650;][1]
 
@@ -2102,7 +2102,7 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 
 <!-- div -->
 
-### <a id="_.templateSettings" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2574" title="View in source">`_.templateSettings`</a>
+### <a id="_.templateSettings" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2575" title="View in source">`_.templateSettings`</a>
 *(Object)*: By default, Lo-Dash uses ERB-style template delimiters, change the following template settings to use alternative delimiters.
 [&#9650;][1]
 
@@ -2111,7 +2111,7 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 
 <!-- div -->
 
-### <a id="_.templateSettings.escape" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2583" title="View in source">`_.templateSettings.escape`</a>
+### <a id="_.templateSettings.escape" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2584" title="View in source">`_.templateSettings.escape`</a>
 *(RegExp)*: Used to detect `data` property values to be HTML-escaped.
 [&#9650;][1]
 
@@ -2120,7 +2120,7 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 
 <!-- div -->
 
-### <a id="_.templateSettings.evaluate" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2592" title="View in source">`_.templateSettings.evaluate`</a>
+### <a id="_.templateSettings.evaluate" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2593" title="View in source">`_.templateSettings.evaluate`</a>
 *(RegExp)*: Used to detect code to be evaluated.
 [&#9650;][1]
 
@@ -2129,7 +2129,7 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 
 <!-- div -->
 
-### <a id="_.templateSettings.interpolate" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2601" title="View in source">`_.templateSettings.interpolate`</a>
+### <a id="_.templateSettings.interpolate" href="https://github.com/bestiejs/lodash/blob/master/lodash.js#L2602" title="View in source">`_.templateSettings.interpolate`</a>
 *(RegExp)*: Used to detect `data` property values to inject.
 [&#9650;][1]
 

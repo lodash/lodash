@@ -120,6 +120,8 @@
       throw exception;
     }
 
+    console.log("Compressing Lodash using the Closure Compiler...");
+
     // post-process the compiled source
     compiledSource = postprocess(compiledSource);
 
@@ -138,6 +140,8 @@
       // explicit `binary` encoding is necessary to ensure that the stream is written correctly
       fs.writeFileSync(path.join(distPath, 'lodash.compiler.js.gz'), result, 'binary');
 
+      console.log("Done. Size: %d KB.", compiledSize);
+
       // compress Lo-Dash using UglifyJS
       var ugly = uglifyJS.uglify,
           uglifiedSource = ugly.gen_code(
@@ -153,6 +157,8 @@
                 'ascii_only': true
           });
 
+      console.log("Compressing Lodash using UglifyJS...");
+
       // post-process the uglified source and split lines at 500 characters for
       // consistency with Closure Compiler
       uglifiedSource = postprocess(ugly.split_lines(uglifiedSource, 500));
@@ -167,6 +173,8 @@
         }
         var uglifiedSize = result.length;
         fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), result, 'binary');
+
+        console.log("Done. Size: %d KB.", uglifiedSize);
 
         // select the smallest minified distribution and use it as the official
         // minified release

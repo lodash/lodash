@@ -39,9 +39,9 @@
   if (module != require.main) {
     module.exports = postprocess;
   } else {
-    // Read the JavaScript source file from the first argument if the script
+    // read the JavaScript source file from the first argument if the script
     // was invoked directly (e.g. `node post-compile.js source.js`) and write to
-    // the same file.
+    // the same file
     (function() {
       var source = fs.readFileSync(process.argv[2], 'utf8');
       fs.writeFileSync(process.argv[2], postprocess(source), 'utf8');

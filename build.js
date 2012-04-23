@@ -118,7 +118,7 @@
       });
 
       // post-process and `gzip` the uglified distribution. Lines are
-      // restricted to 500 characters for consistency with Closure Compiler.
+      // restricted to 500 characters for consistency with Closure Compiler
       uglifiedSource = postprocess(ugly.split_lines(uglifiedSource, 500));
       invoke('gzip', ['-9f', '-c'], uglifiedSource, 'binary', function onUglifyCompress(exception, uglifiedGzippedSource) {
         var uglifiedSize;
@@ -132,17 +132,17 @@
 
         // save the compiled version to disk. The explicit `binary`
         // encoding for the `gzip`-ped version is necessary to ensure that
-        // the stream is written correctly.
+        // the stream is written correctly
         fs.writeFileSync(path.join(distPath, 'lodash.compiler.js'), compiledSource);
         fs.writeFileSync(path.join(distPath, 'lodash.compiler.js.gz'), compiledGzippedSource, 'binary');
 
-        // save the uglified version to disk.
+        // save the uglified version to disk
         fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), uglifiedSource);
         fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), uglifiedGzippedSource, 'binary');
 
         // select the smallest minified distribution and use it as the
         // official minified release. If they are equivalent, the compiled
-        // distribution is used.
+        // distribution is used
         fs.writeFileSync(path.join(__dirname, 'lodash.min.js'), compiledSize < uglifiedSize ? compiledSource : uglifiedSource);
       });
     });

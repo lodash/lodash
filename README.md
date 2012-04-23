@@ -78,7 +78,7 @@ cd lodash
 git submodule update --init
 ~~~
 
-Feel free to fork and send pull requests if you see possible improvements!
+Feel free to fork and send pull requests if you see improvements!
 
 ## Author
 

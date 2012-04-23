@@ -135,7 +135,7 @@
 
     test('should call custom `toArray` method of an array', function() {
       var array = [1, 2, 3];
-      array.toArray = function() { return [3, 2, 1] };
+      array.toArray = function() { return [3, 2, 1]; };
       deepEqual(_.toArray(array), [3, 2, 1]);
     });
 

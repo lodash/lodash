@@ -1,6 +1,6 @@
 # Lo-Dash <sup>v0.1.0</sup>
 
-A drop-in replacement for [Underscore.js](https://github.com/documentcloud/underscore/) that delivers **up to 8x performance improvements**, bug fixes, and additional features.
+A drop-in replacement for [Underscore.js](https://github.com/documentcloud/underscore/) that delivers up to [8x performance improvements](http://jsperf.com/lodash-underscore#chart=bar), [bug fixes](https://github.com/bestiejs/lodash/blob/master/test/test.js#L71), and additional features.
 
 ## BestieJS
 
@@ -12,6 +12,14 @@ The documentation for Lo-Dash can be viewed here: [/doc/README.md](https://githu
 Underscore's [documentation](http://documentcloud.github.com/underscore/) may also be used.
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
+
+## So What's The Secret?
+
+Lo-Dash's performance is gained by avoiding native methods, instead opting for simplified non-ES5 compliant methods optimized for common usage, and by leveraging function compilation to reduce the number of overall function calls.
+
+## What else?
+
+Lo-Dash comes with AMD loader support baked in, chainable `_.each`, and will [soon address](https://github.com/bestiejs/lodash/wiki/Roadmap) cross-browser object iteration issues.
 
 ## Installation and usage
 

@@ -76,7 +76,7 @@
     '_',
     'amd',
     'chain',
-    'clearInterval',
+    'clearTimeout',
     'criteria',
     'escape',
     'evaluate',

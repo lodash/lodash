@@ -16,3 +16,6 @@
 [submodule "vendor/uglifyjs"]
 	path = vendor/uglifyjs
 	url = git://github.com/mishoo/UglifyJS.git
+[submodule "vendor/underscore"]
+	path = vendor/underscore
+	url = git://github.com/documentcloud/underscore.git

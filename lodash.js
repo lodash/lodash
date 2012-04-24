@@ -245,7 +245,7 @@
         options = {},
         props = ['beforeLoop', 'loopExp', 'inLoop', 'afterLoop'];
 
-    // use a while-loop to merge options because `extend` isn't defined yet
+    // use simple loops to merge options because `extend` isn't defined yet
     while (++index < arguments.length) {
       for (prop in arguments[index]) {
         options[prop] = arguments[index][prop];

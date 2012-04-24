@@ -61,7 +61,7 @@
         process = spawn(name, parameters);
 
     // juggle arguments
-    if (typeof encoding == 'string' && callback != null) {
+    if (typeof encoding == 'string') {
       // explicitly set the encoding of the output stream if one is specified
       process.stdout.setEncoding(encoding);
     } else {
@@ -193,7 +193,7 @@
       throw exception;
     }
     // store the post-processed Uglified result and gzip it
-    accumulator.uglified.source = postprocess(result);
+    accumulator.uglified.source = result = postprocess(result);
     invoke('gzip', gzipOptions, result, 'binary', onUglifyGzip);
   }
 
@@ -234,7 +234,7 @@
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), uglified.source);
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), uglified.gzip, 'binary');
 
-    // select the smallest gzipped file and use its minified form as the
+    // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to Closure Compiler)
     fs.writeFileSync(path.join(__dirname, 'lodash.min.js'),
       uglified.gzip.length < compiled.gzip.length

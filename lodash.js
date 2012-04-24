@@ -245,7 +245,7 @@
         options = {},
         props = ['beforeLoop', 'loopExp', 'inLoop', 'afterLoop'];
 
-    // use a while-loop to merge options objects because `extend` isn't defined yet
+    // use a while-loop to merge options because `extend` isn't defined yet
     while (++index < arguments.length) {
       for (prop in arguments[index]) {
         options[prop] = arguments[index][prop];
@@ -277,17 +277,17 @@
       '"use strict";' +
       // compile the arguments the function accepts
       'return function(' + args + '){\n' +
-        // add code that goes at the top of the iteration method
+        // add code to the top of the iteration method
         (options.top || '') + ';\n' +
         // assign the `result` variable an initial value
         ('var index, result' + (init ? '=' + init : '')) + ';\n' +
-        // if the first argument, e.g. `collection`, is nullish then exit early
+        // exit early if the first argument, e.g. `collection`, is nullish
         'if(' + firstArg + '==undefined)return ' + (options.exits || 'result') + ';\n' +
         // the following branch is for iterating arrays and array-like objects
         (arrayBranch
-            // initialize `length` and `index` values
+            // initialize `length` and `index` variables
           ? 'var length=' + firstArg + '.length;\nindex=-1;\n' +
-            // check if the `collection` is array-like when also supporting object iteration
+            // check if the `collection` is array-like when there is an object iteration branch
             ((objectBranch ? 'if(length===+length){\n'  : '') +
             // add code before the while-loop
             (array.beforeLoop || '') + ';\n' +
@@ -302,15 +302,15 @@
             (objectBranch ? '\n}\n' : ''))
           : ''
         ) +
-        // the following branch is for iterating an object's own or inherited keys (configurable)
+        // the following branch is for iterating an object's own/inherited properties
         (objectBranch
-            // begin the else-statement when also supporting array-like iteration
+            // begin the else-statement when there is an array-like iteration branch
           ? ((arrayBranch ? 'else{\n' : '') +
             // add code before the for-in loop
             (object.beforeLoop || '') + ';\n' +
             // add a custom loop expression
             'for(' + (object.loopExp || 'index in ' + firstArg) + '){\n' +
-              // when `options.useHas` is `true` compile in `hasOwnProperty` checks
+              // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
               (useHas ? 'if(hasOwnProperty.call(' + /\S+$/.exec(object.loopExp || firstArg)[0] + ',index)){\n' : '') +
                 // add code inside the for-in loop
                 object.inLoop +
@@ -322,7 +322,7 @@
             (arrayBranch ? '\n}\n' : ''))
           : ''
         ) +
-        // add code that goes at the bottom of the iteration method
+        // add code to the bottom of the iteration method
         (options.bottom || '') + ';\n' +
         // finally, return the `result`
         'return ' + (options.returns || 'result') +

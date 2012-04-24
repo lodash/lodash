@@ -2,6 +2,10 @@
 
 A drop-in replacement for [Underscore.js](https://github.com/documentcloud/underscore/) that delivers up to [8x performance improvements](http://jsperf.com/lodash-underscore#chart=bar), [bug fixes](https://github.com/bestiejs/lodash/blob/master/test/test.js#L71), and additional features.
 
+## Screencast
+
+For more information check out [this screencast](http://dl.dropbox.com/u/513327/allyoucanleet/post/20/file/screencast.mp4) over Lo-Dash.
+
 ## BestieJS
 
 Lo-Dash is part of the BestieJS *"Best in Class"* module collection. This means we promote solid browser/environment support, ES5 precedents, unit testing, and plenty of documentation.
@@ -21,10 +25,6 @@ Lo-Dash's performance is gained by avoiding native methods, instead opting for s
 ## What else?
 
 Lo-Dash comes with AMD loader support baked in, chainable `_.each`, and will [soon address](https://github.com/bestiejs/lodash/wiki/Roadmap) cross-browser object iteration issues.
-
-## Screencast
-
-For more information check out [this screencast](http://dl.dropbox.com/u/513327/allyoucanleet/post/20/file/screencast.mp4) over Lo-Dash.
 
 ## Installation and usage
 

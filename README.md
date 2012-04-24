@@ -61,15 +61,14 @@ load('lodash.js');
 In an AMD loader like [RequireJS](http://requirejs.org/):
 
 ~~~ js
-// opt-in
-define.amd.lodash = true;
-
+// Lo-Dash is defined as an anonymous module so, through path mapping, it can be
+// referenced as the "underscore" module
 require({
   'paths': {
-    'lodash': 'path/to/lodash'
+    'underscore': 'path/to/lodash'
   }
 },
-['lodash'], function(_) {
+['underscore'], function(_) {
   console.log(_.VERSION);
 });
 ~~~

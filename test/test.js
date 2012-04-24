@@ -47,9 +47,17 @@
   QUnit.module('lodash');
 
   (function() {
-    test('supports loading lodash.js as a module', function() {
+    test('supports loading lodash.js as the "lodash" module', function() {
       if (window.document && window.require) {
-        equal((_2 || {}).VERSION, _.VERSION);
+        equal((_2 || {}).moduleName, 'lodash');
+      } else {
+        skipTest(1)
+      }
+    });
+
+    test('supports loading lodash.js as the "underscore" module', function() {
+      if (window.document && window.require) {
+        equal((_3 || {}).moduleName, 'underscore');
       } else {
         skipTest(1)
       }

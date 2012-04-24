@@ -12,7 +12,7 @@
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
-		<script>var _2, _ = 1;</script>
+		<script>var _2, _3, _ = 1;</script>
 		<script src="../lodash.js"></script>
 		<script src="../vendor/requirejs/require.js"></script>
 		<script>
@@ -21,16 +21,21 @@
 				document.write('<script src="test.js"><\/script>');
 			}
 			else {
-				define.amd.lodash = true;
 				require({
 					'baseUrl': '../vendor/requirejs/',
 					'urlArgs': 't=' + (+new Date),
 					'paths': {
-						'lodash': '../../lodash'
+						'lodash': '../../lodash',
+						'underscore': './../../lodash'
 					}
 				},
-				['lodash'], function(_) {
-					_2 = _.noConflict();
+				['lodash', 'underscore'], function(lodash, lodashAsUnderscore) {
+					_2 = lodash.noConflict();
+					_2.moduleName = 'lodash';
+
+					_3 = lodashAsUnderscore.noConflict();
+					_3.moduleName = 'underscore';
+
 					require(['test.js']);
 				});
 			}

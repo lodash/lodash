@@ -245,12 +245,13 @@
         options = {},
         props = ['beforeLoop', 'loopExp', 'inLoop', 'afterLoop'];
 
+    // use a while-loop to merge options objects because `extend` isn't defined yet
     while (++index < arguments.length) {
       for (prop in arguments[index]) {
         options[prop] = arguments[index][prop];
       }
     }
-
+    // assign the `array` and `object` branch options
     while ((prop = props.pop())) {
       if (typeof options[prop] == 'object') {
         array[prop] = options[prop].array;
@@ -268,36 +269,62 @@
         objectBranch = !(args == 'array' || iterate == 'arrays'),
         useHas = options.useHas !== false;
 
+    // stings used to compile methods are minified during the build process
     return Function('arrayClass,bind,concat,funcClass,hasOwnProperty,identity,' +
                     'indexOf,Infinity,isArray,isEmpty,Math,slice,stringClass,' +
                     'toString,undefined',
+      // compile the function in strict mode
       '"use strict";' +
+      // compile the arguments the function accepts
       'return function(' + args + '){\n' +
+        // add code that goes at the top of the iteration method
         (options.top || '') + ';\n' +
+        // assign the `result` variable an initial value
         ('var index, result' + (init ? '=' + init : '')) + ';\n' +
+        // if the first argument, e.g. `collection`, is nullish then exit early
         'if(' + firstArg + '==undefined)return ' + (options.exits || 'result') + ';\n' +
+        // the following branch is for iterating arrays and array-like objects
         (arrayBranch
+            // initialize `length` and `index` values
           ? 'var length=' + firstArg + '.length;\nindex=-1;\n' +
+            // check if the `collection` is array-like when also supporting object iteration
             ((objectBranch ? 'if(length===+length){\n'  : '') +
+            // add code before the while-loop
             (array.beforeLoop || '') + ';\n' +
-            'while(' + (array.loopExp || '++index<length') + '){\n' + array.inLoop + '\n}' +
+            // add a custom loop expression
+            'while(' + (array.loopExp || '++index<length') + '){\n' +
+              // add code inside the while-loop
+              array.inLoop +
+            '\n}' +
+            // add code after the while-loop
             (array.afterLoop || '') + ';\n' +
+            // end the array-like if-statement
             (objectBranch ? '\n}\n' : ''))
           : ''
         ) +
+        // the following branch is for iterating an object's own or inherited keys (configurable)
         (objectBranch
+            // begin the else-statement when also supporting array-like iteration
           ? ((arrayBranch ? 'else{\n' : '') +
+            // add code before the for-in loop
             (object.beforeLoop || '') + ';\n' +
+            // add a custom loop expression
             'for(' + (object.loopExp || 'index in ' + firstArg) + '){\n' +
+              // when `options.useHas` is `true` compile in `hasOwnProperty` checks
               (useHas ? 'if(hasOwnProperty.call(' + /\S+$/.exec(object.loopExp || firstArg)[0] + ',index)){\n' : '') +
+                // add code inside the for-in loop
                 object.inLoop +
               (useHas ? '\n}' : '') +
             '\n}' +
+            // add code after the for-in loop
             (object.afterLoop || '') + ';\n' +
+            // end the object iteration else-statement
             (arrayBranch ? '\n}\n' : ''))
           : ''
         ) +
+        // add code that goes at the bottom of the iteration method
         (options.bottom || '') + ';\n' +
+        // finally, return the `result`
         'return ' + (options.returns || 'result') +
       '\n}'
     )(arrayClass, bind, concat, funcClass, hasOwnProperty, identity,

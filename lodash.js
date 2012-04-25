@@ -2231,11 +2231,12 @@
    */
   function pick(object) {
     var prop,
-        index = -1,
-        props = concat.apply([], slice.call(arguments, 1)),
+        index = 0,
+        props = concat.apply([], arguments),
         length = props.length,
         result = {};
 
+    // start `index` at `1` to skip `object`
     while (++index < length) {
       prop = props[index];
       if (prop in object) {

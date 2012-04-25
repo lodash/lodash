@@ -14,6 +14,7 @@
   /** Used to minify variables embedded in compiled strings */
   var compiledVars = [
     'accumulator',
+    'args',
     'array',
     'arrayClass',
     'bind',
@@ -37,6 +38,7 @@
     'length',
     'object',
     'Math',
+    'methodName',
     'prop',
     'property',
     'result',

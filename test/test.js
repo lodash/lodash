@@ -87,6 +87,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.groupBy');
+
+  (function() {
+    test('supports the `thisArg` argument', function() {
+      var actual = _.groupBy([1.3, 2.1, 2.4], function(num) {
+        return this.floor(num);
+      }, Math);
+
+      deepEqual(actual, { '1': [1.3], '2': [2.1, 2.4] });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.initial');
 
   (function() {
@@ -131,6 +145,20 @@
   (function() {
     test('should detect the size of a string value', function() {
       equal(_.size('abc'), 3);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sortBy');
+
+  (function() {
+    test('supports the `thisArg` argument', function() {
+      var actual = _.sortBy([1, 2, 3, 4], function(num) {
+        return this.sin(num);
+      }, Math);
+
+      deepEqual(actual, [4, 3, 1, 2]);
     });
   }());
 

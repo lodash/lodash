@@ -481,8 +481,10 @@
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
   var groupBy = iterationFactory(forEachFactoryOptions, {
-    'top': 'var prop,isFunc=toString.call(callback)==funcClass',
     'init': '{}',
+    'beforeLoop':
+      'var prop,isFunc=toString.call(callback)==funcClass;\n' +
+      'if(isFunc&&thisArg)callback=bind(callback,thisArg)',
     'inLoop':
       'prop=isFunc?callback(collection[index],index,collection):collection[index][callback];\n' +
       '(result[prop]||(result[prop]=[])).push(collection[index])'
@@ -504,14 +506,17 @@
    * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
    * // => [[1, 5, 7], [1, 2, 3]]
    */
-  function invoke(collection, methodName) {
-    var args = slice.call(arguments, 2),
-        isFunc = isFunction(methodName);
-
-    return map(collection, function(value) {
-      return (isFunc ? methodName || value : value[methodName]).apply(value, args);
-    });
-  }
+  var invoke = iterationFactory(mapFactoryOptions, {
+    'args': 'collection,methodName',
+    'top': 'var args=slice.call(arguments,2),isFunc=toString.call(methodName)==funcClass',
+    'inLoop': (function() {
+      var value = '(isFunc?methodName:collection[index][methodName]).apply(collection[index],args)';
+      return {
+        'array': 'result[index]=' + value,
+        'object': 'result[result.length]=' + value
+      };
+    }())
+  });
 
   /**
    * Produces a new array of values by mapping each value in the `collection`

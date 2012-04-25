@@ -81,24 +81,26 @@
   /** Compilation options for `_.difference` */
   var differenceFactoryOptions = {
     'args': 'array',
-    'top': 'var values=concat.apply([],slice.call(arguments,1))',
+    'top': 'var values = concat.apply([], slice.call(arguments, 1))',
     'init': '[]',
-    'inLoop': 'if(indexOf(values,array[index])<0)result.push(array[index])'
+    'inLoop': 'if (indexOf(values, array[index]) < 0) result.push(array[index])'
   };
 
   /** Compilation options for `_.every` */
   var everyFactoryOptions = {
     'init': 'true',
-    'inLoop': 'if(!callback(collection[index],index,collection))return !result'
+    'inLoop': 'if (!callback(collection[index], index, collection)) return !result'
   };
 
   /** Compilation options for `_.extend` */
   var extendFactoryOptions = {
     'args': 'object',
     'init': 'object',
-    'beforeLoop': 'for(var source,j=1,length=arguments.length;j<length;j++){\nsource=arguments[j]',
+    'beforeLoop':
+      'for (var source, j = 1, length = arguments.length; j < length; j++) {\n' +
+        'source = arguments[j]',
     'loopExp': 'index in source',
-    'inLoop': 'object[index]=source[index]',
+    'inLoop': 'object[index] = source[index]',
     'useHas': false,
     'afterLoop': '}'
   };
@@ -106,23 +108,27 @@
   /** Compilation options for `_.filter` */
   var filterFactoryOptions = {
     'init': '[]',
-    'inLoop': 'callback(collection[index],index,collection)&&result.push(collection[index])'
+    'inLoop': 'callback(collection[index], index, collection) && result.push(collection[index])'
   };
 
   /** Compilation options for `_.forEach` */
   var forEachFactoryOptions = {
-    'args': 'collection,callback,thisArg',
+    'args': 'collection, callback, thisArg',
     'top':
-      'if(!callback){\ncallback=identity\n}\n' +
-      'else if(thisArg){\ncallback=bind(callback,thisArg)\n}',
+      'if (!callback) {\n' +
+        'callback = identity\n' +
+      '}\n' +
+      'else if (thisArg) {\n' +
+        'callback = bind(callback, thisArg)\n' +
+      '}',
     'init': 'collection',
-    'inLoop': 'callback(collection[index],index,collection)'
+    'inLoop': 'callback(collection[index], index, collection)'
   };
 
   /** Compilation options for `_.keys` */
   var keysFactoryOptions = {
     'args': 'object',
-    'top': 'if(object!==Object(object))throw TypeError()',
+    'top': 'if (object !== Object(object)) throw TypeError()',
     'init': '[]',
     'inLoop': 'result.push(index)'
   };
@@ -132,26 +138,31 @@
     'init': '',
     'exits': '[]',
     'beforeLoop': {
-      'array': 'result=Array(length)',
-      'object': 'result=[]'
+      'array': 'result = Array(length)',
+      'object': 'result = []'
     },
     'inLoop': {
-      'array': 'result[index]=callback(collection[index],index,collection)',
-      'object': 'result[result.length]=callback(collection[index],index,collection)'
+      'array': 'result[index] = callback(collection[index], index, collection)',
+      'object': 'result[result.length] = callback(collection[index], index, collection)'
     }
   };
 
   /** Compilation options for `_.max` */
   var maxFactoryOptions = {
     'top':
-      'var current,result=-Infinity,computed=result;\n' +
-      'if(!callback){\n' +
-        'if(isArray(collection)&&collection[0]===+collection[0])return Math.max.apply(Math,collection);\n' +
-        'if(isEmpty(collection))return result;\n' +
-      '}else if(thisArg)callback=bind(callback,thisArg)',
+      'var current, computed = -Infinity, result = computed;\n' +
+      'if (!callback) {\n' +
+        'if (isArray(collection) && collection[0] === +collection[0])' +
+          'return Math.max.apply(Math, collection);\n' +
+        'if (isEmpty(collection))' +
+          'return result\n' +
+      '} else if (thisArg) callback = bind(callback, thisArg)',
     'inLoop':
-        'current=callback?callback(collection[index],index,collection):collection[index];\n' +
-        'if(current>=computed)computed=current,result=collection[index]'
+      'current = callback' +
+        '? callback(collection[index], index, collection)' +
+        ': collection[index];\n' +
+      'if (current >= computed)' +
+        'computed = current, result = collection[index]'
   };
 
   /*--------------------------------------------------------------------------*/
@@ -221,9 +232,9 @@
   var isEmpty = iterationFactory({
     'args': 'value',
     'iterate': 'objects',
-    'top': 'var className=toString.call(value)',
+    'top': 'var className = toString.call(value)',
     'init': 'true',
-    'beforeLoop': 'if(className==arrayClass||className==stringClass)return !value.length',
+    'beforeLoop': 'if (className == arrayClass || className == stringClass) return !value.length',
     'inLoop': 'return false'
   });
 
@@ -269,29 +280,30 @@
         useHas = options.useHas !== false;
 
     // stings used to compile methods are minified during the build process
-    return Function('arrayClass,bind,concat,funcClass,hasOwnProperty,identity,' +
-                    'indexOf,Infinity,isArray,isEmpty,Math,slice,stringClass,' +
-                    'toString,undefined',
+    return Function('arrayClass, bind, concat, funcClass, hasOwnProperty, identity,' +
+                    'indexOf, Infinity, isArray, isEmpty, Math, slice, stringClass,' +
+                    'toString, undefined',
       // compile the function in strict mode
       '"use strict";' +
       // compile the arguments the function accepts
-      'return function(' + args + '){\n' +
+      'return function(' + args + ') {\n' +
         // add code to the top of the iteration method
         (options.top || '') + ';\n' +
         // assign the `result` variable an initial value
         ('var index, result' + (init ? '=' + init : '')) + ';\n' +
         // exit early if the first argument, e.g. `collection`, is nullish
-        'if(' + firstArg + '==undefined)return ' + (options.exits || 'result') + ';\n' +
+        'if (' + firstArg + ' == undefined) return ' + (options.exits || 'result') + ';\n' +
         // the following branch is for iterating arrays and array-like objects
         (arrayBranch
             // initialize `length` and `index` variables
-          ? 'var length=' + firstArg + '.length;\nindex=-1;\n' +
+          ? 'var length = ' + firstArg + '.length;\n' +
+            'index = -1;\n' +
             // check if the `collection` is array-like when there is an object iteration branch
-            ((objectBranch ? 'if(length===+length){\n'  : '') +
+            ((objectBranch ? 'if (length === +length) {\n'  : '') +
             // add code before the while-loop
             (array.beforeLoop || '') + ';\n' +
             // add a custom loop expression
-            'while(' + (array.loopExp || '++index<length') + '){\n' +
+            'while (' + (array.loopExp || '++index < length') + ') {\n' +
               // add code inside the while-loop
               array.inLoop +
             '\n}' +
@@ -304,13 +316,13 @@
         // the following branch is for iterating an object's own/inherited properties
         (objectBranch
             // begin the else-statement when there is an array-like iteration branch
-          ? ((arrayBranch ? 'else{\n' : '') +
+          ? ((arrayBranch ? 'else {\n' : '') +
             // add code before the for-in loop
             (object.beforeLoop || '') + ';\n' +
             // add a custom loop expression
-            'for(' + (object.loopExp || 'index in ' + firstArg) + '){\n' +
+            'for (' + (object.loopExp || 'index in ' + firstArg) + ') {\n' +
               // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
-              (useHas ? 'if(hasOwnProperty.call(' + /\S+$/.exec(object.loopExp || firstArg)[0] + ',index)){\n' : '') +
+              (useHas ? 'if (hasOwnProperty.call(' + /\S+$/.exec(object.loopExp || firstArg)[0] + ',index)) {\n' : '') +
                 // add code inside the for-in loop
                 object.inLoop +
               (useHas ? '\n}' : '') +
@@ -364,9 +376,9 @@
    * // => true
    */
   var contains = iterationFactory({
-    'args': 'collection,target',
+    'args': 'collection, target',
     'init': 'false',
-    'inLoop': 'if(collection[index]===target)return true'
+    'inLoop': 'if (collection[index] === target) return true'
   });
 
   /**
@@ -431,7 +443,7 @@
    * // => 2
    */
   var find = iterationFactory(forEachFactoryOptions, {
-    'inLoop': 'if(callback(collection[index],index,collection))return collection[index]'
+    'inLoop': 'if (callback(collection[index], index, collection)) return collection[index]'
   });
 
   /**
@@ -483,11 +495,13 @@
   var groupBy = iterationFactory(forEachFactoryOptions, {
     'init': '{}',
     'beforeLoop':
-      'var prop,isFunc=toString.call(callback)==funcClass;\n' +
-      'if(isFunc&&thisArg)callback=bind(callback,thisArg)',
+      'var prop, isFunc = toString.call(callback) == funcClass;\n' +
+      'if (isFunc && thisArg) callback = bind(callback, thisArg)',
     'inLoop':
-      'prop=isFunc?callback(collection[index],index,collection):collection[index][callback];\n' +
-      '(result[prop]||(result[prop]=[])).push(collection[index])'
+      'prop = isFunc' +
+        '? callback(collection[index], index, collection)' +
+        ': collection[index][callback];\n' +
+      '(result[prop] || (result[prop] = [])).push(collection[index])'
   });
 
   /**
@@ -507,13 +521,13 @@
    * // => [[1, 5, 7], [1, 2, 3]]
    */
   var invoke = iterationFactory(mapFactoryOptions, {
-    'args': 'collection,methodName',
-    'top': 'var args=slice.call(arguments,2),isFunc=toString.call(methodName)==funcClass',
+    'args': 'collection, methodName',
+    'top': 'var args = slice.call(arguments, 2), isFunc = toString.call(methodName) == funcClass',
     'inLoop': (function() {
-      var value = '(isFunc?methodName:collection[index][methodName]).apply(collection[index],args)';
+      var value = '(isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)';
       return {
-        'array': 'result[index]=' + value,
-        'object': 'result[result.length]=' + value
+        'array': 'result[index] = ' + value,
+        'object': 'result[result.length] = ' + value
       };
     }())
   });
@@ -614,10 +628,10 @@
    * // => ['moe', 'larry', 'curly']
    */
   var pluck = iterationFactory(mapFactoryOptions, {
-    'args': 'collection,property',
+    'args': 'collection, property',
     'inLoop': {
-      'array': 'result[index]=collection[index][property]',
-      'object': 'result[result.length]=collection[index][property]'
+      'array': 'result[index] = collection[index][property]',
+      'object': 'result[result.length] = collection[index][property]'
     }
   });
 
@@ -645,22 +659,22 @@
    */
   var reduce = iterationFactory({
     'args':
-      'collection,callback,accumulator,thisArg',
+      'collection, callback, accumulator, thisArg',
     'top':
-      'var initial=arguments.length>2;\n' +
-      'if(thisArg)callback=bind(callback,thisArg)',
+      'var initial = arguments.length > 2;\n' +
+      'if (thisArg) callback = bind(callback, thisArg)',
     'init':
       'accumulator',
     'beforeLoop': {
-      'array': 'if(!initial)result=collection[++index]'
+      'array': 'if (!initial) result = collection[++index]'
     },
     'inLoop': {
       'array':
-        'result=callback(result,collection[index],index,collection)',
+        'result = callback(result, collection[index], index, collection)',
       'object':
-        'result=initial\n' +
-          '?callback(result,collection[index],index,collection)\n' +
-          ':(initial=true,collection[index])'
+        'result = initial\n' +
+          '? callback(result, collection[index], index, collection)\n' +
+          ': (initial = true, collection[index])'
     }
   });
 
@@ -934,8 +948,8 @@
   var values = iterationFactory(mapFactoryOptions, {
     'args': 'collection',
     'inLoop': {
-      'array': 'result[index]=collection[index]',
-      'object': 'result[result.length]=collection[index]'
+      'array': 'result[index] = collection[index]',
+      'object': 'result[result.length] = collection[index]'
     }
   });
 
@@ -958,7 +972,7 @@
   var compact = iterationFactory({
     'args': 'array',
     'init': '[]',
-    'inLoop': 'if(array[index])result.push(array[index])'
+    'inLoop': 'if (array[index]) result.push(array[index])'
   });
 
   /**
@@ -1310,7 +1324,7 @@
    * // => [2, 3, 4]
    */
   var without = iterationFactory(differenceFactoryOptions, {
-    'top': 'var values=slice.call(arguments,1)',
+    'top': 'var values = slice.call(arguments, 1)',
     'init': '[]'
   });
 
@@ -1722,7 +1736,7 @@
    * // => { 'flavor': 'chocolate', 'sprinkles': 'lots' }
    */
   var defaults = iterationFactory(extendFactoryOptions, {
-    'inLoop': 'if(object[index]==undefined)' + extendFactoryOptions.inLoop
+    'inLoop': 'if (object[index] == undefined)' + extendFactoryOptions.inLoop
   });
 
   /**
@@ -1760,7 +1774,7 @@
   var functions = iterationFactory(keysFactoryOptions, {
     'top': '',
     'useHas': false,
-    'inLoop': 'if(toString.call(object[index])==funcClass)result.push(index)',
+    'inLoop': 'if (toString.call(object[index]) == funcClass) result.push(index)',
     'returns': 'result.sort()'
   });
 
@@ -2505,11 +2519,11 @@
 
     // if a variable is not specified, place data values in local scope
     if (!options.variable) {
-      source = 'with(object||{}){\n' + source + '\n}\n';
+      source = 'with (object || {}) {\n' + source + '\n}\n';
     }
 
-    source = 'var __t,__j=Array.prototype.join,__p="";' +
-      'function print(){__p+=__j.call(arguments,"")}\n' +
+    source = 'var __t, __j = Array.prototype.join, __p = "";' +
+      'function print() { __p += __j.call(arguments, "") }\n' +
       source + 'return __p';
 
     var render = Function(options.variable || 'object', '_', source);

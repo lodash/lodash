@@ -67,8 +67,7 @@
       hasOwnProperty = ObjProto.hasOwnProperty,
       push = ArrayProto.push,
       slice = ArrayProto.slice,
-      toString = ObjProto.toString,
-      unshift = ArrayProto.unshift;
+      toString = ObjProto.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeIsArray = Array.isArray,
@@ -481,18 +480,13 @@
    * _.groupBy(['one', 'two', 'three'], 'length');
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
-  function groupBy(collection, callback, thisArg) {
-    var result = {};
-    if (!isFunction(callback)) {
-      var prop = callback;
-      callback = function(collection) { return collection[prop]; };
-    }
-    forEach(collection, function(value, index, collection) {
-      var prop = callback(value, index, collection);
-      (result[prop] || (result[prop] = [])).push(value);
-    });
-    return result;
-  }
+  var groupBy = iterationFactory(forEachFactoryOptions, {
+    'top': 'var prop,isFunc=toString.call(callback)==funcClass',
+    'init': '{}',
+    'inLoop':
+      'prop=isFunc?callback(collection[index],index,collection):collection[index][callback];\n' +
+      '(result[prop]||(result[prop]=[])).push(collection[index])'
+  });
 
   /**
    * Calls the method named by `methodName` for each value of the `collection`.
@@ -1025,14 +1019,18 @@
     if (shallow) {
       return concat.apply([], array);
     }
-    return reduce(array, function(accumulator, value) {
-      if (isArray(value)) {
-        push.apply(accumulator, flatten(value));
-        return accumulator;
+    var index = -1,
+        length = array.length,
+        result = [];
+
+    while (++index < length) {
+      if (isArray(array[index])) {
+        push.apply(result, flatten(array[index]));
+      } else {
+        result.push(array[index]);
       }
-      accumulator.push(value);
-      return accumulator;
-    }, []);
+    }
+    return result;
   }
 
   /**
@@ -1109,7 +1107,7 @@
     var rest = slice.call(arguments, 1);
     return filter(uniq(array), function(value) {
       return every(rest, function(other) {
-        return indexOf(other, value) >= 0;
+        return indexOf(other, value) > -1;
       });
     });
   }
@@ -1248,7 +1246,7 @@
    * // => [1, 2, 3, 101, 10]
    */
   function union() {
-    return uniq(flatten(arguments, true));
+    return uniq(concat.apply([], arguments));
   }
 
   /**
@@ -2215,7 +2213,7 @@
   function pick(object) {
     var prop,
         index = -1,
-        props = flatten(slice.call(arguments, 1)),
+        props = concat.apply([], slice.call(arguments, 1)),
         length = props.length,
         result = {};
 
@@ -2326,12 +2324,8 @@
       var func = lodash[methodName] = object[methodName];
 
       lodash.prototype[methodName] = function() {
-        // In Opera < 9.50 and some older/beta Mobile Safari versions using `unshift()`
-        // generically to augment the `arguments` object will pave the value at
-        // index `0` without incrimenting the other values's indexes.
-        // https://github.com/documentcloud/underscore/issues/9
-        var args = slice.call(arguments);
-        unshift.call(args, this._wrapped);
+        var args = [this._wrapped];
+        push.apply(args, arguments);
 
         var result = func.apply(lodash, args);
         return this._chain ? new Lodash(result).chain() : result;

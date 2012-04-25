@@ -5,7 +5,7 @@
   /** The Node filesystem module */
   var fs = require('fs');
 
-  /** Used to minify string values embedded in compiled strings */
+  /** Used to minify string literals embedded in compiled strings */
   var compiledValues = [
     'arrays',
     'objects'
@@ -33,9 +33,11 @@
     'initial',
     'isArray',
     'isEmpty',
+    'isFunc',
     'length',
     'object',
     'Math',
+    'prop',
     'property',
     'result',
     'slice',
@@ -83,7 +85,6 @@
     'interpolate',
     'isEqual',
     'isFinite',
-    'lodash',
     'setTimeout',
     'templateSettings',
     'toArray',

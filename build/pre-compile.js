@@ -5,7 +5,7 @@
   /** The Node filesystem module */
   var fs = require('fs');
 
-  /** Used to minify string literals embedded in compiled strings */
+  /** Used to minify string values used by `iterationFactory` and its options */
   var compiledValues = [
     'arrays',
     'objects'
@@ -114,6 +114,13 @@
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + iterationFactoryOptions.concat(propWhitelist).join('|') + ')\\b', 'g'), "['$1']");
 
+    // remove whitespace from string literals
+    source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {
+      return string.replace(/\[object |else if|function | in |return\s+[\w']|throw |use strict|var |'\\n'|\\n|\s+/g, function(match) {
+        return match == false || match == '\\n' ? '' : match;
+      });
+    });
+
     // minify `sortBy` and `template` methods
     ['sortBy', 'template'].forEach(function(methodName) {
       var properties = ['criteria', 'value'],
@@ -124,9 +131,6 @@
       properties.forEach(function(property, index) {
         result = result.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
       });
-
-      // remove escaped newlines in strings
-      result = result.replace(/\\n/g, '');
 
       // replace with modified snippet
       source = source.replace(snippet, result);
@@ -185,9 +189,6 @@
           result = result.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
         }
       });
-
-      // remove escaped newlines in strings
-      result = result.replace(/\\n/g, '');
 
       // replace with modified snippet
       source = source.replace(snippet, result);

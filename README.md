@@ -1,6 +1,6 @@
 # Lo-Dash <sup>v0.1.0</sup>
 
-A drop-in replacement for [Underscore.js](https://github.com/documentcloud/underscore/) that delivers up to [8x performance improvements](http://jsperf.com/lodash-underscore#chart=bar), [bug fixes](https://github.com/bestiejs/lodash/blob/master/test/test.js#L71), and additional features.
+A drop-in replacement for [Underscore.js](https://github.com/documentcloud/underscore/) that delivers up to [8x performance improvements](http://jsperf.com/lodash-underscore#chart=bar), [bug fixes](https://github.com/bestiejs/lodash/blob/master/test/test.js#L88), and additional features.
 
 ## Screencast
 

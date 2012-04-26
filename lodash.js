@@ -269,8 +269,8 @@
         firstArg = /^[^,]+/.exec(args)[0],
         init = options.init,
         iterate = options.iterate,
-        arrayBranch = !(args == 'object' || iterate == 'objects'),
-        objectBranch = !(args == 'array' || iterate == 'arrays'),
+        arrayBranch = !(firstArg == 'object' || iterate == 'objects'),
+        objectBranch = !(firstArg == 'array' || iterate == 'arrays'),
         useHas = options.useHas !== false;
 
     // stings used to compile methods are minified during the build process
@@ -493,31 +493,6 @@
         '? callback(collection[index], index, collection)' +
         ': collection[index][callback];\n' +
       '(result[prop] || (result[prop] = [])).push(collection[index])'
-  });
-
-  /**
-   * Calls the method named by `methodName` for each value of the `collection`.
-   * Additional arguments will be passed to each invoked method.
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
-   * @param {String} methodName The name of the method to invoke.
-   * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the method with.
-   * @returns {Array} Returns a new array of values returned from each invoked method.
-   * @example
-   *
-   * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
-   * // => [[1, 5, 7], [1, 2, 3]]
-   */
-  var invoke = iterationFactory(mapFactoryOptions, {
-    'args': 'collection, methodName',
-    'top': 'var args = slice.call(arguments, 2), isFunc = toString.call(methodName) == funcClass',
-    'inLoop': {
-      'array': 'result[index] = (isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)',
-      'object': 'result.push(isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)'
-    }
   });
 
   /**
@@ -1122,6 +1097,28 @@
       });
     });
   }
+
+  /**
+   * Calls the method named by `methodName` for each value of the `collection`.
+   * Additional arguments will be passed to each invoked method.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to iterate over.
+   * @param {String} methodName The name of the method to invoke.
+   * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the method with.
+   * @returns {Array} Returns a new array of values returned from each invoked method.
+   * @example
+   *
+   * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
+   * // => [[1, 5, 7], [1, 2, 3]]
+   */
+  var invoke = iterationFactory(mapFactoryOptions, {
+    'args': 'array, methodName',
+    'top': 'var args = slice.call(arguments, 2), isFunc = toString.call(methodName) == funcClass',
+    'inLoop': 'result[index] = (isFunc ? methodName : array[index][methodName]).apply(array[index], args)'
+  });
 
   /**
    * Gets the last value of the `array`. Pass `n` to return the lasy `n` values

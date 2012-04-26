@@ -81,8 +81,8 @@
   /** Compilation options for `_.difference` */
   var differenceFactoryOptions = {
     'args': 'array',
-    'top': 'var values = concat.apply([], slice.call(arguments, 1))',
     'init': '[]',
+    'top': 'var values = concat.apply([], slice.call(arguments, 1))',
     'inLoop': 'if (indexOf(values, array[index]) < 0) result.push(array[index])'
   };
 
@@ -96,13 +96,13 @@
   var extendFactoryOptions = {
     'args': 'object',
     'init': 'object',
-    'beforeLoop':
+    'top':
       'for (var source, j = 1, length = arguments.length; j < length; j++) {\n' +
         'source = arguments[j]',
     'loopExp': 'index in source',
-    'inLoop': 'object[index] = source[index]',
     'useHas': false,
-    'afterLoop': '}'
+    'inLoop': 'object[index] = source[index]',
+    'bottom': '}'
   };
 
   /** Compilation options for `_.filter` */
@@ -114,6 +114,7 @@
   /** Compilation options for `_.forEach` */
   var forEachFactoryOptions = {
     'args': 'collection, callback, thisArg',
+    'init': 'collection',
     'top':
       'if (!callback) {\n' +
         'callback = identity\n' +
@@ -121,16 +122,7 @@
       'else if (thisArg) {\n' +
         'callback = bind(callback, thisArg)\n' +
       '}',
-    'init': 'collection',
     'inLoop': 'callback(collection[index], index, collection)'
-  };
-
-  /** Compilation options for `_.keys` */
-  var keysFactoryOptions = {
-    'args': 'object',
-    'top': 'if (object !== Object(object)) throw TypeError()',
-    'init': '[]',
-    'inLoop': 'result.push(index)'
   };
 
   /** Compilation options for `_.map` */
@@ -143,7 +135,7 @@
     },
     'inLoop': {
       'array': 'result[index] = callback(collection[index], index, collection)',
-      'object': 'result[result.length] = callback(collection[index], index, collection)'
+      'object': 'result.push(callback(collection[index], index, collection))'
     }
   };
 
@@ -232,9 +224,10 @@
   var isEmpty = iterationFactory({
     'args': 'value',
     'iterate': 'objects',
-    'top': 'var className = toString.call(value)',
     'init': 'true',
-    'beforeLoop': 'if (className == arrayClass || className == stringClass) return !value.length',
+    'top':
+      'var className = toString.call(value);\n' +
+      'if (className == arrayClass || className == stringClass) return !value.length',
     'inLoop': 'return false'
   });
 
@@ -253,7 +246,7 @@
         array = {},
         object = {},
         options = {},
-        props = ['beforeLoop', 'loopExp', 'inLoop', 'afterLoop'];
+        props = ['beforeLoop', 'loopExp', 'inLoop'];
 
     // use simple loops to merge options because `extend` isn't defined yet
     while (++index < arguments.length) {
@@ -261,6 +254,7 @@
         options[prop] = arguments[index][prop];
       }
     }
+
     // assign the `array` and `object` branch options
     while ((prop = props.pop())) {
       if (typeof options[prop] == 'object') {
@@ -287,12 +281,13 @@
       '"use strict";' +
       // compile the arguments the function accepts
       'return function(' + args + ') {\n' +
-        // add code to the top of the iteration method
-        (options.top || '') + ';\n' +
         // assign the `result` variable an initial value
         ('var index, result' + (init ? '=' + init : '')) + ';\n' +
-        // exit early if the first argument, e.g. `collection`, is nullish
-        'if (' + firstArg + ' == undefined) return ' + (options.exits || 'result') + ';\n' +
+        // exit early if first argument, e.g. `collection`, is nullish or custom expression
+        'if (' + (options.exitsExp || firstArg + ' == undefined') + ')\n' +
+          'return ' + (options.exits || 'result') + ';\n' +
+        // add code after the exits if-statement but before the array/object iteration branches
+        (options.top || '') + ';\n' +
         // the following branch is for iterating arrays and array-like objects
         (arrayBranch
             // initialize `length` and `index` variables
@@ -307,8 +302,6 @@
               // add code inside the while-loop
               array.inLoop +
             '\n}' +
-            // add code after the while-loop
-            (array.afterLoop || '') + ';\n' +
             // end the array-like if-statement
             (objectBranch ? '\n}\n' : ''))
           : ''
@@ -327,8 +320,6 @@
                 object.inLoop +
               (useHas ? '\n}' : '') +
             '\n}' +
-            // add code after the for-in loop
-            (object.afterLoop || '') + ';\n' +
             // end the object iteration else-statement
             (arrayBranch ? '\n}\n' : ''))
           : ''
@@ -494,7 +485,7 @@
    */
   var groupBy = iterationFactory(forEachFactoryOptions, {
     'init': '{}',
-    'beforeLoop':
+    'top':
       'var prop, isFunc = toString.call(callback) == funcClass;\n' +
       'if (isFunc && thisArg) callback = bind(callback, thisArg)',
     'inLoop':
@@ -523,13 +514,10 @@
   var invoke = iterationFactory(mapFactoryOptions, {
     'args': 'collection, methodName',
     'top': 'var args = slice.call(arguments, 2), isFunc = toString.call(methodName) == funcClass',
-    'inLoop': (function() {
-      var value = '(isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)';
-      return {
-        'array': 'result[index] = ' + value,
-        'object': 'result[result.length] = ' + value
-      };
-    }())
+    'inLoop': {
+      'array': 'result[index] = (isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)',
+      'object': 'result.push(isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)'
+    }
   });
 
   /**
@@ -631,7 +619,7 @@
     'args': 'collection, property',
     'inLoop': {
       'array': 'result[index] = collection[index][property]',
-      'object': 'result[result.length] = collection[index][property]'
+      'object': 'result.push(collection[index][property])'
     }
   });
 
@@ -658,13 +646,11 @@
    * // => 6
    */
   var reduce = iterationFactory({
-    'args':
-      'collection, callback, accumulator, thisArg',
+    'args': 'collection, callback, accumulator, thisArg',
+    'init': 'accumulator',
     'top':
       'var initial = arguments.length > 2;\n' +
       'if (thisArg) callback = bind(callback, thisArg)',
-    'init':
-      'accumulator',
     'beforeLoop': {
       'array': 'if (!initial) result = collection[++index]'
     },
@@ -700,14 +686,16 @@
    * // => [4, 5, 2, 3, 0, 1]
    */
   function reduceRight(collection, callback, result, thisArg) {
-    var initial = arguments.length > 2;
     if (collection == undefined) {
       return result;
     }
+
+    var initial = arguments.length > 2,
+        length = collection.length;
+
     if(thisArg) {
       callback = bind(callback, thisArg);
     }
-    var length = collection.length;
     if (length === +length) {
       if (length && !initial) {
         result = collection[--length];
@@ -891,14 +879,18 @@
    * _.sortedIndex([10, 20, 30, 40, 50], 35);
    * // => 3
    */
-  function sortedIndex(array, object, callback) {
-    var low = 0,
+  function sortedIndex(array, value, callback) {
+    var mid,
+        low = 0,
         high = array.length;
 
-    callback || (callback = identity);
     while (low < high) {
-      var mid = (low + high) >> 1;
-      callback(array[mid]) < callback(object) ? (low = mid + 1) : (high = mid);
+      mid = (low + high) >> 1;
+      if (callback ? callback(array[mid]) < callback(value) : array[mid] < value) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
     }
     return low;
   }
@@ -949,7 +941,7 @@
     'args': 'collection',
     'inLoop': {
       'array': 'result[index] = collection[index]',
-      'object': 'result[result.length] = collection[index]'
+      'object': 'result.push(collection[index])'
     }
   });
 
@@ -1324,8 +1316,8 @@
    * // => [2, 3, 4]
    */
   var without = iterationFactory(differenceFactoryOptions, {
-    'top': 'var values = slice.call(arguments, 1)',
-    'init': '[]'
+    'init': '[]',
+    'top': 'var values = slice.call(arguments, 1)'
   });
 
   /**
@@ -1771,8 +1763,9 @@
    * _.functions(_);
    * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
    */
-  var functions = iterationFactory(keysFactoryOptions, {
-    'top': '',
+  var functions = iterationFactory({
+    'args': 'object',
+    'init': '[]',
     'useHas': false,
     'inLoop': 'if (toString.call(object[index]) == funcClass) result.push(index)',
     'returns': 'result.sort()'
@@ -2212,7 +2205,13 @@
    * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
    * // => ['one', 'two', 'three']
    */
-  var keys = nativeKeys || iterationFactory(keysFactoryOptions);
+  var keys = nativeKeys || iterationFactory({
+    'args': 'object',
+    'exitsExp': 'object !== Object(object)',
+    'exits': 'throw TypeError()',
+    'init': '[]',
+    'inLoop': 'result.push(index)'
+  });
 
   /**
    * Creates an object composed of the specified properties. Property names may

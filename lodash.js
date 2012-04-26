@@ -266,7 +266,6 @@
     }
 
     var args = options.args,
-        exits = options.exits,
         firstArg = /^[^,]+/.exec(args)[0],
         init = options.init,
         iterate = options.iterate,
@@ -286,8 +285,7 @@
         ('var index, result' + (init ? '=' + init : '')) + ';\n' +
         // exit early if first argument, e.g. `collection`, is nullish or custom expression
         'if (' + (options.exitsExp || firstArg + ' == undefined') + ')\n' +
-          // IE < 9 JScript will throw a syntax error if it encounters `return throw ...`
-          (/^throw\b/.test(exits) ? '' : 'return ') + (exits || 'result') + ';\n' +
+          'return ' + (options.exits || 'result') + ';\n' +
         // add code after the exits if-statement but before the array/object iteration branches
         (options.top || '') + ';\n' +
         // the following branch is for iterating arrays and array-like objects
@@ -2209,8 +2207,7 @@
    */
   var keys = nativeKeys || iterationFactory({
     'args': 'object',
-    'exitsExp': 'object !== Object(object)',
-    'exits': 'throw TypeError()',
+    'exitsExp': '"key" in object, false',
     'init': '[]',
     'inLoop': 'result.push(index)'
   });

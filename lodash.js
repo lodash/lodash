@@ -859,9 +859,12 @@
         low = 0,
         high = array.length;
 
+    if (callback) {
+      value = callback(value);
+    }
     while (low < high) {
       mid = (low + high) >> 1;
-      if (callback ? callback(array[mid]) < callback(value) : array[mid] < value) {
+      if ((callback ? callback(array[mid]) : array[mid]) < value) {
         low = mid + 1;
       } else {
         high = mid;

@@ -2073,6 +2073,29 @@
   function isObject(value) {
     return value === Object(value);
   }
+  
+  /**
+   * Checks if a `value` is a direct instance of object, i.e. `{}`, or "hash".
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a hash, else `false`.
+   * @example
+   *
+   * _.isHash({});
+   * // => true
+   *
+   * _.isHash(new (function Model() {}));
+   * // => false
+   *
+   * _.isHash(1);
+   * // => false
+   */
+  function isHash(value) {
+    return value && value.constructor === Object;
+  }
 
   /**
    * Checks if a `value` is `NaN`.

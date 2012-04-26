@@ -56,12 +56,12 @@
 
   /** Used to minify `iterationFactory` option properties */
   var iterationFactoryOptions = [
-    'afterLoop',
     'args',
     'array',
     'beforeLoop',
     'bottom',
     'exits',
+    'exitsExp',
     'inLoop',
     'init',
     'iterate',

@@ -38,7 +38,6 @@
     'length',
     'object',
     'Math',
-    'methodName',
     'prop',
     'property',
     'result',
@@ -50,8 +49,7 @@
     'toString',
     'true',
     'undefined',
-    'value',
-    'values'
+    'value'
   ];
 
   /** Used to minify `iterationFactory` option properties */
@@ -60,14 +58,12 @@
     'array',
     'beforeLoop',
     'bottom',
-    'exits',
-    'exitsExp',
+    'exit',
     'inLoop',
     'init',
     'iterate',
     'loopExp',
     'object',
-    'returns',
     'top',
     'useHas'
   ];

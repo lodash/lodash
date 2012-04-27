@@ -122,6 +122,53 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.partial');
+
+  (function() {
+    test('correctly partially applies an argument, without additional arguments', function() {
+      expect(1);
+      var arg = 'catnip',
+          fn = function(x) { return x; };
+
+      equal(_.partial(fn, arg)(), arg);
+    });
+
+    test('correctly partially applies an argument, with additional arguments', function() {
+      expect(1);
+      var arg1 = 'catnip',
+          arg2 = 'cheese',
+          fn = function(x, y) { return [x, y]; };
+
+      deepEqual(_.partial(fn, arg1)(arg2), [arg1, arg2]);
+    });
+
+    test('correctly does not partially apply no arguments, with additional arguments', function() {
+      expect(1);
+      var arg = 'catnip',
+          fn = function(x) { return x; };
+
+      equal(_.partial(fn)(arg), arg);
+    });
+
+    test('correctly does not partially apply no arguments, without additional arguments', function() {
+      expect(1);
+      var fn = function() { return arguments.length; };
+
+      equal(_.partial(fn)(), 0);
+    });
+
+    test('should not alter the context of either function', function() {
+      expect(2);
+      var o = { cat: 'nip' },
+          fn = function() { return this.cat; };
+
+      equal(_.partial(fn.bind(o))(), o.cat);
+      equal(_.partial(fn).bind(o)(), o.cat);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.reduceRight');
 
   (function() {

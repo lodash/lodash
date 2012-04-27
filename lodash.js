@@ -1449,6 +1449,44 @@
   }
 
   /**
+   * Takes a function `func` and an optional amount of arguments and returns
+   * a function that takes an optional amount of arguments. When called, the
+   * returned function calls `func` with the original arguments + additional
+   * arguments. Much like bind, except it does not alter the context of the
+   * functions.
+   *
+   * @static
+   * @memberOf _
+   * @category Functions
+   * @param {Function} func The function to partially apply arguments to.
+   * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
+   * @returns {Function} Returns the partially applied function.
+   * @example
+   *
+   * var greet = function(greeting, name) { return greeting + ': ' + name; };
+   * var hi = _.partial(greet, 'hi');
+   * hi('moe');
+   * // => 'hi: moe'
+   */
+  function partial(func) {
+    var args = slice.call(arguments, 1);
+
+    if (args.length) {
+      return function() {
+        return arguments.length ?
+          func.apply(this, args.concat(slice.call(arguments))) :
+          func.apply(this, args);
+      };
+    } else {
+      return function() {
+        return arguments.length ?
+          func.apply(this, arguments) :
+          func.call(this);
+      };
+    }
+  }
+
+  /**
    * Binds methods on the `object` to the object, overwriting the non-bound method.
    * If no method names are provided, all the function properties of the `object`
    * will be bound.
@@ -2748,6 +2786,7 @@
     'mixin': mixin,
     'noConflict': noConflict,
     'once': once,
+    'partial': partial,
     'pick': pick,
     'pluck': pluck,
     'range': range,

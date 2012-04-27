@@ -121,8 +121,7 @@
   var mapFactoryOptions = {
     'init': '[]',
     'beforeLoop': {
-      'array': 'result.length = length',
-      'object': 'result = []'
+      'array': 'result=Array(length)'
     },
     'inLoop': {
       'array': 'result[index] = callback(collection[index], index, collection)',

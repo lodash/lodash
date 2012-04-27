@@ -627,7 +627,7 @@
           '? callback(result, collection[index], index, collection)\n' +
           ': (initial = true, collection[index])'
     }
-  })
+  });
 
   /**
    * The right-associative version of `_.reduce`. The `callback` is bound to the
@@ -774,7 +774,7 @@
    * // => [5, 4, 6, 3, 1, 2]
    */
   function sortBy(collection, callback, thisArg) {
-    if (!isFunction(callback)) {
+    if (toString.call(callback) != funcClass) {
       var prop = callback;
       callback = function(collection) { return collection[prop]; };
     } else if (thisArg) {
@@ -881,7 +881,7 @@
     if (!collection) {
       return [];
     }
-    if (isFunction(collection.toArray)) {
+    if (toString.call(collection.toArray) == funcClass) {
       return collection.toArray();
     }
     var length = collection.length;
@@ -1129,8 +1129,8 @@
   function invoke(array, methodName) {
     var args = slice.call(arguments, 2),
         index = -1,
+        length = array.length,
         isFunc = toString.call(methodName) == funcClass,
-        length = array.length;
         result = [];
 
     while (++index < length) {
@@ -1346,9 +1346,9 @@
    * // => [2, 3, 4]
    */
   function without(array) {
-    var index = -1,
+    var excluded = slice.call(arguments, 1),
+        index = -1,
         length = array.length,
-        excluded = slice.call(arguments, 1),
         result = [];
 
     while (++index < length) {
@@ -1949,10 +1949,10 @@
       b = b._wrapped;
     }
     // invoke a custom `isEqual` method if one is provided
-    if (a.isEqual && isFunction(a.isEqual)) {
+    if (a.isEqual && toString.call(a.isEqual) == funcClass) {
       return a.isEqual(b);
     }
-    if (b.isEqual && isFunction(b.isEqual)) {
+    if (b.isEqual && toString.call(b.isEqual) == funcClass) {
       return b.isEqual(a);
     }
     // compare [[Class]] names
@@ -2437,7 +2437,7 @@
       return null;
     }
     var value = object[property];
-    return isFunction(value) ? object[property]() : value;
+    return toString.call(value) == funcClass ? object[property]() : value;
   }
 
   /**

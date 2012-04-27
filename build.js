@@ -2,9 +2,10 @@
 ;(function() {
   'use strict';
 
-  /** The Node filesystem, path, and child process modules */
+  /** The Node filesystem, path, `zlib`, and child process modules */
   var fs = require('fs'),
       path = require('path'),
+      gzip = require('zlib').gzip,
       spawn = require('child_process').spawn;
 
   /** The build directory containing the build scripts */
@@ -33,9 +34,6 @@
     '--language_in=ECMASCRIPT5_STRICT',
     '--warning_level=QUIET'
   ];
-
-  /** Gzip command-line options */
-  var gzipOptions = ['-9f', '-c'];
 
   /** The pre-processed Lo-Dash source */
   var source = preprocess(fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8'));
@@ -159,7 +157,7 @@
     }
     // store the post-processed Closure Compiler result and gzip it
     accumulator.compiled.source = result = postprocess(result);
-    invoke('gzip', gzipOptions, result, 'binary', onClosureGzip);
+    gzip(result, onClosureGzip);
   }
 
   /**
@@ -167,7 +165,7 @@
    *
    * @private
    * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting gzipped source.
+   * @param {Buffer} result The resulting gzipped source.
    */
   function onClosureGzip(exception, result) {
     if (exception) {
@@ -194,7 +192,7 @@
     }
     // store the post-processed Uglified result and gzip it
     accumulator.uglified.source = result = postprocess(result);
-    invoke('gzip', gzipOptions, result, 'binary', onUglifyGzip);
+    gzip(result, onUglifyGzip);
   }
 
   /**
@@ -202,7 +200,7 @@
    *
    * @private
    * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting gzipped source.
+   * @param {Buffer} result The resulting gzipped source.
    */
   function onUglifyGzip(exception, result) {
     if (exception) {
@@ -227,12 +225,11 @@
 
     // save the Closure Compiled version to disk
     fs.writeFileSync(path.join(distPath, 'lodash.compiler.js'), compiled.source);
-    // explicit 'binary' is necessary to ensure the stream is written correctly
-    fs.writeFileSync(path.join(distPath, 'lodash.compiler.js.gz'), compiled.gzip, 'binary');
+    fs.writeFileSync(path.join(distPath, 'lodash.compiler.js.gz'), compiled.gzip);
 
     // save the Uglified version to disk
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), uglified.source);
-    fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), uglified.gzip, 'binary');
+    fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), uglified.gzip);
 
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to Closure Compiler)

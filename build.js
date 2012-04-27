@@ -2,9 +2,10 @@
 ;(function() {
   'use strict';
 
-  /** The Node filesystem, path, and child process modules */
+  /** The Node filesystem, path, `zlib`, and child process modules */
   var fs = require('fs'),
       path = require('path'),
+      gzip = require('zlib').gzip,
       spawn = require('child_process').spawn;
 
   /** The build directory containing the build scripts */
@@ -34,64 +35,8 @@
     '--warning_level=QUIET'
   ];
 
-  /** Gzip command-line options */
-  var gzipOptions = ['-9f', '-c'];
-
   /** The pre-processed Lo-Dash source */
   var source = preprocess(fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8'));
-
-  /*--------------------------------------------------------------------------*/
-
-  /**
-   * Invokes a process with the given `name`, `parameters`, and `source` (used as
-   * the standard input). Yields the result to a `callback` function. The optional
-   * `encoding` argument specifies the output stream encoding.
-   *
-   * @private
-   * @param {String} name The name of the process.
-   * @param {Array} parameters An array of arguments to proxy to the process.
-   * @param {String} source The standard input to proxy to the process.
-   * @param {String} [encoding] The expected encoding of the output stream.
-   * @param {Function} callback The function to call once the process completes.
-   */
-  function invoke(name, parameters, source, encoding, callback) {
-    // the standard error stream, standard output stream, and process instance
-    var error = '',
-        output = '',
-        process = spawn(name, parameters);
-
-    // juggle arguments
-    if (typeof encoding == 'string') {
-      // explicitly set the encoding of the output stream if one is specified
-      process.stdout.setEncoding(encoding);
-    } else {
-      callback = encoding;
-      encoding = null;
-    }
-
-    process.stdout.on('data', function(data) {
-      // append the data to the output stream
-      output += data;
-    });
-
-    process.stderr.on('data', function(data) {
-      // append the error message to the error stream
-      error += data;
-    });
-
-    process.on('exit', function(status) {
-      var exception = null;
-      // `status` contains the process exit code
-      if (status) {
-        exception = new Error(error);
-        exception.status = status;
-      }
-      callback(exception, output);
-    });
-
-    // proxy the standard input to the process
-    process.stdin.end(source);
-  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -105,7 +50,34 @@
    */
   function closureCompile(source, callback) {
     console.log('Compressing lodash.js using the Closure Compiler...');
-    invoke('java', ['-jar', closurePath].concat(closureOptions), source, callback);
+
+    // the standard error stream, standard output stream, and Closure Compiler process
+    var error = '',
+        output = '',
+        compiler = spawn('java', ['-jar', closurePath].concat(closureOptions));
+
+    compiler.stdout.on('data', function(data) {
+      // append the data to the output stream
+      output += data;
+    });
+
+    compiler.stderr.on('data', function(data) {
+      // append the error message to the error stream
+      error += data;
+    });
+
+    compiler.on('exit', function(status) {
+      var exception = null;
+      // `status` contains the process exit code
+      if (status) {
+        exception = new Error(error);
+        exception.status = status;
+      }
+      callback(exception, output);
+    });
+
+    // proxy the standard input to the Closure Compiler
+    compiler.stdin.end(source);
   }
 
   /**
@@ -159,7 +131,7 @@
     }
     // store the post-processed Closure Compiler result and gzip it
     accumulator.compiled.source = result = postprocess(result);
-    invoke('gzip', gzipOptions, result, 'binary', onClosureGzip);
+    gzip(result, onClosureGzip);
   }
 
   /**
@@ -167,7 +139,7 @@
    *
    * @private
    * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting gzipped source.
+   * @param {Buffer} result The resulting gzipped source.
    */
   function onClosureGzip(exception, result) {
     if (exception) {
@@ -194,7 +166,7 @@
     }
     // store the post-processed Uglified result and gzip it
     accumulator.uglified.source = result = postprocess(result);
-    invoke('gzip', gzipOptions, result, 'binary', onUglifyGzip);
+    gzip(result, onUglifyGzip);
   }
 
   /**
@@ -202,7 +174,7 @@
    *
    * @private
    * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting gzipped source.
+   * @param {Buffer} result The resulting gzipped source.
    */
   function onUglifyGzip(exception, result) {
     if (exception) {
@@ -227,12 +199,11 @@
 
     // save the Closure Compiled version to disk
     fs.writeFileSync(path.join(distPath, 'lodash.compiler.js'), compiled.source);
-    // explicit 'binary' is necessary to ensure the stream is written correctly
-    fs.writeFileSync(path.join(distPath, 'lodash.compiler.js.gz'), compiled.gzip, 'binary');
+    fs.writeFileSync(path.join(distPath, 'lodash.compiler.js.gz'), compiled.gzip);
 
     // save the Uglified version to disk
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), uglified.source);
-    fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), uglified.gzip, 'binary');
+    fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), uglified.gzip);
 
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to Closure Compiler)

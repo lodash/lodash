@@ -78,14 +78,6 @@
   var clearTimeout = window.clearTimeout,
       setTimeout = window.setTimeout;
 
-  /** Compilation options for `_.difference` */
-  var differenceFactoryOptions = {
-    'args': 'array',
-    'init': '[]',
-    'top': 'var values = concat.apply([], slice.call(arguments, 1))',
-    'inLoop': 'if (indexOf(values, array[index]) < 0) result.push(array[index])'
-  };
-
   /** Compilation options for `_.every` */
   var everyFactoryOptions = {
     'init': 'true',
@@ -127,10 +119,9 @@
 
   /** Compilation options for `_.map` */
   var mapFactoryOptions = {
-    'init': '',
-    'exits': '[]',
+    'init': '[]',
     'beforeLoop': {
-      'array': 'result = Array(length)',
+      'array': 'result.length = length',
       'object': 'result = []'
     },
     'inLoop': {
@@ -283,10 +274,9 @@
       'return function(' + args + ') {\n' +
         // assign the `result` variable an initial value
         ('var index, result' + (init ? '=' + init : '')) + ';\n' +
-        // exit early if first argument, e.g. `collection`, is nullish or custom expression
-        'if (' + (options.exitsExp || firstArg + ' == undefined') + ')\n' +
-          'return ' + (options.exits || 'result') + ';\n' +
-        // add code after the exits if-statement but before the array/object iteration branches
+        // add code to exit early or do so if the first argument is nullish
+        (options.exit || 'if (' + firstArg + ' == undefined) return result') + ';\n' +
+        // add code after the exit snippet but before the iteration branches
         (options.top || '') + ';\n' +
         // the following branch is for iterating arrays and array-like objects
         (arrayBranch
@@ -327,7 +317,7 @@
         // add code to the bottom of the iteration method
         (options.bottom || '') + ';\n' +
         // finally, return the `result`
-        'return ' + (options.returns || 'result') +
+        'return result' +
       '\n}'
     )(arrayClass, bind, concat, funcClass, hasOwnProperty, identity,
       indexOf, Infinity, isArray, isEmpty, Math, slice, stringClass, toString);
@@ -637,7 +627,7 @@
           '? callback(result, collection[index], index, collection)\n' +
           ': (initial = true, collection[index])'
     }
-  });
+  })
 
   /**
    * The right-associative version of `_.reduce`. The `callback` is bound to the
@@ -939,11 +929,18 @@
    * _.compact([0, 1, false, 2, '', 3]);
    * // => [1, 2, 3]
    */
-  var compact = iterationFactory({
-    'args': 'array',
-    'init': '[]',
-    'inLoop': 'if (array[index]) result.push(array[index])'
-  });
+  var compact = function(array) {
+    var index = -1,
+        length = array.length,
+        result = [];
+
+    while (++index < length) {
+      if (array[index]) {
+        result.push(array[index]);
+      }
+    }
+    return result;
+  }
 
   /**
    * Produces a new array of `array` values not present in the other arrays
@@ -961,7 +958,19 @@
    * _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
    * // => [1, 3, 4]
    */
-  var difference = iterationFactory(differenceFactoryOptions);
+  function difference(array) {
+    var index = -1,
+        length = array.length,
+        result = [],
+        flattened = concat.apply(result, slice.call(arguments, 1));
+
+    while (++index < length) {
+      if (indexOf(flattened, array[index]) < 0) {
+        result.push(array[index]);
+      }
+    }
+    return result;
+  }
 
   /**
    * Gets the first value of the `array`. Pass `n` to return the first `n` values
@@ -1117,11 +1126,18 @@
    * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
    * // => [[1, 5, 7], [1, 2, 3]]
    */
-  var invoke = iterationFactory(mapFactoryOptions, {
-    'args': 'array, methodName',
-    'top': 'var args = slice.call(arguments, 2), isFunc = toString.call(methodName) == funcClass',
-    'inLoop': 'result[index] = (isFunc ? methodName : array[index][methodName]).apply(array[index], args)'
-  });
+  function invoke(array, methodName) {
+    var args = slice.call(arguments, 2),
+        index = -1,
+        isFunc = toString.call(methodName) == funcClass,
+        length = array.length;
+        result = [];
+
+    while (++index < length) {
+      result[index] = (isFunc ? methodName : array[index][methodName]).apply(array[index], args);
+    }
+    return result;
+  }
 
   /**
    * Gets the last value of the `array`. Pass `n` to return the lasy `n` values
@@ -1257,7 +1273,17 @@
    * // => [1, 2, 3, 101, 10]
    */
   function union() {
-    return uniq(concat.apply([], arguments));
+    var index = -1,
+        result = [],
+        flattened = concat.apply(result, arguments),
+        length = flattened.length;
+
+    while (++index < length) {
+      if (indexOf(result, flattened[index]) < 0) {
+        result.push(flattened[index]);
+      }
+    }
+    return result;
   }
 
   /**
@@ -1282,21 +1308,25 @@
    * // => [1, 2, 3, 4]
    */
   function uniq(array, isSorted, callback) {
-    var initial = callback ? map(array, callback) : array,
-        result = [];
+    var computed,
+        index = -1,
+        length = array.length,
+        result = [],
+        seen = [];
 
-    // the `isSorted` flag is irrelevant if the array only contains two elements.
-    if (array.length < 3) {
+    if (length < 3) {
       isSorted = true;
     }
-    reduce(initial, function(accumulator, value, index) {
-      if (isSorted ? last(accumulator) !== value || !accumulator.length : indexOf(accumulator, value) < 0) {
-        accumulator.push(value);
-        result.push(array[index]);
+    while (++index < length) {
+      computed = callback ? callback(array[index]) : array[index];
+      if (isSorted
+            ? !index || seen[seen.length - 1] !== computed
+            : indexOf(seen, computed) < 0
+          ) {
+        seen.push(computed);
+        result.push(array[index])
       }
-      return accumulator;
-    }, []);
-
+    }
     return result;
   }
 
@@ -1315,10 +1345,19 @@
    * _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
    * // => [2, 3, 4]
    */
-  var without = iterationFactory(differenceFactoryOptions, {
-    'init': '[]',
-    'top': 'var values = slice.call(arguments, 1)'
-  });
+  function without(array) {
+    var index = -1,
+        length = array.length,
+        excluded = slice.call(arguments, 1),
+        result = [];
+
+    while (++index < length) {
+      if (indexOf(excluded, array[index]) < 0) {
+        result.push(array[index]);
+      }
+    }
+    return result;
+  }
 
   /**
    * Merges together the values of each of the arrays with the value at the
@@ -1768,7 +1807,7 @@
     'init': '[]',
     'useHas': false,
     'inLoop': 'if (toString.call(object[index]) == funcClass) result.push(index)',
-    'returns': 'result.sort()'
+    'bottom': 'result.sort()'
   });
 
   /**
@@ -2207,7 +2246,7 @@
    */
   var keys = nativeKeys || iterationFactory({
     'args': 'object',
-    'exitsExp': '"key" in object, false',
+    'exit': 'if (object !== Object(object)) throw TypeError()',
     'init': '[]',
     'inLoop': 'result.push(index)'
   });
@@ -2581,7 +2620,7 @@
    * _([1, 2, 3]).value();
    * // => [1, 2, 3]
    */
-  function chainWrapper() {
+  function wrapperChain() {
     this._chain = true;
     return this;
   }
@@ -2589,6 +2628,7 @@
   /**
    * Extracts the value from a wrapped chainable object.
    *
+   * @name value
    * @memberOf _
    * @category Chaining
    * @returns {Mixed} Returns the wrapped object.
@@ -2597,7 +2637,7 @@
    * _([1, 2, 3]).value();
    * // => [1, 2, 3]
    */
-  function value() {
+  function wrapperValue() {
     return this._wrapped;
   }
 
@@ -2792,8 +2832,8 @@
 
   // add `chain` and `value` after calling to `mixin()` to avoid getting wrapped
   extend(Lodash.prototype, {
-    'chain': chainWrapper,
-    'value': value
+    'chain': wrapperChain,
+    'value': wrapperValue
   });
 
   /*--------------------------------------------------------------------------*/

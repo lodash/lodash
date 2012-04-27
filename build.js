@@ -4,8 +4,8 @@
 
   /** The Node filesystem, path, `zlib`, and child process modules */
   var fs = require('fs'),
-      path = require('path'),
       gzip = require('zlib').gzip,
+      path = require('path'),
       spawn = require('child_process').spawn;
 
   /** The build directory containing the build scripts */
@@ -68,6 +68,7 @@
 
     compiler.on('exit', function(status) {
       var exception = null;
+
       // `status` contains the process exit code
       if (status) {
         exception = new Error(error);

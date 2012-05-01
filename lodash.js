@@ -2280,7 +2280,7 @@
   function pick(object) {
     var prop,
         index = 0,
-        props = concat.apply([], arguments),
+        props = concat.apply(ArrayProto, arguments),
         length = props.length,
         result = {};
 

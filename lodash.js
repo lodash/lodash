@@ -1101,12 +1101,20 @@
    * // => [1, 2]
    */
   function intersection(array) {
-    var rest = slice.call(arguments, 1);
-    return filter(uniq(array), function(value) {
-      return every(rest, function(other) {
-        return indexOf(other, value) > -1;
-      });
-    });
+    var value,
+        index = -1,
+        length = array.length,
+        others = slice.call(arguments, 1),
+        result = [];
+
+    while (++index < length) {
+      value = array[index];
+      if (indexOf(result, value) < 0 &&
+          every(others, function(other) { return indexOf(other, value) > -1; })) {
+        result.push(value);
+      }
+    }
+    return result;
   }
 
   /**

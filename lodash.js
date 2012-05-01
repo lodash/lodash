@@ -119,9 +119,11 @@
 
   /** Compilation options for `_.map` */
   var mapFactoryOptions = {
-    'init': '[]',
+    'init': '',
+    'exit': 'if (!collection) return []',
     'beforeLoop': {
-      'array': 'result=Array(length)'
+      'array': 'result=Array(length)',
+      'object': 'result=[]'
     },
     'inLoop': {
       'array': 'result[index] = callback(collection[index], index, collection)',
@@ -274,7 +276,7 @@
         // assign the `result` variable an initial value
         ('var index, result' + (init ? '=' + init : '')) + ';\n' +
         // add code to exit early or do so if the first argument is nullish
-        (options.exit || 'if (' + firstArg + ' == undefined) return result') + ';\n' +
+        (options.exit || 'if (!' + firstArg + ') return result') + ';\n' +
         // add code after the exit snippet but before the iteration branches
         (options.top || '') + ';\n' +
         // the following branch is for iterating arrays and array-like objects
@@ -650,7 +652,7 @@
    * // => [4, 5, 2, 3, 0, 1]
    */
   function reduceRight(collection, callback, result, thisArg) {
-    if (collection == undefined) {
+    if (!collection) {
       return result;
     }
 
@@ -986,7 +988,7 @@
    */
   function indexOf(array, value, isSorted) {
     var index, length;
-    if (array == undefined) {
+    if (!array) {
       return -1;
     }
     if (isSorted) {
@@ -1121,7 +1123,7 @@
    * // => 4
    */
   function lastIndexOf(array, value) {
-    if (array == undefined) {
+    if (!array) {
       return -1;
     }
     var index = array.length;
@@ -2480,7 +2482,7 @@
    * // => 'nonsense'
    */
   function result(object, property) {
-    if (object == undefined) {
+    if (!object) {
       return null;
     }
     var value = object[property];

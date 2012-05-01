@@ -798,45 +798,6 @@
   });
 
   /**
-   * Uses a binary search to determine the smallest  index at which the `value`
-   * should be inserted into the `collection` in order to maintain the sort order
-   * of the `collection`. If `callback` is passed, it will be executed for each
-   * value in the `collection` to compute their sort ranking. The `callback` is
-   * invoked with 1 argument.
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array} array The array to iterate over.
-   * @param {Mixed} value The value to evaluate.
-   * @param {Function} [callback] The function called per iteration.
-   * @returns {Number} Returns the index at which the value should be inserted
-   *  into the collection.
-   * @example
-   *
-   * _.sortedIndex([10, 20, 30, 40, 50], 35);
-   * // => 3
-   */
-  function sortedIndex(array, value, callback) {
-    var mid,
-        low = 0,
-        high = array.length;
-
-    if (callback) {
-      value = callback(value);
-    }
-    while (low < high) {
-      mid = (low + high) >> 1;
-      if ((callback ? callback(array[mid]) : array[mid]) < value) {
-        low = mid + 1;
-      } else {
-        high = mid;
-      }
-    }
-    return low;
-  }
-
-  /**
    * Converts the `collection`, into an array. Useful for converting the
    * `arguments` object.
    *
@@ -1270,6 +1231,45 @@
   }
 
   /**
+   * Uses a binary search to determine the smallest  index at which the `value`
+   * should be inserted into the `collection` in order to maintain the sort order
+   * of the `collection`. If `callback` is passed, it will be executed for each
+   * value in the `collection` to compute their sort ranking. The `callback` is
+   * invoked with 1 argument; (value).
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to iterate over.
+   * @param {Mixed} value The value to evaluate.
+   * @param {Function} [callback] The function called per iteration.
+   * @returns {Number} Returns the index at which the value should be inserted
+   *  into the collection.
+   * @example
+   *
+   * _.sortedIndex([10, 20, 30, 40, 50], 35);
+   * // => 3
+   */
+  function sortedIndex(array, value, callback) {
+    var mid,
+        low = 0,
+        high = array.length;
+
+    if (callback) {
+      value = callback(value);
+    }
+    while (low < high) {
+      mid = (low + high) >> 1;
+      if ((callback ? callback(array[mid]) : array[mid]) < value) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    return low;
+  }
+
+  /**
    * Computes the union of the passed-in arrays.
    *
    * @static
@@ -1566,8 +1566,8 @@
   }
 
   /**
-   * Invokes the `func` function after `wait` milliseconds. Additional arguments
-   * are passed `func` when it is invoked.
+   * Executes the `func` function after `wait` milliseconds. Additional arguments
+   * are passed to `func` when it is invoked.
    *
    * @static
    * @memberOf _
@@ -1588,7 +1588,7 @@
   }
 
   /**
-   * Defers invoking the `func` function until the current call stack has cleared.
+   * Defers executing the `func` function until the current call stack has cleared.
    * Additional arguments are passed to `func` when it is invoked.
    *
    * @static
@@ -1666,7 +1666,7 @@
   }
 
   /**
-   * Creates a new function that, when invoked, will only call the original
+   * Creates a new function that, when executed, will only call the original
    * function at most once per every `wait` milliseconds.
    *
    * @static
@@ -2452,7 +2452,8 @@
   }
 
   /**
-   * Executes the `callback` function `n` times.
+   * Executes the `callback` function `n` times. The `callback` is invoked with
+   * 1 argument; (index).
    *
    * @static
    * @memberOf _

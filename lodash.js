@@ -1432,30 +1432,58 @@
   /**
    * Creates a new function that, when called, invokes `func` with the `this`
    * binding of `thisArg` and prepends additional arguments to those passed to
-   * the bound function.
+   * the bound function. Lazy defined methods may be bound by passing the object
+   * they are bound to as `func` and the method name as `thisArg`.
    *
    * @static
    * @memberOf _
    * @category Functions
-   * @param {Function} func The function to bind.
-   * @param @param {Mixed} [thisArg] The `this` binding of `func`.
+   * @param {Function|Object} func The function to bind or the object the method belongs to.
+   * @param @param {Mixed} [thisArg] The `this` binding of `func` or the method name.
    * @param {Mixed} [arg1, arg2, ...] Arguments to prepend to those passed to the bound function.
    * @returns {Function} Returns the new bound function.
    * @example
    *
+   * // basic bind
    * var func = function(greeting) { return greeting + ': ' + this.name; };
    * func = _.bind(func, { 'name': 'moe' }, 'hi');
    * func();
    * // => 'hi: moe'
+   *
+   * // lazy bind
+   * var object = {
+   *   'name': 'moe',
+   *   'greet': function(greeting) {
+   *     return greeting + ': ' + this.name;
+   *   }
+   * };
+   *
+   * var func = _.bind(object, 'greet', 'hi');
+   * func();
+   * // => 'hi: moe'
+   *
+   * object.greet = function(greeting) {
+   *   return greeting + ' ' + this.name + '!';
+   * };
+   *
+   * func();
+   * // => 'hi moe!'
    */
   function bind(func, thisArg) {
     var args = slice.call(arguments, 2),
-        argsLength = args.length;
+        argsLength = args.length,
+        isFunc = toString.call(func) == funcClass;
 
+    // juggle arguments
+    if (!isFunc) {
+      var methodName = thisArg;
+      thisArg = func;
+    }
     return function() {
-      args.length = argsLength;
       push.apply(args, arguments);
-      return func.apply(thisArg, args);
+      var result = (isFunc ? func : thisArg[methodName]).apply(thisArg, args);
+      args.length = argsLength;
+      return result;
     };
   }
 

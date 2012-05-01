@@ -76,6 +76,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.bind');
+
+  (function() {
+    test('supports lazy bind', function() {
+      var object = {
+        'name': 'moe',
+        'greet': function(greeting) {
+          return greeting + ': ' + this.name;
+        }
+      };
+
+      var func = _.bind(object, 'greet', 'hi');
+      equal(func(), 'hi: moe');
+
+      object.greet = function(greeting) {
+        return greeting + ' ' + this.name + '!';
+      };
+      equal(func(), 'hi moe!');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.forEach');
 
   (function() {

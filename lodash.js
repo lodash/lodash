@@ -707,32 +707,6 @@
   });
 
   /**
-   * Produces a new array of shuffled `collection` values, using a version of the
-   * Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object} collection The collection to shuffle.
-   * @returns {Array} Returns a new shuffled array.
-   * @example
-   *
-   * _.shuffle([1, 2, 3, 4, 5, 6]);
-   * // => [4, 1, 6, 3, 5, 2]
-   */
-  function shuffle(collection) {
-    var rand,
-        result = [];
-
-    forEach(collection, function(value, index) {
-      rand = Math.floor(Math.random() * (index + 1));
-      result[index] = result[rand];
-      result[rand] = value;
-    });
-    return result;
-  }
-
-  /**
    * Gets the number of values in the `collection`.
    *
    * @static
@@ -1263,6 +1237,34 @@
    */
   function rest(array, n, guard) {
     return slice.call(array, (n == undefined || guard) ? 1 : n);
+  }
+
+  /**
+   * Produces a new array of shuffled `array` values, using a version of the
+   * Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to shuffle.
+   * @returns {Array} Returns a new shuffled array.
+   * @example
+   *
+   * _.shuffle([1, 2, 3, 4, 5, 6]);
+   * // => [4, 1, 6, 3, 5, 2]
+   */
+  function shuffle(array) {
+    var rand,
+        index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      rand = Math.floor(Math.random() * (index + 1));
+      result[index] = result[rand];
+      result[rand] = array[index];
+    }
+    return result;
   }
 
   /**

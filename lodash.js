@@ -988,17 +988,19 @@
    */
   function flatten(array, shallow) {
     if (shallow) {
-      return concat.apply([], array);
+      return concat.apply(ArrayProto, array);
     }
-    var index = -1,
+    var value,
+        index = -1,
         length = array.length,
         result = [];
 
     while (++index < length) {
-      if (isArray(array[index])) {
-        push.apply(result, flatten(array[index]));
+      value = array[index];
+      if (isArray(value)) {
+        push.apply(result, flatten(value));
       } else {
-        result.push(array[index]);
+        result.push(value);
       }
     }
     return result;

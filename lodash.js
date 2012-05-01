@@ -1335,7 +1335,7 @@
             : indexOf(seen, computed) < 0
           ) {
         seen.push(computed);
-        result.push(array[index])
+        result.push(array[index]);
       }
     }
     return result;
@@ -1528,7 +1528,7 @@
   }
 
   /**
-   * Creates a new function that will postpone its execution until after `wait`
+   * Creates a new function that will delay its execution until after `wait`
    * milliseconds have elapsed since the last time it was invoked. Pass `true`
    * for `immediate` to cause debounce to invoke the function on the leading,
    * instead of the trailing, edge of the `wait` timeout.
@@ -1547,21 +1547,26 @@
    * jQuery(window).on('resize', lazyLayout);
    */
   function debounce(func, wait, immediate) {
-    var timeout;
-    return function() {
-      var args = arguments,
-          thisArg = this;
+    var args, thisArg, timeout;
 
-      if (immediate && !timeout) {
+    function delayed() {
+      timeout = undefined;
+      if (!immediate) {
         func.apply(thisArg, args);
       }
+    }
+
+    return function() {
+      var isImmediate = immediate && !timeout;
+      args = arguments;
+      thisArg = this;
+
       clearTimeout(timeout);
-      timeout = setTimeout(function() {
-        timeout = undefined;
-        if (!immediate) {
-          func.apply(thisArg, args);
-        }
-      }, wait);
+      timeout = setTimeout(delayed, wait);
+
+      if (isImmediate) {
+        func.apply(thisArg, args);
+      }
     };
   }
 
@@ -1681,29 +1686,32 @@
    * jQuery(window).on('scroll', throttled);
    */
   function throttle(func, wait) {
-    var args, more, result, thisArg, throttling, timeout,
+    var args, more, thisArg, throttling, timeout,
         whenDone = debounce(function() { more = throttling = false; }, wait);
 
+    function delayed() {
+      timeout = undefined;
+      if (more) {
+        func.apply(thisArg, args);
+      }
+      whenDone();
+    }
+
     return function() {
+      var result;
       args = arguments;
       thisArg = this;
 
       if (!timeout) {
-        timeout = setTimeout(function() {
-          timeout = undefined;
-          if (more) {
-            func.apply(thisArg, args);
-          }
-          whenDone();
-        }, wait);
+        timeout = setTimeout(delayed, wait);
       }
       if (throttling) {
         more = true;
       } else {
+        throttling = true;
         result = func.apply(thisArg, args);
       }
       whenDone();
-      throttling = true;
       return result;
     };
   }

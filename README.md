@@ -101,3 +101,5 @@ Feel free to fork and send pull requests if you see improvements!
 
 * [Kit Cambridge](http://kitcambridge.github.com/)
   [![twitter/kitcambridge](http://gravatar.com/avatar/6662a1d02f351b5ef2f8b4d815804661?s=70)](https://twitter.com/kitcambridge "Follow @kitcambridge on Twitter")
+* [Mathias Bynens](http://mathiasbynens.be/)
+  [![twitter/mathias](http://gravatar.com/avatar/24e08a9ea84deb17ae121074d0f17125?s=70)](https://twitter.com/mathias "Follow @mathias on Twitter")

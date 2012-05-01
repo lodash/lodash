@@ -24,7 +24,7 @@
    */
   function postprocess(source) {
     // set the version
-    var license = licenseTemplate.replace('@VERSION', (/VERSION:([\'"])(.*?)\1/).exec(source).pop());
+    var license = licenseTemplate.replace('@VERSION', (/VERSION\s*:\s*([\'"])(.*?)\1/).exec(source).pop());
     // move vars exposed by Closure Compiler into the IIFE
     source = source.replace(/^([^(\n]+)\s*(\(function[^)]+\){)/, '$2$1');
     // use double quotes consistently

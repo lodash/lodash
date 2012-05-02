@@ -1701,8 +1701,10 @@
   }
 
   /**
-   * Creates a new function that, when executed, will only call the original
-   * function at most once per every `wait` milliseconds.
+   * Creates a new function that, when executed, will only call the `func`
+   * function at most once per every `wait` milliseconds. If the throttled function
+   * is invoked more than once, `func` will also be called on the trailing edge
+   * of the `wait` timeout.
    *
    * @static
    * @memberOf _
@@ -1716,32 +1718,32 @@
    * jQuery(window).on('scroll', throttled);
    */
   function throttle(func, wait) {
-    var args, more, thisArg, throttling, timeout,
-        whenDone = debounce(function() { more = throttling = false; }, wait);
+    var args,
+        result,
+        thisArg,
+        timeoutId,
+        lastCalled = 0;
 
-    function delayed() {
-      timeout = undefined;
-      if (more) {
-        func.apply(thisArg, args);
-      }
-      whenDone();
+    function trailingCall() {
+      lastCalled = new Date;
+      timeoutId = undefined;
+      func.apply(thisArg, args);
     }
 
     return function() {
-      var result;
+      var now = new Date,
+          remain = wait - (now - lastCalled);
+
       args = arguments;
       thisArg = this;
 
-      if (!timeout) {
-        timeout = setTimeout(delayed, wait);
-      }
-      if (throttling) {
-        more = true;
-      } else {
-        throttling = true;
+      if (remain <= 0) {
+        lastCalled = now;
         result = func.apply(thisArg, args);
       }
-      whenDone();
+      else if (!timeoutId) {
+        timeoutId = setTimeout(trailingCall, remain);
+      }
       return result;
     };
   }

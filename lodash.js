@@ -1558,16 +1558,16 @@
   }
 
   /**
-   * Creates a new function that will delay its execution until after `wait`
-   * milliseconds have elapsed since the last time it was invoked. Pass `true`
-   * for `immediate` to cause debounce to invoke the function on the leading,
+   * Creates a new function that will delay the execution of `func` until after
+   * `wait` milliseconds have elapsed since the last time it was invoked. Pass
+   * `true` for `immediate` to cause debounce to invoke `func` on the leading,
    * instead of the trailing, edge of the `wait` timeout.
    *
    * @static
    * @memberOf _
    * @category Functions
    * @param {Function} func The function to debounce.
-   * @param {Number} wait The number of milliseconds to postone.
+   * @param {Number} wait The number of milliseconds to delay.
    * @param {Boolean} immediate A flag to indicate execution is on the leading
    *  edge of the timeout.
    * @returns {Function} Returns the new debounced function.
@@ -1577,26 +1577,30 @@
    * jQuery(window).on('resize', lazyLayout);
    */
   function debounce(func, wait, immediate) {
-    var args, thisArg, timeout;
+    var args,
+        result,
+        thisArg,
+        timeoutId;
 
     function delayed() {
-      timeout = undefined;
+      timeoutId = undefined;
       if (!immediate) {
         func.apply(thisArg, args);
       }
     }
 
     return function() {
-      var isImmediate = immediate && !timeout;
+      var isImmediate = immediate && !timeoutId;
       args = arguments;
       thisArg = this;
 
-      clearTimeout(timeout);
-      timeout = setTimeout(delayed, wait);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(delayed, wait);
 
       if (isImmediate) {
-        func.apply(thisArg, args);
+        result = func.apply(thisArg, args);
       }
+      return result;
     };
   }
 

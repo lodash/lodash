@@ -99,6 +99,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.debounce');
+
+  (function() {
+    test('subsequent "immediate" debounced calls should return the result of the first call', function() {
+      var debounced = _.debounce(function(value) { return value; }, 100, true),
+          result = [debounced('x'), debounced('y')];
+
+      deepEqual(result, ['x', 'x']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.forEach');
 
   (function() {

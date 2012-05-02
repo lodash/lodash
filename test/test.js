@@ -187,6 +187,31 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.throttle');
+
+  (function() {
+    test('subsequent calls should return the result of the first call', function() {
+      var throttled = _.throttle(function(value) { return value; }, 100),
+          result = [throttled('x'), throttled('y')];
+
+      deepEqual(result, ['x', 'x']);
+    });
+
+    test('supports calls in a loop', function() {
+      var counter = 0,
+          throttled = _.throttle(function() { counter++; }, 100),
+          start = new Date,
+          limit = 220;
+
+      while ((new Date - start) < limit) {
+        throttled();
+      }
+      equal(counter, 3);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.toArray');
 
   (function() {

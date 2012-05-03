@@ -8,23 +8,16 @@
 ;(function(window, undefined) {
   'use strict';
 
-  /** Used to escape and unescape characters in templates */
+  /** Used to escape characters in templates */
   var escapes = {
     '\\': '\\',
     "'": "'",
-    'r': '\r',
-    'n': '\n',
-    't': '\t',
-    'u2028': '\u2028',
-    'u2029': '\u2029'
+    '\n': 'n',
+    '\r': 'r',
+    '\t': 't',
+    '\u2028': 'u2028',
+    '\u2029': 'u2029'
   };
-
-  // assign the result as keys and the keys as values
-  (function() {
-    for (var prop in escapes) {
-      escapes[escapes[prop]] = prop;
-    }
-  }());
 
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports &&
@@ -36,18 +29,11 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
-  /** Used to replace unescape characters with their escaped counterpart */
-  var reEscaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+  /** Used to store unique `reUnescaped` regexps */
+  var reCache = {};
 
-  /**
-   * Used for `templateSettings` properties such as `escape`, `evaluate`,
-   * or `interpolate` with explicitly assigned falsey values to ensure no match
-   * is made.
-   */
-  var reNoMatch = /.^/;
-
-  /** Used to replace escaped characters with their unescaped counterpart */
-  var reUnescaper = /\\(\\|'|r|n|t|u2028|u2029)/g;
+  /** Used to extract a regexp from its `source` property */
+  var reSource = /^\/([\s\S]+?)\/[gim]+?$/;
 
   /** Object#toString result shortcuts */
   var arrayClass = '[object Array]',
@@ -65,6 +51,7 @@
   /** Native method shortcuts */
   var concat = ArrayProto.concat,
       hasOwnProperty = ObjProto.hasOwnProperty,
+      join = ArrayProto.join,
       push = ArrayProto.push,
       slice = ArrayProto.slice,
       toString = ObjProto.toString;
@@ -226,6 +213,19 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Used by `String#replace` to escape characters for inclusion in compiled
+   * string literals while skipping over template delimiters.
+   *
+   * @private
+   * @param {String} character The the character to escape.
+   * @param {String} [delimiter=''] The delimiter to skip over.
+   * @returns {String} Returns an escaped character or template delimiter.
+   */
+  function escapeString(character, delimiter) {
+    return delimiter || '\\' + escapes[character];
+  }
+
+  /**
    * Compiles iteration functions.
    *
    * @private
@@ -322,21 +322,6 @@
       '\n}'
     )(arrayClass, bind, concat, funcClass, hasOwnProperty, identity,
       indexOf, Infinity, isArray, isEmpty, Math, slice, stringClass, toString);
-  }
-
-  /**
-   * Unescapes characters, previously escaped for inclusion in compiled string
-   * literals, so they may compiled into function bodies.
-   * (Used for template interpolation, evaluation, or escaping)
-   *
-   * @private
-   * @param {String} string The string to unescape.
-   * @returns {String} Returns the unescaped string.
-   */
-  function unescape(string) {
-    return string.replace(reUnescaper, function(match, escaped) {
-      return escapes[escaped];
-    });
   }
 
   /*--------------------------------------------------------------------------*/
@@ -2594,45 +2579,66 @@
   function template(text, data, options) {
     options = defaults(options || {}, lodash.templateSettings);
 
-    // Compile the template source, taking care to escape characters that
-    // cannot be included in string literals and then unescape them in code
-    // blocks.
-    var source = "__p+='" + text
-      .replace(reEscaper, function(match) {
-        return '\\' + escapes[match];
-      })
-      .replace(options.escape || reNoMatch, function(match, code) {
-        return "'+\n((__t=(" + unescape(code) + "))==null?'':_.escape(__t))+\n'";
-      })
-      .replace(options.interpolate || reNoMatch, function(match, code) {
-        return "'+\n((__t=(" + unescape(code) + "))==null?'':__t)+\n'";
-      })
-      .replace(options.evaluate || reNoMatch, function(match, code) {
-        return "';\n" + unescape(code) + ";\n__p+='";
-      }) + "';\n";
+    var result,
+        reEscapeDelimiter = options.escape,
+        reEvaluateDelimiter = options.evaluate,
+        reInterpolateDelimiter = options.interpolate,
+        id = reEscapeDelimiter + reEvaluateDelimiter + reInterpolateDelimiter,
+        reUnescaped = reCache[id],
+        variable = options.variable;
 
-    // if a variable is not specified, place data values in local scope
-    if (!options.variable) {
-      source = 'with (object || {}) {\n' + source + '\n}\n';
+    // create and cache the `reUnescaped` regexp
+    if (!reUnescaped) {
+      reUnescaped = [];
+      if (reEscapeDelimiter) {
+        reUnescaped.push(reSource.exec(reEscapeDelimiter)[1]);
+      }
+      if (reEvaluateDelimiter) {
+        reUnescaped.push(reSource.exec(reEvaluateDelimiter)[1]);
+      }
+      if (reInterpolateDelimiter) {
+        reUnescaped.push(reSource.exec(reInterpolateDelimiter)[1]);
+      }
+      reUnescaped = reCache[id] = RegExp('\\\\|\'|\\r|\\n|\\t|\\u2028|\\u2029' +
+        (reUnescaped.length ? '|((?:' + reUnescaped.join(')|(?:') + '))' : ''), 'g');
     }
 
-    source = 'var __t, __j = Array.prototype.join, __p = "";' +
+    // escape characters that cannot be included in string literals
+    text = text.replace(reUnescaped, escapeString);
+
+    if (reEscapeDelimiter) {
+      text = text.replace(reEscapeDelimiter, "'+\n((__t=($1))==null?'':__e(__t))+\n'")
+    }
+    if (reInterpolateDelimiter) {
+      text = text.replace(reInterpolateDelimiter, "'+\n((__t=($1))==null?'':__t)+\n'");
+    }
+    if (reEvaluateDelimiter) {
+      text = text.replace(reEvaluateDelimiter, "';\n$1;\n__p+='");
+    }
+
+    text = "__p='" + text + "';\n";
+
+    // if `options.variable` is not specified, add `data` to the top of the scope chain
+    if (!variable) {
+      text = 'with (object || {}) {\n' + text + '\n}\n';
+    }
+
+    text = 'function(' + (variable || 'object') + '){\n' +
+      'var __p, __t;\n' +
       'function print() { __p += __j.call(arguments, "") }\n' +
-      source + 'return __p';
+      text +
+      'return __p\n}';
 
-    var render = Function(options.variable || 'object', '_', source);
+    result = Function('_,__e,__j', 'return ' + text)(lodash, escape, join);
+
     if (data) {
-      return render(data, lodash);
+      return result(data);
     }
-
-    var template = function(data) {
-      return render.call(this, data, lodash);
-    };
-
-    // provide the compiled function source as a convenience for build time precompilation
-    template.source = 'function(' + (options.variable || 'object') + '){\n' + source + '\n}';
-
-    return template;
+    // provide the compiled function's source via its `toString()` method, in
+    // supported environments, or the `source` property as a convenience for
+    // build time precompilation
+    result.source = text;
+    return result;
   }
 
   /*--------------------------------------------------------------------------*/

@@ -29,11 +29,20 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
-  /** Used to store unique `reUnescaped` regexps */
-  var reCache = {};
+  /** Used to match tokens in template text */
+  var reToken = /__token__(\d+)/g;
 
-  /** Used to extract a regexp from its `source` property */
-  var reSource = /^\/([\s\S]+?)\/[gim]+?$/;
+  /**
+   * Used to match unescaped characters in template text
+   * (older Safari can't parse unicode escape sequences in a regexp literals)
+   */
+  var reUnescaped = RegExp('\\\\|[\'\\n\\r\\t\u2028\u2029]', 'g');
+
+  /** Used to replace template delimiters */
+  var token = '__token__';
+
+  /** Used store tokenized template text code snippets */
+  var tokenized = [];
 
   /** Object#toString result shortcuts */
   var arrayClass = '[object Array]',
@@ -213,16 +222,28 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Used by `String#replace` to escape characters for inclusion in compiled
-   * string literals while skipping over template delimiters.
+   * Used by `String#replace` to replace tokens with their corresponding code
+   * snippets.
    *
    * @private
-   * @param {String} character The the character to escape.
-   * @param {String} [delimiter=''] The delimiter to skip over.
-   * @returns {String} Returns an escaped character or template delimiter.
+   * @param {String} match The matched token.
+   * @param {String} index The `tokenized` index of the code snippet.
+   * @returns {String} Returns the code snippet.
    */
-  function escapeString(character, delimiter) {
-    return delimiter || '\\' + escapes[character];
+  function detokenize(match, index) {
+    return tokenized[index];
+  }
+
+  /**
+   * Used by `template()` to escape characters for inclusion in compiled
+   * string literals.
+   *
+   * @private
+   * @param {String} match The matched character to escape.
+   * @returns {String} Returns the escaped character.
+   */
+  function escapeChar(match) {
+    return '\\' + escapes[match];
   }
 
   /**
@@ -322,6 +343,48 @@
       '\n}'
     )(arrayClass, bind, concat, funcClass, hasOwnProperty, identity,
       indexOf, Infinity, isArray, isEmpty, Math, slice, stringClass, toString);
+  }
+
+  /**
+   * Used by `template()` to replace "escape" template delimiters with tokens.
+   *
+   * @private
+   * @param {String} match The matched template delimiter.
+   * @param {String} value The delimiter value.
+   * @returns {String} Returns a token.
+   */
+  function tokenizeEscape(match, value) {
+    var index = tokenized.length;
+    tokenized[index] = "'+\n((__t=(" + value + "))==null?'':__e(__t))+\n'";
+    return token + index;
+  }
+
+  /**
+   * Used by `template()` to replace "interpolate" template delimiters with tokens.
+   *
+   * @private
+   * @param {String} match The matched template delimiter.
+   * @param {String} value The delimiter value.
+   * @returns {String} Returns a token.
+   */
+  function tokenizeInterpolate(match, value) {
+    var index = tokenized.length;
+    tokenized[index] = "'+\n((__t=(" + value + "))==null?'':__t)+\n'";
+    return token + index;
+  }
+
+  /**
+   * Used by `template()` to replace "evaluate" template delimiters with tokens.
+   *
+   * @private
+   * @param {String} match The matched template delimiter.
+   * @param {String} value The delimiter value.
+   * @returns {String} Returns a token.
+   */
+  function tokenizeEvaluate(match, value) {
+    var index = tokenized.length;
+    tokenized[index] = "';\n" + value + ";\n__p+='";
+    return token + index;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -2480,50 +2543,6 @@
   }
 
   /**
-   * Executes the `callback` function `n` times. The `callback` is invoked with
-   * 1 argument; (index).
-   *
-   * @static
-   * @memberOf _
-   * @category Utilities
-   * @param {Number} n The number of times to execute the callback.
-   * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @example
-   *
-   * _.times(3, function() { genie.grantWish(); });
-   */
-  function times(n, callback, thisArg) {
-    if (thisArg) {
-      callback = bind(callback, thisArg);
-    }
-    for (var index = 0; index < n; index++) {
-      callback(index);
-    }
-  }
-
-  /**
-   * Generates a unique id. If `prefix` is passed, the id will be appended to it.
-   *
-   * @static
-   * @memberOf _
-   * @category Utilities
-   * @param {String} [prefix] The value to prefix the id with.
-   * @returns {Number|String} Returns a numeric id if no prefix is passed, else
-   *  a string id may be returned.
-   * @example
-   *
-   * _.uniqueId('contact_');
-   * // => 'contact_104'
-   */
-  function uniqueId(prefix) {
-    var id = idCounter++;
-    return prefix ? prefix + id : id;
-  }
-
-  /*--------------------------------------------------------------------------*/
-
-  /**
    * A JavaScript micro-templating method, similar to John Resig's implementation.
    * Lo-Dash templating handles arbitrary delimiters, preserves whitespace, and
    * correctly escapes quotes within interpolated code.
@@ -2582,40 +2601,25 @@
         reEscapeDelimiter = options.escape,
         reEvaluateDelimiter = options.evaluate,
         reInterpolateDelimiter = options.interpolate,
-        id = reEscapeDelimiter + reEvaluateDelimiter + reInterpolateDelimiter,
-        reUnescaped = reCache[id],
         variable = options.variable;
 
-    // create and cache the `reUnescaped` regexp
-    if (!reUnescaped) {
-      reUnescaped = [];
-      if (reEscapeDelimiter) {
-        reUnescaped.push(reSource.exec(reEscapeDelimiter)[1]);
-      }
-      if (reEvaluateDelimiter) {
-        reUnescaped.push(reSource.exec(reEvaluateDelimiter)[1]);
-      }
-      if (reInterpolateDelimiter) {
-        reUnescaped.push(reSource.exec(reInterpolateDelimiter)[1]);
-      }
-      reUnescaped = reCache[id] = RegExp('\\\\|\'|\\r|\\n|\\t|\\u2028|\\u2029' +
-        (reUnescaped.length ? '|((?:' + reUnescaped.join(')|(?:') + '))' : ''), 'g');
-    }
-
-    // escape characters that cannot be included in string literals
-    text = text.replace(reUnescaped, escapeString);
-
+    // tokenize delimiters to avoid escaping them
     if (reEscapeDelimiter) {
-      text = text.replace(reEscapeDelimiter, "'+\n((__t=($1))==null?'':__e(__t))+\n'")
+      text = text.replace(reEscapeDelimiter, tokenizeEscape);
     }
     if (reInterpolateDelimiter) {
-      text = text.replace(reInterpolateDelimiter, "'+\n((__t=($1))==null?'':__t)+\n'");
+      text = text.replace(reInterpolateDelimiter, tokenizeInterpolate);
     }
     if (reEvaluateDelimiter) {
-      text = text.replace(reEvaluateDelimiter, "';\n$1;\n__p+='");
+      text = text.replace(reEvaluateDelimiter, tokenizeEvaluate);
     }
 
-    text = "__p='" + text + "';\n";
+    // escape characters that cannot be included in string literals and
+    // detokenize delimiter code snippets
+    text = "__p='" + text.replace(reUnescaped, escapeChar).replace(reToken, detokenize) + "';\n";
+
+    // clear stored tokens
+    tokenized.length = 0;
 
     // if `options.variable` is not specified, add `data` to the top of the scope chain
     if (!variable) {
@@ -2638,6 +2642,48 @@
     // build time precompilation
     result.source = text;
     return result;
+  }
+
+  /**
+   * Executes the `callback` function `n` times. The `callback` is invoked with
+   * 1 argument; (index).
+   *
+   * @static
+   * @memberOf _
+   * @category Utilities
+   * @param {Number} n The number of times to execute the callback.
+   * @param {Function} callback The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @example
+   *
+   * _.times(3, function() { genie.grantWish(); });
+   */
+  function times(n, callback, thisArg) {
+    if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
+    for (var index = 0; index < n; index++) {
+      callback(index);
+    }
+  }
+
+  /**
+   * Generates a unique id. If `prefix` is passed, the id will be appended to it.
+   *
+   * @static
+   * @memberOf _
+   * @category Utilities
+   * @param {String} [prefix] The value to prefix the id with.
+   * @returns {Number|String} Returns a numeric id if no prefix is passed, else
+   *  a string id may be returned.
+   * @example
+   *
+   * _.uniqueId('contact_');
+   * // => 'contact_104'
+   */
+  function uniqueId(prefix) {
+    var id = idCounter++;
+    return prefix ? prefix + id : id;
   }
 
   /*--------------------------------------------------------------------------*/

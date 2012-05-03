@@ -109,8 +109,8 @@
     'init': '',
     'exit': 'if (!collection) return []',
     'beforeLoop': {
-      'array': 'result=Array(length)',
-      'object': 'result=[]'
+      'array': 'result = Array(length)',
+      'object': 'result = []'
     },
     'inLoop': {
       'array': 'result[index] = callback(collection[index], index, collection)',
@@ -179,12 +179,12 @@
    * _.isArray([1, 2, 3]);
    * // => true
    */
-  var isArray = nativeIsArray || function isArray(value) {
+  var isArray = nativeIsArray || function(value) {
     return toString.call(value) == arrayClass;
   };
 
   /**
-   * Checks if a `value` is empty. Arrays or strings with a length of 0 and
+   * Checks if a `value` is empty. Arrays or strings with a length of `0` and
    * objects with no enumerable own properties are considered "empty".
    *
    * @static
@@ -265,7 +265,7 @@
         objectBranch = !(firstArg == 'array' || iterate == 'arrays'),
         useHas = options.useHas !== false;
 
-    // stings used to compile methods are minified during the build process
+    // all strings used to compile methods are minified during the build process
     return Function('arrayClass, bind, concat, funcClass, hasOwnProperty, identity,' +
                     'indexOf, Infinity, isArray, isEmpty, Math, slice, stringClass,' +
                     'toString, undefined',
@@ -275,7 +275,7 @@
       'return function(' + args + ') {\n' +
         // assign the `result` variable an initial value
         ('var index, result' + (init ? '=' + init : '')) + ';\n' +
-        // add code to exit early or do so if the first argument is nullish
+        // add code to exit early or do so if the first argument is falsey
         (options.exit || 'if (!' + firstArg + ') return result') + ';\n' +
         // add code after the exit snippet but before the iteration branches
         (options.top || '') + ';\n' +
@@ -349,9 +349,9 @@
   });
 
   /**
-   * Checks if the `callback` returns truthy for **all** values of a `collection`.
-   * The `callback` is invoked with 3 arguments; for arrays they are
-   * (value, index, array) and for objects they are (value, key, object).
+   * Checks if the `callback` returns a truthy value for **all** elements of a
+   * `collection`. The `callback` is invoked with 3 arguments; for arrays they
+   * are (value, index, array) and for objects they are (value, key, object).
    *
    * @static
    * @memberOf _
@@ -600,18 +600,18 @@
     'args': 'collection, callback, accumulator, thisArg',
     'init': 'accumulator',
     'top':
-      'var initial = arguments.length > 2;\n' +
+      'var noaccum = arguments.length < 3;\n' +
       'if (thisArg) callback = bind(callback, thisArg)',
     'beforeLoop': {
-      'array': 'if (!initial) result = collection[++index]'
+      'array': 'if (noaccum) result = collection[++index]'
     },
     'inLoop': {
       'array':
         'result = callback(result, collection[index], index, collection)',
       'object':
-        'result = initial\n' +
-          '? callback(result, collection[index], index, collection)\n' +
-          ': (initial = true, collection[index])'
+        'result = noaccum\n' +
+          '? (noaccum = false, collection[index])\n' +
+          ': callback(result, collection[index], index, collection)'
     }
   });
 
@@ -636,39 +636,39 @@
    * var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
    * // => [4, 5, 2, 3, 0, 1]
    */
-  function reduceRight(collection, callback, result, thisArg) {
+  function reduceRight(collection, callback, accumulator, thisArg) {
     if (!collection) {
-      return result;
+      return accumulator;
     }
 
-    var initial = arguments.length > 2,
-        length = collection.length;
+    var length = collection.length,
+        noaccum = arguments.length < 3;
 
     if(thisArg) {
       callback = bind(callback, thisArg);
     }
     if (length === +length) {
-      if (length && !initial) {
-        result = collection[--length];
+      if (length && noaccum) {
+        accumulator = collection[--length];
       }
       while (length--) {
-        result = callback(result, collection[length], length, collection);
+        accumulator = callback(accumulator, collection[length], length, collection);
       }
-      return result;
+      return accumulator;
     }
 
     var prop,
         props = keys(collection);
 
     length = props.length;
-    if (length && !initial) {
-      result = collection[props[--length]];
+    if (length && noaccum) {
+      accumulator = collection[props[--length]];
     }
     while (length--) {
       prop = props[length];
-      result = callback(result, collection[prop], prop, collection);
+      accumulator = callback(accumulator, collection[prop], prop, collection);
     }
-    return result;
+    return accumulator;
   }
 
   /**
@@ -760,11 +760,11 @@
   }
 
   /**
-   * Checks if the `callback` returns truthy for **any** value of a `collection`.
-   * The function returns as soon as it finds passing value, and does not iterate
-   * over the entire `collection`. The `callback` is invoked with 3 arguments; for
-   * arrays they are (value, index, array) and for objects they are
-   * (value, key, object).
+   * Checks if the `callback` returns a truthy value for **any** element of a
+   * `collection`. The function returns as soon as it finds passing value, and
+   * does not iterate over the entire `collection`. The `callback` is invoked
+   * with 3 arguments; for arrays they are (value, index, array) and for objects
+   * they are (value, key, object).
    *
    * @static
    * @memberOf _
@@ -1865,8 +1865,8 @@
    * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
    * // => true
    */
-  function has(object, prop) {
-    return hasOwnProperty.call(object, prop);
+  function has(object, property) {
+    return hasOwnProperty.call(object, property);
   }
 
   /**
@@ -1890,7 +1890,7 @@
   };
   // fallback for browser like IE<9 which detect `arguments` as `[object Object]`
   if (!isArguments(arguments)) {
-    isArguments = function isArguments(value) {
+    isArguments = function(value) {
       return !!(value && hasOwnProperty.call(value, 'callee'));
     };
   }

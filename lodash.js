@@ -222,8 +222,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Used by `String#replace` to replace tokens with their corresponding code
-   * snippets.
+   * Used by `template()` to replace tokens with their corresponding code snippets.
    *
    * @private
    * @param {String} match The matched token.
@@ -355,7 +354,7 @@
    */
   function tokenizeEscape(match, value) {
     var index = tokenized.length;
-    tokenized[index] = "'+\n((__t=(" + value + "))==null?'':__e(__t))+\n'";
+    tokenized[index] = "'+\n((__t = (" + value + ")) == null ? '' : __e(__t)) +\n'";
     return token + index;
   }
 
@@ -369,7 +368,7 @@
    */
   function tokenizeInterpolate(match, value) {
     var index = tokenized.length;
-    tokenized[index] = "'+\n((__t=(" + value + "))==null?'':__t)+\n'";
+    tokenized[index] = "'+\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
     return token + index;
   }
 
@@ -383,7 +382,7 @@
    */
   function tokenizeEvaluate(match, value) {
     var index = tokenized.length;
-    tokenized[index] = "';\n" + value + ";\n__p+='";
+    tokenized[index] = "';\n" + value + ";\n__p += '";
     return token + index;
   }
 
@@ -2626,7 +2625,7 @@
       text = 'with (object || {}) {\n' + text + '\n}\n';
     }
 
-    text = 'function(' + (variable || 'object') + '){\n' +
+    text = 'function(' + (variable || 'object') + ') {\n' +
       'var __p, __t;\n' +
       'function print() { __p += __j.call(arguments, "") }\n' +
       text +

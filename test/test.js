@@ -210,6 +210,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.template');
+
+  (function() {
+    test('supports recursive calls', function() {
+      var compiled = _.template('<%= a %><% a = _.template(c, object) %><%= a %>'),
+          data = { 'a': 'A', 'b': 'B', 'c': '<%= b %>' };
+
+      equal(compiled(data), 'AB');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.throttle');
 
   (function() {

@@ -151,6 +151,7 @@
    * The `lodash` function.
    *
    * @name _
+   * @constructor
    * @param {Mixed} value The value to wrap in a `Lodash` instance.
    * @returns {Object} Returns a `Lodash` instance.
    */
@@ -2631,7 +2632,7 @@
       text +
       'return __p\n}';
 
-    result = Function('_,__e,__j', 'return ' + text)(lodash, escape, join);
+    result = Function('_, __e, __j', 'return ' + text)(lodash, escape, join);
 
     if (data) {
       return result(data);

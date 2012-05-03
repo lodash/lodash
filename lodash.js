@@ -34,7 +34,7 @@
 
   /**
    * Used to match unescaped characters in template text
-   * (older Safari can't parse unicode escape sequences in a regexp literals)
+   * (older Safari can't parse unicode escape sequences in a RegExp literals)
    */
   var reUnescaped = RegExp('\\\\|[\'\\n\\r\\t\u2028\u2029]', 'g');
 
@@ -2618,7 +2618,7 @@
     // detokenize delimiter code snippets
     text = "__p='" + text.replace(reUnescaped, escapeChar).replace(reToken, detokenize) + "';\n";
 
-    // clear stored tokens
+    // clear stored code snippets
     tokenized.length = 0;
 
     // if `options.variable` is not specified, add `data` to the top of the scope chain

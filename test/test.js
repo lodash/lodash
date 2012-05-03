@@ -112,6 +112,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.escape');
+
+  (function() {
+    test('should not escape the ">" character', function() {
+      equal(_.escape('>'), '>');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.forEach');
 
   (function() {

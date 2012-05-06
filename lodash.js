@@ -70,7 +70,7 @@
 
   /* Used if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
   var nativeBind = reNative.test(nativeBind = slice.bind) &&
-    (/\n/.test(nativeBind) || toString.call(window.opera) == '[object Opera]') && nativeBind;
+    /\n|Opera/.test(nativeBind + toString.call(window.opera)) && nativeBind;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
@@ -1516,16 +1516,16 @@
 
   /**
    * Creates a new function that, when called, invokes `func` with the `this`
-   * binding of `thisArg` and prepends additional arguments to those passed to
-   * the bound function. Lazy defined methods may be bound by passing the object
-   * they are bound to as `func` and the method name as `thisArg`.
+   * binding of `thisArg` and prepends any additional `bind` arguments to those
+   * passed to the bound function. Lazy defined methods may be bound by passing
+   * the object they are bound to as `func` and the method name as `thisArg`.
    *
    * @static
    * @memberOf _
    * @category Functions
    * @param {Function|Object} func The function to bind or the object the method belongs to.
    * @param @param {Mixed} [thisArg] The `this` binding of `func` or the method name.
-   * @param {Mixed} [arg1, arg2, ...] Arguments to prepend to those passed to the bound function.
+   * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
    * @returns {Function} Returns the new bound function.
    * @example
    *
@@ -1563,11 +1563,11 @@
       methodName = thisArg;
       thisArg = func;
     }
-    // use native `Function#bind` if faster
+    // use if `Function#bind` is faster
     else if (nativeBind) {
       func = nativeBind.call.apply(nativeBind, arguments);
       return function() {
-        return func.apply(undefined, arguments);
+        return arguments.length ? func.apply(undefined, arguments) : func();
       };
     }
 
@@ -1805,6 +1805,43 @@
       }
       ran = true;
       result = func.apply(this, arguments);
+      return result;
+    };
+  }
+
+  /**
+   * Creates a new function that, when called, invokes `func` with any additional
+   * `partial` arguments prepended to those passed to the partially applied
+   * function. This method is similar `bind`, except it does **not** alter the
+   * `this` binding.
+   *
+   * @static
+   * @memberOf _
+   * @category Functions
+   * @param {Function} func The function to partially apply arguments to.
+   * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
+   * @returns {Function} Returns the new partially applied function.
+   * @example
+   *
+   * var greet = function(greeting, name) { return greeting + ': ' + name; };
+   * var hi = _.partial(greet, 'hi');
+   * hi('moe');
+   * // => 'hi: moe'
+   */
+  function partial(func) {
+    var args = slice.call(arguments, 1),
+        argsLength = args.length;
+
+    return function() {
+      var result,
+          others = arguments;
+
+      if (others.length) {
+        args.length = argsLength;
+        push.apply(args, others);
+      }
+      result = args.length == 1 ? func.call(this, args[0]) : func.apply(this, args);
+      args.length = argsLength;
       return result;
     };
   }
@@ -2912,6 +2949,7 @@
     'mixin': mixin,
     'noConflict': noConflict,
     'once': once,
+    'partial': partial,
     'pick': pick,
     'pluck': pluck,
     'range': range,

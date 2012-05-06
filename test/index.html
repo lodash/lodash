@@ -12,7 +12,20 @@
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
-		<script>var _2, _3, _ = 1;</script>
+		<script>
+			var _2,
+			    _3 = Object.keys;
+
+			Object.keys = function() { return []; };
+		</script>
+		<script src="../lodash.js"></script>
+		<script>
+			var lodashBadKeys = _,
+				_ = 1;
+
+			Object.keys = _3;
+			_3 = void 0;
+		</script>
 		<script src="../lodash.js"></script>
 		<script src="../vendor/requirejs/require.js"></script>
 		<script>

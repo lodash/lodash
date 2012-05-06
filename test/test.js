@@ -62,6 +62,14 @@
         skipTest(1)
       }
     });
+
+    test('avoids overwritten native methods', function() {
+      if (window.lodashBadKeys) {
+        notDeepEqual(lodashBadKeys.keys({ 'a': 1 }), []);
+      } else {
+        skipTest(1);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

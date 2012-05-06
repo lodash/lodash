@@ -29,6 +29,9 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
+  /** Used to detect if a method is native */
+  var reNative = /\{\s*\[native code\]\s*\}/;
+
   /** Used to match tokens in template text */
   var reToken = /__token__(\d+)/g;
 
@@ -65,10 +68,14 @@
       slice = ArrayProto.slice,
       toString = ObjectProto.toString;
 
+  /* Used if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
+  var nativeBind = reNative.test(nativeBind = slice.bind) &&
+    (/\n/.test(nativeBind) || toString.call(window.opera) == '[object Opera]') && nativeBind;
+
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
-  var nativeIsArray = Array.isArray,
+  var nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
-      nativeKeys = Object.keys;
+      nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys;
 
   /** Timer shortcuts */
   var clearTimeout = window.clearTimeout,
@@ -1548,19 +1555,41 @@
    * // => 'hi moe!'
    */
   function bind(func, thisArg) {
-    var args = slice.call(arguments, 2),
-        argsLength = args.length,
+    var methodName,
         isFunc = toString.call(func) == funcClass;
 
     // juggle arguments
     if (!isFunc) {
-      var methodName = thisArg;
+      methodName = thisArg;
       thisArg = func;
     }
+    // use native `Function#bind` if faster
+    else if (nativeBind) {
+      func = nativeBind.call.apply(nativeBind, arguments);
+      return function() {
+        return func.apply(undefined, arguments);
+      };
+    }
+
+    var partialArgs = slice.call(arguments, 2),
+        partialArgsLength = partialArgs.length;
+
     return function() {
-      push.apply(args, arguments);
-      var result = (isFunc ? func : thisArg[methodName]).apply(thisArg, args);
-      args.length = argsLength;
+      var result,
+          args = arguments;
+
+      if (!isFunc) {
+        func = thisArg[methodName];
+      }
+      if (partialArgsLength) {
+        if (args.length) {
+          partialArgs.length = partialArgsLength;
+          push.apply(partialArgs, args);
+        }
+        args = partialArgs;
+      }
+      result = args.length ? func.apply(thisArg, args) : func.call(thisArg);
+      partialArgs.length = partialArgsLength;
       return result;
     };
   }

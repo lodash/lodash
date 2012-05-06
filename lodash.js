@@ -55,15 +55,15 @@
 
   /** Native prototype shortcuts */
   var ArrayProto = Array.prototype,
-      ObjProto = Object.prototype;
+      ObjectProto = Object.prototype;
 
   /** Native method shortcuts */
   var concat = ArrayProto.concat,
-      hasOwnProperty = ObjProto.hasOwnProperty,
+      hasOwnProperty = ObjectProto.hasOwnProperty,
       join = ArrayProto.join,
       push = ArrayProto.push,
       slice = ArrayProto.slice,
-      toString = ObjProto.toString;
+      toString = ObjectProto.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeIsArray = Array.isArray,
@@ -251,6 +251,34 @@
    *
    * @private
    * @param {Object} [options1, options2, ..] The compile options objects.
+   *
+   *  args - A string of comma separated arguments the iteration function will
+   *   accept.
+   *
+   *  iterate - A string to specify whether the iteration function is only for
+   *   "arrays" or "objects". It is automatically set if the first argument of
+   *   `options.args` is "array" or "object".
+   *
+   *  init - A string to specify the initial value of the `result` variable.
+   *
+   *  exit - A string of code to use in place of the default exit-early check
+   *   of `if (!arguments[0]) return result`.
+   *
+   *  top - A string of code to execute after the exit-early check but before
+   *   the iteration branches.
+   *
+   *  beforeLoop - A string or object containing an "array" or "object" property
+   *   of code to execute before the array or object loops.
+   *
+   *  loopExp - A string or object containing an "array" or "object" property
+   *   of code to execute as the array or object loop expression.
+   *
+   *  inLoop - A string or object containing an "array" or "object" property
+   *   of code to execute in the array or object loops.
+   *
+   *  bottom - A string of code to execute after the iteration branches but
+   *   before the `result` is returned.
+   *
    * @returns {Function} Returns the compiled function.
    */
   function iterationFactory() {
@@ -1392,8 +1420,8 @@
   }
 
   /**
-   * Produces a new array with all occurrences of the values removed using strict
-   * equality for comparisons, i.e. `===`.
+   * Produces a new array with all occurrences of the passed values removed using
+   * strict equality for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
@@ -2482,7 +2510,7 @@
     forEach(functions(object), function(methodName) {
       var func = lodash[methodName] = object[methodName];
 
-      lodash.prototype[methodName] = function() {
+      Lodash.prototype[methodName] = function() {
         var args = [this._wrapped];
         push.apply(args, arguments);
 
@@ -2912,7 +2940,7 @@
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = ArrayProto[methodName];
 
-    lodash.prototype[methodName] = function() {
+    Lodash.prototype[methodName] = function() {
       var value = this._wrapped;
       func.apply(value, arguments);
 

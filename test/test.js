@@ -176,6 +176,48 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.partial');
+
+  (function() {
+    test('partially applies an argument, without additional arguments', function() {
+      var arg = 'catnip',
+          func = function(x) { return x; };
+
+      equal(_.partial(func, arg)(), arg);
+    });
+
+    test('partially applies an argument, with additional arguments', function() {
+      var arg1 = 'catnip',
+          arg2 = 'cheese',
+          func = function(x, y) { return [x, y]; };
+
+      deepEqual(_.partial(func, arg1)(arg2), [arg1, arg2]);
+    });
+
+    test('works without partially applying arguments, without additional arguments', function() {
+      var func = function() { return arguments.length; };
+
+      equal(_.partial(func)(), 0);
+    });
+
+    test('works without partially applying arguments, with additional arguments', function() {
+      var arg = 'catnip',
+          func = function(x) { return x; };
+
+      equal(_.partial(func)(arg), arg);
+    });
+
+    test('should not alter the `this` binding of either function', function() {
+      var o = { 'cat': 'nip' },
+          func = function() { return this.cat; };
+
+      equal(_.partial(_.bind(func, o))(), o.cat);
+      equal(_.bind(_.partial(func), o)(), o.cat);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.reduceRight');
 
   (function() {

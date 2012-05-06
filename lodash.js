@@ -139,8 +139,9 @@
     'top':
       'var current, computed = -Infinity, result = computed;\n' +
       'if (!callback) {\n' +
-        'if (isArray(collection) && collection[0] === +collection[0])' +
-          'return Math.max.apply(Math, collection);\n' +
+        'if (isArray(collection) && collection[0] === +collection[0]) {\n' +
+          'try { return Math.max.apply(Math, collection); } catch(e) { }\n' +
+        '}\n' +
         'if (isEmpty(collection))' +
           'return result\n' +
       '} else if (thisArg) callback = bind(callback, thisArg)',

@@ -25,8 +25,8 @@
 
   /**
    * Detect the JScript [[DontEnum]] bug:
-   * IE < 9 makes an objects own properties, shadowing non-enumerable ones,
-   * non-enumerable too.
+   * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
+   * made non-enumerable as well.
    */
   var hasDontEnumBug = !{ 'valueOf': 0 }.propertyIsEnumerable('valueOf');
 
@@ -48,7 +48,7 @@
    */
   var reUnescaped = RegExp('\\\\|[\'\\n\\r\\t\u2028\u2029]', 'g');
 
-  /** Used to fix JScript's [[DontEnum]] bug in IE < 9 */
+  /** Used to fix the JScript [[DontEnum]] bug */
   var shadowed = [
     'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
     'toLocaleString', 'toString', 'valueOf'
@@ -401,10 +401,10 @@
               ) +
             '\n}' +
             (hasDontEnumBug
-              ? // because IE < 9 can't set the `[[Enumerable]]` attribute of an
+              ? // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
                 // existing property and the `constructor` property of a prototype
                 // defaults to non-enumerable, Lo-Dash skips the `constructor`
-                // property when it infers it's iterating over a `prototype` object
+                // property when it infers it's iterating over a `prototype` object.
                 'var ctor = ' + iteratedObject + '.constructor,\n' +
                     'skipCtor = ctor && ctor.prototype && ctor.prototype.constructor === ctor;\n' +
                 'for (var j = 0; j < 7; j++) {\n' +
@@ -3064,7 +3064,7 @@
       func.apply(value, arguments);
 
       // IE compatibility mode and IE < 9 have buggy Array `shift()` and `splice()`
-      // functions that fail to remove the last element, `object[0]`, of
+      // functions that fail to remove the last element, `value[0]`, of
       // array-like-objects even though the `length` property is set to `0`.
       // The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
       // is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.

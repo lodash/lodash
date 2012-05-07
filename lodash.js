@@ -42,11 +42,8 @@
   /** Used to match tokens in template text */
   var reToken = /__token__(\d+)/g;
 
-  /**
-   * Used to match unescaped characters in template text
-   * (older Safari can't parse unicode escape sequences in a RegExp literals)
-   */
-  var reUnescaped = RegExp('\\\\|[\'\\n\\r\\t\u2028\u2029]', 'g');
+  /** Used to match unescaped characters in template text */
+  var reUnescaped = /['\n\r\t\u2028\u2029\\]/g;
 
   /** Used to fix the JScript [[DontEnum]] bug */
   var shadowed = [

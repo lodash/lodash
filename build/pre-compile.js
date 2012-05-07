@@ -37,7 +37,6 @@
     'isFunc',
     'length',
     'object',
-    'Math',
     'noaccum',
     'prop',
     'property',
@@ -166,6 +165,7 @@
       // minify snippet variables/arguments
       compiledVars.forEach(function(variable, index) {
         result = result.replace(RegExp('([^.]\\b|\\\\n)' + variable + '\\b(?!\'\\s*[\\]:])', 'g'), '$1' + minNames[index]);
+
         // correct `typeof x == 'object'`
         if (variable == 'object') {
           result = result.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), "$1object'");
@@ -175,6 +175,10 @@
           result = result
             .replace(RegExp(':\\s*' + minNames[index] + '\\s*,', 'g'), ':' + variable + ',')
             .replace(RegExp('\\s*' + minNames[index] + '\\s*;', 'g'), variable + ';');
+        }
+        if (variable == 'slice') {
+          // correct `slice.call(arguments)`
+          result = result.replace(RegExp('\\b' + minNames[index] + '(\\.call\\(arguments\\))'), 'slice$1');
         }
       });
 

@@ -23,6 +23,13 @@
   var freeExports = typeof exports == 'object' && exports &&
     (typeof global == 'object' && global && global == global.global && (window = global), exports);
 
+  /**
+   * Detect the JScript [[DontEnum]] bug:
+   * IE < 9 makes an objects own properties, shadowing non-enumerable ones,
+   * non-enumerable too.
+   */
+  var hasDontEnumBug = !{ 'valueOf': 0 }.propertyIsEnumerable('valueOf');
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -40,6 +47,12 @@
    * (older Safari can't parse unicode escape sequences in a RegExp literals)
    */
   var reUnescaped = RegExp('\\\\|[\'\\n\\r\\t\u2028\u2029]', 'g');
+
+  /** Used to fix JScript's [[DontEnum]] bug in IE < 9 */
+  var shadowed = [
+    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
+    'toLocaleString', 'toString', 'valueOf'
+  ];
 
   /** Used to replace template delimiters */
   var token = '__token__';
@@ -318,14 +331,16 @@
         firstArg = /^[^,]+/.exec(args)[0],
         init = options.init,
         iterate = options.iterate,
+        iteratedObject = /\S+$/.exec(object.loopExp || firstArg)[0],
+        hasExp = 'hasOwnProperty.call(' + iteratedObject + ', index)',
         arrayBranch = !(firstArg == 'object' || iterate == 'objects'),
         objectBranch = !(firstArg == 'array' || iterate == 'arrays'),
         useHas = options.useHas !== false;
 
     // all strings used to compile methods are minified during the build process
-    return Function('arrayClass, bind, concat, funcClass, hasOwnProperty, identity,' +
-                    'indexOf, Infinity, isArray, isEmpty, Math, slice, stringClass,' +
-                    'toString, undefined',
+    return Function('arrayClass, bind, concat, funcClass, hasOwnProperty, identity, ' +
+                    'indexOf, Infinity, isArray, isEmpty, Math, shadowed, slice, ' +
+                    'stringClass, toString, undefined',
       // compile the function in strict mode
       '"use strict";' +
       // compile the arguments the function accepts
@@ -358,16 +373,52 @@
         (objectBranch
             // begin the else-statement when there is an array-like iteration branch
           ? ((arrayBranch ? 'else {\n' : '') +
+            // initialize object iteration flags for modern browsers
+            (hasDontEnumBug ? '' : 'var skipProto = typeof ' + iteratedObject + ' == "function";\n') +
             // add code before the for-in loop
             (object.beforeLoop || '') + ';\n' +
             // add a custom loop expression
             'for (' + (object.loopExp || 'index in ' + firstArg) + ') {\n' +
-              // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
-              (useHas ? 'if (hasOwnProperty.call(' + /\S+$/.exec(object.loopExp || firstArg)[0] + ',index)) {\n' : '') +
-                // add code inside the for-in loop
-                object.inLoop +
-              (useHas ? '\n}' : '') +
+              (hasDontEnumBug
+                ? // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
+                  (useHas ? 'if (' + hasExp + ') {\n' : '') +
+                    // add code inside the for-in loop
+                    object.inLoop +
+                  (useHas ? '\n}' : '')
+                : // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
+                  // (if the prototype or a property on the prototype has been set)
+                  // incorrectly sets a function's `prototype` property [[Enumerable]]
+                  // value to true. Because of this Lo-Dash standardizes on skipping
+                  // the the `prototype` property of functions regardless of its
+                  // [[Enumerable]] value.
+                  'if (!(skipProto && index == "prototype")' +
+                      // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
+                      (useHas ? '\n&& ' + hasExp : '') +
+                      '\n) {' +
+                    // add code inside the for-in loop
+                    object.inLoop +
+                  '\n}'
+              ) +
             '\n}' +
+            (hasDontEnumBug
+              ? // because IE < 9 can't set the `[[Enumerable]]` attribute of an
+                // existing property and the `constructor` property of a prototype
+                // defaults to non-enumerable, Lo-Dash skips the `constructor`
+                // property when it infers it's iterating over a `prototype` object
+                'var ctor = ' + iteratedObject + '.constructor,\n' +
+                    'skipCtor = ctor && ctor.prototype && ctor.prototype.constructor === ctor;\n' +
+                'for (var j = 0; j < 7; j++) {\n' +
+                  'index = shadowed[j];\n' +
+                  'if (!(skipCtor && index == "constructor")' +
+                      // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
+                      (useHas ? '\n&& ' + hasExp : '') +
+                      '\n) {' +
+                    // add code inside the for-in loop
+                    object.inLoop +
+                  '\n}' +
+                '\n}'
+              : ''
+            ) +
             // end the object iteration else-statement
             (arrayBranch ? '\n}\n' : ''))
           : ''
@@ -377,8 +428,8 @@
         // finally, return the `result`
         'return result' +
       '\n}'
-    )(arrayClass, bind, concat, funcClass, hasOwnProperty, identity,
-      indexOf, Infinity, isArray, isEmpty, Math, slice, stringClass, toString);
+    )(arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf,
+      Infinity, isArray, isEmpty, Math, shadowed, slice, stringClass, toString);
   }
 
   /**

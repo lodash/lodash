@@ -23,6 +23,7 @@
     'collection',
     'computed',
     'concat',
+    'ctor',
     'current',
     'false',
     'funcClass',
@@ -41,6 +42,9 @@
     'prop',
     'property',
     'result',
+    'shadowed',
+    'skipCtor',
+    'skipProto',
     'slice',
     'source',
     'stringClass',
@@ -83,6 +87,7 @@
     'interpolate',
     'isEqual',
     'isFinite',
+    'opera',
     'setTimeout',
     'source',
     'templateSettings',
@@ -113,7 +118,7 @@
 
     // remove whitespace from string literals
     source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {
-      return string.replace(/\[object |else if|function | in |return\s+[\w']|throw |use strict|var |'\\n'|\\\\n|\\n|\s+/g, function(match) {
+      return string.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |use strict|var |'\\n'|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
     });

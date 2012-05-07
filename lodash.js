@@ -170,22 +170,26 @@
    *
    * @name _
    * @constructor
-   * @param {Mixed} value The value to wrap in a `Lodash` instance.
-   * @returns {Object} Returns a `Lodash` instance.
+   * @param {Mixed} value The value to wrap in a `LoDash` instance.
+   * @returns {Object} Returns a `LoDash` instance.
    */
   function lodash(value) {
     // allow invoking `lodash` without the `new` operator
-    return new Lodash(value);
+    return new LoDash(value);
   }
 
   /**
-   * Creates a `Lodash` instance that wraps a value to allow chaining.
+   * Creates a `LoDash` instance that wraps a value to allow chaining.
    *
    * @private
    * @constructor
    * @param {Mixed} value The value to wrap.
    */
-  function Lodash(value) {
+  function LoDash(value) {
+    // exit early if already wrapped
+    if (value && value._wrapped) {
+      return value;
+    }
     this._wrapped = value;
   }
 
@@ -300,20 +304,20 @@
    * @returns {Function} Returns the compiled function.
    */
   function iterationFactory() {
-    var prop,
-        index = -1,
+    var arg,
+        prop,
+        args = slice.call(arguments),
         array = {},
         object = {},
         options = {},
         props = ['beforeLoop', 'loopExp', 'inLoop'];
 
     // use simple loops to merge options because `extend` isn't defined yet
-    while (++index < arguments.length) {
-      for (prop in arguments[index]) {
-        options[prop] = arguments[index][prop];
+    while ((arg = args.shift())) {
+      for (prop in arg) {
+        options[prop] = arg[prop];
       }
     }
-
     // assign the `array` and `object` branch options
     while ((prop = props.pop())) {
       if (typeof options[prop] == 'object') {
@@ -336,7 +340,7 @@
 
     // all strings used to compile methods are minified during the build process
     return Function('arrayClass, bind, concat, funcClass, hasOwnProperty, identity, ' +
-                    'indexOf, Infinity, isArray, isEmpty, Math, shadowed, slice, ' +
+                    'indexOf, Infinity, isArray, isEmpty, shadowed, slice, ' +
                     'stringClass, toString, undefined',
       // compile the function in strict mode
       '"use strict";' +
@@ -426,7 +430,7 @@
         'return result' +
       '\n}'
     )(arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf,
-      Infinity, isArray, isEmpty, Math, shadowed, slice, stringClass, toString);
+      Infinity, isArray, isEmpty, shadowed, slice, stringClass, toString);
   }
 
   /**
@@ -1018,7 +1022,7 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to process.
-   * @param {Mixed} [array1, array2, ...] Arrays to check.
+   * @param {Array} [array1, array2, ...] Arrays to check.
    * @returns {Array} Returns a new array of `array` values not present in the
    *  other arrays.
    * @example
@@ -1163,7 +1167,7 @@
    * @memberOf _
    * @alias intersect
    * @category Arrays
-   * @param {Mixed} [array1, array2, ...] Arrays to process.
+   * @param {Array} [array1, array2, ...] Arrays to process.
    * @returns {Array} Returns a new array of unique values, in order, that are
    *  present in **all** of the arrays.
    * @example
@@ -1409,7 +1413,7 @@
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {Mixed} [array1, array2, ...] Arrays to process.
+   * @param {Array} [array1, array2, ...] Arrays to process.
    * @returns {Array} Returns a new array of unique values, in order, that are
    *  present in one or more of the arrays.
    * @example
@@ -1513,7 +1517,7 @@
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {Mixed} [array1, array2, ...] Arrays to process.
+   * @param {Array} [array1, array2, ...] Arrays to process.
    * @returns {Array} Returns a new array of merged arrays.
    * @example
    *
@@ -1652,7 +1656,7 @@
    * @memberOf _
    * @category Functions
    * @param {Object} object The object to bind and assign the bound methods to.
-   * @param {Mixed} [methodName1, methodName2, ...] Method names on the object to bind.
+   * @param {String} [methodName1, methodName2, ...] Method names on the object to bind.
    * @returns {Object} Returns the `object`.
    * @example
    *
@@ -1688,7 +1692,7 @@
    * @static
    * @memberOf _
    * @category Functions
-   * @param {Mixed} [func1, func2, ...] Functions to compose.
+   * @param {Function} [func1, func2, ...] Functions to compose.
    * @returns {Function} Returns the new composed function.
    * @example
    *
@@ -1967,7 +1971,9 @@
   function wrap(func, wrapper) {
     return function() {
       var args = [func];
-      push.apply(args, arguments);
+      if (arguments.length) {
+        push.apply(args, arguments);
+      }
       return wrapper.apply(this, args);
     };
   }
@@ -2625,12 +2631,17 @@
     forEach(functions(object), function(methodName) {
       var func = lodash[methodName] = object[methodName];
 
-      Lodash.prototype[methodName] = function() {
+      LoDash.prototype[methodName] = function() {
         var args = [this._wrapped];
-        push.apply(args, arguments);
-
-        var result = func.apply(lodash, args);
-        return this._chain ? new Lodash(result).chain() : result;
+        if (arguments.length) {
+          push.apply(args, arguments);
+        }
+        var result = args.length == 1 ? func.call(lodash, args[0]) : func.apply(lodash, args);
+        if (this._chain) {
+          result = new LoDash(result);
+          result._chain = true;
+        }
+        return result;
       };
     });
   }
@@ -2855,7 +2866,9 @@
    * // => 'moe is 40'
    */
   function chain(value) {
-    return new Lodash(value).chain();
+    value = new LoDash(value);
+    value._chain = true;
+    return value;
   }
 
   /**
@@ -3046,20 +3059,23 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // assign private `Lodash` constructor's prototype
-  Lodash.prototype = lodash.prototype;
+  // assign private `LoDash` constructor's prototype
+  LoDash.prototype = lodash.prototype;
 
-  // add all of the static functions to `Lodash.prototype`
+  // add all of the static functions to `LoDash.prototype`
   mixin(lodash);
 
   // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = ArrayProto[methodName];
 
-    Lodash.prototype[methodName] = function() {
+    LoDash.prototype[methodName] = function() {
       var value = this._wrapped;
-      func.apply(value, arguments);
-
+      if (arguments.length) {
+        func.apply(value, arguments);
+      } else {
+        func.call(value);
+      }
       // IE compatibility mode and IE < 9 have buggy Array `shift()` and `splice()`
       // functions that fail to remove the last element, `value[0]`, of
       // array-like-objects even though the `length` property is set to `0`.
@@ -3068,21 +3084,32 @@
       if (value.length === 0) {
         delete value[0];
       }
-      return this._chain ? new Lodash(value).chain() : value;
+      if (this._chain) {
+        value = new LoDash(value);
+        value._chain = true;
+      }
+      return value;
     };
   });
 
   // add all accessor Array functions to the wrapper.
   forEach(['concat', 'join', 'slice'], function(methodName) {
     var func = ArrayProto[methodName];
-    Lodash.prototype[methodName] = function() {
-      var result = func.apply(this._wrapped, arguments);
-      return this._chain ? new Lodash(result).chain() : result;
+
+    LoDash.prototype[methodName] = function() {
+      var value = this._wrapped,
+          result = arguments.length ? func.apply(value, arguments) : func.call(value);
+
+      if (this._chain) {
+        result = new LoDash(result);
+        result._chain = true;
+      }
+      return result;
     };
   });
 
   // add `chain` and `value` after calling to `mixin()` to avoid getting wrapped
-  extend(Lodash.prototype, {
+  extend(LoDash.prototype, {
     'chain': wrapperChain,
     'value': wrapperValue
   });

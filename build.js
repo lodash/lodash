@@ -24,6 +24,7 @@
 
   /** Used to shares values between multiple callbacks */
   var accumulator = {
+    'combined': {},
     'compiled': {},
     'uglified': {}
   };
@@ -46,15 +47,22 @@
    *
    * @private
    * @param {String} source The JavaScript source to minify.
+   * @param {String} [message] The message to log.
    * @param {Function} callback The function to call once the process completes.
    */
-  function closureCompile(source, callback) {
-    console.log('Compressing lodash.js using the Closure Compiler...');
-
+  function closureCompile(source, message, callback) {
     // the standard error stream, standard output stream, and Closure Compiler process
     var error = '',
         output = '',
         compiler = spawn('java', ['-jar', closurePath].concat(closureOptions));
+
+    // juggle arguments
+    if (typeof message == 'function') {
+      callback = message;
+      message = null;
+    }
+
+    console.log(message == null ? 'Compressing lodash.js using the Closure Compiler...' : message);
 
     compiler.stdout.on('data', function(data) {
       // append the data to the output stream
@@ -88,14 +96,21 @@
    *
    * @private
    * @param {String} source The JavaScript source to minify.
+   * @param {String} [message] The message to log.
    * @param {Function} callback The function to call once the process completes.
    */
-  function uglify(source, callback) {
+  function uglify(source, message, callback) {
     var exception,
         result,
         ugly = uglifyJS.uglify;
 
-    console.log('Compressing lodash.js using UglifyJS...');
+    // juggle arguments
+    if (typeof message == 'function') {
+      callback = message;
+      message = null;
+    }
+
+    console.log(message == null ? 'Compressing lodash.js using UglifyJS...' : message);
 
     try {
       result = ugly.gen_code(
@@ -150,7 +165,7 @@
     accumulator.compiled.gzip = result;
     console.log('Done. Size: %d KB.', result.length);
 
-    // next, minify using UglifyJS
+    // next, minify the source using only UglifyJS
     uglify(source, onUglify);
   }
 
@@ -181,8 +196,45 @@
     if (exception) {
       throw exception;
     }
+    var message = 'Compressing lodash.js combining Closure Compiler and UglifyJS...';
+
     // store the gzipped result and report the size
     accumulator.uglified.gzip = result;
+    console.log('Done. Size: %d KB.', result.length);
+
+    // next, minify the Closure Compiler minified source using UglifyJS
+    uglify(accumulator.compiled.source, message, onCombine);
+  }
+
+  /**
+   * The combined `uglify()` callback.
+   *
+   * @private
+   * @param {Object|Undefined} exception The error object.
+   * @param {String} result The resulting minified source.
+   */
+  function onCombine(exception, result) {
+    if (exception) {
+      throw exception;
+    }
+    // store the post-processed Uglified result and gzip it
+    accumulator.combined.source = result = postprocess(result);
+    gzip(result, onCombineGzip);
+  }
+
+  /**
+   * The combined `gzip` callback.
+   *
+   * @private
+   * @param {Object|Undefined} exception The error object.
+   * @param {Buffer} result The resulting gzipped source.
+   */
+  function onCombineGzip(exception, result) {
+    if (exception) {
+      throw exception;
+    }
+    // store the gzipped result and report the size
+    accumulator.combined.gzip = result;
     console.log('Done. Size: %d KB.', result.length);
 
     // finish by choosing the smallest compressed file
@@ -195,7 +247,8 @@
    * @private
    */
   function onComplete() {
-    var compiled = accumulator.compiled,
+    var combined = accumulator.combined,
+        compiled = accumulator.compiled,
         uglified = accumulator.uglified;
 
     // save the Closure Compiled version to disk
@@ -206,12 +259,20 @@
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), uglified.source);
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), uglified.gzip);
 
+    // save the Combined minified version to disk
+    fs.writeFileSync(path.join(distPath, 'lodash.combined.js'), combined.source);
+    fs.writeFileSync(path.join(distPath, 'lodash.combined.js.gz'), combined.gzip);
+
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to Closure Compiler)
+    var min = Math.min(combined.gzip.length, compiled.gzip.length, uglified.gzip.length);
+
     fs.writeFileSync(path.join(__dirname, 'lodash.min.js'),
-      uglified.gzip.length < compiled.gzip.length
-        ? uglified.source
-        : compiled.source
+      compiled.gzip.length == min
+        ? compiled.source
+        : uglified.gzip.length == min
+          ? uglified.source
+          : combined.source
     );
   }
 

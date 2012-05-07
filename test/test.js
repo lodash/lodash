@@ -390,6 +390,34 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...).shift');
+
+  (function() {
+    test('should remove the value at index `0` when length is `0` (test in IE 8 compatibility mode)', function() {
+      var wrapped = _({ '0': 1, 'length': 1 });
+      wrapped.shift();
+
+      deepEqual(wrapped.keys(), ['length']);
+      equal(wrapped.first(), undefined);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).splice');
+
+  (function() {
+    test('should remove the value at index `0` when length is `0` (test in IE < 9, and in compatibility mode for IE9)', function() {
+      var wrapped = _({ '0': 1, 'length': 1 });
+      wrapped.splice(0, 1);
+
+      deepEqual(wrapped.keys(), ['length']);
+      equal(wrapped.first(), undefined);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   // explicitly call `QUnit.start()` in a CLI environment
   if (!window.document) {
     QUnit.start();

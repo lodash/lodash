@@ -26,6 +26,17 @@
   /** Used to resolve a value's internal [[Class]] */
   var toString = {}.toString;
 
+  /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
+  var shadowed = {
+    'constructor': 1,
+    'hasOwnProperty': 2,
+    'isPrototypeOf': 3,
+    'propertyIsEnumerable': 4,
+    'toLocaleString': 5,
+    'toString': 6,
+    'valueOf': 7
+  };
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -130,12 +141,41 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.extend');
+
+  (function() {
+    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+      var expected = { 'a': 1, 'b': 2 },
+          func = function() { };
+
+      func.prototype.c = 3;
+      func.a = 1;
+      func.b = 2;
+
+      deepEqual(_.extend({}, func), expected);
+
+      func.prototype = { 'c': 3 };
+      deepEqual(_.extend({}, func), expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.forEach');
 
   (function() {
     test('returns the collection', function() {
       var collection = [1, 2, 3, 4];
       equal(_.forEach(collection, Boolean), collection);
+    });
+
+    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+      var object = {};
+      _.forEach(shadowed, function(value, key) {
+        object[key] = value;
+      });
+
+      deepEqual(object, shadowed);
     });
   }());
 
@@ -171,6 +211,17 @@
   (function() {
     test('returns `true` for `new Number(NaN)`', function() {
       equal(_.isNaN(new Number(NaN)), true)
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.keys');
+
+  (function() {
+    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+      deepEqual(_.keys(shadowed).sort(),
+        'constructor hasOwnProperty isPrototypeOf propertyIsEnumerable toLocaleString toString valueOf'.split(' '));
     });
   }());
 

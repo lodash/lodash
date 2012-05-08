@@ -5,7 +5,7 @@
   /** The Node filesystem module */
   var fs = require('fs');
 
-  /** Used to minify string values used by `iterationFactory` and its options */
+  /** Used to minify string values used by `compileIterator` and its options */
   var compiledValues = [
     'arrays',
     'objects'
@@ -55,18 +55,24 @@
     'value'
   ];
 
-  /** Used to minify `iterationFactory` option properties */
-  var iterationFactoryOptions = [
+  /** Used to minify `compileIterator` option properties */
+  var iteratorOptions = [
     'args',
     'array',
+    'arrayBranch',
     'beforeLoop',
     'bottom',
     'exit',
+    'firstArg',
+    'hasExp',
+    'hasDontEnumBug',
     'inLoop',
     'init',
     'iterate',
+    'iteratedObject',
     'loopExp',
     'object',
+    'objectBranch',
     'top',
     'useHas'
   ];
@@ -113,7 +119,7 @@
 
     // add brackets to whitelisted properties so Closure Compiler won't mung them.
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
-    source = source.replace(RegExp('\\.(' + iterationFactoryOptions.concat(propWhitelist).join('|') + ')\\b', 'g'), "['$1']");
+    source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");
 
     // remove whitespace from string literals
     source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {
@@ -122,10 +128,10 @@
       });
     });
 
-    // minify `sortBy` and `template` methods
-    ['sortBy', 'template'].forEach(function(methodName) {
+    // minify `_.sortBy` internal properties
+    (function() {
       var properties = ['criteria', 'value'],
-          snippet = source.match(RegExp('(\\n\\s*)function ' + methodName + '[\\s\\S]+?\\1}'))[0],
+          snippet = source.match(RegExp('( +)function sortBy[\\s\\S]+?\\n\\1}'))[0],
           result = snippet;
 
       // minify property strings
@@ -135,36 +141,60 @@
 
       // replace with modified snippet
       source = source.replace(snippet, result);
-    });
+    }());
 
-    // minify all `iterationFactory` related snippets
+    // minify all compilable snippets
     source.match(
       RegExp([
-        // match variables storing `iterationFactory` options
-        'var [a-zA-Z]+FactoryOptions\\s*=\\s*\\{[\\s\\S]+?};\\n',
-        // match the the `iterationFactory` function
-        '(\\n\\s*)function iterationFactory[\\s\\S]+?\\1}',
-        // match methods created by `iterationFactor` calls
-        'iterationFactory\\((?:[\'{]|[a-zA-Z]+,)[\\s\\S]+?\\);\\n'
+        // match the `iterationTemplate`
+        '( +)var iteratorTemplate[\\s\\S]+?\\n\\1}',
+        // match variables storing `createIterator` options
+        '( +)var [a-zA-Z]+IteratorOptions[\\s\\S]+?\\n\\2}',
+        // match the the `createIterator` function
+        '( +)function createIterator[\\s\\S]+?\\n\\3}',
+        // match methods created by `createIterator` calls
+        'createIterator\\((?:[\'{]|[a-zA-Z]+,)[\\s\\S]+?\\);\\n'
       ].join('|'), 'g')
     )
     .forEach(function(snippet, index) {
-      var result = snippet;
+      var isCreateIterator = /function createIterator/.test(snippet),
+          isIteratorTemplate = /var iteratorTemplate/.test(snippet),
+          result = snippet;
 
-      // add `true` and `false` arguments to be minified
-      if (/function iterationFactory/.test(snippet)) {
+      if (isIteratorTemplate) {
+        // minify delimiters
         result = result
-          .replace(/(Function\('[\s\S]+?)undefined/, '$1true,false,undefined')
-          .replace(/\)\([^)]+/, '$&,true,false');
+          .replace(/<%=/g, '#')
+          .replace(/<%/g, '@')
+          .replace(/%>/g, '%');
 
-        // replace with modified snippet early and clip snippet
-        source = source.replace(snippet, result);
-        snippet = result = result.replace(/\)\([\s\S]+$/, '');
+        // minify delimiter regexps
+        result = result
+          .replace(/('evaluate':)[^,}]+/, '$1/@([\\s\\S]+?)%/g')
+          .replace(/('interpolate':)[^,}]+/, '$1/#([\\s\\S]+?)%/g');
+      }
+      else {
+        // add brackets to whitelisted properties so Closure Compiler won't mung them.
+        // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
+        result = result.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
       }
 
-      // minify snippet variables/arguments
+      if (isCreateIterator) {
+        // add `true` and `false` arguments to be minified
+        result = result
+          .replace(/(Function\(\s*'[\s\S]+?)undefined/, '$1true,false,undefined')
+          .replace(/factory\([^)]+/, '$&,true,false');
+
+        // replace with modified snippet early and clip snippet so other arguments
+        // aren't minified
+        source = source.replace(snippet, result);
+        snippet = result = result.replace(/factory\([\s\S]+$/, '');
+      }
+
+      // minify snippet variables / arguments
       compiledVars.forEach(function(variable, index) {
-        result = result.replace(RegExp('([^.]\\b|\\\\n)' + variable + '\\b(?!\'\\s*[\\]:])', 'g'), '$1' + minNames[index]);
+        // ensure properties aren't minified
+        result = result.replace(RegExp('([^.]\\b|\\\\n)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
 
         // correct `typeof x == 'object'`
         if (variable == 'object') {
@@ -173,26 +203,35 @@
         // correct boolean literals
         if (variable == 'true' || variable == 'false') {
           result = result
-            .replace(RegExp(':\\s*' + minNames[index] + '\\s*,', 'g'), ':' + variable + ',')
-            .replace(RegExp('\\s*' + minNames[index] + '\\s*;', 'g'), variable + ';');
-        }
-        if (variable == 'slice') {
-          // correct `slice.call(arguments)`
-          result = result.replace(RegExp('\\b' + minNames[index] + '(\\.call\\(arguments\\))'), 'slice$1');
+            .replace(RegExp(': *' + minNames[index] + ' *,', 'g'), ':' + variable + ',')
+            .replace(RegExp(' *' + minNames[index] + ' *;', 'g'), variable + ';');
         }
       });
 
-      // minify snippet values
+      // minify snippet string values
       compiledValues.forEach(function(value, index) {
         result = result.replace(RegExp("'" + value + "'", 'g'), "'" + minNames[index] + "'");
       });
 
-      // minify iterationFactory option property strings
-      iterationFactoryOptions.forEach(function(property, index) {
-        if (property == 'array' || property == 'object') {
-          result = result.replace(RegExp("'" + property + "'(\\s*[\\]:])", 'g'), "'" + minNames[index] + "'$1");
-        } else {
-          result = result.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
+      // minify `createIterator` option property names
+      iteratorOptions.forEach(function(property, index) {
+        if (isIteratorTemplate) {
+          // minify property names and accessors
+          result = result.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
+        }
+        else {
+          if (property == 'array' || property == 'object') {
+            // minify "array" and "object" sub property names
+            result = result.replace(RegExp("'" + property + "'(\\s*[\\]:])", 'g'), "'" + minNames[index] + "'$1");
+          }
+          else {
+            // minify property name strings
+            result = result.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
+            // minify property names in regexps and accessors
+            if (isCreateIterator) {
+              result = result.replace(RegExp('([\\.|/])' + property + '\\b' , 'g'), '$1' + minNames[index]);
+            }
+          }
         }
       });
 
@@ -208,7 +247,8 @@
   // expose `preprocess`
   if (module != require.main) {
     module.exports = preprocess;
-  } else {
+  }
+  else {
     // read the JavaScript source file from the first argument if the script
     // was invoked directly (e.g. `node pre-compile.js source.js`) and write to
     // the same file

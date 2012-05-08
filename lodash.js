@@ -102,8 +102,8 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** The template used to create iteration functions */
-  var iterationTemplate = template(
+  /** The template used to create iterator functions */
+  var iteratorTemplate = template(
     // assign the `result` variable an initial value
     'var index, result<% if (init) { %> = <%= init %><% } %>;\n' +
     // add code to exit early or do so if the first argument is falsey
@@ -175,14 +175,14 @@
     'interpolate': reInterpolateDelimiter
   });
 
-  /** Reusable template data for `_.every` */
-  var everyFactoryOptions = {
+  /** Reusable iterator options for `_.every` */
+  var everyIteratorOptions = {
     'init': 'true',
     'inLoop': 'if (!callback(collection[index], index, collection)) return !result'
   };
 
-  /** Reusable template data for `_.extend` */
-  var extendFactoryOptions = {
+  /** Reusable iterator options for `_.extend` */
+  var extendIteratorOptions = {
     'args': 'object',
     'init': 'object',
     'top':
@@ -194,14 +194,14 @@
     'bottom': '}'
   };
 
-  /** Reusable template data for `_.filter` */
-  var filterFactoryOptions = {
+  /** Reusable iterator options for `_.filter` */
+  var filterIteratorOptions = {
     'init': '[]',
     'inLoop': 'callback(collection[index], index, collection) && result.push(collection[index])'
   };
 
-  /** Reusable template data for `_.forEach` */
-  var forEachFactoryOptions = {
+  /** Reusable iterator options for `_.forEach` */
+  var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'init': 'collection',
     'top':
@@ -214,8 +214,8 @@
     'inLoop': 'callback(collection[index], index, collection)'
   };
 
-  /** Reusable template data for `_.map` */
-  var mapFactoryOptions = {
+  /** Reusable iterator options for `_.map` */
+  var mapIteratorOptions = {
     'init': '',
     'exit': 'if (!collection) return []',
     'beforeLoop': {
@@ -228,8 +228,8 @@
     }
   };
 
-  /** Reusable template data for `_.max` */
-  var maxFactoryOptions = {
+  /** Reusable iterator options for `_.max` */
+  var maxIteratorOptions = {
     'top':
       'var current, computed = -Infinity, result = computed;\n' +
       'if (!callback) {\n' +
@@ -420,7 +420,7 @@
     if (firstArg == 'object' || iterate == 'objects') {
       data.arrayBranch = null;
     }
-    else if (firstArg == 'array' || iterate == 'arrays') {
+    if (firstArg == 'array' || iterate == 'arrays') {
       data.objectBranch = null;
     }
     else if (!objectBranch.loopExp) {
@@ -430,7 +430,7 @@
     var factory = Function(
         'arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf, ' +
         'Infinity, isArray, isEmpty, shadowed, slice, stringClass, toString, undefined',
-      '"use strict"; return function(' + args + ') {\n' + iterationTemplate(data) + '\n}'
+      '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
@@ -547,7 +547,7 @@
    * _.every([true, 1, null, 'yes'], Boolean);
    * => false
    */
-  var every = createIterator(forEachFactoryOptions, everyFactoryOptions);
+  var every = createIterator(forEachIteratorOptions, everyIteratorOptions);
 
   /**
    * Examines each value in a `collection`, returning an array of all values the
@@ -568,7 +568,7 @@
    * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [2, 4, 6]
    */
-  var filter = createIterator(forEachFactoryOptions, filterFactoryOptions);
+  var filter = createIterator(forEachIteratorOptions, filterIteratorOptions);
 
   /**
    * Examines each value in a `collection`, returning the first one the `callback`
@@ -590,7 +590,7 @@
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => 2
    */
-  var find = createIterator(forEachFactoryOptions, {
+  var find = createIterator(forEachIteratorOptions, {
     'inLoop': 'if (callback(collection[index], index, collection)) return collection[index]'
   });
 
@@ -616,7 +616,7 @@
    * _.forEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
    * // => alerts each number in turn...
    */
-  var forEach = createIterator(forEachFactoryOptions);
+  var forEach = createIterator(forEachIteratorOptions);
 
   /**
    * Splits a `collection` into sets, grouped by the result of running each value
@@ -640,7 +640,7 @@
    * _.groupBy(['one', 'two', 'three'], 'length');
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
-  var groupBy = createIterator(forEachFactoryOptions, {
+  var groupBy = createIterator(forEachIteratorOptions, {
     'init': '{}',
     'top':
       'var prop, isFunc = toString.call(callback) == funcClass;\n' +
@@ -674,7 +674,7 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9]
    */
-  var map = createIterator(forEachFactoryOptions, mapFactoryOptions);
+  var map = createIterator(forEachIteratorOptions, mapIteratorOptions);
 
   /**
    * Retrieves the maximum value of a `collection`. If `callback` is passed,
@@ -701,7 +701,7 @@
    * _.max(stooges, function(stooge) { return stooge.age; });
    * // => { 'name': 'curly', 'age': 60 };
    */
-  var max = createIterator(forEachFactoryOptions, maxFactoryOptions);
+  var max = createIterator(forEachIteratorOptions, maxIteratorOptions);
 
   /**
    * Retrieves the minimum value of a `collection`. If `callback` is passed,
@@ -722,9 +722,9 @@
    * _.min([10, 5, 100, 2, 1000]);
    * // => 2
    */
-  var min = createIterator(forEachFactoryOptions, maxFactoryOptions, {
-    'top': maxFactoryOptions.top.replace('-', '').replace('max', 'min'),
-    'inLoop': maxFactoryOptions.inLoop.replace('>=', '<')
+  var min = createIterator(forEachIteratorOptions, maxIteratorOptions, {
+    'top': maxIteratorOptions.top.replace('-', '').replace('max', 'min'),
+    'inLoop': maxIteratorOptions.inLoop.replace('>=', '<')
   });
 
   /**
@@ -747,7 +747,7 @@
    * _.pluck(stooges, 'name');
    * // => ['moe', 'larry', 'curly']
    */
-  var pluck = createIterator(mapFactoryOptions, {
+  var pluck = createIterator(mapIteratorOptions, {
     'args': 'collection, property',
     'inLoop': {
       'array':  'result[index] = collection[index][property]',
@@ -870,8 +870,8 @@
    * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [1, 3, 5]
    */
-  var reject = createIterator(forEachFactoryOptions, filterFactoryOptions, {
-    'inLoop': '!' + filterFactoryOptions.inLoop
+  var reject = createIterator(forEachIteratorOptions, filterIteratorOptions, {
+    'inLoop': '!' + filterIteratorOptions.inLoop
   });
 
   /**
@@ -960,9 +960,9 @@
    * _.some([null, 0, 'yes', false]);
    * // => true
    */
-  var some = createIterator(forEachFactoryOptions, everyFactoryOptions, {
+  var some = createIterator(forEachIteratorOptions, everyIteratorOptions, {
     'init': 'false',
-    'inLoop': everyFactoryOptions.inLoop.replace('!', '')
+    'inLoop': everyIteratorOptions.inLoop.replace('!', '')
   });
 
   /**
@@ -1007,7 +1007,7 @@
    * _.values({ 'one': 1, 'two': 2, 'three': 3 });
    * // => [1, 2, 3]
    */
-  var values = createIterator(mapFactoryOptions, {
+  var values = createIterator(mapIteratorOptions, {
     'args': 'collection',
     'inLoop': {
       'array':  'result[index] = collection[index]',
@@ -2048,8 +2048,8 @@
    * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'lots' });
    * // => { 'flavor': 'chocolate', 'sprinkles': 'lots' }
    */
-  var defaults = createIterator(extendFactoryOptions, {
-    'inLoop': 'if (object[index] == undefined)' + extendFactoryOptions.inLoop
+  var defaults = createIterator(extendIteratorOptions, {
+    'inLoop': 'if (object[index] == undefined)' + extendIteratorOptions.inLoop
   });
 
   /**
@@ -2067,7 +2067,7 @@
    * _.extend({ 'name': 'moe' }, { 'age': 40 });
    * // => { 'name': 'moe', 'age': 40 }
    */
-  var extend = createIterator(extendFactoryOptions);
+  var extend = createIterator(extendIteratorOptions);
 
   /**
    * Produces a sorted array of the properties, own and inherited, of `object`

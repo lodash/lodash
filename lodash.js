@@ -36,6 +36,15 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
+  /** Used to match the "escape" template delimiters */
+  var reEscapeDelimiter = /<%-([\s\S]+?)%>/g;
+
+  /** Used to match the "evaluate" template delimiters */
+  var reEvaluateDelimiter = /<%([\s\S]+?)%>/g;
+
+  /** Used to match the "interpolate" template delimiters */
+  var reInterpolateDelimiter = /<%=([\s\S]+?)%>/g;
+
   /** Used to detect if a method is native */
   var reNative = /\{\s*\[native code\]\s*\}/;
 
@@ -54,7 +63,7 @@
   /** Used to replace template delimiters */
   var token = '__token__';
 
-  /** Used store tokenized template text code snippets */
+  /** Used to store tokenized template text snippets */
   var tokenized = [];
 
   /** Object#toString result shortcuts */
@@ -91,76 +100,155 @@
   var clearTimeout = window.clearTimeout,
       setTimeout = window.setTimeout;
 
-  /** Compilation options for `_.every` */
+  /*--------------------------------------------------------------------------*/
+
+  /** The template used to create iteration functions */
+  var iterationTemplate = template(
+    // assign the `result` variable an initial value
+    'var index, result<% if (init) { %> = <%= init %><% } %>;\n' +
+    // add code to exit early or do so if the first argument is falsey
+    '<%= exit %>;\n' +
+    // add code after the exit snippet but before the iteration branches
+    '<%= top %>;\n' +
+
+    // the following branch is for iterating arrays and array-like objects
+    '<% if (arrayBranch) { %>' +
+    '  var length = <%= firstArg %>.length; index = -1;\n' +
+    '  <% if (objectBranch) { %>if (length === +length) {\n<% } %>' +
+    '  <%= arrayBranch.beforeLoop %>;\n' +
+    '  while (<%= arrayBranch.loopExp %>) {\n' +
+    '    <%= arrayBranch.inLoop %>;\n' +
+    '  }\n' +
+    '  <% if (objectBranch) { %>}\n<% } %>' +
+    '<% } %>' +
+
+    // the following branch is for iterating an object's own/inherited properties
+    '<% if (objectBranch) { %>' +
+    '  <% if (arrayBranch) { %>\nelse {\n<% } %>' +
+    '  <% if (!hasDontEnumBug) { %>var skipProto = typeof <%= iteratedObject %> == \'function\';\n<% } %>' +
+    '  <%= objectBranch.beforeLoop %>;\n' +
+    '  for (<%= objectBranch.loopExp %>) {\n' +
+    '    <% if (hasDontEnumBug) { %>' +
+    '      <% if (useHas) { %>if (<%= hasExp %>) {\n<% } %>' +
+    '      <%= objectBranch.inLoop %>;\n' +
+    '      <% if (useHas) { %>}\n<% } %>' +
+    '    <% } else { %>' +
+
+    // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
+    // (if the prototype or a property on the prototype has been set)
+    // incorrectly sets a function's `prototype` property [[Enumerable]]
+    // value to true. Because of this Lo-Dash standardizes on skipping
+    // the the `prototype` property of functions regardless of its
+    // [[Enumerable]] value.
+    '      if (!(skipProto && index == "prototype")\n' +
+    '          <% if (useHas) { %>&& <%= hasExp %><% } %>) {\n' +
+    '        <%= objectBranch.inLoop %>;\n' +
+    '      }\n' +
+    '    <% } %>' +
+    '  }\n' +
+
+    // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
+    // existing property and the `constructor` property of a prototype
+    // defaults to non-enumerable, Lo-Dash skips the `constructor`
+    // property when it infers it's iterating over a `prototype` object.
+    '  <% if (hasDontEnumBug) { %>' +
+    '    var ctor = <%= iteratedObject %>.constructor,\n' +
+    '        skipCtor = ctor && ctor.prototype === <%= iteratedObject %>;\n' +
+    '    for (var j = 0; j < 7; j++) {\n' +
+    '      index = shadowed[j];\n' +
+    '      if (!(skipCtor && index == "constructor")\n' +
+    '          <% if (useHas) { %>&& <%= hasExp %><% } %>) {\n' +
+    '       <%= objectBranch.inLoop %>;\n' +
+    '      }\n' +
+    '    }\n' +
+    '  <% } %>' +
+
+    '  <% if (arrayBranch) { %>}\n<% } %>' +
+    '<% } %>' +
+    // add code to the bottom of the iteration function
+    '<%= bottom %>;\n' +
+    // finally, return the `result`
+    'return result'
+
+    , null, {
+    'evaluate': reEvaluateDelimiter,
+    'interpolate': reInterpolateDelimiter
+  });
+
+  /** Reusable template data for `_.every` */
   var everyFactoryOptions = {
     'init': 'true',
     'inLoop': 'if (!callback(collection[index], index, collection)) return !result'
   };
 
-  /** Compilation options for `_.extend` */
+  /** Reusable template data for `_.extend` */
   var extendFactoryOptions = {
     'args': 'object',
     'init': 'object',
     'top':
       'for (var source, j = 1, length = arguments.length; j < length; j++) {\n' +
-        'source = arguments[j]',
+      '  source = arguments[j]',
     'loopExp': 'index in source',
     'useHas': false,
     'inLoop': 'object[index] = source[index]',
     'bottom': '}'
   };
 
-  /** Compilation options for `_.filter` */
+  /** Reusable template data for `_.filter` */
   var filterFactoryOptions = {
     'init': '[]',
     'inLoop': 'callback(collection[index], index, collection) && result.push(collection[index])'
   };
 
-  /** Compilation options for `_.forEach` */
+  /** Reusable template data for `_.forEach` */
   var forEachFactoryOptions = {
     'args': 'collection, callback, thisArg',
     'init': 'collection',
     'top':
       'if (!callback) {\n' +
-        'callback = identity\n' +
+      '  callback = identity\n' +
       '}\n' +
       'else if (thisArg) {\n' +
-        'callback = bind(callback, thisArg)\n' +
+      '  callback = bind(callback, thisArg)\n' +
       '}',
     'inLoop': 'callback(collection[index], index, collection)'
   };
 
-  /** Compilation options for `_.map` */
+  /** Reusable template data for `_.map` */
   var mapFactoryOptions = {
     'init': '',
     'exit': 'if (!collection) return []',
     'beforeLoop': {
-      'array': 'result = Array(length)',
+      'array':  'result = Array(length)',
       'object': 'result = []'
     },
     'inLoop': {
-      'array': 'result[index] = callback(collection[index], index, collection)',
+      'array':  'result[index] = callback(collection[index], index, collection)',
       'object': 'result.push(callback(collection[index], index, collection))'
     }
   };
 
-  /** Compilation options for `_.max` */
+  /** Reusable template data for `_.max` */
   var maxFactoryOptions = {
     'top':
       'var current, computed = -Infinity, result = computed;\n' +
       'if (!callback) {\n' +
-        'if (isArray(collection) && collection[0] === +collection[0]) {\n' +
-          'try { return Math.max.apply(Math, collection); } catch(e) { }\n' +
-        '}\n' +
-        'if (isEmpty(collection))' +
-          'return result\n' +
-      '} else if (thisArg) callback = bind(callback, thisArg)',
+      '  if (isArray(collection) && collection[0] === +collection[0]) {\n' +
+      '    try { return Math.max.apply(Math, collection); } catch(e) { }\n' +
+      '  }\n' +
+      '  if (isEmpty(collection)) {\n' +
+      '    return result\n' +
+      '  }\n' +
+      '} else if (thisArg) {\n' +
+      '  callback = bind(callback, thisArg)\n' +
+      '}',
     'inLoop':
       'current = callback' +
-        '? callback(collection[index], index, collection)' +
-        ': collection[index];\n' +
-      'if (current >= computed)' +
-        'computed = current, result = collection[index]'
+      '  ? callback(collection[index], index, collection)' +
+      '  : collection[index];\n' +
+      'if (current >= computed) {\n' +
+      '  computed = current, result = collection[index]\n' +
+      '}'
   };
 
   /*--------------------------------------------------------------------------*/
@@ -232,7 +320,7 @@
    * _.isEmpty({});
    * // => true
    */
-  var isEmpty = iterationFactory({
+  var isEmpty = createIterator({
     'args': 'value',
     'iterate': 'objects',
     'init': 'true',
@@ -245,31 +333,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Used by `template()` to replace tokens with their corresponding code snippets.
-   *
-   * @private
-   * @param {String} match The matched token.
-   * @param {String} index The `tokenized` index of the code snippet.
-   * @returns {String} Returns the code snippet.
-   */
-  function detokenize(match, index) {
-    return tokenized[index];
-  }
-
-  /**
-   * Used by `template()` to escape characters for inclusion in compiled
-   * string literals.
-   *
-   * @private
-   * @param {String} match The matched character to escape.
-   * @returns {String} Returns the escaped character.
-   */
-  function escapeChar(match) {
-    return '\\' + escapes[match];
-  }
-
-  /**
-   * Compiles iteration functions.
+   * Creates compiled iteration functions.
    *
    * @private
    * @param {Object} [options1, options2, ..] The compile options objects.
@@ -303,134 +367,100 @@
    *
    * @returns {Function} Returns the compiled function.
    */
-  function iterationFactory() {
-    var arg,
+  function createIterator() {
+    var object,
         prop,
-        args = slice.call(arguments),
-        array = {},
-        object = {},
-        options = {},
-        props = ['beforeLoop', 'loopExp', 'inLoop'];
+        value,
+        index = -1,
+        length = arguments.length;
 
-    // use simple loops to merge options because `extend` isn't defined yet
-    while ((arg = args.shift())) {
-      for (prop in arg) {
-        options[prop] = arg[prop];
+    // merge options into a template data object
+    var data = {
+      'bottom': '',
+      'exit': '',
+      'init': '',
+      'top': '',
+      'arrayBranch': { 'loopExp': '++index < length' },
+      'objectBranch': {}
+    };
+
+    while (++index < length) {
+      object = arguments[index];
+      for (prop in object) {
+        value = (value = object[prop]) == null ? '' : value;
+        // keep this regexp explicit for the build pre-process
+        if (/beforeLoop|loopExp|inLoop/.test(prop)) {
+          if (typeof value == 'string') {
+            value = { 'array': value, 'object': value };
+          }
+          data.arrayBranch[prop] = value.array;
+          data.objectBranch[prop] = value.object;
+        } else {
+          data[prop] = value;
+        }
       }
     }
-    // assign the `array` and `object` branch options
-    while ((prop = props.pop())) {
-      if (typeof options[prop] == 'object') {
-        array[prop] = options[prop].array;
-        object[prop] = options[prop].object;
-      } else {
-        array[prop] = object[prop] = options[prop] || '';
-      }
-    }
-
-    var args = options.args,
+    // set additional template data values
+    var args = data.args,
+        arrayBranch = data.arrayBranch,
+        objectBranch = data.objectBranch,
         firstArg = /^[^,]+/.exec(args)[0],
-        init = options.init,
-        iterate = options.iterate,
-        iteratedObject = /\S+$/.exec(object.loopExp || firstArg)[0],
-        hasExp = 'hasOwnProperty.call(' + iteratedObject + ', index)',
-        arrayBranch = !(firstArg == 'object' || iterate == 'objects'),
-        objectBranch = !(firstArg == 'array' || iterate == 'arrays'),
-        useHas = options.useHas !== false;
+        iterate = data.iterate,
+        iteratedObject = /\S+$/.exec(objectBranch.loopExp || firstArg)[0];
 
-    // all strings used to compile methods are minified during the build process
-    return Function('arrayClass, bind, concat, funcClass, hasOwnProperty, identity, ' +
-                    'indexOf, Infinity, isArray, isEmpty, shadowed, slice, ' +
-                    'stringClass, toString, undefined',
-      // compile the function in strict mode
-      '"use strict";' +
-      // compile the arguments the function accepts
-      'return function(' + args + ') {\n' +
-        // assign the `result` variable an initial value
-        ('var index, result' + (init ? '=' + init : '')) + ';\n' +
-        // add code to exit early or do so if the first argument is falsey
-        (options.exit || 'if (!' + firstArg + ') return result') + ';\n' +
-        // add code after the exit snippet but before the iteration branches
-        (options.top || '') + ';\n' +
-        // the following branch is for iterating arrays and array-like objects
-        (arrayBranch
-            // initialize `length` and `index` variables
-          ? 'var length = ' + firstArg + '.length;\n' +
-            'index = -1;\n' +
-            // check if the `collection` is array-like when there is an object iteration branch
-            ((objectBranch ? 'if (length === +length) {\n'  : '') +
-            // add code before the while-loop
-            (array.beforeLoop || '') + ';\n' +
-            // add a custom loop expression
-            'while (' + (array.loopExp || '++index < length') + ') {\n' +
-              // add code inside the while-loop
-              array.inLoop +
-            '\n}' +
-            // end the array-like if-statement
-            (objectBranch ? '\n}\n' : ''))
-          : ''
-        ) +
-        // the following branch is for iterating an object's own/inherited properties
-        (objectBranch
-            // begin the else-statement when there is an array-like iteration branch
-          ? ((arrayBranch ? 'else {\n' : '') +
-            // initialize object iteration flags for modern browsers
-            (hasDontEnumBug ? '' : 'var skipProto = typeof ' + iteratedObject + ' == "function";\n') +
-            // add code before the for-in loop
-            (object.beforeLoop || '') + ';\n' +
-            // add a custom loop expression
-            'for (' + (object.loopExp || 'index in ' + firstArg) + ') {\n' +
-              (hasDontEnumBug
-                ? // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
-                  (useHas ? 'if (' + hasExp + ') {\n' : '') +
-                    // add code inside the for-in loop
-                    object.inLoop +
-                  (useHas ? '\n}' : '')
-                : // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
-                  // (if the prototype or a property on the prototype has been set)
-                  // incorrectly sets a function's `prototype` property [[Enumerable]]
-                  // value to true. Because of this Lo-Dash standardizes on skipping
-                  // the the `prototype` property of functions regardless of its
-                  // [[Enumerable]] value.
-                  'if (!(skipProto && index == "prototype")' +
-                      // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
-                      (useHas ? '\n&& ' + hasExp : '') +
-                      '\n) {' +
-                    // add code inside the for-in loop
-                    object.inLoop +
-                  '\n}'
-              ) +
-            '\n}' +
-            (hasDontEnumBug
-              ? // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
-                // existing property and the `constructor` property of a prototype
-                // defaults to non-enumerable, Lo-Dash skips the `constructor`
-                // property when it infers it's iterating over a `prototype` object.
-                'var ctor = ' + iteratedObject + '.constructor,\n' +
-                    'skipCtor = ctor && ctor.prototype && ctor.prototype.constructor === ctor;\n' +
-                'for (var j = 0; j < 7; j++) {\n' +
-                  'index = shadowed[j];\n' +
-                  'if (!(skipCtor && index == "constructor")' +
-                      // compile in `hasOwnProperty` checks when `options.useHas` is not `false`
-                      (useHas ? '\n&& ' + hasExp : '') +
-                      '\n) {' +
-                    // add code inside the for-in loop
-                    object.inLoop +
-                  '\n}' +
-                '\n}'
-              : ''
-            ) +
-            // end the object iteration else-statement
-            (arrayBranch ? '\n}\n' : ''))
-          : ''
-        ) +
-        // add code to the bottom of the iteration method
-        (options.bottom || '') + ';\n' +
-        // finally, return the `result`
-        'return result' +
-      '\n}'
-    )(arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf,
-      Infinity, isArray, isEmpty, shadowed, slice, stringClass, toString);
+    data.firstArg = firstArg;
+    data.hasDontEnumBug = hasDontEnumBug;
+    data.hasExp = 'hasOwnProperty.call(' + iteratedObject + ', index)';
+    data.iteratedObject = iteratedObject;
+    data.useHas = data.useHas !== false;
+
+    if (!data.exit) {
+      data.exit = 'if (' + firstArg + ' == null) return result';
+    }
+    if (firstArg == 'object' || iterate == 'objects') {
+      data.arrayBranch = null;
+    }
+    else if (firstArg == 'array' || iterate == 'arrays') {
+      data.objectBranch = null;
+    }
+    else if (!objectBranch.loopExp) {
+      objectBranch.loopExp = 'index in ' + iteratedObject;
+    }
+    // create the function factory
+    var factory = Function(
+        'arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf, ' +
+        'Infinity, isArray, isEmpty, shadowed, slice, stringClass, toString, undefined',
+      '"use strict"; return function(' + args + ') {\n' + iterationTemplate(data) + '\n}'
+    );
+    // return the compiled function
+    return factory(
+      arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf,
+      Infinity, isArray, isEmpty, shadowed, slice, stringClass, toString
+    );
+  }
+
+  /**
+   * Used by `template()` to replace tokens with their corresponding code snippets.
+   *
+   * @private
+   * @param {String} match The matched token.
+   * @param {String} index The `tokenized` index of the code snippet.
+   * @returns {String} Returns the code snippet.
+   */
+  function detokenize(match, index) {
+    return tokenized[index];
+  }
+
+  /**
+   * Used by `template()` to escape characters for inclusion in compiled
+   * string literals.
+   *
+   * @private
+   * @param {String} match The matched character to escape.
+   * @returns {String} Returns the escaped character.
+   */
+  function escapeChar(match) {
+    return '\\' + escapes[match];
   }
 
   /**
@@ -493,7 +523,7 @@
    * _.contains([1, 2, 3], 3);
    * // => true
    */
-  var contains = iterationFactory({
+  var contains = createIterator({
     'args': 'collection, target',
     'init': 'false',
     'inLoop': 'if (collection[index] === target) return true'
@@ -517,7 +547,7 @@
    * _.every([true, 1, null, 'yes'], Boolean);
    * => false
    */
-  var every = iterationFactory(forEachFactoryOptions, everyFactoryOptions);
+  var every = createIterator(forEachFactoryOptions, everyFactoryOptions);
 
   /**
    * Examines each value in a `collection`, returning an array of all values the
@@ -538,7 +568,7 @@
    * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [2, 4, 6]
    */
-  var filter = iterationFactory(forEachFactoryOptions, filterFactoryOptions);
+  var filter = createIterator(forEachFactoryOptions, filterFactoryOptions);
 
   /**
    * Examines each value in a `collection`, returning the first one the `callback`
@@ -560,7 +590,7 @@
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => 2
    */
-  var find = iterationFactory(forEachFactoryOptions, {
+  var find = createIterator(forEachFactoryOptions, {
     'inLoop': 'if (callback(collection[index], index, collection)) return collection[index]'
   });
 
@@ -586,7 +616,7 @@
    * _.forEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
    * // => alerts each number in turn...
    */
-  var forEach = iterationFactory(forEachFactoryOptions);
+  var forEach = createIterator(forEachFactoryOptions);
 
   /**
    * Splits a `collection` into sets, grouped by the result of running each value
@@ -610,15 +640,15 @@
    * _.groupBy(['one', 'two', 'three'], 'length');
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
-  var groupBy = iterationFactory(forEachFactoryOptions, {
+  var groupBy = createIterator(forEachFactoryOptions, {
     'init': '{}',
     'top':
       'var prop, isFunc = toString.call(callback) == funcClass;\n' +
       'if (isFunc && thisArg) callback = bind(callback, thisArg)',
     'inLoop':
-      'prop = isFunc' +
-        '? callback(collection[index], index, collection)' +
-        ': collection[index][callback];\n' +
+      'prop = isFunc\n' +
+      '  ? callback(collection[index], index, collection)\n' +
+      '  : collection[index][callback];\n' +
       '(result[prop] || (result[prop] = [])).push(collection[index])'
   });
 
@@ -644,7 +674,7 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9]
    */
-  var map = iterationFactory(forEachFactoryOptions, mapFactoryOptions);
+  var map = createIterator(forEachFactoryOptions, mapFactoryOptions);
 
   /**
    * Retrieves the maximum value of a `collection`. If `callback` is passed,
@@ -671,7 +701,7 @@
    * _.max(stooges, function(stooge) { return stooge.age; });
    * // => { 'name': 'curly', 'age': 60 };
    */
-  var max = iterationFactory(forEachFactoryOptions, maxFactoryOptions);
+  var max = createIterator(forEachFactoryOptions, maxFactoryOptions);
 
   /**
    * Retrieves the minimum value of a `collection`. If `callback` is passed,
@@ -692,7 +722,7 @@
    * _.min([10, 5, 100, 2, 1000]);
    * // => 2
    */
-  var min = iterationFactory(forEachFactoryOptions, maxFactoryOptions, {
+  var min = createIterator(forEachFactoryOptions, maxFactoryOptions, {
     'top': maxFactoryOptions.top.replace('-', '').replace('max', 'min'),
     'inLoop': maxFactoryOptions.inLoop.replace('>=', '<')
   });
@@ -717,10 +747,10 @@
    * _.pluck(stooges, 'name');
    * // => ['moe', 'larry', 'curly']
    */
-  var pluck = iterationFactory(mapFactoryOptions, {
+  var pluck = createIterator(mapFactoryOptions, {
     'args': 'collection, property',
     'inLoop': {
-      'array': 'result[index] = collection[index][property]',
+      'array':  'result[index] = collection[index][property]',
       'object': 'result.push(collection[index][property])'
     }
   });
@@ -747,7 +777,7 @@
    * var sum = _.reduce([1, 2, 3], function(memo, num) { return memo + num; });
    * // => 6
    */
-  var reduce = iterationFactory({
+  var reduce = createIterator({
     'args': 'collection, callback, accumulator, thisArg',
     'init': 'accumulator',
     'top':
@@ -761,8 +791,8 @@
         'result = callback(result, collection[index], index, collection)',
       'object':
         'result = noaccum\n' +
-          '? (noaccum = false, collection[index])\n' +
-          ': callback(result, collection[index], index, collection)'
+        '  ? (noaccum = false, collection[index])\n' +
+        '  : callback(result, collection[index], index, collection)'
     }
   });
 
@@ -840,7 +870,7 @@
    * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [1, 3, 5]
    */
-  var reject = iterationFactory(forEachFactoryOptions, filterFactoryOptions, {
+  var reject = createIterator(forEachFactoryOptions, filterFactoryOptions, {
     'inLoop': '!' + filterFactoryOptions.inLoop
   });
 
@@ -930,7 +960,7 @@
    * _.some([null, 0, 'yes', false]);
    * // => true
    */
-  var some = iterationFactory(forEachFactoryOptions, everyFactoryOptions, {
+  var some = createIterator(forEachFactoryOptions, everyFactoryOptions, {
     'init': 'false',
     'inLoop': everyFactoryOptions.inLoop.replace('!', '')
   });
@@ -977,10 +1007,10 @@
    * _.values({ 'one': 1, 'two': 2, 'three': 3 });
    * // => [1, 2, 3]
    */
-  var values = iterationFactory(mapFactoryOptions, {
+  var values = createIterator(mapFactoryOptions, {
     'args': 'collection',
     'inLoop': {
-      'array': 'result[index] = collection[index]',
+      'array':  'result[index] = collection[index]',
       'object': 'result.push(collection[index])'
     }
   });
@@ -2018,7 +2048,7 @@
    * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'lots' });
    * // => { 'flavor': 'chocolate', 'sprinkles': 'lots' }
    */
-  var defaults = iterationFactory(extendFactoryOptions, {
+  var defaults = createIterator(extendFactoryOptions, {
     'inLoop': 'if (object[index] == undefined)' + extendFactoryOptions.inLoop
   });
 
@@ -2037,7 +2067,7 @@
    * _.extend({ 'name': 'moe' }, { 'age': 40 });
    * // => { 'name': 'moe', 'age': 40 }
    */
-  var extend = iterationFactory(extendFactoryOptions);
+  var extend = createIterator(extendFactoryOptions);
 
   /**
    * Produces a sorted array of the properties, own and inherited, of `object`
@@ -2054,7 +2084,7 @@
    * _.functions(_);
    * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
    */
-  var functions = iterationFactory({
+  var functions = createIterator({
     'args': 'object',
     'init': '[]',
     'useHas': false,
@@ -2496,7 +2526,7 @@
    * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
    * // => ['one', 'two', 'three']
    */
-  var keys = nativeKeys || iterationFactory({
+  var keys = nativeKeys || createIterator({
     'args': 'object',
     'exit': 'if (object !== Object(object)) throw TypeError()',
     'init': '[]',
@@ -2749,23 +2779,38 @@
    * </script>
    */
   function template(text, data, options) {
-    options = defaults(options || {}, lodash.templateSettings);
+    options || (options = {});
 
     var result,
-        reEscapeDelimiter = options.escape,
-        reEvaluateDelimiter = options.evaluate,
-        reInterpolateDelimiter = options.interpolate,
+        defaults = lodash.templateSettings || {},
+        escapeDelimiter = options.escape,
+        evaluateDelimiter = options.evaluate,
+        interpolateDelimiter = options.interpolate,
         variable = options.variable;
 
+    // use template defaults if no option is provided
+    if (escapeDelimiter == null) {
+      escapeDelimiter = defaults.escape;
+    }
+    if (evaluateDelimiter == null) {
+      evaluateDelimiter = defaults.evaluate;
+    }
+    if (interpolateDelimiter == null) {
+      interpolateDelimiter = defaults.interpolate;
+    }
+    if (variable == null) {
+      variable = defaults.variable;
+    }
+
     // tokenize delimiters to avoid escaping them
-    if (reEscapeDelimiter) {
-      text = text.replace(reEscapeDelimiter, tokenizeEscape);
+    if (escapeDelimiter) {
+      text = text.replace(escapeDelimiter, tokenizeEscape);
     }
-    if (reInterpolateDelimiter) {
-      text = text.replace(reInterpolateDelimiter, tokenizeInterpolate);
+    if (interpolateDelimiter) {
+      text = text.replace(interpolateDelimiter, tokenizeInterpolate);
     }
-    if (reEvaluateDelimiter) {
-      text = text.replace(reEvaluateDelimiter, tokenizeEvaluate);
+    if (evaluateDelimiter) {
+      text = text.replace(evaluateDelimiter, tokenizeEvaluate);
     }
 
     // escape characters that cannot be included in string literals and
@@ -2934,7 +2979,7 @@
        * @memberOf _.templateSettings
        * @type RegExp
        */
-      'escape': /<%-([\s\S]+?)%>/g,
+      'escape': reEscapeDelimiter,
 
       /**
        * Used to detect code to be evaluated.
@@ -2943,7 +2988,7 @@
        * @memberOf _.templateSettings
        * @type RegExp
        */
-      'evaluate': /<%([\s\S]+?)%>/g,
+      'evaluate': reEvaluateDelimiter,
 
       /**
        * Used to detect `data` property values to inject.
@@ -2952,7 +2997,7 @@
        * @memberOf _.templateSettings
        * @type RegExp
        */
-      'interpolate': /<%=([\s\S]+?)%>/g
+      'interpolate': reInterpolateDelimiter
     },
 
     // assign static methods

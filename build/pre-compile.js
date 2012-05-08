@@ -170,8 +170,8 @@
 
         // minify delimiter regexps
         result = result
-          .replace(/('evaluate':)[^,}]+/, '$1/@([\\s\\S]+?)%/g')
-          .replace(/('interpolate':)[^,}]+/, '$1/#([\\s\\S]+?)%/g');
+          .replace(/('evaluate':)[^,}]+/, '$1/@([^%]+)%/g')
+          .replace(/('interpolate':)[^,}]+/, '$1/#([^%]+)%/g');
       }
       else {
         // add brackets to whitelisted properties so Closure Compiler won't mung them.

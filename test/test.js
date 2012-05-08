@@ -151,7 +151,7 @@
       Foo.a = 1;
       Foo.b = 2;
 
-      var expected = { 'a': 1, 'b': 2 }; console.log(_.keys(_.extend({}, Foo)))
+      var expected = { 'a': 1, 'b': 2 };
       deepEqual(_.extend({}, Foo), expected);
 
       Foo.prototype = { 'c': 3 };

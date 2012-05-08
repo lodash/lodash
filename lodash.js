@@ -113,21 +113,21 @@
 
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
-    '  var length = <%= firstArg %>.length; index = -1;' +
-    '  <% if (objectBranch) { %>\n  if (length === +length) {\n<% } %>' +
+    'var length = <%= firstArg %>.length; index = -1;' +
+    '  <% if (objectBranch) { %>\nif (length === +length) {\n<% } %>' +
     '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (<%= arrayBranch.loopExp %>) {\n' +
     '    <%= arrayBranch.inLoop %>;\n' +
     '  }' +
-    '  <% if (objectBranch) { %>\n  }\n<% }' +
+    '  <% if (objectBranch) { %>\n}\n<% }' +
     '}' +
 
     // the following branch is for iterating an object's own/inherited properties
     'if (objectBranch) {' +
-    '  if (arrayBranch) { %>  else {\n<% }' +
-    '  if (!hasDontEnumBug) { %>    var skipProto = typeof <%= iteratedObject %> == \'function\';\n<% } %>' +
+    '  if (arrayBranch) { %>else {\n<% }' +
+    '  if (!hasDontEnumBug) { %>  var skipProto = typeof <%= iteratedObject %> == \'function\';\n<% } %>' +
     '  <%= objectBranch.beforeLoop %>;\n' +
-    '  for (<%= objectBranch.loopExp %>) {\n' +
+    '  for (<%= objectBranch.loopExp %>) {' +
     '  <%' +
     '  if (hasDontEnumBug) {' +
     '    if (useHas) { %>    if (<%= hasExp %>) {\n  <% } %>' +
@@ -135,7 +135,7 @@
     '    if (useHas) { %>    }\n<% }' +
     '  }' +
     '  else {' +
-    '  %>' +
+    '  %>\n' +
 
     // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
     // (if the prototype or a property on the prototype has been set)
@@ -143,12 +143,11 @@
     // value to true. Because of this Lo-Dash standardizes on skipping
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
-    '    if (!(skipProto && index == "prototype")' +
-    '    <% if (useHas) { %>\n        && <%= hasExp %><% } %>) {\n' +
+    '    if (!(skipProto && index == "prototype")<% if (useHas) { %> && <%= hasExp %><% } %>) {\n' +
     '      <%= objectBranch.inLoop %>;\n' +
     '    }' +
-    '  <% } %>' +
-    '  }\n' +
+    '  <% } %>\n' +
+    '  }' +
 
     // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
     // existing property and the `constructor` property of a prototype
@@ -159,15 +158,14 @@
     '      skipCtor = ctor && ctor.prototype === <%= iteratedObject %>;\n' +
     '  for (var j = 0; j < 7; j++) {\n' +
     '    index = shadowed[j];\n' +
-    '    if (!(skipCtor && index == "constructor") &&\n' +
-    '        <%= hasExp %>) {\n' +
+    '    if (!(skipCtor && index == "constructor") && <%= hasExp %>) {\n' +
     '      <%= objectBranch.inLoop %>;\n' +
     '    }\n' +
-    '  }\n' +
+    '  }' +
     '<% }' +
 
-    '   if (arrayBranch) { %>\n  }\n<% }' +
-    '} %>' +
+    '   if (arrayBranch) { %>\n}<% }' +
+    '} %>\n' +
 
     // add code to the bottom of the iteration function
     '<%= bottom %>;\n' +

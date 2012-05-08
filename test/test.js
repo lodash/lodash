@@ -145,17 +145,17 @@
 
   (function() {
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
-      var expected = { 'a': 1, 'b': 2 },
-          func = function() { };
+      function Foo() {}
+      Foo.prototype.c = 3;
 
-      func.prototype.c = 3;
-      func.a = 1;
-      func.b = 2;
+      Foo.a = 1;
+      Foo.b = 2;
 
-      deepEqual(_.extend({}, func), expected);
+      var expected = { 'a': 1, 'b': 2 }; console.log(_.keys(_.extend({}, Foo)))
+      deepEqual(_.extend({}, Foo), expected);
 
-      func.prototype = { 'c': 3 };
-      deepEqual(_.extend({}, func), expected);
+      Foo.prototype = { 'c': 3 };
+      deepEqual(_.extend({}, Foo), expected);
     });
   }());
 
@@ -206,6 +206,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isEqual');
+
+  (function() {
+    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+      equal(_.isEqual(shadowed, {}), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isNaN');
 
   (function() {
@@ -220,6 +230,10 @@
 
   (function() {
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      deepEqual(_.keys(Foo.prototype), ['a']);
       deepEqual(_.keys(shadowed).sort(),
         'constructor hasOwnProperty isPrototypeOf propertyIsEnumerable toLocaleString toString valueOf'.split(' '));
     });
@@ -340,6 +354,12 @@
           data = { 'a': 'A', 'b': 'B', 'c': '<%= b %>' };
 
       equal(compiled(data), 'AB');
+    });
+
+    test('should not augment the `options` object', function() {
+      var options = {};
+      _.template('', null, options);
+      deepEqual(options, {});
     });
   }());
 

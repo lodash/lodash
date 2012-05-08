@@ -113,26 +113,29 @@
 
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
-    '  var length = <%= firstArg %>.length; index = -1;\n' +
-    '  <% if (objectBranch) { %>if (length === +length) {\n<% } %>' +
+    '  var length = <%= firstArg %>.length; index = -1;' +
+    '  <% if (objectBranch) { %>\n  if (length === +length) {\n<% } %>' +
     '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (<%= arrayBranch.loopExp %>) {\n' +
     '    <%= arrayBranch.inLoop %>;\n' +
-    '  }\n' +
-    '  <% if (objectBranch) { %>}\n<% } %>' +
-    '<% } %>' +
+    '  }' +
+    '  <% if (objectBranch) { %>\n  }\n<% }' +
+    '}' +
 
     // the following branch is for iterating an object's own/inherited properties
-    '<% if (objectBranch) { %>' +
-    '  <% if (arrayBranch) { %>\nelse {\n<% } %>' +
-    '  <% if (!hasDontEnumBug) { %>var skipProto = typeof <%= iteratedObject %> == \'function\';\n<% } %>' +
+    'if (objectBranch) {' +
+    '  if (arrayBranch) { %>  else {\n<% }' +
+    '  if (!hasDontEnumBug) { %>    var skipProto = typeof <%= iteratedObject %> == \'function\';\n<% } %>' +
     '  <%= objectBranch.beforeLoop %>;\n' +
     '  for (<%= objectBranch.loopExp %>) {\n' +
-    '    <% if (hasDontEnumBug) { %>' +
-    '      <% if (useHas) { %>if (<%= hasExp %>) {\n<% } %>' +
-    '      <%= objectBranch.inLoop %>;\n' +
-    '      <% if (useHas) { %>}\n<% } %>' +
-    '    <% } else { %>' +
+    '  <%' +
+    '  if (hasDontEnumBug) {' +
+    '    if (useHas) { %>    if (<%= hasExp %>) {\n  <% } %>' +
+    '    <%= objectBranch.inLoop %>;\n<%' +
+    '    if (useHas) { %>    }\n<% }' +
+    '  }' +
+    '  else {' +
+    '  %>' +
 
     // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
     // (if the prototype or a property on the prototype has been set)
@@ -140,11 +143,11 @@
     // value to true. Because of this Lo-Dash standardizes on skipping
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
-    '      if (!(skipProto && index == "prototype")\n' +
-    '          <% if (useHas) { %>&& <%= hasExp %><% } %>) {\n' +
-    '        <%= objectBranch.inLoop %>;\n' +
-    '      }\n' +
-    '    <% } %>' +
+    '    if (!(skipProto && index == "prototype")' +
+    '    <% if (useHas) { %>\n        && <%= hasExp %><% } %>) {\n' +
+    '      <%= objectBranch.inLoop %>;\n' +
+    '    }' +
+    '  <% } %>' +
     '  }\n' +
 
     // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
@@ -152,19 +155,20 @@
     // defaults to non-enumerable, Lo-Dash skips the `constructor`
     // property when it infers it's iterating over a `prototype` object.
     '  <% if (hasDontEnumBug) { %>' +
-    '    var ctor = <%= iteratedObject %>.constructor,\n' +
-    '        skipCtor = ctor && ctor.prototype === <%= iteratedObject %>;\n' +
-    '    for (var j = 0; j < 7; j++) {\n' +
-    '      index = shadowed[j];\n' +
-    '      if (!(skipCtor && index == "constructor")\n' +
-    '          <% if (useHas) { %>&& <%= hasExp %><% } %>) {\n' +
-    '       <%= objectBranch.inLoop %>;\n' +
-    '      }\n' +
+    '  var ctor = <%= iteratedObject %>.constructor,\n' +
+    '      skipCtor = ctor && ctor.prototype === <%= iteratedObject %>;\n' +
+    '  for (var j = 0; j < 7; j++) {\n' +
+    '    index = shadowed[j];\n' +
+    '    if (!(skipCtor && index == "constructor") &&\n' +
+    '        <%= hasExp %>) {\n' +
+    '      <%= objectBranch.inLoop %>;\n' +
     '    }\n' +
-    '  <% } %>' +
+    '  }\n' +
+    '<% }' +
 
-    '  <% if (arrayBranch) { %>}\n<% } %>' +
-    '<% } %>' +
+    '   if (arrayBranch) { %>\n  }\n<% }' +
+    '} %>' +
+
     // add code to the bottom of the iteration function
     '<%= bottom %>;\n' +
     // finally, return the `result`
@@ -282,6 +286,20 @@
   }
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Iterates over an `object`, executing the `callback` for each value in the
+   * `collection`. The `callback` is invoked with 3 arguments, (value, key, object),
+   * and may terminate the loop by explicitly returning `false`.
+   *
+   * @private
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   */
+  var forOwn = createIterator({
+    'args': 'object, callback',
+    'inLoop': 'if (callback(object[index], index, object) === false) break'
+  });
 
   /**
    * Checks if a `value` is an array.
@@ -2298,8 +2316,7 @@
       if (result) {
         // deep compare the contents, ignoring non-numeric properties
         while (size--) {
-          // ensure commutative equality for sparse arrays
-          if (!(result = size in a == size in b && isEqual(a[size], b[size], stack))) {
+          if (!(result = isEqual(a[size], b[size], stack))) {
             break;
           }
         }
@@ -2310,23 +2327,20 @@
         return false;
       }
       // deep compare objects
-      for (var prop in a) {
-        if (hasOwnProperty.call(a, prop)) {
-          // count the expected number of properties
-          size++;
-          // deep compare each member
-          if (!(result = hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack))) {
-            break;
-          }
-        }
-      }
+      forOwn(a, function(value, prop) {
+        // count the expected number of properties
+        size++;
+        // deep compare each member
+        result = hasOwnProperty.call(b, prop) && isEqual(value, b[prop], stack);
+        // exit loop if `result` is `false`
+        return result;
+      });
+
       // ensure that both objects contain the same number of properties
       if (result) {
-        for (prop in b) {
-          if (hasOwnProperty.call(b, prop) && !(size--)) {
-            break;
-          }
-        }
+        forOwn(b, function() {
+          return !!(size--);
+        });
         result = !size;
       }
     }

@@ -91,6 +91,11 @@
     test('creates a new instance when called without the `new` operator', function() {
       ok(_() instanceof _);
     });
+
+    test('should pass through LoDash instances', function() {
+      var wrapped = _([]);
+      equal(_(wrapped), wrapped);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

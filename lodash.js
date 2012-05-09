@@ -46,7 +46,9 @@
   var reInterpolateDelimiter = /<%=([\s\S]+?)%>/g;
 
   /** Used to detect if a method is native */
-  var reNative = /\{\s*\[native code\]\s*\}/;
+  var reNative = RegExp('^' + ({}.valueOf + '')
+    .replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
+    .replace(/valueOf/g, '.+?') + '$')
 
   /** Used to match tokens in template text */
   var reToken = /__token__(\d+)/g;

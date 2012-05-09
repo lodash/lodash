@@ -81,8 +81,8 @@
   /** Used protect the specified properties from getting minified */
   var propWhitelist = [
     '_',
+    '_wrapped',
     'amd',
-    'chain',
     'clearTimeout',
     'criteria',
     'escape',

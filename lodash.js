@@ -1278,7 +1278,7 @@
     }
     while (++index < length) {
       current = callback ? callback(array[index], index, array) : array[index];
-      if (current >= computed) {
+      if (current > computed) {
         computed = current;
         result = array[index];
       }

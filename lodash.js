@@ -114,7 +114,7 @@
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
     'var length = <%= firstArg %>.length; index = -1;' +
-    '  <% if (objectBranch) { %>\nif (length === +length) {\n<% } %>' +
+    '  <% if (objectBranch) { %>\nif (length === +length) {<% } %>\n' +
     '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (<%= arrayBranch.loopExp %>) {\n' +
     '    <%= arrayBranch.inLoop %>;\n' +
@@ -128,14 +128,14 @@
     '  if (!hasDontEnumBug) { %>  var skipProto = typeof <%= iteratedObject %> == \'function\';\n<% } %>' +
     '  <%= objectBranch.beforeLoop %>;\n' +
     '  for (<%= objectBranch.loopExp %>) {' +
-    '  <%' +
+    '  \n<%' +
     '  if (hasDontEnumBug) {' +
     '    if (useHas) { %>    if (<%= hasExp %>) {\n  <% } %>' +
-    '    <%= objectBranch.inLoop %>;\n<%' +
-    '    if (useHas) { %>    }\n<% }' +
+    '    <%= objectBranch.inLoop %>;<%' +
+    '    if (useHas) { %>\n    }<% }' +
     '  }' +
     '  else {' +
-    '  %>\n' +
+    '  %>' +
 
     // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
     // (if the prototype or a property on the prototype has been set)
@@ -153,11 +153,11 @@
     // existing property and the `constructor` property of a prototype
     // defaults to non-enumerable, Lo-Dash skips the `constructor`
     // property when it infers it's iterating over a `prototype` object.
-    '  <% if (hasDontEnumBug) { %>' +
+    '  <% if (hasDontEnumBug) { %>\n' +
     '  var ctor = <%= iteratedObject %>.constructor,\n' +
-    '      skipCtor = ctor && ctor.prototype === <%= iteratedObject %>;\n' +
-    '  for (var j = 0; j < 7; j++) {\n' +
-    '    index = shadowed[j];\n' +
+    '      skipCtor = ctor && ctor.prototype === <%= iteratedObject %>;\n\n' +
+    '  for (var k = 0; k < 7; k++) {\n' +
+    '    index = shadowed[k];\n' +
     '    if (!(skipCtor && index == "constructor") && <%= hasExp %>) {\n' +
     '      <%= objectBranch.inLoop %>;\n' +
     '    }\n' +
@@ -230,29 +230,6 @@
     }
   };
 
-  /** Reusable iterator options for `_.max` */
-  var maxIteratorOptions = {
-    'top':
-      'var current, computed = -Infinity, result = computed;\n' +
-      'if (!callback) {\n' +
-      '  if (isArray(collection) && collection[0] === +collection[0]) {\n' +
-      '    try { return Math.max.apply(Math, collection); } catch(e) { }\n' +
-      '  }\n' +
-      '  if (isEmpty(collection)) {\n' +
-      '    return result\n' +
-      '  }\n' +
-      '} else if (thisArg) {\n' +
-      '  callback = bind(callback, thisArg)\n' +
-      '}',
-    'inLoop':
-      'current = callback' +
-      '  ? callback(collection[index], index, collection)' +
-      '  : collection[index];\n' +
-      'if (current >= computed) {\n' +
-      '  computed = current, result = collection[index]\n' +
-      '}'
-  };
-
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -284,20 +261,6 @@
   }
 
   /*--------------------------------------------------------------------------*/
-
-  /**
-   * Iterates over an `object`, executing the `callback` for each value in the
-   * `collection`. The `callback` is invoked with 3 arguments, (value, key, object),
-   * and may terminate the loop by explicitly returning `false`.
-   *
-   * @private
-   * @param {Object} object The object to iterate over.
-   * @param {Function} callback The function called per iteration.
-   */
-  var forOwn = createIterator({
-    'args': 'object, callback',
-    'inLoop': 'if (callback(object[index], index, object) === false) break'
-  });
 
   /**
    * Checks if a `value` is an array.
@@ -691,57 +654,6 @@
    * // => [3, 6, 9]
    */
   var map = createIterator(forEachIteratorOptions, mapIteratorOptions);
-
-  /**
-   * Retrieves the maximum value of a `collection`. If `callback` is passed,
-   * it will be executed for each value in the `collection` to generate the
-   * criterion by which the value is ranked. The `callback` is invoked with 3
-   * arguments; for arrays they are (value, index, array) and for objects they
-   * are (value, key, object).
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function} [callback] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Mixed} Returns the maximum value.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
-   * ];
-   *
-   * _.max(stooges, function(stooge) { return stooge.age; });
-   * // => { 'name': 'curly', 'age': 60 };
-   */
-  var max = createIterator(forEachIteratorOptions, maxIteratorOptions);
-
-  /**
-   * Retrieves the minimum value of a `collection`. If `callback` is passed,
-   * it will be executed for each value in the `collection` to generate the
-   * criterion by which the value is ranked. The `callback` is invoked with 3
-   * arguments; for arrays they are (value, index, array) and for objects they
-   * are (value, key, object).
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function} [callback] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Mixed} Returns the minimum value.
-   * @example
-   *
-   * _.min([10, 5, 100, 2, 1000]);
-   * // => 2
-   */
-  var min = createIterator(forEachIteratorOptions, maxIteratorOptions, {
-    'top': maxIteratorOptions.top.replace('-', '').replace('max', 'min'),
-    'inLoop': maxIteratorOptions.inLoop.replace('>=', '<')
-  });
 
   /**
    * Retrieves the value of a specified property from all values in a `collection`.
@@ -1315,6 +1227,114 @@
       }
     }
     return -1;
+  }
+
+  /**
+   * Retrieves the maximum value of an `array`. If `callback` is passed,
+   * it will be executed for each value in the `array` to generate the
+   * criterion by which the value is ranked. The `callback` is invoked with 3
+   * arguments; (value, index, array).
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to iterate over.
+   * @param {Function} [callback] The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Mixed} Returns the maximum value.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
+   * ];
+   *
+   * _.max(stooges, function(stooge) { return stooge.age; });
+   * // => { 'name': 'curly', 'age': 60 };
+   */
+  function max(array, callback, thisArg) {
+    var current,
+        computed = -Infinity,
+        index = -1,
+        length = array.length,
+        result = computed;
+
+    if (!callback) {
+      // assume an array of numbers
+      if (array[0] === +array[0] && length < 25000) {
+        // some browsers, like Chrome and Firefox, have a limit on the number of
+        // arguments a function is allowed to accept before clipping the arguments
+        // or throwing an error
+        try {
+          return Math.max.apply(Math, array);
+        } catch(e) { }
+      }
+      if (!array.length) {
+        return result;
+      }
+    } else if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
+    while (++index < length) {
+      current = callback ? callback(array[index], index, array) : array[index];
+      if (current >= computed) {
+        computed = current;
+        result = array[index];
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Retrieves the minimum value of an `array`. If `callback` is passed,
+   * it will be executed for each value in the `array` to generate the
+   * criterion by which the value is ranked. The `callback` is invoked with 3
+   * arguments; (value, index, array).
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to iterate over.
+   * @param {Function} [callback] The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Mixed} Returns the minimum value.
+   * @example
+   *
+   * _.min([10, 5, 100, 2, 1000]);
+   * // => 2
+   */
+  function min(array, callback, thisArg) {
+    var current,
+        computed = Infinity,
+        index = -1,
+        length = array.length,
+        result = computed;
+
+    if (!callback) {
+      // assume an array of numbers
+      if (array[0] === +array[0] && length < 25000) {
+        // some browsers, like Chrome and Firefox, have a limit on the number of
+        // arguments a function is allowed to accept before clipping the arguments
+        // or throwing an error
+        try {
+          return Math.min.apply(Math, array);
+        } catch(e) { }
+      }
+      if (!array.length) {
+        return result;
+      }
+    } else if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
+    while (++index < length) {
+      current = callback ? callback(array[index], index, array) : array[index];
+      if (current < computed) {
+        computed = current;
+        result = array[index];
+      }
+    }
+    return result;
   }
 
   /**
@@ -2299,7 +2319,8 @@
       }
     }
 
-    var result = true,
+    var index = -1,
+        result = true,
         size = 0;
 
     // add the first collection to the stack of traversed objects
@@ -2324,22 +2345,34 @@
       if ('constructor' in a != 'constructor' in b || a.constructor != b.constructor) {
         return false;
       }
-      // deep compare objects
-      forOwn(a, function(value, prop) {
-        // count the expected number of properties
-        size++;
-        // deep compare each member
-        result = hasOwnProperty.call(b, prop) && isEqual(value, b[prop], stack);
-        // exit loop if `result` is `false`
-        return result;
-      });
-
-      // ensure that both objects contain the same number of properties
+      // deep compare objects.
+      for (var prop in a) {
+        if (hasOwnProperty.call(a, prop)) {
+          // count the number of properties.
+          size++;
+          // deep compare each property value.
+          if (!(result = hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack))) {
+            break;
+          }
+        }
+      }
+      // ensure both objects have the same number of properties
       if (result) {
-        forOwn(b, function() {
-          return !!(size--);
-        });
+        for (prop in b) {
+          if (hasOwnProperty.call(b, prop) && !(size--)) break;
+        }
         result = !size;
+      }
+      // handle JScript [[DontEnum]] bug
+      if (result && hasDontEnumBug) {
+        while (++index < 7) {
+          prop = shadowed[index];
+          if (hasOwnProperty.call(a, prop)) {
+            if (!(result = hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack))) {
+              break;
+            }
+          }
+        }
       }
     }
     // remove the first collection from the stack of traversed objects

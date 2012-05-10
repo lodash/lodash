@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.1.0 <https://github.com/bestiejs/lodash>
+ * Lo-Dash v0.1.0 <http://lodash.com>
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
@@ -163,16 +163,17 @@
     // defaults to non-enumerable, Lo-Dash skips the `constructor`
     // property when it infers it's iterating over a `prototype` object.
     '  <% if (hasDontEnumBug) { %>\n' +
-    '  var ctor = <%= iteratedObject %>.constructor,\n' +
-    '      skipCtor = ctor && ctor.prototype === <%= iteratedObject %>;\n\n' +
-    '  for (var k = 0; k < 7; k++) {\n' +
-    '    index = shadowed[k];\n' +
-    '    if (!(skipCtor && index == "constructor") && <%= hasExp %>) {\n' +
-    '      <%= objectBranch.inLoop %>;\n' +
-    '    }\n' +
-    '  }' +
-    '<% }' +
-
+    '  var ctor = <%= iteratedObject %>.constructor;\n' +
+    '  <% for (var k = 0; k < 7; k++) { %>\n' +
+    '  index = "<%= shadowed[k] %>";\n' +
+    '  if (<%' +
+    '      if (shadowed[k] == "constructor") {' +
+    '        %>!(ctor && ctor.prototype === <%= iteratedObject %>) && <%' +
+    '      } %><%= hasExp %>) {\n' +
+    '    <%= objectBranch.inLoop %>;\n' +
+    '  }<%' +
+    '     }' +
+    '   }' +
     '   if (arrayBranch) { %>\n}<% }' +
     '} %>\n' +
 
@@ -197,8 +198,8 @@
     'args': 'object',
     'init': 'object',
     'top':
-      'for (var source, j = 1, length = arguments.length; j < length; j++) {\n' +
-      '  source = arguments[j]',
+      'for (var source, sourceIndex = 1, length = arguments.length; sourceIndex < length; sourceIndex++) {\n' +
+      '  source = arguments[sourceIndex]',
     'loopExp': 'index in source',
     'useHas': false,
     'inLoop': 'object[index] = source[index]',
@@ -400,6 +401,7 @@
     data.hasDontEnumBug = hasDontEnumBug;
     data.hasExp = 'hasOwnProperty.call(' + iteratedObject + ', index)';
     data.iteratedObject = iteratedObject;
+    data.shadowed = shadowed;
     data.useHas = data.useHas !== false;
 
     if (!data.exit) {
@@ -417,13 +419,13 @@
     // create the function factory
     var factory = Function(
         'arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf, ' +
-        'Infinity, isArray, isEmpty, shadowed, slice, stringClass, toString, undefined',
+        'Infinity, isArray, isEmpty, slice, stringClass, toString, undefined',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
       arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf,
-      Infinity, isArray, isEmpty, shadowed, slice, stringClass, toString
+      Infinity, isArray, isEmpty, slice, stringClass, toString
     );
   }
 

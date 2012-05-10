@@ -231,6 +231,21 @@
 
   /*--------------------------------------------------------------------------*/
 
+QUnit.module('lodash.isPrimitive');
+
+(function() {
+  test('returns `true` for primitives', function() {
+    equal(_.isPrimitive(42), true);
+    equal(_.isPrimitive('42'), true);
+    equal(_.isPrimitive(undefined), true);
+    equal(_.isPrimitive(null), true);
+    equal(_.isPrimitive({}), false);
+    equal(_.isPrimitive(_.isPrimitive), false);
+  });
+}());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.keys');
 
   (function() {

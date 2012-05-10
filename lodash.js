@@ -8,6 +8,13 @@
 ;(function(window, undefined) {
   'use strict';
 
+  /** Used to detect the JavaScript engine's argument length limit */
+  var argsLimit = Math.pow(2, 32) - 1;
+
+  try {
+    (function() { argsLimit = arguments.length; }).apply(null, Array(argsLimit));
+  } catch(e) { }
+
   /** Used to escape characters in templates */
   var escapes = {
     '\\': '\\',
@@ -1263,11 +1270,11 @@
         result = computed;
 
     if (!callback) {
-      // assume an array of numbers
-      if (array[0] === +array[0] && length < 25000) {
-        // some browsers, like Chrome and Firefox, have a limit on the number of
-        // arguments a function is allowed to accept before clipping the arguments
-        // or throwing an error
+      // fast path for arrays of numbers
+      if (array[0] === +array[0] && length < argsLimit) {
+        // some JavaScript engines have a limit on the number of arguments functions
+        // can accept before clipping the argument length or throwing an error
+        // https://bugs.webkit.org/show_bug.cgi?id=80797
         try {
           return Math.max.apply(Math, array);
         } catch(e) { }
@@ -1314,11 +1321,7 @@
         result = computed;
 
     if (!callback) {
-      // assume an array of numbers
-      if (array[0] === +array[0] && length < 25000) {
-        // some browsers, like Chrome and Firefox, have a limit on the number of
-        // arguments a function is allowed to accept before clipping the arguments
-        // or throwing an error
+      if (array[0] === +array[0] && length < argsLimit) {
         try {
           return Math.min.apply(Math, array);
         } catch(e) { }

@@ -246,24 +246,25 @@
 
   /*--------------------------------------------------------------------------*/
 
-  _.each(['max', 'min'], function(methodName) {
-    QUnit.module('lodash.' + methodName);
+  (function() {
+    var i = -1,
+        largeArray = [];
 
-    test('does not error when computing the ' + methodName + ' value of massive arrays', function() {
-      var actual,
-          array = [],
-          i = -1;
+    while (++i <= 1e6) {
+      largeArray[i] = i;
+    }
+    _.each(['max', 'min'], function(methodName) {
+      QUnit.module('lodash.' + methodName);
 
-      while (++i <= 1e6) {
-        array[i] = i;
-      }
-      try {
-        actual = _[methodName](array);
-      } catch(e) { }
+      test('does not error when computing the ' + methodName + ' value of massive arrays', function() {
+        try {
+          var actual = _[methodName](largeArray);
+        } catch(e) { }
 
-      equal(actual, methodName == 'max' ? 1e6 : 0);
+        equal(actual, methodName == 'max' ? 1e6 : 0);
+      });
     });
-  });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

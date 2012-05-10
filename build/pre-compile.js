@@ -39,11 +39,10 @@
     'prop',
     'property',
     'result',
-    'shadowed',
-    'skipCtor',
     'skipProto',
     'slice',
     'source',
+    'sourceIndex',
     'stringClass',
     'target',
     'thisArg',
@@ -71,6 +70,7 @@
     'loopExp',
     'object',
     'objectBranch',
+    'shadowed',
     'top',
     'useHas'
   ];

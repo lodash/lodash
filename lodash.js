@@ -19,6 +19,16 @@
     '\u2029': 'u2029'
   };
 
+  /** Used to check whether a value is a primitive */
+  var typeIsPrimitive = {
+    "object": false,
+    "function": false,
+    "undefined": true,
+    "string": true,
+    "number": true,
+    "boolean": true
+  };
+
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports &&
     (typeof global == 'object' && global && global == global.global && (window = global), exports);
@@ -2559,6 +2569,23 @@
   }
 
   /**
+   * Checks if a `value` is a primitive (string, number, boolean, undefined, null).
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a primitive, else `false`.
+   * @example
+   *
+   * _.isPrimitive(42);
+   * // => true
+   */
+  function isPrimitive(value) {
+    return typeIsPrimitive[typeof value] || value === null;
+  }
+
+  /**
    * Produces an array of the `object`'s enumerable own property names.
    *
    * @static
@@ -3091,6 +3118,7 @@
     'isRegExp': isRegExp,
     'isString': isString,
     'isUndefined': isUndefined,
+    'isPrimitive': isPrimitive,
     'keys': keys,
     'last': last,
     'lastIndexOf': lastIndexOf,

@@ -12,7 +12,9 @@
   var argsLimit = Math.pow(2, 32) - 1;
 
   try {
-    (function() { argsLimit = arguments.length; }).apply(null, Array(argsLimit));
+    (function() {
+      argsLimit = arguments.length;
+    }).apply(null, Array(argsLimit));
   } catch(e) { }
 
   /** Used to escape characters in templates */
@@ -39,6 +41,19 @@
 
   /** Used to generate unique IDs */
   var idCounter = 0;
+
+  /**
+   * Used to check whether a value is the ECMAScript language type of Object.
+   * http://es5.github.com/#x8
+   */
+  var objectTypes = {
+    'boolean': false,
+    'function': true,
+    'object': true,
+    'number': false,
+    'string': false,
+    'undefined': false
+  };
 
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
@@ -419,13 +434,13 @@
     // create the function factory
     var factory = Function(
         'arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf, ' +
-        'Infinity, isArray, isEmpty, slice, stringClass, toString, undefined',
+        'Infinity, isArray, isEmpty, objectTypes, slice, stringClass, toString, undefined',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
       arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf,
-      Infinity, isArray, isEmpty, slice, stringClass, toString
+      Infinity, isArray, isEmpty, objectTypes, slice, stringClass, toString
     );
   }
 
@@ -2068,10 +2083,9 @@
    * // => { 'name': 'moe' };
    */
   function clone(value) {
-    if (value !== Object(value)) {
-      return value;
-    }
-    return isArray(value) ? value.slice() : extend({}, value);
+    return objectTypes[typeof value] && value !== null
+      ? (isArray(value) ? value.slice() : extend({}, value))
+      : value;
   }
 
   /**
@@ -2444,7 +2458,7 @@
    * // => false
    */
   function isObject(value) {
-    return value === Object(value);
+    return objectTypes[typeof value] && value !== null;
   }
 
   /**
@@ -2580,7 +2594,7 @@
    */
   var keys = nativeKeys || createIterator({
     'args': 'object',
-    'exit': 'if (object !== Object(object)) throw TypeError()',
+    'exit': 'if (!objectTypes[typeof object] || object === null) throw TypeError()',
     'init': '[]',
     'inLoop': 'result.push(index)'
   });

@@ -35,6 +35,7 @@
     'isFunc',
     'length',
     'object',
+    'objectTypes',
     'noaccum',
     'prop',
     'property',

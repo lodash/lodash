@@ -24,8 +24,8 @@
 
   /** Used to shares values between multiple callbacks */
   var accumulator = {
-    'combined': {},
     'compiled': {},
+    'hybrid': {},
     'uglified': {}
   };
 
@@ -203,38 +203,38 @@
     console.log('Done. Size: %d KB.', result.length);
 
     // next, minify the Closure Compiler minified source using UglifyJS
-    uglify(accumulator.compiled.source, message, onCombine);
+    uglify(accumulator.compiled.source, message, onHybrid);
   }
 
   /**
-   * The combined `uglify()` callback.
+   * The hybrid `uglify()` callback.
    *
    * @private
    * @param {Object|Undefined} exception The error object.
    * @param {String} result The resulting minified source.
    */
-  function onCombine(exception, result) {
+  function onHybrid(exception, result) {
     if (exception) {
       throw exception;
     }
     // store the post-processed Uglified result and gzip it
-    accumulator.combined.source = result = postprocess(result);
-    gzip(result, onCombineGzip);
+    accumulator.hybrid.source = result = postprocess(result);
+    gzip(result, onHybridGzip);
   }
 
   /**
-   * The combined `gzip` callback.
+   * The hybrid `gzip` callback.
    *
    * @private
    * @param {Object|Undefined} exception The error object.
    * @param {Buffer} result The resulting gzipped source.
    */
-  function onCombineGzip(exception, result) {
+  function onHybridGzip(exception, result) {
     if (exception) {
       throw exception;
     }
     // store the gzipped result and report the size
-    accumulator.combined.gzip = result;
+    accumulator.hybrid.gzip = result;
     console.log('Done. Size: %d KB.', result.length);
 
     // finish by choosing the smallest compressed file
@@ -247,8 +247,8 @@
    * @private
    */
   function onComplete() {
-    var combined = accumulator.combined,
-        compiled = accumulator.compiled,
+    var compiled = accumulator.compiled,
+        hybrid = accumulator.hybrid,
         uglified = accumulator.uglified;
 
     // save the Closure Compiled version to disk
@@ -259,20 +259,20 @@
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js'), uglified.source);
     fs.writeFileSync(path.join(distPath, 'lodash.uglify.js.gz'), uglified.gzip);
 
-    // save the Combined minified version to disk
-    fs.writeFileSync(path.join(distPath, 'lodash.combined.js'), combined.source);
-    fs.writeFileSync(path.join(distPath, 'lodash.combined.js.gz'), combined.gzip);
+    // save the hybrid minified version to disk
+    fs.writeFileSync(path.join(distPath, 'lodash.hybrid.js'), hybrid.source);
+    fs.writeFileSync(path.join(distPath, 'lodash.hybrid.js.gz'), hybrid.gzip);
 
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to Closure Compiler)
-    var min = Math.min(combined.gzip.length, compiled.gzip.length, uglified.gzip.length);
+    var min = Math.min(compiled.gzip.length, hybrid.gzip.length, uglified.gzip.length);
 
     fs.writeFileSync(path.join(__dirname, 'lodash.min.js'),
       compiled.gzip.length == min
         ? compiled.source
         : uglified.gzip.length == min
           ? uglified.source
-          : combined.source
+          : hybrid.source
     );
   }
 

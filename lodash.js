@@ -391,11 +391,11 @@
     }
     // set additional template data values
     var args = data.args,
-        arrayBranch = data.arrayBranch,
         objectBranch = data.objectBranch,
         firstArg = /^[^,]+/.exec(args)[0],
+        loopExp = objectBranch.loopExp,
         iterate = data.iterate,
-        iteratedObject = /\S+$/.exec(objectBranch.loopExp || firstArg)[0];
+        iteratedObject = /\S+$/.exec(loopExp || firstArg)[0];
 
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
@@ -413,7 +413,7 @@
     if (firstArg == 'array' || iterate == 'arrays') {
       data.objectBranch = null;
     }
-    else if (!objectBranch.loopExp) {
+    else if (!loopExp) {
       objectBranch.loopExp = 'index in ' + iteratedObject;
     }
     // create the function factory
@@ -1273,7 +1273,7 @@
 
     if (!callback) {
       // fast path for arrays of numbers
-      if (array[0] === +array[0] && length < argsLimit) {
+      if (array[0] === +array[0] && length <= argsLimit) {
         // some JavaScript engines have a limit on the number of arguments functions
         // can accept before clipping the argument length or throwing an error
         // https://bugs.webkit.org/show_bug.cgi?id=80797
@@ -1323,7 +1323,7 @@
         result = computed;
 
     if (!callback) {
-      if (array[0] === +array[0] && length < argsLimit) {
+      if (array[0] === +array[0] && length <= argsLimit) {
         try {
           return Math.min.apply(Math, array);
         } catch(e) { }
@@ -2850,9 +2850,6 @@
     if (interpolateDelimiter == null) {
       interpolateDelimiter = defaults.interpolate;
     }
-    if (variable == null) {
-      variable = defaults.variable;
-    }
 
     // tokenize delimiters to avoid escaping them
     if (escapeDelimiter) {
@@ -2874,10 +2871,11 @@
 
     // if `options.variable` is not specified, add `data` to the top of the scope chain
     if (!variable) {
-      text = 'with (object || {}) {\n' + text + '\n}\n';
+      variable = defaults.variable;
+      text = 'with (' + variable + ' || {}) {\n' + text + '\n}\n';
     }
 
-    text = 'function(' + (variable || 'object') + ') {\n' +
+    text = 'function(' + variable + ') {\n' +
       'var __p, __t;\n' +
       'function print() { __p += __j.call(arguments, "") }\n' +
       text +
@@ -3049,7 +3047,16 @@
        * @memberOf _.templateSettings
        * @type RegExp
        */
-      'interpolate': reInterpolateDelimiter
+      'interpolate': reInterpolateDelimiter,
+
+      /**
+       * Used to reference the data object in the template text.
+       *
+       * @static
+       * @memberOf _.templateSettings
+       * @type String
+       */
+      'variable': 'object'
     },
 
     // assign static methods

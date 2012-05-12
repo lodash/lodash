@@ -109,6 +109,7 @@
 * [`_.templateSettings.escape`](#_templatesettingsescape)
 * [`_.templateSettings.evaluate`](#_templatesettingsevaluate)
 * [`_.templateSettings.interpolate`](#_templatesettingsinterpolate)
+* [`_.templateSettings.variable`](#_templatesettingsvariable)
 
 <!-- /div -->
 
@@ -150,7 +151,7 @@ The `lodash` function.
 <!-- div -->
 
 ### `_.VERSION`
-<a id="_version" href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3015 "View in source") [&#x24C9;][1]
+<a id="_version" href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3013 "View in source") [&#x24C9;][1]
 
 *(String)*: The semantic version number.
 
@@ -281,7 +282,7 @@ jQuery('#lodash_button').on('click', buttonView.onClick);
 <!-- div -->
 
 ### `_.chain(value)`
-<a id="_chainvalue" href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2965 "View in source") [&#x24C9;][1]
+<a id="_chainvalue" href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2963 "View in source") [&#x24C9;][1]
 
 Wraps the value in a `lodash` chainable object.
 
@@ -2356,7 +2357,7 @@ jQuery(window).on('scroll', throttled);
 <!-- div -->
 
 ### `_.times(n, callback [, thisArg])`
-<a id="_timesn-callback--thisarg" href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2912 "View in source") [&#x24C9;][1]
+<a id="_timesn-callback--thisarg" href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2910 "View in source") [&#x24C9;][1]
 
 Executes the `callback` function `n` times. The `callback` is invoked with `1` argument; *(index)*.
 
@@ -2464,7 +2465,7 @@ _.uniq([1, 2, 1, 3, 1, 4]);
 <!-- div -->
 
 ### `_.uniqueId([prefix])`
-<a id="_uniqueidprefix" href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2935 "View in source") [&#x24C9;][1]
+<a id="_uniqueidprefix" href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2933 "View in source") [&#x24C9;][1]
 
 Generates a unique id. If `prefix` is passed, the id will be appended to it.
 
@@ -2613,7 +2614,7 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 <!-- div -->
 
 ### `_.prototype.chain()`
-<a id="_prototypechain" href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2983 "View in source") [&#x24C9;][1]
+<a id="_prototypechain" href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2981 "View in source") [&#x24C9;][1]
 
 Extracts the value from a wrapped chainable object.
 
@@ -2637,7 +2638,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### `_.prototype.value()`
-<a id="_prototypevalue" href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3000 "View in source") [&#x24C9;][1]
+<a id="_prototypevalue" href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2998 "View in source") [&#x24C9;][1]
 
 Extracts the value from a wrapped chainable object.
 
@@ -2668,7 +2669,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### `_.templateSettings`
-<a id="_templatesettings" href="#_templatesettings">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3025 "View in source") [&#x24C9;][1]
+<a id="_templatesettings" href="#_templatesettings">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3023 "View in source") [&#x24C9;][1]
 
 *(Object)*: By default, Lo-Dash uses ERB-style template delimiters, change the following template settings to use alternative delimiters.
 
@@ -2683,7 +2684,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### `_.templateSettings.escape`
-<a id="_templatesettingsescape" href="#_templatesettingsescape">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3034 "View in source") [&#x24C9;][1]
+<a id="_templatesettingsescape" href="#_templatesettingsescape">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3032 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect `data` property values to be HTML-escaped.
 
@@ -2698,7 +2699,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### `_.templateSettings.evaluate`
-<a id="_templatesettingsevaluate" href="#_templatesettingsevaluate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3043 "View in source") [&#x24C9;][1]
+<a id="_templatesettingsevaluate" href="#_templatesettingsevaluate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3041 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect code to be evaluated.
 
@@ -2713,9 +2714,24 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### `_.templateSettings.interpolate`
-<a id="_templatesettingsinterpolate" href="#_templatesettingsinterpolate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3052 "View in source") [&#x24C9;][1]
+<a id="_templatesettingsinterpolate" href="#_templatesettingsinterpolate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3050 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect `data` property values to inject.
+
+* * *
+
+<!-- /div -->
+
+
+<!-- div -->
+
+
+<!-- div -->
+
+### `_.templateSettings.variable`
+<a id="_templatesettingsvariable" href="#_templatesettingsvariable">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3059 "View in source") [&#x24C9;][1]
+
+*(String)*: Used to reference the data object in the template text.
 
 * * *
 

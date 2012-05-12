@@ -211,6 +211,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isEmpty');
+
+  (function() {
+    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+      equal(_.isEmpty(shadowed), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isEqual');
 
   (function() {

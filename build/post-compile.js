@@ -8,7 +8,7 @@
   /** The minimal license/copyright template */
   var licenseTemplate =
     '/*!\n' +
-    ' Lo-Dash @VERSION github.com/bestiejs/lodash/blob/master/LICENSE.txt\n' +
+    ' Lo-Dash @VERSION lodash.com/license\n' +
     ' Underscore.js 1.3.3 github.com/documentcloud/underscore/blob/master/LICENSE\n' +
     '*/';
 

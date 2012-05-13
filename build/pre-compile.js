@@ -105,7 +105,6 @@
   /**
    * Pre-process a given JavaScript `source`, preparing it for minification.
    *
-   * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the processed source.
    */
@@ -130,7 +129,7 @@
     // minify `_.sortBy` internal properties
     (function() {
       var properties = ['criteria', 'value'],
-          snippet = source.match(RegExp('( +)function sortBy[\\s\\S]+?\\n\\1}'))[0],
+          snippet = source.match(/( +)function sortBy[\s\S]+?\n\1}/)[0],
           result = snippet;
 
       // minify property strings

@@ -7,7 +7,6 @@
 
   /** Used to minify string values used by `compileIterator` and its options */
   var compiledValues = [
-    'arrays',
     'objects'
   ];
 
@@ -66,7 +65,6 @@
     'hasDontEnumBug',
     'inLoop',
     'init',
-    'iterate',
     'iteratedObject',
     'loopExp',
     'object',

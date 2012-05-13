@@ -6,11 +6,8 @@
   var fs = require('fs'),
       path = require('path');
 
-  /** The build directory containing the build scripts */
-  var buildPath = path.join(__dirname, 'build');
-
   /** The minify module */
-  var Minify = require(path.join(buildPath, 'minify'));
+  var Minify = require(path.join(__dirname, 'build', 'minify'));
 
   /** The lodash.js source */
   var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');

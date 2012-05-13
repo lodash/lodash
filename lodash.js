@@ -3,7 +3,7 @@
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
- * Available under MIT license <http://mths.be/mit>
+ * Available under MIT license <http://lodash.com/license>
  */
 ;(function(window, undefined) {
   'use strict';
@@ -326,28 +326,27 @@
    */
   var isEmpty = createIterator({
     'args': 'value',
-    'iterate': 'objects',
     'init': 'true',
     'top':
       'var className = toString.call(value);\n' +
       'if (className == arrayClass || className == stringClass) return !value.length',
-    'inLoop': 'return false'
+    'inLoop': {
+      'object': 'return false'
+    }
   });
 
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates compiled iteration functions.
+   * Creates compiled iteration functions. The iteration function will be created
+   * to iterate over only objects if the first argument of `options.args` is
+   * "object" or `options.inLoop.array` is falsey.
    *
    * @private
    * @param {Object} [options1, options2, ..] The compile options objects.
    *
    *  args - A string of comma separated arguments the iteration function will
    *   accept.
-   *
-   *  iterate - A string to specify whether the iteration function is only for
-   *   "arrays" or "objects". It is automatically set if the first argument of
-   *   `options.args` is "array" or "object".
    *
    *  init - A string to specify the initial value of the `result` variable.
    *
@@ -406,10 +405,10 @@
     }
     // set additional template data values
     var args = data.args,
+        arrayBranch = data.arrayBranch,
         objectBranch = data.objectBranch,
         firstArg = /^[^,]+/.exec(args)[0],
         loopExp = objectBranch.loopExp,
-        iterate = data.iterate,
         iteratedObject = /\S+$/.exec(loopExp || firstArg)[0];
 
     data.firstArg = firstArg;
@@ -422,13 +421,10 @@
     if (!data.exit) {
       data.exit = 'if (' + firstArg + ' == null) return result';
     }
-    if (firstArg == 'object' || iterate == 'objects') {
+    if (firstArg == 'object' || !arrayBranch.inLoop) {
       data.arrayBranch = null;
     }
-    if (firstArg == 'array' || iterate == 'arrays') {
-      data.objectBranch = null;
-    }
-    else if (!loopExp) {
+    if (!loopExp) {
       objectBranch.loopExp = 'index in ' + iteratedObject;
     }
     // create the function factory

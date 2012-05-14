@@ -202,33 +202,11 @@
     'interpolate': reInterpolateDelimiter
   });
 
-  /** Reusable iterator options for `_.every` */
-  var everyIteratorOptions = {
-    'init': 'true',
-    'inLoop': 'if (!callback(collection[index], index, collection)) return !result'
-  };
-
-  /** Reusable iterator options for `_.extend` */
-  var extendIteratorOptions = {
-    'args': 'object',
-    'init': 'object',
-    'top':
-      'for (var source, sourceIndex = 1, length = arguments.length; sourceIndex < length; sourceIndex++) {\n' +
-      '  source = arguments[sourceIndex]',
-    'loopExp': 'index in source',
-    'useHas': false,
-    'inLoop': 'object[index] = source[index]',
-    'bottom': '}'
-  };
-
-  /** Reusable iterator options for `_.filter` */
-  var filterIteratorOptions = {
-    'init': '[]',
-    'inLoop': 'callback(collection[index], index, collection) && result.push(collection[index])'
-  };
-
-  /** Reusable iterator options for `_.forEach` */
-  var forEachIteratorOptions = {
+  /**
+   * Reusable iterator options shared by
+   * `every`, `filter`, `find`, `forEach`,`groupBy`, `map`, `reject`, and `some`.
+   */
+  var baseIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'init': 'collection',
     'top':
@@ -241,7 +219,32 @@
     'inLoop': 'callback(collection[index], index, collection)'
   };
 
-  /** Reusable iterator options for `_.map` */
+  /** Reusable iterator options for `every` and `some` */
+  var everyIteratorOptions = {
+    'init': 'true',
+    'inLoop': 'if (!callback(collection[index], index, collection)) return !result'
+  };
+
+  /** Reusable iterator options for `defaults` and `extend` */
+  var extendIteratorOptions = {
+    'args': 'object',
+    'init': 'object',
+    'top':
+      'for (var source, sourceIndex = 1, length = arguments.length; sourceIndex < length; sourceIndex++) {\n' +
+      '  source = arguments[sourceIndex]',
+    'loopExp': 'index in source',
+    'useHas': false,
+    'inLoop': 'object[index] = source[index]',
+    'bottom': '}'
+  };
+
+  /** Reusable iterator options for `filter`  and `reject` */
+  var filterIteratorOptions = {
+    'init': '[]',
+    'inLoop': 'callback(collection[index], index, collection) && result.push(collection[index])'
+  };
+
+  /** Reusable iterator options for `map`, `pluck`, and `values` */
   var mapIteratorOptions = {
     'init': '',
     'exit': 'if (!collection) return []',
@@ -548,7 +551,7 @@
    * _.every([true, 1, null, 'yes'], Boolean);
    * => false
    */
-  var every = createIterator(forEachIteratorOptions, everyIteratorOptions);
+  var every = createIterator(baseIteratorOptions, everyIteratorOptions);
 
   /**
    * Examines each value in a `collection`, returning an array of all values the
@@ -569,7 +572,7 @@
    * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [2, 4, 6]
    */
-  var filter = createIterator(forEachIteratorOptions, filterIteratorOptions);
+  var filter = createIterator(baseIteratorOptions, filterIteratorOptions);
 
   /**
    * Examines each value in a `collection`, returning the first one the `callback`
@@ -591,7 +594,7 @@
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => 2
    */
-  var find = createIterator(forEachIteratorOptions, {
+  var find = createIterator(baseIteratorOptions, {
     'inLoop': 'if (callback(collection[index], index, collection)) return collection[index]'
   });
 
@@ -617,7 +620,12 @@
    * _.forEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
    * // => alerts each number in turn...
    */
-  var forEach = createIterator(forEachIteratorOptions);
+  var forEach = createIterator(baseIteratorOptions, {
+    'top':
+      'if (callback && thisArg) {\n' +
+      '  callback = bind(callback, thisArg)\n' +
+      '}'
+  });
 
   /**
    * Splits a `collection` into sets, grouped by the result of running each value
@@ -641,7 +649,7 @@
    * _.groupBy(['one', 'two', 'three'], 'length');
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
-  var groupBy = createIterator(forEachIteratorOptions, {
+  var groupBy = createIterator(baseIteratorOptions, {
     'init': '{}',
     'top':
       'var prop, isFunc = toString.call(callback) == funcClass;\n' +
@@ -675,7 +683,7 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9]
    */
-  var map = createIterator(forEachIteratorOptions, mapIteratorOptions);
+  var map = createIterator(baseIteratorOptions, mapIteratorOptions);
 
   /**
    * Retrieves the value of a specified property from all values in a `collection`.
@@ -820,7 +828,7 @@
    * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [1, 3, 5]
    */
-  var reject = createIterator(forEachIteratorOptions, filterIteratorOptions, {
+  var reject = createIterator(baseIteratorOptions, filterIteratorOptions, {
     'inLoop': '!' + filterIteratorOptions.inLoop
   });
 
@@ -910,7 +918,7 @@
    * _.some([null, 0, 'yes', false]);
    * // => true
    */
-  var some = createIterator(forEachIteratorOptions, everyIteratorOptions, {
+  var some = createIterator(baseIteratorOptions, everyIteratorOptions, {
     'init': 'false',
     'inLoop': everyIteratorOptions.inLoop.replace('!', '')
   });
@@ -981,7 +989,7 @@
    * _.compact([0, 1, false, 2, '', 3]);
    * // => [1, 2, 3]
    */
-  var compact = function(array) {
+  function compact(array) {
     var index = -1,
         length = array.length,
         result = [];
@@ -1623,12 +1631,12 @@
 
   /**
    * Creates a new function that is restricted to executing only after it is
-   * called a given number of `times`.
+   * called `n` times.
    *
    * @static
    * @memberOf _
    * @category Functions
-   * @param {Number} times The number of times the function must be called before
+   * @param {Number} n The number of times the function must be called before
    * it is executed.
    * @param {Function} func The function to restrict.
    * @returns {Function} Returns the new restricted function.
@@ -1640,12 +1648,12 @@
    * });
    * // renderNotes is run once, after all notes have saved.
    */
-  function after(times, func) {
-    if (times < 1) {
+  function after(n, func) {
+    if (n < 1) {
       return func();
     }
     return function() {
-      if (--times < 1) {
+      if (--n < 1) {
         return func.apply(this, arguments);
       }
     };
@@ -2180,7 +2188,7 @@
    * _.isArguments([1, 2, 3]);
    * // => false
    */
-  var isArguments = function isArguments(value) {
+  var isArguments = function(value) {
     return toString.call(value) == '[object Arguments]';
   };
   // fallback for browser like IE<9 which detect `arguments` as `[object Object]`

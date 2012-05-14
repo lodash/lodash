@@ -18,7 +18,6 @@
    * Post-process a given minified JavaScript `source`, preparing it for
    * deployment.
    *
-   * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the processed source.
    */

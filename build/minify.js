@@ -29,14 +29,25 @@
     '--warning_level=QUIET'
   ];
 
-  /** Used to match the file extension of a file path */
-  var reExtension = /\.[^.]+$/;
-
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Minify a given JavaScript `source`.
+   * The exposed `minify` function minifies a given `source` and invokes the
+   * `onComplete` callback when finished.
    *
+   * @param {String} source The source to minify.
+   * @param {String} workingName The name to give temporary files creates during the minification process.
+   * @param {Function} onComplete A function called when minification has completed.
+   */
+  function minify(source, workingName, onComplete) {
+    new Minify(source, workingName, onComplete);
+  }
+
+  /**
+   * The Minify constructor used to keep state of each `minify` invocation.
+   *
+   * @private
+   * @constructor
    * @param {String} source The source to minify.
    * @param {String} workingName The name to give temporary files creates during the minification process.
    * @param {Function} onComplete A function called when minification has completed.
@@ -305,9 +316,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // expose `Minify`
+  // expose `minify`
   if (module != require.main) {
-    module.exports = Minify;
+    module.exports = minify;
   }
   else {
     // read the JavaScript source file from the first argument if the script
@@ -319,8 +330,8 @@
           source = fs.readFileSync(filePath, 'utf8'),
           workingName = path.basename(filePath, '.js') + '.min';
 
-      new Minify(source, workingName, function(result) {
-        fs.writeFileSync(path.join(dirPath, workingName + '.js'));
+      minify(source, workingName, function(result) {
+        fs.writeFileSync(path.join(dirPath, workingName + '.js'), result);
       });
     }());
   }

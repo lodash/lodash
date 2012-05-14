@@ -126,8 +126,13 @@
 
     // minify `_.sortBy` internal properties
     (function() {
+      // exit early if `_.sortBy` is not found
+      var snippet = (source.match(/( +)function sortBy[\s\S]+?\n\1}/) || [])[0];
+      if (!snippet) {
+        return;
+      }
+
       var properties = ['criteria', 'value'],
-          snippet = source.match(/( +)function sortBy[\s\S]+?\n\1}/)[0],
           result = snippet;
 
       // minify property strings
@@ -140,7 +145,7 @@
     }());
 
     // minify all compilable snippets
-    source.match(
+    var snippets = source.match(
       RegExp([
         // match the `iterationTemplate`
         '( +)var iteratorTemplate[\\s\\S]+?\\n\\1}',
@@ -149,10 +154,16 @@
         // match the the `createIterator` function
         '( +)function createIterator[\\s\\S]+?\\n\\3}',
         // match methods created by `createIterator` calls
-        'createIterator\\((?:[\'{]|[a-zA-Z]+,)[\\s\\S]+?\\);\\n'
+        'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]+?\\);\\n'
       ].join('|'), 'g')
-    )
-    .forEach(function(snippet, index) {
+    );
+
+    // exit early if no compilable snippets
+    if (!snippets) {
+      return source;
+    }
+
+    snippets.forEach(function(snippet, index) {
       var isCreateIterator = /function createIterator/.test(snippet),
           isIteratorTemplate = /var iteratorTemplate/.test(snippet),
           result = snippet;

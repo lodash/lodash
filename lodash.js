@@ -42,10 +42,7 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
-  /**
-   * Used to check whether a value is the ECMAScript language type of Object.
-   * http://es5.github.com/#x8
-   */
+  /** Used to determine if values are of the language type Object */
   var objectTypes = {
     'boolean': false,
     'function': true,
@@ -164,7 +161,7 @@
     // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
     // (if the prototype or a property on the prototype has been set)
     // incorrectly sets a function's `prototype` property [[Enumerable]]
-    // value to true. Because of this Lo-Dash standardizes on skipping
+    // value to `true`. Because of this Lo-Dash standardizes on skipping
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
     '    if (!(skipProto && index == "prototype")<% if (useHas) { %> && <%= hasExp %><% } %>) {\n' +
@@ -346,7 +343,7 @@
    * "object" or `options.inLoop.array` is falsey.
    *
    * @private
-   * @param {Object} [options1, options2, ..] The compile options objects.
+   * @param {Object} [options1, options2, ...] The compile options objects.
    *
    *  args - A string of comma separated arguments the iteration function will
    *   accept.
@@ -364,6 +361,9 @@
    *
    *  loopExp - A string or object containing an "array" or "object" property
    *   of code to execute as the array or object loop expression.
+   *
+   *  useHas - A boolean to specify whether or not to use `hasOwnProperty` checks
+   *   in the object loop.
    *
    *  inLoop - A string or object containing an "array" or "object" property
    *   of code to execute in the array or object loops.
@@ -433,13 +433,13 @@
     // create the function factory
     var factory = Function(
         'arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf, ' +
-        'Infinity, isArray, isEmpty, objectTypes, slice, stringClass, toString, undefined',
+        'isArray, isEmpty, objectTypes, slice, stringClass, toString, undefined',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
       arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf,
-      Infinity, isArray, isEmpty, objectTypes, slice, stringClass, toString
+      isArray, isEmpty, objectTypes, slice, stringClass, toString
     );
   }
 
@@ -2098,7 +2098,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The object to populate.
-   * @param {Object} [defaults1, defaults2, ..] The defaults objects to apply to `object`.
+   * @param {Object} [defaults1, defaults2, ...] The defaults objects to apply to `object`.
    * @returns {Object} Returns `object`.
    * @example
    *
@@ -2118,7 +2118,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The destination object.
-   * @param {Object} [source1, source2, ..] The source objects.
+   * @param {Object} [source1, source2, ...] The source objects.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -2443,7 +2443,8 @@
   }
 
   /**
-   * Checks if a `value` is an object.
+   * Checks if a `value` is the language type of Object.
+   * (e.g. arrays, functions, objects, regexps, `new Number(0)`, and `new String('')`)
    *
    * @static
    * @memberOf _
@@ -2459,6 +2460,8 @@
    * // => false
    */
   function isObject(value) {
+    // check if the value is the ECMAScript language type of Object
+    // http://es5.github.com/#x8
     return objectTypes[typeof value] && value !== null;
   }
 
@@ -2608,7 +2611,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The object to pluck.
-   * @param {Object} [prop1, prop2, ..] The properties to pick.
+   * @param {Object} [prop1, prop2, ...] The properties to pick.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
    *

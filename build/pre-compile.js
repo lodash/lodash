@@ -23,7 +23,6 @@
     'identity',
     'index',
     'indexOf',
-    'Infinity',
     'isArray',
     'isEmpty',
     'isFunc',

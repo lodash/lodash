@@ -4,23 +4,19 @@
 		<meta charset="utf-8">
 		<title>Underscore Test Suite</title>
 		<link rel="stylesheet" href="../vendor/underscore/test/vendor/qunit.css">
+		<style>
+			#jslitmus, iframe {
+				display: none;
+			}
+		</style>
 	</head>
 	<body>
-		<div class="underscore-test">
-			<h1 id="qunit-header">Underscore Test Suite</h1>
-			<h2 id="qunit-banner"></h2>
-			<div id="qunit-testrunner-toolbar"></div>
-			<h2 id="qunit-userAgent"></h2>
-			<ol id="qunit-tests"></ol>
-			<br>
-			<h1 class="qunit-header">Underscore Speed Suite</h1>
-			<p>
-				A representative sample of the functions are benchmarked here, to provide
-				a sense of how fast they might run in different browsers.
-				Each iteration runs on an array of 1000 elements.<br><br>
-				For example, the 'intersect' test measures the number of times you can
-				find the intersection of two thousand-element arrays in one second.
-			</p>
+		<div id="qunit"></div>
+		<div id="qunit-fixture">
+			<div id="map-test">
+				<div id="id1"></div>
+				<div id="id2"></div>
+			</div>
 		</div>
 		<script src="../vendor/underscore/test/vendor/jquery.js"></script>
 		<script src="../vendor/underscore/test/vendor/qunit.js"></script>
@@ -32,7 +28,6 @@
 		<script src="../vendor/underscore/test/objects.js"></script>
 		<script src="../vendor/underscore/test/utility.js"></script>
 		<script src="../vendor/underscore/test/chaining.js"></script>
-		<script src="../vendor/underscore/test/speed.js"></script>
 		<script type="text/html" id="template">
 			<%
 			// a comment

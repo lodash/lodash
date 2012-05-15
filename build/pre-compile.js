@@ -5,11 +5,6 @@
   /** The Node filesystem module */
   var fs = require('fs');
 
-  /** Used to minify string values used by `compileIterator` and its options */
-  var compiledValues = [
-    'objects'
-  ];
-
   /** Used to minify variables embedded in compiled strings */
   var compiledVars = [
     'accumulator',
@@ -111,9 +106,9 @@
     source = source.replace(/\/\*![\s\S]+?\*\//, '');
 
     // correct JSDoc tags for Closure Compiler
-    source = source.replace(/@(?:alias|category)[^\n]*/g, '');
+    source = source.replace(/@(?:alias|category)\b[^\n]*/g, '');
 
-    // add brackets to whitelisted properties so Closure Compiler won't mung them.
+    // add brackets to whitelisted properties so Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");
 
@@ -126,33 +121,29 @@
 
     // minify `_.sortBy` internal properties
     (function() {
-      // exit early if `_.sortBy` is not found
-      var snippet = (source.match(/( +)function sortBy[\s\S]+?\n\1}/) || [])[0];
-      if (!snippet) {
-        return;
-      }
-
       var properties = ['criteria', 'value'],
+          snippet = (source.match(/( +)function sortBy\b[\s\S]+?\n\1}/) || [])[0],
           result = snippet;
 
-      // minify property strings
-      properties.forEach(function(property, index) {
-        result = result.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
-      });
-
-      // replace with modified snippet
-      source = source.replace(snippet, result);
+      if (snippet) {
+        // minify property strings
+        properties.forEach(function(property, index) {
+          result = result.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
+        });
+        // replace with modified snippet
+        source = source.replace(snippet, result);
+      }
     }());
 
     // minify all compilable snippets
     var snippets = source.match(
       RegExp([
         // match the `iterationTemplate`
-        '( +)var iteratorTemplate[\\s\\S]+?\\n\\1}',
+        '( +)var iteratorTemplate\\b[\\s\\S]+?\\n\\1}',
         // match variables storing `createIterator` options
-        '( +)var [a-zA-Z]+IteratorOptions[\\s\\S]+?\\n\\2}',
+        '( +)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
         // match the the `createIterator` function
-        '( +)function createIterator[\\s\\S]+?\\n\\3}',
+        '( +)function createIterator\\b[\\s\\S]+?\\n\\3}',
         // match methods created by `createIterator` calls
         'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]+?\\);\\n'
       ].join('|'), 'g')
@@ -164,8 +155,8 @@
     }
 
     snippets.forEach(function(snippet, index) {
-      var isCreateIterator = /function createIterator/.test(snippet),
-          isIteratorTemplate = /var iteratorTemplate/.test(snippet),
+      var isCreateIterator = /function createIterator\b/.test(snippet),
+          isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
           result = snippet;
 
       if (isIteratorTemplate) {
@@ -181,8 +172,7 @@
           .replace(/('interpolate':)[^,}]+/, '$1/#([^%]+)%/g');
       }
       else {
-        // add brackets to whitelisted properties so Closure Compiler won't mung them.
-        // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
+        // add brackets to whitelisted properties so Closure Compiler won't mung them
         result = result.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
       }
 
@@ -200,24 +190,19 @@
 
       // minify snippet variables / arguments
       compiledVars.forEach(function(variable, index) {
-        // ensure properties aren't minified
+        // ensure properties in compiled strings are minified
         result = result.replace(RegExp('([^.]\\b|\\\\n)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
 
         // correct `typeof x == 'object'`
         if (variable == 'object') {
           result = result.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), "$1object'");
         }
-        // correct boolean literals
+        // correct external boolean literals
         if (variable == 'true' || variable == 'false') {
           result = result
-            .replace(RegExp(': *' + minNames[index] + ' *,', 'g'), ':' + variable + ',')
-            .replace(RegExp(' *' + minNames[index] + ' *;', 'g'), variable + ';');
+            .replace(RegExp(': *' + minNames[index] + ',', 'g'), ':' + variable + ',')
+            .replace(RegExp('\\b' + minNames[index] + ';', 'g'), variable + ';');
         }
-      });
-
-      // minify snippet string values
-      compiledValues.forEach(function(value, index) {
-        result = result.replace(RegExp("'" + value + "'", 'g'), "'" + minNames[index] + "'");
       });
 
       // minify `createIterator` option property names
@@ -229,7 +214,7 @@
         else {
           if (property == 'array' || property == 'object') {
             // minify "array" and "object" sub property names
-            result = result.replace(RegExp("'" + property + "'(\\s*[\\]:])", 'g'), "'" + minNames[index] + "'$1");
+            result = result.replace(RegExp("'" + property + "'( *[\\]:])", 'g'), "'" + minNames[index] + "'$1");
           }
           else {
             // minify property name strings

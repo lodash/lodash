@@ -199,7 +199,7 @@
     }
     // store the gzipped result and report the size
     this.compiled.gzip = result;
-    console.log('Done. Size: %d KB.', result.length);
+    console.log('Done. Size: %d bytes.', result.length);
 
     // next, minify the source using only UglifyJS
     uglify.call(this, this.source, onUglify.bind(this));
@@ -236,7 +236,7 @@
 
     // store the gzipped result and report the size
     this.uglified.gzip = result;
-    console.log('Done. Size: %d KB.', result.length);
+    console.log('Done. Size: %d bytes.', result.length);
 
     // next, minify the Closure Compiler minified source using UglifyJS
     uglify.call(this, this.compiled.source, message, onHybrid.bind(this));
@@ -271,7 +271,7 @@
     }
     // store the gzipped result and report the size
     this.hybrid.gzip = result;
-    console.log('Done. Size: %d KB.', result.length);
+    console.log('Done. Size: %d bytes.', result.length);
 
     // finish by choosing the smallest compressed file
     onComplete.call(this);

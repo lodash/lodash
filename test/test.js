@@ -344,6 +344,10 @@
     test('should detect the size of a string value', function() {
       equal(_.size('abc'), 3);
     });
+
+    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+      equal(_.size(shadowed), 7);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

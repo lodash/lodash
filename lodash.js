@@ -2675,6 +2675,9 @@
    * // => "Curly, Larry &amp; Moe"
    */
   function escape(string) {
+    // the `>` character doesn't require escaping in HTML and has no special
+    // meaning unless it's part of an open tag
+    // http://mathiasbynens.be/notes/ambiguous-ampersands (semi-related fun fact)
     return (string + '')
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')

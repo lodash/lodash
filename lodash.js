@@ -621,10 +621,7 @@
    * // => alerts each number in turn...
    */
   var forEach = createIterator(baseIteratorOptions, {
-    'top':
-      'if (callback && thisArg) {\n' +
-      '  callback = bind(callback, thisArg)\n' +
-      '}'
+    'top': 'if (thisArg) callback = bind(callback, thisArg)'
   });
 
   /**

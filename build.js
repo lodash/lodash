@@ -222,7 +222,8 @@
   }
 
   /**
-   * Removes a function and associated code from the `source`.
+   * Removes the `funcName` function declaration, expression, or assignment and
+   * associated code from the `source`.
    *
    * @private
    * @param {String} source The source to process.

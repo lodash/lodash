@@ -1,0 +1,1049 @@
+###################################################################################################
+ 1.4.0 - 2011-09-23 - Revision: 11967
+###################################################################################################
+
+Overview:
+    Issue 4776: [Firebug lite] CSS Media Types
+    Issue 4777: [Firebug lite] Specificity of CSS Rules
+    Issue 3760: [Firebug lite] CommandLine throws syntax error if there's a comment in the expression
+    Issue 3326: [Firebug lite] CSS Rule Line Number
+    Issue 3262: [Firebug Lite] CSS specificity is not being calculated properly
+    Issue 4239: [Firebug Lite] Using ie7-js library crashes IE8
+    Issue 4472: [Firebug Lite] Ajax headers deleted on IE
+
+    Issue 4606: [Firebug Lite] Console is not working properly in recent versions of FF
+    Issue 4587: [Firebug Lite] Opera shows security warning when using the Inspect tool
+    Issue 4432: [Firebug Lite] HTML is mixed-up with functions 
+    
+-------------------------------------------------------------------------------
+CSS
+-------------------------------------------------------------------------------
+
+    - cssAnalyzer code refactored
+    - cssParser (powered by sergeche's Simple CSS Parser https://github.com/sergeche/webkit-css)
+
+-------------------------------------------------------------------------------
+XHR
+-------------------------------------------------------------------------------
+    - XHR calls made by Firebug Lite internally are not visible in the Console log anymore
+    - added FBL.getNativeXHRObject()
+    
+-------------------------------------------------------------------------------
+Other
+-------------------------------------------------------------------------------
+    - Store module (powered by marcuswestin's library https://github.com/marcuswestin/store.js)
+    
+    - console injection fallback now works as expected, creating a "firebug" object when there's 
+      a "console" object already and overrideConsole option is set to false.
+
+    - jsonViewer will not try to evaluate the contents of the requested file if the content-type
+      is set to "text/plain" 
+
+    - new getLocation() function
+    - better expression evaluation
+
+-------------------------------------------------------------------------------
+FBTest
+-------------------------------------------------------------------------------
+    - more robust Unit Test Framework
+    - updated QUnit to the latest version
+    - FBTest.click() now works in IE
+    - FBTest.getPanel() now returns also Side Panels
+    - updated Test Cases to use Sebastian's template
+    - Firebug Lite script is automatically inserted by the Test Runner, allowing you to easily
+      test the same file against different versions
+      
+   - Improvements in the Test Runner
+            - included total number of tests passed and failed, and total execution time
+            - included link to run the test page again
+            - included link to open the test page it in another tab
+            - included link to view the test page in fullscreen mode
+            - improved the progress output of the tests, including the title of that test (if any
+              is found in the document.title)
+
+    - new Test Runner Toolbar:
+            - allows selecting different Test Lists
+            - allows selecting different builds given the Version/Channel/Mode    
+
+    - Properties added to FBTest
+            - config
+            - delayDuration
+            - waitInterval
+            - waitTimeout
+
+    - Methods added to FBTest
+            - FBTest.triggerEvent()
+            - FBTest.getXHRObject()
+            - FBTest.loadScript()
+            - FBTest.installFirebug()
+            - FBTest.getFirebugConfig()
+            - FBTest.getFirebugLocation()
+            - FBTest.getTestListLocation()
+            - FBTest.loadTestList()
+            - FBTest.getURLParamaters()
+            - FBTest.delay()
+            - FBTest.wait()
+
+
+###################################################################################################
+ 1.4.0b1 - 2011-08-18 - Revision: 11337
+###################################################################################################
+
+-------------------------------------------------------------------------------
+Issues
+-------------------------------------------------------------------------------
+    - Issue 4606: Firebug Lite: Console is not working properly in recent versions of FF
+    - Issue 4587: Firebug Lite: Opera shows security warning when using the Inspect tool
+    - Issue 4432: Firebug Lite: HTML is mixed-up with functions 
+
+-------------------------------------------------------------------------------
+Internal fixes
+-------------------------------------------------------------------------------
+    - overrideConsole option now works as expected
+    - Fixed problem with console injection in recent versions of FF
+    - Fixed problem with resizing in-page chrome (iframe) in recent versions of FF
+    - Fixed visual glitch with Menus in high resolution monitors
+    - Fixed source line number height in high resolution monitors
+    - Fixed mini-chrome (lower-right icon) size glitch when the cache is empty
+    - Bookmarklet now works as expected when visiting getfirebug.com
+
+-------------------------------------------------------------------------------
+Chrome extension
+-------------------------------------------------------------------------------
+    - Improved activation failure messages in Chrome extension
+
+-------------------------------------------------------------------------------
+Internal changes
+-------------------------------------------------------------------------------
+    - internal directory organization and code refactoring to facilitate future 
+      merging with Firebug code base (now code written for lite and the code 
+      borrowed from Firebug are in different directories)
+
+
+###################################################################################################
+ 1.3.2 - 2011-03-22 - Revision: 9760
+###################################################################################################
+
+Overview:
+    - Issue 3422: Firebug Lite breaks Google Instant Search
+    - Issue 3504: Firebug lite: jQuery.ajax call fails in IE
+    - Issue 3524: Firebug Lite Style Panel doesn't work if the native Element is extended
+    - Issue 3554: Firebug Lite should use local images when loaded locally
+    - Issue 3166: Listen to F12 key in for Google Chrome when inactive
+    - Issue 3579: Use context menu to Inspect Element in Firebug Lite Chrome Extension
+    - infoTips for CSS properties such as color and image
+
+-------------------------------------------------------------------------------
+Addition
+-------------------------------------------------------------------------------
+    - infoTips for CSS properties such as color and image
+
+-------------------------------------------------------------------------------
+Bugfixes
+-------------------------------------------------------------------------------
+    - Issue 3422: Firebug Lite breaks Google Instant Search
+    - Issue 3504: Firebug lite: jQuery.ajax call fails in IE
+    - Issue 3524: Firebug Lite Style Panel doesn't work if the native Element is extended
+    - Issue 3554: Firebug Lite should use local images when loaded locally
+
+-------------------------------------------------------------------------------
+Core
+-------------------------------------------------------------------------------
+    - Isolated most of Lite-specific code (not part/adaptation of Firebug's
+      original source) into a single directory (/content/firebug/lite/).
+    - Created a simple server-side proxy plugin to be used in conjunction with
+      Firebug Lite in order to overcome the cross-domain limitations of JavaScript
+    - Unifying Firebug Lite internal cache system (to be used in sourceCache).
+      As a bonus, the unified model allows Firebug Lite to adapt its cache when
+      new elements are inserted into the document, which means that now it will
+      be easier to use the Inspector in dynamically created content.
+
+-------------------------------------------------------------------------------
+Chrome extension improvements
+-------------------------------------------------------------------------------
+    - Issue 3166: Listen to F12 key in for Google Chrome when inactive
+    - Issue 3579: Use context menu to Inspect Element in Firebug Lite Chrome Extension
+    - Code refactored (chrome extension specific code isolated in a single file/module)
+    - Better message handling (two-way communication between the application/page,
+      content script and background page)
+    - Activation refactoring. The application is loaded how assynchronously during
+      activation and the activation can be started now by the BrowserAction/Icon,
+      the F12/ctrl+F12 key, or the context meny "Inspect with Firebug Lite" option.
+      It is possible also to activate-deactivate-reactivate without reloading
+      the page now.
+
+
+###################################################################################################
+ 1.3.1 - 2010-09-07 - Revision: 7759
+###################################################################################################
+
+Overview:
+    - Issue 3272: Install Google Chrome extension results in a 404 error
+    - Issue 3384: Just two inadvertent globals across the Firebug Lite files
+    - Issue 3318: Firebug Lite dies if you hide the UI when the large command line is open
+    - Issue 3181: Firebug Lite Missing XHR methods/properties
+    - Issue 3262: CSS specificity is not being calculated properly.
+    - Issue 3038: Empty (null) styles when adding CSS styles in Firebug Lite
+    - Normalizing syntax (missing semicolons)
+    - Added basic JsDoc comment markup
+
+
+###################################################################################################
+ 1.3.1b2 - 2010-07-26 - Revision: 7413
+###################################################################################################
+
+Overview:
+    - Issue 3224: Firebug Lite shows error when trying to read some external stylesheets
+    - Issue 3181: Missing XHR methods/properties
+    - Custom Net response viewers (XML and JSON viewers)
+        - Port of HTML viewer used in XHR representations
+        - Port of jsonViewer used in XHR representations
+        - Port of xmlViewer used in XHR representations
+
+-------------------------------------------------------------------------------
+XHR
+-------------------------------------------------------------------------------
+    - Compatibility with XMLHttpRequest 2 specification
+    - Issue 3181: Missing XHR methods/properties
+    - XHR representation is properly updated when the request is aborted
+    - Adjusting spy.mimeType according XHR response so we can detect when to
+      use custom response viewers (like HTML, XML and JSON viewers)
+
+-------------------------------------------------------------------------------
+jsonViewer
+-------------------------------------------------------------------------------
+    - Port of jsonViewer used in XHR representations
+
+-------------------------------------------------------------------------------
+xmlViewer    
+-------------------------------------------------------------------------------
+    - Port of xmlViewer used in XHR representations
+
+-------------------------------------------------------------------------------
+Net 
+-------------------------------------------------------------------------------
+    - Custom Net response viewers (XML and JSON viewers)
+    - Port of HTML viewer used in XHR representations
+
+-------------------------------------------------------------------------------
+Spy 
+-------------------------------------------------------------------------------
+    - dispatching "initTabBody" event to Firebug.NetMonitor.NetInfoBody listeners
+      so custom response viewers can be properly initialized
+
+-------------------------------------------------------------------------------
+CSS
+-------------------------------------------------------------------------------
+    - Included warnings when some external stylesheets could not be loaded
+    - Issue 3224: Firebug Lite shows error when trying to read some external stylesheets
+    
+-------------------------------------------------------------------------------
+Inspector
+-------------------------------------------------------------------------------
+    - Avoid error when the element is not attached a document
+
+-------------------------------------------------------------------------------
+Domplate
+-------------------------------------------------------------------------------
+    - Removing the temporary fix to RegExp problem Google Chrome 5 once it 
+      is now fixed (and the temporary fix breaks the latest version).
+
+-------------------------------------------------------------------------------
+Firebug
+-------------------------------------------------------------------------------
+    - Firebug.Rep.getTitle now works for some special cases in IE
+
+-------------------------------------------------------------------------------
+Command Line
+-------------------------------------------------------------------------------
+    - Firebug.Console no longer uses Firebug.Console.LOG_COMMAND to identify 
+      console calls as in the old Console panel version.
+
+-------------------------------------------------------------------------------
+Lib
+-------------------------------------------------------------------------------
+    - Added new experimental getDOMMember function to detect user members
+      (properties/functions) of several builtin objects such as window,
+      document, location, and instances of Element and other DOM objects
+
+
+###################################################################################################
+ 1.3.1b1 - 2010-06-29 - Revision: 7198
+###################################################################################################
+
+Overview:
+    - Issue 2958: Unable to add CSS to an element that has no style rules
+    - Issue 3165: Styling problem with nested expandable groups
+    - Issue 3178: Bookmarklet does not support XML+XSLT documents
+    - Context menu support for Style and CSS Panels
+    - Using double click to insert new CSS rule (instead of mouse down)  
+    
+
+-------------------------------------------------------------------------------
+i18n
+-------------------------------------------------------------------------------
+    - Unified all localization-related functions inside i18n.js
+    - Implemented $STRF (required for context menus)
+
+-------------------------------------------------------------------------------
+GUI
+-------------------------------------------------------------------------------
+    - Improved GUI Menu component to support content menus
+
+-------------------------------------------------------------------------------
+Editor
+-------------------------------------------------------------------------------
+    - Fixed timing issues when calling input.focus() and input.select()
+
+-------------------------------------------------------------------------------
+Chrome
+-------------------------------------------------------------------------------
+    - Panels now will stop editing when clicking on any non-editable element
+
+-------------------------------------------------------------------------------
+UI
+-------------------------------------------------------------------------------
+    - Issue 3165: Styling problem with nested expandable groups
+
+-------------------------------------------------------------------------------
+CSS
+-------------------------------------------------------------------------------
+    - Issue 2958: Unable to add CSS to an element that has no style rules
+    - Using double click to insert new CSS rule (instead of mouse down)  
+    - IE support for new features being used (context menu, double click, etc)
+
+-------------------------------------------------------------------------------
+Firebug
+-------------------------------------------------------------------------------
+    - Implemented panel.onContextMenu()
+
+-------------------------------------------------------------------------------
+Lib
+-------------------------------------------------------------------------------
+    - Ported lib.hasProperties()
+    - Fixed IE mouse button detection for "dblclick" events
+    - Port of lib.parseJSONString()
+    - Making the development mode work online without requiring pre-configuration
+    - Enabled the bookmarlet update detection
+
+-------------------------------------------------------------------------------
+HTML
+-------------------------------------------------------------------------------
+    - Added the old representations back to Firebug Lite source (Firebug.Reps)
+
+-------------------------------------------------------------------------------
+Console
+-------------------------------------------------------------------------------
+    - Fixed the broken console.dirxml() function
+
+-------------------------------------------------------------------------------
+CommandLine
+-------------------------------------------------------------------------------
+    - Fixed the broken dirxml() command line shortcut 
+
+-------------------------------------------------------------------------------
+Bookmarklet
+-------------------------------------------------------------------------------
+    - Issue 3178: Bookmarklet does not support XML+XSLT documents
+
+
+###################################################################################################
+ 1.3.1a2 - 2010-06-24 - Revision: 7125
+###################################################################################################
+
+Overview:
+    - Major performance improvements in the inline editor
+    - Major performance improvement in Chrome.keyCodeListen 
+    - Issue 3118: Long lines in XHR response
+    - Issue 2981: Switching from CSS tab and back causes an error
+    - Fix bug in Google Chrome 5 which causes representation of "object links" 
+      not being properly styled
+
+
+-------------------------------------------------------------------------------
+Editor
+-------------------------------------------------------------------------------
+    - autocompletion cycling (with UP/DOWN keys) now works as expected for partially
+      typed words in IE6+, Safari/Google Chrome, and Opera
+      
+    - Major improvement in editor's autocomplete performance (was too slow on IE)
+    - No more problems with autocomplete when typing fast (timing issues)
+    - ignoring the inline editor spell checking in Safari/Google Chrome
+
+-------------------------------------------------------------------------------
+Domplate
+-------------------------------------------------------------------------------
+    - Fix bug in Google Chrome 5 which causes representation of "object links" 
+      not being properly styled
+
+-------------------------------------------------------------------------------
+UI
+-------------------------------------------------------------------------------
+    - Issue 3118: Long lines in XHR response
+    - Added round corner support in the XHR tabs to Chrome and Opera
+    - Resetting user agent styles for tables which was creating a small glitch
+      (undesired blank space) between the toolbar and the panel content
+
+-------------------------------------------------------------------------------
+Extensions
+-------------------------------------------------------------------------------
+    - Testing Firediff extension support
+
+-------------------------------------------------------------------------------
+CSS
+-------------------------------------------------------------------------------
+    - Issue 2981: Switching from CSS tab and back causes an error
+    - Destroying the inline editor when the panel is destroyed or hidden
+    - Properly dispatching some CSS change events to listeners
+
+-------------------------------------------------------------------------------
+Firebug
+-------------------------------------------------------------------------------
+    - Port of Firebug.Listener
+    - Firebug.Module now inherits from Firebug.Listener as in Firebug
+    - Experimental context menu support
+
+-------------------------------------------------------------------------------
+Chrome
+-------------------------------------------------------------------------------
+    - Improved window key code event listener. Only one "keydown" event will be 
+      attached to the window, and the onKeyCodeListen() function will delegate 
+      which listeners should be called according to the event.keyCode fired.
+
+    - Fixing bug in the persistent mode (related to the new console panel)
+    - Improving the accuracy of the delay time calculated in the persist process.
+
+-------------------------------------------------------------------------------
+Lib
+-------------------------------------------------------------------------------
+    - Fixed problem in Lib.dispatch which was preventing some listeners to be called.
+
+
+
+###################################################################################################
+ 1.3.0 - 2010-05-24 - Revision: 6859
+###################################################################################################
+
+    - Refactored code
+        - Console e Css old modules deleted (not used anymore)
+        - Test modules deleted (moved to 1.4 branch)
+        - Comparison modules deleted (a copy of Domplate and DOM which was
+          used to compare the Firebug and Firebug Lite sources)
+          
+    - New distribution location and file name:
+        - https://getfirebug.com/firebug-lite.js (compressed)
+        - https://getfirebug.com/firebug-lite-debug.js (uncompressed, trace)
+        - https://getfirebug.com/firebug-lite-beta.js (beta channel)
+    
+    - Added "debug" URL option
+    
+    - Updated "classic" and "light" skins
+    
+    - Improvements in the debug mode (it exposes the FBL library, and forces
+      the UI element to be visible at HTML panel)
+    
+    - Fixed frameCounters variable leaking to global namespace
+    
+    - Firebug.extend() method added to support Firebug Lite extensions
+    
+    - Fixed the missing command line API dir()
+    - Fixed the missing command line api dirxml()
+    - Fixed the missing console.firebuglite property in the console object
+    - Fixed problem when loading an extension before the UI finish loading
+
+
+###################################################################################################
+ 1.3.0b2 - 2010-05-06 - Revision: 6695
+###################################################################################################
+
+-------------------------------------------------------------------------------
+Console
+-------------------------------------------------------------------------------
+    - The Console Panel now uses the same rendering engine (domplate) and object
+      representation (Reps) used in Firebug
+      
+    - Console now has clickable objects links, which will lead you to the related 
+      panel, HTML if is an element, or the DOM panel if is an object
+      
+    - console.dir() now uses the same rich representation as in the DOM panel, with
+      items which can be collapsed, and links which can be clicked.
+      
+    - console.trace() now uses rich representation, with clickable links, and will
+      show the file name and line number for some browsers when found at the stacktrace 
+    
+    - console.count() now works as in Firebug
+    - console.group() now can be collapsed, using the same representation as in Firebug 
+    - console.groupCollapsed() added to the console object
+
+    - new offline log messages handler (messages called before Firebug Lite UI finish 
+      rendering), able to support clickable links and advanced representations 
+      like the XHR watcher
+      
+    - ability to listen offline XHR messages
+    
+-------------------------------------------------------------------------------
+XHR
+-------------------------------------------------------------------------------
+    - Fixed Issue 2977: XHR POST and URL parameters in the console
+    - Fixed Issue 2840: Firebug Lite 1.3b doesn't handle synchronous XHR requests
+    - Fixed Issue 2846: Firebug Lite 1.3b doesn't show XHR request made before the main 
+      document is loaded
+      
+    - Fixed issue with the spinning XHR gif that wasn't being hidden sometimes in IE
+    - Fixed bug when there is no responseHeaders in IE
+    - Properly handling error when something goes wrong (like access restriction error)
+
+-------------------------------------------------------------------------------
+Chrome extension
+-------------------------------------------------------------------------------
+    - Fixed problem with restricted pages. the method used to load the bookmarlet
+      when no content script is available no longer works in recent versions of
+      Google Chrome, so now an alert box appears indicating that the extension
+      can't work on that page
+    
+    - Fixed problem when trying to activate Firebug Lite in a page which was open
+      before Firebug extension itself being enabled. Now it shows an alert box
+      asking the user to reload the page to complete the activation
+    
+    - Fixed problem in Google Chrome 5 which was caused by not using the proper
+      encoding (UTF-8) at the content script file
+      
+    - Fixed problem with popup. when the popup was opened, the bug icon was
+      becoming gray, falsely indicating that it was deactivated
+
+    - Fixed problem with synchronization between Firebug Lite state and the 
+      browser icon state
+      
+    - Fixed problem with UI images not loading in Mac and Linux (was related
+      to a bug in a third-party compression tool called Izarc)
+    
+    - Ignoring the FirebugChannel element in the HTML panel visualization
+    
+    - The core of the extension now uses the exact the same source as found
+      at getfirebug.com, and no longer needs to be built with a different
+      URL location for the images 
+
+-------------------------------------------------------------------------------
+Lib
+-------------------------------------------------------------------------------
+    - Fixed problem with cookies not available in XML+XSL documents
+    - Fixed bug at lib.findLocation() in IE, when using deep relative paths 
+    - Basic extension system support
+    - Basic support for the next generation HTML panel (fully editable, cross-frame)
+
+-------------------------------------------------------------------------------
+Net
+-------------------------------------------------------------------------------
+    - Ported Firebug.NetMonitor.NetInfoPostData representation
+    - Fixed problem with the styling of XHR post tab in Google Chrome
+    - Fixed problem with the styling of XHR params tab in IE
+
+-------------------------------------------------------------------------------
+ConsoleInjector
+-------------------------------------------------------------------------------
+    - ported the consoleInjector module from Firebug
+
+-------------------------------------------------------------------------------
+Reps
+-------------------------------------------------------------------------------
+    - Fixed problem with the Element's representation and attribute names
+    - Adjusted the StackFrame representation to be used with the new console.trace()
+
+-------------------------------------------------------------------------------
+HTML
+-------------------------------------------------------------------------------
+    - Fixed styling problem with source code inside HTML tree (script tag). 
+      The line numbers were positioned at the top of the panel.
+
+-------------------------------------------------------------------------------
+Repository
+-------------------------------------------------------------------------------
+    - Added issues test cases directory to the repository
+
+
+
+###################################################################################################
+ 1.3.0b1 - 2010-02-05 - Revision: 6012
+###################################################################################################
+
+-------------------------------------------------------------------------------
+CSS
+-------------------------------------------------------------------------------
+    - Implemented a more robust stylesheet scanner (will scan imported stylesheets)
+    - Implemented a cascading styles analyser (will detect which CSS rules are applied
+      to a particular element, in the proper cascading order)
+      
+    - Ported css.js file from Firebug, including the following features:
+        - live edit of CSS properties
+        - enable/disable CSS properties on-the-fly
+        - Cascading visualization
+        - Inheritance visualization (with overriden properties marked)
+    
+    - Ported the CSS Panel
+    - Ported the Style Panel
+    - Ported the Computed Panel divided in categories (in a separated tab)
+    - Fixed the problem with external stylesheets (now shows a "Access restricted" message). 
+
+-------------------------------------------------------------------------------
+Editor
+-------------------------------------------------------------------------------
+    - Autocomplete feature with UP/DOWN keys
+    - "Complete as you type" feature in most browsers (not working in Opera yet)
+    - Increment/decrement with UP/DOWN, PAGE-UP/PAGE-DOWN
+    - Navigation with TAB/SHIFT+TAB
+    - Fixed the CSS of editor to work in all browsers
+    - Pretty inline editor support in IE6
+    - Fixed problem with inline editor in Safari/Chrome/IE: special keys doesn't 
+      trigger the onkeypress event, making some changes in the editor not apply 
+      to the CSS property.
+
+-------------------------------------------------------------------------------
+Console
+-------------------------------------------------------------------------------
+    - Strings are properly rendered in console.* calls
+
+-------------------------------------------------------------------------------
+CommandLine
+-------------------------------------------------------------------------------
+    - Fixed Issue 2764: Fix problem with commandLine API and jQuery's $ shortcut.
+
+-------------------------------------------------------------------------------
+Script
+-------------------------------------------------------------------------------
+    - Don't show the Firebug Lite source code in the script list
+    - Refactored Script panel
+    - Fixed potential memory leak
+    - Using the Warning template in the Script panel when failing to load external scripts.
+
+-------------------------------------------------------------------------------
+Chrome
+-------------------------------------------------------------------------------
+    - When running as Chrome extension, all images used in the interface are
+      stored in the extension directory, hugely improving the perceived loading
+      time for GUI operations, specially in the startup.
+      
+    - Implemented the chrome.deactivate() method
+
+-------------------------------------------------------------------------------
+GUI
+-------------------------------------------------------------------------------
+    - Added the "off" button to the UI
+    - Updated "minimize" and "detach" buttons with new images used in Firebug 1.4+
+    - Fixed problem with panel initialization that was breaking the scroll 
+      position persistence of the panels.
+
+-------------------------------------------------------------------------------
+Domplate
+-------------------------------------------------------------------------------
+    - Added domplate tag.insertBefore method
+    
+-------------------------------------------------------------------------------
+Lib
+-------------------------------------------------------------------------------
+    - Added KeyEvent constants
+    - Added bindFixed method
+    - Added Whitespace and Entity conversions methods
+    - Added String escaping methods
+    - Added CSS methods
+    - Added DOM queries methods
+    
+    - Fixed lib.collapse() method to work in IE6 (that doesn't support the "[collapsed]" 
+      CSS selector that was used to match the element)
+     
+    - Implemented a cross-browser lib.selectInputRange() and lib.getInputCaretPosition()
+      to support text selection and caret position detection in editor module
+      
+    - Making instanceOf() work also for non HTML elements (elements without ownerDocument 
+      property), to avoid the use of the instanceof operator, that may cause error in other 
+      browsers when the Class is not defined in the global namespace.
+
+-------------------------------------------------------------------------------
+Core
+-------------------------------------------------------------------------------
+    - Ported editor.js module from Firebug
+    - Ported a simplified version of tabContext.js
+    - Implemented a more robust Cache system that will be used internally
+    - Implemented a message dispatching method to communicate with the Chrome extension
+
+
+###################################################################################################
+ 1.3.0a5 - 2010-01-16 - Revision: 5719
+###################################################################################################
+
+-------------------------------------------------------------------------------
+CommandLine
+-------------------------------------------------------------------------------
+    - Large Command Line
+    - Refactoring CommandLine module for better readability and encapsulation (commandHistory
+        is now a private variable in CommandLine module)
+
+-------------------------------------------------------------------------------
+Chrome
+-------------------------------------------------------------------------------
+    - Fix problem in iframe creation that was blocking the UI creation via
+      bookmarlet in IE, for some pages.
+      
+    - Allow Firebug Lite UI to load in "windowless mode", without creating an
+      iframe. This is necessary to make the bookmarlet run in cases where it
+      is not possible to create an iframe.
+      
+    - Refactoring Chrome module for better readability
+
+-------------------------------------------------------------------------------
+User Interface
+-------------------------------------------------------------------------------
+    - refined the layout of buttons (added an image background)
+    - refined the layout of log groups
+
+-------------------------------------------------------------------------------
+Context
+-------------------------------------------------------------------------------
+    - Better context evaluation (commands with multiple lines are now properly evaluated)
+    - context.evaluate() properly executes and returns the value of expressions with 
+      multiple commands (be it multilined or not).
+
+-------------------------------------------------------------------------------
+Style
+-------------------------------------------------------------------------------
+    - Basic editing feature of inline styles (Style panel)
+
+-------------------------------------------------------------------------------
+HTML
+-------------------------------------------------------------------------------
+    - properly format inline style of elements in IE to lower-case in HTML panel
+
+-------------------------------------------------------------------------------
+Lib
+-------------------------------------------------------------------------------
+    - fixed visibility detection and visibility representation of elements
+    - Fixed problems in IE with some event functions like isLeftClick(), isRightClick(), 
+      and others. IE has a different pattern for identifying mouse buttons.
+
+-------------------------------------------------------------------------------
+Console
+-------------------------------------------------------------------------------
+    - Added the "category" of error in the error messages (like "Type Error", "Syntax Error", etc).
+    - ported the consoleInjetor.js file that will be used with the new console (console2.js)
+    - ported the console.js file from Firebug codebase (not enabled yet). This will replace 
+      the current implementation of the Console panel in the 1.3 final version.
+
+-------------------------------------------------------------------------------
+Core
+-------------------------------------------------------------------------------
+    - new XHR watcher (with response and headers tabs) 
+    - fixed variable "root" leaking to global namespace (domplate.js) 
+    - improved development build functions
+
+
+###################################################################################################
+ 1.3.0a4 - 2009-12-31 - Revision: 5505 
+###################################################################################################
+
+-------------------------------------------------------------------------------
+Core
+-------------------------------------------------------------------------------
+    - Improved the performance of the application initial loading time
+    - Improved the performance of the popup loading time
+    - Refactored the chrome synchronization mechanism
+    - Implemented synchronization of the persistent popup
+    - Fixed isFunction() problem with IE when dealing with external objects
+    
+    - Improved the memory consumption. Now each panel only uses resources (listen
+      for events, etc) when is currently selected.
+    
+    - Implemented the "Duck Type Detection" system, to make possible identify
+      native classes (Document, Element, etc) in IE, and therefore, generate
+      the appropriate visual representation.
+
+-------------------------------------------------------------------------------
+User Interface
+-------------------------------------------------------------------------------
+    - Moved all UI components to a separated gui.js file.
+    - Implemented the Menu class (with normal, checkbox, radiobutton, group
+      and separator items), that will be used in options menus at 1.3 verson
+      and in contexts menus at 1.4 version.
+
+-------------------------------------------------------------------------------
+Chrome
+-------------------------------------------------------------------------------
+    - StatusBar
+    - SidePanel size and positioning
+    
+    - Long sequence of elements (like toolbar/statusbar buttons) don't "bleed" 
+      anymore (appears outside its container) when the chrome has small dimensions
+       
+    - Large panels now triggers automatically the appropriate scrollbars
+      (some huge scripts with long lines wans't triggering the horizontal scrollbar) 
+
+-------------------------------------------------------------------------------
+Console
+-------------------------------------------------------------------------------
+    - Fixed problem in console.time() and console.timeEnd().
+    - Implemented the console.trace (thanks dongryphon for the contribution!)
+
+-------------------------------------------------------------------------------
+Inspector
+-------------------------------------------------------------------------------
+    - Implemented the border in the BoxModel Highlight
+    
+-------------------------------------------------------------------------------
+HTML
+-------------------------------------------------------------------------------
+    - Internet Explorer and inline styles representation (thanks christophe.blin 
+      for the contribution!)
+
+    - Implemented a basic sidePanel synchronization to test the overall 
+      performance of the rendering when inspecting elements
+
+-------------------------------------------------------------------------------
+DOM
+-------------------------------------------------------------------------------
+    - Ported the main part of the original DOM Panel in Firebug
+    - Ported the DOM "views path" mechanism (click and "go into" DOM objects)
+    - Improved the performance of the initial rendering 
+    - Implemented a basic DOM Panel subclass used in as HTML side panel
+
+-------------------------------------------------------------------------------
+Script
+-------------------------------------------------------------------------------
+    - Implemented the basics of the Script panel, with some code ported from
+      the Firebug Lite 1.2 version.
+      
+    - Better number of lines detection
+
+-------------------------------------------------------------------------------
+CSS
+-------------------------------------------------------------------------------
+    - Implemented the basics of the CSS panel, with some code ported from
+      the Firebug Lite 1.2 version.
+      
+    - Adjusted the rules and property names styles to lowercase
+
+-------------------------------------------------------------------------------
+Domplate
+-------------------------------------------------------------------------------
+    - Removed the dependency on global variables (domplate, DomplateTag)
+    - Adjusted the code so it can run in external contexts (persistent mode)
+
+
+
+###################################################################################################
+ 1.3.0a3 - 2009-09-13 - Revision: 4882
+###################################################################################################
+
+-------------------------------------------------------------------------------
+Core
+-------------------------------------------------------------------------------
+    - Better implementation of the chrome synchronization (detach and reattach methods)
+    - Improvements the location detection
+
+-------------------------------------------------------------------------------
+Chrome
+-------------------------------------------------------------------------------
+    - XML+XSL and XHTML support
+    - Synchronization messages ("detach" and "reattach") are now dispatched to all panels 
+    - Fixed problem with Chrome synchronization in Opera
+    - Fixed weird bug in layout in IE (horizontal splitter was disappearing sometimes)
+
+-------------------------------------------------------------------------------
+Inspector
+-------------------------------------------------------------------------------
+    - Reimplemented the IE auto margin size calculator
+    - Reimplemented the pointsToPixels function
+    - Reimplemented the pixelsPerInch calculator
+    - Outline Inspector is now "cropped" to avoid triggering the scrollbars
+
+-------------------------------------------------------------------------------
+Bookmarlet
+-------------------------------------------------------------------------------
+    - More robust and maintainable bookmarlet
+
+-------------------------------------------------------------------------------
+Domplate
+-------------------------------------------------------------------------------
+    - Ported the Domplate rendering engine
+
+-------------------------------------------------------------------------------
+Reps
+-------------------------------------------------------------------------------
+    - Ported the visual representation rules of objects (Reps module) 
+
+-------------------------------------------------------------------------------
+Persist
+-------------------------------------------------------------------------------
+    - Reimplemented the application core to support in the future persisted
+      Chromes, that is, UI windows that stays alive when the user reloads or
+      changes the page (considering that the following page is in the same domain).
+
+
+
+###################################################################################################
+ 1.3.0a2 - 2009-08-03 - Revision: 3847
+###################################################################################################
+
+-------------------------------------------------------------------------------
+Core Changes
+-------------------------------------------------------------------------------
+    - Context Class implemented to allow inspect different windows (contexts)
+    
+    - better settings handling: 
+        - modes: BookmarletMode, PersistentMode, TraceMode, DevelopmentMode
+        - skin: xp, classic, light
+
+    - all components were revised to better handling memory consumption. 
+      create()/destroy() methods (called when something is created) and 
+      initialize()/shutdown() when something is activated, or made visible.
+
+    - console.log calls are now captured even when the UI is not loaded
+    - better location detection
+    - library initialization reimplemented to support future persistent applications
+    
+-------------------------------------------------------------------------------
+User Interface Changes
+-------------------------------------------------------------------------------
+    - Created "xp" and "classic" skins. The old skin was based in a Firefox 
+      non-default theme.     
+    
+    - HTML and CSS revised to render properly in different browsers, running
+      on different compatibility modes (quirks mode, standards mode).
+    
+-------------------------------------------------------------------------------
+Chrome Changes
+-------------------------------------------------------------------------------
+    - better positioning calculation, when running on different compatibility 
+      modes (quirks mode, standards mode).
+    
+    - better window size, scrollSize and scollPosition calculations, when 
+      running on different compatibility modes (quirks mode, standards mode).
+    
+    - element:hover now works also in IE7 & IE8 when in quirks mode.
+    
+    - resize chrome performance (buffered frame-skip technique) 
+    
+    - mini-chrome implemented
+
+-------------------------------------------------------------------------------
+Core Additions
+-------------------------------------------------------------------------------
+    - FBTrace - internal logging system
+    
+    - DOM methods:
+        - createElement()
+        - createGlobalElement()
+        
+    - Event methods:
+        - bind()
+        - cancelEvent()
+        - addGlobalEvent()
+        - removeGlobalEvent()
+        - dispatch()
+        - disableTextSelection()
+    
+    - className methods:
+        - addClass()
+        - removeClass()
+        - hasClass()
+        - toggleClass()
+
+-------------------------------------------------------------------------------
+Chrome Additions
+-------------------------------------------------------------------------------
+    - Controller Class
+    - Module Class
+    - Panel Class
+    - PanelBar Class
+    - Button Class (normal and toggle buttons)
+    
+    - FBTrace Panel
+
+
+
+
+###################################################################################################
+ 1.3.0a1 - 2009-05-03 - Revision: 2729
+###################################################################################################
+
+-------------------------------------------------------------------------------
+Inspector
+-------------------------------------------------------------------------------
+    - Inspect function implemented.
+
+    - onInspecting highlight element in HTML Tree behaviour implemented.
+      When inspecting, the elements are being highlighted, and the scroll
+      is being changed to make the element visible in the tree.
+
+-------------------------------------------------------------------------------
+Core
+-------------------------------------------------------------------------------
+    - Problem with scope in event handlers. All functions that need to access
+      the "shared scope" must be assigned to a local variable.
+        
+        var onClick = function onClick(e)
+        {
+        ...
+
+    - Revised "extend" and "append" functions
+
+    - problem with the new Firebug for FF3, it seems that it doesn't allow 
+      extending the console namespace anymore.
+            
+    - CommandLineAPI --> $, $$, dir, dirxml...
+
+    - Fixed bug in getLocation function, the relative path calculation wasn't 
+      working in all cases. 
+
+    - Fixed bug in commandLine. Commands that doesn't return a value (if, for,
+      while) wasn't being properly executed.
+
+-------------------------------------------------------------------------------
+Events
+-------------------------------------------------------------------------------
+    - Opera problem with the TAB key in commandLine
+
+    - Better handling of the F12 key press, which wasn't being properly
+      attached to the Chrome Frame window.
+
+-------------------------------------------------------------------------------
+Chrome
+-------------------------------------------------------------------------------
+    - Problem with multiple iframes and the resizing of the Chrome, that
+      tries to add events on them.
+
+    - Fixed problem in IE when resizing the Chrome, when the relative position
+      of the mouse wasnt being computed in all frames of the document, 
+      resulting in strange flickerings when resizing it.
+
+    - Fixed problem in Opera when resizing the Chrome.
+
+    - Problem when resizing with the fbVSplitter, when it reaches the side of
+       the screen. Problem with negative pixel numbers.
+
+    - fbVSplitter is bigger than the frame in firefox. Problem with mouse scroll.
+
+    - isScrolledToBottom is not working in Firefox, it seems that this is 
+      happening because the scrollable panel is some pixels higher than
+      it should be.
+
+-------------------------------------------------------------------------------
+Inspector
+-------------------------------------------------------------------------------
+    - Selected element in HTML tree isn't being highlighted (boxmodel)
+
+    - BoxModel functions entirely revised. Now the position, size, padding
+       and margin are being computed correctly, in all units: pt, px, em, ex
+       and % (need to test more deeply the percentage values).
+
+-------------------------------------------------------------------------------
+commandLine
+-------------------------------------------------------------------------------
+    - better handling of scope of commandLine.eval(), if you type "this" it will
+      refer to the CommandLine module, and it should refer to "window" instead
+
+
+
+
+###################################################################################################
+ 1.3.0a0 - 2009-01-24 - Revision: 1765
+###################################################################################################
+
+1.3.0 prototype

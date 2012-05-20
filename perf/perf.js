@@ -66,7 +66,7 @@
       console.log('\n' + this.name + ':');
     },
     'onCycle': function(event) {
-      console.log(event.target.toString());
+      console.log(event.target + '');
     },
     'onComplete': function() {
       var fastest = this.filter('fastest').pluck('name'),
@@ -93,9 +93,9 @@
       else {
         // report results
         if (score.lodash >= score.underscore) {
-          console.log('\nLo-Dash is ' + (score.lodash / score.underscore).toFixed(2) + 'x faster than Underscore.\n');
+          console.log('\nLo-Dash is ' + (score.lodash / score.underscore).toFixed(2) + 'x faster than Underscore.');
         } else {
-          console.log('\nUnderscore is ' + (score.underscore / score.lodash).toFixed(2) + 'x faster than Lo-Dash.\n');
+          console.log('\nUnderscore is ' + (score.underscore / score.lodash).toFixed(2) + 'x faster than Lo-Dash.');
         }
       }
     }
@@ -191,6 +191,9 @@
 
   /*--------------------------------------------------------------------------*/
 
+  if (Benchmark.platform + '') {
+    console.log(Benchmark.platform + '\n');
+  }
   // start suites
   suites[0].run();
 

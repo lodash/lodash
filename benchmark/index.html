@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Lo-Dash Benchmark Suite</title>
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="../lodash.js"></script>
+		<script>
+			var lodash = _.noConflict();
+		</script>
+		<script src="../vendor/underscore/underscore.js"></script>
+		<script src="../vendor/benchmark.js/benchmark.js"></script>
+		<script src="../vendor/firebug-lite/src/firebug-lite-debug.js"></script>
+		<script>
+			window.onload = function() {
+				var sibling = document.scripts[0],
+				    script = document.createElement('script');
+
+				document.getElementById('FirebugUI').style.height = '100%';
+
+				script.src = 'benchmark.js';
+				sibling.parentNode.insertBefore(script, sibling);
+			};
+		</script>
+	</body>
+</html>

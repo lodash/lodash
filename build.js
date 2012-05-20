@@ -13,6 +13,9 @@
   /** Flag used to specify a custom build */
   var isCustom = false;
 
+  /** Shortcut used to convert array-like objects to arrays */
+  var slice = [].slice;
+
   /** The lodash.js source */
   var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
 
@@ -64,7 +67,7 @@
     'compact': [],
     'compose': [],
     'contains': ['createIterator'],
-    'createIterator': ['template'],
+    'createIterator': [],
     'debounce': [],
     'defaults': ['createIterator'],
     'defer': [],
@@ -140,12 +143,6 @@
     'zip': ['max', 'pluck']
   };
 
-  /** Used to indicate core functions */
-  var coreFuncs = ['extend', 'forEach', 'mixin'];
-
-  /** Used to determine the remaining functions in the source */
-  var funcNames = Object.keys(dependencyMap);
-
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -211,14 +208,60 @@
   }
 
   /**
-   * Determines if all functions of the given names have been removed.
+   * Determines if all functions of the given names have been removed from the `source`.
    *
    * @private
+   * @param {String} source The source to inspect.
    * @param {String} [funcName1, funcName2, ...] The names of functions to check.
    * @returns {Boolean} Returns `true` if all functions have been removed, else `false`.
    */
-  function isRemoved() {
-    return !lodash.intersection(funcNames, arguments).length;
+  function isRemoved(source) {
+    return slice.call(arguments, 1).every(function(funcName) {
+      return !matchFunction(source, funcName);
+    });
+  }
+
+  /**
+   * Searches the `source` for a `funcName` function declaration, expression, or
+   * assignment and returns the matched snippet.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @param {String} funcName The name of the function to match.
+   * @returns {String} Returns the matched function snippet.
+   */
+  function matchFunction(source, funcName) {
+    var result = source.match(RegExp(
+      // match multi-line comment block (could be on a single line)
+      '\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/\\n' +
+      // begin non-capturing group
+      '(?:' +
+      // match a function declaration
+      '( +)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
+      // match a variable declaration with `createIterator`
+      ' +var ' + funcName + ' *= *(?:[a-zA-Z]+ *\\|\\| *)?createIterator\\((?:{|[a-zA-Z])[\\s\\S]+?\\);|' +
+      // match a variable declaration with function expression
+      '( +)var ' + funcName + ' *= *(?:[a-zA-Z]+ *\\|\\| *)?function[\\s\\S]+?\\n\\2};' +
+      // end non-capturing group
+      ')\\n'
+    ));
+
+    return result ? result[0] : '';
+  }
+
+  /**
+   * Removes the all references to `refName` from the `createIterator` source.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} refName The name of the reference to remove.
+   * @returns {String} Returns the modified source.
+   */
+  function removeFromCreateIterator(source, refName) {
+    var snippet = matchFunction(source, 'createIterator'),
+        modified = snippet.replace(RegExp('\\b' + refName + '\\b,? *', 'g'), '');
+
+    return source.replace(snippet, modified);
   }
 
   /**
@@ -231,70 +274,29 @@
    * @returns {String} Returns the source with the function removed.
    */
   function removeFunction(source, funcName) {
-    // remove function
-    source = source.replace(RegExp(
-      // match multi-line comment block (could be on a single line)
-      '\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/\\n' +
-      // begin non-capturing group
-      '(?:' +
-      // match a function declaration
-      '( +)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
-      // match a variable declaration with `createIerator`
-      ' +var ' + funcName + ' *= *(?:[a-zA-Z]+ *\\|\\| *)?createIterator\\((?:{|[a-zA-Z])[\\s\\S]+?\\);|' +
-      // match a variable declaration with function expression
-      '( +)var ' + funcName + ' *= *(?:[a-zA-Z]+ *\\|\\| *)?function[\\s\\S]+?\\n\\2};' +
-      // end non-capturing group
-      ')\\n'
-    ), '');
+    var modified,
+        snippet = matchFunction(source, funcName);
 
-    // exit early if function is already removed
-    var found = funcNames.indexOf(funcName);
-    if (found < 0) {
+    // exit early if function is not found
+    if (!snippet) {
       return source;
     }
 
-    // grab `lodash` method assignments snippet
-    var assignmentSnippet = source.match(/( +)extend\(lodash,(?:[\s\S]+?\},)?([\s\S]+?\n\1}\))/)[2];
+    // remove function
+    source = source.replace(matchFunction(source, funcName), '');
 
-    // remove `funcName` from method assignments
-    var modifiedSnippet = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
-      result = result.replace(RegExp(" *'" + otherName + "'[^\\n]+\\n"), '');
-      return result;
-    }, assignmentSnippet)
+    // grab the method assignments snippet
+    snippet = source.match(/lodash\.VERSION *= *[\s\S]+?\/\*-+\*\/\n/)[0];
 
-    // remove any trailing commas and comments from the method assignments
-    modifiedSnippet = modifiedSnippet.replace(/,(?:\s*\/\/[^\n]*)?(\s*}\))/, '$1');
+    // remove assignment and aliases
+    modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
+      return result.replace(RegExp('(?:\\n *//.*\\s*)* *lodash\\.' + otherName + ' *= *.+\\n'), '');
+    }, snippet);
 
-    // replace method assignments snippet with the modified snippet
-    source = source.replace(assignmentSnippet, modifiedSnippet);
+    // replace with the modified snippet
+    source = source.replace(snippet, modified);
 
-    // remove from remaining function names
-    funcNames.splice(found, 1);
-
-    // remove associated code snippets
-    switch(funcName) {
-      case 'isArguments':
-        // remove `isArguments` if-statement
-        source = source.replace(/ +(?:\/\/[^\n]*\s+)?if *\(!isArguments[^)]+\)[\s\S]+?};?\s*}\n/, '');
-        break;
-
-      case 'template':
-        // remove associated functions
-        ['detokenize', 'escapeChar', 'tokenizeEscape', 'tokenizeInterpolate', 'tokenizeEvaluate'].forEach(function(otherName) {
-          source = removeFunction(source, otherName);
-        });
-        // remove associated variables
-        ['escapes', 'iteratorTemplate', 'reEscapeDelimiter', 'reEvaluateDelimiter', 'reInterpolateDelimiter', 'reToken', 'reUnescaped', 'token', 'tokenized'].forEach(function(varName) {
-          source = removeVar(source, varName);
-        });
-        // remove `templateSettings` assignment
-        source = source.replace(/\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\n( +)'templateSettings'[\s\S]+?},\n/, '');
-        break;
-
-      case 'uniqueId':
-        source = removeVar(source, 'idCounter');
-    }
-    return source;
+    return removeFromCreateIterator(source, funcName);
   }
 
   /**
@@ -306,13 +308,58 @@
    * @returns {String} Returns the source with the variable removed.
    */
   function removeVar(source, varName) {
-    return source.replace(RegExp(
+    source = source.replace(RegExp(
+      // begin non-capturing group
+      '(?:' +
       // match multi-line comment block
-      '\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/\\n' +
-      // match a variable declaration
-      '( +)var ' + varName + ' *= *(?:.*?;|[\\s\\S]+?\\n\\1[^\\n]+;)\\n'
+      '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
+      // match a variable declaration that's not part of a declaration list
+      '( +)var ' + varName + ' *= *(?:.*?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\1.+?;)\\n|' +
+      // match a variable in a declaration list
+      '\\n +' + varName + ' *=.*?,' +
+      // end non-capturing group
+      ')'
     ), '');
+
+    // remove a varaible at the start of a variable declaration list
+    source = source.replace(RegExp('(var +)' + varName + ' *=.+?,\\s+'), '$1');
+
+    // remove a variable at the end of a variable declaration list
+    source = source.replace(RegExp(',\\s*' + varName + ' *=.*?;'), ';');
+
+    return removeFromCreateIterator(source, varName);
   }
+
+  /*--------------------------------------------------------------------------*/
+
+  // inline `iteratorTemplate`
+  (function() {
+    var iteratorTemplate = lodash._iteratorTemplate,
+        code = /^function[^{]+{([\s\S]+?)}$/.exec(iteratorTemplate)[1];
+
+    // remove whitespace from template
+    code = code.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |var |\\\\n|\\n|\s+/g, function(match) {
+      return match == false || match == '\\n' ? '' : match;
+    });
+
+    // remove unnecessary code
+    code = code
+      .replace(/\|\|\{\}|,__t,__j=Array.prototype.join|function print[^}]+}|\+''/g, '')
+      .replace(/(\{);|;(\})/g, '$1$2')
+      .replace(/\(\(__t=\(([^)]+)\)\)==null\?'':__t\)/g, '$1');
+
+    // ensure escaped characters are interpreted correctly inside the `Function()` string
+    code = code.replace(/\\/g, '\\\\');
+
+    // add `code` to `Function()`
+    code = '$1Function(\'object\',\n$2  "' + code + '"\n$2);\n';
+
+    // replace `template()` with `Function()`
+    source = source.replace(/(( +)var iteratorTemplate *= *)([\s\S]+?\n\2.+?);\n/, code);
+
+    // remove pseudo private property `_iteratorTemplate`
+    source = source.replace(/(?:\s*\/\/.*)*\s*lodash\._iteratorTemplate\b.+\n/, '\n');
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -325,7 +372,7 @@
     }
 
     var filterType = pair[1],
-        filterNames = pair[2].split(',');
+        filterNames = lodash.intersection(Object.keys(dependencyMap), pair[2].split(',').map(getRealName));
 
     // set custom build flag
     isCustom = true;
@@ -333,24 +380,14 @@
     // remove the specified functions and their dependants
     if (filterType == 'exclude') {
       filterNames.forEach(function(funcName) {
-        funcName = getRealName(funcName);
-        var otherNames = getDependants(funcName).concat(funcName);
-
-        // skip removal if `funcName` is a required core function
-        if (otherNames.some(function(otherName) {
-              return coreFuncs.indexOf(otherName) > -1;
-            })) {
-          return;
-        }
-        otherNames.forEach(function(otherName) {
+        getDependants(funcName).concat(funcName).forEach(function(otherName) {
           source = removeFunction(source, otherName);
         });
       });
     }
     // else remove all but the specified functions and their dependencies
     else {
-      filterNames = lodash.uniq(filterNames.concat(coreFuncs).reduce(function(result, funcName) {
-        funcName = getRealName(funcName);
+      filterNames = lodash.uniq(filterNames.reduce(function(result, funcName) {
         result.push.apply(result, getDependencies(funcName).concat(funcName));
         return result;
       }, []));
@@ -362,29 +399,40 @@
       });
     }
 
-    // remove shared variables
-    if (isRemoved('createIterator', 'isEqual')) {
-      source = removeVar(source, 'hasDontEnumBug');
+    // remove associated functions, variables and code snippets
+    if (isRemoved('isArguments')) {
+      // remove `isArguments` if-statement
+      source = source.replace(/(?:\s*\/\/.*)*\s*if *\(!isArguments[^)]+\)[\s\S]+?};?\s*}\n/, '');
     }
-    if (isRemoved('every', 'filter', 'find', 'forEach', 'groupBy', 'map', 'reject', 'some')) {
-      source = removeVar(source, 'baseIteratorOptions');
+    if (isRemoved('mixin')) {
+      // remove `LoDash` constructor
+      source = removeFunction(source, 'LoDash');
+      // remove `LoDash` calls
+      source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
+      // remove `LoDash.prototype` additions
+      source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
     }
-    if (isRemoved('every', 'some')) {
-      source = removeVar(source, 'everyIteratorOptions');
+    if (isRemoved(source, 'template')) {
+      // remove `templateSettings` assignment
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
     }
-    if (isRemoved('defaults', 'extend')) {
-      source = removeVar(source, 'extendIteratorOptions');
-    }
-    if (isRemoved('filter', 'reject')) {
-      source = removeVar(source, 'filterIteratorOptions');
-    }
-    if (isRemoved('map', 'pluck', 'values')) {
-      source = removeVar(source, 'mapIteratorOptions');
-    }
-    if (isRemoved('max', 'min')) {
-      // remove varaible and associated try-catch
+    if (isRemoved(source, 'max', 'min')) {
       source = removeVar(source, 'argsLimit');
-      source = source.replace(/\n *try\s*\{\s*\(function[\s\S]+?catch[^}]+}\n/, '');
+      // remove `argsLimit` try-catch
+      source = source.replace(/\n *try\s*\{[\s\S]+?argsLimit *=[\s\S]+?catch[^}]+}\n/, '');
+    }
+    if (isRemoved(source, 'isArray', 'isEmpty', 'isEqual', 'size')) {
+      source = removeVar(source, 'arrayClass');
+    }
+    if (isRemoved(source, 'bind', 'functions', 'groupBy', 'invoke', 'isEqual', 'isFunction', 'result', 'sortBy', 'toArray')) {
+      source = removeVar(source, 'funcClass');
+    }
+    if (isRemoved(source, 'clone', 'isObject', 'keys')) {
+      source = removeVar(source, 'objectTypes');
+      source = removeFromCreateIterator(source, 'objectTypes');
+    }
+    if (isRemoved(source, 'isEmpty', 'isEqual', 'isString', 'size')) {
+      source = removeVar(source, 'stringClass');
     }
 
     // consolidate consecutive horizontal rule comment separators
@@ -397,8 +445,8 @@
 
   // begin the minification process
   if (isCustom) {
+    fs.writeFileSync(path.join(__dirname, 'lodash.custom.js'), source);
     minify(source, 'lodash.custom.min', function(result) {
-      fs.writeFileSync(path.join(__dirname, 'lodash.custom.js'), source);
       fs.writeFileSync(path.join(__dirname, 'lodash.custom.min.js'), result);
     });
   }

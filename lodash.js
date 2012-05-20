@@ -8,11 +8,16 @@
 ;(function(window, undefined) {
   'use strict';
 
+  /** Detect free variable `exports` */
+  var freeExports = typeof exports == 'object' && exports &&
+    (typeof global == 'object' && global && global == global.global && (window = global), exports);
+
   /** Used to detect the JavaScript engine's argument length limit */
   var argsLimit = Math.pow(2, 32) - 1;
 
   try {
-    (function() {
+    // skip test if running in Java to avoid uncatchable error
+    window.environment && environment['java.home'] || (function() {
       argsLimit = arguments.length;
     }).apply(null, Array(argsLimit));
   } catch(e) { }
@@ -27,10 +32,6 @@
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
-
-  /** Detect free variable `exports` */
-  var freeExports = typeof exports == 'object' && exports &&
-    (typeof global == 'object' && global && global == global.global && (window = global), exports);
 
   /**
    * Detect the JScript [[DontEnum]] bug:
@@ -103,7 +104,6 @@
   /** Native method shortcuts */
   var concat = ArrayProto.concat,
       hasOwnProperty = ObjectProto.hasOwnProperty,
-      join = ArrayProto.join,
       push = ArrayProto.push,
       slice = ArrayProto.slice,
       toString = ObjectProto.toString;
@@ -123,7 +123,13 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** The template used to create iterator functions */
+  /**
+   * The template used to create iterator functions.
+   *
+   * @private
+   * @param {Obect} data The data object used to populate the text.
+   * @returns {String} Returns the interpolated text.
+   */
   var iteratorTemplate = template(
     // assign the `result` variable an initial value
     'var index, result<% if (init) { %> = <%= init %><% } %>;\n' +
@@ -164,7 +170,7 @@
     // value to `true`. Because of this Lo-Dash standardizes on skipping
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
-    '    if (!(skipProto && index == "prototype")<% if (useHas) { %> && <%= hasExp %><% } %>) {\n' +
+    '    if (!(skipProto && index == \'prototype\')<% if (useHas) { %> && <%= hasExp %><% } %>) {\n' +
     '      <%= objectBranch.inLoop %>;\n' +
     '    }' +
     '  <% } %>\n' +
@@ -177,9 +183,9 @@
     '  <% if (hasDontEnumBug) { %>\n' +
     '  var ctor = <%= iteratedObject %>.constructor;\n' +
     '  <% for (var k = 0; k < 7; k++) { %>\n' +
-    '  index = "<%= shadowed[k] %>";\n' +
+    '  index = \'<%= shadowed[k] %>\';\n' +
     '  if (<%' +
-    '      if (shadowed[k] == "constructor") {' +
+    '      if (shadowed[k] == \'constructor\') {' +
     '        %>!(ctor && ctor.prototype === <%= iteratedObject %>) && <%' +
     '      } %><%= hasExp %>) {\n' +
     '    <%= objectBranch.inLoop %>;\n' +
@@ -477,7 +483,7 @@
    */
   function tokenizeEscape(match, value) {
     var index = tokenized.length;
-    tokenized[index] = "'+\n((__t = (" + value + ")) == null ? '' : __e(__t)) +\n'";
+    tokenized[index] = "'+\n((__t = (" + value + ")) == null ? '' : _.escape(__t)) +\n'";
     return token + index;
   }
 
@@ -2892,17 +2898,17 @@
 
     // if `options.variable` is not specified, add `data` to the top of the scope chain
     if (!variable) {
-      variable = defaults.variable;
+      variable = defaults.variable || 'object';
       text = 'with (' + variable + ' || {}) {\n' + text + '\n}\n';
     }
 
     text = 'function(' + variable + ') {\n' +
-      'var __p, __t;\n' +
-      'function print() { __p += __j.call(arguments, "") }\n' +
+      'var __p, __t, __j = Array.prototype.join;\n' +
+      'function print() { __p += __j.call(arguments, \'\') }\n' +
       text +
       'return __p\n}';
 
-    result = Function('_, __e, __j', 'return ' + text)(lodash, escape, join);
+    result = Function('_', 'return ' + text)(lodash);
 
     if (data) {
       return result(data);
@@ -3022,173 +3028,178 @@
 
   /*--------------------------------------------------------------------------*/
 
-  extend(lodash, {
+  /**
+   * The semantic version number.
+   *
+   * @static
+   * @memberOf _
+   * @type String
+   */
+  lodash.VERSION = '0.1.0';
+
+  /**
+   * By default, Lo-Dash uses ERB-style template delimiters, change the
+   * following template settings to use alternative delimiters.
+   *
+   * @static
+   * @memberOf _
+   * @type Object
+   */
+  lodash.templateSettings = {
 
     /**
-     * The semantic version number.
+     * Used to detect `data` property values to be HTML-escaped.
      *
      * @static
-     * @memberOf _
+     * @memberOf _.templateSettings
+     * @type RegExp
+     */
+    'escape': reEscapeDelimiter,
+
+    /**
+     * Used to detect code to be evaluated.
+     *
+     * @static
+     * @memberOf _.templateSettings
+     * @type RegExp
+     */
+    'evaluate': reEvaluateDelimiter,
+
+    /**
+     * Used to detect `data` property values to inject.
+     *
+     * @static
+     * @memberOf _.templateSettings
+     * @type RegExp
+     */
+    'interpolate': reInterpolateDelimiter,
+
+    /**
+     * Used to reference the data object in the template text.
+     *
+     * @static
+     * @memberOf _.templateSettings
      * @type String
      */
-    'VERSION': '0.1.0',
+    'variable': 'object'
+  };
 
-    /**
-     * By default, Lo-Dash uses ERB-style template delimiters, change the
-     * following template settings to use alternative delimiters.
-     *
-     * @static
-     * @memberOf _
-     * @type Object
-     */
-    'templateSettings': {
+  // assign static methods
+  lodash.after = after;
+  lodash.bind = bind;
+  lodash.bindAll = bindAll;
+  lodash.chain = chain;
+  lodash.clone = clone;
+  lodash.compact = compact;
+  lodash.compose = compose;
+  lodash.contains = contains;
+  lodash.debounce = debounce;
+  lodash.defaults = defaults;
+  lodash.defer = defer;
+  lodash.delay = delay;
+  lodash.difference = difference;
+  lodash.escape = escape;
+  lodash.every = every;
+  lodash.extend = extend;
+  lodash.filter = filter;
+  lodash.find = find;
+  lodash.first = first;
+  lodash.flatten = flatten;
+  lodash.forEach = forEach;
+  lodash.functions = functions;
+  lodash.groupBy = groupBy;
+  lodash.has = has;
+  lodash.identity = identity;
+  lodash.indexOf = indexOf;
+  lodash.initial = initial;
+  lodash.intersection = intersection;
+  lodash.invoke = invoke;
+  lodash.isArguments = isArguments;
+  lodash.isArray = isArray;
+  lodash.isBoolean = isBoolean;
+  lodash.isDate = isDate;
+  lodash.isElement = isElement;
+  lodash.isEmpty = isEmpty;
+  lodash.isEqual = isEqual;
+  lodash.isFinite = isFinite;
+  lodash.isFunction = isFunction;
+  lodash.isNaN = isNaN;
+  lodash.isNull = isNull;
+  lodash.isNumber = isNumber;
+  lodash.isObject = isObject;
+  lodash.isRegExp = isRegExp;
+  lodash.isString = isString;
+  lodash.isUndefined = isUndefined;
+  lodash.keys = keys;
+  lodash.last = last;
+  lodash.lastIndexOf = lastIndexOf;
+  lodash.map = map;
+  lodash.max = max;
+  lodash.memoize = memoize;
+  lodash.min = min;
+  lodash.mixin = mixin;
+  lodash.noConflict = noConflict;
+  lodash.once = once;
+  lodash.partial = partial;
+  lodash.pick = pick;
+  lodash.pluck = pluck;
+  lodash.range = range;
+  lodash.reduce = reduce;
+  lodash.reduceRight = reduceRight;
+  lodash.reject = reject;
+  lodash.rest = rest;
+  lodash.result = result;
+  lodash.shuffle = shuffle;
+  lodash.size = size;
+  lodash.some = some;
+  lodash.sortBy = sortBy;
+  lodash.sortedIndex = sortedIndex;
+  lodash.tap = tap;
+  lodash.template = template;
+  lodash.throttle = throttle;
+  lodash.times = times;
+  lodash.toArray = toArray;
+  lodash.union = union;
+  lodash.uniq = uniq;
+  lodash.uniqueId = uniqueId;
+  lodash.values = values;
+  lodash.without = without;
+  lodash.wrap = wrap;
+  lodash.zip = zip;
 
-      /**
-       * Used to detect `data` property values to be HTML-escaped.
-       *
-       * @static
-       * @memberOf _.templateSettings
-       * @type RegExp
-       */
-      'escape': reEscapeDelimiter,
+  // assign aliases
+  lodash.all = every;
+  lodash.any = some;
+  lodash.collect = map;
+  lodash.detect = find;
+  lodash.each = forEach;
+  lodash.foldl = reduce;
+  lodash.foldr = reduceRight;
+  lodash.head = first;
+  lodash.include = contains;
+  lodash.inject = reduce;
+  lodash.intersect = intersection;
+  lodash.methods = functions;
+  lodash.select = filter;
+  lodash.tail = rest;
+  lodash.take = first;
+  lodash.unique = uniq;
 
-      /**
-       * Used to detect code to be evaluated.
-       *
-       * @static
-       * @memberOf _.templateSettings
-       * @type RegExp
-       */
-      'evaluate': reEvaluateDelimiter,
-
-      /**
-       * Used to detect `data` property values to inject.
-       *
-       * @static
-       * @memberOf _.templateSettings
-       * @type RegExp
-       */
-      'interpolate': reInterpolateDelimiter,
-
-      /**
-       * Used to reference the data object in the template text.
-       *
-       * @static
-       * @memberOf _.templateSettings
-       * @type String
-       */
-      'variable': 'object'
-    },
-
-    // assign static methods
-    'after': after,
-    'bind': bind,
-    'bindAll': bindAll,
-    'chain': chain,
-    'clone': clone,
-    'compact': compact,
-    'compose': compose,
-    'contains': contains,
-    'debounce': debounce,
-    'defaults': defaults,
-    'defer': defer,
-    'delay': delay,
-    'difference': difference,
-    'escape': escape,
-    'every': every,
-    'extend': extend,
-    'filter': filter,
-    'find': find,
-    'first': first,
-    'flatten': flatten,
-    'forEach': forEach,
-    'functions': functions,
-    'groupBy': groupBy,
-    'has': has,
-    'identity': identity,
-    'indexOf': indexOf,
-    'initial': initial,
-    'intersection': intersection,
-    'invoke': invoke,
-    'isArguments': isArguments,
-    'isArray': isArray,
-    'isBoolean': isBoolean,
-    'isDate': isDate,
-    'isElement': isElement,
-    'isEmpty': isEmpty,
-    'isEqual': isEqual,
-    'isFinite': isFinite,
-    'isFunction': isFunction,
-    'isNaN': isNaN,
-    'isNull': isNull,
-    'isNumber': isNumber,
-    'isObject': isObject,
-    'isRegExp': isRegExp,
-    'isString': isString,
-    'isUndefined': isUndefined,
-    'keys': keys,
-    'last': last,
-    'lastIndexOf': lastIndexOf,
-    'map': map,
-    'max': max,
-    'memoize': memoize,
-    'min': min,
-    'mixin': mixin,
-    'noConflict': noConflict,
-    'once': once,
-    'partial': partial,
-    'pick': pick,
-    'pluck': pluck,
-    'range': range,
-    'reduce': reduce,
-    'reduceRight': reduceRight,
-    'reject': reject,
-    'rest': rest,
-    'result': result,
-    'shuffle': shuffle,
-    'size': size,
-    'some': some,
-    'sortBy': sortBy,
-    'sortedIndex': sortedIndex,
-    'tap': tap,
-    'template': template,
-    'throttle': throttle,
-    'times': times,
-    'toArray': toArray,
-    'union': union,
-    'uniq': uniq,
-    'uniqueId': uniqueId,
-    'values': values,
-    'without': without,
-    'wrap': wrap,
-    'zip': zip,
-
-    // assign aliases
-    'all': every,
-    'any': some,
-    'collect': map,
-    'detect': find,
-    'each': forEach,
-    'foldl': reduce,
-    'foldr': reduceRight,
-    'head': first,
-    'include': contains,
-    'inject': reduce,
-    'intersect': intersection,
-    'methods': functions,
-    'select': filter,
-    'tail': rest,
-    'take': first,
-    'unique': uniq
-  });
+  // add pseudo private template used and removed in the build process
+  lodash._iteratorTemplate = iteratorTemplate;
 
   /*--------------------------------------------------------------------------*/
 
   // assign private `LoDash` constructor's prototype
   LoDash.prototype = lodash.prototype;
 
-  // add all of the static functions to `LoDash.prototype`
+  // add all static functions to `LoDash.prototype`
   mixin(lodash);
+
+  // add `LoDash.prototype.chain` after calling `mixin()` to avoid overwriting
+  // it with the wrapped `lodash.chain`
+  LoDash.prototype.chain = wrapperChain;
+  LoDash.prototype.value = wrapperValue;
 
   // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
@@ -3231,12 +3242,6 @@
       }
       return result;
     };
-  });
-
-  // add `chain` and `value` after calling to `mixin()` to avoid getting wrapped
-  extend(LoDash.prototype, {
-    'chain': wrapperChain,
-    'value': wrapperValue
   });
 
   /*--------------------------------------------------------------------------*/

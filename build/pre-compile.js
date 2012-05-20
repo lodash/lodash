@@ -75,21 +75,120 @@
   var propWhitelist = [
     '_',
     '_wrapped',
+    'after',
+    'all',
     'amd',
+    'any',
+    'bind',
+    'bindAll',
+    'chain',
     'clearTimeout',
+    'clone',
+    'collect',
+    'compact',
+    'compose',
+    'contains',
     'criteria',
+    'debounce',
+    'defaults',
+    'defer',
+    'delay',
+    'detect',
+    'difference',
+    'each',
+    'environment',
+    'escape',
     'escape',
     'evaluate',
+    'every',
+    'extend',
+    'filter',
+    'find',
+    'first',
+    'flatten',
+    'foldl',
+    'foldr',
+    'forEach',
+    'functions',
+    'groupBy',
+    'has',
+    'head',
+    'identity',
+    'include',
+    'indexOf',
+    'initial',
+    'inject',
     'interpolate',
+    'intersect',
+    'intersection',
+    'invoke',
+    'isArguments',
+    'isArray',
+    'isBoolean',
+    'isDate',
+    'isElement',
+    'isEmpty',
+    'isEqual',
     'isEqual',
     'isFinite',
+    'isFinite',
+    'isFunction',
+    'isNaN',
+    'isNull',
+    'isNumber',
+    'isObject',
+    'isRegExp',
+    'isString',
+    'isUndefined',
+    'keys',
+    'last',
+    'lastIndexOf',
+    'map',
+    'max',
+    'memoize',
+    'methods',
+    'min',
+    'mixin',
+    'noConflict',
+    'once',
     'opera',
+    'partial',
+    'pick',
+    'pluck',
+    'range',
+    'reduce',
+    'reduceRight',
+    'reject',
+    'rest',
+    'result',
+    'select',
     'setTimeout',
+    'shuffle',
+    'size',
+    'some',
+    'sortBy',
+    'sortedIndex',
     'source',
+    'tail',
+    'take',
+    'tap',
+    'template',
     'templateSettings',
+    'throttle',
+    'times',
     'toArray',
+    'toArray',
+    'union',
+    'uniq',
+    'unique',
+    'uniqueId',
     'value',
-    'variable'
+    'values',
+    'variable',
+    'VERSION',
+    'without',
+    'wrap',
+    'zip'
   ];
 
   /*--------------------------------------------------------------------------*/
@@ -105,7 +204,7 @@
     source = source.replace(/\/\*![\s\S]+?\*\//, '');
 
     // correct JSDoc tags for Closure Compiler
-    source = source.replace(/@(?:alias|category)\b[^\n]*/g, '');
+    source = source.replace(/@(?:alias|category)\b.*/g, '');
 
     // add brackets to whitelisted properties so Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
@@ -113,6 +212,7 @@
 
     // remove whitespace from string literals
     source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {
+      // avoids removing the '\n' of the `escapes` object
       return string.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |use strict|var |'\\n'|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
@@ -121,7 +221,7 @@
     // minify `_.sortBy` internal properties
     (function() {
       var properties = ['criteria', 'value'],
-          snippet = (source.match(/( +)function sortBy\b[\s\S]+?\n\1}/) || [])[0],
+          snippet = (source.match(/( +)function sortBy\b[\s\S]+?\n\1}/) || 0)[0],
           result = snippet;
 
       if (snippet) {
@@ -137,14 +237,14 @@
     // minify all compilable snippets
     var snippets = source.match(
       RegExp([
-        // match the `iterationTemplate`
-        '( +)var iteratorTemplate\\b[\\s\\S]+?\\n\\1}',
-        // match variables storing `createIterator` options
-        '( +)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
-        // match the the `createIterator` function
-        '( +)function createIterator\\b[\\s\\S]+?\\n\\3}',
+        // match the `iteratorTemplate`
+        'var iteratorTemplate\\b[\\s\\S]+?\\);\\n',
         // match methods created by `createIterator` calls
-        'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]+?\\);\\n'
+        'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]+?\\);\\n',
+        // match variables storing `createIterator` options
+        '( +)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\1}',
+        // match the the `createIterator` function
+        '( +)function createIterator\\b[\\s\\S]+?\\n\\2}'
       ].join('|'), 'g')
     );
 
@@ -158,22 +258,9 @@
           isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
           result = snippet;
 
-      if (isIteratorTemplate) {
-        // minify delimiters
-        result = result
-          .replace(/<%=/g, '#')
-          .replace(/<%/g, '@')
-          .replace(/%>/g, '%');
 
-        // minify delimiter regexps
-        result = result
-          .replace(/('evaluate':)[^,}]+/, '$1/@([^%]+)%/g')
-          .replace(/('interpolate':)[^,}]+/, '$1/#([^%]+)%/g');
-      }
-      else {
-        // add brackets to whitelisted properties so Closure Compiler won't mung them
-        result = result.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
-      }
+      // add brackets to whitelisted properties so Closure Compiler won't mung them
+      result = result.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
 
       if (isCreateIterator) {
         // add `true` and `false` arguments to be minified
@@ -189,15 +276,15 @@
 
       // minify snippet variables / arguments
       compiledVars.forEach(function(variable, index) {
-        // ensure properties in compiled strings are minified
-        result = result.replace(RegExp('([^.]\\b|\\\\n)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
+        // ensure properties in compiled strings aren't minified
+        result = result.replace(RegExp('([^.]\\b)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
 
         // correct `typeof x == 'object'`
         if (variable == 'object') {
           result = result.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), "$1object'");
         }
         // correct external boolean literals
-        if (variable == 'true' || variable == 'false') {
+        else if (variable == 'true' || variable == 'false') {
           result = result
             .replace(RegExp(': *' + minNames[index] + ',', 'g'), ':' + variable + ',')
             .replace(RegExp('\\b' + minNames[index] + ';', 'g'), variable + ';');
@@ -207,7 +294,7 @@
       // minify `createIterator` option property names
       iteratorOptions.forEach(function(property, index) {
         if (isIteratorTemplate) {
-          // minify property names and accessors
+          // minify property names as interpolated template variables
           result = result.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
         }
         else {

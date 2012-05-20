@@ -22,14 +22,32 @@
    * @returns {String} Returns the processed source.
    */
   function postprocess(source) {
+    // exit early if snippet isn't found
+    var snippet = /VERSION\s*:\s*([\'"])(.*?)\1/.exec(source);
+    if (!snippet) {
+      return source;
+    }
+
     // set the version
-    var license = licenseTemplate.replace('@VERSION', (/VERSION\s*:\s*([\'"])(.*?)\1/).exec(source).pop());
+    var license = licenseTemplate.replace('@VERSION', snippet[2]);
+
     // move vars exposed by Closure Compiler into the IIFE
     source = source.replace(/^([^(\n]+)\s*(\(function[^)]+\){)/, '$2$1');
+
     // use double quotes consistently
     source = source.replace(/'use strict'/, '"use strict"');
+
+    // unescape properties (i.e. foo["bar"] => foo.bar)
+    source = source.replace(/(\w)\["([^."]+)"\]/g, '$1.$2');
+
+    // correct AMD module definition for AMD build optimizers
+    source = source.replace(/("function")==(typeof define)&&\(?("object")==(typeof define\.amd)(&&define\.amd)\)?/, '$2==$1&&$4==$3$5');
+
     // add license
-    return license + '\n;' + source;
+    source = license + '\n;' + source;
+
+    // add trailing semicolon
+    return source.replace(/[\s;]*$/, ';');
   }
 
   /*--------------------------------------------------------------------------*/

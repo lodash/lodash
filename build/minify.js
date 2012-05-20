@@ -54,7 +54,7 @@
    */
   function Minify(source, workingName, onComplete) {
     // create the destination directory if it doesn't exist
-    if (!path.existsSync(distPath)) {
+    if (!fs.existsSync(distPath)) {
       fs.mkdirSync(distPath);
     }
 

@@ -75,6 +75,7 @@
       } else {
         console.log(fastest + ' is the fastest.');
       }
+      // add score adjusting for maring of error
       score.lodash += Math.floor(1 / (this[0].stats.mean + this[0].stats.moe));
       score.underscore += Math.floor(1 / (this[1].stats.mean + this[1].stats.moe));
 
@@ -137,10 +138,10 @@
   suites.push(
     Benchmark.Suite('keys')
       .add('Lo-Dash', function() {
-        lodash.keys( object );
+        lodash.keys(object);
       })
       .add('Underscore', function() {
-        _.keys( object );
+        _.keys(object);
       })
   );
 
@@ -149,12 +150,12 @@
   suites.push(
     Benchmark.Suite('map')
       .add('Lo-Dash', function() {
-        lodash.map( objects, function( obj ) {
+        lodash.map(objects, function(obj) {
           return obj.num;
         });
       })
       .add('Underscore', function() {
-        _.map( objects, function( obj ) {
+        _.map(objects, function(obj) {
           return obj.num;
         });
       })

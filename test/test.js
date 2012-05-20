@@ -53,7 +53,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // must explicitly use `QUnit.module` instead of `module()`
+  // explicitly call `QUnit.module()` instead of `module()`
   // in case we are in a CLI environment
   QUnit.module('lodash');
 
@@ -455,5 +455,10 @@
       equal(wrapped.first(), undefined);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  // explicitly call `QUnit.start()` for Narwhal, Rhino, and RingoJS
+  QUnit.start();
 
 }(typeof global == 'object' && global || this));

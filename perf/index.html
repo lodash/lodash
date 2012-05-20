@@ -20,12 +20,20 @@
 		<script src="../vendor/benchmark.js/benchmark.js"></script>
 		<script src="../vendor/firebug-lite/src/firebug-lite-debug.js"></script>
 		<script>
+			(function() {
+				if (!/[?&]nojava=true(?:&|$)/.test(location.search)) {
+					// using innerHTML avoids an alert in some versions of IE6
+					var div = document.createElement('div');
+					div.innerHTML = '<applet code=nano archive="../vendor/benchmark.js/nano.jar">';
+					document.body.insertBefore(div.lastChild, document.body.firstChild);
+				}
+			}());
+
 			window.onload = function() {
 				var sibling = document.scripts[0],
 				    script = document.createElement('script');
 
 				document.getElementById('FirebugUI').style.height = '100%';
-
 				script.src = 'perf.js';
 				sibling.parentNode.insertBefore(script, sibling);
 			};

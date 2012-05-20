@@ -68,7 +68,7 @@
   /** Used to detect if a method is native */
   var reNative = RegExp('^' + ({}.valueOf + '')
     .replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
-    .replace(/valueOf/g, '.+?') + '$')
+    .replace(/valueOf|for [^\]]+/g, '.+?') + '$');
 
   /** Used to match tokens in template text */
   var reToken = /__token__(\d+)/g;

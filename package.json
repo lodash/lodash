@@ -38,8 +38,5 @@
   "directories": {
     "doc": "./doc",
     "test": "./test"
-  },
-  "devDependencies": {
-    "colors": "~0.6.0"
   }
 }

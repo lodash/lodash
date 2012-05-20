@@ -28,7 +28,7 @@
   /** Used to score Lo-Dash and Underscore performance */
   var score = { 'lodash': 0, 'underscore': 0 };
 
-  /** Use a queue benchmark suites */
+  /** Used to queue benchmark suites */
   var suites = [];
 
   /** Add `console.log()` support for Narwhal and RingoJS */
@@ -69,17 +69,21 @@
       console.log(event.target.toString());
     },
     'onComplete': function() {
-      var fastest = this.filter('fastest').pluck('name');
+      var fastest = this.filter('fastest').pluck('name'),
+          lodashHz = Math.floor(1 / (this[0].stats.mean + this[0].stats.moe)),
+          underscoreHz = Math.floor(1 / (this[1].stats.mean + this[1].stats.moe));
+
       if (fastest.length > 1) {
         console.log('It\'s too close to call.');
+        lodashHz = underscoreHz = Math.min(lodashHz, underscoreHz);
       } else {
         console.log(fastest + ' is the fastest.');
       }
-      // add score adjusting for maring of error
-      score.lodash += Math.floor(1 / (this[0].stats.mean + this[0].stats.moe));
-      score.underscore += Math.floor(1 / (this[1].stats.mean + this[1].stats.moe));
+      // add score adjusted for margin of error
+      score.lodash += lodashHz;
+      score.underscore += underscoreHz;
 
-      // remove from current suite from queue
+      // remove current suite from queue
       suites.shift();
 
       if (suites.length) {

@@ -13,7 +13,7 @@
   /** Load Lo-Dash */
   var lodash =
     window.lodash || (
-      lodash = load('../lodash.js') || window._,
+      lodash = load('../lodash.min.js') || window._,
       lodash = lodash._ || lodash,
       lodash.noConflict()
     );
@@ -21,7 +21,7 @@
   /** Load Underscore */
   var _ =
     window._ || (
-      _ = load('../vendor/underscore/underscore.js') || window._,
+      _ = load('../vendor/underscore/underscore-min.js') || window._,
       _._ || _
     );
 
@@ -70,8 +70,8 @@
     },
     'onComplete': function() {
       var fastest = this.filter('fastest').pluck('name'),
-          lodashHz = Math.floor(1 / (this[0].stats.mean + this[0].stats.moe)),
-          underscoreHz = Math.floor(1 / (this[1].stats.mean + this[1].stats.moe));
+          lodashHz = 1 / (this[0].stats.mean + this[0].stats.moe),
+          underscoreHz = 1 / (this[1].stats.mean + this[1].stats.moe);
 
       if (fastest.length > 1) {
         console.log('It\'s too close to call.');
@@ -192,7 +192,7 @@
   /*--------------------------------------------------------------------------*/
 
   if (Benchmark.platform + '') {
-    console.log(Benchmark.platform + '\n');
+    console.log(Benchmark.platform + '');
   }
   // start suites
   suites[0].run();

@@ -88,9 +88,9 @@
       else {
         // report results
         if (score.lodash >= score.underscore) {
-          console.log('\nLo-Dash is ' + (score.lodash / score.underscore).toFixed(2) + 'x faster than Underscore.');
+          console.log('\nLo-Dash is ' + (score.lodash / score.underscore).toFixed(2) + 'x faster than Underscore.\n');
         } else {
-          console.log('\nUnderscore is ' + (score.underscore / score.lodash).toFixed(2) + 'x faster than Lo-Dash.');
+          console.log('\nUnderscore is ' + (score.underscore / score.lodash).toFixed(2) + 'x faster than Lo-Dash.\n');
         }
       }
     }

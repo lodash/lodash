@@ -366,7 +366,7 @@
   // custom build
   process.argv.some(function(arg) {
     // exit early if not the "exclude" or "include" command option
-    var pair = arg.match(/^(exclude|include)=(.+)$/);
+    var pair = arg.match(/^(exclude|include)=(.*)$/);
     if (!pair) {
       return false;
     }
@@ -400,11 +400,11 @@
     }
 
     // remove associated functions, variables and code snippets
-    if (isRemoved('isArguments')) {
+    if (isRemoved(source, 'isArguments')) {
       // remove `isArguments` if-statement
       source = source.replace(/(?:\s*\/\/.*)*\s*if *\(!isArguments[^)]+\)[\s\S]+?};?\s*}\n/, '');
     }
-    if (isRemoved('mixin')) {
+    if (isRemoved(source, 'mixin')) {
       // remove `LoDash` constructor
       source = removeFunction(source, 'LoDash');
       // remove `LoDash` calls

@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v0.1.0</sup>
+# Lo-Dash <sup>v0.2.0</sup>
 
 <!-- div -->
 
@@ -617,7 +617,7 @@ Checks if the `callback` returns a truthy value for **all** elements of a `colle
 #### Example
 ~~~ js
 _.every([true, 1, null, 'yes'], Boolean);
-=> false
+// => false
 ~~~
 
 * * *
@@ -795,7 +795,7 @@ _.forEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
 // => alerts each number in turn
 
 _([1, 2, 3]).forEach(function(num) { alert(num); }).join(',');
-// => alerts each number in turn and returns "1,2,3"
+// => alerts each number in turn and returns '1,2,3'
 ~~~
 
 * * *

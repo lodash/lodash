@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.1.0 <http://lodash.com>
+ * Lo-Dash v0.2.0 <http://lodash.com>
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
@@ -3063,7 +3063,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.1.0';
+  lodash.VERSION = '0.2.0';
 
   /**
    * By default, Lo-Dash uses ERB-style template delimiters, change the

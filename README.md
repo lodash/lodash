@@ -2,13 +2,11 @@
 
 Lo-Dash, from the devs behind [jsPerf.com](http://jsperf.com), is a drop-in replacement for Underscore.js that delivers [performance improvements](http://jsperf.com/lodash-underscore#filterby=family), bug fixes, and additional features.
 
-Lo-DashÕs performance is gained by avoiding slower native methods, instead opting for simplified non-ES5 compliant methods optimized for common usage, and by leveraging function compilation to reduce the number of overall function calls.
+Lo-Dashâ€™s performance is gained by avoiding slower native methods, instead opting for simplified non-ES5 compliant methods optimized for common usage, and by leveraging function compilation to reduce the number of overall function calls.
 
 ## Dive in
 
-WeÕve got [API docs](http://lodash.com/docs) and [unit tests](http://lodash.com/tests).
-
-UnderscoreÕs [documentation](http://documentcloud.github.com/underscore/) may also be used.
+Weâ€™ve got [API docs](http://lodash.com/docs) and [unit tests](http://lodash.com/tests).
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
 
@@ -23,7 +21,7 @@ For more information check out these screencasts over Lo-Dash:
 
  * AMD loader support
  * [_.bind](http://lodash.com/docs#_bindfunc--arg1-arg2-) supports *"lazy"* binding
- * [_.debounce](http://lodash.com/docs#_debouncefunc-wait-immediate)Õed functions match [_.throttle](http://lodash.com/docs#_throttlefunc-wait)Õed functionsÕ return value behavior
+ * [_.debounce](http://lodash.com/docs#_debouncefunc-wait-immediate)â€™ed functions match [_.throttle](http://lodash.com/docs#_throttlefunc-wait)â€™ed functionsâ€™ return value behavior
  * [_.forEach](http://lodash.com/docs#_foreachcollection-callback--thisarg) is chainable
  * [_.groupBy](http://lodash.com/docs#_groupbycollection-callback--thisarg) accepts a third `thisArg` argument
  * [_.partial](http://lodash.com/docs#_partialfunc--arg1-arg2-) for more functional fun
@@ -48,8 +46,8 @@ node build include="each, filter, map, noConflict"
 
  2. Use the `exclude` argument to pass the names of the methods to exclude from the build.
 ~~~ bash
-node build exclude=isNaN,union,zip
-node build exclude="isNaN, union, zip"
+node build exclude=isNaN,isUndefined,union,zip
+node build exclude="isNaN, isUndefined, union, zip"
 ~~~
 
 Custom builds are saved to `lodash.custom.js` and `lodash.custom.min.js`.
@@ -89,8 +87,6 @@ load('lodash.js');
 In an AMD loader like [RequireJS](http://requirejs.org/):
 
 ~~~ js
-// Lo-Dash is defined as an anonymous module so, through path mapping, it can be
-// referenced as the "underscore" module
 require({
   'paths': {
     'underscore': 'path/to/lodash'
@@ -118,7 +114,7 @@ cd lodash
 git submodule update --init
 ~~~
 
-## Closed Underscore issues
+## Closed Underscore.js issues
 
  * Fix Firefox, IE, Opera, and Safari object iteration bugs [#376](https://github.com/documentcloud/underscore/issues/376)
  * Handle arrays with `undefined` values correctly in IE < 9 [#601](https://github.com/documentcloud/underscore/issues/601)
@@ -198,9 +194,9 @@ git submodule update --init
  * Added `_.partial`
  * Commented the `iterationFactory` options object
  * Ensured `_.max` and `_.min` support extremely large arrays
- * Fixed IE < 9 `[DontEnum]` bug and Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1Õs prototype property iteration bug
+ * Fixed IE < 9 `[DontEnum]` bug and Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1â€™s prototype property iteration bug
  * Inlined `_.isFunction` calls.
- * Made `_.debounce`Õed functions match `_.throttle`Õed functionsÕ return value behavior
+ * Made `_.debounce`â€™ed functions match `_.throttle`â€™ed functionsâ€™ return value behavior
  * Made `_.escape` no longer translate the *">"* character
  * Fixed `clearTimeout` typo
  * Simplified all methods in the *"Arrays"* category

@@ -1,8 +1,8 @@
 {
   "name": "lodash",
-  "version": "0.1.0",
-  "description": "A drop-in replacement for Underscore.js that delivers up to 8x performance improvements, bug fixes, and additional features.",
-  "homepage": "https://github.com/bestiejs/lodash",
+  "version": "0.2.0",
+  "description": "A drop-in replacement for Underscore.js that delivers performance improvements, bug fixes, and additional features.",
+  "homepage": "http://lodash.com",
   "main": "lodash",
   "keywords": [
     "browser",
@@ -16,7 +16,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://mths.be/mit"
+      "url": "http://lodash.com/license"
     }
   ],
   "author": {
@@ -37,6 +37,7 @@
   ],
   "directories": {
     "doc": "./doc",
+    "perf": "./perf",
     "test": "./test"
   }
 }

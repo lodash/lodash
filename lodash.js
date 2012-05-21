@@ -570,7 +570,7 @@
    * @example
    *
    * _.every([true, 1, null, 'yes'], Boolean);
-   * => false
+   * // => false
    */
   var every = createIterator(baseIteratorOptions, everyIteratorOptions);
 
@@ -639,7 +639,7 @@
    * // => alerts each number in turn
    *
    * _([1, 2, 3]).forEach(function(num) { alert(num); }).join(',');
-   * // => alerts each number in turn and returns "1,2,3"
+   * // => alerts each number in turn and returns '1,2,3'
    */
   var forEach = createIterator(baseIteratorOptions, {
     'top': 'if (thisArg) callback = bind(callback, thisArg)'

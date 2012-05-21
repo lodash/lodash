@@ -30,7 +30,7 @@
 			}());
 
 			window.onload = function() {
-				var sibling = document.scripts[0],
+				var sibling = document.getElementsByTagName('script')[0],
 				    script = document.createElement('script');
 
 				document.getElementById('FirebugUI').style.height = '100%';

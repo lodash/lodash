@@ -372,7 +372,7 @@
     }
 
     var filterType = pair[1],
-        filterNames = lodash.intersection(Object.keys(dependencyMap), pair[2].split(',').map(getRealName));
+        filterNames = lodash.intersection(Object.keys(dependencyMap), pair[2].split(/, */).map(getRealName));
 
     // set custom build flag
     isCustom = true;

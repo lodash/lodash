@@ -12,12 +12,26 @@
   var freeExports = typeof exports == 'object' && exports &&
     (typeof global == 'object' && global && global == global.global && (window = global), exports);
 
-  /** Used to detect the JavaScript engine's argument length limit */
-  var argsLimit = Math.pow(2, 32) - 1;
+  /**
+   * Used to detect the JavaScript engine's argument length limit.
+   *
+   * The initial value of `argsLimit` is low enough not to cause uncatchable
+   * errors in Java and avoid locking up older browsers like Safari 3.
+   *
+   * Some engines have a limit on the number of arguments functions can accept
+   * before clipping the argument length or throwing an error.
+   * https://bugs.webkit.org/show_bug.cgi?id=80797
+   *
+   * For example Firefox's limits have been observed to be at least:
+   *   Firefox 2    - 35,535
+   *   Firefox 3.6  - 16,777,215
+   *   Firefox 4-7  - 523,264
+   *   Firefox >= 8 - Throws error
+   */
+  var argsLimit = 5e4;
 
   try {
-    // skip test if running in Java to avoid uncatchable error
-    window.environment && environment['java.home'] || (function() {
+    (function() {
       argsLimit = arguments.length;
     }).apply(null, Array(argsLimit));
   } catch(e) { }
@@ -1298,7 +1312,6 @@
       if (array[0] === +array[0] && length <= argsLimit) {
         // some JavaScript engines have a limit on the number of arguments functions
         // can accept before clipping the argument length or throwing an error
-        // https://bugs.webkit.org/show_bug.cgi?id=80797
         try {
           return Math.max.apply(Math, array);
         } catch(e) { }

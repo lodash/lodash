@@ -29,6 +29,9 @@
     '--warning_level=QUIET'
   ];
 
+  /** Reassign `existsSync` for older versions of Node */
+  fs.existsSync || (fs.existsSync = path.existsSync);
+
   /*--------------------------------------------------------------------------*/
 
   /**

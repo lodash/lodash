@@ -9,7 +9,7 @@ Lo-Dash's performance is gained by avoiding slower native methods, instead optin
 For more information check out these screencasts over Lo-Dash:
 
  * [Introducing Lo-Dash](http://dl.dropbox.com/u/513327/allyoucanleet/post/20/file/screencast.mp4)
- * [Compiling and custom builds]()
+ * [Compiling and custom builds](http://dl.dropbox.com/u/513327/allyoucanleet/post/21/file/screencast.mp4)
 
 ## Documentation
 
@@ -19,7 +19,7 @@ Underscore's [documentation](http://documentcloud.github.com/underscore/) may al
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
 
-For a summary of bug fixes, changes, features, and optimizations, check out [wiki/The-Low-Down](https://github.com/bestiejs/lodash/wiki/The-Low-Down).
+For a summary of bug fixes, changes, features, and optimizations, check out [/wiki/The-Low-Down](https://github.com/bestiejs/lodash/wiki/The-Low-Down).
 
 ## Features
 

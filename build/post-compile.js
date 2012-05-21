@@ -23,7 +23,7 @@
    */
   function postprocess(source) {
     // exit early if snippet isn't found
-    var snippet = /VERSION\s*:\s*([\'"])(.*?)\1/.exec(source);
+    var snippet = /VERSION\s*[=:]\s*([\'"])(.*?)\1/.exec(source);
     if (!snippet) {
       return source;
     }

@@ -149,6 +149,14 @@
   QUnit.module('lodash.extend');
 
   (function() {
+    test('should not error on `null` or `undefined` sources (test in IE < 9)', function() {
+      try {
+        deepEqual(_.extend({}, null, undefined, { 'a': 1 }), { 'a': 1 });
+      } catch(e) {
+        ok(false);
+      }
+    });
+
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
       function Foo() {}
       Foo.prototype.c = 3;

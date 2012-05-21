@@ -635,11 +635,11 @@
    * @returns {Array|Object} Returns the `collection`.
    * @example
    *
-   * _.forEach([1, 2, 3], function(num) { alert(num); });
-   * // => alerts each number in turn...
+   * _([1, 2, 3]).forEach(function(num) { alert(num); }).join(',');
+   * // => alerts each number in turn and returns "1,2,3"
    *
    * _.forEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
-   * // => alerts each number in turn...
+   * // => alerts each number in turn
    */
   var forEach = createIterator(baseIteratorOptions, {
     'top': 'if (thisArg) callback = bind(callback, thisArg)'
@@ -851,7 +851,7 @@
   });
 
   /**
-   * Gets the number of values in the `collection`.
+   * Gets the number of values in the `collection` or the `length` of a string value.
    *
    * @static
    * @memberOf _
@@ -860,8 +860,14 @@
    * @returns {Number} Returns the number of values in the collection.
    * @example
    *
+   * _.size([1, 2]);
+   * // => 2
+   *
    * _.size({ 'one': 1, 'two': 2, 'three': 3 });
    * // => 3
+   *
+   * _.size('curly');
+   * // => 5
    */
   function size(collection) {
     var className = toString.call(collection);
@@ -888,6 +894,9 @@
    * @example
    *
    * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return Math.sin(num); });
+   * // => [5, 4, 6, 3, 1, 2]
+   *
+   * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return this.sin(num); }, Math);
    * // => [5, 4, 6, 3, 1, 2]
    */
   function sortBy(collection, callback, thisArg) {
@@ -1828,7 +1837,8 @@
    * Creates a new function that will delay the execution of `func` until after
    * `wait` milliseconds have elapsed since the last time it was invoked. Pass
    * `true` for `immediate` to cause debounce to invoke `func` on the leading,
-   * instead of the trailing, edge of the `wait` timeout.
+   * instead of the trailing, edge of the `wait` timeout. Subsequent calls to
+   * the debounced function will return the result of the last `func` call.
    *
    * @static
    * @memberOf _
@@ -2012,7 +2022,8 @@
    * Creates a new function that, when executed, will only call the `func`
    * function at most once per every `wait` milliseconds. If the throttled function
    * is invoked more than once, `func` will also be called on the trailing edge
-   * of the `wait` timeout.
+   * of the `wait` timeout. Subsequent calls to the throttled function will
+   * return the result of the last `func` call.
    *
    * @static
    * @memberOf _
@@ -2699,7 +2710,7 @@
    */
   function escape(string) {
     // the `>` character doesn't require escaping in HTML and has no special
-    // meaning unless it's part of an open tag
+    // meaning unless it's part of a tag or an unquoted attribute value
     // http://mathiasbynens.be/notes/ambiguous-ampersands (semi-related fun fact)
     return (string + '')
       .replace(/&/g, '&amp;')
@@ -3199,7 +3210,7 @@
   lodash.take = first;
   lodash.unique = uniq;
 
-  // add pseudo private template used and removed in the build process
+  // add pseudo private template used and removed during the build process
   lodash._iteratorTemplate = iteratorTemplate;
 
   /*--------------------------------------------------------------------------*/

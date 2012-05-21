@@ -248,11 +248,12 @@
     'init': 'object',
     'top':
       'for (var source, sourceIndex = 1, length = arguments.length; sourceIndex < length; sourceIndex++) {\n' +
-      '  source = arguments[sourceIndex]',
+      '  source = arguments[sourceIndex];\n' +
+      (hasDontEnumBug ? '  if (source) {' : ''),
     'loopExp': 'index in source',
     'useHas': false,
     'inLoop': 'object[index] = source[index]',
-    'bottom': '}'
+    'bottom': (hasDontEnumBug ? '  }\n' : '') + '}'
   };
 
   /** Reusable iterator options for `filter`  and `reject` */

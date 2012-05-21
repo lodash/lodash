@@ -635,11 +635,11 @@
    * @returns {Array|Object} Returns the `collection`.
    * @example
    *
-   * _([1, 2, 3]).forEach(function(num) { alert(num); }).join(',');
-   * // => alerts each number in turn and returns "1,2,3"
-   *
    * _.forEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
    * // => alerts each number in turn
+   *
+   * _([1, 2, 3]).forEach(function(num) { alert(num); }).join(',');
+   * // => alerts each number in turn and returns "1,2,3"
    */
   var forEach = createIterator(baseIteratorOptions, {
     'top': 'if (thisArg) callback = bind(callback, thisArg)'
@@ -662,6 +662,9 @@
    * @example
    *
    * _.groupBy([1.3, 2.1, 2.4], function(num) { return Math.floor(num); });
+   * // => { '1': [1.3], '2': [2.1, 2.4] }
+   *
+   * _.groupBy([1.3, 2.1, 2.4], function(num) { return this.floor(num); }, Math);
    * // => { '1': [1.3], '2': [2.1, 2.4] }
    *
    * _.groupBy(['one', 'two', 'three'], 'length');

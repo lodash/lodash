@@ -1,6 +1,6 @@
 # Lo-Dash <sup>v0.2.0</sup>
 
-Lo-Dash, from the devs behind [jsPerf.com](http://jsperf.com), is a drop-in replacement for Underscore.js that delivers [performance improvements](http://jsperf.com/lodash-underscore#filterby=family), bug fixes, and additional features.
+A drop-in replacement for Underscore.js, from the devs behind [jsPerf.com](http://jsperf.com), that delivers [performance improvements](http://jsperf.com/lodash-underscore#filterby=family), bug fixes, and additional features.
 
 Lo-Dash’s performance is gained by avoiding slower native methods, instead opting for simplified non-ES5 compliant methods optimized for common usage, and by leveraging function compilation to reduce the number of overall function calls.
 
@@ -15,7 +15,7 @@ For a list of upcoming features, check out our [roadmap](https://github.com/best
 For more information check out these screencasts over Lo-Dash:
 
  * [Introducing Lo-Dash](http://dl.dropbox.com/u/513327/allyoucanleet/post/20/file/screencast.mp4)
- * [Compiling and custom builds](http://dl.dropbox.com/u/513327/allyoucanleet/post/21/file/screencast.mp4)
+ * [Optimizations and custom builds](http://dl.dropbox.com/u/513327/allyoucanleet/post/21/file/screencast.mp4)
 
 ## Features
 
@@ -25,7 +25,7 @@ For more information check out these screencasts over Lo-Dash:
  * [_.forEach](http://lodash.com/docs#_foreachcollection-callback--thisarg) is chainable
  * [_.groupBy](http://lodash.com/docs#_groupbycollection-callback--thisarg) accepts a third `thisArg` argument
  * [_.partial](http://lodash.com/docs#_partialfunc--arg1-arg2-) for more functional fun
- * [_.size](http://lodash.com/docs#_sizecollection) returns the `length` of a string value
+ * [_.size](http://lodash.com/docs#_sizecollection) returns the `length` of string values
 
 ## Support
 
@@ -123,7 +123,7 @@ git submodule update --init
  * `_.forEach` should be chainable [#142](https://github.com/documentcloud/underscore/issues/142)
  * `_isNaN(new Number(NaN))` should return `true`
  * `_.reduceRight` should pass correct callback arguments when iterating objects
- * `_.size` should return the `length` of a string value
+ * `_.size` should return the `length` of string values
 
 ## Optimized methods <sup>(50+)</sup>
 

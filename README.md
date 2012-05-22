@@ -23,9 +23,9 @@ For more information check out these screencasts over Lo-Dash:
  * [_.bind](http://lodash.com/docs#_bindfunc--arg1-arg2-) supports *"lazy"* binding
  * [_.debounce](http://lodash.com/docs#_debouncefunc-wait-immediate)’ed functions match [_.throttle](http://lodash.com/docs#_throttlefunc-wait)’ed functions’ return value behavior
  * [_.forEach](http://lodash.com/docs#_foreachcollection-callback--thisarg) is chainable
- * [_.groupBy](http://lodash.com/docs#_groupbycollection-callback--thisarg) accepts a third `thisArg` argument
+ * [_.groupBy](http://lodash.com/docs#_groupbycollection-callback--thisarg) accepts a third, `thisArg`, argument
  * [_.partial](http://lodash.com/docs#_partialfunc--arg1-arg2-) for more functional fun
- * [_.size](http://lodash.com/docs#_sizecollection) returns the `length` of string values
+ * [_.size](http://lodash.com/docs#_sizecollection) supports returning the `length` of string values
 
 ## Support
 
@@ -121,9 +121,9 @@ git submodule update --init
  * Methods should work on pages with incorrectly shimmed native methods [#7](https://github.com/documentcloud/underscore/issues/7)
  * Register as AMD module, but still export to global [#431](https://github.com/documentcloud/underscore/pull/431)
  * `_.forEach` should be chainable [#142](https://github.com/documentcloud/underscore/issues/142)
- * `_isNaN(new Number(NaN))` should return `true`
- * `_.reduceRight` should pass correct callback arguments when iterating objects
- * `_.size` should return the `length` of string values
+ * `_isNaN(new Number(NaN))` should return `true` [[test](https://github.com/bestiejs/lodash/blob/5bcd444084c92b1753feeaf66c20323e57a2dac3/test/test.js#L95-99)]
+ * `_.reduceRight` should pass correct callback arguments when iterating objects [[test](https://github.com/bestiejs/lodash/blob/5bcd444084c92b1753feeaf66c20323e57a2dac3/test/test.js#L106-116)]
+ * `_.size` should return the `length` of string values [[test](https://github.com/bestiejs/lodash/blob/5bcd444084c92b1753feeaf66c20323e57a2dac3/test/test.js#L121-127)]
 
 ## Optimized methods <sup>(50+)</sup>
 
@@ -189,9 +189,9 @@ git submodule update --init
  * Added *"lazy bind"* support to `_.bind`
  * Added native method overwrite detection to avoid bad native shims
  * Added support for more AMD build optimizers and aliasing as the *"underscore"* module
- * Added `thisArg` to `_.groupBy`
+ * Added `thisArg` argument to `_.groupBy`
  * Added whitespace to compiled strings
- * Added `_.partial`
+ * Added `_.partial` method
  * Commented the `iterationFactory` options object
  * Ensured `_.max` and `_.min` support extremely large arrays
  * Fixed IE < 9 `[DontEnum]` bug and Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1’s prototype property iteration bug

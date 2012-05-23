@@ -976,9 +976,6 @@
    * // => [1, 2, 3, [[4]]];
    */
   function flatten(array, shallow) {
-    if (shallow) {
-      return concat.apply(ArrayProto, array);
-    }
     var value,
         index = -1,
         length = array.length,
@@ -987,7 +984,7 @@
     while (++index < length) {
       value = array[index];
       if (isArray(value)) {
-        push.apply(result, flatten(value));
+        push.apply(result, shallow ? value : flatten(value));
       } else {
         result.push(value);
       }

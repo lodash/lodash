@@ -174,6 +174,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.flatten');
+
+  (function() {
+    test('should treat sparse arrays as dense', function() {
+      var array = [[1, 2, 3], Array(3)],
+          expected = [1, 2, 3],
+          actual1 = _.flatten(array),
+          actual2 = _.flatten(array, true);
+
+      expected.push(undefined, undefined, undefined);
+
+      deepEqual(actual1, expected);
+      ok('4' in actual1);
+
+      deepEqual(actual2, expected);
+      ok('4' in actual2);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.forEach');
 
   (function() {

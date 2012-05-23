@@ -2680,14 +2680,16 @@
   }
 
   /**
-   * Gets the `length` of `value` when `value` is an array or string, or gets
-   * the number of enumerable own properties when `value` is an object.
+   * Gets the size of a `value` by returning `value.length` if `value` is a
+   * string or array, or the number of own enumerable properties if `value` is
+   * an object.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Array|Object|String} value The value to inspect.
-   * @returns {Number} Returns the value's size.
+   * @returns {Number} Returns `value.length` if `value` is a string or array,
+   *  or the number of own enumerable properties if `value` is an object.
    * @example
    *
    * _.size([1, 2]);

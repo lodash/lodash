@@ -70,15 +70,6 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
-  /** Used to match the "escape" template delimiters */
-  var reEscapeDelimiter = /<%-([\s\S]+?)%>/g;
-
-  /** Used to match the "evaluate" template delimiters */
-  var reEvaluateDelimiter = /<%([\s\S]+?)%>/g;
-
-  /** Used to match the "interpolate" template delimiters */
-  var reInterpolateDelimiter = /<%=([\s\S]+?)%>/g;
-
   /** Used to detect if a method is native */
   var reNative = RegExp('^' + ({}.valueOf + '')
     .replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
@@ -134,6 +125,83 @@
   /** Timer shortcuts */
   var clearTimeout = window.clearTimeout,
       setTimeout = window.setTimeout;
+
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * The `lodash` function.
+   *
+   * @name _
+   * @constructor
+   * @param {Mixed} value The value to wrap in a `LoDash` instance.
+   * @returns {Object} Returns a `LoDash` instance.
+   */
+  function lodash(value) {
+    // allow invoking `lodash` without the `new` operator
+    return new LoDash(value);
+  }
+
+  /**
+   * Creates a `LoDash` instance that wraps a value to allow chaining.
+   *
+   * @private
+   * @constructor
+   * @param {Mixed} value The value to wrap.
+   */
+  function LoDash(value) {
+    // exit early if already wrapped
+    if (value && value._wrapped) {
+      return value;
+    }
+    this._wrapped = value;
+  }
+
+  /**
+   * By default, Lo-Dash uses ERB-style template delimiters, change the
+   * following template settings to use alternative delimiters.
+   *
+   * @static
+   * @memberOf _
+   * @type Object
+   */
+  lodash.templateSettings = {
+
+    /**
+     * Used to detect `data` property values to be HTML-escaped.
+     *
+     * @static
+     * @memberOf _.templateSettings
+     * @type RegExp
+     */
+    'escape': /<%-([\s\S]+?)%>/g,
+
+    /**
+     * Used to detect code to be evaluated.
+     *
+     * @static
+     * @memberOf _.templateSettings
+     * @type RegExp
+     */
+    'evaluate': /<%([\s\S]+?)%>/g,
+
+    /**
+     * Used to detect `data` property values to inject.
+     *
+     * @static
+     * @memberOf _.templateSettings
+     * @type RegExp
+     */
+    'interpolate': /<%=([\s\S]+?)%>/g,
+
+    /**
+     * Used to reference the data object in the template text.
+     *
+     * @static
+     * @memberOf _.templateSettings
+     * @type String
+     */
+    'variable': 'object'
+  };
 
   /*--------------------------------------------------------------------------*/
 
@@ -213,11 +281,7 @@
     '<%= bottom %>;\n' +
     // finally, return the `result`
     'return result'
-
-    , null, {
-    'evaluate': reEvaluateDelimiter,
-    'interpolate': reInterpolateDelimiter
-  });
+  );
 
   /**
    * Reusable iterator options shared by
@@ -275,86 +339,6 @@
       'object': 'result.push(callback(collection[index], index, collection))'
     }
   };
-
-  /*--------------------------------------------------------------------------*/
-
-  /**
-   * The `lodash` function.
-   *
-   * @name _
-   * @constructor
-   * @param {Mixed} value The value to wrap in a `LoDash` instance.
-   * @returns {Object} Returns a `LoDash` instance.
-   */
-  function lodash(value) {
-    // allow invoking `lodash` without the `new` operator
-    return new LoDash(value);
-  }
-
-  /**
-   * Creates a `LoDash` instance that wraps a value to allow chaining.
-   *
-   * @private
-   * @constructor
-   * @param {Mixed} value The value to wrap.
-   */
-  function LoDash(value) {
-    // exit early if already wrapped
-    if (value && value._wrapped) {
-      return value;
-    }
-    this._wrapped = value;
-  }
-
-  /*--------------------------------------------------------------------------*/
-
-  /**
-   * Checks if a `value` is an array.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an array, else `false`.
-   * @example
-   *
-   * (function() { return _.isArray(arguments); })();
-   * // => false
-   *
-   * _.isArray([1, 2, 3]);
-   * // => true
-   */
-  var isArray = nativeIsArray || function(value) {
-    return toString.call(value) == arrayClass;
-  };
-
-  /**
-   * Checks if a `value` is empty. Arrays or strings with a length of `0` and
-   * objects with no enumerable own properties are considered "empty".
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is empty, else `false`.
-   * @example
-   *
-   * _.isEmpty([1, 2, 3]);
-   * // => false
-   *
-   * _.isEmpty({});
-   * // => true
-   */
-  var isEmpty = createIterator({
-    'args': 'value',
-    'init': 'true',
-    'top':
-      'var className = toString.call(value);\n' +
-      'if (className == arrayClass || className == stringClass) return !value.length',
-    'inLoop': {
-      'object': 'return false'
-    }
-  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -646,43 +630,6 @@
   });
 
   /**
-   * Splits a `collection` into sets, grouped by the result of running each value
-   * through `callback`. The `callback` is invoked with 3 arguments; for arrays
-   * they are (value, index, array) and for objects they are (value, key, object).
-   * The `callback` argument may also be the name of a property to group by.
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function|String} callback The function called per iteration or
-   *  property name to group by.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Object} Returns an object of grouped values.
-   * @example
-   *
-   * _.groupBy([1.3, 2.1, 2.4], function(num) { return Math.floor(num); });
-   * // => { '1': [1.3], '2': [2.1, 2.4] }
-   *
-   * _.groupBy([1.3, 2.1, 2.4], function(num) { return this.floor(num); }, Math);
-   * // => { '1': [1.3], '2': [2.1, 2.4] }
-   *
-   * _.groupBy(['one', 'two', 'three'], 'length');
-   * // => { '3': ['one', 'two'], '5': ['three'] }
-   */
-  var groupBy = createIterator(baseIteratorOptions, {
-    'init': '{}',
-    'top':
-      'var prop, isFunc = toString.call(callback) == funcClass;\n' +
-      'if (isFunc && thisArg) callback = bind(callback, thisArg)',
-    'inLoop':
-      'prop = isFunc\n' +
-      '  ? callback(collection[index], index, collection)\n' +
-      '  : collection[index][callback];\n' +
-      '(result[prop] || (result[prop] = [])).push(collection[index])'
-  });
-
-  /**
    * Produces a new array of values by mapping each value in the `collection`
    * through a transformation `callback`. The `callback` is bound to the `thisArg`
    * value, if one is passed. The `callback` is invoked with 3 arguments; for
@@ -852,81 +799,6 @@
   var reject = createIterator(baseIteratorOptions, filterIteratorOptions, {
     'inLoop': '!' + filterIteratorOptions.inLoop
   });
-
-  /**
-   * Gets the number of values in the `collection` or the `length` of a string value.
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object} collection The collection inspect.
-   * @returns {Number} Returns the number of values in the collection.
-   * @example
-   *
-   * _.size([1, 2]);
-   * // => 2
-   *
-   * _.size({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => 3
-   *
-   * _.size('curly');
-   * // => 5
-   */
-  function size(collection) {
-    var className = toString.call(collection);
-    return className == arrayClass || className == stringClass
-      ? collection.length
-      : keys(collection).length;
-  }
-
-  /**
-   * Produces a new sorted array, ranked in ascending order by the results of
-   * running each value of a `collection` through `callback`. The `callback` is
-   * invoked with 3 arguments; for arrays they are (value, index, array) and for
-   * objects they are (value, key, object). The `callback` argument may also be
-   * the name of a property to sort by (e.g. 'length').
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function|String} callback The function called per iteration or
-   *  property name to sort by.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of sorted values.
-   * @example
-   *
-   * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return Math.sin(num); });
-   * // => [5, 4, 6, 3, 1, 2]
-   *
-   * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return this.sin(num); }, Math);
-   * // => [5, 4, 6, 3, 1, 2]
-   */
-  function sortBy(collection, callback, thisArg) {
-    if (toString.call(callback) != funcClass) {
-      var prop = callback;
-      callback = function(collection) { return collection[prop]; };
-    } else if (thisArg) {
-      callback = bind(callback, thisArg);
-    }
-    return pluck(map(collection, function(value, index) {
-      return {
-        'criteria': callback(value, index, collection),
-        'value': value
-      };
-    }).sort(function(left, right) {
-      var a = left.criteria,
-          b = right.criteria;
-
-      if (a === undefined) {
-        return 1;
-      }
-      if (b === undefined) {
-        return -1;
-      }
-      return a < b ? -1 : a > b ? 1 : 0;
-    }), 'value');
-  }
 
   /**
    * Checks if the `callback` returns a truthy value for **any** element of a
@@ -1121,6 +993,99 @@
       }
     }
     return result;
+  }
+
+  /**
+   * Splits a `collection` into sets, grouped by the result of running each value
+   * through `callback`. The `callback` is invoked with 3 arguments;
+   * (value, index, array). The `callback` argument may also be the name of a
+   * property to group by.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to iterate over.
+   * @param {Function|String} callback The function called per iteration or
+   *  property name to group by.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Object} Returns an object of grouped values.
+   * @example
+   *
+   * _.groupBy([1.3, 2.1, 2.4], function(num) { return Math.floor(num); });
+   * // => { '1': [1.3], '2': [2.1, 2.4] }
+   *
+   * _.groupBy([1.3, 2.1, 2.4], function(num) { return this.floor(num); }, Math);
+   * // => { '1': [1.3], '2': [2.1, 2.4] }
+   *
+   * _.groupBy(['one', 'two', 'three'], 'length');
+   * // => { '3': ['one', 'two'], '5': ['three'] }
+   */
+  function groupBy(array, callback, thisArg) {
+    var prop,
+        value,
+        index = -1,
+        isFunc = toString.call(callback) == funcClass,
+        length = array.length,
+        result = {};
+
+    if (isFunc && thisArg) {
+      callback = bind(callback, thisArg);
+    }
+    while (++index < length) {
+      value = array[index];
+      prop = isFunc ? callback(value, index, array) : value[callback];
+      (hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(value);
+    }
+    return result
+  }
+
+  /**
+   * Produces a new sorted array, ranked in ascending order by the results of
+   * running each value of a `collection` through `callback`. The `callback` is
+   * invoked with 3 arguments; for arrays they are (value, index, array) and for
+   * objects they are (value, key, object). The `callback` argument may also be
+   * the name of a property to sort by (e.g. 'length').
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to iterate over.
+   * @param {Function|String} callback The function called per iteration or
+   *  property name to sort by.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Array} Returns a new array of sorted values.
+   * @example
+   *
+   * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return Math.sin(num); });
+   * // => [5, 4, 6, 3, 1, 2]
+   *
+   * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return this.sin(num); }, Math);
+   * // => [5, 4, 6, 3, 1, 2]
+   */
+  function sortBy(array, callback, thisArg) {
+    if (toString.call(callback) != funcClass) {
+      var prop = callback;
+      callback = function(array) { return array[prop]; };
+    } else if (thisArg) {
+      callback = bind(callback, thisArg);
+    }
+    return pluck(map(array, function(value, index) {
+      return {
+        'criteria': callback(value, index, array),
+        'value': value
+      };
+    }).sort(function(left, right) {
+      var a = left.criteria,
+          b = right.criteria;
+
+      if (a === undefined) {
+        return 1;
+      }
+      if (b === undefined) {
+        return -1;
+      }
+      return a < b ? -1 : a > b ? 1 : 0;
+    }), 'value');
   }
 
   /**
@@ -2230,6 +2195,26 @@
   }
 
   /**
+   * Checks if a `value` is an array.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is an array, else `false`.
+   * @example
+   *
+   * (function() { return _.isArray(arguments); })();
+   * // => false
+   *
+   * _.isArray([1, 2, 3]);
+   * // => true
+   */
+  var isArray = nativeIsArray || function(value) {
+    return toString.call(value) == arrayClass;
+  };
+
+  /**
    * Checks if a `value` is a boolean (`true` or `false`) value.
    *
    * @static
@@ -2279,6 +2264,34 @@
   function isElement(value) {
     return !!(value && value.nodeType == 1);
   }
+
+  /**
+   * Checks if a `value` is empty. Arrays or strings with a length of `0` and
+   * objects with no enumerable own properties are considered "empty".
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Array|Object|String} value The value to inspect.
+   * @returns {Boolean} Returns `true` if the `value` is empty, else `false`.
+   * @example
+   *
+   * _.isEmpty([1, 2, 3]);
+   * // => false
+   *
+   * _.isEmpty({});
+   * // => true
+   */
+  var isEmpty = createIterator({
+    'args': 'value',
+    'init': 'true',
+    'top':
+      'var className = toString.call(value);\n' +
+      'if (className == arrayClass || className == stringClass) return !value.length',
+    'inLoop': {
+      'object': 'return false'
+    }
+  });
 
   /**
    * Performs a deep comparison between two values to determine if they are
@@ -2670,6 +2683,33 @@
   }
 
   /**
+   * Gets the `length` of `value` when `value` is an array or string, or gets
+   * the number of enumerable own properties when `value` is an object.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Array|Object|String} value The value to inspect.
+   * @returns {Number} Returns the value's size.
+   * @example
+   *
+   * _.size([1, 2]);
+   * // => 2
+   *
+   * _.size({ 'one': 1, 'two': 2, 'three': 3 });
+   * // => 3
+   *
+   * _.size('curly');
+   * // => 5
+   */
+  function size(value) {
+    var className = toString.call(value);
+    return className == arrayClass || className == stringClass
+      ? value.length
+      : keys(value).length;
+  }
+
+  /**
    * Invokes `interceptor` with the `value` as the first argument, and then returns
    * `value`. The primary purpose of this method is to "tap into" a method chain,
    * in order to performoperations on intermediate results within the chain.
@@ -2724,7 +2764,7 @@
   }
 
   /**
-   * This function simply returns the first argument passed to it.
+   * This function returns the first argument passed to it.
    * Note: It is used throughout Lo-Dash as a default callback.
    *
    * @static
@@ -2889,7 +2929,7 @@
     options || (options = {});
 
     var result,
-        defaults = lodash.templateSettings || {},
+        defaults = lodash.templateSettings,
         escapeDelimiter = options.escape,
         evaluateDelimiter = options.evaluate,
         interpolateDelimiter = options.interpolate,
@@ -2926,7 +2966,7 @@
 
     // if `options.variable` is not specified, add `data` to the top of the scope chain
     if (!variable) {
-      variable = defaults.variable || 'object';
+      variable = defaults.variable;
       text = 'with (' + variable + ' || {}) {\n' + text + '\n}\n';
     }
 
@@ -3064,53 +3104,6 @@
    * @type String
    */
   lodash.VERSION = '0.2.0';
-
-  /**
-   * By default, Lo-Dash uses ERB-style template delimiters, change the
-   * following template settings to use alternative delimiters.
-   *
-   * @static
-   * @memberOf _
-   * @type Object
-   */
-  lodash.templateSettings = {
-
-    /**
-     * Used to detect `data` property values to be HTML-escaped.
-     *
-     * @static
-     * @memberOf _.templateSettings
-     * @type RegExp
-     */
-    'escape': reEscapeDelimiter,
-
-    /**
-     * Used to detect code to be evaluated.
-     *
-     * @static
-     * @memberOf _.templateSettings
-     * @type RegExp
-     */
-    'evaluate': reEvaluateDelimiter,
-
-    /**
-     * Used to detect `data` property values to inject.
-     *
-     * @static
-     * @memberOf _.templateSettings
-     * @type RegExp
-     */
-    'interpolate': reInterpolateDelimiter,
-
-    /**
-     * Used to reference the data object in the template text.
-     *
-     * @static
-     * @memberOf _.templateSettings
-     * @type String
-     */
-    'variable': 'object'
-  };
 
   // assign static methods
   lodash.after = after;

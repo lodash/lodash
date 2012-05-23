@@ -14,7 +14,7 @@
 
 			Object.keys = function() { return []; };
 		</script>
-		<script src="../lodash.js"></script>
+		<script src="../lodash.min.js"></script>
 		<script>
 			var lodashBadKeys = _,
 				_ = 1;
@@ -22,7 +22,7 @@
 			Object.keys = _3;
 			_3 = void 0;
 		</script>
-		<script src="../lodash.js"></script>
+		<script src="../lodash.min.js"></script>
 		<script src="../vendor/requirejs/require.js"></script>
 		<script>
 			if (/[?&]norequire=true(?:&|$)/.test(location.search)) {
@@ -34,8 +34,8 @@
 					'baseUrl': '../vendor/requirejs/',
 					'urlArgs': 't=' + (+new Date),
 					'paths': {
-						'lodash': '../../lodash',
-						'underscore': './../../lodash'
+						'lodash': '../../lodash.min',
+						'underscore': './../../lodash.min'
 					}
 				},
 				['lodash', 'underscore'], function(lodash, lodashAsUnderscore) {

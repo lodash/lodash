@@ -48,7 +48,12 @@
           _ = window._,
           lodash = window.lodash,
           numbers = [],
-          object = {};
+          object = {},
+          words = [
+            'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+            'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
+            'seventeen', 'eighteen', 'nineteen', 'twenty'
+          ];
 
       for (var index = 0; index < 20; index++) {
         numbers[index] = index;
@@ -119,8 +124,6 @@
       })
   );
 
-  /*--------------------------------------------------------------------------*/
-
   suites.push(
     Benchmark.Suite('each object')
       .add('Lo-Dash', function() {
@@ -134,6 +137,50 @@
         _.each(object, function(num) {
           timesTwo.push(num * 2);
         });
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('flatten deep')
+      .add('Lo-Dash', function() {
+        lodash.flatten([1, [2], [3, [[4]]]]);
+      })
+      .add('Underscore', function() {
+        _.flatten([1, [2], [3, [[4]]]]);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('flatten shallow')
+      .add('Lo-Dash', function() {
+        lodash.flatten([1, [2], [3, [[4]]]], true);
+      })
+      .add('Underscore', function() {
+        _.flatten([1, [2], [3, [[4]]]], true);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('groupBy with callback')
+      .add('Lo-Dash', function() {
+        lodash.groupBy(numbers, function(num) { return Math.floor(num); });
+      })
+      .add('Underscore', function() {
+        _.groupBy(numbers, function(num) { return Math.floor(num); });
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('groupBy with property name')
+      .add('Lo-Dash', function() {
+        lodash.groupBy(words, 'length');
+      })
+      .add('Underscore', function() {
+        _.groupBy(words, 'length');
       })
   );
 

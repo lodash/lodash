@@ -3267,7 +3267,22 @@
   /*--------------------------------------------------------------------------*/
 
   // expose Lo-Dash
-  if (freeExports) {
+  // some AMD build optimizers, like r.js, check for specific condition patterns like the following:
+  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
+    // Expose Lo-Dash to the global object even when an AMD loader is present in
+    // case Lo-Dash was injected by a third-party script and not intended to be
+    // loaded as a module. The global assignment can be reverted in the Lo-Dash
+    // module via its `noConflict()` method.
+    window._ = lodash;
+
+    // define as an anonymous module so, through path mapping, it can be
+    // referenced as the "underscore" module
+    define(function() {
+      return lodash;
+    });
+  }
+  // check for `exports` after `define` in case a build optimizer adds an `exports` object
+  else if (freeExports) {
     // in Node.js or RingoJS v0.8.0+
     if (typeof module == 'object' && module && module.exports == freeExports) {
       (module.exports = lodash)._ = lodash;
@@ -3277,21 +3292,8 @@
       freeExports._ = lodash;
     }
   }
-  // in a browser or Rhino
   else {
-    // Expose Lo-Dash to the global object even when an AMD loader is present in
-    // case Lo-Dash was injected by a third-party script and not intended to be
-    // loaded as a module. The global assignment can be reverted in the Lo-Dash
-    // module via its `noConflict()` method.
+    // in a browser or Rhino
     window._ = lodash;
-
-    // some AMD build optimizers, like r.js, check for specific condition patterns like the following:
-    if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-      // define as an anonymous module so, through path mapping, it can be
-      // referenced as the "underscore" module
-      define(function() {
-        return lodash;
-      });
-    }
   }
 }(this));

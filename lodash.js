@@ -391,8 +391,8 @@
       'exit': '',
       'init': '',
       'top': '',
-      'arrayBranch': { 'loopExp': '++index < length' },
-      'objectBranch': {}
+      'arrayBranch': { 'beforeLoop': '', 'loopExp': '++index < length' },
+      'objectBranch': { 'beforeLoop': '' }
     };
 
     while (++index < length) {
@@ -427,7 +427,7 @@
     data.useHas = data.useHas !== false;
 
     if (!data.exit) {
-      data.exit = 'if (' + firstArg + ' == null) return result';
+      data.exit = 'if (!' + firstArg + ') return result';
     }
     if (firstArg == 'object' || !arrayBranch.inLoop) {
       data.arrayBranch = null;
@@ -437,14 +437,14 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf, ' +
-        'isArray, isEmpty, objectTypes, slice, stringClass, toString, undefined',
+        'arrayClass, bind, funcClass, hasOwnProperty, identity, objectTypes, ' +
+        'stringClass, toString, undefined',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayClass, bind, concat, funcClass, hasOwnProperty, identity, indexOf,
-      isArray, isEmpty, objectTypes, slice, stringClass, toString
+      arrayClass, bind, funcClass, hasOwnProperty, identity, objectTypes,
+      stringClass, toString
     );
   }
 

@@ -13,7 +13,7 @@
   /** Load Lo-Dash */
   var lodash =
     window.lodash || (
-      lodash = load('../lodash.min.js') || window._,
+      lodash = load('../lodash.js') || window._,
       lodash = lodash._ || lodash,
       lodash.noConflict()
     );
@@ -21,7 +21,7 @@
   /** Load Underscore */
   var _ =
     window._ || (
-      _ = load('../vendor/underscore/underscore-min.js') || window._,
+      _ = load('../vendor/underscore/underscore.js') || window._,
       _._ || _
     );
 

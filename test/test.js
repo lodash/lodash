@@ -204,6 +204,15 @@
 
       deepEqual(actual, { '1': [1.3], '2': [2.1, 2.4] });
     });
+
+    test('should only add elements to own, not inherited, properties', function() {
+      var actual = _.groupBy([1.3, 2.1, 2.4], function(num) {
+        return Math.floor(num) > 1 ? 'hasOwnProperty' : 'constructor';
+      });
+
+      deepEqual(actual.constructor, [1.3]);
+      deepEqual(actual.hasOwnProperty, [2.1, 2.4]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

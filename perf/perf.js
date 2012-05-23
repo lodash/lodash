@@ -165,7 +165,19 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('groupBy with callback')
+    Benchmark.Suite('difference')
+      .add('Lo-Dash', function() {
+        lodash.difference(numbers, [5, 25, 10, 30]);
+      })
+      .add('Underscore', function() {
+        _.difference(numbers, [5, 25, 10, 30]);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('groupBy callback')
       .add('Lo-Dash', function() {
         lodash.groupBy(numbers, function(num) { return Math.floor(num); });
       })
@@ -175,7 +187,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('groupBy with property name')
+    Benchmark.Suite('groupBy property name')
       .add('Lo-Dash', function() {
         lodash.groupBy(words, 'length');
       })
@@ -211,6 +223,17 @@
         });
       })
   );
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('pick')
+      .add('Lo-Dash', function() {
+        lodash.pick(object, 'key6', 'key13');
+      })
+      .add('Underscore', function() {
+        _.pick(object, 'key6', 'key13');
+      })
+  );
 
   /*--------------------------------------------------------------------------*/
 
@@ -221,6 +244,18 @@
       })
       .add('Underscore', function() {
         _.pluck(objects, 'num');
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('union')
+      .add('Lo-Dash', function() {
+        lodash.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+      })
+      .add('Underscore', function() {
+        _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
       })
   );
 

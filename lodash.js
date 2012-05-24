@@ -473,6 +473,15 @@
   }
 
   /**
+   * A no-operation function.
+   *
+   * @private
+   */
+  function noop() {
+    // no operation performed
+  }
+
+  /**
    * Used by `template()` to replace "escape" template delimiters with tokens.
    *
    * @private
@@ -1701,18 +1710,20 @@
     }
     // use if `Function#bind` is faster
     else if (nativeBind) {
-      func = nativeBind.call.apply(nativeBind, arguments);
-      return function() {
-        return arguments.length ? func.apply(undefined, arguments) : func();
-      };
+      return nativeBind.call.apply(nativeBind, arguments);
+    }
+    // spec'd to throw a TypeError
+    // http://es5.github.com/#x15.3.4.5
+    else if (toString.call(func) != funcClass) {
+      throw new TypeError;
     }
 
     var partialArgs = slice.call(arguments, 2),
         partialArgsLength = partialArgs.length;
 
-    return function() {
-      var result,
-          args = arguments;
+    function bound() {
+      var args = arguments,
+          thisBinding = thisArg;
 
       if (!isFunc) {
         func = thisArg[methodName];
@@ -1724,10 +1735,27 @@
         }
         args = partialArgs;
       }
-      result = args.length ? func.apply(thisArg, args) : func.call(thisArg);
+      var isInstance = this instanceof bound;
+      if (isInstance) {
+        // get `func` instance if `bound` is invoked in a `new` expression
+        noop.prototype = func.prototype;
+        thisBinding = new noop;
+      }
+
+      var result = args.length ? func.apply(thisBinding, args) : func.call(thisBinding);
       partialArgs.length = partialArgsLength;
+
+      if (isInstance) {
+        // mimic a constructor's `return` behavior
+        // http://es5.github.com/#x13.2.2
+        return objectTypes[typeof result] && result !== null
+          ? result
+          : thisBinding
+      }
       return result;
-    };
+    }
+
+    return bound;
   }
 
   /**

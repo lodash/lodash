@@ -292,6 +292,31 @@
         });
       })
   );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('max')
+      .add('Lo-Dash', function() {
+        lodash.max(numbers);
+      })
+      .add('Underscore', function() {
+        _.max(numbers);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('min')
+      .add('Lo-Dash', function() {
+        lodash.min(numbers);
+      })
+      .add('Underscore', function() {
+        _.min(numbers);
+      })
+  );
+
   /*--------------------------------------------------------------------------*/
 
   suites.push(

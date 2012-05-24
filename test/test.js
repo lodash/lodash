@@ -294,28 +294,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  (function() {
-    var i = -1,
-        largeArray = [];
-
-    while (++i <= 1e6) {
-      largeArray[i] = i;
-    }
-    _.each(['max', 'min'], function(methodName) {
-      QUnit.module('lodash.' + methodName);
-
-      test('does not error when computing the ' + methodName + ' value of massive arrays', function() {
-        try {
-          var actual = _[methodName](largeArray);
-        } catch(e) { }
-
-        equal(actual, methodName == 'max' ? 1e6 : 0);
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.partial');
 
   (function() {

@@ -1731,6 +1731,7 @@
         }
         args = partialArgs;
       }
+
       var isInstance = this instanceof bound;
       if (isInstance) {
         // get `func` instance if `bound` is invoked in a `new` expression

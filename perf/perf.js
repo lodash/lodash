@@ -55,6 +55,17 @@
             'seventeen', 'eighteen', 'nineteen', 'twenty'
           ];
 
+      var ctor = function() { },
+          func = function(greeting) { return greeting + ': ' + this.name; };
+
+      var lodashBoundNormal = lodash.bind(func, { 'name': 'moe' }),
+          lodashBoundCtor = lodash.bind(ctor, { 'name': 'moe' }),
+          lodashBoundPartial = lodash.bind(func, { 'name': 'moe' }, 'hi');
+
+      var _boundNormal = _.bind(func, { 'name': 'moe' }),
+          _boundCtor = _.bind(ctor, { 'name': 'moe' }),
+          _boundPartial = _.bind(func, { 'name': 'moe' }, 'hi');
+
       for (var index = 0; index < 20; index++) {
         numbers[index] = index;
         object['key' + index] = index;
@@ -105,6 +116,48 @@
       }
     }
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('bind call')
+      .add('Lo-Dash', function() {
+        lodash.bind(func, { 'name': 'moe' }, 'hi');
+      })
+      .add('Underscore', function() {
+        _.bind(func, { 'name': 'moe' }, 'hi');
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('bound normal')
+      .add('Lo-Dash', function() {
+        lodashBoundNormal();
+      })
+      .add('Underscore', function() {
+        _boundNormal();
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('bound partial')
+      .add('Lo-Dash', function() {
+        lodashBoundPartial();
+      })
+      .add('Underscore', function() {
+        _boundPartial();
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('bound constructor')
+      .add('Lo-Dash', function() {
+        new lodashBoundCtor();
+      })
+      .add('Underscore', function() {
+        new _boundCtor();
+      })
+  );
 
   /*--------------------------------------------------------------------------*/
 

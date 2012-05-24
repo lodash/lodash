@@ -1154,7 +1154,6 @@
    *
    * @static
    * @memberOf _
-   * @alias intersect
    * @category Arrays
    * @param {Array} [array1, array2, ...] Arrays to process.
    * @returns {Array} Returns a new array of unique values, in order, that are
@@ -1555,9 +1554,6 @@
         result = [],
         seen = [];
 
-    if (length < 3) {
-      isSorted = true;
-    }
     while (++index < length) {
       computed = callback ? callback(array[index]) : array[index];
       if (isSorted
@@ -1719,6 +1715,7 @@
 
     function bound() {
       var args = arguments,
+          isInstance = this instanceof bound,
           thisBinding = thisArg;
 
       if (!isFunc) {
@@ -1731,8 +1728,6 @@
         }
         args = partialArgs;
       }
-
-      var isInstance = this instanceof bound;
       if (isInstance) {
         // get `func` instance if `bound` is invoked in a `new` expression
         noop.prototype = func.prototype;
@@ -3223,7 +3218,6 @@
   lodash.head = first;
   lodash.include = contains;
   lodash.inject = reduce;
-  lodash.intersect = intersection;
   lodash.methods = functions;
   lodash.select = filter;
   lodash.tail = rest;

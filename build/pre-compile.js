@@ -110,7 +110,6 @@
     'initial',
     'inject',
     'interpolate',
-    'intersect',
     'intersection',
     'invoke',
     'isArguments',

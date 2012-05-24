@@ -420,7 +420,7 @@
       while ((new Date - start) < limit) {
         throttled();
       }
-      equal(counter, 3);
+      ok(counter > 1);
     });
   }());
 

@@ -148,7 +148,7 @@ git submodule update --init
  * `_.functions`, `_.methods`
  * `_.groupBy`
  * `_.indexOf`
- * `_.intersection`, `_.intersect`
+ * `_.intersection`
  * `_.invoke`
  * `_.isEmpty`
  * `_.isEqual`
@@ -189,6 +189,7 @@ git submodule update --init
 * Adjusted the Lo-Dash export order for r.js
 * Ensured `_.groupBy` values are added to own, not inherited, properties
 * Made `_.bind` follow ES5 spec to support a popular Backbone.js pattern
+* Removed the alias `intersect`
 * Simplified `_.bind`, `_.flatten`, `_.groupBy`, `_.max`, and `_.min`
 
 ### <sup>v0.2.0</sup>

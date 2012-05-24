@@ -46,9 +46,13 @@
     'setup': function() {
       var window = Function('return this || global')(),
           _ = window._,
-          lodash = window.lodash,
-          numbers = [],
+          lodash = window.lodash;
+
+      var numbers = [],
           object = {},
+          fourNumbers = [5, 25, 10, 30],
+          nestedNumbers = [1, [2], [3, [[4]]]],
+          twoNumbers = [12, 21],
           words = [
             'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
             'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
@@ -198,20 +202,20 @@
   suites.push(
     Benchmark.Suite('flatten deep')
       .add('Lo-Dash', function() {
-        lodash.flatten([1, [2], [3, [[4]]]]);
+        lodash.flatten(nestedNumbers);
       })
       .add('Underscore', function() {
-        _.flatten([1, [2], [3, [[4]]]]);
+        _.flatten(nestedNumbers);
       })
   );
 
   suites.push(
     Benchmark.Suite('flatten shallow')
       .add('Lo-Dash', function() {
-        lodash.flatten([1, [2], [3, [[4]]]], true);
+        lodash.flatten(nestedNumbers, true);
       })
       .add('Underscore', function() {
-        _.flatten([1, [2], [3, [[4]]]], true);
+        _.flatten(nestedNumbers, true);
       })
   );
 
@@ -220,10 +224,10 @@
   suites.push(
     Benchmark.Suite('difference')
       .add('Lo-Dash', function() {
-        lodash.difference(numbers, [5, 25, 10, 30]);
+        lodash.difference(numbers, fourNumbers);
       })
       .add('Underscore', function() {
-        _.difference(numbers, [5, 25, 10, 30]);
+        _.difference(numbers, fourNumbers);
       })
   );
 
@@ -246,6 +250,18 @@
       })
       .add('Underscore', function() {
         _.groupBy(words, 'length');
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('intersection')
+      .add('Lo-Dash', function() {
+        lodash.intersection(numbers, fourNumbers, twoNumbers);
+      })
+      .add('Underscore', function() {
+        _.intersection(numbers, fourNumbers, twoNumbers);
       })
   );
 
@@ -305,10 +321,10 @@
   suites.push(
     Benchmark.Suite('union')
       .add('Lo-Dash', function() {
-        lodash.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+        lodash.union(numbers, fourNumbers, twoNumbers);
       })
       .add('Underscore', function() {
-        _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+        _.union(numbers, fourNumbers, twoNumbers);
       })
   );
 

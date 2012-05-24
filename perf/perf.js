@@ -89,15 +89,21 @@
       console.log(event.target + '');
     },
     'onComplete': function() {
-      var fastest = this.filter('fastest').pluck('name'),
+      var fastest = this.filter('fastest'),
+          slowest = this.filter('slowest'),
           lodashHz = 1 / (this[0].stats.mean + this[0].stats.moe),
           underscoreHz = 1 / (this[1].stats.mean + this[1].stats.moe);
 
       if (fastest.length > 1) {
         console.log('It\'s too close to call.');
         lodashHz = underscoreHz = Math.min(lodashHz, underscoreHz);
-      } else {
-        console.log(fastest + ' is the fastest.');
+      }
+      else {
+        var slowestHz = slowest[0] == this[0] ? lodashHz : underscoreHz,
+            fastestHz = fastest[0] == this[0] ? lodashHz : underscoreHz,
+            percent = Math.round(((fastestHz / slowestHz) - 1) * 100);
+
+        console.log(fastest[0].name + ' is ' + percent + '% faster.');
       }
       // add score adjusted for margin of error
       score.lodash += lodashHz;

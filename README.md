@@ -116,11 +116,11 @@ git submodule update --init
 
 ## Closed Underscore.js issues
 
- * Ensure `_.groupBy` only adds values to own, not inherited, properties [[test](https://github.com/bestiejs/lodash/commit/e4176d12670542a043eb19564fea91cccffea50f), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L229-236)]
- * Ensure `_.throttle` works when called in tight loop [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L436-446)]
+ * Ensure `_.groupBy` adds values to own, not inherited, properties [[test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L229-236)]
+ * Ensure `_.throttle` works when called in tight loops [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L436-446)]
  * Fix Firefox, IE, Opera, and Safari object iteration bugs [[#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L152-172), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L206-213), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L255-257), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L265-267), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L285-292), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L386-388)]
  * Handle arrays with `undefined` values correctly in IE < 9 [[#601](https://github.com/documentcloud/underscore/issues/601)]
- * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [test](https://github.com/bestiejs/lodash/blob/2416dde0a06f29ff281ea39dd8aa405561ff867a/test/test.js#L66-72)]
+ * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L77-83)]
  * Register as AMD module, but still export to global [[#431](https://github.com/documentcloud/underscore/pull/431), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L61-75)]
  * `_.forEach` should be chainable [[#142](https://github.com/documentcloud/underscore/issues/142), [test](https://github.com/bestiejs/lodash/blob/5bcd444084c92b1753feeaf66c20323e57a2dac3/test/test.js#L74-77)]
  * `_isNaN(new Number(NaN))` should return `true` [[test](https://github.com/bestiejs/lodash/blob/5bcd444084c92b1753feeaf66c20323e57a2dac3/test/test.js#L95-99)]
@@ -187,9 +187,9 @@ git submodule update --init
 ### <sup>v0.2.1</sup>
 
 * Adjusted the Lo-Dash export order for r.js
-* Ensured `_.groupBy` only adds values to own, not inherited, properties
+* Ensured `_.groupBy` values are added to own, not inherited, properties
 * Made `_.bind` follow ES5 spec to support a popular Backbone.js pattern
-* Simplified `_.bind`, `_.flatten`, `_.groupBy`, `_.man`, and `_.min`
+* Simplified `_.bind`, `_.flatten`, `_.groupBy`, `_.max`, and `_.min`
 
 ### <sup>v0.2.0</sup>
 
@@ -203,7 +203,7 @@ git submodule update --init
  * Added `_.partial` method
  * Commented the `iterationFactory` options object
  * Ensured `_.max` and `_.min` support extremely large arrays
- * Ensuredg `_.throttle` works in a tight loop
+ * Ensured `_.throttle` works in tight loops
  * Fixed IE < 9 `[DontEnum]` bug and Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1’s prototype property iteration bug
  * Inlined `_.isFunction` calls.
  * Made `_.debounce`’ed functions match `_.throttle`’ed functions’ return value behavior

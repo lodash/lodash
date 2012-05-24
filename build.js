@@ -414,11 +414,6 @@
       // remove `templateSettings` assignment
       source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
     }
-    if (isRemoved(source, 'max', 'min')) {
-      source = removeVar(source, 'argsLimit');
-      // remove `argsLimit` try-catch
-      source = source.replace(/\n *try\s*\{[\s\S]+?argsLimit *=[\s\S]+?catch[^}]+}\n/, '');
-    }
     if (isRemoved(source, 'isArray', 'isEmpty', 'isEqual', 'size')) {
       source = removeVar(source, 'arrayClass');
     }

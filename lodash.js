@@ -12,30 +12,6 @@
   var freeExports = typeof exports == 'object' && exports &&
     (typeof global == 'object' && global && global == global.global && (window = global), exports);
 
-  /**
-   * Used to detect the JavaScript engine's argument length limit.
-   *
-   * The initial value of `argsLimit` is low enough not to cause uncatchable
-   * errors in Java and avoid locking up older browsers like Safari 3.
-   *
-   * Some engines have a limit on the number of arguments functions can accept
-   * before clipping the argument length or throwing an error.
-   * https://bugs.webkit.org/show_bug.cgi?id=80797
-   *
-   * For example Firefox's limits have been observed to be at least:
-   *   Firefox 2    - 35,535
-   *   Firefox 3.6  - 16,777,215
-   *   Firefox 4-7  - 523,264
-   *   Firefox >= 8 - Throws error
-   */
-  var argsLimit = 5e4;
-
-  try {
-    (function() {
-      argsLimit = arguments.length;
-    }).apply(null, Array(argsLimit));
-  } catch(e) { }
-
   /** Used to escape characters in templates */
   var escapes = {
     '\\': '\\',
@@ -1291,22 +1267,18 @@
         result = computed;
 
     if (!callback) {
-      // fast path for arrays of numbers
-      if (array[0] === +array[0] && length <= argsLimit) {
-        // some JavaScript engines have a limit on the number of arguments functions
-        // can accept before clipping the argument length or throwing an error
-        try {
-          return Math.max.apply(Math, array);
-        } catch(e) { }
+      while (++index < length) {
+        if (array[index] > result) {
+          result = array[index];
+        }
       }
-      if (!array.length) {
-        return result;
-      }
-    } else if (thisArg) {
+      return result;
+    }
+    if (thisArg) {
       callback = bind(callback, thisArg);
     }
     while (++index < length) {
-      current = callback ? callback(array[index], index, array) : array[index];
+      current = callback(array[index], index, array);
       if (current > computed) {
         computed = current;
         result = array[index];
@@ -1341,19 +1313,18 @@
         result = computed;
 
     if (!callback) {
-      if (array[0] === +array[0] && length <= argsLimit) {
-        try {
-          return Math.min.apply(Math, array);
-        } catch(e) { }
+      while (++index < length) {
+        if (array[index] < result) {
+          result = array[index];
+        }
       }
-      if (!array.length) {
-        return result;
-      }
-    } else if (thisArg) {
+      return result;
+    }
+    if (thisArg) {
       callback = bind(callback, thisArg);
     }
     while (++index < length) {
-      current = callback ? callback(array[index], index, array) : array[index];
+      current = callback(array[index], index, array);
       if (current < computed) {
         computed = current;
         result = array[index];
@@ -1708,43 +1679,36 @@
     else if (nativeBind) {
       return nativeBind.call.apply(nativeBind, arguments);
     }
-    // `Function#bind` spec
-    // http://es5.github.com/#x15.3.4.5
-    var partialArgs = slice.call(arguments, 2),
-        partialArgsLength = partialArgs.length;
+
+    var partialArgs = slice.call(arguments, 2);
 
     function bound() {
+      // `Function#bind` spec
+      // http://es5.github.com/#x15.3.4.5
       var args = arguments,
-          isInstance = this instanceof bound,
           thisBinding = thisArg;
 
       if (!isFunc) {
         func = thisArg[methodName];
       }
-      if (partialArgsLength) {
-        if (args.length) {
-          partialArgs.length = partialArgsLength;
-          push.apply(partialArgs, args);
-        }
-        args = partialArgs;
+      if (partialArgs.length) {
+        args = args.length
+          ? concat.apply(partialArgs, args)
+          : partialArgs;
       }
-      if (isInstance) {
+      if (this instanceof bound) {
         // get `func` instance if `bound` is invoked in a `new` expression
         noop.prototype = func.prototype;
         thisBinding = new noop;
-      }
 
-      var result = args.length ? func.apply(thisBinding, args) : func.call(thisBinding);
-      partialArgs.length = partialArgsLength;
-
-      if (isInstance) {
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
+        var result = func.apply(thisBinding, args);
         return objectTypes[typeof result] && result !== null
           ? result
           : thisBinding
       }
-      return result;
+      return func.apply(thisBinding, args);
     }
 
     return bound;

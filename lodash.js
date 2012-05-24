@@ -1712,12 +1712,8 @@
     else if (nativeBind) {
       return nativeBind.call.apply(nativeBind, arguments);
     }
-    // spec'd to throw a TypeError
+    // `Function#bind` spec
     // http://es5.github.com/#x15.3.4.5
-    else if (toString.call(func) != funcClass) {
-      throw new TypeError;
-    }
-
     var partialArgs = slice.call(arguments, 2),
         partialArgsLength = partialArgs.length;
 
@@ -1746,7 +1742,7 @@
       partialArgs.length = partialArgsLength;
 
       if (isInstance) {
-        // mimic a constructor's `return` behavior
+        // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
         return objectTypes[typeof result] && result !== null
           ? result

@@ -3189,7 +3189,8 @@
   lodash.take = first;
   lodash.unique = uniq;
 
-  // add pseudo private template used and removed during the build process
+  // add pseudo privates used and removed during the build process
+  lodash._createIterator = createIterator;
   lodash._iteratorTemplate = iteratorTemplate;
 
   /*--------------------------------------------------------------------------*/

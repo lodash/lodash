@@ -174,6 +174,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.find');
+
+  (function() {
+    var array = [1, 2, 3, 4];
+
+    test('should return found `value`', function() {
+      equal(_.find(array, function(n) { return n > 2; }), 3);
+    });
+
+    test('should return `undefined` if `value` is not found', function() {
+      equal(_.find(array, function(n) { return n == 5; }), undefined);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.flatten');
 
   (function() {

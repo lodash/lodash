@@ -585,6 +585,7 @@
    * // => 2
    */
   var find = createIterator(baseIteratorOptions, {
+    'init': '',
     'inLoop': 'if (callback(collection[index], index, collection)) return collection[index]'
   });
 

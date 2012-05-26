@@ -328,36 +328,18 @@
     return removeFromCreateIterator(source, varName);
   }
 
-  /*--------------------------------------------------------------------------*/
-
-  // inline `iteratorTemplate`
-  (function() {
-    var iteratorTemplate = lodash._iteratorTemplate,
-        code = /^function[^{]+{([\s\S]+?)}$/.exec(iteratorTemplate)[1];
-
-    // remove whitespace from template
-    code = code.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |var |\\\\n|\\n|\s+/g, function(match) {
+  /**
+   * Removes non-syntax critical whitespace from a string.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the source with whitespace removed.
+   */
+  function removeWhitespace(source) {
+    return source.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |var |\\\\n|\\n|\s+/g, function(match) {
       return match == false || match == '\\n' ? '' : match;
     });
-
-    // remove unnecessary code
-    code = code
-      .replace(/\|\|\{\}|,__t,__j=Array.prototype.join|function print[^}]+}|\+''/g, '')
-      .replace(/(\{);|;(\})/g, '$1$2')
-      .replace(/\(\(__t=\(([^)]+)\)\)==null\?'':__t\)/g, '$1');
-
-    // ensure escaped characters are interpreted correctly inside the `Function()` string
-    code = code.replace(/\\/g, '\\\\');
-
-    // add `code` to `Function()`
-    code = '$1Function(\'object\',\n$2  "' + code + '"\n$2);\n';
-
-    // replace `template()` with `Function()`
-    source = source.replace(/(( +)var iteratorTemplate *= *)([\s\S]+?\n\2.+?);\n/, code);
-
-    // remove pseudo private property `_iteratorTemplate`
-    source = source.replace(/(?:\s*\/\/.*)*\s*lodash\._iteratorTemplate\b.+\n/, '\n');
-  }());
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -435,6 +417,65 @@
 
     return true;
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  (function() {
+    // for mobile builds
+    if (process.argv.indexOf('mobile') > -1) {
+      // set custom build flag
+      isCustom = true;
+
+      // inline functions defined with `createIterator`
+      lodash.functions(lodash).forEach(function(funcName) {
+        var reFunc = RegExp('( +var ' + funcName + ' *= *)((?:[a-zA-Z]+ *\\|\\| *)?)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n'),
+            parts = source.match(reFunc);
+
+        // skip if not defined with `createIterator`
+        if (!parts) {
+          return;
+        }
+        source = source.replace(reFunc,
+          (funcName == 'keys'
+            ? '$1$2' + lodash._createIterator(Function('return ' + parts[3])())
+            : '$1' + lodash[funcName]
+          ) + ';\n'
+        );
+      });
+
+      // remove `iteratorTemplate`
+      source = removeVar(source, 'iteratorTemplate');
+
+      // remove JScript [[DontEnum]] fix from `isEqual`
+      source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}\n/, '\n');
+    }
+    // for normal builds
+    else {
+      // extract `iteratorTemplate` source
+      var iteratorTemplateCode = /^function[^{]+{([\s\S]+?)}$/.exec(lodash._iteratorTemplate)[1];
+
+      // remove whitespace and unnecessary code
+      iteratorTemplateCode = removeWhitespace(iteratorTemplateCode)
+        .replace(/\|\|\{\}|,__t,__j=Array.prototype.join|function print[^}]+}|\+''/g, '')
+        .replace(/(\{);|;(\})/g, '$1$2')
+        .replace(/\(\(__t=\(([^)]+)\)\)==null\?'':__t\)/g, '$1');
+
+      // ensure escaped characters are interpreted correctly inside the `Function()` string
+      iteratorTemplateCode = iteratorTemplateCode.replace(/\\/g, '\\\\');
+
+      // add `iteratorTemplateCode` to `Function()` to avoid strict mode error
+      // for using a with-statement
+      iteratorTemplateCode = '$1Function(\'object\',\n$2  "' + iteratorTemplateCode + '"\n$2);\n';
+
+      // replace `template()` with `Function()`
+      source = source.replace(/(( +)var iteratorTemplate *= *)([\s\S]+?\n\2.+?);\n/, iteratorTemplateCode);
+    }
+
+    // remove pseudo private properties
+    source = source.replace(/(?:\s*\/\/.*)*\s*lodash\._(?:createIterator|iteratorTemplate)\b.+\n/g, '\n');
+  }());
+
+  /*--------------------------------------------------------------------------*/
 
   // begin the minification process
   if (isCustom) {

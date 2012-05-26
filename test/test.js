@@ -92,7 +92,7 @@
       ok(_() instanceof _);
     });
 
-    test('should pass through LoDash instances', function() {
+    test('should return passed LoDash instances', function() {
       var wrapped = _([]);
       equal(_(wrapped), wrapped);
     });

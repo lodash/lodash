@@ -302,6 +302,11 @@
     'inLoop': 'callback(collection[index], index, collection) && result.push(collection[index])'
   };
 
+  /** Reusable iterator options for `find`  and `forEach` */
+  var forEachIteratorOptions = {
+    'top': 'if (thisArg) callback = bind(callback, thisArg)'
+  };
+
   /** Reusable iterator options for `map`, `pluck`, and `values` */
   var mapIteratorOptions = {
     'init': '',
@@ -584,7 +589,7 @@
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => 2
    */
-  var find = createIterator(baseIteratorOptions, {
+  var find = createIterator(baseIteratorOptions, forEachIteratorOptions, {
     'init': '',
     'inLoop': 'if (callback(collection[index], index, collection)) return collection[index]'
   });
@@ -611,9 +616,7 @@
    * _([1, 2, 3]).forEach(function(num) { alert(num); }).join(',');
    * // => alerts each number in turn and returns '1,2,3'
    */
-  var forEach = createIterator(baseIteratorOptions, {
-    'top': 'if (thisArg) callback = bind(callback, thisArg)'
-  });
+  var forEach = createIterator(baseIteratorOptions, forEachIteratorOptions);
 
   /**
    * Produces a new array of values by mapping each value in the `collection`

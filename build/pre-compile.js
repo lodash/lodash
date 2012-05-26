@@ -65,6 +65,7 @@
   /** Used protect the specified properties from getting minified */
   var propWhitelist = [
     '_',
+    '_chain',
     '_wrapped',
     'after',
     'all',

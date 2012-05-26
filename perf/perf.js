@@ -206,6 +206,22 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('find')
+      .add('Lo-Dash', function() {
+        lodash.find(numbers, function(num) {
+          return num === 19;
+        });
+      })
+      .add('Underscore', function() {
+        _.find(numbers, function(num) {
+          return num === 19;
+        });
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('flatten deep')
       .add('Lo-Dash', function() {
         lodash.flatten(nestedNumbers);

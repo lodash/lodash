@@ -75,7 +75,7 @@
     'every': ['bind', 'createIterator', 'identity'],
     'extend': ['createIterator'],
     'filter': ['bind', 'createIterator', 'identity'],
-    'find': ['createIterator'],
+    'find': ['bind', 'createIterator'],
     'first': [],
     'flatten': ['isArray'],
     'forEach': ['bind', 'createIterator'],

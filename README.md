@@ -116,6 +116,7 @@ git submodule update --init
 
 ## Closed Underscore.js issues
 
+ * Ensure `_(...)` returns passed wrapper instances [[test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L95-98)]
  * Ensure `_.groupBy` adds values to own, not inherited, properties [[test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L229-236)]
  * Ensure `_.throttle` works when called in tight loops [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L436-446)]
  * Fix Firefox, IE, Opera, and Safari object iteration bugs [[#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L152-172), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L206-213), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L255-257), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L265-267), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L285-292), [test](https://github.com/bestiejs/lodash/blob/32627f45072952df18a64cf5e9f2433d2d32730f/test/test.js#L386-388)]
@@ -203,6 +204,7 @@ git submodule update --init
  * Added whitespace to compiled strings
  * Added `_.partial` method
  * Commented the `iterationFactory` options object
+ * Ensured `_(...)` returns passed wrapper instances
  * Ensured `_.max` and `_.min` support extremely large arrays
  * Ensured `_.throttle` works in tight loops
  * Fixed IE < 9 `[DontEnum]` bug and Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1’s prototype property iteration bug

@@ -2746,8 +2746,7 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;')
-      .replace(/\//g,'&#x2F;');
+      .replace(/'/g, '&#x27;');
   }
 
   /**

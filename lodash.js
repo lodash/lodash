@@ -2953,7 +2953,7 @@
 
     // if `options.variable` is not specified, add `data` to the top of the scope chain
     if (!variable) {
-      variable = defaults.variable;
+      variable = defaults.variable || 'obj';
       text = 'with (' + variable + ' || {}) {\n' + text + '\n}\n';
     }
 

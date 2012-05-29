@@ -176,7 +176,7 @@
      * @memberOf _.templateSettings
      * @type String
      */
-    'variable': 'object'
+    'variable': 'obj'
   };
 
   /*--------------------------------------------------------------------------*/

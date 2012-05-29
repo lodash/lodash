@@ -10,9 +10,6 @@
   var lodash = require(path.join(__dirname, 'lodash')),
       minify = require(path.join(__dirname, 'build', 'minify'));
 
-  /** Flag used to specify a custom build */
-  var isCustom = false;
-
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
@@ -140,6 +137,23 @@
     'wrap': [],
     'zip': ['max', 'pluck']
   };
+
+  /** Names of methods to filter for the build */
+  var filterMethods = Object.keys(dependencyMap);
+
+  /** Used to specify if `filterMethods` should be used for exclusion or inclusion */
+  var filterType = process.argv.reduce(function(result, value) {
+    if (!result) {
+      var pair = value.match(/^(exclude|include)=(.*)$/);
+      if (pair) {
+        filterMethods = lodash.intersection(filterMethods, pair[2].split(/, */).map(getRealName));
+        return pair[1];
+      }
+    }
+  }, '');
+
+  /** Flag used to specify a mobile build */
+  var isMobile = process.argv.indexOf('mobile') > -1;
 
   /*--------------------------------------------------------------------------*/
 
@@ -344,22 +358,14 @@
   /*--------------------------------------------------------------------------*/
 
   // custom build
-  process.argv.some(function(arg) {
-    // exit early if not the "exclude" or "include" command option
-    var pair = arg.match(/^(exclude|include)=(.*)$/);
-    if (!pair) {
-      return false;
+  (function() {
+    // exit early if "exclude" or "include" options aren't specified
+    if (!filterType) {
+      return;
     }
-
-    var filterType = pair[1],
-        filterNames = lodash.intersection(Object.keys(dependencyMap), pair[2].split(/, */).map(getRealName));
-
-    // set custom build flag
-    isCustom = true;
-
     // remove the specified functions and their dependants
     if (filterType == 'exclude') {
-      filterNames.forEach(function(funcName) {
+      filterMethods.forEach(function(funcName) {
         getDependants(funcName).concat(funcName).forEach(function(otherName) {
           source = removeFunction(source, otherName);
         });
@@ -367,13 +373,13 @@
     }
     // else remove all but the specified functions and their dependencies
     else {
-      filterNames = lodash.uniq(filterNames.reduce(function(result, funcName) {
+      filterMethods = lodash.uniq(filterMethods.reduce(function(result, funcName) {
         result.push.apply(result, getDependencies(funcName).concat(funcName));
         return result;
       }, []));
 
       lodash.each(dependencyMap, function(dependencies, otherName) {
-        if (filterNames.indexOf(otherName) < 0) {
+        if (filterMethods.indexOf(otherName) < 0) {
           source = removeFunction(source, otherName);
         }
       });
@@ -402,9 +408,21 @@
     if (isRemoved(source, 'bind', 'functions', 'groupBy', 'invoke', 'isEqual', 'isFunction', 'result', 'sortBy', 'toArray')) {
       source = removeVar(source, 'funcClass');
     }
+    if (isRemoved(source, 'bind')) {
+      source = removeVar(source, 'nativeBind');
+    }
+    if (isRemoved(source, 'isArray')) {
+      source = removeVar(source, 'nativeIsArray');
+    }
+    if (isRemoved(source, 'keys')) {
+      source = removeVar(source, 'nativeKeys');
+    }
     if (isRemoved(source, 'clone', 'isObject', 'keys')) {
       source = removeVar(source, 'objectTypes');
       source = removeFromCreateIterator(source, 'objectTypes');
+    }
+    if (isRemoved(source, 'bind', 'isArray', 'keys')) {
+      source = removeVar(source, 'reNative');
     }
     if (isRemoved(source, 'isEmpty', 'isEqual', 'isString', 'size')) {
       source = removeVar(source, 'stringClass');
@@ -414,71 +432,70 @@
     source = source.replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
       return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
     });
-
-    return true;
-  });
-
-  /*--------------------------------------------------------------------------*/
-
-  (function() {
-    // for mobile builds
-    if (process.argv.indexOf('mobile') > -1) {
-      // set custom build flag
-      isCustom = true;
-
-      // inline functions defined with `createIterator`
-      lodash.functions(lodash).forEach(function(funcName) {
-        var reFunc = RegExp('( +var ' + funcName + ' *= *)((?:[a-zA-Z]+ *\\|\\| *)?)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n'),
-            parts = source.match(reFunc);
-
-        // skip if not defined with `createIterator`
-        if (!parts) {
-          return;
-        }
-        source = source.replace(reFunc,
-          (funcName == 'keys'
-            ? '$1$2' + lodash._createIterator(Function('return ' + parts[3])())
-            : '$1' + lodash[funcName]
-          ) + ';\n'
-        );
-      });
-
-      // remove `iteratorTemplate`
-      source = removeVar(source, 'iteratorTemplate');
-
-      // remove JScript [[DontEnum]] fix from `isEqual`
-      source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}\n/, '\n');
-    }
-    // for normal builds
-    else {
-      // extract `iteratorTemplate` source
-      var iteratorTemplateCode = /^function[^{]+{([\s\S]+?)}$/.exec(lodash._iteratorTemplate)[1];
-
-      // remove whitespace and unnecessary code
-      iteratorTemplateCode = removeWhitespace(iteratorTemplateCode)
-        .replace(/\|\|\{\}|,__t,__j=Array.prototype.join|function print[^}]+}|\+''/g, '')
-        .replace(/(\{);|;(\})/g, '$1$2')
-        .replace(/\(\(__t=\(([^)]+)\)\)==null\?'':__t\)/g, '$1');
-
-      // ensure escaped characters are interpreted correctly inside the `Function()` string
-      iteratorTemplateCode = iteratorTemplateCode.replace(/\\/g, '\\\\');
-
-      // add `iteratorTemplateCode` to `Function()` to avoid strict mode error
-      // for using a with-statement
-      iteratorTemplateCode = '$1Function(\'object\',\n$2  "' + iteratorTemplateCode + '"\n$2);\n';
-
-      // replace `template()` with `Function()`
-      source = source.replace(/(( +)var iteratorTemplate *= *)([\s\S]+?\n\2.+?);\n/, iteratorTemplateCode);
-    }
-
-    // remove pseudo private properties
-    source = source.replace(/(?:\s*\/\/.*)*\s*lodash\._(?:createIterator|iteratorTemplate)\b.+\n/g, '\n');
   }());
 
   /*--------------------------------------------------------------------------*/
 
+  if (isMobile) {
+    // inline functions defined with `createIterator`
+    lodash.functions(lodash).forEach(function(funcName) {
+      var reFunc = RegExp('( +var ' + funcName + ' *= *)((?:[a-zA-Z]+ *\\|\\| *)?)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n'),
+          parts = source.match(reFunc);
+
+      // skip if not defined with `createIterator`
+      if (!parts) {
+        return;
+      }
+      // extract function's code
+      var code = funcName == 'keys'
+        ? '$1$2' + lodash._createIterator(Function('return ' + parts[3])())
+        : '$1' + lodash[funcName];
+
+      // format code
+      code = code.replace(/\n(?:.*)/g, function(match) {
+        match = match.slice(1);
+        return (match == '}' ? '\n  ' : '\n    ') + match;
+      }) + ';\n';
+
+      source = source.replace(reFunc, code);
+    });
+
+    // remove `iteratorTemplate`
+    source = removeVar(source, 'iteratorTemplate');
+
+    // remove JScript [[DontEnum]] fix from `isEqual`
+    source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}\n/, '\n');
+
+    // remove IE `shift` and `splice` fix
+    source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(value.length *=== *0[\s\S]+?\n\1}\n/, '\n');
+  }
+  else {
+    // inline `iteratorTemplate` template
+    source = source.replace(/(( +)var iteratorTemplate *= *)([\s\S]+?\n\2.+?);\n/, (function() {
+      // extract `iteratorTemplate` code
+      var code = /^function[^{]+{([\s\S]+?)}$/.exec(lodash._iteratorTemplate)[1];
+
+      code = removeWhitespace(code)
+        // remove unnecessary code
+        .replace(/\|\|\{\}|,__t,__j=Array.prototype.join|function print[^}]+}|\+''/g, '')
+        .replace(/(\{);|;(\})/g, '$1$2')
+        .replace(/\(\(__t=\(([^)]+)\)\)==null\?'':__t\)/g, '$1')
+        // ensure escaped characters are interpreted correctly in the string literal
+        .replace(/\\/g, '\\\\');
+
+      // add `code` to `Function()` as a string literal to avoid strict mode
+      // errors caused by the required with-statement
+      return '$1Function(\'obj\',\n$2  "' + code + '"\n$2);\n';
+    }()));
+  }
+
+  // remove pseudo private properties
+  source = source.replace(/(?:\s*\/\/.*)*\s*lodash\._(?:createIterator|iteratorTemplate)\b.+\n/g, '\n');
+
+  /*--------------------------------------------------------------------------*/
+
   // begin the minification process
-  if (isCustom) {
+  if (filterType || isMobile) {
     fs.writeFileSync(path.join(__dirname, 'lodash.custom.js'), source);
     minify(source, 'lodash.custom.min', function(result) {
       fs.writeFileSync(path.join(__dirname, 'lodash.custom.min.js'), result);

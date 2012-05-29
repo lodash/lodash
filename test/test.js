@@ -402,7 +402,7 @@
 
   (function() {
     test('supports recursive calls', function() {
-      var compiled = _.template('<%= a %><% a = _.template(c, object) %><%= a %>'),
+      var compiled = _.template('<%= a %><% a = _.template(c, obj) %><%= a %>'),
           data = { 'a': 'A', 'b': 'B', 'c': '<%= b %>' };
 
       equal(compiled(data), 'AB');

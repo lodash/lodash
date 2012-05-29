@@ -62,7 +62,7 @@
   /** Used to minify variables and string values to a single character */
   var minNames = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  /** Used protect the specified properties from getting minified */
+  /** Used to protect the specified properties from getting minified */
   var propWhitelist = [
     '_',
     '_chain',

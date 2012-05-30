@@ -20,12 +20,12 @@ For more information check out these screencasts over Lo-Dash:
 ## Features
 
  * AMD loader support
- * [_.bind](http://lodash.com/docs#_bindfunc--arg1-arg2-) supports *"lazy"* binding
- * [_.debounce](http://lodash.com/docs#_debouncefunc-wait-immediate)’ed functions match [_.throttle](http://lodash.com/docs#_throttlefunc-wait)’ed functions’ return value behavior
- * [_.forEach](http://lodash.com/docs#_foreachcollection-callback--thisarg) is chainable
- * [_.groupBy](http://lodash.com/docs#_groupbycollection-callback--thisarg) accepts a third, `thisArg`, argument
- * [_.partial](http://lodash.com/docs#_partialfunc--arg1-arg2-) for more functional fun
- * [_.size](http://lodash.com/docs#_sizecollection) supports returning the `length` of string values
+ * [_.bind](http://lodash.com/docs#bind) supports *"lazy"* binding
+ * [_.debounce](http://lodash.com/docs#debounce)’ed functions match [_.throttle](http://lodash.com/docs#throttle)’ed functions’ return value behavior
+ * [_.forEach](http://lodash.com/docs#forEach) is chainable
+ * [_.groupBy](http://lodash.com/docs#groupBy) accepts a third, `thisArg`, argument
+ * [_.partial](http://lodash.com/docs#partial) for more functional fun
+ * [_.size](http://lodash.com/docs#size) supports returning the `length` of string values
 
 ## Support
 
@@ -197,7 +197,7 @@ git submodule update --init
 
  * Added mobile build option
  * Ensured `_.find` returns `undefined` for unmatched values
- * Ensured `_.templateSettings.variable` Underscore.js compatibility
+ * Ensured `_.templateSettings.variable` is compatible with Underscore.js
  * Optimized `_.escape`
  * Reduced dependencies in `_.find`
 

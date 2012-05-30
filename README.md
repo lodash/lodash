@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v0.2.1</sup>
+# Lo-Dash <sup>v0.2.2</sup>
 
 A drop-in replacement for Underscore.js, from the devs behind [jsPerf.com](http://jsperf.com), that delivers [performance improvements](http://jsperf.com/lodash-underscore#filterby=family), [bug fixes](https://github.com/bestiejs/lodash#closed-underscorejs-issues), and [additional features](https://github.com/bestiejs/lodash#features).
 
@@ -36,18 +36,26 @@ Lo-Dash has been tested in at least Chrome 5-19, Firefox 1.5-12, IE 6-9, Opera 9
 Custom builds make it easy to create lightweight versions of Lo-Dash containing only the methods you need.
 We handle all the method dependency and alias mapping for you.
 
+Mobile builds, with IE bug fixes and method compilation removed, may be created by using the `mobile` argument.
+
+~~~ bash
+node build mobile
+~~~
+
 Custom builds may be created in two ways:
 
  1. Use the`include` argument to pass the names of the methods to include in the build.
 ~~~ bash
 node build include=each,filter,map,noConflict
 node build include="each, filter, map, noConflict"
+node build mobile include=each,filter,map,noConflict
 ~~~
 
  2. Use the `exclude` argument to pass the names of the methods to exclude from the build.
 ~~~ bash
 node build exclude=isNaN,isUndefined,union,zip
 node build exclude="isNaN, isUndefined, union, zip"
+node build mobile exclude=isNaN,isUndefined,union,zip
 ~~~
 
 Custom builds are saved to `lodash.custom.js` and `lodash.custom.min.js`.
@@ -185,13 +193,21 @@ git submodule update --init
 
 ## Changelog
 
+### <sup>v0.2.2</sup>
+
+ * Added mobile build option
+ * Ensured `_.find` returns `undefined` for unmatched values
+ * Ensured `_.templateSettings.variable` Underscore.js compatibility
+ * Optimized `_.escape`
+ * Reduced dependencies in `_.find`
+
 ### <sup>v0.2.1</sup>
 
-* Adjusted the Lo-Dash export order for r.js
-* Ensured `_.groupBy` values are added to own, not inherited, properties
-* Made `_.bind` follow ES5 spec to support a popular Backbone.js pattern
-* Removed the alias `intersect`
-* Simplified `_.bind`, `_.flatten`, `_.groupBy`, `_.max`, and `_.min`
+ * Adjusted the Lo-Dash export order for r.js
+ * Ensured `_.groupBy` values are added to own, not inherited, properties
+ * Made `_.bind` follow ES5 spec to support a popular Backbone.js pattern
+ * Removed the alias `intersect`
+ * Simplified `_.bind`, `_.flatten`, `_.groupBy`, `_.max`, and `_.min`
 
 ### <sup>v0.2.0</sup>
 

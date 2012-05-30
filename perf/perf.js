@@ -99,8 +99,8 @@
         lodashHz = underscoreHz = Math.min(lodashHz, underscoreHz);
       }
       else {
-        var slowestHz = slowest[0] == this[0] ? lodashHz : underscoreHz,
-            fastestHz = fastest[0] == this[0] ? lodashHz : underscoreHz,
+        var fastestHz = fastest[0] == this[0] ? lodashHz : underscoreHz,
+            slowestHz = slowest[0] == this[0] ? lodashHz : underscoreHz,
             percent = Math.round(((fastestHz / slowestHz) - 1) * 100);
 
         console.log(fastest[0].name + ' is ' + percent + '% faster.');
@@ -117,11 +117,17 @@
         suites[0].run();
       }
       else {
+        var fastestTotalHz = Math.max(score.lodash, score.underscore),
+            slowestTotalHz = Math.min(score.lodash, score.underscore),
+            totalPercent = Math.round(((fastestTotalHz  / slowestTotalHz) - 1) * 100),
+            totalX = (fastestTotalHz / slowestTotalHz).toFixed(2),
+            message = ' is ' + totalPercent + '% (' + totalX + 'x) faster than ';
+
         // report results
         if (score.lodash >= score.underscore) {
-          console.log('\nLo-Dash is ' + (score.lodash / score.underscore).toFixed(2) + 'x faster than Underscore.');
+          console.log('\nLo-Dash' + message + 'Underscore.');
         } else {
-          console.log('\nUnderscore is ' + (score.underscore / score.lodash).toFixed(2) + 'x faster than Lo-Dash.');
+          console.log('\nUnderscore' + message + 'Lo-Dash.');
         }
       }
     }

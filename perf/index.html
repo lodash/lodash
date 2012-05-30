@@ -38,7 +38,7 @@
 				    script = document.createElement('script');
 
 				document.getElementById('FirebugUI').style.height = '100%';
-				script.src = 'perf.js';
+				script.src = 'perf.js?t=' + (+new Date);
 				sibling.parentNode.insertBefore(script, sibling);
 			};
 		</script>

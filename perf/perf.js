@@ -25,6 +25,11 @@
       _._ || _
     );
 
+  /** Used to access the Firebug Lite panel */
+  var fbPanel = (fbPanel = window.document && document.getElementById('FirebugUI')) &&
+    (fbPanel = (fbPanel = fbPanel.contentWindow || fbPanel.contentDocument).document || fbPanel) &&
+    fbPanel.getElementById('fbPanel1');
+
   /** Used to score Lo-Dash and Underscore performance */
   var score = { 'lodash': 0, 'underscore': 0 };
 
@@ -38,6 +43,22 @@
   window._ = _;
   window.Benchmark = Benchmark;
   window.lodash = lodash;
+
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * Logs text to the console.
+   *
+   * @private
+   * @param {String} text The text to log.
+   */
+  function log(text) {
+    console.log(text);
+    if (fbPanel) {
+      // scroll down the Firebug Lite panel
+      fbPanel.scrollTop = fbPanel.scrollHeight;
+    }
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -83,27 +104,28 @@
 
   lodash.extend(Benchmark.Suite.options, {
     'onStart': function() {
-      console.log('\n' + this.name + ':');
+      log('\n' + this.name + ':');
     },
     'onCycle': function(event) {
-      console.log(event.target + '');
+      log(event.target + '');
     },
     'onComplete': function() {
-      var fastest = this.filter('fastest'),
+      var formatNumber = Benchmark.formatNumber,
+          fastest = this.filter('fastest'),
           slowest = this.filter('slowest'),
           lodashHz = 1 / (this[0].stats.mean + this[0].stats.moe),
           underscoreHz = 1 / (this[1].stats.mean + this[1].stats.moe);
 
       if (fastest.length > 1) {
-        console.log('It\'s too close to call.');
+        log('It\'s too close to call.');
         lodashHz = underscoreHz = Math.min(lodashHz, underscoreHz);
       }
       else {
         var fastestHz = fastest[0] == this[0] ? lodashHz : underscoreHz,
             slowestHz = slowest[0] == this[0] ? lodashHz : underscoreHz,
-            percent = Math.round(((fastestHz / slowestHz) - 1) * 100);
+            percent = formatNumber(Math.round(((fastestHz / slowestHz) - 1) * 100));
 
-        console.log(fastest[0].name + ' is ' + percent + '% faster.');
+        log(fastest[0].name + ' is ' + percent + '% faster.');
       }
       // add score adjusted for margin of error
       score.lodash += lodashHz;
@@ -119,15 +141,15 @@
       else {
         var fastestTotalHz = Math.max(score.lodash, score.underscore),
             slowestTotalHz = Math.min(score.lodash, score.underscore),
-            totalPercent = Math.round(((fastestTotalHz  / slowestTotalHz) - 1) * 100),
-            totalX = (fastestTotalHz / slowestTotalHz).toFixed(2),
+            totalPercent = formatNumber(Math.round(((fastestTotalHz  / slowestTotalHz) - 1) * 100)),
+            totalX = formatNumber((fastestTotalHz / slowestTotalHz).toFixed(2)),
             message = ' is ' + totalPercent + '% (' + totalX + 'x) faster than ';
 
         // report results
         if (score.lodash >= score.underscore) {
-          console.log('\nLo-Dash' + message + 'Underscore.');
+          log('\nLo-Dash' + message + 'Underscore.');
         } else {
-          console.log('\nUnderscore' + message + 'Lo-Dash.');
+          log('\nUnderscore' + message + 'Lo-Dash.');
         }
       }
     }
@@ -396,7 +418,7 @@
   /*--------------------------------------------------------------------------*/
 
   if (Benchmark.platform + '') {
-    console.log(Benchmark.platform + '');
+    log(Benchmark.platform + '');
   }
   // start suites
   suites[0].run();

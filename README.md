@@ -6,7 +6,7 @@ Lo-Dash’s performance is gained by avoiding slower native methods, instead opt
 
 ## Dive in
 
-We’ve got [API docs](http://lodash.com/docs) and [unit tests](http://lodash.com/tests).
+We’ve got [API docs](http://lodash.com/docs), [benchmarks](http://lodash.com/benchmarks), and [unit tests](http://lodash.com/tests).
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
 

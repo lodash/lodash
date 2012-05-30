@@ -10,6 +10,9 @@
   var lodash = require(path.join(__dirname, 'lodash')),
       minify = require(path.join(__dirname, 'build', 'minify'));
 
+  /** Flag used to specify a mobile build */
+  var isMobile = process.argv.indexOf('mobile') > -1;
+
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
@@ -151,9 +154,6 @@
       }
     }
   }, '');
-
-  /** Flag used to specify a mobile build */
-  var isMobile = process.argv.indexOf('mobile') > -1;
 
   /*--------------------------------------------------------------------------*/
 

@@ -439,25 +439,19 @@
   if (isMobile) {
     // inline functions defined with `createIterator`
     lodash.functions(lodash).forEach(function(funcName) {
-      var reFunc = RegExp('( +var ' + funcName + ' *= *)((?:[a-zA-Z]+ *\\|\\| *)?)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n'),
-          parts = source.match(reFunc);
+      var reFunc = RegExp('(\\bvar ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
 
       // skip if not defined with `createIterator`
-      if (!parts) {
+      if (!reFunc.test(source)) {
         return;
       }
-      // extract function's code
-      var code = funcName == 'keys'
-        ? '$1$2' + lodash._createIterator(Function('return ' + parts[3])())
-        : '$1' + lodash[funcName];
-
-      // format code
-      code = code.replace(/\n(?:.*)/g, function(match) {
+      // extract and format the function's code
+      var code = (lodash[funcName] + '').replace(/\n(?:.*)/g, function(match) {
         match = match.slice(1);
         return (match == '}' ? '\n  ' : '\n    ') + match;
-      }) + ';\n';
+      });
 
-      source = source.replace(reFunc, code);
+      source = source.replace(reFunc, '$1' + code + ';\n');
     });
 
     // remove `iteratorTemplate`
@@ -490,7 +484,7 @@
   }
 
   // remove pseudo private properties
-  source = source.replace(/(?:\s*\/\/.*)*\s*lodash\._(?:createIterator|iteratorTemplate)\b.+\n/g, '\n');
+  source = source.replace(/(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n/g, '\n');
 
   /*--------------------------------------------------------------------------*/
 

@@ -1077,6 +1077,9 @@
    *
    * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return this.sin(num); }, Math);
    * // => [5, 4, 6, 3, 1, 2]
+   *
+   * _.sortBy(['larry', 'brendan', 'moe'], 'length');
+   * // => ['moe', 'larry', 'brendan']
    */
   function sortBy(array, callback, thisArg) {
     if (toString.call(callback) != funcClass) {
@@ -1114,23 +1117,33 @@
    * @category Arrays
    * @param {Array} array The array to search.
    * @param {Mixed} value The value to search for.
-   * @param {Boolean} [isSorted=false] A flag to indicate that the `array` is already sorted.
+   * @param {Boolean|Number} [fromIndex=0] The index to start searching from or
+   *  `true` to perform a binary search on a sorted `array`.
    * @returns {Number} Returns the index of the matched value or `-1`.
    * @example
    *
-   * _.indexOf([1, 2, 3], 2);
+   * _.indexOf([1, 2, 3, 1, 2, 3], 2);
    * // => 1
+   *
+   * _.indexOf([1, 2, 3, 1, 2, 3], 2, 3);
+   * // => 4
+   *
+   * _.indexOf([1, 1, 2, 2, 3, 3], 2, true);
+   * // => 2
    */
-  function indexOf(array, value, isSorted) {
-    var index, length;
-    if (!array) {
-      return -1;
+  function indexOf(array, value, fromIndex) {
+    var index = -1,
+        length = array.length;
+
+    if (fromIndex) {
+      if (fromIndex === +fromIndex) {
+        index = (fromIndex < 0 ? Math.max(0, length + fromIndex) : fromIndex) - 1;
+      } else {
+        index = sortedIndex(array, value);
+        return array[index] === value ? index : -1;
+      }
     }
-    if (isSorted) {
-      index = sortedIndex(array, value);
-      return array[index] === value ? index : -1;
-    }
-    for (index = 0, length = array.length; index < length; index++) {
+    while (++index < length) {
       if (array[index] === value) {
         return index;
       }
@@ -1250,17 +1263,21 @@
    * @category Arrays
    * @param {Array} array The array to search.
    * @param {Mixed} value The value to search for.
+   * @param {Number} [fromIndex=array.length-1] The index to start searching from.
    * @returns {Number} Returns the index of the matched value or `-1`.
    * @example
    *
    * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2);
    * // => 4
+   *
+   * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2, 3);
+   * // => 1
    */
-  function lastIndexOf(array, value) {
-    if (!array) {
-      return -1;
-    }
+  function lastIndexOf(array, value, fromIndex) {
     var index = array.length;
+    if (fromIndex && fromIndex === +fromIndex) {
+      index = (fromIndex < 0 ? Math.max(0, index + fromIndex) : Math.min(fromIndex, index - 1)) + 1;
+    }
     while (index--) {
       if (array[index] === value) {
         return index;
@@ -1465,10 +1482,10 @@
   }
 
   /**
-   * Uses a binary search to determine the smallest  index at which the `value`
-   * should be inserted into the `collection` in order to maintain the sort order
-   * of the `collection`. If `callback` is passed, it will be executed for each
-   * value in the `collection` to compute their sort ranking. The `callback` is
+   * Uses a binary search to determine the smallest index at which the `value`
+   * should be inserted into the `array` in order to maintain the sort order
+   * of the `array`. If `callback` is passed, it will be executed for each
+   * value in the `array` to compute their sort ranking. The `callback` is
    * invoked with 1 argument; (value).
    *
    * @static
@@ -1478,7 +1495,7 @@
    * @param {Mixed} value The value to evaluate.
    * @param {Function} [callback] The function called per iteration.
    * @returns {Number} Returns the index at which the value should be inserted
-   *  into the collection.
+   *  into the array.
    * @example
    *
    * _.sortedIndex([10, 20, 30, 40, 50], 35);

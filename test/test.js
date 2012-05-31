@@ -254,6 +254,42 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.indexOf');
+
+  (function() {
+    var array = [1, 2, 3, 1, 2, 3];
+
+    test('should work with a positive `fromIndex`', function() {
+      equal(_.indexOf(array, 1, 2), 3);
+    });
+
+    test('should work with `fromIndex` >= `array.length`', function() {
+      equal(_.indexOf(array, 1, 6), -1);
+      equal(_.indexOf(array, undefined, 6), -1);
+      equal(_.indexOf(array, 1, 8), -1);
+      equal(_.indexOf(array, undefined, 8), -1);
+    });
+
+    test('should work with a negative `fromIndex`', function() {
+      equal(_.indexOf(array, 2, -3), 4);
+    });
+
+    test('should work with a negative `fromIndex` <= `-array.length`', function() {
+      equal(_.indexOf(array, 1, -6), 0);
+      equal(_.indexOf(array, 2, -8), 1);
+    });
+
+    test('should ignore non-number `fromIndex` values', function() {
+      equal(_.indexOf([1, 2, 3], 1, '1'), 0);
+    });
+
+    test('should work with `isSorted`', function() {
+      equal(_.indexOf([1, 2, 3], 1, true), 0);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.initial');
 
   (function() {
@@ -319,6 +355,39 @@
 
       Foo.prototype = { 'c': 3 };
       deepEqual(_.keys(Foo), expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.lastIndexOf');
+
+  (function() {
+    var array = [1, 2, 3, 1, 2, 3];
+
+    test('should work with a positive `fromIndex`', function() {
+      equal(_.lastIndexOf(array, 1, 2), 0);
+    });
+
+    test('should work with `fromIndex` >= `array.length`', function() {
+      equal(_.lastIndexOf(array, undefined, 6), -1);
+      equal(_.lastIndexOf(array, 1, 6), 3);
+      equal(_.lastIndexOf(array, undefined, 8), -1);
+      equal(_.lastIndexOf(array, 1, 8), 3);
+    });
+
+    test('should work with a negative `fromIndex`', function() {
+      equal(_.lastIndexOf(array, 2, -3), 1);
+    });
+
+    test('should work with a negative `fromIndex` <= `-array.length`', function() {
+      equal(_.lastIndexOf(array, 1, -6), 0);
+      equal(_.lastIndexOf(array, 2, -8), -1);
+    });
+
+    test('should ignore non-number `fromIndex` values', function() {
+      equal(_.lastIndexOf([1, 2, 3], 3, '1'), 2);
+      equal(_.lastIndexOf([1, 2, 3], 3, true), 2);
     });
   }());
 

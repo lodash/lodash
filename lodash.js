@@ -271,7 +271,7 @@
       '  callback = identity\n' +
       '}\n' +
       'else if (thisArg) {\n' +
-      '  callback = bind(callback, thisArg)\n' +
+      '  callback = iteratorBind(callback, thisArg)\n' +
       '}',
     'inLoop': 'callback(collection[index], index, collection)'
   };
@@ -304,7 +304,7 @@
 
   /** Reusable iterator options for `find`  and `forEach` */
   var forEachIteratorOptions = {
-    'top': 'if (thisArg) callback = bind(callback, thisArg)'
+    'top': 'if (thisArg) callback = iteratorBind(callback, thisArg)'
   };
 
   /** Reusable iterator options for `map`, `pluck`, and `values` */
@@ -418,13 +418,13 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayClass, bind, funcClass, hasOwnProperty, identity, objectTypes, ' +
+        'arrayClass, funcClass, hasOwnProperty, identity, iteratorBind, objectTypes, ' +
         'stringClass, toString, undefined',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayClass, bind, funcClass, hasOwnProperty, identity, objectTypes,
+      arrayClass, funcClass, hasOwnProperty, identity, iteratorBind, objectTypes,
       stringClass, toString
     );
   }
@@ -451,6 +451,21 @@
    */
   function escapeChar(match) {
     return '\\' + escapes[match];
+  }
+
+  /**
+   * Creates a new function that, when called, invokes `func` with the `this`
+   * binding of `thisArg` and the arguments (value, index, object).
+   *
+   * @private
+   * @param {Function} func The function to bind.
+   * @param {Mixed} [thisArg] The `this` binding of `func`.
+   * @returns {Function} Returns the new bound function.
+   */
+  function iteratorBind(func, thisArg) {
+    return function(value, index, object) {
+      return func.call(thisArg, value, index, object);
+    };
   }
 
   /**
@@ -697,7 +712,7 @@
     'init': 'accumulator',
     'top':
       'var noaccum = arguments.length < 3;\n' +
-      'if (thisArg) callback = bind(callback, thisArg)',
+      'if (thisArg) callback = iteratorBind(callback, thisArg)',
     'beforeLoop': {
       'array': 'if (noaccum) result = collection[++index]'
     },
@@ -741,7 +756,7 @@
         noaccum = arguments.length < 3;
 
     if(thisArg) {
-      callback = bind(callback, thisArg);
+      callback = iteratorBind(callback, thisArg);
     }
     if (length === +length) {
       if (length && noaccum) {
@@ -1015,7 +1030,7 @@
         result = {};
 
     if (isFunc && thisArg) {
-      callback = bind(callback, thisArg);
+      callback = iteratorBind(callback, thisArg);
     }
     while (++index < length) {
       value = array[index];
@@ -1053,7 +1068,7 @@
       var prop = callback;
       callback = function(array) { return array[prop]; };
     } else if (thisArg) {
-      callback = bind(callback, thisArg);
+      callback = iteratorBind(callback, thisArg);
     }
     return pluck(map(array, function(value, index) {
       return {
@@ -1279,7 +1294,7 @@
       return result;
     }
     if (thisArg) {
-      callback = bind(callback, thisArg);
+      callback = iteratorBind(callback, thisArg);
     }
     while (++index < length) {
       current = callback(array[index], index, array);
@@ -1325,7 +1340,7 @@
       return result;
     }
     if (thisArg) {
-      callback = bind(callback, thisArg);
+      callback = iteratorBind(callback, thisArg);
     }
     while (++index < length) {
       current = callback(array[index], index, array);
@@ -1640,7 +1655,7 @@
    * @memberOf _
    * @category Functions
    * @param {Function|Object} func The function to bind or the object the method belongs to.
-   * @param @param {Mixed} [thisArg] The `this` binding of `func` or the method name.
+   * @param {Mixed} [thisArg] The `this` binding of `func` or the method name.
    * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
    * @returns {Function} Returns the new bound function.
    * @example

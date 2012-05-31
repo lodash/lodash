@@ -9,7 +9,6 @@
   var compiledVars = [
     'accumulator',
     'arrayClass',
-    'bind',
     'callback',
     'className',
     'collection',
@@ -19,6 +18,7 @@
     'hasOwnProperty',
     'identity',
     'index',
+    'iteratorBind',
     'length',
     'object',
     'objectTypes',

@@ -478,6 +478,21 @@
   }
 
   /**
+   * A shim implementation of `Object.keys` that produces an array of the given
+   * object's enumerable own property names.
+   *
+   * @private
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property names.
+   */
+  var shimKeys = createIterator({
+    'args': 'object',
+    'exit': 'if (!objectTypes[typeof object] || object === null) throw TypeError()',
+    'init': '[]',
+    'inLoop': 'result.push(index)'
+  });
+
+  /**
    * Used by `template()` to replace "escape" template delimiters with tokens.
    *
    * @private
@@ -2643,12 +2658,12 @@
    * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
    * // => ['one', 'two', 'three']
    */
-  var keys = nativeKeys || createIterator({
-    'args': 'object',
-    'exit': 'if (!objectTypes[typeof object] || object === null) throw TypeError()',
-    'init': '[]',
-    'inLoop': 'result.push(index)'
-  });
+  var keys = !nativeKeys ? shimKeys : function(object) {
+    // avoid iterating over the `prototype` property
+    return typeof object == 'function'
+      ? shimKeys(object)
+      : nativeKeys(object);
+  };
 
   /**
    * Creates an object composed of the specified properties. Property names may
@@ -3209,6 +3224,7 @@
   // add pseudo privates used and removed during the build process
   lodash._createIterator = createIterator;
   lodash._iteratorTemplate = iteratorTemplate;
+  lodash._shimKeys = shimKeys;
 
   /*--------------------------------------------------------------------------*/
 

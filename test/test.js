@@ -307,6 +307,16 @@
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       equal(_.isEmpty(shadowed), false);
     });
+
+    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      equal(_.isEmpty(Foo), true);
+
+      Foo.prototype = { 'a': 1 };
+      equal(_.isEmpty(Foo), true);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

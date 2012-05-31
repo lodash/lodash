@@ -3034,13 +3034,21 @@
    * @example
    *
    * _.times(3, function() { genie.grantWish(); });
+   * // => calls `genie.grantWish()` 3 times
+   *
+   * _.times(3, function() { this.grantWish(); }, genie);
+   * // => also calls `genie.grantWish()` 3 times
    */
   function times(n, callback, thisArg) {
+    var index = -1;
     if (thisArg) {
-      callback = bind(callback, thisArg);
-    }
-    for (var index = 0; index < n; index++) {
-      callback(index);
+      while (++index < n) {
+        callback.call(thisArg, index);
+      }
+    } else {
+      while (++index < n) {
+        callback(index);
+      }
     }
   }
 

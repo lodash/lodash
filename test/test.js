@@ -306,6 +306,20 @@
       deepEqual(_.keys(shadowed).sort(),
         'constructor hasOwnProperty isPrototypeOf propertyIsEnumerable toLocaleString toString valueOf'.split(' '));
     });
+
+    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+      function Foo() {}
+      Foo.prototype.c = 3;
+
+      Foo.a = 1;
+      Foo.b = 2;
+
+      var expected = ['a', 'b'];
+      deepEqual(_.keys(Foo), expected);
+
+      Foo.prototype = { 'c': 3 };
+      deepEqual(_.keys(Foo), expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -251,9 +251,9 @@
       // match a function declaration
       '( +)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
       // match a variable declaration with `createIterator`
-      ' +var ' + funcName + ' *=.*createIterator\\((?:{|[a-zA-Z])[\\s\\S]+?\\);|' +
+      ' +var ' + funcName + ' *=.*?createIterator\\((?:{|[a-zA-Z])[\\s\\S]+?\\);|' +
       // match a variable declaration with function expression
-      '( +)var ' + funcName + ' *=.*function[\\s\\S]+?\\n\\2};' +
+      '( +)var ' + funcName + ' *=.*?function[\\s\\S]+?\\n\\2};' +
       // end non-capturing group
       ')\\n'
     ));

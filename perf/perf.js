@@ -69,7 +69,8 @@
           _ = window._,
           lodash = window.lodash;
 
-      var numbers = [],
+      var length = 20,
+          numbers = [],
           object = {},
           fourNumbers = [5, 25, 10, 30],
           nestedNumbers = [1, [2], [3, [[4]]]],
@@ -91,13 +92,13 @@
           _boundCtor = _.bind(ctor, { 'name': 'moe' }),
           _boundPartial = _.bind(func, { 'name': 'moe' }, 'hi');
 
-      for (var index = 0; index < 20; index++) {
+      for (var index = 0; index < length; index++) {
         numbers[index] = index;
         object['key' + index] = index;
       }
 
-      var objects = lodash.map(numbers, function(n) {
-        return { 'num': n };
+      var objects = lodash.map(numbers, function(num) {
+        return { 'num': num };
       });
     }
   });
@@ -168,7 +169,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('bound normal')
+    Benchmark.Suite('bound')
       .add('Lo-Dash', function() {
         lodashBoundNormal();
       })
@@ -202,31 +203,43 @@
   suites.push(
     Benchmark.Suite('each array')
       .add('Lo-Dash', function() {
-        var timesTwo = [];
-        lodash.each(numbers, function(num) {
-          timesTwo.push(num * 2);
-        });
+        var result = [];
+        lodash.each(numbers, function(num) { result.push(num * 2); });
       })
       .add('Underscore', function() {
-        var timesTwo = [];
-        _.each(numbers, function(num) {
-          timesTwo.push(num * 2);
-        });
+        var result = [];
+        _.each(numbers, function(num) { result.push(num * 2); });
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('each array thisArg')
+      .add('Lo-Dash', function() {
+        var result = [];
+        lodash.each(numbers, function(num, index) {
+          result.push(num + this['key' + index]);
+        }, object);
+      })
+      .add('Underscore', function() {
+        var result = [];
+        _.each(numbers, function(num, index) {
+          result.push(num + this['key' + index]);
+        }, object);
       })
   );
 
   suites.push(
     Benchmark.Suite('each object')
       .add('Lo-Dash', function() {
-        var timesTwo = [];
+        var result = [];
         lodash.each(object, function(num) {
-          timesTwo.push(num * 2);
+          result.push(num * 2);
         });
       })
       .add('Underscore', function() {
-        var timesTwo = [];
+        var result = [];
         _.each(object, function(num) {
-          timesTwo.push(num * 2);
+          result.push(num * 2);
         });
       })
   );
@@ -286,10 +299,10 @@
   suites.push(
     Benchmark.Suite('groupBy callback')
       .add('Lo-Dash', function() {
-        lodash.groupBy(numbers, function(num) { return Math.floor(num); });
+        lodash.groupBy(numbers, function(num) { return num >> 1; });
       })
       .add('Underscore', function() {
-        _.groupBy(numbers, function(num) { return Math.floor(num); });
+        _.groupBy(numbers, function(num) { return num >> 1; });
       })
   );
 
@@ -300,6 +313,28 @@
       })
       .add('Underscore', function() {
         _.groupBy(words, 'length');
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('indexOf')
+      .add('Lo-Dash', function() {
+        lodash.indexOf(numbers, 9);
+      })
+      .add('Underscore', function() {
+        _.indexOf(numbers, 9);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('indexOf isSorted')
+      .add('Lo-Dash', function() {
+        lodash.indexOf(numbers, 9, true);
+      })
+      .add('Underscore', function() {
+        _.indexOf(numbers, 9, true);
       })
   );
 
@@ -330,16 +365,42 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('lastIndexOf')
+      .add('Lo-Dash', function() {
+        lodash.lastIndexOf(numbers, 9);
+      })
+      .add('Underscore', function() {
+        _.lastIndexOf(numbers, 9);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('map')
       .add('Lo-Dash', function() {
-        lodash.map(objects, function(obj) {
-          return obj.num;
+        lodash.map(objects, function(value) {
+          return value.num;
         });
       })
       .add('Underscore', function() {
-        _.map(objects, function(obj) {
-          return obj.num;
+        _.map(objects, function(value) {
+          return value.num;
         });
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('map thisArg')
+      .add('Lo-Dash', function() {
+        lodash.map(objects, function(value, index) {
+          return this['key' + index] + value.num;
+        }, object);
+      })
+      .add('Underscore', function() {
+        _.map(objects, function(value, index) {
+          return this['key' + index] + value.num;
+        }, object);
       })
   );
 
@@ -388,6 +449,64 @@
       })
       .add('Underscore', function() {
         _.pluck(objects, 'num');
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('sortBy callback')
+      .add('Lo-Dash', function() {
+        lodash.sortBy(numbers, function(num) { return Math.sin(num); });
+      })
+      .add('Underscore', function() {
+        _.sortBy(numbers, function(num) { return Math.sin(num); });
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('sortBy callback thisArg')
+      .add('Lo-Dash', function() {
+        lodash.sortBy(numbers, function(num) { return this.sin(num); }, Math);
+      })
+      .add('Underscore', function() {
+        _.sortBy(numbers, function(num) { return this.sin(num); }, Math);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('sortBy property name')
+      .add('Lo-Dash', function() {
+        lodash.sortBy(words, 'length');
+      })
+      .add('Underscore', function() {
+        _.sortBy(words, 'length');
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('times')
+      .add('Lo-Dash', function() {
+        var result = [];
+        lodash.times(length, function(n) { result.push(n); });
+      })
+      .add('Underscore', function() {
+        var result = [];
+        _.times(length, function(n) { result.push(n); });
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('times thisArg')
+      .add('Lo-Dash', function() {
+        var result = [];
+        lodash.times(length, function(n) { result.push(this.sin(n)); }, Math);
+      })
+      .add('Underscore', function() {
+        var result = [];
+        _.times(length, function(n) { result.push(this.sin(n)); }, Math);
       })
   );
 

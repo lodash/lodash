@@ -34,10 +34,12 @@
 			}());
 
 			window.onload = function() {
-				var sibling = document.getElementsByTagName('script')[0],
+				var fbUI = document.getElementById('FirebugUI'),
+				    fbDoc = (fbDoc = fbUI.contentWindow || fbUI.contentDocument).document || fbDoc,
+				    sibling = document.getElementsByTagName('script')[0],
 				    script = document.createElement('script');
 
-				document.getElementById('FirebugUI').style.height = '100%';
+				fbUI.style.height = fbDoc.body.style.height = fbDoc.documentElement.style.height = '100%';
 				script.src = 'perf.js?t=' + (+new Date);
 				sibling.parentNode.insertBefore(script, sibling);
 			};

@@ -331,10 +331,10 @@
   suites.push(
     Benchmark.Suite('indexOf isSorted')
       .add('Lo-Dash', function() {
-        lodash.indexOf(numbers, 9, true);
+        lodash.indexOf(numbers, 19, true);
       })
       .add('Underscore', function() {
-        _.indexOf(numbers, 9, true);
+        _.indexOf(numbers, 19, true);
       })
   );
 

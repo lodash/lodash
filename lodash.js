@@ -199,7 +199,7 @@
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
     'var length = <%= firstArg %>.length; index = -1;' +
-    '  <% if (objectBranch) { %>\nif (length === +length) {<% } %>\n' +
+    '  <% if (objectBranch) { %>\nif (typeof length == \'number\') {<% } %>\n' +
     '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (<%= arrayBranch.loopExp %>) {\n' +
     '    <%= arrayBranch.inLoop %>;\n' +
@@ -568,7 +568,7 @@
    * @alias all
    * @category Collections
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Boolean} Returns `true` if all values pass the callback check, else `false`.
    * @example
@@ -589,7 +589,7 @@
    * @alias select
    * @category Collections
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array} Returns a new array of values that passed callback check.
    * @example
@@ -659,7 +659,7 @@
    * @alias collect
    * @category Collections
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array} Returns a new array of values returned by the callback.
    * @example
@@ -773,7 +773,7 @@
     if(thisArg) {
       callback = iteratorBind(callback, thisArg);
     }
-    if (length === +length) {
+    if (typeof length == 'number') {
       if (length && noaccum) {
         accumulator = collection[--length];
       }
@@ -807,7 +807,7 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array} Returns a new array of values that did **not** pass the callback check.
    * @example
@@ -831,7 +831,7 @@
    * @alias any
    * @category Collections
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Boolean} Returns `true` if any value passes the callback check, else `false`.
    * @example
@@ -866,7 +866,7 @@
       return collection.toArray();
     }
     var length = collection.length;
-    if (length === +length) {
+    if (typeof length == 'number') {
       return slice.call(collection);
     }
     return values(collection);
@@ -1082,7 +1082,7 @@
    * // => ['moe', 'larry', 'brendan']
    */
   function sortBy(array, callback, thisArg) {
-    if (toString.call(callback) != funcClass) {
+    if (typeof callback == 'string') {
       var prop = callback;
       callback = function(array) { return array[prop]; };
     } else if (thisArg) {
@@ -1136,7 +1136,7 @@
         length = array.length;
 
     if (fromIndex) {
-      if (fromIndex === +fromIndex) {
+      if (typeof fromIndex == 'number') {
         index = (fromIndex < 0 ? Math.max(0, length + fromIndex) : fromIndex) - 1;
       } else {
         index = sortedIndex(array, value);
@@ -1275,7 +1275,7 @@
    */
   function lastIndexOf(array, value, fromIndex) {
     var index = array.length;
-    if (fromIndex && fromIndex === +fromIndex) {
+    if (fromIndex && typeof fromIndex == 'number') {
       index = (fromIndex < 0 ? Math.max(0, index + fromIndex) : Math.min(fromIndex, index - 1)) + 1;
     }
     while (index--) {
@@ -1484,9 +1484,9 @@
   /**
    * Uses a binary search to determine the smallest index at which the `value`
    * should be inserted into the `array` in order to maintain the sort order
-   * of the `array`. If `callback` is passed, it will be executed for each
-   * value in the `array` to compute their sort ranking. The `callback` is
-   * invoked with 1 argument; (value).
+   * of the `array`. If `callback` is passed, it will be executed for `value` and
+   * each element in the `array` to compute their sort ranking. The `callback`
+   * is invoked with 1 argument; (value).
    *
    * @static
    * @memberOf _

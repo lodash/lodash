@@ -1072,11 +1072,11 @@
    * @returns {Array} Returns a new array of sorted values.
    * @example
    *
-   * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return Math.sin(num); });
-   * // => [5, 4, 6, 3, 1, 2]
+   * _.sortBy([1, 2, 3], function(num) { return Math.sin(num); });
+   * // => [3, 1, 2]
    *
-   * _.sortBy([1, 2, 3, 4, 5, 6], function(num) { return this.sin(num); }, Math);
-   * // => [5, 4, 6, 3, 1, 2]
+   * _.sortBy([1, 2, 3], function(num) { return this.sin(num); }, Math);
+   * // => [3, 1, 2]
    *
    * _.sortBy(['larry', 'brendan', 'moe'], 'length');
    * // => ['moe', 'larry', 'brendan']
@@ -1165,8 +1165,8 @@
    * @returns {Array} Returns all but the last value or `n` values of the `array`.
    * @example
    *
-   * _.initial([5, 4, 3, 2, 1]);
-   * // => [5, 4, 3, 2]
+   * _.initial([3, 2, 1]);
+   * // => [3, 2]
    */
   function initial(array, n, guard) {
     return slice.call(array, 0, -((n == undefined || guard) ? 1 : n));
@@ -1246,7 +1246,7 @@
    * @returns {Array} Returns all but the last value or `n` values of the `array`.
    * @example
    *
-   * _.last([5, 4, 3, 2, 1]);
+   * _.last([3, 2, 1]);
    * // => 1
    */
   function last(array, n, guard) {
@@ -1446,8 +1446,8 @@
    * @returns {Array} Returns all but the first value or `n` values of the `array`.
    * @example
    *
-   * _.rest([5, 4, 3, 2, 1]);
-   * // => [4, 3, 2, 1]
+   * _.rest([3, 2, 1]);
+   * // => [2, 1]
    */
   function rest(array, n, guard) {
     return slice.call(array, (n == undefined || guard) ? 1 : n);
@@ -1484,37 +1484,53 @@
   /**
    * Uses a binary search to determine the smallest index at which the `value`
    * should be inserted into the `array` in order to maintain the sort order
-   * of the `array`. If `callback` is passed, it will be executed for `value` and
-   * each element in the `array` to compute their sort ranking. The `callback`
-   * is invoked with 1 argument; (value).
+   * of the sorted `array`. If `callback` is passed, it will be executed for
+   * `value` and each element in the `array` to compute their sort ranking.
+   * The `callback` is invoked with 1 argument; (value).
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to iterate over.
    * @param {Mixed} value The value to evaluate.
-   * @param {Function} [callback] The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Number} Returns the index at which the value should be inserted
    *  into the array.
    * @example
    *
-   * _.sortedIndex([10, 20, 30, 40, 50], 35);
-   * // => 3
+   * _.sortedIndex([20, 30, 40], 35);
+   * // => 2
+   *
+   * var dict = {
+   *   'wordToNumber': { 'twenty': 20, 'thirty': 30, 'thirty-five': 35, 'fourty': 40 }
+   * };
+   *
+   * _.sortedIndex(['twenty', 'thirty', 'fourty'], 'thirty-five', function(word) {
+   *   return dict.wordToNumber[word];
+   * });
+   * // => 2
+   *
+   * _.sortedIndex(['twenty', 'thirty', 'fourty'], 'thirty-five', function(word) {
+   *   return this.wordToNumber[word];
+   * }, dict);
+   * // => 2
    */
-  function sortedIndex(array, value, callback) {
+  function sortedIndex(array, value, callback, thisArg) {
     var mid,
         low = 0,
         high = array.length;
 
     if (callback) {
-      value = callback(value);
-    }
-    while (low < high) {
-      mid = (low + high) >> 1;
-      if ((callback ? callback(array[mid]) : array[mid]) < value) {
-        low = mid + 1;
-      } else {
-        high = mid;
+      value = callback.call(thisArg, value);
+      while (low < high) {
+        mid = (low + high) >>> 1;
+        callback.call(thisArg, array[mid]) < value ? low = mid + 1 : high = mid;
+      }
+    } else {
+      while (low < high) {
+        mid = (low + high) >>> 1;
+        array[mid] < value ? low = mid + 1 : high = mid;
       }
     }
     return low;
@@ -1562,22 +1578,43 @@
    * @category Arrays
    * @param {Array} array The array to process.
    * @param {Boolean} [isSorted=false] A flag to indicate that the `array` is already sorted.
-   * @param {Function} [callback] A
+   * @param {Function} [callback=identity] The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array} Returns a duplicate-value-free array.
    * @example
    *
-   * _.uniq([1, 2, 1, 3, 1, 4]);
-   * // => [1, 2, 3, 4]
+   * _.uniq([1, 2, 1, 3, 1]);
+   * // => [1, 2, 3]
+   *
+   * _.uiq([1, 1, 2, 2, 3], true);
+   * // => [1, 2, 3]
+   *
+   * _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return Math.floor(num); });
+   * // => [1, 2, 3]
+   *
+   * _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return this.floor(num); }, Math);
+   * // => [1, 2, 3]
    */
-  function uniq(array, isSorted, callback) {
+  function uniq(array, isSorted, callback, thisArg) {
     var computed,
         index = -1,
         length = array.length,
         result = [],
         seen = [];
 
+    // juggle arguments
+    if (typeof isSorted == 'function') {
+      thisArg = callback;
+      callback = isSorted;
+      isSorted = false;
+    }
+    if (!callback) {
+      callback = identity;
+    } else if (thisArg) {
+      callback = iteratorBind(callback, thisArg);
+    }
     while (++index < length) {
-      computed = callback ? callback(array[index]) : array[index];
+      computed = callback(array[index], index, array);
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
             : indexOf(seen, computed) < 0
@@ -2134,8 +2171,8 @@
    * @example
    *
    * var iceCream = { 'flavor': 'chocolate' };
-   * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'lots' });
-   * // => { 'flavor': 'chocolate', 'sprinkles': 'lots' }
+   * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
+   * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
   var defaults = createIterator(extendIteratorOptions, {
     'inLoop': 'if (object[index] == undefined)' + extendIteratorOptions.inLoop
@@ -2219,7 +2256,7 @@
   var isArguments = function(value) {
     return toString.call(value) == '[object Arguments]';
   };
-  // fallback for browser like IE<9 which detect `arguments` as `[object Object]`
+  // fallback for browser like IE < 9 which detect `arguments` as `[object Object]`
   if (!isArguments(arguments)) {
     isArguments = function(value) {
       return !!(value && hasOwnProperty.call(value, 'callee'));

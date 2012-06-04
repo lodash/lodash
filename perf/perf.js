@@ -55,7 +55,7 @@
   function log(text) {
     console.log(text);
     if (fbPanel) {
-      // scroll down the Firebug Lite panel
+      // scroll the Firebug Lite panel down
       fbPanel.scrollTop = fbPanel.scrollHeight;
     }
   }
@@ -74,12 +74,7 @@
           object = {},
           fourNumbers = [5, 25, 10, 30],
           nestedNumbers = [1, [2], [3, [[4]]]],
-          twoNumbers = [12, 21],
-          words = [
-            'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
-            'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
-            'seventeen', 'eighteen', 'nineteen', 'twenty'
-          ];
+          twoNumbers = [12, 21];
 
       var ctor = function() { },
           func = function(greeting) { return greeting + ': ' + this.name; };
@@ -91,6 +86,36 @@
       var _boundNormal = _.bind(func, { 'name': 'moe' }),
           _boundCtor = _.bind(ctor, { 'name': 'moe' }),
           _boundPartial = _.bind(func, { 'name': 'moe' }, 'hi');
+
+      var wordToNumber = {
+        'one': 1,
+        'two': 2,
+        'three': 3,
+        'four': 4,
+        'five': 5,
+        'six': 6,
+        'seven': 7,
+        'eight': 8,
+        'nine': 9,
+        'ten': 10,
+        'eleven': 11,
+        'twelve': 12,
+        'thirteen': 13,
+        'fourteen': 14,
+        'fifteen': 15,
+        'sixteen': 16,
+        'seventeen': 17,
+        'eighteen': 18,
+        'nineteen': 19,
+        'twenty': 20,
+        'twenty-one': 21,
+        'twenty-two': 22,
+        'twenty-three': 23,
+        'twenty-four': 24,
+        'twenty-five': 25
+      };
+
+      var words = _.keys(wordToNumber).slice(0, length);
 
       for (var index = 0; index < length; index++) {
         numbers[index] = index;
@@ -487,6 +512,32 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('sortedIndex')
+      .add('Lo-Dash', function() {
+        lodash.sortedIndex(numbers, 25);
+      })
+      .add('Underscore', function() {
+        _.sortedIndex(numbers, 25);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('sortedIndex callback')
+      .add('Lo-Dash', function() {
+        lodash.sortedIndex(words, 'twenty-five', function(value) {
+          return wordToNumber[value];
+        });
+      })
+      .add('Underscore', function() {
+        _.sortedIndex(words, 'twenty-five', function(value) {
+          return wordToNumber[value];
+        });
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('times')
       .add('Lo-Dash', function() {
         var result = [];
@@ -519,6 +570,32 @@
       })
       .add('Underscore', function() {
         _.union(numbers, fourNumbers, twoNumbers);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('uniq')
+      .add('Lo-Dash', function() {
+        lodash.uniq(numbers.concat(fourNumbers, twoNumbers));
+      })
+      .add('Underscore', function() {
+        _.uniq(numbers.concat(fourNumbers, twoNumbers));
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('uniq callback')
+      .add('Lo-Dash', function() {
+        lodash.uniq(numbers.concat(fourNumbers, twoNumbers), function(num) {
+          return num % 2;
+        });
+      })
+      .add('Underscore', function() {
+        _.uniq(numbers.concat(fourNumbers, twoNumbers), function(num) {
+          return num % 2;
+        });
       })
   );
 

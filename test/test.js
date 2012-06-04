@@ -142,6 +142,10 @@
     test('should not escape the ">" character', function() {
       equal(_.escape('>'), '>');
     });
+
+    test('should not escape the "/" character', function() {
+      equal(_.escape('/'), '/');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -177,14 +181,14 @@
   QUnit.module('lodash.find');
 
   (function() {
-    var array = [1, 2, 3, 4];
+    var array = [1, 2, 3];
 
     test('should return found `value`', function() {
       equal(_.find(array, function(n) { return n > 2; }), 3);
     });
 
     test('should return `undefined` if `value` is not found', function() {
-      equal(_.find(array, function(n) { return n == 5; }), undefined);
+      equal(_.find(array, function(n) { return n == 4; }), undefined);
     });
   }());
 
@@ -215,7 +219,7 @@
 
   (function() {
     test('returns the collection', function() {
-      var collection = [1, 2, 3, 4];
+      var collection = [1, 2, 3];
       equal(_.forEach(collection, Boolean), collection);
     });
 
@@ -294,7 +298,7 @@
 
   (function() {
     test('returns an empty collection for `n` of `0`', function() {
-      var array = [1, 2, 3, 4];
+      var array = [1, 2, 3];
       deepEqual(_.initial(array, 0), []);
     });
   }());
@@ -481,11 +485,25 @@
 
   (function() {
     test('supports the `thisArg` argument', function() {
-      var actual = _.sortBy([1, 2, 3, 4], function(num) {
+      var actual = _.sortBy([1, 2, 3], function(num) {
         return this.sin(num);
       }, Math);
 
-      deepEqual(actual, [4, 3, 1, 2]);
+      deepEqual(actual, [3, 1, 2]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sortedIndex');
+
+  (function() {
+    test('supports the `thisArg` argument', function() {
+      var actual = _.sortedIndex([1, 2, 3], 4, function(num) {
+        return this.sin(num);
+      }, Math);
+
+      equal(actual, 0);
     });
   }());
 
@@ -552,6 +570,20 @@
       deepEqual(_.toArray(args), [1, 2, 3]);
     });
   }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.uniq');
+
+  (function() {
+    test('supports the `thisArg` argument', function() {
+      var actual = _.uniq([1, 2, 1.5, 3, 2.5], function(num) {
+        return this.floor(num);
+      }, Math);
+
+      deepEqual(actual, [1, 2, 3]);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

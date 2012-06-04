@@ -12,17 +12,6 @@
   var freeExports = typeof exports == 'object' && exports &&
     (typeof global == 'object' && global && global == global.global && (window = global), exports);
 
-  /** Used to escape characters in templates */
-  var escapes = {
-    '\\': '\\',
-    "'": "'",
-    '\n': 'n',
-    '\r': 'r',
-    '\t': 't',
-    '\u2028': 'u2028',
-    '\u2029': 'u2029'
-  };
-
   /**
    * Detect the JScript [[DontEnum]] bug:
    * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
@@ -32,16 +21,6 @@
 
   /** Used to generate unique IDs */
   var idCounter = 0;
-
-  /** Used to determine if values are of the language type Object */
-  var objectTypes = {
-    'boolean': false,
-    'function': true,
-    'object': true,
-    'number': false,
-    'string': false,
-    'undefined': false
-  };
 
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
@@ -54,8 +33,11 @@
   /** Used to match tokens in template text */
   var reToken = /__token__(\d+)/g;
 
-  /** Used to match unescaped characters in template text */
-  var reUnescaped = /['\n\r\t\u2028\u2029\\]/g;
+  /** Used to match unescaped characters in HTML */
+  var reUnescapedHtml = /[&<"']/g;
+
+  /** Used to match unescaped characters in string literals */
+  var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
   /** Used to fix the JScript [[DontEnum]] bug */
   var shadowed = [
@@ -68,6 +50,40 @@
 
   /** Used to store tokenized template text snippets */
   var tokenized = [];
+
+  /**
+   * Used to escape characters for inclusion in HTML.
+   * The `>` and `/` characters don't require escaping in HTML and have no
+   * special meaning unless they're part of a tag or an unquoted attribute value
+   * http://mathiasbynens.be/notes/ambiguous-ampersands (semi-related fun fact)
+   */
+  var htmlEscapes = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '"': '&quot;',
+    "'": '&#x27;'
+  };
+
+  /** Used to determine if values are of the language type Object */
+  var objectTypes = {
+    'boolean': false,
+    'function': true,
+    'object': true,
+    'number': false,
+    'string': false,
+    'undefined': false
+  };
+
+  /** Used to escape characters for inclusion in string literals */
+  var stringEscapes = {
+    '\\': '\\',
+    "'": "'",
+    '\n': 'n',
+    '\r': 'r',
+    '\t': 't',
+    '\u2028': 'u2028',
+    '\u2029': 'u2029'
+  };
 
   /** Object#toString result shortcuts */
   var arrayClass = '[object Array]',
@@ -449,8 +465,19 @@
    * @param {String} match The matched character to escape.
    * @returns {String} Returns the escaped character.
    */
-  function escapeChar(match) {
-    return '\\' + escapes[match];
+  function escapeStringChar(match) {
+    return '\\' + stringEscapes[match];
+  }
+
+  /**
+   * Used by `escape()` to escape characters for inclusion in HTML.
+   *
+   * @private
+   * @param {String} match The matched character to escape.
+   * @returns {String} Returns the escaped character.
+   */
+  function escapeHtmlChar(match) {
+    return htmlEscapes[match];
   }
 
   /**
@@ -2823,14 +2850,7 @@
    * // => "Curly, Larry &amp; Moe"
    */
   function escape(string) {
-    // the `>` character doesn't require escaping in HTML and has no special
-    // meaning unless it's part of a tag or an unquoted attribute value
-    // http://mathiasbynens.be/notes/ambiguous-ampersands (semi-related fun fact)
-    return (string + '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;');
+    return (string + '').replace(reUnescapedHtml, escapeHtmlChar);
   }
 
   /**
@@ -3029,7 +3049,9 @@
 
     // escape characters that cannot be included in string literals and
     // detokenize delimiter code snippets
-    text = "__p='" + text.replace(reUnescaped, escapeChar).replace(reToken, detokenize) + "';\n";
+    text = "__p='" + text
+      .replace(reUnescapedString, escapeStringChar)
+      .replace(reToken, detokenize) + "';\n";
 
     // clear stored code snippets
     tokenized.length = 0;

@@ -143,8 +143,8 @@
         var fastestTotalHz = Math.max(score.lodash, score.underscore),
             slowestTotalHz = Math.min(score.lodash, score.underscore),
             totalPercent = formatNumber(Math.round(((fastestTotalHz  / slowestTotalHz) - 1) * 100)),
-            totalX = formatNumber((fastestTotalHz / slowestTotalHz).toFixed(2)),
-            message = ' is ' + totalPercent + '% (' + totalX + 'x) faster than ';
+            totalX = fastestTotalHz / slowestTotalHz,
+            message = ' is ' + totalPercent + '% ' + (totalX == 1 ? '' : '(' + formatNumber(totalX.toFixed(2)) + 'x) ') + 'faster than ';
 
         // report results
         if (score.lodash >= score.underscore) {
@@ -540,6 +540,7 @@
     log(Benchmark.platform + '');
   }
   // start suites
+  log('\nSit back and relax, this may take a while.');
   suites[0].run();
 
 }(typeof global == 'object' && global || this));

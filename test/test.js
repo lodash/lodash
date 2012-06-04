@@ -37,6 +37,17 @@
     'valueOf': 7
   };
 
+  /** Used to check problem JScript properties too */
+  var shadowedKeys = [
+    'constructor',
+    'hasOwnProperty',
+    'isPrototypeOf',
+    'propertyIsEnumerable',
+    'toLocaleString',
+    'toString',
+    'valueOf'
+  ];
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -222,16 +233,65 @@
       var collection = [1, 2, 3];
       equal(_.forEach(collection, Boolean), collection);
     });
+  }());
 
-    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
-      var object = {};
-      _.forEach(shadowed, function(value, key) {
-        object[key] = value;
-      });
+  /*--------------------------------------------------------------------------*/
 
-      deepEqual(object, shadowed);
+  QUnit.module('lodash.forIn');
+
+  (function() {
+    test('iterates over inherited properties', function() {
+      function Dog(name) { this.name = name; }
+      Dog.prototype.bark = function() { /* Woof, woof! */ };
+
+      var keys = [];
+      _.forIn(new Dog('Dagny'), function(value, key) { keys.push(key); });
+      deepEqual(keys.sort(), ['bark', 'name']);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.forOwn');
+
+  (function() {
+    test('iterates over the `length` property', function() {
+      var keys = [],
+          object = { '0': 'zero', '1': 'one', 'length': 2 };
+
+      _.forOwn(object, function(value, key) { keys.push(key); });
+      deepEqual(keys.sort(), ['0', '1', 'length']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
+    var func = _[methodName];
+    QUnit.module('lodash.' + methodName + ' iteration bugs');
+
+    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+      var keys = [];
+      func(shadowed, function(value, key) { keys.push(key); });
+      deepEqual(keys.sort(), shadowedKeys);
+    });
+
+    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      var keys = [];
+      function callback(value, key) { keys.push(key); }
+
+      func(Foo, callback);
+      deepEqual(keys, []);
+      keys.length = 0;
+
+      Foo.prototype = { 'a': 1 };
+      func(Foo, callback);
+      deepEqual(keys, []);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -315,7 +375,6 @@
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
       function Foo() {}
       Foo.prototype.a = 1;
-
       equal(_.isEmpty(Foo), true);
 
       Foo.prototype = { 'a': 1 };
@@ -353,8 +412,7 @@
       Foo.prototype.a = 1;
 
       deepEqual(_.keys(Foo.prototype), ['a']);
-      deepEqual(_.keys(shadowed).sort(),
-        'constructor hasOwnProperty isPrototypeOf propertyIsEnumerable toLocaleString toString valueOf'.split(' '));
+      deepEqual(_.keys(shadowed).sort(), shadowedKeys);
     });
 
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {

@@ -790,10 +790,10 @@ Iterates over an `object`'s enumerable own properties, executing the `callback` 
 
 #### Example
 ~~~ js
-_.forOwn({ '0': 'zero', '1': 'one', '2': 'two', 'length': 3 }, function(num, key) {
+_.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
   alert(key);
 });
-// => alerts 'zero', 'one', 'two', and 'length' (order is not guaranteed)
+// => alerts '1', '2', and 'length' (order is not guaranteed)
 ~~~
 
 * * *

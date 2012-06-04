@@ -36,7 +36,7 @@
   /** Used to match unescaped characters in HTML */
   var reUnescapedHtml = /[&<"']/g;
 
-  /** Used to match unescaped characters in string literals */
+  /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
   /** Used to fix the JScript [[DontEnum]] bug */
@@ -74,7 +74,7 @@
     'undefined': false
   };
 
-  /** Used to escape characters for inclusion in string literals */
+  /** Used to escape characters for inclusion in compiled string literals */
   var stringEscapes = {
     '\\': '\\',
     "'": "'",
@@ -2836,8 +2836,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Escapes a string for insertion into HTML, replacing `&`, `<`, `"`, `'`,
-   * and `/` characters.
+   * Escapes a string for inclusion in HTML, replacing `&`, `<`, `"`, and `'`
+   * characters.
    *
    * @static
    * @memberOf _

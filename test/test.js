@@ -233,6 +233,14 @@
       var collection = [1, 2, 3];
       equal(_.forEach(collection, Boolean), collection);
     });
+
+    test('should treat array-like object with invalid `length` as a regular object', function() {
+      var keys = [],
+          object = { 'length': -1 };
+
+      _.forEach(object, function(value, key) { keys.push(key); });
+      deepEqual(keys, ['length']);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -521,6 +529,17 @@
 
       deepEqual(args, ['C', 'B', 'b', object]);
     });
+
+    test('should treat array-like object with invalid `length` as a regular object', function() {
+      var args,
+          object = { 'a': 'A', 'length': -1 };
+
+      _.reduceRight(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [-1, 'A', 'a', object]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -622,10 +641,15 @@
       deepEqual(_.toArray(array), [3, 2, 1]);
     });
 
-    test('should treat array-like-objects like arrays', function() {
+    test('should treat array-like objects like arrays', function() {
       var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
       deepEqual(_.toArray(object), ['a', 'b', 'c']);
       deepEqual(_.toArray(args), [1, 2, 3]);
+    });
+
+    test('should treat array-like object with invalid `length` as a regular object', function() {
+      var object = { 'length': -1 };
+      deepEqual(_.toArray(object), [-1]);
     });
   }(1, 2, 3));
 

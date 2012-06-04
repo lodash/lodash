@@ -215,7 +215,7 @@
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
     'var length = <%= firstArg %>.length; index = -1;' +
-    '  <% if (objectBranch) { %>\nif (typeof length == \'number\') {<% } %>\n' +
+    '  <% if (objectBranch) { %>\nif (typeof length === length >>> 0) {<% } %>\n' +
     '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (<%= arrayBranch.loopExp %>) {\n' +
     '    <%= arrayBranch.inLoop %>;\n' +
@@ -804,7 +804,7 @@
     if(thisArg) {
       callback = iteratorBind(callback, thisArg);
     }
-    if (typeof length == 'number') {
+    if (length === length >>> 0) {
       if (length && noaccum) {
         accumulator = collection[--length];
       }
@@ -895,7 +895,7 @@
       return collection.toArray();
     }
     var length = collection.length;
-    if (typeof length == 'number') {
+    if (length === length >>> 0) {
       return slice.call(collection);
     }
     return values(collection);
@@ -3391,7 +3391,7 @@
       }
       // IE compatibility mode and IE < 9 have buggy Array `shift()` and `splice()`
       // functions that fail to remove the last element, `value[0]`, of
-      // array-like-objects even though the `length` property is set to `0`.
+      // array-like objects even though the `length` property is set to `0`.
       // The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
       // is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
       if (value.length === 0) {

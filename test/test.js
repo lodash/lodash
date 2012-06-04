@@ -582,6 +582,17 @@
 
       equal(actual, 0);
     });
+
+    test('supports arrays with lengths larger than `Math.pow(2, 31) - 1`', function() {
+      var length = Math.pow(2, 32) - 1,
+          index = length - 1,
+          array = Array(length),
+          steps = 0;
+
+      array[index] = index;
+      _.sortedIndex(array, index, function() { steps++; });
+      equal(steps, 33);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

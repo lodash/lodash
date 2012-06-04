@@ -211,6 +211,9 @@
       });
     });
 
+    // remove newline from double-quoted string in `_.template`
+    source = source.replace('"\';\\n"', '"\';"');
+
     // minify `_.sortBy` internal properties
     (function() {
       var properties = ['criteria', 'value'],

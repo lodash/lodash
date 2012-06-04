@@ -79,6 +79,8 @@
     'first': [],
     'flatten': ['isArray'],
     'forEach': ['createIterator'],
+    'forIn': ['createIterator'],
+    'forOwn': ['createIterator'],
     'functions': ['createIterator'],
     'groupBy': ['createIterator'],
     'has': [],

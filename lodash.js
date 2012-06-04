@@ -323,6 +323,13 @@
     'top': 'if (thisArg) callback = iteratorBind(callback, thisArg)'
   };
 
+  /** Reusable iterator options for `forIn`  and `forOwn` */
+  var forOwnIteratorOptions = {
+    'inLoop': {
+      'object': baseIteratorOptions.inLoop
+    }
+  };
+
   /** Reusable iterator options for `map`, `pluck`, and `values` */
   var mapIteratorOptions = {
     'init': '',
@@ -587,8 +594,9 @@
 
   /**
    * Checks if the `callback` returns a truthy value for **all** elements of a
-   * `collection`. The `callback` is invoked with 3 arguments; for arrays they
-   * are (value, index, array) and for objects they are (value, key, object).
+   * `collection`. The `callback` is bound to `thisArg` and invoked with 3
+   * arguments; for arrays they are (value, index, array) and for objects they
+   * are (value, key, object).
    *
    * @static
    * @memberOf _
@@ -607,9 +615,9 @@
 
   /**
    * Examines each value in a `collection`, returning an array of all values the
-   * `callback` returns truthy for. The `callback` is invoked with 3 arguments;
-   * for arrays they are (value, index, array) and for objects they are
-   * (value, key, object).
+   * `callback` returns truthy for. The `callback` is bound to `thisArg` and
+   * invoked with 3 arguments; for arrays they are (value, index, array) and for
+   * objects they are (value, key, object).
    *
    * @static
    * @memberOf _
@@ -630,8 +638,8 @@
    * Examines each value in a `collection`, returning the first one the `callback`
    * returns truthy for. The function returns as soon as it finds an acceptable
    * value, and does not iterate over the entire `collection`. The `callback` is
-   * invoked with 3 arguments; for arrays they are (value, index, array) and for
-   * objects they are (value, key, object).
+   * bound to `thisArg` and invoked with 3 arguments; for arrays they are
+   * (value, index, array) and for objects they are (value, key, object).
    *
    * @static
    * @memberOf _
@@ -653,9 +661,9 @@
 
   /**
    * Iterates over a `collection`, executing the `callback` for each value in the
-   * `collection`. The `callback` is bound to the `thisArg` value, if one is passed.
-   * The `callback` is invoked with 3 arguments; for arrays they are
-   * (value, index, array) and for objects they are (value, key, object).
+   * `collection`. The `callback` is bound to `thisArg` and invoked with 3
+   * arguments; for arrays they are (value, index, array) and for objects they
+   * are (value, key, object).
    *
    * @static
    * @memberOf _
@@ -667,19 +675,19 @@
    * @returns {Array|Object} Returns the `collection`.
    * @example
    *
-   * _.forEach({ 'one': 1, 'two': 2, 'three': 3}, function(num) { alert(num); });
-   * // => alerts each number in turn
-   *
    * _([1, 2, 3]).forEach(function(num) { alert(num); }).join(',');
-   * // => alerts each number in turn and returns '1,2,3'
+   * // => alerts each number and returns '1,2,3'
+   *
+   * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { alert(num); });
+   * // => alerts each number (order is not guaranteed)
    */
   var forEach = createIterator(baseIteratorOptions, forEachIteratorOptions);
 
   /**
    * Produces a new array of values by mapping each value in the `collection`
-   * through a transformation `callback`. The `callback` is bound to the `thisArg`
-   * value, if one is passed. The `callback` is invoked with 3 arguments; for
-   * arrays they are (value, index, array) and for objects they are (value, key, object).
+   * through a transformation `callback`. The `callback` is bound to `thisArg`
+   * and invoked with 3 arguments; for arrays they are (value, index, array)
+   * and for objects they are (value, key, object).
    *
    * @static
    * @memberOf _
@@ -695,7 +703,7 @@
    * // => [3, 6, 9]
    *
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
-   * // => [3, 6, 9]
+   * // => [3, 6, 9] (order is not guaranteed)
    */
   var map = createIterator(baseIteratorOptions, mapIteratorOptions);
 
@@ -730,10 +738,9 @@
   /**
    * Boils down a `collection` to a single value. The initial state of the
    * reduction is `accumulator` and each successive step of it should be returned
-   * by the `callback`. The `callback` is bound to the `thisArg` value, if one is
-   * passed. The `callback` is invoked with 4 arguments; for arrays they are
-   * (accumulator, value, index, array) and for objects they are
-   * (accumulator, value, key, object).
+   * by the `callback`. The `callback` is bound to `thisArg` and invoked with 4
+   * arguments; for arrays they are (accumulator, value, index, array) and for
+   * objects they are (accumulator, value, key, object).
    *
    * @static
    * @memberOf _
@@ -769,10 +776,7 @@
   });
 
   /**
-   * The right-associative version of `_.reduce`. The `callback` is bound to the
-   * `thisArg` value, if one is passed. The `callback` is invoked with 4 arguments;
-   * for arrays they are (accumulator, value, index, array) and for objects they
-   * are (accumulator, value, key, object).
+   * The right-associative version of `_.reduce`.
    *
    * @static
    * @memberOf _
@@ -826,9 +830,7 @@
 
   /**
    * The opposite of `_.filter`, this method returns the values of a `collection`
-   * that `callback` does **not** return truthy for. The `callback` is invoked
-   * with 3 arguments; for arrays they are (value, index, array) and for objects
-   * they are (value, key, object).
+   * that `callback` does **not** return truthy for.
    *
    * @static
    * @memberOf _
@@ -849,9 +851,9 @@
   /**
    * Checks if the `callback` returns a truthy value for **any** element of a
    * `collection`. The function returns as soon as it finds passing value, and
-   * does not iterate over the entire `collection`. The `callback` is invoked
-   * with 3 arguments; for arrays they are (value, index, array) and for objects
-   * they are (value, key, object).
+   * does not iterate over the entire `collection`. The `callback` is bound to
+   * `thisArg` and invoked with 3 arguments; for arrays they are
+   * (value, index, array) and for objects they are (value, key, object).
    *
    * @static
    * @memberOf _
@@ -1040,9 +1042,9 @@
 
   /**
    * Splits a `collection` into sets, grouped by the result of running each value
-   * through `callback`. The `callback` is invoked with 3 arguments;
-   * (value, index, array). The `callback` argument may also be the name of a
-   * property to group by.
+   * through `callback`. The `callback` is bound to `thisArg` and invoked with 3
+   * arguments; (value, index, array). The `callback` argument may also be the
+   * name of a property to group by.
    *
    * @static
    * @memberOf _
@@ -1085,9 +1087,8 @@
   /**
    * Produces a new sorted array, ranked in ascending order by the results of
    * running each value of a `collection` through `callback`. The `callback` is
-   * invoked with 3 arguments; for arrays they are (value, index, array) and for
-   * objects they are (value, key, object). The `callback` argument may also be
-   * the name of a property to sort by (e.g. 'length').
+   * bound to `thisArg` and invoked with 3 arguments; (value, index, array). The
+   * `callback` argument may also be the name of a property to sort by (e.g. 'length').
    *
    * @static
    * @memberOf _
@@ -1316,8 +1317,8 @@
   /**
    * Retrieves the maximum value of an `array`. If `callback` is passed,
    * it will be executed for each value in the `array` to generate the
-   * criterion by which the value is ranked. The `callback` is invoked with 3
-   * arguments; (value, index, array).
+   * criterion by which the value is ranked. The `callback` is bound to
+   * `thisArg` and invoked with 3 arguments; (value, index, array).
    *
    * @static
    * @memberOf _
@@ -1368,8 +1369,8 @@
   /**
    * Retrieves the minimum value of an `array`. If `callback` is passed,
    * it will be executed for each value in the `array` to generate the
-   * criterion by which the value is ranked. The `callback` is invoked with 3
-   * arguments; (value, index, array).
+   * criterion by which the value is ranked. The `callback` is bound to `thisArg`
+   * and invoked with 3 arguments; (value, index, array).
    *
    * @static
    * @memberOf _
@@ -1513,7 +1514,7 @@
    * should be inserted into the `array` in order to maintain the sort order
    * of the sorted `array`. If `callback` is passed, it will be executed for
    * `value` and each element in the `array` to compute their sort ranking.
-   * The `callback` is invoked with 1 argument; (value).
+   * The `callback` is bound to `thisArg` and invoked with 1 argument; (value).
    *
    * @static
    * @memberOf _
@@ -1596,8 +1597,8 @@
    * for comparisons, i.e. `===`. If the `array` is already sorted, passing `true`
    * for `isSorted` will run a faster algorithm. If `callback` is passed,
    * each value of `array` is passed through a transformation `callback` before
-   * uniqueness is computed. The `callback` is invoked with 3 arguments;
-   * (value, index, array).
+   * uniqueness is computed. The `callback` is bound to `thisArg` and invoked
+   * with 3 arguments; (value, index, array).
    *
    * @static
    * @memberOf _
@@ -2223,6 +2224,58 @@
   var extend = createIterator(extendIteratorOptions);
 
   /**
+   * Iterates over an `object`'s enumerable own and inherited properties,
+   * executing the `callback` for each property. The `callback` is bound to
+   * `thisArg` and invoked with 3 arguments; (value, key, object).
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Object} Returns the `object`.
+   * @example
+   *
+   * function Dog(name) {
+   *   this.name = name;
+   * }
+   *
+   * Dog.prototype.bark = function() {
+   *   alert('Woof, woof!');
+   * };
+   *
+   * _.forIn(new Dog('Dagny'), function(value, key) {
+   *   alert(key);
+   * });
+   * // => alerts 'name' and 'bark' (order is not guaranteed)
+   */
+  var forIn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions, {
+    'useHas': false
+  });
+
+  /**
+   * Iterates over an `object`'s enumerable own properties, executing the
+   * `callback` for each property. The `callback` is bound to `thisArg` and
+   * invoked with 3 arguments; (value, key, object).
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Object} Returns the `object`.
+   * @example
+   *
+   * _.forOwn({ '0': 'zero', '1': 'one', '2': 'two', 'length': 3 }, function(num, key) {
+   *   alert(key);
+   * });
+   * // => alerts 'zero', 'one', 'two', and 'length' (order is not guaranteed)
+   */
+  var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
+
+  /**
    * Produces a sorted array of the properties, own and inherited, of `object`
    * that have function values.
    *
@@ -2737,7 +2790,7 @@
    * @example
    *
    * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => ['one', 'two', 'three']
+   * // => ['one', 'two', 'three'] (order is not guaranteed)
    */
   var keys = !nativeKeys ? shimKeys : function(object) {
     // avoid iterating over the `prototype` property
@@ -2780,7 +2833,7 @@
 
   /**
    * Gets the size of a `value` by returning `value.length` if `value` is a
-   * string or array, or the number of own enumerable properties if `value` is
+   * string or array, or the number of enumerable own properties if `value` is
    * an object.
    *
    * @static
@@ -2788,7 +2841,7 @@
    * @category Objects
    * @param {Array|Object|String} value The value to inspect.
    * @returns {Number} Returns `value.length` if `value` is a string or array,
-   *  or the number of own enumerable properties if `value` is an object.
+   *  or the number of enumerable own properties if `value` is an object.
    * @example
    *
    * _.size([1, 2]);
@@ -3081,8 +3134,8 @@
   }
 
   /**
-   * Executes the `callback` function `n` times. The `callback` is invoked with
-   * 1 argument; (index).
+   * Executes the `callback` function `n` times. The `callback` is bound to
+   * `thisArg` and invoked with 1 argument; (index).
    *
    * @static
    * @memberOf _
@@ -3227,6 +3280,8 @@
   lodash.first = first;
   lodash.flatten = flatten;
   lodash.forEach = forEach;
+  lodash.forIn = forIn;
+  lodash.forOwn = forOwn;
   lodash.functions = functions;
   lodash.groupBy = groupBy;
   lodash.has = has;
@@ -3305,7 +3360,7 @@
   lodash.take = first;
   lodash.unique = uniq;
 
-  // add pseudo privates used and removed during the build process
+  // add pseudo private properties used and removed during the build process
   lodash._createIterator = createIterator;
   lodash._iteratorTemplate = iteratorTemplate;
   lodash._shimKeys = shimKeys;

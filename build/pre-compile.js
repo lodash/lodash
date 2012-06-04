@@ -101,6 +101,8 @@
     'foldl',
     'foldr',
     'forEach',
+    'forIn',
+    'forOwn',
     'functions',
     'groupBy',
     'has',

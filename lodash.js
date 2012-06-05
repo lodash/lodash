@@ -215,7 +215,7 @@
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
     'var length = <%= firstArg %>.length; index = -1;' +
-    '  <% if (objectBranch) { %>\nif (typeof length === length >>> 0) {<% } %>\n' +
+    '  <% if (objectBranch) { %>\nif (length === length >>> 0) {<% } %>\n' +
     '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (<%= arrayBranch.loopExp %>) {\n' +
     '    <%= arrayBranch.inLoop %>;\n' +

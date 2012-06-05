@@ -2271,7 +2271,7 @@
    * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
    *   alert(key);
    * });
-   * // => alerts '1', '2', and 'length' (order is not guaranteed)
+   * // => alerts '0', '1', and 'length' (order is not guaranteed)
    */
   var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
 
@@ -2663,7 +2663,7 @@
 
   /**
    * Checks if a `value` is `NaN`.
-   * Note: this is not the same as native `isNaN`, which will return true for
+   * Note: This is not the same as native `isNaN`, which will return true for
    * `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
    *
    * @static

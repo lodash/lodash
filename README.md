@@ -45,20 +45,28 @@ Mobile builds, with IE bug fixes and method compilation removed, may be created 
 node build mobile
 ~~~
 
-Custom builds may be created in two ways:
+Custom builds may be created in three ways:
 
- 1. Use the`include` argument to pass the names of the methods to include in the build.
+ 1. Use the `category` argument to pass the categories of methods to include in the build.<br>
+    Valid categories are *"arrays"*, *"chaining"*, *"collections"*, *"functions"*, *"objects"*, and *"utilities"*.
 ~~~ bash
-node build include=each,filter,map,noConflict
-node build include="each, filter, map, noConflict"
-node build mobile include=each,filter,map,noConflict
+node build category=collections,functions
+node build category="collections, functions"
+node build mobile category=collections,functions
 ~~~
 
- 2. Use the `exclude` argument to pass the names of the methods to exclude from the build.
+ 2. Use the `include` argument to pass the names of the methods to include in the build.
 ~~~ bash
-node build exclude=isNaN,isUndefined,union,zip
-node build exclude="isNaN, isUndefined, union, zip"
-node build mobile exclude=isNaN,isUndefined,union,zip
+node build include=each,filter,map
+node build include="each, filter, map"
+node build mobile include=each,filter,map
+~~~
+
+ 3. Use the `exclude` argument to pass the names of the methods to exclude from the build.
+~~~ bash
+node build exclude=union,uniq,zip
+node build exclude="union, uniq, zip"
+node build mobile exclude=union,uniq,zip
 ~~~
 
 Custom builds are saved to `lodash.custom.js` and `lodash.custom.min.js`.

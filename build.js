@@ -60,7 +60,7 @@
     'after': [],
     'bind': [],
     'bindAll': ['bind'],
-    'chain': [],
+    'chain': ['mixin'],
     'clone': ['extend', 'isArray'],
     'compact': [],
     'compose': [],
@@ -143,18 +143,38 @@
     'zip': ['max', 'pluck']
   };
 
-  /** Names of methods to filter for the build */
-  var filterMethods = Object.keys(dependencyMap);
+  /** Names of all methods */
+  var allMethods = Object.keys(dependencyMap);
 
-  /** Used to specify if `filterMethods` should be used for exclusion or inclusion */
+  /** Names of methods to filter for the build */
+  var filterMethods = allMethods;
+
+  /** Used to specify whether `filterMethods` is used for exclusion or inclusion */
   var filterType = process.argv.reduce(function(result, value) {
-    if (!result) {
-      var pair = value.match(/^(exclude|include)=(.*)$/);
-      if (pair) {
-        filterMethods = lodash.intersection(filterMethods, pair[2].split(/, */).map(getRealName));
-        return pair[1];
-      }
+    if (result) {
+      return result;
     }
+    var pair = value.match(/^(category|exclude|include)=(.*)$/);
+    if (!pair) {
+      return result;
+    }
+
+    result = pair[1];
+    filterMethods = pair[2].split(/, */).map(getRealName);
+
+    if (result == 'category') {
+      // resolve method names belonging to each category
+      filterMethods = filterMethods.reduce(function(result, category) {
+        return result.concat(allMethods.filter(function(funcName) {
+          return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, funcName));
+        }));
+      }, []);
+    }
+    else {
+      // remove nonexistent method names
+      filterMethods = lodash.intersection(allMethods, filterMethods);
+    }
+    return result;
   }, '');
 
   /*--------------------------------------------------------------------------*/
@@ -295,7 +315,6 @@
     if (!snippet) {
       return source;
     }
-
     // remove function
     source = source.replace(matchFunction(source, funcName), '');
 
@@ -361,25 +380,26 @@
 
   // custom build
   (function() {
-    // exit early if "exclude" or "include" options aren't specified
+    // exit early if "category", "exclude", or "include" options aren't specified
     if (!filterType) {
       return;
     }
-    // remove the specified functions and their dependants
     if (filterType == 'exclude') {
+      // remove the specified functions and their dependants
       filterMethods.forEach(function(funcName) {
         getDependants(funcName).concat(funcName).forEach(function(otherName) {
           source = removeFunction(source, otherName);
         });
       });
     }
-    // else remove all but the specified functions and their dependencies
     else {
+      // add dependencies to `filterMethods`
       filterMethods = lodash.uniq(filterMethods.reduce(function(result, funcName) {
         result.push.apply(result, getDependencies(funcName).concat(funcName));
         return result;
       }, []));
 
+      // remove methods not included in `filterMethods`
       lodash.each(dependencyMap, function(dependencies, otherName) {
         if (filterMethods.indexOf(otherName) < 0) {
           source = removeFunction(source, otherName);

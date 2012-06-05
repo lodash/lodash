@@ -284,7 +284,7 @@
         // correct external boolean literals
         else if (variable == 'true' || variable == 'false') {
           result = result
-            .replace(RegExp(': *' + minNames[index] + ',', 'g'), ':' + variable + ',')
+            .replace(RegExp(': *' + minNames[index] + '([,\\n])', 'g'), ':' + variable + '$1')
             .replace(RegExp('\\b' + minNames[index] + ';', 'g'), variable + ';');
         }
       });

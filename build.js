@@ -371,7 +371,7 @@
    * @returns {String} Returns the source with whitespace removed.
    */
   function removeWhitespace(source) {
-    return source.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |var |\\\\n|\\n|\s+/g, function(match) {
+    return source.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |var |@ |\\\\n|\\n|\s+/g, function(match) {
       return match == false || match == '\\n' ? '' : match;
     });
   }
@@ -461,6 +461,7 @@
   if (isMobile) {
     // inline functions defined with `createIterator`
     lodash.functions(lodash).forEach(function(funcName) {
+      // match `funcName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
       var reFunc = RegExp('(\\bvar ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
 
       // skip if not defined with `createIterator`

@@ -280,7 +280,7 @@
 
   /**
    * Reusable iterator options shared by
-   * `every`, `filter`, `find`, `forEach`,`groupBy`, `map`, `reject`, and `some`.
+   * `every`, `filter`, `find`, `forEach`, `forIn`, `forOwn`, `map`, `reject`, and `some`.
    */
   var baseIteratorOptions = {
     'args': 'collection, callback, thisArg',
@@ -315,18 +315,18 @@
     'bottom': (hasDontEnumBug ? '  }\n' : '') + '}'
   };
 
-  /** Reusable iterator options for `filter`  and `reject` */
+  /** Reusable iterator options for `filter` and `reject` */
   var filterIteratorOptions = {
     'init': '[]',
     'inLoop': 'callback(collection[index], index, collection) && result.push(collection[index])'
   };
 
-  /** Reusable iterator options for `find`  and `forEach` */
+  /** Reusable iterator options for `find`, `forEach`, `forIn`, and `forOwn` */
   var forEachIteratorOptions = {
     'top': 'if (thisArg) callback = iteratorBind(callback, thisArg)'
   };
 
-  /** Reusable iterator options for `forIn`  and `forOwn` */
+  /** Reusable iterator options for `forIn` and `forOwn` */
   var forOwnIteratorOptions = {
     'inLoop': {
       'object': baseIteratorOptions.inLoop
@@ -1044,7 +1044,7 @@
   }
 
   /**
-   * Splits a `collection` into sets, grouped by the result of running each value
+   * Splits `array` into sets, grouped by the result of running each value
    * through `callback`. The `callback` is bound to `thisArg` and invoked with 3
    * arguments; (value, index, array). The `callback` argument may also be the
    * name of a property to group by.
@@ -1072,7 +1072,7 @@
     var prop,
         value,
         index = -1,
-        isFunc = toString.call(callback) == funcClass,
+        isFunc = typeof callback == 'function',
         length = array.length,
         result = {};
 
@@ -1089,7 +1089,7 @@
 
   /**
    * Produces a new sorted array, ranked in ascending order by the results of
-   * running each value of a `collection` through `callback`. The `callback` is
+   * running each element of `array` through `callback`. The `callback` is
    * bound to `thisArg` and invoked with 3 arguments; (value, index, array). The
    * `callback` argument may also be the name of a property to sort by (e.g. 'length').
    *
@@ -1235,14 +1235,17 @@
   }
 
   /**
-   * Calls the method named by `methodName` for each value of the `collection`.
-   * Additional arguments will be passed to each invoked method.
+   * Invokes the method named by `methodName` on each element of `array`.
+   * Additional arguments will be passed to each invoked method. If `methodName`
+   * is a function it will be invoked for, and `this` bound to, each element
+   * of `array`.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to iterate over.
-   * @param {String} methodName The name of the method to invoke.
+   * @param {Function|String} methodName The name of the method to invoke or
+   *  the function invoked per iteration.
    * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the method with.
    * @returns {Array} Returns a new array of values returned from each invoked method.
    * @example
@@ -1254,7 +1257,7 @@
     var args = slice.call(arguments, 2),
         index = -1,
         length = array.length,
-        isFunc = toString.call(methodName) == funcClass,
+        isFunc = typeof methodName == 'function',
         result = [];
 
     while (++index < length) {
@@ -1837,8 +1840,8 @@
   }
 
   /**
-   * Binds methods on the `object` to the object, overwriting the non-bound method.
-   * If no method names are provided, all the function properties of the `object`
+   * Binds methods on `object` to `object`, overwriting the existing method.
+   * If no method names are provided, all the function properties of `object`
    * will be bound.
    *
    * @static
@@ -2990,7 +2993,7 @@
   }
 
   /**
-   * Resolves the value of `property` on `object`. If the property is a function
+   * Resolves the value of `property` on `object`. If `property` is a function
    * it will be invoked and its result returned, else the property value is returned.
    *
    * @static

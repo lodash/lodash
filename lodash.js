@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.3.0-pre <http://lodash.com>
+ * Lo-Dash v0.3.0 <http://lodash.com>
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
@@ -675,10 +675,10 @@
    * @returns {Array|Object} Returns the `collection`.
    * @example
    *
-   * _([1, 2, 3]).forEach(function(num) { alert(num); }).join(',');
+   * _([1, 2, 3]).forEach(alert).join(',');
    * // => alerts each number and returns '1,2,3'
    *
-   * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { alert(num); });
+   * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, alert);
    * // => alerts each number (order is not guaranteed)
    */
   var forEach = createIterator(baseIteratorOptions, forEachIteratorOptions);
@@ -1729,7 +1729,7 @@
    * _.forEach(notes, function(note) {
    *   note.asyncSave({ 'success': renderNotes });
    * });
-   * // renderNotes is run once, after all notes have saved.
+   * // `renderNotes` is run once, after all notes have saved
    */
   function after(n, func) {
     if (n < 1) {
@@ -1758,7 +1758,10 @@
    * @example
    *
    * // basic bind
-   * var func = function(greeting) { return greeting + ': ' + this.name; };
+   * var func = function(greeting) {
+   *   return greeting + ': ' + this.name;
+   * };
+   *
    * func = _.bind(func, { 'name': 'moe' }, 'hi');
    * func();
    * // => 'hi: moe'
@@ -1776,11 +1779,11 @@
    * // => 'hi: moe'
    *
    * object.greet = function(greeting) {
-   *   return greeting + ' ' + this.name + '!';
+   *   return greeting + ', ' + this.name + '!';
    * };
    *
    * func();
-   * // => 'hi moe!'
+   * // => 'hi, moe!'
    */
   function bind(func, thisArg) {
     var methodName,
@@ -1981,7 +1984,7 @@
    * @example
    *
    * _.defer(function() { alert('deferred'); });
-   * // Returns from the function before the alert runs.
+   * // returns from the function before `alert` is called
    */
   function defer(func) {
     var args = slice.call(arguments, 1);
@@ -3036,13 +3039,13 @@
    * compiled({ 'name': 'moe' });
    * // => 'hello: moe'
    *
-   * var list = '% _.forEach(people, function(name) { %> <li><%= name %></li> <% }); %>';
+   * var list = '<% _.forEach(people, function(name) { %> <li><%= name %></li> <% }); %>';
    * _.template(list, { 'people': ['moe', 'curly', 'larry'] });
    * // => '<li>moe</li><li>curly</li><li>larry</li>'
    *
    * var template = _.template('<b><%- value %></b>');
    * template({ 'value': '<script>' });
-   * // => '<b>&lt;script&gt;</b>'
+   * // => '<b>&lt;script></b>'
    *
    * // using `print`
    * var compiled = _.template('<% print("Hello " + epithet); %>');
@@ -3057,7 +3060,6 @@
    * var template = _.template('Hello {{ name }}!');
    * template({ 'name': 'Mustache' });
    * // => 'Hello Mustache!'
-   *
    *
    * // using the `variable` option
    * _.template('<%= data.hasWith %>', { 'hasWith': 'no' }, { 'variable': 'data' });
@@ -3256,7 +3258,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.3.0-pre';
+  lodash.VERSION = '0.3.0';
 
   // assign static methods
   lodash.after = after;

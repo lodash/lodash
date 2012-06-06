@@ -385,7 +385,7 @@
       return;
     }
     if (filterType == 'exclude') {
-      // remove the specified functions and their dependants
+      // remove methods that are named in `filterMethods` and their dependants
       filterMethods.forEach(function(funcName) {
         getDependants(funcName).concat(funcName).forEach(function(otherName) {
           source = removeFunction(source, otherName);
@@ -399,7 +399,7 @@
         return result;
       }, []));
 
-      // remove methods not included in `filterMethods`
+      // remove methods that aren't named in `filterMethods`
       lodash.each(dependencyMap, function(dependencies, otherName) {
         if (filterMethods.indexOf(otherName) < 0) {
           source = removeFunction(source, otherName);

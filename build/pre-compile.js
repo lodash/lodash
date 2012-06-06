@@ -195,7 +195,7 @@
     // remove copyright to add later in post-compile.js
     source = source.replace(/\/\*![\s\S]+?\*\//, '');
 
-    // correct JSDoc tags for Closure Compiler
+    // remove unrecognized JSDoc tags so Closure Compiler won't complain
     source = source.replace(/@(?:alias|category)\b.*/g, '');
 
     // add brackets to whitelisted properties so Closure Compiler won't mung them
@@ -207,14 +207,17 @@
 
     // remove whitespace from string literals
     source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {
-      // avoids removing the '\n' of the `escapes` object
-      return string.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |use strict|var |'\\n'|\\\\n|\\n|\s+/g, function(match) {
+      // avoids removing the '\n' of the `stringEscapes` object
+      return string.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |use strict|var |@ |'\\n'|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
     });
 
     // remove newline from double-quoted string in `_.template`
     source = source.replace('"\';\\n"', '"\';"');
+
+    // remove debug sourceURL in `_.template`
+    source = source.replace(/\+(?:\s*\/\/.*)*\s*'\/\/@ sourceURL=[^;]+/, '');
 
     // minify `_.sortBy` internal properties
     (function() {

@@ -45,6 +45,9 @@
     'toLocaleString', 'toString', 'valueOf'
   ];
 
+  /** Used to make template sourceURLs easier to identify */
+  var templateCounter = 0;
+
   /** Used to replace template delimiters */
   var token = '__token__';
 
@@ -3121,7 +3124,11 @@
       'var __p, __t, __j = Array.prototype.join;\n' +
       'function print() { __p += __j.call(arguments, \'\') }\n' +
       text +
-      'return __p\n}';
+      'return __p\n}\n' +
+      // add sourceURL for easier debugging
+      // (Narwhal requires a trailing newline to prevent a syntax error)
+      // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
+      '//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']\n';
 
     result = Function('_', 'return ' + text)(lodash);
 
@@ -3363,7 +3370,6 @@
   lodash.unique = uniq;
 
   // add pseudo private properties used and removed during the build process
-  lodash._createIterator = createIterator;
   lodash._iteratorTemplate = iteratorTemplate;
   lodash._shimKeys = shimKeys;
 

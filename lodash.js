@@ -333,20 +333,6 @@
     }
   };
 
-  /** Reusable iterator options for `map` and `values` */
-  var mapIteratorOptions = {
-    'init': '',
-    'exit': 'if (!collection) return []',
-    'beforeLoop': {
-      'array':  'result = Array(length)',
-      'object': 'result = []'
-    },
-    'inLoop': {
-      'array':  'result[index] = callback(collection[index], index, collection)',
-      'object': 'result.push(callback(collection[index], index, collection))'
-    }
-  };
-
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -516,7 +502,7 @@
 
   /**
    * A shim implementation of `Object.keys` that produces an array of the given
-   * object's enumerable own property names.
+   * object's own enumerable property names.
    *
    * @private
    * @param {Object} object The object to inspect.
@@ -708,7 +694,18 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9] (order is not guaranteed)
    */
-  var map = createIterator(baseIteratorOptions, mapIteratorOptions);
+  var map = createIterator(baseIteratorOptions, {
+    'init': '',
+    'exit': 'if (!collection) return []',
+    'beforeLoop': {
+      'array':  'result = Array(length)',
+      'object': 'result = []'
+    },
+    'inLoop': {
+      'array':  'result[index] = callback(collection[index], index, collection)',
+      'object': 'result.push(callback(collection[index], index, collection))'
+    }
+  });
 
   /**
    * Boils down a `collection` to a single value. The initial state of the
@@ -875,28 +872,6 @@
     }
     return values(collection);
   }
-
-  /**
-   * Produces an array of enumerable own property values of the `collection`.
-   *
-   * @static
-   * @memberOf _
-   * @alias methods
-   * @category Collections
-   * @param {Array|Object} collection The collection to inspect.
-   * @returns {Array} Returns a new array of property values.
-   * @example
-   *
-   * _.values({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => [1, 2, 3]
-   */
-  var values = createIterator(mapIteratorOptions, {
-    'args': 'collection',
-    'inLoop': {
-      'array':  'result[index] = collection[index]',
-      'object': 'result.push(collection[index])'
-    }
-  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -2236,9 +2211,9 @@
   var extend = createIterator(extendIteratorOptions);
 
   /**
-   * Iterates over an `object`'s enumerable own and inherited properties,
-   * executing the `callback` for each property. The `callback` is bound to
-   * `thisArg` and invoked with 3 arguments; (value, key, object).
+   * Iterates over `object`'s own and inherited enumerable properties, executing
+   * the `callback` for each property. The `callback` is bound to `thisArg` and
+   * invoked with 3 arguments; (value, key, object).
    *
    * @static
    * @memberOf _
@@ -2267,9 +2242,9 @@
   });
 
   /**
-   * Iterates over an `object`'s enumerable own properties, executing the
-   * `callback` for each property. The `callback` is bound to `thisArg` and
-   * invoked with 3 arguments; (value, key, object).
+   * Iterates over `object`'s own enumerable properties, executing the `callback`
+   * for each property. The `callback` is bound to `thisArg` and invoked with 3
+   * arguments; (value, key, object).
    *
    * @static
    * @memberOf _
@@ -2288,8 +2263,8 @@
   var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
 
   /**
-   * Produces a sorted array of the properties, own and inherited, of `object`
-   * that have function values.
+   * Produces a sorted array of the enumerable properties, own and inherited,
+   * of `object` that have function values.
    *
    * @static
    * @memberOf _
@@ -2428,7 +2403,7 @@
 
   /**
    * Checks if a `value` is empty. Arrays or strings with a length of `0` and
-   * objects with no enumerable own properties are considered "empty".
+   * objects with no own enumerable properties are considered "empty".
    *
    * @static
    * @memberOf _
@@ -2792,7 +2767,7 @@
   }
 
   /**
-   * Produces an array of the `object`'s enumerable own property names.
+   * Produces an array of object`'s own enumerable property names.
    *
    * @static
    * @memberOf _
@@ -2844,16 +2819,15 @@
   }
 
   /**
-   * Gets the size of a `value` by returning `value.length` if `value` is a
-   * string or array, or the number of enumerable own properties if `value` is
-   * an object.
+   * Gets the size of `value` by returning `value.length` if `value` is a string
+   * or array, or the number of own enumerable properties if `value` is an object.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Array|Object|String} value The value to inspect.
    * @returns {Number} Returns `value.length` if `value` is a string or array,
-   *  or the number of enumerable own properties if `value` is an object.
+   *  or the number of own enumerable properties if `value` is an object.
    * @example
    *
    * _.size([1, 2]);
@@ -2897,6 +2871,25 @@
     interceptor(value);
     return value;
   }
+
+  /**
+   * Produces an array of `object`'s own enumerable property values.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property values.
+   * @example
+   *
+   * _.values({ 'one': 1, 'two': 2, 'three': 3 });
+   * // => [1, 2, 3]
+   */
+  var values = createIterator({
+    'args': 'object',
+    'init': '[]',
+    'inLoop': 'result.push(object[index])'
+  });
 
   /*--------------------------------------------------------------------------*/
 

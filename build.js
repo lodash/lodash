@@ -117,7 +117,7 @@
     'once': [],
     'partial': [],
     'pick': [],
-    'pluck': ['createIterator'],
+    'pluck': [],
     'range': [],
     'reduce': ['createIterator'],
     'reduceRight': ['keys'],

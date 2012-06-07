@@ -212,7 +212,8 @@
       var array = [[1, 2, 3], Array(3)],
           expected = [1, 2, 3],
           actual1 = _.flatten(array),
-          actual2 = _.flatten(array, true);
+          actual2 = _.flatten(array, true),
+          actual3 = _.flatten(null);
 
       expected.push(undefined, undefined, undefined);
 
@@ -221,6 +222,7 @@
 
       deepEqual(actual2, expected);
       ok('4' in actual2);
+      deepEqual(actual3, []);
     });
   }());
 

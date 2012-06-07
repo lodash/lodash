@@ -149,9 +149,9 @@
       else {
         var fastestHz = fastest[0] == this[0] ? lodashHz : underscoreHz,
             slowestHz = slowest[0] == this[0] ? lodashHz : underscoreHz,
-            percent = formatNumber(Math.round(((fastestHz / slowestHz) - 1) * 100));
+            percent = ((fastestHz / slowestHz) - 1) * 100;
 
-        log(fastest[0].name + ' is ' + percent + '% faster.');
+        log(fastest[0].name + ' is ' + formatNumber(percent < 1 ? percent.toFixed(2) : Math.round(percent)) + '% faster.');
       }
       // add score adjusted for margin of error
       score.lodash += lodashHz;
@@ -604,10 +604,10 @@
   suites.push(
     Benchmark.Suite('values')
       .add('Lo-Dash', function() {
-        lodash.values(objects);
+        lodash.values(object);
       })
       .add('Underscore', function() {
-        _.values(objects);
+        _.values(object);
       })
   );
 

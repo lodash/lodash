@@ -333,7 +333,7 @@
     }
   };
 
-  /** Reusable iterator options for `map`, `pluck`, and `values` */
+  /** Reusable iterator options for `map` and `values` */
   var mapIteratorOptions = {
     'init': '',
     'exit': 'if (!collection) return []',
@@ -709,34 +709,6 @@
    * // => [3, 6, 9] (order is not guaranteed)
    */
   var map = createIterator(baseIteratorOptions, mapIteratorOptions);
-
-  /**
-   * Retrieves the value of a specified property from all values in a `collection`.
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
-   * @param {String} property The property to pluck.
-   * @returns {Array} Returns a new array of property values.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
-   * ];
-   *
-   * _.pluck(stooges, 'name');
-   * // => ['moe', 'larry', 'curly']
-   */
-  var pluck = createIterator(mapIteratorOptions, {
-    'args': 'collection, property',
-    'inLoop': {
-      'array':  'result[index] = collection[index][property]',
-      'object': 'result.push(collection[index][property])'
-    }
-  });
 
   /**
    * Boils down a `collection` to a single value. The initial state of the
@@ -1414,6 +1386,37 @@
         computed = current;
         result = array[index];
       }
+    }
+    return result;
+  }
+
+  /**
+   * Retrieves the value of a specified property from all elements in `array`.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to iterate over.
+   * @param {String} property The property to pluck.
+   * @returns {Array} Returns a new array of property values.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
+   * ];
+   *
+   * _.pluck(stooges, 'name');
+   * // => ['moe', 'larry', 'curly']
+   */
+  function pluck(array, property) {
+    var index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = array[index][property];
     }
     return result;
   }

@@ -974,6 +974,9 @@
    * // => [1, 2, 3, [[4]]];
    */
   function flatten(array, shallow) {
+    if (!isArray(array)) {
+      return [];
+    }
     var value,
         index = -1,
         length = array.length,

@@ -708,6 +708,82 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash "Arrays" methods');
+
+  (function() {
+    test('should allow a falsey `array` argument', function() {
+      _.each([
+        'compact',
+        'difference',
+        'first',
+        'flatten',
+        'groupBy',
+        'indexOf',
+        'initial',
+        'intersection',
+        'invoke',
+        'last',
+        'lastIndexOf',
+        'max',
+        'min',
+        'pluck',
+        'range',
+        'rest',
+        'shuffle',
+        'sortBy',
+        'sortedIndex',
+        'union',
+        'uniq',
+        'without',
+        'zip'
+      ], function(methodName) {
+        var pass = true;
+        try {
+          _[methodName]();
+        } catch(e) {
+          pass = false;
+        }
+        ok(pass, methodName + ' allows a falsey `array` argument');
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash "Collections" methods');
+
+  (function() {
+    test('should allow a falsey `collection` argument', function() {
+      _.each([
+        'contains',
+        'every',
+        'filter',
+        'find',
+        'forEach',
+        'map',
+        'reduce',
+        'reduceRight',
+        'reject',
+        'some',
+        'toArray'
+      ], function(methodName) {
+        var pass = true;
+        try {
+          if (/^(?:contains|toArray)$/.test(methodName)) {
+            _[methodName](null);
+          } else {
+            _[methodName](null, _.identity);
+          }
+        } catch(e) {
+          pass = false;
+        }
+        ok(pass, methodName + ' allows a falsey `collection` argument');
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   // explicitly call `QUnit.start()` for Narwhal, Rhino, and RingoJS
   QUnit.start();
 

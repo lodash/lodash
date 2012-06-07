@@ -890,9 +890,12 @@
    * // => [1, 2, 3]
    */
   function compact(array) {
+    var result = [];
+    if (!array) {
+      return result;
+    }
     var index = -1,
-        length = array.length,
-        result = [];
+        length = array.length;
 
     while (++index < length) {
       if (array[index]) {
@@ -919,9 +922,12 @@
    * // => [1, 3, 4]
    */
   function difference(array) {
+    var result = [];
+    if (!array) {
+      return result;
+    }
     var index = -1,
         length = array.length,
-        result = [],
         flattened = concat.apply(result, slice.call(arguments, 1));
 
     while (++index < length) {
@@ -945,14 +951,16 @@
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
    * @returns {Mixed} Returns the first value or an array of the first `n` values
-   *  of the `array`.
+   *  of `array`.
    * @example
    *
    * _.first([5, 4, 3, 2, 1]);
    * // => 5
    */
   function first(array, n, guard) {
-    return (n == undefined || guard) ? array[0] : slice.call(array, 0, n);
+    if (array) {
+      return (n == undefined || guard) ? array[0] : slice.call(array, 0, n);
+    }
   }
 
   /**
@@ -974,10 +982,13 @@
    * // => [1, 2, 3, [[4]]];
    */
   function flatten(array, shallow) {
+    var result = [];
+    if (!array) {
+      return result;
+    }
     var value,
         index = -1,
-        length = array.length,
-        result = [];
+        length = array.length;
 
     while (++index < length) {
       value = array[index];
@@ -1016,12 +1027,15 @@
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
   function groupBy(array, callback, thisArg) {
+    var result = {};
+    if (!array) {
+      return result;
+    }
     var prop,
         value,
         index = -1,
         isFunc = typeof callback == 'function',
-        length = array.length,
-        result = {};
+        length = array.length;
 
     if (isFunc && thisArg) {
       callback = iteratorBind(callback, thisArg);
@@ -1031,58 +1045,7 @@
       prop = isFunc ? callback(value, index, array) : value[callback];
       (hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(value);
     }
-    return result
-  }
-
-  /**
-   * Produces a new sorted array, ranked in ascending order by the results of
-   * running each element of `array` through `callback`. The `callback` is
-   * bound to `thisArg` and invoked with 3 arguments; (value, index, array). The
-   * `callback` argument may also be the name of a property to sort by (e.g. 'length').
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to iterate over.
-   * @param {Function|String} callback The function called per iteration or
-   *  property name to sort by.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of sorted values.
-   * @example
-   *
-   * _.sortBy([1, 2, 3], function(num) { return Math.sin(num); });
-   * // => [3, 1, 2]
-   *
-   * _.sortBy([1, 2, 3], function(num) { return this.sin(num); }, Math);
-   * // => [3, 1, 2]
-   *
-   * _.sortBy(['larry', 'brendan', 'moe'], 'length');
-   * // => ['moe', 'larry', 'brendan']
-   */
-  function sortBy(array, callback, thisArg) {
-    if (typeof callback == 'string') {
-      var prop = callback;
-      callback = function(array) { return array[prop]; };
-    } else if (thisArg) {
-      callback = iteratorBind(callback, thisArg);
-    }
-    return pluck(map(array, function(value, index) {
-      return {
-        'criteria': callback(value, index, array),
-        'value': value
-      };
-    }).sort(function(left, right) {
-      var a = left.criteria,
-          b = right.criteria;
-
-      if (a === undefined) {
-        return 1;
-      }
-      if (b === undefined) {
-        return -1;
-      }
-      return a < b ? -1 : a > b ? 1 : 0;
-    }), 'value');
+    return result;
   }
 
   /**
@@ -1110,6 +1073,9 @@
    * // => 2
    */
   function indexOf(array, value, fromIndex) {
+    if (!array) {
+      return -1;
+    }
     var index = -1,
         length = array.length;
 
@@ -1130,7 +1096,7 @@
   }
 
   /**
-   * Gets all but the last value of the `array`. Pass `n` to exclude the last `n`
+   * Gets all but the last value of `array`. Pass `n` to exclude the last `n`
    * values from the result.
    *
    * @static
@@ -1140,13 +1106,16 @@
    * @param {Number} [n] The number of elements to return.
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Array} Returns all but the last value or `n` values of the `array`.
+   * @returns {Array} Returns all but the last value or `n` values of `array`.
    * @example
    *
    * _.initial([3, 2, 1]);
    * // => [3, 2]
    */
   function initial(array, n, guard) {
+    if (!array) {
+      return [];
+    }
     return slice.call(array, 0, -((n == undefined || guard) ? 1 : n));
   }
 
@@ -1165,11 +1134,14 @@
    * // => [1, 2]
    */
   function intersection(array) {
+    var result = [];
+    if (!array) {
+      return result;
+    }
     var value,
         index = -1,
         length = array.length,
-        others = slice.call(arguments, 1),
-        result = [];
+        others = slice.call(arguments, 1);
 
     while (++index < length) {
       value = array[index];
@@ -1201,11 +1173,14 @@
    * // => [[1, 5, 7], [1, 2, 3]]
    */
   function invoke(array, methodName) {
+    var result = [];
+    if (!array) {
+      return result;
+    }
     var args = slice.call(arguments, 2),
         index = -1,
         length = array.length,
-        isFunc = typeof methodName == 'function',
-        result = [];
+        isFunc = typeof methodName == 'function';
 
     while (++index < length) {
       result[index] = (isFunc ? methodName : array[index][methodName]).apply(array[index], args);
@@ -1224,15 +1199,18 @@
    * @param {Number} [n] The number of elements to return.
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Array} Returns all but the last value or `n` values of the `array`.
+   * @returns {Mixed} Returns the last value or an array of the last `n` values
+   *  of `array`.
    * @example
    *
    * _.last([3, 2, 1]);
    * // => 1
    */
   function last(array, n, guard) {
-    var length = array.length;
-    return (n == undefined || guard) ? array[length - 1] : slice.call(array, -n || length);
+    if (array) {
+      var length = array.length;
+      return (n == undefined || guard) ? array[length - 1] : slice.call(array, -n || length);
+    }
   }
 
   /**
@@ -1255,6 +1233,9 @@
    * // => 1
    */
   function lastIndexOf(array, value, fromIndex) {
+    if (!array) {
+      return -1;
+    }
     var index = array.length;
     if (fromIndex && typeof fromIndex == 'number') {
       index = (fromIndex < 0 ? Math.max(0, index + fromIndex) : Math.min(fromIndex, index - 1)) + 1;
@@ -1292,11 +1273,15 @@
    * // => { 'name': 'curly', 'age': 60 };
    */
   function max(array, callback, thisArg) {
-    var current,
-        computed = -Infinity,
-        index = -1,
-        length = array.length,
+    var computed = -Infinity,
         result = computed;
+
+    if (!array) {
+      return result;
+    }
+    var current,
+        index = -1,
+        length = array.length;
 
     if (!callback) {
       while (++index < length) {
@@ -1338,11 +1323,15 @@
    * // => 2
    */
   function min(array, callback, thisArg) {
-    var current,
-        computed = Infinity,
-        index = -1,
-        length = array.length,
+    var computed = Infinity,
         result = computed;
+
+    if (!array) {
+      return result;
+    }
+    var current,
+        index = -1,
+        length = array.length;
 
     if (!callback) {
       while (++index < length) {
@@ -1386,6 +1375,9 @@
    * // => ['moe', 'larry', 'curly']
    */
   function pluck(array, property) {
+    if (!array) {
+      return [];
+    }
     var index = -1,
         length = array.length,
         result = Array(length);
@@ -1445,7 +1437,7 @@
 
   /**
    * The opposite of `_.initial`, this method gets all but the first value of
-   * the `array`. Pass `n` to exclude the first `n` values from the result.
+   * `array`. Pass `n` to exclude the first `n` values from the result.
    *
    * @static
    * @memberOf _
@@ -1455,13 +1447,16 @@
    * @param {Number} [n] The number of elements to return.
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Array} Returns all but the first value or `n` values of the `array`.
+   * @returns {Array} Returns all but the first value or `n` values of `array`.
    * @example
    *
    * _.rest([3, 2, 1]);
    * // => [2, 1]
    */
   function rest(array, n, guard) {
+    if (!array) {
+      return [];
+    }
     return slice.call(array, (n == undefined || guard) ? 1 : n);
   }
 
@@ -1480,6 +1475,9 @@
    * // => [4, 1, 6, 3, 5, 2]
    */
   function shuffle(array) {
+    if (!array) {
+      return [];
+    }
     var rand,
         index = -1,
         length = array.length,
@@ -1494,11 +1492,65 @@
   }
 
   /**
+   * Produces a new sorted array, ranked in ascending order by the results of
+   * running each element of `array` through `callback`. The `callback` is
+   * bound to `thisArg` and invoked with 3 arguments; (value, index, array). The
+   * `callback` argument may also be the name of a property to sort by (e.g. 'length').
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to iterate over.
+   * @param {Function|String} callback The function called per iteration or
+   *  property name to sort by.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Array} Returns a new array of sorted values.
+   * @example
+   *
+   * _.sortBy([1, 2, 3], function(num) { return Math.sin(num); });
+   * // => [3, 1, 2]
+   *
+   * _.sortBy([1, 2, 3], function(num) { return this.sin(num); }, Math);
+   * // => [3, 1, 2]
+   *
+   * _.sortBy(['larry', 'brendan', 'moe'], 'length');
+   * // => ['moe', 'larry', 'brendan']
+   */
+  function sortBy(array, callback, thisArg) {
+    if (!array) {
+      return [];
+    }
+    if (typeof callback == 'string') {
+      var prop = callback;
+      callback = function(array) { return array[prop]; };
+    } else if (thisArg) {
+      callback = iteratorBind(callback, thisArg);
+    }
+    return pluck(map(array, function(value, index) {
+      return {
+        'criteria': callback(value, index, array),
+        'value': value
+      };
+    }).sort(function(left, right) {
+      var a = left.criteria,
+          b = right.criteria;
+
+      if (a === undefined) {
+        return 1;
+      }
+      if (b === undefined) {
+        return -1;
+      }
+      return a < b ? -1 : a > b ? 1 : 0;
+    }), 'value');
+  }
+
+  /**
    * Uses a binary search to determine the smallest index at which the `value`
-   * should be inserted into the `array` in order to maintain the sort order
-   * of the sorted `array`. If `callback` is passed, it will be executed for
-   * `value` and each element in the `array` to compute their sort ranking.
-   * The `callback` is bound to `thisArg` and invoked with 1 argument; (value).
+   * should be inserted into `array` in order to maintain the sort order of the
+   * sorted `array`. If `callback` is passed, it will be executed for `value` and
+   * each element in `array` to compute their sort ranking. The `callback` is
+   * bound to `thisArg` and invoked with 1 argument; (value).
    *
    * @static
    * @memberOf _
@@ -1508,7 +1560,7 @@
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Number} Returns the index at which the value should be inserted
-   *  into the array.
+   *  into `array`.
    * @example
    *
    * _.sortedIndex([20, 30, 40], 35);
@@ -1529,6 +1581,9 @@
    * // => 2
    */
   function sortedIndex(array, value, callback, thisArg) {
+    if (!array) {
+      return 0;
+    }
     var mid,
         low = 0,
         high = array.length;
@@ -1608,10 +1663,13 @@
    * // => [1, 2, 3]
    */
   function uniq(array, isSorted, callback, thisArg) {
+    var result = [];
+    if (!array) {
+      return result;
+    }
     var computed,
         index = -1,
         length = array.length,
-        result = [],
         seen = [];
 
     // juggle arguments
@@ -1654,10 +1712,13 @@
    * // => [2, 3, 4]
    */
   function without(array) {
+    var result = [];
+    if (!array) {
+      return result;
+    }
     var excluded = slice.call(arguments, 1),
         index = -1,
-        length = array.length,
-        result = [];
+        length = array.length;
 
     while (++index < length) {
       if (indexOf(excluded, array[index]) < 0) {
@@ -1683,7 +1744,10 @@
    * _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
    * // => [['moe', 30, true], ['larry', 40, false], ['curly', 50, false]]
    */
-  function zip() {
+  function zip(array) {
+    if (!array) {
+      return [];
+    }
     var index = -1,
         length = max(pluck(arguments, 'length')),
         result = Array(length);

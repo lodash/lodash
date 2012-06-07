@@ -242,7 +242,7 @@
   }
 
   /**
-   * Determines if all functions of the given names have been removed from the `source`.
+   * Determines if all functions of the given names have been removed from `source`.
    *
    * @private
    * @param {String} source The source to inspect.
@@ -256,7 +256,7 @@
   }
 
   /**
-   * Searches the `source` for a `funcName` function declaration, expression, or
+   * Searches `source` for a `funcName` function declaration, expression, or
    * assignment and returns the matched snippet.
    *
    * @private
@@ -300,7 +300,7 @@
 
   /**
    * Removes the `funcName` function declaration, expression, or assignment and
-   * associated code from the `source`.
+   * associated code from `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -333,7 +333,18 @@
   }
 
   /**
-   * Removes a given variable from the `source`.
+   * Removes the `_.isArguments` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the source with the `isArguments` fallback removed.
+   */
+  function removeIsArgumentsFallback(source) {
+    return source.replace(/(?: *\/\/.*)*\s*if *\(!isArguments[^)]+\)[\s\S]+?};?\s*}\n/, '');
+  }
+
+  /**
+   * Removes a given variable from `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -409,8 +420,7 @@
 
     // remove associated functions, variables and code snippets
     if (isRemoved(source, 'isArguments')) {
-      // remove `isArguments` if-statement
-      source = source.replace(/(?:\s*\/\/.*)*\s*if *\(!isArguments[^)]+\)[\s\S]+?};?\s*}\n/, '');
+      source = removeIsArgumentsFallback(source);
     }
     if (isRemoved(source, 'mixin')) {
       // remove `LoDash` constructor
@@ -477,7 +487,8 @@
       source = source.replace(reFunc, '$1' + code + ';\n');
     });
 
-    // remove `iteratorTemplate`
+    source = removeIsArgumentsFallback(source);
+
     source = removeVar(source, 'iteratorTemplate');
 
     // remove JScript [[DontEnum]] fix from `isEqual`

@@ -46,11 +46,12 @@ Lo-Dash has been tested in at least Chrome 5-19, Firefox 1.5-13, IE 6-9, Opera 9
 Custom builds make it easy to create lightweight versions of Lo-Dash containing only the methods you need.
 We handle all the method dependency and alias mapping for you.
 
- * Backbone builds, containing all methods required by Backbone, may be created by using the `backbone` modifier argument.
+ * Backbone builds, containing all methods required by Backbone, may be created using the `backbone` modifier argument.
 ~~~ bash
 node build backbone
 ~~~
- * Mobile builds, with IE bug fixes and method compilation removed, may be created by using the `mobile` modifier argument.
+
+ * Mobile builds, with IE bug fixes and method compilation removed, may be created using the `mobile` modifier argument.
 ~~~ bash
 node build mobile
 ~~~
@@ -61,15 +62,16 @@ Custom builds may be created in three ways:
     Valid categories are *"arrays"*, *"chaining"*, *"collections"*, *"functions"*, *"objects"*, and *"utilities"*.
 ~~~ bash
 node build category=collections,functions
+node build category="collections, functions"
 ~~~
 
- 2. Use the `include` argument to pass the names of the methods to include in the build.
+ 2. Use the `include` argument to pass the names of methods to include in the build.
 ~~~ bash
 node build include=each,filter,map
 node build include="each, filter, map"
 ~~~
 
- 3. Use the `exclude` argument to pass the names of the methods to exclude from the build.
+ 3. Use the `exclude` argument to pass the names of methods to exclude from the build.
 ~~~ bash
 node build exclude=union,uniq,zip
 node build exclude="union, uniq, zip"

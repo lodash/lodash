@@ -226,9 +226,9 @@
           result = snippet;
 
       if (snippet) {
-        // minify property strings
+        // minify properties
         properties.forEach(function(property, index) {
-          result = result.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
+          result = result.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
         });
         // replace with modified snippet
         source = source.replace(snippet, result);

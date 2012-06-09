@@ -1526,12 +1526,17 @@
     } else if (thisArg) {
       callback = iteratorBind(callback, thisArg);
     }
-    return pluck(map(array, function(value, index) {
-      return {
-        'criteria': callback(value, index, array),
-        'value': value
+    var index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = {
+        'criteria': callback(array[index], index, array),
+        'value': array[index]
       };
-    }).sort(function(left, right) {
+    }
+    result.sort(function(left, right) {
       var a = left.criteria,
           b = right.criteria;
 
@@ -1542,7 +1547,12 @@
         return -1;
       }
       return a < b ? -1 : a > b ? 1 : 0;
-    }), 'value');
+    });
+
+    while (length--) {
+      result[length] = result[length].value;
+    }
+    return result;
   }
 
   /**
@@ -1921,7 +1931,7 @@
   /**
    * Creates a new function that is the composition of the passed functions,
    * where each function consumes the return value of the function that follows.
-   * In math terms, composing thefunctions `f()`, `g()`, and `h()` produces `f(g(h()))`.
+   * In math terms, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
    *
    * @static
    * @memberOf _
@@ -3025,7 +3035,7 @@
         if (arguments.length) {
           push.apply(args, arguments);
         }
-        var result = args.length == 1 ? func.call(lodash, args[0]) : func.apply(lodash, args);
+        var result = func.apply(lodash, args);
         if (this._chain) {
           result = new LoDash(result);
           result._chain = true;
@@ -3061,7 +3071,7 @@
    * @category Utilities
    * @param {Object} object The object to inspect.
    * @param {String} property The property to get the result of.
-   * @returns {Mixed} Returns the resolved.
+   * @returns {Mixed} Returns the resolved value.
    * @example
    *
    * var object = {
@@ -3455,11 +3465,8 @@
 
     LoDash.prototype[methodName] = function() {
       var value = this._wrapped;
-      if (arguments.length) {
-        func.apply(value, arguments);
-      } else {
-        func.call(value);
-      }
+      func.apply(value, arguments);
+
       // IE compatibility mode and IE < 9 have buggy Array `shift()` and `splice()`
       // functions that fail to remove the last element, `value[0]`, of
       // array-like objects even though the `length` property is set to `0`.
@@ -3482,7 +3489,7 @@
 
     LoDash.prototype[methodName] = function() {
       var value = this._wrapped,
-          result = arguments.length ? func.apply(value, arguments) : func.call(value);
+          result = func.apply(value, arguments);
 
       if (this._chain) {
         result = new LoDash(result);

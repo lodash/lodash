@@ -10,9 +10,6 @@
   var lodash = require(path.join(__dirname, 'lodash')),
       minify = require(path.join(__dirname, 'build', 'minify'));
 
-  /** Flag used to specify a mobile build */
-  var isMobile = process.argv.indexOf('mobile') > -1;
-
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
@@ -55,11 +52,56 @@
     'uniq': ['unique']
   };
 
+  /** Used to track Backbone's Lo-Dash dependencies */
+  var backboneDependencies = [
+    'bind',
+    'bindAll',
+    'clone',
+    'contains',
+    'escape',
+    'every',
+    'extend',
+    'filter',
+    'find',
+    'first',
+    'forEach',
+    'groupBy',
+    'has',
+    'indexOf',
+    'initial',
+    'invoke',
+    'isArray',
+    'isEmpty',
+    'isEqual',
+    'isFunction',
+    'isObject',
+    'isRegExp',
+    'keys',
+    'last',
+    'lastIndexOf',
+    'map',
+    'max',
+    'min',
+    'mixin',
+    'reduce',
+    'reduceRight',
+    'reject',
+    'rest',
+    'shuffle',
+    'size',
+    'some',
+    'sortBy',
+    'sortedIndex',
+    'toArray',
+    'uniqueId',
+    'without'
+  ];
+
   /** Used to track function dependencies */
   var dependencyMap = {
     'after': [],
     'bind': [],
-    'bindAll': ['bind'],
+    'bindAll': ['bind', 'functions'],
     'chain': ['mixin'],
     'clone': ['extend', 'isArray'],
     'compact': [],
@@ -112,7 +154,7 @@
     'max': [],
     'memoize': [],
     'min': [],
-    'mixin': ['forEach'],
+    'mixin': ['forEach', 'functions'],
     'noConflict': [],
     'once': [],
     'partial': [],
@@ -127,7 +169,7 @@
     'shuffle': [],
     'size': ['keys'],
     'some': ['createIterator', 'identity'],
-    'sortBy': ['map', 'pluck'],
+    'sortBy': [],
     'sortedIndex': ['identity'],
     'tap': [],
     'template': ['escape'],
@@ -143,39 +185,40 @@
     'zip': ['max', 'pluck']
   };
 
-  /** Names of all methods */
-  var allMethods = Object.keys(dependencyMap);
+  /** Collections of method names */
+  var excludeMethods,
+      includeMethods,
+      allMethods = Object.keys(dependencyMap);
 
-  /** Names of methods to filter for the build */
-  var filterMethods = allMethods;
-
-  /** Used to specify whether `filterMethods` is used for exclusion or inclusion */
+  /** Used to specify whether filtering is for exclusion or inclusion */
   var filterType = process.argv.reduce(function(result, value) {
     if (result) {
       return result;
     }
-    var pair = value.match(/^(category|exclude|include)=(.*)$/);
+    var pair = value.match(/^(exclude|include)=(.*)$/);
     if (!pair) {
       return result;
     }
+    // remove nonexistent method names
+    var methodNames = lodash.intersection(allMethods, pair[2].split(/, */).map(getRealName));
 
-    result = pair[1];
-    filterMethods = pair[2].split(/, */).map(getRealName);
-
-    if (result == 'category') {
-      // resolve method names belonging to each category
-      filterMethods = filterMethods.reduce(function(result, category) {
-        return result.concat(allMethods.filter(function(funcName) {
-          return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, funcName));
-        }));
-      }, []);
+    if (pair[1] == 'exclude') {
+      excludeMethods = methodNames;
+    } else {
+      includeMethods = methodNames;
     }
-    else {
-      // remove nonexistent method names
-      filterMethods = lodash.intersection(allMethods, filterMethods);
-    }
-    return result;
+    // return `filterType`
+    return pair[1];
   }, '');
+
+  /** Flag used to specify a backbone build */
+  var isBackbone = process.argv.indexOf('backbone') > -1;
+
+  /** Flag used to specify a mobile build */
+  var isMobile = process.argv.indexOf('mobile') > -1;
+
+  /** Flag used to specify a custom build */
+  var isCustom = filterType || isBackbone || isMobile;
 
   /*--------------------------------------------------------------------------*/
 
@@ -201,7 +244,7 @@
     // iterate over `dependencyMap`, adding the names of functions that
     // have `funcName` as a dependency
     return lodash.reduce(dependencyMap, function(result, dependencies, otherName) {
-      if (dependencies.indexOf(funcName) > -1) {
+      if (lodash.contains(dependencies, funcName)) {
         result.push(otherName);
       }
       return result;
@@ -209,25 +252,26 @@
   }
 
   /**
-   * Gets an array of dependencies for a function of the given `funcName`.
+   * Gets an array of dependencies for a given function name. If passed an array
+   * of dependencies it will return an array containing the given dependencies
+   * plus any additional detected sub-dependencies.
    *
    * @private
-   * @param {String} funcName The name of the function to query.
+   * @param {Array|String} funcName A single function name or array of
+   *  dependencies to query.
    * @returns {Array} Returns an array of function dependencies.
    */
   function getDependencies(funcName) {
-    var dependencies = dependencyMap[funcName],
-        result = [];
-
+    var dependencies = Array.isArray(funcName) ? funcName : dependencyMap[funcName];
     if (!dependencies) {
-      return result;
+      return [];
     }
     // recursively accumulate the dependencies of the `funcName` function, and
     // the dependencies of its dependencies, and so on.
-    return dependencies.reduce(function(result, otherName) {
+    return lodash.uniq(dependencies.reduce(function(result, otherName) {
       result.push.apply(result, getDependencies(otherName).concat(otherName));
       return result;
-    }, result);
+    }, []));
   }
 
   /**
@@ -292,7 +336,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeFromCreateIterator(source, refName) {
-    var snippet = matchFunction(source, 'createIterator'),
+    var snippet = matchFunction(source, 'createIterator').match(/Function\([\s\S]+$/)[0],
         modified = snippet.replace(RegExp('\\b' + refName + '\\b,? *', 'g'), '');
 
     return source.replace(snippet, modified);
@@ -389,30 +433,81 @@
 
   /*--------------------------------------------------------------------------*/
 
+  // Backbone build
+  if (isBackbone) {
+    // add any additional dependencies
+    backboneDependencies = getDependencies(backboneDependencies);
+
+    if (filterType == 'exclude') {
+      // remove excluded methods from `backboneDependencies`
+      includeMethods = lodash.without.apply(lodash, [backboneDependencies].concat(excludeMethods));
+    }
+    else if (filterType) {
+      // merge backbone dependencies into `includeMethods`
+      includeMethods = lodash.union(includeMethods, backboneDependencies);
+    }
+    else {
+      // include only the Backbone dependencies
+      includeMethods = backboneDependencies;
+    }
+    filterType = 'include';
+  }
+
+  /*--------------------------------------------------------------------------*/
+
+  // add category methods
+  process.argv.some(function(value) {
+    var categories = value.match(/^category=(.*)$/);
+    if (!categories) {
+      return false;
+    }
+    // resolve method names belonging to each category
+    var categoryMethods = categories.reduce(function(result, category) {
+      return result.concat(allMethods.filter(function(funcName) {
+        return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, funcName));
+      }));
+    }, []);
+
+    if (filterType == 'exclude') {
+      // remove excluded methods from `categoryMethods`
+      includeMethods = lodash.without.apply(lodash, [categoryMethods].concat(excludeMethods));
+    }
+    else if (filterType) {
+      // merge backbone dependencies into `includeMethods`
+      includeMethods = lodash.union(includeMethods, categoryMethods);
+    }
+    else {
+      // include only the Backbone dependencies
+      includeMethods = categoryMethods;
+    }
+
+    filterType = 'include';
+    return true;
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   // custom build
   (function() {
-    // exit early if "category", "exclude", or "include" options aren't specified
+    // exit early if "exclude" or "include" options aren't specified
     if (!filterType) {
       return;
     }
     if (filterType == 'exclude') {
-      // remove methods that are named in `filterMethods` and their dependants
-      filterMethods.forEach(function(funcName) {
+      // remove methods that are named in `excludeMethods` and their dependants
+      excludeMethods.forEach(function(funcName) {
         getDependants(funcName).concat(funcName).forEach(function(otherName) {
           source = removeFunction(source, otherName);
         });
       });
     }
     else {
-      // add dependencies to `filterMethods`
-      filterMethods = lodash.uniq(filterMethods.reduce(function(result, funcName) {
-        result.push.apply(result, getDependencies(funcName).concat(funcName));
-        return result;
-      }, []));
+      // add dependencies to `includeMethods`
+      includeMethods = getDependencies(includeMethods);
 
-      // remove methods that aren't named in `filterMethods`
-      lodash.each(dependencyMap, function(dependencies, otherName) {
-        if (filterMethods.indexOf(otherName) < 0) {
+      // remove methods that aren't named in `includeMethods`
+      lodash.each(allMethods, function(otherName) {
+        if (!lodash.contains(includeMethods, otherName)) {
           source = removeFunction(source, otherName);
         }
       });
@@ -517,13 +612,13 @@
     }()));
   }
 
+  /*--------------------------------------------------------------------------*/
+
   // remove pseudo private properties
   source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
 
-  /*--------------------------------------------------------------------------*/
-
   // begin the minification process
-  if (filterType || isMobile) {
+  if (isCustom) {
     fs.writeFileSync(path.join(__dirname, 'lodash.custom.js'), source);
     minify(source, 'lodash.custom.min', function(result) {
       fs.writeFileSync(path.join(__dirname, 'lodash.custom.min.js'), result);

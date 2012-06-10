@@ -1171,6 +1171,9 @@
    *
    * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
    * // => [[1, 5, 7], [1, 2, 3]]
+   *
+   * _.invoke([123, 456], String.prototype.split, '');
+   * // => [['1', '2', '3'], ['4', '5', '6']]
    */
   function invoke(array, methodName) {
     var result = [];
@@ -3096,7 +3099,7 @@
   }
 
   /**
-   * A JavaScript micro-templating method, similar to John Resig's implementation.
+   * A micro-templating method, similar to John Resig's implementation.
    * Lo-Dash templating handles arbitrary delimiters, preserves whitespace, and
    * correctly escapes quotes within interpolated code.
    *

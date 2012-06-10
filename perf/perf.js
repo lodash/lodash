@@ -480,6 +480,18 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('shuffle')
+      .add('Lo-Dash', function() {
+        lodash.shuffle(numbers);
+      })
+      .add('Underscore', function() {
+        _.shuffle(numbers);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('sortBy callback')
       .add('Lo-Dash', function() {
         lodash.sortBy(numbers, function(num) { return Math.sin(num); });

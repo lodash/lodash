@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.3.0 <http://lodash.com>
+ * Lo-Dash v0.3.1 <http://lodash.com>
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
@@ -3341,7 +3341,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.3.0';
+  lodash.VERSION = '0.3.1';
 
   // assign static methods
   lodash.after = after;

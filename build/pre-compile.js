@@ -202,8 +202,8 @@
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");
 
-    // remove brackets from `_.escape(__t)` in `tokenizeEscape`
-    source = source.replace("_['escape'](__t)", '_.escape(__t)');
+    // remove brackets from `_.escape()` in `tokenizeEscape`
+    source = source.replace("_['escape'](\"", '_.escape("');
 
     // remove whitespace from string literals
     source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {

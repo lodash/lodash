@@ -525,7 +525,7 @@
    */
   function tokenizeEscape(match, value) {
     var index = tokenized.length;
-    tokenized[index] = "'+\n((__t = (" + value + ")) == null ? '' : _.escape(__t)) +\n'";
+    tokenized[index] = "'+\n_.escape(" + value + ") +\n'";
     return token + index;
   }
 
@@ -2985,7 +2985,7 @@
    * // => "Curly, Larry &amp; Moe"
    */
   function escape(string) {
-    return (string + '').replace(reUnescapedHtml, escapeHtmlChar);
+    return string == null ? '' : (string + '').replace(reUnescapedHtml, escapeHtmlChar);
   }
 
   /**

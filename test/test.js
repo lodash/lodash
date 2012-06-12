@@ -157,6 +157,11 @@
     test('should not escape the "/" character', function() {
       equal(_.escape('/'), '/');
     });
+
+    test('should return empty string when passed `null` or `undefined`', function() {
+      equal(_.escape(null), '');
+      equal(_.escape(undefined), '');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

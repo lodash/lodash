@@ -217,7 +217,7 @@
     source = source.replace('"\';\\n"', '"\';"');
 
     // remove debug sourceURL in `_.template`
-    source = source.replace(/\+(?:\s*\/\/.*)*\s*'\/\/@ sourceURL=[^;]+/, '');
+    source = source.replace(/(?:\s*\/\/.*\n)* *if *\(useSourceURL[^}]+}/, '');
 
     // minify `_.sortBy` internal properties
     (function() {

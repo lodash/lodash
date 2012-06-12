@@ -54,6 +54,12 @@
   /** Used to store tokenized template text snippets */
   var tokenized = [];
 
+  /** Detect if sourceURL syntax is usable without erroring */
+  try {
+    // Adobe's and Narwhal's JS engines will error
+    var useSourceURL = (Function('//@')(), true);
+  } catch(e){ }
+
   /**
    * Used to escape characters for inclusion in HTML.
    * The `>` and `/` characters don't require escaping in HTML and have no
@@ -2641,8 +2647,9 @@
       // ensure both objects have the same number of properties
       if (result) {
         for (prop in b) {
-          // Adobe JS engines have an operator precedence bug that causes `!size--`
-          // to produce the wrong result so it must be wrapped in parentheses.
+          // Adobe's JS engine, embedded in applications like InDesign, has a
+          // bug that causes `!size--` to throw an error so it must be wrapped
+          // in parentheses.
           // https://github.com/documentcloud/underscore/issues/355
           if (hasOwnProperty.call(b, prop) && !(size--)) {
             break;
@@ -3208,11 +3215,13 @@
       'var __p, __t, __j = Array.prototype.join;\n' +
       'function print() { __p += __j.call(arguments, \'\') }\n' +
       text +
-      'return __p\n}\n' +
-      // add sourceURL for easier debugging
-      // (Narwhal requires a trailing newline to prevent a syntax error)
-      // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-      '//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']\n';
+      'return __p\n}';
+
+    // add a sourceURL for easier debugging
+    // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
+    if (useSourceURL) {
+      text += '\n//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']';
+    }
 
     result = Function('_', 'return ' + text)(lodash);
 

@@ -2641,7 +2641,12 @@
       // ensure both objects have the same number of properties
       if (result) {
         for (prop in b) {
-          if (hasOwnProperty.call(b, prop) && !(size--)) break;
+          // Adobe JS engines have an operator precedence bug that causes `!size--`
+          // to produce the wrong result so it must be wrapped in parentheses.
+          // https://github.com/documentcloud/underscore/issues/355
+          if (hasOwnProperty.call(b, prop) && !(size--)) {
+            break;
+          }
         }
         result = !size;
       }
@@ -3067,7 +3072,8 @@
 
   /**
    * Resolves the value of `property` on `object`. If `property` is a function
-   * it will be invoked and its result returned, else the property value is returned.
+   * it will be invoked and its result returned, else the property value is
+   * returned. If `object` is falsey, then `null` is returned.
    *
    * @static
    * @memberOf _
@@ -3091,6 +3097,8 @@
    * // => 'nonsense'
    */
   function result(object, property) {
+    // based on Backbone's private `getValue` function
+    // https://github.com/documentcloud/backbone/blob/0.9.2/backbone.js#L1419-1424
     if (!object) {
       return null;
     }

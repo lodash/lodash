@@ -2256,9 +2256,9 @@
   }
 
   /**
-   * Assigns missing properties in `object` with default values from the defaults
-   * objects. As soon as a property is set, additional defaults of the same
-   * property will be ignored.
+   * Assigns missing properties on `object` with default values from the defaults
+   * objects. Once a property is set, additional defaults of the same property
+   * will be ignored.
    *
    * @static
    * @memberOf _
@@ -2770,6 +2770,7 @@
   /**
    * Checks if a `value` is `null`.
    *
+   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -2841,6 +2842,7 @@
   /**
    * Checks if a `value` is `undefined`.
    *
+   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -2911,6 +2913,7 @@
    * Gets the size of `value` by returning `value.length` if `value` is a string
    * or array, or the number of own enumerable properties if `value` is an object.
    *
+   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -2933,32 +2936,6 @@
     return className == arrayClass || className == stringClass
       ? value.length
       : keys(value).length;
-  }
-
-  /**
-   * Invokes `interceptor` with the `value` as the first argument, and then returns
-   * `value`. The primary purpose of this method is to "tap into" a method chain,
-   * in order to performoperations on intermediate results within the chain.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to pass to `callback`.
-   * @param {Function} interceptor The function to invoke.
-   * @returns {Mixed} Returns `value`.
-   * @example
-   *
-   * _.chain([1,2,3,200])
-   *  .filter(function(num) { return num % 2 == 0; })
-   *  .tap(alert)
-   *  .map(function(num) { return num * num })
-   *  .value();
-   * // => // [2, 200] (alerted)
-   * // => [4, 40000]
-   */
-  function tap(value, interceptor) {
-    interceptor(value);
-    return value;
   }
 
   /**
@@ -3082,6 +3059,7 @@
    * it will be invoked and its result returned, else the property value is
    * returned. If `object` is falsey, then `null` is returned.
    *
+   * @deprecated
    * @static
    * @memberOf _
    * @category Utilities
@@ -3288,13 +3266,13 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Wraps the value in a `lodash` chainable object.
+   * Wraps the value in a `lodash` wrapper object.
    *
    * @static
    * @memberOf _
    * @category Chaining
    * @param {Mixed} value The value to wrap.
-   * @returns {Object} Returns the `lodash` chainable object.
+   * @returns {Object} Returns the wrapper object.
    * @example
    *
    * var stooges = [
@@ -3317,12 +3295,39 @@
   }
 
   /**
-   * Extracts the value from a wrapped chainable object.
+   * Invokes `interceptor` with the `value` as the first argument, and then
+   * returns `value`. The purpose of this method is to "tap into" a method chain,
+   * in order to perform operations on intermediate results within the chain.
    *
-   * @name chain
+   * @static
    * @memberOf _
    * @category Chaining
-   * @returns {Mixed} Returns the wrapped object.
+   * @param {Mixed} value The value to pass to `callback`.
+   * @param {Function} interceptor The function to invoke.
+   * @returns {Mixed} Returns `value`.
+   * @example
+   *
+   * _.chain([1,2,3,200])
+   *  .filter(function(num) { return num % 2 == 0; })
+   *  .tap(alert)
+   *  .map(function(num) { return num * num })
+   *  .value();
+   * // => // [2, 200] (alerted)
+   * // => [4, 40000]
+   */
+  function tap(value, interceptor) {
+    interceptor(value);
+    return value;
+  }
+
+  /**
+   * Enables method chaining on the wrapper object.
+   *
+   * @name chain
+   * @deprecated
+   * @memberOf _
+   * @category Chaining
+   * @returns {Mixed} Returns the wrapper object.
    * @example
    *
    * _([1, 2, 3]).value();
@@ -3334,12 +3339,12 @@
   }
 
   /**
-   * Extracts the value from a wrapped chainable object.
+   * Extracts the wrapped value.
    *
    * @name value
    * @memberOf _
    * @category Chaining
-   * @returns {Mixed} Returns the wrapped object.
+   * @returns {Mixed} Returns the wrapped value.
    * @example
    *
    * _([1, 2, 3]).value();

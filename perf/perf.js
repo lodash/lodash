@@ -238,7 +238,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('each array thisArg')
+    Benchmark.Suite('each array thisArg (slow path)')
       .add('Lo-Dash', function() {
         var result = [];
         lodash.each(numbers, function(num, index) {
@@ -416,7 +416,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('map thisArg')
+    Benchmark.Suite('map thisArg (slow path)')
       .add('Lo-Dash', function() {
         lodash.map(objects, function(value, index) {
           return this['key' + index] + value.num;
@@ -502,7 +502,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('sortBy callback thisArg')
+    Benchmark.Suite('sortBy callback thisArg (slow path)')
       .add('Lo-Dash', function() {
         lodash.sortBy(numbers, function(num) { return this.sin(num); }, Math);
       })
@@ -534,7 +534,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('sortedIndex callback')
+    Benchmark.Suite('sortedIndex callback (slow path)')
       .add('Lo-Dash', function() {
         lodash.sortedIndex(words, 'twenty-five', function(value) {
           return wordToNumber[value];

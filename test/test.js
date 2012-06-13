@@ -642,6 +642,23 @@
       }
       ok(counter > 1);
     });
+
+    asyncTest('supports recursive calls', function() {
+      var counter = 0;
+      var throttled = _.throttle(function() {
+        counter++;
+        if (counter < 4) {
+          throttled();
+        }
+      }, 100);
+
+      setTimeout(function() {
+        ok(counter > 1);
+        QUnit.start();
+      }, 220);
+
+      throttled();
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -790,6 +807,7 @@
   /*--------------------------------------------------------------------------*/
 
   // explicitly call `QUnit.start()` for Narwhal, Rhino, and RingoJS
-  QUnit.start();
-
+  if (!window.document) {
+    QUnit.start();
+  }
 }(typeof global == 'object' && global || this));

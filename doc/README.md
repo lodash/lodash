@@ -2221,7 +2221,7 @@ _.template('<%= data.hasWith %>', { 'hasWith': 'no' }, { 'variable': 'data' });
 ### <a id="_throttlefunc-wait"></a>`_.throttle(func, wait)`
 <a href="#_throttlefunc-wait">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2174 "View in source") [&#x24C9;][1]
 
-Creates a new function that, when executed, will only call the `func` function at most once per every `wait` milliseconds. If the throttled function is invoked more than once, `func` will also be called on the trailing edge of the `wait` timeout. Subsequent calls to the throttled function will return the result of the last `func` call.
+Creates a new function that, when executed, will only call the `func` function at most once per every `wait` milliseconds. If the throttled function is invoked more than once during the `wait` timeout, `func` will also be called on the trailing edge of the timeout. Subsequent calls to the throttled function will return the result of the last `func` call.
 
 #### Arguments
 1. `func` *(Function)*: The function to throttle.

@@ -2155,10 +2155,10 @@
 
   /**
    * Creates a new function that, when executed, will only call the `func`
-   * function at most once per every `wait` milliseconds. If the throttled function
-   * is invoked more than once, `func` will also be called on the trailing edge
-   * of the `wait` timeout. Subsequent calls to the throttled function will
-   * return the result of the last `func` call.
+   * function at most once per every `wait` milliseconds. If the throttled
+   * function is invoked more than once during the `wait` timeout, `func` will
+   * also be called on the trailing edge of the timeout. Subsequent calls to the
+   * throttled function will return the result of the last `func` call.
    *
    * @static
    * @memberOf _

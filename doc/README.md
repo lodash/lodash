@@ -147,7 +147,7 @@ The `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3361 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3366 "View in source") [&#x24C9;][1]
 
 *(String)*: The semantic version number.
 
@@ -270,15 +270,15 @@ jQuery('#lodash_button').on('click', buttonView.onClick);
 <!-- div -->
 
 ### <a id="_chainvalue"></a>`_.chain(value)`
-<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3313 "View in source") [&#x24C9;][1]
+<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3291 "View in source") [&#x24C9;][1]
 
-Wraps the value in a `lodash` chainable object.
+Wraps the value in a `lodash` wrapper object.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to wrap.
 
 #### Returns
-*(Object)*: Returns the `lodash` chainable object.
+*(Object)*: Returns the wrapper object.
 
 #### Example
 ~~~ js
@@ -432,7 +432,7 @@ jQuery(window).on('resize', lazyLayout);
 ### <a id="_defaultsobject--defaults1-defaults2-"></a>`_.defaults(object [, defaults1, defaults2, ...])`
 <a href="#_defaultsobject--defaults1-defaults2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2275 "View in source") [&#x24C9;][1]
 
-Assigns missing properties in `object` with default values from the defaults objects. As soon as a property is set, additional defaults of the same property will be ignored.
+Assigns missing properties on `object` with default values from the defaults objects. Once a property is set, additional defaults of the same property will be ignored.
 
 #### Arguments
 1. `object` *(Object)*: The object to populate.
@@ -533,7 +533,7 @@ _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
 <!-- div -->
 
 ### <a id="_escapestring"></a>`_.escape(string)`
-<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2999 "View in source") [&#x24C9;][1]
+<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2976 "View in source") [&#x24C9;][1]
 
 Escapes a string for inclusion in HTML, replacing `&`, `<`, `"`, and `'` characters.
 
@@ -888,7 +888,7 @@ _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
 <!-- div -->
 
 ### <a id="_identityvalue"></a>`_.identity(value)`
-<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3018 "View in source") [&#x24C9;][1]
+<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2995 "View in source") [&#x24C9;][1]
 
 This function returns the first argument passed to it. Note: It is used throughout Lo-Dash as a default callback.
 
@@ -1296,7 +1296,7 @@ _.isNaN(undefined);
 <!-- div -->
 
 ### <a id="_isnullvalue"></a>`_.isNull(value)`
-<a href="#_isnullvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2786 "View in source") [&#x24C9;][1]
+<a href="#_isnullvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2787 "View in source") [&#x24C9;][1]
 
 Checks if a `value` is `null`.
 
@@ -1323,7 +1323,7 @@ _.isNull(undefined);
 <!-- div -->
 
 ### <a id="_isnumbervalue"></a>`_.isNumber(value)`
-<a href="#_isnumbervalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2803 "View in source") [&#x24C9;][1]
+<a href="#_isnumbervalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2804 "View in source") [&#x24C9;][1]
 
 Checks if a `value` is a number.
 
@@ -1374,7 +1374,7 @@ _.isObject(1);
 <!-- div -->
 
 ### <a id="_isregexpvalue"></a>`_.isRegExp(value)`
-<a href="#_isregexpvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2820 "View in source") [&#x24C9;][1]
+<a href="#_isregexpvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2821 "View in source") [&#x24C9;][1]
 
 Checks if a `value` is a regular expression.
 
@@ -1398,7 +1398,7 @@ _.isRegExp(/moe/);
 <!-- div -->
 
 ### <a id="_isstringvalue"></a>`_.isString(value)`
-<a href="#_isstringvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2837 "View in source") [&#x24C9;][1]
+<a href="#_isstringvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2838 "View in source") [&#x24C9;][1]
 
 Checks if a `value` is a string.
 
@@ -1422,7 +1422,7 @@ _.isString('moe');
 <!-- div -->
 
 ### <a id="_isundefinedvalue"></a>`_.isUndefined(value)`
-<a href="#_isundefinedvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2854 "View in source") [&#x24C9;][1]
+<a href="#_isundefinedvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2856 "View in source") [&#x24C9;][1]
 
 Checks if a `value` is `undefined`.
 
@@ -1446,7 +1446,7 @@ _.isUndefined(void 0);
 <!-- div -->
 
 ### <a id="_keysobject"></a>`_.keys(object)`
-<a href="#_keysobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2871 "View in source") [&#x24C9;][1]
+<a href="#_keysobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2873 "View in source") [&#x24C9;][1]
 
 Produces an array of object`'s own enumerable property names.
 
@@ -1638,7 +1638,7 @@ _.min([10, 5, 100, 2, 1000]);
 <!-- div -->
 
 ### <a id="_mixinobject"></a>`_.mixin(object)`
-<a href="#_mixinobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3044 "View in source") [&#x24C9;][1]
+<a href="#_mixinobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3021 "View in source") [&#x24C9;][1]
 
 Adds functions properties of `object` to the `lodash` function and chainable wrapper.
 
@@ -1668,7 +1668,7 @@ _('larry').capitalize();
 <!-- div -->
 
 ### <a id="_noconflict"></a>`_.noConflict()`
-<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3075 "View in source") [&#x24C9;][1]
+<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3052 "View in source") [&#x24C9;][1]
 
 Reverts the '_' variable to its previous value and returns a reference to the `lodash` function.
 
@@ -1741,7 +1741,7 @@ hi('moe');
 <!-- div -->
 
 ### <a id="_pickobject--prop1-prop2-"></a>`_.pick(object [, prop1, prop2, ...])`
-<a href="#_pickobject--prop1-prop2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2893 "View in source") [&#x24C9;][1]
+<a href="#_pickobject--prop1-prop2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2895 "View in source") [&#x24C9;][1]
 
 Creates an object composed of the specified properties. Property names may be specified as individual arguments or as arrays of property names.
 
@@ -1942,7 +1942,7 @@ _.rest([3, 2, 1]);
 <!-- div -->
 
 ### <a id="_resultobject-property"></a>`_.result(object, property)`
-<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3106 "View in source") [&#x24C9;][1]
+<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3084 "View in source") [&#x24C9;][1]
 
 Resolves the value of `property` on `object`. If `property` is a function it will be invoked and its result returned, else the property value is returned. If `object` is falsey, then `null` is returned.
 
@@ -2001,7 +2001,7 @@ _.shuffle([1, 2, 3, 4, 5, 6]);
 <!-- div -->
 
 ### <a id="_sizevalue"></a>`_.size(value)`
-<a href="#_sizevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2931 "View in source") [&#x24C9;][1]
+<a href="#_sizevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2934 "View in source") [&#x24C9;][1]
 
 Gets the size of `value` by returning `value.length` if `value` is a string or array, or the number of own enumerable properties if `value` is an object.
 
@@ -2130,9 +2130,9 @@ _.sortedIndex(['twenty', 'thirty', 'fourty'], 'thirty-five', function(word) {
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2959 "View in source") [&#x24C9;][1]
+<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3318 "View in source") [&#x24C9;][1]
 
-Invokes `interceptor` with the `value` as the first argument, and then returns `value`. The primary purpose of this method is to "tap into" a method chain, in order to performoperations on intermediate results within the chain.
+Invokes `interceptor` with the `value` as the first argument, and then returns `value`. The purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to pass to `callback`.
@@ -2160,7 +2160,7 @@ _.chain([1,2,3,200])
 <!-- div -->
 
 ### <a id="_templatetext-data-options"></a>`_.template(text, data, options)`
-<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3167 "View in source") [&#x24C9;][1]
+<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3145 "View in source") [&#x24C9;][1]
 
 A micro-templating method, similar to John Resig's implementation. Lo-Dash templating handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.
 
@@ -2244,7 +2244,7 @@ jQuery(window).on('scroll', throttled);
 <!-- div -->
 
 ### <a id="_timesn-callback--thisarg"></a>`_.times(n, callback [, thisArg])`
-<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3256 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3234 "View in source") [&#x24C9;][1]
 
 Executes the `callback` function `n` times. The `callback` is bound to `thisArg` and invoked with `1` argument; *(index)*.
 
@@ -2354,7 +2354,7 @@ _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return this.floor(num); }, Math);
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3283 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3261 "View in source") [&#x24C9;][1]
 
 Generates a unique id. If `prefix` is passed, the id will be appended to it.
 
@@ -2378,7 +2378,7 @@ _.uniqueId('contact_');
 <!-- div -->
 
 ### <a id="_valuesobject"></a>`_.values(object)`
-<a href="#_valuesobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2977 "View in source") [&#x24C9;][1]
+<a href="#_valuesobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L2954 "View in source") [&#x24C9;][1]
 
 Produces an array of `object`'s own enumerable property values.
 
@@ -2488,12 +2488,12 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 <!-- div -->
 
 ### <a id="_prototypechain"></a>`_.prototype.chain()`
-<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3331 "View in source") [&#x24C9;][1]
+<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3336 "View in source") [&#x24C9;][1]
 
-Extracts the value from a wrapped chainable object.
+Enables method chaining on the wrapper object.
 
 #### Returns
-*(Mixed)*: Returns the wrapped object.
+*(Mixed)*: Returns the wrapper object.
 
 #### Example
 ~~~ js
@@ -2509,12 +2509,12 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_prototypevalue"></a>`_.prototype.value()`
-<a href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3348 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.1/lodash.js#L3353 "View in source") [&#x24C9;][1]
 
-Extracts the value from a wrapped chainable object.
+Extracts the wrapped value.
 
 #### Returns
-*(Mixed)*: Returns the wrapped object.
+*(Mixed)*: Returns the wrapped value.
 
 #### Example
 ~~~ js

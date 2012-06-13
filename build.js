@@ -587,10 +587,10 @@
     source = removeVar(source, 'iteratorTemplate');
 
     // remove JScript [[DontEnum]] fix from `isEqual`
-    source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}\n/, '\n');
+    source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}/, '');
 
     // remove IE `shift` and `splice` fix
-    source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(value.length *=== *0[\s\S]+?\n\1}\n/, '\n');
+    source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
   }
   else {
     // inline `iteratorTemplate` template

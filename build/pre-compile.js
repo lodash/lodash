@@ -216,7 +216,10 @@
     // remove newline from double-quoted string in `_.template`
     source = source.replace('"\';\\n"', '"\';"');
 
-    // remove debug sourceURL in `_.template`
+    // remove `useSourceURL` variable
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*\n)* *var useSourceURL[\s\S]+?catch[^}]+}\n/, '');
+
+    // remove debug sourceURL use in `_.template`
     source = source.replace(/(?:\s*\/\/.*\n)* *if *\(useSourceURL[^}]+}/, '');
 
     // minify `_.sortBy` internal properties

@@ -217,9 +217,6 @@
   /** Flag used to specify a mobile build */
   var isMobile = process.argv.indexOf('mobile') > -1;
 
-  /** Flag used to specify a custom build */
-  var isCustom = filterType || isBackbone || isMobile;
-
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -618,7 +615,7 @@
   source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
 
   // begin the minification process
-  if (isCustom) {
+  if (filterType || isBackbone || isMobile) {
     fs.writeFileSync(path.join(__dirname, 'lodash.custom.js'), source);
     minify(source, 'lodash.custom.min', function(result) {
       fs.writeFileSync(path.join(__dirname, 'lodash.custom.min.js'), result);

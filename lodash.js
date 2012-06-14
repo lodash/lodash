@@ -339,6 +339,20 @@
     }
   };
 
+ /** Reusable iterator options for `invoke`, `map`, and `pluck` */
+  var mapIteratorOptions = {
+    'init': '',
+    'exit': 'if (!collection) return []',
+    'beforeLoop': {
+      'array':  'result = Array(length)',
+      'object': 'result = []'
+    },
+    'inLoop': {
+      'array':  'result[index] = callback(collection[index], index, collection)',
+      'object': 'result.push(callback(collection[index], index, collection))'
+    }
+  };
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -437,13 +451,13 @@
     // create the function factory
     var factory = Function(
         'arrayClass, funcClass, hasOwnProperty, identity, iteratorBind, objectTypes, ' +
-        'stringClass, toString, undefined',
+        'slice, stringClass, toString, undefined',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
       arrayClass, funcClass, hasOwnProperty, identity, iteratorBind, objectTypes,
-      stringClass, toString
+      slice, stringClass, toString
     );
   }
 
@@ -679,7 +693,40 @@
   var forEach = createIterator(baseIteratorOptions, forEachIteratorOptions);
 
   /**
-   * Produces a new array of values by mapping each value in the `collection`
+   * Invokes the method named by `methodName` on each element in the `collection`.
+   * Additional arguments will be passed to each invoked method. If `methodName`
+   * is a function it will be invoked for, and `this` bound to, each element
+   * in the `collection`.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Function|String} methodName The name of the method to invoke or
+   *  the function invoked per iteration.
+   * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the method with.
+   * @returns {Array} Returns a new array of values returned from each invoked method.
+   * @example
+   *
+   * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
+   * // => [[1, 5, 7], [1, 2, 3]]
+   *
+   * _.invoke([123, 456], String.prototype.split, '');
+   * // => [['1', '2', '3'], ['4', '5', '6']]
+   */
+  var invoke = createIterator(mapIteratorOptions, {
+    'args': 'collection, methodName',
+    'top':
+      'var args = slice.call(arguments, 2),\n' +
+      '    isFunc = typeof methodName == \'function\'',
+    'inLoop': {
+      'array': 'result[index] = (isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)',
+      'object': 'result.push((isFunc ? methodName : collection[index][methodName]).apply(collection[index], args))'
+    }
+  });
+
+  /**
+   * Produces a new array of values by mapping each element in the `collection`
    * through a transformation `callback`. The `callback` is bound to `thisArg`
    * and invoked with 3 arguments; for arrays they are (value, index, array)
    * and for objects they are (value, key, object).
@@ -700,16 +747,34 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9] (order is not guaranteed)
    */
-  var map = createIterator(baseIteratorOptions, {
-    'init': '',
-    'exit': 'if (!collection) return []',
-    'beforeLoop': {
-      'array':  'result = Array(length)',
-      'object': 'result = []'
-    },
+  var map = createIterator(baseIteratorOptions, mapIteratorOptions);
+
+  /**
+   * Retrieves the value of a specified property from all elements in
+   * the `collection`.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object} collection The collection to iterate over.
+   * @param {String} property The property to pluck.
+   * @returns {Array} Returns a new array of property values.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
+   * ];
+   *
+   * _.pluck(stooges, 'name');
+   * // => ['moe', 'larry', 'curly']
+   */
+  var pluck = createIterator(mapIteratorOptions, {
+    'args': 'collection, property',
     'inLoop': {
-      'array':  'result[index] = callback(collection[index], index, collection)',
-      'object': 'result.push(callback(collection[index], index, collection))'
+      'array':  'result[index] = collection[index][property]',
+      'object': 'result.push(collection[index][property])'
     }
   });
 
@@ -1160,44 +1225,6 @@
   }
 
   /**
-   * Invokes the method named by `methodName` on each element of `array`.
-   * Additional arguments will be passed to each invoked method. If `methodName`
-   * is a function it will be invoked for, and `this` bound to, each element
-   * of `array`.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to iterate over.
-   * @param {Function|String} methodName The name of the method to invoke or
-   *  the function invoked per iteration.
-   * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the method with.
-   * @returns {Array} Returns a new array of values returned from each invoked method.
-   * @example
-   *
-   * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
-   * // => [[1, 5, 7], [1, 2, 3]]
-   *
-   * _.invoke([123, 456], String.prototype.split, '');
-   * // => [['1', '2', '3'], ['4', '5', '6']]
-   */
-  function invoke(array, methodName) {
-    var result = [];
-    if (!array) {
-      return result;
-    }
-    var args = slice.call(arguments, 2),
-        index = -1,
-        length = array.length,
-        isFunc = typeof methodName == 'function';
-
-    while (++index < length) {
-      result[index] = (isFunc ? methodName : array[index][methodName]).apply(array[index], args);
-    }
-    return result;
-  }
-
-  /**
    * Gets the last value of the `array`. Pass `n` to return the lasy `n` values
    * of the `array`.
    *
@@ -1359,40 +1386,6 @@
         computed = current;
         result = array[index];
       }
-    }
-    return result;
-  }
-
-  /**
-   * Retrieves the value of a specified property from all elements in `array`.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to iterate over.
-   * @param {String} property The property to pluck.
-   * @returns {Array} Returns a new array of property values.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
-   * ];
-   *
-   * _.pluck(stooges, 'name');
-   * // => ['moe', 'larry', 'curly']
-   */
-  function pluck(array, property) {
-    if (!array) {
-      return [];
-    }
-    var index = -1,
-        length = array.length,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = array[index][property];
     }
     return result;
   }
@@ -1608,10 +1601,14 @@
         high = array.length;
 
     if (callback) {
-      value = callback.call(thisArg, value);
+      if (thisArg) {
+        var fn = callback;
+        callback = function(value) { return fn.call(thisArg, value); };
+      }
+      value = callback(value);
       while (low < high) {
         mid = (low + high) >>> 1;
-        callback.call(thisArg, array[mid]) < value ? low = mid + 1 : high = mid;
+        callback(array[mid]) < value ? low = mid + 1 : high = mid;
       }
     } else {
       while (low < high) {

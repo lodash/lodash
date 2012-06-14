@@ -378,6 +378,17 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.invoke');
+
+  (function() {
+    test('should work with an object for `collection`', function() {
+      var object = { 'a': 1, 'b': 2, 'c': 3 };
+      deepEqual(_.invoke(object, 'toFixed', 1), ['1.0', '2.0', '3.0']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isEmpty');
 
   (function() {
@@ -515,6 +526,17 @@
 
       equal(_.partial(_.bind(func, o))(), o.cat);
       equal(_.bind(_.partial(func), o)(), o.cat);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.pluck');
+
+  (function() {
+    test('should work with an object for `collection`', function() {
+      var object = { 'a': [1], 'b': [1, 2], 'c': [1, 2, 3] };
+      deepEqual(_.pluck(object, 'length'), [1, 2, 3]);
     });
   }());
 
@@ -743,12 +765,10 @@
         'indexOf',
         'initial',
         'intersection',
-        'invoke',
         'last',
         'lastIndexOf',
         'max',
         'min',
-        'pluck',
         'range',
         'rest',
         'shuffle',
@@ -782,7 +802,9 @@
         'filter',
         'find',
         'forEach',
+        'invoke',
         'map',
+        'pluck',
         'reduce',
         'reduceRight',
         'reject',

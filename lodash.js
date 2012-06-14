@@ -1602,8 +1602,7 @@
 
     if (callback) {
       if (thisArg) {
-        var fn = callback;
-        callback = function(value) { return fn.call(thisArg, value); };
+        callback = bind(callback, thisArg);
       }
       value = callback(value);
       while (low < high) {

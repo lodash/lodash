@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.3.1 <http://lodash.com>
+ * Lo-Dash v0.3.2 <http://lodash.com>
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
@@ -2384,7 +2384,7 @@
   }
 
   /**
-   * Checks if a `value` is an `arguments` object.
+   * Checks if `value` is an `arguments` object.
    *
    * @static
    * @memberOf _
@@ -2410,7 +2410,7 @@
   }
 
   /**
-   * Checks if a `value` is an array.
+   * Checks if `value` is an array.
    *
    * @static
    * @memberOf _
@@ -2430,7 +2430,7 @@
   };
 
   /**
-   * Checks if a `value` is a boolean (`true` or `false`) value.
+   * Checks if `value` is a boolean (`true` or `false`) value.
    *
    * @static
    * @memberOf _
@@ -2447,7 +2447,7 @@
   }
 
   /**
-   * Checks if a `value` is a date.
+   * Checks if `value` is a date.
    *
    * @static
    * @memberOf _
@@ -2464,7 +2464,7 @@
   }
 
   /**
-   * Checks if a `value` is a DOM element.
+   * Checks if `value` is a DOM element.
    *
    * @static
    * @memberOf _
@@ -2481,7 +2481,7 @@
   }
 
   /**
-   * Checks if a `value` is empty. Arrays or strings with a length of `0` and
+   * Checks if `value` is empty. Arrays or strings with a length of `0` and
    * objects with no own enumerable properties are considered "empty".
    *
    * @static
@@ -2671,8 +2671,11 @@
   }
 
   /**
-   * Checks if a `value` is a finite number.
+   * Checks if `value` is a finite number.
+   * Note: This is not the same as native `isFinite`, which will return true for
+   * booleans and other values. See http://es5.github.com/#x15.1.2.5.
    *
+   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -2694,7 +2697,7 @@
   }
 
   /**
-   * Checks if a `value` is a function.
+   * Checks if `value` is a function.
    *
    * @static
    * @memberOf _
@@ -2711,7 +2714,7 @@
   }
 
   /**
-   * Checks if a `value` is the language type of Object.
+   * Checks if `value` is the language type of Object.
    * (e.g. arrays, functions, objects, regexps, `new Number(0)`, and `new String('')`)
    *
    * @static
@@ -2734,10 +2737,11 @@
   }
 
   /**
-   * Checks if a `value` is `NaN`.
+   * Checks if `value` is `NaN`.
    * Note: This is not the same as native `isNaN`, which will return true for
    * `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
    *
+   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -2764,7 +2768,7 @@
   }
 
   /**
-   * Checks if a `value` is `null`.
+   * Checks if `value` is `null`.
    *
    * @deprecated
    * @static
@@ -2785,7 +2789,7 @@
   }
 
   /**
-   * Checks if a `value` is a number.
+   * Checks if `value` is a number.
    *
    * @static
    * @memberOf _
@@ -2802,7 +2806,7 @@
   }
 
   /**
-   * Checks if a `value` is a regular expression.
+   * Checks if `value` is a regular expression.
    *
    * @static
    * @memberOf _
@@ -2819,7 +2823,7 @@
   }
 
   /**
-   * Checks if a `value` is a string.
+   * Checks if `value` is a string.
    *
    * @static
    * @memberOf _
@@ -2836,7 +2840,7 @@
   }
 
   /**
-   * Checks if a `value` is `undefined`.
+   * Checks if `value` is `undefined`.
    *
    * @deprecated
    * @static
@@ -3359,7 +3363,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.3.1';
+  lodash.VERSION = '0.3.2';
 
   // assign static methods
   lodash.after = after;

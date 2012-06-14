@@ -534,7 +534,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('sortedIndex callback (slow path)')
+    Benchmark.Suite('sortedIndex callback')
       .add('Lo-Dash', function() {
         lodash.sortedIndex(words, 'twenty-five', function(value) {
           return wordToNumber[value];

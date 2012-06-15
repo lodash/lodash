@@ -22,6 +22,7 @@ For more information check out these screencasts over Lo-Dash:
 
  * [Introducing Lo-Dash](http://dl.dropbox.com/u/513327/allyoucanleet/post/20/file/screencast.mp4)
  * [Optimizations and custom builds](http://dl.dropbox.com/u/513327/allyoucanleet/post/21/file/screencast.mp4)
+ * [Lo-Dash’s origin and why it’s the better utility belt](http://dl.dropbox.com/u/513327/allyoucanleet/post/22/file/screencast.mp4)
 
 ## Features
 

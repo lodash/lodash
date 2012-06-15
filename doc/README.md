@@ -2336,7 +2336,7 @@ Produces a duplicate-value-free version of the `array` using strict equality for
 _.uniq([1, 2, 1, 3, 1]);
 // => [1, 2, 3]
 
-_.uiq([1, 1, 2, 2, 3], true);
+_.uniq([1, 1, 2, 2, 3], true);
 // => [1, 2, 3]
 
 _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return Math.floor(num); });

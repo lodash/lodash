@@ -184,7 +184,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('bind call')
+    Benchmark.Suite('`_.bind` (will use native if available and inferred fast)')
       .add('Lo-Dash', function() {
         lodash.bind(func, { 'name': 'moe' }, 'hi');
       })
@@ -194,7 +194,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('bound')
+    Benchmark.Suite('bound call')
       .add('Lo-Dash', function() {
         lodashBoundNormal();
       })
@@ -204,7 +204,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('bound partial')
+    Benchmark.Suite('bound and partially applied call')
       .add('Lo-Dash', function() {
         lodashBoundPartial();
       })
@@ -214,7 +214,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('bound constructor')
+    Benchmark.Suite('bound and called in a `new` expression, i.e. `new bound` (edge case)')
       .add('Lo-Dash', function() {
         new lodashBoundCtor();
       })
@@ -226,7 +226,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('each array')
+    Benchmark.Suite('`_.each` iterating an array')
       .add('Lo-Dash', function() {
         var result = [];
         lodash.each(numbers, function(num) { result.push(num * 2); });
@@ -238,7 +238,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('each array thisArg (slow path)')
+    Benchmark.Suite('`_.each` iterating an array with `thisArg` (slow path)')
       .add('Lo-Dash', function() {
         var result = [];
         lodash.each(numbers, function(num, index) {
@@ -254,7 +254,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('each object')
+    Benchmark.Suite('`_.each` iterating an object')
       .add('Lo-Dash', function() {
         var result = [];
         lodash.each(object, function(num) {
@@ -272,7 +272,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('find')
+    Benchmark.Suite('`_.find`')
       .add('Lo-Dash', function() {
         lodash.find(numbers, function(num) {
           return num === 19;
@@ -288,7 +288,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('flatten deep')
+    Benchmark.Suite('`_.flatten`')
       .add('Lo-Dash', function() {
         lodash.flatten(nestedNumbers);
       })
@@ -298,7 +298,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('flatten shallow')
+    Benchmark.Suite('`_.flatten` with `shallow`')
       .add('Lo-Dash', function() {
         lodash.flatten(nestedNumbers, true);
       })
@@ -310,7 +310,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('difference')
+    Benchmark.Suite('`_.difference`')
       .add('Lo-Dash', function() {
         lodash.difference(numbers, fourNumbers);
       })
@@ -322,7 +322,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('groupBy callback')
+    Benchmark.Suite('`_.groupBy` with `callback`')
       .add('Lo-Dash', function() {
         lodash.groupBy(numbers, function(num) { return num >> 1; });
       })
@@ -332,7 +332,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('groupBy property name')
+    Benchmark.Suite('`_.groupBy` with `property` name')
       .add('Lo-Dash', function() {
         lodash.groupBy(words, 'length');
       })
@@ -344,7 +344,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('indexOf')
+    Benchmark.Suite('`_.indexOf`')
       .add('Lo-Dash', function() {
         lodash.indexOf(numbers, 9);
       })
@@ -354,7 +354,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('indexOf isSorted')
+    Benchmark.Suite('`_.indexOf` with `isSorted`')
       .add('Lo-Dash', function() {
         lodash.indexOf(numbers, 19, true);
       })
@@ -366,7 +366,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('intersection')
+    Benchmark.Suite('`_.intersection`')
       .add('Lo-Dash', function() {
         lodash.intersection(numbers, fourNumbers, twoNumbers);
       })
@@ -378,7 +378,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('keys')
+    Benchmark.Suite('`_.keys` (uses native `Object.keys` if available)')
       .add('Lo-Dash', function() {
         lodash.keys(object);
       })
@@ -390,7 +390,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('lastIndexOf')
+    Benchmark.Suite('`_.lastIndexOf`')
       .add('Lo-Dash', function() {
         lodash.lastIndexOf(numbers, 9);
       })
@@ -402,7 +402,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('map')
+    Benchmark.Suite('`_.map`')
       .add('Lo-Dash', function() {
         lodash.map(objects, function(value) {
           return value.num;
@@ -416,7 +416,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('map thisArg (slow path)')
+    Benchmark.Suite('`_.map` with `thisArg` (slow path)')
       .add('Lo-Dash', function() {
         lodash.map(objects, function(value, index) {
           return this['key' + index] + value.num;
@@ -432,7 +432,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('max')
+    Benchmark.Suite('`_.max`')
       .add('Lo-Dash', function() {
         lodash.max(numbers);
       })
@@ -444,7 +444,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('min')
+    Benchmark.Suite('`_.min`')
       .add('Lo-Dash', function() {
         lodash.min(numbers);
       })
@@ -456,7 +456,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('pick')
+    Benchmark.Suite('`_.pick`')
       .add('Lo-Dash', function() {
         lodash.pick(object, 'key6', 'key13');
       })
@@ -468,7 +468,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('pluck')
+    Benchmark.Suite('`_.pluck`')
       .add('Lo-Dash', function() {
         lodash.pluck(objects, 'num');
       })
@@ -480,7 +480,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('shuffle')
+    Benchmark.Suite('`_.shuffle`')
       .add('Lo-Dash', function() {
         lodash.shuffle(numbers);
       })
@@ -492,7 +492,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('sortBy callback')
+    Benchmark.Suite('`_.sortBy` with `callback`')
       .add('Lo-Dash', function() {
         lodash.sortBy(numbers, function(num) { return Math.sin(num); });
       })
@@ -502,7 +502,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('sortBy callback thisArg (slow path)')
+    Benchmark.Suite('`_.sortBy` with `callback` and `thisArg` (slow path)')
       .add('Lo-Dash', function() {
         lodash.sortBy(numbers, function(num) { return this.sin(num); }, Math);
       })
@@ -512,7 +512,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('sortBy property name')
+    Benchmark.Suite('`_.sortBy` with `property` name')
       .add('Lo-Dash', function() {
         lodash.sortBy(words, 'length');
       })
@@ -524,7 +524,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('sortedIndex')
+    Benchmark.Suite('`_.sortedIndex`')
       .add('Lo-Dash', function() {
         lodash.sortedIndex(numbers, 25);
       })
@@ -534,7 +534,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('sortedIndex callback')
+    Benchmark.Suite('`_.sortedIndex` with `callback`')
       .add('Lo-Dash', function() {
         lodash.sortedIndex(words, 'twenty-five', function(value) {
           return wordToNumber[value];
@@ -550,7 +550,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('times')
+    Benchmark.Suite('`_.times`')
       .add('Lo-Dash', function() {
         var result = [];
         lodash.times(length, function(n) { result.push(n); });
@@ -562,7 +562,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('times thisArg')
+    Benchmark.Suite('`_.times` with `thisArg`')
       .add('Lo-Dash', function() {
         var result = [];
         lodash.times(length, function(n) { result.push(this.sin(n)); }, Math);
@@ -576,7 +576,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('union')
+    Benchmark.Suite('`_.union`')
       .add('Lo-Dash', function() {
         lodash.union(numbers, fourNumbers, twoNumbers);
       })
@@ -588,7 +588,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('uniq')
+    Benchmark.Suite('`_.uniq`')
       .add('Lo-Dash', function() {
         lodash.uniq(numbers.concat(fourNumbers, twoNumbers));
       })
@@ -598,7 +598,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('uniq callback')
+    Benchmark.Suite('`_.uniq` with `callback`')
       .add('Lo-Dash', function() {
         lodash.uniq(numbers.concat(fourNumbers, twoNumbers), function(num) {
           return num % 2;
@@ -614,7 +614,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('values')
+    Benchmark.Suite('`_.values`')
       .add('Lo-Dash', function() {
         lodash.values(object);
       })

@@ -1425,7 +1425,8 @@
       end = start || 0;
       start = 0;
     }
-
+    // use `Array(length)` so V8 will avoid the slower "dictionary" mode
+    // http://www.youtube.com/watch?v=XAqIpGU8ZZk#t=16m27s
     var index = -1,
         length = Math.max(Math.ceil((end - start) / step), 0),
         result = Array(length);

@@ -424,7 +424,7 @@
         }
       }
     }
-    // set additional template data values
+    // set additional template `data` values
     var args = data.args,
         arrayBranch = data.arrayBranch,
         objectBranch = data.objectBranch,
@@ -934,7 +934,7 @@
     if (!collection) {
       return [];
     }
-    if (toString.call(collection.toArray) == funcClass) {
+    if (collection.toArray && toString.call(collection.toArray) == funcClass) {
       return collection.toArray();
     }
     var length = collection.length;
@@ -999,10 +999,10 @@
     }
     var index = -1,
         length = array.length,
-        flattened = concat.apply(result, slice.call(arguments, 1));
+        flattened = concat.apply(result, arguments);
 
     while (++index < length) {
-      if (indexOf(flattened, array[index]) < 0) {
+      if (indexOf(flattened, array[index], length) < 0) {
         result.push(array[index]);
       }
     }
@@ -1731,12 +1731,11 @@
     if (!array) {
       return result;
     }
-    var excluded = slice.call(arguments, 1),
-        index = -1,
+    var index = -1,
         length = array.length;
 
     while (++index < length) {
-      if (indexOf(excluded, array[index]) < 0) {
+      if (indexOf(arguments, array[index], 1) < 0) {
         result.push(array[index]);
       }
     }
@@ -1911,8 +1910,7 @@
    *
    * var buttonView = {
    *  'label': 'lodash',
-   *  'onClick': function() { alert('clicked: ' + this.label); },
-   *  'onHover': function() { console.log('hovering: ' + this.label); }
+   *  'onClick': function() { alert('clicked: ' + this.label); }
    * };
    *
    * _.bindAll(buttonView);

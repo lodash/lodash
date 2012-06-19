@@ -312,10 +312,10 @@
   suites.push(
     Benchmark.Suite('`_.difference`')
       .add('Lo-Dash', function() {
-        lodash.difference(numbers, fourNumbers);
+        lodash.difference(numbers, fourNumbers, twoNumbers);
       })
       .add('Underscore', function() {
-        _.difference(numbers, fourNumbers);
+        _.difference(numbers, fourNumbers, twoNumbers);
       })
   );
 

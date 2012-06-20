@@ -43,6 +43,14 @@ For more information check out these screencasts over Lo-Dash:
 
 Lo-Dash has been tested in at least Chrome 5-19, Firefox 1.5-13, IE 6-9, Opera 9.25-12, Safari 3.0.4-5.1.3, Node.js 0.4.8-0.6.18, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC3.
 
+## Test Lo-Dash
+
+ * Run the official [test suite](http://lodash.com/tests).
+ * Test Lo-Dash's performance:
+   * Run the full official [benchmark suite](http://lodash.com/benchmarks).
+   * Run an existing function test on jsPerf by searching for "[lodash](http://jsperf.com/search?q=lodash)" and "[lo-dash](http://jsperf.com/search?q=lo-dash)" 
+   * Create your own test at [jsPerf](http://jsperf.com)
+
 ## Custom builds
 
 Custom builds make it easy to create lightweight versions of Lo-Dash containing only the methods you need.
@@ -94,6 +102,8 @@ In browsers:
 
 ~~~ html
 <script src="lodash.js"></script>
+or use the CDN:
+<script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.3.2/lodash.min.js"></script>
 ~~~
 
 Using [npm](http://npmjs.org/):

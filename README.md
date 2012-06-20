@@ -96,6 +96,7 @@ In browsers:
 
 ~~~ html
 <script src="lodash.js"></script>
+
 or use the CDN:
 <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.3.2/lodash.min.js"></script>
 ~~~

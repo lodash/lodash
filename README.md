@@ -15,6 +15,8 @@ Lo-Dash’s performance is gained by avoiding slower native methods, instead opt
 
 We’ve got [API docs](http://lodash.com/docs), [benchmarks](http://lodash.com/benchmarks), and [unit tests](http://lodash.com/tests).
 
+You can create your own benchmark at [jsPerf](http://jsperf.com), and search for existing tests named "[lo-dash](http://jsperf.com/search?q=lo-dash)" & "[lodash](http://jsperf.com/search?q=lodash)"
+
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
 
 ## Screencasts
@@ -42,14 +44,6 @@ For more information check out these screencasts over Lo-Dash:
 ## Support
 
 Lo-Dash has been tested in at least Chrome 5-19, Firefox 1.5-13, IE 6-9, Opera 9.25-12, Safari 3.0.4-5.1.3, Node.js 0.4.8-0.6.18, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC3.
-
-## Test Lo-Dash
-
- * Run the official [test suite](http://lodash.com/tests).
- * Test Lo-Dash's performance:
-   * Run the full official [benchmark suite](http://lodash.com/benchmarks).
-   * Run an existing function test on jsPerf by searching for "[lodash](http://jsperf.com/search?q=lodash)" and "[lo-dash](http://jsperf.com/search?q=lo-dash)" 
-   * Create your own test at [jsPerf](http://jsperf.com)
 
 ## Custom builds
 

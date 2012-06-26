@@ -168,7 +168,7 @@
     'shuffle': [],
     'size': ['keys'],
     'some': ['identity'],
-    'sortBy': [],
+    'sortBy': ['map'],
     'sortedIndex': ['bind'],
     'tap': [],
     'template': ['escape'],

@@ -327,6 +327,14 @@
       deepEqual(actual.constructor, [1.3]);
       deepEqual(actual.hasOwnProperty, [2.1, 2.4]);
     });
+    
+    test('should work with an object for `collection`', function() {
+      var actual = _.groupBy({ 'a': 1.3, 'b': 2.1, 'c': 2.4 }, function(num) {
+        return Math.floor(num);
+      });
+
+      deepEqual(actual, { '1': [1.3], '2': [2.1, 2.4] });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -592,6 +600,14 @@
       var actual = _.sortBy([1, 2, 3], function(num) {
         return this.sin(num);
       }, Math);
+
+      deepEqual(actual, [3, 1, 2]);
+    });
+    
+    test('should work with an object for `collection`', function() {
+      var actual = _.sortBy({ 'a': 1, 'b': 2, 'c': 3 }, function(num) {
+        return Math.sin(num);
+      });
 
       deepEqual(actual, [3, 1, 2]);
     });

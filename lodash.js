@@ -3078,9 +3078,8 @@
   }
 
   /**
-   * A micro-templating method, similar to John Resig's implementation.
-   * Lo-Dash templating handles arbitrary delimiters, preserves whitespace, and
-   * correctly escapes quotes within interpolated code.
+   * A micro-templating method that handles arbitrary delimiters, preserves
+   * whitespace, and correctly escapes quotes within interpolated code.
    *
    * @static
    * @memberOf _
@@ -3129,9 +3128,15 @@
    * </script>
    */
   function template(text, data, options) {
+    // based on John Resig's `tmpl` implementation
+    // http://ejohn.org/blog/javascript-micro-templating/
+    // and Laura Doktorova's doT.js
+    // https://github.com/olado/doT
     options || (options = {});
 
-    var result,
+    var isEvaluating,
+        isInterpolating,
+        result,
         defaults = lodash.templateSettings,
         escapeDelimiter = options.escape,
         evaluateDelimiter = options.evaluate,
@@ -3154,10 +3159,10 @@
       text = text.replace(escapeDelimiter, tokenizeEscape);
     }
     if (interpolateDelimiter) {
-      text = text.replace(interpolateDelimiter, tokenizeInterpolate);
+      isInterpolating = text != (text = text.replace(interpolateDelimiter, tokenizeInterpolate));
     }
     if (evaluateDelimiter) {
-      text = text.replace(evaluateDelimiter, tokenizeEvaluate);
+      isEvaluating = text != (text = text.replace(evaluateDelimiter, tokenizeEvaluate));
     }
 
     // escape characters that cannot be included in string literals and
@@ -3176,8 +3181,16 @@
     }
 
     text = 'function(' + variable + ') {\n' +
-      'var __p, __t, __j = Array.prototype.join;\n' +
-      'function print() { __p += __j.call(arguments, \'\') }\n' +
+      'var __p' +
+      (isInterpolating
+        ? ', __t'
+        : ''
+      ) +
+      (isEvaluating
+        ? ', __j = Array.prototype.join;\n' +
+          'function print() { __p += __j.call(arguments, \'\') }\n'
+        : ';\n'
+      ) +
       text +
       'return __p\n}';
 

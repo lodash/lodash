@@ -693,6 +693,43 @@
   var forEach = createIterator(baseIteratorOptions, forEachIteratorOptions);
 
   /**
+   * Splits `collection` into sets, grouped by the result of running each value
+   * through `callback`. The `callback` is bound to `thisArg` and invoked with 3
+   * arguments; (value, index, array). The `callback` argument may also be the
+   * name of a property to group by.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Function|String} callback The function called per iteration or
+   *  property name to group by.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Object} Returns an object of grouped values.
+   * @example
+   *
+   * _.groupBy([1.3, 2.1, 2.4], function(num) { return Math.floor(num); });
+   * // => { '1': [1.3], '2': [2.1, 2.4] }
+   *
+   * _.groupBy([1.3, 2.1, 2.4], function(num) { return this.floor(num); }, Math);
+   * // => { '1': [1.3], '2': [2.1, 2.4] }
+   *
+   * _.groupBy(['one', 'two', 'three'], 'length');
+   * // => { '3': ['one', 'two'], '5': ['three'] }
+   */
+  var groupBy = createIterator(baseIteratorOptions, {
+    'init': '{}',
+    'top':
+      'var prop, isFunc = typeof callback == \'function\';\n' +
+      'if (isFunc && thisArg) callback = iteratorBind(callback, thisArg)',
+    'inLoop':
+      'prop = isFunc\n' +
+      '  ? callback(collection[index], index, collection)\n' +
+      '  : collection[index][callback];\n' +
+      '(hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(collection[index])'
+  });
+
+  /**
    * Invokes the method named by `methodName` on each element in the `collection`.
    * Additional arguments will be passed to each invoked method. If `methodName`
    * is a function it will be invoked for, and `this` bound to, each element
@@ -916,6 +953,67 @@
     'inLoop': everyIteratorOptions.inLoop.replace('!', '')
   });
 
+
+  /**
+   * Produces a new sorted array, ranked in ascending order by the results of
+   * running each element of `collection` through `callback`. The `callback` is
+   * bound to `thisArg` and invoked with 3 arguments; (value, index, array). The
+   * `callback` argument may also be the name of a property to sort by (e.g. 'length').
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Function|String} callback The function called per iteration or
+   *  property name to sort by.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Array} Returns a new array of sorted values.
+   * @example
+   *
+   * _.sortBy([1, 2, 3], function(num) { return Math.sin(num); });
+   * // => [3, 1, 2]
+   *
+   * _.sortBy([1, 2, 3], function(num) { return this.sin(num); }, Math);
+   * // => [3, 1, 2]
+   *
+   * _.sortBy(['larry', 'brendan', 'moe'], 'length');
+   * // => ['moe', 'larry', 'brendan']
+   */
+  function sortBy(collection, callback, thisArg) {
+    if (typeof callback == 'string') {
+      var prop = callback;
+      callback = function(collection) { return collection[prop]; };
+    } else if (thisArg) {
+      callback = iteratorBind(callback, thisArg);
+    }
+  
+    var result = map(collection, function(value, index) {
+      return {
+        'criteria': callback(value, index, collection),
+        'value': value
+      };
+    });
+
+    result.sort(function(left, right) {
+      var a = left.criteria,
+          b = right.criteria;
+
+      if (a === undefined) {
+        return 1;
+      }
+      if (b === undefined) {
+        return -1;
+      }
+      return a < b ? -1 : a > b ? 1 : 0;
+    });
+
+    var length = result.length;
+    while (length--) {
+      result[length] = result[length].value;
+    }
+    return result;
+  }
+
   /**
    * Converts the `collection`, into an array. Useful for converting the
    * `arguments` object.
@@ -1068,53 +1166,6 @@
       } else {
         result.push(value);
       }
-    }
-    return result;
-  }
-
-  /**
-   * Splits `array` into sets, grouped by the result of running each value
-   * through `callback`. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, index, array). The `callback` argument may also be the
-   * name of a property to group by.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to iterate over.
-   * @param {Function|String} callback The function called per iteration or
-   *  property name to group by.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Object} Returns an object of grouped values.
-   * @example
-   *
-   * _.groupBy([1.3, 2.1, 2.4], function(num) { return Math.floor(num); });
-   * // => { '1': [1.3], '2': [2.1, 2.4] }
-   *
-   * _.groupBy([1.3, 2.1, 2.4], function(num) { return this.floor(num); }, Math);
-   * // => { '1': [1.3], '2': [2.1, 2.4] }
-   *
-   * _.groupBy(['one', 'two', 'three'], 'length');
-   * // => { '3': ['one', 'two'], '5': ['three'] }
-   */
-  function groupBy(array, callback, thisArg) {
-    var result = {};
-    if (!array) {
-      return result;
-    }
-    var prop,
-        value,
-        index = -1,
-        isFunc = typeof callback == 'function',
-        length = array.length;
-
-    if (isFunc && thisArg) {
-      callback = iteratorBind(callback, thisArg);
-    }
-    while (++index < length) {
-      value = array[index];
-      prop = isFunc ? callback(value, index, array) : value[callback];
-      (hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(value);
     }
     return result;
   }
@@ -1490,70 +1541,6 @@
       rand = Math.floor(Math.random() * (index + 1));
       result[index] = result[rand];
       result[rand] = array[index];
-    }
-    return result;
-  }
-
-  /**
-   * Produces a new sorted array, ranked in ascending order by the results of
-   * running each element of `array` through `callback`. The `callback` is
-   * bound to `thisArg` and invoked with 3 arguments; (value, index, array). The
-   * `callback` argument may also be the name of a property to sort by (e.g. 'length').
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to iterate over.
-   * @param {Function|String} callback The function called per iteration or
-   *  property name to sort by.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of sorted values.
-   * @example
-   *
-   * _.sortBy([1, 2, 3], function(num) { return Math.sin(num); });
-   * // => [3, 1, 2]
-   *
-   * _.sortBy([1, 2, 3], function(num) { return this.sin(num); }, Math);
-   * // => [3, 1, 2]
-   *
-   * _.sortBy(['larry', 'brendan', 'moe'], 'length');
-   * // => ['moe', 'larry', 'brendan']
-   */
-  function sortBy(array, callback, thisArg) {
-    if (!array) {
-      return [];
-    }
-    if (typeof callback == 'string') {
-      var prop = callback;
-      callback = function(array) { return array[prop]; };
-    } else if (thisArg) {
-      callback = iteratorBind(callback, thisArg);
-    }
-    var index = -1,
-        length = array.length,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = {
-        'criteria': callback(array[index], index, array),
-        'value': array[index]
-      };
-    }
-    result.sort(function(left, right) {
-      var a = left.criteria,
-          b = right.criteria;
-
-      if (a === undefined) {
-        return 1;
-      }
-      if (b === undefined) {
-        return -1;
-      }
-      return a < b ? -1 : a > b ? 1 : 0;
-    });
-
-    while (length--) {
-      result[length] = result[length].value;
     }
     return result;
   }

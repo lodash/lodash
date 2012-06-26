@@ -582,14 +582,28 @@
   QUnit.module('lodash.size');
 
   (function() {
+    var args = arguments;
+
     test('should detect the size of a string value', function() {
       equal(_.size('abc'), 3);
+    });
+
+    test('should allow a falsey `object` argument', function() {
+      try {
+        var actual = [_.size(), _.size(null), _.size(false), _.size(0)];
+      } catch(e) { }
+
+      deepEqual(actual, [0, 0, 0, 0]);
+    });
+
+    test('should work with `arguments` objects (test in IE < 9)', function() {
+      equal(_.size(args), 3);
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       equal(_.size(shadowed), 7);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 

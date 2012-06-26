@@ -2918,10 +2918,11 @@
    * // => 5
    */
   function size(value) {
-    var className = toString.call(value);
-    return className == arrayClass || className == stringClass
-      ? value.length
-      : keys(value).length;
+    if (!value) {
+      return 0;
+    }
+    var length = value.length;
+    return length === length >>> 0 ? value.length : keys(value).length;
   }
 
   /**

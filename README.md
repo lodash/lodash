@@ -8,14 +8,14 @@ Lo-Dash’s performance is gained by avoiding slower native methods, instead opt
 
  * [Development source](https://raw.github.com/bestiejs/lodash/v0.3.2/lodash.js)
  * [Production source](https://raw.github.com/bestiejs/lodash/v0.3.2/lodash.min.js)
- * For faster serving, use [cdn js'](https://www.cdnjs.com/#/search/lodash) cloud hosted [v0.3.2 file here](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.3.2/lodash.min.js), thanks to [CloudFlare](http://www.cloudflare.com/)!
+ * Available on [cdnjs](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.3.2/lodash.min.js) thanks to [CloudFlare](http://www.cloudflare.com/)
  * For optimal performance, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
 ## Dive in
 
 We’ve got [API docs](http://lodash.com/docs), [benchmarks](http://lodash.com/benchmarks), and [unit tests](http://lodash.com/tests).
 
-You can create your own benchmark at [jsPerf](http://jsperf.com), and search for existing tests named "[lo-dash](http://jsperf.com/search?q=lo-dash)" & "[lodash](http://jsperf.com/search?q=lodash)"
+Create your own benchmarks at [jsPerf](http://jsperf.com), or [search](http://jsperf.com/search?q=lodash) for existing ones.
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
 
@@ -25,7 +25,7 @@ For more information check out these screencasts over Lo-Dash:
 
  * [Introducing Lo-Dash](https://vimeo.com/44154599)
  * [Optimizations and custom builds](https://vimeo.com/44154601)
- * [Lo-Dash’s origin and why it’s the better utility belt](https://vimeo.com/44154600)
+ * [Lo-Dash’s origin and why it’s a better utility belt](https://vimeo.com/44154600)
 
 ## Features
 

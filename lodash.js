@@ -1472,7 +1472,7 @@
    */
   function range(start, end, step) {
     step || (step = 1);
-    if (arguments.length < 2) {
+    if (end == null) {
       end = start || 0;
       start = 0;
     }

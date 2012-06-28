@@ -986,7 +986,7 @@
     } else if (thisArg) {
       callback = iteratorBind(callback, thisArg);
     }
-  
+
     var result = map(collection, function(value, index) {
       return {
         'criteria': callback(value, index, collection),
@@ -1479,7 +1479,7 @@
     // use `Array(length)` so V8 will avoid the slower "dictionary" mode
     // http://www.youtube.com/watch?v=XAqIpGU8ZZk#t=16m27s
     var index = -1,
-        length = Math.max(Math.ceil((end - start) / step), 0),
+        length = Math.max(0, Math.ceil((end - start) / step)),
         result = Array(length);
 
     while (++index < length) {

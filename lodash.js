@@ -840,7 +840,7 @@
     'args': 'collection, callback, accumulator, thisArg',
     'init': 'accumulator',
     'top':
-      'var noaccum = arguments.length < 3;\n' +
+      'var noaccum = accumulator == null;\n' +
       'if (thisArg) callback = iteratorBind(callback, thisArg)',
     'beforeLoop': {
       'array': 'if (noaccum) result = collection[++index]'
@@ -879,7 +879,7 @@
     }
 
     var length = collection.length,
-        noaccum = arguments.length < 3;
+        noaccum = accumulator == null;
 
     if(thisArg) {
       callback = iteratorBind(callback, thisArg);

@@ -271,6 +271,17 @@
   }
 
   /**
+   * Gets the `_.isArguments` fallback snippet from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `isArguments` fallback snippet.
+   */
+  function getIsArgumentsFallback(source) {
+    return (source.match(/(?: *\/\/.*)*\s*if *\(!(?:lodash\.)?isArguments[^)]+\)[\s\S]+?};?\s*}\n/) || [''])[0];
+  }
+
+  /**
    * Gets the real name, not alias, of a given `funcName`.
    *
    * @private
@@ -380,7 +391,7 @@
    * @returns {String} Returns the source with the `isArguments` fallback removed.
    */
   function removeIsArgumentsFallback(source) {
-    return source.replace(/(?: *\/\/.*)*\s*if *\(!isArguments[^)]+\)[\s\S]+?};?\s*}\n/, '');
+    return source.replace(getIsArgumentsFallback(source), '');
   }
 
   /**
@@ -555,6 +566,82 @@
     source = source.replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
       return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
     });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  // simplify template snippets
+  source = source.replace(
+    RegExp(
+      "'else if \\(thisArg\\) \\{\\\\n' \\+\\s*" +
+      "'  callback = iteratorBind\\(callback, thisArg\\)\\\\n' \\+\\s*" +
+      "'}'"
+    , 'g'),
+    "'else if (thisArg) callback = iteratorBind(callback, thisArg)'"
+  );
+
+  // DRY out isType methods
+  (function() {
+    var iteratorName = lodash.find(['forEach', 'forOwn'], function(funcName) {
+      return !isRemoved(source, funcName);
+    });
+
+    if (!iteratorName) {
+      return;
+    }
+    var snippet,
+        funcNames = [],
+        result = [],
+        token = '__isTypeToken__';
+
+    lodash.forOwn({
+      'Arguments': "'[object Arguments]'",
+      'Date': 'dateClass',
+      'Function': 'funcClass',
+      'Number': 'numberClass',
+      'RegExp': 'regexpClass',
+      'String': 'stringClass'
+    }, function(value, key) {
+      var funcName = 'is' + key,
+          funcCode = matchFunction(source, funcName);
+
+      if (funcCode) {
+        if (!snippet) {
+          snippet = funcCode;
+        }
+        funcNames.push(funcName);
+        result.push("'" + key + "': " + value);
+      }
+    });
+
+    // skip this optimization if there are less than 2 functions
+    if (result.length < 2) {
+      return;
+    }
+    // add a token to mark the position to insert new code
+    source = source.replace(snippet, '\n' + token + '\n' + snippet);
+
+    // remove existing isType functions
+    funcNames.forEach(function(funcName) {
+      source = removeFunction(source, funcName);
+    });
+
+    // replace token with new DRY code
+    source = source.replace(token,
+      '  // add `_.' + funcNames.join('`, `_.') + '`\n' +
+      '  ' + iteratorName + '({\n    ' + result.join(',\n    ') + '\n  }, function(className, key) {\n' +
+      "    lodash['is' + key] = function(value) {\n" +
+      '      return toString.call(value) == className;\n' +
+      '    };\n' +
+      '  });'
+    );
+
+    // tweak `isArguments` fallback
+    snippet = getIsArgumentsFallback(source);
+    if (snippet) {
+      result = '\n' + snippet.replace(/isArguments/g, 'lodash.$&');
+      source = source.replace(snippet, result);
+    }
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -462,6 +462,28 @@
   }
 
   /**
+   * Used by `sortBy()` to compare values of the array returned by `toSortable()`,
+   * sorting them in ascending order.
+   *
+   * @private
+   * @param {Object} a The object to compare to `b`.
+   * @param {Object} b The object to compare to `a`.
+   * @returns {Number} Returns `-1` if `a` < `b`, `0` if `a` == `b`, or `1` if `a` > `b`.
+   */
+  function compareAscending(a, b) {
+    a = a.criteria;
+    b = b.criteria;
+
+    if (a === undefined) {
+      return 1;
+    }
+    if (b === undefined) {
+      return -1;
+    }
+    return a < b ? -1 : a > b ? 1 : 0;
+  }
+
+  /**
    * Used by `template()` to replace tokens with their corresponding code snippets.
    *
    * @private
@@ -534,7 +556,7 @@
     'init': '[]',
     'inLoop': 'result.push(index)'
   });
-
+  
   /**
    * Used by `template()` to replace "escape" template delimiters with tokens.
    *
@@ -576,6 +598,35 @@
     tokenized[index] = "';\n" + value + ";\n__p += '";
     return token + index;
   }
+
+  /**
+   * Converts `collection` to an array of objects by running each element through
+   * a transformation `callback`. Each object has a `criteria` property containing
+   * the transformed value to be sorted and a `value` property containing the
+   * original unmodified value. The `callback` is invoked with 3 arguments;
+   * for arrays they are (value, index, array) and for objects they are
+   * (value, key, object).
+   *
+   * @private
+   * @param {Array|Object} collection The collection to convert.
+   * @param {Function} callback The function called per iteration.
+   * @returns {Array} Returns a new array of objects to sort.
+   */
+  var toSortable = createIterator(mapIteratorOptions, {
+    'args': 'collection, callback',
+    'inLoop': {
+      'array':
+        'result[index] = {\n' +
+        '  criteria: callback(collection[index], index, collection),\n' +
+        '  value: collection[index]\n' +
+        '}',
+      'object':
+        'result.push({\n' +
+        '  criteria: callback(collection[index], index, collection),\n' +
+        '  value: collection[index]\n' +
+        '})'
+    }
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -694,9 +745,10 @@
 
   /**
    * Splits `collection` into sets, grouped by the result of running each value
-   * through `callback`. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, index, array). The `callback` argument may also be the
-   * name of a property to group by.
+   * through `callback`. The `callback` is bound to `thisArg` and invoked with
+   * 3 arguments; for arrays they are (value, index, array) and for objects they
+   * are (value, key, object). The `callback` argument may also be the name of a
+   * property to group by.
    *
    * @static
    * @memberOf _
@@ -956,9 +1008,11 @@
 
   /**
    * Produces a new sorted array, ranked in ascending order by the results of
-   * running each element of `collection` through `callback`. The `callback` is
-   * bound to `thisArg` and invoked with 3 arguments; (value, index, array). The
-   * `callback` argument may also be the name of a property to sort by (e.g. 'length').
+   * running each element of `collection` through a transformation `callback`.
+   * The `callback` is bound to `thisArg` and invoked with 3 arguments;
+   * for arrays they are (value, index, array) and for objects they are
+   * (value, key, object). The `callback` argument may also be the name of a
+   * property to sort by (e.g. 'length').
    *
    * @static
    * @memberOf _
@@ -986,28 +1040,9 @@
     } else if (thisArg) {
       callback = iteratorBind(callback, thisArg);
     }
-  
-    var result = map(collection, function(value, index) {
-      return {
-        'criteria': callback(value, index, collection),
-        'value': value
-      };
-    });
+    var result = toSortable(collection, callback).sort(compareAscending),
+        length = result.length;
 
-    result.sort(function(left, right) {
-      var a = left.criteria,
-          b = right.criteria;
-
-      if (a === undefined) {
-        return 1;
-      }
-      if (b === undefined) {
-        return -1;
-      }
-      return a < b ? -1 : a > b ? 1 : 0;
-    });
-
-    var length = result.length;
     while (length--) {
       result[length] = result[length].value;
     }

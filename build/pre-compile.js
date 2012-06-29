@@ -226,20 +226,24 @@
     // remove debug sourceURL use in `_.template`
     source = source.replace(/(?:\s*\/\/.*\n)* *if *\(useSourceURL[^}]+}/, '');
 
-    // minify `_.sortBy` internal properties
+    // minify internal properties used by `_.sortBy`
     (function() {
       var properties = ['criteria', 'value'],
-          snippet = (source.match(/( +)function sortBy\b[\s\S]+?\n\1}/) || 0)[0],
-          result = snippet;
+          snippets = source.match(/( +)(?:function compareAscending|function sortBy|var toSortable)\b[\s\S]+?\n\1}/g);
 
-      if (snippet) {
+      if (!snippets) {
+        return;
+      }
+      snippets.forEach(function(snippet) {
+        var result = snippet;
+
         // minify properties
         properties.forEach(function(property, index) {
           result = result.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
         });
         // replace with modified snippet
         source = source.replace(snippet, result);
-      }
+      });
     }());
 
     // minify all compilable snippets

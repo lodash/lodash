@@ -451,7 +451,7 @@
     // create the function factory
     var factory = Function(
         'arrayClass, funcClass, hasOwnProperty, identity, iteratorBind, objectTypes, ' +
-        'slice, stringClass, toString, undefined',
+        'slice, stringClass, toString',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
@@ -556,7 +556,7 @@
     'init': '[]',
     'inLoop': 'result.push(index)'
   });
-  
+
   /**
    * Used by `template()` to replace "escape" template delimiters with tokens.
    *
@@ -1163,7 +1163,7 @@
    */
   function first(array, n, guard) {
     if (array) {
-      return (n == undefined || guard) ? array[0] : slice.call(array, 0, n);
+      return (n == null || guard) ? array[0] : slice.call(array, 0, n);
     }
   }
 
@@ -1273,7 +1273,7 @@
     if (!array) {
       return [];
     }
-    return slice.call(array, 0, -((n == undefined || guard) ? 1 : n));
+    return slice.call(array, 0, -((n == null || guard) ? 1 : n));
   }
 
   /**
@@ -1331,7 +1331,7 @@
   function last(array, n, guard) {
     if (array) {
       var length = array.length;
-      return (n == undefined || guard) ? array[length - 1] : slice.call(array, -n || length);
+      return (n == null || guard) ? array[length - 1] : slice.call(array, -n || length);
     }
   }
 
@@ -1514,7 +1514,7 @@
     // use `Array(length)` so V8 will avoid the slower "dictionary" mode
     // http://www.youtube.com/watch?v=XAqIpGU8ZZk#t=16m27s
     var index = -1,
-        length = Math.max(Math.ceil((end - start) / step), 0),
+        length = Math.max(0, Math.ceil((end - start) / step)),
         result = Array(length);
 
     while (++index < length) {
@@ -1546,7 +1546,7 @@
     if (!array) {
       return [];
     }
-    return slice.call(array, (n == undefined || guard) ? 1 : n);
+    return slice.call(array, (n == null || guard) ? 1 : n);
   }
 
   /**
@@ -2012,7 +2012,7 @@
         timeoutId;
 
     function delayed() {
-      timeoutId = undefined;
+      timeoutId = null;
       if (!immediate) {
         func.apply(thisArg, args);
       }
@@ -2197,7 +2197,7 @@
 
     function trailingCall() {
       lastCalled = new Date;
-      timeoutId = undefined;
+      timeoutId = null;
       func.apply(thisArg, args);
     }
 
@@ -2290,7 +2290,7 @@
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
   var defaults = createIterator(extendIteratorOptions, {
-    'inLoop': 'if (object[index] == undefined)' + extendIteratorOptions.inLoop
+    'inLoop': 'if (object[index] == null)' + extendIteratorOptions.inLoop
   });
 
   /**
@@ -2560,8 +2560,8 @@
       // treat `+0` vs. `-0` as not equal
       return a !== 0 || (1 / a == 1 / b);
     }
-    // a strict comparison is necessary because `null == undefined`
-    if (a == undefined || b == undefined) {
+    // a strict comparison is necessary because `undefined == null`
+    if (a == null || b == null) {
       return a === b;
     }
     // unwrap any wrapped objects

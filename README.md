@@ -157,7 +157,7 @@ git submodule update --init
 
 ## Closed Underscore.js issues
 
- * Allow iteration of objects with a `length` property [[#148](https://github.com/documentcloud/underscore/issues/148), [#154](https://github.com/documentcloud/underscore/issues/154), [#252](https://github.com/documentcloud/underscore/issues/252), [#448](https://github.com/documentcloud/underscore/issues/448), [test](https://github.com/bestiejs/lodash/blob/1ba47a7c2a35552796f0c75dc2b46660e230f842/test/test.js#L271-276)]
+ * Allow iteration of objects with a `length` property [[#148](https://github.com/documentcloud/underscore/issues/148), [#154](https://github.com/documentcloud/underscore/issues/154), [#252](https://github.com/documentcloud/underscore/issues/252), [#448](https://github.com/documentcloud/underscore/issues/448), [#659](https://github.com/documentcloud/underscore/issues/659), [test](https://github.com/bestiejs/lodash/blob/1ba47a7c2a35552796f0c75dc2b46660e230f842/test/test.js#L271-276)]
  * Ensure "Arrays" category methods allow falsey `array` arguments [[test](https://github.com/bestiejs/lodash/blob/1ba47a7c2a35552796f0c75dc2b46660e230f842/test/test.js#L758-790)]
  * Ensure array-like objects with invalid `length` properties are treated like regular objects [[test](https://github.com/bestiejs/lodash/blob/1ba47a7c2a35552796f0c75dc2b46660e230f842/test/test.js#L242-248), [test](https://github.com/bestiejs/lodash/blob/1ba47a7c2a35552796f0c75dc2b46660e230f842/test/test.js#L560-569), [test](https://github.com/bestiejs/lodash/blob/1ba47a7c2a35552796f0c75dc2b46660e230f842/test/test.js#L705-708)]
  * Ensure `_(…)` returns passed wrapper instances [[test](https://github.com/bestiejs/lodash/blob/1ba47a7c2a35552796f0c75dc2b46660e230f842/test/test.js#L106-109)]

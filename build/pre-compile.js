@@ -14,7 +14,6 @@
     'className',
     'collection',
     'ctor',
-    'false',
     'funcClass',
     'hasOwnProperty',
     'identity',
@@ -36,8 +35,6 @@
     'target',
     'thisArg',
     'toString',
-    'true',
-    'undefined',
     'value'
   ];
 
@@ -270,16 +267,10 @@
           isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
           result = snippet;
 
-
       // add brackets to whitelisted properties so Closure Compiler won't mung them
       result = result.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
 
       if (isCreateIterator) {
-        // add `true` and `false` arguments to be minified
-        result = result
-          .replace(/(Function\(\s*'[\s\S]+?)undefined/, '$1true,false,undefined')
-          .replace(/factory\([^)]+/, '$&,true,false');
-
         // replace with modified snippet early and clip snippet so other arguments
         // aren't minified
         source = source.replace(snippet, result);
@@ -294,12 +285,6 @@
         // correct `typeof x == 'object'`
         if (variable == 'object') {
           result = result.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), "$1object'");
-        }
-        // correct external boolean literals
-        else if (variable == 'true' || variable == 'false') {
-          result = result
-            .replace(RegExp(': *' + minNames[index] + '([,\\n])', 'g'), ':' + variable + '$1')
-            .replace(RegExp('\\b' + minNames[index] + ';', 'g'), variable + ';');
         }
       });
 

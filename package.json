@@ -31,6 +31,10 @@
     "type": "git",
     "url": "https://github.com/bestiejs/lodash.git"
   },
+  "scripts": {
+    "build": "node build",
+    "test": "node test/test"
+  },
   "engines": [
     "node",
     "rhino"

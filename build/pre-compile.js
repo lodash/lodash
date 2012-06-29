@@ -13,6 +13,7 @@
     'callback',
     'className',
     'collection',
+    'compareAscending',
     'ctor',
     'funcClass',
     'hasOwnProperty',
@@ -25,6 +26,7 @@
     'noaccum',
     'object',
     'objectTypes',
+    'prop',
     'property',
     'result',
     'skipProto',
@@ -206,6 +208,9 @@
     // remove brackets from `_.escape()` in `tokenizeEscape`
     source = source.replace("_['escape'](\"", '_.escape("');
 
+    // remove brackets from `result[length].value` in `_.sortBy`
+    source = source.replace("result[length]['value']", 'result[length].value');
+
     // remove whitespace from string literals
     source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {
       // avoids removing the '\n' of the `stringEscapes` object
@@ -226,7 +231,7 @@
     // minify internal properties used by `_.sortBy`
     (function() {
       var properties = ['criteria', 'value'],
-          snippets = source.match(/( +)(?:function compareAscending|function sortBy|var toSortable)\b[\s\S]+?\n\1}/g);
+          snippets = source.match(/( +)(?:function compareAscending|var sortBy)\b[\s\S]+?\n\1}/g);
 
       if (!snippets) {
         return;

@@ -286,7 +286,8 @@
 
   /**
    * Reusable iterator options shared by
-   * `every`, `filter`, `find`, `forEach`, `forIn`, `forOwn`, `map`, `reject`, and `some`.
+   * `every`, `filter`, `find`, `forEach`, `forIn`, `forOwn`, `groupBy`, `map`,
+   * `reject`, `some`, and `sortBy`.
    */
   var baseIteratorOptions = {
     'args': 'collection, callback, thisArg',
@@ -339,7 +340,7 @@
     }
   };
 
- /** Reusable iterator options for `invoke`, `map`, and `pluck` */
+ /** Reusable iterator options for `invoke`, `map`, `pluck`, and `sortBy` */
   var mapIteratorOptions = {
     'init': '',
     'exit': 'if (!collection) return []',
@@ -450,20 +451,20 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayClass, funcClass, hasOwnProperty, identity, iteratorBind, objectTypes, ' +
-        'slice, stringClass, toString',
+        'arrayClass, compareAscending, funcClass, hasOwnProperty, identity, ' +
+        'iteratorBind, objectTypes, slice, stringClass, toString',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayClass, funcClass, hasOwnProperty, identity, iteratorBind, objectTypes,
-      slice, stringClass, toString
+      arrayClass, compareAscending, funcClass, hasOwnProperty, identity,
+      iteratorBind, objectTypes, slice, stringClass, toString
     );
   }
 
   /**
-   * Used by `sortBy()` to compare values of the array returned by `toSortable()`,
-   * sorting them in ascending order.
+   * Used by `sortBy()` to compare transformed values of `collection`, sorting
+   * them in ascending order.
    *
    * @private
    * @param {Object} a The object to compare to `b`.
@@ -598,35 +599,6 @@
     tokenized[index] = "';\n" + value + ";\n__p += '";
     return token + index;
   }
-
-  /**
-   * Converts `collection` to an array of objects by running each element through
-   * a transformation `callback`. Each object has a `criteria` property containing
-   * the transformed value to be sorted and a `value` property containing the
-   * original unmodified value. The `callback` is invoked with 3 arguments;
-   * for arrays they are (value, index, array) and for objects they are
-   * (value, key, object).
-   *
-   * @private
-   * @param {Array|Object} collection The collection to convert.
-   * @param {Function} callback The function called per iteration.
-   * @returns {Array} Returns a new array of objects to sort.
-   */
-  var toSortable = createIterator(mapIteratorOptions, {
-    'args': 'collection, callback',
-    'inLoop': {
-      'array':
-        'result[index] = {\n' +
-        '  criteria: callback(collection[index], index, collection),\n' +
-        '  value: collection[index]\n' +
-        '}',
-      'object':
-        'result.push({\n' +
-        '  criteria: callback(collection[index], index, collection),\n' +
-        '  value: collection[index]\n' +
-        '})'
-    }
-  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -1007,7 +979,7 @@
 
 
   /**
-   * Produces a new sorted array, ranked in ascending order by the results of
+   * Produces a new sorted array, sorted in ascending order by the results of
    * running each element of `collection` through a transformation `callback`.
    * The `callback` is bound to `thisArg` and invoked with 3 arguments;
    * for arrays they are (value, index, array) and for objects they are
@@ -1033,21 +1005,34 @@
    * _.sortBy(['larry', 'brendan', 'moe'], 'length');
    * // => ['moe', 'larry', 'brendan']
    */
-  function sortBy(collection, callback, thisArg) {
-    if (typeof callback == 'string') {
-      var prop = callback;
-      callback = function(collection) { return collection[prop]; };
-    } else if (thisArg) {
-      callback = iteratorBind(callback, thisArg);
-    }
-    var result = toSortable(collection, callback).sort(compareAscending),
-        length = result.length;
-
-    while (length--) {
-      result[length] = result[length].value;
-    }
-    return result;
-  }
+  var sortBy = createIterator(baseIteratorOptions, mapIteratorOptions, {
+    'top':
+      'if (typeof callback == \'string\') {\n' +
+      '  var prop = callback;\n' +
+      '  callback = function(collection) { return collection[prop] }\n' +
+      '}\n' +
+      'else if (thisArg) {\n' +
+      '  callback = iteratorBind(callback, thisArg)\n' +
+      '}',
+    'inLoop': {
+      'array':
+        'result[index] = {\n' +
+        '  criteria: callback(collection[index], index, collection),\n' +
+        '  value: collection[index]\n' +
+        '}',
+      'object':
+        'result.push({\n' +
+        '  criteria: callback(collection[index], index, collection),\n' +
+        '  value: collection[index]\n' +
+        '})'
+    },
+    'bottom':
+      'result.sort(compareAscending);\n' +
+      'length = result.length;\n' +
+      'while (length--) {\n' +
+      '  result[length] = result[length].value\n' +
+      '}'
+  });
 
   /**
    * Converts the `collection`, into an array. Useful for converting the

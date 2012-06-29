@@ -580,12 +580,15 @@
     "'else if (thisArg) callback = iteratorBind(callback, thisArg)'"
   );
 
+  /*--------------------------------------------------------------------------*/
+
   // DRY out isType methods
   (function() {
     var iteratorName = lodash.find(['forEach', 'forOwn'], function(funcName) {
       return !isRemoved(source, funcName);
     });
 
+    // skip this optimization if there is no iteration method to use
     if (!iteratorName) {
       return;
     }
@@ -594,6 +597,7 @@
         result = [],
         token = '__isTypeToken__';
 
+    // build replacement code
     lodash.forOwn({
       'Arguments': "'[object Arguments]'",
       'Date': 'dateClass',
@@ -607,6 +611,7 @@
 
       if (funcCode) {
         if (!snippet) {
+          // use snippet to mark the insert position
           snippet = funcCode;
         }
         funcNames.push(funcName);
@@ -674,6 +679,9 @@
 
     // remove IE `shift` and `splice` fix
     source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
+
+    // cleanup code
+    source = source.replace(/^ *;\n/gm, '');
   }
   else {
     // inline `iteratorTemplate` template

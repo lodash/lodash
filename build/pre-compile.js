@@ -253,13 +253,13 @@
     var snippets = source.match(
       RegExp([
         // match the `iteratorTemplate`
-        'var iteratorTemplate\\b[\\s\\S]+?\\);\\n',
+        '( +)var iteratorTemplate\\b[\\s\\S]+?\\n\\1}',
         // match methods created by `createIterator` calls
         'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]+?\\);\\n',
         // match variables storing `createIterator` options
-        '( +)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\1}',
+        '( +)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
         // match the the `createIterator` function
-        '( +)function createIterator\\b[\\s\\S]+?\\n\\2}'
+        '( +)function createIterator\\b[\\s\\S]+?\\n\\3}'
       ].join('|'), 'g')
     );
 

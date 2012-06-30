@@ -185,6 +185,28 @@
     'zipObject': []
   };
 
+  /** Used to `iteratorTemplate` */
+  var iteratorOptions = [
+    'args',
+    'array',
+    'arrayBranch',
+    'beforeLoop',
+    'bottom',
+    'exit',
+    'firstArg',
+    'hasExp',
+    'hasDontEnumBug',
+    'inLoop',
+    'init',
+    'iteratedObject',
+    'loopExp',
+    'object',
+    'objectBranch',
+    'shadowed',
+    'top',
+    'useHas'
+  ];
+
   /** Collections of method names */
   var excludeMethods,
       includeMethods,
@@ -269,6 +291,23 @@
       result.push.apply(result, getDependencies(otherName).concat(otherName));
       return result;
     }, []));
+  }
+
+  /**
+   * Gets the formatted source of the given function.
+   *
+   * @private
+   * @param {Function} func The function to process.
+   * @returns {String} Returns the formatted source.
+   */
+  function getFunctionSource(func) {
+    var source = (func + '');
+    return source.replace(/\n(?:.*)/g, function(match, index) {
+      match = match.slice(1);
+      return (
+        match == '}' && source.indexOf('}', index + 2) == -1 ? '\n  ' : '\n    '
+      ) + match;
+    });
   }
 
   /**
@@ -662,13 +701,8 @@
       if (!reFunc.test(source)) {
         return;
       }
-      // extract and format the function's code
-      var code = (lodash[funcName] + '').replace(/\n(?:.*)/g, function(match) {
-        match = match.slice(1);
-        return (match == '}' ? '\n  ' : '\n    ') + match;
-      });
-
-      source = source.replace(reFunc, '$1' + code + ';\n');
+      // extract, format, and inject the compiled function's source code
+      source = source.replace(reFunc, '$1' + getFunctionSource(lodash[funcName]) + ';\n');
     });
 
     source = removeIsArgumentsFallback(source);
@@ -687,20 +721,34 @@
   else {
     // inline `iteratorTemplate` template
     source = source.replace(/(( +)var iteratorTemplate *= *)([\s\S]+?\n\2.+?);\n/, (function() {
-      // extract `iteratorTemplate` code
-      var code = /^function[^{]+{([\s\S]+?)}$/.exec(lodash._iteratorTemplate)[1];
+      var code = getFunctionSource(lodash._iteratorTemplate.source);
 
-      code = removeWhitespace(code)
-        // remove unnecessary code
-        .replace(/\|\|\{\}|,__t,__j=Array.prototype.join|function print[^}]+}|\+''/g, '')
-        .replace(/(\{);|;(\})/g, '$1$2')
-        .replace(/\(\(__t=\(([^)]+)\)\)==null\?'':__t\)/g, '$1')
-        // ensure escaped characters are interpreted correctly in the string literal
-        .replace(/\\/g, '\\\\');
+      // expand properties to avoid having to use a with-statement
+      iteratorOptions.forEach(function(property) {
+        code = code.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
+      });
 
-      // add `code` to `Function()` as a string literal to avoid strict mode
-      // errors caused by the required with-statement
-      return '$1Function(\'obj\',\n$2  "' + code + '"\n$2);\n';
+      // remove unnecessary code
+      code = code
+        .replace(/, *__t, *__j *= *Array.prototype.join|function print[^}]+}/g, '')
+        .replace(/'(?:\\n|\s)+'/g, "''")
+        .replace(/__p *\+= *' *';/g, '')
+        .replace(/(__p *\+= *)' *' *\+/g, '$1')
+        .replace(/\+\s*' *';/g, ';')
+        .replace(/';(?:\\n|\s)*} *'/g, "'}'")
+        .replace(/(\{) *;|; *(\})/g, '$1$2')
+        .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '$1');
+
+      // remove the with-statement
+      code = code.replace(/ *with *\([^)]+\) *{/, '\n').replace(/\s*}(\s*)return /, '$1return ');
+
+      // minor cleanup
+      code = code.replace(/var __p;\s*__p/, 'var __p');
+
+      // remove comments, including sourceURLs
+      code = code.replace(/\s*\/\/.*(?:\n|$)/g, '');
+
+      return '$1' + code + ';\n';
     }()));
   }
 

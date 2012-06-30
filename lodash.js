@@ -1751,10 +1751,10 @@
   }
 
   /**
-   * Merges together the values of each of the arrays with the value at the
-   * corresponding position. Useful for separate data sources that are coordinated
-   * through matching array indexes. For a matrix of nested arrays, `_.zip.apply(...)`
-   * can transpose the matrix in a similar fashion.
+   * Merges the elements of each array at their corresponding indexes. Useful for
+   * separate data sources that are coordinated through matching array indexes.
+   * For a matrix of nested arrays, `_.zip.apply(...)` can transpose the matrix
+   * in a similar fashion.
    *
    * @static
    * @memberOf _
@@ -1776,6 +1776,36 @@
 
     while (++index < length) {
       result[index] = pluck(arguments, index);
+    }
+    return result;
+  }
+
+  /**
+   * Merges an array of `keys` and an array of `values` into a single object.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} keys The array of keys.
+   * @param {Array} [values=[]] The array of values.
+   * @returns {Object} Returns an object composed of the given keys and
+   *  corresponding values.
+   * @example
+   *
+   * _.zipObject(['moe', 'larry', 'curly'], [30, 40, 50]);
+   * // => { 'moe': 30, 'larry': 40, 'curly': 50 }
+   */
+  function zipObject(keys, values) {
+    if (!keys) {
+      return {};
+    }
+    var index = -1,
+        length = keys.length,
+        result = {};
+
+    values || (values = []);
+    while (++index < length) {
+      result[keys[index]] = values[index];
     }
     return result;
   }
@@ -3469,6 +3499,7 @@
   lodash.without = without;
   lodash.wrap = wrap;
   lodash.zip = zip;
+  lodash.zipObject = zipObject;
 
   // assign aliases
   lodash.all = every;

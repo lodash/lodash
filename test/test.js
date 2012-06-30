@@ -754,6 +754,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.zipObject');
+
+  (function() {
+    test('supports not passing a `values` argument', function() {
+      deepEqual(_.zipObject(['a', 'b', 'c']), { 'a': undefined, 'b': undefined, 'c': undefined });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).shift');
 
   (function() {
@@ -807,7 +817,8 @@
         'union',
         'uniq',
         'without',
-        'zip'
+        'zip',
+        'zipObject'
       ], function(methodName) {
         var pass = true;
         try {

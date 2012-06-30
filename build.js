@@ -181,7 +181,8 @@
     'values': [],
     'without': ['indexOf'],
     'wrap': [],
-    'zip': ['max', 'pluck']
+    'zip': ['max', 'pluck'],
+    'zipObject': []
   };
 
   /** Collections of method names */

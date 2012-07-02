@@ -9,7 +9,7 @@
   'use strict';
 
   /**
-   * Used to match potentially incorrect data object references, i.e. `obj.obj`,
+   * Used to match potentially incorrect data object references, like `obj.obj`,
    * in compiled templates. The variables are assigned in `_.template`.
    */
   var lastVariable,
@@ -590,20 +590,6 @@
   }
 
   /**
-   * Used by `template()` to replace "interpolate" template delimiters with tokens.
-   *
-   * @private
-   * @param {String} match The matched template delimiter.
-   * @param {String} value The delimiter value.
-   * @returns {String} Returns a token.
-   */
-  function tokenizeInterpolate(match, value) {
-    var index = tokenized.length;
-    tokenized[index] = "' +\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
-    return token + index;
-  }
-
-  /**
    * Used by `template()` to replace "evaluate" template delimiters with tokens.
    *
    * @private
@@ -614,6 +600,20 @@
   function tokenizeEvaluate(match, value) {
     var index = tokenized.length;
     tokenized[index] = "';\n" + value + ";\n__p += '";
+    return token + index;
+  }
+
+  /**
+   * Used by `template()` to replace "interpolate" template delimiters with tokens.
+   *
+   * @private
+   * @param {String} match The matched template delimiter.
+   * @param {String} value The delimiter value.
+   * @returns {String} Returns a token.
+   */
+  function tokenizeInterpolate(match, value) {
+    var index = tokenized.length;
+    tokenized[index] = "' +\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
     return token + index;
   }
 
@@ -1911,7 +1911,8 @@
       methodName = thisArg;
       thisArg = func;
     }
-    // use if native `Function#bind` is faster
+    // use `Function#bind` if it exists and is fast
+    // (in V8 `Function#bind` is slower except when partially applied)
     else if (useNativeBind || (nativeBind && arguments.length > 2)) {
       return nativeBind.call.apply(nativeBind, arguments);
     }

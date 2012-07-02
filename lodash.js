@@ -75,15 +75,6 @@
   /** Used to store tokenized template text snippets */
   var tokenized = [];
 
-  /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
-  var useNativeBind = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
-
-  /** Detect if sourceURL syntax is usable without erroring */
-  try {
-    // Adobe's and Narwhal's JS engines will error
-    var useSourceURL = (Function('//@')(), true);
-  } catch(e){ }
-
   /** Native method shortcuts */
   var concat = ArrayProto.concat,
       hasOwnProperty = ObjectProto.hasOwnProperty,
@@ -109,6 +100,15 @@
   /** Timer shortcuts */
   var clearTimeout = window.clearTimeout,
       setTimeout = window.setTimeout;
+
+  /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
+  var useNativeBind = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
+
+  /** Detect if sourceURL syntax is usable without erroring */
+  try {
+    // Adobe's and Narwhal's JS engines will error
+    var useSourceURL = (Function('//@')(), true);
+  } catch(e){ }
 
   /**
    * Used to escape characters for inclusion in HTML.

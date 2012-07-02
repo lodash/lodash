@@ -10,10 +10,3 @@ perf/*.html
 perf/*.sh
 test/*.html
 test/*.sh
-vendor/backbone/
-vendor/closure-compiler/
-vendor/docdown/
-vendor/firebug-lite/
-vendor/requirejs/
-vendor/uglifyjs/
-vendor/underscore/

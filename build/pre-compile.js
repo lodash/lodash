@@ -207,7 +207,10 @@
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");
 
     // remove brackets from `_.escape()` in `tokenizeEscape`
-    source = source.replace("_['escape'](\"", '_.escape("');
+    source = source.replace(/_\['escape']\("/, '_.escape("');
+
+    // remove brackets from `_.escape()` in `_.template`
+    source = source.replace(/__e *= *_\['escape']/, '__e=_.escape');
 
     // remove brackets from `result[length].value` in `_.sortBy`
     source = source.replace("result[length]['value']", 'result[length].value');
@@ -218,6 +221,11 @@
       return string.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |use strict|var |@ |'\\n'|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
+    });
+
+    // remove whitespace from `_.template` related regexpes
+    source = source.replace(/(?:reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
+      return match.replace(/ /g, '');
     });
 
     // remove newline from double-quoted string in `_.template`

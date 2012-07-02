@@ -301,7 +301,7 @@
    * @returns {String} Returns the formatted source.
    */
   function getFunctionSource(func) {
-    var source = (func + '');
+    var source = func.source || (func + '');
     return source.replace(/\n(?:.*)/g, function(match, index) {
       match = match.slice(1);
       return (
@@ -463,19 +463,6 @@
     source = source.replace(RegExp(',\\s*' + varName + ' *=.*?;'), ';');
 
     return removeFromCreateIterator(source, varName);
-  }
-
-  /**
-   * Removes non-syntax critical whitespace from a string.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the source with whitespace removed.
-   */
-  function removeWhitespace(source) {
-    return source.replace(/\[object |else if|function | in |return\s+[\w']|throw |typeof |var |@ |\\\\n|\\n|\s+/g, function(match) {
-      return match == false || match == '\\n' ? '' : match;
-    });
   }
 
   /*--------------------------------------------------------------------------*/
@@ -720,8 +707,8 @@
   }
   else {
     // inline `iteratorTemplate` template
-    source = source.replace(/(( +)var iteratorTemplate *= *)([\s\S]+?\n\2.+?);\n/, (function() {
-      var code = getFunctionSource(lodash._iteratorTemplate.source);
+    source = source.replace(/(( +)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
+      var code = getFunctionSource(lodash._iteratorTemplate);
 
       // expand properties to avoid having to use a with-statement
       iteratorOptions.forEach(function(property) {
@@ -735,7 +722,6 @@
         .replace(/__p *\+= *' *';/g, '')
         .replace(/(__p *\+= *)' *' *\+/g, '$1')
         .replace(/\+\s*' *';/g, ';')
-        .replace(/';(?:\\n|\s)*} *'/g, "'}'")
         .replace(/(\{) *;|; *(\})/g, '$1$2')
         .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '$1');
 

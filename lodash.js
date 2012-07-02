@@ -8,9 +8,20 @@
 ;(function(window, undefined) {
   'use strict';
 
+  /**
+   * Used to match potentially incorrect data object references, i.e. `obj.obj`,
+   * in compiled templates. The variables are assigned in `_.template`.
+   */
+  var lastVariable,
+      reDoubleVariable;
+
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports &&
     (typeof global == 'object' && global && global == global.global && (window = global), exports);
+
+  /** Native prototype shortcuts */
+  var ArrayProto = Array.prototype,
+      ObjectProto = Object.prototype;
 
   /**
    * Detect the JScript [[DontEnum]] bug:
@@ -25,10 +36,20 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
+  /** Used to match empty strings in compiled templates */
+  var reEmptyStringEvaluate = /\b__p \+= '';/g,
+      reEmptyStringInterpolate = /\b__p \+= '' \+/g,
+      reEmptyStringHybrid = /\b__t\) \+\n'';/g;
+
+  /** Used to insert the data object variable into compiled templates */
+  var reInsertVariable = /(?:__e|__t = )\(\s*(?![\s"']|this\.)/g;
+
   /** Used to detect if a method is native */
-  var reNative = RegExp('^' + ({}.valueOf + '')
-    .replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
-    .replace(/valueOf|for [^\]]+/g, '.+?') + '$');
+  var reNative = RegExp('^' +
+    (ObjectProto.valueOf + '')
+      .replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
+      .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
+  );
 
   /** Used to match tokens in template text */
   var reToken = /__token__(\d+)/g;
@@ -54,11 +75,40 @@
   /** Used to store tokenized template text snippets */
   var tokenized = [];
 
+  /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
+  var useNativeBind = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
+
   /** Detect if sourceURL syntax is usable without erroring */
   try {
     // Adobe's and Narwhal's JS engines will error
     var useSourceURL = (Function('//@')(), true);
   } catch(e){ }
+
+  /** Native method shortcuts */
+  var concat = ArrayProto.concat,
+      hasOwnProperty = ObjectProto.hasOwnProperty,
+      push = ArrayProto.push,
+      slice = ArrayProto.slice,
+      toString = ObjectProto.toString;
+
+  /* Native method shortcuts for methods with the same name as other `lodash` methods */
+  var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
+      nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
+      nativeIsFinite = window.isFinite,
+      nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys;
+
+  /** Object#toString result shortcuts */
+  var arrayClass = '[object Array]',
+      boolClass = '[object Boolean]',
+      dateClass = '[object Date]',
+      funcClass = '[object Function]',
+      numberClass = '[object Number]',
+      regexpClass = '[object RegExp]',
+      stringClass = '[object String]';
+
+  /** Timer shortcuts */
+  var clearTimeout = window.clearTimeout,
+      setTimeout = window.setTimeout;
 
   /**
    * Used to escape characters for inclusion in HTML.
@@ -94,39 +144,6 @@
     '\u2029': 'u2029'
   };
 
-  /** Object#toString result shortcuts */
-  var arrayClass = '[object Array]',
-      boolClass = '[object Boolean]',
-      dateClass = '[object Date]',
-      funcClass = '[object Function]',
-      numberClass = '[object Number]',
-      regexpClass = '[object RegExp]',
-      stringClass = '[object String]';
-
-  /** Native prototype shortcuts */
-  var ArrayProto = Array.prototype,
-      ObjectProto = Object.prototype;
-
-  /** Native method shortcuts */
-  var concat = ArrayProto.concat,
-      hasOwnProperty = ObjectProto.hasOwnProperty,
-      push = ArrayProto.push,
-      slice = ArrayProto.slice,
-      toString = ObjectProto.toString;
-
-  /* Used if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
-  var nativeBind = reNative.test(nativeBind = slice.bind) &&
-    /\n|Opera/.test(nativeBind + toString.call(window.opera)) && nativeBind;
-
-  /* Native method shortcuts for methods with the same name as other `lodash` methods */
-  var nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
-      nativeIsFinite = window.isFinite,
-      nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys;
-
-  /** Timer shortcuts */
-  var clearTimeout = window.clearTimeout,
-      setTimeout = window.setTimeout;
-
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -158,8 +175,8 @@
   }
 
   /**
-   * By default, Lo-Dash uses ERB-style template delimiters, change the
-   * following template settings to use alternative delimiters.
+   * By default, Lo-Dash uses embedded Ruby (ERB) style template delimiters,
+   * change the following template settings to use alternative delimiters.
    *
    * @static
    * @memberOf _
@@ -227,7 +244,7 @@
     '  <% if (objectBranch) { %>\nif (length === length >>> 0) {<% } %>\n' +
     '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (<%= arrayBranch.loopExp %>) {\n' +
-    '    <%= arrayBranch.inLoop %>;\n' +
+    '    <%= arrayBranch.inLoop %>\n' +
     '  }' +
     '  <% if (objectBranch) { %>\n}\n<% }' +
     '}' +
@@ -254,7 +271,7 @@
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
     '    if (!(skipProto && index == \'prototype\')<% if (useHas) { %> && <%= hasExp %><% } %>) {\n' +
-    '      <%= objectBranch.inLoop %>;\n' +
+    '      <%= objectBranch.inLoop %>\n' +
     '    }' +
     '  <% } %>\n' +
     '  }' +
@@ -271,7 +288,7 @@
     '      if (shadowed[k] == \'constructor\') {' +
     '        %>!(ctor && ctor.prototype === <%= iteratedObject %>) && <%' +
     '      } %><%= hasExp %>) {\n' +
-    '    <%= objectBranch.inLoop %>;\n' +
+    '    <%= objectBranch.inLoop %>\n' +
     '  }<%' +
     '     }' +
     '   }' +
@@ -340,7 +357,7 @@
     }
   };
 
- /** Reusable iterator options for `invoke`, `map`, `pluck`, and `sortBy` */
+  /** Reusable iterator options for `invoke`, `map`, `pluck`, and `sortBy` */
   var mapIteratorOptions = {
     'init': '',
     'exit': 'if (!collection) return []',
@@ -568,7 +585,7 @@
    */
   function tokenizeEscape(match, value) {
     var index = tokenized.length;
-    tokenized[index] = "'+\n_.escape(" + value + ") +\n'";
+    tokenized[index] = "' +\n__e(" + value + ") +\n'";
     return token + index;
   }
 
@@ -582,7 +599,7 @@
    */
   function tokenizeInterpolate(match, value) {
     var index = tokenized.length;
-    tokenized[index] = "'+\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
+    tokenized[index] = "' +\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
     return token + index;
   }
 
@@ -1859,24 +1876,24 @@
    *
    * // basic bind
    * var func = function(greeting) {
-   *   return greeting + ': ' + this.name;
+   *   return greeting + ' ' + this.name;
    * };
    *
    * func = _.bind(func, { 'name': 'moe' }, 'hi');
    * func();
-   * // => 'hi: moe'
+   * // => 'hi moe'
    *
    * // lazy bind
    * var object = {
    *   'name': 'moe',
    *   'greet': function(greeting) {
-   *     return greeting + ': ' + this.name;
+   *     return greeting + ' ' + this.name;
    *   }
    * };
    *
    * var func = _.bind(object, 'greet', 'hi');
    * func();
-   * // => 'hi: moe'
+   * // => 'hi moe'
    *
    * object.greet = function(greeting) {
    *   return greeting + ', ' + this.name + '!';
@@ -1894,8 +1911,8 @@
       methodName = thisArg;
       thisArg = func;
     }
-    // use if `Function#bind` is faster
-    else if (nativeBind) {
+    // use if native `Function#bind` is faster
+    else if (useNativeBind || (nativeBind && arguments.length > 2)) {
       return nativeBind.call.apply(nativeBind, arguments);
     }
 
@@ -1929,7 +1946,6 @@
       }
       return func.apply(thisBinding, args);
     }
-
     return bound;
   }
 
@@ -3185,7 +3201,8 @@
     // https://github.com/olado/doT
     options || (options = {});
 
-    var isEvaluating,
+    var isEscaping,
+        isEvaluating,
         isInterpolating,
         result,
         defaults = lodash.templateSettings,
@@ -3207,7 +3224,7 @@
 
     // tokenize delimiters to avoid escaping them
     if (escapeDelimiter) {
-      text = text.replace(escapeDelimiter, tokenizeEscape);
+      isEscaping = text != (text = text.replace(escapeDelimiter, tokenizeEscape));
     }
     if (interpolateDelimiter) {
       isInterpolating = text != (text = text.replace(interpolateDelimiter, tokenizeInterpolate));
@@ -3225,16 +3242,45 @@
     // clear stored code snippets
     tokenized.length = 0;
 
-    // if `options.variable` is not specified, add `data` to the top of the scope chain
+    // strip concating empty strings
+    if (isInterpolating) {
+      text = text.replace(reEmptyStringInterpolate, '__p \+=');
+    }
+    if (isEvaluating) {
+      text = text.replace(reEmptyStringEvaluate, '');
+      if (isInterpolating) {
+        text = text.replace(reEmptyStringHybrid, '__t);');
+      }
+    }
+
     if (!variable) {
       variable = defaults.variable;
-      text = 'with (' + variable + ' || {}) {\n' + text + '\n}\n';
+
+      // if `options.variable` is not specified or the template contains "evaluate"
+      // delimiters, add the data object to the top of the scope chain
+      if (isEvaluating || !variable) {
+        text = 'with (' + variable + ' || {}) {\n' + text + '\n}\n';
+      }
+      // else insert data object references to avoid using a with-statement
+      else {
+        if (variable != lastVariable) {
+          lastVariable = variable;
+          reDoubleVariable = RegExp('([(\\s])(' + variable + '\\.' + variable + ')\\b', 'g');
+        }
+        text = text
+          .replace(reInsertVariable, '$&' + variable + '.')
+          .replace(reDoubleVariable, '$1($2 || ' + variable + ')');
+      }
     }
 
     text = 'function(' + variable + ') {\n' +
       'var __p' +
       (isInterpolating
         ? ', __t'
+        : ''
+      ) +
+      (isEscaping
+        ? ', __e = _.escape'
         : ''
       ) +
       (isEvaluating

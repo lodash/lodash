@@ -197,10 +197,15 @@ git submodule update --init
  * `_.indexOf`
  * `_.intersection`
  * `_.invoke`
+ * `_.isArguments`
+ * `_.isDate`
  * `_.isEmpty`
  * `_.isEqual`
  * `_.isFinite`
+ * `_.isFunction`
  * `_.isObject`
+ * `_.isNumber`
+ * `_.isRegExp`
  * `_.isString`
  * `_.keys`
  * `_.lastIndexOf`

@@ -90,6 +90,94 @@
           _boundCtor = _.bind(ctor, { 'name': 'moe' }),
           _boundPartial = _.bind(func, { 'name': 'moe' }, 'hi');
 
+      var tplData = {
+        'header1': 'Header1',
+        'header2': 'Header2',
+        'header3': 'Header3',
+        'header4': 'Header4',
+        'header5': 'Header5',
+        'header6': 'Header6',
+        'list': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+      };
+
+      var tplBase =
+        '<div>' +
+        "<h1 class='header1'><%= header1 %></h1>" +
+        "<h2 class='header2'><%= header2 %></h2>" +
+        "<h3 class='header3'><%= header3 %></h3>" +
+        "<h4 class='header4'><%= header4 %></h4>" +
+        "<h5 class='header5'><%= header5 %></h5>" +
+        "<h6 class='header6'><%= header6 %></h6>";
+
+      var tpl =
+        tplBase +
+        "<ul class='list'>" +
+        "<li class='item'><%= list[0] %></li>" +
+        "<li class='item'><%= list[1] %></li>" +
+        "<li class='item'><%= list[2] %></li>" +
+        "<li class='item'><%= list[3] %></li>" +
+        "<li class='item'><%= list[4] %></li>" +
+        "<li class='item'><%= list[5] %></li>" +
+        "<li class='item'><%= list[6] %></li>" +
+        "<li class='item'><%= list[7] %></li>" +
+        "<li class='item'><%= list[8] %></li>" +
+        "<li class='item'><%= list[9] %></li>" +
+        '</ul>' +
+        '</div>';
+
+      var tplWithEvaluate =
+        tplBase +
+        "<ul class='list'>" +
+        '<% for (var index = 0, length = list.length; index < length; index++) { %>' +
+        "<li class='item'><%= list[index] %></li>" +
+        '<% } %>' +
+        '</ul>' +
+        '</div>';
+
+      var tplBaseVerbose =
+        '<div>' +
+        "<h1 class='header1'><%= data.header1 %></h1>" +
+        "<h2 class='header2'><%= data.header2 %></h2>" +
+        "<h3 class='header3'><%= data.header3 %></h3>" +
+        "<h4 class='header4'><%= data.header4 %></h4>" +
+        "<h5 class='header5'><%= data.header5 %></h5>" +
+        "<h6 class='header6'><%= data.header6 %></h6>";
+
+      var tplVerbose =
+        tplBaseVerbose +
+        "<ul class='list'>" +
+        "<li class='item'><%= data.list[0] %></li>" +
+        "<li class='item'><%= data.list[1] %></li>" +
+        "<li class='item'><%= data.list[2] %></li>" +
+        "<li class='item'><%= data.list[3] %></li>" +
+        "<li class='item'><%= data.list[4] %></li>" +
+        "<li class='item'><%= data.list[5] %></li>" +
+        "<li class='item'><%= data.list[6] %></li>" +
+        "<li class='item'><%= data.list[7] %></li>" +
+        "<li class='item'><%= data.list[8] %></li>" +
+        "<li class='item'><%= data.list[9] %></li>" +
+        '</ul>' +
+        '</div>';
+
+      var tplVerboseWithEvaluate =
+        tplBaseVerbose +
+        "<ul class='list'>" +
+        '<% for (var index = 0, length = data.list.length; index < length; index++) { %>' +
+        "<li class='item'><%= data.list[index] %></li>" +
+        '<% } %>' +
+        '</ul>' +
+        '</div>';
+
+      var lodashTpl = lodash.template(tpl),
+          lodashTplWithEvaluate = lodash.template(tplWithEvaluate),
+          lodashTplVerbose = lodash.template(tplVerbose, null, { 'variable': 'data' }),
+          lodashTplVerboseWithEvaluate = lodash.template(tplVerboseWithEvaluate, null, { 'variable': 'data' });
+
+      var _tpl = _.template(tpl),
+          _tplWithEvaluate = _.template(tplWithEvaluate),
+          _tplVerbose = _.template(tplVerbose, null, { 'variable': 'data' }),
+          _tplVerboseWithEvaluate = _.template(tplVerboseWithEvaluate, null, { 'variable': 'data' });
+
       var wordToNumber = {
         'one': 1,
         'two': 2,
@@ -589,6 +677,68 @@
         _.sortedIndex(words, 'twenty-five', function(value) {
           return wordToNumber[value];
         });
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.template` without "evaluate" delimiters')
+      .add('Lo-Dash', function() {
+        lodash.template(tpl, tplData);
+      })
+      .add('Underscore', function() {
+        _.template(tpl, tplData);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.template` with "evaluate" delimiters')
+      .add('Lo-Dash', function() {
+        lodash.template(tplWithEvaluate, tplData);
+      })
+      .add('Underscore', function() {
+        _.template(tplWithEvaluate, tplData);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('compiled template without "evaluate" delimiters')
+      .add('Lo-Dash', function() {
+        lodashTpl(tplData);
+      })
+      .add('Underscore', function() {
+        _tpl(tplData);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('compiled template with "evaluate" delimiters')
+      .add('Lo-Dash', function() {
+        lodashTplWithEvaluate(tplData);
+      })
+      .add('Underscore', function() {
+        _tplWithEvaluate(tplData);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('compiled template without a with-statement or "evaluate" delimiters')
+      .add('Lo-Dash', function() {
+        lodashTplVerbose(tplData);
+      })
+      .add('Underscore', function() {
+        _tplVerbose(tplData);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('compiled template without a with-statement using "evaluate" delimiters')
+      .add('Lo-Dash', function() {
+        lodashTplVerboseWithEvaluate(tplData);
+      })
+      .add('Underscore', function() {
+        _tplVerboseWithEvaluate(tplData);
       })
   );
 

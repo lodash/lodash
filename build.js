@@ -571,6 +571,7 @@
     }
     if (isRemoved(source, 'bind')) {
       source = removeVar(source, 'nativeBind');
+      source = removeVar(source, 'useNativeBind');
     }
     if (isRemoved(source, 'isArray')) {
       source = removeVar(source, 'nativeIsArray');

@@ -47,6 +47,18 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Gets the Hz, i.e. operations per second, of `bench` adjusted for the
+   * margin of error.
+   *
+   * @private
+   * @param {Object} bench The benchmark object.
+   * @returns {Number} Returns the adjusted Hz.
+   */
+  function getHz(bench) {
+    return 1 / (bench.stats.mean + bench.stats.moe);
+  }
+
+  /**
    * Logs text to the console.
    *
    * @private
@@ -229,20 +241,24 @@
     'onComplete': function() {
       var formatNumber = Benchmark.formatNumber,
           fastest = this.filter('fastest'),
+          fastestHz = getHz(fastest[0]),
           slowest = this.filter('slowest'),
-          lodashHz = 1 / (this[0].stats.mean + this[0].stats.moe),
-          underscoreHz = 1 / (this[1].stats.mean + this[1].stats.moe);
+          slowestHz = getHz(slowest[0]),
+          lodashHz = getHz(this[0]),
+          underscoreHz = getHz(this[1]);
 
       if (fastest.length > 1) {
         log('It\'s too close to call.');
-        lodashHz = underscoreHz = Math.min(lodashHz, underscoreHz);
+        lodashHz = underscoreHz = slowestHz;
       }
       else {
-        var fastestHz = fastest[0] == this[0] ? lodashHz : underscoreHz,
-            slowestHz = slowest[0] == this[0] ? lodashHz : underscoreHz,
-            percent = ((fastestHz / slowestHz) - 1) * 100;
+        var percent = ((fastestHz / slowestHz) - 1) * 100;
 
-        log(fastest[0].name + ' is ' + formatNumber(percent < 1 ? percent.toFixed(2) : Math.round(percent)) + '% faster.');
+        log(
+          fastest[0].name + ' is ' +
+          formatNumber(percent < 1 ? percent.toFixed(2) : Math.round(percent)) +
+          '% faster.'
+        );
       }
       // add score adjusted for margin of error
       score.lodash += lodashHz;

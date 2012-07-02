@@ -76,8 +76,11 @@
           nestedNumbers = [1, [2], [3, [[4]]]],
           twoNumbers = [12, 21];
 
-      var ctor = function() { },
-          func = function(greeting) { return greeting + ': ' + this.name; };
+      var ctor = function() { };
+
+      var func = function(greeting, punctuation) {
+        return greeting + ', ' + this.name + (punctuation || '.');
+      };
 
       var lodashBoundNormal = lodash.bind(func, { 'name': 'moe' }),
           lodashBoundCtor = lodash.bind(ctor, { 'name': 'moe' }),
@@ -184,7 +187,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.bind` (will use native if available and inferred fast)')
+    Benchmark.Suite('`_.bind` (uses native `Function#bind` if available and inferred fast)')
       .add('Lo-Dash', function() {
         lodash.bind(func, { 'name': 'moe' }, 'hi');
       })
@@ -204,12 +207,32 @@
   );
 
   suites.push(
-    Benchmark.Suite('bound and partially applied call')
+    Benchmark.Suite('bound call with arguments')
+      .add('Lo-Dash', function() {
+        lodashBoundNormal('hi', '!');
+      })
+      .add('Underscore', function() {
+        _boundNormal('hi', '!');
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('bound and partially applied call (uses native `Function#bind` if available)')
       .add('Lo-Dash', function() {
         lodashBoundPartial();
       })
       .add('Underscore', function() {
         _boundPartial();
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('bound and partially applied call with arguments (uses native `Function#bind` if available)')
+      .add('Lo-Dash', function() {
+        lodashBoundPartial('!');
+      })
+      .add('Underscore', function() {
+        _boundPartial('!');
       })
   );
 
@@ -486,6 +509,28 @@
       })
       .add('Underscore', function() {
         _.shuffle(numbers);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.size` with an array')
+      .add('Lo-Dash', function() {
+        lodash.size(numbers);
+      })
+      .add('Underscore', function() {
+        _.size(numbers);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.size` with an object')
+      .add('Lo-Dash', function() {
+        lodash.size(object);
+      })
+      .add('Underscore', function() {
+        _.size(object);
       })
   );
 

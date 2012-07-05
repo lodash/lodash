@@ -1,8 +1,6 @@
 *.custom.*
 *.min.*
 .*
-build.*
-build/
 dist/
 doc/*.php
 node_modules/

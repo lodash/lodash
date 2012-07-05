@@ -559,6 +559,9 @@
       // remove `LoDash.prototype` additions
       source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
     }
+    if (isRemoved(source, 'sortBy')) {
+      source = removeFunction(source, 'compareAscending');
+    }
     if (isRemoved(source, 'template')) {
       // remove `templateSettings` assignment
       source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
@@ -578,10 +581,10 @@
     }
     if (isRemoved(source, 'keys')) {
       source = removeVar(source, 'nativeKeys');
+      source = removeFunction(source, 'shimKeys');
     }
     if (isRemoved(source, 'clone', 'isObject', 'keys')) {
       source = removeVar(source, 'objectTypes');
-      source = removeFromCreateIterator(source, 'objectTypes');
     }
     if (isRemoved(source, 'bind', 'isArray', 'keys')) {
       source = removeVar(source, 'reNative');

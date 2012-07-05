@@ -699,7 +699,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.template` without "evaluate" delimiters')
+    Benchmark.Suite('`_.template` without "evaluate" delimiters (slow path)')
       .add('Lo-Dash', function() {
         lodash.template(tpl, tplData);
       })
@@ -709,7 +709,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.template` with "evaluate" delimiters')
+    Benchmark.Suite('`_.template` with "evaluate" delimiters (slow path)')
       .add('Lo-Dash', function() {
         lodash.template(tplWithEvaluate, tplData);
       })

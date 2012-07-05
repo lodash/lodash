@@ -224,12 +224,17 @@
     });
 
     // remove whitespace from `_.template` related regexpes
-    source = source.replace(/(?:reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
-      return match.replace(/ /g, '');
+    source = source.replace(/(?:reDelimiterCode\w+|reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
+      return match.replace(/ |\\n/g, '');
     });
 
-    // remove newline from double-quoted string in `_.template`
-    source = source.replace('"\';\\n"', '"\';"');
+    // remove newline from double-quoted strings in `_.template`
+    source = source
+      .replace('"\';\\n__with ("', '"\';__with("')
+      .replace('"\\n}__\\n__p += \'"', '"}____p+=\'"')
+      .replace('"__p = \'"', '"__p=\'"')
+      .replace('"\';\\n"', '"\';"')
+      .replace("') {\\n'", "'){'")
 
     // remove `useSourceURL` variable
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*\n)* *var useSourceURL[\s\S]+?catch[^}]+}\n/, '');

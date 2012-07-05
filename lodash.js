@@ -9,11 +9,29 @@
   'use strict';
 
   /**
-   * Used to match potentially incorrect data object references, like `obj.obj`,
-   * in compiled templates. The variables are assigned in `_.template`.
+   * Used to cache the last `_.templateSettings.evaluate` delimiter to avoid
+   * unnecessarily assigning `reEvaluateDelimiter` a new generated regexp.
+   * Assigned in `_.template`.
    */
-  var lastVariable,
-      reDoubleVariable;
+  var lastEvaluateDelimiter;
+
+  /**
+   * Used to cache the last template `options.variable` to avoid unnecessarily
+   * assigning `reDoubleVariable` a new generated regexp. Assigned in `_.template`.
+   */
+  var lastVariable;
+
+  /**
+   * Used to match potentially incorrect data object references, like `obj.obj`,
+   * in compiled templates. Assigned in `_.template`.
+   */
+  var reDoubleVariable;
+
+  /**
+   * Used to match "evaluate" delimiters, including internal delimiters,
+   * in template text. Assigned in `_.template`.
+   */
+  var reEvaluateDelimiter;
 
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports &&
@@ -36,13 +54,21 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
-  /** Used to match empty strings in compiled templates */
+  /** Used to detect delimiter values that should be processed by `tokenizeEvaluate` */
+  var reComplexDelimiter = /[-)}={(+]|\[\D/;
+
+  /** Used to match code generated in place of template delimiters */
+  var reDelimiterCodeLeading = /^';\n/,
+      reDelimiterCodeMiddle = /^' \+\n/,
+      reDelimiterCodeTrailing = /(?:__p \+= '|\+\n')$/;
+
+  /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+?=) '' \+/g,
-      reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
+      reEmptyStringTrailing = /(__w?e\(.*?\)|\b__w?t\)) \+\n'';/g;
 
-  /** Used to insert the data object variable into compiled templates */
-  var reInsertVariable = /(?:__e|__t = )\(\s*(?![\s"']|this\.)/g;
+  /** Used to insert the data object variable into compiled template source */
+  var reInsertVariable = /(?:__e|__t = )\(\s*(?![\d\s"']|this\.)/g;
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
@@ -54,7 +80,7 @@
   /** Used to match tokens in template text */
   var reToken = /__token__(\d+)/g;
 
-  /** Used to match unescaped characters in HTML */
+  /** Used to match unescaped characters in strings for inclusion in HTML */
   var reUnescapedHtml = /[&<"']/g;
 
   /** Used to match unescaped characters in compiled string literals */
@@ -88,7 +114,7 @@
       nativeIsFinite = window.isFinite,
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys;
 
-  /** Object#toString result shortcuts */
+  /** `Object#toString` result shortcuts */
   var arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
@@ -480,7 +506,7 @@
   }
 
   /**
-   * Used by `sortBy()` to compare transformed values of `collection`, sorting
+   * Used by `sortBy` to compare transformed values of `collection`, sorting
    * them in ascending order.
    *
    * @private
@@ -502,7 +528,7 @@
   }
 
   /**
-   * Used by `template()` to replace tokens with their corresponding code snippets.
+   * Used by `template` to replace tokens with their corresponding code snippets.
    *
    * @private
    * @param {String} match The matched token.
@@ -514,7 +540,7 @@
   }
 
   /**
-   * Used by `template()` to escape characters for inclusion in compiled
+   * Used by `template` to escape characters for inclusion in compiled
    * string literals.
    *
    * @private
@@ -526,7 +552,7 @@
   }
 
   /**
-   * Used by `escape()` to escape characters for inclusion in HTML.
+   * Used by `escape` to escape characters for inclusion in HTML.
    *
    * @private
    * @param {String} match The matched character to escape.
@@ -576,7 +602,7 @@
   });
 
   /**
-   * Used by `template()` to replace "escape" template delimiters with tokens.
+   * Used by `template` to replace "escape" template delimiters with tokens.
    *
    * @private
    * @param {String} match The matched template delimiter.
@@ -584,27 +610,41 @@
    * @returns {String} Returns a token.
    */
   function tokenizeEscape(match, value) {
+    if (reComplexDelimiter.test(value)) {
+      return '<e%-' + value + '%>';
+    }
     var index = tokenized.length;
     tokenized[index] = "' +\n__e(" + value + ") +\n'";
     return token + index;
   }
 
   /**
-   * Used by `template()` to replace "evaluate" template delimiters with tokens.
+   * Used by `template` to replace "evaluate" template delimiters, or complex
+   * "escape" and "interpolate" delimiters, with tokens.
    *
    * @private
    * @param {String} match The matched template delimiter.
    * @param {String} value The delimiter value.
+   * @param {String} escapeValue The "escape" delimiter value.
+   * @param {String} interpolateValue The "interpolate" delimiter value.
    * @returns {String} Returns a token.
    */
-  function tokenizeEvaluate(match, value) {
+  function tokenizeEvaluate(match, value, escapeValue, interpolateValue) {
     var index = tokenized.length;
-    tokenized[index] = "';\n" + value + ";\n__p += '";
+    if (value) {
+      tokenized[index] = "';\n" + value + ";\n__p += '"
+    }
+    else if (escapeValue) {
+      tokenized[index] = "' +\n__we(" + escapeValue + ") +\n'";
+    }
+    else if (interpolateValue) {
+      tokenized[index] = "' +\n((__wt = (" + interpolateValue + ")) == null ? '' : __wt) +\n'";
+    }
     return token + index;
   }
 
   /**
-   * Used by `template()` to replace "interpolate" template delimiters with tokens.
+   * Used by `template` to replace "interpolate" template delimiters with tokens.
    *
    * @private
    * @param {String} match The matched template delimiter.
@@ -612,6 +652,9 @@
    * @returns {String} Returns a token.
    */
   function tokenizeInterpolate(match, value) {
+    if (reComplexDelimiter.test(value)) {
+      return '<e%=' + value + '%>';
+    }
     var index = tokenized.length;
     tokenized[index] = "' +\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
     return token + index;
@@ -3203,9 +3246,7 @@
     options || (options = {});
 
     var endIndex,
-        isEscaping,
         isEvaluating,
-        isInterpolating,
         startIndex,
         result,
         useWith,
@@ -3225,18 +3266,25 @@
     if (interpolateDelimiter == null) {
       interpolateDelimiter = defaults.interpolate;
     }
+
     // tokenize delimiters to avoid escaping them
     if (escapeDelimiter) {
-      isEscaping = text != (text = text.replace(escapeDelimiter, tokenizeEscape));
+      text = text.replace(escapeDelimiter, tokenizeEscape);
     }
     if (interpolateDelimiter) {
-      isInterpolating = text != (text = text.replace(interpolateDelimiter, tokenizeInterpolate));
+      text = text.replace(interpolateDelimiter, tokenizeInterpolate);
     }
-    if (evaluateDelimiter) {
-      startIndex = tokenized.length;
-      isEvaluating = text != (text = text.replace(evaluateDelimiter, tokenizeEvaluate));
-      endIndex = tokenized.length - 1;
+    if (evaluateDelimiter != lastEvaluateDelimiter) {
+      lastEvaluateDelimiter = evaluateDelimiter;
+      reEvaluateDelimiter = RegExp(
+        (evaluateDelimiter ? evaluateDelimiter.source : '($^)') +
+        '|<e%-([\\s\\S]+?)%>|<e%=([\\s\\S]+?)%>'
+      , 'g');
     }
+    startIndex = tokenized.length;
+    text = text.replace(reEvaluateDelimiter, tokenizeEvaluate);
+    endIndex = tokenized.length - 1;
+    isEvaluating = startIndex <= endIndex;
 
     // if `options.variable` is not specified and the template contains "evaluate"
     // delimiters, inject a with-statement around all "evaluate" delimiters to
@@ -3246,21 +3294,13 @@
       useWith = isEvaluating;
 
       if (useWith) {
-        tokenized[startIndex] =
-          tokenized[startIndex].slice(0, 3) +
-          '__with (' + variable + ') {\n' +
-          tokenized[startIndex].slice(3);
+        tokenized[startIndex] = "';\n__with (" + variable + ') {\n' + tokenized[startIndex]
+          .replace(reDelimiterCodeLeading, '')
+          .replace(reDelimiterCodeMiddle, '__p += ');
 
-        tokenized[endIndex] =
-          tokenized[endIndex].slice(0, -8) +
-          '}__\n' +
-          tokenized[endIndex].slice(-8);
+        tokenized[endIndex] = tokenized[endIndex]
+          .replace(reDelimiterCodeTrailing, '') + "\n}__\n__p += '";
       }
-    }
-    // memoize `reDoubleVariable`
-    if (variable != lastVariable) {
-      lastVariable = variable;
-      reDoubleVariable = RegExp('([(\\s])' + variable + '\\.' + variable + '\\b', 'g');
     }
 
     var strInsertVariable = '$&' + variable + '.',
@@ -3278,9 +3318,13 @@
     // find the start and end indexes of the with-statement
     if (useWith) {
       startIndex = text.indexOf('__with');
-      endIndex = text.indexOf('}__', startIndex + 12);
+      endIndex = text.indexOf('}__', startIndex + 10);
     }
-
+    // memoize `reDoubleVariable`
+    if (variable != lastVariable) {
+      lastVariable = variable;
+      reDoubleVariable = RegExp('([(\\s])' + variable + '\\.' + variable + '\\b', 'g');
+    }
     // inject data object references outside of the with-statement
     text = (useWith ? text.slice(0, startIndex) : text)
       .replace(reInsertVariable, strInsertVariable)
@@ -3293,27 +3337,17 @@
         : ''
       );
 
-    // cleanup compiled code by stripping empty strings
+    // cleanup code by stripping empty strings
     text = (isEvaluating ? text.replace(reEmptyStringLeading, '') : text)
       .replace(reEmptyStringMiddle, '$1')
       .replace(reEmptyStringTrailing, '$1;');
 
-    // wrap function body
+    // frame code as the function body
     text = 'function(' + variable + ') {\n' +
-      (useWith
-        ? variable + ' || (' + variable + ' = {});\n'
-        : ''
-      ) +
-      'var __p' +
-      (isInterpolating
-        ? ', __t'
-        : ''
-      ) +
+      variable + ' || (' + variable + ' = {});\n' +
+      'var __p, __t, __wt' +
       ', __d = ' + variable + '.' + variable + ' || ' + variable +
-      (isEscaping
-        ? ', __e = _.escape'
-        : ''
-      ) +
+      ', __e = _.escape, __we = __e' +
       (isEvaluating
         ? ', __j = Array.prototype.join;\n' +
           'function print() { __p += __j.call(arguments, \'\') }\n'
@@ -3333,7 +3367,7 @@
     if (data) {
       return result(data);
     }
-    // provide the compiled function's source via its `toString()` method, in
+    // provide the compiled function's source via its `toString` method, in
     // supported environments, or the `source` property as a convenience for
     // build time precompilation
     result.source = text;

@@ -718,19 +718,20 @@
 
       // remove unnecessary code
       code = code
-        .replace(/, *__t, *__j *= *Array.prototype.join|function print[^}]+}/g, '')
+        .replace(/, *__t,[^;]+|function print[^}]+}/g, '')
         .replace(/'(?:\\n|\s)+'/g, "''")
         .replace(/__p *\+= *' *';/g, '')
         .replace(/(__p *\+= *)' *' *\+/g, '$1')
-        .replace(/\+\s*' *';/g, ';')
         .replace(/(\{) *;|; *(\})/g, '$1$2')
-        .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '$1');
+        .replace(/\(\(__w?t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__w?t\)/g, '$1');
 
       // remove the with-statement
-      code = code.replace(/ *with *\([^)]+\) *{/, '\n').replace(/\s*}(\s*)return /, '$1return ');
+      code = code.replace(/ *with *\([^)]+\) *{/, '\n').replace(/}}\s*;?\s*}/, '}}\n');
 
       // minor cleanup
-      code = code.replace(/var __p;\s*__p/, 'var __p');
+      code = code
+        .replace(/obj *\|\| *\(obj *= *\{}\);/, '')
+        .replace(/var __p;\s*__p/, 'var __p');
 
       // remove comments, including sourceURLs
       code = code.replace(/\s*\/\/.*(?:\n|$)/g, '');

@@ -37,9 +37,9 @@
   var oldDash = window._;
 
   /** Used to match empty strings in compiled templates */
-  var reEmptyStringEvaluate = /\b__p \+= '';/g,
-      reEmptyStringInterpolate = /\b__p \+= '' \+/g,
-      reEmptyStringHybrid = /\b__t\) \+\n'';/g;
+  var reEmptyStringLeading = /\b__p \+= '';/g,
+      reEmptyStringMiddle = /\b(__p \+?=) '' \+/g,
+      reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
   /** Used to insert the data object variable into compiled templates */
   var reInsertVariable = /(?:__e|__t = )\(\s*(?![\s"']|this\.)/g;
@@ -3202,10 +3202,13 @@
     // https://github.com/olado/doT
     options || (options = {});
 
-    var isEscaping,
+    var endIndex,
+        isEscaping,
         isEvaluating,
         isInterpolating,
+        startIndex,
         result,
+        useWith,
         defaults = lodash.templateSettings,
         escapeDelimiter = options.escape,
         evaluateDelimiter = options.evaluate,
@@ -3222,7 +3225,6 @@
     if (interpolateDelimiter == null) {
       interpolateDelimiter = defaults.interpolate;
     }
-
     // tokenize delimiters to avoid escaping them
     if (escapeDelimiter) {
       isEscaping = text != (text = text.replace(escapeDelimiter, tokenizeEscape));
@@ -3231,55 +3233,83 @@
       isInterpolating = text != (text = text.replace(interpolateDelimiter, tokenizeInterpolate));
     }
     if (evaluateDelimiter) {
+      startIndex = tokenized.length;
       isEvaluating = text != (text = text.replace(evaluateDelimiter, tokenizeEvaluate));
+      endIndex = tokenized.length - 1;
     }
+
+    // if `options.variable` is not specified and the template contains "evaluate"
+    // delimiters, inject a with-statement around all "evaluate" delimiters to
+    // add the data object to the top of the scope chain
+    if (!variable) {
+      variable = defaults.variable || lastVariable || 'obj';
+      useWith = isEvaluating;
+
+      if (useWith) {
+        tokenized[startIndex] =
+          tokenized[startIndex].slice(0, 3) +
+          '__with (' + variable + ') {\n' +
+          tokenized[startIndex].slice(3);
+
+        tokenized[endIndex] =
+          tokenized[endIndex].slice(0, -8) +
+          '}__\n' +
+          tokenized[endIndex].slice(-8);
+      }
+    }
+    // memoize `reDoubleVariable`
+    if (variable != lastVariable) {
+      lastVariable = variable;
+      reDoubleVariable = RegExp('([(\\s])' + variable + '\\.' + variable + '\\b', 'g');
+    }
+
+    var strInsertVariable = '$&' + variable + '.',
+        strDoubleVariable = '$1__d';
 
     // escape characters that cannot be included in string literals and
     // detokenize delimiter code snippets
-    text = "__p='" + text
+    text = "__p = '" + text
       .replace(reUnescapedString, escapeStringChar)
       .replace(reToken, detokenize) + "';\n";
 
     // clear stored code snippets
     tokenized.length = 0;
 
-    // strip concating empty strings
-    if (isInterpolating) {
-      text = text.replace(reEmptyStringInterpolate, '__p \+=');
-    }
-    if (isEvaluating) {
-      text = text.replace(reEmptyStringEvaluate, '');
-      if (isInterpolating) {
-        text = text.replace(reEmptyStringHybrid, '__t);');
-      }
+    // find the start and end indexes of the with-statement
+    if (useWith) {
+      startIndex = text.indexOf('__with');
+      endIndex = text.indexOf('}__', startIndex + 12);
     }
 
-    if (!variable) {
-      variable = defaults.variable;
+    // inject data object references outside of the with-statement
+    text = (useWith ? text.slice(0, startIndex) : text)
+      .replace(reInsertVariable, strInsertVariable)
+      .replace(reDoubleVariable, strDoubleVariable) +
+      (useWith
+        ? text.slice(startIndex + 2, endIndex + 1) +
+          text.slice(endIndex + 3)
+            .replace(reInsertVariable, strInsertVariable)
+            .replace(reDoubleVariable, strDoubleVariable)
+        : ''
+      );
 
-      // if `options.variable` is not specified or the template contains "evaluate"
-      // delimiters, add the data object to the top of the scope chain
-      if (isEvaluating || !variable) {
-        text = 'with (' + variable + ' || {}) {\n' + text + '\n}\n';
-      }
-      // else insert data object references to avoid using a with-statement
-      else {
-        if (variable != lastVariable) {
-          lastVariable = variable;
-          reDoubleVariable = RegExp('([(\\s])(' + variable + '\\.' + variable + ')\\b', 'g');
-        }
-        text = text
-          .replace(reInsertVariable, '$&' + variable + '.')
-          .replace(reDoubleVariable, '$1($2 || ' + variable + ')');
-      }
-    }
+    // cleanup compiled code by stripping empty strings
+    text = (isEvaluating ? text.replace(reEmptyStringLeading, '') : text)
+      .replace(reEmptyStringMiddle, '$1')
+      .replace(reEmptyStringTrailing, '$1;');
 
+    // wrap function body
     text = 'function(' + variable + ') {\n' +
+      (useWith
+        ? variable + ' || (' + variable + ' = {});\n'
+        : ''
+      ) +
       'var __p' +
       (isInterpolating
         ? ', __t'
         : ''
       ) +
+      ', __d = ' + variable + '.' + variable + ' || ' + variable +
       (isEscaping
         ? ', __e = _.escape'
         : ''

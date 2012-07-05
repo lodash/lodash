@@ -669,6 +669,13 @@
       _.template('', null, options);
       deepEqual(options, {});
     });
+
+    test('should work with complex "interpolate" delimiters', function() {
+      var compiled = _.template('<%= a + b %>'),
+          data = { 'a': 1, 'b': 2 };
+
+      equal(compiled(data), 3);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

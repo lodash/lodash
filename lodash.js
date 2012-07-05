@@ -55,7 +55,7 @@
   var oldDash = window._;
 
   /** Used to detect delimiter values that should be processed by `tokenizeEvaluate` */
-  var reComplexDelimiter = /[-)}={(+]|\[\D/;
+  var reComplexDelimiter = /[-+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
 
   /** Used to match code generated in place of template delimiters */
   var reDelimiterCodeLeading = /^';\n/,

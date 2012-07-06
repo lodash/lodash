@@ -41,13 +41,6 @@
   var ArrayProto = Array.prototype,
       ObjectProto = Object.prototype;
 
-  /**
-   * Detect the JScript [[DontEnum]] bug:
-   * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
-   * made non-enumerable as well.
-   */
-  var hasDontEnumBug = !{ 'valueOf': 0 }.propertyIsEnumerable('valueOf');
-
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -105,6 +98,7 @@
   var concat = ArrayProto.concat,
       hasOwnProperty = ObjectProto.hasOwnProperty,
       push = ArrayProto.push,
+      propertyIsEnumerable = ObjectProto.propertyIsEnumerable,
       slice = ArrayProto.slice,
       toString = ObjectProto.toString;
 
@@ -126,6 +120,13 @@
   /** Timer shortcuts */
   var clearTimeout = window.clearTimeout,
       setTimeout = window.setTimeout;
+
+  /**
+   * Detect the JScript [[DontEnum]] bug:
+   * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
+   * made non-enumerable as well.
+   */
+  var hasDontEnumBug = !propertyIsEnumerable.call({ 'valueOf': 0 }, 'valueOf');
 
   /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
   var useNativeBind = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
@@ -2968,7 +2969,7 @@
    */
   var keys = !nativeKeys ? shimKeys : function(object) {
     // avoid iterating over the `prototype` property
-    return typeof object == 'function'
+    return typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
       ? shimKeys(object)
       : nativeKeys(object);
   };

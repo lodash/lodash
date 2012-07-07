@@ -30,7 +30,7 @@
   ];
 
   /** Reassign `existsSync` for older versions of Node */
-  fs.existsSync || (fs.existsSync = path.existsSync);
+  fs.existsSync || (fs.existsSync = fs.existsSync);
 
   /*--------------------------------------------------------------------------*/
 

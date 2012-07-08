@@ -2,19 +2,42 @@
 ;(function() {
   'use strict';
 
-  /** The Node filesystem and path modules */
+  /** Load modules */
   var fs = require('fs'),
-      path = require('path');
-
-  /** Load other modules */
-  var lodash = require(path.join(__dirname, 'lodash')),
+      path = require('path'),
+      vm = require('vm'),
       minify = require(path.join(__dirname, 'build', 'minify'));
+
+  /** Flag used to specify a backbone build */
+  var isBackbone = process.argv.indexOf('backbone') > -1;
+
+  /** Flag used to specify a legacy build */
+  var isLegacy = process.argv.indexOf('legacy') > -1;
+
+  /** Flag used to specify a mobile build */
+  var isMobile = !isLegacy && process.argv.indexOf('mobile') > -1;
 
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
   /** The lodash.js source */
   var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
+
+  /** Load customized Lo-Dash module */
+  var lodash = (function() {
+    var sandbox = {};
+
+    if (isLegacy) {
+      ['isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
+        source = replaceVar(source, varName, 'false');
+      });
+    }
+    else if (isMobile) {
+      source = replaceVar(source, 'isKeysFast', 'false');
+    }
+    vm.runInNewContext(source, sandbox);
+    return sandbox._;
+  }());
 
   /** Used to associate aliases with their real names */
   var aliasToRealMap = {
@@ -198,6 +221,7 @@
     'hasDontEnumBug',
     'inLoop',
     'init',
+    'isKeysFast',
     'iteratedObject',
     'loopExp',
     'object',
@@ -232,12 +256,6 @@
     // return `filterType`
     return pair[1];
   }, '');
-
-  /** Flag used to specify a backbone build */
-  var isBackbone = process.argv.indexOf('backbone') > -1;
-
-  /** Flag used to specify a mobile build */
-  var isMobile = process.argv.indexOf('mobile') > -1;
 
   /*--------------------------------------------------------------------------*/
 
@@ -318,7 +336,7 @@
    * @returns {String} Returns the `isArguments` fallback snippet.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?: *\/\/.*)*\s*if *\(!(?:lodash\.)?isArguments[^)]+\)[\s\S]+?};?\s*}\n/) || [''])[0];
+    return (source.match(/(?: *\/\/.*)*\s*if *\(!(?:lodash\.)?isArguments[^)]+\)[\s\S]+?};\s*}\n/) || [''])[0];
   }
 
   /**
@@ -465,6 +483,31 @@
     return removeFromCreateIterator(source, varName);
   }
 
+  /**
+   * Searches `source` for a `varName` variable declaration and replaces its
+   * assigned value with `varValue`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @param {String} varName The name of the variable to replace.
+   * @returns {String} Returns the source with the variable replaced.
+   */
+  function replaceVar(source, varName, varValue) {
+    // replace a variable that's not part of a declaration list
+    source = source.replace(RegExp(
+      '(( +)var ' + varName + ' *= *)' +
+      '(?:.*?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\2.+?;)\\n'
+    ), '$1' + varValue + ';\n');
+
+    // replace a varaible at the start of middle of a declaration list
+    source = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), '$1 ' + varValue + ',');
+
+    // replace a variable at the end of a variable declaration list
+    source = source.replace(RegExp('(,\\s*' + varName + ' *=).*?;'), '$1 ' + varValue + ';');
+
+    return source;
+  }
+
   /*--------------------------------------------------------------------------*/
 
   // Backbone build
@@ -574,13 +617,12 @@
     }
     if (isRemoved(source, 'bind')) {
       source = removeVar(source, 'nativeBind');
-      source = removeVar(source, 'useNativeBind');
+      source = removeVar(source, 'isBindFast');
     }
     if (isRemoved(source, 'isArray')) {
       source = removeVar(source, 'nativeIsArray');
     }
     if (isRemoved(source, 'keys')) {
-      source = removeVar(source, 'nativeKeys');
       source = removeFunction(source, 'shimKeys');
     }
     if (isRemoved(source, 'clone', 'isObject', 'keys')) {
@@ -637,6 +679,10 @@
       'RegExp': 'regexpClass',
       'String': 'stringClass'
     }, function(value, key) {
+      // if legacy build skip `isArguments`
+      if (isLegacy && key == 'Arguments') {
+        return;
+      }
       var funcName = 'is' + key,
           funcCode = matchFunction(source, funcName);
 
@@ -673,7 +719,7 @@
     );
 
     // tweak `isArguments` fallback
-    snippet = getIsArgumentsFallback(source);
+    snippet = !isLegacy && getIsArgumentsFallback(source);
     if (snippet) {
       result = '\n' + snippet.replace(/isArguments/g, 'lodash.$&');
       source = source.replace(snippet, result);
@@ -681,6 +727,29 @@
   }());
 
   /*--------------------------------------------------------------------------*/
+
+  if (isLegacy) {
+    // replace `_.keys` with `shimKeys`
+    if (!isRemoved(source, 'keys')) {
+      source = source.replace(
+        matchFunction(source, 'keys').replace(/[\s\S]+?var keys *=/, ''),
+        matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *=/, '')
+      );
+
+      source = removeFunction(source, 'shimKeys');
+    }
+    // replace `_.isArguments` with fallback
+    if (!isRemoved(source, 'isArguments')) {
+      source = source.replace(
+        matchFunction(source, 'isArguments').replace(/[\s\S]+?var isArguments *=/, ''),
+        getIsArgumentsFallback(source).match(/isArguments *=([\s\S]+?) *};/)[1] + '  };\n'
+      );
+
+      source = removeIsArgumentsFallback(source);
+    }
+
+    source = removeFromCreateIterator(source, 'nativeKeys');
+  }
 
   if (isMobile) {
     // inline functions defined with `createIterator`
@@ -696,31 +765,27 @@
       source = source.replace(reFunc, '$1' + getFunctionSource(lodash[funcName]) + ';\n');
     });
 
-    source = removeIsArgumentsFallback(source);
-
-    source = removeVar(source, 'iteratorTemplate');
-
     // remove JScript [[DontEnum]] fix from `isEqual`
     source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}/, '');
 
     // remove IE `shift` and `splice` fix
     source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
 
-    // cleanup code
-    source = source.replace(/^ *;\n/gm, '');
+    source = removeVar(source, 'iteratorTemplate');
+    source = removeIsArgumentsFallback(source);
   }
   else {
     // inline `iteratorTemplate` template
     source = source.replace(/(( +)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
-      var code = getFunctionSource(lodash._iteratorTemplate);
+      var snippet = getFunctionSource(lodash._iteratorTemplate);
 
       // expand properties to avoid having to use a with-statement
       iteratorOptions.forEach(function(property) {
-        code = code.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
+        snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
       });
 
       // remove unnecessary code
-      code = code
+      snippet = snippet
         .replace(/, *__t,[^;]+|function print[^}]+}/g, '')
         .replace(/'(?:\\n|\s)+'/g, "''")
         .replace(/__p *\+= *' *';/g, '')
@@ -729,17 +794,17 @@
         .replace(/\(\(__w?t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__w?t\)/g, '$1');
 
       // remove the with-statement
-      code = code.replace(/ *with *\([^)]+\) *{/, '\n').replace(/}}\s*;?\s*}/, '}}\n');
+      snippet = snippet.replace(/ *with *\([^)]+\) *{/, '\n').replace(/}}\s*;?\s*}/, '}}\n');
 
       // minor cleanup
-      code = code
+      snippet = snippet
         .replace(/obj *\|\| *\(obj *= *\{}\);/, '')
         .replace(/var __p;\s*__p/, 'var __p');
 
       // remove comments, including sourceURLs
-      code = code.replace(/\s*\/\/.*(?:\n|$)/g, '');
+      snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
 
-      return '$1' + code + ';\n';
+      return '$1' + snippet + ';\n';
     }()));
   }
 
@@ -748,8 +813,11 @@
   // remove pseudo private properties
   source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
 
+  // cleanup code
+  source = source.replace(/^ *;\n/gm, '');
+
   // begin the minification process
-  if (filterType || isBackbone || isMobile) {
+  if (filterType || isBackbone || isLegacy || isMobile) {
     fs.writeFileSync(path.join(__dirname, 'lodash.custom.js'), source);
     minify(source, 'lodash.custom.min', function(result) {
       fs.writeFileSync(path.join(__dirname, 'lodash.custom.min.js'), result);

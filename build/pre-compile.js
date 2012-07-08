@@ -258,13 +258,14 @@
       }
       snippets.forEach(function(snippet) {
         var result = snippet,
-            isSortBy = /var sortBy\b/.test(result);
+            isSortBy = /var sortBy\b/.test(result),
+            isInlined = !/\bcreateIterator\b/.test(result);
 
         // minify properties
         properties.forEach(function(property, index) {
-          // add quotes around properties in the inlined method of the mobile build
-          // so Closure Compiler won't mung them
-          if (isSortBy) {
+          // add quotes around properties in the inlined `sortBy` of the mobile
+          // build so Closure Compiler won't mung them
+          if (isSortBy && isInlined) {
             result = result
               .replace(RegExp('\\.' + property + '\\b', 'g'), "['" + minNames[index] + "']")
               .replace(RegExp('\\b' + property + ' *:', 'g'), "'" + minNames[index] + "':");

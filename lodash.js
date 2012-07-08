@@ -131,6 +131,9 @@
   /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
   var useNativeBind = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
 
+  /* Detect if `Object.keys` exists and is inferred to be fast (i.e. V8, Opera, IE) */
+  var useNativeKeys = nativeKeys && /^.+$|true/.test(nativeKeys + !!window.attachEvent);
+
   /** Detect if sourceURL syntax is usable without erroring */
   try {
     // Adobe's and Narwhal's JS engines will error
@@ -279,17 +282,34 @@
     // the following branch is for iterating an object's own/inherited properties
     'if (objectBranch) {' +
     '  if (arrayBranch) { %>else {\n<% }' +
-    '  if (!hasDontEnumBug) { %>  var skipProto = typeof <%= iteratedObject %> == \'function\';\n<% } %>' +
-    '  <%= objectBranch.beforeLoop %>;\n' +
+    '  if (!hasDontEnumBug) { %>' +
+    '  var skipProto = typeof <%= iteratedObject %> == \'function\' && \n' +
+    '    propertyIsEnumerable.call(<%= iteratedObject %>, \'prototype\');\n<%' +
+    '  } %>' +
+    '  <%= objectBranch.beforeLoop %>;\n<%' +
+
+    // iterate own properties using `Object.keys` if it's fast
+    '  if (useNativeKeys && useHas) { %>' +
+    '  var props = nativeKeys(<%= iteratedObject %>),\n' +
+    '      propIndex = -1,\n' +
+    '      length = props.length;\n' +
+    '  while (++propIndex < length) {\n' +
+    '    index = props[propIndex];\n' +
+    '    if (!(skipProto && index == \'prototype\')) {\n' +
+    '      <%= objectBranch.inLoop %>\n' +
+    '    }\n' +
+    '  }\n' +
+
+    // else using a for-in loop
+    '  <% } else {  %>' +
     '  for (<%= objectBranch.loopExp %>) {' +
     '  \n<%' +
-    '  if (hasDontEnumBug) {' +
-    '    if (useHas) { %>    if (<%= hasExp %>) {\n  <% } %>' +
+    '    if (hasDontEnumBug) {' +
+    '      if (useHas) { %>    if (<%= hasExp %>) {\n  <% } %>' +
     '    <%= objectBranch.inLoop %>;<%' +
-    '    if (useHas) { %>\n    }<% }' +
-    '  }' +
-    '  else {' +
-    '  %>' +
+    '      if (useHas) { %>\n    }<% }' +
+    '    }' +
+    '    else { %>' +
 
     // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
     // (if the prototype or a property on the prototype has been set)
@@ -300,8 +320,9 @@
     '    if (!(skipProto && index == \'prototype\')<% if (useHas) { %> && <%= hasExp %><% } %>) {\n' +
     '      <%= objectBranch.inLoop %>\n' +
     '    }' +
-    '  <% } %>\n' +
+    '    <% } %>\n' +
     '  }' +
+    '  <% } %>' +
 
     // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
     // existing property and the `constructor` property of a prototype
@@ -309,7 +330,7 @@
     // property when it infers it's iterating over a `prototype` object.
     '  <% if (hasDontEnumBug) { %>\n' +
     '  var ctor = <%= iteratedObject %>.constructor;\n' +
-    '  <% for (var k = 0; k < 7; k++) { %>\n' +
+    '    <% for (var k = 0; k < 7; k++) { %>\n' +
     '  index = \'<%= shadowed[k] %>\';\n' +
     '  if (<%' +
     '      if (shadowed[k] == \'constructor\') {' +
@@ -479,6 +500,7 @@
 
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
+    data.useNativeKeys = useNativeKeys;
     data.hasExp = 'hasOwnProperty.call(' + iteratedObject + ', index)';
     data.iteratedObject = iteratedObject;
     data.shadowed = shadowed;
@@ -496,13 +518,15 @@
     // create the function factory
     var factory = Function(
         'arrayClass, compareAscending, funcClass, hasOwnProperty, identity, ' +
-        'iteratorBind, objectTypes, slice, stringClass, toString',
+        'iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, ' +
+        'slice, stringClass, toString',
       '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
       arrayClass, compareAscending, funcClass, hasOwnProperty, identity,
-      iteratorBind, objectTypes, slice, stringClass, toString
+      iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, slice,
+      stringClass, toString
     );
   }
 

@@ -336,7 +336,7 @@
    * @returns {String} Returns the `isArguments` fallback snippet.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?: *\/\/.*)*\s*if *\(!(?:lodash\.)?isArguments[^)]+\)[\s\S]+?};\s*}\n/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\s*if *\(!(?:lodash\.)?isArguments[^)]+\)[\s\S]+?};\s*}/) || [''])[0];
   }
 
   /**
@@ -453,6 +453,25 @@
   }
 
   /**
+   * Removes the `Object.keys` object iteration optimization from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeKeysOptimization(source) {
+    return removeVar(source, 'isKeysFast')
+      // remove conditional concat in `mapIteratorOptions`
+      .replace(/= *' *\+ *\(isKeysFast.+/, "= []'")
+      // remove conditional concat in `mapIteratorOptions`, `invoke`, `pluck`, and `sortBy`
+      .replace(/' *\+ *\(isKeysFast.+?\) *\+ *'/g, '.push')
+      // remove data object property assignment in `createIterator`
+      .replace(/\s*.+?\.isKeysFast *=.+/, '')
+      // remove optimized branch in `iteratorTemplate`
+      .replace(/(?: *\/\/.*\n)*\s*'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, '$2');
+  }
+
+  /**
    * Removes a given variable from `source`.
    *
    * @private
@@ -467,9 +486,9 @@
       // match multi-line comment block
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
       // match a variable declaration that's not part of a declaration list
-      '( +)var ' + varName + ' *= *(?:.*?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\1.+?;)\\n|' +
+      '( +)var ' + varName + ' *= *(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\1.+?;)\\n|' +
       // match a variable in a declaration list
-      '\\n +' + varName + ' *=.*?,' +
+      '\\n +' + varName + ' *=.+?,' +
       // end non-capturing group
       ')'
     ), '');
@@ -478,7 +497,7 @@
     source = source.replace(RegExp('(var +)' + varName + ' *=.+?,\\s+'), '$1');
 
     // remove a variable at the end of a variable declaration list
-    source = source.replace(RegExp(',\\s*' + varName + ' *=.*?;'), ';');
+    source = source.replace(RegExp(',\\s*' + varName + ' *=.+?;'), ';');
 
     return removeFromCreateIterator(source, varName);
   }
@@ -496,14 +515,14 @@
     // replace a variable that's not part of a declaration list
     source = source.replace(RegExp(
       '(( +)var ' + varName + ' *= *)' +
-      '(?:.*?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\2.+?;)\\n'
+      '(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\2.+?;)\\n'
     ), '$1' + varValue + ';\n');
 
     // replace a varaible at the start of middle of a declaration list
     source = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), '$1 ' + varValue + ',');
 
     // replace a variable at the end of a variable declaration list
-    source = source.replace(RegExp('(,\\s*' + varName + ' *=).*?;'), '$1 ' + varValue + ';');
+    source = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), '$1 ' + varValue + ';');
 
     return source;
   }
@@ -661,7 +680,7 @@
       return !isRemoved(source, funcName);
     });
 
-    // skip this optimization if there is no iteration method to use
+    // skip this optimization if there are no iteration methods to use
     if (!iteratorName) {
       return;
     }
@@ -679,7 +698,7 @@
       'RegExp': 'regexpClass',
       'String': 'stringClass'
     }, function(value, key) {
-      // if legacy build skip `isArguments`
+      // skip `isArguments` if legacy build
       if (isLegacy && key == 'Arguments') {
         return;
       }
@@ -729,6 +748,25 @@
   /*--------------------------------------------------------------------------*/
 
   if (isLegacy) {
+    ['isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
+      source = removeVar(source, varName);
+    });
+
+    ['bind', 'isArray'].forEach(function(funcName) {
+      var snippet = matchFunction(source, funcName),
+          result = snippet;
+
+      // remove native `Function#bind` branch
+      if (funcName == 'bind' ) {
+        result = result.replace(/(?:\s*\/\/.*)*\s*else if *\(isBindFast[^}]+}/, '');
+      }
+      // remove native `Array.isArray` branch
+      else if (funcName == 'isArray') {
+        result = result.replace(/nativeIsArray * \|\|/, '');
+      }
+      source = source.replace(snippet, result);
+    });
+
     // replace `_.keys` with `shimKeys`
     if (!isRemoved(source, 'keys')) {
       source = source.replace(
@@ -749,6 +787,7 @@
     }
 
     source = removeFromCreateIterator(source, 'nativeKeys');
+    source = removeKeysOptimization(source);
   }
 
   if (isMobile) {
@@ -766,13 +805,15 @@
     });
 
     // remove JScript [[DontEnum]] fix from `isEqual`
-    source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}/, '');
+    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}/, '');
 
     // remove IE `shift` and `splice` fix
-    source = source.replace(/(?:\s*\/\/.*\n)*( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
+    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
 
+    source = removeVar(source, 'hasDontEnumBug');
     source = removeVar(source, 'iteratorTemplate');
     source = removeIsArgumentsFallback(source);
+    source = removeKeysOptimization(source);
   }
   else {
     // inline `iteratorTemplate` template
@@ -794,7 +835,7 @@
         .replace(/\(\(__w?t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__w?t\)/g, '$1');
 
       // remove the with-statement
-      snippet = snippet.replace(/ *with *\([^)]+\) *{/, '\n').replace(/}}\s*;?\s*}/, '}}\n');
+      snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
 
       // minor cleanup
       snippet = snippet

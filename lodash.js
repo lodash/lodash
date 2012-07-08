@@ -276,40 +276,39 @@
     '  while (<%= arrayBranch.loopExp %>) {\n' +
     '    <%= arrayBranch.inLoop %>\n' +
     '  }' +
-    '  <% if (objectBranch) { %>\n}\n<% }' +
-    '}' +
+    '  <% if (objectBranch) { %>\n}<% } %>' +
+    '<% } %>' +
 
     // the following branch is for iterating an object's own/inherited properties
-    'if (objectBranch) {' +
-    '  if (arrayBranch) { %>else {\n<% }' +
-    '  if (!hasDontEnumBug) { %>' +
+    '<% if (objectBranch) { %>' +
+    '  <% if (arrayBranch) { %>\nelse {<% } %>' +
+    '  <% if (!hasDontEnumBug) { %>\n' +
     '  var skipProto = typeof <%= iteratedObject %> == \'function\' && \n' +
-    '    propertyIsEnumerable.call(<%= iteratedObject %>, \'prototype\');\n<%' +
-    '  } %>' +
-    '  <%= objectBranch.beforeLoop %>;\n<%' +
+    '    propertyIsEnumerable.call(<%= iteratedObject %>, \'prototype\');\n' +
+    '  <% } %>' +
 
     // iterate own properties using `Object.keys` if it's fast
-    '  if (isKeysFast && useHas) { %>' +
+    '  <% if (isKeysFast && useHas) { %>\n' +
     '  var props = nativeKeys(<%= iteratedObject %>),\n' +
     '      propIndex = -1,\n' +
-    '      length = props.length;\n' +
+    '      length = props.length;\n\n' +
+    '  <%= objectBranch.beforeLoop %>;\n' +
     '  while (++propIndex < length) {\n' +
     '    index = props[propIndex];\n' +
     '    if (!(skipProto && index == \'prototype\')) {\n' +
     '      <%= objectBranch.inLoop %>\n' +
     '    }\n' +
-    '  }\n' +
+    '  }' +
 
     // else using a for-in loop
-    '  <% } else {  %>' +
+    '  <% } else { %>\n' +
+    '  <%= objectBranch.beforeLoop %>;\n' +
     '  for (<%= objectBranch.loopExp %>) {' +
-    '  \n<%' +
-    '    if (hasDontEnumBug) {' +
-    '      if (useHas) { %>    if (<%= hasExp %>) {\n  <% } %>' +
-    '    <%= objectBranch.inLoop %>;<%' +
-    '      if (useHas) { %>\n    }<% }' +
-    '    }' +
-    '    else { %>' +
+    '    <% if (hasDontEnumBug) { %>\n' +
+    '    <% if (useHas) { %>if (<%= hasExp %>) {\n  <% } %>' +
+    '    <%= objectBranch.inLoop %>;\n' +
+    '    <% if (useHas) { %>}<% } %>' +
+    '    <% } else { %>\n' +
 
     // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
     // (if the prototype or a property on the prototype has been set)
@@ -328,7 +327,7 @@
     // existing property and the `constructor` property of a prototype
     // defaults to non-enumerable, Lo-Dash skips the `constructor`
     // property when it infers it's iterating over a `prototype` object.
-    '  <% if (hasDontEnumBug) { %>\n' +
+    '  <% if (hasDontEnumBug) { %>\n\n' +
     '  var ctor = <%= iteratedObject %>.constructor;\n' +
     '    <% for (var k = 0; k < 7; k++) { %>\n' +
     '  index = \'<%= shadowed[k] %>\';\n' +
@@ -337,11 +336,11 @@
     '        %>!(ctor && ctor.prototype === <%= iteratedObject %>) && <%' +
     '      } %><%= hasExp %>) {\n' +
     '    <%= objectBranch.inLoop %>\n' +
-    '  }<%' +
-    '     }' +
-    '   }' +
-    '   if (arrayBranch) { %>\n}<% }' +
-    '} %>\n' +
+    '  }' +
+    '    <% } %>' +
+    '  <% } %>' +
+    '  <% if (arrayBranch) { %>\n}<% } %>' +
+    '<% } %>\n' +
 
     // add code to the bottom of the iteration function
     '<%= bottom %>;\n' +
@@ -411,11 +410,11 @@
     'exit': 'if (!collection) return []',
     'beforeLoop': {
       'array':  'result = Array(length)',
-      'object': 'result = []'
+      'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')
     },
     'inLoop': {
       'array':  'result[index] = callback(collection[index], index, collection)',
-      'object': 'result.push(callback(collection[index], index, collection))'
+      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(callback(collection[index], index, collection))'
     }
   };
 
@@ -867,7 +866,7 @@
       '    isFunc = typeof methodName == \'function\'',
     'inLoop': {
       'array': 'result[index] = (isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)',
-      'object': 'result.push((isFunc ? methodName : collection[index][methodName]).apply(collection[index], args))'
+      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '((isFunc ? methodName : collection[index][methodName]).apply(collection[index], args))'
     }
   });
 
@@ -920,7 +919,7 @@
     'args': 'collection, property',
     'inLoop': {
       'array':  'result[index] = collection[index][property]',
-      'object': 'result.push(collection[index][property])'
+      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(collection[index][property])'
     }
   });
 
@@ -1106,7 +1105,7 @@
         '  value: collection[index]\n' +
         '}',
       'object':
-        'result.push({\n' +
+        'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '({\n' +
         '  criteria: callback(collection[index], index, collection),\n' +
         '  value: collection[index]\n' +
         '})'

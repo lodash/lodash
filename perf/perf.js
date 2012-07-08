@@ -356,11 +356,15 @@
     Benchmark.Suite('`_.each` iterating an array')
       .add('Lo-Dash', function() {
         var result = [];
-        lodash.each(numbers, function(num) { result.push(num * 2); });
+        lodash.each(numbers, function(num) {
+          result.push(num * 2);
+        });
       })
       .add('Underscore', function() {
         var result = [];
-        _.each(numbers, function(num) { result.push(num * 2); });
+        _.each(numbers, function(num) {
+          result.push(num * 2);
+        });
       })
   );
 
@@ -399,7 +403,51 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.find`')
+    Benchmark.Suite('`_.filter` iterating an array')
+      .add('Lo-Dash', function() {
+        lodash.filter(numbers, function(num) {
+          return num % 2;
+        });
+      })
+      .add('Underscore', function() {
+        _.filter(numbers, function(num) {
+          return num % 2;
+        });
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.filter` iterating an array with `thisArg` (slow path)')
+      .add('Lo-Dash', function() {
+        lodash.filter(numbers, function(num, index) {
+          return this['key' + index] % 2;
+        }, object);
+      })
+      .add('Underscore', function() {
+        _.filter(numbers, function(num, index) {
+           return this['key' + index] % 2;
+        }, object);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.filter` iterating an object')
+      .add('Lo-Dash', function() {
+        lodash.filter(object, function(num) {
+          return num % 2;
+        });
+      })
+      .add('Underscore', function() {
+        _.filter(object, function(num) {
+          return num % 2;
+        });
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.find` iterating an array')
       .add('Lo-Dash', function() {
         lodash.find(numbers, function(num) {
           return num === 19;
@@ -408,6 +456,20 @@
       .add('Underscore', function() {
         _.find(numbers, function(num) {
           return num === 19;
+        });
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.find` iterating an object')
+      .add('Lo-Dash', function() {
+        lodash.find(numbers, function(value, key) {
+          return /\D9$/.test(key);
+        });
+      })
+      .add('Underscore', function() {
+        _.find(numbers, function(value, key) {
+          return /\D9$/.test(key);
         });
       })
   );
@@ -449,7 +511,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.groupBy` with `callback`')
+    Benchmark.Suite('`_.groupBy` with `callback` iterating an array')
       .add('Lo-Dash', function() {
         lodash.groupBy(numbers, function(num) { return num >> 1; });
       })
@@ -459,12 +521,22 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.groupBy` with `property` name')
+    Benchmark.Suite('`_.groupBy` with `property` name iterating an array')
       .add('Lo-Dash', function() {
         lodash.groupBy(words, 'length');
       })
       .add('Underscore', function() {
         _.groupBy(words, 'length');
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.groupBy` with `callback` iterating an object')
+      .add('Lo-Dash', function() {
+        lodash.groupBy(wordToNumber, function(num) { return num >> 1; });
+      })
+      .add('Underscore', function() {
+        _.groupBy(wordToNumber, function(num) { return num >> 1; });
       })
   );
 
@@ -529,7 +601,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.map`')
+    Benchmark.Suite('`_.map` iterating an array')
       .add('Lo-Dash', function() {
         lodash.map(objects, function(value) {
           return value.num;
@@ -543,7 +615,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.map` with `thisArg` (slow path)')
+    Benchmark.Suite('`_.map` with `thisArg` iterating an array (slow path)')
       .add('Lo-Dash', function() {
         lodash.map(objects, function(value, index) {
           return this['key' + index] + value.num;
@@ -553,6 +625,20 @@
         _.map(objects, function(value, index) {
           return this['key' + index] + value.num;
         }, object);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.map` iterating an object')
+      .add('Lo-Dash', function() {
+        lodash.map(object, function(value) {
+          return value;
+        });
+      })
+      .add('Underscore', function() {
+        _.map(object, function(value) {
+          return value;
+        });
       })
   );
 

@@ -257,10 +257,18 @@
         return;
       }
       snippets.forEach(function(snippet) {
-        var result = snippet;
+        var result = snippet,
+            isSortBy = /var sortBy\b/.test(result);
 
         // minify properties
         properties.forEach(function(property, index) {
+          // add quotes around properties in the inlined method of the mobile build
+          // so Closure Compiler won't mung them
+          if (isSortBy) {
+            result = result
+              .replace(RegExp('\\.' + property + '\\b', 'g'), "['" + minNames[index] + "']")
+              .replace(RegExp('\\b' + property + ' *:', 'g'), "'" + minNames[index] + "':");
+          }
           result = result.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
         });
         // replace with modified snippet

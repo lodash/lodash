@@ -23,11 +23,15 @@
     'iteratorBind',
     'length',
     'methodName',
+    'nativeKeys',
     'noaccum',
     'object',
     'objectTypes',
     'prop',
+    'propIndex',
+    'props',
     'property',
+    'propertyIsEnumerable',
     'result',
     'skipProto',
     'slice',
@@ -59,7 +63,8 @@
     'objectBranch',
     'shadowed',
     'top',
-    'useHas'
+    'useHas',
+    'useNativeKeys'
   ];
 
   /** Used to minify variables and string values to a single character */
@@ -74,6 +79,7 @@
     'all',
     'amd',
     'any',
+    'attachEvent',
     'bind',
     'bindAll',
     'chain',

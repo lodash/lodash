@@ -57,14 +57,14 @@
     'hasDontEnumBug',
     'inLoop',
     'init',
+    'isKeysFast',
     'iteratedObject',
     'loopExp',
     'object',
     'objectBranch',
     'shadowed',
     'top',
-    'useHas',
-    'useNativeKeys'
+    'useHas'
   ];
 
   /** Used to minify variables and string values to a single character */

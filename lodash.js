@@ -129,10 +129,10 @@
   var hasDontEnumBug = !propertyIsEnumerable.call({ 'valueOf': 0 }, 'valueOf');
 
   /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
-  var useNativeBind = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
+  var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
 
   /* Detect if `Object.keys` exists and is inferred to be fast (i.e. V8, Opera, IE) */
-  var useNativeKeys = nativeKeys && /^.+$|true/.test(nativeKeys + !!window.attachEvent);
+  var isKeysFast = nativeKeys && /^.+$|true/.test(nativeKeys + !!window.attachEvent);
 
   /** Detect if sourceURL syntax is usable without erroring */
   try {
@@ -289,7 +289,7 @@
     '  <%= objectBranch.beforeLoop %>;\n<%' +
 
     // iterate own properties using `Object.keys` if it's fast
-    '  if (useNativeKeys && useHas) { %>' +
+    '  if (isKeysFast && useHas) { %>' +
     '  var props = nativeKeys(<%= iteratedObject %>),\n' +
     '      propIndex = -1,\n' +
     '      length = props.length;\n' +
@@ -500,8 +500,8 @@
 
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
-    data.useNativeKeys = useNativeKeys;
     data.hasExp = 'hasOwnProperty.call(' + iteratedObject + ', index)';
+    data.isKeysFast = isKeysFast;
     data.iteratedObject = iteratedObject;
     data.shadowed = shadowed;
     data.useHas = data.useHas !== false;
@@ -1981,7 +1981,7 @@
     }
     // use `Function#bind` if it exists and is fast
     // (in V8 `Function#bind` is slower except when partially applied)
-    else if (useNativeBind || (nativeBind && arguments.length > 2)) {
+    else if (isBindFast || (nativeBind && arguments.length > 2)) {
       return nativeBind.call.apply(nativeBind, arguments);
     }
 

@@ -8,46 +8,57 @@
 	<body>
 		<div id="qunit"></div>
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
+		<script src="ui.js"></script>
 		<script>
-			var _2,
-			    _3 = Object.keys;
-
+			// set a bad shim
+			Object._keys = Object.keys;
 			Object.keys = function() { return []; };
+
+			// load Lo-Dash and expose it to the bad `Object.keys` shim
+			document.write('<script src="../' + QUnit.config.lodashFilename + '.js"><\/script>');
 		</script>
-		<script src="../lodash.js"></script>
 		<script>
-			var lodashBadKeys = _,
-				_ = 1;
+			// store Lo-Dash to test for bad shim detection
+			var lodashBadShim = _;
 
-			Object.keys = _3;
-			_3 = void 0;
+			// restore nativeKeys
+			Object.keys = Object._keys;
+			delete Object._keys;
+
+			// set to test `_.noConflict`
+			_ = 1;
+
+			// load Lo-Dash again to overwrite the existing `_` value
+			document.write('<script src="../' + QUnit.config.lodashFilename + '.js"><\/script>');
+
+			// load test.js if not using require.js
+			document.write(QUnit.urlParams.norequire
+				? '<script src="test.js"><\/script>'
+				: '<script src="../vendor/requirejs/require.js"><\/script>'
+			);
 		</script>
-		<script src="../lodash.js"></script>
-		<script src="../vendor/requirejs/require.js"></script>
 		<script>
-			if (/[?&]norequire=true(?:&|$)/.test(location.search)) {
-				require = define = null;
-				document.write('<script src="test.js"><\/script>');
-			}
-			else {
-				require({
-					'baseUrl': '../vendor/requirejs/',
-					'urlArgs': 't=' + (+new Date),
-					'paths': {
-						'lodash': '../../lodash',
-						'underscore': './../../lodash'
-					}
-				},
-				['lodash', 'underscore'], function(lodash, lodashAsUnderscore) {
-					_2 = lodash.noConflict();
-					_2.moduleName = 'lodash';
+			// load Lo-Dash as a module
+			var lodashModule,
+			    underscoreModule;
 
-					_3 = lodashAsUnderscore.noConflict();
-					_3.moduleName = 'underscore';
+			window.require && require({
+				'baseUrl': '../vendor/requirejs/',
+				'urlArgs': 't=' + (+new Date),
+				'paths': {
+					'lodash': '../../' + QUnit.config.lodashFilename,
+					'underscore': './../../' + QUnit.config.lodashFilename
+				}
+			},
+			['lodash', 'underscore'], function(lodash, underscore) {
+				lodashModule = lodash.noConflict();
+				lodashModule.moduleName = 'lodash';
 
-					require(['test.js']);
-				});
-			}
+				underscoreModule = underscore.noConflict();
+				underscoreModule.moduleName = 'underscore';
+
+				require(['test.js']);
+			});
 		</script>
 	</body>
 </html>

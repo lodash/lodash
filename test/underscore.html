@@ -22,7 +22,10 @@
 		<script src="../vendor/underscore/test/vendor/jquery.js"></script>
 		<script src="../vendor/underscore/test/vendor/qunit.js"></script>
 		<script src="../vendor/underscore/test/vendor/jslitmus.js"></script>
-		<script src="../lodash.js"></script>
+		<script src="ui.js"></script>
+		<script>
+			document.write('<script src="../' + QUnit.config.lodashFilename + '.js"><\/script>');
+		</script>
 		<script src="../vendor/underscore/test/collections.js"></script>
 		<script src="../vendor/underscore/test/arrays.js"></script>
 		<script src="../vendor/underscore/test/functions.js"></script>

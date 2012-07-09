@@ -810,6 +810,7 @@
     // remove IE `shift` and `splice` fix
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
 
+    source = removeVar(source, 'extendIteratorOptions');
     source = removeVar(source, 'hasDontEnumBug');
     source = removeVar(source, 'iteratorTemplate');
     source = removeIsArgumentsFallback(source);

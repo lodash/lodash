@@ -25,7 +25,10 @@
 		<script src="../vendor/backbone/test/vendor/jquery-1.7.1.js"></script>
 		<script src="../vendor/backbone/test/vendor/qunit.js"></script>
 		<script src="../vendor/backbone/test/vendor/jslitmus.js"></script>
-		<script src="../lodash.js"></script>
+		<script src="ui.js"></script>
+		<script>
+			document.write('<script src="../' + QUnit.config.lodashFilename + '.js"><\/script>');
+		</script>
 		<script src="../vendor/backbone/backbone.js"></script>
 		<script src="../vendor/backbone/test/noconflict.js"></script>
 		<script src="../vendor/backbone/test/events.js"></script>

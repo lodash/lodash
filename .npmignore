@@ -7,4 +7,5 @@ node_modules/
 perf/*.html
 perf/*.sh
 test/*.html
+test/*-ui.js
 test/*.sh

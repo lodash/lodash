@@ -1,4 +1,5 @@
-(function(window, undefined) {
+;(function(window, undefined) {
+  'use strict';
 
   /** Use a single load function */
   var load = typeof require == 'function' ? require : window.load;
@@ -71,7 +72,7 @@
   (function() {
     test('supports loading lodash.js as the "lodash" module', function() {
       if (window.document && window.require) {
-        equal((_2 || {}).moduleName, 'lodash');
+        equal((lodashModule || {}).moduleName, 'lodash');
       } else {
         skipTest(1)
       }
@@ -79,15 +80,15 @@
 
     test('supports loading lodash.js as the "underscore" module', function() {
       if (window.document && window.require) {
-        equal((_3 || {}).moduleName, 'underscore');
+        equal((underscoreModule || {}).moduleName, 'underscore');
       } else {
         skipTest(1)
       }
     });
 
     test('avoids overwritten native methods', function() {
-      if (window.lodashBadKeys) {
-        notDeepEqual(lodashBadKeys.keys({ 'a': 1 }), []);
+      if (window.document) {
+        notDeepEqual(lodashBadShim.keys({ 'a': 1 }), []);
       } else {
         skipTest(1);
       }

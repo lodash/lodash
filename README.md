@@ -55,6 +55,11 @@ We handle all the method dependency and alias mapping for you.
 node build backbone
 ~~~
 
+ * Legacy builds, tailored for older browsers without [ES5 support](http://es5.github.com/), may be created using the `legacy` modifier argument.
+~~~ bash
+node build legacy
+~~~
+
  * Mobile builds, with IE bug fixes and method compilation removed, may be created using the `mobile` modifier argument.
 ~~~ bash
 node build mobile
@@ -81,11 +86,11 @@ node build exclude=union,uniq,zip
 node build exclude="union, uniq, zip"
 ~~~
 
-All arguments, except `include` and `exlcude`, may be combined.
+All arguments, except `include` with `exclude` and `mobile` with `legacy`, may be combined.
 
 ~~~ bash
 node build backbone mobile category=functions include=pick,uniq
-node build backbone mobile category=utilities exclude=first,last
+node build backbone legacy category=utilities exclude=first,last
 ~~~
 
 Custom builds are saved to `lodash.custom.js` and `lodash.custom.min.js`.

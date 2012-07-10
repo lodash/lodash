@@ -20,6 +20,7 @@
     'identity',
     'index',
     'isFunc',
+    'iteratee',
     'iteratorBind',
     'length',
     'methodName',
@@ -53,15 +54,14 @@
     'bottom',
     'exit',
     'firstArg',
-    'hasExp',
     'hasDontEnumBug',
     'inLoop',
     'init',
     'isKeysFast',
-    'iteratedObject',
-    'loopExp',
+    'iteratee',
     'object',
     'objectBranch',
+    'noCharByIndex',
     'shadowed',
     'top',
     'useHas'
@@ -196,9 +196,9 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Pre-process a given JavaScript `source`, preparing it for minification.
+   * Pre-process a given Lo-Dash source, preparing it for minification.
    *
-   * @param {String} source The source to process.
+   * @param {String} source The Lo-Dash source to process.
    * @returns {String} Returns the processed source.
    */
   function preprocess(source) {
@@ -257,23 +257,23 @@
         return;
       }
       snippets.forEach(function(snippet) {
-        var result = snippet,
-            isSortBy = /var sortBy\b/.test(result),
-            isInlined = !/\bcreateIterator\b/.test(result);
+        var modified = snippet,
+            isSortBy = /var sortBy\b/.test(modified),
+            isInlined = !/\bcreateIterator\b/.test(modified);
 
         // minify properties
         properties.forEach(function(property, index) {
-          // add quotes around properties in the inlined `sortBy` of the mobile
+          // add quotes around properties in the inlined `_.sortBy` of the mobile
           // build so Closure Compiler won't mung them
           if (isSortBy && isInlined) {
-            result = result
+            modified = modified
               .replace(RegExp('\\.' + property + '\\b', 'g'), "['" + minNames[index] + "']")
               .replace(RegExp('\\b' + property + ' *:', 'g'), "'" + minNames[index] + "':");
           }
-          result = result.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
+          modified = modified.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
         });
         // replace with modified snippet
-        source = source.replace(snippet, result);
+        source = source.replace(snippet, modified);
       });
     }());
 
@@ -299,26 +299,26 @@
     snippets.forEach(function(snippet, index) {
       var isCreateIterator = /function createIterator\b/.test(snippet),
           isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
-          result = snippet;
+          modified = snippet;
 
       // add brackets to whitelisted properties so Closure Compiler won't mung them
-      result = result.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
+      modified = modified.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
 
       if (isCreateIterator) {
         // replace with modified snippet early and clip snippet so other arguments
         // aren't minified
-        source = source.replace(snippet, result);
-        snippet = result = result.replace(/factory\([\s\S]+$/, '');
+        source = source.replace(snippet, modified);
+        snippet = modified = modified.replace(/factory\([\s\S]+$/, '');
       }
 
       // minify snippet variables / arguments
       compiledVars.forEach(function(variable, index) {
         // ensure properties in compiled strings aren't minified
-        result = result.replace(RegExp('([^.]\\b)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
+        modified = modified.replace(RegExp('([^.]\\b)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
 
         // correct `typeof x == 'object'`
         if (variable == 'object') {
-          result = result.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), "$1object'");
+          modified = modified.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), "$1object'");
         }
       });
 
@@ -326,26 +326,26 @@
       iteratorOptions.forEach(function(property, index) {
         if (isIteratorTemplate) {
           // minify property names as interpolated template variables
-          result = result.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
+          modified = modified.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
         }
         else {
           if (property == 'array' || property == 'object') {
             // minify "array" and "object" sub property names
-            result = result.replace(RegExp("'" + property + "'( *[\\]:])", 'g'), "'" + minNames[index] + "'$1");
+            modified = modified.replace(RegExp("'" + property + "'( *[\\]:])", 'g'), "'" + minNames[index] + "'$1");
           }
           else {
             // minify property name strings
-            result = result.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
+            modified = modified.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
             // minify property names in regexps and accessors
             if (isCreateIterator) {
-              result = result.replace(RegExp('([\\.|/])' + property + '\\b' , 'g'), '$1' + minNames[index]);
+              modified = modified.replace(RegExp('([\\.|/])' + property + '\\b' , 'g'), '$1' + minNames[index]);
             }
           }
         }
       });
 
       // replace with modified snippet
-      source = source.replace(snippet, result);
+      source = source.replace(snippet, modified);
     });
 
     return source;

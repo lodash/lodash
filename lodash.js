@@ -128,6 +128,13 @@
    */
   var hasDontEnumBug = !propertyIsEnumerable.call({ 'valueOf': 0 }, 'valueOf');
 
+  /**
+   * Detect support for accessing string characters by index:
+   * IE < 8 can't access characters by index and IE 8 can only access
+   * characters by index on string literals.
+   */
+  var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
+
   /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
   var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
 
@@ -262,18 +269,27 @@
    */
   var iteratorTemplate = template(
     // assign the `result` variable an initial value
-    'var index, result<% if (init) { %> = <%= init %><% } %>;\n' +
+    'var result<% if (init) { %> = <%= init %><% } %>;\n' +
     // add code to exit early or do so if the first argument is falsey
     '<%= exit %>;\n' +
     // add code after the exit snippet but before the iteration branches
     '<%= top %>;\n' +
+    'var index, iteratee = <%= iteratee %>;\n' +
 
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
-    'var length = <%= firstArg %>.length; index = -1;' +
-    '  <% if (objectBranch) { %>\nif (length === length >>> 0) {<% } %>\n' +
+    'var length = iteratee.length; index = -1;' +
+    '  <% if (objectBranch) { %>\nif (length === length >>> 0) {<% } %>' +
+
+    // add support for accessing string characters by index if needed
+    '  <% if (noCharByIndex) { %>\n' +
+    '  if (toString.call(iteratee) == stringClass) {\n' +
+    '    iteratee = iteratee.split(\'\')\n' +
+    '  }' +
+    '  <% } %>\n' +
+
     '  <%= arrayBranch.beforeLoop %>;\n' +
-    '  while (<%= arrayBranch.loopExp %>) {\n' +
+    '  while (++index < length) {\n' +
     '    <%= arrayBranch.inLoop %>\n' +
     '  }' +
     '  <% if (objectBranch) { %>\n}<% } %>' +
@@ -283,13 +299,13 @@
     '<% if (objectBranch) { %>' +
     '  <% if (arrayBranch) { %>\nelse {<% } %>' +
     '  <% if (!hasDontEnumBug) { %>\n' +
-    '  var skipProto = typeof <%= iteratedObject %> == \'function\' && \n' +
-    '    propertyIsEnumerable.call(<%= iteratedObject %>, \'prototype\');\n' +
+    '  var skipProto = typeof iteratee == \'function\' && \n' +
+    '    propertyIsEnumerable.call(iteratee, \'prototype\');\n' +
     '  <% } %>' +
 
     // iterate own properties using `Object.keys` if it's fast
     '  <% if (isKeysFast && useHas) { %>\n' +
-    '  var props = nativeKeys(<%= iteratedObject %>),\n' +
+    '  var props = nativeKeys(iteratee),\n' +
     '      propIndex = -1,\n' +
     '      length = props.length;\n\n' +
     '  <%= objectBranch.beforeLoop %>;\n' +
@@ -303,11 +319,11 @@
     // else using a for-in loop
     '  <% } else { %>\n' +
     '  <%= objectBranch.beforeLoop %>;\n' +
-    '  for (<%= objectBranch.loopExp %>) {' +
+    '  for (index in iteratee) {' +
     '    <% if (hasDontEnumBug) { %>\n' +
-    '    <% if (useHas) { %>if (<%= hasExp %>) {\n  <% } %>' +
+    '    <%   if (useHas) { %>if (hasOwnProperty.call(iteratee, index)) {\n  <% } %>' +
     '    <%= objectBranch.inLoop %>;\n' +
-    '    <% if (useHas) { %>}<% } %>' +
+    '    <%   if (useHas) { %>}<% } %>' +
     '    <% } else { %>\n' +
 
     // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
@@ -316,7 +332,8 @@
     // value to `true`. Because of this Lo-Dash standardizes on skipping
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
-    '    if (!(skipProto && index == \'prototype\')<% if (useHas) { %> && <%= hasExp %><% } %>) {\n' +
+    '    if (!(skipProto && index == \'prototype\')<% if (useHas) { %> &&\n' +
+    '        hasOwnProperty.call(iteratee, index)<% } %>) {\n' +
     '      <%= objectBranch.inLoop %>\n' +
     '    }' +
     '    <% } %>\n' +
@@ -328,13 +345,13 @@
     // defaults to non-enumerable, Lo-Dash skips the `constructor`
     // property when it infers it's iterating over a `prototype` object.
     '  <% if (hasDontEnumBug) { %>\n\n' +
-    '  var ctor = <%= iteratedObject %>.constructor;\n' +
+    '  var ctor = iteratee.constructor;\n' +
     '    <% for (var k = 0; k < 7; k++) { %>\n' +
     '  index = \'<%= shadowed[k] %>\';\n' +
     '  if (<%' +
     '      if (shadowed[k] == \'constructor\') {' +
-    '        %>!(ctor && ctor.prototype === <%= iteratedObject %>) && <%' +
-    '      } %><%= hasExp %>) {\n' +
+    '        %>!(ctor && ctor.prototype === iteratee) && <%' +
+    '      } %>hasOwnProperty.call(iteratee, index)) {\n' +
     '    <%= objectBranch.inLoop %>\n' +
     '  }' +
     '    <% } %>' +
@@ -363,13 +380,13 @@
       'else if (thisArg) {\n' +
       '  callback = iteratorBind(callback, thisArg)\n' +
       '}',
-    'inLoop': 'callback(collection[index], index, collection)'
+    'inLoop': 'callback(iteratee[index], index, collection)'
   };
 
   /** Reusable iterator options for `every` and `some` */
   var everyIteratorOptions = {
     'init': 'true',
-    'inLoop': 'if (!callback(collection[index], index, collection)) return !result'
+    'inLoop': 'if (!callback(iteratee[index], index, collection)) return !result'
   };
 
   /** Reusable iterator options for `defaults` and `extend` */
@@ -380,16 +397,16 @@
       'for (var source, sourceIndex = 1, length = arguments.length; sourceIndex < length; sourceIndex++) {\n' +
       '  source = arguments[sourceIndex];\n' +
       (hasDontEnumBug ? '  if (source) {' : ''),
-    'loopExp': 'index in source',
+    'iteratee': 'source',
     'useHas': false,
-    'inLoop': 'object[index] = source[index]',
+    'inLoop': 'result[index] = iteratee[index]',
     'bottom': (hasDontEnumBug ? '  }\n' : '') + '}'
   };
 
   /** Reusable iterator options for `filter` and `reject` */
   var filterIteratorOptions = {
     'init': '[]',
-    'inLoop': 'callback(collection[index], index, collection) && result.push(collection[index])'
+    'inLoop': 'callback(iteratee[index], index, collection) && result.push(iteratee[index])'
   };
 
   /** Reusable iterator options for `find`, `forEach`, `forIn`, and `forOwn` */
@@ -413,8 +430,8 @@
       'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')
     },
     'inLoop': {
-      'array':  'result[index] = callback(collection[index], index, collection)',
-      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(callback(collection[index], index, collection))'
+      'array':  'result[index] = callback(iteratee[index], index, collection)',
+      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(callback(iteratee[index], index, collection))'
     }
   };
 
@@ -442,8 +459,8 @@
    *  beforeLoop - A string or object containing an "array" or "object" property
    *   of code to execute before the array or object loops.
    *
-   *  loopExp - A string or object containing an "array" or "object" property
-   *   of code to execute as the array or object loop expression.
+   *  iteratee - A string or object containing an "array" or "object" property
+   *   of the variable to be iterated in the loop expression.
    *
    *  useHas - A boolean to specify whether or not to use `hasOwnProperty` checks
    *   in the object loop.
@@ -469,7 +486,7 @@
       'exit': '',
       'init': '',
       'top': '',
-      'arrayBranch': { 'beforeLoop': '', 'loopExp': '++index < length' },
+      'arrayBranch': { 'beforeLoop': '' },
       'objectBranch': { 'beforeLoop': '' }
     };
 
@@ -478,7 +495,7 @@
       for (prop in object) {
         value = (value = object[prop]) == null ? '' : value;
         // keep this regexp explicit for the build pre-process
-        if (/beforeLoop|loopExp|inLoop/.test(prop)) {
+        if (/beforeLoop|inLoop/.test(prop)) {
           if (typeof value == 'string') {
             value = { 'array': value, 'object': value };
           }
@@ -491,28 +508,21 @@
     }
     // set additional template `data` values
     var args = data.args,
-        arrayBranch = data.arrayBranch,
-        objectBranch = data.objectBranch,
         firstArg = /^[^,]+/.exec(args)[0],
-        loopExp = objectBranch.loopExp,
-        iteratedObject = /\S+$/.exec(loopExp || firstArg)[0];
+        iteratee = (data.iteratee = data.iteratee || firstArg);
 
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
-    data.hasExp = 'hasOwnProperty.call(' + iteratedObject + ', index)';
     data.isKeysFast = isKeysFast;
-    data.iteratedObject = iteratedObject;
+    data.noCharByIndex = noCharByIndex;
     data.shadowed = shadowed;
     data.useHas = data.useHas !== false;
 
     if (!data.exit) {
       data.exit = 'if (!' + firstArg + ') return result';
     }
-    if (firstArg == 'object' || !arrayBranch.inLoop) {
+    if (firstArg != 'collection' || !data.arrayBranch.inLoop) {
       data.arrayBranch = null;
-    }
-    if (!loopExp) {
-      objectBranch.loopExp = 'index in ' + iteratedObject;
     }
     // create the function factory
     var factory = Function(
@@ -620,7 +630,7 @@
    */
   var shimKeys = createIterator({
     'args': 'object',
-    'exit': 'if (!objectTypes[typeof object] || object === null) throw TypeError()',
+    'exit': 'if (!(object && objectTypes[typeof object])) throw TypeError()',
     'init': '[]',
     'inLoop': 'result.push(index)'
   });
@@ -694,7 +704,7 @@
    * @memberOf _
    * @alias include
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Mixed} target The value to check for.
    * @returns {Boolean} Returns `true` if `target` value is found, else `false`.
    * @example
@@ -705,7 +715,7 @@
   var contains = createIterator({
     'args': 'collection, target',
     'init': 'false',
-    'inLoop': 'if (collection[index] === target) return true'
+    'inLoop': 'if (iteratee[index] === target) return true'
   });
 
   /**
@@ -718,7 +728,7 @@
    * @memberOf _
    * @alias all
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Boolean} Returns `true` if all values pass the callback check, else `false`.
@@ -739,7 +749,7 @@
    * @memberOf _
    * @alias select
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array} Returns a new array of values that passed callback check.
@@ -761,7 +771,7 @@
    * @memberOf _
    * @alias detect
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Mixed} Returns the value that passed the callback check, else `undefined`.
@@ -772,7 +782,7 @@
    */
   var find = createIterator(baseIteratorOptions, forEachIteratorOptions, {
     'init': '',
-    'inLoop': 'if (callback(collection[index], index, collection)) return collection[index]'
+    'inLoop': 'if (callback(iteratee[index], index, collection)) return iteratee[index]'
   });
 
   /**
@@ -785,7 +795,7 @@
    * @memberOf _
    * @alias each
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array|Object} Returns the `collection`.
@@ -809,7 +819,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|String} callback The function called per iteration or
    *  property name to group by.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
@@ -832,9 +842,9 @@
       'if (isFunc && thisArg) callback = iteratorBind(callback, thisArg)',
     'inLoop':
       'prop = isFunc\n' +
-      '  ? callback(collection[index], index, collection)\n' +
-      '  : collection[index][callback];\n' +
-      '(hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(collection[index])'
+      '  ? callback(iteratee[index], index, collection)\n' +
+      '  : iteratee[index][callback];\n' +
+      '(hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(iteratee[index])'
   });
 
   /**
@@ -846,7 +856,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|String} methodName The name of the method to invoke or
    *  the function invoked per iteration.
    * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the method with.
@@ -865,8 +875,12 @@
       'var args = slice.call(arguments, 2),\n' +
       '    isFunc = typeof methodName == \'function\'',
     'inLoop': {
-      'array': 'result[index] = (isFunc ? methodName : collection[index][methodName]).apply(collection[index], args)',
-      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '((isFunc ? methodName : collection[index][methodName]).apply(collection[index], args))'
+      'array':
+        'result[index] = (isFunc ? methodName : iteratee[index][methodName])' +
+        '.apply(iteratee[index], args)',
+      'object':
+        'result' + (isKeysFast ? '[propIndex] = ' : '.push') +
+        '((isFunc ? methodName : iteratee[index][methodName]).apply(iteratee[index], args))'
     }
   });
 
@@ -880,7 +894,7 @@
    * @memberOf _
    * @alias collect
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array} Returns a new array of values returned by the callback.
@@ -901,7 +915,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {String} property The property to pluck.
    * @returns {Array} Returns a new array of property values.
    * @example
@@ -918,8 +932,8 @@
   var pluck = createIterator(mapIteratorOptions, {
     'args': 'collection, property',
     'inLoop': {
-      'array':  'result[index] = collection[index][property]',
-      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(collection[index][property])'
+      'array':  'result[index] = iteratee[index][property]',
+      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(iteratee[index][property])'
     }
   });
 
@@ -934,7 +948,7 @@
    * @memberOf _
    * @alias foldl, inject
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [accumulator] Initial value of the accumulator.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
@@ -955,11 +969,11 @@
     },
     'inLoop': {
       'array':
-        'result = callback(result, collection[index], index, collection)',
+        'result = callback(result, iteratee[index], index, collection)',
       'object':
         'result = noaccum\n' +
-        '  ? (noaccum = false, collection[index])\n' +
-        '  : callback(result, collection[index], index, collection)'
+        '  ? (noaccum = false, iteratee[index])\n' +
+        '  : callback(result, iteratee[index], index, collection)'
     }
   });
 
@@ -970,7 +984,7 @@
    * @memberOf _
    * @alias foldr
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [accumulator] Initial value of the accumulator.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
@@ -993,11 +1007,15 @@
       callback = iteratorBind(callback, thisArg);
     }
     if (length === length >>> 0) {
+      var iteratee = noCharByIndex && toString.call(collection) == stringClass
+        ? collection.split('')
+        : collection;
+
       if (length && noaccum) {
-        accumulator = collection[--length];
+        accumulator = iteratee[--length];
       }
       while (length--) {
-        accumulator = callback(accumulator, collection[length], length, collection);
+        accumulator = callback(accumulator, iteratee[length], length, collection);
       }
       return accumulator;
     }
@@ -1023,7 +1041,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array} Returns a new array of values that did **not** pass the callback check.
@@ -1047,7 +1065,7 @@
    * @memberOf _
    * @alias any
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Boolean} Returns `true` if any value passes the callback check, else `false`.
@@ -1073,7 +1091,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|String} callback The function called per iteration or
    *  property name to sort by.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
@@ -1101,13 +1119,13 @@
     'inLoop': {
       'array':
         'result[index] = {\n' +
-        '  criteria: callback(collection[index], index, collection),\n' +
-        '  value: collection[index]\n' +
+        '  criteria: callback(iteratee[index], index, collection),\n' +
+        '  value: iteratee[index]\n' +
         '}',
       'object':
         'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '({\n' +
-        '  criteria: callback(collection[index], index, collection),\n' +
-        '  value: collection[index]\n' +
+        '  criteria: callback(iteratee[index], index, collection),\n' +
+        '  value: iteratee[index]\n' +
         '})'
     },
     'bottom':
@@ -1125,7 +1143,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array|Object} collection The collection to convert.
+   * @param {Array|Object|String} collection The collection to convert.
    * @returns {Array} Returns the new converted array.
    * @example
    *
@@ -1141,7 +1159,9 @@
     }
     var length = collection.length;
     if (length === length >>> 0) {
-      return slice.call(collection);
+      return noCharByIndex && toString.call(collection) == stringClass
+        ? collection.split('')
+        : slice.call(collection);
     }
     return values(collection);
   }
@@ -2008,7 +2028,7 @@
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
         var result = func.apply(thisBinding, args);
-        return objectTypes[typeof result] && result !== null
+        return result && objectTypes[typeof result]
           ? result
           : thisBinding
       }
@@ -2366,7 +2386,7 @@
    * // => { 'name': 'moe' };
    */
   function clone(value) {
-    return objectTypes[typeof value] && value !== null
+    return value && objectTypes[typeof value]
       ? (isArray(value) ? value.slice() : extend({}, value))
       : value;
   }
@@ -2389,7 +2409,7 @@
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
   var defaults = createIterator(extendIteratorOptions, {
-    'inLoop': 'if (object[index] == null)' + extendIteratorOptions.inLoop
+    'inLoop': 'if (result[index] == null) ' + extendIteratorOptions.inLoop
   });
 
   /**
@@ -2480,7 +2500,7 @@
     'args': 'object',
     'init': '[]',
     'useHas': false,
-    'inLoop': 'if (toString.call(object[index]) == funcClass) result.push(index)',
+    'inLoop': 'if (toString.call(iteratee[index]) == funcClass) result.push(index)',
     'bottom': 'result.sort()'
   });
 
@@ -2853,7 +2873,7 @@
   function isObject(value) {
     // check if the value is the ECMAScript language type of Object
     // http://es5.github.com/#x8
-    return objectTypes[typeof value] && value !== null;
+    return value && objectTypes[typeof value];
   }
 
   /**
@@ -3075,7 +3095,7 @@
   var values = createIterator({
     'args': 'object',
     'init': '[]',
-    'inLoop': 'result.push(object[index])'
+    'inLoop': 'result.push(iteratee[index])'
   });
 
   /*--------------------------------------------------------------------------*/
@@ -3274,21 +3294,21 @@
         startIndex,
         result,
         useWith,
-        defaults = lodash.templateSettings,
         escapeDelimiter = options.escape,
         evaluateDelimiter = options.evaluate,
         interpolateDelimiter = options.interpolate,
+        settings = lodash.templateSettings,
         variable = options.variable;
 
-    // use template defaults if no option is provided
+    // use default settings if no options object is provided
     if (escapeDelimiter == null) {
-      escapeDelimiter = defaults.escape;
+      escapeDelimiter = settings.escape;
     }
     if (evaluateDelimiter == null) {
-      evaluateDelimiter = defaults.evaluate;
+      evaluateDelimiter = settings.evaluate;
     }
     if (interpolateDelimiter == null) {
-      interpolateDelimiter = defaults.interpolate;
+      interpolateDelimiter = settings.interpolate;
     }
 
     // tokenize delimiters to avoid escaping them
@@ -3314,7 +3334,7 @@
     // delimiters, inject a with-statement around all "evaluate" delimiters to
     // add the data object to the top of the scope chain
     if (!variable) {
-      variable = defaults.variable || lastVariable || 'obj';
+      variable = settings.variable || lastVariable || 'obj';
       useWith = isEvaluating;
 
       if (useWith) {
@@ -3349,7 +3369,7 @@
       lastVariable = variable;
       reDoubleVariable = RegExp('([(\\s])' + variable + '\\.' + variable + '\\b', 'g');
     }
-    // inject data object references outside of the with-statement
+    // prepend data object references to property names outside of the with-statement
     text = (useWith ? text.slice(0, startIndex) : text)
       .replace(reInsertVariable, strInsertVariable)
       .replace(reDoubleVariable, strDoubleVariable) +

@@ -13,9 +13,14 @@
   /*--------------------------------------------------------------------------*/
 
   // assign `QUnit.config` properties
-  QUnit.config.lodashFilename = build == 'prod'
-    ? 'lodash.min'
-    : (build == 'custom' ? 'lodash.custom.min' : 'lodash');
+  QUnit.config.lodashFilename = (function() {
+    switch (build) {
+      case 'custom':       return 'lodash.custom.min';
+      case 'custom-debug': return 'lodash.custom';
+      case 'prod':         return 'lodash.min';
+    }
+    return 'lodash';
+  }());
 
   // assign `QUnit.urlParams` properties
   QUnit.extend(QUnit.urlParams, {
@@ -45,11 +50,15 @@
         header.appendChild(label1);
         header.appendChild(label2);
 
-        if (build == 'prod') {
-          dropdown.selectedIndex = 1;
-        } else if (build == 'custom') {
-          dropdown.selectedIndex = 2;
-        }
+        dropdown.selectedIndex = (function() {
+          switch (build) {
+            case 'custom':       return 3;
+            case 'custom-debug': return 2;
+            case 'prod':         return 1;
+          }
+          return 0;
+        }());
+    
         checkbox.checked = norequire;
         addEvent(checkbox, 'click', eventHandler);
         addEvent(dropdown, 'change', eventHandler);
@@ -68,6 +77,7 @@
       '<select name="build">' +
       '<option value="dev">developement</option>' +
       '<option value="prod">production</option>' +
+      '<option value="custom-debug">custom (debug)</option>' +
       '<option value="custom">custom</option>' +
       '</select>build';
 

@@ -247,6 +247,26 @@
       _.forEach(object, function(value, key) { keys.push(key); });
       deepEqual(keys, ['length']);
     });
+
+    _.each([
+      { 'kind': 'literal', 'value': 'abc' },
+      { 'kind': 'object', 'value': Object('abc') }
+    ],
+    function(data) {
+      test('should work with a string ' + data.kind + ' for `collection` (test in IE < 9)', function() {
+        var args,
+            collection = data.value,
+            values = [];
+
+        _.forEach(collection, function(value) {
+          args || (args = slice.call(arguments));
+          values.push(value);
+        });
+
+        deepEqual(args, ['a', 0, collection]);
+        deepEqual(values, ['a', 'b', 'c']);
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -556,25 +576,53 @@
   (function() {
     test('should pass the correct `callback` arguments when iterating an object', function() {
       var args,
-          object = { 'a': 'A', 'b': 'B', 'c': 'C' },
-          keys = _.keys(object);
+          object = { 'a': 'A', 'b': 'B' },
+          lastKey = _.keys(object).pop();
+
+      var expected = lastKey == 'a'
+        ? ['A', 'B', 'b', object]
+        : ['B', 'A', 'a', object];
 
       _.reduceRight(object, function() {
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, ['C', 'B', 'b', object]);
+      deepEqual(args, expected);
     });
 
     test('should treat array-like object with invalid `length` as a regular object', function() {
       var args,
-          object = { 'a': 'A', 'length': -1 };
+          object = { 'a': 'A', 'length': -1 },
+          lastKey = _.keys(object).pop();
+
+      var expected = lastKey == 'a'
+        ? ['A', '-1', 'length', object]
+        : [-1, 'A', 'a', object];
 
       _.reduceRight(object, function() {
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [-1, 'A', 'a', object]);
+      deepEqual(args, expected);
+    });
+
+    _.each([
+      { 'kind': 'literal', 'value': 'abc' },
+      { 'kind': 'object', 'value': Object('abc') }
+    ],
+    function(data) {
+      test('should work with a string ' + data.kind + ' for `collection` (test in IE < 9)', function() {
+        var args,
+            collection = data.value;
+
+        var actual = _.reduceRight(collection, function(accumulator, value) {
+          args || (args = slice.call(arguments));
+          return accumulator + value;
+        });
+
+        deepEqual(args, ['c', 'b', 1, collection]);
+        equal(actual, 'cba');
+      });
     });
   }());
 
@@ -768,6 +816,11 @@
     test('should treat array-like object with invalid `length` as a regular object', function() {
       var object = { 'length': -1 };
       deepEqual(_.toArray(object), [-1]);
+    });
+
+    test('should work with a string for `collection` (test in IE < 9)', function() {
+      deepEqual(_.toArray('abc'), ['a', 'b', 'c']);
+      deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
     });
   }(1, 2, 3));
 

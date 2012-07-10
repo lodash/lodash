@@ -87,9 +87,28 @@ class Generator {
    * @returns {String} The formatted string.
    */
   private static function format($string) {
-    // mark numbers as code and italicize parentheses
-    return trim(preg_replace('/(^|\s)(\([^)]+\))/', '$1*$2*',
-      preg_replace('/ (-?\d+(?:.\d+)?)(?!\.[^\n])/', ' `$1`', $string)));
+    $counter = 0;
+
+    // tokenize inline code snippets
+    preg_match_all('/`[^`]+`/', $string, $tokenized);
+    $tokenized = $tokenized[0];
+    foreach ($tokenized as $snippet) {
+      $string = str_replace($snippet, '__token' . ($counter++) .'__', $string);
+    }
+
+    // italicize parentheses
+    $string = preg_replace('/(^|\s)(\([^)]+\))/', '$1*$2*', $string);
+
+    // mark numbers as inline code
+    $string = preg_replace('/ (-?\d+(?:.\d+)?)(?!\.[^\n])/', ' `$1`', $string);
+
+    // detokenize inline code snippets
+    $counter = 0;
+    foreach ($tokenized as $snippet) {
+      $string = str_replace('__token' . ($counter++) . '__', $snippet, $string);
+    }
+
+    return trim($string);
   }
 
   /**

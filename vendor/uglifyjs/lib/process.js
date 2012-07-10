@@ -61,6 +61,7 @@
 var jsp = require("./parse-js"),
     slice = jsp.slice,
     member = jsp.member,
+    is_identifier_char = jsp.is_identifier_char,
     PRECEDENCE = jsp.PRECEDENCE,
     OPERATORS = jsp.OPERATORS;
 
@@ -1517,6 +1518,15 @@ function gen_code(ast, options) {
                 finally { indentation -= incr; }
         };
 
+        function last_char(str) {
+                str = str.toString();
+                return str.charAt(str.length - 1);
+        };
+
+        function first_char(str) {
+                return str.toString().charAt(0);
+        };
+
         function add_spaces(a) {
                 if (beautify)
                         return a.join(" ");
@@ -1525,7 +1535,8 @@ function gen_code(ast, options) {
                         var next = a[i + 1];
                         b.push(a[i]);
                         if (next &&
-                            ((/[a-z0-9_\x24]$/i.test(a[i].toString()) && /^[a-z0-9_\x24]/i.test(next.toString())) ||
+                            ((is_identifier_char(last_char(a[i])) && (is_identifier_char(first_char(next))
+                                                                      || first_char(next) == "\\")) ||
                              (/[\+\-]$/.test(a[i].toString()) && /^[\+\-]/.test(next.toString())))) {
                                 b.push(" ");
                         }

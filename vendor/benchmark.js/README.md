@@ -114,25 +114,6 @@ suite.add('RegExp#test', function() {
 // > Fastest is String#indexOf
 ~~~
 
-## Cloning this repo
-
-To clone this repository including all submodules, using Git 1.6.5 or later:
-
-~~~ bash
-git clone --recursive https://github.com/bestiejs/benchmark.js.git
-cd benchmark.js
-~~~
-
-For older Git versions, just use:
-
-~~~ bash
-git clone https://github.com/bestiejs/benchmark.js.git
-cd benchmark.js
-git submodule update --init
-~~~
-
-Feel free to fork and send pull requests if you see improvements!
-
 ## Footnotes
 
   1. Benchmark.js has been tested in at least Adobe AIR 2.6, Chrome 5-15, Firefox 1.5-8, IE 6-10, Opera 9.25-11.52, Safari 2-5.1.1, Node.js 0.4.8-0.6.1, Narwhal 0.3.2, RingoJS 0.7-0.8, and Rhino 1.7RC3.

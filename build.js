@@ -217,15 +217,14 @@
     'bottom',
     'exit',
     'firstArg',
-    'hasExp',
     'hasDontEnumBug',
     'inLoop',
     'init',
     'isKeysFast',
-    'iteratedObject',
-    'loopExp',
+    'iteratee',
     'object',
     'objectBranch',
+    'noCharByIndex',
     'shadowed',
     'top',
     'useHas'
@@ -260,7 +259,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Gets the aliases associated with a given `funcName`.
+   * Gets the aliases associated with a given function name.
    *
    * @private
    * @param {String} funcName The name of the function to get aliases for.
@@ -271,7 +270,7 @@
   }
 
   /**
-   * Gets an array of depenants for a function by the given `funcName`.
+   * Gets an array of depenants for a function by a given name.
    *
    * @private
    * @param {String} funcName The name of the function to query.
@@ -320,6 +319,8 @@
    */
   function getFunctionSource(func) {
     var source = func.source || (func + '');
+
+    // all leading whitespace
     return source.replace(/\n(?:.*)/g, function(match, index) {
       match = match.slice(1);
       return (
@@ -340,7 +341,7 @@
   }
 
   /**
-   * Gets the real name, not alias, of a given `funcName`.
+   * Gets the real name, not alias, of a given function name.
    *
    * @private
    * @param {String} funcName The name of the function to resolve.
@@ -393,7 +394,7 @@
   }
 
   /**
-   * Removes the all references to `refName` from the `createIterator` source.
+   * Removes the all references to `refName` from `createIterator` in `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -461,10 +462,10 @@
    */
   function removeKeysOptimization(source) {
     return removeVar(source, 'isKeysFast')
-      // remove conditional concat in `mapIteratorOptions`
-      .replace(/= *' *\+ *\(isKeysFast.+/, "= []'")
-      // remove conditional concat in `mapIteratorOptions`, `invoke`, `pluck`, and `sortBy`
-      .replace(/' *\+ *\(isKeysFast.+?\) *\+ *'/g, '.push')
+      // remove `isKeysFast` from `beforeLoop.object` of `mapIteratorOptions`
+      .replace(/=\s*'\s*\+\s*\(isKeysFast.+/, "= []'")
+      // remove `isKeysFast` from `inLoop.object` of `mapIteratorOptions`, `invoke`, `pluck`, and `sortBy`
+      .replace(/'\s*\+\s*\(isKeysFast[^)]+?\)\s*\+\s*'/g, '.push')
       // remove data object property assignment in `createIterator`
       .replace(/\s*.+?\.isKeysFast *=.+/, '')
       // remove optimized branch in `iteratorTemplate`
@@ -518,7 +519,7 @@
       '(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\2.+?;)\\n'
     ), '$1' + varValue + ';\n');
 
-    // replace a varaible at the start of middle of a declaration list
+    // replace a varaible at the start or middle of a declaration list
     source = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), '$1 ' + varValue + ',');
 
     // replace a variable at the end of a variable declaration list
@@ -531,7 +532,7 @@
 
   // Backbone build
   if (isBackbone) {
-    // add any additional dependencies
+    // add any additional sub-dependencies
     backboneDependencies = getDependencies(backboneDependencies);
 
     if (filterType == 'exclude') {
@@ -569,14 +570,13 @@
       includeMethods = lodash.without.apply(lodash, [categoryMethods].concat(excludeMethods));
     }
     else if (filterType) {
-      // merge backbone dependencies into `includeMethods`
+      // merge `categoryMethods` into `includeMethods`
       includeMethods = lodash.union(includeMethods, categoryMethods);
     }
     else {
-      // include only the Backbone dependencies
+      // include only the `categoryMethods`
       includeMethods = categoryMethods;
     }
-
     filterType = 'include';
     return true;
   });
@@ -609,7 +609,7 @@
       });
     }
 
-    // remove associated functions, variables and code snippets
+    // remove associated functions, variables, and code snippets
     if (isRemoved(source, 'isArguments')) {
       source = removeIsArgumentsFallback(source);
     }
@@ -674,7 +674,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // DRY out isType methods
+  // DRY out isType functions
   (function() {
     var iteratorName = lodash.find(['forEach', 'forOwn'], function(funcName) {
       return !isRemoved(source, funcName);
@@ -686,7 +686,7 @@
     }
     var snippet,
         funcNames = [],
-        result = [],
+        objectSnippets = [],
         token = '__isTypeToken__';
 
     // build replacement code
@@ -698,7 +698,7 @@
       'RegExp': 'regexpClass',
       'String': 'stringClass'
     }, function(value, key) {
-      // skip `isArguments` if legacy build
+      // skip `isArguments` if a legacy build
       if (isLegacy && key == 'Arguments') {
         return;
       }
@@ -711,12 +711,12 @@
           snippet = funcCode;
         }
         funcNames.push(funcName);
-        result.push("'" + key + "': " + value);
+        objectSnippets.push("'" + key + "': " + value);
       }
     });
 
-    // skip this optimization if there are less than 2 functions
-    if (result.length < 2) {
+    // skip this optimization if there are less than 2 isType functions
+    if (funcNames.length < 2) {
       return;
     }
     // add a token to mark the position to insert new code
@@ -730,7 +730,7 @@
     // replace token with new DRY code
     source = source.replace(token,
       '  // add `_.' + funcNames.join('`, `_.') + '`\n' +
-      '  ' + iteratorName + '({\n    ' + result.join(',\n    ') + '\n  }, function(className, key) {\n' +
+      '  ' + iteratorName + '({\n    ' + objectSnippets.join(',\n    ') + '\n  }, function(className, key) {\n' +
       "    lodash['is' + key] = function(value) {\n" +
       '      return toString.call(value) == className;\n' +
       '    };\n' +
@@ -740,8 +740,8 @@
     // tweak `isArguments` fallback
     snippet = !isLegacy && getIsArgumentsFallback(source);
     if (snippet) {
-      result = '\n' + snippet.replace(/isArguments/g, 'lodash.$&');
-      source = source.replace(snippet, result);
+      var modified = '\n' + snippet.replace(/isArguments/g, 'lodash.$&');
+      source = source.replace(snippet, modified);
     }
   }());
 
@@ -754,17 +754,17 @@
 
     ['bind', 'isArray'].forEach(function(funcName) {
       var snippet = matchFunction(source, funcName),
-          result = snippet;
+          modified = snippet;
 
-      // remove native `Function#bind` branch
+      // remove native `Function#bind` branch in `_.bind`
       if (funcName == 'bind' ) {
-        result = result.replace(/(?:\s*\/\/.*)*\s*else if *\(isBindFast[^}]+}/, '');
+        modified = modified.replace(/(?:\s*\/\/.*)*\s*else if *\(isBindFast[^}]+}/, '');
       }
-      // remove native `Array.isArray` branch
+      // remove native `Array.isArray` branch in `_.isArray`
       else if (funcName == 'isArray') {
-        result = result.replace(/nativeIsArray * \|\|/, '');
+        modified = modified.replace(/nativeIsArray * \|\|/, '');
       }
-      source = source.replace(snippet, result);
+      source = source.replace(snippet, modified);
     });
 
     // replace `_.keys` with `shimKeys`
@@ -786,12 +786,13 @@
       source = removeIsArgumentsFallback(source);
     }
 
+    source = removeVar(source, 'reNative');
     source = removeFromCreateIterator(source, 'nativeKeys');
     source = removeKeysOptimization(source);
   }
 
   if (isMobile) {
-    // inline functions defined with `createIterator`
+    // inline all functions defined with `createIterator`
     lodash.functions(lodash).forEach(function(funcName) {
       // match `funcName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
       var reFunc = RegExp('(\\bvar ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
@@ -804,11 +805,14 @@
       source = source.replace(reFunc, '$1' + getFunctionSource(lodash[funcName]) + ';\n');
     });
 
-    // remove JScript [[DontEnum]] fix from `isEqual`
+    // remove JScript [[DontEnum]] fix from `_.isEqual`
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}/, '');
 
-    // remove IE `shift` and `splice` fix
+    // remove IE `shift` and `splice` fix from mutator Array functions mixin
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
+
+    // remove `noCharByIndex` from `_.reduceRight` and `_.toArray`
+    source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
 
     source = removeVar(source, 'extendIteratorOptions');
     source = removeVar(source, 'hasDontEnumBug');
@@ -821,9 +825,16 @@
     source = source.replace(/(( +)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
       var snippet = getFunctionSource(lodash._iteratorTemplate);
 
-      // expand properties to avoid having to use a with-statement
+      // prepend data object references to property names to avoid having to
+      // use a with-statement
       iteratorOptions.forEach(function(property) {
-        snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
+        if (property == 'iteratee') {
+          // use a more fine-grained regexp for the `iteratee` property because
+          // it's a compiled variable as well as a data property
+          snippet = snippet.replace(/(__t *= *\( *)(iteratee)/, '$1obj.$2');
+        } else {
+          snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
+        }
       });
 
       // remove unnecessary code

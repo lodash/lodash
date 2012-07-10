@@ -37,6 +37,9 @@
   /** Used to check if an object is extensible */
   var isExtensible = Object.isExtensible || function() { return true; };
 
+  /** Used to access Wade Simmons' Node microtime module */
+  var microtimeObject = req('microtime');
+
   /** Used to access the browser's high resolution timer */
   var perfObject = isHostType(window, 'performance') && performance;
 
@@ -45,6 +48,9 @@
     perfObject.now && 'now' ||
     perfObject.webkitNow && 'webkitNow'
   );
+
+  /** Used to access Node's high resolution timer */
+  var processObject = isHostType(window, 'process') && process;
 
   /** Used to check if an own property is enumerable */
   var propertyIsEnumerable = {}.propertyIsEnumerable;
@@ -678,7 +684,14 @@
 
     start = toInteger(start);
     start = start < 0 ? max(length + start, 0) : min(start, length);
-    deleteCount = min(max(toInteger(deleteCount), 0), length - start);
+
+    // support the de-facto SpiderMonkey extension
+    // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/splice#Parameters
+    // https://bugs.ecmascript.org/show_bug.cgi?id=429
+    deleteCount = arguments.length == 1
+      ? length - start
+      : min(max(toInteger(deleteCount), 0), length - start);
+
     return insert.call(object, start, deleteCount, slice.call(arguments, 2));
   }
 
@@ -1884,6 +1897,21 @@
    *   'onCycle': onCycle,
    *   'onComplete': onComplete
    * });
+   *
+   * // or name and options
+   * suite.add('foo', {
+   *   'fn': fn,
+   *   'onCycle': onCycle,
+   *   'onComplete': onComplete
+   * });
+   *
+   * // or options only
+   * suite.add({
+   *   'name': 'foo',
+   *   'fn': fn,
+   *   'onCycle': onCycle,
+   *   'onComplete': onComplete
+   * });
    */
   function add(name, fn, options) {
     var me = this,
@@ -2509,7 +2537,7 @@
           if (ns.stop) {
             ns.start();
             while (!(measured = ns.microseconds())) { }
-          } else if (perfName) {
+          } else if (ns[perfName]) {
             divisor = 1e3;
             measured = Function('n', 'var r,s=n.' + perfName + '();while(!(r=n.' + perfName + '()-s)){};return r')(ns);
           } else {
@@ -2519,8 +2547,14 @@
         }
         else if (unit == 'ns') {
           divisor = 1e9;
-          begin = ns.nanoTime();
-          while (!(measured = ns.nanoTime() - begin)) { }
+          if (ns.nanoTime) {
+            begin = ns.nanoTime();
+            while (!(measured = ns.nanoTime() - begin)) { }
+          } else {
+            begin = (begin = ns())[0] + (begin[1] / divisor);
+            while (!(measured = ((measured = ns())[0] + (measured[1] / divisor)) - begin)) { }
+            divisor = 1;
+          }
         }
         else {
           begin = new ns;
@@ -2575,9 +2609,13 @@
       timers.push({ 'ns': timer.ns, 'res': getRes('us'), 'unit': 'us' });
     }
 
-    // detect Node's microtime module:
-    // npm install microtime
-    if ((timer.ns = (req('microtime') || { 'now': 0 }).now)) {
+    // detect Node's nanosecond resolution timer available in Node >= 0.8
+    if (processObject && typeof (timer.ns = processObject.hrtime) == 'function') {
+      timers.push({ 'ns': timer.ns, 'res': getRes('ns'), 'unit': 'ns' });
+    }
+
+    // detect Wade Simmons' Node microtime module
+    if (microtimeObject && typeof (timer.ns = microtimeObject.now) == 'function') {
       timers.push({ 'ns': timer.ns,  'res': getRes('us'), 'unit': 'us' });
     }
 
@@ -2596,10 +2634,17 @@
     }
     // use API of chosen timer
     if (timer.unit == 'ns') {
-      extend(template, {
-        'begin': 's$=n$.nanoTime()',
-        'end': 'r$=(n$.nanoTime()-s$)/1e9'
-      });
+      if (timer.ns.nanoTime) {
+        extend(template, {
+          'begin': 's$=n$.nanoTime()',
+          'end': 'r$=(n$.nanoTime()-s$)/1e9'
+        });
+      } else {
+        extend(template, {
+          'begin': 's$=n$()',
+          'end': 'r$=n$(s$);r$=r$[0]+(r$[1]/1e9)'
+        });
+      }
     }
     else if (timer.unit == 'us') {
       if (timer.ns.stop) {

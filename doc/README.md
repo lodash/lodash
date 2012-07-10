@@ -1349,7 +1349,7 @@ _.isNumber(8.4 * 5;
 ### <a id="_isobjectvalue"></a>`_.isObject(value)`
 <a href="#_isobjectvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/v0.3.2/lodash.js#L2873 "View in source") [&#x24C9;][1]
 
-Checks if `value` is the language type of Object. *(e.g. arrays, functions, objects, regexps, `new Number(0)*`, and `new String('')`)
+Checks if `value` is the language type of Object. *(e.g. arrays, functions, objects, regexps, `new Number(0)`, and `new String('')`)*
 
 #### Arguments
 1. `value` *(Mixed)*: The value to check.

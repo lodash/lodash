@@ -15,9 +15,9 @@
   // assign `QUnit.config` properties
   QUnit.config.lodashFilename = (function() {
     switch (build) {
+      case 'prod':         return 'lodash.min';
       case 'custom':       return 'lodash.custom.min';
       case 'custom-debug': return 'lodash.custom';
-      case 'prod':         return 'lodash.min';
     }
     return 'lodash';
   }());
@@ -52,13 +52,13 @@
 
         dropdown.selectedIndex = (function() {
           switch (build) {
-            case 'custom':       return 3;
-            case 'custom-debug': return 2;
             case 'prod':         return 1;
+            case 'custom':       return 2;
+            case 'custom-debug': return 3;
           }
           return 0;
         }());
-    
+
         checkbox.checked = norequire;
         addEvent(checkbox, 'click', eventHandler);
         addEvent(dropdown, 'change', eventHandler);
@@ -77,8 +77,8 @@
       '<select name="build">' +
       '<option value="dev">developement</option>' +
       '<option value="prod">production</option>' +
-      '<option value="custom-debug">custom (debug)</option>' +
       '<option value="custom">custom</option>' +
+      '<option value="custom-debug">custom (debug)</option>' +
       '</select>build';
 
     var checkbox = label1.firstChild,

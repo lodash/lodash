@@ -817,9 +817,14 @@
     // remove `noCharByIndex` from `_.reduceRight`
     source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
 
+    // remove `noArraySliceOnStrings` from `_.toArray`
+    source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
+
     source = removeVar(source, 'extendIteratorOptions');
     source = removeVar(source, 'hasDontEnumBug');
     source = removeVar(source, 'iteratorTemplate');
+    source = removeVar(source, 'noArraySliceOnStrings');
+    source = removeVar(source, 'noCharByIndex');
     source = removeIsArgumentsFallback(source);
     source = removeKeysOptimization(source);
   }

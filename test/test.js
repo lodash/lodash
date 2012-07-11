@@ -24,9 +24,6 @@
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
-  /** Used to resolve a value's internal [[Class]] */
-  var toString = {}.toString;
-
   /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
   var shadowed = {
     'constructor': 1,
@@ -638,9 +635,9 @@
     });
 
     test('should allow a falsey `object` argument', function() {
-      var fn = _.size;
+      var func = _.size;
       try {
-        var actual = [fn(), fn(undefined), fn(null), fn(false), fn(0)];
+        var actual = [func(), func(undefined), func(null), func(false), func(0)];
       } catch(e) { }
 
       deepEqual(actual, [0, 0, 0, 0, 0]);
@@ -907,15 +904,15 @@
         'zip',
         'zipObject'
       ], function(methodName) {
-        var fn = _[methodName],
+        var func = _[methodName],
             pass = true;
 
         try {
-          fn();
-          fn(undefined);
-          fn(null);
-          fn(false);
-          fn(0);
+          func();
+          func(undefined);
+          func(null);
+          func(false);
+          func(0);
         } catch(e) {
           pass = false;
         }
@@ -945,23 +942,23 @@
         'some',
         'toArray'
       ], function(methodName) {
-        var fn = _[methodName],
+        var func = _[methodName],
             identity = _.identity,
             pass = true;
 
         try {
           if (/^(?:contains|toArray)$/.test(methodName)) {
-            fn();
-            fn(undefined);
-            fn(null);
-            fn(false);
-            fn(0);
+            func();
+            func(undefined);
+            func(null);
+            func(false);
+            func(0);
           }
           else {
-            fn(undefined, identity);
-            fn(null, identity);
-            fn(false, identity);
-            fn(0, identity);
+            func(undefined, identity);
+            func(null, identity);
+            func(false, identity);
+            func(0, identity);
           }
         } catch(e) {
           pass = false;

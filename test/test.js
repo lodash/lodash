@@ -132,6 +132,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.contains');
+
+  (function() {
+    _.each([
+      { 'kind': 'literal', 'value': 'abc' },
+      { 'kind': 'object', 'value': Object('abc') }
+    ],
+    function(data) {
+      test('should work with a string ' + data.kind + ' for `collection`', function() {
+        equal(_.contains(data.value, 'bc'), true);
+        equal(_.contains(data.value, 'd'), false);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.debounce');
 
   (function() {

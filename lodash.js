@@ -3421,7 +3421,11 @@
       text += '\n//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']';
     }
 
-    result = Function('_', 'return ' + text)(lodash);
+    try {
+      result = Function('_', 'return ' + text)(lodash);
+    } catch(e) {
+      result = function() { throw e; };
+    }
 
     if (data) {
       return result(data);

@@ -15,7 +15,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Post-process a given minified JavaScript `source`, preparing it for
+   * Post-process a given minified Lo-Dash `source`, preparing it for
    * deployment.
    *
    * @param {String} source The source to process.

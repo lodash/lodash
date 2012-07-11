@@ -198,7 +198,7 @@
   /**
    * Pre-process a given Lo-Dash source, preparing it for minification.
    *
-   * @param {String} source The Lo-Dash source to process.
+   * @param {String} source The source to process.
    * @returns {String} Returns the processed source.
    */
   function preprocess(source) {
@@ -217,6 +217,9 @@
 
     // remove brackets from `_.escape()` in `_.template`
     source = source.replace(/__e *= *_\['escape']/, '__e=_.escape');
+
+    // remove brackets from `collection.indexOf` in `_.contains`
+    source = source.replace("collection['indexOf'](target)", 'collection.indexOf(target)');
 
     // remove brackets from `result[length].value` in `_.sortBy`
     source = source.replace("result[length]['value']", 'result[length].value');

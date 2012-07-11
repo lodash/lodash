@@ -514,10 +514,12 @@
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
     data.isKeysFast = isKeysFast;
-    data.noCharByIndex = noCharByIndex;
     data.shadowed = shadowed;
     data.useHas = data.useHas !== false;
 
+    if (!('noCharByIndex' in data)) {
+      data.noCharByIndex = noCharByIndex;
+    }
     if (!data.exit) {
       data.exit = 'if (!' + firstArg + ') return result';
     }
@@ -711,11 +713,21 @@
    *
    * _.contains([1, 2, 3], 3);
    * // => true
+   *
+   * _.contains({ 'name': 'moe', 'age': 40 }, 'moe');
+   * // => true
+   *
+   * _.contains('curly', 'ur');
+   * // => true
    */
   var contains = createIterator({
     'args': 'collection, target',
     'init': 'false',
-    'inLoop': 'if (iteratee[index] === target) return true'
+    'noCharByIndex': false,
+    'beforeLoop': {
+      'array': 'if (toString.call(iteratee) == stringClass) return collection.indexOf(target) > -1'
+    },
+    'inLoop': 'if (iteratee[index] === target) return true',
   });
 
   /**
@@ -2635,6 +2647,9 @@
    * // => false
    *
    * _.isEmpty({});
+   * // => true
+   *
+   * _.isEmpty('');
    * // => true
    */
   var isEmpty = createIterator({

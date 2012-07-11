@@ -56,7 +56,7 @@
   if (module != require.main) {
     module.exports = postprocess;
   } else {
-    // read the JavaScript source file from the first argument if the script
+    // read the Lo-Dash source file from the first argument if the script
     // was invoked directly (e.g. `node post-compile.js source.js`) and write to
     // the same file
     (function() {

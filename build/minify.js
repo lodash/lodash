@@ -35,8 +35,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The exposed `minify` function minifies a given `source` and invokes the
-   * `onComplete` callback when finished.
+   * The exposed `minify` function minifies a given Lo-Dash `source` and invokes
+   * the `onComplete` callback when finished.
    *
    * @param {String} source The source to minify.
    * @param {String} workingName The name to give temporary files creates during the minification process.
@@ -58,7 +58,10 @@
   function Minify(source, workingName, onComplete) {
     // create the destination directory if it doesn't exist
     if (!fs.existsSync(distPath)) {
-      fs.mkdirSync(distPath);
+      // avoid errors when called as a npm executable
+      try {
+        fs.mkdirSync(distPath);
+      } catch(e) { }
     }
 
     this.compiled = {};
@@ -291,17 +294,20 @@
         name = this.workingName,
         uglified = this.uglified;
 
-    // save the Closure Compiled version to disk
-    fs.writeFileSync(path.join(distPath, name + '.compiler.js'), compiled.source);
-    fs.writeFileSync(path.join(distPath, name + '.compiler.js.gz'), compiled.gzip);
+    // avoid errors when called as a npm executable
+    try {
+      // save the Closure Compiled version to disk
+      fs.writeFileSync(path.join(distPath, name + '.compiler.js'), compiled.source);
+      fs.writeFileSync(path.join(distPath, name + '.compiler.js.gz'), compiled.gzip);
 
-    // save the Uglified version to disk
-    fs.writeFileSync(path.join(distPath, name + '.uglify.js'), uglified.source);
-    fs.writeFileSync(path.join(distPath, name + '.uglify.js.gz'), uglified.gzip);
+      // save the Uglified version to disk
+      fs.writeFileSync(path.join(distPath, name + '.uglify.js'), uglified.source);
+      fs.writeFileSync(path.join(distPath, name + '.uglify.js.gz'), uglified.gzip);
 
-    // save the hybrid minified version to disk
-    fs.writeFileSync(path.join(distPath, name + '.hybrid.js'), hybrid.source);
-    fs.writeFileSync(path.join(distPath, name + '.hybrid.js.gz'), hybrid.gzip);
+      // save the hybrid minified version to disk
+      fs.writeFileSync(path.join(distPath, name + '.hybrid.js'), hybrid.source);
+      fs.writeFileSync(path.join(distPath, name + '.hybrid.js.gz'), hybrid.gzip);
+    } catch(e) { }
 
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to Closure Compiler)
@@ -324,7 +330,7 @@
     module.exports = minify;
   }
   else {
-    // read the JavaScript source file from the first argument if the script
+    // read the Lo-Dash source file from the first argument if the script
     // was invoked directly (e.g. `node minify.js source.js`) and write to
     // the same file
     (function() {

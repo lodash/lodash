@@ -8,6 +8,9 @@
       vm = require('vm'),
       minify = require(path.join(__dirname, 'build', 'minify'));
 
+  /** The current working directory */
+  var cwd = process.cwd();
+
   /** Flag used to specify a backbone build */
   var isBackbone = process.argv.indexOf('backbone') > -1;
 
@@ -871,14 +874,14 @@
 
   // begin the minification process
   if (filterType || isBackbone || isLegacy || isMobile) {
-    fs.writeFileSync(path.join(__dirname, 'lodash.custom.js'), source);
+    fs.writeFileSync(path.join(cwd, 'lodash.custom.js'), source);
     minify(source, 'lodash.custom.min', function(result) {
-      fs.writeFileSync(path.join(__dirname, 'lodash.custom.min.js'), result);
+      fs.writeFileSync(path.join(cwd, 'lodash.custom.min.js'), result);
     });
   }
   else {
     minify(source, 'lodash.min', function(result) {
-      fs.writeFileSync(path.join(__dirname, 'lodash.min.js'), result);
+      fs.writeFileSync(path.join(cwd, 'lodash.min.js'), result);
     });
   }
 }());

@@ -128,15 +128,15 @@
    */
   var hasDontEnumBug = !propertyIsEnumerable.call({ 'valueOf': 0 }, 'valueOf');
 
+  /** Detect if `Array#slice` cannot be used to convert strings to arrays (e.g. Opera < 10.52) */
+  var noArraySliceOnStrings = slice.call('x')[0] != 'x';
+
   /**
    * Detect lack of support for accessing string characters by index:
    * IE < 8 can't access characters by index and IE 8 can only access
    * characters by index on string literals.
    */
   var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
-
-  /** Detect if `Array#slice` cannot be used to convert strings to arrays (e.g. Opera < 10.52) */
-  var noArraySliceOnStrings = slice.call('x')[0] != 'x';
 
   /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
   var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));

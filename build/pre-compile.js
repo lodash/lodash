@@ -196,7 +196,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Pre-process a given Lo-Dash source, preparing it for minification.
+   * Pre-process a given Lo-Dash `source`, preparing it for minification.
    *
    * @param {String} source The source to process.
    * @returns {String} Returns the processed source.
@@ -361,7 +361,7 @@
     module.exports = preprocess;
   }
   else {
-    // read the JavaScript source file from the first argument if the script
+    // read the Lo-Dash source file from the first argument if the script
     // was invoked directly (e.g. `node pre-compile.js source.js`) and write to
     // the same file
     (function() {

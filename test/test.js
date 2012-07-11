@@ -734,6 +734,15 @@
       deepEqual(options, {});
     });
 
+    test('should be debuggable if compiled with errors', function() {
+      var source = _.template('<% if x %>').source;
+      ok(source.indexOf('__p') > -1);
+    });
+
+    test('should raise an error if a template, compiled with errors, is executed', function() {
+      raises(_.template('<% if x %>'));
+    });
+
     test('should work with complex "interpolate" delimiters', function() {
       _.each({
         '<%= a + b %>': '3',

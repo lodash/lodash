@@ -638,11 +638,12 @@
     });
 
     test('should allow a falsey `object` argument', function() {
+      var fn = _.size;
       try {
-        var actual = [_.size(), _.size(null), _.size(false), _.size(0)];
+        var actual = [fn(), fn(undefined), fn(null), fn(false), fn(0)];
       } catch(e) { }
 
-      deepEqual(actual, [0, 0, 0, 0]);
+      deepEqual(actual, [0, 0, 0, 0, 0]);
     });
 
     test('should work with `arguments` objects (test in IE < 9)', function() {
@@ -906,9 +907,15 @@
         'zip',
         'zipObject'
       ], function(methodName) {
-        var pass = true;
+        var fn = _[methodName],
+            pass = true;
+
         try {
-          _[methodName]();
+          fn();
+          fn(undefined);
+          fn(null);
+          fn(false);
+          fn(0);
         } catch(e) {
           pass = false;
         }
@@ -938,12 +945,23 @@
         'some',
         'toArray'
       ], function(methodName) {
-        var pass = true;
+        var fn = _[methodName],
+            identity = _.identity,
+            pass = true;
+
         try {
           if (/^(?:contains|toArray)$/.test(methodName)) {
-            _[methodName](null);
-          } else {
-            _[methodName](null, _.identity);
+            fn();
+            fn(undefined);
+            fn(null);
+            fn(false);
+            fn(0);
+          }
+          else {
+            fn(undefined, identity);
+            fn(null, identity);
+            fn(false, identity);
+            fn(0, identity);
           }
         } catch(e) {
           pass = false;

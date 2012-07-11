@@ -332,7 +332,7 @@
   else {
     // read the Lo-Dash source file from the first argument if the script
     // was invoked directly (e.g. `node minify.js source.js`) and write to
-    // the same file
+    // `<filename>.min.js`
     (function() {
       var filePath = process.argv[2],
           dirPath = path.dirname(filePath),
@@ -340,7 +340,7 @@
           workingName = path.basename(filePath, '.js') + '.min';
 
       minify(source, workingName, function(result) {
-        fs.writeFileSync(path.join(dirPath, workingName + '.js'), result);
+        fs.writeFileSync(path.join(dirPath, workingName + '.js'), result, 'utf8');
       });
     }());
   }

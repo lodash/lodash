@@ -873,6 +873,28 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.toArray` with an array')
+      .add('Lo-Dash', function() {
+        lodash.toArray(numbers);
+      })
+      .add('Underscore', function() {
+        _.toArray(numbers);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.toArray` with an object')
+      .add('Lo-Dash', function() {
+        lodash.toArray(object);
+      })
+      .add('Underscore', function() {
+        _.toArray(object);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.union`')
       .add('Lo-Dash', function() {
         lodash.union(numbers, fourNumbers, twoNumbers);

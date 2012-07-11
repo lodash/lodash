@@ -129,11 +129,14 @@
   var hasDontEnumBug = !propertyIsEnumerable.call({ 'valueOf': 0 }, 'valueOf');
 
   /**
-   * Detect support for accessing string characters by index:
+   * Detect lack of support for accessing string characters by index:
    * IE < 8 can't access characters by index and IE 8 can only access
    * characters by index on string literals.
    */
   var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
+
+  /** Detect if `Array#slice` cannot be used to convert strings to arrays (e.g. Opera < 10.52) */
+  var noArraySliceOnStrings = slice.call('x')[0] != 'x';
 
   /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
   var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
@@ -727,7 +730,7 @@
     'beforeLoop': {
       'array': 'if (toString.call(iteratee) == stringClass) return collection.indexOf(target) > -1'
     },
-    'inLoop': 'if (iteratee[index] === target) return true',
+    'inLoop': 'if (iteratee[index] === target) return true'
   });
 
   /**
@@ -1171,7 +1174,7 @@
     }
     var length = collection.length;
     if (length === length >>> 0) {
-      return noCharByIndex && toString.call(collection) == stringClass
+      return (noArraySliceOnStrings ? toString.call(collection) == stringClass : typeof collection == 'string')
         ? collection.split('')
         : slice.call(collection);
     }

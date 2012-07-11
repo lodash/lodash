@@ -814,7 +814,7 @@
     // remove IE `shift` and `splice` fix from mutator Array functions mixin
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
 
-    // remove `noCharByIndex` from `_.reduceRight` and `_.toArray`
+    // remove `noCharByIndex` from `_.reduceRight`
     source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
 
     source = removeVar(source, 'extendIteratorOptions');

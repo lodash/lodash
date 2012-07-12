@@ -29,7 +29,6 @@
   /** Load customized Lo-Dash module */
   var lodash = (function() {
     var sandbox = {};
-
     if (isLegacy) {
       ['isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
         source = replaceVar(source, varName, 'false');
@@ -260,6 +259,33 @@
   }, '');
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Logs the help message to the console.
+   *
+   * @private
+   */
+  function displayHelp() {
+    console.log([
+      '',
+      '  Commands:',
+      '',
+      '    lodash backbone      Build containing all methods required by Backbone',
+      '    lodash legacy        Build tailored for older browsers without ES5 support',
+      '    lodash mobile        Build with IE < 9 bug fixes and method compilation removed',
+      '    lodash category=...  Comma separated categories of methods to include in the build',
+      '    lodash exclude=...   Comma separated names of methods to exclude from the build',
+      '    lodash include=...   Comma separated names of methods to include in the build',
+      '',
+      '    All arguments, except `exclude` with `include` and `legacy` with `mobile`, may be combined.',
+      '',
+      '  Options:',
+      '',
+      '    -h, --help     Display help information',
+      '    -V, --version  Output current version of Lo-Dash',
+      ''
+    ].join('\n'));
+  }
 
   /**
    * Gets the aliases associated with a given function name.
@@ -533,6 +559,24 @@
     source = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), '$1 ' + varValue + ';');
 
     return source;
+  }
+
+  /*--------------------------------------------------------------------------*/
+
+  // display help message
+  if (lodash.find(process.argv, function(arg) {
+        return /^(?:-h|--help)$/.test(arg);
+      })) {
+    displayHelp();
+    process.exit();
+  }
+
+  // display `lodash.VERSION`
+  if (lodash.find(process.argv, function(arg) {
+        return /^(?:-V|--version)$/.test(arg);
+      })) {
+    console.log(lodash.VERSION);
+    process.exit();
   }
 
   /*--------------------------------------------------------------------------*/

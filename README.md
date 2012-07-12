@@ -75,23 +75,23 @@ lodash category=collections,functions
 lodash category="collections, functions"
 ~~~
 
- 2. Use the `include` argument to pass the names of methods to include in the build.
-~~~ bash
-lodash include=each,filter,map
-lodash include="each, filter, map"
-~~~
-
- 3. Use the `exclude` argument to pass the names of methods to exclude from the build.
+ 2. Use the `exclude` argument to pass the names of methods to exclude from the build.
 ~~~ bash
 lodash exclude=union,uniq,zip
 lodash exclude="union, uniq, zip"
 ~~~
 
-All arguments, except `include` with `exclude` and `mobile` with `legacy`, may be combined.
+ 3. Use the `include` argument to pass the names of methods to include in the build.
+~~~ bash
+lodash include=each,filter,map
+lodash include="each, filter, map"
+~~~
+
+All arguments, except `exclude` with `include` and `legacy` with `mobile`, may be combined.
 
 ~~~ bash
-lodash backbone mobile category=functions include=pick,uniq
 lodash backbone legacy category=utilities exclude=first,last
+lodash backbone mobile category=functions include=pick,uniq
 ~~~
 
 The `lodash` command-line utility is available when Lo-Dash is installed as a global package (i.e. `npm install -g lodash`).

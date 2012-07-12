@@ -21,6 +21,9 @@
       _._ || _
     );
 
+  /** Shortcut used to make object properties immutable */
+  var freeze = Object.freeze;
+
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
@@ -52,9 +55,10 @@
    * Skips a given number of tests with a passing result.
    *
    * @private
-   * @param {Number} count The number of tests to skip.
+   * @param {Number} [count=1] The number of tests to skip.
    */
   function skipTest(count) {
+    count || (count = 1);
     while (count--) {
       ok(true, 'test skipped');
     }
@@ -71,7 +75,7 @@
       if (window.document && window.require) {
         equal((lodashModule || {}).moduleName, 'lodash');
       } else {
-        skipTest(1)
+        skipTest()
       }
     });
 
@@ -79,7 +83,7 @@
       if (window.document && window.require) {
         equal((underscoreModule || {}).moduleName, 'underscore');
       } else {
-        skipTest(1)
+        skipTest()
       }
     });
 
@@ -87,7 +91,7 @@
       if (window.document) {
         notDeepEqual(lodashBadShim.keys({ 'a': 1 }), []);
       } else {
-        skipTest(1);
+        skipTest();
       }
     });
   }());
@@ -206,6 +210,35 @@
       deepEqual(_.extend({}, Foo), expected);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  _.each(['bindAll', 'defaults', 'extend'], function(methodName) {
+    var func = _[methodName];
+    QUnit.module('lodash.' + methodName + ' strict mode checks');
+
+    test('should not throw strict mode errors', function() {
+      var object = { 'a': null, 'b': function(){} },
+          pass = true;
+
+      if (freeze) {
+        freeze(object);
+        try {
+          if (methodName == 'bindAll') {
+            func(object);
+          } else {
+            func(object, { 'a': 1 });
+          }
+        } catch(e) {
+          pass = false;
+        }
+        ok(pass);
+      }
+      else {
+        skipTest();
+      }
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

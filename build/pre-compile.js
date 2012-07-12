@@ -308,8 +308,8 @@
       modified = modified.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
 
       if (isCreateIterator) {
-        // replace with modified snippet early and clip snippet so other arguments
-        // aren't minified
+        // replace with modified snippet early and clip snippet to the `factory`
+        // call so other arguments aren't minified
         source = source.replace(snippet, modified);
         snippet = modified = modified.replace(/factory\([\s\S]+$/, '');
       }

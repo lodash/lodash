@@ -1,5 +1,5 @@
 /**
- * QUnit v1.8.0 - A JavaScript Unit Testing Framework
+ * QUnit v1.9.0 - A JavaScript Unit Testing Framework
  *
  * http://docs.jquery.com/QUnit
  *
@@ -38,10 +38,10 @@
 	line-height: 1em;
 	font-weight: normal;
 
-	border-radius: 15px 15px 0 0;
-	-moz-border-radius: 15px 15px 0 0;
-	-webkit-border-top-right-radius: 15px;
-	-webkit-border-top-left-radius: 15px;
+	border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
 }
 
 #qunit-header a {
@@ -54,9 +54,9 @@
 	color: #fff;
 }
 
-#qunit-header label {
+#qunit-testrunner-toolbar label {
 	display: inline-block;
-	padding-left: 0.5em;
+	padding: 0 .5em 0 .1em;
 }
 
 #qunit-banner {
@@ -113,13 +113,9 @@
 
 	background-color: #fff;
 
-	border-radius: 15px;
-	-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;
-
-	box-shadow: inset 0px 2px 13px #999;
-	-moz-box-shadow: inset 0px 2px 13px #999;
-	-webkit-box-shadow: inset 0px 2px 13px #999;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 }
 
 #qunit-tests table {
@@ -162,8 +158,7 @@
 #qunit-tests b.failed                       { color: #710909; }
 
 #qunit-tests li li {
-	margin: 0.5em;
-	padding: 0.4em 0.5em 0.4em 0.5em;
+	padding: 5px;
 	background-color: #fff;
 	border-bottom: none;
 	list-style-position: inside;
@@ -172,9 +167,9 @@
 /*** Passing Styles */
 
 #qunit-tests li li.pass {
-	color: #5E740B;
+	color: #3c510c;
 	background-color: #fff;
-	border-left: 26px solid #C6E746;
+	border-left: 10px solid #C6E746;
 }
 
 #qunit-tests .pass                          { color: #528CE0; background-color: #D2E0E6; }
@@ -190,15 +185,15 @@
 #qunit-tests li li.fail {
 	color: #710909;
 	background-color: #fff;
-	border-left: 26px solid #EE5757;
+	border-left: 10px solid #EE5757;
 	white-space: pre;
 }
 
 #qunit-tests > li:last-child {
-	border-radius: 0 0 15px 15px;
-	-moz-border-radius: 0 0 15px 15px;
-	-webkit-border-bottom-right-radius: 15px;
-	-webkit-border-bottom-left-radius: 15px;
+	border-radius: 0 0 5px 5px;
+	-moz-border-radius: 0 0 5px 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
 }
 
 #qunit-tests .fail                          { color: #000000; background-color: #EE5757; }

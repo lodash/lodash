@@ -5,6 +5,7 @@
  * Available under MIT license <http://mths.be/mit>
  */
 ;(function(global) {
+  'use strict';
 
   /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
   global.console || (global.console = { 'log': global.print });
@@ -24,7 +25,8 @@
   var toString = {}.toString;
 
   /** Used by timer methods */
-  var timer,
+  var doneCalled,
+      timer,
       counter = 0,
       ids = {};
 
@@ -149,26 +151,26 @@
    *  `runtime`, and `total`.
    */
   function done(details) {
-    // stop `asyncTest()` from erroneously calling `done()` twice in environments w/o timeouts
-    if (!QUnit.doneCalled) {
-      console.log(hr);
-      console.log('    PASS: ' + details.passed + '  FAIL: ' + details.failed + '  TOTAL: ' + details.total);
-      console.log('    Finished in ' + details.runtime + ' milliseconds.');
-      console.log(hr);
-
-      // exit out of Rhino
-      try {
-        quit();
-      } catch(e) { }
-
-      // exit out of Node.js
-      try {
-        process.exit();
-      } catch(e) { }
-
-      // prevent multiple calls to `done()`
-      QUnit.doneCalled = true;
+    // stop `asyncTest()` from erroneously calling `done()` twice in
+    // environments w/o timeouts
+    if (doneCalled) {
+      return;
     }
+    doneCalled = true;
+    console.log(hr);
+    console.log('    PASS: ' + details.passed + '  FAIL: ' + details.failed + '  TOTAL: ' + details.total);
+    console.log('    Finished in ' + details.runtime + ' milliseconds.');
+    console.log(hr);
+
+    // exit out of Rhino
+    try {
+      quit();
+    } catch(e) { }
+
+    // exit out of Node.js
+    try {
+      process.exit();
+    } catch(e) { }
   }
 
   /**
@@ -181,12 +183,13 @@
   function log(details) {
     var expected = details.expected,
         result = details.result,
-        type = typeof expected != 'undefined' ? 'EQ' : 'OK',
-        assertion = [
-          result ? 'PASS' : 'FAIL',
-          type,
-          details.message || 'ok'
-        ];
+        type = typeof expected != 'undefined' ? 'EQ' : 'OK';
+
+    var assertion = [
+      result ? 'PASS' : 'FAIL',
+      type,
+      details.message || 'ok'
+    ];
 
     if (!result && type == 'EQ') {
       assertion.push('Expected: ' + expected + ', Actual: ' + details.actual);
@@ -215,7 +218,7 @@
    * @returns {String} The result string.
    */
   var parseObject = (function() {
-    var _parseObject = QUnit.jsDump.parsers.object;
+    var func = QUnit.jsDump.parsers.object;
     return function(object) {
       // fork to support Rhino's error objects
       if (typeof object.rhinoException == 'object') {
@@ -224,7 +227,7 @@
           '", fileName: "' + object.fileName +
           '", lineNumber: ' + object.lineNumber + ' }';
       }
-      return _parseObject(object);
+      return func(object);
     };
   }());
 
@@ -237,16 +240,16 @@
    */
   function testDone(details) {
     var assertions = QUnit.config.testStats.assertions,
-        name = details.name;
+        testName = details.name;
 
     if (details.failed > 0) {
-      console.log(' FAIL - '+ name);
+      console.log(' FAIL - '+ testName);
       each(assertions, function(value) {
         console.log('    ' + value);
       });
     }
     else {
-      console.log(' PASS - ' + name);
+      console.log(' PASS - ' + testName);
     }
     assertions.length = 0;
   }
@@ -274,8 +277,11 @@
   // exclude `module` because some environments have it as a built-in object
   each(['asyncTest', 'deepEqual', 'equal', 'equals', 'expect', 'notDeepEqual',
         'notEqual', 'notStrictEqual', 'ok', 'raises', 'same', 'start', 'stop',
-        'strictEqual', 'test'], function(name) {
-    global[name] = QUnit[name];
+        'strictEqual', 'test', 'throws'], function(funcName) {
+    var func = QUnit[funcName];
+    if (func) {
+      global[funcName] = func;
+    }
   });
 
   // expose timer methods to global
@@ -301,11 +307,11 @@
   QUnit.moduleStart(moduleStart);
   QUnit.testDone(testDone);
 
-  // wrap `parseObject`
+  // add wrapped function
   QUnit.jsDump.parsers.object = parseObject;
 
-  // must call `QUnit.start()` in the test file if using QUnit < 1.3.0 with Node.js
-  // or any version of QUnit with Narwhal, Rhino, or RingoJS
+  // must call `QUnit.start()` in the test file if using QUnit < 1.3.0 with
+  // Node.js or any version of QUnit with Narwhal, Rhino, or RingoJS
   QUnit.init();
 
 }(typeof global == 'object' && global || this));

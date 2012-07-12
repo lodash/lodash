@@ -740,7 +740,7 @@
     });
 
     test('should raise an error if a template, compiled with errors, is executed', function() {
-      raises(_.template('<% if x %>'));
+      throws(_.template('<% if x %>'));
     });
 
     test('should work with complex "interpolate" delimiters', function() {

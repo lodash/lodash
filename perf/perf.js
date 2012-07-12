@@ -81,28 +81,32 @@
           _ = window._,
           lodash = window.lodash;
 
-      var length = 20,
-          funcNames = lodash.functions(lodash),
-          numbers = [],
+      var index,
+          length,
+          belt = /Lo-Dash/.test(this.name) ? lodash : _,
+          limit = 20,
+          numbers = Array(limit),
           object = {},
+          objects = Array(limit),
           fourNumbers = [5, 25, 10, 30],
           nestedNumbers = [1, [2], [3, [[4]]]],
           twoNumbers = [12, 21];
 
-      var bindAllObjects = [];
-
-      var objects = lodash.map(numbers, function(num) {
-        return { 'num': num };
-      });
-
-      lodash.times(this.count, function(index) {
-        bindAllObjects[index] = lodash.clone(lodash);
-      });
-
-      lodash.times(length, function(index) {
+      for (index = 0, length = limit; index < length; index++) {
         numbers[index] = index;
         object['key' + index] = index;
-      });
+        objects[index] = { 'num': index };
+      }
+
+      if (typeof isBindAll != 'undefined') {
+        var bindAllObjects = Array(this.count),
+            funcNames = belt.functions(lodash);
+
+        // potentially expensive
+        for (index = 0, length = this.count; index < length; index++) {
+          bindAllObjects[index] = belt.clone(lodash);
+        }
+      }
 
       var ctor = function() { };
 
@@ -234,7 +238,7 @@
         'twenty-five': 25
       };
 
-      var words = _.keys(wordToNumber).slice(0, length);
+      var words = belt.keys(wordToNumber).slice(0, limit);
     }
   });
 
@@ -361,21 +365,33 @@
 
   suites.push(
     Benchmark.Suite('`_.bindAll` iterating arguments')
-      .add('Lo-Dash', function() {
-        lodash.bindAll.apply(lodash, [bindAllObjects.pop()].concat(funcNames));
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.bindAll.apply(lodash, [bindAllObjects.pop()].concat(funcNames));
+        },
+        'teardown': 'function isBindAll(){}'
       })
-      .add('Underscore', function() {
-        _.bindAll.apply(_, [bindAllObjects.pop()].concat(funcNames));
+      .add('Underscore', {
+        'fn': function() {
+          _.bindAll.apply(_, [bindAllObjects.pop()].concat(funcNames));
+        },
+        'teardown': 'function isBindAll(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('`_.bindAll` iterating the `object`')
-      .add('Lo-Dash', function() {
-        lodash.bindAll(bindAllObjects.pop());
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.bindAll(bindAllObjects.pop());
+        },
+        'teardown': 'function isBindAll(){}'
       })
-      .add('Underscore', function() {
-        _.bindAll(bindAllObjects.pop());
+      .add('Underscore', {
+        'fn': function() {
+          _.bindAll(bindAllObjects.pop());
+        },
+        'teardown': 'function isBindAll(){}'
       })
   );
 

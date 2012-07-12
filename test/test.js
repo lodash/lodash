@@ -771,8 +771,31 @@
         var compiled = _.template(key),
             data = { 'a': 1, 'b': 2 };
 
-        equal(compiled(data), value);
+        equal(compiled(data), value, key);
       });
+    });
+
+    test('should allow referencing variables declared in "evaluate" delimiters from other delimiters', function() {
+      var compiled = _.template('<% var b = a; %><%= b.value %>'),
+          data = { 'a': { 'value': 1 } };
+
+      equal(compiled(data), '1');
+    });
+
+    test('should work when passing `options.variable`', function() {
+      var compiled = _.template(
+        '<% _.forEach( data.a, function( value ) { %>' +
+            '<%= value.valueOf() %>' +
+        '<% }) %>', null, { 'variable': 'data' }
+      );
+
+      var data = { 'a': [1, 2, 3] };
+
+      try {
+        equal(compiled(data), '123');
+      } catch(e) {
+        ok(false);
+      }
     });
   }());
 

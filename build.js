@@ -223,13 +223,13 @@
     'inLoop',
     'init',
     'isKeysFast',
-    'iteratee',
     'object',
     'objectBranch',
     'noCharByIndex',
     'shadowed',
     'top',
-    'useHas'
+    'useHas',
+    'useStrict'
   ];
 
   /** Collections of method names */
@@ -840,13 +840,7 @@
       // prepend data object references to property names to avoid having to
       // use a with-statement
       iteratorOptions.forEach(function(property) {
-        if (property == 'iteratee') {
-          // use a more fine-grained regexp for the `iteratee` property because
-          // it's a compiled variable as well as a data property
-          snippet = snippet.replace(/(__t *= *\( *)(iteratee)/, '$1obj.$2');
-        } else {
-          snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
-        }
+        snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
       });
 
       // remove unnecessary code

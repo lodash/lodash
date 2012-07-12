@@ -266,13 +266,17 @@
    * @returns {String} Returns the interpolated text.
    */
   var iteratorTemplate = template(
+    // conditional strict mode
+   '<% if (useStrict) { %>\'use strict\';\n<% } %>' +
+
+    // the `iteratee` may be reassigned by the `top` snippet
+    'var index, iteratee = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
-    'var result<% if (init) { %> = <%= init %><% } %>;\n' +
+    'result<% if (init) { %> = <%= init %><% } %>;\n' +
     // add code to exit early or do so if the first argument is falsey
     '<%= exit %>;\n' +
     // add code after the exit snippet but before the iteration branches
     '<%= top %>;\n' +
-    'var index, iteratee = <%= iteratee %>;\n' +
 
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
@@ -389,14 +393,14 @@
 
   /** Reusable iterator options for `defaults` and `extend` */
   var extendIteratorOptions = {
+    'useHas': false,
+    'useStrict': false,
     'args': 'object',
     'init': 'object',
     'top':
-      'for (var source, sourceIndex = 1, length = arguments.length; sourceIndex < length; sourceIndex++) {\n' +
-      '  source = arguments[sourceIndex];\n' +
-      (hasDontEnumBug ? '  if (source) {' : ''),
-    'iteratee': 'source',
-    'useHas': false,
+      'for (var iterateeIndex = 1, length = arguments.length; iterateeIndex < length; iterateeIndex++) {\n' +
+      '  iteratee = arguments[iterateeIndex];\n' +
+      (hasDontEnumBug ? '  if (iteratee) {' : ''),
     'inLoop': 'result[index] = iteratee[index]',
     'bottom': (hasDontEnumBug ? '  }\n' : '') + '}'
   };
@@ -443,6 +447,12 @@
    * @private
    * @param {Object} [options1, options2, ...] The compile options objects.
    *
+   *  useHas - A boolean to specify whether or not to use `hasOwnProperty` checks
+   *   in the object loop.
+   *
+   *  useStrict - A boolean to specify whether or not to include the ES5
+   *   "use strict" directive.
+   *
    *  args - A string of comma separated arguments the iteration function will
    *   accept.
    *
@@ -456,12 +466,6 @@
    *
    *  beforeLoop - A string or object containing an "array" or "object" property
    *   of code to execute before the array or object loops.
-   *
-   *  iteratee - A string or object containing an "array" or "object" property
-   *   of the variable to be iterated in the loop expression.
-   *
-   *  useHas - A boolean to specify whether or not to use `hasOwnProperty` checks
-   *   in the object loop.
    *
    *  inLoop - A string or object containing an "array" or "object" property
    *   of code to execute in the array or object loops.
@@ -506,14 +510,14 @@
     }
     // set additional template `data` values
     var args = data.args,
-        firstArg = /^[^,]+/.exec(args)[0],
-        iteratee = (data.iteratee = data.iteratee || firstArg);
+        firstArg = /^[^,]+/.exec(args)[0];
 
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
     data.isKeysFast = isKeysFast;
     data.shadowed = shadowed;
     data.useHas = data.useHas !== false;
+    data.useStrict = data.useStrict !== false;
 
     if (!('noCharByIndex' in data)) {
       data.noCharByIndex = noCharByIndex;
@@ -526,14 +530,14 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayClass, compareAscending, funcClass, hasOwnProperty, identity, ' +
-        'iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, ' +
-        'slice, stringClass, toString',
-      '"use strict"; return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
+        'arrayClass, bind, compareAscending, funcClass, hasOwnProperty, identity, ' +
+        'iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, slice, ' +
+        'stringClass, toString',
+      'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayClass, compareAscending, funcClass, hasOwnProperty, identity,
+      arrayClass, bind, compareAscending, funcClass, hasOwnProperty, identity,
       iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, slice,
       stringClass, toString
     );
@@ -2058,19 +2062,23 @@
    * jQuery('#lodash_button').on('click', buttonView.onClick);
    * // => When the button is clicked, `this.label` will have the correct value
    */
-  function bindAll(object) {
-    var funcs = arguments,
-        index = 1;
-
-    if (funcs.length == 1) {
-      index = 0;
-      funcs = functions(object);
-    }
-    for (var length = funcs.length; index < length; index++) {
-      object[funcs[index]] = bind(object[funcs[index]], object);
-    }
-    return object;
-  }
+  var bindAll = createIterator({
+    'useHas': false,
+    'useStrict': false,
+    'args': 'object',
+    'init': 'object',
+    'top':
+      'var funcs = arguments,\n' +
+      '    length = funcs.length;\n' +
+      'if (length > 1) {\n' +
+      '  for (var index = 1; index < length; index++)\n' +
+      '    result[funcs[index]] = bind(result[funcs[index]], result);\n' +
+      '  return result\n' +
+      '}',
+    'inLoop':
+      'if (toString.call(result[index]) == funcClass)' +
+      ' result[index] = bind(result[index], result)'
+  });
 
   /**
    * Creates a new function that is the composition of the passed functions,
@@ -2496,9 +2504,9 @@
    * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
    */
   var functions = createIterator({
+    'useHas': false,
     'args': 'object',
     'init': '[]',
-    'useHas': false,
     'inLoop': 'if (toString.call(iteratee[index]) == funcClass) result.push(index)',
     'bottom': 'result.sort()'
   });

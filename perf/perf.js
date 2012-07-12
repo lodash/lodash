@@ -82,11 +82,27 @@
           lodash = window.lodash;
 
       var length = 20,
+          funcNames = lodash.functions(lodash),
           numbers = [],
           object = {},
           fourNumbers = [5, 25, 10, 30],
           nestedNumbers = [1, [2], [3, [[4]]]],
           twoNumbers = [12, 21];
+
+      var bindAllObjects = [];
+
+      var objects = lodash.map(numbers, function(num) {
+        return { 'num': num };
+      });
+
+      lodash.times(this.count, function(index) {
+        bindAllObjects[index] = lodash.clone(lodash);
+      });
+
+      lodash.times(length, function(index) {
+        numbers[index] = index;
+        object['key' + index] = index;
+      });
 
       var ctor = function() { };
 
@@ -219,15 +235,6 @@
       };
 
       var words = _.keys(wordToNumber).slice(0, length);
-
-      for (var index = 0; index < length; index++) {
-        numbers[index] = index;
-        object['key' + index] = index;
-      }
-
-      var objects = lodash.map(numbers, function(num) {
-        return { 'num': num };
-      });
     }
   });
 
@@ -347,6 +354,28 @@
       })
       .add('Underscore', function() {
         new _boundCtor();
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.bindAll` iterating arguments')
+      .add('Lo-Dash', function() {
+        lodash.bindAll.apply(lodash, [bindAllObjects.pop()].concat(funcNames));
+      })
+      .add('Underscore', function() {
+        _.bindAll.apply(_, [bindAllObjects.pop()].concat(funcNames));
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.bindAll` iterating the `object`')
+      .add('Lo-Dash', function() {
+        lodash.bindAll(bindAllObjects.pop());
+      })
+      .add('Underscore', function() {
+        _.bindAll(bindAllObjects.pop());
       })
   );
 
@@ -493,6 +522,18 @@
       })
       .add('Underscore', function() {
         _.flatten(nestedNumbers, true);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.functions`')
+      .add('Lo-Dash', function() {
+        lodash.functions(lodash);
+      })
+      .add('Underscore', function() {
+        _.functions(lodash);
       })
   );
 

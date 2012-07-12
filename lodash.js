@@ -123,7 +123,7 @@
    */
   var hasDontEnumBug = !propertyIsEnumerable.call({ 'valueOf': 0 }, 'valueOf');
 
-  /** Detect if `Array#slice` cannot be used to convert strings to arrays (e.g. Opera < 10.52) */
+  /** Detect if `Array#slice` cannot be used to convert strings to arrays (Opera < 10.52) */
   var noArraySliceOnStrings = slice.call('x')[0] != 'x';
 
   /**
@@ -133,10 +133,10 @@
    */
   var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
 
-  /* Detect if `Function#bind` exists and is inferred to be fast (i.e. all but V8) */
+  /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
   var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
 
-  /* Detect if `Object.keys` exists and is inferred to be fast (i.e. V8, Opera, IE) */
+  /* Detect if `Object.keys` exists and is inferred to be fast (V8, Opera, IE) */
   var isKeysFast = nativeKeys && /^.+$|true/.test(nativeKeys + !!window.attachEvent);
 
   /** Detect if sourceURL syntax is usable without erroring */
@@ -729,8 +729,7 @@
   /**
    * Checks if the `callback` returns a truthy value for **all** elements of a
    * `collection`. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; for arrays they are (value, index, array) and for objects they
-   * are (value, key, object).
+   * arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -750,8 +749,7 @@
   /**
    * Examines each value in a `collection`, returning an array of all values the
    * `callback` returns truthy for. The `callback` is bound to `thisArg` and
-   * invoked with 3 arguments; for arrays they are (value, index, array) and for
-   * objects they are (value, key, object).
+   * invoked with 3 arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -772,8 +770,7 @@
    * Examines each value in a `collection`, returning the first one the `callback`
    * returns truthy for. The function returns as soon as it finds an acceptable
    * value, and does not iterate over the entire `collection`. The `callback` is
-   * bound to `thisArg` and invoked with 3 arguments; for arrays they are
-   * (value, index, array) and for objects they are (value, key, object).
+   * bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -796,8 +793,7 @@
   /**
    * Iterates over a `collection`, executing the `callback` for each value in the
    * `collection`. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; for arrays they are (value, index, array) and for objects they
-   * are (value, key, object).
+   * arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -820,9 +816,8 @@
   /**
    * Splits `collection` into sets, grouped by the result of running each value
    * through `callback`. The `callback` is bound to `thisArg` and invoked with
-   * 3 arguments; for arrays they are (value, index, array) and for objects they
-   * are (value, key, object). The `callback` argument may also be the name of a
-   * property to group by.
+   * 3 arguments; (value, index|key, collection). The `callback` argument may
+   * also be the name of a property to group by.
    *
    * @static
    * @memberOf _
@@ -895,8 +890,7 @@
   /**
    * Produces a new array of values by mapping each element in the `collection`
    * through a transformation `callback`. The `callback` is bound to `thisArg`
-   * and invoked with 3 arguments; for arrays they are (value, index, array)
-   * and for objects they are (value, key, object).
+   * and invoked with 3 arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -949,8 +943,7 @@
    * Boils down a `collection` to a single value. The initial state of the
    * reduction is `accumulator` and each successive step of it should be returned
    * by the `callback`. The `callback` is bound to `thisArg` and invoked with 4
-   * arguments; for arrays they are (accumulator, value, index, array) and for
-   * objects they are (accumulator, value, key, object).
+   * arguments; for arrays they are (accumulator, value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -1043,8 +1036,8 @@
   }
 
   /**
-   * The opposite of `_.filter`, this method returns the values of a `collection`
-   * that `callback` does **not** return truthy for.
+   * The opposite of `_.filter`, this method returns the values of a
+   * `collection` that `callback` does **not** return truthy for.
    *
    * @static
    * @memberOf _
@@ -1066,8 +1059,7 @@
    * Checks if the `callback` returns a truthy value for **any** element of a
    * `collection`. The function returns as soon as it finds passing value, and
    * does not iterate over the entire `collection`. The `callback` is bound to
-   * `thisArg` and invoked with 3 arguments; for arrays they are
-   * (value, index, array) and for objects they are (value, key, object).
+   * `thisArg` and invoked with 3 arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -1092,9 +1084,8 @@
    * Produces a new sorted array, sorted in ascending order by the results of
    * running each element of `collection` through a transformation `callback`.
    * The `callback` is bound to `thisArg` and invoked with 3 arguments;
-   * for arrays they are (value, index, array) and for objects they are
-   * (value, key, object). The `callback` argument may also be the name of a
-   * property to sort by (e.g. 'length').
+   * (value, index|key, collection). The `callback` argument may also be the
+   * name of a property to sort by (e.g. 'length').
    *
    * @static
    * @memberOf _
@@ -2729,8 +2720,8 @@
 
       case boolClass:
       case dateClass:
-        // coerce dates and booleans to numeric values, dates to milliseconds and booleans to 1 or 0;
-        // treat invalid dates coerced to `NaN` as not equal
+        // coerce dates and booleans to numeric values, dates to milliseconds and
+        // booleans to 1 or 0; treat invalid dates coerced to `NaN` as not equal
         return +a == +b;
 
       // regexps are compared by their source and flags

@@ -20,6 +20,9 @@
   /** Flag used to specify a mobile build */
   var isMobile = !isLegacy && process.argv.indexOf('mobile') > -1;
 
+  /** Flag used to specify if the source should be in strict mode */
+  var isStrict = !(isLegacy || isMobile);
+
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
@@ -33,6 +36,15 @@
       ['isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
         source = replaceVar(source, varName, 'false');
       });
+
+      // remove `useStrict` branch from `iteratorTemplate`
+      source = source.replace(/(?: *\/\/.*\n)*\s*' *<% *if *\(useStrict\).+\n/, '');
+
+      // remove `useStrict` from iterator options
+      source = source.replace(/ *'useStrict': *false,\n/g, '');
+
+      // remove `useStrict` data object property assignment in `createIterator`
+      source = source.replace(/\s*.+?\.useStrict *=.+/, '');
     }
     else if (isMobile) {
       source = replaceVar(source, 'isKeysFast', 'false');
@@ -506,6 +518,17 @@
   }
 
   /**
+   * Removes the "use strict" directive from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeUseStrict(source) {
+    return source.replace(/(["'])use strict\1;( *\n)?/, '');
+  }
+
+  /**
    * Removes a given variable from `source`.
    *
    * @private
@@ -938,10 +961,19 @@
   // cleanup code
   source = source.replace(/^ *;\n/gm, '');
 
+  if (!isStrict) {
+    source = removeUseStrict(source);
+  }
+
   // begin the minification process
   if (filterType || isBackbone || isLegacy || isMobile) {
     fs.writeFileSync(path.join(cwd, 'lodash.custom.js'), source);
+
     minify(source, 'lodash.custom.min', function(result) {
+      // re-remove "use strict" added by the minifier
+      if (!isStrict) {
+        result = removeUseStrict(result);
+      }
       fs.writeFileSync(path.join(cwd, 'lodash.custom.min.js'), result);
     });
   }

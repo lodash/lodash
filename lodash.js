@@ -50,15 +50,10 @@
   /** Used to detect delimiter values that should be processed by `tokenizeEvaluate` */
   var reComplexDelimiter = /[-+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
 
-  /** Used to match code generated in place of template delimiters */
-  var reDelimiterCodeLeading = /^';\n/,
-      reDelimiterCodeMiddle = /^' \+\n/,
-      reDelimiterCodeTrailing = /(?:__p \+= '|\+\n')$/;
-
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
-      reEmptyStringMiddle = /\b(__p \+?=) '' \+/g,
-      reEmptyStringTrailing = /(__w?e\(.*?\)|\b__w?t\)) \+\n'';/g;
+      reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
+      reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
   /** Used to insert the data object variable into compiled template source */
   var reInsertVariable = /(?:__e|__t = )\(\s*(?![\d\s"']|this\.)/g;
@@ -672,12 +667,10 @@
     var index = tokenized.length;
     if (value) {
       tokenized[index] = "';\n" + value + ";\n__p += '"
-    }
-    else if (escapeValue) {
-      tokenized[index] = "' +\n__we(" + escapeValue + ") +\n'";
-    }
-    else if (interpolateValue) {
-      tokenized[index] = "' +\n((__wt = (" + interpolateValue + ")) == null ? '' : __wt) +\n'";
+    } else if (escapeValue) {
+      tokenized[index] = "' +\n__e(" + escapeValue + ") +\n'";
+    } else if (interpolateValue) {
+      tokenized[index] = "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
     }
     return token + index;
   }
@@ -3307,11 +3300,8 @@
     // https://github.com/olado/doT
     options || (options = {});
 
-    var endIndex,
-        isEvaluating,
-        startIndex,
+    var isEvaluating,
         result,
-        useWith,
         escapeDelimiter = options.escape,
         evaluateDelimiter = options.evaluate,
         interpolateDelimiter = options.interpolate,
@@ -3337,83 +3327,63 @@
       text = text.replace(interpolateDelimiter, tokenizeInterpolate);
     }
     if (evaluateDelimiter != lastEvaluateDelimiter) {
+      // generate `reEvaluateDelimiter` to match `_.templateSettings.evaluate`
+      // and internal `<e%- %>`, `<e%= %>` delimiters
       lastEvaluateDelimiter = evaluateDelimiter;
       reEvaluateDelimiter = RegExp(
         (evaluateDelimiter ? evaluateDelimiter.source : '($^)') +
         '|<e%-([\\s\\S]+?)%>|<e%=([\\s\\S]+?)%>'
       , 'g');
     }
-    startIndex = tokenized.length;
+    isEvaluating = tokenized.length;
     text = text.replace(reEvaluateDelimiter, tokenizeEvaluate);
-    endIndex = tokenized.length - 1;
-    isEvaluating = startIndex <= endIndex;
-
-    // if `options.variable` is not specified and the template contains "evaluate"
-    // delimiters, inject a with-statement around all "evaluate" delimiters to
-    // add the data object to the top of the scope chain
-    if (!variable) {
-      variable = settings.variable || lastVariable || 'obj';
-      useWith = isEvaluating;
-
-      if (useWith) {
-        tokenized[startIndex] = "';\n__with (" + variable + ') {\n' + tokenized[startIndex]
-          .replace(reDelimiterCodeLeading, '')
-          .replace(reDelimiterCodeMiddle, '__p += ');
-
-        tokenized[endIndex] = tokenized[endIndex]
-          .replace(reDelimiterCodeTrailing, '') + "\n}__\n__p += '";
-      }
-    }
-
-    var strInsertVariable = '$&' + variable + '.',
-        strDoubleVariable = '$1__d';
+    isEvaluating = isEvaluating != tokenized.length;
 
     // escape characters that cannot be included in string literals and
     // detokenize delimiter code snippets
-    text = "__p = '" + text
+    text = "__p += '" + text
       .replace(reUnescapedString, escapeStringChar)
       .replace(reToken, detokenize) + "';\n";
 
     // clear stored code snippets
     tokenized.length = 0;
 
-    // find the start and end indexes of the with-statement
-    if (useWith) {
-      startIndex = text.indexOf('__with');
-      endIndex = text.indexOf('}__', startIndex + 10);
+    // if `options.variable` is not specified and the template contains "evaluate"
+    // delimiters, wrap a with-statement around the generated code to add the
+    // data object to the top of the scope chain
+    if (!variable) {
+      variable = settings.variable || lastVariable || 'obj';
+
+      if (isEvaluating) {
+        text = 'with (' + variable + ') {\n' + text + '\n}\n';
+      }
+      else {
+        if (variable != lastVariable) {
+          // generate `reDoubleVariable` to match references like `obj.obj` inside
+          // transformed "escape" and "interpolate" delimiters
+          lastVariable = variable;
+          reDoubleVariable = RegExp('(\\(\\s*)' + variable + '\\.' + variable + '\\b', 'g');
+        }
+        // avoid a with-statement by prepending data object references to property names
+        text = text
+          .replace(reInsertVariable, '$&' + variable + '.')
+          .replace(reDoubleVariable, '$1__d');
+      }
     }
-    // memoize `reDoubleVariable`
-    if (variable != lastVariable) {
-      lastVariable = variable;
-      reDoubleVariable = RegExp('([(\\s])' + variable + '\\.' + variable + '\\b', 'g');
-    }
-    // prepend data object references to property names outside of the with-statement
-    text = (useWith ? text.slice(0, startIndex) : text)
-      .replace(reInsertVariable, strInsertVariable)
-      .replace(reDoubleVariable, strDoubleVariable) +
-      (useWith
-        ? text.slice(startIndex + 2, endIndex + 1) +
-          text.slice(endIndex + 3)
-            .replace(reInsertVariable, strInsertVariable)
-            .replace(reDoubleVariable, strDoubleVariable)
-        : ''
-      );
 
     // cleanup code by stripping empty strings
-    text = (isEvaluating ? text.replace(reEmptyStringLeading, '') : text)
+    text = ( isEvaluating ? text.replace(reEmptyStringLeading, '') : text)
       .replace(reEmptyStringMiddle, '$1')
       .replace(reEmptyStringTrailing, '$1;');
 
     // frame code as the function body
     text = 'function(' + variable + ') {\n' +
       variable + ' || (' + variable + ' = {});\n' +
-      'var __p, __t, __wt' +
-      ', __d = ' + variable + '.' + variable + ' || ' + variable +
-      ', __e = _.escape, __we = __e' +
+      'var __t, __p = \'\', __e = _.escape' +
       (isEvaluating
         ? ', __j = Array.prototype.join;\n' +
           'function print() { __p += __j.call(arguments, \'\') }\n'
-        : ';\n'
+        : ', __d = ' + variable + '.' + variable + ' || ' + variable + ';\n'
       ) +
       text +
       'return __p\n}';

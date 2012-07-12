@@ -405,10 +405,14 @@
    * @returns {String} Returns the modified source.
    */
   function removeFromCreateIterator(source, refName) {
-    var snippet = matchFunction(source, 'createIterator').match(/Function\([\s\S]+$/)[0],
-        modified = snippet.replace(RegExp('\\b' + refName + '\\b,? *', 'g'), '');
-
-    return source.replace(snippet, modified);
+    var snippet = matchFunction(source, 'createIterator');
+    if (snippet) {
+      // clip the snippet the `factory` assignment
+      snippet = snippet.match(/Function\([\s\S]+$/)[0];
+      var modified = snippet.replace(RegExp('\\b' + refName + '\\b,? *', 'g'), '');
+      source = source.replace(snippet, modified);
+    }
+    return source;
   }
 
   /**
@@ -611,56 +615,6 @@
         }
       });
     }
-
-    // remove associated functions, variables, and code snippets
-    if (isRemoved(source, 'isArguments')) {
-      source = removeIsArgumentsFallback(source);
-    }
-    if (isRemoved(source, 'mixin')) {
-      // remove `LoDash` constructor
-      source = removeFunction(source, 'LoDash');
-      // remove `LoDash` calls
-      source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
-      // remove `LoDash.prototype` additions
-      source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
-    }
-    if (isRemoved(source, 'sortBy')) {
-      source = removeFunction(source, 'compareAscending');
-    }
-    if (isRemoved(source, 'template')) {
-      // remove `templateSettings` assignment
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
-    }
-    if (isRemoved(source, 'isArray', 'isEmpty', 'isEqual', 'size')) {
-      source = removeVar(source, 'arrayClass');
-    }
-    if (isRemoved(source, 'bind', 'functions', 'groupBy', 'invoke', 'isEqual', 'isFunction', 'result', 'sortBy', 'toArray')) {
-      source = removeVar(source, 'funcClass');
-    }
-    if (isRemoved(source, 'bind')) {
-      source = removeVar(source, 'nativeBind');
-      source = removeVar(source, 'isBindFast');
-    }
-    if (isRemoved(source, 'isArray')) {
-      source = removeVar(source, 'nativeIsArray');
-    }
-    if (isRemoved(source, 'keys')) {
-      source = removeFunction(source, 'shimKeys');
-    }
-    if (isRemoved(source, 'clone', 'isObject', 'keys')) {
-      source = removeVar(source, 'objectTypes');
-    }
-    if (isRemoved(source, 'bind', 'isArray', 'keys')) {
-      source = removeVar(source, 'reNative');
-    }
-    if (isRemoved(source, 'isEmpty', 'isEqual', 'isString', 'size')) {
-      source = removeVar(source, 'stringClass');
-    }
-
-    // consolidate consecutive horizontal rule comment separators
-    source = source.replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
-      return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -847,12 +801,13 @@
 
       // remove unnecessary code
       snippet = snippet
-        .replace(/, *__t,[^;]+|function print[^}]+}/g, '')
+        .replace(/var __t.+/, "var __p = '';")
+        .replace(/function print[^}]+}/, '')
         .replace(/'(?:\\n|\s)+'/g, "''")
         .replace(/__p *\+= *' *';/g, '')
         .replace(/(__p *\+= *)' *' *\+/g, '$1')
         .replace(/(\{) *;|; *(\})/g, '$1$2')
-        .replace(/\(\(__w?t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__w?t\)/g, '$1');
+        .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '$1');
 
       // remove the with-statement
       snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
@@ -860,7 +815,7 @@
       // minor cleanup
       snippet = snippet
         .replace(/obj *\|\| *\(obj *= *\{}\);/, '')
-        .replace(/var __p;\s*__p/, 'var __p');
+        .replace(/var __p = '';\s*__p \+=/, 'var __p =');
 
       // remove comments, including sourceURLs
       snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
@@ -871,8 +826,73 @@
 
   /*--------------------------------------------------------------------------*/
 
+  // remove associated functions, variables, and code snippets that the minifier may miss
+  if (isRemoved(source, 'isArguments')) {
+    source = removeIsArgumentsFallback(source);
+  }
+  if (isRemoved(source, 'mixin')) {
+    // remove `LoDash` constructor
+    source = removeFunction(source, 'LoDash');
+    // remove `LoDash` calls
+    source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
+    // remove `LoDash.prototype` additions
+    source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
+  }
+  if (isRemoved(source, 'sortBy')) {
+    source = removeFunction(source, 'compareAscending');
+  }
+  if (isRemoved(source, 'template')) {
+    // remove `templateSettings` assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
+  }
+  if (isRemoved(source, 'toArray')) {
+    source = removeVar(source, 'noArraySliceOnStrings');
+  }
+  if (isRemoved(source, 'isArray', 'isEmpty', 'isEqual', 'size')) {
+    source = removeVar(source, 'arrayClass');
+  }
+  if (isRemoved(source, 'bind', 'functions', 'groupBy', 'invoke', 'isEqual', 'isFunction', 'result', 'sortBy', 'toArray')) {
+    source = removeVar(source, 'funcClass');
+  }
+  if (isRemoved(source, 'bind')) {
+    source = removeVar(source, 'nativeBind');
+    source = removeVar(source, 'isBindFast');
+  }
+  if (isRemoved(source, 'isArray')) {
+    source = removeVar(source, 'nativeIsArray');
+  }
+  if (isRemoved(source, 'keys')) {
+    source = removeFunction(source, 'shimKeys');
+  }
+  if (isRemoved(source, 'clone', 'isObject', 'keys')) {
+    source = removeVar(source, 'objectTypes');
+  }
+  if (isRemoved(source, 'bind', 'isArray', 'keys')) {
+    source = removeVar(source, 'reNative');
+  }
+  if (isRemoved(source, 'isEmpty', 'isEqual', 'isString', 'size')) {
+    source = removeVar(source, 'stringClass');
+  }
+  if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
+    source = removeFunction(source, 'createIterator');
+  }
+  if (isRemoved(source, 'createIterator', 'extend', 'isEqual')) {
+    source = removeVar(source, 'hasDontEnumBug');
+  }
+  if (isRemoved(source, 'createIterator', 'keys')) {
+    source = removeVar(source, 'nativeKeys');
+  }
+  if (isRemoved(source, 'createIterator', 'reduceRight')) {
+    source = removeVar(source, 'noCharByIndex');
+  }
+
   // remove pseudo private properties
   source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
+
+  // consolidate consecutive horizontal rule comment separators
+  source = source.replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
+    return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
+  });
 
   // cleanup code
   source = source.replace(/^ *;\n/gm, '');

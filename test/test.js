@@ -865,7 +865,7 @@
       deepEqual(_.toArray(object), [-1]);
     });
 
-    test('should work with a string for `collection` (test in IE < 9)', function() {
+    test('should work with a string for `collection` (test in Opera < 10.52)', function() {
       deepEqual(_.toArray('abc'), ['a', 'b', 'c']);
       deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
     });

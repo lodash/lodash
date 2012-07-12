@@ -615,6 +615,12 @@
         }
       });
     }
+
+    // remove `isArguments` fallback before `isArguments` is transformed by
+    // other parts of the build process
+    if (isRemoved(source, 'isArguments')) {
+      source = removeIsArgumentsFallback(source);
+    }
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -827,9 +833,6 @@
   /*--------------------------------------------------------------------------*/
 
   // remove associated functions, variables, and code snippets that the minifier may miss
-  if (isRemoved(source, 'isArguments')) {
-    source = removeIsArgumentsFallback(source);
-  }
   if (isRemoved(source, 'mixin')) {
     // remove `LoDash` constructor
     source = removeFunction(source, 'LoDash');

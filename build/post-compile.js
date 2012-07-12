@@ -34,9 +34,6 @@
     // move vars exposed by Closure Compiler into the IIFE
     source = source.replace(/^([^(\n]+)\s*(\(function[^)]+\){)/, '$2$1');
 
-    // use double quotes consistently
-    source = source.replace(/'use strict'/, '"use strict"');
-
     // unescape properties (i.e. foo["bar"] => foo.bar)
     source = source.replace(/(\w)\["([^."]+)"\]/g, '$1.$2');
 

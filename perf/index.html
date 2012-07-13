@@ -34,14 +34,22 @@
 			}());
 
 			window.onload = function() {
-				var fbUI = document.getElementById('FirebugUI'),
-				    fbDoc = (fbDoc = fbUI.contentWindow || fbUI.contentDocument).document || fbDoc,
-				    sibling = document.getElementsByTagName('script')[0],
-				    script = document.createElement('script');
+				function init() {
+					var fbUI = document.getElementById('FirebugUI'),
+					    fbDoc = fbUI && (fbDoc = fbUI.contentWindow || fbUI.contentDocument).document || fbDoc;
 
-				fbUI.style.height = fbDoc.body.style.height = fbDoc.documentElement.style.height = '100%';
-				script.src = 'perf.js?t=' + (+new Date);
-				sibling.parentNode.insertBefore(script, sibling);
+					if (!fbDoc || !fbDoc.body) {
+						return setTimeout(init, 15);
+					}
+					var sibling = document.getElementsByTagName('script')[0],
+					    script = document.createElement('script');
+
+					fbUI.style.height = fbDoc.body.style.height = fbDoc.documentElement.style.height = '100%';
+					script.src = 'perf.js?t=' + (+new Date);
+					sibling.parentNode.insertBefore(script, sibling);
+
+				}
+				init();
 			};
 		</script>
 	</body>

@@ -2698,20 +2698,18 @@
         sample = bench.stats.sample;
 
     /**
-     * Adds a number of clones to the queue.
+     * Adds a clone to the queue.
      */
-    function enqueue(count) {
-      while (count--) {
-        queue.push(bench.clone({
-          '_original': bench,
-          'events': {
-            'abort': [update],
-            'cycle': [update],
-            'error': [update],
-            'start': [update]
-          }
-        }));
-      }
+    function enqueue() {
+      queue.push(bench.clone({
+        '_original': bench,
+        'events': {
+          'abort': [update],
+          'cycle': [update],
+          'error': [update],
+          'start': [update]
+        }
+      }));
     }
 
     /**
@@ -2817,14 +2815,14 @@
       }
       // if time permits, increase sample size to reduce the margin of error
       if (queue.length < 2 && !maxedOut) {
-        enqueue(1);
+        enqueue();
       }
       // abort the invoke cycle when done
       event.aborted = done;
     }
 
     // init queue and begin
-    enqueue(minSamples);
+    enqueue();
     invoke(queue, {
       'name': 'run',
       'args': { 'async': async },

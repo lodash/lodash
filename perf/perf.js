@@ -76,6 +76,8 @@
 
   lodash.extend(Benchmark.options, {
     'async': true,
+    'maxTime': 1,
+    'minSamples': 30,
     'setup': function() {
       var window = Function('return this || global')(),
           _ = window._,
@@ -83,19 +85,29 @@
 
       var index,
           length,
-          belt = /Lo-Dash/.test(this.name) ? lodash : _,
+          belt = this.name == 'Lo-Dash' ? lodash : _,
           limit = 20,
-          numbers = Array(limit),
           object = {},
           objects = Array(limit),
+          numbers = Array(limit),
           fourNumbers = [5, 25, 10, 30],
           nestedNumbers = [1, [2], [3, [[4]]]],
           twoNumbers = [12, 21];
 
+      var object2 = {},
+          objects2 = Array(limit),
+          numbers2 = Array(limit),
+          nestedNumbers2 = [1, [2], [3, [[4]]]];
+
       for (index = 0, length = limit; index < length; index++) {
         numbers[index] = index;
+        numbers2[index] = index;
+
         object['key' + index] = index;
+        object2['key' + index] = index;
+
         objects[index] = { 'num': index };
+        objects2[index] = { 'num': index };
       }
 
       if (typeof isBindAll != 'undefined') {
@@ -108,19 +120,33 @@
         }
       }
 
-      var ctor = function() { };
+      var ctor = function() {};
 
       var func = function(greeting, punctuation) {
         return greeting + ', ' + this.name + (punctuation || '.');
       };
 
-      var lodashBoundNormal = lodash.bind(func, { 'name': 'moe' }),
-          lodashBoundCtor = lodash.bind(ctor, { 'name': 'moe' }),
-          lodashBoundPartial = lodash.bind(func, { 'name': 'moe' }, 'hi');
+      var objectOfPrimitives = {
+        'boolean': true,
+        'number': 1,
+        'string': 'a'
+      };
 
-      var _boundNormal = _.bind(func, { 'name': 'moe' }),
-          _boundCtor = _.bind(ctor, { 'name': 'moe' }),
-          _boundPartial = _.bind(func, { 'name': 'moe' }, 'hi');
+      var objectOfObjects = {
+        'boolean': new Boolean(true),
+        'number': new Number(1),
+        'string': new String('a')
+      };
+
+      var contextObject = { 'name': 'moe' };
+
+      var lodashBoundNormal = lodash.bind(func, contextObject),
+          lodashBoundCtor = lodash.bind(ctor, contextObject),
+          lodashBoundPartial = lodash.bind(func, contextObject, 'hi');
+
+      var _boundNormal = _.bind(func, contextObject),
+          _boundCtor = _.bind(ctor, contextObject),
+          _boundPartial = _.bind(func, contextObject, 'hi');
 
       var tplData = {
         'header1': 'Header1',
@@ -200,15 +226,17 @@
         '</ul>' +
         '</div>';
 
+      var settingsObject = { 'variable': 'data' };
+
       var lodashTpl = lodash.template(tpl),
           lodashTplWithEvaluate = lodash.template(tplWithEvaluate),
-          lodashTplVerbose = lodash.template(tplVerbose, null, { 'variable': 'data' }),
-          lodashTplVerboseWithEvaluate = lodash.template(tplVerboseWithEvaluate, null, { 'variable': 'data' });
+          lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject),
+          lodashTplVerboseWithEvaluate = lodash.template(tplVerboseWithEvaluate, null, settingsObject);
 
       var _tpl = _.template(tpl),
           _tplWithEvaluate = _.template(tplWithEvaluate),
-          _tplVerbose = _.template(tplVerbose, null, { 'variable': 'data' }),
-          _tplVerboseWithEvaluate = _.template(tplVerboseWithEvaluate, null, { 'variable': 'data' });
+          _tplVerbose = _.template(tplVerbose, null, settingsObject),
+          _tplVerboseWithEvaluate = _.template(tplVerboseWithEvaluate, null, settingsObject);
 
       var wordToNumber = {
         'one': 1,
@@ -398,6 +426,18 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.difference`')
+      .add('Lo-Dash', function() {
+        lodash.difference(numbers, fourNumbers, twoNumbers);
+      })
+      .add('Underscore', function() {
+        _.difference(numbers, fourNumbers, twoNumbers);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.each` iterating an array')
       .add('Lo-Dash', function() {
         var result = [];
@@ -556,18 +596,6 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.difference`')
-      .add('Lo-Dash', function() {
-        lodash.difference(numbers, fourNumbers, twoNumbers);
-      })
-      .add('Underscore', function() {
-        _.difference(numbers, fourNumbers, twoNumbers);
-      })
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
     Benchmark.Suite('`_.groupBy` with `callback` iterating an array')
       .add('Lo-Dash', function() {
         lodash.groupBy(numbers, function(num) { return num >> 1; });
@@ -628,6 +656,58 @@
       })
       .add('Underscore', function() {
         _.intersection(numbers, fourNumbers, twoNumbers);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.isEqual` comparing primitives and objects (edge case)')
+      .add('Lo-Dash', function() {
+        lodash.isEqual(objectOfPrimitives, objectOfObjects);
+      })
+      .add('Underscore', function() {
+        _.isEqual(objectOfPrimitives, objectOfObjects);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.isEqual` comparing arrays')
+      .add('Lo-Dash', function() {
+        lodash.isEqual(numbers, numbers2);
+      })
+      .add('Underscore', function() {
+        _.isEqual(numbers, numbers2);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.isEqual` comparing nested arrays')
+      .add('Lo-Dash', function() {
+        lodash.isEqual(nestedNumbers, nestedNumbers2);
+      })
+      .add('Underscore', function() {
+        _.isEqual(nestedNumbers, nestedNumbers2);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.isEqual` comparing arrays of objects')
+      .add('Lo-Dash', function() {
+        lodash.isEqual(objects, objects2);
+      })
+      .add('Underscore', function() {
+        _.isEqual(objects, objects2);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.isEqual` comparing objects')
+      .add('Lo-Dash', function() {
+        lodash.isEqual(object, object2);
+      })
+      .add('Underscore', function() {
+        _.isEqual(object, object2);
       })
   );
 

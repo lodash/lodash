@@ -20,8 +20,14 @@
   /** Flag used to specify a mobile build */
   var isMobile = !isLegacy && process.argv.indexOf('mobile') > -1;
 
-  /** Flag used to specify if the source should be in strict mode */
-  var isStrict = !(isLegacy || isMobile);
+  /**
+   * Flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are
+   * constructed using the "use strict" directive.
+   */
+  var isStrict = process.argv.indexOf('strict') > -1;
+
+  /** Flag used to specify if the build should include the "use strict" directive */
+  var useStrict = isStrict || !(isLegacy || isMobile);
 
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
@@ -32,19 +38,19 @@
   /** Load customized Lo-Dash module */
   var lodash = (function() {
     var sandbox = {};
+
+    if (isStrict) {
+      source = setUseStrictOption(source, true);
+    }
+    else if (!useStrict) {
+      source = removeUseStrictDirective(source);
+      source = setUseStrictOption(source, false);
+    }
+
     if (isLegacy) {
       ['isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
         source = replaceVar(source, varName, 'false');
       });
-
-      // remove `useStrict` branch from `iteratorTemplate`
-      source = source.replace(/(?: *\/\/.*\n)*\s*' *<% *if *\(useStrict\).+\n/, '');
-
-      // remove `useStrict` from iterator options
-      source = source.replace(/ *'useStrict': *false,\n/g, '');
-
-      // remove `useStrict` data object property assignment in `createIterator`
-      source = source.replace(/\s*.+?\.useStrict *=.+/, '');
     }
     else if (isMobile) {
       source = replaceVar(source, 'isKeysFast', 'false');
@@ -285,6 +291,7 @@
       '    lodash backbone      Build containing all methods required by Backbone',
       '    lodash legacy        Build tailored for older browsers without ES5 support',
       '    lodash mobile        Build with IE < 9 bug fixes and method compilation removed',
+      '    lodash strict        Build with `_.bindAll`, `_.extend`, and `_.defaults` in strict mode',
       '    lodash category=...  Comma separated categories of methods to include in the build',
       '    lodash exclude=...   Comma separated names of methods to exclude from the build',
       '    lodash include=...   Comma separated names of methods to include in the build',
@@ -507,14 +514,14 @@
    */
   function removeKeysOptimization(source) {
     return removeVar(source, 'isKeysFast')
+      // remove optimized branch in `iteratorTemplate`
+      .replace(/(?: *\/\/.*\n)*\s*'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, '$2')
       // remove `isKeysFast` from `beforeLoop.object` of `mapIteratorOptions`
       .replace(/=\s*'\s*\+\s*\(isKeysFast.+/, "= []'")
       // remove `isKeysFast` from `inLoop.object` of `mapIteratorOptions`, `invoke`, `pluck`, and `sortBy`
       .replace(/'\s*\+\s*\(isKeysFast[^)]+?\)\s*\+\s*'/g, '.push')
       // remove data object property assignment in `createIterator`
-      .replace(/\s*.+?\.isKeysFast *=.+/, '')
-      // remove optimized branch in `iteratorTemplate`
-      .replace(/(?: *\/\/.*\n)*\s*'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, '$2');
+      .replace(/\s*.+?\.isKeysFast *=.+/, '');
   }
 
   /**
@@ -524,7 +531,7 @@
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeUseStrict(source) {
+  function removeUseStrictDirective(source) {
     return source.replace(/(["'])use strict\1;( *\n)?/, '');
   }
 
@@ -582,6 +589,24 @@
     source = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), '$1 ' + varValue + ';');
 
     return source;
+  }
+
+  /**
+   * Hard-codes the `useStrict` template option value for `iteratorTemplate`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {Boolean} value The value to set.
+   * @returns {String} Returns the modified source.
+   */
+  function setUseStrictOption(source, value) {
+    return source
+      // replace `useStrict` branch in `value` with hard-coded option
+      .replace(/(?: *\/\/.*\n)*(\s*)' *<% *if *\(useStrict\).+/, value ? "$1'\\'use strict\\';\\n' +" : '')
+      // remove `useStrict` from iterator options
+      .replace(/ *'useStrict': *false,\n/g, '')
+      // remove `useStrict` data object property assignment in `createIterator`
+      .replace(/\s*.+?\.useStrict *=.+/, '');
   }
 
   /*--------------------------------------------------------------------------*/
@@ -961,18 +986,14 @@
   // cleanup code
   source = source.replace(/^ *;\n/gm, '');
 
-  if (!isStrict) {
-    source = removeUseStrict(source);
-  }
-
   // begin the minification process
-  if (filterType || isBackbone || isLegacy || isMobile) {
+  if (filterType || isBackbone || isLegacy || isMobile || isStrict) {
     fs.writeFileSync(path.join(cwd, 'lodash.custom.js'), source);
 
     minify(source, 'lodash.custom.min', function(result) {
       // re-remove "use strict" added by the minifier
-      if (!isStrict) {
-        result = removeUseStrict(result);
+      if (!useStrict) {
+        result = removeUseStrictDirective(result);
       }
       fs.writeFileSync(path.join(cwd, 'lodash.custom.min.js'), result);
     });

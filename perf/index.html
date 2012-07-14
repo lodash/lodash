@@ -21,36 +21,37 @@
 			var lodash = _.noConflict();
 		</script>
 		<script src="../vendor/underscore/underscore.js"></script>
+		<script src="../vendor/platform.js/platform.js"></script>
 		<script src="../vendor/benchmark.js/benchmark.js"></script>
 		<script src="../vendor/firebug-lite/src/firebug-lite-debug.js"></script>
+		<script src="perf.js"></script>
 		<script>
 			(function() {
-				if (!/[?&]nojava=true(?:&|$)/.test(location.search)) {
+				var useApplet = !/[?&]nojava=true(?:&|$)/.test(location.search);
+
+				function init() {
+					var fbUI = document.getElementById('FirebugUI'),
+					    fbDoc = fbUI && (fbDoc = fbUI.contentWindow || fbUI.contentDocument).document || fbDoc,
+					    fbCommandLine = fbDoc && fbDoc.getElementById('fbCommandLine');
+
+					if (!fbCommandLine) {
+						return setTimeout(init, 15);
+					}
+					fbUI.style.height = fbDoc.body.style.height = fbDoc.documentElement.style.height = '100%';
+
+					// give applet time to initialize
+					lodash.delay(run, useApplet ? 500 : 15);
+				}
+
+				if (useApplet) {
 					// using innerHTML avoids an alert in some versions of IE6
 					var div = document.createElement('div');
 					div.innerHTML = '<applet code=nano archive="../vendor/benchmark.js/nano.jar">';
 					document.body.insertBefore(div.lastChild, document.body.firstChild);
 				}
+
+				window.onload = init;
 			}());
-
-			window.onload = function() {
-				function init() {
-					var fbUI = document.getElementById('FirebugUI'),
-					    fbDoc = fbUI && (fbDoc = fbUI.contentWindow || fbUI.contentDocument).document || fbDoc;
-
-					if (!fbDoc || !fbDoc.body) {
-						return setTimeout(init, 15);
-					}
-					var sibling = document.getElementsByTagName('script')[0],
-					    script = document.createElement('script');
-
-					fbUI.style.height = fbDoc.body.style.height = fbDoc.documentElement.style.height = '100%';
-					script.src = 'perf.js?t=' + (+new Date);
-					sibling.parentNode.insertBefore(script, sibling);
-
-				}
-				init();
-			};
 		</script>
 	</body>
 </html>

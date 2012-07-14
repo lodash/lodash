@@ -602,12 +602,12 @@
   suites.push(
     Benchmark.Suite('`_.find` iterating an object')
       .add('Lo-Dash', function() {
-        lodash.find(numbers, function(value, key) {
+        lodash.find(object, function(value, key) {
           return /\D9$/.test(key);
         });
       })
       .add('Underscore', function() {
-        _.find(numbers, function(value, key) {
+        _.find(object, function(value, key) {
           return /\D9$/.test(key);
         });
       })
@@ -726,6 +726,39 @@
   );
 
   /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.invoke` iterating an array')
+      .add('Lo-Dash', function() {
+        lodash.invoke(numbers, 'toFixed', '2');
+      })
+      .add('Underscore', function() {
+        _.invoke(numbers, 'toFixed', '2');
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.invoke` with a function for `methodName` iterating an array')
+      .add('Lo-Dash', function() {
+        lodash.invoke(numbers, String.prototype.split, '');
+      })
+      .add('Underscore', function() {
+        _.invoke(numbers, String.prototype.split, '');
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.invoke` iterating an object')
+      .add('Lo-Dash', function() {
+        lodash.invoke(object, 'toFixed', '2');
+      })
+      .add('Underscore', function() {
+        _.invoke(object, 'toFixed', '2');
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing primitives and objects (edge case)')

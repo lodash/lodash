@@ -25,10 +25,8 @@
       _._ || _
     );
 
-  /** Used to access the Firebug Lite panel */
-  var fbPanel = (fbPanel = window.document && document.getElementById('FirebugUI')) &&
-    (fbPanel = (fbPanel = fbPanel.contentWindow || fbPanel.contentDocument).document || fbPanel) &&
-    fbPanel.getElementById('fbPanel1');
+  /** Used to access the Firebug Lite panel (set by `run`) */
+  var fbPanel;
 
   /** Used to score Lo-Dash and Underscore performance */
   var score = { 'lodash': 0, 'underscore': 0 };
@@ -72,20 +70,32 @@
     }
   }
 
+  /**
+   * Runs all benchmark suites.
+   *
+   * @private (@public in the browser)
+   */
+  function run() {
+    fbPanel = (fbPanel = window.document && document.getElementById('FirebugUI')) &&
+      (fbPanel = (fbPanel = fbPanel.contentWindow || fbPanel.contentDocument).document || fbPanel) &&
+      fbPanel.getElementById('fbPanel1');
+
+    log('\nSit back and relax, this may take a while.');
+    suites[0].run();
+  }
+
   /*--------------------------------------------------------------------------*/
 
   lodash.extend(Benchmark.options, {
     'async': true,
-    'maxTime': 1,
-    'minSamples': 30,
     'setup': function() {
       var window = Function('return this || global')(),
           _ = window._,
-          lodash = window.lodash;
+          lodash = window.lodash,
+          belt = this.name == 'Lo-Dash' ? lodash : _;
 
       var index,
           length,
-          belt = this.name == 'Lo-Dash' ? lodash : _,
           limit = 20,
           object = {},
           objects = Array(limit),
@@ -94,23 +104,30 @@
           nestedNumbers = [1, [2], [3, [[4]]]],
           twoNumbers = [12, 21];
 
-      var object2 = {},
-          objects2 = Array(limit),
-          numbers2 = Array(limit),
-          nestedNumbers2 = [1, [2], [3, [[4]]]];
-
       for (index = 0, length = limit; index < length; index++) {
         numbers[index] = index;
-        numbers2[index] = index;
-
         object['key' + index] = index;
-        object2['key' + index] = index;
-
         objects[index] = { 'num': index };
-        objects2[index] = { 'num': index };
       }
 
-      if (typeof isBindAll != 'undefined') {
+      if (typeof bind != 'undefined') {
+        var contextObject = { 'name': 'moe' },
+            ctor = function() {};
+
+        var func = function(greeting, punctuation) {
+          return greeting + ', ' + this.name + (punctuation || '.');
+        };
+
+        var lodashBoundNormal = lodash.bind(func, contextObject),
+            lodashBoundCtor = lodash.bind(ctor, contextObject),
+            lodashBoundPartial = lodash.bind(func, contextObject, 'hi');
+
+        var _boundNormal = _.bind(func, contextObject),
+            _boundCtor = _.bind(ctor, contextObject),
+            _boundPartial = _.bind(func, contextObject, 'hi');
+      }
+
+      if (typeof bindAll != 'undefined') {
         var bindAllObjects = Array(this.count),
             funcNames = belt.functions(lodash);
 
@@ -120,153 +137,154 @@
         }
       }
 
-      var ctor = function() {};
+      if (typeof groupBy != 'undefined') {
+        var wordToNumber = {
+          'one': 1,
+          'two': 2,
+          'three': 3,
+          'four': 4,
+          'five': 5,
+          'six': 6,
+          'seven': 7,
+          'eight': 8,
+          'nine': 9,
+          'ten': 10,
+          'eleven': 11,
+          'twelve': 12,
+          'thirteen': 13,
+          'fourteen': 14,
+          'fifteen': 15,
+          'sixteen': 16,
+          'seventeen': 17,
+          'eighteen': 18,
+          'nineteen': 19,
+          'twenty': 20,
+          'twenty-one': 21,
+          'twenty-two': 22,
+          'twenty-three': 23,
+          'twenty-four': 24,
+          'twenty-five': 25
+        };
 
-      var func = function(greeting, punctuation) {
-        return greeting + ', ' + this.name + (punctuation || '.');
-      };
+        var words = belt.keys(wordToNumber).slice(0, limit);
+      }
 
-      var objectOfPrimitives = {
-        'boolean': true,
-        'number': 1,
-        'string': 'a'
-      };
+      if (typeof isEqual != 'undefined') {
+        var objectOfPrimitives = {
+          'boolean': true,
+          'number': 1,
+          'string': 'a'
+        };
 
-      var objectOfObjects = {
-        'boolean': new Boolean(true),
-        'number': new Number(1),
-        'string': new String('a')
-      };
+        var objectOfObjects = {
+          'boolean': new Boolean(true),
+          'number': new Number(1),
+          'string': new String('a')
+        };
 
-      var contextObject = { 'name': 'moe' };
+        var object2 = {},
+            objects2 = Array(limit),
+            numbers2 = Array(limit),
+            nestedNumbers2 = [1, [2], [3, [[4]]]];
 
-      var lodashBoundNormal = lodash.bind(func, contextObject),
-          lodashBoundCtor = lodash.bind(ctor, contextObject),
-          lodashBoundPartial = lodash.bind(func, contextObject, 'hi');
+        for (index = 0, length = limit; index < length; index++) {
+          numbers2[index] = index;
+          object2['key' + index] = index;
+          objects2[index] = { 'num': index };
+        }
+      }
 
-      var _boundNormal = _.bind(func, contextObject),
-          _boundCtor = _.bind(ctor, contextObject),
-          _boundPartial = _.bind(func, contextObject, 'hi');
+      if (typeof template != 'undefined') {
+        var tplData = {
+          'header1': 'Header1',
+          'header2': 'Header2',
+          'header3': 'Header3',
+          'header4': 'Header4',
+          'header5': 'Header5',
+          'header6': 'Header6',
+          'list': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+        };
 
-      var tplData = {
-        'header1': 'Header1',
-        'header2': 'Header2',
-        'header3': 'Header3',
-        'header4': 'Header4',
-        'header5': 'Header5',
-        'header6': 'Header6',
-        'list': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
-      };
+        var tplBase =
+          '<div>' +
+          "<h1 class='header1'><%= header1 %></h1>" +
+          "<h2 class='header2'><%= header2 %></h2>" +
+          "<h3 class='header3'><%= header3 %></h3>" +
+          "<h4 class='header4'><%= header4 %></h4>" +
+          "<h5 class='header5'><%= header5 %></h5>" +
+          "<h6 class='header6'><%= header6 %></h6>";
 
-      var tplBase =
-        '<div>' +
-        "<h1 class='header1'><%= header1 %></h1>" +
-        "<h2 class='header2'><%= header2 %></h2>" +
-        "<h3 class='header3'><%= header3 %></h3>" +
-        "<h4 class='header4'><%= header4 %></h4>" +
-        "<h5 class='header5'><%= header5 %></h5>" +
-        "<h6 class='header6'><%= header6 %></h6>";
+        var tpl =
+          tplBase +
+          "<ul class='list'>" +
+          "<li class='item'><%= list[0] %></li>" +
+          "<li class='item'><%= list[1] %></li>" +
+          "<li class='item'><%= list[2] %></li>" +
+          "<li class='item'><%= list[3] %></li>" +
+          "<li class='item'><%= list[4] %></li>" +
+          "<li class='item'><%= list[5] %></li>" +
+          "<li class='item'><%= list[6] %></li>" +
+          "<li class='item'><%= list[7] %></li>" +
+          "<li class='item'><%= list[8] %></li>" +
+          "<li class='item'><%= list[9] %></li>" +
+          '</ul>' +
+          '</div>';
 
-      var tpl =
-        tplBase +
-        "<ul class='list'>" +
-        "<li class='item'><%= list[0] %></li>" +
-        "<li class='item'><%= list[1] %></li>" +
-        "<li class='item'><%= list[2] %></li>" +
-        "<li class='item'><%= list[3] %></li>" +
-        "<li class='item'><%= list[4] %></li>" +
-        "<li class='item'><%= list[5] %></li>" +
-        "<li class='item'><%= list[6] %></li>" +
-        "<li class='item'><%= list[7] %></li>" +
-        "<li class='item'><%= list[8] %></li>" +
-        "<li class='item'><%= list[9] %></li>" +
-        '</ul>' +
-        '</div>';
+        var tplWithEvaluate =
+          tplBase +
+          "<ul class='list'>" +
+          '<% for (var index = 0, length = list.length; index < length; index++) { %>' +
+          "<li class='item'><%= list[index] %></li>" +
+          '<% } %>' +
+          '</ul>' +
+          '</div>';
 
-      var tplWithEvaluate =
-        tplBase +
-        "<ul class='list'>" +
-        '<% for (var index = 0, length = list.length; index < length; index++) { %>' +
-        "<li class='item'><%= list[index] %></li>" +
-        '<% } %>' +
-        '</ul>' +
-        '</div>';
+        var tplBaseVerbose =
+          '<div>' +
+          "<h1 class='header1'><%= data.header1 %></h1>" +
+          "<h2 class='header2'><%= data.header2 %></h2>" +
+          "<h3 class='header3'><%= data.header3 %></h3>" +
+          "<h4 class='header4'><%= data.header4 %></h4>" +
+          "<h5 class='header5'><%= data.header5 %></h5>" +
+          "<h6 class='header6'><%= data.header6 %></h6>";
 
-      var tplBaseVerbose =
-        '<div>' +
-        "<h1 class='header1'><%= data.header1 %></h1>" +
-        "<h2 class='header2'><%= data.header2 %></h2>" +
-        "<h3 class='header3'><%= data.header3 %></h3>" +
-        "<h4 class='header4'><%= data.header4 %></h4>" +
-        "<h5 class='header5'><%= data.header5 %></h5>" +
-        "<h6 class='header6'><%= data.header6 %></h6>";
+        var tplVerbose =
+          tplBaseVerbose +
+          "<ul class='list'>" +
+          "<li class='item'><%= data.list[0] %></li>" +
+          "<li class='item'><%= data.list[1] %></li>" +
+          "<li class='item'><%= data.list[2] %></li>" +
+          "<li class='item'><%= data.list[3] %></li>" +
+          "<li class='item'><%= data.list[4] %></li>" +
+          "<li class='item'><%= data.list[5] %></li>" +
+          "<li class='item'><%= data.list[6] %></li>" +
+          "<li class='item'><%= data.list[7] %></li>" +
+          "<li class='item'><%= data.list[8] %></li>" +
+          "<li class='item'><%= data.list[9] %></li>" +
+          '</ul>' +
+          '</div>';
 
-      var tplVerbose =
-        tplBaseVerbose +
-        "<ul class='list'>" +
-        "<li class='item'><%= data.list[0] %></li>" +
-        "<li class='item'><%= data.list[1] %></li>" +
-        "<li class='item'><%= data.list[2] %></li>" +
-        "<li class='item'><%= data.list[3] %></li>" +
-        "<li class='item'><%= data.list[4] %></li>" +
-        "<li class='item'><%= data.list[5] %></li>" +
-        "<li class='item'><%= data.list[6] %></li>" +
-        "<li class='item'><%= data.list[7] %></li>" +
-        "<li class='item'><%= data.list[8] %></li>" +
-        "<li class='item'><%= data.list[9] %></li>" +
-        '</ul>' +
-        '</div>';
+        var tplVerboseWithEvaluate =
+          tplBaseVerbose +
+          "<ul class='list'>" +
+          '<% for (var index = 0, length = data.list.length; index < length; index++) { %>' +
+          "<li class='item'><%= data.list[index] %></li>" +
+          '<% } %>' +
+          '</ul>' +
+          '</div>';
 
-      var tplVerboseWithEvaluate =
-        tplBaseVerbose +
-        "<ul class='list'>" +
-        '<% for (var index = 0, length = data.list.length; index < length; index++) { %>' +
-        "<li class='item'><%= data.list[index] %></li>" +
-        '<% } %>' +
-        '</ul>' +
-        '</div>';
+        var settingsObject = { 'variable': 'data' };
 
-      var settingsObject = { 'variable': 'data' };
+        var lodashTpl = lodash.template(tpl),
+            lodashTplWithEvaluate = lodash.template(tplWithEvaluate),
+            lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject),
+            lodashTplVerboseWithEvaluate = lodash.template(tplVerboseWithEvaluate, null, settingsObject);
 
-      var lodashTpl = lodash.template(tpl),
-          lodashTplWithEvaluate = lodash.template(tplWithEvaluate),
-          lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject),
-          lodashTplVerboseWithEvaluate = lodash.template(tplVerboseWithEvaluate, null, settingsObject);
-
-      var _tpl = _.template(tpl),
-          _tplWithEvaluate = _.template(tplWithEvaluate),
-          _tplVerbose = _.template(tplVerbose, null, settingsObject),
-          _tplVerboseWithEvaluate = _.template(tplVerboseWithEvaluate, null, settingsObject);
-
-      var wordToNumber = {
-        'one': 1,
-        'two': 2,
-        'three': 3,
-        'four': 4,
-        'five': 5,
-        'six': 6,
-        'seven': 7,
-        'eight': 8,
-        'nine': 9,
-        'ten': 10,
-        'eleven': 11,
-        'twelve': 12,
-        'thirteen': 13,
-        'fourteen': 14,
-        'fifteen': 15,
-        'sixteen': 16,
-        'seventeen': 17,
-        'eighteen': 18,
-        'nineteen': 19,
-        'twenty': 20,
-        'twenty-one': 21,
-        'twenty-two': 22,
-        'twenty-three': 23,
-        'twenty-four': 24,
-        'twenty-five': 25
-      };
-
-      var words = belt.keys(wordToNumber).slice(0, limit);
+        var _tpl = _.template(tpl),
+            _tplWithEvaluate = _.template(tplWithEvaluate),
+            _tplVerbose = _.template(tplVerbose, null, settingsObject),
+            _tplVerboseWithEvaluate = _.template(tplVerboseWithEvaluate, null, settingsObject);
+      }
     }
   });
 
@@ -331,61 +349,97 @@
 
   suites.push(
     Benchmark.Suite('`_.bind` (uses native `Function#bind` if available and inferred fast)')
-      .add('Lo-Dash', function() {
-        lodash.bind(func, { 'name': 'moe' }, 'hi');
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.bind(func, { 'name': 'moe' }, 'hi');
+        },
+        'teardown': 'function bind(){}'
       })
-      .add('Underscore', function() {
-        _.bind(func, { 'name': 'moe' }, 'hi');
+      .add('Underscore', {
+        'fn': function() {
+          _.bind(func, { 'name': 'moe' }, 'hi');
+        },
+        'teardown': 'function bind(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('bound call')
-      .add('Lo-Dash', function() {
-        lodashBoundNormal();
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodashBoundNormal();
+        },
+        'teardown': 'function bind(){}'
       })
-      .add('Underscore', function() {
-        _boundNormal();
+      .add('Underscore', {
+        'fn': function() {
+          _boundNormal();
+        },
+        'teardown': 'function bind(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('bound call with arguments')
-      .add('Lo-Dash', function() {
-        lodashBoundNormal('hi', '!');
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodashBoundNormal('hi', '!');
+        },
+        'teardown': 'function bind(){}'
       })
-      .add('Underscore', function() {
-        _boundNormal('hi', '!');
+      .add('Underscore', {
+        'fn': function() {
+          _boundNormal('hi', '!');
+        },
+        'teardown': 'function bind(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('bound and partially applied call (uses native `Function#bind` if available)')
-      .add('Lo-Dash', function() {
-        lodashBoundPartial();
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodashBoundPartial();
+        },
+        'teardown': 'function bind(){}'
       })
-      .add('Underscore', function() {
-        _boundPartial();
+      .add('Underscore', {
+        'fn': function() {
+          _boundPartial();
+        },
+        'teardown': 'function bind(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('bound and partially applied call with arguments (uses native `Function#bind` if available)')
-      .add('Lo-Dash', function() {
-        lodashBoundPartial('!');
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodashBoundPartial('!');
+        },
+        'teardown': 'function bind(){}'
       })
-      .add('Underscore', function() {
-        _boundPartial('!');
+      .add('Underscore', {
+        'fn': function() {
+          _boundPartial('!');
+        },
+        'teardown': 'function bind(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('bound and called in a `new` expression, i.e. `new bound` (edge case)')
-      .add('Lo-Dash', function() {
-        new lodashBoundCtor();
+      .add('Lo-Dash', {
+        'fn': function() {
+          new lodashBoundCtor();
+        },
+        'teardown': 'function bind(){}'
       })
-      .add('Underscore', function() {
-        new _boundCtor();
+      .add('Underscore', {
+        'fn': function() {
+          new _boundCtor();
+        },
+        'teardown': 'function bind(){}'
       })
   );
 
@@ -397,13 +451,13 @@
         'fn': function() {
           lodash.bindAll.apply(lodash, [bindAllObjects.pop()].concat(funcNames));
         },
-        'teardown': 'function isBindAll(){}'
+        'teardown': 'function bindAll(){}'
       })
       .add('Underscore', {
         'fn': function() {
           _.bindAll.apply(_, [bindAllObjects.pop()].concat(funcNames));
         },
-        'teardown': 'function isBindAll(){}'
+        'teardown': 'function bindAll(){}'
       })
   );
 
@@ -413,13 +467,13 @@
         'fn': function() {
           lodash.bindAll(bindAllObjects.pop());
         },
-        'teardown': 'function isBindAll(){}'
+        'teardown': 'function bindAll(){}'
       })
       .add('Underscore', {
         'fn': function() {
           _.bindAll(bindAllObjects.pop());
         },
-        'teardown': 'function isBindAll(){}'
+        'teardown': 'function bindAll(){}'
       })
   );
 
@@ -607,21 +661,33 @@
 
   suites.push(
     Benchmark.Suite('`_.groupBy` with `property` name iterating an array')
-      .add('Lo-Dash', function() {
-        lodash.groupBy(words, 'length');
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.groupBy(words, 'length');
+        },
+        'teardown': 'function groupBy(){}'
       })
-      .add('Underscore', function() {
-        _.groupBy(words, 'length');
+      .add('Underscore', {
+        'fn': function() {
+          _.groupBy(words, 'length');
+        },
+        'teardown': 'function groupBy(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('`_.groupBy` with `callback` iterating an object')
-      .add('Lo-Dash', function() {
-        lodash.groupBy(wordToNumber, function(num) { return num >> 1; });
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.groupBy(wordToNumber, function(num) { return num >> 1; });
+        },
+        'teardown': 'function groupBy(){}'
       })
-      .add('Underscore', function() {
-        _.groupBy(wordToNumber, function(num) { return num >> 1; });
+      .add('Underscore', {
+        'fn': function() {
+          _.groupBy(wordToNumber, function(num) { return num >> 1; });
+        },
+        'teardown': 'function groupBy(){}'
       })
   );
 
@@ -663,51 +729,81 @@
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing primitives and objects (edge case)')
-      .add('Lo-Dash', function() {
-        lodash.isEqual(objectOfPrimitives, objectOfObjects);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.isEqual(objectOfPrimitives, objectOfObjects);
+        },
+        'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', function() {
-        _.isEqual(objectOfPrimitives, objectOfObjects);
+      .add('Underscore', {
+        'fn': function() {
+          _.isEqual(objectOfPrimitives, objectOfObjects);
+        },
+        'teardown': 'function isEqual(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing arrays')
-      .add('Lo-Dash', function() {
-        lodash.isEqual(numbers, numbers2);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.isEqual(numbers, numbers2);
+        },
+        'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', function() {
-        _.isEqual(numbers, numbers2);
+      .add('Underscore', {
+        'fn': function() {
+          _.isEqual(numbers, numbers2);
+        },
+        'teardown': 'function isEqual(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing nested arrays')
-      .add('Lo-Dash', function() {
-        lodash.isEqual(nestedNumbers, nestedNumbers2);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.isEqual(nestedNumbers, nestedNumbers2);
+        },
+        'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', function() {
-        _.isEqual(nestedNumbers, nestedNumbers2);
+      .add('Underscore', {
+        'fn': function() {
+          _.isEqual(nestedNumbers, nestedNumbers2);
+        },
+        'teardown': 'function isEqual(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing arrays of objects')
-      .add('Lo-Dash', function() {
-        lodash.isEqual(objects, objects2);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.isEqual(objects, objects2);
+        },
+        'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', function() {
-        _.isEqual(objects, objects2);
+      .add('Underscore', {
+        'fn': function() {
+          _.isEqual(objects, objects2);
+        },
+        'teardown': 'function isEqual(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing objects')
-      .add('Lo-Dash', function() {
-        lodash.isEqual(object, object2);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.isEqual(object, object2);
+        },
+        'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', function() {
-        _.isEqual(object, object2);
+      .add('Underscore', {
+        'fn': function() {
+          _.isEqual(object, object2);
+        },
+        'teardown': 'function isEqual(){}'
       })
   );
 
@@ -885,11 +981,17 @@
 
   suites.push(
     Benchmark.Suite('`_.sortBy` with `property` name')
-      .add('Lo-Dash', function() {
-        lodash.sortBy(words, 'length');
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.sortBy(words, 'length');
+        },
+        'teardown': 'function groupBy(){}'
       })
-      .add('Underscore', function() {
-        _.sortBy(words, 'length');
+      .add('Underscore', {
+        'fn': function() {
+          _.sortBy(words, 'length');
+        },
+        'teardown': 'function groupBy(){}'
       })
   );
 
@@ -907,15 +1009,21 @@
 
   suites.push(
     Benchmark.Suite('`_.sortedIndex` with `callback`')
-      .add('Lo-Dash', function() {
-        lodash.sortedIndex(words, 'twenty-five', function(value) {
-          return wordToNumber[value];
-        });
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.sortedIndex(words, 'twenty-five', function(value) {
+            return wordToNumber[value];
+          });
+        },
+        'teardown': 'function groupBy(){}'
       })
-      .add('Underscore', function() {
-        _.sortedIndex(words, 'twenty-five', function(value) {
-          return wordToNumber[value];
-        });
+      .add('Underscore', {
+        'fn': function() {
+          _.sortedIndex(words, 'twenty-five', function(value) {
+            return wordToNumber[value];
+          });
+        },
+        'teardown': 'function groupBy(){}'
       })
   );
 
@@ -923,61 +1031,97 @@
 
   suites.push(
     Benchmark.Suite('`_.template` without "evaluate" delimiters (slow path)')
-      .add('Lo-Dash', function() {
-        lodash.template(tpl, tplData);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.template(tpl, tplData);
+        },
+        'teardown': 'function template(){}'
       })
-      .add('Underscore', function() {
-        _.template(tpl, tplData);
+      .add('Underscore', {
+        'fn': function() {
+          _.template(tpl, tplData);
+        },
+        'teardown': 'function template(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('`_.template` with "evaluate" delimiters (slow path)')
-      .add('Lo-Dash', function() {
-        lodash.template(tplWithEvaluate, tplData);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.template(tplWithEvaluate, tplData);
+        },
+        'teardown': 'function template(){}'
       })
-      .add('Underscore', function() {
-        _.template(tplWithEvaluate, tplData);
+      .add('Underscore', {
+        'fn': function() {
+          _.template(tplWithEvaluate, tplData);
+        },
+        'teardown': 'function template(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('compiled template without "evaluate" delimiters')
-      .add('Lo-Dash', function() {
-        lodashTpl(tplData);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodashTpl(tplData);
+        },
+        'teardown': 'function template(){}'
       })
-      .add('Underscore', function() {
-        _tpl(tplData);
+      .add('Underscore', {
+        'fn': function() {
+          _tpl(tplData);
+        },
+        'teardown': 'function template(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('compiled template with "evaluate" delimiters')
-      .add('Lo-Dash', function() {
-        lodashTplWithEvaluate(tplData);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodashTplWithEvaluate(tplData);
+        },
+        'teardown': 'function template(){}'
       })
-      .add('Underscore', function() {
-        _tplWithEvaluate(tplData);
+      .add('Underscore', {
+        'fn': function() {
+          _tplWithEvaluate(tplData);
+        },
+        'teardown': 'function template(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('compiled template without a with-statement or "evaluate" delimiters')
-      .add('Lo-Dash', function() {
-        lodashTplVerbose(tplData);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodashTplVerbose(tplData);
+        },
+        'teardown': 'function template(){}'
       })
-      .add('Underscore', function() {
-        _tplVerbose(tplData);
+      .add('Underscore', {
+        'fn': function() {
+          _tplVerbose(tplData);
+        },
+        'teardown': 'function template(){}'
       })
   );
 
   suites.push(
     Benchmark.Suite('compiled template without a with-statement using "evaluate" delimiters')
-      .add('Lo-Dash', function() {
-        lodashTplVerboseWithEvaluate(tplData);
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodashTplVerboseWithEvaluate(tplData);
+        },
+        'teardown': 'function template(){}'
       })
-      .add('Underscore', function() {
-        _tplVerboseWithEvaluate(tplData);
+      .add('Underscore', {
+        'fn': function() {
+          _tplVerboseWithEvaluate(tplData);
+        },
+        'teardown': 'function template(){}'
       })
   );
 
@@ -1084,8 +1228,11 @@
   if (Benchmark.platform + '') {
     log(Benchmark.platform + '');
   }
-  // start suites
-  log('\nSit back and relax, this may take a while.');
-  suites[0].run();
 
+  // in the browser, expose `run` to be called later
+  if (window.document) {
+    window.run = run;
+  } else {
+    run();
+  }
 }(typeof global == 'object' && global || this));

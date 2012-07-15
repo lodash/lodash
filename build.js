@@ -919,6 +919,16 @@
   /*--------------------------------------------------------------------------*/
 
   // remove associated functions, variables, and code snippets that the minifier may miss
+  if (isRemoved(source, 'bind')) {
+    source = removeVar(source, 'nativeBind');
+    source = removeVar(source, 'isBindFast');
+  }
+  if (isRemoved(source, 'isArray')) {
+    source = removeVar(source, 'nativeIsArray');
+  }
+  if (isRemoved(source, 'keys')) {
+    source = removeFunction(source, 'shimKeys');
+  }
   if (isRemoved(source, 'mixin')) {
     // remove `LoDash` constructor
     source = removeFunction(source, 'LoDash');
@@ -937,36 +947,26 @@
   if (isRemoved(source, 'toArray')) {
     source = removeVar(source, 'noArraySliceOnStrings');
   }
-  if (isRemoved(source, 'isArray', 'isEmpty', 'isEqual', 'size')) {
+  if (isRemoved(source, 'isArray', 'isEmpty', 'isEqual')) {
     source = removeVar(source, 'arrayClass');
   }
-  if (isRemoved(source, 'bind', 'functions', 'groupBy', 'invoke', 'isEqual', 'isFunction', 'result', 'sortBy', 'toArray')) {
+  if (isRemoved(source, 'bind', 'bindAll', 'functions', 'isEqual', 'isFunction', 'result', 'toArray')) {
     source = removeVar(source, 'funcClass');
   }
-  if (isRemoved(source, 'bind')) {
-    source = removeVar(source, 'nativeBind');
-    source = removeVar(source, 'isBindFast');
-  }
-  if (isRemoved(source, 'isArray')) {
-    source = removeVar(source, 'nativeIsArray');
-  }
-  if (isRemoved(source, 'keys')) {
-    source = removeFunction(source, 'shimKeys');
-  }
-  if (isRemoved(source, 'clone', 'isObject', 'keys')) {
+  if (isRemoved(source, 'bind', 'clone', 'isObject', 'keys')) {
     source = removeVar(source, 'objectTypes');
-  }
-  if (isRemoved(source, 'bind', 'isArray', 'keys')) {
-    source = removeVar(source, 'reNative');
-  }
-  if (isRemoved(source, 'isEmpty', 'isEqual', 'isString', 'size')) {
-    source = removeVar(source, 'stringClass');
   }
   if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
     source = removeFunction(source, 'createIterator');
   }
+  if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
+    source = removeVar(source, 'reNative');
+  }
   if (isRemoved(source, 'createIterator', 'extend', 'isEqual')) {
     source = removeVar(source, 'hasDontEnumBug');
+  }
+  if (isRemoved(source, 'createIterator', 'contains', 'isEmpty', 'isEqual', 'isString')) {
+    source = removeVar(source, 'stringClass');
   }
   if (isRemoved(source, 'createIterator', 'keys')) {
     source = removeVar(source, 'nativeKeys');

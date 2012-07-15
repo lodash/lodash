@@ -440,6 +440,41 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Creates a new function optimized for searching large arrays for a given `value`,
+   * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {Mixed} value The value to search for.
+   * @param {Number} [fromIndex=0] The index to start searching from.
+   * @param {Number} [largeSize=30] The length at which an array is considered large.
+   * @returns {Boolean} Returns `true` if `value` is found, else `false`.
+   */
+  function cachedContains(array, fromIndex, largeSize) {
+    fromIndex || (fromIndex = 0);
+
+    var length = array.length,
+        isLarge = (length - fromIndex) >= (largeSize || 30),
+        cache = isLarge ? {} : array;
+
+    if (isLarge) {
+      // init value cache
+      var value,
+          index = fromIndex - 1;
+
+      while (++index < length) {
+        value = array[index];
+        (hasOwnProperty.call(cache, value) ? cache[value] : (cache[value] = [])).push(value);
+      }
+    }
+    return function(value) {
+      return isLarge
+        ? hasOwnProperty.call(cache, value) && indexOf(cache[value], value) > -1
+        : indexOf(cache, value, fromIndex) > -1;
+    }
+  }
+
+  /**
    * Creates compiled iteration functions. The iteration function will be created
    * to iterate over only objects if the first argument of `options.args` is
    * "object" or `options.inLoop.array` is falsey.
@@ -1224,10 +1259,11 @@
     }
     var index = -1,
         length = array.length,
-        flattened = concat.apply(result, arguments);
+        flattened = concat.apply(result, arguments),
+        contains = cachedContains(flattened, length);
 
     while (++index < length) {
-      if (indexOf(flattened, array[index], length) < 0) {
+      if (!contains(array[index])) {
         result.push(array[index]);
       }
     }
@@ -1390,12 +1426,15 @@
     var value,
         index = -1,
         length = array.length,
-        others = slice.call(arguments, 1);
+        others = slice.call(arguments, 1),
+        cache = [];
 
     while (++index < length) {
       value = array[index];
       if (indexOf(result, value) < 0 &&
-          every(others, function(other) { return indexOf(other, value) > -1; })) {
+          every(others, function(other, index) {
+            return (cache[index] || (cache[index] = cachedContains(other)))(value);
+          })) {
         result.push(value);
       }
     }
@@ -1847,10 +1886,11 @@
       return result;
     }
     var index = -1,
-        length = array.length;
+        length = array.length,
+        contains = cachedContains(arguments, 1, 20);
 
     while (++index < length) {
-      if (indexOf(arguments, array[index], 1) < 0) {
+      if (!contains(array[index])) {
         result.push(array[index]);
       }
     }
@@ -2774,7 +2814,8 @@
           }
         }
       }
-    } else {
+    }
+    else {
       // objects with different constructors are not equivalent
       if ('constructor' in a != 'constructor' in b || a.constructor != b.constructor) {
         return false;

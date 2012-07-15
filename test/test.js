@@ -166,6 +166,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.difference');
+
+  (function() {
+    test('should work correctly when using `cachedContains`', function() {
+      var array1 = _.range(27),
+          array2 = array1.slice(),
+          a = {},
+          b = {},
+          c = {};
+
+      array1.push(a, b, c);
+      array2.push(b, c, a);
+
+      deepEqual(_.difference(array1, array2), []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.escape');
 
   (function() {

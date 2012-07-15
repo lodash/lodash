@@ -95,7 +95,6 @@
           belt = this.name == 'Lo-Dash' ? lodash : _;
 
       var index,
-          length,
           limit = 20,
           object = {},
           objects = Array(limit),
@@ -104,7 +103,7 @@
           nestedNumbers = [1, [2], [3, [[4]]]],
           twoNumbers = [12, 21];
 
-      for (index = 0, length = limit; index < length; index++) {
+      for (index = 0; index < limit; index++) {
         numbers[index] = index;
         object['key' + index] = index;
         objects[index] = { 'num': index };
@@ -132,7 +131,7 @@
             funcNames = belt.functions(lodash);
 
         // potentially expensive
-        for (index = 0, length = this.count; index < length; index++) {
+        for (index = 0; index < this.count; index++) {
           bindAllObjects[index] = belt.clone(lodash);
         }
       }
@@ -187,10 +186,47 @@
             numbers2 = Array(limit),
             nestedNumbers2 = [1, [2], [3, [[4]]]];
 
-        for (index = 0, length = limit; index < length; index++) {
+        for (index = 0; index < limit; index++) {
           numbers2[index] = index;
           object2['key' + index] = index;
           objects2[index] = { 'num': index };
+        }
+      }
+
+      if (typeof multiArrays != 'undefined') {
+        var twentyFiveValues = Array(25),
+            twentyFiveValues2 = Array(25),
+            fiftyValues = Array(50),
+            fiftyValues2 = Array(50),
+            seventyFiveValues = Array(75),
+            seventyFiveValues2 = Array(75),
+            lowerChars = 'abcdefghijklmnopqrstuvwxyz'.split(''),
+            upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+        for (index = 0; index < 75; index++) {
+          if (index < 26) {
+            if (index < 20) {
+              twentyFiveValues[index] = lowerChars[index];
+              twentyFiveValues2[index] = upperChars[index];
+            }
+            else if (index < 25) {
+              twentyFiveValues[index] =
+              twentyFiveValues2[index] = index;
+            }
+            fiftyValues[index] =
+            seventyFiveValues[index] = lowerChars[index];
+
+            fiftyValues2[index] =
+            seventyFiveValues2[index] = upperChars[index];
+          }
+          else {
+            if (index < 50) {
+              fiftyValues[index] = index;
+              fiftyValues2[index] = index + (index < 40 ? 75 : 0);
+            }
+            seventyFiveValues[index] = index;
+            seventyFiveValues2[index] = index + (index < 60 ? 75 : 0);
+          }
         }
       }
 
@@ -489,6 +525,54 @@
       })
   );
 
+  suites.push(
+    Benchmark.Suite('`_.difference` iterating 25 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.difference(twentyFiveValues, twentyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.difference(twentyFiveValues, twentyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.difference` iterating 50 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.difference(fiftyValues, fiftyValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.difference(fiftyValues, fiftyValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.difference` iterating 75 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.difference(seventyFiveValues, seventyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.difference(seventyFiveValues, seventyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
   /*--------------------------------------------------------------------------*/
 
   suites.push(
@@ -725,6 +809,54 @@
       })
   );
 
+  suites.push(
+    Benchmark.Suite('`_.intersection` iterating 25 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.intersection(twentyFiveValues, twentyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.intersection(twentyFiveValues, twentyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.intersection` iterating 50 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.intersection(fiftyValues, fiftyValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.intersection(fiftyValues, fiftyValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.intersection` iterating 75 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.intersection(seventyFiveValues, seventyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.intersection(seventyFiveValues, seventyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
   /*--------------------------------------------------------------------------*/
 
   suites.push(
@@ -758,7 +890,6 @@
   );
 
   /*--------------------------------------------------------------------------*/
-
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing primitives and objects (edge case)')
@@ -1218,6 +1349,54 @@
       })
   );
 
+  suites.push(
+    Benchmark.Suite('`_.union` iterating an array of 25 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.union(twentyFiveValues, twentyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.union(twentyFiveValues, twentyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.union` iterating an array of 50 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.union(fiftyValues, fiftyValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.union(fiftyValues, fiftyValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.union` iterating an array of 75 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.union(seventyFiveValues, seventyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.union(seventyFiveValues, seventyFiveValues2);
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
   /*--------------------------------------------------------------------------*/
 
   suites.push(
@@ -1253,6 +1432,66 @@
       })
       .add('Underscore', function() {
         _.values(object);
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.without`')
+      .add('Lo-Dash', function() {
+        lodash.without(numbers, 9, 12, 14, 15);
+      })
+      .add('Underscore', function() {
+        _.without(numbers, 9, 12, 14, 15);
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.without` iterating an array of 25 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.without.apply(lodash, [twentyFiveValues].concat(twentyFiveValues2));
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.without.apply(_, [twentyFiveValues].concat(twentyFiveValues2));
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.without` iterating an array of 50 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.without.apply(lodash, [fiftyValues].concat(fiftyValues2));
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.without.apply(_, [fiftyValues].concat(fiftyValues2));
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.without` iterating an array of 75 elements')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.without.apply(lodash, [seventyFiveValues].concat(seventyFiveValues2));
+        },
+        'teardown': 'function multiArrays(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.without.apply(_, [seventyFiveValues].concat(seventyFiveValues2));
+        },
+        'teardown': 'function multiArrays(){}'
       })
   );
 

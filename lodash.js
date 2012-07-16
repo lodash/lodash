@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.4.1 <http://lodash.com>
+ * Lo-Dash v0.4.2 <http://lodash.com>
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
@@ -459,18 +459,22 @@
 
     if (isLarge) {
       // init value cache
-      var value,
+      var key,
           index = fromIndex - 1;
 
       while (++index < length) {
-        value = array[index];
-        (hasOwnProperty.call(cache, value) ? cache[value] : (cache[value] = [])).push(value);
+        // manually coerce `value` to string because `hasOwnProperty`, in some
+        // older versions of Firefox, coerces objects incorrectly
+        key = array[index] + '';
+        (hasOwnProperty.call(cache, key) ? cache[key] : (cache[key] = [])).push(array[index]);
       }
     }
     return function(value) {
-      return isLarge
-        ? hasOwnProperty.call(cache, value) && indexOf(cache[value], value) > -1
-        : indexOf(cache, value, fromIndex) > -1;
+      if (isLarge) {
+        var key = value + '';
+        return hasOwnProperty.call(cache, key) && indexOf(cache[key], value) > -1;
+      }
+      return indexOf(cache, value, fromIndex) > -1;
     }
   }
 
@@ -2589,7 +2593,8 @@
   var isArguments = function(value) {
     return toString.call(value) == '[object Arguments]';
   };
-  // fallback for browser like IE < 9 which detect `arguments` as `[object Object]`
+  // fallback for browser like Firefox < 4 and IE < 9 which detect
+  // `arguments` as `[object Object]`
   if (!isArguments(arguments)) {
     isArguments = function(value) {
       return !!(value && hasOwnProperty.call(value, 'callee'));
@@ -3600,7 +3605,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.4.1';
+  lodash.VERSION = '0.4.2';
 
   // assign static methods
   lodash.after = after;
@@ -3730,11 +3735,12 @@
       var value = this._wrapped;
       func.apply(value, arguments);
 
-      // IE compatibility mode and IE < 9 have buggy Array `shift()` and `splice()`
-      // functions that fail to remove the last element, `value[0]`, of
-      // array-like objects even though the `length` property is set to `0`.
-      // The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-      // is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+      // Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array
+      // `shift()` and `splice()` functions that fail to remove the last element,
+      // `value[0]`, of array-like objects even though the `length` property is
+      // set to `0`. The `shift()` method is buggy in IE 8 compatibility mode,
+      // while `splice()` is buggy regardless of mode in IE < 9 and buggy in
+      // compatibility mode in IE 9.
       if (value.length === 0) {
         delete value[0];
       }

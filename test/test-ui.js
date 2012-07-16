@@ -73,7 +73,7 @@
       '<input name="norequire" type="checkbox">No RequireJS</label>';
 
     var label2 = document.createElement('label');
-    label2.innerHTML =
+    label2.innerHTML = ' ' +
       '<select name="build">' +
       '<option value="dev">Developement</option>' +
       '<option value="prod">Production</option>' +
@@ -82,7 +82,7 @@
       '</select> Build';
 
     var checkbox = label1.firstChild,
-        dropdown = label2.firstChild;
+        dropdown = label2.getElementsByTagName('select')[0];
 
     init();
   });

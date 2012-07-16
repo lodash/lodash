@@ -24,8 +24,9 @@ For a list of upcoming features, check out our [roadmap](https://github.com/best
 For more information check out these screencasts over Lo-Dash:
 
  * [Introducing Lo-Dash](https://vimeo.com/44154599)
- * [Optimizations and custom builds](https://vimeo.com/44154601)
+ * [Lo-Dash optimizations and custom builds](https://vimeo.com/44154601)
  * [Lo-Dash’s origin and why it’s a better utility belt](https://vimeo.com/44154600)
+ * [Unit testing in Lo-Dash](https://vimeo.com/45865290)
 
 ## Features
 
@@ -66,7 +67,7 @@ lodash legacy
 lodash mobile
 ~~~
 
- * Strict builds, with `_.bindAll`, `_.extend`, and `_.defaults` in [strict mode](http://es5.github.com/#C), may be created using the `strict` modifier argument.
+ * Strict builds, with `_.bindAll`, `_.defaults`, and `_.extend` in [strict mode](http://es5.github.com/#C), may be created using the `strict` modifier argument.
 ~~~ bash
 lodash strict
 ~~~
@@ -153,7 +154,7 @@ require({
 
  * Allow iteration of objects with a `length` property [[#148](https://github.com/documentcloud/underscore/issues/148), [#154](https://github.com/documentcloud/underscore/issues/154), [#252](https://github.com/documentcloud/underscore/issues/252), [#448](https://github.com/documentcloud/underscore/issues/448), [#659](https://github.com/documentcloud/underscore/issues/659), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L364-370)]
  * Ensure array-like objects with invalid `length` properties are treated like regular objects [[test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L315-321), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L665-679), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L921-924)]
- * Ensure *"Arrays"* methods allow falsey `array` arguments [[test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L989-1027)]
+ * Ensure *"Arrays"* methods allow falsey `array` arguments [[test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L989-1028)]
  * Ensure *"Collections"* methods allow string `collection` arguments [[#247](https://github.com/documentcloud/underscore/issues/247), [#276](https://github.com/documentcloud/underscore/issues/276), [#561](https://github.com/documentcloud/underscore/pull/561), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L148-157), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L323-341), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L681-698), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L926-929)]
  * Ensure templates compiled with errors are inspectable [[#666](https://github.com/documentcloud/underscore/issues/666), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L795-802)]
  * Fix cross-browser object iteration bugs [[#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L224-236), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L375-400), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L496-507), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L515-517), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L535-555), [test](https://github.com/bestiejs/lodash/blob/v0.4.2/test/test.js#L725-727)]
@@ -241,7 +242,7 @@ require({
 ### <sup>v0.4.2</sup>
 
  * Added `strict` build
- * Ensured `_.bindAll`, `_.extend`, and `_.defaults` avoid strict mode errors when attempting to augment read-only properties
+ * Ensured `_.bindAll`, `_.defaults`, and `_.extend` avoid strict mode errors when attempting to augment read-only properties
  * Optimized the iteration of large arrays in `_.difference`, `_.intersection`, and `_.without`
  * Fixed build bugs related to removing variables
 

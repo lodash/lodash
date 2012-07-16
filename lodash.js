@@ -141,8 +141,10 @@
 
   /** Detect if sourceURL syntax is usable without erroring */
   try {
-    // Adobe's and Narwhal's JS engines will error
-    var useSourceURL = (Function('//@')(), true);
+    // Adobe's and Narwhal's JS engines will error. IE 8/9/etc also evaluate
+    // @ symbols as part of a non-standard conditional include system, so it
+    // parses /a/a as a malformed regular expression, so we know to exclude them.
+    var useSourceURL = (Function('//@/a/a')(), true);
   } catch(e){ }
 
   /**

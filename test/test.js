@@ -4,11 +4,17 @@
   /** Use a single load function */
   var load = typeof require == 'function' ? require : window.load;
 
+  /** The `platform` object to check */
+  var platform =
+    window.platform ||
+    load('../vendor/platform.js/platform.js') ||
+    window.platform;
+
   /** The unit testing framework */
   var QUnit =
     window.QUnit || (
       window.setTimeout || (window.addEventListener = window.setTimeout = / /),
-      window.QUnit = load('../vendor/qunit/qunit/qunit.js') || window.QUnit,
+      window.QUnit = load('../vendor/qunit/qunit/qunit' + (platform.name == 'Narwhal' ? '-1.8.0' : '') + '.js') || window.QUnit,
       load('../vendor/qunit-clib/qunit-clib.js'),
       (window.addEventListener || 0).test && delete window.addEventListener,
       window.QUnit
@@ -792,7 +798,7 @@
     });
 
     test('should raise an error if a template, compiled with errors, is executed', function() {
-      throws(_.template('<% if x %>'));
+      raises(_.template('<% if x %>'));
     });
 
     test('should work with complex "interpolate" delimiters', function() {

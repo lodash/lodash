@@ -855,6 +855,19 @@
         ok(false);
       }
     });
+
+    test('should not error with IE conditional comments enabled (test with development build)', function() {
+      var compiled = _.template(''),
+          pass = true;
+
+      /*@cc_on @*/
+      try {
+        compiled();
+      } catch(e) {
+        pass = false;
+      }
+      ok(pass);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

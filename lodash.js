@@ -141,10 +141,14 @@
 
   /** Detect if sourceURL syntax is usable without erroring */
   try {
-    // Adobe's and Narwhal's JS engines will error. IE 8/9/etc also evaluate
-    // @ symbols as part of a non-standard conditional include system, so it
-    // parses /a/a as a malformed regular expression, so we know to exclude them.
-    var useSourceURL = (Function('//@/a/a')(), true);
+    // The JS engine in Adobe products, like InDesign, will throw a syntax error
+    // when it encounters a single line comment beginning with the `@` symbol.
+    // The JS engine in Narwhal will generate the function `function anonymous(){//}`
+    // and throw a syntax error. In IE, `@` symbols are part of its non-standard
+    // conditional compilation support. The `@cc_on` statement activates its
+    // support while the trailing `!` induces a syntax error to exlude it.
+    // See http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
+    var useSourceURL = (Function('//@cc_on!')(), true);
   } catch(e){ }
 
   /**
@@ -3444,6 +3448,9 @@
     try {
       result = Function('_', 'return ' + text)(lodash);
     } catch(e) {
+      // defer syntax errors until the compiled template is executed to allow
+      // examining the `source` property beforehand and for consistency,
+      // because other template related errors occur at execution
       result = function() { throw e; };
     }
 

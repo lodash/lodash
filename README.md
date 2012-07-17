@@ -8,7 +8,7 @@ Lo-Dash’s performance is gained by avoiding slower native methods, instead opt
 
  * [Development source](https://raw.github.com/bestiejs/lodash/v0.4.2/lodash.js)
  * [Production source](https://raw.github.com/bestiejs/lodash/v0.4.2/lodash.min.js)
- * CDN copies of ≤ [v0.4.1](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.4.1/lodash.min.js) are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
+ * CDN copies of ≤ [v0.4.2](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.4.2/lodash.min.js) are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
  * For optimal performance, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
 ## Dive in

@@ -707,17 +707,17 @@
    *
    * @private
    * @param {String} match The matched template delimiter.
-   * @param {String} value The delimiter value.
-   * @param {String} escapeValue The "escape" delimiter value.
-   * @param {String} interpolateValue The "interpolate" delimiter value.
+   * @param {String} escapeValue The complex "escape" delimiter value.
+   * @param {String} interpolateValue The complex "interpolate" delimiter value.
+   * @param {String} [evaluateValue] The "evaluate" delimiter value.
    * @returns {String} Returns a token.
    */
-  function tokenizeEvaluate(match, value, escapeValue, interpolateValue) {
+  function tokenizeEvaluate(match, escapeValue, interpolateValue, evaluateValue) {
     var index = tokenized.length;
-    if (value) {
-      tokenized[index] = "';\n" + value + ";\n__p += '"
-    } else if (escapeValue) {
+    if (escapeValue) {
       tokenized[index] = "' +\n__e(" + escapeValue + ") +\n'";
+    } else if (evaluateValue) {
+      tokenized[index] = "';\n" + evaluateValue + ";\n__p += '";
     } else if (interpolateValue) {
       tokenized[index] = "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
     }
@@ -3364,7 +3364,9 @@
       escapeDelimiter = settings.escape;
     }
     if (evaluateDelimiter == null) {
-      evaluateDelimiter = settings.evaluate;
+      // use `false` as the fallback value so the initial assignment of
+      // `reEvaluateDelimiter` will still occur
+      evaluateDelimiter = settings.evaluate || false;
     }
     if (interpolateDelimiter == null) {
       interpolateDelimiter = settings.interpolate;
@@ -3382,8 +3384,8 @@
       // and internal `<e%- %>`, `<e%= %>` delimiters
       lastEvaluateDelimiter = evaluateDelimiter;
       reEvaluateDelimiter = RegExp(
-        (evaluateDelimiter ? evaluateDelimiter.source : '($^)') +
-        '|<e%-([\\s\\S]+?)%>|<e%=([\\s\\S]+?)%>'
+        '<e%-([\\s\\S]+?)%>|<e%=([\\s\\S]+?)%>' +
+        (evaluateDelimiter ? '|' + evaluateDelimiter.source : '')
       , 'g');
     }
     isEvaluating = tokenized.length;

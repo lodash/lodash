@@ -575,16 +575,16 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayClass, bind, compareAscending, funcClass, hasOwnProperty, identity, ' +
-        'iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, slice, ' +
-        'stringClass, toString',
+        'arrayClass, ArrayProto, bind, compareAscending, concat, funcClass, ' +
+        'hasOwnProperty, identity, indexOf, iteratorBind, objectTypes, nativeKeys, ' +
+        'propertyIsEnumerable, slice, stringClass, toString',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayClass, bind, compareAscending, funcClass, hasOwnProperty, identity,
-      iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, slice,
-      stringClass, toString
+      arrayClass, ArrayProto, bind, compareAscending, concat, funcClass,
+      hasOwnProperty, identity, indexOf, iteratorBind, objectTypes, nativeKeys,
+      propertyIsEnumerable, slice, stringClass, toString
     );
   }
 
@@ -2449,16 +2449,17 @@
   }
 
   /**
-   * Assigns missing properties on `object` with default values from the defaults
-   * objects. Once a property is set, additional defaults of the same property
-   * will be ignored.
+   * Assigns enumerable properties of the default object(s) to the `destination`
+   * object for all `destination` properties that resolve to `null`/`undefined`.
+   * Once a property is set, additional defaults of the same property will be
+   * ignored.
    *
    * @static
    * @memberOf _
    * @category Objects
-   * @param {Object} object The object to populate.
-   * @param {Object} [defaults1, defaults2, ...] The defaults objects to apply to `object`.
-   * @returns {Object} Returns `object`.
+   * @param {Object} object The destination object.
+   * @param {Object} [default1, default2, ...] The default objects.
+   * @returns {Object} Returns the `object`.
    * @example
    *
    * var iceCream = { 'flavor': 'chocolate' };
@@ -2470,15 +2471,40 @@
   });
 
   /**
-   * Copies enumerable properties from the source objects to the `destination` object.
-   * Subsequent sources will overwrite propery assignments of previous sources.
+   * Creates a shallow clone of `object` excluding the specified properties.
+   * Property names may be specified as individual arguments or as arrays of
+   * property names.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The source object.
+   * @param {Object} [prop1, prop2, ...] The properties to drop.
+   * @returns {Object} Returns an object without the dropped properties.
+   * @example
+   *
+   * _.drop({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
+   * // => { 'name': 'moe', 'age': 40 }
+   */
+  var drop = createIterator({
+    'useHas': false,
+    'args': 'object',
+    'init': '{}',
+    'top': 'var props = concat.apply(ArrayProto, arguments)',
+    'inLoop': 'if (indexOf(props, index) < 0) result[index] = iteratee[index]'
+  });
+
+  /**
+   * Assigns enumerable properties of the source object(s) to the `destination`
+   * object. Subsequent sources will overwrite propery assignments of previous
+   * sources.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @returns {Object} Returns the destination object.
+   * @returns {Object} Returns the `object`.
    * @example
    *
    * _.extend({ 'name': 'moe' }, { 'age': 40 });
@@ -3080,13 +3106,14 @@
   };
 
   /**
-   * Creates an object composed of the specified properties. Property names may
-   * be specified as individual arguments or as arrays of property names.
+   * Creates a shallow clone of `object` composed of the specified properties.
+   * Property names may be specified as individual arguments or as arrays of
+   * property names.
    *
    * @static
    * @memberOf _
    * @category Objects
-   * @param {Object} object The object to pluck.
+   * @param {Object} object The source object.
    * @param {Object} [prop1, prop2, ...] The properties to pick.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
@@ -3632,6 +3659,7 @@
   lodash.defer = defer;
   lodash.delay = delay;
   lodash.difference = difference;
+  lodash.drop = drop;
   lodash.escape = escape;
   lodash.every = every;
   lodash.extend = extend;

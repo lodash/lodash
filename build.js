@@ -155,6 +155,7 @@
     'defer': [],
     'delay': [],
     'difference': ['indexOf'],
+    'drop': ['indexOf'],
     'escape': [],
     'every': ['identity'],
     'extend': [],

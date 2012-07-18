@@ -201,6 +201,34 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.drop');
+
+  (function() {
+    var object = { 'a': 1, 'b': 2, 'c': 3 },
+        actual = { 'b': 2 };
+
+    test('should accept individual property names', function() {
+      deepEqual(_.drop(object, 'a', 'c'), actual);
+    });
+
+    test('should accept an array of property names', function() {
+      deepEqual(_.drop(object, ['a', 'c']), actual);
+    });
+
+    test('should accept mixes of individual and arrays of property names', function() {
+      deepEqual(_.drop(object, ['a'], 'c'), actual);
+    });
+
+    test('should iterate over inherited properties', function() {
+      function Foo() {}
+      Foo.prototype = object;
+
+      deepEqual(_.drop(new Foo, 'a', 'c'), actual);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.escape');
 
   (function() {
@@ -637,6 +665,19 @@
 
       equal(_.partial(_.bind(func, o))(), o.cat);
       equal(_.bind(_.partial(func), o)(), o.cat);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.pick');
+
+  (function() {
+    test('should iterate over inherited properties', function() {
+      function Foo() {}
+      Foo.prototype = { 'a': 1, 'b': 2, 'c': 3 };
+
+      deepEqual(_.pick(new Foo, 'b'), { 'b': 2 });
     });
   }());
 

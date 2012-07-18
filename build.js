@@ -11,7 +11,7 @@
   /** The current working directory */
   var cwd = process.cwd();
 
-  /** Flag used to specify a backbone build */
+  /** Flag used to specify a Backbone build */
   var isBackbone = process.argv.indexOf('backbone') > -1;
 
   /** Flag used to specify a legacy build */
@@ -25,6 +25,9 @@
    * constructed using the "use strict" directive.
    */
   var isStrict = process.argv.indexOf('strict') > -1;
+
+  /** Flag used to specify an Underscore build */
+  var isUnderscore = process.argv.indexOf('underscore') > -1;
 
   /** Flag used to specify if the build should include the "use strict" directive */
   var useStrict = isStrict || !(isLegacy || isMobile);
@@ -256,6 +259,13 @@
       includeMethods,
       allMethods = Object.keys(dependencyMap);
 
+  var underscoreMethods = lodash.without.apply(lodash, [allMethods].concat([
+    'drop',
+    'forIn',
+    'forOwn',
+    'partial'
+  ]));
+
   /** Used to specify whether filtering is for exclusion or inclusion */
   var filterType = process.argv.reduce(function(result, value) {
     if (result) {
@@ -293,11 +303,13 @@
       '    lodash legacy        Build tailored for older browsers without ES5 support',
       '    lodash mobile        Build with IE < 9 bug fixes and method compilation removed',
       '    lodash strict        Build with `_.bindAll`, `_.defaults`, and `_.extend` in strict mode',
+      '    lodash underscore    Build containing only methods included in Underscore',
       '    lodash category=...  Comma separated categories of methods to include in the build',
       '    lodash exclude=...   Comma separated names of methods to exclude from the build',
       '    lodash include=...   Comma separated names of methods to include in the build',
       '',
-      '    All arguments, except `exclude` with `include` and `legacy` with `mobile`, may be combined.',
+      '    All arguments, except `backbone` with `underscore`, `exclude` with `include`,',
+      '    and `legacy` with `mobile`, may be combined.',
       '',
       '  Options:',
       '',
@@ -630,25 +642,36 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // Backbone build
-  if (isBackbone) {
+  // add methods required by Backbone or Underscore
+  [
+    { 'flag': isBackbone, 'methodNames': backboneDependencies },
+    { 'flag': isUnderscore, 'methodNames': underscoreMethods }
+  ]
+  .some(function(data) {
+    var flag = data.flag,
+        methodNames = data.methodNames;
+
+    if (!flag) {
+      return false;
+    }
     // add any additional sub-dependencies
-    backboneDependencies = getDependencies(backboneDependencies);
+    methodNames = getDependencies(methodNames);
 
     if (filterType == 'exclude') {
-      // remove excluded methods from `backboneDependencies`
-      includeMethods = lodash.without.apply(lodash, [backboneDependencies].concat(excludeMethods));
+      // remove excluded methods from `methodNames`
+      includeMethods = lodash.without.apply(lodash, [methodNames].concat(excludeMethods));
     }
     else if (filterType) {
-      // merge backbone dependencies into `includeMethods`
-      includeMethods = lodash.union(includeMethods, backboneDependencies);
+      // merge `methodNames` into `includeMethods`
+      includeMethods = lodash.union(includeMethods, methodNames);
     }
     else {
-      // include only the Backbone dependencies
-      includeMethods = backboneDependencies;
+      // include only the `methodNames`
+      includeMethods = methodNames;
     }
     filterType = 'include';
-  }
+    return true;
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -988,7 +1011,7 @@
   source = source.replace(/^ *;\n/gm, '');
 
   // begin the minification process
-  if (filterType || isBackbone || isLegacy || isMobile || isStrict) {
+  if (filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
     fs.writeFileSync(path.join(cwd, 'lodash.custom.js'), source);
 
     minify(source, 'lodash.custom.min', function(result) {

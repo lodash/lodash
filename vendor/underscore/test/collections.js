@@ -253,6 +253,18 @@ $(document).ready(function() {
     equal(grouped['5'].join(' '), 'three seven eight');
   });
 
+  test('collections: countBy', function() {
+    var parity = _.countBy([1, 2, 3, 4, 5], function(num){ return num % 2 == 0; });
+    equal(parity['true'], 2);
+    equal(parity['false'], 3);
+
+    var list = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+    var grouped = _.countBy(list, 'length');
+    equal(grouped['3'], 4);
+    equal(grouped['4'], 3);
+    equal(grouped['5'], 3);
+  });
+
   test('collections: sortedIndex', function() {
     var numbers = [10, 20, 30, 40, 50], num = 35;
     var indexForNum = _.sortedIndex(numbers, num);

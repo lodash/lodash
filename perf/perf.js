@@ -136,7 +136,7 @@
         }
       }
 
-      if (typeof groupBy != 'undefined') {
+      if (typeof countBy != 'undefined') {
         var wordToNumber = {
           'one': 1,
           'two': 2,
@@ -516,6 +516,50 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.countBy` with `callback` iterating an array')
+      .add('Lo-Dash', function() {
+        lodash.countBy(numbers, function(num) { return num >> 1; });
+      })
+      .add('Underscore', function() {
+        _.countBy(numbers, function(num) { return num >> 1; });
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.countBy` with `property` name iterating an array')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.countBy(words, 'length');
+        },
+        'teardown': 'function countBy(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.countBy(words, 'length');
+        },
+        'teardown': 'function countBy(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.countBy` with `callback` iterating an object')
+      .add('Lo-Dash', {
+        'fn': function() {
+          lodash.countBy(wordToNumber, function(num) { return num >> 1; });
+        },
+        'teardown': 'function countBy(){}'
+      })
+      .add('Underscore', {
+        'fn': function() {
+          _.countBy(wordToNumber, function(num) { return num >> 1; });
+        },
+        'teardown': 'function countBy(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.difference`')
       .add('Lo-Dash', function() {
         lodash.difference(numbers, fourNumbers, twoNumbers);
@@ -749,13 +793,13 @@
         'fn': function() {
           lodash.groupBy(words, 'length');
         },
-        'teardown': 'function groupBy(){}'
+        'teardown': 'function countBy(){}'
       })
       .add('Underscore', {
         'fn': function() {
           _.groupBy(words, 'length');
         },
-        'teardown': 'function groupBy(){}'
+        'teardown': 'function countBy(){}'
       })
   );
 
@@ -765,13 +809,13 @@
         'fn': function() {
           lodash.groupBy(wordToNumber, function(num) { return num >> 1; });
         },
-        'teardown': 'function groupBy(){}'
+        'teardown': 'function countBy(){}'
       })
       .add('Underscore', {
         'fn': function() {
           _.groupBy(wordToNumber, function(num) { return num >> 1; });
         },
-        'teardown': 'function groupBy(){}'
+        'teardown': 'function countBy(){}'
       })
   );
 
@@ -1149,13 +1193,13 @@
         'fn': function() {
           lodash.sortBy(words, 'length');
         },
-        'teardown': 'function groupBy(){}'
+        'teardown': 'function countBy(){}'
       })
       .add('Underscore', {
         'fn': function() {
           _.sortBy(words, 'length');
         },
-        'teardown': 'function groupBy(){}'
+        'teardown': 'function countBy(){}'
       })
   );
 
@@ -1179,7 +1223,7 @@
             return wordToNumber[value];
           });
         },
-        'teardown': 'function groupBy(){}'
+        'teardown': 'function countBy(){}'
       })
       .add('Underscore', {
         'fn': function() {
@@ -1187,7 +1231,7 @@
             return wordToNumber[value];
           });
         },
-        'teardown': 'function groupBy(){}'
+        'teardown': 'function countBy(){}'
       })
   );
 

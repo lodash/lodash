@@ -125,7 +125,7 @@ In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
 var _ = require('lodash');
 ~~~
 
-In [Narwhal](http://narwhaljs.org/) and [RingoJS v0.7.0-](http://ringojs.org/):
+In [RingoJS v0.7.0-](http://ringojs.org/):
 
 ~~~ js
 var _ = require('lodash')._;

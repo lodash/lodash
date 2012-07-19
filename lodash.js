@@ -391,6 +391,23 @@
     'inLoop': 'callback(iteratee[index], index, collection)'
   };
 
+  /** Reusable iterator options for `countBy`, `groupBy`, and `sortBy` */
+  var countByIteratorOptions = {
+    'init': '{}',
+    'top':
+      'var prop;\n' +
+      'if (typeof callback != \'function\') {\n' +
+      '  var valueProp = callback;\n' +
+      '  callback = function(value) { return value[valueProp] }\n' +
+      '}\n' +
+      'else if (thisArg) {\n' +
+      '  callback = iteratorBind(callback, thisArg)\n' +
+      '}',
+    'inLoop':
+      'prop = callback(iteratee[index], index, collection);\n' +
+      '(hasOwnProperty.call(result, prop) ? result[prop]++ : result[prop] = 1)'
+  };
+
   /** Reusable iterator options for `every` and `some` */
   var everyIteratorOptions = {
     'init': 'true',
@@ -776,6 +793,34 @@
   });
 
   /**
+   * Creates an object composed of keys returned from running each element of
+   * `collection` through a `callback`. The corresponding value of each key is
+   * the number of times the key was returned by `callback`. The `callback` is
+   * bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * The `callback` argument may also be the name of a property to count by (e.g. 'length').
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|String} collection The collection to iterate over.
+   * @param {Function|String} callback The function called per iteration or
+   *  property name to count by.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Object} Returns the composed aggregate object.
+   * @example
+   *
+   * _.countBy([4.3, 6.1, 6.4], function(num) { return Math.floor(num); });
+   * // => { '4': 1, '6': 2 }
+   *
+   * _.countBy([4.3, 6.1, 6.4], function(num) { return this.floor(num); }, Math);
+   * // => { '4': 1, '6': 2 }
+   *
+   * _.countBy(['one', 'two', 'three'], 'length');
+   * // => { '3': 2, '5': 1 }
+   */
+  var countBy = createIterator(baseIteratorOptions, countByIteratorOptions);
+
+  /**
    * Checks if the `callback` returns a truthy value for **all** elements of a
    * `collection`. The `callback` is bound to `thisArg` and invoked with 3
    * arguments; (value, index|key, collection).
@@ -863,10 +908,11 @@
   var forEach = createIterator(baseIteratorOptions, forEachIteratorOptions);
 
   /**
-   * Splits `collection` into sets, grouped by the result of running each value
-   * through `callback`. The `callback` is bound to `thisArg` and invoked with
-   * 3 arguments; (value, index|key, collection). The `callback` argument may
-   * also be the name of a property to group by.
+   * Creates an object composed of keys returned from running each element of
+   * `collection` through a `callback`. The corresponding value of each key is an
+   * array of elements passed to `callback` that returned the key. The `callback`
+   * is bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * The `callback` argument may also be the name of a property to count by (e.g. 'length').
    *
    * @static
    * @memberOf _
@@ -875,27 +921,21 @@
    * @param {Function|String} callback The function called per iteration or
    *  property name to group by.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Object} Returns an object of grouped values.
+   * @returns {Object} Returns the composed aggregate object.
    * @example
    *
-   * _.groupBy([1.3, 2.1, 2.4], function(num) { return Math.floor(num); });
-   * // => { '1': [1.3], '2': [2.1, 2.4] }
+   * _.groupBy([4.2, 6.1, 6.4], function(num) { return Math.floor(num); });
+   * // => { '4': [4.2], '6': [6.1, 6.4] }
    *
-   * _.groupBy([1.3, 2.1, 2.4], function(num) { return this.floor(num); }, Math);
-   * // => { '1': [1.3], '2': [2.1, 2.4] }
+   * _.groupBy([4.2, 6.1, 6.4], function(num) { return this.floor(num); }, Math);
+   * // => { '4': [4.2], '6': [6.1, 6.4] }
    *
    * _.groupBy(['one', 'two', 'three'], 'length');
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
-  var groupBy = createIterator(baseIteratorOptions, {
-    'init': '{}',
-    'top':
-      'var prop, isFunc = typeof callback == \'function\';\n' +
-      'if (isFunc && thisArg) callback = iteratorBind(callback, thisArg)',
+  var groupBy = createIterator(baseIteratorOptions, countByIteratorOptions, {
     'inLoop':
-      'prop = isFunc\n' +
-      '  ? callback(iteratee[index], index, collection)\n' +
-      '  : iteratee[index][callback];\n' +
+      'prop = callback(iteratee[index], index, collection);\n' +
       '(hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(iteratee[index])'
   });
 
@@ -937,9 +977,9 @@
   });
 
   /**
-   * Produces a new array of values by mapping each element in the `collection`
-   * through a transformation `callback`. The `callback` is bound to `thisArg`
-   * and invoked with 3 arguments; (value, index|key, collection).
+   * Creates a new array of values by running each element in the `collection`
+   * through a `callback`. The `callback` is bound to `thisArg` and invoked with
+   * 3 arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -1128,13 +1168,11 @@
     'inLoop': everyIteratorOptions.inLoop.replace('!', '')
   });
 
-
   /**
-   * Produces a new sorted array, sorted in ascending order by the results of
-   * running each element of `collection` through a transformation `callback`.
-   * The `callback` is bound to `thisArg` and invoked with 3 arguments;
-   * (value, index|key, collection). The `callback` argument may also be the
-   * name of a property to sort by (e.g. 'length').
+   * Creates a new sorted array, sorted in ascending order by the results of
+   * running each element of `collection` through a `callback`. The `callback` is
+   * bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * The `callback` argument may also be the name of a property to sort by (e.g. 'length').
    *
    * @static
    * @memberOf _
@@ -1155,15 +1193,7 @@
    * _.sortBy(['larry', 'brendan', 'moe'], 'length');
    * // => ['moe', 'larry', 'brendan']
    */
-  var sortBy = createIterator(baseIteratorOptions, mapIteratorOptions, {
-    'top':
-      'if (typeof callback == \'string\') {\n' +
-      '  var prop = callback;\n' +
-      '  callback = function(collection) { return collection[prop] }\n' +
-      '}\n' +
-      'else if (thisArg) {\n' +
-      '  callback = iteratorBind(callback, thisArg)\n' +
-      '}',
+  var sortBy = createIterator(baseIteratorOptions, countByIteratorOptions, mapIteratorOptions, {
     'inLoop': {
       'array':
         'result[index] = {\n' +
@@ -1217,7 +1247,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Produces a new array with all falsey values of `array` removed. The values
+   * Creates a new array with all falsey values of `array` removed. The values
    * `false`, `null`, `0`, `""`, `undefined` and `NaN` are all falsey.
    *
    * @static
@@ -1247,7 +1277,7 @@
   }
 
   /**
-   * Produces a new array of `array` values not present in the other arrays
+   * Creates a new array of `array` values not present in the other arrays
    * using strict equality for comparisons, i.e. `===`.
    *
    * @static
@@ -1691,7 +1721,7 @@
   }
 
   /**
-   * Produces a new array of shuffled `array` values, using a version of the
+   * Creates a new array of shuffled `array` values, using a version of the
    * Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
    *
    * @static
@@ -1811,12 +1841,11 @@
   }
 
   /**
-   * Produces a duplicate-value-free version of the `array` using strict equality
+   * Creates a duplicate-value-free version of the `array` using strict equality
    * for comparisons, i.e. `===`. If the `array` is already sorted, passing `true`
-   * for `isSorted` will run a faster algorithm. If `callback` is passed,
-   * each value of `array` is passed through a transformation `callback` before
-   * uniqueness is computed. The `callback` is bound to `thisArg` and invoked
-   * with 3 arguments; (value, index, array).
+   * for `isSorted` will run a faster algorithm. If `callback` is passed, each
+   * element of `array` is passed through a callback` before uniqueness is computed.
+   * The `callback` is bound to `thisArg` and invoked with 3 arguments; (value, index, array).
    *
    * @static
    * @memberOf _
@@ -1876,7 +1905,7 @@
   }
 
   /**
-   * Produces a new array with all occurrences of the passed values removed using
+   * Creates a new array with all occurrences of the passed values removed using
    * strict equality for comparisons, i.e. `===`.
    *
    * @static
@@ -2211,7 +2240,7 @@
 
   /**
    * Executes the `func` function after `wait` milliseconds. Additional arguments
-   * are passed to `func` when it is invoked.
+   * will be passed to `func` when it is invoked.
    *
    * @static
    * @memberOf _
@@ -2233,7 +2262,7 @@
 
   /**
    * Defers executing the `func` function until the current call stack has cleared.
-   * Additional arguments are passed to `func` when it is invoked.
+   * Additional arguments will be passed to `func` when it is invoked.
    *
    * @static
    * @memberOf _
@@ -2396,16 +2425,15 @@
   }
 
   /**
-   * Create a new function that passes the `func` function to the `wrapper`
-   * function as its first argument. Additional arguments are appended to those
-   * passed to the `wrapper` function.
+   * Create a new function that passes `func` to the `wrapper` function as its
+   * first argument. Additional arguments passed to the new function are appended
+   * to those passed to the `wrapper` function.
    *
    * @static
    * @memberOf _
    * @category Functions
    * @param {Function} func The function to wrap.
    * @param {Function} wrapper The wrapper function.
-   * @param {Mixed} [arg1, arg2, ...] Arguments to append to those passed to the wrapper.
    * @returns {Function} Returns the new function.
    * @example
    *
@@ -2565,7 +2593,7 @@
   var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
 
   /**
-   * Produces a sorted array of the enumerable properties, own and inherited,
+   * Creates a sorted array of all enumerable properties, own and inherited,
    * of `object` that have function values.
    *
    * @static
@@ -3086,7 +3114,7 @@
   }
 
   /**
-   * Produces an array of object`'s own enumerable property names.
+   * Creates an array composed of the own enumerable property names of `object`.
    *
    * @static
    * @memberOf _
@@ -3169,7 +3197,7 @@
   }
 
   /**
-   * Produces an array of `object`'s own enumerable property values.
+   * Creates an array composed of the own enumerable property values of `object`.
    *
    * @static
    * @memberOf _
@@ -3391,8 +3419,8 @@
       escapeDelimiter = settings.escape;
     }
     if (evaluateDelimiter == null) {
-      // use `false` as the fallback value so the initial assignment of
-      // `reEvaluateDelimiter` will still occur
+      // use `false` as the fallback value, instead of leaving it `undefined`,
+      // so the initial assignment of `reEvaluateDelimiter` will still occur
       evaluateDelimiter = settings.evaluate || false;
     }
     if (interpolateDelimiter == null) {
@@ -3582,7 +3610,7 @@
    * @static
    * @memberOf _
    * @category Chaining
-   * @param {Mixed} value The value to pass to `callback`.
+   * @param {Mixed} value The value to pass to `interceptor`.
    * @param {Function} interceptor The function to invoke.
    * @returns {Mixed} Returns `value`.
    * @example
@@ -3654,6 +3682,7 @@
   lodash.compact = compact;
   lodash.compose = compose;
   lodash.contains = contains;
+  lodash.countBy = countBy;
   lodash.debounce = debounce;
   lodash.defaults = defaults;
   lodash.defer = defer;

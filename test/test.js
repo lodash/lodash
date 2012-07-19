@@ -169,6 +169,21 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.countBy');
+
+  (function() {
+      test('should only add elements to own, not inherited, properties', function() {
+      var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
+        return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
+      });
+
+      deepEqual(actual.constructor, 1);
+      deepEqual(actual.hasOwnProperty, 2);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.debounce');
 
   (function() {
@@ -443,28 +458,28 @@
 
   (function() {
     test('supports the `thisArg` argument', function() {
-      var actual = _.groupBy([1.3, 2.1, 2.4], function(num) {
+      var actual = _.groupBy([4.2, 6.1, 6.4], function(num) {
         return this.floor(num);
       }, Math);
 
-      deepEqual(actual, { '1': [1.3], '2': [2.1, 2.4] });
+      deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
 
     test('should only add elements to own, not inherited, properties', function() {
-      var actual = _.groupBy([1.3, 2.1, 2.4], function(num) {
-        return Math.floor(num) > 1 ? 'hasOwnProperty' : 'constructor';
+      var actual = _.groupBy([4.2, 6.1, 6.4], function(num) {
+        return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
-      deepEqual(actual.constructor, [1.3]);
-      deepEqual(actual.hasOwnProperty, [2.1, 2.4]);
+      deepEqual(actual.constructor, [4.2]);
+      deepEqual(actual.hasOwnProperty, [6.1, 6.4]);
     });
 
     test('should work with an object for `collection`', function() {
-      var actual = _.groupBy({ 'a': 1.3, 'b': 2.1, 'c': 2.4 }, function(num) {
+      var actual = _.groupBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
         return Math.floor(num);
       });
 
-      deepEqual(actual, { '1': [1.3], '2': [2.1, 2.4] });
+      deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
   }());
 

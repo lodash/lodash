@@ -30,7 +30,7 @@ Via [npm](http://npmjs.org/):
 npm install platform
 ~~~
 
-In [Narwhal](http://narwhaljs.org/), [Node.js](http://nodejs.org/), and [RingoJS](http://ringojs.org/):
+In [Node.js](http://nodejs.org/) and [RingoJS](http://ringojs.org/):
 
 ~~~ js
 var platform = require('platform');

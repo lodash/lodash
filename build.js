@@ -153,6 +153,7 @@
     'compact': [],
     'compose': [],
     'contains': [],
+    'countBy': [],
     'debounce': [],
     'defaults': [],
     'defer': [],
@@ -260,10 +261,12 @@
       allMethods = Object.keys(dependencyMap);
 
   var underscoreMethods = lodash.without.apply(lodash, [allMethods].concat([
+    'countBy',
     'drop',
     'forIn',
     'forOwn',
-    'partial'
+    'partial',
+    'zipObject'
   ]));
 
   /** Used to specify whether filtering is for exclusion or inclusion */

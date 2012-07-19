@@ -46,7 +46,8 @@
     'target',
     'thisArg',
     'toString',
-    'value'
+    'value',
+    'valueProp'
   ];
 
   /** Used to minify `compileIterator` option properties */
@@ -93,6 +94,7 @@
     'compact',
     'compose',
     'contains',
+    'countBy',
     'criteria',
     'debounce',
     'defaults',

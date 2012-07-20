@@ -2348,9 +2348,8 @@
 
   /**
    * Creates a new function that, when called, invokes `func` with any additional
-   * `partial` arguments prepended to those passed to the partially applied
-   * function. This method is similar `bind`, except it does **not** alter the
-   * `this` binding.
+   * `partial` arguments prepended to those passed to the new function. This method
+   * is similar `bind`, except it does **not** alter the `this` binding.
    *
    * @static
    * @memberOf _
@@ -2433,14 +2432,14 @@
   }
 
   /**
-   * Create a new function that passes `func` to the `wrapper` function as its
+   * Creates a new function that passes `value` to the `wrapper` function as its
    * first argument. Additional arguments passed to the new function are appended
    * to those passed to the `wrapper` function.
    *
    * @static
    * @memberOf _
    * @category Functions
-   * @param {Function} func The function to wrap.
+   * @param {Mixed} value The value to wrap.
    * @param {Function} wrapper The wrapper function.
    * @returns {Function} Returns the new function.
    * @example
@@ -2452,9 +2451,9 @@
    * hello();
    * // => 'before, hello: moe, after'
    */
-  function wrap(func, wrapper) {
+  function wrap(value, wrapper) {
     return function() {
-      var args = [func];
+      var args = [value];
       if (arguments.length) {
         push.apply(args, arguments);
       }

@@ -51,6 +51,7 @@
     }
 
     if (isLegacy) {
+      source = replaceVar(source, 'noArgsClass', 'true');
       ['isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
         source = replaceVar(source, varName, 'false');
       });
@@ -401,7 +402,7 @@
    * @returns {String} Returns the `isArguments` fallback snippet.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\s*if *\(!(?:lodash\.)?isArguments[^)]+\)[\s\S]+?};\s*}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\s*if *\(noArgsClass[\s\S]+?};\s*}/) || [''])[0];
   }
 
   /**
@@ -773,15 +774,15 @@
 
     // build replacement code
     lodash.forOwn({
-      'Arguments': "'[object Arguments]'",
+      'Arguments': 'argsClass',
       'Date': 'dateClass',
       'Function': 'funcClass',
       'Number': 'numberClass',
       'RegExp': 'regexpClass',
       'String': 'stringClass'
     }, function(value, key) {
-      // skip `isArguments` if a legacy build
-      if (isLegacy && key == 'Arguments') {
+      // skip `isArguments` if not a mobile build
+      if (!isMobile && key == 'Arguments') {
         return;
       }
       var funcName = 'is' + key,
@@ -818,13 +819,6 @@
       '    };\n' +
       '  });'
     );
-
-    // tweak `isArguments` fallback
-    snippet = !isLegacy && getIsArgumentsFallback(source);
-    if (snippet) {
-      var modified = '\n' + snippet.replace(/isArguments/g, 'lodash.$&');
-      source = source.replace(snippet, modified);
-    }
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -861,8 +855,8 @@
     // replace `_.isArguments` with fallback
     if (!isRemoved(source, 'isArguments')) {
       source = source.replace(
-        matchFunction(source, 'isArguments').replace(/[\s\S]+?var isArguments *=/, ''),
-        getIsArgumentsFallback(source).match(/isArguments *=([\s\S]+?) *};/)[1] + '  };\n'
+        matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''),
+        getIsArgumentsFallback(source).match(/isArguments *= *function([\s\S]+?) *};/)[1] + '  }\n'
       );
 
       source = removeIsArgumentsFallback(source);

@@ -546,6 +546,8 @@
   QUnit.module('lodash.isEmpty');
 
   (function() {
+    var args = arguments;
+
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       equal(_.isEmpty(shadowed), false);
     });
@@ -558,7 +560,15 @@
       Foo.prototype = { 'a': 1 };
       equal(_.isEmpty(Foo), true);
     });
-  }());
+
+    test('should work with an object that has a `length` property', function() {
+      equal(_.isEmpty({ 'length': 0 }), false);
+    });
+
+    test('should work with `arguments` objects (test in IE < 9)', function() {
+      equal(_.isEmpty(args), false);
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -782,6 +792,10 @@
       } catch(e) { }
 
       deepEqual(actual, [0, 0, 0, 0, 0]);
+    });
+
+    test('should work with an object that has a `length` property', function() {
+      equal(_.size({ 'length': 3 }), 1);
     });
 
     test('should work with `arguments` objects (test in IE < 9)', function() {

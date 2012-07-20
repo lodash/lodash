@@ -10,10 +10,10 @@
     'accumulator',
     'args',
     'arrayClass',
+    'arrayLikeClasses',
     'ArrayProto',
     'bind',
     'callback',
-    'className',
     'collection',
     'compareAscending',
     'concat',
@@ -24,6 +24,7 @@
     'identity',
     'index',
     'indexOf',
+    'isArguments',
     'isFunc',
     'iteratee',
     'iterateeIndex',
@@ -215,6 +216,10 @@
     // remove unrecognized JSDoc tags so Closure Compiler won't complain
     source = source.replace(/@(?:alias|category)\b.*/g, '');
 
+    // manually convert `arrayLikeClasses` property assignments because
+    // Closure Compiler errors trying to minify them
+    source = source.replace(/(arrayLikeClasses =)[\s\S]+?= *true/g, "$1{'[object Arguments]': true, '[object Array]': true, '[object String]': true }");
+
     // add brackets to whitelisted properties so Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");
@@ -239,7 +244,7 @@
       });
     });
 
-    // remove whitespace from `_.template` related regexpes
+    // remove whitespace from `_.template` related regexes
     source = source.replace(/(?:reDelimiterCode\w+|reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
       return match.replace(/ |\\n/g, '');
     });
@@ -346,7 +351,7 @@
           else {
             // minify property name strings
             modified = modified.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
-            // minify property names in regexps and accessors
+            // minify property names in regexes and accessors
             if (isCreateIterator) {
               modified = modified.replace(RegExp('([\\.|/])' + property + '\\b' , 'g'), '$1' + minNames[index]);
             }

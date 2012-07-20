@@ -104,7 +104,8 @@
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys;
 
   /** `Object#toString` result shortcuts */
-  var arrayClass = '[object Array]',
+  var argsClass = '[object Arguments]',
+      arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
       funcClass = '[object Function]',
@@ -123,6 +124,9 @@
    */
   var hasDontEnumBug = !propertyIsEnumerable.call({ 'valueOf': 0 }, 'valueOf');
 
+  /** Detect if an `arguments` object's [[Class]] is unresolvable (Firefox < 4, IE < 9) */
+  var noArgsClass = !isArguments(arguments);
+
   /** Detect if `Array#slice` cannot be used to convert strings to arrays (Opera < 10.52) */
   var noArraySliceOnStrings = slice.call('x')[0] != 'x';
 
@@ -136,7 +140,7 @@
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
   var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
 
-  /* Detect if `Object.keys` exists and is inferred to be fast (V8, Opera, IE) */
+  /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
   var isKeysFast = nativeKeys && /^.+$|true/.test(nativeKeys + !!window.attachEvent);
 
   /** Detect if sourceURL syntax is usable without erroring */
@@ -150,6 +154,10 @@
     // See http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
     var useSourceURL = (Function('//@cc_on!')(), true);
   } catch(e){ }
+
+  /** Used to identify object classifications that are array-like */
+  var arrayLikeClasses = {};
+  arrayLikeClasses[argsClass] = arrayLikeClasses[arrayClass] = arrayLikeClasses[stringClass] = true;
 
   /**
    * Used to escape characters for inclusion in HTML.
@@ -592,16 +600,16 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayClass, ArrayProto, bind, compareAscending, concat, funcClass, ' +
-        'hasOwnProperty, identity, indexOf, iteratorBind, objectTypes, nativeKeys, ' +
-        'propertyIsEnumerable, slice, stringClass, toString',
+        'arrayClass, arrayLikeClasses, ArrayProto, bind, compareAscending, concat, ' +
+        'funcClass, hasOwnProperty, identity, indexOf, isArguments, iteratorBind, ' +
+        'objectTypes, nativeKeys, propertyIsEnumerable, slice, stringClass, toString',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayClass, ArrayProto, bind, compareAscending, concat, funcClass,
-      hasOwnProperty, identity, indexOf, iteratorBind, objectTypes, nativeKeys,
-      propertyIsEnumerable, slice, stringClass, toString
+      arrayClass, arrayLikeClasses, ArrayProto, bind, compareAscending, concat,
+      funcClass, hasOwnProperty, identity, indexOf, isArguments, iteratorBind,
+      objectTypes, nativeKeys, propertyIsEnumerable, slice, stringClass, toString
     );
   }
 
@@ -2650,12 +2658,11 @@
    * _.isArguments([1, 2, 3]);
    * // => false
    */
-  var isArguments = function(value) {
-    return toString.call(value) == '[object Arguments]';
-  };
-  // fallback for browser like Firefox < 4 and IE < 9 which detect
-  // `arguments` as `[object Object]`
-  if (!isArguments(arguments)) {
+  function isArguments(value) {
+    return toString.call(value) == argsClass;
+  }
+  // fallback for browsers that can't detect `arguments` objects by [[Class]]
+  if (noArgsClass) {
     isArguments = function(value) {
       return !!(value && hasOwnProperty.call(value, 'callee'));
     };
@@ -2733,8 +2740,9 @@
   }
 
   /**
-   * Checks if `value` is empty. Arrays or strings with a length of `0` and
-   * objects with no own enumerable properties are considered "empty".
+   * Checks if `value` is empty. Arrays, strings, or `arguments` objects with a
+   * length of `0` and objects with no own enumerable properties are considered
+   * "empty".
    *
    * @static
    * @memberOf _
@@ -2756,8 +2764,9 @@
     'args': 'value',
     'init': 'true',
     'top':
-      'var className = toString.call(value);\n' +
-      'if (className == arrayClass || className == stringClass) return !value.length',
+      'if (arrayLikeClasses[toString.call(value)]' +
+        (noArgsClass ? ' || isArguments(value)' : '') +
+      ') return !value.length',
     'inLoop': {
       'object': 'return false'
     }
@@ -2794,7 +2803,7 @@
       // treat `+0` vs. `-0` as not equal
       return a !== 0 || (1 / a == 1 / b);
     }
-    // a strict comparison is necessary because `undefined == null`
+    // a strict comparison is necessary because `null == undefined`
     if (a == null || b == null) {
       return a === b;
     }
@@ -2818,11 +2827,11 @@
       return false;
     }
     switch (className) {
-      // strings, numbers, dates, and booleans are compared by value
-      case stringClass:
-        // primitives and their corresponding object instances are equivalent;
-        // thus, `'5'` is quivalent to `new String('5')`
-        return a == String(b);
+      case boolClass:
+      case dateClass:
+        // coerce dates and booleans to numbers, dates to milliseconds and booleans
+        // to `1` or `0`, treating invalid dates coerced to `NaN` as not equal
+        return +a == +b;
 
       case numberClass:
         // treat `NaN` vs. `NaN` as equal
@@ -2831,28 +2840,21 @@
           // but treat `+0` vs. `-0` as not equal
           : (a == 0 ? (1 / a == 1 / b) : a == +b);
 
-      case boolClass:
-      case dateClass:
-        // coerce dates and booleans to numeric values, dates to milliseconds and
-        // booleans to 1 or 0; treat invalid dates coerced to `NaN` as not equal
-        return +a == +b;
-
-      // regexps are compared by their source and flags
       case regexpClass:
-        return a.source == b.source &&
-               a.global == b.global &&
-               a.multiline == b.multiline &&
-               a.ignoreCase == b.ignoreCase;
+      case stringClass:
+        // coerce regexes to strings (http://es5.github.com/#x15.10.6.4)
+        // treat string primitives and their corresponding object instances as equal
+        return a == b + '';
     }
     if (typeof a != 'object' || typeof b != 'object') {
+      // for unequal function values
       return false;
     }
-    // Assume equality for cyclic structures. The algorithm for detecting cyclic
-    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
+    // assume cyclic structures are equal
+    // the algorithm for detecting cyclic structures is adapted from ES 5.1
+    // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
     var length = stack.length;
     while (length--) {
-      // Linear search. Performance is inversely proportional to the number of
-      // unique nested structures.
       if (stack[length] == a) {
         return true;
       }
@@ -2865,7 +2867,7 @@
     // add the first collection to the stack of traversed objects
     stack.push(a);
 
-    // recursively compare objects and arrays
+    // recursively compare objects and arrays (susceptible to call stack limits)
     if (className == arrayClass) {
       // compare array lengths to determine if a deep comparison is necessary
       size = a.length;
@@ -2881,11 +2883,11 @@
       }
     }
     else {
-      // objects with different constructors are not equivalent
+      // objects with different constructors are not equal
       if ('constructor' in a != 'constructor' in b || a.constructor != b.constructor) {
         return false;
       }
-      // deep compare objects.
+      // deep compare objects
       for (var prop in a) {
         if (hasOwnProperty.call(a, prop)) {
           // count the number of properties.
@@ -2899,14 +2901,14 @@
       // ensure both objects have the same number of properties
       if (result) {
         for (prop in b) {
-          // Adobe's JS engine, embedded in applications like InDesign, has a
-          // bug that causes `!size--` to throw an error so it must be wrapped
-          // in parentheses.
+          // The JS engine in Adobe products, like InDesign, has a bug that causes
+          // `!size--` to throw an error so it must be wrapped in parentheses.
           // https://github.com/documentcloud/underscore/issues/355
           if (hasOwnProperty.call(b, prop) && !(size--)) {
             break;
           }
         }
+        // `size` will be `-1` if `b` has more properties than `a`
         result = !size;
       }
       // handle JScript [[DontEnum]] bug
@@ -2971,7 +2973,7 @@
 
   /**
    * Checks if `value` is the language type of Object.
-   * (e.g. arrays, functions, objects, regexps, `new Number(0)`, and `new String('')`)
+   * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
    *
    * @static
    * @memberOf _
@@ -3167,16 +3169,16 @@
   }
 
   /**
-   * Gets the size of `value` by returning `value.length` if `value` is a string
-   * or array, or the number of own enumerable properties if `value` is an object.
+   * Gets the size of `value` by returning `value.length` if `value` is an
+   * array, string, or `arguments` object. If `value` is an object, size is
+   * determined by returning the number of own enumerable properties it has.
    *
    * @deprecated
    * @static
    * @memberOf _
    * @category Objects
    * @param {Array|Object|String} value The value to inspect.
-   * @returns {Number} Returns `value.length` if `value` is a string or array,
-   *  or the number of own enumerable properties if `value` is an object.
+   * @returns {Number} Returns `value.length` or number of own enumerable properties.
    * @example
    *
    * _.size([1, 2]);
@@ -3192,8 +3194,9 @@
     if (!value) {
       return 0;
     }
-    var length = value.length;
-    return length === length >>> 0 ? value.length : keys(value).length;
+    return arrayLikeClasses[toString.call(value)] || (noArgsClass && isArguments(value))
+      ? value.length
+      : keys(value).length;
   }
 
   /**

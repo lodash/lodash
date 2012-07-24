@@ -14,11 +14,14 @@
   /** Flag used to specify a Backbone build */
   var isBackbone = process.argv.indexOf('backbone') > -1;
 
+  /** Flag used to specify a Content Security Policy build */
+  var isCSP = process.argv.indexOf('csp') > -1 || process.argv.indexOf('CSP') > -1;
+
   /** Flag used to specify a legacy build */
   var isLegacy = process.argv.indexOf('legacy') > -1;
 
   /** Flag used to specify a mobile build */
-  var isMobile = !isLegacy && process.argv.indexOf('mobile') > -1;
+  var isMobile = !isLegacy && (isCSP || process.argv.indexOf('mobile') > -1);
 
   /**
    * Flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are
@@ -304,6 +307,7 @@
       '  Commands:',
       '',
       '    lodash backbone      Build containing all methods required by Backbone',
+      '    lodash csp           Build supporting default Content Security Policy restrictions',
       '    lodash legacy        Build tailored for older browsers without ES5 support',
       '    lodash mobile        Build with IE < 9 bug fixes and method compilation removed',
       '    lodash strict        Build with `_.bindAll`, `_.defaults`, and `_.extend` in strict mode',

@@ -3038,8 +3038,6 @@
         }
       }
     }
-    // remove the first collection from the stack of traversed objects
-    stack.pop();
     return result;
   }
 

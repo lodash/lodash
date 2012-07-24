@@ -2913,28 +2913,28 @@
   function isEqual(a, b, stack) {
     stack || (stack = []);
 
-    // exit early for identical values
-    if (a === b) {
-      // treat `+0` vs. `-0` as not equal
-      return a !== 0 || (1 / a == 1 / b);
-    }
     // a strict comparison is necessary because `null == undefined`
     if (a == null || b == null) {
       return a === b;
     }
-    // unwrap any wrapped objects
+    // unwrap any LoDash wrapped values
     if (a._chain) {
       a = a._wrapped;
     }
     if (b._chain) {
       b = b._wrapped;
     }
-    // invoke a custom `isEqual` method if one is provided
+    // use custom `isEqual` method if available
     if (a.isEqual && toString.call(a.isEqual) == funcClass) {
       return a.isEqual(b);
     }
     if (b.isEqual && toString.call(b.isEqual) == funcClass) {
       return b.isEqual(a);
+    }
+    // exit early for identical values
+    if (a === b) {
+      // treat `+0` vs. `-0` as not equal
+      return a !== 0 || (1 / a == 1 / b);
     }
     // compare [[Class]] names
     var className = toString.call(a);
@@ -2979,12 +2979,12 @@
         result = true,
         size = 0;
 
-    // add the first collection to the stack of traversed objects
+    // add `a` to the stack of traversed objects
     stack.push(a);
 
     // recursively compare objects and arrays (susceptible to call stack limits)
-    if (className == arrayClass) {
-      // compare array lengths to determine if a deep comparison is necessary
+    if (arrayLikeClasses[className] || (noArgsClass && isArguments(value))) {
+      // compare lengths to determine if a deep comparison is necessary
       size = a.length;
       result = size == b.length;
 

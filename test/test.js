@@ -671,6 +671,20 @@
   QUnit.module('lodash.isEqual');
 
   (function() {
+    test('should work with `arguments` objects (test in IE < 9)', function() {
+      var args1 = (function() { return arguments; }(1, 2, 3)),
+          args2 = (function() { return arguments; }(1, 2, 3)),
+          args3 = (function() { return arguments; }(1, 2));
+
+      equal(_.isEqual(args1, args2), true);
+      equal(_.isEqual(args1, args3), false);
+    });
+
+    test('should respect custom `isEqual` result despite objects strict equaling each other', function() {
+      var object = { 'isEqual': function() { return false; } };
+      equal(_.isEqual(object, object), false);
+    });
+
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       equal(_.isEqual(shadowed, {}), false);
     });

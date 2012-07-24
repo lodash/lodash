@@ -152,6 +152,102 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.clone');
+
+  (function() {
+    function Klass() { }
+    Klass.prototype = { 'a': 1 };
+
+    var nonCloneable = {
+      'an arguments object': arguments,
+      'an element': window.document && document.body,
+      'a function': Klass,
+      'a Klass instance': new Klass
+    };
+
+    var objects = {
+      'an array': ['a', 'b', 'c', ''],
+      'an array-like-object': { '0': 'a', '1': 'b', '2': 'c',  '3': '', 'length': 5 },
+      'boolean': false,
+      'boolean object': Object(false),
+      'an object': { 'a': 0, 'b': 1, 'c': 3 },
+      'an object with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
+      'null': null,
+      'a number': 3,
+      'a number object': Object(3),
+      'a regexp': /a/gim,
+      'a string': 'a',
+      'a string object': Object('a'),
+      'undefined': undefined
+    };
+
+    objects['an array'].length = 5;
+
+    _.forOwn(objects, function(object, key) {
+      test('should deep clone ' + key + ' correctly', function() {
+        var clone = _.clone(object, true);
+
+        if (object == null) {
+          equal(clone, object);
+        } else {
+          deepEqual(clone.valueOf(), object.valueOf());
+        }
+        if (_.isObject(object)) {
+          ok(clone !== object);
+        } else {
+          skipTest();
+        }
+      });
+    });
+
+    _.forOwn(nonCloneable, function(object, key) {
+      test('should not clone ' + key, function() {
+        ok(_.clone(object) === object);
+        ok(_.clone(object, true) === object);
+      });
+    });
+
+    test('should shallow clone when used as `callback` for `_.map`', function() {
+      var expected = [{ 'a': [0] }, { 'b': [1] }],
+          actual = _.map(expected, _.clone);
+
+      ok(actual != expected && actual.a == expected.a && actual.b == expected.b);
+    });
+
+    test('should deep clone objects with circular references', function() {
+      var object = {
+        'foo': { 'b': { 'foo': { 'c': { } } } },
+        'bar': { }
+      };
+
+      object.foo.b.foo.c.foo = object;
+      object.bar.b = object.foo.b;
+
+      var clone = _.clone(object, true);
+      ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c.foo && clone !== object);
+    });
+
+    test('should clone using Klass#clone', function() {
+      var object = new Klass;
+      Klass.prototype.clone = function() {  return new Klass; };
+
+      var clone = _.clone(object);
+      ok(clone !== object && clone instanceof Klass);
+
+      clone = _.clone(object, true);
+      ok(clone !== object && clone instanceof Klass);
+
+      delete Klass.prototype.clone;
+    });
+
+    test('should clone problem JScript properties (test in IE < 9)', function() {
+      deepEqual(_.clone(shadowed), shadowed);
+      deepEqual(_.clone(shadowed, true), shadowed);
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.contains');
 
   (function() {

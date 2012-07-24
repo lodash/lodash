@@ -220,6 +220,13 @@
     // Closure Compiler errors trying to minify them
     source = source.replace(/(arrayLikeClasses =)[\s\S]+?= *true/g, "$1{'[object Arguments]': true, '[object Array]': true, '[object String]': true }");
 
+    // manually convert `cloneableClasses` property assignments because
+    // Closure Compiler errors trying to minify them
+    source = source.replace(/(cloneableClasses =)[\s\S]+?= *true/g,
+      "$1{'[object Array]': true, '[object Boolean]': true, '[object Date]': true, " +
+      "'[object Number]': true, '[object Object]': true, '[object RegExp]': true, '[object String]': true }"
+    );
+
     // add brackets to whitelisted properties so Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");

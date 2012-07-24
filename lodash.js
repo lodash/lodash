@@ -55,6 +55,9 @@
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
+  /** Used to match regexp flags from their coerced string values */
+  var reFlags = /\w*$/;
+
   /** Used to insert the data object variable into compiled template source */
   var reInsertVariable = /(?:__e|__t = )\(\s*(?![\d\s"']|this\.)/g;
 
@@ -110,6 +113,7 @@
       dateClass = '[object Date]',
       funcClass = '[object Function]',
       numberClass = '[object Number]',
+      objectClass = '[object Object]',
       regexpClass = '[object RegExp]',
       stringClass = '[object String]';
 
@@ -158,6 +162,12 @@
   /** Used to identify object classifications that are array-like */
   var arrayLikeClasses = {};
   arrayLikeClasses[argsClass] = arrayLikeClasses[arrayClass] = arrayLikeClasses[stringClass] = true;
+
+  /** Used to identify object classifications that `_.clone` supports */
+  var cloneableClasses = {};
+  cloneableClasses[arrayClass] = cloneableClasses[boolClass] = cloneableClasses[dateClass] =
+  cloneableClasses[numberClass] = cloneableClasses[objectClass] = cloneableClasses[regexpClass] =
+  cloneableClasses[stringClass] = true;
 
   /**
    * Used to escape characters for inclusion in HTML.
@@ -2464,23 +2474,129 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Create a shallow clone of the `value`. Any nested objects or arrays will be
-   * assigned by reference and not cloned.
+   * Create a clone of `value`. If `deep` is `true`, all nested objects, excluding
+   * functons and `arguments` objects, will be cloned otherwise they will be
+   * assigned by reference.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to clone.
+   * @param {Boolean} deep A flag to indicate a deep clone.
+   * @param {Object} [guard] Internally used to allow this method to work with
+   *  others like `_.map` without using their callback `index` argument for `deep`.
+   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
+   *  to avoid circular references.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
    *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
+   * ];
+   *
    * _.clone({ 'name': 'moe' });
-   * // => { 'name': 'moe' };
+   * // => { 'name': 'moe' }
+   *
+   * var shallow = _.clone(stooges);
+   * shallow[0] === stooges[0];
+   * // => true
+   *
+   * var deep = _.clone(stooges, true);
+   * shallow[0] === stooges[0];
+   * // => false
    */
-  function clone(value) {
-    return value && objectTypes[typeof value]
-      ? (isArray(value) ? value.slice() : extend({}, value))
-      : value;
+  function clone(value, deep, guard, stack) {
+    if (!value) {
+      return value;
+    }
+    var isObj = typeof value == 'object';
+    stack || (stack = []);
+
+    if (guard) {
+      deep = false;
+    }
+    // use custom `clone` method if available
+    if (value.clone && toString.call(value.clone) == funcClass) {
+      return value.clone(deep);
+    }
+    // inspect [[Class]]
+    if (isObj) {
+      var className = toString.call(value);
+
+      // don't clone `arguments` objects, functions, or non-object Objects
+      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {
+        return value;
+      }
+
+      var ctor = value.constructor,
+          isArr = className == arrayClass,
+          useCtor = toString.call(ctor) == funcClass;
+
+      // IE < 9 presents nodes like `Object` objects:
+      // IE < 8 are missing the node's constructor property
+      // IE 8 node constructors are typeof "object"
+      // check if the constructor is `Object` as `Object instanceof Object` is `true`
+      if (className == objectClass &&
+          (isObj = useCtor && ctor instanceof ctor)) {
+        // An object's own properties are iterated before inherited properties.
+        // If the last iterated key belongs to an object's own property then
+        // there are no inherited enumerable properties.
+        forIn(value, function(objValue, objKey) { isObj = objKey; });
+        isObj = isObj == true || hasOwnProperty.call(value, isObj);
+      }
+    }
+    // shallow clone
+    if (!isObj || !deep) {
+      // don't clone functions
+      return isObj
+        ? (isArr ? slice.call(value) : extend({}, value))
+        : value;
+    }
+
+    switch (className) {
+      case boolClass:
+        return new ctor(value == true);
+
+      case dateClass:
+        return new ctor(+value);
+
+      case numberClass:
+      case stringClass:
+        return new ctor(value);
+
+      case regexpClass:
+        return ctor(value.source, reFlags.exec(value));
+    }
+
+    // check for circular references and return corresponding clone
+    var length = stack.length;
+    while (length--) {
+      if (stack[length].value == value) {
+        return stack[length].clone;
+      }
+    }
+
+    // init cloned object
+    length = value.length;
+    var result = isArr ? ctor(length) : (useCtor ? new ctor : {});
+
+    // add current clone and original value to the stack of traversed objects
+    stack.push({ 'clone': result, 'value': value });
+
+    // recursively populate clone (susceptible to call stack limits)
+    if (isArr) {
+      var index = -1;
+      while (++index < length) {
+        result[index] = clone(value[index], deep, null, stack);
+      }
+    } else {
+      forOwn(value, function(objValue, key) {
+        result[key] = clone(objValue, deep, null, stack);
+      });
+    }
+    return result;
   }
 
   /**
@@ -2780,8 +2896,8 @@
    * @category Objects
    * @param {Mixed} a The value to compare.
    * @param {Mixed} b The other value to compare.
-   * @param {Array} [stack] Internally used to keep track of "seen" objects to
-   *  avoid circular references.
+   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
+   *  to avoid circular references.
    * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
    * @example
    *

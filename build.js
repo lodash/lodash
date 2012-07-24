@@ -150,7 +150,7 @@
     'bind': [],
     'bindAll': ['bind', 'functions'],
     'chain': ['mixin'],
-    'clone': ['extend', 'isArray'],
+    'clone': ['extend', 'forOwn', 'isArguments'],
     'compact': [],
     'compose': [],
     'contains': [],
@@ -774,17 +774,12 @@
 
     // build replacement code
     lodash.forOwn({
-      'Arguments': 'argsClass',
       'Date': 'dateClass',
       'Function': 'funcClass',
       'Number': 'numberClass',
       'RegExp': 'regexpClass',
       'String': 'stringClass'
     }, function(value, key) {
-      // skip `isArguments` if not a mobile build
-      if (!isMobile && key == 'Arguments') {
-        return;
-      }
       var funcName = 'is' + key,
           funcCode = matchFunction(source, funcName);
 
@@ -887,15 +882,19 @@
     // remove IE `shift` and `splice` fix from mutator Array functions mixin
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
 
-    // remove `noCharByIndex` from `_.reduceRight`
-    source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
+    // remove `noArgsClass` from `_.clone` and `_.size`
+    source = source.replace(/ *\|\| *\(noArgsClass *&[^)]+?\)\)/g, '');
 
     // remove `noArraySliceOnStrings` from `_.toArray`
     source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
 
+    // remove `noCharByIndex` from `_.reduceRight`
+    source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
+
     source = removeVar(source, 'extendIteratorOptions');
     source = removeVar(source, 'hasDontEnumBug');
     source = removeVar(source, 'iteratorTemplate');
+    source = removeVar(source, 'noArgsClass');
     source = removeVar(source, 'noArraySliceOnStrings');
     source = removeVar(source, 'noCharByIndex');
     source = removeIsArgumentsFallback(source);

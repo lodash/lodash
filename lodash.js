@@ -1695,9 +1695,11 @@
    * // => []
    */
   function range(start, end, step) {
-    step || (step = 1);
+    start = +start || 0;
+    step = +step || 1;
+
     if (end == null) {
-      end = start || 0;
+      end = start;
       start = 0;
     }
     // use `Array(length)` so V8 will avoid the slower "dictionary" mode

@@ -2985,7 +2985,7 @@
     stack.push(a);
 
     // recursively compare objects and arrays (susceptible to call stack limits)
-    if (arrayLikeClasses[className] || (noArgsClass && isArguments(value))) {
+    if (arrayLikeClasses[className] || (noArgsClass && isArguments(a))) {
       // compare lengths to determine if a deep comparison is necessary
       size = a.length;
       result = size == b.length;

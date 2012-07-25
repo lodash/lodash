@@ -27,6 +27,17 @@
       _._ || _
     );
 
+  /** Used to pass falsey values to methods */
+  var falsey = [
+    ,
+    '',
+    0,
+    false,
+    NaN,
+    null,
+    undefined
+  ];
+
   /** Shortcut used to make object properties immutable */
   var freeze = Object.freeze;
 
@@ -829,6 +840,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.range');
+
+  (function() {
+    var func = _.range;
+
+    test('should treat falsey `start` arguments as `0`', function() {
+      _.each(falsey, function(value, index) {
+        if (index) {
+          deepEqual(_.range(value), []);
+          deepEqual(_.range(value, 1), [0]);
+        } else {
+          deepEqual(_.range(), []);
+        }
+      });
+    });
+
+    test('should coerce arguments to numbers', function() {
+      var actual = [func('0',1), func('1'), func(0, 1, '1')];
+      deepEqual(actual, [[0], [0], [0]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.reduceRight');
 
   (function() {
@@ -896,12 +931,12 @@
     });
 
     test('should allow a falsey `object` argument', function() {
-      var func = _.size;
-      try {
-        var actual = [func(), func(undefined), func(null), func(false), func(0)];
-      } catch(e) { }
-
-      deepEqual(actual, [0, 0, 0, 0, 0]);
+      _.each(falsey, function(index, value) {
+        try {
+          var actual = index ? _.size(value) : _.size();
+        } catch(e) { }
+        equal(actual, 0);
+      })
     });
 
     test('should work with an object that has a `length` property', function() {
@@ -1217,15 +1252,14 @@
         var func = _[methodName],
             pass = true;
 
-        try {
-          func();
-          func(undefined);
-          func(null);
-          func(false);
-          func(0);
-        } catch(e) {
-          pass = false;
-        }
+        _.each(falsey, function(value, index) {
+          try {
+            index ? func() : func(value);
+          } catch(e) {
+            pass = false;
+          }
+        });
+
         ok(pass, methodName + ' allows a falsey `array` argument');
       });
     });
@@ -1256,23 +1290,18 @@
             identity = _.identity,
             pass = true;
 
-        try {
-          if (/^(?:contains|toArray)$/.test(methodName)) {
-            func();
-            func(undefined);
-            func(null);
-            func(false);
-            func(0);
+        _.each(falsey, function(value, index) {
+          try {
+            if (/^(?:contains|toArray)$/.test(methodName)) {
+              index ? func() : func(value);
+            } else if (index) {
+              func(value, identity);
+            }
+          } catch(e) {
+            pass = false;
           }
-          else {
-            func(undefined, identity);
-            func(null, identity);
-            func(false, identity);
-            func(0, identity);
-          }
-        } catch(e) {
-          pass = false;
-        }
+        });
+
         ok(pass, methodName + ' allows a falsey `collection` argument');
       });
     });

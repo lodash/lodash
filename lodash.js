@@ -294,7 +294,7 @@
    '<% if (useStrict) { %>\'use strict\';\n<% } %>' +
 
     // the `iteratee` may be reassigned by the `top` snippet
-    'var index, iteratee = <%= firstArg %>, ' +
+    'var index, value, iteratee = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
     'result<% if (init) { %> = <%= init %><% } %>;\n' +
     // add code to exit early or do so if the first argument is falsey
@@ -316,6 +316,7 @@
 
     '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (++index < length) {\n' +
+    '    value = iteratee[index];\n' +
     '    <%= arrayBranch.inLoop %>\n' +
     '  }' +
     '  <% if (objectBranch) { %>\n}<% } %>' +
@@ -338,6 +339,7 @@
     '  while (++propIndex < length) {\n' +
     '    index = props[propIndex];\n' +
     '    if (!(skipProto && index == \'prototype\')) {\n' +
+    '      value = iteratee[index];\n' +
     '      <%= objectBranch.inLoop %>\n' +
     '    }\n' +
     '  }' +
@@ -348,6 +350,7 @@
     '  for (index in iteratee) {' +
     '    <% if (hasDontEnumBug) { %>\n' +
     '    <%   if (useHas) { %>if (hasOwnProperty.call(iteratee, index)) {\n  <% } %>' +
+    '    value = iteratee[index];\n' +
     '    <%= objectBranch.inLoop %>;\n' +
     '    <%   if (useHas) { %>}<% } %>' +
     '    <% } else { %>\n' +
@@ -360,6 +363,7 @@
     // [[Enumerable]] value.
     '    if (!(skipProto && index == \'prototype\')<% if (useHas) { %> &&\n' +
     '        hasOwnProperty.call(iteratee, index)<% } %>) {\n' +
+    '      value = iteratee[index];\n' +
     '      <%= objectBranch.inLoop %>\n' +
     '    }' +
     '    <% } %>\n' +
@@ -378,6 +382,7 @@
     '      if (shadowed[k] == \'constructor\') {' +
     '        %>!(ctor && ctor.prototype === iteratee) && <%' +
     '      } %>hasOwnProperty.call(iteratee, index)) {\n' +
+    '    value = iteratee[index];\n' +
     '    <%= objectBranch.inLoop %>\n' +
     '  }' +
     '    <% } %>' +
@@ -406,7 +411,7 @@
       'else if (thisArg) {\n' +
       '  callback = iteratorBind(callback, thisArg)\n' +
       '}',
-    'inLoop': 'callback(iteratee[index], index, collection)'
+    'inLoop': 'callback(value, index, collection)'
   };
 
   /** Reusable iterator options for `countBy`, `groupBy`, and `sortBy` */
@@ -422,14 +427,14 @@
       '  callback = iteratorBind(callback, thisArg)\n' +
       '}',
     'inLoop':
-      'prop = callback(iteratee[index], index, collection);\n' +
+      'prop = callback(value, index, collection);\n' +
       '(hasOwnProperty.call(result, prop) ? result[prop]++ : result[prop] = 1)'
   };
 
   /** Reusable iterator options for `every` and `some` */
   var everyIteratorOptions = {
     'init': 'true',
-    'inLoop': 'if (!callback(iteratee[index], index, collection)) return !result'
+    'inLoop': 'if (!callback(value, index, collection)) return !result'
   };
 
   /** Reusable iterator options for `defaults` and `extend` */
@@ -442,14 +447,14 @@
       'for (var iterateeIndex = 1, length = arguments.length; iterateeIndex < length; iterateeIndex++) {\n' +
       '  iteratee = arguments[iterateeIndex];\n' +
       (hasDontEnumBug ? '  if (iteratee) {' : ''),
-    'inLoop': 'result[index] = iteratee[index]',
+    'inLoop': 'result[index] = value',
     'bottom': (hasDontEnumBug ? '  }\n' : '') + '}'
   };
 
   /** Reusable iterator options for `filter` and `reject` */
   var filterIteratorOptions = {
     'init': '[]',
-    'inLoop': 'callback(iteratee[index], index, collection) && result.push(iteratee[index])'
+    'inLoop': 'callback(value, index, collection) && result.push(value)'
   };
 
   /** Reusable iterator options for `find`, `forEach`, `forIn`, and `forOwn` */
@@ -473,8 +478,8 @@
       'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')
     },
     'inLoop': {
-      'array':  'result[index] = callback(iteratee[index], index, collection)',
-      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(callback(iteratee[index], index, collection))'
+      'array':  'result[index] = callback(value, index, collection)',
+      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(callback(value, index, collection))'
     }
   };
 
@@ -807,7 +812,7 @@
     'beforeLoop': {
       'array': 'if (toString.call(iteratee) == stringClass) return collection.indexOf(target) > -1'
     },
-    'inLoop': 'if (iteratee[index] === target) return true'
+    'inLoop': 'if (value === target) return true'
   });
 
   /**
@@ -899,7 +904,7 @@
    */
   var find = createIterator(baseIteratorOptions, forEachIteratorOptions, {
     'init': '',
-    'inLoop': 'if (callback(iteratee[index], index, collection)) return iteratee[index]'
+    'inLoop': 'if (callback(value, index, collection)) return value'
   });
 
   /**
@@ -953,8 +958,8 @@
    */
   var groupBy = createIterator(baseIteratorOptions, countByIteratorOptions, {
     'inLoop':
-      'prop = callback(iteratee[index], index, collection);\n' +
-      '(hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(iteratee[index])'
+      'prop = callback(value, index, collection);\n' +
+      '(hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(value)'
   });
 
   /**
@@ -986,11 +991,11 @@
       '    isFunc = typeof methodName == \'function\'',
     'inLoop': {
       'array':
-        'result[index] = (isFunc ? methodName : iteratee[index][methodName])' +
-        '.apply(iteratee[index], args)',
+        'result[index] = (isFunc ? methodName : value[methodName])' +
+        '.apply(value, args)',
       'object':
         'result' + (isKeysFast ? '[propIndex] = ' : '.push') +
-        '((isFunc ? methodName : iteratee[index][methodName]).apply(iteratee[index], args))'
+        '((isFunc ? methodName : value[methodName]).apply(value, args))'
     }
   });
 
@@ -1041,8 +1046,8 @@
   var pluck = createIterator(mapIteratorOptions, {
     'args': 'collection, property',
     'inLoop': {
-      'array':  'result[index] = iteratee[index][property]',
-      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(iteratee[index][property])'
+      'array':  'result[index] = value[property]',
+      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(value[property])'
     }
   });
 
@@ -1077,11 +1082,11 @@
     },
     'inLoop': {
       'array':
-        'result = callback(result, iteratee[index], index, collection)',
+        'result = callback(result, value, index, collection)',
       'object':
         'result = noaccum\n' +
-        '  ? (noaccum = false, iteratee[index])\n' +
-        '  : callback(result, iteratee[index], index, collection)'
+        '  ? (noaccum = false, value)\n' +
+        '  : callback(result, value, index, collection)'
     }
   });
 
@@ -1215,13 +1220,13 @@
     'inLoop': {
       'array':
         'result[index] = {\n' +
-        '  criteria: callback(iteratee[index], index, collection),\n' +
-        '  value: iteratee[index]\n' +
+        '  criteria: callback(value, index, collection),\n' +
+        '  value: value\n' +
         '}',
       'object':
         'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '({\n' +
-        '  criteria: callback(iteratee[index], index, collection),\n' +
-        '  value: iteratee[index]\n' +
+        '  criteria: callback(value, index, collection),\n' +
+        '  value: value\n' +
         '})'
     },
     'bottom':
@@ -2644,7 +2649,7 @@
     'args': 'object',
     'init': '{}',
     'top': 'var props = concat.apply(ArrayProto, arguments)',
-    'inLoop': 'if (indexOf(props, index) < 0) result[index] = iteratee[index]'
+    'inLoop': 'if (indexOf(props, index) < 0) result[index] = value'
   });
 
   /**
@@ -2736,7 +2741,7 @@
     'useHas': false,
     'args': 'object',
     'init': '[]',
-    'inLoop': 'if (toString.call(iteratee[index]) == funcClass) result.push(index)',
+    'inLoop': 'if (toString.call(value) == funcClass) result.push(index)',
     'bottom': 'result.sort()'
   });
 
@@ -3330,7 +3335,7 @@
   var values = createIterator({
     'args': 'object',
     'init': '[]',
-    'inLoop': 'result.push(iteratee[index])'
+    'inLoop': 'result.push(value)'
   });
 
   /*--------------------------------------------------------------------------*/

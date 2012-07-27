@@ -285,15 +285,25 @@
 
         // minify properties
         properties.forEach(function(property, index) {
+          var reBracketProp = RegExp("\\['" + property + '\\b', 'g'),
+              reDotProp = RegExp('\\.' + property + '\\b', 'g'),
+              rePropColon = RegExp('\\b' + property + ' *:', 'g');
+
           // add quotes around properties in the inlined `_.sortBy` of the mobile
           // build so Closure Compiler won't mung them
           if (isSortBy && isInlined) {
             modified = modified
-              .replace(RegExp('\\.' + property + '\\b', 'g'), "['" + minNames[index] + "']")
-              .replace(RegExp('\\b' + property + ' *:', 'g'), "'" + minNames[index] + "':");
+              .replace(reDotProp, "['" + minNames[index] + "']")
+              .replace(rePropColon, "'" + minNames[index] + "':");
           }
-          modified = modified.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
+          else {
+            modified = modified
+              .replace(reBracketProp, "['" + minNames[index])
+              .replace(reDotProp, '.' + minNames[index])
+              .replace(rePropColon, minNames[index] + ':');
+          }
         });
+
         // replace with modified snippet
         source = source.replace(snippet, modified);
       });

@@ -427,6 +427,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.filter');
+
+  (function() {
+    test('should not modify the resulting value from within `callback`', function() {
+      var actual = _.filter([0], function(value, index, array) {
+        return (array[index] = 1);
+      });
+
+      deepEqual(actual, [0]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.find');
 
   (function() {

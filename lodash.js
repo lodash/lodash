@@ -39,7 +39,10 @@
 
   /** Native prototype shortcuts */
   var ArrayProto = Array.prototype,
-      ObjectProto = Object.prototype;
+      BoolProto = Boolean.prototype,
+      ObjectProto = Object.prototype,
+      NumberProto = Number.prototype,
+      StringProto = String.prototype;
 
   /** Used to generate unique IDs */
   var idCounter = 0;
@@ -141,6 +144,9 @@
    */
   var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
 
+  /** Detect if a node's [[Class]] is unresolvable (IE < 9) */
+  var noNodeClass = toString.call(window.document || {}) == objectClass;
+
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
   var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
 
@@ -161,10 +167,13 @@
 
   /** Used to identify object classifications that are array-like */
   var arrayLikeClasses = {};
+  arrayLikeClasses[boolClass] = arrayLikeClasses[dateClass] = arrayLikeClasses[funcClass] =
+  arrayLikeClasses[numberClass] = arrayLikeClasses[objectClass] = arrayLikeClasses[regexpClass] = false;
   arrayLikeClasses[argsClass] = arrayLikeClasses[arrayClass] = arrayLikeClasses[stringClass] = true;
 
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
+  cloneableClasses[argsClass] = cloneableClasses[funcClass] = false;
   cloneableClasses[arrayClass] = cloneableClasses[boolClass] = cloneableClasses[dateClass] =
   cloneableClasses[numberClass] = cloneableClasses[objectClass] = cloneableClasses[regexpClass] =
   cloneableClasses[stringClass] = true;
@@ -189,7 +198,8 @@
     'object': true,
     'number': false,
     'string': false,
-    'undefined': false
+    'undefined': false,
+    'unknown': true
   };
 
   /** Used to escape characters for inclusion in compiled string literals */
@@ -2494,6 +2504,8 @@
    *  others like `_.map` without using their callback `index` argument for `deep`.
    * @param {Array} [stack=[]] Internally used to keep track of traversed objects
    *  to avoid circular references.
+   * @param {Boolean} thorough Internally used to indicate whether or not to perform
+   *  a more thorough clone of non-object values.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
    *
@@ -2514,8 +2526,8 @@
    * shallow[0] === stooges[0];
    * // => false
    */
-  function clone(value, deep, guard, stack) {
-    if (!value) {
+  function clone(value, deep, guard, stack, thorough) {
+    if (value == null) {
       return value;
     }
     var isObj = typeof value == 'object';
@@ -2524,34 +2536,44 @@
     if (guard) {
       deep = false;
     }
+    // avoid slower checks on non-objects
+    if (thorough == null) {
+      // primitives passed from iframes use the primary document's native prototypes
+      thorough = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
+    }
     // use custom `clone` method if available
-    if (value.clone && toString.call(value.clone) == funcClass) {
+    if ((isObj || thorough) && value.clone && toString.call(value.clone) == funcClass) {
       return value.clone(deep);
     }
     // inspect [[Class]]
     if (isObj) {
-      var className = toString.call(value);
-
       // don't clone `arguments` objects, functions, or non-object Objects
+      var className = toString.call(value);
       if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {
         return value;
       }
 
-      var ctor = value.constructor,
-          isArr = className == arrayClass,
-          useCtor = toString.call(ctor) == funcClass;
+      var useCtor,
+          ctor = value.constructor,
+          isArr = className == arrayClass;
 
-      // IE < 9 presents nodes like `Object` objects:
-      // IE < 8 are missing the node's constructor property
-      // IE 8 node constructors are typeof "object"
-      // check if the constructor is `Object` as `Object instanceof Object` is `true`
-      if (className == objectClass &&
-          (isObj = useCtor && ctor instanceof ctor)) {
-        // An object's own properties are iterated before inherited properties.
-        // If the last iterated key belongs to an object's own property then
-        // there are no inherited enumerable properties.
-        forIn(value, function(objValue, objKey) { isObj = objKey; });
-        isObj = isObj == true || hasOwnProperty.call(value, isObj);
+      if (className == objectClass) {
+        // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
+        // methods that are `typeof` "string" and still can coerce nodes to strings
+        isObj = !noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string');
+
+        if (isObj) {
+          // check that the constructor is `Object` because `Object instanceof Object` is `true`
+          useCtor = toString.call(ctor) == funcClass;
+          isObj = !useCtor || ctor instanceof ctor;
+        }
+        if (isObj) {
+          // An object's own properties are iterated before inherited properties.
+          // If the last iterated key belongs to an object's own property then
+          // there are no inherited enumerable properties.
+          forIn(value, function(objValue, objKey) { isObj = objKey; });
+          isObj = isObj == true || hasOwnProperty.call(value, isObj);
+        }
       }
     }
     // shallow clone
@@ -2596,11 +2618,11 @@
     if (isArr) {
       var index = -1;
       while (++index < length) {
-        result[index] = clone(value[index], deep, null, stack);
+        result[index] = clone(value[index], deep, null, stack, thorough);
       }
     } else {
       forOwn(value, function(objValue, key) {
-        result[key] = clone(objValue, deep, null, stack);
+        result[key] = clone(objValue, deep, null, stack, thorough);
       });
     }
     return result;
@@ -2905,6 +2927,8 @@
    * @param {Mixed} b The other value to compare.
    * @param {Array} [stack=[]] Internally used to keep track of traversed objects
    *  to avoid circular references.
+   * @param {Boolean} thorough Internally used to indicate whether or not to perform
+   *  a more thorough comparison of non-object values.
    * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
    * @example
    *
@@ -2917,26 +2941,33 @@
    * _.isEqual(moe, clone);
    * // => true
    */
-  function isEqual(a, b, stack) {
+  function isEqual(a, b, stack, thorough) {
     stack || (stack = []);
 
     // a strict comparison is necessary because `null == undefined`
     if (a == null || b == null) {
       return a === b;
     }
-    // unwrap any LoDash wrapped values
-    if (a._chain) {
-      a = a._wrapped;
+    // avoid slower checks on non-objects
+    if (thorough == null) {
+      // primitives passed from iframes use the primary document's native prototypes
+      thorough = !!(BoolProto.isEqual || NumberProto.isEqual || StringProto.isEqual);
     }
-    if (b._chain) {
-      b = b._wrapped;
-    }
-    // use custom `isEqual` method if available
-    if (a.isEqual && toString.call(a.isEqual) == funcClass) {
-      return a.isEqual(b);
-    }
-    if (b.isEqual && toString.call(b.isEqual) == funcClass) {
-      return b.isEqual(a);
+    if (objectTypes[typeof a] || objectTypes[typeof b] || thorough) {
+      // unwrap any LoDash wrapped values
+      if (a._chain) {
+        a = a._wrapped;
+      }
+      if (b._chain) {
+        b = b._wrapped;
+      }
+      // use custom `isEqual` method if available
+      if (a.isEqual && toString.call(a.isEqual) == funcClass) {
+        return a.isEqual(b);
+      }
+      if (b.isEqual && toString.call(b.isEqual) == funcClass) {
+        return b.isEqual(a);
+      }
     }
     // exit early for identical values
     if (a === b) {
@@ -2968,10 +2999,18 @@
         // treat string primitives and their corresponding object instances as equal
         return a == b + '';
     }
-    if (typeof a != 'object' || typeof b != 'object') {
-      // for unequal function values
+    // exit early, in older browsers, if `a` is array-like but not `b`
+    var isArr = arrayLikeClasses[className];
+    if (noArgsClass && !isArr && (isArr = isArguments(a)) && !isArguments(b)) {
       return false;
     }
+    // exit for functions and DOM nodes
+    if (!isArr && (className != objectClass || (noNodeClass && (
+        (typeof a.toString != 'function' && typeof (a + '') == 'string') ||
+        (typeof b.toString != 'function' && typeof (b + '') == 'string'))))) {
+      return false;
+    }
+
     // assume cyclic structures are equal
     // the algorithm for detecting cyclic structures is adapted from ES 5.1
     // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
@@ -2990,7 +3029,7 @@
     stack.push(a);
 
     // recursively compare objects and arrays (susceptible to call stack limits)
-    if (arrayLikeClasses[className] || (noArgsClass && isArguments(a))) {
+    if (isArr) {
       // compare lengths to determine if a deep comparison is necessary
       size = a.length;
       result = size == b.length;
@@ -2998,54 +3037,56 @@
       if (result) {
         // deep compare the contents, ignoring non-numeric properties
         while (size--) {
-          if (!(result = isEqual(a[size], b[size], stack))) {
+          if (!(result = isEqual(a[size], b[size], stack, thorough))) {
             break;
           }
         }
       }
+      return result;
     }
-    else {
-      // objects with different constructors are not equal
-      if ('constructor' in a != 'constructor' in b || a.constructor != b.constructor) {
+
+    var ctorA = a.constructor,
+        ctorB = b.constructor;
+
+    // non `Object` object instances with different constructors are not equal
+    if (ctorA != ctorB && !(
+          toString.call(ctorA) == funcClass && ctorA instanceof ctorA &&
+          toString.call(ctorB) == funcClass && ctorB instanceof ctorB
+        )) {
+      return false;
+    }
+    // deep compare objects
+    for (var prop in a) {
+      if (hasOwnProperty.call(a, prop)) {
+        // count the number of properties.
+        size++;
+        // deep compare each property value.
+        if (!(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack, thorough))) {
+          return false;
+        }
+      }
+    }
+    // ensure both objects have the same number of properties
+    for (prop in b) {
+      // The JS engine in Adobe products, like InDesign, has a bug that causes
+      // `!size--` to throw an error so it must be wrapped in parentheses.
+      // https://github.com/documentcloud/underscore/issues/355
+      if (hasOwnProperty.call(b, prop) && !(size--)) {
+        // `size` will be `-1` if `b` has more properties than `a`
         return false;
       }
-      // deep compare objects
-      for (var prop in a) {
-        if (hasOwnProperty.call(a, prop)) {
-          // count the number of properties.
-          size++;
-          // deep compare each property value.
-          if (!(result = hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack))) {
-            break;
-          }
-        }
-      }
-      // ensure both objects have the same number of properties
-      if (result) {
-        for (prop in b) {
-          // The JS engine in Adobe products, like InDesign, has a bug that causes
-          // `!size--` to throw an error so it must be wrapped in parentheses.
-          // https://github.com/documentcloud/underscore/issues/355
-          if (hasOwnProperty.call(b, prop) && !(size--)) {
-            break;
-          }
-        }
-        // `size` will be `-1` if `b` has more properties than `a`
-        result = !size;
-      }
-      // handle JScript [[DontEnum]] bug
-      if (result && hasDontEnumBug) {
-        while (++index < 7) {
-          prop = shadowed[index];
-          if (hasOwnProperty.call(a, prop)) {
-            if (!(result = hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack))) {
-              break;
-            }
-          }
+    }
+    // handle JScript [[DontEnum]] bug
+    if (hasDontEnumBug) {
+      while (++index < 7) {
+        prop = shadowed[index];
+        if (hasOwnProperty.call(a, prop) &&
+            !(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack, thorough))) {
+          return false;
         }
       }
     }
-    return result;
+    return true;
   }
 
   /**

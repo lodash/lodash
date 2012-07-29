@@ -881,13 +881,16 @@
     });
 
     // remove JScript [[DontEnum]] fix from `_.isEqual`
-    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(result *&& *hasDontEnumBug[\s\S]+?\n\1}/, '');
+    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
 
     // remove IE `shift` and `splice` fix from mutator Array functions mixin
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
 
-    // remove `noArgsClass` from `_.clone` and `_.size`
+    // remove `noArgsClass` from `_.clone`, `_.isEqual`, and `_.size`
     source = source.replace(/ *\|\| *\(noArgsClass *&[^)]+?\)\)/g, '');
+
+    // remove `noArgsClass` from `_.isEqual`
+    source = source.replace(/if *\(noArgsClass[^}]+?}\n/, '');
 
     // remove `noArraySliceOnStrings` from `_.toArray`
     source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');

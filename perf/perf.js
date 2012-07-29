@@ -132,7 +132,10 @@
 
         // potentially expensive
         for (index = 0; index < this.count; index++) {
-          bindAllObjects[index] = belt.clone(lodash);
+          bindAllObjects[index] = belt.reduce(funcNames, function(object, funcName) {
+            object[funcName] = lodash[funcName];
+            return object;
+          }, {});
         }
       }
 
@@ -510,6 +513,18 @@
           _.bindAll(bindAllObjects.pop());
         },
         'teardown': 'function bindAll(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.clone` with an object')
+      .add('Lo-Dash', function() {
+        lodash.clone(object);
+      })
+      .add('Underscore', function() {
+        _.clone(object);
       })
   );
 
@@ -1144,16 +1159,6 @@
   );
 
   /*--------------------------------------------------------------------------*/
-
-  suites.push(
-    Benchmark.Suite('`_.size` with an array')
-      .add('Lo-Dash', function() {
-        lodash.size(numbers);
-      })
-      .add('Underscore', function() {
-        _.size(numbers);
-      })
-  );
 
   suites.push(
     Benchmark.Suite('`_.size` with an object')

@@ -2198,7 +2198,7 @@
     'inLoop':
       'for (pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {\n' +
       '  prop = props[propIndex];\n' +
-      '  if (pass = value[prop] === properties[prop]) break\n' +
+      '  if (!(pass = value[prop] === properties[prop])) break\n' +
       '}\n' +
       'if (pass) result.push(value)'
   });

@@ -1277,6 +1277,41 @@
     return values(collection);
   }
 
+  /**
+   * Examines each element in a `collection`, returning an array of all elements
+   * that contain the given `properties`.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|String} collection The collection to iterate over.
+   * @param {Object} properties The object of properties/values to filter by.
+   * @returns {Array} Returns a new array of elements that contain the given `properties`.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
+   * ];
+   *
+   * _.where(stooges, { 'age': 40 });
+   * // => [{ 'name': 'moe', 'age': 40 }]
+   */
+  var where = createIterator(filterIteratorOptions, {
+    'args': 'collection, properties',
+    'top':
+      'var pass, prop, propIndex, props = [];\n' +
+      'forIn(properties, function(value, prop) { props.push(prop) });\n' +
+      'var propsLength = props.length',
+    'inLoop':
+      'for (pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {\n' +
+      '  prop = props[propIndex];\n' +
+      '  if (pass = value[prop] === properties[prop]) break\n' +
+      '}\n' +
+      'if (pass) result.push(value)'
+  });
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -3920,6 +3955,7 @@
   lodash.uniq = uniq;
   lodash.uniqueId = uniqueId;
   lodash.values = values;
+  lodash.where = where;
   lodash.without = without;
   lodash.wrap = wrap;
   lodash.zip = zip;

@@ -342,12 +342,12 @@
 
     // iterate own properties using `Object.keys` if it's fast
     '  <% if (isKeysFast && useHas) { %>\n' +
-    '  var props = nativeKeys(iteratee),\n' +
-    '      propIndex = -1,\n' +
-    '      length = props.length;\n\n' +
+    '  var ownIndex = -1,\n' +
+    '      ownProps = nativeKeys(iteratee),\n' +
+    '      length = ownProps.length;\n\n' +
     '  <%= objectBranch.beforeLoop %>;\n' +
-    '  while (++propIndex < length) {\n' +
-    '    index = props[propIndex];\n' +
+    '  while (++ownIndex < length) {\n' +
+    '    index = ownProps[ownIndex];\n' +
     '    if (!(skipProto && index == \'prototype\')) {\n' +
     '      value = iteratee[index];\n' +
     '      <%= objectBranch.inLoop %>\n' +
@@ -461,7 +461,7 @@
     'bottom': (hasDontEnumBug ? '  }\n' : '') + '}'
   };
 
-  /** Reusable iterator options for `filter` and `reject` */
+  /** Reusable iterator options for `filter`, `reject`, and `where` */
   var filterIteratorOptions = {
     'init': '[]',
     'inLoop': 'callback(value, index, collection) && result.push(value)'
@@ -489,7 +489,7 @@
     },
     'inLoop': {
       'array':  'result[index] = callback(value, index, collection)',
-      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(callback(value, index, collection))'
+      'object': 'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '(callback(value, index, collection))'
     }
   };
 
@@ -626,14 +626,14 @@
     // create the function factory
     var factory = Function(
         'arrayClass, arrayLikeClasses, ArrayProto, bind, compareAscending, concat, ' +
-        'funcClass, hasOwnProperty, identity, indexOf, isArguments, iteratorBind, ' +
+        'forIn, funcClass, hasOwnProperty, identity, indexOf, isArguments, iteratorBind, ' +
         'objectTypes, nativeKeys, propertyIsEnumerable, slice, stringClass, toString',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
       arrayClass, arrayLikeClasses, ArrayProto, bind, compareAscending, concat,
-      funcClass, hasOwnProperty, identity, indexOf, isArguments, iteratorBind,
+      forIn, funcClass, hasOwnProperty, identity, indexOf, isArguments, iteratorBind,
       objectTypes, nativeKeys, propertyIsEnumerable, slice, stringClass, toString
     );
   }
@@ -794,7 +794,898 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Checks if a given `target` value is present in a `collection` using strict
+   * Create a clone of `value`. If `deep` is `true`, all nested objects, excluding
+   * functons and `arguments` objects, will be cloned otherwise they will be
+   * assigned by reference.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to clone.
+   * @param {Boolean} deep A flag to indicate a deep clone.
+   * @param {Object} [guard] Internally used to allow this method to work with
+   *  others like `_.map` without using their callback `index` argument for `deep`.
+   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
+   *  to avoid circular references.
+   * @param {Boolean} thorough Internally used to indicate whether or not to perform
+   *  a more thorough clone of non-object values.
+   * @returns {Mixed} Returns the cloned `value`.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
+   * ];
+   *
+   * _.clone({ 'name': 'moe' });
+   * // => { 'name': 'moe' }
+   *
+   * var shallow = _.clone(stooges);
+   * shallow[0] === stooges[0];
+   * // => true
+   *
+   * var deep = _.clone(stooges, true);
+   * shallow[0] === stooges[0];
+   * // => false
+   */
+  function clone(value, deep, guard, stack, thorough) {
+    if (value == null) {
+      return value;
+    }
+    var isObj = typeof value == 'object';
+    stack || (stack = []);
+
+    if (guard) {
+      deep = false;
+    }
+    // avoid slower checks on non-objects
+    if (thorough == null) {
+      // primitives passed from iframes use the primary document's native prototypes
+      thorough = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
+    }
+    // use custom `clone` method if available
+    if ((isObj || thorough) && value.clone && toString.call(value.clone) == funcClass) {
+      return value.clone(deep);
+    }
+    // inspect [[Class]]
+    if (isObj) {
+      // don't clone `arguments` objects, functions, or non-object Objects
+      var className = toString.call(value);
+      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {
+        return value;
+      }
+
+      var useCtor,
+          ctor = value.constructor,
+          isArr = className == arrayClass;
+
+      if (className == objectClass) {
+        // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
+        // methods that are `typeof` "string" and still can coerce nodes to strings
+        isObj = !noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string');
+
+        if (isObj) {
+          // check that the constructor is `Object` because `Object instanceof Object` is `true`
+          useCtor = toString.call(ctor) == funcClass;
+          isObj = !useCtor || ctor instanceof ctor;
+        }
+        if (isObj) {
+          // An object's own properties are iterated before inherited properties.
+          // If the last iterated key belongs to an object's own property then
+          // there are no inherited enumerable properties.
+          forIn(value, function(objValue, objKey) { isObj = objKey; });
+          isObj = isObj == true || hasOwnProperty.call(value, isObj);
+        }
+      }
+    }
+    // shallow clone
+    if (!isObj || !deep) {
+      // don't clone functions
+      return isObj
+        ? (isArr ? slice.call(value) : extend({}, value))
+        : value;
+    }
+
+    switch (className) {
+      case boolClass:
+        return new ctor(value == true);
+
+      case dateClass:
+        return new ctor(+value);
+
+      case numberClass:
+      case stringClass:
+        return new ctor(value);
+
+      case regexpClass:
+        return ctor(value.source, reFlags.exec(value));
+    }
+
+    // check for circular references and return corresponding clone
+    var length = stack.length;
+    while (length--) {
+      if (stack[length].value == value) {
+        return stack[length].clone;
+      }
+    }
+
+    // init cloned object
+    length = value.length;
+    var result = isArr ? ctor(length) : (useCtor ? new ctor : {});
+
+    // add current clone and original value to the stack of traversed objects
+    stack.push({ 'clone': result, 'value': value });
+
+    // recursively populate clone (susceptible to call stack limits)
+    if (isArr) {
+      var index = -1;
+      while (++index < length) {
+        result[index] = clone(value[index], deep, null, stack, thorough);
+      }
+    } else {
+      forOwn(value, function(objValue, key) {
+        result[key] = clone(objValue, deep, null, stack, thorough);
+      });
+    }
+    return result;
+  }
+
+  /**
+   * Assigns enumerable properties of the default object(s) to the `destination`
+   * object for all `destination` properties that resolve to `null`/`undefined`.
+   * Once a property is set, additional defaults of the same property will be
+   * ignored.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The destination object.
+   * @param {Object} [default1, default2, ...] The default objects.
+   * @returns {Object} Returns the `object`.
+   * @example
+   *
+   * var iceCream = { 'flavor': 'chocolate' };
+   * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
+   * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
+   */
+  var defaults = createIterator(extendIteratorOptions, {
+    'inLoop': 'if (result[index] == null) ' + extendIteratorOptions.inLoop
+  });
+
+  /**
+   * Creates a shallow clone of `object` excluding the specified properties.
+   * Property names may be specified as individual arguments or as arrays of
+   * property names.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The source object.
+   * @param {Object} [prop1, prop2, ...] The properties to drop.
+   * @returns {Object} Returns an object without the dropped properties.
+   * @example
+   *
+   * _.drop({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
+   * // => { 'name': 'moe', 'age': 40 }
+   */
+  var drop = createIterator({
+    'useHas': false,
+    'args': 'object',
+    'init': '{}',
+    'top': 'var props = concat.apply(ArrayProto, arguments)',
+    'inLoop': 'if (indexOf(props, index) < 0) result[index] = value'
+  });
+
+  /**
+   * Assigns enumerable properties of the source object(s) to the `destination`
+   * object. Subsequent sources will overwrite propery assignments of previous
+   * sources.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The destination object.
+   * @param {Object} [source1, source2, ...] The source objects.
+   * @returns {Object} Returns the `object`.
+   * @example
+   *
+   * _.extend({ 'name': 'moe' }, { 'age': 40 });
+   * // => { 'name': 'moe', 'age': 40 }
+   */
+  var extend = createIterator(extendIteratorOptions);
+
+  /**
+   * Iterates over `object`'s own and inherited enumerable properties, executing
+   * the `callback` for each property. The `callback` is bound to `thisArg` and
+   * invoked with 3 arguments; (value, key, object).
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Object} Returns the `object`.
+   * @example
+   *
+   * function Dog(name) {
+   *   this.name = name;
+   * }
+   *
+   * Dog.prototype.bark = function() {
+   *   alert('Woof, woof!');
+   * };
+   *
+   * _.forIn(new Dog('Dagny'), function(value, key) {
+   *   alert(key);
+   * });
+   * // => alerts 'name' and 'bark' (order is not guaranteed)
+   */
+  var forIn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions, {
+    'useHas': false
+  });
+
+  /**
+   * Iterates over `object`'s own enumerable properties, executing the `callback`
+   * for each property. The `callback` is bound to `thisArg` and invoked with 3
+   * arguments; (value, key, object).
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Object} Returns the `object`.
+   * @example
+   *
+   * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
+   *   alert(key);
+   * });
+   * // => alerts '0', '1', and 'length' (order is not guaranteed)
+   */
+  var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
+
+  /**
+   * Creates a sorted array of all enumerable properties, own and inherited,
+   * of `object` that have function values.
+   *
+   * @static
+   * @memberOf _
+   * @alias methods
+   * @category Objects
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property names that have function values.
+   * @example
+   *
+   * _.functions(_);
+   * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
+   */
+  var functions = createIterator({
+    'useHas': false,
+    'args': 'object',
+    'init': '[]',
+    'inLoop': 'if (toString.call(value) == funcClass) result.push(index)',
+    'bottom': 'result.sort()'
+  });
+
+  /**
+   * Checks if the specified object `property` exists and is a direct property,
+   * instead of an inherited property.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to check.
+   * @param {String} property The property to check for.
+   * @returns {Boolean} Returns `true` if key is a direct property, else `false`.
+   * @example
+   *
+   * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
+   * // => true
+   */
+  function has(object, property) {
+    return hasOwnProperty.call(object, property);
+  }
+
+  /**
+   * Checks if `value` is an `arguments` object.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
+   * @example
+   *
+   * (function() { return _.isArguments(arguments); })(1, 2, 3);
+   * // => true
+   *
+   * _.isArguments([1, 2, 3]);
+   * // => false
+   */
+  function isArguments(value) {
+    return toString.call(value) == argsClass;
+  }
+  // fallback for browsers that can't detect `arguments` objects by [[Class]]
+  if (noArgsClass) {
+    isArguments = function(value) {
+      return !!(value && hasOwnProperty.call(value, 'callee'));
+    };
+  }
+
+  /**
+   * Checks if `value` is an array.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is an array, else `false`.
+   * @example
+   *
+   * (function() { return _.isArray(arguments); })();
+   * // => false
+   *
+   * _.isArray([1, 2, 3]);
+   * // => true
+   */
+  var isArray = nativeIsArray || function(value) {
+    return toString.call(value) == arrayClass;
+  };
+
+  /**
+   * Checks if `value` is a boolean (`true` or `false`) value.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a boolean value, else `false`.
+   * @example
+   *
+   * _.isBoolean(null);
+   * // => false
+   */
+  function isBoolean(value) {
+    return value === true || value === false || toString.call(value) == boolClass;
+  }
+
+  /**
+   * Checks if `value` is a date.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a date, else `false`.
+   * @example
+   *
+   * _.isDate(new Date);
+   * // => true
+   */
+  function isDate(value) {
+    return toString.call(value) == dateClass;
+  }
+
+  /**
+   * Checks if `value` is a DOM element.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a DOM element, else `false`.
+   * @example
+   *
+   * _.isElement(document.body);
+   * // => true
+   */
+  function isElement(value) {
+    return !!(value && value.nodeType == 1);
+  }
+
+  /**
+   * Checks if `value` is empty. Arrays, strings, or `arguments` objects with a
+   * length of `0` and objects with no own enumerable properties are considered
+   * "empty".
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Array|Object|String} value The value to inspect.
+   * @returns {Boolean} Returns `true` if the `value` is empty, else `false`.
+   * @example
+   *
+   * _.isEmpty([1, 2, 3]);
+   * // => false
+   *
+   * _.isEmpty({});
+   * // => true
+   *
+   * _.isEmpty('');
+   * // => true
+   */
+  var isEmpty = createIterator({
+    'args': 'value',
+    'init': 'true',
+    'top':
+      'if (arrayLikeClasses[toString.call(value)]' +
+        (noArgsClass ? ' || isArguments(value)' : '') +
+      ') return !value.length',
+    'inLoop': {
+      'object': 'return false'
+    }
+  });
+
+  /**
+   * Performs a deep comparison between two values to determine if they are
+   * equivalent to each other.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} a The value to compare.
+   * @param {Mixed} b The other value to compare.
+   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
+   *  to avoid circular references.
+   * @param {Boolean} thorough Internally used to indicate whether or not to perform
+   *  a more thorough comparison of non-object values.
+   * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
+   * @example
+   *
+   * var moe = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
+   * var clone = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
+   *
+   * moe == clone;
+   * // => false
+   *
+   * _.isEqual(moe, clone);
+   * // => true
+   */
+  function isEqual(a, b, stack, thorough) {
+    stack || (stack = []);
+
+    // a strict comparison is necessary because `null == undefined`
+    if (a == null || b == null) {
+      return a === b;
+    }
+    // avoid slower checks on non-objects
+    if (thorough == null) {
+      // primitives passed from iframes use the primary document's native prototypes
+      thorough = !!(BoolProto.isEqual || NumberProto.isEqual || StringProto.isEqual);
+    }
+    if (objectTypes[typeof a] || objectTypes[typeof b] || thorough) {
+      // unwrap any LoDash wrapped values
+      if (a._chain) {
+        a = a._wrapped;
+      }
+      if (b._chain) {
+        b = b._wrapped;
+      }
+      // use custom `isEqual` method if available
+      if (a.isEqual && toString.call(a.isEqual) == funcClass) {
+        return a.isEqual(b);
+      }
+      if (b.isEqual && toString.call(b.isEqual) == funcClass) {
+        return b.isEqual(a);
+      }
+    }
+    // exit early for identical values
+    if (a === b) {
+      // treat `+0` vs. `-0` as not equal
+      return a !== 0 || (1 / a == 1 / b);
+    }
+    // compare [[Class]] names
+    var className = toString.call(a);
+    if (className != toString.call(b)) {
+      return false;
+    }
+    switch (className) {
+      case boolClass:
+      case dateClass:
+        // coerce dates and booleans to numbers, dates to milliseconds and booleans
+        // to `1` or `0`, treating invalid dates coerced to `NaN` as not equal
+        return +a == +b;
+
+      case numberClass:
+        // treat `NaN` vs. `NaN` as equal
+        return a != +a
+          ? b != +b
+          // but treat `+0` vs. `-0` as not equal
+          : (a == 0 ? (1 / a == 1 / b) : a == +b);
+
+      case regexpClass:
+      case stringClass:
+        // coerce regexes to strings (http://es5.github.com/#x15.10.6.4)
+        // treat string primitives and their corresponding object instances as equal
+        return a == b + '';
+    }
+    // exit early, in older browsers, if `a` is array-like but not `b`
+    var isArr = arrayLikeClasses[className];
+    if (noArgsClass && !isArr && (isArr = isArguments(a)) && !isArguments(b)) {
+      return false;
+    }
+    // exit for functions and DOM nodes
+    if (!isArr && (className != objectClass || (noNodeClass && (
+        (typeof a.toString != 'function' && typeof (a + '') == 'string') ||
+        (typeof b.toString != 'function' && typeof (b + '') == 'string'))))) {
+      return false;
+    }
+
+    // assume cyclic structures are equal
+    // the algorithm for detecting cyclic structures is adapted from ES 5.1
+    // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
+    var length = stack.length;
+    while (length--) {
+      if (stack[length] == a) {
+        return true;
+      }
+    }
+
+    var index = -1,
+        result = true,
+        size = 0;
+
+    // add `a` to the stack of traversed objects
+    stack.push(a);
+
+    // recursively compare objects and arrays (susceptible to call stack limits)
+    if (isArr) {
+      // compare lengths to determine if a deep comparison is necessary
+      size = a.length;
+      result = size == b.length;
+
+      if (result) {
+        // deep compare the contents, ignoring non-numeric properties
+        while (size--) {
+          if (!(result = isEqual(a[size], b[size], stack, thorough))) {
+            break;
+          }
+        }
+      }
+      return result;
+    }
+
+    var ctorA = a.constructor,
+        ctorB = b.constructor;
+
+    // non `Object` object instances with different constructors are not equal
+    if (ctorA != ctorB && !(
+          toString.call(ctorA) == funcClass && ctorA instanceof ctorA &&
+          toString.call(ctorB) == funcClass && ctorB instanceof ctorB
+        )) {
+      return false;
+    }
+    // deep compare objects
+    for (var prop in a) {
+      if (hasOwnProperty.call(a, prop)) {
+        // count the number of properties.
+        size++;
+        // deep compare each property value.
+        if (!(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack, thorough))) {
+          return false;
+        }
+      }
+    }
+    // ensure both objects have the same number of properties
+    for (prop in b) {
+      // The JS engine in Adobe products, like InDesign, has a bug that causes
+      // `!size--` to throw an error so it must be wrapped in parentheses.
+      // https://github.com/documentcloud/underscore/issues/355
+      if (hasOwnProperty.call(b, prop) && !(size--)) {
+        // `size` will be `-1` if `b` has more properties than `a`
+        return false;
+      }
+    }
+    // handle JScript [[DontEnum]] bug
+    if (hasDontEnumBug) {
+      while (++index < 7) {
+        prop = shadowed[index];
+        if (hasOwnProperty.call(a, prop) &&
+            !(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack, thorough))) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Checks if `value` is a finite number.
+   * Note: This is not the same as native `isFinite`, which will return true for
+   * booleans and other values. See http://es5.github.com/#x15.1.2.5.
+   *
+   * @deprecated
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a finite number, else `false`.
+   * @example
+   *
+   * _.isFinite(-101);
+   * // => true
+   *
+   * _.isFinite('10');
+   * // => false
+   *
+   * _.isFinite(Infinity);
+   * // => false
+   */
+  function isFinite(value) {
+    return nativeIsFinite(value) && toString.call(value) == numberClass;
+  }
+
+  /**
+   * Checks if `value` is a function.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a function, else `false`.
+   * @example
+   *
+   * _.isFunction(''.concat);
+   * // => true
+   */
+  function isFunction(value) {
+    return toString.call(value) == funcClass;
+  }
+
+  /**
+   * Checks if `value` is the language type of Object.
+   * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is an object, else `false`.
+   * @example
+   *
+   * _.isObject({});
+   * // => true
+   *
+   * _.isObject(1);
+   * // => false
+   */
+  function isObject(value) {
+    // check if the value is the ECMAScript language type of Object
+    // http://es5.github.com/#x8
+    return value && objectTypes[typeof value];
+  }
+
+  /**
+   * Checks if `value` is `NaN`.
+   * Note: This is not the same as native `isNaN`, which will return true for
+   * `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
+   *
+   * @deprecated
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is `NaN`, else `false`.
+   * @example
+   *
+   * _.isNaN(NaN);
+   * // => true
+   *
+   * _.isNaN(new Number(NaN));
+   * // => true
+   *
+   * isNaN(undefined);
+   * // => true
+   *
+   * _.isNaN(undefined);
+   * // => false
+   */
+  function isNaN(value) {
+    // `NaN` as a primitive is the only value that is not equal to itself
+    // (perform the [[Class]] check first to avoid errors with some host objects in IE)
+    return toString.call(value) == numberClass && value != +value
+  }
+
+  /**
+   * Checks if `value` is `null`.
+   *
+   * @deprecated
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is `null`, else `false`.
+   * @example
+   *
+   * _.isNull(null);
+   * // => true
+   *
+   * _.isNull(undefined);
+   * // => false
+   */
+  function isNull(value) {
+    return value === null;
+  }
+
+  /**
+   * Checks if `value` is a number.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a number, else `false`.
+   * @example
+   *
+   * _.isNumber(8.4 * 5;
+   * // => true
+   */
+  function isNumber(value) {
+    return toString.call(value) == numberClass;
+  }
+
+  /**
+   * Checks if `value` is a regular expression.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a regular expression, else `false`.
+   * @example
+   *
+   * _.isRegExp(/moe/);
+   * // => true
+   */
+  function isRegExp(value) {
+    return toString.call(value) == regexpClass;
+  }
+
+  /**
+   * Checks if `value` is a string.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a string, else `false`.
+   * @example
+   *
+   * _.isString('moe');
+   * // => true
+   */
+  function isString(value) {
+    return toString.call(value) == stringClass;
+  }
+
+  /**
+   * Checks if `value` is `undefined`.
+   *
+   * @deprecated
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is `undefined`, else `false`.
+   * @example
+   *
+   * _.isUndefined(void 0);
+   * // => true
+   */
+  function isUndefined(value) {
+    return value === undefined;
+  }
+
+  /**
+   * Creates an array composed of the own enumerable property names of `object`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property names.
+   * @example
+   *
+   * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
+   * // => ['one', 'two', 'three'] (order is not guaranteed)
+   */
+  var keys = !nativeKeys ? shimKeys : function(object) {
+    // avoid iterating over the `prototype` property
+    return typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
+      ? shimKeys(object)
+      : nativeKeys(object);
+  };
+
+  /**
+   * Creates a shallow clone of `object` composed of the specified properties.
+   * Property names may be specified as individual arguments or as arrays of
+   * property names.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The source object.
+   * @param {Object} [prop1, prop2, ...] The properties to pick.
+   * @returns {Object} Returns an object composed of the picked properties.
+   * @example
+   *
+   * _.pick({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'name', 'age');
+   * // => { 'name': 'moe', 'age': 40 }
+   */
+  function pick(object) {
+    var prop,
+        index = 0,
+        props = concat.apply(ArrayProto, arguments),
+        length = props.length,
+        result = {};
+
+    // start `index` at `1` to skip `object`
+    while (++index < length) {
+      prop = props[index];
+      if (prop in object) {
+        result[prop] = object[prop];
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Gets the size of `value` by returning `value.length` if `value` is an
+   * array, string, or `arguments` object. If `value` is an object, size is
+   * determined by returning the number of own enumerable properties it has.
+   *
+   * @deprecated
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Array|Object|String} value The value to inspect.
+   * @returns {Number} Returns `value.length` or number of own enumerable properties.
+   * @example
+   *
+   * _.size([1, 2]);
+   * // => 2
+   *
+   * _.size({ 'one': 1, 'two': 2, 'three': 3 });
+   * // => 3
+   *
+   * _.size('curly');
+   * // => 5
+   */
+  function size(value) {
+    if (!value) {
+      return 0;
+    }
+    return arrayLikeClasses[toString.call(value)] || (noArgsClass && isArguments(value))
+      ? value.length
+      : keys(value).length;
+  }
+
+  /**
+   * Creates an array composed of the own enumerable property values of `object`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property values.
+   * @example
+   *
+   * _.values({ 'one': 1, 'two': 2, 'three': 3 });
+   * // => [1, 2, 3]
+   */
+  var values = createIterator({
+    'args': 'object',
+    'init': '[]',
+    'inLoop': 'result.push(value)'
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * Checks if a given `target` element is present in a `collection` using strict
    * equality for comparisons, i.e. `===`.
    *
    * @static
@@ -803,7 +1694,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Mixed} target The value to check for.
-   * @returns {Boolean} Returns `true` if `target` value is found, else `false`.
+   * @returns {Boolean} Returns `true` if the `target` element is found, else `false`.
    * @example
    *
    * _.contains([1, 2, 3], 3);
@@ -865,7 +1756,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Boolean} Returns `true` if all values pass the callback check, else `false`.
+   * @returns {Boolean} Returns `true` if all elements pass the callback check, else `false`.
    * @example
    *
    * _.every([true, 1, null, 'yes'], Boolean);
@@ -874,8 +1765,8 @@
   var every = createIterator(baseIteratorOptions, everyIteratorOptions);
 
   /**
-   * Examines each value in a `collection`, returning an array of all values the
-   * `callback` returns truthy for. The `callback` is bound to `thisArg` and
+   * Examines each element in a `collection`, returning an array of all elements
+   * the `callback` returns truthy for. The `callback` is bound to `thisArg` and
    * invoked with 3 arguments; (value, index|key, collection).
    *
    * @static
@@ -885,7 +1776,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of values that passed callback check.
+   * @returns {Array} Returns a new array of elements that passed callback check.
    * @example
    *
    * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
@@ -894,9 +1785,9 @@
   var filter = createIterator(baseIteratorOptions, filterIteratorOptions);
 
   /**
-   * Examines each value in a `collection`, returning the first one the `callback`
+   * Examines each element in a `collection`, returning the first one the `callback`
    * returns truthy for. The function returns as soon as it finds an acceptable
-   * value, and does not iterate over the entire `collection`. The `callback` is
+   * element, and does not iterate over the entire `collection`. The `callback` is
    * bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
    *
    * @static
@@ -906,7 +1797,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Mixed} Returns the value that passed the callback check, else `undefined`.
+   * @returns {Mixed} Returns the element that passed the callback check, else `undefined`.
    * @example
    *
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
@@ -918,8 +1809,8 @@
   });
 
   /**
-   * Iterates over a `collection`, executing the `callback` for each value in the
-   * `collection`. The `callback` is bound to `thisArg` and invoked with 3
+   * Iterates over a `collection`, executing the `callback` for each element in
+   * the `collection`. The `callback` is bound to `thisArg` and invoked with 3
    * arguments; (value, index|key, collection).
    *
    * @static
@@ -1004,7 +1895,7 @@
         'result[index] = (isFunc ? methodName : value[methodName])' +
         '.apply(value, args)',
       'object':
-        'result' + (isKeysFast ? '[propIndex] = ' : '.push') +
+        'result' + (isKeysFast ? '[ownIndex] = ' : '.push') +
         '((isFunc ? methodName : value[methodName]).apply(value, args))'
     }
   });
@@ -1021,7 +1912,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of values returned by the callback.
+   * @returns {Array} Returns a new array of elements returned by the callback.
    * @example
    *
    * _.map([1, 2, 3], function(num) { return num * 3; });
@@ -1057,7 +1948,7 @@
     'args': 'collection, property',
     'inLoop': {
       'array':  'result[index] = value[property]',
-      'object': 'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '(value[property])'
+      'object': 'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '(value[property])'
     }
   });
 
@@ -1167,7 +2058,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of values that did **not** pass the callback check.
+   * @returns {Array} Returns a new array of elements that did **not** pass the callback check.
    * @example
    *
    * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
@@ -1190,7 +2081,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Boolean} Returns `true` if any value passes the callback check, else `false`.
+   * @returns {Boolean} Returns `true` if any element passes the callback check, else `false`.
    * @example
    *
    * _.some([null, 0, 'yes', false]);
@@ -1214,7 +2105,7 @@
    * @param {Function|String} callback The function called per iteration or
    *  property name to sort by.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of sorted values.
+   * @returns {Array} Returns a new array of sorted elements.
    * @example
    *
    * _.sortBy([1, 2, 3], function(num) { return Math.sin(num); });
@@ -1234,7 +2125,7 @@
         '  value: value\n' +
         '}',
       'object':
-        'result' + (isKeysFast ? '[propIndex] = ' : '.push') + '({\n' +
+        'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '({\n' +
         '  criteria: callback(value, index, collection),\n' +
         '  value: value\n' +
         '})'
@@ -1345,7 +2236,7 @@
   }
 
   /**
-   * Creates a new array of `array` values not present in the other arrays
+   * Creates a new array of `array` elements not present in the other arrays
    * using strict equality for comparisons, i.e. `===`.
    *
    * @static
@@ -1353,7 +2244,7 @@
    * @category Arrays
    * @param {Array} array The array to process.
    * @param {Array} [array1, array2, ...] Arrays to check.
-   * @returns {Array} Returns a new array of `array` values not present in the
+   * @returns {Array} Returns a new array of `array` elements not present in the
    *  other arrays.
    * @example
    *
@@ -1379,8 +2270,8 @@
   }
 
   /**
-   * Gets the first value of the `array`. Pass `n` to return the first `n` values
-   * of the `array`.
+   * Gets the first element of the `array`. Pass `n` to return the first `n`
+   * elements of the `array`.
    *
    * @static
    * @memberOf _
@@ -1390,8 +2281,8 @@
    * @param {Number} [n] The number of elements to return.
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Mixed} Returns the first value or an array of the first `n` values
-   *  of `array`.
+   * @returns {Mixed} Returns the first element or an array of the first `n`
+   *  elements of `array`.
    * @example
    *
    * _.first([5, 4, 3, 2, 1]);
@@ -1489,8 +2380,8 @@
   }
 
   /**
-   * Gets all but the last value of `array`. Pass `n` to exclude the last `n`
-   * values from the result.
+   * Gets all but the last element of `array`. Pass `n` to exclude the last `n`
+   * elements from the result.
    *
    * @static
    * @memberOf _
@@ -1499,7 +2390,7 @@
    * @param {Number} [n] The number of elements to return.
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Array} Returns all but the last value or `n` values of `array`.
+   * @returns {Array} Returns all but the last element or `n` elements of `array`.
    * @example
    *
    * _.initial([3, 2, 1]);
@@ -1519,7 +2410,7 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} [array1, array2, ...] Arrays to process.
-   * @returns {Array} Returns a new array of unique values, in order, that are
+   * @returns {Array} Returns a new array of unique elements, in order, that are
    *  present in **all** of the arrays.
    * @example
    *
@@ -1550,8 +2441,8 @@
   }
 
   /**
-   * Gets the last value of the `array`. Pass `n` to return the lasy `n` values
-   * of the `array`.
+   * Gets the last element of the `array`. Pass `n` to return the lasy `n`
+   * elementsvof the `array`.
    *
    * @static
    * @memberOf _
@@ -1560,8 +2451,8 @@
    * @param {Number} [n] The number of elements to return.
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Mixed} Returns the last value or an array of the last `n` values
-   *  of `array`.
+   * @returns {Mixed} Returns the last element or an array of the last `n`
+   *  elements of `array`.
    * @example
    *
    * _.last([3, 2, 1]);
@@ -2522,897 +3413,6 @@
       return wrapper.apply(this, args);
     };
   }
-
-  /*--------------------------------------------------------------------------*/
-
-  /**
-   * Create a clone of `value`. If `deep` is `true`, all nested objects, excluding
-   * functons and `arguments` objects, will be cloned otherwise they will be
-   * assigned by reference.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to clone.
-   * @param {Boolean} deep A flag to indicate a deep clone.
-   * @param {Object} [guard] Internally used to allow this method to work with
-   *  others like `_.map` without using their callback `index` argument for `deep`.
-   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
-   *  to avoid circular references.
-   * @param {Boolean} thorough Internally used to indicate whether or not to perform
-   *  a more thorough clone of non-object values.
-   * @returns {Mixed} Returns the cloned `value`.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
-   * ];
-   *
-   * _.clone({ 'name': 'moe' });
-   * // => { 'name': 'moe' }
-   *
-   * var shallow = _.clone(stooges);
-   * shallow[0] === stooges[0];
-   * // => true
-   *
-   * var deep = _.clone(stooges, true);
-   * shallow[0] === stooges[0];
-   * // => false
-   */
-  function clone(value, deep, guard, stack, thorough) {
-    if (value == null) {
-      return value;
-    }
-    var isObj = typeof value == 'object';
-    stack || (stack = []);
-
-    if (guard) {
-      deep = false;
-    }
-    // avoid slower checks on non-objects
-    if (thorough == null) {
-      // primitives passed from iframes use the primary document's native prototypes
-      thorough = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
-    }
-    // use custom `clone` method if available
-    if ((isObj || thorough) && value.clone && toString.call(value.clone) == funcClass) {
-      return value.clone(deep);
-    }
-    // inspect [[Class]]
-    if (isObj) {
-      // don't clone `arguments` objects, functions, or non-object Objects
-      var className = toString.call(value);
-      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {
-        return value;
-      }
-
-      var useCtor,
-          ctor = value.constructor,
-          isArr = className == arrayClass;
-
-      if (className == objectClass) {
-        // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-        // methods that are `typeof` "string" and still can coerce nodes to strings
-        isObj = !noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string');
-
-        if (isObj) {
-          // check that the constructor is `Object` because `Object instanceof Object` is `true`
-          useCtor = toString.call(ctor) == funcClass;
-          isObj = !useCtor || ctor instanceof ctor;
-        }
-        if (isObj) {
-          // An object's own properties are iterated before inherited properties.
-          // If the last iterated key belongs to an object's own property then
-          // there are no inherited enumerable properties.
-          forIn(value, function(objValue, objKey) { isObj = objKey; });
-          isObj = isObj == true || hasOwnProperty.call(value, isObj);
-        }
-      }
-    }
-    // shallow clone
-    if (!isObj || !deep) {
-      // don't clone functions
-      return isObj
-        ? (isArr ? slice.call(value) : extend({}, value))
-        : value;
-    }
-
-    switch (className) {
-      case boolClass:
-        return new ctor(value == true);
-
-      case dateClass:
-        return new ctor(+value);
-
-      case numberClass:
-      case stringClass:
-        return new ctor(value);
-
-      case regexpClass:
-        return ctor(value.source, reFlags.exec(value));
-    }
-
-    // check for circular references and return corresponding clone
-    var length = stack.length;
-    while (length--) {
-      if (stack[length].value == value) {
-        return stack[length].clone;
-      }
-    }
-
-    // init cloned object
-    length = value.length;
-    var result = isArr ? ctor(length) : (useCtor ? new ctor : {});
-
-    // add current clone and original value to the stack of traversed objects
-    stack.push({ 'clone': result, 'value': value });
-
-    // recursively populate clone (susceptible to call stack limits)
-    if (isArr) {
-      var index = -1;
-      while (++index < length) {
-        result[index] = clone(value[index], deep, null, stack, thorough);
-      }
-    } else {
-      forOwn(value, function(objValue, key) {
-        result[key] = clone(objValue, deep, null, stack, thorough);
-      });
-    }
-    return result;
-  }
-
-  /**
-   * Assigns enumerable properties of the default object(s) to the `destination`
-   * object for all `destination` properties that resolve to `null`/`undefined`.
-   * Once a property is set, additional defaults of the same property will be
-   * ignored.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The destination object.
-   * @param {Object} [default1, default2, ...] The default objects.
-   * @returns {Object} Returns the `object`.
-   * @example
-   *
-   * var iceCream = { 'flavor': 'chocolate' };
-   * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
-   * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
-   */
-  var defaults = createIterator(extendIteratorOptions, {
-    'inLoop': 'if (result[index] == null) ' + extendIteratorOptions.inLoop
-  });
-
-  /**
-   * Creates a shallow clone of `object` excluding the specified properties.
-   * Property names may be specified as individual arguments or as arrays of
-   * property names.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The source object.
-   * @param {Object} [prop1, prop2, ...] The properties to drop.
-   * @returns {Object} Returns an object without the dropped properties.
-   * @example
-   *
-   * _.drop({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
-   * // => { 'name': 'moe', 'age': 40 }
-   */
-  var drop = createIterator({
-    'useHas': false,
-    'args': 'object',
-    'init': '{}',
-    'top': 'var props = concat.apply(ArrayProto, arguments)',
-    'inLoop': 'if (indexOf(props, index) < 0) result[index] = value'
-  });
-
-  /**
-   * Assigns enumerable properties of the source object(s) to the `destination`
-   * object. Subsequent sources will overwrite propery assignments of previous
-   * sources.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The destination object.
-   * @param {Object} [source1, source2, ...] The source objects.
-   * @returns {Object} Returns the `object`.
-   * @example
-   *
-   * _.extend({ 'name': 'moe' }, { 'age': 40 });
-   * // => { 'name': 'moe', 'age': 40 }
-   */
-  var extend = createIterator(extendIteratorOptions);
-
-  /**
-   * Iterates over `object`'s own and inherited enumerable properties, executing
-   * the `callback` for each property. The `callback` is bound to `thisArg` and
-   * invoked with 3 arguments; (value, key, object).
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to iterate over.
-   * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Object} Returns the `object`.
-   * @example
-   *
-   * function Dog(name) {
-   *   this.name = name;
-   * }
-   *
-   * Dog.prototype.bark = function() {
-   *   alert('Woof, woof!');
-   * };
-   *
-   * _.forIn(new Dog('Dagny'), function(value, key) {
-   *   alert(key);
-   * });
-   * // => alerts 'name' and 'bark' (order is not guaranteed)
-   */
-  var forIn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions, {
-    'useHas': false
-  });
-
-  /**
-   * Iterates over `object`'s own enumerable properties, executing the `callback`
-   * for each property. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, key, object).
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to iterate over.
-   * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Object} Returns the `object`.
-   * @example
-   *
-   * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
-   *   alert(key);
-   * });
-   * // => alerts '0', '1', and 'length' (order is not guaranteed)
-   */
-  var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
-
-  /**
-   * Creates a sorted array of all enumerable properties, own and inherited,
-   * of `object` that have function values.
-   *
-   * @static
-   * @memberOf _
-   * @alias methods
-   * @category Objects
-   * @param {Object} object The object to inspect.
-   * @returns {Array} Returns a new array of property names that have function values.
-   * @example
-   *
-   * _.functions(_);
-   * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
-   */
-  var functions = createIterator({
-    'useHas': false,
-    'args': 'object',
-    'init': '[]',
-    'inLoop': 'if (toString.call(value) == funcClass) result.push(index)',
-    'bottom': 'result.sort()'
-  });
-
-  /**
-   * Checks if the specified object `property` exists and is a direct property,
-   * instead of an inherited property.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to check.
-   * @param {String} property The property to check for.
-   * @returns {Boolean} Returns `true` if key is a direct property, else `false`.
-   * @example
-   *
-   * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
-   * // => true
-   */
-  function has(object, property) {
-    return hasOwnProperty.call(object, property);
-  }
-
-  /**
-   * Checks if `value` is an `arguments` object.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
-   * @example
-   *
-   * (function() { return _.isArguments(arguments); })(1, 2, 3);
-   * // => true
-   *
-   * _.isArguments([1, 2, 3]);
-   * // => false
-   */
-  function isArguments(value) {
-    return toString.call(value) == argsClass;
-  }
-  // fallback for browsers that can't detect `arguments` objects by [[Class]]
-  if (noArgsClass) {
-    isArguments = function(value) {
-      return !!(value && hasOwnProperty.call(value, 'callee'));
-    };
-  }
-
-  /**
-   * Checks if `value` is an array.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an array, else `false`.
-   * @example
-   *
-   * (function() { return _.isArray(arguments); })();
-   * // => false
-   *
-   * _.isArray([1, 2, 3]);
-   * // => true
-   */
-  var isArray = nativeIsArray || function(value) {
-    return toString.call(value) == arrayClass;
-  };
-
-  /**
-   * Checks if `value` is a boolean (`true` or `false`) value.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a boolean value, else `false`.
-   * @example
-   *
-   * _.isBoolean(null);
-   * // => false
-   */
-  function isBoolean(value) {
-    return value === true || value === false || toString.call(value) == boolClass;
-  }
-
-  /**
-   * Checks if `value` is a date.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a date, else `false`.
-   * @example
-   *
-   * _.isDate(new Date);
-   * // => true
-   */
-  function isDate(value) {
-    return toString.call(value) == dateClass;
-  }
-
-  /**
-   * Checks if `value` is a DOM element.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a DOM element, else `false`.
-   * @example
-   *
-   * _.isElement(document.body);
-   * // => true
-   */
-  function isElement(value) {
-    return !!(value && value.nodeType == 1);
-  }
-
-  /**
-   * Checks if `value` is empty. Arrays, strings, or `arguments` objects with a
-   * length of `0` and objects with no own enumerable properties are considered
-   * "empty".
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Array|Object|String} value The value to inspect.
-   * @returns {Boolean} Returns `true` if the `value` is empty, else `false`.
-   * @example
-   *
-   * _.isEmpty([1, 2, 3]);
-   * // => false
-   *
-   * _.isEmpty({});
-   * // => true
-   *
-   * _.isEmpty('');
-   * // => true
-   */
-  var isEmpty = createIterator({
-    'args': 'value',
-    'init': 'true',
-    'top':
-      'if (arrayLikeClasses[toString.call(value)]' +
-        (noArgsClass ? ' || isArguments(value)' : '') +
-      ') return !value.length',
-    'inLoop': {
-      'object': 'return false'
-    }
-  });
-
-  /**
-   * Performs a deep comparison between two values to determine if they are
-   * equivalent to each other.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} a The value to compare.
-   * @param {Mixed} b The other value to compare.
-   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
-   *  to avoid circular references.
-   * @param {Boolean} thorough Internally used to indicate whether or not to perform
-   *  a more thorough comparison of non-object values.
-   * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
-   * @example
-   *
-   * var moe = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
-   * var clone = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
-   *
-   * moe == clone;
-   * // => false
-   *
-   * _.isEqual(moe, clone);
-   * // => true
-   */
-  function isEqual(a, b, stack, thorough) {
-    stack || (stack = []);
-
-    // a strict comparison is necessary because `null == undefined`
-    if (a == null || b == null) {
-      return a === b;
-    }
-    // avoid slower checks on non-objects
-    if (thorough == null) {
-      // primitives passed from iframes use the primary document's native prototypes
-      thorough = !!(BoolProto.isEqual || NumberProto.isEqual || StringProto.isEqual);
-    }
-    if (objectTypes[typeof a] || objectTypes[typeof b] || thorough) {
-      // unwrap any LoDash wrapped values
-      if (a._chain) {
-        a = a._wrapped;
-      }
-      if (b._chain) {
-        b = b._wrapped;
-      }
-      // use custom `isEqual` method if available
-      if (a.isEqual && toString.call(a.isEqual) == funcClass) {
-        return a.isEqual(b);
-      }
-      if (b.isEqual && toString.call(b.isEqual) == funcClass) {
-        return b.isEqual(a);
-      }
-    }
-    // exit early for identical values
-    if (a === b) {
-      // treat `+0` vs. `-0` as not equal
-      return a !== 0 || (1 / a == 1 / b);
-    }
-    // compare [[Class]] names
-    var className = toString.call(a);
-    if (className != toString.call(b)) {
-      return false;
-    }
-    switch (className) {
-      case boolClass:
-      case dateClass:
-        // coerce dates and booleans to numbers, dates to milliseconds and booleans
-        // to `1` or `0`, treating invalid dates coerced to `NaN` as not equal
-        return +a == +b;
-
-      case numberClass:
-        // treat `NaN` vs. `NaN` as equal
-        return a != +a
-          ? b != +b
-          // but treat `+0` vs. `-0` as not equal
-          : (a == 0 ? (1 / a == 1 / b) : a == +b);
-
-      case regexpClass:
-      case stringClass:
-        // coerce regexes to strings (http://es5.github.com/#x15.10.6.4)
-        // treat string primitives and their corresponding object instances as equal
-        return a == b + '';
-    }
-    // exit early, in older browsers, if `a` is array-like but not `b`
-    var isArr = arrayLikeClasses[className];
-    if (noArgsClass && !isArr && (isArr = isArguments(a)) && !isArguments(b)) {
-      return false;
-    }
-    // exit for functions and DOM nodes
-    if (!isArr && (className != objectClass || (noNodeClass && (
-        (typeof a.toString != 'function' && typeof (a + '') == 'string') ||
-        (typeof b.toString != 'function' && typeof (b + '') == 'string'))))) {
-      return false;
-    }
-
-    // assume cyclic structures are equal
-    // the algorithm for detecting cyclic structures is adapted from ES 5.1
-    // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
-    var length = stack.length;
-    while (length--) {
-      if (stack[length] == a) {
-        return true;
-      }
-    }
-
-    var index = -1,
-        result = true,
-        size = 0;
-
-    // add `a` to the stack of traversed objects
-    stack.push(a);
-
-    // recursively compare objects and arrays (susceptible to call stack limits)
-    if (isArr) {
-      // compare lengths to determine if a deep comparison is necessary
-      size = a.length;
-      result = size == b.length;
-
-      if (result) {
-        // deep compare the contents, ignoring non-numeric properties
-        while (size--) {
-          if (!(result = isEqual(a[size], b[size], stack, thorough))) {
-            break;
-          }
-        }
-      }
-      return result;
-    }
-
-    var ctorA = a.constructor,
-        ctorB = b.constructor;
-
-    // non `Object` object instances with different constructors are not equal
-    if (ctorA != ctorB && !(
-          toString.call(ctorA) == funcClass && ctorA instanceof ctorA &&
-          toString.call(ctorB) == funcClass && ctorB instanceof ctorB
-        )) {
-      return false;
-    }
-    // deep compare objects
-    for (var prop in a) {
-      if (hasOwnProperty.call(a, prop)) {
-        // count the number of properties.
-        size++;
-        // deep compare each property value.
-        if (!(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack, thorough))) {
-          return false;
-        }
-      }
-    }
-    // ensure both objects have the same number of properties
-    for (prop in b) {
-      // The JS engine in Adobe products, like InDesign, has a bug that causes
-      // `!size--` to throw an error so it must be wrapped in parentheses.
-      // https://github.com/documentcloud/underscore/issues/355
-      if (hasOwnProperty.call(b, prop) && !(size--)) {
-        // `size` will be `-1` if `b` has more properties than `a`
-        return false;
-      }
-    }
-    // handle JScript [[DontEnum]] bug
-    if (hasDontEnumBug) {
-      while (++index < 7) {
-        prop = shadowed[index];
-        if (hasOwnProperty.call(a, prop) &&
-            !(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack, thorough))) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Checks if `value` is a finite number.
-   * Note: This is not the same as native `isFinite`, which will return true for
-   * booleans and other values. See http://es5.github.com/#x15.1.2.5.
-   *
-   * @deprecated
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a finite number, else `false`.
-   * @example
-   *
-   * _.isFinite(-101);
-   * // => true
-   *
-   * _.isFinite('10');
-   * // => false
-   *
-   * _.isFinite(Infinity);
-   * // => false
-   */
-  function isFinite(value) {
-    return nativeIsFinite(value) && toString.call(value) == numberClass;
-  }
-
-  /**
-   * Checks if `value` is a function.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a function, else `false`.
-   * @example
-   *
-   * _.isFunction(''.concat);
-   * // => true
-   */
-  function isFunction(value) {
-    return toString.call(value) == funcClass;
-  }
-
-  /**
-   * Checks if `value` is the language type of Object.
-   * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an object, else `false`.
-   * @example
-   *
-   * _.isObject({});
-   * // => true
-   *
-   * _.isObject(1);
-   * // => false
-   */
-  function isObject(value) {
-    // check if the value is the ECMAScript language type of Object
-    // http://es5.github.com/#x8
-    return value && objectTypes[typeof value];
-  }
-
-  /**
-   * Checks if `value` is `NaN`.
-   * Note: This is not the same as native `isNaN`, which will return true for
-   * `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
-   *
-   * @deprecated
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is `NaN`, else `false`.
-   * @example
-   *
-   * _.isNaN(NaN);
-   * // => true
-   *
-   * _.isNaN(new Number(NaN));
-   * // => true
-   *
-   * isNaN(undefined);
-   * // => true
-   *
-   * _.isNaN(undefined);
-   * // => false
-   */
-  function isNaN(value) {
-    // `NaN` as a primitive is the only value that is not equal to itself
-    // (perform the [[Class]] check first to avoid errors with some host objects in IE)
-    return toString.call(value) == numberClass && value != +value
-  }
-
-  /**
-   * Checks if `value` is `null`.
-   *
-   * @deprecated
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is `null`, else `false`.
-   * @example
-   *
-   * _.isNull(null);
-   * // => true
-   *
-   * _.isNull(undefined);
-   * // => false
-   */
-  function isNull(value) {
-    return value === null;
-  }
-
-  /**
-   * Checks if `value` is a number.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a number, else `false`.
-   * @example
-   *
-   * _.isNumber(8.4 * 5;
-   * // => true
-   */
-  function isNumber(value) {
-    return toString.call(value) == numberClass;
-  }
-
-  /**
-   * Checks if `value` is a regular expression.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a regular expression, else `false`.
-   * @example
-   *
-   * _.isRegExp(/moe/);
-   * // => true
-   */
-  function isRegExp(value) {
-    return toString.call(value) == regexpClass;
-  }
-
-  /**
-   * Checks if `value` is a string.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a string, else `false`.
-   * @example
-   *
-   * _.isString('moe');
-   * // => true
-   */
-  function isString(value) {
-    return toString.call(value) == stringClass;
-  }
-
-  /**
-   * Checks if `value` is `undefined`.
-   *
-   * @deprecated
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is `undefined`, else `false`.
-   * @example
-   *
-   * _.isUndefined(void 0);
-   * // => true
-   */
-  function isUndefined(value) {
-    return value === undefined;
-  }
-
-  /**
-   * Creates an array composed of the own enumerable property names of `object`.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to inspect.
-   * @returns {Array} Returns a new array of property names.
-   * @example
-   *
-   * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => ['one', 'two', 'three'] (order is not guaranteed)
-   */
-  var keys = !nativeKeys ? shimKeys : function(object) {
-    // avoid iterating over the `prototype` property
-    return typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
-      ? shimKeys(object)
-      : nativeKeys(object);
-  };
-
-  /**
-   * Creates a shallow clone of `object` composed of the specified properties.
-   * Property names may be specified as individual arguments or as arrays of
-   * property names.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The source object.
-   * @param {Object} [prop1, prop2, ...] The properties to pick.
-   * @returns {Object} Returns an object composed of the picked properties.
-   * @example
-   *
-   * _.pick({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'name', 'age');
-   * // => { 'name': 'moe', 'age': 40 }
-   */
-  function pick(object) {
-    var prop,
-        index = 0,
-        props = concat.apply(ArrayProto, arguments),
-        length = props.length,
-        result = {};
-
-    // start `index` at `1` to skip `object`
-    while (++index < length) {
-      prop = props[index];
-      if (prop in object) {
-        result[prop] = object[prop];
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Gets the size of `value` by returning `value.length` if `value` is an
-   * array, string, or `arguments` object. If `value` is an object, size is
-   * determined by returning the number of own enumerable properties it has.
-   *
-   * @deprecated
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Array|Object|String} value The value to inspect.
-   * @returns {Number} Returns `value.length` or number of own enumerable properties.
-   * @example
-   *
-   * _.size([1, 2]);
-   * // => 2
-   *
-   * _.size({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => 3
-   *
-   * _.size('curly');
-   * // => 5
-   */
-  function size(value) {
-    if (!value) {
-      return 0;
-    }
-    return arrayLikeClasses[toString.call(value)] || (noArgsClass && isArguments(value))
-      ? value.length
-      : keys(value).length;
-  }
-
-  /**
-   * Creates an array composed of the own enumerable property values of `object`.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to inspect.
-   * @returns {Array} Returns a new array of property values.
-   * @example
-   *
-   * _.values({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => [1, 2, 3]
-   */
-  var values = createIterator({
-    'args': 'object',
-    'init': '[]',
-    'inLoop': 'result.push(value)'
-  });
 
   /*--------------------------------------------------------------------------*/
 

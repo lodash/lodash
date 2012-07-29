@@ -253,7 +253,9 @@
 
     test('should clone problem JScript properties (test in IE < 9)', function() {
       deepEqual(_.clone(shadowed), shadowed);
+      ok(_.clone(shadowed) != shadowed);
       deepEqual(_.clone(shadowed, true), shadowed);
+      ok(_.clone(shadowed, true) != shadowed);
     });
   }(1, 2, 3));
 
@@ -1218,6 +1220,54 @@
       }, Math);
 
       deepEqual(actual, [1, 2, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.where');
+
+  (function() {
+    var array = [
+      { 'a': 1 },
+      { 'a': 1 },
+      { 'a': 1, 'b': 2 },
+      { 'a': 2, 'b': 2 },
+      { 'a': 3 }
+    ];
+
+    test('should filter by properties', function() {
+      deepEqual(_.where(array, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1 }, { 'a': 1, 'b': 2 }]);
+      deepEqual(_.where(array, { 'a': 2 }), [{ 'a': 2, 'b': 2 }]);
+      deepEqual(_.where(array, { 'a': 3 }), [{ 'a': 3 }]);
+      deepEqual(_.where(array, { 'b': 1 }), []);
+      deepEqual(_.where(array, { 'b': 2 }), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
+      deepEqual(_.where(array, { 'a': 1, 'b': 2 }), [{ 'a': 1, 'b': 2 }]);
+    });
+
+    test('should filter by inherited properties', function() {
+      function Foo() {}
+      Foo.prototype = { 'b': 2 };
+
+      var properties = new Foo;
+      properties.a = 1;
+
+      deepEqual(_.where(array, properties), [{ 'a': 1, 'b': 2 }]);
+    });
+
+    test('should filter by problem JScript properties (test in IE < 9)', function() {
+      var collection = [shadowed];
+      deepEqual(_.where(collection, shadowed), [shadowed]);
+    });
+
+    test('should work with an object for `collection`', function() {
+      var collection = {
+        'x': { 'a': 1 },
+        'y': { 'a': 3 },
+        'z': { 'a': 1, 'b': 2 }
+      };
+
+      deepEqual(_.where(collection, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1, 'b': 2 }]);
     });
   }());
 

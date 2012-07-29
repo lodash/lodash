@@ -710,8 +710,34 @@
       equal(_.isEqual(object, object), false);
     });
 
+    test('should use custom `isEqual` method on primitives', function() {
+      Boolean.prototype.isEqual = function() { return true; };
+      equal(_.isEqual(true, false), true);
+      delete Boolean.prototype.isEqual;
+    });
+
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       equal(_.isEqual(shadowed, {}), false);
+    });
+
+    test('should return `true` for like-objects from different documents', function() {
+      if (window.document) {
+        var body = document.body,
+            iframe = document.createElement('iframe'),
+            object = { 'a': 1, 'b': 2, 'c': 3 };
+
+        body.appendChild(iframe);
+        var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
+        idoc.write("<script>parent._._object = { 'a': 1, 'b': 2, 'c': 3 };<\/script>");
+        idoc.close();
+
+        equal(_.isEqual(object, _._object), true);
+        body.removeChild(iframe);
+        delete _._object;
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 

@@ -231,6 +231,7 @@
     'uniq': ['identity', 'indexOf'],
     'uniqueId': [],
     'values': [],
+    'where': ['forIn'],
     'without': ['indexOf'],
     'wrap': [],
     'zip': ['max', 'pluck'],
@@ -270,6 +271,7 @@
     'forIn',
     'forOwn',
     'partial',
+    'where',
     'zipObject'
   ]));
 
@@ -336,6 +338,17 @@
    */
   function getAliases(funcName) {
     return realToAliasMap[funcName] || [];
+  }
+
+  /**
+   * Gets the Lo-Dash method assignments snippet from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the method assignments snippet.
+   */
+  function getMethodAssignments(source) {
+    return (source.match(/lodash\.VERSION *= *[\s\S]+?\/\*-+\*\/\n/) || [''])[0];
   }
 
   /**
@@ -502,7 +515,7 @@
     source = source.replace(matchFunction(source, funcName), '');
 
     // grab the method assignments snippet
-    snippet = source.match(/lodash\.VERSION *= *[\s\S]+?\/\*-+\*\/\n/)[0];
+    snippet = getMethodAssignments(source);
 
     // remove assignment and aliases
     modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
@@ -771,10 +784,8 @@
     if (!iteratorName) {
       return;
     }
-    var snippet,
-        funcNames = [],
-        objectSnippets = [],
-        token = '__isTypeToken__';
+    var funcNames = [],
+        objectSnippets = [];
 
     // build replacement code
     lodash.forOwn({
@@ -788,10 +799,6 @@
           funcCode = matchFunction(source, funcName);
 
       if (funcCode) {
-        if (!snippet) {
-          // use snippet to mark the insert position
-          snippet = funcCode;
-        }
         funcNames.push(funcName);
         objectSnippets.push("'" + key + "': " + value);
       }
@@ -801,22 +808,21 @@
     if (funcNames.length < 2) {
       return;
     }
-    // add a token to mark the position to insert new code
-    source = source.replace(snippet, '\n' + token + '\n' + snippet);
 
     // remove existing isType functions
     funcNames.forEach(function(funcName) {
       source = removeFunction(source, funcName);
     });
 
-    // replace token with new DRY code
-    source = source.replace(token,
+    // insert new DRY code after the method assignments
+    var snippet = getMethodAssignments(source);
+    source = source.replace(snippet, snippet + '\n' +
       '  // add `_.' + funcNames.join('`, `_.') + '`\n' +
       '  ' + iteratorName + '({\n    ' + objectSnippets.join(',\n    ') + '\n  }, function(className, key) {\n' +
       "    lodash['is' + key] = function(value) {\n" +
       '      return toString.call(value) == className;\n' +
       '    };\n' +
-      '  });'
+      '  });\n'
     );
   }());
 

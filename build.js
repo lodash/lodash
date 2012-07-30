@@ -893,7 +893,7 @@
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
 
     // remove `noArgsClass` from `_.clone`, `_.isEqual`, and `_.size`
-    source = source.replace(/ *\|\| *\(noArgsClass *&[^)]+?\)\)/g, '');
+    source = source.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
 
     // remove `noArgsClass` from `_.isEqual`
     source = source.replace(/if *\(noArgsClass[^}]+?}\n/, '');
@@ -903,6 +903,15 @@
 
     // remove `noCharByIndex` from `_.reduceRight`
     source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
+
+    // remove `noNodeClass` assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '');
+
+    // remove `noNodeClass` from `_.clone`
+    source = source.replace(/(?:\s*\/\/.*)*\n *isObj *= *!noNodeClass.+\n/, '');
+
+    // remove `noNodeClass` from `_.isEqual`
+    source = source.replace(/ *\|\| *\(noNodeClass *&&[\s\S]+?\)\)\)/, '');
 
     source = removeVar(source, 'extendIteratorOptions');
     source = removeVar(source, 'hasDontEnumBug');

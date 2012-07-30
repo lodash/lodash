@@ -144,8 +144,14 @@
    */
   var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
 
-  /** Detect if a node's [[Class]] is unresolvable (IE < 9) */
-  var noNodeClass = toString.call(window.document || {}) == objectClass;
+  /**
+   * Detect if a node's [[Class]] is unresolvable (IE < 9)
+   * and that the JS engine won't error when attempting to coerce an object to
+   * a string without a `toString` property value of `typeof` "function".
+   */
+  try {
+    var noNodeClass = ({ 'toString': 0 } + '', toString.call(window.document || 0) == objectClass);
+  } catch(e) { }
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
   var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
@@ -301,7 +307,7 @@
    */
   var iteratorTemplate = template(
     // conditional strict mode
-   '<% if (useStrict) { %>\'use strict\';\n<% } %>' +
+    '<% if (useStrict) { %>\'use strict\';\n<% } %>' +
 
     // the `iteratee` may be reassigned by the `top` snippet
     'var index, value, iteratee = <%= firstArg %>, ' +
@@ -794,9 +800,11 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Create a clone of `value`. If `deep` is `true`, all nested objects, excluding
-   * functons and `arguments` objects, will be cloned otherwise they will be
-   * assigned by reference.
+   * Creates a clone of `value`. If `deep` is `true`, all nested objects will
+   * also be cloned otherwise they will be assigned by reference. If a value has
+   * a `clone` method it will be used to perform the clone. Functions, DOM nodes,
+   * `arguments` objects, and object instances created by a constructor other
+   * than `Object` are **not** cloned unless they have a custom `clone` method.
    *
    * @static
    * @memberOf _
@@ -1221,7 +1229,8 @@
 
   /**
    * Performs a deep comparison between two values to determine if they are
-   * equivalent to each other.
+   * equivalent to each other. If a value has an `isEqual` method it will be
+   * used to perform the comparison.
    *
    * @static
    * @memberOf _

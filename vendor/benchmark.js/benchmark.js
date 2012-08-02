@@ -2410,8 +2410,7 @@
         'teardown': getSource(bench.teardown, preprocess('m$.teardown()'))
       };
 
-      var compiled = bench.compiled,
-          count = bench.count = clone.count,
+      var count = bench.count = clone.count,
           decompilable = support.decompilation || stringable,
           id = bench.id,
           isEmpty = !(source.fn || stringable),
@@ -2433,77 +2432,77 @@
         }
       }
 
-      if (!compiled) {
-        // compile in setup/teardown functions and the test loop
-        compiled = bench.compiled = createFunction(preprocess('t$'), interpolate(
-          preprocess(deferred
-            ? 'var d$=this,#{fnArg}=d$,m$=d$.benchmark._original,f$=m$.fn,su$=m$.setup,td$=m$.teardown;' +
-              // when `deferred.cycles` is `0` then...
-              'if(!d$.cycles){' +
-              // set `deferred.fn`
-              'd$.fn=function(){var #{fnArg}=d$;if(typeof f$=="function"){try{#{fn}\n}catch(e$){f$(d$)}}else{#{fn}\n}};' +
-              // set `deferred.teardown`
-              'd$.teardown=function(){d$.cycles=0;if(typeof td$=="function"){try{#{teardown}\n}catch(e$){td$()}}else{#{teardown}\n}};' +
-              // execute the benchmark's `setup`
-              'if(typeof su$=="function"){try{#{setup}\n}catch(e$){su$()}}else{#{setup}\n};' +
-              // start timer
-              't$.start(d$);' +
-              // execute `deferred.fn` and return a dummy object
-              '}d$.fn();return{}'
+      // Compile in setup/teardown functions and the test loop.
+      // Create a new compiled test, instead of using the cached `bench.compiled`,
+      // to avoid potential engine optimizations enabled over the life of the test.
+      var compiled = bench.compiled = createFunction(preprocess('t$'), interpolate(
+        preprocess(deferred
+          ? 'var d$=this,#{fnArg}=d$,m$=d$.benchmark._original,f$=m$.fn,su$=m$.setup,td$=m$.teardown;' +
+            // when `deferred.cycles` is `0` then...
+            'if(!d$.cycles){' +
+            // set `deferred.fn`
+            'd$.fn=function(){var #{fnArg}=d$;if(typeof f$=="function"){try{#{fn}\n}catch(e$){f$(d$)}}else{#{fn}\n}};' +
+            // set `deferred.teardown`
+            'd$.teardown=function(){d$.cycles=0;if(typeof td$=="function"){try{#{teardown}\n}catch(e$){td$()}}else{#{teardown}\n}};' +
+            // execute the benchmark's `setup`
+            'if(typeof su$=="function"){try{#{setup}\n}catch(e$){su$()}}else{#{setup}\n};' +
+            // start timer
+            't$.start(d$);' +
+            // execute `deferred.fn` and return a dummy object
+            '}d$.fn();return{}'
 
-            : 'var r$,s$,m$=this,f$=m$.fn,i$=m$.count,n$=t$.ns;#{setup}\n#{begin};' +
-              'while(i$--){#{fn}\n}#{end};#{teardown}\nreturn{elapsed:r$,uid:"#{uid}"}'),
+          : 'var r$,s$,m$=this,f$=m$.fn,i$=m$.count,n$=t$.ns;#{setup}\n#{begin};' +
+            'while(i$--){#{fn}\n}#{end};#{teardown}\nreturn{elapsed:r$,uid:"#{uid}"}'),
+        source
+      ));
+
+      try {
+        if (isEmpty) {
+          // Firefox may remove dead code from Function#toString results
+          // http://bugzil.la/536085
+          throw new Error('The test "' + name + '" is empty. This may be the result of dead code removal.');
+        }
+        else if (!deferred) {
+          // pretest to determine if compiled code is exits early, usually by a
+          // rogue `return` statement, by checking for a return object with the uid
+          bench.count = 1;
+          compiled = (compiled.call(bench, timer) || {}).uid == uid && compiled;
+          bench.count = count;
+        }
+      } catch(e) {
+        compiled = null;
+        clone.error = e || new Error(String(e));
+        bench.count = count;
+      }
+      // fallback when a test exits early or errors during pretest
+      if (decompilable && !compiled && !deferred && !isEmpty) {
+        compiled = createFunction(preprocess('t$'), interpolate(
+          preprocess(
+            (clone.error && !stringable
+              ? 'var r$,s$,m$=this,f$=m$.fn,i$=m$.count'
+              : 'function f$(){#{fn}\n}var r$,s$,m$=this,i$=m$.count'
+            ) +
+            ',n$=t$.ns;#{setup}\n#{begin};m$.f$=f$;while(i$--){m$.f$()}#{end};' +
+            'delete m$.f$;#{teardown}\nreturn{elapsed:r$}'
+          ),
           source
         ));
 
         try {
-          if (isEmpty) {
-            // Firefox may remove dead code from Function#toString results
-            // http://bugzil.la/536085
-            throw new Error('The test "' + name + '" is empty. This may be the result of dead code removal.');
-          }
-          else if (!deferred) {
-            // pretest to determine if compiled code is exits early, usually by a
-            // rogue `return` statement, by checking for a return object with the uid
-            bench.count = 1;
-            compiled = (compiled.call(bench, timer) || {}).uid == uid && compiled;
-            bench.count = count;
-          }
-        } catch(e) {
-          compiled = null;
-          clone.error = e || new Error(String(e));
+          // pretest one more time to check for errors
+          bench.count = 1;
+          compiled.call(bench, timer);
+          bench.compiled = compiled;
           bench.count = count;
+          delete clone.error;
         }
-        // fallback when a test exits early or errors during pretest
-        if (decompilable && !compiled && !deferred && !isEmpty) {
-          compiled = createFunction(preprocess('t$'), interpolate(
-            preprocess(
-              (clone.error && !stringable
-                ? 'var r$,s$,m$=this,f$=m$.fn,i$=m$.count'
-                : 'function f$(){#{fn}\n}var r$,s$,m$=this,i$=m$.count'
-              ) +
-              ',n$=t$.ns;#{setup}\n#{begin};m$.f$=f$;while(i$--){m$.f$()}#{end};' +
-              'delete m$.f$;#{teardown}\nreturn{elapsed:r$}'
-            ),
-            source
-          ));
-
-          try {
-            // pretest one more time to check for errors
-            bench.count = 1;
-            compiled.call(bench, timer);
+        catch(e) {
+          bench.count = count;
+          if (clone.error) {
+            compiled = null;
+          } else {
             bench.compiled = compiled;
-            bench.count = count;
-            delete clone.error;
-          }
-          catch(e) {
-            bench.count = count;
-            if (clone.error) {
-              compiled = null;
-            } else {
-              bench.compiled = compiled;
-              clone.error = e || new Error(String(e));
-            }
+            clone.error = e || new Error(String(e));
           }
         }
       }

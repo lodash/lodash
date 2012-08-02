@@ -134,6 +134,9 @@
 
       rest = [];
       events = events.split(eventSplitter);
+
+      // Fill up `rest` with the callback arguments.  Since we're only copying
+      // the tail of `arguments`, a loop is much faster than Array#slice.
       for (i = 1, length = arguments.length; i < length; i++) {
         rest[i - 1] = arguments[i];
       }
@@ -1023,6 +1026,9 @@
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
+      // Normalize root to always include trailing slash
+      if (!trailingSlash.test(this.options.root)) this.options.root += '/';
+
       if (oldIE && this._wantsHashChange) {
         this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
         this.navigate(fragment);
@@ -1042,7 +1048,7 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = this.location;
-      var atRoot  = (loc.pathname === this.options.root) && !loc.search;
+      var atRoot = (loc.pathname.replace(/[^/]$/, '$&/') === this.options.root) && !loc.search;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...

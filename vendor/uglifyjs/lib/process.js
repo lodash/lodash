@@ -59,6 +59,7 @@
  ***********************************************************************/
 
 var jsp = require("./parse-js"),
+    curry = jsp.curry,
     slice = jsp.slice,
     member = jsp.member,
     is_identifier_char = jsp.is_identifier_char,
@@ -389,8 +390,8 @@ Scope.prototype = {
                         return name;
                 }
         },
-        active: function(dir) {
-                return member(dir, this.directives) || this.parent && this.parent.active(dir);
+        active_directive: function(dir) {
+                return member(dir, this.directives) || this.parent && this.parent.active_directive(dir);
         }
 };
 
@@ -837,9 +838,9 @@ function prepare_ifs(ast) {
                         var fi = statements[i];
                         if (fi[0] != "if") continue;
 
-                        if (fi[3] && walk(fi[3])) continue;
+                        if (fi[3]) continue;
 
-                        var t = walk(fi[2]);
+                        var t = fi[2];
                         if (!aborts(t)) continue;
 
                         var conditional = walk(fi[1]);
@@ -898,6 +899,10 @@ function for_side_effects(ast, handler) {
                 if (op == "++" || op == "--")
                         return found.apply(this, arguments);
         };
+        function binary(op) {
+                if (op == "&&" || op == "||")
+                        return found.apply(this, arguments);
+        };
         return w.with_walkers({
                 "try": found,
                 "throw": found,
@@ -916,6 +921,8 @@ function for_side_effects(ast, handler) {
                 "return": found,
                 "unary-prefix": unary,
                 "unary-postfix": unary,
+                "conditional": found,
+                "binary": binary,
                 "defun": found
         }, function(){
                 while (true) try {
@@ -991,7 +998,7 @@ function ast_lift_variables(ast) {
                         if (ret == null) ret = d;
                         else ret = [ "seq", d, ret ];
                 }
-                if (ret == null) {
+                if (ret == null && w.parent()[0] != "for") {
                         if (w.parent()[0] == "for-in")
                                 return [ "name", defs[0][0] ];
                         return MAP.skip;
@@ -1022,6 +1029,12 @@ function ast_lift_variables(ast) {
 };
 
 function ast_squeeze(ast, options) {
+        ast = squeeze_1(ast, options);
+        ast = squeeze_2(ast, options);
+        return ast;
+};
+
+function squeeze_1(ast, options) {
         options = defaults(options, {
                 make_seqs   : true,
                 dead_code   : true,
@@ -1093,17 +1106,7 @@ function ast_squeeze(ast, options) {
         };
 
         function _lambda(name, args, body) {
-                return [ this[0], name, args, with_scope(body.scope, function() {
-                        return tighten(body, "lambda");
-                }) ];
-        };
-
-        function with_scope(s, cont) {
-                var _scope = scope;
-                scope = s;
-                var ret = cont();
-                scope = _scope;
-                return ret;
+                return [ this[0], name, args, tighten(body, "lambda") ];
         };
 
         // this function does a few things:
@@ -1323,9 +1326,7 @@ function ast_squeeze(ast, options) {
                 },
                 "if": make_if,
                 "toplevel": function(body) {
-                        return with_scope(this.scope, function() {
-                            return [ "toplevel", tighten(body) ];
-                        });
+                        return [ "toplevel", tighten(body) ];
                 },
                 "switch": function(expr, body) {
                         var last = body.length - 1;
@@ -1397,12 +1398,6 @@ function ast_squeeze(ast, options) {
                         }
                         return [ this[0], op, lvalue, rvalue ];
                 },
-                "directive": function(dir) {
-                        if (scope.active(dir))
-                            return [ "block" ];
-                        scope.directives.push(dir);
-                        return [ this[0], dir ];
-                },
                 "call": function(expr, args) {
                         expr = walk(expr);
                         if (options.unsafe && expr[0] == "dot" && expr[1][0] == "string" && expr[2] == "toString") {
@@ -1420,11 +1415,35 @@ function ast_squeeze(ast, options) {
                         return [ this[0], num ];
                 }
         }, function() {
-                for (var i = 0; i < 2; ++i) {
-                        ast = prepare_ifs(ast);
-                        ast = walk(ast_add_scope(ast));
-                }
-                return ast;
+                return walk(prepare_ifs(walk(prepare_ifs(ast))));
+        });
+};
+
+function squeeze_2(ast, options) {
+        var w = ast_walker(), walk = w.walk, scope;
+        function with_scope(s, cont) {
+                var save = scope, ret;
+                scope = s;
+                ret = cont();
+                scope = save;
+                return ret;
+        };
+        function lambda(name, args, body) {
+                return [ this[0], name, args, with_scope(body.scope, curry(MAP, body, walk)) ];
+        };
+        return w.with_walkers({
+                "directive": function(dir) {
+                        if (scope.active_directive(dir))
+                                return [ "block" ];
+                        scope.directives.push(dir);
+                },
+                "toplevel": function(body) {
+                        return [ this[0], with_scope(this.scope, curry(MAP, body, walk)) ];
+                },
+                "function": lambda,
+                "defun": lambda
+        }, function(){
+                return walk(ast_add_scope(ast));
         });
 };
 
@@ -1833,7 +1852,9 @@ function gen_code(ast, options) {
                         })), "]" ]);
                 },
                 "stat": function(stmt) {
-                        return make(stmt).replace(/;*\s*$/, ";");
+                        return stmt != null
+                                ? make(stmt).replace(/;*\s*$/, ";")
+                                : ";";
                 },
                 "seq": function() {
                         return add_commas(MAP(slice(arguments), make));
@@ -2089,3 +2110,7 @@ exports.MAP = MAP;
 
 // keep this last!
 exports.ast_squeeze_more = require("./squeeze-more").ast_squeeze_more;
+
+// Local variables:
+// js-indent-level: 8
+// End:

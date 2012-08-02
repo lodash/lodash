@@ -250,8 +250,9 @@
   }
 
   /**
-   * By default, Lo-Dash uses embedded Ruby (ERB) style template delimiters,
-   * change the following template settings to use alternative delimiters.
+   * By default, the template delimiters used by Lo-Dash are similar to those in
+   * embedded Ruby (ERB). Change the following template settings to use alternative
+   * delimiters.
    *
    * @static
    * @memberOf _
@@ -631,16 +632,19 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayClass, arrayLikeClasses, ArrayProto, bind, compareAscending, concat, ' +
-        'forIn, funcClass, hasOwnProperty, identity, indexOf, isArguments, iteratorBind, ' +
-        'objectTypes, nativeKeys, propertyIsEnumerable, slice, stringClass, toString',
-      'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
+        'arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn, ' +
+        'funcClass, hasOwnProperty, identity, indexOf, isArguments, isArray, ' +
+        'isPlainObject, iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, ' +
+        'slice, stringClass, toString',
+      'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
+      'return callee'
     );
     // return the compiled function
     return factory(
-      arrayClass, arrayLikeClasses, ArrayProto, bind, compareAscending, concat,
-      forIn, funcClass, hasOwnProperty, identity, indexOf, isArguments, iteratorBind,
-      objectTypes, nativeKeys, propertyIsEnumerable, slice, stringClass, toString
+      arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn,
+      funcClass, hasOwnProperty, identity, indexOf, isArguments, isArray,
+      isPlainObject, iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable,
+      slice, stringClass, toString
     );
   }
 
@@ -699,6 +703,33 @@
    */
   function escapeHtmlChar(match) {
     return htmlEscapes[match];
+  }
+
+  /**
+   * Checks if `value` is a plain `Object` object with `Object` as its constructor.
+   *
+   * @private
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a plain `Object` object, else `false`.
+   */
+  function isPlainObject(value) {
+    var result = false;
+    if (!(value && typeof value == 'object')) {
+      return result;
+    }
+    // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
+    // methods that are `typeof` "string" and still can coerce nodes to strings.
+    // Also check that the constructor is `Object` (i.e. `Object instanceof Object`)
+    var ctor = value.constructor;
+    if ((!noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string')) &&
+        (toString.call(ctor) != funcClass || ctor instanceof ctor)) {
+      // An object's own properties are iterated before inherited properties.
+      // If the last iterated key belongs to an object's own property then
+      // there are no inherited enumerable properties.
+      forIn(value, function(objValue, objKey) { result = objKey; });
+      result = result === false || hasOwnProperty.call(value, result);
+    }
+    return result;
   }
 
   /**
@@ -863,29 +894,8 @@
       if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {
         return value;
       }
-
-      var useCtor,
-          ctor = value.constructor,
-          isArr = className == arrayClass;
-
-      if (className == objectClass) {
-        // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-        // methods that are `typeof` "string" and still can coerce nodes to strings
-        isObj = !noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string');
-
-        if (isObj) {
-          // check that the constructor is `Object` because `Object instanceof Object` is `true`
-          useCtor = toString.call(ctor) == funcClass;
-          isObj = !useCtor || ctor instanceof ctor;
-        }
-        if (isObj) {
-          // An object's own properties are iterated before inherited properties.
-          // If the last iterated key belongs to an object's own property then
-          // there are no inherited enumerable properties.
-          forIn(value, function(objValue, objKey) { isObj = objKey; });
-          isObj = isObj == true || hasOwnProperty.call(value, isObj);
-        }
-      }
+      var isArr = className == arrayClass;
+      isObj = isArr || (className == objectClass ? isPlainObject(value) : isObj);
     }
     // shallow clone
     if (!isObj || !deep) {
@@ -895,6 +905,7 @@
         : value;
     }
 
+    var ctor = value.constructor;
     switch (className) {
       case boolClass:
         return new ctor(value == true);
@@ -920,7 +931,7 @@
 
     // init cloned object
     length = value.length;
-    var result = isArr ? ctor(length) : (useCtor ? new ctor : {});
+    var result = isArr ? ctor(length) : {};
 
     // add current clone and original value to the stack of traversed objects
     stack.push({ 'clone': result, 'value': value });
@@ -950,7 +961,7 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [default1, default2, ...] The default objects.
-   * @returns {Object} Returns the `object`.
+   * @returns {Object} Returns the destination object.
    * @example
    *
    * var iceCream = { 'flavor': 'chocolate' };
@@ -995,7 +1006,7 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @returns {Object} Returns the `object`.
+   * @returns {Object} Returns the destination object.
    * @example
    *
    * _.extend({ 'name': 'moe' }, { 'age': 40 });
@@ -1014,7 +1025,7 @@
    * @param {Object} object The object to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Object} Returns the `object`.
+   * @returns {Object} Returns `object`.
    * @example
    *
    * function Dog(name) {
@@ -1045,7 +1056,7 @@
    * @param {Object} object The object to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Object} Returns the `object`.
+   * @returns {Object} Returns `object`.
    * @example
    *
    * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
@@ -1829,7 +1840,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array|Object} Returns the `collection`.
+   * @returns {Array|Object} Returns `collection`.
    * @example
    *
    * _([1, 2, 3]).forEach(alert).join(',');
@@ -1931,6 +1942,48 @@
    * // => [3, 6, 9] (order is not guaranteed)
    */
   var map = createIterator(baseIteratorOptions, mapIteratorOptions);
+
+  /**
+   * Merges enumerable properties of the source object(s) into the `destination`
+   * object. Subsequent sources will overwrite propery assignments of previous
+   * sources.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The destination object.
+   * @param {Object} [source1, source2, ...] The source objects.
+   * @returns {Object} Returns the destination object.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe' },
+   *   { 'name': 'larry' }
+   * ];
+   *
+   * var ages = [
+   *   { 'age': 40 },
+   *   { 'age': 50 }
+   * ];
+   *
+   * _.merge(stooges, ages);
+   * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
+   */
+  var merge = createIterator(extendIteratorOptions, {
+    'top': 'var destValue, isArr;\n' + extendIteratorOptions.top,
+    'inLoop':
+      'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +
+      '  destValue = result[index];\n' +
+      '  if (isArr) {\n' +
+      '    destValue = destValue && isArray(destValue) ? destValue : []\n' +
+      '  } else {\n' +
+      '    destValue = destValue && isPlainObject(destValue) ? destValue : {}\n' +
+      '  }\n' +
+      '  result[index] = callee(destValue, value)\n' +
+      '} else if (value != null) {\n' +
+      '  result[index] = value\n' +
+      '}'
+  });
 
   /**
    * Retrieves the value of a specified property from all elements in
@@ -2907,7 +2960,7 @@
   }
 
   /**
-   * Merges the elements of each array at their corresponding indexes. Useful for
+   * Groups the elements of each array at their corresponding indexes. Useful for
    * separate data sources that are coordinated through matching array indexes.
    * For a matrix of nested arrays, `_.zip.apply(...)` can transpose the matrix
    * in a similar fashion.
@@ -2916,7 +2969,7 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} [array1, array2, ...] Arrays to process.
-   * @returns {Array} Returns a new array of merged arrays.
+   * @returns {Array} Returns a new array of grouped elements.
    * @example
    *
    * _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
@@ -2937,7 +2990,7 @@
   }
 
   /**
-   * Merges an array of `keys` and an array of `values` into a single object.
+   * Creates an object composed from an array of `keys` and an array of `values`.
    *
    * @static
    * @memberOf _
@@ -3099,7 +3152,7 @@
    * @category Functions
    * @param {Object} object The object to bind and assign the bound methods to.
    * @param {String} [methodName1, methodName2, ...] Method names on the object to bind.
-   * @returns {Object} Returns the `object`.
+   * @returns {Object} Returns `object`.
    * @example
    *
    * var buttonView = {
@@ -3436,8 +3489,8 @@
    * @returns {String} Returns the escaped string.
    * @example
    *
-   * _.escape('Curly, Larry & Moe');
-   * // => "Curly, Larry &amp; Moe"
+   * _.escape('Moe, Larry & Curly');
+   * // => "Moe, Larry &amp; Curly"
    */
   function escape(string) {
     return string == null ? '' : (string + '').replace(reUnescapedHtml, escapeHtmlChar);
@@ -3478,11 +3531,11 @@
    *   }
    * });
    *
-   * _.capitalize('curly');
-   * // => 'Curly'
-   *
-   * _('larry').capitalize();
+   * _.capitalize('larry');
    * // => 'Larry'
+   *
+   * _('curly').capitalize();
+   * // => 'Curly'
    */
   function mixin(object) {
     forEach(functions(object), function(methodName) {
@@ -3577,8 +3630,8 @@
    * // => 'hello: moe'
    *
    * var list = '<% _.forEach(people, function(name) { %> <li><%= name %></li> <% }); %>';
-   * _.template(list, { 'people': ['moe', 'curly', 'larry'] });
-   * // => '<li>moe</li><li>curly</li><li>larry</li>'
+   * _.template(list, { 'people': ['moe', 'larry', 'curly'] });
+   * // => '<li>moe</li><li>larry</li><li>curly</li>'
    *
    * var template = _.template('<b><%- value %></b>');
    * template({ 'value': '<script>' });
@@ -3937,6 +3990,7 @@
   lodash.map = map;
   lodash.max = max;
   lodash.memoize = memoize;
+  lodash.merge = merge;
   lodash.min = min;
   lodash.mixin = mixin;
   lodash.noConflict = noConflict;

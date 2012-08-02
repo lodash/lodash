@@ -204,6 +204,7 @@
     'map': ['identity'],
     'max': [],
     'memoize': [],
+    'merge': ['isArray'],
     'min': [],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
@@ -270,6 +271,7 @@
     'drop',
     'forIn',
     'forOwn',
+    'merge',
     'partial',
     'where',
     'zipObject'
@@ -838,11 +840,11 @@
           modified = snippet;
 
       // remove native `Function#bind` branch in `_.bind`
-      if (funcName == 'bind' ) {
+      if (funcName == 'bind') {
         modified = modified.replace(/(?:\s*\/\/.*)*\s*else if *\(isBindFast[^}]+}/, '');
       }
       // remove native `Array.isArray` branch in `_.isArray`
-      else if (funcName == 'isArray') {
+      else {
         modified = modified.replace(/nativeIsArray * \|\|/, '');
       }
       source = source.replace(snippet, modified);
@@ -907,8 +909,8 @@
     // remove `noNodeClass` assignment
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '');
 
-    // remove `noNodeClass` from `_.clone`
-    source = source.replace(/(?:\s*\/\/.*)*\n *isObj *= *!noNodeClass.+\n/, '');
+    // remove `noNodeClass` from `isPlainObject`
+    source = source.replace(/\(!noNodeClass *\|\|[\s\S]+?\)\) *&&/, '');
 
     // remove `noNodeClass` from `_.isEqual`
     source = source.replace(/ *\|\| *\(noNodeClass *&&[\s\S]+?\)\)\)/, '');

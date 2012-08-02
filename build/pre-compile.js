@@ -9,15 +9,16 @@
   var compiledVars = [
     'accumulator',
     'args',
-    'arrayClass',
     'arrayLikeClasses',
     'ArrayProto',
     'bind',
     'callback',
+    'callee',
     'collection',
     'compareAscending',
     'concat',
     'ctor',
+    'destValue',
     'forIn',
     'funcClass',
     'funcs',
@@ -25,8 +26,11 @@
     'identity',
     'index',
     'indexOf',
+    'isArr',
+    'isArray',
     'isArguments',
     'isFunc',
+    'isPlainObject',
     'iteratee',
     'iterateeIndex',
     'iteratorBind',
@@ -81,6 +85,9 @@
 
   /** Used to minify variables and string values to a single character */
   var minNames = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  minNames.push.apply(minNames, minNames.map(function(value) {
+    return value + value;
+  }));
 
   /** Used to protect the specified properties from getting minified */
   var propWhitelist = [
@@ -162,6 +169,7 @@
     'map',
     'max',
     'memoize',
+    'merge',
     'methods',
     'min',
     'mixin',

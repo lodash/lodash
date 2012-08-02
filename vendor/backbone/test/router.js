@@ -20,9 +20,11 @@ $(document).ready(function() {
       _.extend(this, _.pick($('<a></a>', {href: href})[0],
         'href',
         'hash',
+        'host',
         'search',
         'fragment',
-        'pathname'
+        'pathname',
+        'protocol'
       ));
       // In IE, anchor.pathname does not contain a leading slash though
       // window.location.pathname does.
@@ -316,6 +318,54 @@ $(document).ready(function() {
     });
     Backbone.history.navigate('x');
     strictEqual(Backbone.history.fragment, 'x');
+  });
+
+  test("Router: Normalize root.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/root/fragment');
+        }
+      }
+    });
+    Backbone.history.start({
+      pushState: true,
+      root: '/root',
+      hashChange: false
+    });
+    Backbone.history.navigate('fragment');
+  });
+
+  test("Router: Normalize root.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root#fragment');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {},
+        replaceState: function(state, title, url) {
+          strictEqual(url, 'http://example.com/root/fragment');
+        }
+      }
+    });
+    Backbone.history.start({
+      pushState: true,
+      root: '/root'
+    });
+  });
+
+  test("Router: Normalize root.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    Backbone.history = new Backbone.History({location: location});
+    Backbone.history.loadUrl = function() { ok(true); };
+    Backbone.history.start({
+      pushState: true,
+      root: '/root'
+    });
   });
 
 });

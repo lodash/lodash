@@ -72,3 +72,7 @@ function ast_squeeze_more(ast) {
 };
 
 exports.ast_squeeze_more = ast_squeeze_more;
+
+// Local variables:
+// js-indent-level: 8
+// End:

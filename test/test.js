@@ -231,11 +231,11 @@
         'bar': { }
       };
 
-      object.foo.b.foo.c.foo = object;
+      object.foo.b.foo.c = object;
       object.bar.b = object.foo.b;
 
       var clone = _.clone(object, true);
-      ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c.foo && clone !== object);
+      ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c && clone !== object);
     });
 
     test('should clone using Klass#clone', function() {
@@ -811,6 +811,72 @@
     test('should ignore non-number `fromIndex` values', function() {
       equal(_.lastIndexOf([1, 2, 3], 3, '1'), 2);
       equal(_.lastIndexOf([1, 2, 3], 3, true), 2);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.merge');
+
+  (function() {
+    test('should merge `source` into the destination object', function() {
+      var stooges = [
+        { 'name': 'moe' },
+        { 'name': 'larry' }
+      ];
+
+      var ages = [
+        { 'age': 40 },
+        { 'age': 50 }
+      ];
+
+      var heights = [
+        { 'height': '5\'4"' },
+        { 'height': '5\'5"' },
+      ];
+
+      var expected = [
+        { 'name': 'moe', 'age': 40, 'height': '5\'4"' },
+        { 'name': 'larry', 'age': 50, 'height': '5\'5"' }
+      ];
+
+      deepEqual(_.merge(stooges, ages, heights), expected);
+    });
+
+    test('should merge sources containing circular references', function() {
+      var object = {
+        'foo': { 'a': 1 },
+        'bar': { 'a': 2 }
+      };
+
+      var source = {
+        'foo': { 'b': { 'foo': { 'c': { } } } },
+        'bar': { }
+      };
+
+      source.foo.b.foo.c = source;
+      source.bar.b = source.foo.b;
+
+      var actual = _.merge(object, source);
+
+      ok(actual.bar.b === actual.foo.b && actual.foo.b.foo.c === actual.foo.b.foo.c.foo.b.foo.c);
+    });
+
+    test('should merge problem JScript properties (test in IE < 9)', function() {
+      var object = [{
+        'constructor': 1,
+        'hasOwnProperty': 2,
+        'isPrototypeOf': 3
+      }];
+
+      var source = [{
+        'propertyIsEnumerable': 4,
+        'toLocaleString': 5,
+        'toString': 6,
+        'valueOf': 7
+      }];
+
+      deepEqual(_.merge(object, source), [shadowed]);
     });
   }());
 

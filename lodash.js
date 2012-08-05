@@ -1042,7 +1042,8 @@
   /**
    * Iterates over `object`'s own and inherited enumerable properties, executing
    * the `callback` for each property. The `callback` is bound to `thisArg` and
-   * invoked with 3 arguments; (value, key, object).
+   * invoked with 3 arguments; (value, key, object). Callbacks may terminate
+   * iteration early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -1073,7 +1074,8 @@
   /**
    * Iterates over `object`'s own enumerable properties, executing the `callback`
    * for each property. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, key, object).
+   * arguments; (value, key, object). Callbacks may terminate iteration early by
+   * explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -1858,7 +1860,8 @@
   /**
    * Iterates over a `collection`, executing the `callback` for each element in
    * the `collection`. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, index|key, collection).
+   * arguments; (value, index|key, collection). Callbacks may terminate iteration
+   * early by explicitly returning `false`.
    *
    * @static
    * @memberOf _

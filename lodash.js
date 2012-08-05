@@ -846,7 +846,7 @@
    *  others like `_.map` without using their callback `index` argument for `deep`.
    * @param {Array} [stack=[]] Internally used to keep track of traversed objects
    *  to avoid circular references.
-   * @param {Boolean} thorough Internally used to indicate whether or not to perform
+   * @param {Object} thorough Internally used to indicate whether or not to perform
    *  a more thorough clone of non-object values.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
@@ -872,19 +872,19 @@
     if (value == null) {
       return value;
     }
-    var isObj = typeof value == 'object';
-    stack || (stack = []);
-
     if (guard) {
       deep = false;
     }
-    // avoid slower checks on non-objects
-    if (thorough == null) {
+    // avoid slower checks on primitives
+    thorough || (thorough = { 'value': null });
+    if (thorough.value == null) {
       // primitives passed from iframes use the primary document's native prototypes
-      thorough = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
+      thorough.value = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
     }
     // use custom `clone` method if available
-    if ((isObj || thorough) && value.clone && toString.call(value.clone) == funcClass) {
+    var isObj = typeof value == 'object';
+    if ((isObj || thorough.value) && value.clone && toString.call(value.clone) == funcClass) {
+      thorough.value = null;
       return value.clone(deep);
     }
     // inspect [[Class]]
@@ -922,10 +922,11 @@
     }
 
     // check for circular references and return corresponding clone
+    stack || (stack = []);
     var length = stack.length;
     while (length--) {
-      if (stack[length].value == value) {
-        return stack[length].clone;
+      if (stack[length].source == value) {
+        return stack[length].value;
       }
     }
 
@@ -933,8 +934,8 @@
     length = value.length;
     var result = isArr ? ctor(length) : {};
 
-    // add current clone and original value to the stack of traversed objects
-    stack.push({ 'clone': result, 'value': value });
+    // add current clone and original source value to the stack of traversed objects
+    stack.push({ 'value': result, 'source': value });
 
     // recursively populate clone (susceptible to call stack limits)
     if (isArr) {
@@ -1250,7 +1251,7 @@
    * @param {Mixed} b The other value to compare.
    * @param {Array} [stack=[]] Internally used to keep track of traversed objects
    *  to avoid circular references.
-   * @param {Boolean} thorough Internally used to indicate whether or not to perform
+   * @param {Object} thorough Internally used to indicate whether or not to perform
    *  a more thorough comparison of non-object values.
    * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
    * @example
@@ -1265,18 +1266,17 @@
    * // => true
    */
   function isEqual(a, b, stack, thorough) {
-    stack || (stack = []);
-
     // a strict comparison is necessary because `null == undefined`
     if (a == null || b == null) {
       return a === b;
     }
     // avoid slower checks on non-objects
-    if (thorough == null) {
+    thorough || (thorough = { 'value': null });
+    if (thorough.value == null) {
       // primitives passed from iframes use the primary document's native prototypes
-      thorough = !!(BoolProto.isEqual || NumberProto.isEqual || StringProto.isEqual);
+      thorough.value = !!(BoolProto.isEqual || NumberProto.isEqual || StringProto.isEqual);
     }
-    if (objectTypes[typeof a] || objectTypes[typeof b] || thorough) {
+    if (objectTypes[typeof a] || objectTypes[typeof b] || thorough.value) {
       // unwrap any LoDash wrapped values
       if (a._chain) {
         a = a._wrapped;
@@ -1286,9 +1286,11 @@
       }
       // use custom `isEqual` method if available
       if (a.isEqual && toString.call(a.isEqual) == funcClass) {
+        thorough.value = null;
         return a.isEqual(b);
       }
       if (b.isEqual && toString.call(b.isEqual) == funcClass) {
+        thorough.value = null;
         return b.isEqual(a);
       }
     }
@@ -1337,6 +1339,7 @@
     // assume cyclic structures are equal
     // the algorithm for detecting cyclic structures is adapted from ES 5.1
     // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
+    stack || (stack = []);
     var length = stack.length;
     while (length--) {
       if (stack[length] == a) {
@@ -1953,6 +1956,10 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
+   * @param {Object} [indicator] Internally used to indicate that the `stack`
+   *  argument is an array of traversed objects instead of another source object.
+   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
+   *  to avoid circular references.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -1970,16 +1977,27 @@
    * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
    */
   var merge = createIterator(extendIteratorOptions, {
-    'top': 'var destValue, isArr;\n' + extendIteratorOptions.top,
+    'args': 'object, source, indicator, stack',
+    'top':
+      'var destValue, found, isArr, stackLength, recursive = indicator == isPlainObject;\n' +
+      'if (!recursive) stack = [];\n' +
+      'for (var iterateeIndex = 1, length = recursive ? 2 : arguments.length; iterateeIndex < length; iterateeIndex++) {\n' +
+      '  iteratee = arguments[iterateeIndex];\n',
     'inLoop':
       'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +
-      '  destValue = result[index];\n' +
-      '  if (isArr) {\n' +
-      '    destValue = destValue && isArray(destValue) ? destValue : []\n' +
-      '  } else {\n' +
-      '    destValue = destValue && isPlainObject(destValue) ? destValue : {}\n' +
+      '  found = false; stackLength = stack.length;\n' +
+      '  while (stackLength--) {\n' +
+      '    if (found = stack[stackLength].source == value) break\n' +
       '  }\n' +
-      '  result[index] = callee(destValue, value)\n' +
+      '  if (found) {\n' +
+      '    result[index] = stack[stackLength].value\n' +
+      '  } else {\n' +
+      '    destValue = (destValue = result[index]) && isArr\n' +
+      '      ? (isArray(destValue) ? destValue : [])\n' +
+      '      : (isPlainObject(destValue) ? destValue : {});\n' +
+      '    stack.push({ value: destValue, source: value });\n' +
+      '    result[index] = callee(destValue, value, isPlainObject, stack)\n' +
+      '  }\n' +
       '} else if (value != null) {\n' +
       '  result[index] = value\n' +
       '}'

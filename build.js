@@ -153,7 +153,7 @@
     'bind': [],
     'bindAll': ['bind', 'functions'],
     'chain': ['mixin'],
-    'clone': ['extend', 'forOwn', 'isArguments'],
+    'clone': ['extend', 'forIn', 'forOwn', 'isArguments'],
     'compact': [],
     'compose': [],
     'contains': [],
@@ -187,8 +187,8 @@
     'isBoolean': [],
     'isDate': [],
     'isElement': [],
-    'isEmpty': [],
-    'isEqual': [],
+    'isEmpty': ['isArguments'],
+    'isEqual': ['isArguments'],
     'isFinite': [],
     'isFunction': [],
     'isNaN': [],
@@ -204,7 +204,7 @@
     'map': ['identity'],
     'max': [],
     'memoize': [],
-    'merge': ['isArray'],
+    'merge': ['isArray', 'forIn'],
     'min': [],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
@@ -219,7 +219,7 @@
     'rest': [],
     'result': [],
     'shuffle': [],
-    'size': ['keys'],
+    'size': ['isArguments', 'keys'],
     'some': ['identity'],
     'sortBy': [],
     'sortedIndex': ['bind'],
@@ -488,7 +488,7 @@
   function removeFromCreateIterator(source, refName) {
     var snippet = matchFunction(source, 'createIterator');
     if (snippet) {
-      // clip the snippet the `factory` assignment
+      // clip the snippet at the `factory` assignment
       snippet = snippet.match(/Function\([\s\S]+$/)[0];
       var modified = snippet.replace(RegExp('\\b' + refName + '\\b,? *', 'g'), '');
       source = source.replace(snippet, modified);
@@ -561,6 +561,38 @@
   }
 
   /**
+   * Removes all `noArgsClass` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeNoArgsClass(source) {
+    return removeVar(source, 'noArgsClass')
+      // remove `noArgsClass` from `_.clone`, `_.isEqual`, and `_.size`
+      .replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '')
+      // remove `noArgsClass` from `_.isEqual`
+      .replace(/if *\(noArgsClass[^}]+?}\n/, '');
+  }
+
+  /**
+   * Removes all `noNodeClass` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeNoNodeClass(source) {
+    return source
+      // remove `noNodeClass` assignment
+      .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '')
+      // remove `noNodeClass` from `isPlainObject`
+      .replace(/\(!noNodeClass *\|\|[\s\S]+?\)\) *&&/, '')
+      // remove `noNodeClass` from `_.isEqual`
+      .replace(/ *\|\| *\(noNodeClass *&&[\s\S]+?\)\)\)/, '');
+  }
+
+  /**
    * Removes the "use strict" directive from `source`.
    *
    * @private
@@ -598,6 +630,9 @@
 
     // remove a variable at the end of a variable declaration list
     source = source.replace(RegExp(',\\s*' + varName + ' *=.+?;'), ';');
+
+    // remove variable reference from `arrayLikeClasses` and `cloneableClasses` assignments
+    source = source.replace(RegExp('(?:arrayLikeClasses|cloneableClasses)\\[' + varName + '\\] *= *(?:false|true)?', 'g'), '');
 
     return removeFromCreateIterator(source, varName);
   }
@@ -643,6 +678,25 @@
       .replace(/ *'useStrict': *false,\n/g, '')
       // remove `useStrict` data object property assignment in `createIterator`
       .replace(/\s*.+?\.useStrict *=.+/, '');
+  }
+
+  /**
+   * Writes `source` to a file with the given `filename` to the current
+   * working directory.
+   *
+   * @private
+   * @param {String} source The source to write.
+   * @param {String} filename The name of the file.
+   */
+  function writeFile(source, filename) {
+    // correct overly aggressive Closure Compiler minification
+    source = source.replace('prototype={valueOf:1}', 'prototype={valueOf:1,y:1}');
+
+    // re-remove "use strict" added by the minifier
+    if (!useStrict) {
+      source = removeUseStrictDirective(source);
+    }
+    fs.writeFileSync(path.join(cwd, filename), source);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -893,17 +947,17 @@
       return match.replace(/\bcallee\b/g, 'merge');
     });
 
+    // remove `hasDontEnumBug` and `iteratesOwnLast` assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(\)\);\n/, '');
+
+    // remove `iteratesOwnLast` from `isPlainObject`
+    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
+
     // remove JScript [[DontEnum]] fix from `_.isEqual`
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
 
     // remove IE `shift` and `splice` fix from mutator Array functions mixin
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
-
-    // remove `noArgsClass` from `_.clone`, `_.isEqual`, and `_.size`
-    source = source.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
-
-    // remove `noArgsClass` from `_.isEqual`
-    source = source.replace(/if *\(noArgsClass[^}]+?}\n/, '');
 
     // remove `noArraySliceOnStrings` from `_.toArray`
     source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
@@ -911,23 +965,14 @@
     // remove `noCharByIndex` from `_.reduceRight`
     source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
 
-    // remove `noNodeClass` assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '');
-
-    // remove `noNodeClass` from `isPlainObject`
-    source = source.replace(/\(!noNodeClass *\|\|[\s\S]+?\)\) *&&/, '');
-
-    // remove `noNodeClass` from `_.isEqual`
-    source = source.replace(/ *\|\| *\(noNodeClass *&&[\s\S]+?\)\)\)/, '');
-
     source = removeVar(source, 'extendIteratorOptions');
-    source = removeVar(source, 'hasDontEnumBug');
     source = removeVar(source, 'iteratorTemplate');
-    source = removeVar(source, 'noArgsClass');
     source = removeVar(source, 'noArraySliceOnStrings');
     source = removeVar(source, 'noCharByIndex');
     source = removeIsArgumentsFallback(source);
     source = removeKeysOptimization(source);
+    source = removeNoArgsClass(source);
+    source = removeNoNodeClass(source);
   }
   else {
     // inline `iteratorTemplate` template
@@ -986,9 +1031,6 @@
     // remove `LoDash.prototype` additions
     source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
   }
-  if (isRemoved(source, 'sortBy')) {
-    source = removeFunction(source, 'compareAscending');
-  }
   if (isRemoved(source, 'template')) {
     // remove `templateSettings` assignment
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
@@ -996,14 +1038,14 @@
   if (isRemoved(source, 'toArray')) {
     source = removeVar(source, 'noArraySliceOnStrings');
   }
-  if (isRemoved(source, 'isArray', 'isEmpty', 'isEqual')) {
-    source = removeVar(source, 'arrayClass');
+  if (isRemoved(source, 'clone', 'merge')) {
+    source = removeFunction(source, 'isPlainObject');
   }
-  if (isRemoved(source, 'bind', 'bindAll', 'functions', 'isEqual', 'isFunction', 'result', 'toArray')) {
-    source = removeVar(source, 'funcClass');
+  if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual', 'size')) {
+    source = removeNoArgsClass(source);
   }
-  if (isRemoved(source, 'bind', 'clone', 'isObject', 'keys')) {
-    source = removeVar(source, 'objectTypes');
+  if (isRemoved(source, 'isEqual', 'isPlainObject')) {
+    source = removeNoNodeClass(source);
   }
   if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
     source = removeFunction(source, 'createIterator');
@@ -1011,17 +1053,19 @@
   if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
     source = removeVar(source, 'reNative');
   }
-  if (isRemoved(source, 'createIterator', 'extend', 'isEqual')) {
-    source = removeVar(source, 'hasDontEnumBug');
+  if (isRemoved(source, 'createIterator', 'clone', 'merge')) {
+    source = removeVar(source, 'iteratesOwnLast');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;| +iteratesOwnLast *=.+/, '');
   }
-  if (isRemoved(source, 'createIterator', 'contains', 'isEmpty', 'isEqual', 'isString')) {
-    source = removeVar(source, 'stringClass');
+  if (isRemoved(source, 'createIterator', 'extend', 'isEqual', 'merge')) {
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;| +hasDontEnumBug *=.+/, '');
   }
   if (isRemoved(source, 'createIterator', 'keys')) {
     source = removeVar(source, 'nativeKeys');
   }
-  if (isRemoved(source, 'createIterator', 'reduceRight')) {
-    source = removeVar(source, 'noCharByIndex');
+  if (!source.match(/var (?:hasDontEnumBug|iteratesOwnLast)\b/g)) {
+    // remove `hasDontEnumBug` and `iteratesOwnLast` assignment
+    source = source.replace(/ *\(function\(\) *{\s*var props\b[\s\S]+?}\(\)\);/, '');
   }
 
   // remove pseudo private properties
@@ -1037,19 +1081,15 @@
 
   // begin the minification process
   if (filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
-    fs.writeFileSync(path.join(cwd, 'lodash.custom.js'), source);
+    writeFile(source, 'lodash.custom.js');
 
     minify(source, 'lodash.custom.min', function(result) {
-      // re-remove "use strict" added by the minifier
-      if (!useStrict) {
-        result = removeUseStrictDirective(result);
-      }
-      fs.writeFileSync(path.join(cwd, 'lodash.custom.min.js'), result);
+      writeFile(result, 'lodash.custom.min.js');
     });
   }
   else {
     minify(source, 'lodash.min', function(result) {
-      fs.writeFileSync(path.join(cwd, 'lodash.min.js'), result);
+      writeFile(result, 'lodash.min.js');
     });
   }
 }());

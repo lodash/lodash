@@ -241,7 +241,7 @@
 
     // manually convert `arrayLikeClasses` property assignments because
     // Closure Compiler errors trying to minify them
-    source = source.replace(/(arrayLikeClasses =)[\s\S]+?= *true/g,
+    source = source.replace(/(arrayLikeClasses =)[\s\S]+?= *true/,
       "$1{'[object Arguments]': true, '[object Array]': true, '[object Boolean]': false, " +
       "'[object Date]': false, '[object Function]': false, '[object Number]': false, " +
       "'[object Object]': false, '[object RegExp]': false, '[object String]': true }"
@@ -249,7 +249,7 @@
 
     // manually convert `cloneableClasses` property assignments because
     // Closure Compiler errors trying to minify them
-    source = source.replace(/(cloneableClasses =)[\s\S]+?= *true/g,
+    source = source.replace(/(cloneableClasses =)[\s\S]+?= *true/,
       "$1{'[object Arguments]': false, '[object Array]': true, '[object Boolean]': true, " +
       "'[object Date]': true, '[object Function]': false, '[object Number]': true, " +
       "'[object Object]': true, '[object RegExp]': true, '[object String]': true }"

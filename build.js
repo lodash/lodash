@@ -888,6 +888,11 @@
       source = source.replace(reFunc, '$1' + getFunctionSource(lodash[funcName]) + ';\n');
     });
 
+    // replace `callee` in `_.merge` with `merge`
+    source = source.replace(matchFunction(source, 'merge'), function(match) {
+      return match.replace(/\bcallee\b/g, 'merge');
+    });
+
     // remove JScript [[DontEnum]] fix from `_.isEqual`
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
 

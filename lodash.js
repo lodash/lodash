@@ -129,7 +129,19 @@
    * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
    * made non-enumerable as well.
    */
-  var hasDontEnumBug = !propertyIsEnumerable.call({ 'valueOf': 0 }, 'valueOf');
+  var hasDontEnumBug;
+
+  /** Detect if own properties are iterated after inherited properties (IE < 9) */
+  var iteratesOwnLast;
+
+  (function() {
+    var props = [];
+    function ctor() { this.x = 1; }
+    ctor.prototype = { 'valueOf': 1, 'y': 1 };
+    for (var prop in new ctor) { props.push(prop); }
+    hasDontEnumBug = (props + '').length < 4;
+    iteratesOwnLast = props[0] != 'x';
+  }());
 
   /** Detect if an `arguments` object's [[Class]] is unresolvable (Firefox < 4, IE < 9) */
   var noArgsClass = !isArguments(arguments);
@@ -428,7 +440,7 @@
       'else if (thisArg) {\n' +
       '  callback = iteratorBind(callback, thisArg)\n' +
       '}',
-    'inLoop': 'callback(value, index, collection)'
+    'inLoop': 'if (callback(value, index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `countBy`, `groupBy`, and `sortBy` */
@@ -723,11 +735,23 @@
     var ctor = value.constructor;
     if ((!noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string')) &&
         (toString.call(ctor) != funcClass || ctor instanceof ctor)) {
-      // An object's own properties are iterated before inherited properties.
-      // If the last iterated key belongs to an object's own property then
-      // there are no inherited enumerable properties.
-      forIn(value, function(objValue, objKey) { result = objKey; });
-      result = result === false || hasOwnProperty.call(value, result);
+      // IE < 9 iterates inherited properties before own properties. If the first
+      // iterated property is an object's own property then there are no inherited
+      // enumerable properties.
+      if (iteratesOwnLast) {
+        forIn(value, function(objValue, objKey) {
+          result = !hasOwnProperty.call(value, objKey);
+          return false;
+        });
+        return result === false;
+      }
+      // In most environments an object's own properties are iterated before
+      // its inherited properties. If the last iterated property is an object's
+      // own property then there are no inherited enumerable properties.
+      forIn(value, function(objValue, objKey) {
+        result = objKey;
+      });
+      return result === false || hasOwnProperty.call(value, result);
     }
     return result;
   }
@@ -1982,7 +2006,8 @@
       'var destValue, found, isArr, stackLength, recursive = indicator == isPlainObject;\n' +
       'if (!recursive) stack = [];\n' +
       'for (var iterateeIndex = 1, length = recursive ? 2 : arguments.length; iterateeIndex < length; iterateeIndex++) {\n' +
-      '  iteratee = arguments[iterateeIndex];\n',
+      '  iteratee = arguments[iterateeIndex];\n' +
+      (hasDontEnumBug ? '  if (iteratee) {' : ''),
     'inLoop':
       'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +
       '  found = false; stackLength = stack.length;\n' +

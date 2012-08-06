@@ -575,6 +575,27 @@
     });
   });
 
+  _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
+    var func = _[methodName];
+    QUnit.module('lodash.' + methodName + ' can exit early');
+
+    test('can exit early when iterating arrays', function() {
+      var array = [1, 2, 3],
+          values = [];
+
+      func(array, function(value) { values.push(value); return false; });
+      deepEqual(values, [1]);
+    });
+
+    test('can exit early when iterating objects', function() {
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          values = [];
+
+      func(object, function(value) { values.push(value); return false; });
+      equal(values.length, 1);
+    });
+  });
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.groupBy');

@@ -712,7 +712,7 @@
       equal(_.isEqual(object, object), false);
     });
 
-    test('should use custom `isEqual` method on primitives', function() {
+    test('should use custom `isEqual` methods on primitives', function() {
       Boolean.prototype.isEqual = function() { return true; };
       equal(_.isEqual(true, false), true);
       delete Boolean.prototype.isEqual;
@@ -758,6 +758,12 @@
   QUnit.module('lodash.keys');
 
   (function() {
+    var args = arguments;
+
+    test('should work with `arguments` objects (test in IE < 9)', function() {
+      deepEqual(_.keys(args), ['0', '1', '2']);
+    });
+
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       function Foo() {}
       Foo.prototype.a = 1;
@@ -779,7 +785,7 @@
       Foo.prototype = { 'c': 3 };
       deepEqual(_.keys(Foo), expected);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 

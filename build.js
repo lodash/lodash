@@ -254,6 +254,7 @@
     'isKeysFast',
     'object',
     'objectBranch',
+    'noArgsEnum',
     'noCharByIndex',
     'shadowed',
     'top',
@@ -321,7 +322,7 @@
       '    lodash include=...   Comma separated names of methods to include in the build',
       '',
       '    All arguments, except `backbone` with `underscore`, `exclude` with `include`,',
-      '    and `legacy` with `mobile`, may be combined.',
+      '    and `legacy` with `csp`/`mobile`, may be combined.',
       '',
       '  Options:',
       '',
@@ -947,8 +948,8 @@
       return match.replace(/\bcallee\b/g, 'merge');
     });
 
-    // remove `hasDontEnumBug` and `iteratesOwnLast` assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(\)\);\n/, '');
+    // remove `hasDontEnumBug`, `iteratesOwnLast`, `noArgsEnum` assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
 
     // remove `iteratesOwnLast` from `isPlainObject`
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
@@ -1049,23 +1050,23 @@
   }
   if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
     source = removeFunction(source, 'createIterator');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var noArgsEnum;|.+?noArgsEnum *=.+/g, '');
   }
   if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
     source = removeVar(source, 'reNative');
   }
   if (isRemoved(source, 'createIterator', 'clone', 'merge')) {
-    source = removeVar(source, 'iteratesOwnLast');
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;| +iteratesOwnLast *=.+/, '');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
   }
-  if (isRemoved(source, 'createIterator', 'extend', 'isEqual', 'merge')) {
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;| +hasDontEnumBug *=.+/, '');
+  if (isRemoved(source, 'createIterator', 'isEqual')) {
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
   }
   if (isRemoved(source, 'createIterator', 'keys')) {
     source = removeVar(source, 'nativeKeys');
   }
-  if (!source.match(/var (?:hasDontEnumBug|iteratesOwnLast)\b/g)) {
-    // remove `hasDontEnumBug` and `iteratesOwnLast` assignment
-    source = source.replace(/ *\(function\(\) *{\s*var props\b[\s\S]+?}\(\)\);/, '');
+  if (!source.match(/var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum)\b/g)) {
+    // remove `hasDontEnumBug`, `iteratesOwnLast`, `noArgsEnum` assignment
+    source = source.replace(/ *\(function\(\) *{\s*var props\b[\s\S]+?}\(1\)\);/, '');
   }
 
   // remove pseudo private properties

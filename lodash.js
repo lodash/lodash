@@ -134,14 +134,18 @@
   /** Detect if own properties are iterated after inherited properties (IE < 9) */
   var iteratesOwnLast;
 
+  /** Detect if an `arguments` object's indexes are non-enumerable (IE < 9) */
+  var noArgsEnum = true;
+
   (function() {
     var props = [];
     function ctor() { this.x = 1; }
     ctor.prototype = { 'valueOf': 1, 'y': 1 };
     for (var prop in new ctor) { props.push(prop); }
+    for (prop in arguments) { noArgsEnum = !prop; }
     hasDontEnumBug = (props + '').length < 4;
     iteratesOwnLast = props[0] != 'x';
-  }());
+  }(1));
 
   /** Detect if an `arguments` object's [[Class]] is unresolvable (Firefox < 4, IE < 9) */
   var noArgsClass = !isArguments(arguments);
@@ -353,7 +357,20 @@
 
     // the following branch is for iterating an object's own/inherited properties
     '<% if (objectBranch) { %>' +
-    '  <% if (arrayBranch) { %>\nelse {<% } %>' +
+    '  <% if (arrayBranch) { %>\nelse {' +
+
+    // add support for iterating over `arguments` objects if needed
+    '  <%  } else if (noArgsEnum) { %>\n' +
+    '  var length = iteratee.length; index = -1;\n' +
+    '  if (length && isArguments(iteratee)) {\n' +
+    '    while (++index < length) {\n' +
+    '      value = iteratee[index];\n' +
+    '      index += \'\';\n' +
+    '      <%= objectBranch.inLoop %>\n' +
+    '    }\n' +
+    '  } else {' +
+    '  <% } %>' +
+
     '  <% if (!hasDontEnumBug) { %>\n' +
     '  var skipProto = typeof iteratee == \'function\' && \n' +
     '    propertyIsEnumerable.call(iteratee, \'prototype\');\n' +
@@ -416,7 +433,7 @@
     '  }' +
     '    <% } %>' +
     '  <% } %>' +
-    '  <% if (arrayBranch) { %>\n}<% } %>' +
+    '  <% if (arrayBranch || noArgsEnum) { %>\n}<% } %>' +
     '<% } %>\n' +
 
     // add code to the bottom of the iteration function
@@ -473,8 +490,8 @@
     'args': 'object',
     'init': 'object',
     'top':
-      'for (var iterateeIndex = 1, length = arguments.length; iterateeIndex < length; iterateeIndex++) {\n' +
-      '  iteratee = arguments[iterateeIndex];\n' +
+      'for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
+      '  iteratee = arguments[argsIndex];\n' +
       (hasDontEnumBug ? '  if (iteratee) {' : ''),
     'inLoop': 'result[index] = value',
     'bottom': (hasDontEnumBug ? '  }\n' : '') + '}'
@@ -629,6 +646,7 @@
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
     data.isKeysFast = isKeysFast;
+    data.noArgsEnum = noArgsEnum;
     data.shadowed = shadowed;
     data.useHas = data.useHas !== false;
     data.useStrict = data.useStrict !== false;
@@ -781,21 +799,6 @@
   }
 
   /**
-   * A shim implementation of `Object.keys` that produces an array of the given
-   * object's own enumerable property names.
-   *
-   * @private
-   * @param {Object} object The object to inspect.
-   * @returns {Array} Returns a new array of property names.
-   */
-  var shimKeys = createIterator({
-    'args': 'object',
-    'exit': 'if (!(object && objectTypes[typeof object])) throw TypeError()',
-    'init': '[]',
-    'inLoop': 'result.push(index)'
-  });
-
-  /**
    * Used by `template` to replace "escape" template delimiters with tokens.
    *
    * @private
@@ -858,8 +861,8 @@
    * Creates a clone of `value`. If `deep` is `true`, all nested objects will
    * also be cloned otherwise they will be assigned by reference. If a value has
    * a `clone` method it will be used to perform the clone. Functions, DOM nodes,
-   * `arguments` objects, and object instances created by a constructor other
-   * than `Object` are **not** cloned unless they have a custom `clone` method.
+   * `arguments` objects, and objects created by constructors other than `Object`
+   * are **not** cloned unless they have a custom `clone` method.
    *
    * @static
    * @memberOf _
@@ -1042,8 +1045,8 @@
   /**
    * Iterates over `object`'s own and inherited enumerable properties, executing
    * the `callback` for each property. The `callback` is bound to `thisArg` and
-   * invoked with 3 arguments; (value, key, object). Callbacks may terminate
-   * iteration early by explicitly returning `false`.
+   * invoked with 3 arguments; (value, key, object). Callbacks may exit iteration
+   * early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -1074,7 +1077,7 @@
   /**
    * Iterates over `object`'s own enumerable properties, executing the `callback`
    * for each property. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, key, object). Callbacks may terminate iteration early by
+   * arguments; (value, key, object). Callbacks may exit iteration early by
    * explicitly returning `false`.
    *
    * @static
@@ -1629,6 +1632,21 @@
   }
 
   /**
+   * A shim implementation of `Object.keys` that produces an array of the given
+   * object's own enumerable property names.
+   *
+   * @private
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property names.
+   */
+  var shimKeys = createIterator({
+    'args': 'object',
+    'exit': 'if (!(object && objectTypes[typeof object])) throw TypeError()',
+    'init': '[]',
+    'inLoop': 'result.push(index)'
+  });
+
+  /**
    * Creates an array composed of the own enumerable property names of `object`.
    *
    * @static
@@ -1860,7 +1878,7 @@
   /**
    * Iterates over a `collection`, executing the `callback` for each element in
    * the `collection`. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, index|key, collection). Callbacks may terminate iteration
+   * arguments; (value, index|key, collection). Callbacks may exit iteration
    * early by explicitly returning `false`.
    *
    * @static
@@ -2008,8 +2026,8 @@
     'top':
       'var destValue, found, isArr, stackLength, recursive = indicator == isPlainObject;\n' +
       'if (!recursive) stack = [];\n' +
-      'for (var iterateeIndex = 1, length = recursive ? 2 : arguments.length; iterateeIndex < length; iterateeIndex++) {\n' +
-      '  iteratee = arguments[iterateeIndex];\n' +
+      'for (var argsIndex = 1, argsLength = recursive ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
+      '  iteratee = arguments[argsIndex];\n' +
       (hasDontEnumBug ? '  if (iteratee) {' : ''),
     'inLoop':
       'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +

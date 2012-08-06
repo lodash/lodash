@@ -70,10 +70,10 @@
 
     var label1 = document.createElement('label');
     label1.innerHTML =
-      '<input name="norequire" type="checkbox">No RequireJS</label>';
+      '<input name="norequire" type="checkbox">No RequireJS';
 
     var label2 = document.createElement('label');
-    label2.innerHTML = ' ' +
+    label2.innerHTML = '&nbsp;' +
       '<select name="build">' +
       '<option value="dev">Developement</option>' +
       '<option value="prod">Production</option>' +

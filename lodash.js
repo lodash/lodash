@@ -364,8 +364,7 @@
     '  var length = iteratee.length; index = -1;\n' +
     '  if (length && isArguments(iteratee)) {\n' +
     '    while (++index < length) {\n' +
-    '      value = iteratee[index];\n' +
-    '      index += \'\';\n' +
+    '      value = iteratee[index += \'\'];\n' +
     '      <%= objectBranch.inLoop %>\n' +
     '    }\n' +
     '  } else {' +
@@ -1446,6 +1445,7 @@
 
   /**
    * Checks if `value` is a finite number.
+   *
    * Note: This is not the same as native `isFinite`, which will return true for
    * booleans and other values. See http://es5.github.com/#x15.1.2.5.
    *
@@ -1512,6 +1512,7 @@
 
   /**
    * Checks if `value` is `NaN`.
+   *
    * Note: This is not the same as native `isNaN`, which will return true for
    * `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
    *
@@ -3562,6 +3563,7 @@
 
   /**
    * This function returns the first argument passed to it.
+   *
    * Note: It is used throughout Lo-Dash as a default callback.
    *
    * @static
@@ -3677,6 +3679,9 @@
   /**
    * A micro-templating method that handles arbitrary delimiters, preserves
    * whitespace, and correctly escapes quotes within interpolated code.
+   *
+   * Note: For Chrome extensions use the `lodash csp` build and see
+   * http://code.google.com/chrome/extensions/trunk/sandboxingEval.html
    *
    * @static
    * @memberOf _

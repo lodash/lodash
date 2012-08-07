@@ -261,7 +261,7 @@ require({
 
 ### <sup>v0.5.0-rc.1</sup>
 
- * Added `_.countBy`, `_.drop`, `_.merge`, and `_.where`
+ * Added [_.countBy](https://github.com/bestiejs/lodash/tree/master/doc#_countbycollection-callback--thisarg), [_.drop](https://github.com/bestiejs/lodash/tree/master/doc#_dropobject--prop1-prop2-), [_.merge](https://github.com/bestiejs/lodash/tree/master/doc#_mergeobject--source1-source2--indicator), and [_.where](https://github.com/bestiejs/lodash/tree/master/doc#_wherecollection-properties)
  * Added `csp` *(Content Security Policy)* and `underscore` build options
  * Added `deep` cloning support to `_.clone`
  * Added support for exiting `_.forEach`, `_.forIn`, and `_.forOwn` early by returning `false` in the `callback`

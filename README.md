@@ -51,7 +51,7 @@ For more information check out these screencasts over Lo-Dash:
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5-20, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3.0.4-6, Node.js 0.4.8-0.8.2, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC3.
+Lo-Dash has been tested in at least Chrome 5-21, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3.0.4-6, Node.js 0.4.8-0.8.5, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC3.
 
 ## Custom builds
 
@@ -185,12 +185,13 @@ require({
  * `_.forEach` should be chainable [[#142](https://github.com/documentcloud/underscore/issues/142), [test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L486-489)]
  * `_.forEach` should exit iteration early [[#211](https://github.com/documentcloud/underscore/issues/211), [test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L578-597)]
  * `_.groupBy` should add values to own, not inherited, properties [[test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L612-619)]
+ * `_.isEqual` should return `true` for like-objects from different documents [[test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L746-766)]
  * `_.isNaN(new Number(NaN))` should return `true` [[test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L774-776)]
  * `_.keys` and `_.size` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [#653](https://github.com/documentcloud/underscore/issues/653), [test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L786-788), [test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L1083-1085)]
  * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L996-999)]
  * `_.reduceRight` should pass correct callback arguments when iterating objects [[test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L1007-1021)]
  * `_.size` should return the `length` of string values [[test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L1066-1068)]
- * `_.size` shouldn't error on falsey values [[#650](https://github.com/documentcloud/underscore/pull/650), [test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L1070-1077)]
+ * `_.size` shouldn’t error on falsey values [[#650](https://github.com/documentcloud/underscore/pull/650), [test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L1070-1077)]
  * `_.sortedIndex` should support arrays with high `length` values [[test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L1127-1136)]
  * `_.template` should not augment the `options` object [[test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L1151-1155)]
  * `_.throttle` should work when called in a loop [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/v0.5.0-rc.1/test/test.js#L1247-1257)]

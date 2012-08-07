@@ -181,10 +181,11 @@
     // when it encounters a single line comment beginning with the `@` symbol.
     // The JS engine in Narwhal will generate the function `function anonymous(){//}`
     // and throw a syntax error. In IE, `@` symbols are part of its non-standard
-    // conditional compilation support. The `@cc_on` statement activates its
-    // support while the trailing `!` induces a syntax error to exlude it.
+    // conditional compilation support. The `@cc_on` statement activates its support
+    // while the trailing ` !` induces a syntax error to exlude it. Compatibility
+    // modes in IE > 8 require a space before the `!` to induce a syntax error.
     // See http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
-    var useSourceURL = (Function('//@cc_on!')(), true);
+    var useSourceURL = (Function('//@cc_on !')(), true);
   } catch(e){ }
 
   /** Used to identify object classifications that are array-like */
@@ -490,10 +491,9 @@
     'init': 'object',
     'top':
       'for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
-      '  iteratee = arguments[argsIndex];\n' +
-      (hasDontEnumBug ? '  if (iteratee) {' : ''),
+      '  if (iteratee = arguments[argsIndex]) {',
     'inLoop': 'result[index] = value',
-    'bottom': (hasDontEnumBug ? '  }\n' : '') + '}'
+    'bottom': '  }\n}'
   };
 
   /** Reusable iterator options for `filter`, `reject`, and `where` */
@@ -908,7 +908,7 @@
       thorough.value = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
     }
     // use custom `clone` method if available
-    var isObj = typeof value == 'object';
+    var isObj = objectTypes[typeof value];
     if ((isObj || thorough.value) && value.clone && toString.call(value.clone) == funcClass) {
       thorough.value = null;
       return value.clone(deep);
@@ -2028,8 +2028,7 @@
       'var destValue, found, isArr, stackLength, recursive = indicator == isPlainObject;\n' +
       'if (!recursive) stack = [];\n' +
       'for (var argsIndex = 1, argsLength = recursive ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
-      '  iteratee = arguments[argsIndex];\n' +
-      (hasDontEnumBug ? '  if (iteratee) {' : ''),
+      '  if (iteratee = arguments[argsIndex]) {',
     'inLoop':
       'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +
       '  found = false; stackLength = stack.length;\n' +

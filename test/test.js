@@ -753,7 +753,9 @@
         var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
         idoc.write("<script>parent._._object = { 'a': 1, 'b': 2, 'c': 3 };<\/script>");
         idoc.close();
-
+      }
+      // ensure `_._object` is assigned (unassigned in Opera 10.00)
+      if (_._object) {
         equal(_.isEqual(object, _._object), true);
         body.removeChild(iframe);
         delete _._object;

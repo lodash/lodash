@@ -3421,6 +3421,9 @@
       }
       ran = true;
       result = func.apply(this, arguments);
+
+      // clear the `func` variable so the function may be garbage collected
+      func = null;
       return result;
     };
   }

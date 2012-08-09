@@ -32,19 +32,19 @@ For more information check out these screencasts over Lo-Dash:
 
  * AMD loader support ([RequireJS](http://requirejs.org/), [curl.js](https://github.com/cujojs/curl), etc.)
  * [_.bind](http://lodash.com/docs#bind) supports *"lazy"* binding
- * [_.clone](https://github.com/bestiejs/lodash/tree/master/doc#_clonevalue-deep--guard-thorough) supports *"deep"* cloning
- * [_.countBy](https://github.com/bestiejs/lodash/tree/master/doc#_countbycollection-callback--thisarg) as a compainion function for [_.groupBy](http://lodash.com/docs#groupBy) and [_.sortBy](http://lodash.com/docs#sortBy)
+ * [_.clone](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_clonevalue-deep--guard-thorough) supports *"deep"* cloning
+ * [_.countBy](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_countbycollection-callback--thisarg) as a compainion function for [_.groupBy](http://lodash.com/docs#groupBy) and [_.sortBy](http://lodash.com/docs#sortBy)
  * [_.debounce](http://lodash.com/docs#debounce)’ed functions match [_.throttle](http://lodash.com/docs#throttle)’ed functions’ return value behavior
- * [_.drop](https://github.com/bestiejs/lodash/tree/master/doc#_dropobject--prop1-prop2-) for the inverse functionality of [_.pick](http://lodash.com/docs#pick)
+ * [_.drop](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_dropobject--prop1-prop2-) for the inverse functionality of [_.pick](http://lodash.com/docs#pick)
  * [_.forEach](http://lodash.com/docs#forEach) is chainable and supports exiting iteration early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating over an object’s own and inherited properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating over an object’s own properties
  * [_.groupBy](http://lodash.com/docs#groupBy), [_.sortedIndex](http://lodash.com/docs#sortedIndex), and [_.uniq](http://lodash.com/docs#uniq) accept a `thisArg` argument
  * [_.indexOf](http://lodash.com/docs#indexOf) and [_.lastIndexOf](http://lodash.com/docs#lastIndexOf) accept a `fromIndex` argument
- * [_.merge](https://github.com/bestiejs/lodash/tree/master/doc#_mergeobject--source1-source2--indicator) for a *"deep"* [_.extend](http://lodash.com/docs#extend)
+ * [_.merge](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_mergeobject--source1-source2--indicator) for a *"deep"* [_.extend](http://lodash.com/docs#extend)
  * [_.partial](http://lodash.com/docs#partial) for partial application without `this` binding
  * [_.template](http://lodash.com/docs#template) utilizes [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl) for easier debugging
- * [_.where](https://github.com/bestiejs/lodash/tree/master/doc#_wherecollection-properties) for filtering collections by contained properties
+ * [_.where](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_wherecollection-properties) for filtering collections by contained properties
  * [_.zipObject](http://lodash.com/docs#zipObject) for composing objects
  * [_.contains](http://lodash.com/docs#contains), [_.size](http://lodash.com/docs#size), [_.toArray](http://lodash.com/docs#toArray),
    [and more…](http://lodash.com/docs "_.every, _.filter, _.find, _.forEach, _.groupBy, _.invoke, _.map, _.pluck, _.reduce, _.reduceRight, _.reject, _.some, _sortBy") accept strings
@@ -261,7 +261,7 @@ require({
 
 ### <sup>v0.5.0-rc.1</sup>
 
- * Added [_.countBy](https://github.com/bestiejs/lodash/tree/master/doc#_countbycollection-callback--thisarg), [_.drop](https://github.com/bestiejs/lodash/tree/master/doc#_dropobject--prop1-prop2-), [_.merge](https://github.com/bestiejs/lodash/tree/master/doc#_mergeobject--source1-source2--indicator), and [_.where](https://github.com/bestiejs/lodash/tree/master/doc#_wherecollection-properties)
+ * Added [_.countBy](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_countbycollection-callback--thisarg), [_.drop](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_dropobject--prop1-prop2-), [_.merge](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_mergeobject--source1-source2--indicator), and [_.where](https://github.com/bestiejs/lodash/tree/v0.5.0-rc.1/doc#_wherecollection-properties)
  * Added `csp` *(Content Security Policy)* and `underscore` build options
  * Added `deep` cloning support to `_.clone`
  * Added support for exiting `_.forEach`, `_.forIn`, and `_.forOwn` early by returning `false` in the `callback`

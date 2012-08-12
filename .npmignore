@@ -1,5 +1,4 @@
 *.custom.*
-*.min.*
 .*
 dist/
 doc/*.php
@@ -11,7 +10,7 @@ test/*-ui.js
 test/*.sh
 vendor/backbone/
 vendor/docdown/
-vendor/qunit/qunit/*.css
-vendor/underscore/
-vendor/requirejs/
 vendor/firebug-lite/
+vendor/qunit/qunit/*.css
+vendor/requirejs/
+vendor/underscore/test/

@@ -21,7 +21,7 @@
   ],
   "author": {
     "name": "John-David Dalton",
-    "email": "john@fusejs.com",
+    "email": "john.david.dalton@gmail.com",
     "web": "http://allyoucanleet.com/"
   },
   "bugs": {
@@ -42,6 +42,9 @@
     "node",
     "rhino"
   ],
+  "jam":{
+    "main": "lodash.min.js"
+  },
   "scripts": {
     "build": "node build",
     "test": "node test/test"

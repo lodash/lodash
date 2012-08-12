@@ -494,6 +494,10 @@
 
       _.forEach(object, function(value, key) { keys.push(key); });
       deepEqual(keys, ['length']);
+
+      keys = []; object.length = Math.pow(2, 32);
+      _.forEach(object, function(value, key) { keys.push(key); });
+      deepEqual(keys, ['length']);
     });
 
     _.each([

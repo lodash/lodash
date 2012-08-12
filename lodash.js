@@ -339,7 +339,7 @@
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
     'var length = iteratee.length; index = -1;' +
-    '  <% if (objectBranch) { %>\nif (length === length >>> 0) {<% } %>' +
+    '  <% if (objectBranch) { %>\nif (length > -1 && length === length >>> 0) {<% } %>' +
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +
@@ -2146,7 +2146,8 @@
     if(thisArg) {
       callback = iteratorBind(callback, thisArg);
     }
-    if (length === length >>> 0) {
+    // Opera 10.53-10.60 JITted `length >>> 0` returns the wrong value for negative numbers
+    if (length > -1 && length === length >>> 0) {
       var iteratee = noCharByIndex && toString.call(collection) == stringClass
         ? collection.split('')
         : collection;
@@ -2286,7 +2287,7 @@
       return collection.toArray();
     }
     var length = collection.length;
-    if (length === length >>> 0) {
+    if (length > -1 && length === length >>> 0) {
       return (noArraySliceOnStrings ? toString.call(collection) == stringClass : typeof collection == 'string')
         ? collection.split('')
         : slice.call(collection);

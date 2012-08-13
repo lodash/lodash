@@ -263,8 +263,8 @@
   ];
 
   /** Collections of method names */
-  var excludeMethods,
-      includeMethods,
+  var excludeMethods = [],
+      includeMethods = [],
       allMethods = Object.keys(dependencyMap);
 
   var underscoreMethods = lodash.without.apply(lodash, [allMethods].concat([
@@ -719,6 +719,17 @@
   }
 
   /*--------------------------------------------------------------------------*/
+
+  // don't expose `_.forIn` or `_.forOwn` if `isUnderscore` is `true` unless
+  // requested by `include`
+  if (isUnderscore) {
+    if (includeMethods.indexOf('forIn')  == -1) {
+      source = source.replace(/ *lodash\.forIn *=.+\n/, '');
+    }
+    if (includeMethods.indexOf('forOwn') == -1) {
+      source = source.replace(/ *lodash\.forOwn *=.+\n/, '');
+    }
+  }
 
   // add methods required by Backbone or Underscore
   [

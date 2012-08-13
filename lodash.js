@@ -1259,7 +1259,8 @@
     'args': 'value',
     'init': 'true',
     'top':
-      'var className = toString.call(value), length = value.length;\n' +
+      'var className = toString.call(value),\n' +
+      '    length = value.length;\n' +
       'if (arrayLikeClasses[className]' +
       (noArgsClass ? ' || isArguments(value)' : '') + ' ||\n' +
       '  (className == objectClass && length > -1 && length === length >>> 0 &&\n' +
@@ -2543,7 +2544,8 @@
   }
 
   /**
-   * Computes the intersection of all the passed-in arrays.
+   * Computes the intersection of all the passed-in arrays using strict equality
+   * for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
@@ -2913,7 +2915,8 @@
   }
 
   /**
-   * Computes the union of the passed-in arrays.
+   * Computes the union of the passed-in arrays using strict equality for
+   * comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _

@@ -819,14 +819,13 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // simplify template snippets
+  // simplify template snippets by removing unnecessary brackets
   source = source.replace(
-    RegExp(
-      "'else if \\(thisArg\\) \\{\\\\n' \\+\\s*" +
-      "'  callback = iteratorBind\\(callback, thisArg\\)\\\\n' \\+\\s*" +
-      "'}'"
-    , 'g'),
-    "'else if (thisArg) callback = iteratorBind(callback, thisArg)'"
+    RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*')}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
+  );
+
+  source = source.replace(
+    RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*')}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
   );
 
   /*--------------------------------------------------------------------------*/

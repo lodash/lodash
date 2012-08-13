@@ -713,6 +713,13 @@
       equal(_.isEmpty({ 'length': 0 }), false);
     });
 
+    test('should work with array-like collections', function() {
+      function Foo(elements) { Array.prototype.push.apply(this, elements); }
+      Foo.prototype = { 'splice': Array.prototype.splice };
+
+      equal(_.isEmpty(new Foo([])), true);
+    });
+
     test('should work with `arguments` objects (test in IE < 9)', function() {
       equal(_.isEmpty(args), false);
     });
@@ -1082,6 +1089,13 @@
 
     test('should work with an object that has a `length` property', function() {
       equal(_.size({ 'length': 3 }), 1);
+    });
+
+    test('should work with array-like collections', function() {
+      function Foo(elements) { Array.prototype.push.apply(this, elements); }
+      Foo.prototype = { 'splice': Array.prototype.splice };
+
+      equal(_.size(new Foo([1, 2, 3])), 3);
     });
 
     test('should work with `arguments` objects (test in IE < 9)', function() {

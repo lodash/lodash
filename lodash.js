@@ -663,8 +663,8 @@
     var factory = Function(
         'arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn, ' +
         'funcClass, hasOwnProperty, identity, indexOf, isArguments, isArray, ' +
-        'isPlainObject, iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable, ' +
-        'slice, stringClass, toString',
+        'isPlainObject, iteratorBind, objectClass, objectTypes, nativeKeys, ' +
+        'propertyIsEnumerable, slice, stringClass, toString',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
     );
@@ -672,8 +672,8 @@
     return factory(
       arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn,
       funcClass, hasOwnProperty, identity, indexOf, isArguments, isArray,
-      isPlainObject, iteratorBind, objectTypes, nativeKeys, propertyIsEnumerable,
-      slice, stringClass, toString
+      isPlainObject, iteratorBind, objectClass, objectTypes, nativeKeys,
+      propertyIsEnumerable, slice, stringClass, toString
     );
   }
 
@@ -1259,9 +1259,12 @@
     'args': 'value',
     'init': 'true',
     'top':
-      'if (arrayLikeClasses[toString.call(value)]' +
-        (noArgsClass ? ' || isArguments(value)' : '') +
-      ') return !value.length',
+      'var className = toString.call(value), length = value.length;\n' +
+      'if (arrayLikeClasses[className]' +
+      (noArgsClass ? ' || isArguments(value)' : '') + ' ||\n' +
+      '  (className == objectClass && length > -1 && length === length >>> 0 &&\n' +
+      '  toString.call(value.splice) == funcClass)' +
+      ') return !length',
     'inLoop': {
       'object': 'return false'
     }
@@ -1726,9 +1729,19 @@
     if (!value) {
       return 0;
     }
-    return arrayLikeClasses[toString.call(value)] || (noArgsClass && isArguments(value))
-      ? value.length
-      : keys(value).length;
+    var className = toString.call(value),
+        length = value.length;
+
+    // return `value.length` for `arguments` objects, arrays, strings, and DOM
+    // query collections of libraries like jQuery and MooTools
+    // http://code.google.com/p/fbug/source/browse/branches/firebug1.9/content/firebug/chrome/reps.js?r=12614#653
+    // http://trac.webkit.org/browser/trunk/Source/WebCore/inspector/InjectedScriptSource.js?rev=125186#L609
+    if (arrayLikeClasses[className] || (noArgsClass && isArguments(value)) ||
+        (className == objectClass && length > -1 && length === length >>> 0 &&
+          toString.call(value.splice) == funcClass)) {
+      return length;
+    }
+    return keys(value).length;
   }
 
   /**
@@ -1961,8 +1974,7 @@
       '    isFunc = typeof methodName == \'function\'',
     'inLoop': {
       'array':
-        'result[index] = (isFunc ? methodName : value[methodName])' +
-        '.apply(value, args)',
+        'result[index] = (isFunc ? methodName : value[methodName]).apply(value, args)',
       'object':
         'result' + (isKeysFast ? '[ownIndex] = ' : '.push') +
         '((isFunc ? methodName : value[methodName]).apply(value, args))'

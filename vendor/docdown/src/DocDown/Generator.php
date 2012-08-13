@@ -208,6 +208,7 @@ class Generator {
     $openTag = "\n<!-- div -->\n";
     $closeTag = "\n<!-- /div -->\n";
     $result = array('# ' . $this->options['title']);
+    $toc = 'toc';
 
     // initialize $api array
     foreach ($this->entries as $entry) {
@@ -304,10 +305,15 @@ class Generator {
 
       $compiling = $compiling ? ($result[] = $closeTag) : true;
 
+      // assign TOC hash
+      if (count($result) == 2) {
+        $toc = $member;
+      }
+
       // add root entry
       array_push(
         $result,
-        $openTag, '## ' . (count($result) == 2 ? '<a id="toc"></a>' : '') . '`' . $member . '`',
+        $openTag, '## ' . (count($result) == 2 ? '<a id="' . $toc . '"></a>' : '') . '`' . $member . '`',
         Generator::interpolate('* [`' . $member . '`](##{hash})', $entry)
       );
 
@@ -401,7 +407,7 @@ class Generator {
     }
 
     // close tags add TOC link reference
-    array_push($result, $closeTag, $closeTag, '', '  [1]: #toc "Jump back to the TOC."');
+    array_push($result, $closeTag, $closeTag, '', '  [1]: #' . $toc . ' "Jump back to the TOC."');
 
     // cleanup whitespace
     return trim(preg_replace('/ +\n/', "\n", join($result, "\n")));

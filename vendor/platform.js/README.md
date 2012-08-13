@@ -1,4 +1,4 @@
-# Platform.js <sup>v1.0.0-pre</sup>
+# Platform.js <sup>v1.0.0</sup>
 
 A platform detection library that works on nearly all JavaScript platforms<sup><a name="fnref1" href="#fn1">1</a></sup>.
 
@@ -15,6 +15,10 @@ Platform.js is part of the BestieJS *"Best in Class"* module collection. This me
 The documentation for Platform.js can be viewed here: [/doc/README.md](https://github.com/bestiejs/platform.js/blob/master/doc/README.md#readme)
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/platform.js/wiki/Roadmap).
+
+## Support
+
+Platform.js has been tested in at least Chrome 5-21, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3-6, Node.js 0.4.8-0.8.6, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC3.
 
 ## Installation and usage
 
@@ -82,11 +86,6 @@ info.layout; // 'Presto'
 info.os; // 'Mac OS X 10.7.2'
 info.description; // 'Opera 11.52 (identifying as Firefox 4.0) on Mac OS X 10.7.2'
 ~~~
-
-## Footnotes
-
-  1. Platform.js has been tested in at least Adobe AIR 2.6, Chrome 5-15, Firefox 1.5-8, IE 6-10, Opera 9.25-11.52, Safari 2-5.1.1, Node.js 0.4.8-0.6.1, Narwhal 0.3.2, RingoJS 0.7-0.8, and Rhino 1.7RC3.
-     <a name="fn1" title="Jump back to footnote 1 in the text." href="#fnref1">&#8617;</a>
 
 ## Author
 

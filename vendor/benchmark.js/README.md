@@ -1,4 +1,4 @@
-# Benchmark.js <sup>v1.0.0-pre</sup>
+# Benchmark.js <sup>v1.0.0</sup>
 
 A [robust](http://calendar.perfplanet.com/2010/bulletproof-javascript-benchmarks/ "Bulletproof JavaScript benchmarks") benchmarking library that works on nearly all JavaScript platforms<sup><a name="fnref1" href="#fn1">1</a></sup>, supports high-resolution timers, and returns statistically significant results. As seen on [jsPerf](http://jsperf.com/).
 
@@ -11,6 +11,10 @@ Benchmark.js is part of the BestieJS *"Best in Class"* module collection. This m
 The documentation for Benchmark.js can be viewed here: <http://benchmarkjs.com/docs>
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/benchmark.js/wiki/Roadmap).
+
+## Support
+
+Benchmark.js has been tested in at least Adobe AIR 2.6, Chrome 5-21, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3-6, Node.js 0.4.8-0.8.6, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC3.
 
 ## Installation and usage
 
@@ -113,11 +117,6 @@ suite.add('RegExp#test', function() {
 // > String#indexOf x 6,139,623 +-1.00% (131 cycles)
 // > Fastest is String#indexOf
 ~~~
-
-## Footnotes
-
-  1. Benchmark.js has been tested in at least Adobe AIR 2.6, Chrome 5-15, Firefox 1.5-8, IE 6-10, Opera 9.25-11.52, Safari 2-5.1.1, Node.js 0.4.8-0.6.1, Narwhal 0.3.2, RingoJS 0.7-0.8, and Rhino 1.7RC3.
-     <a name="fn1" title="Jump back to footnote 1 in the text." href="#fnref1">&#8617;</a>
 
 ## Authors
 

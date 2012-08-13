@@ -135,6 +135,20 @@ $(document).ready(function() {
     ok(!view.el);
   });
 
+  test("View: with className and id functions", 2, function() {
+    var View = Backbone.View.extend({
+      className: function() {
+        return 'className';
+      },
+      id: function() {
+        return 'id';
+      }
+    });
+    var view = new View();
+    strictEqual(view.el.className, 'className');
+    strictEqual(view.el.id, 'id');
+  });
+
   test("View: with attributes", 2, function() {
     var view = new Backbone.View({attributes : {'class': 'one', id: 'two'}});
     equal(view.el.className, 'one');

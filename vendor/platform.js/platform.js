@@ -1,5 +1,5 @@
 /*!
- * Platform.js v1.0.0-pre <http://mths.be/platform>
+ * Platform.js v1.0.0 <http://mths.be/platform>
  * Copyright 2010-2012 John-David Dalton <http://allyoucanleet.com/>
  * Available under MIT license <http://mths.be/mit>
  */
@@ -297,7 +297,7 @@
       'Opera Mini',
       'Opera',
       'Chrome',
-      { 'label': 'Chrome Mobile', 'pattern': 'CrMo' },
+      { 'label': 'Chrome Mobile', 'pattern': '(?:CriOS|CrMo)' },
       { 'label': 'Firefox', 'pattern': '(?:Firefox|Minefield)' },
       { 'label': 'IE', 'pattern': 'MSIE' },
       'Safari'
@@ -512,12 +512,11 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Return platform description when the platform object is coerced to a string.
+     * Returns `platform.description` when the platform object is coerced to a string.
      *
      * @name toString
      * @memberOf platform
-     * @type Function
-     * @returns {String} The platform description.
+     * @returns {String} Returns `platform.description` if available, else an empty string.
      */
     function toStringPlatform() {
       return this.description || '';
@@ -573,7 +572,7 @@
     // detect non-Opera versions (order is important)
     if (!version) {
       version = getVersion([
-        '(?:Cloud9|CrMo|Opera ?Mini|Raven|Silk(?!/[\\d.]+$))',
+        '(?:Cloud9|CriOS|CrMo|Opera ?Mini|Raven|Silk(?!/[\\d.]+$))',
         'Version',
         qualify(name),
         '(?:Firefox|Minefield|NetFront)'
@@ -708,7 +707,7 @@
           ))
         ) && !reOpera.test(data = parse.call(forOwn, ua.replace(reOpera, '') + ';')) && data.name) {
 
-      // when "indentifying" the UA contains both Opera and the other browser's name
+      // when "indentifying", the UA contains both Opera and the other browser's name
       data = 'ing as ' + data.name + ((data = data.version) ? ' ' + data : '');
       if (reOpera.test(name)) {
         if (/IE/.test(data) && os == 'Mac OS') {
@@ -716,7 +715,7 @@
         }
         data = 'identify' + data;
       }
-      // when "masking" the UA contains only the other browser's name
+      // when "masking", the UA contains only the other browser's name
       else {
         data = 'mask' + data;
         if (operaClass) {
@@ -760,13 +759,37 @@
         data = (data = data[0], data < 400 ? 1 : data < 500 ? 2 : data < 526 ? 3 : data < 533 ? 4 : data < 534 ? '4+' : data < 535 ? 5 : '5');
       } else {
         layout[1] = 'like Chrome';
-        data = data[1] || (data = data[0], data < 530 ? 1 : data < 532 ? 2 : data < 532.05 ? 3 : data < 533 ? 4 : data < 534.03 ? 5 : data < 534.07 ? 6 : data < 534.10 ? 7 : data < 534.13 ? 8 : data < 534.16 ? 9 : data < 534.24 ? 10 : data < 534.30 ? 11 : data < 535.01 ? 12 : data < 535.02 ? '13+' : data < 535.07 ? 15 : data < 535.11 ? 16 : data < 535.19 ? 17 : data < 535.21 ? 18 : '19');
+        data = data[1] || (data = data[0], data < 530 ? 1 : data < 532 ? 2 : data < 532.05 ? 3 : data < 533 ? 4 : data < 534.03 ? 5 : data < 534.07 ? 6 : data < 534.10 ? 7 : data < 534.13 ? 8 : data < 534.16 ? 9 : data < 534.24 ? 10 : data < 534.30 ? 11 : data < 535.01 ? 12 : data < 535.02 ? '13+' : data < 535.07 ? 15 : data < 535.11 ? 16 : data < 535.19 ? 17 : data < 536.05 ? 18 : data < 536.10 ? 19 : data < 537.01 ? 20 : '21');
       }
       // add the postfix of ".x" or "+" for approximate versions
       layout[1] += ' ' + (data += typeof data == 'number' ? '.x' : /[.+]/.test(data) ? '' : '+');
       // obscure version for some Safari 1-2 releases
       if (name == 'Safari' && (!version || parseInt(version) > 45)) {
         version = data;
+      }
+    }
+    // detect Opera desktop modes
+    if (name == 'Opera' &&  (data = /(?:zbov|zvav)$/.exec(os))) {
+      name += ' ';
+      description.unshift('desktop mode');
+      if (data == 'zvav') {
+        name += 'Mini';
+        version = null;
+      } else {
+        name += 'Mobile';
+      }
+    }
+    // detect Chrome desktop mode
+    else if (name == 'Safari' && /Chrome/.exec(layout[1])) {
+      description.unshift('desktop mode');
+      name = 'Chrome Mobile';
+      version = null;
+
+      if (/Mac OS X/.test(os)) {
+        manufacturer = 'Apple';
+        os = 'iOS 4.3+';
+      } else {
+        os = null;
       }
     }
     // strip incorrect OS versions
@@ -793,9 +816,25 @@
     if (product) {
       description.push((/^on /.test(description[description.length -1]) ? '' : 'on ') + product);
     }
+    // parse OS into an object
+    if (os) {
+      data = / ([\d.+]+)$/.exec(os);
+      os = {
+        'architecture': 32,
+        'family': data ? os.replace(data[0], '') : os,
+        'version': data ? data[1] : null,
+        'toString': function() {
+          var version = this.version;
+          return this.family + (version ? ' ' + version : '') + (this.architecture == 64 ? ' 64-bit' : '');
+        }
+      };
+    }
     // add browser/OS architecture
-    if ((data = /\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i).test(arch) && !/\bi686\b/i.test(arch)) {
-      os = os && os + (data.test(os) ? '' : ' 64-bit');
+    if ((data = / (?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(arch)) && !/\bi686\b/i.test(arch)) {
+      if (os) {
+        os.architecture = 64;
+        os.family = os.family.replace(data, '');
+      }
       if (name && (/WOW64/i.test(ua) ||
           (useFeatures && /\w(?:86|32)$/.test(nav.cpuClass || nav.platform)))) {
         description.unshift('32-bit');
@@ -834,11 +873,46 @@
        * The name of the operating system.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type Object
        */
-      'os': os && (name &&
-        !(os == os.split(' ')[0] && (os == name.split(' ')[0] || product)) &&
-          description.push(product ? '(' + os + ')' : 'on ' + os), os),
+      'os': os
+        ? (name &&
+            !(os == String(os).split(' ')[0] && (os == name.split(' ')[0] || product)) &&
+              description.push(product ? '(' + os + ')' : 'on ' + os), os)
+        : {
+
+          /**
+           * The CPU architecture the OS is built for.
+           *
+           * @memberOf platform.os
+           * @type String|Null
+           */
+          'architecture': null,
+
+          /**
+           * The family of the OS.
+           *
+           * @memberOf platform.os
+           * @type String|Null
+           */
+          'family': null,
+
+          /**
+           * The version of the OS.
+           *
+           * @memberOf platform.os
+           * @type String|Null
+           */
+          'version': null,
+
+          /**
+           * Returns the OS string.
+           *
+           * @memberOf platform.os
+           * @returns {String} The OS string.
+           */
+          'toString': function() { return 'null'; }
+        },
 
       /**
        * The platform description.

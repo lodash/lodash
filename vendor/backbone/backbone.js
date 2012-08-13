@@ -1290,8 +1290,8 @@
     _ensureElement: function() {
       if (!this.el) {
         var attrs = _.extend({}, getValue(this, 'attributes'));
-        if (this.id) attrs.id = this.id;
-        if (this.className) attrs['class'] = this.className;
+        if (this.id) attrs.id = getValue(this, 'id');
+        if (this.className) attrs['class'] = getValue(this, 'className');
         this.setElement(this.make(getValue(this, 'tagName'), attrs), false);
       } else {
         this.setElement(this.el, false);

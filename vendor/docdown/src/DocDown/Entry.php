@@ -196,7 +196,7 @@ class Entry {
    * @returns {Array} The entry `param` data.
    */
   public function getParams( $index = null ) {
-    preg_match_all('#\*\s*@param\s+\{([^}]+)\}\s+(\[[^]]+\]|[$\w]+)\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#i', $this->entry, $result);
+    preg_match_all('#\*\s*@param\s+\{([^}]+)\}\s+(\[.+\]|[$\w]+)\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#i', $this->entry, $result);
     if (count($result = array_filter(array_slice($result, 1)))) {
       // repurpose array
       foreach ($result as $param) {

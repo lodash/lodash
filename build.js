@@ -691,7 +691,7 @@
    */
   function writeFile(source, filename) {
     // correct overly aggressive Closure Compiler minification
-    source = source.replace('prototype={valueOf:1}', 'prototype={valueOf:1,y:1}');
+    source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
 
     // re-remove "use strict" added by the minifier
     if (!useStrict) {

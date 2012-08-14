@@ -38,7 +38,7 @@
     source = source.replace(/(\w)\["([^."]+)"\]/g, '$1.$2');
 
     // correct AMD module definition for AMD build optimizers
-    source = source.replace(/("function")==(typeof define)&&\(?("object")==(typeof define\.amd)(&&define\.amd)\)?/, '$2==$1&&$4==$3$5');
+    source = source.replace(/("function")\s*==\s*(typeof define)\s*&&\s*\(?\s*("object")\s*==\s*(typeof define\.amd)\s*&&\s*(define\.amd)\s*\)?/, '$2==$1&&$4==$3&&$5');
 
     // add license
     source = license + '\n;' + source;

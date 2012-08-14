@@ -55,6 +55,7 @@
     'isArr',
     'isArray',
     'isFunc',
+    'isFunction',
     'isPlainObject',
     'methodName',
     'noaccum',

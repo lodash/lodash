@@ -857,7 +857,6 @@
     // build replacement code
     lodash.forOwn({
       'Date': 'dateClass',
-      'Function': 'funcClass',
       'Number': 'numberClass',
       'RegExp': 'regexpClass',
       'String': 'stringClass'

@@ -663,8 +663,8 @@
     var factory = Function(
         'arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn, ' +
         'funcClass, hasOwnProperty, identity, indexOf, isArguments, isArray, ' +
-        'isPlainObject, iteratorBind, objectClass, objectTypes, nativeKeys, ' +
-        'propertyIsEnumerable, slice, stringClass, toString',
+        'isFunction, isPlainObject, iteratorBind, objectClass, objectTypes, ' +
+        'nativeKeys, propertyIsEnumerable, slice, stringClass, toString',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
     );
@@ -672,8 +672,8 @@
     return factory(
       arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn,
       funcClass, hasOwnProperty, identity, indexOf, isArguments, isArray,
-      isPlainObject, iteratorBind, objectClass, objectTypes, nativeKeys,
-      propertyIsEnumerable, slice, stringClass, toString
+      isFunction, isPlainObject, iteratorBind, objectClass, objectTypes,
+      nativeKeys, propertyIsEnumerable, slice, stringClass, toString
     );
   }
 
@@ -751,7 +751,7 @@
     // Also check that the constructor is `Object` (i.e. `Object instanceof Object`)
     var ctor = value.constructor;
     if ((!noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string')) &&
-        (toString.call(ctor) != funcClass || ctor instanceof ctor)) {
+        (!isFunction(ctor) || ctor instanceof ctor)) {
       // IE < 9 iterates inherited properties before own properties. If the first
       // iterated property is an object's own property then there are no inherited
       // enumerable properties.
@@ -857,6 +857,92 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Checks if `value` is an `arguments` object.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
+   * @example
+   *
+   * (function() { return _.isArguments(arguments); })(1, 2, 3);
+   * // => true
+   *
+   * _.isArguments([1, 2, 3]);
+   * // => false
+   */
+  function isArguments(value) {
+    return toString.call(value) == argsClass;
+  }
+  // fallback for browsers that can't detect `arguments` objects by [[Class]]
+  if (noArgsClass) {
+    isArguments = function(value) {
+      return !!(value && hasOwnProperty.call(value, 'callee'));
+    };
+  }
+
+  /**
+   * Checks if `value` is an array.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is an array, else `false`.
+   * @example
+   *
+   * (function() { return _.isArray(arguments); })();
+   * // => false
+   *
+   * _.isArray([1, 2, 3]);
+   * // => true
+   */
+  var isArray = nativeIsArray || function(value) {
+    return toString.call(value) == arrayClass;
+  };
+
+  /**
+   * Checks if `value` is a function.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a function, else `false`.
+   * @example
+   *
+   * _.isFunction(''.concat);
+   * // => true
+   */
+  function isFunction(value) {
+    return typeof value == 'function';
+  }
+  // fallback for older versions of Chrome and Safari
+  if (isFunction(/x/)) {
+    isFunction = function(value) {
+      return toString.call(value) == funcClass;
+    };
+  }
+
+  /**
+   * A shim implementation of `Object.keys` that produces an array of the given
+   * object's own enumerable property names.
+   *
+   * @private
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property names.
+   */
+  var shimKeys = createIterator({
+    'args': 'object',
+    'exit': 'if (!(object && objectTypes[typeof object])) throw TypeError()',
+    'init': '[]',
+    'inLoop': 'result.push(index)'
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  /**
    * Creates a clone of `value`. If `deep` is `true`, all nested objects will
    * also be cloned otherwise they will be assigned by reference. If a value has
    * a `clone` method it will be used to perform the clone. Functions, DOM nodes,
@@ -909,7 +995,7 @@
     }
     // use custom `clone` method if available
     var isObj = objectTypes[typeof value];
-    if ((isObj || thorough.value) && value.clone && toString.call(value.clone) == funcClass) {
+    if ((isObj || thorough.value) && value.clone && isFunction(value.clone)) {
       thorough.value = null;
       return value.clone(deep);
     }
@@ -1114,7 +1200,7 @@
     'useHas': false,
     'args': 'object',
     'init': '[]',
-    'inLoop': 'if (toString.call(value) == funcClass) result.push(index)',
+    'inLoop': 'if (isFunction(value)) result.push(index)',
     'bottom': 'result.sort()'
   });
 
@@ -1136,52 +1222,6 @@
   function has(object, property) {
     return hasOwnProperty.call(object, property);
   }
-
-  /**
-   * Checks if `value` is an `arguments` object.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
-   * @example
-   *
-   * (function() { return _.isArguments(arguments); })(1, 2, 3);
-   * // => true
-   *
-   * _.isArguments([1, 2, 3]);
-   * // => false
-   */
-  function isArguments(value) {
-    return toString.call(value) == argsClass;
-  }
-  // fallback for browsers that can't detect `arguments` objects by [[Class]]
-  if (noArgsClass) {
-    isArguments = function(value) {
-      return !!(value && hasOwnProperty.call(value, 'callee'));
-    };
-  }
-
-  /**
-   * Checks if `value` is an array.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an array, else `false`.
-   * @example
-   *
-   * (function() { return _.isArray(arguments); })();
-   * // => false
-   *
-   * _.isArray([1, 2, 3]);
-   * // => true
-   */
-  var isArray = nativeIsArray || function(value) {
-    return toString.call(value) == arrayClass;
-  };
 
   /**
    * Checks if `value` is a boolean (`true` or `false`) value.
@@ -1264,7 +1304,7 @@
       'if (arrayLikeClasses[className]' +
       (noArgsClass ? ' || isArguments(value)' : '') + ' ||\n' +
       '  (className == objectClass && length > -1 && length === length >>> 0 &&\n' +
-      '  toString.call(value.splice) == funcClass)' +
+      '  isFunction(value.splice))' +
       ') return !length',
     'inLoop': {
       'object': 'return false'
@@ -1317,11 +1357,11 @@
         b = b._wrapped;
       }
       // use custom `isEqual` method if available
-      if (a.isEqual && toString.call(a.isEqual) == funcClass) {
+      if (a.isEqual && isFunction(a.isEqual)) {
         thorough.value = null;
         return a.isEqual(b);
       }
-      if (b.isEqual && toString.call(b.isEqual) == funcClass) {
+      if (b.isEqual && isFunction(b.isEqual)) {
         thorough.value = null;
         return b.isEqual(a);
       }
@@ -1408,8 +1448,8 @@
 
     // non `Object` object instances with different constructors are not equal
     if (ctorA != ctorB && !(
-          toString.call(ctorA) == funcClass && ctorA instanceof ctorA &&
-          toString.call(ctorB) == funcClass && ctorB instanceof ctorB
+          isFunction(ctorA) && ctorA instanceof ctorA &&
+          isFunction(ctorB) && ctorB instanceof ctorB
         )) {
       return false;
     }
@@ -1472,23 +1512,6 @@
    */
   function isFinite(value) {
     return nativeIsFinite(value) && toString.call(value) == numberClass;
-  }
-
-  /**
-   * Checks if `value` is a function.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a function, else `false`.
-   * @example
-   *
-   * _.isFunction(''.concat);
-   * // => true
-   */
-  function isFunction(value) {
-    return toString.call(value) == funcClass;
   }
 
   /**
@@ -1637,21 +1660,6 @@
   }
 
   /**
-   * A shim implementation of `Object.keys` that produces an array of the given
-   * object's own enumerable property names.
-   *
-   * @private
-   * @param {Object} object The object to inspect.
-   * @returns {Array} Returns a new array of property names.
-   */
-  var shimKeys = createIterator({
-    'args': 'object',
-    'exit': 'if (!(object && objectTypes[typeof object])) throw TypeError()',
-    'init': '[]',
-    'inLoop': 'result.push(index)'
-  });
-
-  /**
    * Creates an array composed of the own enumerable property names of `object`.
    *
    * @static
@@ -1738,8 +1746,7 @@
     // http://code.google.com/p/fbug/source/browse/branches/firebug1.9/content/firebug/chrome/reps.js?r=12614#653
     // http://trac.webkit.org/browser/trunk/Source/WebCore/inspector/InjectedScriptSource.js?rev=125186#L609
     if (arrayLikeClasses[className] || (noArgsClass && isArguments(value)) ||
-        (className == objectClass && length > -1 && length === length >>> 0 &&
-          toString.call(value.splice) == funcClass)) {
+        (className == objectClass && length > -1 && length === length >>> 0 && isFunction(value.splice))) {
       return length;
     }
     return keys(value).length;
@@ -2296,7 +2303,7 @@
     if (!collection) {
       return [];
     }
-    if (collection.toArray && toString.call(collection.toArray) == funcClass) {
+    if (collection.toArray && isFunction(collection.toArray)) {
       return collection.toArray();
     }
     var length = collection.length;
@@ -3176,7 +3183,7 @@
    */
   function bind(func, thisArg) {
     var methodName,
-        isFunc = toString.call(func) == funcClass;
+        isFunc = isFunction(func);
 
     // juggle arguments
     if (!isFunc) {
@@ -3253,13 +3260,15 @@
       'var funcs = arguments,\n' +
       '    length = funcs.length;\n' +
       'if (length > 1) {\n' +
-      '  for (var index = 1; index < length; index++)\n' +
-      '    result[funcs[index]] = bind(result[funcs[index]], result);\n' +
+      '  for (var index = 1; index < length; index++) {\n' +
+      '    result[funcs[index]] = bind(result[funcs[index]], result)\n' +
+      '  }\n' +
       '  return result\n' +
       '}',
     'inLoop':
-      'if (toString.call(result[index]) == funcClass)' +
-      ' result[index] = bind(result[index], result)'
+      'if (isFunction(result[index])) {\n' +
+      '  result[index] = bind(result[index], result)\n' +
+      '}'
   });
 
   /**
@@ -3691,7 +3700,7 @@
       return null;
     }
     var value = object[property];
-    return toString.call(value) == funcClass ? object[property]() : value;
+    return isFunction(value) ? object[property]() : value;
   }
 
   /**

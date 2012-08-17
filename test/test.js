@@ -715,7 +715,7 @@
 
     test('should work with jQuery/MooTools DOM query collections', function() {
       function Foo(elements) { Array.prototype.push.apply(this, elements); }
-      Foo.prototype = { 'splice': Array.prototype.splice };
+      Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
 
       equal(_.isEmpty(new Foo([])), true);
     });
@@ -1108,7 +1108,7 @@
 
     test('should work with jQuery/MooTools DOM query collections', function() {
       function Foo(elements) { Array.prototype.push.apply(this, elements); }
-      Foo.prototype = { 'splice': Array.prototype.splice };
+      Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
 
       equal(_.size(new Foo([1, 2, 3])), 3);
     });

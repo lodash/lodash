@@ -746,12 +746,15 @@
    *
    * @private
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a plain `Object` object, else `false`.
+   * @param {Boolean} [skipArgsCheck=false] Internally used to skip checks for
+   *  `arguments` objects.
+   * @returns {Boolean} Returns `true` if the `value` is a plain `Object` object,
+   *  else `false`.
    */
-  function isPlainObject(value) {
+  function isPlainObject(value, skipArgsCheck) {
     // avoid non-objects and false positives for `arguments` objects
     var result = false;
-    if (!(value && typeof value == 'object') || isArguments(value)) {
+    if (!(value && typeof value == 'object') || (!skipArgsCheck && isArguments(value))) {
       return result;
     }
     // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
@@ -1015,7 +1018,7 @@
         return value;
       }
       var isArr = className == arrayClass;
-      isObj = isArr || (className == objectClass ? isPlainObject(value) : isObj);
+      isObj = isArr || (className == objectClass ? isPlainObject(value, true) : isObj);
     }
     // shallow clone
     if (!isObj || !deep) {

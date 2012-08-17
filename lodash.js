@@ -749,9 +749,9 @@
    * @returns {Boolean} Returns `true` if the `value` is a plain `Object` object, else `false`.
    */
   function isPlainObject(value) {
-    // avoid non-objects and false positives for `arguments` objects in IE < 9
+    // avoid non-objects and false positives for `arguments` objects
     var result = false;
-    if (!(value && typeof value == 'object') || (noArgsClass && isArguments(value))) {
+    if (!(value && typeof value == 'object') || isArguments(value)) {
       return result;
     }
     // IE < 9 presents DOM nodes as `Object` objects except they have `toString`

@@ -1,5 +1,5 @@
 /*!
- * QUnit CLI Boilerplate v1.0.0-pre
+ * QUnit CLI Boilerplate v1.0.0
  * Copyright 2011-2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on a gist by Jörn Zaefferer <https://gist.github.com/722381>
  * Available under MIT license <http://mths.be/mit>
@@ -92,6 +92,8 @@
    * @returns {Number} The the ID of the timeout.
    */
   function schedule(fn, delay, args, repeated) {
+    // Rhino 1.7RC4 will error assigning `task` below
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=775566
     var task = ids[++counter] = new JavaAdapter(java.util.TimerTask, {
       'run': function() {
         fn.apply(global, args);

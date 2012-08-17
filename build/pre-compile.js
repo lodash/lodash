@@ -151,6 +151,7 @@
     'head',
     'identity',
     'include',
+    'index',
     'indexOf',
     'initial',
     'inject',
@@ -304,7 +305,7 @@
 
     // minify internal properties used by 'compareAscending', `_.clone`, `_.merge`, and `_.sortBy`
     (function() {
-      var properties = ['criteria', 'source', 'value'],
+      var properties = ['criteria', 'index', 'source', 'value'],
           snippets = source.match(/( +)(?:function clone|function compareAscending|var merge|var sortBy)\b[\s\S]+?\n\1}/g);
 
       if (!snippets) {

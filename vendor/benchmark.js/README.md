@@ -2,19 +2,19 @@
 
 A [robust](http://calendar.perfplanet.com/2010/bulletproof-javascript-benchmarks/ "Bulletproof JavaScript benchmarks") benchmarking library that works on nearly all JavaScript platforms<sup><a name="fnref1" href="#fn1">1</a></sup>, supports high-resolution timers, and returns statistically significant results. As seen on [jsPerf](http://jsperf.com/).
 
-## BestieJS
+## Download
 
-Benchmark.js is part of the BestieJS *"Best in Class"* module collection. This means we promote solid browser/environment support, ES5 precedents, unit testing, and plenty of documentation.
+ * [Development source](https://raw.github.com/bestiejs/benchmark.js/1.0.0/benchmark.js)
 
-## Documentation
+## Dive in
 
-The documentation for Benchmark.js can be viewed here: <http://benchmarkjs.com/docs>
+We’ve got [API docs](http://benchmarkjs.com/docs) and [unit tests](http://benchmarkjs.com/tests).
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/benchmark.js/wiki/Roadmap).
 
 ## Support
 
-Benchmark.js has been tested in at least Adobe AIR 2.6, Chrome 5-21, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3-6, Node.js 0.4.8-0.8.6, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC3.
+Benchmark.js has been tested in at least Adobe AIR 3.1, Chrome 5-21, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3-6, Node.js 0.8.6, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
 
 ## Installation and usage
 
@@ -117,6 +117,10 @@ suite.add('RegExp#test', function() {
 // > String#indexOf x 6,139,623 +-1.00% (131 cycles)
 // > Fastest is String#indexOf
 ~~~
+
+## BestieJS
+
+Benchmark.js is part of the BestieJS *"Best in Class"* module collection. This means we promote solid browser/environment support, ES5 precedents, unit testing, and plenty of documentation.
 
 ## Authors
 

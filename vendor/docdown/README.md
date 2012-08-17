@@ -1,4 +1,4 @@
-# Docdown <sup>v1.0.0-pre</sup>
+# Docdown <sup>v1.0.0</sup>
 
 A simple JSDoc to Markdown documentation generator.
 
@@ -21,17 +21,6 @@ $markdown = docdown(array(
   "url"  => "https://github.com/username/project/blob/master/my.js"
 ));
 ~~~
-
-## Cloning this repo
-
-To clone this repository just use:
-
-~~~ bash
-git clone https://github.com/docdown/docdown.git
-cd docdown
-~~~
-
-Feel free to fork and send pull requests if you see improvements!
 
 ## Author
 

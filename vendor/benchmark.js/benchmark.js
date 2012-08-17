@@ -1044,7 +1044,7 @@
   function isPlainObject(value) {
     // avoid non-objects and false positives for `arguments` objects in IE < 9
     var result = false;
-    if (!(value && typeof value == 'object') || (noArgumentsClass && isArguments(value))) {
+    if (!(value && typeof value == 'object') || isArguments(value)) {
       return result;
     }
     // IE < 9 presents DOM nodes as `Object` objects except they have `toString`

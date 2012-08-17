@@ -166,8 +166,8 @@
   QUnit.module('lodash.clone');
 
   (function() {
-    function Klass() { this.b = 1; }
-    Klass.prototype = { 'a': 1 };
+    function Klass() { this.a = 1; }
+    Klass.prototype = { 'b': 1 };
 
     var nonCloneable = {
       'an arguments object': arguments,

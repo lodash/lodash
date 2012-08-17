@@ -11,7 +11,6 @@
     'collection',
     'concat',
     'ctor',
-    'funcClass',
     'hasOwnProperty',
     'identity',
     'index',

@@ -662,18 +662,18 @@
     // create the function factory
     var factory = Function(
         'arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn, ' +
-        'funcClass, hasOwnProperty, identity, indexOf, isArguments, isArray, ' +
-        'isFunction, isPlainObject, iteratorBind, objectClass, objectTypes, ' +
-        'nativeKeys, propertyIsEnumerable, slice, stringClass, toString',
+        'hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
+        'isPlainObject, iteratorBind, objectClass, objectTypes, nativeKeys, ' +
+        'propertyIsEnumerable, slice, stringClass, toString',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
     );
     // return the compiled function
     return factory(
       arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn,
-      funcClass, hasOwnProperty, identity, indexOf, isArguments, isArray,
-      isFunction, isPlainObject, iteratorBind, objectClass, objectTypes,
-      nativeKeys, propertyIsEnumerable, slice, stringClass, toString
+      hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction,
+      isPlainObject, iteratorBind, objectClass, objectTypes, nativeKeys,
+      propertyIsEnumerable, slice, stringClass, toString
     );
   }
 
@@ -735,7 +735,9 @@
   }
 
   /**
-   * Checks if `value` is a plain `Object` object with `Object` as its constructor.
+   * Checks if a given `value` is an object created by the `Object` constructor
+   * assuming objects created by the `Object` constructor have no inherited
+   * enumerable properties and that there are no `Object.prototype` extensions.
    *
    * @private
    * @param {Mixed} value The value to check.

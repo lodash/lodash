@@ -1112,6 +1112,28 @@
   QUnit.module('lodash.sortBy');
 
   (function() {
+    test('should perform a stable sort', function() {
+      function Pair(x, y) {
+        this.x = x;
+        this.y = y;
+      }
+
+      var collection = [
+        new Pair(1, 1), new Pair(1, 2),
+        new Pair(1, 3), new Pair(1, 4),
+        new Pair(1, 5), new Pair(1, 6),
+        new Pair(2, 1), new Pair(2, 2),
+        new Pair(2, 3), new Pair(2, 4),
+        new Pair(2, 5), new Pair(2, 6)
+      ];
+
+      var actual = _.sortBy(collection, function(pair) {
+        return pair.x;
+      });
+
+      deepEqual(actual, collection);
+    });
+
     test('supports the `thisArg` argument', function() {
       var actual = _.sortBy([1, 2, 3], function(num) {
         return this.sin(num);

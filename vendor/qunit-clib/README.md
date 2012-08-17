@@ -13,7 +13,7 @@ QUnit CLIB has been tested in at least Node.js 0.4.8-0.8.6, Narwhal v0.3.2, Ring
 
 ## Usage
 
-~~~ js
+```js
 (function(window) {
 
   // use a single load function
@@ -43,7 +43,7 @@ QUnit CLIB has been tested in at least Node.js 0.4.8-0.8.6, Narwhal v0.3.2, Ring
     QUnit.start();
   }
 }(typeof global == 'object' && global || this));
-~~~
+```
 
 ## Footnotes
 

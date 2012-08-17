@@ -20,15 +20,15 @@ Benchmark.js has been tested in at least Adobe AIR 3.1, Chrome 5-21, Firefox 1.5
 
 In a browser or Adobe AIR:
 
-~~~ html
+```html
 <script src="benchmark.js"></script>
-~~~
+```
 
 Optionally, expose Java’s nanosecond timer by adding the `nano` applet to the `<body>`:
 
-~~~ html
+```html
 <applet code="nano" archive="nano.jar"></applet>
-~~~
+```
 
 Or enable Chrome’s microsecond timer by using the [command line switch](http://peter.sh/experiments/chromium-command-line-switches/#enable-benchmarking):
 
@@ -36,37 +36,37 @@ Or enable Chrome’s microsecond timer by using the [command line switch](http:/
 
 Via [npm](http://npmjs.org/):
 
-~~~ bash
+```bash
 npm install benchmark
-~~~
+```
 
 In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
 
-~~~ js
+```js
 var Benchmark = require('benchmark');
-~~~
+```
 
 Optionally, use the [microtime module](https://github.com/wadey/node-microtime) by Wade Simmons:
 
-~~~ bash
+```bash
 npm install microtime
-~~~
+```
 
 In [RingoJS v0.7.0-](http://ringojs.org/):
 
-~~~ js
+```js
 var Benchmark = require('benchmark').Benchmark;
-~~~
+```
 
 In [Rhino](http://www.mozilla.org/rhino/):
 
-~~~ js
+```js
 load('benchmark.js');
-~~~
+```
 
 In an AMD loader like [RequireJS](http://requirejs.org/):
 
-~~~ js
+```js
 require({
   'paths': {
     'benchmark': 'path/to/benchmark'
@@ -88,11 +88,11 @@ require({
   Benchmark.platform = platform;
   console.log(Benchmark.platform.name);
 });
-~~~
+```
 
 Usage example:
 
-~~~ js
+```js
 var suite = new Benchmark.Suite;
 
 // add tests
@@ -116,7 +116,7 @@ suite.add('RegExp#test', function() {
 // > RegExp#test x 4,161,532 +-0.99% (59 cycles)
 // > String#indexOf x 6,139,623 +-1.00% (131 cycles)
 // > Fastest is String#indexOf
-~~~
+```
 
 ## BestieJS
 

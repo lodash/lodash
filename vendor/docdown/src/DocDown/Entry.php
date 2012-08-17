@@ -140,7 +140,7 @@ class Entry {
     preg_match('#\*\s*@example\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
     if (count($result)) {
       $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', "\n", $result[1]));
-      $result = '~~~ ' . $this->lang . "\n" . $result . "\n~~~";
+      $result = '```' . $this->lang . "\n" . $result . "\n```";
     }
     return $result;
   }

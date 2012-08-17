@@ -859,6 +859,8 @@
   QUnit.module('lodash.merge');
 
   (function() {
+    var args = arguments;
+
     test('should merge `source` into the destination object', function() {
       var stooges = [
         { 'name': 'moe' },
@@ -918,7 +920,20 @@
 
       deepEqual(_.merge(object, source), [shadowed]);
     });
-  }());
+
+    test('should not treat `arguments` objects as plain objects', function() {
+      var object = {
+        'args': args
+      };
+
+      var source = {
+        'args': { '3': 4 }
+      };
+
+      var actual = _.merge(object, source);
+      equal(_.isArguments(actual.args), false);
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -1112,7 +1127,7 @@
   QUnit.module('lodash.sortBy');
 
   (function() {
-    test('should perform a stable sort', function() {
+    test('should perform a stable sort (test in IE > 8, Opera, and V8)', function() {
       function Pair(x, y) {
         this.x = x;
         this.y = y;

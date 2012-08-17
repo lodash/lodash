@@ -12,7 +12,7 @@ For a list of upcoming features, check out our [roadmap](https://github.com/jdal
 
 Usage example:
 
-~~~ php
+```php
 require("docdown.php");
 
 // generate Markdown
@@ -20,7 +20,7 @@ $markdown = docdown(array(
   "path" => $filepath,
   "url"  => "https://github.com/username/project/blob/master/my.js"
 ));
-~~~
+```
 
 ## Author
 

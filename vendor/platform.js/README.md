@@ -24,31 +24,31 @@ Platform.js has been tested in at least Adobe AIR 3.1, Chrome 5-21, Firefox 1.5-
 
 In a browser or Adobe AIR:
 
-~~~ html
+```html
 <script src="platform.js"></script>
-~~~
+```
 
 Via [npm](http://npmjs.org/):
 
-~~~ bash
+```bash
 npm install platform
-~~~
+```
 
 In [Node.js](http://nodejs.org/) and [RingoJS](http://ringojs.org/):
 
-~~~ js
+```js
 var platform = require('platform');
-~~~
+```
 
 In [Rhino](http://www.mozilla.org/rhino/):
 
-~~~ js
+```js
 load('platform.js');
-~~~
+```
 
 In an AMD loader like [RequireJS](http://requirejs.org/):
 
-~~~ js
+```js
 require({
   'paths': {
     'platform': 'path/to/platform'
@@ -57,11 +57,11 @@ require({
 ['platform'], function(platform) {
   console.log(platform.name);
 });
-~~~
+```
 
 Usage example:
 
-~~~ js
+```js
 // on IE10 x86 platform preview running in IE7 compatibility mode on Windows 7 64 bit edition
 platform.name; // 'IE'
 platform.version; // '10.0'
@@ -85,7 +85,7 @@ info.version; // '11.52'
 info.layout; // 'Presto'
 info.os; // 'Mac OS X 10.7.2'
 info.description; // 'Opera 11.52 (identifying as Firefox 4.0) on Mac OS X 10.7.2'
-~~~
+```
 
 ## Author
 

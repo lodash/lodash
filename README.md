@@ -1,6 +1,6 @@
 # Lo-Dash <sup>v0.5.0</sup>
 
-A drop-in replacement<sup>[*](https://github.com/bestiejs/lodash/wiki/Drop-in-Disclaimer)</sup> for Underscore.js, from the devs behind [jsPerf.com](http://jsperf.com), delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#closed-underscorejs-issues), and [additional features](https://github.com/bestiejs/lodash#features).
+A drop-in replacement<sup>[*](https://github.com/bestiejs/lodash/wiki/Drop-in-Disclaimer)</sup> for Underscore.js, from the devs behind [jsPerf.com](http://jsperf.com), delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues-20), and [additional features](https://github.com/bestiejs/lodash#features).
 
 Lo-Dash’s performance is gained by avoiding slower native methods, instead opting for simplified non-ES5 compliant methods optimized for common usage, and by leveraging function compilation to reduce the number of overall function calls.
 
@@ -51,7 +51,7 @@ For more information check out these screencasts over Lo-Dash:
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5-21, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3-6, Node.js 0.4.8-0.8.6, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC3.
+Lo-Dash has been tested in at least Chrome 5-21, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3-6, Node.js 0.4.8-0.8.7, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
 
 ## Custom builds
 
@@ -180,8 +180,8 @@ require({
  * `_(…)` should return passed wrapper instances [[test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L135-138)]
  * `_.clone` should allow `deep` cloning [[#595](https://github.com/documentcloud/underscore/pull/595), [test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L197-212)]
  * `_.contains` should work with strings [[#667](https://github.com/documentcloud/underscore/pull/667), [test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L267-276)]
- * `_.escape` should return an empty string when passed `null` or `undefined` [[#407](https://github.com/documentcloud/underscore/issues/427), [test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L367-370)]
- * `_.extend` should recursively extend objects [[#379](https://github.com/documentcloud/underscore/pull/379), [test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L862-920)]
+ * `_.escape` should return an empty string when passed `null` or `undefined` [[#427](https://github.com/documentcloud/underscore/issues/427), [test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L367-370)]
+ * `_.extend` should recursively extend objects [[#379](https://github.com/documentcloud/underscore/pull/379), [test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L882-955)]
  * `_.forEach` should be chainable [[#142](https://github.com/documentcloud/underscore/issues/142), [test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L486-489)]
  * `_.forEach` should allow exiting iteration early [[#211](https://github.com/documentcloud/underscore/issues/211), [test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L582-601)]
  * `_.groupBy` should add values to own, not inherited, properties [[test](https://github.com/bestiejs/lodash/blob/v0.5.0/test/test.js#L616-623)]

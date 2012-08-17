@@ -678,15 +678,18 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed values of `collection`, sorting
-   * them in ascending order.
+   * Used by `sortBy` to compare transformed `collection` values, sorting them
+   * stabily in ascending order.
    *
    * @private
    * @param {Object} a The object to compare to `b`.
    * @param {Object} b The object to compare to `a`.
-   * @returns {Number} Returns `-1` if `a` < `b`, `0` if `a` == `b`, or `1` if `a` > `b`.
+   * @returns {Number} Returns the sort order indicator of `1` or `-1`.
    */
   function compareAscending(a, b) {
+    var ai = a.index,
+        bi = b.index;
+
     a = a.criteria;
     b = b.criteria;
 
@@ -696,7 +699,9 @@
     if (b === undefined) {
       return -1;
     }
-    return a < b ? -1 : a > b ? 1 : 0;
+    // ensure a stable sort in V8 and other engines
+    // http://code.google.com/p/v8/issues/detail?id=90
+    return a < b ? -1 : a > b ? 1 : ai < bi ? -1 : 1;
   }
 
   /**
@@ -746,7 +751,7 @@
   function isPlainObject(value) {
     // avoid non-objects and false positives for `arguments` objects in IE < 9
     var result = false;
-    if (!(value && typeof value == 'object') || (noArgumentsClass && isArguments(value))) {
+    if (!(value && typeof value == 'object') || (noArgsClass && isArguments(value))) {
       return result;
     }
     // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
@@ -2272,11 +2277,13 @@
       'array':
         'result[index] = {\n' +
         '  criteria: callback(value, index, collection),\n' +
+        '  index: index,\n' +
         '  value: value\n' +
         '}',
       'object':
         'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '({\n' +
         '  criteria: callback(value, index, collection),\n' +
+        '  index: index,\n' +
         '  value: value\n' +
         '})'
     },

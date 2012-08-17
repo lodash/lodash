@@ -779,6 +779,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isObject');
+
+  (function() {
+    test('should avoid V8 bug #2291', function() {
+      // trigger V8 bug
+      // http://code.google.com/p/v8/issues/detail?id=2291
+      var obj = {},
+          str = 'foo';
+
+      // 1: Useless comparison statement, this is half the trigger
+      obj == obj;
+      // 2: Initial check with object, this is the other half of the trigger
+      _.isObject(obj);
+
+      equal(_.isObject(str), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isNaN');
 
   (function() {

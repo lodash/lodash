@@ -3759,9 +3759,9 @@
    * template({ 'name': 'Mustache' });
    * // => 'Hello Mustache!'
    *
-   * // using the `variable` option
-   * _.template('<%= data.hasWith %>', { 'hasWith': 'no' }, { 'variable': 'data' });
-   * // => 'no'
+   * // specify the `variable` option to avoid using a with-statement during compilation
+   * _.template('Using a with-statement: <%= data.answer %>', { 'answer': 'no' }, { 'variable': 'data' });
+   * // => 'Using a with-statement: no'
    *
    * // using the `source` property
    * <script>

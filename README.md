@@ -59,62 +59,62 @@ Custom builds make it easy to create lightweight versions of Lo-Dash containing 
 We handle all the method dependency and alias mapping for you.
 
  * Backbone builds, containing all methods required by Backbone, may be created using the `backbone` modifier argument.
-~~~ bash
+```bash
 lodash backbone
-~~~
+```
 
  * CSP builds, supporting default Content Security Policy restrictions, may be created using the `csp` modifier argument.
-~~~ bash
+```bash
 lodash csp
-~~~
+```
 
  * Legacy builds, tailored for older browsers without [ES5 support](http://es5.github.com/), may be created using the `legacy` modifier argument.
-~~~ bash
+```bash
 lodash legacy
-~~~
+```
 
  * Mobile builds, with IE < 9 bug fixes and method compilation removed, may be created using the `mobile` modifier argument.
-~~~ bash
+```bash
 lodash mobile
-~~~
+```
 
  * Strict builds, with `_.bindAll`, `_.defaults`, and `_.extend` in [strict mode](http://es5.github.com/#C), may be created using the `strict` modifier argument.
-~~~ bash
+```bash
 lodash strict
-~~~
+```
 
  * Underscore builds, containing only methods included in Underscore, may be created using the `underscore` modifier argument.
-~~~ bash
+```bash
 lodash underscore
-~~~
+```
 
 Custom builds may be created in three ways:
 
  1. Use the `category` argument to pass the categories of methods to include in the build.<br>
     Valid categories are *"arrays"*, *"chaining"*, *"collections"*, *"functions"*, *"objects"*, and *"utilities"*.
-~~~ bash
+```bash
 lodash category=collections,functions
 lodash category="collections, functions"
-~~~
+```
 
  2. Use the `exclude` argument to pass the names of methods to exclude from the build.
-~~~ bash
+```bash
 lodash exclude=union,uniq,zip
 lodash exclude="union, uniq, zip"
-~~~
+```
 
  3. Use the `include` argument to pass the names of methods to include in the build.
-~~~ bash
+```bash
 lodash include=each,filter,map
 lodash include="each, filter, map"
-~~~
+```
 
 All arguments, except `backbone` with `underscore`, `exclude` with `include`, and `legacy` with `csp`/`mobile`, may be combined.
 
-~~~ bash
+```bash
 lodash backbone legacy category=utilities exclude=first,last
 lodash underscore mobile strict category=functions include=pick,uniq
-~~~
+```
 
 The `lodash` command-line utility is available when Lo-Dash is installed as a global package (i.e. `npm install -g lodash`).
 
@@ -124,38 +124,38 @@ Custom builds are saved to `lodash.custom.js` and `lodash.custom.min.js`.
 
 In browsers:
 
-~~~ html
+```html
 <script src="lodash.js"></script>
-~~~
+```
 
 Using [npm](http://npmjs.org/):
 
-~~~ bash
+```bash
 npm install lodash
 npm install -g lodash
-~~~
+```
 
 In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
 
-~~~ js
+```js
 var _ = require('lodash');
-~~~
+```
 
 In [RingoJS v0.7.0-](http://ringojs.org/):
 
-~~~ js
+```js
 var _ = require('lodash')._;
-~~~
+```
 
 In [Rhino](http://www.mozilla.org/rhino/):
 
-~~~ js
+```js
 load('lodash.js');
-~~~
+```
 
 In an AMD loader like [RequireJS](http://requirejs.org/):
 
-~~~ js
+```js
 require({
   'paths': {
     'underscore': 'path/to/lodash'
@@ -164,7 +164,7 @@ require({
 ['underscore'], function(_) {
   console.log(_.VERSION);
 });
-~~~
+```
 
 ## Resolved Underscore.js issues <sup>(20+)</sup>
 

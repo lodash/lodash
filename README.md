@@ -43,6 +43,7 @@ For more information check out these screencasts over Lo-Dash:
  * [_.indexOf](http://lodash.com/docs#indexOf) and [_.lastIndexOf](http://lodash.com/docs#lastIndexOf) accept a `fromIndex` argument
  * [_.merge](http://lodash.com/docs#merge) for a *"deep"* [_.extend](http://lodash.com/docs#extend)
  * [_.partial](http://lodash.com/docs#partial) for partial application without `this` binding
+ * [_.sortBy](http://lodash.com/docs#sortBy) performs a [stable](http://en.wikipedia.org/wiki/Sorting_algorithm#Stability) sort
  * [_.template](http://lodash.com/docs#template) utilizes [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl) for easier debugging
  * [_.where](http://lodash.com/docs#where) for filtering collections by contained properties
  * [_.zipObject](http://lodash.com/docs#zipObject) for composing objects

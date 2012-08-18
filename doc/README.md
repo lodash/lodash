@@ -2185,7 +2185,7 @@ _.some([null, 0, 'yes', false]);
 ### <a id="_sortbycollection-callback--thisarg"></a>`_.sortBy(collection, callback [, thisArg])`
 <a href="#_sortbycollection-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2280 "View in source") [&#x24C9;][1]
 
-Creates a new sorted array, sorted in ascending order by the results of running each element of `collection` through a `callback`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to sort by *(e.g. 'length')*.
+Creates a new array, stable sorted in ascending order by the results of running each element of `collection` through a `callback`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to sort by *(e.g. 'length')*.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.

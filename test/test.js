@@ -145,7 +145,7 @@
   (function() {
     test('should correctly append array arguments to partially applied arguments (test in IE < 9)', function() {
       var args,
-          bound = _.bind(function() { args = slice.call(arguments); }, null, 'a');
+          bound = _.bind(function() { args = slice.call(arguments); }, {}, 'a');
 
       bound(['b'], 'c');
       deepEqual(args, ['a', ['b'], 'c']);

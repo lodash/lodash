@@ -3224,7 +3224,7 @@
       }
       if (partialArgs.length) {
         args = args.length
-          ? concat.apply(partialArgs, args)
+          ? partialArgs.concat(slice.call(args))
           : partialArgs;
       }
       if (this instanceof bound) {

@@ -678,8 +678,8 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed `collection` values, sorting them
-   * stabily in ascending order.
+   * Used by `sortBy` to compare transformed `collection` values, stable sorting
+   * them in ascending order.
    *
    * @private
    * @param {Object} a The object to compare to `b`.
@@ -2253,9 +2253,9 @@
   });
 
   /**
-   * Creates a new sorted array, sorted in ascending order by the results of
-   * running each element of `collection` through a `callback`. The `callback` is
-   * bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * Creates a new array, stable sorted in ascending order by the results of
+   * running each element of `collection` through a `callback`. The `callback`
+   * is bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
    * The `callback` argument may also be the name of a property to sort by (e.g. 'length').
    *
    * @static

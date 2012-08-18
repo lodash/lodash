@@ -4,7 +4,7 @@ A [robust](http://calendar.perfplanet.com/2010/bulletproof-javascript-benchmarks
 
 ## Download
 
- * [Development source](https://raw.github.com/bestiejs/benchmark.js/1.0.0/benchmark.js)
+ * [Development source](https://raw.github.com/bestiejs/benchmark.js/v1.0.0/benchmark.js)
 
 ## Dive in
 

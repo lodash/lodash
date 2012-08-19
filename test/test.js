@@ -817,6 +817,50 @@
 
   /*--------------------------------------------------------------------------*/
 
+  _.each([
+    'isArguments',
+    'isArray',
+    'isBoolean',
+    'isDate',
+    'isElement',
+    'isEmpty',
+    'isEqual',
+    'isFinite',
+    'isFunction',
+    'isNaN',
+    'isNull',
+    'isNumber',
+    'isObject',
+    'isRegExp',
+    'isString',
+    'isUndefined'
+  ], function(methodName) {
+    var func = _[methodName];
+    QUnit.module('lodash.' + methodName + ' result');
+
+    test('should return a boolean', function() {
+      var expected = 'boolean';
+
+      equal(typeof func(arguments), expected);
+      equal(typeof func([]), expected);
+      equal(typeof func(true), expected);
+      equal(typeof func(false), expected);
+      equal(typeof func(new Date), expected);
+      equal(typeof func(window.document && document.body), expected);
+      equal(typeof func({}), expected);
+      equal(typeof func(undefined), expected);
+      equal(typeof func(Infinity), expected);
+      equal(typeof func(_), expected);
+      equal(typeof func(NaN), expected);
+      equal(typeof func(null), expected);
+      equal(typeof func(0), expected);
+      equal(typeof func({ 'a': 1 }), expected);
+      equal(typeof func('a'), expected);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.keys');
 
   (function() {
@@ -1489,88 +1533,43 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash "Arrays" methods');
+  QUnit.module('lodash methods');
 
   (function() {
-    test('should allow a falsey `array` argument', function() {
-      _.each([
-        'compact',
-        'difference',
-        'first',
-        'flatten',
-        'groupBy',
-        'indexOf',
-        'initial',
-        'intersection',
-        'last',
-        'lastIndexOf',
-        'max',
-        'min',
-        'range',
-        'rest',
-        'shuffle',
-        'sortBy',
-        'sortedIndex',
-        'union',
-        'uniq',
-        'without',
-        'zip',
-        'zipObject'
-      ], function(methodName) {
+    test('should allow a falsey arguments', function() {
+      var funcs = _.without.apply(_, [_.functions(_)].concat([
+        '_iteratorTemplate',
+        '_shimKeys',
+        'after',
+        'bind',
+        'bindAll',
+        'compose',
+        'debounce',
+        'defer',
+        'delay',
+        'functions',
+        'memoize',
+        'once',
+        'partial',
+        'tap',
+        'template',
+        'throttle',
+        'wrap'
+      ]));
+
+      _.each(funcs, function(methodName) {
         var func = _[methodName],
             pass = true;
 
         _.each(falsey, function(value, index) {
           try {
-            index ? func() : func(value);
+            index ? func(value) : func();
           } catch(e) {
             pass = false;
           }
         });
 
-        ok(pass, methodName + ' allows a falsey `array` argument');
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash "Collections" methods');
-
-  (function() {
-    test('should allow a falsey `collection` argument', function() {
-      _.each([
-        'contains',
-        'every',
-        'filter',
-        'find',
-        'forEach',
-        'invoke',
-        'map',
-        'pluck',
-        'reduce',
-        'reduceRight',
-        'reject',
-        'some',
-        'toArray'
-      ], function(methodName) {
-        var func = _[methodName],
-            identity = _.identity,
-            pass = true;
-
-        _.each(falsey, function(value, index) {
-          try {
-            if (/^(?:contains|toArray)$/.test(methodName)) {
-              index ? func() : func(value);
-            } else if (index) {
-              func(value, identity);
-            }
-          } catch(e) {
-            pass = false;
-          }
-        });
-
-        ok(pass, methodName + ' allows a falsey `collection` argument');
+        ok(pass, methodName + ' allows a falsey arguments');
       });
     });
   }());

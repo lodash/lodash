@@ -379,15 +379,15 @@
     // iterate own properties using `Object.keys` if it's fast
     '  <% if (isKeysFast && useHas) { %>\n' +
     '  var ownIndex = -1,\n' +
-    '      ownProps = nativeKeys(iteratee),\n' +
+    '      ownProps = objectTypes[typeof iteratee] ? nativeKeys(iteratee) : [],\n' +
     '      length = ownProps.length;\n\n' +
     '  <%= objectBranch.beforeLoop %>;\n' +
     '  while (++ownIndex < length) {\n' +
     '    index = ownProps[ownIndex];\n' +
-    '    if (!(skipProto && index == \'prototype\')) {\n' +
-    '      value = iteratee[index];\n' +
-    '      <%= objectBranch.inLoop %>\n' +
-    '    }\n' +
+    '    <% if (!hasDontEnumBug) { %>if (!(skipProto && index == \'prototype\')) {\n  <% } %>' +
+    '    value = iteratee[index];\n' +
+    '    <%= objectBranch.inLoop %>\n' +
+    '    <% if (!hasDontEnumBug) { %>}\n<% } %>' +
     '  }' +
 
     // else using a for-in loop
@@ -946,7 +946,6 @@
    */
   var shimKeys = createIterator({
     'args': 'object',
-    'exit': 'if (!(object && objectTypes[typeof object])) throw TypeError()',
     'init': '[]',
     'inLoop': 'result.push(index)'
   });
@@ -1231,7 +1230,7 @@
    * // => true
    */
   function has(object, property) {
-    return hasOwnProperty.call(object, property);
+    return object ? hasOwnProperty.call(object, property) : false;
   }
 
   /**
@@ -1282,7 +1281,7 @@
    * // => true
    */
   function isElement(value) {
-    return !!(value && value.nodeType == 1);
+    return value ? value.nodeType == 1 : false;
   }
 
   /**
@@ -1547,7 +1546,7 @@
     // http://es5.github.com/#x8
     // and avoid a V8 bug
     // http://code.google.com/p/v8/issues/detail?id=2291
-    return value && objectTypes[typeof value];
+    return value ? objectTypes[typeof value] : false;
   }
 
   /**
@@ -1686,11 +1685,73 @@
    * // => ['one', 'two', 'three'] (order is not guaranteed)
    */
   var keys = !nativeKeys ? shimKeys : function(object) {
+    var type = typeof object;
+
     // avoid iterating over the `prototype` property
-    return typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
-      ? shimKeys(object)
-      : nativeKeys(object);
+    if (type == 'function' && propertyIsEnumerable.call(object, 'prototype')) {
+      return shimKeys(object);
+    }
+    return object && objectTypes[type]
+      ? nativeKeys(object)
+      : [];
   };
+
+  /**
+   * Merges enumerable properties of the source object(s) into the `destination`
+   * object. Subsequent sources will overwrite propery assignments of previous
+   * sources.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The destination object.
+   * @param {Object} [source1, source2, ...] The source objects.
+   * @param {Object} [indicator] Internally used to indicate that the `stack`
+   *  argument is an array of traversed objects instead of another source object.
+   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
+   *  to avoid circular references.
+   * @returns {Object} Returns the destination object.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe' },
+   *   { 'name': 'larry' }
+   * ];
+   *
+   * var ages = [
+   *   { 'age': 40 },
+   *   { 'age': 50 }
+   * ];
+   *
+   * _.merge(stooges, ages);
+   * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
+   */
+  var merge = createIterator(extendIteratorOptions, {
+    'args': 'object, source, indicator, stack',
+    'top':
+      'var destValue, found, isArr, stackLength, recursive = indicator == isPlainObject;\n' +
+      'if (!recursive) stack = [];\n' +
+      'for (var argsIndex = 1, argsLength = recursive ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
+      '  if (iteratee = arguments[argsIndex]) {',
+    'inLoop':
+      'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +
+      '  found = false; stackLength = stack.length;\n' +
+      '  while (stackLength--) {\n' +
+      '    if (found = stack[stackLength].source == value) break\n' +
+      '  }\n' +
+      '  if (found) {\n' +
+      '    result[index] = stack[stackLength].value\n' +
+      '  } else {\n' +
+      '    destValue = (destValue = result[index]) && isArr\n' +
+      '      ? (isArray(destValue) ? destValue : [])\n' +
+      '      : (isPlainObject(destValue) ? destValue : {});\n' +
+      '    stack.push({ value: destValue, source: value });\n' +
+      '    result[index] = callee(destValue, value, isPlainObject, stack)\n' +
+      '  }\n' +
+      '} else if (value != null) {\n' +
+      '  result[index] = value\n' +
+      '}'
+  });
 
   /**
    * Creates a shallow clone of `object` composed of the specified properties.
@@ -1709,11 +1770,14 @@
    * // => { 'name': 'moe', 'age': 40 }
    */
   function pick(object) {
+    var result = {};
+    if (!object) {
+      return result;
+    }
     var prop,
         index = 0,
         props = concat.apply(ArrayProto, arguments),
-        length = props.length,
-        result = {};
+        length = props.length;
 
     // start `index` at `1` to skip `object`
     while (++index < length) {
@@ -2024,63 +2088,6 @@
    * // => [3, 6, 9] (order is not guaranteed)
    */
   var map = createIterator(baseIteratorOptions, mapIteratorOptions);
-
-  /**
-   * Merges enumerable properties of the source object(s) into the `destination`
-   * object. Subsequent sources will overwrite propery assignments of previous
-   * sources.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The destination object.
-   * @param {Object} [source1, source2, ...] The source objects.
-   * @param {Object} [indicator] Internally used to indicate that the `stack`
-   *  argument is an array of traversed objects instead of another source object.
-   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
-   *  to avoid circular references.
-   * @returns {Object} Returns the destination object.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'moe' },
-   *   { 'name': 'larry' }
-   * ];
-   *
-   * var ages = [
-   *   { 'age': 40 },
-   *   { 'age': 50 }
-   * ];
-   *
-   * _.merge(stooges, ages);
-   * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
-   */
-  var merge = createIterator(extendIteratorOptions, {
-    'args': 'object, source, indicator, stack',
-    'top':
-      'var destValue, found, isArr, stackLength, recursive = indicator == isPlainObject;\n' +
-      'if (!recursive) stack = [];\n' +
-      'for (var argsIndex = 1, argsLength = recursive ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
-      '  if (iteratee = arguments[argsIndex]) {',
-    'inLoop':
-      'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +
-      '  found = false; stackLength = stack.length;\n' +
-      '  while (stackLength--) {\n' +
-      '    if (found = stack[stackLength].source == value) break\n' +
-      '  }\n' +
-      '  if (found) {\n' +
-      '    result[index] = stack[stackLength].value\n' +
-      '  } else {\n' +
-      '    destValue = (destValue = result[index]) && isArr\n' +
-      '      ? (isArray(destValue) ? destValue : [])\n' +
-      '      : (isPlainObject(destValue) ? destValue : {});\n' +
-      '    stack.push({ value: destValue, source: value });\n' +
-      '    result[index] = callee(destValue, value, isPlainObject, stack)\n' +
-      '  }\n' +
-      '} else if (value != null) {\n' +
-      '  result[index] = value\n' +
-      '}'
-  });
 
   /**
    * Retrieves the value of a specified property from all elements in

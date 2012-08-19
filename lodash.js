@@ -311,7 +311,7 @@
      * @memberOf _.templateSettings
      * @type String
      */
-    'variable': 'obj'
+    'variable': ''
   };
 
   /*--------------------------------------------------------------------------*/
@@ -3742,7 +3742,7 @@
    *  is given, else it returns the interpolated text.
    * @example
    *
-   * // using compiled template
+   * // using a compiled template
    * var compiled = _.template('hello: <%= name %>');
    * compiled({ 'name': 'moe' });
    * // => 'hello: moe'
@@ -3751,32 +3751,38 @@
    * _.template(list, { 'people': ['moe', 'larry', 'curly'] });
    * // => '<li>moe</li><li>larry</li><li>curly</li>'
    *
-   * var template = _.template('<b><%- value %></b>');
-   * template({ 'value': '<script>' });
+   * // using the "escape" delimiter to escape HTML in data property values
+   * _.template('<b><%- value %></b>', { 'value': '<script>' });
    * // => '<b>&lt;script></b>'
    *
-   * // using `print`
-   * var compiled = _.template('<% print("Hello " + epithet); %>');
-   * compiled({ 'epithet': 'stooge' });
+   * // using the internal `print` function in "evaluate" delimiters
+   * _.template('<% print("Hello " + epithet); %>', { 'epithet': 'stooge' });
    * // => 'Hello stooge.'
    *
-   * // using custom template settings
+   * // using custom template delimiter settings
    * _.templateSettings = {
    *   'interpolate': /\{\{(.+?)\}\}/g
    * };
    *
-   * var template = _.template('Hello {{ name }}!');
-   * template({ 'name': 'Mustache' });
+   * _.template('Hello {{ name }}!', { 'name': 'Mustache' });
    * // => 'Hello Mustache!'
    *
-   * // specify the `variable` option to avoid using a with-statement during compilation
-   * _.template('Using a with-statement: <%= data.answer %>', { 'answer': 'no' }, { 'variable': 'data' });
-   * // => 'Using a with-statement: no'
+   * // using the `variable` option to ensure a with-statement isn't used in a compiled template
+   * var compiled = _.template('hello: <%= data.name %>', null, { 'variable': 'data' });
+   * compiled.source;
+   * // => function(data) {
+   *   var __t, __p = '', __e = _.escape;
+   *   __p += 'hello: ' + ((__t = ( data.name )) == null ? '' : __t);
+   *   return __p;
+   * }
    *
-   * // using the `source` property
-   * <script>
-   *   JST.project = <%= _.template(jstText).source %>;
-   * </script>
+   * // using the `source` property to inline compiled templates for meaningful
+   * // line numbers in error messages and a stack trace
+   * fs.writeFileSync(path.join(cwd, 'jst.js'), '\
+   *   var JST = {\
+   *     "main": ' + _.template(mainText).source + '\
+   *   };\
+   * ');
    */
   function template(text, data, options) {
     // based on John Resig's `tmpl` implementation
@@ -3791,7 +3797,8 @@
         evaluateDelimiter = options.evaluate,
         interpolateDelimiter = options.interpolate,
         settings = lodash.templateSettings,
-        variable = options.variable;
+        variable = options.variable || settings.variable,
+        hasVariable = variable;
 
     // use default settings if no options object is provided
     if (escapeDelimiter == null) {
@@ -3835,11 +3842,11 @@
     // clear stored code snippets
     tokenized.length = 0;
 
-    // if `options.variable` is not specified and the template contains "evaluate"
+    // if `variable` is not specified and the template contains "evaluate"
     // delimiters, wrap a with-statement around the generated code to add the
     // data object to the top of the scope chain
-    if (!variable) {
-      variable = settings.variable || lastVariable || 'obj';
+    if (!hasVariable) {
+      variable = lastVariable || 'obj';
 
       if (isEvaluating) {
         text = 'with (' + variable + ') {\n' + text + '\n}\n';
@@ -3865,12 +3872,12 @@
 
     // frame code as the function body
     text = 'function(' + variable + ') {\n' +
-      variable + ' || (' + variable + ' = {});\n' +
+      (hasVariable ? '' : variable + ' || (' + variable + ' = {});\n') +
       'var __t, __p = \'\', __e = _.escape' +
       (isEvaluating
         ? ', __j = Array.prototype.join;\n' +
           'function print() { __p += __j.call(arguments, \'\') }\n'
-        : ', __d = ' + variable + '.' + variable + ' || ' + variable + ';\n'
+        : (hasVariable ? '' : ', __d = ' + variable + '.' + variable + ' || ' + variable) + ';\n'
       ) +
       text +
       'return __p\n}';

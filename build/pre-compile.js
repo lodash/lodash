@@ -264,11 +264,8 @@
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");
 
-    // remove brackets from `_.escape()` in `tokenizeEscape`
-    source = source.replace(/_\['escape']\("/, '_.escape("');
-
     // remove brackets from `_.escape()` in `_.template`
-    source = source.replace(/__e *= *_\['escape']/, '__e=_.escape');
+    source = source.replace(/__e *= *_\['escape']/g, '__e=_.escape');
 
     // remove brackets from `collection.indexOf` in `_.contains`
     source = source.replace("collection['indexOf'](target)", 'collection.indexOf(target)');

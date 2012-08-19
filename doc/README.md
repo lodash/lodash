@@ -152,7 +152,7 @@ The `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4053 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4060 "View in source") [&#x24C9;][1]
 
 *(String)*: The semantic version number.
 
@@ -274,7 +274,7 @@ jQuery('#lodash_button').on('click', buttonView.onClick);
 <!-- div -->
 
 ### <a id="_chainvalue"></a>`_.chain(value)`
-<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3978 "View in source") [&#x24C9;][1]
+<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3985 "View in source") [&#x24C9;][1]
 
 Wraps the value in a `lodash` wrapper object.
 
@@ -2256,7 +2256,7 @@ _.sortedIndex(['twenty', 'thirty', 'fourty'], 'thirty-five', function(word) {
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4005 "View in source") [&#x24C9;][1]
+<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4012 "View in source") [&#x24C9;][1]
 
 Invokes `interceptor` with the `value` as the first argument, and then returns `value`. The purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
 
@@ -2286,7 +2286,7 @@ _.chain([1,2,3,200])
 <!-- div -->
 
 ### <a id="_templatetext-data-options"></a>`_.template(text, data, options)`
-<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3781 "View in source") [&#x24C9;][1]
+<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3787 "View in source") [&#x24C9;][1]
 
 A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.  Note: For Chrome extensions use the `lodash csp` build and see http://code.google.com/chrome/extensions/trunk/sandboxingEval.html
 
@@ -2300,7 +2300,7 @@ A micro-templating method that handles arbitrary delimiters, preserves whitespac
 
 #### Example
 ```js
-// using compiled template
+// using a compiled template
 var compiled = _.template('hello: <%= name %>');
 compiled({ 'name': 'moe' });
 // => 'hello: moe'
@@ -2309,32 +2309,38 @@ var list = '<% _.forEach(people, function(name) { %> <li><%= name %></li> <% });
 _.template(list, { 'people': ['moe', 'larry', 'curly'] });
 // => '<li>moe</li><li>larry</li><li>curly</li>'
 
-var template = _.template('<b><%- value %></b>');
-template({ 'value': '<script>' });
+// using the "escape" delimiter to escape HTML in data property values
+_.template('<b><%- value %></b>', { 'value': '<script>' });
 // => '<b>&lt;script></b>'
 
-// using `print`
-var compiled = _.template('<% print("Hello " + epithet); %>');
-compiled({ 'epithet': 'stooge' });
+// using the internal `print` function in "evaluate" delimiters
+_.template('<% print("Hello " + epithet); %>', { 'epithet': 'stooge' });
 // => 'Hello stooge.'
 
-// using custom template settings
+// using custom template delimiter settings
 _.templateSettings = {
   'interpolate': /\{\{(.+?)\}\}/g
 };
 
-var template = _.template('Hello {{ name }}!');
-template({ 'name': 'Mustache' });
+_.template('Hello {{ name }}!', { 'name': 'Mustache' });
 // => 'Hello Mustache!'
 
-// specify the `variable` option to avoid using a with-statement during compilation
-_.template('Using a with-statement: <%= data.answer %>', { 'answer': 'no' }, { 'variable': 'data' });
-// => 'Using a with-statement: no'
+// using the `variable` option to ensure a with-statement isn't used in a compiled template
+var compiled = _.template('hello: <%= data.name %>', null, { 'variable': 'data' });
+compiled.source;
+// => function(data) {
+  var __t, __p = '', __e = _.escape;
+  __p += 'hello: ' + ((__t = ( data.name )) == null ? '' : __t);
+  return __p;
+}
 
-// using the `source` property
-<script>
-  JST.project = <%= _.template(jstText).source %>;
-</script>
+// using the `source` property to inline compiled templates for meaningful
+// line numbers in error messages and a stack trace
+fs.writeFileSync(path.join(cwd, 'jst.js'), '\
+  var JST = {\
+    "main": ' + _.template(mainText).source + '\
+  };\
+');
 ```
 
 * * *
@@ -2370,7 +2376,7 @@ jQuery(window).on('scroll', throttled);
 <!-- div -->
 
 ### <a id="_timesn-callback--thisarg"></a>`_.times(n, callback [, thisArg])`
-<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3921 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3928 "View in source") [&#x24C9;][1]
 
 Executes the `callback` function `n` times. The `callback` is bound to `thisArg` and invoked with `1` argument; *(index)*.
 
@@ -2480,7 +2486,7 @@ _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return this.floor(num); }, Math);
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3948 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3955 "View in source") [&#x24C9;][1]
 
 Generates a unique id. If `prefix` is passed, the id will be appended to it.
 
@@ -2669,7 +2675,7 @@ _.zipObject(['moe', 'larry', 'curly'], [30, 40, 50]);
 <!-- div -->
 
 ### <a id="_prototypechain"></a>`_.prototype.chain()`
-<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4023 "View in source") [&#x24C9;][1]
+<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4030 "View in source") [&#x24C9;][1]
 
 Enables method chaining on the wrapper object.
 
@@ -2690,7 +2696,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_prototypevalue"></a>`_.prototype.value()`
-<a href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4040 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4047 "View in source") [&#x24C9;][1]
 
 Extracts the wrapped value.
 

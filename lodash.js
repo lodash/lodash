@@ -817,7 +817,7 @@
    * @returns {String} Returns a token.
    */
   function tokenizeEscape(match, value) {
-    if (reComplexDelimiter.test(value)) {
+    if (match && reComplexDelimiter.test(value)) {
       return '<e%-' + value + '%>';
     }
     var index = tokenized.length;
@@ -837,15 +837,14 @@
    * @returns {String} Returns a token.
    */
   function tokenizeEvaluate(match, escapeValue, interpolateValue, evaluateValue) {
-    var index = tokenized.length;
-    if (escapeValue) {
-      tokenized[index] = "' +\n__e(" + escapeValue + ") +\n'";
-    } else if (evaluateValue) {
+    if (evaluateValue) {
+      var index = tokenized.length;
       tokenized[index] = "';\n" + evaluateValue + ";\n__p += '";
-    } else if (interpolateValue) {
-      tokenized[index] = "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
+      return token + index;
     }
-    return token + index;
+    return escapeValue
+      ? tokenizeEscape(null, escapeValue)
+      : tokenizeInterpolate(null, interpolateValue);
   }
 
   /**
@@ -857,7 +856,7 @@
    * @returns {String} Returns a token.
    */
   function tokenizeInterpolate(match, value) {
-    if (reComplexDelimiter.test(value)) {
+    if (match && reComplexDelimiter.test(value)) {
       return '<e%=' + value + '%>';
     }
     var index = tokenized.length;
@@ -3729,8 +3728,12 @@
    * A micro-templating method that handles arbitrary delimiters, preserves
    * whitespace, and correctly escapes quotes within interpolated code.
    *
-   * Note: For Chrome extensions use the `lodash csp` build and see
-   * http://code.google.com/chrome/extensions/trunk/sandboxingEval.html
+   * Note: In the development build `_.template` utilizes sourceURLs for easier
+   * debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
+   *
+   * Note: Lo-Dash may be used in Chrome extensions by either creating a `lodash csp`
+   * build and avoiding `_.template` use, or loading Lo-Dash in a sandboxed page.
+   * See http://developer.chrome.com/trunk/extensions/sandboxingEval.html
    *
    * @static
    * @memberOf _
@@ -3767,7 +3770,7 @@
    * _.template('Hello {{ name }}!', { 'name': 'Mustache' });
    * // => 'Hello Mustache!'
    *
-   * // using the `variable` option to ensure a with-statement isn't used in a compiled template
+   * // using the `variable` option to ensure a with-statement isn't used in the compiled template
    * var compiled = _.template('hello: <%= data.name %>', null, { 'variable': 'data' });
    * compiled.source;
    * // => function(data) {
@@ -3790,6 +3793,7 @@
     // and Laura Doktorova's doT.js
     // https://github.com/olado/doT
     options || (options = {});
+    text += '';
 
     var isEvaluating,
         result,

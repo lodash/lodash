@@ -699,6 +699,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isElement');
+
+  (function() {
+    test('should use strict equality in its duck type check', function() {
+      var element = window.document ? document.body : { 'nodeType': 1 };
+      equal(_.isElement(element), true);
+
+      equal(_.isElement({ 'nodeType': new Number(1) }), false);
+      equal(_.isElement({ 'nodeType': true }), false);
+      equal(_.isElement({ 'nodeType': [1] }), false);
+      equal(_.isElement({ 'nodeType': '1' }), false);
+      equal(_.isElement({ 'nodeType': '001' }), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isEmpty');
 
   (function() {

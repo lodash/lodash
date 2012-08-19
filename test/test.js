@@ -1569,7 +1569,6 @@
         'once',
         'partial',
         'tap',
-        'template',
         'throttle',
         'wrap'
       ]));

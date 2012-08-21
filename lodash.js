@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.5.1 <http://lodash.com>
+ * Lo-Dash v0.5.2 <http://lodash.com>
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
@@ -399,7 +399,6 @@
     '    value = iteratee[index];\n' +
     '    <%= objectBranch.inLoop %>;\n' +
     '    <%   if (useHas) { %>}<% } %>' +
-    '    <% } else { %>\n' +
 
     // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
     // (if the prototype or a property on the prototype has been set)
@@ -407,6 +406,7 @@
     // value to `true`. Because of this Lo-Dash standardizes on skipping
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
+    '    <% } else { %>\n' +
     '    if (!(skipProto && index == \'prototype\')<% if (useHas) { %> &&\n' +
     '        hasOwnProperty.call(iteratee, index)<% } %>) {\n' +
     '      value = iteratee[index];\n' +
@@ -2307,7 +2307,7 @@
   });
 
   /**
-   * Converts the `collection`, into an array. Useful for converting the
+   * Converts the `collection`, to an array. Useful for converting the
    * `arguments` object.
    *
    * @static
@@ -3906,7 +3906,7 @@
     }
     // provide the compiled function's source via its `toString` method, in
     // supported environments, or the `source` property as a convenience for
-    // build time precompilation
+    // inlining compiled templates during the build process
     result.source = text;
     return result;
   }
@@ -4061,7 +4061,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.5.1';
+  lodash.VERSION = '0.5.2';
 
   // assign static methods
   lodash.after = after;

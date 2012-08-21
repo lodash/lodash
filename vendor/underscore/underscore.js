@@ -1,6 +1,6 @@
 //     Underscore.js 1.3.3
 //     (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
-//     Underscore is freely distributable under the MIT license.
+//     Underscore may be freely distributed under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
 //     Oliver Steele's Functional, and John Resig's Micro-Templating.
 //     For all details and documentation:
@@ -330,10 +330,9 @@
 
   // Safely convert anything iterable into a real, live array.
   _.toArray = function(obj) {
-    if (!obj)                                     return [];
-    if (_.isArray(obj))                           return slice.call(obj);
-    if (_.isArguments(obj))                       return slice.call(obj);
-    if (obj.toArray && _.isFunction(obj.toArray)) return obj.toArray();
+    if (!obj)                                 return [];
+    if (_.isArray(obj) || _.isArguments(obj)) return slice.call(obj);
+    if (_.isFunction(obj.toArray))            return obj.toArray();
     return _.values(obj);
   };
 

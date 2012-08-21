@@ -154,7 +154,9 @@
           belt = this.name == "Lo-Dash" ? lodash : _;\
       \
       var index,\
+          date = new Date,\
           limit = 20,\
+          regexp = /x/,\
           object = {},\
           objects = Array(limit),\
           numbers = Array(limit),\
@@ -937,6 +939,36 @@
         'fn': '_.isEqual(object, object2)',
         'teardown': 'function isEqual(){}'
       })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.isArguments`, `_.isDate`, `_.isFunction`, `_.isNumber`, `_.isRegExp`')
+      .add('Lo-Dash', '\
+        lodash.isArguments(arguments);\
+        lodash.isArguments(object);\
+        lodash.isDate(date);\
+        lodash.isDate(object);\
+        lodash.isFunction(lodash);\
+        lodash.isFunction(object);\
+        lodash.isNumber(1);\
+        lodash.isNumber(object);\
+        lodash.isRegExp(regexp);\
+        lodash.isRegExp(object);'
+      )
+      .add('Underscore', '\
+        _.isArguments(arguments);\
+        _.isArguments(object);\
+        _.isDate(date);\
+        _.isDate(object);\
+        _.isFunction(_);\
+        _.isFunction(object);\
+        _.isNumber(1);\
+        _.isNumber(object);\
+        _.isRegExp(regexp);\
+        _.isRegExp(object);'
+      )
   );
 
   /*--------------------------------------------------------------------------*/

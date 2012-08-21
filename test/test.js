@@ -102,7 +102,7 @@
       if (window.document && window.require) {
         equal((lodashModule || {}).moduleName, 'lodash');
       } else {
-        skipTest()
+        skipTest();
       }
     });
 
@@ -110,7 +110,7 @@
       if (window.document && window.require) {
         equal((underscoreModule || {}).moduleName, 'underscore');
       } else {
-        skipTest()
+        skipTest();
       }
     });
 
@@ -1557,6 +1557,7 @@
   (function() {
     test('should allow a falsey arguments', function() {
       var funcs = _.without.apply(_, [_.functions(_)].concat([
+        '_',
         '_iteratorTemplate',
         '_shimKeys',
         'after',

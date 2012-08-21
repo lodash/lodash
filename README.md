@@ -171,7 +171,7 @@ require({
 
  * Allow iteration of objects with a `length` property [[#148](https://github.com/documentcloud/underscore/issues/148), [#154](https://github.com/documentcloud/underscore/issues/154), [#252](https://github.com/documentcloud/underscore/issues/252), [#448](https://github.com/documentcloud/underscore/issues/448), [#659](https://github.com/documentcloud/underscore/issues/659), [test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L551-557)]
  * Ensure array-like objects with invalid `length` properties are treated like regular objects [[test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L499-509)]
- * Ensure *“Arrays”*, “Collections”, and “Objects” methods allow falsey arguments [[test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1558-1593)]
+ * Ensure *“Arrays”*, “Collections”, and “Objects” methods don’t error when passed falsey arguments [[#650](https://github.com/documentcloud/underscore/pull/650), [test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1558-1593)]
  * Ensure *“Collections”* methods allow string `collection` arguments [[#247](https://github.com/documentcloud/underscore/issues/247), [#276](https://github.com/documentcloud/underscore/issues/276), [#561](https://github.com/documentcloud/underscore/pull/561), [test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L511-529)]
  * Ensure templates compiled with errors are inspectable [[#666](https://github.com/documentcloud/underscore/issues/666), [test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1299-1302)]
  * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L562-587)]
@@ -196,7 +196,6 @@ require({
  * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1110-1113)]
  * `_.reduceRight` should pass correct callback arguments when iterating objects [[test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1121-1135)]
  * `_.size` should return the `length` of string values [[test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1179-1181)]
- * `_.size` shouldn’t error on falsey values [[#650](https://github.com/documentcloud/underscore/pull/650), [test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1183-1190)]
  * `_.sortedIndex` should support arrays with high `length` values [[test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1269-1278)]
  * `_.template` should not augment the `options` object [[test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1293-1297)]
  * `_.throttle` should work when called in a loop [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/v0.5.2/test/test.js#L1389-1399)]
@@ -269,7 +268,7 @@ require({
 
  * Ensured `_.isElement` uses strict equality for its duck type check
  * Ensured `_.isObject` returns a boolean value
- * Ensured `_.template` and *“Objects”* methods don’t error when passed falsey values
+ * Ensured `_.template` and *“Objects”* methods don’t error when passed falsey arguments
  * Made `_.template` generate less unused code in compiled templates
 
 ### <sup>v0.5.1</sup>

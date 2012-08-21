@@ -1555,7 +1555,7 @@
   QUnit.module('lodash methods');
 
   (function() {
-    test('should allow a falsey arguments', function() {
+    test('should allow falsey arguments', function() {
       var funcs = _.without.apply(_, [_.functions(_)].concat([
         '_',
         '_iteratorTemplate',
@@ -1588,7 +1588,7 @@
           }
         });
 
-        ok(pass, methodName + ' allows a falsey arguments');
+        ok(pass, methodName + ' allows falsey arguments');
       });
     });
   }());

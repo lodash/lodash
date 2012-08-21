@@ -272,14 +272,14 @@
   QUnit.module('lodash.contains');
 
   (function() {
-    _.each([
-      { 'kind': 'literal', 'value': 'abc' },
-      { 'kind': 'object', 'value': Object('abc') }
-    ],
-    function(data) {
-      test('should work with a string ' + data.kind + ' for `collection`', function() {
-        equal(_.contains(data.value, 'bc'), true);
-        equal(_.contains(data.value, 'd'), false);
+    _.each({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection`', function() {
+        equal(_.contains(collection, 'bc'), true);
+        equal(_.contains(collection, 'd'), false);
       });
     });
   }());
@@ -508,14 +508,13 @@
       deepEqual(keys, ['length']);
     });
 
-    _.each([
-      { 'kind': 'literal', 'value': 'abc' },
-      { 'kind': 'object', 'value': Object('abc') }
-    ],
-    function(data) {
-      test('should work with a string ' + data.kind + ' for `collection` (test in IE < 9)', function() {
+    _.each({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection` (test in IE < 9)', function() {
         var args,
-            collection = data.value,
             values = [];
 
         _.forEach(collection, function(value) {
@@ -1151,14 +1150,13 @@
       deepEqual(args, expected);
     });
 
-    _.each([
-      { 'kind': 'literal', 'value': 'abc' },
-      { 'kind': 'object', 'value': Object('abc') }
-    ],
-    function(data) {
-      test('should work with a string ' + data.kind + ' for `collection` (test in IE < 9)', function() {
-        var args,
-            collection = data.value;
+    _.each({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection` (test in IE < 9)', function() {
+        var args;
 
         var actual = _.reduceRight(collection, function(accumulator, value) {
           args || (args = slice.call(arguments));
@@ -1425,10 +1423,14 @@
   (function() {
     var args = arguments;
 
-    test('should call custom `toArray` method of an array', function() {
-      var array = [1, 2, 3];
-      array.toArray = function() { return [3, 2, 1]; };
-      deepEqual(_.toArray(array), [3, 2, 1]);
+    _.each({
+      'an array': ['a', 'b', 'c'],
+      'a string': Object('abc')
+    }, function(collection, key) {
+      test('should call custom `toArray` method of ' + key, function() {
+        collection.toArray = function() { return [3, 2, 1]; };
+        deepEqual(_.toArray(collection), [3, 2, 1]);
+      });
     });
 
     test('should treat array-like objects like arrays', function() {

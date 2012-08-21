@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v0.5.1</sup>
+# Lo-Dash <sup>v0.5.2</sup>
 
 <!-- div -->
 
@@ -2404,7 +2404,7 @@ _.times(3, function() { this.grantWish(); }, genie);
 ### <a id="_toarraycollection"></a>`_.toArray(collection)`
 <a href="#_toarraycollection">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2323 "View in source") [&#x24C9;][1]
 
-Converts the `collection`, into an array. Useful for converting the `arguments` object.
+Converts the `collection`, to an array. Useful for converting the `arguments` object.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to convert.

@@ -2,6 +2,9 @@
 ;(function() {
   'use strict';
 
+  /** The debug version of `source` */
+  var debugSource;
+
   /** Load modules */
   var fs = require('fs'),
       path = require('path'),
@@ -532,17 +535,6 @@
   }
 
   /**
-   * Removes the `_.isFunction` fallback from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the source with the `isFunction` fallback removed.
-   */
-  function removeIsFunctionFallback(source) {
-    return source.replace(/(?:\s*\/\/.*)*\s*if *\(isFunction\(\/x\/[\s\S]+?};\s*}/, '');
-  }
-
-  /**
    * Removes the `_.isArguments` fallback from `source`.
    *
    * @private
@@ -551,6 +543,17 @@
    */
   function removeIsArgumentsFallback(source) {
     return source.replace(getIsArgumentsFallback(source), '');
+  }
+
+  /**
+   * Removes the `_.isFunction` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the source with the `isFunction` fallback removed.
+   */
+  function removeIsFunctionFallback(source) {
+    return source.replace(/(?:\s*\/\/.*)*\s*if *\(isFunction\(\/x\/[\s\S]+?};\s*}/, '');
   }
 
   /**
@@ -1033,19 +1036,12 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // remove associated functions, variables, and code snippets that the minifier may miss
-  if (isRemoved(source, 'bind')) {
-    source = removeVar(source, 'nativeBind');
-    source = removeVar(source, 'isBindFast');
-  }
-  if (isRemoved(source, 'isArray')) {
-    source = removeVar(source, 'nativeIsArray');
+  // modify/remove references to removed methods/variables
+  if (isRemoved(source, 'isArguments')) {
+    source = replaceVar(source, 'noArgsClass', 'false');
   }
   if (isRemoved(source, 'isFunction')) {
     source = removeIsFunctionFallback(source);
-  }
-  if (isRemoved(source, 'keys')) {
-    source = removeFunction(source, 'shimKeys');
   }
   if (isRemoved(source, 'mixin')) {
     // remove `LoDash` constructor
@@ -1054,6 +1050,22 @@
     source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
     // remove `LoDash.prototype` additions
     source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
+  }
+
+  // assign debug source before further modifications that rely on the minifier
+  // to remove unused variables and other dead code
+  debugSource = source;
+
+  // remove associated functions, variables, and code snippets that the minifier may miss
+  if (isRemoved(source, 'bind')) {
+    source = removeVar(source, 'nativeBind');
+    source = removeVar(source, 'isBindFast');
+  }
+  if (isRemoved(source, 'isArray')) {
+    source = removeVar(source, 'nativeIsArray');
+  }
+  if (isRemoved(source, 'keys')) {
+    source = removeFunction(source, 'shimKeys');
   }
   if (isRemoved(source, 'template')) {
     // remove `templateSettings` assignment
@@ -1105,7 +1117,7 @@
 
   // begin the minification process
   if (filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
-    writeFile(source, 'lodash.custom.js');
+    writeFile(debugSource, 'lodash.custom.js');
 
     minify(source, 'lodash.custom.min', function(result) {
       writeFile(result, 'lodash.custom.min.js');

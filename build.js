@@ -150,31 +150,31 @@
   /** Used to track function dependencies */
   var dependencyMap = {
     'after': [],
-    'bind': [],
-    'bindAll': ['bind', 'functions'],
+    'bind': ['isFunction'],
+    'bindAll': ['bind', 'isFunction'],
     'chain': ['mixin'],
-    'clone': ['extend', 'forIn', 'forOwn', 'isArguments'],
+    'clone': ['extend', 'forIn', 'forOwn', 'isArguments', 'isFunction'],
     'compact': [],
     'compose': [],
     'contains': [],
     'countBy': [],
     'debounce': [],
-    'defaults': [],
+    'defaults': ['isArguments'],
     'defer': [],
     'delay': [],
     'difference': ['indexOf'],
-    'drop': ['indexOf'],
+    'drop': ['indexOf', 'isArguments'],
     'escape': [],
     'every': ['identity'],
-    'extend': [],
+    'extend': ['isArguments'],
     'filter': ['identity'],
     'find': [],
     'first': [],
     'flatten': ['isArray'],
     'forEach': [],
-    'forIn': [],
-    'forOwn': [],
-    'functions': [],
+    'forIn': ['isArguments'],
+    'forOwn': ['isArguments'],
+    'functions': ['isArguments', 'isFunction'],
     'groupBy': [],
     'has': [],
     'identity': [],
@@ -187,8 +187,8 @@
     'isBoolean': [],
     'isDate': [],
     'isElement': [],
-    'isEmpty': ['isArguments'],
-    'isEqual': ['isArguments'],
+    'isEmpty': ['isArguments', 'isFunction'],
+    'isEqual': ['isArguments', 'isFunction'],
     'isFinite': [],
     'isFunction': [],
     'isNaN': [],
@@ -198,13 +198,13 @@
     'isRegExp': [],
     'isString': [],
     'isUndefined': [],
-    'keys': [],
+    'keys': ['isArguments'],
     'last': [],
     'lastIndexOf': [],
     'map': ['identity'],
     'max': [],
     'memoize': [],
-    'merge': ['isArray', 'forIn'],
+    'merge': ['isArguments', 'isArray', 'forIn'],
     'min': [],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
@@ -217,9 +217,9 @@
     'reduceRight': ['keys'],
     'reject': ['identity'],
     'rest': [],
-    'result': [],
+    'result': ['isFunction'],
     'shuffle': [],
-    'size': ['isArguments', 'keys'],
+    'size': ['isArguments', 'isFunction', 'keys'],
     'some': ['identity'],
     'sortBy': [],
     'sortedIndex': ['bind'],
@@ -227,11 +227,11 @@
     'template': ['escape'],
     'throttle': [],
     'times': [],
-    'toArray': ['values'],
+    'toArray': ['isFunction', 'values'],
     'union': ['indexOf'],
     'uniq': ['identity', 'indexOf'],
     'uniqueId': [],
-    'values': [],
+    'values': ['isArguments'],
     'where': ['forIn'],
     'without': ['indexOf'],
     'wrap': [],
@@ -529,6 +529,17 @@
     source = source.replace(snippet, modified);
 
     return removeFromCreateIterator(source, funcName);
+  }
+
+  /**
+   * Removes the `_.isFunction` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the source with the `isFunction` fallback removed.
+   */
+  function removeIsFunctionFallback(source) {
+    return source.replace(/(?:\s*\/\/.*)*\s*if *\(isFunction\(\/x\/[\s\S]+?};\s*}/, '');
   }
 
   /**
@@ -1029,6 +1040,9 @@
   }
   if (isRemoved(source, 'isArray')) {
     source = removeVar(source, 'nativeIsArray');
+  }
+  if (isRemoved(source, 'isFunction')) {
+    source = removeIsFunctionFallback(source);
   }
   if (isRemoved(source, 'keys')) {
     source = removeFunction(source, 'shimKeys');

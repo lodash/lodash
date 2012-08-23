@@ -175,6 +175,9 @@
   /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
   var isKeysFast = nativeKeys && /^.+$|true/.test(nativeKeys + !!window.attachEvent);
 
+  /* Detect if strict mode, "use strict", is inferred to be fast (V8) */
+  var isStrictFast = !isBindFast;
+
   /** Detect if sourceURL syntax is usable without erroring */
   try {
     // The JS engine in Adobe products, like InDesign, will throw a syntax error
@@ -631,8 +634,8 @@
           if (typeof value == 'string') {
             value = { 'array': value, 'object': value };
           }
-          data.arrayBranch[prop] = value.array;
-          data.objectBranch[prop] = value.object;
+          data.arrayBranch[prop] = value.array || '';
+          data.objectBranch[prop] = value.object || '';
         } else {
           data[prop] = value;
         }
@@ -640,7 +643,8 @@
     }
     // set additional template `data` values
     var args = data.args,
-        firstArg = /^[^,]+/.exec(args)[0];
+        firstArg = /^[^,]+/.exec(args)[0],
+        useStrict = data.useStrict;
 
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
@@ -648,7 +652,7 @@
     data.noArgsEnum = noArgsEnum;
     data.shadowed = shadowed;
     data.useHas = data.useHas !== false;
-    data.useStrict = data.useStrict !== false;
+    data.useStrict = useStrict == null ? isStrictFast : useStrict;
 
     if (!('noCharByIndex' in data)) {
       data.noCharByIndex = noCharByIndex;

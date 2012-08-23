@@ -50,15 +50,16 @@
 
     if (isStrict) {
       source = setUseStrictOption(source, true);
-    }
-    else if (!useStrict) {
+    } else {
       source = removeUseStrictDirective(source);
-      source = setUseStrictOption(source, false);
+      if (!useStrict) {
+        source = setUseStrictOption(source, false);
+      }
     }
 
     if (isLegacy) {
       source = replaceVar(source, 'noArgsClass', 'true');
-      ['isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
+      ['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
         source = replaceVar(source, varName, 'false');
       });
     }
@@ -686,11 +687,14 @@
    * @returns {String} Returns the modified source.
    */
   function setUseStrictOption(source, value) {
-    return source
+    // remove `isStrictFast` assignment
+    return removeVar(source, 'isStrictFast')
       // replace `useStrict` branch in `value` with hard-coded option
       .replace(/(?: *\/\/.*\n)*(\s*)' *<% *if *\(useStrict\).+/, value ? "$1'\\'use strict\\';\\n' +" : '')
       // remove `useStrict` from iterator options
       .replace(/ *'useStrict': *false,\n/g, '')
+      // remove `useStrict` variable assignment in `createIterator`
+      .replace(/,\s*useStrict *=[^;]+/, '')
       // remove `useStrict` data object property assignment in `createIterator`
       .replace(/\s*.+?\.useStrict *=.+/, '');
   }
@@ -708,7 +712,7 @@
     source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
 
     // re-remove "use strict" added by the minifier
-    if (!useStrict) {
+    if (!isStrict) {
       source = removeUseStrictDirective(source);
     }
     fs.writeFileSync(path.join(cwd, filename), source);
@@ -1057,10 +1061,6 @@
   debugSource = source;
 
   // remove associated functions, variables, and code snippets that the minifier may miss
-  if (isRemoved(source, 'bind')) {
-    source = removeVar(source, 'nativeBind');
-    source = removeVar(source, 'isBindFast');
-  }
   if (isRemoved(source, 'isArray')) {
     source = removeVar(source, 'nativeIsArray');
   }
@@ -1086,6 +1086,11 @@
   if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
     source = removeFunction(source, 'createIterator');
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var noArgsEnum;|.+?noArgsEnum *=.+/g, '');
+  }
+  if (isRemoved(source, 'createIterator', 'bind')) {
+    source = removeVar(source, 'isBindFast');
+    source = removeVar(source, 'isStrictFast');
+    source = removeVar(source, 'nativeBind');
   }
   if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
     source = removeVar(source, 'reNative');

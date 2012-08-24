@@ -212,6 +212,7 @@ require({
  * `_.defaults`
  * `_.defer`
  * `_.difference`
+ * `_.drop`, `_.omit`
  * `_.each`
  * `_.escape`
  * `_.every`, `_.all`

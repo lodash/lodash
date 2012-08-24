@@ -187,6 +187,7 @@
     'min',
     'mixin',
     'noConflict',
+    'omit',
     'once',
     'opera',
     'partial',

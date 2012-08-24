@@ -50,6 +50,16 @@ $(document).ready(function() {
     ok(_.isEqual(result, {a:1, b:2}), 'can restrict properties to those named in mixed args');
   });
 
+  test("objects: omit", function() {
+    var result;
+    result = _.omit({a:1, b:2, c:3}, 'b');
+    ok(_.isEqual(result, {a:1, c:3}), 'can omit a single named property');
+    result = _.omit({a:1, b:2, c:3}, 'a', 'c');
+    ok(_.isEqual(result, {b:2}), 'can omit several named properties');
+    result = _.omit({a:1, b:2, c:3}, ['b', 'c']);
+    ok(_.isEqual(result, {a:1}), 'can omit properties named in an array');
+  });
+
   test("objects: defaults", function() {
     var result;
     var options = {zero: 0, one: 1, empty: "", nan: NaN, string: "string"};

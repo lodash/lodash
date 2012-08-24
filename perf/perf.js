@@ -1066,6 +1066,18 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.omit`')
+      .add('Lo-Dash', '\
+        lodash.omit(object, "key6", "key13")'
+      )
+      .add('Underscore', '\
+        _.omit(object, "key6", "key13")'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.pick`')
       .add('Lo-Dash', '\
         lodash.pick(object, "key6", "key13")'

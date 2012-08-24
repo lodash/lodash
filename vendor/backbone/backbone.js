@@ -791,14 +791,14 @@
     // collection immediately, unless `wait: true` is passed, in which case we
     // wait for the server to agree.
     create: function(model, options) {
-      var coll = this;
+      var collection = this;
       options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
       if (!model) return false;
-      if (!options.wait) coll.add(model, options);
+      if (!options.wait) collection.add(model, options);
       var success = options.success;
       options.success = function(model, resp, options) {
-        if (options.wait) coll.add(model, options);
+        if (options.wait) collection.add(model, options);
         if (success) success(model, resp, options);
       };
       model.save(null, options);
@@ -1314,14 +1314,6 @@
 
   });
 
-  // The self-propagating extend function that Backbone classes use.
-  var extend = function(protoProps, classProps) {
-    return inherits(this, protoProps, classProps);
-  };
-
-  // Set up inheritance for the model, collection, and view.
-  Model.extend = Collection.extend = Router.extend = View.extend = extend;
-
   // Backbone.sync
   // -------------
 
@@ -1421,7 +1413,8 @@
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
-  var inherits = function(parent, protoProps, staticProps) {
+  var extend = function(protoProps, staticProps) {
+    var parent = this;
     var child;
 
     // The constructor function for the new subclass is either defined by you
@@ -1456,6 +1449,9 @@
 
     return child;
   };
+
+  // Set up inheritance for the model, collection, and view.
+  Model.extend = Collection.extend = Router.extend = View.extend = extend;
 
   // Helper function to get a value from a Backbone object as a property
   // or as a function.

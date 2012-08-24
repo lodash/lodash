@@ -1105,6 +1105,7 @@
    *
    * @static
    * @memberOf _
+   * @alias omit
    * @category Objects
    * @param {Object} object The source object.
    * @param {Object} [prop1, prop2, ...] The properties to drop.
@@ -4169,6 +4170,7 @@
   lodash.include = contains;
   lodash.inject = reduce;
   lodash.methods = functions;
+  lodash.omit = drop;
   lodash.select = filter;
   lodash.tail = rest;
   lodash.take = first;

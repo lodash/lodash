@@ -83,6 +83,7 @@
     'include': 'contains',
     'inject': 'reduce',
     'methods': 'functions',
+    'omit': 'drop',
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
@@ -92,6 +93,7 @@
   /** Used to associate real names with their aliases */
   var realToAliasMap = {
     'contains': ['include'],
+    'drop': ['omit'],
     'every': ['all'],
     'filter': ['select'],
     'find': ['detect'],

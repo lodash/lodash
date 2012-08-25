@@ -698,17 +698,22 @@
 
   // Return a copy of the object only containing the whitelisted properties.
   _.pick = function(obj) {
-    var result = {};
-    each(_.flatten(slice.call(arguments, 1)), function(key) {
-      if (key in obj) result[key] = obj[key];
+    var copy = {};
+    var keys = _.flatten(slice.call(arguments, 1));
+    each(keys, function(key) {
+      if (key in obj) copy[key] = obj[key];
     });
-    return result;
+    return copy;
   };
 
    // Return a copy of the object without the blacklisted properties.
   _.omit = function(obj) {
+    var copy = _.extend({}, obj);
     var keys = _.flatten(slice.call(arguments, 1));
-    return _.pick(obj, _.difference(_.keys(obj), keys));
+    each(keys, function(key) {
+      delete copy[key];
+    });
+    return copy;
   };
 
   // Fill in a given object with default properties.

@@ -289,13 +289,13 @@
   QUnit.module('lodash.countBy');
 
   (function() {
-      test('should only add elements to own, not inherited, properties', function() {
+      test('should only add values to own, not inherited, properties', function() {
       var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
-      deepEqual(actual.constructor, 1);
-      deepEqual(actual.hasOwnProperty, 2);
+      equal(actual.constructor, 1);
+      equal(actual.hasOwnProperty, 2);
     });
   }());
 
@@ -620,7 +620,7 @@
       deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
 
-    test('should only add elements to own, not inherited, properties', function() {
+    test('should only add values to own, not inherited, properties', function() {
       var actual = _.groupBy([4.2, 6.1, 6.4], function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });

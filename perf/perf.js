@@ -200,7 +200,7 @@
         }\
       }\
       \
-      if (typeof countBy != "undefined") {\
+      if (typeof countBy != "undefined" || typeof omit != "undefined") {\
         var wordToNumber = {\
           "one": 1,\
           "two": 2,\
@@ -226,7 +226,22 @@
           "twenty-two": 22,\
           "twenty-three": 23,\
           "twenty-four": 24,\
-          "twenty-five": 25\
+          "twenty-five": 25,\
+          "twenty-six": 26,\
+          "twenty-seven": 27,\
+          "twenty-eight": 28,\
+          "twenty-nine": 29,\
+          "thirty": 30,\
+          "thirty-one": 31,\
+          "thirty-two": 32,\
+          "thirty-three": 33,\
+          "thirty-four": 34,\
+          "thirty-five": 35,\
+          "thirty-six": 36,\
+          "thirty-seven": 37,\
+          "thirty-eight": 38,\
+          "thirty-nine": 39,\
+          "forty": 40\
         };\
         \
         var words = belt.keys(wordToNumber).slice(0, limit);\
@@ -292,6 +307,24 @@
             seventyFiveValues2[index] = index + (index < 60 ? 75 : 0);\
           }\
         }\
+      }\
+      if (typeof omit != "undefined") {\
+        \
+        var tenWordObject = {\
+          "one": 1,\
+          "two": 2,\
+          "three": 3,\
+          "four": 4,\
+          "five": 5,\
+          "six": 6,\
+          "seven": 7,\
+          "eight": 8,\
+          "nine": 9,\
+          "ten": 10\
+        };\
+        \
+        var _omitted = _.omit(wordToNumber, tenWordObject),\
+            lodashOmitted = lodash.omit(wordToNumber, tenWordObject);\
       }\
       \
       if (typeof template != "undefined") {\
@@ -1066,13 +1099,37 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.omit`')
+    Benchmark.Suite('`_.omit` iterating 20 properties, omitting 2 keys')
       .add('Lo-Dash', '\
         lodash.omit(object, "key6", "key13")'
       )
       .add('Underscore', '\
         _.omit(object, "key6", "key13")'
       )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.omit` iterating 40 properties, omitting 20 keys')
+      .add('Lo-Dash', {
+        'fn': 'lodash.omit(wordToNumber, words)',
+        'teardown': 'function omit(){}'
+      })
+      .add('Underscore', {
+        'fn': 'result = _.omit(wordToNumber, words)',
+        'teardown': 'function omit(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.omit` iterating 10 properties, omitting 20 keys')
+      .add('Lo-Dash', {
+        'fn': 'lodash.omit(tenWordObject, words)',
+        'teardown': 'function omit(){}'
+      })
+      .add('Underscore', {
+        'fn': '_.omit(tenWordObject, words)',
+        'teardown': 'function omit(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/

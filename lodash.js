@@ -1129,12 +1129,19 @@
    * @alias omit
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Object} [prop1, prop2, ...] The properties to drop.
+   * @param {Function|String} callback|[prop1, prop2, ...] The properties to drop
+   *  or the function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Object} Returns an object without the dropped properties.
    * @example
    *
    * _.drop({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
    * // => { 'name': 'moe', 'age': 40 }
+   *
+   * _.drop({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
+   *   return key.charAt(0) == '_';
+   * });
+   * // => { 'name': 'moe' }
    */
   var drop = createIterator(dropIteratorOptions);
 
@@ -1783,13 +1790,19 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Function|String} [callback|prop1, prop2, ...] The properties to pick
+   * @param {Function|String} callback|[prop1, prop2, ...] The properties to pick
    *  or the function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
    *
    * _.pick({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'name', 'age');
    * // => { 'name': 'moe', 'age': 40 }
+   *
+   * _.pick({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
+   *   return key.charAt(0) != '_';
+   * });
+   * // => { 'name': 'moe' }
    */
   var pick = createIterator(dropIteratorOptions, {
     'top':
@@ -1912,8 +1925,8 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Function|String} callback The function called per iteration or
-   *  property name to count by.
+   * @param {Function|String} callback|property The function called per iteration
+   *  or property name to count by.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Object} Returns the composed aggregate object.
    * @example
@@ -2028,8 +2041,8 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Function|String} callback The function called per iteration or
-   *  property name to group by.
+   * @param {Function|String} callback|property The function called per iteration
+   *  or property name to group by.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Object} Returns the composed aggregate object.
    * @example
@@ -2288,8 +2301,8 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Function|String} callback The function called per iteration or
-   *  property name to sort by.
+   * @param {Function|String} callback|property The function called per iteration
+   *  or property name to sort by.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @returns {Array} Returns a new array of sorted elements.
    * @example

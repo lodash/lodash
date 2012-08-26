@@ -657,7 +657,7 @@
     data.useHas = data.useHas !== false;
     data.useStrict = useStrict == null ? isStrictFast : useStrict;
 
-    if (!('noCharByIndex' in data)) {
+    if (data.noCharByIndex == null) {
       data.noCharByIndex = noCharByIndex;
     }
     if (!data.exit) {
@@ -1884,7 +1884,7 @@
     'init': 'false',
     'noCharByIndex': false,
     'beforeLoop': {
-      'array': 'if (toString.call(iteratee) == stringClass) return collection.indexOf(target) > -1'
+      'array': 'if (toString.call(collection) == stringClass) return collection.indexOf(target) > -1'
     },
     'inLoop': 'if (value === target) return true'
   });

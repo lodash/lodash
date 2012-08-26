@@ -708,11 +708,11 @@
 
    // Return a copy of the object without the blacklisted properties.
   _.omit = function(obj) {
-    var copy = _.extend({}, obj);
+    var copy = {};
     var keys = _.flatten(slice.call(arguments, 1));
-    each(keys, function(key) {
-      delete copy[key];
-    });
+    for (var key in obj) {
+      if (!_.include(keys, key)) copy[key] = obj[key];
+    }
     return copy;
   };
 

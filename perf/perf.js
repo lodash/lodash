@@ -308,24 +308,6 @@
           }\
         }\
       }\
-      if (typeof omit != "undefined") {\
-        \
-        var tenWordObject = {\
-          "one": 1,\
-          "two": 2,\
-          "three": 3,\
-          "four": 4,\
-          "five": 5,\
-          "six": 6,\
-          "seven": 7,\
-          "eight": 8,\
-          "nine": 9,\
-          "ten": 10\
-        };\
-        \
-        var _omitted = _.omit(wordToNumber, tenWordObject),\
-            lodashOmitted = lodash.omit(wordToNumber, tenWordObject);\
-      }\
       \
       if (typeof template != "undefined") {\
         var tplData = {\
@@ -1120,18 +1102,6 @@
       })
   );
 
-  suites.push(
-    Benchmark.Suite('`_.omit` iterating 10 properties, omitting 20 keys')
-      .add('Lo-Dash', {
-        'fn': 'lodash.omit(tenWordObject, words)',
-        'teardown': 'function omit(){}'
-      })
-      .add('Underscore', {
-        'fn': '_.omit(tenWordObject, words)',
-        'teardown': 'function omit(){}'
-      })
-  );
-
   /*--------------------------------------------------------------------------*/
 
   suites.push(
@@ -1376,42 +1346,6 @@
       .add('Underscore', '\
         _.union(numbers, fourNumbers, twoNumbers)'
       )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 25 elements')
-      .add('Lo-Dash', {
-        'fn': 'lodash.union(twentyFiveValues, twentyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add('Underscore', {
-        'fn': '_.union(twentyFiveValues, twentyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 50 elements')
-      .add('Lo-Dash', {
-        'fn': 'lodash.union(fiftyValues, fiftyValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add('Underscore', {
-        'fn': '_.union(fiftyValues, fiftyValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 75 elements')
-      .add('Lo-Dash', {
-        'fn': 'lodash.union(seventyFiveValues, seventyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add('Underscore', {
-        'fn': '_.union(seventyFiveValues, seventyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
   );
 
   /*--------------------------------------------------------------------------*/

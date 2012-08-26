@@ -1088,11 +1088,11 @@
     });
 
     test('should not alter the `this` binding of either function', function() {
-      var o = { 'cat': 'nip' },
+      var object = { 'cat': 'nip' },
           func = function() { return this.cat; };
 
-      equal(_.partial(_.bind(func, o))(), o.cat);
-      equal(_.bind(_.partial(func), o)(), o.cat);
+      equal(_.partial(_.bind(func, object))(), object.cat);
+      equal(_.bind(_.partial(func), object)(), object.cat);
     });
   }());
 
@@ -1208,12 +1208,12 @@
   (function() {
     test('should pass the correct `callback` arguments when iterating an object', function() {
       var args,
-          object = { 'a': 'A', 'b': 'B' },
+          object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();
 
-      var expected = lastKey == 'a'
-        ? ['A', 'B', 'b', object]
-        : ['B', 'A', 'a', object];
+      var expected = lastKey == 'b'
+        ? [2, 1, 'a', object]
+        : [1, 2, 'b', object];
 
       _.reduceRight(object, function() {
         args || (args = slice.call(arguments));
@@ -1224,12 +1224,12 @@
 
     test('should treat array-like object with invalid `length` as a regular object', function() {
       var args,
-          object = { 'a': 'A', 'length': -1 },
+          object = { 'a': 1, 'length': -1 },
           lastKey = _.keys(object).pop();
 
-      var expected = lastKey == 'a'
-        ? ['A', '-1', 'length', object]
-        : [-1, 'A', 'a', object];
+      var expected = lastKey == 'length'
+        ? [-1, 1, 'a', object]
+        : [1, -1, 'length', object];
 
       _.reduceRight(object, function() {
         args || (args = slice.call(arguments));

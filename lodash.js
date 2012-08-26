@@ -2152,7 +2152,7 @@
       'var noaccum = arguments.length < 3;\n' +
       'if (thisArg) callback = iteratorBind(callback, thisArg)',
     'beforeLoop': {
-      'array': 'if (noaccum) result = collection[++index]'
+      'array': 'if (noaccum) result = iteratee[++index]'
     },
     'inLoop': {
       'array':

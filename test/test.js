@@ -1115,6 +1115,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.reduce');
+
+  (function() {
+    _.each({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection` (test in IE < 9)', function() {
+        var args;
+
+        var actual = _.reduce(collection, function(accumulator, value) {
+          args || (args = slice.call(arguments));
+          return accumulator + value;
+        });
+
+        deepEqual(args, ['a', 'b', 1, collection]);
+        equal(actual, 'abc');
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.reduceRight');
 
   (function() {

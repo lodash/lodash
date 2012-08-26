@@ -483,6 +483,22 @@
       '(hasOwnProperty.call(result, prop) ? result[prop]++ : result[prop] = 1)'
   };
 
+  /** Reusable iterator options for `drop` and `pick` */
+  var dropIteratorOptions = {
+    'useHas': false,
+    'args': 'object, callback, thisArg',
+    'init': '{}',
+    'top':
+      'var isFunc = typeof callback == \'function\';\n' +
+      'if (!isFunc) {\n' +
+      '  var props = concat.apply(ArrayProto, arguments)\n' +
+      '} else if (thisArg) {\n' +
+      '  callback = iteratorBind(callback, thisArg)\n' +
+      '}',
+    'inLoop':
+      'if (isFunc ? !callback(value, index, object) : indexOf(props, index) < 0) result[index] = value'
+  };
+
   /** Reusable iterator options for `every` and `some` */
   var everyIteratorOptions = {
     'init': 'true',
@@ -1104,7 +1120,9 @@
   /**
    * Creates a shallow clone of `object` excluding the specified properties.
    * Property names may be specified as individual arguments or as arrays of
-   * property names.
+   * property names. If `callback` is passed, it will be executed for each property
+   * in the `object`, dropping the properties `callback` returns truthy for. The
+   * `callback` is bound to `thisArg` and invoked with 3 arguments; (value, key, object).
    *
    * @static
    * @memberOf _
@@ -1118,13 +1136,7 @@
    * _.drop({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
    * // => { 'name': 'moe', 'age': 40 }
    */
-  var drop = createIterator({
-    'useHas': false,
-    'args': 'object',
-    'init': '{}',
-    'top': 'var props = concat.apply(ArrayProto, arguments)',
-    'inLoop': 'if (indexOf(props, index) < 0) result[index] = value'
-  });
+  var drop = createIterator(dropIteratorOptions);
 
   /**
    * Assigns enumerable properties of the source object(s) to the `destination`
@@ -1763,38 +1775,38 @@
   /**
    * Creates a shallow clone of `object` composed of the specified properties.
    * Property names may be specified as individual arguments or as arrays of
-   * property names.
+   * property names. If `callback` is passed, it will be executed for each property
+   * in the `object`, picking the properties `callback` returns truthy for. The
+   * `callback` is bound to `thisArg` and invoked with 3 arguments; (value, key, object).
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Object} [prop1, prop2, ...] The properties to pick.
+   * @param {Function|String} [callback|prop1, prop2, ...] The properties to pick
+   *  or the function called per iteration.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
    *
    * _.pick({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'name', 'age');
    * // => { 'name': 'moe', 'age': 40 }
    */
-  function pick(object) {
-    var result = {};
-    if (!object) {
-      return result;
-    }
-    var prop,
-        index = 0,
-        props = concat.apply(ArrayProto, arguments),
-        length = props.length;
-
-    // start `index` at `1` to skip `object`
-    while (++index < length) {
-      prop = props[index];
-      if (prop in object) {
-        result[prop] = object[prop];
-      }
-    }
-    return result;
-  }
+  var pick = createIterator(dropIteratorOptions, {
+    'top':
+      'if (typeof callback != \'function\') {\n' +
+      '  var prop,\n' +
+      '      props = concat.apply(ArrayProto, arguments),\n' +
+      '      length = props.length;\n' +
+      '  for (index = 1; index < length; index++) {\n' +
+      '    prop = props[index];\n' +
+      '    if (prop in object) result[prop] = object[prop]\n' +
+      '  }\n' +
+      '} else {\n' +
+      '  if (thisArg) callback = iteratorBind(callback, thisArg)',
+    'inLoop':
+      'if (callback(value, index, object)) result[index] = value',
+    'bottom': '}'
+  });
 
   /**
    * Gets the size of `value` by returning `value.length` if `value` is an

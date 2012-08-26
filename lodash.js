@@ -129,10 +129,23 @@
 
   /**
    * Detect the JScript [[DontEnum]] bug:
+   *
    * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
    * made non-enumerable as well.
    */
   var hasDontEnumBug;
+
+  /**
+   * Detect if `Array#shift` and `Array#splice` augment array-like objects
+   * incorrectly:
+   *
+   * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
+   * and `splice()` functions that fail to remove the last element, `value[0]`,
+   * of array-like objects even though the `length` property is set to `0`.
+   * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
+   * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+   */
+  var hasObjectSpliceBug;
 
   /** Detect if own properties are iterated after inherited properties (IE < 9) */
   var iteratesOwnLast;
@@ -141,13 +154,18 @@
   var noArgsEnum = true;
 
   (function() {
-    var props = [];
+    var object = { '0': 1, 'length': 1 },
+        props = [];
+
     function ctor() { this.x = 1; }
     ctor.prototype = { 'valueOf': 1, 'y': 1 };
+
     for (var prop in new ctor) { props.push(prop); }
     for (prop in arguments) { noArgsEnum = !prop; }
+
     hasDontEnumBug = (props + '').length < 4;
     iteratesOwnLast = props[0] != 'x';
+    hasObjectSpliceBug = (props.splice.call(object, 0, 1), object[0]);
   }(1));
 
   /** Detect if an `arguments` object's [[Class]] is unresolvable (Firefox < 4, IE < 9) */
@@ -158,6 +176,7 @@
 
   /**
    * Detect lack of support for accessing string characters by index:
+   *
    * IE < 8 can't access characters by index and IE 8 can only access
    * characters by index on string literals.
    */
@@ -181,16 +200,22 @@
   /* Detect if strict mode, "use strict", is inferred to be fast (V8) */
   var isStrictFast = !isBindFast;
 
-  /** Detect if sourceURL syntax is usable without erroring */
+  /**
+   * Detect if sourceURL syntax is usable without erroring:
+   *
+   * The JS engine in Adobe products, like InDesign, will throw a syntax error
+   * when it encounters a single line comment beginning with the `@` symbol.
+   *
+   * The JS engine in Narwhal will generate the function `function anonymous(){//}`
+   * and throw a syntax error.
+   *
+   * In IE, `@` symbols are part of its non-standard conditional compilation support.
+   * The `@cc_on` statement activates its support while the trailing ` !` induces
+   * a syntax error to exlude it. Compatibility modes in IE > 8 require a space
+   * before the `!` to induce a syntax error.
+   * See http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
+   */
   try {
-    // The JS engine in Adobe products, like InDesign, will throw a syntax error
-    // when it encounters a single line comment beginning with the `@` symbol.
-    // The JS engine in Narwhal will generate the function `function anonymous(){//}`
-    // and throw a syntax error. In IE, `@` symbols are part of its non-standard
-    // conditional compilation support. The `@cc_on` statement activates its support
-    // while the trailing ` !` induces a syntax error to exlude it. Compatibility
-    // modes in IE > 8 require a space before the `!` to induce a syntax error.
-    // See http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
     var useSourceURL = (Function('//@cc_on !')(), true);
   } catch(e){ }
 
@@ -208,7 +233,8 @@
   cloneableClasses[stringClass] = true;
 
   /**
-   * Used to escape characters for inclusion in HTML.
+   * Used to escape characters for inclusion in HTML:
+   *
    * The `>` and `/` characters don't require escaping in HTML and have no
    * special meaning unless they're part of a tag or an unquoted attribute value
    * http://mathiasbynens.be/notes/ambiguous-ampersands (semi-related fun fact)
@@ -4231,13 +4257,9 @@
       var value = this._wrapped;
       func.apply(value, arguments);
 
-      // Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array
-      // `shift()` and `splice()` functions that fail to remove the last element,
-      // `value[0]`, of array-like objects even though the `length` property is
-      // set to `0`. The `shift()` method is buggy in IE 8 compatibility mode,
-      // while `splice()` is buggy regardless of mode in IE < 9 and buggy in
-      // compatibility mode in IE 9.
-      if (value.length === 0) {
+      // avoid array-like object bugs with `Array#shift` and `Array#splice` in
+      // Firefox < 10 and IE < 9
+      if (hasObjectSpliceBug && value.length === 0) {
         delete value[0];
       }
       if (this._chain) {

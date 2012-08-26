@@ -16,13 +16,13 @@
 * [`_.compact`](#_compactarray)
 * [`_.compose`](#_composefunc1-func2-)
 * [`_.contains`](#_containscollection-target)
-* [`_.countBy`](#_countbycollection-callback--thisarg)
+* [`_.countBy`](#_countbycollection--thisarg)
 * [`_.debounce`](#_debouncefunc-wait-immediate)
 * [`_.defaults`](#_defaultsobject--default1-default2-)
 * [`_.defer`](#_deferfunc--arg1-arg2-)
 * [`_.delay`](#_delayfunc-wait--arg1-arg2-)
 * [`_.difference`](#_differencearray--array1-array2-)
-* [`_.drop`](#_dropobject--prop1-prop2-)
+* [`_.drop`](#_dropobject--thisarg)
 * [`_.escape`](#_escapestring)
 * [`_.every`](#_everycollection--callbackidentity-thisarg)
 * [`_.extend`](#_extendobject--source1-source2-)
@@ -34,7 +34,7 @@
 * [`_.forIn`](#_forinobject-callback--thisarg)
 * [`_.forOwn`](#_forownobject-callback--thisarg)
 * [`_.functions`](#_functionsobject)
-* [`_.groupBy`](#_groupbycollection-callback--thisarg)
+* [`_.groupBy`](#_groupbycollection--thisarg)
 * [`_.has`](#_hasobject-property)
 * [`_.identity`](#_identityvalue)
 * [`_.indexOf`](#_indexofarray-value--fromindex0)
@@ -69,7 +69,7 @@
 * [`_.noConflict`](#_noconflict)
 * [`_.once`](#_oncefunc)
 * [`_.partial`](#_partialfunc--arg1-arg2-)
-* [`_.pick`](#_pickobject--callback|prop1-prop2-)
+* [`_.pick`](#_pickobject--thisarg)
 * [`_.pluck`](#_pluckcollection-property)
 * [`_.range`](#_rangestart0-end--step1)
 * [`_.reduce`](#_reducecollection-callback--accumulator-thisarg)
@@ -80,7 +80,7 @@
 * [`_.shuffle`](#_shufflearray)
 * [`_.size`](#_sizevalue)
 * [`_.some`](#_somecollection--callbackidentity-thisarg)
-* [`_.sortBy`](#_sortbycollection-callback--thisarg)
+* [`_.sortBy`](#_sortbycollection--thisarg)
 * [`_.sortedIndex`](#_sortedindexarray-value--callbackidentity-thisarg)
 * [`_.tap`](#_tapvalue-interceptor)
 * [`_.template`](#_templatetext-data-options)
@@ -121,6 +121,14 @@
 <!-- /div -->
 
 
+<!-- div -->
+
+## ``
+* [``](#)
+
+<!-- /div -->
+
+
 <!-- /div -->
 
 
@@ -134,7 +142,7 @@
 <!-- div -->
 
 ### <a id="_value"></a>`_(value)`
-<a href="#_value">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L255 "View in source") [&#x24C9;][1]
+<a href="#_value">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L281 "View in source") [&#x24C9;][1]
 
 The `lodash` function.
 
@@ -152,7 +160,7 @@ The `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4086 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4125 "View in source") [&#x24C9;][1]
 
 *(String)*: The semantic version number.
 
@@ -164,7 +172,7 @@ The `lodash` function.
 <!-- div -->
 
 ### <a id="_aftern-func"></a>`_.after(n, func)`
-<a href="#_aftern-func">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3173 "View in source") [&#x24C9;][1]
+<a href="#_aftern-func">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3212 "View in source") [&#x24C9;][1]
 
 Creates a new function that is restricted to executing only after it is called `n` times.
 
@@ -192,7 +200,7 @@ _.forEach(notes, function(note) {
 <!-- div -->
 
 ### <a id="_bindfunc--thisarg-arg1-arg2-"></a>`_.bind(func [, thisArg, arg1, arg2, ...])`
-<a href="#_bindfunc--thisarg-arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3227 "View in source") [&#x24C9;][1]
+<a href="#_bindfunc--thisarg-arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3266 "View in source") [&#x24C9;][1]
 
 Creates a new function that, when called, invokes `func` with the `this` binding of `thisArg` and prepends any additional `bind` arguments to those passed to the bound function. Lazy defined methods may be bound by passing the object they are bound to as `func` and the method name as `thisArg`.
 
@@ -243,7 +251,7 @@ func();
 <!-- div -->
 
 ### <a id="_bindallobject--methodname1-methodname2-"></a>`_.bindAll(object [, methodName1, methodName2, ...])`
-<a href="#_bindallobject--methodname1-methodname2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3297 "View in source") [&#x24C9;][1]
+<a href="#_bindallobject--methodname1-methodname2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3336 "View in source") [&#x24C9;][1]
 
 Binds methods on `object` to `object`, overwriting the existing method. If no method names are provided, all the function properties of `object` will be bound.
 
@@ -274,7 +282,7 @@ jQuery('#lodash_button').on('click', buttonView.onClick);
 <!-- div -->
 
 ### <a id="_chainvalue"></a>`_.chain(value)`
-<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4011 "View in source") [&#x24C9;][1]
+<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4050 "View in source") [&#x24C9;][1]
 
 Wraps the value in a `lodash` wrapper object.
 
@@ -308,7 +316,7 @@ var youngest = _.chain(stooges)
 <!-- div -->
 
 ### <a id="_clonevalue-deep--guard-stack-thorough"></a>`_.clone(value, deep [, guard, stack=[]], thorough)`
-<a href="#_clonevalue-deep--guard-stack-thorough">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1015 "View in source") [&#x24C9;][1]
+<a href="#_clonevalue-deep--guard-stack-thorough">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1041 "View in source") [&#x24C9;][1]
 
 Creates a clone of `value`. If `deep` is `true`, all nested objects will also be cloned otherwise they will be assigned by reference. If a value has a `clone` method it will be used to perform the clone. Functions, DOM nodes, `arguments` objects, and objects created by constructors other than `Object` are **not** cloned unless they have a custom `clone` method.
 
@@ -350,7 +358,7 @@ shallow[0] === stooges[0];
 <!-- div -->
 
 ### <a id="_compactarray"></a>`_.compact(array)`
-<a href="#_compactarray">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2410 "View in source") [&#x24C9;][1]
+<a href="#_compactarray">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2449 "View in source") [&#x24C9;][1]
 
 Creates a new array with all falsey values of `array` removed. The values `false`, `null`, `0`, `""`, `undefined` and `NaN` are all falsey.
 
@@ -374,7 +382,7 @@ _.compact([0, 1, false, 2, '', 3]);
 <!-- div -->
 
 ### <a id="_composefunc1-func2-"></a>`_.compose([func1, func2, ...])`
-<a href="#_composefunc1-func2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3335 "View in source") [&#x24C9;][1]
+<a href="#_composefunc1-func2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3374 "View in source") [&#x24C9;][1]
 
 Creates a new function that is the composition of the passed functions, where each function consumes the return value of the function that follows. In math terms, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
 
@@ -401,7 +409,7 @@ welcome('moe');
 <!-- div -->
 
 ### <a id="_containscollection-target"></a>`_.contains(collection, target)`
-<a href="#_containscollection-target">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1894 "View in source") [&#x24C9;][1]
+<a href="#_containscollection-target">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1933 "View in source") [&#x24C9;][1]
 
 Checks if a given `target` element is present in a `collection` using strict equality for comparisons, i.e. `===`.
 
@@ -431,15 +439,14 @@ _.contains('curly', 'ur');
 
 <!-- div -->
 
-### <a id="_countbycollection-callback--thisarg"></a>`_.countBy(collection, callback [, thisArg])`
-<a href="#_countbycollection-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1930 "View in source") [&#x24C9;][1]
+### <a id="_countbycollection--thisarg"></a>`_.countBy(collection [, thisArg])`
+<a href="#_countbycollection--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1969 "View in source") [&#x24C9;][1]
 
 Creates an object composed of keys returned from running each element of `collection` through a `callback`. The corresponding value of each key is the number of times the key was returned by `callback`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to count by *(e.g. 'length')*.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
-2. `callback` *(Function|String)*: The function called per iteration or  property name to count by.
-3. `[thisArg]` *(Mixed)*: The `this` binding for the callback.
+2. `[thisArg]` *(Mixed)*: The `this` binding for the callback.
 
 #### Returns
 *(Object)*: Returns the composed aggregate object.
@@ -464,7 +471,7 @@ _.countBy(['one', 'two', 'three'], 'length');
 <!-- div -->
 
 ### <a id="_debouncefunc-wait-immediate"></a>`_.debounce(func, wait, immediate)`
-<a href="#_debouncefunc-wait-immediate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3368 "View in source") [&#x24C9;][1]
+<a href="#_debouncefunc-wait-immediate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3407 "View in source") [&#x24C9;][1]
 
 Creates a new function that will delay the execution of `func` until after `wait` milliseconds have elapsed since the last time it was invoked. Pass `true` for `immediate` to cause debounce to invoke `func` on the leading, instead of the trailing, edge of the `wait` timeout. Subsequent calls to the debounced function will return the result of the last `func` call.
 
@@ -490,7 +497,7 @@ jQuery(window).on('resize', lazyLayout);
 <!-- div -->
 
 ### <a id="_defaultsobject--default1-default2-"></a>`_.defaults(object [, default1, default2, ...])`
-<a href="#_defaultsobject--default1-default2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1116 "View in source") [&#x24C9;][1]
+<a href="#_defaultsobject--default1-default2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1142 "View in source") [&#x24C9;][1]
 
 Assigns enumerable properties of the default object(s) to the `destination` object for all `destination` properties that resolve to `null`/`undefined`. Once a property is set, additional defaults of the same property will be ignored.
 
@@ -516,7 +523,7 @@ _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
 <!-- div -->
 
 ### <a id="_deferfunc--arg1-arg2-"></a>`_.defer(func [, arg1, arg2, ...])`
-<a href="#_deferfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3433 "View in source") [&#x24C9;][1]
+<a href="#_deferfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3472 "View in source") [&#x24C9;][1]
 
 Defers executing the `func` function until the current call stack has cleared. Additional arguments will be passed to `func` when it is invoked.
 
@@ -541,7 +548,7 @@ _.defer(function() { alert('deferred'); });
 <!-- div -->
 
 ### <a id="_delayfunc-wait--arg1-arg2-"></a>`_.delay(func, wait [, arg1, arg2, ...])`
-<a href="#_delayfunc-wait--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3413 "View in source") [&#x24C9;][1]
+<a href="#_delayfunc-wait--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3452 "View in source") [&#x24C9;][1]
 
 Executes the `func` function after `wait` milliseconds. Additional arguments will be passed to `func` when it is invoked.
 
@@ -568,7 +575,7 @@ _.delay(log, 1000, 'logged later');
 <!-- div -->
 
 ### <a id="_differencearray--array1-array2-"></a>`_.difference(array [, array1, array2, ...])`
-<a href="#_differencearray--array1-array2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2442 "View in source") [&#x24C9;][1]
+<a href="#_differencearray--array1-array2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2481 "View in source") [&#x24C9;][1]
 
 Creates a new array of `array` elements not present in the other arrays using strict equality for comparisons, i.e. `===`.
 
@@ -592,14 +599,14 @@ _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
 
 <!-- div -->
 
-### <a id="_dropobject--prop1-prop2-"></a>`_.drop(object [, prop1, prop2, ...])`
-<a href="#_dropobject--prop1-prop2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1139 "View in source") [&#x24C9;][1]
+### <a id="_dropobject--thisarg"></a>`_.drop(object [, thisArg])`
+<a href="#_dropobject--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1172 "View in source") [&#x24C9;][1]
 
 Creates a shallow clone of `object` excluding the specified properties. Property names may be specified as individual arguments or as arrays of property names. If `callback` is passed, it will be executed for each property in the `object`, dropping the properties `callback` returns truthy for. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, key, object)*.
 
 #### Arguments
 1. `object` *(Object)*: The source object.
-2. `[prop1, prop2, ...]` *(Object)*: The properties to drop.
+2. `[thisArg]` *(Mixed)*: The `this` binding for the callback.
 
 #### Returns
 *(Object)*: Returns an object without the dropped properties.
@@ -608,6 +615,11 @@ Creates a shallow clone of `object` excluding the specified properties. Property
 ```js
 _.drop({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
 // => { 'name': 'moe', 'age': 40 }
+
+_.drop({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
+  return key.charAt(0) == '_';
+});
+// => { 'name': 'moe' }
 ```
 
 * * *
@@ -618,7 +630,7 @@ _.drop({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
 <!-- div -->
 
 ### <a id="_escapestring"></a>`_.escape(string)`
-<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3630 "View in source") [&#x24C9;][1]
+<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3669 "View in source") [&#x24C9;][1]
 
 Escapes a string for inclusion in HTML, replacing `&`, `<`, `"`, and `'` characters.
 
@@ -642,7 +654,7 @@ _.escape('Moe, Larry & Curly');
 <!-- div -->
 
 ### <a id="_everycollection--callbackidentity-thisarg"></a>`_.every(collection [, callback=identity, thisArg])`
-<a href="#_everycollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1950 "View in source") [&#x24C9;][1]
+<a href="#_everycollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1989 "View in source") [&#x24C9;][1]
 
 Checks if the `callback` returns a truthy value for **all** elements of a `collection`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
@@ -668,7 +680,7 @@ _.every([true, 1, null, 'yes'], Boolean);
 <!-- div -->
 
 ### <a id="_extendobject--source1-source2-"></a>`_.extend(object [, source1, source2, ...])`
-<a href="#_extendobject--source1-source2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1157 "View in source") [&#x24C9;][1]
+<a href="#_extendobject--source1-source2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1190 "View in source") [&#x24C9;][1]
 
 Assigns enumerable properties of the source object(s) to the `destination` object. Subsequent sources will overwrite propery assignments of previous sources.
 
@@ -693,7 +705,7 @@ _.extend({ 'name': 'moe' }, { 'age': 40 });
 <!-- div -->
 
 ### <a id="_filtercollection--callbackidentity-thisarg"></a>`_.filter(collection [, callback=identity, thisArg])`
-<a href="#_filtercollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1970 "View in source") [&#x24C9;][1]
+<a href="#_filtercollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2009 "View in source") [&#x24C9;][1]
 
 Examines each element in a `collection`, returning an array of all elements the `callback` returns truthy for. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
@@ -719,7 +731,7 @@ var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; })
 <!-- div -->
 
 ### <a id="_findcollection-callback--thisarg"></a>`_.find(collection, callback [, thisArg])`
-<a href="#_findcollection-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1991 "View in source") [&#x24C9;][1]
+<a href="#_findcollection-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2030 "View in source") [&#x24C9;][1]
 
 Examines each element in a `collection`, returning the first one the `callback` returns truthy for. The function returns as soon as it finds an acceptable element, and does not iterate over the entire `collection`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
@@ -745,7 +757,7 @@ var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
 <!-- div -->
 
 ### <a id="_firstarray--n-guard"></a>`_.first(array [, n, guard])`
-<a href="#_firstarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2479 "View in source") [&#x24C9;][1]
+<a href="#_firstarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2518 "View in source") [&#x24C9;][1]
 
 Gets the first element of the `array`. Pass `n` to return the first `n` elements of the `array`.
 
@@ -771,7 +783,7 @@ _.first([5, 4, 3, 2, 1]);
 <!-- div -->
 
 ### <a id="_flattenarray-shallow"></a>`_.flatten(array, shallow)`
-<a href="#_flattenarray-shallow">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2503 "View in source") [&#x24C9;][1]
+<a href="#_flattenarray-shallow">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2542 "View in source") [&#x24C9;][1]
 
 Flattens a nested array *(the nesting can be to any depth)*. If `shallow` is truthy, `array` will only be flattened a single level.
 
@@ -799,7 +811,7 @@ _.flatten([1, [2], [3, [[4]]]], true);
 <!-- div -->
 
 ### <a id="_foreachcollection-callback--thisarg"></a>`_.forEach(collection, callback [, thisArg])`
-<a href="#_foreachcollection-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2018 "View in source") [&#x24C9;][1]
+<a href="#_foreachcollection-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2057 "View in source") [&#x24C9;][1]
 
 Iterates over a `collection`, executing the `callback` for each element in the `collection`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. Callbacks may exit iteration early by explicitly returning `false`.
 
@@ -828,7 +840,7 @@ _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, alert);
 <!-- div -->
 
 ### <a id="_forinobject-callback--thisarg"></a>`_.forIn(object, callback [, thisArg])`
-<a href="#_forinobject-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1187 "View in source") [&#x24C9;][1]
+<a href="#_forinobject-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1220 "View in source") [&#x24C9;][1]
 
 Iterates over `object`'s own and inherited enumerable properties, executing the `callback` for each property. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, key, object)*. Callbacks may exit iteration early by explicitly returning `false`.
 
@@ -864,7 +876,7 @@ _.forIn(new Dog('Dagny'), function(value, key) {
 <!-- div -->
 
 ### <a id="_forownobject-callback--thisarg"></a>`_.forOwn(object, callback [, thisArg])`
-<a href="#_forownobject-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1211 "View in source") [&#x24C9;][1]
+<a href="#_forownobject-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1244 "View in source") [&#x24C9;][1]
 
 Iterates over `object`'s own enumerable properties, executing the `callback` for each property. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, key, object)*. Callbacks may exit iteration early by explicitly returning `false`.
 
@@ -892,7 +904,7 @@ _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
 <!-- div -->
 
 ### <a id="_functionsobject"></a>`_.functions(object)`
-<a href="#_functionsobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1228 "View in source") [&#x24C9;][1]
+<a href="#_functionsobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1261 "View in source") [&#x24C9;][1]
 
 Creates a sorted array of all enumerable properties, own and inherited, of `object` that have function values.
 
@@ -915,15 +927,14 @@ _.functions(_);
 
 <!-- div -->
 
-### <a id="_groupbycollection-callback--thisarg"></a>`_.groupBy(collection, callback [, thisArg])`
-<a href="#_groupbycollection-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2046 "View in source") [&#x24C9;][1]
+### <a id="_groupbycollection--thisarg"></a>`_.groupBy(collection [, thisArg])`
+<a href="#_groupbycollection--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2085 "View in source") [&#x24C9;][1]
 
 Creates an object composed of keys returned from running each element of `collection` through a `callback`. The corresponding value of each key is an array of elements passed to `callback` that returned the key. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to count by *(e.g. 'length')*.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
-2. `callback` *(Function|String)*: The function called per iteration or  property name to group by.
-3. `[thisArg]` *(Mixed)*: The `this` binding for the callback.
+2. `[thisArg]` *(Mixed)*: The `this` binding for the callback.
 
 #### Returns
 *(Object)*: Returns the composed aggregate object.
@@ -948,7 +959,7 @@ _.groupBy(['one', 'two', 'three'], 'length');
 <!-- div -->
 
 ### <a id="_hasobject-property"></a>`_.has(object, property)`
-<a href="#_hasobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1251 "View in source") [&#x24C9;][1]
+<a href="#_hasobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1284 "View in source") [&#x24C9;][1]
 
 Checks if the specified object `property` exists and is a direct property, instead of an inherited property.
 
@@ -973,7 +984,7 @@ _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
 <!-- div -->
 
 ### <a id="_identityvalue"></a>`_.identity(value)`
-<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3650 "View in source") [&#x24C9;][1]
+<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3689 "View in source") [&#x24C9;][1]
 
 This function returns the first argument passed to it.  Note: It is used throughout Lo-Dash as a default callback.
 
@@ -998,7 +1009,7 @@ moe === _.identity(moe);
 <!-- div -->
 
 ### <a id="_indexofarray-value--fromindex0"></a>`_.indexOf(array, value [, fromIndex=0])`
-<a href="#_indexofarray-value--fromindex0">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2547 "View in source") [&#x24C9;][1]
+<a href="#_indexofarray-value--fromindex0">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2586 "View in source") [&#x24C9;][1]
 
 Gets the index at which the first occurrence of `value` is found using strict equality for comparisons, i.e. `===`. If the `array` is already sorted, passing `true` for `isSorted` will run a faster binary search.
 
@@ -1030,7 +1041,7 @@ _.indexOf([1, 1, 2, 2, 3, 3], 2, true);
 <!-- div -->
 
 ### <a id="_initialarray--n-guard"></a>`_.initial(array [, n, guard])`
-<a href="#_initialarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2587 "View in source") [&#x24C9;][1]
+<a href="#_initialarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2626 "View in source") [&#x24C9;][1]
 
 Gets all but the last element of `array`. Pass `n` to exclude the last `n` elements from the result.
 
@@ -1056,7 +1067,7 @@ _.initial([3, 2, 1]);
 <!-- div -->
 
 ### <a id="_intersectionarray1-array2-"></a>`_.intersection([array1, array2, ...])`
-<a href="#_intersectionarray1-array2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2609 "View in source") [&#x24C9;][1]
+<a href="#_intersectionarray1-array2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2648 "View in source") [&#x24C9;][1]
 
 Computes the intersection of all the passed-in arrays using strict equality for comparisons, i.e. `===`.
 
@@ -1080,7 +1091,7 @@ _.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 <!-- div -->
 
 ### <a id="_invokecollection-methodname--arg1-arg2-"></a>`_.invoke(collection, methodName [, arg1, arg2, ...])`
-<a href="#_invokecollection-methodname--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2074 "View in source") [&#x24C9;][1]
+<a href="#_invokecollection-methodname--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2113 "View in source") [&#x24C9;][1]
 
 Invokes the method named by `methodName` on each element in the `collection`. Additional arguments will be passed to each invoked method. If `methodName` is a function it will be invoked for, and `this` bound to, each element in the `collection`.
 
@@ -1109,7 +1120,7 @@ _.invoke([123, 456], String.prototype.split, '');
 <!-- div -->
 
 ### <a id="_isargumentsvalue"></a>`_.isArguments(value)`
-<a href="#_isargumentsvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L908 "View in source") [&#x24C9;][1]
+<a href="#_isargumentsvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L934 "View in source") [&#x24C9;][1]
 
 Checks if `value` is an `arguments` object.
 
@@ -1136,7 +1147,7 @@ _.isArguments([1, 2, 3]);
 <!-- div -->
 
 ### <a id="_isarrayvalue"></a>`_.isArray(value)`
-<a href="#_isarrayvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L934 "View in source") [&#x24C9;][1]
+<a href="#_isarrayvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L960 "View in source") [&#x24C9;][1]
 
 Checks if `value` is an array.
 
@@ -1163,7 +1174,7 @@ _.isArray([1, 2, 3]);
 <!-- div -->
 
 ### <a id="_isbooleanvalue"></a>`_.isBoolean(value)`
-<a href="#_isbooleanvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1268 "View in source") [&#x24C9;][1]
+<a href="#_isbooleanvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1301 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a boolean *(`true` or `false`)* value.
 
@@ -1187,7 +1198,7 @@ _.isBoolean(null);
 <!-- div -->
 
 ### <a id="_isdatevalue"></a>`_.isDate(value)`
-<a href="#_isdatevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1285 "View in source") [&#x24C9;][1]
+<a href="#_isdatevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1318 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a date.
 
@@ -1211,7 +1222,7 @@ _.isDate(new Date);
 <!-- div -->
 
 ### <a id="_iselementvalue"></a>`_.isElement(value)`
-<a href="#_iselementvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1302 "View in source") [&#x24C9;][1]
+<a href="#_iselementvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1335 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a DOM element.
 
@@ -1235,7 +1246,7 @@ _.isElement(document.body);
 <!-- div -->
 
 ### <a id="_isemptyvalue"></a>`_.isEmpty(value)`
-<a href="#_isemptyvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1327 "View in source") [&#x24C9;][1]
+<a href="#_isemptyvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1360 "View in source") [&#x24C9;][1]
 
 Checks if `value` is empty. Arrays, strings, or `arguments` objects with a length of `0` and objects with no own enumerable properties are considered "empty".
 
@@ -1265,7 +1276,7 @@ _.isEmpty('');
 <!-- div -->
 
 ### <a id="_isequala-b--stack-thorough"></a>`_.isEqual(a, b [, stack=[]], thorough)`
-<a href="#_isequala-b--stack-thorough">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1369 "View in source") [&#x24C9;][1]
+<a href="#_isequala-b--stack-thorough">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1402 "View in source") [&#x24C9;][1]
 
 Performs a deep comparison between two values to determine if they are equivalent to each other. If a value has an `isEqual` method it will be used to perform the comparison.
 
@@ -1298,7 +1309,7 @@ _.isEqual(moe, clone);
 <!-- div -->
 
 ### <a id="_isfinitevalue"></a>`_.isFinite(value)`
-<a href="#_isfinitevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1542 "View in source") [&#x24C9;][1]
+<a href="#_isfinitevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1575 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a finite number.  Note: This is not the same as native `isFinite`, which will return true for booleans and other values. See http://es5.github.com/#x15.1.2.5.
 
@@ -1328,7 +1339,7 @@ _.isFinite(Infinity);
 <!-- div -->
 
 ### <a id="_isfunctionvalue"></a>`_.isFunction(value)`
-<a href="#_isfunctionvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L951 "View in source") [&#x24C9;][1]
+<a href="#_isfunctionvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L977 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a function.
 
@@ -1352,7 +1363,7 @@ _.isFunction(''.concat);
 <!-- div -->
 
 ### <a id="_isnanvalue"></a>`_.isNaN(value)`
-<a href="#_isnanvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1597 "View in source") [&#x24C9;][1]
+<a href="#_isnanvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1630 "View in source") [&#x24C9;][1]
 
 Checks if `value` is `NaN`.  Note: This is not the same as native `isNaN`, which will return true for `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
 
@@ -1385,7 +1396,7 @@ _.isNaN(undefined);
 <!-- div -->
 
 ### <a id="_isnullvalue"></a>`_.isNull(value)`
-<a href="#_isnullvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1620 "View in source") [&#x24C9;][1]
+<a href="#_isnullvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1653 "View in source") [&#x24C9;][1]
 
 Checks if `value` is `null`.
 
@@ -1412,7 +1423,7 @@ _.isNull(undefined);
 <!-- div -->
 
 ### <a id="_isnumbervalue"></a>`_.isNumber(value)`
-<a href="#_isnumbervalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1637 "View in source") [&#x24C9;][1]
+<a href="#_isnumbervalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1670 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a number.
 
@@ -1436,7 +1447,7 @@ _.isNumber(8.4 * 5;
 <!-- div -->
 
 ### <a id="_isobjectvalue"></a>`_.isObject(value)`
-<a href="#_isobjectvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1563 "View in source") [&#x24C9;][1]
+<a href="#_isobjectvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1596 "View in source") [&#x24C9;][1]
 
 Checks if `value` is the language type of Object. *(e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)*
 
@@ -1463,7 +1474,7 @@ _.isObject(1);
 <!-- div -->
 
 ### <a id="_isregexpvalue"></a>`_.isRegExp(value)`
-<a href="#_isregexpvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1654 "View in source") [&#x24C9;][1]
+<a href="#_isregexpvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1687 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a regular expression.
 
@@ -1487,7 +1498,7 @@ _.isRegExp(/moe/);
 <!-- div -->
 
 ### <a id="_isstringvalue"></a>`_.isString(value)`
-<a href="#_isstringvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1671 "View in source") [&#x24C9;][1]
+<a href="#_isstringvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1704 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a string.
 
@@ -1511,7 +1522,7 @@ _.isString('moe');
 <!-- div -->
 
 ### <a id="_isundefinedvalue"></a>`_.isUndefined(value)`
-<a href="#_isundefinedvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1689 "View in source") [&#x24C9;][1]
+<a href="#_isundefinedvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1722 "View in source") [&#x24C9;][1]
 
 Checks if `value` is `undefined`.
 
@@ -1535,7 +1546,7 @@ _.isUndefined(void 0);
 <!-- div -->
 
 ### <a id="_keysobject"></a>`_.keys(object)`
-<a href="#_keysobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1706 "View in source") [&#x24C9;][1]
+<a href="#_keysobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1739 "View in source") [&#x24C9;][1]
 
 Creates an array composed of the own enumerable property names of `object`.
 
@@ -1559,7 +1570,7 @@ _.keys({ 'one': 1, 'two': 2, 'three': 3 });
 <!-- div -->
 
 ### <a id="_lastarray--n-guard"></a>`_.last(array [, n, guard])`
-<a href="#_lastarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2652 "View in source") [&#x24C9;][1]
+<a href="#_lastarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2691 "View in source") [&#x24C9;][1]
 
 Gets the last element of the `array`. Pass `n` to return the lasy `n` elementsvof the `array`.
 
@@ -1585,7 +1596,7 @@ _.last([3, 2, 1]);
 <!-- div -->
 
 ### <a id="_lastindexofarray-value--fromindexarraylength-1"></a>`_.lastIndexOf(array, value [, fromIndex=array.length-1])`
-<a href="#_lastindexofarray-value--fromindexarraylength-1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2678 "View in source") [&#x24C9;][1]
+<a href="#_lastindexofarray-value--fromindexarraylength-1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2717 "View in source") [&#x24C9;][1]
 
 Gets the index at which the last occurrence of `value` is found using strict equality for comparisons, i.e. `===`.
 
@@ -1614,7 +1625,7 @@ _.lastIndexOf([1, 2, 3, 1, 2, 3], 2, 3);
 <!-- div -->
 
 ### <a id="_mapcollection--callbackidentity-thisarg"></a>`_.map(collection [, callback=identity, thisArg])`
-<a href="#_mapcollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2109 "View in source") [&#x24C9;][1]
+<a href="#_mapcollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2148 "View in source") [&#x24C9;][1]
 
 Creates a new array of values by running each element in the `collection` through a `callback`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
@@ -1643,7 +1654,7 @@ _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
 <!-- div -->
 
 ### <a id="_maxarray--callback-thisarg"></a>`_.max(array [, callback, thisArg])`
-<a href="#_maxarray--callback-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2718 "View in source") [&#x24C9;][1]
+<a href="#_maxarray--callback-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2757 "View in source") [&#x24C9;][1]
 
 Retrieves the maximum value of an `array`. If `callback` is passed, it will be executed for each value in the `array` to generate the criterion by which the value is ranked. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index, array)*.
 
@@ -1675,7 +1686,7 @@ _.max(stooges, function(stooge) { return stooge.age; });
 <!-- div -->
 
 ### <a id="_memoizefunc--resolver"></a>`_.memoize(func [, resolver])`
-<a href="#_memoizefunc--resolver">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3456 "View in source") [&#x24C9;][1]
+<a href="#_memoizefunc--resolver">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3495 "View in source") [&#x24C9;][1]
 
 Creates a new function that memoizes the result of `func`. If `resolver` is passed, it will be used to determine the cache key for storing the result based on the arguments passed to the memoized function. By default, the first argument passed to the memoized function is used as the cache key.
 
@@ -1701,7 +1712,7 @@ var fibonacci = _.memoize(function(n) {
 <!-- div -->
 
 ### <a id="_mergeobject--source1-source2--indicator-stack"></a>`_.merge(object [, source1, source2, ..., indicator, stack=[]])`
-<a href="#_mergeobject--source1-source2--indicator-stack">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1748 "View in source") [&#x24C9;][1]
+<a href="#_mergeobject--source1-source2--indicator-stack">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1781 "View in source") [&#x24C9;][1]
 
 Merges enumerable properties of the source object(s) into the `destination` object. Subsequent sources will overwrite propery assignments of previous sources.
 
@@ -1738,7 +1749,7 @@ _.merge(stooges, ages);
 <!-- div -->
 
 ### <a id="_minarray--callback-thisarg"></a>`_.min(array [, callback, thisArg])`
-<a href="#_minarray--callback-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2768 "View in source") [&#x24C9;][1]
+<a href="#_minarray--callback-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2807 "View in source") [&#x24C9;][1]
 
 Retrieves the minimum value of an `array`. If `callback` is passed, it will be executed for each value in the `array` to generate the criterion by which the value is ranked. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index, array)*.
 
@@ -1764,7 +1775,7 @@ _.min([10, 5, 100, 2, 1000]);
 <!-- div -->
 
 ### <a id="_mixinobject"></a>`_.mixin(object)`
-<a href="#_mixinobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3676 "View in source") [&#x24C9;][1]
+<a href="#_mixinobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3715 "View in source") [&#x24C9;][1]
 
 Adds functions properties of `object` to the `lodash` function and chainable wrapper.
 
@@ -1794,7 +1805,7 @@ _('curly').capitalize();
 <!-- div -->
 
 ### <a id="_noconflict"></a>`_.noConflict()`
-<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3707 "View in source") [&#x24C9;][1]
+<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3746 "View in source") [&#x24C9;][1]
 
 Reverts the '_' variable to its previous value and returns a reference to the `lodash` function.
 
@@ -1814,7 +1825,7 @@ var lodash = _.noConflict();
 <!-- div -->
 
 ### <a id="_oncefunc"></a>`_.once(func)`
-<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3482 "View in source") [&#x24C9;][1]
+<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3521 "View in source") [&#x24C9;][1]
 
 Creates a new function that is restricted to one execution. Repeat calls to the function will return the value of the first call.
 
@@ -1840,7 +1851,7 @@ initialize();
 <!-- div -->
 
 ### <a id="_partialfunc--arg1-arg2-"></a>`_.partial(func [, arg1, arg2, ...])`
-<a href="#_partialfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3517 "View in source") [&#x24C9;][1]
+<a href="#_partialfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3556 "View in source") [&#x24C9;][1]
 
 Creates a new function that, when called, invokes `func` with any additional `partial` arguments prepended to those passed to the new function. This method is similar `bind`, except it does **not** alter the `this` binding.
 
@@ -1866,14 +1877,14 @@ hi('moe');
 
 <!-- div -->
 
-### <a id="_pickobject--callback|prop1-prop2-"></a>`_.pick(object [, callback|prop1, prop2, ...])`
-<a href="#_pickobject--callback|prop1-prop2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1794 "View in source") [&#x24C9;][1]
+### <a id="_pickobject--thisarg"></a>`_.pick(object [, thisArg])`
+<a href="#_pickobject--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1833 "View in source") [&#x24C9;][1]
 
 Creates a shallow clone of `object` composed of the specified properties. Property names may be specified as individual arguments or as arrays of property names. If `callback` is passed, it will be executed for each property in the `object`, picking the properties `callback` returns truthy for. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, key, object)*.
 
 #### Arguments
 1. `object` *(Object)*: The source object.
-2. `[callback|prop1, prop2, ...]` *(Function|String)*: The properties to pick  or the function called per iteration.
+2. `[thisArg]` *(Mixed)*: The `this` binding for the callback.
 
 #### Returns
 *(Object)*: Returns an object composed of the picked properties.
@@ -1882,6 +1893,11 @@ Creates a shallow clone of `object` composed of the specified properties. Proper
 ```js
 _.pick({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'name', 'age');
 // => { 'name': 'moe', 'age': 40 }
+
+_.pick({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
+  return key.charAt(0) != '_';
+});
+// => { 'name': 'moe' }
 ```
 
 * * *
@@ -1892,7 +1908,7 @@ _.pick({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'name', 'age');
 <!-- div -->
 
 ### <a id="_pluckcollection-property"></a>`_.pluck(collection, property)`
-<a href="#_pluckcollection-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2132 "View in source") [&#x24C9;][1]
+<a href="#_pluckcollection-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2171 "View in source") [&#x24C9;][1]
 
 Retrieves the value of a specified property from all elements in the `collection`.
 
@@ -1923,7 +1939,7 @@ _.pluck(stooges, 'name');
 <!-- div -->
 
 ### <a id="_rangestart0-end--step1"></a>`_.range([start=0], end [, step=1])`
-<a href="#_rangestart0-end--step1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2829 "View in source") [&#x24C9;][1]
+<a href="#_rangestart0-end--step1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2868 "View in source") [&#x24C9;][1]
 
 Creates an array of numbers *(positive and/or negative)* progressing from `start` up to but not including `stop`. This method is a port of Python's `range()` function. See http://docs.python.org/library/functions.html#range.
 
@@ -1961,7 +1977,7 @@ _.range(0);
 <!-- div -->
 
 ### <a id="_reducecollection-callback--accumulator-thisarg"></a>`_.reduce(collection, callback [, accumulator, thisArg])`
-<a href="#_reducecollection-callback--accumulator-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2160 "View in source") [&#x24C9;][1]
+<a href="#_reducecollection-callback--accumulator-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2199 "View in source") [&#x24C9;][1]
 
 Boils down a `collection` to a single value. The initial state of the reduction is `accumulator` and each successive step of it should be returned by the `callback`. The `callback` is bound to `thisArg` and invoked with `4` arguments; for arrays they are *(accumulator, value, index|key, collection)*.
 
@@ -1988,7 +2004,7 @@ var sum = _.reduce([1, 2, 3], function(memo, num) { return memo + num; });
 <!-- div -->
 
 ### <a id="_reducerightcollection-callback--accumulator-thisarg"></a>`_.reduceRight(collection, callback [, accumulator, thisArg])`
-<a href="#_reducerightcollection-callback--accumulator-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2197 "View in source") [&#x24C9;][1]
+<a href="#_reducerightcollection-callback--accumulator-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2236 "View in source") [&#x24C9;][1]
 
 The right-associative version of `_.reduce`.
 
@@ -2016,7 +2032,7 @@ var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
 <!-- div -->
 
 ### <a id="_rejectcollection--callbackidentity-thisarg"></a>`_.reject(collection [, callback=identity, thisArg])`
-<a href="#_rejectcollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2253 "View in source") [&#x24C9;][1]
+<a href="#_rejectcollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2292 "View in source") [&#x24C9;][1]
 
 The opposite of `_.filter`, this method returns the values of a `collection` that `callback` does **not** return truthy for.
 
@@ -2042,7 +2058,7 @@ var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
 <!-- div -->
 
 ### <a id="_restarray--n-guard"></a>`_.rest(array [, n, guard])`
-<a href="#_restarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2868 "View in source") [&#x24C9;][1]
+<a href="#_restarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2907 "View in source") [&#x24C9;][1]
 
 The opposite of `_.initial`, this method gets all but the first value of `array`. Pass `n` to exclude the first `n` values from the result.
 
@@ -2068,7 +2084,7 @@ _.rest([3, 2, 1]);
 <!-- div -->
 
 ### <a id="_resultobject-property"></a>`_.result(object, property)`
-<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3739 "View in source") [&#x24C9;][1]
+<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3778 "View in source") [&#x24C9;][1]
 
 Resolves the value of `property` on `object`. If `property` is a function it will be invoked and its result returned, else the property value is returned. If `object` is falsey, then `null` is returned.
 
@@ -2103,7 +2119,7 @@ _.result(object, 'stuff');
 <!-- div -->
 
 ### <a id="_shufflearray"></a>`_.shuffle(array)`
-<a href="#_shufflearray">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2889 "View in source") [&#x24C9;][1]
+<a href="#_shufflearray">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2928 "View in source") [&#x24C9;][1]
 
 Creates a new array of shuffled `array` values, using a version of the Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
 
@@ -2127,7 +2143,7 @@ _.shuffle([1, 2, 3, 4, 5, 6]);
 <!-- div -->
 
 ### <a id="_sizevalue"></a>`_.size(value)`
-<a href="#_sizevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1833 "View in source") [&#x24C9;][1]
+<a href="#_sizevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1872 "View in source") [&#x24C9;][1]
 
 Gets the size of `value` by returning `value.length` if `value` is an array, string, or `arguments` object. If `value` is an object, size is determined by returning the number of own enumerable properties it has.
 
@@ -2157,7 +2173,7 @@ _.size('curly');
 <!-- div -->
 
 ### <a id="_somecollection--callbackidentity-thisarg"></a>`_.some(collection [, callback=identity, thisArg])`
-<a href="#_somecollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2276 "View in source") [&#x24C9;][1]
+<a href="#_somecollection--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2315 "View in source") [&#x24C9;][1]
 
 Checks if the `callback` returns a truthy value for **any** element of a `collection`. The function returns as soon as it finds passing value, and does not iterate over the entire `collection`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
@@ -2182,15 +2198,14 @@ _.some([null, 0, 'yes', false]);
 
 <!-- div -->
 
-### <a id="_sortbycollection-callback--thisarg"></a>`_.sortBy(collection, callback [, thisArg])`
-<a href="#_sortbycollection-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2306 "View in source") [&#x24C9;][1]
+### <a id="_sortbycollection--thisarg"></a>`_.sortBy(collection [, thisArg])`
+<a href="#_sortbycollection--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2345 "View in source") [&#x24C9;][1]
 
 Creates a new array, stable sorted in ascending order by the results of running each element of `collection` through a `callback`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to sort by *(e.g. 'length')*.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
-2. `callback` *(Function|String)*: The function called per iteration or  property name to sort by.
-3. `[thisArg]` *(Mixed)*: The `this` binding for the callback.
+2. `[thisArg]` *(Mixed)*: The `this` binding for the callback.
 
 #### Returns
 *(Array)*: Returns a new array of sorted elements.
@@ -2215,7 +2230,7 @@ _.sortBy(['larry', 'brendan', 'moe'], 'length');
 <!-- div -->
 
 ### <a id="_sortedindexarray-value--callbackidentity-thisarg"></a>`_.sortedIndex(array, value [, callback=identity, thisArg])`
-<a href="#_sortedindexarray-value--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2941 "View in source") [&#x24C9;][1]
+<a href="#_sortedindexarray-value--callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2980 "View in source") [&#x24C9;][1]
 
 Uses a binary search to determine the smallest index at which the `value` should be inserted into `array` in order to maintain the sort order of the sorted `array`. If `callback` is passed, it will be executed for `value` and each element in `array` to compute their sort ranking. The `callback` is bound to `thisArg` and invoked with `1` argument; *(value)*.
 
@@ -2256,7 +2271,7 @@ _.sortedIndex(['twenty', 'thirty', 'fourty'], 'thirty-five', function(word) {
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4038 "View in source") [&#x24C9;][1]
+<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4077 "View in source") [&#x24C9;][1]
 
 Invokes `interceptor` with the `value` as the first argument, and then returns `value`. The purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
 
@@ -2286,7 +2301,7 @@ _.chain([1,2,3,200])
 <!-- div -->
 
 ### <a id="_templatetext-data-options"></a>`_.template(text, data, options)`
-<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3812 "View in source") [&#x24C9;][1]
+<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3851 "View in source") [&#x24C9;][1]
 
 A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.  Note: In the development build `_.template` utilizes sourceURLs for easier debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl  Note: Lo-Dash may be used in Chrome extensions by either creating a `lodash csp` build and avoiding `_.template` use, or loading Lo-Dash in a sandboxed page. See http://developer.chrome.com/trunk/extensions/sandboxingEval.html
 
@@ -2351,7 +2366,7 @@ fs.writeFileSync(path.join(cwd, 'jst.js'), '\
 <!-- div -->
 
 ### <a id="_throttlefunc-wait"></a>`_.throttle(func, wait)`
-<a href="#_throttlefunc-wait">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3553 "View in source") [&#x24C9;][1]
+<a href="#_throttlefunc-wait">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3592 "View in source") [&#x24C9;][1]
 
 Creates a new function that, when executed, will only call the `func` function at most once per every `wait` milliseconds. If the throttled function is invoked more than once during the `wait` timeout, `func` will also be called on the trailing edge of the timeout. Subsequent calls to the throttled function will return the result of the last `func` call.
 
@@ -2376,7 +2391,7 @@ jQuery(window).on('scroll', throttled);
 <!-- div -->
 
 ### <a id="_timesn-callback--thisarg"></a>`_.times(n, callback [, thisArg])`
-<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3954 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3993 "View in source") [&#x24C9;][1]
 
 Executes the `callback` function `n` times. The `callback` is bound to `thisArg` and invoked with `1` argument; *(index)*.
 
@@ -2402,7 +2417,7 @@ _.times(3, function() { this.grantWish(); }, genie);
 <!-- div -->
 
 ### <a id="_toarraycollection"></a>`_.toArray(collection)`
-<a href="#_toarraycollection">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2343 "View in source") [&#x24C9;][1]
+<a href="#_toarraycollection">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2382 "View in source") [&#x24C9;][1]
 
 Converts the `collection`, to an array. Useful for converting the `arguments` object.
 
@@ -2426,7 +2441,7 @@ Converts the `collection`, to an array. Useful for converting the `arguments` ob
 <!-- div -->
 
 ### <a id="_unionarray1-array2-"></a>`_.union([array1, array2, ...])`
-<a href="#_unionarray1-array2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2982 "View in source") [&#x24C9;][1]
+<a href="#_unionarray1-array2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3021 "View in source") [&#x24C9;][1]
 
 Computes the union of the passed-in arrays using strict equality for comparisons, i.e. `===`.
 
@@ -2450,7 +2465,7 @@ _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 <!-- div -->
 
 ### <a id="_uniqarray--issortedfalse-callbackidentity-thisarg"></a>`_.uniq(array [, isSorted=false, callback=identity, thisArg])`
-<a href="#_uniqarray--issortedfalse-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3026 "View in source") [&#x24C9;][1]
+<a href="#_uniqarray--issortedfalse-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3065 "View in source") [&#x24C9;][1]
 
 Creates a duplicate-value-free version of the `array` using strict equality for comparisons, i.e. `===`. If the `array` is already sorted, passing `true` for `isSorted` will run a faster algorithm. If `callback` is passed, each element of `array` is passed through a callback` before uniqueness is computed. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index, array)*.
 
@@ -2486,7 +2501,7 @@ _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return this.floor(num); }, Math);
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3981 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4020 "View in source") [&#x24C9;][1]
 
 Generates a unique id. If `prefix` is passed, the id will be appended to it.
 
@@ -2510,7 +2525,7 @@ _.uniqueId('contact_');
 <!-- div -->
 
 ### <a id="_valuesobject"></a>`_.values(object)`
-<a href="#_valuesobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1864 "View in source") [&#x24C9;][1]
+<a href="#_valuesobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1903 "View in source") [&#x24C9;][1]
 
 Creates an array composed of the own enumerable property values of `object`.
 
@@ -2534,7 +2549,7 @@ _.values({ 'one': 1, 'two': 2, 'three': 3 });
 <!-- div -->
 
 ### <a id="_wherecollection-properties"></a>`_.where(collection, properties)`
-<a href="#_wherecollection-properties">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2380 "View in source") [&#x24C9;][1]
+<a href="#_wherecollection-properties">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2419 "View in source") [&#x24C9;][1]
 
 Examines each element in a `collection`, returning an array of all elements that contain the given `properties`.
 
@@ -2565,7 +2580,7 @@ _.where(stooges, { 'age': 40 });
 <!-- div -->
 
 ### <a id="_withoutarray--value1-value2-"></a>`_.without(array [, value1, value2, ...])`
-<a href="#_withoutarray--value1-value2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3075 "View in source") [&#x24C9;][1]
+<a href="#_withoutarray--value1-value2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3114 "View in source") [&#x24C9;][1]
 
 Creates a new array with all occurrences of the passed values removed using strict equality for comparisons, i.e. `===`.
 
@@ -2590,7 +2605,7 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 <!-- div -->
 
 ### <a id="_wrapvalue-wrapper"></a>`_.wrap(value, wrapper)`
-<a href="#_wrapvalue-wrapper">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3604 "View in source") [&#x24C9;][1]
+<a href="#_wrapvalue-wrapper">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3643 "View in source") [&#x24C9;][1]
 
 Creates a new function that passes `value` to the `wrapper` function as its first argument. Additional arguments passed to the new function are appended to those passed to the `wrapper` function.
 
@@ -2619,7 +2634,7 @@ hello();
 <!-- div -->
 
 ### <a id="_ziparray1-array2-"></a>`_.zip([array1, array2, ...])`
-<a href="#_ziparray1-array2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3108 "View in source") [&#x24C9;][1]
+<a href="#_ziparray1-array2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3147 "View in source") [&#x24C9;][1]
 
 Groups the elements of each array at their corresponding indexes. Useful for separate data sources that are coordinated through matching array indexes. For a matrix of nested arrays, `_.zip.apply(...)` can transpose the matrix in a similar fashion.
 
@@ -2643,7 +2658,7 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 <!-- div -->
 
 ### <a id="_zipobjectkeys--values"></a>`_.zipObject(keys [, values=[]])`
-<a href="#_zipobjectkeys--values">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3137 "View in source") [&#x24C9;][1]
+<a href="#_zipobjectkeys--values">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3176 "View in source") [&#x24C9;][1]
 
 Creates an object composed from an array of `keys` and an array of `values`.
 
@@ -2675,7 +2690,7 @@ _.zipObject(['moe', 'larry', 'curly'], [30, 40, 50]);
 <!-- div -->
 
 ### <a id="_prototypechain"></a>`_.prototype.chain()`
-<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4056 "View in source") [&#x24C9;][1]
+<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4095 "View in source") [&#x24C9;][1]
 
 Enables method chaining on the wrapper object.
 
@@ -2696,7 +2711,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_prototypevalue"></a>`_.prototype.value()`
-<a href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4073 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4112 "View in source") [&#x24C9;][1]
 
 Extracts the wrapped value.
 
@@ -2724,7 +2739,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_templatesettings"></a>`_.templateSettings`
-<a href="#_templatesettings">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L284 "View in source") [&#x24C9;][1]
+<a href="#_templatesettings">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L310 "View in source") [&#x24C9;][1]
 
 *(Object)*: By default, the template delimiters used by Lo-Dash are similar to those in embedded Ruby *(ERB)*. Change the following template settings to use alternative delimiters.
 
@@ -2736,7 +2751,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_templatesettingsescape"></a>`_.templateSettings.escape`
-<a href="#_templatesettingsescape">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L293 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsescape">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L319 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect `data` property values to be HTML-escaped.
 
@@ -2748,7 +2763,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_templatesettingsevaluate"></a>`_.templateSettings.evaluate`
-<a href="#_templatesettingsevaluate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L302 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsevaluate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L328 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect code to be evaluated.
 
@@ -2760,7 +2775,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_templatesettingsinterpolate"></a>`_.templateSettings.interpolate`
-<a href="#_templatesettingsinterpolate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L311 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsinterpolate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L337 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect `data` property values to inject.
 
@@ -2772,9 +2787,28 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_templatesettingsvariable"></a>`_.templateSettings.variable`
-<a href="#_templatesettingsvariable">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L320 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsvariable">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L346 "View in source") [&#x24C9;][1]
 
 *(String)*: Used to reference the data object in the template text.
+
+* * *
+
+<!-- /div -->
+
+
+<!-- /div -->
+
+
+<!-- div -->
+
+## ``
+
+<!-- div -->
+
+### <a id=""></a>``
+<a href="#">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L218 "View in source") [&#x24C9;][1]
+
+(Unknown): Detect if sourceURL syntax is usable without erroring:  The JS engine in Adobe products, like InDesign, will throw a syntax error when it encounters a single line comment beginning with the `@` symbol.  The JS engine in Narwhal will generate the function `function anonymous(){//}` and throw a syntax error.  In IE, `@` symbols are part of its non-standard conditional compilation support. The `@cc_on` statement activates its support while the trailing ` !` induces a syntax error to exlude it. Compatibility modes in IE > 8 require a space before the `!` to induce a syntax error. See http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
 
 * * *
 

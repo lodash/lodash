@@ -336,11 +336,11 @@
   QUnit.module('lodash.drop');
 
   (function() {
-    var object = { 'a': 1, 'b': 2, 'c': 3 },
+    var object = { 'a': 1, 'b': 2 },
         actual = { 'b': 2 };
 
     test('should accept individual property names', function() {
-      deepEqual(_.drop(object, 'a', 'c'), actual);
+      deepEqual(_.drop(object, 'a'), actual);
     });
 
     test('should accept an array of property names', function() {
@@ -355,7 +355,38 @@
       function Foo() {}
       Foo.prototype = object;
 
-      deepEqual(_.drop(new Foo, 'a', 'c'), actual);
+      deepEqual(_.drop(new Foo, 'a'), actual);
+    });
+
+    test('should work with a `callback` argument', function() {
+      var actual = _.drop(object, function(value) {
+        return value == 1;
+      });
+
+      deepEqual(actual, { 'b': 2 });
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args,
+          lastKey = _.keys(object).pop();
+
+      var expected = lastKey == 'b'
+        ? [1, 'a', object]
+        : [2, 'b', object];
+
+      _.drop(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, expected);
+    });
+
+    test('should correct set the `this` binding', function() {
+      var actual = _.drop(object, function(value) {
+        return value == this.a;
+      }, { 'a': 1 });
+
+      deepEqual(actual, { 'b': 2 });
     });
   }());
 
@@ -1070,11 +1101,44 @@
   QUnit.module('lodash.pick');
 
   (function() {
+    var object = { 'a': 1, 'b': 2 };
+
     test('should iterate over inherited properties', function() {
       function Foo() {}
-      Foo.prototype = { 'a': 1, 'b': 2, 'c': 3 };
+      Foo.prototype = object;
 
       deepEqual(_.pick(new Foo, 'b'), { 'b': 2 });
+    });
+
+    test('should work with a `callback` argument', function() {
+      var actual = _.pick(object, function(value) {
+        return value == 2;
+      });
+
+      deepEqual(actual, { 'b': 2 });
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args,
+          lastKey = _.keys(object).pop();
+
+      var expected = lastKey == 'b'
+        ? [1, 'a', object]
+        : [2, 'b', object];
+
+      _.pick(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, expected);
+    });
+
+    test('should correct set the `this` binding', function() {
+      var actual = _.pick(object, function(value) {
+        return value == this.b;
+      }, { 'b': 2 });
+
+      deepEqual(actual, { 'b': 2 });
     });
   }());
 

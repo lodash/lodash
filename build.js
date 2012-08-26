@@ -186,7 +186,7 @@
     'identity': [],
     'indexOf': ['sortedIndex'],
     'initial': [],
-    'intersection': ['every', 'indexOf'],
+    'intersection': ['indexOf'],
     'invoke': [],
     'isArguments': [],
     'isArray': [],

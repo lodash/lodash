@@ -47,6 +47,9 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
+  /** Used by `cachedContains` as the default size when optimizations are enabled for large arrays */
+  var largeArraySize = 30;
+
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
@@ -548,7 +551,7 @@
     fromIndex || (fromIndex = 0);
 
     var length = array.length,
-        isLarge = (length - fromIndex) >= (largeSize || 30),
+        isLarge = (length - fromIndex) >= (largeSize || largeArraySize),
         cache = isLarge ? {} : array;
 
     if (isLarge) {
@@ -2365,15 +2368,15 @@
   var where = createIterator(filterIteratorOptions, {
     'args': 'collection, properties',
     'top':
-      'var pass, prop, propIndex, props = [];\n' +
+      'var props = [];\n' +
       'forIn(properties, function(value, prop) { props.push(prop) });\n' +
       'var propsLength = props.length',
     'inLoop':
-      'for (pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {\n' +
+      'for (var prop, pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {\n' +
       '  prop = props[propIndex];\n' +
       '  if (!(pass = value[prop] === properties[prop])) break\n' +
       '}\n' +
-      'if (pass) result.push(value)'
+      'pass && result.push(value)'
   });
 
   /*--------------------------------------------------------------------------*/
@@ -2597,17 +2600,19 @@
       return result;
     }
     var value,
+        argsLength = arguments.length,
+        cache = [],
         index = -1,
-        length = array.length,
-        others = slice.call(arguments, 1),
-        cache = [];
+        length = array.length;
 
-    while (++index < length) {
+    array: while (++index < length) {
       value = array[index];
-      if (indexOf(result, value) < 0 &&
-          every(others, function(other, index) {
-            return (cache[index] || (cache[index] = cachedContains(other)))(value);
-          })) {
+      if (indexOf(result, value) < 0) {
+        for (var argsIndex = 1; argsIndex < argsLength; argsIndex++) {
+          if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(arguments[argsIndex])))(value)) {
+            continue array;
+          }
+        }
         result.push(value);
       }
     }

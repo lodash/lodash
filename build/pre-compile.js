@@ -7,6 +7,8 @@
 
   /** Used to minify variables embedded in compiled strings */
   var compiledVars = [
+    'argsIndex',
+    'argsLength',
     'callback',
     'collection',
     'concat',
@@ -36,8 +38,6 @@
     // lesser used variables
     'accumulator',
     'args',
-    'argsIndex',
-    'argsLength',
     'arrayLikeClasses',
     'ArrayProto',
     'bind',

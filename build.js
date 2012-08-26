@@ -977,7 +977,7 @@
       return match.replace(/\bcallee\b/g, 'merge');
     });
 
-    // remove `hasDontEnumBug`, `iteratesOwnLast`, `noArgsEnum` assignment
+    // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
 
     // remove `iteratesOwnLast` from `isPlainObject`
@@ -986,8 +986,8 @@
     // remove JScript [[DontEnum]] fix from `_.isEqual`
     source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
 
-    // remove IE `shift` and `splice` fix from mutator Array functions mixin
-    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(value.length *=== *0[\s\S]+?\n\1}/, '');
+    // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
+    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
 
     // remove `noArraySliceOnStrings` from `_.toArray`
     source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
@@ -1056,6 +1056,8 @@
     source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
     // remove `LoDash.prototype` additions
     source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
+    // remove `hasObjectSpliceBug` assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasObjectSpliceBug;|.+?hasObjectSpliceBug *=.+/g, '');
   }
 
   // assign debug source before further modifications that rely on the minifier
@@ -1106,9 +1108,9 @@
   if (isRemoved(source, 'createIterator', 'keys')) {
     source = removeVar(source, 'nativeKeys');
   }
-  if (!source.match(/var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum)\b/g)) {
-    // remove `hasDontEnumBug`, `iteratesOwnLast`, `noArgsEnum` assignment
-    source = source.replace(/ *\(function\(\) *{\s*var props\b[\s\S]+?}\(1\)\);/, '');
+  if (!source.match(/var (?:hasDontEnumBug|hasObjectSpliceBug|iteratesOwnLast|noArgsEnum)\b/g)) {
+    // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, and `noArgsEnum` assignment
+    source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
   }
 
   // remove pseudo private properties

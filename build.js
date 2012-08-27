@@ -234,6 +234,7 @@
     'throttle': [],
     'times': [],
     'toArray': ['isFunction', 'values'],
+    'unescape': [],
     'union': ['indexOf'],
     'uniq': ['identity', 'indexOf'],
     'uniqueId': [],
@@ -280,6 +281,7 @@
     'forOwn',
     'merge',
     'partial',
+    'unescape',
     'where',
     'zipObject'
   ]));

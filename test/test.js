@@ -1539,17 +1539,19 @@
   QUnit.module('lodash.unescape');
 
   (function() {
-    test('should perform a case-insensitive replacement of numeric character references', function() {
-      equal(_.unescape('&#x27;x&#X27;'), "'x'");
-    });
+    var escaped = '&lt;h1&gt;Moe&#x27;s famous &quot;death by chocolate&quot; brownies &amp; cake&lt;\/h1&gt;',
+        unescaped = '<h1>Moe\'s famous "death by chocolate" brownies & cake<\/h1>';
 
     test('should unescape entities in the correct order', function() {
       equal(_.unescape('&amp;lt;'), '&lt;');
     });
 
     test('should unescape the proper entities', function() {
-      var escaped = '&lt;h1&gt;Moe&#x27;s famous &quot;death by chocolate&quot; brownies &amp; cake&lt;\/h1&gt;';
-      equal(_.unescape(escaped), '<h1>Moe\'s famous "death by chocolate" brownies & cake<\/h1>');
+      equal(_.unescape(escaped), unescaped);
+    });
+
+    test('should unescape the same characters escaped by `_.escape`', function() {
+      equal(_.unescape(_.escape(unescaped)), unescaped);
     });
 
     test('should return an empty string when passed `null` or `undefined`', function() {

@@ -57,7 +57,7 @@
   var reComplexDelimiter = /[-+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
 
   /** Used to match HTML entities */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#[xX]27);/g;
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g;
 
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -251,19 +251,13 @@
     "'": '&#x27;'
   };
 
-  /**
-   * Used to convert HTML entities to characters:
-   *
-   * Numeric character references are case-insensitive.
-   * http://whatwg.org/html/syntax.html#character-references
-   */
+  /** Used to convert HTML entities to characters */
   var htmlUnescapes = {
     '&amp;': '&',
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
-    '&#x27;': "'",
-    '&#X27;': "'"
+    '&#x27;': "'"
   };
 
   /** Used to determine if values are of the language type Object */

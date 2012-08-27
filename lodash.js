@@ -56,6 +56,9 @@
   /** Used to detect delimiter values that should be processed by `tokenizeEvaluate` */
   var reComplexDelimiter = /[-+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
 
+  /** Used to match HTML entities */
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#[xX]27);/g;
+
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -74,11 +77,11 @@
       .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
   );
 
-  /** Used to match tokens in template text */
+  /** Used to match internally used tokens in template text */
   var reToken = /__token__(\d+)/g;
 
-  /** Used to match unescaped characters in strings for inclusion in HTML */
-  var reUnescapedHtml = /[&<"']/g;
+  /** Used to match HTML characters */
+  var reUnescapedHtml = /[&<>"']/g;
 
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
@@ -233,17 +236,34 @@
   cloneableClasses[stringClass] = true;
 
   /**
-   * Used to escape characters for inclusion in HTML:
+   * Used to convert characters to HTML entities:
    *
-   * The `>` and `/` characters don't require escaping in HTML and have no
-   * special meaning unless they're part of a tag or an unquoted attribute value
-   * http://mathiasbynens.be/notes/ambiguous-ampersands (semi-related fun fact)
+   * Though the `>` character is escaped for symmetry, characters like `>` and `/`
+   * don't require escaping in HTML and have no special meaning unless they're part
+   * of a tag or an unquoted attribute value.
+   * http://mathiasbynens.be/notes/ambiguous-ampersands (under "semi-related fun fact")
    */
   var htmlEscapes = {
     '&': '&amp;',
     '<': '&lt;',
+    '>': '&gt;',
     '"': '&quot;',
     "'": '&#x27;'
+  };
+
+  /**
+   * Used to convert HTML entities to characters:
+   *
+   * Numeric character references are case-insensitive.
+   * http://www.w3.org/TR/html4/charset.html#h-5.3.1
+   */
+  var htmlUnescapes = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#x27;': "'",
+    '&#X27;': "'"
   };
 
   /** Used to determine if values are of the language type Object */
@@ -522,7 +542,10 @@
       '  callback = iteratorBind(callback, thisArg)\n' +
       '}',
     'inLoop':
-      'if (isFunc ? !callback(value, index, object) : indexOf(props, index) < 0) result[index] = value'
+      'if (isFunc\n' +
+      '  ? !callback(value, index, object)\n' +
+      '  : indexOf(props, index) < 0\n' +
+      ') result[index] = value'
   };
 
   /** Reusable iterator options for `every` and `some` */
@@ -778,7 +801,7 @@
   }
 
   /**
-   * Used by `escape` to escape characters for inclusion in HTML.
+   * Used by `escape` to convert characters to HTML entities.
    *
    * @private
    * @param {String} match The matched character to escape.
@@ -911,6 +934,17 @@
     var index = tokenized.length;
     tokenized[index] = "' +\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
     return token + index;
+  }
+
+  /**
+   * Used by `unescape` to convert HTML entities to characters.
+   *
+   * @private
+   * @param {String} match The matched character to unescape.
+   * @returns {String} Returns the unescaped character.
+   */
+  function unescapeHtmlChar(match) {
+    return htmlUnescapes[match];
   }
 
   /*--------------------------------------------------------------------------*/
@@ -1852,7 +1886,6 @@
    * array, string, or `arguments` object. If `value` is an object, size is
    * determined by returning the number of own enumerable properties it has.
    *
-   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -3653,8 +3686,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Escapes a string for inclusion in HTML, replacing `&`, `<`, `"`, and `'`
-   * characters.
+   * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
+   * corresponding HTML entities.
    *
    * @static
    * @memberOf _
@@ -4004,6 +4037,24 @@
   }
 
   /**
+   * Converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#x27`
+   * in `string` to their corresponding characters.
+   *
+   * @static
+   * @memberOf _
+   * @category Utilities
+   * @param {String} string The string to unescape.
+   * @returns {String} Returns the unescaped string.
+   * @example
+   *
+   * _.unescape('Moe, Larry &amp; Curly');
+   * // => "Moe, Larry & Curly"
+   */
+  function unescape(string) {
+    return string == null ? '' : (string + '').replace(reEscapedHtml, unescapeHtmlChar);
+  }
+
+  /**
    * Generates a unique id. If `prefix` is passed, the id will be appended to it.
    *
    * @static
@@ -4204,6 +4255,7 @@
   lodash.throttle = throttle;
   lodash.times = times;
   lodash.toArray = toArray;
+  lodash.unescape = unescape;
   lodash.union = union;
   lodash.uniq = uniq;
   lodash.uniqueId = uniqueId;

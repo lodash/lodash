@@ -255,7 +255,7 @@
    * Used to convert HTML entities to characters:
    *
    * Numeric character references are case-insensitive.
-   * http://www.w3.org/TR/html4/charset.html#h-5.3.1
+   * http://whatwg.org/html/syntax.html#character-references
    */
   var htmlUnescapes = {
     '&amp;': '&',
@@ -4037,7 +4037,7 @@
   }
 
   /**
-   * Converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#x27`
+   * Converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#x27;`
    * in `string` to their corresponding characters.
    *
    * @static

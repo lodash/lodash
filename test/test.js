@@ -395,15 +395,11 @@
   QUnit.module('lodash.escape');
 
   (function() {
-    test('should not escape the ">" character', function() {
-      equal(_.escape('>'), '>');
-    });
-
     test('should not escape the "/" character', function() {
       equal(_.escape('/'), '/');
     });
 
-    test('should return empty string when passed `null` or `undefined`', function() {
+    test('should return an empty string when passed `null` or `undefined`', function() {
       equal(_.escape(null), '');
       equal(_.escape(undefined), '');
     });
@@ -1537,6 +1533,30 @@
       deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
     });
   }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.unescape');
+
+  (function() {
+    test('should perform a case-insensitive replacement of numeric character references', function() {
+      equal(_.unescape('&#x27;x&#X27;'), "'x'");
+    });
+
+    test('should unescape entities in the correct order', function() {
+      equal(_.unescape('&amp;lt;'), '&lt;');
+    });
+
+    test('should unescape the proper entities', function() {
+      var escaped = '&lt;h1&gt;Moe&#x27;s famous &quot;death by chocolate&quot; brownies &amp; cake&lt;\/h1&gt;';
+      equal(_.unescape(escaped), '<h1>Moe\'s famous "death by chocolate" brownies & cake<\/h1>');
+    });
+
+    test('should return an empty string when passed `null` or `undefined`', function() {
+      equal(_.unescape(null), '');
+      equal(_.unescape(undefined), '');
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

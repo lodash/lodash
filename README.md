@@ -8,7 +8,7 @@ Lo-Dash’s performance is gained by avoiding slower native methods, instead opt
 
  * [Development source](https://raw.github.com/bestiejs/lodash/v0.6.0/lodash.js)
  * [Production source](https://raw.github.com/bestiejs/lodash/v0.6.0/lodash.min.js)
- * CDN copies of ≤ [v0.5.2](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.5.2/lodash.min.js) are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
+ * CDN copies of ≤ [v0.6.0](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.6.0/lodash.min.js) are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
  * For optimal performance, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
 ## Dive in
@@ -54,7 +54,7 @@ For more information check out these screencasts over Lo-Dash:
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5-21, Firefox 1.5-13, IE 6-9, Opera 9.25-12.01, Safari 3-6, Node.js 0.4.8-0.8.7, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
+Lo-Dash has been tested in at least Chrome 5-21, Firefox 1-14, IE 6-9, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.8, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
 
 ## Custom builds
 

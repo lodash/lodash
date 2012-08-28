@@ -289,7 +289,7 @@
   QUnit.module('lodash.countBy');
 
   (function() {
-      test('should only add values to own, not inherited, properties', function() {
+    test('should only add values to own, not inherited, properties', function() {
       var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });

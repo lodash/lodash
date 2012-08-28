@@ -23,17 +23,17 @@
   /** Flag used to specify a legacy build */
   var isLegacy = process.argv.indexOf('legacy') > -1;
 
+  /** Flag used to specify an Underscore build */
+  var isUnderscore = process.argv.indexOf('underscore') > -1;
+
   /** Flag used to specify a mobile build */
-  var isMobile = !isLegacy && (isCSP || process.argv.indexOf('mobile') > -1);
+  var isMobile = !isLegacy && (isCSP || isUnderscore || process.argv.indexOf('mobile') > -1);
 
   /**
    * Flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are
    * constructed using the "use strict" directive.
    */
   var isStrict = process.argv.indexOf('strict') > -1;
-
-  /** Flag used to specify an Underscore build */
-  var isUnderscore = process.argv.indexOf('underscore') > -1;
 
   /** Flag used to specify if the build should include the "use strict" directive */
   var useStrict = isStrict || !(isLegacy || isMobile);
@@ -56,14 +56,19 @@
         source = setUseStrictOption(source, false);
       }
     }
-
     if (isLegacy) {
       source = replaceVar(source, 'noArgsClass', 'true');
       ['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
         source = replaceVar(source, varName, 'false');
       });
     }
-    else if (isMobile) {
+    else if (isUnderscore) {
+      // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
+      source = source
+        .replace(/(?: *\/\/.*\n)*\s*' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
+        .replace(/!hasDontEnumBug *\|\|/g, '');
+    }
+    if (isMobile) {
       source = replaceVar(source, 'isKeysFast', 'false');
     }
     vm.runInNewContext(source, sandbox);

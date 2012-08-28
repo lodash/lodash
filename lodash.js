@@ -162,7 +162,6 @@
 
     function ctor() { this.x = 1; }
     ctor.prototype = { 'valueOf': 1, 'y': 1 };
-
     for (var prop in new ctor) { props.push(prop); }
     for (prop in arguments) { noArgsEnum = !prop; }
 
@@ -417,6 +416,12 @@
     '  } else {' +
     '  <% } %>' +
 
+    // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
+    // (if the prototype or a property on the prototype has been set)
+    // incorrectly sets a function's `prototype` property [[Enumerable]]
+    // value to `true`. Because of this Lo-Dash standardizes on skipping
+    // the the `prototype` property of functions regardless of its
+    // [[Enumerable]] value.
     '  <% if (!hasDontEnumBug) { %>\n' +
     '  var skipProto = typeof iteratee == \'function\' && \n' +
     '    propertyIsEnumerable.call(iteratee, \'prototype\');\n' +
@@ -440,25 +445,15 @@
     '  <% } else { %>\n' +
     '  <%= objectBranch.beforeLoop %>;\n' +
     '  for (index in iteratee) {' +
-    '    <% if (hasDontEnumBug) { %>\n' +
-    '    <%   if (useHas) { %>if (hasOwnProperty.call(iteratee, index)) {\n  <% } %>' +
+    '    <% if (!hasDontEnumBug || useHas) { %>\n    if (<%' +
+    '      if (!hasDontEnumBug) { %>!(skipProto && index == \'prototype\')<% }' +
+    '      if (!hasDontEnumBug && useHas) { %> && <% }' +
+    '      if (useHas) { %>hasOwnProperty.call(iteratee, index)<% }' +
+    '    %>) {' +
+    '    <% } %>\n' +
     '    value = iteratee[index];\n' +
     '    <%= objectBranch.inLoop %>;\n' +
-    '    <%   if (useHas) { %>}<% } %>' +
-
-    // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
-    // (if the prototype or a property on the prototype has been set)
-    // incorrectly sets a function's `prototype` property [[Enumerable]]
-    // value to `true`. Because of this Lo-Dash standardizes on skipping
-    // the the `prototype` property of functions regardless of its
-    // [[Enumerable]] value.
-    '    <% } else { %>\n' +
-    '    if (!(skipProto && index == \'prototype\')<% if (useHas) { %> &&\n' +
-    '        hasOwnProperty.call(iteratee, index)<% } %>) {\n' +
-    '      value = iteratee[index];\n' +
-    '      <%= objectBranch.inLoop %>\n' +
-    '    }' +
-    '    <% } %>\n' +
+    '    <% if (!hasDontEnumBug || useHas) { %>}\n<% } %>' +
     '  }' +
     '  <% } %>' +
 

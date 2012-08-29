@@ -16,13 +16,13 @@
 * [`_.compact`](#_compactarray)
 * [`_.compose`](#_composefunc1-func2-)
 * [`_.contains`](#_containscollection-target)
-* [`_.countBy`](#_countbycollection-callback|property--thisarg)
+* [`_.countBy`](#_countbycollection-callbackproperty--thisarg)
 * [`_.debounce`](#_debouncefunc-wait-immediate)
 * [`_.defaults`](#_defaultsobject--default1-default2-)
 * [`_.defer`](#_deferfunc--arg1-arg2-)
 * [`_.delay`](#_delayfunc-wait--arg1-arg2-)
 * [`_.difference`](#_differencearray--array1-array2-)
-* [`_.drop`](#_dropobject-callback|-prop1-prop2--thisarg)
+* [`_.drop`](#_dropobject-callback-prop1-prop2--thisarg)
 * [`_.escape`](#_escapestring)
 * [`_.every`](#_everycollection--callbackidentity-thisarg)
 * [`_.extend`](#_extendobject--source1-source2-)
@@ -34,7 +34,7 @@
 * [`_.forIn`](#_forinobject-callback--thisarg)
 * [`_.forOwn`](#_forownobject-callback--thisarg)
 * [`_.functions`](#_functionsobject)
-* [`_.groupBy`](#_groupbycollection-callback|property--thisarg)
+* [`_.groupBy`](#_groupbycollection-callbackproperty--thisarg)
 * [`_.has`](#_hasobject-property)
 * [`_.identity`](#_identityvalue)
 * [`_.indexOf`](#_indexofarray-value--fromindex0)
@@ -69,7 +69,7 @@
 * [`_.noConflict`](#_noconflict)
 * [`_.once`](#_oncefunc)
 * [`_.partial`](#_partialfunc--arg1-arg2-)
-* [`_.pick`](#_pickobject-callback|-prop1-prop2--thisarg)
+* [`_.pick`](#_pickobject-callback-prop1-prop2--thisarg)
 * [`_.pluck`](#_pluckcollection-property)
 * [`_.range`](#_rangestart0-end--step1)
 * [`_.reduce`](#_reducecollection-callback--accumulator-thisarg)
@@ -80,7 +80,7 @@
 * [`_.shuffle`](#_shufflearray)
 * [`_.size`](#_sizevalue)
 * [`_.some`](#_somecollection--callbackidentity-thisarg)
-* [`_.sortBy`](#_sortbycollection-callback|property--thisarg)
+* [`_.sortBy`](#_sortbycollection-callbackproperty--thisarg)
 * [`_.sortedIndex`](#_sortedindexarray-value--callbackidentity-thisarg)
 * [`_.tap`](#_tapvalue-interceptor)
 * [`_.template`](#_templatetext-data-options)
@@ -440,8 +440,8 @@ _.contains('curly', 'ur');
 
 <!-- div -->
 
-### <a id="_countbycollection-callback|property--thisarg"></a>`_.countBy(collection, callback|property [, thisArg])`
-<a href="#_countbycollection-callback|property--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1997 "View in source") [&#x24C9;][1]
+### <a id="_countbycollection-callbackproperty--thisarg"></a>`_.countBy(collection, callback|property [, thisArg])`
+<a href="#_countbycollection-callbackproperty--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1997 "View in source") [&#x24C9;][1]
 
 Creates an object composed of keys returned from running each element of `collection` through a `callback`. The corresponding value of each key is the number of times the key was returned by `callback`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to count by *(e.g. 'length')*.
 
@@ -601,8 +601,8 @@ _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
 
 <!-- div -->
 
-### <a id="_dropobject-callback|-prop1-prop2--thisarg"></a>`_.drop(object, callback|[prop1, prop2, ..., thisArg])`
-<a href="#_dropobject-callback|-prop1-prop2--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1201 "View in source") [&#x24C9;][1]
+### <a id="_dropobject-callback-prop1-prop2--thisarg"></a>`_.drop(object, callback|[prop1, prop2, ..., thisArg])`
+<a href="#_dropobject-callback-prop1-prop2--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1201 "View in source") [&#x24C9;][1]
 
 Creates a shallow clone of `object` excluding the specified properties. Property names may be specified as individual arguments or as arrays of property names. If `callback` is passed, it will be executed for each property in the `object`, dropping the properties `callback` returns truthy for. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, key, object)*.
 
@@ -930,8 +930,8 @@ _.functions(_);
 
 <!-- div -->
 
-### <a id="_groupbycollection-callback|property--thisarg"></a>`_.groupBy(collection, callback|property [, thisArg])`
-<a href="#_groupbycollection-callback|property--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2113 "View in source") [&#x24C9;][1]
+### <a id="_groupbycollection-callbackproperty--thisarg"></a>`_.groupBy(collection, callback|property [, thisArg])`
+<a href="#_groupbycollection-callbackproperty--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2113 "View in source") [&#x24C9;][1]
 
 Creates an object composed of keys returned from running each element of `collection` through a `callback`. The corresponding value of each key is an array of elements passed to `callback` that returned the key. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to count by *(e.g. 'length')*.
 
@@ -1881,8 +1881,8 @@ hi('moe');
 
 <!-- div -->
 
-### <a id="_pickobject-callback|-prop1-prop2--thisarg"></a>`_.pick(object, callback|[prop1, prop2, ..., thisArg])`
-<a href="#_pickobject-callback|-prop1-prop2--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1862 "View in source") [&#x24C9;][1]
+### <a id="_pickobject-callback-prop1-prop2--thisarg"></a>`_.pick(object, callback|[prop1, prop2, ..., thisArg])`
+<a href="#_pickobject-callback-prop1-prop2--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1862 "View in source") [&#x24C9;][1]
 
 Creates a shallow clone of `object` composed of the specified properties. Property names may be specified as individual arguments or as arrays of property names. If `callback` is passed, it will be executed for each property in the `object`, picking the properties `callback` returns truthy for. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, key, object)*.
 
@@ -2203,8 +2203,8 @@ _.some([null, 0, 'yes', false]);
 
 <!-- div -->
 
-### <a id="_sortbycollection-callback|property--thisarg"></a>`_.sortBy(collection, callback|property [, thisArg])`
-<a href="#_sortbycollection-callback|property--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2373 "View in source") [&#x24C9;][1]
+### <a id="_sortbycollection-callbackproperty--thisarg"></a>`_.sortBy(collection, callback|property [, thisArg])`
+<a href="#_sortbycollection-callbackproperty--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2373 "View in source") [&#x24C9;][1]
 
 Creates a new array, stable sorted in ascending order by the results of running each element of `collection` through a `callback`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to sort by *(e.g. 'length')*.
 

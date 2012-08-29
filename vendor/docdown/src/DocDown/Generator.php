@@ -163,7 +163,7 @@ class Generator {
     $member = !$member ? $entry->getMembers(0) : $member;
     $result = ($member ? $member . ($entry->isPlugin() ? 'prototype' : '') : '') . $entry->getCall();
     $result = preg_replace('/\(\[|\[\]/', '', $result);
-    $result = preg_replace('/[ =\'"{}.()\]]/', '', $result);
+    $result = preg_replace('/[ =|\'"{}.()\]]/', '', $result);
     $result = preg_replace('/[[#,]/', '-', $result);
     return strtolower($result);
   }

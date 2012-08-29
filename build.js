@@ -1122,6 +1122,7 @@
     source = removeVar(source, 'reNative');
   }
   if (isRemoved(source, 'createIterator', 'clone', 'merge')) {
+    source = removeIsPlainObjectFallback(source);
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
   }
   if (isRemoved(source, 'createIterator', 'isEqual')) {

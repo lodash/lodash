@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v0.6.0</sup>
+# Lo-Dash <sup>v0.6.1</sup>
 
 A drop-in replacement<sup>[*](https://github.com/bestiejs/lodash/wiki/Drop-in-Disclaimer)</sup> for Underscore.js, from the devs behind [jsPerf.com](http://jsperf.com), delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues-30), and [additional features](https://github.com/bestiejs/lodash#features).
 
@@ -6,8 +6,8 @@ Lo-Dash’s performance is gained by avoiding slower native methods, instead opt
 
 ## Download
 
- * [Development source](https://raw.github.com/bestiejs/lodash/v0.6.0/lodash.js)
- * [Production source](https://raw.github.com/bestiejs/lodash/v0.6.0/lodash.min.js)
+ * [Development source](https://raw.github.com/bestiejs/lodash/v0.6.1/lodash.js)
+ * [Production source](https://raw.github.com/bestiejs/lodash/v0.6.1/lodash.min.js)
  * CDN copies of ≤ [v0.6.0](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.6.0/lodash.min.js) are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
  * For optimal performance, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
@@ -171,38 +171,38 @@ require({
 
 ## Resolved Underscore.js issues <sup>(30+)</sup>
 
- * Allow iteration of objects with a `length` property [[#148](https://github.com/documentcloud/underscore/issues/148), [#154](https://github.com/documentcloud/underscore/issues/154), [#252](https://github.com/documentcloud/underscore/issues/252), [#448](https://github.com/documentcloud/underscore/issues/448), [#659](https://github.com/documentcloud/underscore/issues/659), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L578-584)]
- * Ensure array-like objects with invalid `length` properties are treated like regular objects [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L526-536)]
- * Ensure *“Arrays”*, “Collections”, and “Objects” methods don’t error when passed falsey arguments [[#650](https://github.com/documentcloud/underscore/pull/650), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1668-1703)]
- * Ensure *“Collections”* methods allow string `collection` arguments [[#247](https://github.com/documentcloud/underscore/issues/247), [#276](https://github.com/documentcloud/underscore/issues/276), [#561](https://github.com/documentcloud/underscore/pull/561), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L538-555)]
- * Ensure templates compiled with errors are inspectable [[#666](https://github.com/documentcloud/underscore/issues/666), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1383-1386)]
- * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L589-614)]
+ * Allow iteration of objects with a `length` property [[#148](https://github.com/documentcloud/underscore/issues/148), [#154](https://github.com/documentcloud/underscore/issues/154), [#252](https://github.com/documentcloud/underscore/issues/252), [#448](https://github.com/documentcloud/underscore/issues/448), [#659](https://github.com/documentcloud/underscore/issues/659), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L578-584)]
+ * Ensure array-like objects with invalid `length` properties are treated like regular objects [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L526-536)]
+ * Ensure *“Arrays”*, “Collections”, and “Objects” methods don’t error when passed falsey arguments [[#650](https://github.com/documentcloud/underscore/pull/650), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1668-1703)]
+ * Ensure *“Collections”* methods allow string `collection` arguments [[#247](https://github.com/documentcloud/underscore/issues/247), [#276](https://github.com/documentcloud/underscore/issues/276), [#561](https://github.com/documentcloud/underscore/pull/561), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L538-555)]
+ * Ensure templates compiled with errors are inspectable [[#666](https://github.com/documentcloud/underscore/issues/666), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1383-1386)]
+ * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L589-614)]
  * Handle arrays with `undefined` values correctly in IE < 9 [[#601](https://github.com/documentcloud/underscore/issues/601)]
- * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L117-123)]
- * Register as an AMD module, but still export to global [[#431](https://github.com/documentcloud/underscore/pull/431), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L101-115)]
- * `_(…)` should return passed wrapper instances [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L135-138)]
- * `_.clone` should allow `deep` cloning [[#595](https://github.com/documentcloud/underscore/pull/595), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L205-220)]
- * `_.contains` should work with strings [[#667](https://github.com/documentcloud/underscore/pull/667), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L275-284)]
- * `_.countBy` and `_.groupBy` should only add values to own, not inherited, properties [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L292-299)]
- * `_.escape` should return an empty string when passed `null` or `undefined` [[#427](https://github.com/documentcloud/underscore/issues/427), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L402-405)]
- * `_.extend` should recursively extend objects [[#379](https://github.com/documentcloud/underscore/pull/379), [#718](https://github.com/documentcloud/underscore/issues/718), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L979-1001)]
- * `_.forEach` should be chainable [[#142](https://github.com/documentcloud/underscore/issues/142), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L521-524)]
- * `_.forEach` should allow exiting iteration early [[#211](https://github.com/documentcloud/underscore/issues/211), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L616-635)]
- * `_.isElement` should use strict equality for its duck type check [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L731-740)]
- * `_.isEmpty` and `_.size` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L767-772)]
- * `_.isEqual` should return `true` for like-objects from different documents [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L808-828)]
- * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L836-848)]
- * `_.isNaN(new Number(NaN))` should return `true` [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L856-858)]
- * `_.keys` and `_.size` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [#653](https://github.com/documentcloud/underscore/issues/653), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L912-914)]
+ * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L117-123)]
+ * Register as an AMD module, but still export to global [[#431](https://github.com/documentcloud/underscore/pull/431), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L101-115)]
+ * `_(…)` should return passed wrapper instances [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L135-138)]
+ * `_.clone` should allow `deep` cloning [[#595](https://github.com/documentcloud/underscore/pull/595), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L205-220)]
+ * `_.contains` should work with strings [[#667](https://github.com/documentcloud/underscore/pull/667), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L275-284)]
+ * `_.countBy` and `_.groupBy` should only add values to own, not inherited, properties [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L292-299)]
+ * `_.escape` should return an empty string when passed `null` or `undefined` [[#427](https://github.com/documentcloud/underscore/issues/427), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L402-405)]
+ * `_.extend` should recursively extend objects [[#379](https://github.com/documentcloud/underscore/pull/379), [#718](https://github.com/documentcloud/underscore/issues/718), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L979-1001)]
+ * `_.forEach` should be chainable [[#142](https://github.com/documentcloud/underscore/issues/142), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L521-524)]
+ * `_.forEach` should allow exiting iteration early [[#211](https://github.com/documentcloud/underscore/issues/211), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L616-635)]
+ * `_.isElement` should use strict equality for its duck type check [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L731-740)]
+ * `_.isEmpty` and `_.size` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L767-772)]
+ * `_.isEqual` should return `true` for like-objects from different documents [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L808-828)]
+ * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L836-848)]
+ * `_.isNaN(new Number(NaN))` should return `true` [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L856-858)]
+ * `_.keys` and `_.size` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [#653](https://github.com/documentcloud/underscore/issues/653), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L912-914)]
  * `_.once` should free the given function for garbage collection [[#693](https://github.com/documentcloud/underscore/pull/693)]
- * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1170-1173)]
- * `_.reduceRight` should pass correct callback arguments when iterating objects [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1205-1219)]
- * `_.size` should return the `length` of string values [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1263-1265)]
- * `_.sortedIndex` should support arrays with high `length` values [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1353-1362)]
- * `_.template` should not augment the `options` object [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1377-1381)]
- * `_.throttle` should work when called in a loop [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1473-1483)]
- * `_.toArray` uses custom `toArray` methods of arrays and strings [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1510-1518)]
- * `_.zipObject` should accept less than two arguments [[test](https://github.com/bestiejs/lodash/blob/v0.6.0/test/test.js#L1630-1632)]
+ * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1170-1173)]
+ * `_.reduceRight` should pass correct callback arguments when iterating objects [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1205-1219)]
+ * `_.size` should return the `length` of string values [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1263-1265)]
+ * `_.sortedIndex` should support arrays with high `length` values [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1353-1362)]
+ * `_.template` should not augment the `options` object [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1377-1381)]
+ * `_.throttle` should work when called in a loop [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1473-1483)]
+ * `_.toArray` uses custom `toArray` methods of arrays and strings [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1510-1518)]
+ * `_.zipObject` should accept less than two arguments [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1630-1632)]
 
 ## Optimized methods <sup>(50+)</sup>
 
@@ -266,6 +266,11 @@ require({
  * plus all `_(…)` method wrappers
 
 ## Release Notes
+
+### <sup>v0.6.1</sup>
+
+ * Ensured IE conditional compilation isn’t enabled by the `useSourceURL` test
+ * Optimized `isPlainObject`
 
 ### <sup>v0.6.0</sup>
 

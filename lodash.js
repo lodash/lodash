@@ -211,14 +211,12 @@
    * The JS engine in Narwhal will generate the function `function anonymous(){//}`
    * and throw a syntax error.
    *
-   * In IE, `@` symbols are part of its non-standard conditional compilation support.
-   * The `@cc_on` statement activates its support while the trailing ` !` induces
-   * a syntax error to exlude it. Compatibility modes in IE > 8 require a space
-   * before the `!` to induce a syntax error.
-   * See http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
+   * Avoid comments beginning `@` symbols in IE because they are part of its
+   * non-standard conditional compilation support.
+   * http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
    */
   try {
-    var useSourceURL = (Function('//@cc_on !')(), true);
+    var useSourceURL = (Function('//@')(), !window.attachEvent);
   } catch(e){ }
 
   /** Used to identify object classifications that are array-like */

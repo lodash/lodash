@@ -435,7 +435,7 @@
    * @returns {String} Returns the `isArguments` fallback snippet.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\s*if *\(noArgsClass[\s\S]+?};\s*}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( +)if *\(noArgsClass[\s\S]+?};\n\1}/) || [''])[0];
   }
 
   /**
@@ -563,7 +563,18 @@
    * @returns {String} Returns the source with the `isFunction` fallback removed.
    */
   function removeIsFunctionFallback(source) {
-    return source.replace(/(?:\s*\/\/.*)*\s*if *\(isFunction\(\/x\/[\s\S]+?};\s*}/, '');
+    return source.replace(/(?:\s*\/\/.*)*\n( +)if *\(isFunction\(\/x\/[\s\S]+?};\n\1}/, '');
+  }
+
+  /**
+   * Removes the `isPlainObject` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the source with the `isPlainObject` fallback removed.
+   */
+  function removeIsPlainObjectFallback(source) {
+    return source.replace(/(?:\s*\/\/.*)*\n( +)if *\(!isPlainObject[\s\S]+?};\n\1}/, '');
   }
 
   /**
@@ -984,6 +995,11 @@
       return match.replace(/\bcallee\b/g, 'merge');
     });
 
+    if (!isUnderscore) {
+      source = removeIsArgumentsFallback(source);
+      source = removeIsPlainObjectFallback(source);
+    }
+
     // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
 
@@ -1006,7 +1022,6 @@
     source = removeVar(source, 'iteratorTemplate');
     source = removeVar(source, 'noArraySliceOnStrings');
     source = removeVar(source, 'noCharByIndex');
-    source = removeIsArgumentsFallback(source);
     source = removeKeysOptimization(source);
     source = removeNoArgsClass(source);
     source = removeNoNodeClass(source);

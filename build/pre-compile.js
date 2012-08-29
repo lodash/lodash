@@ -106,6 +106,7 @@
     '_',
     '_chain',
     '_wrapped',
+    '__proto__',
     'after',
     'all',
     'amd',

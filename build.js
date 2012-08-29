@@ -1082,6 +1082,9 @@
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasObjectSpliceBug;|.+?hasObjectSpliceBug *=.+/g, '');
   }
 
+  // remove pseudo private properties
+  source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
+
   // assign debug source before further modifications that rely on the minifier
   // to remove unused variables and other dead code
   debugSource = source;
@@ -1135,9 +1138,6 @@
     // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, and `noArgsEnum` assignment
     source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
   }
-
-  // remove pseudo private properties
-  source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
 
   // consolidate consecutive horizontal rule comment separators
   source = source.replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {

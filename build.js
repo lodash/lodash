@@ -998,6 +998,7 @@
     if (!isUnderscore) {
       source = removeIsArgumentsFallback(source);
       source = removeIsPlainObjectFallback(source);
+      source = removeNoArgsClass(source);
     }
 
     // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
@@ -1023,7 +1024,6 @@
     source = removeVar(source, 'noArraySliceOnStrings');
     source = removeVar(source, 'noCharByIndex');
     source = removeKeysOptimization(source);
-    source = removeNoArgsClass(source);
     source = removeNoNodeClass(source);
   }
   else {

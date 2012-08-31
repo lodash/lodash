@@ -78,7 +78,7 @@
   );
 
   /** Used to match internally used tokens in template text */
-  var reToken = /__token__(\d+)/g;
+  var reToken = /__token(\d+)__/g;
 
   /** Used to match HTML characters */
   var reUnescapedHtml = /[&<>"']/g;
@@ -96,7 +96,8 @@
   var templateCounter = 0;
 
   /** Used to replace template delimiters */
-  var token = '__token__';
+  var tokenHead = '__token',
+      tokenFoot = '__';
 
   /** Used to store tokenized template text snippets */
   var tokenized = [];
@@ -840,7 +841,7 @@
     }
     var index = tokenized.length;
     tokenized[index] = "' +\n__e(" + value + ") +\n'";
-    return token + index;
+    return tokenHead + index + tokenFoot;
   }
 
   /**
@@ -858,7 +859,7 @@
     if (evaluateValue) {
       var index = tokenized.length;
       tokenized[index] = "';\n" + evaluateValue + ";\n__p += '";
-      return token + index;
+      return tokenHead + index + tokenFoot;
     }
     return escapeValue
       ? tokenizeEscape(null, escapeValue)
@@ -879,7 +880,7 @@
     }
     var index = tokenized.length;
     tokenized[index] = "' +\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
-    return token + index;
+    return tokenHead + index + tokenFoot;
   }
 
   /**

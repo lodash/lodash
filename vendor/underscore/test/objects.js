@@ -18,6 +18,16 @@ $(document).ready(function() {
     equal(_.values({one : 1, two : 2}).join(', '), '1, 2', 'can extract the values from an object');
   });
 
+  test("objects: pairs", function() {
+    deepEqual(_.pairs({one: 1, two: 2}), [['one', 1], ['two', 2]], 'can convert an object into pairs');
+  });
+
+  test("objects: invert", function() {
+    var obj = {first: 'Moe', second: 'Larry', third: 'Curly'};
+    equal(_.keys(_.invert(obj)).join(' '), 'Moe Larry Curly', 'can invert an object');
+    ok(_.isEqual(_.invert(_.invert(obj)), obj), 'two inverts gets you back where you started');
+  });
+
   test("objects: functions", function() {
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
     ok(_.isEqual(['b', 'd'], _.functions(obj)), 'can grab the function names of any passed-in object');

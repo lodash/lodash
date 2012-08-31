@@ -1487,6 +1487,11 @@
       }
       ok(pass);
     });
+
+    test('should tokenize delimiters correctly', function() {
+      var compiled = _.template('<span class="icon-<%= type %>2"></span>');
+      equal(compiled({ 'type': 1 }), '<span class="icon-12"></span>');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

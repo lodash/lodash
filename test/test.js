@@ -1161,6 +1161,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.random');
+
+  (function() {
+    test('should work like `Math.random` if no arguments are passed', function() {
+      var actual = _.random();
+      ok(actual >= 0 && actual < 1);
+    });
+
+    test('supports not passing a `max` argument', function() {
+      var actual = _.random(5),
+          start = new Date;
+
+      while ((new Date - start) < 50 && actual == 5) {
+        actual = _.random(5);
+      }
+      ok(actual != 5);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.range');
 
   (function() {

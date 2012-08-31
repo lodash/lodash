@@ -4056,11 +4056,11 @@
    * @param {Mixed} [thisArg] The `this` binding for the callback.
    * @example
    *
-   * _.times(3, function() { genie.grantWish(); });
-   * // => calls `genie.grantWish()` 3 times
+   * _.times(3, function(n) { genie.grantWish(n); });
+   * // => calls `genie.grantWish(n)` three times, passing `n` of `0`, `1`, and `2` respectively
    *
-   * _.times(3, function() { this.grantWish(); }, genie);
-   * // => also calls `genie.grantWish()` 3 times
+   * _.times(3, function(n) { this.grantWish(n); }, genie);
+   * // => also calls `genie.grantWish(n)` three times
    */
   function times(n, callback, thisArg) {
     var index = -1;

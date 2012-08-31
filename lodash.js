@@ -1287,6 +1287,26 @@
   }
 
   /**
+   * Invert the keys and values of an object. The values must be serializable.
+   *
+   * @static
+   * @memberOf _
+   * @alias methods
+   * @category Objects
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property names that have function values.
+   * @example
+   *
+   *  var obj = {first: 'Moe', second: 'Larry', third: 'Curly'}
+   * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
+   */
+  var invert = createIterator({
+    'args': 'object',
+    'init': '{}',
+    'inLoop': 'result[value] = index'
+  });
+
+  /**
    * Checks if `value` is a boolean (`true` or `false`) value.
    *
    * @static
@@ -1878,7 +1898,7 @@
    * });
    * // => { 'name': 'moe' }
    */
-  var pick = createIterator(dropIteratorOptions, {
+  var pick = createIterator(omitIteratorOptions, {
     'top':
       'if (typeof callback != \'function\') {\n' +
       '  var prop,\n' +
@@ -4226,6 +4246,7 @@
   lodash.indexOf = indexOf;
   lodash.initial = initial;
   lodash.intersection = intersection;
+  lodash.invert = invert;
   lodash.invoke = invoke;
   lodash.isArguments = isArguments;
   lodash.isArray = isArray;
@@ -4256,6 +4277,7 @@
   lodash.object = object;
   lodash.omit = omit;
   lodash.once = once;
+  lodash.pairs = pairs;
   lodash.partial = partial;
   lodash.pick = pick;
   lodash.pluck = pluck;

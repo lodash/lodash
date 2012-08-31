@@ -516,25 +516,6 @@
       '(hasOwnProperty.call(result, prop) ? result[prop]++ : result[prop] = 1)'
   };
 
-  /** Reusable iterator options for `drop` and `pick` */
-  var dropIteratorOptions = {
-    'useHas': false,
-    'args': 'object, callback, thisArg',
-    'init': '{}',
-    'top':
-      'var isFunc = typeof callback == \'function\';\n' +
-      'if (!isFunc) {\n' +
-      '  var props = concat.apply(ArrayProto, arguments)\n' +
-      '} else if (thisArg) {\n' +
-      '  callback = iteratorBind(callback, thisArg)\n' +
-      '}',
-    'inLoop':
-      'if (isFunc\n' +
-      '  ? !callback(value, index, object)\n' +
-      '  : indexOf(props, index) < 0\n' +
-      ') result[index] = value'
-  };
-
   /** Reusable iterator options for `every` and `some` */
   var everyIteratorOptions = {
     'init': 'true',
@@ -584,6 +565,25 @@
       'array':  'result[index] = callback(value, index, collection)',
       'object': 'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '(callback(value, index, collection))'
     }
+  };
+
+  /** Reusable iterator options for `omit` and `pick` */
+  var omitIteratorOptions = {
+    'useHas': false,
+    'args': 'object, callback, thisArg',
+    'init': '{}',
+    'top':
+      'var isFunc = typeof callback == \'function\';\n' +
+      'if (!isFunc) {\n' +
+      '  var props = concat.apply(ArrayProto, arguments)\n' +
+      '} else if (thisArg) {\n' +
+      '  callback = iteratorBind(callback, thisArg)\n' +
+      '}',
+    'inLoop':
+      'if (isFunc\n' +
+      '  ? !callback(value, index, object)\n' +
+      '  : indexOf(props, index) < 0\n' +
+      ') result[index] = value'
   };
 
   /*--------------------------------------------------------------------------*/
@@ -1171,34 +1171,6 @@
   var defaults = createIterator(extendIteratorOptions, {
     'inLoop': 'if (result[index] == null) ' + extendIteratorOptions.inLoop
   });
-
-  /**
-   * Creates a shallow clone of `object` excluding the specified properties.
-   * Property names may be specified as individual arguments or as arrays of
-   * property names. If `callback` is passed, it will be executed for each property
-   * in the `object`, dropping the properties `callback` returns truthy for. The
-   * `callback` is bound to `thisArg` and invoked with 3 arguments; (value, key, object).
-   *
-   * @static
-   * @memberOf _
-   * @alias omit
-   * @category Objects
-   * @param {Object} object The source object.
-   * @param {Function|String} callback|[prop1, prop2, ...] The properties to drop
-   *  or the function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Object} Returns an object without the dropped properties.
-   * @example
-   *
-   * _.drop({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
-   * // => { 'name': 'moe', 'age': 40 }
-   *
-   * _.drop({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
-   *   return key.charAt(0) == '_';
-   * });
-   * // => { 'name': 'moe' }
-   */
-  var drop = createIterator(dropIteratorOptions);
 
   /**
    * Assigns enumerable properties of the source object(s) to the `destination`
@@ -1832,6 +1804,53 @@
       '} else if (value != null) {\n' +
       '  result[index] = value\n' +
       '}'
+  });
+
+  /**
+   * Creates a shallow clone of `object` excluding the specified properties.
+   * Property names may be specified as individual arguments or as arrays of
+   * property names. If `callback` is passed, it will be executed for each property
+   * in the `object`, omitting the properties `callback` returns truthy for. The
+   * `callback` is bound to `thisArg` and invoked with 3 arguments; (value, key, object).
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The source object.
+   * @param {Function|String} callback|[prop1, prop2, ...] The properties to omit
+   *  or the function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Object} Returns an object without the omitted properties.
+   * @example
+   *
+   * _.omit({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
+   * // => { 'name': 'moe', 'age': 40 }
+   *
+   * _.omit({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
+   *   return key.charAt(0) == '_';
+   * });
+   * // => { 'name': 'moe' }
+   */
+  var omit = createIterator(omitIteratorOptions);
+
+  /**
+   * Creates a two dimensional array of the given object's key-value pairs,
+   * i.e. `[[key1, value1], [key2, value2]]`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to inspect..
+   * @returns {Array} Returns new array of key-value pairs.
+   * @example
+   *
+   * _.pairs({ 'moe': 30, 'larry': 40, 'curly': 50 });
+   * // => [['moe', 30], ['larry', 40], ['curly', 50]] (order is not guaranteed)
+   */
+  var pairs = createIterator({
+    'args': 'object',
+    'init':'[]',
+    'inLoop': 'result.push([index, value])'
   });
 
   /**
@@ -2865,6 +2884,41 @@
   }
 
   /**
+   * Creates an object composed from arrays of `keys` and `values`. Pass either
+   * a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]`, or
+   * two arrays, one of `keys` and one of corresponding `values`.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} keys The array of keys.
+   * @param {Array} [values=[]] The array of values.
+   * @returns {Object} Returns an object composed of the given keys and
+   *  corresponding values.
+   * @example
+   *
+   * _.object(['moe', 'larry', 'curly'], [30, 40, 50]);
+   * // => { 'moe': 30, 'larry': 40, 'curly': 50 }
+   */
+  function object(keys, values) {
+    if (!keys) {
+      return {};
+    }
+    var index = -1,
+        length = keys.length,
+        result = {};
+
+    while (++index < length) {
+      if (values) {
+        result[keys[index]] = values[index];
+      } else {
+        result[keys[index][0]] = keys[index][1];
+      }
+    }
+    return result;
+  }
+
+  /**
    * Creates an array of numbers (positive and/or negative) progressing from
    * `start` up to but not including `stop`. This method is a port of Python's
    * `range()` function. See http://docs.python.org/library/functions.html#range.
@@ -2920,7 +2974,7 @@
    *
    * @static
    * @memberOf _
-   * @alias tail
+   * @alias drop, tail
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
@@ -3182,36 +3236,6 @@
 
     while (++index < length) {
       result[index] = pluck(arguments, index);
-    }
-    return result;
-  }
-
-  /**
-   * Creates an object composed from an array of `keys` and an array of `values`.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} keys The array of keys.
-   * @param {Array} [values=[]] The array of values.
-   * @returns {Object} Returns an object composed of the given keys and
-   *  corresponding values.
-   * @example
-   *
-   * _.zipObject(['moe', 'larry', 'curly'], [30, 40, 50]);
-   * // => { 'moe': 30, 'larry': 40, 'curly': 50 }
-   */
-  function zipObject(keys, values) {
-    if (!keys) {
-      return {};
-    }
-    var index = -1,
-        length = keys.length,
-        result = {};
-
-    values || (values = []);
-    while (++index < length) {
-      result[keys[index]] = values[index];
     }
     return result;
   }
@@ -4185,7 +4209,6 @@
   lodash.defer = defer;
   lodash.delay = delay;
   lodash.difference = difference;
-  lodash.drop = drop;
   lodash.escape = escape;
   lodash.every = every;
   lodash.extend = extend;
@@ -4230,6 +4253,8 @@
   lodash.min = min;
   lodash.mixin = mixin;
   lodash.noConflict = noConflict;
+  lodash.object = object;
+  lodash.omit = omit;
   lodash.once = once;
   lodash.partial = partial;
   lodash.pick = pick;
@@ -4259,13 +4284,13 @@
   lodash.without = without;
   lodash.wrap = wrap;
   lodash.zip = zip;
-  lodash.zipObject = zipObject;
 
   // assign aliases
   lodash.all = every;
   lodash.any = some;
   lodash.collect = map;
   lodash.detect = find;
+  lodash.drop = rest;
   lodash.each = forEach;
   lodash.foldl = reduce;
   lodash.foldr = reduceRight;
@@ -4273,7 +4298,6 @@
   lodash.include = contains;
   lodash.inject = reduce;
   lodash.methods = functions;
-  lodash.omit = drop;
   lodash.select = filter;
   lodash.tail = rest;
   lodash.take = first;

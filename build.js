@@ -81,6 +81,7 @@
     'any': 'some',
     'collect': 'map',
     'detect': 'find',
+    'drop': 'rest',
     'each': 'forEach',
     'foldl': 'reduce',
     'foldr': 'reduceRight',
@@ -88,7 +89,6 @@
     'include': 'contains',
     'inject': 'reduce',
     'methods': 'functions',
-    'omit': 'drop',
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
@@ -98,7 +98,6 @@
   /** Used to associate real names with their aliases */
   var realToAliasMap = {
     'contains': ['include'],
-    'drop': ['omit'],
     'every': ['all'],
     'filter': ['select'],
     'find': ['detect'],
@@ -108,7 +107,7 @@
     'map': ['collect'],
     'reduce': ['foldl', 'inject'],
     'reduceRight': ['foldr'],
-    'rest': ['tail'],
+    'rest': ['drop', 'tail'],
     'some': ['any'],
     'uniq': ['unique']
   };
@@ -174,7 +173,6 @@
     'defer': [],
     'delay': [],
     'difference': ['indexOf'],
-    'drop': ['indexOf', 'isArguments'],
     'escape': [],
     'every': ['identity'],
     'extend': ['isArguments'],
@@ -219,6 +217,8 @@
     'min': [],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
+    'object': [],
+    'omit': ['indexOf', 'isArguments'],
     'once': [],
     'partial': [],
     'pick': [],
@@ -247,8 +247,7 @@
     'where': ['forIn'],
     'without': ['indexOf'],
     'wrap': [],
-    'zip': ['max', 'pluck'],
-    'zipObject': []
+    'zip': ['max', 'pluck']
   };
 
   /** Used to `iteratorTemplate` */
@@ -281,14 +280,14 @@
 
   var underscoreMethods = lodash.without.apply(lodash, [allMethods].concat([
     'countBy',
-    'drop',
     'forIn',
     'forOwn',
     'merge',
+    'object',
+    'omit',
     'partial',
     'unescape',
-    'where',
-    'zipObject'
+    'where'
   ]));
 
   /** Used to specify whether filtering is for exclusion or inclusion */

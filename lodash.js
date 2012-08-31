@@ -111,9 +111,13 @@
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
+      nativeFloor = Math.floor,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
-      nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys;
+      nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
+      nativeMax = Math.max,
+      nativeMin = Math.min,
+      nativeRandom = Math.random;
 
   /** `Object#toString` result shortcuts */
   var argsClass = '[object Arguments]',
@@ -2659,7 +2663,7 @@
 
     if (fromIndex) {
       if (typeof fromIndex == 'number') {
-        index = (fromIndex < 0 ? Math.max(0, length + fromIndex) : fromIndex) - 1;
+        index = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) - 1;
       } else {
         index = sortedIndex(array, value);
         return array[index] === value ? index : -1;
@@ -2787,7 +2791,7 @@
     }
     var index = array.length;
     if (fromIndex && typeof fromIndex == 'number') {
-      index = (fromIndex < 0 ? Math.max(0, index + fromIndex) : Math.min(fromIndex, index - 1)) + 1;
+      index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
     }
     while (index--) {
       if (array[index] === value) {
@@ -2978,7 +2982,7 @@
     // use `Array(length)` so V8 will avoid the slower "dictionary" mode
     // http://www.youtube.com/watch?v=XAqIpGU8ZZk#t=16m27s
     var index = -1,
-        length = Math.max(0, Math.ceil((end - start) / step)),
+        length = nativeMax(0, Math.ceil((end - start) / step)),
         result = Array(length);
 
     while (++index < length) {
@@ -3037,7 +3041,7 @@
         result = Array(length);
 
     while (++index < length) {
-      rand = Math.floor(Math.random() * (index + 1));
+      rand = nativeFloor(nativeRandom() * (index + 1));
       result[index] = result[rand];
       result[rand] = array[index];
     }
@@ -3821,6 +3825,40 @@
   }
 
   /**
+   * Produces a random number between `min` and `max` (inclusive). If only one
+   * argument is passed, a number between `0` and the given number will be returned.
+   * If no arguments are passed `_.random` will act as `Math.random`.
+   *
+   * @static
+   * @memberOf _
+   * @category Utilities
+   * @param {Number} min The minimum possible value
+   * @param {Number} max The maximum possible value
+   * @returns {Number} Returns the random number.
+   * @example
+   *
+   * _.random(0, 5);
+   * // => a number between 1 and 5
+   *
+   * _.random(5);
+   * // => also a number between 1 and 5
+   *
+   * _.random();
+   * // => an integer between 0 and less than 1
+   */
+  function random(min, max) {
+    if (!arguments.length) {
+      return nativeRandom();
+    }
+    min || (min = 0);
+    if (!max) {
+      max = min;
+      min = 0;
+    }
+    return min + nativeFloor(nativeRandom() * (max - min + 1));
+  }
+
+  /**
    * Resolves the value of `property` on `object`. If `property` is a function
    * it will be invoked and its result returned, else the property value is
    * returned. If `object` is falsey, then `null` is returned.
@@ -4281,6 +4319,7 @@
   lodash.partial = partial;
   lodash.pick = pick;
   lodash.pluck = pluck;
+  lodash.random = random;
   lodash.range = range;
   lodash.reduce = reduce;
   lodash.reduceRight = reduceRight;

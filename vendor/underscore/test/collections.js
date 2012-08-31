@@ -141,6 +141,7 @@ $(document).ready(function() {
     ok(_.all([1], _.identity) === true, 'cast to boolean - true');
     ok(_.all([0], _.identity) === false, 'cast to boolean - false');
     ok(_.every([true, true, true], _.identity), 'aliased as "every"');
+    ok(!_.all([undefined, undefined, undefined], _.identity), 'works with arrays of undefined');
   });
 
   test('collections: any', function() {
@@ -303,6 +304,14 @@ $(document).ready(function() {
   test('collections: size', function() {
     equal(_.size({one : 1, two : 2, three : 3}), 3, 'can compute the size of an object');
     equal(_.size([1, 2, 3]), 3, 'can compute the size of an array');
+
+    var func = function() {
+      return _.size(arguments);
+    };
+
+    equal(func(1, 2, 3, 4), 4, 'can test the size of the arguments object');
+
+    equal(_.size('hello'), 5, 'can compute the size of a string');
   });
 
 });

@@ -865,6 +865,18 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.invert`')
+      .add('Lo-Dash', '\
+        lodash.invert(object)'
+      )
+      .add('Underscore', '\
+        _.invert(object)'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.invoke` iterating an array')
       .add('Lo-Dash', '\
         lodash.invoke(numbers, "toFixed", "2")'
@@ -1100,6 +1112,18 @@
         'fn': 'result = _.omit(wordToNumber, words)',
         'teardown': 'function omit(){}'
       })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.pairs`')
+      .add('Lo-Dash', '\
+        lodash.pairs(object)'
+      )
+      .add('Underscore', '\
+        _.pairs(object)'
+      )
   );
 
   /*--------------------------------------------------------------------------*/

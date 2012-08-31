@@ -183,7 +183,7 @@
     attributes || (attributes = {});
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attributes = this.parse(attributes);
-    if (defaults = getValue(this, 'defaults')) {
+    if (defaults = _.result(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
     }
     this.attributes = {};
@@ -336,9 +336,7 @@
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
       };
-      options.error = Backbone.wrapError(options.error, model, options);
       return this.sync('read', this, options);
     },
 
@@ -383,11 +381,9 @@
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
       };
 
       // Finish configuring and sending the Ajax request.
-      options.error = Backbone.wrapError(options.error, model, options);
       var xhr = this.sync(this.isNew() ? 'create' : 'update', this, options);
 
       // When using `wait`, reset attributes to original values unless
@@ -415,7 +411,6 @@
       options.success = function(resp) {
         if (options.wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
-        if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
       if (this.isNew()) {
@@ -423,7 +418,6 @@
         return false;
       }
 
-      options.error = Backbone.wrapError(options.error, model, options);
       var xhr = this.sync('delete', this, options);
       if (!options.wait) destroy();
       return xhr;
@@ -433,7 +427,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url: function() {
-      var base = getValue(this, 'urlRoot') || getValue(this.collection, 'url') || urlError();
+      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -527,8 +521,8 @@
 
     // Check if the model is currently in a valid state. It's only possible to
     // get into an *invalid* state if you're using silent changes.
-    isValid: function() {
-      return !this.validate || !this.validate(this.attributes);
+    isValid: function(options) {
+      return !this.validate || !this.validate(this.attributes, options);
     },
 
     // Run validation against the next complete set of model attributes,
@@ -539,11 +533,8 @@
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
-      if (options && options.error) {
-        options.error(this, error, options);
-      } else {
-        this.trigger('error', this, error, options);
-      }
+      if (options && options.error) options.error(this, error, options);
+      this.trigger('error', this, error, options);
       return false;
     }
 
@@ -781,9 +772,7 @@
       options.success = function(resp, status, xhr) {
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
       };
-      options.error = Backbone.wrapError(options.error, collection, options);
       return this.sync('read', this, options);
     },
 
@@ -913,7 +902,6 @@
     //     });
     //
     route: function(route, name, callback) {
-      Backbone.history || (Backbone.history = new History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (!callback) callback = this[name];
       Backbone.history.route(route, _.bind(function(fragment) {
@@ -1163,6 +1151,9 @@
 
   });
 
+  // Create the default Backbone.history.
+  Backbone.history = new History;
+
   // Backbone.View
   // -------------
 
@@ -1260,7 +1251,7 @@
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents: function(events) {
-      if (!(events || (events = getValue(this, 'events')))) return;
+      if (!(events || (events = _.result(this, 'events')))) return;
       this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
@@ -1303,10 +1294,10 @@
     // an element from the `id`, `className` and `tagName` properties.
     _ensureElement: function() {
       if (!this.el) {
-        var attrs = _.extend({}, getValue(this, 'attributes'));
-        if (this.id) attrs.id = getValue(this, 'id');
-        if (this.className) attrs['class'] = getValue(this, 'className');
-        this.setElement(this.make(getValue(this, 'tagName'), attrs), false);
+        var attrs = _.extend({}, _.result(this, 'attributes'));
+        if (this.id) attrs.id = _.result(this, 'id');
+        if (this.className) attrs['class'] = _.result(this, 'className');
+        this.setElement(this.make(_.result(this, 'tagName'), attrs), false);
       } else {
         this.setElement(this.el, false);
       }
@@ -1351,7 +1342,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = getValue(model, 'url') || urlError();
+      params.url = _.result(model, 'url') || urlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -1383,6 +1374,18 @@
       params.processData = false;
     }
 
+    var success = options.success;
+    options.success = function(resp, status, xhr) {
+      if (success) success(resp, status, xhr);
+      model.trigger('sync', model, resp, options);
+    };
+
+    var error = options.error;
+    options.error = function(xhr, status, thrown) {
+      if (error) error(model, xhr, options);
+      model.trigger('error', model, xhr, options);
+    };
+
     // Make the request, allowing the user to override any Ajax options.
     return Backbone.ajax(_.extend(params, options));
   };
@@ -1392,23 +1395,8 @@
     return Backbone.$.ajax.apply(Backbone.$, arguments);
   };
 
-  // Wrap an optional error callback with a fallback error event.
-  Backbone.wrapError = function(onError, originalModel, options) {
-    return function(model, resp) {
-      resp = model === originalModel ? resp : model;
-      if (onError) {
-        onError(originalModel, resp, options);
-      } else {
-        originalModel.trigger('error', originalModel, resp, options);
-      }
-    };
-  };
-
   // Helpers
   // -------
-
-  // Shared empty constructor function to aid in prototype-chain creation.
-  var ctor = function(){};
 
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
@@ -1420,31 +1408,27 @@
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
     // by us to simply call the parent's constructor.
-    if (protoProps && protoProps.hasOwnProperty('constructor')) {
+    if (protoProps && _.has(protoProps, 'constructor')) {
       child = protoProps.constructor;
     } else {
       child = function(){ parent.apply(this, arguments); };
     }
 
-    // Inherit class (static) properties from parent.
-    _.extend(child, parent);
-
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
-    ctor.prototype = parent.prototype;
-    child.prototype = new ctor();
+    function Surrogate(){ this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate;
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
     if (protoProps) _.extend(child.prototype, protoProps);
 
     // Add static properties to the constructor function, if supplied.
-    if (staticProps) _.extend(child, staticProps);
+    _.extend(child, parent, staticProps);
 
-    // Correctly set child's `prototype.constructor`.
-    child.prototype.constructor = child;
-
-    // Set a convenience property in case the parent's prototype is needed later.
+    // Set a convenience property in case the parent's prototype is needed
+    // later.
     child.__super__ = parent.prototype;
 
     return child;
@@ -1452,13 +1436,6 @@
 
   // Set up inheritance for the model, collection, and view.
   Model.extend = Collection.extend = Router.extend = View.extend = extend;
-
-  // Helper function to get a value from a Backbone object as a property
-  // or as a function.
-  var getValue = function(object, prop) {
-    if (!(object && object[prop])) return null;
-    return _.isFunction(object[prop]) ? object[prop]() : object[prop];
-  };
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {

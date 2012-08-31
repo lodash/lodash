@@ -25,6 +25,8 @@ $(document).ready(function() {
     equal(result.join(', '), '2, 3, 4', 'aliased as tail and works on arguments object');
     result = _.map([[1,2,3],[1,2,3]], _.rest);
     equal(_.flatten(result).join(','), '2,3,2,3', 'works well with _.map');
+    result = (function(){ return _(arguments).drop(); })(1, 2, 3, 4);
+    equal(result.join(', '), '2, 3, 4', 'aliased as drop and works on arguments object');
   });
 
   test("arrays: initial", function() {
@@ -123,10 +125,17 @@ $(document).ready(function() {
     equal(String(stooges), 'moe,30,true,larry,40,,curly,50,', 'zipped together arrays of different lengths');
   });
 
-  test('arrays: zipObject', function() {
-    var result = _.zipObject(['moe', 'larry', 'curly'], [30, 40, 50]);
+  test('arrays: object', function() {
+    var result = _.object(['moe', 'larry', 'curly'], [30, 40, 50]);
     var shouldBe = {moe: 30, larry: 40, curly: 50};
     ok(_.isEqual(result, shouldBe), 'two arrays zipped together into an object');
+
+    result = _.object([['one', 1], ['two', 2], ['three', 3]]);
+    shouldBe = {one: 1, two: 2, three: 3};
+    ok(_.isEqual(result, shouldBe), 'an array of pairs zipped together into an object');
+
+    var stooges = {moe: 30, larry: 40, curly: 50};
+    ok(_.isEqual(_.object(_.pairs(stooges)), stooges), 'an object converted to pairs and back to an object');
   });
 
   test("arrays: indexOf", function() {

@@ -1,13 +1,12 @@
 $(document).ready(function() {
 
-  var lastRequest = null;
-  var sync = Backbone.sync;
-
   var a, b, c, d, e, col, otherCol;
 
-  module("Backbone.Collection", {
+  module("Backbone.Collection", _.extend(new Environment, {
 
     setup: function() {
+      Environment.prototype.setup.apply(this, arguments);
+
       a         = new Backbone.Model({id: 3, label: 'a'});
       b         = new Backbone.Model({id: 2, label: 'b'});
       c         = new Backbone.Model({id: 1, label: 'c'});
@@ -15,21 +14,9 @@ $(document).ready(function() {
       e         = null;
       col       = new Backbone.Collection([a,b,c,d]);
       otherCol  = new Backbone.Collection();
-
-      Backbone.sync = function(method, model, options) {
-        lastRequest = {
-          method: method,
-          model: model,
-          options: options
-        };
-      };
-    },
-
-    teardown: function() {
-      Backbone.sync = sync;
     }
 
-  });
+  }));
 
   test("Collection: new and sort", 7, function() {
     equal(col.first(), a, "a should be first");
@@ -48,26 +35,18 @@ $(document).ready(function() {
   });
 
   test("Collection: new and parse", 3, function() {
-    var MyCol = Backbone.Collection.extend({
-      // only save the models that have an even value.
+    var Collection = Backbone.Collection.extend({
       parse : function(data) {
-        var onlyEven = [];
-        _.each(data, function(datum) {
-          if (datum.a % 2 === 0) {
-            onlyEven.push(datum);
-          }
+        return _.filter(data, function(datum) {
+          return datum.a % 2 === 0;
         });
-
-        return onlyEven;
       }
     });
-    anotherCol  = new MyCol([
-      { a : 1 },{ a : 2 },{ a : 3 },{ a : 4 }
-    ], { parse : true });
-
-    equal(anotherCol.length, 2);
-    equal(anotherCol.first().get('a'), 2)
-    equal(anotherCol.last().get('a'), 4);
+    var models = [{a: 1}, {a: 2}, {a: 3}, {a: 4}];
+    var collection = new Collection(models, {parse: true});
+    strictEqual(collection.length, 2);
+    strictEqual(collection.first().get('a'), 2);
+    strictEqual(collection.last().get('a'), 4);
   });
 
   test("Collection: get, getByCid", 3, function() {
@@ -379,21 +358,25 @@ $(document).ready(function() {
   });
 
   test("Collection: fetch", 4, function() {
-    col.fetch();
-    equal(lastRequest.method, 'read');
-    equal(lastRequest.model, col);
-    equal(lastRequest.options.parse, true);
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.fetch();
+    equal(this.syncArgs.method, 'read');
+    equal(this.syncArgs.model, collection);
+    equal(this.syncArgs.options.parse, true);
 
-    col.fetch({parse: false});
-    equal(lastRequest.options.parse, false);
+    collection.fetch({parse: false});
+    equal(this.syncArgs.options.parse, false);
   });
 
   test("Collection: create", 4, function() {
-    var model = col.create({label: 'f'}, {wait: true});
-    equal(lastRequest.method, 'create');
-    equal(lastRequest.model, model);
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    var model = collection.create({label: 'f'}, {wait: true});
+    equal(this.syncArgs.method, 'create');
+    equal(this.syncArgs.model, model);
     equal(model.get('label'), 'f');
-    equal(model.collection, col);
+    equal(model.collection, collection);
   });
 
   test("Collection: create enforces validation", 1, function() {
@@ -524,16 +507,17 @@ $(document).ready(function() {
   });
 
   test("#714: access `model.collection` in a brand new model.", 2, function() {
-    var col = new Backbone.Collection;
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
     var Model = Backbone.Model.extend({
       set: function(attrs) {
         equal(attrs.prop, 'value');
-        equal(this.collection, col);
+        equal(this.collection, collection);
         return this;
       }
     });
-    col.model = Model;
-    col.create({prop: 'value'});
+    collection.model = Model;
+    collection.create({prop: 'value'});
   });
 
   test("#574, remove its own reference to the .models array.", 2, function() {
@@ -659,15 +643,10 @@ $(document).ready(function() {
   });
 
   test("#1412 - Trigger 'sync' event.", 2, function() {
-    var collection = new Backbone.Collection([], {
-      model: Backbone.Model.extend({
-        sync: function(method, model, options) {
-          options.success();
-        }
-      })
-    });
-    collection.sync = function(method, model, options) { options.success(); };
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
     collection.on('sync', function() { ok(true); });
+    Backbone.ajax = function(settings){ settings.success(); };
     collection.fetch();
     collection.create({id: 1});
   });

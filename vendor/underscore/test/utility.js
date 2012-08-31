@@ -48,6 +48,15 @@ $(document).ready(function() {
   test("utility: _.escape", function() {
     equal(_.escape("Curly & Moe"), "Curly &amp; Moe");
     equal(_.escape("Curly &amp; Moe"), "Curly &amp;amp; Moe");
+    equal(_.escape(null), '');
+  });
+
+  test("utility: _.unescape", function() {
+    var string = "Curly & Moe";
+    equal(_.unescape("Curly &amp; Moe"), string);
+    equal(_.unescape("Curly &amp;amp; Moe"), "Curly &amp; Moe");
+    equal(_.unescape(null), '');
+    equal(_.unescape(_.escape(string)), string);
   });
 
   test("utility: template", function() {
@@ -154,6 +163,14 @@ $(document).ready(function() {
 
     var templateWithNull = _.template("a null undefined {{planet}}");
     equal(templateWithNull({planet : "world"}), "a null undefined world", "can handle missing escape and evaluate settings");
+  });
+
+  test('utility: _.template provides the generated function source, when a SyntaxError occurs', function() {
+    try {
+      _.template('<b><%= if %></b>');
+    } catch (e) {
+      ok(e.source.indexOf('( if )') > 0);
+    }
   });
 
   test('_.template handles \\u2028 & \\u2029', function() {

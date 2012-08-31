@@ -174,6 +174,7 @@
   // Delegates to **ECMAScript 5**'s native `every` if available.
   // Aliased as `all`.
   _.every = _.all = function(obj, iterator, context) {
+    iterator || (iterator = _.identity);
     var result = true;
     if (obj == null) return result;
     if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
@@ -338,7 +339,7 @@
 
   // Return the number of elements in an object.
   _.size = function(obj) {
-    return _.isArray(obj) ? obj.length : _.keys(obj).length;
+    return (obj.length === +obj.length) ? obj.length : _.keys(obj).length;
   };
 
   // Array Functions
@@ -369,12 +370,12 @@
     }
   };
 
-  // Returns everything but the first entry of the array. Aliased as `tail`.
-  // Especially useful on the arguments object. Passing an **index** will return
-  // the rest of the values in the array from that index onward. The **guard**
+  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
+  // Especially useful on the arguments object. Passing an **n** will return
+  // the rest N values in the array. The **guard**
   // check allows it to work with `_.map`.
-  _.rest = _.tail = function(array, index, guard) {
-    return slice.call(array, (index == null) || guard ? 1 : index);
+  _.rest = _.tail = _.drop = function(array, n, guard) {
+    return slice.call(array, (n == null) || guard ? 1 : n);
   };
 
   // Trim out all falsy values from an array.
@@ -456,12 +457,17 @@
     return results;
   };
 
-  // Zip together two arrays -- an array of keys and an array of values -- into
-  // a single object.
-  _.zipObject = function(keys, values) {
+  // Converts lists into objects. Pass either a single array of `[key, value]`
+  // pairs, or two parallel arrays of the same length -- one of keys, and one of
+  // the corresponding values.
+  _.object = function(list, values) {
     var result = {};
-    for (var i = 0, l = keys.length; i < l; i++) {
-      result[keys[i]] = values[i];
+    for (var i = 0, l = list.length; i < l; i++) {
+      if (values) {
+        result[list[i]] = values[i];
+      } else {
+        result[list[i][0]] = list[i][1];
+      }
     }
     return result;
   };
@@ -622,7 +628,9 @@
     return function() {
       if (ran) return memo;
       ran = true;
-      return memo = func.apply(this, arguments);
+      memo = func.apply(this, arguments);
+      func = null;
+      return memo;
     };
   };
 
@@ -674,6 +682,21 @@
   // Retrieve the values of an object's properties.
   _.values = function(obj) {
     return _.map(obj, _.identity);
+  };
+
+  // Convert an object into a list of `[key, value]` pairs.
+  _.pairs = function(obj) {
+    return _.map(obj, function(value, key) {
+      return [key, value];
+    });
+  };
+
+  // Invert the keys and values of an object. The values must be serializable.
+  _.invert = function(obj) {
+    return _.reduce(obj, function(memo, value, key) {
+      memo[value] = key;
+      return memo;
+    }, {});
   };
 
   // Return a sorted list of the function names available on the object.
@@ -925,25 +948,39 @@
     for (var i = 0; i < n; i++) iterator.call(context, i);
   };
 
+  // Return a random integer between min and max (inclusive).
+  _.random = function(min, max) {
+    return min + (0 | Math.random() * (max - min + 1));
+  };
+
   // List of HTML entities for escaping.
-  var htmlEscapes = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;',
-    '/': '&#x2F;'
+  var entityMap = {
+    escape: {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#x27;',
+      '/': '&#x2F;'
+    }
+  };
+  entityMap.unescape = _.invert(entityMap.escape);
+
+  // Regexes containing the keys and values listed immediately above.
+  var entityRegexes = {
+    escape:   new RegExp('[' + _.keys(entityMap.escape).join('') + ']', 'g'),
+    unescape: new RegExp('(' + _.keys(entityMap.unescape).join('|') + ')', 'g')
   };
 
-  // Regex containing the keys listed immediately above.
-  var htmlEscaper = /[&<>"'\/]/g;
-
-  // Escape a string for HTML interpolation.
-  _.escape = function(string) {
-    return ('' + string).replace(htmlEscaper, function(match) {
-      return htmlEscapes[match];
-    });
-  };
+  // Functions for escaping and unescaping strings to/from HTML interpolation.
+  _.each(['escape', 'unescape'], function(method) {
+    _[method] = function(string) {
+      if (string == null) return '';
+      return ('' + string).replace(entityRegexes[method], function(match) {
+        return entityMap[method][match];
+      });
+    };
+  });
 
   // If the value of the named property is a function then invoke it;
   // otherwise, return it.
@@ -1033,10 +1070,16 @@
     if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
 
     source = "var __t,__p='',__j=Array.prototype.join," +
-      "print=function(){__p+=__j.call(arguments,'')};\n" +
+      "print=function(){__p+=__j.call(arguments,'');};\n" +
       source + "return __p;\n";
 
-    var render = new Function(settings.variable || 'obj', '_', source);
+    try {
+      var render = new Function(settings.variable || 'obj', '_', source);
+    } catch (e) {
+      e.source = source;
+      throw e;
+    }
+
     if (data) return render(data, _);
     var template = function(data) {
       return render.call(this, data, _);

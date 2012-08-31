@@ -333,65 +333,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.drop');
-
-  (function() {
-    var object = { 'a': 1, 'b': 2 },
-        actual = { 'b': 2 };
-
-    test('should accept individual property names', function() {
-      deepEqual(_.drop(object, 'a'), actual);
-    });
-
-    test('should accept an array of property names', function() {
-      deepEqual(_.drop(object, ['a', 'c']), actual);
-    });
-
-    test('should accept mixes of individual and arrays of property names', function() {
-      deepEqual(_.drop(object, ['a'], 'c'), actual);
-    });
-
-    test('should iterate over inherited properties', function() {
-      function Foo() {}
-      Foo.prototype = object;
-
-      deepEqual(_.drop(new Foo, 'a'), actual);
-    });
-
-    test('should work with a `callback` argument', function() {
-      var actual = _.drop(object, function(value) {
-        return value == 1;
-      });
-
-      deepEqual(actual, { 'b': 2 });
-    });
-
-    test('should pass the correct `callback` arguments', function() {
-      var args,
-          lastKey = _.keys(object).pop();
-
-      var expected = lastKey == 'b'
-        ? [1, 'a', object]
-        : [2, 'b', object];
-
-      _.drop(object, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, expected);
-    });
-
-    test('should correct set the `this` binding', function() {
-      var actual = _.drop(object, function(value) {
-        return value == this.a;
-      }, { 'a': 1 });
-
-      deepEqual(actual, { 'b': 2 });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.escape');
 
   (function() {
@@ -1052,6 +993,75 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.object');
+
+  (function() {
+    test('supports not passing a `values` argument', function() {
+      deepEqual(_.object(['a', 'b', 'c']), { 'a': undefined, 'b': undefined, 'c': undefined });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.omit');
+
+  (function() {
+    var object = { 'a': 1, 'b': 2 },
+        actual = { 'b': 2 };
+
+    test('should accept individual property names', function() {
+      deepEqual(_.omit(object, 'a'), actual);
+    });
+
+    test('should accept an array of property names', function() {
+      deepEqual(_.omit(object, ['a', 'c']), actual);
+    });
+
+    test('should accept mixes of individual and arrays of property names', function() {
+      deepEqual(_.omit(object, ['a'], 'c'), actual);
+    });
+
+    test('should iterate over inherited properties', function() {
+      function Foo() {}
+      Foo.prototype = object;
+
+      deepEqual(_.omit(new Foo, 'a'), actual);
+    });
+
+    test('should work with a `callback` argument', function() {
+      var actual = _.omit(object, function(value) {
+        return value == 1;
+      });
+
+      deepEqual(actual, { 'b': 2 });
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args,
+          lastKey = _.keys(object).pop();
+
+      var expected = lastKey == 'b'
+        ? [1, 'a', object]
+        : [2, 'b', object];
+
+      _.omit(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, expected);
+    });
+
+    test('should correct set the `this` binding', function() {
+      var actual = _.omit(object, function(value) {
+        return value == this.a;
+      }, { 'a': 1 });
+
+      deepEqual(actual, { 'b': 2 });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.partial');
 
   (function() {
@@ -1619,16 +1629,6 @@
       };
 
       deepEqual(_.where(collection, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1, 'b': 2 }]);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.zipObject');
-
-  (function() {
-    test('supports not passing a `values` argument', function() {
-      deepEqual(_.zipObject(['a', 'b', 'c']), { 'a': undefined, 'b': undefined, 'c': undefined });
     });
   }());
 

@@ -187,6 +187,7 @@
     'min',
     'mixin',
     'noConflict',
+    'object',
     'omit',
     'once',
     'opera',
@@ -227,8 +228,7 @@
     'where',
     'without',
     'wrap',
-    'zip',
-    'zipObject'
+    'zip'
   ];
 
   /*--------------------------------------------------------------------------*/

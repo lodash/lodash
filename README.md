@@ -209,7 +209,6 @@ require({
  * `_.defer`
  * `_.difference`
  * `_.each`
- * `_.escape`
  * `_.every`, `_.all`
  * `_.extend`
  * `_.filter`, `_.select`
@@ -220,6 +219,7 @@ require({
  * `_.groupBy`
  * `_.indexOf`
  * `_.intersection`
+ * `_.invert`
  * `_.invoke`
  * `_.isArguments`
  * `_.isDate`
@@ -238,6 +238,7 @@ require({
  * `_.min`
  * `_.mixin`
  * `_.omit`
+ * `_.pairs`
  * `_.pick`
  * `_.pluck`
  * `_.reduce`, `_.foldl`, `_.inject`

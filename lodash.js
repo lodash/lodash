@@ -1865,7 +1865,7 @@
    * @static
    * @memberOf _
    * @category Objects
-   * @param {Object} object The object to inspect..
+   * @param {Object} object The object to inspect.
    * @returns {Array} Returns new array of key-value pairs.
    * @example
    *
@@ -1875,7 +1875,7 @@
   var pairs = createIterator({
     'args': 'object',
     'init':'[]',
-    'inLoop': 'result.push([index, value])'
+    'inLoop': 'result'  + (isKeysFast ? '[ownIndex] = ' : '.push') + '([index, value])'
   });
 
   /**

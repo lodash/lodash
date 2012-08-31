@@ -595,7 +595,7 @@
       .replace(/(?: *\/\/.*\n)*\s*'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, '$2')
       // remove `isKeysFast` from `beforeLoop.object` of `mapIteratorOptions`
       .replace(/=\s*'\s*\+\s*\(isKeysFast.+/, "= []'")
-      // remove `isKeysFast` from `inLoop.object` of `mapIteratorOptions`, `invoke`, `pluck`, and `sortBy`
+      // remove `isKeysFast` from `inLoop.object` of `mapIteratorOptions`, `invoke`, `pairs`, `pluck`, and `sortBy`
       .replace(/'\s*\+\s*\(isKeysFast[^)]+?\)\s*\+\s*'/g, '.push')
       // remove data object property assignment in `createIterator`
       .replace(/\s*.+?\.isKeysFast *=.+/, '');

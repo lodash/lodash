@@ -1304,10 +1304,6 @@
       })
     });
 
-    test('should work with an object that has a `length` property', function() {
-      equal(_.size({ 'length': 3 }), 1);
-    });
-
     test('should work with jQuery/MooTools DOM query collections', function() {
       function Foo(elements) { Array.prototype.push.apply(this, elements); }
       Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };

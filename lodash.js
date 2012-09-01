@@ -3837,15 +3837,15 @@
    * // => an integer between 0 and less than 1
    */
   function random(min, max) {
-    if (!arguments.length) {
+    if (min == null && max == null) {
       return nativeRandom();
     }
-    min || (min = 0);
-    if (!max) {
+    min = +min || 0;
+    if (max == null) {
       max = min;
       min = 0;
     }
-    return min + nativeFloor(nativeRandom() * (max - min + 1));
+    return min + nativeFloor(nativeRandom() * ((+max || 0) - min + 1));
   }
 
   /**

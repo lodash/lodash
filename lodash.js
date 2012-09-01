@@ -1921,45 +1921,6 @@
   });
 
   /**
-   * Gets the size of `value` by returning `value.length` if `value` is an
-   * array, string, or `arguments` object. If `value` is an object, size is
-   * determined by returning the number of own enumerable properties it has.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Array|Object|String} value The value to inspect.
-   * @returns {Number} Returns `value.length` or number of own enumerable properties.
-   * @example
-   *
-   * _.size([1, 2]);
-   * // => 2
-   *
-   * _.size({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => 3
-   *
-   * _.size('curly');
-   * // => 5
-   */
-  function size(value) {
-    if (!value) {
-      return 0;
-    }
-    var className = toString.call(value),
-        length = value.length;
-
-    // return `value.length` for `arguments` objects, arrays, strings, and DOM
-    // query collections of libraries like jQuery and MooTools
-    // http://code.google.com/p/fbug/source/browse/branches/firebug1.9/content/firebug/chrome/reps.js?r=12614#653
-    // http://trac.webkit.org/browser/trunk/Source/WebCore/inspector/InjectedScriptSource.js?rev=125186#L609
-    if (arrayLikeClasses[className] || (noArgsClass && isArguments(value)) ||
-        (className == objectClass && length > -1 && length === length >>> 0 && isFunction(value.splice))) {
-      return length;
-    }
-    return keys(value).length;
-  }
-
-  /**
    * Creates an array composed of the own enumerable property values of `object`.
    *
    * @static
@@ -2364,6 +2325,34 @@
   var reject = createIterator(baseIteratorOptions, filterIteratorOptions, {
     'inLoop': '!' + filterIteratorOptions.inLoop
   });
+
+  /**
+   * Gets the size of the `collection` by returning `collection.length` for arrays
+   * and array-like objects or the number of own enumerable properties for objects.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|String} collection The collection to inspect.
+   * @returns {Number} Returns `collection.length` or number of own enumerable properties.
+   * @example
+   *
+   * _.size([1, 2]);
+   * // => 2
+   *
+   * _.size({ 'one': 1, 'two': 2, 'three': 3 });
+   * // => 3
+   *
+   * _.size('curly');
+   * // => 5
+   */
+  function size(collection) {
+    if (!collection) {
+      return 0;
+    }
+    var length = collection.length;
+    return length > -1 && length === length >>> 0 ? length : keys(collection).length;
+  }
 
   /**
    * Checks if the `callback` returns a truthy value for **any** element of a
@@ -3833,8 +3822,8 @@
    * @static
    * @memberOf _
    * @category Utilities
-   * @param {Number} min The minimum possible value
-   * @param {Number} max The maximum possible value
+   * @param {Number} min The minimum possible value.
+   * @param {Number} max The maximum possible value.
    * @returns {Number} Returns the random number.
    * @example
    *

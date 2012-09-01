@@ -147,6 +147,7 @@
     'reduceRight',
     'reject',
     'rest',
+    'result',
     'shuffle',
     'size',
     'some',

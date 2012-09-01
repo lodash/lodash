@@ -186,7 +186,7 @@ require({
  * `_.forEach` should be chainable [[#142](https://github.com/documentcloud/underscore/issues/142), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L521-524)]
  * `_.forEach` should allow exiting iteration early [[#211](https://github.com/documentcloud/underscore/issues/211), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L616-635)]
  * `_.isElement` should use strict equality for its duck type check [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L731-740)]
- * `_.isEmpty` and `_.size` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L767-772)]
+ * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L767-772)]
  * `_.isEqual` should return `true` for like-objects from different documents [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L808-828)]
  * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L836-848)]
  * `_.isNaN(new Number(NaN))` should return `true` [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L856-858)]

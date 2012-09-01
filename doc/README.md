@@ -1912,7 +1912,7 @@ initialize();
 Creates a two dimensional array of the given object's key-value pairs, i.e. `[[key1, value1], [key2, value2]]`.
 
 #### Arguments
-1. `object` *(Object)*: The object to inspect..
+1. `object` *(Object)*: The object to inspect.
 
 #### Returns
 *(Array)*: Returns new array of key-value pairs.
@@ -2025,8 +2025,8 @@ _.pluck(stooges, 'name');
 Produces a random number between `min` and `max` *(inclusive)*. If only one argument is passed, a number between `0` and the given number will be returned. If no arguments are passed `_.random` will act as `Math.random`.
 
 #### Arguments
-1. `min` *(Number)*: The minimum possible value
-2. `max` *(Number)*: The maximum possible value
+1. `min` *(Number)*: The minimum possible value.
+2. `max` *(Number)*: The maximum possible value.
 
 #### Returns
 *(Number)*: Returns the random number.

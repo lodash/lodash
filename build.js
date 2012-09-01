@@ -233,7 +233,7 @@
     'rest': [],
     'result': ['isFunction'],
     'shuffle': [],
-    'size': ['isArguments', 'isFunction', 'keys'],
+    'size': ['keys'],
     'some': ['identity'],
     'sortBy': [],
     'sortedIndex': ['bind'],
@@ -610,7 +610,7 @@
    */
   function removeNoArgsClass(source) {
     return removeVar(source, 'noArgsClass')
-      // remove `noArgsClass` from `_.clone`, `_.isEqual`, and `_.size`
+      // remove `noArgsClass` from `_.clone` and `_.isEqual`
       .replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '')
       // remove `noArgsClass` from `_.isEqual`
       .replace(/if *\(noArgsClass[^}]+?}\n/, '');
@@ -1111,7 +1111,7 @@
   if (isRemoved(source, 'clone', 'merge')) {
     source = removeFunction(source, 'isPlainObject');
   }
-  if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual', 'size')) {
+  if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual')) {
     source = removeNoArgsClass(source);
   }
   if (isRemoved(source, 'isEqual', 'isPlainObject')) {

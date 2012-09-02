@@ -104,9 +104,9 @@
   /** Used to protect the specified properties from getting minified */
   var propWhitelist = [
     '_',
-    '_chain',
-    '_wrapped',
+    '__chain__',
     '__proto__',
+    '__wrapped__',
     'after',
     'all',
     'amd',

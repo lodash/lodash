@@ -1452,12 +1452,9 @@
     }
     if (objectTypes[typeof a] || objectTypes[typeof b] || thorough.value) {
       // unwrap any LoDash wrapped values
-      if (a._chain) {
-        a = a._wrapped;
-      }
-      if (b._chain) {
-        b = b._wrapped;
-      }
+      a = a._wrapped || a;
+      b = b._wrapped || b;
+
       // use custom `isEqual` method if available
       if (a.isEqual && isFunction(a.isEqual)) {
         thorough.value = null;

@@ -308,10 +308,10 @@
    */
   function LoDash(value) {
     // exit early if already wrapped
-    if (value && value._wrapped) {
+    if (value && value.__wrapped__) {
       return value;
     }
-    this._wrapped = value;
+    this.__wrapped__ = value;
   }
 
   /**
@@ -1452,8 +1452,8 @@
     }
     if (objectTypes[typeof a] || objectTypes[typeof b] || thorough.value) {
       // unwrap any LoDash wrapped values
-      a = a._wrapped || a;
-      b = b._wrapped || b;
+      a = a.__wrapped__ || a;
+      b = b.__wrapped__ || b;
 
       // use custom `isEqual` method if available
       if (a.isEqual && isFunction(a.isEqual)) {
@@ -3794,14 +3794,14 @@
       var func = lodash[methodName] = object[methodName];
 
       LoDash.prototype[methodName] = function() {
-        var args = [this._wrapped];
+        var args = [this.__wrapped__];
         if (arguments.length) {
           push.apply(args, arguments);
         }
         var result = func.apply(lodash, args);
-        if (this._chain) {
+        if (this.__chain__) {
           result = new LoDash(result);
-          result._chain = true;
+          result.__chain__ = true;
         }
         return result;
       };
@@ -4178,7 +4178,7 @@
    */
   function chain(value) {
     value = new LoDash(value);
-    value._chain = true;
+    value.__chain__ = true;
     return value;
   }
 
@@ -4222,7 +4222,7 @@
    * // => [1, 2, 3]
    */
   function wrapperChain() {
-    this._chain = true;
+    this.__chain__ = true;
     return this;
   }
 
@@ -4239,7 +4239,7 @@
    * // => [1, 2, 3]
    */
   function wrapperValue() {
-    return this._wrapped;
+    return this.__wrapped__;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -4387,7 +4387,7 @@
     var func = ArrayProto[methodName];
 
     LoDash.prototype[methodName] = function() {
-      var value = this._wrapped;
+      var value = this.__wrapped__;
       func.apply(value, arguments);
 
       // avoid array-like object bugs with `Array#shift` and `Array#splice` in
@@ -4395,9 +4395,9 @@
       if (hasObjectSpliceBug && value.length === 0) {
         delete value[0];
       }
-      if (this._chain) {
+      if (this.__chain__) {
         value = new LoDash(value);
-        value._chain = true;
+        value.__chain__ = true;
       }
       return value;
     };
@@ -4408,12 +4408,12 @@
     var func = ArrayProto[methodName];
 
     LoDash.prototype[methodName] = function() {
-      var value = this._wrapped,
+      var value = this.__wrapped__,
           result = func.apply(value, arguments);
 
-      if (this._chain) {
+      if (this.__chain__) {
         result = new LoDash(result);
-        result._chain = true;
+        result.__chain__ = true;
       }
       return result;
     };

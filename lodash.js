@@ -308,7 +308,7 @@
    */
   function LoDash(value) {
     // exit early if already wrapped
-    if (value && value._wrapped) {
+    if (value instanceof LoDash) {
       return value;
     }
     this._wrapped = value;

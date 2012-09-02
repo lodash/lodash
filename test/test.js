@@ -153,6 +153,10 @@
       var wrapped = _([]);
       equal(_(wrapped), wrapped);
     });
+
+    test('should return LoDash instance if value has _wrapped property', function() {
+      ok(_({_wrapped: true}) instanceof _);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

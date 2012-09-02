@@ -966,6 +966,49 @@
   }
 
   /**
+   * A fallback implementation of `isPlainObject`.
+   *
+   * @private
+   * @param {Mixed} value The value to check.
+   * @param {Boolean} [skipArgsCheck=false] Internally used to skip checks for
+   *  `arguments` objects.
+   * @returns {Boolean} Returns `true` if the `value` is a plain `Object` object,
+   *  else `false`.
+   */
+  function isPlainFallback(value, skipArgsCheck) {
+    // avoid non-objects and false positives for `arguments` objects
+    var result = false;
+    if (!(value && typeof value == 'object') || (!skipArgsCheck && isArguments(value))) {
+      return result;
+    }
+    // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
+    // methods that are `typeof` "string" and still can coerce nodes to strings.
+    // Also check that the constructor is `Object` (i.e. `Object instanceof Object`)
+    var ctor = value.constructor;
+    if ((!noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string')) &&
+        (!isFunction(ctor) || ctor instanceof ctor)) {
+      // IE < 9 iterates inherited properties before own properties. If the first
+      // iterated property is an object's own property then there are no inherited
+      // enumerable properties.
+      if (iteratesOwnLast) {
+        forIn(value, function(objValue, objKey) {
+          result = !hasOwnProperty.call(value, objKey);
+          return false;
+        });
+        return result === false;
+      }
+      // In most environments an object's own properties are iterated before
+      // its inherited properties. If the last iterated property is an object's
+      // own property then there are no inherited enumerable properties.
+      forIn(value, function(objValue, objKey) {
+        result = objKey;
+      });
+      return result === false || hasOwnProperty.call(value, result);
+    }
+    return result;
+  }
+
+  /**
    * Checks if a given `value` is an object created by the `Object` constructor
    * assuming objects created by the `Object` constructor have no inherited
    * enumerable properties and that there are no `Object.prototype` extensions.
@@ -977,46 +1020,17 @@
    * @returns {Boolean} Returns `true` if the `value` is a plain `Object` object,
    *  else `false`.
    */
-  function isPlainObject(value, skipArgsCheck) {
-    return value
-      ? value == ObjectProto || (value.__proto__ == ObjectProto && (skipArgsCheck || !isArguments(value)))
-      : false;
-  }
-  // fallback for IE
-  if (!isPlainObject(objectTypes)) {
-    isPlainObject = function(value, skipArgsCheck) {
-      // avoid non-objects and false positives for `arguments` objects
-      var result = false;
-      if (!(value && typeof value == 'object') || (!skipArgsCheck && isArguments(value))) {
-        return result;
-      }
-      // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-      // methods that are `typeof` "string" and still can coerce nodes to strings.
-      // Also check that the constructor is `Object` (i.e. `Object instanceof Object`)
-      var ctor = value.constructor;
-      if ((!noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string')) &&
-          (!isFunction(ctor) || ctor instanceof ctor)) {
-        // IE < 9 iterates inherited properties before own properties. If the first
-        // iterated property is an object's own property then there are no inherited
-        // enumerable properties.
-        if (iteratesOwnLast) {
-          forIn(value, function(objValue, objKey) {
-            result = !hasOwnProperty.call(value, objKey);
-            return false;
-          });
-          return result === false;
-        }
-        // In most environments an object's own properties are iterated before
-        // its inherited properties. If the last iterated property is an object's
-        // own property then there are no inherited enumerable properties.
-        forIn(value, function(objValue, objKey) {
-          result = objKey;
-        });
-        return result === false || hasOwnProperty.call(value, result);
-      }
-      return result;
-    };
-  }
+  var isPlainObject = objectTypes.__proto__ != ObjectProto ? isPlainFallback : function(value, skipArgsCheck) {
+    if (!value) {
+      return false;
+    }
+    var valueOf = value.valueOf,
+        objProto = typeof valueOf == 'function' && valueOf.__proto__.__proto__;
+
+    return objProto
+      ? value == objProto || (value.__proto__ == objProto && (skipArgsCheck || !isArguments(value)))
+      : isPlainFallback(value);
+  };
 
   /**
    * A shim implementation of `Object.keys` that produces an array of the given

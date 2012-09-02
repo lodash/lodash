@@ -83,6 +83,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  // add object from iframe
+  (function() {
+    if (!window.document) {
+      return;
+    }
+    var body = document.body,
+        iframe = document.createElement('iframe');
+
+    iframe.frameBorder = iframe.height = iframe.width = 0;
+    body.appendChild(iframe);
+    var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
+    idoc.write("<script>parent._._object = { 'a': 1, 'b': 2, 'c': 3 };<\/script>");
+    idoc.close();
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   // explicitly call `QUnit.module()` instead of `module()`
   // in case we are in a CLI environment
   QUnit.module('lodash');
@@ -191,6 +208,7 @@
       'boolean object': Object(false),
       'an object': { 'a': 0, 'b': 1, 'c': 3 },
       'an object with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
+      'an object from another document': _._object || {},
       'null': null,
       'a number': 3,
       'a number object': Object(3),
@@ -205,12 +223,8 @@
     _.forOwn(objects, function(object, key) {
       test('should deep clone ' + key + ' correctly', function() {
         var clone = _.clone(object, true);
+        ok(_.isEqual(object, clone));
 
-        if (object == null) {
-          equal(clone, object);
-        } else {
-          deepEqual(clone.valueOf(), object.valueOf());
-        }
         if (_.isObject(object)) {
           ok(clone !== object);
         } else {
@@ -747,21 +761,10 @@
     });
 
     test('should return `true` for like-objects from different documents', function() {
-      if (window.document) {
-        var body = document.body,
-            iframe = document.createElement('iframe'),
-            object = { 'a': 1, 'b': 2, 'c': 3 };
-
-        body.appendChild(iframe);
-        var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
-        idoc.write("<script>parent._._object = { 'a': 1, 'b': 2, 'c': 3 };<\/script>");
-        idoc.close();
-      }
       // ensure `_._object` is assigned (unassigned in Opera 10.00)
       if (_._object) {
+        var object = { 'a': 1, 'b': 2, 'c': 3 };
         equal(_.isEqual(object, _._object), true);
-        body.removeChild(iframe);
-        delete _._object;
       }
       else {
         skipTest();

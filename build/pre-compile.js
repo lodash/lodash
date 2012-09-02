@@ -231,7 +231,11 @@
     'where',
     'without',
     'wrap',
-    'zip'
+    'zip',
+
+    // properties used by underscore.js
+    '_chain',
+    '_wrapped'
   ];
 
   /*--------------------------------------------------------------------------*/
@@ -272,6 +276,9 @@
     // remove brackets from `_.escape()` in `_.template`
     source = source.replace(/__e *= *_\['escape']/g, '__e=_.escape');
 
+    // remove brackets from `_.escape()` in underscore.js `_.template`
+    source = source.replace(/_\['escape'\]\(__t'/g, '_.escape(__t');
+
     // remove brackets from `collection.indexOf` in `_.contains`
     source = source.replace("collection['indexOf'](target)", 'collection.indexOf(target)');
 
@@ -285,6 +292,9 @@
         return match == false || match == '\\n' ? '' : match;
       });
     });
+
+    // add newline to `+"__p+='"` in underscore.js `_.template`
+    source = source.replace(/\+"__p\+='"/g, '+"\\n__p+=\'"');
 
     // remove whitespace from `_.template` related regexes
     source = source.replace(/(?:reDelimiterCode\w+|reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {

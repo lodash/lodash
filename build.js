@@ -573,17 +573,6 @@
   }
 
   /**
-   * Removes the `isPlainObject` fallback from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the source with the `isPlainObject` fallback removed.
-   */
-  function removeIsPlainObjectFallback(source) {
-    return source.replace(/(?:\s*\/\/.*)*\n( +)if *\(!isPlainObject[\s\S]+?};\n\1}/, '');
-  }
-
-  /**
    * Removes the `Object.keys` object iteration optimization from `source`.
    *
    * @private
@@ -1003,7 +992,6 @@
 
     if (!isUnderscore) {
       source = removeIsArgumentsFallback(source);
-      source = removeIsPlainObjectFallback(source);
       source = removeNoArgsClass(source);
     }
 
@@ -1131,7 +1119,6 @@
     source = removeVar(source, 'reNative');
   }
   if (isRemoved(source, 'createIterator', 'clone', 'merge')) {
-    source = removeIsPlainObjectFallback(source);
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
   }
   if (isRemoved(source, 'createIterator', 'isEqual')) {

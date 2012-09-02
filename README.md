@@ -27,6 +27,7 @@ For more information check out these screencasts over Lo-Dash:
  * [Lo-Dash optimizations and custom builds](https://vimeo.com/44154601)
  * [Lo-Dash’s origin and why it’s a better utility belt](https://vimeo.com/44154600)
  * [Unit testing in Lo-Dash](https://vimeo.com/45865290)
+ * [Lo-Dash’s approach to native method use](https://vimeo.com/48576012)
 
 ## Features
 

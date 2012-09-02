@@ -38,7 +38,6 @@ For more information check out these screencasts over Lo-Dash:
  * [_.forEach](http://lodash.com/docs#forEach) is chainable and supports exiting iteration early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating over an object’s own and inherited properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating over an object’s own properties
- * [_.groupBy](http://lodash.com/docs#groupBy), [_.sortedIndex](http://lodash.com/docs#sortedIndex), and [_.uniq](http://lodash.com/docs#uniq) accept a `thisArg` argument
  * [_.indexOf](http://lodash.com/docs#indexOf) and [_.lastIndexOf](http://lodash.com/docs#lastIndexOf) accept a `fromIndex` argument
  * [_.merge](http://lodash.com/docs#merge) for a *“deep”* [_.extend](http://lodash.com/docs#extend)
  * [_.omit](http://lodash.com/docs#omit) for the inverse functionality of [_.pick](http://lodash.com/docs#pick)
@@ -49,6 +48,7 @@ For more information check out these screencasts over Lo-Dash:
  * [_.unescape](http://lodash.com/docs#unescape) to unescape strings escaped by [_.escape](http://lodash.com/docs#escape)
  * [_.where](http://lodash.com/docs#where) for filtering collections by contained properties
  * [_.object](http://lodash.com/docs#object) for composing objects
+ * [_.countBy](http://lodash.com/docs#countBy), [_.groupBy](http://lodash.com/docs#groupBy), [_.sortedIndex](http://lodash.com/docs#sortedIndex), and [_.uniq](http://lodash.com/docs#uniq) accept a `thisArg` argument
  * [_.contains](http://lodash.com/docs#contains), [_.size](http://lodash.com/docs#size), [_.toArray](http://lodash.com/docs#toArray),
    [and more…](http://lodash.com/docs "_.every, _.filter, _.find, _.forEach, _.groupBy, _.invoke, _.map, _.pluck, _.reduce, _.reduceRight, _.reject, _.some, _sortBy") accept strings
 

@@ -6,11 +6,15 @@
   var fs = require('fs');
 
   /** The minimal license/copyright template */
-  var licenseTemplate =
-    '/*!\n' +
-    ' Lo-Dash @VERSION lodash.com/license\n' +
-    ' Underscore.js 1.3.3 github.com/documentcloud/underscore/blob/master/LICENSE\n' +
-    '*/';
+  var licenseTemplate = {
+    'lodash':
+      '/*!\n' +
+      ' Lo-Dash @VERSION lodash.com/license\n' +
+      ' Underscore.js 1.3.3 github.com/documentcloud/underscore/blob/master/LICENSE\n' +
+      '*/',
+    'underscore':
+      '/*! Underscore.js @VERSION github.com/documentcloud/underscore/blob/master/LICENSE */'
+  };
 
   /*--------------------------------------------------------------------------*/
 
@@ -29,7 +33,9 @@
     }
 
     // set the version
-    var license = licenseTemplate.replace('@VERSION', snippet[2]);
+    var license = (
+      snippet ? licenseTemplate[/lodash/i.test(source) ? 'lodash' : 'underscore'] : ''
+    ).replace('@VERSION', snippet[2]);
 
     // move vars exposed by Closure Compiler into the IIFE
     source = source.replace(/^([^(\n]+)\s*(\(function[^)]+\){)/, '$2$1');

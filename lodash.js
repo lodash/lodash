@@ -4066,10 +4066,8 @@
     try {
       result = Function('_', 'return ' + text)(lodash);
     } catch(e) {
-      // defer syntax errors until the compiled template is executed to allow
-      // examining the `source` property beforehand and for consistency,
-      // because other template related errors occur at execution
-      result = function() { throw e; };
+      e.source = text;
+      throw e;
     }
 
     if (data) {

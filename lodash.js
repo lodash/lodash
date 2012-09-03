@@ -447,8 +447,8 @@
     // else using a for-in loop
     '  <% } else { %>\n' +
     '  <%= objectBranch.beforeLoop %>;\n' +
-    '  for (index in iteratee) {' +
-    '    <% if (!hasDontEnumBug || useHas) { %>\n    if (<%' +
+    '  for (index in iteratee) {<%' +
+    '    if (!hasDontEnumBug || useHas) { %>\n    if (<%' +
     '      if (!hasDontEnumBug) { %>!(skipProto && index == \'prototype\')<% }' +
     '      if (!hasDontEnumBug && useHas) { %> && <% }' +
     '      if (useHas) { %>hasOwnProperty.call(iteratee, index)<% }' +
@@ -966,14 +966,16 @@
   }
 
   /**
-   * A fallback implementation of `isPlainObject`.
+   * A fallback implementation of `isPlainObject` that checks if a given `value`
+   * is an object created by the `Object` constructor, assuming objects created
+   * by the `Object` constructor have no inherited enumerable properties and that
+   * there are no `Object.prototype` extensions.
    *
    * @private
    * @param {Mixed} value The value to check.
    * @param {Boolean} [skipArgsCheck=false] Internally used to skip checks for
    *  `arguments` objects.
-   * @returns {Boolean} Returns `true` if the `value` is a plain `Object` object,
-   *  else `false`.
+   * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
    */
   function isPlainFallback(value, skipArgsCheck) {
     // avoid non-objects and false positives for `arguments` objects
@@ -1009,23 +1011,20 @@
   }
 
   /**
-   * Checks if a given `value` is an object created by the `Object` constructor
-   * assuming objects created by the `Object` constructor have no inherited
-   * enumerable properties and that there are no `Object.prototype` extensions.
+   * Checks if a given `value` is an object created by the `Object` constructor.
    *
    * @private
    * @param {Mixed} value The value to check.
    * @param {Boolean} [skipArgsCheck=false] Internally used to skip checks for
    *  `arguments` objects.
-   * @returns {Boolean} Returns `true` if the `value` is a plain `Object` object,
-   *  else `false`.
+   * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
    */
   var isPlainObject = objectTypes.__proto__ != ObjectProto ? isPlainFallback : function(value, skipArgsCheck) {
     if (!value) {
       return false;
     }
     var valueOf = value.valueOf,
-        objProto = typeof valueOf == 'function' && valueOf.__proto__.__proto__;
+        objProto = typeof valueOf == 'function' && (objProto = valueOf.__proto__) && objProto.__proto__;
 
     return objProto
       ? value == objProto || (value.__proto__ == objProto && (skipArgsCheck || !isArguments(value)))

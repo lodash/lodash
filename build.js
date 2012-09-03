@@ -66,6 +66,29 @@
       });
     }
     else if (isUnderscore) {
+      // remove `deep` clone functionality
+      source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
+        '  function clone(value) {',
+        '    if (value == null) {',
+        '      return value;',
+        '    }',
+        '    var isObj = objectTypes[typeof value];',
+        '    if (isObj && value.clone && isFunction(value.clone)) {',
+        '      return value.clone(deep);',
+        '    }',
+        '    if (isObj) {',
+        '      var className = toString.call(value);',
+        '      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {',
+        '        return value;',
+        '      }',
+        '      var isArr = className == arrayClass;',
+        '    }',
+        '    return isObj',
+        '      ? (isArr ? slice.call(value) : extend({}, value))',
+        '      : value;',
+        '  }'
+      ].join('\n'));
+
       // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
       source = source
         .replace(/(?: *\/\/.*\n)*\s*' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
@@ -258,21 +281,21 @@
   };
 
   /** Used to report invalid arguments */
-  var invalidArgs = lodash.without.apply(lodash, [argv.slice(2)].concat([
-    'backbone',
-    'csp',
-    'legacy',
-    'mobile',
-    'strict',
-    'underscore',
-    'category',
-    'exclude',
-    'include',
-    '-h',
-    '--help',
-    '-V',
-    '--version'
-  ]));
+  var invalidArgs = lodash.reject(argv.slice(2), function(value) {
+    if (/^(?:category|exclude|include)=(?:.*)$/.test(value)) {
+      return true;
+    }
+    return [
+      'backbone',
+      'csp',
+      'legacy',
+      'mobile',
+      'strict',
+      'underscore',
+      '-h', '--help',
+      '-V', '--version'
+    ].indexOf(value) > -1;
+  });
 
   /** Used to inline `iteratorTemplate` */
   var iteratorOptions = [
@@ -1128,7 +1151,10 @@
   if (isRemoved(source, 'toArray')) {
     source = removeVar(source, 'noArraySliceOnStrings');
   }
-  if (isRemoved(source, 'clone', 'merge')) {
+  if (isUnderscore
+        ? isRemoved(source, 'merge')
+        : isRemoved(source, 'clone', 'merge')
+      ) {
     source = removeFunction(source, 'isPlainObject');
   }
   if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual')) {
@@ -1149,11 +1175,11 @@
   if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
     source = removeVar(source, 'reNative');
   }
-  if (isRemoved(source, 'createIterator', 'clone', 'merge')) {
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
-  }
   if (isRemoved(source, 'createIterator', 'isEqual')) {
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
+  }
+  if (isRemoved(source, 'createIterator', 'isPlainObject')) {
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
   }
   if (isRemoved(source, 'createIterator', 'keys')) {
     source = removeVar(source, 'nativeKeys');

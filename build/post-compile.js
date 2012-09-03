@@ -34,7 +34,7 @@
 
     // set the version
     var license = (
-      snippet ? licenseTemplate[/lodash/i.test(source) ? 'lodash' : 'underscore'] : ''
+      snippet ? licenseTemplate[/call\(this\)[;\s]*$/.test(source) ? 'underscore' : 'lodash'] : ''
     ).replace('@VERSION', snippet[2]);
 
     // move vars exposed by Closure Compiler into the IIFE

@@ -1410,13 +1410,13 @@
       deepEqual(options, {});
     });
 
-    test('should be debuggable if compiled with errors', function() {
-      var source = _.template('<% if x %>').source;
-      ok(source.indexOf('__p') > -1);
-    });
-
-    test('should raise an error if a template, compiled with errors, is executed', function() {
-      raises(_.template('<% if x %>'));
+    test('should provide the template source when a SyntaxError occurs', function() {
+      try {
+        _.template('<% if x %>');
+      } catch(e) {
+        var source = e.source;
+      }
+      ok((source + '').indexOf('__p') > -1);
     });
 
     test('should work with complex "interpolate" delimiters', function() {

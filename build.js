@@ -11,29 +11,32 @@
       vm = require('vm'),
       minify = require(path.join(__dirname, 'build', 'minify'));
 
+  /** The arguments passed to build.js */
+  var argv = process.argv;
+
   /** The current working directory */
   var cwd = process.cwd();
 
   /** Flag used to specify a Backbone build */
-  var isBackbone = process.argv.indexOf('backbone') > -1;
+  var isBackbone = argv.indexOf('backbone') > -1;
 
   /** Flag used to specify a Content Security Policy build */
-  var isCSP = process.argv.indexOf('csp') > -1 || process.argv.indexOf('CSP') > -1;
+  var isCSP = argv.indexOf('csp') > -1 || argv.indexOf('CSP') > -1;
 
   /** Flag used to specify a legacy build */
-  var isLegacy = process.argv.indexOf('legacy') > -1;
+  var isLegacy = argv.indexOf('legacy') > -1;
 
   /** Flag used to specify an Underscore build */
-  var isUnderscore = process.argv.indexOf('underscore') > -1;
+  var isUnderscore = argv.indexOf('underscore') > -1;
 
   /** Flag used to specify a mobile build */
-  var isMobile = !isLegacy && (isCSP || isUnderscore || process.argv.indexOf('mobile') > -1);
+  var isMobile = !isLegacy && (isCSP || isUnderscore || argv.indexOf('mobile') > -1);
 
   /**
    * Flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are
    * constructed using the "use strict" directive.
    */
-  var isStrict = process.argv.indexOf('strict') > -1;
+  var isStrict = argv.indexOf('strict') > -1;
 
   /** Flag used to specify if the build should include the "use strict" directive */
   var useStrict = isStrict || !(isLegacy || isMobile);
@@ -254,7 +257,24 @@
     'zip': ['max', 'pluck']
   };
 
-  /** Used to `iteratorTemplate` */
+  /** Used to report invalid arguments */
+  var invalidArgs = lodash.without.apply(lodash, [argv.slice(2)].concat([
+    'backbone',
+    'csp',
+    'legacy',
+    'mobile',
+    'strict',
+    'underscore',
+    'category',
+    'exclude',
+    'include',
+    '-h',
+    '--help',
+    '-V',
+    '--version'
+  ]));
+
+  /** Used to inline `iteratorTemplate` */
   var iteratorOptions = [
     'args',
     'array',
@@ -298,7 +318,7 @@
   ]));
 
   /** Used to specify whether filtering is for exclusion or inclusion */
-  var filterType = process.argv.reduce(function(result, value) {
+  var filterType = argv.reduce(function(result, value) {
     if (result) {
       return result;
     }
@@ -333,15 +353,15 @@
       '    lodash backbone      Build containing all methods required by Backbone',
       '    lodash csp           Build supporting default Content Security Policy restrictions',
       '    lodash legacy        Build tailored for older browsers without ES5 support',
-      '    lodash mobile        Build with IE < 9 bug fixes and method compilation removed',
-      '    lodash strict        Build with `_.bindAll`, `_.defaults`, and `_.extend` in strict mode',
+      '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
+      '    lodash strict        Build with `_.bindAll`, `_.defaults`, & `_.extend` in strict mode',
       '    lodash underscore    Build containing only methods included in Underscore',
       '    lodash category=...  Comma separated categories of methods to include in the build',
       '    lodash exclude=...   Comma separated names of methods to exclude from the build',
       '    lodash include=...   Comma separated names of methods to include in the build',
       '',
-      '    All arguments, except `backbone` with `underscore`, `exclude` with `include`,',
-      '    and `legacy` with `csp`/`mobile`, may be combined.',
+      '    All arguments, except `exclude` with `include` & `legacy` with `csp` / `mobile`,',
+      '    may be combined.',
       '',
       '  Options:',
       '',
@@ -735,8 +755,15 @@
 
   /*--------------------------------------------------------------------------*/
 
+  // report invalid arguments
+  if (invalidArgs.length) {
+    console.log('\nInvalid arguments passed: ' + invalidArgs.join(', '));
+    displayHelp();
+    process.exit();
+  }
+
   // display help message
-  if (lodash.find(process.argv, function(arg) {
+  if (lodash.find(argv, function(arg) {
         return /^(?:-h|--help)$/.test(arg);
       })) {
     displayHelp();
@@ -744,7 +771,7 @@
   }
 
   // display `lodash.VERSION`
-  if (lodash.find(process.argv, function(arg) {
+  if (lodash.find(argv, function(arg) {
         return /^(?:-V|--version)$/.test(arg);
       })) {
     console.log(lodash.VERSION);
@@ -798,7 +825,7 @@
   /*--------------------------------------------------------------------------*/
 
   // add category methods
-  process.argv.some(function(value) {
+  argv.some(function(value) {
     var categories = value.match(/^category=(.*)$/);
     if (!categories) {
       return false;

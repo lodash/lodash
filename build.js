@@ -89,6 +89,9 @@
         '  }'
       ].join('\n'));
 
+      // remove Opera 10.53-10.60 JIT fixes
+      source = source.replace(/length *> *-1 *&& *length/g, 'length');
+
       // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
       source = source
         .replace(/(?: *\/\/.*\n)*\s*' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')

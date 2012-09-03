@@ -350,12 +350,12 @@
       '',
       '  Commands:',
       '',
-      '    lodash backbone      Build containing all methods required by Backbone',
+      '    lodash backbone      Build with only methods required by Backbone',
       '    lodash csp           Build supporting default Content Security Policy restrictions',
       '    lodash legacy        Build tailored for older browsers without ES5 support',
       '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
       '    lodash strict        Build with `_.bindAll`, `_.defaults`, & `_.extend` in strict mode',
-      '    lodash underscore    Build containing only methods included in Underscore',
+      '    lodash underscore    Build with only methods included in Underscore without iteration fixes',
       '    lodash category=...  Comma separated categories of methods to include in the build',
       '    lodash exclude=...   Comma separated names of methods to exclude from the build',
       '    lodash include=...   Comma separated names of methods to include in the build',
@@ -757,7 +757,11 @@
 
   // report invalid arguments
   if (invalidArgs.length) {
-    console.log('\nInvalid arguments passed: ' + invalidArgs.join(', '));
+    console.log(
+      '\n' +
+      'Invalid argument' + (invalidArgs.length > 1 ? 's' : '') +
+      ' passed: ' + invalidArgs.join(', ')
+    );
     displayHelp();
     process.exit();
   }

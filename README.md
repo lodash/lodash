@@ -48,7 +48,7 @@ For more information check out these screencasts over Lo-Dash:
  * [_.template](http://lodash.com/docs#template) utilizes [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl) for easier debugging
  * [_.unescape](http://lodash.com/docs#unescape) to unescape strings escaped by [_.escape](http://lodash.com/docs#escape)
  * [_.where](http://lodash.com/docs#where) for filtering collections by contained properties
- * [_.object](http://lodash.com/docs#object) for composing objects
+ * [_.object](https://github.com/bestiejs/lodash/tree/master/doc#_objectkeys--values) for composing objects
  * [_.countBy](http://lodash.com/docs#countBy), [_.groupBy](http://lodash.com/docs#groupBy), [_.sortedIndex](http://lodash.com/docs#sortedIndex), and [_.uniq](http://lodash.com/docs#uniq) accept a `thisArg` argument
  * [_.contains](http://lodash.com/docs#contains), [_.size](http://lodash.com/docs#size), [_.toArray](http://lodash.com/docs#toArray),
    [and more…](http://lodash.com/docs "_.every, _.filter, _.find, _.forEach, _.groupBy, _.invoke, _.map, _.pluck, _.reduce, _.reduceRight, _.reject, _.some, _sortBy") accept strings
@@ -179,7 +179,6 @@ require({
  * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L589-614)]
  * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L117-123)]
  * Register as an AMD module, but still export to global [[#431](https://github.com/documentcloud/underscore/pull/431), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L101-115)]
- * `_(…)` should return passed wrapper instances [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L135-138)]
  * `_.clone` should allow `deep` cloning [[#595](https://github.com/documentcloud/underscore/pull/595), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L205-220)]
  * `_.contains` should work with strings [[#667](https://github.com/documentcloud/underscore/pull/667), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L275-284)]
  * `_.countBy` and `_.groupBy` should only add values to own, not inherited, properties [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L292-299)]
@@ -195,7 +194,6 @@ require({
  * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1170-1173)]
  * `_.reduceRight` should pass correct callback arguments when iterating objects [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1205-1219)]
  * `_.sortedIndex` should support arrays with high `length` values [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1353-1362)]
- * `_.template` should not augment the `options` object [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1377-1381)]
  * `_.throttle` should work when called in a loop [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1473-1483)]
  * `_.toArray` uses custom `toArray` methods of arrays and strings [[test](https://github.com/bestiejs/lodash/blob/v0.6.1/test/test.js#L1510-1518)]
 

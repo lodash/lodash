@@ -135,6 +135,7 @@
     'escape',
     'evaluate',
     'every',
+    'exports',
     'extend',
     'filter',
     'find',

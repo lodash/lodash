@@ -88,17 +88,20 @@
         '      : value;',
         '  }'
       ].join('\n'));
+    }
+    if (isMobile) {
+      source = replaceVar(source, 'isKeysFast', 'false');
 
       // remove Opera 10.53-10.60 JIT fixes
       source = source.replace(/length *> *-1 *&& *length/g, 'length');
+
+      // remove `prototype` [[Enumerable]] fix from `_.keys`
+      source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(.+?propertyIsEnumerable[\s\S]+?\n\1}/, '');
 
       // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
       source = source
         .replace(/(?: *\/\/.*\n)*\s*' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
         .replace(/!hasDontEnumBug *\|\|/g, '');
-    }
-    if (isMobile) {
-      source = replaceVar(source, 'isKeysFast', 'false');
     }
     vm.runInNewContext(source, sandbox);
     return sandbox._;
@@ -946,11 +949,15 @@
 
     // build replacement code
     lodash.forOwn({
+      'Arguments': 'argsClass',
       'Date': 'dateClass',
       'Number': 'numberClass',
       'RegExp': 'regexpClass',
       'String': 'stringClass'
     }, function(value, key) {
+      if (!isUnderscore && key == 'Arguments') {
+        return;
+      }
       var funcName = 'is' + key,
           funcCode = matchFunction(source, funcName);
 

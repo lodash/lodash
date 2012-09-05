@@ -1309,7 +1309,6 @@
    *
    * @static
    * @memberOf _
-   * @alias methods
    * @category Objects
    * @param {Object} object The object to inspect.
    * @returns {Array} Returns a new array of property names that have function values.

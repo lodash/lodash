@@ -212,48 +212,50 @@ class Generator {
 
     // initialize $api array
     foreach ($this->entries as $entry) {
+      // skip invalid or private entries
+      $name = $entry->getName();
+      if (!$name || $entry->isPrivate()) {
+        continue;
+      }
 
-      if (!$entry->isPrivate()) {
-        $name = $entry->getName();
-        $members = $entry->getMembers();
-        $members = count($members) ? $members : array('');
+      $members = $entry->getMembers();
+      $members = count($members) ? $members : array('');
 
-        foreach ($members as $member) {
-          // create api category arrays
-          if (!isset($api[$member]) && $member) {
-            // create temporary entry to be replaced later
-            $api[$member] = new Entry('', '', $entry->lang);
-            $api[$member]->static = array();
-            $api[$member]->plugin = array();
+      foreach ($members as $member) {
+        // create api category arrays
+        if (!isset($api[$member]) && $member) {
+          // create temporary entry to be replaced later
+          $api[$member] = new Entry('', '', $entry->lang);
+          $api[$member]->static = array();
+          $api[$member]->plugin = array();
+        }
+
+        // append entry to api category
+        if (!$member || $entry->isCtor() || ($entry->getType() == 'Object' &&
+            !preg_match('/[=:]\s*null\s*[,;]?$/', $entry->entry))) {
+
+          // assign the real entry, replacing the temporary entry if it exist
+          $member = ($member ? $member . ($entry->isPlugin() ? '#' : '.') : '') . $name;
+          $entry->static = @$api[$member] ? $api[$member]->static : array();
+          $entry->plugin = @$api[$member] ? $api[$member]->plugin : array();
+
+          $api[$member] = $entry;
+          foreach ($entry->getAliases() as $alias) {
+            $api[$member] = $alias;
+            $alias->static = array();
+            $alias->plugin = array();
           }
-
-          // append entry to api category
-          if (!$member || $entry->isCtor() || ($entry->getType() == 'Object' &&
-              !preg_match('/[=:]\s*null\s*[,;]?$/', $entry->entry))) {
-
-            // assign the real entry, replacing the temporary entry if it exist
-            $member = ($member ? $member . ($entry->isPlugin() ? '#' : '.') : '') . $name;
-            $entry->static = @$api[$member] ? $api[$member]->static : array();
-            $entry->plugin = @$api[$member] ? $api[$member]->plugin : array();
-
-            $api[$member] = $entry;
-            foreach ($entry->getAliases() as $alias) {
-              $api[$member] = $alias;
-              $alias->static = array();
-              $alias->plugin = array();
-            }
+        }
+        else if ($entry->isStatic()) {
+          $api[$member]->static[] = $entry;
+          foreach ($entry->getAliases() as $alias) {
+            $api[$member]->static[] = $alias;
           }
-          else if ($entry->isStatic()) {
-            $api[$member]->static[] = $entry;
-            foreach ($entry->getAliases() as $alias) {
-              $api[$member]->static[] = $alias;
-            }
-          }
-          else if (!$entry->isCtor()) {
-            $api[$member]->plugin[] = $entry;
-            foreach ($entry->getAliases() as $alias) {
-              $api[$member]->plugin[] = $alias;
-            }
+        }
+        else if (!$entry->isCtor()) {
+          $api[$member]->plugin[] = $entry;
+          foreach ($entry->getAliases() as $alias) {
+            $api[$member]->plugin[] = $alias;
           }
         }
       }

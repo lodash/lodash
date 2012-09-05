@@ -426,7 +426,7 @@ welcome('moe');
 Checks if a given `target` element is present in a `collection` using strict equality for comparisons, i.e. `===`.
 
 #### Aliases
-include
+*include*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -645,7 +645,7 @@ _.escape('Moe, Larry & Curly');
 Checks if the `callback` returns a truthy value for **all** elements of a `collection`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
 #### Aliases
-all
+*all*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -699,7 +699,7 @@ _.extend({ 'name': 'moe' }, { 'age': 40 });
 Examines each element in a `collection`, returning an array of all elements the `callback` returns truthy for. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
 #### Aliases
-select
+*select*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -728,7 +728,7 @@ var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; })
 Examines each element in a `collection`, returning the first one the `callback` returns truthy for. The function returns as soon as it finds an acceptable element, and does not iterate over the entire `collection`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
 #### Aliases
-detect
+*detect*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -757,7 +757,7 @@ var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
 Gets the first element of the `array`. Pass `n` to return the first `n` elements of the `array`.
 
 #### Aliases
-head, take
+*head, take*
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
@@ -814,7 +814,7 @@ _.flatten([1, [2], [3, [[4]]]], true);
 Iterates over a `collection`, executing the `callback` for each element in the `collection`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*. Callbacks may exit iteration early by explicitly returning `false`.
 
 #### Aliases
-each
+*each*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -910,7 +910,7 @@ _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
 Creates a sorted array of all enumerable properties, own and inherited, of `object` that have function values.
 
 #### Aliases
-methods
+*methods*
 
 #### Arguments
 1. `object` *(Object)*: The object to inspect.
@@ -1659,7 +1659,7 @@ _.lastIndexOf([1, 2, 3, 1, 2, 3], 2, 3);
 Creates a new array of values by running each element in the `collection` through a `callback`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
 #### Aliases
-collect
+*collect*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -2126,7 +2126,7 @@ _.range(0);
 Boils down a `collection` to a single value. The initial state of the reduction is `accumulator` and each successive step of it should be returned by the `callback`. The `callback` is bound to `thisArg` and invoked with `4` arguments; for arrays they are *(accumulator, value, index|key, collection)*.
 
 #### Aliases
-foldl, inject
+*foldl, inject*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -2156,7 +2156,7 @@ var sum = _.reduce([1, 2, 3], function(memo, num) { return memo + num; });
 The right-associative version of `_.reduce`.
 
 #### Aliases
-foldr
+*foldr*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -2213,7 +2213,7 @@ var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
 The opposite of `_.initial`, this method gets all but the first value of `array`. Pass `n` to exclude the first `n` values from the result.
 
 #### Aliases
-drop, tail
+*drop, tail*
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
@@ -2331,7 +2331,7 @@ _.size('curly');
 Checks if the `callback` returns a truthy value for **any** element of a `collection`. The function returns as soon as it finds passing value, and does not iterate over the entire `collection`. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index|key, collection)*.
 
 #### Aliases
-any
+*any*
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -2651,7 +2651,7 @@ _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 Creates a duplicate-value-free version of the `array` using strict equality for comparisons, i.e. `===`. If the `array` is already sorted, passing `true` for `isSorted` will run a faster algorithm. If `callback` is passed, each element of `array` is passed through a callback` before uniqueness is computed. The `callback` is bound to `thisArg` and invoked with `3` arguments; *(value, index, array)*.
 
 #### Aliases
-unique
+*unique*
 
 #### Arguments
 1. `array` *(Array)*: The array to process.

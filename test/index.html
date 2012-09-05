@@ -58,12 +58,14 @@
 				}
 			},
 			['lodash', 'underscore'], function(lodash, underscore) {
-				lodashModule = lodash.noConflict();
-				lodashModule.moduleName = 'lodash';
-
-				underscoreModule = underscore.noConflict();
-				underscoreModule.moduleName = 'underscore';
-
+				if (lodash.noConflict) {
+					lodashModule = lodash.noConflict();
+					lodashModule.moduleName = 'lodash';
+				}
+				if (underscore.noConflict) {
+					underscoreModule = underscore.noConflict();
+					underscoreModule.moduleName = 'underscore';
+				}
 				require(['test.js']);
 			});
 

@@ -14,6 +14,12 @@ $(document).ready(function() {
 
   });
 
+  test("#750 - Return _ instance.", 2, function() {
+    var instance = _([]);
+    ok(_(instance) === instance);
+    ok(new _(instance) === instance);
+  });
+
   test("utility: identity", function() {
     var moe = {name : 'moe'};
     equal(_.identity(moe), moe, 'moe is the same as his identity');
@@ -227,6 +233,12 @@ $(document).ready(function() {
     var countEscaped = 0;
     var templateEscaped = _.template('<%- f() %>');
     templateEscaped({f: function(){ ok(!(countEscaped++)); }});
+  });
+
+  test('#746 - _.template settings are not modified.', 1, function() {
+    var settings = {};
+    _.template('', null, settings);
+    deepEqual(settings, {});
   });
 
 });

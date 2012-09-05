@@ -47,7 +47,11 @@
     nativeBind         = FuncProto.bind;
 
   // Create a safe reference to the Underscore object for use below.
-  var _ = function(obj) { return new wrapper(obj); };
+  var _ = function(obj) {
+    if (obj instanceof _) return obj;
+    if (!(this instanceof _)) return new _(obj);
+    this._wrapped = obj;
+  };
 
   // Export the Underscore object for **Node.js**, with
   // backwards-compatibility for the old `require()` API. If we're in
@@ -771,8 +775,8 @@
     // A strict comparison is necessary because `null == undefined`.
     if (a == null || b == null) return a === b;
     // Unwrap any wrapped objects.
-    if (a._chain) a = a._wrapped;
-    if (b._chain) b = b._wrapped;
+    if (a instanceof _) a = a._wrapped;
+    if (b instanceof _) b = b._wrapped;
     // Invoke a custom `isEqual` method if one is provided.
     if (a.isEqual && _.isFunction(a.isEqual)) return a.isEqual(b);
     if (b.isEqual && _.isFunction(b.isEqual)) return b.isEqual(a);
@@ -990,11 +994,15 @@
     return _.isFunction(value) ? value.call(object) : value;
   };
 
-  // Add your own custom functions to the Underscore object, ensuring that
-  // they're correctly added to the OOP wrapper as well.
+  // Add your own custom functions to the Underscore object.
   _.mixin = function(obj) {
     each(_.functions(obj), function(name){
-      addToWrapper(name, _[name] = obj[name]);
+      var func = _[name] = obj[name];
+      _.prototype[name] = function() {
+        var args = slice.call(arguments);
+        args.unshift(this._wrapped);
+        return result.call(this, func.apply(_, args));
+      };
     });
   };
 
@@ -1047,7 +1055,7 @@
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
   _.template = function(text, data, settings) {
-    settings = _.defaults(settings || {}, _.templateSettings);
+    settings = _.defaults({}, settings, _.templateSettings);
 
     // Compile the template source, taking care to escape characters that
     // cannot be included in a string literal and then unescape them in code
@@ -1096,29 +1104,15 @@
     return _(obj).chain();
   };
 
-  // The OOP Wrapper
+  // OOP
   // ---------------
-
   // If Underscore is called as a function, it returns a wrapped object that
   // can be used OO-style. This wrapper holds altered versions of all the
   // underscore functions. Wrapped objects may be chained.
-  var wrapper = function(obj) { this._wrapped = obj; };
-
-  // Expose `wrapper.prototype` as `_.prototype`
-  _.prototype = wrapper.prototype;
 
   // Helper function to continue chaining intermediate results.
-  var result = function(obj, chain) {
-    return chain ? _(obj).chain() : obj;
-  };
-
-  // A method to easily add functions to the OOP wrapper.
-  var addToWrapper = function(name, func) {
-    wrapper.prototype[name] = function() {
-      var args = slice.call(arguments);
-      unshift.call(args, this._wrapped);
-      return result(func.apply(_, args), this._chain);
-    };
+  var result = function(obj) {
+    return this._chain ? _(obj).chain() : obj;
   };
 
   // Add all of the Underscore functions to the wrapper object.
@@ -1127,31 +1121,35 @@
   // Add all mutator Array functions to the wrapper.
   each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
     var method = ArrayProto[name];
-    wrapper.prototype[name] = function() {
+    _.prototype[name] = function() {
       var obj = this._wrapped;
       method.apply(obj, arguments);
       if ((name == 'shift' || name == 'splice') && obj.length === 0) delete obj[0];
-      return result(obj, this._chain);
+      return result.call(this, obj);
     };
   });
 
   // Add all accessor Array functions to the wrapper.
   each(['concat', 'join', 'slice'], function(name) {
     var method = ArrayProto[name];
-    wrapper.prototype[name] = function() {
-      return result(method.apply(this._wrapped, arguments), this._chain);
+    _.prototype[name] = function() {
+      return result.call(this, method.apply(this._wrapped, arguments));
     };
   });
 
-  // Start chaining a wrapped Underscore object.
-  wrapper.prototype.chain = function() {
-    this._chain = true;
-    return this;
-  };
+  _.extend(_.prototype, {
 
-  // Extracts the result from a wrapped and chained object.
-  wrapper.prototype.value = function() {
-    return this._wrapped;
-  };
+    // Start chaining a wrapped Underscore object.
+    chain: function() {
+      this._chain = true;
+      return this;
+    },
+
+    // Extracts the result from a wrapped and chained object.
+    value: function() {
+      return this._wrapped;
+    }
+
+  });
 
 }).call(this);

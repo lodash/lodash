@@ -99,6 +99,7 @@ class Entry {
       if (count($result)) {
         $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
         $result = preg_split('/,\s*/', $result);
+        natsort($result);
 
         foreach ($result as $resultIndex => $value) {
           $result[$resultIndex] = new Alias($value, $this);
@@ -219,6 +220,7 @@ class Entry {
       if (count($result)) {
         $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
         $result = preg_split('/,\s*/', $result);
+        natsort($result);
       }
       $this->_members = $result;
     }

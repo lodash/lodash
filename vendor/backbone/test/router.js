@@ -344,7 +344,7 @@ $(document).ready(function() {
       history: {
         pushState: function(state, title, url) {},
         replaceState: function(state, title, url) {
-          strictEqual(url, 'http://example.com/root/fragment');
+          strictEqual(url, '/root/fragment');
         }
       }
     });
@@ -362,6 +362,90 @@ $(document).ready(function() {
     Backbone.history.start({
       pushState: true,
       root: '/root'
+    });
+  });
+
+  test("Normalize root - leading slash.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+    Backbone.history.start({root: 'root'});
+    strictEqual(Backbone.history.root, '/root/');
+  });
+
+  test("Transition from hashChange to pushState.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root#x/y');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(state, title, url){
+          strictEqual(url, '/root/x/y');
+        }
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true
+    });
+  });
+
+  test("#1619: Router: Normalize empty root", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+    Backbone.history.start({root: ''});
+    strictEqual(Backbone.history.root, '/');
+  });
+
+  test("#1619: Router: nagivate with empty root", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/fragment');
+        }
+      }
+    });
+    Backbone.history.start({
+      pushState: true,
+      root: '',
+      hashChange: false
+    });
+    Backbone.history.navigate('fragment');
+  });
+
+  test("Transition from pushState to hashChange.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root/x/y?a=b');
+    location.replace = function(url) {
+      strictEqual(url, '/root/?a=b#x/y');
+    };
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: null,
+        replaceState: null
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true
     });
   });
 

@@ -77,7 +77,7 @@ class Entry {
         $this->isCtor() ||
         count($this->getParams()) ||
         count($this->getReturns()) ||
-        preg_match('/\*\s*@function\b/', $this->entry)
+        preg_match('/\* *@function\b/', $this->entry)
       );
     }
     return $this->_isFunction;
@@ -94,7 +94,7 @@ class Entry {
    */
   public function getAliases( $index = null ) {
     if (!isset($this->_aliases)) {
-      preg_match('#\*\s*@alias\s+([^\n]+)#', $this->entry, $result);
+      preg_match('#\* *@alias\s+([^\n]+)#', $this->entry, $result);
 
       if (count($result)) {
         $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
@@ -128,7 +128,7 @@ class Entry {
     }
     // resolve name
     // avoid $this->getName() because it calls $this->getCall()
-    preg_match('#\*\s*@name\s+([^\n]+)#', $this->entry, $name);
+    preg_match('#\* *@name\s+([^\n]+)#', $this->entry, $name);
     if (count($name)) {
       $name = trim($name[1]);
     } else {
@@ -183,7 +183,7 @@ class Entry {
       return $this->_example;
     }
 
-    preg_match('#\*\s*@example\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
+    preg_match('#\* *@example\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
     if (count($result)) {
       $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', "\n", $result[1]));
       $result = '```' . $this->lang . "\n" . $result . "\n```";
@@ -215,7 +215,7 @@ class Entry {
    */
   public function getMembers( $index = null ) {
     if (!isset($this->_members)) {
-      preg_match('#\*\s*@member(?:Of)?\s+([^\n]+)#', $this->entry, $result);
+      preg_match('#\* *@member(?:Of)?\s+([^\n]+)#', $this->entry, $result);
       if (count($result)) {
         $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
         $result = preg_split('/,\s*/', $result);
@@ -238,7 +238,7 @@ class Entry {
       return $this->_name;
     }
 
-    preg_match('#\*\s*@name\s+([^\n]+)#', $this->entry, $result);
+    preg_match('#\* *@name\s+([^\n]+)#', $this->entry, $result);
     if (count($result)) {
       $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
     } else {
@@ -257,7 +257,7 @@ class Entry {
    */
   public function getParams( $index = null ) {
     if (!isset($this->_params)) {
-      preg_match_all('#\*\s*@param\s+\{([^}]+)\}\s+(\[.+\]|[$\w|]+(?:\[.+\])?)\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#i', $this->entry, $result);
+      preg_match_all('#\* *@param\s+\{([^}]+)\}\s+(\[.+\]|[$\w|]+(?:\[.+\])?)\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#i', $this->entry, $result);
       if (count($result = array_filter(array_slice($result, 1)))) {
         // repurpose array
         foreach ($result as $param) {
@@ -288,7 +288,7 @@ class Entry {
       return $this->_returns;
     }
 
-    preg_match('#\*\s*@returns\s+\{([^}]+)\}\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
+    preg_match('#\* *@returns\s+\{([^}]+)\}\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
     if (count($result)) {
       $result = array_map('trim', array_slice($result, 1));
       $result[0] = str_replace('|', ', ', $result[0]);
@@ -309,7 +309,7 @@ class Entry {
       return $this->_type;
     }
 
-    preg_match('#\*\s*@type\s+([^\n]+)#', $this->entry, $result);
+    preg_match('#\* *@type\s+([^\n]+)#', $this->entry, $result);
     if (count($result)) {
       $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
     } else {
@@ -337,7 +337,7 @@ class Entry {
    */
   public function isCtor() {
     if (!isset($this->_isCtor)) {
-      $this->_isCtor = !!preg_match('/\*\s*@constructor\b/', $this->entry);
+      $this->_isCtor = !!preg_match('/\* *@constructor\b/', $this->entry);
     }
     return $this->_isCtor;
   }
@@ -363,7 +363,7 @@ class Entry {
    */
   public function isPrivate() {
     if (!isset($this->_isPrivate)) {
-      $this->_isPrivate = !!preg_match('/\*\s*@private\b/', $this->entry) || strrpos($this->entry, '@') === false;
+      $this->_isPrivate = !!preg_match('/\* *@private\b/', $this->entry) || !preg_match('/\* *@[a-z]+\b/', $this->entry);
     }
     return $this->_isPrivate;
   }
@@ -380,7 +380,7 @@ class Entry {
     }
 
     $public = !$this->isPrivate();
-    $result = $public && !!preg_match('/\*\s*@static\b/', $this->entry);
+    $result = $public && !!preg_match('/\* *@static\b/', $this->entry);
 
     // set in cases where it isn't explicitly stated
     if ($public && !$result) {

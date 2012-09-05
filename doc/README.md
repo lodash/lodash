@@ -141,14 +141,6 @@
 <!-- /div -->
 
 
-<!-- div -->
-
-## ``
-* [``](#)
-
-<!-- /div -->
-
-
 <!-- /div -->
 
 
@@ -2957,25 +2949,6 @@ _([1, 2, 3]).value();
 <a href="#_templatesettingsvariable">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L362 "View in source") [&#x24C9;][1]
 
 *(String)*: Used to reference the data object in the template text.
-
-* * *
-
-<!-- /div -->
-
-
-<!-- /div -->
-
-
-<!-- div -->
-
-## ``
-
-<!-- div -->
-
-### <a id=""></a>``
-<a href="#">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L223 "View in source") [&#x24C9;][1]
-
-(Unknown): Detect if sourceURL syntax is usable without erroring:  The JS engine in Adobe products, like InDesign, will throw a syntax error when it encounters a single line comment beginning with the `@` symbol.  The JS engine in Narwhal will generate the function `function anonymous(){//}` and throw a syntax error.  Avoid comments beginning `@` symbols in IE because they are part of its non-standard conditional compilation support. http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
 
 * * *
 

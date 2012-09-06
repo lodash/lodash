@@ -25,7 +25,6 @@
   /** Closure Compiler command-line options */
   var closureOptions = [
     '--compilation_level=ADVANCED_OPTIMIZATIONS',
-    '--language_in=ECMASCRIPT5_STRICT',
     '--warning_level=QUIET'
   ];
 

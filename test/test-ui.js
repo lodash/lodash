@@ -47,8 +47,8 @@
     function init() {
       var toolbar = document.getElementById('qunit-testrunner-toolbar');
       if (toolbar) {
-        toolbar.appendChild(label1);
-        toolbar.appendChild(label2);
+        toolbar.appendChild(span1);
+        toolbar.appendChild(span2);
 
         dropdown.selectedIndex = (function() {
           switch (build) {
@@ -68,21 +68,24 @@
       }
     }
 
-    var label1 = document.createElement('label');
-    label1.innerHTML =
-      '<input name="norequire" type="checkbox">No RequireJS';
+    var span1 = document.createElement('span');
+    span1.innerHTML =
+      '<input id="qunit-norequire" type="checkbox">' +
+      '<label for="qunit-norequire">No RequireJS</label>';
 
-    var label2 = document.createElement('label');
-    label2.innerHTML = '&nbsp;' +
-      '<select name="build">' +
+    var span2 = document.createElement('span');
+    span2.style.cssText = 'float:right';
+    span2.innerHTML =
+      '<label for="qunit-build">Build: </label>' +
+      '<select id="qunit-build">' +
       '<option value="dev">Developement</option>' +
       '<option value="prod">Production</option>' +
       '<option value="custom">Custom</option>' +
       '<option value="custom-debug">Custom (debug)</option>' +
-      '</select> Build';
+      '</select>';
 
-    var checkbox = label1.firstChild,
-        dropdown = label2.getElementsByTagName('select')[0];
+    var checkbox = span1.firstChild,
+        dropdown = span2.lastChild;
 
     init();
   });

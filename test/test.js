@@ -996,16 +996,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.object');
-
-  (function() {
-    test('supports not passing a `values` argument', function() {
-      deepEqual(_.object(['a', 'b', 'c']), { 'a': undefined, 'b': undefined, 'c': undefined });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.omit');
 
   (function() {

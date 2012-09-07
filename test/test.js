@@ -318,7 +318,17 @@
   QUnit.module('lodash.debounce');
 
   (function() {
-    test('subsequent "immediate" debounced calls should return the result of the first call', function() {
+    asyncTest('subsequent debounced calls return the last `func` result', function() {
+      var debounced = _.debounce(function(value) { return value; }, 100);
+      debounced('x');
+
+      setTimeout(function() {
+        equal(debounced('y'), 'x');
+        QUnit.start();
+      }, 220);
+    });
+
+    test('subsequent "immediate" debounced calls return the last `func` result', function() {
       var debounced = _.debounce(function(value) { return value; }, 100, true),
           result = [debounced('x'), debounced('y')];
 

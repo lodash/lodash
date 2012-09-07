@@ -3488,7 +3488,7 @@
     function delayed() {
       timeoutId = null;
       if (!immediate) {
-        func.apply(thisArg, args);
+        result = func.apply(thisArg, args);
       }
     }
 
@@ -3674,7 +3674,7 @@
     function trailingCall() {
       lastCalled = new Date;
       timeoutId = null;
-      func.apply(thisArg, args);
+      result = func.apply(thisArg, args);
     }
 
     return function() {

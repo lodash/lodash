@@ -591,7 +591,9 @@
       context = this; args = arguments;
       var later = function() {
         timeout = null;
-        if (more) func.apply(context, args);
+        if (more) {
+          result = func.apply(context, args);
+        }
         whenDone();
       };
       if (!timeout) timeout = setTimeout(later, wait);

@@ -2,7 +2,7 @@ $(document).ready(function() {
 
   module("Objects");
 
-  test("objects: keys", function() {
+  test("keys", function() {
     equal(_.keys({one : 1, two : 2}).join(', '), 'one, two', 'can extract the keys from an object');
     // the test above is not safe because it relies on for-in enumeration order
     var a = []; a[1] = 0;
@@ -14,21 +14,21 @@ $(document).ready(function() {
     raises(function() { _.keys(true); }, TypeError, 'throws an error for boolean primitives');
   });
 
-  test("objects: values", function() {
+  test("values", function() {
     equal(_.values({one : 1, two : 2}).join(', '), '1, 2', 'can extract the values from an object');
   });
 
-  test("objects: pairs", function() {
+  test("pairs", function() {
     deepEqual(_.pairs({one: 1, two: 2}), [['one', 1], ['two', 2]], 'can convert an object into pairs');
   });
 
-  test("objects: invert", function() {
+  test("invert", function() {
     var obj = {first: 'Moe', second: 'Larry', third: 'Curly'};
     equal(_.keys(_.invert(obj)).join(' '), 'Moe Larry Curly', 'can invert an object');
     ok(_.isEqual(_.invert(_.invert(obj)), obj), 'two inverts gets you back where you started');
   });
 
-  test("objects: functions", function() {
+  test("functions", function() {
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
     ok(_.isEqual(['b', 'd'], _.functions(obj)), 'can grab the function names of any passed-in object');
 
@@ -37,7 +37,7 @@ $(document).ready(function() {
     equal(_.functions(new Animal).join(''), 'run', 'also looks up functions on the prototype');
   });
 
-  test("objects: extend", function() {
+  test("extend", function() {
     var result;
     equal(_.extend({}, {a:'b'}).a, 'b', 'can extend an object with the attributes of another');
     equal(_.extend({a:'x'}, {a:'b'}).a, 'b', 'properties in source override destination');
@@ -50,7 +50,7 @@ $(document).ready(function() {
     equal(_.keys(result).join(''), 'ab', 'extend does not copy undefined values');
   });
 
-  test("objects: pick", function() {
+  test("pick", function() {
     var result;
     result = _.pick({a:1, b:2, c:3}, 'a', 'c');
     ok(_.isEqual(result, {a:1, c:3}), 'can restrict properties to those named');
@@ -64,7 +64,7 @@ $(document).ready(function() {
     ok(_.isEqual(_.pick(new Obj, 'a', 'c'), {a:1, c: 3}), 'include prototype props');
   });
 
-  test("objects: omit", function() {
+  test("omit", function() {
     var result;
     result = _.omit({a:1, b:2, c:3}, 'b');
     ok(_.isEqual(result, {a:1, c:3}), 'can omit a single named property');
@@ -78,7 +78,7 @@ $(document).ready(function() {
     ok(_.isEqual(_.omit(new Obj, 'b'), {a:1, c: 3}), 'include prototype props');
   });
 
-  test("objects: defaults", function() {
+  test("defaults", function() {
     var result;
     var options = {zero: 0, one: 1, empty: "", nan: NaN, string: "string"};
 
@@ -93,7 +93,7 @@ $(document).ready(function() {
     equal(options.word, "word", 'new value is added, first one wins');
   });
 
-  test("objects: clone", function() {
+  test("clone", function() {
     var moe = {name : 'moe', lucky : [13, 27, 34]};
     var clone = _.clone(moe);
     equal(clone.name, 'moe', 'the clone as the attributes of the original');
@@ -109,7 +109,7 @@ $(document).ready(function() {
     equal(_.clone(null), null, 'non objects should not be changed by clone');
   });
 
-  test("objects: isEqual", function() {
+  test("isEqual", function() {
     function First() {
       this.value = 1;
     }
@@ -392,7 +392,7 @@ $(document).ready(function() {
     ok(_.isEqual(date, date_json), 'date matches serialized date');
   });
 
-  test("objects: isEmpty", function() {
+  test("isEmpty", function() {
     ok(!_([1]).isEmpty(), '[1] is not empty');
     ok(_.isEmpty([]), '[] is empty');
     ok(!_.isEmpty({one : 1}), '{one : 1} is not empty');
@@ -430,13 +430,13 @@ $(document).ready(function() {
   );
   iDoc.close();
 
-  test("objects: isElement", function() {
+  test("isElement", function() {
     ok(!_.isElement('div'), 'strings are not dom elements');
     ok(_.isElement($('html')[0]), 'the html tag is a DOM element');
     ok(_.isElement(iElement), 'even from another frame');
   });
 
-  test("objects: isArguments", function() {
+  test("isArguments", function() {
     var args = (function(){ return arguments; })(1, 2, 3);
     ok(!_.isArguments('string'), 'a string is not an arguments object');
     ok(!_.isArguments(_.isArguments), 'a function is not an arguments object');
@@ -446,7 +446,7 @@ $(document).ready(function() {
     ok(_.isArguments(iArguments), 'even from another frame');
   });
 
-  test("objects: isObject", function() {
+  test("isObject", function() {
     ok(_.isObject(arguments), 'the arguments object is object');
     ok(_.isObject([1, 2, 3]), 'and arrays');
     ok(_.isObject($('html')[0]), 'and DOM element');
@@ -461,19 +461,19 @@ $(document).ready(function() {
     ok(_.isObject(new String('string')), 'but new String()');
   });
 
-  test("objects: isArray", function() {
+  test("isArray", function() {
     ok(!_.isArray(arguments), 'the arguments object is not an array');
     ok(_.isArray([1, 2, 3]), 'but arrays are');
     ok(_.isArray(iArray), 'even from another frame');
   });
 
-  test("objects: isString", function() {
+  test("isString", function() {
     ok(!_.isString(document.body), 'the document body is not a string');
     ok(_.isString([1, 2, 3].join(', ')), 'but strings are');
     ok(_.isString(iString), 'even from another frame');
   });
 
-  test("objects: isNumber", function() {
+  test("isNumber", function() {
     ok(!_.isNumber('string'), 'a string is not a number');
     ok(!_.isNumber(arguments), 'the arguments object is not a number');
     ok(!_.isNumber(undefined), 'undefined is not a number');
@@ -484,7 +484,7 @@ $(document).ready(function() {
     ok(!_.isNumber('1'), 'numeric strings are not numbers');
   });
 
-  test("objects: isBoolean", function() {
+  test("isBoolean", function() {
     ok(!_.isBoolean(2), 'a number is not a boolean');
     ok(!_.isBoolean("string"), 'a string is not a boolean');
     ok(!_.isBoolean("false"), 'the string "false" is not a boolean');
@@ -498,27 +498,27 @@ $(document).ready(function() {
     ok(_.isBoolean(iBoolean), 'even from another frame');
   });
 
-  test("objects: isFunction", function() {
+  test("isFunction", function() {
     ok(!_.isFunction([1, 2, 3]), 'arrays are not functions');
     ok(!_.isFunction('moe'), 'strings are not functions');
     ok(_.isFunction(_.isFunction), 'but functions are');
     ok(_.isFunction(iFunction), 'even from another frame');
   });
 
-  test("objects: isDate", function() {
+  test("isDate", function() {
     ok(!_.isDate(100), 'numbers are not dates');
     ok(!_.isDate({}), 'objects are not dates');
     ok(_.isDate(new Date()), 'but dates are');
     ok(_.isDate(iDate), 'even from another frame');
   });
 
-  test("objects: isRegExp", function() {
+  test("isRegExp", function() {
     ok(!_.isRegExp(_.identity), 'functions are not RegExps');
     ok(_.isRegExp(/identity/), 'but RegExps are');
     ok(_.isRegExp(iRegExp), 'even from another frame');
   });
 
-  test("objects: isFinite", function() {
+  test("isFinite", function() {
     ok(!_.isFinite(undefined), 'undefined is not Finite');
     ok(!_.isFinite(null), 'null is not Finite');
     ok(!_.isFinite(NaN), 'NaN is not Finite');
@@ -532,7 +532,7 @@ $(document).ready(function() {
     ok(_.isFinite(-12.44), 'Floats are Finite');
   });
 
-  test("objects: isNaN", function() {
+  test("isNaN", function() {
     ok(!_.isNaN(undefined), 'undefined is not NaN');
     ok(!_.isNaN(null), 'null is not NaN');
     ok(!_.isNaN(0), '0 is not NaN');
@@ -540,14 +540,14 @@ $(document).ready(function() {
     ok(_.isNaN(iNaN), 'even from another frame');
   });
 
-  test("objects: isNull", function() {
+  test("isNull", function() {
     ok(!_.isNull(undefined), 'undefined is not null');
     ok(!_.isNull(NaN), 'NaN is not null');
     ok(_.isNull(null), 'but null is');
     ok(_.isNull(iNull), 'even from another frame');
   });
 
-  test("objects: isUndefined", function() {
+  test("isUndefined", function() {
     ok(!_.isUndefined(1), 'numbers are defined');
     ok(!_.isUndefined(null), 'null is defined');
     ok(!_.isUndefined(false), 'false is defined');
@@ -558,7 +558,7 @@ $(document).ready(function() {
   });
 
   if (window.ActiveXObject) {
-    test("objects: IE host objects", function() {
+    test("IE host objects", function() {
       var xml = new ActiveXObject("Msxml2.DOMDocument.3.0");
       ok(!_.isNumber(xml));
       ok(!_.isBoolean(xml));
@@ -569,7 +569,7 @@ $(document).ready(function() {
     });
   }
 
-  test("objects: tap", function() {
+  test("tap", function() {
     var intercepted = null;
     var interceptor = function(obj) { intercepted = obj; };
     var returned = _.tap(1, interceptor);

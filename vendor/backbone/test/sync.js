@@ -21,7 +21,7 @@ $(document).ready(function() {
 
   }));
 
-  test("sync: read", 4, function() {
+  test("read", 4, function() {
     library.fetch();
     equal(this.ajaxSettings.url, '/library');
     equal(this.ajaxSettings.type, 'GET');
@@ -29,14 +29,14 @@ $(document).ready(function() {
     ok(_.isEmpty(this.ajaxSettings.data));
   });
 
-  test("sync: passing data", 3, function() {
+  test("passing data", 3, function() {
     library.fetch({data: {a: 'a', one: 1}});
     equal(this.ajaxSettings.url, '/library');
     equal(this.ajaxSettings.data.a, 'a');
     equal(this.ajaxSettings.data.one, 1);
   });
 
-  test("sync: create", 6, function() {
+  test("create", 6, function() {
     equal(this.ajaxSettings.url, '/library');
     equal(this.ajaxSettings.type, 'POST');
     equal(this.ajaxSettings.dataType, 'json');
@@ -46,7 +46,7 @@ $(document).ready(function() {
     equal(data.length, 123);
   });
 
-  test("sync: update", 7, function() {
+  test("update", 7, function() {
     library.first().save({id: '1-the-tempest', author: 'William Shakespeare'});
     equal(this.ajaxSettings.url, '/library/1-the-tempest');
     equal(this.ajaxSettings.type, 'PUT');
@@ -58,7 +58,7 @@ $(document).ready(function() {
     equal(data.length, 123);
   });
 
-  test("sync: update with emulateHTTP and emulateJSON", 7, function() {
+  test("update with emulateHTTP and emulateJSON", 7, function() {
     Backbone.emulateHTTP = Backbone.emulateJSON = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
@@ -72,7 +72,7 @@ $(document).ready(function() {
     Backbone.emulateHTTP = Backbone.emulateJSON = false;
   });
 
-  test("sync: update with just emulateHTTP", 6, function() {
+  test("update with just emulateHTTP", 6, function() {
     Backbone.emulateHTTP = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
@@ -85,7 +85,7 @@ $(document).ready(function() {
     Backbone.emulateHTTP = false;
   });
 
-  test("sync: update with just emulateJSON", 6, function() {
+  test("update with just emulateJSON", 6, function() {
     Backbone.emulateJSON = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
@@ -98,7 +98,7 @@ $(document).ready(function() {
     Backbone.emulateJSON = false;
   });
 
-  test("sync: read model", 3, function() {
+  test("read model", 3, function() {
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().fetch();
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
@@ -106,7 +106,7 @@ $(document).ready(function() {
     ok(_.isEmpty(this.ajaxSettings.data));
   });
 
-  test("sync: destroy", 3, function() {
+  test("destroy", 3, function() {
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().destroy({wait: true});
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
@@ -114,7 +114,7 @@ $(document).ready(function() {
     equal(this.ajaxSettings.data, null);
   });
 
-  test("sync: destroy with emulateHTTP", 3, function() {
+  test("destroy with emulateHTTP", 3, function() {
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     Backbone.emulateHTTP = Backbone.emulateJSON = true;
     library.first().destroy();
@@ -124,7 +124,7 @@ $(document).ready(function() {
     Backbone.emulateHTTP = Backbone.emulateJSON = false;
   });
 
-  test("sync: urlError", 2, function() {
+  test("urlError", 2, function() {
     var model = new Backbone.Model();
     raises(function() {
       model.fetch();

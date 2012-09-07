@@ -265,7 +265,7 @@
       '  Options:',
       '',
       '    -h, --help     Display help information',
-      '    -s, --silent   Skip printing status updates to the console',
+      '    -s, --silent   Skip status updates normally logged to the console',
       '    -V, --version  Output current version of Lo-Dash',
       ''
     ].join('\n'));
@@ -665,7 +665,7 @@
     // flag used to specify a mobile build
     var isMobile = !isLegacy && (isCSP || isUnderscore || options.indexOf('mobile') > -1);
 
-    // flag used to specify skipping status updates to the console
+    // flag used to specify skipping status updates normally logged to the console
     var isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1;
 
     // flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are

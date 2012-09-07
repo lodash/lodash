@@ -2,7 +2,7 @@ $(document).ready(function() {
 
   module("Arrays");
 
-  test("arrays: first", function() {
+  test("first", function() {
     equal(_.first([1,2,3]), 1, 'can pull out the first element of an array');
     equal(_([1, 2, 3]).first(), 1, 'can perform OO-style "first()"');
     equal(_.first([1,2,3], 0).join(', '), "", 'can pass an index to first');
@@ -16,7 +16,7 @@ $(document).ready(function() {
     equal(result.join(','), '1,2', 'aliased as take');
   });
 
-  test("arrays: rest", function() {
+  test("rest", function() {
     var numbers = [1, 2, 3, 4];
     equal(_.rest(numbers).join(", "), "2, 3, 4", 'working rest()');
     equal(_.rest(numbers, 0).join(", "), "1, 2, 3, 4", 'working rest(0)');
@@ -29,7 +29,7 @@ $(document).ready(function() {
     equal(result.join(', '), '2, 3, 4', 'aliased as drop and works on arguments object');
   });
 
-  test("arrays: initial", function() {
+  test("initial", function() {
     equal(_.initial([1,2,3,4,5]).join(", "), "1, 2, 3, 4", 'working initial()');
     equal(_.initial([1,2,3,4],2).join(", "), "1, 2", 'initial can take an index');
     var result = (function(){ return _(arguments).initial(); })(1, 2, 3, 4);
@@ -38,7 +38,7 @@ $(document).ready(function() {
     equal(_.flatten(result).join(','), '1,2,1,2', 'initial works with _.map');
   });
 
-  test("arrays: last", function() {
+  test("last", function() {
     equal(_.last([1,2,3]), 3, 'can pull out the last element of an array');
     equal(_.last([1,2,3], 0).join(', '), "", 'can pass an index to last');
     equal(_.last([1,2,3], 2).join(', '), '2, 3', 'can pass an index to last');
@@ -49,13 +49,13 @@ $(document).ready(function() {
     equal(result.join(','), '3,3', 'works well with _.map');
   });
 
-  test("arrays: compact", function() {
+  test("compact", function() {
     equal(_.compact([0, 1, false, 2, false, 3]).length, 3, 'can trim out all falsy values');
     var result = (function(){ return _(arguments).compact().length; })(0, 1, false, 2, false, 3);
     equal(result, 3, 'works on an arguments object');
   });
 
-  test("arrays: flatten", function() {
+  test("flatten", function() {
     if (window.JSON) {
       var list = [1, [2], [3, [[[4]]]]];
       equal(JSON.stringify(_.flatten(list)), '[1,2,3,4]', 'can flatten nested arrays');
@@ -65,7 +65,7 @@ $(document).ready(function() {
     }
   });
 
-  test("arrays: without", function() {
+  test("without", function() {
     var list = [1, 2, 1, 0, 3, 1, 4];
     equal(_.without(list, 0, 1).join(', '), '2, 3, 4', 'can remove all instances of an object');
     var result = (function(){ return _.without(arguments, 0, 1); })(1, 2, 1, 0, 3, 1, 4);
@@ -76,7 +76,7 @@ $(document).ready(function() {
     ok(_.without(list, list[0]).length == 1, 'ditto.');
   });
 
-  test("arrays: uniq", function() {
+  test("uniq", function() {
     var list = [1, 2, 1, 3, 1, 4];
     equal(_.uniq(list).join(', '), '1, 2, 3, 4', 'can find the unique values of an unsorted array');
 
@@ -95,7 +95,7 @@ $(document).ready(function() {
     equal(result.join(', '), '1, 2, 3, 4', 'works on an arguments object');
   });
 
-  test("arrays: intersection", function() {
+  test("intersection", function() {
     var stooges = ['moe', 'curly', 'larry'], leaders = ['moe', 'groucho'];
     equal(_.intersection(stooges, leaders).join(''), 'moe', 'can take the set intersection of two arrays');
     equal(_(stooges).intersection(leaders).join(''), 'moe', 'can perform an OO-style intersection');
@@ -103,7 +103,7 @@ $(document).ready(function() {
     equal(result.join(''), 'moe', 'works on an arguments object');
   });
 
-  test("arrays: union", function() {
+  test("union", function() {
     var result = _.union([1, 2, 3], [2, 30, 1], [1, 40]);
     equal(result.join(' '), '1 2 3 30 40', 'takes the union of a list of arrays');
 
@@ -111,7 +111,7 @@ $(document).ready(function() {
     equal(result.join(' '), '1 2 3 30 40 1', 'takes the union of a list of nested arrays');
   });
 
-  test("arrays: difference", function() {
+  test("difference", function() {
     var result = _.difference([1, 2, 3], [2, 30, 40]);
     equal(result.join(' '), '1 3', 'takes the difference of two arrays');
 
@@ -119,13 +119,13 @@ $(document).ready(function() {
     equal(result.join(' '), '3 4', 'takes the difference of three arrays');
   });
 
-  test('arrays: zip', function() {
+  test('zip', function() {
     var names = ['moe', 'larry', 'curly'], ages = [30, 40, 50], leaders = [true];
     var stooges = _.zip(names, ages, leaders);
     equal(String(stooges), 'moe,30,true,larry,40,,curly,50,', 'zipped together arrays of different lengths');
   });
 
-  test('arrays: object', function() {
+  test('object', function() {
     var result = _.object(['moe', 'larry', 'curly'], [30, 40, 50]);
     var shouldBe = {moe: 30, larry: 40, curly: 50};
     ok(_.isEqual(result, shouldBe), 'two arrays zipped together into an object');
@@ -138,7 +138,7 @@ $(document).ready(function() {
     ok(_.isEqual(_.object(_.pairs(stooges)), stooges), 'an object converted to pairs and back to an object');
   });
 
-  test("arrays: indexOf", function() {
+  test("indexOf", function() {
     var numbers = [1, 2, 3];
     numbers.indexOf = null;
     equal(_.indexOf(numbers, 2), 1, 'can compute indexOf, even without the native function');
@@ -159,7 +159,7 @@ $(document).ready(function() {
     equal(index, 1, '40 is in the list');
   });
 
-  test("arrays: lastIndexOf", function() {
+  test("lastIndexOf", function() {
     var numbers = [1, 0, 1, 0, 0, 1, 0, 0, 0];
     numbers.lastIndexOf = null;
     equal(_.lastIndexOf(numbers, 1), 5, 'can compute lastIndexOf, even without the native function');
@@ -169,7 +169,7 @@ $(document).ready(function() {
     equal(_.indexOf(null, 2), -1, 'handles nulls properly');
   });
 
-  test("arrays: range", function() {
+  test("range", function() {
     equal(_.range(0).join(''), '', 'range with 0 as a first argument generates an empty array');
     equal(_.range(4).join(' '), '0 1 2 3', 'range with a single positive argument generates an array of elements 0,1,2,...,n-1');
     equal(_.range(5, 8).join(' '), '5 6 7', 'range with two arguments a &amp; b, a&lt;b generates an array of elements a,a+1,a+2,...,b-2,b-1');

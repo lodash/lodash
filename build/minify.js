@@ -38,11 +38,11 @@
    * the `onComplete` callback when finished.
    *
    * @param {String} source The source to minify.
-   * @param {String} workingName The name to give temporary files creates during the minification process.
-   * @param {Function} onComplete A function called when minification has completed.
+   * @param {Object} options The options object containing `onComplete`, `silent`,
+   *  and `workingName`.
    */
-  function minify(source, workingName, onComplete) {
-    new Minify(source, workingName, onComplete);
+  function minify(source, options) {
+    new Minify(source, options);
   }
 
   /**
@@ -51,10 +51,17 @@
    * @private
    * @constructor
    * @param {String} source The source to minify.
-   * @param {String} workingName The name to give temporary files creates during the minification process.
-   * @param {Function} onComplete A function called when minification has completed.
+   * @param {Object} options The options object containing `onComplete`, `silent`,
+   *  and `workingName`.
    */
-  function Minify(source, workingName, onComplete) {
+  function Minify(source, options) {
+    source || (source = '');
+    options || (options = {});
+
+    if (typeof source != 'string') {
+      options = source || options;
+      source = options.source || '';
+    }
     // create the destination directory if it doesn't exist
     if (!fs.existsSync(distPath)) {
       // avoid errors when called as a npm executable
@@ -63,12 +70,15 @@
       } catch(e) { }
     }
 
+    source = preprocess(source);
+
     this.compiled = {};
     this.hybrid = {};
     this.uglified = {};
-    this.onComplete = onComplete;
-    this.source = source = preprocess(source);
-    this.workingName = workingName;
+    this.isSilent = !!options.silent;
+    this.onComplete = options.onComplete || function() {};
+    this.source = source;
+    this.workingName = options.workingName || 'temp';
 
     // begin the minification process
     closureCompile.call(this, source, onClosureCompile.bind(this));
@@ -97,10 +107,12 @@
       message = null;
     }
 
-    console.log(message == null
-      ? 'Compressing ' + this.workingName + ' using the Closure Compiler...'
-      : message
-    );
+    if (!this.isSilent) {
+      console.log(message == null
+        ? 'Compressing ' + this.workingName + ' using the Closure Compiler...'
+        : message
+      );
+    }
 
     compiler.stdout.on('data', function(data) {
       // append the data to the output stream
@@ -148,10 +160,12 @@
       message = null;
     }
 
-    console.log(message == null
-      ? 'Compressing ' + this.workingName + ' using UglifyJS...'
-      : message
-    );
+    if (!this.isSilent) {
+      console.log(message == null
+        ? 'Compressing ' + this.workingName + ' using UglifyJS...'
+        : message
+      );
+    }
 
     try {
       result = ugly.gen_code(
@@ -202,9 +216,12 @@
     if (exception) {
       throw exception;
     }
+    if (!this.isSilent) {
+      console.log('Done. Size: %d bytes.', result.length);
+    }
+
     // store the gzipped result and report the size
     this.compiled.gzip = result;
-    console.log('Done. Size: %d bytes.', result.length);
 
     // next, minify the source using only UglifyJS
     uglify.call(this, this.source, onUglify.bind(this));
@@ -237,11 +254,13 @@
     if (exception) {
       throw exception;
     }
+    if (!this.isSilent) {
+      console.log('Done. Size: %d bytes.', result.length);
+    }
     var message = 'Compressing  ' + this.workingName + ' using hybrid minification...';
 
     // store the gzipped result and report the size
     this.uglified.gzip = result;
-    console.log('Done. Size: %d bytes.', result.length);
 
     // next, minify the Closure Compiler minified source using UglifyJS
     uglify.call(this, this.compiled.source, message, onHybrid.bind(this));
@@ -274,9 +293,11 @@
     if (exception) {
       throw exception;
     }
+    if (!this.isSilent) {
+      console.log('Done. Size: %d bytes.', result.length);
+    }
     // store the gzipped result and report the size
     this.hybrid.gzip = result;
-    console.log('Done. Size: %d bytes.', result.length);
 
     // finish by choosing the smallest compressed file
     onComplete.call(this);
@@ -333,13 +354,24 @@
     // was invoked directly (e.g. `node minify.js source.js`) and write to
     // `<filename>.min.js`
     (function() {
-      var filePath = process.argv[2],
+      var options = process.argv;
+      if (options.length < 3) {
+        return;
+      }
+
+      var filePath = options[options.length - 1],
           dirPath = path.dirname(filePath),
+          outputPath = path.join(dirPath, workingName + '.js'),
+          isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1,
           source = fs.readFileSync(filePath, 'utf8'),
           workingName = path.basename(filePath, '.js') + '.min';
 
-      minify(source, workingName, function(result) {
-        fs.writeFileSync(path.join(dirPath, workingName + '.js'), result, 'utf8');
+      minify(source, {
+        'silent': isSilent,
+        'workingName': workingName,
+        'onComplete': function(source) {
+          fs.writeFileSync(outputPath, source, 'utf8');
+        }
       });
     }());
   }

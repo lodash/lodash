@@ -1340,7 +1340,10 @@
         new Pair(1, 5), new Pair(1, 6),
         new Pair(2, 1), new Pair(2, 2),
         new Pair(2, 3), new Pair(2, 4),
-        new Pair(2, 5), new Pair(2, 6)
+        new Pair(2, 5), new Pair(2, 6),
+        new Pair(undefined, 1), new Pair(undefined, 2),
+        new Pair(undefined, 3), new Pair(undefined, 4),
+        new Pair(undefined, 5), new Pair(undefined, 6)
       ];
 
       var actual = _.sortBy(collection, function(pair) {

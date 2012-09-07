@@ -757,6 +757,9 @@
     a = a.criteria;
     b = b.criteria;
 
+    if (a === b) {
+      return ai < bi ? -1 : 1;
+    }
     if (a === undefined) {
       return 1;
     }

@@ -2,110 +2,18 @@
 ;(function() {
   'use strict';
 
-  /** The debug version of `source` */
-  var debugSource;
-
   /** Load modules */
   var fs = require('fs'),
       path = require('path'),
       vm = require('vm'),
-      minify = require(path.join(__dirname, 'build', 'minify'));
-
-  /** The arguments passed to build.js */
-  var argv = process.argv;
+      minify = require(path.join(__dirname, 'build', 'minify')),
+      _ = require(path.join(__dirname, 'lodash'));
 
   /** The current working directory */
   var cwd = process.cwd();
 
-  /** Flag used to specify a Backbone build */
-  var isBackbone = argv.indexOf('backbone') > -1;
-
-  /** Flag used to specify a Content Security Policy build */
-  var isCSP = argv.indexOf('csp') > -1 || argv.indexOf('CSP') > -1;
-
-  /** Flag used to specify a legacy build */
-  var isLegacy = argv.indexOf('legacy') > -1;
-
-  /** Flag used to specify an Underscore build */
-  var isUnderscore = argv.indexOf('underscore') > -1;
-
-  /** Flag used to specify a mobile build */
-  var isMobile = !isLegacy && (isCSP || isUnderscore || argv.indexOf('mobile') > -1);
-
-  /**
-   * Flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are
-   * constructed using the "use strict" directive.
-   */
-  var isStrict = argv.indexOf('strict') > -1;
-
-  /** Flag used to specify if the build should include the "use strict" directive */
-  var useStrict = isStrict || !(isLegacy || isMobile);
-
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
-
-  /** The lodash.js source */
-  var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
-
-  /** Load customized Lo-Dash module */
-  var lodash = (function() {
-    var sandbox = {};
-
-    if (isStrict) {
-      source = setUseStrictOption(source, true);
-    } else {
-      source = removeUseStrictDirective(source);
-      if (!useStrict) {
-        source = setUseStrictOption(source, false);
-      }
-    }
-    if (isLegacy) {
-      source = replaceVar(source, 'noArgsClass', 'true');
-      ['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
-        source = replaceVar(source, varName, 'false');
-      });
-    }
-    else if (isUnderscore) {
-      // remove `deep` clone functionality
-      source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
-        '  function clone(value) {',
-        '    if (value == null) {',
-        '      return value;',
-        '    }',
-        '    var isObj = objectTypes[typeof value];',
-        '    if (isObj && value.clone && isFunction(value.clone)) {',
-        '      return value.clone(deep);',
-        '    }',
-        '    if (isObj) {',
-        '      var className = toString.call(value);',
-        '      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {',
-        '        return value;',
-        '      }',
-        '      var isArr = className == arrayClass;',
-        '    }',
-        '    return isObj',
-        '      ? (isArr ? slice.call(value) : extend({}, value))',
-        '      : value;',
-        '  }'
-      ].join('\n'));
-    }
-    if (isMobile) {
-      source = replaceVar(source, 'isKeysFast', 'false');
-
-      // remove Opera 10.53-10.60 JIT fixes
-      source = source.replace(/length *> *-1 *&& *length/g, 'length');
-
-      // remove `prototype` [[Enumerable]] fix from `_.keys`
-      source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(.+?propertyIsEnumerable[\s\S]+?\n\1}/, '');
-
-      // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
-      source = source
-        .replace(/(?: *\/\/.*\n)*\s*' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
-        .replace(/!hasDontEnumBug *\|\|/g, '');
-    }
-    vm.runInNewContext(source, sandbox);
-    return sandbox._;
-  }());
 
   /** Used to associate aliases with their real names */
   var aliasToRealMap = {
@@ -286,23 +194,6 @@
     'zip': ['max', 'pluck']
   };
 
-  /** Used to report invalid arguments */
-  var invalidArgs = lodash.reject(argv.slice(2), function(value) {
-    if (/^(?:category|exclude|include)=(?:.*)$/.test(value)) {
-      return true;
-    }
-    return [
-      'backbone',
-      'csp',
-      'legacy',
-      'mobile',
-      'strict',
-      'underscore',
-      '-h', '--help',
-      '-V', '--version'
-    ].indexOf(value) > -1;
-  });
-
   /** Used to inline `iteratorTemplate` */
   var iteratorOptions = [
     'args',
@@ -329,9 +220,9 @@
   /** Collections of method names */
   var excludeMethods = [],
       includeMethods = [],
-      allMethods = Object.keys(dependencyMap);
+      allMethods = _.keys(dependencyMap);
 
-  var underscoreMethods = lodash.without.apply(lodash, [allMethods].concat([
+  var underscoreMethods = _.without.apply(_, [allMethods].concat([
     'countBy',
     'forIn',
     'forOwn',
@@ -345,27 +236,6 @@
     'unescape',
     'where'
   ]));
-
-  /** Used to specify whether filtering is for exclusion or inclusion */
-  var filterType = argv.reduce(function(result, value) {
-    if (result) {
-      return result;
-    }
-    var pair = value.match(/^(exclude|include)=(.*)$/);
-    if (!pair) {
-      return result;
-    }
-    // remove nonexistent method names
-    var methodNames = lodash.intersection(allMethods, pair[2].split(/, */).map(getRealName));
-
-    if (pair[1] == 'exclude') {
-      excludeMethods = methodNames;
-    } else {
-      includeMethods = methodNames;
-    }
-    // return `filterType`
-    return pair[1];
-  }, '');
 
   /*--------------------------------------------------------------------------*/
 
@@ -389,7 +259,7 @@
       '    lodash exclude=...   Comma separated names of methods to exclude from the build',
       '    lodash include=...   Comma separated names of methods to include in the build',
       '',
-      '    All arguments, except `exclude` with `include` & `legacy` with `csp` / `mobile`,',
+      '    All arguments, except `exclude` with `include` & `legacy` with `csp`/`mobile`,',
       '    may be combined.',
       '',
       '  Options:',
@@ -432,8 +302,8 @@
   function getDependants(funcName) {
     // iterate over `dependencyMap`, adding the names of functions that
     // have `funcName` as a dependency
-    return lodash.reduce(dependencyMap, function(result, dependencies, otherName) {
-      if (lodash.contains(dependencies, funcName)) {
+    return _.reduce(dependencyMap, function(result, dependencies, otherName) {
+      if (_.contains(dependencies, funcName)) {
         result.push(otherName);
       }
       return result;
@@ -457,7 +327,7 @@
     }
     // recursively accumulate the dependencies of the `funcName` function, and
     // the dependencies of its dependencies, and so on.
-    return lodash.uniq(dependencies.reduce(function(result, otherName) {
+    return _.uniq(dependencies.reduce(function(result, otherName) {
       result.push.apply(result, getDependencies(otherName).concat(otherName));
       return result;
     }, []));
@@ -673,17 +543,6 @@
   }
 
   /**
-   * Removes the "use strict" directive from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeUseStrictDirective(source) {
-    return source.replace(/(["'])use strict\1;( *\n)?/, '');
-  }
-
-  /**
    * Removes a given variable from `source`.
    *
    * @private
@@ -764,460 +623,608 @@
   }
 
   /**
-   * Writes `source` to a file with the given `filename` to the current
-   * working directory.
+   * Post-process the minified source.
    *
    * @private
-   * @param {String} source The source to write.
-   * @param {String} filename The name of the file.
+   * @param {String} source The minified source to process.
+   * @returns {String} The modified source.
    */
-  function writeFile(source, filename) {
+  function postMinify(source) {
     // correct overly aggressive Closure Compiler minification
-    source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
-
-    // re-remove "use strict" added by the minifier
-    if (!isStrict) {
-      source = removeUseStrictDirective(source);
-    }
-    fs.writeFileSync(path.join(cwd, filename), source);
+    return source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
   }
 
   /*--------------------------------------------------------------------------*/
 
-  // report invalid arguments
-  if (invalidArgs.length) {
-    console.log(
-      '\n' +
-      'Invalid argument' + (invalidArgs.length > 1 ? 's' : '') +
-      ' passed: ' + invalidArgs.join(', ')
-    );
-    displayHelp();
-    process.exit();
-  }
+  /**
+   * Creates a debug and minified build, executing the `callback` for each.
+   * The `callback` is invoked with 2 arguments; (filepath, source)
+   *
+   * @param {Array} options The options array.
+   * @param {Function} callback The function called per build.
+   */
+  function build(options, callback) {
+    options || (options = []);
 
-  // display help message
-  if (lodash.find(argv, function(arg) {
-        return /^(?:-h|--help)$/.test(arg);
-      })) {
-    displayHelp();
-    process.exit();
-  }
+    // the debug version of `source`
+    var debugSource;
 
-  // display `lodash.VERSION`
-  if (lodash.find(argv, function(arg) {
-        return /^(?:-V|--version)$/.test(arg);
-      })) {
-    console.log(lodash.VERSION);
-    process.exit();
-  }
+    // flag used to specify a Backbone build
+    var isBackbone = options.indexOf('backbone') > -1;
 
-  /*--------------------------------------------------------------------------*/
+    // flag used to specify a Content Security Policy build
+    var isCSP = options.indexOf('csp') > -1 || options.indexOf('CSP') > -1;
 
-  // don't expose `_.forIn` or `_.forOwn` if `isUnderscore` is `true` unless
-  // requested by `include`
-  if (isUnderscore) {
-    if (includeMethods.indexOf('forIn')  == -1) {
-      source = source.replace(/ *lodash\.forIn *=.+\n/, '');
-    }
-    if (includeMethods.indexOf('forOwn') == -1) {
-      source = source.replace(/ *lodash\.forOwn *=.+\n/, '');
-    }
-  }
+    // flag used to specify a legacy build
+    var isLegacy = options.indexOf('legacy') > -1;
 
-  // add methods required by Backbone or Underscore
-  [
-    { 'flag': isBackbone, 'methodNames': backboneDependencies },
-    { 'flag': isUnderscore, 'methodNames': underscoreMethods }
-  ]
-  .some(function(data) {
-    var flag = data.flag,
-        methodNames = data.methodNames;
+    // flag used to specify an Underscore build
+    var isUnderscore = options.indexOf('underscore') > -1;
 
-    if (!flag) {
-      return false;
-    }
-    // add any additional sub-dependencies
-    methodNames = getDependencies(methodNames);
+    // flag used to specify a mobile build
+    var isMobile = !isLegacy && (isCSP || isUnderscore || options.indexOf('mobile') > -1);
 
-    if (filterType == 'exclude') {
-      // remove excluded methods from `methodNames`
-      includeMethods = lodash.without.apply(lodash, [methodNames].concat(excludeMethods));
-    }
-    else if (filterType) {
-      // merge `methodNames` into `includeMethods`
-      includeMethods = lodash.union(includeMethods, methodNames);
-    }
-    else {
-      // include only the `methodNames`
-      includeMethods = methodNames;
-    }
-    filterType = 'include';
-    return true;
-  });
+    // flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are
+    // constructed using the "use strict" directive
+    var isStrict = options.indexOf('strict') > -1;
 
-  /*--------------------------------------------------------------------------*/
+    // flag used to specify if the build should include the "use strict" directive
+    var useStrict = isStrict || !(isLegacy || isMobile);
 
-  // add category methods
-  argv.some(function(value) {
-    var categories = value.match(/^category=(.*)$/);
-    if (!categories) {
-      return false;
-    }
-    // resolve method names belonging to each category
-    var categoryMethods = categories.reduce(function(result, category) {
-      return result.concat(allMethods.filter(function(funcName) {
-        return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, funcName));
-      }));
-    }, []);
+    // the lodash.js source
+    var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
 
-    if (filterType == 'exclude') {
-      // remove excluded methods from `categoryMethods`
-      includeMethods = lodash.without.apply(lodash, [categoryMethods].concat(excludeMethods));
-    }
-    else if (filterType) {
-      // merge `categoryMethods` into `includeMethods`
-      includeMethods = lodash.union(includeMethods, categoryMethods);
-    }
-    else {
-      // include only the `categoryMethods`
-      includeMethods = categoryMethods;
-    }
-    filterType = 'include';
-    return true;
-  });
+    // load customized Lo-Dash module
+    var lodash = (function() {
+      var sandbox = {};
 
-  /*--------------------------------------------------------------------------*/
+      if (isStrict) {
+        source = setUseStrictOption(source, true);
+      } else {
+        // remove "use strict" directive
+        source = source.replace(/(["'])use strict\1;( *\n)?/, '');
+        if (!useStrict) {
+          source = setUseStrictOption(source, false);
+        }
+      }
+      if (isLegacy) {
+        source = replaceVar(source, 'noArgsClass', 'true');
+        ['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
+          source = replaceVar(source, varName, 'false');
+        });
+      }
+      else if (isUnderscore) {
+        // remove `deep` clone functionality
+        source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
+          '  function clone(value) {',
+          '    if (value == null) {',
+          '      return value;',
+          '    }',
+          '    var isObj = objectTypes[typeof value];',
+          '    if (isObj && value.clone && isFunction(value.clone)) {',
+          '      return value.clone(deep);',
+          '    }',
+          '    if (isObj) {',
+          '      var className = toString.call(value);',
+          '      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {',
+          '        return value;',
+          '      }',
+          '      var isArr = className == arrayClass;',
+          '    }',
+          '    return isObj',
+          '      ? (isArr ? slice.call(value) : extend({}, value))',
+          '      : value;',
+          '  }'
+        ].join('\n'));
+      }
+      if (isMobile) {
+        source = replaceVar(source, 'isKeysFast', 'false');
 
-  // custom build
-  (function() {
-    // exit early if "exclude" or "include" options aren't specified
-    if (!filterType) {
+        // remove Opera 10.53-10.60 JIT fixes
+        source = source.replace(/length *> *-1 *&& *length/g, 'length');
+
+        // remove `prototype` [[Enumerable]] fix from `_.keys`
+        source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(.+?propertyIsEnumerable[\s\S]+?\n\1}/, '');
+
+        // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
+        source = source
+          .replace(/(?: *\/\/.*\n)*\s*' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
+          .replace(/!hasDontEnumBug *\|\|/g, '');
+      }
+      vm.runInNewContext(source, sandbox);
+      return sandbox._;
+    }());
+
+    // used to specify whether filtering is for exclusion or inclusion
+    var filterType = options.reduce(function(result, value) {
+      if (result) {
+        return result;
+      }
+      var pair = value.match(/^(exclude|include)=(.*)$/);
+      if (!pair) {
+        return result;
+      }
+      // remove nonexistent method names
+      var methodNames = _.intersection(allMethods, pair[2].split(/, */).map(getRealName));
+
+      if (pair[1] == 'exclude') {
+        excludeMethods = methodNames;
+      } else {
+        includeMethods = methodNames;
+      }
+      // return `filterType`
+      return pair[1];
+    }, '');
+
+    // used to report invalid arguments
+    var invalidArgs = _.reject(options, function(value) {
+      if (/^(?:category|exclude|include)=(?:.*)$/.test(value)) {
+        return true;
+      }
+      return [
+        'backbone',
+        'csp',
+        'legacy',
+        'mobile',
+        'strict',
+        'underscore',
+        '-h', '--help',
+        '-V', '--version'
+      ].indexOf(value) > -1;
+    });
+
+    // report invalid arguments
+    if (invalidArgs.length) {
+      console.log(
+        '\n' +
+        'Invalid argument' + (invalidArgs.length > 1 ? 's' : '') +
+        ' passed: ' + invalidArgs.join(', ')
+      );
+      displayHelp();
       return;
     }
-    if (filterType == 'exclude') {
-      // remove methods that are named in `excludeMethods` and their dependants
-      excludeMethods.forEach(function(funcName) {
-        getDependants(funcName).concat(funcName).forEach(function(otherName) {
-          source = removeFunction(source, otherName);
-        });
-      });
-    }
-    else {
-      // add dependencies to `includeMethods`
-      includeMethods = getDependencies(includeMethods);
 
-      // remove methods that aren't named in `includeMethods`
-      lodash.each(allMethods, function(otherName) {
-        if (!lodash.contains(includeMethods, otherName)) {
-          source = removeFunction(source, otherName);
+    // display help message
+    if (_.find(options, function(arg) {
+          return /^(?:-h|--help)$/.test(arg);
+        })) {
+      displayHelp();
+      return;
+    }
+
+    // display `lodash.VERSION`
+    if (_.find(options, function(arg) {
+          return /^(?:-V|--version)$/.test(arg);
+        })) {
+      console.log(_.VERSION);
+      return;
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    // don't expose `_.forIn` or `_.forOwn` if `isUnderscore` is `true` unless
+    // requested by `include`
+    if (isUnderscore) {
+      if (includeMethods.indexOf('forIn')  == -1) {
+        source = source.replace(/ *lodash\.forIn *=.+\n/, '');
+      }
+      if (includeMethods.indexOf('forOwn') == -1) {
+        source = source.replace(/ *lodash\.forOwn *=.+\n/, '');
+      }
+    }
+
+    // add methods required by Backbone or Underscore
+    [
+      { 'flag': isBackbone, 'methodNames': backboneDependencies },
+      { 'flag': isUnderscore, 'methodNames': underscoreMethods }
+    ]
+    .some(function(data) {
+      var flag = data.flag,
+          methodNames = data.methodNames;
+
+      if (!flag) {
+        return false;
+      }
+      // add any additional sub-dependencies
+      methodNames = getDependencies(methodNames);
+
+      if (filterType == 'exclude') {
+        // remove excluded methods from `methodNames`
+        includeMethods = _.without.apply(_, [methodNames].concat(excludeMethods));
+      }
+      else if (filterType) {
+        // merge `methodNames` into `includeMethods`
+        includeMethods = _.union(includeMethods, methodNames);
+      }
+      else {
+        // include only the `methodNames`
+        includeMethods = methodNames;
+      }
+      filterType = 'include';
+      return true;
+    });
+
+    /*------------------------------------------------------------------------*/
+
+    // add category methods
+    options.some(function(value) {
+      var categories = value.match(/^category=(.*)$/);
+      if (!categories) {
+        return false;
+      }
+      // resolve method names belonging to each category
+      var categoryMethods = categories.reduce(function(result, category) {
+        return result.concat(allMethods.filter(function(funcName) {
+          return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, funcName));
+        }));
+      }, []);
+
+      if (filterType == 'exclude') {
+        // remove excluded methods from `categoryMethods`
+        includeMethods = _.without.apply(_, [categoryMethods].concat(excludeMethods));
+      }
+      else if (filterType) {
+        // merge `categoryMethods` into `includeMethods`
+        includeMethods = _.union(includeMethods, categoryMethods);
+      }
+      else {
+        // include only the `categoryMethods`
+        includeMethods = categoryMethods;
+      }
+      filterType = 'include';
+      return true;
+    });
+
+    /*------------------------------------------------------------------------*/
+
+    // custom build
+    (function() {
+      // exit early if "exclude" or "include" options aren't specified
+      if (!filterType) {
+        return;
+      }
+      if (filterType == 'exclude') {
+        // remove methods that are named in `excludeMethods` and their dependants
+        excludeMethods.forEach(function(funcName) {
+          getDependants(funcName).concat(funcName).forEach(function(otherName) {
+            source = removeFunction(source, otherName);
+          });
+        });
+      }
+      else {
+        // add dependencies to `includeMethods`
+        includeMethods = getDependencies(includeMethods);
+
+        // remove methods that aren't named in `includeMethods`
+        _.each(allMethods, function(otherName) {
+          if (!_.contains(includeMethods, otherName)) {
+            source = removeFunction(source, otherName);
+          }
+        });
+      }
+
+      // remove `isArguments` fallback before `isArguments` is transformed by
+      // other parts of the build process
+      if (isRemoved(source, 'isArguments')) {
+        source = removeIsArgumentsFallback(source);
+      }
+    }());
+
+    /*------------------------------------------------------------------------*/
+
+    // simplify template snippets by removing unnecessary brackets
+    source = source.replace(
+      RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
+    );
+
+    source = source.replace(
+      RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
+    );
+
+    /*------------------------------------------------------------------------*/
+
+    // DRY out isType functions
+    (function() {
+      var iteratorName = _.find(['forEach', 'forOwn'], function(funcName) {
+        return !isRemoved(source, funcName);
+      });
+
+      // skip this optimization if there are no iteration methods to use
+      if (!iteratorName) {
+        return;
+      }
+      var funcNames = [],
+          objectSnippets = [];
+
+      // build replacement code
+      _.forOwn({
+        'Arguments': 'argsClass',
+        'Date': 'dateClass',
+        'Number': 'numberClass',
+        'RegExp': 'regexpClass',
+        'String': 'stringClass'
+      }, function(value, key) {
+        if (!isUnderscore && key == 'Arguments') {
+          return;
+        }
+        var funcName = 'is' + key,
+            funcCode = matchFunction(source, funcName);
+
+        if (funcCode) {
+          funcNames.push(funcName);
+          objectSnippets.push("'" + key + "': " + value);
         }
       });
-    }
 
-    // remove `isArguments` fallback before `isArguments` is transformed by
-    // other parts of the build process
-    if (isRemoved(source, 'isArguments')) {
-      source = removeIsArgumentsFallback(source);
-    }
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  // simplify template snippets by removing unnecessary brackets
-  source = source.replace(
-    RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
-  );
-
-  source = source.replace(
-    RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  // DRY out isType functions
-  (function() {
-    var iteratorName = lodash.find(['forEach', 'forOwn'], function(funcName) {
-      return !isRemoved(source, funcName);
-    });
-
-    // skip this optimization if there are no iteration methods to use
-    if (!iteratorName) {
-      return;
-    }
-    var funcNames = [],
-        objectSnippets = [];
-
-    // build replacement code
-    lodash.forOwn({
-      'Arguments': 'argsClass',
-      'Date': 'dateClass',
-      'Number': 'numberClass',
-      'RegExp': 'regexpClass',
-      'String': 'stringClass'
-    }, function(value, key) {
-      if (!isUnderscore && key == 'Arguments') {
+      // skip this optimization if there are less than 2 isType functions
+      if (funcNames.length < 2) {
         return;
       }
-      var funcName = 'is' + key,
-          funcCode = matchFunction(source, funcName);
 
-      if (funcCode) {
-        funcNames.push(funcName);
-        objectSnippets.push("'" + key + "': " + value);
-      }
-    });
-
-    // skip this optimization if there are less than 2 isType functions
-    if (funcNames.length < 2) {
-      return;
-    }
-
-    // remove existing isType functions
-    funcNames.forEach(function(funcName) {
-      source = removeFunction(source, funcName);
-    });
-
-    // insert new DRY code after the method assignments
-    var snippet = getMethodAssignments(source);
-    source = source.replace(snippet, snippet + '\n' +
-      '  // add `_.' + funcNames.join('`, `_.') + '`\n' +
-      '  ' + iteratorName + '({\n    ' + objectSnippets.join(',\n    ') + '\n  }, function(className, key) {\n' +
-      "    lodash['is' + key] = function(value) {\n" +
-      '      return toString.call(value) == className;\n' +
-      '    };\n' +
-      '  });\n'
-    );
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  if (isLegacy) {
-    ['isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
-      source = removeVar(source, varName);
-    });
-
-    ['bind', 'isArray'].forEach(function(funcName) {
-      var snippet = matchFunction(source, funcName),
-          modified = snippet;
-
-      // remove native `Function#bind` branch in `_.bind`
-      if (funcName == 'bind') {
-        modified = modified.replace(/(?:\s*\/\/.*)*\s*else if *\(isBindFast[^}]+}/, '');
-      }
-      // remove native `Array.isArray` branch in `_.isArray`
-      else {
-        modified = modified.replace(/nativeIsArray * \|\|/, '');
-      }
-      source = source.replace(snippet, modified);
-    });
-
-    // replace `_.keys` with `shimKeys`
-    if (!isRemoved(source, 'keys')) {
-      source = source.replace(
-        matchFunction(source, 'keys').replace(/[\s\S]+?var keys *=/, ''),
-        matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *=/, '')
-      );
-
-      source = removeFunction(source, 'shimKeys');
-    }
-    // replace `_.isArguments` with fallback
-    if (!isRemoved(source, 'isArguments')) {
-      source = source.replace(
-        matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''),
-        getIsArgumentsFallback(source).match(/isArguments *= *function([\s\S]+?) *};/)[1] + '  }\n'
-      );
-
-      source = removeIsArgumentsFallback(source);
-    }
-
-    source = removeVar(source, 'reNative');
-    source = removeFromCreateIterator(source, 'nativeKeys');
-    source = removeKeysOptimization(source);
-  }
-
-  if (isMobile) {
-    // inline all functions defined with `createIterator`
-    lodash.functions(lodash).forEach(function(funcName) {
-      // match `funcName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
-      var reFunc = RegExp('(\\bvar ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
-
-      // skip if not defined with `createIterator`
-      if (!reFunc.test(source)) {
-        return;
-      }
-      // extract, format, and inject the compiled function's source code
-      source = source.replace(reFunc, '$1' + getFunctionSource(lodash[funcName]) + ';\n');
-    });
-
-    // replace `callee` in `_.merge` with `merge`
-    source = source.replace(matchFunction(source, 'merge'), function(match) {
-      return match.replace(/\bcallee\b/g, 'merge');
-    });
-
-    if (!isUnderscore) {
-      source = removeIsArgumentsFallback(source);
-      source = removeNoArgsClass(source);
-    }
-
-    // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
-
-    // remove `iteratesOwnLast` from `isPlainObject`
-    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
-
-    // remove JScript [[DontEnum]] fix from `_.isEqual`
-    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
-
-    // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
-    source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
-
-    // remove `noArraySliceOnStrings` from `_.toArray`
-    source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
-
-    // remove `noCharByIndex` from `_.reduceRight`
-    source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
-
-    source = removeVar(source, 'extendIteratorOptions');
-    source = removeVar(source, 'iteratorTemplate');
-    source = removeVar(source, 'noArraySliceOnStrings');
-    source = removeVar(source, 'noCharByIndex');
-    source = removeKeysOptimization(source);
-    source = removeNoNodeClass(source);
-  }
-  else {
-    // inline `iteratorTemplate` template
-    source = source.replace(/(( +)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
-      var snippet = getFunctionSource(lodash._iteratorTemplate);
-
-      // prepend data object references to property names to avoid having to
-      // use a with-statement
-      iteratorOptions.forEach(function(property) {
-        snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
+      // remove existing isType functions
+      funcNames.forEach(function(funcName) {
+        source = removeFunction(source, funcName);
       });
 
-      // remove unnecessary code
-      snippet = snippet
-        .replace(/var __t.+/, "var __p = '';")
-        .replace(/function print[^}]+}/, '')
-        .replace(/'(?:\\n|\s)+'/g, "''")
-        .replace(/__p *\+= *' *';/g, '')
-        .replace(/(__p *\+= *)' *' *\+/g, '$1')
-        .replace(/(\{) *;|; *(\})/g, '$1$2')
-        .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '$1');
+      // insert new DRY code after the method assignments
+      var snippet = getMethodAssignments(source);
+      source = source.replace(snippet, snippet + '\n' +
+        '  // add `_.' + funcNames.join('`, `_.') + '`\n' +
+        '  ' + iteratorName + '({\n    ' + objectSnippets.join(',\n    ') + '\n  }, function(className, key) {\n' +
+        "    lodash['is' + key] = function(value) {\n" +
+        '      return toString.call(value) == className;\n' +
+        '    };\n' +
+        '  });\n'
+      );
+    }());
 
-      // remove the with-statement
-      snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
+    /*------------------------------------------------------------------------*/
 
-      // minor cleanup
-      snippet = snippet
-        .replace(/obj *\|\| *\(obj *= *\{}\);/, '')
-        .replace(/var __p = '';\s*__p \+=/, 'var __p =');
+    if (isLegacy) {
+      ['isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
+        source = removeVar(source, varName);
+      });
 
-      // remove comments, including sourceURLs
-      snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
+      ['bind', 'isArray'].forEach(function(funcName) {
+        var snippet = matchFunction(source, funcName),
+            modified = snippet;
 
-      return '$1' + snippet + ';\n';
-    }()));
+        // remove native `Function#bind` branch in `_.bind`
+        if (funcName == 'bind') {
+          modified = modified.replace(/(?:\s*\/\/.*)*\s*else if *\(isBindFast[^}]+}/, '');
+        }
+        // remove native `Array.isArray` branch in `_.isArray`
+        else {
+          modified = modified.replace(/nativeIsArray * \|\|/, '');
+        }
+        source = source.replace(snippet, modified);
+      });
+
+      // replace `_.keys` with `shimKeys`
+      if (!isRemoved(source, 'keys')) {
+        source = source.replace(
+          matchFunction(source, 'keys').replace(/[\s\S]+?var keys *=/, ''),
+          matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *=/, '')
+        );
+
+        source = removeFunction(source, 'shimKeys');
+      }
+      // replace `_.isArguments` with fallback
+      if (!isRemoved(source, 'isArguments')) {
+        source = source.replace(
+          matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''),
+          getIsArgumentsFallback(source).match(/isArguments *= *function([\s\S]+?) *};/)[1] + '  }\n'
+        );
+
+        source = removeIsArgumentsFallback(source);
+      }
+
+      source = removeVar(source, 'reNative');
+      source = removeFromCreateIterator(source, 'nativeKeys');
+      source = removeKeysOptimization(source);
+    }
+
+    if (isMobile) {
+      // inline all functions defined with `createIterator`
+      _.functions(lodash).forEach(function(funcName) {
+        // match `funcName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
+        var reFunc = RegExp('(\\bvar ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
+
+        // skip if not defined with `createIterator`
+        if (!reFunc.test(source)) {
+          return;
+        }
+        // extract, format, and inject the compiled function's source code
+        source = source.replace(reFunc, '$1' + getFunctionSource(lodash[funcName]) + ';\n');
+      });
+
+      // replace `callee` in `_.merge` with `merge`
+      source = source.replace(matchFunction(source, 'merge'), function(match) {
+        return match.replace(/\bcallee\b/g, 'merge');
+      });
+
+      if (!isUnderscore) {
+        source = removeIsArgumentsFallback(source);
+        source = removeNoArgsClass(source);
+      }
+
+      // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
+
+      // remove `iteratesOwnLast` from `isPlainObject`
+      source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
+
+      // remove JScript [[DontEnum]] fix from `_.isEqual`
+      source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
+
+      // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
+      source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
+
+      // remove `noArraySliceOnStrings` from `_.toArray`
+      source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
+
+      // remove `noCharByIndex` from `_.reduceRight`
+      source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
+
+      source = removeVar(source, 'extendIteratorOptions');
+      source = removeVar(source, 'iteratorTemplate');
+      source = removeVar(source, 'noArraySliceOnStrings');
+      source = removeVar(source, 'noCharByIndex');
+      source = removeKeysOptimization(source);
+      source = removeNoNodeClass(source);
+    }
+    else {
+      // inline `iteratorTemplate` template
+      source = source.replace(/(( +)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
+        var snippet = getFunctionSource(lodash._iteratorTemplate);
+
+        // prepend data object references to property names to avoid having to
+        // use a with-statement
+        iteratorOptions.forEach(function(property) {
+          snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
+        });
+
+        // remove unnecessary code
+        snippet = snippet
+          .replace(/var __t.+/, "var __p = '';")
+          .replace(/function print[^}]+}/, '')
+          .replace(/'(?:\\n|\s)+'/g, "''")
+          .replace(/__p *\+= *' *';/g, '')
+          .replace(/(__p *\+= *)' *' *\+/g, '$1')
+          .replace(/(\{) *;|; *(\})/g, '$1$2')
+          .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '$1');
+
+        // remove the with-statement
+        snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
+
+        // minor cleanup
+        snippet = snippet
+          .replace(/obj *\|\| *\(obj *= *\{}\);/, '')
+          .replace(/var __p = '';\s*__p \+=/, 'var __p =');
+
+        // remove comments, including sourceURLs
+        snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
+
+        return '$1' + snippet + ';\n';
+      }()));
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    // modify/remove references to removed methods/variables
+    if (isRemoved(source, 'isArguments')) {
+      source = replaceVar(source, 'noArgsClass', 'false');
+    }
+    if (isRemoved(source, 'isFunction')) {
+      source = removeIsFunctionFallback(source);
+    }
+    if (isRemoved(source, 'mixin')) {
+      // remove `LoDash` constructor
+      source = removeFunction(source, 'LoDash');
+      // remove `LoDash` calls
+      source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
+      // remove `LoDash.prototype` additions
+      source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
+      // remove `hasObjectSpliceBug` assignment
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasObjectSpliceBug;|.+?hasObjectSpliceBug *=.+/g, '');
+    }
+
+    // remove pseudo private properties
+    source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
+
+    // assign debug source before further modifications that rely on the minifier
+    // to remove unused variables and other dead code
+    debugSource = source;
+
+    // remove associated functions, variables, and code snippets that the minifier may miss
+    if (isRemoved(source, 'isArray')) {
+      source = removeVar(source, 'nativeIsArray');
+    }
+    if (isRemoved(source, 'keys')) {
+      source = removeFunction(source, 'shimKeys');
+    }
+    if (isRemoved(source, 'template')) {
+      // remove `templateSettings` assignment
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
+    }
+    if (isRemoved(source, 'toArray')) {
+      source = removeVar(source, 'noArraySliceOnStrings');
+    }
+    if (isUnderscore
+          ? isRemoved(source, 'merge')
+          : isRemoved(source, 'clone', 'merge')
+        ) {
+      source = removeFunction(source, 'isPlainObject');
+    }
+    if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual')) {
+      source = removeNoArgsClass(source);
+    }
+    if (isRemoved(source, 'isEqual', 'isPlainObject')) {
+      source = removeNoNodeClass(source);
+    }
+    if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
+      source = removeFunction(source, 'createIterator');
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var noArgsEnum;|.+?noArgsEnum *=.+/g, '');
+    }
+    if (isRemoved(source, 'createIterator', 'bind')) {
+      source = removeVar(source, 'isBindFast');
+      source = removeVar(source, 'isStrictFast');
+      source = removeVar(source, 'nativeBind');
+    }
+    if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
+      source = removeVar(source, 'reNative');
+    }
+    if (isRemoved(source, 'createIterator', 'isEqual')) {
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
+    }
+    if (isRemoved(source, 'createIterator', 'isPlainObject')) {
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
+    }
+    if (isRemoved(source, 'createIterator', 'keys')) {
+      source = removeVar(source, 'nativeKeys');
+    }
+    if (!source.match(/var (?:hasDontEnumBug|hasObjectSpliceBug|iteratesOwnLast|noArgsEnum)\b/g)) {
+      // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, and `noArgsEnum` assignment
+      source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
+    }
+
+    // consolidate consecutive horizontal rule comment separators
+    source = source.replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
+      return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
+    });
+
+    // cleanup code
+    source = source.replace(/^ *;\n/gm, '');
+
+    // begin the minification process
+    if (filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
+      callback(path.join(cwd, 'lodash.custom.js'), debugSource);
+
+      minify(source, 'lodash.custom.min', function(source) {
+        if (isStrict) {
+          // inject "use strict" directive
+          source = source.replace(/^(\/\*![\s\S]+?\*\/\n;\(function[^)]+\){)([^'"])/, '$1"use strict";$2');
+        }
+        callback(path.join(cwd, 'lodash.custom.min.js'), postMinify(source));
+      });
+    }
+    else {
+      minify(source, 'lodash.min', function(source) {
+        callback(path.join(cwd, 'lodash.min.js'), postMinify(source));
+      });
+    }
   }
 
   /*--------------------------------------------------------------------------*/
 
-  // modify/remove references to removed methods/variables
-  if (isRemoved(source, 'isArguments')) {
-    source = replaceVar(source, 'noArgsClass', 'false');
-  }
-  if (isRemoved(source, 'isFunction')) {
-    source = removeIsFunctionFallback(source);
-  }
-  if (isRemoved(source, 'mixin')) {
-    // remove `LoDash` constructor
-    source = removeFunction(source, 'LoDash');
-    // remove `LoDash` calls
-    source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
-    // remove `LoDash.prototype` additions
-    source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
-    // remove `hasObjectSpliceBug` assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasObjectSpliceBug;|.+?hasObjectSpliceBug *=.+/g, '');
-  }
-
-  // remove pseudo private properties
-  source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
-
-  // assign debug source before further modifications that rely on the minifier
-  // to remove unused variables and other dead code
-  debugSource = source;
-
-  // remove associated functions, variables, and code snippets that the minifier may miss
-  if (isRemoved(source, 'isArray')) {
-    source = removeVar(source, 'nativeIsArray');
-  }
-  if (isRemoved(source, 'keys')) {
-    source = removeFunction(source, 'shimKeys');
-  }
-  if (isRemoved(source, 'template')) {
-    // remove `templateSettings` assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
-  }
-  if (isRemoved(source, 'toArray')) {
-    source = removeVar(source, 'noArraySliceOnStrings');
-  }
-  if (isUnderscore
-        ? isRemoved(source, 'merge')
-        : isRemoved(source, 'clone', 'merge')
-      ) {
-    source = removeFunction(source, 'isPlainObject');
-  }
-  if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual')) {
-    source = removeNoArgsClass(source);
-  }
-  if (isRemoved(source, 'isEqual', 'isPlainObject')) {
-    source = removeNoNodeClass(source);
-  }
-  if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
-    source = removeFunction(source, 'createIterator');
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var noArgsEnum;|.+?noArgsEnum *=.+/g, '');
-  }
-  if (isRemoved(source, 'createIterator', 'bind')) {
-    source = removeVar(source, 'isBindFast');
-    source = removeVar(source, 'isStrictFast');
-    source = removeVar(source, 'nativeBind');
-  }
-  if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
-    source = removeVar(source, 'reNative');
-  }
-  if (isRemoved(source, 'createIterator', 'isEqual')) {
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
-  }
-  if (isRemoved(source, 'createIterator', 'isPlainObject')) {
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
-  }
-  if (isRemoved(source, 'createIterator', 'keys')) {
-    source = removeVar(source, 'nativeKeys');
-  }
-  if (!source.match(/var (?:hasDontEnumBug|hasObjectSpliceBug|iteratesOwnLast|noArgsEnum)\b/g)) {
-    // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, and `noArgsEnum` assignment
-    source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
-  }
-
-  // consolidate consecutive horizontal rule comment separators
-  source = source.replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
-    return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
-  });
-
-  // cleanup code
-  source = source.replace(/^ *;\n/gm, '');
-
-  // begin the minification process
-  if (filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
-    writeFile(debugSource, 'lodash.custom.js');
-
-    minify(source, 'lodash.custom.min', function(result) {
-      writeFile(result, 'lodash.custom.min.js');
-    });
+  // expose `build`
+  if (module != require.main) {
+    module.exports = build;
   }
   else {
-    minify(source, 'lodash.min', function(result) {
-      writeFile(result, 'lodash.min.js');
+    // or invoked directly
+    build(process.argv.slice(2), function(filepath, source) {
+      fs.writeFileSync(filepath, source);
     });
   }
 }());

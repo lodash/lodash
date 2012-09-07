@@ -20,18 +20,18 @@ $(document).ready(function() {
     ok(new _(instance) === instance);
   });
 
-  test("utility: identity", function() {
+  test("identity", function() {
     var moe = {name : 'moe'};
     equal(_.identity(moe), moe, 'moe is the same as his identity');
   });
 
-  test("utility: uniqueId", function() {
+  test("uniqueId", function() {
     var ids = [], i = 0;
     while(i++ < 100) ids.push(_.uniqueId());
     equal(_.uniq(ids).length, ids.length, 'can generate a globally-unique stream of ids');
   });
 
-  test("utility: times", function() {
+  test("times", function() {
     var vals = [];
     _.times(3, function (i) { vals.push(i); });
     ok(_.isEqual(vals, [0,1,2]), "is 0 indexed");
@@ -41,7 +41,7 @@ $(document).ready(function() {
     ok(_.isEqual(vals, [0,1,2]), "works as a wrapper");
   });
 
-  test("utility: mixin", function() {
+  test("mixin", function() {
     _.mixin({
       myReverse: function(string) {
         return string.split('').reverse().join('');
@@ -51,13 +51,13 @@ $(document).ready(function() {
     equal(_('champ').myReverse(), 'pmahc', 'mixed in a function to the OOP wrapper');
   });
 
-  test("utility: _.escape", function() {
+  test("_.escape", function() {
     equal(_.escape("Curly & Moe"), "Curly &amp; Moe");
     equal(_.escape("Curly &amp; Moe"), "Curly &amp;amp; Moe");
     equal(_.escape(null), '');
   });
 
-  test("utility: _.unescape", function() {
+  test("_.unescape", function() {
     var string = "Curly & Moe";
     equal(_.unescape("Curly &amp; Moe"), string);
     equal(_.unescape("Curly &amp;amp; Moe"), "Curly &amp; Moe");
@@ -65,7 +65,7 @@ $(document).ready(function() {
     equal(_.unescape(_.escape(string)), string);
   });
 
-  test("utility: template", function() {
+  test("template", function() {
     var basicTemplate = _.template("<%= thing %> is gettin' on my noives!");
     var result = basicTemplate({thing : 'This'});
     equal(result, "This is gettin' on my noives!", 'can do basic attribute interpolation');
@@ -171,7 +171,7 @@ $(document).ready(function() {
     equal(templateWithNull({planet : "world"}), "a null undefined world", "can handle missing escape and evaluate settings");
   });
 
-  test('utility: _.template provides the generated function source, when a SyntaxError occurs', function() {
+  test('_.template provides the generated function source, when a SyntaxError occurs', function() {
     try {
       _.template('<b><%= if %></b>');
     } catch (e) {

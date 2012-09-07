@@ -1118,10 +1118,10 @@
     navigate: function(fragment, options) {
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: options};
-      var frag = (fragment || '').replace(routeStripper, '');
-      if (this.fragment === frag) return;
-      this.fragment = frag;
-      var url = (frag.indexOf(this.root) !== 0 ? this.root : '') + frag;
+      fragment = this.getFragment(fragment || '');
+      if (this.fragment === fragment) return;
+      this.fragment = fragment;
+      var url = (fragment.indexOf(this.root) !== 0 ? this.root : '') + fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
@@ -1130,13 +1130,13 @@
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.
       } else if (this._wantsHashChange) {
-        this._updateHash(this.location, frag, options.replace);
-        if (this.iframe && (frag !== this.getFragment(this.getHash(this.iframe)))) {
+        this._updateHash(this.location, fragment, options.replace);
+        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
           if(!options.replace) this.iframe.document.open().close();
-          this._updateHash(this.iframe.location, frag, options.replace);
+          this._updateHash(this.iframe.location, fragment, options.replace);
         }
 
       // If you've told us that you explicitly don't want fallback hashchange-

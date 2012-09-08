@@ -1002,6 +1002,11 @@
       var actual = _.merge(object, source);
       equal(_.isArguments(actual.args), false);
     });
+
+    test('should work with four arguments', function() {
+      var expected = { 'a': 4 };
+      deepEqual(_.merge({ 'a': 1 }, { 'a': 2 }, { 'a': 3 }, expected), expected);
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

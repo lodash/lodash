@@ -222,7 +222,7 @@
    */
   try {
     var useSourceURL = (Function('//@')(), !window.attachEvent);
-  } catch(e){ }
+  } catch(e) { }
 
   /** Used to identify object classifications that are array-like */
   var arrayLikeClasses = {};

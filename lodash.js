@@ -757,18 +757,17 @@
     a = a.criteria;
     b = b.criteria;
 
-    if (a === b) {
-      return ai < bi ? -1 : 1;
-    }
-    if (a === undefined) {
-      return 1;
-    }
-    if (b === undefined) {
-      return -1;
-    }
     // ensure a stable sort in V8 and other engines
     // http://code.google.com/p/v8/issues/detail?id=90
-    return a < b ? -1 : a > b ? 1 : ai < bi ? -1 : 1;
+    if (a !== b) {
+      if (a > b || a === undefined) {
+        return 1;
+      }
+      if (a < b || b === undefined) {
+        return -1;
+      }
+    }
+    return ai < bi ? -1 : 1;
   }
 
   /**

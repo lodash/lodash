@@ -1817,22 +1817,21 @@
    * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
    */
   var merge = createIterator(extendIteratorOptions, {
-    'args': 'object, source, indicator, stack',
+    'args': 'object, source, indicator',
     'top':
-      'var destValue, found, isArr, stackLength, recursive = indicator == isPlainObject;\n' +
-      'if (!recursive) stack = [];\n' +
+      'var isArr, recursive = indicator == isPlainObject, stack = recursive ? arguments[3] : [];\n' +
       'for (var argsIndex = 1, argsLength = recursive ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
       '  if (iteratee = arguments[argsIndex]) {',
     'inLoop':
       'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +
-      '  found = false; stackLength = stack.length;\n' +
+      '  var found = false, stackLength = stack.length;\n' +
       '  while (stackLength--) {\n' +
       '    if (found = stack[stackLength].source == value) break\n' +
       '  }\n' +
       '  if (found) {\n' +
       '    result[index] = stack[stackLength].value\n' +
       '  } else {\n' +
-      '    destValue = (destValue = result[index]) && isArr\n' +
+      '    var destValue = (destValue = result[index]) && isArr\n' +
       '      ? (isArray(destValue) ? destValue : [])\n' +
       '      : (isPlainObject(destValue) ? destValue : {});\n' +
       '    stack.push({ value: destValue, source: value });\n' +

@@ -1499,6 +1499,11 @@
       var compiled = _.template('<span class="icon-<%= type %>2"></span>');
       equal(compiled({ 'type': 1 }), '<span class="icon-12"></span>');
     });
+
+    test('should work with "interpolate" delimiters containing ternary operators', function() {
+      var compiled = _.template('<%= value ? value : "b" %>');
+      equal(compiled({ 'value': 'a' }), 'a');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

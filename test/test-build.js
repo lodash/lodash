@@ -414,7 +414,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('build');
+  QUnit.module('lodash build');
 
   (function() {
     var commands = [
@@ -514,9 +514,7 @@
   QUnit.module('strict modifier');
 
   (function() {
-    var object = {};
-
-    Object.defineProperties(object, {
+    var object = Object.create(Object.prototype, {
       'a': { 'value': _.identify },
       'b': { 'value': null }
     });

@@ -54,7 +54,7 @@
   var oldDash = window._;
 
   /** Used to detect delimiter values that should be processed by `tokenizeEvaluate` */
-  var reComplexDelimiter = /[-+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
+  var reComplexDelimiter = /[-?+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
 
   /** Used to match HTML entities */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g;

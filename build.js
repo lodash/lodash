@@ -178,7 +178,7 @@
     'some': ['identity'],
     'sortBy': [],
     'sortedIndex': ['bind'],
-    'tap': [],
+    'tap': ['mixin'],
     'template': ['escape'],
     'throttle': [],
     'times': [],
@@ -187,6 +187,7 @@
     'union': ['indexOf'],
     'uniq': ['identity', 'indexOf'],
     'uniqueId': [],
+    'value': ['mixin'],
     'values': ['isArguments'],
     'where': ['forIn'],
     'without': ['indexOf'],
@@ -217,11 +218,10 @@
     'useStrict'
   ];
 
-  /** Collections of method names */
-  var excludeMethods = [],
-      includeMethods = [],
-      allMethods = _.keys(dependencyMap);
+  /** List of all Lo-Dash methods */
+  var allMethods = _.keys(dependencyMap);
 
+  /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
     'countBy',
     'forIn',
@@ -238,6 +238,23 @@
   ]));
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Removes unnecessary comments and whitespace.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function cleanupSource(source) {
+    return source
+      // remove lines with just whitespace and semicolons
+      .replace(/^ *;\n/gm, '')
+      // consolidate consecutive horizontal rule comment separators
+      .replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
+        return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
+      });
+  }
 
   /**
    * Logs the help message to the console.
@@ -264,7 +281,9 @@
       '',
       '  Options:',
       '',
+      '    -c , --stdout  Write output to standard output',
       '    -h, --help     Display help information',
+      '    -o, --output   Write output to a given filename/path',
       '    -s, --silent   Skip status updates normally logged to the console',
       '    -V, --version  Output current version of Lo-Dash',
       ''
@@ -650,6 +669,10 @@
     // the debug version of `source`
     var debugSource;
 
+    // collections of method names to exclude or include
+    var excludeMethods = [],
+        includeMethods = [];
+
     // flag used to specify a Backbone build
     var isBackbone = options.indexOf('backbone') > -1;
 
@@ -680,7 +703,10 @@
 
     // load customized Lo-Dash module
     var lodash = (function() {
-      var sandbox = {};
+      var context = _.extend(vm.createContext(), {
+        'clearTimeout': clearTimeout,
+        'setTimeout': setTimeout
+      });
 
       if (isStrict) {
         source = setUseStrictOption(source, true);
@@ -735,8 +761,8 @@
           .replace(/(?: *\/\/.*\n)*\s*' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
           .replace(/!hasDontEnumBug *\|\|/g, '');
       }
-      vm.runInNewContext(source, sandbox);
-      return sandbox._;
+      vm.runInContext(source, context);
+      return context._;
     }());
 
     // used to specify whether filtering is for exclusion or inclusion
@@ -762,7 +788,7 @@
 
     // used to report invalid arguments
     var invalidArgs = _.reject(options, function(value) {
-      if (/^(?:category|exclude|include)=(?:.*)$/.test(value)) {
+      if (/^(?:category|exclude|include)=.*$/.test(value)) {
         return true;
       }
       return [
@@ -772,7 +798,10 @@
         'mobile',
         'strict',
         'underscore',
+        '-c', '--stdout',
         '-h', '--help',
+        '-o', '--output',
+        '-s', '--silent',
         '-V', '--version'
       ].indexOf(value) > -1;
     });
@@ -857,7 +886,7 @@
         return false;
       }
       // resolve method names belonging to each category
-      var categoryMethods = categories.reduce(function(result, category) {
+      var categoryMethods = categories[1].split(/, */).reduce(function(result, category) {
         return result.concat(allMethods.filter(function(funcName) {
           return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, funcName));
         }));
@@ -1141,6 +1170,9 @@
     debugSource = source;
 
     // remove associated functions, variables, and code snippets that the minifier may miss
+    if (isRemoved(source, 'clone')) {
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var cloneableClasses *=[\s\S]+?true;\n/g, '');
+    }
     if (isRemoved(source, 'isArray')) {
       source = removeVar(source, 'nativeIsArray');
     }
@@ -1178,6 +1210,9 @@
     if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
       source = removeVar(source, 'reNative');
     }
+    if (isRemoved(source, 'createIterator', 'isEmpty', 'isEqual')) {
+      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var arrayLikeClasses *=[\s\S]+?true;\n/g, '');
+    }
     if (isRemoved(source, 'createIterator', 'isEqual')) {
       source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
     }
@@ -1192,13 +1227,8 @@
       source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
     }
 
-    // consolidate consecutive horizontal rule comment separators
-    source = source.replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
-      return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
-    });
-
-    // cleanup code
-    source = source.replace(/^ *;\n/gm, '');
+    debugSource = cleanupSource(debugSource);
+    source = cleanupSource(source);
 
     // begin the minification process
     if (filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {

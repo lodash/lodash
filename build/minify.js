@@ -361,10 +361,10 @@
 
       var filePath = options[options.length - 1],
           dirPath = path.dirname(filePath),
+          workingName = path.basename(filePath, '.js') + '.min',
           outputPath = path.join(dirPath, workingName + '.js'),
           isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1,
-          source = fs.readFileSync(filePath, 'utf8'),
-          workingName = path.basename(filePath, '.js') + '.min';
+          source = fs.readFileSync(filePath, 'utf8');
 
       minify(source, {
         'silent': isSilent,

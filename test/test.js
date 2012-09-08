@@ -992,6 +992,21 @@
       var actual = _.merge(object, source);
       equal(_.isArguments(actual.args), false);
     });
+
+    test('should be able to merge an arbitrary number of objects', function() {
+      var o1 = {a: 1, b: 2};
+      var o2 = {a: 2, c: 2};
+      var o3 = {a: 3, d: 2};
+      var o4 = {a: 4, e: 2};
+      var o5 = {a: 5, f: 2};
+      var o6 = {a: 6, g: 2};
+
+      var expected1 = {a: 4, b: 2, c: 2, d: 2, e: 2};
+      var expected2 = {a: 6, b: 2, c: 2, d: 2, e: 2, f: 2, g: 2};
+
+      deepEqual(_.merge(o1, o2, o3, o4), expected1);
+      deepEqual(_.merge(o1, o2, o3, o4, o5, o6), expected2);
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

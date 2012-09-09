@@ -237,10 +237,18 @@
     'where'
   ]));
 
+  /** List of ways to export the `LoDash` function */
+  var exportsAll = [
+    'amd',
+    'commonjs',
+    'global',
+    'node'
+  ];
+
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Removes unnecessary comments and whitespace.
+   * Removes unnecessary comments, whitespace, and pseudo private properties.
    *
    * @private
    * @param {String} source The source to process.
@@ -248,6 +256,8 @@
    */
   function cleanupSource(source) {
     return source
+      // remove pseudo private properties
+      .replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n')
       // remove lines with just whitespace and semicolons
       .replace(/^ *;\n/gm, '')
       // consolidate consecutive horizontal rule comment separators
@@ -274,6 +284,7 @@
       '    lodash underscore    Build with only methods included in Underscore without iteration fixes',
       '    lodash category=...  Comma separated categories of methods to include in the build',
       '    lodash exclude=...   Comma separated names of methods to exclude from the build',
+      '    lodash exports=...   Comma separated names of ways to export the `LoDash` function',
       '    lodash include=...   Comma separated names of methods to include in the build',
       '',
       '    All arguments, except `exclude` with `include` & `legacy` with `csp`/`mobile`,',
@@ -283,7 +294,7 @@
       '',
       '    -c , --stdout  Write output to standard output',
       '    -h, --help     Display help information',
-      '    -o, --output   Write output to a given filename/path',
+      '    -o, --output   Write output to a given path/filename',
       '    -s, --silent   Skip status updates normally logged to the console',
       '    -V, --version  Output current version of Lo-Dash',
       ''
@@ -521,7 +532,7 @@
   function removeKeysOptimization(source) {
     return removeVar(source, 'isKeysFast')
       // remove optimized branch in `iteratorTemplate`
-      .replace(/(?: *\/\/.*\n)*\s*'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, '$2')
+      .replace(/(?: *\/\/.*\n)* *'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, '$2')
       // remove `isKeysFast` from `beforeLoop.object` of `mapIteratorOptions`
       .replace(/=\s*'\s*\+\s*\(isKeysFast.+/, "= []'")
       // remove `isKeysFast` from `inLoop.object` of `mapIteratorOptions`, `invoke`, `pairs`, `pluck`, and `sortBy`
@@ -701,9 +712,60 @@
     // the lodash.js source
     var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
 
+    // used to specify the ways to export the `LoDash` function
+    var exportsOptions = options.reduce(function(result, value) {
+      var match = value.match(/^exports=(.*)$/);
+      if (!match) {
+        return result;
+      }
+      return match[1].split(/, */).sort();
+    }, exportsAll.slice());
+
+    // used to specify whether filtering is for exclusion or inclusion
+    var filterType = options.reduce(function(result, value) {
+      if (result) {
+        return result;
+      }
+      var pair = value.match(/^(exclude|include)=(.*)$/);
+      if (!pair) {
+        return result;
+      }
+      // remove nonexistent method names
+      var methodNames = _.intersection(allMethods, pair[2].split(/, */).map(getRealName));
+
+      if (pair[1] == 'exclude') {
+        excludeMethods = methodNames;
+      } else {
+        includeMethods = methodNames;
+      }
+      // return `filterType`
+      return pair[1];
+    }, '');
+
+    // used to report invalid command-line arguments
+    var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index) {
+      if (/^(?:category|exclude|exports|include)=.*$/.test(value)) {
+        return true;
+      }
+      return [
+        'backbone',
+        'csp',
+        'legacy',
+        'lodash',
+        'mobile',
+        'strict',
+        'underscore',
+        '-c', '--stdout',
+        '-h', '--help',
+        '-o', '--output',
+        '-s', '--silent',
+        '-V', '--version'
+      ].indexOf(value) > -1;
+    });
+
     // load customized Lo-Dash module
     var lodash = (function() {
-      var context = _.extend(vm.createContext(), {
+      var context = vm.createContext({
         'clearTimeout': clearTimeout,
         'setTimeout': setTimeout
       });
@@ -764,47 +826,6 @@
       vm.runInContext(source, context);
       return context._;
     }());
-
-    // used to specify whether filtering is for exclusion or inclusion
-    var filterType = options.reduce(function(result, value) {
-      if (result) {
-        return result;
-      }
-      var pair = value.match(/^(exclude|include)=(.*)$/);
-      if (!pair) {
-        return result;
-      }
-      // remove nonexistent method names
-      var methodNames = _.intersection(allMethods, pair[2].split(/, */).map(getRealName));
-
-      if (pair[1] == 'exclude') {
-        excludeMethods = methodNames;
-      } else {
-        includeMethods = methodNames;
-      }
-      // return `filterType`
-      return pair[1];
-    }, '');
-
-    // used to report invalid arguments
-    var invalidArgs = _.reject(options, function(value) {
-      if (/^(?:category|exclude|include)=.*$/.test(value)) {
-        return true;
-      }
-      return [
-        'backbone',
-        'csp',
-        'legacy',
-        'mobile',
-        'strict',
-        'underscore',
-        '-c', '--stdout',
-        '-h', '--help',
-        '-o', '--output',
-        '-s', '--silent',
-        '-V', '--version'
-      ].indexOf(value) > -1;
-    });
 
     // report invalid arguments
     if (invalidArgs.length) {
@@ -953,8 +974,6 @@
     source = source.replace(
       RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
     );
-
-    /*------------------------------------------------------------------------*/
 
     // DRY out isType functions
     (function() {
@@ -1144,6 +1163,24 @@
 
     /*------------------------------------------------------------------------*/
 
+    if (exportsOptions.indexOf('amd') == -1) {
+      source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +define[\s\S]+?else /, '$1');
+    }
+    if (exportsOptions.indexOf('node') == -1) {
+      source = source.replace(/(?: *\/\/.*\n)* *if *\(typeof +module[\s\S]+?else *{\n([\s\S]+?) *}\n/, '$1');
+    }
+    if (exportsOptions.indexOf('commonjs') == -1) {
+      source = source.replace(/(?: *\/\/.*\n)*(?:( +)else *{)?\s*freeExports\._ *=.+(\n\1})?\n/, '');
+    }
+    if (exportsOptions.indexOf('global') == -1) {
+      source = source.replace(/(?:( +)else *{)?(?:\s*\/\/.*)*\s*window\._ *= *lodash.+(\n\1})?\n/g, '');
+    }
+
+    // remove `if (freeExports) {...}` if it's empty
+    source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{\n([\s\S]+?) *})?/, '$1');
+
+    /*------------------------------------------------------------------------*/
+
     // modify/remove references to removed methods/variables
     if (isRemoved(source, 'isArguments')) {
       source = replaceVar(source, 'noArgsClass', 'false');
@@ -1227,11 +1264,13 @@
       source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
     }
 
+    /*------------------------------------------------------------------------*/
+
     debugSource = cleanupSource(debugSource);
     source = cleanupSource(source);
 
     // begin the minification process
-    if (filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
+    if (!_.isEqual(exportsOptions, exportsAll) || filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
       callback(path.join(cwd, 'lodash.custom.js'), debugSource);
 
       minify(source, {
@@ -1265,7 +1304,7 @@
   }
   else {
     // or invoked directly
-    build(process.argv.slice(2), function(filepath, source) {
+    build(process.argv, function(filepath, source) {
       fs.writeFileSync(filepath, source, 'utf8');
     });
   }

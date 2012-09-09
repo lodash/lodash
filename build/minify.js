@@ -39,8 +39,8 @@
    *
    * @param {Array|String} source The array of command-line arguments or the
    *  source to minify.
-   * @param {Object} options The options object containing `onComplete`, `silent`,
-   *  and `workingName`.
+   * @param {Object} options The options object containing `onComplete`,
+   *  `silent`, and `workingName`.
    */
   function minify(source, options) {
     options || (options = {});
@@ -72,8 +72,8 @@
    * @private
    * @constructor
    * @param {String} source The source to minify.
-   * @param {Object} options The options object containing `onComplete`, `silent`,
-   *  and `workingName`.
+   * @param {Object} options The options object containing `onComplete`,
+   *  `silent`, and `workingName`.
    */
   function Minify(source, options) {
     source || (source = '');

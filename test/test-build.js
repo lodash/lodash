@@ -523,7 +523,7 @@
       var start = _.after(2, _.once(QUnit.start));
 
       asyncTest(strictMode + ' should ' + (index ? 'error': 'silently fail') + ' attempting to overwrite read-only properties', function() {
-        var commands = ['--silent', 'include=bindAll,defaults,extend'];
+        var commands = ['-s', 'include=bindAll,defaults,extend'];
         if (index) {
           commands.push('strict');
         }
@@ -557,7 +557,7 @@
     var start = _.once(QUnit.start);
 
     asyncTest('should not have deep clone', function() {
-      build(['--silent', 'underscore'], function(filepath, source) {
+      build(['-s', 'underscore'], function(filepath, source) {
         vm.runInContext(source, context);
 
         var array = [{ 'a': 1 }],

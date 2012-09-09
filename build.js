@@ -780,10 +780,12 @@
         }
       }
       if (isLegacy) {
-        source = replaceVar(source, 'noArgsClass', 'true');
         ['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
           source = replaceVar(source, varName, 'false');
         });
+
+        source = replaceVar(source, 'noArgsClass', 'true');
+        source = removeKeysOptimization(source);
       }
       else if (isUnderscore) {
         // remove `deep` clone functionality
@@ -811,6 +813,7 @@
       }
       if (isMobile) {
         source = replaceVar(source, 'isKeysFast', 'false');
+        source = removeKeysOptimization(source);
 
         // remove Opera 10.53-10.60 JIT fixes
         source = source.replace(/length *> *-1 *&& *length/g, 'length');
@@ -1073,7 +1076,6 @@
 
       source = removeVar(source, 'reNative');
       source = removeFromCreateIterator(source, 'nativeKeys');
-      source = removeKeysOptimization(source);
     }
 
     if (isMobile) {
@@ -1122,7 +1124,6 @@
       source = removeVar(source, 'iteratorTemplate');
       source = removeVar(source, 'noArraySliceOnStrings');
       source = removeVar(source, 'noCharByIndex');
-      source = removeKeysOptimization(source);
       source = removeNoNodeClass(source);
     }
     else {

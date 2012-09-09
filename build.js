@@ -52,52 +52,6 @@
     'uniq': ['unique']
   };
 
-  /** Used to track Backbone's Lo-Dash dependencies */
-  var backboneDependencies = [
-    'bind',
-    'bindAll',
-    'clone',
-    'contains',
-    'escape',
-    'every',
-    'extend',
-    'filter',
-    'find',
-    'first',
-    'forEach',
-    'groupBy',
-    'has',
-    'indexOf',
-    'initial',
-    'invoke',
-    'isArray',
-    'isEmpty',
-    'isEqual',
-    'isFunction',
-    'isObject',
-    'isRegExp',
-    'keys',
-    'last',
-    'lastIndexOf',
-    'map',
-    'max',
-    'min',
-    'mixin',
-    'reduce',
-    'reduceRight',
-    'reject',
-    'rest',
-    'result',
-    'shuffle',
-    'size',
-    'some',
-    'sortBy',
-    'sortedIndex',
-    'toArray',
-    'uniqueId',
-    'without'
-  ];
-
   /** Used to track function dependencies */
   var dependencyMap = {
     'after': [],
@@ -220,6 +174,52 @@
 
   /** List of all Lo-Dash methods */
   var allMethods = _.keys(dependencyMap);
+
+  /** List Backbone's Lo-Dash dependencies */
+  var backboneDependencies = [
+    'bind',
+    'bindAll',
+    'clone',
+    'contains',
+    'escape',
+    'every',
+    'extend',
+    'filter',
+    'find',
+    'first',
+    'forEach',
+    'groupBy',
+    'has',
+    'indexOf',
+    'initial',
+    'invoke',
+    'isArray',
+    'isEmpty',
+    'isEqual',
+    'isFunction',
+    'isObject',
+    'isRegExp',
+    'keys',
+    'last',
+    'lastIndexOf',
+    'map',
+    'max',
+    'min',
+    'mixin',
+    'reduce',
+    'reduceRight',
+    'reject',
+    'rest',
+    'result',
+    'shuffle',
+    'size',
+    'some',
+    'sortBy',
+    'sortedIndex',
+    'toArray',
+    'uniqueId',
+    'without'
+  ];
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([

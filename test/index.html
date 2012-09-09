@@ -32,9 +32,6 @@
 			Object.keys = Object._keys;
 			delete Object._keys;
 
-			// set to test `_.noConflict`
-			_ = {};
-
 			// load Lo-Dash again to overwrite the existing `_` value
 			document.write('<script src="../' + QUnit.config.lodashFilename + '.js"><\/script>');
 

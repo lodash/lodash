@@ -699,8 +699,11 @@
     // flag used to specify a mobile build
     var isMobile = !isLegacy && (isCSP || isUnderscore || options.indexOf('mobile') > -1);
 
+    // flag used to specify writing output to standard output
+    var isStdOut = options.indexOf('-c') > -1 || options.indexOf('--stdout') > -1;
+
     // flag used to specify skipping status updates normally logged to the console
-    var isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1;
+    var isSilent = isStdOut || options.indexOf('-s') > -1 || options.indexOf('--silent') > -1;
 
     // flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are
     // constructed using the "use strict" directive
@@ -1271,8 +1274,10 @@
 
     // begin the minification process
     if (!_.isEqual(exportsOptions, exportsAll) || filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
-      callback(path.join(cwd, 'lodash.custom.js'), debugSource);
-
+      // output debug build
+      if (!isStdOut) {
+        callback(path.join(cwd, 'lodash.custom.js'), debugSource);
+      }
       minify(source, {
         'silent': isSilent,
         'workingName': 'lodash.custom.min',
@@ -1281,7 +1286,12 @@
             // inject "use strict" directive
             source = source.replace(/^(\/\*![\s\S]+?\*\/\n;\(function[^)]+\){)([^'"])/, '$1"use strict";$2');
           }
-          callback(path.join(cwd, 'lodash.custom.min.js'), postMinify(source));
+          source = postMinify(source);
+          if (isStdOut) {
+            console.log(source);
+          } else {
+            callback(path.join(cwd, 'lodash.custom.min.js'), source);
+          }
         }
       });
     }
@@ -1290,7 +1300,12 @@
         'silent': isSilent,
         'workingName': 'lodash.min',
         'onComplete': function(source) {
-          callback(path.join(cwd, 'lodash.min.js'), postMinify(source));
+          source = postMinify(source);
+          if (isStdOut) {
+            console.log(source);
+          } else {
+            callback(path.join(cwd, 'lodash.min.js'), source);
+          }
         }
       });
     }

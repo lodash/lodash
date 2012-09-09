@@ -1445,7 +1445,7 @@
       return a === b;
     }
     // init internal data
-    data || (data = { 'isCircular': false, 'thorough': null });
+    data || (data = { 'thorough': null });
 
     // avoid slower checks on non-objects
     if (data.thorough == null) {
@@ -1509,10 +1509,6 @@
       return false;
     }
 
-    // exit if it's the second pass of a circular reference
-    if (data.isCircular) {
-      return true;
-    }
     // assume cyclic structures are equal
     // the algorithm for detecting cyclic structures is adapted from ES 5.1
     // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
@@ -1520,9 +1516,8 @@
         length = stack.length;
 
     while (length--) {
-      if (stack[length] == a) {
-        data.isCircular = true;
-        break;
+      if (stack[length].a == a) {
+        return stack[length].b == b;
       }
     }
 
@@ -1530,8 +1525,8 @@
         result = true,
         size = 0;
 
-    // add `a` to the stack of traversed objects
-    stack.push(a);
+    // add `a` and `b` to the stack of traversed objects
+    stack.push({ 'a': a, 'b': b });
 
     // recursively compare objects and arrays (susceptible to call stack limits)
     if (isArr) {

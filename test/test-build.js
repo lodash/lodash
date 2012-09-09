@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-;(function() {
+;(function(undefined) {
   'use strict';
 
   /** Load modules */
@@ -16,12 +16,6 @@
 
   /** The `build` module */
   var build = require('../build.js');
-
-  /** Used to access the built Lo-Dash object */
-  var context = vm.createContext({
-    'clearTimeout': clearTimeout,
-    'setTimeout': setTimeout
-  });
 
   /** Used to associate aliases with their real names */
   var aliasToRealMap = {
@@ -263,6 +257,19 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Creates a context object to use with `vm.runInContext`.
+   *
+   * @private
+   * @returns {Object} Returns a new context object.
+   */
+  function createContext() {
+    return vm.createContext({
+      'clearTimeout': clearTimeout,
+      'setTimeout': setTimeout
+    });
+  }
+
+  /**
    * Expands a list of method names to include real and alias names.
    *
    * @private
@@ -435,7 +442,7 @@
       'category=collections,functions',
       'underscore backbone',
       'backbone legacy category=utilities exclude=first,last',
-      'underscore mobile strict category=functions include=pick,uniq',
+      'underscore mobile strict category=functions exports=amd,global include=pick,uniq',
     ]
     .concat(
       allMethods.map(function(methodName) {
@@ -448,14 +455,13 @@
 
       asyncTest('`lodash ' + command +'`', function() {
         build(['--silent'].concat(command.split(' ')), function(filepath, source) {
+          var basename = path.basename(filepath, '.js'),
+              context = createContext(),
+              methodNames = [];
+
           try {
-            delete context._;
             vm.runInContext(source, context);
           } catch(e) { }
-
-          var basename = path.basename(filepath, '.js'),
-              lodash = context._ || {},
-              methodNames = [];
 
           if (/underscore/.test(command)) {
             methodNames = underscoreMethods;
@@ -497,6 +503,7 @@
             methodNames = expandMethodNames(methodNames);
           }
 
+          var lodash = context._ || {};
           methodNames = _.unique(methodNames);
 
           methodNames.forEach(function(methodName) {
@@ -529,11 +536,12 @@
         }
 
         build(commands, function(filepath, source) {
-          vm.runInContext(source, context);
-
           var basename = path.basename(filepath, '.js'),
-              lodash = context._,
+              context = createContext(),
               pass = !index;
+
+          vm.runInContext(source, context);
+          var lodash = context._;
 
           try {
             lodash.bindAll(object);
@@ -558,14 +566,77 @@
 
     asyncTest('should not have deep clone', function() {
       build(['-s', 'underscore'], function(filepath, source) {
-        vm.runInContext(source, context);
-
         var array = [{ 'a': 1 }],
             basename = path.basename(filepath, '.js'),
-            lodash = context._;
+            context = createContext();
+
+        vm.runInContext(source, context);
+        var lodash = context._;
 
         ok(lodash.clone(array, true)[0] === array[0], basename);
         start();
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('exports command');
+  var exportsAll = [
+    'amd',
+    'commonjs',
+    'global',
+    'node'
+  ];
+  (function() {
+    var commands = [
+      'exports=amd',
+      'exports=commonjs',
+      'exports=global',
+      'exports=node'
+    ];
+
+    commands.forEach(function(command, index) {
+      var start = _.after(2, _.once(QUnit.start));
+
+      asyncTest('`lodash ' + command +'`', function() {
+        build(['-s', command], function(filepath, source) {
+          var basename = path.basename(filepath, '.js'),
+              context = createContext(),
+              pass = false;
+
+          switch(index) {
+            case 0:
+              context.define = function(fn) {
+                pass = true;
+                context._ = fn();
+              };
+              context.define.amd = {};
+              vm.runInContext(source, context);
+              ok(pass, basename);
+              break;
+
+            case 1:
+              context.exports = {};
+              vm.runInContext(source, context);
+              ok(context._ === undefined, basename);
+              ok(_.isFunction(context.exports._), basename)
+              break;
+
+            case 2:
+              vm.runInContext(source, context);
+              ok(_.isFunction(context._), basename);
+              break;
+
+            case 3:
+              context.exports = {};
+              context.module = { 'exports': context.exports };
+              vm.runInContext(source, context);
+              ok(context._ === undefined, basename);
+              ok(_.isFunction(context.module.exports), basename);
+          }
+          start();
+        });
       });
     });
   }());

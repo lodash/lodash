@@ -300,10 +300,10 @@
     // remove debug sourceURL use in `_.template`
     source = source.replace(/(?:\s*\/\/.*\n)* *if *\(useSourceURL[^}]+}/, '');
 
-    // minify internal properties used by 'compareAscending', `_.clone`, `_.merge`, and `_.sortBy`
+    // minify internal properties used by 'compareAscending', `_.clone`, `_.isEqual`, `_.merge`, and `_.sortBy`
     (function() {
-      var properties = ['criteria', 'index', 'source', 'value'],
-          snippets = source.match(/( +)(?:function clone|function compareAscending|var merge|var sortBy)\b[\s\S]+?\n\1}/g);
+      var properties = ['criteria', 'index', 'isCircular', 'source', 'thorough', 'value'],
+          snippets = source.match(/( +)(?:function (?:clone|compareAscending|isEqual)|var merge|var sortBy)\b[\s\S]+?\n\1}/g);
 
       if (!snippets) {
         return;

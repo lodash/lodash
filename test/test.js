@@ -770,15 +770,23 @@
       equal(_.isEqual(shadowed, {}), false);
     });
 
-    test('should return `true` for like-objects from different documents', function() {
-      // ensure `_._object` is assigned (unassigned in Opera 10.00)
-      if (_._object) {
-        var object = { 'a': 1, 'b': 2, 'c': 3 };
-        equal(_.isEqual(object, _._object), true);
-      }
-      else {
-        skipTest();
-      }
+    test('should use custom `isEqual` methods on primitives', function() {
+      Boolean.prototype.isEqual = function() { return true; };
+      equal(_.isEqual(true, false), true);
+      delete Boolean.prototype.isEqual;
+    });
+
+    test('should return `false` when comparing values with circular references to unlike values', function() {
+      var array1 = ['a', null, 'c'],
+          array2 = ['a', [], 'c'],
+          object1 = { 'a': 1, 'b': null, 'c': 3 },
+          object2 = { 'a': 1, 'b': {}, 'c': 3 };
+
+      array1[1] = array1;
+      equal(_.isEqual(array1, array2), false);
+
+      object1.b = object1;
+      equal(_.isEqual(object1, object2), false);
     });
   }());
 

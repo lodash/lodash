@@ -107,11 +107,13 @@
     '__chain__',
     '__proto__',
     '__wrapped__',
+    'a',
     'after',
     'all',
     'amd',
     'any',
     'attachEvent',
+    'b',
     'bind',
     'bindAll',
     'chain',
@@ -302,7 +304,7 @@
 
     // minify internal properties used by 'compareAscending', `_.clone`, `_.isEqual`, `_.merge`, and `_.sortBy`
     (function() {
-      var properties = ['criteria', 'index', 'isCircular', 'source', 'thorough', 'value'],
+      var properties = ['criteria', 'index', 'source', 'thorough', 'value'],
           snippets = source.match(/( +)(?:function (?:clone|compareAscending|isEqual)|var merge|var sortBy)\b[\s\S]+?\n\1}/g);
 
       if (!snippets) {

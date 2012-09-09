@@ -751,7 +751,6 @@
         'backbone',
         'csp',
         'legacy',
-        'lodash',
         'mobile',
         'strict',
         'underscore',

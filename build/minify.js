@@ -37,11 +37,32 @@
    * The exposed `minify` function minifies a given Lo-Dash `source` and invokes
    * the `onComplete` callback when finished.
    *
-   * @param {String} source The source to minify.
+   * @param {Array|String} source The array of command-line arguments or the
+   *  source to minify.
    * @param {Object} options The options object containing `onComplete`, `silent`,
    *  and `workingName`.
    */
   function minify(source, options) {
+    options || (options = {});
+
+    if (Array.isArray(source)) {
+      // convert the command-line arguments to an options object
+      options = source;
+      var filePath = options[options.length - 1],
+          dirPath = path.dirname(filePath),
+          workingName = path.basename(filePath, '.js') + '.min',
+          outputPath = path.join(dirPath, workingName + '.js'),
+          isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1;
+
+      source = fs.readFileSync(filePath, 'utf8');
+      options = {
+        'silent': isSilent,
+        'workingName': workingName,
+        'onComplete': function(source) {
+          fs.writeFileSync(outputPath, source, 'utf8');
+        }
+      };
+    }
     new Minify(source, options);
   }
 
@@ -70,15 +91,15 @@
       } catch(e) { }
     }
 
-    source = preprocess(source);
-
     this.compiled = {};
     this.hybrid = {};
     this.uglified = {};
     this.isSilent = !!options.silent;
     this.onComplete = options.onComplete || function() {};
-    this.source = source;
     this.workingName = options.workingName || 'temp';
+
+    source = preprocess(source);
+    this.source = source;
 
     // begin the minification process
     closureCompile.call(this, source, onClosureCompile.bind(this));
@@ -358,21 +379,7 @@
       if (options.length < 3) {
         return;
       }
-
-      var filePath = options[options.length - 1],
-          dirPath = path.dirname(filePath),
-          workingName = path.basename(filePath, '.js') + '.min',
-          outputPath = path.join(dirPath, workingName + '.js'),
-          isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1,
-          source = fs.readFileSync(filePath, 'utf8');
-
-      minify(source, {
-        'silent': isSilent,
-        'workingName': workingName,
-        'onComplete': function(source) {
-          fs.writeFileSync(outputPath, source, 'utf8');
-        }
-      });
+      minify(options);
     }());
   }
 }());

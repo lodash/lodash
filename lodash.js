@@ -1063,10 +1063,9 @@
    * @param {Boolean} deep A flag to indicate a deep clone.
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `deep`.
-   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
-   *  to avoid circular references.
-   * @param {Object} thorough Internally used to indicate whether or not to perform
-   *  a more thorough clone of non-object values.
+   * @param {Object} [data={}] Internally used to track traversed objects to avoid
+   *  circular references and indicate whether to perform a more thorough clone
+   *  of non-object values.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
    *
@@ -1087,23 +1086,25 @@
    * shallow[0] === stooges[0];
    * // => false
    */
-  function clone(value, deep, guard, stack, thorough) {
+  function clone(value, deep, guard, data) {
     if (value == null) {
       return value;
     }
     if (guard) {
       deep = false;
     }
+    // init internal data
+    data || (data = { 'thorough': null });
+
     // avoid slower checks on primitives
-    thorough || (thorough = { 'value': null });
-    if (thorough.value == null) {
+    if (data.thorough == null) {
       // primitives passed from iframes use the primary document's native prototypes
-      thorough.value = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
+      data.thorough = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
     }
     // use custom `clone` method if available
     var isObj = objectTypes[typeof value];
-    if ((isObj || thorough.value) && value.clone && isFunction(value.clone)) {
-      thorough.value = null;
+    if ((isObj || data.thorough) && value.clone && isFunction(value.clone)) {
+      data.thorough = null;
       return value.clone(deep);
     }
     // inspect [[Class]]
@@ -1140,9 +1141,10 @@
         return ctor(value.source, reFlags.exec(value));
     }
 
+    var stack = data.stack || (data.stack = []),
+        length = stack.length;
+
     // check for circular references and return corresponding clone
-    stack || (stack = []);
-    var length = stack.length;
     while (length--) {
       if (stack[length].source == value) {
         return stack[length].value;
@@ -1150,8 +1152,7 @@
     }
 
     // init cloned object
-    length = value.length;
-    var result = isArr ? ctor(length) : {};
+    var result = isArr ? ctor(length = value.length) : {};
 
     // add current clone and original source value to the stack of traversed objects
     stack.push({ 'value': result, 'source': value });
@@ -1160,11 +1161,11 @@
     if (isArr) {
       var index = -1;
       while (++index < length) {
-        result[index] = clone(value[index], deep, null, stack, thorough);
+        result[index] = clone(value[index], deep, null, data);
       }
     } else {
       forOwn(value, function(objValue, key) {
-        result[key] = clone(objValue, deep, null, stack, thorough);
+        result[key] = clone(objValue, deep, null, data);
       });
     }
     return result;
@@ -1423,10 +1424,9 @@
    * @category Objects
    * @param {Mixed} a The value to compare.
    * @param {Mixed} b The other value to compare.
-   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
-   *  to avoid circular references.
-   * @param {Object} thorough Internally used to indicate whether or not to perform
-   *  a more thorough comparison of non-object values.
+   * @param {Object} [data={}] Internally used track traversed objects to avoid
+   *  circular references and indicate whether to perform a more thorough comparison
+   *  of non-object values.
    * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
    * @example
    *
@@ -1439,29 +1439,31 @@
    * _.isEqual(moe, clone);
    * // => true
    */
-  function isEqual(a, b, stack, thorough) {
+  function isEqual(a, b, data) {
     // a strict comparison is necessary because `null == undefined`
     if (a == null || b == null) {
       return a === b;
     }
+    // init internal data
+    data || (data = { 'isCircular': false, 'thorough': null });
+
     // avoid slower checks on non-objects
-    thorough || (thorough = { 'value': null });
-    if (thorough.value == null) {
+    if (data.thorough == null) {
       // primitives passed from iframes use the primary document's native prototypes
-      thorough.value = !!(BoolProto.isEqual || NumberProto.isEqual || StringProto.isEqual);
+      data.thorough = !!(BoolProto.isEqual || NumberProto.isEqual || StringProto.isEqual);
     }
-    if (objectTypes[typeof a] || objectTypes[typeof b] || thorough.value) {
+    if (objectTypes[typeof a] || objectTypes[typeof b] || data.thorough) {
       // unwrap any LoDash wrapped values
       a = a.__wrapped__ || a;
       b = b.__wrapped__ || b;
 
       // use custom `isEqual` method if available
       if (a.isEqual && isFunction(a.isEqual)) {
-        thorough.value = null;
+        data.thorough = null;
         return a.isEqual(b);
       }
       if (b.isEqual && isFunction(b.isEqual)) {
-        thorough.value = null;
+        data.thorough = null;
         return b.isEqual(a);
       }
     }
@@ -1507,14 +1509,20 @@
       return false;
     }
 
+    // exit if it's the second pass of a circular reference
+    if (data.isCircular) {
+      return true;
+    }
     // assume cyclic structures are equal
     // the algorithm for detecting cyclic structures is adapted from ES 5.1
     // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
-    stack || (stack = []);
-    var length = stack.length;
+    var stack = data.stack || (data.stack = []),
+        length = stack.length;
+
     while (length--) {
       if (stack[length] == a) {
-        return true;
+        data.isCircular = true;
+        break;
       }
     }
 
@@ -1534,7 +1542,7 @@
       if (result) {
         // deep compare the contents, ignoring non-numeric properties
         while (size--) {
-          if (!(result = isEqual(a[size], b[size], stack, thorough))) {
+          if (!(result = isEqual(a[size], b[size], data))) {
             break;
           }
         }
@@ -1558,7 +1566,7 @@
         // count the number of properties.
         size++;
         // deep compare each property value.
-        if (!(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack, thorough))) {
+        if (!(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], data))) {
           return false;
         }
       }
@@ -1578,7 +1586,7 @@
       while (++index < 7) {
         prop = shadowed[index];
         if (hasOwnProperty.call(a, prop) &&
-            !(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stack, thorough))) {
+            !(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], data))) {
           return false;
         }
       }
@@ -1797,8 +1805,8 @@
    * @param {Object} [source1, source2, ...] The source objects.
    * @param {Object} [indicator] Internally used to indicate that the `stack`
    *  argument is an array of traversed objects instead of another source object.
-   * @param {Array} [stack=[]] Internally used to keep track of traversed objects
-   *  to avoid circular references.
+   * @param {Array} [stack=[]] Internally used to track traversed objects to avoid
+   *  circular references.
    * @returns {Object} Returns the destination object.
    * @example
    *

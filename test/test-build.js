@@ -444,7 +444,7 @@
     );
 
     commands.forEach(function(command) {
-      var start = _.after(2, QUnit.start);
+      var start = _.after(2, _.once(QUnit.start));
 
       asyncTest('`lodash ' + command +'`', function() {
         build(['--silent'].concat(command.split(' ')), function(filepath, source) {
@@ -520,6 +520,8 @@
     });
 
     ['non-strict', 'strict'].forEach(function(strictMode, index) {
+      var start = _.after(2, _.once(QUnit.start));
+
       asyncTest(strictMode + ' should ' + (index ? 'error': 'silently fail') + ' attempting to overwrite read-only properties', function() {
         var commands = ['--silent', 'include=bindAll,defaults,extend'];
         if (index) {
@@ -546,4 +548,26 @@
       });
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('underscore modifier');
+
+  (function() {
+    var start = _.once(QUnit.start);
+
+    asyncTest('should not have deep clone', function() {
+      build(['--silent', 'underscore'], function(filepath, source) {
+        vm.runInContext(source, context);
+
+        var array = [{ 'a': 1 }],
+            basename = path.basename(filepath, '.js'),
+            lodash = context._;
+
+        ok(lodash.clone(array, true)[0] === array[0], basename);
+        start();
+      });
+    });
+  }());
+
 }());

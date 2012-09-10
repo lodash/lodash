@@ -15,7 +15,7 @@
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
-  /** Shorcut to the `stdout` object */
+  /** Shortcut to the `stdout` object */
   var stdout = process.stdout;
 
   /** Used to associate aliases with their real names */
@@ -270,7 +270,7 @@
   }
 
   /**
-   * Logs the help message to the console.
+   * Writes the help message to standard output.
    *
    * @private
    */
@@ -295,7 +295,7 @@
       '',
       '  Options:',
       '',
-      '    -c , --stdout  Write output to standard output',
+      '    -c, --stdout   Write output to standard output',
       '    -h, --help     Display help information',
       '    -o, --output   Write output to a given path/filename',
       '    -s, --silent   Skip status updates normally logged to the console',
@@ -308,11 +308,11 @@
    * Gets the aliases associated with a given function name.
    *
    * @private
-   * @param {String} funcName The name of the function to get aliases for.
+   * @param {String} methodName The name of the method to get aliases for.
    * @returns {Array} Returns an array of aliases.
    */
-  function getAliases(funcName) {
-    return realToAliasMap[funcName] || [];
+  function getAliases(methodName) {
+    return realToAliasMap[methodName] || [];
   }
 
   /**
@@ -327,17 +327,17 @@
   }
 
   /**
-   * Gets an array of depenants for a function by a given name.
+   * Gets an array of depenants for a method by a given name.
    *
    * @private
-   * @param {String} funcName The name of the function to query.
-   * @returns {Array} Returns an array of function dependants.
+   * @param {String} methodName The name of the method to query.
+   * @returns {Array} Returns an array of method dependants.
    */
-  function getDependants(funcName) {
-    // iterate over `dependencyMap`, adding the names of functions that
-    // have `funcName` as a dependency
+  function getDependants(methodName) {
+    // iterate over the `dependencyMap`, adding the names of methods that
+    // have `methodName` as a dependency
     return _.reduce(dependencyMap, function(result, dependencies, otherName) {
-      if (_.contains(dependencies, funcName)) {
+      if (_.contains(dependencies, methodName)) {
         result.push(otherName);
       }
       return result;
@@ -345,21 +345,21 @@
   }
 
   /**
-   * Gets an array of dependencies for a given function name. If passed an array
+   * Gets an array of dependencies for a given method name. If passed an array
    * of dependencies it will return an array containing the given dependencies
    * plus any additional detected sub-dependencies.
    *
    * @private
-   * @param {Array|String} funcName A single function name or array of
+   * @param {Array|String} methodName A single method name or array of
    *  dependencies to query.
-   * @returns {Array} Returns an array of function dependencies.
+   * @returns {Array} Returns an array of method dependencies.
    */
-  function getDependencies(funcName) {
-    var dependencies = Array.isArray(funcName) ? funcName : dependencyMap[funcName];
+  function getDependencies(methodName) {
+    var dependencies = Array.isArray(methodName) ? methodName : dependencyMap[methodName];
     if (!dependencies) {
       return [];
     }
-    // recursively accumulate the dependencies of the `funcName` function, and
+    // recursively accumulate the dependencies of the `methodName` function, and
     // the dependencies of its dependencies, and so on.
     return _.uniq(dependencies.reduce(function(result, otherName) {
       result.push.apply(result, getDependencies(otherName).concat(otherName));
@@ -377,7 +377,7 @@
   function getFunctionSource(func) {
     var source = func.source || (func + '');
 
-    // all leading whitespace
+    // format leading whitespace
     return source.replace(/\n(?:.*)/g, function(match, index) {
       match = match.slice(1);
       return (
@@ -398,14 +398,14 @@
   }
 
   /**
-   * Gets the real name, not alias, of a given function name.
+   * Gets the real name, not alias, of a given method name.
    *
    * @private
-   * @param {String} funcName The name of the function to resolve.
-   * @returns {String} Returns the real name.
+   * @param {String} methodName The name of the method to resolve.
+   * @returns {String} Returns the real method name.
    */
-  function getRealName(funcName) {
-    return aliasToRealMap[funcName] || funcName;
+  function getRealName(methodName) {
+    return aliasToRealMap[methodName] || methodName;
   }
 
   /**
@@ -656,18 +656,6 @@
       .replace(/\s*.+?\.useStrict *=.+/, '');
   }
 
-  /**
-   * Post-process the minified source.
-   *
-   * @private
-   * @param {String} source The minified source to process.
-   * @returns {String} The modified source.
-   */
-  function postMinify(source) {
-    // correct overly aggressive Closure Compiler minification
-    return source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
-  }
-
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -682,6 +670,56 @@
 
     // the debug version of `source`
     var debugSource;
+
+    // used to report invalid command-line arguments
+    var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
+      if (/^(?:-o|--output)$/.test(options[index - 1]) ||
+          /^(?:category|exclude|exports|include)=.*$/.test(value)) {
+        return true;
+      }
+      return [
+        'backbone',
+        'csp',
+        'legacy',
+        'mobile',
+        'strict',
+        'underscore',
+        '-c', '--stdout',
+        '-h', '--help',
+        '-o', '--output',
+        '-s', '--silent',
+        '-V', '--version'
+      ].indexOf(value) > -1;
+    });
+
+    // report invalid arguments
+    if (invalidArgs.length) {
+      console.log(
+        '\n' +
+        'Invalid argument' + (invalidArgs.length > 1 ? 's' : '') +
+        ' passed: ' + invalidArgs.join(', ')
+      );
+      displayHelp();
+      return;
+    }
+
+    // display help message
+    if (_.find(options, function(arg) {
+          return /^(?:-h|--help)$/.test(arg);
+        })) {
+      displayHelp();
+      return;
+    }
+
+    // display `lodash.VERSION`
+    if (_.find(options, function(arg) {
+          return /^(?:-V|--version)$/.test(arg);
+        })) {
+      console.log(_.VERSION);
+      return;
+    }
+
+    /*------------------------------------------------------------------------*/
 
     // collections of method names to exclude or include
     var excludeMethods = [],
@@ -746,32 +784,6 @@
       }
       // return `filterType`
       return pair[1];
-    }, '');
-
-    // used to report invalid command-line arguments
-    var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
-      if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|include)=.*$/.test(value)) {
-        return true;
-      }
-      return [
-        'backbone',
-        'csp',
-        'legacy',
-        'mobile',
-        'strict',
-        'underscore',
-        '-c', '--stdout',
-        '-h', '--help',
-        '-o', '--output',
-        '-s', '--silent',
-        '-V', '--version'
-      ].indexOf(value) > -1;
-    });
-
-    // used to specify the output path for built files
-    var outputPath = options.reduce(function(result, value, index) {
-      return result || (/^(?:-o|--output)$/.test(value) ? options[index + 1] : result);
     }, '');
 
     // load customized Lo-Dash module
@@ -841,38 +853,12 @@
       return context._;
     }());
 
-    // report invalid arguments
-    if (invalidArgs.length) {
-      console.log(
-        '\n' +
-        'Invalid argument' + (invalidArgs.length > 1 ? 's' : '') +
-        ' passed: ' + invalidArgs.join(', ')
-      );
-      displayHelp();
-      return;
-    }
-
-    // display help message
-    if (_.find(options, function(arg) {
-          return /^(?:-h|--help)$/.test(arg);
-        })) {
-      displayHelp();
-      return;
-    }
-
-    // display `lodash.VERSION`
-    if (_.find(options, function(arg) {
-          return /^(?:-V|--version)$/.test(arg);
-        })) {
-      console.log(_.VERSION);
-      return;
-    }
-
     /*------------------------------------------------------------------------*/
 
-    // don't expose `_.forIn` or `_.forOwn` if `isUnderscore` is `true` unless
-    // requested by `include`
+    // customize for Backbone and Underscore builds
     if (isUnderscore) {
+      // don't expose `_.forIn` or `_.forOwn` if `isUnderscore` is `true` unless
+      // requested by `include`
       if (includeMethods.indexOf('forIn')  == -1) {
         source = source.replace(/ *lodash\.forIn *=.+\n/, '');
       }
@@ -881,7 +867,7 @@
       }
     }
 
-    // add methods required by Backbone or Underscore
+    // include methods required by Backbone and Underscore builds
     [
       { 'flag': isBackbone, 'methodNames': backboneDependencies },
       { 'flag': isUnderscore, 'methodNames': underscoreMethods }
@@ -914,7 +900,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // add category methods
+    // include methods by category
     options.some(function(value) {
       var categories = value.match(/^category=(.*)$/);
       if (!categories) {
@@ -922,8 +908,8 @@
       }
       // resolve method names belonging to each category
       var categoryMethods = categories[1].split(/, */).reduce(function(result, category) {
-        return result.concat(allMethods.filter(function(funcName) {
-          return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, funcName));
+        return result.concat(allMethods.filter(function(methodName) {
+          return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, methodName));
         }));
       }, []);
 
@@ -945,7 +931,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // custom build
+    // remove methods from the build
     (function() {
       // exit early if "exclude" or "include" options aren't specified
       if (!filterType) {
@@ -953,8 +939,8 @@
       }
       if (filterType == 'exclude') {
         // remove methods that are named in `excludeMethods` and their dependants
-        excludeMethods.forEach(function(funcName) {
-          getDependants(funcName).concat(funcName).forEach(function(otherName) {
+        excludeMethods.forEach(function(methodName) {
+          getDependants(methodName).concat(methodName).forEach(function(otherName) {
             source = removeFunction(source, otherName);
           });
         });
@@ -964,17 +950,11 @@
         includeMethods = getDependencies(includeMethods);
 
         // remove methods that aren't named in `includeMethods`
-        _.each(allMethods, function(otherName) {
+        allMethods.forEach(function(otherName) {
           if (!_.contains(includeMethods, otherName)) {
             source = removeFunction(source, otherName);
           }
         });
-      }
-
-      // remove `isArguments` fallback before `isArguments` is transformed by
-      // other parts of the build process
-      if (isRemoved(source, 'isArguments')) {
-        source = removeIsArgumentsFallback(source);
       }
     }());
 
@@ -989,10 +969,15 @@
       RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
     );
 
+    // remove `isArguments` fallback before `isArguments` is transformed by
+    // other parts of the build process
+    if (isRemoved(source, 'isArguments')) {
+      source = removeIsArgumentsFallback(source);
+    }
     // DRY out isType functions
     (function() {
-      var iteratorName = _.find(['forEach', 'forOwn'], function(funcName) {
-        return !isRemoved(source, funcName);
+      var iteratorName = _.find(['forEach', 'forOwn'], function(methodName) {
+        return !isRemoved(source, methodName);
       });
 
       // skip this optimization if there are no iteration methods to use
@@ -1009,7 +994,8 @@
         'Number': 'numberClass',
         'RegExp': 'regexpClass',
         'String': 'stringClass'
-      }, function(value, key) {
+      },
+      function(value, key) {
         if (!isUnderscore && key == 'Arguments') {
           return;
         }
@@ -1051,12 +1037,12 @@
         source = removeVar(source, varName);
       });
 
-      ['bind', 'isArray'].forEach(function(funcName) {
-        var snippet = matchFunction(source, funcName),
+      ['bind', 'isArray'].forEach(function(methodName) {
+        var snippet = matchFunction(source, methodName),
             modified = snippet;
 
         // remove native `Function#bind` branch in `_.bind`
-        if (funcName == 'bind') {
+        if (methodName == 'bind') {
           modified = modified.replace(/(?:\s*\/\/.*)*\s*else if *\(isBindFast[^}]+}/, '');
         }
         // remove native `Array.isArray` branch in `_.isArray`
@@ -1091,16 +1077,16 @@
 
     if (isMobile) {
       // inline all functions defined with `createIterator`
-      _.functions(lodash).forEach(function(funcName) {
-        // match `funcName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
-        var reFunc = RegExp('(\\bvar ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
+      _.functions(lodash).forEach(function(methodName) {
+        // match `methodName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
+        var reFunc = RegExp('(\\bvar ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
 
         // skip if not defined with `createIterator`
         if (!reFunc.test(source)) {
           return;
         }
         // extract, format, and inject the compiled function's source code
-        source = source.replace(reFunc, '$1' + getFunctionSource(lodash[funcName]) + ';\n');
+        source = source.replace(reFunc, '$1' + getFunctionSource(lodash[methodName]) + ';\n');
       });
 
       // replace `callee` in `_.merge` with `merge`
@@ -1175,6 +1161,7 @@
 
     /*------------------------------------------------------------------------*/
 
+    // customize how the `LoDash` function is exported
     if (exportsOptions.indexOf('amd') == -1) {
       source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +define[\s\S]+?else /, '$1');
     }
@@ -1276,50 +1263,46 @@
       source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
     }
 
-    /*------------------------------------------------------------------------*/
-
     debugSource = cleanupSource(debugSource);
     source = cleanupSource(source);
 
+    /*------------------------------------------------------------------------*/
+
+    // used to specify creating a custom build
+    var isCustom = !_.isEqual(exportsOptions, exportsAll) || filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore;
+
+    // used to specify the output path for builds
+    var outputPath = options.reduce(function(result, value, index) {
+      return result || (/^(?:-o|--output)$/.test(value) ? options[index + 1] : result);
+    }, '');
+
+    // used to name temporary files created in `dist/`
+    var workingName = 'lodash' + (isCustom ? '.custom' : '') + '.min';
+
+    // output debug build
+    if (isCustom && !outputPath && !isStdOut) {
+      callback(debugSource, path.join(cwd, 'lodash.custom.js'));
+    }
     // begin the minification process
-    if (!_.isEqual(exportsOptions, exportsAll) || filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
-      // output debug build
-      if (!outputPath && !isStdOut) {
-        callback(debugSource, path.join(cwd, 'lodash.custom.js'));
+    minify(source, {
+      'silent': isSilent,
+      'workingName': workingName,
+      'onComplete': function(source) {
+        // correct overly aggressive Closure Compiler minification
+        source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
+
+        // inject "use strict" directive
+        if (isStrict) {
+          source = source.replace(/^(\/\*![\s\S]+?\*\/\n;\(function[^)]+\){)([^'"])/, '$1"use strict";$2');
+        }
+        if (isStdOut) {
+          stdout.write(source);
+          callback(source);
+        } else {
+          callback(source, outputPath || path.join(cwd, workingName + '.js'));
+        }
       }
-      minify(source, {
-        'silent': isSilent,
-        'workingName': 'lodash.custom.min',
-        'onComplete': function(source) {
-          if (isStrict) {
-            // inject "use strict" directive
-            source = source.replace(/^(\/\*![\s\S]+?\*\/\n;\(function[^)]+\){)([^'"])/, '$1"use strict";$2');
-          }
-          source = postMinify(source);
-          if (isStdOut) {
-            stdout.write(source);
-            callback(source);
-          } else {
-            callback(source, outputPath || path.join(cwd, 'lodash.custom.min.js'));
-          }
-        }
-      });
-    }
-    else {
-      minify(source, {
-        'silent': isSilent,
-        'workingName': 'lodash.min',
-        'onComplete': function(source) {
-          source = postMinify(source);
-          if (isStdOut) {
-            stdout.write(source);
-            callback(source);
-          } else {
-            callback(source, outputPath || path.join(cwd, 'lodash.min.js'));
-          }
-        }
-      });
-    }
+    });
   }
 
   /*--------------------------------------------------------------------------*/

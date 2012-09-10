@@ -1,0 +1,34 @@
+{
+  "name": "lodash",
+  "version": "0.6.1",
+  "description": "A drop-in replacement for Underscore.js delivering performance, bug fixes, and additional features.",
+  "homepage": "http://lodash.com",
+  "main": [
+    "./lodash.js",
+    "./lodash.min.js"
+  ],
+  "keywords": [
+    "browser",
+    "client",
+    "functional",
+    "performance",
+    "server",
+    "speed",
+    "util"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://lodash.com/license"
+    }
+  ],
+  "author": {
+    "name": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "web": "http://allyoucanleet.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bestiejs/lodash.git"
+  }
+}

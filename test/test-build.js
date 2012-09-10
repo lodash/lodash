@@ -454,7 +454,7 @@
       var start = _.after(2, _.once(QUnit.start));
 
       asyncTest('`lodash ' + command +'`', function() {
-        build(['--silent'].concat(command.split(' ')), function(filepath, source) {
+        build(['--silent'].concat(command.split(' ')), function(source, filepath) {
           var basename = path.basename(filepath, '.js'),
               context = createContext(),
               methodNames = [];
@@ -535,7 +535,7 @@
           commands.push('strict');
         }
 
-        build(commands, function(filepath, source) {
+        build(commands, function(source, filepath) {
           var basename = path.basename(filepath, '.js'),
               context = createContext(),
               pass = !index;
@@ -565,7 +565,7 @@
     var start = _.once(QUnit.start);
 
     asyncTest('should not have deep clone', function() {
-      build(['-s', 'underscore'], function(filepath, source) {
+      build(['-s', 'underscore'], function(source, filepath) {
         var array = [{ 'a': 1 }],
             basename = path.basename(filepath, '.js'),
             context = createContext();
@@ -582,12 +582,7 @@
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('exports command');
-  var exportsAll = [
-    'amd',
-    'commonjs',
-    'global',
-    'node'
-  ];
+
   (function() {
     var commands = [
       'exports=amd',
@@ -600,7 +595,7 @@
       var start = _.after(2, _.once(QUnit.start));
 
       asyncTest('`lodash ' + command +'`', function() {
-        build(['-s', command], function(filepath, source) {
+        build(['-s', command], function(source, filepath) {
           var basename = path.basename(filepath, '.js'),
               context = createContext(),
               pass = false;
@@ -635,6 +630,42 @@
               ok(context._ === undefined, basename);
               ok(_.isFunction(context.module.exports), basename);
           }
+          start();
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('output options');
+
+  (function() {
+    ['-o a.js', '--output a.js'].forEach(function(command, index) {
+      var start = _.once(QUnit.start);
+
+      asyncTest('`lodash ' + command +'`', function() {
+        build(['-s'].concat(command.split(' ')), function(source, filepath) {
+          equal(filepath, 'a.js', command);
+          start();
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('stdout options');
+
+  (function() {
+    ['-c', '--stdout'].forEach(function(command, index) {
+      var descriptor = Object.getOwnPropertyDescriptor(global, 'console'),
+          start = _.once(QUnit.start);
+
+      asyncTest('`lodash ' + command +'`', function() {
+        build([command, 'exports=', 'include='], function(source, filepath) {
+          equal(source, '');
+          equal(arguments.length, 1);
           start();
         });
       });

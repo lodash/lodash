@@ -38,14 +38,14 @@
     source = source.replace(/("function")\s*==\s*(typeof define)\s*&&\s*\(?\s*("object")\s*==\s*(typeof define\.amd)\s*&&\s*(define\.amd)\s*\)?/, '$2==$1&&$4==$3&&$5');
 
     // add trailing semicolon
-    source = source.replace(/[\s;]*$/, ';');
-
+    if (source) {
+      source = source.replace(/[\s;]*$/, ';');
+    }
     // exit early if version snippet isn't found
     var snippet = /VERSION\s*[=:]\s*([\'"])(.*?)\1/.exec(source);
     if (!snippet) {
       return source;
     }
-
     // add license
     return licenseTemplate[/call\(this\);?$/.test(source) ? 'underscore' : 'lodash']
       .replace('@VERSION', snippet[2]) + '\n;' + source;

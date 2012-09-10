@@ -15,6 +15,9 @@
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
+  /** Shorcut to the `stdout` object */
+  var stdout = process.stdout;
+
   /** Used to associate aliases with their real names */
   var aliasToRealMap = {
     'all': 'every',
@@ -1282,7 +1285,7 @@
     if (!_.isEqual(exportsOptions, exportsAll) || filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
       // output debug build
       if (!outputPath && !isStdOut) {
-        callback(path.join(cwd, 'lodash.custom.js'), debugSource);
+        callback(debugSource, path.join(cwd, 'lodash.custom.js'));
       }
       minify(source, {
         'silent': isSilent,
@@ -1294,9 +1297,10 @@
           }
           source = postMinify(source);
           if (isStdOut) {
-            console.log(source);
+            stdout.write(source);
+            callback(source);
           } else {
-            callback(outputPath || path.join(cwd, 'lodash.custom.min.js'), source);
+            callback(source, outputPath || path.join(cwd, 'lodash.custom.min.js'));
           }
         }
       });
@@ -1308,9 +1312,10 @@
         'onComplete': function(source) {
           source = postMinify(source);
           if (isStdOut) {
-            console.log(source);
+            stdout.write(source);
+            callback(source);
           } else {
-            callback(outputPath || path.join(cwd, 'lodash.min.js'), source);
+            callback(source, outputPath || path.join(cwd, 'lodash.min.js'));
           }
         }
       });
@@ -1325,8 +1330,8 @@
   }
   else {
     // or invoked directly
-    build(process.argv, function(filepath, source) {
-      fs.writeFileSync(filepath, source, 'utf8');
+    build(process.argv, function(source, filepath) {
+      filepath && fs.writeFileSync(filepath, source, 'utf8');
     });
   }
 }());

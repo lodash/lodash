@@ -746,8 +746,9 @@
     }, '');
 
     // used to report invalid command-line arguments
-    var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index) {
-      if (/^(?:category|exclude|exports|include)=.*$/.test(value)) {
+    var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
+      if (/^(?:-o|--output)$/.test(options[index - 1]) ||
+          /^(?:category|exclude|exports|include)=.*$/.test(value)) {
         return true;
       }
       return [
@@ -764,6 +765,11 @@
         '-V', '--version'
       ].indexOf(value) > -1;
     });
+
+    // used to specify the output path for built files
+    var outputPath = options.reduce(function(result, value, index) {
+      return result || (/^(?:-o|--output)$/.test(value) ? options[index + 1] : result);
+    }, '');
 
     // load customized Lo-Dash module
     var lodash = (function() {
@@ -1275,7 +1281,7 @@
     // begin the minification process
     if (!_.isEqual(exportsOptions, exportsAll) || filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore) {
       // output debug build
-      if (!isStdOut) {
+      if (!outputPath && !isStdOut) {
         callback(path.join(cwd, 'lodash.custom.js'), debugSource);
       }
       minify(source, {
@@ -1290,7 +1296,7 @@
           if (isStdOut) {
             console.log(source);
           } else {
-            callback(path.join(cwd, 'lodash.custom.min.js'), source);
+            callback(outputPath || path.join(cwd, 'lodash.custom.min.js'), source);
           }
         }
       });
@@ -1304,7 +1310,7 @@
           if (isStdOut) {
             console.log(source);
           } else {
-            callback(path.join(cwd, 'lodash.min.js'), source);
+            callback(outputPath || path.join(cwd, 'lodash.min.js'), source);
           }
         }
       });

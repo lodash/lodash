@@ -5,17 +5,14 @@
   /** Load modules */
   var fs = require('fs'),
       path = require('path'),
-      vm = require('vm');
+      vm = require('vm'),
+      build = require('../build.js'),
+      minify = require('../build/minify'),
+      _ = require('../lodash.js');
 
   /** The unit testing framework */
   var QUnit = global.QUnit = require('../vendor/qunit/qunit/qunit.js');
   require('../vendor/qunit-clib/qunit-clib.js');
-
-  /** The `lodash` function to test */
-  var _ = require('../lodash.js');
-
-  /** The `build` module */
-  var build = require('../build.js');
 
   /** Used to associate aliases with their real names */
   var aliasToRealMap = {
@@ -668,6 +665,34 @@
           equal(arguments.length, 1);
           start();
         });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('minify underscore');
+
+  (function() {
+    var start = _.once(QUnit.start);
+
+    asyncTest('`minify underscore.js`', function() {
+      var source = fs.readFileSync(path.join(__dirname, '..', 'vendor', 'underscore', 'underscore.js'), 'utf8');
+      minify(source, {
+        'silent': true,
+        'workingName': 'underscore.min',
+        'onComplete': function(result) {
+          var context = createContext();
+
+          try {
+            vm.runInContext(result, context);
+          } catch(e) { }
+
+          var underscore = context._ || {};
+          ok(_.isString(underscore.VERSION));
+          ok(result.match(/\n/g).length < source.match(/\n/g).length);
+          start();
+        }
       });
     });
   }());

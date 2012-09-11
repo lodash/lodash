@@ -995,8 +995,8 @@
       // iterated property is an object's own property then there are no inherited
       // enumerable properties.
       if (iteratesOwnLast) {
-        forIn(value, function(objValue, objKey) {
-          result = !hasOwnProperty.call(value, objKey);
+        forIn(value, function(value, key, object) {
+          result = !hasOwnProperty.call(object, key);
           return false;
         });
         return result === false;
@@ -1004,8 +1004,8 @@
       // In most environments an object's own properties are iterated before
       // its inherited properties. If the last iterated property is an object's
       // own property then there are no inherited enumerable properties.
-      forIn(value, function(objValue, objKey) {
-        result = objKey;
+      forIn(value, function(value, key) {
+        result = key;
       });
       return result === false || hasOwnProperty.call(value, result);
     }
@@ -1838,11 +1838,11 @@
       '  if (found) {\n' +
       '    result[index] = values[stackLength]\n' +
       '  } else {\n' +
-      '    sources.push(source);\n' +
       '    values.push(value = (value = result[index]) && isArr\n' +
       '      ? (isArray(value) ? value : [])\n' +
       '      : (isPlainObject(value) ? value : {})\n' +
       '    );\n' +
+      '    sources.push(source);\n' +
       '    result[index] = callee(value, source, isPlainObject, data)\n' +
       '  }\n' +
       '} else if (source != null) {\n' +

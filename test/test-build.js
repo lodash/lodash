@@ -585,7 +585,8 @@
       'exports=amd',
       'exports=commonjs',
       'exports=global',
-      'exports=node'
+      'exports=node',
+      'exports=none'
     ];
 
     commands.forEach(function(command, index) {
@@ -626,9 +627,38 @@
               vm.runInContext(source, context);
               ok(context._ === undefined, basename);
               ok(_.isFunction(context.module.exports), basename);
+              break;
+
+            case 4:
+              vm.runInContext(source, context);
+              ok(context._ === undefined, basename);
           }
           start();
         });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('iife command');
+
+  (function() {
+    var start = _.after(2, _.once(QUnit.start));
+
+    asyncTest('`lodash iife=...`', function() {
+      build(['-s', 'iife=!function(window,undefined){%output%}(this)'], function(source, filepath) {
+        var basename = path.basename(filepath, '.js'),
+            context = createContext();
+
+        try {
+          vm.runInContext(source, context);
+        } catch(e) { }
+
+        var lodash = context._ || {};
+        ok(_.isString(lodash.VERSION), basename);
+        ok(/!function/.test(source), basename);
+        start();
       });
     });
   }());
@@ -676,7 +706,7 @@
   (function() {
     var start = _.once(QUnit.start);
 
-    asyncTest('`minify underscore.js`', function() {
+    asyncTest('`node minify underscore.js`', function() {
       var source = fs.readFileSync(path.join(__dirname, '..', 'vendor', 'underscore', 'underscore.js'), 'utf8');
       minify(source, {
         'silent': true,

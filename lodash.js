@@ -1520,7 +1520,7 @@
 
     while (length--) {
       if (stackA[length] == a) {
-        return stackA[length] == b;
+        return stackB[length] == b;
       }
     }
 

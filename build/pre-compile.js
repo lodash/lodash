@@ -322,7 +322,7 @@
         properties.forEach(function(property, index) {
           var reBracketProp = RegExp("\\['(" + property + ")'\\]", 'g'),
               reDotProp = RegExp('\\.' + property + '\\b', 'g'),
-              rePropColon = RegExp("([^?])(')?\\b" + property + "\\2 *:", 'g');
+              rePropColon = RegExp("([^?\\s])\\s*([\"'])?\\b" + property + "\\2 *:", 'g');
 
           if (isCompilable) {
             // add quotes around properties in the inlined `_.merge` and `_.sortBy`

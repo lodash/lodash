@@ -1825,7 +1825,7 @@
   var merge = createIterator(extendIteratorOptions, {
     'args': 'object, source, indicator',
     'top':
-      'var isArr, source, recursive = indicator == isPlainObject,\n' +
+      'var isArr, recursive = indicator == isPlainObject,\n' +
       '    data = recursive ? arguments[3] : { values: [], sources: [] };\n' +
       'for (var argsIndex = 1, argsLength = recursive ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
       '  if (iteratee = arguments[argsIndex]) {',

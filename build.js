@@ -285,10 +285,14 @@
       '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
       '    lodash strict        Build with `_.bindAll`, `_.defaults`, & `_.extend` in strict mode',
       '    lodash underscore    Build with only methods included in Underscore without iteration fixes',
-      '    lodash category=...  Comma separated categories of methods to include in the build',
       '    lodash exclude=...   Comma separated names of methods to exclude from the build',
-      '    lodash exports=...   Comma separated names of ways to export the `LoDash` function',
       '    lodash include=...   Comma separated names of methods to include in the build',
+      '    lodash category=...  Comma separated categories of methods to include in the build',
+      '                         (i.e. “arrays”, “chaining”, “collections”, “functions”, “objects”, and “utilities”)',
+      '    lodash exports=...   Comma separated names of ways to export the `LoDash` function',
+      '                         (i.e. “amd”, “commonjs”, “global”, “node”, and “none”)',
+      '    lodash iife=...      Code to replace the immediately-invoked function expression that wraps Lo-Dash',
+      '                         (e.g. “!function(window,undefined){%output%}(this)”)',
       '',
       '    All arguments, except `exclude` with `include` & `legacy` with `csp`/`mobile`,',
       '    may be combined.',
@@ -674,7 +678,7 @@
     // used to report invalid command-line arguments
     var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|include)=.*$/.test(value)) {
+          /^(?:category|exclude|exports|iife|include)=.*$/.test(value)) {
         return true;
       }
       return [
@@ -784,6 +788,11 @@
       }
       // return `filterType`
       return pair[1];
+    }, '');
+
+    // used to specify a custom IIFE to wrap Lo-Dash
+    var iife = options.reduce(function(result, value) {
+      return result || (result = value.match(/^iife=(.*)$/)) && result[1];
     }, '');
 
     // load customized Lo-Dash module
@@ -1161,7 +1170,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // customize how the `LoDash` function is exported
+    // customize Lo-Dash's export bootstrap
     if (exportsOptions.indexOf('amd') == -1) {
       source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +define[\s\S]+?else /, '$1');
     }
@@ -1177,6 +1186,21 @@
 
     // remove `if (freeExports) {...}` if it's empty
     source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{\n([\s\S]+?) *})?/, '$1');
+
+    /*------------------------------------------------------------------------*/
+
+    // customize Lo-Dash's IIFE
+    (function() {
+      if (iife) {
+        var token = '%output%',
+            index = iife.indexOf(token);
+
+        source = source.match(/\/\*![\s\S]+?\*\/\n/) +
+          iife.slice(0, index) +
+          source.replace(/^[^(]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
+          iife.slice(index + token.length);
+      }
+    }());
 
     /*------------------------------------------------------------------------*/
 
@@ -1269,7 +1293,7 @@
     /*------------------------------------------------------------------------*/
 
     // used to specify creating a custom build
-    var isCustom = !_.isEqual(exportsOptions, exportsAll) || filterType || isBackbone || isLegacy || isMobile || isStrict || isUnderscore;
+    var isCustom = !_.isEqual(exportsOptions, exportsAll) || filterType || iife || isBackbone || isLegacy || isMobile || isStrict || isUnderscore;
 
     // used to specify the output path for builds
     var outputPath = options.reduce(function(result, value, index) {

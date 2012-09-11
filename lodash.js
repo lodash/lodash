@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.6.1 <http://lodash.com>
+ * Lo-Dash v0.7.0 <http://lodash.com>
  * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * <http://documentcloud.github.com/underscore>
@@ -1310,17 +1310,17 @@
   }
 
   /**
-   * Invert the keys and values of an object. The values must be serializable.
+   * Creates an object composed of the inverted keys and values of the given `object`.
    *
    * @static
    * @memberOf _
    * @category Objects
-   * @param {Object} object The object to inspect.
-   * @returns {Array} Returns a new array of property names that have function values.
+   * @param {Object} object The object to invert.
+   * @returns {Object} Returns the created inverted object.
    * @example
    *
-   *  var obj = {first: 'Moe', second: 'Larry', third: 'Curly'}
-   * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
+   *  _.invert({ 'first': 'Moe', 'second': 'Larry', 'third': 'Curly' });
+   * // => { 'Moe': 'first', 'Larry': 'second', 'Curly': 'third' } (order is not guaranteed)
    */
   var invert = createIterator({
     'args': 'object',
@@ -3843,7 +3843,7 @@
    * @category Utilities
    * @param {Number} min The minimum possible value.
    * @param {Number} max The maximum possible value.
-   * @returns {Number} Returns the random number.
+   * @returns {Number} Returns a random number.
    * @example
    *
    * _.random(0, 5);
@@ -4257,7 +4257,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.6.1';
+  lodash.VERSION = '0.7.0';
 
   // assign static methods
   lodash.after = after;

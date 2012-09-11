@@ -293,6 +293,12 @@ $(document).ready(function() {
     b.push("Curly");
     ok(!_.isEqual(a, b), "Arrays containing circular references and different properties are not equal");
 
+    // More circular arrays #767.
+    a = ["everything is checked but", "this", "is not"];
+    a[1] = a;
+    b = ["everything is checked but", ["this", "array"], "is not"];
+    ok(!_.isEqual(a, b), "Comparison of circular references with non-circular references are not equal");
+
     // Circular Objects.
     a = {abc: null};
     b = {abc: null};
@@ -305,6 +311,12 @@ $(document).ready(function() {
     a.def = new Number(75);
     b.def = new Number(63);
     ok(!_.isEqual(a, b), "Objects containing circular references and different properties are not equal");
+
+    // More circular objects #767.
+    a = {everything: "is checked", but: "this", is: "not"};
+    a.but = a;
+    b = {everything: "is checked", but: {that:"object"}, is: "not"};
+    ok(!_.isEqual(a, b), "Comparison of circular references with non-circular object references are not equal");
 
     // Cyclic Structures.
     a = [{abc: null}];

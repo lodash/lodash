@@ -1141,13 +1141,14 @@
         return ctor(value.source, reFlags.exec(value));
     }
 
-    var stack = data.stack || (data.stack = []),
-        length = stack.length;
+    var clones = data.clones || (data.clones = []),
+        sources = data.sources || (data.sources = []),
+        length = clones.length;
 
     // check for circular references and return corresponding clone
     while (length--) {
-      if (stack[length].source == value) {
-        return stack[length].value;
+      if (sources[length] == value) {
+        return clones[length];
       }
     }
 
@@ -1155,7 +1156,8 @@
     var result = isArr ? ctor(length = value.length) : {};
 
     // add current clone and original source value to the stack of traversed objects
-    stack.push({ 'value': result, 'source': value });
+    clones.push(result);
+    sources.push(value);
 
     // recursively populate clone (susceptible to call stack limits)
     if (isArr) {
@@ -1512,12 +1514,13 @@
     // assume cyclic structures are equal
     // the algorithm for detecting cyclic structures is adapted from ES 5.1
     // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
-    var stack = data.stack || (data.stack = []),
-        length = stack.length;
+    var stackA = data.stackA || (data.stackA = []),
+        stackB = data.stackB || (data.stackB = []),
+        length = stackA.length;
 
     while (length--) {
-      if (stack[length].a == a) {
-        return stack[length].b == b;
+      if (stackA[length] == a) {
+        return stackA[length] == b;
       }
     }
 
@@ -1526,7 +1529,8 @@
         size = 0;
 
     // add `a` and `b` to the stack of traversed objects
-    stack.push({ 'a': a, 'b': b });
+    stackA.push(a);
+    stackB.push(b);
 
     // recursively compare objects and arrays (susceptible to call stack limits)
     if (isArr) {
@@ -1800,7 +1804,7 @@
    * @param {Object} [source1, source2, ...] The source objects.
    * @param {Object} [indicator] Internally used to indicate that the `stack`
    *  argument is an array of traversed objects instead of another source object.
-   * @param {Array} [stack=[]] Internally used to track traversed objects to avoid
+   * @param {Object} [data={}] Internally used to track traversed objects to avoid
    *  circular references.
    * @returns {Object} Returns the destination object.
    * @example
@@ -1821,26 +1825,28 @@
   var merge = createIterator(extendIteratorOptions, {
     'args': 'object, source, indicator',
     'top':
-      'var isArr, recursive = indicator == isPlainObject, stack = recursive ? arguments[3] : [];\n' +
+      'var isArr, source, recursive = indicator == isPlainObject,\n' +
+      '    data = recursive ? arguments[3] : { values: [], sources: [] };\n' +
       'for (var argsIndex = 1, argsLength = recursive ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
       '  if (iteratee = arguments[argsIndex]) {',
     'inLoop':
-      'if (value && ((isArr = isArray(value)) || isPlainObject(value))) {\n' +
-      '  var found = false, stackLength = stack.length;\n' +
+      'if ((source = value) && ((isArr = isArray(source)) || isPlainObject(source))) {\n' +
+      '  var found = false, values = data.values, sources = data.sources, stackLength = sources.length;\n' +
       '  while (stackLength--) {\n' +
-      '    if (found = stack[stackLength].source == value) break\n' +
+      '    if (found = sources[stackLength] == source) break\n' +
       '  }\n' +
       '  if (found) {\n' +
-      '    result[index] = stack[stackLength].value\n' +
+      '    result[index] = values[stackLength]\n' +
       '  } else {\n' +
-      '    var destValue = (destValue = result[index]) && isArr\n' +
-      '      ? (isArray(destValue) ? destValue : [])\n' +
-      '      : (isPlainObject(destValue) ? destValue : {});\n' +
-      '    stack.push({ value: destValue, source: value });\n' +
-      '    result[index] = callee(destValue, value, isPlainObject, stack)\n' +
+      '    sources.push(source);\n' +
+      '    values.push(value = (value = result[index]) && isArr\n' +
+      '      ? (isArray(value) ? value : [])\n' +
+      '      : (isPlainObject(value) ? value : {})\n' +
+      '    );\n' +
+      '    result[index] = callee(value, source, isPlainObject, data)\n' +
       '  }\n' +
-      '} else if (value != null) {\n' +
-      '  result[index] = value\n' +
+      '} else if (source != null) {\n' +
+      '  result[index] = source\n' +
       '}'
   });
 

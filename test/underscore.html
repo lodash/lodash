@@ -20,8 +20,15 @@
 		</div>
 		<script src="../vendor/backbone/test/vendor/json2.js"></script>
 		<script src="../vendor/underscore/test/vendor/jquery.js"></script>
-		<script src="../vendor/underscore/test/vendor/qunit.js"></script>
 		<script src="../vendor/underscore/test/vendor/jslitmus.js"></script>
+		<script src="../vendor/platform.js/platform.js"></script>
+		<script>
+			// avoid syntax errors for `QUnit.throws` in older Firefoxes
+			document.write(platform.name == 'Firefox' && /^1\b/.test(platform.version)
+				? '<script src="../vendor/qunit/qunit/qunit-1.8.0.js"><\/script>'
+				: '<script src="../vendor/qunit/qunit/qunit.js"><\/script>'
+			);
+		</script>
 		<script src="test-ui.js"></script>
 		<script>
 			document.write('<script src="../' + QUnit.config.lodashFilename + '.js"><\/script>');

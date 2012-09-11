@@ -284,7 +284,7 @@
       '    lodash legacy        Build tailored for older browsers without ES5 support',
       '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
       '    lodash strict        Build with `_.bindAll`, `_.defaults`, & `_.extend` in strict mode',
-      '    lodash underscore    Build with only methods included in Underscore without iteration fixes',
+      '    lodash underscore    Build with iteration fixes removed and only Underscore’s API',
       '    lodash exclude=...   Comma separated names of methods to exclude from the build',
       '    lodash include=...   Comma separated names of methods to include in the build',
       '    lodash category=...  Comma separated categories of methods to include in the build',

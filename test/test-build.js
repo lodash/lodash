@@ -418,103 +418,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash build');
-
-  (function() {
-    var commands = [
-      'backbone',
-      'csp',
-      'legacy',
-      'mobile',
-      'strict',
-      'underscore',
-      'category=arrays',
-      'category=chaining',
-      'category=collections',
-      'category=functions',
-      'category=objects',
-      'category=utilities',
-      'exclude=union,uniq,zip',
-      'include=each,filter,map',
-      'category=collections,functions',
-      'underscore backbone',
-      'backbone legacy category=utilities exclude=first,last',
-      'underscore mobile strict category=functions exports=amd,global include=pick,uniq',
-    ]
-    .concat(
-      allMethods.map(function(methodName) {
-        return 'include=' + methodName;
-      })
-    );
-
-    commands.forEach(function(command) {
-      var start = _.after(2, _.once(QUnit.start));
-
-      asyncTest('`lodash ' + command +'`', function() {
-        build(['--silent'].concat(command.split(' ')), function(source, filepath) {
-          var basename = path.basename(filepath, '.js'),
-              context = createContext(),
-              methodNames = [];
-
-          try {
-            vm.runInContext(source, context);
-          } catch(e) { }
-
-          if (/underscore/.test(command)) {
-            methodNames = underscoreMethods;
-          }
-          if (/backbone/.test(command)) {
-            methodNames = backboneDependencies;
-          }
-          if (/include/.test(command)) {
-            methodNames = methodNames.concat(command.match(/include=(\S*)/)[1].split(/, */));
-          }
-          if (/category/.test(command)) {
-            methodNames = command.match(/category=(\S*)/)[1].split(/, */).reduce(function(result, category) {
-              switch (category) {
-                case 'arrays':
-                  return result.concat(arraysMethods);
-                case 'chaining':
-                  return result.concat(chainingMethods);
-                case 'collections':
-                  return result.concat(collectionsMethods);
-                case 'functions':
-                  return result.concat(functionsMethods);
-                case 'objects':
-                  return result.concat(objectsMethods);
-                case 'utilities':
-                  return result.concat(utilityMethods);
-              }
-              return result;
-            }, methodNames);
-          }
-          if (!methodNames.length) {
-            methodNames = allMethods;
-          }
-
-          if (/exclude/.test(command)) {
-            methodNames = _.without.apply(_, [methodNames].concat(
-              expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))
-            ));
-          } else {
-            methodNames = expandMethodNames(methodNames);
-          }
-
-          var lodash = context._ || {};
-          methodNames = _.unique(methodNames);
-
-          methodNames.forEach(function(methodName) {
-            testMethod(lodash, methodName, basename);
-          });
-
-          start();
-        });
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('strict modifier');
 
   (function() {
@@ -647,7 +550,7 @@
     var start = _.after(2, _.once(QUnit.start));
 
     asyncTest('`lodash iife=...`', function() {
-      build(['-s', 'iife=!function(window,undefined){%output%}(this)'], function(source, filepath) {
+      build(['-s', 'exports=none', 'iife=this["lodash"]=(function(window,undefined){%output%;return lodash}(this))'], function(source, filepath) {
         var basename = path.basename(filepath, '.js'),
             context = createContext();
 
@@ -655,9 +558,8 @@
           vm.runInContext(source, context);
         } catch(e) { }
 
-        var lodash = context._ || {};
+        var lodash = context.lodash || {};
         ok(_.isString(lodash.VERSION), basename);
-        ok(/!function/.test(source), basename);
         start();
       });
     });
@@ -760,6 +662,103 @@
         var actual = lodash.clone(circular1, true);
         ok(actual != circular1 && actual.b == actual, basename);
         start();
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash build');
+
+  (function() {
+    var commands = [
+      'backbone',
+      'csp',
+      'legacy',
+      'mobile',
+      'strict',
+      'underscore',
+      'category=arrays',
+      'category=chaining',
+      'category=collections',
+      'category=functions',
+      'category=objects',
+      'category=utilities',
+      'exclude=union,uniq,zip',
+      'include=each,filter,map',
+      'category=collections,functions',
+      'underscore backbone',
+      'backbone legacy category=utilities exclude=first,last',
+      'underscore mobile strict category=functions exports=amd,global include=pick,uniq',
+    ]
+    .concat(
+      allMethods.map(function(methodName) {
+        return 'include=' + methodName;
+      })
+    );
+
+    commands.forEach(function(command) {
+      var start = _.after(2, _.once(QUnit.start));
+
+      asyncTest('`lodash ' + command +'`', function() {
+        build(['--silent'].concat(command.split(' ')), function(source, filepath) {
+          var basename = path.basename(filepath, '.js'),
+              context = createContext(),
+              methodNames = [];
+
+          try {
+            vm.runInContext(source, context);
+          } catch(e) { }
+
+          if (/underscore/.test(command)) {
+            methodNames = underscoreMethods;
+          }
+          if (/backbone/.test(command)) {
+            methodNames = backboneDependencies;
+          }
+          if (/include/.test(command)) {
+            methodNames = methodNames.concat(command.match(/include=(\S*)/)[1].split(/, */));
+          }
+          if (/category/.test(command)) {
+            methodNames = command.match(/category=(\S*)/)[1].split(/, */).reduce(function(result, category) {
+              switch (category) {
+                case 'arrays':
+                  return result.concat(arraysMethods);
+                case 'chaining':
+                  return result.concat(chainingMethods);
+                case 'collections':
+                  return result.concat(collectionsMethods);
+                case 'functions':
+                  return result.concat(functionsMethods);
+                case 'objects':
+                  return result.concat(objectsMethods);
+                case 'utilities':
+                  return result.concat(utilityMethods);
+              }
+              return result;
+            }, methodNames);
+          }
+          if (!methodNames.length) {
+            methodNames = allMethods;
+          }
+
+          if (/exclude/.test(command)) {
+            methodNames = _.without.apply(_, [methodNames].concat(
+              expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))
+            ));
+          } else {
+            methodNames = expandMethodNames(methodNames);
+          }
+
+          var lodash = context._ || {};
+          methodNames = _.unique(methodNames);
+
+          methodNames.forEach(function(methodName) {
+            testMethod(lodash, methodName, basename);
+          });
+
+          start();
+        });
       });
     });
   }());

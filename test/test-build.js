@@ -686,8 +686,7 @@
 
   (function() {
     ['-c', '--stdout'].forEach(function(command, index) {
-      var descriptor = Object.getOwnPropertyDescriptor(global, 'console'),
-          start = _.once(QUnit.start);
+      var start = _.once(QUnit.start);
 
       asyncTest('`lodash ' + command +'`', function() {
         build([command, 'exports=', 'include='], function(source, filepath) {
@@ -723,6 +722,44 @@
           ok(result.match(/\n/g).length < source.match(/\n/g).length);
           start();
         }
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('mobile build');
+
+  (function() {
+    var start = _.after(2, _.once(QUnit.start));
+
+    asyncTest('`lodash mobile`', function() {
+      build(['-s', 'mobile'], function(source, filepath) {
+        var basename = path.basename(filepath, '.js'),
+            context = createContext();
+
+        try {
+          vm.runInContext(source, context);
+        } catch(e) { }
+
+        var array = [1, 2, 3],
+            object1 = [{ 'a': 1 }],
+            object2 = [{ 'b': 2 }],
+            object3 = [{ 'a': 1, 'b': 2 }],
+            circular1 = { 'a': 1 },
+            circular2 = { 'a': 1 },
+            lodash = context._;
+
+        circular1.b = circular1;
+        circular2.b = circular2;
+
+        deepEqual(lodash.merge(object1, object2), object3, basename);
+        deepEqual(lodash.sortBy([3, 2, 1], _.identity), array, basename);
+        equal(lodash.isEqual(circular1, circular2), true, basename);
+
+        var actual = lodash.clone(circular1, true);
+        ok(actual != circular1 && actual.b == actual, basename);
+        start();
       });
     });
   }());

@@ -79,7 +79,7 @@
     if (obj == null) return;
     if (nativeForEach && obj.forEach === nativeForEach) {
       obj.forEach(iterator, context);
-    } else if (obj.length === +obj.length) {
+    } else if (_.isArray(obj) || _.isArguments(obj)) {
       for (var i = 0, l = obj.length; i < l; i++) {
         if (iterator.call(context, obj[i], i, obj) === breaker) return;
       }
@@ -343,7 +343,8 @@
 
   // Return the number of elements in an object.
   _.size = function(obj) {
-    return (obj.length === +obj.length) ? obj.length : _.keys(obj).length;
+    var hasLength = _.isArray(obj) || _.isArguments(obj) || _.isString(obj);
+    return hasLength ? obj.length : _.keys(obj).length;
   };
 
   // Array Functions

@@ -228,14 +228,6 @@ $(document).ready(function() {
     ok(_.isEqual(Array(3), Array(3)), "Sparse arrays of identical lengths are equal");
     ok(!_.isEqual(Array(3), Array(6)), "Sparse arrays of different lengths are not equal when both are empty");
 
-    // According to the Microsoft deviations spec, section 2.1.26, JScript 5.x treats `undefined`
-    // elements in arrays as elisions. Thus, sparse arrays and dense arrays containing `undefined`
-    // values are equivalent.
-    if (0 in [undefined]) {
-      ok(!_.isEqual(Array(3), [undefined, undefined, undefined]), "Sparse and dense arrays are not equal");
-      ok(!_.isEqual([undefined, undefined, undefined], Array(3)), "Commutative equality is implemented for sparse and dense arrays");
-    }
-
     // Simple objects.
     ok(_.isEqual({a: "Curly", b: 1, c: true}, {a: "Curly", b: 1, c: true}), "Objects containing identical primitives are equal");
     ok(_.isEqual({a: /Curly/g, b: new Date(2009, 11, 13)}, {a: /Curly/g, b: new Date(2009, 11, 13)}), "Objects containing equivalent members are equal");

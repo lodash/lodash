@@ -26,6 +26,7 @@
   // Create quick reference variables for speed access to core prototypes.
   var push             = ArrayProto.push,
       slice            = ArrayProto.slice,
+      concat           = ArrayProto.concat,
       unshift          = ArrayProto.unshift,
       toString         = ObjProto.toString,
       hasOwnProperty   = ObjProto.hasOwnProperty;
@@ -79,7 +80,7 @@
     if (obj == null) return;
     if (nativeForEach && obj.forEach === nativeForEach) {
       obj.forEach(iterator, context);
-    } else if (_.isArray(obj) || _.isArguments(obj)) {
+    } else if (obj.length === +obj.length) {
       for (var i = 0, l = obj.length; i < l; i++) {
         if (iterator.call(context, obj[i], i, obj) === breaker) return;
       }
@@ -343,8 +344,7 @@
 
   // Return the number of elements in an object.
   _.size = function(obj) {
-    var hasLength = _.isArray(obj) || _.isArguments(obj) || _.isString(obj);
-    return hasLength ? obj.length : _.keys(obj).length;
+    return (obj.length === +obj.length) ? obj.length : _.keys(obj).length;
   };
 
   // Array Functions
@@ -429,7 +429,7 @@
   // Produce an array that contains the union: each distinct element from all of
   // the passed-in arrays.
   _.union = function() {
-    return _.uniq(flatten(arguments, true, []));
+    return _.uniq(concat.apply(ArrayProto, arguments));
   };
 
   // Produce an array that contains every item shared between all the
@@ -446,7 +446,7 @@
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
-    var rest = flatten(slice.call(arguments, 1), true, []);
+    var rest = concat.apply(ArrayProto, slice.call(arguments, 1));
     return _.filter(array, function(value){ return !_.include(rest, value); });
   };
 
@@ -729,7 +729,7 @@
   // Return a copy of the object only containing the whitelisted properties.
   _.pick = function(obj) {
     var copy = {};
-    var keys = _.flatten(slice.call(arguments, 1));
+    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
     each(keys, function(key) {
       if (key in obj) copy[key] = obj[key];
     });
@@ -739,7 +739,7 @@
    // Return a copy of the object without the blacklisted properties.
   _.omit = function(obj) {
     var copy = {};
-    var keys = _.flatten(slice.call(arguments, 1));
+    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
     for (var key in obj) {
       if (!_.include(keys, key)) copy[key] = obj[key];
     }
@@ -780,9 +780,6 @@
     // Unwrap any wrapped objects.
     if (a instanceof _) a = a._wrapped;
     if (b instanceof _) b = b._wrapped;
-    // Invoke a custom `isEqual` method if one is provided.
-    if (a.isEqual && _.isFunction(a.isEqual)) return a.isEqual(b);
-    if (b.isEqual && _.isFunction(b.isEqual)) return b.isEqual(a);
     // Compare `[[Class]]` names.
     var className = toString.call(a);
     if (className != toString.call(b)) return false;
@@ -909,10 +906,9 @@
     return _.isNumber(obj) && isFinite(obj);
   };
 
-  // Is the given value `NaN`?
+  // Is the given value `NaN`? (NaN is the only number which does not equal itself).
   _.isNaN = function(obj) {
-    // `NaN` is the only value for which `===` is not reflexive.
-    return obj !== obj;
+    return _.isNumber(obj) && obj != +obj;
   };
 
   // Is a given value a boolean?

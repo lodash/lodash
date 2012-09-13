@@ -648,6 +648,87 @@
   }
 
   /**
+   * Used by `sortBy` to compare transformed `collection` values, stable sorting
+   * them in ascending order.
+   *
+   * @private
+   * @param {Object} a The object to compare to `b`.
+   * @param {Object} b The object to compare to `a`.
+   * @returns {Number} Returns the sort order indicator of `1` or `-1`.
+   */
+  function compareAscending(a, b) {
+    var ai = a.index,
+        bi = b.index;
+
+    a = a.criteria;
+    b = b.criteria;
+
+    // ensure a stable sort in V8 and other engines
+    // http://code.google.com/p/v8/issues/detail?id=90
+    if (a !== b) {
+      if (a > b || a === undefined) {
+        return 1;
+      }
+      if (a < b || b === undefined) {
+        return -1;
+      }
+    }
+    return ai < bi ? -1 : 1;
+  }
+
+  /**
+   * Creates a new function that, when called, invokes `func` with the `this`
+   * binding of `thisArg` and prepends any `partailArgs` to the arguments passed
+   * to the bound function.
+   *
+   * @private
+   * @param {Function|String} func The function to bind or the method name.
+   * @param {Mixed} [thisArg] The `this` binding of `func`.
+   * @param {Array} partialArgs An array of arguments to be partially applied.
+   * @returns {Function} Returns the new bound function.
+   */
+  function createBound(func, thisArg, partialArgs) {
+    var isFunc = isFunction(func),
+        isPartial = !partialArgs,
+        methodName = func;
+
+    // juggle arguments
+    if (isPartial) {
+      partialArgs = thisArg;
+    }
+
+    function bound() {
+      // `Function#bind` spec
+      // http://es5.github.com/#x15.3.4.5
+      var args = arguments,
+          thisBinding = isPartial ? this : thisArg;
+
+      if (!isFunc) {
+        func = thisArg[methodName];
+      }
+      if (partialArgs.length) {
+        args = args.length
+          ? partialArgs.concat(slice.call(args))
+          : partialArgs;
+      }
+      if (this instanceof bound) {
+        // get `func` instance if `bound` is invoked in a `new` expression
+        noop.prototype = func.prototype;
+        thisBinding = new noop;
+
+        // mimic the constructor's `return` behavior
+        // http://es5.github.com/#x13.2.2
+        var result = func.apply(thisBinding, args);
+        return result && objectTypes[typeof result]
+          ? result
+          : thisBinding
+      }
+      return func.apply(thisBinding, args);
+    }
+    return bound;
+  }
+
+  /**
    * Creates compiled iteration functions. The iteration function will be created
    * to iterate over only objects if the first argument of `options.args` is
    * "object" or `options.inLoop.array` is falsey.
@@ -757,35 +838,6 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed `collection` values, stable sorting
-   * them in ascending order.
-   *
-   * @private
-   * @param {Object} a The object to compare to `b`.
-   * @param {Object} b The object to compare to `a`.
-   * @returns {Number} Returns the sort order indicator of `1` or `-1`.
-   */
-  function compareAscending(a, b) {
-    var ai = a.index,
-        bi = b.index;
-
-    a = a.criteria;
-    b = b.criteria;
-
-    // ensure a stable sort in V8 and other engines
-    // http://code.google.com/p/v8/issues/detail?id=90
-    if (a !== b) {
-      if (a > b || a === undefined) {
-        return 1;
-      }
-      if (a < b || b === undefined) {
-        return -1;
-      }
-    }
-    return ai < bi ? -1 : 1;
-  }
-
-  /**
    * Used by `template` to replace tokens with their corresponding code snippets.
    *
    * @private
@@ -818,58 +870,6 @@
    */
   function escapeHtmlChar(match) {
     return htmlEscapes[match];
-  }
-
-  /**
-   * Creates a new function that, when called, invokes `func` with the `this`
-   * binding of `thisArg` and prepends any `partailArgs` to the arguments passed
-   * to the bound function.
-   *
-   * @private
-   * @param {Function|String} func The function to bind or the method name.
-   * @param {Mixed} [thisArg] The `this` binding of `func`.
-   * @param {Array} partialArgs An array of arguments to be partially applied.
-   * @returns {Function} Returns the new bound function.
-   */
-  function makeBound(func, thisArg, partialArgs) {
-    var isFunc = isFunction(func),
-        isPartial = !partialArgs,
-        methodName = func;
-
-    // juggle arguments
-    if (isPartial) {
-      partialArgs = thisArg;
-    }
-
-    function bound() {
-      // `Function#bind` spec
-      // http://es5.github.com/#x15.3.4.5
-      var args = arguments,
-          thisBinding = isPartial ? this : thisArg;
-
-      if (!isFunc) {
-        func = thisArg[methodName];
-      }
-      if (partialArgs.length) {
-        args = args.length
-          ? partialArgs.concat(slice.call(args))
-          : partialArgs;
-      }
-      if (this instanceof bound) {
-        // get `func` instance if `bound` is invoked in a `new` expression
-        noop.prototype = func.prototype;
-        thisBinding = new noop;
-
-        // mimic the constructor's `return` behavior
-        // http://es5.github.com/#x13.2.2
-        var result = func.apply(thisBinding, args);
-        return result && objectTypes[typeof result]
-          ? result
-          : thisBinding
-      }
-      return func.apply(thisBinding, args);
-    }
-    return bound;
   }
 
   /**
@@ -3360,7 +3360,7 @@
     // (in V8 `Function#bind` is slower except when partially applied)
     return isBindFast || (nativeBind && arguments.length > 2)
       ? nativeBind.call.apply(nativeBind, arguments)
-      : makeBound(func, thisArg, slice.call(arguments, 2));
+      : createBound(func, thisArg, slice.call(arguments, 2));
   }
 
   /**
@@ -3559,7 +3559,7 @@
    * // => 'hi, moe!'
    */
   function lateBind(object, methodName) {
-    return makeBound(methodName, object, slice.call(arguments, 2));
+    return createBound(methodName, object, slice.call(arguments, 2));
   }
 
   /**
@@ -3642,7 +3642,7 @@
    * // => 'hi: moe'
    */
   function partial(func) {
-    return makeBound(func, slice.call(arguments, 1));
+    return createBound(func, slice.call(arguments, 1));
   }
 
   /**

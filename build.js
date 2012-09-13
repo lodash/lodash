@@ -826,23 +826,16 @@
         // remove `deep` clone functionality
         source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
           '  function clone(value) {',
-          '    if (value == null) {',
-          '      return value;',
-          '    }',
-          '    var isObj = objectTypes[typeof value];',
-          '    if (isObj && value.clone && isFunction(value.clone)) {',
-          '      return value.clone(deep);',
-          '    }',
-          '    if (isObj) {',
+          '    if (value && objectTypes[typeof value]) {',
           '      var className = toString.call(value);',
           '      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {',
-          '        return value;',
+          '        return value',
           '      }',
-          '      var isArr = className == arrayClass;',
+          '      return className == arrayClass',
+          '        ? slice.call(value)',
+          '        : extend({}, value)',
           '    }',
-          '    return isObj',
-          '      ? (isArr ? slice.call(value) : extend({}, value))',
-          '      : value;',
+          '    return value',
           '  }'
         ].join('\n'));
       }

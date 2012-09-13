@@ -44,7 +44,6 @@
     'callee',
     'className',
     'compareAscending',
-    'data',
     'forIn',
     'found',
     'funcs',
@@ -64,13 +63,12 @@
     'properties',
     'property',
     'propsLength',
-    'recursive',
     'source',
-    'sources',
+    'stackA',
+    'stackB',
     'stackLength',
     'target',
-    'valueProp',
-    'values'
+    'valueProp'
   ];
 
   /** Used to minify `compileIterator` option properties */
@@ -118,7 +116,6 @@
     'chain',
     'clearTimeout',
     'clone',
-    'clones',
     'collect',
     'compact',
     'compose',
@@ -214,9 +211,6 @@
     'sortBy',
     'sortedIndex',
     'source',
-    'sources',
-    'stackA',
-    'stackB',
     'tail',
     'take',
     'tap',
@@ -305,10 +299,10 @@
     // remove debug sourceURL use in `_.template`
     source = source.replace(/(?:\s*\/\/.*\n)* *if *\(useSourceURL[^}]+}/, '');
 
-    // minify internal properties used by 'compareAscending', `_.clone`, `_.isEqual`, `_.merge`, and `_.sortBy`
+    // minify internal properties used by 'compareAscending', `_.merge`, and `_.sortBy`
     (function() {
-      var properties = ['clones', 'criteria', 'index', 'sources', 'thorough', 'value', 'values'],
-          snippets = source.match(/( +)(?:function (?:clone|compareAscending|isEqual)|var merge|var sortBy)\b[\s\S]+?\n\1}/g);
+      var properties = ['criteria', 'index', 'value'],
+          snippets = source.match(/( +)(?:function compareAscending|var merge|var sortBy)\b[\s\S]+?\n\1}/g);
 
       if (!snippets) {
         return;

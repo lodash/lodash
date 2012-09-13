@@ -27,7 +27,7 @@
    */
   function postprocess(source) {
     // move vars exposed by Closure Compiler into the IIFE
-    source = source.replace(/^([^(\n]+)\s*(\(function[^)]+\){)/, '$2$1');
+    source = source.replace(/^((?:(['"])use strict\2;)?(?:var (?:[a-z]+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^)]+\){)/, '$3$1');
 
     // unescape properties (i.e. foo["bar"] => foo.bar)
     source = source.replace(/(\w)\["([^."]+)"\]/g, function(match, left, right) {

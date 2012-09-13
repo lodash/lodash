@@ -551,20 +551,33 @@
   QUnit.module('iife command');
 
   (function() {
-    var start = _.after(2, _.once(QUnit.start));
+    var commands = [
+      'iife=this["lodash"]=(function(window,undefined){%output%;return lodash}(this))',
+      'iife=define(function(window,undefined){return function(){%output%;return lodash}}(this));'
+    ];
 
-    asyncTest('`lodash iife=...`', function() {
-      build(['-s', 'exports=none', 'iife=this["lodash"]=(function(window,undefined){%output%;return lodash}(this))'], function(source, filepath) {
-        var basename = path.basename(filepath, '.js'),
-            context = createContext();
+    commands.forEach(function(command) {
+      var start = _.after(2, _.once(QUnit.start));
 
-        try {
-          vm.runInContext(source, context);
-        } catch(e) { }
+      asyncTest('`lodash ' + command +'`', function() {
+        build(['-s', 'exports=none', command], function(source, filepath) {
+          var basename = path.basename(filepath, '.js'),
+              context = createContext();
 
-        var lodash = context.lodash || {};
-        ok(_.isString(lodash.VERSION), basename);
-        start();
+          context.define = function(func) {
+            context.lodash = func();
+          };
+
+          try {
+            vm.runInContext(source, context);
+          } catch(e) {
+            console.log(e);
+          }
+
+          var lodash = context.lodash || {};
+          ok(_.isString(lodash.VERSION), basename);
+          start();
+        });
       });
     });
   }());
@@ -621,7 +634,9 @@
 
           try {
             vm.runInContext(result, context);
-          } catch(e) { }
+          } catch(e) {
+            console.log(e);
+          }
 
           var underscore = context._ || {};
           ok(_.isString(underscore.VERSION));
@@ -646,7 +661,9 @@
 
         try {
           vm.runInContext(source, context);
-        } catch(e) { }
+        } catch(e) {
+          console.log(e);
+        }
 
         var array = [1, 2, 3],
             object1 = [{ 'a': 1 }],
@@ -712,7 +729,9 @@
 
           try {
             vm.runInContext(source, context);
-          } catch(e) { }
+          } catch(e) {
+            console.log(e);
+          }
 
           if (/underscore/.test(command)) {
             methodNames = underscoreMethods;

@@ -1051,10 +1051,9 @@
 
   /**
    * Creates a clone of `value`. If `deep` is `true`, all nested objects will
-   * also be cloned otherwise they will be assigned by reference. If a value has
-   * a `clone` method it will be used to perform the clone. Functions, DOM nodes,
-   * `arguments` objects, and objects created by constructors other than `Object`
-   * are **not** cloned unless they have a custom `clone` method.
+   * also be cloned otherwise they will be assigned by reference. Functions, DOM
+   * nodes, `arguments` objects, and objects created by constructors other than
+   * `Object` are **not** cloned.
    *
    * @static
    * @memberOf _
@@ -1063,9 +1062,9 @@
    * @param {Boolean} deep A flag to indicate a deep clone.
    * @param {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `deep`.
-   * @param {Object} [data={}] Internally used to track traversed objects to avoid
-   *  circular references and indicate whether to perform a more thorough clone
-   *  of non-object values.
+   * @param {Array} [stackA=[]] Internally used to track traversed source objects.
+   * @param {Array} [stackB=[]] Internally used to associate clones with their
+   *  source counterparts.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
    *
@@ -1086,28 +1085,15 @@
    * shallow[0] === stooges[0];
    * // => false
    */
-  function clone(value, deep, guard, data) {
+  function clone(value, deep, guard, stackA, stackB) {
     if (value == null) {
       return value;
     }
     if (guard) {
       deep = false;
     }
-    // init internal data
-    data || (data = { 'thorough': null });
-
-    // avoid slower checks on primitives
-    if (data.thorough == null) {
-      // primitives passed from iframes use the primary document's native prototypes
-      data.thorough = !!(BoolProto.clone || NumberProto.clone || StringProto.clone);
-    }
-    // use custom `clone` method if available
-    var isObj = objectTypes[typeof value];
-    if ((isObj || data.thorough) && value.clone && isFunction(value.clone)) {
-      data.thorough = null;
-      return value.clone(deep);
-    }
     // inspect [[Class]]
+    var isObj = objectTypes[typeof value];
     if (isObj) {
       // don't clone `arguments` objects, functions, or non-object Objects
       var className = toString.call(value);
@@ -1141,33 +1127,34 @@
         return ctor(value.source, reFlags.exec(value));
     }
 
-    var clones = data.clones || (data.clones = []),
-        sources = data.sources || (data.sources = []),
-        length = clones.length;
-
     // check for circular references and return corresponding clone
+    stackA || (stackA = []);
+    stackB || (stackB = []);
+
+    var length = stackA.length;
     while (length--) {
-      if (sources[length] == value) {
-        return clones[length];
+      if (stackA[length] == value) {
+        return stackB[length];
       }
     }
 
     // init cloned object
     var result = isArr ? ctor(length = value.length) : {};
 
-    // add current clone and original source value to the stack of traversed objects
-    clones.push(result);
-    sources.push(value);
+    // add the source value to the stack of traversed objects
+    // and associate it with its clone
+    stackA.push(value);
+    stackB.push(result);
 
     // recursively populate clone (susceptible to call stack limits)
     if (isArr) {
       var index = -1;
       while (++index < length) {
-        result[index] = clone(value[index], deep, null, data);
+        result[index] = clone(value[index], deep, null, stackA, stackB);
       }
     } else {
       forOwn(value, function(objValue, key) {
-        result[key] = clone(objValue, deep, null, data);
+        result[key] = clone(objValue, deep, null, stackA, stackB);
       });
     }
     return result;
@@ -1418,17 +1405,15 @@
 
   /**
    * Performs a deep comparison between two values to determine if they are
-   * equivalent to each other. If a value has an `isEqual` method it will be
-   * used to perform the comparison.
+   * equivalent to each other.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} a The value to compare.
    * @param {Mixed} b The other value to compare.
-   * @param {Object} [data={}] Internally used track traversed objects to avoid
-   *  circular references and indicate whether to perform a more thorough comparison
-   *  of non-object values.
+   * @param {Object} [stackA=[]] Internally used track traversed `a` objects.
+   * @param {Object} [stackB=[]] Internally used track traversed `b` objects.
    * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
    * @example
    *
@@ -1441,38 +1426,20 @@
    * _.isEqual(moe, clone);
    * // => true
    */
-  function isEqual(a, b, data) {
+  function isEqual(a, b, stackA, stackB) {
     // a strict comparison is necessary because `null == undefined`
     if (a == null || b == null) {
       return a === b;
-    }
-    // init internal data
-    data || (data = { 'thorough': null });
-
-    // avoid slower checks on non-objects
-    if (data.thorough == null) {
-      // primitives passed from iframes use the primary document's native prototypes
-      data.thorough = !!(BoolProto.isEqual || NumberProto.isEqual || StringProto.isEqual);
-    }
-    if (objectTypes[typeof a] || objectTypes[typeof b] || data.thorough) {
-      // unwrap any LoDash wrapped values
-      a = a.__wrapped__ || a;
-      b = b.__wrapped__ || b;
-
-      // use custom `isEqual` method if available
-      if (a.isEqual && isFunction(a.isEqual)) {
-        data.thorough = null;
-        return a.isEqual(b);
-      }
-      if (b.isEqual && isFunction(b.isEqual)) {
-        data.thorough = null;
-        return b.isEqual(a);
-      }
     }
     // exit early for identical values
     if (a === b) {
       // treat `+0` vs. `-0` as not equal
       return a !== 0 || (1 / a == 1 / b);
+    }
+    // unwrap any LoDash wrapped values
+    if (objectTypes[typeof a] || objectTypes[typeof b]) {
+      a = a.__wrapped__ || a;
+      b = b.__wrapped__ || b;
     }
     // compare [[Class]] names
     var className = toString.call(a);
@@ -1514,10 +1481,10 @@
     // assume cyclic structures are equal
     // the algorithm for detecting cyclic structures is adapted from ES 5.1
     // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
-    var stackA = data.stackA || (data.stackA = []),
-        stackB = data.stackB || (data.stackB = []),
-        length = stackA.length;
+    stackA || (stackA = []);
+    stackB || (stackB = []);
 
+    var length = stackA.length;
     while (length--) {
       if (stackA[length] == a) {
         return stackB[length] == b;
@@ -1541,7 +1508,7 @@
       if (result) {
         // deep compare the contents, ignoring non-numeric properties
         while (size--) {
-          if (!(result = isEqual(a[size], b[size], data))) {
+          if (!(result = isEqual(a[size], b[size], stackA, stackB))) {
             break;
           }
         }
@@ -1565,7 +1532,7 @@
         // count the number of properties.
         size++;
         // deep compare each property value.
-        if (!(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], data))) {
+        if (!(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stackA, stackB))) {
           return false;
         }
       }
@@ -1585,7 +1552,7 @@
       while (++index < 7) {
         prop = shadowed[index];
         if (hasOwnProperty.call(a, prop) &&
-            !(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], data))) {
+            !(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stackA, stackB))) {
           return false;
         }
       }
@@ -1804,8 +1771,9 @@
    * @param {Object} [source1, source2, ...] The source objects.
    * @param {Object} [indicator] Internally used to indicate that the `stack`
    *  argument is an array of traversed objects instead of another source object.
-   * @param {Object} [data={}] Internally used to track traversed objects to avoid
-   *  circular references.
+   * @param {Array} [stackA=[]] Internally used to track traversed source objects.
+   * @param {Array} [stackB=[]] Internally used to associate clones with their
+   *  source counterparts.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -1825,25 +1793,34 @@
   var merge = createIterator(extendIteratorOptions, {
     'args': 'object, source, indicator',
     'top':
-      'var isArr, recursive = indicator == isPlainObject,\n' +
-      '    data = recursive ? arguments[3] : { values: [], sources: [] };\n' +
-      'for (var argsIndex = 1, argsLength = recursive ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
-      '  if (iteratee = arguments[argsIndex]) {',
+      'var argsLength, isArr, stackA, stackB,\n' +
+      '    args = arguments, argsIndex = 0;\n' +
+      'if (indicator == isPlainObject) {\n' +
+      '  argsLength = 2;\n' +
+      '  stackA = args[3];\n' +
+      '  stackB = args[4]\n' +
+      '} else {\n' +
+      '  argsLength = args.length;\n' +
+      '  stackA = [];\n' +
+      '  stackB = []\n' +
+      '}\n' +
+      'while (++argsIndex < argsLength) {\n' +
+      '  if (iteratee = args[argsIndex]) {',
     'inLoop':
       'if ((source = value) && ((isArr = isArray(source)) || isPlainObject(source))) {\n' +
-      '  var found = false, values = data.values, sources = data.sources, stackLength = sources.length;\n' +
+      '  var found = false, stackLength = stackA.length;\n' +
       '  while (stackLength--) {\n' +
-      '    if (found = sources[stackLength] == source) break\n' +
+      '    if (found = stackA[stackLength] == source) break\n' +
       '  }\n' +
       '  if (found) {\n' +
-      '    result[index] = values[stackLength]\n' +
+      '    result[index] = stackB[stackLength]\n' +
       '  } else {\n' +
-      '    values.push(value = (value = result[index]) && isArr\n' +
+      '    stackA.push(source);\n' +
+      '    stackB.push(value = (value = result[index]) && isArr\n' +
       '      ? (isArray(value) ? value : [])\n' +
       '      : (isPlainObject(value) ? value : {})\n' +
       '    );\n' +
-      '    sources.push(source);\n' +
-      '    result[index] = callee(value, source, isPlainObject, data)\n' +
+      '    result[index] = callee(value, source, isPlainObject, stackA, stackB)\n' +
       '  }\n' +
       '} else if (source != null) {\n' +
       '  result[index] = source\n' +
@@ -2446,8 +2423,7 @@
   });
 
   /**
-   * Converts the `collection`, to an array. Useful for converting the
-   * `arguments` object.
+   * Converts the `collection`, to an array.
    *
    * @static
    * @memberOf _

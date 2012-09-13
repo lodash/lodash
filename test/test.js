@@ -260,19 +260,6 @@
       ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c && clone !== object);
     });
 
-    test('should clone using Klass#clone', function() {
-      var object = new Klass;
-      Klass.prototype.clone = function() {  return new Klass; };
-
-      var clone = _.clone(object);
-      ok(clone !== object && clone instanceof Klass);
-
-      clone = _.clone(object, true);
-      ok(clone !== object && clone instanceof Klass);
-
-      delete Klass.prototype.clone;
-    });
-
     test('should clone problem JScript properties (test in IE < 9)', function() {
       deepEqual(_.clone(shadowed), shadowed);
       ok(_.clone(shadowed) != shadowed);
@@ -753,17 +740,6 @@
 
       equal(_.isEqual(args1, args2), true);
       equal(_.isEqual(args1, args3), false);
-    });
-
-    test('should respect custom `isEqual` result despite objects strict equaling each other', function() {
-      var object = { 'isEqual': function() { return false; } };
-      equal(_.isEqual(object, object), false);
-    });
-
-    test('should use custom `isEqual` methods on primitives', function() {
-      Boolean.prototype.isEqual = function() { return true; };
-      equal(_.isEqual(true, false), true);
-      delete Boolean.prototype.isEqual;
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {

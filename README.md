@@ -32,7 +32,6 @@ For more information check out these screencasts over Lo-Dash:
 ## Features
 
  * AMD loader support ([RequireJS](http://requirejs.org/), [curl.js](https://github.com/cujojs/curl), etc.)
- * [_.bind](http://lodash.com/docs#bind) supports *“lazy”* binding
  * [_.clone](http://lodash.com/docs#clone) supports *“deep”* cloning
  * [_.countBy](http://lodash.com/docs#countBy) as a companion function for [_.groupBy](http://lodash.com/docs#groupBy) and [_.sortBy](http://lodash.com/docs#sortBy)
  * [_.debounce](http://lodash.com/docs#debounce)’ed functions match [_.throttle](http://lodash.com/docs#throttle)’ed functions’ return value behavior

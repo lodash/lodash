@@ -167,23 +167,6 @@
       bound(['b'], 'c');
       deepEqual(args, ['a', ['b'], 'c']);
     });
-
-    test('supports lazy bind', function() {
-      var object = {
-        'name': 'moe',
-        'greet': function(greeting) {
-          return greeting + ': ' + this.name;
-        }
-      };
-
-      var func = _.bind(object, 'greet', 'hi');
-      equal(func(), 'hi: moe');
-
-      object.greet = function(greeting) {
-        return greeting + ' ' + this.name + '!';
-      };
-      equal(func(), 'hi moe!');
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -909,6 +892,29 @@
     test('should ignore non-number `fromIndex` values', function() {
       equal(_.lastIndexOf([1, 2, 3], 3, '1'), 2);
       equal(_.lastIndexOf([1, 2, 3], 3, true), 2);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.lateBind');
+
+  (function() {
+    test('should work when the target function is overwritten', function() {
+      var object = {
+        'name': 'moe',
+        'greet': function(greeting) {
+          return greeting + ': ' + this.name;
+        }
+      };
+
+      var func = _.lateBind(object, 'greet', 'hi');
+      equal(func(), 'hi: moe');
+
+      object.greet = function(greeting) {
+        return greeting + ' ' + this.name + '!';
+      };
+      equal(func(), 'hi moe!');
     });
   }());
 

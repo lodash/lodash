@@ -26,9 +26,5 @@
     "name": "John-David Dalton",
     "email": "john.david.dalton@gmail.com",
     "web": "http://allyoucanleet.com/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bestiejs/lodash.git"
   }
 }

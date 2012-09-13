@@ -499,7 +499,7 @@
       '  callback = identity\n' +
       '}\n' +
       'else if (thisArg) {\n' +
-      '  callback = iteratorBind(callback, thisArg)\n' +
+      '  callback = bindIterator(callback, thisArg)\n' +
       '}',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
   };
@@ -514,7 +514,7 @@
       '  callback = function(value) { return value[valueProp] }\n' +
       '}\n' +
       'else if (thisArg) {\n' +
-      '  callback = iteratorBind(callback, thisArg)\n' +
+      '  callback = bindIterator(callback, thisArg)\n' +
       '}',
     'inLoop':
       'prop = callback(value, index, collection);\n' +
@@ -548,7 +548,7 @@
 
   /** Reusable iterator options for `find`, `forEach`, `forIn`, and `forOwn` */
   var forEachIteratorOptions = {
-    'top': 'if (thisArg) callback = iteratorBind(callback, thisArg)'
+    'top': 'if (thisArg) callback = bindIterator(callback, thisArg)'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
@@ -582,7 +582,7 @@
       'if (!isFunc) {\n' +
       '  var props = concat.apply(ArrayProto, arguments)\n' +
       '} else if (thisArg) {\n' +
-      '  callback = iteratorBind(callback, thisArg)\n' +
+      '  callback = bindIterator(callback, thisArg)\n' +
       '}',
     'inLoop':
       'if (isFunc\n' +
@@ -592,6 +592,21 @@
   };
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Creates a bound iterator function that, when called, invokes `func` with
+   * the `this` binding of `thisArg` and the arguments (value, index, object).
+   *
+   * @private
+   * @param {Function} func The function to bind.
+   * @param {Mixed} [thisArg] The `this` binding of `func`.
+   * @returns {Function} Returns the new bound function.
+   */
+  function bindIterator(func, thisArg) {
+    return function(value, index, object) {
+      return func.call(thisArg, value, index, object);
+    };
+  }
 
   /**
    * Creates a new function optimized for searching large arrays for a given `value`,
@@ -725,19 +740,19 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn, ' +
-        'hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
-        'isPlainObject, iteratorBind, objectClass, objectTypes, nativeKeys, ' +
-        'propertyIsEnumerable, slice, stringClass, toString',
+        'arrayLikeClasses, ArrayProto, bind, bindIterator, compareAscending, concat, ' +
+        'forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
+        'isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
+        'slice, stringClass, toString',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
     );
     // return the compiled function
     return factory(
-      arrayLikeClasses, ArrayProto, bind, compareAscending, concat, forIn,
-      hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction,
-      isPlainObject, iteratorBind, objectClass, objectTypes, nativeKeys,
-      propertyIsEnumerable, slice, stringClass, toString
+      arrayLikeClasses, ArrayProto, bind, bindIterator, compareAscending, concat,
+      forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction,
+      isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
+      slice, stringClass, toString
     );
   }
 
@@ -807,17 +822,54 @@
 
   /**
    * Creates a new function that, when called, invokes `func` with the `this`
-   * binding of `thisArg` and the arguments (value, index, object).
+   * binding of `thisArg` and prepends any `partailArgs` to the arguments passed
+   * to the bound function.
    *
    * @private
-   * @param {Function} func The function to bind.
+   * @param {Function|String} func The function to bind or the method name.
    * @param {Mixed} [thisArg] The `this` binding of `func`.
+   * @param {Array} partialArgs An array of arguments to be partially applied.
    * @returns {Function} Returns the new bound function.
    */
-  function iteratorBind(func, thisArg) {
-    return function(value, index, object) {
-      return func.call(thisArg, value, index, object);
-    };
+  function makeBound(func, thisArg, partialArgs) {
+    var isFunc = isFunction(func),
+        isPartial = !partialArgs,
+        methodName = func;
+
+    // juggle arguments
+    if (isPartial) {
+      partialArgs = thisArg;
+    }
+
+    function bound() {
+      // `Function#bind` spec
+      // http://es5.github.com/#x15.3.4.5
+      var args = arguments,
+          thisBinding = isPartial ? this : thisArg;
+
+      if (!isFunc) {
+        func = thisArg[methodName];
+      }
+      if (partialArgs.length) {
+        args = args.length
+          ? partialArgs.concat(slice.call(args))
+          : partialArgs;
+      }
+      if (this instanceof bound) {
+        // get `func` instance if `bound` is invoked in a `new` expression
+        noop.prototype = func.prototype;
+        thisBinding = new noop;
+
+        // mimic the constructor's `return` behavior
+        // http://es5.github.com/#x13.2.2
+        var result = func.apply(thisBinding, args);
+        return result && objectTypes[typeof result]
+          ? result
+          : thisBinding
+      }
+      return func.apply(thisBinding, args);
+    }
+    return bound;
   }
 
   /**
@@ -1910,7 +1962,7 @@
       '    if (prop in object) result[prop] = object[prop]\n' +
       '  }\n' +
       '} else {\n' +
-      '  if (thisArg) callback = iteratorBind(callback, thisArg)',
+      '  if (thisArg) callback = bindIterator(callback, thisArg)',
     'inLoop':
       'if (callback(value, index, object)) result[index] = value',
     'bottom': '}'
@@ -2230,7 +2282,7 @@
     'init': 'accumulator',
     'top':
       'var noaccum = arguments.length < 3;\n' +
-      'if (thisArg) callback = iteratorBind(callback, thisArg)',
+      'if (thisArg) callback = bindIterator(callback, thisArg)',
     'beforeLoop': {
       'array': 'if (noaccum) result = iteratee[++index]'
     },
@@ -2271,7 +2323,7 @@
         noaccum = arguments.length < 3;
 
     if(thisArg) {
-      callback = iteratorBind(callback, thisArg);
+      callback = bindIterator(callback, thisArg);
     }
     // Opera 10.53-10.60 JITted `length >>> 0` returns the wrong value for negative numbers
     if (length > -1 && length === length >>> 0) {
@@ -2830,7 +2882,7 @@
       return result;
     }
     if (thisArg) {
-      callback = iteratorBind(callback, thisArg);
+      callback = bindIterator(callback, thisArg);
     }
     while (++index < length) {
       current = callback(array[index], index, array);
@@ -2880,7 +2932,7 @@
       return result;
     }
     if (thisArg) {
-      callback = iteratorBind(callback, thisArg);
+      callback = bindIterator(callback, thisArg);
     }
     while (++index < length) {
       current = callback(array[index], index, array);
@@ -3172,7 +3224,7 @@
     if (!callback) {
       callback = identity;
     } else if (thisArg) {
-      callback = iteratorBind(callback, thisArg);
+      callback = bindIterator(callback, thisArg);
     }
     while (++index < length) {
       computed = callback(array[index], index, array);
@@ -3284,19 +3336,17 @@
   /**
    * Creates a new function that, when called, invokes `func` with the `this`
    * binding of `thisArg` and prepends any additional `bind` arguments to those
-   * passed to the bound function. Lazy defined methods may be bound by passing
-   * the object they are bound to as `func` and the method name as `thisArg`.
+   * passed to the bound function.
    *
    * @static
    * @memberOf _
    * @category Functions
-   * @param {Function|Object} func The function to bind or the object the method belongs to.
-   * @param {Mixed} [thisArg] The `this` binding of `func` or the method name.
+   * @param {Function} func The function to bind.
+   * @param {Mixed} [thisArg] The `this` binding of `func`.
    * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
    * @returns {Function} Returns the new bound function.
    * @example
    *
-   * // basic bind
    * var func = function(greeting) {
    *   return greeting + ' ' + this.name;
    * };
@@ -3304,72 +3354,13 @@
    * func = _.bind(func, { 'name': 'moe' }, 'hi');
    * func();
    * // => 'hi moe'
-   *
-   * // lazy bind
-   * var object = {
-   *   'name': 'moe',
-   *   'greet': function(greeting) {
-   *     return greeting + ' ' + this.name;
-   *   }
-   * };
-   *
-   * var func = _.bind(object, 'greet', 'hi');
-   * func();
-   * // => 'hi moe'
-   *
-   * object.greet = function(greeting) {
-   *   return greeting + ', ' + this.name + '!';
-   * };
-   *
-   * func();
-   * // => 'hi, moe!'
    */
   function bind(func, thisArg) {
-    var methodName,
-        isFunc = isFunction(func);
-
-    // juggle arguments
-    if (!isFunc) {
-      methodName = thisArg;
-      thisArg = func;
-    }
     // use `Function#bind` if it exists and is fast
     // (in V8 `Function#bind` is slower except when partially applied)
-    else if (isBindFast || (nativeBind && arguments.length > 2)) {
-      return nativeBind.call.apply(nativeBind, arguments);
-    }
-
-    var partialArgs = slice.call(arguments, 2);
-
-    function bound() {
-      // `Function#bind` spec
-      // http://es5.github.com/#x15.3.4.5
-      var args = arguments,
-          thisBinding = thisArg;
-
-      if (!isFunc) {
-        func = thisArg[methodName];
-      }
-      if (partialArgs.length) {
-        args = args.length
-          ? partialArgs.concat(slice.call(args))
-          : partialArgs;
-      }
-      if (this instanceof bound) {
-        // get `func` instance if `bound` is invoked in a `new` expression
-        noop.prototype = func.prototype;
-        thisBinding = new noop;
-
-        // mimic the constructor's `return` behavior
-        // http://es5.github.com/#x13.2.2
-        var result = func.apply(thisBinding, args);
-        return result && objectTypes[typeof result]
-          ? result
-          : thisBinding
-      }
-      return func.apply(thisBinding, args);
-    }
-    return bound;
+    return isBindFast || (nativeBind && arguments.length > 2)
+      ? nativeBind.call.apply(nativeBind, arguments)
+      : makeBound(func, thisArg, slice.call(arguments, 2));
   }
 
   /**
@@ -3536,6 +3527,42 @@
   }
 
   /**
+   * Creates a new function that, when called, invokes `object[methodName]` and
+   * prepends any additional `lateBind` arguments to those passed to the bound
+   * function. This method
+   *
+   * @static
+   * @memberOf _
+   * @category Functions
+   * @param {Object} object The object the method belongs to.
+   * @param {String} methodName The method name.
+   * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
+   * @returns {Function} Returns the new bound function.
+   * @example
+   *
+   * var object = {
+   *   'name': 'moe',
+   *   'greet': function(greeting) {
+   *     return greeting + ' ' + this.name;
+   *   }
+   * };
+   *
+   * var func = _.bind(object, 'greet', 'hi');
+   * func();
+   * // => 'hi moe'
+   *
+   * object.greet = function(greeting) {
+   *   return greeting + ', ' + this.name + '!';
+   * };
+   *
+   * func();
+   * // => 'hi, moe!'
+   */
+  function lateBind(object, methodName) {
+    return makeBound(methodName, object, slice.call(arguments, 2));
+  }
+
+  /**
    * Creates a new function that memoizes the result of `func`. If `resolver` is
    * passed, it will be used to determine the cache key for storing the result
    * based on the arguments passed to the memoized function. By default, the first
@@ -3599,7 +3626,7 @@
   /**
    * Creates a new function that, when called, invokes `func` with any additional
    * `partial` arguments prepended to those passed to the new function. This method
-   * is similar `bind`, except it does **not** alter the `this` binding.
+   * is similar to `bind`, except it does **not** alter the `this` binding.
    *
    * @static
    * @memberOf _
@@ -3615,21 +3642,7 @@
    * // => 'hi: moe'
    */
   function partial(func) {
-    var args = slice.call(arguments, 1),
-        argsLength = args.length;
-
-    return function() {
-      var result,
-          others = arguments;
-
-      if (others.length) {
-        args.length = argsLength;
-        push.apply(args, others);
-      }
-      result = args.length == 1 ? func.call(this, args[0]) : func.apply(this, args);
-      args.length = argsLength;
-      return result;
-    };
+    return makeBound(func, slice.call(arguments, 1));
   }
 
   /**
@@ -4288,6 +4301,7 @@
   lodash.keys = keys;
   lodash.last = last;
   lodash.lastIndexOf = lastIndexOf;
+  lodash.lateBind = lateBind;
   lodash.map = map;
   lodash.max = max;
   lodash.memoize = memoize;

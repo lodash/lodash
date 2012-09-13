@@ -109,6 +109,7 @@
     'keys': ['isArguments'],
     'last': [],
     'lastIndexOf': [],
+    'lateBind': ['isFunction'],
     'map': ['identity'],
     'max': [],
     'memoize': [],
@@ -120,7 +121,7 @@
     'omit': ['indexOf', 'isArguments'],
     'once': [],
     'pairs': [],
-    'partial': [],
+    'partial': ['isFunction'],
     'pick': [],
     'pluck': [],
     'random': [],
@@ -205,6 +206,7 @@
     'keys',
     'last',
     'lastIndexOf',
+    'lateBind',
     'map',
     'max',
     'min',
@@ -230,6 +232,7 @@
     'forIn',
     'forOwn',
     'invert',
+    'lateBind',
     'merge',
     'object',
     'omit',
@@ -1052,7 +1055,7 @@
 
         // remove native `Function#bind` branch in `_.bind`
         if (methodName == 'bind') {
-          modified = modified.replace(/(?:\s*\/\/.*)*\s*else if *\(isBindFast[^}]+}/, '');
+          modified = modified.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
         }
         // remove native `Array.isArray` branch in `_.isArray`
         else {

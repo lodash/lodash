@@ -9,6 +9,7 @@
   var compiledVars = [
     'argsIndex',
     'argsLength',
+    'bindIterator',
     'callback',
     'collection',
     'concat',
@@ -17,7 +18,6 @@
     'identity',
     'index',
     'iteratee',
-    'iteratorBind',
     'length',
     'nativeKeys',
     'object',
@@ -180,6 +180,7 @@
     'keys',
     'last',
     'lastIndexOf',
+    'lateBind',
     'map',
     'max',
     'memoize',

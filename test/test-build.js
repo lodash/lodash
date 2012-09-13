@@ -134,6 +134,7 @@
     'debounce',
     'defer',
     'delay',
+    'lateBind',
     'memoize',
     'once',
     'partial',
@@ -241,6 +242,7 @@
     'forIn',
     'forOwn',
     'invert',
+    'lateBind',
     'merge',
     'object',
     'omit',
@@ -370,14 +372,16 @@
       else if (functionsMethods.indexOf(methodName) > -1) {
         if (methodName == 'after') {
           func(1, noop);
+        } else if (methodName == 'bindAll') {
+          func({ 'noop': noop });
+        } else if (methodName == 'lateBind') {
+          func(lodash, 'identity', array, string);
         } else if (/^(?:bind|partial)$/.test(methodName)) {
           func(noop, object, array, string);
         } else if (/^(?:compose|memoize|wrap)$/.test(methodName)) {
           func(noop, noop);
         } else if (/^(?:debounce|throttle)$/.test(methodName)) {
           func(noop, 100);
-        } else if (methodName == 'bindAll') {
-          func({ 'noop': noop });
         } else {
           func(noop);
         }

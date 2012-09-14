@@ -401,7 +401,7 @@
    * @returns {String} Returns the `isArguments` fallback snippet.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( +)if *\((?:noArgsClass|!isArguments\(arguments\))\)[\s\S]+?};\n\1}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( +)if *\(noArgsClass\)[\s\S]+?};\n\1}/) || [''])[0];
   }
 
   /**
@@ -826,12 +826,9 @@
         // remove `deep` clone functionality
         source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
           '  function clone(value) {',
-          '    if (value && objectTypes[typeof value]) {',
-          '      return toString.call(value) == arrayClass',
-          '        ? slice.call(value)',
-          '        : extend({}, value)',
-          '    }',
-          '    return value',
+          '    return value && objectTypes[typeof value]',
+          '      ? (toString.call(value) == arrayClass ? slice.call(value) : extend({}, value))',
+          '      : value',
           '  }'
         ].join('\n'));
       }
@@ -990,6 +987,7 @@
 
       // build replacement code
       _.forOwn({
+        'Arguments': 'argsClass',
         'Date': 'dateClass',
         'Number': 'numberClass',
         'RegExp': 'regexpClass',
@@ -999,6 +997,10 @@
         var funcName = 'is' + key,
             funcCode = matchFunction(source, funcName);
 
+        // only DRY `isArguments` for Underscore builds
+        if (key == 'Arguments' && !isUnderscore) {
+          return;
+        }
         if (funcCode) {
           funcNames.push(funcName);
           objectSnippets.push("'" + key + "': " + value);
@@ -1015,16 +1017,28 @@
         source = removeFunction(source, funcName);
       });
 
-      // insert new DRY code after the method assignments
+      // insert new DRY code before the `lodash` method assignments
       var snippet = getMethodAssignments(source);
-      source = source.replace(snippet, snippet + '\n' +
-        '  // add `_.' + funcNames.join('`, `_.') + '`\n' +
-        '  ' + iteratorName + '({\n    ' + objectSnippets.join(',\n    ') + '\n  }, function(className, key) {\n' +
-        "    lodash['is' + key] = function(value) {\n" +
-        '      return toString.call(value) == className;\n' +
-        '    };\n' +
-        '  });\n'
-      );
+      source = source.replace(snippet, snippet += [
+        '',
+        '  // add `_.' + funcNames.join('`, `_.') + '`',
+        '  ' + iteratorName + '({\n    ' + objectSnippets.join(',\n    ') + '\n  }, function(className, key) {',
+        "    lodash['is' + key] = function(value) {",
+        '      return toString.call(value) == className',
+        '    }',
+        '  });'
+      ].join('\n'));
+
+      // move `isArguments` fallback to after the new DRY code
+      if (isUnderscore) {
+        var fallback = getIsArgumentsFallback(source);
+        source = removeIsArgumentsFallback(source).replace(snippet,
+          snippet + fallback
+            .replace(/\bisArguments\b/g, 'lodash.$&')
+            .replace(/\bnoArgsClass\b/g, '!lodash.isArguments(arguments)') +
+            '\n'
+        );
+      }
     }());
 
     /*------------------------------------------------------------------------*/
@@ -1091,12 +1105,7 @@
         return match.replace(/\bcallee\b/g, 'merge');
       });
 
-      if (isUnderscore) {
-        // replace `noArgsClass` from `isArguments` fallback
-        source = source.replace(getIsArgumentsFallback(source), function(match) {
-          return match.replace('noArgsClass', '!isArguments(arguments)');
-        });
-      } else {
+      if (!isUnderscore) {
         source = removeIsArgumentsFallback(source);
       }
 

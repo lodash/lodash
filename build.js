@@ -401,7 +401,7 @@
    * @returns {String} Returns the `isArguments` fallback snippet.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( +)if *\(noArgsClass[\s\S]+?};\n\1}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( +)if *\((?:noArgsClass|!isArguments\(arguments\))\)[\s\S]+?};\n\1}/) || [''])[0];
   }
 
   /**
@@ -542,7 +542,7 @@
   function removeKeysOptimization(source) {
     return removeVar(source, 'isKeysFast')
       // remove optimized branch in `iteratorTemplate`
-      .replace(/(?: *\/\/.*\n)* *'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, '$2')
+      .replace(/(?: *\/\/.*\n)* *'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, "'\\n' +\n$2")
       // remove `isKeysFast` from `beforeLoop.object` of `mapIteratorOptions`
       .replace(/=\s*'\s*\+\s*\(isKeysFast.+/, "= []'")
       // remove `isKeysFast` from `inLoop.object` of `mapIteratorOptions`, `invoke`, `pairs`, `pluck`, and `sortBy`
@@ -563,7 +563,7 @@
       // remove `noArgsClass` from `_.clone` and `_.isEqual`
       .replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '')
       // remove `noArgsClass` from `_.isEqual`
-      .replace(/if *\(noArgsClass[^}]+?}\n/, '');
+      .replace(/if *\(noArgsClass[^}]+?}\n/, '\n');
   }
 
   /**
@@ -827,11 +827,7 @@
         source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
           '  function clone(value) {',
           '    if (value && objectTypes[typeof value]) {',
-          '      var className = toString.call(value);',
-          '      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {',
-          '        return value',
-          '      }',
-          '      return className == arrayClass',
+          '      return toString.call(value) == arrayClass',
           '        ? slice.call(value)',
           '        : extend({}, value)',
           '    }',
@@ -994,16 +990,12 @@
 
       // build replacement code
       _.forOwn({
-        'Arguments': 'argsClass',
         'Date': 'dateClass',
         'Number': 'numberClass',
         'RegExp': 'regexpClass',
         'String': 'stringClass'
       },
       function(value, key) {
-        if (!isUnderscore && key == 'Arguments') {
-          return;
-        }
         var funcName = 'is' + key,
             funcCode = matchFunction(source, funcName);
 
@@ -1099,9 +1091,13 @@
         return match.replace(/\bcallee\b/g, 'merge');
       });
 
-      if (!isUnderscore) {
+      if (isUnderscore) {
+        // replace `noArgsClass` from `isArguments` fallback
+        source = source.replace(getIsArgumentsFallback(source), function(match) {
+          return match.replace('noArgsClass', '!isArguments(arguments)');
+        });
+      } else {
         source = removeIsArgumentsFallback(source);
-        source = removeNoArgsClass(source);
       }
 
       // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
@@ -1126,6 +1122,7 @@
       source = removeVar(source, 'iteratorTemplate');
       source = removeVar(source, 'noArraySliceOnStrings');
       source = removeVar(source, 'noCharByIndex');
+      source = removeNoArgsClass(source);
       source = removeNoNodeClass(source);
     }
     else {
@@ -1184,7 +1181,7 @@
     source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{\n([\s\S]+?) *})?/, '$1');
 
     if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
-      source = removeVar(source, 'freeExports');
+      source = source.replace(/var freeExports *=[\s\S]+?;\n/, '');
     }
 
     /*------------------------------------------------------------------------*/

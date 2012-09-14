@@ -44,6 +44,7 @@
 		<script>
 			// load Lo-Dash as a module
 			var lodashModule,
+			    shimmedModule,
 			    underscoreModule;
 
 			window.require && require({
@@ -51,13 +52,23 @@
 				'urlArgs': 't=' + (+new Date),
 				'paths': {
 					'lodash': '../../' + QUnit.config.lodashFilename,
-					'underscore': './../../' + QUnit.config.lodashFilename
+					'shimmed': './../../' + QUnit.config.lodashFilename,
+					'underscore': '../underscore/../../' + QUnit.config.lodashFilename
+				},
+				'shim': {
+					'shimmed': {
+					    'exports': '_'
+					}
 				}
 			},
-			['lodash', 'underscore'], function(lodash, underscore) {
+			['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
 				if (lodash.noConflict) {
 					lodashModule = lodash.noConflict();
 					lodashModule.moduleName = 'lodash';
+				}
+				if (shimmed.noConflict) {
+					shimmedModule = shimmed.noConflict();
+					shimmedModule.moduleName = 'shimmed';
 				}
 				if (underscore.noConflict) {
 					underscoreModule = underscore.noConflict();

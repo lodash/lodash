@@ -455,8 +455,8 @@
     '    %>) {' +
     '    <% } %>\n' +
     '    value = iteratee[index];\n' +
-    '    <%= objectBranch.inLoop %>;\n' +
-    '    <% if (!hasDontEnumBug || useHas) { %>}\n<% } %>' +
+    '    <%= objectBranch.inLoop %>;' +
+    '    <% if (!hasDontEnumBug || useHas) { %>\n    }<% } %>\n' +
     '  }' +
     '  <% } %>' +
 

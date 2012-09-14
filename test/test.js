@@ -123,6 +123,14 @@
       }
     });
 
+    test('supports loading lodash.js with the Require.js "shim" configuration option', function() {
+      if (window.document && window.require) {
+        equal((shimmedModule || {}).moduleName, 'shimmed');
+      } else {
+        skipTest();
+      }
+    });
+
     test('supports loading lodash.js as the "underscore" module', function() {
       if (window.document && window.require) {
         equal((underscoreModule || {}).moduleName, 'underscore');

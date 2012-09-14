@@ -422,6 +422,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('minified AMD snippet');
+
+  (function() {
+    var start = _.once(QUnit.start);
+
+    asyncTest('`lodash`', function() {
+      build(['-s'], function(source, filepath) {
+        // used by r.js build optimizer
+        var defineHasRegExp = /typeof\s+define\s*==(=)?\s*['"]function['"]\s*&&\s*typeof\s+define\.amd\s*==(=)?\s*['"]object['"]\s*&&\s*define\.amd/g;
+        ok(!!defineHasRegExp.exec(source));
+        start();
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('strict modifier');
 
   (function() {

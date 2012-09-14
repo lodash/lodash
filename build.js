@@ -1183,6 +1183,10 @@
     // remove `if (freeExports) {...}` if it's empty
     source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{\n([\s\S]+?) *})?/, '$1');
 
+    if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
+      source = removeVar(source, 'freeExports');
+    }
+
     /*------------------------------------------------------------------------*/
 
     // customize Lo-Dash's IIFE

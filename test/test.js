@@ -466,18 +466,6 @@
       equal(_.forEach(collection, Boolean), collection);
     });
 
-    test('should treat array-like object with invalid `length` as a regular object', function() {
-      var keys = [],
-          object = { 'length': -1 };
-
-      _.forEach(object, function(value, key) { keys.push(key); });
-      deepEqual(keys, ['length']);
-
-      keys = []; object.length = Math.pow(2, 32);
-      _.forEach(object, function(value, key) { keys.push(key); });
-      deepEqual(keys, ['length']);
-    });
-
     _.each({
       'literal': 'abc',
       'object': Object('abc')
@@ -1260,22 +1248,6 @@
       deepEqual(args, expected);
     });
 
-    test('should treat array-like object with invalid `length` as a regular object', function() {
-      var args,
-          object = { 'a': 1, 'length': -1 },
-          lastKey = _.keys(object).pop();
-
-      var expected = lastKey == 'length'
-        ? [-1, 1, 'a', object]
-        : [1, -1, 'length', object];
-
-      _.reduceRight(object, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, expected);
-    });
-
     _.each({
       'literal': 'abc',
       'object': Object('abc')
@@ -1558,25 +1530,10 @@
   (function() {
     var args = arguments;
 
-    _.each({
-      'an array': ['a', 'b', 'c'],
-      'a string': Object('abc')
-    }, function(collection, key) {
-      test('should call custom `toArray` method of ' + key, function() {
-        collection.toArray = function() { return [3, 2, 1]; };
-        deepEqual(_.toArray(collection), [3, 2, 1]);
-      });
-    });
-
     test('should treat array-like objects like arrays', function() {
       var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
       deepEqual(_.toArray(object), ['a', 'b', 'c']);
       deepEqual(_.toArray(args), [1, 2, 3]);
-    });
-
-    test('should treat array-like object with invalid `length` as a regular object', function() {
-      var object = { 'length': -1 };
-      deepEqual(_.toArray(object), [-1]);
     });
 
     test('should work with a string for `collection` (test in Opera < 10.52)', function() {

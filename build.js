@@ -599,6 +599,7 @@
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
       // match a variable declaration that's not part of a declaration list
       '( +)var ' + varName + ' *= *(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\1.+?;)\\n|' +
+      //'( +)var ' + varName + ' *= *(?:.+?;|(?:Function\\(.+?|.*?[^,])[\\s\\S]+?\\n\\1.+?;)\\n|' +
       // match a variable in a declaration list
       '\\n +' + varName + ' *=.+?,' +
       // end non-capturing group
@@ -835,9 +836,6 @@
       if (isMobile) {
         source = replaceVar(source, 'isKeysFast', 'false');
         source = removeKeysOptimization(source);
-
-        // remove Opera 10.53-10.60 JIT fixes
-        source = source.replace(/length *> *-1 *&& *length/g, 'length');
 
         // remove `prototype` [[Enumerable]] fix from `_.keys`
         source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(.+?propertyIsEnumerable[\s\S]+?\n\1}/, '');
@@ -1190,7 +1188,8 @@
     source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{\n([\s\S]+?) *})?/, '$1');
 
     if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
-      source = source.replace(/var freeExports *=[\s\S]+?;\n/, '');
+      //source = removeVar(source, 'freeExports');
+      source = source.replace(/var freeExports *=[\s\S]+?;\n/, '')
     }
 
     /*------------------------------------------------------------------------*/

@@ -245,6 +245,29 @@ $(document).ready(function() {
     var list = ["one", "two", "three", "four", "five"];
     var sorted = _.sortBy(list, 'length');
     equal(sorted.join(' '), 'one two four five three', 'sorted by length');
+
+    function Pair(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    var collection = [
+      new Pair(1, 1), new Pair(1, 2),
+      new Pair(1, 3), new Pair(1, 4),
+      new Pair(1, 5), new Pair(1, 6),
+      new Pair(2, 1), new Pair(2, 2),
+      new Pair(2, 3), new Pair(2, 4),
+      new Pair(2, 5), new Pair(2, 6),
+      new Pair(undefined, 1), new Pair(undefined, 2),
+      new Pair(undefined, 3), new Pair(undefined, 4),
+      new Pair(undefined, 5), new Pair(undefined, 6)
+    ];
+
+    var actual = _.sortBy(collection, function(pair) {
+      return pair.x;
+    });
+
+    deepEqual(actual, collection, 'sortBy should be stable');
   });
 
   test('groupBy', function() {
@@ -296,14 +319,6 @@ $(document).ready(function() {
 
     var numbers = _.toArray({one : 1, two : 2, three : 3});
     equal(numbers.join(', '), '1, 2, 3', 'object flattened into array');
-
-    var objectWithToArrayFunction = {toArray: function() {
-        return [1, 2, 3];
-    }};
-    equal(_.toArray(objectWithToArrayFunction).join(', '), '1, 2, 3', 'toArray method used if present');
-
-    var objectWithToArrayValue = {toArray: 1};
-    equal(_.toArray(objectWithToArrayValue).join(', '), '1', 'toArray property ignored if not a function');
   });
 
   test('size', function() {

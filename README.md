@@ -209,15 +209,12 @@ require({
  * `_.isElement` should use strict equality for its duck type check [[#734](https://github.com/documentcloud/underscore/issues/734), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L696-705)]
  * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L732-737)]
  * `_.isEqual` should return `true` for like-objects from different documents [[#733](https://github.com/documentcloud/underscore/issues/733), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L784-795)]
- * `_.isEqual` should use custom `isEqual` methods before checking strict equality [[#748](https://github.com/documentcloud/underscore/issues/748), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L758-761)]
  * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L803-815)]
- * `_.isNaN(new Number(NaN))` should return `true` [[#749](https://github.com/documentcloud/underscore/issues/749), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L823-825)]
  * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L879-881)]
  * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L1222-1225)]
  * `_.reduceRight` should pass correct callback arguments when iterating objects [[test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L1257-1271)]
  * `_.sortedIndex` should support arrays with high `length` values [[#735](https://github.com/documentcloud/underscore/issues/735), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L1404-1413)]
  * `_.throttle` should work when called in a loop [[#502](https://github.com/documentcloud/underscore/issues/502), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L1534-1544)]
- * `_.toArray` uses custom `toArray` methods of arrays and strings [[#747](https://github.com/documentcloud/underscore/issues/747), [test](https://github.com/bestiejs/lodash/blob/v0.7.0/test/test.js#L1571-1579)]
 
 ## Optimized methods <sup>(50+)</sup>
 

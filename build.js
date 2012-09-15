@@ -592,14 +592,17 @@
    * @returns {String} Returns the source with the variable removed.
    */
   function removeVar(source, varName) {
+    // simplify `arrayLikeClasses` and `cloneableClasses`
+    if (/^(?:arrayLike|cloneable)Classes$/.test(varName)) {
+      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?(true;\\n)'), '$1$2');
+    }
     source = source.replace(RegExp(
       // begin non-capturing group
       '(?:' +
       // match multi-line comment block
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
       // match a variable declaration that's not part of a declaration list
-      '( +)var ' + varName + ' *= *(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\1.+?;)\\n|' +
-      //'( +)var ' + varName + ' *= *(?:.+?;|(?:Function\\(.+?|.*?[^,])[\\s\\S]+?\\n\\1.+?;)\\n|' +
+      '( +)var ' + varName + ' *= *(?:.+?(?:;|&&\\n[^;]+;)|(?:\\w+\\(|{)[\\s\\S]+?\\n\\1.+?;)\\n|' +
       // match a variable in a declaration list
       '\\n +' + varName + ' *=.+?,' +
       // end non-capturing group
@@ -729,6 +732,9 @@
 
     /*------------------------------------------------------------------------*/
 
+    // backup `dependencyMap` to restore later
+    var dependencyBackup = _.clone(dependencyMap, true);
+
     // collections of method names to exclude or include
     var excludeMethods = [],
         includeMethods = [];
@@ -824,11 +830,33 @@
         source = removeKeysOptimization(source);
       }
       else if (isUnderscore) {
+        // update dependencies
+        dependencyMap.clone = ['extend', 'isArray'];
+        dependencyMap.isEqual = ['isArray', 'isFunction'];
+        dependencyMap.isEmpty = ['isArray'];
+
+        // remove unneeded variables
+        source = removeVar(source, 'arrayLikeClasses');
+        source = removeVar(source, 'cloneableClasses');
+
+        // remove unused features from `createBound`
+        source = source.replace(matchFunction(source, 'createBound'), function(match) {
+          return match
+            .replace(/(function createBound\([^{]+{)[\s\S]+?(\n *function bound)/, '$1$2')
+            .replace(/thisBinding *=[^}]+}/, 'thisBinding = thisArg;\n');
+        });
+
+        // replace `arrayLikeClasses` in `_.isEmpty`
+        source = source.replace(/'if *\(arrayLikeClasses[\s\S]+?' \|\|\\n/, "'if (isArray(value) ||");
+
+        // replace `arrayLikeClasses` in `_.isEqual`
+        source = source.replace(/(?: *\/\/.*\n)*( +)var isArr *= *arrayLikeClasses[^}]+}/, '$1var isArr = isArray(a);');
+
         // remove `deep` clone functionality
         source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
           '  function clone(value) {',
           '    return value && objectTypes[typeof value]',
-          '      ? (toString.call(value) == arrayClass ? slice.call(value) : extend({}, value))',
+          '      ? (isArray(value) ? slice.call(value) : extend({}, value))',
           '      : value',
           '  }'
         ].join('\n'));
@@ -842,7 +870,7 @@
 
         // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
         source = source
-          .replace(/(?: *\/\/.*\n)*\s*' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
+          .replace(/(?: *\/\/.*\n)* *' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
           .replace(/!hasDontEnumBug *\|\|/g, '');
       }
       vm.runInContext(source, context);
@@ -1188,8 +1216,7 @@
     source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{\n([\s\S]+?) *})?/, '$1');
 
     if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
-      //source = removeVar(source, 'freeExports');
-      source = source.replace(/var freeExports *=[\s\S]+?;\n/, '')
+      source = removeVar(source, 'freeExports');
     }
 
     /*------------------------------------------------------------------------*/
@@ -1236,7 +1263,7 @@
 
     // remove associated functions, variables, and code snippets that the minifier may miss
     if (isRemoved(source, 'clone')) {
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var cloneableClasses *=[\s\S]+?true;\n/g, '');
+      source = removeVar(source, 'cloneableClasses');
     }
     if (isRemoved(source, 'isArray')) {
       source = removeVar(source, 'nativeIsArray');
@@ -1276,7 +1303,7 @@
       source = removeVar(source, 'reNative');
     }
     if (isRemoved(source, 'createIterator', 'isEmpty', 'isEqual')) {
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var arrayLikeClasses *=[\s\S]+?true;\n/g, '');
+      source = removeVar(source, 'arrayLikeClasses');
     }
     if (isRemoved(source, 'createIterator', 'isEqual')) {
       source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
@@ -1307,6 +1334,9 @@
 
     // used to name temporary files created in `dist/`
     var workingName = 'lodash' + (isCustom ? '.custom' : '') + '.min';
+
+    // restore `dependencyMap`
+    dependencyMap = dependencyBackup;
 
     // output debug build
     if (isCustom && !outputPath && !isStdOut) {

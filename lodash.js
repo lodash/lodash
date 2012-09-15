@@ -387,7 +387,7 @@
     // the following branch is for iterating arrays and array-like objects
     '<% if (arrayBranch) { %>' +
     'var length = iteratee.length; index = -1;' +
-    '  <% if (objectBranch) { %>\nif (length > -1 && length === length >>> 0) {<% } %>' +
+    '  <% if (objectBranch) { %>\nif (length === +length) {<% } %>' +
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +
@@ -1447,7 +1447,7 @@
       '    length = value.length;\n' +
       'if (arrayLikeClasses[className]' +
       (noArgsClass ? ' || isArguments(value)' : '') + ' ||\n' +
-      '  (className == objectClass && length > -1 && length === length >>> 0 &&\n' +
+      '  (className == objectClass && length === +length &&\n' +
       '  isFunction(value.splice))' +
       ') return !length',
     'inLoop': {
@@ -2325,8 +2325,7 @@
     if(thisArg) {
       callback = bindIterator(callback, thisArg);
     }
-    // Opera 10.53-10.60 JITted `length >>> 0` returns the wrong value for negative numbers
-    if (length > -1 && length === length >>> 0) {
+    if (length === +length) {
       var iteratee = noCharByIndex && toString.call(collection) == stringClass
         ? collection.split('')
         : collection;
@@ -2399,7 +2398,7 @@
       return 0;
     }
     var length = collection.length;
-    return length > -1 && length === length >>> 0 ? length : keys(collection).length;
+    return length === +length ? length : keys(collection).length;
   }
 
   /**
@@ -2491,11 +2490,8 @@
     if (!collection) {
       return [];
     }
-    if (collection.toArray && isFunction(collection.toArray)) {
-      return collection.toArray();
-    }
     var length = collection.length;
-    if (length > -1 && length === length >>> 0) {
+    if (length === +length) {
       return (noArraySliceOnStrings ? toString.call(collection) == stringClass : typeof collection == 'string')
         ? collection.split('')
         : slice.call(collection);

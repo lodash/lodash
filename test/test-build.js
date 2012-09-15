@@ -485,7 +485,7 @@
   (function() {
     var start = _.once(QUnit.start);
 
-    asyncTest('should not have deep clone', function() {
+    asyncTest('modified methods should work correctly', function() {
       build(['-s', 'underscore'], function(source, filepath) {
         var array = [{ 'a': 1 }],
             basename = path.basename(filepath, '.js'),
@@ -494,7 +494,10 @@
         vm.runInContext(source, context);
         var lodash = context._;
 
-        ok(lodash.clone(array, true)[0] === array[0], basename);
+        var object = { 'fn': lodash.bind(function() { return this.x; }, { 'x': 1 }) };
+        equal(object.fn(), 1, 'bind: ' + basename);
+
+        ok(lodash.clone(array, true)[0] === array[0], 'clone: ' + basename);
         start();
       });
     });

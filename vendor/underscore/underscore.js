@@ -277,13 +277,16 @@
     return _.pluck(_.map(obj, function(value, index, list) {
       return {
         value : value,
+        index : index,
         criteria : iterator.call(context, value, index, list)
       };
     }).sort(function(left, right) {
-      var a = left.criteria, b = right.criteria;
+      var  a = left.criteria, b = right.criteria;
+      var ai = left.index,    bi = right.index;
+      if (a === b)      return ai < bi ? -1 : 1;
       if (a === void 0) return 1;
       if (b === void 0) return -1;
-      return a < b ? -1 : a > b ? 1 : 0;
+      return a < b ? -1 : a > b ? 1 : ai < bi ? -1 : 1;
     }), 'value');
   };
 
@@ -336,9 +339,8 @@
 
   // Safely convert anything iterable into a real, live array.
   _.toArray = function(obj) {
-    if (!obj)                                 return [];
-    if (_.isArray(obj) || _.isArguments(obj)) return slice.call(obj);
-    if (_.isFunction(obj.toArray))            return obj.toArray();
+    if (!obj) return [];
+    if (obj.length === +obj.length) return slice.call(obj);
     return _.values(obj);
   };
 
@@ -614,17 +616,18 @@
   // N milliseconds. If `immediate` is passed, trigger the function on the
   // leading edge, instead of the trailing.
   _.debounce = function(func, wait, immediate) {
-    var timeout;
+    var timeout, result;
     return function() {
       var context = this, args = arguments;
       var later = function() {
         timeout = null;
-        if (!immediate) func.apply(context, args);
+        if (!immediate) result = func.apply(context, args);
       };
       var callNow = immediate && !timeout;
       clearTimeout(timeout);
       timeout = setTimeout(later, wait);
-      if (callNow) func.apply(context, args);
+      if (callNow) result = func.apply(context, args);
+      return result;
     };
   };
 
@@ -646,7 +649,8 @@
   // conditionally execute the original function.
   _.wrap = function(func, wrapper) {
     return function() {
-      var args = [func].concat(slice.call(arguments, 0));
+      var args = [func];
+      push.apply(args, arguments);
       return wrapper.apply(this, args);
     };
   };
@@ -999,8 +1003,8 @@
     each(_.functions(obj), function(name){
       var func = _[name] = obj[name];
       _.prototype[name] = function() {
-        var args = slice.call(arguments);
-        args.unshift(this._wrapped);
+        var args = [this._wrapped];
+        push.apply(args, arguments);
         return result.call(this, func.apply(_, args));
       };
     });

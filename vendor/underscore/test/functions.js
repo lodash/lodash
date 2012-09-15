@@ -141,7 +141,7 @@ $(document).ready(function() {
     var incr = function(){ return ++counter; };
     var throttledIncr = _.throttle(incr, 100);
     var results = [];
-    var saveResult = function() { results.push(throttledIncr()); }
+    var saveResult = function() { results.push(throttledIncr()); };
     saveResult(); saveResult(); saveResult();
     setTimeout(saveResult, 70);
     setTimeout(saveResult, 120);
@@ -159,7 +159,7 @@ $(document).ready(function() {
       equal(results[6], 2, "incr was throttled");
       equal(results[7], 3, "incr was called thrice");
       equal(results[8], 3, "incr was throttled");
-      start();  
+      start();
     }, 400);
   });
 
@@ -176,11 +176,17 @@ $(document).ready(function() {
     _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 220);
   });
 
-  asyncTest("debounce asap", 2, function() {
+  asyncTest("debounce asap", 5, function() {
+    var a, b, c;
     var counter = 0;
-    var incr = function(){ counter++; };
+    var incr = function(){ return ++counter; };
     var debouncedIncr = _.debounce(incr, 50, true);
-    debouncedIncr(); debouncedIncr(); debouncedIncr();
+    a = debouncedIncr();
+    b = debouncedIncr();
+    c = debouncedIncr();
+    equal(a, 1);
+    equal(b, 1);
+    equal(c, 1);
     equal(counter, 1, 'incr was called immediately');
     setTimeout(debouncedIncr, 30);
     setTimeout(debouncedIncr, 60);

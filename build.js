@@ -288,8 +288,9 @@
       '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
       '    lodash strict        Build with `_.bindAll`, `_.defaults`, & `_.extend` in strict mode',
       '    lodash underscore    Build with iteration fixes removed and only Underscore’s API',
-      '    lodash exclude=...   Comma separated names of methods to exclude from the build',
       '    lodash include=...   Comma separated names of methods to include in the build',
+      '    lodash minus=...     Comma separated names of methods to remove from those included in the build',
+      '    lodash plus=...      Comma separated names of methods to add to those included in the build',
       '    lodash category=...  Comma separated categories of methods to include in the build',
       '                         (i.e. “arrays”, “chaining”, “collections”, “functions”, “objects”, and “utilities”)',
       '    lodash exports=...   Comma separated names of ways to export the `LoDash` function',
@@ -297,8 +298,7 @@
       '    lodash iife=...      Code to replace the immediately-invoked function expression that wraps Lo-Dash',
       '                         (e.g. “!function(window,undefined){%output%}(this)”)',
       '',
-      '    All arguments, except `exclude` with `include` & `legacy` with `csp`/`mobile`,',
-      '    may be combined.',
+      '    All arguments, except `legacy` with `csp`/`mobile`, may be combined.',
       '',
       '  Options:',
       '',
@@ -455,6 +455,30 @@
     ));
 
     return result ? result[0] : '';
+  }
+
+  /**
+   * Converts a comma separated options string into an array.
+   *
+   * @private
+   * @param {String} value The option to convert.
+   * @returns {Array} Returns the new converted array.
+   */
+  function optionToArray(value) {
+    return value.match(/\w+=(.*)$/)[1].split(/, */);
+  }
+
+  /**
+   * Converts a comma separated options string into an array containing
+   * only real method names.
+   *
+   * @private
+   * @param {String} value The option to convert.
+   * @returns {Array} Returns the new converted array.
+   */
+  function optionToMethodsArray(value) {
+    // remove nonexistent method names via `_.intersection`
+    return _.uniq(_.intersection(allMethods, optionToArray(value).map(getRealName)));
   }
 
   /**
@@ -685,7 +709,7 @@
     // used to report invalid command-line arguments
     var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include)=.*$/.test(value)) {
+          /^(?:category|exclude|exports|iife|include|minus|plus)=.*$/.test(value)) {
         return true;
       }
       return [
@@ -735,10 +759,6 @@
     // backup `dependencyMap` to restore later
     var dependencyBackup = _.clone(dependencyMap, true);
 
-    // collections of method names to exclude or include
-    var excludeMethods = [],
-        includeMethods = [];
-
     // flag used to specify a Backbone build
     var isBackbone = options.indexOf('backbone') > -1;
 
@@ -772,38 +792,75 @@
 
     // used to specify the ways to export the `LoDash` function
     var exportsOptions = options.reduce(function(result, value) {
-      var match = value.match(/^exports=(.*)$/);
-      if (!match) {
-        return result;
-      }
-      return match[1].split(/, */).sort();
+      return /exports/.test(value)
+        ? optionToArray(value).sort()
+        : result;
     }, exportsAll.slice());
-
-    // used to specify whether filtering is for exclusion or inclusion
-    var filterType = options.reduce(function(result, value) {
-      if (result) {
-        return result;
-      }
-      var pair = value.match(/^(exclude|include)=(.*)$/);
-      if (!pair) {
-        return result;
-      }
-      // remove nonexistent method names
-      var methodNames = _.intersection(allMethods, pair[2].split(/, */).map(getRealName));
-
-      if (pair[1] == 'exclude') {
-        excludeMethods = methodNames;
-      } else {
-        includeMethods = methodNames;
-      }
-      // return `filterType`
-      return pair[1];
-    }, '');
 
     // used to specify a custom IIFE to wrap Lo-Dash
     var iife = options.reduce(function(result, value) {
-      return result || (result = value.match(/^iife=(.*)$/)) && result[1];
-    }, '');
+      return result || (result = value.match(/iife=(.*)/)) && result[1];
+    }, null);
+
+    /*------------------------------------------------------------------------*/
+
+    // collections of method names
+    var buildMethods;
+
+    var minusMethods = options.reduce(function(result, value) {
+      return /exclude|minus/.test(value)
+        ? _.union(result, optionToMethodsArray(value))
+        : result;
+    }, []);
+
+    var plusMethods = options.reduce(function(result, value) {
+      return /plus/.test(value)
+        ? _.union(result, optionToMethodsArray(value))
+        : result;
+    }, []);
+
+    // add methods explicitly
+    options.some(function(value) {
+      return /include/.test(value) &&
+        (buildMethods = getDependencies(optionToMethodsArray(value)));
+    });
+
+    // add methods required by Backbone and Underscore builds
+    if (isBackbone && !buildMethods) {
+      buildMethods = getDependencies(backboneDependencies);
+    }
+    if (isUnderscore && !buildMethods) {
+      buildMethods = getDependencies(underscoreMethods);
+    }
+
+    // add methods by category
+    options.some(function(value) {
+      if (!/category/.test(value)) {
+        return false;
+      }
+      // resolve method names belonging to each category
+      var methodNames = optionToArray(value).reduce(function(result, category) {
+        return result.concat(allMethods.filter(function(methodName) {
+          return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, methodName));
+        }));
+      }, []);
+
+      return (buildMethods = _.union(buildMethods || [], getDependencies(methodNames)));
+    });
+
+    // init `buildMethods` if it hasn't been inited
+    if (!buildMethods) {
+      buildMethods = allMethods.slice();
+    }
+
+    if (plusMethods.length) {
+      buildMethods = _.union(buildMethods, getDependencies(plusMethods));
+    }
+    if (minusMethods.length) {
+      buildMethods = _.without.apply(_, [buildMethods].concat(minusMethods, getDependants(buildMethods)));
+    }
+
+    /*------------------------------------------------------------------------*/
 
     // load customized Lo-Dash module
     var lodash = (function() {
@@ -822,7 +879,7 @@
         }
       }
       if (isLegacy) {
-        ['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
+        _.each(['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
           source = replaceVar(source, varName, 'false');
         });
 
@@ -839,13 +896,6 @@
         source = removeVar(source, 'arrayLikeClasses');
         source = removeVar(source, 'cloneableClasses');
 
-        // remove unused features from `createBound`
-        source = source.replace(matchFunction(source, 'createBound'), function(match) {
-          return match
-            .replace(/(function createBound\([^{]+{)[\s\S]+?(\n *function bound)/, '$1$2')
-            .replace(/thisBinding *=[^}]+}/, 'thisBinding = thisArg;\n');
-        });
-
         // replace `arrayLikeClasses` in `_.isEmpty`
         source = source.replace(/'if *\(arrayLikeClasses[\s\S]+?' \|\|\\n/, "'if (isArray(value) ||");
 
@@ -860,6 +910,15 @@
           '      : value',
           '  }'
         ].join('\n'));
+
+        // remove unused features from `createBound`
+        if (buildMethods.indexOf('partial') == -1) {
+          source = source.replace(matchFunction(source, 'createBound'), function(match) {
+            return match
+              .replace(/(function createBound\([^{]+{)[\s\S]+?(\n *function bound)/, '$1$2')
+              .replace(/thisBinding *=[^}]+}/, 'thisBinding = thisArg;\n');
+          });
+        }
       }
       if (isMobile) {
         source = replaceVar(source, 'isKeysFast', 'false');
@@ -879,111 +938,6 @@
 
     /*------------------------------------------------------------------------*/
 
-    // customize for Backbone and Underscore builds
-    if (isUnderscore) {
-      // don't expose `_.forIn` or `_.forOwn` if `isUnderscore` is `true` unless
-      // requested by `include`
-      if (includeMethods.indexOf('forIn')  == -1) {
-        source = source.replace(/ *lodash\.forIn *=.+\n/, '');
-      }
-      if (includeMethods.indexOf('forOwn') == -1) {
-        source = source.replace(/ *lodash\.forOwn *=.+\n/, '');
-      }
-    }
-
-    // include methods required by Backbone and Underscore builds
-    [
-      { 'flag': isBackbone, 'methodNames': backboneDependencies },
-      { 'flag': isUnderscore, 'methodNames': underscoreMethods }
-    ]
-    .some(function(data) {
-      var flag = data.flag,
-          methodNames = data.methodNames;
-
-      if (!flag) {
-        return false;
-      }
-      // add any additional sub-dependencies
-      methodNames = getDependencies(methodNames);
-
-      if (filterType == 'exclude') {
-        // remove excluded methods from `methodNames`
-        includeMethods = _.without.apply(_, [methodNames].concat(excludeMethods));
-      }
-      else if (filterType) {
-        // merge `methodNames` into `includeMethods`
-        includeMethods = _.union(includeMethods, methodNames);
-      }
-      else {
-        // include only the `methodNames`
-        includeMethods = methodNames;
-      }
-      filterType = 'include';
-      return true;
-    });
-
-    /*------------------------------------------------------------------------*/
-
-    // include methods by category
-    options.some(function(value) {
-      var categories = value.match(/^category=(.*)$/);
-      if (!categories) {
-        return false;
-      }
-      // resolve method names belonging to each category
-      var categoryMethods = categories[1].split(/, */).reduce(function(result, category) {
-        return result.concat(allMethods.filter(function(methodName) {
-          return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, methodName));
-        }));
-      }, []);
-
-      if (filterType == 'exclude') {
-        // remove excluded methods from `categoryMethods`
-        includeMethods = _.without.apply(_, [categoryMethods].concat(excludeMethods));
-      }
-      else if (filterType) {
-        // merge `categoryMethods` into `includeMethods`
-        includeMethods = _.union(includeMethods, categoryMethods);
-      }
-      else {
-        // include only the `categoryMethods`
-        includeMethods = categoryMethods;
-      }
-      filterType = 'include';
-      return true;
-    });
-
-    /*------------------------------------------------------------------------*/
-
-    // remove methods from the build
-    (function() {
-      // exit early if "exclude" or "include" options aren't specified
-      if (!filterType) {
-        return;
-      }
-      if (filterType == 'exclude') {
-        // remove methods that are named in `excludeMethods` and their dependants
-        excludeMethods.forEach(function(methodName) {
-          getDependants(methodName).concat(methodName).forEach(function(otherName) {
-            source = removeFunction(source, otherName);
-          });
-        });
-      }
-      else {
-        // add dependencies to `includeMethods`
-        includeMethods = getDependencies(includeMethods);
-
-        // remove methods that aren't named in `includeMethods`
-        allMethods.forEach(function(otherName) {
-          if (!_.contains(includeMethods, otherName)) {
-            source = removeFunction(source, otherName);
-          }
-        });
-      }
-    }());
-
-    /*------------------------------------------------------------------------*/
-
     // simplify template snippets by removing unnecessary brackets
     source = source.replace(
       RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
@@ -993,11 +947,19 @@
       RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
     );
 
+    // remove methods from the build
+    allMethods.forEach(function(otherName) {
+      if (!_.contains(buildMethods, otherName)) {
+        source = removeFunction(source, otherName);
+      }
+    });
+
     // remove `isArguments` fallback before `isArguments` is transformed by
     // other parts of the build process
     if (isRemoved(source, 'isArguments')) {
       source = removeIsArgumentsFallback(source);
     }
+
     // DRY out isType functions
     (function() {
       var iteratorName = _.find(['forEach', 'forOwn'], function(methodName) {
@@ -1070,11 +1032,11 @@
     /*------------------------------------------------------------------------*/
 
     if (isLegacy) {
-      ['isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'].forEach(function(varName) {
+      _.each(['isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
         source = removeVar(source, varName);
       });
 
-      ['bind', 'isArray'].forEach(function(methodName) {
+      _.each(['bind', 'isArray'], function(methodName) {
         var snippet = matchFunction(source, methodName),
             modified = snippet;
 
@@ -1223,7 +1185,7 @@
 
     // customize Lo-Dash's IIFE
     (function() {
-      if (iife) {
+      if (typeof iife == 'string') {
         var token = '%output%',
             index = iife.indexOf(token);
 
@@ -1325,7 +1287,9 @@
     /*------------------------------------------------------------------------*/
 
     // used to specify creating a custom build
-    var isCustom = !_.isEqual(exportsOptions, exportsAll) || filterType || iife || isBackbone || isLegacy || isMobile || isStrict || isUnderscore;
+    var isCustom = isBackbone || isLegacy || isMobile || isStrict || isUnderscore ||
+      /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
+      !_.isEqual(exportsOptions, exportsAll);
 
     // used to specify the output path for builds
     var outputPath = options.reduce(function(result, value, index) {

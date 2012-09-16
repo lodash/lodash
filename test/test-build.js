@@ -430,8 +430,10 @@
     asyncTest('`lodash`', function() {
       build(['-s'], function(source, filepath) {
         // used by r.js build optimizer
-        var defineHasRegExp = /typeof\s+define\s*==(=)?\s*['"]function['"]\s*&&\s*typeof\s+define\.amd\s*==(=)?\s*['"]object['"]\s*&&\s*define\.amd/g;
-        ok(!!defineHasRegExp.exec(source));
+        var defineHasRegExp = /typeof\s+define\s*==(=)?\s*['"]function['"]\s*&&\s*typeof\s+define\.amd\s*==(=)?\s*['"]object['"]\s*&&\s*define\.amd/g,
+            basename = path.basename(filepath, '.js');
+
+        ok(!!defineHasRegExp.exec(source), basename);
         start();
       });
     });
@@ -483,9 +485,9 @@
   QUnit.module('underscore modifier');
 
   (function() {
-    var start = _.once(QUnit.start);
-
     asyncTest('modified methods should work correctly', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
       build(['-s', 'underscore'], function(source, filepath) {
         var array = [{ 'a': 1 }],
             basename = path.basename(filepath, '.js'),
@@ -494,10 +496,25 @@
         vm.runInContext(source, context);
         var lodash = context._;
 
-        var object = { 'fn': lodash.bind(function() { return this.x; }, { 'x': 1 }) };
-        equal(object.fn(), 1, 'bind: ' + basename);
+        var object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
+        equal(object.fn(), 2, 'bind: ' + basename);
 
         ok(lodash.clone(array, true)[0] === array[0], 'clone: ' + basename);
+        start();
+      });
+    });
+
+    asyncTest('`lodash underscore include=partial`', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
+      build(['-s', 'underscore', 'include=partial'], function(source, filepath) {
+        var basename = path.basename(filepath, '.js'),
+            context = createContext();
+
+        vm.runInContext(source, context);
+        var lodash = context._;
+
+        equal(lodash.partial(_.identity, 2)(), 2, 'partial: ' + basename);
         start();
       });
     });
@@ -729,8 +746,9 @@
       'include=each,filter,map',
       'category=collections,functions',
       'underscore backbone',
-      'backbone legacy category=utilities exclude=first,last',
-      'underscore mobile strict category=functions exports=amd,global include=pick,uniq',
+      'backbone legacy category=utilities minus=first,last',
+      'underscore include=debounce,throttle plus=after minus=throttle',
+      'underscore mobile strict category=functions exports=amd,global plus=pick,uniq',
     ]
     .concat(
       allMethods.map(function(methodName) {
@@ -743,9 +761,9 @@
 
       asyncTest('`lodash ' + command +'`', function() {
         build(['--silent'].concat(command.split(' ')), function(source, filepath) {
-          var basename = path.basename(filepath, '.js'),
-              context = createContext(),
-              methodNames = [];
+          var methodNames,
+              basename = path.basename(filepath, '.js'),
+              context = createContext();
 
           try {
             vm.runInContext(source, context);
@@ -753,15 +771,16 @@
             console.log(e);
           }
 
-          if (/underscore/.test(command)) {
-            methodNames = underscoreMethods;
-          }
-          if (/backbone/.test(command)) {
-            methodNames = backboneDependencies;
-          }
           if (/include/.test(command)) {
-            methodNames = methodNames.concat(command.match(/include=(\S*)/)[1].split(/, */));
+            methodNames = command.match(/include=(\S*)/)[1].split(/, */);
           }
+          if (/backbone/.test(command) && !methodNames) {
+            methodNames = backboneDependencies.slice();
+          }
+          if (/underscore/.test(command) && !methodNames) {
+            methodNames = underscoreMethods.slice();
+          }
+
           if (/category/.test(command)) {
             methodNames = command.match(/category=(\S*)/)[1].split(/, */).reduce(function(result, category) {
               switch (category) {
@@ -779,23 +798,26 @@
                   return result.concat(utilityMethods);
               }
               return result;
-            }, methodNames);
+            }, methodNames || []);
           }
-          if (!methodNames.length) {
-            methodNames = allMethods;
+          if (!methodNames) {
+            methodNames = allMethods.slice();
+          }
+          if (/plus/.test(command)) {
+            methodNames = methodNames.concat(command.match(/plus=(\S*)/)[1].split(/, */));
+          }
+          if (/minus/.test(command)) {
+            methodNames = _.without.apply(_, [methodNames]
+              .concat(expandMethodNames(command.match(/minus=(\S*)/)[1].split(/, */))));
+          }
+          if (/exclude/.test(command)) {
+            methodNames = _.without.apply(_, [methodNames]
+              .concat(expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))));
           }
 
-          if (/exclude/.test(command)) {
-            methodNames = _.without.apply(_, [methodNames].concat(
-              expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))
-            ));
-          } else {
-            methodNames = expandMethodNames(methodNames);
-          }
+          methodNames = _.uniq(expandMethodNames(methodNames));
 
           var lodash = context._ || {};
-          methodNames = _.unique(methodNames);
-
           methodNames.forEach(function(methodName) {
             testMethod(lodash, methodName, basename);
           });

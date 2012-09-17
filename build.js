@@ -12,8 +12,14 @@
   /** The current working directory */
   var cwd = process.cwd();
 
+  /** Shortcut to native `Array.prototype` */
+  var ArrayProto = Array.prototype;
+
+  /** Shortcut used to push arrays of values to an array */
+  var push = ArrayProto.push;
+
   /** Shortcut used to convert array-like objects to arrays */
-  var slice = [].slice;
+  var slice = ArrayProto.slice;
 
   /** Shortcut to the `stdout` object */
   var stdout = process.stdout;
@@ -288,10 +294,10 @@
       '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
       '    lodash strict        Build with `_.bindAll`, `_.defaults`, & `_.extend` in strict mode',
       '    lodash underscore    Build with iteration fixes removed and only Underscore’s API',
-      '    lodash include=...   Comma separated names of methods to include in the build',
-      '    lodash minus=...     Comma separated names of methods to remove from those included in the build',
-      '    lodash plus=...      Comma separated names of methods to add to those included in the build',
-      '    lodash category=...  Comma separated categories of methods to include in the build',
+      '    lodash include=...   Comma separated method/category names to include in the build',
+      '    lodash minus=...     Comma separated method/category names to remove from those included in the build',
+      '    lodash plus=...      Comma separated method/category names to add to those included in the build',
+      '    lodash category=...  Comma separated categories of methods to include in the build (case-insensitive)',
       '                         (i.e. “arrays”, “chaining”, “collections”, “functions”, “objects”, and “utilities”)',
       '    lodash exports=...   Comma separated names of ways to export the `LoDash` function',
       '                         (i.e. “amd”, “commonjs”, “global”, “node”, and “none”)',
@@ -405,6 +411,20 @@
   }
 
   /**
+   * Gets the names of methods in `source` belonging to the given `category`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @param {String} category The category to filter by.
+   * @returns {Array} Returns a new array of method names belonging to the given category.
+   */
+  function getMethodsByCategory(source, category) {
+    return allMethods.filter(function(methodName) {
+      return RegExp('@category ' + category + '\\b').test(matchFunction(source, methodName));
+    });
+  }
+
+  /**
    * Gets the real name, not alias, of a given method name.
    *
    * @private
@@ -477,8 +497,18 @@
    * @returns {Array} Returns the new converted array.
    */
   function optionToMethodsArray(value) {
-    // remove nonexistent method names via `_.intersection`
-    return _.uniq(_.intersection(allMethods, optionToArray(value).map(getRealName)));
+    var methodNames = optionToArray(value);
+
+    // convert categories to method names
+    methodNames.forEach(function(category) {
+      push.apply(methodNames, getMethodsByCategory(category));
+    });
+
+    // convert aliases to real method names
+    methodNames = methodNames.map(getRealName);
+
+    // remove nonexistent method names and duplicates
+    return _.uniq(_.intersection(allMethods, methodNames));
   }
 
   /**
@@ -833,16 +863,15 @@
       buildMethods = getDependencies(underscoreMethods);
     }
 
-    // add methods by category
+    // add methods explicitly by category
     options.some(function(value) {
       if (!/category/.test(value)) {
         return false;
       }
-      // resolve method names belonging to each category
+      // resolve method names belonging to each category (case-insensitive)
       var methodNames = optionToArray(value).reduce(function(result, category) {
-        return result.concat(allMethods.filter(function(methodName) {
-          return RegExp('@category ' + category + '\\b', 'i').test(matchFunction(source, methodName));
-        }));
+        var capitalized = category[0].toUpperCase() + category.toLowerCase().slice(1);
+        return result.concat(getMethodsByCategory(source, capitalized));
       }, []);
 
       return (buildMethods = _.union(buildMethods || [], getDependencies(methodNames)));

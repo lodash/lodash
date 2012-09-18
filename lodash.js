@@ -609,7 +609,7 @@
   }
 
   /**
-   * Creates a new function optimized for searching large arrays for a given `value`,
+   * Creates a function optimized for searching large arrays for a given `value`,
    * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
    *
    * @private
@@ -677,7 +677,7 @@
   }
 
   /**
-   * Creates a new function that, when called, invokes `func` with the `this`
+   * Creates a function that, when called, invokes `func` with the `this`
    * binding of `thisArg` and prepends any `partailArgs` to the arguments passed
    * to the bound function.
    *
@@ -1255,7 +1255,7 @@
   /**
    * Iterates over `object`'s own and inherited enumerable properties, executing
    * the `callback` for each property. The `callback` is bound to `thisArg` and
-   * invoked with 3 arguments; (value, key, object). Callbacks may exit iteration
+   * invoked with three arguments; (value, key, object). Callbacks may exit iteration
    * early by explicitly returning `false`.
    *
    * @static
@@ -1286,9 +1286,9 @@
 
   /**
    * Iterates over `object`'s own enumerable properties, executing the `callback`
-   * for each property. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, key, object). Callbacks may exit iteration early by
-   * explicitly returning `false`.
+   * for each property. The `callback` is bound to `thisArg` and invoked with three
+   * arguments; (value, key, object). Callbacks may exit iteration early by explicitly
+   * returning `false`.
    *
    * @static
    * @memberOf _
@@ -1727,7 +1727,7 @@
    * @returns {Boolean} Returns `true` if the `value` is a number, else `false`.
    * @example
    *
-   * _.isNumber(8.4 * 5;
+   * _.isNumber(8.4 * 5);
    * // => true
    */
   function isNumber(value) {
@@ -1884,7 +1884,7 @@
    * Property names may be specified as individual arguments or as arrays of
    * property names. If `callback` is passed, it will be executed for each property
    * in the `object`, omitting the properties `callback` returns truthy for. The
-   * `callback` is bound to `thisArg` and invoked with 3 arguments; (value, key, object).
+   * `callback` is bound to `thisArg` and invoked with three arguments; (value, key, object).
    *
    * @static
    * @memberOf _
@@ -1931,7 +1931,7 @@
    * Property names may be specified as individual arguments or as arrays of
    * property names. If `callback` is passed, it will be executed for each property
    * in the `object`, picking the properties `callback` returns truthy for. The
-   * `callback` is bound to `thisArg` and invoked with 3 arguments; (value, key, object).
+   * `callback` is bound to `thisArg` and invoked with three arguments; (value, key, object).
    *
    * @static
    * @memberOf _
@@ -2025,7 +2025,7 @@
    * Creates an object composed of keys returned from running each element of
    * `collection` through a `callback`. The corresponding value of each key is
    * the number of times the key was returned by `callback`. The `callback` is
-   * bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
    * The `callback` argument may also be the name of a property to count by (e.g. 'length').
    *
    * @static
@@ -2051,7 +2051,7 @@
 
   /**
    * Checks if the `callback` returns a truthy value for **all** elements of a
-   * `collection`. The `callback` is bound to `thisArg` and invoked with 3
+   * `collection`. The `callback` is bound to `thisArg` and invoked with three
    * arguments; (value, index|key, collection).
    *
    * @static
@@ -2061,7 +2061,8 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Boolean} Returns `true` if all elements pass the callback check, else `false`.
+   * @returns {Boolean} Returns `true` if all elements pass the callback check,
+   *  else `false`.
    * @example
    *
    * _.every([true, 1, null, 'yes'], Boolean);
@@ -2072,7 +2073,7 @@
   /**
    * Examines each element in a `collection`, returning an array of all elements
    * the `callback` returns truthy for. The `callback` is bound to `thisArg` and
-   * invoked with 3 arguments; (value, index|key, collection).
+   * invoked with three arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -2081,7 +2082,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of elements that passed callback check.
+   * @returns {Array} Returns a new array of elements that passed the callback check.
    * @example
    *
    * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
@@ -2093,7 +2094,7 @@
    * Examines each element in a `collection`, returning the first one the `callback`
    * returns truthy for. The function returns as soon as it finds an acceptable
    * element, and does not iterate over the entire `collection`. The `callback` is
-   * bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -2102,7 +2103,8 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Mixed} Returns the element that passed the callback check, else `undefined`.
+   * @returns {Mixed} Returns the element that passed the callback check,
+   *  else `undefined`.
    * @example
    *
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
@@ -2115,9 +2117,9 @@
 
   /**
    * Iterates over a `collection`, executing the `callback` for each element in
-   * the `collection`. The `callback` is bound to `thisArg` and invoked with 3
-   * arguments; (value, index|key, collection). Callbacks may exit iteration
-   * early by explicitly returning `false`.
+   * the `collection`. The `callback` is bound to `thisArg` and invoked with three
+   * arguments; (value, index|key, collection). Callbacks may exit iteration early
+   * by explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -2126,7 +2128,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array|Object} Returns `collection`.
+   * @returns {Array|Object|String} Returns `collection`.
    * @example
    *
    * _([1, 2, 3]).forEach(alert).join(',');
@@ -2141,7 +2143,7 @@
    * Creates an object composed of keys returned from running each element of
    * `collection` through a `callback`. The corresponding value of each key is an
    * array of elements passed to `callback` that returned the key. The `callback`
-   * is bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * is bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
    * The `callback` argument may also be the name of a property to count by (e.g. 'length').
    *
    * @static
@@ -2170,10 +2172,10 @@
   });
 
   /**
-   * Invokes the method named by `methodName` on each element in the `collection`.
-   * Additional arguments will be passed to each invoked method. If `methodName`
-   * is a function it will be invoked for, and `this` bound to, each element
-   * in the `collection`.
+   * Invokes the method named by `methodName` on each element in the `collection`,
+   * returning an array of the results of each invoked method. Additional arguments
+   * will be passed to each invoked method. If `methodName` is a function it will
+   * be invoked for, and `this` bound to, each element in the `collection`.
    *
    * @static
    * @memberOf _
@@ -2182,7 +2184,7 @@
    * @param {Function|String} methodName The name of the method to invoke or
    *  the function invoked per iteration.
    * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the method with.
-   * @returns {Array} Returns a new array of values returned from each invoked method.
+   * @returns {Array} Returns a new array of the results of each invoked method.
    * @example
    *
    * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
@@ -2206,9 +2208,9 @@
   });
 
   /**
-   * Creates a new array of values by running each element in the `collection`
+   * Creates an array of values by running each element in the `collection`
    * through a `callback`. The `callback` is bound to `thisArg` and invoked with
-   * 3 arguments; (value, index|key, collection).
+   * three arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -2217,7 +2219,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of elements returned by the callback.
+   * @returns {Array} Returns a new array of the results of each `callback` execution.
    * @example
    *
    * _.map([1, 2, 3], function(num) { return num * 3; });
@@ -2363,7 +2365,8 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Array} Returns a new array of elements that did **not** pass the callback check.
+   * @returns {Array} Returns a new array of elements that did **not** pass the
+   *  callback check.
    * @example
    *
    * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
@@ -2405,7 +2408,7 @@
    * Checks if the `callback` returns a truthy value for **any** element of a
    * `collection`. The function returns as soon as it finds passing value, and
    * does not iterate over the entire `collection`. The `callback` is bound to
-   * `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * `thisArg` and invoked with three arguments; (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -2414,7 +2417,8 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
-   * @returns {Boolean} Returns `true` if any element passes the callback check, else `false`.
+   * @returns {Boolean} Returns `true` if any element passes the callback check,
+   *  else `false`.
    * @example
    *
    * _.some([null, 0, 'yes', false]);
@@ -2426,9 +2430,9 @@
   });
 
   /**
-   * Creates a new array, stable sorted in ascending order by the results of
+   * Creates an array, stable sorted in ascending order by the results of
    * running each element of `collection` through a `callback`. The `callback`
-   * is bound to `thisArg` and invoked with 3 arguments; (value, index|key, collection).
+   * is bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
    * The `callback` argument may also be the name of a property to sort by (e.g. 'length').
    *
    * @static
@@ -2537,7 +2541,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a new array with all falsey values of `array` removed. The values
+   * Creates an array with all falsey values of `array` removed. The values
    * `false`, `null`, `0`, `""`, `undefined` and `NaN` are all falsey.
    *
    * @static
@@ -2567,7 +2571,7 @@
   }
 
   /**
-   * Creates a new array of `array` elements not present in the other arrays
+   * Creates an array of `array` elements not present in the other arrays
    * using strict equality for comparisons, i.e. `===`.
    *
    * @static
@@ -2654,6 +2658,8 @@
 
     while (++index < length) {
       value = array[index];
+
+      // recursively flatten arrays (susceptible to call stack limits)
       if (isArray(value)) {
         push.apply(result, shallow ? value : flatten(value));
       } else {
@@ -2838,7 +2844,7 @@
    * Retrieves the maximum value of an `array`. If `callback` is passed,
    * it will be executed for each value in the `array` to generate the
    * criterion by which the value is ranked. The `callback` is bound to
-   * `thisArg` and invoked with 3 arguments; (value, index, array).
+   * `thisArg` and invoked with three arguments; (value, index, array).
    *
    * @static
    * @memberOf _
@@ -2894,7 +2900,7 @@
    * Retrieves the minimum value of an `array`. If `callback` is passed,
    * it will be executed for each value in the `array` to generate the
    * criterion by which the value is ranked. The `callback` is bound to `thisArg`
-   * and invoked with 3 arguments; (value, index, array).
+   * and invoked with three arguments; (value, index, array).
    *
    * @static
    * @memberOf _
@@ -3051,7 +3057,7 @@
   }
 
   /**
-   * Creates a new array of shuffled `array` values, using a version of the
+   * Creates an array of shuffled `array` values, using a version of the
    * Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
    *
    * @static
@@ -3086,7 +3092,7 @@
    * should be inserted into `array` in order to maintain the sort order of the
    * sorted `array`. If `callback` is passed, it will be executed for `value` and
    * each element in `array` to compute their sort ranking. The `callback` is
-   * bound to `thisArg` and invoked with 1 argument; (value).
+   * bound to `thisArg` and invoked with one argument; (value).
    *
    * @static
    * @memberOf _
@@ -3176,7 +3182,7 @@
    * for comparisons, i.e. `===`. If the `array` is already sorted, passing `true`
    * for `isSorted` will run a faster algorithm. If `callback` is passed, each
    * element of `array` is passed through a callback` before uniqueness is computed.
-   * The `callback` is bound to `thisArg` and invoked with 3 arguments; (value, index, array).
+   * The `callback` is bound to `thisArg` and invoked with three arguments; (value, index, array).
    *
    * @static
    * @memberOf _
@@ -3236,7 +3242,7 @@
   }
 
   /**
-   * Creates a new array with all occurrences of the passed values removed using
+   * Creates an array with all occurrences of the passed values removed using
    * strict equality for comparisons, i.e. `===`.
    *
    * @static
@@ -3300,7 +3306,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a new function that is restricted to executing only after it is
+   * Creates a function that is restricted to executing only after it is
    * called `n` times.
    *
    * @static
@@ -3330,7 +3336,7 @@
   }
 
   /**
-   * Creates a new function that, when called, invokes `func` with the `this`
+   * Creates a function that, when called, invokes `func` with the `this`
    * binding of `thisArg` and prepends any additional `bind` arguments to those
    * passed to the bound function.
    *
@@ -3402,7 +3408,7 @@
   });
 
   /**
-   * Creates a new function that is the composition of the passed functions,
+   * Creates a function that is the composition of the passed functions,
    * where each function consumes the return value of the function that follows.
    * In math terms, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
    *
@@ -3433,7 +3439,7 @@
   }
 
   /**
-   * Creates a new function that will delay the execution of `func` until after
+   * Creates a function that will delay the execution of `func` until after
    * `wait` milliseconds have elapsed since the last time it was invoked. Pass
    * `true` for `immediate` to cause debounce to invoke `func` on the leading,
    * instead of the trailing, edge of the `wait` timeout. Subsequent calls to
@@ -3523,7 +3529,7 @@
   }
 
   /**
-   * Creates a new function that, when called, invokes `object[methodName]` and
+   * Creates a function that, when called, invokes `object[methodName]` and
    * prepends any additional `lateBind` arguments to those passed to the bound
    * function. This method
    *
@@ -3559,7 +3565,7 @@
   }
 
   /**
-   * Creates a new function that memoizes the result of `func`. If `resolver` is
+   * Creates a function that memoizes the result of `func`. If `resolver` is
    * passed, it will be used to determine the cache key for storing the result
    * based on the arguments passed to the memoized function. By default, the first
    * argument passed to the memoized function is used as the cache key.
@@ -3587,7 +3593,7 @@
   }
 
   /**
-   * Creates a new function that is restricted to one execution. Repeat calls to
+   * Creates a function that is restricted to one execution. Repeat calls to
    * the function will return the value of the first call.
    *
    * @static
@@ -3620,7 +3626,7 @@
   }
 
   /**
-   * Creates a new function that, when called, invokes `func` with any additional
+   * Creates a function that, when called, invokes `func` with any additional
    * `partial` arguments prepended to those passed to the new function. This method
    * is similar to `bind`, except it does **not** alter the `this` binding.
    *
@@ -3642,7 +3648,7 @@
   }
 
   /**
-   * Creates a new function that, when executed, will only call the `func`
+   * Creates a function that, when executed, will only call the `func`
    * function at most once per every `wait` milliseconds. If the throttled
    * function is invoked more than once during the `wait` timeout, `func` will
    * also be called on the trailing edge of the timeout. Subsequent calls to the
@@ -3691,7 +3697,7 @@
   }
 
   /**
-   * Creates a new function that passes `value` to the `wrapper` function as its
+   * Creates a function that passes `value` to the `wrapper` function as its
    * first argument. Additional arguments passed to the new function are appended
    * to those passed to the `wrapper` function.
    *
@@ -4075,8 +4081,9 @@
   }
 
   /**
-   * Executes the `callback` function `n` times. The `callback` is bound to
-   * `thisArg` and invoked with 1 argument; (index).
+   * Executes the `callback` function `n` times, returning an array of the results
+   * of each `callback` execution. The `callback` is bound to `thisArg` and invoked
+   * with one argument; (index).
    *
    * @static
    * @memberOf _
@@ -4084,25 +4091,32 @@
    * @param {Number} n The number of times to execute the callback.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @returns {Array} Returns a new array of the results of each `callback` execution.
    * @example
    *
-   * _.times(3, function(n) { genie.grantWish(n); });
-   * // => calls `genie.grantWish(n)` three times, passing `n` of `0`, `1`, and `2` respectively
+   * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
+   * // => [3, 6, 4]
    *
-   * _.times(3, function(n) { this.grantWish(n); }, genie);
-   * // => also calls `genie.grantWish(n)` three times
+   * _.times(3, function(n) { mage.castSpell(n); });
+   * // => calls `mage.castSpell(n)` three times, passing `n` of `0`, `1`, and `2` respectively
+   *
+   * _.times(3, function(n) { this.cast(n); }, mage);
+   * // => also calls `mage.castSpell(n)` three times
    */
   function times(n, callback, thisArg) {
-    var index = -1;
+    var index = -1,
+        result = Array(n || 0);
+
     if (thisArg) {
       while (++index < n) {
-        callback.call(thisArg, index);
+        result[index] = callback.call(thisArg, index);
       }
     } else {
       while (++index < n) {
-        callback(index);
+        result[index] = callback(index);
       }
     }
+    return result;
   }
 
   /**
@@ -4186,7 +4200,7 @@
    * @returns {Mixed} Returns `value`.
    * @example
    *
-   * _.chain([1,2,3,200])
+   * _.chain([1, 2, 3, 200])
    *  .filter(function(num) { return num % 2 == 0; })
    *  .tap(alert)
    *  .map(function(num) { return num * num })

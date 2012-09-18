@@ -1479,6 +1479,13 @@
       var compiled = _.template('<%= value ? value : "b" %>');
       equal(compiled({ 'value': 'a' }), 'a');
     });
+
+    test('should parse delimiters with newlines correctly', function() {
+      var expected = '<<\nprint("<p>" + (value ? "yes" : "no") + "</p>")\n>>',
+          compiled = _.template(expected, null, { 'evaluate': /<<(.+?)>>/g });
+
+      equal(compiled({ 'value': true }), expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

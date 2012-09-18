@@ -1544,6 +1544,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.times');
+
+  (function() {
+    test('should return an array of the results of each `callback` execution', function() {
+      deepEqual(_.times(3, function(n) { return n * 2; }), [0, 2, 4]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.unescape');
 
   (function() {

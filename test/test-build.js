@@ -295,6 +295,31 @@
   }
 
   /**
+   * Gets the names of methods belonging to the given `category`.
+   *
+   * @private
+   * @param {String} category The category to filter by.
+   * @returns {Array} Returns a new array of method names belonging to the given category.
+   */
+  function getMethodsByCategory(category) {
+    switch (category) {
+      case 'Arrays':
+        return arraysMethods.slice();
+      case 'Chaining':
+        return chainingMethods.slice();
+      case 'Collections':
+        return collectionsMethods.slice();
+      case 'Functions':
+        return functionsMethods.slice();
+      case 'Objects':
+        return objectsMethods.slice();
+      case 'Utilities':
+        return utilityMethods.slice();
+    }
+    return [];
+  }
+
+  /**
    * Gets the real name, not alias, of a given function name.
    *
    * @private
@@ -659,10 +684,10 @@
   QUnit.module('minify underscore');
 
   (function() {
-    var start = _.once(QUnit.start);
+    var source = fs.readFileSync(path.join(__dirname, '..', 'vendor', 'underscore', 'underscore.js'), 'utf8'),
+        start = _.once(QUnit.start);
 
     asyncTest('`node minify underscore.js`', function() {
-      var source = fs.readFileSync(path.join(__dirname, '..', 'vendor', 'underscore', 'underscore.js'), 'utf8');
       minify(source, {
         'silent': true,
         'workingName': 'underscore.min',
@@ -677,7 +702,7 @@
 
           var underscore = context._ || {};
           ok(_.isString(underscore.VERSION));
-          ok(result.match(/\n/g).length < source.match(/\n/g).length);
+          ok(!/Lo-Dash/.test(result) && result.match(/\n/g).length < source.match(/\n/g).length);
           start();
         }
       });
@@ -744,6 +769,7 @@
       'category=utilities',
       'exclude=union,uniq,zip',
       'include=each,filter,map',
+      'include=once plus=bind,Chaining',
       'category=collections,functions',
       'underscore backbone',
       'backbone legacy category=utilities minus=first,last',
@@ -770,36 +796,26 @@
           } catch(e) {
             console.log(e);
           }
-
+          // add method names explicitly
           if (/include/.test(command)) {
             methodNames = command.match(/include=(\S*)/)[1].split(/, */);
           }
+          // add method names required by Backbone and Underscore builds
           if (/backbone/.test(command) && !methodNames) {
             methodNames = backboneDependencies.slice();
           }
           if (/underscore/.test(command) && !methodNames) {
             methodNames = underscoreMethods.slice();
           }
-
+          // add method names explicitly by category
           if (/category/.test(command)) {
+            // resolve method names belonging to each category (case-insensitive)
             methodNames = command.match(/category=(\S*)/)[1].split(/, */).reduce(function(result, category) {
-              switch (category) {
-                case 'arrays':
-                  return result.concat(arraysMethods);
-                case 'chaining':
-                  return result.concat(chainingMethods);
-                case 'collections':
-                  return result.concat(collectionsMethods);
-                case 'functions':
-                  return result.concat(functionsMethods);
-                case 'objects':
-                  return result.concat(objectsMethods);
-                case 'utilities':
-                  return result.concat(utilityMethods);
-              }
-              return result;
+              var capitalized = category[0].toUpperCase() + category.toLowerCase().slice(1);
+              return result.concat(getMethodsByCategory(capitalized));
             }, methodNames || []);
           }
+          // init `methodNames` if it hasn't been inited
           if (!methodNames) {
             methodNames = allMethods.slice();
           }
@@ -815,7 +831,13 @@
               .concat(expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))));
           }
 
-          methodNames = _.uniq(expandMethodNames(methodNames));
+          // expand aliases and categories to real method names
+          methodNames = expandMethodNames(methodNames).reduce(function(result, methodName) {
+            return result.concat(methodName, getMethodsByCategory(methodName));
+          }, []);
+
+          // remove nonexistent and duplicate method names
+          methodNames = _.uniq(_.intersection(allMethods, expandMethodNames(methodNames)));
 
           var lodash = context._ || {};
           methodNames.forEach(function(methodName) {

@@ -303,8 +303,11 @@
       '                         (i.e. “amd”, “commonjs”, “global”, “node”, and “none”)',
       '    lodash iife=...      Code to replace the immediately-invoked function expression that wraps Lo-Dash',
       '                         (e.g. “!function(window,undefined){%output%}(this)”)',
+      '    lodash template=...  The file path pattern used for matching template files to compile',
+      '                         (e.g. `lodash template=path/to/templates/*.tmpl`)',
       '',
-      '    All arguments, except `legacy` with `csp`/`mobile`, may be combined.',
+      '    All arguments, except `legacy` with `csp` or `mobile`, may be combined.',
+      '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
       '',
       '  Options:',
       '',
@@ -420,7 +423,7 @@
    */
   function getMethodsByCategory(source, category) {
     return allMethods.filter(function(methodName) {
-      return RegExp('@category ' + category + '\\b').test(matchFunction(source, methodName));
+      return category && RegExp('@category ' + category + '\\b').test(matchFunction(source, methodName));
     });
   }
 
@@ -493,21 +496,22 @@
    * only real method names.
    *
    * @private
+   * @param {String} source The source to inspect.
    * @param {String} value The option to convert.
    * @returns {Array} Returns the new converted array.
    */
-  function optionToMethodsArray(value) {
+  function optionToMethodsArray(source, value) {
     var methodNames = optionToArray(value);
 
     // convert categories to method names
     methodNames.forEach(function(category) {
-      push.apply(methodNames, getMethodsByCategory(category));
+      push.apply(methodNames, getMethodsByCategory(source, category));
     });
 
     // convert aliases to real method names
     methodNames = methodNames.map(getRealName);
 
-    // remove nonexistent method names and duplicates
+    // remove nonexistent and duplicate method names
     return _.uniq(_.intersection(allMethods, methodNames));
   }
 
@@ -739,7 +743,7 @@
     // used to report invalid command-line arguments
     var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|minus|plus)=.*$/.test(value)) {
+          /^(?:category|exclude|exports|iife|include|minus|plus|template)=.*$/.test(value)) {
         return true;
       }
       return [
@@ -839,23 +843,23 @@
 
     var minusMethods = options.reduce(function(result, value) {
       return /exclude|minus/.test(value)
-        ? _.union(result, optionToMethodsArray(value))
+        ? _.union(result, optionToMethodsArray(source, value))
         : result;
     }, []);
 
     var plusMethods = options.reduce(function(result, value) {
       return /plus/.test(value)
-        ? _.union(result, optionToMethodsArray(value))
+        ? _.union(result, optionToMethodsArray(source, value))
         : result;
     }, []);
 
-    // add methods explicitly
+    // add method names explicitly
     options.some(function(value) {
       return /include/.test(value) &&
-        (buildMethods = getDependencies(optionToMethodsArray(value)));
+        (buildMethods = getDependencies(optionToMethodsArray(source, value)));
     });
 
-    // add methods required by Backbone and Underscore builds
+    // add method names required by Backbone and Underscore builds
     if (isBackbone && !buildMethods) {
       buildMethods = getDependencies(backboneDependencies);
     }
@@ -863,7 +867,7 @@
       buildMethods = getDependencies(underscoreMethods);
     }
 
-    // add methods explicitly by category
+    // add method names by category
     options.some(function(value) {
       if (!/category/.test(value)) {
         return false;

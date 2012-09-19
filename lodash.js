@@ -3883,9 +3883,9 @@
 
       // replace delimiters with snippets
       source +=
-        escapeValue ?      "' +\n__e(" + escapeValue + ") +\n'" :
-        interpolateValue ? "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'" :
-        evaluateValue ?    "';\n" + evaluateValue + ";\n__p += '" : '';
+        escapeValue ? "' +\n__e(" + escapeValue + ") +\n'" :
+        evaluateValue ? "';\n" + evaluateValue + ";\n__p += '" :
+        interpolateValue ? "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'" : '';
 
       isEvaluating || (isEvaluating = evaluateValue || reComplexDelimiter.test(escapeValue || interpolateValue));
       index = offset + match.length;
@@ -3927,14 +3927,14 @@
       source +
       'return __p\n}';
 
-    // add a sourceURL for easier debugging
+    // use a sourceURL for easier debugging
     // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-    if (useSourceURL) {
-      source += '\n//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']';
-    }
+    var sourceURL = useSourceURL
+      ? '\n//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']'
+      : '';
 
     try {
-      result = Function('_', 'return ' + source)(lodash);
+      result = Function('_', 'return ' + source + sourceURL)(lodash);
     } catch(e) {
       e.source = source;
       throw e;

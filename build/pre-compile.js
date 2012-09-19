@@ -298,7 +298,7 @@
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var useSourceURL[\s\S]+?catch[^}]+}\n/, '');
 
     // remove debug sourceURL use in `_.template`
-    source = source.replace(/(?:\s*\/\/.*\n)* *if *\(useSourceURL[^}]+}/, '');
+    source = source.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
 
     // minify internal properties used by 'compareAscending', `_.merge`, and `_.sortBy`
     (function() {

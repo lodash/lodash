@@ -1163,9 +1163,9 @@
   QUnit.module('lodash.random');
 
   (function() {
-    test('should work like `Math.random` if no arguments are passed', function() {
+    test('should return `0` or `1` when no arguments are passed', function() {
       var actual = _.random();
-      ok(actual >= 0 && actual < 1);
+      ok(actual === 0 || actual === 1);
     });
 
     test('supports not passing a `max` argument', function() {

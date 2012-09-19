@@ -3827,13 +3827,12 @@
   /**
    * Produces a random number between `min` and `max` (inclusive). If only one
    * argument is passed, a number between `0` and the given number will be returned.
-   * If no arguments are passed `_.random` will act as `Math.random`.
    *
    * @static
    * @memberOf _
    * @category Utilities
-   * @param {Number} min The minimum possible value.
-   * @param {Number} max The maximum possible value.
+   * @param {Number} [min=0] The minimum possible value.
+   * @param {Number} [max=1] The maximum possible value.
    * @returns {Number} Returns a random number.
    * @example
    *
@@ -3842,13 +3841,10 @@
    *
    * _.random(5);
    * // => also a number between 1 and 5
-   *
-   * _.random();
-   * // => an integer between 0 and less than 1
    */
   function random(min, max) {
     if (min == null && max == null) {
-      return nativeRandom();
+      max = 1;
     }
     min = +min || 0;
     if (max == null) {

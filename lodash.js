@@ -8,31 +8,6 @@
 ;(function(window, undefined) {
   'use strict';
 
-  /**
-   * Used to cache the last `_.templateSettings.evaluate` delimiter to avoid
-   * unnecessarily assigning `reEvaluateDelimiter` a new generated regexp.
-   * Assigned in `_.template`.
-   */
-  var lastEvaluateDelimiter;
-
-  /**
-   * Used to cache the last template `options.variable` to avoid unnecessarily
-   * assigning `reDoubleVariable` a new generated regexp. Assigned in `_.template`.
-   */
-  var lastVariable;
-
-  /**
-   * Used to match potentially incorrect data object references, like `obj.obj`,
-   * in compiled templates. Assigned in `_.template`.
-   */
-  var reDoubleVariable;
-
-  /**
-   * Used to match "evaluate" delimiters, including internal delimiters,
-   * in template text. Assigned in `_.template`.
-   */
-  var reEvaluateDelimiter;
-
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports &&
     (typeof global == 'object' && global && global == global.global && (window = global), exports);
@@ -77,8 +52,8 @@
       .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
   );
 
-  /** Used to match internally used tokens in template text */
-  var reToken = /__token(\d+)__/g;
+  /** Used to ensure capturing order and avoid matches for undefined delimiters */
+  var reNoMatch = /($^)/;
 
   /** Used to match HTML characters */
   var reUnescapedHtml = /[&<>"']/g;
@@ -94,13 +69,6 @@
 
   /** Used to make template sourceURLs easier to identify */
   var templateCounter = 0;
-
-  /** Used to replace template delimiters */
-  var tokenHead = '__token',
-      tokenFoot = '__';
-
-  /** Used to store tokenized template text snippets */
-  var tokenized = [];
 
   /** Native method shortcuts */
   var concat = ArrayProto.concat,
@@ -838,18 +806,6 @@
   }
 
   /**
-   * Used by `template` to replace tokens with their corresponding code snippets.
-   *
-   * @private
-   * @param {String} match The matched token.
-   * @param {String} index The `tokenized` index of the code snippet.
-   * @returns {String} Returns the code snippet.
-   */
-  function detokenize(match, index) {
-    return tokenized[index];
-  }
-
-  /**
    * Used by `template` to escape characters for inclusion in compiled
    * string literals.
    *
@@ -879,62 +835,6 @@
    */
   function noop() {
     // no operation performed
-  }
-
-  /**
-   * Used by `template` to replace "escape" template delimiters with tokens.
-   *
-   * @private
-   * @param {String} match The matched template delimiter.
-   * @param {String} value The delimiter value.
-   * @returns {String} Returns a token.
-   */
-  function tokenizeEscape(match, value) {
-    if (match && reComplexDelimiter.test(value)) {
-      return '<e%-' + value + '%>';
-    }
-    var index = tokenized.length;
-    tokenized[index] = "' +\n__e(" + value + ") +\n'";
-    return tokenHead + index + tokenFoot;
-  }
-
-  /**
-   * Used by `template` to replace "evaluate" template delimiters, or complex
-   * "escape" and "interpolate" delimiters, with tokens.
-   *
-   * @private
-   * @param {String} match The matched template delimiter.
-   * @param {String} escapeValue The complex "escape" delimiter value.
-   * @param {String} interpolateValue The complex "interpolate" delimiter value.
-   * @param {String} [evaluateValue] The "evaluate" delimiter value.
-   * @returns {String} Returns a token.
-   */
-  function tokenizeEvaluate(match, escapeValue, interpolateValue, evaluateValue) {
-    if (evaluateValue) {
-      var index = tokenized.length;
-      tokenized[index] = "';\n" + evaluateValue + ";\n__p += '";
-      return tokenHead + index + tokenFoot;
-    }
-    return escapeValue
-      ? tokenizeEscape(null, escapeValue)
-      : tokenizeInterpolate(null, interpolateValue);
-  }
-
-  /**
-   * Used by `template` to replace "interpolate" template delimiters with tokens.
-   *
-   * @private
-   * @param {String} match The matched template delimiter.
-   * @param {String} value The delimiter value.
-   * @returns {String} Returns a token.
-   */
-  function tokenizeInterpolate(match, value) {
-    if (match && reComplexDelimiter.test(value)) {
-      return '<e%=' + value + '%>';
-    }
-    var index = tokenized.length;
-    tokenized[index] = "' +\n((__t = (" + value + ")) == null ? '' : __t) +\n'";
-    return tokenHead + index + tokenFoot;
   }
 
   /**
@@ -3964,85 +3864,59 @@
 
     var isEvaluating,
         result,
-        escapeDelimiter = options.escape,
-        evaluateDelimiter = options.evaluate,
-        interpolateDelimiter = options.interpolate,
+        index = 0,
         settings = lodash.templateSettings,
+        source = "__p += '",
         variable = options.variable || settings.variable,
         hasVariable = variable;
 
-    // use default settings if no options object is provided
-    if (escapeDelimiter == null) {
-      escapeDelimiter = settings.escape;
-    }
-    if (evaluateDelimiter == null) {
-      // use `false` as the fallback value, instead of leaving it `undefined`,
-      // so the initial assignment of `reEvaluateDelimiter` will still occur
-      evaluateDelimiter = settings.evaluate || false;
-    }
-    if (interpolateDelimiter == null) {
-      interpolateDelimiter = settings.interpolate;
-    }
+    // compile regexp to match each delimiter
+    var reDelimiters = RegExp(
+      (options.escape || settings.escape || reNoMatch).source + '|' +
+      (options.interpolate || settings.interpolate || reNoMatch).source + '|' +
+      (options.evaluate || settings.evaluate || reNoMatch).source + '|$'
+    , 'g');
 
-    // tokenize delimiters to avoid escaping them
-    if (escapeDelimiter) {
-      text = text.replace(escapeDelimiter, tokenizeEscape);
-    }
-    if (interpolateDelimiter) {
-      text = text.replace(interpolateDelimiter, tokenizeInterpolate);
-    }
-    if (evaluateDelimiter != lastEvaluateDelimiter) {
-      // generate `reEvaluateDelimiter` to match `_.templateSettings.evaluate`
-      // and internal `<e%- %>`, `<e%= %>` delimiters
-      lastEvaluateDelimiter = evaluateDelimiter;
-      reEvaluateDelimiter = RegExp(
-        '<e%-([\\s\\S]+?)%>|<e%=([\\s\\S]+?)%>' +
-        (evaluateDelimiter ? '|' + evaluateDelimiter.source : '')
-      , 'g');
-    }
-    isEvaluating = tokenized.length;
-    text = text.replace(reEvaluateDelimiter, tokenizeEvaluate);
-    isEvaluating = isEvaluating != tokenized.length;
+    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {
+      // escape characters that cannot be included in string literals
+      source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);
 
-    // escape characters that cannot be included in string literals and
-    // detokenize delimiter code snippets
-    text = "__p += '" + text
-      .replace(reUnescapedString, escapeStringChar)
-      .replace(reToken, detokenize) + "';\n";
+      // replace delimiters with snippets
+      source +=
+        escapeValue ?      "' +\n__e(" + escapeValue + ") +\n'" :
+        interpolateValue ? "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'" :
+        evaluateValue ?    "';\n" + evaluateValue + ";\n__p += '" : '';
 
-    // clear stored code snippets
-    tokenized.length = 0;
+      isEvaluating || (isEvaluating = evaluateValue || reComplexDelimiter.test(escapeValue || interpolateValue));
+      index = offset + match.length;
+    });
+
+    source += "';\n";
 
     // if `variable` is not specified and the template contains "evaluate"
     // delimiters, wrap a with-statement around the generated code to add the
     // data object to the top of the scope chain
     if (!hasVariable) {
-      variable = lastVariable || 'obj';
-
+      variable = 'obj';
       if (isEvaluating) {
-        text = 'with (' + variable + ') {\n' + text + '\n}\n';
+        source = 'with (' + variable + ') {\n' + source + '\n}\n';
       }
       else {
-        if (variable != lastVariable) {
-          // generate `reDoubleVariable` to match references like `obj.obj` inside
-          // transformed "escape" and "interpolate" delimiters
-          lastVariable = variable;
-          reDoubleVariable = RegExp('(\\(\\s*)' + variable + '\\.' + variable + '\\b', 'g');
-        }
         // avoid a with-statement by prepending data object references to property names
-        text = text
+        var reDoubleVariable = RegExp('(\\(\\s*)' + variable + '\\.' + variable + '\\b', 'g');
+        source = source
           .replace(reInsertVariable, '$&' + variable + '.')
           .replace(reDoubleVariable, '$1__d');
       }
     }
 
     // cleanup code by stripping empty strings
-    text = ( isEvaluating ? text.replace(reEmptyStringLeading, '') : text)
+    source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
       .replace(reEmptyStringMiddle, '$1')
       .replace(reEmptyStringTrailing, '$1;');
 
     // frame code as the function body
-    text = 'function(' + variable + ') {\n' +
+    source = 'function(' + variable + ') {\n' +
       (hasVariable ? '' : variable + ' || (' + variable + ' = {});\n') +
       'var __t, __p = \'\', __e = _.escape' +
       (isEvaluating
@@ -4050,19 +3924,19 @@
           'function print() { __p += __j.call(arguments, \'\') }\n'
         : (hasVariable ? '' : ', __d = ' + variable + '.' + variable + ' || ' + variable) + ';\n'
       ) +
-      text +
+      source +
       'return __p\n}';
 
     // add a sourceURL for easier debugging
     // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
     if (useSourceURL) {
-      text += '\n//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']';
+      source += '\n//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']';
     }
 
     try {
-      result = Function('_', 'return ' + text)(lodash);
+      result = Function('_', 'return ' + source)(lodash);
     } catch(e) {
-      e.source = text;
+      e.source = source;
       throw e;
     }
 
@@ -4072,7 +3946,7 @@
     // provide the compiled function's source via its `toString` method, in
     // supported environments, or the `source` property as a convenience for
     // inlining compiled templates during the build process
-    result.source = text;
+    result.source = source;
     return result;
   }
 

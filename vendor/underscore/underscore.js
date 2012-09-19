@@ -228,6 +228,18 @@
     return _.map(obj, function(value){ return value[key]; });
   };
 
+  // Convenience version of a common use case of `filter`: selecting only objects
+  // with specific `key:value` pairs.
+  _.where = function(obj, attrs) {
+    if (_.isEmpty(attrs)) return [];
+    return _.filter(obj, function(value) {
+      for (var key in attrs) {
+        if (attrs[key] !== value[key]) return false;
+      }
+      return true;
+    });
+  };
+
   // Return the maximum element or (element-based computation).
   // Can't optimize arrays of integers longer than 65,535 elements.
   // See: https://bugs.webkit.org/show_bug.cgi?id=80797
@@ -264,16 +276,21 @@
     var index = 0;
     var shuffled = [];
     each(obj, function(value) {
-      rand = Math.floor(Math.random() * ++index);
+      rand = _.random(index++);
       shuffled[index - 1] = shuffled[rand];
       shuffled[rand] = value;
     });
     return shuffled;
   };
 
+  // An internal function to generate lookup iterators.
+  var lookupIterator = function(value) {
+    return _.isFunction(value) ? value : function(obj){ return obj[value]; };
+  };
+
   // Sort the object's values by a criterion produced by an iterator.
-  _.sortBy = function(obj, val, context) {
-    var iterator = lookupIterator(obj, val);
+  _.sortBy = function(obj, value, context) {
+    var iterator = lookupIterator(value);
     return _.pluck(_.map(obj, function(value, index, list) {
       return {
         value : value,
@@ -281,26 +298,22 @@
         criteria : iterator.call(context, value, index, list)
       };
     }).sort(function(left, right) {
-      var  a = left.criteria, b = right.criteria;
-      var ai = left.index,    bi = right.index;
-      if (a === b)      return ai < bi ? -1 : 1;
-      if (a === void 0) return 1;
-      if (b === void 0) return -1;
-      return a < b ? -1 : a > b ? 1 : ai < bi ? -1 : 1;
+      var a = left.criteria;
+      var b = right.criteria;
+      if (a !== b) {
+        if (a > b || a === void 0) return 1;
+        if (a < b || b === void 0) return -1;
+      }
+      return left.index < right.index ? -1 : 1;
     }), 'value');
   };
 
-  // An internal function to generate lookup iterators.
-  var lookupIterator = function(obj, val) {
-    return _.isFunction(val) ? val : function(obj) { return obj[val]; };
-  };
-
   // An internal function used for aggregate "group by" operations.
-  var group = function(obj, val, behavior) {
+  var group = function(obj, value, context, behavior) {
     var result = {};
-    var iterator = lookupIterator(obj, val);
+    var iterator = lookupIterator(value);
     each(obj, function(value, index) {
-      var key = iterator(value, index);
+      var key = iterator.call(context, value, index);
       behavior(result, key, value);
     });
     return result;
@@ -308,8 +321,8 @@
 
   // Groups the object's values by a criterion. Pass either a string attribute
   // to group by, or a function that returns the criterion.
-  _.groupBy = function(obj, val) {
-    return group(obj, val, function(result, key, value) {
+  _.groupBy = function(obj, value, context) {
+    return group(obj, value, context, function(result, key, value) {
       (result[key] || (result[key] = [])).push(value);
     });
   };
@@ -317,8 +330,8 @@
   // Counts instances of an object that group by a certain criterion. Pass
   // either a string attribute to count by, or a function that returns the
   // criterion.
-  _.countBy = function(obj, val) {
-    return group(obj, val, function(result, key, value) {
+  _.countBy = function(obj, value, context) {
+    return group(obj, value, context, function(result, key, value) {
       result[key] || (result[key] = 0);
       result[key]++;
     });
@@ -958,6 +971,10 @@
 
   // Return a random integer between min and max (inclusive).
   _.random = function(min, max) {
+    if (max == null) {
+      max = min;
+      min = 0;
+    }
     return min + (0 | Math.random() * (max - min + 1));
   };
 
@@ -1029,31 +1046,21 @@
   // When customizing `templateSettings`, if you don't want to define an
   // interpolation, evaluation or escaping regex, we need one that is
   // guaranteed not to match.
-  var noMatch = /.^/;
+  var noMatch = /(.)^/;
 
   // Certain characters need to be escaped so that they can be put into a
   // string literal.
   var escapes = {
-    '\\':   '\\',
-    "'":    "'",
-    r:      '\r',
-    n:      '\n',
-    t:      '\t',
-    u2028:  '\u2028',
-    u2029:  '\u2029'
+    "'":      "'",
+    '\\':     '\\',
+    '\r':     'r',
+    '\n':     'n',
+    '\t':     't',
+    '\u2028': 'u2028',
+    '\u2029': 'u2029'
   };
 
-  for (var key in escapes) escapes[escapes[key]] = key;
   var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-  var unescaper = /\\(\\|'|r|n|t|u2028|u2029)/g;
-
-  // Within an interpolation, evaluation, or escaping, remove HTML escaping
-  // that had been previously added.
-  var unescape = function(code) {
-    return code.replace(unescaper, function(match, escape) {
-      return escapes[escape];
-    });
-  };
 
   // JavaScript micro-templating, similar to John Resig's implementation.
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
@@ -1061,22 +1068,26 @@
   _.template = function(text, data, settings) {
     settings = _.defaults({}, settings, _.templateSettings);
 
-    // Compile the template source, taking care to escape characters that
-    // cannot be included in a string literal and then unescape them in code
-    // blocks.
-    var source = "__p+='" + text
-      .replace(escaper, function(match) {
-        return '\\' + escapes[match];
-      })
-      .replace(settings.escape || noMatch, function(match, code) {
-        return "'+\n((__t=(" + unescape(code) + "))==null?'':_.escape(__t))+\n'";
-      })
-      .replace(settings.interpolate || noMatch, function(match, code) {
-        return "'+\n((__t=(" + unescape(code) + "))==null?'':__t)+\n'";
-      })
-      .replace(settings.evaluate || noMatch, function(match, code) {
-        return "';\n" + unescape(code) + "\n__p+='";
-      }) + "';\n";
+    // Combine delimiters into one regular expression via alternation.
+    var matcher = new RegExp([
+      (settings.escape || noMatch).source,
+      (settings.interpolate || noMatch).source,
+      (settings.evaluate || noMatch).source
+    ].join('|') + '|$', 'g');
+
+    // Compile the template source, escaping string literals appropriately.
+    var index = 0;
+    var source = "__p+='";
+    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+      source += text.slice(index, offset)
+        .replace(escaper, function(match) { return '\\' + escapes[match]; });
+      source +=
+        escape ? "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'" :
+        interpolate ? "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'" :
+        evaluate ? "';\n" + evaluate + "\n__p+='" : '';
+      index = offset + match.length;
+    });
+    source += "';\n";
 
     // If a variable is not specified, place data values in local scope.
     if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';

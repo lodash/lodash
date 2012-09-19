@@ -830,10 +830,10 @@
       };
     }
     // add browser/OS architecture
-    if ((data = / (?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(arch)) && !/\bi686\b/i.test(arch)) {
+    if ((data = /\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(arch)) && !/\bi686\b/i.test(arch)) {
       if (os) {
         os.architecture = 64;
-        os.family = os.family.replace(data, '');
+        os.family = os.family.replace(RegExp(' *' + data), '');
       }
       if (name && (/WOW64/i.test(ua) ||
           (useFeatures && /\w(?:86|32)$/.test(nav.cpuClass || nav.platform)))) {

@@ -241,4 +241,9 @@ $(document).ready(function() {
     deepEqual(settings, {});
   });
 
+  test('#779 - delimeters are applied to unescaped text.', 1, function() {
+    var template = _.template('<<\nx\n>>', null, {evaluate: /<<(.*?)>>/g});
+    strictEqual(template(), '<<\nx\n>>');
+  });
+
 });

@@ -282,7 +282,7 @@
     source = source.replace(/\+"__p\+='"/g, '+"\\n__p+=\'"');
 
     // remove whitespace from `_.template` related regexes
-    source = source.replace(/(?:reDelimiterCode\w+|reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
+    source = source.replace(/(?:reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
       return match.replace(/ |\\n/g, '');
     });
 

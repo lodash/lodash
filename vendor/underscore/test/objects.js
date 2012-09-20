@@ -342,6 +342,9 @@ $(document).ready(function() {
     ok(_.isEqual(isEqualObjClone, isEqualObj), 'Commutative equality is implemented for objects with custom `isEqual` methods');
     ok(!_.isEqual(isEqualObj, {}), 'Objects that do not implement equivalent `isEqual` methods are not equal');
     ok(!_.isEqual({}, isEqualObj), 'Commutative equality is implemented for objects with different `isEqual` methods');
+
+    // Objects from another frame.
+    ok(_.isEqual({}, iObject));
   });
 
   test("isEmpty", function() {
@@ -378,6 +381,7 @@ $(document).ready(function() {
       parent.iNull      = null;\
       parent.iBoolean   = new Boolean(false);\
       parent.iUndefined = undefined;\
+      parent.iObject     = {};\
     </script>"
   );
   iDoc.close();

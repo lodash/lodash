@@ -2493,7 +2493,7 @@
     }
     var index = -1,
         length = array.length,
-        flattened = concat.apply(result, arguments),
+        flattened = concat.apply(ArrayProto, arguments),
         contains = cachedContains(flattened, length);
 
     while (++index < length) {
@@ -3065,9 +3065,9 @@
    */
   function union() {
     var index = -1,
-        result = [],
-        flattened = concat.apply(result, arguments),
-        length = flattened.length;
+        flattened = concat.apply(ArrayProto, arguments),
+        length = flattened.length,
+        result = [];
 
     while (++index < length) {
       if (indexOf(result, flattened[index]) < 0) {

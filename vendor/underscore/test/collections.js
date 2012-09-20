@@ -111,6 +111,39 @@ $(document).ready(function() {
 
     equal(_.reduceRight([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
     raises(function() { _.reduceRight([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');
+
+    // Assert that the correct arguments are being passed.
+
+    var args,
+        memo = {},
+        object = {a: 1, b: 2},
+        lastKey = _.keys(object).pop();
+
+    var expected = lastKey == 'a'
+      ? [memo, 1, 'a', object]
+      : [memo, 2, 'b', object];
+
+    _.reduceRight(object, function() {
+      args || (args = _.toArray(arguments));
+    }, memo);
+
+    deepEqual(args, expected);
+
+    // And again, with numeric keys.
+
+    object = {'2': 'a', '1': 'b'};
+    lastKey = _.keys(object).pop();
+    args = null;
+
+    expected = lastKey == '2'
+      ? [memo, 'a', '2', object]
+      : [memo, 'b', '1', object];
+
+    _.reduceRight(object, function() {
+      args || (args = _.toArray(arguments));
+    }, memo);
+
+    deepEqual(args, expected);
   });
 
   test('find', function() {

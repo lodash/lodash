@@ -1153,6 +1153,74 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.reduce` iterating an array')
+      .add('Lo-Dash', '\
+        lodash.reduce(numbers, function(result, value, index) {\
+          result[index] = value;\
+          return result;\
+        }, {});'
+      )
+      .add('Underscore', '\
+        _.reduce(numbers, function(result, value, index) {\
+          result[index] = value;\
+          return result;\
+        }, {});'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.reduce` iterating an object')
+      .add('Lo-Dash', '\
+        lodash.reduce(object, function(result, value, key) {\
+          result.push([key, value]);\
+          return result;\
+        }, []);'
+      )
+      .add('Underscore', '\
+        _.reduce(object, function(result, value, key) {\
+          result.push([key, value]);\
+          return result;\
+        }, []);'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.reduceRight` iterating an array')
+      .add('Lo-Dash', '\
+        lodash.reduceRight(numbers, function(result, value, index) {\
+          result[index] = value;\
+          return result;\
+        }, {});'
+      )
+      .add('Underscore', '\
+        _.reduceRight(numbers, function(result, value, index) {\
+          result[index] = value;\
+          return result;\
+        }, {});'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.reduceRight` iterating an object')
+      .add('Lo-Dash', '\
+        lodash.reduceRight(object, function(result, value, key) {\
+          result.push([key, value]);\
+          return result;\
+        }, []);'
+      )
+      .add('Underscore', '\
+        _.reduceRight(object, function(result, value, key) {\
+          result.push([key, value]);\
+          return result;\
+        }, []);'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.shuffle`')
       .add('Lo-Dash', '\
         lodash.shuffle(numbers)'
@@ -1407,6 +1475,18 @@
       )
       .add('Underscore', '\
         _.values(object)'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.where`')
+      .add('Lo-Dash', '\
+        lodash.where(objects, { "num": 9 });'
+      )
+      .add('Underscore', '\
+        _.where(objects, { "num": 9 });'
       )
   );
 

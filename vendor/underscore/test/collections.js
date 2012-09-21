@@ -107,6 +107,9 @@ $(document).ready(function() {
     }
     ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
 
+    var sum = _.reduceRight({a: 1, b: 2, c: 3}, function(sum, num){ return sum + num; });
+    equal(sum, 6, 'default initial value on object');
+
     ok(_.reduceRight(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
 
     equal(_.reduceRight([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
@@ -326,6 +329,13 @@ $(document).ready(function() {
 
     var context = {};
     _.groupBy([{}], function(){ ok(this === context); }, context);
+
+    grouped = _.groupBy([4.2, 6.1, 6.4], function(num) {
+      return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
+    });
+    equal(grouped.constructor.length, 1);
+    equal(grouped.hasOwnProperty.length, 2);
+
   });
 
   test('countBy', function() {
@@ -341,6 +351,12 @@ $(document).ready(function() {
 
     var context = {};
     _.countBy([{}], function(){ ok(this === context); }, context);
+
+    grouped = _.countBy([4.2, 6.1, 6.4], function(num) {
+      return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
+    });
+    equal(grouped.constructor, 1);
+    equal(grouped.hasOwnProperty, 2);
   });
 
   test('sortedIndex', function() {

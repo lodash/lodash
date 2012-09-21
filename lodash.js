@@ -2220,39 +2220,19 @@
     if (!collection) {
       return accumulator;
     }
-
     var length = collection.length,
         noaccum = arguments.length < 3;
 
-    if(thisArg) {
-      callback = bindIterator(callback, thisArg);
+    if (length !== +length) {
+      var props = keys(collection);
+      length = props.length;
     }
-    if (length === +length) {
-      var iteratee = noCharByIndex && toString.call(collection) == stringClass
-        ? collection.split('')
-        : collection;
-
-      if (length && noaccum) {
-        accumulator = iteratee[--length];
-      }
-      while (length--) {
-        accumulator = callback(accumulator, iteratee[length], length, collection);
-      }
-      return accumulator;
-    }
-
-    var prop,
-        props = keys(collection);
-
-    length = props.length;
-    if (length && noaccum) {
-      accumulator = collection[props[--length]];
-    }
-    while (length--) {
-      prop = props[length];
-      accumulator = callback(accumulator, collection[prop], prop, collection);
-    }
-    return accumulator;
+    return reduce(collection, function(accumulator, value, index, object) {
+      var index = props ? props[--length] : --length;
+      return noaccum
+        ? (noaccum = false, object[index])
+        : callback.call(thisArg, accumulator, object[index], index, object);
+    }, accumulator);
   }
 
   /**

@@ -133,7 +133,7 @@
     'random': [],
     'range': [],
     'reduce': [],
-    'reduceRight': ['keys'],
+    'reduceRight': ['keys', 'reduce'],
     'reject': ['identity'],
     'rest': [],
     'result': ['isFunction'],

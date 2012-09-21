@@ -157,6 +157,10 @@ $(document).ready(function() {
     numbers = [1, 40, 40, 40, 40, 40, 40, 40, 50, 60, 70]; num = 40;
     index = _.indexOf(numbers, num, true);
     equal(index, 1, '40 is in the list');
+
+    numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3];
+    index = _.indexOf(numbers, 2, 5);
+    equal(index, 7, 'supports the fromIndex argument');
   });
 
   test("lastIndexOf", function() {
@@ -167,6 +171,10 @@ $(document).ready(function() {
     var result = (function(){ return _.lastIndexOf(arguments, 1); })(1, 0, 1, 0, 0, 1, 0, 0, 0);
     equal(result, 5, 'works on an arguments object');
     equal(_.indexOf(null, 2), -1, 'handles nulls properly');
+
+    numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3];
+    index = _.lastIndexOf(numbers, 2, 2);
+    equal(index, 1, 'supports the fromIndex argument');
   });
 
   test("range", function() {

@@ -15,17 +15,22 @@ $(document).ready(function() {
   });
 
   test("values", function() {
-    equal(_.values({one : 1, two : 2}).join(', '), '1, 2', 'can extract the values from an object');
+    equal(_.values({one: 1, two: 2}).join(', '), '1, 2', 'can extract the values from an object');
+    equal(_.values({one: 1, two: 2, length: 3}).join(', '), '1, 2, 3', '... even when one of them is "length"');
   });
 
   test("pairs", function() {
     deepEqual(_.pairs({one: 1, two: 2}), [['one', 1], ['two', 2]], 'can convert an object into pairs');
+    deepEqual(_.pairs({one: 1, two: 2, length: 3}), [['one', 1], ['two', 2], ['length', 3]], '... even when one of them is "length"');
   });
 
   test("invert", function() {
     var obj = {first: 'Moe', second: 'Larry', third: 'Curly'};
     equal(_.keys(_.invert(obj)).join(' '), 'Moe Larry Curly', 'can invert an object');
     ok(_.isEqual(_.invert(_.invert(obj)), obj), 'two inverts gets you back where you started');
+
+    var obj = {length: 3};
+    ok(_.invert(obj)['3'] == 'length', 'can invert an object with "length"')
   });
 
   test("functions", function() {

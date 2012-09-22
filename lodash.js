@@ -2220,19 +2220,23 @@
     if (!collection) {
       return accumulator;
     }
-    var length = collection.length,
+    var iteratee = collection,
+        length = collection.length,
         noaccum = arguments.length < 3;
 
     if (length !== +length) {
       var props = keys(collection);
       length = props.length;
+    } else if (noCharByIndex && toString.call(collection) == stringClass) {
+      iteratee = collection.split('');
     }
-    return reduce(collection, function(accumulator, value, index, object) {
-      var index = props ? props[--length] : --length;
-      return noaccum
-        ? (noaccum = false, object[index])
-        : callback.call(thisArg, accumulator, object[index], index, object);
-    }, accumulator);
+    forEach(collection, function(value, index, object) {
+      index = props ? props[--length] : --length;
+      accumulator = noaccum
+        ? (noaccum = false, iteratee[index])
+        : callback.call(thisArg, accumulator, iteratee[index], index, object);
+    });
+    return accumulator;
   }
 
   /**

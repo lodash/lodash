@@ -456,8 +456,8 @@
 
   /**
    * Reusable iterator options shared by
-   * `every`, `filter`, `find`, `forEach`, `forIn`, `forOwn`, `groupBy`, `map`,
-   * `reject`, `some`, and `sortBy`.
+   * `countBy`, `every`, `filter`, `find`, `forEach`, `forIn`, `forOwn`, `groupBy`,
+   * `map`, `reject`, `some`, and `sortBy`.
    */
   var baseIteratorOptions = {
     'args': 'collection, callback, thisArg',
@@ -466,7 +466,7 @@
       'if (!callback) {\n' +
       '  callback = identity\n' +
       '}\n' +
-      'else if (thisArg) {\n' +
+      'else if (thisArg !== undefined) {\n' +
       '  callback = bindIterator(callback, thisArg)\n' +
       '}',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
@@ -481,7 +481,7 @@
       '  var valueProp = callback;\n' +
       '  callback = function(value) { return value[valueProp] }\n' +
       '}\n' +
-      'else if (thisArg) {\n' +
+      'else if (thisArg !== undefined) {\n' +
       '  callback = bindIterator(callback, thisArg)\n' +
       '}',
     'inLoop':
@@ -516,7 +516,7 @@
 
   /** Reusable iterator options for `find`, `forEach`, `forIn`, and `forOwn` */
   var forEachIteratorOptions = {
-    'top': 'if (thisArg) callback = bindIterator(callback, thisArg)'
+    'top': 'if (thisArg !== undefined) callback = bindIterator(callback, thisArg)'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
@@ -549,7 +549,7 @@
       'var isFunc = typeof callback == \'function\';\n' +
       'if (!isFunc) {\n' +
       '  var props = concat.apply(ArrayProto, arguments)\n' +
-      '} else if (thisArg) {\n' +
+      '} else if (thisArg !== undefined) {\n' +
       '  callback = bindIterator(callback, thisArg)\n' +
       '}',
     'inLoop':
@@ -792,7 +792,7 @@
         'arrayLikeClasses, ArrayProto, bind, bindIterator, compareAscending, concat, ' +
         'forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
         'isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
-        'slice, stringClass, toString',
+        'slice, stringClass, toString, undefined',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
     );
@@ -1862,7 +1862,7 @@
       '    if (prop in object) result[prop] = object[prop]\n' +
       '  }\n' +
       '} else {\n' +
-      '  if (thisArg) callback = bindIterator(callback, thisArg)',
+      '  if (thisArg !== undefined) callback = bindIterator(callback, thisArg)',
     'inLoop':
       'if (callback(value, index, object)) result[index] = value',
     'bottom': '}'
@@ -2184,7 +2184,7 @@
     'init': 'accumulator',
     'top':
       'var noaccum = arguments.length < 3;\n' +
-      'if (thisArg) callback = bindIterator(callback, thisArg)',
+      'if (thisArg !== undefined) callback = bindIterator(callback, thisArg)',
     'beforeLoop': {
       'array': 'if (noaccum) result = iteratee[++index]'
     },
@@ -2763,7 +2763,7 @@
       }
       return result;
     }
-    if (thisArg) {
+    if (thisArg !== undefined) {
       callback = bindIterator(callback, thisArg);
     }
     while (++index < length) {
@@ -2813,7 +2813,7 @@
       }
       return result;
     }
-    if (thisArg) {
+    if (thisArg !== undefined) {
       callback = bindIterator(callback, thisArg);
     }
     while (++index < length) {
@@ -3011,7 +3011,7 @@
         high = array.length;
 
     if (callback) {
-      if (thisArg) {
+      if (thisArg !== undefined) {
         callback = bind(callback, thisArg);
       }
       value = callback(value);
@@ -3105,7 +3105,7 @@
     }
     if (!callback) {
       callback = identity;
-    } else if (thisArg) {
+    } else if (thisArg !== undefined) {
       callback = bindIterator(callback, thisArg);
     }
     while (++index < length) {
@@ -3954,10 +3954,11 @@
    * // => also calls `mage.castSpell(n)` three times
    */
   function times(n, callback, thisArg) {
+    n = +n || 0;
     var index = -1,
-        result = Array(n || 0);
+        result = Array(n);
 
-    if (thisArg) {
+    if (thisArg !== undefined) {
       while (++index < n) {
         result[index] = callback.call(thisArg, index);
       }

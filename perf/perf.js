@@ -276,7 +276,6 @@
         var twentyFiveValues = Array(25),\
             twentyFiveValues2 = Array(25),\
             fiftyValues = Array(50),\
-            fiftyValues2 = Array(50),\
             seventyFiveValues = Array(75),\
             seventyFiveValues2 = Array(75),\
             lowerChars = "abcdefghijklmnopqrstuvwxyz".split(""),\
@@ -294,14 +293,11 @@
             }\
             fiftyValues[index] =\
             seventyFiveValues[index] = lowerChars[index];\
-            \
-            fiftyValues2[index] =\
             seventyFiveValues2[index] = upperChars[index];\
           }\
           else {\
             if (index < 50) {\
               fiftyValues[index] = index;\
-              fiftyValues2[index] = index + (index < 40 ? 75 : 0);\
             }\
             seventyFiveValues[index] = index;\
             seventyFiveValues2[index] = index + (index < 60 ? 75 : 0);\
@@ -575,13 +571,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 50 elements')
+    Benchmark.Suite('`_.difference` iterating 50 and 75 elements')
       .add('Lo-Dash', {
-        'fn': 'lodash.difference(fiftyValues, fiftyValues2)',
+        'fn': 'lodash.difference(fiftyValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add('Underscore', {
-        'fn': '_.difference(fiftyValues, fiftyValues2)',
+        'fn': '_.difference(fiftyValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );

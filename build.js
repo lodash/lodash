@@ -133,7 +133,7 @@
     'random': [],
     'range': [],
     'reduce': [],
-    'reduceRight': ['keys', 'reduce'],
+    'reduceRight': ['forEach', 'keys'],
     'reject': ['identity'],
     'rest': [],
     'result': ['isFunction'],
@@ -1146,7 +1146,7 @@
       source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
 
       // remove `noCharByIndex` from `_.reduceRight`
-      source = source.replace(/noCharByIndex *&&[^:]+: *([^;]+)/g, '$1');
+      source = source.replace(/}\s*else if *\(noCharByIndex[^}]+/, '');
 
       source = removeVar(source, 'extendIteratorOptions');
       source = removeVar(source, 'iteratorTemplate');

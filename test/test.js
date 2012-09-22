@@ -1713,7 +1713,61 @@
           }
         });
 
-        ok(pass, methodName + ' allows falsey arguments');
+        ok(pass, '_.' + methodName + ' allows falsey arguments');
+      });
+    });
+
+    test('should handle `null` `thisArg` arguments', function() {
+      var thisArg,
+          array = ['a'],
+          callback = function() { thisArg = this; },
+          useStrict = Function('"use strict";return this')() === undefined;
+
+      var funcs = [
+        'countBy',
+        'every',
+        'filter',
+        'find',
+        'forEach',
+        'forIn',
+        'forOwn',
+        'groupBy',
+        'map',
+        'max',
+        'min',
+        'omit',
+        'pick',
+        'reduce',
+        'reduceRight',
+        'reject',
+        'some',
+        'sortBy',
+        'sortedIndex',
+        'times',
+        'uniq'
+      ];
+
+      _.each(funcs, function(methodName) {
+        var func = _[methodName],
+            message = '_.' + methodName + ' handles `null` `thisArg` arguments';
+
+        thisArg = undefined;
+
+        if (/^reduce/.test(methodName)) {
+          func(array, callback, 0, null);
+        } else if (methodName == 'sortedIndex') {
+          func(array, 'a', callback, null);
+        } else if (methodName == 'times') {
+          func(1, callback, null);
+        } else {
+          func(array, callback, null);
+        }
+
+        if (useStrict) {
+          deepEqual(thisArg, null, message);
+        } else {
+          equal(thisArg, window, message);
+        }
       });
     });
   }());

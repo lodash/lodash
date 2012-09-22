@@ -33,6 +33,7 @@
     'stringClass',
     'thisArg',
     'toString',
+    'undefined',
     'value',
 
     // lesser used variables

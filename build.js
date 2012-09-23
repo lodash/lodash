@@ -234,19 +234,11 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
-    'countBy',
     'forIn',
     'forOwn',
-    'invert',
     'lateBind',
     'merge',
-    'object',
-    'omit',
-    'pairs',
-    'partial',
-    'random',
-    'unescape',
-    'where'
+    'partial'
   ]));
 
   /** List of ways to export the `LoDash` function */

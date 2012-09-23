@@ -395,14 +395,25 @@
   }
 
   /**
-   * Gets the `_.isArguments` fallback snippet from `source`.
+   * Gets the `_.isArguments` fallback from `source`.
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `isArguments` fallback snippet.
+   * @returns {String} Returns the `isArguments` fallback.
    */
   function getIsArgumentsFallback(source) {
     return (source.match(/(?:\s*\/\/.*)*\n( +)if *\(noArgsClass\)[\s\S]+?};\n\1}/) || [''])[0];
+  }
+
+  /**
+   * Gets the `_.isFunction` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `isFunction` fallback.
+   */
+  function getIsFunctionFallback(source) {
+    return (source.match(/(?:\s*\/\/.*)*\n( +)if *\(isFunction\(\/x\/[\s\S]+?};\n\1}/) || [''])[0];
   }
 
   /**
@@ -579,7 +590,7 @@
    * @returns {String} Returns the source with the `isFunction` fallback removed.
    */
   function removeIsFunctionFallback(source) {
-    return source.replace(/(?:\s*\/\/.*)*\n( +)if *\(isFunction\(\/x\/[\s\S]+?};\n\1}/, '');
+    return source.replace(getIsFunctionFallback(source), '');
   }
 
   /**
@@ -785,6 +796,11 @@
     // backup `dependencyMap` to restore later
     var dependencyBackup = _.clone(dependencyMap, true);
 
+    // used to specify a custom IIFE to wrap Lo-Dash
+    var iife = options.reduce(function(result, value) {
+      return result || (result = value.match(/iife=(.*)/)) && result[1];
+    }, null);
+
     // flag used to specify a Backbone build
     var isBackbone = options.indexOf('backbone') > -1;
 
@@ -810,23 +826,24 @@
     // constructed using the "use strict" directive
     var isStrict = options.indexOf('strict') > -1;
 
-    // flag used to specify if the build should include the "use strict" directive
-    var useStrict = isStrict || !(isLegacy || isMobile);
+    // used to specify the ways to export the `LoDash` function
+    var exportsOptions = options.reduce(function(result, value) {
+      return /exports/.test(value) ? optionToArray(value).sort() : result;
+    }, isUnderscore
+      ? ['commonjs', 'global', 'node']
+      : exportsAll.slice()
+    );
+
+    // used to specify the output path for builds
+    var outputPath = options.reduce(function(result, value, index) {
+      return result || (/^(?:-o|--output)$/.test(value) ? options[index + 1] : result);
+    }, '');
 
     // the lodash.js source
     var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
 
-    // used to specify the ways to export the `LoDash` function
-    var exportsOptions = options.reduce(function(result, value) {
-      return /exports/.test(value)
-        ? optionToArray(value).sort()
-        : result;
-    }, exportsAll.slice());
-
-    // used to specify a custom IIFE to wrap Lo-Dash
-    var iife = options.reduce(function(result, value) {
-      return result || (result = value.match(/iife=(.*)/)) && result[1];
-    }, null);
+    // flag used to specify if the build should include the "use strict" directive
+    var useStrict = isStrict || !(isLegacy || isMobile);
 
     /*------------------------------------------------------------------------*/
 
@@ -984,75 +1001,6 @@
     if (isRemoved(source, 'isArguments')) {
       source = removeIsArgumentsFallback(source);
     }
-
-    // DRY out isType functions
-    (function() {
-      var iteratorName = _.find(['forEach', 'forOwn'], function(methodName) {
-        return !isRemoved(source, methodName);
-      });
-
-      // skip this optimization if there are no iteration methods to use
-      if (!iteratorName) {
-        return;
-      }
-      var funcNames = [],
-          objectSnippets = [];
-
-      // build replacement code
-      _.forOwn({
-        'Arguments': 'argsClass',
-        'Date': 'dateClass',
-        'Number': 'numberClass',
-        'RegExp': 'regexpClass',
-        'String': 'stringClass'
-      },
-      function(value, key) {
-        var funcName = 'is' + key,
-            funcCode = matchFunction(source, funcName);
-
-        // only DRY `isArguments` for Underscore builds
-        if (key == 'Arguments' && !isUnderscore) {
-          return;
-        }
-        if (funcCode) {
-          funcNames.push(funcName);
-          objectSnippets.push("'" + key + "': " + value);
-        }
-      });
-
-      // skip this optimization if there are less than 2 isType functions
-      if (funcNames.length < 2) {
-        return;
-      }
-
-      // remove existing isType functions
-      funcNames.forEach(function(funcName) {
-        source = removeFunction(source, funcName);
-      });
-
-      // insert new DRY code before the `lodash` method assignments
-      var snippet = getMethodAssignments(source);
-      source = source.replace(snippet, snippet += [
-        '',
-        '  // add `_.' + funcNames.join('`, `_.') + '`',
-        '  ' + iteratorName + '({\n    ' + objectSnippets.join(',\n    ') + '\n  }, function(className, key) {',
-        "    lodash['is' + key] = function(value) {",
-        '      return toString.call(value) == className',
-        '    }',
-        '  });'
-      ].join('\n'));
-
-      // move `isArguments` fallback to after the new DRY code
-      if (isUnderscore) {
-        var fallback = getIsArgumentsFallback(source);
-        source = removeIsArgumentsFallback(source).replace(snippet,
-          snippet + fallback
-            .replace(/\bisArguments\b/g, 'lodash.$&')
-            .replace(/\bnoArgsClass\b/g, '!lodash.isArguments(arguments)') +
-            '\n'
-        );
-      }
-    }());
 
     /*------------------------------------------------------------------------*/
 
@@ -1315,11 +1263,6 @@
     var isCustom = isBackbone || isLegacy || isMobile || isStrict || isUnderscore ||
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll);
-
-    // used to specify the output path for builds
-    var outputPath = options.reduce(function(result, value, index) {
-      return result || (/^(?:-o|--output)$/.test(value) ? options[index + 1] : result);
-    }, '');
 
     // used to name temporary files created in `dist/`
     var workingName = 'lodash' + (isCustom ? '.custom' : '') + '.min';

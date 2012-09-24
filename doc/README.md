@@ -14,7 +14,7 @@
 * [`_.bind`](#_bindfunc--thisarg-arg1-arg2-)
 * [`_.bindAll`](#_bindallobject--methodname1-methodname2-)
 * [`_.chain`](#_chainvalue)
-* [`_.clone`](#_clonevalue-deep--guard-stacka-stackb)
+* [`_.clone`](#_clonevalue-deep)
 * [`_.collect`](#_mapcollection--callbackidentity-thisarg)
 * [`_.compact`](#_compactarray)
 * [`_.compose`](#_composefunc1-func2-)
@@ -26,14 +26,14 @@
 * [`_.delay`](#_delayfunc-wait--arg1-arg2-)
 * [`_.detect`](#_findcollection-callback--thisarg)
 * [`_.difference`](#_differencearray--array1-array2-)
-* [`_.drop`](#_restarray--n-guard)
+* [`_.drop`](#_restarray--n)
 * [`_.each`](#_foreachcollection-callback--thisarg)
 * [`_.escape`](#_escapestring)
 * [`_.every`](#_everycollection--callbackidentity-thisarg)
 * [`_.extend`](#_extendobject--source1-source2-)
 * [`_.filter`](#_filtercollection--callbackidentity-thisarg)
 * [`_.find`](#_findcollection-callback--thisarg)
-* [`_.first`](#_firstarray--n-guard)
+* [`_.first`](#_firstarray--n)
 * [`_.flatten`](#_flattenarray-shallow)
 * [`_.foldl`](#_reducecollection-callback--accumulator-thisarg)
 * [`_.foldr`](#_reducerightcollection-callback--accumulator-thisarg)
@@ -43,11 +43,11 @@
 * [`_.functions`](#_functionsobject)
 * [`_.groupBy`](#_groupbycollection-callbackproperty--thisarg)
 * [`_.has`](#_hasobject-property)
-* [`_.head`](#_firstarray--n-guard)
+* [`_.head`](#_firstarray--n)
 * [`_.identity`](#_identityvalue)
 * [`_.include`](#_containscollection-target)
 * [`_.indexOf`](#_indexofarray-value--fromindex0)
-* [`_.initial`](#_initialarray--n-guard)
+* [`_.initial`](#_initialarray--n)
 * [`_.inject`](#_reducecollection-callback--accumulator-thisarg)
 * [`_.intersection`](#_intersectionarray1-array2-)
 * [`_.invert`](#_invertobject)
@@ -58,25 +58,25 @@
 * [`_.isDate`](#_isdatevalue)
 * [`_.isElement`](#_iselementvalue)
 * [`_.isEmpty`](#_isemptyvalue)
-* [`_.isEqual`](#_isequala-b--stacka-stackb)
+* [`_.isEqual`](#_isequala-b)
 * [`_.isFinite`](#_isfinitevalue)
 * [`_.isFunction`](#_isfunctionvalue)
 * [`_.isNaN`](#_isnanvalue)
 * [`_.isNull`](#_isnullvalue)
 * [`_.isNumber`](#_isnumbervalue)
 * [`_.isObject`](#_isobjectvalue)
-* [`_.isPlainObject`](#_isplainobjectvalue--skipargscheckfalse)
+* [`_.isPlainObject`](#_isplainobjectvalue)
 * [`_.isRegExp`](#_isregexpvalue)
 * [`_.isString`](#_isstringvalue)
 * [`_.isUndefined`](#_isundefinedvalue)
 * [`_.keys`](#_keysobject)
-* [`_.last`](#_lastarray--n-guard)
+* [`_.last`](#_lastarray--n)
 * [`_.lastIndexOf`](#_lastindexofarray-value--fromindexarraylength-1)
 * [`_.lateBind`](#_latebindobject-methodname--arg1-arg2-)
 * [`_.map`](#_mapcollection--callbackidentity-thisarg)
 * [`_.max`](#_maxarray--callback-thisarg)
 * [`_.memoize`](#_memoizefunc--resolver)
-* [`_.merge`](#_mergeobject--source1-source2--indicator-stacka-stackb)
+* [`_.merge`](#_mergeobject--source1-source2-)
 * [`_.methods`](#_functionsobject)
 * [`_.min`](#_minarray--callback-thisarg)
 * [`_.mixin`](#_mixinobject)
@@ -93,7 +93,7 @@
 * [`_.reduce`](#_reducecollection-callback--accumulator-thisarg)
 * [`_.reduceRight`](#_reducerightcollection-callback--accumulator-thisarg)
 * [`_.reject`](#_rejectcollection--callbackidentity-thisarg)
-* [`_.rest`](#_restarray--n-guard)
+* [`_.rest`](#_restarray--n)
 * [`_.result`](#_resultobject-property)
 * [`_.select`](#_filtercollection--callbackidentity-thisarg)
 * [`_.shuffle`](#_shufflearray)
@@ -101,8 +101,8 @@
 * [`_.some`](#_somecollection--callbackidentity-thisarg)
 * [`_.sortBy`](#_sortbycollection-callbackproperty--thisarg)
 * [`_.sortedIndex`](#_sortedindexarray-value--callbackidentity-thisarg)
-* [`_.tail`](#_restarray--n-guard)
-* [`_.take`](#_firstarray--n-guard)
+* [`_.tail`](#_restarray--n)
+* [`_.take`](#_firstarray--n)
 * [`_.tap`](#_tapvalue-interceptor)
 * [`_.template`](#_templatetext-data-options)
 * [`_.throttle`](#_throttlefunc-wait)
@@ -309,17 +309,14 @@ var youngest = _.chain(stooges)
 
 <!-- div -->
 
-### <a id="_clonevalue-deep--guard-stacka-stackb"></a>`_.clone(value, deep [, guard, stackA=[], stackB=[]])`
-<a href="#_clonevalue-deep--guard-stacka-stackb">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1057 "View in source") [&#x24C9;][1]
+### <a id="_clonevalue-deep"></a>`_.clone(value, deep)`
+<a href="#_clonevalue-deep">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1057 "View in source") [&#x24C9;][1]
 
 Creates a clone of `value`. If `deep` is `true`, all nested objects will also be cloned otherwise they will be assigned by reference. Functions, DOM nodes, `arguments` objects, and objects created by constructors other than `Object` are **not** cloned.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to clone.
 2. `deep` *(Boolean)*: A flag to indicate a deep clone.
-3. `[guard]` *(Object)*: Internally used to allow this method to work with others like `_.map` without using their callback `index` argument for `deep`.
-4. `[stackA=[]]` *(Array)*: Internally used to track traversed source objects.
-5. `[stackB=[]]` *(Array)*: Internally used to associate clones with their source counterparts.
 
 #### Returns
 *(Mixed)*: Returns the cloned `value`.
@@ -733,8 +730,8 @@ var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
 
 <!-- div -->
 
-### <a id="_firstarray--n-guard"></a>`_.first(array [, n, guard])`
-<a href="#_firstarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2530 "View in source") [&#x24C9;][1]
+### <a id="_firstarray--n"></a>`_.first(array [, n])`
+<a href="#_firstarray--n">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2530 "View in source") [&#x24C9;][1]
 
 Gets the first element of the `array`. Pass `n` to return the first `n` elements of the `array`.
 
@@ -744,7 +741,6 @@ Gets the first element of the `array`. Pass `n` to return the first `n` elements
 #### Arguments
 1. `array` *(Array)*: The array to query.
 2. `[n]` *(Number)*: The number of elements to return.
-3. `[guard]` *(Object)*: Internally used to allow this method to work with others like `_.map` without using their callback `index` argument for `n`.
 
 #### Returns
 *(Mixed)*: Returns the first element or an array of the first `n`  elements of `array`.
@@ -1027,15 +1023,14 @@ _.indexOf([1, 1, 2, 2, 3, 3], 2, true);
 
 <!-- div -->
 
-### <a id="_initialarray--n-guard"></a>`_.initial(array [, n, guard])`
-<a href="#_initialarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2640 "View in source") [&#x24C9;][1]
+### <a id="_initialarray--n"></a>`_.initial(array [, n])`
+<a href="#_initialarray--n">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2640 "View in source") [&#x24C9;][1]
 
 Gets all but the last element of `array`. Pass `n` to exclude the last `n` elements from the result.
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
 2. `[n]` *(Number)*: The number of elements to return.
-3. `[guard]` *(Object)*: Internally used to allow this method to work with others like `_.map` without using their callback `index` argument for `n`.
 
 #### Returns
 *(Array)*: Returns all but the last element or `n` elements of `array`.
@@ -1286,16 +1281,14 @@ _.isEmpty('');
 
 <!-- div -->
 
-### <a id="_isequala-b--stacka-stackb"></a>`_.isEqual(a, b [, stackA=[], stackB=[]])`
-<a href="#_isequala-b--stacka-stackb">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1398 "View in source") [&#x24C9;][1]
+### <a id="_isequala-b"></a>`_.isEqual(a, b)`
+<a href="#_isequala-b">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1398 "View in source") [&#x24C9;][1]
 
 Performs a deep comparison between two values to determine if they are equivalent to each other.
 
 #### Arguments
 1. `a` *(Mixed)*: The value to compare.
 2. `b` *(Mixed)*: The other value to compare.
-3. `[stackA=[]]` *(Object)*: Internally used track traversed `a` objects.
-4. `[stackB=[]]` *(Object)*: Internally used track traversed `b` objects.
 
 #### Returns
 *(Boolean)*: Returns `true` if the values are equvalent, else `false`.
@@ -1487,14 +1480,13 @@ _.isObject(1);
 
 <!-- div -->
 
-### <a id="_isplainobjectvalue--skipargscheckfalse"></a>`_.isPlainObject(value [, skipArgsCheck=false])`
-<a href="#_isplainobjectvalue--skipargscheckfalse">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L948 "View in source") [&#x24C9;][1]
+### <a id="_isplainobjectvalue"></a>`_.isPlainObject(value)`
+<a href="#_isplainobjectvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L948 "View in source") [&#x24C9;][1]
 
 Checks if a given `value` is an object created by the `Object` constructor.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to check.
-2. `[skipArgsCheck=false]` *(Boolean)*: Internally used to skip checks for `arguments` objects.
 
 #### Returns
 *(Boolean)*: Returns `true` if `value` is a plain object, else `false`.
@@ -1619,15 +1611,14 @@ _.keys({ 'one': 1, 'two': 2, 'three': 3 });
 
 <!-- div -->
 
-### <a id="_lastarray--n-guard"></a>`_.last(array [, n, guard])`
-<a href="#_lastarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2705 "View in source") [&#x24C9;][1]
+### <a id="_lastarray--n"></a>`_.last(array [, n])`
+<a href="#_lastarray--n">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2705 "View in source") [&#x24C9;][1]
 
 Gets the last element of the `array`. Pass `n` to return the lasy `n` elementsvof the `array`.
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
 2. `[n]` *(Number)*: The number of elements to return.
-3. `[guard]` *(Object)*: Internally used to allow this method to work with others like `_.map` without using their callback `index` argument for `n`.
 
 #### Returns
 *(Mixed)*: Returns the last element or an array of the last `n`  elements of `array`.
@@ -1805,17 +1796,14 @@ var fibonacci = _.memoize(function(n) {
 
 <!-- div -->
 
-### <a id="_mergeobject--source1-source2--indicator-stacka-stackb"></a>`_.merge(object [, source1, source2, ..., indicator, stackA=[], stackB=[]])`
-<a href="#_mergeobject--source1-source2--indicator-stacka-stackb">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1765 "View in source") [&#x24C9;][1]
+### <a id="_mergeobject--source1-source2-"></a>`_.merge(object [, source1, source2, ...])`
+<a href="#_mergeobject--source1-source2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1765 "View in source") [&#x24C9;][1]
 
 Merges enumerable properties of the source object(s) into the `destination` object. Subsequent sources will overwrite propery assignments of previous sources.
 
 #### Arguments
 1. `object` *(Object)*: The destination object.
 2. `[source1, source2, ...]` *(Object)*: The source objects.
-3. `[indicator]` *(Object)*: Internally used to indicate that the `stack` argument is an array of traversed objects instead of another source object.
-4. `[stackA=[]]` *(Array)*: Internally used to track traversed source objects.
-5. `[stackB=[]]` *(Array)*: Internally used to associate clones with their source counterparts.
 
 #### Returns
 *(Object)*: Returns the destination object.
@@ -2267,8 +2255,8 @@ var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
 
 <!-- div -->
 
-### <a id="_restarray--n-guard"></a>`_.rest(array [, n, guard])`
-<a href="#_restarray--n-guard">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2956 "View in source") [&#x24C9;][1]
+### <a id="_restarray--n"></a>`_.rest(array [, n])`
+<a href="#_restarray--n">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2956 "View in source") [&#x24C9;][1]
 
 The opposite of `_.initial`, this method gets all but the first value of `array`. Pass `n` to exclude the first `n` values from the result.
 
@@ -2278,7 +2266,6 @@ The opposite of `_.initial`, this method gets all but the first value of `array`
 #### Arguments
 1. `array` *(Array)*: The array to query.
 2. `[n]` *(Number)*: The number of elements to return.
-3. `[guard]` *(Object)*: Internally used to allow this method to work with others like `_.map` without using their callback `index` argument for `n`.
 
 #### Returns
 *(Array)*: Returns all but the first value or `n` values of `array`.

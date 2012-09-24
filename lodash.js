@@ -926,7 +926,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @param {Boolean} [skipArgsCheck=false] Internally used to skip checks for
+   * @param- {Boolean} [skipArgsCheck=false] Internally used to skip checks for
    *  `arguments` objects.
    * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
    * @example
@@ -965,7 +965,7 @@
    *
    * @private
    * @param {Mixed} value The value to check.
-   * @param {Boolean} [skipArgsCheck=false] Internally used to skip checks for
+   * @param- {Boolean} [skipArgsCheck=false] Internally used to skip checks for
    *  `arguments` objects.
    * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
    */
@@ -1029,10 +1029,10 @@
    * @category Objects
    * @param {Mixed} value The value to clone.
    * @param {Boolean} deep A flag to indicate a deep clone.
-   * @param {Object} [guard] Internally used to allow this method to work with
+   * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `deep`.
-   * @param {Array} [stackA=[]] Internally used to track traversed source objects.
-   * @param {Array} [stackB=[]] Internally used to associate clones with their
+   * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
+   * @param- {Array} [stackB=[]] Internally used to associate clones with their
    *  source counterparts.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
@@ -1381,8 +1381,8 @@
    * @category Objects
    * @param {Mixed} a The value to compare.
    * @param {Mixed} b The other value to compare.
-   * @param {Object} [stackA=[]] Internally used track traversed `a` objects.
-   * @param {Object} [stackB=[]] Internally used track traversed `b` objects.
+   * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
+   * @param- {Object} [stackB=[]] Internally used track traversed `b` objects.
    * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
    * @example
    *
@@ -1741,10 +1741,10 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param {Object} [indicator] Internally used to indicate that the `stack`
+   * @param- {Object} [indicator] Internally used to indicate that the `stack`
    *  argument is an array of traversed objects instead of another source object.
-   * @param {Array} [stackA=[]] Internally used to track traversed source objects.
-   * @param {Array} [stackB=[]] Internally used to associate clones with their
+   * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
+   * @param- {Array} [stackB=[]] Internally used to associate clones with their
    *  source counterparts.
    * @returns {Object} Returns the destination object.
    * @example
@@ -2518,7 +2518,7 @@
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
-   * @param {Object} [guard] Internally used to allow this method to work with
+   * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
    * @returns {Mixed} Returns the first element or an array of the first `n`
    *  elements of `array`.
@@ -2629,7 +2629,7 @@
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
-   * @param {Object} [guard] Internally used to allow this method to work with
+   * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
    * @returns {Array} Returns all but the last element or `n` elements of `array`.
    * @example
@@ -2693,7 +2693,7 @@
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
-   * @param {Object} [guard] Internally used to allow this method to work with
+   * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
    * @returns {Mixed} Returns the last element or an array of the last `n`
    *  elements of `array`.
@@ -2945,7 +2945,7 @@
    * @category Arrays
    * @param {Array} array The array to query.
    * @param {Number} [n] The number of elements to return.
-   * @param {Object} [guard] Internally used to allow this method to work with
+   * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
    * @returns {Array} Returns all but the first value or `n` values of `array`.
    * @example

@@ -67,7 +67,7 @@
     'bind': ['isFunction'],
     'bindAll': ['bind', 'isFunction'],
     'chain': ['mixin'],
-    'clone': ['extend', 'forIn', 'forOwn', 'isArguments', 'isFunction'],
+    'clone': ['extend', 'forOwn', 'isArguments', 'isPlainObject'],
     'compact': [],
     'compose': [],
     'contains': [],
@@ -109,6 +109,7 @@
     'isNull': [],
     'isNumber': [],
     'isObject': [],
+    'isPlainObject': ['forIn', 'isArguments', 'isFunction'],
     'isRegExp': [],
     'isString': [],
     'isUndefined': [],
@@ -119,7 +120,7 @@
     'map': ['identity'],
     'max': [],
     'memoize': [],
-    'merge': ['isArguments', 'isArray', 'forIn'],
+    'merge': ['isArray', 'isPlainObject'],
     'min': [],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
@@ -236,6 +237,7 @@
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
     'forIn',
     'forOwn',
+    'isPlainObject',
     'lateBind',
     'merge',
     'partial'
@@ -250,6 +252,42 @@
   ];
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Creates a debug and minified build, executing the `callback` for each.
+   * The `callback` is invoked with 2 arguments; (filepath, source)
+   *
+   * @param {Array} options The options array.
+   * @param {Function} callback The function called per build.
+   */
+  function buildTemplate(templatePattern, templateSettings) {
+    var directory = path.dirname(templatePattern);
+
+    var pattern = RegExp(
+      path.basename(templatePattern)
+        .replace(/[.+?^=!:${}()|[\]\/\\]/g, '\\$&')
+        .replace(/\*/g, '.*?') + '$'
+    );
+
+    var source = [
+      ';(function() {',
+      '  var templates = _.templates || (_.templates = {});'
+    ];
+
+    fs.readdirSync(directory).forEach(function(filename) {
+      var filepath = path.join(directory, filename);
+      if (pattern.test(filename)) {
+        var text = fs.readFileSync(filepath, 'utf8'),
+            precompiled = getFunctionSource(_.template(text, null, templateSettings)),
+            prop = filename.replace(/\..*$/, '');
+
+        source.push('  templates["' + prop + '"] = ' + precompiled + ';');
+      }
+    });
+
+    source.push('}());');
+    return source.join('\n');
+  }
 
   /**
    * Removes unnecessary comments, whitespace, and pseudo private properties.
@@ -294,9 +332,10 @@
       '    lodash exports=...   Comma separated names of ways to export the `LoDash` function',
       '                         (i.e. “amd”, “commonjs”, “global”, “node”, and “none”)',
       '    lodash iife=...      Code to replace the immediately-invoked function expression that wraps Lo-Dash',
-      '                         (e.g. “!function(window,undefined){%output%}(this)”)',
+      '                         (e.g. `lodash iife="!function(window,undefined){%output%}(this)"`)',
+      '',
       '    lodash template=...  The file path pattern used for matching template files to compile',
-      '                         (e.g. `lodash template=path/to/templates/*.tmpl`)',
+      '                         (e.g. `lodash template=./*.jst`)',
       '',
       '    All arguments, except `legacy` with `csp` or `mobile`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
@@ -304,7 +343,9 @@
       '  Options:',
       '',
       '    -c, --stdout   Write output to standard output',
+      '    -d, --debug    Write only the debug output',
       '    -h, --help     Display help information',
+      '    -m, --minify   Write only the minified output',
       '    -o, --output   Write output to a given path/filename',
       '    -s, --silent   Skip status updates normally logged to the console',
       '    -V, --version  Output current version of Lo-Dash',
@@ -734,7 +775,7 @@
    * Creates a debug and minified build, executing the `callback` for each.
    * The `callback` is invoked with 2 arguments; (filepath, source)
    *
-   * @param {Array} options The options array.
+   * @param {Array} options The build options array.
    * @param {Function} callback The function called per build.
    */
   function build(options, callback) {
@@ -746,7 +787,7 @@
     // used to report invalid command-line arguments
     var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|minus|plus|template)=.*$/.test(value)) {
+          /^(?:category|exclude|exports|iife|include|minus|plus|settings|template)=.*$/.test(value)) {
         return true;
       }
       return [
@@ -757,7 +798,9 @@
         'strict',
         'underscore',
         '-c', '--stdout',
+        '-d', '--debug',
         '-h', '--help',
+        '-m', '--minify',
         '-o', '--output',
         '-s', '--silent',
         '-V', '--version'
@@ -798,7 +841,8 @@
 
     // used to specify a custom IIFE to wrap Lo-Dash
     var iife = options.reduce(function(result, value) {
-      return result || (result = value.match(/iife=(.*)/)) && result[1];
+      var match = value.match(/iife=(.*)/);
+      return match ? match[1] : result;
     }, null);
 
     // flag used to specify a Backbone build
@@ -807,11 +851,17 @@
     // flag used to specify a Content Security Policy build
     var isCSP = options.indexOf('csp') > -1 || options.indexOf('CSP') > -1;
 
+    // flag used to specify only creating the debug build
+    var isDebug = options.indexOf('-d') > -1 || options.indexOf('--debug') > -1;
+
     // flag used to specify a legacy build
     var isLegacy = options.indexOf('legacy') > -1;
 
     // flag used to specify an Underscore build
     var isUnderscore = options.indexOf('underscore') > -1;
+
+    // flag used to specify only creating the minified build
+    var isMinify = !isDebug && options.indexOf('-m') > -1 || options.indexOf('--minify')> -1;
 
     // flag used to specify a mobile build
     var isMobile = !isLegacy && (isCSP || isUnderscore || options.indexOf('mobile') > -1);
@@ -836,8 +886,31 @@
 
     // used to specify the output path for builds
     var outputPath = options.reduce(function(result, value, index) {
-      return result || (/^(?:-o|--output)$/.test(value) ? options[index + 1] : result);
+      if (/-o|--output/.test(value)) {
+        result = options[index + 1];
+        result = path.join(fs.realpathSync(path.dirname(result)), path.basename(result));
+      }
+      return result;
     }, '');
+
+    // used to match external template files to pre-compile
+    var templatePattern = options.reduce(function(result, value) {
+      var match = value.match(/template=(.+)$/);
+      return match
+        ? path.join(fs.realpathSync(path.dirname(match[1])), path.basename(match[1]))
+        : result;
+    }, '');
+
+    // used when pre-compiling template files
+    var templateSettings = options.reduce(function(result, value) {
+      var match = value.match(/settings=(.+)$/);
+      return match
+        ? JSON.parse(match[1])
+        : result;
+    }, _.clone(_.templateSettings));
+
+    // flag used to specify a template build
+    var isTemplate = !!templatePattern;
 
     // the lodash.js source
     var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
@@ -847,65 +920,68 @@
 
     /*------------------------------------------------------------------------*/
 
-    // collections of method names
-    var buildMethods;
+    // names of methods to include in the build
+    var buildMethods = !isTemplate && (function() {
+      var result;
 
-    var minusMethods = options.reduce(function(result, value) {
-      return /exclude|minus/.test(value)
-        ? _.union(result, optionToMethodsArray(source, value))
-        : result;
-    }, []);
-
-    var plusMethods = options.reduce(function(result, value) {
-      return /plus/.test(value)
-        ? _.union(result, optionToMethodsArray(source, value))
-        : result;
-    }, []);
-
-    // add method names explicitly
-    options.some(function(value) {
-      return /include/.test(value) &&
-        (buildMethods = getDependencies(optionToMethodsArray(source, value)));
-    });
-
-    // add method names required by Backbone and Underscore builds
-    if (isBackbone && !buildMethods) {
-      buildMethods = getDependencies(backboneDependencies);
-    }
-    if (isUnderscore && !buildMethods) {
-      buildMethods = getDependencies(underscoreMethods);
-    }
-
-    // add method names by category
-    options.some(function(value) {
-      if (!/category/.test(value)) {
-        return false;
-      }
-      // resolve method names belonging to each category (case-insensitive)
-      var methodNames = optionToArray(value).reduce(function(result, category) {
-        var capitalized = category[0].toUpperCase() + category.toLowerCase().slice(1);
-        return result.concat(getMethodsByCategory(source, capitalized));
+      var minusMethods = options.reduce(function(accumulator, value) {
+        return /exclude|minus/.test(value)
+          ? _.union(accumulator, optionToMethodsArray(source, value))
+          : accumulator;
       }, []);
 
-      return (buildMethods = _.union(buildMethods || [], getDependencies(methodNames)));
-    });
+      var plusMethods = options.reduce(function(accumulator, value) {
+        return /plus/.test(value)
+          ? _.union(accumulator, optionToMethodsArray(source, value))
+          : accumulator;
+      }, []);
 
-    // init `buildMethods` if it hasn't been inited
-    if (!buildMethods) {
-      buildMethods = allMethods.slice();
-    }
+      // add method names explicitly
+      options.some(function(value) {
+        return /include/.test(value) &&
+          (result = getDependencies(optionToMethodsArray(source, value)));
+      });
 
-    if (plusMethods.length) {
-      buildMethods = _.union(buildMethods, getDependencies(plusMethods));
-    }
-    if (minusMethods.length) {
-      buildMethods = _.without.apply(_, [buildMethods].concat(minusMethods, getDependants(buildMethods)));
-    }
+      // add method names required by Backbone and Underscore builds
+      if (isBackbone && !result) {
+        result = getDependencies(backboneDependencies);
+      }
+      if (isUnderscore && !result) {
+        result = getDependencies(underscoreMethods);
+      }
+
+      // add method names by category
+      options.some(function(value) {
+        if (!/category/.test(value)) {
+          return false;
+        }
+        // resolve method names belonging to each category (case-insensitive)
+        var methodNames = optionToArray(value).reduce(function(accumulator, category) {
+          var capitalized = category[0].toUpperCase() + category.toLowerCase().slice(1);
+          return accumulator.concat(getMethodsByCategory(source, capitalized));
+        }, []);
+
+        return (result = _.union(result || [], getDependencies(methodNames)));
+      });
+
+      // init `result` if it hasn't been inited
+      if (!result) {
+        result = allMethods.slice();
+      }
+
+      if (plusMethods.length) {
+        result = _.union(result, getDependencies(plusMethods));
+      }
+      if (minusMethods.length) {
+        result = _.without.apply(_, [result].concat(minusMethods, getDependants(result)));
+      }
+      return result;
+    }());
 
     /*------------------------------------------------------------------------*/
 
     // load customized Lo-Dash module
-    var lodash = (function() {
+    var lodash = !isTemplate && (function() {
       var context = vm.createContext({
         'clearTimeout': clearTimeout,
         'setTimeout': setTimeout
@@ -980,156 +1056,191 @@
 
     /*------------------------------------------------------------------------*/
 
-    // simplify template snippets by removing unnecessary brackets
-    source = source.replace(
-      RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
-    );
+    if (isTemplate) {
+      source = buildTemplate(templatePattern, templateSettings);
+    }
+    else {
+      // simplify template snippets by removing unnecessary brackets
+      source = source.replace(
+        RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
+      );
 
-    source = source.replace(
-      RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
-    );
+      source = source.replace(
+        RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
+      );
 
-    // remove methods from the build
-    allMethods.forEach(function(otherName) {
-      if (!_.contains(buildMethods, otherName)) {
-        source = removeFunction(source, otherName);
+      // remove methods from the build
+      allMethods.forEach(function(otherName) {
+        if (!_.contains(buildMethods, otherName)) {
+          source = removeFunction(source, otherName);
+        }
+      });
+
+      // remove `isArguments` fallback before `isArguments` is transformed by
+      // other parts of the build process
+      if (isRemoved(source, 'isArguments')) {
+        source = removeIsArgumentsFallback(source);
       }
-    });
 
-    // remove `isArguments` fallback before `isArguments` is transformed by
-    // other parts of the build process
-    if (isRemoved(source, 'isArguments')) {
-      source = removeIsArgumentsFallback(source);
+      /*----------------------------------------------------------------------*/
+
+      if (isLegacy) {
+        _.each(['isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
+          source = removeVar(source, varName);
+        });
+
+        _.each(['bind', 'isArray'], function(methodName) {
+          var snippet = matchFunction(source, methodName),
+              modified = snippet;
+
+          // remove native `Function#bind` branch in `_.bind`
+          if (methodName == 'bind') {
+            modified = modified.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
+          }
+          // remove native `Array.isArray` branch in `_.isArray`
+          else {
+            modified = modified.replace(/nativeIsArray * \|\|/, '');
+          }
+          source = source.replace(snippet, modified);
+        });
+
+        // replace `_.keys` with `shimKeys`
+        if (!isRemoved(source, 'keys')) {
+          source = source.replace(
+            matchFunction(source, 'keys').replace(/[\s\S]+?var keys *=/, ''),
+            matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *=/, '')
+          );
+
+          source = removeFunction(source, 'shimKeys');
+        }
+        // replace `_.isArguments` with fallback
+        if (!isRemoved(source, 'isArguments')) {
+          source = source.replace(
+            matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''),
+            getIsArgumentsFallback(source).match(/isArguments *= *function([\s\S]+?) *};/)[1] + '  }\n'
+          );
+
+          source = removeIsArgumentsFallback(source);
+        }
+
+        source = removeVar(source, 'reNative');
+        source = removeFromCreateIterator(source, 'nativeKeys');
+      }
+
+      if (isMobile) {
+        // inline all functions defined with `createIterator`
+        _.functions(lodash).forEach(function(methodName) {
+          // match `methodName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
+          var reFunc = RegExp('(\\bvar ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
+
+          // skip if not defined with `createIterator`
+          if (!reFunc.test(source)) {
+            return;
+          }
+          // extract, format, and inject the compiled function's source code
+          source = source.replace(reFunc, '$1' + getFunctionSource(lodash[methodName]) + ';\n');
+        });
+
+        // replace `callee` in `_.merge` with `merge`
+        source = source.replace(matchFunction(source, 'merge'), function(match) {
+          return match.replace(/\bcallee\b/g, 'merge');
+        });
+
+        if (isUnderscore) {
+          (function() {
+            // replace `isArguments` and its fallback
+            var snippet = matchFunction(source, 'isArguments')
+              .replace(/function isArguments/, 'lodash.isArguments = function');
+
+            source = removeFunction(source, 'isArguments');
+
+            source = source.replace(getIsArgumentsFallback(source), function(match) {
+              return snippet + '\n' + match
+                .replace(/\bisArguments\b/g, 'lodash.$&')
+                .replace(/\bnoArgsClass\b/g, '!lodash.isArguments(arguments)');
+            });
+          }());
+        }
+        else {
+          source = removeIsArgumentsFallback(source);
+        }
+
+        // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
+
+        // remove `iteratesOwnLast` from `isPlainObject`
+        source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
+
+        // remove JScript [[DontEnum]] fix from `_.isEqual`
+        source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
+
+        // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
+        source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
+
+        // remove `noArraySliceOnStrings` from `_.toArray`
+        source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
+
+        // remove `noCharByIndex` from `_.reduceRight`
+        source = source.replace(/}\s*else if *\(noCharByIndex[^}]+/, '');
+
+        source = removeVar(source, 'extendIteratorOptions');
+        source = removeVar(source, 'iteratorTemplate');
+        source = removeVar(source, 'noArraySliceOnStrings');
+        source = removeVar(source, 'noCharByIndex');
+        source = removeNoArgsClass(source);
+        source = removeNoNodeClass(source);
+      }
+      else {
+        // inline `iteratorTemplate` template
+        source = source.replace(/(( +)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
+          var snippet = getFunctionSource(lodash._iteratorTemplate);
+
+          // prepend data object references to property names to avoid having to
+          // use a with-statement
+          iteratorOptions.forEach(function(property) {
+            snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
+          });
+
+          // remove unnecessary code
+          snippet = snippet
+            .replace(/var __t.+/, "var __p = '';")
+            .replace(/function print[^}]+}/, '')
+            .replace(/'(?:\\n|\s)+'/g, "''")
+            .replace(/__p *\+= *' *';/g, '')
+            .replace(/(__p *\+= *)' *' *\+/g, '$1')
+            .replace(/(\{) *;|; *(\})/g, '$1$2')
+            .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '$1');
+
+          // remove the with-statement
+          snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
+
+          // minor cleanup
+          snippet = snippet
+            .replace(/obj *\|\| *\(obj *= *\{}\);/, '')
+            .replace(/var __p = '';\s*__p \+=/, 'var __p =');
+
+          // remove comments, including sourceURLs
+          snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
+
+          return '$1' + snippet + ';\n';
+        }()));
+      }
     }
 
     /*------------------------------------------------------------------------*/
 
-    if (isLegacy) {
-      _.each(['isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
-        source = removeVar(source, varName);
-      });
+    // customize Lo-Dash's IIFE
+    (function() {
+      if (typeof iife == 'string') {
+        var token = '%output%',
+            index = iife.indexOf(token);
 
-      _.each(['bind', 'isArray'], function(methodName) {
-        var snippet = matchFunction(source, methodName),
-            modified = snippet;
-
-        // remove native `Function#bind` branch in `_.bind`
-        if (methodName == 'bind') {
-          modified = modified.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
-        }
-        // remove native `Array.isArray` branch in `_.isArray`
-        else {
-          modified = modified.replace(/nativeIsArray * \|\|/, '');
-        }
-        source = source.replace(snippet, modified);
-      });
-
-      // replace `_.keys` with `shimKeys`
-      if (!isRemoved(source, 'keys')) {
-        source = source.replace(
-          matchFunction(source, 'keys').replace(/[\s\S]+?var keys *=/, ''),
-          matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *=/, '')
-        );
-
-        source = removeFunction(source, 'shimKeys');
+        source = source.match(/\/\*![\s\S]+?\*\/\n/) +
+          iife.slice(0, index) +
+          source.replace(/^[^(]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
+          iife.slice(index + token.length);
       }
-      // replace `_.isArguments` with fallback
-      if (!isRemoved(source, 'isArguments')) {
-        source = source.replace(
-          matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''),
-          getIsArgumentsFallback(source).match(/isArguments *= *function([\s\S]+?) *};/)[1] + '  }\n'
-        );
-
-        source = removeIsArgumentsFallback(source);
-      }
-
-      source = removeVar(source, 'reNative');
-      source = removeFromCreateIterator(source, 'nativeKeys');
-    }
-
-    if (isMobile) {
-      // inline all functions defined with `createIterator`
-      _.functions(lodash).forEach(function(methodName) {
-        // match `methodName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
-        var reFunc = RegExp('(\\bvar ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
-
-        // skip if not defined with `createIterator`
-        if (!reFunc.test(source)) {
-          return;
-        }
-        // extract, format, and inject the compiled function's source code
-        source = source.replace(reFunc, '$1' + getFunctionSource(lodash[methodName]) + ';\n');
-      });
-
-      // replace `callee` in `_.merge` with `merge`
-      source = source.replace(matchFunction(source, 'merge'), function(match) {
-        return match.replace(/\bcallee\b/g, 'merge');
-      });
-
-      if (!isUnderscore) {
-        source = removeIsArgumentsFallback(source);
-      }
-
-      // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
-
-      // remove `iteratesOwnLast` from `isPlainObject`
-      source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
-
-      // remove JScript [[DontEnum]] fix from `_.isEqual`
-      source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
-
-      // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
-      source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
-
-      // remove `noArraySliceOnStrings` from `_.toArray`
-      source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
-
-      // remove `noCharByIndex` from `_.reduceRight`
-      source = source.replace(/}\s*else if *\(noCharByIndex[^}]+/, '');
-
-      source = removeVar(source, 'extendIteratorOptions');
-      source = removeVar(source, 'iteratorTemplate');
-      source = removeVar(source, 'noArraySliceOnStrings');
-      source = removeVar(source, 'noCharByIndex');
-      source = removeNoArgsClass(source);
-      source = removeNoNodeClass(source);
-    }
-    else {
-      // inline `iteratorTemplate` template
-      source = source.replace(/(( +)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
-        var snippet = getFunctionSource(lodash._iteratorTemplate);
-
-        // prepend data object references to property names to avoid having to
-        // use a with-statement
-        iteratorOptions.forEach(function(property) {
-          snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
-        });
-
-        // remove unnecessary code
-        snippet = snippet
-          .replace(/var __t.+/, "var __p = '';")
-          .replace(/function print[^}]+}/, '')
-          .replace(/'(?:\\n|\s)+'/g, "''")
-          .replace(/__p *\+= *' *';/g, '')
-          .replace(/(__p *\+= *)' *' *\+/g, '$1')
-          .replace(/(\{) *;|; *(\})/g, '$1$2')
-          .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '$1');
-
-        // remove the with-statement
-        snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
-
-        // minor cleanup
-        snippet = snippet
-          .replace(/obj *\|\| *\(obj *= *\{}\);/, '')
-          .replace(/var __p = '';\s*__p \+=/, 'var __p =');
-
-        // remove comments, including sourceURLs
-        snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
-
-        return '$1' + snippet + ';\n';
-      }()));
-    }
+    }());
 
     /*------------------------------------------------------------------------*/
 
@@ -1156,106 +1267,87 @@
 
     /*------------------------------------------------------------------------*/
 
-    // customize Lo-Dash's IIFE
-    (function() {
-      if (typeof iife == 'string') {
-        var token = '%output%',
-            index = iife.indexOf(token);
-
-        source = source.match(/\/\*![\s\S]+?\*\/\n/) +
-          iife.slice(0, index) +
-          source.replace(/^[^(]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
-          iife.slice(index + token.length);
+    if (isTemplate) {
+      debugSource = source;
+    }
+    else {
+      // modify/remove references to removed methods/variables
+      if (isRemoved(source, 'isArguments')) {
+        source = replaceVar(source, 'noArgsClass', 'false');
       }
-    }());
+      if (isRemoved(source, 'isFunction')) {
+        source = removeIsFunctionFallback(source);
+      }
+      if (isRemoved(source, 'mixin')) {
+        // remove `LoDash` constructor
+        source = removeFunction(source, 'LoDash');
+        // remove `LoDash` calls
+        source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
+        // remove `LoDash.prototype` additions
+        source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
+        // remove `hasObjectSpliceBug` assignment
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasObjectSpliceBug;|.+?hasObjectSpliceBug *=.+/g, '');
+      }
 
-    /*------------------------------------------------------------------------*/
+      // remove pseudo private properties
+      source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
 
-    // modify/remove references to removed methods/variables
-    if (isRemoved(source, 'isArguments')) {
-      source = replaceVar(source, 'noArgsClass', 'false');
-    }
-    if (isRemoved(source, 'isFunction')) {
-      source = removeIsFunctionFallback(source);
-    }
-    if (isRemoved(source, 'mixin')) {
-      // remove `LoDash` constructor
-      source = removeFunction(source, 'LoDash');
-      // remove `LoDash` calls
-      source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
-      // remove `LoDash.prototype` additions
-      source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
-      // remove `hasObjectSpliceBug` assignment
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasObjectSpliceBug;|.+?hasObjectSpliceBug *=.+/g, '');
-    }
+      // assign debug source before further modifications that rely on the minifier
+      // to remove unused variables and other dead code
+      debugSource = source;
 
-    // remove pseudo private properties
-    source = source.replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n');
-
-    // assign debug source before further modifications that rely on the minifier
-    // to remove unused variables and other dead code
-    debugSource = source;
-
-    // remove associated functions, variables, and code snippets that the minifier may miss
-    if (isRemoved(source, 'clone')) {
-      source = removeVar(source, 'cloneableClasses');
+      // remove associated functions, variables, and code snippets that the minifier may miss
+      if (isRemoved(source, 'clone')) {
+        source = removeVar(source, 'cloneableClasses');
+      }
+      if (isRemoved(source, 'isArray')) {
+        source = removeVar(source, 'nativeIsArray');
+      }
+      if (isRemoved(source, 'keys')) {
+        source = removeFunction(source, 'shimKeys');
+      }
+      if (isRemoved(source, 'template')) {
+        // remove `templateSettings` assignment
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
+      }
+      if (isRemoved(source, 'toArray')) {
+        source = removeVar(source, 'noArraySliceOnStrings');
+      }
+      if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual')) {
+        source = removeNoArgsClass(source);
+      }
+      if (isRemoved(source, 'isEqual', 'isPlainObject')) {
+        source = removeNoNodeClass(source);
+      }
+      if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
+        source = removeFunction(source, 'createIterator');
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var noArgsEnum;|.+?noArgsEnum *=.+/g, '');
+      }
+      if (isRemoved(source, 'createIterator', 'bind')) {
+        source = removeVar(source, 'isBindFast');
+        source = removeVar(source, 'isStrictFast');
+        source = removeVar(source, 'nativeBind');
+      }
+      if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
+        source = removeVar(source, 'reNative');
+      }
+      if (isRemoved(source, 'createIterator', 'isEmpty', 'isEqual')) {
+        source = removeVar(source, 'arrayLikeClasses');
+      }
+      if (isRemoved(source, 'createIterator', 'isEqual')) {
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
+      }
+      if (isRemoved(source, 'createIterator', 'isPlainObject')) {
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
+      }
+      if (isRemoved(source, 'createIterator', 'keys')) {
+        source = removeVar(source, 'nativeKeys');
+      }
+      if (!source.match(/var (?:hasDontEnumBug|hasObjectSpliceBug|iteratesOwnLast|noArgsEnum)\b/g)) {
+        // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, and `noArgsEnum` assignment
+        source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
+      }
     }
-    if (isRemoved(source, 'isArray')) {
-      source = removeVar(source, 'nativeIsArray');
-    }
-    if (isRemoved(source, 'keys')) {
-      source = removeFunction(source, 'shimKeys');
-    }
-    if (isRemoved(source, 'template')) {
-      // remove `templateSettings` assignment
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
-    }
-    if (isRemoved(source, 'toArray')) {
-      source = removeVar(source, 'noArraySliceOnStrings');
-    }
-    if (isUnderscore
-          ? isRemoved(source, 'merge')
-          : isRemoved(source, 'clone', 'merge')
-        ) {
-      source = removeFunction(source, 'isPlainObject');
-    }
-    if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual')) {
-      source = removeNoArgsClass(source);
-    }
-    if (isRemoved(source, 'isEqual', 'isPlainObject')) {
-      source = removeNoNodeClass(source);
-    }
-    if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
-      source = removeFunction(source, 'createIterator');
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var noArgsEnum;|.+?noArgsEnum *=.+/g, '');
-    }
-    if (isRemoved(source, 'createIterator', 'bind')) {
-      source = removeVar(source, 'isBindFast');
-      source = removeVar(source, 'isStrictFast');
-      source = removeVar(source, 'nativeBind');
-    }
-    if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
-      source = removeVar(source, 'reNative');
-    }
-    if (isRemoved(source, 'createIterator', 'isEmpty', 'isEqual')) {
-      source = removeVar(source, 'arrayLikeClasses');
-    }
-    if (isRemoved(source, 'createIterator', 'isEqual')) {
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
-    }
-    if (isRemoved(source, 'createIterator', 'isPlainObject')) {
-      source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
-    }
-    if (isRemoved(source, 'createIterator', 'keys')) {
-      source = removeVar(source, 'nativeKeys');
-    }
-    if (!source.match(/var (?:hasDontEnumBug|hasObjectSpliceBug|iteratesOwnLast|noArgsEnum)\b/g)) {
-      // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, and `noArgsEnum` assignment
-      source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
-    }
-
-    debugSource = cleanupSource(debugSource);
-    source = cleanupSource(source);
 
     /*------------------------------------------------------------------------*/
 
@@ -1265,35 +1357,43 @@
       !_.isEqual(exportsOptions, exportsAll);
 
     // used to name temporary files created in `dist/`
-    var workingName = 'lodash' + (isCustom ? '.custom' : '') + '.min';
+    var workingName = 'lodash' + (isTemplate ? '.template' : isCustom ? '.custom' : '');
 
     // restore `dependencyMap`
     dependencyMap = dependencyBackup;
 
     // output debug build
-    if (isCustom && !outputPath && !isStdOut) {
-      callback(debugSource, path.join(cwd, 'lodash.custom.js'));
+    if (!isMinify && (isCustom || isTemplate)) {
+      if (isDebug && isStdOut) {
+        stdout.write(debugSource);
+        callback(debugSource);
+      } else if (!isStdOut) {
+        callback(debugSource, (isDebug && outputPath) || path.join(cwd, workingName + '.js'));
+      }
     }
     // begin the minification process
-    minify(source, {
-      'silent': isSilent,
-      'workingName': workingName,
-      'onComplete': function(source) {
-        // correct overly aggressive Closure Compiler minification
-        source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
+    if (!isDebug) {
+      workingName += '.min';
+      minify(source, {
+        'silent': isSilent,
+        'workingName': workingName,
+        'onComplete': function(source) {
+          // correct overly aggressive Closure Compiler minification
+          source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
 
-        // inject "use strict" directive
-        if (isStrict) {
-          source = source.replace(/^(\/\*![\s\S]+?\*\/\n;\(function[^)]+\){)([^'"])/, '$1"use strict";$2');
+          // inject "use strict" directive
+          if (isStrict) {
+            source = source.replace(/^(\/\*![\s\S]+?\*\/\n;\(function[^)]+\){)([^'"])/, '$1"use strict";$2');
+          }
+          if (isStdOut) {
+            stdout.write(source);
+            callback(source);
+          } else {
+            callback(source, outputPath || path.join(cwd, workingName + '.js'));
+          }
         }
-        if (isStdOut) {
-          stdout.write(source);
-          callback(source);
-        } else {
-          callback(source, outputPath || path.join(cwd, workingName + '.js'));
-        }
-      }
-    });
+      });
+    }
   }
 
   /*--------------------------------------------------------------------------*/

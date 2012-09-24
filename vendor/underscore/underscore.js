@@ -105,23 +105,16 @@
     return results;
   };
 
-  // Internal data flag for performing `reduceRight`.
-  var right = null;
-
   // **Reduce** builds up a single result from a list of values, aka `inject`,
   // or `foldl`. Delegates to **ECMAScript 5**'s native `reduce` if available.
   _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
     var initial = arguments.length > 2;
     if (obj == null) obj = [];
-    if (!right && nativeReduce && obj.reduce === nativeReduce) {
+    if (nativeReduce && obj.reduce === nativeReduce) {
       if (context) iterator = _.bind(iterator, context);
       return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
     }
     each(obj, function(value, index, list) {
-      if (right) {
-        index = right.keys[index];
-        list = right.list;
-      }
       if (!initial) {
         memo = value;
         initial = true;
@@ -142,12 +135,22 @@
       if (context) iterator = _.bind(iterator, context);
       return arguments.length > 2 ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
     }
-    var values = _.toArray(obj).reverse();
-    if (context && !initial) iterator = _.bind(iterator, context);
-    right = {keys: _.keys(obj).reverse(), list: obj};
-    var result = initial ? _.reduce(values, iterator, memo, context) : _.reduce(values, iterator);
-    right = null;
-    return result;
+    var length = obj.length;
+    if (length !== +length) {
+      var keys = _.keys(obj);
+      length = keys.length;
+    }
+    each(obj, function(value, index, list) {
+      index = keys ? keys[--length] : --length;
+      if (!initial) {
+        memo = obj[index];
+        initial = true;
+      } else {
+        memo = iterator.call(context, memo, obj[index], index, list);
+      }
+    });
+    if (!initial) throw new TypeError('Reduce of empty array with no initial value');
+    return memo;
   };
 
   // Return the first value which passes a truth test. Aliased as `detect`.

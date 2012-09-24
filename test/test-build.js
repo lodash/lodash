@@ -165,6 +165,7 @@
     'isNull',
     'isNumber',
     'isObject',
+    'isPlainObject',
     'isRegExp',
     'isString',
     'isUndefined',
@@ -238,19 +239,12 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
-    'countBy',
     'forIn',
     'forOwn',
-    'invert',
+    'isPlainObject',
     'lateBind',
     'merge',
-    'object',
-    'omit',
-    'pairs',
-    'partial',
-    'random',
-    'unescape',
-    'where'
+    'partial'
   ]));
 
   /*--------------------------------------------------------------------------*/
@@ -654,7 +648,7 @@
 
       asyncTest('`lodash ' + command +'`', function() {
         build(['-s'].concat(command.split(' ')), function(source, filepath) {
-          equal(filepath, 'a.js', command);
+          equal(path.basename(filepath), 'a.js', command);
           start();
         });
       });
@@ -670,7 +664,7 @@
       var start = _.once(QUnit.start);
 
       asyncTest('`lodash ' + command +'`', function() {
-        build([command, 'exports=', 'include='], function(source, filepath) {
+        build([command, 'exports=', 'include='], function(source) {
           equal(source, '');
           equal(arguments.length, 1);
           start();

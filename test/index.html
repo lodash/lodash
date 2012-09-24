@@ -62,7 +62,7 @@
 				}
 			},
 			['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
-				if (lodash.noConflict) {
+				if (lodash && lodash.noConflict) {
 					lodashModule = lodash.noConflict();
 					lodashModule.moduleName = 'lodash';
 				}
@@ -70,7 +70,7 @@
 					shimmedModule = shimmed.noConflict();
 					shimmedModule.moduleName = 'shimmed';
 				}
-				if (underscore.noConflict) {
+				if (underscore && underscore.noConflict) {
 					underscoreModule = underscore.noConflict();
 					underscoreModule.moduleName = 'underscore';
 				}

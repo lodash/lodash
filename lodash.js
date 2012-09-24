@@ -906,7 +906,7 @@
    * @returns {Boolean} Returns `true` if the `value` is a function, else `false`.
    * @example
    *
-   * _.isFunction(''.concat);
+   * _.isFunction(_);
    * // => true
    */
   function isFunction(value) {
@@ -918,6 +918,44 @@
       return toString.call(value) == funcClass;
     };
   }
+
+  /**
+   * Checks if a given `value` is an object created by the `Object` constructor.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @param {Boolean} [skipArgsCheck=false] Internally used to skip checks for
+   *  `arguments` objects.
+   * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
+   * @example
+   *
+   * function Stooge(name, age) {
+   *   this.name = name;
+   *   this.age = age;
+   * }
+   *
+   * _.isPlainObject(new Stooge('moe', 40));
+   * // false
+   *
+   * _.isPlainObject([1, 2, 3]);
+   * // false
+   *
+   * _.isPlainObject({ 'name': 'moe', 'age': 40 });
+   * // => true
+   */
+  var isPlainObject = objectTypes.__proto__ != ObjectProto ? isPlainFallback : function(value, skipArgsCheck) {
+    if (!value) {
+      return false;
+    }
+    var valueOf = value.valueOf,
+        objProto = typeof valueOf == 'function' && (objProto = valueOf.__proto__) && objProto.__proto__;
+
+    return objProto
+      ? value == objProto || (value.__proto__ == objProto && (skipArgsCheck || !isArguments(value)))
+      : isPlainFallback(value);
+  };
 
   /**
    * A fallback implementation of `isPlainObject` that checks if a given `value`
@@ -963,27 +1001,6 @@
     }
     return result;
   }
-
-  /**
-   * Checks if a given `value` is an object created by the `Object` constructor.
-   *
-   * @private
-   * @param {Mixed} value The value to check.
-   * @param {Boolean} [skipArgsCheck=false] Internally used to skip checks for
-   *  `arguments` objects.
-   * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
-   */
-  var isPlainObject = objectTypes.__proto__ != ObjectProto ? isPlainFallback : function(value, skipArgsCheck) {
-    if (!value) {
-      return false;
-    }
-    var valueOf = value.valueOf,
-        objProto = typeof valueOf == 'function' && (objProto = valueOf.__proto__) && objProto.__proto__;
-
-    return objProto
-      ? value == objProto || (value.__proto__ == objProto && (skipArgsCheck || !isArguments(value)))
-      : isPlainFallback(value);
-  };
 
   /**
    * A shim implementation of `Object.keys` that produces an array of the given
@@ -1551,6 +1568,9 @@
    * @example
    *
    * _.isObject({});
+   * // => true
+   *
+   * _.isObject([1, 2, 3]);
    * // => true
    *
    * _.isObject(1);
@@ -4160,6 +4180,7 @@
   lodash.isNull = isNull;
   lodash.isNumber = isNumber;
   lodash.isObject = isObject;
+  lodash.isPlainObject = isPlainObject;
   lodash.isRegExp = isRegExp;
   lodash.isString = isString;
   lodash.isUndefined = isUndefined;

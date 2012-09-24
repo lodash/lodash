@@ -2685,8 +2685,8 @@
   }
 
   /**
-   * Gets the last element of the `array`. Pass `n` to return the lasy `n`
-   * elementsvof the `array`.
+   * Gets the last element of the `array`. Pass `n` to return the last `n`
+   * elements of the `array`.
    *
    * @static
    * @memberOf _

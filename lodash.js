@@ -791,7 +791,7 @@
     var factory = Function(
         'arrayLikeClasses, ArrayProto, bind, bindIterator, compareAscending, concat, ' +
         'forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
-        'isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
+        'isPlainObject, noop, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
         'slice, stringClass, toString, undefined',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
@@ -800,7 +800,7 @@
     return factory(
       arrayLikeClasses, ArrayProto, bind, bindIterator, compareAscending, concat,
       forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction,
-      isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
+      isPlainObject, noop, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
       slice, stringClass, toString
     );
   }
@@ -1767,7 +1767,7 @@
     'top':
       'var argsLength, isArr, stackA, stackB,\n' +
       '    args = arguments, argsIndex = 0;\n' +
-      'if (indicator == isPlainObject) {\n' +
+      'if (indicator == noop) {\n' +
       '  argsLength = 2;\n' +
       '  stackA = args[3];\n' +
       '  stackB = args[4]\n' +
@@ -1792,7 +1792,7 @@
       '      ? (isArray(value) ? value : [])\n' +
       '      : (isPlainObject(value) ? value : {})\n' +
       '    );\n' +
-      '    result[index] = callee(value, source, isPlainObject, stackA, stackB)\n' +
+      '    result[index] = callee(value, source, noop, stackA, stackB)\n' +
       '  }\n' +
       '} else if (source != null) {\n' +
       '  result[index] = source\n' +

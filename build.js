@@ -254,38 +254,67 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a debug and minified build, executing the `callback` for each.
-   * The `callback` is invoked with 2 arguments; (filepath, source)
+   * Compiles template files matched by the given file path `pattern` into a
+   * single source, extending `_.templates` with precompiled templates named after
+   * each template file's basename.
    *
-   * @param {Array} options The options array.
-   * @param {Function} callback The function called per build.
+   * @private
+   * @param {String} pattern The file path pattern.
+   * @param {Object} options The options object.
+   * @returns {String} Returns the compiled source.
    */
-  function buildTemplate(templatePattern, templateSettings) {
-    var directory = path.dirname(templatePattern);
+  function buildTemplate(pattern, options) {
+    pattern || (pattern = './*.jst');
+    options || (options = _.templateSettings);
 
-    var pattern = RegExp(
-      path.basename(templatePattern)
-        .replace(/[.+?^=!:${}()|[\]\/\\]/g, '\\$&')
-        .replace(/\*/g, '.*?') + '$'
-    );
+    var directory = path.dirname(pattern);
+
+    var moduleName = 'lodash';
 
     var source = [
       ';(function() {',
-      '  var templates = _.templates || (_.templates = {});'
+      "  var freeExports = typeof exports == 'object' && exports;",
+      '',
+      '  var templates = {};',
+      ''
     ];
+
+    // convert to a regexp
+    pattern = RegExp(
+      path.basename(pattern)
+        .replace(/[.+?^=!:${}()|[\]\/\\]/g, '\\$&')
+        .replace(/\*/g, '.*?') + '$'
+    );
 
     fs.readdirSync(directory).forEach(function(filename) {
       var filepath = path.join(directory, filename);
       if (pattern.test(filename)) {
         var text = fs.readFileSync(filepath, 'utf8'),
-            precompiled = getFunctionSource(_.template(text, null, templateSettings)),
+            precompiled = getFunctionSource(_.template(text, null, options)),
             prop = filename.replace(/\..*$/, '');
 
-        source.push('  templates["' + prop + '"] = ' + precompiled + ';');
+        source.push("  templates['" + prop + "'] = " + precompiled + ';');
       }
     });
 
-    source.push('}());');
+    source.push(
+      '',
+      "  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {",
+      "    define(['" + moduleName + "'], function(lodash) {",
+      '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
+      '    });',
+      "  } else if (freeExports) {",
+      "    if (typeof module == 'object' && module && module.exports == freeExports) {",
+      '      (module.exports = templates).templates = templates;',
+      '    } else {',
+      '      freeExports.templates = templates;',
+      '    }',
+      '  } else {',
+      '    _.templates = _.extend(_.templates || {}, templates);',
+      '  }',
+      '}());'
+    );
+
     return source.join('\n');
   }
 
@@ -334,8 +363,10 @@
       '    lodash iife=...      Code to replace the immediately-invoked function expression that wraps Lo-Dash',
       '                         (e.g. `lodash iife="!function(window,undefined){%output%}(this)"`)',
       '',
-      '    lodash template=...  The file path pattern used for matching template files to compile',
+      '    lodash template=...  File path pattern used to match template files to precompile',
       '                         (e.g. `lodash template=./*.jst`)',
+      '    lodash settings=...  Template settings used when precompiling templates',
+      '                         (e.g. `lodash settings="{interpolate:/\\{\\{(.+?)\\}\\}/g}"`)',
       '',
       '    All arguments, except `legacy` with `csp` or `mobile`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
@@ -893,7 +924,7 @@
       return result;
     }, '');
 
-    // used to match external template files to pre-compile
+    // used to match external template files to precompile
     var templatePattern = options.reduce(function(result, value) {
       var match = value.match(/template=(.+)$/);
       return match
@@ -901,11 +932,11 @@
         : result;
     }, '');
 
-    // used when pre-compiling template files
+    // used when precompiling template files
     var templateSettings = options.reduce(function(result, value) {
       var match = value.match(/settings=(.+)$/);
       return match
-        ? JSON.parse(match[1])
+        ? Function('return {' + match[1].replace(/^{|}$/g, '') + '}')()
         : result;
     }, _.clone(_.templateSettings));
 
@@ -1249,17 +1280,17 @@
       source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +define[\s\S]+?else /, '$1');
     }
     if (exportsOptions.indexOf('node') == -1) {
-      source = source.replace(/(?: *\/\/.*\n)* *if *\(typeof +module[\s\S]+?else *{\n([\s\S]+?) *}\n/, '$1');
+      source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +module[\s\S]+?else *{[\s\S]+?\n\1}\n/, '$1');
     }
     if (exportsOptions.indexOf('commonjs') == -1) {
-      source = source.replace(/(?: *\/\/.*\n)*(?:( +)else *{)?\s*freeExports\._ *=.+(\n\1})?\n/, '');
+      source = source.replace(/(?: *\/\/.*\n)*(?:( +)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n/, '');
     }
     if (exportsOptions.indexOf('global') == -1) {
-      source = source.replace(/(?:( +)else *{)?(?:\s*\/\/.*)*\s*window\._ *= *lodash.+(\n\1})?\n/g, '');
+      source = source.replace(/(?:( +)else *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n/g, '');
     }
 
     // remove `if (freeExports) {...}` if it's empty
-    source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{\n([\s\S]+?) *})?/, '$1');
+    source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n/, '$1');
 
     if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
       source = removeVar(source, 'freeExports');

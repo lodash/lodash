@@ -58,6 +58,7 @@
     'isPlainObject',
     'methodName',
     'noaccum',
+    'noop',
     'objectClass',
     'objectTypes',
     'pass',

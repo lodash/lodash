@@ -272,10 +272,13 @@
     var moduleName = 'lodash';
 
     var source = [
-      ';(function() {',
-      "  var freeExports = typeof exports == 'object' && exports;",
+      ';(function(window) {',
+      "  var freeExports = typeof exports == 'object' && exports &&",
+      "    (typeof global == 'object' && global && global == global.global && (window = global), exports);",
       '',
       '  var templates = {};',
+      '',
+      '  var _ = window._;',
       ''
     ];
 
@@ -301,7 +304,8 @@
       '',
       "  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {",
       "    define(['" + moduleName + "'], function(lodash) {",
-      '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
+      '      _ = lodash;',
+      '      _.templates = _.extend(_.templates || {}, templates);',
       '    });',
       "  } else if (freeExports) {",
       "    if (typeof module == 'object' && module && module.exports == freeExports) {",
@@ -309,10 +313,10 @@
       '    } else {',
       '      freeExports.templates = templates;',
       '    }',
-      '  } else {',
+      '  } else if (_) {',
       '    _.templates = _.extend(_.templates || {}, templates);',
       '  }',
-      '}());'
+      '}(this));'
     );
 
     return source.join('\n');
@@ -1280,13 +1284,13 @@
       source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +define[\s\S]+?else /, '$1');
     }
     if (exportsOptions.indexOf('node') == -1) {
-      source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +module[\s\S]+?else *{[\s\S]+?\n\1}\n/, '$1');
+      source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +module[\s\S]+?else *{([\s\S]+?\n)\1}\n/, '$1$2');
     }
     if (exportsOptions.indexOf('commonjs') == -1) {
       source = source.replace(/(?: *\/\/.*\n)*(?:( +)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n/, '');
     }
     if (exportsOptions.indexOf('global') == -1) {
-      source = source.replace(/(?:( +)else *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n/g, '');
+      source = source.replace(/(?:( +)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n/g, '$1$2\n');
     }
 
     // remove `if (freeExports) {...}` if it's empty

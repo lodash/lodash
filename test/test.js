@@ -106,7 +106,7 @@
 
   (function() {
     // ensure this test is executed before any other template tests to avoid false positives
-    test('should initialize `reEvaluateDelimiter` correctly (test with production build)', function() {
+    test('should initialize `reEvaluateDelimiter` (test with production build)', function() {
       var data = { 'a': [1, 2] },
           settings = _.templateSettings;
 
@@ -168,7 +168,7 @@
   QUnit.module('lodash.bind');
 
   (function() {
-    test('should correctly append array arguments to partially applied arguments (test in IE < 9)', function() {
+    test('should append array arguments to partially applied arguments (test in IE < 9)', function() {
       var args,
           bound = _.bind(function() { args = slice.call(arguments); }, {}, 'a');
 
@@ -212,7 +212,7 @@
     objects['an array'].length = 5;
 
     _.forOwn(objects, function(object, key) {
-      test('should deep clone ' + key + ' correctly', function() {
+      test('should deep clone ' + key, function() {
         var clone = _.clone(object, true);
         ok(_.isEqual(object, clone));
 
@@ -319,7 +319,7 @@
   QUnit.module('lodash.difference');
 
   (function() {
-    test('should work correctly when using `cachedContains`', function() {
+    test('should work when using `cachedContains`', function() {
       var array1 = _.range(27),
           array2 = array1.slice(),
           a = {},
@@ -777,6 +777,22 @@
   (function() {
     test('returns `true` for `new Number(NaN)`', function() {
       equal(_.isNaN(new Number(NaN)), true)
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isPlainObject');
+
+  (function() {
+    test('should detect plain objects', function() {
+      function Foo(a) {
+        this.a = 1;
+      }
+
+      equal(_.isPlainObject(new Foo(1)), false);
+      equal(_.isPlainObject([1, 2, 3]), false);
+      equal(_.isPlainObject({ 'a': 1 }), true);
     });
   }());
 
@@ -1470,7 +1486,7 @@
       ok(pass);
     });
 
-    test('should tokenize delimiters correctly', function() {
+    test('should tokenize delimiters', function() {
       var compiled = _.template('<span class="icon-<%= type %>2"></span>');
       equal(compiled({ 'type': 1 }), '<span class="icon-12"></span>');
     });
@@ -1480,7 +1496,7 @@
       equal(compiled({ 'value': 'a' }), 'a');
     });
 
-    test('should parse delimiters with newlines correctly', function() {
+    test('should parse delimiters with newlines', function() {
       var expected = '<<\nprint("<p>" + (value ? "yes" : "no") + "</p>")\n>>',
           compiled = _.template(expected, null, { 'evaluate': /<<(.+?)>>/g });
 

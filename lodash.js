@@ -926,8 +926,6 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @param- {Boolean} [skipArgsCheck=false] Internally used to skip checks for
-   *  `arguments` objects.
    * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
    * @example
    *
@@ -945,7 +943,7 @@
    * _.isPlainObject({ 'name': 'moe', 'age': 40 });
    * // => true
    */
-  var isPlainObject = objectTypes.__proto__ != ObjectProto ? isPlainFallback : function(value, skipArgsCheck) {
+  var isPlainObject = objectTypes.__proto__ != ObjectProto ? isPlainFallback : function(value) {
     if (!value) {
       return false;
     }
@@ -953,7 +951,7 @@
         objProto = typeof valueOf == 'function' && (objProto = valueOf.__proto__) && objProto.__proto__;
 
     return objProto
-      ? value == objProto || (value.__proto__ == objProto && (skipArgsCheck || !isArguments(value)))
+      ? value == objProto || (value.__proto__ == objProto && !isArguments(value))
       : isPlainFallback(value);
   };
 
@@ -965,14 +963,12 @@
    *
    * @private
    * @param {Mixed} value The value to check.
-   * @param- {Boolean} [skipArgsCheck=false] Internally used to skip checks for
-   *  `arguments` objects.
    * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
    */
-  function isPlainFallback(value, skipArgsCheck) {
+  function isPlainFallback(value) {
     // avoid non-objects and false positives for `arguments` objects
     var result = false;
-    if (!(value && typeof value == 'object') || (!skipArgsCheck && isArguments(value))) {
+    if (!(value && typeof value == 'object') || isArguments(value)) {
       return result;
     }
     // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
@@ -1070,7 +1066,7 @@
         return value;
       }
       var isArr = className == arrayClass;
-      isObj = isArr || (className == objectClass ? isPlainObject(value, true) : isObj);
+      isObj = isArr || (className == objectClass ? isPlainObject(value) : isObj);
     }
     // shallow clone
     if (!isObj || !deep) {

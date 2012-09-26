@@ -1280,25 +1280,35 @@
     /*------------------------------------------------------------------------*/
 
     // customize Lo-Dash's export bootstrap
-    if (exportsOptions.indexOf('amd') == -1) {
-      source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +define[\s\S]+?else /, '$1');
-    }
-    if (exportsOptions.indexOf('node') == -1) {
-      source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +module[\s\S]+?else *{([\s\S]+?\n)\1}\n/, '$1$2');
-    }
-    if (exportsOptions.indexOf('commonjs') == -1) {
-      source = source.replace(/(?: *\/\/.*\n)*(?:( +)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n/, '');
-    }
-    if (exportsOptions.indexOf('global') == -1) {
-      source = source.replace(/(?:( +)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n/g, '$1$2\n');
-    }
+    (function() {
+      var isAMD = exportsOptions.indexOf('amd') > -1,
+          isCommonJS = exportsOptions.indexOf('commonjs') > -1,
+          isGlobal = exportsOptions.indexOf('global') > -1,
+          isNode = exportsOptions.indexOf('node') > -1;
 
-    // remove `if (freeExports) {...}` if it's empty
-    source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n/, '$1');
+      if (!isAMD) {
+        source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +define[\s\S]+?else /, '$1');
+      }
+      if (!isNode) {
+        source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +module[\s\S]+?else *{([\s\S]+?\n)\1}\n/, '$1$2');
+      }
+      if (!isCommonJS) {
+        source = source.replace(/(?: *\/\/.*\n)*(?:( +)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n/, '');
+      }
+      if (!isGlobal) {
+        source = source.replace(/(?:( +)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n/g, '$1$2\n');
+      }
+      // remove `if (freeExports) {...}` if it's empty
+      if (isAMD && isGlobal) {
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}\n/, '');
+      } else {
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n/, '$1');
+      }
 
-    if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
-      source = removeVar(source, 'freeExports');
-    }
+      if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
+        source = removeVar(source, 'freeExports');
+      }
+    }());
 
     /*------------------------------------------------------------------------*/
 

@@ -460,6 +460,40 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('independent builds');
+
+  (function() {
+    asyncTest('debug only', function() {
+      build(['-d', '-s'], function(source, filepath) {
+        equal(path.basename(filepath, '.js'), 'lodash');
+        start();
+      });
+    });
+
+    asyncTest('debug custom', function () {
+      build(['-d', '-s', 'backbone'], function(source, filepath) {
+        equal(path.basename(filepath, '.js'), 'lodash.custom');
+        start();
+      });
+    });
+
+    asyncTest('minified only', function() {
+      build(['-m', '-s'], function(source, filepath) {
+        equal(path.basename(filepath, '.js'), 'lodash.min');
+        start();
+      });
+    });
+
+    asyncTest('minified custom', function () {
+      build(['-m', '-s', 'backbone'], function(source, filepath) {
+        equal(path.basename(filepath, '.js'), 'lodash.custom.min');
+        start();
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('strict modifier');
 
   (function() {

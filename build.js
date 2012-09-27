@@ -1408,7 +1408,7 @@
     dependencyMap = dependencyBackup;
 
     // output debug build
-    if (!isMinify && (isCustom || isTemplate || isDebug)) {
+    if (!isMinify && (isCustom || isDebug || isTemplate)) {
       if (isDebug && isStdOut) {
         stdout.write(debugSource);
         callback(debugSource);

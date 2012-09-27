@@ -9,7 +9,7 @@
   var compiledVars = [
     'argsIndex',
     'argsLength',
-    'bindIterator',
+    'bindCallback',
     'callback',
     'collection',
     'concat',
@@ -64,13 +64,13 @@
     'pass',
     'properties',
     'property',
+    'propertyCallback',
     'propsLength',
     'source',
     'stackA',
     'stackB',
     'stackLength',
-    'target',
-    'valueProp'
+    'target'
   ];
 
   /** Used to minify `compileIterator` option properties */

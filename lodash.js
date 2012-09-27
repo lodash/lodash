@@ -467,7 +467,7 @@
       '  callback = identity\n' +
       '}\n' +
       'else if (thisArg !== undefined) {\n' +
-      '  callback = bindIterator(callback, thisArg)\n' +
+      '  callback = bindCallback(callback, thisArg)\n' +
       '}',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
   };
@@ -476,16 +476,13 @@
   var countByIteratorOptions = {
     'init': '{}',
     'top':
-      'var prop;\n' +
       'if (typeof callback != \'function\') {\n' +
-      '  var valueProp = callback;\n' +
-      '  callback = function(value) { return value[valueProp] }\n' +
-      '}\n' +
-      'else if (thisArg !== undefined) {\n' +
-      '  callback = bindIterator(callback, thisArg)\n' +
+      '  callback = propertyCallback(callback)\n' +
+      '} else if (thisArg !== undefined) {\n' +
+      '  callback = bindCallback(callback, thisArg)\n' +
       '}',
     'inLoop':
-      'prop = callback(value, index, collection);\n' +
+      'var prop = callback(value, index, collection);\n' +
       '(hasOwnProperty.call(result, prop) ? result[prop]++ : result[prop] = 1)'
   };
 
@@ -516,7 +513,7 @@
 
   /** Reusable iterator options for `find`, `forEach`, `forIn`, and `forOwn` */
   var forEachIteratorOptions = {
-    'top': 'if (thisArg !== undefined) callback = bindIterator(callback, thisArg)'
+    'top': 'if (thisArg !== undefined) callback = bindCallback(callback, thisArg)'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
@@ -550,7 +547,7 @@
       'if (!isFunc) {\n' +
       '  var props = concat.apply(ArrayProto, arguments)\n' +
       '} else if (thisArg !== undefined) {\n' +
-      '  callback = bindIterator(callback, thisArg)\n' +
+      '  callback = bindCallback(callback, thisArg)\n' +
       '}',
     'inLoop':
       'if (isFunc\n' +
@@ -570,7 +567,7 @@
    * @param {Mixed} [thisArg] The `this` binding of `func`.
    * @returns {Function} Returns the new bound function.
    */
-  function bindIterator(func, thisArg) {
+  function bindCallback(func, thisArg) {
     return function(value, index, object) {
       return func.call(thisArg, value, index, object);
     };
@@ -789,19 +786,19 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayLikeClasses, ArrayProto, bind, bindIterator, compareAscending, concat, ' +
+        'arrayLikeClasses, ArrayProto, bind, bindCallback, compareAscending, concat, ' +
         'forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
         'isPlainObject, noop, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
-        'slice, stringClass, toString, undefined',
+        'propertyCallback, slice, stringClass, toString, undefined',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
     );
     // return the compiled function
     return factory(
-      arrayLikeClasses, ArrayProto, bind, bindIterator, compareAscending, concat,
+      arrayLikeClasses, ArrayProto, bind, bindCallback, compareAscending, concat,
       forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction,
       isPlainObject, noop, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
-      slice, stringClass, toString
+      propertyCallback, slice, stringClass, toString
     );
   }
 
@@ -835,6 +832,19 @@
    */
   function noop() {
     // no operation performed
+  }
+
+  /**
+   * Creates a function that returns the `property` value of the given `object`.
+   *
+   * @private
+   * @param {String} property The property to get the value of.
+   * @returns {Function} Returns the new function.
+   */
+  function propertyCallback(property) {
+    return function(object) {
+      return object[property];
+    };
   }
 
   /**
@@ -1878,7 +1888,7 @@
       '    if (prop in object) result[prop] = object[prop]\n' +
       '  }\n' +
       '} else {\n' +
-      '  if (thisArg !== undefined) callback = bindIterator(callback, thisArg)',
+      '  if (thisArg !== undefined) callback = bindCallback(callback, thisArg)',
     'inLoop':
       'if (callback(value, index, object)) result[index] = value',
     'bottom': '}'
@@ -2083,7 +2093,7 @@
    */
   var groupBy = createIterator(baseIteratorOptions, countByIteratorOptions, {
     'inLoop':
-      'prop = callback(value, index, collection);\n' +
+      'var prop = callback(value, index, collection);\n' +
       '(hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(value)'
   });
 
@@ -2200,7 +2210,7 @@
     'init': 'accumulator',
     'top':
       'var noaccum = arguments.length < 3;\n' +
-      'if (thisArg !== undefined) callback = bindIterator(callback, thisArg)',
+      'if (thisArg !== undefined) callback = bindCallback(callback, thisArg)',
     'beforeLoop': {
       'array': 'if (noaccum) result = iteratee[++index]'
     },
@@ -2784,7 +2794,7 @@
       return result;
     }
     if (thisArg !== undefined) {
-      callback = bindIterator(callback, thisArg);
+      callback = bindCallback(callback, thisArg);
     }
     while (++index < length) {
       current = callback(array[index], index, array);
@@ -2834,7 +2844,7 @@
       return result;
     }
     if (thisArg !== undefined) {
-      callback = bindIterator(callback, thisArg);
+      callback = bindCallback(callback, thisArg);
     }
     while (++index < length) {
       current = callback(array[index], index, array);
@@ -3031,7 +3041,9 @@
         high = array.length;
 
     if (callback) {
-      if (thisArg !== undefined) {
+      if (typeof callback != 'function') {
+        callback = propertyCallback(callback);
+      } else if (thisArg !== undefined) {
         callback = bind(callback, thisArg);
       }
       value = callback(value);
@@ -3126,7 +3138,7 @@
     if (!callback) {
       callback = identity;
     } else if (thisArg !== undefined) {
-      callback = bindIterator(callback, thisArg);
+      callback = bindCallback(callback, thisArg);
     }
     while (++index < length) {
       computed = callback(array[index], index, array);
@@ -3764,7 +3776,7 @@
    * @memberOf _
    * @category Utilities
    * @param {Object} object The object to inspect.
-   * @param {String} property The property to get the result of.
+   * @param {String} property The property to get the value of.
    * @returns {Mixed} Returns the resolved value.
    * @example
    *

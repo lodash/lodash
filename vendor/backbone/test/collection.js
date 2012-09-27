@@ -97,7 +97,7 @@ $(document).ready(function() {
     equal(col.pluck('label').join(' '), 'a b c d');
   });
 
-  test("add", 11, function() {
+  test("add", 10, function() {
     var added, opts, secondAdded;
     added = opts = secondAdded = null;
     e = new Backbone.Model({id: 10, label : 'e'});
@@ -107,7 +107,6 @@ $(document).ready(function() {
     });
     col.on('add', function(model, collection, options){
       added = model.get('label');
-      equal(options.index, 4);
       opts = options;
     });
     col.add(e, {amazing: true});
@@ -563,23 +562,6 @@ $(document).ready(function() {
     });
   });
 
-  test("index with comparator", 4, function() {
-    var counter = 0;
-    var col = new Backbone.Collection([{id: 2}, {id: 4}], {
-      comparator: function(model){ return model.id; }
-    }).on('add', function(model, colleciton, options){
-      if (model.id == 1) {
-        equal(options.index, 0);
-        equal(counter++, 0);
-      }
-      if (model.id == 3) {
-        equal(options.index, 2);
-        equal(counter++, 1);
-      }
-    });
-    col.add([{id: 3}, {id: 1}]);
-  });
-
   test("throwing during add leaves consistent state", 4, function() {
     var col = new Backbone.Collection();
     col.on('test', function() { ok(false); });
@@ -699,4 +681,24 @@ $(document).ready(function() {
     deepEqual(values, [1, 2, 3]);
   });
 
+  test("#1604 - Removal during iteration.", 0, function() {
+    var collection = new Backbone.Collection([{}, {}]);
+    collection.on('add', function() {
+      collection.at(0).destroy();
+    });
+    collection.add({}, {at: 0});
+  });
+
+  test("#1638 - `sort` during `add` triggers correctly.", function() {
+    var collection = new Backbone.Collection;
+    collection.comparator = function(model) { return model.get('x'); };
+    var added = [];
+    collection.on('add', function(model) {
+      model.set({x: 3});
+      collection.sort();
+      added.push(model.id);
+    });
+    collection.add([{id: 1, x: 1}, {id: 2, x: 2}]);
+    deepEqual(added, [1, 2]);
+  });
 });

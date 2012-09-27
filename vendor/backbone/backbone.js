@@ -20,6 +20,7 @@
 
   // Create a local reference to array methods.
   var ArrayProto = Array.prototype;
+  var push = ArrayProto.push;
   var slice = ArrayProto.slice;
   var splice = ArrayProto.splice;
 
@@ -585,59 +586,51 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, index, length, model, cid, id, cids = {}, ids = {}, dups = [];
-      options || (options = {});
+      var i, args, length, model, existing;
+      var at = options && options.at;
       models = _.isArray(models) ? models.slice() : [models];
 
       // Begin by turning bare objects into model references, and preventing
-      // invalid models or duplicate models from being added.
+      // invalid models from being added.
       for (i = 0, length = models.length; i < length; i++) {
-        if (!(model = models[i] = this._prepareModel(models[i], options))) {
-          throw new Error("Can't add an invalid model to a collection");
-        }
-        cid = model.cid;
-        id = model.id;
-        if (cids[cid] || this._byCid[cid] || ((id != null) && (ids[id] || this._byId[id]))) {
-          dups.push(i);
+        if (models[i] = this._prepareModel(models[i], options)) continue;
+        throw new Error("Can't add an invalid model to a collection");
+      }
+
+      for (i = models.length - 1; i >= 0; i--) {
+        model = models[i];
+        existing = model.id != null && this._byId[model.id];
+
+        // If a duplicate is found, splice it out and optionally merge it into
+        // the existing model.
+        if (existing || this._byCid[model.cid]) {
+          if (options && options.merge && existing) {
+            existing.set(model, options);
+          }
+          models.splice(i, 1);
           continue;
         }
-        cids[cid] = ids[id] = model;
-      }
 
-      // Remove duplicates.
-      i = dups.length;
-      while (i--) {
-        dups[i] = models.splice(dups[i], 1)[0];
-      }
-
-      // Listen to added models' events, and index models for lookup by
-      // `id` and by `cid`.
-      for (i = 0, length = models.length; i < length; i++) {
-        (model = models[i]).on('all', this._onModelEvent, this);
+        // Listen to added models' events, and index models for lookup by
+        // `id` and by `cid`.
+        model.on('all', this._onModelEvent, this);
         this._byCid[model.cid] = model;
         if (model.id != null) this._byId[model.id] = model;
       }
 
-      // Insert models into the collection, re-sorting if needed, and triggering
-      // `add` events unless silenced.
-      this.length += length;
-      index = options.at != null ? options.at : this.models.length;
-      splice.apply(this.models, [index, 0].concat(models));
-
-      // Merge in duplicate models.
-      if (options.merge) {
-        for (i = 0, length = dups.length; i < length; i++) {
-          if (model = this._byId[dups[i].id]) model.set(dups[i], options);
-        }
-      }
+      // Update `length` and splice in new models.
+      this.length += models.length;
+      args = [at != null ? at : this.models.length, 0];
+      push.apply(args, models);
+      splice.apply(this.models, args);
 
       // Sort the collection if appropriate.
-      if (this.comparator && options.at == null) this.sort({silent: true});
+      if (this.comparator && at == null) this.sort({silent: true});
 
-      if (options.silent) return this;
-      for (i = 0, length = this.models.length; i < length; i++) {
-        if (!cids[(model = this.models[i]).cid]) continue;
-        options.index = i;
+      if (options && options.silent) return this;
+
+      // Trigger `add` events.
+      while (model = models.shift()) {
         model.trigger('add', model, this, options);
       }
 
@@ -1138,7 +1131,7 @@
       fragment = this.getFragment(fragment || '');
       if (this.fragment === fragment) return;
       this.fragment = fragment;
-      var url = (fragment.indexOf(this.root) !== 0 ? this.root : '') + fragment;
+      var url = this.root + fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {

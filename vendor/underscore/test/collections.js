@@ -366,6 +366,15 @@ $(document).ready(function() {
 
     var indexFor30 = _.sortedIndex(numbers, 30);
     equal(indexFor30, 2, '30 should be inserted at index 2');
+
+    var objects = [{x: 10}, {x: 20}, {x: 30}, {x: 40}];
+    var iterator = function(obj){ return obj.x; };
+    strictEqual(_.sortedIndex(objects, {x: 25}, iterator), 2);
+    strictEqual(_.sortedIndex(objects, {x: 35}, 'x'), 3);
+
+    var context = {1: 2, 2: 3, 3: 4};
+    iterator = function(obj){ return this[obj]; };
+    strictEqual(_.sortedIndex([1, 3], 2, iterator, context), 1);
   });
 
   test('shuffle', function() {

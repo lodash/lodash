@@ -464,6 +464,7 @@
 
   (function() {
     asyncTest('debug only', function() {
+      var start = _.once(QUnit.start);
       build(['-d', '-s'], function(source, filepath) {
         equal(path.basename(filepath, '.js'), 'lodash');
         start();
@@ -471,6 +472,7 @@
     });
 
     asyncTest('debug custom', function () {
+      var start = _.once(QUnit.start);
       build(['-d', '-s', 'backbone'], function(source, filepath) {
         equal(path.basename(filepath, '.js'), 'lodash.custom');
         start();
@@ -478,6 +480,7 @@
     });
 
     asyncTest('minified only', function() {
+      var start = _.once(QUnit.start);
       build(['-m', '-s'], function(source, filepath) {
         equal(path.basename(filepath, '.js'), 'lodash.min');
         start();
@@ -485,6 +488,7 @@
     });
 
     asyncTest('minified custom', function () {
+      var start = _.once(QUnit.start);
       build(['-m', '-s', 'backbone'], function(source, filepath) {
         equal(path.basename(filepath, '.js'), 'lodash.custom.min');
         start();
@@ -503,14 +507,13 @@
     });
 
     ['non-strict', 'strict'].forEach(function(strictMode, index) {
-      var start = _.after(2, _.once(QUnit.start));
-
       asyncTest(strictMode + ' should ' + (index ? 'error': 'silently fail') + ' attempting to overwrite read-only properties', function() {
-        var commands = ['-s', 'include=bindAll,defaults,extend'];
+        var commands = ['-s', 'include=bindAll,defaults,extend'],
+            start = _.after(2, _.once(QUnit.start));
+
         if (index) {
           commands.push('strict');
         }
-
         build(commands, function(source, filepath) {
           var basename = path.basename(filepath, '.js'),
               context = createContext(),
@@ -587,9 +590,9 @@
     ];
 
     commands.forEach(function(command, index) {
-      var start = _.after(2, _.once(QUnit.start));
-
       asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
         build(['-s', command], function(source, filepath) {
           var basename = path.basename(filepath, '.js'),
               context = createContext(),
@@ -647,9 +650,9 @@
     ];
 
     commands.forEach(function(command) {
-      var start = _.after(2, _.once(QUnit.start));
-
       asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
         build(['-s', 'exports=none', command], function(source, filepath) {
           var basename = path.basename(filepath, '.js'),
               context = createContext();
@@ -678,11 +681,11 @@
 
   (function() {
     ['-o a.js', '--output a.js'].forEach(function(command, index) {
-      var start = _.once(QUnit.start);
-
       asyncTest('`lodash ' + command +'`', function() {
+        var start = _.once(QUnit.start);
+
         build(['-s'].concat(command.split(' ')), function(source, filepath) {
-          equal(path.basename(filepath), 'a.js', command);
+          equal(path.basename(filepath, '.js'), 'a', command);
           start();
         });
       });
@@ -695,9 +698,9 @@
 
   (function() {
     ['-c', '--stdout'].forEach(function(command, index) {
-      var start = _.once(QUnit.start);
-
       asyncTest('`lodash ' + command +'`', function() {
+        var start = _.once(QUnit.start);
+
         build([command, 'exports=', 'include='], function(source) {
           equal(source, '');
           equal(arguments.length, 1);
@@ -712,10 +715,10 @@
   QUnit.module('minify underscore');
 
   (function() {
-    var source = fs.readFileSync(path.join(__dirname, '..', 'vendor', 'underscore', 'underscore.js'), 'utf8'),
-        start = _.once(QUnit.start);
-
     asyncTest('`node minify underscore.js`', function() {
+      var source = fs.readFileSync(path.join(__dirname, '..', 'vendor', 'underscore', 'underscore.js'), 'utf8'),
+          start = _.once(QUnit.start);
+
       minify(source, {
         'silent': true,
         'workingName': 'underscore.min',
@@ -742,9 +745,9 @@
   QUnit.module('mobile build');
 
   (function() {
-    var start = _.after(2, _.once(QUnit.start));
-
     asyncTest('`lodash mobile`', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
       build(['-s', 'mobile'], function(source, filepath) {
         var basename = path.basename(filepath, '.js'),
             context = createContext();
@@ -811,9 +814,9 @@
     );
 
     commands.forEach(function(command) {
-      var start = _.after(2, _.once(QUnit.start));
-
       asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
         build(['--silent'].concat(command.split(' ')), function(source, filepath) {
           var methodNames,
               basename = path.basename(filepath, '.js'),

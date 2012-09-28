@@ -118,10 +118,10 @@
     'lastIndexOf': [],
     'lateBind': ['isFunction'],
     'map': ['identity'],
-    'max': [],
+    'max': ['identity'],
     'memoize': [],
     'merge': ['isArray', 'isPlainObject'],
-    'min': [],
+    'min': ['identity'],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
     'object': [],
@@ -142,7 +142,7 @@
     'size': ['keys'],
     'some': ['identity'],
     'sortBy': [],
-    'sortedIndex': ['bind'],
+    'sortedIndex': ['bind', 'identity'],
     'tap': ['mixin'],
     'template': ['escape'],
     'throttle': [],
@@ -167,7 +167,6 @@
     'arrayBranch',
     'beforeLoop',
     'bottom',
-    'exit',
     'firstArg',
     'hasDontEnumBug',
     'inLoop',
@@ -243,7 +242,7 @@
     'partial'
   ]));
 
-  /** List of ways to export the `LoDash` function */
+  /** List of ways to export the `lodash` function */
   var exportsAll = [
     'amd',
     'commonjs',
@@ -362,7 +361,7 @@
       '    lodash plus=...      Comma separated method/category names to add to those included in the build',
       '    lodash category=...  Comma separated categories of methods to include in the build (case-insensitive)',
       '                         (i.e. “arrays”, “chaining”, “collections”, “functions”, “objects”, and “utilities”)',
-      '    lodash exports=...   Comma separated names of ways to export the `LoDash` function',
+      '    lodash exports=...   Comma separated names of ways to export the `lodash` function',
       '                         (i.e. “amd”, “commonjs”, “global”, “node”, and “none”)',
       '    lodash iife=...      Code to replace the immediately-invoked function expression that wraps Lo-Dash',
       '                         (e.g. `lodash iife="!function(window,undefined){%output%}(this)"`)',
@@ -911,7 +910,7 @@
     // constructed using the "use strict" directive
     var isStrict = options.indexOf('strict') > -1;
 
-    // used to specify the ways to export the `LoDash` function
+    // used to specify the ways to export the `lodash` function
     var exportsOptions = options.reduce(function(result, value) {
       return /exports/.test(value) ? optionToArray(value).sort() : result;
     }, isUnderscore
@@ -1324,12 +1323,10 @@
         source = removeIsFunctionFallback(source);
       }
       if (isRemoved(source, 'mixin')) {
-        // remove `LoDash` constructor
-        source = removeFunction(source, 'LoDash');
-        // remove `LoDash` calls
-        source = source.replace(/(?:new +LoDash(?!\()|(?:new +)?LoDash\([^)]*\));?/g, '');
-        // remove `LoDash.prototype` additions
-        source = source.replace(/(?:\s*\/\/.*)*\s*LoDash.prototype *=[\s\S]+?\/\*-+\*\//, '');
+        // remove `lodash` calls
+        source = source.replace(/(?:new +lodash(?!\()|(?:new +)?lodash\([^)]*\));?/g, '');
+        // remove `lodash.prototype` additions
+        source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\)[\s\S]+?\/\*-+\*\//, '');
         // remove `hasObjectSpliceBug` assignment
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasObjectSpliceBug;|.+?hasObjectSpliceBug *=.+/g, '');
       }

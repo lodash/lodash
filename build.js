@@ -1094,15 +1094,6 @@
       source = buildTemplate(templatePattern, templateSettings);
     }
     else {
-      // simplify template snippets by removing unnecessary brackets
-      source = source.replace(
-        RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
-      );
-
-      source = source.replace(
-        RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
-      );
-
       // remove methods from the build
       allMethods.forEach(function(otherName) {
         if (!_.contains(buildMethods, otherName)) {
@@ -1271,7 +1262,7 @@
 
         source = source.match(/\/\*![\s\S]+?\*\/\n/) +
           iife.slice(0, index) +
-          source.replace(/^[^(]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
+          source.replace(/^[\s\S]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
           iife.slice(index + token.length);
       }
     }());
@@ -1323,8 +1314,6 @@
         source = removeIsFunctionFallback(source);
       }
       if (isRemoved(source, 'mixin')) {
-        // remove `lodash` calls
-        source = source.replace(/(?:new +lodash(?!\()|(?:new +)?lodash\([^)]*\));?/g, '');
         // remove `lodash.prototype` additions
         source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\)[\s\S]+?\/\*-+\*\//, '');
         // remove `hasObjectSpliceBug` assignment
@@ -1384,6 +1373,7 @@
       }
       if (isRemoved(source, 'createIterator', 'keys')) {
         source = removeVar(source, 'nativeKeys');
+        source = removeKeysOptimization(source);
       }
       if (!source.match(/var (?:hasDontEnumBug|hasObjectSpliceBug|iteratesOwnLast|noArgsEnum)\b/g)) {
         // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, and `noArgsEnum` assignment

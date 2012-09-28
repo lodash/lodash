@@ -699,10 +699,17 @@
   (function() {
     ['-c', '--stdout'].forEach(function(command, index) {
       asyncTest('`lodash ' + command +'`', function() {
-        var start = _.once(QUnit.start);
+        var written,
+            start = _.once(QUnit.start),
+            write = process.stdout.write;
+
+        process.stdout.write = function(string) {
+          written = string;
+        };
 
         build([command, 'exports=', 'include='], function(source) {
-          equal(source, '');
+          process.stdout.write = write;
+          equal(written, source);
           equal(arguments.length, 1);
           start();
         });

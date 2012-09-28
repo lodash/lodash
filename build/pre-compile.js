@@ -80,7 +80,6 @@
     'arrayBranch',
     'beforeLoop',
     'bottom',
-    'exit',
     'firstArg',
     'hasDontEnumBug',
     'inLoop',

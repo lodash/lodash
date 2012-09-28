@@ -1,8 +1,8 @@
 /*!
  * Lo-Dash v0.7.0 <http://lodash.com>
- * Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
- * Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
- * <http://documentcloud.github.com/underscore>
+ * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
+ * Based on Underscore.js 1.4.0 <http://underscorejs.org>
+ * (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
 ;(function(window, undefined) {
@@ -259,25 +259,17 @@
    *
    * @name _
    * @constructor
-   * @param {Mixed} value The value to wrap in a `LoDash` instance.
-   * @returns {Object} Returns a `LoDash` instance.
+   * @param {Mixed} value The value to wrap in a `lodash` instance.
+   * @returns {Object} Returns a `lodash` instance.
    */
   function lodash(value) {
-    // allow invoking `lodash` without the `new` operator
-    return new LoDash(value);
-  }
-
-  /**
-   * Creates a `LoDash` instance that wraps a value to allow chaining.
-   *
-   * @private
-   * @constructor
-   * @param {Mixed} value The value to wrap.
-   */
-  function LoDash(value) {
     // exit early if already wrapped
     if (value && value.__wrapped__) {
       return value;
+    }
+    // allow invoking `lodash` without the `new` operator
+    if (!(this instanceof lodash)) {
+      return new lodash(value);
     }
     this.__wrapped__ = value;
   }
@@ -347,9 +339,7 @@
     'var index, value, iteratee = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
     'result<% if (init) { %> = <%= init %><% } %>;\n' +
-    // add code to exit early or do so if the first argument is falsey
-    '<%= exit %>;\n' +
-    // add code after the exit snippet but before the iteration branches
+    // add code before the iteration branches
     '<%= top %>;\n' +
 
     // the following branch is for iterating arrays and array-like objects
@@ -465,8 +455,7 @@
     'top':
       'if (!callback) {\n' +
       '  callback = identity\n' +
-      '}\n' +
-      'else if (thisArg !== undefined) {\n' +
+      '} else if (thisArg !== undefined) {\n' +
       '  callback = bindCallback(callback, thisArg)\n' +
       '}',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
@@ -526,7 +515,6 @@
   /** Reusable iterator options for `invoke`, `map`, `pluck`, and `sortBy` */
   var mapIteratorOptions = {
     'init': '',
-    'exit': 'if (!collection) return []',
     'beforeLoop': {
       'array':  'result = Array(length)',
       'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')
@@ -712,11 +700,7 @@
    *
    *  init - A string to specify the initial value of the `result` variable.
    *
-   *  exit - A string of code to use in place of the default exit-early check
-   *   of `if (!arguments[0]) return result`.
-   *
-   *  top - A string of code to execute after the exit-early check but before
-   *   the iteration branches.
+   *  top - A string of code to execute before the iteration branches.
    *
    *  beforeLoop - A string or object containing an "array" or "object" property
    *   of code to execute before the array or object loops.
@@ -739,8 +723,6 @@
     // merge options into a template data object
     var data = {
       'bottom': '',
-      'exit': '',
-      'init': '',
       'top': '',
       'arrayBranch': { 'beforeLoop': '' },
       'objectBranch': { 'beforeLoop': '' }
@@ -765,10 +747,12 @@
     // set additional template `data` values
     var args = data.args,
         firstArg = /^[^,]+/.exec(args)[0],
+        init = data.init,
         useStrict = data.useStrict;
 
     data.firstArg = firstArg;
     data.hasDontEnumBug = hasDontEnumBug;
+    data.init = init == null ? firstArg : init;
     data.isKeysFast = isKeysFast;
     data.noArgsEnum = noArgsEnum;
     data.shadowed = shadowed;
@@ -778,9 +762,6 @@
     if (data.noCharByIndex == null) {
       data.noCharByIndex = noCharByIndex;
     }
-    if (!data.exit) {
-      data.exit = 'if (!' + firstArg + ') return result';
-    }
     if (firstArg != 'collection' || !data.arrayBranch.inLoop) {
       data.arrayBranch = null;
     }
@@ -788,7 +769,7 @@
     var factory = Function(
         'arrayLikeClasses, ArrayProto, bind, bindCallback, compareAscending, concat, ' +
         'forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
-        'isPlainObject, noop, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
+        'isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
         'propertyCallback, slice, stringClass, toString, undefined',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
@@ -797,7 +778,7 @@
     return factory(
       arrayLikeClasses, ArrayProto, bind, bindCallback, compareAscending, concat,
       forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction,
-      isPlainObject, noop, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
+      isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
       propertyCallback, slice, stringClass, toString
     );
   }
@@ -823,15 +804,6 @@
    */
   function escapeHtmlChar(match) {
     return htmlEscapes[match];
-  }
-
-  /**
-   * A no-operation function.
-   *
-   * @private
-   */
-  function noop() {
-    // no operation performed
   }
 
   /**
@@ -1268,7 +1240,7 @@
    * // => true
    */
   function has(object, property) {
-    return object ? hasOwnProperty.call(object, property) : false;
+    return hasOwnProperty.call(object, property);
   }
 
   /**
@@ -1366,6 +1338,7 @@
     'args': 'value',
     'init': 'true',
     'top':
+      'if (!value) return result;\n' +
       'var className = toString.call(value),\n' +
       '    length = value.length;\n' +
       'if (arrayLikeClasses[className]' +
@@ -1411,7 +1384,7 @@
       // treat `+0` vs. `-0` as not equal
       return a !== 0 || (1 / a == 1 / b);
     }
-    // unwrap any LoDash wrapped values
+    // unwrap any `lodash` wrapped values
     if (objectTypes[typeof a] || objectTypes[typeof b]) {
       a = a.__wrapped__ || a;
       b = b.__wrapped__ || b;
@@ -1732,9 +1705,7 @@
     if (type == 'function' && propertyIsEnumerable.call(object, 'prototype')) {
       return shimKeys(object);
     }
-    return object && objectTypes[type]
-      ? nativeKeys(object)
-      : [];
+    return nativeKeys(object);
   };
 
   /**
@@ -1771,16 +1742,11 @@
   var merge = createIterator(extendIteratorOptions, {
     'args': 'object, source, indicator',
     'top':
-      'var argsLength, isArr, stackA, stackB,\n' +
-      '    args = arguments, argsIndex = 0;\n' +
-      'if (indicator == noop) {\n' +
-      '  argsLength = 2;\n' +
-      '  stackA = args[3];\n' +
-      '  stackB = args[4]\n' +
+      'var isArr, args = arguments, argsIndex = 0;\n' +
+      'if (indicator == compareAscending) {\n' +
+      '  var argsLength = 2, stackA = args[3], stackB = args[4]\n' +
       '} else {\n' +
-      '  argsLength = args.length;\n' +
-      '  stackA = [];\n' +
-      '  stackB = []\n' +
+      '  var argsLength = args.length, stackA = [], stackB = []\n' +
       '}\n' +
       'while (++argsIndex < argsLength) {\n' +
       '  if (iteratee = args[argsIndex]) {',
@@ -1798,7 +1764,7 @@
       '      ? (isArray(value) ? value : [])\n' +
       '      : (isPlainObject(value) ? value : {})\n' +
       '    );\n' +
-      '    result[index] = callee(value, source, noop, stackA, stackB)\n' +
+      '    result[index] = callee(value, source, compareAscending, stackA, stackB)\n' +
       '  }\n' +
       '} else if (source != null) {\n' +
       '  result[index] = source\n' +
@@ -2243,9 +2209,6 @@
    * // => [4, 5, 2, 3, 0, 1]
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
-    if (!collection) {
-      return accumulator;
-    }
     var iteratee = collection,
         length = collection.length,
         noaccum = arguments.length < 3;
@@ -2465,12 +2428,9 @@
    * // => [1, 2, 3]
    */
   function compact(array) {
-    var result = [];
-    if (!array) {
-      return result;
-    }
     var index = -1,
-        length = array.length;
+        length = array.length,
+        result = [];
 
     while (++index < length) {
       if (array[index]) {
@@ -2497,14 +2457,11 @@
    * // => [1, 3, 4]
    */
   function difference(array) {
-    var result = [];
-    if (!array) {
-      return result;
-    }
     var index = -1,
         length = array.length,
         flattened = concat.apply(ArrayProto, arguments),
-        contains = cachedContains(flattened, length);
+        contains = cachedContains(flattened, length),
+        result = [];
 
     while (++index < length) {
       if (!contains(array[index])) {
@@ -2534,9 +2491,7 @@
    * // => 5
    */
   function first(array, n, guard) {
-    if (array) {
-      return (n == null || guard) ? array[0] : slice.call(array, 0, n);
-    }
+    return (n == null || guard) ? array[0] : slice.call(array, 0, n);
   }
 
   /**
@@ -2558,13 +2513,10 @@
    * // => [1, 2, 3, [[4]]];
    */
   function flatten(array, shallow) {
-    var result = [];
-    if (!array) {
-      return result;
-    }
     var value,
         index = -1,
-        length = array.length;
+        length = array.length,
+        result = [];
 
     while (++index < length) {
       value = array[index];
@@ -2604,9 +2556,6 @@
    * // => 2
    */
   function indexOf(array, value, fromIndex) {
-    if (!array) {
-      return -1;
-    }
     var index = -1,
         length = array.length;
 
@@ -2644,9 +2593,6 @@
    * // => [3, 2]
    */
   function initial(array, n, guard) {
-    if (!array) {
-      return [];
-    }
     return slice.call(array, 0, -((n == null || guard) ? 1 : n));
   }
 
@@ -2666,15 +2612,12 @@
    * // => [1, 2]
    */
   function intersection(array) {
-    var result = [];
-    if (!array) {
-      return result;
-    }
     var value,
         argsLength = arguments.length,
         cache = [],
         index = -1,
-        length = array.length;
+        length = array.length,
+        result = [];
 
     array: while (++index < length) {
       value = array[index];
@@ -2709,10 +2652,8 @@
    * // => 1
    */
   function last(array, n, guard) {
-    if (array) {
-      var length = array.length;
-      return (n == null || guard) ? array[length - 1] : slice.call(array, -n || length);
-    }
+    var length = array.length;
+    return (n == null || guard) ? array[length - 1] : slice.call(array, -n || length);
   }
 
   /**
@@ -2735,9 +2676,6 @@
    * // => 1
    */
   function lastIndexOf(array, value, fromIndex) {
-    if (!array) {
-      return -1;
-    }
     var index = array.length;
     if (fromIndex && typeof fromIndex == 'number') {
       index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
@@ -2786,14 +2724,8 @@
         length = array.length;
 
     if (!callback) {
-      while (++index < length) {
-        if (array[index] > result) {
-          result = array[index];
-        }
-      }
-      return result;
-    }
-    if (thisArg !== undefined) {
+      callback = identity;
+    } else if (thisArg !== undefined) {
       callback = bindCallback(callback, thisArg);
     }
     while (++index < length) {
@@ -2836,14 +2768,8 @@
         length = array.length;
 
     if (!callback) {
-      while (++index < length) {
-        if (array[index] < result) {
-          result = array[index];
-        }
-      }
-      return result;
-    }
-    if (thisArg !== undefined) {
+      callback = identity;
+    } else if (thisArg !== undefined) {
       callback = bindCallback(callback, thisArg);
     }
     while (++index < length) {
@@ -2874,9 +2800,6 @@
    * // => { 'moe': 30, 'larry': 40, 'curly': 50 }
    */
   function object(keys, values) {
-    if (!keys) {
-      return {};
-    }
     var index = -1,
         length = keys.length,
         result = {};
@@ -2960,9 +2883,6 @@
    * // => [2, 1]
    */
   function rest(array, n, guard) {
-    if (!array) {
-      return [];
-    }
     return slice.call(array, (n == null || guard) ? 1 : n);
   }
 
@@ -2981,9 +2901,6 @@
    * // => [4, 1, 6, 3, 5, 2]
    */
   function shuffle(array) {
-    if (!array) {
-      return [];
-    }
     var rand,
         index = -1,
         length = array.length,
@@ -3033,29 +2950,21 @@
    * // => 2
    */
   function sortedIndex(array, value, callback, thisArg) {
-    if (!array) {
-      return 0;
-    }
     var mid,
         low = 0,
         high = array.length;
 
-    if (callback) {
-      if (typeof callback != 'function') {
-        callback = propertyCallback(callback);
-      } else if (thisArg !== undefined) {
-        callback = bind(callback, thisArg);
-      }
-      value = callback(value);
-      while (low < high) {
-        mid = (low + high) >>> 1;
-        callback(array[mid]) < value ? low = mid + 1 : high = mid;
-      }
-    } else {
-      while (low < high) {
-        mid = (low + high) >>> 1;
-        array[mid] < value ? low = mid + 1 : high = mid;
-      }
+    if (!callback) {
+      callback = identity;
+    } else if (typeof callback != 'function') {
+      callback = propertyCallback(callback);
+    } else if (thisArg !== undefined) {
+      callback = bind(callback, thisArg);
+    }
+    value = callback(value);
+    while (low < high) {
+      mid = (low + high) >>> 1;
+      callback(array[mid]) < value ? low = mid + 1 : high = mid;
     }
     return low;
   }
@@ -3120,13 +3029,10 @@
    * // => [1, 2, 3]
    */
   function uniq(array, isSorted, callback, thisArg) {
-    var result = [];
-    if (!array) {
-      return result;
-    }
     var computed,
         index = -1,
         length = array.length,
+        result = [],
         seen = [];
 
     // juggle arguments
@@ -3169,13 +3075,10 @@
    * // => [2, 3, 4]
    */
   function without(array) {
-    var result = [];
-    if (!array) {
-      return result;
-    }
     var index = -1,
         length = array.length,
-        contains = cachedContains(arguments, 1, 20);
+        contains = cachedContains(arguments, 1, 20),
+        result = [];
 
     while (++index < length) {
       if (!contains(array[index])) {
@@ -3202,9 +3105,6 @@
    * // => [['moe', 30, true], ['larry', 40, false], ['curly', 50, false]]
    */
   function zip(array) {
-    if (!array) {
-      return [];
-    }
     var index = -1,
         length = max(pluck(arguments, 'length')),
         result = Array(length);
@@ -3303,7 +3203,6 @@
     'useHas': false,
     'useStrict': false,
     'args': 'object',
-    'init': 'object',
     'top':
       'var funcs = arguments,\n' +
       '    length = funcs.length;\n' +
@@ -3704,14 +3603,14 @@
     forEach(functions(object), function(methodName) {
       var func = lodash[methodName] = object[methodName];
 
-      LoDash.prototype[methodName] = function() {
+      lodash.prototype[methodName] = function() {
         var args = [this.__wrapped__];
         if (arguments.length) {
           push.apply(args, arguments);
         }
         var result = func.apply(lodash, args);
         if (this.__chain__) {
-          result = new LoDash(result);
+          result = new lodash(result);
           result.__chain__ = true;
         }
         return result;
@@ -3872,7 +3771,6 @@
     // and Laura Doktorova's doT.js
     // https://github.com/olado/doT
     options || (options = {});
-    text += '';
 
     var isEvaluating,
         result,
@@ -3990,14 +3888,8 @@
     var index = -1,
         result = Array(n);
 
-    if (thisArg !== undefined) {
-      while (++index < n) {
-        result[index] = callback.call(thisArg, index);
-      }
-    } else {
-      while (++index < n) {
-        result[index] = callback(index);
-      }
+    while (++index < n) {
+      result[index] = callback.call(thisArg, index);
     }
     return result;
   }
@@ -4065,7 +3957,7 @@
    * // => 'moe is 40'
    */
   function chain(value) {
-    value = new LoDash(value);
+    value = new lodash(value);
     value.__chain__ = true;
     return value;
   }
@@ -4261,22 +4153,19 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // assign private `LoDash` constructor's prototype
-  LoDash.prototype = lodash.prototype;
-
-  // add all static functions to `LoDash.prototype`
+  // add all static functions to `lodash.prototype`
   mixin(lodash);
 
-  // add `LoDash.prototype.chain` after calling `mixin()` to avoid overwriting
+  // add `lodash.prototype.chain` after calling `mixin()` to avoid overwriting
   // it with the wrapped `lodash.chain`
-  LoDash.prototype.chain = wrapperChain;
-  LoDash.prototype.value = wrapperValue;
+  lodash.prototype.chain = wrapperChain;
+  lodash.prototype.value = wrapperValue;
 
   // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = ArrayProto[methodName];
 
-    LoDash.prototype[methodName] = function() {
+    lodash.prototype[methodName] = function() {
       var value = this.__wrapped__;
       func.apply(value, arguments);
 
@@ -4286,7 +4175,7 @@
         delete value[0];
       }
       if (this.__chain__) {
-        value = new LoDash(value);
+        value = new lodash(value);
         value.__chain__ = true;
       }
       return value;
@@ -4297,12 +4186,12 @@
   forEach(['concat', 'join', 'slice'], function(methodName) {
     var func = ArrayProto[methodName];
 
-    LoDash.prototype[methodName] = function() {
+    lodash.prototype[methodName] = function() {
       var value = this.__wrapped__,
           result = func.apply(value, arguments);
 
       if (this.__chain__) {
-        result = new LoDash(result);
+        result = new lodash(result);
         result.__chain__ = true;
       }
       return result;

@@ -10,10 +10,10 @@
     'lodash':
       '/*!\n' +
       ' Lo-Dash @VERSION lodash.com/license\n' +
-      ' Underscore.js 1.3.3 github.com/documentcloud/underscore/blob/master/LICENSE\n' +
+      ' Underscore.js 1.4.0 underscorejs.org/LICENSE\n' +
       '*/',
     'underscore':
-      '/*! Underscore.js @VERSION github.com/documentcloud/underscore/blob/master/LICENSE */'
+      '/*! Underscore.js @VERSION underscorejs.org/LICENSE */'
   };
 
   /*--------------------------------------------------------------------------*/

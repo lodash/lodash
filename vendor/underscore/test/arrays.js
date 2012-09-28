@@ -144,7 +144,6 @@ $(document).ready(function() {
     equal(_.indexOf(numbers, 2), 1, 'can compute indexOf, even without the native function');
     var result = (function(){ return _.indexOf(arguments, 2); })(1, 2, 3);
     equal(result, 1, 'works on an arguments object');
-    equal(_.indexOf(null, 2), -1, 'handles nulls properly');
 
     var numbers = [10, 20, 30, 40, 50], num = 35;
     var index = _.indexOf(numbers, num, true);
@@ -170,7 +169,6 @@ $(document).ready(function() {
     equal(_.lastIndexOf(numbers, 0), 8, 'lastIndexOf the other element');
     var result = (function(){ return _.lastIndexOf(arguments, 1); })(1, 0, 1, 0, 0, 1, 0, 0, 0);
     equal(result, 5, 'works on an arguments object');
-    equal(_.indexOf(null, 2), -1, 'handles nulls properly');
 
     numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3];
     index = _.lastIndexOf(numbers, 2, 2);

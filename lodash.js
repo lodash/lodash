@@ -2270,10 +2270,7 @@
    * // => 5
    */
   function size(collection) {
-    if (!collection) {
-      return 0;
-    }
-    var length = collection.length;
+    var length = collection ? collection.length : 0;
     return length === +length ? length : keys(collection).length;
   }
 
@@ -2364,10 +2361,7 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    if (!collection) {
-      return [];
-    }
-    var length = collection.length;
+    var length = collection ? collection.length : 0;
     if (length === +length) {
       return (noArraySliceOnStrings ? toString.call(collection) == stringClass : typeof collection == 'string')
         ? collection.split('')
@@ -2713,15 +2707,11 @@
    * // => { 'name': 'curly', 'age': 60 };
    */
   function max(array, callback, thisArg) {
-    var computed = -Infinity,
-        result = computed;
-
-    if (!array) {
-      return result;
-    }
     var current,
+        result,
+        computed = -Infinity,
         index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     if (!callback) {
       callback = identity;
@@ -2757,15 +2747,11 @@
    * // => 2
    */
   function min(array, callback, thisArg) {
-    var computed = Infinity,
-        result = computed;
-
-    if (!array) {
-      return result;
-    }
     var current,
+        result,
+        computed = Infinity,
         index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     if (!callback) {
       callback = identity;
@@ -3695,10 +3681,7 @@
   function result(object, property) {
     // based on Backbone's private `getValue` function
     // https://github.com/documentcloud/backbone/blob/0.9.2/backbone.js#L1419-1424
-    if (!object) {
-      return null;
-    }
-    var value = object[property];
+    var value = object ? object[property] : null;
     return isFunction(value) ? object[property]() : value;
   }
 

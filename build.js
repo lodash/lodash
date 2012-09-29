@@ -1031,7 +1031,7 @@
         }
       }
       if (isLegacy) {
-        _.each(['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
+        _.each(['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeGetPrototypeOf', 'nativeIsArray', 'nativeKeys'], function(varName) {
           source = replaceVar(source, varName, 'false');
         });
 
@@ -1334,6 +1334,9 @@
       if (isRemoved(source, 'isArray')) {
         source = removeVar(source, 'nativeIsArray');
       }
+      if (isRemoved(source, 'isPlainObject')) {
+        source = removeVar(source, 'nativeGetPrototypeOf');
+      }
       if (isRemoved(source, 'keys')) {
         source = removeFunction(source, 'shimKeys');
       }
@@ -1359,7 +1362,7 @@
         source = removeVar(source, 'isStrictFast');
         source = removeVar(source, 'nativeBind');
       }
-      if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'keys')) {
+      if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'isPlainObject', 'keys')) {
         source = removeVar(source, 'reNative');
       }
       if (isRemoved(source, 'createIterator', 'isEmpty', 'isEqual')) {

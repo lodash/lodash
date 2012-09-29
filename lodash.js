@@ -667,11 +667,13 @@
   function createCallback(func, thisArg) {
     if (!func) {
       return identity;
-    } else if (typeof func != 'function') {
+    }
+    if (typeof func != 'function') {
       return function(object) {
         return object[func];
-      }
-    } else if (thisArg !== undefined) {
+      };
+    }
+    if (thisArg !== undefined) {
       return function(value, index, object) {
         return func.call(thisArg, value, index, object);
       };
@@ -1693,13 +1695,10 @@
    * // => ['one', 'two', 'three'] (order is not guaranteed)
    */
   var keys = !nativeKeys ? shimKeys : function(object) {
-    var type = typeof object;
-
     // avoid iterating over the `prototype` property
-    if (type == 'function' && propertyIsEnumerable.call(object, 'prototype')) {
-      return shimKeys(object);
-    }
-    return nativeKeys(object);
+    return typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
+      ? shimKeys(object)
+      : nativeKeys(object);
   };
 
   /**

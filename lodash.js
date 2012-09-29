@@ -206,31 +206,6 @@
   cloneableClasses[numberClass] = cloneableClasses[objectClass] = cloneableClasses[regexpClass] =
   cloneableClasses[stringClass] = true;
 
-  /**
-   * Used to convert characters to HTML entities:
-   *
-   * Though the `>` character is escaped for symmetry, characters like `>` and `/`
-   * don't require escaping in HTML and have no special meaning unless they're part
-   * of a tag or an unquoted attribute value.
-   * http://mathiasbynens.be/notes/ambiguous-ampersands (under "semi-related fun fact")
-   */
-  var htmlEscapes = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;'
-  };
-
-  /** Used to convert HTML entities to characters */
-  var htmlUnescapes = {
-    '&amp;': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#x27;': "'"
-  };
-
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
     'boolean': false,
@@ -829,6 +804,25 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Creates an object composed of the inverted keys and values of the given `object`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to invert.
+   * @returns {Object} Returns the created inverted object.
+   * @example
+   *
+   *  _.invert({ 'first': 'Moe', 'second': 'Larry', 'third': 'Curly' });
+   * // => { 'Moe': 'first', 'Larry': 'second', 'Curly': 'third' } (order is not guaranteed)
+   */
+  var invert = createIterator({
+    'args': 'object',
+    'init': '{}',
+    'inLoop': 'result[value] = index'
+  });
+
+  /**
    * Checks if `value` is an `arguments` object.
    *
    * @static
@@ -989,6 +983,25 @@
     'init': '[]',
     'inLoop': 'result.push(index)'
   });
+
+  /**
+   * Used to convert characters to HTML entities:
+   *
+   * Though the `>` character is escaped for symmetry, characters like `>` and `/`
+   * don't require escaping in HTML and have no special meaning unless they're part
+   * of a tag or an unquoted attribute value.
+   * http://mathiasbynens.be/notes/ambiguous-ampersands (under "semi-related fun fact")
+   */
+  var htmlEscapes = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;'
+  };
+
+  /** Used to convert HTML entities to characters */
+  var htmlUnescapes = invert(htmlEscapes);
 
   /*--------------------------------------------------------------------------*/
 
@@ -1238,25 +1251,6 @@
   function has(object, property) {
     return hasOwnProperty.call(object, property);
   }
-
-  /**
-   * Creates an object composed of the inverted keys and values of the given `object`.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to invert.
-   * @returns {Object} Returns the created inverted object.
-   * @example
-   *
-   *  _.invert({ 'first': 'Moe', 'second': 'Larry', 'third': 'Curly' });
-   * // => { 'Moe': 'first', 'Larry': 'second', 'Curly': 'third' } (order is not guaranteed)
-   */
-  var invert = createIterator({
-    'args': 'object',
-    'init': '{}',
-    'inLoop': 'result[value] = index'
-  });
 
   /**
    * Checks if `value` is a boolean (`true` or `false`) value.

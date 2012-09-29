@@ -81,6 +81,7 @@
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
       nativeFloor = Math.floor,
+      nativeGetPrototypeOf = reNative.test(nativeGetPrototypeOf = Object.getPrototypeOf) && nativeGetPrototypeOf,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
@@ -452,24 +453,14 @@
   var baseIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'init': 'collection',
-    'top':
-      'if (!callback) {\n' +
-      '  callback = identity\n' +
-      '} else if (thisArg !== undefined) {\n' +
-      '  callback = bindCallback(callback, thisArg)\n' +
-      '}',
+    'top': 'callback = createCallback(callback, thisArg)',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `countBy`, `groupBy`, and `sortBy` */
   var countByIteratorOptions = {
     'init': '{}',
-    'top':
-      'if (typeof callback != \'function\') {\n' +
-      '  callback = propertyCallback(callback)\n' +
-      '} else if (thisArg !== undefined) {\n' +
-      '  callback = bindCallback(callback, thisArg)\n' +
-      '}',
+    'top': 'callback = createCallback(callback, thisArg)',
     'inLoop':
       'var prop = callback(value, index, collection);\n' +
       '(hasOwnProperty.call(result, prop) ? result[prop]++ : result[prop] = 1)'
@@ -502,7 +493,7 @@
 
   /** Reusable iterator options for `find`, `forEach`, `forIn`, and `forOwn` */
   var forEachIteratorOptions = {
-    'top': 'if (thisArg !== undefined) callback = bindCallback(callback, thisArg)'
+    'top': 'callback = createCallback(callback, thisArg)'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
@@ -532,11 +523,8 @@
     'init': '{}',
     'top':
       'var isFunc = typeof callback == \'function\';\n' +
-      'if (!isFunc) {\n' +
-      '  var props = concat.apply(ArrayProto, arguments)\n' +
-      '} else if (thisArg !== undefined) {\n' +
-      '  callback = bindCallback(callback, thisArg)\n' +
-      '}',
+      'callback = createCallback(callback, thisArg);\n' +
+      'if (!isFunc) var props = concat.apply(ArrayProto, arguments)',
     'inLoop':
       'if (isFunc\n' +
       '  ? !callback(value, index, object)\n' +
@@ -545,21 +533,6 @@
   };
 
   /*--------------------------------------------------------------------------*/
-
-  /**
-   * Creates a bound iterator function that, when called, invokes `func` with
-   * the `this` binding of `thisArg` and the arguments (value, index, object).
-   *
-   * @private
-   * @param {Function} func The function to bind.
-   * @param {Mixed} [thisArg] The `this` binding of `func`.
-   * @returns {Function} Returns the new bound function.
-   */
-  function bindCallback(func, thisArg) {
-    return function(value, index, object) {
-      return func.call(thisArg, value, index, object);
-    };
-  }
 
   /**
    * Creates a function optimized for searching large arrays for a given `value`,
@@ -682,6 +655,31 @@
   }
 
   /**
+   * Produces an iteration callback bound to an optional `thisArg`. If `func` is
+   * a property name, the callback will return the property value for a given element.
+   *
+   * @private
+   * @param {Function|String} [func=identity|property] The function called per
+   * iteration or property name to query.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Function} Returns a callback function.
+   */
+  function createCallback(func, thisArg) {
+    if (!func) {
+      return identity;
+    } else if (typeof func != 'function') {
+      return function(object) {
+        return object[func];
+      }
+    } else if (thisArg !== undefined) {
+      return function(value, index, object) {
+        return func.call(thisArg, value, index, object);
+      };
+    }
+    return func;
+  }
+
+  /**
    * Creates compiled iteration functions. The iteration function will be created
    * to iterate over only objects if the first argument of `options.args` is
    * "object" or `options.inLoop.array` is falsey.
@@ -767,19 +765,19 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayLikeClasses, ArrayProto, bind, bindCallback, compareAscending, concat, ' +
+        'arrayLikeClasses, ArrayProto, bind, compareAscending, concat, createCallback, ' +
         'forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
         'isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
-        'propertyCallback, slice, stringClass, toString, undefined',
+        'slice, stringClass, toString, undefined',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
       'return callee'
     );
     // return the compiled function
     return factory(
-      arrayLikeClasses, ArrayProto, bind, bindCallback, compareAscending, concat,
+      arrayLikeClasses, ArrayProto, bind, compareAscending, concat, createCallback,
       forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction,
       isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
-      propertyCallback, slice, stringClass, toString
+      slice, stringClass, toString
     );
   }
 
@@ -807,16 +805,12 @@
   }
 
   /**
-   * Creates a function that returns the `property` value of the given `object`.
+   * A no-operation function.
    *
    * @private
-   * @param {String} property The property to get the value of.
-   * @returns {Function} Returns the new function.
    */
-  function propertyCallback(property) {
-    return function(object) {
-      return object[property];
-    };
+  function noop() {
+    // no operation performed
   }
 
   /**
@@ -925,15 +919,15 @@
    * _.isPlainObject({ 'name': 'moe', 'age': 40 });
    * // => true
    */
-  var isPlainObject = objectTypes.__proto__ != ObjectProto ? isPlainFallback : function(value) {
-    if (!value) {
+  var isPlainObject = !nativeGetPrototypeOf ? isPlainFallback : function(value) {
+    if (!(value && typeof value == 'object')) {
       return false;
     }
     var valueOf = value.valueOf,
-        objProto = typeof valueOf == 'function' && (objProto = valueOf.__proto__) && objProto.__proto__;
+        objProto = typeof valueOf == 'function' && (objProto = nativeGetPrototypeOf(valueOf)) && nativeGetPrototypeOf(objProto);
 
     return objProto
-      ? value == objProto || (value.__proto__ == objProto && !isArguments(value))
+      ? value == objProto || (nativeGetPrototypeOf(value) == objProto && !isArguments(value))
       : isPlainFallback(value);
   };
 
@@ -1158,7 +1152,7 @@
    * @category Objects
    * @param {Object} object The object to iterate over.
    * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns `object`.
    * @example
    *
@@ -1190,7 +1184,7 @@
    * @category Objects
    * @param {Object} object The object to iterate over.
    * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns `object`.
    * @example
    *
@@ -1784,7 +1778,7 @@
    * @param {Object} object The source object.
    * @param {Function|String} callback|[prop1, prop2, ...] The properties to omit
    *  or the function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns an object without the omitted properties.
    * @example
    *
@@ -1831,7 +1825,7 @@
    * @param {Object} object The source object.
    * @param {Function|String} callback|[prop1, prop2, ...] The properties to pick
    *  or the function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
    *
@@ -1854,7 +1848,7 @@
       '    if (prop in object) result[prop] = object[prop]\n' +
       '  }\n' +
       '} else {\n' +
-      '  if (thisArg !== undefined) callback = bindCallback(callback, thisArg)',
+      '  callback = createCallback(callback, thisArg)',
     'inLoop':
       'if (callback(value, index, object)) result[index] = value',
     'bottom': '}'
@@ -1926,7 +1920,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|String} callback|property The function called per iteration
    *  or property name to count by.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns the composed aggregate object.
    * @example
    *
@@ -1952,7 +1946,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Boolean} Returns `true` if all elements pass the callback check,
    *  else `false`.
    * @example
@@ -1973,7 +1967,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of elements that passed the callback check.
    * @example
    *
@@ -1994,7 +1988,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the element that passed the callback check,
    *  else `undefined`.
    * @example
@@ -2019,7 +2013,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array|Object|String} Returns `collection`.
    * @example
    *
@@ -2044,7 +2038,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|String} callback|property The function called per iteration
    *  or property name to group by.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns the composed aggregate object.
    * @example
    *
@@ -2110,7 +2104,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of the results of each `callback` execution.
    * @example
    *
@@ -2164,7 +2158,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [accumulator] Initial value of the accumulator.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the accumulated value.
    * @example
    *
@@ -2176,7 +2170,7 @@
     'init': 'accumulator',
     'top':
       'var noaccum = arguments.length < 3;\n' +
-      'if (thisArg !== undefined) callback = bindCallback(callback, thisArg)',
+      'callback = createCallback(callback, thisArg)',
     'beforeLoop': {
       'array': 'if (noaccum) result = iteratee[++index]'
     },
@@ -2200,7 +2194,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} callback The function called per iteration.
    * @param {Mixed} [accumulator] Initial value of the accumulator.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the accumulated value.
    * @example
    *
@@ -2237,7 +2231,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of elements that did **not** pass the
    *  callback check.
    * @example
@@ -2286,7 +2280,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Boolean} Returns `true` if any element passes the callback check,
    *  else `false`.
    * @example
@@ -2311,7 +2305,7 @@
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|String} callback|property The function called per iteration
    *  or property name to sort by.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of sorted elements.
    * @example
    *
@@ -2693,7 +2687,7 @@
    * @category Arrays
    * @param {Array} array The array to iterate over.
    * @param {Function} [callback] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the maximum value.
    * @example
    *
@@ -2708,16 +2702,12 @@
    */
   function max(array, callback, thisArg) {
     var current,
-        result,
         computed = -Infinity,
         index = -1,
-        length = array ? array.length : 0;
+        length = array ? array.length : 0,
+        result = computed;
 
-    if (!callback) {
-      callback = identity;
-    } else if (thisArg !== undefined) {
-      callback = bindCallback(callback, thisArg);
-    }
+    callback = createCallback(callback, thisArg);
     while (++index < length) {
       current = callback(array[index], index, array);
       if (current > computed) {
@@ -2739,7 +2729,7 @@
    * @category Arrays
    * @param {Array} array The array to iterate over.
    * @param {Function} [callback] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the minimum value.
    * @example
    *
@@ -2748,16 +2738,12 @@
    */
   function min(array, callback, thisArg) {
     var current,
-        result,
         computed = Infinity,
         index = -1,
-        length = array ? array.length : 0;
+        length = array ? array.length : 0,
+        result = computed;
 
-    if (!callback) {
-      callback = identity;
-    } else if (thisArg !== undefined) {
-      callback = bindCallback(callback, thisArg);
-    }
+    callback = createCallback(callback, thisArg);
     while (++index < length) {
       current = callback(array[index], index, array);
       if (current < computed) {
@@ -2905,32 +2891,37 @@
    * should be inserted into `array` in order to maintain the sort order of the
    * sorted `array`. If `callback` is passed, it will be executed for `value` and
    * each element in `array` to compute their sort ranking. The `callback` is
-   * bound to `thisArg` and invoked with one argument; (value).
+   * bound to `thisArg` and invoked with one argument; (value). The `callback`
+   * argument may also be the name of a property to order by.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to iterate over.
    * @param {Mixed} value The value to evaluate.
-   * @param {Function} [callback=identity] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Function|String} [callback=identity|property] The function called
+   *  per iteration or property name to order by.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Number} Returns the index at which the value should be inserted
    *  into `array`.
    * @example
    *
-   * _.sortedIndex([20, 30, 40], 35);
+   * _.sortedIndex([20, 30, 50], 40);
+   * // => 2
+   *
+   * _.sortedIndex([{ 'x': 20 }, { 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
    * // => 2
    *
    * var dict = {
-   *   'wordToNumber': { 'twenty': 20, 'thirty': 30, 'thirty-five': 35, 'fourty': 40 }
+   *   'wordToNumber': { 'twenty': 20, 'thirty': 30, 'fourty': 40, 'fifty': 50 }
    * };
    *
-   * _.sortedIndex(['twenty', 'thirty', 'fourty'], 'thirty-five', function(word) {
+   * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
    *   return dict.wordToNumber[word];
    * });
    * // => 2
    *
-   * _.sortedIndex(['twenty', 'thirty', 'fourty'], 'thirty-five', function(word) {
+   * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
    *   return this.wordToNumber[word];
    * }, dict);
    * // => 2
@@ -2940,13 +2931,7 @@
         low = 0,
         high = array.length;
 
-    if (!callback) {
-      callback = identity;
-    } else if (typeof callback != 'function') {
-      callback = propertyCallback(callback);
-    } else if (thisArg !== undefined) {
-      callback = bind(callback, thisArg);
-    }
+    callback = createCallback(callback, thisArg);
     value = callback(value);
     while (low < high) {
       mid = (low + high) >>> 1;
@@ -2998,7 +2983,7 @@
    * @param {Array} array The array to process.
    * @param {Boolean} [isSorted=false] A flag to indicate that the `array` is already sorted.
    * @param {Function} [callback=identity] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a duplicate-value-free array.
    * @example
    *
@@ -3027,11 +3012,7 @@
       callback = isSorted;
       isSorted = false;
     }
-    if (!callback) {
-      callback = identity;
-    } else if (thisArg !== undefined) {
-      callback = bindCallback(callback, thisArg);
-    }
+    callback = createCallback(callback, thisArg);
     while (++index < length) {
       computed = callback(array[index], index, array);
       if (isSorted
@@ -3853,7 +3834,7 @@
    * @category Utilities
    * @param {Number} n The number of times to execute the callback.
    * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding for the callback.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of the results of each `callback` execution.
    * @example
    *

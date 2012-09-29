@@ -768,18 +768,20 @@
    */
   function replaceVar(source, varName, varValue) {
     // replace a variable that's not part of a declaration list
-    source = source.replace(RegExp(
+    var result = source.replace(RegExp(
       '(( +)var ' + varName + ' *= *)' +
       '(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\2.+?;)\\n'
     ), '$1' + varValue + ';\n');
 
-    // replace a varaible at the start or middle of a declaration list
-    source = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), '$1 ' + varValue + ',');
-
-    // replace a variable at the end of a variable declaration list
-    source = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), '$1 ' + varValue + ';');
-
-    return source;
+    if (source == result) {
+      // replace a varaible at the start or middle of a declaration list
+      result = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), '$1 ' + varValue + ',');
+    }
+    if (source == result) {
+      // replace a variable at the end of a variable declaration list
+      result = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), '$1 ' + varValue + ';');
+    }
+    return result;
   }
 
   /**
@@ -1321,6 +1323,9 @@
     }
     else {
       // modify/remove references to removed methods/variables
+      if (isRemoved(source, 'invert')) {
+        source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
+      }
       if (isRemoved(source, 'isArguments')) {
         source = replaceVar(source, 'noArgsClass', 'false');
       }

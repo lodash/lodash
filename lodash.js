@@ -523,8 +523,8 @@
     'init': '{}',
     'top':
       'var isFunc = typeof callback == \'function\';\n' +
-      'callback = createCallback(callback, thisArg);\n' +
-      'if (!isFunc) var props = concat.apply(ArrayProto, arguments)',
+      'if (isFunc) callback = createCallback(callback, thisArg);\n' +
+      'else var props = concat.apply(ArrayProto, arguments)',
     'inLoop':
       'if (isFunc\n' +
       '  ? !callback(value, index, object)\n' +

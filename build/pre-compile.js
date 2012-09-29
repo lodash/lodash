@@ -274,7 +274,7 @@
     // remove whitespace from string literals
     source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {
       // avoids removing the '\n' of the `stringEscapes` object
-      return string.replace(/\[object |delete |else if|function | in |return\s+[\w']|throw |typeof |use strict|var |@ |'\\n'|\\\\n|\\n|\s+/g, function(match) {
+      return string.replace(/\[object |delete |else if|else var |function | in |return\s+[\w']|throw |typeof |use strict|var |@ |'\\n'|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
     });

@@ -835,13 +835,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.intersection` iterating 50 elements')
+    Benchmark.Suite('`_.intersection` iterating 50 and 75 elements')
       .add('Lo-Dash', {
-        'fn': 'lodash.intersection(fiftyValues, fiftyValues2)',
+        'fn': 'lodash.intersection(fiftyValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add('Underscore', {
-        'fn': '_.intersection(fiftyValues, fiftyValues2)',
+        'fn': '_.intersection(fiftyValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1511,13 +1511,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.without` iterating an array of 50 elements')
+    Benchmark.Suite('`_.without` iterating an array of 75 and 50 elements')
       .add('Lo-Dash', {
-        'fn': 'lodash.without.apply(lodash, [fiftyValues].concat(fiftyValues2));',
+        'fn': 'lodash.without.apply(lodash, [seventyFiveValues2].concat(fiftyValues));',
         'teardown': 'function multiArrays(){}'
       })
       .add('Underscore', {
-        'fn': '_.without.apply(_, [fiftyValues].concat(fiftyValues2));',
+        'fn': '_.without.apply(_, [seventyFiveValues2].concat(fiftyValues));',
         'teardown': 'function multiArrays(){}'
       })
   );

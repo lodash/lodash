@@ -142,7 +142,7 @@
     'size': ['keys'],
     'some': ['identity'],
     'sortBy': [],
-    'sortedIndex': ['bind', 'identity'],
+    'sortedIndex': ['identity'],
     'tap': ['mixin'],
     'template': ['escape'],
     'throttle': [],

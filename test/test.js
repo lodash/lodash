@@ -378,11 +378,12 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('strict mode checks');
+
   _.each(['bindAll', 'defaults', 'extend'], function(methodName) {
     var func = _[methodName];
-    QUnit.module('lodash.' + methodName + ' strict mode checks');
 
-    test('should not throw strict mode errors', function() {
+    test('lodash.' + methodName + ' should not throw strict mode errors', function() {
       var object = { 'a': null, 'b': function(){} },
           pass = true;
 
@@ -517,17 +518,18 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('object iteration bugs');
+
   _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
     var func = _[methodName];
-    QUnit.module('lodash.' + methodName + ' iteration bugs');
 
-    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+    test('lodash.' + methodName + ' fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       var keys = [];
       func(shadowed, function(value, key) { keys.push(key); });
       deepEqual(keys.sort(), shadowedKeys);
     });
 
-    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+    test('lodash.' + methodName + ' skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
@@ -544,11 +546,14 @@
     });
   });
 
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('exit early');
+
   _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
     var func = _[methodName];
-    QUnit.module('lodash.' + methodName + ' can exit early');
 
-    test('can exit early when iterating arrays', function() {
+    test('lodash.' + methodName + ' can exit early when iterating arrays', function() {
       var array = [1, 2, 3],
           values = [];
 
@@ -556,7 +561,7 @@
       deepEqual(values, [1]);
     });
 
-    test('can exit early when iterating objects', function() {
+    test('lodash.' + methodName + ' can exit early when iterating objects', function() {
       var object = { 'a': 1, 'b': 2, 'c': 3 },
           values = [];
 
@@ -798,6 +803,8 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('isType checks');
+
   _.each([
     'isArguments',
     'isArray',
@@ -817,9 +824,8 @@
     'isUndefined'
   ], function(methodName) {
     var func = _[methodName];
-    QUnit.module('lodash.' + methodName + ' result');
 
-    test('should return a boolean', function() {
+    test('lodash.' + methodName + ' should return a boolean', function() {
       var expected = 'boolean';
 
       equal(typeof func(arguments), expected);

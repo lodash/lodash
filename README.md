@@ -1,6 +1,6 @@
 # Lo-Dash <sup>v0.7.0</sup>
 
-A drop-in replacement<sup>[*](https://github.com/bestiejs/lodash/wiki/Drop-in-Disclaimer)</sup> for Underscore.js, from the devs behind [jsPerf.com](http://jsperf.com), delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), and [additional features](https://github.com/bestiejs/lodash#features).
+A drop-in replacement<sup>[*](https://github.com/bestiejs/lodash/wiki/Drop-in-Disclaimer)</sup> for Underscore.js, from the devs behind [jsPerf.com](http://jsperf.com), delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), and [additional features](http://lodash.com/#features).
 
 Lo-Dash’s performance is gained by avoiding slower native methods, instead opting for simplified non-ES5 compliant methods optimized for common usage, and by leveraging function compilation to reduce the number of overall function calls.
 
@@ -56,7 +56,7 @@ For more information check out these screencasts over Lo-Dash:
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5-21, Firefox 1-15, IE 6-9, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.8, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
+Lo-Dash has been tested in at least Chrome 5-21, Firefox 1-15, IE 6-9, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.9, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
 
 ## Custom builds
 
@@ -194,7 +194,6 @@ require({
 ## Resolved Underscore.js issues
 
  * Allow iteration of objects with a `length` property [[#148](https://github.com/documentcloud/underscore/issues/148), [#154](https://github.com/documentcloud/underscore/issues/154), [#252](https://github.com/documentcloud/underscore/issues/252), [#448](https://github.com/documentcloud/underscore/issues/448), [#659](https://github.com/documentcloud/underscore/issues/659), [test](https://github.com/bestiejs/lodash/blob/v0.8.0/test/test.js#L543-549)]
- * Ensure *“Arrays”*, *“Collections”*, and *“Objects”* methods don’t error when passed falsey arguments [[#650](https://github.com/documentcloud/underscore/pull/650), [test](https://github.com/bestiejs/lodash/blob/v0.8.0/test/test.js#L1719-1754)]
  * Ensure *“Collections”* methods allow string `collection` arguments [[#247](https://github.com/documentcloud/underscore/issues/247), [#276](https://github.com/documentcloud/underscore/issues/276), [#561](https://github.com/documentcloud/underscore/pull/561), [test](https://github.com/bestiejs/lodash/blob/v0.8.0/test/test.js#L503-520)]
  * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v0.8.0/test/test.js#L554-579)]
  * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v0.8.0/test/test.js#L134-140)]
@@ -262,7 +261,6 @@ require({
  * `_.sortedIndex`
  * `_.template`
  * `_.throttle`
- * `_.times`
  * `_.toArray`
  * `_.union`
  * `_.uniq`, `_.unique`

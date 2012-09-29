@@ -630,7 +630,7 @@
       return source;
     }
     // remove function
-    source = source.replace(matchFunction(source, funcName), '');
+    source = source.replace(snippet, '');
 
     // grab the method assignments snippet
     snippet = getMethodAssignments(source);
@@ -1054,6 +1054,11 @@
         // replace `arrayLikeClasses` in `_.isEqual`
         source = source.replace(/(?: *\/\/.*\n)*( +)var isArr *= *arrayLikeClasses[^}]+}/, '$1var isArr = isArray(a);');
 
+        // remove "exit early" feature from `_.each`
+        source = source.replace(/( )+var baseIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
+          return match.replace(/if *\(callback[^']+/, 'callback(value, index, collection)');
+        });
+
         // remove `deep` clone functionality
         source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
           '  function clone(value) {',
@@ -1094,6 +1099,15 @@
       source = buildTemplate(templatePattern, templateSettings);
     }
     else {
+      // simplify template snippets by removing unnecessary brackets
+      source = source.replace(
+        RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
+      );
+
+      source = source.replace(
+        RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
+      );
+
       // remove methods from the build
       allMethods.forEach(function(otherName) {
         if (!_.contains(buildMethods, otherName)) {

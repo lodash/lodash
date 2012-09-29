@@ -436,7 +436,7 @@
       console.log(e);
       pass = false;
     }
-    equal(pass, true, methodName + ': ' + message);
+    equal(pass, true, '_.' + methodName + ': ' + message);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -545,17 +545,25 @@
       var start = _.after(2, _.once(QUnit.start));
 
       build(['-s', 'underscore'], function(source, filepath) {
-        var array = [{ 'a': 1 }],
+        var last,
+            array = [{ 'value': 1 }, { 'value': 2 }],
             basename = path.basename(filepath, '.js'),
             context = createContext();
 
         vm.runInContext(source, context);
         var lodash = context._;
 
-        var object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
-        equal(object.fn(), 2, 'bind: ' + basename);
+        lodash.each(array, function(value) {
+          last = value;
+          return false;
+        });
 
-        ok(lodash.clone(array, true)[0] === array[0], 'clone: ' + basename);
+        equal(last.value, 2, '_.each: ' + basename);
+
+        var object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
+        equal(object.fn(), 2, '_.bind: ' + basename);
+
+        ok(lodash.clone(array, true)[0] === array[0], '_.clone: ' + basename);
         start();
       });
     });
@@ -570,7 +578,7 @@
         vm.runInContext(source, context);
         var lodash = context._;
 
-        equal(lodash.partial(_.identity, 2)(), 2, 'partial: ' + basename);
+        equal(lodash.partial(_.identity, 2)(), 2, '_.partial: ' + basename);
         start();
       });
     });

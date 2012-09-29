@@ -9,10 +9,10 @@
   var compiledVars = [
     'argsIndex',
     'argsLength',
-    'bindCallback',
     'callback',
     'collection',
     'concat',
+    'createCallback',
     'ctor',
     'hasOwnProperty',
     'identity',
@@ -64,7 +64,6 @@
     'pass',
     'properties',
     'property',
-    'propertyCallback',
     'propsLength',
     'source',
     'stackA',
@@ -105,7 +104,6 @@
   var propWhitelist = [
     '_',
     '__chain__',
-    '__proto__',
     '__wrapped__',
     'after',
     'all',

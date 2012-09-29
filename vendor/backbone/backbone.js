@@ -926,6 +926,7 @@
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate: function(fragment, options) {
       Backbone.history.navigate(fragment, options);
+      return this;
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the

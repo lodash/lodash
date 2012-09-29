@@ -163,7 +163,10 @@ $(document).ready(function() {
   });
 
   test("lastIndexOf", function() {
-    var numbers = [1, 0, 1, 0, 0, 1, 0, 0, 0];
+    var numbers = [1, 0, 1];
+    equal(_.lastIndexOf(numbers, 1), 2);
+
+    numbers = [1, 0, 1, 0, 0, 1, 0, 0, 0];
     numbers.lastIndexOf = null;
     equal(_.lastIndexOf(numbers, 1), 5, 'can compute lastIndexOf, even without the native function');
     equal(_.lastIndexOf(numbers, 0), 8, 'lastIndexOf the other element');

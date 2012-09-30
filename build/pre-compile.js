@@ -245,11 +245,12 @@
   /**
    * Pre-process a given Lo-Dash `source`, preparing it for minification.
    *
-   * @param {String} source The source to process.
+   * @param {String} [source=''] The source to process.
    * @param {Object} [options={}] The options object.
    * @returns {String} Returns the processed source.
    */
   function preprocess(source, options) {
+    source || (source = '');
     options || (options = {});
 
     // remove unrecognized JSDoc tags so Closure Compiler won't complain
@@ -446,12 +447,17 @@
     // was invoked directly (e.g. `node pre-compile.js source.js`) and write to
     // the same file
     (function() {
-      var options = process.argv,
-          filePath = options[options.length - 1],
+      var options = process.argv;
+      if (options.length < 3) {
+        return;
+      }
+      var filePath = options[options.length - 1],
           isTemplate = options.indexOf('-t') > -1 || options.indexOf('--template') > -1,
           source = fs.readFileSync(filePath, 'utf8');
 
-      fs.writeFileSync(filePath, preprocess(source, { 'isTemplate': isTemplate }), 'utf8');
+      fs.writeFileSync(filePath, preprocess(source, {
+        'isTemplate': isTemplate
+      }), 'utf8');
     }());
   }
 }());

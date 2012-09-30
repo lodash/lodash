@@ -3,7 +3,7 @@
   "version": "0.7.0",
   "description": "A drop-in replacement for Underscore.js delivering performance, bug fixes, and additional features.",
   "homepage": "http://lodash.com",
-  "main": "lodash",
+  "main": "./lodash",
   "keywords": [
     "browser",
     "client",
@@ -43,10 +43,10 @@
     "rhino"
   ],
   "jam": {
-    "main": "./lodash.min.js"
+    "main": "./lodash.js"
   },
   "scripts": {
     "build": "node build",
-    "test": "node test/test"
+    "test": "node test/test;node test/test-build"
   }
 }

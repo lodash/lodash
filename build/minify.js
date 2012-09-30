@@ -9,13 +9,10 @@
       spawn = require('child_process').spawn;
 
   /** The directory that is the base of the repository */
-  var basePath = fs.realpathSync(path.join(__dirname, '../'));
+  var basePath = fs.realpathSync(path.join(__dirname, '..'));
 
   /** The directory where the Closure Compiler is located */
   var closurePath = path.join(basePath, 'vendor', 'closure-compiler', 'compiler.jar');
-
-  /** The distribution directory */
-  var distPath = path.join(basePath, 'dist');
 
   /** Load other modules */
   var preprocess = require('./pre-compile'),
@@ -48,27 +45,27 @@
     if (Array.isArray(source)) {
       // convert commands to an options object
       options = source;
+
       var filePath = options[options.length - 1],
-          dirPath = path.dirname(filePath),
           isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1,
           isTemplate = options.indexOf('-t') > -1 || options.indexOf('--template') > -1,
-          workingName = path.basename(filePath, '.js') + '.min';
+          outputPath = path.join(path.dirname(filePath), path.basename(filePath, '.js') + '.min.js');
 
-      workingName = options.reduce(function(result, value, index) {
-        return /-wn|--working-name/.test(value)
-          ? options[index + 1]
-          : result;
-      }, workingName);
+      outputPath = options.reduce(function(result, value, index) {
+        if (/-o|--output/.test(value)) {
+          result = options[index + 1];
+          result = path.join(fs.realpathSync(path.dirname(result)), path.basename(result));
+        }
+        return result;
+      }, outputPath);
 
-      var outputPath = path.join(dirPath, workingName + '.js');
-      source = fs.readFileSync(filePath, 'utf8');
       options = {
         'isSilent': isSilent,
         'isTemplate': isTemplate,
-        'onComplete': function(source) {
-          fs.writeFileSync(outputPath, source, 'utf8');
-        }
+        'outputPath': outputPath
       };
+
+      source = fs.readFileSync(filePath, 'utf8');
     }
     new Minify(source, options);
   }
@@ -83,28 +80,23 @@
    */
   function Minify(source, options) {
     // juggle arguments
-    if (typeof source != 'string') {
+    if (typeof source == 'object' && source) {
       options = source || options;
       source = options.source || '';
     }
-    // create the destination directory if it doesn't exist
-    if (!fs.existsSync(distPath)) {
-      // avoid errors when called as a npm executable
-      try {
-        fs.mkdirSync(distPath);
-      } catch(e) { }
-    }
-
     this.compiled = {};
     this.hybrid = {};
     this.uglified = {};
     this.isSilent = !!options.isSilent;
     this.isTemplate = !!options.isTemplate;
-    this.onComplete = options.onComplete || function() {};
-    this.workingName = options.workingName;
+    this.outputPath = options.outputPath;
 
     source = preprocess(source, options);
     this.source = source;
+
+    this.onComplete = options.onComplete || function(source) {
+      fs.writeFileSync(this.outputPath, source, 'utf8');
+    };
 
     // begin the minification process
     closureCompile.call(this, source, onClosureCompile.bind(this));
@@ -144,7 +136,7 @@
 
     if (!this.isSilent) {
       console.log(message == null
-        ? 'Compressing ' + this.workingName + ' using the Closure Compiler...'
+        ? 'Compressing ' + path.basename(this.outputPath, '.js') + ' using the Closure Compiler...'
         : message
       );
     }
@@ -197,7 +189,7 @@
 
     if (!this.isSilent) {
       console.log(message == null
-        ? 'Compressing ' + this.workingName + ' using UglifyJS...'
+        ? 'Compressing ' + path.basename(this.outputPath, '.js') + ' using UglifyJS...'
         : message
       );
     }
@@ -292,7 +284,7 @@
     if (!this.isSilent) {
       console.log('Done. Size: %d bytes.', result.length);
     }
-    var message = 'Compressing  ' + this.workingName + ' using hybrid minification...';
+    var message = 'Compressing  ' + path.basename(this.outputPath, '.js') + ' using hybrid minification...';
 
     // store the gzipped result and report the size
     this.uglified.gzip = result;
@@ -346,23 +338,7 @@
   function onComplete() {
     var compiled = this.compiled,
         hybrid = this.hybrid,
-        name = this.workingName,
         uglified = this.uglified;
-
-    // avoid errors when called as a npm executable
-    try {
-      // save the Closure Compiled version to disk
-      fs.writeFileSync(path.join(distPath, name + '.compiler.js'), compiled.source);
-      fs.writeFileSync(path.join(distPath, name + '.compiler.js.gz'), compiled.gzip);
-
-      // save the Uglified version to disk
-      fs.writeFileSync(path.join(distPath, name + '.uglify.js'), uglified.source);
-      fs.writeFileSync(path.join(distPath, name + '.uglify.js.gz'), uglified.gzip);
-
-      // save the hybrid minified version to disk
-      fs.writeFileSync(path.join(distPath, name + '.hybrid.js'), hybrid.source);
-      fs.writeFileSync(path.join(distPath, name + '.hybrid.js.gz'), hybrid.gzip);
-    } catch(e) { }
 
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to Closure Compiler)

@@ -1410,8 +1410,8 @@
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll);
 
-    // used to name temporary files created in `dist/`
-    var workingName = outputPath
+    // used as the basename of the output path
+    var basename = outputPath
       ? path.basename(outputPath, '.js')
       : 'lodash' + (isTemplate ? '.template' : isCustom ? '.custom' : '');
 
@@ -1424,18 +1424,17 @@
         stdout.write(debugSource);
         callback(debugSource);
       } else if (!isStdOut) {
-        callback(debugSource, (isDebug && outputPath) || path.join(cwd, workingName + '.js'));
+        callback(debugSource, (isDebug && outputPath) || path.join(cwd, basename + '.js'));
       }
     }
     // begin the minification process
     if (!isDebug) {
-      if (!outputPath) {
-        workingName += '.min';
-      }
+      outputPath || (outputPath = path.join(cwd, basename + '.min.js'));
+
       minify(source, {
         'isSilent': isSilent,
         'isTemplate': isTemplate,
-        'workingName': workingName,
+        'outputPath': outputPath,
         'onComplete': function(source) {
           // correct overly aggressive Closure Compiler minification
           source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
@@ -1448,7 +1447,7 @@
             stdout.write(source);
             callback(source);
           } else {
-            callback(source, outputPath || path.join(cwd, workingName + '.js'));
+            callback(source, outputPath);
           }
         }
       });

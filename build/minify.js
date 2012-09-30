@@ -37,16 +37,16 @@
    * The exposed `minify` function minifies a given Lo-Dash `source` and invokes
    * the `onComplete` callback when finished.
    *
-   * @param {Array|String} source The array of command-line arguments or the
-   *  source to minify.
-   * @param {Object} options The options object containing `onComplete`,
-   *  `silent`, and `workingName`.
+   * @param {Array|String} [source=''] THe source to minify or array of commands.
+   * @param {Object} [options={}] The options object.
    */
   function minify(source, options) {
+    source || (source = '');
     options || (options = {});
 
+    // juggle arguments
     if (Array.isArray(source)) {
-      // convert the command-line arguments to an options object
+      // convert commands to an options object
       options = source;
       var filePath = options[options.length - 1],
           dirPath = path.dirname(filePath),
@@ -62,7 +62,6 @@
 
       var outputPath = path.join(dirPath, workingName + '.js');
       source = fs.readFileSync(filePath, 'utf8');
-
       options = {
         'isSilent': isSilent,
         'isTemplate': isTemplate,
@@ -79,14 +78,11 @@
    *
    * @private
    * @constructor
-   * @param {String} [source=''] The source to minify.
-   * @param {Object} [options={}] The options object containing `onComplete`,
-   *  `silent`, and `workingName`.
+   * @param {String} source The source to minify.
+   * @param {Object} options The options object.
    */
   function Minify(source, options) {
-    source || (source = '');
-    options || (options = {});
-
+    // juggle arguments
     if (typeof source != 'string') {
       options = source || options;
       source = options.source || '';
@@ -105,7 +101,7 @@
     this.isSilent = !!options.isSilent;
     this.isTemplate = !!options.isTemplate;
     this.onComplete = options.onComplete || function() {};
-    this.workingName = options.workingName || 'temp';
+    this.workingName = options.workingName;
 
     source = preprocess(source, options);
     this.source = source;

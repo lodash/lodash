@@ -811,7 +811,7 @@
    * Creates a debug and minified build, executing the `callback` for each.
    * The `callback` is invoked with 2 arguments; (filePath, source)
    *
-   * @param {Array} [options=[]] The build options array.
+   * @param {Array} [options=[]] An array of commands.
    * @param {Function} callback The function called per build.
    */
   function build(options, callback) {

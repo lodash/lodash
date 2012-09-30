@@ -37,7 +37,7 @@
    * The exposed `minify` function minifies a given Lo-Dash `source` and invokes
    * the `onComplete` callback when finished.
    *
-   * @param {Array|String} [source=''] THe source to minify or array of commands.
+   * @param {Array|String} [source=''] The source to minify or array of commands.
    * @param {Object} [options={}] The options object.
    */
   function minify(source, options) {

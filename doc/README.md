@@ -2527,7 +2527,7 @@ var compiled = _.template('hello: <%= name %>');
 compiled({ 'name': 'moe' });
 // => 'hello: moe'
 
-var list = '<% _.forEach(people, function(name) { %> <li><%= name %></li> <% }); %>';
+var list = '<% _.forEach(people, function(name) { %><li><%= name %></li><% }); %>';
 _.template(list, { 'people': ['moe', 'larry', 'curly'] });
 // => '<li>moe</li><li>larry</li><li>curly</li>'
 
@@ -2536,12 +2536,12 @@ _.template('<b><%- value %></b>', { 'value': '<script>' });
 // => '<b>&lt;script></b>'
 
 // using the internal `print` function in "evaluate" delimiters
-_.template('<% print("Hello " + epithet); %>', { 'epithet': 'stooge' });
+_.template('<% print("Hello " + epithet); %>.', { 'epithet': 'stooge' });
 // => 'Hello stooge.'
 
 // using custom template delimiter settings
 _.templateSettings = {
-  'interpolate': /\{\{(.+?)\}\}/g
+  'interpolate': /\{\{([\s\S]+?)\}\}/g
 };
 
 _.template('Hello {{ name }}!', { 'name': 'Mustache' });

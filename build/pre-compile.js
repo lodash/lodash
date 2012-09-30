@@ -246,14 +246,21 @@
    * Pre-process a given Lo-Dash `source`, preparing it for minification.
    *
    * @param {String} source The source to process.
+   * @param {Object} [options={}] The options object.
    * @returns {String} Returns the processed source.
    */
-  function preprocess(source) {
-    // remove copyright to add later in post-compile.js
-    source = source.replace(/\/\*![\s\S]+?\*\//, '');
+  function preprocess(source, options) {
+    options || (options = {});
 
     // remove unrecognized JSDoc tags so Closure Compiler won't complain
     source = source.replace(/@(?:alias|category)\b.*/g, '');
+
+    if (options.isTemplate) {
+      return source;
+    }
+
+    // remove copyright to add later in post-compile.js
+    source = source.replace(/\/\*![\s\S]+?\*\//, '');
 
     // add brackets to whitelisted properties so Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
@@ -439,8 +446,12 @@
     // was invoked directly (e.g. `node pre-compile.js source.js`) and write to
     // the same file
     (function() {
-      var source = fs.readFileSync(process.argv[2], 'utf8');
-      fs.writeFileSync(process.argv[2], preprocess(source), 'utf8');
+      var options = process.argv,
+          filePath = options[options.length - 1],
+          isTemplate = options.indexOf('-t') > -1 || options.indexOf('--template') > -1,
+          source = fs.readFileSync(filePath, 'utf8');
+
+      fs.writeFileSync(filePath, preprocess(source, { 'isTemplate': isTemplate }), 'utf8');
     }());
   }
 }());

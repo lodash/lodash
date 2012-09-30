@@ -9,7 +9,7 @@
       spawn = require('child_process').spawn;
 
   /** The directory that is the base of the repository */
-  var basePath = path.join(__dirname, '../');
+  var basePath = fs.realpathSync(path.join(__dirname, '../'));
 
   /** The directory where the Closure Compiler is located */
   var closurePath = path.join(basePath, 'vendor', 'closure-compiler', 'compiler.jar');
@@ -18,9 +18,9 @@
   var distPath = path.join(basePath, 'dist');
 
   /** Load other modules */
-  var preprocess = require(path.join(__dirname, 'pre-compile')),
-      postprocess = require(path.join(__dirname, 'post-compile')),
-      uglifyJS = require(path.join(basePath, 'vendor', 'uglifyjs', 'uglify-js'));
+  var preprocess = require('./pre-compile'),
+      postprocess = require('./post-compile'),
+      uglifyJS = require('../vendor/uglifyjs/uglify-js');
 
   /** Closure Compiler command-line options */
   var closureOptions = [
@@ -50,14 +50,22 @@
       options = source;
       var filePath = options[options.length - 1],
           dirPath = path.dirname(filePath),
-          workingName = path.basename(filePath, '.js') + '.min',
-          outputPath = path.join(dirPath, workingName + '.js'),
-          isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1;
+          isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1,
+          isTemplate = options.indexOf('-t') > -1 || options.indexOf('--template') > -1,
+          workingName = path.basename(filePath, '.js') + '.min';
 
+      workingName = options.reduce(function(result, value, index) {
+        return /-wn|--working-name/.test(value)
+          ? options[index + 1]
+          : result;
+      }, workingName);
+
+      var outputPath = path.join(dirPath, workingName + '.js');
       source = fs.readFileSync(filePath, 'utf8');
+
       options = {
-        'silent': isSilent,
-        'workingName': workingName,
+        'isSilent': isSilent,
+        'isTemplate': isTemplate,
         'onComplete': function(source) {
           fs.writeFileSync(outputPath, source, 'utf8');
         }
@@ -71,8 +79,8 @@
    *
    * @private
    * @constructor
-   * @param {String} source The source to minify.
-   * @param {Object} options The options object containing `onComplete`,
+   * @param {String} [source=''] The source to minify.
+   * @param {Object} [options={}] The options object containing `onComplete`,
    *  `silent`, and `workingName`.
    */
   function Minify(source, options) {
@@ -94,11 +102,12 @@
     this.compiled = {};
     this.hybrid = {};
     this.uglified = {};
-    this.isSilent = !!options.silent;
+    this.isSilent = !!options.isSilent;
+    this.isTemplate = !!options.isTemplate;
     this.onComplete = options.onComplete || function() {};
     this.workingName = options.workingName || 'temp';
 
-    source = preprocess(source);
+    source = preprocess(source, options);
     this.source = source;
 
     // begin the minification process
@@ -117,10 +126,19 @@
    * @param {Function} callback The function to call once the process completes.
    */
   function closureCompile(source, message, callback) {
+    var options = closureOptions.slice();
+
+    // use simple optimizations when minifying template files
+    if (this.isTemplate) {
+      options = options.map(function(value) {
+        return value.replace(/^(compilation_level)=.+$/, '$1=SIMPLE_OPTIMIZATIONS');
+      });
+    }
+
     // the standard error stream, standard output stream, and Closure Compiler process
     var error = '',
         output = '',
-        compiler = spawn('java', ['-jar', closurePath].concat(closureOptions));
+        compiler = spawn('java', ['-jar', closurePath].concat(options));
 
     // juggle arguments
     if (typeof message == 'function') {

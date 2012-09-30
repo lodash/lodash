@@ -258,12 +258,12 @@
    * each template file's basename.
    *
    * @private
-   * @param {String} pattern The file path pattern.
-   * @param {Object} options The options object.
+   * @param {String} [pattern='<cwd>/*.jst'] The file path pattern.
+   * @param {Object} [options=_.templateSettings] The options object.
    * @returns {String} Returns the compiled source.
    */
   function buildTemplate(pattern, options) {
-    pattern || (pattern = './*.jst');
+    pattern || (pattern = path.join(cwd, '*.jst'));
     options || (options = _.templateSettings);
 
     var directory = path.dirname(pattern);
@@ -289,9 +289,9 @@
     );
 
     fs.readdirSync(directory).forEach(function(filename) {
-      var filepath = path.join(directory, filename);
+      var filePath = path.join(directory, filename);
       if (pattern.test(filename)) {
-        var text = fs.readFileSync(filepath, 'utf8'),
+        var text = fs.readFileSync(filePath, 'utf8'),
             precompiled = getFunctionSource(_.template(text, null, options)),
             prop = filename.replace(/\..*$/, '');
 
@@ -809,9 +809,9 @@
 
   /**
    * Creates a debug and minified build, executing the `callback` for each.
-   * The `callback` is invoked with 2 arguments; (filepath, source)
+   * The `callback` is invoked with 2 arguments; (filePath, source)
    *
-   * @param {Array} options The build options array.
+   * @param {Array} [options=[]] The build options array.
    * @param {Function} callback The function called per build.
    */
   function build(options, callback) {
@@ -1429,7 +1429,8 @@
     if (!isDebug) {
       workingName += '.min';
       minify(source, {
-        'silent': isSilent,
+        'isSilent': isSilent,
+        'isTemplate': isTemplate,
         'workingName': workingName,
         'onComplete': function(source) {
           // correct overly aggressive Closure Compiler minification
@@ -1458,8 +1459,8 @@
   }
   else {
     // or invoked directly
-    build(process.argv, function(source, filepath) {
-      filepath && fs.writeFileSync(filepath, source, 'utf8');
+    build(process.argv, function(source, filePath) {
+      filePath && fs.writeFileSync(filePath, source, 'utf8');
     });
   }
 }());

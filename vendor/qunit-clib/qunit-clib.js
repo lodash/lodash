@@ -171,7 +171,7 @@
 
     // exit out of Node.js
     try {
-      process.exit();
+      process.exit(details.failed);
     } catch(e) { }
   }
 

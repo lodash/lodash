@@ -47,6 +47,6 @@
   },
   "scripts": {
     "build": "node build",
-    "test": "node test/test;node test/test-build"
+    "test": "node test/test && node test/test-build"
   }
 }

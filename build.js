@@ -1411,7 +1411,9 @@
       !_.isEqual(exportsOptions, exportsAll);
 
     // used to name temporary files created in `dist/`
-    var workingName = 'lodash' + (isTemplate ? '.template' : isCustom ? '.custom' : '');
+    var workingName = outputPath
+      ? path.basename(outputPath, '.js')
+      : 'lodash' + (isTemplate ? '.template' : isCustom ? '.custom' : '');
 
     // restore `dependencyMap`
     dependencyMap = dependencyBackup;
@@ -1427,7 +1429,9 @@
     }
     // begin the minification process
     if (!isDebug) {
-      workingName += '.min';
+      if (!outputPath) {
+        workingName += '.min';
+      }
       minify(source, {
         'isSilent': isSilent,
         'isTemplate': isTemplate,

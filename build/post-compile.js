@@ -62,7 +62,11 @@
     // was invoked directly (e.g. `node post-compile.js source.js`) and write to
     // the same file
     (function() {
-      var filePath = process.argv[2],
+      var options = process.argv;
+      if (options.length < 3) {
+        return;
+      }
+      var filePath = options[options.length - 1],
           source = fs.readFileSync(filePath, 'utf8');
 
       fs.writeFileSync(filePath, postprocess(source), 'utf8');

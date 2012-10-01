@@ -131,7 +131,7 @@ lodash template="./*.jst"
 
  * Use the `settings` argument to pass the template settings used when precompiling templates
 ```bash
-lodash settings="{interpolate:/\\{\\{(.+?)\\}\\}/g}"
+lodash settings="{interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/g}"
 ```
 
 All arguments, except `legacy` with `csp` or `mobile`, may be combined.<br>

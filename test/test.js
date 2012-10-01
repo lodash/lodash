@@ -1706,7 +1706,7 @@
       var thisArg,
           array = ['a'],
           callback = function() { thisArg = this; },
-          useStrict = Function('"use strict";return this')() === undefined;
+          useStrict = (function() { return this; }).call(null) === null;
 
       var funcs = [
         'countBy',

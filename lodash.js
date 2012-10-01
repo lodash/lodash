@@ -3303,7 +3303,8 @@
   /**
    * Creates a function that, when called, invokes `object[methodName]` and
    * prepends any additional `lateBind` arguments to those passed to the bound
-   * function. This method
+   * function. This method differs from `_.bind` by allowing bound functions to
+   * reference methods that will be redefined or don't yet exist.
    *
    * @static
    * @memberOf _
@@ -3321,7 +3322,7 @@
    *   }
    * };
    *
-   * var func = _.bind(object, 'greet', 'hi');
+   * var func = _.lateBind(object, 'greet', 'hi');
    * func();
    * // => 'hi moe'
    *

@@ -355,7 +355,7 @@
       '    lodash legacy        Build tailored for older browsers without ES5 support',
       '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
       '    lodash strict        Build with `_.bindAll`, `_.defaults`, & `_.extend` in strict mode',
-      '    lodash underscore    Build with iteration fixes removed and only Underscore’s API',
+      '    lodash underscore    Build tailored for projects already using Underscore',
       '    lodash include=...   Comma separated method/category names to include in the build',
       '    lodash minus=...     Comma separated method/category names to remove from those included in the build',
       '    lodash plus=...      Comma separated method/category names to add to those included in the build',
@@ -1051,7 +1051,7 @@
         source = removeVar(source, 'cloneableClasses');
 
         // replace `arrayLikeClasses` in `_.isEmpty`
-        source = source.replace(/'if *\(arrayLikeClasses[\s\S]+?' \|\|\\n/, "'if (isArray(value) ||");
+        source = source.replace(/'if *\(arrayLikeClasses[\s\S]+?' \|\|\\n/, "'if (isArray(value) || className == stringClass ||");
 
         // replace `arrayLikeClasses` in `_.isEqual`
         source = source.replace(/(?: *\/\/.*\n)*( +)var isArr *= *arrayLikeClasses[^}]+}/, '$1var isArr = isArray(a);');

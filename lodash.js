@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.7.0 <http://lodash.com>
+ * Lo-Dash v0.8.0 <http://lodash.com>
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.4.0 <http://underscorejs.org>
  * (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
@@ -981,6 +981,7 @@
   var shimKeys = createIterator({
     'args': 'object',
     'init': '[]',
+    'top': 'if (!(object && objectTypes[typeof object])) throw TypeError()',
     'inLoop': 'result.push(index)'
   });
 
@@ -3988,7 +3989,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.7.0';
+  lodash.VERSION = '0.8.0';
 
   // assign static methods
   lodash.after = after;

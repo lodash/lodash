@@ -609,6 +609,7 @@
         });
 
         equal(last.value, 2, '_.each: ' + basename);
+        equal(lodash.isEmpty('moe'), false, '_.isEmpty: ' + basename);
 
         var object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
         equal(object.fn(), 2, '_.bind: ' + basename);

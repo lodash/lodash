@@ -1050,6 +1050,18 @@
         source = removeVar(source, 'arrayLikeClasses');
         source = removeVar(source, 'cloneableClasses');
 
+        // remove large array optimizations from `cachedContains`
+        source = source.replace(/( +)function cachedContains[\s\S]+?\n\1}/, [
+          '  function cachedContains(array, fromIndex) {',
+          '    return function(value) {',
+          '      return indexOf(array, value, fromIndex || 0) > -1;',
+          '    };',
+          '  }'
+        ].join('\n'));
+
+        // reduce the number of arguments passed to `cachedContains` from 3 to 2
+        source = source.replace(/(cachedContains\(\w+, *\w+), *\w+/g, '$1');
+
         // replace `arrayLikeClasses` in `_.isEmpty`
         source = source.replace(/'if *\(arrayLikeClasses[\s\S]+?' \|\|\\n/, "'if (isArray(value) || className == stringClass ||");
 

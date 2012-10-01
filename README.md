@@ -11,7 +11,6 @@ Lo-Dash’s performance is gained by avoiding slower native methods, instead opt
  * [Production build](https://raw.github.com/bestiejs/lodash/v0.8.0/lodash.min.js)
  * [Underscore build](https://raw.github.com/bestiejs/lodash/v0.8.0/lodash.underscore.min.js) tailored for projects already using Underscore
  * CDN copies of ≤ [v0.8.0](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.8.0/lodash.min.js) are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
-
  * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
 ## Dive in
@@ -125,17 +124,17 @@ lodash backbone plus=random,template
 lodash backbone plus="random, template"
 ```
 
-* Use the `template` argument to pass the file path pattern used to match template files to precompile
+ * Use the `template` argument to pass the file path pattern used to match template files to precompile
 ```bash
 lodash template="./*.jst"
 ```
 
-* Use the `settings` argument to pass the template settings used when precompiling templates
+ * Use the `settings` argument to pass the template settings used when precompiling templates
 ```bash
 lodash settings="{interpolate:/\\{\\{(.+?)\\}\\}/g}"
 ```
 
-All arguments, except `legacy` with `csp` or `mobile`, may be combined.
+All arguments, except `legacy` with `csp` or `mobile`, may be combined.<br>
 Unless specified by `-o` or `--output`, all files created are saved to the current working directory.
 
 The following options are also supported:

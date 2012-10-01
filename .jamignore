@@ -1,8 +1,14 @@
 *.custom.*
 .*
+build.js
+index.js
+build/
 doc/*.php
 node_modules/
 perf/*.sh
 test/*.sh
 test/test-build.js
 test/template/
+vendor/closure-compiler
+vendor/docdown
+vendor/uglifyjs

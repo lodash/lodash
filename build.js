@@ -369,7 +369,7 @@
       '    lodash template=...  File path pattern used to match template files to precompile',
       '                         (e.g. `lodash template=./*.jst`)',
       '    lodash settings=...  Template settings used when precompiling templates',
-      '                         (e.g. `lodash settings="{interpolate:/\\{\\{(.+?)\\}\\}/g}"`)',
+      '                         (e.g. `lodash settings="{interpolate:/\\\\{\\\\{([\\\\s\\\\S]+?)\\\\}\\\\}/g}"`)',
       '',
       '    All arguments, except `legacy` with `csp` or `mobile`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',

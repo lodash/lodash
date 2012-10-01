@@ -139,13 +139,13 @@ Unless specified by `-o` or `--output`, all files created are saved to the curre
 
 The following options are also supported:
 
- * `-c`, `--stdout`&nbsp;&nbsp; Write output to standard output
- * `-d`, `--debug`&nbsp;&nbsp;&nbsp; Write only the debug output
- * `-h`, `--help`&nbsp;&nbsp;&nbsp;&nbsp; Display help information
- * `-m`, `--minify`&nbsp;&nbsp; Write only the minified output
- * `-o`, `--output`&nbsp;&nbsp; Write output to a given path/filename
- * `-s`, `--silent`&nbsp;&nbsp; Skip status updates normally logged to the console
- * `-V`, `--version`&nbsp; Output current version of Lo-Dash
+ * `-c`, `--stdout`&nbsp;&nbsp;&nbsp;&nbsp; Write output to standard output
+ * `-d`, `--debug`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Write only the debug output
+ * `-h`, `--help`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Display help information
+ * `-m`, `--minify`&nbsp;&nbsp;&nbsp;&nbsp; Write only the minified output
+ * `-o`, `--output`&nbsp;&nbsp;&nbsp;&nbsp; Write output to a given path/filename
+ * `-s`, `--silent`&nbsp;&nbsp;&nbsp;&nbsp; Skip status updates normally logged to the console
+ * `-V`, `--version`&nbsp;&nbsp; Output current version of Lo-Dash
 
 The `lodash` command-line utility is available when Lo-Dash is installed as a global package (i.e. `npm install -g lodash`).
 

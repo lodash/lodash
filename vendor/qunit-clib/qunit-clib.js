@@ -171,7 +171,12 @@
 
     // exit out of Node.js
     try {
-      process.exit(details.failed);
+      if (details.failed) {
+        console.error('Error: ' + details.failed + ' of ' + details.total + ' tests failed.');
+        process.exit(1);
+      } else {
+        process.exit(0);
+      }
     } catch(e) { }
   }
 

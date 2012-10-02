@@ -2446,8 +2446,9 @@
         result = [];
 
     while (++index < length) {
-      if (!contains(array[index])) {
-        result.push(array[index]);
+      var value = array[index];
+      if (!contains(value)) {
+        result.push(value);
       }
     }
     return result;
@@ -2594,15 +2595,14 @@
    * // => [1, 2]
    */
   function intersection(array) {
-    var value,
-        argsLength = arguments.length,
+    var argsLength = arguments.length,
         cache = [],
         index = -1,
         length = array.length,
         result = [];
 
     array: while (++index < length) {
-      value = array[index];
+      var value = array[index];
       if (indexOf(result, value) < 0) {
         for (var argsIndex = 1; argsIndex < argsLength; argsIndex++) {
           if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(arguments[argsIndex])))(value)) {
@@ -3042,8 +3042,9 @@
         result = [];
 
     while (++index < length) {
-      if (!contains(array[index])) {
-        result.push(array[index]);
+      var value = array[index];
+      if (!contains(value)) {
+        result.push(value);
       }
     }
     return result;

@@ -542,7 +542,7 @@
   function matchFunction(source, funcName) {
     var result = source.match(RegExp(
       // match multi-line comment block (could be on a single line)
-      '\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/\\n' +
+      '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/\\n)?' +
       // begin non-capturing group
       '(?:' +
       // match a function declaration
@@ -733,16 +733,12 @@
       source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?(true;\\n)'), '$1$2');
     }
     source = source.replace(RegExp(
-      // begin non-capturing group
-      '(?:' +
       // match multi-line comment block
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
       // match a variable declaration that's not part of a declaration list
       '( +)var ' + varName + ' *= *(?:.+?(?:;|&&\\n[^;]+;)|(?:\\w+\\(|{)[\\s\\S]+?\\n\\1.+?;)\\n|' +
       // match a variable in a declaration list
-      '\\n +' + varName + ' *=.+?,' +
-      // end non-capturing group
-      ')'
+      '\\n +' + varName + ' *=.+?,'
     ), '');
 
     // remove a varaible at the start of a variable declaration list
@@ -1050,17 +1046,76 @@
         source = removeVar(source, 'arrayLikeClasses');
         source = removeVar(source, 'cloneableClasses');
 
-        // remove large array optimizations from `cachedContains`
-        source = source.replace(/( +)function cachedContains[\s\S]+?\n\1}/, [
-          '  function cachedContains(array, fromIndex) {',
-          '    return function(value) {',
-          '      return indexOf(array, value, fromIndex || 0) > -1;',
-          '    };',
+        // remove large array optimizations
+        source = removeFunction(source, 'cachedContains');
+        source = removeVar(source, 'largeArraySize');
+
+        // replace `_.clone`
+        source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
+          '  function clone(value) {',
+          '    return value && objectTypes[typeof value]',
+          '      ? (isArray(value) ? slice.call(value) : extend({}, value))',
+          '      : value',
           '  }'
         ].join('\n'));
 
-        // reduce the number of arguments passed to `cachedContains` from 3 to 2
-        source = source.replace(/(cachedContains\(\w+, *\w+), *\w+/g, '$1');
+        // replace `_.difference`
+        source = source.replace(/( +)function difference[\s\S]+?\n\1}/, [
+          '  function difference(array) {',
+          '    var index = -1,',
+          '        length = array.length,',
+          '        flattened = concat.apply(ArrayProto, arguments),',
+          '        result = [];',
+          '',
+          '    while (++index < length) {',
+          '      var value = array[index]',
+          '      if (indexOf(flattened, value, length) < 0) {',
+          '        result.push(value);',
+          '      }',
+          '    }',
+          '    return result',
+          '  }'
+        ].join('\n'));
+
+        // replace `_.intersection`
+        source = source.replace(/( +)function intersection[\s\S]+?\n\1}/, [
+          '  function intersection(array) {',
+          '    var argsLength = arguments.length,',
+          '        index = -1,',
+          '        length = array.length,',
+          '        result = [];',
+          '',
+          '    array: while (++index < length) {',
+          '      var value = array[index]',
+          '      if (indexOf(result, value) < 0) {',
+          '        for (var argsIndex = 1; argsIndex < argsLength; argsIndex++) {',
+          '          if (indexOf(arguments[argsIndex], value) < 0) {',
+          '            continue array;',
+          '          }',
+          '        }',
+          '        result.push(value);',
+          '      }',
+          '    }',
+          '    return result',
+          '  }'
+        ].join('\n'));
+
+        // replace `_.without`
+        source = source.replace(/( +)function without[\s\S]+?\n\1}/, [
+          '  function without(array) {',
+          '    var index = -1,',
+          '        length = array.length,',
+          '        result = [];',
+          '',
+          '    while (++index < length) {',
+          '      var value = array[index]',
+          '      if (indexOf(arguments, value, 1) < 0) {',
+          '        result.push(value);',
+          '      }',
+          '    }',
+          '    return result',
+          '  }'
+        ].join('\n'));
 
         // replace `arrayLikeClasses` in `_.isEmpty`
         source = source.replace(/'if *\(arrayLikeClasses[\s\S]+?' \|\|\\n/, "'if (isArray(value) || className == stringClass ||");
@@ -1069,18 +1124,9 @@
         source = source.replace(/(?: *\/\/.*\n)*( +)var isArr *= *arrayLikeClasses[^}]+}/, '$1var isArr = isArray(a);');
 
         // remove "exit early" feature from `_.each`
-        source = source.replace(/( )+var baseIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
+        source = source.replace(/( +)var baseIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
           return match.replace(/if *\(callback[^']+/, 'callback(value, index, collection)');
         });
-
-        // remove `deep` clone functionality
-        source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
-          '  function clone(value) {',
-          '    return value && objectTypes[typeof value]',
-          '      ? (isArray(value) ? slice.call(value) : extend({}, value))',
-          '      : value',
-          '  }'
-        ].join('\n'));
 
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {

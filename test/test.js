@@ -1702,6 +1702,43 @@
   QUnit.module('lodash methods');
 
   (function() {
+    test('should allow falsey arguments', function() {
+      var funcs = _.without.apply(_, [_.functions(_)].concat([
+        '_',
+        '_iteratorTemplate',
+        '_shimKeys',
+        'after',
+        'bind',
+        'bindAll',
+        'compose',
+        'debounce',
+        'defer',
+        'delay',
+        'functions',
+        'memoize',
+        'once',
+        'partial',
+        'tap',
+        'throttle',
+        'wrap'
+      ]));
+
+      _.each(funcs, function(methodName) {
+        var func = _[methodName],
+            pass = true;
+
+        _.each(falsey, function(value, index) {
+          try {
+            index ? func(value) : func();
+          } catch(e) {
+            pass = false;
+          }
+        });
+
+        ok(pass, '_.' + methodName + ' allows falsey arguments');
+      });
+    });
+
     test('should handle `null` `thisArg` arguments', function() {
       var thisArg,
           array = ['a'],

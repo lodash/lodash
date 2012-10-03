@@ -315,6 +315,8 @@
     'var index, value, iteratee = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
     'result<% if (init) { %> = <%= init %><% } %>;\n' +
+    // exit early if the first argument is falsey
+    'if (!<%= firstArg %>) return result;\n' +
     // add code before the iteration branches
     '<%= top %>;\n' +
 
@@ -981,7 +983,6 @@
   var shimKeys = createIterator({
     'args': 'object',
     'init': '[]',
-    'top': 'if (!(object && objectTypes[typeof object])) throw TypeError()',
     'inLoop': 'result.push(index)'
   });
 
@@ -1250,7 +1251,7 @@
    * // => true
    */
   function has(object, property) {
-    return hasOwnProperty.call(object, property);
+    return object ? hasOwnProperty.call(object, property) : false;
   }
 
   /**
@@ -1329,7 +1330,6 @@
     'args': 'value',
     'init': 'true',
     'top':
-      'if (!value) return result;\n' +
       'var className = toString.call(value),\n' +
       '    length = value.length;\n' +
       'if (arrayLikeClasses[className]' +
@@ -1690,10 +1690,15 @@
    * // => ['one', 'two', 'three'] (order is not guaranteed)
    */
   var keys = !nativeKeys ? shimKeys : function(object) {
+    var type = typeof object;
+
     // avoid iterating over the `prototype` property
-    return typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
-      ? shimKeys(object)
-      : nativeKeys(object);
+    if (type == 'function' && propertyIsEnumerable.call(object, 'prototype')) {
+      return shimKeys(object);
+    }
+    return object && objectTypes[type]
+      ? nativeKeys(object)
+     : [];
   };
 
   /**
@@ -2198,7 +2203,7 @@
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
     var iteratee = collection,
-        length = collection.length,
+        length = collection ? collection.length : 0,
         noaccum = arguments.length < 3;
 
     if (length !== +length) {
@@ -2349,7 +2354,10 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    var length = collection ? collection.length : 0;
+    if (!collection) {
+      return [];
+    }
+    var length = collection.length;
     if (length === +length) {
       return (noArraySliceOnStrings ? toString.call(collection) == stringClass : typeof collection == 'string')
         ? collection.split('')
@@ -2411,7 +2419,7 @@
    */
   function compact(array) {
     var index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         result = [];
 
     while (++index < length) {
@@ -2439,11 +2447,14 @@
    * // => [1, 3, 4]
    */
   function difference(array) {
+    var result = [];
+    if (!array) {
+      return result;
+    }
     var index = -1,
         length = array.length,
         flattened = concat.apply(ArrayProto, arguments),
-        contains = cachedContains(flattened, length),
-        result = [];
+        contains = cachedContains(flattened, length);
 
     while (++index < length) {
       var value = array[index];
@@ -2474,7 +2485,9 @@
    * // => 5
    */
   function first(array, n, guard) {
-    return (n == null || guard) ? array[0] : slice.call(array, 0, n);
+    if (array) {
+      return (n == null || guard) ? array[0] : slice.call(array, 0, n);
+    }
   }
 
   /**
@@ -2498,7 +2511,7 @@
   function flatten(array, shallow) {
     var value,
         index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         result = [];
 
     while (++index < length) {
@@ -2540,7 +2553,7 @@
    */
   function indexOf(array, value, fromIndex) {
     var index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     if (fromIndex) {
       if (typeof fromIndex == 'number') {
@@ -2576,7 +2589,9 @@
    * // => [3, 2]
    */
   function initial(array, n, guard) {
-    return slice.call(array, 0, -((n == null || guard) ? 1 : n));
+    return array
+      ? slice.call(array, 0, -((n == null || guard) ? 1 : n))
+      : [];
   }
 
   /**
@@ -2598,7 +2613,7 @@
     var argsLength = arguments.length,
         cache = [],
         index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         result = [];
 
     array: while (++index < length) {
@@ -2634,8 +2649,10 @@
    * // => 1
    */
   function last(array, n, guard) {
-    var length = array.length;
-    return (n == null || guard) ? array[length - 1] : slice.call(array, -n || length);
+    if (array) {
+      var length = array.length;
+      return (n == null || guard) ? array[length - 1] : slice.call(array, -n || length);
+    }
   }
 
   /**
@@ -2658,7 +2675,7 @@
    * // => 1
    */
   function lastIndexOf(array, value, fromIndex) {
-    var index = array.length;
+    var index = array ? array.length : 0;
     if (fromIndex && typeof fromIndex == 'number') {
       index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
     }
@@ -2767,7 +2784,7 @@
    */
   function object(keys, values) {
     var index = -1,
-        length = keys.length,
+        length = keys ? keys.length : 0,
         result = {};
 
     while (++index < length) {
@@ -2849,7 +2866,9 @@
    * // => [2, 1]
    */
   function rest(array, n, guard) {
-    return slice.call(array, (n == null || guard) ? 1 : n);
+    return array
+      ? slice.call(array, (n == null || guard) ? 1 : n)
+      : [];
   }
 
   /**
@@ -2869,7 +2888,7 @@
   function shuffle(array) {
     var rand,
         index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         result = Array(length);
 
     while (++index < length) {
@@ -2923,7 +2942,7 @@
   function sortedIndex(array, value, callback, thisArg) {
     var mid,
         low = 0,
-        high = array.length;
+        high = array ? array.length : low;
 
     callback = createCallback(callback, thisArg);
     value = callback(value);
@@ -2996,7 +3015,7 @@
   function uniq(array, isSorted, callback, thisArg) {
     var computed,
         index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         result = [],
         seen = [];
 
@@ -3037,7 +3056,7 @@
    */
   function without(array) {
     var index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         contains = cachedContains(arguments, 1, 20),
         result = [];
 
@@ -3068,7 +3087,7 @@
    */
   function zip(array) {
     var index = -1,
-        length = max(pluck(arguments, 'length')),
+        length = array ? max(pluck(arguments, 'length')) : 0,
         result = Array(length);
 
     while (++index < length) {
@@ -3730,6 +3749,7 @@
     // http://ejohn.org/blog/javascript-micro-templating/
     // and Laura Doktorova's doT.js
     // https://github.com/olado/doT
+    text += '';
     options || (options = {});
 
     var isEvaluating,

@@ -950,6 +950,9 @@
     // flag used to specify if the build should include the "use strict" directive
     var useStrict = isStrict || !(isLegacy || isMobile);
 
+    // flag used to specify replacing Lo-Dash's `_.clone` with Underscore's
+    var useUnderscoreClone = isUnderscore;
+
     /*------------------------------------------------------------------------*/
 
     // names of methods to include in the build
@@ -973,6 +976,11 @@
         return /include/.test(value) &&
           (result = getDependencies(optionToMethodsArray(source, value)));
       });
+
+      // use Lo-Dash's clone if explicitly requested
+      if (result && result.indexOf('clone') > -1) {
+        useUnderscoreClone = false;
+      }
 
       // add method names required by Backbone and Underscore builds
       if (isBackbone && !result) {
@@ -1038,7 +1046,6 @@
       }
       else if (isUnderscore) {
         // update dependencies
-        dependencyMap.clone = ['extend', 'isArray'];
         dependencyMap.isEqual = ['isArray', 'isFunction'];
         dependencyMap.isEmpty = ['isArray'];
 
@@ -1051,13 +1058,16 @@
         source = removeVar(source, 'largeArraySize');
 
         // replace `_.clone`
-        source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
-          '  function clone(value) {',
-          '    return value && objectTypes[typeof value]',
-          '      ? (isArray(value) ? slice.call(value) : extend({}, value))',
-          '      : value',
-          '  }'
-        ].join('\n'));
+        if (useUnderscoreClone) {
+          dependencyMap.clone = ['extend', 'isArray'];
+          source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
+            '  function clone(value) {',
+            '    return value && objectTypes[typeof value]',
+            '      ? (isArray(value) ? slice.call(value) : extend({}, value))',
+            '      : value',
+            '  }'
+          ].join('\n'));
+        }
 
         // replace `_.difference`
         source = source.replace(/( +)function difference[\s\S]+?\n\1}/, [

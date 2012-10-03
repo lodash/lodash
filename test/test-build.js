@@ -633,6 +633,24 @@
         start();
       });
     });
+
+    asyncTest('`lodash underscore plus=clone`', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
+      build(['-s', 'underscore', 'plus=clone'], function(source, filePath) {
+        var array = [{ 'value': 1 }],
+            basename = path.basename(filePath, '.js'),
+            context = createContext();
+
+        vm.runInContext(source, context);
+        var lodash = context._,
+            clone = lodash.clone(array, true);
+
+        deepEqual(array, clone, basename);
+        notEqual(array, clone, basename);
+        start();
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

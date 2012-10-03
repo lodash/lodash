@@ -1060,7 +1060,7 @@
         // replace `_.clone`
         if (useUnderscoreClone) {
           dependencyMap.clone = ['extend', 'isArray'];
-          source = source.replace(/( +)function clone[\s\S]+?\n\1}/, [
+          source = source.replace(/^( +)function clone[\s\S]+?\n\1}/m, [
             '  function clone(value) {',
             '    return value && objectTypes[typeof value]',
             '      ? (isArray(value) ? slice.call(value) : extend({}, value))',
@@ -1070,7 +1070,7 @@
         }
 
         // replace `_.difference`
-        source = source.replace(/( +)function difference[\s\S]+?\n\1}/, [
+        source = source.replace(/^( +)function difference[\s\S]+?\n\1}/m, [
           '  function difference(array) {',
           '    var index = -1,',
           '        length = array.length,',
@@ -1088,7 +1088,7 @@
         ].join('\n'));
 
         // replace `_.intersection`
-        source = source.replace(/( +)function intersection[\s\S]+?\n\1}/, [
+        source = source.replace(/^( +)function intersection[\s\S]+?\n\1}/m, [
           '  function intersection(array) {',
           '    var argsLength = arguments.length,',
           '        index = -1,',
@@ -1111,7 +1111,7 @@
         ].join('\n'));
 
         // replace `_.without`
-        source = source.replace(/( +)function without[\s\S]+?\n\1}/, [
+        source = source.replace(/^( +)function without[\s\S]+?\n\1}/m, [
           '  function without(array) {',
           '    var index = -1,',
           '        length = array.length,',
@@ -1235,6 +1235,8 @@
         source = removeVar(source, 'reNative');
         source = removeFromCreateIterator(source, 'nativeKeys');
       }
+
+      /*----------------------------------------------------------------------*/
 
       if (isMobile) {
         // inline all functions defined with `createIterator`

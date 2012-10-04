@@ -395,7 +395,7 @@
           } else {
             func(object, { 'a': 1 });
           }
-        } catch(e) {console.log(e);
+        } catch(e) {
           pass = false;
         }
         ok(pass);

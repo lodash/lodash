@@ -10,7 +10,7 @@
     'lodash':
       '/*!\n' +
       ' Lo-Dash @VERSION lodash.com/license\n' +
-      ' Underscore.js 1.4.0 underscorejs.org/LICENSE\n' +
+      ' Underscore.js 1.4.1 underscorejs.org/LICENSE\n' +
       '*/',
     'underscore':
       '/*! Underscore.js @VERSION underscorejs.org/LICENSE */'

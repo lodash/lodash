@@ -1,7 +1,7 @@
 /*!
- * Lo-Dash v0.8.0 <http://lodash.com>
+ * Lo-Dash v0.8.1 <http://lodash.com>
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
- * Based on Underscore.js 1.4.0 <http://underscorejs.org>
+ * Based on Underscore.js 1.4.1 <http://underscorejs.org>
  * (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
@@ -3999,7 +3999,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.8.0';
+  lodash.VERSION = '0.8.1';
 
   // assign static methods
   lodash.after = after;

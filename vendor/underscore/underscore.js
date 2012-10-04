@@ -1,4 +1,4 @@
-//     Underscore.js 1.4.0
+//     Underscore.js 1.4.1
 //     http://underscorejs.org
 //     (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore may be freely distributed under the MIT license.
@@ -65,7 +65,7 @@
   }
 
   // Current version.
-  _.VERSION = '1.4.0';
+  _.VERSION = '1.4.1';
 
   // Collection Functions
   // --------------------

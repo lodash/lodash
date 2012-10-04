@@ -312,4 +312,15 @@ $(document).ready(function() {
     view.remove();
   });
 
+  test("Provide function for el.", 1, function() {
+    var View = Backbone.View.extend({
+      el: function() {
+        return "<p><a></a></p>";
+      }
+    });
+
+    var view = new View;
+    ok(view.$el.is('p:has(a)'));
+  });
+
 });

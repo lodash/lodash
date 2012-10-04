@@ -482,7 +482,7 @@
 
   /** Reusable iterator options for `invoke`, `map`, `pluck`, and `sortBy` */
   var mapIteratorOptions = {
-    'init': '',
+    'init': false,
     'beforeLoop': {
       'array':  'result = Array(length)',
       'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')
@@ -672,8 +672,7 @@
    *  useStrict - A boolean to specify whether or not to include the ES5
    *   "use strict" directive.
    *
-   *  args - A string of comma separated arguments the iteration function will
-   *   accept.
+   *  args - A string of comma separated arguments the iteration function will accept.
    *
    *  init - A string to specify the initial value of the `result` variable.
    *
@@ -691,31 +690,35 @@
    * @returns {Function} Returns the compiled function.
    */
   function createIterator() {
-    var object,
-        prop,
-        value,
-        index = -1,
+    var index = -1,
         length = arguments.length;
 
     // merge options into a template data object
     var data = {
       'bottom': '',
+      'hasDontEnumBug': hasDontEnumBug,
+      'isKeysFast': isKeysFast,
+      'noArgsEnum': noArgsEnum,
+      'noCharByIndex': noCharByIndex,
+      'shadowed': shadowed,
       'top': '',
-      'arrayBranch': { 'beforeLoop': '' },
-      'objectBranch': { 'beforeLoop': '' }
+      'useHas': true,
+      'useStrict': isStrictFast,
+      'arrayBranch': {},
+      'objectBranch': {}
     };
 
     while (++index < length) {
-      object = arguments[index];
-      for (prop in object) {
-        value = (value = object[prop]) == null ? '' : value;
+      var object = arguments[index];
+      for (var prop in object) {
+        var value = object[prop];
         // keep this regexp explicit for the build pre-process
         if (/beforeLoop|inLoop/.test(prop)) {
           if (typeof value == 'string') {
             value = { 'array': value, 'object': value };
           }
-          data.arrayBranch[prop] = value.array || '';
-          data.objectBranch[prop] = value.object || '';
+          data.arrayBranch[prop] = value.array;
+          data.objectBranch[prop] = value.object;
         } else {
           data[prop] = value;
         }
@@ -724,28 +727,18 @@
     // set additional template `data` values
     var args = data.args,
         firstArg = /^[^,]+/.exec(args)[0],
-        init = data.init,
-        useStrict = data.useStrict;
+        init = data.init;
 
     data.firstArg = firstArg;
-    data.hasDontEnumBug = hasDontEnumBug;
     data.init = init == null ? firstArg : init;
-    data.isKeysFast = isKeysFast;
-    data.noArgsEnum = noArgsEnum;
-    data.shadowed = shadowed;
-    data.useHas = data.useHas !== false;
-    data.useStrict = useStrict == null ? isStrictFast : useStrict;
 
-    if (data.noCharByIndex == null) {
-      data.noCharByIndex = noCharByIndex;
-    }
     if (firstArg != 'collection' || !data.arrayBranch.inLoop) {
       data.arrayBranch = null;
     }
     // create the function factory
     var factory = Function(
         'arrayLikeClasses, ArrayProto, bind, compareAscending, concat, createCallback, ' +
-        'forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction, ' +
+        'forIn, hasOwnProperty, indexOf, isArguments, isArray, isFunction, ' +
         'isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
         'slice, stringClass, toString, undefined',
       'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
@@ -754,7 +747,7 @@
     // return the compiled function
     return factory(
       arrayLikeClasses, ArrayProto, bind, compareAscending, concat, createCallback,
-      forIn, hasOwnProperty, identity, indexOf, isArguments, isArray, isFunction,
+      forIn, hasOwnProperty, indexOf, isArguments, isArray, isFunction,
       isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
       slice, stringClass, toString
     );
@@ -846,7 +839,7 @@
   // fallback for browsers that can't detect `arguments` objects by [[Class]]
   if (noArgsClass) {
     isArguments = function(value) {
-      return !!(value && hasOwnProperty.call(value, 'callee'));
+      return value ? hasOwnProperty.call(value, 'callee') : false;
     };
   }
 
@@ -1996,7 +1989,7 @@
    * // => 2
    */
   var find = createIterator(baseIteratorOptions, forEachIteratorOptions, {
-    'init': '',
+    'init': false,
     'inLoop': 'if (callback(value, index, collection)) return value'
   });
 
@@ -3194,8 +3187,8 @@
       '  return result\n' +
       '}',
     'inLoop':
-      'if (isFunction(result[index])) {\n' +
-      '  result[index] = bind(result[index], result)\n' +
+      'if (isFunction(value)) {\n' +
+      '  result[index] = bind(value, result)\n' +
       '}'
   });
 

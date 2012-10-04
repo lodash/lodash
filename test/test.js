@@ -1767,7 +1767,7 @@
       var thisArg,
           array = ['a'],
           callback = function() { thisArg = this; },
-          useStrict = (function() { return this; }).call(null) === null;
+          expected = (function() { return this; }).call(null);
 
       var funcs = [
         'countBy',
@@ -1809,10 +1809,10 @@
           func(array, callback, null);
         }
 
-        if (useStrict) {
+        if (expected === null) {
           deepEqual(thisArg, null, message);
         } else {
-          equal(thisArg, window, message);
+          equal(thisArg, expected, message);
         }
       });
     });

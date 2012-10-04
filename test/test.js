@@ -646,6 +646,15 @@
       var array = [1, 2, 3];
       deepEqual(_.initial(array, 0), []);
     });
+
+    test('should allow a falsey `array` argument', function() {
+      _.each(falsey, function(index, value) {
+        try {
+          var actual = index ? _.initial(value) : _.initial();
+        } catch(e) { }
+        deepEqual(actual, []);
+      })
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1286,6 +1295,21 @@
         deepEqual(args, ['c', 'b', 1, collection]);
         equal(actual, 'cba');
       });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.rest');
+
+  (function() {
+    test('should allow a falsey `array` argument', function() {
+      _.each(falsey, function(index, value) {
+        try {
+          var actual = index ? _.rest(value) : _.rest();
+        } catch(e) { }
+        deepEqual(actual, []);
+      })
     });
   }());
 

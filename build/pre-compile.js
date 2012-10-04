@@ -15,7 +15,6 @@
     'createCallback',
     'ctor',
     'hasOwnProperty',
-    'identity',
     'index',
     'iteratee',
     'length',

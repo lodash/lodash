@@ -684,7 +684,7 @@
       // remove `isKeysFast` from `inLoop.object` of `mapIteratorOptions`, `invoke`, `pairs`, `pluck`, and `sortBy`
       .replace(/'\s*\+\s*\(isKeysFast[^)]+?\)\s*\+\s*'/g, '.push')
       // remove data object property assignment in `createIterator`
-      .replace(/\s*.+?\.isKeysFast *=.+/, '');
+      .replace(/ *'isKeysFast':.+\n/, '');
   }
 
   /**
@@ -795,10 +795,8 @@
       .replace(/(?: *\/\/.*\n)*(\s*)' *<% *if *\(useStrict\).+/, value ? "$1'\\'use strict\\';\\n' +" : '')
       // remove `useStrict` from iterator options
       .replace(/ *'useStrict': *false,\n/g, '')
-      // remove `useStrict` variable assignment in `createIterator`
-      .replace(/,\s*useStrict *=[^;]+/, '')
       // remove `useStrict` data object property assignment in `createIterator`
-      .replace(/\s*.+?\.useStrict *=.+/, '');
+      .replace(/ *'useStrict':.+\n/, '');
   }
 
   /*--------------------------------------------------------------------------*/

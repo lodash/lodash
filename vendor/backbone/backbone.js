@@ -183,22 +183,22 @@
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
-    attributes || (attributes = {});
+    var attrs = attributes || {};
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = _.result(this, 'defaults')) {
-      attributes = _.extend({}, defaults, attributes);
+      attrs = _.extend({}, defaults, attrs);
     }
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
     this.changed = {};
-    this._silent = {};
+    this._changes = {};
     this._pending = {};
-    this.set(attributes, {silent: true});
+    this.set(attrs, {silent: true});
     // Reset change tracking.
     this.changed = {};
-    this._silent = {};
+    this._changes = {};
     this._pending = {};
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
@@ -210,13 +210,17 @@
     // A hash of attributes whose current and previous value differ.
     changed: null,
 
-    // A hash of attributes that have silently changed since the last time
-    // `change` was called.  Will become pending attributes on the next call.
-    _silent: null,
+    // A hash of attributes that have changed since the last time `change`
+    // was called.
+    _changes: null,
 
-    // A hash of attributes that have changed since the last `'change'` event
+    // A hash of attributes that have changed since the last `change` event
     // began.
     _pending: null,
+
+    // A hash of attributes with the current model state to determine if
+    // a `change` should be recorded within a nested `change` block.
+    _changing : null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -257,23 +261,22 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
-    set: function(key, value, options) {
-      var attrs, attr, val;
+    set: function(attrs, options) {
+      var attr, key, val;
+      if (attrs == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (_.isObject(key) || key == null) {
-        attrs = key;
-        options = value;
-      } else {
-        attrs = {};
-        attrs[key] = value;
+      if (!_.isObject(attrs)) {
+        key = attrs;
+        (attrs = {})[key] = options;
+        options = arguments[2];
       }
 
       // Extract attributes and options.
-      options || (options = {});
-      if (!attrs) return this;
+      var silent = options && options.silent;
+      var unset = options && options.unset;
       if (attrs instanceof Model) attrs = attrs.attributes;
-      if (options.unset) for (attr in attrs) attrs[attr] = void 0;
+      if (unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
@@ -281,7 +284,7 @@
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
-      var changes = options.changes = {};
+      var changing = this._changing;
       var now = this.attributes;
       var escaped = this._escapedAttributes;
       var prev = this._previousAttributes || {};
@@ -291,27 +294,30 @@
         val = attrs[attr];
 
         // If the new and current value differ, record the change.
-        if (!_.isEqual(now[attr], val) || (options.unset && _.has(now, attr))) {
+        if (!_.isEqual(now[attr], val) || (unset && _.has(now, attr))) {
           delete escaped[attr];
-          (options.silent ? this._silent : changes)[attr] = true;
+          this._changes[attr] = true;
         }
 
         // Update or delete the current value.
-        options.unset ? delete now[attr] : now[attr] = val;
+        unset ? delete now[attr] : now[attr] = val;
 
         // If the new and previous value differ, record the change.  If not,
         // then remove changes for this attribute.
         if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
           this.changed[attr] = val;
-          if (!options.silent) this._pending[attr] = true;
+          if (!silent) this._pending[attr] = true;
         } else {
           delete this.changed[attr];
           delete this._pending[attr];
+          if (!changing) delete this._changes[attr];
         }
+
+        if (changing && _.isEqual(now[attr], changing[attr])) delete this._changes[attr];
       }
 
       // Fire the `"change"` events.
-      if (!options.silent) this.change(options);
+      if (!silent) this.change(options);
       return this;
     },
 
@@ -346,16 +352,14 @@
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save: function(key, value, options) {
-      var attrs, current, done;
+    save: function(attrs, options) {
+      var key, current, done;
 
-      // Handle both `("key", value)` and `({key: value})` -style calls.
-      if (_.isObject(key) || key == null) {
-        attrs = key;
-        options = value;
-      } else {
-        attrs = {};
-        attrs[key] = value;
+      // Handle both `"key", value` and `{key: value}` -style arguments.
+      if (attrs != null && !_.isObject(attrs)) {
+        key = attrs;
+        (attrs = {})[key] = options;
+        options = arguments[2];
       }
       options = options ? _.clone(options) : {};
 
@@ -372,7 +376,7 @@
       }
 
       // Do not persist invalid models.
-      if (!attrs && !this.isValid()) return false;
+      if (!attrs && !this._validate(null, options)) return false;
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
@@ -455,18 +459,25 @@
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
-      options || (options = {});
       var changing = this._changing;
-      this._changing = true;
+      var current = this._changing = {};
 
       // Silent changes become pending changes.
-      for (var attr in this._silent) this._pending[attr] = true;
+      for (var attr in this._changes) this._pending[attr] = true;
 
-      // Silent changes are triggered.
-      var changes = _.extend({}, options.changes, this._silent);
-      this._silent = {};
+      // Trigger 'change:attr' for any new or silent changes.
+      var changes = this._changes;
+      this._changes = {};
+
+      // Set the correct state for this._changing values
+      var triggers = [];
       for (var attr in changes) {
-        this.trigger('change:' + attr, this, this.get(attr), options);
+        current[attr] = this.get(attr);
+        triggers.push(attr);
+      }
+
+      for (var i=0, l=triggers.length; i < l; i++) {
+        this.trigger('change:' + triggers[i], this, current[triggers[i]], options);
       }
       if (changing) return this;
 
@@ -476,13 +487,13 @@
         this.trigger('change', this, options);
         // Pending and silent changes still remain.
         for (var attr in this.changed) {
-          if (this._pending[attr] || this._silent[attr]) continue;
+          if (this._pending[attr] || this._changes[attr]) continue;
           delete this.changed[attr];
         }
         this._previousAttributes = _.clone(this.attributes);
       }
 
-      this._changing = false;
+      this._changing = null;
       return this;
     },
 
@@ -532,7 +543,7 @@
     // returning `true` if all is well. If a specific `error` callback has
     // been passed, call that instead of firing the general `"error"` event.
     _validate: function(attrs, options) {
-      if (options.silent || !this.validate) return true;
+      if (options && options.silent || !this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
@@ -894,9 +905,10 @@
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
+  var optionalParam = /\((.*?)\)/g;
   var namedParam    = /:\w+/g;
   var splatParam    = /\*\w+/g;
-  var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
+  var escapeRegExp  = /[-{}[\]+?.,\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
@@ -947,6 +959,7 @@
     // against the current location hash.
     _routeToRegExp: function(route) {
       route = route.replace(escapeRegExp, '\\$&')
+                   .replace(optionalParam, '(?:$1)?')
                    .replace(namedParam, '([^\/]+)')
                    .replace(splatParam, '(.*?)');
       return new RegExp('^' + route + '$');
@@ -1059,7 +1072,7 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = this.location;
-      var atRoot = (loc.pathname.replace(/[^/]$/, '$&/') === this.root) && !loc.search;
+      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
@@ -1073,7 +1086,7 @@
       // in a browser where it could be `pushState`-based instead...
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = this.getHash().replace(routeStripper, '');
-        this.history.replaceState({}, document.title, this.root + this.fragment);
+        this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
       }
 
       if (!this.options.silent) return this.loadUrl();
@@ -1320,7 +1333,7 @@
         if (this.className) attrs['class'] = _.result(this, 'className');
         this.setElement(this.make(_.result(this, 'tagName'), attrs), false);
       } else {
-        this.setElement(this.el, false);
+        this.setElement(_.result(this, 'el'), false);
       }
     }
 
@@ -1435,18 +1448,18 @@
       child = function(){ parent.apply(this, arguments); };
     }
 
+    // Add static properties to the constructor function, if supplied.
+    _.extend(child, parent, staticProps);
+
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
-    function Surrogate(){ this.constructor = child; };
+    var Surrogate = function(){ this.constructor = child; };
     Surrogate.prototype = parent.prototype;
     child.prototype = new Surrogate;
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
     if (protoProps) _.extend(child.prototype, protoProps);
-
-    // Add static properties to the constructor function, if supplied.
-    _.extend(child, parent, staticProps);
 
     // Set a convenience property in case the parent's prototype is needed
     // later.

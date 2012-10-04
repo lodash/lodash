@@ -2548,13 +2548,11 @@
     var index = -1,
         length = array ? array.length : 0;
 
-    if (fromIndex) {
-      if (typeof fromIndex == 'number') {
-        index = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) - 1;
-      } else {
-        index = sortedIndex(array, value);
-        return array[index] === value ? index : -1;
-      }
+    if (typeof fromIndex == 'number') {
+      index = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0) - 1;
+    } else if (fromIndex) {
+      index = sortedIndex(array, value);
+      return array[index] === value ? index : -1;
     }
     while (++index < length) {
       if (array[index] === value) {
@@ -2669,7 +2667,7 @@
    */
   function lastIndexOf(array, value, fromIndex) {
     var index = array ? array.length : 0;
-    if (fromIndex && typeof fromIndex == 'number') {
+    if (typeof fromIndex == 'number') {
       index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
     }
     while (index--) {
@@ -2879,13 +2877,12 @@
    * // => [4, 1, 6, 3, 5, 2]
    */
   function shuffle(array) {
-    var rand,
-        index = -1,
+    var index = -1,
         length = array ? array.length : 0,
         result = Array(length);
 
     while (++index < length) {
-      rand = nativeFloor(nativeRandom() * (index + 1));
+      var rand = nativeFloor(nativeRandom() * (index + 1));
       result[index] = result[rand];
       result[rand] = array[index];
     }
@@ -2933,14 +2930,13 @@
    * // => 2
    */
   function sortedIndex(array, value, callback, thisArg) {
-    var mid,
-        low = 0,
+    var low = 0,
         high = array ? array.length : low;
 
     callback = createCallback(callback, thisArg);
     value = callback(value);
     while (low < high) {
-      mid = (low + high) >>> 1;
+      var mid = (low + high) >>> 1;
       callback(array[mid]) < value ? low = mid + 1 : high = mid;
     }
     return low;
@@ -3006,8 +3002,7 @@
    * // => [1, 2, 3]
    */
   function uniq(array, isSorted, callback, thisArg) {
-    var computed,
-        index = -1,
+    var index = -1,
         length = array ? array.length : 0,
         result = [],
         seen = [];
@@ -3020,7 +3015,7 @@
     }
     callback = createCallback(callback, thisArg);
     while (++index < length) {
-      computed = callback(array[index], index, array);
+      var computed = callback(array[index], index, array);
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
             : indexOf(seen, computed) < 0

@@ -531,13 +531,11 @@
 
     if (isLarge) {
       // init value cache
-      var key,
-          index = fromIndex - 1;
-
+      var index = fromIndex - 1;
       while (++index < length) {
         // manually coerce `value` to string because `hasOwnProperty`, in some
         // older versions of Firefox, coerces objects incorrectly
-        key = array[index] + '';
+        var key = array[index] + '';
         (hasOwnProperty.call(cache, key) ? cache[key] : (cache[key] = [])).push(array[index]);
       }
     }
@@ -666,11 +664,9 @@
    * @private
    * @param {Object} [options1, options2, ...] The compile options objects.
    *
-   *  useHas - A boolean to specify whether or not to use `hasOwnProperty` checks
-   *   in the object loop.
+   *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
    *
-   *  useStrict - A boolean to specify whether or not to include the ES5
-   *   "use strict" directive.
+   *  useStrict - A boolean to specify including the "use strict" directive.
    *
    *  args - A string of comma separated arguments the iteration function will accept.
    *
@@ -2502,13 +2498,12 @@
    * // => [1, 2, 3, [[4]]];
    */
   function flatten(array, shallow) {
-    var value,
-        index = -1,
+    var index = -1,
         length = array ? array.length : 0,
         result = [];
 
     while (++index < length) {
-      value = array[index];
+      var value = array[index];
 
       // recursively flatten arrays (susceptible to call stack limits)
       if (isArray(value)) {
@@ -2703,15 +2698,14 @@
    * // => { 'name': 'curly', 'age': 60 };
    */
   function max(array, callback, thisArg) {
-    var current,
-        computed = -Infinity,
+    var computed = -Infinity,
         index = -1,
         length = array ? array.length : 0,
         result = computed;
 
     callback = createCallback(callback, thisArg);
     while (++index < length) {
-      current = callback(array[index], index, array);
+      var current = callback(array[index], index, array);
       if (current > computed) {
         computed = current;
         result = array[index];
@@ -2739,15 +2733,14 @@
    * // => 2
    */
   function min(array, callback, thisArg) {
-    var current,
-        computed = Infinity,
+    var computed = Infinity,
         index = -1,
         length = array ? array.length : 0,
         result = computed;
 
     callback = createCallback(callback, thisArg);
     while (++index < length) {
-      current = callback(array[index], index, array);
+      var current = callback(array[index], index, array);
       if (current < computed) {
         computed = current;
         result = array[index];
@@ -3737,7 +3730,7 @@
     // http://ejohn.org/blog/javascript-micro-templating/
     // and Laura Doktorova's doT.js
     // https://github.com/olado/doT
-    text += '';
+    text || (text = '');
     options || (options = {});
 
     var isEvaluating,

@@ -38,6 +38,7 @@ For more information check out these screencasts over Lo-Dash:
  * [_.forEach](http://lodash.com/docs#forEach) is chainable and supports exiting iteration early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating over an object’s own and inherited properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating over an object’s own properties
+ * [_.isPlainObject](http://lodash.com/docs#isPlainObject) checks if values are created by the `Object` constructor
  * [_.lateBind](http://lodash.com/docs#lateBind) for late binding
  * [_.merge](http://lodash.com/docs#merge) for a *“deep”* [_.extend](http://lodash.com/docs#extend)
  * [_.partial](http://lodash.com/docs#partial) for partial application without `this` binding

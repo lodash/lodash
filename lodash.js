@@ -314,7 +314,7 @@
     // the `iteratee` may be reassigned by the `top` snippet
     'var index, value, iteratee = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
-    'result<% if (init) { %> = <%= init %><% } %>;\n' +
+    'result = <%= init || firstArg %>;\n' +
     // exit early if the first argument is falsey
     'if (!<%= firstArg %>) return result;\n' +
     // add code before the iteration branches
@@ -686,13 +686,10 @@
    * @returns {Function} Returns the compiled function.
    */
   function createIterator() {
-    var index = -1,
-        length = arguments.length;
-
-    // merge options into a template data object
     var data = {
       'bottom': '',
       'hasDontEnumBug': hasDontEnumBug,
+      'init': '',
       'isKeysFast': isKeysFast,
       'noArgsEnum': noArgsEnum,
       'noCharByIndex': noCharByIndex,
@@ -704,8 +701,11 @@
       'objectBranch': {}
     };
 
-    while (++index < length) {
-      var object = arguments[index];
+    var object,
+        index = -1;
+
+    // merge options into a template data object
+    while (object = arguments[++index]) {
       for (var prop in object) {
         var value = object[prop];
         // keep this regexp explicit for the build pre-process
@@ -721,14 +721,8 @@
       }
     }
     // set additional template `data` values
-    var args = data.args,
-        firstArg = /^[^,]+/.exec(args)[0],
-        init = data.init;
-
-    data.firstArg = firstArg;
-    data.init = init == null ? firstArg : init;
-
-    if (firstArg != 'collection' || !data.arrayBranch.inLoop) {
+    var args = data.args;
+    if ((data.firstArg = /^[^,]+/.exec(args)[0]) != 'collection' || !data.arrayBranch.inLoop) {
       data.arrayBranch = null;
     }
     // create the function factory
@@ -1742,7 +1736,7 @@
       '    result[index] = stackB[stackLength]\n' +
       '  } else {\n' +
       '    stackA.push(source);\n' +
-      '    stackB.push(value = (value = result[index]) && isArr\n' +
+      '    stackB.push(value = (value = result[index], isArr)\n' +
       '      ? (isArray(value) ? value : [])\n' +
       '      : (isPlainObject(value) ? value : {})\n' +
       '    );\n' +
@@ -1985,7 +1979,7 @@
    * // => 2
    */
   var find = createIterator(baseIteratorOptions, forEachIteratorOptions, {
-    'init': false,
+    'init': 'undefined',
     'inLoop': 'if (callback(value, index, collection)) return value'
   });
 

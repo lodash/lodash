@@ -67,7 +67,7 @@
     'bind': ['isFunction'],
     'bindAll': ['bind', 'isFunction'],
     'chain': ['mixin'],
-    'clone': ['extend', 'forOwn', 'isArguments', 'isPlainObject'],
+    'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isPlainObject'],
     'compact': [],
     'compose': [],
     'contains': [],

@@ -286,11 +286,11 @@ $(document).ready(function() {
   test("dispose", 0, function() {
     var View = Backbone.View.extend({
       events: {
-        click: function() { ok(false); }
+        click: function() { fail(); }
       },
       initialize: function() {
-        this.model.on('all x', function(){ ok(false); }, this);
-        this.collection.on('all x', function(){ ok(false); }, this);
+        this.model.on('all x', function(){ fail(); }, this);
+        this.collection.on('all x', function(){ fail(); }, this);
       }
     });
 
@@ -303,6 +303,11 @@ $(document).ready(function() {
     view.model.trigger('x');
     view.collection.trigger('x');
     view.$el.click();
+  });
+
+  test("dispose with non Backbone objects", 0, function() {
+    var view = new Backbone.View({model: {}, collection: {}});
+    view.dispose();
   });
 
   test("view#remove calls dispose.", 1, function() {

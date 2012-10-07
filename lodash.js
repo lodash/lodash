@@ -720,7 +720,7 @@
         }
       }
     }
-    // set additional template `data` values
+    // set additional template `data` properties
     var args = data.args;
     if ((data.firstArg = /^[^,]+/.exec(args)[0]) != 'collection' || !data.arrayBranch.inLoop) {
       data.arrayBranch = null;
@@ -1055,8 +1055,6 @@
     var ctor = value.constructor;
     switch (className) {
       case boolClass:
-        return new ctor(value == true);
-
       case dateClass:
         return new ctor(+value);
 

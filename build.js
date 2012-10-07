@@ -1256,8 +1256,14 @@
         });
 
         if (isUnderscore) {
+          // remove compiled template cleanup from `_.template`
+          source = source.replace(/(?:\s*\/\/.*)*\n *source *=.+?isEvaluating.+?reEmptyStringLeading[\s\S]+?\);/, '');
+          source = removeVar(source, 'reEmptyStringLeading');
+          source = removeVar(source, 'reEmptyStringMiddle');
+          source = removeVar(source, 'reEmptyStringTrailing');
+
+          // replace `isArguments` and its fallback
           (function() {
-            // replace `isArguments` and its fallback
             var snippet = matchFunction(source, 'isArguments')
               .replace(/function isArguments/, 'lodash.isArguments = function');
 

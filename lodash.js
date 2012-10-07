@@ -1,7 +1,7 @@
 /*!
  * Lo-Dash v0.8.1 <http://lodash.com>
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
- * Based on Underscore.js 1.4.1 <http://underscorejs.org>
+ * Based on Underscore.js 1.4.2 <http://underscorejs.org>
  * (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
@@ -1204,7 +1204,7 @@
     'useHas': false,
     'args': 'object',
     'init': '[]',
-    'inLoop': 'if (isFunction(value)) result.push(index)',
+    'inLoop': 'isFunction(value) && result.push(index)',
     'bottom': 'result.sort()'
   });
 
@@ -1671,7 +1671,7 @@
     }
     return object && objectTypes[type]
       ? nativeKeys(object)
-     : [];
+      : [];
   };
 
   /**
@@ -3159,9 +3159,7 @@
       '  return result\n' +
       '}',
     'inLoop':
-      'if (isFunction(value)) {\n' +
-      '  result[index] = bind(value, result)\n' +
-      '}'
+      'if (isFunction(value)) result[index] = bind(value, result)'
   });
 
   /**

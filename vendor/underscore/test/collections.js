@@ -411,6 +411,8 @@ $(document).ready(function() {
     equal(func(1, 2, 3, 4), 4, 'can test the size of the arguments object');
 
     equal(_.size('hello'), 5, 'can compute the size of a string');
+
+    equal(_.size(null), 0, 'handles nulls');
   });
 
 });

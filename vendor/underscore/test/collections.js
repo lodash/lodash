@@ -25,6 +25,10 @@ $(document).ready(function() {
     answer = null;
     _.each([1, 2, 3], function(num, index, arr){ if (_.include(arr, num)) answer = true; });
     ok(answer, 'can reference the original collection from inside the iterator');
+
+    answers = 0;
+    _.each(null, function(){ ++answers; });
+    equal(answers, 0, 'handles a null properly');
   });
 
   test('map', function() {
@@ -50,6 +54,9 @@ $(document).ready(function() {
 
     var ids = _.map(document.images, function(n){ return n.id; });
     ok(ids[0] == 'chart_image', 'can use collection methods on HTMLCollections');
+
+    var ifnull = _.map(null, function(){});
+    ok(_.isArray(ifnull) && ifnull.length === 0, 'handles a null properly');
   });
 
   test('reduce', function() {
@@ -69,6 +76,15 @@ $(document).ready(function() {
     var sum = _.reduce([1, 2, 3], function(sum, num){ return sum + num; });
     equal(sum, 6, 'default initial value');
 
+    var ifnull;
+    try {
+      _.reduce(null, function(){});
+    } catch (ex) {
+      ifnull = ex;
+    }
+    ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
+
+    ok(_.reduce(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
     equal(_.reduce([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
     raises(function() { _.reduce([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');
   });
@@ -83,8 +99,18 @@ $(document).ready(function() {
     var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; });
     equal(list, 'bazbarfoo', 'default initial value');
 
+    var ifnull;
+    try {
+      _.reduceRight(null, function(){});
+    } catch (ex) {
+      ifnull = ex;
+    }
+    ok(ifnull instanceof TypeError, 'handles a null (without inital value) properly');
+
     var sum = _.reduceRight({a: 1, b: 2, c: 3}, function(sum, num){ return sum + num; });
     equal(sum, 6, 'default initial value on object');
+
+    ok(_.reduceRight(null, function(){}, 138) === 138, 'handles a null (with initial value) properly');
 
     equal(_.reduceRight([], function(){}, undefined), undefined, 'undefined can be passed as a special case');
     raises(function() { _.reduceRight([], function(){}); }, TypeError, 'throws an error for empty arrays with no initial value');

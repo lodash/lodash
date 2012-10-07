@@ -1256,7 +1256,7 @@
         });
 
         if (isUnderscore) {
-          // remove compiled template cleanup from `_.template`
+          // remove "compiled template cleanup" from `_.template`
           source = source.replace(/(?:\s*\/\/.*)*\n *source *=.+?isEvaluating.+?reEmptyStringLeading[\s\S]+?\);/, '');
           source = removeVar(source, 'reEmptyStringLeading');
           source = removeVar(source, 'reEmptyStringMiddle');

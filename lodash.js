@@ -482,7 +482,7 @@
 
   /** Reusable iterator options for `invoke`, `map`, `pluck`, and `sortBy` */
   var mapIteratorOptions = {
-    'init': false,
+    'init': 'collection || []',
     'beforeLoop': {
       'array':  'result = Array(length)',
       'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')

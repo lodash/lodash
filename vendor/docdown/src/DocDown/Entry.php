@@ -166,6 +166,8 @@ class Entry {
     preg_match('#\* *@category\s+([^\n]+)#', $this->entry, $result);
     if (count($result)) {
       $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
+    } else {
+      $result = $this->getType() == 'Function' ? 'Methods' : 'Properties';
     }
     $this->_category = $result;
     return $result;

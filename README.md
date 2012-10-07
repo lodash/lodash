@@ -200,7 +200,6 @@ require({
 
  * Add AMD loader support [[#431](https://github.com/documentcloud/underscore/pull/431), [test](https://github.com/bestiejs/lodash/blob/v0.8.1/test/test.js#L118-140)]
  * Allow iteration of objects with a `length` property [[#799](https://github.com/documentcloud/underscore/pull/799), [test](https://github.com/bestiejs/lodash/blob/v0.8.1/test/test.js#L510-516)]
- * Ensure *“Arrays”*, *“Collections”*, and *“Objects”* methods don’t error when passed falsey arguments [[#650](https://github.com/documentcloud/underscore/pull/650), [#803](https://github.com/documentcloud/underscore/issues/803), [test](https://github.com/bestiejs/lodash/blob/v0.8.1/test/test.js#L1729-1764)]
  * Ensure *“Collections”* methods allow string `collection` arguments [[#247](https://github.com/documentcloud/underscore/issues/247), [#276](https://github.com/documentcloud/underscore/issues/276), [#561](https://github.com/documentcloud/underscore/pull/561), [test](https://github.com/bestiejs/lodash/blob/v0.8.1/test/test.js#L470-487)]
  * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v0.8.1/test/test.js#L526-546)]
  * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v0.8.1/test/test.js#L142-148)]

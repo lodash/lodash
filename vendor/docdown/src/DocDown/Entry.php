@@ -153,6 +153,25 @@ class Entry {
   }
 
   /**
+   * Extracts the entry's `category` data.
+   *
+   * @memberOf Entry
+   * @returns {String} The entry's `category` data.
+   */
+  public function getCategory() {
+    if (isset($this->_category)) {
+      return $this->_category;
+    }
+
+    preg_match('#\* *@category\s+([^\n]+)#', $this->entry, $result);
+    if (count($result)) {
+      $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
+    }
+    $this->_category = $result;
+    return $result;
+  }
+
+  /**
    * Extracts the entry's description.
    *
    * @memberOf Entry

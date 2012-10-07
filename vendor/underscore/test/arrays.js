@@ -14,6 +14,8 @@ $(document).ready(function() {
     equal(result.join(','), '1,1', 'works well with _.map');
     result = (function() { return _.take([1,2,3], 2); })();
     equal(result.join(','), '1,2', 'aliased as take');
+
+    equal(_.first(null), undefined, 'handles nulls');
   });
 
   test("rest", function() {
@@ -47,6 +49,8 @@ $(document).ready(function() {
     equal(result, 4, 'works on an arguments object');
     result = _.map([[1,2,3],[1,2,3]], _.last);
     equal(result.join(','), '3,3', 'works well with _.map');
+
+    equal(_.last(null), undefined, 'handles nulls');
   });
 
   test("compact", function() {
@@ -136,6 +140,8 @@ $(document).ready(function() {
 
     var stooges = {moe: 30, larry: 40, curly: 50};
     ok(_.isEqual(_.object(_.pairs(stooges)), stooges), 'an object converted to pairs and back to an object');
+
+    ok(_.isEqual(_.object(null), {}), 'handles nulls');
   });
 
   test("indexOf", function() {

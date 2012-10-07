@@ -204,6 +204,7 @@ class Generator {
    */
   public function generate() {
     $api = array();
+    $categories = array();
     $compiling = false;
     $openTag = "\n<!-- div -->\n";
     $closeTag = "\n<!-- /div -->\n";
@@ -223,14 +224,26 @@ class Generator {
 
       foreach ($members as $member) {
         // create api category arrays
-        if (!isset($api[$member]) && $member) {
+        if ($member && !isset($api[$member])) {
           // create temporary entry to be replaced later
-          $api[$member] = new Entry('', '', $entry->lang);
+          $api[$member] = new stdClass;
           $api[$member]->static = array();
           $api[$member]->plugin = array();
         }
 
-        // append entry to api category
+        // track categories
+        $category = $entry->getCategory();
+        if ($category) {
+          if (!isset($categories[$category])) {
+            $categories[$category] = array();
+          }
+          $categories[$category][] = $entry;
+          foreach ($entry->getAliases() as $alias) {
+            $categories[$category][] = $alias;
+          }
+        }
+
+        // append entry to api member
         if (!$member || $entry->isCtor() || ($entry->getType() == 'Object' &&
             !preg_match('/[=:]\s*(?:null|undefined)\s*[,;]?$/', $entry->entry))) {
 
@@ -268,19 +281,19 @@ class Generator {
     function sortCompare($a, $b) {
       $score = array( 'a' => 0, 'b' => 0);
       foreach (array( 'a' => $a, 'b' => $b) as $key => $value) {
-        // capitalized keys that represent constructor properties are last
+        // capitalized properties are last
         if (preg_match('/[#.][A-Z]/', $value)) {
           $score[$key] = 0;
         }
-        // lowercase keys with prototype properties are next to last
+        // lowercase prototype properties are next to last
         else if (preg_match('/#[a-z]/', $value)) {
           $score[$key] = 1;
         }
-        // lowercase keys with static properties next to first
+        // lowercase static properties next to first
         else if (preg_match('/\.[a-z]/', $value)) {
           $score[$key] = 2;
         }
-        // lowercase keys with no properties are first
+        // root properties are first
         else if (preg_match('/^[^#.]+$/', $value)) {
           $score[$key] = 3;
         }

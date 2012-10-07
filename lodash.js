@@ -1065,7 +1065,6 @@
       case regexpClass:
         return ctor(value.source, reFlags.exec(value));
     }
-
     // check for circular references and return corresponding clone
     stackA || (stackA = []);
     stackB || (stackB = []);
@@ -1076,9 +1075,8 @@
         return stackB[length];
       }
     }
-
     // init cloned object
-    var result = isArr ? ctor(length = value.length) : {};
+    var result = isArr ? ctor(value.length) : {};
 
     // add the source value to the stack of traversed objects
     // and associate it with its clone
@@ -1086,16 +1084,10 @@
     stackB.push(result);
 
     // recursively populate clone (susceptible to call stack limits)
-    if (isArr) {
-      var index = -1;
-      while (++index < length) {
-        result[index] = clone(value[index], deep, null, stackA, stackB);
-      }
-    } else {
-      forOwn(value, function(objValue, key) {
-        result[key] = clone(objValue, deep, null, stackA, stackB);
-      });
-    }
+    (isArr ? forEach : forOwn)(value, function(objValue, key) {
+      result[key] = clone(objValue, deep, null, stackA, stackB);
+    });
+
     return result;
   }
 

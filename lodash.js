@@ -2756,10 +2756,11 @@
         result = {};
 
     while (++index < length) {
+      var key = keys[index];
       if (values) {
-        result[keys[index]] = values[index];
+        result[key] = values[index];
       } else {
-        result[keys[index][0]] = keys[index][1];
+        result[key[0]] = key[1];
       }
     }
     return result;
@@ -2941,8 +2942,9 @@
         result = [];
 
     while (++index < length) {
-      if (indexOf(result, flattened[index]) < 0) {
-        result.push(flattened[index]);
+      var value = flattened[index];
+      if (indexOf(result, value) < 0) {
+        result.push(value);
       }
     }
     return result;

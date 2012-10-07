@@ -22,7 +22,7 @@ class Alias {
    * @param {String} $name The alias name.
    * @param {Object} $owner The alias owner.
    */
-  public function __construct($name, $owner) {
+  public function __construct( $name, $owner ) {
     $this->owner = $owner;
     $this->_name = $name;
     $this->_call = $owner->getCall();

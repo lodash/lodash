@@ -8,12 +8,30 @@ require(dirname(__FILE__) . "/Entry.php");
 class Generator {
 
   /**
+   * The HTML for the close tag.
+   *
+   * @static
+   * @memberOf Generator
+   * @type String
+   */
+  public $closeTag = "\n<!-- /div -->\n";
+
+  /**
    * An array of JSDoc entries.
    *
    * @memberOf Generator
    * @type Array
    */
   public $entries = array();
+
+  /**
+   * The HTML for the open tag.
+   *
+   * @static
+   * @memberOf Generator
+   * @type String
+   */
+  public $openTag = "\n<!-- div -->\n";
 
   /**
    * An options array used to configure the generator.
@@ -24,7 +42,7 @@ class Generator {
   public $options = array();
 
   /**
-   * The entire file's source code.
+   * The file's source code.
    *
    * @memberOf Generator
    * @type String
@@ -86,7 +104,7 @@ class Generator {
    * @param {String} $string The string to format.
    * @returns {String} The formatted string.
    */
-  private static function format($string) {
+  private static function format( $string ) {
     $counter = 0;
 
     // tokenize inline code snippets
@@ -121,7 +139,7 @@ class Generator {
    * @param {Array|Object} $object The template object.
    * @returns {String} The modified string.
    */
-  private static function interpolate($string, $object) {
+  private static function interpolate( $string, $object ) {
     preg_match_all('/#\{([^}]+)\}/', $string, $tokens);
     $tokens = array_unique(array_pop($tokens));
 
@@ -148,6 +166,63 @@ class Generator {
   }
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Adds the given `$entries` to the `$result` array.
+   *
+   * @private
+   * @memberOf Generator
+   * @param {Array} $result The result array to modify.
+   * @param {Array} $entries The entries to add to the `$result`.
+   */
+  private function addEntries( &$result, $entries ) {
+    foreach ($entries as $entry) {
+      // skip aliases
+      if ($entry->isAlias()) {
+        continue;
+      }
+      // name and description
+      array_push(
+        $result,
+        $this->openTag,
+        Generator::interpolate("### <a id=\"#{hash}\"></a>`#{member}#{separator}#{call}`\n<a href=\"##{hash}\">#</a> [&#x24C8;](#{href} \"View in source\") [&#x24C9;][1]\n\n#{desc}", $entry)
+      );
+
+      // @alias
+      if (count($aliases = $entry->getAliases())) {
+        array_push($result, '', '#### Aliases');
+        foreach ($aliases as $index => $alias) {
+          $aliases[$index] = $alias->getName();
+        }
+        $result[] = '*' . implode(', ', $aliases) . '*';
+      }
+      // @param
+      if (count($params = $entry->getParams())) {
+        array_push($result, '', '#### Arguments');
+        foreach ($params as $index => $param) {
+          $result[] = Generator::interpolate('#{num}. `#{name}` (#{type}): #{desc}', array(
+            'desc' => $param[2],
+            'name' => $param[1],
+            'num'  => $index + 1,
+            'type' => $param[0]
+          ));
+        }
+      }
+      // @returns
+      if (count($returns = $entry->getReturns())) {
+        array_push(
+          $result, '',
+          '#### Returns',
+          Generator::interpolate('(#{type}): #{desc}', array('desc' => $returns[1], 'type' => $returns[0]))
+        );
+      }
+      // @example
+      if ($example = $entry->getExample()) {
+        array_push($result, '', '#### Example', $example);
+      }
+      array_push($result, "\n* * *", $this->closeTag);
+    }
+  }
 
   /**
    * Resolves the entry's hash used to navigate the documentation.
@@ -204,10 +279,11 @@ class Generator {
    */
   public function generate() {
     $api = array();
+    $byCategory = @$this->options['toc'] == 'categories';
     $categories = array();
+    $closeTag = $this->closeTag;
     $compiling = false;
-    $openTag = "\n<!-- div -->\n";
-    $closeTag = "\n<!-- /div -->\n";
+    $openTag = $this->openTag;
     $result = array('# ' . $this->options['title']);
     $toc = 'toc';
 
@@ -229,18 +305,6 @@ class Generator {
           $api[$member] = new stdClass;
           $api[$member]->static = array();
           $api[$member]->plugin = array();
-        }
-
-        // track categories
-        $category = $entry->getCategory();
-        if ($category) {
-          if (!isset($categories[$category])) {
-            $categories[$category] = array();
-          }
-          $categories[$category][] = $entry;
-          foreach ($entry->getAliases() as $alias) {
-            $categories[$category][] = $alias;
-          }
         }
 
         // append entry to api member
@@ -270,6 +334,26 @@ class Generator {
           foreach ($entry->getAliases() as $alias) {
             $api[$member]->plugin[] = $alias;
           }
+        }
+      }
+    }
+
+    // add properties to each entry
+    foreach ($api as $key => $entry) {
+      $entry->hash = $this->getHash($entry);
+      $entry->href = $this->getLineUrl($entry);
+
+      $member = $entry->getMembers(0);
+      $member = ($member ? $member . ($entry->isPlugin() ? '.prototype.' : '.') : '') . $entry->getName();
+      $entry->member = preg_replace('/' . $entry->getName() . '$/', '', $member);
+
+      // add properties to static and plugin sub-entries
+      foreach (array('static', 'plugin') as $kind) {
+        foreach ($entry->{$kind} as $subentry) {
+          $subentry->hash = $this->getHash($subentry);
+          $subentry->href = $this->getLineUrl($subentry);
+          $subentry->member = $member;
+          $subentry->separator = $this->getSeparator($subentry);
         }
       }
     }
@@ -323,48 +407,89 @@ class Generator {
 
     /*------------------------------------------------------------------------*/
 
+    // add categories
+    foreach ($api as $key => $entry) {
+      $categories[$entry->getCategory()][] = $entry;
+      foreach (array('static', 'plugin') as $kind) {
+        foreach ($entry->{$kind} as $subentry) {
+          $categories[$subentry->getCategory()][] = $subentry;
+        }
+      }
+    }
+
+    // sort categories
+    ksort($categories);
+
+    foreach(array('Methods', 'Properties') as $category) {
+      if (isset($categories[$category])) {
+        $entries = $categories[$category];
+        unset($categories[$category]);
+        $categories[$category] = $entries;
+      }
+    }
+
+    /*------------------------------------------------------------------------*/
+
     // compile TOC
     $result[] = $openTag;
 
-    foreach ($api as $key => $entry) {
-      $entry->hash = $this->getHash($entry);
-      $entry->href = $this->getLineUrl($entry);
-
-      $member = $entry->getMembers(0);
-      $member = ($member ? $member . ($entry->isPlugin() ? '.prototype.' : '.') : '') . $entry->getName();
-
-      $entry->member = preg_replace('/' . $entry->getName() . '$/', '', $member);
-
-      $compiling = $compiling ? ($result[] = $closeTag) : true;
-
-      // assign TOC hash
-      if (count($result) == 2) {
-        $toc = $member;
-      }
-
-      // add root entry
-      array_push(
-        $result,
-        $openTag, '## ' . (count($result) == 2 ? '<a id="' . $toc . '"></a>' : '') . '`' . $member . '`',
-        Generator::interpolate('* [`' . $member . '`](##{hash})', $entry)
-      );
-
-      // add static and plugin sub-entries
-      foreach (array('static', 'plugin') as $kind) {
-        if ($kind == 'plugin' && count($entry->plugin)) {
-          array_push(
-            $result,
-            $closeTag,
-            $openTag,
-            '## `' . $member . ($entry->isCtor() ? '.prototype`' : '`')
-          );
+    // compile TOC by categories
+    if ($byCategory) {
+      foreach ($categories as $key => $entries) {
+        if ($compiling)  {
+          $result[] = $closeTag;
+        } else {
+          $compiling = true;
         }
-        foreach ($entry->{$kind} as $subentry) {
-          $subentry->hash = $this->getHash($subentry);
-          $subentry->href = $this->getLineUrl($subentry);
-          $subentry->member = $member;
-          $subentry->separator = $this->getSeparator($subentry);
-          $result[] = Generator::interpolate('* [`#{member}#{separator}#{name}`](##{hash})', $subentry);
+        // assign TOC hash
+        if (count($result) == 2) {
+          $toc = $key;
+        }
+        // add category
+        array_push(
+          $result,
+          $openTag, '## ' . (count($result) == 2 ? '<a id="' . $toc . '"></a>' : '') . '`' . $key . '`'
+        );
+        // add entries
+        foreach ($entries as $entry) {
+          $result[] = Generator::interpolate('* [`#{member}#{separator}#{name}`](##{hash})', $entry);
+        }
+      }
+    }
+    // compile TOC by namespace
+    else {
+      foreach ($api as $key => $entry) {
+        if ($compiling)  {
+          $result[] = $closeTag;
+        } else {
+          $compiling = true;
+        }
+        $member = $entry->member . $entry->getName();
+
+        // assign TOC hash
+        if (count($result) == 2) {
+          $toc = $member;
+        }
+        // add root entry
+        array_push(
+          $result,
+          $openTag, '## ' . (count($result) == 2 ? '<a id="' . $toc . '"></a>' : '') . '`' . $member . '`',
+          Generator::interpolate('* [`' . $member . '`](##{hash})', $entry)
+        );
+
+        // add static and plugin sub-entries
+        foreach (array('static', 'plugin') as $kind) {
+          if ($kind == 'plugin' && count($entry->plugin)) {
+            array_push(
+              $result,
+              $closeTag,
+              $openTag,
+              '## `' . $member . ($entry->isCtor() ? '.prototype`' : '`')
+            );
+          }
+          foreach ($entry->{$kind} as $subentry) {
+            $result[] = Generator::interpolate('* [`' . $member . '#{separator}#{name}`](##{hash})', $subentry);
+          }
         }
       }
     }
@@ -377,81 +502,51 @@ class Generator {
     $compiling = false;
     $result[] = $openTag;
 
-    foreach ($api as $entry) {
-      // skip aliases
-      if ($entry->isAlias()) {
-        continue;
-      }
-
-      // add root entry
-      $member = $entry->member . $entry->getName();
-      $compiling = $compiling ? ($result[] = $closeTag) : true;
-
-      array_push($result, $openTag, '## `' . $member . '`');
-
-      foreach (array($entry, 'static', 'plugin') as $kind) {
-        $subentries = is_string($kind) ? $entry->{$kind} : array($kind);
-
-        // title
-        if ($kind != 'static' && $entry->getType() != 'Object' &&
-              count($subentries) && $subentries[0] != $kind) {
-          if ($kind == 'plugin') {
-            $result[] = $closeTag;
-          }
-          array_push(
-            $result,
-            $openTag,
-            '## `' . $member . ($kind == 'plugin' ? '.prototype`' : '`')
-          );
+    if ($byCategory) {
+      foreach ($categories as $key => $entries) {
+        if ($compiling)  {
+          $result[] = $closeTag;
+        } else {
+          $compiling = true;
         }
+        if ($key != 'Methods' && $key != 'Properties') {
+          $key = '“' . $key . '” Methods';
+        }
+        array_push($result, $openTag, '## `' . $key . '`');
+        $this->addEntries($result, $entries);
+      }
+    }
+    else {
+      foreach ($api as $entry) {
+        // skip aliases
+        if ($entry->isAlias()) {
+          continue;
+        }
+        if ($compiling)  {
+          $result[] = $closeTag;
+        } else {
+          $compiling = true;
+        }
+        // add root entry name
+        $member = $entry->member . $entry->getName();
+        array_push($result, $openTag, '## `' . $member . '`');
 
-        // body
-        foreach ($subentries as $subentry) {
-          // skip aliases
-          if ($subentry->isAlias()) {
-            continue;
-          }
+        foreach (array($entry, 'static', 'plugin') as $kind) {
+          $subentries = is_string($kind) ? $entry->{$kind} : array($kind);
 
-          // description
-          array_push(
-            $result,
-            $openTag,
-            Generator::interpolate("### <a id=\"#{hash}\"></a>`#{member}#{separator}#{call}`\n<a href=\"##{hash}\">#</a> [&#x24C8;](#{href} \"View in source\") [&#x24C9;][1]\n\n#{desc}", $subentry)
-          );
-
-          // @alias
-          if (count($aliases = $subentry->getAliases())) {
-            array_push($result, '', '#### Aliases');
-            foreach ($aliases as $index => $alias) {
-              $aliases[$index] = $alias->getName();
+          // add sub-entry name
+          if ($kind != 'static' && $entry->getType() != 'Object' &&
+                count($subentries) && $subentries[0] != $kind) {
+            if ($kind == 'plugin') {
+              $result[] = $closeTag;
             }
-            $result[] = '*' . implode(', ', $aliases) . '*';
-          }
-          // @param
-          if (count($params = $subentry->getParams())) {
-            array_push($result, '', '#### Arguments');
-            foreach ($params as $index => $param) {
-              $result[] = Generator::interpolate('#{num}. `#{name}` (#{type}): #{desc}', array(
-                'desc' => $param[2],
-                'name' => $param[1],
-                'num'  => $index + 1,
-                'type' => $param[0]
-              ));
-            }
-          }
-          // @returns
-          if (count($returns = $subentry->getReturns())) {
             array_push(
-              $result, '',
-              '#### Returns',
-              Generator::interpolate('(#{type}): #{desc}', array('desc' => $returns[1], 'type' => $returns[0]))
+              $result,
+              $openTag,
+              '## `' . $member . ($kind == 'plugin' ? '.prototype`' : '`')
             );
           }
-          // @example
-          if ($example = $subentry->getExample()) {
-            array_push($result, '', '#### Example', $example);
-          }
-          array_push($result, "\n* * *", $closeTag);
+          $this->addEntries($result, $subentries);
         }
       }
     }

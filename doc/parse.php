@@ -20,9 +20,10 @@
 
   // generate Markdown
   $markdown = docdown(array(
-    'path' => '../' . $file,
+    'path'  => '../' . $file,
     'title' => 'Lo-Dash <sup>v0.8.1</sup>',
-    'url'  => 'https://github.com/bestiejs/lodash/blob/master/lodash.js'
+    'toc'   => 'categories',
+    'url'   => 'https://github.com/bestiejs/lodash/blob/master/lodash.js'
   ));
 
   // save to a .md file

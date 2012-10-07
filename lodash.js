@@ -235,6 +235,7 @@
    *
    * @name _
    * @constructor
+   * @category Chaining
    * @param {Mixed} value The value to wrap in a `lodash` instance.
    * @returns {Object} Returns a `lodash` instance.
    */

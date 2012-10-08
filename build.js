@@ -1035,7 +1035,7 @@
         }
       }
       if (isLegacy) {
-        _.each(['isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeGetPrototypeOf', 'nativeIsArray', 'nativeKeys'], function(varName) {
+        _.each(['getPrototypeOf', 'isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
           source = replaceVar(source, varName, 'false');
         });
 
@@ -1428,7 +1428,7 @@
         source = removeVar(source, 'nativeIsArray');
       }
       if (isRemoved(source, 'isPlainObject')) {
-        source = removeVar(source, 'nativeGetPrototypeOf');
+        source = removeVar(source, 'getPrototypeOf');
       }
       if (isRemoved(source, 'keys')) {
         source = removeFunction(source, 'shimKeys');

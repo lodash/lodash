@@ -1727,6 +1727,17 @@
 
   (function() {
     test('should allow falsey arguments', function() {
+      var returnArrays = [
+       'filter',
+       'invoke',
+       'map',
+       'pluck',
+       'reject',
+       'sortBy',
+       'toArray',
+       'where'
+      ];
+
       var funcs = _.without.apply(_, [_.functions(_)].concat([
         '_',
         '_iteratorTemplate',
@@ -1748,17 +1759,24 @@
       ]));
 
       _.each(funcs, function(methodName) {
-        var func = _[methodName],
+        var actual = [],
+            expected = _.times(falsey.length, function() { return []; }),
+            func = _[methodName],
             pass = true;
 
         _.each(falsey, function(value, index) {
           try {
-            index ? func(value) : func();
+            actual.push(index ? func(value) : func());
           } catch(e) {
             pass = false;
           }
         });
 
+        if (_.indexOf(returnArrays, methodName) > -1) {
+          deepEqual(actual, expected, '_.' + methodName + ' returns an array');
+        } else {
+          skipTest(falsey.length);
+        }
         ok(pass, '_.' + methodName + ' allows falsey arguments');
       });
     });

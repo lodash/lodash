@@ -2396,8 +2396,9 @@
         result = [];
 
     while (++index < length) {
-      if (array[index]) {
-        result.push(array[index]);
+      var value = array[index];
+      if (value) {
+        result.push(value);
       }
     }
     return result;
@@ -2860,7 +2861,7 @@
         result = Array(length);
 
     while (++index < length) {
-      var rand = random(index);
+      var rand = nativeFloor(nativeRandom() * (index + 1));
       result[index] = result[rand];
       result[rand] = array[index];
     }

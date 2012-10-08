@@ -138,7 +138,7 @@
     'reject': ['identity'],
     'rest': [],
     'result': ['isFunction'],
-    'shuffle': [],
+    'shuffle': ['random'],
     'size': ['keys'],
     'some': ['identity'],
     'sortBy': ['identity'],

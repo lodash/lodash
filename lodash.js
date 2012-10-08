@@ -80,6 +80,7 @@
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
+      nativeCeil = Math.ceil,
       nativeFloor = Math.floor,
       nativeGetPrototypeOf = reNative.test(nativeGetPrototypeOf = Object.getPrototypeOf) && nativeGetPrototypeOf,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
@@ -430,7 +431,6 @@
    */
   var baseIteratorOptions = {
     'args': 'collection, callback, thisArg',
-    'init': 'collection',
     'top': 'callback = createCallback(callback, thisArg)',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
   };
@@ -455,7 +455,6 @@
     'useHas': false,
     'useStrict': false,
     'args': 'object',
-    'init': 'object',
     'top':
       'for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
       '  if (iteratee = arguments[argsIndex]) {',
@@ -2807,7 +2806,7 @@
     // use `Array(length)` so V8 will avoid the slower "dictionary" mode
     // http://www.youtube.com/watch?v=XAqIpGU8ZZk#t=16m27s
     var index = -1,
-        length = nativeMax(0, Math.ceil((end - start) / step)),
+        length = nativeMax(0, nativeCeil((end - start) / step)),
         result = Array(length);
 
     while (++index < length) {
@@ -2861,7 +2860,7 @@
         result = Array(length);
 
     while (++index < length) {
-      var rand = nativeFloor(nativeRandom() * (index + 1));
+      var rand = random(index);
       result[index] = result[rand];
       result[rand] = array[index];
     }

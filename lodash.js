@@ -71,7 +71,10 @@
   var templateCounter = 0;
 
   /** Native method shortcuts */
-  var concat = ArrayProto.concat,
+  var ceil = Math.ceil,
+      concat = ArrayProto.concat,
+      floor = Math.floor,
+      getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
       hasOwnProperty = ObjectProto.hasOwnProperty,
       push = ArrayProto.push,
       propertyIsEnumerable = ObjectProto.propertyIsEnumerable,
@@ -80,9 +83,6 @@
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
-      nativeCeil = Math.ceil,
-      nativeFloor = Math.floor,
-      nativeGetPrototypeOf = reNative.test(nativeGetPrototypeOf = Object.getPrototypeOf) && nativeGetPrototypeOf,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
@@ -900,15 +900,15 @@
    * _.isPlainObject({ 'name': 'moe', 'age': 40 });
    * // => true
    */
-  var isPlainObject = !nativeGetPrototypeOf ? isPlainFallback : function(value) {
+  var isPlainObject = !getPrototypeOf ? isPlainFallback : function(value) {
     if (!(value && typeof value == 'object')) {
       return false;
     }
     var valueOf = value.valueOf,
-        objProto = typeof valueOf == 'function' && (objProto = nativeGetPrototypeOf(valueOf)) && nativeGetPrototypeOf(objProto);
+        objProto = typeof valueOf == 'function' && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
 
     return objProto
-      ? value == objProto || (nativeGetPrototypeOf(value) == objProto && !isArguments(value))
+      ? value == objProto || (getPrototypeOf(value) == objProto && !isArguments(value))
       : isPlainFallback(value);
   };
 
@@ -1812,11 +1812,11 @@
   var pick = createIterator(omitIteratorOptions, {
     'top':
       'if (typeof callback != \'function\') {\n' +
-      '  var prop,\n' +
+      '  var index = 0,\n' +
       '      props = concat.apply(ArrayProto, arguments),\n' +
       '      length = props.length;\n' +
-      '  for (index = 1; index < length; index++) {\n' +
-      '    prop = props[index];\n' +
+      '  while (++index < length) {\n' +
+      '    var prop = props[index];\n' +
       '    if (prop in object) result[prop] = object[prop]\n' +
       '  }\n' +
       '} else {\n' +
@@ -2367,8 +2367,8 @@
       'forIn(properties, function(value, prop) { props.push(prop) });\n' +
       'var propsLength = props.length',
     'inLoop':
-      'for (var prop, pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {\n' +
-      '  prop = props[propIndex];\n' +
+      'for (var pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {\n' +
+      '  var prop = props[propIndex];\n' +
       '  if (!(pass = value[prop] === properties[prop])) break\n' +
       '}\n' +
       'pass && result.push(value)'
@@ -2807,7 +2807,7 @@
     // use `Array(length)` so V8 will avoid the slower "dictionary" mode
     // http://www.youtube.com/watch?v=XAqIpGU8ZZk#t=16m27s
     var index = -1,
-        length = nativeMax(0, nativeCeil((end - start) / step)),
+        length = nativeMax(0, ceil((end - start) / step)),
         result = Array(length);
 
     while (++index < length) {
@@ -2861,7 +2861,7 @@
         result = Array(length);
 
     while (++index < length) {
-      var rand = nativeFloor(nativeRandom() * (index + 1));
+      var rand = floor(nativeRandom() * (index + 1));
       result[index] = result[rand];
       result[rand] = array[index];
     }
@@ -3154,9 +3154,10 @@
     'args': 'object',
     'top':
       'var funcs = arguments,\n' +
+      '    index = 0,\n' +
       '    length = funcs.length;\n' +
       'if (length > 1) {\n' +
-      '  for (var index = 1; index < length; index++) {\n' +
+      '  while (++index < length) {\n' +
       '    result[funcs[index]] = bind(result[funcs[index]], result)\n' +
       '  }\n' +
       '  return result\n' +
@@ -3610,7 +3611,7 @@
       max = min;
       min = 0;
     }
-    return min + nativeFloor(nativeRandom() * ((+max || 0) - min + 1));
+    return min + floor(nativeRandom() * ((+max || 0) - min + 1));
   }
 
   /**

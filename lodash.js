@@ -697,8 +697,8 @@
       'top': '',
       'useHas': true,
       'useStrict': isStrictFast,
-      'arrayBranch': {},
-      'objectBranch': {}
+      'arrayBranch': { 'beforeLoop': '' },
+      'objectBranch': { 'beforeLoop': '' }
     };
 
     var object,
@@ -2688,12 +2688,20 @@
         length = array ? array.length : 0,
         result = computed;
 
-    callback = createCallback(callback, thisArg);
-    while (++index < length) {
-      var current = callback(array[index], index, array);
-      if (current > computed) {
-        computed = current;
-        result = array[index];
+    if (callback) {
+      callback = createCallback(callback, thisArg);
+      while (++index < length) {
+        var current = callback(array[index], index, array);
+        if (current > computed) {
+          computed = current;
+          result = array[index];
+        }
+      }
+    } else {
+      while (++index < length) {
+        if (array[index] > result) {
+          result = array[index];
+        }
       }
     }
     return result;
@@ -2723,12 +2731,20 @@
         length = array ? array.length : 0,
         result = computed;
 
-    callback = createCallback(callback, thisArg);
-    while (++index < length) {
-      var current = callback(array[index], index, array);
-      if (current < computed) {
-        computed = current;
-        result = array[index];
+    if (callback) {
+      callback = createCallback(callback, thisArg);
+      while (++index < length) {
+        var current = callback(array[index], index, array);
+        if (current < computed) {
+          computed = current;
+          result = array[index];
+        }
+      }
+    } else {
+      while (++index < length) {
+        if (array[index] < result) {
+          result = array[index];
+        }
       }
     }
     return result;
@@ -2912,11 +2928,18 @@
     var low = 0,
         high = array ? array.length : low;
 
-    callback = createCallback(callback, thisArg);
-    value = callback(value);
-    while (low < high) {
-      var mid = (low + high) >>> 1;
-      callback(array[mid]) < value ? low = mid + 1 : high = mid;
+    if (callback) {
+      callback = createCallback(callback, thisArg);
+      value = callback(value);
+      while (low < high) {
+        var mid = (low + high) >>> 1;
+        callback(array[mid]) < value ? low = mid + 1 : high = mid;
+      }
+    } else {
+      while (low < high) {
+        var mid = (low + high) >>> 1;
+        array[mid] < value ? low = mid + 1 : high = mid;
+      }
     }
     return low;
   }

@@ -2089,6 +2089,98 @@
   var map = createIterator(baseIteratorOptions, mapIteratorOptions);
 
   /**
+   * Retrieves the maximum value of an `array`. If `callback` is passed,
+   * it will be executed for each value in the `array` to generate the
+   * criterion by which the value is ranked. The `callback` is bound to
+   * `thisArg` and invoked with three arguments; (value, index, collection).
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array} collection The collection to iterate over.
+   * @param {Function} [callback] The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Mixed} Returns the maximum value.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
+   * ];
+   *
+   * _.max(stooges, function(stooge) { return stooge.age; });
+   * // => { 'name': 'curly', 'age': 60 };
+   */
+  function max(collection, callback, thisArg) {
+    var computed = -Infinity,
+        index = -1,
+        length = collection ? collection.length : 0,
+        result = computed;
+
+    if (callback || length !== +length) {
+      callback = createCallback(callback, thisArg);
+      forEach(collection, function(value, index, collection) {
+        var current = callback(value, index, collection);
+        if (current > computed) {
+          computed = current;
+          result = value;
+        }
+      });
+    } else {
+      while (++index < length) {
+        if (collection[index] > result) {
+          result = collection[index];
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Retrieves the minimum value of an `array`. If `callback` is passed,
+   * it will be executed for each value in the `array` to generate the
+   * criterion by which the value is ranked. The `callback` is bound to `thisArg`
+   * and invoked with three arguments; (value, index, collection).
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array} collection The collection to iterate over.
+   * @param {Function} [callback] The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Mixed} Returns the minimum value.
+   * @example
+   *
+   * _.min([10, 5, 100, 2, 1000]);
+   * // => 2
+   */
+  function min(collection, callback, thisArg) {
+    var computed = Infinity,
+        index = -1,
+        length = collection ? collection.length : 0,
+        result = computed;
+
+    if (callback || length !== +length) {
+      callback = createCallback(callback, thisArg);
+      forEach(collection, function(value, index, collection) {
+        var current = callback(value, index, collection);
+        if (current < computed) {
+          computed = current;
+          result = value;
+        }
+      });
+    } else {
+      while (++index < length) {
+        if (collection[index] < result) {
+          result = collection[index];
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * Retrieves the value of a specified property from all elements in
    * the `collection`.
    *
@@ -2214,6 +2306,32 @@
   var reject = createIterator(baseIteratorOptions, filterIteratorOptions, {
     'inLoop': '!' + filterIteratorOptions.inLoop
   });
+
+  /**
+   * Creates an array of shuffled `array` values, using a version of the
+   * Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array} collection The collection to shuffle.
+   * @returns {Array} Returns a new shuffled collection.
+   * @example
+   *
+   * _.shuffle([1, 2, 3, 4, 5, 6]);
+   * // => [4, 1, 6, 3, 5, 2]
+   */
+  function shuffle(collection) {
+    var index = -1,
+        result = Array(collection ? collection.length : 0);
+
+    forEach(collection, function(value) {
+      var rand = floor(nativeRandom() * (++index + 1));
+      result[index] = result[rand];
+      result[rand] = value;
+    });
+    return result;
+  }
 
   /**
    * Gets the size of the `collection` by returning `collection.length` for arrays
@@ -2659,98 +2777,6 @@
   }
 
   /**
-   * Retrieves the maximum value of an `array`. If `callback` is passed,
-   * it will be executed for each value in the `array` to generate the
-   * criterion by which the value is ranked. The `callback` is bound to
-   * `thisArg` and invoked with three arguments; (value, index, array).
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to iterate over.
-   * @param {Function} [callback] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Mixed} Returns the maximum value.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
-   * ];
-   *
-   * _.max(stooges, function(stooge) { return stooge.age; });
-   * // => { 'name': 'curly', 'age': 60 };
-   */
-  function max(array, callback, thisArg) {
-    var computed = -Infinity,
-        index = -1,
-        length = array ? array.length : 0,
-        result = computed;
-
-    if (callback) {
-      callback = createCallback(callback, thisArg);
-      while (++index < length) {
-        var current = callback(array[index], index, array);
-        if (current > computed) {
-          computed = current;
-          result = array[index];
-        }
-      }
-    } else {
-      while (++index < length) {
-        if (array[index] > result) {
-          result = array[index];
-        }
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Retrieves the minimum value of an `array`. If `callback` is passed,
-   * it will be executed for each value in the `array` to generate the
-   * criterion by which the value is ranked. The `callback` is bound to `thisArg`
-   * and invoked with three arguments; (value, index, array).
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to iterate over.
-   * @param {Function} [callback] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Mixed} Returns the minimum value.
-   * @example
-   *
-   * _.min([10, 5, 100, 2, 1000]);
-   * // => 2
-   */
-  function min(array, callback, thisArg) {
-    var computed = Infinity,
-        index = -1,
-        length = array ? array.length : 0,
-        result = computed;
-
-    if (callback) {
-      callback = createCallback(callback, thisArg);
-      while (++index < length) {
-        var current = callback(array[index], index, array);
-        if (current < computed) {
-          computed = current;
-          result = array[index];
-        }
-      }
-    } else {
-      while (++index < length) {
-        if (array[index] < result) {
-          result = array[index];
-        }
-      }
-    }
-    return result;
-  }
-
-  /**
    * Creates an object composed from arrays of `keys` and `values`. Pass either
    * a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]`, or
    * two arrays, one of `keys` and one of corresponding `values`.
@@ -2855,33 +2881,6 @@
     return array
       ? slice.call(array, (n == null || guard) ? 1 : n)
       : [];
-  }
-
-  /**
-   * Creates an array of shuffled `array` values, using a version of the
-   * Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to shuffle.
-   * @returns {Array} Returns a new shuffled array.
-   * @example
-   *
-   * _.shuffle([1, 2, 3, 4, 5, 6]);
-   * // => [4, 1, 6, 3, 5, 2]
-   */
-  function shuffle(array) {
-    var index = -1,
-        length = array ? array.length : 0,
-        result = Array(length);
-
-    while (++index < length) {
-      var rand = floor(nativeRandom() * (index + 1));
-      result[index] = result[rand];
-      result[rand] = array[index];
-    }
-    return result;
   }
 
   /**

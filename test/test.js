@@ -1597,6 +1597,31 @@
 
       throttled();
     });
+
+    asyncTest('should clear timeout when `func` is called', function() {
+      var now = new Date,
+          times = [];
+
+      var throttled = _.throttle(function() {
+        times.push(new Date - now);
+      }, 20);
+
+      setTimeout(throttled, 20);
+      setTimeout(throttled, 20);
+      setTimeout(throttled, 40);
+      setTimeout(throttled, 40);
+
+      setTimeout(function() {
+        var actual = _.every(times, function(value, index) {
+          return index
+            ? (value - times[index - 1]) > 15
+            : true;
+        });
+
+        ok(actual);
+        QUnit.start();
+      }, 120);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

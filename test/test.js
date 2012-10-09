@@ -947,6 +947,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.max and lodash.min object iteration');
+
+  _.each(['max', 'min'], function(methodName) {
+    var func = _[methodName];
+
+    test('lodash.' + methodName + ' should iterate an object', function() {
+      var actual = func({ 'a': 1, 'b': 2, 'c': 3 });
+      equal(actual, methodName == 'max' ? 3 : 1);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.merge');
 
   (function() {
@@ -991,7 +1004,6 @@
       source.bar.b = source.foo.b;
 
       var actual = _.merge(object, source);
-
       ok(actual.bar.b === actual.foo.b && actual.foo.b.foo.c === actual.foo.b.foo.c.foo.b.foo.c);
     });
 
@@ -1310,6 +1322,17 @@
         } catch(e) { }
         deepEqual(actual, []);
       })
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.shuffle');
+
+  (function() {
+    test('should shuffle an object', function() {
+      var actual = _.shuffle({ 'a': 1, 'b': 2, 'c': 3 });
+      deepEqual(actual.sort(), [1, 2, 3]);
     });
   }());
 

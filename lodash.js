@@ -3468,6 +3468,7 @@
       thisArg = this;
 
       if (remain <= 0) {
+        clearTimeout(timeoutId);
         lastCalled = now;
         result = func.apply(thisArg, args);
       }

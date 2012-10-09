@@ -162,7 +162,9 @@ Using [npm](http://npmjs.org/):
 
 ```bash
 npm install lodash
+
 npm install -g lodash
+npm link lodash
 ```
 
 In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
@@ -170,6 +172,8 @@ In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
 ```js
 var _ = require('lodash');
 ```
+
+**Note**: If you install Lo-Dash globally, you'll [need to run `npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project's root directory first.
 
 In [RingoJS v0.7.0-](http://ringojs.org/):
 

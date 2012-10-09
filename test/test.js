@@ -1733,6 +1733,7 @@
        'map',
        'pluck',
        'reject',
+       'shuffle',
        'sortBy',
        'toArray',
        'where'

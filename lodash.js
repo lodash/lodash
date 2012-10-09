@@ -2621,7 +2621,7 @@
   /**
    * Gets the index at which the first occurrence of `value` is found using
    * strict equality for comparisons, i.e. `===`. If the `array` is already
-   * sorted, passing `true` for `isSorted` will run a faster binary search.
+   * sorted, passing `true` for `fromIndex` will run a faster binary search.
    *
    * @static
    * @memberOf _

@@ -83,6 +83,9 @@ class Generator {
     if (!isset($options['lang'])) {
       $options['lang'] = 'js';
     }
+    if (!isset($options['toc'])) {
+      $options['toc'] = 'properties';
+    }
 
     $this->options = $options;
     $this->source = str_replace(PHP_EOL, "\n", $options['source']);
@@ -279,7 +282,7 @@ class Generator {
    */
   public function generate() {
     $api = array();
-    $byCategory = @$this->options['toc'] == 'categories';
+    $byCategory = $this->options['toc'] == 'categories';
     $categories = array();
     $closeTag = $this->closeTag;
     $compiling = false;
@@ -339,7 +342,7 @@ class Generator {
     }
 
     // add properties to each entry
-    foreach ($api as $key => $entry) {
+    foreach ($api as $entry) {
       $entry->hash = $this->getHash($entry);
       $entry->href = $this->getLineUrl($entry);
 
@@ -408,7 +411,7 @@ class Generator {
     /*------------------------------------------------------------------------*/
 
     // add categories
-    foreach ($api as $key => $entry) {
+    foreach ($api as $entry) {
       $categories[$entry->getCategory()][] = $entry;
       foreach (array('static', 'plugin') as $kind) {
         foreach ($entry->{$kind} as $subentry) {
@@ -435,7 +438,7 @@ class Generator {
 
     // compile TOC by categories
     if ($byCategory) {
-      foreach ($categories as $key => $entries) {
+      foreach ($categories as $category => $entries) {
         if ($compiling)  {
           $result[] = $closeTag;
         } else {
@@ -443,12 +446,12 @@ class Generator {
         }
         // assign TOC hash
         if (count($result) == 2) {
-          $toc = $key;
+          $toc = $category;
         }
         // add category
         array_push(
           $result,
-          $openTag, '## ' . (count($result) == 2 ? '<a id="' . $toc . '"></a>' : '') . '`' . $key . '`'
+          $openTag, '## ' . (count($result) == 2 ? '<a id="' . $toc . '"></a>' : '') . '`' . $category . '`'
         );
         // add entries
         foreach ($entries as $entry) {
@@ -458,8 +461,8 @@ class Generator {
     }
     // compile TOC by namespace
     else {
-      foreach ($api as $key => $entry) {
-        if ($compiling)  {
+      foreach ($api as $entry) {
+        if ($compiling) {
           $result[] = $closeTag;
         } else {
           $compiling = true;
@@ -488,7 +491,8 @@ class Generator {
             );
           }
           foreach ($entry->{$kind} as $subentry) {
-            $result[] = Generator::interpolate('* [`' . $member . '#{separator}#{name}`](##{hash})', $subentry);
+            $subentry->member = $member;
+            $result[] = Generator::interpolate('* [`#{member}#{separator}#{name}`](##{hash})', $subentry);
           }
         }
       }
@@ -503,16 +507,16 @@ class Generator {
     $result[] = $openTag;
 
     if ($byCategory) {
-      foreach ($categories as $key => $entries) {
+      foreach ($categories as $category => $entries) {
         if ($compiling)  {
           $result[] = $closeTag;
         } else {
           $compiling = true;
         }
-        if ($key != 'Methods' && $key != 'Properties') {
-          $key = '“' . $key . '” Methods';
+        if ($category != 'Methods' && $category != 'Properties') {
+          $category = '“' . $category . '” Methods';
         }
-        array_push($result, $openTag, '## `' . $key . '`');
+        array_push($result, $openTag, '## `' . $category . '`');
         $this->addEntries($result, $entries);
       }
     }

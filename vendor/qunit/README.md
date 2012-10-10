@@ -1,4 +1,4 @@
-[QUnit](http://qunitjs.com) - A JavaScript Unit Testing framework.
+[QUnit](http://docs.jquery.com/QUnit) - A JavaScript Unit Testing framework.
 ================================
 
 QUnit is a powerful, easy-to-use, JavaScript test suite. It's used by the jQuery
@@ -35,8 +35,7 @@ the change, run `grunt` to lint and test it, then commit, push and create a pull
 Include some background for the change in the commit message and `Fixes #nnn`, referring
 to the issue number you're addressing.
 
-To run `grunt`, you need `node` and `npm`, then `npm install grunt -g`. That gives you a global
-grunt binary. For additional grunt tasks, also run `npm install`.
+To run `grunt`, you need `node` and `npm`, then `npm install grunt -g`.
 
 Releases
 --------
@@ -48,12 +47,3 @@ tag, update them again to the next version, commit and push commits and tags
 
 Put the 'v' in front of the tag, e.g. `v1.8.0`. Clean up the changelog, removing merge commits
 or whitespace cleanups.
-
-To upload to code.jquery.com (replace $version accordingly):
-
-	scp -q qunit/qunit.js jqadmin@code.origin.jquery.com:/var/www/html/code.jquery.com/qunit/qunit-$version.js
-	scp -q qunit/qunit.css jqadmin@code.origin.jquery.com:/var/www/html/code.jquery.com/qunit/qunit-$version.css
-
-Then update /var/www/html/code.jquery.com/index.html and purge it with:
-
-	curl -s http://code.origin.jquery.com/?reload

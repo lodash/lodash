@@ -1614,7 +1614,7 @@
       setTimeout(function() {
         var actual = _.every(times, function(value, index) {
           return index
-            ? (value - times[index - 1]) > 15
+            ? (value - times[index - 1]) > 2
             : true;
         });
 

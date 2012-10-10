@@ -1278,19 +1278,19 @@
         }
         else {
           source = removeIsArgumentsFallback(source);
-        }
 
-        // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
+          // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
+          source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
+
+          // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
+          source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
+        }
 
         // remove `iteratesOwnLast` from `isPlainObject`
         source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
 
         // remove JScript [[DontEnum]] fix from `_.isEqual`
         source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
-
-        // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
-        source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
 
         // remove `noArraySliceOnStrings` from `_.toArray`
         source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');

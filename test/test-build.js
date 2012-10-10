@@ -804,7 +804,7 @@
           start = _.once(QUnit.start);
 
       minify(source, {
-        'silent': true,
+        'isSilent': true,
         'workingName': 'underscore.min',
         'onComplete': function(result) {
           var context = createContext();

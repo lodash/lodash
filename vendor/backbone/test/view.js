@@ -286,11 +286,11 @@ $(document).ready(function() {
   test("dispose", 0, function() {
     var View = Backbone.View.extend({
       events: {
-        click: function() { fail(); }
+        click: function() { ok(false); }
       },
       initialize: function() {
-        this.model.on('all x', function(){ fail(); }, this);
-        this.collection.on('all x', function(){ fail(); }, this);
+        this.model.on('all x', function(){ ok(false); }, this);
+        this.collection.on('all x', function(){ ok(false); }, this);
       }
     });
 

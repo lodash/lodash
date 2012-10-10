@@ -1,11 +1,11 @@
 /**
- * QUnit v1.10.0 - A JavaScript Unit Testing Framework
+ * QUnit v1.9.0 - A JavaScript Unit Testing Framework
  *
- * http://qunitjs.com
+ * http://docs.jquery.com/QUnit
  *
- * Copyright 2012 jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
+ * Copyright (c) 2012 John Resig, Jörn Zaefferer
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * or GPL (GPL-LICENSE.txt) licenses.
  */
 
 (function( window ) {
@@ -17,8 +17,6 @@ var QUnit,
 	fileName = (sourceFromStacktrace( 0 ) || "" ).replace(/(:\d+)+\)?/, "").replace(/.+\//, ""),
 	toString = Object.prototype.toString,
 	hasOwn = Object.prototype.hasOwnProperty,
-	// Keep a local reference to Date (GH-283)
-	Date = window.Date,
 	defined = {
 	setTimeout: typeof window.setTimeout !== "undefined",
 	sessionStorage: (function() {
@@ -306,8 +304,7 @@ QUnit = {
 	// call on start of module test to prepend name to all tests
 	module: function( name, testEnvironment ) {
 		config.currentModule = name;
-		config.currentModuleTestEnvironment = testEnvironment;
-		config.modules[name] = true;
+		config.currentModuleTestEnviroment = testEnvironment;
 	},
 
 	asyncTest: function( testName, expected, callback ) {
@@ -339,7 +336,7 @@ QUnit = {
 			async: async,
 			callback: callback,
 			module: config.currentModule,
-			moduleTestEnvironment: config.currentModuleTestEnvironment,
+			moduleTestEnvironment: config.currentModuleTestEnviroment,
 			stack: sourceFromStacktrace( 2 )
 		});
 
@@ -352,11 +349,7 @@ QUnit = {
 
 	// Specify the number of expected assertions to gurantee that failed test (no assertions are run at all) don't slip through.
 	expect: function( asserts ) {
-		if (arguments.length === 1) {
-			config.current.expected = asserts;
-		} else {
-			return config.current.expected;
-		}
+		config.current.expected = asserts;
 	},
 
 	start: function( count ) {
@@ -422,8 +415,6 @@ QUnit.assert = {
 
 		var source,
 			details = {
-				module: config.current.module,
-				name: config.current.testName,
 				result: result,
 				message: msg
 			};
@@ -609,9 +600,6 @@ config = {
 		}
 	],
 
-	// Set of all modules.
-	modules: {},
-
 	// logging callback queues
 	begin: [],
 	done: [],
@@ -722,10 +710,17 @@ extend( QUnit, {
 	},
 
 	// Resets the test setup. Useful for tests that modify the DOM.
+	// If jQuery is available, uses jQuery's html(), otherwise just innerHTML.
 	reset: function() {
-		var fixture = id( "qunit-fixture" );
-		if ( fixture ) {
-			fixture.innerHTML = config.fixture;
+		var fixture;
+
+		if ( window.jQuery ) {
+			jQuery( "#qunit-fixture" ).html( config.fixture );
+		} else {
+			fixture = id( "qunit-fixture" );
+			if ( fixture ) {
+				fixture.innerHTML = config.fixture;
+			}
 		}
 	},
 
@@ -786,8 +781,6 @@ extend( QUnit, {
 
 		var output, source,
 			details = {
-				module: config.current.module,
-				name: config.current.testName,
 				result: result,
 				message: message,
 				actual: actual,
@@ -833,8 +826,6 @@ extend( QUnit, {
 
 		var output,
 			details = {
-				module: config.current.module,
-				name: config.current.testName,
 				result: false,
 				message: message
 			};
@@ -925,9 +916,7 @@ QUnit.load = function() {
 	runLoggingCallbacks( "begin", QUnit, {} );
 
 	// Initialize the config, saving the execution queue
-	var banner, filter, i, label, len, main, ol, toolbar, userAgent, val, urlConfigCheckboxes, moduleFilter,
-	    numModules = 0,
-	    moduleFilterHtml = "",
+	var banner, filter, i, label, len, main, ol, toolbar, userAgent, val, urlConfigCheckboxes,
 		urlConfigHtml = "",
 		oldconfig = extend( {}, config );
 
@@ -950,15 +939,6 @@ QUnit.load = function() {
 		config[ val.id ] = QUnit.urlParams[ val.id ];
 		urlConfigHtml += "<input id='qunit-urlconfig-" + val.id + "' name='" + val.id + "' type='checkbox'" + ( config[ val.id ] ? " checked='checked'" : "" ) + " title='" + val.tooltip + "'><label for='qunit-urlconfig-" + val.id + "' title='" + val.tooltip + "'>" + val.label + "</label>";
 	}
-
-	moduleFilterHtml += "<label for='qunit-modulefilter'>Module: </label><select id='qunit-modulefilter' name='modulefilter'><option value='' " + ( config.module === undefined  ? "selected" : "" ) + ">< All Modules ></option>";
-	for ( i in config.modules ) {
-		if ( config.modules.hasOwnProperty( i ) ) {
-			numModules += 1;
-			moduleFilterHtml += "<option value='" + encodeURIComponent(i) + "' " + ( config.module === i ? "selected" : "" ) + ">" + i + "</option>";
-		}
-	}
-	moduleFilterHtml += "</select>";
 
 	// `userAgent` initialized at top of scope
 	userAgent = id( "qunit-userAgent" );
@@ -1022,19 +1002,6 @@ QUnit.load = function() {
 			window.location = QUnit.url( params );
 		});
 		toolbar.appendChild( urlConfigCheckboxes );
-
-		if (numModules > 1) {
-			moduleFilter = document.createElement( 'span' );
-			moduleFilter.setAttribute( 'id', 'qunit-modulefilter-container' );
-			moduleFilter.innerHTML = moduleFilterHtml;
-			addEvent( moduleFilter, "change", function() {
-				var selectBox = moduleFilter.getElementsByTagName("select")[0],
-				    selectedModule = decodeURIComponent(selectBox.options[selectBox.selectedIndex].value);
-
-				window.location = QUnit.url( { module: ( selectedModule === "" ) ? undefined : selectedModule } );
-			});
-			toolbar.appendChild(moduleFilter);
-		}
 	}
 
 	// `main` initialized at top of scope
@@ -1072,9 +1039,9 @@ window.onerror = function ( error, filePath, linerNr ) {
 			}
 			QUnit.pushFailure( error, filePath + ":" + linerNr );
 		} else {
-			QUnit.test( "global failure", extend( function() {
+			QUnit.test( "global failure", function() {
 				QUnit.pushFailure( error, filePath + ":" + linerNr );
-			}, { validTest: validTest } ) );
+			});
 		}
 		return false;
 	}
@@ -1141,11 +1108,6 @@ function done() {
 		}
 	}
 
-	// scroll back to top to show results
-	if ( window.scrollTo ) {
-		window.scrollTo(0, 0);
-	}
-
 	runLoggingCallbacks( "done", QUnit, {
 		failed: config.stats.bad,
 		passed: passed,
@@ -1160,12 +1122,6 @@ function validTest( test ) {
 		filter = config.filter && config.filter.toLowerCase(),
 		module = config.module && config.module.toLowerCase(),
 		fullName = (test.module + ": " + test.testName).toLowerCase();
-
-	// Internally-generated tests are always valid
-	if ( test.callback && test.callback.validTest === validTest ) {
-		delete test.callback.validTest;
-		return true;
-	}
 
 	if ( config.testNumber ) {
 		return test.testNumber === config.testNumber;
@@ -1448,8 +1404,7 @@ QUnit.equiv = (function() {
 						a.global === b.global &&
 						// (gmi) ...
 						a.ignoreCase === b.ignoreCase &&
-						a.multiline === b.multiline &&
-						a.sticky === b.sticky;
+						a.multiline === b.multiline;
 				},
 
 				// - skip when the property is a method of an instance (OOP)

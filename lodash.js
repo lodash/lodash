@@ -892,10 +892,10 @@
    * }
    *
    * _.isPlainObject(new Stooge('moe', 40));
-   * // false
+   * // => false
    *
    * _.isPlainObject([1, 2, 3]);
-   * // false
+   * // => false
    *
    * _.isPlainObject({ 'name': 'moe', 'age': 40 });
    * // => true

@@ -173,7 +173,7 @@ In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
 var _ = require('lodash');
 ```
 
-**Note:** If Lo-Dash is installed globally, [run `npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before attempting to `require` it.
+**Note:** If Lo-Dash is installed globally, [run `npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.
 
 In [RingoJS v0.7.0-](http://ringojs.org/):
 

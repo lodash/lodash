@@ -3809,13 +3809,10 @@
 
     // use a sourceURL for easier debugging
     // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-    var sourceURL = ''
+    var sourceURL = '';
 
     if( useSourceURL ) {
-      sourceURL = '\n//@ sourceURL=' + (
-        options.sourceURL ? 
-        options.sourceURL 
-        : '/lodash/template/source' + '['+ (templateCounter++) +']' )
+      sourceURL = '\n//@ sourceURL=' + (options.sourceURL ? options.sourceURL : '/lodash/template/source' + '[' + (templateCounter++) + ']');
     } else {
       sourceURL = '';
     }

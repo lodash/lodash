@@ -215,7 +215,6 @@
     'take',
     'tap',
     'template',
-    'templates',
     'templateSettings',
     'throttle',
     'times',

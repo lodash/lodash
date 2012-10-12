@@ -275,9 +275,8 @@
       "  var freeExports = typeof exports == 'object' && exports &&",
       "    (typeof global == 'object' && global && global == global.global && (window = global), exports);",
       '',
-      '  var templates = {};',
-      '',
-      '  var _ = window._;',
+      '  var templates = {},',
+      '      _ = window._;',
       ''
     ];
 
@@ -295,16 +294,14 @@
             precompiled = getFunctionSource(_.template(text, null, options)),
             prop = filename.replace(/\..*$/, '');
 
-        source.push("  templates['" + prop + "'] = " + precompiled + ';');
+        source.push("  templates['" + prop.replace(/'/g, "\\'") + "'] = " + precompiled + ';', '');
       }
     });
 
     source.push(
-      '',
       "  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {",
       "    define(['" + moduleName + "'], function(lodash) {",
-      '      _ = lodash;',
-      '      _.templates = _.extend(_.templates || {}, templates);',
+      '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
       '    });',
       "  } else if (freeExports) {",
       "    if (typeof module == 'object' && module && module.exports == freeExports) {",
@@ -1382,7 +1379,7 @@
       if (isAMD && isGlobal) {
         source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}\n/, '');
       } else {
-        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n/, '$1');
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n/, '$1\n');
       }
 
       if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
@@ -1511,8 +1508,9 @@
         'outputPath': outputPath,
         'onComplete': function(source) {
           // correct overly aggressive Closure Compiler minification
-          source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
-
+          if (!isTemplate) {
+            source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
+          }
           // inject "use strict" directive
           if (isStrict) {
             source = source.replace(/^(\/\*![\s\S]+?\*\/\n;\(function[^)]+\){)([^'"])/, '$1"use strict";$2');

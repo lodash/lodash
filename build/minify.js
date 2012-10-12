@@ -119,7 +119,7 @@
     // use simple optimizations when minifying template files
     if (this.isTemplate) {
       options = options.map(function(value) {
-        return value.replace(/^(compilation_level)=.+$/, '$1=SIMPLE_OPTIMIZATIONS');
+        return value.replace(/^(--compilation_level)=.+$/, '$1=SIMPLE_OPTIMIZATIONS');
       });
     }
 

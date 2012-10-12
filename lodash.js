@@ -3812,8 +3812,10 @@
     var sourceURL = ''
 
     if( useSourceURL ) {
-      sourceURL = '\n//@ sourceURL=' + (options.sourceURL ? options.sourceURL : '/lodash/template/source' )
-      sourceURL += '['+ (templateCounter++) +']'
+      sourceURL = '\n//@ sourceURL=' + (
+        options.sourceURL ? 
+        options.sourceURL 
+        : '/lodash/template/source' + '['+ (templateCounter++) +']' )
     } else {
       sourceURL = '';
     }

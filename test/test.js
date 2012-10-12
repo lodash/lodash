@@ -105,16 +105,6 @@
   QUnit.module('lodash');
 
   (function() {
-    // ensure this test is executed before any other template tests to avoid false positives
-    test('should initialize `reEvaluateDelimiter` (test with production build)', function() {
-      var data = { 'a': [1, 2] },
-          settings = _.templateSettings;
-
-      _.templateSettings = { 'interpolate': /\{\{(.+?)\}\}/g };
-      equal(_.template('{{ a.join(",") }}', data), '1,2');
-      _.templateSettings = settings;
-    });
-
     test('supports loading lodash.js as the "lodash" module', function() {
       if (window.document && window.require) {
         equal((lodashModule || {}).moduleName, 'lodash');
@@ -1509,7 +1499,7 @@
 
       equal(compiled(data), '1');
     });
-
+    
     test('should work when passing `options.variable`', function() {
       var compiled = _.template(
         '<% _.forEach( data.a, function( value ) { %>' +

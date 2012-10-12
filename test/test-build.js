@@ -483,6 +483,29 @@
 
         equal(templates.a(data.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
         equal(templates.b(data.b), 'Hello stooge.', basename);
+        delete _.templates;
+        start();
+      });
+    });
+
+    asyncTest('`lodash template=*.jst` exports=amd', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
+      build(['-s', 'template=' + templatePath + '/*.jst', 'exports=amd'], function(source, filePath) {
+        var basename = path.basename(filePath, '.js'),
+            context = createContext(),
+            pass = false;
+
+        (context.define = function(requires, factory) {
+          factory(_);
+          var templates = _.templates;
+          pass = 'a' in templates && 'b' in templates;
+        })
+        .amd = {};
+
+        vm.runInContext(source, context);
+        ok(pass, basename);
+        delete _.templates;
         start();
       });
     });

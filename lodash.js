@@ -3693,9 +3693,9 @@
    * @example
    *
    * // using a compiled template
-   * var compiled = _.template('hello: <%= name %>');
+   * var compiled = _.template('hello <%= name %>');
    * compiled({ 'name': 'moe' });
-   * // => 'hello: moe'
+   * // => 'hello moe'
    *
    * var list = '<% _.forEach(people, function(name) { %><li><%= name %></li><% }); %>';
    * _.template(list, { 'people': ['moe', 'larry', 'curly'] });
@@ -3706,25 +3706,30 @@
    * // => '<b>&lt;script></b>'
    *
    * // using the internal `print` function in "evaluate" delimiters
-   * _.template('<% print("Hello " + epithet); %>.', { 'epithet': 'stooge' });
-   * // => 'Hello stooge.'
+   * _.template('<% print("hello " + epithet); %>!', { 'epithet': 'stooge' });
+   * // => 'hello stooge!'
    *
    * // using custom template delimiter settings
    * _.templateSettings = {
    *   'interpolate': /\{\{([\s\S]+?)\}\}/g
    * };
    *
-   * _.template('Hello {{ name }}!', { 'name': 'Mustache' });
-   * // => 'Hello Mustache!'
+   * _.template('hello {{ name }}!', { 'name': 'mustache' });
+   * // => 'hello mustache!'
    *
    * // using the `variable` option to ensure a with-statement isn't used in the compiled template
-   * var compiled = _.template('hello: <%= data.name %>', null, { 'variable': 'data' });
+   * var compiled = _.template('hello <%= data.name %>!', null, { 'variable': 'data' });
    * compiled.source;
    * // => function(data) {
    *   var __t, __p = '', __e = _.escape;
-   *   __p += 'hello: ' + ((__t = ( data.name )) == null ? '' : __t);
+   *   __p += 'hello ' + ((__t = ( data.name )) == null ? '' : __t) + '!';
    *   return __p;
    * }
+   *
+   * // using the `sourceURL` option to specify a custom sourceURL for the template
+   * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
+   * compiled(data);
+   * // => find the source of "greeting.jst" under the sources tab or resources panel of the web inspector
    *
    * // using the `source` property to inline compiled templates for meaningful
    * // line numbers in error messages and a stack trace
@@ -3810,7 +3815,7 @@
     // use a sourceURL for easier debugging
     // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
     var sourceURL = useSourceURL
-      ? '\n//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']'
+      ? '\n//@ sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']')
       : '';
 
     try {

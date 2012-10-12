@@ -3809,9 +3809,13 @@
 
     // use a sourceURL for easier debugging
     // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-    var sourceURL = useSourceURL
-      ? '\n//@ sourceURL=/lodash/template/source[' + (templateCounter++) + ']'
-      : '';
+    var sourceURL = '';
+
+    if( useSourceURL ) {
+      sourceURL = '\n//@ sourceURL=' + (options.sourceURL ? options.sourceURL : '/lodash/template/source' + '[' + (templateCounter++) + ']');
+    } else {
+      sourceURL = '';
+    }
 
     try {
       result = Function('_', 'return ' + source + sourceURL)(lodash);

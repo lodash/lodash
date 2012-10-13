@@ -71,7 +71,7 @@
     'compact': [],
     'compose': [],
     'contains': [],
-    'countBy': ['identity'],
+    'countBy': ['forEach', 'identity'],
     'debounce': [],
     'defaults': ['isArguments'],
     'defer': [],
@@ -88,7 +88,7 @@
     'forIn': ['identity', 'isArguments'],
     'forOwn': ['identity', 'isArguments'],
     'functions': ['isArguments', 'isFunction'],
-    'groupBy': ['identity'],
+    'groupBy': ['forEach', 'identity'],
     'has': [],
     'identity': [],
     'indexOf': ['sortedIndex'],
@@ -120,16 +120,16 @@
     'map': ['identity'],
     'max': ['forEach'],
     'memoize': [],
-    'merge': ['isArray', 'isPlainObject'],
+    'merge': ['forOwn', 'isArray', 'isPlainObject'],
     'min': ['forEach'],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
     'object': [],
-    'omit': ['indexOf', 'isArguments'],
+    'omit': ['forIn', 'indexOf', 'isArguments'],
     'once': [],
     'pairs': [],
     'partial': ['isFunction'],
-    'pick': [],
+    'pick': ['forIn'],
     'pluck': [],
     'random': [],
     'range': [],
@@ -141,7 +141,7 @@
     'shuffle': ['forEach'],
     'size': ['keys'],
     'some': ['identity'],
-    'sortBy': ['identity'],
+    'sortBy': ['forEach', 'identity'],
     'sortedIndex': ['identity'],
     'tap': ['mixin'],
     'template': ['escape'],
@@ -1245,11 +1245,6 @@
           }
           // extract, format, and inject the compiled function's source code
           source = source.replace(reFunc, '$1' + getFunctionSource(lodash[methodName]) + ';\n');
-        });
-
-        // replace `callee` in `_.merge` with `merge`
-        source = source.replace(matchFunction(source, 'merge'), function(match) {
-          return match.replace(/\bcallee\b/g, 'merge');
         });
 
         if (isUnderscore) {

@@ -425,23 +425,13 @@
   );
 
   /**
-   * Reusable iterator options shared by
-   * `countBy`, `every`, `filter`, `find`, `forEach`, `forIn`, `forOwn`, `groupBy`,
-   * `map`, `reject`, `some`, and `sortBy`.
+   * Reusable iterator options shared by `every`, `filter`,
+   * `find`, `forEach`, `forIn`, `forOwn`, `map`, `reject`, and `some`.
    */
   var baseIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'top': 'callback = createCallback(callback, thisArg)',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
-  };
-
-  /** Reusable iterator options for `countBy`, `groupBy`, and `sortBy` */
-  var countByIteratorOptions = {
-    'init': '{}',
-    'top': 'callback = createCallback(callback, thisArg)',
-    'inLoop':
-      'var prop = callback(value, index, collection);\n' +
-      '(hasOwnProperty.call(result, prop) ? result[prop]++ : result[prop] = 1)'
   };
 
   /** Reusable iterator options for `every` and `some` */
@@ -480,7 +470,7 @@
     }
   };
 
-  /** Reusable iterator options for `invoke`, `map`, `pluck`, and `sortBy` */
+  /** Reusable iterator options for `invoke`, `map`, and `pluck` */
   var mapIteratorOptions = {
     'init': 'collection || []',
     'beforeLoop': {
@@ -491,22 +481,6 @@
       'array':  'result[index] = callback(value, index, collection)',
       'object': 'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '(callback(value, index, collection))'
     }
-  };
-
-  /** Reusable iterator options for `omit` and `pick` */
-  var omitIteratorOptions = {
-    'useHas': false,
-    'args': 'object, callback, thisArg',
-    'init': '{}',
-    'top':
-      'var isFunc = typeof callback == \'function\';\n' +
-      'if (isFunc) callback = createCallback(callback, thisArg);\n' +
-      'else var props = concat.apply(ArrayProto, arguments)',
-    'inLoop':
-      'if (isFunc\n' +
-      '  ? !callback(value, index, object)\n' +
-      '  : indexOf(props, index) < 0\n' +
-      ') result[index] = value'
   };
 
   /*--------------------------------------------------------------------------*/
@@ -727,18 +701,15 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayLikeClasses, ArrayProto, bind, compareAscending, concat, createCallback, ' +
-        'forIn, hasOwnProperty, indexOf, isArguments, isArray, isFunction, ' +
-        'isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
+        'arrayLikeClasses, bind, createCallback, forIn, hasOwnProperty, isArguments, ' +
+        'isFunction, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
         'slice, stringClass, toString, undefined',
-      'var callee = function(' + args + ') {\n' + iteratorTemplate(data) + '\n};\n' +
-      'return callee'
+      'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayLikeClasses, ArrayProto, bind, compareAscending, concat, createCallback,
-      forIn, hasOwnProperty, indexOf, isArguments, isArray, isFunction,
-      isPlainObject, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
+      arrayLikeClasses, bind, createCallback, forIn, hasOwnProperty, isArguments,
+      isFunction, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
       slice, stringClass, toString
     );
   }
@@ -1705,37 +1676,48 @@
    * _.merge(stooges, ages);
    * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
    */
-  var merge = createIterator(extendIteratorOptions, {
-    'args': 'object, source, indicator',
-    'top':
-      'var isArr, args = arguments, argsIndex = 0;\n' +
-      'if (indicator == compareAscending) {\n' +
-      '  var argsLength = 2, stackA = args[3], stackB = args[4]\n' +
-      '} else {\n' +
-      '  var argsLength = args.length, stackA = [], stackB = []\n' +
-      '}\n' +
-      'while (++argsIndex < argsLength) {\n' +
-      '  if (iteratee = args[argsIndex]) {',
-    'inLoop':
-      'if ((source = value) && ((isArr = isArray(source)) || isPlainObject(source))) {\n' +
-      '  var found = false, stackLength = stackA.length;\n' +
-      '  while (stackLength--) {\n' +
-      '    if (found = stackA[stackLength] == source) break\n' +
-      '  }\n' +
-      '  if (found) {\n' +
-      '    result[index] = stackB[stackLength]\n' +
-      '  } else {\n' +
-      '    stackA.push(source);\n' +
-      '    stackB.push(value = (value = result[index], isArr)\n' +
-      '      ? (isArray(value) ? value : [])\n' +
-      '      : (isPlainObject(value) ? value : {})\n' +
-      '    );\n' +
-      '    result[index] = callee(value, source, compareAscending, stackA, stackB)\n' +
-      '  }\n' +
-      '} else if (source != null) {\n' +
-      '  result[index] = source\n' +
-      '}'
-  });
+  function merge(object, source, indicator) {
+    var args = arguments,
+        index = 0,
+        length = 2,
+        stackA = args[3],
+        stackB = args[4];
+
+    if (indicator != compareAscending) {
+      length = args.length;
+      stackA = [];
+      stackB = [];
+    }
+    while (++index < length) {
+      forOwn(args[index], function(source, key) {
+        var isArr, value;
+        if (source && ((isArr = isArray(source)) || isPlainObject(source))) {
+          var found = false,
+              stackLength = stackA.length;
+
+          while (stackLength--) {
+            if ((found = stackA[stackLength] == source)) {
+              break;
+            }
+          }
+          if (found) {
+            object[key] = stackB[stackLength];
+          }
+          else {
+            stackA.push(source);
+            stackB.push(value = (value = object[key], isArr)
+              ? (isArray(value) ? value : [])
+              : (isPlainObject(value) ? value : {})
+            );
+            object[key] = merge(value, source, compareAscending, stackA, stackB);
+          }
+        } else if (source != null) {
+          object[key] = source;
+        }
+      });
+    }
+    return object;
+  }
 
   /**
    * Creates a shallow clone of `object` excluding the specified properties.
@@ -1762,7 +1744,25 @@
    * });
    * // => { 'name': 'moe' }
    */
-  var omit = createIterator(omitIteratorOptions);
+  function omit(object, callback, thisArg) {
+    var isFunc = typeof callback == 'function',
+        result = {};
+
+    if (isFunc) {
+      callback = createCallback(callback, thisArg);
+    } else {
+      var props = concat.apply(ArrayProto, arguments);
+    }
+    forIn(object, function(value, key, object) {
+      if (isFunc
+            ? !callback(value, key, object)
+            : indexOf(props, key) < 0
+          ) {
+        result[key] = value;
+      }
+    });
+    return result;
+  }
 
   /**
    * Creates a two dimensional array of the given object's key-value pairs,
@@ -1809,22 +1809,29 @@
    * });
    * // => { 'name': 'moe' }
    */
-  var pick = createIterator(omitIteratorOptions, {
-    'top':
-      'if (typeof callback != \'function\') {\n' +
-      '  var index = 0,\n' +
-      '      props = concat.apply(ArrayProto, arguments),\n' +
-      '      length = props.length;\n' +
-      '  while (++index < length) {\n' +
-      '    var prop = props[index];\n' +
-      '    if (prop in object) result[prop] = object[prop]\n' +
-      '  }\n' +
-      '} else {\n' +
-      '  callback = createCallback(callback, thisArg)',
-    'inLoop':
-      'if (callback(value, index, object)) result[index] = value',
-    'bottom': '}'
-  });
+  function pick(object, callback, thisArg) {
+    var result = {};
+    if (typeof callback != 'function') {
+      var index = 0,
+          props = concat.apply(ArrayProto, arguments),
+          length = props.length;
+
+      while (++index < length) {
+        var prop = props[index];
+        if (prop in object) {
+          result[prop] = object[prop];
+        }
+      }
+    } else {
+      callback = createCallback(callback, thisArg);
+      forIn(object, function(value, key, object) {
+        if (callback(value, key, object)) {
+          result[key] = value;
+        }
+      });
+    }
+    return result;
+  }
 
   /**
    * Creates an array composed of the own enumerable property values of `object`.
@@ -1905,7 +1912,15 @@
    * _.countBy(['one', 'two', 'three'], 'length');
    * // => { '3': 2, '5': 1 }
    */
-  var countBy = createIterator(baseIteratorOptions, countByIteratorOptions);
+  function countBy(collection, callback, thisArg) {
+    var result = {};
+    callback = createCallback(callback, thisArg);
+    forEach(collection, function(value, key, collection) {
+      key = callback(value, key, collection);
+      (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
+    });
+    return result;
+  }
 
   /**
    * Checks if the `callback` returns a truthy value for **all** elements of a
@@ -2023,11 +2038,15 @@
    * _.groupBy(['one', 'two', 'three'], 'length');
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
-  var groupBy = createIterator(baseIteratorOptions, countByIteratorOptions, {
-    'inLoop':
-      'var prop = callback(value, index, collection);\n' +
-      '(hasOwnProperty.call(result, prop) ? result[prop] : result[prop] = []).push(value)'
-  });
+  function groupBy(collection, callback, thisArg) {
+    var result = {};
+    callback = createCallback(callback, thisArg);
+    forEach(collection, function(value, key, collection) {
+      key = callback(value, key, collection);
+      (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
+    });
+    return result;
+  }
 
   /**
    * Invokes the method named by `methodName` on each element in the `collection`,
@@ -2408,28 +2427,25 @@
    * _.sortBy(['larry', 'brendan', 'moe'], 'length');
    * // => ['moe', 'larry', 'brendan']
    */
-  var sortBy = createIterator(baseIteratorOptions, countByIteratorOptions, mapIteratorOptions, {
-    'inLoop': {
-      'array':
-        'result[index] = {\n' +
-        '  criteria: callback(value, index, collection),\n' +
-        '  index: index,\n' +
-        '  value: value\n' +
-        '}',
-      'object':
-        'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '({\n' +
-        '  criteria: callback(value, index, collection),\n' +
-        '  index: index,\n' +
-        '  value: value\n' +
-        '})'
-    },
-    'bottom':
-      'result.sort(compareAscending);\n' +
-      'length = result.length;\n' +
-      'while (length--) {\n' +
-      '  result[length] = result[length].value\n' +
-      '}'
-  });
+  function sortBy(collection, callback, thisArg) {
+    var result = [];
+    callback = createCallback(callback, thisArg);
+
+    forEach(collection, function(value, index, collection) {
+      result.push({
+        'criteria': callback(value, index, collection),
+        'index': index,
+        'value': value
+      });
+    });
+
+    var length = result.length;
+    result.sort(compareAscending);
+    while (length--) {
+      result[length] = result[length].value;
+    }
+    return result;
+  }
 
   /**
    * Converts the `collection`, to an array.

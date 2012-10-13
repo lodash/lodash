@@ -21,37 +21,20 @@
     'object',
     'ownIndex',
     'ownProps',
-    'prop',
     'propertyIsEnumerable',
-    'propIndex',
-    'props',
     'result',
     'skipProto',
-    'slice',
     'stringClass',
     'thisArg',
     'toString',
-    'undefined',
     'value',
 
     // lesser used variables
-    'args',
-    'arrayLikeClasses',
     'bind',
-    'className',
-    'forIn',
     'funcs',
     'isArguments',
-    'isFunc',
     'isFunction',
-    'methodName',
-    'objectClass',
-    'objectTypes',
-    'pass',
-    'properties',
-    'property',
-    'propsLength',
-    'target'
+    'objectTypes'
   ];
 
   /** Used to minify `compileIterator` option properties */
@@ -290,10 +273,10 @@
     // remove debug sourceURL use in `_.template`
     source = source.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
 
-    // minify internal properties used by 'compareAscending', `_.merge`, and `_.sortBy`
+    // minify internal properties used by 'compareAscending' and `_.sortBy`
     (function() {
       var properties = ['criteria', 'index', 'value'],
-          snippets = source.match(/( +)function (?:compareAscending|merge|sortBy)\b[\s\S]+?\n\1}/g);
+          snippets = source.match(/( +)function (?:compareAscending|sortBy)\b[\s\S]+?\n\1}/g);
 
       if (!snippets) {
         return;
@@ -309,13 +292,8 @@
 
           modified = modified
             .replace(reBracketProp, "['" + minNames[index] + "']")
-            .replace(reDotProp, '.' + minNames[index])
-            .replace(rePropColon, "$1'" + minNames[index] + "':")
-
-          // correct `value.source` in regexp branch of `_.clone`
-          if (property == 'source') {
-            modified = modified.replace("value['" + minNames[index] + "']", "value['source']");
-          }
+            .replace(reDotProp, "['" + minNames[index] + "']")
+            .replace(rePropColon, "$1'" + minNames[index] + "':");
         });
 
         // replace with modified snippet

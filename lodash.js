@@ -425,8 +425,8 @@
   );
 
   /**
-   * Reusable iterator options shared by `every`, `filter`,
-   * `find`, `forEach`, `forIn`, `forOwn`, `map`, `reject`, and `some`.
+   * Reusable iterator options shared by `every`, `filter`, forEach`, `forIn`,
+   * `forOwn`, `map`, `reject`, and `some`.
    */
   var baseIteratorOptions = {
     'args': 'collection, callback, thisArg',
@@ -452,13 +452,13 @@
     'bottom': '  }\n}'
   };
 
-  /** Reusable iterator options for `filter`, `reject`, and `where` */
+  /** Reusable iterator options for `filter` and `reject` */
   var filterIteratorOptions = {
     'init': '[]',
     'inLoop': 'callback(value, index, collection) && result.push(value)'
   };
 
-  /** Reusable iterator options for `find`, `forEach`, `forIn`, and `forOwn` */
+  /** Reusable iterator options for `forEach`, `forIn`, and `forOwn` */
   var forEachIteratorOptions = {
     'top': 'callback = createCallback(callback, thisArg)'
   };
@@ -467,19 +467,6 @@
   var forOwnIteratorOptions = {
     'inLoop': {
       'object': baseIteratorOptions.inLoop
-    }
-  };
-
-  /** Reusable iterator options for `invoke`, `map`, and `pluck` */
-  var mapIteratorOptions = {
-    'init': 'collection || []',
-    'beforeLoop': {
-      'array':  'result = Array(length)',
-      'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')
-    },
-    'inLoop': {
-      'array':  'result[index] = callback(value, index, collection)',
-      'object': 'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '(callback(value, index, collection))'
     }
   };
 
@@ -701,16 +688,14 @@
     }
     // create the function factory
     var factory = Function(
-        'arrayLikeClasses, bind, createCallback, forIn, hasOwnProperty, isArguments, ' +
-        'isFunction, objectClass, objectTypes, nativeKeys, propertyIsEnumerable, ' +
-        'slice, stringClass, toString, undefined',
+        'bind, createCallback, forIn, hasOwnProperty, isArguments, isFunction, ' +
+        'objectTypes, nativeKeys, propertyIsEnumerable, stringClass, toString',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayLikeClasses, bind, createCallback, forIn, hasOwnProperty, isArguments,
-      isFunction, objectClass, objectTypes, nativeKeys, propertyIsEnumerable,
-      slice, stringClass, toString
+      bind, createCallback, forIn, hasOwnProperty, isArguments, isFunction,
+      objectTypes, nativeKeys, propertyIsEnumerable, stringClass, toString
     );
   }
 
@@ -1171,13 +1156,15 @@
    * _.functions(_);
    * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
    */
-  var functions = createIterator({
-    'useHas': false,
-    'args': 'object',
-    'init': '[]',
-    'inLoop': 'isFunction(value) && result.push(index)',
-    'bottom': 'result.sort()'
-  });
+  function functions(object) {
+    var result = [];
+    forIn(object, function(value, key) {
+      if (isFunction(value)) {
+        result.push(key);
+      }
+    });
+    return result.sort();
+  }
 
   /**
    * Checks if the specified object `property` exists and is a direct property,
@@ -1270,21 +1257,23 @@
    * _.isEmpty('');
    * // => true
    */
-  var isEmpty = createIterator({
-    'args': 'value',
-    'init': 'true',
-    'top':
-      'var className = toString.call(value),\n' +
-      '    length = value.length;\n' +
-      'if (arrayLikeClasses[className]' +
-      (noArgsClass ? ' || isArguments(value)' : '') + ' ||\n' +
-      '  (className == objectClass && length === +length &&\n' +
-      '  isFunction(value.splice))' +
-      ') return !length',
-    'inLoop': {
-      'object': 'return false'
+  function isEmpty(value) {
+    var result = true;
+    if (!value) {
+      return result;
     }
-  });
+    var className = toString.call(value),
+        length = value.length;
+
+    if ((arrayLikeClasses[className] || (noArgsClass && isArguments(value))) ||
+        (className == objectClass && length === +length && isFunction(value.splice))) {
+      return !length;
+    }
+    forOwn(value, function() {
+      return (result = false);
+    });
+    return result;
+  }
 
   /**
    * Performs a deep comparison between two values to determine if they are
@@ -1778,11 +1767,13 @@
    * _.pairs({ 'moe': 30, 'larry': 40, 'curly': 50 });
    * // => [['moe', 30], ['larry', 40], ['curly', 50]] (order is not guaranteed)
    */
-  var pairs = createIterator({
-    'args': 'object',
-    'init':'[]',
-    'inLoop': 'result'  + (isKeysFast ? '[ownIndex] = ' : '.push') + '([index, value])'
-  });
+  function pairs(object) {
+    var result = [];
+    forOwn(object, function(value, key) {
+      result.push([key, value]);
+    });
+    return result;
+  }
 
   /**
    * Creates a shallow clone of `object` composed of the specified properties.
@@ -1846,11 +1837,13 @@
    * _.values({ 'one': 1, 'two': 2, 'three': 3 });
    * // => [1, 2, 3]
    */
-  var values = createIterator({
-    'args': 'object',
-    'init': '[]',
-    'inLoop': 'result.push(value)'
-  });
+  function values(object) {
+    var result = [];
+    forOwn(object, function(value) {
+      result.push(value);
+    });
+    return result;
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -1876,15 +1869,11 @@
    * _.contains('curly', 'ur');
    * // => true
    */
-  var contains = createIterator({
-    'args': 'collection, target',
-    'init': 'false',
-    'noCharByIndex': false,
-    'beforeLoop': {
-      'array': 'if (toString.call(collection) == stringClass) return collection.indexOf(target) > -1'
-    },
-    'inLoop': 'if (value === target) return true'
-  });
+  function contains(collection, target) {
+    return toString.call(collection) == stringClass
+      ? collection.indexOf(target) > -1
+      : some(collection, function(value) { return value === target; });
+  }
 
   /**
    * Creates an object composed of keys returned from running each element of
@@ -1983,10 +1972,14 @@
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => 2
    */
-  var find = createIterator(baseIteratorOptions, forEachIteratorOptions, {
-    'init': 'undefined',
-    'inLoop': 'if (callback(value, index, collection)) return value'
-  });
+  function find(collection, callback, thisArg) {
+    var result;
+    callback = createCallback(callback, thisArg);
+    some(collection, function(value, index, collection) {
+      return callback(value, index, collection) && (result = value, true);
+    });
+    return result;
+  }
 
   /**
    * Iterates over a `collection`, executing the `callback` for each element in
@@ -2070,19 +2063,16 @@
    * _.invoke([123, 456], String.prototype.split, '');
    * // => [['1', '2', '3'], ['4', '5', '6']]
    */
-  var invoke = createIterator(mapIteratorOptions, {
-    'args': 'collection, methodName',
-    'top':
-      'var args = slice.call(arguments, 2),\n' +
-      '    isFunc = typeof methodName == \'function\'',
-    'inLoop': {
-      'array':
-        'result[index] = (isFunc ? methodName : value[methodName]).apply(value, args)',
-      'object':
-        'result' + (isKeysFast ? '[ownIndex] = ' : '.push') +
-        '((isFunc ? methodName : value[methodName]).apply(value, args))'
-    }
-  });
+  function invoke(collection, methodName) {
+    var args = slice.call(arguments, 2),
+        isFunc = typeof methodName == 'function',
+        result = [];
+
+    forEach(collection, function(value) {
+      result.push((isFunc ? methodName : value[methodName]).apply(value, args));
+    });
+    return result;
+  }
 
   /**
    * Creates an array of values by running each element in the `collection`
@@ -2105,7 +2095,17 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9] (order is not guaranteed)
    */
-  var map = createIterator(baseIteratorOptions, mapIteratorOptions);
+  var map = createIterator(baseIteratorOptions, {
+    'init': 'collection || []',
+    'beforeLoop': {
+      'array':  'result = Array(length)',
+      'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')
+    },
+    'inLoop': {
+      'array':  'result[index] = callback(value, index, collection)',
+      'object': 'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '(callback(value, index, collection))'
+    }
+  });
 
   /**
    * Retrieves the maximum value of an `array`. If `callback` is passed,
@@ -2220,13 +2220,13 @@
    * _.pluck(stooges, 'name');
    * // => ['moe', 'larry', 'curly']
    */
-  var pluck = createIterator(mapIteratorOptions, {
-    'args': 'collection, property',
-    'inLoop': {
-      'array':  'result[index] = value[property]',
-      'object': 'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '(value[property])'
-    }
-  });
+  function pluck(collection, property) {
+    var result = [];
+    forEach(collection, function(value) {
+      result.push(value[property]);
+    });
+    return result;
+  }
 
   /**
    * Boils down a `collection` to a single value. The initial state of the
@@ -2248,24 +2248,16 @@
    * var sum = _.reduce([1, 2, 3], function(memo, num) { return memo + num; });
    * // => 6
    */
-  var reduce = createIterator({
-    'args': 'collection, callback, accumulator, thisArg',
-    'init': 'accumulator',
-    'top':
-      'var noaccum = arguments.length < 3;\n' +
-      'callback = createCallback(callback, thisArg)',
-    'beforeLoop': {
-      'array': 'if (noaccum) result = iteratee[++index]'
-    },
-    'inLoop': {
-      'array':
-        'result = callback(result, value, index, collection)',
-      'object':
-        'result = noaccum\n' +
-        '  ? (noaccum = false, value)\n' +
-        '  : callback(result, value, index, collection)'
-    }
-  });
+  function reduce(collection, callback, accumulator, thisArg) {
+    var noaccum = arguments.length < 3;
+    callback = createCallback(callback, thisArg);
+    forEach(collection, function(value, index, collection) {
+      accumulator = noaccum
+        ? (noaccum = false, value)
+        : callback(accumulator, value, index, collection)
+    });
+    return accumulator;
+  }
 
   /**
    * The right-associative version of `_.reduce`.
@@ -2430,7 +2422,6 @@
   function sortBy(collection, callback, thisArg) {
     var result = [];
     callback = createCallback(callback, thisArg);
-
     forEach(collection, function(value, index, collection) {
       result.push({
         'criteria': callback(value, index, collection),
@@ -2494,19 +2485,26 @@
    * _.where(stooges, { 'age': 40 });
    * // => [{ 'name': 'moe', 'age': 40 }]
    */
-  var where = createIterator(filterIteratorOptions, {
-    'args': 'collection, properties',
-    'top':
-      'var props = [];\n' +
-      'forIn(properties, function(value, prop) { props.push(prop) });\n' +
-      'var propsLength = props.length',
-    'inLoop':
-      'for (var pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {\n' +
-      '  var prop = props[propIndex];\n' +
-      '  if (!(pass = value[prop] === properties[prop])) break\n' +
-      '}\n' +
-      'pass && result.push(value)'
-  });
+  function where(collection, properties) {
+    var props = [];
+    forIn(properties, function(value, prop) { props.push(prop); });
+
+    var propsLength = props.length,
+        result = [];
+
+    forEach(collection, function(value) {
+      for (var pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {
+        var prop = props[propIndex];
+        if (!(pass = value[prop] === properties[prop])) {
+          break;
+        }
+      }
+      if (pass) {
+        result.push(value);
+      }
+    });
+    return result;
+  }
 
   /*--------------------------------------------------------------------------*/
 

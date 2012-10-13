@@ -11,7 +11,6 @@
     'argsLength',
     'callback',
     'collection',
-    'concat',
     'createCallback',
     'ctor',
     'hasOwnProperty',
@@ -36,38 +35,22 @@
     'value',
 
     // lesser used variables
-    'accumulator',
     'args',
     'arrayLikeClasses',
-    'ArrayProto',
     'bind',
-    'callee',
     'className',
-    'compareAscending',
     'forIn',
-    'found',
     'funcs',
-    'indexOf',
-    'indicator',
     'isArguments',
-    'isArr',
-    'isArray',
     'isFunc',
     'isFunction',
-    'isPlainObject',
     'methodName',
-    'noaccum',
-    'noop',
     'objectClass',
     'objectTypes',
     'pass',
     'properties',
     'property',
     'propsLength',
-    'source',
-    'stackA',
-    'stackB',
-    'stackLength',
     'target'
   ];
 
@@ -310,15 +293,13 @@
     // minify internal properties used by 'compareAscending', `_.merge`, and `_.sortBy`
     (function() {
       var properties = ['criteria', 'index', 'value'],
-          snippets = source.match(/( +)(?:function compareAscending|var merge|var sortBy)\b[\s\S]+?\n\1}/g);
+          snippets = source.match(/( +)function (?:compareAscending|merge|sortBy)\b[\s\S]+?\n\1}/g);
 
       if (!snippets) {
         return;
       }
       snippets.forEach(function(snippet) {
-        var modified = snippet,
-            isCompilable = /(?:var merge|var sortBy)\b/.test(modified),
-            isInlined = !/\bcreateIterator\b/.test(modified);
+        var modified = snippet;
 
         // minify properties
         properties.forEach(function(property, index) {
@@ -326,32 +307,14 @@
               reDotProp = RegExp('\\.' + property + '\\b', 'g'),
               rePropColon = RegExp("([^?\\s])\\s*([\"'])?\\b" + property + "\\2 *:", 'g');
 
-          if (isCompilable) {
-            // add quotes around properties in the inlined `_.merge` and `_.sortBy`
-            // of the mobile build so Closure Compiler won't mung them
-            if (isInlined) {
-              modified = modified
-                .replace(reBracketProp, "['" + minNames[index] + "']")
-                .replace(reDotProp, "['" + minNames[index] + "']")
-                .replace(rePropColon, "$1'" + minNames[index] + "':");
-            }
-            else {
-              modified = modified
-                .replace(reBracketProp, '.' + minNames[index])
-                .replace(reDotProp, '.' + minNames[index])
-                .replace(rePropColon, '$1' + minNames[index] + ':');
-            }
-          }
-          else {
-            modified = modified
-              .replace(reBracketProp, "['" + minNames[index] + "']")
-              .replace(reDotProp, '.' + minNames[index])
-              .replace(rePropColon, "$1'" + minNames[index] + "':")
+          modified = modified
+            .replace(reBracketProp, "['" + minNames[index] + "']")
+            .replace(reDotProp, '.' + minNames[index])
+            .replace(rePropColon, "$1'" + minNames[index] + "':")
 
-            // correct `value.source` in regexp branch of `_.clone`
-            if (property == 'source') {
-              modified = modified.replace("value['" + minNames[index] + "']", "value['source']");
-            }
+          // correct `value.source` in regexp branch of `_.clone`
+          if (property == 'source') {
+            modified = modified.replace("value['" + minNames[index] + "']", "value['source']");
           }
         });
 

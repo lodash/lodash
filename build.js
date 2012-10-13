@@ -70,8 +70,8 @@
     'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isPlainObject'],
     'compact': [],
     'compose': [],
-    'contains': [],
-    'countBy': ['forEach', 'identity'],
+    'contains': ['some'],
+    'countBy': ['forEach'],
     'debounce': [],
     'defaults': ['isArguments'],
     'defer': [],
@@ -81,27 +81,27 @@
     'every': ['identity'],
     'extend': ['isArguments'],
     'filter': ['identity'],
-    'find': ['identity'],
+    'find': ['some'],
     'first': [],
     'flatten': ['isArray'],
     'forEach': ['identity'],
     'forIn': ['identity', 'isArguments'],
     'forOwn': ['identity', 'isArguments'],
-    'functions': ['isArguments', 'isFunction'],
-    'groupBy': ['forEach', 'identity'],
+    'functions': ['forIn', 'isFunction'],
+    'groupBy': ['forEach'],
     'has': [],
     'identity': [],
     'indexOf': ['sortedIndex'],
     'initial': [],
     'intersection': ['indexOf'],
     'invert': [],
-    'invoke': [],
+    'invoke': ['forEach'],
     'isArguments': [],
     'isArray': [],
     'isBoolean': [],
     'isDate': [],
     'isElement': [],
-    'isEmpty': ['isArguments', 'isFunction'],
+    'isEmpty': ['forOwn', 'isArguments', 'isFunction'],
     'isEqual': ['isArguments', 'isFunction'],
     'isFinite': [],
     'isFunction': [],
@@ -125,15 +125,15 @@
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
     'object': [],
-    'omit': ['forIn', 'indexOf', 'isArguments'],
+    'omit': ['forIn', 'indexOf'],
     'once': [],
-    'pairs': [],
+    'pairs': ['forOwn'],
     'partial': ['isFunction'],
     'pick': ['forIn'],
-    'pluck': [],
+    'pluck': ['forEach'],
     'random': [],
     'range': [],
-    'reduce': ['identity'],
+    'reduce': ['forEach'],
     'reduceRight': ['forEach', 'keys'],
     'reject': ['identity'],
     'rest': [],
@@ -141,20 +141,20 @@
     'shuffle': ['forEach'],
     'size': ['keys'],
     'some': ['identity'],
-    'sortBy': ['forEach', 'identity'],
+    'sortBy': ['forEach'],
     'sortedIndex': ['identity'],
     'tap': ['mixin'],
     'template': ['escape'],
     'throttle': [],
     'times': [],
-    'toArray': ['isFunction', 'values'],
+    'toArray': ['values'],
     'unescape': [],
     'union': ['indexOf'],
     'uniq': ['identity', 'indexOf'],
     'uniqueId': [],
     'value': ['mixin'],
-    'values': ['isArguments'],
-    'where': ['forIn'],
+    'values': ['forOwn'],
+    'where': ['forEach', 'forIn'],
     'without': ['indexOf'],
     'wrap': [],
     'zip': ['max', 'pluck']
@@ -676,9 +676,9 @@
     return removeVar(source, 'isKeysFast')
       // remove optimized branch in `iteratorTemplate`
       .replace(/(?: *\/\/.*\n)* *'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, "'\\n' +\n$2")
-      // remove `isKeysFast` from `beforeLoop.object` of `mapIteratorOptions`
+      // remove `isKeysFast` from `beforeLoop.object` of `_.map`
       .replace(/=\s*'\s*\+\s*\(isKeysFast.+/, "= []'")
-      // remove `isKeysFast` from `inLoop.object` of `mapIteratorOptions`, `invoke`, `pairs`, `pluck`, and `sortBy`
+      // remove `isKeysFast` from `inLoop.object` of `_.map`
       .replace(/'\s*\+\s*\(isKeysFast[^)]+?\)\s*\+\s*'/g, '.push')
       // remove data object property assignment in `createIterator`
       .replace(/ *'isKeysFast':.+\n/, '');
@@ -948,6 +948,11 @@
     // flag used to specify replacing Lo-Dash's `_.clone` with Underscore's
     var useUnderscoreClone = isUnderscore;
 
+    // flags used to specify exposing Lo-Dash methods in an Underscore build
+    var exposeForIn = !isUnderscore,
+        exposeForOwn = !isUnderscore,
+        exposeIsPlainObject = !isUnderscore;
+
     /*------------------------------------------------------------------------*/
 
     // names of methods to include in the build
@@ -972,11 +977,13 @@
           (result = getDependencies(optionToMethodsArray(source, value)));
       });
 
-      // use Lo-Dash's clone if explicitly requested
-      if (result && result.indexOf('clone') > -1) {
-        useUnderscoreClone = false;
+      // include Lo-Dash's methods if explicitly requested
+      if (result) {
+        exposeForIn = result.indexOf('forIn') > -1;
+        exposeForOwn = result.indexOf('forOwn') > -1;
+        exposeIsPlainObject = result.indexOf('isPlainObject') > -1;
+        useUnderscoreClone = result.indexOf('clone') < 0;
       }
-
       // add method names required by Backbone and Underscore builds
       if (isBackbone && !result) {
         result = getDependencies(backboneDependencies);
@@ -1123,7 +1130,7 @@
         ].join('\n'));
 
         // replace `arrayLikeClasses` in `_.isEmpty`
-        source = source.replace(/'if *\(arrayLikeClasses[\s\S]+?' \|\|\\n/, "'if (isArray(value) || className == stringClass ||");
+        source = source.replace(/if *\(\(arrayLikeClasses.+?noArgsClass.+/, 'if (isArray(value) || className == stringClass ||');
 
         // replace `arrayLikeClasses` in `_.isEqual`
         source = source.replace(/(?: *\/\/.*\n)*( +)var isArr *= *arrayLikeClasses[^}]+}/, '$1var isArr = isArray(a);');
@@ -1248,11 +1255,22 @@
         });
 
         if (isUnderscore) {
-          // remove "compiled template cleanup" from `_.template`
-          source = source.replace(/(?:\s*\/\/.*)*\n *source *=.+?isEvaluating.+?reEmptyStringLeading[\s\S]+?\);/, '');
-          source = removeVar(source, 'reEmptyStringLeading');
-          source = removeVar(source, 'reEmptyStringMiddle');
-          source = removeVar(source, 'reEmptyStringTrailing');
+          // remove `_.forIn`, `_.forOwn`, and `_.isPlainObject` assignments
+          (function() {
+            var snippet = getMethodAssignments(source),
+                modified = snippet;
+
+            if (!exposeForIn) {
+              modified = modified.replace(/(?:\n *\/\/.*\s*)* *lodash\.forIn *= *.+\n/, '');
+            }
+            if (!exposeForOwn) {
+              modified = modified.replace(/(?:\n *\/\/.*\s*)* *lodash\.forOwn *= *.+\n/, '');
+            }
+            if (!exposeIsPlainObject) {
+              modified = modified.replace(/(?:\n *\/\/.*\s*)* *lodash\.isPlainObject *= *.+\n/, '');
+            }
+            source = source.replace(snippet, modified);
+          }());
 
           // replace `isArguments` and its fallback
           (function() {
@@ -1267,6 +1285,12 @@
                 .replace(/\bnoArgsClass\b/g, '!lodash.isArguments(arguments)');
             });
           }());
+
+          // remove "compiled template cleanup" from `_.template`
+          source = source.replace(/(?:\s*\/\/.*)*\n *source *=.+?isEvaluating.+?reEmptyStringLeading[\s\S]+?\);/, '');
+          source = removeVar(source, 'reEmptyStringLeading');
+          source = removeVar(source, 'reEmptyStringMiddle');
+          source = removeVar(source, 'reEmptyStringTrailing');
         }
         else {
           source = removeIsArgumentsFallback(source);

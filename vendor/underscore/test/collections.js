@@ -171,6 +171,14 @@ $(document).ready(function() {
   test('reject', function() {
     var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
     equal(odds.join(', '), '1, 3, 5', 'rejected each even number');
+
+    var context = "obj";
+
+    var evens = _.reject([1, 2, 3, 4, 5, 6], function(num){
+      equal(context, "obj");
+      return num % 2 != 0;
+    }, context);
+    equal(evens.join(', '), '2, 4, 6', 'rejected each odd number');
   });
 
   test('all', function() {

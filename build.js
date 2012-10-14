@@ -725,9 +725,9 @@
    * @returns {String} Returns the source with the variable removed.
    */
   function removeVar(source, varName) {
-    // simplify `arrayLikeClasses` and `cloneableClasses`
-    if (/^(?:arrayLike|cloneable)Classes$/.test(varName)) {
-      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?(true;\\n)'), '$1$2');
+    // simplify `cloneableClasses`
+    if (varName == 'cloneableClasses') {
+      source = source.replace(/(var cloneableClasses *=)[\s\S]+?(true;\n)/, '$1$2');
     }
     source = source.replace(RegExp(
       // match multi-line comment block
@@ -744,8 +744,8 @@
     // remove a variable at the end of a variable declaration list
     source = source.replace(RegExp(',\\s*' + varName + ' *=.+?;'), ';');
 
-    // remove variable reference from `arrayLikeClasses` and `cloneableClasses` assignments
-    source = source.replace(RegExp('(?:arrayLikeClasses|cloneableClasses)\\[' + varName + '\\] *= *(?:false|true)?', 'g'), '');
+    // remove variable reference from `cloneableClasses` assignments
+    source = source.replace(RegExp('cloneableClasses\\[' + varName + '\\] *= *(?:false|true)?', 'g'), '');
 
     return removeFromCreateIterator(source, varName);
   }
@@ -1056,7 +1056,6 @@
       }
       else if (isUnderscore) {
         // remove unneeded variables
-        source = removeVar(source, 'arrayLikeClasses');
         source = removeVar(source, 'cloneableClasses');
 
         // remove large array optimizations
@@ -1186,8 +1185,11 @@
         // remove string support from `_.contains`
         source = source.replace(/return *\(toString\.call.+?stringClass[\s\S]+?;/, 'return indexOf(collection, target) > -1;');
 
-        // replace `arrayLikeClasses` in `_.isEqual`
-        source = source.replace(/(?: *\/\/.*\n)*( +)var isArr *= *arrayLikeClasses[^}]+}/, '$1var isArr = isArray(a);');
+        // remove `arguments` object check from `_.isEqual`
+        source = source.replace(/ *\|\| *className *== *argsClass/, '');
+
+        // simplify DOM node check from `_.isEqual`
+        source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
 
         // remove "exit early" feature from `_.each`
         source = source.replace(/( +)var baseIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
@@ -1527,9 +1529,6 @@
       }
       if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'isPlainObject', 'keys')) {
         source = removeVar(source, 'reNative');
-      }
-      if (isRemoved(source, 'createIterator', 'isEmpty', 'isEqual')) {
-        source = removeVar(source, 'arrayLikeClasses');
       }
       if (isRemoved(source, 'createIterator', 'isEqual')) {
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');

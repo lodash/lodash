@@ -639,6 +639,13 @@
         object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
         equal(object.fn(), 2, '_.bind: ' + basename);
 
+        object = { 'a': 1, 'b': 2, 'c': 3 };
+        var actual = lodash.omit(object, function(value) { return value == 3; });
+        deepEqual(_.keys(actual).sort(), ['a', 'b', 'c'], '_.omit: ' + basename);
+
+        actual = lodash.pick(object, function(value) { return value != 3; });
+        deepEqual(_.keys(actual), [], '_.pick: ' + basename);
+
         ok(lodash.clone(array, true)[0] === array[0], '_.clone: ' + basename);
         start();
       });

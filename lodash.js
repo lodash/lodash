@@ -1743,7 +1743,7 @@
     forIn(object, function(value, key, object) {
       if (isFunc
             ? !callback(value, key, object)
-            : indexOf(props, key) < 0
+            : indexOf(props, key, 1) < 0
           ) {
         result[key] = value;
       }
@@ -1868,9 +1868,16 @@
    * // => true
    */
   function contains(collection, target) {
-    return toString.call(collection) == stringClass
-      ? collection.indexOf(target) > -1
-      : some(collection, function(value) { return value === target; });
+    var length = collection ? collection.length : 0;
+    if (length === +length) {
+      return (toString.call(collection) == stringClass
+        ? collection.indexOf(target)
+        : indexOf(collection, target)
+      ) > -1;
+    }
+    return some(collection, function(value) {
+      return value === target;
+    });
   }
 
   /**

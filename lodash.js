@@ -1665,17 +1665,15 @@
    * _.merge(stooges, ages);
    * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
    */
-  function merge(object, source, indicator) {
+  function merge(object, source, indicator, stackA, stackB) {
     var args = arguments,
         index = 0,
-        length = 2,
-        stackA = args[3],
-        stackB = args[4];
+        length = 2;
 
     if (indicator != compareAscending) {
-      length = args.length;
       stackA = [];
       stackB = [];
+      length = args.length;
     }
     while (++index < length) {
       forOwn(args[index], function(source, key) {
@@ -3476,18 +3474,18 @@
 
     return function() {
       var now = new Date,
-          remain = wait - (now - lastCalled);
+          remaining = wait - (now - lastCalled);
 
       args = arguments;
       thisArg = this;
 
-      if (remain <= 0) {
+      if (remaining <= 0) {
         clearTimeout(timeoutId);
         lastCalled = now;
         result = func.apply(thisArg, args);
       }
       else if (!timeoutId) {
-        timeoutId = setTimeout(trailingCall, remain);
+        timeoutId = setTimeout(trailingCall, remaining);
       }
       return result;
     };

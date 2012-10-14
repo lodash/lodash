@@ -194,12 +194,6 @@
     var useSourceURL = (Function('//@')(), !window.attachEvent);
   } catch(e) { }
 
-  /** Used to identify object classifications that are array-like */
-  var arrayLikeClasses = {};
-  arrayLikeClasses[boolClass] = arrayLikeClasses[dateClass] = arrayLikeClasses[funcClass] =
-  arrayLikeClasses[numberClass] = arrayLikeClasses[objectClass] = arrayLikeClasses[regexpClass] = false;
-  arrayLikeClasses[argsClass] = arrayLikeClasses[arrayClass] = arrayLikeClasses[stringClass] = true;
-
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
   cloneableClasses[argsClass] = cloneableClasses[funcClass] = false;
@@ -1269,7 +1263,8 @@
     var className = toString.call(value),
         length = value.length;
 
-    if ((arrayLikeClasses[className] || (noArgsClass && isArguments(value))) ||
+    if ((className == arrayClass || className == stringClass ||
+        className == argsClass || (noArgsClass && isArguments(value))) ||
         (className == objectClass && length === +length && isFunction(value.splice))) {
       return !length;
     }
@@ -1338,7 +1333,7 @@
         return a == b + '';
     }
     // exit early, in older browsers, if `a` is array-like but not `b`
-    var isArr = arrayLikeClasses[className];
+    var isArr = className == arrayClass || className == argsClass;
     if (noArgsClass && !isArr && (isArr = isArguments(a)) && !isArguments(b)) {
       return false;
     }

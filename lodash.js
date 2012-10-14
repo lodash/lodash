@@ -422,7 +422,7 @@
    * Reusable iterator options shared by `every`, `filter`, forEach`, `forIn`,
    * `forOwn`, `map`, `reject`, and `some`.
    */
-  var baseIteratorOptions = {
+  var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'top': 'callback = createCallback(callback, thisArg)',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
@@ -446,21 +446,10 @@
     'bottom': '  }\n}'
   };
 
-  /** Reusable iterator options for `filter` and `reject` */
-  var filterIteratorOptions = {
-    'init': '[]',
-    'inLoop': 'callback(value, index, collection) && result.push(value)'
-  };
-
-  /** Reusable iterator options for `forEach`, `forIn`, and `forOwn` */
-  var forEachIteratorOptions = {
-    'top': 'callback = createCallback(callback, thisArg)'
-  };
-
   /** Reusable iterator options for `forIn` and `forOwn` */
   var forOwnIteratorOptions = {
     'inLoop': {
-      'object': baseIteratorOptions.inLoop
+      'object': forEachIteratorOptions.inLoop
     }
   };
 
@@ -766,7 +755,7 @@
    * });
    * // => alerts 'name' and 'bark' (order is not guaranteed)
    */
-  var forIn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions, {
+  var forIn = createIterator(forEachIteratorOptions, forOwnIteratorOptions, {
     'useHas': false
   });
 
@@ -790,7 +779,7 @@
    * });
    * // => alerts '0', '1', and 'length' (order is not guaranteed)
    */
-  var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
+  var forOwn = createIterator(forEachIteratorOptions, forOwnIteratorOptions);
 
   /**
    * Checks if `value` is an `arguments` object.
@@ -1937,7 +1926,7 @@
    * _.every([true, 1, null, 'yes'], Boolean);
    * // => false
    */
-  var every = createIterator(baseIteratorOptions, everyIteratorOptions);
+  var every = createIterator(forEachIteratorOptions, everyIteratorOptions);
 
   /**
    * Examines each element in a `collection`, returning an array of all elements
@@ -1957,7 +1946,10 @@
    * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [2, 4, 6]
    */
-  var filter = createIterator(baseIteratorOptions, filterIteratorOptions);
+  var filter = createIterator(forEachIteratorOptions, {
+    'init': '[]',
+    'inLoop': 'callback(value, index, collection) && result.push(value)'
+  });
 
   /**
    * Examines each element in a `collection`, returning the first one the `callback`
@@ -2010,7 +2002,7 @@
    * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, alert);
    * // => alerts each number (order is not guaranteed)
    */
-  var forEach = createIterator(baseIteratorOptions, forEachIteratorOptions);
+  var forEach = createIterator(forEachIteratorOptions);
 
   /**
    * Creates an object composed of keys returned from running each element of
@@ -2102,7 +2094,7 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9] (order is not guaranteed)
    */
-  var map = createIterator(baseIteratorOptions, {
+  var map = createIterator(forEachIteratorOptions, {
     'init': 'collection || []',
     'beforeLoop': {
       'array':  'result = Array(length)',
@@ -2321,9 +2313,12 @@
    * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [1, 3, 5]
    */
-  var reject = createIterator(baseIteratorOptions, filterIteratorOptions, {
-    'inLoop': '!' + filterIteratorOptions.inLoop
-  });
+  function reject(collection, callback, thisArg) {
+    callback = createCallback(callback, thisArg);
+    return filter(collection, function(value, index, collection) {
+      return !callback(value, index, collection);
+    });
+  }
 
   /**
    * Creates an array of shuffled `array` values, using a version of the
@@ -2396,7 +2391,7 @@
    * _.some([null, 0, 'yes', false]);
    * // => true
    */
-  var some = createIterator(baseIteratorOptions, everyIteratorOptions, {
+  var some = createIterator(forEachIteratorOptions, everyIteratorOptions, {
     'init': 'false',
     'inLoop': everyIteratorOptions.inLoop.replace('!', '')
   });

@@ -745,23 +745,58 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates an object composed of the inverted keys and values of the given `object`.
+   * Iterates over `object`'s own and inherited enumerable properties, executing
+   * the `callback` for each property. The `callback` is bound to `thisArg` and
+   * invoked with three arguments; (value, key, object). Callbacks may exit iteration
+   * early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
    * @category Objects
-   * @param {Object} object The object to invert.
-   * @returns {Object} Returns the created inverted object.
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Object} Returns `object`.
    * @example
    *
-   *  _.invert({ 'first': 'Moe', 'second': 'Larry', 'third': 'Curly' });
-   * // => { 'Moe': 'first', 'Larry': 'second', 'Curly': 'third' } (order is not guaranteed)
+   * function Dog(name) {
+   *   this.name = name;
+   * }
+   *
+   * Dog.prototype.bark = function() {
+   *   alert('Woof, woof!');
+   * };
+   *
+   * _.forIn(new Dog('Dagny'), function(value, key) {
+   *   alert(key);
+   * });
+   * // => alerts 'name' and 'bark' (order is not guaranteed)
    */
-  var invert = createIterator({
-    'args': 'object',
-    'init': '{}',
-    'inLoop': 'result[value] = index'
+  var forIn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions, {
+    'useHas': false
   });
+
+  /**
+   * Iterates over `object`'s own enumerable properties, executing the `callback`
+   * for each property. The `callback` is bound to `thisArg` and invoked with three
+   * arguments; (value, key, object). Callbacks may exit iteration early by explicitly
+   * returning `false`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Object} Returns `object`.
+   * @example
+   *
+   * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
+   *   alert(key);
+   * });
+   * // => alerts '0', '1', and 'length' (order is not guaranteed)
+   */
+  var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
 
   /**
    * Checks if `value` is an `arguments` object.
@@ -919,11 +954,13 @@
    * @param {Object} object The object to inspect.
    * @returns {Array} Returns a new array of property names.
    */
-  var shimKeys = createIterator({
-    'args': 'object',
-    'init': '[]',
-    'inLoop': 'result.push(index)'
-  });
+  function shimKeys(object) {
+    var result = [];
+    forOwn(object, function(value, key) {
+      result.push(key);
+    });
+    return result;
+  }
 
   /**
    * Used to convert characters to HTML entities:
@@ -1088,60 +1125,6 @@
   var extend = createIterator(extendIteratorOptions);
 
   /**
-   * Iterates over `object`'s own and inherited enumerable properties, executing
-   * the `callback` for each property. The `callback` is bound to `thisArg` and
-   * invoked with three arguments; (value, key, object). Callbacks may exit iteration
-   * early by explicitly returning `false`.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to iterate over.
-   * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Object} Returns `object`.
-   * @example
-   *
-   * function Dog(name) {
-   *   this.name = name;
-   * }
-   *
-   * Dog.prototype.bark = function() {
-   *   alert('Woof, woof!');
-   * };
-   *
-   * _.forIn(new Dog('Dagny'), function(value, key) {
-   *   alert(key);
-   * });
-   * // => alerts 'name' and 'bark' (order is not guaranteed)
-   */
-  var forIn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions, {
-    'useHas': false
-  });
-
-  /**
-   * Iterates over `object`'s own enumerable properties, executing the `callback`
-   * for each property. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, key, object). Callbacks may exit iteration early by explicitly
-   * returning `false`.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to iterate over.
-   * @param {Function} callback The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Object} Returns `object`.
-   * @example
-   *
-   * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
-   *   alert(key);
-   * });
-   * // => alerts '0', '1', and 'length' (order is not guaranteed)
-   */
-  var forOwn = createIterator(baseIteratorOptions, forEachIteratorOptions, forOwnIteratorOptions);
-
-  /**
    * Creates a sorted array of all enumerable properties, own and inherited,
    * of `object` that have function values.
    *
@@ -1183,6 +1166,27 @@
    */
   function has(object, property) {
     return object ? hasOwnProperty.call(object, property) : false;
+  }
+
+  /**
+   * Creates an object composed of the inverted keys and values of the given `object`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to invert.
+   * @returns {Object} Returns the created inverted object.
+   * @example
+   *
+   *  _.invert({ 'first': 'Moe', 'second': 'Larry', 'third': 'Curly' });
+   * // => { 'Moe': 'first', 'Larry': 'second', 'Curly': 'third' } (order is not guaranteed)
+   */
+  function invert(object) {
+    var result = {};
+    forOwn(object, function(value, key) {
+      result[value] = key;
+    });
+    return result;
   }
 
   /**

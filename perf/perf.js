@@ -1239,6 +1239,50 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.reject` iterating an array')
+      .add('Lo-Dash', '\
+        lodash.reject(numbers, function(num) {\
+          return num % 2;\
+        })'
+      )
+      .add('Underscore', '\
+        _.reject(numbers, function(num) {\
+          return num % 2;\
+        })'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.reject` iterating an array with `thisArg` (slow path)')
+      .add('Lo-Dash', '\
+        lodash.reject(numbers, function(num, index) {\
+          return this["key" + index] % 2;\
+        }, object)'
+      )
+      .add('Underscore', '\
+        _.reject(numbers, function(num, index) {\
+           return this["key" + index] % 2;\
+        }, object)'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.reject` iterating an object')
+      .add('Lo-Dash', '\
+        lodash.reject(object, function(num) {\
+          return num % 2\
+        })'
+      )
+      .add('Underscore', '\
+        _.reject(object, function(num) {\
+          return num % 2\
+        })'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.shuffle`')
       .add('Lo-Dash', '\
         lodash.shuffle(numbers)'

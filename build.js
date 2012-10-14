@@ -1272,8 +1272,8 @@
         // replace `_.keys` with `shimKeys`
         if (!isRemoved(source, 'keys')) {
           source = source.replace(
-            matchFunction(source, 'keys').replace(/[\s\S]+?var keys *=/, ''),
-            matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *=/, '')
+            matchFunction(source, 'keys').replace(/[\s\S]+?var keys *= */, ''),
+            matchFunction(source, 'shimKeys').replace(/[\s\S]+?function shimKeys/, 'function').replace(/}\n$/, '};\n')
           );
 
           source = removeFunction(source, 'shimKeys');

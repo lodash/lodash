@@ -1499,7 +1499,7 @@
 
       equal(compiled(data), '1');
     });
-    
+
     test('should work when passing `options.variable`', function() {
       var compiled = _.template(
         '<% _.forEach( data.a, function( value ) { %>' +

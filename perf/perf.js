@@ -513,6 +513,28 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.contains` iterating an array')
+      .add('Lo-Dash', '\
+        lodash.contains(numbers, 19)'
+      )
+      .add('Underscore', '\
+        _.contains(numbers, 19)'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.contains` iterating an object')
+      .add('Lo-Dash', '\
+        lodash.contains(object, 19)'
+      )
+      .add('Underscore', '\
+        _.contains(object, 19)'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.countBy` with `callback` iterating an array')
       .add('Lo-Dash', '\
         lodash.countBy(numbers, function(num) { return num >> 1; })'

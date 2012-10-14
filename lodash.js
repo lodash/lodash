@@ -1636,7 +1636,7 @@
    * @param- {Object} [indicator] Internally used to indicate that the `stack`
    *  argument is an array of traversed objects instead of another source object.
    * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
-   * @param- {Array} [stackB=[]] Internally used to associate clones with their
+   * @param- {Array} [stackB=[]] Internally used to associate values with their
    *  source counterparts.
    * @returns {Object} Returns the destination object.
    * @example
@@ -1668,11 +1668,10 @@
     }
     while (++index < length) {
       forOwn(args[index], function(source, key) {
-        var isArr, value;
+        var found, isArr, value;
         if (source && ((isArr = isArray(source)) || isPlainObject(source))) {
-          var found = false,
-              stackLength = stackA.length;
-
+          // avoid merging previously merged cyclic sources
+          var stackLength = stackA.length;
           while (stackLength--) {
             if ((found = stackA[stackLength] == source)) {
               break;
@@ -1682,11 +1681,13 @@
             object[key] = stackB[stackLength];
           }
           else {
+            // add `source` and associated `value` to the stack of traversed objects
             stackA.push(source);
             stackB.push(value = (value = object[key], isArr)
               ? (isArray(value) ? value : [])
               : (isPlainObject(value) ? value : {})
             );
+            // recursively merge objects and arrays (susceptible to call stack limits)
             object[key] = merge(value, source, compareAscending, stackA, stackB);
           }
         } else if (source != null) {

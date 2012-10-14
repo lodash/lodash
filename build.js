@@ -70,7 +70,7 @@
     'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isPlainObject'],
     'compact': [],
     'compose': [],
-    'contains': ['some'],
+    'contains': ['indexOf', 'some'],
     'countBy': ['forEach'],
     'debounce': [],
     'defaults': ['isArguments'],
@@ -975,6 +975,7 @@
       if (isUnderscore) {
         dependencyMap.isEqual = ['isArray', 'isFunction'];
         dependencyMap.isEmpty = ['isArray', 'isString'];
+        dependencyMap.pick = [];
 
         if (useUnderscoreClone) {
           dependencyMap.clone = ['extend', 'isArray'];
@@ -1132,6 +1133,39 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.omit`
+        source = source.replace(/^( +)function omit[\s\S]+?\n\1}/m, [
+          '  function omit(object) {',
+          '    var props = concat.apply(ArrayProto, arguments),',
+          '        result = {};',
+          '',
+          '    forIn(object, function(value, key) {',
+          '      if (indexOf(props, key, 1) < 0) {',
+          '        result[key] = value;',
+          '      }',
+          '    });',
+          '    return result;',
+          '  }'
+        ].join('\n'));
+
+        // replace `_.pick`
+        source = source.replace(/^( +)function pick[\s\S]+?\n\1}/m, [
+          '  function pick(object) {',
+          '    var index = 0,',
+          '        props = concat.apply(ArrayProto, arguments),',
+          '        length = props.length,',
+          '        result = {};',
+          '',
+          '    while (++index < length) {',
+          '      var prop = props[index];',
+          '      if (prop in object) {',
+          '        result[prop] = object[prop];',
+          '      }',
+          '    }',
+          '    return result;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.without`
         source = source.replace(/^( +)function without[\s\S]+?\n\1}/m, [
           '  function without(array) {',
@@ -1148,6 +1182,9 @@
           '    return result',
           '  }'
         ].join('\n'));
+
+        // remove string support from `_.contains`
+        source = source.replace(/return *\(toString\.call.+?stringClass[\s\S]+?;/, 'return indexOf(collection, target) > -1;');
 
         // replace `arrayLikeClasses` in `_.isEqual`
         source = source.replace(/(?: *\/\/.*\n)*( +)var isArr *= *arrayLikeClasses[^}]+}/, '$1var isArr = isArray(a);');

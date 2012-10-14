@@ -1303,19 +1303,14 @@
    * // => true
    */
   function isEqual(a, b, stackA, stackB) {
-    // a strict comparison is necessary because `null == undefined`
-    if (a == null || b == null) {
-      return a === b;
-    }
     // exit early for identical values
     if (a === b) {
       // treat `+0` vs. `-0` as not equal
       return a !== 0 || (1 / a == 1 / b);
     }
-    // unwrap any `lodash` wrapped values
-    if (objectTypes[typeof a] || objectTypes[typeof b]) {
-      a = a.__wrapped__ || a;
-      b = b.__wrapped__ || b;
+    // a strict comparison is necessary because `null == undefined`
+    if (a == null || b == null) {
+      return a === b;
     }
     // compare [[Class]] names
     var className = toString.call(a);
@@ -1347,11 +1342,27 @@
     if (noArgsClass && !isArr && (isArr = isArguments(a)) && !isArguments(b)) {
       return false;
     }
-    // exit for functions and DOM nodes
-    if (!isArr && (className != objectClass || (noNodeClass && (
-        (typeof a.toString != 'function' && typeof (a + '') == 'string') ||
-        (typeof b.toString != 'function' && typeof (b + '') == 'string'))))) {
-      return false;
+    if (!isArr) {
+      // unwrap any `lodash` wrapped values
+      if (a.__wrapped__ || b.__wrapped__) {
+        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b);
+      }
+      // exit for functions and DOM nodes
+      if (className != objectClass || (noNodeClass && (
+          (typeof a.toString != 'function' && typeof (a + '') == 'string') ||
+          (typeof b.toString != 'function' && typeof (b + '') == 'string')))) {
+        return false;
+      }
+      var ctorA = a.constructor,
+          ctorB = b.constructor;
+
+      // non `Object` object instances with different constructors are not equal
+      if (ctorA != ctorB && !(
+            isFunction(ctorA) && ctorA instanceof ctorA &&
+            isFunction(ctorB) && ctorB instanceof ctorB
+          )) {
+        return false;
+      }
     }
 
     // assume cyclic structures are equal
@@ -1392,16 +1403,6 @@
       return result;
     }
 
-    var ctorA = a.constructor,
-        ctorB = b.constructor;
-
-    // non `Object` object instances with different constructors are not equal
-    if (ctorA != ctorB && !(
-          isFunction(ctorA) && ctorA instanceof ctorA &&
-          isFunction(ctorB) && ctorB instanceof ctorB
-        )) {
-      return false;
-    }
     // deep compare objects
     for (var prop in a) {
       if (hasOwnProperty.call(a, prop)) {

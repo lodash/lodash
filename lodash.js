@@ -434,7 +434,7 @@
     'inLoop': 'if (!callback(value, index, collection)) return !result'
   };
 
-  /** Reusable iterator options for `defaults` and `extend` */
+  /** Reusable iterator options for `bindAll`, `defaults`, and `extend` */
   var extendIteratorOptions = {
     'useHas': false,
     'useStrict': false,
@@ -3186,22 +3186,20 @@
    * jQuery('#lodash_button').on('click', buttonView.onClick);
    * // => When the button is clicked, `this.label` will have the correct value
    */
-  var bindAll = createIterator({
-    'useHas': false,
-    'useStrict': false,
-    'args': 'object',
+  var bindAll = createIterator(extendIteratorOptions, {
     'top':
       'var funcs = arguments,\n' +
-      '    index = 0,\n' +
       '    length = funcs.length;\n' +
       'if (length > 1) {\n' +
-      '  while (++index < length) {\n' +
-      '    result[funcs[index]] = bind(result[funcs[index]], result)\n' +
+      '  while (--length) {\n' +
+      '    index = funcs[length];\n' +
+      '    result[index] = bind(result[index], result)\n' +
       '  }\n' +
       '  return result\n' +
       '}',
     'inLoop':
-      'if (isFunction(value)) result[index] = bind(value, result)'
+      'if (isFunction(value)) result[index] = bind(value, result)',
+    'bottom': false
   });
 
   /**

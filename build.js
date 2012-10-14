@@ -135,7 +135,7 @@
     'range': [],
     'reduce': ['forEach'],
     'reduceRight': ['forEach', 'keys'],
-    'reject': ['identity'],
+    'reject': ['filter'],
     'rest': [],
     'result': ['isFunction'],
     'shuffle': ['forEach'],
@@ -1191,8 +1191,8 @@
         // simplify DOM node check from `_.isEqual`
         source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
 
-        // remove "exit early" feature from `_.each`
-        source = source.replace(/( +)var baseIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
+        // remove "exit early" feature from `_.forEach`, `_.forIn`, and `_.forOwn`
+        source = source.replace(/( +)var forEachIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
           return match.replace(/if *\(callback[^']+/, 'callback(value, index, collection)');
         });
 

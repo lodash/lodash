@@ -1669,10 +1669,12 @@
    * _.merge(stooges, ages);
    * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
    */
-  function merge(object, source, indicator, stackA, stackB) {
+  function merge(object, source, indicator) {
     var args = arguments,
         index = 0,
-        length = 2;
+        length = 2,
+        stackA = args[3],
+        stackB = args[4];
 
     if (indicator != compareAscending) {
       stackA = [];

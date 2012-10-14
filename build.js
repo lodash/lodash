@@ -971,6 +971,15 @@
           : accumulator;
       }, []);
 
+      // update dependencies
+      if (isUnderscore) {
+        dependencyMap.isEqual = ['isArray', 'isFunction'];
+        dependencyMap.isEmpty = ['isArray', 'isString'];
+
+        if (useUnderscoreClone) {
+          dependencyMap.clone = ['extend', 'isArray'];
+        }
+      }
       // add method names explicitly
       options.some(function(value) {
         return /include/.test(value) &&
@@ -1006,11 +1015,9 @@
         return (result = _.union(result || [], getDependencies(methodNames)));
       });
 
-      // init `result` if it hasn't been inited
       if (!result) {
         result = allMethods.slice();
       }
-
       if (plusMethods.length) {
         result = _.union(result, getDependencies(plusMethods));
       }
@@ -1047,10 +1054,6 @@
         source = removeKeysOptimization(source);
       }
       else if (isUnderscore) {
-        // update dependencies
-        dependencyMap.isEqual = ['isArray', 'isFunction'];
-        dependencyMap.isEmpty = ['isArray'];
-
         // remove unneeded variables
         source = removeVar(source, 'arrayLikeClasses');
         source = removeVar(source, 'cloneableClasses');
@@ -1061,7 +1064,6 @@
 
         // replace `_.clone`
         if (useUnderscoreClone) {
-          dependencyMap.clone = ['extend', 'isArray'];
           source = source.replace(/^( +)function clone[\s\S]+?\n\1}/m, [
             '  function clone(value) {',
             '    return value && objectTypes[typeof value]',
@@ -1112,6 +1114,24 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.isEmpty`
+        source = source.replace(/^( +)function isEmpty[\s\S]+?\n\1}/m, [
+          '  function isEmpty(value) {',
+          '    if (!value) {',
+          '      return true;',
+          '    }',
+          '    if (isArray(value) || isString(value)) {',
+          '      return !value.length;',
+          '    }',
+          '    for (var key in value) {',
+          '      if (hasOwnProperty.call(value, key)) {',
+          '        return false;',
+          '      }',
+          '    }',
+          '    return true;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.without`
         source = source.replace(/^( +)function without[\s\S]+?\n\1}/m, [
           '  function without(array) {',
@@ -1128,9 +1148,6 @@
           '    return result',
           '  }'
         ].join('\n'));
-
-        // replace `arrayLikeClasses` in `_.isEmpty`
-        source = source.replace(/if *\(\(arrayLikeClasses.+?noArgsClass.+/, 'if (isArray(value) || className == stringClass ||');
 
         // replace `arrayLikeClasses` in `_.isEqual`
         source = source.replace(/(?: *\/\/.*\n)*( +)var isArr *= *arrayLikeClasses[^}]+}/, '$1var isArr = isArray(a);');

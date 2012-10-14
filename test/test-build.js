@@ -632,12 +632,39 @@
         });
 
         equal(last.value, 2, '_.each: ' + basename);
-        equal(lodash.isEmpty('moe'), false, '_.isEmpty: ' + basename);
 
-        var object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
+        var object = { 'length': 0, 'splice': Array.prototype.splice };
+        equal(lodash.isEmpty(object), false, '_.isEmpty: ' + basename);
+
+        object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
         equal(object.fn(), 2, '_.bind: ' + basename);
 
         ok(lodash.clone(array, true)[0] === array[0], '_.clone: ' + basename);
+        start();
+      });
+    });
+
+    asyncTest('should not have any Lo-Dash-only methods', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
+      build(['-s', 'underscore'], function(source, filePath) {
+        var basename = path.basename(filePath, '.js'),
+            context = createContext();
+
+        vm.runInContext(source, context);
+        var lodash = context._;
+
+        _.each([
+          'forIn',
+          'forOwn',
+          'isPlainObject',
+          'lateBind',
+          'merge',
+          'partial'
+        ], function(methodName) {
+          equal(lodash[methodName], undefined, '_.' + methodName + ' exists: ' + basename);
+        });
+
         start();
       });
     });

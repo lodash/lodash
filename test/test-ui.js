@@ -15,14 +15,15 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // expose build name
-  ui.buildName = (function() {
+  // expose Lo-Dash build file path
+  ui.buildPath = (function() {
     switch (build) {
-      case 'lodash-prod':         return 'lodash.min';
-      case 'lodash-custom':       return 'lodash.custom.min';
-      case 'lodash-custom-debug': return 'lodash.custom';
+      case 'lodash-prod':         return 'lodash.min.js';
+      case 'lodash-underscore':   return 'lodash.underscore.min.js';
+      case 'lodash-custom':       return 'lodash.custom.min.js';
+      case 'lodash-custom-debug': return 'lodash.custom'.js;
     }
-    return 'lodash';
+    return 'lodash.js';
   }());
 
   // assign `QUnit.urlParams` properties
@@ -56,8 +57,9 @@
         buildList.selectedIndex = (function() {
           switch (build) {
             case 'lodash-prod':         return 1;
-            case 'lodash-custom':       return 2;
-            case 'lodash-custom-debug': return 3;
+            case 'lodash-underscore':   return 2;
+            case 'lodash-custom':       return 3;
+            case 'lodash-custom-debug': return 4;
           }
           return 0;
         }());
@@ -83,6 +85,7 @@
       '<select id="qunit-build">' +
       '<option value="lodash-dev">Developement</option>' +
       '<option value="lodash-prod">Production</option>' +
+      '<option value="lodash-underscore">Underscore</option>' +
       '<option value="lodash-custom">Custom</option>' +
       '<option value="lodash-custom-debug">Custom (debug)</option>' +
       '</select>';

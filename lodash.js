@@ -420,7 +420,7 @@
 
   /**
    * Reusable iterator options shared by `every`, `filter`, forEach`, `forIn`,
-   * `forOwn`, `map`, `reject`, and `some`.
+   * `forOwn`, `map`, and `some`.
    */
   var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
@@ -1348,7 +1348,6 @@
         return false;
       }
     }
-
     // assume cyclic structures are equal
     // the algorithm for detecting cyclic structures is adapted from ES 5.1
     // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
@@ -1386,7 +1385,6 @@
       }
       return result;
     }
-
     // deep compare objects
     for (var prop in a) {
       if (hasOwnProperty.call(a, prop)) {
@@ -1673,7 +1671,8 @@
           // avoid merging previously merged cyclic sources
           var stackLength = stackA.length;
           while (stackLength--) {
-            if ((found = stackA[stackLength] == source)) {
+            found = stackA[stackLength] == source;
+            if (found) {
               break;
             }
           }
@@ -2475,7 +2474,7 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Object} properties The object of properties/values to filter by.
+   * @param {Object} properties The object of property values to filter by.
    * @returns {Array} Returns a new array of elements that contain the given `properties`.
    * @example
    *
@@ -2492,13 +2491,15 @@
     var props = [];
     forIn(properties, function(value, prop) { props.push(prop); });
 
-    var propsLength = props.length,
+    var length = props.length,
         result = [];
 
     forEach(collection, function(value) {
-      for (var pass = true, propIndex = 0; propIndex < propsLength; propIndex++) {
-        var prop = props[propIndex];
-        if (!(pass = value[prop] === properties[prop])) {
+      var index = -1, passed = true;
+      while (++index < length) {
+        var prop = props[index],
+            pass = value[prop] === properties[prop];
+        if (!pass) {
           break;
         }
       }

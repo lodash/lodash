@@ -28,8 +28,8 @@
   /** Used to access the Firebug Lite panel (set by `run`) */
   var fbPanel;
 
-  /** Used to score Lo-Dash and Underscore performance */
-  var score = { 'lodash': 0, 'underscore': 0 };
+  /** Used to score performance */
+  var score = { 'a': 0, 'b': 0 };
 
   /** Used to queue benchmark suites */
   var suites = [];
@@ -38,10 +38,10 @@
   var ui = window.ui || {};
 
   /** The Lo-Dash build basename */
-  var buildName = basename(ui.buildPath || 'lodash.min', '.js');
+  var buildName = basename(ui.buildPath || 'lodash', '.js');
 
   /** The other library basename */
-  var otherName = basename(ui.otherPath || 'underscore-min', '.js');
+  var otherName = basename(ui.otherPath || 'underscore', '.js');
 
   /** Add `console.log()` support for Narwhal and RingoJS */
   window.console || (window.console = { 'log': window.print });
@@ -54,7 +54,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Gets the basename of the given `filePath`. If the file `extension` is passed
+   * Gets the basename of the given `filePath`. If the file `extension` is passed,
    * it will be removed from the basename.
    *
    * @private
@@ -124,12 +124,12 @@
           fastestHz = getHz(fastest[0]),
           slowest = this.filter('slowest'),
           slowestHz = getHz(slowest[0]),
-          lodashHz = getHz(this[0]),
-          underscoreHz = getHz(this[1]);
+          aHz = getHz(this[0]),
+          bHz = getHz(this[1]);
 
       if (fastest.length > 1) {
         log('It\'s too close to call.');
-        lodashHz = underscoreHz = slowestHz;
+        aHz = bHz = slowestHz;
       }
       else {
         var percent = ((fastestHz / slowestHz) - 1) * 100;
@@ -141,8 +141,8 @@
         );
       }
       // add score adjusted for margin of error
-      score.lodash += lodashHz;
-      score.underscore += underscoreHz;
+      score.a += aHz;
+      score.b += bHz;
 
       // remove current suite from queue
       suites.shift();
@@ -152,14 +152,14 @@
         suites[0].run();
       }
       else {
-        var fastestTotalHz = Math.max(score.lodash, score.underscore),
-            slowestTotalHz = Math.min(score.lodash, score.underscore),
+        var fastestTotalHz = Math.max(score.a, score.b),
+            slowestTotalHz = Math.min(score.a, score.b),
             totalPercent = formatNumber(Math.round(((fastestTotalHz  / slowestTotalHz) - 1) * 100)),
             totalX = fastestTotalHz / slowestTotalHz,
             message = 'is ' + totalPercent + '% ' + (totalX == 1 ? '' : '(' + formatNumber(totalX.toFixed(2)) + 'x) ') + 'faster than';
 
         // report results
-        if (score.lodash >= score.underscore) {
+        if (score.a >= score.b) {
           log('\n' + buildName + ' ' + message + ' ' + otherName + '.');
         } else {
           log('\n' + otherName + ' ' + message + ' ' + buildName + '.');

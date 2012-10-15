@@ -1729,6 +1729,10 @@
 
       deepEqual(_.where(collection, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1, 'b': 2 }]);
     });
+
+    test('should return an empty array when passed an empty `properties` object', function() {
+      deepEqual(_.where(array, {}), []);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

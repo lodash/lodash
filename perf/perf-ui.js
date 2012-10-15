@@ -7,7 +7,7 @@
   /** The other library to load */
   var other = (/other=([^&]+)/.exec(location.search) || [])[1];
 
-  /** The UI object */
+  /** The `ui` object */
   var ui = {};
 
   /*--------------------------------------------------------------------------*/
@@ -31,27 +31,29 @@
 
   /*--------------------------------------------------------------------------*/
 
-  ui.buildName = (function() {
+  // expose Lo-Dash build file path
+  ui.buildPath = (function() {
     switch (build) {
-      case 'lodash-dev':          return 'lodash';
-      case 'lodash-custom':       return 'lodash.custom.min';
-      case 'lodash-custom-debug': return 'lodash.custom';
+      case 'lodash-dev':        return 'lodash.js';
+      case 'lodash-underscore': return 'lodash.underscore.min.js';
+      case 'lodash-custom':     return 'lodash.custom.min.js';
     }
-    return 'lodash.min';
+    return 'lodash.min.js';
   }());
 
-  ui.otherName = (function() {
+  // expose other library file path
+  ui.otherPath = (function() {
     switch (other) {
-      case 'lodash-dev':          return 'lodash';
-      case 'lodash-prod':         return 'lodash.min';
-      case 'lodash-custom':       return 'lodash.custom.min';
-      case 'lodash-custom-debug': return 'lodash.custom';
-      case 'underscore-dev':      return 'vendor/underscore/underscore';
+      case 'lodash-dev':        return 'lodash.js';
+      case 'lodash-prod':       return 'lodash.min.js';
+      case 'lodash-underscore': return 'lodash.underscore.min.js';
+      case 'lodash-custom':     return 'lodash.custom.min.js';
+      case 'underscore-dev':    return 'vendor/underscore/underscore.js';
     }
-    return 'vendor/underscore/underscore-min';
+    return 'vendor/underscore/underscore-min.js';
   }());
 
-  // initialize dropdowns
+  // initialize controls
   addListener(window, 'load', function() {
     function eventHandler(event) {
       var search = location.search.replace(/^\?|&?(?:build|other)=[^&]*&?/g, '');
@@ -74,8 +76,8 @@
       '<select id="perf-build">' +
       '<option value="lodash-dev">Lo-Dash</option>' +
       '<option value="lodash-prod">Lo-Dash (minified)</option>' +
+      '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
       '<option value="lodash-custom">Lo-Dash (custom)</option>' +
-      '<option value="lodash-custom-debug">Custom (debug)</option>' +
       '</select>';
 
     var span2 = document.createElement('span');
@@ -87,8 +89,8 @@
       '<option value="underscore-prod">Underscore (minified)</option>' +
       '<option value="lodash-dev">Lo-Dash</option>' +
       '<option value="lodash-prod">Lo-Dash (minified)</option>' +
+      '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
       '<option value="lodash-custom">Lo-Dash (custom)</option>' +
-      '<option value="lodash-custom-debug">Lo-Dash (custom debug)</option>' +
       '</select>';
 
     var buildList = span1.lastChild,
@@ -101,8 +103,8 @@
     buildList.selectedIndex = (function() {
       switch (build) {
         case 'lodash-dev':          return 0;
-        case 'lodash-custom':       return 2;
-        case 'lodash-custom-debug': return 3;
+        case 'lodash-underscore':   return 2;
+        case 'lodash-custom':       return 3;
       }
       return 1;
     }());
@@ -112,8 +114,8 @@
         case 'underscore-dev':      return 0;
         case 'lodash-dev':          return 2;
         case 'lodash-prod':         return 3;
-        case 'lodash-custom':       return 4;
-        case 'lodash-custom-debug': return 5;
+        case 'lodash-underscore':   return 4;
+        case 'lodash-custom':       return 5;
       }
       return 1;
     }());

@@ -34,6 +34,15 @@
   /** Used to queue benchmark suites */
   var suites = [];
 
+  /** The `ui` object */
+  var ui = window.ui || {};
+
+  /** The Lo-Dash build basename */
+  var buildName = basename(ui.buildPath || 'lodash.min', '.js');
+
+  /** The other library basename */
+  var otherName = basename(ui.otherPath || 'underscore-min', '.js');
+
   /** Add `console.log()` support for Narwhal and RingoJS */
   window.console || (window.console = { 'log': window.print });
 
@@ -43,6 +52,22 @@
   window.lodash = lodash;
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Gets the basename of the given `filePath`. If the file `extension` is passed
+   * it will be removed from the basename.
+   *
+   * @private
+   * @param {String} path The file path to inspect.
+   * @param {String} extension The extension to remove.
+   * @returns {String} Returns the basename.
+   */
+  function basename(filePath, extension) {
+    var result = (filePath || '').split(/[\\/]/).pop();
+    return arguments.length < 2
+      ? result
+      : result.replace(RegExp(extension.replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&') + '$'), '');
+  }
 
   /**
    * Gets the Hz, i.e. operations per second, of `bench` adjusted for the
@@ -131,13 +156,13 @@
             slowestTotalHz = Math.min(score.lodash, score.underscore),
             totalPercent = formatNumber(Math.round(((fastestTotalHz  / slowestTotalHz) - 1) * 100)),
             totalX = fastestTotalHz / slowestTotalHz,
-            message = ' is ' + totalPercent + '% ' + (totalX == 1 ? '' : '(' + formatNumber(totalX.toFixed(2)) + 'x) ') + 'faster than ';
+            message = 'is ' + totalPercent + '% ' + (totalX == 1 ? '' : '(' + formatNumber(totalX.toFixed(2)) + 'x) ') + 'faster than';
 
         // report results
         if (score.lodash >= score.underscore) {
-          log('\nLo-Dash' + message + 'Underscore.');
+          log('\n' + buildName + ' ' + message + ' ' + otherName + '.');
         } else {
-          log('\nUnderscore' + message + 'Lo-Dash.');
+          log('\n' + otherName + ' ' + message + ' ' + buildName + '.');
         }
       }
     }
@@ -402,11 +427,11 @@
 
   suites.push(
     Benchmark.Suite('`_.bind` (uses native `Function#bind` if available and inferred fast)')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.bind(func, { "name": "moe" }, "hi")',
         'teardown': 'function bind(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.bind(func, { "name": "moe" }, "hi")',
         'teardown': 'function bind(){}'
       })
@@ -414,11 +439,11 @@
 
   suites.push(
     Benchmark.Suite('bound call')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodashBoundNormal()',
         'teardown': 'function bind(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_boundNormal()',
         'teardown': 'function bind(){}'
       })
@@ -426,11 +451,11 @@
 
   suites.push(
     Benchmark.Suite('bound call with arguments')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodashBoundNormal("hi", "!")',
         'teardown': 'function bind(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_boundNormal("hi", "!")',
         'teardown': 'function bind(){}'
       })
@@ -438,11 +463,11 @@
 
   suites.push(
     Benchmark.Suite('bound and partially applied call (uses native `Function#bind` if available)')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodashBoundPartial()',
         'teardown': 'function bind(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_boundPartial()',
         'teardown': 'function bind(){}'
       })
@@ -450,11 +475,11 @@
 
   suites.push(
     Benchmark.Suite('bound and partially applied call with arguments (uses native `Function#bind` if available)')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodashBoundPartial("!")',
         'teardown': 'function bind(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_boundPartial("!")',
         'teardown': 'function bind(){}'
       })
@@ -462,11 +487,11 @@
 
   suites.push(
     Benchmark.Suite('bound and called in a `new` expression, i.e. `new bound` (edge case)')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'new lodashBoundCtor()',
         'teardown': 'function bind(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': 'new _boundCtor()',
         'teardown': 'function bind(){}'
       })
@@ -476,11 +501,11 @@
 
   suites.push(
     Benchmark.Suite('`_.bindAll` iterating arguments')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.bindAll.apply(lodash, [bindAllObjects.pop()].concat(funcNames))',
         'teardown': 'function bindAll(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.bindAll.apply(_, [bindAllObjects.pop()].concat(funcNames))',
         'teardown': 'function bindAll(){}'
       })
@@ -488,11 +513,11 @@
 
   suites.push(
     Benchmark.Suite('`_.bindAll` iterating the `object`')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.bindAll(bindAllObjects.pop())',
         'teardown': 'function bindAll(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.bindAll(bindAllObjects.pop())',
         'teardown': 'function bindAll(){}'
       })
@@ -502,10 +527,10 @@
 
   suites.push(
     Benchmark.Suite('`_.clone` with an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.clone(object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.clone(object)'
       )
   );
@@ -514,20 +539,20 @@
 
   suites.push(
     Benchmark.Suite('`_.contains` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.contains(numbers, 19)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.contains(numbers, 19)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.contains` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.contains(object, 19)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.contains(object, 19)'
       )
   );
@@ -536,21 +561,21 @@
 
   suites.push(
     Benchmark.Suite('`_.countBy` with `callback` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.countBy(numbers, function(num) { return num >> 1; })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.countBy(numbers, function(num) { return num >> 1; })'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.countBy` with `property` name iterating an array')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.countBy(words, "length")',
         'teardown': 'function countBy(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.countBy(words, "length")',
         'teardown': 'function countBy(){}'
       })
@@ -558,11 +583,11 @@
 
   suites.push(
     Benchmark.Suite('`_.countBy` with `callback` iterating an object')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.countBy(wordToNumber, function(num) { return num >> 1; })',
         'teardown': 'function countBy(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.countBy(wordToNumber, function(num) { return num >> 1; })',
         'teardown': 'function countBy(){}'
       })
@@ -572,21 +597,21 @@
 
   suites.push(
     Benchmark.Suite('`_.difference`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.difference(numbers, fourNumbers, twoNumbers)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.difference(numbers, fourNumbers, twoNumbers)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.difference` iterating 25 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.difference(twentyFiveValues, twentyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.difference(twentyFiveValues, twentyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
@@ -594,11 +619,11 @@
 
   suites.push(
     Benchmark.Suite('`_.difference` iterating 50 and 75 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.difference(fiftyValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.difference(fiftyValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
@@ -606,11 +631,11 @@
 
   suites.push(
     Benchmark.Suite('`_.difference` iterating 75 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.difference(seventyFiveValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.difference(seventyFiveValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
@@ -620,13 +645,13 @@
 
   suites.push(
     Benchmark.Suite('`_.each` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         var result = [];\
         lodash.each(numbers, function(num) {\
           result.push(num * 2);\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         var result = [];\
         _.each(numbers, function(num) {\
           result.push(num * 2);\
@@ -636,13 +661,13 @@
 
   suites.push(
     Benchmark.Suite('`_.each` iterating an array with `thisArg` (slow path)')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         var result = [];\
         lodash.each(numbers, function(num, index) {\
           result.push(num + this["key" + index]);\
         }, object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         var result = [];\
         _.each(numbers, function(num, index) {\
           result.push(num + this["key" + index]);\
@@ -652,13 +677,13 @@
 
   suites.push(
     Benchmark.Suite('`_.each` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         var result = [];\
         lodash.each(object, function(num) {\
           result.push(num * 2);\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         var result = [];\
         _.each(object, function(num) {\
           result.push(num * 2);\
@@ -670,12 +695,12 @@
 
   suites.push(
     Benchmark.Suite('`_.filter` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.filter(numbers, function(num) {\
           return num % 2;\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.filter(numbers, function(num) {\
           return num % 2;\
         })'
@@ -684,12 +709,12 @@
 
   suites.push(
     Benchmark.Suite('`_.filter` iterating an array with `thisArg` (slow path)')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.filter(numbers, function(num, index) {\
           return this["key" + index] % 2;\
         }, object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.filter(numbers, function(num, index) {\
            return this["key" + index] % 2;\
         }, object)'
@@ -698,12 +723,12 @@
 
   suites.push(
     Benchmark.Suite('`_.filter` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.filter(object, function(num) {\
           return num % 2\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.filter(object, function(num) {\
           return num % 2\
         })'
@@ -714,12 +739,12 @@
 
   suites.push(
     Benchmark.Suite('`_.find` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.find(numbers, function(num) {\
           return num === 19;\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.find(numbers, function(num) {\
           return num === 19;\
         })'
@@ -728,12 +753,12 @@
 
   suites.push(
     Benchmark.Suite('`_.find` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.find(object, function(value, key) {\
           return /\D9$/.test(key);\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.find(object, function(value, key) {\
           return /\D9$/.test(key);\
         })'
@@ -744,20 +769,20 @@
 
   suites.push(
     Benchmark.Suite('`_.flatten`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.flatten(nestedNumbers)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.flatten(nestedNumbers)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.flatten` with `shallow`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.flatten(nestedNumbers, true)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.flatten(nestedNumbers, true)'
       )
   );
@@ -766,10 +791,10 @@
 
   suites.push(
     Benchmark.Suite('`_.functions`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.functions(lodash)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.functions(lodash)'
       )
   );
@@ -778,21 +803,21 @@
 
   suites.push(
     Benchmark.Suite('`_.groupBy` with `callback` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.groupBy(numbers, function(num) { return num >> 1; })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.groupBy(numbers, function(num) { return num >> 1; })'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.groupBy` with `property` name iterating an array')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.groupBy(words, "length")',
         'teardown': 'function countBy(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.groupBy(words, "length")',
         'teardown': 'function countBy(){}'
       })
@@ -800,11 +825,11 @@
 
   suites.push(
     Benchmark.Suite('`_.groupBy` with `callback` iterating an object')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.groupBy(wordToNumber, function(num) { return num >> 1; })',
         'teardown': 'function countBy(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.groupBy(wordToNumber, function(num) { return num >> 1; })',
         'teardown': 'function countBy(){}'
       })
@@ -814,20 +839,20 @@
 
   suites.push(
     Benchmark.Suite('`_.indexOf`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.indexOf(numbers, 9)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.indexOf(numbers, 9)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.indexOf` with `isSorted`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.indexOf(numbers, 19, true)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.indexOf(numbers, 19, true)'
       )
   );
@@ -836,21 +861,21 @@
 
   suites.push(
     Benchmark.Suite('`_.intersection`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.intersection(numbers, fourNumbers, twoNumbers)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.intersection(numbers, fourNumbers, twoNumbers)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.intersection` iterating 25 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.intersection(twentyFiveValues, twentyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.intersection(twentyFiveValues, twentyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
@@ -858,11 +883,11 @@
 
   suites.push(
     Benchmark.Suite('`_.intersection` iterating 50 and 75 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.intersection(fiftyValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.intersection(fiftyValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
@@ -870,11 +895,11 @@
 
   suites.push(
     Benchmark.Suite('`_.intersection` iterating 75 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.intersection(seventyFiveValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.intersection(seventyFiveValues, seventyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
@@ -884,10 +909,10 @@
 
   suites.push(
     Benchmark.Suite('`_.invert`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.invert(object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.invert(object)'
       )
   );
@@ -896,30 +921,30 @@
 
   suites.push(
     Benchmark.Suite('`_.invoke` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.invoke(numbers, "toFixed", "2")'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.invoke(numbers, "toFixed", "2")'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.invoke` with a function for `methodName` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.invoke(numbers, String.prototype.split, "")'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.invoke(numbers, String.prototype.split, "")'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.invoke` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.invoke(object, "toFixed", "2")'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.invoke(object, "toFixed", "2")'
       )
   );
@@ -928,11 +953,11 @@
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing primitives and objects (edge case)')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.isEqual(objectOfPrimitives, objectOfObjects)',
         'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.isEqual(objectOfPrimitives, objectOfObjects)',
         'teardown': 'function isEqual(){}'
       })
@@ -940,11 +965,11 @@
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing arrays')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.isEqual(numbers, numbers2)',
         'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.isEqual(numbers, numbers2)',
         'teardown': 'function isEqual(){}'
       })
@@ -952,11 +977,11 @@
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing nested arrays')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.isEqual(nestedNumbers, nestedNumbers2)',
         'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.isEqual(nestedNumbers, nestedNumbers2)',
         'teardown': 'function isEqual(){}'
       })
@@ -964,11 +989,11 @@
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing arrays of objects')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.isEqual(objects, objects2)',
         'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.isEqual(objects, objects2)',
         'teardown': 'function isEqual(){}'
       })
@@ -976,11 +1001,11 @@
 
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing objects')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.isEqual(object, object2)',
         'teardown': 'function isEqual(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.isEqual(object, object2)',
         'teardown': 'function isEqual(){}'
       })
@@ -990,7 +1015,7 @@
 
   suites.push(
     Benchmark.Suite('`_.isArguments`, `_.isDate`, `_.isFunction`, `_.isNumber`, `_.isRegExp`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.isArguments(arguments);\
         lodash.isArguments(object);\
         lodash.isDate(date);\
@@ -1002,7 +1027,7 @@
         lodash.isRegExp(regexp);\
         lodash.isRegExp(object);'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.isArguments(arguments);\
         _.isArguments(object);\
         _.isDate(date);\
@@ -1020,10 +1045,10 @@
 
   suites.push(
     Benchmark.Suite('`_.keys` (uses native `Object.keys` if available)')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.keys(object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.keys(object)'
       )
   );
@@ -1032,10 +1057,10 @@
 
   suites.push(
     Benchmark.Suite('`_.lastIndexOf`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.lastIndexOf(numbers, 9)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.lastIndexOf(numbers, 9)'
       )
   );
@@ -1044,12 +1069,12 @@
 
   suites.push(
     Benchmark.Suite('`_.map` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.map(objects, function(value) {\
           return value.num;\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.map(objects, function(value) {\
           return value.num;\
         })'
@@ -1058,12 +1083,12 @@
 
   suites.push(
     Benchmark.Suite('`_.map` with `thisArg` iterating an array (slow path)')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.map(objects, function(value, index) {\
           return this["key" + index] + value.num;\
         }, object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.map(objects, function(value, index) {\
           return this["key" + index] + value.num;\
         }, object)'
@@ -1072,12 +1097,12 @@
 
   suites.push(
     Benchmark.Suite('`_.map` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.map(object, function(value) {\
           return value;\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.map(object, function(value) {\
           return value;\
         })'
@@ -1088,10 +1113,10 @@
 
   suites.push(
     Benchmark.Suite('`_.max`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.max(numbers)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.max(numbers)'
       )
   );
@@ -1100,10 +1125,10 @@
 
   suites.push(
     Benchmark.Suite('`_.min`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.min(numbers)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.min(numbers)'
       )
   );
@@ -1112,21 +1137,21 @@
 
   suites.push(
     Benchmark.Suite('`_.omit` iterating 20 properties, omitting 2 keys')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.omit(object, "key6", "key13")'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.omit(object, "key6", "key13")'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.omit` iterating 40 properties, omitting 20 keys')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.omit(wordToNumber, words)',
         'teardown': 'function omit(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': 'result = _.omit(wordToNumber, words)',
         'teardown': 'function omit(){}'
       })
@@ -1136,10 +1161,10 @@
 
   suites.push(
     Benchmark.Suite('`_.pairs`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.pairs(object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.pairs(object)'
       )
   );
@@ -1148,10 +1173,10 @@
 
   suites.push(
     Benchmark.Suite('`_.pick`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.pick(object, "key6", "key13")'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.pick(object, "key6", "key13")'
       )
   );
@@ -1160,10 +1185,10 @@
 
   suites.push(
     Benchmark.Suite('`_.pluck`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.pluck(objects, "num")'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.pluck(objects, "num")'
       )
   );
@@ -1172,13 +1197,13 @@
 
   suites.push(
     Benchmark.Suite('`_.reduce` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.reduce(numbers, function(result, value, index) {\
           result[index] = value;\
           return result;\
         }, {});'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.reduce(numbers, function(result, value, index) {\
           result[index] = value;\
           return result;\
@@ -1188,13 +1213,13 @@
 
   suites.push(
     Benchmark.Suite('`_.reduce` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.reduce(object, function(result, value, key) {\
           result.push([key, value]);\
           return result;\
         }, []);'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.reduce(object, function(result, value, key) {\
           result.push([key, value]);\
           return result;\
@@ -1206,13 +1231,13 @@
 
   suites.push(
     Benchmark.Suite('`_.reduceRight` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.reduceRight(numbers, function(result, value, index) {\
           result[index] = value;\
           return result;\
         }, {});'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.reduceRight(numbers, function(result, value, index) {\
           result[index] = value;\
           return result;\
@@ -1222,13 +1247,13 @@
 
   suites.push(
     Benchmark.Suite('`_.reduceRight` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.reduceRight(object, function(result, value, key) {\
           result.push([key, value]);\
           return result;\
         }, []);'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.reduceRight(object, function(result, value, key) {\
           result.push([key, value]);\
           return result;\
@@ -1240,12 +1265,12 @@
 
   suites.push(
     Benchmark.Suite('`_.reject` iterating an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.reject(numbers, function(num) {\
           return num % 2;\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.reject(numbers, function(num) {\
           return num % 2;\
         })'
@@ -1254,12 +1279,12 @@
 
   suites.push(
     Benchmark.Suite('`_.reject` iterating an array with `thisArg` (slow path)')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.reject(numbers, function(num, index) {\
           return this["key" + index] % 2;\
         }, object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.reject(numbers, function(num, index) {\
            return this["key" + index] % 2;\
         }, object)'
@@ -1268,12 +1293,12 @@
 
   suites.push(
     Benchmark.Suite('`_.reject` iterating an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.reject(object, function(num) {\
           return num % 2\
         })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.reject(object, function(num) {\
           return num % 2\
         })'
@@ -1284,10 +1309,10 @@
 
   suites.push(
     Benchmark.Suite('`_.shuffle`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.shuffle(numbers)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.shuffle(numbers)'
       )
   );
@@ -1296,10 +1321,10 @@
 
   suites.push(
     Benchmark.Suite('`_.size` with an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.size(object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.size(object)'
       )
   );
@@ -1308,31 +1333,31 @@
 
   suites.push(
     Benchmark.Suite('`_.sortBy` with `callback`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.sortBy(numbers, function(num) { return Math.sin(num); })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.sortBy(numbers, function(num) { return Math.sin(num); })'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.sortBy` with `callback` and `thisArg` (slow path)')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.sortBy(numbers, function(num) { return this.sin(num); }, Math)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.sortBy(numbers, function(num) { return this.sin(num); }, Math)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.sortBy` with `property` name')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.sortBy(words, "length")',
         'teardown': 'function countBy(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.sortBy(words, "length")',
         'teardown': 'function countBy(){}'
       })
@@ -1342,24 +1367,24 @@
 
   suites.push(
     Benchmark.Suite('`_.sortedIndex`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.sortedIndex(numbers, 25)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.sortedIndex(numbers, 25)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.sortedIndex` with `callback`')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': '\
           lodash.sortedIndex(words, "twenty-five", function(value) {\
             return wordToNumber[value];\
           })',
         'teardown': 'function countBy(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '\
           _.sortedIndex(words, "twenty-five", function(value) {\
             return wordToNumber[value];\
@@ -1372,11 +1397,11 @@
 
   suites.push(
     Benchmark.Suite('`_.template` without "evaluate" delimiters (slow path)')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.template(tpl, tplData)',
         'teardown': 'function template(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.template(tpl, tplData)',
         'teardown': 'function template(){}'
       })
@@ -1384,11 +1409,11 @@
 
   suites.push(
     Benchmark.Suite('`_.template` with "evaluate" delimiters (slow path)')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.template(tplWithEvaluate, tplData)',
         'teardown': 'function template(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.template(tplWithEvaluate, tplData)',
         'teardown': 'function template(){}'
       })
@@ -1396,11 +1421,11 @@
 
   suites.push(
     Benchmark.Suite('compiled template without "evaluate" delimiters')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodashTpl(tplData)',
         'teardown': 'function template(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_tpl(tplData)',
         'teardown': 'function template(){}'
       })
@@ -1408,11 +1433,11 @@
 
   suites.push(
     Benchmark.Suite('compiled template with "evaluate" delimiters')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodashTplWithEvaluate(tplData)',
         'teardown': 'function template(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_tplWithEvaluate(tplData)',
         'teardown': 'function template(){}'
       })
@@ -1420,11 +1445,11 @@
 
   suites.push(
     Benchmark.Suite('compiled template without a with-statement or "evaluate" delimiters')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodashTplVerbose(tplData)',
         'teardown': 'function template(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_tplVerbose(tplData)',
         'teardown': 'function template(){}'
       })
@@ -1432,11 +1457,11 @@
 
   suites.push(
     Benchmark.Suite('compiled template without a with-statement using "evaluate" delimiters')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodashTplVerboseWithEvaluate(tplData)',
         'teardown': 'function template(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_tplVerboseWithEvaluate(tplData)',
         'teardown': 'function template(){}'
       })
@@ -1446,11 +1471,11 @@
 
   suites.push(
     Benchmark.Suite('`_.times`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         var result = [];\
         lodash.times(length, function(n) { result.push(n); })'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         var result = [];\
         _.times(length, function(n) { result.push(n); })'
       )
@@ -1458,11 +1483,11 @@
 
   suites.push(
     Benchmark.Suite('`_.times` with `thisArg`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         var result = [];\
         lodash.times(length, function(n) { result.push(this.sin(n)); }, Math)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         var result = [];\
         _.times(length, function(n) { result.push(this.sin(n)); }, Math)'
       )
@@ -1472,20 +1497,20 @@
 
   suites.push(
     Benchmark.Suite('`_.toArray` with an array')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.toArray(numbers)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.toArray(numbers)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.toArray` with an object')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.toArray(object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.toArray(object)'
       )
   );
@@ -1494,10 +1519,10 @@
 
   suites.push(
     Benchmark.Suite('`_.union`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.union(numbers, fourNumbers, twoNumbers)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.union(numbers, fourNumbers, twoNumbers)'
       )
   );
@@ -1506,22 +1531,22 @@
 
   suites.push(
     Benchmark.Suite('`_.uniq`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.uniq(numbers.concat(fourNumbers, twoNumbers))'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.uniq(numbers.concat(fourNumbers, twoNumbers))'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.uniq` with `callback`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.uniq(numbers.concat(fourNumbers, twoNumbers), function(num) {\
           return num % 2;\
         });'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.uniq(numbers.concat(fourNumbers, twoNumbers), function(num) {\
           return num % 2;\
         })'
@@ -1532,10 +1557,10 @@
 
   suites.push(
     Benchmark.Suite('`_.values`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.values(object)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.values(object)'
       )
   );
@@ -1544,10 +1569,10 @@
 
   suites.push(
     Benchmark.Suite('`_.where`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.where(objects, { "num": 9 });'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.where(objects, { "num": 9 });'
       )
   );
@@ -1556,21 +1581,21 @@
 
   suites.push(
     Benchmark.Suite('`_.without`')
-      .add('Lo-Dash', '\
+      .add(buildName, '\
         lodash.without(numbers, 9, 12, 14, 15)'
       )
-      .add('Underscore', '\
+      .add(otherName, '\
         _.without(numbers, 9, 12, 14, 15)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.without` iterating an array of 25 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.without.apply(lodash, [twentyFiveValues].concat(twentyFiveValues2));',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.without.apply(_, [twentyFiveValues].concat(twentyFiveValues2));',
         'teardown': 'function multiArrays(){}'
       })
@@ -1578,11 +1603,11 @@
 
   suites.push(
     Benchmark.Suite('`_.without` iterating an array of 75 and 50 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.without.apply(lodash, [seventyFiveValues2].concat(fiftyValues));',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.without.apply(_, [seventyFiveValues2].concat(fiftyValues));',
         'teardown': 'function multiArrays(){}'
       })
@@ -1590,11 +1615,11 @@
 
   suites.push(
     Benchmark.Suite('`_.without` iterating an array of 75 elements')
-      .add('Lo-Dash', {
+      .add(buildName, {
         'fn': 'lodash.without.apply(lodash, [seventyFiveValues].concat(seventyFiveValues2));',
         'teardown': 'function multiArrays(){}'
       })
-      .add('Underscore', {
+      .add(otherName, {
         'fn': '_.without.apply(_, [seventyFiveValues].concat(seventyFiveValues2));',
         'teardown': 'function multiArrays(){}'
       })

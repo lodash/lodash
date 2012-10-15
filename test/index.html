@@ -22,7 +22,7 @@
 			Object.keys = function() { return []; };
 
 			// load Lo-Dash and expose it to the bad `Object.keys` shim
-			document.write('<script src="../' + ui.buildName + '.js"><\/script>');
+			document.write('<script src="../' + ui.buildPath + '"><\/script>');
 		</script>
 		<script>
 			// store Lo-Dash to test for bad shim detection
@@ -33,7 +33,7 @@
 			delete Object._keys;
 
 			// load Lo-Dash again to overwrite the existing `_` value
-			document.write('<script src="../' + ui.buildName + '.js"><\/script>');
+			document.write('<script src="../' + ui.buildPath + '"><\/script>');
 
 			// load test.js if not using require.js
 			document.write(QUnit.urlParams.norequire
@@ -47,20 +47,24 @@
 			    shimmedModule,
 			    underscoreModule;
 
-			window.require && require({
-				'baseUrl': '../vendor/requirejs/',
-				'urlArgs': 't=' + (+new Date),
-				'paths': {
-					'lodash': '../../' + ui.buildName,
-					'shimmed': './../../' + ui.buildName,
-					'underscore': '../underscore/../../' + ui.buildName
-				},
-				'shim': {
-					'shimmed': {
-					    'exports': '_'
+			window.require && require(
+			(function() {
+				var modulePath = ui.buildPath.replace(/\.js$/, '');
+				return {
+					'baseUrl': '../vendor/requirejs/',
+					'urlArgs': 't=' + (+new Date),
+					'paths': {
+						'lodash': '../../' + modulePath,
+						'shimmed': './../../' + modulePath,
+						'underscore': '../underscore/../../' + modulePath
+					},
+					'shim': {
+						'shimmed': {
+						    'exports': '_'
+						}
 					}
-				}
-			},
+				};
+			}()),
 			['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
 				if (lodash && lodash.noConflict) {
 					lodashModule = lodash.noConflict();

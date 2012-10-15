@@ -13,17 +13,34 @@
 				position: absolute;
 				left: -9999em;
 			}
+			#FirebugUI {
+				top: 2em;
+			}
+			#perf-toolbar {
+				background-color: #EEE;
+				color: #5E740B;
+				font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif;
+				font-size: small;
+				padding: 0.5em 0 0.5em 2em;
+				overflow: hidden;
+			}
 		</style>
 	</head>
 	<body>
-		<script src="../lodash.min.js"></script>
-		<script>
-			var lodash = _.noConflict();
-		</script>
-		<script src="../vendor/underscore/underscore-min.js"></script>
+		<div id="perf-toolbar"></div>
 		<script src="../vendor/platform.js/platform.js"></script>
 		<script src="../vendor/benchmark.js/benchmark.js"></script>
 		<script src="../vendor/firebug-lite/src/firebug-lite-debug.js"></script>
+		<script src="perf-ui.js"></script>
+		<script>
+			document.write('<script src="../' + ui.buildName + '.js"><\/script>');
+		</script>
+		<script>
+			var lodash = _.noConflict();
+		</script>
+		<script>
+			document.write('<script src="../' + ui.otherName + '.js"><\/script>');
+		</script>
 		<script src="perf.js"></script>
 		<script>
 			(function() {
@@ -39,7 +56,12 @@
 					if (!fbCommandLine) {
 						return setTimeout(init, 15);
 					}
-					fbUI.style.height = fbDoc.body.style.height = fbDoc.documentElement.style.height = '100%';
+					fbUI.style.height = (
+					  Math.max(document.documentElement.clientHeight, document.body.clientHeight) -
+					  document.getElementById('perf-toolbar').clientHeight
+					) + 'px';
+
+					fbDoc.body.style.height = fbDoc.documentElement.style.height = '100%';
 					setTimeout(run, 15);
 				}
 

@@ -10,14 +10,17 @@
   /** A flag to determine if RequireJS should be loaded */
   var norequire = /[?&]norequire=true(?:&|$)/.test(location.search);
 
+  /** The `ui` object */
+  var ui = {};
+
   /*--------------------------------------------------------------------------*/
 
-  // assign `QUnit.config` properties
-  QUnit.config.lodashFilename = (function() {
+  // expose build name
+  ui.buildName = (function() {
     switch (build) {
-      case 'prod':         return 'lodash.min';
-      case 'custom':       return 'lodash.custom.min';
-      case 'custom-debug': return 'lodash.custom';
+      case 'lodash-prod':         return 'lodash.min';
+      case 'lodash-custom':       return 'lodash.custom.min';
+      case 'lodash-custom-debug': return 'lodash.custom';
     }
     return 'lodash';
   }());
@@ -28,7 +31,7 @@
     'norequire': norequire
   });
 
-  // initialize the build dropdown
+  // initialize controls
   addEvent(window, 'load', function() {
     function eventHandler(event) {
       var search = location.search.replace(/^\?|&?(?:build|norequire)=[^&]*&?/g, '');
@@ -39,8 +42,8 @@
       }
       location.href =
         location.href.split('?')[0] + '?' +
-        (search ? search + '&' : '') + 'build=' +
-        dropdown[dropdown.selectedIndex].value +
+        (search ? search + '&' : '') +
+        'build=' + buildList[buildList.selectedIndex].value +
         (checkbox.checked ? '&norequire=true' : '');
     }
 
@@ -50,18 +53,18 @@
         toolbar.appendChild(span1);
         toolbar.appendChild(span2);
 
-        dropdown.selectedIndex = (function() {
+        buildList.selectedIndex = (function() {
           switch (build) {
-            case 'prod':         return 1;
-            case 'custom':       return 2;
-            case 'custom-debug': return 3;
+            case 'lodash-prod':         return 1;
+            case 'lodash-custom':       return 2;
+            case 'lodash-custom-debug': return 3;
           }
           return 0;
         }());
 
         checkbox.checked = norequire;
         addEvent(checkbox, 'click', eventHandler);
-        addEvent(dropdown, 'change', eventHandler);
+        addEvent(buildList, 'change', eventHandler);
       }
       else {
         setTimeout(init, 15);
@@ -78,16 +81,19 @@
     span2.innerHTML =
       '<label for="qunit-build">Build: </label>' +
       '<select id="qunit-build">' +
-      '<option value="dev">Developement</option>' +
-      '<option value="prod">Production</option>' +
-      '<option value="custom">Custom</option>' +
-      '<option value="custom-debug">Custom (debug)</option>' +
+      '<option value="lodash-dev">Developement</option>' +
+      '<option value="lodash-prod">Production</option>' +
+      '<option value="lodash-custom">Custom</option>' +
+      '<option value="lodash-custom-debug">Custom (debug)</option>' +
       '</select>';
 
     var checkbox = span1.firstChild,
-        dropdown = span2.lastChild;
+        buildList = span2.lastChild;
 
     init();
   });
+
+  // expose `ui`
+  window.ui = ui;
 
 }(this));

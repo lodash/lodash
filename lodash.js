@@ -2621,7 +2621,15 @@
   function flatten(array, shallow) {
     var index = -1,
         length = array ? array.length : 0,
-        result = [];
+        result;
+
+    //Shallow flatten optimization
+    //The 10K limit is due to the limit of arguments in a function call
+    if (shallow && length <= 10000) {
+        return Array.prototype.concat.apply([], array);
+    }
+
+    result = [];
 
     while (++index < length) {
       var value = array[index];

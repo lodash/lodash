@@ -2621,7 +2621,13 @@
   function flatten(array, shallow) {
     var index = -1,
         length = array ? array.length : 0,
-        result = [];
+        result;
+
+    if (shallow && length <= 10000) {
+        return Array.prototype.concat.apply([], array);
+    }
+
+    result = [];
 
     while (++index < length) {
       var value = array[index];

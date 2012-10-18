@@ -2495,7 +2495,7 @@
         result = [];
 
     forEach(collection, function(value) {
-      var index = -1, passed = true;
+      var index = -1;
       while (++index < length) {
         var prop = props[index],
             pass = value[prop] === properties[prop];

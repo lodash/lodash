@@ -2,22 +2,30 @@
 ;(function() {
   'use strict';
 
-  /** The Node filesystem, path, `zlib`, and child process modules */
+  /** The Node filesystem, `zlib`, path, child process, and HTTPS modules */
   var fs = require('fs'),
-      gzip = require('zlib').gzip,
+      zlib = require('zlib'),
       path = require('path'),
-      spawn = require('child_process').spawn;
+      spawn = require('child_process').spawn,
+      https = require('https');
 
   /** The directory that is the base of the repository */
   var basePath = fs.realpathSync(path.join(__dirname, '..'));
 
+  /** The `vendor` directory */
+  var vendorPath = path.join(basePath, 'vendor');
+
   /** The directory where the Closure Compiler is located */
-  var closurePath = path.join(basePath, 'vendor', 'closure-compiler', 'compiler.jar');
+  var closurePath = path.join(vendorPath, 'closure-compiler', 'compiler.jar');
+
+  /** The directory where UglifyJS is located */
+  var uglifyPath = path.join(vendorPath, 'uglifyjs', 'uglify-js.js');
 
   /** Load other modules */
   var preprocess = require('./pre-compile'),
       postprocess = require('./post-compile'),
-      uglifyJS = require('../vendor/uglifyjs/uglify-js');
+      tar = require('tar'),
+      uglifyJS = null;
 
   /** Closure Compiler command-line options */
   var closureOptions = [
@@ -27,6 +35,50 @@
 
   /** Reassign `existsSync` for older versions of Node */
   fs.existsSync || (fs.existsSync = path.existsSync);
+
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * Fetches a required `.tar.gz` dependency with the given Git object ID from
+   * the Lo-Dash repo on GitHub. The object ID may be obtained by running `git
+   * hash-object path/to/dependency.tar.gz`.
+   *
+   * @param {String} source The Git object ID of the `.tar.gz` package.
+   * @param {String|Object} The extraction target directory, or an object
+   *   containing archived file names and target paths as key-value pairs.
+   * @param {Function} callback The function to call once the extraction
+   *  finishes.
+   *
+   */
+  function getDependency(source, targets, callback) {
+    https.get({
+      'host': 'api.github.com',
+      'path': '/repos/bestiejs/lodash/git/blobs/' + source,
+      'headers': {
+        'Accept': 'application/vnd.github.v3.raw'
+      }
+    }, function(response) {
+      var parser;
+      if (typeof targets == 'string') {
+        parser = new tar.Extract({
+          'path': targets
+        });
+      } else {
+        parser = new tar.Parse();
+        parser.on('entry', function(entry) {
+          var path = entry.path;
+          if (path in targets) {
+            entry.pipe(fs.createWriteStream(targets[path]));
+          }
+        });
+      }
+      parser.on('end', function() {
+        callback(null, targets);
+      });
+      parser.on('error', callback);
+      response.pipe(zlib.createUnzip()).pipe(parser);
+    }).on('error', callback);
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -114,6 +166,15 @@
    * @param {Function} callback The function to call once the process completes.
    */
   function closureCompile(source, message, callback) {
+    if (!fs.existsSync(closurePath)) {
+      return getDependency('aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d', vendorPath, function(exception) {
+        if (exception) {
+          callback(exception);
+        }
+        closureCompile.call(this, source, message, callback)
+      }.bind(this));
+    }
+
     var options = closureOptions.slice();
 
     // use simple optimizations when minifying template files
@@ -177,6 +238,19 @@
    * @param {Function} callback The function to call once the process completes.
    */
   function uglify(source, message, callback) {
+    if (!uglifyJS) {
+      if (fs.existsSync(uglifyPath)) {
+        uglifyJS = require(uglifyPath);
+      } else {
+        return getDependency('827f406a02626c1c6723e8ae281b6785d36375c1', vendorPath, function(exception) {
+          if (exception) {
+            callback(exception);
+          }
+          uglify.call(this, source, message, callback);
+        }.bind(this));
+      }
+    }
+
     var exception,
         result,
         ugly = uglifyJS.uglify;
@@ -229,7 +303,7 @@
     }
     // store the post-processed Closure Compiler result and gzip it
     this.compiled.source = result = postprocess(result);
-    gzip(result, onClosureGzip.bind(this));
+    zlib.gzip(result, onClosureGzip.bind(this));
   }
 
   /**
@@ -267,7 +341,7 @@
     }
     // store the post-processed Uglified result and gzip it
     this.uglified.source = result = postprocess(result);
-    gzip(result, onUglifyGzip.bind(this));
+    zlib.gzip(result, onUglifyGzip.bind(this));
   }
 
   /**
@@ -306,7 +380,7 @@
     }
     // store the post-processed Uglified result and gzip it
     this.hybrid.source = result = postprocess(result);
-    gzip(result, onHybridGzip.bind(this));
+    zlib.gzip(result, onHybridGzip.bind(this));
   }
 
   /**

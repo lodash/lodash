@@ -24,6 +24,9 @@
     "email": "john.david.dalton@gmail.com",
     "web": "http://allyoucanleet.com/"
   },
+  "dependencies": {
+    "tar": "~0.1.13"
+  },
   "bugs": {
     "url": "https://github.com/bestiejs/lodash/issues"
   },

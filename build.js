@@ -976,6 +976,7 @@
         dependencyMap.isEqual = ['isArray', 'isFunction'];
         dependencyMap.isEmpty = ['isArray', 'isString'];
         dependencyMap.pick = [];
+        dependencyMap.template = ['defaults', 'escape'];
 
         if (useUnderscoreClone) {
           dependencyMap.clone = ['extend', 'isArray'];
@@ -1034,6 +1035,7 @@
     var lodash = !isTemplate && (function() {
       var context = vm.createContext({
         'clearTimeout': clearTimeout,
+        'console': console,
         'setTimeout': setTimeout
       });
 
@@ -1342,11 +1344,65 @@
             });
           }());
 
-          // remove "compiled template cleanup" from `_.template`
-          source = source.replace(/(?:\s*\/\/.*)*\n *source *=.+?isEvaluating.+?reEmptyStringLeading[\s\S]+?\);/, '');
+          // replace `_.template`
+          source = source.replace(/^( +)function template[\s\S]+?\n\1}/m, function() {
+            return [
+              '  function template(text, data, options) {',
+              "    text || (text = '');",
+              '    options = defaults({}, options, lodash.templateSettings);',
+              '',
+              '    var index = 0,',
+              '        source = "__p += \'",',
+              "        variable = options.variable;",
+              '',
+              '    var reDelimiters = RegExp(',
+              "      (options.escape || reNoMatch).source + '|' +",
+              "      (options.interpolate || reNoMatch).source + '|' +",
+              "      (options.evaluate || reNoMatch).source + '|$'",
+              "    , 'g');",
+              '',
+              '    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {',
+              '      source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);',
+              '      source +=',
+              '        escapeValue ? "\' +\\n_.escape(" + escapeValue + ") +\\n\'" :',
+              '        evaluateValue ? "\';\\n" + evaluateValue + ";\\n__p += \'" :',
+              '        interpolateValue ? "\' +\\n((__t = (" + interpolateValue + ")) == null ? \'\' : __t) +\\n\'" : \'\';',
+              '',
+              '      index = offset + match.length;',
+              '    });',
+              '',
+              '    source += "\';\\n";',
+              '    if (!variable) {',
+              "      variable = 'obj';",
+              "      source = 'with (' + variable + ' || {}) {\\n' + source + '\\n}\\n';",
+              '    }',
+              "    source = 'function(' + variable + ') {\\n' +",
+              "      'var __t, __p = \\'\\', __j = Array.prototype.join;\\n' +",
+              "      'function print() { __p += __j.call(arguments, \\'\\') }\\n' +",
+              '      source +',
+              "      'return __p\\n}';",
+              '',
+              '    try {',
+              "      var result = Function('_', 'return ' + source)(lodash);",
+              '    } catch(e) {',
+              '      e.source = source;',
+              '      throw e;',
+              '    }',
+              '    if (data) {',
+              '      return result(data);',
+              '    }',
+              '    result.source = source;',
+              '    return result;',
+              '  }'
+            ].join('\n');
+          });
+
+          // remove unneeded template related variables
+          source = removeVar(source, 'reComplexDelimiter');
           source = removeVar(source, 'reEmptyStringLeading');
           source = removeVar(source, 'reEmptyStringMiddle');
           source = removeVar(source, 'reEmptyStringTrailing');
+          source = removeVar(source, 'reInsertVariable');
         }
         else {
           source = removeIsArgumentsFallback(source);

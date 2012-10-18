@@ -7,8 +7,8 @@
       zlib = require('zlib'),
       path = require('path'),
       https = require('https'),
-      tar = require('tar'),
-      npm = require('npm');
+      exec = require('child_process').exec,
+      tar = require('tar');
 
   /** The directory that is the base of the repository */
   var basePath = fs.realpathSync(path.join(__dirname, '..'));
@@ -58,31 +58,27 @@
     }).on('error', callback);
   }
 
-  npm.load({
-    'global': true
-  }, function(exception) {
-    if (exception) {
-      process.stderr.write('There was a problem loading the npm registry.');
+  exec('npm -g root', function(exception, stdout, stderr) {
+    if (exception || stderr) {
+      console.error('There was a problem loading the npm registry.');
       process.exit(1);
-    } else {
-      if (path.resolve(basePath, '..') == npm.root) {
-        // download Closure Compiler
-        getDependency('aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d', vendorPath, function(exception) {
-          var statusCode = 0;
+    } else if (path.resolve(basePath, '..') == stdout.trim()) {
+      // download Closure Compiler
+      getDependency('aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d', vendorPath, function(exception) {
+        var statusCode = 0;
+        if (exception) {
+          console.error('There was a problem downloading the Closure Compiler.');
+          statusCode = 1;
+        }
+        // download UglifyJS
+        getDependency('827f406a02626c1c6723e8ae281b6785d36375c1', vendorPath, function(exception) {
           if (exception) {
-            process.stderr.write('There was a problem downloading Closure Compiler.');
+            console.error('There was a problem downloading UglifyJS.');
             statusCode = 1;
           }
-          // download UglifyJS
-          getDependency('827f406a02626c1c6723e8ae281b6785d36375c1', vendorPath, function(exception) {
-            if (exception) {
-              process.stderr.write('There was a problem downloading UglifyJS.');
-              statusCode = 1;
-            }
-            process.exit(statusCode);
-          });
+          process.exit(statusCode);
         });
-      }
+      });
     }
   });
 }());

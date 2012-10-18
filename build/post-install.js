@@ -61,6 +61,7 @@
   npm.load({
     'global': true
   }, function(exception) {
+    console.log(path.resolve(basePath, '..'), npm.root);
     if (exception) {
       process.stderr.write('There was a problem loading the npm registry.');
       process.exit(1);

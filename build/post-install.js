@@ -30,6 +30,9 @@
       'host': 'api.github.com',
       'path': '/repos/bestiejs/lodash/git/blobs/' + objectId,
       'headers': {
+        // by default, all GitHub blob API endpoints return a JSON document
+        // containing Base64-encoded blob data. Overriding the `Accept` header
+        // with the GitHub raw media type returns the blob data directly.
         'Accept': 'application/vnd.github.v3.raw'
       }
     }, function(response) {
@@ -54,6 +57,7 @@
       return;
     }
     // download Closure Compiler
+    console.log('Downloading Closure Compiler...');
     getDependency('aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d', vendorPath, function(exception) {
       var statusCode = 0;
       if (exception) {
@@ -61,6 +65,7 @@
         statusCode = 1;
       }
       // download UglifyJS
+      console.log('Downloading UglifyJS...');
       getDependency('827f406a02626c1c6723e8ae281b6785d36375c1', vendorPath, function(exception) {
         if (exception) {
           console.error('There was a problem downloading UglifyJS.');

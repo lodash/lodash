@@ -8,10 +8,10 @@
       path = require('path'),
       spawn = require('child_process').spawn;
 
-  /** The directory that is the base of the repository */
+  /** The path of the directory that is the base of the repository */
   var basePath = fs.realpathSync(path.join(__dirname, '..'));
 
-  /** The directory where the Closure Compiler is located */
+  /** The path of the directory where the Closure Compiler is located */
   var closurePath = path.join(basePath, 'vendor', 'closure-compiler', 'compiler.jar');
 
   /** Load other modules */

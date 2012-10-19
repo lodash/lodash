@@ -30,7 +30,7 @@
       'host': 'api.github.com',
       'path': '/repos/bestiejs/lodash/git/blobs/' + objectId,
       'headers': {
-        // by default, all GitHub blob API endpoints return a JSON document
+        // By default, all GitHub blob API endpoints return a JSON document
         // containing Base64-encoded blob data. Overriding the `Accept` header
         // with the GitHub raw media type returns the blob data directly.
         'Accept': 'application/vnd.github.v3.raw'

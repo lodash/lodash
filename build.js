@@ -117,7 +117,7 @@
     'last': [],
     'lastIndexOf': [],
     'lateBind': ['isFunction'],
-    'map': ['identity'],
+    'map': ['forEach', 'isArray'],
     'max': ['forEach'],
     'memoize': [],
     'merge': ['forOwn', 'isArray', 'isPlainObject'],

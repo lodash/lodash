@@ -419,7 +419,7 @@
   );
 
   /**
-   * Reusable iterator options shared by `forEach`, `forIn`,`forOwn`, and `map`.
+   * Reusable iterator options shared by `forEach`, `forIn`, and `forOwn`.
    */
   var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
@@ -2100,17 +2100,23 @@
    * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
    * // => [3, 6, 9] (order is not guaranteed)
    */
-  var map = createIterator(forEachIteratorOptions, {
-    'init': 'collection || []',
-    'beforeLoop': {
-      'array':  'result = Array(length)',
-      'object': 'result = ' + (isKeysFast ? 'Array(length)' : '[]')
-    },
-    'inLoop': {
-      'array':  'result[index] = callback(value, index, collection)',
-      'object': 'result' + (isKeysFast ? '[ownIndex] = ' : '.push') + '(callback(value, index, collection))'
+  function map(collection, callback, thisArg) {
+    var index = -1,
+        length = collection ? collection.length : 0,
+        result = Array(length);
+
+    callback = createCallback(callback, thisArg);
+    if (isArray(collection)) {
+      while (++index < length) {
+        result[index] = callback(collection[index], index, collection);
+      }
+    } else {
+      forEach(collection, function(value, key, collection) {
+        result[++index] = callback(value, key, collection);
+      });
     }
-  });
+    return result;
+  }
 
   /**
    * Retrieves the maximum value of an `array`. If `callback` is passed,

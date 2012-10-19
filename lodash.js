@@ -419,19 +419,12 @@
   );
 
   /**
-   * Reusable iterator options shared by `every`, `filter`, forEach`, `forIn`,
-   * `forOwn`, `map`, and `some`.
+   * Reusable iterator options shared by `forEach`, `forIn`,`forOwn`, and `map`.
    */
   var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'top': 'callback = createCallback(callback, thisArg)',
     'inLoop': 'if (callback(value, index, collection) === false) return result'
-  };
-
-  /** Reusable iterator options for `every` and `some` */
-  var everyIteratorOptions = {
-    'init': 'true',
-    'inLoop': 'if (!callback(value, index, collection)) return !result'
   };
 
   /** Reusable iterator options for `bindAll`, `defaults`, and `extend` */
@@ -1926,7 +1919,14 @@
    * _.every([true, 1, null, 'yes'], Boolean);
    * // => false
    */
-  var every = createIterator(forEachIteratorOptions, everyIteratorOptions);
+  function every(collection, callback, thisArg) {
+    var result = true;
+    callback = createCallback(callback, thisArg);
+    forEach(collection, function(value, index, collection) {
+      return (result = callback(value, index, collection));
+    });
+    return !!result;
+  }
 
   /**
    * Examines each element in a `collection`, returning an array of all elements
@@ -1946,10 +1946,16 @@
    * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => [2, 4, 6]
    */
-  var filter = createIterator(forEachIteratorOptions, {
-    'init': '[]',
-    'inLoop': 'callback(value, index, collection) && result.push(value)'
-  });
+  function filter(collection, callback, thisArg) {
+    var result = [];
+    callback = createCallback(callback, thisArg);
+    forEach(collection, function(value, index, collection) {
+      if (callback(value, index, collection)) {
+        result.push(value);
+      }
+    });
+    return result;
+  }
 
   /**
    * Examines each element in a `collection`, returning the first one the `callback`
@@ -2391,10 +2397,14 @@
    * _.some([null, 0, 'yes', false]);
    * // => true
    */
-  var some = createIterator(forEachIteratorOptions, everyIteratorOptions, {
-    'init': 'false',
-    'inLoop': everyIteratorOptions.inLoop.replace('!', '')
-  });
+  function some(collection, callback, thisArg) {
+    var result;
+    callback = createCallback(callback, thisArg);
+    forEach(collection, function(value, index, collection) {
+      return !(result = callback(value, index, collection));
+    });
+    return !!result;
+  }
 
   /**
    * Creates an array, stable sorted in ascending order by the results of

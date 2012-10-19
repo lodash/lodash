@@ -694,6 +694,36 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.every` iterating an array')
+      .add(buildName, '\
+        lodash.every(numbers, function(num) {\
+          return num + "";\
+        })'
+      )
+      .add(otherName, '\
+        _.every(numbers, function(num) {\
+          return num + "";\
+        })'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.every` iterating an object')
+      .add(buildName, '\
+        lodash.every(object, function(num) {\
+          return num + "";\
+        })'
+      )
+      .add(otherName, '\
+        _.every(object, function(num) {\
+          return num + "";\
+        })'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.filter` iterating an array')
       .add(buildName, '\
         lodash.filter(numbers, function(num) {\
@@ -1326,6 +1356,36 @@
       )
       .add(otherName, '\
         _.size(object)'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.some` iterating an array')
+      .add(buildName, '\
+        lodash.some(numbers, function(num) {\
+          return num == 19;\
+        })'
+      )
+      .add(otherName, '\
+        _.some(numbers, function(num) {\
+          return num == 19;\
+        })'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.some` iterating an object')
+      .add(buildName, '\
+        lodash.some(object, function(num) {\
+          return num == 19;\
+        })'
+      )
+      .add(otherName, '\
+        _.some(object, function(num) {\
+          return num == 19;\
+        })'
       )
   );
 

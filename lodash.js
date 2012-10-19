@@ -427,7 +427,7 @@
     'inLoop': 'if (callback(value, index, collection) === false) return result'
   };
 
-  /** Reusable iterator options for `bindAll`, `defaults`, and `extend` */
+  /** Reusable iterator options for `defaults`, and `extend` */
   var extendIteratorOptions = {
     'useHas': false,
     'useStrict': false,
@@ -661,6 +661,9 @@
     var args = data.args;
     if ((data.firstArg = /^[^,]+/.exec(args)[0]) != 'collection' || !data.arrayBranch.inLoop) {
       data.arrayBranch = null;
+    }
+    if (!data.objectBranch.inLoop) {
+      data.objectBranch = null;
     }
     // create the function factory
     var factory = Function(
@@ -3204,7 +3207,9 @@
    * jQuery('#lodash_button').on('click', buttonView.onClick);
    * // => When the button is clicked, `this.label` will have the correct value
    */
-  var bindAll = createIterator(extendIteratorOptions, {
+  var bindAll = createIterator({
+    'useStrict': false,
+    'args': 'object',
     'top':
       'var funcs = arguments,\n' +
       '    length = funcs.length;\n' +
@@ -3214,10 +3219,10 @@
       '    result[index] = bind(result[index], result)\n' +
       '  }\n' +
       '  return result\n' +
-      '}',
-    'inLoop':
-      'if (isFunction(value)) result[index] = bind(value, result)',
-    'bottom': false
+      '}\n' +
+      'forIn(result, function(value, key) {\n' +
+      '  if (isFunction(value)) result[key] = bind(value, result)\n' +
+      '})'
   });
 
   /**

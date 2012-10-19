@@ -65,7 +65,7 @@
   var dependencyMap = {
     'after': [],
     'bind': ['isFunction'],
-    'bindAll': ['bind', 'isFunction'],
+    'bindAll': ['bind', 'forIn', 'isFunction'],
     'chain': ['mixin'],
     'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isPlainObject'],
     'compact': [],

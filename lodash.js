@@ -9,8 +9,7 @@
   'use strict';
 
   /** Detect free variable `exports` */
-  var freeExports = typeof exports == 'object' && exports &&
-    (typeof global == 'object' && global && global == global.global && (window = global), exports);
+  var freeExports = typeof exports == 'object' && exports;
 
   /** Native prototype shortcuts */
   var ArrayProto = Array.prototype,
@@ -101,10 +100,6 @@
       regexpClass = '[object RegExp]',
       stringClass = '[object String]';
 
-  /** Timer shortcuts */
-  var clearTimeout = window.clearTimeout,
-      setTimeout = window.setTimeout;
-
   /**
    * Detect the JScript [[DontEnum]] bug:
    *
@@ -112,6 +107,9 @@
    * made non-enumerable as well.
    */
   var hasDontEnumBug;
+
+  /** Detect if own properties are iterated after inherited properties (IE < 9) */
+  var iteratesOwnLast;
 
   /**
    * Detect if `Array#shift` and `Array#splice` augment array-like objects
@@ -123,26 +121,21 @@
    * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
    * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
    */
-  var hasObjectSpliceBug;
-
-  /** Detect if own properties are iterated after inherited properties (IE < 9) */
-  var iteratesOwnLast;
+  var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
+    ArrayProto.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
 
   /** Detect if an `arguments` object's indexes are non-enumerable (IE < 9) */
   var noArgsEnum = true;
 
   (function() {
-    var object = { '0': 1, 'length': 1 },
-        props = [];
-
+    var props = [];
     function ctor() { this.x = 1; }
     ctor.prototype = { 'valueOf': 1, 'y': 1 };
     for (var prop in new ctor) { props.push(prop); }
     for (prop in arguments) { noArgsEnum = !prop; }
 
-    hasDontEnumBug = (props + '').length < 4;
+    hasDontEnumBug = !/valueOf/.test(props);
     iteratesOwnLast = props[0] != 'x';
-    hasObjectSpliceBug = (props.splice.call(object, 0, 1), object[0]);
   }(1));
 
   /** Detect if an `arguments` object's [[Class]] is unresolvable (Firefox < 4, IE < 9) */
@@ -208,8 +201,7 @@
     'object': true,
     'number': false,
     'string': false,
-    'undefined': false,
-    'unknown': true
+    'undefined': false
   };
 
   /** Used to escape characters for inclusion in compiled string literals */
@@ -629,7 +621,7 @@
       for (var prop in object) {
         var value = object[prop];
         if (prop == 'loop') {
-          data.arrayLoop = value;
+          data.arrayLoop =
           data.objectLoop = value;
         } else {
           data[prop] = value;

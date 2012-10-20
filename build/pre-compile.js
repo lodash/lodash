@@ -109,6 +109,7 @@
     'forIn',
     'forOwn',
     'functions',
+    'global',
     'groupBy',
     'has',
     'head',

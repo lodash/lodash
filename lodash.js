@@ -11,6 +11,12 @@
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports;
 
+  /** Detect free variable `global` and use it as `window` */
+  var freeGlobal = typeof global == 'object' && global;
+  if (freeGlobal.global === freeGlobal) {
+    window = freeGlobal;
+  }
+
   /** Native prototype shortcuts */
   var ArrayProto = Array.prototype,
       BoolProto = Boolean.prototype,
@@ -168,9 +174,6 @@
   /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
   var isKeysFast = nativeKeys && /^.+$|true/.test(nativeKeys + !!window.attachEvent);
 
-  /* Detect if strict mode, "use strict", is inferred to be fast (V8) */
-  var isStrictFast = !isBindFast;
-
   /**
    * Detect if sourceURL syntax is usable without erroring:
    *
@@ -298,7 +301,7 @@
    */
   var iteratorTemplate = template(
     // conditional strict mode
-    '<% if (useStrict) { %>\'use strict\';\n<% } %>' +
+    '<% if (obj.useStrict) { %>\'use strict\';\n<% } %>' +
 
     // the `iteratee` may be reassigned by the `top` snippet
     'var index, value, iteratee = <%= firstArg %>, ' +
@@ -420,7 +423,6 @@
   /** Reusable iterator options for `defaults`, and `extend` */
   var extendIteratorOptions = {
     'useHas': false,
-    'useStrict': false,
     'args': 'object',
     'top':
       'for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
@@ -589,7 +591,6 @@
    * @param {Object} [options1, options2, ...] The compile options objects.
    *
    *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
-   *  useStrict - A boolean to specify including the "use strict" directive.
    *  args - A string of comma separated arguments the iteration function will accept.
    *  top - A string of code to execute before the iteration branches.
    *  arrayLoop - A string of code to execute in the array loop.
@@ -610,8 +611,7 @@
       'noCharByIndex': noCharByIndex,
       'shadowed': shadowed,
       'top': '',
-      'useHas': true,
-      'useStrict': isStrictFast
+      'useHas': true
     };
 
     var object,
@@ -3175,7 +3175,6 @@
    * // => When the button is clicked, `this.label` will have the correct value
    */
   var bindAll = createIterator({
-    'useStrict': false,
     'args': 'object',
     'top':
       'var funcs = arguments,\n' +

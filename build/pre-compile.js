@@ -32,6 +32,7 @@
     // lesser used variables
     'bind',
     'funcs',
+    'functions',
     'isArguments',
     'isFunction',
     'objectTypes'
@@ -41,16 +42,14 @@
   var iteratorOptions = [
     'args',
     'array',
-    'arrayBranch',
-    'beforeLoop',
+    'arrayLoop',
     'bottom',
     'firstArg',
     'hasDontEnumBug',
-    'inLoop',
-    'init',
     'isKeysFast',
+    'loop',
     'object',
-    'objectBranch',
+    'objectLoop',
     'noArgsEnum',
     'noCharByIndex',
     'shadowed',
@@ -360,9 +359,9 @@
           else {
             // minify property name strings
             modified = modified.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
-            // minify property names in regexes and accessors
+            // minify property names in accessors
             if (isCreateIterator) {
-              modified = modified.replace(RegExp('([\\.|/])' + property + '\\b' , 'g'), '$1' + minNames[index]);
+              modified = modified.replace(RegExp('\\.' + property + '\\b' , 'g'), '.' + minNames[index]);
             }
           }
         }

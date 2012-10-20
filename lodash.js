@@ -310,16 +310,16 @@
     // the `iteratee` may be reassigned by the `top` snippet
     'var index, value, iteratee = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
-    'result = <%= init || firstArg %>;\n' +
+    'result = <%= firstArg %>;\n' +
     // exit early if the first argument is falsey
     'if (!<%= firstArg %>) return result;\n' +
     // add code before the iteration branches
     '<%= top %>;\n' +
 
     // the following branch is for iterating arrays and array-like objects
-    '<% if (arrayBranch) { %>' +
+    '<% if (arrayLoop) { %>' +
     'var length = iteratee.length; index = -1;' +
-    '  <% if (objectBranch) { %>\nif (length === +length) {<% } %>' +
+    '  <% if (objectLoop) { %>\nif (typeof length == \'number\') {<% } %>' +
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +
@@ -328,17 +328,16 @@
     '  }' +
     '  <% } %>\n' +
 
-    '  <%= arrayBranch.beforeLoop %>;\n' +
     '  while (++index < length) {\n' +
     '    value = iteratee[index];\n' +
-    '    <%= arrayBranch.inLoop %>\n' +
+    '    <%= arrayLoop %>\n' +
     '  }' +
-    '  <% if (objectBranch) { %>\n}<% } %>' +
+    '  <% if (objectLoop) { %>\n}<% } %>' +
     '<% } %>' +
 
     // the following branch is for iterating an object's own/inherited properties
-    '<% if (objectBranch) { %>' +
-    '  <% if (arrayBranch) { %>\nelse {' +
+    '<% if (objectLoop) { %>' +
+    '  <% if (arrayLoop) { %>\nelse {' +
 
     // add support for iterating over `arguments` objects if needed
     '  <%  } else if (noArgsEnum) { %>\n' +
@@ -346,7 +345,7 @@
     '  if (length && isArguments(iteratee)) {\n' +
     '    while (++index < length) {\n' +
     '      value = iteratee[index += \'\'];\n' +
-    '      <%= objectBranch.inLoop %>\n' +
+    '      <%= objectLoop %>\n' +
     '    }\n' +
     '  } else {' +
     '  <% } %>' +
@@ -367,18 +366,16 @@
     '  var ownIndex = -1,\n' +
     '      ownProps = objectTypes[typeof iteratee] ? nativeKeys(iteratee) : [],\n' +
     '      length = ownProps.length;\n\n' +
-    '  <%= objectBranch.beforeLoop %>;\n' +
     '  while (++ownIndex < length) {\n' +
     '    index = ownProps[ownIndex];\n' +
     '    <% if (!hasDontEnumBug) { %>if (!(skipProto && index == \'prototype\')) {\n  <% } %>' +
     '    value = iteratee[index];\n' +
-    '    <%= objectBranch.inLoop %>\n' +
+    '    <%= objectLoop %>\n' +
     '    <% if (!hasDontEnumBug) { %>}\n<% } %>' +
     '  }' +
 
     // else using a for-in loop
     '  <% } else { %>\n' +
-    '  <%= objectBranch.beforeLoop %>;\n' +
     '  for (index in iteratee) {<%' +
     '    if (!hasDontEnumBug || useHas) { %>\n    if (<%' +
     '      if (!hasDontEnumBug) { %>!(skipProto && index == \'prototype\')<% }' +
@@ -387,7 +384,7 @@
     '    %>) {' +
     '    <% } %>\n' +
     '    value = iteratee[index];\n' +
-    '    <%= objectBranch.inLoop %>;' +
+    '    <%= objectLoop %>;' +
     '    <% if (!hasDontEnumBug || useHas) { %>\n    }<% } %>\n' +
     '  }' +
     '  <% } %>' +
@@ -405,11 +402,11 @@
     '        %>!(ctor && ctor.prototype === iteratee) && <%' +
     '      } %>hasOwnProperty.call(iteratee, index)) {\n' +
     '    value = iteratee[index];\n' +
-    '    <%= objectBranch.inLoop %>\n' +
+    '    <%= objectLoop %>\n' +
     '  }' +
     '    <% } %>' +
     '  <% } %>' +
-    '  <% if (arrayBranch || noArgsEnum) { %>\n}<% } %>' +
+    '  <% if (arrayLoop || noArgsEnum) { %>\n}<% } %>' +
     '<% } %>\n' +
 
     // add code to the bottom of the iteration function
@@ -424,7 +421,7 @@
   var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'top': 'callback = createCallback(callback, thisArg)',
-    'inLoop': 'if (callback(value, index, collection) === false) return result'
+    'loop': 'if (callback(value, index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `defaults`, and `extend` */
@@ -435,15 +432,14 @@
     'top':
       'for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
       '  if (iteratee = arguments[argsIndex]) {',
-    'inLoop': 'result[index] = value',
+    'objectLoop': 'result[index] = value',
     'bottom': '  }\n}'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
   var forOwnIteratorOptions = {
-    'inLoop': {
-      'object': forEachIteratorOptions.inLoop
-    }
+    'loop': null,
+    'objectLoop': forEachIteratorOptions.loop
   };
 
   /*--------------------------------------------------------------------------*/
@@ -594,48 +590,35 @@
   }
 
   /**
-   * Creates compiled iteration functions. The iteration function will be created
-   * to iterate over only objects if the first argument of `options.args` is
-   * "object" or `options.inLoop.array` is falsey.
+   * Creates compiled iteration functions.
    *
    * @private
    * @param {Object} [options1, options2, ...] The compile options objects.
    *
    *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
-   *
    *  useStrict - A boolean to specify including the "use strict" directive.
-   *
    *  args - A string of comma separated arguments the iteration function will accept.
-   *
-   *  init - A string to specify the initial value of the `result` variable.
-   *
    *  top - A string of code to execute before the iteration branches.
-   *
-   *  beforeLoop - A string or object containing an "array" or "object" property
-   *   of code to execute before the array or object loops.
-   *
-   *  inLoop - A string or object containing an "array" or "object" property
-   *   of code to execute in the array or object loops.
-   *
-   *  bottom - A string of code to execute after the iteration branches but
-   *   before the `result` is returned.
+   *  arrayLoop - A string of code to execute in the array loop.
+   *  objectLoop - A string of code to execute in the object loop.
+   *  loop - A string of code to execute in the array or object loops.
+   *  bottom - A string of code to execute after the iteration branches.
    *
    * @returns {Function} Returns the compiled function.
    */
   function createIterator() {
     var data = {
+      'arrayLoop': '',
       'bottom': '',
       'hasDontEnumBug': hasDontEnumBug,
-      'init': '',
       'isKeysFast': isKeysFast,
+      'objectLoop': '',
       'noArgsEnum': noArgsEnum,
       'noCharByIndex': noCharByIndex,
       'shadowed': shadowed,
       'top': '',
       'useHas': true,
-      'useStrict': isStrictFast,
-      'arrayBranch': { 'beforeLoop': '' },
-      'objectBranch': { 'beforeLoop': '' }
+      'useStrict': isStrictFast
     };
 
     var object,
@@ -645,13 +628,9 @@
     while (object = arguments[++index]) {
       for (var prop in object) {
         var value = object[prop];
-        // keep this regexp explicit for the build pre-process
-        if (/beforeLoop|inLoop/.test(prop)) {
-          if (typeof value == 'string') {
-            value = { 'array': value, 'object': value };
-          }
-          data.arrayBranch[prop] = value.array;
-          data.objectBranch[prop] = value.object;
+        if (prop == 'loop') {
+          data.arrayLoop = value;
+          data.objectLoop = value;
         } else {
           data[prop] = value;
         }
@@ -659,21 +638,17 @@
     }
     // set additional template `data` properties
     var args = data.args;
-    if ((data.firstArg = /^[^,]+/.exec(args)[0]) != 'collection' || !data.arrayBranch.inLoop) {
-      data.arrayBranch = null;
-    }
-    if (!data.objectBranch.inLoop) {
-      data.objectBranch = null;
-    }
+    data.firstArg = /^[^,]+/.exec(args)[0];
+
     // create the function factory
     var factory = Function(
-        'bind, createCallback, forIn, hasOwnProperty, isArguments, isFunction, ' +
+        'bind, createCallback, functions, hasOwnProperty, isArguments, isFunction, ' +
         'objectTypes, nativeKeys, propertyIsEnumerable, stringClass, toString',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      bind, createCallback, forIn, hasOwnProperty, isArguments, isFunction,
+      bind, createCallback, functions, hasOwnProperty, isArguments, isFunction,
       objectTypes, nativeKeys, propertyIsEnumerable, stringClass, toString
     );
   }
@@ -1082,7 +1057,7 @@
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
   var defaults = createIterator(extendIteratorOptions, {
-    'inLoop': 'if (result[index] == null) ' + extendIteratorOptions.inLoop
+    'objectLoop': 'if (result[index] == null) ' + extendIteratorOptions.objectLoop
   });
 
   /**
@@ -1250,7 +1225,7 @@
 
     if ((className == arrayClass || className == stringClass ||
         className == argsClass || (noArgsClass && isArguments(value))) ||
-        (className == objectClass && length === +length && isFunction(value.splice))) {
+        (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
       return !length;
     }
     forOwn(value, function() {
@@ -1856,7 +1831,7 @@
    */
   function contains(collection, target) {
     var length = collection ? collection.length : 0;
-    if (length === +length) {
+    if (typeof length == 'number') {
       return (toString.call(collection) == stringClass
         ? collection.indexOf(target)
         : indexOf(collection, target)
@@ -2383,7 +2358,7 @@
    */
   function size(collection) {
     var length = collection ? collection.length : 0;
-    return length === +length ? length : keys(collection).length;
+    return typeof length == 'number' ? length : keys(collection).length;
   }
 
   /**
@@ -2476,8 +2451,7 @@
     if (!collection) {
       return [];
     }
-    var length = collection.length;
-    if (length === +length) {
+    if (typeof collection.length == 'number') {
       return (noArraySliceOnStrings ? toString.call(collection) == stringClass : typeof collection == 'string')
         ? collection.split('')
         : slice.call(collection);
@@ -3212,17 +3186,13 @@
     'args': 'object',
     'top':
       'var funcs = arguments,\n' +
-      '    length = funcs.length;\n' +
-      'if (length > 1) {\n' +
-      '  while (--length) {\n' +
-      '    index = funcs[length];\n' +
-      '    result[index] = bind(result[index], result)\n' +
-      '  }\n' +
-      '  return result\n' +
+      '    index = funcs.length > 1 ? 0 : (funcs = functions(object), -1),\n' +
+      '    length = funcs.length;' +
+      'while (++index < length) {\n' +
+      '  value = funcs[index];\n' +
+      '  result[value] = bind(result[value], result)\n' +
       '}\n' +
-      'forIn(result, function(value, key) {\n' +
-      '  if (isFunction(value)) result[key] = bind(value, result)\n' +
-      '})'
+      'return result'
   });
 
   /**

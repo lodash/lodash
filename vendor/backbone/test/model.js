@@ -55,6 +55,17 @@ $(document).ready(function() {
     equal(model.get('value'), 2);
   });
 
+  test("parse can return null", 1, function() {
+    var Model = Backbone.Model.extend({
+      parse: function(obj) {
+        obj.value += 1;
+        return null;
+      }
+    });
+    var model = new Model({value: 1}, {parse: true});
+    equal(JSON.stringify(model.toJSON()), "{}");
+  });
+
   test("url", 3, function() {
     doc.urlRoot = null;
     equal(doc.url(), '/collection/1-the-tempest');

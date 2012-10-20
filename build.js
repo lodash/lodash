@@ -65,7 +65,7 @@
   var dependencyMap = {
     'after': [],
     'bind': ['isFunction'],
-    'bindAll': ['bind', 'forIn', 'isFunction'],
+    'bindAll': ['bind', 'functions'],
     'chain': ['mixin'],
     'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isPlainObject'],
     'compact': [],
@@ -164,16 +164,14 @@
   var iteratorOptions = [
     'args',
     'array',
-    'arrayBranch',
-    'beforeLoop',
+    'arrayLoop',
     'bottom',
     'firstArg',
     'hasDontEnumBug',
-    'inLoop',
-    'init',
     'isKeysFast',
+    'loop',
     'object',
-    'objectBranch',
+    'objectLoop',
     'noArgsEnum',
     'noCharByIndex',
     'shadowed',
@@ -676,10 +674,6 @@
     return removeVar(source, 'isKeysFast')
       // remove optimized branch in `iteratorTemplate`
       .replace(/(?: *\/\/.*\n)* *'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, "'\\n' +\n$2")
-      // remove `isKeysFast` from `beforeLoop.object` of `_.map`
-      .replace(/=\s*'\s*\+\s*\(isKeysFast.+/, "= []'")
-      // remove `isKeysFast` from `inLoop.object` of `_.map`
-      .replace(/'\s*\+\s*\(isKeysFast[^)]+?\)\s*\+\s*'/g, '.push')
       // remove data object property assignment in `createIterator`
       .replace(/ *'isKeysFast':.+\n/, '');
   }
@@ -791,9 +785,7 @@
       // replace `useStrict` branch in `value` with hard-coded option
       .replace(/(?: *\/\/.*\n)*(\s*)' *<% *if *\(useStrict\).+/, value ? "$1'\\'use strict\\';\\n' +" : '')
       // remove `useStrict` from iterator options
-      .replace(/ *'useStrict': *false,\n/g, '')
-      // remove `useStrict` data object property assignment in `createIterator`
-      .replace(/ *'useStrict':.+\n/, '');
+      .replace(/(?:,\s*'useStrict':[^,]+?\n| *'useStrict':[^,]+,\n)/g, '');
   }
 
   /*--------------------------------------------------------------------------*/

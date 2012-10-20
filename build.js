@@ -1185,9 +1185,17 @@
         // simplify DOM node check from `_.isEqual`
         source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
 
-        // remove "exit early" feature from `_.forEach`, `_.forIn`, and `_.forOwn`
+        // unexpose "exit early" feature from `_.forEach`, `_.forIn`, and `_.forOwn`
         source = source.replace(/( +)var forEachIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
-          return match.replace(/if *\(callback[^']+/, 'callback(value, index, collection)');
+          return match.replace(/=== *false\)/, '=== objectTypes)');
+        });
+
+        source = source.replace(matchFunction(source, 'every'), function(match) {
+          return match.replace(/\(result *= *(.+?)\);/, '!(result = $1) && objectTypes;');
+        });
+
+        source = source.replace(matchFunction(source, 'some'), function(match) {
+          return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && objectTypes;');
         });
 
         // remove unused features from `createBound`
@@ -1405,6 +1413,18 @@
           // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
           source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
         }
+
+        // remove `thisArg` from unexposed `forIn` and `forOwn`
+        _.each([
+          { 'methodName': 'forIn', 'flag': exposeForIn },
+          { 'methodName': 'forOwn', 'flag': exposeForOwn }
+        ], function(data) {
+          if (!data.flag) {
+            source = source.replace(matchFunction(source, data.methodName), function(match) {
+              return match.replace(/(callback), *thisArg/g, '$1');
+            });
+          }
+        });
 
         // remove `iteratesOwnLast` from `isPlainObject`
         source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');

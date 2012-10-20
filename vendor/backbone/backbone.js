@@ -10,7 +10,7 @@
   // Initial Setup
   // -------------
 
-  // Save a reference to the global object (`window` in the browser, `global`
+  // Save a reference to the global object (`window` in the browser, `exports`
   // on the server).
   var root = this;
 
@@ -185,7 +185,7 @@
     var defaults;
     var attrs = attributes || {};
     if (options && options.collection) this.collection = options.collection;
-    if (options && options.parse) attributes = this.parse(attributes);
+    if (options && options.parse) attrs = this.parse(attrs);
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.extend({}, defaults, attrs);
     }
@@ -946,12 +946,10 @@
     // routes can be defined at the bottom of the route map.
     _bindRoutes: function() {
       if (!this.routes) return;
-      var routes = [];
-      for (var route in this.routes) {
-        routes.unshift([route, this.routes[route]]);
-      }
-      for (var i = 0, l = routes.length; i < l; i++) {
-        this.route(routes[i][0], routes[i][1], this[routes[i][1]]);
+      var route, routes = _.keys(this.routes);
+      while ((route = routes.pop()) != null) {
+        var name = this.routes[route];
+        this.route(route, name, this[name]);
       }
     },
 
@@ -1393,14 +1391,14 @@
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
-    if (Backbone.emulateHTTP) {
-      if (type === 'PUT' || type === 'DELETE') {
-        if (Backbone.emulateJSON) params.data._method = type;
-        params.type = 'POST';
-        params.beforeSend = function(xhr) {
-          xhr.setRequestHeader('X-HTTP-Method-Override', type);
-        };
-      }
+    if (Backbone.emulateHTTP && (type === 'PUT' || type === 'DELETE')) {
+      params.type = 'POST';
+      if (Backbone.emulateJSON) params.data._method = type;
+      var beforeSend = options.beforeSend;
+      options.beforeSend = function(xhr) {
+        xhr.setRequestHeader('X-HTTP-Method-Override', type);
+        if (beforeSend) return beforeSend.apply(this, arguments);
+      };
     }
 
     // Don't process data on a non-GET request.
@@ -1469,7 +1467,7 @@
   };
 
   // Set up inheritance for the model, collection, router, and view.
-  Model.extend = Collection.extend = Router.extend = View.extend = extend;
+  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {

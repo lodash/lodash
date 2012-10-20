@@ -485,7 +485,9 @@ $(document).ready(function() {
     ok(!_.isFinite(NaN), 'NaN is not Finite');
     ok(!_.isFinite(Infinity), 'Infinity is not Finite');
     ok(!_.isFinite(-Infinity), '-Infinity is not Finite');
-    ok(!_.isFinite('12'), 'Strings are not numbers');
+    ok(_.isFinite('12'), 'Numeric strings are numbers');
+    ok(!_.isFinite('1a'), 'Non numeric strings are not numbers');
+    ok(!_.isFinite(''), 'Empty strings are not numbers');
     var obj = new Number(5);
     ok(_.isFinite(obj), 'Number instances can be finite');
     ok(_.isFinite(0), '0 is Finite');

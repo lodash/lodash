@@ -951,7 +951,7 @@
 
   // Is a given object a finite number?
   _.isFinite = function(obj) {
-    return _.isNumber(obj) && isFinite(obj);
+    return isFinite( obj ) && !isNaN( parseFloat(obj) );
   };
 
   // Is the given value `NaN`? (NaN is the only number which does not equal itself).

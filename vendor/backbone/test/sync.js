@@ -17,6 +17,11 @@ $(document).ready(function() {
       Environment.prototype.setup.apply(this, arguments);
       library = new Library;
       library.create(attrs, {wait: false});
+    },
+
+    teardown: function() {
+      Environment.prototype.teardown.apply(this, arguments);
+      Backbone.emulateHTTP = false;
     }
 
   }));
@@ -155,6 +160,25 @@ $(document).ready(function() {
       error: function() { ok(true); }
     });
     this.ajaxSettings.error();
+  });
+
+  test("#1756 - Call user provided beforeSend function.", 4, function() {
+    Backbone.emulateHTTP = true;
+    var model = new Backbone.Model;
+    model.url = '/test';
+    var xhr = {
+      setRequestHeader: function(header, value) {
+        strictEqual(header, 'X-HTTP-Method-Override');
+        strictEqual(value, 'DELETE');
+      }
+    };
+    model.sync('delete', model, {
+      beforeSend: function(_xhr) {
+        ok(_xhr === xhr);
+        return false;
+      }
+    });
+    strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
 });

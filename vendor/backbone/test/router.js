@@ -481,4 +481,15 @@ $(document).ready(function() {
     });
   });
 
+  test("#1746 - Router allows empty route.", 1, function() {
+    var Router = Backbone.Router.extend({
+      routes: {'': 'empty'},
+      empty: function(){},
+      route: function(route){
+        strictEqual(route, '');
+      }
+    });
+    new Router;
+  });
+
 });

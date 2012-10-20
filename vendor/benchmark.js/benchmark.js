@@ -320,6 +320,7 @@
   /** Math shortcuts */
   var abs   = Math.abs,
       floor = Math.floor,
+      log   = Math.log,
       max   = Math.max,
       min   = Math.min,
       pow   = Math.pow,
@@ -946,6 +947,20 @@
   }
 
   /**
+   * Computes the geometric mean (log-average) of a sample.
+   * See http://en.wikipedia.org/wiki/Geometric_mean#Relationship_with_arithmetic_mean_of_logarithms.
+   *
+   * @private
+   * @param {Array} sample The sample.
+   * @returns {Number} The geometric mean.
+   */
+  function getGeometricMean(sample) {
+    return pow(Math.E, reduce(sample, function(sum, x) {
+      return sum + log(x);
+    }) / sample.length) || 0;
+  }
+
+  /**
    * Computes the arithmetic mean of a sample.
    *
    * @private
@@ -953,9 +968,9 @@
    * @returns {Number} The mean.
    */
   function getMean(sample) {
-    return reduce(sample, function(sum, x) {
+    return (reduce(sample, function(sum, x) {
       return sum + x;
-    }) / sample.length || 0;
+    }) / sample.length) || 0;
   }
 
   /**
@@ -2076,6 +2091,10 @@
         event.aborted = me.aborted;
       },
       'onComplete': function(event) {
+        me.score = getGeometricMean(map(me, function(bench) {
+          return bench.reference / (bench.times.period * 1e6);
+        })) || 0;
+
         me.running = false;
         me.emit(event);
       }
@@ -3169,7 +3188,15 @@
        * @memberOf Benchmark.options
        * @type Function
        */
-      'onStart': undefined
+      'onStart': undefined,
+
+      /**
+       * The reference time taken to execute the test once (usecs).
+       *
+       * @memberOf Benchmark.options
+       * @type Number
+       */
+      'reference': 0
     },
 
     /**
@@ -3725,6 +3752,14 @@
      * @type Number
      */
     'length': 0,
+
+    /**
+     * A score computed using the normalized result of each benchmark in the suite.
+     *
+     * @memberOf Benchmark.Suite
+     * @type Number
+     */
+    'score': 0,
 
     /**
      * A flag to indicate if the suite is aborted.

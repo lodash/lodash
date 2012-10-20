@@ -631,14 +631,15 @@
           return false;
         });
 
+        var object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
+        equal(object.fn(), 2, '_.bind: ' + basename);
+
         ok(lodash.clone(array, true)[0] === array[0], '_.clone: ' + basename);
         equal(last.value, 2, '_.each: ' + basename);
+        equal(lodash.every([true, false, true]), false, '_.every: ' + basename);
 
-        var object = { 'length': 0, 'splice': Array.prototype.splice };
+        object = { 'length': 0, 'splice': Array.prototype.splice };
         equal(lodash.isEmpty(object), false, '_.isEmpty: ' + basename);
-
-        object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
-        equal(object.fn(), 2, '_.bind: ' + basename);
 
         // avoid issues comparing objects with `deepEqual`
         object = { 'a': 1, 'b': 2, 'c': 3 };
@@ -647,6 +648,8 @@
 
         actual = lodash.pick(object, function(value) { return value != 3; });
         deepEqual(_.keys(actual), [], '_.pick: ' + basename);
+
+        equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         start();
       });
     });

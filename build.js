@@ -723,6 +723,10 @@
     if (varName == 'cloneableClasses') {
       source = source.replace(/(var cloneableClasses *=)[\s\S]+?(true;\n)/, '$1$2');
     }
+    // simplify `hasObjectSpliceBug`
+    if (varName == 'hasObjectSpliceBug') {
+      source = source.replace(/(var hasObjectSpliceBug *=)[^;]+/, '$1false');
+    }
     source = source.replace(RegExp(
       // match multi-line comment block
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
@@ -1406,9 +1410,7 @@
         }
         else {
           source = removeIsArgumentsFallback(source);
-
-          // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, `noArgsEnum` assignment
-          source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b[\s\S]+?}\(1\)\);\n/, '');
+          source = removeVar(source, 'hasObjectSpliceBug');
 
           // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
           source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
@@ -1425,6 +1427,11 @@
             });
           }
         });
+
+        // remove `hasDontEnumBug`, `iteratesOwnLast`, and `noArgsEnum` declarations and assignments
+        source = source
+          .replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/, '')
+          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum).+\n/g, '');
 
         // remove `iteratesOwnLast` from `isPlainObject`
         source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
@@ -1549,8 +1556,7 @@
       if (isRemoved(source, 'mixin')) {
         // remove `lodash.prototype` additions
         source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\)[\s\S]+?\/\*-+\*\//, '');
-        // remove `hasObjectSpliceBug` assignment
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasObjectSpliceBug;|.+?hasObjectSpliceBug *=.+/g, '');
+        source = removeVar(source, 'hasObjectSpliceBug');
       }
 
       // remove pseudo private properties
@@ -1608,9 +1614,9 @@
         source = removeVar(source, 'nativeKeys');
         source = removeKeysOptimization(source);
       }
-      if (!source.match(/var (?:hasDontEnumBug|hasObjectSpliceBug|iteratesOwnLast|noArgsEnum)\b/g)) {
-        // remove `hasDontEnumBug`, `hasObjectSpliceBug`, `iteratesOwnLast`, and `noArgsEnum` assignment
-        source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);/, '');
+      if (!source.match(/var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum)\b/g)) {
+        // remove `hasDontEnumBug`, `iteratesOwnLast`, and `noArgsEnum` assignments
+        source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/, '');
       }
     }
 

@@ -787,7 +787,7 @@
     // remove `isStrictFast` assignment
     return removeVar(source, 'isStrictFast')
       // replace `useStrict` branch in `value` with hard-coded option
-      .replace(/(?: *\/\/.*\n)*(\s*)' *<% *if *\(useStrict\).+/, value ? "$1'\\'use strict\\';\\n' +" : '')
+      .replace(/(?: *\/\/.*\n)*(\s*)' *<%.+?useStrict.+/, value ? "$1'\\'use strict\\';\\n' +" : '')
       // remove `useStrict` from iterator options
       .replace(/(?:,\s*'useStrict':[^,]+?\n| *'useStrict':[^,]+,\n)/g, '');
   }

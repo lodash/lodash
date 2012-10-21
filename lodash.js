@@ -93,7 +93,6 @@
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
-      nativeIsNaN = window.isNaN,
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
@@ -1387,10 +1386,10 @@
   }
 
   /**
-   * Checks if `value` is a finite number.
+   * Checks if `value` is, or can be coerced to, a finite number.
    *
    * Note: This is not the same as native `isFinite`, which will return true for
-   * booleans and other values. See http://es5.github.com/#x15.1.2.5.
+   * booleans and empty strings. See http://es5.github.com/#x15.1.2.5.
    *
    * @deprecated
    * @static
@@ -1404,13 +1403,19 @@
    * // => true
    *
    * _.isFinite('10');
+   * // => true
+   *
+   * _.isFinite(true);
+   * // => false
+   *
+   * _.isFinite('');
    * // => false
    *
    * _.isFinite(Infinity);
    * // => false
    */
   function isFinite(value) {
-    return nativeIsFinite(value) && !nativeIsNaN(parseFloat(value));
+    return nativeIsFinite(value ? +value : parseFloat(value));
   }
 
   /**
@@ -2930,18 +2935,14 @@
     var low = 0,
         high = array ? array.length : low;
 
-    if (callback) {
-      callback = createCallback(callback, thisArg);
-      value = callback(value);
-      while (low < high) {
-        var mid = (low + high) >>> 1;
-        callback(array[mid]) < value ? low = mid + 1 : high = mid;
-      }
-    } else {
-      while (low < high) {
-        var mid = (low + high) >>> 1;
-        array[mid] < value ? low = mid + 1 : high = mid;
-      }
+    // explicitly reference `identity` for better engine inlining
+    callback = callback ? createCallback(callback, thisArg) : identity;
+    value = callback(value);
+    while (low < high) {
+      var mid = (low + high) >>> 1;
+      callback(array[mid]) < value
+        ? low = mid + 1
+        : high = mid;
     }
     return low;
   }
@@ -3456,7 +3457,6 @@
       timeoutId = null;
       result = func.apply(thisArg, args);
     }
-
     return function() {
       var now = new Date,
           remaining = wait - (now - lastCalled);
@@ -3867,8 +3867,9 @@
   }
 
   /**
-   * Converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#x27;`
-   * in `string` to their corresponding characters.
+   * The opposite of `_.escape`, this method converts the HTML entities
+   * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#x27;` in `string` to their
+   * corresponding characters.
    *
    * @static
    * @memberOf _

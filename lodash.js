@@ -2475,25 +2475,22 @@
    */
   function where(collection, properties) {
     var props = [];
-    forIn(properties, function(value, prop) { props.push(prop); });
-
-    var length = props.length,
-        result = [];
-
-    forEach(collection, function(value) {
-      var index = -1;
-      while (++index < length) {
-        var prop = props[index],
-            pass = value[prop] === properties[prop];
-        if (!pass) {
-          break;
+    forIn(properties, function(value, prop) {
+      props.push(prop);
+    });
+    var propsLength = props.length;
+    if (!propsLength) {
+      return props;
+    }
+    return filter(collection, function(object) {
+      var length = propsLength;
+      while (length--) {
+        if (object[props[length]] !== properties[props[length]]) {
+          return false;
         }
       }
-      if (pass) {
-        result.push(value);
-      }
+      return true;
     });
-    return result;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -2703,24 +2700,21 @@
    * // => [1, 2]
    */
   function intersection(array) {
-    var argsLength = arguments.length,
-        cache = [],
-        index = -1,
-        length = array ? array.length : 0,
-        result = [];
+    var args = arguments,
+        argsLength = args.length,
+        cache = [];
 
-    array: while (++index < length) {
-      var value = array[index];
+    return filter(array, function(value) {
       if (indexOf(result, value) < 0) {
-        for (var argsIndex = 1; argsIndex < argsLength; argsIndex++) {
-          if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(arguments[argsIndex])))(value)) {
-            continue array;
+        var length = argsLength;
+        while (--length) {
+          if (!(cache[length] || (cache[length] = cachedContains(args[length])))(value)) {
+            return false;
           }
         }
-        result.push(value);
+        return true;
       }
-    }
-    return result;
+    });
   }
 
   /**

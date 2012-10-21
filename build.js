@@ -1092,20 +1092,22 @@
         // replace `_.intersection`
         source = source.replace(/^( +)function intersection[\s\S]+?\n\1}/m, [
           '  function intersection(array) {',
-          '    var args = argument,',
-          '        argsLength = args.length;',
+          '    var args = arguments,',
+          '        argsLength = args.length,',
+          '        result = [];',
           '',
-          '    return filter(array, function(value) {',
+          '    forEach(array, function(value) {',
           '      if (indexOf(result, value) < 0) {',
           '        var length = argsLength;',
           '        while (--length) {',
           '          if (indexOf(args[length], value) < 0) {',
-          '            return false;',
+          '            return;',
           '          }',
           '        }',
-          '        return true;',
+          '        result.push(value);',
           '      }',
           '    });',
+          '    return result;',
           '  }'
         ].join('\n'));
 

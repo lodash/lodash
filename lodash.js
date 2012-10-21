@@ -2702,19 +2702,21 @@
   function intersection(array) {
     var args = arguments,
         argsLength = args.length,
-        cache = [];
+        cache = [],
+        result = [];
 
-    return filter(array, function(value) {
+    forEach(array, function(value) {
       if (indexOf(result, value) < 0) {
         var length = argsLength;
         while (--length) {
           if (!(cache[length] || (cache[length] = cachedContains(args[length])))(value)) {
-            return false;
+            return;
           }
         }
-        return true;
+        result.push(value);
       }
     });
+    return result;
   }
 
   /**

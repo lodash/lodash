@@ -937,6 +937,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.map');
+
+  (function() {
+    test('should return the correct result when iterating an object', function() {
+      var actual = _.map({ 'a': 1, 'b': 2, 'c': 3 }, function(value) {
+        return value;
+      });
+      deepEqual(actual, [1, 2, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.max and lodash.min object iteration');
 
   _.each(['max', 'min'], function(methodName) {

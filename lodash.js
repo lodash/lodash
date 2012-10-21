@@ -2119,7 +2119,7 @@
         length = collection ? collection.length : 0,
         result = computed;
 
-    if (callback || length !== +length) {
+    if (callback || typeof length != 'number') {
       callback = createCallback(callback, thisArg);
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -2162,7 +2162,7 @@
         length = collection ? collection.length : 0,
         result = computed;
 
-    if (callback || length !== +length) {
+    if (callback || typeof length != 'number') {
       callback = createCallback(callback, thisArg);
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -2702,7 +2702,7 @@
   function intersection(array) {
     var args = arguments,
         argsLength = args.length,
-        cache = [],
+        cache = {},
         result = [];
 
     forEach(array, function(value) {

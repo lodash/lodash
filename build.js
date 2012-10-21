@@ -1188,6 +1188,11 @@
         // simplify DOM node check from `_.isEqual`
         source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
 
+        // remove arguments juggling from `_.uniq`
+        source = source.replace(matchFunction(source, 'uniq'), function(match) {
+          return match.replace(/(?: *\/\/.*\n)*( +)if *\(typeof isSorted[^}]+?}\n/, '');
+        });
+
         // unexpose "exit early" feature from `_.forEach`, `_.forIn`, and `_.forOwn`
         source = source.replace(/( +)var forEachIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
           return match.replace(/=== *false\)/, '=== objectTypes)');

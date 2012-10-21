@@ -27,6 +27,9 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
+  /** Used internally to indicate various things */
+  var indicatorObject = {};
+
   /** Used by `cachedContains` as the default size when optimizations are enabled for large arrays */
   var largeArraySize = 30;
 
@@ -619,13 +622,13 @@
 
     // merge options into a template data object
     while (object = arguments[++index]) {
-      for (var prop in object) {
-        var value = object[prop];
-        if (prop == 'loop') {
+      for (var key in object) {
+        var value = object[key];
+        if (key == 'loop') {
           data.arrayLoop =
           data.objectLoop = value;
         } else {
-          data[prop] = value;
+          data[key] = value;
         }
       }
     }
@@ -1350,22 +1353,22 @@
       return result;
     }
     // deep compare objects
-    for (var prop in a) {
-      if (hasOwnProperty.call(a, prop)) {
+    for (var key in a) {
+      if (hasOwnProperty.call(a, key)) {
         // count the number of properties.
         size++;
         // deep compare each property value.
-        if (!(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stackA, stackB))) {
+        if (!(hasOwnProperty.call(b, key) && isEqual(a[key], b[key], stackA, stackB))) {
           return false;
         }
       }
     }
     // ensure both objects have the same number of properties
-    for (prop in b) {
+    for (key in b) {
       // The JS engine in Adobe products, like InDesign, has a bug that causes
       // `!size--` to throw an error so it must be wrapped in parentheses.
       // https://github.com/documentcloud/underscore/issues/355
-      if (hasOwnProperty.call(b, prop) && !(size--)) {
+      if (hasOwnProperty.call(b, key) && !(size--)) {
         // `size` will be `-1` if `b` has more properties than `a`
         return false;
       }
@@ -1373,9 +1376,9 @@
     // handle JScript [[DontEnum]] bug
     if (hasDontEnumBug) {
       while (++index < 7) {
-        prop = shadowed[index];
-        if (hasOwnProperty.call(a, prop) &&
-            !(hasOwnProperty.call(b, prop) && isEqual(a[prop], b[prop], stackA, stackB))) {
+        key = shadowed[index];
+        if (hasOwnProperty.call(a, key) &&
+            !(hasOwnProperty.call(b, key) && isEqual(a[key], b[key], stackA, stackB))) {
           return false;
         }
       }
@@ -1623,7 +1626,7 @@
         stackA = args[3],
         stackB = args[4];
 
-    if (indicator != compareAscending) {
+    if (indicator !== indicatorObject) {
       stackA = [];
       stackB = [];
       length = args.length;
@@ -1651,7 +1654,7 @@
               : (isPlainObject(value) ? value : {})
             );
             // recursively merge objects and arrays (susceptible to call stack limits)
-            object[key] = merge(value, source, compareAscending, stackA, stackB);
+            object[key] = merge(value, source, indicatorObject, stackA, stackB);
           }
         } else if (source != null) {
           object[key] = source;
@@ -1761,9 +1764,9 @@
           length = props.length;
 
       while (++index < length) {
-        var prop = props[index];
-        if (prop in object) {
-          result[prop] = object[prop];
+        var key = props[index];
+        if (key in object) {
+          result[key] = object[key];
         }
       }
     } else {
@@ -2264,17 +2267,17 @@
         length = collection ? collection.length : 0,
         noaccum = arguments.length < 3;
 
-    if (length !== +length) {
+    if (typeof length != 'number') {
       var props = keys(collection);
       length = props.length;
     } else if (noCharByIndex && toString.call(collection) == stringClass) {
       iteratee = collection.split('');
     }
-    forEach(collection, function(value, index, object) {
+    forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum
         ? (noaccum = false, iteratee[index])
-        : callback.call(thisArg, accumulator, iteratee[index], index, object);
+        : callback.call(thisArg, accumulator, iteratee[index], index, collection);
     });
     return accumulator;
   }
@@ -3246,7 +3249,6 @@
         result = func.apply(thisArg, args);
       }
     }
-
     return function() {
       var isImmediate = immediate && !timeoutId;
       args = arguments;
@@ -3362,10 +3364,10 @@
   function memoize(func, resolver) {
     var cache = {};
     return function() {
-      var prop = resolver ? resolver.apply(this, arguments) : arguments[0];
-      return hasOwnProperty.call(cache, prop)
-        ? cache[prop]
-        : (cache[prop] = func.apply(this, arguments));
+      var key = resolver ? resolver.apply(this, arguments) : arguments[0];
+      return hasOwnProperty.call(cache, key)
+        ? cache[key]
+        : (cache[key] = func.apply(this, arguments));
     };
   }
 

@@ -1193,19 +1193,6 @@
           return match.replace(/(?: *\/\/.*\n)*( +)if *\(typeof isSorted[^}]+?}\n/, '');
         });
 
-        // unexpose "exit early" feature from `_.forEach`, `_.forIn`, and `_.forOwn`
-        source = source.replace(/( +)var forEachIteratorOptions *=[\s\S]+?\n\1.+?;/, function(match) {
-          return match.replace(/=== *false\)/, '=== objectTypes)');
-        });
-
-        source = source.replace(matchFunction(source, 'every'), function(match) {
-          return match.replace(/\(result *= *(.+?)\);/, '!(result = $1) && objectTypes;');
-        });
-
-        source = source.replace(matchFunction(source, 'some'), function(match) {
-          return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && objectTypes;');
-        });
-
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {
           source = source.replace(matchFunction(source, 'createBound'), function(match) {
@@ -1351,6 +1338,22 @@
                 .replace(/\bnoArgsClass\b/g, '!lodash.isArguments(arguments)');
             });
           }());
+
+          // unexpose "exit early" feature from `_.forEach`, `_.forIn`, and `_.forOwn`
+          _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match.replace(/=== *false\)/g, '=== indicatorObject)');
+            });
+          });
+
+          // modify `_.every` and `_.some` to use the private `indicatorObject`
+          source = source.replace(matchFunction(source, 'every'), function(match) {
+            return match.replace(/\(result *= *(.+?)\);/, '!(result = $1) && indicatorObject;');
+          });
+
+          source = source.replace(matchFunction(source, 'some'), function(match) {
+            return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
+          });
 
           // replace `_.template`
           source = source.replace(/^( +)function template[\s\S]+?\n\1}/m, function() {

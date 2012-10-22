@@ -33,7 +33,8 @@
    * @param {Object} options The options object.
    *
    *  id - The Git object ID of the `.tar.gz` file.
-   *  onComplete - The function to call once the extraction finishes.
+   *  onComplete - The function, invoked with one argument (exception),
+   *   called once the extraction has finished.
    *  path - The path of the extraction directory.
    *  title - The dependency's title used in status updates logged to the console.
    */

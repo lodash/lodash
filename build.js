@@ -796,7 +796,9 @@
 
   /**
    * Creates a debug and minified build, executing the `callback` for each.
-   * The `callback` is invoked with 2 arguments; (filePath, source)
+   * The `callback` is invoked with two arguments; (filePath, outputSource).
+   *
+   * Note: For a list of commands see `displayHelp()` or run `lodash --help`.
    *
    * @param {Array} [options=[]] An array of commands.
    * @param {Function} callback The function called per build.

@@ -590,8 +590,7 @@
    * Creates compiled iteration functions.
    *
    * @private
-   * @param {Object} [options1, options2, ...] The compile options objects.
-   *
+   * @param {Object} [options1, options2, ...] The compile options object(s).
    *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
    *  args - A string of comma separated arguments the iteration function will accept.
    *  top - A string of code to execute before the iteration branches.
@@ -3685,6 +3684,12 @@
    * @param {String} text The template text.
    * @param {Obect} data The data object used to populate the text.
    * @param {Object} options The options object.
+   *  escape - The "escape" delimiter regexp.
+   *  evaluate - The "evaluate" delimiter regexp.
+   *  interpolate - The "interpolate" delimiter regexp.
+   *  sourceURL - The sourceURL of the template's compiled source.
+   *  variable - The data object variable name.
+   *
    * @returns {Function|String} Returns a compiled function when no `data` object
    *  is given, else it returns the interpolated text.
    * @example
@@ -3706,13 +3711,18 @@
    * _.template('<% print("hello " + epithet); %>!', { 'epithet': 'stooge' });
    * // => 'hello stooge!'
    *
-   * // using custom template delimiter settings
+   * // using custom template delimiters
    * _.templateSettings = {
    *   'interpolate': /\{\{([\s\S]+?)\}\}/g
    * };
    *
    * _.template('hello {{ name }}!', { 'name': 'mustache' });
    * // => 'hello mustache!'
+   *
+   * // using the `sourceURL` option to specify a custom sourceURL for the template
+   * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
+   * compiled(data);
+   * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
    *
    * // using the `variable` option to ensure a with-statement isn't used in the compiled template
    * var compiled = _.template('hello <%= data.name %>!', null, { 'variable': 'data' });
@@ -3722,11 +3732,6 @@
    *   __p += 'hello ' + ((__t = ( data.name )) == null ? '' : __t) + '!';
    *   return __p;
    * }
-   *
-   * // using the `sourceURL` option to specify a custom sourceURL for the template
-   * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
-   * compiled(data);
-   * // => find the source of "greeting.jst" under the sources tab or resources panel of the web inspector
    *
    * // using the `source` property to inline compiled templates for meaningful
    * // line numbers in error messages and a stack trace

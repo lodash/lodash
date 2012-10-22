@@ -31,11 +31,20 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The exposed `minify` function minifies a given Lo-Dash `source` and invokes
-   * the `onComplete` callback when finished.
+   * Minifies a given Lo-Dash `source` and invokes the `options.onComplete`
+   * callback when finished. The `onComplete` callback is invoked with one
+   * argument; (outputSource).
    *
    * @param {Array|String} [source=''] The source to minify or array of commands.
+   *  -o, --output - Write output to a given path/filename.
+   *  -s, --silent - Skip status updates normally logged to the console.
+   *  -t, --template - Applies template specific minifier options.
+   *
    * @param {Object} [options={}] The options object.
+   *  outputPath - Write output to a given path/filename.
+   *  isSilent - Skip status updates normally logged to the console.
+   *  isTemplate - Applies template specific minifier options.
+   *  onComplete - The function called once minification has finished.
    */
   function minify(source, options) {
     source || (source = '');
@@ -77,6 +86,10 @@
    * @constructor
    * @param {String} source The source to minify.
    * @param {Object} options The options object.
+   *  outputPath - Write output to a given path/filename.
+   *  isSilent - Skip status updates normally logged to the console.
+   *  isTemplate - Applies template specific minifier options.
+   *  onComplete - The function called once minification has finished.
    */
   function Minify(source, options) {
     // juggle arguments
@@ -111,7 +124,7 @@
    * @private
    * @param {String} source The JavaScript source to minify.
    * @param {String} [message] The message to log.
-   * @param {Function} callback The function to call once the process completes.
+   * @param {Function} callback The function called once the process has completed.
    */
   function closureCompile(source, message, callback) {
     var options = closureOptions.slice();
@@ -171,7 +184,7 @@
    * @private
    * @param {String} source The JavaScript source to minify.
    * @param {String} [message] The message to log.
-   * @param {Function} callback The function to call once the process completes.
+   * @param {Function} callback The function called once the process has completed.
    */
   function uglify(source, message, callback) {
     var exception,

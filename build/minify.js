@@ -122,7 +122,6 @@
         return value.replace(/^(--compilation_level)=.+$/, '$1=SIMPLE_OPTIMIZATIONS');
       });
     }
-
     // the standard error stream, standard output stream, and Closure Compiler process
     var error = '',
         output = '',
@@ -133,14 +132,12 @@
       callback = message;
       message = null;
     }
-
     if (!this.isSilent) {
       console.log(message == null
         ? 'Compressing ' + path.basename(this.outputPath, '.js') + ' using the Closure Compiler...'
         : message
       );
     }
-
     compiler.stdout.on('data', function(data) {
       // append the data to the output stream
       output += data;
@@ -186,14 +183,12 @@
       callback = message;
       message = null;
     }
-
     if (!this.isSilent) {
       console.log(message == null
         ? 'Compressing ' + path.basename(this.outputPath, '.js') + ' using UglifyJS...'
         : message
       );
     }
-
     try {
       result = ugly.gen_code(
         // enable unsafe transformations
@@ -246,7 +241,6 @@
     if (!this.isSilent) {
       console.log('Done. Size: %d bytes.', result.length);
     }
-
     // store the gzipped result and report the size
     this.compiled.gzip = result;
 

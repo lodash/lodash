@@ -2081,7 +2081,7 @@
   function map(collection, callback, thisArg) {
     var index = -1,
         length = collection ? collection.length : 0,
-        result = Array(length);
+        result = Array(typeof length == 'number' ? length : 0);
 
     callback = createCallback(callback, thisArg);
     if (isArray(collection)) {

@@ -996,7 +996,7 @@ _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, alert);
 ### <a id="_groupbycollection-callbackproperty--thisarg"></a>`_.groupBy(collection, callback|property [, thisArg])`
 <a href="#_groupbycollection-callbackproperty--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2017 "View in source") [&#x24C9;][1]
 
-Creates an object composed of keys returned from running each element of `collection` through a `callback`. The corresponding value of each key is an array of elements passed to `callback` that returned the key. The `callback` is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to count by *(e.g. 'length')*.
+Creates an object composed of keys returned from running each element of `collection` through a `callback`. The corresponding value of each key is an array of elements passed to `callback` that returned the key. The `callback` is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*. The `callback` argument may also be the name of a property to group by *(e.g. 'length')*.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.

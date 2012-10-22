@@ -3284,7 +3284,7 @@
    */
   function delay(func, wait) {
     var args = slice.call(arguments, 2);
-    return setTimeout(function() { return func.apply(undefined, args); }, wait);
+    return setTimeout(function() { func.apply(undefined, args); }, wait);
   }
 
   /**
@@ -3304,7 +3304,7 @@
    */
   function defer(func) {
     var args = slice.call(arguments, 1);
-    return setTimeout(function() { return func.apply(undefined, args); }, 1);
+    return setTimeout(function() { func.apply(undefined, args); }, 1);
   }
 
   /**

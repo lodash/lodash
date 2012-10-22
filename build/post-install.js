@@ -16,19 +16,45 @@
   /** The path of the `vendor` directory */
   var vendorPath = path.join(basePath, 'vendor');
 
+  /** The Git object ID of `closure-compiler.tar.gz` */
+  var closureId = 'aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d';
+
+  /** The Git object ID of `uglifyjs.tar.gz` */
+  var uglifyId = '827f406a02626c1c6723e8ae281b6785d36375c1';
+
+  /*--------------------------------------------------------------------------*/
+
   /**
    * Fetches a required `.tar.gz` dependency with the given Git object ID from
    * the Lo-Dash repo on GitHub. The object ID may be obtained by running
    * `git hash-object path/to/dependency.tar.gz`.
    *
-   * @param {String} objectId The Git object ID of the `.tar.gz` package.
-   * @param {String} The extraction target directory.
-   * @param {Function} callback The function to call once the extraction finishes.
+   * @private
+   * @param {Object} options The options object.
+   *
+   *  id - The Git object ID of the `.tar.gz` file.
+   *  onComplete - The function to call once the extraction finishes.
+   *  path - The path of the extraction directory.
+   *  title - The dependency's title used in status updates logged to the console.
    */
-  function getDependency(objectId, targets, callback) {
+  function getDependency(options) {
+    options || (options = {});
+
+    var onComplete = options.onComplete,
+        title = options.title;
+
+    function callback(exception) {
+      if (exception) {
+        console.error('There was a problem downloading ' + title + '.');
+      }
+      onComplete(exception);
+    }
+
+    console.log('Downloading ' + title + '...');
+
     https.get({
       'host': 'api.github.com',
-      'path': '/repos/bestiejs/lodash/git/blobs/' + objectId,
+      'path': '/repos/bestiejs/lodash/git/blobs/' + options.id,
       'headers': {
         // By default, all GitHub blob API endpoints return a JSON document
         // containing Base64-encoded blob data. Overriding the `Accept` header
@@ -37,7 +63,7 @@
       }
     }, function(response) {
       var parser = new tar.Extract({
-        'path': targets
+        'path': options.path
       })
       .on('end', callback)
       .on('error', callback);
@@ -46,6 +72,8 @@
     })
     .on('error', callback);
   }
+
+  /*--------------------------------------------------------------------------*/
 
   exec('npm -g root', function(exception, stdout, stderr) {
     if (exception || stderr) {
@@ -56,23 +84,22 @@
     if (path.resolve(basePath, '..') != stdout.trim()) {
       return;
     }
-    // download Closure Compiler
-    console.log('Downloading Closure Compiler...');
-    getDependency('aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d', vendorPath, function(exception) {
-      var statusCode = 0;
-      if (exception) {
-        console.error('There was a problem downloading the Closure Compiler.');
-        statusCode = 1;
+    // download the Closure Compiler
+    getDependency({
+      'title': 'the Closure Compiler',
+      'id': closureId,
+      'path': vendorPath,
+      'onComplete':function(exceptionA) {
+        // download UglifyJS
+        getDependency({
+          'title': 'UglifyJS',
+          'id': uglifyId,
+          'path': vendorPath,
+          'onComplete': function(exceptionB) {
+            process.exit(exceptionA || exceptionB ? 1 : 0);
+          }
+        });
       }
-      // download UglifyJS
-      console.log('Downloading UglifyJS...');
-      getDependency('827f406a02626c1c6723e8ae281b6785d36375c1', vendorPath, function(exception) {
-        if (exception) {
-          console.error('There was a problem downloading UglifyJS.');
-          statusCode = 1;
-        }
-        process.exit(statusCode);
-      });
     });
   });
 }());

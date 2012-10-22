@@ -1993,7 +1993,7 @@
    * `collection` through a `callback`. The corresponding value of each key is an
    * array of elements passed to `callback` that returned the key. The `callback`
    * is bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
-   * The `callback` argument may also be the name of a property to count by (e.g. 'length').
+   * The `callback` argument may also be the name of a property to group by (e.g. 'length').
    *
    * @static
    * @memberOf _

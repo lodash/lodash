@@ -41,6 +41,9 @@
   /** Shortcut used to make object properties immutable */
   var freeze = Object.freeze;
 
+  /** Used to set property descriptors */
+  var setDescriptor = Object.defineProperty;
+
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
 
@@ -945,6 +948,16 @@
         return value;
       });
       deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should handle object arguments with non-numeric length properties', function() {
+      if (setDescriptor) {
+        var object = {};
+        setDescriptor(object, 'length', { 'value': 'x' });
+        deepEqual(_.map(object, _.identity), []);
+      } else {
+        skipTest();
+      }
     });
   }());
 

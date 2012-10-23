@@ -1288,8 +1288,7 @@
       if (isMobile) {
         // inline all functions defined with `createIterator`
         _.functions(lodash).forEach(function(methodName) {
-          // match `methodName` with pseudo private `_` prefixes removed to allow matching `shimKeys`
-          var reFunc = RegExp('(\\bvar ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
+          var reFunc = RegExp('(\\bvar ' + methodName + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
 
           // skip if not defined with `createIterator`
           if (!reFunc.test(source)) {

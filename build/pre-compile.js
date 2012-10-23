@@ -15,10 +15,12 @@
     'ctor',
     'hasOwnProperty',
     'index',
+    'isArguments',
     'iteratee',
     'length',
     'nativeKeys',
     'object',
+    'objectTypes',
     'ownIndex',
     'ownProps',
     'propertyIsEnumerable',
@@ -27,15 +29,7 @@
     'stringClass',
     'thisArg',
     'toString',
-    'value',
-
-    // lesser used variables
-    'bind',
-    'funcs',
-    'functions',
-    'isArguments',
-    'isFunction',
-    'objectTypes'
+    'value'
   ];
 
   /** Used to minify `compileIterator` option properties */

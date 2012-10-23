@@ -574,9 +574,9 @@
   QUnit.module('strict modifier');
 
   (function() {
-    var object = Object.create(Object.prototype, {
-      'a': { 'value': _.identify },
-      'b': { 'value': null }
+    var object = Object.freeze({
+      'a': _.identity,
+      'b': null
     });
 
     ['non-strict', 'strict'].forEach(function(strictMode, index) {
@@ -589,20 +589,26 @@
         }
         build(commands, function(source, filePath) {
           var basename = path.basename(filePath, '.js'),
-              context = createContext(),
-              pass = !index;
+              context = createContext();
 
           vm.runInContext(source, context);
           var lodash = context._;
 
-          try {
-            lodash.bindAll(object);
-            lodash.extend(object, { 'a': 1 });
-            lodash.defaults(object, { 'b': 2 });
-          } catch(e) {
-            pass = !!index;
-          }
-          equal(pass, true, basename);
+          var actual = _.every([
+            function() { lodash.bindAll(object); },
+            function() { lodash.extend(object, { 'a': 1 }); },
+            function() { lodash.defaults(object, { 'b': 2 }); }
+          ], function(fn) {
+            var pass = !index;
+            try {
+              fn();
+            } catch(e) {
+              pass = !!index;
+            }
+            return pass;
+          });
+
+          equal(actual, true, basename);
           start();
         });
       });

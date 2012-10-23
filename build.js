@@ -784,12 +784,12 @@
    * @returns {String} Returns the modified source.
    */
   function setUseStrictOption(source, value) {
-    // remove `isStrictFast` assignment
-    return removeVar(source, 'isStrictFast')
-      // replace `useStrict` branch in `value` with hard-coded option
-      .replace(/(?: *\/\/.*\n)*(\s*)' *<%.+?useStrict.+/, value ? "$1'\\'use strict\\';\\n' +" : '')
-      // remove `useStrict` from iterator options
-      .replace(/(?:,\s*'useStrict':[^,]+?\n| *'useStrict':[^,]+,\n)/g, '');
+    // inject "use strict"
+    if (value) {
+      source = source.replace(/^[\s\S]*?function[^{]+{/, "$&\n  'use strict';");
+    }
+    // replace `useStrict` branch in `value` with hard-coded option
+    return source.replace(/(?: *\/\/.*\n)*(\s*)' *<%.+?useStrict.+/, value ? "$1'\\'use strict\\';\\n' +" : '');
   }
 
   /*--------------------------------------------------------------------------*/
@@ -940,9 +940,6 @@
     // the lodash.js source
     var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
 
-    // flag used to specify if the build should include the "use strict" directive
-    var useStrict = isStrict || !(isLegacy || isMobile);
-
     // flag used to specify replacing Lo-Dash's `_.clone` with Underscore's
     var useUnderscoreClone = isUnderscore;
 
@@ -1037,17 +1034,10 @@
         'setTimeout': setTimeout
       });
 
-      if (isStrict) {
-        source = setUseStrictOption(source, true);
-      } else {
-        // remove "use strict" directive
-        source = source.replace(/(["'])use strict\1;( *\n)?/, '');
-        if (!useStrict) {
-          source = setUseStrictOption(source, false);
-        }
-      }
+      source = setUseStrictOption(source, isStrict);
+
       if (isLegacy) {
-        _.each(['getPrototypeOf', 'isBindFast', 'isKeysFast', 'isStrictFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
+        _.each(['getPrototypeOf', 'isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
           source = replaceVar(source, varName, 'false');
         });
 
@@ -1607,7 +1597,6 @@
       }
       if (isRemoved(source, 'createIterator', 'bind')) {
         source = removeVar(source, 'isBindFast');
-        source = removeVar(source, 'isStrictFast');
         source = removeVar(source, 'nativeBind');
       }
       if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'isPlainObject', 'keys')) {
@@ -1668,7 +1657,7 @@
           }
           // inject "use strict" directive
           if (isStrict) {
-            source = source.replace(/^(\/\*![\s\S]+?\*\/\n;\(function[^)]+\){)([^'"])/, '$1"use strict";$2');
+            source = source.replace(/^([\s\S]*?function[^{]+{)([^'"])/, '$1"use strict";$2');
           }
           if (isStdOut) {
             stdout.write(source);

@@ -313,10 +313,10 @@
     // add code before the iteration branches
     '<%= top %>;\n' +
 
-    // the following branch is for iterating arrays and array-like objects
+    // array-like iteration:
     '<% if (arrayLoop) { %>' +
-    'var length = iteratee.length; index = -1;' +
-    '  <% if (objectLoop) { %>\nif (typeof length == \'number\') {<% } %>' +
+    'var length = iteratee.length; index = -1;\n' +
+    'if (typeof length == \'number\') {' +
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +
@@ -325,17 +325,15 @@
     '  }' +
     '  <% } %>\n' +
 
+    // iterate over the array-like value
     '  while (++index < length) {\n' +
     '    value = iteratee[index];\n' +
     '    <%= arrayLoop %>\n' +
-    '  }' +
-    '  <% if (objectLoop) { %>\n}<% } %>' +
-    '<% } %>' +
+    '  }\n' +
+    '}\n' +
+    'else {' +
 
-    // the following branch is for iterating an object's own/inherited properties
-    '<% if (objectLoop) { %>' +
-    '  <% if (arrayLoop) { %>\nelse {' +
-
+    // object iteration:
     // add support for iterating over `arguments` objects if needed
     '  <%  } else if (noArgsEnum) { %>\n' +
     '  var length = iteratee.length; index = -1;\n' +
@@ -403,8 +401,7 @@
     '  }' +
     '    <% } %>' +
     '  <% } %>' +
-    '  <% if (arrayLoop || noArgsEnum) { %>\n}<% } %>' +
-    '<% } %>\n' +
+    '  <% if (arrayLoop || noArgsEnum) { %>\n}<% } %>\n' +
 
     // add code to the bottom of the iteration function
     '<%= bottom %>;\n' +

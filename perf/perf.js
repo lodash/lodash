@@ -224,6 +224,12 @@
           }, {});\
         }\
       }\
+      if (typeof compact != "undefined") {\
+        var uncompacted = numbers.slice();\
+        uncompacted[2] = false;\
+        uncompacted[6] = null;\
+        uncompacted[18] = "";\
+      }\
       \
       if (typeof countBy != "undefined" || typeof omit != "undefined") {\
         var wordToNumber = {\
@@ -538,6 +544,20 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.compact`')
+      .add(buildName, {
+        'fn': 'lodash.compact(uncompacted)',
+        'teardown': 'function compact(){}'
+      })
+      .add(otherName, {
+        'fn': '_.compact(uncompacted)',
+        'teardown': 'function compact(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.contains` iterating an array')
       .add(buildName, '\
         lodash.contains(numbers, 19)'
@@ -591,6 +611,18 @@
         'fn': '_.countBy(wordToNumber, function(num) { return num >> 1; })',
         'teardown': 'function countBy(){}'
       })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.defaults`')
+      .add(buildName, '\
+        lodash.defaults({ "key2": 2, "key6": 6, "key18": 18 }, object)'
+      )
+      .add(otherName, '\
+        _.defaults({ "key2": 2, "key6": 6, "key18": 18 }, object)'
+      )
   );
 
   /*--------------------------------------------------------------------------*/
@@ -718,6 +750,18 @@
         _.every(object, function(num) {\
           return num + "";\
         })'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.extend`')
+      .add(buildName, '\
+        lodash.extend({}, object)'
+      )
+      .add(otherName, '\
+        _.extend({}, object)'
       )
   );
 

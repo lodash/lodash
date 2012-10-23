@@ -418,7 +418,8 @@
   var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'top': 'callback = createCallback(callback, thisArg)',
-    'loop': 'if (callback(value, index, collection) === false) return result'
+    'arrayLoop': 'if (callback(value, index, collection) === false) return result',
+    'objectLoop': 'if (callback(value, index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `defaults`, and `extend` */
@@ -434,8 +435,7 @@
 
   /** Reusable iterator options for `forIn` and `forOwn` */
   var forOwnIteratorOptions = {
-    'loop': null,
-    'objectLoop': forEachIteratorOptions.loop
+    'arrayLoop': null
   };
 
   /*--------------------------------------------------------------------------*/
@@ -595,7 +595,6 @@
    *  top - A string of code to execute before the iteration branches.
    *  arrayLoop - A string of code to execute in the array loop.
    *  objectLoop - A string of code to execute in the object loop.
-   *  loop - A string of code to execute in the array or object loops.
    *  bottom - A string of code to execute after the iteration branches.
    *
    * @returns {Function} Returns the compiled function.
@@ -614,22 +613,12 @@
       'useHas': true
     };
 
-    var object,
-        index = -1;
-
     // merge options into a template data object
-    while (object = arguments[++index]) {
+    for (var object, index = 0; object = arguments[index]; index++) {
       for (var key in object) {
-        var value = object[key];
-        if (key == 'loop') {
-          data.arrayLoop =
-          data.objectLoop = value;
-        } else {
-          data[key] = value;
-        }
+        data[key] = object[key];
       }
     }
-    // set additional template `data` properties
     var args = data.args;
     data.firstArg = /^[^,]+/.exec(args)[0];
 

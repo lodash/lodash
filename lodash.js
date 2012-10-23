@@ -4109,9 +4109,8 @@
   lodash.take = first;
   lodash.unique = uniq;
 
-  // add pseudo private properties used and removed during the build process
+  // add pseudo private property to be used and removed during the build process
   lodash._iteratorTemplate = iteratorTemplate;
-  lodash._shimKeys = shimKeys;
 
   /*--------------------------------------------------------------------------*/
 

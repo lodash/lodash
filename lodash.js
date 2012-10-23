@@ -3469,19 +3469,17 @@
    * @returns {Function} Returns the new function.
    * @example
    *
-   * var hello = function(name) { return 'hello: ' + name; };
+   * var hello = function(name) { return 'hello ' + name; };
    * hello = _.wrap(hello, function(func) {
    *   return 'before, ' + func('moe') + ', after';
    * });
    * hello();
-   * // => 'before, hello: moe, after'
+   * // => 'before, hello moe, after'
    */
   function wrap(value, wrapper) {
     return function() {
       var args = [value];
-      if (arguments.length) {
-        push.apply(args, arguments);
-      }
+      push.apply(args, arguments);
       return wrapper.apply(this, args);
     };
   }
@@ -3554,9 +3552,8 @@
 
       lodash.prototype[methodName] = function() {
         var args = [this.__wrapped__];
-        if (arguments.length) {
-          push.apply(args, arguments);
-        }
+        push.apply(args, arguments);
+
         var result = func.apply(lodash, args);
         if (this.__chain__) {
           result = new lodash(result);

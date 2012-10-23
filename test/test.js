@@ -1843,8 +1843,6 @@
 
         if (_.indexOf(returnArrays, methodName) > -1) {
           deepEqual(actual, expected, '_.' + methodName + ' returns an array');
-        } else {
-          skipTest(falsey.length);
         }
         ok(pass, '_.' + methodName + ' allows falsey arguments');
       });

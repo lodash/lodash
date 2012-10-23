@@ -6,7 +6,6 @@
  * Available under MIT license <http://lodash.com/license>
  */
 ;(function(window, undefined) {
-  'use strict';
 
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports;
@@ -636,14 +635,14 @@
 
     // create the function factory
     var factory = Function(
-        'bind, createCallback, functions, hasOwnProperty, isArguments, isFunction, ' +
-        'objectTypes, nativeKeys, propertyIsEnumerable, stringClass, toString',
+        'createCallback, hasOwnProperty, isArguments, objectTypes, nativeKeys, ' +
+        'propertyIsEnumerable, stringClass, toString',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      bind, createCallback, functions, hasOwnProperty, isArguments, isFunction,
-      objectTypes, nativeKeys, propertyIsEnumerable, stringClass, toString
+      createCallback, hasOwnProperty, isArguments, objectTypes, nativeKeys,
+      propertyIsEnumerable, stringClass, toString
     );
   }
 
@@ -2485,18 +2484,15 @@
     forIn(properties, function(value, prop) {
       props.push(prop);
     });
-    var propsLength = props.length;
-    if (!propsLength) {
-      return props;
-    }
     return filter(collection, function(object) {
-      var length = propsLength;
+      var length = props.length;
       while (length--) {
-        if (object[props[length]] !== properties[props[length]]) {
-          return false;
+        var result = object[props[length]] === properties[props[length]];
+        if (!result) {
+          break;
         }
       }
-      return true;
+      return !!result;
     });
   }
 
@@ -3173,18 +3169,17 @@
    * jQuery('#lodash_button').on('click', buttonView.onClick);
    * // => When the button is clicked, `this.label` will have the correct value
    */
-  var bindAll = createIterator({
-    'args': 'object',
-    'top':
-      'var funcs = arguments,\n' +
-      '    index = funcs.length > 1 ? 0 : (funcs = functions(object), -1),\n' +
-      '    length = funcs.length;' +
-      'while (++index < length) {\n' +
-      '  value = funcs[index];\n' +
-      '  result[value] = bind(result[value], result)\n' +
-      '}\n' +
-      'return result'
-  });
+  function bindAll(object) {
+    var funcs = arguments,
+        index = funcs.length > 1 ? 0 : (funcs = functions(object), -1),
+        length = funcs.length;
+
+    while (++index < length) {
+      var key = funcs[index];
+      object[key] = bind(object[key], object);
+    }
+    return object;
+  }
 
   /**
    * Creates a function that is the composition of the passed functions,

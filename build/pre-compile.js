@@ -35,14 +35,11 @@
   /** Used to minify `compileIterator` option properties */
   var iteratorOptions = [
     'args',
-    'array',
     'arrayLoop',
     'bottom',
     'firstArg',
     'hasDontEnumBug',
     'isKeysFast',
-    'loop',
-    'object',
     'objectLoop',
     'noArgsEnum',
     'noCharByIndex',
@@ -345,17 +342,11 @@
           modified = modified.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
         }
         else {
-          if (property == 'array' || property == 'object') {
-            // minify "array" and "object" sub property names
-            modified = modified.replace(RegExp("'" + property + "'( *[\\]:])", 'g'), "'" + minNames[index] + "'$1");
-          }
-          else {
-            // minify property name strings
-            modified = modified.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
-            // minify property names in accessors
-            if (isCreateIterator) {
-              modified = modified.replace(RegExp('\\.' + property + '\\b' , 'g'), '.' + minNames[index]);
-            }
+          // minify property name strings
+          modified = modified.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
+          // minify property names in accessors
+          if (isCreateIterator) {
+            modified = modified.replace(RegExp('\\.' + property + '\\b' , 'g'), '.' + minNames[index]);
           }
         }
       });

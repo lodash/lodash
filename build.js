@@ -163,14 +163,11 @@
   /** Used to inline `iteratorTemplate` */
   var iteratorOptions = [
     'args',
-    'array',
     'arrayLoop',
     'bottom',
     'firstArg',
     'hasDontEnumBug',
     'isKeysFast',
-    'loop',
-    'object',
     'objectLoop',
     'noArgsEnum',
     'noCharByIndex',

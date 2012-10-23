@@ -4,4 +4,4 @@ node_js:
   - 0.8
 before_script:
   - "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d | tar xvz -C vendor"
-  - "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/827f406a02626c1c6723e8ae281b6785d36375c1 | tar xvz -C vendor"
+  - "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/9869c4443fb22598235d1019fcc8245be41e8889 | tar xvz -C vendor"

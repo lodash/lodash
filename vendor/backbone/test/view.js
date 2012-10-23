@@ -7,17 +7,20 @@ $(document).ready(function() {
     setup: function() {
       view = new Backbone.View({
         id        : 'test-view',
-        className : 'test-view'
+        className : 'test-view',
+        other     : 'non-special-option'
       });
     }
 
   });
 
-  test("constructor", 4, function() {
+  test("constructor", 6, function() {
     equal(view.el.id, 'test-view');
     equal(view.el.className, 'test-view');
+    equal(view.el.other, void 0);
     equal(view.options.id, 'test-view');
     equal(view.options.className, 'test-view');
+    equal(view.options.other, 'non-special-option');
   });
 
   test("jQuery", 1, function() {

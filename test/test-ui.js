@@ -21,7 +21,7 @@
       case 'lodash-prod':         return 'lodash.min.js';
       case 'lodash-underscore':   return 'lodash.underscore.min.js';
       case 'lodash-custom':       return 'lodash.custom.min.js';
-      case 'lodash-custom-debug': return 'lodash.custom'.js;
+      case 'lodash-custom-debug': return 'lodash.custom.js';
     }
     return 'lodash.js';
   }());

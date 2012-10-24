@@ -42,7 +42,12 @@
   var freeze = Object.freeze;
 
   /** Used to set property descriptors */
-  var setDescriptor = Object.defineProperty;
+  var setDescriptor = (function(fn) {
+    try {
+      var o = {};
+      return fn(o, o, o) && fn;
+    } catch(e) { }
+  }(Object.defineProperty));
 
   /** Shortcut used to convert array-like objects to arrays */
   var slice = [].slice;
@@ -1810,7 +1815,6 @@
       var funcs = _.without.apply(_, [_.functions(_)].concat([
         '_',
         '_iteratorTemplate',
-        '_shimKeys',
         'after',
         'bind',
         'bindAll',

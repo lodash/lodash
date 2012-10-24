@@ -16,12 +16,9 @@
     window = freeGlobal;
   }
 
-  /** Native prototype shortcuts */
-  var ArrayProto = Array.prototype,
-      BoolProto = Boolean.prototype,
-      ObjectProto = Object.prototype,
-      NumberProto = Number.prototype,
-      StringProto = String.prototype;
+  /** Used to access array and object methods */
+  var arrayRef = [],
+      objectRef = {};
 
   /** Used to generate unique IDs */
   var idCounter = 0;
@@ -54,7 +51,7 @@
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
-    (ObjectProto.valueOf + '')
+    (objectRef.valueOf + '')
       .replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
       .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
   );
@@ -79,14 +76,14 @@
 
   /** Native method shortcuts */
   var ceil = Math.ceil,
-      concat = ArrayProto.concat,
+      concat = arrayRef.concat,
       floor = Math.floor,
       getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
-      hasOwnProperty = ObjectProto.hasOwnProperty,
-      push = ArrayProto.push,
-      propertyIsEnumerable = ObjectProto.propertyIsEnumerable,
-      slice = ArrayProto.slice,
-      toString = ObjectProto.toString;
+      hasOwnProperty = objectRef.hasOwnProperty,
+      push = arrayRef.push,
+      propertyIsEnumerable = objectRef.propertyIsEnumerable,
+      slice = arrayRef.slice,
+      toString = objectRef.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
@@ -130,7 +127,7 @@
    * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
    */
   var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
-    ArrayProto.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
+    arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
 
   /** Detect if an `arguments` object's indexes are non-enumerable (IE < 9) */
   var noArgsEnum = true;
@@ -678,6 +675,32 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Checks if `value` is an `arguments` object.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
+   * @example
+   *
+   * (function() { return _.isArguments(arguments); })(1, 2, 3);
+   * // => true
+   *
+   * _.isArguments([1, 2, 3]);
+   * // => false
+   */
+  function isArguments(value) {
+    return toString.call(value) == argsClass;
+  }
+  // fallback for browsers that can't detect `arguments` objects by [[Class]]
+  if (noArgsClass) {
+    isArguments = function(value) {
+      return value ? hasOwnProperty.call(value, 'callee') : false;
+    };
+  }
+
+  /**
    * Iterates over `object`'s own and inherited enumerable properties, executing
    * the `callback` for each property. The `callback` is bound to `thisArg` and
    * invoked with three arguments; (value, key, object). Callbacks may exit iteration
@@ -730,32 +753,6 @@
    * // => alerts '0', '1', and 'length' (order is not guaranteed)
    */
   var forOwn = createIterator(forEachIteratorOptions, forOwnIteratorOptions);
-
-  /**
-   * Checks if `value` is an `arguments` object.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
-   * @example
-   *
-   * (function() { return _.isArguments(arguments); })(1, 2, 3);
-   * // => true
-   *
-   * _.isArguments([1, 2, 3]);
-   * // => false
-   */
-  function isArguments(value) {
-    return toString.call(value) == argsClass;
-  }
-  // fallback for browsers that can't detect `arguments` objects by [[Class]]
-  if (noArgsClass) {
-    isArguments = function(value) {
-      return value ? hasOwnProperty.call(value, 'callee') : false;
-    };
-  }
 
   /**
    * A fallback implementation of `isPlainObject` that checks if a given `value`
@@ -1685,7 +1682,7 @@
     if (isFunc) {
       callback = createCallback(callback, thisArg);
     } else {
-      var props = concat.apply(ArrayProto, arguments);
+      var props = concat.apply(arrayRef, arguments);
     }
     forIn(object, function(value, key, object) {
       if (isFunc
@@ -1749,7 +1746,7 @@
     var result = {};
     if (typeof callback != 'function') {
       var index = 0,
-          props = concat.apply(ArrayProto, arguments),
+          props = concat.apply(arrayRef, arguments),
           length = props.length;
 
       while (++index < length) {
@@ -2528,7 +2525,7 @@
   function difference(array) {
     var index = -1,
         length = array ? array.length : 0,
-        flattened = concat.apply(ArrayProto, arguments),
+        flattened = concat.apply(arrayRef, arguments),
         contains = cachedContains(flattened, length),
         result = [];
 
@@ -2939,7 +2936,7 @@
    */
   function union() {
     var index = -1,
-        flattened = concat.apply(ArrayProto, arguments),
+        flattened = concat.apply(arrayRef, arguments),
         length = flattened.length,
         result = [];
 
@@ -4112,7 +4109,7 @@
 
   // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-    var func = ArrayProto[methodName];
+    var func = arrayRef[methodName];
 
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__;
@@ -4133,7 +4130,7 @@
 
   // add all accessor Array functions to the wrapper.
   forEach(['concat', 'join', 'slice'], function(methodName) {
-    var func = ArrayProto[methodName];
+    var func = arrayRef[methodName];
 
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__,

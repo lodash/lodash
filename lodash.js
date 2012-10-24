@@ -2433,10 +2433,7 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    if (!collection) {
-      return [];
-    }
-    if (typeof collection.length == 'number') {
+    if (collection && typeof collection.length == 'number') {
       return (noArraySliceOnStrings ? toString.call(collection) == stringClass : typeof collection == 'string')
         ? collection.split('')
         : slice.call(collection);
@@ -2529,14 +2526,11 @@
    * // => [1, 3, 4]
    */
   function difference(array) {
-    var result = [];
-    if (!array) {
-      return result;
-    }
     var index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         flattened = concat.apply(ArrayProto, arguments),
-        contains = cachedContains(flattened, length);
+        contains = cachedContains(flattened, length),
+        result = [];
 
     while (++index < length) {
       var value = array[index];

@@ -19,7 +19,7 @@
       postprocess = require('./post-compile'),
       uglifyJS = require('../vendor/uglifyjs/uglify-js');
 
-  /** Closure Compiler command-line options */
+  /** The Closure Compiler command-line options */
   var closureOptions = [
     '--compilation_level=ADVANCED_OPTIMIZATIONS',
     '--warning_level=QUIET'
@@ -135,7 +135,7 @@
         return value.replace(/^(--compilation_level)=.+$/, '$1=SIMPLE_OPTIMIZATIONS');
       });
     }
-    // the standard error stream, standard output stream, and Closure Compiler process
+    // the standard error stream, standard output stream, and the Closure Compiler process
     var error = '',
         output = '',
         compiler = spawn('java', ['-jar', closurePath].concat(options));
@@ -348,7 +348,7 @@
         uglified = this.uglified;
 
     // select the smallest gzipped file and use its minified counterpart as the
-    // official minified release (ties go to Closure Compiler)
+    // official minified release (ties go to the Closure Compiler)
     var min = Math.min(compiled.gzip.length, hybrid.gzip.length, uglified.gzip.length);
 
     // pass the minified source to the minify instances "onComplete" callback

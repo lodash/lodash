@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.8.2 <http://lodash.com>
+ * Lo-Dash v0.9.0 <http://lodash.com>
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.4.2 <http://underscorejs.org>
  * (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
@@ -16,7 +16,7 @@
     window = freeGlobal;
   }
 
-  /** Used to access array and object methods */
+  /** Used for array and object method references */
   var arrayRef = [],
       objectRef = {};
 
@@ -3978,7 +3978,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.8.2';
+  lodash.VERSION = '0.9.0';
 
   // assign static methods
   lodash.after = after;

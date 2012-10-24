@@ -206,7 +206,7 @@
     source || (source = '');
     options || (options = {});
 
-    // remove unrecognized JSDoc tags so Closure Compiler won't complain
+    // remove unrecognized JSDoc tags so the Closure Compiler won't complain
     source = source.replace(/@(?:alias|category)\b.*/g, '');
 
     if (options.isTemplate) {
@@ -216,7 +216,12 @@
     // remove copyright to add later in post-compile.js
     source = source.replace(/\/\*![\s\S]+?\*\//, '');
 
-    // add brackets to whitelisted properties so Closure Compiler won't mung them
+    // replace `arrayRef` and `objectRef` values to avoid a bug in the Closure Compiler
+    source = source
+      .replace(/(arrayRef *= *)\[\]/, '$1Array.prototype')
+      .replace(/(objectRef *= *)\{\}/, '$1Object.prototype');
+
+    // add brackets to whitelisted properties so the Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");
 
@@ -314,7 +319,7 @@
           isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
           modified = snippet;
 
-      // add brackets to whitelisted properties so Closure Compiler won't mung them
+      // add brackets to whitelisted properties so the Closure Compiler won't mung them
       modified = modified.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
 
       if (isCreateIterator) {

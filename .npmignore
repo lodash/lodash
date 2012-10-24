@@ -15,8 +15,11 @@ vendor/benchmark.js/*.jar
 vendor/closure-compiler
 vendor/docdown
 vendor/firebug-lite/
+vendor/json3/
 vendor/jquery/
 vendor/qunit/qunit/*.css
+vendor/qunit/qunit/*-1.8.0.js
 vendor/requirejs/
+vendor/underscore/*-min.js
 vendor/uglifyjs
 vendor/underscore/test/

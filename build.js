@@ -12,14 +12,14 @@
   /** The current working directory */
   var cwd = process.cwd();
 
-  /** Shortcut to native `Array.prototype` */
-  var ArrayProto = Array.prototype;
+  /** Used for array method references */
+  var arrayRef = [];
 
   /** Shortcut used to push arrays of values to an array */
-  var push = ArrayProto.push;
+  var push = arrayRef.push;
 
   /** Shortcut used to convert array-like objects to arrays */
-  var slice = ArrayProto.slice;
+  var slice = arrayRef.slice;
 
   /** Shortcut to the `stdout` object */
   var stdout = process.stdout;
@@ -792,7 +792,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a debug and minified build, executing the `callback` for each.
+   * Creates a debug and/or minified build, executing the `callback` for each.
    * The `callback` is invoked with two arguments; (filePath, outputSource).
    *
    * Note: For a list of commands see `displayHelp()` or run `lodash --help`.
@@ -1065,7 +1065,7 @@
           '  function difference(array) {',
           '    var index = -1,',
           '        length = array.length,',
-          '        flattened = concat.apply(ArrayProto, arguments),',
+          '        flattened = concat.apply(arrayRef, arguments),',
           '        result = [];',
           '',
           '    while (++index < length) {',
@@ -1121,7 +1121,7 @@
         // replace `_.omit`
         source = source.replace(/^( +)function omit[\s\S]+?\n\1}/m, [
           '  function omit(object) {',
-          '    var props = concat.apply(ArrayProto, arguments),',
+          '    var props = concat.apply(arrayRef, arguments),',
           '        result = {};',
           '',
           '    forIn(object, function(value, key) {',
@@ -1137,7 +1137,7 @@
         source = source.replace(/^( +)function pick[\s\S]+?\n\1}/m, [
           '  function pick(object) {',
           '    var index = 0,',
-          '        props = concat.apply(ArrayProto, arguments),',
+          '        props = concat.apply(arrayRef, arguments),',
           '        length = props.length,',
           '        result = {};',
           '',
@@ -1647,10 +1647,6 @@
         'isTemplate': isTemplate,
         'outputPath': outputPath,
         'onComplete': function(source) {
-          // correct overly aggressive Closure Compiler minification
-          if (!isTemplate) {
-            source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
-          }
           // inject "use strict" directive
           if (isStrict) {
             source = source.replace(/^([\s\S]*?function[^{]+{)([^'"])/, '$1"use strict";$2');

@@ -217,65 +217,6 @@ require({
  * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v0.8.2/test/test.js#L865-867)]
  * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v0.8.2/test/test.js#L1243-1246)]
 
-## Optimized methods <sup>(50+)</sup>
-
- * `_.bind`
- * `_.bindAll`
- * `_.compact`
- * `_.contains`, `_.include`
- * `_.defaults`
- * `_.difference`
- * `_.each`
- * `_.every`, `_.all`
- * `_.extend`
- * `_.filter`, `_.select`
- * `_.find`, `_.detect`
- * `_.flatten`
- * `_.forEach`, `_.each`
- * `_.functions`, `_.methods`
- * `_.groupBy`
- * `_.indexOf`
- * `_.intersection`
- * `_.invert`
- * `_.invoke`
- * `_.isArguments`
- * `_.isDate`
- * `_.isFinite`
- * `_.isFunction`
- * `_.isObject`
- * `_.isNumber`
- * `_.isRegExp`
- * `_.isString`
- * `_.keys`
- * `_.lastIndexOf`
- * `_.map`, `_.collect`
- * `_.max`
- * `_.memoize`
- * `_.min`
- * `_.mixin`
- * `_.omit`
- * `_.pairs`
- * `_.pick`
- * `_.pluck`
- * `_.reduce`, `_.foldl`, `_.inject`
- * `_.reject`
- * `_.result`
- * `_.shuffle`
- * `_.some`, `_.any`
- * `_.sortBy`
- * `_.sortedIndex`
- * `_.template`
- * `_.throttle`
- * `_.toArray`
- * `_.union`
- * `_.uniq`, `_.unique`
- * `_.values`
- * `_.where`
- * `_.without`
- * `_.wrap`
- * `_.zip`
- * plus all `_(…)` method wrappers
-
 ## Release Notes
 
 ### <sup>v0.8.2</sup>

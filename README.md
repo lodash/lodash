@@ -10,7 +10,7 @@ Lo-Dash’s performance is gained by avoiding slower native methods, instead opt
  * [Development build](https://raw.github.com/bestiejs/lodash/v0.9.0/lodash.js)
  * [Production build](https://raw.github.com/bestiejs/lodash/v0.9.0/lodash.min.js)
  * [Underscore build](https://raw.github.com/bestiejs/lodash/v0.9.0/lodash.underscore.min.js) tailored for projects already using Underscore
- * CDN copies of ≤ [v0.9.0](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.9.0/lodash.min.js) are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
+ * CDN copies of ≤ v0.9.0’s [Production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.9.0/lodash.min.js), [Underscore](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.9.0/lodash.underscore.min.js), and [Development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.9.0/lodash.js) builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
  * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
 ## Dive in
@@ -226,12 +226,12 @@ require({
  * Expanded `_.isFinite` to return `true` for numeric strings
  * Reduced `_.intersection`, `_.omit`, `_.pick`, `_.sortedIndex`, and `_.where`
  * Reduced the `npm` package file size by only downloading the minifiers for global installs
- * Reduced Lo-Dash's file size
- * Removed compilation from `_.bindAll`, `_.contains`, `_.countBy`, `_.every`,
-   `_.filter`, `_.find`, `_.functions`, `_.groupBy`, `_.invert`, `_.invoke`,
-   `_.isEmpty`, `_.map`, `_.merge`, `_.omit`, `_.pairs`, `_.pick`, `_.pluck`,
-   `_.reduce`, `_.reject`, `_.some`, `_.sortBy`, `_.values`, `_.where`, and
-   internal `shimKeys`
+ * Reduced Lo-Dash’s file size
+ * Improved source code comprehension by removing compilation from `_.bindAll`,
+   `_.contains`, `_.countBy`, `_.every`, `_.filter`, `_.find`, `_.functions`,
+   `_.groupBy`, `_.invert`, `_.invoke`, `_.isEmpty`, `_.map`, `_.merge`, `_.omit`,
+   `_.pairs`, `_.pick`, `_.pluck`, `_.reduce`, `_.reject`, `_.some`, `_.sortBy`,
+   `_.values`, `_.where`, and internal `shimKeys`
 
 The full changelog is available [here](https://github.com/bestiejs/lodash/wiki/Changelog).
 

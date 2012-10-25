@@ -632,20 +632,22 @@
         vm.runInContext(source, context);
         var lodash = context._;
 
-        lodash.each(array, function(value) {
-          last = value;
-          return false;
-        });
-
-        var object = { 'fn': lodash.bind(function(x) { return this.x + x; }, { 'x': 1 }, 1) };
+        var object = { 'fn': lodash.bind(function(foo) { return foo + this.bar; }, { 'bar': 1 }, 1) };
         equal(object.fn(), 2, '_.bind: ' + basename);
 
-        ok(lodash.clone(array, true)[0] === array[0], '_.clone: ' + basename);
-        equal(last.value, 2, '_.each: ' + basename);
+        ok(lodash.clone(array, true)[0] === array[0], '_.clone should be shallow: ' + basename);
         equal(lodash.every([true, false, true]), false, '_.every: ' + basename);
 
         object = { 'length': 0, 'splice': Array.prototype.splice };
         equal(lodash.isEmpty(object), false, '_.isEmpty: ' + basename);
+
+        var actual = lodash.forEach(array, function(value) {
+          last = value;
+          return false;
+        });
+
+        equal(last.value, 2, '_.forEach should not exit early: ' + basename);
+        equal(actual, undefined, '_.forEach should return undefined: ' + basename);
 
         // avoid issues comparing objects with `deepEqual`
         object = { 'a': 1, 'b': 2, 'c': 3 };

@@ -1327,6 +1327,11 @@
             });
           }());
 
+          // remove chainability from `_.forEach`
+          source = source.replace(matchFunction(source, 'forEach'), function(match) {
+            return match.replace(/return result([};\s]+)$/, '$1');
+          });
+
           // unexpose "exit early" feature from `_.forEach`, `_.forIn`, and `_.forOwn`
           _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
             source = source.replace(matchFunction(source, methodName), function(match) {

@@ -2935,18 +2935,7 @@
    * // => [1, 2, 3, 101, 10]
    */
   function union() {
-    var index = -1,
-        flattened = concat.apply(arrayRef, arguments),
-        length = flattened.length,
-        result = [];
-
-    while (++index < length) {
-      var value = flattened[index];
-      if (indexOf(result, value) < 0) {
-        result.push(value);
-      }
-    }
-    return result;
+    return uniq(concat.apply(arrayRef, arguments));
   }
 
   /**
@@ -2983,7 +2972,7 @@
     var index = -1,
         length = array ? array.length : 0,
         result = [],
-        seen = [];
+        seen = result;
 
     // juggle arguments
     if (typeof isSorted == 'function') {
@@ -2991,15 +2980,22 @@
       callback = isSorted;
       isSorted = false;
     }
-    callback = createCallback(callback, thisArg);
+    if (callback) {
+      seen = [];
+      callback = createCallback(callback, thisArg);
+    }
     while (++index < length) {
-      var computed = callback(array[index], index, array);
+      var value = array[index],
+          computed = callback ? callback(value, index, array) : value;
+
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
             : indexOf(seen, computed) < 0
           ) {
-        seen.push(computed);
-        result.push(array[index]);
+        if (callback) {
+          seen.push(computed);
+        }
+        result.push(value);
       }
     }
     return result;

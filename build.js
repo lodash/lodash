@@ -149,7 +149,7 @@
     'times': [],
     'toArray': ['values'],
     'unescape': [],
-    'union': ['indexOf'],
+    'union': ['uniq'],
     'uniq': ['identity', 'indexOf'],
     'uniqueId': [],
     'value': ['mixin'],

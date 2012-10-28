@@ -348,6 +348,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.every');
+
+  (function() {
+    test('should return `false` as soon as the `callback` result is falsey', function() {
+      equal(_.every([true, null, true], _.identity), false);
+    });
+  }());
+  
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.extend');
 
   (function() {
@@ -1392,6 +1402,17 @@
       equal(_.size(shadowed), 7);
     });
   }(1, 2, 3));
+
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.some');
+
+  (function() {
+    test('should return `true` as soon as the `callback` result is truthy', function() {
+      equal(_.some([null, true, null], _.identity), true);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

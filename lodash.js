@@ -1883,9 +1883,9 @@
     var result = true;
     callback = createCallback(callback, thisArg);
     forEach(collection, function(value, index, collection) {
-      return (result = callback(value, index, collection));
+      return (result = !!callback(value, index, collection));
     });
-    return !!result;
+    return result;
   }
 
   /**

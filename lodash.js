@@ -2087,7 +2087,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the maximum value.
@@ -2136,7 +2136,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the minimum value.
@@ -2299,7 +2299,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array} collection The collection to shuffle.
+   * @param {Array|Object|String} collection The collection to shuffle.
    * @returns {Array} Returns a new shuffled collection.
    * @example
    *

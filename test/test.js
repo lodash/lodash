@@ -1646,12 +1646,12 @@
 
       var throttled = _.throttle(function() {
         times.push(new Date - now);
-      }, 20);
+      }, 40);
 
-      setTimeout(throttled, 20);
-      setTimeout(throttled, 20);
       setTimeout(throttled, 40);
       setTimeout(throttled, 40);
+      setTimeout(throttled, 80);
+      setTimeout(throttled, 80);
 
       setTimeout(function() {
         var actual = _.every(times, function(value, index) {
@@ -1662,7 +1662,7 @@
 
         ok(actual);
         QUnit.start();
-      }, 120);
+      }, 260);
     });
   }());
 

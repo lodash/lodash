@@ -89,6 +89,7 @@
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
+      nativeIsNaN = window.isNaN,
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
@@ -1337,7 +1338,7 @@
    * // => false
    */
   function isFinite(value) {
-    return nativeIsFinite(value ? +value : parseFloat(value));
+    return nativeIsFinite(value) && !nativeIsNaN(parseFloat(value));
   }
 
   /**

@@ -295,17 +295,17 @@
 
   (function() {
     asyncTest('subsequent debounced calls return the last `func` result', function() {
-      var debounced = _.debounce(function(value) { return value; }, 100);
+      var debounced = _.debounce(function(value) { return value; }, 90);
       debounced('x');
 
       setTimeout(function() {
         equal(debounced('y'), 'x');
         QUnit.start();
-      }, 220);
+      }, 120);
     });
 
     test('subsequent "immediate" debounced calls return the last `func` result', function() {
-      var debounced = _.debounce(function(value) { return value; }, 100, true),
+      var debounced = _.debounce(function(value) { return value; }, 90, true),
           result = [debounced('x'), debounced('y')];
 
       deepEqual(result, ['x', 'x']);
@@ -1626,7 +1626,7 @@
 
   (function() {
     test('subsequent calls should return the result of the first call', function() {
-      var throttled = _.throttle(function(value) { return value; }, 100),
+      var throttled = _.throttle(function(value) { return value; }, 90),
           result = [throttled('x'), throttled('y')];
 
       deepEqual(result, ['x', 'x']);
@@ -1634,9 +1634,9 @@
 
     test('supports calls in a loop', function() {
       var counter = 0,
-          throttled = _.throttle(function() { counter++; }, 100),
+          throttled = _.throttle(function() { counter++; }, 90),
           start = new Date,
-          limit = 220;
+          limit = 180;
 
       while ((new Date - start) < limit) {
         throttled();
@@ -1651,12 +1651,12 @@
         if (counter < 4) {
           throttled();
         }
-      }, 100);
+      }, 90);
 
       setTimeout(function() {
         ok(counter > 1);
         QUnit.start();
-      }, 220);
+      }, 180);
 
       throttled();
     });
@@ -1667,12 +1667,12 @@
 
       var throttled = _.throttle(function() {
         times.push(new Date - now);
-      }, 40);
+      }, 32);
 
-      setTimeout(throttled, 40);
-      setTimeout(throttled, 40);
-      setTimeout(throttled, 80);
-      setTimeout(throttled, 80);
+      setTimeout(throttled, 32);
+      setTimeout(throttled, 32);
+      setTimeout(throttled, 64);
+      setTimeout(throttled, 64);
 
       setTimeout(function() {
         var actual = _.every(times, function(value, index) {

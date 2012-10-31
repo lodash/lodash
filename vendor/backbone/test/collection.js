@@ -701,4 +701,19 @@ $(document).ready(function() {
     collection.add([{id: 1, x: 1}, {id: 2, x: 2}]);
     deepEqual(added, [1, 2]);
   });
+
+  test("fetch parses models by default", 1, function() {
+    var model = {};
+    var Collection = Backbone.Collection.extend({
+      url: 'test',
+      model: Backbone.Model.extend({
+        parse: function(resp) {
+          strictEqual(resp, model);
+        }
+      })
+    });
+    new Collection().fetch();
+    this.ajaxSettings.success([model]);
+  });
+
 });

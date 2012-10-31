@@ -774,6 +774,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isFinite');
+
+  (function() {
+    test('should return `false` for non-numeric values', function() {
+      equal(_.isFinite(null), false);
+      equal(_.isFinite([]), false);
+      equal(_.isFinite(true), false);
+      equal(_.isFinite(''), false);
+      equal(_.isFinite(' '), false);
+      equal(_.isFinite('2px'), false);
+    });
+    
+    test('should return `true` for numeric string values', function() {
+      equal(_.isFinite('2'), true);
+      equal(_.isFinite('0'), true);
+      equal(_.isFinite('08'), true);
+    });
+  }());
+  
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isObject');
 
   (function() {

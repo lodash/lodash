@@ -261,15 +261,16 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
-    set: function(attrs, options) {
-      var attr, key, val;
-      if (attrs == null) return this;
+    set: function(key, val, options) {
+      var attr, attrs;
+      if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (!_.isObject(attrs)) {
-        key = attrs;
-        (attrs = {})[key] = options;
-        options = arguments[2];
+      if (_.isObject(key)) {
+        attrs = key;
+        options = val;
+      } else {
+        (attrs = {})[key] = val;
       }
 
       // Extract attributes and options.
@@ -352,14 +353,15 @@
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save: function(attrs, options) {
-      var key, current, done;
+    save: function(key, val, options) {
+      var attrs, current, done;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (attrs != null && !_.isObject(attrs)) {
-        key = attrs;
-        (attrs = {})[key] = options;
-        options = arguments[2];
+      if (key == null || _.isObject(key)) {
+        attrs = key;
+        options = val;
+      } else if (key != null) {
+        (attrs = {})[key] = val;
       }
       options = options ? _.clone(options) : {};
 
@@ -948,8 +950,7 @@
       if (!this.routes) return;
       var route, routes = _.keys(this.routes);
       while ((route = routes.pop()) != null) {
-        var name = this.routes[route];
-        this.route(route, name, this[name]);
+        this.route(route, this.routes[route]);
       }
     },
 

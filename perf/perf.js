@@ -1577,11 +1577,11 @@
     Benchmark.Suite('`_.times`')
       .add(buildName, '\
         var result = [];\
-        lodash.times(length, function(n) { result.push(n); })'
+        lodash.times(limit, function(n) { result.push(n); })'
       )
       .add(otherName, '\
         var result = [];\
-        _.times(length, function(n) { result.push(n); })'
+        _.times(limit, function(n) { result.push(n); })'
       )
   );
 
@@ -1589,11 +1589,11 @@
     Benchmark.Suite('`_.times` with `thisArg`')
       .add(buildName, '\
         var result = [];\
-        lodash.times(length, function(n) { result.push(this.sin(n)); }, Math)'
+        lodash.times(limit, function(n) { result.push(this.sin(n)); }, Math)'
       )
       .add(otherName, '\
         var result = [];\
-        _.times(length, function(n) { result.push(this.sin(n)); }, Math)'
+        _.times(limit, function(n) { result.push(this.sin(n)); }, Math)'
       )
   );
 

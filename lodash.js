@@ -436,7 +436,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a function optimized for searching large arrays for a given `value`,
+   * Creates a function optimized to search large arrays for a given `value`,
    * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
    *
    * @private
@@ -2981,6 +2981,11 @@
       callback = isSorted;
       isSorted = false;
     }
+    // init value cache for large arrays
+    var isLarge = !isSorted && length > 74;
+    if (isLarge) {
+      var cache = {};
+    }
     if (callback) {
       seen = [];
       callback = createCallback(callback, thisArg);
@@ -2989,11 +2994,15 @@
       var value = array[index],
           computed = callback ? callback(value, index, array) : value;
 
+      if (isLarge) {
+        var key = computed + '';
+        seen = hasOwnProperty.call(cache, key) ? cache[key] : (cache[key] = []);
+      }
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
             : indexOf(seen, computed) < 0
           ) {
-        if (callback) {
+        if (callback || isLarge) {
           seen.push(computed);
         }
         result.push(value);

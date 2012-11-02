@@ -1657,6 +1657,42 @@
       )
   );
 
+  suites.push(
+    Benchmark.Suite('`_.uniq` iterating an array of 50 elements')
+      .add(buildName, {
+        'fn': 'lodash.uniq(twentyFiveValues.concat(twentyFiveValues2));',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.uniq(twentyFiveValues.concat(twentyFiveValues2));',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.uniq` iterating an array of 75 elements')
+      .add(buildName, {
+        'fn': 'lodash.uniq(fiftyValues.concat(twentyFiveValues2));',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.uniq(fiftyValues.concat(twentyFiveValues2));',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.uniq` iterating an array of 100 elements')
+      .add(buildName, {
+        'fn': 'lodash.uniq(seventyFiveValues.concat(twentyFiveValues2));',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.uniq(seventyFiveValues.concat(twentyFiveValues2));',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
   /*--------------------------------------------------------------------------*/
 
   suites.push(

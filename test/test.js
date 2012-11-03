@@ -355,7 +355,7 @@
       equal(_.every([true, null, true], _.identity), false);
     });
   }());
-  
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.extend');
@@ -785,14 +785,14 @@
       equal(_.isFinite(' '), false);
       equal(_.isFinite('2px'), false);
     });
-    
+
     test('should return `true` for numeric string values', function() {
       equal(_.isFinite('2'), true);
       equal(_.isFinite('0'), true);
       equal(_.isFinite('08'), true);
     });
   }());
-  
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.isObject');
@@ -1753,6 +1753,13 @@
       }, Math);
 
       deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should distinguish between numbers and numeric strings', function() {
+      var expected = ['2', 2, Object('2'), Object(2)],
+          actual = _.uniq(expected);
+
+      deepEqual(actual, expected);
     });
   }());
 

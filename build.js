@@ -1151,6 +1151,36 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.uniq`
+        source = source.replace(/^( +)function uniq[\s\S]+?\n\1}/m, [
+          '  function uniq(array, isSorted, callback, thisArg) {',
+          '    var index = -1,',
+          '        length = array ? array.length : 0,',
+          '        result = [],',
+          '        seen = result;',
+          '',
+          '    if (callback) {',
+          '      seen = [];',
+          '      callback = createCallback(callback, thisArg);',
+          '    }',
+          '    while (++index < length) {',
+          '      var value = array[index],',
+          '          computed = callback ? callback(value, index, array) : value;',
+          '',
+          '      if (isSorted',
+          '            ? !index || seen[seen.length - 1] !== computed',
+          '            : indexOf(seen, computed) < 0',
+          '          ) {',
+          '        if (callback) {',
+          '          seen.push(computed);',
+          '        }',
+          '        result.push(value);',
+          '      }',
+          '    }',
+          '    return result;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.without`
         source = source.replace(/^( +)function without[\s\S]+?\n\1}/m, [
           '  function without(array) {',
@@ -1176,11 +1206,6 @@
 
         // simplify DOM node check from `_.isEqual`
         source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
-
-        // remove arguments juggling from `_.uniq`
-        source = source.replace(matchFunction(source, 'uniq'), function(match) {
-          return match.replace(/(?: *\/\/.*\n)*( +)if *\(typeof isSorted[^}]+?}\n/, '');
-        });
 
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {

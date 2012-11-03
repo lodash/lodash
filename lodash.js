@@ -450,12 +450,12 @@
     fromIndex || (fromIndex = 0);
 
     var length = array.length,
-        isLarge = (length - fromIndex) >= (largeSize || largeArraySize),
-        cache = isLarge ? {} : array;
+        isLarge = (length - fromIndex) >= (largeSize || largeArraySize);
 
     if (isLarge) {
-      // init value cache
-      var index = fromIndex - 1;
+      var cache = {},
+          index = fromIndex - 1;
+
       while (++index < length) {
         // manually coerce `value` to string because `hasOwnProperty`, in some
         // older versions of Firefox, coerces objects incorrectly
@@ -468,7 +468,7 @@
         var key = value + '';
         return hasOwnProperty.call(cache, key) && indexOf(cache[key], value) > -1;
       }
-      return indexOf(cache, value, fromIndex) > -1;
+      return indexOf(array, value, fromIndex) > -1;
     }
   }
 

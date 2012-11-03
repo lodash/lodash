@@ -46,7 +46,8 @@
     "rhino"
   ],
   "jam": {
-    "main": "./lodash.js"
+    "main": "./lodash.js",
+    "dependencies": {}
   },
   "scripts": {
     "build": "node build",

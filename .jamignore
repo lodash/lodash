@@ -1,9 +1,11 @@
 .*
 *.custom.*
+*.md
+*.txt
 build.js
 index.js
 build/
-doc/*.php
+doc/
 node_modules/
 perf/
 test/

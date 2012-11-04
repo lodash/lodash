@@ -889,4 +889,12 @@ $(document).ready(function() {
     deepEqual(changes, ['a',1,'item']);
   });
 
+  test("#1791 - `attributes` is available for `parse`", function() {
+    var Model = Backbone.Model.extend({
+      parse: function() { this.has('a'); } // shouldn't throw an error
+    });
+    var model = new Model(null, {parse: true});
+    expect(0);
+  });
+
 });

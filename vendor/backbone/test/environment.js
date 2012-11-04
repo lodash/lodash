@@ -8,6 +8,10 @@
 
     sync: Backbone.sync,
 
+    emulateHTTP: Backbone.emulateHTTP,
+
+    emulateJSON: Backbone.emulateJSON,
+
     setup: function() {
       var env = this;
 
@@ -32,6 +36,8 @@
       this.ajaxSettings = null;
       Backbone.sync = this.sync;
       Backbone.ajax = this.ajax;
+      Backbone.emulateHTTP = this.emulateHTTP;
+      Backbone.emulateJSON = this.emulateJSON;
     }
 
   });

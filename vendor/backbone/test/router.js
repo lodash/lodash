@@ -492,4 +492,9 @@ $(document).ready(function() {
     new Router;
   });
 
+  test("#1794 - Trailing space in fragments.", 1, function() {
+    var history = new Backbone.History;
+    strictEqual(history.getFragment('fragment   '), 'fragment');
+  });
+
 });

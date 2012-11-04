@@ -1645,6 +1645,12 @@
 
       equal(compiled({ 'value': true }), expected);
     });
+
+    test('should parse ES6 template delimiters', function() {
+      var data = { 'value': 2 };
+      equal(_.template('1${value}3', data), '123');
+      equal(_.template('${"{" + value + "\\}"}', data), '{2}');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -457,7 +457,7 @@
           index = fromIndex - 1;
 
       while (++index < length) {
-        // manually coerce `value` to string because `hasOwnProperty`, in some
+        // manually coerce `value` to a string because `hasOwnProperty`, in some
         // older versions of Firefox, coerces objects incorrectly
         var key = array[index] + '';
         (hasOwnProperty.call(cache, key) ? cache[key] : (cache[key] = [])).push(array[index]);
@@ -3004,8 +3004,9 @@
           computed = callback ? callback(value, index, array) : value;
 
       if (isLarge) {
-        var key = computed + '';
-        seen = hasOwnProperty.call(cache, key) ? cache[key] : (cache[key] = []);
+        // manually coerce `computed` to a string because `hasOwnProperty`, in
+        // some older versions of Firefox, coerces objects incorrectly
+        seen = hasOwnProperty.call(cache, computed + '') ? cache[computed] : (cache[computed] = []);
       }
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
@@ -3697,7 +3698,7 @@
    *
    * // using custom template delimiters
    * _.templateSettings = {
-   *   'interpolate': /\{\{([\s\S]+?)\}\}/g
+   *   'interpolate': /{{([\s\S]+?)}}/g
    * };
    *
    * _.template('hello {{ name }}!', { 'name': 'mustache' });
@@ -3744,11 +3745,18 @@
     // compile regexp to match each delimiter
     var reDelimiters = RegExp(
       (options.escape || settings.escape || reNoMatch).source + '|' +
-      (options.interpolate || settings.interpolate || reNoMatch).source + '|' +
+      (options.interpolate || settings.interpolate || reNoMatch).source +
+
+      // match ES6 template delimiters
+      // http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6
+      '|\\$\\{((?:(?=\\\\?)\\\\?[\\s\\S])*?)}|' +
+
       (options.evaluate || settings.evaluate || reNoMatch).source + '|$'
     , 'g');
 
-    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {
+    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, es6TemplateValue, evaluateValue, offset) {
+      interpolateValue || (interpolateValue = es6TemplateValue);
+
       // escape characters that cannot be included in string literals
       source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);
 

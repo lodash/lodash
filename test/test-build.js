@@ -636,6 +636,7 @@
         equal(object.fn(), 2, '_.bind: ' + basename);
 
         ok(lodash.clone(array, true)[0] === array[0], '_.clone should be shallow: ' + basename);
+        equal(lodash.contains([1, 2, 3], 1, 2), true, '_.contains should ignore `fromIndex`: ' + basename);
         equal(lodash.every([true, false, true]), false, '_.every: ' + basename);
 
         object = { 'length': 0, 'splice': Array.prototype.splice };

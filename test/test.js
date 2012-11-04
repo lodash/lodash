@@ -263,6 +263,33 @@
 
   (function() {
     _.each({
+      'an array': [1, 2, 3, 1, 2, 3],
+      'an object': { 'a': 1, 'b': 2, 'c': 3, 'd': 1, 'e': 2, 'f': 3 },
+      'a string': '123123'
+    },
+    function(collection, key) {
+      test('should work with ' + key + ' and a positive `fromIndex`', function() {
+        equal(_.contains(collection, 1, 2), true);
+      });
+
+      test('should work with ' + key + ' and a `fromIndex` >= collection\'s length', function() {
+        equal(_.contains(collection, 1, 6), false);
+        equal(_.contains(collection, undefined, 6), false);
+        equal(_.contains(collection, 1, 8), false);
+        equal(_.contains(collection, undefined, 8), false);
+      });
+
+      test('should work with ' + key + ' and a negative `fromIndex`', function() {
+        equal(_.contains(collection, 2, -3), true);
+      });
+
+      test('should work with ' + key + ' and a negative `fromIndex` <= negative collection\'s length', function() {
+        equal(_.contains(collection, 1, -6), true);
+        equal(_.contains(collection, 2, -8), true);
+      });
+    });
+
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },

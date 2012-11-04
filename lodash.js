@@ -442,7 +442,7 @@
    * @private
    * @param {Array} array The array to search.
    * @param {Mixed} value The value to search for.
-   * @param {Number} [fromIndex=0] The index to start searching from.
+   * @param {Number} [fromIndex=0] The index to search from.
    * @param {Number} [largeSize=30] The length at which an array is considered large.
    * @returns {Boolean} Returns `true` if `value` is found, else `false`.
    */
@@ -1792,7 +1792,8 @@
 
   /**
    * Checks if a given `target` element is present in a `collection` using strict
-   * equality for comparisons, i.e. `===`.
+   * equality for comparisons, i.e. `===`. If `fromIndex` is negative, it is used
+   * as the offset from the end of the collection.
    *
    * @static
    * @memberOf _
@@ -1800,11 +1801,15 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Mixed} target The value to check for.
+   * @param {Number} [fromIndex=0] The index to search from.
    * @returns {Boolean} Returns `true` if the `target` element is found, else `false`.
    * @example
    *
-   * _.contains([1, 2, 3], 3);
+   * _.contains([1, 2, 3], 1);
    * // => true
+   *
+   * _.contains([1, 2, 3], 1, 2);
+   * // => false
    *
    * _.contains({ 'name': 'moe', 'age': 40 }, 'moe');
    * // => true
@@ -1812,16 +1817,19 @@
    * _.contains('curly', 'ur');
    * // => true
    */
-  function contains(collection, target) {
-    var length = collection ? collection.length : 0;
+  function contains(collection, target, fromIndex) {
+    var index = -1,
+        length = collection ? collection.length : 0;
+
+    fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
     if (typeof length == 'number') {
       return (toString.call(collection) == stringClass
-        ? collection.indexOf(target)
-        : indexOf(collection, target)
+        ? collection.indexOf(target, fromIndex)
+        : indexOf(collection, target, fromIndex)
       ) > -1;
     }
     return some(collection, function(value) {
-      return value === target;
+      return ++index >= fromIndex && value === target;
     });
   }
 
@@ -2610,8 +2618,8 @@
    * @category Arrays
    * @param {Array} array The array to search.
    * @param {Mixed} value The value to search for.
-   * @param {Boolean|Number} [fromIndex=0] The index to start searching from or
-   *  `true` to perform a binary search on a sorted `array`.
+   * @param {Boolean|Number} [fromIndex=0] The index to search from or `true` to
+   *  perform a binary search on a sorted `array`.
    * @returns {Number} Returns the index of the matched value or `-1`.
    * @example
    *
@@ -2726,15 +2734,16 @@
   }
 
   /**
-   * Gets the index at which the last occurrence of `value` is found using
-   * strict equality for comparisons, i.e. `===`.
+   * Gets the index at which the last occurrence of `value` is found using strict
+   * equality for comparisons, i.e. `===`. If `fromIndex` is negative, it is used
+   * as the offset from the end of the collection.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to search.
    * @param {Mixed} value The value to search for.
-   * @param {Number} [fromIndex=array.length-1] The index to start searching from.
+   * @param {Number} [fromIndex=array.length-1] The index to search from.
    * @returns {Number} Returns the index of the matched value or `-1`.
    * @example
    *

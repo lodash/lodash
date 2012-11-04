@@ -1060,6 +1060,16 @@
           ].join('\n'));
         }
 
+        // replace `_.contains`
+        source = source.replace(/^( +)function contains[\s\S]+?\n\1}/m, [
+          '  function contains(collection, target) {',
+          '    var length = collection ? collection.length : 0;',
+          "    return typeof length == 'number'",
+          '      ? indexOf(collection, target) > -1',
+          '      : some(collection, function(value) { return value === target; });',
+          '  }'
+        ].join('\n'));
+
         // replace `_.difference`
         source = source.replace(/^( +)function difference[\s\S]+?\n\1}/m, [
           '  function difference(array) {',
@@ -1197,9 +1207,6 @@
           '    return result',
           '  }'
         ].join('\n'));
-
-        // remove string support from `_.contains`
-        source = source.replace(/return *\(toString\.call.+?stringClass[\s\S]+?;/, 'return indexOf(collection, target) > -1;');
 
         // remove `arguments` object check from `_.isEqual`
         source = source.replace(/ *\|\| *className *== *argsClass/, '');
@@ -1382,7 +1389,7 @@
               '',
               '    var index = 0,',
               '        source = "__p += \'",',
-              "        variable = options.variable;",
+              '        variable = options.variable;',
               '',
               '    var reDelimiters = RegExp(',
               "      (options.escape || reNoMatch).source + '|' +",

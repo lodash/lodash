@@ -496,7 +496,7 @@ The opposite of `_.initial`, this method gets all but the first value of `array`
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
-2. `[n]` *(Number)*: The number of elements to return.
+2. `[n]` *(Number)*: The number of elements to exclude at the head of the `array`.
 
 #### Returns
 *(Array)*: Returns all but the first value or `n` values of `array`.

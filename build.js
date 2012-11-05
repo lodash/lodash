@@ -1128,6 +1128,13 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.isFinite`
+        source = source.replace(/^( +)function isFinite[\s\S]+?\n\1}/m, [
+          '  function isFinite(value) {',
+          '    return nativeIsFinite(value) && toString.call(value) == numberClass;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.omit`
         source = source.replace(/^( +)function omit[\s\S]+?\n\1}/m, [
           '  function omit(object) {',

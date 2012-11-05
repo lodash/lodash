@@ -639,24 +639,25 @@
         equal(lodash.contains([1, 2, 3], 1, 2), true, '_.contains should ignore `fromIndex`: ' + basename);
         equal(lodash.every([true, false, true]), false, '_.every: ' + basename);
 
-        object = { 'length': 0, 'splice': Array.prototype.splice };
-        equal(lodash.isEmpty(object), false, '_.isEmpty: ' + basename);
-
         var actual = lodash.forEach(array, function(value) {
           last = value;
           return false;
         });
 
         equal(last.value, 2, '_.forEach should not exit early: ' + basename);
-        equal(actual, undefined, '_.forEach should return undefined: ' + basename);
+        equal(actual, undefined, '_.forEach should return `undefined`: ' + basename);
+
+        object = { 'length': 0, 'splice': Array.prototype.splice };
+        equal(lodash.isEmpty(object), false, '_.isEmpty should return `false` for jQuery/MooTools DOM query collections: ' + basename);
+        equal(lodash.isFinite('2'), false, '_.isFinite should return `false` for numeric string values: ' + basename);
 
         // avoid issues comparing objects with `deepEqual`
         object = { 'a': 1, 'b': 2, 'c': 3 };
         var actual = lodash.omit(object, function(value) { return value == 3; });
-        deepEqual(_.keys(actual).sort(), ['a', 'b', 'c'], '_.omit: ' + basename);
+        deepEqual(_.keys(actual).sort(), ['a', 'b', 'c'], '_.omit should not accept a `callback`: ' + basename);
 
         actual = lodash.pick(object, function(value) { return value != 3; });
-        deepEqual(_.keys(actual), [], '_.pick: ' + basename);
+        deepEqual(_.keys(actual), [], '_.pick should not accept a `callback`: ' + basename);
 
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);

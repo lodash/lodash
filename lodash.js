@@ -32,7 +32,7 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
-  /** Used to detect delimiter values that should be processed by `tokenizeEvaluate` */
+  /** Used to detect template delimiter values that require a with-statement */
   var reComplexDelimiter = /[-?+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
 
   /** Used to match HTML entities */
@@ -56,7 +56,16 @@
       .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
   );
 
-  /** Used to ensure capturing order and avoid matches for undefined delimiters */
+  /**
+   * Used to match ES6 template delimiters
+   * http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6
+   */
+  var reEsTemplate = /\$\{((?:(?=\\?)\\?[\s\S])*?)}/g;
+
+  /** Used to match "interpolate" template delimiters */
+  var reInterpolate = /<%=([\s\S]+?)%>/g;
+
+  /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
 
   /** Used to match HTML characters */
@@ -277,7 +286,7 @@
      * @memberOf _.templateSettings
      * @type RegExp
      */
-    'interpolate': /<%=([\s\S]+?)%>/g,
+    'interpolate': reInterpolate,
 
     /**
      * Used to reference the data object in the template text.
@@ -3690,7 +3699,11 @@
    *
    * // using the "escape" delimiter to escape HTML in data property values
    * _.template('<b><%- value %></b>', { 'value': '<script>' });
-   * // => '<b>&lt;script></b>'
+   * // => '<b>&lt;script&gt;</b>'
+   *
+   * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
+   * _.template('hello ${ name }', { 'name': 'curly' });
+   * // => 'hello curly'
    *
    * // using the internal `print` function in "evaluate" delimiters
    * _.template('<% print("hello " + epithet); %>!', { 'epithet': 'stooge' });
@@ -3736,8 +3749,9 @@
 
     var isEvaluating,
         result,
-        index = 0,
         settings = lodash.templateSettings,
+        index = 0,
+        interpolate = options.interpolate || settings.interpolate || reNoMatch,
         source = "__p += '",
         variable = options.variable || settings.variable,
         hasVariable = variable;
@@ -3745,17 +3759,13 @@
     // compile regexp to match each delimiter
     var reDelimiters = RegExp(
       (options.escape || settings.escape || reNoMatch).source + '|' +
-      (options.interpolate || settings.interpolate || reNoMatch).source +
-
-      // match ES6 template delimiters
-      // http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6
-      '|\\$\\{((?:(?=\\\\?)\\\\?[\\s\\S])*?)}|' +
-
+      interpolate.source + '|' +
+      (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source + '|' +
       (options.evaluate || settings.evaluate || reNoMatch).source + '|$'
     , 'g');
 
-    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, es6TemplateValue, evaluateValue, offset) {
-      interpolateValue || (interpolateValue = es6TemplateValue);
+    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
+      interpolateValue || (interpolateValue = esTemplateValue);
 
       // escape characters that cannot be included in string literals
       source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);

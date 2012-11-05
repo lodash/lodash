@@ -659,6 +659,7 @@
         deepEqual(_.keys(actual), [], '_.pick: ' + basename);
 
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
+        equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
         start();
       });
     });

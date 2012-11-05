@@ -1096,7 +1096,7 @@ _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
 Retrieves the maximum value of an `array`. If `callback` is passed, it will be executed for each value in the `array` to generate the criterion by which the value is ranked. The `callback` is bound to `thisArg` and invoked with three arguments; *(value, index, collection)*.
 
 #### Arguments
-1. `collection` *(Array|Object|String)*: The collection to iterate over.
+1. `collection` *(Array|Object)*: The collection to iterate over.
 2. `[callback]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(Mixed)*: The `this` binding of `callback`.
 
@@ -1128,7 +1128,7 @@ _.max(stooges, function(stooge) { return stooge.age; });
 Retrieves the minimum value of an `array`. If `callback` is passed, it will be executed for each value in the `array` to generate the criterion by which the value is ranked. The `callback` is bound to `thisArg` and invoked with three arguments; *(value, index, collection)*.
 
 #### Arguments
-1. `collection` *(Array|Object|String)*: The collection to iterate over.
+1. `collection` *(Array|Object)*: The collection to iterate over.
 2. `[callback]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(Mixed)*: The `this` binding of `callback`.
 

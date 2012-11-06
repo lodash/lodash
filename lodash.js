@@ -1832,7 +1832,7 @@
 
     fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
     if (typeof length == 'number') {
-      return (toString.call(collection) == stringClass
+      return (isString(collection)
         ? collection.indexOf(target, fromIndex)
         : indexOf(collection, target, fromIndex)
       ) > -1;
@@ -2127,6 +2127,11 @@
         result = computed;
 
     if (callback || !isArray(collection)) {
+      if (!callback && isString(collection)) {
+        callback = function(value) {
+          return value.charCodeAt(0);
+        };
+      }
       callback = createCallback(callback, thisArg);
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -2170,6 +2175,11 @@
         result = computed;
 
     if (callback || !isArray(collection)) {
+      if (!callback && isString(collection)) {
+        callback = function(value) {
+          return value.charCodeAt(0);
+        };
+      }
       callback = createCallback(callback, thisArg);
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -2274,7 +2284,7 @@
     if (typeof length != 'number') {
       var props = keys(collection);
       length = props.length;
-    } else if (noCharByIndex && toString.call(collection) == stringClass) {
+    } else if (noCharByIndex && isString(collection)) {
       iteratee = collection.split('');
     }
     forEach(collection, function(value, index, collection) {
@@ -2449,7 +2459,7 @@
    */
   function toArray(collection) {
     if (collection && typeof collection.length == 'number') {
-      return (noArraySliceOnStrings ? toString.call(collection) == stringClass : typeof collection == 'string')
+      return (noArraySliceOnStrings ? isString(collection) : typeof collection == 'string')
         ? collection.split('')
         : slice.call(collection);
     }

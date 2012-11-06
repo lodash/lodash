@@ -469,7 +469,7 @@
    * @returns {String} Returns the `isArguments` fallback.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( +)if *\(noArgsClass\)[\s\S]+?};\n\1}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\(noArgsClass\)[\s\S]+?};\n\1}/) || [''])[0];
   }
 
   /**
@@ -480,7 +480,7 @@
    * @returns {String} Returns the `isFunction` fallback.
    */
   function getIsFunctionFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( +)if *\(isFunction\(\/x\/[\s\S]+?};\n\1}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?};\n\1}/) || [''])[0];
   }
 
   /**
@@ -538,11 +538,11 @@
       // begin non-capturing group
       '(?:' +
       // match a function declaration
-      '( +)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
+      '( *)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
       // match a variable declaration with `createIterator`
       ' +var ' + funcName + ' *=.*?createIterator\\((?:{|[a-zA-Z])[\\s\\S]+?\\);|' +
       // match a variable declaration with function expression
-      '( +)var ' + funcName + ' *=.*?function[\\s\\S]+?\\n\\2};' +
+      '( *)var ' + funcName + ' *=.*?function[\\s\\S]+?\\n\\2};' +
       // end non-capturing group
       ')\\n'
     ));
@@ -728,7 +728,7 @@
       // match multi-line comment block
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
       // match a variable declaration that's not part of a declaration list
-      '( +)var ' + varName + ' *= *(?:.+?(?:;|&&\\n[^;]+;)|(?:\\w+\\(|{)[\\s\\S]+?\\n\\1.+?;)\\n|' +
+      '( *)var ' + varName + ' *= *(?:.+?(?:;|&&\\n[^;]+;)|(?:\\w+\\(|{)[\\s\\S]+?\\n\\1.+?;)\\n|' +
       // match a variable in a declaration list
       '\\n +' + varName + ' *=.+?,'
     ), '');
@@ -757,7 +757,7 @@
   function replaceVar(source, varName, varValue) {
     // replace a variable that's not part of a declaration list
     var result = source.replace(RegExp(
-      '(( +)var ' + varName + ' *= *)' +
+      '(( *)var ' + varName + ' *= *)' +
       '(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\2.+?;)\\n'
     ), '$1' + varValue + ';\n');
 
@@ -1057,7 +1057,7 @@
 
         // replace `_.clone`
         if (useUnderscoreClone) {
-          source = source.replace(/^( +)function clone[\s\S]+?\n\1}/m, [
+          source = source.replace(/^( *)function clone[\s\S]+?\n\1}/m, [
             '  function clone(value) {',
             '    return value && objectTypes[typeof value]',
             '      ? (isArray(value) ? slice.call(value) : extend({}, value))',
@@ -1067,7 +1067,7 @@
         }
 
         // replace `_.contains`
-        source = source.replace(/^( +)function contains[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function contains[\s\S]+?\n\1}/m, [
           '  function contains(collection, target) {',
           '    var length = collection ? collection.length : 0;',
           "    return typeof length == 'number'",
@@ -1077,7 +1077,7 @@
         ].join('\n'));
 
         // replace `_.difference`
-        source = source.replace(/^( +)function difference[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function difference[\s\S]+?\n\1}/m, [
           '  function difference(array) {',
           '    var index = -1,',
           '        length = array.length,',
@@ -1095,7 +1095,7 @@
         ].join('\n'));
 
         // replace `_.intersection`
-        source = source.replace(/^( +)function intersection[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function intersection[\s\S]+?\n\1}/m, [
           '  function intersection(array) {',
           '    var args = arguments,',
           '        argsLength = args.length,',
@@ -1117,7 +1117,7 @@
         ].join('\n'));
 
         // replace `_.isEmpty`
-        source = source.replace(/^( +)function isEmpty[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function isEmpty[\s\S]+?\n\1}/m, [
           '  function isEmpty(value) {',
           '    if (!value) {',
           '      return true;',
@@ -1135,14 +1135,14 @@
         ].join('\n'));
 
         // replace `_.isFinite`
-        source = source.replace(/^( +)function isFinite[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function isFinite[\s\S]+?\n\1}/m, [
           '  function isFinite(value) {',
           '    return nativeIsFinite(value) && toString.call(value) == numberClass;',
           '  }'
         ].join('\n'));
 
         // replace `_.omit`
-        source = source.replace(/^( +)function omit[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function omit[\s\S]+?\n\1}/m, [
           '  function omit(object) {',
           '    var props = concat.apply(arrayRef, arguments),',
           '        result = {};',
@@ -1157,7 +1157,7 @@
         ].join('\n'));
 
         // replace `_.pick`
-        source = source.replace(/^( +)function pick[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function pick[\s\S]+?\n\1}/m, [
           '  function pick(object) {',
           '    var index = 0,',
           '        props = concat.apply(arrayRef, arguments),',
@@ -1175,7 +1175,7 @@
         ].join('\n'));
 
         // replace `_.uniq`
-        source = source.replace(/^( +)function uniq[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function uniq[\s\S]+?\n\1}/m, [
           '  function uniq(array, isSorted, callback, thisArg) {',
           '    var index = -1,',
           '        length = array ? array.length : 0,',
@@ -1205,7 +1205,7 @@
         ].join('\n'));
 
         // replace `_.without`
-        source = source.replace(/^( +)function without[\s\S]+?\n\1}/m, [
+        source = source.replace(/^( *)function without[\s\S]+?\n\1}/m, [
           '  function without(array) {',
           '    var index = -1,',
           '        length = array.length,',
@@ -1228,7 +1228,7 @@
         source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
 
         // remove string collection callback definition from `_.max` and `_.min`
-        source = source.replace(/( +)if *\(!callback *&& *isString\(collection\)\)[\s\S]+?\n\1}\n/g, '');
+        source = source.replace(/( *)if *\(!callback *&& *isString\(collection\)\)[\s\S]+?\n\1}\n/g, '');
 
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {
@@ -1244,7 +1244,7 @@
         source = removeKeysOptimization(source);
 
         // remove `prototype` [[Enumerable]] fix from `_.keys`
-        source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(.+?propertyIsEnumerable[\s\S]+?\n\1}/, '');
+        source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(.+?propertyIsEnumerable[\s\S]+?\n\1}/, '');
 
         // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
         source = source
@@ -1397,7 +1397,7 @@
           });
 
           // replace `_.template`
-          source = source.replace(/^( +)function template[\s\S]+?\n\1}/m, function() {
+          source = source.replace(/^( *)function template[\s\S]+?\n\1}/m, function() {
             return [
               '  function template(text, data, options) {',
               "    text || (text = '');",
@@ -1461,7 +1461,7 @@
           source = removeVar(source, 'hasObjectSpliceBug');
 
           // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
-          source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
+          source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
         }
 
         // remove `thisArg` from unexposed `forIn` and `forOwn`
@@ -1482,10 +1482,10 @@
           .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum).+\n/g, '');
 
         // remove `iteratesOwnLast` from `isPlainObject`
-        source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
+        source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
 
         // remove JScript [[DontEnum]] fix from `_.isEqual`
-        source = source.replace(/(?:\s*\/\/.*)*\n( +)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
+        source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
 
         // remove `noArraySliceOnStrings` from `_.toArray`
         source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
@@ -1502,7 +1502,7 @@
       }
       else {
         // inline `iteratorTemplate` template
-        source = source.replace(/(( +)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
+        source = source.replace(/(( *)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
           var snippet = getFunctionSource(lodash._iteratorTemplate);
 
           // prepend data object references to property names to avoid having to
@@ -1562,16 +1562,16 @@
           isNode = exportsOptions.indexOf('node') > -1;
 
       if (!isAMD) {
-        source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +define[\s\S]+?else /, '$1');
+        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
       }
       if (!isNode) {
-        source = source.replace(/(?: *\/\/.*\n)*( +)if *\(typeof +module[\s\S]+?else *{([\s\S]+?\n)\1}\n/, '$1$2');
+        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +module[\s\S]+?else *{([\s\S]+?\n)\1}\n/, '$1$2');
       }
       if (!isCommonJS) {
-        source = source.replace(/(?: *\/\/.*\n)*(?:( +)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n/, '');
+        source = source.replace(/(?: *\/\/.*\n)*(?:( *)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n/, '');
       }
       if (!isGlobal) {
-        source = source.replace(/(?:( +)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n/g, '$1$2\n');
+        source = source.replace(/(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n/g, '$1$2\n');
       }
       // remove `if (freeExports) {...}` if it's empty
       if (isAMD && isGlobal) {

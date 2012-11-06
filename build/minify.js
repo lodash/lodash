@@ -15,9 +15,9 @@
   var closurePath = path.join(basePath, 'vendor', 'closure-compiler', 'compiler.jar');
 
   /** Load other modules */
-  var preprocess = require('./pre-compile'),
-      postprocess = require('./post-compile'),
-      uglifyJS = require('../vendor/uglifyjs/uglify-js');
+  var preprocess = require('./pre-compile.js'),
+      postprocess = require('./post-compile.js'),
+      uglifyJS = require('../vendor/uglifyjs/uglify-js.js');
 
   /** The Closure Compiler command-line options */
   var closureOptions = [

@@ -70,7 +70,7 @@
     'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isPlainObject'],
     'compact': [],
     'compose': [],
-    'contains': ['indexOf', 'some'],
+    'contains': ['indexOf', 'isString', 'some'],
     'countBy': ['forEach'],
     'debounce': [],
     'defaults': ['isArguments'],
@@ -118,10 +118,10 @@
     'lastIndexOf': [],
     'lateBind': ['isFunction'],
     'map': ['forEach', 'isArray'],
-    'max': ['forEach', 'isArray'],
+    'max': ['forEach', 'isArray', 'isString'],
     'memoize': [],
     'merge': ['forOwn', 'isArray', 'isPlainObject'],
-    'min': ['forEach', 'isArray'],
+    'min': ['forEach', 'isArray', 'isString'],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
     'object': [],
@@ -134,7 +134,7 @@
     'random': [],
     'range': [],
     'reduce': ['forEach'],
-    'reduceRight': ['forEach', 'keys'],
+    'reduceRight': ['forEach', 'isString', 'keys'],
     'reject': ['filter'],
     'rest': [],
     'result': ['isFunction'],
@@ -964,9 +964,15 @@
       }, []);
 
       // update dependencies
+      if (isMobile) {
+        dependencyMap.reduceRight = ['forEach', 'keys'];
+      }
       if (isUnderscore) {
+        dependencyMap.contains = ['indexOf', 'some'],
         dependencyMap.isEqual = ['isArray', 'isFunction'];
         dependencyMap.isEmpty = ['isArray', 'isString'];
+        dependencyMap.max = ['forEach', 'isArray'];
+        dependencyMap.min = ['forEach', 'isArray'];
         dependencyMap.pick = [];
         dependencyMap.template = ['defaults', 'escape'];
 
@@ -1220,6 +1226,9 @@
 
         // simplify DOM node check from `_.isEqual`
         source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
+
+        // remove string collection callback definition from `_.max` and `_.min`
+        source = source.replace(/( +)if *\(!callback *&& *isString\(collection\)\)[\s\S]+?\n\1}\n/g, '');
 
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {

@@ -76,8 +76,8 @@
 
   /*--------------------------------------------------------------------------*/
 
-  exec('npm -g root', function(exception, stdout, stderr) {
-    if (exception || stderr) {
+  exec('npm -g root', function(exception, stdout) {
+    if (exception) {
       console.error('There was a problem loading the npm registry.');
       process.exit(1);
     }

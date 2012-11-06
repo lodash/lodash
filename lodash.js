@@ -2667,7 +2667,7 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to query.
-   * @param {Number} [n] The number of elements to return.
+   * @param {Number} [n=1] The number of elements to exclude.
    * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
    * @returns {Array} Returns all but the last element or `n` elements of `array`.
@@ -2867,7 +2867,7 @@
    * @alias drop, tail
    * @category Arrays
    * @param {Array} array The array to query.
-   * @param {Number} [n] The number of elements to return.
+   * @param {Number} [n=1] The number of elements to exclude.
    * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
    * @returns {Array} Returns all but the first value or `n` values of `array`.

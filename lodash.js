@@ -2105,7 +2105,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the maximum value.
@@ -2126,7 +2126,7 @@
         length = collection ? collection.length : 0,
         result = computed;
 
-    if (callback || typeof length != 'number') {
+    if (callback || !isArray(collection)) {
       callback = createCallback(callback, thisArg);
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -2154,7 +2154,7 @@
    * @static
    * @memberOf _
    * @category Collections
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the minimum value.
@@ -2169,7 +2169,7 @@
         length = collection ? collection.length : 0,
         result = computed;
 
-    if (callback || typeof length != 'number') {
+    if (callback || !isArray(collection)) {
       callback = createCallback(callback, thisArg);
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);

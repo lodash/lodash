@@ -8,20 +8,20 @@
 ## <a id="Arrays"></a>`Arrays`
 * [`_.compact`](#_compactarray)
 * [`_.difference`](#_differencearray--array1-array2-)
-* [`_.drop`](#_restarray--n)
+* [`_.drop`](#_restarray--n1)
 * [`_.first`](#_firstarray--n)
 * [`_.flatten`](#_flattenarray-shallow)
 * [`_.head`](#_firstarray--n)
 * [`_.indexOf`](#_indexofarray-value--fromindex0)
-* [`_.initial`](#_initialarray--n)
+* [`_.initial`](#_initialarray--n1)
 * [`_.intersection`](#_intersectionarray1-array2-)
 * [`_.last`](#_lastarray--n)
 * [`_.lastIndexOf`](#_lastindexofarray-value--fromindexarraylength-1)
 * [`_.object`](#_objectkeys--values)
 * [`_.range`](#_rangestart0-end--step1)
-* [`_.rest`](#_restarray--n)
+* [`_.rest`](#_restarray--n1)
 * [`_.sortedIndex`](#_sortedindexarray-value--callbackidentityproperty-thisarg)
-* [`_.tail`](#_restarray--n)
+* [`_.tail`](#_restarray--n1)
 * [`_.take`](#_firstarray--n)
 * [`_.union`](#_unionarray1-array2-)
 * [`_.uniq`](#_uniqarray--issortedfalse-callbackidentity-thisarg)
@@ -320,14 +320,14 @@ _.indexOf([1, 1, 2, 2, 3, 3], 2, true);
 
 <!-- div -->
 
-### <a id="_initialarray--n"></a>`_.initial(array [, n])`
-<a href="#_initialarray--n">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2679 "View in source") [&#x24C9;][1]
+### <a id="_initialarray--n1"></a>`_.initial(array [, n=1])`
+<a href="#_initialarray--n1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2679 "View in source") [&#x24C9;][1]
 
 Gets all but the last element of `array`. Pass `n` to exclude the last `n` elements from the result.
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
-2. `[n]` *(Number)*: The number of elements to return.
+2. `[n=1]` *(Number)*: The number of elements to exclude.
 
 #### Returns
 *(Array)*: Returns all but the last element or `n` elements of `array`.
@@ -486,8 +486,8 @@ _.range(0);
 
 <!-- div -->
 
-### <a id="_restarray--n"></a>`_.rest(array [, n])`
-<a href="#_restarray--n">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2879 "View in source") [&#x24C9;][1]
+### <a id="_restarray--n1"></a>`_.rest(array [, n=1])`
+<a href="#_restarray--n1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2879 "View in source") [&#x24C9;][1]
 
 The opposite of `_.initial`, this method gets all but the first value of `array`. Pass `n` to exclude the first `n` values from the result.
 
@@ -496,7 +496,7 @@ The opposite of `_.initial`, this method gets all but the first value of `array`
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
-2. `[n]` *(Number)*: The number of elements to return.
+2. `[n=1]` *(Number)*: The number of elements to exclude.
 
 #### Returns
 *(Array)*: Returns all but the first value or `n` values of `array`.
@@ -1096,7 +1096,7 @@ _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
 Retrieves the maximum value of an `array`. If `callback` is passed, it will be executed for each value in the `array` to generate the criterion by which the value is ranked. The `callback` is bound to `thisArg` and invoked with three arguments; *(value, index, collection)*.
 
 #### Arguments
-1. `collection` *(Array|Object)*: The collection to iterate over.
+1. `collection` *(Array|Object|String)*: The collection to iterate over.
 2. `[callback]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(Mixed)*: The `this` binding of `callback`.
 
@@ -1128,7 +1128,7 @@ _.max(stooges, function(stooge) { return stooge.age; });
 Retrieves the minimum value of an `array`. If `callback` is passed, it will be executed for each value in the `array` to generate the criterion by which the value is ranked. The `callback` is bound to `thisArg` and invoked with three arguments; *(value, index, collection)*.
 
 #### Arguments
-1. `collection` *(Array|Object)*: The collection to iterate over.
+1. `collection` *(Array|Object|String)*: The collection to iterate over.
 2. `[callback]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(Mixed)*: The `this` binding of `callback`.
 

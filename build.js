@@ -6,8 +6,8 @@
   var fs = require('fs'),
       path = require('path'),
       vm = require('vm'),
-      minify = require(path.join(__dirname, 'build', 'minify')),
-      _ = require(path.join(__dirname, 'lodash'));
+      minify = require(path.join(__dirname, 'build', 'minify.js')),
+      _ = require(path.join(__dirname, 'lodash.js'));
 
   /** The current working directory */
   var cwd = process.cwd();

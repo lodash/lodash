@@ -7,7 +7,7 @@
       fs = require('fs'),
       https = require('https'),
       path = require('path'),
-      tar = require('tar'),
+      tar = require('../vendor/tar/tar.js'),
       zlib = require('zlib');
 
   /** The path of the directory that is the base of the repository */

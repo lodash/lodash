@@ -1039,6 +1039,21 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.max and lodash.min string iteration');
+
+  _.each(['max', 'min'], function(methodName) {
+    var func = _[methodName];
+
+    test('lodash.' + methodName + ' should iterate a string', function() {
+      _.each(['abc', Object('abc')], function(value) {
+        var actual = func(value);
+        equal(actual, methodName == 'max' ? 'c' : 'a');
+      });
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.merge');
 
   (function() {

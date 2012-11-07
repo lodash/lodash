@@ -91,6 +91,8 @@ $(document).ready(function() {
     var iterator = function(value) { return value.name; };
     equal(_.map(_.uniq(list, false, iterator), iterator).join(', '), 'moe, curly, larry', 'can find the unique values of an array using a custom iterator');
 
+    equal(_.map(_.uniq(list, iterator), iterator).join(', '), 'moe, curly, larry', 'can find the unique values of an array using a custom iterator without specifying whether array is sorted');
+
     var iterator = function(value) { return value +1; };
     var list = [1, 2, 2, 3, 4, 4];
     equal(_.uniq(list, true, iterator).join(', '), '1, 2, 3, 4', 'iterator works with sorted array');

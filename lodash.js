@@ -482,6 +482,18 @@
   }
 
   /**
+   * Used by `_.max` and `_.min` as the default `callback` when a given
+   * `collection` is a string value.
+   *
+   * @private
+   * @param {String} value The character to inspect.
+   * @returns {Number} Returns the code unit of given character.
+   */
+  function charAtCallback(value) {
+    return value.charCodeAt(0);
+  }
+
+  /**
    * Used by `sortBy` to compare transformed `collection` values, stable sorting
    * them in ascending order.
    *
@@ -2127,12 +2139,10 @@
         result = computed;
 
     if (callback || !isArray(collection)) {
-      if (!callback && isString(collection)) {
-        callback = function(value) {
-          return value.charCodeAt(0);
-        };
-      }
-      callback = createCallback(callback, thisArg);
+      callback = !callback && isString(collection)
+        ? charAtCallback
+        : createCallback(callback, thisArg);
+
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
         if (current > computed) {
@@ -2175,12 +2185,10 @@
         result = computed;
 
     if (callback || !isArray(collection)) {
-      if (!callback && isString(collection)) {
-        callback = function(value) {
-          return value.charCodeAt(0);
-        };
-      }
-      callback = createCallback(callback, thisArg);
+      callback = !callback && isString(collection)
+        ? charAtCallback
+        : createCallback(callback, thisArg);
+
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
         if (current < computed) {

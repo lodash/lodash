@@ -1227,8 +1227,8 @@
         // simplify DOM node check from `_.isEqual`
         source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
 
-        // remove string collection callback definition from `_.max` and `_.min`
-        source = source.replace(/( *)if *\(!callback *&& *isString\(collection\)\)[\s\S]+?\n\1}\n/g, '');
+        // remove conditional `charCodeCallback` use from `_.max` and `_.min`
+        source = source.replace(/!callback *&& *isString\(collection\)[\s\S]+?: */g, '');
 
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {

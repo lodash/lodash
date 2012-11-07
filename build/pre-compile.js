@@ -16,6 +16,7 @@
     'hasOwnProperty',
     'index',
     'isArguments',
+    'isString',
     'iteratee',
     'length',
     'nativeKeys',
@@ -26,9 +27,7 @@
     'propertyIsEnumerable',
     'result',
     'skipProto',
-    'stringClass',
     'thisArg',
-    'toString',
     'value'
   ];
 

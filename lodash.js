@@ -327,7 +327,7 @@
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +
-    '  if (toString.call(iteratee) == stringClass) {\n' +
+    '  if (isString(iteratee)) {\n' +
     '    iteratee = iteratee.split(\'\')\n' +
     '  }' +
     '  <% } %>\n' +
@@ -565,7 +565,7 @@
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
         var result = func.apply(thisBinding, args);
-        return result && objectTypes[typeof result]
+        return isObject(result)
           ? result
           : thisBinding
       }
@@ -640,14 +640,14 @@
 
     // create the function factory
     var factory = Function(
-        'createCallback, hasOwnProperty, isArguments, objectTypes, nativeKeys, ' +
-        'propertyIsEnumerable, stringClass, toString',
+        'createCallback, hasOwnProperty, isArguments, isString, objectTypes, ' +
+        'nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      createCallback, hasOwnProperty, isArguments, objectTypes, nativeKeys,
-      propertyIsEnumerable, stringClass, toString
+      createCallback, hasOwnProperty, isArguments, isString, objectTypes,
+      nativeKeys, propertyIsEnumerable
     );
   }
 
@@ -900,7 +900,7 @@
       deep = false;
     }
     // inspect [[Class]]
-    var isObj = objectTypes[typeof value];
+    var isObj = isObject(value);
     if (isObj) {
       // don't clone `arguments` objects, functions, or non-object Objects
       var className = toString.call(value);
@@ -1585,15 +1585,10 @@
    * // => ['one', 'two', 'three'] (order is not guaranteed)
    */
   var keys = !nativeKeys ? shimKeys : function(object) {
-    var type = typeof object;
-
     // avoid iterating over the `prototype` property
-    if (type == 'function' && propertyIsEnumerable.call(object, 'prototype')) {
-      return shimKeys(object);
-    }
-    return object && objectTypes[type]
-      ? nativeKeys(object)
-      : [];
+    return typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
+      ? shimKeys(object)
+      : (isObject(object) ? nativeKeys(object) : []);
   };
 
   /**

@@ -64,10 +64,10 @@
   /** Used to track function dependencies */
   var dependencyMap = {
     'after': [],
-    'bind': ['isFunction'],
+    'bind': ['isFunction', 'isObject'],
     'bindAll': ['bind', 'functions'],
     'chain': ['mixin'],
-    'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isPlainObject'],
+    'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isObject', 'isPlainObject'],
     'compact': [],
     'compose': [],
     'contains': ['indexOf', 'isString', 'some'],
@@ -84,7 +84,7 @@
     'find': ['some'],
     'first': [],
     'flatten': ['isArray'],
-    'forEach': ['identity'],
+    'forEach': ['identity', 'isString'],
     'forIn': ['identity', 'isArguments'],
     'forOwn': ['identity', 'isArguments'],
     'functions': ['forIn', 'isFunction'],
@@ -113,10 +113,10 @@
     'isRegExp': [],
     'isString': [],
     'isUndefined': [],
-    'keys': ['forOwn', 'isArguments'],
+    'keys': ['forOwn', 'isArguments', 'isObject'],
     'last': [],
     'lastIndexOf': [],
-    'lateBind': ['isFunction'],
+    'lateBind': ['isFunction', 'isObject'],
     'map': ['forEach', 'isArray'],
     'max': ['forEach', 'isArray', 'isString'],
     'memoize': [],
@@ -128,7 +128,7 @@
     'omit': ['forIn', 'indexOf'],
     'once': [],
     'pairs': ['forOwn'],
-    'partial': ['isFunction'],
+    'partial': ['isFunction', 'isObject'],
     'pick': ['forIn'],
     'pluck': ['forEach'],
     'random': [],
@@ -1244,7 +1244,7 @@
         source = removeKeysOptimization(source);
 
         // remove `prototype` [[Enumerable]] fix from `_.keys`
-        source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(.+?propertyIsEnumerable[\s\S]+?\n\1}/, '');
+        source = source.replace(/(?:\s*\/\/.*)*(\s*return *).+?propertyIsEnumerable[\s\S]+?: */, '$1');
 
         // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
         source = source

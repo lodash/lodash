@@ -1907,9 +1907,21 @@
   function every(collection, callback, thisArg) {
     var result = true;
     callback = createCallback(callback, thisArg);
-    forEach(collection, function(value, index, collection) {
-      return (result = !!callback(value, index, collection));
-    });
+
+    if (isArray(collection)) {
+      var index = -1,
+          length = collection.length;
+
+      while (++index < length) {
+        if (!(result = !!callback(collection[index], index, collection))) {
+          break;
+        }
+      }
+    } else {
+      forEach(collection, function(value, index, collection) {
+        return (result = !!callback(value, index, collection));
+      });
+    }
     return result;
   }
 
@@ -1965,8 +1977,11 @@
   function find(collection, callback, thisArg) {
     var result;
     callback = createCallback(callback, thisArg);
-    some(collection, function(value, index, collection) {
-      return callback(value, index, collection) && (result = value, true);
+    forEach(collection, function(value, index, collection) {
+      if (callback(value, index, collection)) {
+        result = value;
+        return false;
+      }
     });
     return result;
   }
@@ -2397,9 +2412,21 @@
   function some(collection, callback, thisArg) {
     var result;
     callback = createCallback(callback, thisArg);
-    forEach(collection, function(value, index, collection) {
-      return !(result = callback(value, index, collection));
-    });
+
+    if (isArray(collection)) {
+      var index = -1,
+          length = collection.length;
+
+      while (++index < length) {
+        if (result = callback(collection[index], index, collection)) {
+          break;
+        }
+      }
+    } else {
+      forEach(collection, function(value, index, collection) {
+        return !(result = callback(value, index, collection));
+      });
+    }
     return !!result;
   }
 

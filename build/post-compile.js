@@ -29,7 +29,7 @@
     // move vars exposed by the Closure Compiler into the IIFE
     source = source.replace(/^((?:(['"])use strict\2;)?(?:var (?:[a-z]+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^)]+\){)/, '$3$1');
 
-    // correct overly aggressive Closure Compiler minification
+    // correct overly aggressive Closure Compiler advanced optimizations
     source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
 
     // unescape properties (i.e. foo["bar"] => foo.bar)

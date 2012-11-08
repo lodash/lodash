@@ -254,16 +254,13 @@
    *
    * @private
    * @param {String} [pattern='<cwd>/*.jst'] The file path pattern.
-   * @param {Object} [options=_.templateSettings] The options object.
+   * @param {Object} options The options object.
    * @returns {String} Returns the compiled source.
    */
   function buildTemplate(pattern, options) {
     pattern || (pattern = path.join(cwd, '*.jst'));
-    options || (options = _.templateSettings);
 
     var directory = path.dirname(pattern);
-
-    var moduleName = 'lodash';
 
     var source = [
       ';(function(window) {',
@@ -295,7 +292,7 @@
 
     source.push(
       "  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {",
-      "    define(['" + moduleName + "'], function(lodash) {",
+      "    define(['" + options.moduleId + "'], function(lodash) {",
       '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
       '    });',
       "  } else if (freeExports) {",
@@ -362,6 +359,7 @@
       '                         (e.g. `lodash template=./*.jst`)',
       '    lodash settings=...  Template settings used when precompiling templates',
       '                         (e.g. `lodash settings="{interpolate:/\\\\{\\\\{([\\\\s\\\\S]+?)\\\\}\\\\}/g}"`)',
+      '    lodash moduleId=...  The AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates',
       '',
       '    All arguments, except `legacy` with `csp` or `mobile`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
@@ -809,7 +807,7 @@
     // used to report invalid command-line arguments
     var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|minus|plus|settings|template)=.*$/.test(value)) {
+          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=.*$/i.test(value)) {
         return true;
       }
       return [
@@ -906,6 +904,12 @@
       : exportsAll.slice()
     );
 
+    // used to specify the AMD module ID of Lo-Dash used by precompiled templates
+    var moduleId = options.reduce(function(result, value) {
+      var match = value.match(/moduleId=(.*)/);
+      return match ? match[1] : result;
+    }, 'lodash');
+
     // used to specify the output path for builds
     var outputPath = options.reduce(function(result, value, index) {
       if (/-o|--output/.test(value)) {
@@ -929,7 +933,9 @@
       return match
         ? Function('return {' + match[1].replace(/^{|}$/g, '') + '}')()
         : result;
-    }, _.clone(_.templateSettings));
+    }, _.extend(_.clone(_.templateSettings), {
+      'moduleId': moduleId
+    }));
 
     // flag used to specify a template build
     var isTemplate = !!templatePattern;

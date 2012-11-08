@@ -488,25 +488,31 @@
       });
     });
 
-    asyncTest('`lodash template=*.jst` exports=amd', function() {
-      var start = _.after(2, _.once(QUnit.start));
+    ['', 'moduleId=underscore'].forEach(function(command) {
+      asyncTest('`lodash template=*.jst` exports=amd' + (command ? ' ' + command : ''), function() {
+        var start = _.after(2, _.once(QUnit.start));
 
-      build(['-s', 'template=' + templatePath + '/*.jst', 'exports=amd'], function(source, filePath) {
-        var basename = path.basename(filePath, '.js'),
-            context = createContext(),
-            pass = false;
+        build(['-s', 'template=' + templatePath + '/*.jst', 'exports=amd'].concat(command || []), function(source, filePath) {
+          var moduleId,
+              basename = path.basename(filePath, '.js'),
+              context = createContext(),
+              pass = false;
 
-        (context.define = function(requires, factory) {
-          factory(_);
-          var templates = _.templates;
-          pass = 'a' in templates && 'b' in templates;
-        })
-        .amd = {};
+          (context.define = function(requires, factory) {
+            factory(_);
+            var templates = _.templates;
+            moduleId = requires + '';
+            pass = 'a' in templates && 'b' in templates;
+          })
+          .amd = {};
 
-        vm.runInContext(source, context);
-        ok(pass, basename);
-        delete _.templates;
-        start();
+          vm.runInContext(source, context);
+
+          equal(moduleId, command ? 'underscore' : 'lodash');
+          ok(pass, basename);
+          delete _.templates;
+          start();
+        });
       });
     });
 

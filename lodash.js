@@ -18,13 +18,14 @@
 
   /** Used for array and object method references */
   var arrayRef = [],
-      objectRef = {};
+      // avoid a Closure Compiler bug by creatively creating an object
+      objectRef = new function(){};
 
   /** Used to generate unique IDs */
   var idCounter = 0;
 
   /** Used internally to indicate various things */
-  var indicatorObject = {};
+  var indicatorObject = objectRef;
 
   /** Used by `cachedContains` as the default size when optimizations are enabled for large arrays */
   var largeArraySize = 30;
@@ -1629,7 +1630,7 @@
         stackA = args[3],
         stackB = args[4];
 
-    if (indicator !== indicatorObject) {
+    if (indicator !== objectRef) {
       stackA = [];
       stackB = [];
       length = args.length;
@@ -1657,7 +1658,7 @@
               : (isPlainObject(value) ? value : {})
             );
             // recursively merge objects and arrays (susceptible to call stack limits)
-            object[key] = merge(value, source, indicatorObject, stackA, stackB);
+            object[key] = merge(value, source, objectRef, stackA, stackB);
           }
         } else if (source != null) {
           object[key] = source;

@@ -215,11 +215,6 @@
     // remove copyright to add later in post-compile.js
     source = source.replace(/\/\*![\s\S]+?\*\//, '');
 
-    // replace `arrayRef` and `objectRef` values to avoid a bug in the Closure Compiler
-    source = source
-      .replace(/(arrayRef *= *)\[\]/, '$1Array.prototype')
-      .replace(/(objectRef *= *)\{\}/, '$1Object.prototype');
-
     // add brackets to whitelisted properties so the Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");

@@ -23,7 +23,7 @@
   var closureOptions = ['--warning_level=QUIET'];
 
   /** The Closure Compiler optimization modes */
-  var OPTIMIZATION_MODES = {
+  var optimizationModes = {
     'simple': 'SIMPLE_OPTIMIZATIONS',
     'advanced': 'ADVANCED_OPTIMIZATIONS'
   };
@@ -100,15 +100,10 @@
       options = source || options;
       source = options.source || '';
     }
-    this.compiled = {
-      'simple': {},
-      'advanced': {}
-    };
-    this.hybrid = {
-      'simple': {},
-      'advanced': {}
-    };
+    this.compiled = { 'simple': {}, 'advanced': {} };
+    this.hybrid = { 'simple': {}, 'advanced': {} };
     this.uglified = {};
+
     this.isSilent = !!options.isSilent;
     this.isTemplate = !!options.isTemplate;
     this.outputPath = options.outputPath;
@@ -132,25 +127,13 @@
    *
    * @private
    * @param {String} source The JavaScript source to minify.
-   * @param {String} [message] The message to log.
-   * @param {String} [mode] The optimization mode.
+   * @param {String} mode The optimization mode.
    * @param {Function} callback The function called once the process has completed.
    */
-  function closureCompile(source, mode, message, callback) {
+  function closureCompile(source, mode, callback) {
+    // use simple optimizations when minifying template files
     var options = closureOptions.slice();
-
-    // juggle arguments
-    if (typeof mode == 'function') {
-      callback = mode;
-      mode = null;
-    } else if (typeof message == 'function') {
-      callback = message;
-      message = null;
-    }
-
-    // use simple optimizations by default when minifying template files
-    mode = OPTIMIZATION_MODES[mode] || OPTIMIZATION_MODES[this.isTemplate ? 'simple' : 'advanced'];
-    options.push('--compilation_level=' + mode);
+    options.push('--compilation_level=' + optimizationModes[this.isTemplate ? 'simple' : mode]);
 
     // the standard error stream, standard output stream, and the Closure Compiler process
     var error = '',
@@ -158,10 +141,7 @@
         compiler = spawn('java', ['-jar', closurePath].concat(options));
 
     if (!this.isSilent) {
-      console.log(message == null
-        ? 'Compressing ' + path.basename(this.outputPath, '.js') + ' using the Closure Compiler, `' + mode + '`...'
-        : message
-      );
+      console.log('Compressing ' + path.basename(this.outputPath, '.js') + ' using the Closure Compiler (' + mode + ')...');
     }
     compiler.stdout.on('data', function(data) {
       // append the data to the output stream
@@ -174,9 +154,8 @@
     });
 
     compiler.on('exit', function(status) {
-      var exception = null;
-
       // `status` contains the process exit code
+      var exception = null;
       if (status) {
         exception = new Error(error);
         exception.status = status;
@@ -195,24 +174,16 @@
    *
    * @private
    * @param {String} source The JavaScript source to minify.
-   * @param {String} [message] The message to log.
+   * @param {String} label The label to log.
    * @param {Function} callback The function called once the process has completed.
    */
-  function uglify(source, message, callback) {
+  function uglify(source, label, callback) {
     var exception,
         result,
         ugly = uglifyJS.uglify;
 
-    // juggle arguments
-    if (typeof message == 'function') {
-      callback = message;
-      message = null;
-    }
     if (!this.isSilent) {
-      console.log(message == null
-        ? 'Compressing ' + path.basename(this.outputPath, '.js') + ' using UglifyJS...'
-        : message
-      );
+      console.log('Compressing ' + path.basename(this.outputPath, '.js') + ' using ' + label + '...');
     }
     try {
       result = ugly.gen_code(
@@ -237,7 +208,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The `closureCompile()` callback.
+   * The Closure Compiler callback for simple optimizations.
    *
    * @private
    * @param {Object|Undefined} exception The error object.
@@ -247,13 +218,13 @@
     if (exception) {
       throw exception;
     }
-    // store the post-processed Closure Compiler result and gzip it
-    this.compiled.simple.source = result = postprocess(result);
+    result = postprocess(result);
+    this.compiled.simple.source = result;
     gzip(result, onClosureSimpleGzip.bind(this));
   }
 
   /**
-   * The Closure Compiler `gzip` callback.
+   * The Closure Compiler `gzip` callback for simple optimizations.
    *
    * @private
    * @param {Object|Undefined} exception The error object.
@@ -266,27 +237,35 @@
     if (!this.isSilent) {
       console.log('Done. Size: %d bytes.', result.length);
     }
-    // store the gzipped result and report the size
     this.compiled.simple.gzip = result;
 
     // next, compile the source using advanced optimizations
-    if (this.isTemplate) {
-      // jump directly to UglifyJS for templates.
-      uglify.call(this, this.source, onUglify.bind(this));
-    } else {
-      // otherwise, compress using advanced optimizations
-      closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
-    }
+    closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
   }
 
+  /**
+   * The Closure Compiler callback for advanced optimizations.
+   *
+   * @private
+   * @param {Object|Undefined} exception The error object.
+   * @param {String} result The resulting minified source.
+   */
   function onClosureAdvancedCompile(exception, result) {
     if (exception) {
       throw exception;
     }
-    this.compiled.advanced.source = result = postprocess(result);
+    result = postprocess(result);
+    this.compiled.advanced.source = result;
     gzip(result, onClosureAdvancedGzip.bind(this));
   }
 
+  /**
+   * The Closure Compiler `gzip` callback for advanced optimizations.
+   *
+   * @private
+   * @param {Object|Undefined} exception The error object.
+   * @param {Buffer} result The resulting gzipped source.
+   */
   function onClosureAdvancedGzip(exception, result) {
     if (exception) {
       throw exception;
@@ -294,15 +273,14 @@
     if (!this.isSilent) {
       console.log('Done. Size: %d bytes.', result.length);
     }
-    // store the gzipped result and report the size
     this.compiled.advanced.gzip = result;
 
     // next, minify the source using only UglifyJS
-    uglify.call(this, this.source, onUglify.bind(this));
+    uglify.call(this, this.source, 'UglifyJS', onUglify.bind(this));
   }
 
   /**
-   * The `uglify()` callback.
+   * The UglifyJS callback.
    *
    * @private
    * @param {Object|Undefined} exception The error object.
@@ -312,8 +290,8 @@
     if (exception) {
       throw exception;
     }
-    // store the post-processed Uglified result and gzip it
-    this.uglified.source = result = postprocess(result);
+    result = postprocess(result);
+    this.uglified.source = result;
     gzip(result, onUglifyGzip.bind(this));
   }
 
@@ -331,17 +309,14 @@
     if (!this.isSilent) {
       console.log('Done. Size: %d bytes.', result.length);
     }
-    var message = 'Compressing ' + path.basename(this.outputPath, '.js') + ' using hybrid minification; `SIMPLE_OPTIMIZATIONS`...';
-
-    // store the gzipped result and report the size
     this.uglified.gzip = result;
 
-    // next, minify the Closure Compiler simple minified source using UglifyJS
-    uglify.call(this, this.compiled.simple.source, message, onSimpleHybrid.bind(this));
+    // next, minify the already Closure Compiler simple optimized source using UglifyJS
+    uglify.call(this, this.compiled.simple.source, 'hybrid (simple)', onSimpleHybrid.bind(this));
   }
 
   /**
-   * The hybrid `uglify()` callback.
+   * The hybrid callback for simple optimizations.
    *
    * @private
    * @param {Object|Undefined} exception The error object.
@@ -351,19 +326,54 @@
     if (exception) {
       throw exception;
     }
-    // store the post-processed Uglified result and gzip it
-    this.hybrid.simple.source = result = postprocess(result);
+    result = postprocess(result);
+    this.hybrid.simple.source = result;
     gzip(result, onSimpleHybridGzip.bind(this));
   }
 
+  /**
+   * The hybrid `gzip` callback for simple optimizations.
+   *
+   * @private
+   * @param {Object|Undefined} exception The error object.
+   * @param {Buffer} result The resulting gzipped source.
+   */
+  function onSimpleHybridGzip(exception, result) {
+    if (exception) {
+      throw exception;
+    }
+    if (!this.isSilent) {
+      console.log('Done. Size: %d bytes.', result.length);
+    }
+    this.hybrid.simple.gzip = result;
+
+    // next, minify the already Closure Compiler advance optimized source using UglifyJS
+    uglify.call(this, this.compiled.advanced.source, 'hybrid (advanced)', onAdvancedHybrid.bind(this));
+  }
+
+  /**
+   * The hybrid callback for advanced optimizations.
+   *
+   * @private
+   * @param {Object|Undefined} exception The error object.
+   * @param {String} result The resulting minified source.
+   */
   function onAdvancedHybrid(exception, result) {
     if (exception) {
       throw exception;
     }
-    this.hybrid.advanced.source = result = postprocess(result);
+    result = postprocess(result);
+    this.hybrid.advanced.source = result;
     gzip(result, onAdvancedHybridGzip.bind(this));
   }
 
+  /**
+   * The hybrid `gzip` callback for advanced optimizations.
+   *
+   * @private
+   * @param {Object|Undefined} exception The error object.
+   * @param {Buffer} result The resulting gzipped source.
+   */
   function onAdvancedHybridGzip(exception, result) {
     if (exception) {
       throw exception;
@@ -378,37 +388,7 @@
   }
 
   /**
-   * The hybrid `gzip` callback.
-   *
-   * @private
-   * @param {Object|Undefined} exception The error object.
-   * @param {Buffer} result The resulting gzipped source.
-   */
-  function onSimpleHybridGzip(exception, result) {
-    if (exception) {
-      throw exception;
-    }
-    if (!this.isSilent) {
-      console.log('Done. Size: %d bytes.', result.length);
-    }
-    // store the gzipped result and report the size
-    this.hybrid.simple.gzip = result;
-
-    var message = 'Compressing ' + path.basename(this.outputPath, '.js') + ' using hybrid minification; `ADVANCED_OPTIMIZATIONS`...';
-    if (this.isTemplate) {
-      this.compiled.advanced = this.hybrid.advanced = {
-        'gzip': {
-          'length': Infinity
-        }
-      };
-      onComplete.call(this);
-    } else {
-      uglify.call(this, this.compiled.advanced.source, message, onAdvancedHybrid.bind(this));
-    }
-  }
-
-  /**
-   * The callback executed after JavaScript source is minified and gzipped.
+   * The callback executed after the source is minified and gzipped.
    *
    * @private
    */
@@ -429,18 +409,12 @@
       hybridAdvanced.gzip.length
     );
 
-    // pass the minified source to the minify instances "onComplete" callback
-    this.onComplete(
-      compiledSimple.gzip.length == min
-        ? compiledSimple.source
-        : compiledAdvanced.gzip.length == min
-          ? compiledAdvanced.source
-          : uglified.gzip.length == min
-            ? uglified.source
-            : hybridSimple.gzip.length == min
-              ? hybridSimple.source
-              : hybridAdvanced.source
-    );
+    // pass the minified source to the "onComplete" callback
+    [compiledSimple, compiledAdvanced, uglified, hybridSimple, hybridAdvanced].some(function(data) {
+      if (data.gzip.length == min) {
+        this.onComplete(data.source);
+      }
+    }, this);
   }
 
   /*--------------------------------------------------------------------------*/

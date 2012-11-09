@@ -20,10 +20,13 @@
       uglifyJS = require('../vendor/uglifyjs/uglify-js.js');
 
   /** The Closure Compiler command-line options */
-  var closureOptions = [
-    '--compilation_level=ADVANCED_OPTIMIZATIONS',
-    '--warning_level=QUIET'
-  ];
+  var closureOptions = ['--warning_level=QUIET'];
+
+  /** The Closure Compiler optimization modes */
+  var OPTIMIZATION_MODES = {
+    'simple': 'SIMPLE_OPTIMIZATIONS',
+    'advanced': 'ADVANCED_OPTIMIZATIONS'
+  };
 
   /** Reassign `existsSync` for older versions of Node */
   fs.existsSync || (fs.existsSync = path.existsSync);
@@ -97,8 +100,14 @@
       options = source || options;
       source = options.source || '';
     }
-    this.compiled = {};
-    this.hybrid = {};
+    this.compiled = {
+      'simple': {},
+      'advanced': {}
+    };
+    this.hybrid = {
+      'simple': {},
+      'advanced': {}
+    };
     this.uglified = {};
     this.isSilent = !!options.isSilent;
     this.isTemplate = !!options.isTemplate;
@@ -112,7 +121,7 @@
     };
 
     // begin the minification process
-    closureCompile.call(this, source, onClosureCompile.bind(this));
+    closureCompile.call(this, source, 'simple', onClosureSimpleCompile.bind(this));
   }
 
   /*--------------------------------------------------------------------------*/
@@ -124,30 +133,33 @@
    * @private
    * @param {String} source The JavaScript source to minify.
    * @param {String} [message] The message to log.
+   * @param {String} [mode] The optimization mode.
    * @param {Function} callback The function called once the process has completed.
    */
-  function closureCompile(source, message, callback) {
+  function closureCompile(source, mode, message, callback) {
     var options = closureOptions.slice();
 
-    // use simple optimizations when minifying template files
-    if (this.isTemplate) {
-      options = options.map(function(value) {
-        return value.replace(/^(--compilation_level)=.+$/, '$1=SIMPLE_OPTIMIZATIONS');
-      });
+    // juggle arguments
+    if (typeof mode == 'function') {
+      callback = mode;
+      mode = null;
+    } else if (typeof message == 'function') {
+      callback = message;
+      message = null;
     }
+
+    // use simple optimizations by default when minifying template files
+    mode = OPTIMIZATION_MODES[mode] || OPTIMIZATION_MODES[this.isTemplate ? 'simple' : 'advanced'];
+    options.push('--compilation_level=' + mode);
+
     // the standard error stream, standard output stream, and the Closure Compiler process
     var error = '',
         output = '',
         compiler = spawn('java', ['-jar', closurePath].concat(options));
 
-    // juggle arguments
-    if (typeof message == 'function') {
-      callback = message;
-      message = null;
-    }
     if (!this.isSilent) {
       console.log(message == null
-        ? 'Compressing ' + path.basename(this.outputPath, '.js') + ' using the Closure Compiler...'
+        ? 'Compressing ' + path.basename(this.outputPath, '.js') + ' using the Closure Compiler, `' + mode + '`...'
         : message
       );
     }
@@ -231,13 +243,13 @@
    * @param {Object|Undefined} exception The error object.
    * @param {String} result The resulting minified source.
    */
-  function onClosureCompile(exception, result) {
+  function onClosureSimpleCompile(exception, result) {
     if (exception) {
       throw exception;
     }
     // store the post-processed Closure Compiler result and gzip it
-    this.compiled.source = result = postprocess(result);
-    gzip(result, onClosureGzip.bind(this));
+    this.compiled.simple.source = result = postprocess(result);
+    gzip(result, onClosureSimpleGzip.bind(this));
   }
 
   /**
@@ -247,7 +259,7 @@
    * @param {Object|Undefined} exception The error object.
    * @param {Buffer} result The resulting gzipped source.
    */
-  function onClosureGzip(exception, result) {
+  function onClosureSimpleGzip(exception, result) {
     if (exception) {
       throw exception;
     }
@@ -255,7 +267,29 @@
       console.log('Done. Size: %d bytes.', result.length);
     }
     // store the gzipped result and report the size
-    this.compiled.gzip = result;
+    this.compiled.simple.gzip = result;
+
+    // next, compile the source using advanced optimizations
+    closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
+  }
+
+  function onClosureAdvancedCompile(exception, result) {
+    if (exception) {
+      throw exception;
+    }
+    this.compiled.advanced.source = result = postprocess(result);
+    gzip(result, onClosureAdvancedGzip.bind(this));
+  }
+
+  function onClosureAdvancedGzip(exception, result) {
+    if (exception) {
+      throw exception;
+    }
+    if (!this.isSilent) {
+      console.log('Done. Size: %d bytes.', result.length);
+    }
+    // store the gzipped result and report the size
+    this.compiled.advanced.gzip = result;
 
     // next, minify the source using only UglifyJS
     uglify.call(this, this.source, onUglify.bind(this));
@@ -291,13 +325,13 @@
     if (!this.isSilent) {
       console.log('Done. Size: %d bytes.', result.length);
     }
-    var message = 'Compressing  ' + path.basename(this.outputPath, '.js') + ' using hybrid minification...';
+    var message = 'Compressing ' + path.basename(this.outputPath, '.js') + ' using hybrid minification; `SIMPLE_OPTIMIZATIONS`...';
 
     // store the gzipped result and report the size
     this.uglified.gzip = result;
 
-    // next, minify the Closure Compiler minified source using UglifyJS
-    uglify.call(this, this.compiled.source, message, onHybrid.bind(this));
+    // next, minify the Closure Compiler simple minified source using UglifyJS
+    uglify.call(this, this.compiled.simple.source, message, onSimpleHybrid.bind(this));
   }
 
   /**
@@ -307,13 +341,34 @@
    * @param {Object|Undefined} exception The error object.
    * @param {String} result The resulting minified source.
    */
-  function onHybrid(exception, result) {
+  function onSimpleHybrid(exception, result) {
     if (exception) {
       throw exception;
     }
     // store the post-processed Uglified result and gzip it
-    this.hybrid.source = result = postprocess(result);
-    gzip(result, onHybridGzip.bind(this));
+    this.hybrid.simple.source = result = postprocess(result);
+    gzip(result, onSimpleHybridGzip.bind(this));
+  }
+
+  function onAdvancedHybrid(exception, result) {
+    if (exception) {
+      throw exception;
+    }
+    this.hybrid.advanced.source = result = postprocess(result);
+    gzip(result, onAdvancedHybridGzip.bind(this));
+  }
+
+  function onAdvancedHybridGzip(exception, result) {
+    if (exception) {
+      throw exception;
+    }
+    if (!this.isSilent) {
+      console.log('Done. Size: %d bytes.', result.length);
+    }
+    this.hybrid.advanced.gzip = result;
+
+    // finish by choosing the smallest compressed file
+    onComplete.call(this);
   }
 
   /**
@@ -323,7 +378,7 @@
    * @param {Object|Undefined} exception The error object.
    * @param {Buffer} result The resulting gzipped source.
    */
-  function onHybridGzip(exception, result) {
+  function onSimpleHybridGzip(exception, result) {
     if (exception) {
       throw exception;
     }
@@ -331,10 +386,10 @@
       console.log('Done. Size: %d bytes.', result.length);
     }
     // store the gzipped result and report the size
-    this.hybrid.gzip = result;
+    this.hybrid.simple.gzip = result;
 
-    // finish by choosing the smallest compressed file
-    onComplete.call(this);
+    var message = 'Compressing ' + path.basename(this.outputPath, '.js') + ' using hybrid minification; `ADVANCED_OPTIMIZATIONS`...';
+    uglify.call(this, this.compiled.advanced.source, message, onAdvancedHybrid.bind(this));
   }
 
   /**
@@ -343,21 +398,33 @@
    * @private
    */
   function onComplete() {
-    var compiled = this.compiled,
-        hybrid = this.hybrid,
-        uglified = this.uglified;
+    var compiledSimple = this.compiled.simple,
+        compiledAdvanced = this.compiled.advanced,
+        uglified = this.uglified,
+        hybridSimple = this.hybrid.simple,
+        hybridAdvanced = this.hybrid.advanced;
 
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to the Closure Compiler)
-    var min = Math.min(compiled.gzip.length, hybrid.gzip.length, uglified.gzip.length);
+    var min = Math.min(
+      compiledSimple.gzip.length,
+      compiledAdvanced.gzip.length,
+      uglified.gzip.length,
+      hybridSimple.gzip.length,
+      hybridAdvanced.gzip.length
+    );
 
     // pass the minified source to the minify instances "onComplete" callback
     this.onComplete(
-      compiled.gzip.length == min
-        ? compiled.source
-        : uglified.gzip.length == min
-          ? uglified.source
-          : hybrid.source
+      compiledSimple.gzip.length == min
+        ? compiledSimple.source
+        : compiledAdvanced.gzip.length == min
+          ? compiledAdvanced.source
+          : uglified.gzip.length == min
+            ? uglified.source
+            : hybridSimple.gzip.length == min
+              ? hybridSimple.source
+              : hybridAdvanced.source
     );
   }
 

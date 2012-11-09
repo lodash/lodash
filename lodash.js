@@ -3131,8 +3131,9 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a function that is restricted to executing only after it is
-   * called `n` times.
+   * Creates a function that is restricted to executing `func` only after it is
+   * called `n` times. The `func` is executed with the `this` binding of the
+   * created function.
    *
    * @static
    * @memberOf _
@@ -3228,6 +3229,7 @@
    * Creates a function that is the composition of the passed functions,
    * where each function consumes the return value of the function that follows.
    * In math terms, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
+   * Each function is executed with the `this` binding of the composed function.
    *
    * @static
    * @memberOf _
@@ -3385,7 +3387,8 @@
    * Creates a function that memoizes the result of `func`. If `resolver` is
    * passed, it will be used to determine the cache key for storing the result
    * based on the arguments passed to the memoized function. By default, the first
-   * argument passed to the memoized function is used as the cache key.
+   * argument passed to the memoized function is used as the cache key. The `func`
+   * is executed with the `this` binding of the memoized function.
    *
    * @static
    * @memberOf _
@@ -3410,8 +3413,9 @@
   }
 
   /**
-   * Creates a function that is restricted to one execution. Repeat calls to
-   * the function will return the value of the first call.
+   * Creates a function that is restricted to execute `func` once. Repeat calls to
+   * the function will return the value of the first call. The `func` is executed
+   * with the `this` binding of the created function.
    *
    * @static
    * @memberOf _
@@ -3444,8 +3448,8 @@
 
   /**
    * Creates a function that, when called, invokes `func` with any additional
-   * `partial` arguments prepended to those passed to the new function. This method
-   * is similar to `bind`, except it does **not** alter the `this` binding.
+   * `partial` arguments prepended to those passed to the new function. This
+   * method is similar to `bind`, except it does **not** alter the `this` binding.
    *
    * @static
    * @memberOf _
@@ -3515,8 +3519,9 @@
 
   /**
    * Creates a function that passes `value` to the `wrapper` function as its
-   * first argument. Additional arguments passed to the new function are appended
-   * to those passed to the `wrapper` function.
+   * first argument. Additional arguments passed to the function are appended
+   * to those passed to the `wrapper` function. The `wrapper` is executed with
+   * the `this` binding of the created function.
    *
    * @static
    * @memberOf _

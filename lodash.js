@@ -3411,7 +3411,8 @@
 
   /**
    * Creates a function that is restricted to one execution. Repeat calls to
-   * the function will return the value of the first call.
+   * the function will return the value of the first call. The function is
+   * executed with the appropriate `this` context.
    *
    * @static
    * @memberOf _
@@ -3424,6 +3425,17 @@
    * initialize();
    * initialize();
    * // Application is only created once.
+   *
+   * var object = {
+   *   'wrapper':'#wrapper',
+   *   'element': _.once(function() {
+   *     return jQuery(this.wrapper).find('.element');
+   *   })
+   * };
+   * object.element();
+   * // => Callback gets run and its value returned
+   * object.element();
+   * // => Callback does not get run, the cached value is returned
    */
   function once(func) {
     var result,

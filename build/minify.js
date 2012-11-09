@@ -270,7 +270,13 @@
     this.compiled.simple.gzip = result;
 
     // next, compile the source using advanced optimizations
-    closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
+    if (this.isTemplate) {
+      // jump directly to UglifyJS for templates.
+      uglify.call(this, this.source, onUglify.bind(this));
+    } else {
+      // otherwise, compress using advanced optimizations
+      closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
+    }
   }
 
   function onClosureAdvancedCompile(exception, result) {
@@ -389,7 +395,16 @@
     this.hybrid.simple.gzip = result;
 
     var message = 'Compressing ' + path.basename(this.outputPath, '.js') + ' using hybrid minification; `ADVANCED_OPTIMIZATIONS`...';
-    uglify.call(this, this.compiled.advanced.source, message, onAdvancedHybrid.bind(this));
+    if (this.isTemplate) {
+      this.compiled.advanced = this.hybrid.advanced = {
+        'gzip': {
+          'length': Infinity
+        }
+      };
+      onComplete.call(this);
+    } else {
+      uglify.call(this, this.compiled.advanced.source, message, onAdvancedHybrid.bind(this));
+    }
   }
 
   /**

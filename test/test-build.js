@@ -474,7 +474,8 @@
 
         var data = {
           'a': { 'people': ['moe', 'larry', 'curly'] },
-          'b': { 'epithet': 'stooge' }
+          'b': { 'epithet': 'stooge' },
+          'c': { 'name': 'ES6' }
         };
 
         context._ = _;
@@ -483,6 +484,7 @@
 
         equal(templates.a(data.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
         equal(templates.b(data.b), 'Hello stooge.', basename);
+        equal(templates.c(data.c), 'Hello ES6!', basename);
         delete _.templates;
         start();
       });
@@ -524,14 +526,14 @@
             context = createContext();
 
         var data = {
-          'c': { 'name': 'Mustache' }
+          'd': { 'name': 'Mustache' }
         };
 
         context._ = _;
         vm.runInContext(source, context);
         var templates = context._.templates;
 
-        equal(templates.c(data.c), 'Hello Mustache!', basename);
+        equal(templates.d(data.d), 'Hello Mustache!', basename);
         start();
       });
     });

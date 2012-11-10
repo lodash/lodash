@@ -3700,11 +3700,12 @@
    * _.result(object, 'stuff');
    * // => 'nonsense'
    */
-  function result(object, property) {
+  function result(object, property, args) {
     // based on Backbone's private `getValue` function
     // https://github.com/documentcloud/backbone/blob/0.9.2/backbone.js#L1419-1424
-    var value = object ? object[property] : null;
-    return isFunction(value) ? object[property]() : value;
+    return isFunction(object[property]) 
+      ? object[property].apply(object, toArray(args)) 
+      : value;
   }
 
   /**

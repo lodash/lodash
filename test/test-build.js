@@ -18,11 +18,11 @@
   var aliasToRealMap = {
     'all': 'every',
     'any': 'some',
-    'assign': 'extend',
     'collect': 'map',
     'detect': 'find',
     'drop': 'rest',
     'each': 'forEach',
+    'extend': 'assign',
     'foldl': 'reduce',
     'foldr': 'reduceRight',
     'head': 'first',
@@ -37,9 +37,9 @@
 
   /** Used to associate real names with their aliases */
   var realToAliasMap = {
+    'assign': ['extend'],
     'contains': ['include'],
     'every': ['all'],
-    'extend': ['assign'],
     'filter': ['select'],
     'find': ['detect'],
     'first': ['head', 'take'],
@@ -242,7 +242,6 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
-    'assign',
     'forIn',
     'forOwn',
     'isPlainObject',

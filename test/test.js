@@ -409,6 +409,14 @@
       Foo.prototype = { 'c': 3 };
       deepEqual(_.extend({}, Foo), expected);
     });
+
+    test('should work with `_.reduce`', function() {
+      var actual = { 'a': 1},
+          array = [{ 'b': 2 }, { 'c': 3 }];
+
+      _.reduce(array, _.extend, actual);
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

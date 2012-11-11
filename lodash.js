@@ -430,10 +430,10 @@
   /** Reusable iterator options for `defaults`, and `extend` */
   var extendIteratorOptions = {
     'useHas': false,
-    'args': 'object',
+    'args': 'object, source, guard',
     'top':
-      'for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
-      '  if (iteratee = arguments[argsIndex]) {',
+      'for (var argsIndex = 1, argsLength = typeof guard == \'number\' ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
+      '  if ((iteratee = arguments[argsIndex])) {',
     'objectLoop': 'result[index] = value',
     'bottom': '  }\n}'
   };
@@ -987,6 +987,7 @@
    *
    * @static
    * @memberOf _
+   * @alias assign
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
@@ -4176,6 +4177,7 @@
   // assign aliases
   lodash.all = every;
   lodash.any = some;
+  lodash.assign = extend;
   lodash.collect = map;
   lodash.detect = find;
   lodash.drop = rest;

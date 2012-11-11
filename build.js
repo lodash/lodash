@@ -80,7 +80,7 @@
     'escape': [],
     'every': ['forEach', 'isArray'],
     'extend': ['isArguments'],
-    'filter': ['forEach'],
+    'filter': ['forEach', 'isArray'],
     'find': ['forEach'],
     'first': [],
     'flatten': ['isArray'],

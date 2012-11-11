@@ -1947,11 +1947,24 @@
   function filter(collection, callback, thisArg) {
     var result = [];
     callback = createCallback(callback, thisArg);
-    forEach(collection, function(value, index, collection) {
-      if (callback(value, index, collection)) {
-        result.push(value);
+
+    if (isArray(collection)) {
+      var index = -1,
+          length = collection.length;
+
+      while (++index < length) {
+        var value = collection[index];
+        if (callback(value, index, collection)) {
+          result.push(value);
+        }
       }
-    });
+    } else {
+      forEach(collection, function(value, index, collection) {
+        if (callback(value, index, collection)) {
+          result.push(value);
+        }
+      });
+    }
     return result;
   }
 
@@ -2419,7 +2432,7 @@
           length = collection.length;
 
       while (++index < length) {
-        if (result = callback(collection[index], index, collection)) {
+        if ((result = callback(collection[index], index, collection))) {
           break;
         }
       }

@@ -163,6 +163,42 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.assign');
+
+  (function() {
+    test('should not error on `null` or `undefined` sources (test in IE < 9)', function() {
+      try {
+        deepEqual(_.assign({}, null, undefined, { 'a': 1 }), { 'a': 1 });
+      } catch(e) {
+        ok(false);
+      }
+    });
+
+    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+      function Foo() {}
+      Foo.prototype.c = 3;
+
+      Foo.a = 1;
+      Foo.b = 2;
+
+      var expected = { 'a': 1, 'b': 2 };
+      deepEqual(_.assign({}, Foo), expected);
+
+      Foo.prototype = { 'c': 3 };
+      deepEqual(_.assign({}, Foo), expected);
+    });
+
+    test('should work with `_.reduce`', function() {
+      var actual = { 'a': 1},
+          array = [{ 'b': 2 }, { 'c': 3 }];
+
+      _.reduce(array, _.assign, actual);
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.bind');
 
   (function() {
@@ -385,45 +421,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.extend');
-
-  (function() {
-    test('should not error on `null` or `undefined` sources (test in IE < 9)', function() {
-      try {
-        deepEqual(_.extend({}, null, undefined, { 'a': 1 }), { 'a': 1 });
-      } catch(e) {
-        ok(false);
-      }
-    });
-
-    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
-      function Foo() {}
-      Foo.prototype.c = 3;
-
-      Foo.a = 1;
-      Foo.b = 2;
-
-      var expected = { 'a': 1, 'b': 2 };
-      deepEqual(_.extend({}, Foo), expected);
-
-      Foo.prototype = { 'c': 3 };
-      deepEqual(_.extend({}, Foo), expected);
-    });
-
-    test('should work with `_.reduce`', function() {
-      var actual = { 'a': 1},
-          array = [{ 'b': 2 }, { 'c': 3 }];
-
-      _.reduce(array, _.extend, actual);
-      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('strict mode checks');
 
-  _.each(['bindAll', 'defaults', 'extend'], function(methodName) {
+  _.each(['assign', 'bindAll', 'defaults'], function(methodName) {
     var func = _[methodName];
 
     test('lodash.' + methodName + ' should not throw strict mode errors', function() {

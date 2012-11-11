@@ -28,11 +28,11 @@
   var aliasToRealMap = {
     'all': 'every',
     'any': 'some',
-    'assign': 'extend',
     'collect': 'map',
     'detect': 'find',
     'drop': 'rest',
     'each': 'forEach',
+    'extend': 'assign',
     'foldl': 'reduce',
     'foldr': 'reduceRight',
     'head': 'first',
@@ -47,9 +47,9 @@
 
   /** Used to associate real names with their aliases */
   var realToAliasMap = {
+    'assign': ['extend'],
     'contains': ['include'],
     'every': ['all'],
-    'extend': ['assign'],
     'filter': ['select'],
     'find': ['detect'],
     'first': ['head', 'take'],
@@ -66,10 +66,11 @@
   /** Used to track function dependencies */
   var dependencyMap = {
     'after': [],
+    'assign': ['isArguments'],
     'bind': ['isFunction', 'isObject'],
     'bindAll': ['bind', 'functions'],
     'chain': ['mixin'],
-    'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isObject', 'isPlainObject'],
+    'clone': ['assign', 'forEach', 'forOwn', 'isArguments', 'isObject', 'isPlainObject'],
     'compact': [],
     'compose': [],
     'contains': ['forEach', 'indexOf', 'isString'],
@@ -81,7 +82,6 @@
     'difference': ['indexOf'],
     'escape': [],
     'every': ['forEach', 'isArray'],
-    'extend': ['isArguments'],
     'filter': ['forEach', 'isArray'],
     'find': ['forEach'],
     'first': [],
@@ -231,7 +231,6 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
-    'assign',
     'forIn',
     'forOwn',
     'isPlainObject',
@@ -346,7 +345,7 @@
       '    lodash csp           Build supporting default Content Security Policy restrictions',
       '    lodash legacy        Build tailored for older browsers without ES5 support',
       '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
-      '    lodash strict        Build with `_.bindAll`, `_.defaults`, & `_.extend` in strict mode',
+      '    lodash strict        Build with `_.assign`, `_.bindAll`, & `_.defaults` in strict mode',
       '    lodash underscore    Build tailored for projects already using Underscore',
       '    lodash include=...   Comma separated method/category names to include in the build',
       '    lodash minus=...     Comma separated method/category names to remove from those included in the build',
@@ -892,7 +891,7 @@
     // flag used to specify skipping status updates normally logged to the console
     var isSilent = isStdOut || options.indexOf('-s') > -1 || options.indexOf('--silent') > -1;
 
-    // flag used to specify `_.bindAll`, `_.extend`, and `_.defaults` are
+    // flag used to specify `_.assign`, `_.bindAll`, and `_.defaults` are
     // constructed using the "use strict" directive
     var isStrict = options.indexOf('strict') > -1;
 
@@ -933,7 +932,7 @@
       return match
         ? Function('return {' + match[1].replace(/^{|}$/g, '') + '}')()
         : result;
-    }, _.extend(_.clone(_.templateSettings), {
+    }, _.assign(_.clone(_.templateSettings), {
       'moduleId': moduleId
     }));
 
@@ -998,7 +997,7 @@
         dependencyMap.template = ['defaults', 'escape'];
 
         if (useUnderscoreClone) {
-          dependencyMap.clone = ['extend', 'isArray'];
+          dependencyMap.clone = ['assign', 'isArray'];
         }
       }
       // add method names required by Backbone and Underscore builds
@@ -1068,7 +1067,7 @@
           source = source.replace(/^( *)function clone[\s\S]+?\n\1}/m, [
             '  function clone(value) {',
             '    return value && objectTypes[typeof value]',
-            '      ? (isArray(value) ? slice.call(value) : extend({}, value))',
+            '      ? (isArray(value) ? slice.call(value) : assign({}, value))',
             '      : value',
             '  }'
           ].join('\n'));
@@ -1108,9 +1107,9 @@
           '  }'
         ].join('\n'));
 
-        // replace `_.extend`
-        source = source.replace(/^( *)var extend *= *createIterator[\s\S]+?\);/m, [
-          '  function extend(object) {',
+        // replace `_.assign`
+        source = source.replace(/^( *)var assign *= *createIterator[\s\S]+?\);/m, [
+          '  function assign(object) {',
           '    if (!object) {',
           '      return object;',
           '    }',
@@ -1309,9 +1308,6 @@
         }
       });
 
-      if (!exposeAssign) {
-        source = removeFunction(source, 'assign');
-      }
       // remove `isArguments` fallback before `isArguments` is transformed by
       // other parts of the build process
       if (isRemoved(source, 'isArguments')) {
@@ -1379,11 +1375,14 @@
         });
 
         if (isUnderscore) {
-          // remove `_.forIn`, `_.forOwn`, and `_.isPlainObject` assignments
+          // remove `_.assign`, `_.forIn`, `_.forOwn`, and `_.isPlainObject` assignments
           (function() {
             var snippet = getMethodAssignments(source),
                 modified = snippet;
 
+            if (!exposeAssign) {
+              modified = modified.replace(/(?:\n *\/\/.*\s*)* *lodash\.assign *= *.+\n/, '');
+            }
             if (!exposeForIn) {
               modified = modified.replace(/(?:\n *\/\/.*\s*)* *lodash\.forIn *= *.+\n/, '');
             }

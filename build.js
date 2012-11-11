@@ -1393,9 +1393,13 @@
             });
           });
 
-          // modify `_.every` and `_.some` to use the private `indicatorObject`
+          // modify `_.every`, `_.find`, and `_.some` to use the private `indicatorObject`
           source = source.replace(matchFunction(source, 'every'), function(match) {
             return match.replace(/\(result *= *(.+?)\);/, '!(result = $1) && indicatorObject;');
+          });
+
+          source = source.replace(matchFunction(source, 'find'), function(match) {
+            return match.replace(/return false/, 'return indicatorObject');
           });
 
           source = source.replace(matchFunction(source, 'some'), function(match) {

@@ -1836,18 +1836,23 @@
    */
   function contains(collection, target, fromIndex) {
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length : 0,
+        result = false;
 
     fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
     if (typeof length == 'number') {
-      return (isString(collection)
+      result = (isString(collection)
         ? collection.indexOf(target, fromIndex)
         : indexOf(collection, target, fromIndex)
       ) > -1;
+    } else {
+      forEach(collection, function(value) {
+        if (++index >= fromIndex) {
+          return !(result = value === target);
+        }
+      });
     }
-    return some(collection, function(value) {
-      return ++index >= fromIndex && value === target;
-    });
+    return result;
   }
 
   /**

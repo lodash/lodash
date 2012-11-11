@@ -70,7 +70,7 @@
     'clone': ['extend', 'forEach', 'forOwn', 'isArguments', 'isObject', 'isPlainObject'],
     'compact': [],
     'compose': [],
-    'contains': ['indexOf', 'isString', 'some'],
+    'contains': ['forEach', 'indexOf', 'isString'],
     'countBy': ['forEach'],
     'debounce': [],
     'defaults': ['isArguments'],
@@ -974,7 +974,7 @@
         dependencyMap.reduceRight = ['forEach', 'keys'];
       }
       if (isUnderscore) {
-        dependencyMap.contains = ['indexOf', 'some'],
+        dependencyMap.contains = ['forEach', 'indexOf'],
         dependencyMap.isEqual = ['isArray', 'isFunction'];
         dependencyMap.isEmpty = ['isArray', 'isString'];
         dependencyMap.max = ['forEach', 'isArray'];
@@ -1075,10 +1075,16 @@
         // replace `_.contains`
         source = source.replace(/^( *)function contains[\s\S]+?\n\1}/m, [
           '  function contains(collection, target) {',
-          '    var length = collection ? collection.length : 0;',
-          "    return typeof length == 'number'",
-          '      ? indexOf(collection, target) > -1',
-          '      : some(collection, function(value) { return value === target; });',
+          '    var length = collection ? collection.length : 0,',
+          '        result = false;',
+          "    if (typeof length == 'number') {",
+          '      result = indexOf(collection, target) > -1;',
+          '    } else {',
+          '      forEach(collection, function(value) {',
+          '        return (result = value === target) && indicatorObject;',
+          '      });',
+          '    }',
+          '    return result;',
           '  }'
         ].join('\n'));
 

@@ -28,6 +28,7 @@
   var aliasToRealMap = {
     'all': 'every',
     'any': 'some',
+    'assign': 'extend',
     'collect': 'map',
     'detect': 'find',
     'drop': 'rest',
@@ -48,6 +49,7 @@
   var realToAliasMap = {
     'contains': ['include'],
     'every': ['all'],
+    'extend': ['assign'],
     'filter': ['select'],
     'find': ['detect'],
     'first': ['head', 'take'],
@@ -229,6 +231,7 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
+    'assign',
     'forIn',
     'forOwn',
     'isPlainObject',
@@ -615,13 +618,10 @@
     var modified,
         snippet = matchFunction(source, funcName);
 
-    // exit early if function is not found
-    if (!snippet) {
-      return source;
-    }
     // remove function
-    source = source.replace(snippet, '');
-
+    if (snippet) {
+      source = source.replace(snippet, '');
+    }
     // grab the method assignments snippet
     snippet = getMethodAssignments(source);
 
@@ -947,7 +947,8 @@
     var useUnderscoreClone = isUnderscore;
 
     // flags used to specify exposing Lo-Dash methods in an Underscore build
-    var exposeForIn = !isUnderscore,
+    var exposeAssign = !isUnderscore,
+        exposeForIn = !isUnderscore,
         exposeForOwn = !isUnderscore,
         exposeIsPlainObject = !isUnderscore;
 
@@ -969,6 +970,20 @@
           : accumulator;
       }, []);
 
+      // add method names explicitly
+      options.some(function(value) {
+        return /include/.test(value) &&
+          (result = getDependencies(optionToMethodsArray(source, value)));
+      });
+
+      // include Lo-Dash's methods if explicitly requested
+      if (isUnderscore && result) {
+        exposeAssign = result.indexOf('assign') > -1;
+        exposeForIn = result.indexOf('forIn') > -1;
+        exposeForOwn = result.indexOf('forOwn') > -1;
+        exposeIsPlainObject = result.indexOf('isPlainObject') > -1;
+        useUnderscoreClone = result.indexOf('clone') < 0;
+      }
       // update dependencies
       if (isMobile) {
         dependencyMap.reduceRight = ['forEach', 'keys'];
@@ -985,19 +1000,6 @@
         if (useUnderscoreClone) {
           dependencyMap.clone = ['extend', 'isArray'];
         }
-      }
-      // add method names explicitly
-      options.some(function(value) {
-        return /include/.test(value) &&
-          (result = getDependencies(optionToMethodsArray(source, value)));
-      });
-
-      // include Lo-Dash's methods if explicitly requested
-      if (result) {
-        exposeForIn = result.indexOf('forIn') > -1;
-        exposeForOwn = result.indexOf('forOwn') > -1;
-        exposeIsPlainObject = result.indexOf('isPlainObject') > -1;
-        useUnderscoreClone = result.indexOf('clone') < 0;
       }
       // add method names required by Backbone and Underscore builds
       if (isBackbone && !result) {
@@ -1103,6 +1105,24 @@
           '      }',
           '    }',
           '    return result',
+          '  }'
+        ].join('\n'));
+
+        // replace `_.extend`
+        source = source.replace(/^( *)var extend *= *createIterator[\s\S]+?\);/m, [
+          '  function extend(object) {',
+          '    if (!object) {',
+          '      return object;',
+          '    }',
+          '    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
+          '      var iteratee = arguments[argsIndex];',
+          '      if (iteratee) {',
+          '        for (var key in iteratee) {',
+          '          object[key] = iteratee[key];',
+          '        }',
+          '      }',
+          '    }',
+          '    return object;',
           '  }'
         ].join('\n'));
 
@@ -1289,6 +1309,9 @@
         }
       });
 
+      if (!exposeAssign) {
+        source = removeFunction(source, 'assign');
+      }
       // remove `isArguments` fallback before `isArguments` is transformed by
       // other parts of the build process
       if (isRemoved(source, 'isArguments')) {

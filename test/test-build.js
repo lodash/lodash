@@ -18,6 +18,7 @@
   var aliasToRealMap = {
     'all': 'every',
     'any': 'some',
+    'assign': 'extend',
     'collect': 'map',
     'detect': 'find',
     'drop': 'rest',
@@ -38,6 +39,7 @@
   var realToAliasMap = {
     'contains': ['include'],
     'every': ['all'],
+    'extend': ['assign'],
     'filter': ['select'],
     'find': ['detect'],
     'first': ['head', 'take'],
@@ -144,6 +146,7 @@
 
   /** List of "Objects" category methods */
   var objectsMethods = [
+    'assign',
     'clone',
     'defaults',
     'extend',
@@ -239,6 +242,7 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
+    'assign',
     'forIn',
     'forOwn',
     'isPlainObject',
@@ -694,6 +698,7 @@
         var lodash = context._;
 
         _.each([
+          'assign',
           'forIn',
           'forOwn',
           'isPlainObject',
@@ -701,7 +706,7 @@
           'merge',
           'partial'
         ], function(methodName) {
-          equal(lodash[methodName], undefined, '_.' + methodName + ' exists: ' + basename);
+          equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
         });
 
         start();
@@ -993,7 +998,9 @@
         build(['--silent'].concat(command.split(' ')), function(source, filePath) {
           var methodNames,
               basename = path.basename(filePath, '.js'),
-              context = createContext();
+              context = createContext(),
+              isUnderscore = /underscore/.test(command),
+              exposeAssign = !isUnderscore;
 
           try {
             vm.runInContext(source, context);
@@ -1008,8 +1015,12 @@
           if (/backbone/.test(command) && !methodNames) {
             methodNames = backboneDependencies.slice();
           }
-          if (/underscore/.test(command) && !methodNames) {
-            methodNames = underscoreMethods.slice();
+          if (isUnderscore) {
+            if (methodNames) {
+              exposeAssign = methodNames.indexOf('assign') > -1;
+            } else {
+              methodNames = underscoreMethods.slice();
+            }
           }
           // add method names explicitly by category
           if (/category/.test(command)) {
@@ -1043,6 +1054,9 @@
           // remove nonexistent and duplicate method names
           methodNames = _.uniq(_.intersection(allMethods, expandMethodNames(methodNames)));
 
+          if (!exposeAssign) {
+            methodNames = _.without(methodNames, 'assign');
+          }
           var lodash = context._ || {};
           methodNames.forEach(function(methodName) {
             testMethod(lodash, methodName, basename);

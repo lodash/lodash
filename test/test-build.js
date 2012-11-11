@@ -647,7 +647,13 @@
         equal(lodash.contains([1, 2, 3], 1, 2), true, '_.contains should ignore `fromIndex`: ' + basename);
         equal(lodash.every([true, false, true]), false, '_.every: ' + basename);
 
-        var actual = lodash.forEach(array, function(value) {
+        actual = lodash.find(array, function(value) {
+          return 'value' in value;
+        });
+
+        equal(actual, array[0], '_.find: ' + basename);
+
+        actual = lodash.forEach(array, function(value) {
           last = value;
           return false;
         });

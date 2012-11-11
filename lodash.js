@@ -417,6 +417,16 @@
     'return result'
   );
 
+  /** Reusable iterator options for `assign` and `defaults` */
+  var assignIteratorOptions = {
+    'args': 'object, source, guard',
+    'top':
+      'for (var argsIndex = 1, argsLength = typeof guard == \'number\' ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
+      '  if ((iteratee = arguments[argsIndex])) {',
+    'objectLoop': 'result[index] = value',
+    'bottom': '  }\n}'
+  };
+
   /**
    * Reusable iterator options shared by `forEach`, `forIn`, and `forOwn`.
    */
@@ -425,17 +435,6 @@
     'top': 'callback = createCallback(callback, thisArg)',
     'arrayLoop': 'if (callback(value, index, collection) === false) return result',
     'objectLoop': 'if (callback(value, index, collection) === false) return result'
-  };
-
-  /** Reusable iterator options for `defaults`, and `extend` */
-  var extendIteratorOptions = {
-    'useHas': false,
-    'args': 'object, source, guard',
-    'top':
-      'for (var argsIndex = 1, argsLength = typeof guard == \'number\' ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
-      '  if ((iteratee = arguments[argsIndex])) {',
-    'objectLoop': 'result[index] = value',
-    'bottom': '  }\n}'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
@@ -698,6 +697,25 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Assigns own enumerable properties of source object(s) to the `destination`
+   * object. Subsequent sources will overwrite propery assignments of previous
+   * sources.
+   *
+   * @static
+   * @memberOf _
+   * @alias extend
+   * @category Objects
+   * @param {Object} object The destination object.
+   * @param {Object} [source1, source2, ...] The source objects.
+   * @returns {Object} Returns the destination object.
+   * @example
+   *
+   * _.assign({ 'name': 'moe' }, { 'age': 40 });
+   * // => { 'name': 'moe', 'age': 40 }
+   */
+  var assign = createIterator(assignIteratorOptions);
+
+  /**
    * Checks if `value` is an `arguments` object.
    *
    * @static
@@ -756,7 +774,7 @@
   });
 
   /**
-   * Iterates over `object`'s own enumerable properties, executing the `callback`
+   * Iterates over an object's own enumerable properties, executing the `callback`
    * for each property. The `callback` is bound to `thisArg` and invoked with three
    * arguments; (value, key, object). Callbacks may exit iteration early by explicitly
    * returning `false`.
@@ -915,7 +933,7 @@
     if (!isObj || !deep) {
       // don't clone functions
       return isObj
-        ? (isArr ? slice.call(value) : extend({}, value))
+        ? (isArr ? slice.call(value) : assign({}, value))
         : value;
     }
 
@@ -976,28 +994,10 @@
    * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
-  var defaults = createIterator(extendIteratorOptions, {
-    'objectLoop': 'if (result[index] == null) ' + extendIteratorOptions.objectLoop
+  var defaults = createIterator(assignIteratorOptions, {
+    'useHas': false,
+    'objectLoop': 'if (result[index] == null) ' + assignIteratorOptions.objectLoop
   });
-
-  /**
-   * Assigns enumerable properties of the source object(s) to the `destination`
-   * object. Subsequent sources will overwrite propery assignments of previous
-   * sources.
-   *
-   * @static
-   * @memberOf _
-   * @alias assign
-   * @category Objects
-   * @param {Object} object The destination object.
-   * @param {Object} [source1, source2, ...] The source objects.
-   * @returns {Object} Returns the destination object.
-   * @example
-   *
-   * _.extend({ 'name': 'moe' }, { 'age': 40 });
-   * // => { 'name': 'moe', 'age': 40 }
-   */
-  var extend = createIterator(extendIteratorOptions);
 
   /**
    * Creates a sorted array of all enumerable properties, own and inherited,
@@ -4079,6 +4079,7 @@
   lodash.VERSION = '0.9.2';
 
   // assign static methods
+  lodash.assign = assign;
   lodash.after = after;
   lodash.bind = bind;
   lodash.bindAll = bindAll;
@@ -4095,7 +4096,6 @@
   lodash.difference = difference;
   lodash.escape = escape;
   lodash.every = every;
-  lodash.extend = extend;
   lodash.filter = filter;
   lodash.find = find;
   lodash.first = first;
@@ -4177,11 +4177,11 @@
   // assign aliases
   lodash.all = every;
   lodash.any = some;
-  lodash.assign = extend;
   lodash.collect = map;
   lodash.detect = find;
   lodash.drop = rest;
   lodash.each = forEach;
+  lodash.extend = assign;
   lodash.foldl = reduce;
   lodash.foldr = reduceRight;
   lodash.head = first;

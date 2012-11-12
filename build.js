@@ -1031,7 +1031,6 @@
         dependencyMap.min = ['forEach', 'isArray'];
         dependencyMap.pick = [];
         dependencyMap.template = ['defaults', 'escape'];
-        dependencyMap.where = ['filter', 'forIn'];
 
         if (useUnderscoreClone) {
           dependencyMap.clone = ['assign', 'isArray'];
@@ -1289,26 +1288,6 @@
           '      }',
           '    }',
           '    return result;',
-          '  }'
-        ].join('\n'));
-
-        // replace `_.where`
-        source = source.replace(/^( *)function where[\s\S]+?\n\1}/m, [
-          '  function where(collection, properties) {',
-          '    var props = [];',
-          '    forIn(properties, function(value, prop) {',
-          '      props.push(prop);',
-          '    });',
-          '    return filter(collection, function(object) {',
-          '      var length = props.length;',
-          '      while (length--) {',
-          '        var result = object[props[length]] === properties[props[length]];',
-          '        if (!result) {',
-          '          break;',
-          '        }',
-          '      }',
-          '      return !!result;',
-          '    });',
           '  }'
         ].join('\n'));
 

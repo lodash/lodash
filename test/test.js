@@ -1157,6 +1157,14 @@
       var expected = { 'a': 4 };
       deepEqual(_.merge({ 'a': 1 }, { 'a': 2 }, { 'a': 3 }, expected), expected);
     });
+
+    test('should work with `_.reduce`', function() {
+      var actual = { 'a': 1},
+          array = [{ 'b': 2 }, { 'c': 3 }];
+
+      _.reduce(array, _.merge, actual);
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

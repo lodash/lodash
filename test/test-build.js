@@ -689,10 +689,6 @@
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
 
-        var properties = new Foo;
-        properties.b = 2;
-        deepEqual(lodash.where(array, properties), [_.first(array)], '_.where should filter by inherited properties: ' + basename);
-
         start();
       });
     });

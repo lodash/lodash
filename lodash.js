@@ -977,7 +977,7 @@
   }
 
   /**
-   * Assigns enumerable properties of the default object(s) to the `destination`
+   * Assigns own enumerable properties of source object(s) to the `destination`
    * object for all `destination` properties that resolve to `null`/`undefined`.
    * Once a property is set, additional defaults of the same property will be
    * ignored.
@@ -995,7 +995,6 @@
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
   var defaults = createIterator(assignIteratorOptions, {
-    'useHas': false,
     'objectLoop': 'if (result[index] == null) ' + assignIteratorOptions.objectLoop
   });
 

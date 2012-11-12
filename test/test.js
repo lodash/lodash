@@ -421,6 +421,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('source property checks');
+
+  _.each(['assign', 'defaults'], function(methodName) {
+    var func = _[methodName];
+
+    test('lodash.' + methodName + ' should not assign inherited `source` properties', function() {
+      function Foo() {}
+      Foo.prototype = { 'a': 1 };
+      deepEqual(func({}, new Foo), {});
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('strict mode checks');
 
   _.each(['assign', 'bindAll', 'defaults'], function(methodName) {

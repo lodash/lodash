@@ -636,7 +636,7 @@
 
       build(['-s', 'underscore'], function(source, filePath) {
         var last,
-            array = [{ 'value': 1 }, { 'value': 2 }],
+            array = [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }],
             basename = path.basename(filePath, '.js'),
             context = createContext();
 
@@ -658,17 +658,17 @@
         deepEqual(lodash.extend({}, new Foo), Foo.prototype, '_.extend should assign inherited `source` properties: ' + basename);
 
         actual = lodash.find(array, function(value) {
-          return 'value' in value;
+          return 'a' in value;
         });
 
-        equal(actual, array[0], '_.find: ' + basename);
+        equal(actual, _.first(array), '_.find: ' + basename);
 
         actual = lodash.forEach(array, function(value) {
           last = value;
           return false;
         });
 
-        equal(last.value, 2, '_.forEach should not exit early: ' + basename);
+        equal(last, _.last(array), '_.forEach should not exit early: ' + basename);
         equal(actual, undefined, '_.forEach should return `undefined`: ' + basename);
 
         object = { 'length': 0, 'splice': Array.prototype.splice };
@@ -688,6 +688,11 @@
 
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
+
+        var properties = new Foo;
+        properties.b = 2;
+        deepEqual(lodash.where(array, properties), [_.first(array)], '_.where should filter by inherited properties: ' + basename);
+
         start();
       });
     });

@@ -250,6 +250,42 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Adds the given build `commands` to the copyright/license header of `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {Array} [commands=[]] An array of commands.
+   * @returns {String} Returns the modified source.
+   */
+  function addCommandsToHeader(source, commands) {
+    return source.replace(/(\/\*!\n)( \*)?( *Lo-Dash [0-9.]+)(.*)/, function() {
+      // convert unmatched groups to empty strings
+      var parts = _.map(slice.call(arguments, 1), function(part) {
+        return part || '';
+      });
+
+      // remove `node path/to/build.js` from `commands`
+      if (commands[0] == 'node') {
+        commands.splice(0, 2);
+      }
+      // add quotes to commands with spaces or equals signs
+      commands = _.map(commands, function(command) {
+        var separator = (command.match(/[= ]/) || [''])[0];
+        if (separator) {
+          var pair = command.split(separator);
+          command = pair[0] + separator + '"' + pair[1] + '"';
+        }
+        return command;
+      });
+      // add build commands to copyright/license header
+      return (
+        parts[0] + parts[1] + parts[2] + ' (Custom Build)' + parts[3] + '\n' +
+        parts[1] + ' Build: `lodash ' + commands.join(' ') + '`'
+      );
+    });
+  }
+
+  /**
    * Compiles template files matched by the given file path `pattern` into a
    * single source, extending `_.templates` with precompiled templates named after
    * each template file's basename.
@@ -1763,6 +1799,9 @@
 
     // output debug build
     if (!isMinify && (isCustom || isDebug || isTemplate)) {
+      if (isCustom) {
+        debugSource = addCommandsToHeader(debugSource, options);
+      }
       if (isDebug && isStdOut) {
         stdout.write(debugSource);
         callback(debugSource);
@@ -1782,6 +1821,9 @@
           // inject "use strict" directive
           if (isStrict) {
             source = source.replace(/^([\s\S]*?function[^{]+{)([^'"])/, '$1"use strict";$2');
+          }
+          if (isCustom) {
+            source = addCommandsToHeader(source, options);
           }
           if (isStdOut) {
             stdout.write(source);

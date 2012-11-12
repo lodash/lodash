@@ -651,6 +651,12 @@
         equal(lodash.contains([1, 2, 3], 1, 2), true, '_.contains should ignore `fromIndex`: ' + basename);
         equal(lodash.every([true, false, true]), false, '_.every: ' + basename);
 
+        function Foo() {}
+        Foo.prototype = { 'a': 1 };
+
+        deepEqual(lodash.defaults({}, new Foo), Foo.prototype, '_.defaults should assign inherited `source` properties: ' + basename);
+        deepEqual(lodash.extend({}, new Foo), Foo.prototype, '_.extend should assign inherited `source` properties: ' + basename);
+
         actual = lodash.find(array, function(value) {
           return 'value' in value;
         });

@@ -1125,6 +1125,26 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.defaults`
+        source = source.replace(/^( *)var defaults *= *createIterator[\s\S]+?\);/m, [
+          '  function defaults(object) {',
+          '    if (!object) {',
+          '      return object;',
+          '    }',
+          '    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
+          '      var iteratee = arguments[argsIndex];',
+          '      if (iteratee) {',
+          '        for (var key in iteratee) {',
+          '          if (object[key] == null) {',
+          '            object[key] = iteratee[key];',
+          '          }',
+          '        }',
+          '      }',
+          '    }',
+          '    return object;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.intersection`
         source = source.replace(/^( *)function intersection[\s\S]+?\n\1}/m, [
           '  function intersection(array) {',

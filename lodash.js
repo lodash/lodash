@@ -2537,10 +2537,7 @@
    * // => [{ 'name': 'moe', 'age': 40 }]
    */
   function where(collection, properties) {
-    var props = [];
-    forIn(properties, function(value, prop) {
-      props.push(prop);
-    });
+    var props = keys(properties);
     return filter(collection, function(object) {
       var length = props.length;
       while (length--) {

@@ -1630,10 +1630,14 @@
         stackA = args[3],
         stackB = args[4];
 
-    if (typeof indicator != 'number' && indicator !== indicatorObject) {
+    if (indicator !== indicatorObject) {
       stackA = [];
       stackB = [];
-      length = args.length;
+
+      // work with `_.reduce` by only using its callback `accumulator` and `value` arguments
+      if (typeof indicator != 'number') {
+        length = args.length;
+      }
     }
     while (++index < length) {
       forOwn(args[index], function(source, key) {

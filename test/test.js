@@ -1855,14 +1855,13 @@
       deepEqual(_.where(array, { 'a': 1, 'b': 2 }), [{ 'a': 1, 'b': 2 }]);
     });
 
-    test('should filter by inherited properties', function() {
+    test('should not filter by inherited properties', function() {
       function Foo() {}
-      Foo.prototype = { 'b': 2 };
+      Foo.prototype = { 'a': 2 };
 
       var properties = new Foo;
-      properties.a = 1;
-
-      deepEqual(_.where(array, properties), [{ 'a': 1, 'b': 2 }]);
+      properties.b = 2;
+      deepEqual(_.where(array, properties), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
     });
 
     test('should filter by problem JScript properties (test in IE < 9)', function() {

@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash v0.9.2 <http://lodash.com>
+ * Lo-Dash 0.9.2 <http://lodash.com>
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.4.2 <http://underscorejs.org>
  * (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.

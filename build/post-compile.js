@@ -49,7 +49,7 @@
     if (!snippet) {
       return source;
     }
-    // add license
+    // add copyright/license header
     return licenseTemplate[/call\(this\);?$/.test(source) ? 'underscore' : 'lodash']
       .replace('@VERSION', snippet[2]) + '\n;' + source;
   }

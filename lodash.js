@@ -1630,7 +1630,7 @@
         stackA = args[3],
         stackB = args[4];
 
-    if (indicator !== objectRef) {
+    if (typeof indicator != 'number' && indicator !== indicatorObject) {
       stackA = [];
       stackB = [];
       length = args.length;
@@ -1658,7 +1658,7 @@
               : (isPlainObject(value) ? value : {})
             );
             // recursively merge objects and arrays (susceptible to call stack limits)
-            object[key] = merge(value, source, objectRef, stackA, stackB);
+            object[key] = merge(value, source, indicatorObject, stackA, stackB);
           }
         } else if (source != null) {
           object[key] = source;

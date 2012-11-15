@@ -30,6 +30,7 @@ For more information check out these screencasts over Lo-Dash:
  * [Lo-Dash’s origin and why it’s a better utility belt](https://vimeo.com/44154600)
  * [Unit testing in Lo-Dash](https://vimeo.com/45865290)
  * [Lo-Dash’s approach to native method use](https://vimeo.com/48576012)
+ * [CascadiaJS: Lo-Dash for a better utility belt](http://www.youtube.com/watch?v=dpPy4f_SeEk)
 
 ## Features
 

@@ -174,7 +174,11 @@ npm install -g lodash
 npm link lodash
 ```
 
-For optimal results, please update to the latest version of `npm` before installing Lo-Dash: `npm install npm -g`.
+To avoid potential issues, update `npm` before installing Lo-Dash:
+
+```bash
+npm install npm -g
+```
 
 In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
 

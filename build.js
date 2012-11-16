@@ -182,12 +182,15 @@
   /** List of all Lo-Dash methods */
   var allMethods = _.keys(dependencyMap);
 
-  /** List Backbone's Lo-Dash dependencies */
+  /** List of Backbone's Lo-Dash dependencies */
   var backboneDependencies = [
     'bind',
     'bindAll',
+    'chain',
     'clone',
     'contains',
+    'countBy',
+    'defaults',
     'escape',
     'every',
     'extend',
@@ -206,14 +209,15 @@
     'isFunction',
     'isObject',
     'isRegExp',
+    'isString',
     'keys',
     'last',
     'lastIndexOf',
-    'lateBind',
     'map',
     'max',
     'min',
     'mixin',
+    'pick',
     'reduce',
     'reduceRight',
     'reject',
@@ -226,6 +230,7 @@
     'sortedIndex',
     'toArray',
     'uniqueId',
+    'value',
     'without'
   ];
 

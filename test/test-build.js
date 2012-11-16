@@ -198,8 +198,11 @@
   var backboneDependencies = [
     'bind',
     'bindAll',
+    'chain',
     'clone',
     'contains',
+    'countBy',
+    'defaults',
     'escape',
     'every',
     'extend',
@@ -218,6 +221,7 @@
     'isFunction',
     'isObject',
     'isRegExp',
+    'isString',
     'keys',
     'last',
     'lastIndexOf',
@@ -225,6 +229,7 @@
     'max',
     'min',
     'mixin',
+    'pick',
     'reduce',
     'reduceRight',
     'reject',
@@ -237,6 +242,7 @@
     'sortedIndex',
     'toArray',
     'uniqueId',
+    'value',
     'without'
   ];
 

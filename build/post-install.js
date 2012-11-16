@@ -77,8 +77,18 @@
 
   exec('npm -g root', function(exception, stdout) {
     if (exception) {
-      console.error('There was a problem loading the npm registry.');
-      process.exit(1);
+      console.error([
+        "There was a problem loading the npm registry. If you're installing the Lo-Dash",
+        "command-line executable (via `npm install -g lodash`), you'll need to manually",
+        'download UglifyJS and the Closure Compiler:',
+        '',
+        "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d | tar xvz -C '%s'",
+        "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/9869c4443fb22598235d1019fcc8245be41e8889 | tar xvz -C '%s'",
+        '',
+        'Please submit an issue on the GitHub issue tracker: %s.'
+      ].join('\n'), vendorPath, vendorPath, process.env.npm_package_bugs_url);
+      console.error(exception);
+      process.exit();
     }
     // exit early if not a global install
     if (path.resolve(basePath, '..') != stdout.trim()) {
@@ -89,14 +99,28 @@
       'title': 'the Closure Compiler',
       'id': closureId,
       'path': vendorPath,
-      'onComplete':function(exceptionA) {
+      'onComplete': function(exception) {
+        if (exception) {
+          console.error([
+            "You'll need to manually download the Closure Compiler:",
+            '',
+            "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d | tar xvz -C '%s'"
+          ].join('\n'), vendorPath);
+        }
         // download UglifyJS
         getDependency({
           'title': 'UglifyJS',
           'id': uglifyId,
           'path': vendorPath,
-          'onComplete': function(exceptionB) {
-            process.exit(exceptionA || exceptionB ? 1 : 0);
+          'onComplete': function(exception) {
+            if (exception) {
+              console.error([
+                "You'll need to manually download the Closure Compiler:",
+                '',
+                "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/9869c4443fb22598235d1019fcc8245be41e8889 | tar xvz -C '%s'"
+              ].join('\n'), vendorPath);
+            }
+            process.exit();
           }
         });
       }

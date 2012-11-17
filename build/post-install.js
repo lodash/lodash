@@ -22,6 +22,23 @@
   /** The Git object ID of `uglifyjs.tar.gz` */
   var uglifyId = '9869c4443fb22598235d1019fcc8245be41e8889';
 
+  /** The media type for raw blob data */
+  var mediaType = 'application/vnd.github.v3.raw';
+
+  /** Used to reference parts of the blob href */
+  var location = (function() {
+    var host = 'api.github.com',
+        origin = 'https://api.github.com',
+        pathname = '/repos/bestiejs/lodash/git/blobs';
+
+    return {
+      'host': host,
+      'href': host + origin + pathname,
+      'origin': origin,
+      'pathname': pathname
+    };
+  }());
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -31,7 +48,6 @@
    *
    * @private
    * @param {Object} options The options object.
-   *
    *  id - The Git object ID of the `.tar.gz` file.
    *  onComplete - The function, invoked with one argument (exception),
    *   called once the extraction has finished.
@@ -41,12 +57,18 @@
   function getDependency(options) {
     options || (options = {});
 
-    var onComplete = options.onComplete,
+    var id = options.id,
+        onComplete = options.onComplete,
+        path = options.path,
         title = options.title;
 
     function callback(exception) {
       if (exception) {
-        console.error('There was a problem downloading ' + title + '.');
+        console.error([
+          'There was a problem installing ' + title + '. To manually install, run:',
+          '',
+          "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + id + " | tar xvz -C '" + path + "'"
+        ].join('\n'));
       }
       onComplete(exception);
     }
@@ -54,17 +76,18 @@
     console.log('Downloading ' + title + '...');
 
     https.get({
-      'host': 'api.github.com',
-      'path': '/repos/bestiejs/lodash/git/blobs/' + options.id,
+      'host': location.host,
+      'path': location.pathname + '/' + id,
       'headers': {
         // By default, all GitHub blob API endpoints return a JSON document
         // containing Base64-encoded blob data. Overriding the `Accept` header
         // with the GitHub raw media type returns the blob data directly.
-        'Accept': 'application/vnd.github.v3.raw'
+        // See http://developer.github.com/v3/media/.
+        'Accept': mediaType
       }
     }, function(response) {
       var decompressor = zlib.createUnzip(),
-          parser = new tar.Extract({ 'path': options.path });
+          parser = new tar.Extract({ 'path': path });
 
       decompressor.on('error', callback)
       parser.on('end', callback).on('error', callback);
@@ -78,15 +101,15 @@
   exec('npm -g root', function(exception, stdout) {
     if (exception) {
       console.error([
-        "There was a problem loading the npm registry. If you're installing the Lo-Dash",
-        "command-line executable (via `npm install -g lodash`), you'll need to manually",
-        'download UglifyJS and the Closure Compiler:',
+        'There was a problem loading the npm registry. If you’re installing the Lo-Dash',
+        'command-line executable (via `npm install -g lodash`), you’ll need to manually',
+        'install UglifyJS and the Closure Compiler by running:',
         '',
-        "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d | tar xvz -C '%s'",
-        "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/9869c4443fb22598235d1019fcc8245be41e8889 | tar xvz -C '%s'",
+        "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + closureId + " | tar xvz -C '" + vendorPath + "'",
+        "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + uglifyId  + " | tar xvz -C '" + vendorPath + "'",
         '',
-        'Please submit an issue on the GitHub issue tracker: %s.'
-      ].join('\n'), vendorPath, vendorPath, process.env.npm_package_bugs_url);
+        'Please submit an issue on the GitHub issue tracker: ' + process.env.npm_package_bugs_url + '.'
+      ].join('\n'));
       console.error(exception);
       process.exit();
     }
@@ -99,27 +122,13 @@
       'title': 'the Closure Compiler',
       'id': closureId,
       'path': vendorPath,
-      'onComplete': function(exception) {
-        if (exception) {
-          console.error([
-            "You'll need to manually download the Closure Compiler:",
-            '',
-            "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d | tar xvz -C '%s'"
-          ].join('\n'), vendorPath);
-        }
+      'onComplete': function() {
         // download UglifyJS
         getDependency({
           'title': 'UglifyJS',
           'id': uglifyId,
           'path': vendorPath,
-          'onComplete': function(exception) {
-            if (exception) {
-              console.error([
-                "You'll need to manually download the Closure Compiler:",
-                '',
-                "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/9869c4443fb22598235d1019fcc8245be41e8889 | tar xvz -C '%s'"
-              ].join('\n'), vendorPath);
-            }
+          'onComplete': function() {
             process.exit();
           }
         });

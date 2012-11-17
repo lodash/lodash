@@ -114,7 +114,7 @@
       process.exit();
     }
     // exit early if not a global install
-    if (path.resolve(basePath, '..') != stdout.trim()) {
+    if (path.resolve(basePath, '..') != fs.realpathSync(stdout.trim())) {
       return;
     }
     // download the Closure Compiler

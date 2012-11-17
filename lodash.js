@@ -2261,10 +2261,18 @@
    * // => ['moe', 'larry', 'curly']
    */
   function pluck(collection, property) {
-    var result = [];
-    forEach(collection, function(value) {
-      result.push(value[property]);
-    });
+    var index = -1,
+        length = collection ? collection.length : 0,
+        result = Array(typeof length == 'number' ? length : 0);
+    if (isArray(collection)) {
+        while (++index < length) {
+            result[index] = collection[index][property];
+        }
+    } else {
+        forEach(collection, function(value) {
+            result[++index] = value[property];
+        });
+    }
     return result;
   }
 

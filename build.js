@@ -69,6 +69,7 @@
     'assign': ['isArguments'],
     'bind': ['isFunction', 'isObject'],
     'bindAll': ['bind', 'functions'],
+    'bindKey': ['isFunction', 'isObject'],
     'chain': ['mixin'],
     'clone': ['assign', 'forEach', 'forOwn', 'isArguments', 'isObject', 'isPlainObject'],
     'compact': [],
@@ -118,7 +119,6 @@
     'keys': ['forOwn', 'isArguments', 'isObject'],
     'last': [],
     'lastIndexOf': [],
-    'lateBind': ['isFunction', 'isObject'],
     'map': ['forEach', 'isArray'],
     'max': ['forEach', 'isArray', 'isString'],
     'memoize': [],
@@ -236,10 +236,10 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
+    'bindKey',
     'forIn',
     'forOwn',
     'isPlainObject',
-    'lateBind',
     'merge',
     'partial'
   ]));

@@ -132,11 +132,11 @@
     'after',
     'bind',
     'bindAll',
+    'bindKey',
     'compose',
     'debounce',
     'defer',
     'delay',
-    'lateBind',
     'memoize',
     'once',
     'partial',
@@ -248,10 +248,10 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
+    'bindKey',
     'forIn',
     'forOwn',
     'isPlainObject',
-    'lateBind',
     'merge',
     'partial'
   ]));
@@ -402,7 +402,7 @@
           func(1, noop);
         } else if (methodName == 'bindAll') {
           func({ 'noop': noop });
-        } else if (methodName == 'lateBind') {
+        } else if (methodName == 'bindKey') {
           func(lodash, 'identity', array, string);
         } else if (/^(?:bind|partial)$/.test(methodName)) {
           func(noop, object, array, string);
@@ -711,10 +711,10 @@
 
         _.each([
           'assign',
+          'bindKey',
           'forIn',
           'forOwn',
           'isPlainObject',
-          'lateBind',
           'merge',
           'partial'
         ], function(methodName) {

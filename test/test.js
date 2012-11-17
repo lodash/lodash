@@ -213,6 +213,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.bindKey');
+
+  (function() {
+    test('should work when the target function is overwritten', function() {
+      var object = {
+        'name': 'moe',
+        'greet': function(greeting) {
+          return greeting + ': ' + this.name;
+        }
+      };
+
+      var func = _.bindKey(object, 'greet', 'hi');
+      equal(func(), 'hi: moe');
+
+      object.greet = function(greeting) {
+        return greeting + ' ' + this.name + '!';
+      };
+      equal(func(), 'hi moe!');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.clone');
 
   (function() {
@@ -997,29 +1020,6 @@
     test('should ignore non-number `fromIndex` values', function() {
       equal(_.lastIndexOf([1, 2, 3], 3, '1'), 2);
       equal(_.lastIndexOf([1, 2, 3], 3, true), 2);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.lateBind');
-
-  (function() {
-    test('should work when the target function is overwritten', function() {
-      var object = {
-        'name': 'moe',
-        'greet': function(greeting) {
-          return greeting + ': ' + this.name;
-        }
-      };
-
-      var func = _.lateBind(object, 'greet', 'hi');
-      equal(func(), 'hi: moe');
-
-      object.greet = function(greeting) {
-        return greeting + ' ' + this.name + '!';
-      };
-      equal(func(), 'hi moe!');
     });
   }());
 

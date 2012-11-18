@@ -561,7 +561,7 @@
       });
     });
 
-    asyncTest('debug custom', function () {
+    asyncTest('debug custom', function() {
       var start = _.once(QUnit.start);
       build(['-d', '-s', 'backbone'], function(source, filePath) {
         equal(path.basename(filePath, '.js'), 'lodash.custom');
@@ -577,7 +577,7 @@
       });
     });
 
-    asyncTest('minified custom', function () {
+    asyncTest('minified custom', function() {
       var start = _.once(QUnit.start);
       build(['-m', '-s', 'backbone'], function(source, filePath) {
         equal(path.basename(filePath, '.js'), 'lodash.custom.min');

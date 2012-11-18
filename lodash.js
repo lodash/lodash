@@ -1339,7 +1339,6 @@
    * Note: This is not the same as native `isFinite`, which will return true for
    * booleans and empty strings. See http://es5.github.com/#x15.1.2.5.
    *
-   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -1423,7 +1422,6 @@
    * Note: This is not the same as native `isNaN`, which will return true for
    * `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
    *
-   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -1452,7 +1450,6 @@
   /**
    * Checks if `value` is `null`.
    *
-   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -1560,7 +1557,6 @@
   /**
    * Checks if `value` is `undefined`.
    *
-   * @deprecated
    * @static
    * @memberOf _
    * @category Objects
@@ -3701,7 +3697,6 @@
    * it will be invoked and its result returned, else the property value is
    * returned. If `object` is falsey, then `null` is returned.
    *
-   * @deprecated
    * @static
    * @memberOf _
    * @category Utilities

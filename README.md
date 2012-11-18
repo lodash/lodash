@@ -230,7 +230,7 @@ require({
 
 #### Compatibility Warnings ####
 
- * Aligned `_.defaults` and `_.extend` with ES6 `Object.assign`
+ * Aligned `_.defaults` and `_.extend` with ES6 [Object.assign](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-15.2.3.15)
  * Renamed `_.lateBind` to `_.bindKey`
 
 #### Changes ####
@@ -241,7 +241,7 @@ require({
  * Ensured `_defaults`, `_.extends`, and `_.merge` works with `_.reduce`
  * Made Lo-Dash’s `npm` package installation work with more system configurations
  * Made `_.extend` an alias of `_.assign`
- * Optimized `_.contains` and `_.filter`
+ * Optimized `_.contains`, `_.defaults`, `_.extend`, and `_.filter`
  * Restricted `_.where` to iterate only own properties of the `source` object
  * Updated `backbone` build Lo-Dash method dependencies
 

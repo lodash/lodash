@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash 0.9.2 <http://lodash.com>
+ * Lo-Dash 0.10.0 <http://lodash.com>
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.4.2 <http://underscorejs.org>
  * (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
@@ -536,11 +536,14 @@
   function createBound(func, thisArg, partialArgs) {
     var isFunc = isFunction(func),
         isPartial = !partialArgs,
-        methodName = func;
+        key = thisArg;
 
     // juggle arguments
     if (isPartial) {
       partialArgs = thisArg;
+    }
+    if (!isFunc) {
+      thisArg = func;
     }
 
     function bound() {
@@ -550,7 +553,7 @@
           thisBinding = isPartial ? this : thisArg;
 
       if (!isFunc) {
-        func = thisArg[methodName];
+        func = thisArg[key];
       }
       if (partialArgs.length) {
         args = args.length
@@ -3245,16 +3248,17 @@
   }
 
   /**
-   * Creates a function that, when called, invokes `object[methodName]` and
-   * prepends any additional `bindKey` arguments to those passed to the bound
+   * Creates a function that, when called, invokes the method at `object[key]`
+   * and prepends any additional `bindKey` arguments to those passed to the bound
    * function. This method differs from `_.bind` by allowing bound functions to
    * reference methods that will be redefined or don't yet exist.
+   * See http://michaux.ca/articles/lazy-function-definition-pattern.
    *
    * @static
    * @memberOf _
    * @category Functions
    * @param {Object} object The object the method belongs to.
-   * @param {String} methodName The method name.
+   * @param {String} key The key of the method.
    * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
    * @returns {Function} Returns the new bound function.
    * @example
@@ -3277,8 +3281,8 @@
    * func();
    * // => 'hi, moe!'
    */
-  function bindKey(object, methodName) {
-    return createBound(methodName, object, slice.call(arguments, 2));
+  function bindKey(object, key) {
+    return createBound(object, key, slice.call(arguments, 2));
   }
 
   /**
@@ -4076,7 +4080,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '0.9.2';
+  lodash.VERSION = '0.10.0';
 
   // assign static methods
   lodash.assign = assign;

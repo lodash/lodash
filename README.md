@@ -238,7 +238,7 @@ require({
  * Added the build commands used to custom build copyright/license headers
  * Added `_.assign`
  * Ensured the `underscore` build of `_.find` returns the first, not last, matched value
- * Ensured `_defaults`, `_.extends`, and `_.merge` works with `_.reduce`
+ * Ensured `_defaults`, `_.extends`, and `_.merge` work with `_.reduce`
  * Made Lo-Dash’s `npm` package installation work with more system configurations
  * Made `_.extend` an alias of `_.assign`
  * Optimized `_.contains`, `_.defaults`, `_.extend`, and `_.filter`

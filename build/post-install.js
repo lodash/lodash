@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-;(function () {
+;(function() {
   'use strict';
 
   /** Load Node modules */
@@ -17,10 +17,10 @@
   var vendorPath = path.join(basePath, 'vendor');
 
   /** The Git object ID of `closure-compiler.tar.gz` */
-  var closureId = 'aa29a2ecf6f51d4da5a2a418c0d4ea0e368ee80d';
+  var closureId = 'a2787b470c577cee2404d186c562dd9835f779f5';
 
   /** The Git object ID of `uglifyjs.tar.gz` */
-  var uglifyId = '9869c4443fb22598235d1019fcc8245be41e8889';
+  var uglifyId = '3390b259e04829538e4d3635d12b317dd6103eca';
 
   /** The media type for raw blob data */
   var mediaType = 'application/vnd.github.v3.raw';

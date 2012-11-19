@@ -1413,6 +1413,9 @@
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
         source = source.replace(/!callback *&& *isString\(collection\)[\s\S]+?: */g, '');
 
+        // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
+        source = source.replace(/ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/g, '');
+
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {
           source = source.replace(matchFunction(source, 'createBound'), function(match) {

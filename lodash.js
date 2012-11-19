@@ -4044,6 +4044,22 @@
   }
 
   /**
+   * Produces the `toString` result of the wrapped value.
+   *
+   * @name toString
+   * @memberOf _
+   * @category Chaining
+   * @returns {String} Returns the string result.
+   * @example
+   *
+   * _([1, 2, 3]).toString();
+   * // => '1,2,3'
+   */
+  function wrapperToString() {
+    return String(this.__wrapped__);
+  }
+
+  /**
    * Extracts the wrapped value.
    *
    * @name valueOf
@@ -4196,7 +4212,9 @@
   // add `lodash.prototype.chain` after calling `mixin()` to avoid overwriting
   // it with the wrapped `lodash.chain`
   lodash.prototype.chain = wrapperChain;
+  lodash.prototype.toString = wrapperToString;
   lodash.prototype.value = wrapperValue;
+  lodash.prototype.valueOf = wrapperValue;
 
   // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {

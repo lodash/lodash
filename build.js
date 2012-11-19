@@ -1166,6 +1166,15 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.chain`
+        source = source.replace(/^( *)function chain[\s\S]+?\n\1}/m, [
+          '  function chain(value) {',
+          '    value = new lodash(value);',
+          '    value.__chain__ = true;',
+          '    return value;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.defaults`
         source = source.replace(/^( *)var defaults *= *createIterator[\s\S]+?\);/m, [
           '  function defaults(object) {',
@@ -1365,6 +1374,28 @@
           '    return result',
           '  }'
         ].join('\n'));
+
+        // replace `wrapperChain`
+        source = source.replace(/^( *)function wrapperChain[\s\S]+?\n\1}/m, [
+          '  function wrapperChain() {',
+          '    this.__chain__ = true;',
+          '    return this;',
+          '  }'
+        ].join('\n'));
+
+        // add `__chain__` checks to `_.mixin` and Array function wrappers
+        source = source.replace(/^( *)forEach\([\s\S]+?\n\1}.+/gm, function(match) {
+          return match.replace(/^( *)return new lodash\(([^)]+)\).+/m, function(submatch, indent, varName) {
+            return indent + [
+              'if (this.__chain__) {',
+              '  varName = new lodash(varName);',
+              '  varName.__chain__ = true;',
+              '}',
+              'return varName;'
+            ].join('\n' + indent)
+            .replace(/varName/g, varName);
+          });
+        });
 
         // remove unneeded template related variables
         source = removeVar(source, 'reComplexDelimiter');

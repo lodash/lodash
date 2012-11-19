@@ -3636,11 +3636,7 @@
         push.apply(args, arguments);
 
         var result = func.apply(lodash, args);
-        if (this.__chain__) {
-          result = new lodash(result);
-          result.__chain__ = true;
-        }
-        return result;
+        return new lodash(result);
       };
     });
   }
@@ -4001,9 +3997,7 @@
    * // => 'moe is 40'
    */
   function chain(value) {
-    value = new lodash(value);
-    value.__chain__ = true;
-    return value;
+    return new lodash(value);
   }
 
   /**
@@ -4046,14 +4040,13 @@
    * // => [1, 2, 3]
    */
   function wrapperChain() {
-    this.__chain__ = true;
     return this;
   }
 
   /**
    * Extracts the wrapped value.
    *
-   * @name value
+   * @name valueOf
    * @memberOf _
    * @category Chaining
    * @returns {Mixed} Returns the wrapped value.
@@ -4218,11 +4211,7 @@
       if (hasObjectSpliceBug && value.length === 0) {
         delete value[0];
       }
-      if (this.__chain__) {
-        value = new lodash(value);
-        value.__chain__ = true;
-      }
-      return value;
+      return new lodash(value);
     };
   });
 
@@ -4234,11 +4223,7 @@
       var value = this.__wrapped__,
           result = func.apply(value, arguments);
 
-      if (this.__chain__) {
-        result = new lodash(result);
-        result.__chain__ = true;
-      }
-      return result;
+      return new lodash(result);
     };
   });
 

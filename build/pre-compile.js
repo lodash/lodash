@@ -59,7 +59,6 @@
   /** Used to protect the specified properties from getting minified */
   var propWhitelist = [
     '_',
-    '__chain__',
     '__wrapped__',
     'after',
     'all',
@@ -189,6 +188,9 @@
     'without',
     'wrap',
     'zip',
+
+    // property used by the `lodash underscore` build
+    '__chain__',
 
     // properties used by underscore.js
     '_chain',

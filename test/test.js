@@ -1922,6 +1922,28 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...).toString');
+
+  (function() {
+    test('should return the `toString` result of the wrapped value', function() {
+      var wrapped = _([1, 2, 3]);
+      equal(String(wrapped), '1,2,3');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).valueOf');
+
+  (function() {
+    test('should return the `valueOf` result of the wrapped value', function() {
+      var wrapped = _(123);
+      equal(Number(wrapped), 123);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash methods');
 
   (function() {

@@ -694,7 +694,11 @@
 
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
-        equal(lodash(1).clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
+
+        object = lodash(1);
+        equal(object.clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
+        equal(String(object) === '1', false, '_.prototype should not implement its own `toString` method: ' + basename);
+        equal(Number(object) === 1 , false, '_.prototype should not implement its own `valueOf` method: ' + basename);
 
         start();
       });

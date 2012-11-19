@@ -694,6 +694,7 @@
 
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
+        equal(lodash(1).clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
 
         start();
       });

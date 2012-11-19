@@ -1901,8 +1901,8 @@
       var wrapped = _({ '0': 1, 'length': 1 });
       wrapped.shift();
 
-      deepEqual(wrapped.keys(), ['length']);
-      equal(wrapped.first(), undefined);
+      deepEqual(wrapped.keys().value(), ['length']);
+      equal(wrapped.first().value(), undefined);
     });
   }());
 
@@ -1915,8 +1915,8 @@
       var wrapped = _({ '0': 1, 'length': 1 });
       wrapped.splice(0, 1);
 
-      deepEqual(wrapped.keys(), ['length']);
-      equal(wrapped.first(), undefined);
+      deepEqual(wrapped.keys().value(), ['length']);
+      equal(wrapped.first().value(), undefined);
     });
   }());
 

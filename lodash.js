@@ -4027,7 +4027,11 @@
   }
 
   /**
-   * Enables method chaining on the wrapper object.
+   * This function returns the wrapper object.
+   *
+   * Note: This function is defined to ensure the existing wrapper object is
+   * returned, instead of creating a new wrapper object like the `_.chain`
+   * method does.
    *
    * @name chain
    * @deprecated

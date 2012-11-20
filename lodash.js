@@ -4225,11 +4225,23 @@
   lodash.prototype.value = wrapperValue;
   lodash.prototype.valueOf = wrapperValue;
 
-  // add all methods that return non-wrapped values
+  // add methods that are capable of returning wrapped and unwrapped values
+  forEach(['first', 'last'], function(methodName) {
+    var func = lodash[methodName];
+    if (func) {
+      lodash.prototype[methodName] = function(n, guard) {
+        var result = func(this.__wrapped__, n, guard);
+        return (n == null || guard)
+          ? result
+          : new lodash(result);
+      };
+    }
+  });
+
+  // add all methods that return unwrapped values
   forEach(filter(functions(lodash), function(methodName) {
-    return /^(?:contains|every|find|first|has|is[A-Z].+|last|reduce.*|some)$/.test(methodName);
-  }),
-  function(methodName) {
+    return /^(?:contains|every|find|has|is[A-Z].+|reduce.*|some)$/.test(methodName);
+  }), function(methodName) {
     var func = lodash[methodName];
 
     lodash.prototype[methodName] = function() {
@@ -4252,7 +4264,7 @@
       if (hasObjectSpliceBug && value.length === 0) {
         delete value[0];
       }
-      return new lodash(value);
+      return this;
     };
   });
 

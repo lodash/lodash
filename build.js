@@ -1397,9 +1397,6 @@
           });
         });
 
-        // remove Lo-Dash specific `lodash.prototype` extensions
-        source = source.replace(/(?:\s*\/\/.*)*\n( *)forEach\(filter[\s\S]+?lodash\.[\s\S]+?\n\1}.+/, '');
-
         // remove unneeded template related variables
         source = removeVar(source, 'reComplexDelimiter');
         source = removeVar(source, 'reEmptyStringLeading');
@@ -1418,6 +1415,11 @@
 
         // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
         source = source.replace(/ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/g, '');
+
+        // remove `lodash.prototype` batch method assignments
+        source = source
+          .replace(/(?:\s*\/\/.*)*\n( *)forEach\(\['first'[\s\S]+?\n\1}.+/, '')
+          .replace(/(?:\s*\/\/.*)*\n( *)forEach\(filter[\s\S]+?lodash\.[\s\S]+?\n\1}.+/, '');
 
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {

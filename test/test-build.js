@@ -695,6 +695,14 @@
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
 
+        var wrapped = lodash(1);
+        equal(wrapped.clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
+        equal(String(wrapped) === '1', false, '_#toString should not be implemented: ' + basename);
+        equal(Number(wrapped) === 1 , false, '_#valueOf should not be implemented: ' + basename);
+
+        wrapped.chain();
+        equal(wrapped.has('x') instanceof lodash, true, '_#has returns wrapped values when chaining: ' + basename);
+
         start();
       });
     });

@@ -1936,7 +1936,7 @@
       var wrapped = _({ '0': 1, 'length': 1 });
       wrapped.shift();
 
-      deepEqual(wrapped.keys(), ['length']);
+      deepEqual(wrapped.keys().value(), ['length']);
       equal(wrapped.first(), undefined);
     });
   }());
@@ -1950,8 +1950,102 @@
       var wrapped = _({ '0': 1, 'length': 1 });
       wrapped.splice(0, 1);
 
-      deepEqual(wrapped.keys(), ['length']);
+      deepEqual(wrapped.keys().value(), ['length']);
       equal(wrapped.first(), undefined);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).toString');
+
+  (function() {
+    test('should return the `toString` result of the wrapped value', function() {
+      var wrapped = _([1, 2, 3]);
+      equal(String(wrapped), '1,2,3');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).valueOf');
+
+  (function() {
+    test('should return the `valueOf` result of the wrapped value', function() {
+      var wrapped = _(123);
+      equal(Number(wrapped), 123);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...) methods capable of returning wrapped and unwrapped values');
+
+  (function() {
+    var array = [1, 2, 3],
+        wrapped = _(array);
+
+    var funcs = [
+      'first',
+      'last'
+    ];
+
+    _.each(funcs, function(methodName) {
+      test('_.' + methodName + ' should return an unwrapped value', function() {
+        equal(typeof wrapped[methodName](), 'number');
+      });
+
+      test('_.' + methodName + ' should return a wrapped value', function() {
+        ok(wrapped[methodName](1) instanceof _);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...) methods that return unwrapped values');
+
+  (function() {
+    var array = [1, 2, 3],
+        wrapped = _(array);
+
+    var funcs = [
+      'contains',
+      'every',
+      'find',
+      'first',
+      'has',
+      'isArguments',
+      'isArray',
+      'isBoolean',
+      'isDate',
+      'isElement',
+      'isEmpty',
+      'isEqual',
+      'isFinite',
+      'isFunction',
+      'isNaN',
+      'isNull',
+      'isNumber',
+      'isObject',
+      'isPlainObject',
+      'isRegExp',
+      'isString',
+      'isUndefined',
+      'last',
+      'reduce',
+      'reduceRight',
+      'some'
+    ];
+
+    _.each(funcs, function(methodName) {
+      test('_.' + methodName + ' should return unwrapped values', function() {
+        var result = methodName == 'reduceRight'
+          ? wrapped[methodName](_.identity)
+          : wrapped[methodName];
+
+        notEqual(typeof result, 'object', '_.' + methodName + ' returns unwrapped values');
+      });
     });
   }());
 

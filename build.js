@@ -124,7 +124,7 @@
     'memoize': [],
     'merge': ['forOwn', 'isArray', 'isPlainObject'],
     'min': ['forEach', 'isArray', 'isString'],
-    'mixin': ['forEach', 'functions'],
+    'mixin': ['filter', 'forEach', 'functions'],
     'noConflict': [],
     'object': [],
     'omit': ['forIn', 'indexOf'],
@@ -1396,6 +1396,9 @@
             .replace(/varName/g, varName);
           });
         });
+
+        // remove Lo-Dash specific `lodash.prototype` extensions
+        source = source.replace(/(?:\s*\/\/.*)*\n( *)forEach\(filter[\s\S]+?lodash\.[\s\S]+?\n\1}.+/, '');
 
         // remove unneeded template related variables
         source = removeVar(source, 'reComplexDelimiter');

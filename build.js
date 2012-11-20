@@ -124,7 +124,7 @@
     'memoize': [],
     'merge': ['forOwn', 'isArray', 'isPlainObject'],
     'min': ['forEach', 'isArray', 'isString'],
-    'mixin': ['forEach', 'functions'],
+    'mixin': ['filter', 'forEach', 'functions'],
     'noConflict': [],
     'object': [],
     'omit': ['forIn', 'indexOf'],
@@ -1166,6 +1166,15 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.chain`
+        source = source.replace(/^( *)function chain[\s\S]+?\n\1}/m, [
+          '  function chain(value) {',
+          '    value = new lodash(value);',
+          '    value.__chain__ = true;',
+          '    return value;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.defaults`
         source = source.replace(/^( *)var defaults *= *createIterator[\s\S]+?\);/m, [
           '  function defaults(object) {',
@@ -1366,6 +1375,28 @@
           '  }'
         ].join('\n'));
 
+        // replace `wrapperChain`
+        source = source.replace(/^( *)function wrapperChain[\s\S]+?\n\1}/m, [
+          '  function wrapperChain() {',
+          '    this.__chain__ = true;',
+          '    return this;',
+          '  }'
+        ].join('\n'));
+
+        // add `__chain__` checks to `_.mixin` and Array function wrappers
+        source = source.replace(/^( *)forEach\([\s\S]+?\n\1}.+/gm, function(match) {
+          return match.replace(/^( *)return new lodash\(([^)]+)\).+/m, function(submatch, indent, varName) {
+            return indent + [
+              'if (this.__chain__) {',
+              '  varName = new lodash(varName);',
+              '  varName.__chain__ = true;',
+              '}',
+              'return varName;'
+            ].join('\n' + indent)
+            .replace(/varName/g, varName);
+          });
+        });
+
         // remove unneeded template related variables
         source = removeVar(source, 'reComplexDelimiter');
         source = removeVar(source, 'reEmptyStringLeading');
@@ -1381,6 +1412,14 @@
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
         source = source.replace(/!callback *&& *isString\(collection\)[\s\S]+?: */g, '');
+
+        // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
+        source = source.replace(/ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/g, '');
+
+        // remove `lodash.prototype` batch method assignments
+        source = source
+          .replace(/(?:\s*\/\/.*)*\n( *)forEach\(\['first'[\s\S]+?\n\1}.+/, '')
+          .replace(/(?:\s*\/\/.*)*\n( *)forEach\(filter[\s\S]+?lodash\.[\s\S]+?\n\1}.+/, '');
 
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') == -1) {

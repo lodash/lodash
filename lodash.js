@@ -751,7 +751,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The object to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns `object`.
    * @example
@@ -783,7 +783,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The object to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns `object`.
    * @example
@@ -1984,7 +1984,7 @@
    * @alias detect
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the element that passed the callback check,
    *  else `undefined`.
@@ -2016,7 +2016,7 @@
    * @alias each
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array|Object|String} Returns `collection`.
    * @example
@@ -2275,7 +2275,7 @@
    * @alias foldl, inject
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [accumulator] Initial value of the accumulator.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the accumulated value.
@@ -2286,11 +2286,11 @@
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-    callback = createCallback(callback, thisArg);
+    callback || (callback = identity);
     forEach(collection, function(value, index, collection) {
       accumulator = noaccum
         ? (noaccum = false, value)
-        : callback(accumulator, value, index, collection)
+        : callback.call(thisArg, accumulator, value, index, collection)
     });
     return accumulator;
   }
@@ -2303,7 +2303,7 @@
    * @alias foldr
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [accumulator] Initial value of the accumulator.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the accumulated value.
@@ -2324,6 +2324,7 @@
     } else if (noCharByIndex && isString(collection)) {
       iteratee = collection.split('');
     }
+    callback || (callback = identity);
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum

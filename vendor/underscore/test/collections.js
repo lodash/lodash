@@ -348,6 +348,11 @@ $(document).ready(function() {
 
     var array = [{}];
     _.groupBy(array, function(value, index, obj){ ok(obj === array); });
+
+    var array = [1, 2, 1, 2, 3];
+    var grouped = _.groupBy(array);
+    equal(grouped['1'].length, 2);
+    equal(grouped['3'].length, 1);
   });
 
   test('countBy', function() {
@@ -372,6 +377,11 @@ $(document).ready(function() {
 
     var array = [{}];
     _.countBy(array, function(value, index, obj){ ok(obj === array); });
+
+    var array = [1, 2, 1, 2, 3];
+    var grouped = _.countBy(array);
+    equal(grouped['1'], 2);
+    equal(grouped['3'], 1);
   });
 
   test('sortedIndex', function() {

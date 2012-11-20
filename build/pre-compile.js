@@ -216,7 +216,6 @@
     if (options.isTemplate) {
       return source;
     }
-
     // remove copyright/license header to add later in post-compile.js
     source = source.replace(/\/\*![\s\S]+?\*\//, '');
 

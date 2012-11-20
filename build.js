@@ -476,7 +476,7 @@
       return [];
     }
     // recursively accumulate the dependencies of the `methodName` function, and
-    // the dependencies of its dependencies, and so on.
+    // the dependencies of its dependencies, and so on
     return _.uniq(dependencies.reduce(function(result, otherName) {
       result.push.apply(result, getDependencies(otherName).concat(otherName));
       return result;
@@ -522,6 +522,17 @@
    */
   function getIsFunctionFallback(source) {
     return (source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?};\n\1}/) || [''])[0];
+  }
+
+  /**
+   * Gets the `iteratorTemplate` from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `iteratorTemplate`.
+   */
+  function getIteratorTemplate(source) {
+    return (source.match(/^( *)var iteratorTemplate *= *[\s\S]+?\n\1.+?;\n/m) || [''])[0];
   }
 
   /**
@@ -655,10 +666,8 @@
    * @returns {String} Returns the source with the function removed.
    */
   function removeFunction(source, funcName) {
-    var modified,
-        snippet = matchFunction(source, funcName);
-
     // remove function
+    var snippet = matchFunction(source, funcName);
     if (snippet) {
       source = source.replace(snippet, '');
     }
@@ -666,7 +675,7 @@
     snippet = getMethodAssignments(source);
 
     // remove assignment and aliases
-    modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
+    var modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
       return result.replace(RegExp('(?:\\n *//.*\\s*)* *lodash\\.' + otherName + ' *= *.+\\n'), '');
     }, snippet);
 
@@ -706,11 +715,19 @@
    * @returns {String} Returns the modified source.
    */
   function removeKeysOptimization(source) {
-    return removeVar(source, 'isKeysFast')
-      // remove optimized branch in `iteratorTemplate`
-      .replace(/(?: *\/\/.*\n)* *'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, "'\\n' +\n$2")
-      // remove data object property assignment in `createIterator`
-      .replace(/ *'isKeysFast':.+\n/, '');
+    source = removeVar(source, 'isKeysFast');
+
+    // remove optimized branch in `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match.replace(/(?: *\/\/.*\n)* *'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, "'\\n' +\n$2");
+    });
+
+    // remove data object property assignment in `createIterator`
+    source = source.replace(matchFunction(source, 'createIterator'), function(match) {
+      return match.replace(/ *'isKeysFast':.+\n/, '');
+    });
+
+    return source;
   }
 
   /**
@@ -721,11 +738,21 @@
    * @returns {String} Returns the modified source.
    */
   function removeNoArgsClass(source) {
-    return removeVar(source, 'noArgsClass')
-      // remove `noArgsClass` from `_.clone` and `_.isEqual`
-      .replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '')
-      // remove `noArgsClass` from `_.isEqual`
-      .replace(/if *\(noArgsClass[^}]+?}\n/, '\n');
+    source = removeVar(source, 'noArgsClass');
+
+    // remove `noArgsClass` from `_.clone`, `_.isEmpty`, and `_.isEqual`
+    _.each(['clone', 'isEmpty', 'isEqual'], function(methodName) {
+      source = source.replace(matchFunction(source, methodName), function(match) {
+        return match.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
+      });
+    });
+
+    // remove `noArgsClass` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/if *\(noArgsClass[^}]+?}\n/, '\n');
+    });
+
+    return source;
   }
 
   /**
@@ -736,13 +763,20 @@
    * @returns {String} Returns the modified source.
    */
   function removeNoNodeClass(source) {
-    return source
-      // remove `noNodeClass` assignment
-      .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '')
-      // remove `noNodeClass` from `isPlainObject`
-      .replace(/\(!noNodeClass *\|\|[\s\S]+?\)\) *&&/, '')
-      // remove `noNodeClass` from `_.isEqual`
-      .replace(/ *\|\| *\(noNodeClass *&&[\s\S]+?\)\)\)/, '');
+    // remove `noNodeClass` assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '');
+
+    // remove `noNodeClass` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/ *\|\| *\(noNodeClass *&&[\s\S]+?\)\)\)/, '');
+    });
+
+    // remove `noNodeClass` from `_.isPlainObject`
+    source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
+      return match.replace(/\(!noNodeClass *\|\|[\s\S]+?\)\) *&&/, '');
+    });
+
+    return source;
   }
 
   /**
@@ -784,8 +818,27 @@
   }
 
   /**
-   * Searches `source` for a `varName` variable declaration and replaces its
-   * assigned value with `varValue`.
+   * Replaces the `funcName` function body in `source` with `funcValue`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @param {String} varName The name of the function to replace.
+   * @returns {String} Returns the source with the function replaced.
+   */
+  function replaceFunction(source, funcName, funcValue) {
+    var match = matchFunction(source, funcName);
+    if (match) {
+      // clip snippet after the JSDoc comment block
+      match = match.replace(/^\s*(?:\/\/.*|\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)\n/, '');
+      source = source.replace(match, function() {
+        return funcValue;
+      });
+    }
+    return source;
+  }
+
+  /**
+   * Replaces the `varName` variable declaration value in `source` with `varValue`.
    *
    * @private
    * @param {String} source The source to inspect.
@@ -797,15 +850,21 @@
     var result = source.replace(RegExp(
       '(( *)var ' + varName + ' *= *)' +
       '(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\2.+?;)\\n'
-    ), '$1' + varValue + ';\n');
+    ), function(match, captured) {
+      return captured + varValue + ';\n';
+    });
 
     if (source == result) {
       // replace a varaible at the start or middle of a declaration list
-      result = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), '$1 ' + varValue + ',');
+      result = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), function(match, captured) {
+        return captured + ' ' + varValue + ',';
+      });
     }
     if (source == result) {
       // replace a variable at the end of a variable declaration list
-      result = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), '$1 ' + varValue + ';');
+      result = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), function(match, captured) {
+        return captured + ' ' + varValue + ';';
+      });
     }
     return result;
   }
@@ -823,8 +882,12 @@
     if (value) {
       source = source.replace(/^[\s\S]*?function[^{]+{/, "$&\n  'use strict';");
     }
-    // replace `useStrict` branch in `value` with hard-coded option
-    return source.replace(/(?: *\/\/.*\n)*(\s*)' *<%.+?useStrict.+/, value ? "$1'\\'use strict\\';\\n' +" : '');
+    // replace `useStrict` branch in `iteratorTemplate` with hard-coded option
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match.replace(/(?: *\/\/.*\n)*(\s*)' *<%.+?useStrict.+/, value ? "$1'\\'use strict\\';\\n' +" : '');
+    });
+
+    return source;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -855,6 +918,7 @@
         'csp',
         'legacy',
         'mobile',
+        'modularize',
         'strict',
         'underscore',
         '-c', '--stdout',
@@ -925,6 +989,9 @@
 
     // flag used to specify a mobile build
     var isMobile = !isLegacy && (isCSP || isUnderscore || options.indexOf('mobile') > -1);
+
+    // flag used to specify a modularize build
+    var isModularize = options.indexOf('modularize') > -1;
 
     // flag used to specify writing output to standard output
     var isStdOut = options.indexOf('-c') > -1 || options.indexOf('--stdout') > -1;
@@ -1103,53 +1170,8 @@
         source = removeFunction(source, 'cachedContains');
         source = removeVar(source, 'largeArraySize');
 
-        // replace `_.clone`
-        if (useUnderscoreClone) {
-          source = source.replace(/^( *)function clone[\s\S]+?\n\1}/m, [
-            '  function clone(value) {',
-            '    return value && objectTypes[typeof value]',
-            '      ? (isArray(value) ? slice.call(value) : assign({}, value))',
-            '      : value',
-            '  }'
-          ].join('\n'));
-        }
-
-        // replace `_.contains`
-        source = source.replace(/^( *)function contains[\s\S]+?\n\1}/m, [
-          '  function contains(collection, target) {',
-          '    var length = collection ? collection.length : 0,',
-          '        result = false;',
-          "    if (typeof length == 'number') {",
-          '      result = indexOf(collection, target) > -1;',
-          '    } else {',
-          '      forEach(collection, function(value) {',
-          '        return (result = value === target) && indicatorObject;',
-          '      });',
-          '    }',
-          '    return result;',
-          '  }'
-        ].join('\n'));
-
-        // replace `_.difference`
-        source = source.replace(/^( *)function difference[\s\S]+?\n\1}/m, [
-          '  function difference(array) {',
-          '    var index = -1,',
-          '        length = array.length,',
-          '        flattened = concat.apply(arrayRef, arguments),',
-          '        result = [];',
-          '',
-          '    while (++index < length) {',
-          '      var value = array[index]',
-          '      if (indexOf(flattened, value, length) < 0) {',
-          '        result.push(value);',
-          '      }',
-          '    }',
-          '    return result',
-          '  }'
-        ].join('\n'));
-
         // replace `_.assign`
-        source = source.replace(/^( *)var assign *= *createIterator[\s\S]+?\);/m, [
+        source = replaceFunction(source, 'assign', [
           '  function assign(object) {',
           '    if (!object) {',
           '      return object;',
@@ -1167,7 +1189,7 @@
         ].join('\n'));
 
         // replace `_.chain`
-        source = source.replace(/^( *)function chain[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'chain', [
           '  function chain(value) {',
           '    value = new lodash(value);',
           '    value.__chain__ = true;',
@@ -1175,8 +1197,35 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.clone`
+        if (useUnderscoreClone) {
+          source = replaceFunction(source, 'clone', [
+            '  function clone(value) {',
+            '    return value && objectTypes[typeof value]',
+            '      ? (isArray(value) ? slice.call(value) : assign({}, value))',
+            '      : value',
+            '  }'
+          ].join('\n'));
+        }
+
+        // replace `_.contains`
+        source = replaceFunction(source, 'contains', [
+          '  function contains(collection, target) {',
+          '    var length = collection ? collection.length : 0,',
+          '        result = false;',
+          "    if (typeof length == 'number') {",
+          '      result = indexOf(collection, target) > -1;',
+          '    } else {',
+          '      forEach(collection, function(value) {',
+          '        return (result = value === target) && indicatorObject;',
+          '      });',
+          '    }',
+          '    return result;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.defaults`
-        source = source.replace(/^( *)var defaults *= *createIterator[\s\S]+?\);/m, [
+        source = replaceFunction(source, 'defaults', [
           '  function defaults(object) {',
           '    if (!object) {',
           '      return object;',
@@ -1195,8 +1244,26 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.difference`
+        source = replaceFunction(source, 'difference', [
+          '  function difference(array) {',
+          '    var index = -1,',
+          '        length = array.length,',
+          '        flattened = concat.apply(arrayRef, arguments),',
+          '        result = [];',
+          '',
+          '    while (++index < length) {',
+          '      var value = array[index]',
+          '      if (indexOf(flattened, value, length) < 0) {',
+          '        result.push(value);',
+          '      }',
+          '    }',
+          '    return result',
+          '  }'
+        ].join('\n'));
+
         // replace `_.intersection`
-        source = source.replace(/^( *)function intersection[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'intersection', [
           '  function intersection(array) {',
           '    var args = arguments,',
           '        argsLength = args.length,',
@@ -1218,7 +1285,7 @@
         ].join('\n'));
 
         // replace `_.isEmpty`
-        source = source.replace(/^( *)function isEmpty[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'isEmpty', [
           '  function isEmpty(value) {',
           '    if (!value) {',
           '      return true;',
@@ -1236,14 +1303,14 @@
         ].join('\n'));
 
         // replace `_.isFinite`
-        source = source.replace(/^( *)function isFinite[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'isFinite', [
           '  function isFinite(value) {',
           '    return nativeIsFinite(value) && toString.call(value) == numberClass;',
           '  }'
         ].join('\n'));
 
         // replace `_.omit`
-        source = source.replace(/^( *)function omit[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'omit', [
           '  function omit(object) {',
           '    var props = concat.apply(arrayRef, arguments),',
           '        result = {};',
@@ -1258,7 +1325,7 @@
         ].join('\n'));
 
         // replace `_.pick`
-        source = source.replace(/^( *)function pick[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'pick', [
           '  function pick(object) {',
           '    var index = 0,',
           '        props = concat.apply(arrayRef, arguments),',
@@ -1276,60 +1343,58 @@
         ].join('\n'));
 
         // replace `_.template`
-        source = source.replace(/^( *)function template[\s\S]+?\n\1}/m, function() {
-          return [
-            '  function template(text, data, options) {',
-            "    text || (text = '');",
-            '    options = defaults({}, options, lodash.templateSettings);',
-            '',
-            '    var index = 0,',
-            '        source = "__p += \'",',
-            '        variable = options.variable;',
-            '',
-            '    var reDelimiters = RegExp(',
-            "      (options.escape || reNoMatch).source + '|' +",
-            "      (options.interpolate || reNoMatch).source + '|' +",
-            "      (options.evaluate || reNoMatch).source + '|$'",
-            "    , 'g');",
-            '',
-            '    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {',
-            '      source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);',
-            '      source +=',
-            '        escapeValue ? "\' +\\n_.escape(" + escapeValue + ") +\\n\'" :',
-            '        evaluateValue ? "\';\\n" + evaluateValue + ";\\n__p += \'" :',
-            '        interpolateValue ? "\' +\\n((__t = (" + interpolateValue + ")) == null ? \'\' : __t) +\\n\'" : \'\';',
-            '',
-            '      index = offset + match.length;',
-            '    });',
-            '',
-            '    source += "\';\\n";',
-            '    if (!variable) {',
-            "      variable = 'obj';",
-            "      source = 'with (' + variable + ' || {}) {\\n' + source + '\\n}\\n';",
-            '    }',
-            "    source = 'function(' + variable + ') {\\n' +",
-            "      'var __t, __p = \\'\\', __j = Array.prototype.join;\\n' +",
-            "      'function print() { __p += __j.call(arguments, \\'\\') }\\n' +",
-            '      source +',
-            "      'return __p\\n}';",
-            '',
-            '    try {',
-            "      var result = Function('_', 'return ' + source)(lodash);",
-            '    } catch(e) {',
-            '      e.source = source;',
-            '      throw e;',
-            '    }',
-            '    if (data) {',
-            '      return result(data);',
-            '    }',
-            '    result.source = source;',
-            '    return result;',
-            '  }'
-          ].join('\n');
-        });
+        source = replaceFunction(source, 'template', [
+          '  function template(text, data, options) {',
+          "    text || (text = '');",
+          '    options = defaults({}, options, lodash.templateSettings);',
+          '',
+          '    var index = 0,',
+          '        source = "__p += \'",',
+          '        variable = options.variable;',
+          '',
+          '    var reDelimiters = RegExp(',
+          "      (options.escape || reNoMatch).source + '|' +",
+          "      (options.interpolate || reNoMatch).source + '|' +",
+          "      (options.evaluate || reNoMatch).source + '|$'",
+          "    , 'g');",
+          '',
+          '    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {',
+          '      source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);',
+          '      source +=',
+          '        escapeValue ? "\' +\\n_.escape(" + escapeValue + ") +\\n\'" :',
+          '        evaluateValue ? "\';\\n" + evaluateValue + ";\\n__p += \'" :',
+          '        interpolateValue ? "\' +\\n((__t = (" + interpolateValue + ")) == null ? \'\' : __t) +\\n\'" : \'\';',
+          '',
+          '      index = offset + match.length;',
+          '    });',
+          '',
+          '    source += "\';\\n";',
+          '    if (!variable) {',
+          "      variable = 'obj';",
+          "      source = 'with (' + variable + ' || {}) {\\n' + source + '\\n}\\n';",
+          '    }',
+          "    source = 'function(' + variable + ') {\\n' +",
+          "      'var __t, __p = \\'\\', __j = Array.prototype.join;\\n' +",
+          "      'function print() { __p += __j.call(arguments, \\'\\') }\\n' +",
+          '      source +',
+          "      'return __p\\n}';",
+          '',
+          '    try {',
+          "      var result = Function('_', 'return ' + source)(lodash);",
+          '    } catch(e) {',
+          '      e.source = source;',
+          '      throw e;',
+          '    }',
+          '    if (data) {',
+          '      return result(data);',
+          '    }',
+          '    result.source = source;',
+          '    return result;',
+          '  }'
+        ].join('\n'));
 
         // replace `_.uniq`
-        source = source.replace(/^( *)function uniq[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'uniq', [
           '  function uniq(array, isSorted, callback, thisArg) {',
           '    var index = -1,',
           '        length = array ? array.length : 0,',
@@ -1359,7 +1424,7 @@
         ].join('\n'));
 
         // replace `_.without`
-        source = source.replace(/^( *)function without[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'without', [
           '  function without(array) {',
           '    var index = -1,',
           '        length = array.length,',
@@ -1376,7 +1441,7 @@
         ].join('\n'));
 
         // replace `wrapperChain`
-        source = source.replace(/^( *)function wrapperChain[\s\S]+?\n\1}/m, [
+        source = replaceFunction(source, 'wrapperChain', [
           '  function wrapperChain() {',
           '    this.__chain__ = true;',
           '    return this;',
@@ -1404,14 +1469,20 @@
         source = removeVar(source, 'reEmptyStringTrailing');
         source = removeVar(source, 'reInsertVariable');
 
-        // remove `arguments` object check from `_.isEqual`
-        source = source.replace(/ *\|\| *className *== *argsClass/, '');
-
-        // simplify DOM node check from `_.isEqual`
-        source = source.replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
+        source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+          return match
+            // remove `arguments` object check from `_.isEqual`
+            .replace(/ *\|\| *className *== *argsClass/, '')
+            // simplify DOM node check from `_.isEqual`
+            .replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
+        });
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
-        source = source.replace(/!callback *&& *isString\(collection\)[\s\S]+?: */g, '');
+        _.each(['max', 'min'], function(methodName) {
+          source = source.replace(matchFunction(source, methodName), function(match) {
+            return match.replace(/!callback *&& *isString\(collection\)[\s\S]+?: */g, '');
+          });
+        });
 
         // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
         source = source.replace(/ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/g, '');
@@ -1435,12 +1506,16 @@
         source = removeKeysOptimization(source);
 
         // remove `prototype` [[Enumerable]] fix from `_.keys`
-        source = source.replace(/(?:\s*\/\/.*)*(\s*return *).+?propertyIsEnumerable[\s\S]+?: */, '$1');
+        source = source.replace(matchFunction(source, 'keys'), function(match) {
+          return match.replace(/(?:\s*\/\/.*)*(\s*return *).+?propertyIsEnumerable[\s\S]+?: */, '$1');
+        });
 
         // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
-        source = source
-          .replace(/(?: *\/\/.*\n)* *' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
-          .replace(/!hasDontEnumBug *\|\|/g, '');
+        source = source.replace(getIteratorTemplate(source), function(match) {
+          return match
+            .replace(/(?: *\/\/.*\n)* *' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
+            .replace(/!hasDontEnumBug *\|\|/g, '');
+        });
       }
       vm.runInContext(source, context);
       return context._;
@@ -1481,19 +1556,14 @@
           source = removeVar(source, varName);
         });
 
-        _.each(['bind', 'isArray'], function(methodName) {
-          var snippet = matchFunction(source, methodName),
-              modified = snippet;
+        // remove native `Function#bind` branch in `_.bind`
+        source = source.replace(matchFunction(source, 'bind'), function(match) {
+          return match.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
+        });
 
-          // remove native `Function#bind` branch in `_.bind`
-          if (methodName == 'bind') {
-            modified = modified.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
-          }
-          // remove native `Array.isArray` branch in `_.isArray`
-          else {
-            modified = modified.replace(/nativeIsArray * \|\|/, '');
-          }
-          source = source.replace(snippet, modified);
+        // remove native `Array.isArray` branch in `_.isArray`
+        source = source.replace(matchFunction(source, 'isArray'), function(match) {
+          return match.replace(/nativeIsArray * \|\|/, '');
         });
 
         // replace `_.keys` with `shimKeys`
@@ -1525,13 +1595,12 @@
         // inline all functions defined with `createIterator`
         _.functions(lodash).forEach(function(methodName) {
           var reFunc = RegExp('(\\bvar ' + methodName + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
-
-          // skip if not defined with `createIterator`
-          if (!reFunc.test(source)) {
-            return;
+          if (reFunc.test(source)) {
+            // extract, format, and inject the compiled function's source code
+            source = source.replace(reFunc, function(match, captured) {
+              return captured + getFunctionSource(lodash[methodName]) + ';\n';
+            });
           }
-          // extract, format, and inject the compiled function's source code
-          source = source.replace(reFunc, '$1' + getFunctionSource(lodash[methodName]) + ';\n');
         });
 
         if (isUnderscore) {
@@ -1557,11 +1626,10 @@
 
           // replace `isArguments` and its fallback
           (function() {
-            var snippet = matchFunction(source, 'isArguments')
-              .replace(/function isArguments/, 'lodash.isArguments = function');
+            var snippet = matchFunction(source, 'isArguments');
+            snippet = snippet.replace(/function isArguments/, 'lodash.isArguments = function');
 
             source = removeFunction(source, 'isArguments');
-
             source = source.replace(getIsArgumentsFallback(source), function(match) {
               return snippet + '\n' + match
                 .replace(/\bisArguments\b/g, 'lodash.$&')
@@ -1647,7 +1715,7 @@
       }
       else {
         // inline `iteratorTemplate` template
-        source = source.replace(/(( *)var iteratorTemplate *= *)[\s\S]+?\n\2.+?;\n/, (function() {
+        source = source.replace(getIteratorTemplate(source), function() {
           var snippet = getFunctionSource(lodash._iteratorTemplate);
 
           // prepend data object references to property names to avoid having to
@@ -1677,8 +1745,8 @@
           // remove comments, including sourceURLs
           snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
 
-          return '$1' + snippet + ';\n';
-        }()));
+          return '  var iteratorTemplate = ' + snippet + ';\n';
+        });
       }
     }
 

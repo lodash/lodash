@@ -1782,6 +1782,19 @@
       deepEqual(_.toArray('abc'), ['a', 'b', 'c']);
       deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
     });
+
+    test('should work with a NodeList for `collection` (test in IE < 9)', function() {
+      if (window.document) {
+        try {
+          var nodeList = document.getElementsByTagName('body'),
+              body = nodeList[0],
+              actual = _.toArray(nodeList);
+        } catch(e) { }
+        deepEqual(actual, [body]);
+      } else {
+        skipTest();
+      }
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

@@ -157,9 +157,6 @@
   /** Detect if an `arguments` object's [[Class]] is unresolvable (Firefox < 4, IE < 9) */
   var noArgsClass = !isArguments(arguments);
 
-  /** Detect if `Array#slice` cannot be used to convert strings to arrays (Opera < 10.52) */
-  var noArraySliceOnStrings = slice.call('x')[0] != 'x';
-
   /**
    * Detect lack of support for accessing string characters by index:
    *
@@ -2510,10 +2507,18 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    if (collection && typeof collection.length == 'number') {
-      return (noArraySliceOnStrings ? isString(collection) : typeof collection == 'string')
-        ? collection.split('')
-        : slice.call(collection);
+    var length = collection ? collection.length : 0;
+    if (typeof length == 'number') {
+      if (noCharByIndex && isString(collection)) {
+        collection = collection.split('');
+      }
+      var index = -1,
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = collection[index];
+      }
+      return result;
     }
     return values(collection);
   }

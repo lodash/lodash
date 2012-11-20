@@ -149,7 +149,7 @@
     'template': ['escape'],
     'throttle': [],
     'times': [],
-    'toArray': ['values'],
+    'toArray': ['isString', 'values'],
     'unescape': [],
     'union': ['uniq'],
     'uniq': ['identity', 'indexOf'],
@@ -1614,21 +1614,28 @@
           .replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/, '')
           .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum).+\n/g, '');
 
-        // remove `iteratesOwnLast` from `isPlainObject`
-        source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
-
         // remove JScript [[DontEnum]] fix from `_.isEqual`
-        source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
+        source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+          return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
+        });
 
-        // remove `noArraySliceOnStrings` from `_.toArray`
-        source = source.replace(/noArraySliceOnStrings *\?[^:]+: *([^)]+)/g, '$1');
+        // remove `iteratesOwnLast` from `isPlainObject`
+        source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
+          return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
+        });
 
         // remove `noCharByIndex` from `_.reduceRight`
-        source = source.replace(/}\s*else if *\(noCharByIndex[^}]+/, '');
+        source = source.replace(matchFunction(source, 'reduceRight'), function(match) {
+          return match.replace(/}\s*else if *\(noCharByIndex[^}]+/, '');
+        });
+
+        // remove `noCharByIndex` from `_.toArray`
+        source = source.replace(matchFunction(source, 'toArray'), function(match) {
+          return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(noCharByIndex[\s\S]+?\n\1}/, '');
+        });
 
         source = removeVar(source, 'extendIteratorOptions');
         source = removeVar(source, 'iteratorTemplate');
-        source = removeVar(source, 'noArraySliceOnStrings');
         source = removeVar(source, 'noCharByIndex');
         source = removeNoArgsClass(source);
         source = removeNoNodeClass(source);
@@ -1763,9 +1770,6 @@
       if (isRemoved(source, 'template')) {
         // remove `templateSettings` assignment
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
-      }
-      if (isRemoved(source, 'toArray')) {
-        source = removeVar(source, 'noArraySliceOnStrings');
       }
       if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual')) {
         source = removeNoArgsClass(source);

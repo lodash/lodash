@@ -331,4 +331,28 @@ $(document).ready(function() {
     ok(view.$el.is('p:has(a)'));
   });
 
+  test("events passed in options", 2, function() {
+    var counter = 0;
+
+    var View = Backbone.View.extend({
+      el: '<p><a id="test"></a></p>',
+      increment: function() {
+        counter++;
+      }
+    });
+    
+    var view = new View({events:{'click #test':'increment'}});
+    var view2 = new View({events:function(){
+      return {'click #test':'increment'};
+    }});
+    
+    view.$('#test').trigger('click');
+    view2.$('#test').trigger('click');
+    equal(counter, 2);
+    
+    view.$('#test').trigger('click');
+    view2.$('#test').trigger('click');
+    equal(counter, 4);
+  });
+
 });

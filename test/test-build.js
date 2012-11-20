@@ -697,8 +697,11 @@
 
         object = lodash(1);
         equal(object.clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
-        equal(String(object) === '1', false, '_.prototype should not implement its own `toString` method: ' + basename);
-        equal(Number(object) === 1 , false, '_.prototype should not implement its own `valueOf` method: ' + basename);
+        equal(String(object) === '1', false, '_#toString should not be implemented: ' + basename);
+        equal(Number(object) === 1 , false, '_#valueOf should not be implemented: ' + basename);
+
+        object.chain();
+        equal(typeof object.has('x') == 'object', true, '_#has returns wrapped values when chaining: ' + basename);
 
         start();
       });

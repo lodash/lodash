@@ -1915,7 +1915,7 @@
       wrapped.shift();
 
       deepEqual(wrapped.keys().value(), ['length']);
-      equal(wrapped.first().value(), undefined);
+      equal(wrapped.first(), undefined);
     });
   }());
 
@@ -1929,7 +1929,7 @@
       wrapped.splice(0, 1);
 
       deepEqual(wrapped.keys().value(), ['length']);
-      equal(wrapped.first().value(), undefined);
+      equal(wrapped.first(), undefined);
     });
   }());
 
@@ -1952,6 +1952,52 @@
     test('should return the `valueOf` result of the wrapped value', function() {
       var wrapped = _(123);
       equal(Number(wrapped), 123);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...) methods returning non-wrapped values');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    var funcs = [
+      'contains',
+      'every',
+      'find',
+      'first',
+      'has',
+      'isArguments',
+      'isArray',
+      'isBoolean',
+      'isDate',
+      'isElement',
+      'isEmpty',
+      'isEqual',
+      'isFinite',
+      'isFunction',
+      'isNaN',
+      'isNull',
+      'isNumber',
+      'isObject',
+      'isPlainObject',
+      'isRegExp',
+      'isString',
+      'isUndefined',
+      'last',
+      'reduce',
+      'reduceRight',
+      'some'
+    ];
+
+    _.each(funcs, function(methodName) {
+      test('_.' + methodName + ' should return non-wrapped values', function() {
+        var func = _[methodName],
+            result = methodName == 'reduceRight' ? func(array, _.identity) : func;
+
+        notEqual(typeof result, 'object', '_.' + methodName + ' returns non-wrapped values');
+      });
     });
   }());
 

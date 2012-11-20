@@ -1375,6 +1375,17 @@
   QUnit.module('lodash.reduce');
 
   (function() {
+    test('should pass the correct `callback` arguments', function() {
+      var args,
+          array = [1, 2, 3];
+
+      _.reduce(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 2, 1, array]);
+    });
+
     _.each({
       'literal': 'abc',
       'object': Object('abc')
@@ -1399,6 +1410,17 @@
   QUnit.module('lodash.reduceRight');
 
   (function() {
+    test('should pass the correct `callback` arguments when iterating an array', function() {
+      var args,
+          array = [1, 2, 3];
+
+      _.reduceRight(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [3, 2, 1, array]);
+    });
+
     test('should pass the correct `callback` arguments when iterating an object', function() {
       var args,
           object = { 'a': 1, 'b': 2 },

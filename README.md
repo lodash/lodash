@@ -45,7 +45,7 @@ For more information check out these screencasts over Lo-Dash:
  * [_.merge](http://lodash.com/docs#merge) for a *“deep”* [_.extend](http://lodash.com/docs#extend)
  * [_.partial](http://lodash.com/docs#partial) for partial application without `this` binding
  * [_.pick](http://lodash.com/docs#pick) and [_.omit](http://lodash.com/docs#omit) accepts `callback` and `thisArg` arguments
- * [_.template](http://lodash.com/docs#template) supports [ES6 delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6) and utilizes [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl) for easier debugging
+ * [_.template](http://lodash.com/docs#template) supports [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6) and utilizes [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl) for easier debugging
  * [_.contains](http://lodash.com/docs#contains), [_.size](http://lodash.com/docs#size), [_.toArray](http://lodash.com/docs#toArray),
    [and more…](http://lodash.com/docs "_.countBy, _.every, _.filter, _.find, _.forEach, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.some, _.sortBy, _.where") accept strings
 
@@ -230,7 +230,7 @@ require({
 
 #### Compatibility Warnings ####
 
- * Aligned `_.defaults` and `_.extend` with ES6 [Object.assign](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-15.2.3.15)
+ * Made `_.defaults` and `_.extend` iterate only own properties of `source` objects to align with [ES6 `Object.assign`](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-15.2.3.15)
  * Renamed `_.lateBind` to `_.bindKey`
 
 #### Changes ####

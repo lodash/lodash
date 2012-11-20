@@ -99,22 +99,28 @@
   /*--------------------------------------------------------------------------*/
 
   exec('npm -g root', function(exception, stdout) {
+    if (!exception) {
+      try {
+        var isGlobal = path.resolve(basePath, '..') == fs.realpathSync(stdout.trim());
+      } catch(e) {
+        exception = e;
+      }
+    }
     if (exception) {
       console.error([
-        'There was a problem loading the npm registry. If you’re installing the Lo-Dash',
-        'command-line executable (via `npm install -g lodash`), you’ll need to manually',
-        'install UglifyJS and the Closure Compiler by running:',
+        'Oops! There was a problem detecting the install mode. If you’re installing the',
+        'Lo-Dash command-line executable (via `npm install -g lodash`), you’ll need to',
+        'manually install UglifyJS and the Closure Compiler by running:',
         '',
         "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + closureId + " | tar xvz -C '" + vendorPath + "'",
         "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + uglifyId  + " | tar xvz -C '" + vendorPath + "'",
         '',
-        'Please submit an issue on the GitHub issue tracker: ' + process.env.npm_package_bugs_url + '.'
+        'Please submit an issue on the GitHub issue tracker: ' + process.env.npm_package_bugs_url
       ].join('\n'));
+
       console.error(exception);
-      process.exit();
     }
-    // exit early if not a global install
-    if (path.resolve(basePath, '..') != fs.realpathSync(stdout.trim())) {
+    if (!isGlobal) {
       return;
     }
     // download the Closure Compiler

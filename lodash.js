@@ -3642,11 +3642,7 @@
         push.apply(args, arguments);
 
         var result = func.apply(lodash, args);
-        if (this.__chain__) {
-          result = new lodash(result);
-          result.__chain__ = true;
-        }
-        return result;
+        return new lodash(result);
       };
     });
   }
@@ -4007,9 +4003,7 @@
    * // => 'moe is 40'
    */
   function chain(value) {
-    value = new lodash(value);
-    value.__chain__ = true;
-    return value;
+    return new lodash(value);
   }
 
   /**
@@ -4039,7 +4033,11 @@
   }
 
   /**
-   * Enables method chaining on the wrapper object.
+   * This function returns the wrapper object.
+   *
+   * Note: This function is defined to ensure the existing wrapper object is
+   * returned, instead of creating a new wrapper object like the `_.chain`
+   * method does.
    *
    * @name chain
    * @deprecated
@@ -4052,14 +4050,29 @@
    * // => [1, 2, 3]
    */
   function wrapperChain() {
-    this.__chain__ = true;
     return this;
+  }
+
+  /**
+   * Produces the `toString` result of the wrapped value.
+   *
+   * @name toString
+   * @memberOf _
+   * @category Chaining
+   * @returns {String} Returns the string result.
+   * @example
+   *
+   * _([1, 2, 3]).toString();
+   * // => '1,2,3'
+   */
+  function wrapperToString() {
+    return String(this.__wrapped__);
   }
 
   /**
    * Extracts the wrapped value.
    *
-   * @name value
+   * @name valueOf
    * @memberOf _
    * @category Chaining
    * @returns {Mixed} Returns the wrapped value.
@@ -4209,7 +4222,35 @@
   // add `lodash.prototype.chain` after calling `mixin()` to avoid overwriting
   // it with the wrapped `lodash.chain`
   lodash.prototype.chain = wrapperChain;
+  lodash.prototype.toString = wrapperToString;
   lodash.prototype.value = wrapperValue;
+  lodash.prototype.valueOf = wrapperValue;
+
+  // add methods that are capable of returning wrapped and unwrapped values
+  forEach(['first', 'last'], function(methodName) {
+    var func = lodash[methodName];
+    if (func) {
+      lodash.prototype[methodName] = function(n, guard) {
+        var result = func(this.__wrapped__, n, guard);
+        return (n == null || guard)
+          ? result
+          : new lodash(result);
+      };
+    }
+  });
+
+  // add all methods that return unwrapped values
+  forEach(filter(functions(lodash), function(methodName) {
+    return /^(?:contains|every|find|has|is[A-Z].+|reduce.*|some)$/.test(methodName);
+  }), function(methodName) {
+    var func = lodash[methodName];
+
+    lodash.prototype[methodName] = function() {
+      var args = [this.__wrapped__];
+      push.apply(args, arguments);
+      return func.apply(lodash, args);
+    };
+  });
 
   // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
@@ -4224,11 +4265,7 @@
       if (hasObjectSpliceBug && value.length === 0) {
         delete value[0];
       }
-      if (this.__chain__) {
-        value = new lodash(value);
-        value.__chain__ = true;
-      }
-      return value;
+      return this;
     };
   });
 
@@ -4240,11 +4277,7 @@
       var value = this.__wrapped__,
           result = func.apply(value, arguments);
 
-      if (this.__chain__) {
-        result = new lodash(result);
-        result.__chain__ = true;
-      }
-      return result;
+      return new lodash(result);
     };
   });
 

@@ -99,7 +99,7 @@ $(document).ready(function() {
     equal(model.url(), '/nested/1/collection/2');
   });
 
-  test("clone", 8, function() {
+  test("clone", 10, function() {
     var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     var b = a.clone();
     equal(a.get('foo'), 1);
@@ -111,6 +111,12 @@ $(document).ready(function() {
     a.set({foo : 100});
     equal(a.get('foo'), 100);
     equal(b.get('foo'), 1, "Changing a parent attribute does not change the clone.");
+
+    var foo = new Backbone.Model({p: 1});
+    var bar = new Backbone.Model({p: 2});
+    bar.set(foo.clone(), {unset: true});
+    equal(foo.get('p'), 1);
+    equal(bar.get('p'), undefined);
   });
 
   test("isNew", 6, function() {

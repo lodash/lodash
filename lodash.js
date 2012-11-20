@@ -4225,6 +4225,20 @@
   lodash.prototype.value = wrapperValue;
   lodash.prototype.valueOf = wrapperValue;
 
+  // add all methods that return non-wrapped values
+  forEach(filter(functions(lodash), function(methodName) {
+    return /^(?:contains|every|find|first|has|is[A-Z].+|last|reduce.*|some)$/.test(methodName);
+  }),
+  function(methodName) {
+    var func = lodash[methodName];
+
+    lodash.prototype[methodName] = function() {
+      var args = [this.__wrapped__];
+      push.apply(args, arguments);
+      return func.apply(lodash, args);
+    };
+  });
+
   // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = arrayRef[methodName];

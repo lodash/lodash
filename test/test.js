@@ -1957,10 +1957,35 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...) methods returning non-wrapped values');
+  QUnit.module('lodash(...) methods capable of returning wrapped and unwrapped values');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [1, 2, 3],
+        wrapped = _(array);
+
+    var funcs = [
+      'first',
+      'last'
+    ];
+
+    _.each(funcs, function(methodName) {
+      test('_.' + methodName + ' should return an unwrapped value', function() {
+        equal(typeof wrapped[methodName](), 'number');
+      });
+
+      test('_.' + methodName + ' should return a wrapped value', function() {
+        ok(wrapped[methodName](1) instanceof _);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...) methods that return unwrapped values');
+
+  (function() {
+    var array = [1, 2, 3],
+        wrapped = _(array);
 
     var funcs = [
       'contains',
@@ -1992,11 +2017,12 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('_.' + methodName + ' should return non-wrapped values', function() {
-        var func = _[methodName],
-            result = methodName == 'reduceRight' ? func(array, _.identity) : func;
+      test('_.' + methodName + ' should return unwrapped values', function() {
+        var result = methodName == 'reduceRight'
+          ? wrapped[methodName](_.identity)
+          : wrapped[methodName];
 
-        notEqual(typeof result, 'object', '_.' + methodName + ' returns non-wrapped values');
+        notEqual(typeof result, 'object', '_.' + methodName + ' returns unwrapped values');
       });
     });
   }());

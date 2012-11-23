@@ -16,6 +16,9 @@
     window = freeGlobal;
   }
 
+  /** Document shortcut used by `createFunction` */
+  var document = window.document;
+
   /** Used for array and object method references */
   var arrayRef = [],
       // avoid a Closure Compiler bug by creatively creating an object
@@ -171,7 +174,7 @@
    * a string without a `toString` property value of `typeof` "function".
    */
   try {
-    var noNodeClass = ({ 'toString': 0 } + '', toString.call(window.document || 0) == objectClass);
+    var noNodeClass = ({ 'toString': 0 } + '', toString.call(document || 0) == objectClass);
   } catch(e) { }
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
@@ -297,6 +300,34 @@
   };
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Creates a function from the given `args` and `body` strings.
+   *
+   * @private
+   * @param {String} args The comma separated function arguments.
+   * @param {String} body The function body.
+   * @returns {Function} The new function.
+   */
+  var createFunction = function(args, body) {
+    var oldValue = window._,
+        script = document.createElement('script'),
+        sibling = document.getElementsByTagName('script')[0];
+
+    // use script injection to avoid Firefox's unoptimized `Function` constructor
+    // http://bugzil.la/804933
+    script.text = 'var _=function(' + args + '){' + body + '}';
+    sibling.parentNode.insertBefore(script, sibling).parentNode.removeChild(script);
+    var result = window._;
+    window._ = oldValue;
+    return result;
+  };
+
+  try {
+    createFunction();
+  } catch(e) {
+    createFunction = Function;
+  }
 
   /**
    * The template used to create iterator functions.
@@ -639,7 +670,7 @@
     data.firstArg = /^[^,]+/.exec(args)[0];
 
     // create the function factory
-    var factory = Function(
+    var factory = createFunction(
         'createCallback, hasOwnProperty, isArguments, isString, objectTypes, ' +
         'nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'

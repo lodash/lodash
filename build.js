@@ -329,7 +329,7 @@
             precompiled = getFunctionSource(_.template(text, null, options)),
             prop = filename.replace(/\..*$/, '');
 
-        source.push("  templates['" + prop.replace(/'/g, "\\'") + "'] = " + precompiled + ';', '');
+        source.push("  templates['" + prop.replace(/['\n\r\t]/g, '\\$&') + "'] = " + precompiled + ';', '');
       }
     });
 
@@ -638,6 +638,18 @@
   }
 
   /**
+   * Removes the `createFunction` function from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeCreateFunction(source) {
+    return removeFunction(source, 'createFunction')
+      .replace(/\n *try *{\s*createFunction[\s\S]+?catch[^}]+}\n/, '');
+  }
+
+  /**
    * Removes the all references to `refName` from `createIterator` in `source`.
    *
    * @private
@@ -663,7 +675,7 @@
    * @private
    * @param {String} source The source to process.
    * @param {String} funcName The name of the function to remove.
-   * @returns {String} Returns the source with the function removed.
+   * @returns {String} Returns the modified source.
    */
   function removeFunction(source, funcName) {
     // remove function
@@ -690,7 +702,7 @@
    *
    * @private
    * @param {String} source The source to process.
-   * @returns {String} Returns the source with the `isArguments` fallback removed.
+   * @returns {String} Returns the modified source.
    */
   function removeIsArgumentsFallback(source) {
     return source.replace(getIsArgumentsFallback(source), '');
@@ -701,7 +713,7 @@
    *
    * @private
    * @param {String} source The source to process.
-   * @returns {String} Returns the source with the `isFunction` fallback removed.
+   * @returns {String} Returns the modified source.
    */
   function removeIsFunctionFallback(source) {
     return source.replace(getIsFunctionFallback(source), '');
@@ -785,7 +797,7 @@
    * @private
    * @param {String} source The source to process.
    * @param {String} varName The name of the variable to remove.
-   * @returns {String} Returns the source with the variable removed.
+   * @returns {String} Returns the modified source.
    */
   function removeVar(source, varName) {
     // simplify `cloneableClasses`
@@ -823,7 +835,7 @@
    * @private
    * @param {String} source The source to inspect.
    * @param {String} varName The name of the function to replace.
-   * @returns {String} Returns the source with the function replaced.
+   * @returns {String} Returns the modified source.
    */
   function replaceFunction(source, funcName, funcValue) {
     var match = matchFunction(source, funcName);
@@ -843,7 +855,7 @@
    * @private
    * @param {String} source The source to inspect.
    * @param {String} varName The name of the variable to replace.
-   * @returns {String} Returns the source with the variable replaced.
+   * @returns {String} Returns the modified source.
    */
   function replaceVar(source, varName, varValue) {
     // replace a variable that's not part of a declaration list
@@ -1710,6 +1722,7 @@
         source = removeVar(source, 'extendIteratorOptions');
         source = removeVar(source, 'iteratorTemplate');
         source = removeVar(source, 'noCharByIndex');
+        source = removeCreateFunction(source);
         source = removeNoArgsClass(source);
         source = removeNoNodeClass(source);
       }

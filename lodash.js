@@ -240,8 +240,8 @@
    * @returns {Object} Returns a `lodash` instance.
    */
   function lodash(value) {
-    // exit early if already wrapped
-    if (value && value.__wrapped__) {
+    // exit early if already wrapped, even if wrapped by a different `lodash` constructor
+    if (value && typeof value == 'object' && value.__wrapped__) {
       return value;
     }
     // allow invoking `lodash` without the `new` operator

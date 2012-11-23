@@ -246,6 +246,9 @@
     // add newline to `+"__p+='"` in underscore.js `_.template`
     source = source.replace(/\+"__p\+='"/g, '+"\\n__p+=\'"');
 
+    // add newline to `body + '}'` in `createFunction`
+    source = source.replace(/body *\+ *'}'/, 'body+"\\n}"');
+
     // remove whitespace from `_.template` related regexes
     source = source.replace(/(?:reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
       return match.replace(/ |\\n/g, '');
@@ -318,7 +321,9 @@
           modified = snippet;
 
       // add brackets to whitelisted properties so the Closure Compiler won't mung them
-      modified = modified.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), "['$1']");
+      modified = modified.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), function(match, prop) {
+        return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
+      });
 
       if (isCreateIterator) {
         // replace with modified snippet early and clip snippet to the `factory`

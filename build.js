@@ -1644,8 +1644,8 @@
             source = removeFunction(source, 'isArguments');
             source = source.replace(getIsArgumentsFallback(source), function(match) {
               return snippet + '\n' + match
-                .replace(/\bisArguments\b/g, 'lodash.$&')
-                .replace(/\bnoArgsClass\b/g, '!lodash.isArguments(arguments)');
+                .replace(/isArguments/g, 'lodash.$&')
+                .replace(/noArgsClass/g, '!lodash.isArguments(arguments)');
             });
           }());
 
@@ -1717,6 +1717,11 @@
         // remove `noCharByIndex` from `_.toArray`
         source = source.replace(matchFunction(source, 'toArray'), function(match) {
           return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(noCharByIndex[\s\S]+?\n\1}/, '');
+        });
+
+        // replace `createFunction` with `Function` in `_.template`
+        source = source.replace(matchFunction(source, 'template'), function(match) {
+          return match.replace(/createFunction/g, 'Function');
         });
 
         source = removeVar(source, 'extendIteratorOptions');

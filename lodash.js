@@ -310,16 +310,29 @@
    * @returns {Function} The new function.
    */
   var createFunction = function(args, body) {
-    var oldValue = window._,
+    var error,
+        onerror = window.onerror,
+        prevDash = window._,
         script = document.createElement('script'),
-        sibling = document.getElementsByTagName('script')[0];
+        sibling = document.scripts[0];
 
     // use script injection to avoid Firefox's unoptimized `Function` constructor
     // http://bugzil.la/804933
-    script.text = 'var _=function(' + args + '){' + body + '}';
+    window.onerror = function(message) {
+      error = message;
+      return false;
+    };
+    // the newline is required to avoid errors if `body` ends with a single line comment
+    script.text = 'var _ = function(' + args + ') {' + body + '\n}';
     sibling.parentNode.insertBefore(script, sibling).parentNode.removeChild(script);
+
     var result = window._;
-    window._ = oldValue;
+    window._ = prevDash;
+    window.onerror = onerror;
+
+    if (error) {
+      throw new SyntaxError(error);
+    }
     return result;
   };
 
@@ -3920,7 +3933,7 @@
       : '';
 
     try {
-      result = Function('_', 'return ' + source + sourceURL)(lodash);
+      result = createFunction('_', 'return ' + source + sourceURL)(lodash);
     } catch(e) {
       e.source = source;
       throw e;

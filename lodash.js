@@ -1482,7 +1482,7 @@
   function isNaN(value) {
     // `NaN` as a primitive is the only value that is not equal to itself
     // (perform the [[Class]] check first to avoid errors with some host objects in IE)
-    return toString.call(value) == numberClass && value != +value
+    return isNumber(value) && value != +value
   }
 
   /**
@@ -1519,7 +1519,7 @@
    * // => true
    */
   function isNumber(value) {
-    return toString.call(value) == numberClass;
+    return typeof value == 'number' || toString.call(value) == numberClass;
   }
 
   /**
@@ -1589,7 +1589,7 @@
    * // => true
    */
   function isString(value) {
-    return toString.call(value) == stringClass;
+    return typeof value == 'string' || toString.call(value) == stringClass;
   }
 
   /**

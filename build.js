@@ -108,7 +108,7 @@
     'isEqual': ['isArguments', 'isFunction'],
     'isFinite': [],
     'isFunction': [],
-    'isNaN': [],
+    'isNaN': ['isNumber'],
     'isNull': [],
     'isNumber': [],
     'isObject': [],

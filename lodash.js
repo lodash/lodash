@@ -320,7 +320,7 @@
     // http://bugzil.la/804933
     window.onerror = function(message) {
       error = message;
-      return false;
+      return true;
     };
     // the newline is required to avoid errors if `body` ends with a single line comment
     script.text = 'var _ = function(' + args + ') {' + body + '\n}';

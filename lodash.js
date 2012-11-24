@@ -322,7 +322,8 @@
       error = message;
       return true;
     };
-    // the newline is required to avoid errors if `body` ends with a single line comment
+    // the newline, in `'\n}'`, is required to avoid errors if `body` ends
+    // with a single line comment
     script.text = 'var _ = function(' + args + ') {' + body + '\n}';
     sibling.parentNode.insertBefore(script, sibling).parentNode.removeChild(script);
 

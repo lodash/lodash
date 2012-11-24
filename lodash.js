@@ -351,10 +351,10 @@
    */
   var iteratorTemplate = template(
     // conditional strict mode
-    '<% if (obj.useStrict) { %>\'use strict\';\n<% } %>' +
+    "<% if (obj.useStrict) { %>'use strict';\n<% } %>" +
 
     // the `iteratee` may be reassigned by the `top` snippet
-    'var index, value, iteratee = <%= firstArg %>, ' +
+    'var index, iteratee = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
     'result = <%= firstArg %>;\n' +
     // exit early if the first argument is falsey
@@ -365,18 +365,17 @@
     // array-like iteration:
     '<% if (arrayLoop) { %>' +
     'var length = iteratee.length; index = -1;\n' +
-    'if (typeof length == \'number\') {' +
+    "if (typeof length == 'number') {" +
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +
     '  if (isString(iteratee)) {\n' +
-    '    iteratee = iteratee.split(\'\')\n' +
+    "    iteratee = iteratee.split('')\n" +
     '  }' +
     '  <% } %>\n' +
 
     // iterate over the array-like value
     '  while (++index < length) {\n' +
-    '    value = iteratee[index];\n' +
     '    <%= arrayLoop %>\n' +
     '  }\n' +
     '}\n' +
@@ -388,7 +387,7 @@
     '  var length = iteratee.length; index = -1;\n' +
     '  if (length && isArguments(iteratee)) {\n' +
     '    while (++index < length) {\n' +
-    '      value = iteratee[index += \'\'];\n' +
+    "      index += '';\n" +
     '      <%= objectLoop %>\n' +
     '    }\n' +
     '  } else {' +
@@ -401,8 +400,8 @@
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
     '  <% if (!hasDontEnumBug) { %>\n' +
-    '  var skipProto = typeof iteratee == \'function\' && \n' +
-    '    propertyIsEnumerable.call(iteratee, \'prototype\');\n' +
+    "  var skipProto = typeof iteratee == 'function' && \n" +
+    "    propertyIsEnumerable.call(iteratee, 'prototype');\n" +
     '  <% } %>' +
 
     // iterate own properties using `Object.keys` if it's fast
@@ -412,8 +411,7 @@
     '      length = ownProps.length;\n\n' +
     '  while (++ownIndex < length) {\n' +
     '    index = ownProps[ownIndex];\n' +
-    '    <% if (!hasDontEnumBug) { %>if (!(skipProto && index == \'prototype\')) {\n  <% } %>' +
-    '    value = iteratee[index];\n' +
+    "    <% if (!hasDontEnumBug) { %>if (!(skipProto && index == 'prototype')) {\n  <% } %>" +
     '    <%= objectLoop %>\n' +
     '    <% if (!hasDontEnumBug) { %>}\n<% } %>' +
     '  }' +
@@ -422,12 +420,11 @@
     '  <% } else { %>\n' +
     '  for (index in iteratee) {<%' +
     '    if (!hasDontEnumBug || useHas) { %>\n    if (<%' +
-    '      if (!hasDontEnumBug) { %>!(skipProto && index == \'prototype\')<% }' +
+    "      if (!hasDontEnumBug) { %>!(skipProto && index == 'prototype')<% }" +
     '      if (!hasDontEnumBug && useHas) { %> && <% }' +
     '      if (useHas) { %>hasOwnProperty.call(iteratee, index)<% }' +
     '    %>) {' +
     '    <% } %>\n' +
-    '    value = iteratee[index];\n' +
     '    <%= objectLoop %>;' +
     '    <% if (!hasDontEnumBug || useHas) { %>\n    }<% } %>\n' +
     '  }' +
@@ -440,12 +437,11 @@
     '  <% if (hasDontEnumBug) { %>\n\n' +
     '  var ctor = iteratee.constructor;\n' +
     '    <% for (var k = 0; k < 7; k++) { %>\n' +
-    '  index = \'<%= shadowed[k] %>\';\n' +
+    "  index = '<%= shadowed[k] %>';\n" +
     '  if (<%' +
-    '      if (shadowed[k] == \'constructor\') {' +
+    "      if (shadowed[k] == 'constructor') {" +
     '        %>!(ctor && ctor.prototype === iteratee) && <%' +
     '      } %>hasOwnProperty.call(iteratee, index)) {\n' +
-    '    value = iteratee[index];\n' +
     '    <%= objectLoop %>\n' +
     '  }' +
     '    <% } %>' +
@@ -462,9 +458,9 @@
   var assignIteratorOptions = {
     'args': 'object, source, guard',
     'top':
-      'for (var argsIndex = 1, argsLength = typeof guard == \'number\' ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n' +
+      "for (var argsIndex = 1, argsLength = typeof guard == 'number' ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n" +
       '  if ((iteratee = arguments[argsIndex])) {',
-    'objectLoop': 'result[index] = value',
+    'objectLoop': 'result[index] = iteratee[index]',
     'bottom': '  }\n}'
   };
 
@@ -474,8 +470,8 @@
   var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'top': 'callback = createCallback(callback, thisArg)',
-    'arrayLoop': 'if (callback(value, index, collection) === false) return result',
-    'objectLoop': 'if (callback(value, index, collection) === false) return result'
+    'arrayLoop': 'if (callback(iteratee[index], index, collection) === false) return result',
+    'objectLoop': 'if (callback(iteratee[index], index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
@@ -3629,7 +3625,7 @@
    * @example
    *
    * _.escape('Moe, Larry & Curly');
-   * // => "Moe, Larry &amp; Curly"
+   * // => 'Moe, Larry &amp; Curly'
    */
   function escape(string) {
     return string == null ? '' : (string + '').replace(reUnescapedHtml, escapeHtmlChar);
@@ -3917,10 +3913,10 @@
     // frame code as the function body
     source = 'function(' + variable + ') {\n' +
       (hasVariable ? '' : variable + ' || (' + variable + ' = {});\n') +
-      'var __t, __p = \'\', __e = _.escape' +
+      "var __t, __p = '', __e = _.escape" +
       (isEvaluating
         ? ', __j = Array.prototype.join;\n' +
-          'function print() { __p += __j.call(arguments, \'\') }\n'
+          "function print() { __p += __j.call(arguments, '') }\n"
         : (hasVariable ? '' : ', __d = ' + variable + '.' + variable + ' || ' + variable) + ';\n'
       ) +
       source +
@@ -3996,7 +3992,7 @@
    * @example
    *
    * _.unescape('Moe, Larry &amp; Curly');
-   * // => "Moe, Larry & Curly"
+   * // => 'Moe, Larry & Curly'
    */
   function unescape(string) {
     return string == null ? '' : (string + '').replace(reEscapedHtml, unescapeHtmlChar);

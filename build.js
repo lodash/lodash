@@ -731,7 +731,7 @@
 
     // remove optimized branch in `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)* *'( *)<% *if *\(isKeysFast[\s\S]+?'\1<% *} *else *\{ *%>.+\n([\s\S]+?) *'\1<% *} *%>.+/, "'\\n' +\n$2");
+      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(isKeysFast[\s\S]+?["']\1<% *} *else *\{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/, "'\\n' +\n$2");
     });
 
     // remove data object property assignment in `createIterator`
@@ -896,7 +896,7 @@
     }
     // replace `useStrict` branch in `iteratorTemplate` with hard-coded option
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)*(\s*)' *<%.+?useStrict.+/, value ? "$1'\\'use strict\\';\\n' +" : '');
+      return match.replace(/(?: *\/\/.*\n)*(\s*)["'] *<%.+?useStrict.+/, value ? '$1"\'use strict\';\\n" +' : '');
     });
 
     return source;
@@ -1386,8 +1386,8 @@
           "      source = 'with (' + variable + ' || {}) {\\n' + source + '\\n}\\n';",
           '    }',
           "    source = 'function(' + variable + ') {\\n' +",
-          "      'var __t, __p = \\'\\', __j = Array.prototype.join;\\n' +",
-          "      'function print() { __p += __j.call(arguments, \\'\\') }\\n' +",
+          '      "var __t, __p = \'\', __j = Array.prototype.join;\\n" +',
+          '      "function print() { __p += __j.call(arguments, \'\') }\\n" +',
           '      source +',
           "      'return __p\\n}';",
           '',
@@ -1525,7 +1525,7 @@
         // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
         source = source.replace(getIteratorTemplate(source), function(match) {
           return match
-            .replace(/(?: *\/\/.*\n)* *' *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|').+/g, '')
+            .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
             .replace(/!hasDontEnumBug *\|\|/g, '');
         });
       }
@@ -1933,7 +1933,7 @@
         'onComplete': function(source) {
           // inject "use strict" directive
           if (isStrict) {
-            source = source.replace(/^([\s\S]*?function[^{]+{)([^'"])/, '$1"use strict";$2');
+            source = source.replace(/^([\s\S]*?function[^{]+{)([^"'])/, '$1"use strict";$2');
           }
           if (isCustom) {
             source = addCommandsToHeader(source, options);

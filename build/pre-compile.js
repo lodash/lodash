@@ -236,9 +236,17 @@
     source = source.replace("result[length]['value']", 'result[length].value');
 
     // remove whitespace from string literals
-    source = source.replace(/'(?:(?=(\\?))\1.)*?'/g, function(string) {
+    source = source.replace(/^ *"(?:(?=(\\?))\1.)*?"|'(?:(?=(\\?))\2.)*?'/gm, function(string) {
       // avoids removing the '\n' of the `stringEscapes` object
-      return string.replace(/\[object |delete |else |function | in |return\s+[\w']|throw |typeof |use strict|var |@ |'\\n'|\\\\n|\\n|\s+/g, function(match) {
+      return string.replace(/\[object |delete |else |function | in |return\s+[\w"']|throw |typeof |use strict|var |@ |(["'])\\n\1|\\\\n|\\n|\s+/g, function(match) {
+        return match == false || match == '\\n' ? '' : match;
+      });
+    });
+
+    // remove whitespace from string literals in double quotes
+    source = source.replace(/^ *"(?:(?=(\\?))\1.)*?"/g, function(string) {
+      // avoids removing the '\n' of the `stringEscapes` object
+      return string.replace(reWhitespace, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
     });
@@ -256,11 +264,8 @@
 
     // remove newline from double-quoted strings in `_.template`
     source = source
-      .replace('"\';\\n__with ("', '"\';__with("')
-      .replace('"\\n}__\\n__p += \'"', '"}____p+=\'"')
-      .replace('"__p = \'"', '"__p=\'"')
-      .replace('"\';\\n"', '"\';"')
-      .replace("') {\\n'", "'){'")
+      .replace('"__p += \'"', '"__p+=\'"')
+      .replace('"\';\n"', '"\';"')
 
     // remove `useSourceURL` variable
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var useSourceURL[\s\S]+?catch[^}]+}\n/, '');

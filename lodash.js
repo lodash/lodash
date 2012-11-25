@@ -470,7 +470,7 @@
    */
   var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
-    'top': 'callback = createCallback(callback, thisArg)',
+    'top': 'callback = callback && thisArg === undefined ? callback : createCallback(callback, thisArg)',
     'arrayLoop': 'if (callback(iteratee[index], index, collection) === false) return result',
     'objectLoop': 'if (callback(iteratee[index], index, collection) === false) return result'
   };
@@ -682,7 +682,7 @@
     // create the function factory
     var factory = createFunction(
         'createCallback, hasOwnProperty, isArguments, isString, objectTypes, ' +
-        'nativeKeys, propertyIsEnumerable',
+        'nativeKeys, propertyIsEnumerable, undefined',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
@@ -1457,7 +1457,7 @@
   /**
    * Checks if `value` is `NaN`.
    *
-   * Note: This is not the same as native `isNaN`, which will return true for
+   * Note: This is not the same as native `isNaN`, which will return `true` for
    * `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
    *
    * @static

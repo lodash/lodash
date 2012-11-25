@@ -2325,7 +2325,7 @@ _.isFunction(_);
 ### <a id="_isnanvalue"></a>`_.isNaN(value)`
 <a href="#_isnanvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1482 "View in source") [&#x24C9;][1]
 
-Checks if `value` is `NaN`.  Note: This is not the same as native `isNaN`, which will return true for `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
+Checks if `value` is `NaN`.  Note: This is not the same as native `isNaN`, which will return `true` for `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to check.

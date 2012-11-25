@@ -30,7 +30,7 @@
     'skipProto',
     'source',
     'thisArg',
-    'value'
+    'undefined'
   ];
 
   /** Used to minify `compileIterator` option properties */
@@ -221,7 +221,9 @@
 
     // add brackets to whitelisted properties so the Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
-    source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), "['$1']");
+    source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), function(match, prop) {
+      return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
+    });
 
     // remove brackets from `_.escape()` in `_.template`
     source = source.replace(/__e *= *_\['escape']/g, '__e=_.escape');
@@ -236,19 +238,17 @@
     source = source.replace("result[length]['value']", 'result[length].value');
 
     // remove whitespace from string literals
-    source = source.replace(/^ *"(?:(?=(\\?))\1.)*?"|'(?:(?=(\\?))\2.)*?'/gm, function(string) {
+    source = source.replace(/^([ "'\w]+:)? *"(?:(?=(\\?))\2.)*?"|'(?:(?=(\\?))\3.)*?'/gm, function(string, captured) {
+      // remove object literal property name
+      if (/:$/.test(captured)) {
+        string = string.slice(captured.length);
+      }
       // avoids removing the '\n' of the `stringEscapes` object
-      return string.replace(/\[object |delete |else |function | in |return\s+[\w"']|throw |typeof |use strict|var |@ |(["'])\\n\1|\\\\n|\\n|\s+/g, function(match) {
+      string = string.replace(/\[object |delete |else |function | in |return\s+[\w"']|throw |typeof |use strict|var |@ |(["'])\\n\1|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
-    });
-
-    // remove whitespace from string literals in double quotes
-    source = source.replace(/^ *"(?:(?=(\\?))\1.)*?"/g, function(string) {
-      // avoids removing the '\n' of the `stringEscapes` object
-      return string.replace(reWhitespace, function(match) {
-        return match == false || match == '\\n' ? '' : match;
-      });
+      // prepend object literal property name
+      return (captured || '') + string;
     });
 
     // add newline to `+"__p+='"` in underscore.js `_.template`
@@ -325,7 +325,7 @@
           isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
           modified = snippet;
 
-      // add brackets to whitelisted properties so the Closure Compiler won't mung them
+      // add brackets to iterator option properties so the Closure Compiler won't mung them
       modified = modified.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), function(match, prop) {
         return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
       });
@@ -342,9 +342,9 @@
         // ensure properties in compiled strings aren't minified
         modified = modified.replace(RegExp('([^.]\\b)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
 
-        // correct `typeof x == 'object'`
-        if (variable == 'object') {
-          modified = modified.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), "$1object'");
+        // correct `typeof` of 'object' and 'undefined'
+        if (variable == 'object' || variable == 'undefined') {
+          modified = modified.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), '$1' + variable + "'");
         }
       });
 

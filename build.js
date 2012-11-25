@@ -1689,7 +1689,9 @@
         ], function(data) {
           if (!data.flag) {
             source = source.replace(matchFunction(source, data.methodName), function(match) {
-              return match.replace(/(callback), *thisArg/g, '$1');
+              return match
+                .replace(/(callback), *thisArg/g, '$1')
+                .replace(/^ *callback *=.+/m, 'callback || (callback = identity);')
             });
           }
         });

@@ -470,7 +470,7 @@
    */
   var forEachIteratorOptions = {
     'args': 'collection, callback, thisArg',
-    'top': 'callback = callback && thisArg === undefined ? callback : createCallback(callback, thisArg)',
+    'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
     'arrayLoop': 'if (callback(iteratee[index], index, collection) === false) return result',
     'objectLoop': 'if (callback(iteratee[index], index, collection) === false) return result'
   };
@@ -550,10 +550,10 @@
     // ensure a stable sort in V8 and other engines
     // http://code.google.com/p/v8/issues/detail?id=90
     if (a !== b) {
-      if (a > b || a === undefined) {
+      if (a > b || typeof a == 'undefined') {
         return 1;
       }
-      if (a < b || b === undefined) {
+      if (a < b || typeof b == 'undefined') {
         return -1;
       }
     }
@@ -634,7 +634,7 @@
         return object[func];
       };
     }
-    if (thisArg !== undefined) {
+    if (typeof thisArg != 'undefined') {
       return function(value, index, object) {
         return func.call(thisArg, value, index, object);
       };
@@ -682,7 +682,7 @@
     // create the function factory
     var factory = createFunction(
         'createCallback, hasOwnProperty, isArguments, isString, objectTypes, ' +
-        'nativeKeys, propertyIsEnumerable, undefined',
+        'nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
@@ -1606,7 +1606,7 @@
    * // => true
    */
   function isUndefined(value) {
-    return value === undefined;
+    return typeof value == 'undefined';
   }
 
   /**

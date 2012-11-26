@@ -29,8 +29,7 @@
     'result',
     'skipProto',
     'source',
-    'thisArg',
-    'undefined'
+    'thisArg'
   ];
 
   /** Used to minify `compileIterator` option properties */
@@ -342,8 +341,8 @@
         // ensure properties in compiled strings aren't minified
         modified = modified.replace(RegExp('([^.]\\b)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
 
-        // correct `typeof` of 'object' and 'undefined'
-        if (variable == 'object' || variable == 'undefined') {
+        // correct `typeof` values
+        if (/^(?:boolean|function|object|number|string|undefined)$/.test(variable)) {
           modified = modified.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), '$1' + variable + "'");
         }
       });

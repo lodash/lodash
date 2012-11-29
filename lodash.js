@@ -202,10 +202,21 @@
 
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
-  cloneableClasses[argsClass] = cloneableClasses[funcClass] = false;
-  cloneableClasses[arrayClass] = cloneableClasses[boolClass] = cloneableClasses[dateClass] =
-  cloneableClasses[numberClass] = cloneableClasses[objectClass] = cloneableClasses[regexpClass] =
-  cloneableClasses[stringClass] = true;
+  cloneableClasses[funcClass] = false;
+  cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
+  cloneableClasses[boolClass] = cloneableClasses[dateClass] =
+  cloneableClasses[numberClass] = cloneableClasses[objectClass] =
+  cloneableClasses[regexpClass] = cloneableClasses[stringClass] = true;
+
+  /** Used to lookup a built-in constructor by [[Class]] */
+  var ctorByClass = {};
+  ctorByClass[arrayClass] = Array;
+  ctorByClass[boolClass] = Boolean;
+  ctorByClass[dateClass] = Date;
+  ctorByClass[objectClass] = Object;
+  ctorByClass[numberClass] = Number;
+  ctorByClass[regexpClass] = RegExp;
+  ctorByClass[stringClass] = String;
 
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
@@ -716,6 +727,19 @@
   }
 
   /**
+   * Checks if `value` is a DOM node in IE < 9.
+   *
+   * @private
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a DOM node, else `false`.
+   */
+  function isNode(value) {
+    // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
+    // methods that are `typeof` "string" and still can coerce nodes to strings
+    return typeof value.toString != 'function' && typeof (value + '') == 'string';
+  }
+
+  /**
    * A no-operation function.
    *
    * @private
@@ -852,12 +876,9 @@
     if (!(value && typeof value == 'object') || isArguments(value)) {
       return result;
     }
-    // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-    // methods that are `typeof` "string" and still can coerce nodes to strings.
-    // Also check that the constructor is `Object` (i.e. `Object instanceof Object`)
+    // check that the constructor is `Object` (i.e. `Object instanceof Object`)
     var ctor = value.constructor;
-    if ((!noNodeClass || !(typeof value.toString != 'function' && typeof (value + '') == 'string')) &&
-        (!isFunction(ctor) || ctor instanceof ctor)) {
+    if ((!isFunction(ctor) && (!noNodeClass || !isNode(value))) || ctor instanceof ctor) {
       // IE < 9 iterates inherited properties before own properties. If the first
       // iterated property is an object's own property then there are no inherited
       // enumerable properties.
@@ -918,9 +939,10 @@
 
   /**
    * Creates a clone of `value`. If `deep` is `true`, all nested objects will
-   * also be cloned otherwise they will be assigned by reference. Functions, DOM
-   * nodes, `arguments` objects, and objects created by constructors other than
-   * `Object` are **not** cloned.
+   * also be cloned otherwise they will be assigned by reference. Functions and
+   * DOM nodes are **not** cloned. The enumerable properties of `arguments` objects
+   * and objects created by constructors other than `Object` are cloned to plain
+   * Object objects.
    *
    * @static
    * @memberOf _
@@ -962,23 +984,19 @@
     // inspect [[Class]]
     var isObj = isObject(value);
     if (isObj) {
-      // don't clone `arguments` objects, functions, or non-object Objects
       var className = toString.call(value);
-      if (!cloneableClasses[className] || (noArgsClass && isArguments(value))) {
+      if (!cloneableClasses[className] || (noNodeClass && isNode(value))) {
         return value;
       }
-      var isArr = className == arrayClass;
-      isObj = isArr || (className == objectClass ? isPlainObject(value) : isObj);
+      var isArr = isArray(value);
     }
     // shallow clone
     if (!isObj || !deep) {
-      // don't clone functions
       return isObj
         ? (isArr ? slice.call(value) : assign({}, value))
         : value;
     }
-
-    var ctor = value.constructor;
+    var ctor = ctorByClass[className];
     switch (className) {
       case boolClass:
       case dateClass:
@@ -1249,8 +1267,16 @@
       return a === b;
     }
     // compare [[Class]] names
-    var className = toString.call(a);
-    if (className != toString.call(b)) {
+    var className = toString.call(a),
+        otherName = toString.call(b);
+
+    if (className == argsClass) {
+      className = objectClass;
+    }
+    if (otherName == argsClass) {
+      otherName = objectClass;
+    }
+    if (className != otherName) {
       return false;
     }
     switch (className) {
@@ -1273,20 +1299,14 @@
         // treat string primitives and their corresponding object instances as equal
         return a == b + '';
     }
-    // exit early, in older browsers, if `a` is array-like but not `b`
-    var isArr = className == arrayClass || className == argsClass;
-    if (noArgsClass && !isArr && (isArr = isArguments(a)) && !isArguments(b)) {
-      return false;
-    }
+    var isArr = className == arrayClass;
     if (!isArr) {
       // unwrap any `lodash` wrapped values
       if (a.__wrapped__ || b.__wrapped__) {
         return isEqual(a.__wrapped__ || a, b.__wrapped__ || b);
       }
       // exit for functions and DOM nodes
-      if (className != objectClass || (noNodeClass && (
-          (typeof a.toString != 'function' && typeof (a + '') == 'string') ||
-          (typeof b.toString != 'function' && typeof (b + '') == 'string')))) {
+      if (className != objectClass || (noNodeClass && (isNode(a) || isNode(b)))) {
         return false;
       }
       var ctorA = a.constructor,
@@ -1312,7 +1332,6 @@
         return stackB[length] == b;
       }
     }
-
     var index = -1,
         result = true,
         size = 0;
@@ -1338,37 +1357,21 @@
       return result;
     }
     // deep compare objects
-    for (var key in a) {
-      if (hasOwnProperty.call(a, key)) {
-        // count the number of properties.
-        size++;
-        // deep compare each property value.
-        if (!(hasOwnProperty.call(b, key) && isEqual(a[key], b[key], stackA, stackB))) {
-          return false;
-        }
-      }
-    }
-    // ensure both objects have the same number of properties
-    for (key in b) {
-      // The JS engine in Adobe products, like InDesign, has a bug that causes
-      // `!size--` to throw an error so it must be wrapped in parentheses.
-      // https://github.com/documentcloud/underscore/issues/355
-      if (hasOwnProperty.call(b, key) && !(size--)) {
+    forOwn(a, function(value, key) {
+      // count the number of properties.
+      size++;
+      // deep compare each property value.
+      return (result = hasOwnProperty.call(b, key) && isEqual(value, b[key], stackA, stackB));
+    });
+
+    if (result) {
+      // ensure both objects have the same number of properties
+      forOwn(b, function() {
         // `size` will be `-1` if `b` has more properties than `a`
-        return false;
-      }
+        return (result = --size > -1);
+      });
     }
-    // handle JScript [[DontEnum]] bug
-    if (hasDontEnumBug) {
-      while (++index < 7) {
-        key = shadowed[index];
-        if (hasOwnProperty.call(a, key) &&
-            !(hasOwnProperty.call(b, key) && isEqual(a[key], b[key], stackA, stackB))) {
-          return false;
-        }
-      }
-    }
-    return true;
+    return result;
   }
 
   /**
@@ -2952,7 +2955,7 @@
       start = 0;
     }
     // use `Array(length)` so V8 will avoid the slower "dictionary" mode
-    // http://www.youtube.com/watch?v=XAqIpGU8ZZk#t=16m27s
+    // http://youtu.be/XAqIpGU8ZZk#t=17m25s
     var index = -1,
         length = nativeMax(0, ceil((end - start) / step)),
         result = Array(length);

@@ -1651,9 +1651,11 @@
             });
           });
 
-          // modify `_.every`, `_.find`, and `_.some` to use the private `indicatorObject`
-          source = source.replace(matchFunction(source, 'every'), function(match) {
-            return match.replace(/\(result *= *(.+?)\);/, '!(result = $1) && indicatorObject;');
+          // modify `_.every`, `_.find`, `_.isEqual`, and `_.some` to use the private `indicatorObject`
+          _.each(['every', 'isEqual'], function(methodName) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+            });
           });
 
           source = source.replace(matchFunction(source, 'find'), function(match) {
@@ -1681,7 +1683,7 @@
             source = source.replace(matchFunction(source, data.methodName), function(match) {
               return match
                 .replace(/(callback), *thisArg/g, '$1')
-                .replace(/^ *callback *=.+/m, 'callback || (callback = identity);')
+                .replace(/^( *)callback *=.+/m, '$1callback || (callback = identity);')
             });
           }
         });
@@ -1694,11 +1696,6 @@
         // remove `iteratesOwnLast` from `shimIsPlainObject`
         source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
           return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
-        });
-
-        // remove JScript [[DontEnum]] fix from `_.isEqual`
-        source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-          return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
         });
 
         // remove `noCharByIndex` from `_.reduceRight`

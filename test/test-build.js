@@ -679,8 +679,11 @@
 
         object = { 'length': 0, 'splice': Array.prototype.splice };
         equal(lodash.isEmpty(object), false, '_.isEmpty should return `false` for jQuery/MooTools DOM query collections: ' + basename);
-
         equal(lodash.isFinite('2'), false, '_.isFinite should return `false` for numeric string values: ' + basename);
+
+        object = { 'a': 1, 'b': 2, 'c': 3 };
+        equal(lodash.isEqual(object, { 'a': 1, 'b': 0, 'c': 3 }), false, '_.isEqual: ' + basename);
+
         equal(lodash.max('abc'), -Infinity, '_.max should return `-Infinity` for strings: ' + basename);
         equal(lodash.min('abc'), Infinity, '_.min should return `Infinity` for strings: ' + basename);
 

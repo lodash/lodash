@@ -71,7 +71,7 @@
     'bindAll': ['bind', 'functions'],
     'bindKey': ['isFunction', 'isObject'],
     'chain': ['mixin'],
-    'clone': ['assign', 'forEach', 'forOwn', 'isArguments', 'isObject', 'isPlainObject'],
+    'clone': ['assign', 'forEach', 'forOwn', 'isArray', 'isObject'],
     'compact': [],
     'compose': [],
     'contains': ['forEach', 'indexOf', 'isString'],
@@ -105,7 +105,7 @@
     'isDate': [],
     'isElement': [],
     'isEmpty': ['forOwn', 'isArguments', 'isFunction'],
-    'isEqual': ['isArguments', 'isFunction'],
+    'isEqual': ['forOwn', 'isFunction'],
     'isFinite': [],
     'isFunction': [],
     'isNaN': ['isNumber'],
@@ -752,16 +752,9 @@
   function removeNoArgsClass(source) {
     source = removeVar(source, 'noArgsClass');
 
-    // remove `noArgsClass` from `_.clone`, `_.isEmpty`, and `_.isEqual`
-    _.each(['clone', 'isEmpty', 'isEqual'], function(methodName) {
-      source = source.replace(matchFunction(source, methodName), function(match) {
-        return match.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
-      });
-    });
-
-    // remove `noArgsClass` from `_.isEqual`
-    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/if *\(noArgsClass[^}]+?}\n/, '\n');
+    // remove `noArgsClass` from `_.isEmpty`
+    source = source.replace(matchFunction(source, 'isEmpty'), function(match) {
+      return match.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
     });
 
     return source;
@@ -778,14 +771,19 @@
     // remove `noNodeClass` assignment
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '');
 
-    // remove `noNodeClass` from `_.isEqual`
-    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/ *\|\| *\(noNodeClass *&&[\s\S]+?\)\)\)/, '');
+    // remove `noNodeClass` from `shimIsPlainObject`
+    source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+      return match.replace(/ *&& *\(!noNodeClass[\s\S]+?\)\)/, '');
     });
 
-    // remove `noNodeClass` from `_.isPlainObject`
-    source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
-      return match.replace(/\(!noNodeClass *\|\|[\s\S]+?\)\) *&&/, '');
+    // remove `noNodeClass` from `_.clone`
+    source = source.replace(matchFunction(source, 'clone'), function(match) {
+      return match.replace(/ *\|\| *\(noNodeClass[\s\S]+?\)\)/, '');
+    });
+
+    // remove `noNodeClass` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/ *\|\| *\(noNodeClass[\s\S]+?\)\)\)/, '');
     });
 
     return source;
@@ -800,13 +798,9 @@
    * @returns {String} Returns the modified source.
    */
   function removeVar(source, varName) {
-    // simplify `cloneableClasses`
-    if (varName == 'cloneableClasses') {
-      source = source.replace(/(var cloneableClasses *=)[\s\S]+?(true;\n)/, '$1$2');
-    }
-    // simplify `hasObjectSpliceBug`
-    if (varName == 'hasObjectSpliceBug') {
-      source = source.replace(/(var hasObjectSpliceBug *=)[^;]+/, '$1false');
+    // simplify `cloneableClasses`, `ctorByClass`, or `hasObjectSpliceBug`
+    if (/^(?:cloneableClasses|ctorByClass|hasObjectSpliceBug)$/.test(varName)) {
+      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?\\n\\n'), '$1=null;\n\n');
     }
     source = source.replace(RegExp(
       // match multi-line comment block
@@ -822,9 +816,6 @@
 
     // remove a variable at the end of a variable declaration list
     source = source.replace(RegExp(',\\s*' + varName + ' *=.+?;'), ';');
-
-    // remove variable reference from `cloneableClasses` assignments
-    source = source.replace(RegExp('cloneableClasses\\[' + varName + '\\] *= *(?:false|true)?', 'g'), '');
 
     return removeFromCreateIterator(source, varName);
   }
@@ -1177,6 +1168,14 @@
       else if (isUnderscore) {
         // remove unneeded variables
         source = removeVar(source, 'cloneableClasses');
+        source = removeVar(source, 'ctorByClass');
+
+        // remove unneeded template related variables
+        source = removeVar(source, 'reComplexDelimiter');
+        source = removeVar(source, 'reEmptyStringLeading');
+        source = removeVar(source, 'reEmptyStringMiddle');
+        source = removeVar(source, 'reEmptyStringTrailing');
+        source = removeVar(source, 'reInsertVariable');
 
         // remove large array optimizations
         source = removeFunction(source, 'cachedContains');
@@ -1474,19 +1473,9 @@
           });
         });
 
-        // remove unneeded template related variables
-        source = removeVar(source, 'reComplexDelimiter');
-        source = removeVar(source, 'reEmptyStringLeading');
-        source = removeVar(source, 'reEmptyStringMiddle');
-        source = removeVar(source, 'reEmptyStringTrailing');
-        source = removeVar(source, 'reInsertVariable');
-
+        // remove `arguments` object check from `_.isEqual`
         source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-          return match
-            // remove `arguments` object check from `_.isEqual`
-            .replace(/ *\|\| *className *== *argsClass/, '')
-            // simplify DOM node check from `_.isEqual`
-            .replace(/(if *\(className *!= *objectClass).+?noNodeClass[\s\S]+?{/, '$1) {');
+          return match.replace(/^ *if *\(.+== argsClass[^}]+}\n/gm, '')
         });
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
@@ -1516,6 +1505,7 @@
       if (isMobile) {
         source = replaceVar(source, 'isKeysFast', 'false');
         source = removeKeysOptimization(source);
+        source = removeNoNodeClass(source);
 
         // remove `prototype` [[Enumerable]] fix from `_.keys`
         source = source.replace(matchFunction(source, 'keys'), function(match) {
@@ -1701,14 +1691,14 @@
           .replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/, '')
           .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum).+\n/g, '');
 
+        // remove `iteratesOwnLast` from `shimIsPlainObject`
+        source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+          return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
+        });
+
         // remove JScript [[DontEnum]] fix from `_.isEqual`
         source = source.replace(matchFunction(source, 'isEqual'), function(match) {
           return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasDontEnumBug[\s\S]+?\n\1}/, '');
-        });
-
-        // remove `iteratesOwnLast` from `isPlainObject`
-        source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
-          return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
         });
 
         // remove `noCharByIndex` from `_.reduceRight`
@@ -1850,6 +1840,7 @@
       // remove associated functions, variables, and code snippets that the minifier may miss
       if (isRemoved(source, 'clone')) {
         source = removeVar(source, 'cloneableClasses');
+        source = removeVar(source, 'ctorByClass');
       }
       if (isRemoved(source, 'isArray')) {
         source = removeVar(source, 'nativeIsArray');
@@ -1864,10 +1855,10 @@
         // remove `templateSettings` assignment
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
       }
-      if (isRemoved(source, 'clone', 'isArguments', 'isEmpty', 'isEqual')) {
+      if (isRemoved(source, 'isArguments', 'isEmpty')) {
         source = removeNoArgsClass(source);
       }
-      if (isRemoved(source, 'isEqual', 'isPlainObject')) {
+      if (isRemoved(source, 'clone', 'isEqual', 'shimIsPlainObject')) {
         source = removeNoNodeClass(source);
       }
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
@@ -1884,7 +1875,7 @@
       if (isRemoved(source, 'createIterator', 'isEqual')) {
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
       }
-      if (isRemoved(source, 'createIterator', 'isPlainObject')) {
+      if (isRemoved(source, 'createIterator', 'shimIsPlainObject')) {
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
       }
       if (isRemoved(source, 'createIterator', 'keys')) {

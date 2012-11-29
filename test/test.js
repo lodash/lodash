@@ -243,17 +243,17 @@
     Klass.prototype = { 'b': 1 };
 
     var nonCloneable = {
-      'an arguments object': arguments,
       'an element': window.document && document.body,
-      'a function': Klass,
-      'a Klass instance': new Klass
+      'a function': Klass
     };
 
     var objects = {
+      'an arguments object': arguments,
       'an array': ['a', 'b', 'c', ''],
       'an array-like-object': { '0': 'a', '1': 'b', '2': 'c',  '3': '', 'length': 5 },
       'boolean': false,
       'boolean object': Object(false),
+      'a Klass instance': new Klass,
       'an object': { 'a': 0, 'b': 1, 'c': 3 },
       'an object with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
       'an object from another document': _._object || {},

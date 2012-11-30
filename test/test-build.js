@@ -698,6 +698,10 @@
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
 
+        actual = [lodash.uniqueId(3), lodash.uniqueId(2), lodash.uniqueId(1)];
+        equal(actual.join(','), '3,3,3', '_.uniqueId should not coerce the prefix argument to a string: ' + basename);
+        equal(typeof lodash.uniqueId(), 'number', '_.uniqueId should return a number value when not passing a prefix argument: ' + basename);
+
         var wrapped = lodash(1);
         equal(wrapped.clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
         equal(String(wrapped) === '1', false, '_#toString should not be implemented: ' + basename);

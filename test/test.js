@@ -295,6 +295,14 @@
       ok(actual != expected && actual.a == expected.a && actual.b == expected.b);
     });
 
+    test('should deep clone `index` and `input` array properties', function() {
+      var array = /x/.exec('x'),
+          actual = _.clone(array, true);
+
+      equal(actual.index, 0);
+      equal(actual.input, 'x');
+    });
+
     test('should deep clone objects with circular references', function() {
       var object = {
         'foo': { 'b': { 'foo': { 'c': { } } } },

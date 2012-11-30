@@ -939,10 +939,13 @@
 
   /**
    * Creates a clone of `value`. If `deep` is `true`, all nested objects will
-   * also be cloned otherwise they will be assigned by reference. Functions and
+   * also be cloned, otherwise they will be assigned by reference. Functions and
    * DOM nodes are **not** cloned. The enumerable properties of `arguments` objects
    * and objects created by constructors other than `Object` are cloned to plain
    * Object objects.
+   *
+   * Note: Lo-Dash's deep clone functionality is loosely based on the structured clone algorithm.
+   * See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
    *
    * @static
    * @memberOf _
@@ -1032,6 +1035,15 @@
       result[key] = clone(objValue, deep, null, stackA, stackB);
     });
 
+    // add array properties assigned by `RegExp#exec`
+    if (isArr) {
+      if (hasOwnProperty.call(value, 'index')) {
+        result.index = value.index;
+      }
+      if (hasOwnProperty.call(value, 'input')) {
+        result.input = value.input;
+      }
+    }
     return result;
   }
 
@@ -3643,7 +3655,7 @@
   /**
    * This function returns the first argument passed to it.
    *
-   * Note: It is used throughout Lo-Dash as a default callback.
+   * Note: This function is used throughout Lo-Dash as a default callback.
    *
    * @static
    * @memberOf _

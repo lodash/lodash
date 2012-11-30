@@ -2556,6 +2556,31 @@
   }
 
   /**
+   * A test function to find out if NodeList fails
+   * to convert into array via [].slice
+   *
+   * @satatic
+   * @param {Array|Object} collection The collection to convert
+   * @returns {Array} Returns the new converted array.
+   */
+  var toarr = (function() {
+    try {
+      slice.call(document.getElementsByTagName('*'), 0);
+    } catch(e) {
+      return function(collection) {
+        var i = ~~collection.length,
+            result = Array(i);
+        while(i--) {
+          result[i] = collection[i];
+        }
+        return result;
+      }
+    }
+    return function (collection) {
+      return slice.call(collection, 0);
+    }
+  })();
+  /**
    * Converts the `collection`, to an array.
    *
    * @static
@@ -2570,19 +2595,11 @@
    */
   function toArray(collection) {
     var length = collection ? collection.length : 0;
-    if (typeof length == 'number') {
-      if (noCharByIndex && isString(collection)) {
-        collection = collection.split('');
-      }
-      var index = -1,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = collection[index];
-      }
-      return result;
-    }
-    return values(collection);
+    return typeof length == 'number'
+      ? isString(collection)
+        ? collection.split('')
+        : toarr(collection)
+      : values(collection);
   }
 
   /**

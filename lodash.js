@@ -1356,19 +1356,24 @@
       }
       return result;
     }
-    // deep compare objects
-    forOwn(a, function(value, key) {
-      // count the number of properties.
-      size++;
-      // deep compare each property value.
-      return (result = hasOwnProperty.call(b, key) && isEqual(value, b[key], stackA, stackB));
+    // deep compare objects using `forIn`, instead of `forOwn`, to avoid `Object.keys`
+    // which, in this case, is more costly
+    forIn(a, function(value, key, a) {
+      if (hasOwnProperty.call(a, key)) {
+        // count the number of properties.
+        size++;
+        // deep compare each property value.
+        return (result = hasOwnProperty.call(b, key) && isEqual(value, b[key], stackA, stackB));
+      }
     });
 
     if (result) {
       // ensure both objects have the same number of properties
-      forOwn(b, function() {
-        // `size` will be `-1` if `b` has more properties than `a`
-        return (result = --size > -1);
+      forIn(b, function(value, key, b) {
+        if (hasOwnProperty.call(b, key)) {
+          // `size` will be `-1` if `b` has more properties than `a`
+          return (result = --size > -1);
+        }
       });
     }
     return result;

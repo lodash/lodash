@@ -1878,6 +1878,21 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.uniqueId');
+
+  (function() {
+    test('should return a string value when not passing a prefix argument', function() {
+      equal(typeof _.uniqueId(), 'string');
+    });
+
+    test('should coerce the prefix argument to a string', function() {
+      var actual = [_.uniqueId(3), _.uniqueId(2), _.uniqueId(1)];
+      equal(/3\d+,2\d+,1\d+/.test(actual), true);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.where');
 
   (function() {

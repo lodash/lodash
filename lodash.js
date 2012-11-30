@@ -2594,12 +2594,13 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    var length = collection ? collection.length : 0;
-    return typeof length == 'number'
-      ? isString(collection)
-        ? collection.split('')
-        : toarr(collection)
-      : values(collection);
+    return collection
+      ? typeof collection.length == 'number'
+        ? isString(collection)
+          ? collection.split('')
+          : toarr(collection)
+        : values(collection)
+      : [];
   }
 
   /**

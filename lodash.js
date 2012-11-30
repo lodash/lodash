@@ -4008,22 +4008,23 @@
   }
 
   /**
-   * Generates a unique id. If `prefix` is passed, the id will be appended to it.
+   * Generates a unique ID. If `prefix` is passed, the ID will be appended to it.
    *
    * @static
    * @memberOf _
    * @category Utilities
-   * @param {String} [prefix] The value to prefix the id with.
-   * @returns {Number|String} Returns a numeric id if no prefix is passed, else
-   *  a string id may be returned.
+   * @param {String} [prefix] The value to prefix the ID with.
+   * @returns {String} Returns the unique ID.
    * @example
    *
    * _.uniqueId('contact_');
    * // => 'contact_104'
+   *
+   * _.uniqueId();
+   * // => '105'
    */
   function uniqueId(prefix) {
-    var id = idCounter++;
-    return prefix ? prefix + id : id;
+    return (prefix == null ? '' : prefix + '') + (++idCounter);
   }
 
   /*--------------------------------------------------------------------------*/

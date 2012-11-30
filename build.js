@@ -105,7 +105,7 @@
     'isDate': [],
     'isElement': [],
     'isEmpty': ['forOwn', 'isArguments', 'isFunction'],
-    'isEqual': ['forOwn', 'isFunction'],
+    'isEqual': ['forIn', 'isFunction'],
     'isFinite': [],
     'isFunction': [],
     'isNaN': ['isNumber'],
@@ -1431,6 +1431,14 @@
           '      }',
           '    }',
           '    return result;',
+          '  }'
+        ].join('\n'));
+
+        // replace `_.uniqueId`
+        source = replaceFunction(source, 'uniqueId', [
+          '  function uniqueId(prefix) {',
+          '    var id = idCounter++;',
+          '    return prefix ? prefix + id : id;',
           '  }'
         ].join('\n'));
 

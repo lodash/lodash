@@ -95,7 +95,6 @@
       hasOwnProperty = objectRef.hasOwnProperty,
       push = arrayRef.push,
       propertyIsEnumerable = objectRef.propertyIsEnumerable,
-      slice = arrayRef.slice,
       toString = objectRef.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
@@ -606,7 +605,7 @@
       }
       if (partialArgs.length) {
         args = args.length
-          ? partialArgs.concat(slice.call(args))
+          ? partialArgs.concat(slice(args))
           : partialArgs;
       }
       if (this instanceof bound) {
@@ -746,6 +745,34 @@
    */
   function noop() {
     // no operation performed
+  }
+
+  /**
+   * Slices the `collection` from the `start` index up to, but not including,
+   * the `end` index.
+   *
+   * Note: This function is used, instead of `Array#slice`, to support node lists
+   * in IE < 9 and to ensure dense arrays are returned.
+   *
+   * @private
+   * @param {Array|Object|String} collection The collection to slice.
+   * @param {Number} start The start index.
+   * @param {Number} end The end index.
+   * @returns {Array} Returns the new array.
+   */
+  function slice(array, start, end) {
+    start || (start = 0);
+    if (typeof end == 'undefined') {
+      end = array ? array.length : 0;
+    }
+    var index = -1,
+        length = end - start || 0,
+        result = Array(length < 0 ? 0 : length);
+
+    while (++index < length) {
+      result[index] = array[start + index];
+    }
+    return result;
   }
 
   /**
@@ -996,7 +1023,7 @@
     // shallow clone
     if (!isObj || !deep) {
       return isObj
-        ? (isArr ? slice.call(value) : assign({}, value))
+        ? (isArr ? slice(value) : assign({}, value))
         : value;
     }
     var ctor = ctorByClass[className];
@@ -2149,7 +2176,7 @@
    * // => [['1', '2', '3'], ['4', '5', '6']]
    */
   function invoke(collection, methodName) {
-    var args = slice.call(arguments, 2),
+    var args = slice(arguments, 2),
         isFunc = typeof methodName == 'function',
         result = [];
 
@@ -2556,7 +2583,7 @@
   }
 
   /**
-   * Converts the `collection`, to an array.
+   * Converts the `collection` to an array.
    *
    * @static
    * @memberOf _
@@ -2571,16 +2598,9 @@
   function toArray(collection) {
     var length = collection ? collection.length : 0;
     if (typeof length == 'number') {
-      if (noCharByIndex && isString(collection)) {
-        collection = collection.split('');
-      }
-      var index = -1,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = collection[index];
-      }
-      return result;
+      return noCharByIndex && isString(array)
+        ? array.split('')
+        : slice(collection);
     }
     return values(collection);
   }
@@ -2694,8 +2714,8 @@
    * @param {Number} [n] The number of elements to return.
    * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Mixed} Returns the first element or an array of the first `n`
-   *  elements of `array`.
+   * @returns {Mixed} Returns the first element, or an array of the first `n`
+   *  elements, of `array`.
    * @example
    *
    * _.first([5, 4, 3, 2, 1]);
@@ -2703,7 +2723,10 @@
    */
   function first(array, n, guard) {
     if (array) {
-      return (n == null || guard) ? array[0] : slice.call(array, 0, n);
+      var length = array.length;
+      return (n == null || guard)
+        ? array[0]
+        : slice(array, 0, nativeMin(nativeMax(0, n), length));
     }
   }
 
@@ -2796,16 +2819,19 @@
    * @param {Number} [n=1] The number of elements to exclude.
    * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Array} Returns all but the last element or `n` elements of `array`.
+   * @returns {Array} Returns all but the last element, or `n` elements, of `array`.
    * @example
    *
    * _.initial([3, 2, 1]);
    * // => [3, 2]
    */
   function initial(array, n, guard) {
-    return array
-      ? slice.call(array, 0, -((n == null || guard) ? 1 : n))
-      : [];
+    if (!array) {
+      return [];
+    }
+    var length = array.length;
+    n = n == null || guard ? 1 : n || 0;
+    return slice(array, 0, nativeMin(nativeMax(0, length - n), length));
   }
 
   /**
@@ -2854,8 +2880,8 @@
    * @param {Number} [n] The number of elements to return.
    * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Mixed} Returns the last element or an array of the last `n`
-   *  elements of `array`.
+   * @returns {Mixed} Returns the last element, or an array of the last `n`
+   *  elements, of `array`.
    * @example
    *
    * _.last([3, 2, 1]);
@@ -2864,7 +2890,7 @@
   function last(array, n, guard) {
     if (array) {
       var length = array.length;
-      return (n == null || guard) ? array[length - 1] : slice.call(array, -n || length);
+      return (n == null || guard) ? array[length - 1] : slice(array, nativeMax(0, length - n));
     }
   }
 
@@ -2996,16 +3022,14 @@
    * @param {Number} [n=1] The number of elements to exclude.
    * @param- {Object} [guard] Internally used to allow this method to work with
    *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Array} Returns all but the first value or `n` values of `array`.
+   * @returns {Array} Returns all but the first element, or `n` elements, of `array`.
    * @example
    *
    * _.rest([3, 2, 1]);
    * // => [2, 1]
    */
   function rest(array, n, guard) {
-    return array
-      ? slice.call(array, (n == null || guard) ? 1 : n)
-      : [];
+    return slice(array, (n == null || guard) ? 1 : nativeMax(0, n));
   }
 
   /**
@@ -3273,7 +3297,7 @@
     // (in V8 `Function#bind` is slower except when partially applied)
     return isBindFast || (nativeBind && arguments.length > 2)
       ? nativeBind.call.apply(nativeBind, arguments)
-      : createBound(func, thisArg, slice.call(arguments, 2));
+      : createBound(func, thisArg, slice(arguments, 2));
   }
 
   /**
@@ -3345,7 +3369,7 @@
    * // => 'hi, moe!'
    */
   function bindKey(object, key) {
-    return createBound(object, key, slice.call(arguments, 2));
+    return createBound(object, key, slice(arguments, 2));
   }
 
   /**
@@ -3445,7 +3469,7 @@
    * // => 'logged later' (Appears after one second.)
    */
   function delay(func, wait) {
-    var args = slice.call(arguments, 2);
+    var args = slice(arguments, 2);
     return setTimeout(function() { func.apply(undefined, args); }, wait);
   }
 
@@ -3465,7 +3489,7 @@
    * // returns from the function before `alert` is called
    */
   function defer(func) {
-    var args = slice.call(arguments, 1);
+    var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
   }
 
@@ -3551,7 +3575,7 @@
    * // => 'hi: moe'
    */
   function partial(func) {
-    return createBound(func, slice.call(arguments, 1));
+    return createBound(func, slice(arguments, 1));
   }
 
   /**

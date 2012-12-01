@@ -348,7 +348,8 @@
   };
 
   try {
-    createFunction();
+    // use script injection if Firefox's script engine is detected
+    (/1/.test(function(){1}) || createFunction)();
   } catch(e) {
     createFunction = Function;
   }

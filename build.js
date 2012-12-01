@@ -646,7 +646,7 @@
    */
   function removeCreateFunction(source) {
     return removeFunction(source, 'createFunction')
-      .replace(/\n *try *{\s*createFunction[\s\S]+?catch[^}]+}\n/, '');
+      .replace(/\n *try *{(?:\s*\/\/.*)*\n.*?createFunction[\s\S]+?catch[^}]+}\n/, '');
   }
 
   /**

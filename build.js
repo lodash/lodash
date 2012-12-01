@@ -132,7 +132,7 @@
     'pairs': ['forOwn'],
     'partial': ['isFunction', 'isObject'],
     'pick': ['forIn'],
-    'pluck': ['forEach'],
+    'pluck': ['map'],
     'random': [],
     'range': [],
     'reduce': ['forEach'],

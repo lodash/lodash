@@ -2346,11 +2346,7 @@
    * // => ['moe', 'larry', 'curly']
    */
   function pluck(collection, property) {
-    var result = [];
-    forEach(collection, function(value) {
-      result.push(value[property]);
-    });
-    return result;
+    return map(collection, property + '');
   }
 
   /**

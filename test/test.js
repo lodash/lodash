@@ -538,10 +538,10 @@
       expected.push(undefined, undefined, undefined);
 
       deepEqual(actual1, expected);
-      ok('4' in actual1);
+      ok(4 in actual1);
 
       deepEqual(actual2, expected);
-      ok('4' in actual2);
+      ok(4 in actual2);
     });
   }());
 
@@ -730,9 +730,9 @@
   QUnit.module('lodash.initial');
 
   (function() {
-    test('returns an empty collection for `n` of `0`', function() {
+    test('returns a full collection for `n` of `0`', function() {
       var array = [1, 2, 3];
-      deepEqual(_.initial(array, 0), []);
+      deepEqual(_.initial(array, 0), [1, 2, 3]);
     });
 
     test('should allow a falsey `array` argument', function() {
@@ -1802,6 +1802,17 @@
   (function() {
     var args = arguments;
 
+    test('should return a dense array', function() {
+      var array = Array(3);
+      array[1] = 2;
+
+      var actual = _.toArray(array);
+
+      ok(0 in actual);
+      ok(2 in actual);
+      deepEqual(actual, array);
+    });
+
     test('should treat array-like objects like arrays', function() {
       var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
       deepEqual(_.toArray(object), ['a', 'b', 'c']);
@@ -1813,7 +1824,7 @@
       deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
     });
 
-    test('should work with a NodeList for `collection` (test in IE < 9)', function() {
+    test('should work with a node list for `collection` (test in IE < 9)', function() {
       if (window.document) {
         try {
           var nodeList = document.getElementsByTagName('body'),

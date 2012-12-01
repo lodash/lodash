@@ -1213,7 +1213,7 @@
           source = replaceFunction(source, 'clone', [
             '  function clone(value) {',
             '    return value && objectTypes[typeof value]',
-            '      ? (isArray(value) ? slice.call(value) : assign({}, value))',
+            '      ? (isArray(value) ? slice(value) : assign({}, value))',
             '      : value',
             '  }'
           ].join('\n'));
@@ -1713,7 +1713,7 @@
 
         // remove `noCharByIndex` from `_.toArray`
         source = source.replace(matchFunction(source, 'toArray'), function(match) {
-          return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(noCharByIndex[\s\S]+?\n\1}/, '');
+          return match.replace(/noCharByIndex[^:]+:/, '');
         });
 
         // replace `createFunction` with `Function` in `_.template`

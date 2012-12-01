@@ -542,8 +542,7 @@ $(document).ready(function() {
     equal(col.length, 0);
   });
 
-  test("#861, adding models to a collection which do not pass validation", 1, function() {
-    raises(function() {
+  test("#861, adding models to a collection which do not pass validation", 2, function() {
       var Model = Backbone.Model.extend({
         validate: function(attrs) {
           if (attrs.id == 3) return "id can't be 3";
@@ -554,26 +553,26 @@ $(document).ready(function() {
         model: Model
       });
 
-      var col = new Collection;
+      var collection = new Collection;
+      collection.on("error", function() { ok(true); });
 
-      col.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}]);
-    }, function(e) {
-      return e.message === "Can't add an invalid model to a collection";
-    });
+      collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}]);
+      deepEqual(collection.pluck('id'), [1, 2, 4, 5, 6]);
   });
 
-  test("throwing during add leaves consistent state", 4, function() {
-    var col = new Backbone.Collection();
-    col.on('test', function() { ok(false); });
-    col.model = Backbone.Model.extend({
+  test("Invalid models are discarded.", 5, function() {
+    var collection = new Backbone.Collection;
+    collection.on('test', function() { ok(true); });
+    collection.model = Backbone.Model.extend({
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
-    var model = new col.model({id: 1, valid: true});
-    raises(function() { col.add([model, {id: 2}]); });
+    var model = new collection.model({id: 1, valid: true});
+    collection.add([model, {id: 2}]);;
     model.trigger('test');
-    ok(!col.getByCid(model.cid));
-    ok(!col.get(1));
-    equal(col.length, 0);
+    ok(collection.getByCid(model.cid));
+    ok(collection.get(1));
+    ok(!collection.get(2));
+    equal(collection.length, 1);
   });
 
   test("multiple copies of the same model", 3, function() {
@@ -714,6 +713,17 @@ $(document).ready(function() {
     });
     new Collection().fetch();
     this.ajaxSettings.success([model]);
+  });
+
+  test("`sort` shouldn't always fire on `add`", 1, function() {
+    var c = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
+      comparator: 'id'
+    });
+    c.sort = function(){ ok(true); };
+    c.add([]);
+    c.add({id: 1});
+    c.add([{id: 2}, {id: 3}]);
+    c.add({id: 4});
   });
 
 });

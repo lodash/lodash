@@ -53,6 +53,13 @@ $(document).ready(function() {
     ok(_.isEqual(result, {x:2, a:'b'}), 'extending from multiple source objects last property trumps');
     result = _.extend({}, {a: void 0, b: null});
     equal(_.keys(result).join(''), 'ab', 'extend does not copy undefined values');
+
+    try {
+      result = {};
+      _.extend(result, null, undefined, { 'a': 1 });
+    } catch(ex) { }
+
+    equal(result.a, 1, 'should not error on `null` or `undefined` sources');
   });
 
   test("pick", function() {
@@ -96,6 +103,13 @@ $(document).ready(function() {
     equal(options.empty, "", 'value exists');
     ok(_.isNaN(options.nan), "NaN isn't overridden");
     equal(options.word, "word", 'new value is added, first one wins');
+
+    try {
+      options = {};
+      _.defaults(options, null, undefined, { 'a': 1 });
+    } catch(ex) { }
+
+    equal(options.a, 1, 'should not error on `null` or `undefined` sources');
   });
 
   test("clone", function() {

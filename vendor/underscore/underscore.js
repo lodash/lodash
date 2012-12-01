@@ -358,7 +358,8 @@
   // Safely convert anything iterable into a real, live array.
   _.toArray = function(obj) {
     if (!obj) return [];
-    if (obj.length === +obj.length) return slice.call(obj);
+    if (_.isArray(obj)) return slice.call(obj);
+    if (obj.length === +obj.length) return _.map(obj, _.identity);
     return _.values(obj);
   };
 
@@ -408,7 +409,7 @@
 
   // Trim out all falsy values from an array.
   _.compact = function(array) {
-    return _.filter(array, function(value){ return !!value; });
+    return _.filter(array, _.identity);
   };
 
   // Internal implementation of a recursive `flatten` function.
@@ -573,18 +574,21 @@
   // Delegates to **ECMAScript 5**'s native `Function.bind` if available.
   // We check for `func.bind` first, to fail fast when `func` is undefined.
   _.bind = function bind(func, context) {
-    var bound, args;
     if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
     if (!_.isFunction(func)) throw new TypeError;
-    args = slice.call(arguments, 2);
-    return bound = function() {
+    var args = slice.call(arguments, 2);
+    var bound = function() {
       if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
-      ctor.prototype = func.prototype;
-      var self = new ctor;
-      var result = func.apply(self, args.concat(slice.call(arguments)));
+      var result = func.apply(this, args.concat(slice.call(arguments)));
       if (Object(result) === result) return result;
-      return self;
+      return this;
     };
+    if (func && func.prototype) {
+      ctor.prototype = func.prototype;
+      bound.prototype = new ctor;
+      ctor.prototype = null;
+    }
+    return bound;
   };
 
   // Bind all of an object's methods to that object. Useful for ensuring that

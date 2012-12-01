@@ -165,6 +165,30 @@ $(document).ready(function() {
     strictEqual(new View().el.id, 'id');
   });
 
+  test("with options function", 3, function() {
+    var View1 = Backbone.View.extend({
+      options: function() {
+        return {
+          title: 'title1',
+          acceptText: 'confirm'
+        }
+      }
+    });
+
+    var View2 = View1.extend({
+      options: function() {
+        return _.extend(View1.prototype.options.call(this), {
+          title: 'title2',
+          fixed: true
+        });
+      }
+    });
+
+    strictEqual(new View2().options.title, 'title2');
+    strictEqual(new View2().options.acceptText, 'confirm');
+    strictEqual(new View2().options.fixed, true);
+  });
+
   test("with attributes", 2, function() {
     var View = Backbone.View.extend({
       attributes: {

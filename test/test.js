@@ -209,6 +209,14 @@
       bound(['b'], 'c');
       deepEqual(args, ['a', ['b'], 'c']);
     });
+
+    test('ensure `new bound` is an instance of `bound` and `func`', function() {
+      var func = function() {},
+          bound = _.bind(func, {}),
+          instance = new bound;
+
+      ok(instance instanceof bound && instance instanceof func);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

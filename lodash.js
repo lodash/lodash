@@ -620,7 +620,7 @@
     if (func && func.prototype) {
       // ensure `new bound` is an instance of `bound` and `func`
       noop.prototype = func.prototype;
-      bound.prototype = new noop
+      bound.prototype = new noop;
       noop.prototype = null;
     }
     return bound;
@@ -2114,7 +2114,7 @@
    * // => alerts each number and returns '1,2,3'
    *
    * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, alert);
-   * // => alerts each number (order is not guaranteed)
+   * // => alerts each number value (order is not guaranteed)
    */
   var forEach = createIterator(forEachIteratorOptions);
 
@@ -2595,8 +2595,8 @@
   function toArray(collection) {
     var length = collection ? collection.length : 0;
     if (typeof length == 'number') {
-      return noCharByIndex && isString(array)
-        ? array.split('')
+      return noCharByIndex && isString(collection)
+        ? collection.split('')
         : slice(collection);
     }
     return values(collection);

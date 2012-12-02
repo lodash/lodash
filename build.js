@@ -263,7 +263,7 @@
    * @returns {String} Returns the modified source.
    */
   function addCommandsToHeader(source, commands) {
-    return source.replace(/(\/\*!\n)( \*)?( *Lo-Dash [0-9.]+)(.*)/, function() {
+    return source.replace(/(\/\*!\n)( \*)?( *Lo-Dash [\w.-]+)(.*)/, function() {
       // convert unmatched groups to empty strings
       var parts = _.map(slice.call(arguments, 1), function(part) {
         return part || '';
@@ -646,8 +646,9 @@
    */
   function removeCreateFunction(source) {
     source = removeVar(source, 'isFirefox');
-    source = removeFunction(source, 'createFunction');
-    return source.replace(/(?:\s*\/\/.*)*\s*if *\(isIeOpera[^}]+}\n/, '');
+    return removeFunction(source, 'createFunction')
+      .replace(/createFunction/g, 'Function')
+      .replace(/(?:\s*\/\/.*)*\s*if *\(isIeOpera[^}]+}\n/, '');
   }
 
   /**
@@ -1556,7 +1557,7 @@
       /*----------------------------------------------------------------------*/
 
       if (isLegacy) {
-        _.each(['isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
+        _.each(['isBindFast', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
           source = removeVar(source, varName);
         });
 
@@ -1588,9 +1589,8 @@
 
           source = removeIsArgumentsFallback(source);
         }
-
-        source = removeVar(source, 'reNative');
         source = removeFromCreateIterator(source, 'nativeKeys');
+        source = removeCreateFunction(source);
       }
 
       /*----------------------------------------------------------------------*/
@@ -1691,7 +1691,7 @@
 
         // remove `hasDontEnumBug`, `iteratesOwnLast`, and `noArgsEnum` declarations and assignments
         source = source
-          .replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/, '')
+          .replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '')
           .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum).+\n/g, '');
 
         // remove `iteratesOwnLast` from `shimIsPlainObject`
@@ -1707,11 +1707,6 @@
         // remove `noCharByIndex` from `_.toArray`
         source = source.replace(matchFunction(source, 'toArray'), function(match) {
           return match.replace(/noCharByIndex[^:]+:/, '');
-        });
-
-        // replace `createFunction` with `Function` in `_.template`
-        source = source.replace(matchFunction(source, 'template'), function(match) {
-          return match.replace(/createFunction/g, 'Function');
         });
 
         source = removeVar(source, 'iteratorTemplate');
@@ -1868,11 +1863,11 @@
         source = removeFunction(source, 'createIterator');
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var noArgsEnum;|.+?noArgsEnum *=.+/g, '');
       }
-      if (isRemoved(source, 'createIterator', 'bind')) {
+      if (isRemoved(source, 'createIterator', 'bind', 'keys', 'template')) {
         source = removeVar(source, 'isBindFast');
         source = removeVar(source, 'nativeBind');
       }
-      if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'isPlainObject', 'keys')) {
+      if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'isPlainObject', 'keys', 'template')) {
         source = removeVar(source, 'reNative');
       }
       if (isRemoved(source, 'createIterator', 'isEqual')) {

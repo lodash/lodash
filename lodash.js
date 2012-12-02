@@ -116,7 +116,7 @@
       stringClass = '[object String]';
 
   /** Detect various environments */
-  var isFirefox = !/1/.test(function(){1}),
+  var isFirefox = !/1/.test(Function('1')),
       isIeOpera = !!window.attachEvent,
       isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 

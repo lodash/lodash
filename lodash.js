@@ -16,8 +16,15 @@
     window = freeGlobal;
   }
 
-  /** Document shortcut used by `createFunction` */
-  var document = window.document;
+  /**
+   * The `document` object used by `createFunction`:
+   *
+   * The JS engine embedded in Adobe products, like InDesign, will throw an
+   * error when acessing `window.document`.
+   */
+  try {
+    var document = window.document;
+  } catch(e) { }
 
   /** Used for array and object method references */
   var arrayRef = [],
@@ -185,8 +192,8 @@
   /**
    * Detect if sourceURL syntax is usable without erroring:
    *
-   * The JS engine in Adobe products, like InDesign, will throw a syntax error
-   * when it encounters a single line comment beginning with the `@` symbol.
+   * The JS engine embedded in Adobe products will throw a syntax error when
+   * it encounters a single line comment beginning with the `@` symbol.
    *
    * The JS engine in Narwhal will generate the function `function anonymous(){//}`
    * and throw a syntax error.
@@ -3919,13 +3926,21 @@
       source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);
 
       // replace delimiters with snippets
-      source +=
-        escapeValue ? "' +\n__e(" + escapeValue + ") +\n'" :
-        evaluateValue ? "';\n" + evaluateValue + ";\n__p += '" :
-        interpolateValue ? "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'" : '';
-
+      if (escapeValue) {
+        source += "' +\n__e(" + escapeValue + ") +\n'";
+      }
+      if (evaluateValue) {
+        source += "';\n" + evaluateValue + ";\n__p += '";
+      }
+      if (interpolateValue) {
+        source += "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
+      }
       isEvaluating || (isEvaluating = evaluateValue || reComplexDelimiter.test(escapeValue || interpolateValue));
       index = offset + match.length;
+
+      // the JS engine embedded in Adobe products requires returning the `match`
+      // string in order to produce the correct `offset` value
+      return match;
     });
 
     source += "';\n";

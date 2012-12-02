@@ -16,16 +16,6 @@
     window = freeGlobal;
   }
 
-  /**
-   * The `document` object used by `createFunction`:
-   *
-   * The JS engine embedded in Adobe products, like InDesign, will throw an
-   * error when acessing `window.document`.
-   */
-  try {
-    var document = window.document;
-  } catch(e) { }
-
   /** Used for array and object method references */
   var arrayRef = [],
       // avoid a Closure Compiler bug by creatively creating an object
@@ -125,6 +115,17 @@
       regexpClass = '[object RegExp]',
       stringClass = '[object String]';
 
+  /** Detect various environments */
+  var isFirefox = !/1/.test(function(){1}),
+      isIeOpera = !!window.attachEvent,
+      isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
+
+  /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
+  var isBindFast = !isV8;
+
+  /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
+  var isKeysFast = isIeOpera || isV8;
+
   /**
    * Detect the JScript [[DontEnum]] bug:
    *
@@ -180,14 +181,8 @@
    * a string without a `toString` property value of `typeof` "function".
    */
   try {
-    var noNodeClass = ({ 'toString': 0 } + '', toString.call(document || 0) == objectClass);
+    var noNodeClass = ({ 'toString': 0 } + '', toString.call(document) == objectClass);
   } catch(e) { }
-
-  /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-  var isBindFast = nativeBind && /\n|Opera/.test(nativeBind + toString.call(window.opera));
-
-  /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
-  var isKeysFast = nativeKeys && /^.+$|true/.test(nativeKeys + !!window.attachEvent);
 
   /**
    * Detect if sourceURL syntax is usable without erroring:
@@ -203,7 +198,7 @@
    * http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
    */
   try {
-    var useSourceURL = (Function('//@')(), !window.attachEvent);
+    var useSourceURL = (Function('//@')(), !isIeOpera);
   } catch(e) { }
 
   /** Used to identify object classifications that `_.clone` supports */
@@ -326,38 +321,13 @@
    * @param {String} body The function body.
    * @returns {Function} The new function.
    */
-  var createFunction = function(args, body) {
-    var error,
-        onerror = window.onerror,
-        prevDash = window._,
-        script = document.createElement('script'),
-        sibling = document.scripts[0];
-
-    // use script injection to avoid Firefox's unoptimized `Function` constructor
-    // http://bugzil.la/804933
-    window.onerror = function(message) {
-      error = message;
-      return true;
-    };
+  function createFunction(args, body) {
     // the newline, in `'\n}'`, is required to avoid errors if `body` ends
     // with a single line comment
-    script.text = 'var _ = function(' + args + ') {' + body + '\n}';
-    sibling.parentNode.insertBefore(script, sibling).parentNode.removeChild(script);
-
-    var result = window._;
-    window._ = prevDash;
-    window.onerror = onerror;
-
-    if (error) {
-      throw new SyntaxError(error);
-    }
-    return result;
-  };
-
-  try {
-    // use script injection if Firefox's script engine is detected
-    (/1/.test(function(){1}) || createFunction)();
-  } catch(e) {
+    return window.eval('(function(' + args + ') {' + body + '\n})');
+  }
+  // use script injection if Firefox's script engine is detected
+  if (isIeOpera || isV8 || !isFirefox) {
     createFunction = Function;
   }
 

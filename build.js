@@ -645,9 +645,9 @@
    * @returns {String} Returns the modified source.
    */
   function removeCreateFunction(source) {
-    return removeFunction(source, 'createFunction')
-      .replace(/\n *try *\{\s*var document[\s\S]+?catch[^}]+}\n/, '')
-      .replace(/\n *try *\{(?:\s*\/\/.*)*\n.*?createFunction[\s\S]+?catch[^}]+}\n/, '');
+    source = removeVar(source, 'isFirefox');
+    source = removeFunction(source, 'createFunction');
+    return source.replace(/(?:\s*\/\/.*)*\s*if *\(isIeOpera[^}]+}\n/, '');
   }
 
   /**
@@ -1171,13 +1171,6 @@
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
 
-        // remove unneeded template related variables
-        source = removeVar(source, 'reComplexDelimiter');
-        source = removeVar(source, 'reEmptyStringLeading');
-        source = removeVar(source, 'reEmptyStringMiddle');
-        source = removeVar(source, 'reEmptyStringTrailing');
-        source = removeVar(source, 'reInsertVariable');
-
         // remove large array optimizations
         source = removeFunction(source, 'cachedContains');
         source = removeVar(source, 'largeArraySize');
@@ -1677,7 +1670,6 @@
         }
         else {
           source = removeIsArgumentsFallback(source);
-          source = removeVar(source, 'hasObjectSpliceBug');
 
           // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
           source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
@@ -1722,9 +1714,7 @@
           return match.replace(/createFunction/g, 'Function');
         });
 
-        source = removeVar(source, 'extendIteratorOptions');
         source = removeVar(source, 'iteratorTemplate');
-        source = removeVar(source, 'noCharByIndex');
         source = removeCreateFunction(source);
         source = removeNoArgsClass(source);
         source = removeNoNodeClass(source);
@@ -1831,6 +1821,13 @@
         source = removeIsFunctionFallback(source);
       }
       if (isRemoved(source, 'mixin')) {
+        // simplify the `lodash` function
+        source = replaceFunction(source, 'lodash', [
+          '  function lodash() {',
+          '    // no operation performed',
+          '  }'
+        ].join('\n'));
+
         // remove `lodash.prototype` additions
         source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\)[\s\S]+?\/\*-+\*\//, '');
         source = removeVar(source, 'hasObjectSpliceBug');
@@ -1864,7 +1861,7 @@
       if (isRemoved(source, 'isArguments', 'isEmpty')) {
         source = removeNoArgsClass(source);
       }
-      if (isRemoved(source, 'clone', 'isEqual', 'shimIsPlainObject')) {
+      if (isRemoved(source, 'clone', 'isEqual', 'isPlainObject')) {
         source = removeNoNodeClass(source);
       }
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
@@ -1881,7 +1878,7 @@
       if (isRemoved(source, 'createIterator', 'isEqual')) {
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
       }
-      if (isRemoved(source, 'createIterator', 'shimIsPlainObject')) {
+      if (isRemoved(source, 'createIterator', 'isPlainObject')) {
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
       }
       if (isRemoved(source, 'createIterator', 'keys')) {

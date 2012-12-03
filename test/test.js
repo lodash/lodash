@@ -1641,7 +1641,7 @@
       } catch(e) {
         var source = e.source;
       }
-      ok((source + '').indexOf('__p') > -1);
+      ok(/__p/.test(source));
     });
 
     test('should work with complex "interpolate" delimiters', function() {

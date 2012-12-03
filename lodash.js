@@ -4309,7 +4309,7 @@
 
   // add all methods that return unwrapped values
   forEach(filter(functions(lodash), function(methodName) {
-    return /^(?:contains|every|find|has|is[A-Z].+|reduce.*|some)$/.test(methodName);
+    return /^(?:bind|contains|every|find|has|is[A-Z].+|reduce.*|some)$/.test(methodName);
   }), function(methodName) {
     var func = lodash[methodName];
 

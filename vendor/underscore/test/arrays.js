@@ -55,18 +55,16 @@ $(document).ready(function() {
 
   test("compact", function() {
     equal(_.compact([0, 1, false, 2, false, 3]).length, 3, 'can trim out all falsy values');
-    var result = (function(){ return _(arguments).compact().length; })(0, 1, false, 2, false, 3);
+    var result = (function(){ return _.compact(arguments).length; })(0, 1, false, 2, false, 3);
     equal(result, 3, 'works on an arguments object');
   });
 
   test("flatten", function() {
-    if (window.JSON) {
-      var list = [1, [2], [3, [[[4]]]]];
-      equal(JSON.stringify(_.flatten(list)), '[1,2,3,4]', 'can flatten nested arrays');
-      equal(JSON.stringify(_.flatten(list, true)), '[1,2,3,[[[4]]]]', 'can shallowly flatten nested arrays');
-      var result = (function(){ return _.flatten(arguments); })(1, [2], [3, [[[4]]]]);
-      equal(JSON.stringify(result), '[1,2,3,4]', 'works on an arguments object');
-    }
+    var list = [1, [2], [3, [[[4]]]]];
+    equal(JSON.stringify(_.flatten(list)), '[1,2,3,4]', 'can flatten nested arrays');
+    equal(JSON.stringify(_.flatten(list, true)), '[1,2,3,[[[4]]]]', 'can shallowly flatten nested arrays');
+    var result = (function(){ return _.flatten(arguments); })(1, [2], [3, [[[4]]]]);
+    equal(JSON.stringify(result), '[1,2,3,4]', 'works on an arguments object');
   });
 
   test("without", function() {

@@ -1742,22 +1742,10 @@
 
   (function() {
     test('subsequent calls should return the result of the first call', function() {
-      var throttled = _.throttle(function(value) { return value; }, 90),
+      var throttled = _.throttle(function(value) { return value; }, 32),
           result = [throttled('x'), throttled('y')];
 
       deepEqual(result, ['x', 'x']);
-    });
-
-    test('supports calls in a loop', function() {
-      var counter = 0,
-          throttled = _.throttle(function() { counter++; }, 90),
-          start = new Date,
-          limit = 180;
-
-      while ((new Date - start) < limit) {
-        throttled();
-      }
-      ok(counter > 1);
     });
 
     asyncTest('supports recursive calls', function() {
@@ -1800,6 +1788,41 @@
         ok(actual);
         QUnit.start();
       }, 260);
+    });
+
+    asyncTest('should not trigger a trailing call when invoked once', function() {
+      var counter = 0,
+          throttled = _.throttle(function() { counter++; }, 32);
+
+      throttled();
+      equal(counter, 1);
+
+      setTimeout(function() {
+        equal(counter, 1);
+        QUnit.start();
+      }, 64);
+    });
+
+    asyncTest('should trigger a trailing call when invoked in a loop', function() {
+      var counter = 0,
+          limit = 90,
+          throttled = _.throttle(function() { counter++; }, 32),
+          start = new Date;
+
+      while ((new Date - start) < limit) {
+        throttled();
+      }
+      setTimeout(function() {
+        throttled();
+        throttled();
+      }, 64);
+
+      setTimeout(function() {
+        ok(counter > 4);
+        QUnit.start();
+      }, 96);
+
+      ok(counter > 1);
     });
   }());
 

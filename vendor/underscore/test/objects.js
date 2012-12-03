@@ -56,8 +56,8 @@ $(document).ready(function() {
 
     try {
       result = {};
-      _.extend(result, null, undefined, { 'a': 1 });
-    } catch(ex) { }
+      _.extend(result, null, undefined, {a:1});
+    } catch(ex) {}
 
     equal(result.a, 1, 'should not error on `null` or `undefined` sources');
   });
@@ -106,8 +106,8 @@ $(document).ready(function() {
 
     try {
       options = {};
-      _.defaults(options, null, undefined, { 'a': 1 });
-    } catch(ex) { }
+      _.defaults(options, null, undefined, {a:1});
+    } catch(ex) {}
 
     equal(options.a, 1, 'should not error on `null` or `undefined` sources');
   });
@@ -351,16 +351,10 @@ $(document).ready(function() {
 
     // Chaining.
     ok(!_.isEqual(_({x: 1, y: undefined}).chain(), _({x: 1, z: 2}).chain()), 'Chained objects containing different values are not equal');
-    equal(_({x: 1, y: 2}).chain().isEqual(_({x: 1, y: 2}).chain()).value(), true, '`isEqual` can be chained');
 
-    // Custom `isEqual` methods.
-    var isEqualObj = {isEqual: function (o) { return o.isEqual == this.isEqual; }, unique: {}};
-    var isEqualObjClone = {isEqual: isEqualObj.isEqual, unique: {}};
-
-    ok(_.isEqual(isEqualObj, isEqualObjClone), 'Both objects implement identical `isEqual` methods');
-    ok(_.isEqual(isEqualObjClone, isEqualObj), 'Commutative equality is implemented for objects with custom `isEqual` methods');
-    ok(!_.isEqual(isEqualObj, {}), 'Objects that do not implement equivalent `isEqual` methods are not equal');
-    ok(!_.isEqual({}, isEqualObj), 'Commutative equality is implemented for objects with different `isEqual` methods');
+    a = _({x: 1, y: 2}).chain();
+    b = _({x: 1, y: 2}).chain();
+    equal(_.isEqual(a.isEqual(b), _(true)), true, '`isEqual` can be chained');
 
     // Objects from another frame.
     ok(_.isEqual({}, iObject));

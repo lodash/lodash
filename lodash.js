@@ -3591,6 +3591,7 @@
 
       if (remaining <= 0) {
         clearTimeout(timeoutId);
+        timeoutId = null;
         lastCalled = now;
         result = func.apply(thisArg, args);
       }

@@ -175,10 +175,11 @@ $(document).ready(function() {
 
   test('_.template provides the generated function source, when a SyntaxError occurs', function() {
     try {
-      _.template('<b><%= if %></b>');
-    } catch (e) {
-      ok(e.source.indexOf('( if )') > 0);
+      _.template('<b><%= if x %></b>');
+    } catch (ex) {
+      var source = ex.source;
     }
+    ok(/__p/.test(source));
   });
 
   test('_.template handles \\u2028 & \\u2029', function() {

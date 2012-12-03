@@ -87,7 +87,7 @@
     'find': ['forEach'],
     'first': [],
     'flatten': ['isArray'],
-    'forEach': ['identity', 'isString'],
+    'forEach': ['identity', 'isArguments', 'isString'],
     'forIn': ['identity', 'isArguments'],
     'forOwn': ['identity', 'isArguments'],
     'functions': ['forIn', 'isFunction'],
@@ -105,7 +105,7 @@
     'isDate': [],
     'isElement': [],
     'isEmpty': ['forOwn', 'isArguments', 'isFunction'],
-    'isEqual': ['forIn', 'isFunction'],
+    'isEqual': ['forIn', 'isArguments', 'isFunction'],
     'isFinite': [],
     'isFunction': [],
     'isNaN': ['isNumber'],
@@ -757,6 +757,11 @@
     // remove `noArgsClass` from `_.isEmpty`
     source = source.replace(matchFunction(source, 'isEmpty'), function(match) {
       return match.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
+    });
+
+    // remove `noArgsClass` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/noArgsClass[^:]+:\s*/g, '');
     });
 
     return source;

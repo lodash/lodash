@@ -1600,7 +1600,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.toArray` with an array')
+    Benchmark.Suite('`_.toArray` with an array (edge case)')
       .add(buildName, '\
         lodash.toArray(numbers)'
       )

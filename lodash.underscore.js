@@ -1,6 +1,6 @@
 /*!
  Lo-Dash 1.0.0-rc.1 (Custom Build) lodash.com/license
- Build: `lodash underscore -m -o ./lodash.underscore.min.js`
+ Build: `lodash underscore -m -o ./lodash.underscore.js`
  Underscore.js 1.4.2 underscorejs.org/LICENSE
 */
 ;(function(e,t){function n(e){if(e&&"object"==typeof e&&e.__wrapped__)return e;if(!(this instanceof n))return new n(e);this.__wrapped__=e}function r(e,t){var n=e.b,r=t.b,e=e.a,t=t.a;if(e!==t){if(e>t||"undefined"==typeof e)return 1;if(e<t||"undefined"==typeof t)return-1}return n<r?-1:1}function i(e,t,n){function r(){var i=arguments,s=t;return n.length&&(i=i.length?n.concat(f(i)):n),this instanceof r?(i=e.apply(this,i),y(i)?i:this):e.apply(s,i)}return e&&e.prototype&&(a.prototype=e.prototype,r.prototype=new 

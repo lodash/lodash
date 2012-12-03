@@ -1,17 +1,25 @@
-# Lo-Dash <sup>v0.10.0</sup>
+# Lo-Dash <sup>v1.0.0-rc.1</sup>
 [![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
-A drop-in replacement<sup>[*](https://github.com/bestiejs/lodash/wiki/Drop-in-Disclaimer)</sup> for Underscore.js, from the devs behind [jsPerf.com](http://jsperf.com), delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), and [additional features](http://lodash.com/#features).
-
-Lo-Dash’s performance is gained by avoiding slower native methods, instead opting for simplified non-ES5 compliant methods optimized for common usage, and by leveraging function compilation to reduce the number of overall function calls.
+A utility library, usable as a drop-in replacement for Underscore.js, delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), and [additional features](http://lodash.com/#features).
 
 ## Download
 
- * [Development build](https://raw.github.com/bestiejs/lodash/v0.10.0/lodash.js)
- * [Production build](https://raw.github.com/bestiejs/lodash/v0.10.0/lodash.min.js)
- * [Underscore build](https://raw.github.com/bestiejs/lodash/v0.10.0/lodash.underscore.min.js) tailored for projects already using Underscore
- * CDN copies of ≤ v0.10.0’s [Production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js), [Underscore](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.underscore.min.js), and [Development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.js) builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/)
- * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
+* Lo-Dash builds:<br>
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.min.js)
+
+* Underscore builds:<br>
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.underscore.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.underscore.min.js)
+
+* CDN copies of ≤ v1.0.0-rc.1’s builds on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+[Lo-Dash development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.js),
+[Lo-Dash production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.min.js),
+[Underscore development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.underscore.js), and
+[Underscore production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.underscore.min.js)
+
+* For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
 ## Dive in
 
@@ -216,34 +224,34 @@ require({
 
 ## Resolved Underscore.js issues
 
- * Allow iteration of objects with a `length` property [[#799](https://github.com/documentcloud/underscore/pull/799), [test](https://github.com/bestiejs/lodash/blob/v0.10.0/test/test.js#L590-L596)]
- * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v0.10.0/test/test.js#L603-L627)]
- * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v0.10.0/test/test.js#L140-L146)]
- * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v0.10.0/test/test.js#L792-L797)]
- * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v0.10.0/test/test.js#L873-L885)]
- * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v0.10.0/test/test.js#L966-L968)]
- * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v0.10.0/test/test.js#L1367-L1370)]
+ * Allow iteration of objects with a `length` property [[#799](https://github.com/documentcloud/underscore/pull/799), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L606-L612)]
+ * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L619-L643)]
+ * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L140-L146)]
+ * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L808-L813)]
+ * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L889-L901)]
+ * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L982-L984)]
+ * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L1383-L1386)]
 
 ## Release Notes
 
-### <sup>v0.10.0</sup>
+### <sup>v1.0.0-rc.1</sup>
 
 #### Compatibility Warnings ####
 
- * Made `_.defaults` and `_.extend` iterate only own properties of `source` objects to align with [ES6 `Object.assign`](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-15.2.3.15)
- * Renamed `_.lateBind` to `_.bindKey`
+ * Made `_(…)` chain automatically without needing to call `_#chain`
+ * Made `_.isEqual` equate `arguments` objects to similar Object objects
+ * Made `_.clone` copy the enumerable properties of `arguments` objects and objects<br>
+   created by constructors other than `Object` are cloned to plain Object objects
 
 #### Changes ####
 
- * Added the build commands used to custom build copyright/license headers
- * Added `_.assign`
- * Ensured the `underscore` build of `_.find` returns the first, not last, matched value
- * Ensured `_defaults`, `_.extends`, and `_.merge` work with `_.reduce`
- * Made Lo-Dash’s `npm` package installation work with more system configurations
- * Made `_.extend` an alias of `_.assign`
- * Optimized `_.contains`, `_.defaults`, `_.extend`, and `_.filter`
- * Restricted `_.where` to iterate only own properties of the `source` object
- * Updated `backbone` build Lo-Dash method dependencies
+ * Ensure Lo-Dash runs in the JS engine embedded in various Adobe products
+ * Ensured `bound` result of `_.bind(func, …)` is an instance of `bound` and `func`
+ * Ensured `_.reduce` and `_.reduceRight` pass the correct number of `callback` arguments
+ * Made deep `_.clone` more closely follow the structured clone algorithm and copy array properties assigned by `RegExp#exec`
+ * Optimized compiled templates in Firefox
+ * Optimized `_.forEach`, `_.forOwn`, `_.isNumber`, and `_.isString`
+ * Simplified `iteratorTemplate`
 
 The full changelog is available [here](https://github.com/bestiejs/lodash/wiki/Changelog).
 

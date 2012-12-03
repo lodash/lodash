@@ -248,6 +248,7 @@ require({
  * Ensure Lo-Dash runs in the JS engine embedded in various Adobe products
  * Ensured `bound` result of `_.bind(func, …)` is an instance of `bound` and `func`
  * Ensured `_.reduce` and `_.reduceRight` pass the correct number of `callback` arguments
+ * Ensured `_.throttle` nulls the `timeoutId`
  * Made deep `_.clone` more closely follow the structured clone algorithm and copy array properties assigned by `RegExp#exec`
  * Optimized compiled templates in Firefox
  * Optimized `_.forEach`, `_.forOwn`, `_.isNumber`, and `_.isString`

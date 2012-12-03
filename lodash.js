@@ -1326,8 +1326,9 @@
       if (className != objectClass || (noNodeClass && (isNode(a) || isNode(b)))) {
         return false;
       }
-      var ctorA = a.constructor,
-          ctorB = b.constructor;
+      // in older versions of Opera, `arguments` objects have `Array` constructors
+      var ctorA = noArgsClass && isArguments(a) ? Object : a.constructor,
+          ctorB = noArgsClass && isArguments(b) ? Object : b.constructor;
 
       // non `Object` object instances with different constructors are not equal
       if (ctorA != ctorB && !(

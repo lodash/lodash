@@ -1801,6 +1801,39 @@
         QUnit.start();
       }, 260);
     });
+
+    asyncTest('should call back immediatly only once when called once', function() {
+      var counter = 0,
+          throttled = _.throttle(function() { counter++; }, 20);
+
+      throttled();
+      equal(counter, 1);
+
+      setTimeout(function() {
+        equal(counter, 1);
+        QUnit.start();
+      }, 35);
+    });
+
+    asyncTest('should call back after the last time it is called when called constantly', function() {
+      var start = new Date,
+          counter = 0,
+          throttled = _.throttle(function() { counter++; }, 10);
+
+      while (new Date - start <= 25) {
+        throttled();
+      }
+
+      setTimeout(function () {
+        throttled();
+        throttled();
+      }, 35);
+
+      setTimeout(function () {
+        equal(counter, 6);
+        QUnit.start();
+      }, 50);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

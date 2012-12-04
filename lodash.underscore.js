@@ -725,7 +725,7 @@
    * also be cloned, otherwise they will be assigned by reference. Functions and
    * DOM nodes are **not** cloned. The enumerable properties of `arguments` objects
    * and objects created by constructors other than `Object` are cloned to plain
-   * Object objects.
+   * `Object` objects.
    *
    * Note: Lo-Dash's deep clone functionality is loosely based on the structured clone algorithm.
    * See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.

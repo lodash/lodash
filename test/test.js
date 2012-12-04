@@ -209,6 +209,13 @@
       bound(['b'], 'c');
       deepEqual(args, ['a', ['b'], 'c']);
     });
+
+    test('ensure `new bound` is an instance of `func`', function() {
+      var func = function() {},
+          bound = _.bind(func, {});
+
+      ok(new bound instanceof func);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1796,8 +1803,9 @@
     });
 
     asyncTest('should trigger a trailing call when invoked in a loop', function() {
-      var counter = 0,
-          limit = 90,
+      var actual,
+          counter = 0,
+          limit = 80,
           throttled = _.throttle(function() { counter++; }, 32),
           start = new Date;
 
@@ -1805,14 +1813,15 @@
         throttled();
       }
       setTimeout(function() {
+        actual = counter + 2;
         throttled();
         throttled();
       }, 64);
 
       setTimeout(function() {
-        ok(counter > 4);
+        equal(counter, actual);
         QUnit.start();
-      }, 96);
+      }, 128);
 
       ok(counter > 1);
     });

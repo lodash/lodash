@@ -587,18 +587,17 @@
           : partialArgs;
       }
       if (this instanceof bound) {
+        // ensure `new bound` is an instance of `bound` and `func`
+        noop.prototype = func.prototype;
+        thisBinding = new noop;
+        noop.prototype = null;
+
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
-        var result = func.apply(this, args);
-        return isObject(result) ? result : this;
+        var result = func.apply(thisBinding, args);
+        return isObject(result) ? result : thisBinding;
       }
       return func.apply(thisBinding, args);
-    }
-    if (func && func.prototype) {
-      // ensure `new bound` is an instance of `bound` and `func`
-      noop.prototype = func.prototype;
-      bound.prototype = new noop;
-      noop.prototype = null;
     }
     return bound;
   }

@@ -344,18 +344,17 @@
           : partialArgs;
       }
       if (this instanceof bound) {
+        // ensure `new bound` is an instance of `bound` and `func`
+        noop.prototype = func.prototype;
+        thisBinding = new noop;
+        noop.prototype = null;
+
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
-        var result = func.apply(this, args);
-        return isObject(result) ? result : this;
+        var result = func.apply(thisBinding, args);
+        return isObject(result) ? result : thisBinding;
       }
       return func.apply(thisBinding, args);
-    }
-    if (func && func.prototype) {
-      // ensure `new bound` is an instance of `bound` and `func`
-      noop.prototype = func.prototype;
-      bound.prototype = new noop;
-      noop.prototype = null;
     }
     return bound;
   }
@@ -758,7 +757,7 @@
    * // => true
    *
    * var deep = _.clone(stooges, true);
-   * shallow[0] === stooges[0];
+   * deep[0] === stooges[0];
    * // => false
    */
   function clone(value) {
@@ -1041,7 +1040,7 @@
       if (className != objectClass) {
         return false;
       }
-      // in older versions of Opera, `arguments` objects have `Array` as their constructor
+      // in older versions of Opera, `arguments` objects have `Array` constructors
       var ctorA = a.constructor,
           ctorB = b.constructor;
 
@@ -3506,8 +3505,7 @@
    * var youngest = _.chain(stooges)
    *     .sortBy(function(stooge) { return stooge.age; })
    *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
-   *     .first()
-   *     .value();
+   *     .first();
    * // => 'moe is 40'
    */
   function chain(value) {
@@ -3531,7 +3529,7 @@
    * _.chain([1, 2, 3, 200])
    *  .filter(function(num) { return num % 2 == 0; })
    *  .tap(alert)
-   *  .map(function(num) { return num * num })
+   *  .map(function(num) { return num * num; })
    *  .value();
    * // => // [2, 200] (alerted)
    * // => [4, 40000]
@@ -3555,8 +3553,9 @@
    * @returns {Mixed} Returns the wrapper object.
    * @example
    *
-   * _([1, 2, 3]).value();
-   * // => [1, 2, 3]
+   * var wrapped = _([1, 2, 3]);
+   * wrapped === wrapped.chain();
+   * // => true
    */
   function wrapperChain() {
     this.__chain__ = true;
@@ -3583,14 +3582,15 @@
    *
    * @name valueOf
    * @memberOf _
+   * @alias value
    * @category Chaining
    * @returns {Mixed} Returns the wrapped value.
    * @example
    *
-   * _([1, 2, 3]).value();
+   * _([1, 2, 3]).valueOf();
    * // => [1, 2, 3]
    */
-  function wrapperValue() {
+  function wrapperValueOf() {
     return this.__wrapped__;
   }
 
@@ -3718,7 +3718,7 @@
   // add `lodash.prototype.chain` after calling `mixin()` to avoid overwriting
   // it with the wrapped `lodash.chain`
   lodash.prototype.chain = wrapperChain;
-  lodash.prototype.value = wrapperValue;
+  lodash.prototype.value = wrapperValueOf;
 
   // add all mutator Array functions to the wrapper.
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {

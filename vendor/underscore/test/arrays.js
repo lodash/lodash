@@ -61,10 +61,10 @@ $(document).ready(function() {
 
   test("flatten", function() {
     var list = [1, [2], [3, [[[4]]]]];
-    equal(JSON.stringify(_.flatten(list)), '[1,2,3,4]', 'can flatten nested arrays');
-    equal(JSON.stringify(_.flatten(list, true)), '[1,2,3,[[[4]]]]', 'can shallowly flatten nested arrays');
+    deepEqual(_.flatten(list), [1,2,3,4], 'can flatten nested arrays');
+    deepEqual(_.flatten(list, true), [1,2,3,[[[4]]]], 'can shallowly flatten nested arrays');
     var result = (function(){ return _.flatten(arguments); })(1, [2], [3, [[[4]]]]);
-    equal(JSON.stringify(result), '[1,2,3,4]', 'works on an arguments object');
+    deepEqual(result, [1,2,3,4], 'works on an arguments object');
   });
 
   test("without", function() {

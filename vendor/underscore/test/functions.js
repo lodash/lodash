@@ -37,7 +37,7 @@ $(document).ready(function() {
     var newBoundf = new Boundf();
     equal(newBoundf.hello, undefined, "function should not be bound to the context, to comply with ECMAScript 5");
     equal(Boundf().hello, "moe curly", "When called without the new operator, it's OK to be bound to the context");
-    ok(newBoundf instanceof Boundf && newBoundf instanceof F, "a bound instance is an instance of the bound and original function");
+    ok(newBoundf instanceof F, "a bound instance is an instance of the original function");
   });
 
   test("bindAll", function() {
@@ -163,6 +163,31 @@ $(document).ready(function() {
       equal(results[8], 3, "incr was throttled");
       start();
     }, 400);
+  });
+
+  asyncTest("throttle triggers trailing call after repeatedly invoked", 2, function() {
+    var actual;
+    var counter = 0;
+    var limit = 80;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 32);
+
+    var stamp = new Date;
+    while ((new Date - stamp) < limit) {
+      throttledIncr();
+    }
+    _.delay(function() {
+      actual = counter + 2;
+      throttledIncr();
+      throttledIncr();
+    }, 64);
+
+    _.delay(function() {
+      equal(counter, actual);
+      start();
+    }, 128);
+
+    ok(counter > 1);
   });
 
   asyncTest("debounce", 1, function() {

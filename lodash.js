@@ -4067,8 +4067,7 @@
    * var youngest = _.chain(stooges)
    *     .sortBy(function(stooge) { return stooge.age; })
    *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
-   *     .first()
-   *     .value();
+   *     .first();
    * // => 'moe is 40'
    */
   function chain(value) {
@@ -4091,7 +4090,7 @@
    * _.chain([1, 2, 3, 200])
    *  .filter(function(num) { return num % 2 == 0; })
    *  .tap(alert)
-   *  .map(function(num) { return num * num })
+   *  .map(function(num) { return num * num; })
    *  .value();
    * // => // [2, 200] (alerted)
    * // => [4, 40000]
@@ -4115,8 +4114,9 @@
    * @returns {Mixed} Returns the wrapper object.
    * @example
    *
-   * _([1, 2, 3]).value();
-   * // => [1, 2, 3]
+   * var wrapped = _([1, 2, 3]);
+   * wrapped === wrapped.chain();
+   * // => true
    */
   function wrapperChain() {
     return this;
@@ -4143,14 +4143,15 @@
    *
    * @name valueOf
    * @memberOf _
+   * @alias value
    * @category Chaining
    * @returns {Mixed} Returns the wrapped value.
    * @example
    *
-   * _([1, 2, 3]).value();
+   * _([1, 2, 3]).valueOf();
    * // => [1, 2, 3]
    */
-  function wrapperValue() {
+  function wrapperValueOf() {
     return this.__wrapped__;
   }
 
@@ -4292,8 +4293,8 @@
   // it with the wrapped `lodash.chain`
   lodash.prototype.chain = wrapperChain;
   lodash.prototype.toString = wrapperToString;
-  lodash.prototype.value = wrapperValue;
-  lodash.prototype.valueOf = wrapperValue;
+  lodash.prototype.value = wrapperValueOf;
+  lodash.prototype.valueOf = wrapperValueOf;
 
   // add methods that are capable of returning wrapped and unwrapped values
   forEach(['first', 'last'], function(methodName) {

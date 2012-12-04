@@ -1802,7 +1802,7 @@
       }, 64);
     });
 
-    asyncTest('should trigger a trailing call when invoked in a loop', function() {
+    asyncTest('should trigger trailing call when invoked repeatedly', function() {
       var actual,
           counter = 0,
           limit = 80,

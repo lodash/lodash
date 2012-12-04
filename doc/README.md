@@ -40,6 +40,7 @@
 * [`_.tap`](#_tapvalue-interceptor)
 * [`_.prototype.chain`](#_prototypechain)
 * [`_.prototype.toString`](#_prototypetostring)
+* [`_.prototype.value`](#_prototypevalueof)
 * [`_.prototype.valueOf`](#_prototypevalueof)
 
 <!-- /div -->
@@ -698,7 +699,7 @@ The `lodash` function.
 <!-- div -->
 
 ### <a id="_chainvalue"></a>`_.chain(value)`
-<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4074 "View in source") [&#x24C9;][1]
+<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4073 "View in source") [&#x24C9;][1]
 
 Wraps the value in a `lodash` wrapper object.
 
@@ -719,8 +720,7 @@ var stooges = [
 var youngest = _.chain(stooges)
     .sortBy(function(stooge) { return stooge.age; })
     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
-    .first()
-    .value();
+    .first();
 // => 'moe is 40'
 ```
 
@@ -732,7 +732,7 @@ var youngest = _.chain(stooges)
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4099 "View in source") [&#x24C9;][1]
+<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4098 "View in source") [&#x24C9;][1]
 
 Invokes `interceptor` with the `value` as the first argument, and then returns `value`. The purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
 
@@ -748,7 +748,7 @@ Invokes `interceptor` with the `value` as the first argument, and then returns `
 _.chain([1, 2, 3, 200])
  .filter(function(num) { return num % 2 == 0; })
  .tap(alert)
- .map(function(num) { return num * num })
+ .map(function(num) { return num * num; })
  .value();
 // => // [2, 200] (alerted)
 // => [4, 40000]
@@ -771,8 +771,9 @@ This function returns the wrapper object.  Note: This function is defined to ens
 
 #### Example
 ```js
-_([1, 2, 3]).value();
-// => [1, 2, 3]
+var wrapped = _([1, 2, 3]);
+wrapped === wrapped.chain();
+// => true
 ```
 
 * * *
@@ -804,16 +805,19 @@ _([1, 2, 3]).toString();
 <!-- div -->
 
 ### <a id="_prototypevalueof"></a>`_.prototype.valueOf()`
-<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4153 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4154 "View in source") [&#x24C9;][1]
 
 Extracts the wrapped value.
+
+#### Aliases
+*value*
 
 #### Returns
 *(Mixed)*: Returns the wrapped value.
 
 #### Example
 ```js
-_([1, 2, 3]).value();
+_([1, 2, 3]).valueOf();
 // => [1, 2, 3]
 ```
 
@@ -3046,7 +3050,7 @@ _.uniqueId();
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4166 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4167 "View in source") [&#x24C9;][1]
 
 *(String)*: The semantic version number.
 

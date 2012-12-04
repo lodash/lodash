@@ -573,22 +573,20 @@
   // optionally). Binding with arguments is also known as `curry`.
   // Delegates to **ECMAScript 5**'s native `Function.bind` if available.
   // We check for `func.bind` first, to fail fast when `func` is undefined.
-  _.bind = function bind(func, context) {
+  _.bind = function(func, context) {
+    var args, bound;
     if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
     if (!_.isFunction(func)) throw new TypeError;
-    var args = slice.call(arguments, 2);
-    var bound = function() {
+    args = slice.call(arguments, 2);
+    return bound = function() {
       if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
-      var result = func.apply(this, args.concat(slice.call(arguments)));
-      if (Object(result) === result) return result;
-      return this;
-    };
-    if (func && func.prototype) {
       ctor.prototype = func.prototype;
-      bound.prototype = new ctor;
+      var self = new ctor;
       ctor.prototype = null;
-    }
-    return bound;
+      var result = func.apply(self, args.concat(slice.call(arguments)));
+      if (Object(result) === result) return result;
+      return self;
+    };
   };
 
   // Bind all of an object's methods to that object. Useful for ensuring that
@@ -640,6 +638,7 @@
       args = arguments;
       if (remaining <= 0) {
         clearTimeout(timeout);
+        timeout = null;
         previous = now;
         result = func.apply(context, args);
       } else if (!timeout) {
@@ -1075,7 +1074,7 @@
   // Useful for temporary DOM ids.
   var idCounter = 0;
   _.uniqueId = function(prefix) {
-    var id = idCounter++;
+    var id = '' + ++idCounter;
     return prefix ? prefix + id : id;
   };
 

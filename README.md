@@ -13,7 +13,7 @@ A utility library, usable as a drop-in replacement for Underscore.js, delivering
 [Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.underscore.js) and
 [Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.underscore.min.js)
 
-* CDN copies of ≤ v1.0.0-rc.1’s builds on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+* CDN copies of ≤ v1.0.0-rc.1’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
 [Lo-Dash development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.js),
 [Lo-Dash production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.min.js),
 [Underscore development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.underscore.js), and
@@ -59,7 +59,7 @@ For more information check out these screencasts over Lo-Dash:
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5~23, Firefox 1~16, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.14, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
+Lo-Dash has been tested in at least Chrome 5~23, Firefox 1~16, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.15, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
 
 ## Custom builds
 
@@ -224,13 +224,13 @@ require({
 
 ## Resolved Underscore.js issues
 
- * Allow iteration of objects with a `length` property [[#799](https://github.com/documentcloud/underscore/pull/799), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L606-L612)]
- * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L619-L643)]
+ * Allow iteration of objects with a `length` property [[#799](https://github.com/documentcloud/underscore/pull/799), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L605-L611)]
+ * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L618-L642)]
  * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L140-L146)]
- * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L808-L813)]
- * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L889-L901)]
- * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L982-L984)]
- * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L1383-L1386)]
+ * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L807-L812)]
+ * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L888-L900)]
+ * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L981-L983)]
+ * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L1382-L1385)]
 
 ## Release Notes
 
@@ -246,7 +246,6 @@ require({
 #### Changes ####
 
  * Ensure Lo-Dash runs in the JS engine embedded in various Adobe products
- * Ensured `bound` result of `_.bind(func, …)` is an instance of `bound` and `func`
  * Ensured `_.reduce` and `_.reduceRight` pass the correct number of `callback` arguments
  * Ensured `_.throttle` nulls the `timeoutId`
  * Made deep `_.clone` more closely follow the structured clone algorithm and copy array properties assigned by `RegExp#exec`

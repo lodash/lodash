@@ -978,7 +978,7 @@
    * // => true
    *
    * var deep = _.clone(stooges, true);
-   * shallow[0] === stooges[0];
+   * deep[0] === stooges[0];
    * // => false
    */
   function clone(value, deep, guard, stackA, stackB) {

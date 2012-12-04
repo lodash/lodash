@@ -1,7 +1,7 @@
 # Lo-Dash <sup>v1.0.0-rc.1</sup>
 [![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
-A utility library, usable as a drop-in replacement for Underscore.js, delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), and [additional features](http://lodash.com/#features).
+A utility library, usable as a drop-in replacement for Underscore, delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), and [additional features](http://lodash.com/#features).
 
 ## Download
 
@@ -193,6 +193,9 @@ In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
 
 ```js
 var _ = require('lodash');
+
+// or as a drop-in replacement for Underscore
+var _ = require('lodash/lodash.underscore');
 ```
 
 **Note:** If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.
@@ -239,13 +242,13 @@ require({
 #### Compatibility Warnings ####
 
  * Made `_(…)` chain automatically without needing to call `_#chain`
- * Made `_.isEqual` equate `arguments` objects to similar Object objects
+ * Made `_.isEqual` equate `arguments` objects to similar `Object` objects
  * Made `_.clone` copy the enumerable properties of `arguments` objects and objects<br>
-   created by constructors other than `Object` are cloned to plain Object objects
+   created by constructors other than `Object` are cloned to plain `Object` objects
 
 #### Changes ####
 
- * Ensure Lo-Dash runs in the JS engine embedded in various Adobe products
+ * Ensure Lo-Dash runs in the JS engine embedded in Adobe products
  * Ensured `_.reduce` and `_.reduceRight` pass the correct number of `callback` arguments
  * Ensured `_.throttle` nulls the `timeoutId`
  * Made deep `_.clone` more closely follow the structured clone algorithm and copy array properties assigned by `RegExp#exec`

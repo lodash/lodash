@@ -4162,10 +4162,10 @@
   lodash.assign = assign;
   lodash.bindAll = bindAll;
   lodash.chain = chain;
+  lodash.compact = compact;
   lodash.countBy = countBy;
   lodash.defaults = defaults;
   lodash.difference = difference;
-  lodash.every = every;
   lodash.filter = filter;
   lodash.flatten = flatten;
   lodash.forEach = forEach;
@@ -4182,7 +4182,6 @@
   lodash.max = max;
   lodash.merge = merge;
   lodash.min = min;
-  lodash.mixin = mixin;
   lodash.object = object;
   lodash.omit = omit;
   lodash.pairs = pairs;
@@ -4192,9 +4191,7 @@
   lodash.reject = reject;
   lodash.rest = rest;
   lodash.shuffle = shuffle;
-  lodash.some = some;
   lodash.sortBy = sortBy;
-  lodash.sortedIndex = sortedIndex;
   lodash.tap = tap;
   lodash.times = times;
   lodash.toArray = toArray;
@@ -4206,8 +4203,6 @@
   lodash.zip = zip;
 
   // add aliases
-  lodash.all = every;
-  lodash.any = some;
   lodash.collect = map;
   lodash.drop = rest;
   lodash.each = forEach;
@@ -4227,13 +4222,13 @@
   lodash.bind = bind;
   lodash.bindKey = bindKey;
   lodash.clone = clone;
-  lodash.compact = compact;
   lodash.compose = compose;
   lodash.contains = contains;
   lodash.debounce = debounce;
   lodash.defer = defer;
   lodash.delay = delay;
   lodash.escape = escape;
+  lodash.every = every;
   lodash.find = find;
   lodash.has = has;
   lodash.identity = identity;
@@ -4257,6 +4252,7 @@
   lodash.isUndefined = isUndefined;
   lodash.lastIndexOf = lastIndexOf;
   lodash.memoize = memoize;
+  lodash.mixin = mixin;
   lodash.noConflict = noConflict;
   lodash.once = once;
   lodash.partial = partial;
@@ -4265,6 +4261,8 @@
   lodash.reduceRight = reduceRight;
   lodash.result = result;
   lodash.size = size;
+  lodash.some = some;
+  lodash.sortedIndex = sortedIndex;
   lodash.template = template;
   lodash.throttle = throttle;
   lodash.unescape = unescape;
@@ -4272,6 +4270,8 @@
   lodash.wrap = wrap;
 
   // add aliases
+  lodash.all = every;
+  lodash.any = some;
   lodash.detect = find;
   lodash.foldl = reduce;
   lodash.foldr = reduceRight;

@@ -133,7 +133,6 @@
   var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
     arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
 
-
   /**
    * Detect lack of support for accessing string characters by index:
    *
@@ -615,7 +614,6 @@
       for (index in iteratee) {
         if (callback(iteratee[index], index, collection) === indicatorObject) return result;    
       }    
-    ;
     return result
   };
 
@@ -649,7 +647,6 @@
         if (callback(iteratee[index], index, collection) === indicatorObject) return result;    
         }
       }    
-    ;
     return result
   };
 
@@ -765,6 +762,7 @@
       ? (isArray(value) ? slice(value) : assign({}, value))
       : value
   }
+
   /**
    * Assigns own enumerable properties of source object(s) to the `destination`
    * object for all `destination` properties that resolve to `null`/`undefined`.
@@ -799,6 +797,7 @@
     }
     return object;
   }
+
   /**
    * Creates a sorted array of all enumerable properties, own and inherited,
    * of `object` that have function values.
@@ -970,6 +969,7 @@
     }
     return true;
   }
+
   /**
    * Performs a deep comparison between two values to determine if they are
    * equivalent to each other.
@@ -1140,8 +1140,9 @@
    * // => false
    */
   function isFinite(value) {
-    return nativeIsFinite(value) && toString.call(value) == numberClass;
+    return nativeIsFinite(value) && !nativeIsNaN(parseFloat(value));
   }
+
   /**
    * Checks if `value` is a function.
    *
@@ -1365,6 +1366,7 @@
     });
     return result;
   }
+
   /**
    * Creates a two dimensional array of the given object's key-value pairs,
    * i.e. `[[key1, value1], [key2, value2]]`.
@@ -1426,6 +1428,7 @@
     }
     return result;
   }
+
   /**
    * Creates an array composed of the own enumerable property values of `object`.
    *
@@ -1488,6 +1491,7 @@
     }
     return result;
   }
+
   /**
    * Creates an object composed of keys returned from running each element of
    * `collection` through a `callback`. The corresponding value of each key is
@@ -1677,7 +1681,6 @@
         }
       }    
     }
-    ;
     
   };
 
@@ -2252,6 +2255,7 @@
     }
     return result
   }
+
   /**
    * Gets the first element of the `array`. Pass `n` to return the first `n`
    * elements of the `array`.
@@ -2417,6 +2421,7 @@
     });
     return result;
   }
+
   /**
    * Gets the last element of the `array`. Pass `n` to return the last `n`
    * elements of the `array`.
@@ -2691,6 +2696,11 @@
         result = [],
         seen = result;
 
+    if (typeof isSorted == 'function') {
+      thisArg = callback;
+      callback = isSorted;
+      isSorted = false;
+    }
     if (callback) {
       seen = [];
       callback = createCallback(callback, thisArg);
@@ -2711,6 +2721,7 @@
     }
     return result;
   }
+
   /**
    * Creates an array with all occurrences of the passed values removed using
    * strict equality for comparisons, i.e. `===`.
@@ -2739,6 +2750,7 @@
     }
     return result
   }
+
   /**
    * Groups the elements of each array at their corresponding indexes. Useful for
    * separate data sources that are coordinated through matching array indexes.
@@ -3411,6 +3423,7 @@
     result.source = source;
     return result;
   }
+
   /**
    * Executes the `callback` function `n` times, returning an array of the results
    * of each `callback` execution. The `callback` is bound to `thisArg` and invoked
@@ -3481,9 +3494,10 @@
    * // => '105'
    */
   function uniqueId(prefix) {
-    var id = idCounter++;
+    var id = ++idCounter + '';
     return prefix ? prefix + id : id;
   }
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -3513,6 +3527,7 @@
     value.__chain__ = true;
     return value;
   }
+
   /**
    * Invokes `interceptor` with the `value` as the first argument, and then
    * returns `value`. The purpose of this method is to "tap into" a method chain,
@@ -3561,6 +3576,7 @@
     this.__chain__ = true;
     return this;
   }
+
   /**
    * Produces the `toString` result of the wrapped value.
    *
@@ -3596,44 +3612,77 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /**
-   * The semantic version number.
-   *
-   * @static
-   * @memberOf _
-   * @type String
-   */
-  lodash.VERSION = '1.0.0-rc.1';
-  lodash.after = after;
-  lodash.bind = bind;
   lodash.bindAll = bindAll;
   lodash.chain = chain;
-  lodash.clone = clone;
-  lodash.compact = compact;
-  lodash.compose = compose;
-  lodash.contains = contains;
   lodash.countBy = countBy;
-  lodash.debounce = debounce;
   lodash.defaults = defaults;
-  lodash.defer = defer;
-  lodash.delay = delay;
   lodash.difference = difference;
-  lodash.escape = escape;
   lodash.every = every;
   lodash.filter = filter;
-  lodash.find = find;
-  lodash.first = first;
   lodash.flatten = flatten;
   lodash.forEach = forEach;
   lodash.functions = functions;
   lodash.groupBy = groupBy;
-  lodash.has = has;
-  lodash.identity = identity;
-  lodash.indexOf = indexOf;
   lodash.initial = initial;
   lodash.intersection = intersection;
   lodash.invert = invert;
   lodash.invoke = invoke;
+  lodash.keys = keys;
+  lodash.map = map;
+  lodash.max = max;
+  lodash.min = min;
+  lodash.mixin = mixin;
+  lodash.object = object;
+  lodash.omit = omit;
+  lodash.pairs = pairs;
+  lodash.pick = pick;
+  lodash.pluck = pluck;
+  lodash.range = range;
+  lodash.reject = reject;
+  lodash.rest = rest;
+  lodash.shuffle = shuffle;
+  lodash.some = some;
+  lodash.sortBy = sortBy;
+  lodash.sortedIndex = sortedIndex;
+  lodash.tap = tap;
+  lodash.times = times;
+  lodash.toArray = toArray;
+  lodash.union = union;
+  lodash.uniq = uniq;
+  lodash.values = values;
+  lodash.where = where;
+  lodash.without = without;
+  lodash.zip = zip;
+
+  // add aliases
+  lodash.all = every;
+  lodash.any = some;
+  lodash.collect = map;
+  lodash.drop = rest;
+  lodash.each = forEach;
+  lodash.extend = assign;
+  lodash.methods = functions;
+  lodash.select = filter;
+  lodash.tail = rest;
+  lodash.unique = uniq;
+
+  /*--------------------------------------------------------------------------*/
+
+  // add functions that return unwrapped values when chaining
+  lodash.after = after;
+  lodash.bind = bind;
+  lodash.clone = clone;
+  lodash.compact = compact;
+  lodash.compose = compose;
+  lodash.contains = contains;
+  lodash.debounce = debounce;
+  lodash.defer = defer;
+  lodash.delay = delay;
+  lodash.escape = escape;
+  lodash.find = find;
+  lodash.has = has;
+  lodash.identity = identity;
+  lodash.indexOf = indexOf;
   lodash.isArray = isArray;
   lodash.isBoolean = isBoolean;
   lodash.isDate = isDate;
@@ -3649,87 +3698,65 @@
   lodash.isRegExp = isRegExp;
   lodash.isString = isString;
   lodash.isUndefined = isUndefined;
-  lodash.keys = keys;
-  lodash.last = last;
   lodash.lastIndexOf = lastIndexOf;
-  lodash.map = map;
-  lodash.max = max;
   lodash.memoize = memoize;
-  lodash.min = min;
-  lodash.mixin = mixin;
   lodash.noConflict = noConflict;
-  lodash.object = object;
-  lodash.omit = omit;
   lodash.once = once;
-  lodash.pairs = pairs;
-  lodash.pick = pick;
-  lodash.pluck = pluck;
   lodash.random = random;
-  lodash.range = range;
   lodash.reduce = reduce;
   lodash.reduceRight = reduceRight;
-  lodash.reject = reject;
-  lodash.rest = rest;
   lodash.result = result;
-  lodash.shuffle = shuffle;
   lodash.size = size;
-  lodash.some = some;
-  lodash.sortBy = sortBy;
-  lodash.sortedIndex = sortedIndex;
-  lodash.tap = tap;
   lodash.template = template;
   lodash.throttle = throttle;
-  lodash.times = times;
-  lodash.toArray = toArray;
   lodash.unescape = unescape;
-  lodash.union = union;
-  lodash.uniq = uniq;
   lodash.uniqueId = uniqueId;
-  lodash.values = values;
-  lodash.where = where;
-  lodash.without = without;
   lodash.wrap = wrap;
-  lodash.zip = zip;
 
-  // assign aliases
-  lodash.all = every;
-  lodash.any = some;
-  lodash.collect = map;
+  // add aliases
   lodash.detect = find;
-  lodash.drop = rest;
-  lodash.each = forEach;
-  lodash.extend = assign;
   lodash.foldl = reduce;
   lodash.foldr = reduceRight;
-  lodash.head = first;
   lodash.include = contains;
   lodash.inject = reduce;
-  lodash.methods = functions;
-  lodash.select = filter;
-  lodash.tail = rest;
-  lodash.take = first;
-  lodash.unique = uniq;
 
   /*--------------------------------------------------------------------------*/
 
-  // add all static functions to `lodash.prototype`
+  // add functions capable of returning wrapped and unwrapped values when chaining
+  lodash.first = first;
+  lodash.last = last;
+
+  // add aliases
+  lodash.take = first;
+  lodash.head = first;
+
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * The semantic version number.
+   *
+   * @static
+   * @memberOf _
+   * @type String
+   */
+  lodash.VERSION = '1.0.0-rc.1';
+
+  // add functions to `lodash.prototype`
   mixin(lodash);
 
-  // add `lodash.prototype.chain` after calling `mixin()` to avoid overwriting
-  // it with the wrapped `lodash.chain`
+  // add "Chaining" functions to the wrapper
   lodash.prototype.chain = wrapperChain;
   lodash.prototype.value = wrapperValueOf;
 
-  // add all mutator Array functions to the wrapper.
+  // add mutator `Array` functions to the wrapper
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = arrayRef[methodName];
-
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__;
       func.apply(value, arguments);
 
-      // avoid array-like object bugs with `Array#shift` and `Array#splice` in
-      // Firefox < 10 and IE < 9
+      // avoid array-like object bugs with `Array#shift` and `Array#splice`
+      // in Firefox < 10 and IE < 9
       if (hasObjectSpliceBug && value.length === 0) {
         delete value[0];
       }
@@ -3737,10 +3764,9 @@
     };
   });
 
-  // add all accessor Array functions to the wrapper.
+  // add accessor `Array` functions to the wrapper
   forEach(['concat', 'join', 'slice'], function(methodName) {
     var func = arrayRef[methodName];
-
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__,
           result = func.apply(value, arguments);

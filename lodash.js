@@ -1,7 +1,7 @@
 /*!
- * Lo-Dash 1.0.0-rc.1 <http://lodash.com>
+ * Lo-Dash 1.0.0-rc.2 <http://lodash.com>
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
- * Based on Underscore.js 1.4.2 <http://underscorejs.org>
+ * Based on Underscore.js 1.4.3 <http://underscorejs.org>
  * (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
@@ -4316,7 +4316,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '1.0.0-rc.1';
+  lodash.VERSION = '1.0.0-rc.2';
 
   // add "Chaining" functions to the wrapper
   lodash.prototype.chain = wrapperChain;

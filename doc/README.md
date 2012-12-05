@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v1.0.0-rc.1</sup>
+# Lo-Dash <sup>v1.0.0-rc.2</sup>
 
 <!-- div -->
 
@@ -3050,7 +3050,7 @@ _.uniqueId();
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4319 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4318 "View in source") [&#x24C9;][1]
 
 *(String)*: The semantic version number.
 

@@ -841,7 +841,7 @@
       // clip snippet after the JSDoc comment block
       match = match.replace(/^\s*(?:\/\/.*|\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)\n/, '');
       source = source.replace(match, function() {
-        return funcValue;
+        return funcValue.trimRight() + '\n';
       });
     }
     return source;
@@ -1313,13 +1313,6 @@
           '  }'
         ].join('\n'));
 
-        // replace `_.isFinite`
-        source = replaceFunction(source, 'isFinite', [
-          '  function isFinite(value) {',
-          '    return nativeIsFinite(value) && toString.call(value) == numberClass;',
-          '  }'
-        ].join('\n'));
-
         // replace `_.omit`
         source = replaceFunction(source, 'omit', [
           '  function omit(object) {',
@@ -1412,6 +1405,11 @@
           '        result = [],',
           '        seen = result;',
           '',
+          "    if (typeof isSorted == 'function') {",
+          '      thisArg = callback;',
+          '      callback = isSorted;',
+          '      isSorted = false;',
+          '    }',
           '    if (callback) {',
           '      seen = [];',
           '      callback = createCallback(callback, thisArg);',
@@ -1437,7 +1435,7 @@
         // replace `_.uniqueId`
         source = replaceFunction(source, 'uniqueId', [
           '  function uniqueId(prefix) {',
-          '    var id = idCounter++;',
+          "    var id = ++idCounter + '';",
           '    return prefix ? prefix + id : id;',
           '  }'
         ].join('\n'));

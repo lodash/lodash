@@ -679,7 +679,6 @@
 
         object = { 'length': 0, 'splice': Array.prototype.splice };
         equal(lodash.isEmpty(object), false, '_.isEmpty should return `false` for jQuery/MooTools DOM query collections: ' + basename);
-        equal(lodash.isFinite('2'), false, '_.isFinite should return `false` for numeric string values: ' + basename);
 
         object = { 'a': 1, 'b': 2, 'c': 3 };
         equal(lodash.isEqual(object, { 'a': 1, 'b': 0, 'c': 3 }), false, '_.isEqual: ' + basename);
@@ -697,10 +696,7 @@
 
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
-
-        actual = [lodash.uniqueId(3), lodash.uniqueId(2), lodash.uniqueId(1)];
-        equal(actual.join(','), '3,3,3', '_.uniqueId should not coerce the prefix argument to a string: ' + basename);
-        equal(typeof lodash.uniqueId(), 'number', '_.uniqueId should return a number value when not passing a prefix argument: ' + basename);
+        equal(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);
 
         var wrapped = lodash(1);
         equal(wrapped.clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);

@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v1.0.0-rc.1</sup>
+# Lo-Dash <sup>v1.0.0-rc.2</sup>
 [![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
 A utility library, usable as a drop-in replacement for Underscore, delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), and [additional features](http://lodash.com/#features).
@@ -6,18 +6,18 @@ A utility library, usable as a drop-in replacement for Underscore, delivering [p
 ## Download
 
 * Lo-Dash builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.min.js)
 
 * Underscore builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.underscore.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.1/lodash.underscore.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.underscore.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.underscore.min.js)
 
-* CDN copies of ≤ v1.0.0-rc.1’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
-[Lo-Dash development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.js),
-[Lo-Dash production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.min.js),
-[Underscore development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.underscore.js), and
-[Underscore production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.1/lodash.underscore.min.js)
+* CDN copies of ≤ v1.0.0-rc.2’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+[Lo-Dash development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.js),
+[Lo-Dash production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.min.js),
+[Underscore development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.underscore.js), and
+[Underscore production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.underscore.min.js)
 
 * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
@@ -43,6 +43,7 @@ For more information check out these screencasts over Lo-Dash:
 ## Features
 
  * AMD loader support ([RequireJS](http://requirejs.org/), [curl.js](https://github.com/cujojs/curl), etc.)
+ * [_(…)](http://lodash.com/docs#_) supports intuitive chaining without calling [_(…).chain](http://lodash.com/docs#prototype_chain)
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”* defined](http://michaux.ca/articles/lazy-function-definition-pattern) methods
  * [_.clone](http://lodash.com/docs#clone) supports *“deep”* cloning
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex` argument
@@ -227,17 +228,22 @@ require({
 
 ## Resolved Underscore.js issues
 
- * Allow iteration of objects with a `length` property [[#799](https://github.com/documentcloud/underscore/pull/799), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L605-L611)]
- * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L618-L642)]
- * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L140-L146)]
- * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L807-L812)]
- * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L888-L900)]
- * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L981-L983)]
- * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.1/test/test.js#L1382-L1385)]
+ * Allow iteration of objects with a `length` property [[#799](https://github.com/documentcloud/underscore/pull/799), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.2/test/test.js#L605-L611)]
+ * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.2/test/test.js#L618-L642)]
+ * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.2/test/test.js#L140-L146)]
+ * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.2/test/test.js#L807-L812)]
+ * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.2/test/test.js#L888-L900)]
+ * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.2/test/test.js#L981-L983)]
+ * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.2/test/test.js#L1382-L1385)]
 
 ## Release Notes
 
-### <sup>v1.0.0-rc.1</sup>
+### <sup>v1.0.0-rc.2</sup> ###
+
+ * Specified more method chaining behaviors
+ * Updated `underscore` build compatibility to v1.4.3
+
+### <sup>v1.0.0-rc.1</sup> ###
 
 #### Compatibility Warnings ####
 

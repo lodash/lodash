@@ -3140,11 +3140,13 @@
       if (isLarge) {
         // manually coerce `computed` to a string because `hasOwnProperty`, in
         // some older versions of Firefox, coerces objects incorrectly
-        seen = hasOwnProperty.call(cache, computed + '') ? cache[computed] : (cache[computed] = []);
+        var inited = hasOwnProperty.call(cache, computed + '')
+          ? !(seen = cache[computed])
+          : (seen = []);
       }
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
-            : indexOf(seen, computed) < 0
+            : inited || indexOf(seen, computed) < 0
           ) {
         if (callback || isLarge) {
           seen.push(computed);

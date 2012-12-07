@@ -135,7 +135,7 @@
     'pluck': ['map'],
     'random': [],
     'range': [],
-    'reduce': ['forEach'],
+    'reduce': ['forEach', 'isArray'],
     'reduceRight': ['forEach', 'isString', 'keys'],
     'reject': ['filter'],
     'rest': [],

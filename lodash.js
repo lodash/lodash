@@ -611,9 +611,11 @@
    * @param {Function|String} [func=identity|property] The function called per
    * iteration or property name to query.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @param {Boolean} [accumulating] A flag to indicate creating a callback
+   *  that accepts an `accumulator` argument.
    * @returns {Function} Returns a callback function.
    */
-  function createCallback(func, thisArg) {
+  function createCallback(func, thisArg, accumulating) {
     if (!func) {
       return identity;
     }
@@ -623,6 +625,11 @@
       };
     }
     if (typeof thisArg != 'undefined') {
+      if (accumulating) {
+        return function(accumulator, value, index, object) {
+          return func.call(thisArg, accumulator, value, index, object);
+        };
+      }
       return function(value, index, object) {
         return func.call(thisArg, value, index, object);
       };
@@ -1951,6 +1958,7 @@
   function countBy(collection, callback, thisArg) {
     var result = {};
     callback = createCallback(callback, thisArg);
+
     forEach(collection, function(value, key, collection) {
       key = callback(value, key, collection);
       (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
@@ -2063,6 +2071,7 @@
   function find(collection, callback, thisArg) {
     var result;
     callback = createCallback(callback, thisArg);
+
     forEach(collection, function(value, index, collection) {
       if (callback(value, index, collection)) {
         result = value;
@@ -2125,6 +2134,7 @@
   function groupBy(collection, callback, thisArg) {
     var result = {};
     callback = createCallback(callback, thisArg);
+
     forEach(collection, function(value, key, collection) {
       key = callback(value, key, collection);
       (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
@@ -2349,12 +2359,25 @@
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-    callback || (callback = identity);
-    forEach(collection, function(value, index, collection) {
-      accumulator = noaccum
-        ? (noaccum = false, value)
-        : callback.call(thisArg, accumulator, value, index, collection)
-    });
+    callback = createCallback(callback, thisArg, true);
+
+    if (isArray(collection)) {
+      var index = -1,
+          length = collection.length;
+
+      if (noaccum) {
+        accumulator = collection[++index];
+      }
+      while (++index < length) {
+        accumulator = callback(accumulator, collection[index], index, collection);
+      }
+    } else {
+      forEach(collection, function(value, index, collection) {
+        accumulator = noaccum
+          ? (noaccum = false, value)
+          : callback(accumulator, value, index, collection)
+      });
+    }
     return accumulator;
   }
 
@@ -2387,12 +2410,12 @@
     } else if (noCharByIndex && isString(collection)) {
       iteratee = collection.split('');
     }
-    callback || (callback = identity);
+    callback = createCallback(callback, thisArg, true);
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum
         ? (noaccum = false, iteratee[index])
-        : callback.call(thisArg, accumulator, iteratee[index], index, collection);
+        : callback(accumulator, iteratee[index], index, collection);
     });
     return accumulator;
   }
@@ -2541,6 +2564,7 @@
   function sortBy(collection, callback, thisArg) {
     var result = [];
     callback = createCallback(callback, thisArg);
+
     forEach(collection, function(value, index, collection) {
       result.push({
         'criteria': callback(value, index, collection),
@@ -3051,9 +3075,10 @@
     var low = 0,
         high = array ? array.length : low;
 
-    // explicitly reference `identity` for better engine inlining
+    // explicitly reference `identity` for better inlining in Firefox
     callback = callback ? createCallback(callback, thisArg) : identity;
     value = callback(value);
+
     while (low < high) {
       var mid = (low + high) >>> 1;
       callback(array[mid]) < value

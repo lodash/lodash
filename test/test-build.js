@@ -525,25 +525,36 @@
           start();
         });
       });
-    });
 
-    asyncTest('`lodash settings=...`', function() {
-      var start = _.after(2, _.once(QUnit.start));
+      asyncTest('`lodash settings=...`' + (command ? ' ' + command : ''), function() {
+        var start = _.after(2, _.once(QUnit.start));
 
-      build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/}'], function(source, filePath) {
-        var basename = path.basename(filePath, '.js'),
-            context = createContext();
+        build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/}'].concat(command || []), function(source, filePath) {
+          var moduleId, templates,
+              basename = path.basename(filePath, '.js'),
+              context = createContext();
 
-        var data = {
-          'd': { 'name': 'Mustache' }
-        };
+          var data = {
+            'd': { 'name': 'Mustache' }
+          };
 
-        context._ = _;
-        vm.runInContext(source, context);
-        var templates = context._.templates;
+          (context.define = function(requires, factory) {
+            factory(_);
+            templates = _.templates;
+            moduleId = requires + '';
+          })
+          .amd = {};
 
-        equal(templates.d(data.d), 'Hello Mustache!', basename);
-        start();
+          context._ = _;
+          vm.runInContext(source, context);
+
+          var templates = context._.templates;
+
+          equal(moduleId, command ? 'underscore' : 'lodash');
+          equal(templates.d(data.d), 'Hello Mustache!', basename);
+          delete _.templates;
+          start();
+        });
       });
     });
   }());

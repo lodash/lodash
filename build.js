@@ -1050,7 +1050,7 @@
     var templateSettings = options.reduce(function(result, value) {
       var match = value.match(/settings=(.+)$/);
       return match
-        ? Function('return {' + match[1].replace(/^{|}$/g, '') + '}')()
+        ? Function('assign, result', 'return assign(result, {' + match[1].replace(/^{|}$/g, '') + '})')(_.assign, result)
         : result;
     }, _.assign(_.clone(_.templateSettings), {
       'moduleId': moduleId

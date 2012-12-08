@@ -489,11 +489,10 @@
 
         context._ = _;
         vm.runInContext(source, context);
-        var templates = context._.templates;
 
-        equal(templates.a(data.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
-        equal(templates.b(data.b), 'Hello stooge.', basename);
-        equal(templates.c(data.c), 'Hello ES6!', basename);
+        equal(_.templates.a(data.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
+        equal(_.templates.b(data.b), 'Hello stooge.', basename);
+        equal(_.templates.c(data.c), 'Hello ES6!', basename);
         delete _.templates;
         start();
       });
@@ -506,21 +505,18 @@
         build(['-s', 'template=' + templatePath + '/*.jst', 'exports=amd'].concat(command || []), function(source, filePath) {
           var moduleId,
               basename = path.basename(filePath, '.js'),
-              context = createContext(),
-              pass = false;
+              context = createContext();
 
-          (context.define = function(requires, factory) {
+          context.define = function(requires, factory) {
             factory(_);
-            var templates = _.templates;
-            moduleId = requires + '';
-            pass = 'a' in templates && 'b' in templates;
-          })
-          .amd = {};
+            moduleId = requires[0];
+          };
 
+          context.define.amd = {};
           vm.runInContext(source, context);
 
-          equal(moduleId, command ? 'underscore' : 'lodash');
-          ok(pass, basename);
+          equal(moduleId, (command ? 'underscore' : 'lodash'), basename);
+          ok('a' in _.templates && 'b' in _.templates, basename);
           delete _.templates;
           start();
         });
@@ -530,7 +526,7 @@
         var start = _.after(2, _.once(QUnit.start));
 
         build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/}'].concat(command || []), function(source, filePath) {
-          var moduleId, templates,
+          var moduleId,
               basename = path.basename(filePath, '.js'),
               context = createContext();
 
@@ -538,20 +534,16 @@
             'd': { 'name': 'Mustache' }
           };
 
-          (context.define = function(requires, factory) {
+          context.define = function(requires, factory) {
             factory(_);
-            templates = _.templates;
-            moduleId = requires + '';
-          })
-          .amd = {};
+            moduleId = requires[0];
+          };
 
-          context._ = _;
+          context.define.amd = {};
           vm.runInContext(source, context);
 
-          var templates = context._.templates;
-
-          equal(moduleId, command ? 'underscore' : 'lodash');
-          equal(templates.d(data.d), 'Hello Mustache!', basename);
+          equal(moduleId, (command ? 'underscore' : 'lodash'), basename);
+          equal(_.templates.d(data.d), 'Hello Mustache!', basename);
           delete _.templates;
           start();
         });

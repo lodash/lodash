@@ -336,6 +336,7 @@
     source.push(
       "  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {",
       "    define(['" + options.moduleId + "'], function(lodash) {",
+      '      _ = lodash;',
       '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
       '    });',
       "  } else if (freeExports) {",
@@ -1050,7 +1051,7 @@
     var templateSettings = options.reduce(function(result, value) {
       var match = value.match(/settings=(.+)$/);
       return match
-        ? Function('assign, result', 'return assign(result, {' + match[1].replace(/^{|}$/g, '') + '})')(_.assign, result)
+        ? _.assign(result, Function('return {' + match[1].replace(/^{|}$/g, '') + '}')())
         : result;
     }, _.assign(_.clone(_.templateSettings), {
       'moduleId': moduleId

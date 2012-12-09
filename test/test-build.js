@@ -54,9 +54,9 @@
   };
 
   /** List of all Lo-Dash methods */
-  var allMethods = _.functions(_).filter(function(methodName) {
-    return !/^_/.test(methodName);
-  });
+  var allMethods = _.functions(_)
+    .filter(function(methodName) { return !/^_/.test(methodName); })
+    .concat('chain');
 
   /** List of "Arrays" category methods */
   var arraysMethods = [
@@ -86,7 +86,6 @@
 
   /** List of "Chaining" category methods */
   var chainingMethods = [
-    'chain',
     'mixin',
     'tap',
     'value'
@@ -498,7 +497,12 @@
       });
     });
 
-    ['', 'moduleId=underscore'].forEach(function(command) {
+    var commands = [
+      '',
+      'moduleId=underscore'
+    ];
+
+    commands.forEach(function(command) {
       asyncTest('`lodash template=*.jst` exports=amd' + (command ? ' ' + command : ''), function() {
         var start = _.after(2, _.once(QUnit.start));
 
@@ -637,6 +641,44 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('underscore chaining methods');
+
+  (function() {
+    var commands = [
+      'backbone',
+      'underscore'
+    ];
+
+    commands.forEach(function(command) {
+      asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s', command], function(source, filePath) {
+          var basename = path.basename(filePath, '.js'),
+              context = createContext();
+
+          vm.runInContext(source, context);
+          var lodash = context._;
+
+          ok(lodash.chain(1) instanceof lodash, '_.chain: ' + basename);
+          ok(lodash(1).chain() instanceof lodash, '_#chain: ' + basename);
+
+          var wrapped = lodash(1);
+          equal(wrapped.clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
+          equal(String(wrapped) === '1', false, '_#toString should not be implemented: ' + basename);
+          equal(Number(wrapped) === 1 , false, '_#valueOf should not be implemented: ' + basename);
+
+          wrapped.chain();
+          equal(wrapped.has('x') instanceof lodash, true, '_#has returns wrapped values when chaining: ' + basename);
+
+          start();
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('underscore modifier');
 
   (function() {
@@ -700,14 +742,6 @@
         equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
         equal(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);
-
-        var wrapped = lodash(1);
-        equal(wrapped.clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
-        equal(String(wrapped) === '1', false, '_#toString should not be implemented: ' + basename);
-        equal(Number(wrapped) === 1 , false, '_#valueOf should not be implemented: ' + basename);
-
-        wrapped.chain();
-        equal(wrapped.has('x') instanceof lodash, true, '_#has returns wrapped values when chaining: ' + basename);
 
         start();
       });
@@ -877,7 +911,12 @@
   QUnit.module('output options');
 
   (function() {
-    ['-o a.js', '--output a.js'].forEach(function(command, index) {
+    var commands = [
+      '-o a.js',
+      '--output a.js'
+    ];
+
+    commands.forEach(function(command, index) {
       asyncTest('`lodash ' + command +'`', function() {
         var start = _.once(QUnit.start);
 
@@ -894,7 +933,12 @@
   QUnit.module('stdout options');
 
   (function() {
-    ['-c', '--stdout'].forEach(function(command, index) {
+    var commands = [
+      '-c',
+      '--stdout'
+    ];
+
+    commands.forEach(function(command, index) {
       asyncTest('`lodash ' + command +'`', function() {
         var written,
             start = _.once(QUnit.start),

@@ -70,7 +70,6 @@
     'bind': ['isFunction', 'isObject'],
     'bindAll': ['bind', 'functions'],
     'bindKey': ['isFunction', 'isObject'],
-    'chain': ['mixin'],
     'clone': ['assign', 'forEach', 'forOwn', 'isArray', 'isObject'],
     'compact': [],
     'compose': [],
@@ -159,7 +158,10 @@
     'where': ['filter', 'keys'],
     'without': ['indexOf'],
     'wrap': [],
-    'zip': ['max', 'pluck']
+    'zip': ['max', 'pluck'],
+
+    // method used by the `backbone` and `underscore` builds
+    'chain': ['mixin']
   };
 
   /** Used to inline `iteratorTemplate` */
@@ -1175,7 +1177,117 @@
         source = replaceVar(source, 'noArgsClass', 'true');
         source = removeKeysOptimization(source);
       }
-      else if (isUnderscore) {
+      // add Underscore's chaining API
+      if (isBackbone || isUnderscore) {
+        // add `_.chain`
+        source = source.replace(matchFunction(source, 'tap'), function(match) {
+          return [
+            '',
+            '  /**',
+            '   * Creates a `lodash` object that wraps the given `value`.',
+            '   *',
+            '   * @static',
+            '   * @memberOf _',
+            '   * @category Chaining',
+            '   * @param {Mixed} value The value to wrap.',
+            '   * @returns {Object} Returns the wrapper object.',
+            '   * @example',
+            '   *',
+            '   * var stooges = [',
+            "   *   { 'name': 'moe', 'age': 40 },",
+            "   *   { 'name': 'larry', 'age': 50 },",
+            "   *   { 'name': 'curly', 'age': 60 }",
+            '   * ];',
+            '   *',
+            '   * var youngest = _.chain(stooges)',
+            '   *     .sortBy(function(stooge) { return stooge.age; })',
+            "   *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })",
+            '   *     .first();',
+            "   * // => 'moe is 40'",
+            '   */',
+            '  function chain(value) {',
+            '    value = new lodash(value);',
+            '    value.__chain__ = true;',
+            '    return value;',
+            '  }',
+            '',
+            match
+          ].join('\n');
+        });
+
+        // add `wrapperChain`
+        source = source.replace(matchFunction(source, 'wrapperToString'), function(match) {
+          return [
+            '',
+            '  /**',
+            '   * Enables method chaining on the wrapper object.',
+            '   *',
+            '   * @name chain',
+            '   * @memberOf _',
+            '   * @category Chaining',
+            '   * @returns {Mixed} Returns the wrapper object.',
+            '   * @example',
+            '   *',
+            '   * var sum = _([1, 2, 3])',
+            '   *     .chain()',
+            '   *     .reduce(function(sum, num) { return sum + num; })',
+            '   *     .value()',
+            '   * // => 6`',
+            '   */',
+            '  function wrapperChain() {',
+            '    this.__chain__ = true;',
+            '    return this;',
+            '  }',
+            '',
+            match
+          ].join('\n');
+        });
+
+        // add `__chain__` checks to `_.mixin` and `Array` function wrappers
+        _.each([
+          matchFunction(source, 'mixin'),
+          /(?:\s*\/\/.*)*\n( *)forEach\(\['[\s\S]+?\n\1}.+/g
+        ], function(pattern) {
+          source = source.replace(pattern, function(match) {
+            return match.replace(/( *)return new lodash\(([^)]+)\).+/, function(submatch, indent, varName) {
+              return indent + [
+                'if (this.__chain__) {',
+                '  varName = new lodash(varName);',
+                '  varName.__chain__ = true;',
+                '}',
+                'return varName;'
+              ].join('\n' + indent)
+              .replace(/varName/g, varName);
+            });
+          });
+        });
+
+        // add `lodash.chain` assignment
+        source = source.replace(getMethodAssignments(source), function(match) {
+          return match.replace(/^(?: *\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\n)?( *)lodash\.VERSION *=/m, '$1lodash.chain = chain;\n\n$&');
+        });
+
+        // add `lodash.prototype.chain` assignment
+        source = source.replace(/^( *)lodash\.prototype\.value *=.+\n/m, '$1lodash.prototype.chain = wrapperChain;\n$&');
+
+        // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
+        source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');
+
+        // remove `lodash.prototype` batch method assignments
+        source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '');
+
+        // move `mixin(lodash)` to after the method assignments
+        source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
+        source = source.replace(getMethodAssignments(source), function(match) {
+          return match + [
+            '',
+            '',
+            '  // add functions to `lodash.prototype`',
+            '  mixin(lodash);'
+          ].join('\n');
+        });
+      }
+      if (isUnderscore) {
         // remove unneeded variables
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
@@ -1199,15 +1311,6 @@
           '      }',
           '    }',
           '    return object;',
-          '  }'
-        ].join('\n'));
-
-        // replace `_.chain`
-        source = replaceFunction(source, 'chain', [
-          '  function chain(value) {',
-          '    value = new lodash(value);',
-          '    value.__chain__ = true;',
-          '    return value;',
           '  }'
         ].join('\n'));
 
@@ -1460,33 +1563,6 @@
           '  }'
         ].join('\n'));
 
-        // replace `wrapperChain`
-        source = replaceFunction(source, 'wrapperChain', [
-          '  function wrapperChain() {',
-          '    this.__chain__ = true;',
-          '    return this;',
-          '  }'
-        ].join('\n'));
-
-        // add `__chain__` checks to `_.mixin` and `Array` function wrappers
-        _.each([
-          matchFunction(source, 'mixin'),
-          /(?:\s*\/\/.*)*\n( *)forEach\(\['[\s\S]+?\n\1}.+/g
-        ], function(pattern) {
-          source = source.replace(pattern, function(match) {
-            return match.replace(/( *)return new lodash\(([^)]+)\).+/, function(submatch, indent, varName) {
-              return indent + [
-                'if (this.__chain__) {',
-                '  varName = new lodash(varName);',
-                '  varName.__chain__ = true;',
-                '}',
-                'return varName;'
-              ].join('\n' + indent)
-              .replace(/varName/g, varName);
-            });
-          });
-        });
-
         // remove `arguments` object check from `_.isEqual`
         source = source.replace(matchFunction(source, 'isEqual'), function(match) {
           return match.replace(/^ *if *\(.+== argsClass[^}]+}\n/gm, '')
@@ -1497,23 +1573,6 @@
           source = source.replace(matchFunction(source, methodName), function(match) {
             return match.replace(/!callback *&& *isString\(collection\)[\s\S]+?: */g, '');
           });
-        });
-
-        // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
-        source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');
-
-        // remove `lodash.prototype` batch method assignments
-        source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '');
-
-        // move `mixin(lodash)` to after the method assignments
-        source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
-        source = source.replace(getMethodAssignments(source), function(match) {
-          return match + [
-            '',
-            '',
-            '  // add functions to `lodash.prototype`',
-            '  mixin(lodash);'
-          ].join('\n');
         });
 
         // remove unused features from `createBound`

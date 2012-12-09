@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "version": "1.0.0-rc.2",
-  "description": "A utility library, usable as a drop-in replacement for Underscore, delivering performance, bug fixes, and additional features.",
+  "description": "An alternative to Underscore.js, delivering consistency, customization, performance, and extra features.",
   "homepage": "http://lodash.com",
   "main": "./lodash",
   "keywords": [

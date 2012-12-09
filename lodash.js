@@ -243,9 +243,30 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The `lodash` function.
+   * Creates a `lodash` object, that wraps the given `value`, to enable
+   * method chaining.
    *
-   * @name _
+   * The wrapper functions capable of chaining are:
+   * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
+   * `compose`, `countBy`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
+   * `filter`, `flatten`, `forEach`, `forIn`, `forOwn`, `functions`, `groupBy`,
+   * `initial`, `intersection`, `invert`, `invoke`, `keys`, `map`, `max`, `memoize`,
+   * `merge`, `min`, `object`, `omit`, `once`, `pairs`, `partial`, `pick`, `pluck`,
+   * `range`, `reject`, `rest`, `shuffle`, `sortBy`, `tap`, `throttle`, `times`,
+   * `toArray`, `union`, `uniq`, `values`, `where`, `without`, `wrap`, and `zip`
+   *
+   * The wrapper functions that do not chain are:
+   * `clone`, `contains`, `escape`, `every`, `find`, `has`, `identity`,
+   * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
+   * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
+   * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `lastIndexOf`,
+   * `mixin`, `noConflict`, `random`, `reduce`, `reduceRight`, `result`, `size`,
+   * `some`, `sortedIndex`, `template`, `unescape`, and `uniqueId`
+   *
+   * The wrapper functions `first` and `last` return wrapped values when `n` is
+   * passed, otherwise unwrapped values are returned.
+   *
+   * @name _,
    * @constructor
    * @category Chaining
    * @param {Mixed} value The value to wrap in a `lodash` instance.
@@ -4077,32 +4098,6 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Wraps the value in a `lodash` wrapper object.
-   *
-   * @static
-   * @memberOf _
-   * @category Chaining
-   * @param {Mixed} value The value to wrap.
-   * @returns {Object} Returns the wrapper object.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
-   * ];
-   *
-   * var youngest = _.chain(stooges)
-   *     .sortBy(function(stooge) { return stooge.age; })
-   *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
-   *     .first();
-   * // => 'moe is 40'
-   */
-  function chain(value) {
-    return new lodash(value);
-  }
-
-  /**
    * Invokes `interceptor` with the `value` as the first argument, and then
    * returns `value`. The purpose of this method is to "tap into" a method chain,
    * in order to perform operations on intermediate results within the chain.
@@ -4126,28 +4121,6 @@
   function tap(value, interceptor) {
     interceptor(value);
     return value;
-  }
-
-  /**
-   * This function returns the wrapper object.
-   *
-   * Note: This function is defined to ensure the existing wrapper object is
-   * returned, instead of creating a new wrapper object like the `_.chain`
-   * method does.
-   *
-   * @name chain
-   * @deprecated
-   * @memberOf _
-   * @category Chaining
-   * @returns {Mixed} Returns the wrapper object.
-   * @example
-   *
-   * var wrapped = _([1, 2, 3]);
-   * wrapped === wrapped.chain();
-   * // => true
-   */
-  function wrapperChain() {
-    return this;
   }
 
   /**
@@ -4186,12 +4159,19 @@
   /*--------------------------------------------------------------------------*/
 
   // add functions that return wrapped values when chaining
+
+  lodash.after = after;
   lodash.assign = assign;
+  lodash.bind = bind;
   lodash.bindAll = bindAll;
-  lodash.chain = chain;
+  lodash.bindKey = bindKey;
   lodash.compact = compact;
+  lodash.compose = compose;
   lodash.countBy = countBy;
+  lodash.debounce = debounce;
   lodash.defaults = defaults;
+  lodash.defer = defer;
+  lodash.delay = delay;
   lodash.difference = difference;
   lodash.filter = filter;
   lodash.flatten = flatten;
@@ -4207,11 +4187,14 @@
   lodash.keys = keys;
   lodash.map = map;
   lodash.max = max;
+  lodash.memoize = memoize;
   lodash.merge = merge;
   lodash.min = min;
   lodash.object = object;
   lodash.omit = omit;
+  lodash.once = once;
   lodash.pairs = pairs;
+  lodash.partial = partial;
   lodash.pick = pick;
   lodash.pluck = pluck;
   lodash.range = range;
@@ -4220,6 +4203,7 @@
   lodash.shuffle = shuffle;
   lodash.sortBy = sortBy;
   lodash.tap = tap;
+  lodash.throttle = throttle;
   lodash.times = times;
   lodash.toArray = toArray;
   lodash.union = union;
@@ -4227,6 +4211,7 @@
   lodash.values = values;
   lodash.where = where;
   lodash.without = without;
+  lodash.wrap = wrap;
   lodash.zip = zip;
 
   // add aliases
@@ -4245,15 +4230,8 @@
   /*--------------------------------------------------------------------------*/
 
   // add functions that return unwrapped values when chaining
-  lodash.after = after;
-  lodash.bind = bind;
-  lodash.bindKey = bindKey;
   lodash.clone = clone;
-  lodash.compose = compose;
   lodash.contains = contains;
-  lodash.debounce = debounce;
-  lodash.defer = defer;
-  lodash.delay = delay;
   lodash.escape = escape;
   lodash.every = every;
   lodash.find = find;
@@ -4278,11 +4256,8 @@
   lodash.isString = isString;
   lodash.isUndefined = isUndefined;
   lodash.lastIndexOf = lastIndexOf;
-  lodash.memoize = memoize;
   lodash.mixin = mixin;
   lodash.noConflict = noConflict;
-  lodash.once = once;
-  lodash.partial = partial;
   lodash.random = random;
   lodash.reduce = reduce;
   lodash.reduceRight = reduceRight;
@@ -4291,10 +4266,8 @@
   lodash.some = some;
   lodash.sortedIndex = sortedIndex;
   lodash.template = template;
-  lodash.throttle = throttle;
   lodash.unescape = unescape;
   lodash.uniqueId = uniqueId;
-  lodash.wrap = wrap;
 
   // add aliases
   lodash.all = every;
@@ -4346,7 +4319,6 @@
   lodash.VERSION = '1.0.0-rc.2';
 
   // add "Chaining" functions to the wrapper
-  lodash.prototype.chain = wrapperChain;
   lodash.prototype.toString = wrapperToString;
   lodash.prototype.value = wrapperValueOf;
   lodash.prototype.valueOf = wrapperValueOf;

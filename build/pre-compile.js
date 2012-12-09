@@ -68,7 +68,6 @@
     'bind',
     'bindAll',
     'bindKey',
-    'chain',
     'clone',
     'collect',
     'compact',
@@ -188,8 +187,9 @@
     'wrap',
     'zip',
 
-    // property used by the `lodash underscore` build
+    // properties used by the `backbone` and `underscore` builds
     '__chain__',
+    'chain',
 
     // properties used by underscore.js
     '_chain',

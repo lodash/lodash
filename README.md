@@ -1,7 +1,7 @@
 # Lo-Dash <sup>v1.0.0-rc.2</sup>
 [![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
-A utility library, usable as a drop-in replacement for Underscore, delivering [performance](http://lodash.com/benchmarks), [bug fixes](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), and [additional features](http://lodash.com/#features).
+An alternative to Underscore.js, delivering [consistency](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
 
 ## Download
 

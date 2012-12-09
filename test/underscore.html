@@ -5,7 +5,7 @@
 		<title>Underscore Test Suite</title>
 		<link rel="stylesheet" href="../vendor/qunit/qunit/qunit.css">
 		<style>
-			iframe, img {
+			iframe {
 				display: none;
 			}
 		</style>
@@ -31,6 +31,48 @@
 		<script src="test-ui.js"></script>
 		<script>
 			document.write('<script src="../' + ui.buildPath + '"><\/script>');
+		</script>
+		<script>
+			if (!_.chain) {
+				_.mixin = function(object) {
+					_.forEach(_.functions(object), function(methodName) {
+						var func = _[methodName] = object[methodName];
+						_.prototype[methodName] = function() {
+							var args = [this.__wrapped__];
+							args.push.apply(args, arguments);
+
+							var result = func.apply(_, args);
+							if (this.__chain__) {
+								result = new _(result);
+								result.__chain__ = true;
+							}
+							return result;
+						};
+					});
+				};
+
+				_.mixin(_);
+
+				_.chain = function(value) {
+					value = new _(value);
+					value.__chain__ = true;
+					return value;
+				};
+
+				_.prototype.chain = function() {
+					this.__chain__ = true;
+					return this;
+				};
+
+				_.prototype.concat = _.wrap(_.prototype.concat, function(func) {
+					var result = func.apply(this, Array.prototype.slice.call(arguments, 1));
+					if (this.__chain__) {
+					  result = new _(result);
+					  result.__chain__ = true;
+					}
+					return result;
+				});
+			}
 		</script>
 		<script src="../vendor/underscore/test/collections.js"></script>
 		<script src="../vendor/underscore/test/arrays.js"></script>

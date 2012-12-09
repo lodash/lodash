@@ -266,7 +266,7 @@
    * The wrapper functions `first` and `last` return wrapped values when `n` is
    * passed, otherwise unwrapped values are returned.
    *
-   * @name _,
+   * @name _
    * @constructor
    * @category Chaining
    * @param {Mixed} value The value to wrap in a `lodash` instance.

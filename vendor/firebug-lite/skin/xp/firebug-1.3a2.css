@@ -70,7 +70,7 @@ html, body {
 body {
     font-family: Lucida Grande, Tahoma, sans-serif;
     font-size: 11px;
-    background: #fff;    
+    background: #fff;
 }
 
 .clear {
@@ -103,7 +103,7 @@ body {
     border: 1px solid #ccc;
     margin: 0 5px 0 0;
     background: #fff url(search.png) no-repeat 4px 2px;
-    padding-left: 20px;    
+    padding-left: 20px;
     font-size: 11px;
 }
 
@@ -124,7 +124,7 @@ body {
     height: 14px;
     background: url(errorIcon.png) no-repeat;
     color: #f00;
-    font-weight: bold;    
+    font-weight: bold;
 }
 
 #fbMiniErrors {
@@ -139,7 +139,7 @@ body {
     margin: 3px 4px 0;
     height: 20px;
     width: 20px;
-    float: right;    
+    float: right;
     background: url(sprite.png) 0 -135px;
     cursor: pointer;
 }
@@ -192,10 +192,10 @@ body {
 }
 
 /************************************************************************************************
- Sub-Layout 
+ Sub-Layout
 *************************************************************************************************/
 
-/* fbToolbar 
+/* fbToolbar
 *************************************************************************************************/
 #fbToolbarIcon {
     float: left;
@@ -237,7 +237,7 @@ body {
     position: relative;
     top: 5px;
     line-height: 19px;
-    cursor: default;    
+    cursor: default;
 }
 
 .fbToolbarSeparator{
@@ -262,7 +262,7 @@ body {
 
 .fbStatusBar span a:hover {
     color: blue;
-    cursor: pointer;    
+    cursor: pointer;
 }
 
 
@@ -307,7 +307,7 @@ body {
     padding-left: 10px;
 }
 
-/* body 
+/* body
 *************************************************************************************************/
 .fbPanel {
     display: none;
@@ -340,7 +340,7 @@ body {
     visibility: hidden !important;
 }
 
-/* fbBottom 
+/* fbBottom
 *************************************************************************************************/
 
 #fbCommand {
@@ -391,7 +391,7 @@ div.fbFitHeight {
  Layout Controls
 *************************************************************************************************/
 
-/* fbToolbar buttons 
+/* fbToolbar buttons
 *************************************************************************************************/
 #fbWindowButtons a {
     font-size: 1px;
@@ -420,7 +420,7 @@ div.fbFitHeight {
     background: url(sprite.png) -48px -119px;
 }
 
-/* fbPanelBarBox tabs 
+/* fbPanelBarBox tabs
 *************************************************************************************************/
 .fbTab {
     text-decoration: none;
@@ -475,7 +475,7 @@ a.fbTab:hover .fbTabR {
     background: url(sprite.png) -8px -96px !important;
 }
 
-/* splitters 
+/* splitters
 *************************************************************************************************/
 #fbHSplitter {
     position: absolute;
@@ -571,7 +571,7 @@ div.objectBox-element {
     color: #fff !important;
 }
 
-/* Webkit CSS Hack - bug in "highlight" named color */ 
+/* Webkit CSS Hack - bug in "highlight" named color */
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .selectedElement{
       background: #316AC5;

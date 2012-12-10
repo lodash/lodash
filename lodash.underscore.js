@@ -185,7 +185,7 @@
    * Creates a `lodash` object, that wraps the given `value`, to enable
    * method chaining.
    *
-   * The wrapper functions capable of chaining are:
+   * The chainable wrapper functions are:
    * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
    * `compose`, `countBy`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
    * `filter`, `flatten`, `forEach`, `forIn`, `forOwn`, `functions`, `groupBy`,
@@ -194,16 +194,16 @@
    * `range`, `reject`, `rest`, `shuffle`, `sortBy`, `tap`, `throttle`, `times`,
    * `toArray`, `union`, `uniq`, `values`, `where`, `without`, `wrap`, and `zip`
    *
-   * The wrapper functions that do not chain are:
-   * `clone`, `contains`, `escape`, `every`, `find`, `has`, `identity`,
-   * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
-   * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
-   * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `lastIndexOf`,
-   * `mixin`, `noConflict`, `random`, `reduce`, `reduceRight`, `result`, `size`,
-   * `some`, `sortedIndex`, `template`, `unescape`, and `uniqueId`
+   * The non-chainable wrapper functions are:
+   * `clone`, `contains`, `escape`, `every`, `find`, `has`, `identity`, `indexOf`,
+   * `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
+   * `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`, `isObject`,
+   * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `lastIndexOf`, `mixin`,
+   * `noConflict`, `random`, `reduce`, `reduceRight`, `result`, `size`, `some`,
+   * `sortedIndex`, `template`, `unescape`, and `uniqueId`
    *
    * The wrapper functions `first` and `last` return wrapped values when `n` is
-   * passed, otherwise unwrapped values are returned.
+   * passed, otherwise return unwrapped values.
    *
    * @name _
    * @constructor
@@ -3656,7 +3656,6 @@
   /*--------------------------------------------------------------------------*/
 
   // add functions that return wrapped values when chaining
-
   lodash.after = after;
   lodash.bind = bind;
   lodash.bindAll = bindAll;
@@ -3794,7 +3793,7 @@
   lodash.prototype.chain = wrapperChain;
   lodash.prototype.value = wrapperValueOf;
 
-  // add mutator `Array` functions to the wrapper
+  // add `Array` mutator functions to the wrapper
   forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
@@ -3810,7 +3809,7 @@
     };
   });
 
-  // add accessor `Array` functions to the wrapper
+  // add `Array` accessor functions to the wrapper
   forEach(['concat', 'join', 'slice'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {

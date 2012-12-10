@@ -328,25 +328,6 @@
       ].join('\n');
     });
 
-    // add `__chain__` checks to `_.mixin` and `Array` function wrappers
-    _.each([
-      matchFunction(source, 'mixin'),
-      /(?:\s*\/\/.*)*\n( *)forEach\(\['[\s\S]+?\n\1}.+/g
-    ], function(pattern) {
-      source = source.replace(pattern, function(match) {
-        return match.replace(/( *)return new lodash\(([^)]+)\).+/, function(submatch, indent, varName) {
-          return indent + [
-            'if (this.__chain__) {',
-            '  varName = new lodash(varName);',
-            '  varName.__chain__ = true;',
-            '}',
-            'return varName;'
-          ].join('\n' + indent)
-          .replace(/varName/g, varName);
-        });
-      });
-    });
-
     // add `lodash.chain` assignment
     source = source.replace(getMethodAssignments(source), function(match) {
       return match.replace(/^(?: *\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\n)?( *)lodash\.VERSION *=/m, '$1lodash.chain = chain;\n\n$&');
@@ -369,6 +350,56 @@
         '',
         '  // add functions to `lodash.prototype`',
         '  mixin(lodash);'
+      ].join('\n');
+    });
+
+    // add `__chain__` checks to `_.mixin`
+    source = source.replace(matchFunction(source, 'mixin'), function(match) {
+      return match.replace(/^( *)return new lodash.+/m, function() {
+        var indent = arguments[1];
+        return indent + [
+          'if (this.__chain__) {',
+          '  result = new lodash(result);',
+          '  result.__chain__ = true;',
+          '}',
+          'return result;'
+        ].join('\n' + indent);
+      });
+    });
+
+    // replace wrapper `Array` method assignments
+    source = source.replace(/^(?: *\/\/.*\n)*( *)forEach\(\['[\s\S]+?\n\1}$/m, function() {
+      return [
+        '  // add `Array` mutator functions to the wrapper',
+        "  forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
+        '    var func = arrayRef[methodName];',
+        '    lodash.prototype[methodName] = function() {',
+        '      var value = this.__wrapped__;',
+        '      func.apply(value, arguments);',
+        '',
+        '      // avoid array-like object bugs with `Array#shift` and `Array#splice`',
+        '      // in Firefox < 10 and IE < 9',
+        '      if (hasObjectSpliceBug && value.length === 0) {',
+        '        delete value[0];',
+        '      }',
+        '      return this;',
+        '    };',
+        '  });',
+        '',
+        '  // add `Array` accessor functions to the wrapper',
+        "  forEach(['concat', 'join', 'slice'], function(methodName) {",
+        '    var func = arrayRef[methodName];',
+        '    lodash.prototype[methodName] = function() {',
+        '      var value = this.__wrapped__,',
+        '          result = func.apply(value, arguments);',
+        '',
+        '      if (this.__chain__) {',
+        '        result = new lodash(result);',
+        '        result.__chain__ = true;',
+        '      }',
+        '      return result;',
+        '    };',
+        '  });'
       ].join('\n');
     });
 
@@ -918,6 +949,19 @@
     });
 
     return source;
+  }
+
+  /**
+   * Removes all `hasObjectSpliceByg` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeHasObjectSpliceBug(source) {
+    return removeVar(source, 'hasObjectSpliceBug')
+      // remove `hasObjectSpliceBug` fix from the `Array` function mixins
+      .replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
   }
 
   /**
@@ -1762,9 +1806,7 @@
         }
         else {
           source = removeIsArgumentsFallback(source);
-
-          // remove `hasObjectSpliceBug` fix from the mutator Array functions mixin
-          source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?\n\1}/, '');
+          source = removeHasObjectSpliceBug(source);
         }
 
         // remove `thisArg` from unexposed `forIn` and `forOwn`
@@ -1908,7 +1950,7 @@
         source = removeIsFunctionFallback(source);
       }
       if (isRemoved(source, 'mixin')) {
-        source = removeVar(source, 'hasObjectSpliceBug');
+        source = removeHasObjectSpliceBug(source);
 
         // simplify the `lodash` function
         source = replaceFunction(source, 'lodash', [
@@ -1921,8 +1963,8 @@
         source = source
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)forEach\(\['[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+\n/, '')
-          .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+\n/, '');
+          .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+\n/g, '')
+          .replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+\n/, '');
       }
 
       // assign debug source before further modifications that rely on the minifier

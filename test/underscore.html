@@ -33,13 +33,19 @@
 			document.write('<script src="../' + ui.buildPath + '"><\/script>');
 		</script>
 		<script>
-			if (!_.chain) {
+			(function() {
+				var push = Array.prototype.push,
+				    slice = Array.prototype.slice;
+
+				if (_.chain) {
+					return;
+				}
 				_.mixin = function(object) {
 					_.forEach(_.functions(object), function(methodName) {
 						var func = _[methodName] = object[methodName];
 						_.prototype[methodName] = function() {
 							var args = [this.__wrapped__];
-							args.push.apply(args, arguments);
+							push.apply(args, arguments);
 
 							var result = func.apply(_, args);
 							if (this.__chain__) {
@@ -65,14 +71,19 @@
 				};
 
 				_.prototype.concat = _.wrap(_.prototype.concat, function(func) {
-					var result = func.apply(this, Array.prototype.slice.call(arguments, 1));
+					var result = func.apply(this, slice.call(arguments, 1));
 					if (this.__chain__) {
-					  result = new _(result);
-					  result.__chain__ = true;
+						result = new _(result);
+						result.__chain__ = true;
 					}
 					return result;
 				});
-			}
+
+				_.prototype.pop = _.wrap(_.prototype.pop, function(func) {
+					func.apply(this, slice.call(arguments, 1));
+					return this;
+				});
+			}());
 		</script>
 		<script src="../vendor/underscore/test/collections.js"></script>
 		<script src="../vendor/underscore/test/arrays.js"></script>

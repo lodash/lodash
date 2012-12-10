@@ -444,7 +444,7 @@
       console.log(e);
       pass = false;
     }
-    equal(pass, true, '_.' + methodName + ': ' + message);
+    ok(pass, '_.' + methodName + ': ' + message);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -632,7 +632,7 @@
             return pass;
           });
 
-          equal(actual, true, basename);
+          ok(actual, basename);
           start();
         });
       });
@@ -664,12 +664,18 @@
           ok(lodash(1).chain() instanceof lodash, '_#chain: ' + basename);
 
           var wrapped = lodash(1);
-          equal(wrapped.clone() instanceof lodash, false, '_(...) wrapped values are not chainable by default: ' + basename);
+          strictEqual(wrapped.identity(), 1, '_(...) wrapped values are not chainable by default: ' + basename);
           equal(String(wrapped) === '1', false, '_#toString should not be implemented: ' + basename);
           equal(Number(wrapped) === 1 , false, '_#valueOf should not be implemented: ' + basename);
 
           wrapped.chain();
-          equal(wrapped.has('x') instanceof lodash, true, '_#has returns wrapped values when chaining: ' + basename);
+          ok(wrapped.has('x') instanceof lodash, '_#has returns wrapped values when chaining: ' + basename);
+          ok(wrapped.join() instanceof lodash, '_#join returns wrapped values when chaining: ' + basename);
+
+          wrapped = lodash([1, 2, 3]);
+          ok(wrapped.pop() instanceof lodash, '_#pop returns wrapped values: ' + basename);
+          ok(wrapped.shift() instanceof lodash, '_#shift returns wrapped values: ' + basename);
+          deepEqual(wrapped.splice(0, 0).value(), [2], '_#splice returns wrapper: ' + basename);
 
           start();
         });
@@ -697,10 +703,10 @@
         var object = { 'fn': lodash.bind(function(foo) { return foo + this.bar; }, { 'bar': 1 }, 1) };
         equal(object.fn(), 2, '_.bind: ' + basename);
 
-        ok(lodash.clone(array, true)[0] === array[0], '_.clone should be shallow: ' + basename);
-        equal(lodash.contains({ 'a': 1, 'b': 2 }, 1), true, '_.contains should work with objects: ' + basename);
-        equal(lodash.contains([1, 2, 3], 1, 2), true, '_.contains should ignore `fromIndex`: ' + basename);
-        equal(lodash.every([true, false, true]), false, '_.every: ' + basename);
+        strictEqual(lodash.clone(array, true)[0], array[0], '_.clone should be shallow: ' + basename);
+        ok(lodash.contains({ 'a': 1, 'b': 2 }, 1), '_.contains should work with objects: ' + basename);
+        ok(lodash.contains([1, 2, 3], 1, 2), '_.contains should ignore `fromIndex`: ' + basename);
+        ok(!lodash.every([true, false, true]), '_.every: ' + basename);
 
         function Foo() {}
         Foo.prototype = { 'a': 1 };
@@ -739,7 +745,7 @@
         actual = lodash.pick(object, function(value) { return value != 3; });
         deepEqual(_.keys(actual), [], '_.pick should not accept a `callback`: ' + basename);
 
-        equal(lodash.some([false, true, false]), true, '_.some: ' + basename);
+        ok(lodash.some([false, true, false]), '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
         equal(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);
 
@@ -843,8 +849,8 @@
             case 1:
               context.exports = {};
               vm.runInContext(source, context);
-              ok(context._ === undefined, basename);
-              ok(_.isFunction(context.exports._), basename)
+              ok(_.isFunction(context.exports._), basename);
+              strictEqual(context._, undefined, basename);
               break;
 
             case 2:
@@ -856,13 +862,13 @@
               context.exports = {};
               context.module = { 'exports': context.exports };
               vm.runInContext(source, context);
-              ok(context._ === undefined, basename);
               ok(_.isFunction(context.module.exports), basename);
+              strictEqual(context._, undefined, basename);
               break;
 
             case 4:
               vm.runInContext(source, context);
-              ok(context._ === undefined, basename);
+              strictEqual(context._, undefined, basename);
           }
           start();
         });
@@ -978,7 +984,6 @@
           } catch(e) {
             console.log(e);
           }
-
           var underscore = context._ || {};
           ok(_.isString(underscore.VERSION));
           ok(!/Lo-Dash/.test(result) && result.match(/\n/g).length < source.match(/\n/g).length);
@@ -1019,7 +1024,7 @@
 
         deepEqual(lodash.merge(object1, object2), object3, basename);
         deepEqual(lodash.sortBy([3, 2, 1], _.identity), array, basename);
-        equal(lodash.isEqual(circular1, circular2), true, basename);
+        ok(lodash.isEqual(circular1, circular2), basename);
 
         var actual = lodash.clone(circular1, true);
         ok(actual != circular1 && actual.b == actual, basename);

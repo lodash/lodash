@@ -238,21 +238,21 @@ require({
 
 ## Release Notes
 
-### <sup>v1.0.0-rc.2</sup> ###
+### <sup>v1.0.0-rc.2</sup>
 
  * Specified more method chaining behaviors
  * Updated `underscore` build compatibility to v1.4.3
 
-### <sup>v1.0.0-rc.1</sup> ###
+### <sup>v1.0.0-rc.1</sup>
 
-#### Compatibility Warnings ####
+#### Compatibility Warnings
 
  * Made `_(…)` chain automatically without needing to call `_#chain`
  * Made `_.isEqual` equate `arguments` objects to similar `Object` objects
  * Made `_.clone` copy the enumerable properties of `arguments` objects and objects<br>
    created by constructors other than `Object` are cloned to plain `Object` objects
 
-#### Changes ####
+#### Changes
 
  * Ensure Lo-Dash runs in the JS engine embedded in Adobe products
  * Ensured `_.reduce` and `_.reduceRight` pass the correct number of `callback` arguments

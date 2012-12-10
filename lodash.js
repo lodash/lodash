@@ -1184,7 +1184,7 @@
    * // => true
    */
   var isArray = nativeIsArray || function(value) {
-    return toString.call(value) == arrayClass;
+    return value instanceof Array || toString.call(value) == arrayClass;
   };
 
   /**
@@ -1218,7 +1218,7 @@
    * // => true
    */
   function isDate(value) {
-    return toString.call(value) == dateClass;
+    return value instanceof Date || toString.call(value) == dateClass;
   }
 
   /**
@@ -1476,7 +1476,7 @@
   // fallback for older versions of Chrome and Safari
   if (isFunction(/x/)) {
     isFunction = function(value) {
-      return toString.call(value) == funcClass;
+      return value instanceof Function || toString.call(value) == funcClass;
     };
   }
 
@@ -1626,7 +1626,7 @@
    * // => true
    */
   function isRegExp(value) {
-    return toString.call(value) == regexpClass;
+    return value instanceof RegExp || toString.call(value) == regexpClass;
   }
 
   /**

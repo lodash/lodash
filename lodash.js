@@ -4159,7 +4159,6 @@
   /*--------------------------------------------------------------------------*/
 
   // add functions that return wrapped values when chaining
-
   lodash.after = after;
   lodash.assign = assign;
   lodash.bind = bind;
@@ -4323,32 +4322,48 @@
   lodash.prototype.value = wrapperValueOf;
   lodash.prototype.valueOf = wrapperValueOf;
 
-  // add mutator `Array` functions to the wrapper
-  forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+  // add `Array` functions that return unwrapped values
+  forEach(['join', 'pop', 'shift'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
-      var value = this.__wrapped__;
-      func.apply(value, arguments);
+      return func.apply(this.__wrapped__, arguments);
+    };
+  });
 
-      // avoid array-like object bugs with `Array#shift` and `Array#splice`
-      // in Firefox < 10 and IE < 9
-      if (hasObjectSpliceBug && value.length === 0) {
-        delete value[0];
-      }
+  // add `Array` functions that return the wrapped value
+  forEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
+    var func = arrayRef[methodName];
+    lodash.prototype[methodName] = function() {
+      func.apply(this.__wrapped__, arguments);
       return this;
     };
   });
 
-  // add accessor `Array` functions to the wrapper
-  forEach(['concat', 'join', 'slice'], function(methodName) {
+  // add `Array` functions that return new wrapped values
+  forEach(['concat', 'slice', 'splice'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
-      var value = this.__wrapped__,
-          result = func.apply(value, arguments);
-
+      var result = func.apply(this.__wrapped__, arguments);
       return new lodash(result);
     };
   });
+
+  // avoid array-like object bugs with `Array#shift` and `Array#splice`
+  // in Firefox < 10 and IE < 9
+  if (hasObjectSpliceBug) {
+    forEach(['shift', 'splice'], function(methodName) {
+      var func = lodash.prototype[methodName];
+      lodash.prototype[methodName] = function() {
+        var value = this.__wrapped__,
+            result = func.apply(this, arguments);
+
+        if (value.length === 0) {
+          delete value[0];
+        }
+        return result;
+      };
+    });
+  }
 
   // add pseudo private property to be used and removed during the build process
   lodash._iteratorTemplate = iteratorTemplate;

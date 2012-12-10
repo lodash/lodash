@@ -281,7 +281,7 @@
         ok(_.isEqual(object, clone));
 
         if (_.isObject(object)) {
-          ok(clone !== object);
+          notStrictEqual(clone, object);
         } else {
           skipTest();
         }
@@ -290,8 +290,8 @@
 
     _.forOwn(nonCloneable, function(object, key) {
       test('should not clone ' + key, function() {
-        ok(_.clone(object) === object);
-        ok(_.clone(object, true) === object);
+        strictEqual(_.clone(object), object);
+        strictEqual(_.clone(object, true), object);
       });
     });
 
@@ -325,9 +325,9 @@
 
     test('should clone problem JScript properties (test in IE < 9)', function() {
       deepEqual(_.clone(shadowed), shadowed);
-      ok(_.clone(shadowed) != shadowed);
+      notEqual(_.clone(shadowed), shadowed);
       deepEqual(_.clone(shadowed, true), shadowed);
-      ok(_.clone(shadowed, true) != shadowed);
+      notEqual(_.clone(shadowed, true), shadowed);
     });
   }(1, 2, 3));
 
@@ -343,7 +343,7 @@
     },
     function(collection, key) {
       test('should work with ' + key + ' and a positive `fromIndex`', function() {
-        equal(_.contains(collection, 1, 2), true);
+        ok(_.contains(collection, 1, 2));
       });
 
       test('should work with ' + key + ' and a `fromIndex` >= collection\'s length', function() {
@@ -354,12 +354,12 @@
       });
 
       test('should work with ' + key + ' and a negative `fromIndex`', function() {
-        equal(_.contains(collection, 2, -3), true);
+        ok(_.contains(collection, 2, -3));
       });
 
       test('should work with ' + key + ' and a negative `fromIndex` <= negative collection\'s length', function() {
-        equal(_.contains(collection, 1, -6), true);
-        equal(_.contains(collection, 2, -8), true);
+        ok(_.contains(collection, 1, -6));
+        ok(_.contains(collection, 2, -8));
       });
     });
 
@@ -369,8 +369,8 @@
     },
     function(collection, key) {
       test('should work with a string ' + key + ' for `collection`', function() {
-        equal(_.contains(collection, 'bc'), true);
-        equal(_.contains(collection, 'd'), false);
+        ok(_.contains(collection, 'bc'));
+        ok(!_.contains(collection, 'd'));
       });
     });
   }());
@@ -453,7 +453,7 @@
 
   (function() {
     test('should return `false` as soon as the `callback` result is falsey', function() {
-      equal(_.every([true, null, true], _.identity), false);
+      ok(!_.every([true, null, true], _.identity));
     });
   }());
 
@@ -770,7 +770,7 @@
   (function() {
     test('should use strict equality in its duck type check', function() {
       var element = window.document ? document.body : { 'nodeType': 1 };
-      equal(_.isElement(element), true);
+      ok(_.isElement(element));
 
       equal(_.isElement({ 'nodeType': new Number(1) }), false);
       equal(_.isElement({ 'nodeType': true }), false);
@@ -794,21 +794,21 @@
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
       function Foo() {}
       Foo.prototype.a = 1;
-      equal(_.isEmpty(Foo), true);
+      ok(_.isEmpty(Foo));
 
       Foo.prototype = { 'a': 1 };
-      equal(_.isEmpty(Foo), true);
+      ok(_.isEmpty(Foo));
     });
 
     test('should work with an object that has a `length` property', function() {
-      equal(_.isEmpty({ 'length': 0 }), false);
+      ok(!_.isEmpty({ 'length': 0 }));
     });
 
     test('should work with jQuery/MooTools DOM query collections', function() {
       function Foo(elements) { Array.prototype.push.apply(this, elements); }
       Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
 
-      equal(_.isEmpty(new Foo([])), true);
+      ok(_.isEmpty(new Foo([])));
     });
 
     test('should work with `arguments` objects (test in IE < 9)', function() {
@@ -826,8 +826,8 @@
           args2 = (function() { return arguments; }(1, 2, 3)),
           args3 = (function() { return arguments; }(1, 2));
 
-      equal(_.isEqual(args1, args2), true);
-      equal(_.isEqual(args1, args3), false);
+      ok(_.isEqual(args1, args2));
+      ok(!_.isEqual(args1, args3));
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
@@ -838,7 +838,7 @@
       // ensure `_._object` is assigned (unassigned in Opera 10.00)
       if (_._object) {
         var object = { 'a': 1, 'b': 2, 'c': 3 };
-        equal(_.isEqual(object, _._object), true);
+        ok(_.isEqual(object, _._object));
       }
       else {
         skipTest();
@@ -865,18 +865,18 @@
 
   (function() {
     test('should return `false` for non-numeric values', function() {
-      equal(_.isFinite(null), false);
-      equal(_.isFinite([]), false);
-      equal(_.isFinite(true), false);
-      equal(_.isFinite(''), false);
-      equal(_.isFinite(' '), false);
-      equal(_.isFinite('2px'), false);
+      ok(!_.isFinite(null));
+      ok(!_.isFinite([]));
+      ok(!_.isFinite(true));
+      ok(!_.isFinite(''));
+      ok(!_.isFinite(' '));
+      ok(!_.isFinite('2px'));
     });
 
     test('should return `true` for numeric string values', function() {
-      equal(_.isFinite('2'), true);
-      equal(_.isFinite('0'), true);
-      equal(_.isFinite('08'), true);
+      ok(_.isFinite('2'));
+      ok(_.isFinite('0'));
+      ok(_.isFinite('08'));
     });
   }());
 
@@ -906,7 +906,7 @@
 
   (function() {
     test('returns `true` for `new Number(NaN)`', function() {
-      equal(_.isNaN(new Number(NaN)), true)
+      ok(_.isNaN(new Number(NaN)));
     });
   }());
 
@@ -920,9 +920,9 @@
         this.a = 1;
       }
 
-      equal(_.isPlainObject(new Foo(1)), false);
-      equal(_.isPlainObject([1, 2, 3]), false);
-      equal(_.isPlainObject({ 'a': 1 }), true);
+      ok(!_.isPlainObject(new Foo(1)));
+      ok(!_.isPlainObject([1, 2, 3]));
+      ok(_.isPlainObject({ 'a': 1 }));
     });
   }());
 
@@ -947,7 +947,8 @@
     'isRegExp',
     'isString',
     'isUndefined'
-  ], function(methodName) {
+  ],
+  function(methodName) {
     var func = _[methodName];
 
     test('lodash.' + methodName + ' should return a boolean', function() {
@@ -1357,7 +1358,7 @@
       while ((new Date - start) < 50 && actual == 5) {
         actual = _.random(5);
       }
-      ok(actual != 5);
+      notEqual(actual, 5);
     });
   }());
 
@@ -1540,7 +1541,7 @@
 
   (function() {
     test('should return `true` as soon as the `callback` result is truthy', function() {
-      equal(_.some([null, true, null], _.identity), true);
+      ok(_.some([null, true, null], _.identity));
     });
   }());
 
@@ -1667,7 +1668,8 @@
         '<%= new Boolean %>': 'false',
         '<%= typeof a %>': 'number',
         '<%= void a %>': ''
-      }, function(value, key) {
+      },
+      function(value, key) {
         var compiled = _.template(key),
             data = { 'a': 1, 'b': 2 };
 
@@ -1938,7 +1940,7 @@
 
     test('should coerce the prefix argument to a string', function() {
       var actual = [_.uniqueId(3), _.uniqueId(2), _.uniqueId(1)];
-      equal(/3\d+,2\d+,1\d+/.test(actual), true);
+      ok(/3\d+,2\d+,1\d+/.test(actual));
     });
   }());
 
@@ -2045,6 +2047,78 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...) methods that return wrapped values');
+
+  (function() {
+    var array = [1, 2, 3],
+        wrapped = _(array);
+
+    var funcs = [
+      'concat',
+      'splice'
+    ];
+
+    _.each(funcs, function(methodName) {
+      test('_.' + methodName + ' should return a wrapped value', function() {
+        ok(wrapped[methodName]() instanceof _);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...) methods that return unwrapped values');
+
+  (function() {
+    var array = [1, 2, 3],
+        wrapped = _(array);
+
+    var funcs = [
+      'clone',
+      'contains',
+      'every',
+      'find',
+      'first',
+      'has',
+      'isArguments',
+      'isArray',
+      'isBoolean',
+      'isDate',
+      'isElement',
+      'isEmpty',
+      'isEqual',
+      'isFinite',
+      'isFunction',
+      'isNaN',
+      'isNull',
+      'isNumber',
+      'isObject',
+      'isPlainObject',
+      'isRegExp',
+      'isString',
+      'isUndefined',
+      'join',
+      'last',
+      'pop',
+      'shift',
+      'reduce',
+      'reduceRight',
+      'some'
+    ];
+
+    _.each(funcs, function(methodName) {
+      test('_.' + methodName + ' should return an unwrapped value', function() {
+        var result = methodName == 'reduceRight'
+          ? wrapped[methodName](_.identity)
+          : wrapped[methodName]();
+
+        equal(result instanceof _, false);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...) methods capable of returning wrapped and unwrapped values');
 
   (function() {
@@ -2069,68 +2143,20 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...) methods that return unwrapped values');
-
-  (function() {
-    var array = [1, 2, 3],
-        wrapped = _(array);
-
-    var funcs = [
-      'contains',
-      'every',
-      'find',
-      'first',
-      'has',
-      'isArguments',
-      'isArray',
-      'isBoolean',
-      'isDate',
-      'isElement',
-      'isEmpty',
-      'isEqual',
-      'isFinite',
-      'isFunction',
-      'isNaN',
-      'isNull',
-      'isNumber',
-      'isObject',
-      'isPlainObject',
-      'isRegExp',
-      'isString',
-      'isUndefined',
-      'last',
-      'reduce',
-      'reduceRight',
-      'some'
-    ];
-
-    _.each(funcs, function(methodName) {
-      test('_.' + methodName + ' should return unwrapped values', function() {
-        var result = methodName == 'reduceRight'
-          ? wrapped[methodName](_.identity)
-          : wrapped[methodName];
-
-        notEqual(typeof result, 'object', '_.' + methodName + ' returns unwrapped values');
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash methods');
 
   (function() {
     test('should allow falsey arguments', function() {
       var returnArrays = [
-       'filter',
-       'invoke',
-       'map',
-       'pluck',
-       'reject',
-       'shuffle',
-       'sortBy',
-       'toArray',
-       'where'
+        'filter',
+        'invoke',
+        'map',
+        'pluck',
+        'reject',
+        'shuffle',
+        'sortBy',
+        'toArray',
+        'where'
       ];
 
       var funcs = _.without.apply(_, [_.functions(_)].concat([
@@ -2220,7 +2246,7 @@
         }
 
         if (expected === null) {
-          deepEqual(thisArg, null, message);
+          strictEqual(thisArg, null, message);
         } else {
           equal(thisArg, expected, message);
         }

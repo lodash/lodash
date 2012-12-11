@@ -73,7 +73,7 @@
     'clone': ['assign', 'forEach', 'forOwn', 'isArray', 'isObject'],
     'compact': [],
     'compose': [],
-    'contains': ['forEach', 'indexOf', 'isString'],
+    'contains': ['indexOf', 'isString'],
     'countBy': ['forEach'],
     'debounce': [],
     'defaults': ['isArguments'],
@@ -81,12 +81,12 @@
     'delay': [],
     'difference': ['indexOf'],
     'escape': [],
-    'every': ['forEach', 'isArray'],
-    'filter': ['forEach', 'isArray'],
+    'every': ['isArray'],
+    'filter': ['isArray'],
     'find': ['forEach'],
     'first': [],
     'flatten': ['isArray'],
-    'forEach': ['identity', 'isArguments', 'isString'],
+    'forEach': ['identity', 'isArguments', 'isArray', 'isString'],
     'forIn': ['identity', 'isArguments'],
     'forOwn': ['identity', 'isArguments'],
     'functions': ['forIn', 'isFunction'],
@@ -95,7 +95,7 @@
     'identity': [],
     'indexOf': ['sortedIndex'],
     'initial': [],
-    'intersection': ['filter', 'indexOf'],
+    'intersection': ['forEach', 'indexOf'],
     'invert': ['forOwn'],
     'invoke': ['forEach'],
     'isArguments': [],
@@ -118,11 +118,11 @@
     'keys': ['forOwn', 'isArguments', 'isObject'],
     'last': [],
     'lastIndexOf': [],
-    'map': ['forEach', 'isArray'],
-    'max': ['forEach', 'isArray', 'isString'],
+    'map': ['isArray'],
+    'max': ['isArray', 'isString'],
     'memoize': [],
     'merge': ['forOwn', 'isArray', 'isPlainObject'],
-    'min': ['forEach', 'isArray', 'isString'],
+    'min': ['isArray', 'isString'],
     'mixin': ['forEach', 'forOwn', 'functions'],
     'noConflict': [],
     'object': [],
@@ -134,14 +134,14 @@
     'pluck': ['map'],
     'random': [],
     'range': [],
-    'reduce': ['forEach', 'isArray'],
+    'reduce': ['isArray'],
     'reduceRight': ['forEach', 'isString', 'keys'],
     'reject': ['filter'],
     'rest': [],
     'result': ['isFunction'],
     'shuffle': ['forEach'],
     'size': ['keys'],
-    'some': ['forEach', 'isArray'],
+    'some': ['isArray'],
     'sortBy': ['forEach'],
     'sortedIndex': ['identity'],
     'tap': ['mixin'],
@@ -368,10 +368,10 @@
     });
 
     // replace wrapper `Array` method assignments
-    source = source.replace(/^(?: *\/\/.*\n)*( *)forEach\(\['[\s\S]+?\n\1}$/m, function() {
+    source = source.replace(/^(?: *\/\/.*\n)*( *)each\(\['[\s\S]+?\n\1}$/m, function() {
       return [
         '  // add `Array` mutator functions to the wrapper',
-        "  forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
+        "  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
         '    var func = arrayRef[methodName];',
         '    lodash.prototype[methodName] = function() {',
         '      var value = this.__wrapped__;',
@@ -387,7 +387,7 @@
         '  });',
         '',
         '  // add `Array` accessor functions to the wrapper',
-        "  forEach(['concat', 'join', 'slice'], function(methodName) {",
+        "  each(['concat', 'join', 'slice'], function(methodName) {",
         '    var func = arrayRef[methodName];',
         '    lodash.prototype[methodName] = function() {',
         '      var value = this.__wrapped__,',
@@ -1274,11 +1274,11 @@
         dependencyMap.reduceRight = ['forEach', 'keys'];
       }
       if (isUnderscore) {
-        dependencyMap.contains = ['forEach', 'indexOf'];
+        dependencyMap.contains = ['indexOf'];
         dependencyMap.isEqual = ['isArray', 'isFunction'];
         dependencyMap.isEmpty = ['isArray', 'isString'];
-        dependencyMap.max = ['forEach', 'isArray'];
-        dependencyMap.min = ['forEach', 'isArray'];
+        dependencyMap.max = ['isArray'];
+        dependencyMap.min = ['isArray'];
         dependencyMap.pick = [];
         dependencyMap.template = ['defaults', 'escape'];
 
@@ -1390,7 +1390,7 @@
           "    if (typeof length == 'number') {",
           '      result = indexOf(collection, target) > -1;',
           '    } else {',
-          '      forEach(collection, function(value) {',
+          '      each(collection, function(value) {',
           '        return (result = value === target) && indicatorObject;',
           '      });',
           '    }',
@@ -1734,7 +1734,8 @@
       if (isMobile) {
         // inline all functions defined with `createIterator`
         _.functions(lodash).forEach(function(methodName) {
-          var reFunc = RegExp('(\\bvar ' + methodName + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
+          // strip leading underscores to match pseudo private functions
+          var reFunc = RegExp('(\\bvar ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
           if (reFunc.test(source)) {
             // extract, format, and inject the compiled function's source code
             source = source.replace(reFunc, function(match, captured) {
@@ -1777,13 +1778,15 @@
             });
           }());
 
-          // remove chainability from `_.forEach`
-          source = source.replace(matchFunction(source, 'forEach'), function(match) {
-            return match.replace(/return result([};\s]+)$/, '$1');
+          // remove chainability from `each` and `_.forEach`
+          _.each(['each', 'forEach'], function(methodName) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match.replace(/\n *return .+?([};\s]+)$/, '$1');
+            });
           });
 
-          // unexpose "exit early" feature from `_.forEach`, `_.forIn`, and `_.forOwn`
-          _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
+          // unexpose "exit early" feature of `each`, `_.forEach`, `_.forIn`, and `_.forOwn`
+          _.each(['each', 'forEach', 'forIn', 'forOwn'], function(methodName) {
             source = source.replace(matchFunction(source, methodName), function(match) {
               return match.replace(/=== *false\)/g, '=== indicatorObject)');
             });
@@ -1962,7 +1965,7 @@
         // remove all `lodash.prototype` additions
         source = source
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\n( *)forEach\(\['[\s\S]+?\n\1}.+/g, '')
+          .replace(/(?:\s*\/\/.*)*\n( *)each\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+\n/g, '')
           .replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+\n/, '');
       }

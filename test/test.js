@@ -1818,12 +1818,12 @@
         actual = counter + 2;
         throttled();
         throttled();
-      }, 64);
+      }, 128);
 
       setTimeout(function() {
         equal(counter, actual);
         QUnit.start();
-      }, 128);
+      }, 256);
 
       ok(counter > 1);
     });

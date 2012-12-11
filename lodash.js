@@ -2887,20 +2887,24 @@
   function intersection(array) {
     var args = arguments,
         argsLength = args.length,
+        index = -1,
+        length = array ? array.length : 0,
         cache = {},
         result = [];
 
-    forEach(array, function(value) {
+    outer:
+    while (++index < length) {
+      var value = array[index];
       if (indexOf(result, value) < 0) {
-        var length = argsLength;
-        while (--length) {
-          if (!(cache[length] || (cache[length] = cachedContains(args[length])))(value)) {
-            return;
+        var argsIndex = argsLength;
+        while (--argsIndex) {
+          if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(args[argsIndex])))(value)) {
+            continue outer;
           }
         }
         result.push(value);
       }
-    });
+    }
     return result;
   }
 

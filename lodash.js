@@ -116,8 +116,7 @@
       stringClass = '[object String]';
 
   /** Detect various environments */
-  var isFirefox = !/1/.test(Function('1')),
-      isIeOpera = !!window.attachEvent,
+  var isIeOpera = !!window.attachEvent,
       isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
@@ -247,24 +246,25 @@
    * method chaining.
    *
    * The chainable wrapper functions are:
-   * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
-   * `compose`, `countBy`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
+   * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`, `compose`,
+   * `concat`, `countBy`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
    * `filter`, `flatten`, `forEach`, `forIn`, `forOwn`, `functions`, `groupBy`,
    * `initial`, `intersection`, `invert`, `invoke`, `keys`, `map`, `max`, `memoize`,
    * `merge`, `min`, `object`, `omit`, `once`, `pairs`, `partial`, `pick`, `pluck`,
-   * `range`, `reject`, `rest`, `shuffle`, `sortBy`, `tap`, `throttle`, `times`,
-   * `toArray`, `union`, `uniq`, `values`, `where`, `without`, `wrap`, and `zip`
+   * `push`, `range`, `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
+   * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`,
+   * `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
    *
    * The non-chainable wrapper functions are:
    * `clone`, `contains`, `escape`, `every`, `find`, `has`, `identity`, `indexOf`,
    * `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
    * `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`, `isObject`,
-   * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `lastIndexOf`, `mixin`,
-   * `noConflict`, `random`, `reduce`, `reduceRight`, `result`, `size`, `some`,
-   * `sortedIndex`, `template`, `unescape`, and `uniqueId`
+   * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`, `lastIndexOf`,
+   * `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`, `result`,
+   * `shift`, `size`, `some`, `sortedIndex`, `template`, `unescape`, and `uniqueId`
    *
    * The wrapper functions `first` and `last` return wrapped values when `n` is
-   * passed, otherwise return unwrapped values.
+   * passed, otherwise they return unwrapped values.
    *
    * @name _
    * @constructor
@@ -333,25 +333,6 @@
   };
 
   /*--------------------------------------------------------------------------*/
-
-  /**
-   * Creates a function from the given `args` and `body` strings.
-   *
-   * @private
-   * @param {String} args The comma separated function arguments.
-   * @param {String} body The function body.
-   * @returns {Function} The new function.
-   */
-  function createFunction(args, body) {
-    // the newline, in `'\n}'`, is required to avoid errors if `body` ends
-    // with a single line comment
-    return window.eval('(function(' + args + ') {' + body + '\n})');
-  }
-  // use `eval` to avoid Firefox's unoptimized `Function` constructor
-  // http://bugzil.la/804933
-  if (isIeOpera || isV8 || !isFirefox) {
-    createFunction = Function;
-  }
 
   /**
    * The template used to create iterator functions.
@@ -476,9 +457,9 @@
   };
 
   /**
-   * Reusable iterator options shared by `forEach`, `forIn`, and `forOwn`.
+   * Reusable iterator options shared by `each`, `forIn`, and `forOwn`.
    */
-  var forEachIteratorOptions = {
+  var eachIteratorOptions = {
     'args': 'collection, callback, thisArg',
     'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
     'arrayLoop': 'if (callback(iteratee[index], index, collection) === false) return result',
@@ -696,7 +677,7 @@
     data.firstArg = /^[^,]+/.exec(args)[0];
 
     // create the function factory
-    var factory = createFunction(
+    var factory = Function(
         'createCallback, hasOwnProperty, isArguments, isString, objectTypes, ' +
         'nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
@@ -707,6 +688,21 @@
       nativeKeys, propertyIsEnumerable
     );
   }
+
+  /**
+   * A function compiled to iterate `arguments` objects, arrays, objects, and
+   * strings consistenly across environments, executing the `callback` for each
+   * element in the `collection`. The `callback` is bound to `thisArg` and invoked
+   * with three arguments; (value, index|key, collection). Callbacks may exit
+   * iteration early by explicitly returning `false`.
+   *
+   * @private
+   * @param {Array|Object|String} collection The collection to iterate over.
+   * @param {Function} [callback=identity] The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Array|Object|String} Returns `collection`.
+   */
+  var each = createIterator(eachIteratorOptions);
 
   /**
    * Used by `template` to escape characters for inclusion in compiled
@@ -867,7 +863,7 @@
    * });
    * // => alerts 'name' and 'bark' (order is not guaranteed)
    */
-  var forIn = createIterator(forEachIteratorOptions, forOwnIteratorOptions, {
+  var forIn = createIterator(eachIteratorOptions, forOwnIteratorOptions, {
     'useHas': false
   });
 
@@ -891,7 +887,7 @@
    * });
    * // => alerts '0', '1', and 'length' (order is not guaranteed)
    */
-  var forOwn = createIterator(forEachIteratorOptions, forOwnIteratorOptions);
+  var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
 
   /**
    * A fallback implementation of `isPlainObject` that checks if a given `value`
@@ -1941,7 +1937,7 @@
         : indexOf(collection, target, fromIndex)
       ) > -1;
     } else {
-      forEach(collection, function(value) {
+      each(collection, function(value) {
         if (++index >= fromIndex) {
           return !(result = value === target);
         }
@@ -2020,7 +2016,7 @@
         }
       }
     } else {
-      forEach(collection, function(value, index, collection) {
+      each(collection, function(value, index, collection) {
         return (result = !!callback(value, index, collection));
       });
     }
@@ -2060,7 +2056,7 @@
         }
       }
     } else {
-      forEach(collection, function(value, index, collection) {
+      each(collection, function(value, index, collection) {
         if (callback(value, index, collection)) {
           result.push(value);
         }
@@ -2124,7 +2120,24 @@
    * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, alert);
    * // => alerts each number value (order is not guaranteed)
    */
-  var forEach = createIterator(forEachIteratorOptions);
+  function forEach(collection, callback, thisArg) {
+    if (isArray(collection)) {
+      var index = -1,
+          length = collection.length;
+
+      if (!callback || typeof thisArg != 'undefined') {
+        callback = createCallback(callback, thisArg);
+      }
+      while (++index < length) {
+        if (callback(collection[index], index, collection) === false) {
+          break;
+        }
+      }
+    } else {
+      each(collection, callback, thisArg);
+    }
+    return collection;
+  }
 
   /**
    * Creates an object composed of keys returned from running each element of
@@ -2228,7 +2241,7 @@
         result[index] = callback(collection[index], index, collection);
       }
     } else {
-      forEach(collection, function(value, key, collection) {
+      each(collection, function(value, key, collection) {
         result[++index] = callback(value, key, collection);
       });
     }
@@ -2270,7 +2283,7 @@
         ? charAtCallback
         : createCallback(callback, thisArg);
 
-      forEach(collection, function(value, index, collection) {
+      each(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
         if (current > computed) {
           computed = current;
@@ -2316,7 +2329,7 @@
         ? charAtCallback
         : createCallback(callback, thisArg);
 
-      forEach(collection, function(value, index, collection) {
+      each(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
         if (current < computed) {
           computed = current;
@@ -2393,7 +2406,7 @@
         accumulator = callback(accumulator, collection[index], index, collection);
       }
     } else {
-      forEach(collection, function(value, index, collection) {
+      each(collection, function(value, index, collection) {
         accumulator = noaccum
           ? (noaccum = false, value)
           : callback(accumulator, value, index, collection)
@@ -2550,7 +2563,7 @@
         }
       }
     } else {
-      forEach(collection, function(value, index, collection) {
+      each(collection, function(value, index, collection) {
         return !(result = callback(value, index, collection));
       });
     }
@@ -4006,7 +4019,7 @@
       : '';
 
     try {
-      result = createFunction('_', 'return ' + source + sourceURL)(lodash);
+      result = Function('_', 'return ' + source + sourceURL)(lodash);
     } catch(e) {
       e.source = source;
       throw e;
@@ -4136,7 +4149,7 @@
    * // => '1,2,3'
    */
   function wrapperToString() {
-    return String(this.__wrapped__);
+    return this.__wrapped__ + '';
   }
 
   /**
@@ -4323,7 +4336,7 @@
   lodash.prototype.valueOf = wrapperValueOf;
 
   // add `Array` functions that return unwrapped values
-  forEach(['join', 'pop', 'shift'], function(methodName) {
+  each(['join', 'pop', 'shift'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
       return func.apply(this.__wrapped__, arguments);
@@ -4331,7 +4344,7 @@
   });
 
   // add `Array` functions that return the wrapped value
-  forEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
+  each(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
       func.apply(this.__wrapped__, arguments);
@@ -4340,7 +4353,7 @@
   });
 
   // add `Array` functions that return new wrapped values
-  forEach(['concat', 'slice', 'splice'], function(methodName) {
+  each(['concat', 'slice', 'splice'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
       var result = func.apply(this.__wrapped__, arguments);
@@ -4351,7 +4364,7 @@
   // avoid array-like object bugs with `Array#shift` and `Array#splice`
   // in Firefox < 10 and IE < 9
   if (hasObjectSpliceBug) {
-    forEach(['shift', 'splice'], function(methodName) {
+    each(['shift', 'splice'], function(methodName) {
       var func = lodash.prototype[methodName];
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__,
@@ -4366,6 +4379,7 @@
   }
 
   // add pseudo private property to be used and removed during the build process
+  lodash._each = each;
   lodash._iteratorTemplate = iteratorTemplate;
 
   /*--------------------------------------------------------------------------*/

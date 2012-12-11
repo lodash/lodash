@@ -270,7 +270,7 @@ $(document).ready(function() {
         };
       }
     });
-    var model = new Defaulted({two: null});
+    model = new Defaulted({two: null});
     equal(model.get('one'), 3);
     equal(model.get('two'), null);
   });
@@ -351,7 +351,7 @@ $(document).ready(function() {
     equal(lastError, "Can't change admin status.");
   });
 
-  test("isValid", 5, function() {
+  test("isValid", function() {
     var model = new Backbone.Model({valid: true});
     model.validate = function(attrs) {
       if (!attrs.valid) return "invalid";
@@ -359,14 +359,26 @@ $(document).ready(function() {
     equal(model.isValid(), true);
     equal(model.set({valid: false}), false);
     equal(model.isValid(), true);
-    ok(model.set('valid', false, {silent: true}));
-    equal(model.isValid(), false);
+    ok(!model.set('valid', false, {silent: true}));
   });
 
   test("save", 2, function() {
     doc.save({title : "Henry V"});
     equal(this.syncArgs.method, 'update');
     ok(_.isEqual(this.syncArgs.model, doc));
+  });
+
+  test("save with PATCH", function() {
+    doc.clear().set({id: 1, a: 1, b: 2, c: 3, d: 4});
+    doc.save();
+    equal(this.syncArgs.method, 'update');
+    equal(this.syncArgs.options.attrs, undefined);
+
+    doc.save({b: 2, d: 4}, {patch: true});
+    equal(this.syncArgs.method, 'patch');
+    equal(_.size(this.syncArgs.options.attrs), 2);
+    equal(this.syncArgs.options.attrs.d, 4);
+    equal(this.syncArgs.options.attrs.a, undefined);
   });
 
   test("save in positional style", 1, function() {
@@ -402,7 +414,7 @@ $(document).ready(function() {
     ok(true, "non-persisted model should not call sync");
   });
 
-  test("validate", 7, function() {
+  test("validate", function() {
     var lastError;
     var model = new Backbone.Model();
     model.validate = function(attrs) {
@@ -415,8 +427,6 @@ $(document).ready(function() {
     equal(result, model);
     equal(model.get('a'), 100);
     equal(lastError, undefined);
-    result = model.set({admin: true}, {silent: true});
-    equal(model.get('admin'), true);
     result = model.set({a: 200, admin: false});
     equal(lastError, "Can't change admin status.");
     equal(result, false);
@@ -639,7 +649,7 @@ $(document).ready(function() {
     equal(model.get('x'), 3);
   });
 
-  test("save with wait validates attributes", 1, function() {
+  test("save with wait validates attributes", function() {
     var model = new Backbone.Model();
     model.url = '/test';
     model.validate = function() { ok(true); };

@@ -12,7 +12,7 @@ The [Backbone](http://backbonejs.org/) and [Underscore](http://http://underscore
 
 ## Contributor License Agreement
 
-Lo-Dash is a [Dojo Foundation](http://dojofoundation.org/) project.
+Lo-Dash is preparing to join [Dojo Foundation](http://dojofoundation.org/).
 As such, we request that all contributors sign the Dojo Foundation [contributor license agreement](http://dojofoundation.org/about/claForm).
 
 For more information about CLAs, please check out Alex Russell’s excellent post, ["Why Do I Need to Sign This?"](http://infrequently.org/2008/06/why-do-i-need-to-sign-this/).

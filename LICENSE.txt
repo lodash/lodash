@@ -1,5 +1,5 @@
 Copyright 2012 John-David Dalton <http://allyoucanleet.com/>
-Based on Underscore.js 1.3.3, copyright 2009-2012 Jeremy Ashkenas,
+Based on Underscore.js 1.4.3, copyright 2009-2012 Jeremy Ashkenas,
 DocumentCloud Inc. <http://documentcloud.github.com/underscore>
 
 Permission is hereby granted, free of charge, to any person obtaining

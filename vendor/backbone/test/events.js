@@ -17,7 +17,7 @@ $(document).ready(function() {
 
   test("binding and triggering multiple events", 4, function() {
     var obj = { counter: 0 };
-    _.extend(obj,Backbone.Events);
+    _.extend(obj, Backbone.Events);
 
     obj.on('a b c', function() { obj.counter += 1; });
 
@@ -34,6 +34,38 @@ $(document).ready(function() {
     obj.trigger('a b c');
     equal(obj.counter, 5);
   });
+
+  test("binding and triggering with event maps", function() {
+    var obj = { counter: 0 };
+    _.extend(obj, Backbone.Events);
+
+    var increment = function() {
+      this.counter += 1;
+    };
+
+    obj.on({
+      a: increment,
+      b: increment,
+      c: increment
+    }, obj);
+
+    obj.trigger('a');
+    equal(obj.counter, 1);
+
+    obj.trigger('a b');
+    equal(obj.counter, 3);
+
+    obj.trigger('c');
+    equal(obj.counter, 4);
+
+    obj.off({
+      a: increment,
+      c: increment
+    }, obj);
+    obj.trigger('a b c');
+    equal(obj.counter, 5);
+  });
+
 
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
@@ -190,6 +222,92 @@ $(document).ready(function() {
     obj.on('event', function() { ok(false); }, obj);
     obj.off(null, null, obj);
     obj.trigger('event');
+  });
+
+  test("once", 2, function() {
+    // Same as the previous test, but we use once rather than having to explicitly unbind
+    var obj = { counterA: 0, counterB: 0 };
+    _.extend(obj,Backbone.Events);
+    var incrA = function(){ obj.counterA += 1; obj.trigger('event'); };
+    var incrB = function(){ obj.counterB += 1 };
+    obj.once('event', incrA);
+    obj.once('event', incrB);
+    obj.trigger('event');
+    obj.trigger('event');
+    obj.trigger('event');
+    equal(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equal(obj.counterB, 1, 'counterB should have only been incremented once.');
+  });
+
+  test("once variant one", 3, function() {
+    var f = function(){ ok(true); };
+
+    var a = _.extend({}, Backbone.Events).once('event', f);
+    var b = _.extend({}, Backbone.Events).on('event', f);
+
+    a.trigger('event');
+
+    b.trigger('event');
+    b.trigger('event');
+  });
+
+  test("once variant two", 3, function() {
+    var f = function(){ ok(true); };
+    var obj = _.extend({}, Backbone.Events);
+
+    obj
+      .once('event', f)
+      .on('event', f)
+      .trigger('event')
+      .trigger('event');
+  });
+
+  test("once with off", 0, function() {
+    var f = function(){ ok(true); };
+    var obj = _.extend({}, Backbone.Events);
+
+    obj.once('event', f);
+    obj.off('event', f);
+    obj.trigger('event');
+  });
+
+  test("once with event maps", function() {
+    var obj = { counter: 0 };
+    _.extend(obj, Backbone.Events);
+
+    var increment = function() {
+      this.counter += 1;
+    };
+
+    obj.once({
+      a: increment,
+      b: increment,
+      c: increment
+    }, obj);
+
+    obj.trigger('a');
+    equal(obj.counter, 1);
+
+    obj.trigger('a b');
+    equal(obj.counter, 2);
+
+    obj.trigger('c');
+    equal(obj.counter, 3);
+
+    obj.trigger('a b c');
+    equal(obj.counter, 3);
+  });
+
+  test("Backbone object inherits Events", function() {
+    ok(Backbone.on === Backbone.Events.on);
+  });
+
+  asyncTest("once with asynchronous events", 1, function() {
+    var func = _.debounce(function() { ok(true); start(); }, 50);
+    var obj = _.extend({}, Backbone.Events).once('async', func);
+
+    obj.trigger('async');
+    obj.trigger('async');
   });
 
 });

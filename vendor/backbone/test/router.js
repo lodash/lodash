@@ -107,7 +107,7 @@ $(document).ready(function() {
     },
 
     optionalItem: function(arg){
-      this.arg = arg !== undefined ? arg : null;
+      this.arg = arg !== void 0 ? arg : null;
     },
 
     splat : function(args) {
@@ -139,7 +139,7 @@ $(document).ready(function() {
     location.replace('http://example.com#search/news');
     Backbone.history.checkUrl();
     equal(router.query, 'news');
-    equal(router.page, undefined);
+    equal(router.page, void 0);
     equal(lastRoute, 'search');
     equal(lastArgs[0], 'news');
   });
@@ -265,12 +265,12 @@ $(document).ready(function() {
     if (!Backbone.history.iframe) ok(true);
   });
 
-  test("route callback gets passed decoded values", 3, function() {
+  test("#967 - Route callback gets passed encoded values.", 3, function() {
     var route = 'has%2Fslash/complex-has%23hash/has%20space';
     Backbone.history.navigate(route, {trigger: true});
-    equal(router.first, 'has/slash');
-    equal(router.part, 'has#hash');
-    equal(router.rest, 'has space');
+    strictEqual(router.first, 'has%2Fslash');
+    strictEqual(router.part, 'has%23hash');
+    strictEqual(router.rest, 'has%20space');
   });
 
   test("correctly handles URLs with % (#868)", 3, function() {
@@ -279,7 +279,7 @@ $(document).ready(function() {
     location.replace('http://example.com#search/fat');
     Backbone.history.checkUrl();
     equal(router.query, 'fat');
-    equal(router.page, undefined);
+    equal(router.page, void 0);
     equal(lastRoute, 'search');
   });
 

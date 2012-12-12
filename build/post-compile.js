@@ -9,11 +9,12 @@
   var licenseTemplate = {
     'lodash':
       '/*!\n' +
-      ' Lo-Dash @VERSION lodash.com/license\n' +
+      ' @license\n' +
+      ' Lo-Dash <%= VERSION %> lodash.com/license\n' +
       ' Underscore.js 1.4.3 underscorejs.org/LICENSE\n' +
       '*/',
     'underscore':
-      '/*! Underscore.js @VERSION underscorejs.org/LICENSE */'
+      '/*! @license Underscore.js <%= VERSION %> underscorejs.org/LICENSE */'
   };
 
   /*--------------------------------------------------------------------------*/
@@ -51,7 +52,7 @@
     }
     // add copyright/license header
     return licenseTemplate[/call\(this\);?$/.test(source) ? 'underscore' : 'lodash']
-      .replace('@VERSION', snippet[2]) + '\n;' + source;
+      .replace('<%= VERSION %>', snippet[2]) + '\n;' + source;
   }
 
   /*--------------------------------------------------------------------------*/

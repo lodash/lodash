@@ -560,6 +560,9 @@
   QUnit.module('independent builds');
 
   (function() {
+    var reComment = /\/\*![\s\S]+?\*\//,
+        reCustom = /Custom Build/;
+
     asyncTest('debug only', function() {
       var start = _.once(QUnit.start);
       build(['-d', '-s'], function(source, filePath) {
@@ -572,6 +575,9 @@
       var start = _.once(QUnit.start);
       build(['-d', '-s', 'backbone'], function(source, filePath) {
         equal(path.basename(filePath, '.js'), 'lodash.custom');
+
+        var comment = source.match(reComment);
+        ok(reCustom.test(comment));
         start();
       });
     });
@@ -588,6 +594,9 @@
       var start = _.once(QUnit.start);
       build(['-m', '-s', 'backbone'], function(source, filePath) {
         equal(path.basename(filePath, '.js'), 'lodash.custom.min');
+
+        var comment = source.match(reComment);
+        ok(reCustom.test(comment));
         start();
       });
     });

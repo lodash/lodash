@@ -297,41 +297,77 @@
             nestedNumbers2 = [1, [2], [3, [[4]]]];\
         \
         for (index = 0; index < limit; index++) {\
-          numbers2[index] = index;\
           object2["key" + index] = index;\
           objects2[index] = { "num": index };\
+          numbers2[index] = index;\
         }\
       }\
       \
       if (typeof multiArrays != "undefined") {\
-        var twentyFiveValues = Array(25),\
+        var twentyValues = Array(20),\
+            twentyValues2 = Array(20),\
+            twentyFiveValues = Array(25),\
             twentyFiveValues2 = Array(25),\
+            thirtyValues = Array(30),\
+            thirtyValues2 = Array(30),\
+            fortyValues = Array(40),\
+            fortyValues2 = Array(40),\
             fiftyValues = Array(50),\
+            fiftyValues2 = Array(50),\
             seventyFiveValues = Array(75),\
             seventyFiveValues2 = Array(75),\
+            hundredValues = Array(100),\
+            hundredValues2 = Array(100),\
             lowerChars = "abcdefghijklmnopqrstuvwxyz".split(""),\
             upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");\
         \
-        for (index = 0; index < 75; index++) {\
-          if (index < 26) {\
-            if (index < 20) {\
-              twentyFiveValues[index] = lowerChars[index];\
-              twentyFiveValues2[index] = upperChars[index];\
-            }\
-            else if (index < 25) {\
-              twentyFiveValues[index] =\
-              twentyFiveValues2[index] = index;\
-            }\
+        for (index = 0; index < 100; index++) {\
+          if (index < 15) {\
+            twentyValues[index] = lowerChars[index];\
+            twentyValues2[index] = upperChars[index];\
+          }\
+          if (index < 20) {\
+            twentyValues[index] =\
+            twentyValues2[index] = index;\
+            \
+            twentyFiveValues[index] = lowerChars[index];\
+            twentyFiveValues2[index] = upperChars[index];\
+          }\
+          if (index < 25) {\
+            twentyFiveValues[index] =\
+            twentyFiveValues2[index] = index;\
+            \
+            thirtyValues[index] =\
+            fortyValues[index] =\
             fiftyValues[index] =\
-            seventyFiveValues[index] = lowerChars[index];\
-            seventyFiveValues2[index] = upperChars[index];\
+            seventyFiveValues[index] =\
+            hundredValues[index] = lowerChars[index];\
+            \
+            thirtyValues2[index] =\
+            fortyValues2[index] =\
+            fiftyValues2[index] =\
+            seventyFiveValues2[index] =\
+            hundredValues2[index] = upperChars[index];\
           }\
           else {\
-            if (index < 50) {\
-              fiftyValues[index] = index;\
+            if (index < 30) {\
+              thirtyValues[index] =\
+              thirtyValues2[index] = index;\
             }\
-            seventyFiveValues[index] = index;\
-            seventyFiveValues2[index] = index + (index < 60 ? 75 : 0);\
+            if (index < 40) {\
+              fortyValues[index] =\
+              fortyValues2[index] = index;\
+            }\
+            if (index < 50) {\
+              fiftyValues[index] =\
+              fiftyValues2[index] = index;\
+            }\
+            if (index < 75) {\
+              seventyFiveValues[index] =\
+              seventyFiveValues2[index] = index;\
+            }\
+            hundredValues[index] =\
+            hundredValues2[index] = index;\
           }\
         }\
       }\
@@ -630,45 +666,33 @@
   suites.push(
     Benchmark.Suite('`_.difference`')
       .add(buildName, '\
-        lodash.difference(numbers, fourNumbers, twoNumbers)'
+        lodash.difference(numbers, twoNumbers, fourNumbers)'
       )
       .add(otherName, '\
-        _.difference(numbers, fourNumbers, twoNumbers)'
+        _.difference(numbers, twoNumbers, fourNumbers)'
       )
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 25 elements')
+    Benchmark.Suite('`_.difference` iterating 30 elements')
       .add(buildName, {
-        'fn': 'lodash.difference(twentyFiveValues, twentyFiveValues2)',
+        'fn': 'lodash.difference(thirtyValues, thirtyValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.difference(twentyFiveValues, twentyFiveValues2)',
+        'fn': '_.difference(thirtyValues, thirtyValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 50 and 75 elements')
+    Benchmark.Suite('`_.difference` iterating 20 and 40 elements')
       .add(buildName, {
-        'fn': 'lodash.difference(fiftyValues, seventyFiveValues2)',
+        'fn': 'lodash.difference(twentyValues, fortyValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.difference(fiftyValues, seventyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.difference` iterating 75 elements')
-      .add(buildName, {
-        'fn': 'lodash.difference(seventyFiveValues, seventyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.difference(seventyFiveValues, seventyFiveValues2)',
+        'fn': '_.difference(twentyValues, fortyValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -936,45 +960,21 @@
   suites.push(
     Benchmark.Suite('`_.intersection`')
       .add(buildName, '\
-        lodash.intersection(numbers, fourNumbers, twoNumbers)'
+        lodash.intersection(numbers, twoNumbers, fourNumbers)'
       )
       .add(otherName, '\
-        _.intersection(numbers, fourNumbers, twoNumbers)'
+        _.intersection(numbers, twoNumbers, fourNumbers)'
       )
   );
 
   suites.push(
-    Benchmark.Suite('`_.intersection` iterating 25 elements')
+    Benchmark.Suite('`_.intersection` iterating 100 elements')
       .add(buildName, {
-        'fn': 'lodash.intersection(twentyFiveValues, twentyFiveValues2)',
+        'fn': 'lodash.intersection(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.intersection(twentyFiveValues, twentyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.intersection` iterating 50 and 75 elements')
-      .add(buildName, {
-        'fn': 'lodash.intersection(fiftyValues, seventyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.intersection(fiftyValues, seventyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.intersection` iterating 75 elements')
-      .add(buildName, {
-        'fn': 'lodash.intersection(seventyFiveValues, seventyFiveValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.intersection(seventyFiveValues, seventyFiveValues2)',
+        'fn': '_.intersection(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1624,23 +1624,11 @@
   suites.push(
     Benchmark.Suite('`_.union`')
       .add(buildName, '\
-        lodash.union(numbers, fourNumbers, twoNumbers)'
+        lodash.union(numbers, twoNumbers, fourNumbers)'
       )
       .add(otherName, '\
-        _.union(numbers, fourNumbers, twoNumbers)'
+        _.union(numbers, twoNumbers, fourNumbers)'
       )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 50 elements')
-      .add(buildName, {
-        'fn': 'lodash.union(twentyFiveValues, twentyFiveValues2);',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.union(twentyFiveValues, twentyFiveValues2);',
-        'teardown': 'function multiArrays(){}'
-      })
   );
 
   suites.push(
@@ -1655,54 +1643,30 @@
       })
   );
 
-  suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 100 elements')
-      .add(buildName, {
-        'fn': 'lodash.union(seventyFiveValues, twentyFiveValues2);',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.union(seventyFiveValues, twentyFiveValues2);',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
   /*--------------------------------------------------------------------------*/
 
   suites.push(
     Benchmark.Suite('`_.uniq`')
       .add(buildName, '\
-        lodash.uniq(numbers.concat(fourNumbers, twoNumbers))'
+        lodash.uniq(numbers.concat(twoNumbers, fourNumbers))'
       )
       .add(otherName, '\
-        _.uniq(numbers.concat(fourNumbers, twoNumbers))'
+        _.uniq(numbers.concat(twoNumbers, fourNumbers))'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.uniq` with `callback`')
       .add(buildName, '\
-        lodash.uniq(numbers.concat(fourNumbers, twoNumbers), function(num) {\
+        lodash.uniq(numbers.concat(twoNumbers, fourNumbers), function(num) {\
           return num % 2;\
         });'
       )
       .add(otherName, '\
-        _.uniq(numbers.concat(fourNumbers, twoNumbers), function(num) {\
+        _.uniq(numbers.concat(twoNumbers, fourNumbers), function(num) {\
           return num % 2;\
         })'
       )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.uniq` iterating an array of 50 elements')
-      .add(buildName, {
-        'fn': 'lodash.uniq(twentyFiveValues.concat(twentyFiveValues2));',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.uniq(twentyFiveValues.concat(twentyFiveValues2));',
-        'teardown': 'function multiArrays(){}'
-      })
   );
 
   suites.push(
@@ -1713,18 +1677,6 @@
       })
       .add(otherName, {
         'fn': '_.uniq(fiftyValues.concat(twentyFiveValues2));',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.uniq` iterating an array of 100 elements')
-      .add(buildName, {
-        'fn': 'lodash.uniq(seventyFiveValues.concat(twentyFiveValues2));',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.uniq(seventyFiveValues.concat(twentyFiveValues2));',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1766,37 +1718,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.without` iterating an array of 25 elements')
+    Benchmark.Suite('`_.without` iterating an array of 20 elements')
       .add(buildName, {
-        'fn': 'lodash.without.apply(lodash, [twentyFiveValues].concat(twentyFiveValues2));',
+        'fn': 'lodash.without.apply(lodash, [twentyValues].concat(twentyValues2));',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.without.apply(_, [twentyFiveValues].concat(twentyFiveValues2));',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.without` iterating an array of 75 and 50 elements')
-      .add(buildName, {
-        'fn': 'lodash.without.apply(lodash, [seventyFiveValues2].concat(fiftyValues));',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.without.apply(_, [seventyFiveValues2].concat(fiftyValues));',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.without` iterating an array of 75 elements')
-      .add(buildName, {
-        'fn': 'lodash.without.apply(lodash, [seventyFiveValues].concat(seventyFiveValues2));',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.without.apply(_, [seventyFiveValues].concat(seventyFiveValues2));',
+        'fn': '_.without.apply(_, [twentyValues].concat(twentyValues2));',
         'teardown': 'function multiArrays(){}'
       })
   );

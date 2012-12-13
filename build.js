@@ -436,8 +436,8 @@
       });
       // add build commands to copyright/license header
       return (
-        parts[0] + parts[1] + parts[2] + parts[3] +
-        ' (Custom Build)' + parts[4] + '\n' +
+        parts[0] +
+        parts[1] + parts[2] + parts[3] + ' (Custom Build)' + parts[4] + '\n' +
         parts[1] + ' Build: `lodash ' + commands.join(' ') + '`'
       );
     });

@@ -25,6 +25,9 @@
   /** The media type for raw blob data */
   var mediaType = 'application/vnd.github.v3.raw';
 
+  /** Reassign `existsSync` for older versions of Node */
+  fs.existsSync || (fs.existsSync = path.existsSync);
+
   /** Used to reference parts of the blob href */
   var location = (function() {
     var host = 'api.github.com',
@@ -101,7 +104,8 @@
   exec('npm -g root', function(exception, stdout) {
     if (!exception) {
       try {
-        var isGlobal = path.resolve(basePath, '..') == fs.realpathSync(stdout.trim());
+        var root = stdout.trim(),
+            isGlobal = fs.existsSync(root) && path.resolve(basePath, '..') == fs.realpathSync(root);
       } catch(e) {
         exception = e;
       }

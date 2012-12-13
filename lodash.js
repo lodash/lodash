@@ -3190,7 +3190,7 @@
       isSorted = false;
     }
     // init value cache for large arrays
-    var isLarge = !isSorted && length > 74;
+    var isLarge = !isSorted && length >= 75;
     if (isLarge) {
       var cache = {};
     }

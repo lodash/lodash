@@ -147,6 +147,7 @@
   var objectsMethods = [
     'assign',
     'clone',
+    'cloneDeep',
     'defaults',
     'extend',
     'forIn',
@@ -248,6 +249,7 @@
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
     'bindKey',
+    'cloneDeep',
     'forIn',
     'forOwn',
     'isPlainObject',

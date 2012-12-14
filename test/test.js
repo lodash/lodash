@@ -243,7 +243,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.clone');
+  QUnit.module('cloning');
 
   (function() {
     function Klass() { this.a = 1; }
@@ -277,7 +277,7 @@
 
     _.forOwn(objects, function(object, key) {
       test('should deep clone ' + key, function() {
-        var clone = _.clone(object, true);
+        var clone = _.cloneDeep(object);
         ok(_.isEqual(object, clone));
 
         if (_.isObject(object)) {
@@ -291,7 +291,7 @@
     _.forOwn(nonCloneable, function(object, key) {
       test('should not clone ' + key, function() {
         strictEqual(_.clone(object), object);
-        strictEqual(_.clone(object, true), object);
+        strictEqual(_.cloneDeep(object), object);
       });
     });
 
@@ -304,7 +304,7 @@
 
     test('should deep clone `index` and `input` array properties', function() {
       var array = /x/.exec('x'),
-          actual = _.clone(array, true);
+          actual = _.cloneDeep(array);
 
       equal(actual.index, 0);
       equal(actual.input, 'x');
@@ -319,15 +319,15 @@
       object.foo.b.foo.c = object;
       object.bar.b = object.foo.b;
 
-      var clone = _.clone(object, true);
+      var clone = _.cloneDeep(object);
       ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c && clone !== object);
     });
 
     test('should clone problem JScript properties (test in IE < 9)', function() {
       deepEqual(_.clone(shadowed), shadowed);
       notEqual(_.clone(shadowed), shadowed);
-      deepEqual(_.clone(shadowed, true), shadowed);
-      notEqual(_.clone(shadowed, true), shadowed);
+      deepEqual(_.cloneDeep(shadowed), shadowed);
+      notEqual(_.cloneDeep(shadowed), shadowed);
     });
   }(1, 2, 3));
 

@@ -71,6 +71,7 @@
     'bindAll': ['bind', 'functions'],
     'bindKey': ['isFunction', 'isObject'],
     'clone': ['assign', 'forEach', 'forOwn', 'isArray', 'isObject'],
+    'cloneDeep': ['clone'],
     'compact': [],
     'compose': [],
     'contains': ['indexOf', 'isString'],
@@ -239,6 +240,7 @@
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
     'bindKey',
+    'cloneDeep',
     'forIn',
     'forOwn',
     'isPlainObject',

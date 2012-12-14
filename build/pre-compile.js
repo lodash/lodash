@@ -69,6 +69,7 @@
     'bindAll',
     'bindKey',
     'clone',
+    'cloneDeep',
     'collect',
     'compact',
     'compose',

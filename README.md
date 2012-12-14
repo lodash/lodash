@@ -9,15 +9,15 @@ An alternative to Underscore.js, delivering [consistency](https://github.com/bes
 [Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.js) and
 [Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.min.js)
 
-* Underscore builds:<br>
+* Underscore compatibility builds:<br>
 [Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.underscore.js) and
 [Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.underscore.min.js)
 
 * CDN copies of ≤ v1.0.0-rc.2’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
-[Lo-Dash development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.js),
-[Lo-Dash production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.min.js),
-[Underscore development](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.underscore.js), and
-[Underscore production](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.underscore.min.js)
+[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.js),
+[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.min.js),
+[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.underscore.js), and
+[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.underscore.min.js)
 
 * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 

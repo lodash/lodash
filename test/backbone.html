@@ -29,10 +29,15 @@
 			);
 		</script>
 		<script src="test-ui.js"></script>
+		<script src="../lodash.js"></script>
 		<script>
+			var lodash = _.noConflict();
 			document.write('<script src="../' + ui.buildPath + '"><\/script>');
 		</script>
 		<script>
+			_.mixin({
+				'debounce': lodash.debounce
+			});
 			if (!_.chain) {
 				_.mixin({
 					'chain': function(value) {

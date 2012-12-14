@@ -220,6 +220,7 @@
     'max',
     'min',
     'mixin',
+    'once',
     'pick',
     'reduce',
     'reduceRight',

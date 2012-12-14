@@ -107,7 +107,7 @@ $(document).ready(function() {
     },
 
     optionalItem: function(arg){
-      this.arg = arg !== void 0 ? arg : null;
+      this.arg = arg != void 0 ? arg : null;
     },
 
     splat : function(args) {
@@ -207,7 +207,7 @@ $(document).ready(function() {
   test("routes (optional)", 2, function() {
     location.replace('http://example.com#optional');
     Backbone.history.checkUrl();
-    equal(router.arg, null);
+    ok(!router.arg);
     location.replace('http://example.com#optional/thing');
     Backbone.history.checkUrl();
     equal(router.arg, 'thing');

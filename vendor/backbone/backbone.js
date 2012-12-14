@@ -1,4 +1,4 @@
-//     Backbone.js 0.9.9-pre
+//     Backbone.js 0.9.9
 
 //     (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -19,10 +19,10 @@
   var previousBackbone = root.Backbone;
 
   // Create a local reference to array methods.
-  var ArrayProto = Array.prototype;
-  var push = ArrayProto.push;
-  var slice = ArrayProto.slice;
-  var splice = ArrayProto.splice;
+  var array = [];
+  var push = array.push;
+  var slice = array.slice;
+  var splice = array.splice;
 
   // The top-level namespace. All public Backbone classes and modules will
   // be attached to this. Exported for both CommonJS and the browser.
@@ -34,7 +34,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.9.9-pre';
+  Backbone.VERSION = '0.9.9';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -64,15 +64,49 @@
   // Backbone.Events
   // ---------------
 
-  // Regular expression used to split event strings
+  // Regular expression used to split event strings.
   var eventSplitter = /\s+/;
 
-  // Internal flag used to set event callbacks `once`.
-  var once = false;
+  // Implement fancy features of the Events API such as multiple event
+  // names `"change blur"` and jQuery-style event maps `{change: action}`
+  // in terms of the existing API.
+  var eventsApi = function(obj, action, name, rest) {
+    if (!name) return true;
+    if (typeof name === 'object') {
+      for (var key in name) {
+        obj[action].apply(obj, [key, name[key]].concat(rest));
+      }
+    } else if (eventSplitter.test(name)) {
+      var names = name.split(eventSplitter);
+      for (var i = 0, l = names.length; i < l; i++) {
+        obj[action].apply(obj, [names[i]].concat(rest));
+      }
+    } else {
+      return true;
+    }
+  };
+
+  // Optimized internal dispatch function for triggering events. Tries to
+  // keep the usual cases speedy (most Backbone events have 3 arguments).
+  var triggerEvents = function(obj, events, args) {
+    var ev, i = -1, l = events.length;
+    switch (args.length) {
+    case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx);
+    return;
+    case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0]);
+    return;
+    case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0], args[1]);
+    return;
+    case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0], args[1], args[2]);
+    return;
+    default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
+    }
+  };
 
   // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may bind with `on` or remove with `off` callback functions
-  // to an event; `trigger`-ing an event fires all callbacks in succession.
+  // custom events. You may bind with `on` or remove with `off` callback
+  // functions to an event; `trigger`-ing an event fires all callbacks in
+  // succession.
   //
   //     var object = {};
   //     _.extend(object, Backbone.Events);
@@ -81,72 +115,58 @@
   //
   var Events = Backbone.Events = {
 
-    // Bind one or more space separated events, `events`, to a `callback`
-    // function. Passing `"all"` will bind the callback to all events fired.
-    on: function(events, callback, context) {
-      if (_.isObject(events)) {
-        for (var key in events) {
-          this.on(key, events[key], callback);
-        }
-        return this;
-      }
-
-      var calls, event, list;
-      if (!callback) return this;
-
-      events = events.split(eventSplitter);
-      calls = this._callbacks || (this._callbacks = {});
-
-      while (event = events.shift()) {
-        list = calls[event] || (calls[event] = []);
-        list.push(callback, context, once ? {} : null);
-      }
-
+    // Bind one or more space separated events, or an events map,
+    // to a `callback` function. Passing `"all"` will bind the callback to
+    // all events fired.
+    on: function(name, callback, context) {
+      if (!(eventsApi(this, 'on', name, [callback, context]) && callback)) return this;
+      this._events || (this._events = {});
+      var list = this._events[name] || (this._events[name] = []);
+      list.push({callback: callback, context: context, ctx: context || this});
       return this;
     },
 
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
-    once: function(events, callback, context) {
-      once = true;
-      this.on(events, callback, context);
-      once = false;
+    once: function(name, callback, context) {
+      if (!(eventsApi(this, 'once', name, [callback, context]) && callback)) return this;
+      var self = this;
+      var once = _.once(function() {
+        self.off(name, once);
+        callback.apply(this, arguments);
+      });
+      once._callback = callback;
+      this.on(name, once, context);
       return this;
     },
 
-    // Remove one or many callbacks. If `context` is null, removes all callbacks
-    // with that function. If `callback` is null, removes all callbacks for the
-    // event. If `events` is null, removes all bound callbacks for all events.
-    off: function(events, callback, context) {
-      if (_.isObject(events)) {
-        for (var key in events) {
-          this.off(key, events[key], callback);
-        }
+    // Remove one or many callbacks. If `context` is null, removes all
+    // callbacks with that function. If `callback` is null, removes all
+    // callbacks for the event. If `events` is null, removes all bound
+    // callbacks for all events.
+    off: function(name, callback, context) {
+      var list, ev, events, names, i, l, j, k;
+      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!name && !callback && !context) {
+        this._events = {};
         return this;
       }
 
-      var event, calls, list, i;
-
-      // No events, or removing *all* events.
-      if (!(calls = this._callbacks)) return this;
-      if (!(events || callback || context)) {
-        delete this._callbacks;
-        return this;
-      }
-
-      events = events ? events.split(eventSplitter) : _.keys(calls);
-
-      // Loop through the callback list, splicing where appropriate.
-      while (event = events.shift()) {
-        if (!(list = calls[event]) || !(callback || context)) {
-          delete calls[event];
-          continue;
-        }
-
-        for (i = list.length - 3; i >= 0; i -= 3) {
-          if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
-            list.splice(i, 3);
+      names = name ? [name] : _.keys(this._events);
+      for (i = 0, l = names.length; i < l; i++) {
+        name = names[i];
+        if (list = this._events[name]) {
+          events = [];
+          if (callback || context) {
+            for (j = 0, k = list.length; j < k; j++) {
+              ev = list[j];
+              if ((callback && callback !== (ev.callback._callback || ev.callback)) ||
+                  (context && context !== ev.context)) {
+                events.push(ev);
+              }
+            }
           }
+          this._events[name] = events;
         }
       }
 
@@ -157,48 +177,43 @@
     // passed the same arguments as `trigger` is, apart from the event name
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
-    trigger: function(events) {
-      var event, calls, list, i, length, args, all, rest, callback, context, onced;
-      if (!(calls = this._callbacks)) return this;
+    trigger: function(name) {
+      if (!this._events) return this;
+      var args = slice.call(arguments, 1);
+      if (!eventsApi(this, 'trigger', name, args)) return this;
+      var events = this._events[name];
+      var allEvents = this._events.all;
+      if (events) triggerEvents(this, events, args);
+      if (allEvents) triggerEvents(this, allEvents, arguments);
+      return this;
+    },
 
-      rest = [];
-      events = events.split(eventSplitter);
+    // An inversion-of-control version of `on`. Tell *this* object to listen to
+    // an event in another object ... keeping track of what it's listening to.
+    listenTo: function(object, events, callback) {
+      var listeners = this._listeners || (this._listeners = {});
+      var id = object._listenerId || (object._listenerId = _.uniqueId('l'));
+      listeners[id] = object;
+      object.on(events, callback || this, this);
+      return this;
+    },
 
-      // Fill up `rest` with the callback arguments.  Since we're only copying
-      // the tail of `arguments`, a loop is much faster than Array#slice.
-      for (i = 1, length = arguments.length; i < length; i++) {
-        rest[i - 1] = arguments[i];
-      }
-
-      // For each event, walk through the list of callbacks twice, first to
-      // trigger the event, then to trigger any `"all"` callbacks.
-      while (event = events.shift()) {
-        // Copy callback lists to prevent modification.
-        if (all = calls.all) all = all.slice();
-        if (list = calls[event]) list = list.slice();
-
-        // Execute event callbacks.
-        if (list) {
-          for (i = 0, length = list.length; i < length; i += 3) {
-            callback = list[i], context = list[i + 1], onced = list[i + 2];
-            if (onced) calls[event].splice(i, 3);
-            if (!onced || !onced.dead) callback.apply(context || this, rest);
-            if (onced) onced.dead = true;
-          }
+    // Tell this object to stop listening to either specific events ... or
+    // to every object it's currently listening to.
+    stopListening: function(object, events, callback) {
+      var listeners = this._listeners;
+      if (!listeners) return;
+      if (object) {
+        object.off(events, callback, this);
+        if (!events && !callback) delete listeners[object._listenerId];
+      } else {
+        for (var id in listeners) {
+          listeners[id].off(null, null, this);
         }
-
-        // Execute "all" callbacks.
-        if (all) {
-          args = [event].concat(rest);
-          for (i = 0, length = all.length; i < length; i += 3) {
-            all[i].apply(all[i + 1] || this, args);
-          }
-        }
+        this._listeners = {};
       }
-
       return this;
     }
-
   };
 
   // Aliases for backwards compatibility.
@@ -220,17 +235,12 @@
     this.cid = _.uniqueId('c');
     this.changed = {};
     this.attributes = {};
-    this._escapedAttributes = {};
-    this._modelState = [];
+    this._changes = [];
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs);
-    if (defaults = _.result(this, 'defaults')) {
-      attrs = _.extend({}, defaults, attrs);
-    }
+    if (defaults = _.result(this, 'defaults')) _.defaults(attrs, defaults);
     this.set(attrs, {silent: true});
-    this._cleanChange = true;
-    this._modelState = [];
-    this._currentState = _.clone(this.attributes);
+    this._currentAttributes = _.clone(this.attributes);
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
   };
@@ -240,27 +250,6 @@
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
-
-    // Whether there is a pending request to fire in the final `change` loop.
-    _pending: false,
-
-    // Whether the model is in the midst of a change cycle.
-    _changing: false,
-
-    // Whether there has been a `set` call since the last
-    // calculation of the changed hash, for efficiency.
-    _cleanChange: true,
-
-    // The model state used for comparison in determining if a
-    // change should be fired.
-    _currentState: null,
-
-    // An array queue of all changes attributed to a model
-    // on the next non-silent change event.
-    _modelState: null,
-
-    // A hash of the model's attributes when the last `change` occured.
-    _previousAttributes: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -287,10 +276,7 @@
 
     // Get the HTML-escaped value of an attribute.
     escape: function(attr) {
-      var html;
-      if (html = this._escapedAttributes[attr]) return html;
-      var val = this.get(attr);
-      return this._escapedAttributes[attr] = _.escape(val == null ? '' : '' + val);
+      return _.escape(this.get(attr));
     },
 
     // Returns `true` if the attribute contains a value that is not null
@@ -317,9 +303,6 @@
       var silent = options && options.silent;
       var unset = options && options.unset;
 
-      if (attrs instanceof Model) attrs = attrs.attributes;
-      if (unset) for (attr in attrs) attrs[attr] = void 0;
-
       // Run validation.
       if (!this._validate(attrs, options)) return false;
 
@@ -327,24 +310,19 @@
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
       var now = this.attributes;
-      var esc = this._escapedAttributes;
 
       // For each `set` attribute...
       for (attr in attrs) {
         val = attrs[attr];
 
-        // If an escaped attr exists, and the new and current value differ, remove the escaped attr.
-        if (esc[attr] && !_.isEqual(now[attr], val) || (unset && _.has(now, attr))) delete esc[attr];
-
-        // Update or delete the current value.
+        // Update or delete the current value, and track the change.
         unset ? delete now[attr] : now[attr] = val;
-
-        // Track any action on the attribute.
-        this._modelState.push(attr, val, unset);
+        this._changes.push(attr, val);
       }
 
-      // Signal that the model's state has potentially changed.
-      this._cleanChange = false;
+      // Signal that the model's state has potentially changed, and we need
+      // to recompute the actual changes.
+      this._hasComputed = false;
 
       // Fire the `"change"` events.
       if (!silent) this.change(options);
@@ -354,15 +332,15 @@
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset: function(attr, options) {
-      options = _.extend({}, options, {unset: true});
-      return this.set(attr, null, options);
+      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear: function(options) {
-      options = _.extend({}, options, {unset: true});
-      return this.set(_.clone(this.attributes), options);
+      var attrs = {};
+      for (var key in this.attributes) attrs[key] = void 0;
+      return this.set(attrs, _.extend({}, options, {unset: true}));
     },
 
     // Fetch the model from the server. If the server's representation of the
@@ -374,7 +352,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp, xhr), options)) return false;
+        if (!model.set(model.parse(resp), options)) return false;
         if (success) success(model, resp, options);
       };
       return this.sync('read', this, options);
@@ -416,7 +394,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         done = true;
-        var serverAttrs = model.parse(resp, xhr);
+        var serverAttrs = model.parse(resp);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
@@ -475,7 +453,7 @@
 
     // **parse** converts a response into the hash of attributes to be `set` on
     // the model. The default implementation is just to pass the response along.
-    parse: function(resp, xhr) {
+    parse: function(resp) {
       return resp;
     },
 
@@ -493,14 +471,15 @@
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
-      var i, changing = this._changing;
+      var changing = this._changing;
       this._changing = true;
 
       // Generate the changes to be triggered on the model.
-      var triggers = this._changeCenter(true);
-      this._pending = triggers.length;
+      var triggers = this._computeChanges(true);
 
-      for (i = triggers.length - 2; i >= 0; i -= 2) {
+      this._pending = !!triggers.length;
+
+      for (var i = triggers.length - 2; i >= 0; i -= 2) {
         this.trigger('change:' + triggers[i], this, triggers[i + 1], options);
       }
 
@@ -513,14 +492,14 @@
         this._previousAttributes = _.clone(this.attributes);
       }
 
-      this._changing = null;
+      this._changing = false;
       return this;
     },
 
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (!this._cleanChange) this._changeCenter();
+      if (!this._hasComputed) this._computeChanges();
       if (attr == null) return !_.isEmpty(this.changed);
       return _.has(this.changed, attr);
     },
@@ -541,39 +520,36 @@
       return changed;
     },
 
-    // Calculates and handles any changes in `this._modelState`,
-    // checking against `this._currentState` to determine current changes.
-    _changeCenter: function (change) {
+    // Looking at the built up list of `set` attribute changes, compute how
+    // many of the attributes have actually changed. If `loud`, return a
+    // boiled-down list of only the real changes.
+    _computeChanges: function(loud) {
       this.changed = {};
-      var local = {};
+      var already = {};
       var triggers = [];
-      var modelState = this._modelState;
-      var currentState = this._currentState;
+      var current = this._currentAttributes;
+      var changes = this._changes;
 
       // Loop through the current queue of potential model changes.
-      for (var i = modelState.length - 3; i >= 0; i -= 3) {
-        var key = modelState[i], val = modelState[i + 1], unset = modelState[i + 2];
+      for (var i = changes.length - 2; i >= 0; i -= 2) {
+        var key = changes[i], val = changes[i + 1];
+        if (already[key]) continue;
+        already[key] = true;
 
-        // If the item hasn't been set locally this round, proceed.
-        if (!local[key]) {
-          local[key] = val;
-
-          // Check if the attribute has been modified since the last change,
-          // and update `this.changed` accordingly.
-          if (currentState[key] !== val || (_.has(currentState, key) && unset)) {
-            this.changed[key] = val;
-
-            // Triggers & modifications are only created inside a `change` call.
-            if (!change) continue;
-            triggers.push(key, val);
-            (!unset) ? currentState[key] = val : delete currentState[key];
-          }
+        // Check if the attribute has been modified since the last change,
+        // and update `this.changed` accordingly. If we're inside of a `change`
+        // call, also add a trigger to the list.
+        if (current[key] !== val) {
+          this.changed[key] = val;
+          if (!loud) continue;
+          triggers.push(key, val);
+          current[key] = val;
         }
-        modelState.splice(i,3);
       }
+      if (loud) this._changes = [];
 
       // Signals `this.changed` is current to prevent duplicate calls from `this.hasChanged`.
-      this._cleanChange = true;
+      this._hasComputed = true;
       return triggers;
     },
 
@@ -588,12 +564,6 @@
     // `"change"` event.
     previousAttributes: function() {
       return _.clone(this._previousAttributes);
-    },
-
-    // Check if the model is currently in a valid state. It's only possible to
-    // get into an *invalid* state if you're using silent changes.
-    isValid: function(options) {
-      return !this.validate || !this.validate(this.attributes, options);
     },
 
     // Run validation against the next complete set of model attributes,
@@ -651,8 +621,9 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, args, length, model, existing, sort;
+      var i, args, length, model, existing, needsSort;
       var at = options && options.at;
+      var sort = ((options && options.sort) == null ? true : options.sort);
       models = _.isArray(models) ? models.slice() : [models];
 
       // Turn bare objects into model references, and prevent invalid models
@@ -670,8 +641,8 @@
         // optionally merge it into the existing model.
         if (existing || this._byCid[model.cid]) {
           if (options && options.merge && existing) {
-            existing.set(model, options);
-            sort = true;
+            existing.set(model.attributes, options);
+            needsSort = sort;
           }
           models.splice(i, 1);
           continue;
@@ -685,14 +656,14 @@
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      if (models.length) sort = true;
+      if (models.length) needsSort = sort;
       this.length += models.length;
       args = [at != null ? at : this.models.length, 0];
       push.apply(args, models);
       splice.apply(this.models, args);
 
       // Sort the collection if appropriate.
-      if (sort && this.comparator && at == null) this.sort({silent: true});
+      if (needsSort && this.comparator && at == null) this.sort({silent: true});
 
       if (options && options.silent) return this;
 
@@ -730,7 +701,7 @@
     // Add a model to the end of the collection.
     push: function(model, options) {
       model = this._prepareModel(model, options);
-      this.add(model, options);
+      this.add(model, _.extend({at: this.length}, options));
       return model;
     },
 
@@ -808,21 +779,31 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      var model, i, l, id, cid, existing;
-      var add = [], remove = [];
-      options = _.extend({add: true, merge: true, remove: false}, options);
+      var model, i, l, existing;
+      var add = [], remove = [], modelMap = {};
+      var idAttr = this.model.prototype.idAttribute;
+      options = _.extend({add: true, merge: true, remove: true}, options);
+      if (options.parse) models = this.parse(models);
+
+      // Allow a single model (or no argument) to be passed.
+      if (!_.isArray(models)) models = models ? [models] : [];
+
+      // Proxy to `add` for this case, no need to iterate...
+      if (options.add && !options.remove) return this.add(models, options);
 
       // Determine which models to add and merge, and which to remove.
       for (i = 0, l = models.length; i < l; i++) {
         model = models[i];
-        existing = this.get(model);
-        if (options.add || options.merge && existing) add.push(model);
+        existing = this.get(model.id || model.cid || model[idAttr]);
+        if (options.remove && existing) modelMap[existing.cid] = true;
+        if ((options.add && !existing) || (options.merge && existing)) {
+          add.push(model);
+        }
       }
       if (options.remove) {
-        var changeset = new Collection(models);
         for (i = 0, l = this.models.length; i < l; i++) {
           model = this.models[i];
-          if (!changeset.get(model)) remove.push(model);
+          if (!modelMap[model.cid]) remove.push(model);
         }
       }
 
@@ -858,7 +839,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         var method = options.update ? 'update' : 'reset';
-        collection[method](collection.parse(resp, xhr), options);
+        collection[method](resp, options);
         if (success) success(collection, resp, options);
       };
       return this.sync('read', this, options);
@@ -884,7 +865,7 @@
 
     // **parse** converts a response into a list of models to be added to the
     // collection. The default implementation is just to pass it through.
-    parse: function(resp, xhr) {
+    parse: function(resp) {
       return resp;
     },
 
@@ -1309,20 +1290,11 @@
       return this;
     },
 
-    // Clean up references to this view in order to prevent latent effects and
-    // memory leaks.
-    dispose: function() {
-      this.undelegateEvents();
-      if (this.model && this.model.off) this.model.off(null, null, this);
-      if (this.collection && this.collection.off) this.collection.off(null, null, this);
-      return this;
-    },
-
-    // Remove this view from the DOM. Note that the view isn't present in the
-    // DOM by default, so calling this method may be a no-op.
+    // Remove this view by taking the element out of the DOM, and removing any
+    // applicable Backbone.Events listeners.
     remove: function() {
-      this.dispose();
       this.$el.remove();
+      this.stopListening();
       return this;
     },
 
@@ -1460,7 +1432,7 @@
     }
 
     // Ensure that we have the appropriate request data.
-    if (options.data == null && model && (method === 'create' || method === 'update')) {
+    if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(options.attrs || model.toJSON(options));
     }
@@ -1473,7 +1445,7 @@
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
-    if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE')) {
+    if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
       params.type = 'POST';
       if (options.emulateJSON) params.data._method = type;
       var beforeSend = options.beforeSend;

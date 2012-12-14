@@ -66,6 +66,25 @@ $(document).ready(function() {
     equal(obj.counter, 5);
   });
 
+  test("listenTo and stopListening", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenTo(b, 'all', function(){ ok(true); });
+    b.trigger('anything');
+    a.listenTo(b, 'all', function(){ ok(false); });
+    a.stopListening();
+    b.trigger('anything');
+  });
+
+  test("listenTo and stopListening with event maps", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenTo(b, {change: function(){ ok(true); }});
+    b.trigger('change');
+    a.listenTo(b, {change: function(){ ok(false); }});
+    a.stopListening();
+    b.trigger('change');
+  });
 
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
@@ -227,13 +246,11 @@ $(document).ready(function() {
   test("once", 2, function() {
     // Same as the previous test, but we use once rather than having to explicitly unbind
     var obj = { counterA: 0, counterB: 0 };
-    _.extend(obj,Backbone.Events);
+    _.extend(obj, Backbone.Events);
     var incrA = function(){ obj.counterA += 1; obj.trigger('event'); };
-    var incrB = function(){ obj.counterB += 1 };
+    var incrB = function(){ obj.counterB += 1; };
     obj.once('event', incrA);
     obj.once('event', incrB);
-    obj.trigger('event');
-    obj.trigger('event');
     obj.trigger('event');
     equal(obj.counterA, 1, 'counterA should have only been incremented once.');
     equal(obj.counterB, 1, 'counterB should have only been incremented once.');
@@ -298,6 +315,14 @@ $(document).ready(function() {
     equal(obj.counter, 3);
   });
 
+  test("once with off only by context", 0, function() {
+    var context = {};
+    var obj = _.extend({}, Backbone.Events);
+    obj.once('event', function(){ ok(false); }, context);
+    obj.off(null, null, context);
+    obj.trigger('event');
+  });
+
   test("Backbone object inherits Events", function() {
     ok(Backbone.on === Backbone.Events.on);
   });
@@ -308,6 +333,31 @@ $(document).ready(function() {
 
     obj.trigger('async');
     obj.trigger('async');
+  });
+
+  test("once with multiple events.", 2, function() {
+    var obj = _.extend({}, Backbone.Events);
+    obj.once('x y', function() { ok(true); });
+    obj.trigger('x y');
+  });
+
+  test("Off during iteration with once.", 2, function() {
+    var obj = _.extend({}, Backbone.Events);
+    var f = function(){ this.off('event', f); };
+    obj.on('event', f);
+    obj.once('event', function(){});
+    obj.on('event', function(){ ok(true); });
+
+    obj.trigger('event');
+    obj.trigger('event');
+  });
+
+  test("`once` on `all` should work as expected", 1, function() {
+    Backbone.once('all', function() {
+      ok(true);
+      Backbone.trigger('all');
+    });
+    Backbone.trigger('all');
   });
 
 });

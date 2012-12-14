@@ -196,8 +196,8 @@
    * `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
    *
    * The non-chainable wrapper functions are:
-   * `clone`, `contains`, `escape`, `every`, `find`, `has`, `identity`, `indexOf`,
-   * `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
+   * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`, `identity`,
+   * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
    * `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`, `isObject`,
    * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`, `lastIndexOf`,
    * `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`, `result`,
@@ -780,14 +780,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a clone of `value`. If `deep` is `true`, all nested objects will
-   * also be cloned, otherwise they will be assigned by reference. Functions and
-   * DOM nodes are **not** cloned. The enumerable properties of `arguments` objects
-   * and objects created by constructors other than `Object` are cloned to plain
-   * `Object` objects.
-   *
-   * Note: Lo-Dash's deep clone functionality is loosely based on the structured clone algorithm.
-   * See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
+   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
+   * be cloned, otherwise they will be assigned by reference.
    *
    * @static
    * @memberOf _
@@ -807,9 +801,6 @@
    *   { 'name': 'larry', 'age': 50 },
    *   { 'name': 'curly', 'age': 60 }
    * ];
-   *
-   * _.clone({ 'name': 'moe' });
-   * // => { 'name': 'moe' }
    *
    * var shallow = _.clone(stooges);
    * shallow[0] === stooges[0];
@@ -2475,8 +2466,8 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} [array1, array2, ...] Arrays to process.
-   * @returns {Array} Returns a new array of unique elements, in order, that are
-   *  present in **all** of the arrays.
+   * @returns {Array} Returns a new array of unique elements that are present
+   *  in **all** of the arrays.
    * @example
    *
    * _.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
@@ -3244,8 +3235,6 @@
 
   /**
    * This function returns the first argument passed to it.
-   *
-   * Note: This function is used throughout Lo-Dash as a default callback.
    *
    * @static
    * @memberOf _

@@ -256,8 +256,8 @@
    * `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
    *
    * The non-chainable wrapper functions are:
-   * `clone`, `contains`, `escape`, `every`, `find`, `has`, `identity`, `indexOf`,
-   * `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
+   * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`, `identity`,
+   * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
    * `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`, `isObject`,
    * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`, `lastIndexOf`,
    * `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`, `result`,
@@ -967,14 +967,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a clone of `value`. If `deep` is `true`, all nested objects will
-   * also be cloned, otherwise they will be assigned by reference. Functions and
-   * DOM nodes are **not** cloned. The enumerable properties of `arguments` objects
-   * and objects created by constructors other than `Object` are cloned to plain
-   * `Object` objects.
-   *
-   * Note: Lo-Dash's deep clone functionality is loosely based on the structured clone algorithm.
-   * See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
+   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
+   * be cloned, otherwise they will be assigned by reference.
    *
    * @static
    * @memberOf _
@@ -994,9 +988,6 @@
    *   { 'name': 'larry', 'age': 50 },
    *   { 'name': 'curly', 'age': 60 }
    * ];
-   *
-   * _.clone({ 'name': 'moe' });
-   * // => { 'name': 'moe' }
    *
    * var shallow = _.clone(stooges);
    * shallow[0] === stooges[0];
@@ -1074,6 +1065,35 @@
       }
     }
     return result;
+  }
+
+  /**
+   * Creates a deep clone of `value`. Functions and DOM nodes are **not** cloned.
+   * The enumerable properties of `arguments` objects and objects created by
+   * constructors other than `Object` are cloned to plain `Object` objects.
+   *
+   * Note: Lo-Dash's deep clone functionality is loosely based on the structured clone algorithm.
+   * See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to deep clone.
+   * @returns {Mixed} Returns the deep cloned `value`.
+   * @example
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 },
+   *   { 'name': 'curly', 'age': 60 }
+   * ];
+   *
+   * var deep = _.cloneDeep(stooges);
+   * deep[0] === stooges[0];
+   * // => false
+   */
+  function cloneDeep(value) {
+    return clone(value, true);
   }
 
   /**
@@ -3730,8 +3750,6 @@
   /**
    * This function returns the first argument passed to it.
    *
-   * Note: This function is used throughout Lo-Dash as a default callback.
-   *
    * @static
    * @memberOf _
    * @category Utilities
@@ -4257,6 +4275,7 @@
 
   // add functions that return unwrapped values when chaining
   lodash.clone = clone;
+  lodash.cloneDeep = cloneDeep;
   lodash.contains = contains;
   lodash.escape = escape;
   lodash.every = every;

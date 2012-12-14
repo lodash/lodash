@@ -2877,8 +2877,8 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} [array1, array2, ...] Arrays to process.
-   * @returns {Array} Returns a new array of unique elements, in order, that are
-   *  present in **all** of the arrays.
+   * @returns {Array} Returns a new array of unique elements that are present
+   *  in **all** of the arrays.
    * @example
    *
    * _.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
@@ -2887,18 +2887,28 @@
   function intersection(array) {
     var args = arguments,
         argsLength = args.length,
+        cache = { '0': {} },
         index = -1,
         length = array ? array.length : 0,
-        cache = {},
-        result = [];
+        isLarge = length >= 100,
+        result = [],
+        seen = result;
 
     outer:
     while (++index < length) {
       var value = array[index];
-      if (indexOf(result, value) < 0) {
+      if (isLarge) {
+        var inited = hasOwnProperty.call(cache[0], value + '')
+          ? !(seen = cache[0][value])
+          : (seen = cache[0][value] = []);
+      }
+      if (inited || indexOf(seen, value) < 0) {
+        if (isLarge) {
+          seen.push(value);
+        }
         var argsIndex = argsLength;
         while (--argsIndex) {
-          if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(args[argsIndex])))(value)) {
+          if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(args[argsIndex], 0, 100)))(value)) {
             continue outer;
           }
         }
@@ -3203,11 +3213,9 @@
           computed = callback ? callback(value, index, array) : value;
 
       if (isLarge) {
-        // manually coerce `computed` to a string because `hasOwnProperty`, in
-        // some older versions of Firefox, coerces objects incorrectly
         var inited = hasOwnProperty.call(cache, computed + '')
           ? !(seen = cache[computed])
-          : (seen = []);
+          : (seen = cache[computed] = []);
       }
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed

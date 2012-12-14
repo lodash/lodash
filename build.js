@@ -417,7 +417,7 @@
    * @returns {String} Returns the modified source.
    */
   function addCommandsToHeader(source, commands) {
-    return source.replace(/(\/\*!\n)( \*)?( *@license[\s*]+)?( *Lo-Dash [\w.-]+)(.*)/, function() {
+    return source.replace(/(\/\*!\n)( \*)?( *Lo-Dash [\w.-]+)(.*)/, function() {
       // convert unmatched groups to empty strings
       var parts = _.map(slice.call(arguments, 1), function(part) {
         return part || '';
@@ -439,7 +439,7 @@
       // add build commands to copyright/license header
       return (
         parts[0] +
-        parts[1] + parts[2] + parts[3] + ' (Custom Build)' + parts[4] + '\n' +
+        parts[1] + parts[2] + ' (Custom Build)' + parts[3] + '\n' +
         parts[1] + ' Build: `lodash ' + commands.join(' ') + '`'
       );
     });

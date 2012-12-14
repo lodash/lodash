@@ -41,7 +41,7 @@ $(document).ready(function() {
     var div = view.make('div', {id: 'test-div'}, 0);
     equal($(div).text(), '0');
 
-    var div = view.make('div', {id: 'test-div'}, '');
+    div = view.make('div', {id: 'test-div'}, '');
     equal($(div).text(), '');
   });
 
@@ -171,7 +171,7 @@ $(document).ready(function() {
         return {
           title: 'title1',
           acceptText: 'confirm'
-        }
+        };
       }
     });
 
@@ -310,14 +310,11 @@ $(document).ready(function() {
     ok(new View().$el.is('p'));
   });
 
-  test("dispose", 0, function() {
+  test("views stopListening", 0, function() {
     var View = Backbone.View.extend({
-      events: {
-        click: function() { ok(false); }
-      },
       initialize: function() {
-        this.model.on('all x', function(){ ok(false); }, this);
-        this.collection.on('all x', function(){ ok(false); }, this);
+        this.listenTo(this.model, 'all x', function(){ ok(false); }, this);
+        this.listenTo(this.collection, 'all x', function(){ ok(false); }, this);
       }
     });
 
@@ -326,22 +323,9 @@ $(document).ready(function() {
       collection: new Backbone.Collection
     });
 
-    view.dispose();
+    view.stopListening();
     view.model.trigger('x');
     view.collection.trigger('x');
-    view.$el.click();
-  });
-
-  test("dispose with non Backbone objects", 0, function() {
-    var view = new Backbone.View({model: {}, collection: {}});
-    view.dispose();
-  });
-
-  test("view#remove calls dispose.", 1, function() {
-    var view = new Backbone.View();
-
-    view.dispose = function() { ok(true); };
-    view.remove();
   });
 
   test("Provide function for el.", 1, function() {
@@ -364,16 +348,16 @@ $(document).ready(function() {
         counter++;
       }
     });
-    
+
     var view = new View({events:{'click #test':'increment'}});
     var view2 = new View({events:function(){
       return {'click #test':'increment'};
     }});
-    
+
     view.$('#test').trigger('click');
     view2.$('#test').trigger('click');
     equal(counter, 2);
-    
+
     view.$('#test').trigger('click');
     view2.$('#test').trigger('click');
     equal(counter, 4);

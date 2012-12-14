@@ -20,7 +20,7 @@
   var closureId = 'a2787b470c577cee2404d186c562dd9835f779f5';
 
   /** The Git object ID of `uglifyjs.tar.gz` */
-  var uglifyId = '3390b259e04829538e4d3635d12b317dd6103eca';
+  var uglifyId = '7ecae09d413eb48dd5785fe877f24e60ac3bbcef';
 
   /** The media type for raw blob data */
   var mediaType = 'application/vnd.github.v3.raw';

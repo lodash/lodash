@@ -55,6 +55,18 @@ $(document).ready(function() {
     equal(model.get('value'), 2);
   });
 
+  test("initialize with defaults", 2, function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        first_name: 'Unknown',
+        last_name: 'Unknown'
+      }
+    });
+    var model = new Model({'first_name': 'John'});
+    equal(model.get('first_name'), 'John');
+    equal(model.get('last_name'), 'Unknown');
+  });
+
   test("parse can return null", 1, function() {
     var Model = Backbone.Model.extend({
       parse: function(obj) {
@@ -114,7 +126,7 @@ $(document).ready(function() {
 
     var foo = new Backbone.Model({p: 1});
     var bar = new Backbone.Model({p: 2});
-    bar.set(foo.clone(), {unset: true});
+    bar.set(foo.clone().attributes, {unset: true});
     equal(foo.get('p'), 1);
     equal(bar.get('p'), undefined);
   });
@@ -201,6 +213,27 @@ $(document).ready(function() {
     equal(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("set triggers changes in the correct order", function() {
+    var value = null;
+    var model = new Backbone.Model;
+    model.on('last', function(){ value = 'last'; });
+    model.on('first', function(){ value = 'first'; });
+    model.trigger('first');
+    model.trigger('last');
+    equal(value, 'last');
+  });
+
+  test("set falsy values in the correct order", 1, function() {
+    var model = new Backbone.Model({result: 'result'});
+    model.on('change', function() {
+      equal(model.changed.result, false);
+    });
+    model.set({result: void 0}, {silent: true});
+    model.set({result: null}, {silent: true});
+    model.set({result: false}, {silent: true});
+    model.change();
+  });
+
   test("multiple unsets", 1, function() {
     var i = 0;
     var counter = function(){ i++; };
@@ -261,7 +294,7 @@ $(document).ready(function() {
     });
     var model = new Defaulted({two: null});
     equal(model.get('one'), 1);
-    equal(model.get('two'), null);
+    equal(model.get('two'), 2);
     Defaulted = Backbone.Model.extend({
       defaults: function() {
         return {
@@ -272,7 +305,7 @@ $(document).ready(function() {
     });
     model = new Defaulted({two: null});
     equal(model.get('one'), 3);
-    equal(model.get('two'), null);
+    equal(model.get('two'), 4);
   });
 
   test("change, hasChanged, changedAttributes, previous, previousAttributes", 12, function() {
@@ -351,17 +384,6 @@ $(document).ready(function() {
     equal(lastError, "Can't change admin status.");
   });
 
-  test("isValid", function() {
-    var model = new Backbone.Model({valid: true});
-    model.validate = function(attrs) {
-      if (!attrs.valid) return "invalid";
-    };
-    equal(model.isValid(), true);
-    equal(model.set({valid: false}), false);
-    equal(model.isValid(), true);
-    ok(!model.set('valid', false, {silent: true}));
-  });
-
   test("save", 2, function() {
     doc.save({title : "Henry V"});
     equal(this.syncArgs.method, 'update');
@@ -379,6 +401,7 @@ $(document).ready(function() {
     equal(_.size(this.syncArgs.options.attrs), 2);
     equal(this.syncArgs.options.attrs.d, 4);
     equal(this.syncArgs.options.attrs.a, undefined);
+    equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
   });
 
   test("save in positional style", 1, function() {
@@ -570,9 +593,9 @@ $(document).ready(function() {
     ok(model.get('x') === a);
   });
 
-  test("unset fires change for undefined attributes", 1, function() {
+  test("unset does not fire a change for undefined attributes", 0, function() {
     var model = new Backbone.Model({x: undefined});
-    model.on('change:x', function(){ ok(true); });
+    model.on('change:x', function(){ ok(false); });
     model.unset('x');
   });
 
@@ -782,12 +805,6 @@ $(document).ready(function() {
       model.set({b: true});
     });
     model.set({a: true});
-  });
-
-  test("#1179 - isValid returns true in the absence of validate.", 1, function() {
-    var model = new Backbone.Model();
-    model.validate = null;
-    ok(model.isValid());
   });
 
   test("#1122 - clear does not alter options.", 1, function() {

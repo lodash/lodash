@@ -386,6 +386,19 @@ $(document).ready(function() {
     equal(this.syncArgs.options.parse, false);
   });
 
+  test("ensure fetch only parses once", 1, function() {
+    var collection = new Backbone.Collection;
+    var counter = 0;
+    collection.parse = function(models) {
+      counter++;
+      return models;
+    };
+    collection.url = '/test';
+    collection.fetch();
+    this.syncArgs.options.success([]);
+    equal(counter, 1);
+  });
+
   test("create", 4, function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
@@ -809,7 +822,7 @@ $(document).ready(function() {
     strictEqual(c.length, 2);
 
     // merge: false doesn't change any models
-    c.update([m1, {id: 2, a: 1}], {merge: false, remove: true});
+    c.update([m1, {id: 2, a: 1}], {merge: false});
     strictEqual(m2.get('a'), void 0);
 
     // add: false, remove: false only merges existing models
@@ -819,13 +832,82 @@ $(document).ready(function() {
 
     // default options add/remove/merge as appropriate
     c.update([{id: 2, a: 1}, m3]);
-    strictEqual(c.length, 3);
+    strictEqual(c.length, 2);
     strictEqual(m2.get('a'), 1);
 
     // Test removing models not passing an argument
-    c.off('remove');
-    c.update([], {remove: true});
+    c.off('remove').on('remove', function(model) {
+      ok(model === m2 || model === m3);
+    });
+    c.update([]);
     strictEqual(c.length, 0);
+  });
+
+  test("update with only cids", 3, function() {
+    var m1 = new Backbone.Model;
+    var m2 = new Backbone.Model;
+    var c = new Backbone.Collection;
+    c.update([m1, m2]);
+    equal(c.length, 2);
+    c.update([m1]);
+    equal(c.length, 1);
+    c.update([m1, m1, m1, m2, m2], {remove: false});
+    equal(c.length, 2);
+  });
+
+  test("update with only idAttribute", 3, function() {
+    var m1 = { _id: 1 };
+    var m2 = { _id: 2 };
+    var col = Backbone.Collection.extend({
+      model: Backbone.Model.extend({
+        idAttribute: '_id'
+      })
+    });
+    var c = new col;
+    c.update([m1, m2]);
+    equal(c.length, 2);
+    c.update([m1]);
+    equal(c.length, 1);
+    c.update([m1, m1, m1, m2, m2], {remove: false});
+    equal(c.length, 2);
+  });
+
+  test("#1894 - Push should not trigger a sort", 0, function() {
+    var Collection = Backbone.Collection.extend({
+      comparator: 'id',
+      sort: function() {
+        ok(false);
+      }
+    });
+    new Collection().push({id: 1});
+  });
+
+  // test("`update` with non-normal id", function() {
+  //   var Collection = Backbone.Collection.extend({
+  //     model: Backbone.Model.extend({idAttribute: '_id'})
+  //   });
+  //   var collection = new Collection({_id: 1});
+  //   collection.update([{_id: 1, a: 1}], {add: false});
+  //   equal(collection.first().get('a'), 1);
+  // });
+
+  test("#1894 - `sort` can optionally be turned off", 0, function() {
+    var Collection = Backbone.Collection.extend({
+      comparator: 'id',
+      sort: function() { ok(true); }
+    });
+    new Collection().add({id: 1}, {sort: false});
+  });
+
+  test("#1915 - `parse` data in the right order in `update`", function() {
+    var collection = new (Backbone.Collection.extend({
+      parse: function (data) {
+        strictEqual(data.status, 'ok');
+        return data.data;
+      }
+    }));
+    var res = {status: 'ok', data:[{id: 1}]}
+    collection.update(res, {parse: true});
   });
 
 });

@@ -1857,7 +1857,7 @@ deep[0] === stooges[0];
 ### <a id="_clonedeepvalue"></a>`_.cloneDeep(value)`
 <a href="#_clonedeepvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1095 "View in source") [&#x24C9;][1]
 
-Creates a deep clone of `value`. Functions and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and objects created by constructors other than `Object` are cloned to plain `Object` objects.  Note: Lo-Dash's deep clone functionality is loosely based on the structured clone algorithm. See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
+Creates a deep clone of `value`. Functions and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and objects created by constructors other than `Object` are cloned to plain `Object` objects.  Note: This function is loosely based on the structured clone algorithm. See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to deep clone.

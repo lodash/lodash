@@ -613,8 +613,8 @@
    * @param {Function|String} [func=identity|property] The function called per
    * iteration or property name to query.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param {Boolean} [accumulating] A flag to indicate creating a callback
-   *  that accepts an `accumulator` argument.
+   * @param {Object} [accumulating] Used to indicate that the callback should
+   *  accept an `accumulator` argument.
    * @returns {Function} Returns a callback function.
    */
   function createCallback(func, thisArg, accumulating) {
@@ -2415,7 +2415,7 @@
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-    callback = createCallback(callback, thisArg, true);
+    callback = createCallback(callback, thisArg, indicatorObject);
 
     if (isArray(collection)) {
       var index = -1,
@@ -2466,7 +2466,7 @@
     } else if (noCharByIndex && isString(collection)) {
       iteratee = collection.split('');
     }
-    callback = createCallback(callback, thisArg, true);
+    callback = createCallback(callback, thisArg, indicatorObject);
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum

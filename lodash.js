@@ -2918,9 +2918,10 @@
     while (++index < length) {
       var value = array[index];
       if (isLarge) {
-        var inited = hasOwnProperty.call(cache[0], value + '')
-          ? !(seen = cache[0][value])
-          : (seen = cache[0][value] = []);
+        var key = value + '';
+        var inited = hasOwnProperty.call(cache[0], key)
+          ? !(seen = cache[0][key])
+          : (seen = cache[0][key] = []);
       }
       if (inited || indexOf(seen, value) < 0) {
         if (isLarge) {
@@ -3233,9 +3234,10 @@
           computed = callback ? callback(value, index, array) : value;
 
       if (isLarge) {
-        var inited = hasOwnProperty.call(cache, computed + '')
-          ? !(seen = cache[computed])
-          : (seen = cache[computed] = []);
+        var key = computed + '';
+        var inited = hasOwnProperty.call(cache, key)
+          ? !(seen = cache[key])
+          : (seen = cache[key] = []);
       }
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed

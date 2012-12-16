@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v1.0.0-rc.2</sup>
+# Lo-Dash <sup>v1.0.0-rc.3</sup>
 [![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
 An alternative to Underscore.js, delivering [consistency](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
@@ -6,18 +6,18 @@ An alternative to Underscore.js, delivering [consistency](https://github.com/bes
 ## Download
 
 * Lo-Dash builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.3/lodash.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.3/lodash.min.js)
 
 * Underscore compatibility builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.underscore.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.2/lodash.underscore.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.3/lodash.underscore.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.3/lodash.underscore.min.js)
 
-* CDN copies of ≤ v1.0.0-rc.2’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
-[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.js),
-[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.min.js),
-[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.underscore.js), and
-[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.2/lodash.underscore.min.js)
+* CDN copies of ≤ v1.0.0-rc.3’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash.js),
+[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash.min.js),
+[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash.underscore.js), and
+[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash.underscore.min.js)
 
 * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
@@ -43,7 +43,7 @@ For more information check out these screencasts over Lo-Dash:
  * AMD loader support ([RequireJS](http://requirejs.org/), [curl.js](https://github.com/cujojs/curl), etc.)
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining without calling [_(…).chain](http://lodash.com/docs#prototype_chain)
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”* defined](http://michaux.ca/articles/lazy-function-definition-pattern) methods
- * [_.clone](http://lodash.com/docs#clone) supports *“deep”* cloning
+ * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for *“deep”* cloning arrays and objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex` argument
  * [_.forEach](http://lodash.com/docs#forEach) is chainable and supports exiting iteration early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating over an object’s own and inherited properties
@@ -231,14 +231,30 @@ require({
  * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L140-L146)]
  * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L807-L812)]
  * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L888-L900)]
- * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L981-L983)]
- * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L1382-L1385)]
+ * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L982-L984)]
+ * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L1383-L1386)]
 
 ## Release Notes
 
 ### <sup>v1.0.0-rc.3</sup>
 
- *
+#### Compatibility Warnings
+
+ * Made `_#join', '_#pop', and '_#shift' wrapper methods return unwrapped values
+ * Made *“Functions”* methods wrapper counterparts return wrapped values
+ * Removed `_.chain` and `_#chain` methods
+
+#### Changes
+
+ * Added [_.cloneDeep](http://lodash.com/docs#cloneDeep) alias of `_.clone(…, true)`
+ * Added `_.once` to the `backbone` build method dependencies
+ * Ensured `backbone` builds implement Underscore’s chaining behavior
+ * Ensured the `settings=…` build option doesn’t clobber the default `moduleId`
+ * Ensured Lo-Dash’s `npm` package installation avoids erroring when no other modules have been globally installed
+ * Made compiled templates loaded via AMD use the Lo-Dash module for their `_` references
+ * Removed the *“Collections”* method `_.forEach` dependency from *“Arrays”* method `_.intersection`
+ * Optimized `_.isArray` and `_.isFunction` fallbacks as well as<br>
+   `_.intersection`, `_.isDate`, `_.isRegExp`, `_.reduce`, `_.reduceRight`, `_.union`, and `_.uniq`
 
 ### <sup>v1.0.0-rc.2</sup>
 
@@ -249,7 +265,7 @@ require({
 
 #### Compatibility Warnings
 
- * Made `_(…)` chain automatically without needing to call `_#chain`
+ * Made `_(…)` intuitively chain without needing to call `_#chain`
  * Made `_.isEqual` equate `arguments` objects to similar `Object` objects
  * Made `_.clone` copy the enumerable properties of `arguments` objects and objects<br>
    created by constructors other than `Object` are cloned to plain `Object` objects

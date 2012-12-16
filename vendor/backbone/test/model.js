@@ -326,7 +326,6 @@ $(document).ready(function() {
     equal(model.hasChanged('name'), true);
     model.change();
     equal(model.get('name'), 'Rob');
-
   });
 
   test("changedAttributes", 3, function() {
@@ -942,6 +941,12 @@ $(document).ready(function() {
     model.set({a:'a'}, {silent:true});
     model.change();
     deepEqual(changes, ['a']);
+  });
+
+  test("#1943 change calculations should use _.isEqual", function() {
+    var model = new Backbone.Model({a: {key: 'value'}});
+    model.set('a', {key:'value'}, {silent:true});
+    equal(model.changedAttributes(), false);
   });
 
 });

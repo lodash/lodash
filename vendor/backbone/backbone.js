@@ -539,7 +539,7 @@
         // Check if the attribute has been modified since the last change,
         // and update `this.changed` accordingly. If we're inside of a `change`
         // call, also add a trigger to the list.
-        if (current[key] !== val) {
+        if (!_.isEqual(current[key], val)) {
           this.changed[key] = val;
           if (!loud) continue;
           triggers.push(key, val);
@@ -1042,7 +1042,7 @@
     this.handlers = [];
     _.bindAll(this, 'checkUrl');
 
-    // #1653 - Ensure that `History` can be used outside of the browser.
+    // Ensure that `History` can be used outside of the browser.
     if (typeof window !== 'undefined') {
       this.location = window.location;
       this.history = window.history;
@@ -1238,7 +1238,7 @@
         var href = location.href.replace(/(javascript:|#).*$/, '');
         location.replace(href + '#' + fragment);
       } else {
-        // #1649 - Some browsers require that `hash` contains a leading #.
+        // Some browsers require that `hash` contains a leading #.
         location.hash = '#' + fragment;
       }
     }

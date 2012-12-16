@@ -240,7 +240,7 @@ require({
 
 #### Compatibility Warnings
 
- * Made `_#join', '_#pop', and '_#shift' wrapper methods return unwrapped values
+ * Made `_#join`, `_#pop`, and `_#shift` wrapper methods return unwrapped values
  * Made *“Functions”* methods wrapper counterparts return wrapped values
  * Removed `_.chain` and `_#chain` methods
 

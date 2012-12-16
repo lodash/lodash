@@ -2013,6 +2013,7 @@
       }
       if (isRemoved(source, 'isPlainObject')) {
         source = removeVar(source, 'getPrototypeOf');
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
       }
       if (isRemoved(source, 'keys')) {
         source = removeFunction(source, 'shimKeys');
@@ -2029,6 +2030,7 @@
       }
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
         source = removeFunction(source, 'createIterator');
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs;|.+?nonEnumArgs *=.+/g, '');
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys', 'template')) {
@@ -2037,12 +2039,6 @@
       }
       if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'isPlainObject', 'keys', 'template')) {
         source = removeVar(source, 'reNative');
-      }
-      if (isRemoved(source, 'createIterator', 'isEqual')) {
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
-      }
-      if (isRemoved(source, 'createIterator', 'isPlainObject')) {
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
       }
       if (isRemoved(source, 'createIterator', 'keys')) {
         source = removeVar(source, 'nativeKeys');

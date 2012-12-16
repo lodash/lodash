@@ -34,8 +34,11 @@
 		</script>
 		<script>
 			(function() {
-				var push = Array.prototype.push,
-				    slice = Array.prototype.slice;
+				var arrayProto = Array.prototype,
+				    concat = arrayProto.concat,
+				    pop = arrayProto.pop,
+				    push = arrayProto.push,
+				    slice = arrayProto.slice;
 
 				if (_.chain) {
 					return;
@@ -70,19 +73,19 @@
 					return this;
 				};
 
-				_.prototype.concat = _.wrap(_.prototype.concat, function(func) {
-					var result = func.apply(this, slice.call(arguments, 1));
+				_.prototype.concat = function() {
+					var result = concat.apply(this.__wrapped__, arguments);
 					if (this.__chain__) {
 						result = new _(result);
 						result.__chain__ = true;
 					}
 					return result;
-				});
+				};
 
-				_.prototype.pop = _.wrap(_.prototype.pop, function(func) {
-					func.apply(this, slice.call(arguments, 1));
+				_.prototype.pop = function() {
+					pop.apply(this.__wrapped__, arguments);
 					return this;
-				});
+				};
 			}());
 		</script>
 		<script src="../vendor/underscore/test/collections.js"></script>

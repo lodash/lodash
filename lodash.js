@@ -4399,16 +4399,18 @@
   // avoid array-like object bugs with `Array#shift` and `Array#splice`
   // in Firefox < 10 and IE < 9
   if (hasObjectSpliceBug) {
-    each(['shift', 'splice'], function(methodName) {
-      var func = lodash.prototype[methodName];
+    each(['pop', 'shift', 'splice'], function(methodName) {
+      var func = arrayRef[methodName],
+          isSplice = methodName == 'splice';
+
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__,
-            result = func.apply(this, arguments);
+            result = func.apply(value, arguments);
 
         if (value.length === 0) {
           delete value[0];
         }
-        return result;
+        return isSplice ? new lodash(result) : result;
       };
     });
   }

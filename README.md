@@ -41,7 +41,7 @@ For more information check out these screencasts over Lo-Dash:
 ## Features
 
  * AMD loader support ([RequireJS](http://requirejs.org/), [curl.js](https://github.com/cujojs/curl), etc.)
- * [_(…)](http://lodash.com/docs#_) supports intuitive chaining without calling [_(…).chain](http://lodash.com/docs#prototype_chain)
+ * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”* defined](http://michaux.ca/articles/lazy-function-definition-pattern) methods
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for *“deep”* cloning arrays and objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex` argument

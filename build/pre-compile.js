@@ -41,7 +41,7 @@
     'hasDontEnumBug',
     'isKeysFast',
     'objectLoop',
-    'noArgsEnum',
+    'nonEnumArgs',
     'noCharByIndex',
     'shadowed',
     'top',

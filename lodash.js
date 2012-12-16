@@ -150,20 +150,23 @@
     arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
 
   /** Detect if an `arguments` object's indexes are non-enumerable (IE < 9) */
-  var noArgsEnum = true;
+  var nonEnumArgs = true;
 
   (function() {
     var props = [];
     function ctor() { this.x = 1; }
     ctor.prototype = { 'valueOf': 1, 'y': 1 };
     for (var prop in new ctor) { props.push(prop); }
-    for (prop in arguments) { noArgsEnum = !prop; }
+    for (prop in arguments) { nonEnumArgs = !prop; }
 
     hasDontEnumBug = !/valueOf/.test(props);
     iteratesOwnLast = props[0] != 'x';
   }(1));
 
-  /** Detect if an `arguments` object's [[Class]] is unresolvable (Firefox < 4, IE < 9) */
+  /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
+  var argsAreObjects = arguments.constructor == Object;
+
+  /** Detect if `arguments` objects [[Class]] is unresolvable (Firefox < 4, IE < 9) */
   var noArgsClass = !isArguments(arguments);
 
   /**
@@ -375,7 +378,7 @@
 
     // object iteration:
     // add support for iterating over `arguments` objects if needed
-    '  <%  } else if (noArgsEnum) { %>\n' +
+    '  <%  } else if (nonEnumArgs) { %>\n' +
     '  var length = iteratee.length; index = -1;\n' +
     '  if (length && isArguments(iteratee)) {\n' +
     '    while (++index < length) {\n' +
@@ -438,7 +441,7 @@
     '  }' +
     '    <% } %>' +
     '  <% } %>' +
-    '  <% if (arrayLoop || noArgsEnum) { %>\n}<% } %>\n' +
+    '  <% if (arrayLoop || nonEnumArgs) { %>\n}<% } %>\n' +
 
     // add code to the bottom of the iteration function
     '<%= bottom %>;\n' +
@@ -660,7 +663,7 @@
       'hasDontEnumBug': hasDontEnumBug,
       'isKeysFast': isKeysFast,
       'objectLoop': '',
-      'noArgsEnum': noArgsEnum,
+      'nonEnumArgs': nonEnumArgs,
       'noCharByIndex': noCharByIndex,
       'shadowed': shadowed,
       'top': '',
@@ -1202,7 +1205,7 @@
   var isArray = nativeIsArray || function(value) {
     // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
     // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
-    return value instanceof Array || toString.call(value) == arrayClass;
+    return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
   };
 
   /**
@@ -1373,8 +1376,8 @@
         return false;
       }
       // in older versions of Opera, `arguments` objects have `Array` constructors
-      var ctorA = noArgsClass && isArguments(a) ? Object : a.constructor,
-          ctorB = noArgsClass && isArguments(b) ? Object : b.constructor;
+      var ctorA = !argsAreObjects && isArguments(a) ? Object : a.constructor,
+          ctorB = !argsAreObjects && isArguments(b) ? Object : b.constructor;
 
       // non `Object` object instances with different constructors are not equal
       if (ctorA != ctorB && !(

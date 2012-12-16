@@ -174,7 +174,7 @@
     'hasDontEnumBug',
     'isKeysFast',
     'objectLoop',
-    'noArgsEnum',
+    'nonEnumArgs',
     'noCharByIndex',
     'shadowed',
     'top',
@@ -904,6 +904,29 @@
   }
 
   /**
+   * Removes all `argsAreObjects` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeArgsAreObjects(source) {
+    source = removeVar(source, 'argsAreObjects');
+
+    // remove `argsAreObjects` from `_.isArray`
+    source = source.replace(matchFunction(source, 'isArray'), function(match) {
+      return match.replace(/\(argsAreObjects && *([^)]+)\)/g, '$1');
+    });
+
+    // remove `argsAreObjects` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/!argsAreObjects[^:]+:\s*/g, '');
+    });
+
+    return source;
+  }
+
+  /**
    * Removes all `noArgsClass` references from `source`.
    *
    * @private
@@ -916,11 +939,6 @@
     // remove `noArgsClass` from `_.isEmpty`
     source = source.replace(matchFunction(source, 'isEmpty'), function(match) {
       return match.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
-    });
-
-    // remove `noArgsClass` from `_.isEqual`
-    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/noArgsClass[^:]+:\s*/g, '');
     });
 
     return source;
@@ -1628,9 +1646,11 @@
           '  }'
         ].join('\n'));
 
-        // remove `arguments` object check from `_.isEqual`
+        // remove `arguments` object and `argsAreObjects` check from `_.isEqual`
         source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-          return match.replace(/^ *if *\(.+== argsClass[^}]+}\n/gm, '')
+          return match
+            .replace(/^ *if *\(.+== argsClass[^}]+}\n/gm, '')
+            .replace(/!argsAreObjects[^:]+:\s*/g, '');
         });
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
@@ -1816,8 +1836,9 @@
           });
         }
         else {
-          source = removeIsArgumentsFallback(source);
+          source = removeArgsAreObjects(source);
           source = removeHasObjectSpliceBug(source);
+          source = removeIsArgumentsFallback(source);
         }
 
         // remove `thisArg` from unexposed `forIn` and `forOwn`
@@ -1834,10 +1855,10 @@
           }
         });
 
-        // remove `hasDontEnumBug`, `iteratesOwnLast`, and `noArgsEnum` declarations and assignments
+        // remove `hasDontEnumBug`, `iteratesOwnLast`, and `nonEnumArgs` declarations and assignments
         source = source
           .replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '')
-          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum).+\n/g, '');
+          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|iteratesOwnLast|nonEnumArgs).+\n/g, '');
 
         // remove `iteratesOwnLast` from `shimIsPlainObject`
         source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
@@ -2008,7 +2029,7 @@
       }
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
         source = removeFunction(source, 'createIterator');
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var noArgsEnum;|.+?noArgsEnum *=.+/g, '');
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs;|.+?nonEnumArgs *=.+/g, '');
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys', 'template')) {
         source = removeVar(source, 'isBindFast');
@@ -2027,8 +2048,8 @@
         source = removeVar(source, 'nativeKeys');
         source = removeKeysOptimization(source);
       }
-      if (!source.match(/var (?:hasDontEnumBug|iteratesOwnLast|noArgsEnum)\b/g)) {
-        // remove `hasDontEnumBug`, `iteratesOwnLast`, and `noArgsEnum` assignments
+      if (!source.match(/var (?:hasDontEnumBug|iteratesOwnLast|nonEnumArgs)\b/g)) {
+        // remove `hasDontEnumBug`, `iteratesOwnLast`, and `nonEnumArgs` assignments
         source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/, '');
       }
     }

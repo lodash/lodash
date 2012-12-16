@@ -1,6 +1,6 @@
 {
   "name": "lodash",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "An alternative to Underscore.js, delivering consistency, customization, performance, and extra features.",
   "homepage": "http://lodash.com",
   "main": "./lodash",

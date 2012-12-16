@@ -1,5 +1,5 @@
 /*!
- * Lo-Dash 1.0.0-rc.2 (Custom Build) <http://lodash.com>
+ * Lo-Dash 1.0.0-rc.3 (Custom Build) <http://lodash.com>
  * Build: `lodash underscore -d -o ./lodash.underscore.js`
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.4.3 <http://underscorejs.org>
@@ -389,8 +389,8 @@
    * @param {Function|String} [func=identity|property] The function called per
    * iteration or property name to query.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param {Boolean} [accumulating] A flag to indicate creating a callback
-   *  that accepts an `accumulator` argument.
+   * @param {Object} [accumulating] Used to indicate that the callback should
+   *  accept an `accumulator` argument.
    * @returns {Function} Returns a callback function.
    */
   function createCallback(func, thisArg, accumulating) {
@@ -1989,7 +1989,7 @@
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-    callback = createCallback(callback, thisArg, true);
+    callback = createCallback(callback, thisArg, indicatorObject);
 
     if (isArray(collection)) {
       var index = -1,
@@ -2038,7 +2038,7 @@
       var props = keys(collection);
       length = props.length;
     }
-    callback = createCallback(callback, thisArg, true);
+    callback = createCallback(callback, thisArg, indicatorObject);
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum
@@ -3811,7 +3811,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '1.0.0-rc.2';
+  lodash.VERSION = '1.0.0-rc.3';
 
   // add functions to `lodash.prototype`
   mixin(lodash);

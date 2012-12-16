@@ -133,6 +133,9 @@
   var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
     arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
 
+  /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
+  var argsAreObjects = arguments.constructor == Object;
+
   /**
    * Detect lack of support for accessing string characters by index:
    *
@@ -435,7 +438,7 @@
       'bottom': '',
       'hasDontEnumBug': hasDontEnumBug,
       'objectLoop': '',
-      'noArgsEnum': noArgsEnum,
+      'nonEnumArgs': nonEnumArgs,
       'noCharByIndex': noCharByIndex,
       'shadowed': shadowed,
       'top': '',
@@ -935,7 +938,7 @@
   var isArray = nativeIsArray || function(value) {
     // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
     // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
-    return value instanceof Array || toString.call(value) == arrayClass;
+    return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
   };
 
   /**

@@ -2161,6 +2161,7 @@
 
       var funcs = _.without.apply(_, [_.functions(_)].concat([
         '_',
+        '_each',
         '_iteratorTemplate',
         'after',
         'bind',

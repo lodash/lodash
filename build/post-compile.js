@@ -32,13 +32,17 @@
     // correct overly aggressive Closure Compiler advanced optimizations
     source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
 
-    // unescape properties (i.e. foo["bar"] => foo.bar)
+    // unescape properties (e.g. foo["bar"] => foo.bar)
     source = source.replace(/(\w)\["([^."]+)"\]/g, function(match, left, right) {
       return /\W/.test(right) ? match : (left + '.' + right);
     });
 
-    // correct AMD module definition for AMD build optimizers
-    source = source.replace(/("function")\s*==\s*(typeof define)\s*&&\s*\(?\s*("object")\s*==\s*(typeof define\.amd)\s*&&\s*(define\.amd)\s*\)?/, '$2==$1&&$4==$3&&$5');
+    // flip `typeof` expressions to help optimize Safari and
+    // correct the AMD module definition for AMD build optimizers
+    // (e.g. from `"number" == typeof x` to `typeof x == "number")
+    source = source.replace(/(return)?\s*("[^"]+")\s*([!=]=)\s*(typeof(?:\s*\([^)]+\)|\s+[\w.]+))/g, function(match, ret, type, equality, expression) {
+      return (ret ? ret + ' ' : '') + expression + equality + type;
+    });
 
     // add trailing semicolon
     if (source) {

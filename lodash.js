@@ -2146,13 +2146,10 @@
    * // => alerts each number value (order is not guaranteed)
    */
   function forEach(collection, callback, thisArg) {
-    if (isArray(collection)) {
+    if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
       var index = -1,
           length = collection.length;
 
-      if (!callback || typeof thisArg != 'undefined') {
-        callback = createCallback(callback, thisArg);
-      }
       while (++index < length) {
         if (callback(collection[index], index, collection) === false) {
           break;

@@ -2088,6 +2088,12 @@
         'isTemplate': isTemplate,
         'outputPath': outputPath,
         'onComplete': function(source) {
+          // replace `!1` with `false` and `!0` with `true` to help
+          // optimize Safari when used in a loop
+          source = source
+            .replace(/!1([!=]==?[a-z])/g, 'false$1')
+            .replace(/!0([!=]==?[a-z])/g, 'true$1')
+
           // inject "use strict" directive
           if (isStrict) {
             source = source.replace(/^([\s\S]*?function[^{]+{)([^"'])/, '$1"use strict";$2');

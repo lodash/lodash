@@ -682,7 +682,15 @@ _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
 ### <a id="_value"></a>`_(value)`
 <a href="#_value">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L278 "View in source") [&#x24C9;][1]
 
-Creates a `lodash` object, that wraps the given `value`, to enable method chaining.  The chainable wrapper functions are: `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`, `compose`, `concat`, `countBy`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`, `forEach`, `forIn`, `forOwn`, `functions`, `groupBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`, `once`, `pairs`, `partial`, `pick`, `pluck`, `push`, `range`, `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `values`, `where`, `without`, `wrap`, and `zip`  The non-chainable wrapper functions are: `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`, `template`, `unescape`, and `uniqueId`  The wrapper functions `first` and `last` return wrapped values when `n` is passed, otherwise they return unwrapped values.
+Creates a `lodash` object, that wraps the given `value`, to enable method chaining.
+
+The chainable wrapper functions are:<br>
+`after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`, `compose`, `concat`, `countBy`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`, `forEach`, `forIn`, `forOwn`, `functions`, `groupBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`, `once`, `pairs`, `partial`, `pick`, `pluck`, `push`, `range`, `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
+
+The non-chainable wrapper functions are:<br>
+`clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`, `template`, `unescape`, and `uniqueId`
+
+The wrapper functions `first` and `last` return wrapped values when `n` is passed, otherwise they return unwrapped values.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to wrap in a `lodash` instance.
@@ -1857,7 +1865,9 @@ deep[0] === stooges[0];
 ### <a id="_clonedeepvalue"></a>`_.cloneDeep(value)`
 <a href="#_clonedeepvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1098 "View in source") [&#x24C9;][1]
 
-Creates a deep clone of `value`. Functions and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and objects created by constructors other than `Object` are cloned to plain `Object` objects.  Note: This function is loosely based on the structured clone algorithm. See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
+Creates a deep clone of `value`. Functions and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and objects created by constructors other than `Object` are cloned to plain `Object` objects.
+
+Note: This function is loosely based on the structured clone algorithm. See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to deep clone.
@@ -2241,7 +2251,9 @@ _.isEqual(moe, clone);
 ### <a id="_isfinitevalue"></a>`_.isFinite(value)`
 <a href="#_isfinitevalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1477 "View in source") [&#x24C9;][1]
 
-Checks if `value` is, or can be coerced to, a finite number.  Note: This is not the same as native `isFinite`, which will return true for booleans and empty strings. See http://es5.github.com/#x15.1.2.5.
+Checks if `value` is, or can be coerced to, a finite number.
+
+Note: This is not the same as native `isFinite`, which will return true for booleans and empty strings. See http://es5.github.com/#x15.1.2.5.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to check.
@@ -2301,7 +2313,9 @@ _.isFunction(_);
 ### <a id="_isnanvalue"></a>`_.isNaN(value)`
 <a href="#_isnanvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1557 "View in source") [&#x24C9;][1]
 
-Checks if `value` is `NaN`.  Note: This is not the same as native `isNaN`, which will return `true` for `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
+Checks if `value` is `NaN`.
+
+Note: This is not the same as native `isNaN`, which will return `true` for `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to check.
@@ -2860,7 +2874,11 @@ _.result(object, 'stuff');
 ### <a id="_templatetext-data-options"></a>`_.template(text, data, options)`
 <a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3967 "View in source") [&#x24C9;][1]
 
-A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.  Note: In the development build `_.template` utilizes sourceURLs for easier debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl  Note: Lo-Dash may be used in Chrome extensions by either creating a `lodash csp` build and avoiding `_.template` use, or loading Lo-Dash in a sandboxed page. See http://developer.chrome.com/trunk/extensions/sandboxingEval.html
+A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.
+
+Note: In the development build `_.template` utilizes sourceURLs for easier debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
+
+Note: Lo-Dash may be used in Chrome extensions by either creating a `lodash csp` build and avoiding `_.template` use, or loading Lo-Dash in a sandboxed page. See http://developer.chrome.com/trunk/extensions/sandboxingEval.html
 
 #### Arguments
 1. `text` *(String)*: The template text.

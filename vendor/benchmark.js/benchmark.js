@@ -25,6 +25,9 @@
   /** Detect free variable `require` */
   var freeRequire = typeof require == 'function' && require;
 
+  /** Used to store the `Object` built-in in case it's overwritten later */
+  var Object = window.Object;
+
   /** Used to crawl all properties regardless of enumerability */
   var getAllKeys = Object.getOwnPropertyNames;
 

@@ -187,7 +187,10 @@ class Entry {
     preg_match('#/\*\*(?:\s*\*)?([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
     if (count($result)) {
       $type = $this->getType();
-      $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
+      $result = preg_replace('/:\n *\* */', ":<br>\n", $result[1]);
+      $result = preg_replace('/(?:^|\n) *\*\n *\* */', "\n\n", $result);
+      $result = preg_replace('/(?:^|\n) *\* ?/', ' ', $result);
+      $result = trim($result);
       $result = ($type == 'Function' ? '' : '(' . str_replace('|', ', ', trim($type, '{}')) . '): ') . $result;
     }
     $this->_desc = $result;

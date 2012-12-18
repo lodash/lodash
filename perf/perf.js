@@ -78,7 +78,8 @@
    * @returns {Number} Returns the adjusted Hz.
    */
   function getHz(bench) {
-    return 1 / (bench.stats.mean + bench.stats.moe);
+    var result = 1 / (bench.stats.mean + bench.stats.moe);
+    return isFinite(result) ? result : 0;
   }
 
   /**
@@ -1416,6 +1417,20 @@
         _.some(numbers, function(num) {\
           return num == 19;\
         })'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.some` with `thisArg` iterating an array (slow path)')
+      .add(buildName, '\
+        lodash.some(objects, function(value, index) {\
+          return this["key" + index] == 19;\
+        }, object)'
+      )
+      .add(otherName, '\
+        _.some(objects, function(value, index) {\
+          return this["key" + index] == 19;\
+        }, object)'
       )
   );
 

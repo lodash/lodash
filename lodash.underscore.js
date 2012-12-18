@@ -716,6 +716,23 @@
   };
 
   /**
+   * Creates an array composed of the own enumerable property names of `object`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property names.
+   * @example
+   *
+   * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
+   * // => ['one', 'two', 'three'] (order is not guaranteed)
+   */
+  var keys = !nativeKeys ? shimKeys : function(object) {
+    return (isObject(object) ? nativeKeys(object) : []);
+  };
+
+  /**
    * A fallback implementation of `isPlainObject` that checks if a given `value`
    * is an object created by the `Object` constructor, assuming objects created
    * by the `Object` constructor have no inherited enumerable properties and that
@@ -912,10 +929,15 @@
    * // => { 'Moe': 'first', 'Larry': 'second', 'Curly': 'third' } (order is not guaranteed)
    */
   function invert(object) {
-    var result = {};
-    forOwn(object, function(value, key) {
-      result[value] = key;
-    });
+    var index = -1,
+        props = keys(object),
+        length = props.length,
+        result = {};
+
+    while (++index < length) {
+      var key = props[index];
+      result[object[key]] = key;
+    }
     return result;
   }
 
@@ -1372,23 +1394,6 @@
   }
 
   /**
-   * Creates an array composed of the own enumerable property names of `object`.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to inspect.
-   * @returns {Array} Returns a new array of property names.
-   * @example
-   *
-   * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => ['one', 'two', 'three'] (order is not guaranteed)
-   */
-  var keys = !nativeKeys ? shimKeys : function(object) {
-    return (isObject(object) ? nativeKeys(object) : []);
-  };
-
-  /**
    * Creates a shallow clone of `object` excluding the specified properties.
    * Property names may be specified as individual arguments or as arrays of
    * property names. If `callback` is passed, it will be executed for each property
@@ -1440,10 +1445,15 @@
    * // => [['moe', 30], ['larry', 40], ['curly', 50]] (order is not guaranteed)
    */
   function pairs(object) {
-    var result = [];
-    forOwn(object, function(value, key) {
-      result.push([key, value]);
-    });
+    var index = -1,
+        props = keys(object),
+        length = props.length,
+        result = Array(length);
+
+    while (++index < length) {
+      var key = props[index];
+      result[index] = [key, object[key]];
+    }
     return result;
   }
 
@@ -1501,10 +1511,14 @@
    * // => [1, 2, 3]
    */
   function values(object) {
-    var result = [];
-    forOwn(object, function(value) {
-      result.push(value);
-    });
+    var index = -1,
+        props = keys(object),
+        length = props.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = object[props[index]];
+    }
     return result;
   }
 

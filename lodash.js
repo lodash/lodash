@@ -1938,6 +1938,29 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Retrieves the elements in the `collection` at specified indexes. Indexes may 
+   * be specified as individual arguments or as arrays of indexes.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|String} collection The collection to iterate over.
+   * @param {Number|Array} number|[index1, index2, ...] The index(es) of `collection`
+   *  to retrieve, either as individual arguments or arrays.
+   * @returns {Array} Returns a new array of elements that matched the provided indexes.
+   * @example
+   *
+   * _.at( ['a', 'b', 'c', 'd', 'e', 'f'], [0, 2, 5] );
+   * // => ['a', 'c', 'f']
+   *
+   * _.at( ['lodash', 'javascript', 'fast'], 0, 2 );
+   * // => ['lodash, 'fast']
+   */
+  function at(collection, list) {
+    return values(pick(collection || [], concat.apply(arguments, slice(arguments, 1))));
+  }
+
+  /**
    * Checks if a given `target` element is present in a `collection` using strict
    * equality for comparisons, i.e. `===`. If `fromIndex` is negative, it is used
    * as the offset from the end of the collection.
@@ -2173,25 +2196,6 @@
       each(collection, callback, thisArg);
     }
     return collection;
-  }
-
-  /**
-   * Grabs the elements in the `collection` using the specified indexes 
-   * in the `list` array.
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Array} list The array of indexes to grab.
-   * @ returns {Array} Returns a new array of elements that matched the list array.
-   * @example
-   *
-   * _.grab( ['a', 'b', 'c', 'd', 'e', 'f'], [0, 2, 5] );
-   * // => ['a', 'c', 'f']
-   */
-  function grab(collection, list) {
-    return invoke(list, function(a){ return a[this]; }, collection);
   }
 
   /**
@@ -4241,6 +4245,7 @@
   // add functions that return wrapped values when chaining
   lodash.after = after;
   lodash.assign = assign;
+  lodash.at = at;
   lodash.bind = bind;
   lodash.bindAll = bindAll;
   lodash.bindKey = bindKey;
@@ -4258,7 +4263,6 @@
   lodash.forIn = forIn;
   lodash.forOwn = forOwn;
   lodash.functions = functions;
-  lodash.grab = grab;
   lodash.groupBy = groupBy;
   lodash.initial = initial;
   lodash.intersection = intersection;

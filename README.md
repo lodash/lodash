@@ -71,7 +71,7 @@ lodash backbone
 ```
 
  * CSP builds, supporting default [Content Security Policy](http://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html) restrictions, may be created using the `csp` modifier argument.
-   The `csp` modifier is an alais of the `mobile` modifier. Chrome extensions will require [sandboxing](http://developer.chrome.com/trunk/extensions/sandboxingEval.html) or the use of either the `csp`, `mobile`, or `underscore` build.
+   The `csp` modifier is an alais of the `mobile` modifier. Chrome extensions will require [sandboxing](http://developer.chrome.com/extensions/sandboxingEval.html) or the use of either the `csp`, `mobile`, or `underscore` build.
 ```bash
 lodash csp
 ```

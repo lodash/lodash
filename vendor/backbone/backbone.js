@@ -190,25 +190,27 @@
 
     // An inversion-of-control version of `on`. Tell *this* object to listen to
     // an event in another object ... keeping track of what it's listening to.
-    listenTo: function(object, events, callback) {
+    listenTo: function(object, events, callback, context) {
+      context = context || this;
       var listeners = this._listeners || (this._listeners = {});
       var id = object._listenerId || (object._listenerId = _.uniqueId('l'));
       listeners[id] = object;
-      object.on(events, callback || this, this);
+      object.on(events, callback || context, context);
       return this;
     },
 
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
-    stopListening: function(object, events, callback) {
+    stopListening: function(object, events, callback, context) {
+      context = context || this;
       var listeners = this._listeners;
       if (!listeners) return;
       if (object) {
-        object.off(events, callback, this);
+        object.off(events, callback, context);
         if (!events && !callback) delete listeners[object._listenerId];
       } else {
         for (var id in listeners) {
-          listeners[id].off(null, null, this);
+          listeners[id].off(null, null, context);
         }
         this._listeners = {};
       }
@@ -237,7 +239,7 @@
     this.attributes = {};
     this._changes = [];
     if (options && options.collection) this.collection = options.collection;
-    if (options && options.parse) attrs = this.parse(attrs);
+    if (options && options.parse) attrs = this.parse(attrs, options);
     if (defaults = _.result(this, 'defaults')) _.defaults(attrs, defaults);
     this.set(attrs, {silent: true});
     this._currentAttributes = _.clone(this.attributes);
@@ -352,7 +354,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp), options)) return false;
+        if (!model.set(model.parse(resp, options), options)) return false;
         if (success) success(model, resp, options);
       };
       return this.sync('read', this, options);
@@ -394,7 +396,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         done = true;
-        var serverAttrs = model.parse(resp);
+        var serverAttrs = model.parse(resp, options);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
@@ -453,7 +455,7 @@
 
     // **parse** converts a response into the hash of attributes to be `set` on
     // the model. The default implementation is just to pass the response along.
-    parse: function(resp) {
+    parse: function(resp, options) {
       return resp;
     },
 
@@ -567,8 +569,8 @@
     },
 
     // Run validation against the next complete set of model attributes,
-    // returning `true` if all is well. If a specific `error` callback has
-    // been passed, call that instead of firing the general `"error"` event.
+    // returning `true` if all is well. Otherwise, fire a general
+    // `"error"` event and call the error callback, if specified.
     _validate: function(attrs, options) {
       if (!this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
@@ -636,11 +638,10 @@
         }
         models[i] = model;
 
-        existing = model.id != null && this._byId[model.id];
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing || this._byCid[model.cid]) {
-          if (options && options.merge && existing) {
+        if (existing = this.get(model)) {
+          if (options && options.merge) {
             existing.set(model.attributes, options);
             needsSort = sort;
           }
@@ -651,7 +652,7 @@
         // Listen to added models' events, and index models for lookup by
         // `id` and by `cid`.
         model.on('all', this._onModelEvent, this);
-        this._byCid[model.cid] = model;
+        this._byId[model.cid] = model;
         if (model.id != null) this._byId[model.id] = model;
       }
 
@@ -685,7 +686,7 @@
         model = this.get(models[i]);
         if (!model) continue;
         delete this._byId[model.id];
-        delete this._byCid[model.cid];
+        delete this._byId[model.cid];
         index = this.indexOf(model);
         this.models.splice(index, 1);
         this.length--;
@@ -734,7 +735,8 @@
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj.id != null ? obj.id : obj] || this._byCid[obj.cid || obj];
+      this._idAttr || (this._idAttr = this.model.prototype.idAttribute);
+      return this._byId[obj.id || obj.cid || obj[this._idAttr] || obj];
     },
 
     // Get the model at the given index.
@@ -781,9 +783,8 @@
     update: function(models, options) {
       var model, i, l, existing;
       var add = [], remove = [], modelMap = {};
-      var idAttr = this.model.prototype.idAttribute;
       options = _.extend({add: true, merge: true, remove: true}, options);
-      if (options.parse) models = this.parse(models);
+      if (options.parse) models = this.parse(models, options);
 
       // Allow a single model (or no argument) to be passed.
       if (!_.isArray(models)) models = models ? [models] : [];
@@ -794,7 +795,7 @@
       // Determine which models to add and merge, and which to remove.
       for (i = 0, l = models.length; i < l; i++) {
         model = models[i];
-        existing = this.get(model.id || model.cid || model[idAttr]);
+        existing = this.get(model);
         if (options.remove && existing) modelMap[existing.cid] = true;
         if ((options.add && !existing) || (options.merge && existing)) {
           add.push(model);
@@ -818,7 +819,7 @@
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
       options || (options = {});
-      if (options.parse) models = this.parse(models);
+      if (options.parse) models = this.parse(models, options);
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
@@ -865,7 +866,7 @@
 
     // **parse** converts a response into a list of models to be added to the
     // collection. The default implementation is just to pass it through.
-    parse: function(resp) {
+    parse: function(resp, options) {
       return resp;
     },
 
@@ -886,7 +887,6 @@
       this.length = 0;
       this.models = [];
       this._byId  = {};
-      this._byCid = {};
     },
 
     // Prepare a model or hash of attributes to be added to this collection.
@@ -1473,7 +1473,7 @@
     };
 
     // Make the request, allowing the user to override any Ajax options.
-    var xhr = Backbone.ajax(_.extend(params, options));
+    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
     model.trigger('request', model, xhr, options);
     return xhr;
   };
@@ -1499,7 +1499,7 @@
     if (protoProps && _.has(protoProps, 'constructor')) {
       child = protoProps.constructor;
     } else {
-      child = function(){ parent.apply(this, arguments); };
+      child = function(){ return parent.apply(this, arguments); };
     }
 
     // Add static properties to the constructor function, if supplied.

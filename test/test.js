@@ -667,6 +667,28 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.grab');
+
+  (function() {
+    test('should get items in range', function() {
+      var result = _.grab(['a', 'b',  1.4, 'c',  { 'foo': 'bar' }, 'd'], [0, 2, 4]);
+      deepEqual( result, ['a', 1.4, { 'foo': 'bar' } ]);
+    });
+    test('should work with an object for `collection`', function() {
+      var result = _.grab({ 'a': 'apple', 'b': 'ball', 'c': 'count' }, ['a', 'c']);
+      deepEqual(result, ['apple', 'count']);
+    });
+    test('no list should return an empty array', function() {
+      deepEqual(_.grab(['a', 'b', 'c']), [] );
+    });
+    test('out of range selections should return undefined', function() {
+      var result = _.grab(['a', 'b', 'c'], [1, 9001]);
+      deepEqual( result, ['b', undefined]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.groupBy');
 
   (function() {

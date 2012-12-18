@@ -62,13 +62,15 @@ $(document).ready(function() {
     strictEqual(collection.last().get('a'), 4);
   });
 
-  test("get", 3, function() {
+  test("get", 5, function() {
     equal(col.get(0), d);
     equal(col.get(2), b);
+    equal(col.get({id: 1}), c);
+    equal(col.get(c.clone()), c);
     equal(col.get(col.first().cid), col.first());
   });
 
-  test("get with non-default ids", 2, function() {
+  test("get with non-default ids", 4, function() {
     var col = new Backbone.Collection();
     var MongoModel = Backbone.Model.extend({
       idAttribute: '_id'
@@ -78,6 +80,12 @@ $(document).ready(function() {
     equal(col.get(100), model);
     model.set({_id: 101});
     equal(col.get(101), model);
+
+    var Col2 = Backbone.Collection.extend({ model: MongoModel });
+    col2 = new Col2();
+    col2.push(model);
+    equal(col2.get({_id: 101}), model);
+    equal(col2.get(model.clone()), model);
   });
 
   test("update index when id changes", 3, function() {
@@ -882,14 +890,14 @@ $(document).ready(function() {
     new Collection().push({id: 1});
   });
 
-  // test("`update` with non-normal id", function() {
-  //   var Collection = Backbone.Collection.extend({
-  //     model: Backbone.Model.extend({idAttribute: '_id'})
-  //   });
-  //   var collection = new Collection({_id: 1});
-  //   collection.update([{_id: 1, a: 1}], {add: false});
-  //   equal(collection.first().get('a'), 1);
-  // });
+  test("`update` with non-normal id", function() {
+    var Collection = Backbone.Collection.extend({
+      model: Backbone.Model.extend({idAttribute: '_id'})
+    });
+    var collection = new Collection({_id: 1});
+    collection.update([{_id: 1, a: 1}], {add: false});
+    equal(collection.first().get('a'), 1);
+  });
 
   test("#1894 - `sort` can optionally be turned off", 0, function() {
     var Collection = Backbone.Collection.extend({
@@ -906,8 +914,27 @@ $(document).ready(function() {
         return data.data;
       }
     }));
-    var res = {status: 'ok', data:[{id: 1}]}
+    var res = {status: 'ok', data:[{id: 1}]};
     collection.update(res, {parse: true});
+  });
+
+  asyncTest("#1939 - `parse` is passed `options`", 1, function () {
+    var collection = new (Backbone.Collection.extend({
+      url: '/',
+      parse: function (data, options) {
+        strictEqual(options.xhr.someHeader, 'headerValue');
+        return data;
+      }
+    }));
+    var ajax = Backbone.ajax;
+    Backbone.ajax = function (params) {
+      _.defer(params.success);
+      return {someHeader: 'headerValue'};
+    };
+    collection.fetch({
+      success: function () { start(); }
+    });
+    Backbone.ajax = ajax;
   });
 
 });

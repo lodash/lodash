@@ -681,6 +681,12 @@
     test('no list should return an empty array', function() {
       deepEqual(_.at(['a', 'b', 'c']), [] );
     });
+    test('should work on strings', function() {
+      deepEqual(_.at("helio", [0,3]), ['h', 'i']);
+    });
+    test('should work with multple args', function() {
+      deepEqual(_.at(['a','b','c','d'], 0, 2, 3), ['a', 'c', 'd']);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

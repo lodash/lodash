@@ -86,6 +86,30 @@ $(document).ready(function() {
     b.trigger('change');
   });
 
+  test("listenTo with context", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var ctx = {};
+    a.listenTo(a, 'foo', function(){ equal(this, ctx); }, ctx);
+    a.trigger('foo');
+  });
+
+  test("stopListening with context", 2, function() {
+    var a = _.extend({}, Backbone.Events);
+    var ctx = {};
+    var calledWithContext = false;
+    var calledWithoutContext = false;
+
+    a.listenTo(a, 'foo', function(){ calledWithContext = true; }, ctx);
+    a.listenTo(a, 'foo', function(){ calledWithoutContext = true; });
+
+    a.stopListening(a, 'foo', null, ctx);
+
+    a.trigger('foo');
+
+    equal(false, calledWithContext);
+    equal(true, calledWithoutContext);
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);

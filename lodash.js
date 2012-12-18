@@ -2176,6 +2176,25 @@
   }
 
   /**
+   * Grabs the elements in the `collection` using the specified indexes 
+   * in the `list` array.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|String} collection The collection to iterate over.
+   * @param {Array} list The array of indexes to grab.
+   * @ returns {Array} Returns a new array of elements that matched the list array.
+   * @example
+   *
+   * _.grab( ['a', 'b', 'c', 'd', 'e', 'f'], [0, 2, 5] );
+   * // => ['a', 'c', 'f']
+   */
+  function grab(collection, list) {
+    return invoke(list, function(a){ return a[this]; }, collection);
+  }
+
+  /**
    * Creates an object composed of keys returned from running each element of
    * `collection` through a `callback`. The corresponding value of each key is an
    * array of elements passed to `callback` that returned the key. The `callback`
@@ -4239,6 +4258,7 @@
   lodash.forIn = forIn;
   lodash.forOwn = forOwn;
   lodash.functions = functions;
+  lodash.grab = grab;
   lodash.groupBy = groupBy;
   lodash.initial = initial;
   lodash.intersection = intersection;

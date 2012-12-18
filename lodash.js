@@ -1956,8 +1956,20 @@
    * _.at( ['lodash', 'javascript', 'fast'], 0, 2 );
    * // => ['lodash, 'fast']
    */
-  function at(collection, list) {
-    return values(pick(collection || [], concat.apply(arguments, slice(arguments, 1))));
+  function at(collection) {
+    var index = -1,
+        props = concat.apply(arrayRef, slice(arguments, 1)),
+        length = props.length,
+        result = Array(length);
+
+    if (noCharByIndex && isString(collection)) {
+      collection = collection.split('');
+    }
+
+    while(++index < length) {
+      result[index] = collection[props[index]];
+    }
+    return result;
   }
 
   /**

@@ -1144,8 +1144,7 @@
         return stackB[length] == b;
       }
     }
-    var index = -1,
-        result = true,
+    var result = true,
         size = 0;
 
     // add `a` and `b` to the stack of traversed objects

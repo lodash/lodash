@@ -1710,9 +1710,9 @@
   }
 
   /**
-   * Merges enumerable properties of the source object(s) into the `destination`
-   * object. Subsequent sources will overwrite propery assignments of previous
-   * sources.
+   * Recursively merges own enumerable properties of the source object(s), that
+   * don't resolve to `null`/`undefined`, into the `destination` object. Subsequent
+   * sources will overwrite propery assignments of previous sources.
    *
    * @static
    * @memberOf _

@@ -197,6 +197,42 @@
     });
   }());
 
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.at');
+
+  (function() {
+    test('should return `undefined` for nonexistent keys', function() {
+      var actual = _.at(['a', 'b',  'c'], [0, 2, 4]);
+      deepEqual(actual, ['a', 'c', undefined]);
+    });
+
+    test('should return an empty array when no keys are passed', function() {
+      deepEqual(_.at(['a', 'b', 'c']), []);
+    });
+
+    test('should accept multiple key arguments', function() {
+      var actual = _.at(['a', 'b', 'c', 'd'], 0, 2, 3);
+      deepEqual(actual, ['a', 'c', 'd']);
+    });
+
+    test('should work with an object for `collection`', function() {
+      var actual = _.at({ 'a': 1, 'b': 2, 'c': 3 }, ['a', 'c']);
+      deepEqual(actual, [1, 3]);
+    });
+
+    _.each({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection`', function() {
+        deepEqual(_.at(collection, [0, 2]), ['a', 'c']);
+      });
+    });
+  }());
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.bind');
@@ -664,30 +700,6 @@
       equal(values.length, 1);
     });
   });
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.at');
-
-  (function() {
-    test('should get items in range', function() {
-      var result = _.at(['a', 'b',  1.4, 'c',  { 'foo': 'bar' }, 'd'], [0, 2, 4]);
-      deepEqual( result, ['a', 1.4, { 'foo': 'bar' } ]);
-    });
-    test('should work with an object for `collection`', function() {
-      var result = _.at({ 'a': 'apple', 'b': 'ball', 'c': 'count' }, ['a', 'c']);
-      deepEqual(result, ['apple', 'count']);
-    });
-    test('no list should return an empty array', function() {
-      deepEqual(_.at(['a', 'b', 'c']), [] );
-    });
-    test('should work on strings', function() {
-      deepEqual(_.at("helio", [0,3]), ['h', 'i']);
-    });
-    test('should work with multple args', function() {
-      deepEqual(_.at(['a','b','c','d'], 0, 2, 3), ['a', 'c', 'd']);
-    });
-  }());
 
   /*--------------------------------------------------------------------------*/
 

@@ -95,6 +95,7 @@
   var collectionsMethods = [
     'all',
     'any',
+    'at',
     'collect',
     'contains',
     'countBy',
@@ -249,6 +250,7 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
+    'at',
     'bindKey',
     'cloneDeep',
     'forIn',
@@ -385,6 +387,10 @@
         else if (/^(?:size|toArray)$/.test(methodName)) {
           func(array);
           func(object);
+        }
+        else if (methodName == 'at') {
+          func(array, 0, 2);
+          func(object, 'a', 'c');
         }
         else if (methodName == 'invoke') {
           func(array, 'slice');

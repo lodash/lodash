@@ -67,6 +67,7 @@
   var dependencyMap = {
     'after': [],
     'assign': ['isArguments'],
+    'at': ['isString'],
     'bind': ['isFunction', 'isObject'],
     'bindAll': ['bind', 'functions'],
     'bindKey': ['isFunction', 'isObject'],

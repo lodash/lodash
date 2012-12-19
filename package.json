@@ -46,8 +46,8 @@
     "main": "./lodash.js"
   },
   "scripts": {
-    "build": "node build",
-    "test": "node test/test && node test/test-build",
-    "install": "node build/post-install"
+    "build": "node ./build.js",
+    "test": "node ./test/test.js && node ./test/test-build.js",
+    "install": "node ./build/post-install.js"
   }
 }

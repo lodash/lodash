@@ -1878,10 +1878,10 @@
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
    *
-   * _.pick({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'name', 'age');
-   * // => { 'name': 'moe', 'age': 40 }
+   * _.pick({ 'name': 'moe', '_userid': 'moe1' }, 'name');
+   * // => { 'name': 'moe' }
    *
-   * _.pick({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
+   * _.pick({ 'name': 'moe', '_userid': 'moe1' }, function(value, key) {
    *   return key.charAt(0) != '_';
    * });
    * // => { 'name': 'moe' }
@@ -1938,16 +1938,18 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates an array of elements from the specified index(es), or keys, of the `collection`.
-   * Indexes may be specified as individual arguments or as arrays of indexes.
+   * Creates an array of elements from the specified index(es), or keys, of the
+   * `collection`. Indexes may be specified as individual arguments or as arrays
+   * of indexes.
    *
    * @static
    * @memberOf _
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Array|Number|String} number|[index1, index2, ...] The index(es) of
-   * `collection` to retrieve, either as individual arguments or arrays.
-   * @returns {Array} Returns a new array of elements that matched the provided indexes.
+   * @param {Array|Number|String} [index1, index2, ...] The index(es) of
+   *  `collection` to retrieve, either as individual arguments or arrays.
+   * @returns {Array} Returns a new array of elements corresponding to the
+   *  provided indexes.
    * @example
    *
    * _.at(['a', 'b', 'c', 'd', 'e'], [0, 2, 4]);

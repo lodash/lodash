@@ -1468,16 +1468,16 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Function|String} callback|[prop1, prop2, ...] The properties to pick
-   *  or the function called per iteration.
+   * @param {Array|Function|String} callback|[prop1, prop2, ...] The function called
+   *  per iteration or properties to pick, either as individual arguments or arrays.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
    *
-   * _.pick({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'name', 'age');
-   * // => { 'name': 'moe', 'age': 40 }
+   * _.pick({ 'name': 'moe', '_userid': 'moe1' }, 'name');
+   * // => { 'name': 'moe' }
    *
-   * _.pick({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
+   * _.pick({ 'name': 'moe', '_userid': 'moe1' }, function(value, key) {
    *   return key.charAt(0) != '_';
    * });
    * // => { 'name': 'moe' }
@@ -2063,7 +2063,7 @@
   }
 
   /**
-   * The opposite of `_.filter`, this method returns the values of a
+   * The opposite of `_.filter`, this method returns the elements of a
    * `collection` that `callback` does **not** return truthy for.
    *
    * @static

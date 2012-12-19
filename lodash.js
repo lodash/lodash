@@ -1872,8 +1872,8 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Function|String} callback|[prop1, prop2, ...] The properties to pick
-   *  or the function called per iteration.
+   * @param {Array|Function|String} callback|[prop1, prop2, ...] The function called
+   *  per iteration or properties to pick, either as individual arguments or arrays.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
@@ -1938,23 +1938,23 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Retrieves the elements in the `collection` at specified indexes. Indexes may 
-   * be specified as individual arguments or as arrays of indexes.
+   * Creates an array of elements from the specified index(es), or keys, of the `collection`.
+   * Indexes may be specified as individual arguments or as arrays of indexes.
    *
    * @static
    * @memberOf _
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Number|Array} number|[index1, index2, ...] The index(es) of `collection`
-   *  to retrieve, either as individual arguments or arrays.
+   * @param {Array|Number|String} number|[index1, index2, ...] The index(es) of
+   * `collection` to retrieve, either as individual arguments or arrays.
    * @returns {Array} Returns a new array of elements that matched the provided indexes.
    * @example
    *
-   * _.at( ['a', 'b', 'c', 'd', 'e', 'f'], [0, 2, 5] );
-   * // => ['a', 'c', 'f']
+   * _.at(['a', 'b', 'c', 'd', 'e'], [0, 2, 4]);
+   * // => ['a', 'c', 'e']
    *
-   * _.at( ['lodash', 'javascript', 'fast'], 0, 2 );
-   * // => ['lodash, 'fast']
+   * _.at(['moe', 'larry', 'curly'], 0, 2);
+   * // => ['moe', 'curly']
    */
   function at(collection) {
     var index = -1,
@@ -1965,7 +1965,6 @@
     if (noCharByIndex && isString(collection)) {
       collection = collection.split('');
     }
-
     while(++index < length) {
       result[index] = collection[props[index]];
     }
@@ -2526,7 +2525,7 @@
   }
 
   /**
-   * The opposite of `_.filter`, this method returns the values of a
+   * The opposite of `_.filter`, this method returns the elements of a
    * `collection` that `callback` does **not** return truthy for.
    *
    * @static

@@ -241,6 +241,7 @@
 
   /** List of methods used by Underscore */
   var underscoreMethods = _.without.apply(_, [allMethods].concat([
+    'at',
     'bindKey',
     'cloneDeep',
     'forIn',
@@ -940,6 +941,32 @@
     // remove `noArgsClass` from `_.isEmpty`
     source = source.replace(matchFunction(source, 'isEmpty'), function(match) {
       return match.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
+    });
+
+    return source;
+  }
+
+  /**
+   * Removes all `noCharByIndex` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeNoCharByIndex(source) {
+    // remove `noCharByIndex` from `_.at`
+    source = source.replace(matchFunction(source, 'at'), function(match) {
+      return match.replace(/^ *if *\(noCharByIndex[^}]+}\n/m, '');
+    });
+
+    // remove `noCharByIndex` from `_.reduceRight`
+    source = source.replace(matchFunction(source, 'reduceRight'), function(match) {
+      return match.replace(/}\s*else if *\(noCharByIndex[^}]+/, '');
+    });
+
+    // remove `noCharByIndex` from `_.toArray`
+    source = source.replace(matchFunction(source, 'toArray'), function(match) {
+      return match.replace(/noCharByIndex[^:]+:/, '');
     });
 
     return source;
@@ -1866,19 +1893,10 @@
           return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
         });
 
-        // remove `noCharByIndex` from `_.reduceRight`
-        source = source.replace(matchFunction(source, 'reduceRight'), function(match) {
-          return match.replace(/}\s*else if *\(noCharByIndex[^}]+/, '');
-        });
-
-        // remove `noCharByIndex` from `_.toArray`
-        source = source.replace(matchFunction(source, 'toArray'), function(match) {
-          return match.replace(/noCharByIndex[^:]+:/, '');
-        });
-
         source = removeVar(source, 'iteratorTemplate');
         source = removeCreateFunction(source);
         source = removeNoArgsClass(source);
+        source = removeNoCharByIndex(source);
         source = removeNoNodeClass(source);
       }
       else {

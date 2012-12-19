@@ -783,6 +783,7 @@
 
         _.each([
           'assign',
+          'at',
           'bindKey',
           'forIn',
           'forOwn',

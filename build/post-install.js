@@ -33,7 +33,7 @@
 
     return {
       'host': host,
-      'href': host + origin + pathname,
+      'href': origin + pathname,
       'origin': origin,
       'pathname': pathname
     };

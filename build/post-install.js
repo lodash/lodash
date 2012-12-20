@@ -3,7 +3,7 @@
   'use strict';
 
   /** Load Node modules */
-  var exec = require('child_process').exec,
+  var execFile = require('child_process').execFile,
       fs = require('fs'),
       https = require('https'),
       path = require('path'),
@@ -20,13 +20,10 @@
   var closureId = 'a2787b470c577cee2404d186c562dd9835f779f5';
 
   /** The Git object ID of `uglifyjs.tar.gz` */
-  var uglifyId = '7ecae09d413eb48dd5785fe877f24e60ac3bbcef';
+  var uglifyId = '505f1be36ef60fd25a992a522f116d5179ab317f';
 
   /** The media type for raw blob data */
   var mediaType = 'application/vnd.github.v3.raw';
-
-  /** Reassign `existsSync` for older versions of Node */
-  fs.existsSync || (fs.existsSync = path.existsSync);
 
   /** Used to reference parts of the blob href */
   var location = (function() {
@@ -41,6 +38,21 @@
       'pathname': pathname
     };
   }());
+
+  /** The message to display when the install mode is undetectable */
+  var oopsMessage = [
+    'Oops! There was a problem detecting the install mode. If you’re installing the',
+    'Lo-Dash command-line executable (via `npm install -g lodash`), you’ll need to',
+    'manually install UglifyJS and the Closure Compiler by running:',
+    '',
+    "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + closureId + " | tar xvz -C '" + vendorPath + "'",
+    "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + uglifyId  + " | tar xvz -C '" + vendorPath + "'",
+    '',
+    'Please submit an issue on the GitHub issue tracker: ' + process.env.npm_package_bugs_url
+  ].join('\n');
+
+  /** Reassign `existsSync` for older versions of Node */
+  fs.existsSync || (fs.existsSync = path.existsSync);
 
   /*--------------------------------------------------------------------------*/
 
@@ -99,9 +111,14 @@
     .on('error', callback);
   }
 
-  /*--------------------------------------------------------------------------*/
-
-  exec('npm -g root', function(exception, stdout) {
+  /**
+   * The `child_process.execFile` callback.
+   *
+   * @private
+   * @param {Object|Undefined} exception The error object.
+   * @param {String} stdout The stdout buffer.
+   */
+  function onExecFile(exception, stdout) {
     if (!exception) {
       try {
         var root = stdout.trim(),
@@ -111,17 +128,7 @@
       }
     }
     if (exception) {
-      console.error([
-        'Oops! There was a problem detecting the install mode. If you’re installing the',
-        'Lo-Dash command-line executable (via `npm install -g lodash`), you’ll need to',
-        'manually install UglifyJS and the Closure Compiler by running:',
-        '',
-        "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + closureId + " | tar xvz -C '" + vendorPath + "'",
-        "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + uglifyId  + " | tar xvz -C '" + vendorPath + "'",
-        '',
-        'Please submit an issue on the GitHub issue tracker: ' + process.env.npm_package_bugs_url
-      ].join('\n'));
-
+      console.error(oopsMessage);
       console.error(exception);
     }
     if (!isGlobal) {
@@ -144,5 +151,14 @@
         });
       }
     });
-  });
+  }
+
+  /*--------------------------------------------------------------------------*/
+
+  try {
+    execFile('npm', [ '-g', 'root' ], onExecFile);
+  } catch(e) {
+    console.error(oopsMessage);
+    console.error(e);
+  }
 }());

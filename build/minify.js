@@ -17,7 +17,7 @@
   /** Load other modules */
   var preprocess = require('./pre-compile.js'),
       postprocess = require('./post-compile.js'),
-      uglifyJS = require('../vendor/uglifyjs/uglify-js.js');
+      uglifyJS = require('../vendor/uglifyjs/tools/node.js');
 
   /** The Closure Compiler command-line options */
   var closureOptions = ['--warning_level=QUIET'];
@@ -155,9 +155,8 @@
 
     compiler.on('exit', function(status) {
       // `status` contains the process exit code
-      var exception = null;
       if (status) {
-        exception = new Error(error);
+        var exception = new Error(error);
         exception.status = status;
       }
       callback(exception, output);
@@ -178,31 +177,42 @@
    * @param {Function} callback The function called once the process has completed.
    */
   function uglify(source, label, callback) {
-    var exception,
-        result,
-        ugly = uglifyJS.uglify;
-
     if (!this.isSilent) {
       console.log('Compressing ' + path.basename(this.outputPath, '.js') + ' using ' + label + '...');
     }
     try {
-      result = ugly.gen_code(
-        // enable unsafe transformations
-        ugly.ast_squeeze_more(
-          ugly.ast_squeeze(
-            // munge variable and function names, excluding the special `define`
-            // function exposed by AMD loaders
-            ugly.ast_mangle(uglifyJS.parser.parse(source), {
-              'except': ['define']
-            }
-        ))), {
-        'ascii_only': true
+      // 1. parse
+      var toplevel = uglifyJS.parse(source);
+
+      // 2. compress
+      // // enable unsafe comparisons
+      toplevel.figure_out_scope();
+      toplevel = toplevel.transform(uglifyJS.Compressor({
+        'unsafe_comps': true,
+        'warnings': false
+      }));
+
+      // 3. mangle
+      // excluding the `define` function exposed by AMD loaders
+      toplevel.figure_out_scope();
+      toplevel.compute_char_frequency();
+      toplevel.mangle_names({
+        'except': ['define']
       });
-    } catch(e) {
-      exception = e;
+
+      // 4. output
+      // restrict lines to 500 characters for consistency with the Closure Compiler
+      var stream = uglifyJS.OutputStream({
+        'ascii_only': true,
+        'max_line_len': 500,
+      });
+
+      toplevel.print(stream);
     }
-    // lines are restricted to 500 characters for consistency with the Closure Compiler
-    callback(exception, result && ugly.split_lines(result, 500));
+    catch(e) {
+      var exception = e;
+    }
+    callback(exception, stream && String(stream));
   }
 
   /*--------------------------------------------------------------------------*/

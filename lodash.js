@@ -4188,7 +4188,8 @@
    * // => '105'
    */
   function uniqueId(prefix) {
-    return (prefix == null ? '' : prefix + '') + (++idCounter);
+    var id = ++idCounter;
+    return (prefix == null ? '' : prefix + '') + id;
   }
 
   /*--------------------------------------------------------------------------*/

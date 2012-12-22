@@ -1,4 +1,5 @@
-/*!
+/**
+ * @license
  * Lo-Dash 1.0.0-rc.3 <http://lodash.com>
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
  * Based on Underscore.js 1.4.3 <http://underscorejs.org>

@@ -1,4 +1,5 @@
-/*!
+/**
+ * @license
  * Lo-Dash 1.0.0-rc.3 (Custom Build) <http://lodash.com>
  * Build: `lodash underscore -d -o ./lodash.underscore.js`
  * (c) 2012 John-David Dalton <http://allyoucanleet.com/>
@@ -1981,9 +1982,9 @@
   }
 
   /**
-   * Boils down a `collection` to a single value. The initial state of the
-   * reduction is `accumulator` and each successive step of it should be returned
-   * by the `callback`. The `callback` is bound to `thisArg` and invoked with 4
+   * Reduces a `collection` to a single value. The initial state of the reduction
+   * is `accumulator` and each successive step of it should be returned by the
+   * `callback`. The `callback` is bound to `thisArg` and invoked with four
    * arguments; for arrays they are (accumulator, value, index|key, collection).
    *
    * @static

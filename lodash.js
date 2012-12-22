@@ -2443,9 +2443,9 @@
   }
 
   /**
-   * Boils down a `collection` to a single value. The initial state of the
-   * reduction is `accumulator` and each successive step of it should be returned
-   * by the `callback`. The `callback` is bound to `thisArg` and invoked with 4
+   * Reduces a `collection` to a single value. The initial state of the reduction
+   * is `accumulator` and each successive step of it should be returned by the
+   * `callback`. The `callback` is bound to `thisArg` and invoked with four
    * arguments; for arrays they are (accumulator, value, index|key, collection).
    *
    * @static

@@ -29,15 +29,16 @@ class Alias {
     $this->_category = $owner->getCategory();
     $this->_desc = $owner->getDesc();
     $this->_example = $owner->getExample();
+    $this->_isCtor = $owner->isCtor();
+    $this->_isLicense = $owner->isLicense();
+    $this->_isPlugin = $owner->isPlugin();
+    $this->_isPrivate = $owner->isPrivate();
+    $this->_isStatic = $owner->isStatic();
     $this->_lineNumber = $owner->getLineNumber();
     $this->_members = $owner->getMembers();
     $this->_params = $owner->getParams();
     $this->_returns = $owner->getReturns();
     $this->_type = $owner->getType();
-    $this->_isCtor = $owner->isCtor();
-    $this->_isPlugin = $owner->isPlugin();
-    $this->_isPrivate = $owner->isPrivate();
-    $this->_isStatic = $owner->isStatic();
   }
 
   /*--------------------------------------------------------------------------*/
@@ -94,6 +95,66 @@ class Alias {
    */
   public function getExample() {
     return $this->_example;
+  }
+
+  /**
+   * Checks if the entry is an alias.
+   *
+   * @memberOf Alias
+   * @returns {Boolean} Returns `true`.
+   */
+  public function isAlias() {
+    return true;
+  }
+
+  /**
+   * Checks if the owner entry is a constructor.
+   *
+   * @memberOf Alias
+   * @returns {Boolean} Returns `true` if a constructor, else `false`.
+   */
+  public function isCtor() {
+    return $this->_isCtor;
+  }
+
+  /**
+   * Checks if the owner entry is a license.
+   *
+   * @memberOf Alias
+   * @returns {Boolean} Returns `true` if a license, else `false`.
+   */
+  public function isLicense() {
+    return $this->_isLicense;
+  }
+
+  /**
+   * Checks if the owner entry *is* assigned to a prototype.
+   *
+   * @memberOf Alias
+   * @returns {Boolean} Returns `true` if assigned to a prototype, else `false`.
+   */
+  public function isPlugin() {
+    return $this->_isPlugin;
+  }
+
+  /**
+   * Checks if the owner entry is private.
+   *
+   * @memberOf Alias
+   * @returns {Boolean} Returns `true` if private, else `false`.
+   */
+  public function isPrivate() {
+    return $this->_isPrivate;
+  }
+
+  /**
+   * Checks if the owner entry is *not* assigned to a prototype.
+   *
+   * @memberOf Alias
+   * @returns {Boolean} Returns `true` if not assigned to a prototype, else `false`.
+   */
+  public function isStatic() {
+    return $this->_isStatic;
   }
 
   /**
@@ -160,56 +221,6 @@ class Alias {
    */
   public function getType() {
     return $this->_type;
-  }
-
-  /**
-   * Checks if the entry is an alias.
-   *
-   * @memberOf Alias
-   * @returns {Boolean} Returns `true`.
-   */
-  public function isAlias() {
-    return true;
-  }
-
-  /**
-   * Checks if the owner entry is a constructor.
-   *
-   * @memberOf Alias
-   * @returns {Boolean} Returns `true` if a constructor, else `false`.
-   */
-  public function isCtor() {
-    return $this->_isCtor;
-  }
-
-  /**
-   * Checks if the owner entry *is* assigned to a prototype.
-   *
-   * @memberOf Alias
-   * @returns {Boolean} Returns `true` if assigned to a prototype, else `false`.
-   */
-  public function isPlugin() {
-    return $this->_isPlugin;
-  }
-
-  /**
-   * Checks if the owner entry is private.
-   *
-   * @memberOf Alias
-   * @returns {Boolean} Returns `true` if private, else `false`.
-   */
-  public function isPrivate() {
-    return $this->_isPrivate;
-  }
-
-  /**
-   * Checks if the owner entry is *not* assigned to a prototype.
-   *
-   * @memberOf Alias
-   * @returns {Boolean} Returns `true` if not assigned to a prototype, else `false`.
-   */
-  public function isStatic() {
-    return $this->_isStatic;
   }
 }
 ?>

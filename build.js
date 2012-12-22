@@ -420,12 +420,7 @@
    * @returns {String} Returns the modified source.
    */
   function addCommandsToHeader(source, commands) {
-    return source.replace(/(\/\*!\n)( \*)?( *Lo-Dash [\w.-]+)(.*)/, function() {
-      // convert unmatched groups to empty strings
-      var parts = _.map(slice.call(arguments, 1), function(part) {
-        return part || '';
-      });
-
+    return source.replace(/(\/\**\n)( \*)( *@license[\s*]+)( *Lo-Dash [\w.-]+)(.*)/, function() {
       // remove `node path/to/build.js` from `commands`
       if (commands[0] == 'node') {
         commands.splice(0, 2);
@@ -440,9 +435,11 @@
         return command;
       });
       // add build commands to copyright/license header
+      var parts = slice.call(arguments, 1);
       return (
         parts[0] +
-        parts[1] + parts[2] + ' (Custom Build)' + parts[3] + '\n' +
+        parts[1] +
+        parts[2] + parts[3] + ' (Custom Build)' + parts[4] + '\n' +
         parts[1] + ' Build: `lodash ' + commands.join(' ') + '`'
       );
     });
@@ -1944,7 +1941,7 @@
         var token = '%output%',
             index = iife.indexOf(token);
 
-        source = source.match(/\/\*![\s\S]+?\*\/\n/) +
+        source = source.match(/^\/\**[\s\S]+?\*\/\n/) +
           iife.slice(0, index) +
           source.replace(/^[\s\S]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
           iife.slice(index + token.length);

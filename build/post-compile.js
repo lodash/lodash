@@ -6,15 +6,13 @@
   var fs = require('fs');
 
   /** The minimal license/copyright template */
-  var licenseTemplate = {
-    'lodash':
-      '/*!\n' +
-      ' Lo-Dash <%= VERSION %> lodash.com/license\n' +
-      ' Underscore.js 1.4.3 underscorejs.org/LICENSE\n' +
-      '*/',
-    'underscore':
-      '/*! Underscore.js <%= VERSION %> underscorejs.org/LICENSE */'
-  };
+  var licenseTemplate = [
+    '/**',
+    ' * @license',
+    ' * Lo-Dash <%= VERSION %> lodash.com/license',
+    ' * Underscore.js 1.4.3 underscorejs.org/LICENSE',
+    ' */'
+  ].join('\n');
 
   /*--------------------------------------------------------------------------*/
 
@@ -26,6 +24,9 @@
    * @returns {String} Returns the processed source.
    */
   function postprocess(source) {
+    // remove old copyright/license header
+    source = source.replace(/^\/\**[\s\S]+?\*\/\n/, '');
+
     // move vars exposed by the Closure Compiler into the IIFE
     source = source.replace(/^((?:(['"])use strict\2;)?(?:var (?:[a-z]+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^)]+\){)/, '$3$1');
 
@@ -53,9 +54,11 @@
     if (!snippet) {
       return source;
     }
-    // add copyright/license header
-    return licenseTemplate[/call\(this\);?$/.test(source) ? 'underscore' : 'lodash']
-      .replace('<%= VERSION %>', snippet[2]) + '\n;' + source;
+    // add new copyright/license header
+    var version = snippet[2];
+    source = licenseTemplate.replace('<%= VERSION %>', version) + '\n;' + source;
+
+    return source;
   }
 
   /*--------------------------------------------------------------------------*/

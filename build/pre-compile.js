@@ -191,11 +191,7 @@
 
     // properties used by the `backbone` and `underscore` builds
     '__chain__',
-    'chain',
-
-    // properties used by underscore.js
-    '_chain',
-    '_wrapped'
+    'chain'
   ];
 
   /*--------------------------------------------------------------------------*/
@@ -217,9 +213,6 @@
     if (options.isTemplate) {
       return source;
     }
-    // remove copyright/license header to add later in post-compile.js
-    source = source.replace(/\/\*![\s\S]+?\*\//, '');
-
     // add brackets to whitelisted properties so the Closure Compiler won't mung them
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), function(match, prop) {
@@ -228,9 +221,6 @@
 
     // remove brackets from `_.escape()` in `_.template`
     source = source.replace(/__e *= *_\['escape']/g, '__e=_.escape');
-
-    // remove brackets from `_.escape()` in underscore.js `_.template`
-    source = source.replace(/_\['escape'\]\(__t'/g, '_.escape(__t');
 
     // remove brackets from `collection.indexOf` in `_.contains`
     source = source.replace("collection['indexOf'](target)", 'collection.indexOf(target)');
@@ -251,9 +241,6 @@
       // prepend object literal property name
       return (captured || '') + string;
     });
-
-    // add newline to `+"__p+='"` in underscore.js `_.template`
-    source = source.replace(/\+"__p\+='"/g, '+"\\n__p+=\'"');
 
     // add newline to `body + '}'` in `createFunction`
     source = source.replace(/body *\+ *'}'/, 'body+"\\n}"');

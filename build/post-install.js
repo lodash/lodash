@@ -3,8 +3,7 @@
   'use strict';
 
   /** Load Node modules */
-  var execFile = require('child_process').execFile,
-      fs = require('fs'),
+  var fs = require('fs'),
       https = require('https'),
       path = require('path'),
       tar = require('../vendor/tar/tar.js'),
@@ -38,21 +37,6 @@
       'pathname': pathname
     };
   }());
-
-  /** The message to display when the install mode is undetectable */
-  var oopsMessage = [
-    'Oops! There was a problem detecting the install mode. If you’re installing the',
-    'Lo-Dash command-line executable (via `npm install -g lodash`), you’ll need to',
-    'manually install UglifyJS and the Closure Compiler by running:',
-    '',
-    "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + closureId + " | tar xvz -C '" + vendorPath + "'",
-    "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + uglifyId  + " | tar xvz -C '" + vendorPath + "'",
-    '',
-    'Please submit an issue on the GitHub issue tracker: ' + process.env.npm_package_bugs_url
-  ].join('\n');
-
-  /** Reassign `existsSync` for older versions of Node */
-  fs.existsSync || (fs.existsSync = path.existsSync);
 
   /*--------------------------------------------------------------------------*/
 
@@ -111,29 +95,9 @@
     .on('error', callback);
   }
 
-  /**
-   * The `child_process.execFile` callback.
-   *
-   * @private
-   * @param {Object|Undefined} exception The error object.
-   * @param {String} stdout The stdout buffer.
-   */
-  function onExecFile(exception, stdout) {
-    if (!exception) {
-      try {
-        var root = stdout.trim(),
-            isGlobal = fs.existsSync(root) && path.resolve(basePath, '..') == fs.realpathSync(root);
-      } catch(e) {
-        exception = e;
-      }
-    }
-    if (exception) {
-      console.error(oopsMessage);
-      console.error(exception);
-    }
-    if (!isGlobal) {
-      return;
-    }
+  /*--------------------------------------------------------------------------*/
+
+  if (process.env.npm_config_global === 'true') {
     // download the Closure Compiler
     getDependency({
       'title': 'the Closure Compiler',
@@ -151,14 +115,5 @@
         });
       }
     });
-  }
-
-  /*--------------------------------------------------------------------------*/
-
-  try {
-    execFile('npm', [ '-g', 'root' ], onExecFile);
-  } catch(e) {
-    console.error(oopsMessage);
-    console.error(e);
   }
 }());

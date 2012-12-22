@@ -4,10 +4,7 @@
 
   /** Load Node modules */
   var fs = require('fs'),
-      https = require('https'),
-      path = require('path'),
-      tar = require('../vendor/tar/tar.js'),
-      zlib = require('zlib');
+      path = require('path');
 
   /** The path of the directory that is the base of the repository */
   var basePath = fs.realpathSync(path.join(__dirname, '..'));
@@ -88,7 +85,7 @@
       var decompressor = zlib.createUnzip(),
           parser = new tar.Extract({ 'path': path });
 
-      decompressor.on('error', callback)
+      decompressor.on('error', callback);
       parser.on('end', callback).on('error', callback);
       response.pipe(decompressor).pipe(parser);
     })
@@ -98,22 +95,41 @@
   /*--------------------------------------------------------------------------*/
 
   if (process.env.npm_config_global === 'true') {
-    // download the Closure Compiler
-    getDependency({
-      'title': 'the Closure Compiler',
-      'id': closureId,
-      'path': vendorPath,
-      'onComplete': function() {
-        // download UglifyJS
-        getDependency({
-          'title': 'UglifyJS',
-          'id': uglifyId,
-          'path': vendorPath,
-          'onComplete': function() {
-            process.exit();
-          }
-        });
-      }
-    });
+    // catch module load errors
+    try {
+      var https = require('https'),
+          tar = require('../vendor/tar/tar.js'),
+          zlib = require('zlib');
+
+      // download the Closure Compiler
+      getDependency({
+        'title': 'the Closure Compiler',
+        'id': closureId,
+        'path': vendorPath,
+        'onComplete': function() {
+          // download UglifyJS
+          getDependency({
+            'title': 'UglifyJS',
+            'id': uglifyId,
+            'path': vendorPath,
+            'onComplete': function() {
+              process.exit();
+            }
+          });
+        }
+      });
+    } catch(e) {
+      console.log([
+        'Oops! There was a problem installing dependencies required by the Lo-Dash',
+        'command-line executable. To manually install UglifyJS and the Closure Compiler',
+        'run:',
+        '',
+        "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + closureId + " | tar xvz -C '" + vendorPath + "'",
+        "curl -H 'Accept: " + mediaType + "' " + location.href + '/' + uglifyId  + " | tar xvz -C '" + vendorPath + "'",
+        ''
+      ].join('\n'));
+
+      console.log(e);
+    }
   }
 }());

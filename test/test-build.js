@@ -569,8 +569,8 @@
   QUnit.module('independent builds');
 
   (function() {
-    var reComment = /\/\*![\s\S]+?\*\//,
-        reCustom = /Custom Build/;
+    var reCustom = /Custom Build/,
+        reLicense = /^\/\**\s+\* @license[\s\S]+?\*\/\n/;
 
     asyncTest('debug only', function() {
       var start = _.once(QUnit.start);
@@ -585,7 +585,7 @@
       build(['-d', '-s', 'backbone'], function(source, filePath) {
         equal(path.basename(filePath, '.js'), 'lodash.custom');
 
-        var comment = source.match(reComment);
+        var comment = source.match(reLicense);
         ok(reCustom.test(comment));
         start();
       });
@@ -604,7 +604,7 @@
       build(['-m', '-s', 'backbone'], function(source, filePath) {
         equal(path.basename(filePath, '.js'), 'lodash.custom.min');
 
-        var comment = source.match(reComment);
+        var comment = source.match(reLicense);
         ok(reCustom.test(comment));
         start();
       });
@@ -979,35 +979,6 @@
           equal(arguments.length, 1);
           start();
         });
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('minify underscore');
-
-  (function() {
-    asyncTest('`node minify underscore.js`', function() {
-      var source = fs.readFileSync(path.join(__dirname, '..', 'vendor', 'underscore', 'underscore.js'), 'utf8'),
-          start = _.once(QUnit.start);
-
-      minify(source, {
-        'isSilent': true,
-        'workingName': 'underscore.min',
-        'onComplete': function(result) {
-          var context = createContext();
-
-          try {
-            vm.runInContext(result, context);
-          } catch(e) {
-            console.log(e);
-          }
-          var underscore = context._ || {};
-          ok(_.isString(underscore.VERSION));
-          ok(!/Lo-Dash/.test(result) && result.match(/\n/g).length < source.match(/\n/g).length);
-          start();
-        }
       });
     });
   }());

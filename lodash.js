@@ -2346,11 +2346,19 @@
    */
   function max(collection, callback, thisArg) {
     var computed = -Infinity,
-        index = -1,
-        length = collection ? collection.length : 0,
         result = computed;
 
-    if (callback || !isArray(collection)) {
+    if (!callback && isArray(collection)) {
+      var index = -1,
+          length = collection.length;
+
+      while (++index < length) {
+        var value = collection[index];
+        if (value > result) {
+          result = value;
+        }
+      }
+    } else {
       callback = !callback && isString(collection)
         ? charAtCallback
         : createCallback(callback, thisArg);
@@ -2362,12 +2370,6 @@
           result = value;
         }
       });
-    } else {
-      while (++index < length) {
-        if (collection[index] > result) {
-          result = collection[index];
-        }
-      }
     }
     return result;
   }
@@ -2392,11 +2394,19 @@
    */
   function min(collection, callback, thisArg) {
     var computed = Infinity,
-        index = -1,
-        length = collection ? collection.length : 0,
         result = computed;
 
-    if (callback || !isArray(collection)) {
+    if (!callback && isArray(collection)) {
+      var index = -1,
+          length = collection.length;
+
+      while (++index < length) {
+        var value = collection[index];
+        if (value < result) {
+          result = value;
+        }
+      }
+    } else {
       callback = !callback && isString(collection)
         ? charAtCallback
         : createCallback(callback, thisArg);
@@ -2408,12 +2418,6 @@
           result = value;
         }
       });
-    } else {
-      while (++index < length) {
-        if (collection[index] < result) {
-          result = collection[index];
-        }
-      }
     }
     return result;
   }

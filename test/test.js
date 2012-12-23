@@ -431,21 +431,21 @@
   QUnit.module('lodash.debounce');
 
   (function() {
+    test('subsequent "immediate" debounced calls return the last `func` result', function() {
+      var debounced = _.debounce(function(value) { return value; }, 32, true),
+          result = [debounced('x'), debounced('y')];
+
+      deepEqual(result, ['x', 'x']);
+    });
+
     asyncTest('subsequent debounced calls return the last `func` result', function() {
-      var debounced = _.debounce(function(value) { return value; }, 90);
+      var debounced = _.debounce(function(value) { return value; }, 32);
       debounced('x');
 
       setTimeout(function() {
         equal(debounced('y'), 'x');
         QUnit.start();
-      }, 120);
-    });
-
-    test('subsequent "immediate" debounced calls return the last `func` result', function() {
-      var debounced = _.debounce(function(value) { return value; }, 90, true),
-          result = [debounced('x'), debounced('y')];
-
-      deepEqual(result, ['x', 'x']);
+      }, 64);
     });
   }());
 
@@ -1785,46 +1785,37 @@
       deepEqual(result, ['x', 'x']);
     });
 
+    test('should clear timeout when `func` is called', function() {
+      var counter = 0,
+          oldDate = Date,
+          throttled = _.throttle(function() { counter++; }, 32);
+
+      throttled();
+      throttled();
+
+      window.Date = function() { return Object(Infinity); };
+      throttled();
+      window.Date = oldDate;
+
+      equal(counter, 2);
+    });
+
     asyncTest('supports recursive calls', function() {
       var counter = 0;
       var throttled = _.throttle(function() {
         counter++;
-        if (counter < 4) {
+        if (counter < 10) {
           throttled();
         }
-      }, 90);
-
-      setTimeout(function() {
-        ok(counter > 1);
-        QUnit.start();
-      }, 180);
-
-      throttled();
-    });
-
-    asyncTest('should clear timeout when `func` is called', function() {
-      var now = new Date,
-          times = [];
-
-      var throttled = _.throttle(function() {
-        times.push(new Date - now);
       }, 32);
 
-      setTimeout(throttled, 32);
-      setTimeout(throttled, 32);
-      setTimeout(throttled, 64);
-      setTimeout(throttled, 64);
+      throttled();
+      equal(counter, 1);
 
       setTimeout(function() {
-        var actual = _.every(times, function(value, index) {
-          return index
-            ? (value - times[index - 1]) > 2
-            : true;
-        });
-
-        ok(actual);
+        ok(counter < 3)
         QUnit.start();
-      }, 260);
+      }, 32);
     });
 
     asyncTest('should not trigger a trailing call when invoked once', function() {
@@ -1837,12 +1828,11 @@
       setTimeout(function() {
         equal(counter, 1);
         QUnit.start();
-      }, 64);
+      }, 96);
     });
 
     asyncTest('should trigger trailing call when invoked repeatedly', function() {
-      var actual,
-          counter = 0,
+      var counter = 0,
           limit = 80,
           throttled = _.throttle(function() { counter++; }, 32),
           start = new Date;
@@ -1850,18 +1840,13 @@
       while ((new Date - start) < limit) {
         throttled();
       }
-      setTimeout(function() {
-        actual = counter + 2;
-        throttled();
-        throttled();
-      }, 128);
+      var lastCount = counter;
+      ok(lastCount > 1);
 
       setTimeout(function() {
-        equal(counter, actual);
+        ok(counter > lastCount);
         QUnit.start();
-      }, 256);
-
-      ok(counter > 1);
+      }, 96);
     });
   }());
 

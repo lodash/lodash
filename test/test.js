@@ -1833,7 +1833,7 @@
 
     asyncTest('should trigger trailing call when invoked repeatedly', function() {
       var counter = 0,
-          limit = 80,
+          limit = 48,
           throttled = _.throttle(function() { counter++; }, 32),
           start = new Date;
 

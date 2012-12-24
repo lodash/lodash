@@ -95,80 +95,67 @@ $(document).ready(function() {
   asyncTest("throttle", 2, function() {
     var counter = 0;
     var incr = function(){ counter++; };
-    var throttledIncr = _.throttle(incr, 100);
-    throttledIncr(); throttledIncr(); throttledIncr();
-    setTimeout(throttledIncr, 70);
-    setTimeout(throttledIncr, 120);
-    setTimeout(throttledIncr, 140);
-    setTimeout(throttledIncr, 190);
-    setTimeout(throttledIncr, 220);
-    setTimeout(throttledIncr, 240);
-    _.delay(function(){ equal(counter, 1, "incr was called immediately"); }, 30);
-    _.delay(function(){ equal(counter, 4, "incr was throttled"); start(); }, 400);
+    var throttledIncr = _.throttle(incr, 32);
+    throttledIncr(); throttledIncr();
+
+    equal(counter, 1, "incr was called immediately");
+    _.delay(function(){ equal(counter, 2, "incr was throttled"); start(); }, 64);
   });
 
   asyncTest("throttle arguments", 2, function() {
     var value = 0;
     var update = function(val){ value = val; };
-    var throttledUpdate = _.throttle(update, 100);
-    throttledUpdate(1); throttledUpdate(2); throttledUpdate(3);
-    setTimeout(function(){ throttledUpdate(4); }, 120);
-    setTimeout(function(){ throttledUpdate(5); }, 140);
-    setTimeout(function(){ throttledUpdate(6); }, 250);
-    _.delay(function(){ equal(value, 1, "updated to latest value"); }, 40);
-    _.delay(function(){ equal(value, 6, "updated to latest value"); start(); }, 400);
+    var throttledUpdate = _.throttle(update, 32);
+    throttledUpdate(1); throttledUpdate(2);
+    _.delay(function(){ throttledUpdate(3); }, 64);
+    equal(value, 1, "updated to latest value");
+    _.delay(function(){ equal(value, 3, "updated to latest value"); start(); }, 96);
   });
 
   asyncTest("throttle once", 2, function() {
     var counter = 0;
     var incr = function(){ return ++counter; };
-    var throttledIncr = _.throttle(incr, 100);
+    var throttledIncr = _.throttle(incr, 32);
     var result = throttledIncr();
     _.delay(function(){
       equal(result, 1, "throttled functions return their value");
       equal(counter, 1, "incr was called once"); start();
-    }, 220);
+    }, 64);
   });
 
   asyncTest("throttle twice", 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
-    var throttledIncr = _.throttle(incr, 100);
+    var throttledIncr = _.throttle(incr, 32);
     throttledIncr(); throttledIncr();
-    _.delay(function(){ equal(counter, 2, "incr was called twice"); start(); }, 220);
+    _.delay(function(){ equal(counter, 2, "incr was called twice"); start(); }, 64);
   });
 
-  asyncTest("throttle repeatedly with results", 9, function() {
+  asyncTest("throttle repeatedly with results", 6, function() {
     var counter = 0;
     var incr = function(){ return ++counter; };
-    var throttledIncr = _.throttle(incr, 100);
+    var throttledIncr = _.throttle(incr, 64);
     var results = [];
     var saveResult = function() { results.push(throttledIncr()); };
-    saveResult(); saveResult(); saveResult();
-    setTimeout(saveResult, 70);
-    setTimeout(saveResult, 120);
-    setTimeout(saveResult, 140);
-    setTimeout(saveResult, 190);
-    setTimeout(saveResult, 240);
-    setTimeout(saveResult, 260);
+    saveResult(); saveResult();
+    _.delay(saveResult, 32);
+    _.delay(saveResult, 80);
+    _.delay(saveResult, 96);
+    _.delay(saveResult, 144);
     _.delay(function() {
       equal(results[0], 1, "incr was called once");
       equal(results[1], 1, "incr was throttled");
       equal(results[2], 1, "incr was throttled");
-      equal(results[3], 1, "incr was throttled");
-      equal(results[4], 2, "incr was called twice");
-      equal(results[5], 2, "incr was throttled");
-      equal(results[6], 2, "incr was throttled");
-      equal(results[7], 3, "incr was called thrice");
-      equal(results[8], 3, "incr was throttled");
+      equal(results[3], 2, "incr was called twice");
+      equal(results[4], 2, "incr was throttled");
+      equal(results[5], 3, "incr was called trailing");
       start();
-    }, 400);
+    }, 192);
   });
 
-  asyncTest("throttle triggers trailing call after repeatedly invoked", 2, function() {
-    var actual;
+  asyncTest("throttle triggers trailing call when invoked repeatedly", 2, function() {
     var counter = 0;
-    var limit = 80;
+    var limit = 48;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 32);
 
@@ -176,62 +163,49 @@ $(document).ready(function() {
     while ((new Date - stamp) < limit) {
       throttledIncr();
     }
-    _.delay(function() {
-      actual = counter + 2;
-      throttledIncr();
-      throttledIncr();
-    }, 64);
-
-    _.delay(function() {
-      equal(counter, actual);
-      start();
-    }, 128);
-
+    var lastCount = counter;
     ok(counter > 1);
+
+    _.delay(function() {
+      ok(counter > lastCount);
+      start();
+    }, 96);
   });
 
   asyncTest("debounce", 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
-    var debouncedIncr = _.debounce(incr, 50);
-    debouncedIncr(); debouncedIncr(); debouncedIncr();
-    setTimeout(debouncedIncr, 30);
-    setTimeout(debouncedIncr, 60);
-    setTimeout(debouncedIncr, 90);
-    setTimeout(debouncedIncr, 120);
-    setTimeout(debouncedIncr, 150);
-    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 220);
+    var debouncedIncr = _.debounce(incr, 32);
+    debouncedIncr(); debouncedIncr();
+    _.delay(debouncedIncr, 16);
+    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 96);
   });
 
-  asyncTest("debounce asap", 5, function() {
-    var a, b, c;
+  asyncTest("debounce asap", 4, function() {
+    var a, b;
     var counter = 0;
     var incr = function(){ return ++counter; };
-    var debouncedIncr = _.debounce(incr, 50, true);
+    var debouncedIncr = _.debounce(incr, 64, true);
     a = debouncedIncr();
     b = debouncedIncr();
-    c = debouncedIncr();
     equal(a, 1);
     equal(b, 1);
-    equal(c, 1);
     equal(counter, 1, 'incr was called immediately');
-    setTimeout(debouncedIncr, 30);
-    setTimeout(debouncedIncr, 60);
-    setTimeout(debouncedIncr, 90);
-    setTimeout(debouncedIncr, 120);
-    setTimeout(debouncedIncr, 150);
-    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 220);
+    _.delay(debouncedIncr, 16);
+    _.delay(debouncedIncr, 32);
+    _.delay(debouncedIncr, 48);
+    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 128);
   });
 
   asyncTest("debounce asap recursively", 2, function() {
     var counter = 0;
     var debouncedIncr = _.debounce(function(){
       counter++;
-      if (counter < 5) debouncedIncr();
-    }, 50, true);
+      if (counter < 10) debouncedIncr();
+    }, 32, true);
     debouncedIncr();
-    equal(counter, 1, 'incr was called immediately');
-    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 70);
+    equal(counter, 1, "incr was called immediately");
+    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 96);
   });
 
   test("once", function() {

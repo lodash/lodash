@@ -938,8 +938,8 @@
     return obj === Object(obj);
   };
 
-  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
-  each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
+  // Add some isType methods: isArguments, isString, isNumber, isDate, isRegExp.
+  each(['Arguments', 'String', 'Number', 'Date', 'RegExp'], function(name) {
     _['is' + name] = function(obj) {
       return toString.call(obj) == '[object ' + name + ']';
     };
@@ -953,10 +953,16 @@
     };
   }
 
-  // Optimize `isFunction` if appropriate.
-  if (typeof (/./) !== 'function') {
+  // Is a given variable a function?
+  _.isFunction = function(obj) {
+    return typeof obj === 'function';
+  };
+
+  // Define a fallback for older versions of Chrome, Firefox, and Safari, where
+  // a regexp is `typeof` "function".
+  if (_.isFunction(/./)) {
     _.isFunction = function(obj) {
-      return typeof obj === 'function';
+      return toString.call(obj) == '[object Function]';
     };
   }
 

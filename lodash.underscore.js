@@ -2241,8 +2241,7 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    var length = collection ? collection.length : 0;
-    if (typeof length == 'number') {
+    if (collection && typeof collection.length == 'number') {
       return  slice(collection);
     }
     return values(collection);
@@ -3298,7 +3297,7 @@
       lodash.prototype[methodName] = function() {
         var args = [this.__wrapped__];
         push.apply(args, arguments);
-
+        
         var result = func.apply(lodash, args);
         if (this.__chain__) {
           result = new lodash(result);

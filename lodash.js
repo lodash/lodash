@@ -2705,8 +2705,7 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    var length = collection ? collection.length : 0;
-    if (typeof length == 'number') {
+    if (collection && typeof collection.length == 'number') {
       return noCharByIndex && isString(collection)
         ? collection.split('')
         : slice(collection);
@@ -3850,9 +3849,7 @@
       lodash.prototype[methodName] = function() {
         var args = [this.__wrapped__];
         push.apply(args, arguments);
-
-        var result = func.apply(lodash, args);
-        return new lodash(result);
+        return new lodash(func.apply(lodash, args));
       };
     });
   }
@@ -4447,8 +4444,7 @@
   each(['concat', 'slice', 'splice'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
-      var result = func.apply(this.__wrapped__, arguments);
-      return new lodash(result);
+      return new lodash(func.apply(this.__wrapped__, arguments));
     };
   });
 

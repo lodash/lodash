@@ -363,6 +363,8 @@
       return match.replace(/^( *)return new lodash.+/m, function() {
         var indent = arguments[1];
         return indent + [
+          '',
+          'var result = func.apply(lodash, args);',
           'if (this.__chain__) {',
           '  result = new lodash(result);',
           '  result.__chain__ = true;',

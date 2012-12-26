@@ -2052,7 +2052,7 @@
     callback = createCallback(callback, thisArg);
 
     forEach(collection, function(value, key, collection) {
-      key = callback(value, key, collection);
+      key = callback(value, key, collection) + '';
       (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
     });
     return result;
@@ -2242,7 +2242,7 @@
     callback = createCallback(callback, thisArg);
 
     forEach(collection, function(value, key, collection) {
-      key = callback(value, key, collection);
+      key = callback(value, key, collection) + '';
       (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
     });
     return result;
@@ -2272,11 +2272,13 @@
    */
   function invoke(collection, methodName) {
     var args = slice(arguments, 2),
+        index = -1,
         isFunc = typeof methodName == 'function',
-        result = [];
+        length = collection ? collection.length : 0,
+        result = Array(typeof length == 'number' ? length : 0);
 
     forEach(collection, function(value) {
-      result.push((isFunc ? methodName : value[methodName]).apply(value, args));
+      result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
     });
     return result;
   }
@@ -2570,7 +2572,8 @@
    */
   function shuffle(collection) {
     var index = -1,
-        result = Array(collection ? collection.length : 0);
+        length = collection ? collection.length : 0,
+        result = Array(typeof length == 'number' ? length : 0);
 
     forEach(collection, function(value) {
       var rand = floor(nativeRandom() * (++index + 1));
@@ -2672,18 +2675,20 @@
    * // => ['moe', 'larry', 'brendan']
    */
   function sortBy(collection, callback, thisArg) {
-    var result = [];
-    callback = createCallback(callback, thisArg);
+    var index = -1,
+        length = collection ? collection.length : 0,
+        result = Array(typeof length == 'number' ? length : 0);
 
-    forEach(collection, function(value, index, collection) {
-      result.push({
-        'criteria': callback(value, index, collection),
+    callback = createCallback(callback, thisArg);
+    forEach(collection, function(value, key, collection) {
+      result[++index] = {
+        'criteria': callback(value, key, collection),
         'index': index,
         'value': value
-      });
+      };
     });
 
-    var length = result.length;
+    length = result.length;
     result.sort(compareAscending);
     while (length--) {
       result[length] = result[length].value;
@@ -3640,7 +3645,7 @@
   function memoize(func, resolver) {
     var cache = {};
     return function() {
-      var key = resolver ? resolver.apply(this, arguments) : arguments[0];
+      var key = (resolver ? resolver.apply(this, arguments) : arguments[0]) + '';
       return hasOwnProperty.call(cache, key)
         ? cache[key]
         : (cache[key] = func.apply(this, arguments));

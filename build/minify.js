@@ -185,9 +185,10 @@
       var toplevel = uglifyJS.parse(source);
 
       // 2. compress
-      // // enable unsafe comparisons
+      // enable unsafe comparisons
       toplevel.figure_out_scope();
       toplevel = toplevel.transform(uglifyJS.Compressor({
+        'comparisons': false,
         'unsafe_comps': true,
         'warnings': false
       }));

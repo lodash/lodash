@@ -47,7 +47,6 @@
   },
   "scripts": {
     "build": "node ./build.js",
-    "test": "node ./test/test.js && node ./test/test-build.js",
-    "install": "node ./build/post-install.js"
+    "test": "node ./test/test.js && node ./test/test-build.js"
   }
 }

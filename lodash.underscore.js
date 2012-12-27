@@ -3140,8 +3140,8 @@
    * // Application is only created once.
    */
   function once(func) {
-    var result,
-        ran = false;
+    var ran,
+        result;
 
     return function() {
       if (ran) {

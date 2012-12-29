@@ -2852,10 +2852,10 @@ Produces a random number between `min` and `max` *(inclusive)*. If only one argu
 #### Example
 ```js
 _.random(0, 5);
-// => a number between 1 and 5
+// => a number between 0 and 5
 
 _.random(5);
-// => also a number between 1 and 5
+// => also a number between 0 and 5
 ```
 
 * * *

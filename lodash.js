@@ -359,7 +359,7 @@
     '<%= top %>;\n' +
 
     // array-like iteration:
-    '<% if (arrayLoop) { %>' +
+    '<% if (arrays) { %>' +
     'var length = iteratee.length; index = -1;\n' +
     "if (typeof length == 'number') {" +
 
@@ -372,7 +372,7 @@
 
     // iterate over the array-like value
     '  while (++index < length) {\n' +
-    '    <%= arrayLoop %>\n' +
+    '    <%= loop %>\n' +
     '  }\n' +
     '}\n' +
     'else {' +
@@ -384,7 +384,7 @@
     '  if (length && isArguments(iteratee)) {\n' +
     '    while (++index < length) {\n' +
     "      index += '';\n" +
-    '      <%= objectLoop %>\n' +
+    '      <%= loop %>\n' +
     '    }\n' +
     '  } else {' +
     '  <% } %>' +
@@ -408,7 +408,7 @@
     '  while (++ownIndex < length) {\n' +
     '    index = ownProps[ownIndex];\n' +
     "    <% if (!hasDontEnumBug) { %>if (!(skipProto && index == 'prototype')) {\n  <% } %>" +
-    '    <%= objectLoop %>\n' +
+    '    <%= loop %>\n' +
     '    <% if (!hasDontEnumBug) { %>}\n<% } %>' +
     '  }' +
 
@@ -421,7 +421,7 @@
     '      if (useHas) { %>hasOwnProperty.call(iteratee, index)<% }' +
     '    %>) {' +
     '    <% } %>\n' +
-    '    <%= objectLoop %>;' +
+    '    <%= loop %>;' +
     '    <% if (!hasDontEnumBug || useHas) { %>\n    }<% } %>\n' +
     '  }' +
     '  <% } %>' +
@@ -438,11 +438,11 @@
     "      if (shadowed[k] == 'constructor') {" +
     '        %>!(ctor && ctor.prototype === iteratee) && <%' +
     '      } %>hasOwnProperty.call(iteratee, index)) {\n' +
-    '    <%= objectLoop %>\n' +
+    '    <%= loop %>\n' +
     '  }' +
     '    <% } %>' +
     '  <% } %>' +
-    '  <% if (arrayLoop || nonEnumArgs) { %>\n}<% } %>\n' +
+    '  <% if (arrays || nonEnumArgs) { %>\n}<% } %>\n' +
 
     // add code to the bottom of the iteration function
     '<%= bottom %>;\n' +
@@ -454,9 +454,10 @@
   var assignIteratorOptions = {
     'args': 'object, source, guard',
     'top':
-      "for (var argsIndex = 1, argsLength = typeof guard == 'number' ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n" +
+      "var argsIndex = 0, argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
+      'while (++argsIndex < argsLength) {\n' +
       '  if ((iteratee = arguments[argsIndex])) {',
-    'objectLoop': 'result[index] = iteratee[index]',
+    'loop': 'result[index] = iteratee[index]',
     'bottom': '  }\n}'
   };
 
@@ -464,15 +465,15 @@
    * Reusable iterator options shared by `each`, `forIn`, and `forOwn`.
    */
   var eachIteratorOptions = {
+    'arrays': true,
     'args': 'collection, callback, thisArg',
     'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
-    'arrayLoop': 'if (callback(iteratee[index], index, collection) === false) return result',
-    'objectLoop': 'if (callback(iteratee[index], index, collection) === false) return result'
+    'loop': 'if (callback(iteratee[index], index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
   var forOwnIteratorOptions = {
-    'arrayLoop': null
+    'arrays': false
   };
 
   /*--------------------------------------------------------------------------*/
@@ -648,25 +649,28 @@
    *
    * @private
    * @param {Object} [options1, options2, ...] The compile options object(s).
+   *  arrays - A boolean to specify support for iterating arrays and array-like objects.
    *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
    *  args - A string of comma separated arguments the iteration function will accept.
    *  top - A string of code to execute before the iteration branches.
-   *  arrayLoop - A string of code to execute in the array loop.
-   *  objectLoop - A string of code to execute in the object loop.
+   *  loop - A string of code to execute in the object loop.
    *  bottom - A string of code to execute after the iteration branches.
    *
    * @returns {Function} Returns the compiled function.
    */
   function createIterator() {
     var data = {
-      'arrayLoop': '',
-      'bottom': '',
+      // support properties
       'hasDontEnumBug': hasDontEnumBug,
       'isKeysFast': isKeysFast,
-      'objectLoop': '',
       'nonEnumArgs': nonEnumArgs,
       'noCharByIndex': noCharByIndex,
       'shadowed': shadowed,
+
+      // iterator options
+      'arrays': false,
+      'bottom': '',
+      'loop': '',
       'top': '',
       'useHas': true
     };
@@ -1139,7 +1143,7 @@
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
   var defaults = createIterator(assignIteratorOptions, {
-    'objectLoop': 'if (result[index] == null) ' + assignIteratorOptions.objectLoop
+    'loop': 'if (result[index] == null) ' + assignIteratorOptions.loop
   });
 
   /**

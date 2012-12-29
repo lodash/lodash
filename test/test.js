@@ -1396,6 +1396,24 @@
       }
       notEqual(actual, 5);
     });
+
+    test('supports large integer values', function() {
+      var array = Array(1000),
+          min = Math.pow(2, 31),
+          max = Math.pow(2, 62);
+
+      ok(_.every(array, function() {
+        return _.random(min, max) >= min;
+      }));
+
+      ok(_.some(array, function() {
+        return _.random(Number.MAX_VALUE) > 0;
+      }));
+    });
+
+    test('should coerce arguments to numbers', function() {
+      strictEqual(_.random('1', '1'), 1);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

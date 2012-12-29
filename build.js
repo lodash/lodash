@@ -169,12 +169,12 @@
   /** Used to inline `iteratorTemplate` */
   var iteratorOptions = [
     'args',
-    'arrayLoop',
+    'arrays',
     'bottom',
     'firstArg',
     'hasDontEnumBug',
     'isKeysFast',
-    'objectLoop',
+    'loop',
     'nonEnumArgs',
     'noCharByIndex',
     'shadowed',
@@ -893,7 +893,7 @@
 
     // remove optimized branch in `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(isKeysFast[\s\S]+?["']\1<% *} *else *\{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/, "'\\n' +\n$2");
+      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(isKeysFast[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/, "'\\n' +\n$2");
     });
 
     // remove data object property assignment in `createIterator`
@@ -980,7 +980,7 @@
    */
   function removeNoNodeClass(source) {
     // remove `noNodeClass` assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '');
 
     // remove `noNodeClass` from `shimIsPlainObject`
     source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
@@ -1097,7 +1097,7 @@
   }
 
   /**
-   * Hard-codes the `useStrict` template option value for `iteratorTemplate`.
+   * Hard-codes the `strict` template option value for `iteratorTemplate`.
    *
    * @private
    * @param {String} source The source to process.
@@ -1109,9 +1109,9 @@
     if (value) {
       source = source.replace(/^[\s\S]*?function[^{]+{/, "$&\n  'use strict';");
     }
-    // replace `useStrict` branch in `iteratorTemplate` with hard-coded option
+    // replace `strict` branch in `iteratorTemplate` with hard-coded option
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)*(\s*)["'] *<%.+?useStrict.+/, value ? '$1"\'use strict\';\\n" +' : '');
+      return match.replace(/(?: *\/\/.*\n)*(\s*)["'] *<%.+?strict.+/, value ? '$1"\'use strict\';\\n" +' : '');
     });
 
     return source;
@@ -1780,7 +1780,6 @@
 
           source = removeIsArgumentsFallback(source);
         }
-        source = removeFromCreateIterator(source, 'nativeKeys');
         source = removeCreateFunction(source);
       }
 
@@ -1916,7 +1915,7 @@
             .replace(/'(?:\\n|\s)+'/g, "''")
             .replace(/__p *\+= *' *';/g, '')
             .replace(/(__p *\+= *)' *' *\+/g, '$1')
-            .replace(/(\{) *;|; *(\})/g, '$1$2')
+            .replace(/({) *;|; *(\})/g, '$1$2')
             .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
 
           // remove the with-statement

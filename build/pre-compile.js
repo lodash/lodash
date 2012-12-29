@@ -35,12 +35,12 @@
   /** Used to minify `compileIterator` option properties */
   var iteratorOptions = [
     'args',
-    'arrayLoop',
+    'arrays',
     'bottom',
     'firstArg',
     'hasDontEnumBug',
     'isKeysFast',
-    'objectLoop',
+    'loop',
     'nonEnumArgs',
     'noCharByIndex',
     'shadowed',
@@ -235,7 +235,7 @@
         string = string.slice(captured.length);
       }
       // avoids removing the '\n' of the `stringEscapes` object
-      string = string.replace(/\[object |delete |else |function | in |return\s+[\w"']|throw |typeof |use strict|var |@ |(["'])\\n\1|\\\\n|\\n|\s+/g, function(match) {
+      string = string.replace(/\[object |delete |else (?!{)|function | in |return\s+[\w"']|throw |typeof |use strict|var |@ |(["'])\\n\1|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
       // prepend object literal property name
@@ -256,7 +256,7 @@
       .replace('"\';\n"', '"\';"')
 
     // remove `useSourceURL` variable
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *\{(?:\s*\/\/.*)*\n *var useSourceURL[\s\S]+?catch[^}]+}\n/, '');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *{(?:\s*\/\/.*)*\n *var useSourceURL[\s\S]+?catch[^}]+}\n/, '');
 
     // remove debug sourceURL use in `_.template`
     source = source.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');

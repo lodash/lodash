@@ -82,7 +82,7 @@ $(document).ready(function() {
     equal(col.get(101), model);
 
     var Col2 = Backbone.Collection.extend({ model: MongoModel });
-    col2 = new Col2();
+    var col2 = new Col2();
     col2.push(model);
     equal(col2.get({_id: 101}), model);
     equal(col2.get(model.clone()), model);
@@ -362,7 +362,9 @@ $(document).ready(function() {
 
   test("model destroy removes from all collections", 3, function() {
     var e = new Backbone.Model({id: 5, title: 'Othello'});
-    e.sync = function(method, model, options) { options.success({}); };
+    e.sync = function(method, model, options) {
+      options.success(model, [], options);
+    };
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([e]);
     e.destroy();
@@ -417,7 +419,7 @@ $(document).ready(function() {
     equal(model.collection, collection);
   });
 
-  test("create enforces validation", 1, function() {
+  test("create with validate:true enforces validation", 1, function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -427,10 +429,10 @@ $(document).ready(function() {
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    equal(col.create({"foo":"bar"}), false);
+    equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
 
-  test("a failing create runs the error callback", 1, function() {
+  test("a failing create returns model with errors", function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -439,11 +441,10 @@ $(document).ready(function() {
     var ValidatingCollection = Backbone.Collection.extend({
       model: ValidatingModel
     });
-    var flag = false;
-    var callback = function(model, error) { flag = true; };
     var col = new ValidatingCollection();
-    col.create({"foo":"bar"}, { error: callback });
-    equal(flag, true);
+    var m = col.create({"foo":"bar"});
+    equal(m.validationError, 'fail');
+    equal(col.length, 1);
   });
 
   test("initialize", 1, function() {
@@ -567,7 +568,7 @@ $(document).ready(function() {
     equal(col.length, 0);
   });
 
-  test("#861, adding models to a collection which do not pass validation", function() {
+  test("#861, adding models to a collection which do not pass validation, with validate:true", function() {
       var Model = Backbone.Model.extend({
         validate: function(attrs) {
           if (attrs.id == 3) return "id can't be 3";
@@ -581,18 +582,18 @@ $(document).ready(function() {
       var collection = new Collection;
       collection.on("error", function() { ok(true); });
 
-      collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}]);
+      collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate:true});
       deepEqual(collection.pluck('id'), [1, 2, 4, 5, 6]);
   });
 
-  test("Invalid models are discarded.", 5, function() {
+  test("Invalid models are discarded with validate:true.", 5, function() {
     var collection = new Backbone.Collection;
     collection.on('test', function() { ok(true); });
     collection.model = Backbone.Model.extend({
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
     var model = new collection.model({id: 1, valid: true});
-    collection.add([model, {id: 2}]);
+    collection.add([model, {id: 2}], {validate:true});
     model.trigger('test');
     ok(collection.get(model.cid));
     ok(collection.get(1));
@@ -656,7 +657,7 @@ $(document).ready(function() {
       }
     };
     col.sync = m.sync = function( method, collection, options ){
-      options.success();
+      options.success(collection, [], options);
     };
     col.fetch(opts);
     col.create(m, opts);
@@ -674,7 +675,9 @@ $(document).ready(function() {
   test("#1447 - create with wait adds model.", 1, function() {
     var collection = new Backbone.Collection;
     var model = new Backbone.Model;
-    model.sync = function(method, model, options){ options.success(); };
+    model.sync = function(method, model, options){
+      options.success(model, [], options);
+    };
     collection.on('add', function(){ ok(true); });
     collection.create(model, {wait: true});
   });
@@ -880,6 +883,24 @@ $(document).ready(function() {
     equal(c.length, 2);
   });
 
+  test("update + merge with default values defined", function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        key: 'value'
+      }
+    });
+    var m = new Model({id: 1});
+    var col = new Backbone.Collection([m], {model: Model});
+    equal(col.first().get('key'), 'value');
+
+    col.update({id: 1, key: 'other'});
+    equal(col.first().get('key'), 'other');
+
+    col.update({id: 1, other: 'value'});
+    equal(col.first().get('key'), 'other');
+    equal(col.length, 1);
+  });
+
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
@@ -935,6 +956,34 @@ $(document).ready(function() {
       success: function () { start(); }
     });
     Backbone.ajax = ajax;
+  });
+
+  test("`add` only `sort`s when necessary", 2, function () {
+    var collection = new (Backbone.Collection.extend({
+      comparator: 'a'
+    }))([{id: 1}, {id: 2}, {id: 3}]);
+    collection.on('sort', function () { ok(true); });
+    collection.add({id: 4}); // do sort, new model
+    collection.add({id: 1, a: 1}, {merge: true}); // do sort, comparator change
+    collection.add({id: 1, b: 1}, {merge: true}); // don't sort, no comparator change
+    collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no comparator change
+    collection.add(collection.models); // don't sort, nothing new
+    collection.add(collection.models, {merge: true}); // don't sort
+  });
+
+  test("`add` only `sort`s when necessary with comparator function", 3, function () {
+    var collection = new (Backbone.Collection.extend({
+      comparator: function(a, b) {
+        a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
+      }
+    }))([{id: 1}, {id: 2}, {id: 3}]);
+    collection.on('sort', function () { ok(true); });
+    collection.add({id: 4}); // do sort, new model
+    collection.add({id: 1, a: 1}, {merge: true}); // do sort, model change
+    collection.add({id: 1, b: 1}, {merge: true}); // do sort, model change
+    collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no model change
+    collection.add(collection.models); // don't sort, nothing new
+    collection.add(collection.models, {merge: true}); // don't sort
   });
 
 });

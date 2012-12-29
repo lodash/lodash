@@ -182,7 +182,7 @@ $(document).ready(function() {
     equal(_.indexOf(null, 2), -1, 'handles nulls properly');
 
     numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3];
-    index = _.lastIndexOf(numbers, 2, 2);
+    var index = _.lastIndexOf(numbers, 2, 2);
     equal(index, 1, 'supports the fromIndex argument');
   });
 

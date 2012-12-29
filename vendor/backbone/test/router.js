@@ -70,6 +70,7 @@ $(document).ready(function() {
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
       "optional(/:item)":           "optionalItem",
+      "named/optional/(y:z)":       "namedOptional",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
@@ -110,23 +111,27 @@ $(document).ready(function() {
       this.arg = arg != void 0 ? arg : null;
     },
 
-    splat : function(args) {
+    splat: function(args) {
       this.args = args;
     },
 
-    complex : function(first, part, rest) {
+    complex: function(first, part, rest) {
       this.first = first;
       this.part = part;
       this.rest = rest;
     },
 
-    query : function(entity, args) {
+    query: function(entity, args) {
       this.entity    = entity;
       this.queryArgs = args;
     },
 
-    anything : function(whatever) {
+    anything: function(whatever) {
       this.anything = whatever;
+    },
+
+    namedOptional: function(z) {
+      this.z = z;
     }
 
   });
@@ -500,6 +505,15 @@ $(document).ready(function() {
   test("#1820 - Leading slash and trailing space.", 1, function() {
     var history = new Backbone.History;
     strictEqual(history.getFragment('/fragment '), 'fragment');
+  });
+
+  test("#1980 - Optional parameters.", 2, function() {
+    location.replace('http://example.com#named/optional/y');
+    Backbone.history.checkUrl();
+    strictEqual(router.z, undefined);
+    location.replace('http://example.com#named/optional/y123');
+    Backbone.history.checkUrl();
+    strictEqual(router.z, '123');
   });
 
 });

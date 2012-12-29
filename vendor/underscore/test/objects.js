@@ -555,7 +555,7 @@ $(document).ready(function() {
       value();
     ok(returned == 6 && intercepted == 6, 'can use tapped objects in a chain');
   });
-  
+
   test("has", function () {
      var obj = {foo: "bar", func: function () {} };
      ok (_.has(obj, "foo"), "has() checks that the object has a property.");
@@ -563,7 +563,7 @@ $(document).ready(function() {
      ok (_.has(obj, "func"), "has() works for functions too.");
      obj.hasOwnProperty = null;
      ok (_.has(obj, "foo"), "has() works even when the hasOwnProperty method is deleted.");
-     child = {};
+     var child = {};
      child.prototype = obj;
      ok (_.has(child, "foo") == false, "has() does not check the prototype chain for a property.")
   });

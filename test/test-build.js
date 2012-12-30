@@ -351,6 +351,7 @@
         object = { 'a': 1, 'b': 2, 'c': 3 },
         noop = function() {},
         string = 'abc',
+        template = '<%= a %>',
         func = lodash[methodName];
 
     try {
@@ -442,6 +443,9 @@
       else if (utilityMethods.indexOf(methodName) > -1) {
         if (methodName == 'result') {
           func(object, 'b');
+        } else if (methodName == 'template') {
+          func(template, object);
+          func(template, null, { 'imports': object })(object);
         } else if (methodName == 'times') {
           func(2, noop, object);
         } else {
@@ -765,6 +769,7 @@
 
         ok(lodash.some([false, true, false]), '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
+        equal('imports' in lodash.templateSettings, false, '_.templateSettings should not have an "imports" property: ' + basename);
         equal(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);
 
         start();

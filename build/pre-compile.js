@@ -105,6 +105,7 @@
     'groupBy',
     'has',
     'head',
+    'imports',
     'identity',
     'include',
     'index',

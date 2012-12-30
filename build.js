@@ -147,7 +147,7 @@
     'sortBy': ['forEach'],
     'sortedIndex': ['identity'],
     'tap': ['mixin'],
-    'template': ['escape'],
+    'template': ['defaults', 'escape', 'keys', 'values'],
     'throttle': [],
     'times': [],
     'toArray': ['isString', 'values'],
@@ -1397,6 +1397,9 @@
         // remove unneeded variables
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
+
+        source = removeVar(source, 'templateImports');
+        source = source.replace(/,\s*'imports'.+/, '');
 
         // remove large array optimizations
         source = removeFunction(source, 'cachedContains');

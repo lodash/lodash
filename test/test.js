@@ -1768,26 +1768,38 @@
     });
 
     test('should tokenize delimiters', function() {
-      var compiled = _.template('<span class="icon-<%= type %>2"></span>');
-      equal(compiled({ 'type': 1 }), '<span class="icon-12"></span>');
+      var compiled = _.template('<span class="icon-<%= type %>2"></span>'),
+          data = { 'type': 1 };
+
+      equal(compiled(data), '<span class="icon-12"></span>');
     });
 
     test('should work with "interpolate" delimiters containing ternary operators', function() {
-      var compiled = _.template('<%= value ? value : "b" %>');
-      equal(compiled({ 'value': 'a' }), 'a');
+      var compiled = _.template('<%= value ? value : "b" %>'),
+          data = { 'value': 'a' };
+
+      equal(compiled(data), 'a');
     });
 
     test('should parse delimiters with newlines', function() {
       var expected = '<<\nprint("<p>" + (value ? "yes" : "no") + "</p>")\n>>',
-          compiled = _.template(expected, null, { 'evaluate': /<<(.+?)>>/g });
+          compiled = _.template(expected, null, { 'evaluate': /<<(.+?)>>/g }),
+          data = { 'value': true };
 
-      equal(compiled({ 'value': true }), expected);
+      equal(compiled(data), expected);
     });
 
     test('should parse ES6 template delimiters', function() {
       var data = { 'value': 2 };
       equal(_.template('1${value}3', data), '123');
       equal(_.template('${"{" + value + "\\}"}', data), '{2}');
+    });
+
+    test('supports the "imports" option', function() {
+      var options = { 'imports': { 'a': 1 } },
+          compiled = _.template('<%= a %>', null, options);
+
+      equal(compiled({}), '1');
     });
   }());
 

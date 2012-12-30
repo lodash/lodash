@@ -330,7 +330,7 @@
       // restrict lines to 500 characters for consistency with the Closure Compiler
       var stream = uglifyJS.OutputStream({
         'ascii_only': true,
-        'comments': true,
+        'comments': /\* *@license/,
         'max_line_len': 500,
       });
 

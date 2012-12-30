@@ -282,9 +282,10 @@
   var assignIteratorOptions = {
     'args': 'object, source, guard',
     'top':
-      "for (var argsIndex = 1, argsLength = typeof guard == 'number' ? 2 : arguments.length; argsIndex < argsLength; argsIndex++) {\n" +
+      "var argsIndex = 0, argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
+      'while (++argsIndex < argsLength) {\n' +
       '  if ((iteratee = arguments[argsIndex])) {',
-    'objectLoop': 'result[index] = iteratee[index]',
+    'loop': 'result[index] = iteratee[index]',
     'bottom': '  }\n}'
   };
 
@@ -292,15 +293,15 @@
    * Reusable iterator options shared by `each`, `forIn`, and `forOwn`.
    */
   var eachIteratorOptions = {
+    'arrays': true,
     'args': 'collection, callback, thisArg',
     'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
-    'arrayLoop': 'if (callback(iteratee[index], index, collection) === false) return result',
-    'objectLoop': 'if (callback(iteratee[index], index, collection) === false) return result'
+    'loop': 'if (callback(iteratee[index], index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
   var forOwnIteratorOptions = {
-    'arrayLoop': null
+    'arrays': false
   };
 
   /*--------------------------------------------------------------------------*/
@@ -424,24 +425,27 @@
    *
    * @private
    * @param {Object} [options1, options2, ...] The compile options object(s).
+   *  arrays - A boolean to specify support for iterating arrays and array-like objects.
    *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
    *  args - A string of comma separated arguments the iteration function will accept.
    *  top - A string of code to execute before the iteration branches.
-   *  arrayLoop - A string of code to execute in the array loop.
-   *  objectLoop - A string of code to execute in the object loop.
+   *  loop - A string of code to execute in the object loop.
    *  bottom - A string of code to execute after the iteration branches.
    *
    * @returns {Function} Returns the compiled function.
    */
   function createIterator() {
     var data = {
-      'arrayLoop': '',
-      'bottom': '',
+      // support properties
       'hasDontEnumBug': hasDontEnumBug,
-      'objectLoop': '',
       'nonEnumArgs': nonEnumArgs,
       'noCharByIndex': noCharByIndex,
       'shadowed': shadowed,
+
+      // iterator options
+      'arrays': false,
+      'bottom': '',
+      'loop': '',
       'top': '',
       'useHas': true
     };
@@ -3343,10 +3347,10 @@
    * @example
    *
    * _.random(0, 5);
-   * // => a number between 1 and 5
+   * // => a number between 0 and 5
    *
    * _.random(5);
-   * // => also a number between 1 and 5
+   * // => also a number between 0 and 5
    */
   function random(min, max) {
     if (min == null && max == null) {

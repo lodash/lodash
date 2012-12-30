@@ -289,6 +289,26 @@
   }
 
   /**
+   * Used to import variables into the compiled template.
+   *
+   * @name imports
+   * @static
+   * @memberOf _.templateSettings
+   * @type Object
+   */
+  var templateImports = {
+
+    /**
+     * A reference to the `lodash` function.
+     *
+     * @static
+     * @memberOf _.templateSettings.imports
+     * @type Object
+     */
+    '_': lodash
+  };
+
+  /**
    * By default, the template delimiters used by Lo-Dash are similar to those in
    * embedded Ruby (ERB). Change the following template settings to use alternative
    * delimiters.
@@ -333,7 +353,9 @@
      * @memberOf _.templateSettings
      * @type String
      */
-    'variable': ''
+    'variable': '',
+
+    'imports': templateImports
   };
 
   /*--------------------------------------------------------------------------*/
@@ -4030,13 +4052,10 @@
     options || (options = {});
 
     var isEvaluating,
-        result,
-        settings = lodash.templateSettings,
         index = 0,
+        settings = lodash.templateSettings,
         interpolate = options.interpolate || settings.interpolate || reNoMatch,
-        source = "__p += '",
-        variable = options.variable || settings.variable,
-        hasVariable = variable;
+        source = "__p += '";
 
     // compile regexp to match each delimiter
     var reDelimiters = RegExp(
@@ -4072,9 +4091,23 @@
 
     source += "';\n";
 
+    // resolve imported variables
+    var imports = options.imports,
+        importsKeys = ['_'],
+        importsValues = [lodash];
+
+    if (imports && imports != templateImports) {
+      isEvaluating = true;
+      imports = defaults({}, imports, settings.imports);
+      importsKeys = keys(imports);
+      importsValues = values(imports);
+    }
     // if `variable` is not specified and the template contains "evaluate"
     // delimiters, wrap a with-statement around the generated code to add the
     // data object to the top of the scope chain
+    var variable = options.variable || settings.variable,
+        hasVariable = variable;
+
     if (!hasVariable) {
       variable = 'obj';
       if (isEvaluating) {
@@ -4113,12 +4146,11 @@
       : '';
 
     try {
-      result = Function('_', 'return ' + source + sourceURL)(lodash);
+      var result = Function(importsKeys, 'return ' + source + sourceURL).apply(undefined, importsValues);
     } catch(e) {
       e.source = source;
       throw e;
     }
-
     if (data) {
       return result(data);
     }

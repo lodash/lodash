@@ -885,7 +885,7 @@
            * The CPU architecture the OS is built for.
            *
            * @memberOf platform.os
-           * @type String|Null
+           * @type Number|Null
            */
           'architecture': null,
 

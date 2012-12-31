@@ -1398,8 +1398,8 @@
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
 
-        source = removeVar(source, 'templateImports');
-        source = source.replace(/,\s*'imports'.+/, '');
+        // remove `_.templateSettings.imports assignment
+        source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
         // remove large array optimizations
         source = removeFunction(source, 'cachedContains');
@@ -1747,6 +1747,13 @@
       if (isRemoved(source, 'isArguments')) {
         source = removeIsArgumentsFallback(source);
       }
+
+      // remove `iteratorTemplate` dependency checks from `_.template`
+      source = source.replace(matchFunction(source, 'template'), function(match) {
+        return match
+          .replace(/iteratorTemplate *&& */g, '')
+          .replace(/iteratorTemplate *\?([^:]+):[^,;]+/g, '$1');
+      });
 
       /*----------------------------------------------------------------------*/
 

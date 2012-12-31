@@ -242,7 +242,6 @@
     /**
      * Used to detect `data` property values to be HTML-escaped.
      *
-     * @static
      * @memberOf _.templateSettings
      * @type RegExp
      */
@@ -251,7 +250,6 @@
     /**
      * Used to detect code to be evaluated.
      *
-     * @static
      * @memberOf _.templateSettings
      * @type RegExp
      */
@@ -260,7 +258,6 @@
     /**
      * Used to detect `data` property values to inject.
      *
-     * @static
      * @memberOf _.templateSettings
      * @type RegExp
      */
@@ -269,7 +266,6 @@
     /**
      * Used to reference the data object in the template text.
      *
-     * @static
      * @memberOf _.templateSettings
      * @type String
      */
@@ -289,9 +285,7 @@
     'bottom': '  }\n}'
   };
 
-  /**
-   * Reusable iterator options shared by `each`, `forIn`, and `forOwn`.
-   */
+  /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
   var eachIteratorOptions = {
     'arrays': true,
     'args': 'collection, callback, thisArg',

@@ -289,26 +289,6 @@
   }
 
   /**
-   * Used to import variables into the compiled template.
-   *
-   * @name imports
-   * @static
-   * @memberOf _.templateSettings
-   * @type Object
-   */
-  var templateImports = {
-
-    /**
-     * A reference to the `lodash` function.
-     *
-     * @static
-     * @memberOf _.templateSettings.imports
-     * @type Object
-     */
-    '_': lodash
-  };
-
-  /**
    * By default, the template delimiters used by Lo-Dash are similar to those in
    * embedded Ruby (ERB). Change the following template settings to use alternative
    * delimiters.
@@ -322,7 +302,6 @@
     /**
      * Used to detect `data` property values to be HTML-escaped.
      *
-     * @static
      * @memberOf _.templateSettings
      * @type RegExp
      */
@@ -331,7 +310,6 @@
     /**
      * Used to detect code to be evaluated.
      *
-     * @static
      * @memberOf _.templateSettings
      * @type RegExp
      */
@@ -340,7 +318,6 @@
     /**
      * Used to detect `data` property values to inject.
      *
-     * @static
      * @memberOf _.templateSettings
      * @type RegExp
      */
@@ -349,13 +326,27 @@
     /**
      * Used to reference the data object in the template text.
      *
-     * @static
      * @memberOf _.templateSettings
      * @type String
      */
     'variable': '',
 
-    'imports': templateImports
+    /**
+     * Used to import variables into the compiled template.
+     *
+     * @memberOf _.templateSettings
+     * @type Object
+     */
+    'imports': {
+
+      /**
+       * A reference to the `lodash` function.
+       *
+       * @memberOf _.templateSettings.imports
+       * @type Function
+       */
+      '_': lodash
+    }
   };
 
   /*--------------------------------------------------------------------------*/
@@ -483,9 +474,7 @@
     'bottom': '  }\n}'
   };
 
-  /**
-   * Reusable iterator options shared by `each`, `forIn`, and `forOwn`.
-   */
+  /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
   var eachIteratorOptions = {
     'arrays': true,
     'args': 'collection, callback, thisArg',
@@ -4048,21 +4037,27 @@
     // http://ejohn.org/blog/javascript-micro-templating/
     // and Laura Doktorova's doT.js
     // https://github.com/olado/doT
+    var settings = lodash.templateSettings;
     text || (text = '');
-    options || (options = {});
 
-    var isEvaluating,
-        index = 0,
-        settings = lodash.templateSettings,
-        interpolate = options.interpolate || settings.interpolate || reNoMatch,
+    // avoid missing dependencies when `iteratorTemplate` is not defined
+    options = iteratorTemplate ? defaults({}, options, settings) : settings;
+
+    var imports = iteratorTemplate && defaults({}, options.imports, settings.imports),
+        importsKeys = iteratorTemplate ? keys(imports) : ['_'],
+        importsValues = iteratorTemplate ? values(imports) : [lodash];
+
+    var index = 0,
+        interpolate = options.interpolate || reNoMatch,
+        isEvaluating = !(importsKeys.length == 1 && importsKeys[0] == '_' && importsValues[0] === lodash),
         source = "__p += '";
 
     // compile regexp to match each delimiter
     var reDelimiters = RegExp(
-      (options.escape || settings.escape || reNoMatch).source + '|' +
+      (options.escape || reNoMatch).source + '|' +
       interpolate.source + '|' +
       (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source + '|' +
-      (options.evaluate || settings.evaluate || reNoMatch).source + '|$'
+      (options.evaluate || reNoMatch).source + '|$'
     , 'g');
 
     text.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
@@ -4091,21 +4086,10 @@
 
     source += "';\n";
 
-    // resolve imported variables
-    var imports = options.imports,
-        importsKeys = ['_'],
-        importsValues = [lodash];
-
-    if (imports && imports != templateImports) {
-      isEvaluating = true;
-      imports = defaults({}, imports, settings.imports);
-      importsKeys = keys(imports);
-      importsValues = values(imports);
-    }
     // if `variable` is not specified and the template contains "evaluate"
     // delimiters, wrap a with-statement around the generated code to add the
     // data object to the top of the scope chain
-    var variable = options.variable || settings.variable,
+    var variable = options.variable,
         hasVariable = variable;
 
     if (!hasVariable) {

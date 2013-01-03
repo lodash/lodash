@@ -1648,7 +1648,10 @@
   function interpolate(string, object) {
     forOwn(object, function(value, key) {
       // escape regexp special characters in `key`
-      string = string.replace(RegExp('#\\{' + key.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1') + '\\}', 'g'), value);
+      string = string.replace(
+        RegExp('#\\{' + key.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1') + '\\}', 'g'),
+        value.replace(/\$/g, '$$$$')
+      );
     });
     return string;
   }

@@ -463,7 +463,7 @@ _.object(['moe', 'larry', 'curly'], [30, 40, 50]);
 ### <a id="_rangestart0-end--step1"></a>`_.range([start=0], end [, step=1])`
 <a href="#_rangestart0-end--step1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3135 "View in source") [&#x24C9;][1]
 
-Creates an array of numbers *(positive and/or negative)* progressing from `start` up to but not including `stop`. This method is a port of Python's `range()` function. See http://docs.python.org/library/functions.html#range.
+Creates an array of numbers *(positive and/or negative)* progressing from `start` up to but not including `end`. This method is a port of Python's `range()` function. See http://docs.python.org/library/functions.html#range.
 
 #### Arguments
 1. `[start=0]` *(Number)*: The start of the range.

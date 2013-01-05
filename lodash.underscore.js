@@ -115,11 +115,10 @@
       stringClass = '[object String]';
 
   /** Detect various environments */
-  var isIeOpera = !!window.attachEvent,
-      isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
+  var isIeOpera = !!window.attachEvent;
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-  var isBindFast = nativeBind && !isV8;
+  var isBindFast = nativeBind && /\n|true/.test(nativeBind + isIeOpera);
 
   /**
    * Detect if `Array#shift` and `Array#splice` augment array-like objects

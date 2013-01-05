@@ -39,7 +39,7 @@
     'bottom',
     'firstArg',
     'hasDontEnumBug',
-    'isKeysFast',
+    'isKeysNative',
     'loop',
     'nonEnumArgs',
     'noCharByIndex',
@@ -275,14 +275,15 @@
 
         // minify properties
         properties.forEach(function(property, index) {
-          var reBracketProp = RegExp("\\['(" + property + ")'\\]", 'g'),
+          var minName = minNames[index],
+              reBracketProp = RegExp("\\['(" + property + ")'\\]", 'g'),
               reDotProp = RegExp('\\.' + property + '\\b', 'g'),
               rePropColon = RegExp("([^?\\s])\\s*([\"'])?\\b" + property + "\\2 *:", 'g');
 
           modified = modified
-            .replace(reBracketProp, "['" + minNames[index] + "']")
-            .replace(reDotProp, "['" + minNames[index] + "']")
-            .replace(rePropColon, "$1'" + minNames[index] + "':");
+            .replace(reBracketProp, "['" + minName + "']")
+            .replace(reDotProp, "['" + minName + "']")
+            .replace(rePropColon, "$1'" + minName + "':");
         });
 
         // replace with modified snippet
@@ -320,35 +321,36 @@
       });
 
       if (isCreateIterator) {
-        // replace with modified snippet early and clip snippet to the `factory`
-        // call so other arguments aren't minified
+        // replace with modified snippet early and clip snippet
         source = source.replace(snippet, modified);
-        snippet = modified = modified.replace(/factory\([\s\S]+$/, '');
+        snippet = modified = modified.replace(/^[\s\S]+?data *= *{[^}]+}.+|return factory\([\s\S]+$/g, '');
       }
-
       // minify snippet variables / arguments
       compiledVars.forEach(function(variable, index) {
+        var minName = minNames[index];
+
         // ensure properties in compiled strings aren't minified
-        modified = modified.replace(RegExp('([^.]\\b)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minNames[index]);
+        modified = modified.replace(RegExp('([^.]\\b)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minName);
 
         // correct `typeof` values
         if (/^(?:boolean|function|object|number|string|undefined)$/.test(variable)) {
-          modified = modified.replace(RegExp("(typeof [^']+')" + minNames[index] + "'", 'g'), '$1' + variable + "'");
+          modified = modified.replace(RegExp("(typeof [^']+')" + minName + "'", 'g'), '$1' + variable + "'");
         }
       });
 
       // minify `createIterator` option property names
       iteratorOptions.forEach(function(property, index) {
+        var minName = minNames[index];
         if (isIteratorTemplate) {
           // minify property names as interpolated template variables
-          modified = modified.replace(RegExp('\\b' + property + '\\b', 'g'), minNames[index]);
+          modified = modified.replace(RegExp('\\b' + property + '\\b', 'g'), minName);
         }
         else {
           // minify property name strings
-          modified = modified.replace(RegExp("'" + property + "'", 'g'), "'" + minNames[index] + "'");
+          modified = modified.replace(RegExp("'" + property + "'", 'g'), "'" + minName + "'");
           // minify property names in accessors
           if (isCreateIterator) {
-            modified = modified.replace(RegExp('\\.' + property + '\\b' , 'g'), '.' + minNames[index]);
+            modified = modified.replace(RegExp('\\.' + property + '\\b' , 'g'), '.' + minName);
           }
         }
       });

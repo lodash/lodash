@@ -1726,7 +1726,7 @@
 
   /**
    * Recursively merges own enumerable properties of the source object(s), that
-   * don't resolve to `null`/`undefined`, into the `destination` object. Subsequent
+   * don't resolve to `undefined`, into the `destination` object. Subsequent
    * sources will overwrite propery assignments of previous sources.
    *
    * @static
@@ -1796,7 +1796,7 @@
             // recursively merge objects and arrays (susceptible to call stack limits)
             object[key] = merge(value, source, indicatorObject, stackA, stackB);
           }
-        } else if (source != null) {
+        } else if (typeof source != 'undefined') {
           object[key] = source;
         }
       });
@@ -3682,7 +3682,7 @@
    * var initialize = _.once(createApplication);
    * initialize();
    * initialize();
-   * // Application is only created once.
+   * // `initialize` executes `createApplication` once
    */
   function once(func) {
     var ran,

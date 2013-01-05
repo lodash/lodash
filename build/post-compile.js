@@ -41,8 +41,8 @@
     // flip `typeof` expressions to help optimize Safari and
     // correct the AMD module definition for AMD build optimizers
     // (e.g. from `"number" == typeof x` to `typeof x == "number")
-    source = source.replace(/(return)?("[^"]+")\s*([!=]=)\s*(typeof(?:\s*\([^)]+\)|\s+[\w.]+))/g, function(match, ret, type, equality, expression) {
-      return (ret ? ret + ' ' : '') + expression + equality + type;
+    source = source.replace(/(\w)?("[^"]+")\s*([!=]=)\s*(typeof(?:\s*\([^)]+\)|\s+[.\w[\]]+))/g, function(match, other, type, equality, expression) {
+      return (other ? other + ' ' : '') + expression + equality + type;
     });
 
     // add trailing semicolon

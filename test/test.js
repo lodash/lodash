@@ -1217,6 +1217,16 @@
       _.reduce(array, _.merge, actual);
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
     });
+
+    test('should assign `null` values', function() {
+      var actual = _.merge({ 'a': 1 }, { 'a': null });
+      strictEqual(actual.a, null);
+    });
+
+    test('should not assign `undefined` values', function() {
+      var actual = _.merge({ 'a': 1 }, { 'a': undefined });
+      equal(actual.a, 1);
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

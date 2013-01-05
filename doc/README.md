@@ -1738,7 +1738,7 @@ Creates a function that is restricted to execute `func` once. Repeat calls to th
 var initialize = _.once(createApplication);
 initialize();
 initialize();
-// Application is only created once.
+// `initialize` executes `createApplication` once
 ```
 
 * * *
@@ -2598,7 +2598,7 @@ _.keys({ 'one': 1, 'two': 2, 'three': 3 });
 ### <a id="_mergeobject--source1-source2-"></a>`_.merge(object [, source1, source2, ...])`
 <a href="#_mergeobject--source1-source2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1758 "View in source") [&#x24C9;][1]
 
-Recursively merges own enumerable properties of the source object(s), that don't resolve to `null`/`undefined`, into the `destination` object. Subsequent sources will overwrite propery assignments of previous sources.
+Recursively merges own enumerable properties of the source object(s), that don't resolve to `undefined`, into the `destination` object. Subsequent sources will overwrite propery assignments of previous sources.
 
 #### Arguments
 1. `object` *(Object)*: The destination object.

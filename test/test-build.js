@@ -622,7 +622,7 @@
   (function() {
     var object = Object.freeze({
       'a': _.identity,
-      'b': null
+      'b': undefined
     });
 
     ['non-strict', 'strict'].forEach(function(strictMode, index) {
@@ -736,7 +736,7 @@
         deepEqual(lodash.defaults({}, new Foo), Foo.prototype, '_.defaults should assign inherited `source` properties: ' + basename);
         deepEqual(lodash.extend({}, new Foo), Foo.prototype, '_.extend should assign inherited `source` properties: ' + basename);
 
-        actual = lodash.find(array, function(value) {
+        var actual = lodash.find(array, function(value) {
           return 'a' in value;
         });
 
@@ -761,7 +761,7 @@
 
         // avoid issues comparing objects with `deepEqual`
         object = { 'a': 1, 'b': 2, 'c': 3 };
-        var actual = lodash.omit(object, function(value) { return value == 3; });
+        actual = lodash.omit(object, function(value) { return value == 3; });
         deepEqual(_.keys(actual).sort(), ['a', 'b', 'c'], '_.omit should not accept a `callback`: ' + basename);
 
         actual = lodash.pick(object, function(value) { return value != 3; });

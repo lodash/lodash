@@ -117,14 +117,10 @@
       stringClass = '[object String]';
 
   /** Detect various environments */
-  var isIeOpera = !!window.attachEvent,
-      isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
+  var isIeOpera = !!window.attachEvent;
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-  var isBindFast = nativeBind && !isV8;
-
-  /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
-  var isKeysFast = nativeKeys && (isIeOpera || isV8);
+  var isBindFast = nativeBind && /\n|true/.test(nativeBind + isIeOpera);
 
   /**
    * Detect the JScript [[DontEnum]] bug:
@@ -414,7 +410,7 @@
     '  <% } %>' +
 
     // iterate own properties using `Object.keys` if it's fast
-    '  <% if (isKeysFast && useHas) { %>\n' +
+    '  <% if (isKeysNative && useHas) { %>\n' +
     '  var ownIndex = -1,\n' +
     '      ownProps = objectTypes[typeof iteratee] ? nativeKeys(iteratee) : [],\n' +
     '      length = ownProps.length;\n\n' +
@@ -673,7 +669,7 @@
     var data = {
       // support properties
       'hasDontEnumBug': hasDontEnumBug,
-      'isKeysFast': isKeysFast,
+      'isKeysNative': nativeKeys,
       'nonEnumArgs': nonEnumArgs,
       'noCharByIndex': noCharByIndex,
       'shadowed': shadowed,

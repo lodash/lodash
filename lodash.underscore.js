@@ -2609,7 +2609,7 @@
 
   /**
    * Creates an array of numbers (positive and/or negative) progressing from
-   * `start` up to but not including `stop`. This method is a port of Python's
+   * `start` up to but not including `end`. This method is a port of Python's
    * `range()` function. See http://docs.python.org/library/functions.html#range.
    *
    * @static
@@ -3135,7 +3135,7 @@
    * var initialize = _.once(createApplication);
    * initialize();
    * initialize();
-   * // Application is only created once.
+   * // `initialize` executes `createApplication` once
    */
   function once(func) {
     var ran,

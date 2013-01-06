@@ -177,10 +177,10 @@
   /**
    * Detect if a node's [[Class]] is unresolvable (IE < 9)
    * and that the JS engine won't error when attempting to coerce an object to
-   * a string without a `toString` property value of `typeof` "function".
+   * a string without a `toString` function.
    */
   try {
-    var noNodeClass = ({ 'toString': 0 } + '', toString.call(document) == objectClass);
+    var noNodeClass = toString.call(document) == objectClass && !({ 'toString': 0 } + '');
   } catch(e) { }
 
   /**

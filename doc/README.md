@@ -729,13 +729,13 @@ Invokes `interceptor` with the `value` as the first argument, and then returns `
 
 #### Example
 ```js
-_.chain([1, 2, 3, 200])
+_([1, 2, 3, 4])
  .filter(function(num) { return num % 2 == 0; })
  .tap(alert)
  .map(function(num) { return num * num; })
  .value();
-// => // [2, 200] (alerted)
-// => [4, 40000]
+// => // [2, 4] (alerted)
+// => [4, 16]
 ```
 
 * * *

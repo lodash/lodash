@@ -1774,15 +1774,12 @@
           // avoid merging previously merged cyclic sources
           var stackLength = stackA.length;
           while (stackLength--) {
-            found = stackA[stackLength] == source;
-            if (found) {
+            if ((found = stackA[stackLength] == source)) {
+              object[key] = stackB[stackLength];
               break;
             }
           }
-          if (found) {
-            object[key] = stackB[stackLength];
-          }
-          else {
+          if (!found) {
             // add `source` and associated `value` to the stack of traversed objects
             stackA.push(source);
             stackB.push(value = (value = object[key], isArr)

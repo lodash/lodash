@@ -321,9 +321,24 @@
       });
 
       if (isCreateIterator) {
-        // replace with modified snippet early and clip snippet
+        // clip before the `factory` call to avoid minifying its arguments
         source = source.replace(snippet, modified);
-        snippet = modified = modified.replace(/^[\s\S]+?data *= *{[^}]+}.+|return factory\([\s\S]+$/g, '');
+        snippet = modified = modified.replace(/return factory\([\s\S]+$/, '');
+      }
+      // minify `createIterator` option property names
+      iteratorOptions.forEach(function(property, index) {
+        var minName = minNames[index];
+
+        // minify variables in `iteratorTemplate` or property names in everything else
+        modified = isIteratorTemplate
+          ? modified.replace(RegExp('\\b' + property + '\\b', 'g'), minName)
+          : modified.replace(RegExp("'" + property + "'", 'g'), "'" + minName + "'");
+      });
+
+      if (isCreateIterator) {
+        // clip after the `data` object assignment to avoid minifying its values
+        source = source.replace(snippet, modified);
+        snippet = modified = modified.replace(/^[\s\S]+?data *= *{[^}]+}.+/, '');
       }
       // minify snippet variables / arguments
       compiledVars.forEach(function(variable, index) {
@@ -335,23 +350,6 @@
         // correct `typeof` values
         if (/^(?:boolean|function|object|number|string|undefined)$/.test(variable)) {
           modified = modified.replace(RegExp("(typeof [^']+')" + minName + "'", 'g'), '$1' + variable + "'");
-        }
-      });
-
-      // minify `createIterator` option property names
-      iteratorOptions.forEach(function(property, index) {
-        var minName = minNames[index];
-        if (isIteratorTemplate) {
-          // minify property names as interpolated template variables
-          modified = modified.replace(RegExp('\\b' + property + '\\b', 'g'), minName);
-        }
-        else {
-          // minify property name strings
-          modified = modified.replace(RegExp("'" + property + "'", 'g'), "'" + minName + "'");
-          // minify property names in accessors
-          if (isCreateIterator) {
-            modified = modified.replace(RegExp('\\.' + property + '\\b' , 'g'), '.' + minName);
-          }
         }
       });
 

@@ -512,6 +512,17 @@
   }
 
   /**
+   * Capitalizes a given string.
+   *
+   * @private
+   * @param {String} string The string to capitalize.
+   * @returns {String} Returns the capitalized string.
+   */
+  function capitalize(string) {
+    return string[0].toUpperCase() + string.toLowerCase().slice(1);
+  }
+
+  /**
    * Removes unnecessary comments, whitespace, and pseudo private properties.
    *
    * @private
@@ -592,21 +603,46 @@
   }
 
   /**
-   * Gets the Lo-Dash method assignments snippet from `source`.
+   * Gets the category of the given method name.
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the method assignments snippet.
+   * @param {String} methodName The method name.
+   * @returns {String} Returns the method name's category.
    */
-  function getMethodAssignments(source) {
-    return (source.match(/\/\*-+\*\/\n(?:\s*\/\/.*)*\s*lodash\.\w+ *=[\s\S]+?lodash\.VERSION *=.+/) || [''])[0];
+  function getCategory(source, methodName) {
+    var result = /@category *(\w+)/.exec(matchFunction(source, methodName));
+    return result ? result[1] : '';
+  }
+
+  /**
+   * Gets an array of category dependencies for a given category.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @param {String} category The category.
+   * @returns {Array} Returns an array of cetegory dependants.
+   */
+  function getCategoryDependencies(source, category) {
+    var methods = _.uniq(getMethodsByCategory(source, category).reduce(function(result, methodName) {
+      push.apply(result, getDependencies(methodName));
+      return result;
+    }, []));
+
+    var categories = _.uniq(methods.map(function(methodName) {
+      return getCategory(source, methodName);
+    }));
+
+    return categories.filter(function(other) {
+      return other != category;
+    });
   }
 
   /**
    * Gets an array of depenants for a method by a given name.
    *
    * @private
-   * @param {String} methodName The name of the method to query.
+   * @param {String} methodName The method name.
    * @returns {Array} Returns an array of method dependants.
    */
   function getDependants(methodName) {
@@ -696,6 +732,17 @@
   }
 
   /**
+   * Gets the Lo-Dash method assignments snippet from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the method assignments snippet.
+   */
+  function getMethodAssignments(source) {
+    return (source.match(/\/\*-+\*\/\n(?:\s*\/\/.*)*\s*lodash\.\w+ *=[\s\S]+?lodash\.VERSION *=.+/) || [''])[0];
+  }
+
+  /**
    * Gets the names of methods in `source` belonging to the given `category`.
    *
    * @private
@@ -705,7 +752,7 @@
    */
   function getMethodsByCategory(source, category) {
     return allMethods.filter(function(methodName) {
-      return category && RegExp('@category ' + category + '\\b').test(matchFunction(source, methodName));
+      return getCategory(source, methodName) == category;
     });
   }
 
@@ -1228,6 +1275,11 @@
     // constructed using the "use strict" directive
     var isStrict = options.indexOf('strict') > -1;
 
+    // used to specify methods of specific categories
+    var categories = options.reduce(function(result, value) {
+      return /category/.test(value) ? optionToArray(value) : result;
+    }, []);
+
     // used to specify the ways to export the `lodash` function
     var exportsOptions = options.reduce(function(result, value) {
       return /exports/.test(value) ? optionToArray(value).sort() : result;
@@ -1340,21 +1392,13 @@
       if (isUnderscore && !result) {
         result = getDependencies(underscoreMethods);
       }
-
       // add method names by category
-      options.some(function(value) {
-        if (!/category/.test(value)) {
-          return false;
-        }
-        // resolve method names belonging to each category (case-insensitive)
-        var methodNames = optionToArray(value).reduce(function(accumulator, category) {
-          var capitalized = category[0].toUpperCase() + category.toLowerCase().slice(1);
-          return accumulator.concat(getMethodsByCategory(source, capitalized));
-        }, []);
-
-        return (result = _.union(result || [], getDependencies(methodNames)));
-      });
-
+      if (categories.length) {
+        result = _.union(result || [], getDependencies(categories.reduce(function(accumulator, category) {
+          // resolve method names belonging to each category (case-insensitive)
+          return accumulator.concat(getMethodsByCategory(source, capitalize(category)));
+        }, [])));
+      }
       if (!result) {
         result = allMethods.slice();
       }
@@ -1983,7 +2027,6 @@
       } else {
         source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n/, '$1\n');
       }
-
       if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
         source = removeVar(source, 'freeExports');
       }

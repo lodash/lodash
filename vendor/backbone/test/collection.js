@@ -497,9 +497,21 @@ $(document).ready(function() {
          [4, 0]);
   });
 
+  test("sortedIndex", function () {
+    var model = new Backbone.Model({key: 2});
+    var collection = new (Backbone.Collection.extend({
+      comparator: 'key'
+    }))([model, {key: 1}]);
+    equal(collection.sortedIndex(model), 1);
+    equal(collection.sortedIndex(model, 'key'), 1);
+    equal(collection.sortedIndex(model, function (model) {
+      return model.get('key');
+    }), 1);
+  });
+
   test("reset", 10, function() {
     var resetCount = 0;
-    var models = col.models;
+    var models = col.models.slice();
     col.on('reset', function() { resetCount += 1; });
     col.reset([]);
     equal(resetCount, 1);

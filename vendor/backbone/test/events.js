@@ -86,6 +86,20 @@ $(document).ready(function() {
     b.trigger('change');
   });
 
+  test("listenTo yourself", 1, function(){
+    var e = _.extend({}, Backbone.Events);
+    e.listenTo(e, "foo", function(){ ok(true); });
+    e.trigger("foo");
+  });
+
+  test("listenTo yourself cleans yourself up with stopListening", 1, function(){
+    var e = _.extend({}, Backbone.Events);
+    e.listenTo(e, "foo", function(){ ok(true); });
+    e.trigger("foo");
+    e.stopListening();
+    e.trigger("foo");
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);

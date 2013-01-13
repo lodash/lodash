@@ -642,14 +642,14 @@
       }
       var props = keys(func);
       return function(object) {
-        var length = props.length;
+        var length = props.length,
+            result = false;
         while (length--) {
-          var result = object[props[length]] === func[props[length]];
-          if (!result) {
+          if (!(result = object[props[length]] === func[props[length]])) {
             break;
           }
         }
-        return !!result;
+        return result;
       };
     }
     if (typeof thisArg != 'undefined') {

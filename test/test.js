@@ -576,6 +576,48 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.first');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    test('should return the first element', function() {
+      strictEqual(_.first(array), 1);
+    });
+
+    test('should return the first two elements', function() {
+      deepEqual(_.first(array, 2), [1, 2]);
+    });
+
+    test('should work with a `callback`', function() {
+      var actual = _.first(array, function(num) {
+        return num < 3;
+      });
+
+      deepEqual(actual, [1, 2]);
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args;
+
+      _.first(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 0, array]);
+    });
+
+    test('supports the `thisArg` argument', function() {
+      var actual = _.first(array, function(value, index) {
+        return this[index] < 3;
+      }, array);
+
+      deepEqual(actual, [1, 2]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.flatten');
 
   (function() {
@@ -780,8 +822,9 @@
   QUnit.module('lodash.initial');
 
   (function() {
-    test('returns a full collection for `n` of `0`', function() {
-      var array = [1, 2, 3];
+    var array = [1, 2, 3];
+
+    test('returns all elements for `n` of `0`', function() {
       deepEqual(_.initial(array, 0), [1, 2, 3]);
     });
 
@@ -792,6 +835,40 @@
         } catch(e) { }
         deepEqual(actual, []);
       })
+    });
+
+    test('should exclude last element', function() {
+      deepEqual(_.initial(array), [1, 2]);
+    });
+
+    test('should exlcude the last two elements', function() {
+      deepEqual(_.initial(array, 2), [1]);
+    });
+
+    test('should work with a `callback`', function() {
+      var actual = _.initial(array, function(num) {
+        return num > 1;
+      });
+
+      deepEqual(actual, [1]);
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args;
+
+      _.initial(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [3, 2, array]);
+    });
+
+    test('supports the `thisArg` argument', function() {
+      var actual = _.initial(array, function(value, index) {
+        return this[index] > 1;
+      }, array);
+
+      deepEqual(actual, [1]);
     });
   }());
 
@@ -1048,6 +1125,48 @@
       deepEqual(_.keys(Foo), expected);
     });
   }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.last');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    test('should return the last element', function() {
+      equal(_.last(array), 3);
+    });
+
+    test('should return the last two elements', function() {
+      deepEqual(_.last(array, 2), [2, 3]);
+    });
+
+    test('should work with a `callback`', function() {
+      var actual = _.last(array, function(num) {
+        return num > 1;
+      });
+
+      deepEqual(actual, [2, 3]);
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args;
+
+      _.last(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [3, 2, array]);
+    });
+
+    test('supports the `thisArg` argument', function() {
+      var actual = _.last(array, function(value, index) {
+        return this[index] > 1;
+      }, array);
+
+      deepEqual(actual, [2, 3]);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -1548,6 +1667,12 @@
   QUnit.module('lodash.rest');
 
   (function() {
+    var array = [1, 2, 3];
+
+    test('returns all elements for `n` of `0`', function() {
+      deepEqual(_.rest(array, 0), [1, 2, 3]);
+    });
+
     test('should allow a falsey `array` argument', function() {
       _.each(falsey, function(index, value) {
         try {
@@ -1555,6 +1680,40 @@
         } catch(e) { }
         deepEqual(actual, []);
       })
+    });
+
+    test('should exclude the first element', function() {
+      deepEqual(_.rest(array), [2, 3]);
+    });
+
+    test('should exclude the first two elements', function() {
+      deepEqual(_.rest(array, 2), [3]);
+    });
+
+    test('should work with a `callback`', function() {
+      var actual = _.rest(array, function(num) {
+        return num < 3;
+      });
+
+      deepEqual(actual, [3]);
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args;
+
+      _.rest(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 0, array]);
+    });
+
+    test('supports the `thisArg` argument', function() {
+      var actual = _.rest(array, function(value, index) {
+        return this[index] < 3;
+      }, array);
+
+      deepEqual(actual, [3]);
     });
   }());
 

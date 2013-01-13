@@ -342,7 +342,7 @@
       var array = /x/.exec('x'),
           actual = _.cloneDeep(array);
 
-      equal(actual.index, 0);
+      strictEqual(actual.index, 0);
       equal(actual.input, 'x');
     });
 
@@ -421,7 +421,7 @@
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
-      equal(actual.constructor, 1);
+      strictEqual(actual.constructor, 1);
       equal(actual.hasOwnProperty, 2);
     });
   }());
@@ -804,16 +804,16 @@
     });
 
     test('should work with a negative `fromIndex` <= `-array.length`', function() {
-      equal(_.indexOf(array, 1, -6), 0);
-      equal(_.indexOf(array, 2, -8), 1);
+      strictEqual(_.indexOf(array, 1, -6), 0);
+      strictEqual(_.indexOf(array, 2, -8), 1);
     });
 
     test('should ignore non-number `fromIndex` values', function() {
-      equal(_.indexOf([1, 2, 3], 1, '1'), 0);
+      strictEqual(_.indexOf([1, 2, 3], 1, '1'), 0);
     });
 
     test('should work with `isSorted`', function() {
-      equal(_.indexOf([1, 2, 3], 1, true), 0);
+      strictEqual(_.indexOf([1, 2, 3], 1, true), 0);
     });
   }());
 
@@ -1176,7 +1176,7 @@
     var array = [1, 2, 3, 1, 2, 3];
 
     test('should work with a positive `fromIndex`', function() {
-      equal(_.lastIndexOf(array, 1, 2), 0);
+      strictEqual(_.lastIndexOf(array, 1, 2), 0);
     });
 
     test('should work with `fromIndex` >= `array.length`', function() {
@@ -1187,11 +1187,11 @@
     });
 
     test('should work with a negative `fromIndex`', function() {
-      equal(_.lastIndexOf(array, 2, -3), 1);
+      strictEqual(_.lastIndexOf(array, 2, -3), 1);
     });
 
     test('should work with a negative `fromIndex` <= `-array.length`', function() {
-      equal(_.lastIndexOf(array, 1, -6), 0);
+      strictEqual(_.lastIndexOf(array, 1, -6), 0);
       equal(_.lastIndexOf(array, 2, -8), -1);
     });
 
@@ -1351,7 +1351,7 @@
 
     test('should not assign `undefined` values', function() {
       var actual = _.merge({ 'a': 1 }, { 'a': undefined });
-      equal(actual.a, 1);
+      strictEqual(actual.a, 1);
     });
   }(1, 2, 3));
 
@@ -1437,7 +1437,7 @@
     test('works without partially applying arguments, without additional arguments', function() {
       var func = function() { return arguments.length; };
 
-      equal(_.partial(func)(), 0);
+      strictEqual(_.partial(func)(), 0);
     });
 
     test('works without partially applying arguments, with additional arguments', function() {
@@ -1744,7 +1744,7 @@
         try {
           var actual = index ? _.size(value) : _.size();
         } catch(e) { }
-        equal(actual, 0);
+        strictEqual(actual, 0);
       })
     });
 
@@ -1832,7 +1832,7 @@
         return this.sin(num);
       }, Math);
 
-      equal(actual, 0);
+      strictEqual(actual, 0);
     });
 
     test('supports arrays with lengths larger than `Math.pow(2, 31) - 1`', function() {

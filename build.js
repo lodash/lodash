@@ -76,23 +76,23 @@
     'compact': [],
     'compose': [],
     'contains': ['indexOf', 'isString'],
-    'countBy': ['forEach'],
+    'countBy': ['forEach', 'keys'],
     'debounce': [],
     'defaults': ['isArguments'],
     'defer': [],
     'delay': [],
     'difference': ['indexOf'],
     'escape': [],
-    'every': ['isArray'],
-    'filter': ['isArray'],
-    'find': ['forEach'],
+    'every': ['isArray', 'keys'],
+    'filter': ['isArray', 'keys'],
+    'find': ['forEach', 'keys'],
     'first': [],
     'flatten': ['isArray'],
     'forEach': ['identity', 'isArguments', 'isArray', 'isString'],
     'forIn': ['identity', 'isArguments'],
     'forOwn': ['identity', 'isArguments'],
     'functions': ['forIn', 'isFunction'],
-    'groupBy': ['forEach'],
+    'groupBy': ['forEach', 'keys'],
     'has': [],
     'identity': [],
     'indexOf': ['sortedIndex'],
@@ -120,11 +120,11 @@
     'keys': ['forOwn', 'isArguments', 'isObject'],
     'last': [],
     'lastIndexOf': [],
-    'map': ['isArray'],
-    'max': ['isArray', 'isString'],
+    'map': ['isArray', 'keys'],
+    'max': ['isArray', 'isString', 'keys'],
     'memoize': [],
     'merge': ['forOwn', 'isArray', 'isPlainObject'],
-    'min': ['isArray', 'isString'],
+    'min': ['isArray', 'isString', 'keys'],
     'mixin': ['forEach', 'forOwn', 'functions'],
     'noConflict': [],
     'object': [],
@@ -136,16 +136,16 @@
     'pluck': ['map'],
     'random': [],
     'range': [],
-    'reduce': ['isArray'],
+    'reduce': ['isArray', 'keys'],
     'reduceRight': ['forEach', 'isString', 'keys'],
     'reject': ['filter'],
     'rest': [],
     'result': ['isFunction'],
     'shuffle': ['forEach'],
     'size': ['keys'],
-    'some': ['isArray'],
-    'sortBy': ['forEach'],
-    'sortedIndex': ['identity'],
+    'some': ['isArray', 'keys'],
+    'sortBy': ['forEach', 'keys'],
+    'sortedIndex': ['identity', 'keys'],
     'tap': ['mixin'],
     'template': ['defaults', 'escape', 'keys', 'values'],
     'throttle': [],
@@ -153,11 +153,11 @@
     'toArray': ['isString', 'values'],
     'unescape': [],
     'union': ['uniq'],
-    'uniq': ['identity', 'indexOf'],
+    'uniq': ['identity', 'indexOf', 'keys'],
     'uniqueId': [],
     'value': ['mixin'],
     'values': ['keys'],
-    'where': ['filter', 'keys'],
+    'where': ['filter'],
     'without': ['indexOf'],
     'wrap': [],
     'zip': ['max', 'pluck'],
@@ -1336,6 +1336,12 @@
         exposeForOwn = !isUnderscore,
         exposeIsPlainObject = !isUnderscore;
 
+    // flags used to specify export options
+    var isAMD = exportsOptions.indexOf('amd') > -1,
+        isCommonJS = exportsOptions.indexOf('commonjs') > -1,
+        isGlobal = exportsOptions.indexOf('global') > -1,
+        isNode = exportsOptions.indexOf('node') > -1;
+
     /*------------------------------------------------------------------------*/
 
     // names of methods to include in the build
@@ -2004,11 +2010,6 @@
 
     // customize Lo-Dash's export bootstrap
     (function() {
-      var isAMD = exportsOptions.indexOf('amd') > -1,
-          isCommonJS = exportsOptions.indexOf('commonjs') > -1,
-          isGlobal = exportsOptions.indexOf('global') > -1,
-          isNode = exportsOptions.indexOf('node') > -1;
-
       if (!isAMD) {
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
       }

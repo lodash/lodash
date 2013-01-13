@@ -734,6 +734,13 @@ $(document).ready(function() {
     model.save({x: 1}, {wait: true});
   });
 
+  test("save turns on parse flag", function () {
+    var Model = Backbone.Model.extend({
+      sync: function(method, model, options) { ok(options.parse); }
+    });
+    new Model().save();
+  });
+
   test("nested `set` during `'change:attr'`", 2, function() {
     var events = [];
     var model = new Backbone.Model();

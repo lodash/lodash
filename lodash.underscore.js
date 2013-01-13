@@ -395,9 +395,23 @@
     if (!func) {
       return identity;
     }
-    if (typeof func != 'function') {
+    var type = typeof func;
+    if (type != 'function') {
+      if (type != 'object') {
+        return function(object) {
+          return object[func];
+        };
+      }
+      var props = keys(func);
       return function(object) {
-        return object[func];
+        var length = props.length,
+            result = false;
+        while (length--) {
+          if (!(result = object[props[length]] === func[props[length]])) {
+            break;
+          }
+        }
+        return result;
       };
     }
     if (typeof thisArg != 'undefined') {
@@ -2271,17 +2285,7 @@
    * // => [{ 'name': 'moe', 'age': 40 }]
    */
   function where(collection, properties) {
-    var props = keys(properties);
-    return filter(collection, function(object) {
-      var length = props.length;
-      while (length--) {
-        var result = object[props[length]] === properties[props[length]];
-        if (!result) {
-          break;
-        }
-      }
-      return !!result;
-    });
+    return filter(collection, properties);
   }
 
   /*--------------------------------------------------------------------------*/

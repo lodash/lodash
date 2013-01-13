@@ -494,7 +494,7 @@
    * @param {Mixed} value The value to search for.
    * @param {Number} [fromIndex=0] The index to search from.
    * @param {Number} [largeSize=30] The length at which an array is considered large.
-   * @returns {Boolean} Returns `true` if `value` is found, else `false`.
+   * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
    */
   function cachedContains(array, fromIndex, largeSize) {
     fromIndex || (fromIndex = 0);
@@ -845,7 +845,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is an `arguments` object, else `false`.
    * @example
    *
    * (function() { return _.isArguments(arguments); })(1, 2, 3);
@@ -946,7 +946,7 @@
    *
    * @private
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
+   * @returns {Boolean} Returns `true`, if `value` is a plain object, else `false`.
    */
   function shimIsPlainObject(value) {
     // avoid non-objects and false positives for `arguments` objects
@@ -1244,7 +1244,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an array, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
    * @example
    *
    * (function() { return _.isArray(arguments); })();
@@ -1260,13 +1260,13 @@
   };
 
   /**
-   * Checks if `value` is a boolean (`true` or `false`) value.
+   * Checks if `value` is a boolean value.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a boolean value, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is a boolean value, else `false`.
    * @example
    *
    * _.isBoolean(null);
@@ -1283,7 +1283,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a date, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is a date, else `false`.
    * @example
    *
    * _.isDate(new Date);
@@ -1300,7 +1300,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a DOM element, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is a DOM element, else `false`.
    * @example
    *
    * _.isElement(document.body);
@@ -1319,7 +1319,7 @@
    * @memberOf _
    * @category Objects
    * @param {Array|Object|String} value The value to inspect.
-   * @returns {Boolean} Returns `true` if the `value` is empty, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is empty, else `false`.
    * @example
    *
    * _.isEmpty([1, 2, 3]);
@@ -1361,7 +1361,7 @@
    * @param {Mixed} b The other value to compare.
    * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
    * @param- {Object} [stackB=[]] Internally used track traversed `b` objects.
-   * @returns {Boolean} Returns `true` if the values are equvalent, else `false`.
+   * @returns {Boolean} Returns `true`, if the values are equvalent, else `false`.
    * @example
    *
    * var moe = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
@@ -1506,7 +1506,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a finite number, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is finite, else `false`.
    * @example
    *
    * _.isFinite(-101);
@@ -1535,7 +1535,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a function, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is a function, else `false`.
    * @example
    *
    * _.isFunction(_);
@@ -1559,7 +1559,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is an object, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is an object, else `false`.
    * @example
    *
    * _.isObject({});
@@ -1589,7 +1589,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is `NaN`, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is `NaN`, else `false`.
    * @example
    *
    * _.isNaN(NaN);
@@ -1617,7 +1617,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is `null`, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is `null`, else `false`.
    * @example
    *
    * _.isNull(null);
@@ -1637,7 +1637,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a number, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is a number, else `false`.
    * @example
    *
    * _.isNumber(8.4 * 5);
@@ -1654,7 +1654,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if `value` is a plain object, else `false`.
+   * @returns {Boolean} Returns `true`, if `value` is a plain object, else `false`.
    * @example
    *
    * function Stooge(name, age) {
@@ -1690,7 +1690,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a regular expression, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is a regular expression, else `false`.
    * @example
    *
    * _.isRegExp(/moe/);
@@ -1707,7 +1707,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a string, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is a string, else `false`.
    * @example
    *
    * _.isString('moe');
@@ -1724,7 +1724,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is `undefined`, else `false`.
+   * @returns {Boolean} Returns `true`, if the `value` is `undefined`, else `false`.
    * @example
    *
    * _.isUndefined(void 0);
@@ -2273,7 +2273,7 @@
   /**
    * Invokes the method named by `methodName` on each element in the `collection`,
    * returning an array of the results of each invoked method. Additional arguments
-   * will be passed to each invoked method. If `methodName` is a function it will
+   * will be passed to each invoked method. If `methodName` is a function, it will
    * be invoked for, and `this` bound to, each element in the `collection`.
    *
    * @static
@@ -2828,30 +2828,51 @@
   }
 
   /**
-   * Gets the first element of the `array`. Pass `n` to return the first `n`
-   * elements of the `array`.
+   * Gets the first element of the `array`. If a number `n` is passed, the first
+   * `n` elements of the `array` are returned. If a `callback` function is passed,
+   * the first elements the `callback` returns truthy for are returned. The `callback`
+   * is bound to `thisArg` and invoked with three arguments; (value, index, array).
    *
    * @static
    * @memberOf _
    * @alias head, take
    * @category Arrays
    * @param {Array} array The array to query.
-   * @param {Number} [n] The number of elements to return.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Mixed} Returns the first element, or an array of the first `n`
-   *  elements, of `array`.
+   * @param {Function|Number} [callback|n] The function called per element or
+   *  the number of elements to return.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Mixed} Returns the first element(s) of `array`.
    * @example
    *
-   * _.first([5, 4, 3, 2, 1]);
-   * // => 5
+   * _.first([1, 2, 3]);
+   * // => 1
+   *
+   * _.first([1, 2, 3], 2);
+   * // => [1, 2]
+   *
+   * _.first([1, 2, 3], function(num) {
+   *   return num < 3;
+   * });
+   * // => [1, 2]
    */
-  function first(array, n, guard) {
+  function first(array, callback, thisArg) {
     if (array) {
-      var length = array.length;
-      return (n == null || guard)
-        ? array[0]
-        : slice(array, 0, nativeMin(nativeMax(0, n), length));
+      var n = 0,
+          length = array.length;
+
+      if (typeof callback == 'function') {
+        var index = -1;
+        callback = createCallback(callback, thisArg);
+        while (++index < length && callback(array[index], index, array)) {
+          n++;
+        }
+      } else {
+        n = callback;
+        if (n == null || thisArg) {
+          return array[0];
+        }
+      }
+      return slice(array, 0, nativeMin(nativeMax(0, n), length));
     }
   }
 
@@ -2934,28 +2955,49 @@
   }
 
   /**
-   * Gets all but the last element of `array`. Pass `n` to exclude the last `n`
-   * elements from the result.
+   * Gets all but the last element of `array`. If a number `n` is passed, the
+   * last `n` elements are excluded from the result. If a `callback` function
+   * is passed, the last elements the `callback` returns truthy for are excluded
+   * from the result. The `callback` is bound to `thisArg` and invoked with three
+   * arguments; (value, index, array).
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to query.
-   * @param {Number} [n=1] The number of elements to exclude.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Array} Returns all but the last element, or `n` elements, of `array`.
+   * @param {Function|Number} [callback|n=1] The function called per element or
+   *  the number of elements to exclude.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Array} Returns a slice of `array`.
    * @example
    *
-   * _.initial([3, 2, 1]);
-   * // => [3, 2]
+   * _.initial([1, 2, 3]);
+   * // => [1, 2]
+   *
+   * _.initial([1, 2, 3], 2);
+   * // => [1]
+   *
+   * _.initial([1, 2, 3], function(num) {
+   *   return num > 1;
+   * });
+   * // => [1]
    */
-  function initial(array, n, guard) {
+  function initial(array, callback, thisArg) {
     if (!array) {
       return [];
     }
-    var length = array.length;
-    n = n == null || guard ? 1 : n || 0;
+    var n = 0,
+        length = array.length;
+
+    if (typeof callback == 'function') {
+      var index = length;
+      callback = createCallback(callback, thisArg);
+      while (index-- && callback(array[index], index, array)) {
+        n++;
+      }
+    } else {
+      n = (callback == null || thisArg) ? 1 : callback || n;
+    }
     return slice(array, 0, nativeMin(nativeMax(0, length - n), length));
   }
 
@@ -3010,27 +3052,50 @@
   }
 
   /**
-   * Gets the last element of the `array`. Pass `n` to return the last `n`
-   * elements of the `array`.
+   * Gets the last element of the `array`. If a number `n` is passed, the last
+   * `n` elements of the `array` are returned. If a `callback` function is passed,
+   * the last elements the `callback` returns truthy for are returned. The `callback`
+   * is bound to `thisArg` and invoked with three arguments; (value, index, array).
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to query.
-   * @param {Number} [n] The number of elements to return.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Mixed} Returns the last element, or an array of the last `n`
-   *  elements, of `array`.
+   * @param {Function|Number} [callback|n] The function called per element or
+   *  the number of elements to return.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Mixed} Returns the last element(s) of `array`.
    * @example
    *
-   * _.last([3, 2, 1]);
-   * // => 1
+   * _.last([1, 2, 3]);
+   * // => 3
+   *
+   * _.last([1, 2, 3], 2);
+   * // => [2, 3]
+   *
+   * _.last([1, 2, 3], function(num) {
+   *   return num > 1;
+   * });
+   * // => [2, 3]
    */
-  function last(array, n, guard) {
+  function last(array, callback, thisArg) {
     if (array) {
-      var length = array.length;
-      return (n == null || guard) ? array[length - 1] : slice(array, nativeMax(0, length - n));
+      var n = 0,
+          length = array.length;
+
+      if (typeof callback == 'function') {
+        var index = length;
+        callback = createCallback(callback, thisArg);
+        while (index-- && callback(array[index], index, array)) {
+          n++;
+        }
+      } else {
+        n = callback;
+        if (n == null || thisArg) {
+          return array[length - 1];
+        }
+      }
+      return slice(array, nativeMax(0, length - n));
     }
   }
 
@@ -3151,25 +3216,48 @@
   }
 
   /**
-   * The opposite of `_.initial`, this method gets all but the first value of
-   * `array`. Pass `n` to exclude the first `n` values from the result.
+   * The opposite of `_.initial`, this method gets all but the first value of `array`.
+   * If a number `n` is passed, the first `n` values are excluded from the result.
+   * If a `callback` function is passed, the first elements the `callback` returns
+   * truthy for are excluded from the result. The `callback` is bound to `thisArg`
+   * and invoked with three arguments; (value, index, array).
    *
    * @static
    * @memberOf _
    * @alias drop, tail
    * @category Arrays
    * @param {Array} array The array to query.
-   * @param {Number} [n=1] The number of elements to exclude.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  others like `_.map` without using their callback `index` argument for `n`.
-   * @returns {Array} Returns all but the first element, or `n` elements, of `array`.
+   * @param {Function|Number} [callback|n=1] The function called per element or
+   *  the number of elements to exclude.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Array} Returns a slice of `array`.
    * @example
    *
-   * _.rest([3, 2, 1]);
-   * // => [2, 1]
+   * _.rest([1, 2, 3]);
+   * // => [2, 3]
+   *
+   * _.rest([1, 2, 3], 2);
+   * // => [3]
+   *
+   * _.rest([1, 2, 3], function(num) {
+   *   return num < 3;
+   * });
+   * // => [3]
    */
-  function rest(array, n, guard) {
-    return slice(array, (n == null || guard) ? 1 : nativeMax(0, n));
+  function rest(array, callback, thisArg) {
+    if (typeof callback == 'function') {
+      var n = 0,
+          index = -1,
+          length = array ? array.length : 0;
+
+      callback = createCallback(callback, thisArg);
+      while (++index < length && callback(array[index], index, array)) {
+        n++;
+      }
+    } else {
+      n = (callback == null || thisArg) ? 1 : nativeMax(0, callback);
+    }
+    return slice(array, n);
   }
 
   /**
@@ -3919,7 +4007,7 @@
   }
 
   /**
-   * Resolves the value of `property` on `object`. If `property` is a function
+   * Resolves the value of `property` on `object`. If `property` is a function,
    * it will be invoked and its result returned, else the property value is
    * returned. If `object` is falsey, then `null` is returned.
    *

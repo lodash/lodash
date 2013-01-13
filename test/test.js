@@ -556,14 +556,21 @@
   QUnit.module('lodash.find');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [
+      { 'a': 1, 'b': 2, 'c': 3 },
+      { 'a': 2, 'b': 2, 'c': 3 }
+    ];
 
     test('should return found `value`', function() {
-      equal(_.find(array, function(n) { return n > 2; }), 3);
+      equal(_.find(array, function(object) { return object.a == 1; }), array[0]);
     });
 
     test('should return `undefined` if `value` is not found', function() {
-      equal(_.find(array, function(n) { return n == 4; }), undefined);
+      equal(_.find(array, function(object) { return object.a == 3; }), undefined);
+    });
+
+    test('should work with an object for `callback`', function() {
+      equal(_.find(array, { 'b': 2, 'c': 3 }), array[0]);
     });
   }());
 

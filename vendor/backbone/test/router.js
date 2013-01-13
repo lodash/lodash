@@ -69,6 +69,7 @@ $(document).ready(function() {
       "contacts":                   "contacts",
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
+      "route-event/:arg":           "routeEvent",
       "optional(/:item)":           "optionalItem",
       "named/optional/(y:z)":       "namedOptional",
       "splat/*args/end":            "splat",
@@ -132,6 +133,9 @@ $(document).ready(function() {
 
     namedOptional: function(z) {
       this.z = z;
+    },
+
+    routeEvent: function(arg) {
     }
 
   });
@@ -514,6 +518,15 @@ $(document).ready(function() {
     location.replace('http://example.com#named/optional/y123');
     Backbone.history.checkUrl();
     strictEqual(router.z, '123');
+  });
+
+  test("#2062 - Trigger 'route' event on router instance.", 2, function() {
+    router.on('route', function(name, args) {
+      strictEqual(name, 'routeEvent');
+      deepEqual(args, ['x']);
+    });
+    location.replace('http://example.com#route-event/x');
+    Backbone.history.checkUrl();
   });
 
 });

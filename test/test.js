@@ -189,14 +189,13 @@
     });
 
     test('should work with `_.reduce`', function() {
-      var actual = { 'a': 1},
+      var actual = { 'a': 1 },
           array = [{ 'b': 2 }, { 'c': 3 }];
 
       _.reduce(array, _.assign, actual);
-      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
   }());
-
 
   /*--------------------------------------------------------------------------*/
 
@@ -251,6 +250,33 @@
           bound = _.bind(func, {});
 
       ok(new bound instanceof func);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.bindAll');
+
+  (function() {
+    test('should accept arrays of method names', function() {
+      var object = {
+        '_a': 1,
+        '_b': 2,
+        '_c': 3,
+        '_d': 4,
+        'a': function() { return this._a; },
+        'b': function() { return this._b; },
+        'c': function() { return this._c; },
+        'd': function() { return this._d; }
+      };
+
+      _.bindAll(object, ['a', 'b'], ['c']);
+
+      var actual = _.map(_.functions(object), function(methodName) {
+        return object[methodName].call({});
+      });
+
+      deepEqual(actual, [1, 2, 3, undefined]);
     });
   }());
 
@@ -366,6 +392,23 @@
       notEqual(_.cloneDeep(shadowed), shadowed);
     });
   }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.compose');
+
+  (function() {
+    test('should accept arrays of functions', function() {
+      var composed = _.compose([
+        function(c) { return c + 'd'; },
+        function(b) { return b + 'c'; }
+      ], [
+        function(a) { return a + 'b'; }
+      ]);
+
+      equal(composed('a'), 'abcd');
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -497,13 +540,18 @@
 
   QUnit.module('source property checks');
 
-  _.each(['assign', 'defaults'], function(methodName) {
+  _.each(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
     test('lodash.' + methodName + ' should not assign inherited `source` properties', function() {
       function Foo() {}
       Foo.prototype = { 'a': 1 };
       deepEqual(func({}, new Foo), {});
+    });
+
+    test('lodash.' + methodName + ' should accept arrays of source objects', function() {
+      var actual = func({}, [{ 'a': 1 }, { 'b': 2 }], [{ 'c': 3 }]);
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
   });
 
@@ -1260,27 +1308,35 @@
     var args = arguments;
 
     test('should merge `source` into the destination object', function() {
-      var stooges = [
-        { 'name': 'moe' },
-        { 'name': 'larry' }
-      ];
+      var names = {
+        'stooges': [
+          { 'name': 'moe' },
+          { 'name': 'larry' }
+        ]
+      };
 
-      var ages = [
-        { 'age': 40 },
-        { 'age': 50 }
-      ];
+      var ages = {
+        'stooges': [
+          { 'age': 40 },
+          { 'age': 50 }
+        ]
+      };
 
-      var heights = [
-        { 'height': '5\'4"' },
-        { 'height': '5\'5"' },
-      ];
+      var heights = {
+        'stooges': [
+          { 'height': '5\'4"' },
+          { 'height': '5\'5"' },
+        ]
+      };
 
-      var expected = [
-        { 'name': 'moe', 'age': 40, 'height': '5\'4"' },
-        { 'name': 'larry', 'age': 50, 'height': '5\'5"' }
-      ];
+      var expected = {
+        'stooges': [
+          { 'name': 'moe', 'age': 40, 'height': '5\'4"' },
+          { 'name': 'larry', 'age': 50, 'height': '5\'5"' }
+        ]
+      };
 
-      deepEqual(_.merge(stooges, ages, heights), expected);
+      deepEqual(_.merge(names, ages, heights), expected);
     });
 
     test('should merge sources containing circular references', function() {
@@ -1302,20 +1358,20 @@
     });
 
     test('should merge problem JScript properties (test in IE < 9)', function() {
-      var object = [{
+      var object = {
         'constructor': 1,
         'hasOwnProperty': 2,
         'isPrototypeOf': 3
-      }];
+      };
 
-      var source = [{
+      var source = {
         'propertyIsEnumerable': 4,
         'toLocaleString': 5,
         'toString': 6,
         'valueOf': 7
-      }];
+      };
 
-      deepEqual(_.merge(object, source), [shadowed]);
+      deepEqual(_.merge(object, source), shadowed);
     });
 
     test('should not treat `arguments` objects as plain objects', function() {
@@ -1361,25 +1417,25 @@
 
   (function() {
     var object = { 'a': 1, 'b': 2 },
-        actual = { 'b': 2 };
+        expected = { 'b': 2 };
 
     test('should accept individual property names', function() {
-      deepEqual(_.omit(object, 'a'), actual);
+      deepEqual(_.omit(object, 'a'), expected);
     });
 
     test('should accept an array of property names', function() {
-      deepEqual(_.omit(object, ['a', 'c']), actual);
+      deepEqual(_.omit(object, ['a', 'c']), expected);
     });
 
     test('should accept mixes of individual and arrays of property names', function() {
-      deepEqual(_.omit(object, ['a'], 'c'), actual);
+      deepEqual(_.omit(object, ['a'], 'c'), expected);
     });
 
     test('should iterate over inherited properties', function() {
       function Foo() {}
       Foo.prototype = object;
 
-      deepEqual(_.omit(new Foo, 'a'), actual);
+      deepEqual(_.omit(new Foo, 'a'), expected);
     });
 
     test('should work with a `callback` argument', function() {
@@ -1387,7 +1443,7 @@
         return value == 1;
       });
 
-      deepEqual(actual, { 'b': 2 });
+      deepEqual(actual, expected);
     });
 
     test('should pass the correct `callback` arguments', function() {
@@ -1410,7 +1466,7 @@
         return value == this.a;
       }, { 'a': 1 });
 
-      deepEqual(actual, { 'b': 2 });
+      deepEqual(actual, expected);
     });
   }());
 

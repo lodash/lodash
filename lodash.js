@@ -463,9 +463,11 @@
   var assignIteratorOptions = {
     'args': 'object, source, guard',
     'top':
-      "var argsIndex = 0, argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
+      'var args = concat.apply(arrayRef, arguments),\n' +
+      '    argsIndex = 0,\n' +
+      "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
       'while (++argsIndex < argsLength) {\n' +
-      '  if ((iteratee = arguments[argsIndex])) {',
+      '  if ((iteratee = args[argsIndex])) {',
     'loop': 'result[index] = iteratee[index]',
     'bottom': '  }\n}'
   };
@@ -707,14 +709,14 @@
 
     // create the function factory
     var factory = Function(
-        'createCallback, hasOwnProperty, isArguments, isString, objectTypes, ' +
-        'nativeKeys, propertyIsEnumerable',
+        'arrayRef, concat, createCallback, hasOwnProperty, isArguments, isString, ' +
+        'objectTypes, nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      createCallback, hasOwnProperty, isArguments, isString, objectTypes,
-      nativeKeys, propertyIsEnumerable
+      arrayRef, concat, createCallback, hasOwnProperty, isArguments, isString,
+      objectTypes, nativeKeys, propertyIsEnumerable
     );
   }
 
@@ -821,8 +823,9 @@
 
   /**
    * Assigns own enumerable properties of source object(s) to the `destination`
-   * object. Subsequent sources will overwrite propery assignments of previous
-   * sources.
+   * object. Source objects may be specified as individual arguments or as arrays
+   * of source objects. Subsequent sources will overwrite propery assignments of
+   * previous sources.
    *
    * @static
    * @memberOf _
@@ -1148,14 +1151,15 @@
   /**
    * Assigns own enumerable properties of source object(s) to the `destination`
    * object for all `destination` properties that resolve to `null`/`undefined`.
-   * Once a property is set, additional defaults of the same property will be
-   * ignored.
+   * Source objects may be specified as individual arguments or as arrays of source
+   * objects. Once a property is set, additional defaults of the same property will
+   * be ignored.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Object} object The destination object.
-   * @param {Object} [default1, default2, ...] The default objects.
+   * @param {Object} [source1, source2, ...] The source objects.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -1736,8 +1740,9 @@
 
   /**
    * Recursively merges own enumerable properties of the source object(s), that
-   * don't resolve to `undefined`, into the `destination` object. Subsequent
-   * sources will overwrite propery assignments of previous sources.
+   * don't resolve to `undefined`, into the `destination` object. Source objects
+   * may be specified as individual arguments or as arrays of source objects.
+   * Subsequent sources will overwrite propery assignments of previous sources.
    *
    * @static
    * @memberOf _
@@ -1752,18 +1757,22 @@
    * @returns {Object} Returns the destination object.
    * @example
    *
-   * var stooges = [
-   *   { 'name': 'moe' },
-   *   { 'name': 'larry' }
-   * ];
+   * var names = {
+   *   'stooges': [
+   *     { 'name': 'moe' },
+   *     { 'name': 'larry' }
+   *   ]
+   * };
    *
-   * var ages = [
-   *   { 'age': 40 },
-   *   { 'age': 50 }
-   * ];
+   * var ages = {
+   *   'stooges': [
+   *     { 'age': 40 },
+   *     { 'age': 50 }
+   *   ]
+   * };
    *
-   * _.merge(stooges, ages);
-   * // => [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }]
+   * _.merge(names, ages);
+   * // => { 'stooges': [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }] }
    */
   function merge(object, source, indicator) {
     var args = arguments,
@@ -1773,6 +1782,7 @@
         stackB = args[4];
 
     if (indicator !== indicatorObject) {
+      args = concat.apply(arrayRef, args);
       stackA = [];
       stackB = [];
 
@@ -1885,10 +1895,10 @@
 
   /**
    * Creates a shallow clone of `object` composed of the specified properties.
-   * Property names may be specified as individual arguments or as arrays of
-   * property names. If `callback` is passed, it will be executed for each property
-   * in the `object`, picking the properties `callback` returns truthy for. The
-   * `callback` is bound to `thisArg` and invoked with three arguments; (value, key, object).
+   * Property names may be specified as individual arguments or as arrays of property
+   * names. If `callback` is passed, it will be executed for each property in the
+   * `object`, picking the properties `callback` returns truthy for. The `callback`
+   * is bound to `thisArg` and invoked with three arguments; (value, key, object).
    *
    * @static
    * @memberOf _
@@ -3532,7 +3542,8 @@
 
   /**
    * Binds methods on `object` to `object`, overwriting the existing method.
-   * If no method names are provided, all the function properties of `object`
+   * Method names may be specified as individual arguments or as arrays of method
+   * names. If no method names are provided, all the function properties of `object`
    * will be bound.
    *
    * @static
@@ -3553,7 +3564,7 @@
    * // => When the button is clicked, `this.label` will have the correct value
    */
   function bindAll(object) {
-    var funcs = arguments,
+    var funcs = concat.apply(arrayRef, arguments),
         index = funcs.length > 1 ? 0 : (funcs = functions(object), -1),
         length = funcs.length;
 
@@ -3605,6 +3616,7 @@
   /**
    * Creates a function that is the composition of the passed functions,
    * where each function consumes the return value of the function that follows.
+   * Functions may be specified as individual arguments or as arrays of functions.
    * In math terms, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
    * Each function is executed with the `this` binding of the composed function.
    *
@@ -3622,7 +3634,7 @@
    * // => 'hi: moe!'
    */
   function compose() {
-    var funcs = arguments;
+    var funcs = concat.apply(arrayRef, arguments);
     return function() {
       var args = arguments,
           length = funcs.length;

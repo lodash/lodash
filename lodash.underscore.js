@@ -277,11 +277,10 @@
   var assignIteratorOptions = {
     'args': 'object, source, guard',
     'top':
-      'var args = concat.apply(arrayRef, arguments),\n' +
-      '    argsIndex = 0,\n' +
-      "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
+      'var argsIndex = 0,\n' +
+      "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
       'while (++argsIndex < argsLength) {\n' +
-      '  if ((iteratee = args[argsIndex])) {',
+      '  if ((iteratee = arguments[argsIndex])) {',
     'loop': 'result[index] = iteratee[index]',
     'bottom': '  }\n}'
   };
@@ -470,14 +469,14 @@
 
     // create the function factory
     var factory = Function(
-        'arrayRef, concat, createCallback, hasOwnProperty, isString, ' +
-        'objectTypes, nativeKeys, propertyIsEnumerable',
+        'createCallback, hasOwnProperty, isString, objectTypes, ' +
+        'nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + (data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayRef, concat, createCallback, hasOwnProperty, isString,
-      objectTypes, nativeKeys, propertyIsEnumerable
+      createCallback, hasOwnProperty, isString, objectTypes,
+      nativeKeys, propertyIsEnumerable
     );
   }
 
@@ -601,9 +600,8 @@
 
   /**
    * Assigns own enumerable properties of source object(s) to the `destination`
-   * object. Source objects may be specified as individual arguments or as arrays
-   * of source objects. Subsequent sources will overwrite propery assignments of
-   * previous sources.
+   * object. Subsequent sources will overwrite propery assignments of previous
+   * sources.
    *
    * @static
    * @memberOf _
@@ -854,9 +852,8 @@
   /**
    * Assigns own enumerable properties of source object(s) to the `destination`
    * object for all `destination` properties that resolve to `null`/`undefined`.
-   * Source objects may be specified as individual arguments or as arrays of source
-   * objects. Once a property is set, additional defaults of the same property will
-   * be ignored.
+   * Once a property is set, additional defaults of the same property will be
+   * ignored.
    *
    * @static
    * @memberOf _
@@ -3069,8 +3066,7 @@
   /**
    * Creates a function that is the composition of the passed functions,
    * where each function consumes the return value of the function that follows.
-   * Functions may be specified as individual arguments or as arrays of functions.
-   * In math terms, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
+   * For example, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
    * Each function is executed with the `this` binding of the composed function.
    *
    * @static
@@ -3087,7 +3083,7 @@
    * // => 'hi: moe!'
    */
   function compose() {
-    var funcs = concat.apply(arrayRef, arguments);
+    var funcs = arguments;
     return function() {
       var args = arguments,
           length = funcs.length;

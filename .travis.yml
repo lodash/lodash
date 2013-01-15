@@ -2,6 +2,11 @@ language: node_js
 node_js:
   - 0.6
   - 0.8
+git:
+  depth: 1
+branches:
+  only:
+    - master
 before_script:
   - "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/a2787b470c577cee2404d186c562dd9835f779f5 | tar xvz -C vendor"
   - "curl -H 'Accept: application/vnd.github.v3.raw' https://api.github.com/repos/bestiejs/lodash/git/blobs/505f1be36ef60fd25a992a522f116d5179ab317f | tar xvz -C vendor"

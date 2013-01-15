@@ -463,11 +463,10 @@
   var assignIteratorOptions = {
     'args': 'object, source, guard',
     'top':
-      'var args = concat.apply(arrayRef, arguments),\n' +
-      '    argsIndex = 0,\n' +
-      "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
+      'var argsIndex = 0,\n' +
+      "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
       'while (++argsIndex < argsLength) {\n' +
-      '  if ((iteratee = args[argsIndex])) {',
+      '  if ((iteratee = arguments[argsIndex])) {',
     'loop': 'result[index] = iteratee[index]',
     'bottom': '  }\n}'
   };
@@ -709,14 +708,14 @@
 
     // create the function factory
     var factory = Function(
-        'arrayRef, concat, createCallback, hasOwnProperty, isArguments, isString, ' +
-        'objectTypes, nativeKeys, propertyIsEnumerable',
+        'createCallback, hasOwnProperty, isArguments, isString, objectTypes, ' +
+        'nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      arrayRef, concat, createCallback, hasOwnProperty, isArguments, isString,
-      objectTypes, nativeKeys, propertyIsEnumerable
+      createCallback, hasOwnProperty, isArguments, isString, objectTypes,
+      nativeKeys, propertyIsEnumerable
     );
   }
 
@@ -823,9 +822,8 @@
 
   /**
    * Assigns own enumerable properties of source object(s) to the `destination`
-   * object. Source objects may be specified as individual arguments or as arrays
-   * of source objects. Subsequent sources will overwrite propery assignments of
-   * previous sources.
+   * object. Subsequent sources will overwrite propery assignments of previous
+   * sources.
    *
    * @static
    * @memberOf _
@@ -1151,9 +1149,8 @@
   /**
    * Assigns own enumerable properties of source object(s) to the `destination`
    * object for all `destination` properties that resolve to `null`/`undefined`.
-   * Source objects may be specified as individual arguments or as arrays of source
-   * objects. Once a property is set, additional defaults of the same property will
-   * be ignored.
+   * Once a property is set, additional defaults of the same property will be
+   * ignored.
    *
    * @static
    * @memberOf _
@@ -1740,9 +1737,8 @@
 
   /**
    * Recursively merges own enumerable properties of the source object(s), that
-   * don't resolve to `undefined`, into the `destination` object. Source objects
-   * may be specified as individual arguments or as arrays of source objects.
-   * Subsequent sources will overwrite propery assignments of previous sources.
+   * don't resolve to `undefined`, into the `destination` object. Subsequent
+   * sources will overwrite propery assignments of previous sources.
    *
    * @static
    * @memberOf _
@@ -1782,7 +1778,6 @@
         stackB = args[4];
 
     if (indicator !== indicatorObject) {
-      args = concat.apply(arrayRef, args);
       stackA = [];
       stackB = [];
 
@@ -1792,9 +1787,10 @@
       }
     }
     while (++index < length) {
-      forOwn(args[index], function(source, key) {
-        var found, isArr, value;
-        if (source && ((isArr = isArray(source)) || isPlainObject(source))) {
+      var isArr = isArray(args[index]);
+      (isArr ? forEach : forOwn)(args[index], function(source, key) {
+        var found, isObj, value;
+        if (source && ((isObj = isPlainObject(source)) || isArray(source))) {
           // avoid merging previously merged cyclic sources
           var stackLength = stackA.length;
           while (stackLength--) {
@@ -1806,14 +1802,14 @@
           if (!found) {
             // add `source` and associated `value` to the stack of traversed objects
             stackA.push(source);
-            stackB.push(value = (value = object[key], isArr)
-              ? (isArray(value) ? value : [])
-              : (isPlainObject(value) ? value : {})
+            stackB.push(value = (value = object[key], isObj)
+              ? (isPlainObject(value) ? value : {})
+              : (isArray(value) ? value : [])
             );
             // recursively merge objects and arrays (susceptible to call stack limits)
             object[key] = merge(value, source, indicatorObject, stackA, stackB);
           }
-        } else if (typeof source != 'undefined') {
+        } else if (isArr || typeof source != 'undefined') {
           object[key] = source;
         }
       });
@@ -3616,8 +3612,7 @@
   /**
    * Creates a function that is the composition of the passed functions,
    * where each function consumes the return value of the function that follows.
-   * Functions may be specified as individual arguments or as arrays of functions.
-   * In math terms, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
+   * For example, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
    * Each function is executed with the `this` binding of the composed function.
    *
    * @static
@@ -3634,7 +3629,7 @@
    * // => 'hi: moe!'
    */
   function compose() {
-    var funcs = concat.apply(arrayRef, arguments);
+    var funcs = arguments;
     return function() {
       var args = arguments,
           length = funcs.length;

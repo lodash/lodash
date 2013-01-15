@@ -7,13 +7,10 @@
 
   /** Used to minify variables embedded in compiled strings */
   var compiledVars = [
-    'args',
     'argsIndex',
     'argsLength',
-    'arrayRef',
     'callback',
     'collection',
-    'concat',
     'createCallback',
     'ctor',
     'guard',

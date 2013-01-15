@@ -395,23 +395,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.compose');
-
-  (function() {
-    test('should accept arrays of functions', function() {
-      var composed = _.compose([
-        function(c) { return c + 'd'; },
-        function(b) { return b + 'c'; }
-      ], [
-        function(a) { return a + 'b'; }
-      ]);
-
-      equal(composed('a'), 'abcd');
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.contains');
 
   (function() {
@@ -547,11 +530,6 @@
       function Foo() {}
       Foo.prototype = { 'a': 1 };
       deepEqual(func({}, new Foo), {});
-    });
-
-    test('lodash.' + methodName + ' should accept arrays of source objects', function() {
-      var actual = func({}, [{ 'a': 1 }, { 'b': 2 }], [{ 'c': 3 }]);
-      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
   });
 
@@ -1406,8 +1384,23 @@
     });
 
     test('should not assign `undefined` values', function() {
+      var a
       var actual = _.merge({ 'a': 1 }, { 'a': undefined });
       strictEqual(actual.a, 1);
+    });
+
+    test('should treat sparse arrays as dense', function() {
+      var array = Array(3);
+      array[0] = 1;
+      array[2] = 3;
+
+      var actual = _.merge([], array),
+          expected = array.slice();
+
+      expected[1] = undefined;
+
+      ok(1 in actual);
+      deepEqual(actual, expected);
     });
   }(1, 2, 3));
 

@@ -4542,9 +4542,11 @@
 
   forOwn(lodash, function(func, methodName) {
     if (!lodash.prototype[methodName]) {
-      lodash.prototype[methodName]= function(n, guard) {
-        var result = func(this.__wrapped__, n, guard);
-        return (n == null || guard) ? result : new lodash(result);
+      lodash.prototype[methodName]= function(callback, thisArg) {
+        var result = func(this.__wrapped__, callback, thisArg);
+        return callback == null || (thisArg && typeof callback != 'function')
+          ? result
+          : new lodash(result);
       };
     }
   });

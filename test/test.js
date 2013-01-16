@@ -640,6 +640,29 @@
 
       deepEqual(actual, [1, 2]);
     });
+
+    test('should chain when passing `n`, `callback`, or `thisArg`', function() {
+      var actual = _(array).first(2);
+
+      ok(actual instanceof _);
+
+      actual = _(array).first(function(num) {
+        return num < 3;
+      });
+
+      ok(actual instanceof _);
+
+      actual = _(array).first(function(value, index) {
+        return this[index] < 3;
+      }, array);
+
+      ok(actual instanceof _);
+    });
+
+    test('should not chain when no arguments are passed', function() {
+      var actual = _(array).first();
+      strictEqual(actual, 1);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1191,6 +1214,29 @@
       }, array);
 
       deepEqual(actual, [2, 3]);
+    });
+
+    test('should chain when passing `n`, `callback`, or `thisArg`', function() {
+      var actual = _(array).last(2);
+
+      ok(actual instanceof _);
+
+      actual = _(array).last(function(num) {
+        return num > 1;
+      });
+
+      ok(actual instanceof _);
+
+      actual = _(array).last(function(value, index) {
+        return this[index] > 1;
+      }, array);
+
+      ok(actual instanceof _);
+    });
+
+    test('should not chain when no arguments are passed', function() {
+      var actual = _(array).last();
+      equal(actual, 3);
     });
   }());
 

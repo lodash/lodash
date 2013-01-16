@@ -1737,14 +1737,19 @@
 
   /**
    * Recursively merges own enumerable properties of the source object(s), that
-   * don't resolve to `undefined`, into the `destination` object. Subsequent
-   * sources will overwrite propery assignments of previous sources.
+   * don't resolve to `undefined`, into the `destination` object. Subsequent sources
+   * will overwrite propery assignments of previous sources. If a `callback` function
+   * is passed, it will be executed to produce the merged values of the destination
+   * and source object properties. The `callback` is bound to `thisArg` and invoked
+   * with two arguments; (objectValue, sourceValue).
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
+   * @param {Function} [callback] The function called for each property to merge.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @param- {Object} [indicator] Internally used to indicate that the `stack`
    *  argument is an array of traversed objects instead of another source object.
    * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
@@ -1773,45 +1778,65 @@
   function merge(object, source, indicator) {
     var args = arguments,
         index = 0,
-        length = 2,
-        stackA = args[3],
-        stackB = args[4];
+        length = 2;
 
-    if (indicator !== indicatorObject) {
+    if (!object) {
+      return object;
+    }
+    if (indicator === indicatorObject) {
+      var callback = args[3],
+          stackA = args[4],
+          stackB = args[5];
+    }
+    else {
       stackA = [];
       stackB = [];
-
-      // work with `_.reduce` by only using its callback `accumulator` and `value` arguments
       if (typeof indicator != 'number') {
         length = args.length;
+        callback = typeof (callback = args[length - 2]) == 'function'
+          ? createCallback(callback, args[--length])
+          : (typeof (callback = args[length - 1]) == 'function' && callback);
       }
     }
     while (++index < length) {
       var isArr = isArray(args[index]);
       (isArr ? forEach : forOwn)(args[index], function(source, key) {
-        var found, isObj, value;
+        var found,
+            isObj,
+            value = object[key];
+
         if (source && ((isObj = isPlainObject(source)) || isArray(source))) {
           // avoid merging previously merged cyclic sources
           var stackLength = stackA.length;
           while (stackLength--) {
             if ((found = stackA[stackLength] == source)) {
-              object[key] = stackB[stackLength];
+              value = stackB[stackLength];
               break;
             }
           }
           if (!found) {
+            value = isObj
+              ? (isPlainObject(value) ? value : {})
+              : (isArray(value) ? value : []);
+
+            if (callback) {
+              value = callback(value, source);
+            }
             // add `source` and associated `value` to the stack of traversed objects
             stackA.push(source);
-            stackB.push(value = (value = object[key], isObj)
-              ? (isPlainObject(value) ? value : {})
-              : (isArray(value) ? value : [])
-            );
+            stackB.push(value);
+
             // recursively merge objects and arrays (susceptible to call stack limits)
-            object[key] = merge(value, source, indicatorObject, stackA, stackB);
+            value = value && merge(value, source, indicatorObject, callback, stackA, stackB);
           }
-        } else if (isArr || typeof source != 'undefined') {
-          object[key] = source;
         }
+        else if (callback) {
+          value = callback(value, source);
+        }
+        else if (isArr || typeof source != 'undefined') {
+          value = source;
+        }
+        object[key] = value;
       });
     }
     return object;

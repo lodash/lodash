@@ -1402,6 +1402,32 @@
       ok(1 in actual);
       deepEqual(actual, expected);
     });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args;
+
+      _.merge({ 'a': 1 }, { 'a': 2 }, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 2]);
+    });
+
+    test('should correct set the `this` binding', function() {
+      var actual = _.merge({}, { 'a': 0 }, function(a, b) {
+        return this[b];
+      }, [2]);
+
+      deepEqual(actual, { 'a': 2 });
+    });
+
+    test('should work as a deep `_.defaults`', function() {
+      var object = { 'a': { 'b': 1 } },
+          source = { 'a': { 'b': 2, 'c': 3 } },
+          expected = { 'a': { 'b': 1, 'c': 3 } };
+
+      deepEqual(_.merge(object, source, _.defaults), expected);
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

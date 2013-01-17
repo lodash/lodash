@@ -76,14 +76,29 @@ $(document).ready(function() {
     b.trigger('anything');
   });
 
-  test("listenTo and stopListening with event maps", 1, function() {
+  test("listenTo and stopListening with event maps", 4, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
-    a.listenTo(b, {change: function(){ ok(true); }});
-    b.trigger('change');
-    a.listenTo(b, {change: function(){ ok(false); }});
+    var cb = function(){ ok(true); };
+    a.listenTo(b, {event: cb});
+    b.trigger('event');
+    a.listenTo(b, {event2: cb});
+    b.on('event2', cb);
+    a.stopListening(b, {event2: cb});
+    b.trigger('event event2');
     a.stopListening();
-    b.trigger('change');
+    b.trigger('event event2');
+  });
+
+  test("stopListening with omitted args", 2, function () {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var cb = function () { ok(true); };
+    a.listenTo(b, 'event', cb);
+    b.on('event', cb);
+    a.listenTo(b, 'event2', cb);
+    a.stopListening(null, {event: cb});
+    b.trigger('event event2');
   });
 
   test("listenTo yourself", 1, function(){
@@ -98,6 +113,13 @@ $(document).ready(function() {
     e.trigger("foo");
     e.stopListening();
     e.trigger("foo");
+  });
+
+  test("listenTo with empty callback doesn't throw an error", 1, function(){
+    var e = _.extend({}, Backbone.Events);
+    e.listenTo(e, "foo", null);
+    e.trigger("foo");
+    ok(true);
   });
 
   test("trigger all for each event", 3, function() {

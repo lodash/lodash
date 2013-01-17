@@ -511,7 +511,7 @@ $(document).ready(function() {
 
   test("reset", 10, function() {
     var resetCount = 0;
-    var models = col.models.slice();
+    var models = col.models;
     col.on('reset', function() { resetCount += 1; });
     col.reset([]);
     equal(resetCount, 1);
@@ -675,13 +675,28 @@ $(document).ready(function() {
     col.create(m, opts);
   });
 
-  test("#1412 - Trigger 'sync' event.", 2, function() {
+  test("#1412 - Trigger 'request' and 'sync' events.", 4, function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
-    collection.on('sync', function() { ok(true); });
     Backbone.ajax = function(settings){ settings.success(); };
+
+    collection.on('request', function(obj, xhr, options) {
+      ok(obj === collection, "collection has correct 'request' event after fetching");
+    });
+    collection.on('sync', function(obj, response, options) {
+      ok(obj === collection, "collection has correct 'sync' event after fetching");
+    });
     collection.fetch();
+    collection.off();
+
+    collection.on('request', function(obj, xhr, options) {
+      ok(obj === collection.get(1), "collection has correct 'request' event after one of its models save");
+    });
+    collection.on('sync', function(obj, response, options) {
+      ok(obj === collection.get(1), "collection has correct 'sync' event after one of its models save");
+    });
     collection.create({id: 1});
+    collection.off();
   });
 
   test("#1447 - create with wait adds model.", 1, function() {

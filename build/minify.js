@@ -15,7 +15,7 @@
       postprocess = require('./post-compile.js');
 
   /** The Git object ID of `closure-compiler.tar.gz` */
-  var closureId = '7bbcf0c118f006fb095ece7c3a11c90b6f0215ad';
+  var closureId = 'c92fd8f7f2b2096eb910c99d10ede0ec25d3c3cc';
 
   /** The Git object ID of `uglifyjs.tar.gz` */
   var uglifyId = '577c2dfdf72c0310d2a560976696c07894943079';

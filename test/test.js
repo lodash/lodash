@@ -1349,7 +1349,7 @@
       var heights = {
         'stooges': [
           { 'height': '5\'4"' },
-          { 'height': '5\'5"' },
+          { 'height': '5\'5"' }
         ]
       };
 

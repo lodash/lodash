@@ -19,8 +19,7 @@
 
   /** Used for array and object method references */
   var arrayRef = [],
-      // avoid a Closure Compiler bug by creatively creating an object
-      objectRef = new function(){};
+      objectRef = {};
 
   /** Used to generate unique IDs */
   var idCounter = 0;

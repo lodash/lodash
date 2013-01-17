@@ -31,7 +31,9 @@
     source = source.replace(/^((?:(['"])use strict\2;)?(?:var (?:[a-z]+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^)]+\){)/, '$3$1');
 
     // correct overly aggressive Closure Compiler advanced optimizations
-    source = source.replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}');
+    source = source
+      .replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}')
+      .replace(/(document[^&]+&&)\s*\w+/, '$1!({toString:0}+"")');
 
     // unescape properties (e.g. foo["bar"] => foo.bar)
     source = source.replace(/(\w)\["([^."]+)"\]/g, function(match, left, right) {

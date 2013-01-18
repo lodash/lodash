@@ -580,13 +580,14 @@
       '',
       '  Options:',
       '',
-      '    -c, --stdout   Write output to standard output',
-      '    -d, --debug    Write only the debug output',
-      '    -h, --help     Display help information',
-      '    -m, --minify   Write only the minified output',
-      '    -o, --output   Write output to a given path/filename',
-      '    -s, --silent   Skip status updates normally logged to the console',
-      '    -V, --version  Output current version of Lo-Dash',
+      '    -c, --stdout      Write output to standard output',
+      '    -d, --debug       Write only the debug output',
+      '    -h, --help        Display help information',
+      '    -m, --minify      Write only the minified output',
+      '    -o, --output      Write output to a given path/filename',
+      '    -p, --source-map  Generate a source map for the minified output',
+      '    -s, --silent      Skip status updates normally logged to the console',
+      '    -V, --version     Output current version of Lo-Dash',
       ''
     ].join('\n'));
   }
@@ -1182,7 +1183,7 @@
     // used to report invalid command-line arguments
     var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=.*$/i.test(value)) {
+          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=.*$/.test(value)) {
         return true;
       }
       return [
@@ -1198,6 +1199,7 @@
         '-h', '--help',
         '-m', '--minify',
         '-o', '--output',
+        '-p', '--source-map',
         '-s', '--silent',
         '-V', '--version'
       ].indexOf(value) > -1;
@@ -1241,6 +1243,9 @@
       return match ? match[1] : result;
     }, null);
 
+    // the path to the source file
+    var filePath = path.join(__dirname, 'lodash.js');
+
     // flag used to specify a Backbone build
     var isBackbone = options.indexOf('backbone') > -1;
 
@@ -1256,8 +1261,11 @@
     // flag used to specify an Underscore build
     var isUnderscore = options.indexOf('underscore') > -1;
 
+    // flag used to specify creating a source map for the minified source
+    var isMapped = options.indexOf('-p') > -1 || options.indexOf('--source-map') > -1;
+
     // flag used to specify only creating the minified build
-    var isMinify = !isDebug && options.indexOf('-m') > -1 || options.indexOf('--minify')> -1;
+    var isMinify = options.indexOf('-m') > -1 || options.indexOf('--minify') > -1;
 
     // flag used to specify a mobile build
     var isMobile = !isLegacy && (isCSP || isUnderscore || options.indexOf('mobile') > -1);
@@ -1325,7 +1333,7 @@
     var isTemplate = !!templatePattern;
 
     // the lodash.js source
-    var source = fs.readFileSync(path.join(__dirname, 'lodash.js'), 'utf8');
+    var source = fs.readFileSync(filePath, 'utf8');
 
     // flag used to specify replacing Lo-Dash's `_.clone` with Underscore's
     var useUnderscoreClone = isUnderscore;
@@ -2123,7 +2131,7 @@
     /*------------------------------------------------------------------------*/
 
     // used to specify creating a custom build
-    var isCustom = isBackbone || isLegacy || isMobile || isStrict || isUnderscore ||
+    var isCustom = isBackbone || isLegacy || isMapped || isMobile || isStrict || isUnderscore ||
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll);
 
@@ -2144,7 +2152,10 @@
         stdout.write(debugSource);
         callback(debugSource);
       } else if (!isStdOut) {
-        callback(debugSource, (isDebug && outputPath) || path.join(cwd, basename + '.js'));
+        callback({
+          'source': debugSource,
+          'outputPath': (isDebug && outputPath) || path.join(cwd, basename + '.js')
+        });
       }
     }
     // begin the minification process
@@ -2152,22 +2163,24 @@
       outputPath || (outputPath = path.join(cwd, basename + '.min.js'));
 
       minify(source, {
+        'filePath': filePath,
+        'isMapped': isMapped,
         'isSilent': isSilent,
         'isTemplate': isTemplate,
         'outputPath': outputPath,
-        'onComplete': function(source) {
+        'onComplete': function(data) {
           // inject "use strict" directive
           if (isStrict) {
-            source = source.replace(/^([\s\S]*?function[^{]+{)([^"'])/, '$1"use strict";$2');
+            data.source = data.source.replace(/^([\s\S]*?function[^{]+{)([^"'])/, '$1"use strict";$2');
           }
           if (isCustom) {
-            source = addCommandsToHeader(source, options);
+            data.source = addCommandsToHeader(data.source, options);
           }
           if (isStdOut) {
-            stdout.write(source);
-            callback(source);
+            stdout.write(data.source);
+            callback(data);
           } else {
-            callback(source, outputPath);
+            callback(data);
           }
         }
       });
@@ -2182,8 +2195,16 @@
   }
   else {
     // or invoked directly
-    build(process.argv, function(source, filePath) {
-      filePath && fs.writeFileSync(filePath, source, 'utf8');
+    build(process.argv, function(data) {
+      var outputPath = data.outputPath,
+          sourceMap = data.sourceMap;
+
+      if (outputPath) {
+        fs.writeFileSync(outputPath, data.source, 'utf8');
+        if (sourceMap) {
+          fs.writeFileSync(path.join(path.dirname(outputPath), path.basename(outputPath, '.js') + '.map'), sourceMap, 'utf8');
+        }
+      }
     });
   }
 }());

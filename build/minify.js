@@ -89,6 +89,7 @@
       options = source;
 
       var filePath = options[options.length - 1],
+          isMapped = options.indexOf('-p') > -1 || options.indexOf('--source-map') > -1,
           isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1,
           isTemplate = options.indexOf('-t') > -1 || options.indexOf('--template') > -1,
           outputPath = path.join(path.dirname(filePath), path.basename(filePath, '.js') + '.min.js');
@@ -102,6 +103,8 @@
       }, outputPath);
 
       options = {
+        'filePath': filePath,
+        'isMapped': isMapped,
         'isSilent': isSilent,
         'isTemplate': isTemplate,
         'outputPath': outputPath
@@ -157,6 +160,8 @@
     this.hybrid = { 'simple': {}, 'advanced': {} };
     this.uglified = {};
 
+    this.filePath = options.filePath;
+    this.isMapped = !!options.isMapped;
     this.isSilent = !!options.isSilent;
     this.isTemplate = !!options.isTemplate;
     this.outputPath = options.outputPath;
@@ -164,8 +169,14 @@
     source = preprocess(source, options);
     this.source = source;
 
-    this.onComplete = options.onComplete || function(source) {
-      fs.writeFileSync(this.outputPath, source, 'utf8');
+    this.onComplete = options.onComplete || function(data) {
+      var outputPath = this.outputPath,
+          sourceMap = data.sourceMap;
+
+      fs.writeFileSync(outputPath, data.source, 'utf8');
+      if (sourceMap) {
+        fs.writeFileSync(getMapPath(outputPath), sourceMap, 'utf8');
+      }
     };
 
     // begin the minification process
@@ -182,8 +193,7 @@
    * @private
    * @param {Object} options The options object.
    *  id - The Git object ID of the `.tar.gz` file.
-   *  onComplete - The function, invoked with one argument (exception),
-   *   called once the extraction has finished.
+   *  onComplete - The function called once the extraction has finished.
    *  path - The path of the extraction directory.
    *  title - The dependency's title used in status updates logged to the console.
    */
@@ -242,6 +252,17 @@
     });
   }
 
+  /**
+   * Resolves the source map path from the given output path.
+   *
+   * @private
+   * @param {String} outputPath The output path.
+   * @returns {String} Returns the source map path.
+   */
+  function getMapPath(outputPath) {
+    return path.join(path.dirname(outputPath), path.basename(outputPath, '.js') + '.map');
+  }
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -254,9 +275,18 @@
    * @param {Function} callback The function called once the process has completed.
    */
   function closureCompile(source, mode, callback) {
+    var filePath = this.filePath,
+        outputPath = this.outputPath,
+        isMapped = this.isMapped,
+        mapPath = getMapPath(outputPath),
+        options = closureOptions.slice();
+
     // use simple optimizations when minifying template files
-    var options = closureOptions.slice();
     options.push('--compilation_level=' + optimizationModes[this.isTemplate ? 'simple' : mode]);
+
+    if (isMapped) {
+      options.push('--create_source_map=' + mapPath, '--source_map_format=V3');
+    }
 
     // the standard error stream, standard output stream, and the Closure Compiler process
     var error = '',
@@ -264,7 +294,7 @@
         compiler = spawn('java', ['-jar', closurePath].concat(options));
 
     if (!this.isSilent) {
-      console.log('Compressing ' + path.basename(this.outputPath, '.js') + ' using the Closure Compiler (' + mode + ')...');
+      console.log('Compressing ' + path.basename(outputPath, '.js') + ' using the Closure Compiler (' + mode + ')...');
     }
     compiler.stdout.on('data', function(data) {
       // append the data to the output stream
@@ -282,7 +312,18 @@
         var exception = new Error(error);
         exception.status = status;
       }
-      callback(exception, output);
+      if (isMapped) {
+        var mapOutput = fs.readFileSync(mapPath, 'utf8');
+        fs.unlinkSync(mapPath);
+
+        output = output
+          .replace(/[\s;]*$/, '\n//@ sourceMappingURL=' + path.basename(mapPath));
+
+        mapOutput = mapOutput
+          .replace(/("file":)""/, '$1"' + path.basename(outputPath) + '"')
+          .replace(/("sources":)\["stdin"\]/, '$1["' + path.basename(filePath) + '"]');
+      }
+      callback(exception, output, mapOutput);
     });
 
     // proxy the standard input to the Closure Compiler
@@ -350,13 +391,17 @@
    * @private
    * @param {Object|Undefined} exception The error object.
    * @param {String} result The resulting minified source.
+   * @param {String} map The source map output.
    */
-  function onClosureSimpleCompile(exception, result) {
+  function onClosureSimpleCompile(exception, result, map) {
     if (exception) {
       throw exception;
     }
     result = postprocess(result);
-    this.compiled.simple.source = result;
+
+    var simple = this.compiled.simple;
+    simple.source = result;
+    simple.sourceMap = map;
     zlib.gzip(result, onClosureSimpleGzip.bind(this));
   }
 
@@ -386,13 +431,17 @@
    * @private
    * @param {Object|Undefined} exception The error object.
    * @param {String} result The resulting minified source.
+   * @param {String} map The source map output.
    */
-  function onClosureAdvancedCompile(exception, result) {
+  function onClosureAdvancedCompile(exception, result, map) {
     if (exception) {
       throw exception;
     }
     result = postprocess(result);
-    this.compiled.advanced.source = result;
+
+    var advanced = this.compiled.advanced;
+    advanced.source = result;
+    advanced.sourceMap = map;
     zlib.gzip(result, onClosureAdvancedGzip.bind(this));
   }
 
@@ -412,8 +461,14 @@
     }
     this.compiled.advanced.gzip = result;
 
-    // next, minify the source using only UglifyJS
-    uglify.call(this, this.source, 'UglifyJS', onUglify.bind(this));
+    // if mapped, finish by choosing the smallest compressed file
+    if (this.isMapped) {
+      onComplete.call(this);
+    }
+    // else, minify the source using UglifyJS
+    else {
+      uglify.call(this, this.source, 'UglifyJS', onUglify.bind(this));
+    }
   }
 
   /**
@@ -538,18 +593,25 @@
 
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to the Closure Compiler)
-    var min = Math.min(
-      compiledSimple.gzip.length,
-      compiledAdvanced.gzip.length,
-      uglified.gzip.length,
-      hybridSimple.gzip.length,
-      hybridAdvanced.gzip.length
-    );
+    var min = this.isMapped
+      ? Math.min(
+          compiledSimple.gzip.length,
+          compiledAdvanced.gzip.length
+        )
+      : Math.min(
+          compiledSimple.gzip.length,
+          compiledAdvanced.gzip.length,
+          uglified.gzip.length,
+          hybridSimple.gzip.length,
+          hybridAdvanced.gzip.length
+        );
 
     // pass the minified source to the "onComplete" callback
     [compiledSimple, compiledAdvanced, uglified, hybridSimple, hybridAdvanced].some(function(data) {
-      if (data.gzip.length == min) {
-        this.onComplete(data.source);
+      var gzip = data.gzip;
+      if (gzip && gzip.length == min) {
+        data.outputPath = this.outputPath;
+        this.onComplete(data);
       }
     }, this);
   }

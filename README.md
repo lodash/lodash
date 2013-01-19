@@ -154,14 +154,14 @@ Unless specified by `-o` or `--output`, all files created are saved to the curre
 
 The following options are also supported:
 
- * `-c`, `--stdout`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Write output to standard output
- * `-d`, `--debug`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Write only the debug output
- * `-h`, `--help`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Display help information
- * `-m`, `--minify`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Write only the minified output
- * `-o`, `--output`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Write output to a given path/filename
- * `-p`, `--source-map`&nbsp;&nbsp; Generate a source map for the minified output
- * `-s`, `--silent`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Skip status updates normally logged to the console
- * `-V`, `--version`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Output current version of Lo-Dash
+ * `-c`, `--stdout`......... Write output to standard output
+ * `-d`, `--debug`........... Write only the debug output
+ * `-h`, `--help`............. Display help information
+ * `-m`, `--minify`......... Write only the minified output
+ * `-o`, `--output`......... Write output to a given path/filename
+ * `-p`, `--source-map`.. Generate a source map for the minified output
+ * `-s`, `--silent`......... Skip status updates normally logged to the console
+ * `-V`, `--version`....... Output current version of Lo-Dash
 
 The `lodash` command-line utility is available when Lo-Dash is installed as a global package (i.e. `npm install -g lodash`).
 

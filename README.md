@@ -1,6 +1,6 @@
 # Lo-Dash <sup>v1.0.0-rc.3</sup>
 
-An alternative to Underscore.js, delivering [consistency](https://github.com/bestiejs/lodash#resolved-underscorejs-issues), [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
+An alternative to Underscore.js, delivering consistency, [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
 
 ## Download
 
@@ -154,14 +154,14 @@ Unless specified by `-o` or `--output`, all files created are saved to the curre
 
 The following options are also supported:
 
- * `-c`, `--stdout`......... Write output to standard output
- * `-d`, `--debug`........... Write only the debug output
- * `-h`, `--help`............. Display help information
- * `-m`, `--minify`......... Write only the minified output
- * `-o`, `--output`......... Write output to a given path/filename
- * `-p`, `--source-map`.. Generate a source map for the minified output
- * `-s`, `--silent`......... Skip status updates normally logged to the console
- * `-V`, `--version`....... Output current version of Lo-Dash
+ * `-c`, `--stdout` ......... Write output to standard output
+ * `-d`, `--debug` ........... Write only the debug output
+ * `-h`, `--help` ............. Display help information
+ * `-m`, `--minify` ......... Write only the minified output
+ * `-o`, `--output` ......... Write output to a given path/filename
+ * `-p`, `--source-map` .. Generate a source map for the minified output
+ * `-s`, `--silent` ......... Skip status updates normally logged to the console
+ * `-V`, `--version` ....... Output current version of Lo-Dash
 
 The `lodash` command-line utility is available when Lo-Dash is installed as a global package (i.e. `npm install -g lodash`).
 
@@ -223,16 +223,6 @@ require({
   console.log(_.VERSION);
 });
 ```
-
-## Resolved Underscore.js issues
-
- * Allow iteration of objects with a `length` property [[#799](https://github.com/documentcloud/underscore/pull/799), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L605-L611)]
- * Fix cross-browser object iteration bugs [[#60](https://github.com/documentcloud/underscore/issues/60), [#376](https://github.com/documentcloud/underscore/issues/376), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L618-L642)]
- * Methods should work on pages with incorrectly shimmed native methods [[#7](https://github.com/documentcloud/underscore/issues/7), [#742](https://github.com/documentcloud/underscore/issues/742), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L140-L146)]
- * `_.isEmpty` should support jQuery/MooTools DOM query collections [[#690](https://github.com/documentcloud/underscore/pull/690), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L807-L812)]
- * `_.isObject` should avoid V8 bug [#2291](http://code.google.com/p/v8/issues/detail?id=2291) [[#605](https://github.com/documentcloud/underscore/issues/605), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L888-L900)]
- * `_.keys` should work with `arguments` objects cross-browser [[#396](https://github.com/documentcloud/underscore/issues/396), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L982-L984)]
- * `_.range` should coerce arguments to numbers [[#634](https://github.com/documentcloud/underscore/issues/634), [#683](https://github.com/documentcloud/underscore/issues/683), [test](https://github.com/bestiejs/lodash/blob/v1.0.0-rc.3/test/test.js#L1383-L1386)]
 
 ## Release Notes
 

@@ -550,7 +550,7 @@
 
   /**
    * Creates a function that, when called, invokes `func` with the `this` binding
-   * of `thisArg` and prepends any `partailArgs` to the arguments passed to the
+   * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
    * bound function.
    *
    * @private
@@ -3864,7 +3864,7 @@
    * @example
    *
    * _.mixin({
-   *   'defaultsDeep': _.partailRight(_.merge, _.defaults)
+   *   'defaultsDeep': _.partialRight(_.merge, _.defaults)
    * });
    *
    * var options = {

@@ -531,6 +531,20 @@
       Foo.prototype = { 'a': 1 };
       deepEqual(func({}, new Foo), {});
     });
+
+    test('lodash.' + methodName + ' should treat sparse arrays as dense', function() {
+      var array = Array(3);
+      array[0] = 1;
+      array[2] = 3;
+
+      var actual = func([], array),
+          expected = array.slice();
+
+      expected[1] = undefined;
+
+      ok(1 in actual);
+      deepEqual(actual, expected);
+    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -1435,20 +1449,6 @@
       strictEqual(actual.a, 1);
     });
 
-    test('should treat sparse arrays as dense', function() {
-      var array = Array(3);
-      array[0] = 1;
-      array[2] = 3;
-
-      var actual = _.merge([], array),
-          expected = array.slice();
-
-      expected[1] = undefined;
-
-      ok(1 in actual);
-      deepEqual(actual, expected);
-    });
-
     test('should pass the correct `callback` arguments', function() {
       var args;
 
@@ -1537,45 +1537,50 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.partial');
+  QUnit.module('partial methods');
 
-  (function() {
-    test('partially applies an argument, without additional arguments', function() {
-      var arg = 'catnip',
-          func = function(x) { return x; };
+  _.each(['partial', 'partialRight'], function(methodName) {
+    var func = _[methodName];
 
-      equal(_.partial(func, arg)(), arg);
+    test('lodash.' + methodName + ' partially applies an argument, without additional arguments', function() {
+      var arg = 'a',
+          fn = function(x) { return x; };
+
+      equal(func(fn, arg)(), arg);
     });
 
-    test('partially applies an argument, with additional arguments', function() {
-      var arg1 = 'catnip',
-          arg2 = 'cheese',
-          func = function(x, y) { return [x, y]; };
+    test('lodash.' + methodName + ' partially applies an argument, with additional arguments', function() {
+      var arg1 = 'a',
+          arg2 = 'b',
+          expected = [arg1, arg2],
+          fn = function(x, y) { return [x, y]; };
 
-      deepEqual(_.partial(func, arg1)(arg2), [arg1, arg2]);
+      if (methodName == 'partialRight') {
+        expected.reverse();
+      }
+      deepEqual(func(fn, arg1)(arg2), expected);
     });
 
-    test('works without partially applying arguments, without additional arguments', function() {
-      var func = function() { return arguments.length; };
-
-      strictEqual(_.partial(func)(), 0);
+    test('lodash.' + methodName + ' works without partially applying arguments, without additional arguments', function() {
+      var fn = function() { return arguments.length; };
+      strictEqual(func(fn)(), 0);
     });
 
-    test('works without partially applying arguments, with additional arguments', function() {
-      var arg = 'catnip',
-          func = function(x) { return x; };
+    test('lodash.' + methodName + ' works without partially applying arguments, with additional arguments', function() {
+      var arg = 'a',
+          fn = function(x) { return x; };
 
-      equal(_.partial(func)(arg), arg);
+      equal(func(fn)(arg), arg);
     });
 
-    test('should not alter the `this` binding of either function', function() {
-      var object = { 'cat': 'nip' },
-          func = function() { return this.cat; };
+    test('lodash.' + methodName + ' should not alter the `this` binding of either function', function() {
+      var object = { 'a': 1 },
+          fn = function() { return this.a; };
 
-      equal(_.partial(_.bind(func, object))(), object.cat);
-      equal(_.bind(_.partial(func), object)(), object.cat);
+      strictEqual(func(_.bind(fn, object))(), object.a);
+      strictEqual(_.bind(func(fn), object)(), object.a);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

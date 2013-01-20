@@ -132,6 +132,7 @@
     'once': [],
     'pairs': ['keys'],
     'partial': ['isFunction', 'isObject'],
+    'partialRight': ['isFunction', 'isObject'],
     'pick': ['forIn'],
     'pluck': ['map'],
     'random': [],
@@ -248,7 +249,8 @@
     'forOwn',
     'isPlainObject',
     'merge',
-    'partial'
+    'partial',
+    'partialRight'
   ]));
 
   /** List of ways to export the `lodash` function */
@@ -694,7 +696,7 @@
     return source.replace(/\n(?:.*)/g, function(match, index) {
       match = match.slice(1);
       return (
-        match == '}' && source.indexOf('}', index + 2) == -1 ? '\n  ' : '\n    '
+        match == '}' && source.indexOf('}', index + 2) < 0 ? '\n  ' : '\n    '
       ) + match;
     });
   }
@@ -1462,24 +1464,6 @@
         source = removeVar(source, 'largeArraySize');
         source = removeKeysOptimization(source);
 
-        // replace `_.assign`
-        source = replaceFunction(source, 'assign', [
-          '  function assign(object) {',
-          '    if (!object) {',
-          '      return object;',
-          '    }',
-          '    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
-          '      var iteratee = arguments[argsIndex];',
-          '      if (iteratee) {',
-          '        for (var key in iteratee) {',
-          '          object[key] = iteratee[key];',
-          '        }',
-          '      }',
-          '    }',
-          '    return object;',
-          '  }'
-        ].join('\n'));
-
         // replace `_.clone`
         if (useUnderscoreClone) {
           source = replaceFunction(source, 'clone', [
@@ -1504,26 +1488,6 @@
           '      });',
           '    }',
           '    return result;',
-          '  }'
-        ].join('\n'));
-
-        // replace `_.defaults`
-        source = replaceFunction(source, 'defaults', [
-          '  function defaults(object) {',
-          '    if (!object) {',
-          '      return object;',
-          '    }',
-          '    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
-          '      var iteratee = arguments[argsIndex];',
-          '      if (iteratee) {',
-          '        for (var key in iteratee) {',
-          '          if (object[key] == null) {',
-          '            object[key] = iteratee[key];',
-          '          }',
-          '        }',
-          '      }',
-          '    }',
-          '    return object;',
           '  }'
         ].join('\n'));
 
@@ -1626,7 +1590,7 @@
         source = replaceFunction(source, 'template', [
           '  function template(text, data, options) {',
           "    text || (text = '');",
-          '    options = defaults({}, options, lodash.templateSettings);',
+          '    options = iteratorTemplate ? defaults({}, options, lodash.templateSettings) : lodash.templateSettings;',
           '',
           '    var index = 0,',
           '        source = "__p += \'",',
@@ -1748,11 +1712,13 @@
         });
 
         // remove unused features from `createBound`
-        if (buildMethods.indexOf('partial') == -1) {
+        if (buildMethods.indexOf('partial') < 0 && buildMethods.indexOf('partialRight') < 0) {
           source = source.replace(matchFunction(source, 'createBound'), function(match) {
             return match
+              .replace(/, *right/, '')
               .replace(/(function createBound\([^{]+{)[\s\S]+?(\n *function bound)/, '$1$2')
-              .replace(/thisBinding *=[^}]+}/, 'thisBinding = thisArg;\n');
+              .replace(/thisBinding *=[^}]+}/, 'thisBinding = thisArg;\n')
+              .replace(/\(args *=.+/, 'partialArgs.concat(slice(args))');
           });
         }
       }
@@ -1807,7 +1773,7 @@
       source = source.replace(matchFunction(source, 'template'), function(match) {
         return match
           .replace(/iteratorTemplate *&& */g, '')
-          .replace(/iteratorTemplate *\?([^:]+):[^,;]+/g, '$1');
+          .replace(/iteratorTemplate *\? *([^:]+?) *:[^,;]+/g, '$1');
       });
 
       /*----------------------------------------------------------------------*/

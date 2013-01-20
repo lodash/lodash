@@ -140,6 +140,7 @@
     'memoize',
     'once',
     'partial',
+    'partialRight',
     'throttle',
     'wrap'
   ];
@@ -257,7 +258,8 @@
     'forOwn',
     'isPlainObject',
     'merge',
-    'partial'
+    'partial',
+    'partialRight'
   ]));
 
   /*--------------------------------------------------------------------------*/
@@ -413,7 +415,7 @@
           func({ 'noop': noop });
         } else if (methodName == 'bindKey') {
           func(lodash, 'identity', array, string);
-        } else if (/^(?:bind|partial)$/.test(methodName)) {
+        } else if (/^(?:bind|partial(?:Right)?)$/.test(methodName)) {
           func(noop, object, array, string);
         } else if (/^(?:compose|memoize|wrap)$/.test(methodName)) {
           func(noop, noop);
@@ -794,7 +796,8 @@
           'forOwn',
           'isPlainObject',
           'merge',
-          'partial'
+          'partial',
+          'partialRight'
         ], function(methodName) {
           equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
         });

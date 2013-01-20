@@ -1153,13 +1153,12 @@
    * @returns {String} Returns the modified source.
    */
   function setUseStrictOption(source, value) {
-    // inject "use strict"
-    if (value) {
-      source = source.replace(/^[\s\S]*?function[^{]+{/, "$&\n  'use strict';");
-    }
+    // inject or remove the "use strict" directive
+    source = source.replace(/(^[\s\S]*?function[^{]+{)(?:\s*'use strict';)?/, '$1' + (value ? "\n  'use strict';" : ''));
+
     // replace `strict` branch in `iteratorTemplate` with hard-coded option
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)*(\s*)["'] *<%.+?strict.+/, value ? '$1"\'use strict\';\\n" +' : '');
+      return match.replace(/(template\()(?:\s*"'use strict.+)?/, '$1' + (value ? '\n    "\'use strict\';\\n" +' : ''));
     });
 
     return source;

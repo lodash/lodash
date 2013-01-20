@@ -354,9 +354,6 @@
    * @returns {String} Returns the interpolated text.
    */
   var iteratorTemplate = template(
-    // conditional strict mode
-    "<% if (obj.useStrict) { %>'use strict';\n<% } %>" +
-
     // the `iteratee` may be reassigned by the `top` snippet
     'var index, iteratee = <%= firstArg %>, ' +
     // assign the `result` variable an initial value

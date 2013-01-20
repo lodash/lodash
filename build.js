@@ -436,6 +436,12 @@
           var pair = command.split(separator);
           command = pair[0] + separator + '"' + pair[1] + '"';
         }
+        // escape newlines, carriage returns, multi-line comment end tokens
+        command = command
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r')
+          .replace(/\*\//g, '*\\/');
+
         return command;
       });
       // add build commands to copyright/license header
@@ -1154,7 +1160,7 @@
    */
   function setUseStrictOption(source, value) {
     // inject or remove the "use strict" directive
-    source = source.replace(/(^[\s\S]*?function[^{]+{)(?:\s*'use strict';)?/, '$1' + (value ? "\n  'use strict';" : ''));
+    source = source.replace(/^([\s\S]*?function[^{]+{)(?:\s*'use strict';)?/, '$1' + (value ? "\n  'use strict';" : ''));
 
     // replace `strict` branch in `iteratorTemplate` with hard-coded option
     source = source.replace(getIteratorTemplate(source), function(match) {
@@ -2168,6 +2174,12 @@
     if (!isDebug) {
       outputPath || (outputPath = path.join(cwd, basename + '.min.js'));
 
+      // convert the IIFE into a function call so Closure Compiler (advanced) won't strip it
+      if (!isIIFE) {
+        source = source
+          .replace(/\(function/, 'iife$&')
+          .replace(/\(this\)\)(;\s*)$/, ', this)$1');
+      }
       minify(source, {
         'filePath': filePath,
         'isMapped': isMapped,
@@ -2176,9 +2188,15 @@
         'modes': isIIFE && ['simple', 'hybrid'],
         'outputPath': outputPath,
         'onComplete': function(data) {
+          // restore IIFE
+          if (!isIIFE) {
+            data.source = data.source
+              .replace(/iife\(/, '(')
+              .replace(/, *this\)([\s;]*(\n\/\/.+)?)$/, '(this))$1');
+          }
           // inject "use strict" directive
           if (isStrict) {
-            data.source = data.source.replace(/^([\s\S]*?function[^{]+{)([^"'])/, '$1"use strict";$2');
+            data.source = data.source.replace(/^([\s\S]*?function[^{]+{\s*)([^"'])/, '$1"use strict";$2');
           }
           if (isCustom) {
             data.source = addCommandsToHeader(data.source, options);

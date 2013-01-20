@@ -1466,14 +1466,6 @@
 
       deepEqual(actual, { 'a': 2 });
     });
-
-    test('should work as a deep `_.defaults`', function() {
-      var object = { 'a': { 'b': 1 } },
-          source = { 'a': { 'b': 2, 'c': 3 } },
-          expected = { 'a': { 'b': 1, 'c': 3 } };
-
-      deepEqual(_.merge(object, source, _.defaults), expected);
-    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -1581,6 +1573,21 @@
       strictEqual(_.bind(func(fn), object)(), object.a);
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.partialRight');
+
+  (function() {
+    test('should work as a deep `_.defaults`', function() {
+      var object = { 'a': { 'b': 1 } },
+          source = { 'a': { 'b': 2, 'c': 3 } },
+          expected = { 'a': { 'b': 1, 'c': 3 } };
+
+      var deepDefaults = _.partialRight(_.merge, _.defaults);
+      deepEqual(deepDefaults(object, source), expected);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

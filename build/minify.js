@@ -120,8 +120,7 @@
       source = fs.readFileSync(filePath, 'utf8');
     }
 
-    modes = options.modes || (options.modes = modes);
-
+    modes = options.modes || modes;
     if (options.isMapped) {
       modes = modes.filter(function(mode) {
         return mode != 'hybrid';
@@ -129,9 +128,11 @@
     }
     if (options.isTemplate) {
       modes = modes.filter(function(mode) {
-        mode != 'advanced';
+        return mode != 'advanced';
       });
     }
+    options.modes = modes;
+
     // fetch the Closure Compiler
     getDependency({
       'id': 'closure-compiler',
@@ -450,7 +451,7 @@
     if (this.modes.indexOf('advanced') > -1) {
       closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
     } else {
-      onComplete.call(this);
+      onClosureAdvancedGzip.call(this);
     }
   }
 

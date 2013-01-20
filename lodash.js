@@ -249,10 +249,10 @@
    * `concat`, `countBy`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
    * `filter`, `flatten`, `forEach`, `forIn`, `forOwn`, `functions`, `groupBy`,
    * `initial`, `intersection`, `invert`, `invoke`, `keys`, `map`, `max`, `memoize`,
-   * `merge`, `min`, `object`, `omit`, `once`, `pairs`, `partial`, `pick`, `pluck`,
-   * `push`, `range`, `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
-   * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`,
-   * `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
+   * `merge`, `min`, `object`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
+   * `pick`, `pluck`, `push`, `range`, `reject`, `rest`, `reverse`, `shuffle`,
+   * `slice`, `sort`, `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`,
+   * `union`, `uniq`, `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
    *
    * The non-chainable wrapper functions are:
    * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`, `identity`,
@@ -458,18 +458,6 @@
     'return result'
   );
 
-  /** Reusable iterator options for `assign` and `defaults` */
-  var assignIteratorOptions = {
-    'args': 'object, source, guard',
-    'top':
-      'var argsIndex = 0,\n' +
-      "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
-      'while (++argsIndex < argsLength) {\n' +
-      '  if ((iteratee = arguments[argsIndex])) {',
-    'loop': 'result[index] = iteratee[index]',
-    'bottom': '  }\n}'
-  };
-
   /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
   var eachIteratorOptions = {
     'arrays': true,
@@ -564,17 +552,18 @@
   }
 
   /**
-   * Creates a function that, when called, invokes `func` with the `this`
-   * binding of `thisArg` and prepends any `partailArgs` to the arguments passed
-   * to the bound function.
+   * Creates a function that, when called, invokes `func` with the `this` binding
+   * of `thisArg` and prepends any `partailArgs` to the arguments passed to the
+   * bound function.
    *
    * @private
    * @param {Function|String} func The function to bind or the method name.
    * @param {Mixed} [thisArg] The `this` binding of `func`.
    * @param {Array} partialArgs An array of arguments to be partially applied.
+   * @param {Object} [right] Used to indicate partially applying arguments from the right.
    * @returns {Function} Returns the new bound function.
    */
-  function createBound(func, thisArg, partialArgs) {
+  function createBound(func, thisArg, partialArgs, right) {
     var isFunc = isFunction(func),
         isPartial = !partialArgs,
         key = thisArg;
@@ -598,7 +587,7 @@
       }
       if (partialArgs.length) {
         args = args.length
-          ? partialArgs.concat(slice(args))
+          ? (args = slice(args), right ? args.concat(partialArgs) : partialArgs.concat(args))
           : partialArgs;
       }
       if (this instanceof bound) {
@@ -820,25 +809,6 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Assigns own enumerable properties of source object(s) to the `destination`
-   * object. Subsequent sources will overwrite propery assignments of previous
-   * sources.
-   *
-   * @static
-   * @memberOf _
-   * @alias extend
-   * @category Objects
-   * @param {Object} object The destination object.
-   * @param {Object} [source1, source2, ...] The source objects.
-   * @returns {Object} Returns the destination object.
-   * @example
-   *
-   * _.assign({ 'name': 'moe' }, { 'age': 40 });
-   * // => { 'name': 'moe', 'age': 40 }
-   */
-  var assign = createIterator(assignIteratorOptions);
-
-  /**
    * Checks if `value` is an `arguments` object.
    *
    * @static
@@ -1016,6 +986,38 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Assigns own enumerable properties of source object(s) to the `destination`
+   * object. Subsequent sources will overwrite propery assignments of previous
+   * sources.
+   *
+   * @static
+   * @memberOf _
+   * @alias extend
+   * @category Objects
+   * @param {Object} object The destination object.
+   * @param {Object} [source1, source2, ...] The source objects.
+   * @param- {Object} [guard] Internally used to allow this method to work with
+   *  `_.reduce` without using its callback's `key and `object` arguments as sources.
+   * @returns {Object} Returns the destination object.
+   * @example
+   *
+   * _.assign({ 'name': 'moe' }, { 'age': 40 });
+   * // => { 'name': 'moe', 'age': 40 }
+   */
+  function assign(object, source, guard) {
+    var args = arguments,
+        index = 0,
+        length = typeof guard == 'number' ? 2 : args.length;
+
+    while (++index < length) {
+      (isArray(args[index]) ? forEach : forOwn)(args[index], function(value, key) {
+        object[key] = value;
+      });
+    }
+    return object;
+  }
+
+  /**
    * Creates a clone of `value`. If `deep` is `true`, nested objects will also
    * be cloned, otherwise they will be assigned by reference.
    *
@@ -1156,6 +1158,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
+   * @param- {Object} [guard] Internally used to allow this method to work with
+   *  `_.reduce` without using its callback's `key` and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -1163,9 +1167,20 @@
    * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
-  var defaults = createIterator(assignIteratorOptions, {
-    'loop': 'if (result[index] == null) ' + assignIteratorOptions.loop
-  });
+  function defaults(object, source, guard) {
+    var args = arguments,
+        index = 0,
+        length = typeof guard == 'number' ? 2 : args.length;
+
+    while (++index < length) {
+      (isArray(args[index]) ? forEach : forOwn)(args[index], function(value, key) {
+        if (object[key] == null) {
+          object[key] = value;
+        }
+      });
+    }
+    return object;
+  }
 
   /**
    * Creates a sorted array of all enumerable properties, own and inherited,
@@ -2546,7 +2561,8 @@
   }
 
   /**
-   * The right-associative version of `_.reduce`.
+   * This method is similar to `_.reduce`, except that it iterates over a
+   * `collection` from right to left.
    *
    * @static
    * @memberOf _
@@ -3197,8 +3213,7 @@
 
   /**
    * Creates an array of numbers (positive and/or negative) progressing from
-   * `start` up to but not including `end`. This method is a port of Python's
-   * `range()` function. See http://docs.python.org/library/functions.html#range.
+   * `start` up to but not including `end`.
    *
    * @static
    * @memberOf _
@@ -3820,7 +3835,7 @@
   /**
    * Creates a function that, when called, invokes `func` with any additional
    * `partial` arguments prepended to those passed to the new function. This
-   * method is similar to `bind`, except it does **not** alter the `this` binding.
+   * method is similar to `_.bind`, except it does **not** alter the `this` binding.
    *
    * @static
    * @memberOf _
@@ -3837,6 +3852,39 @@
    */
   function partial(func) {
     return createBound(func, slice(arguments, 1));
+  }
+
+  /**
+   * This method is similar to `_.partial`, except that `partial` arguments are
+   * appended to those passed to the new function.
+   *
+   * @static
+   * @memberOf _
+   * @category Functions
+   * @param {Function} func The function to partially apply arguments to.
+   * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
+   * @returns {Function} Returns the new partially applied function.
+   * @example
+   *
+   * _.mixin({
+   *   'defaultsDeep': _.partailRight(_.merge, _.defaults)
+   * });
+   *
+   * var options = {
+   *   'variable': 'data',
+   *   'imports': { 'jq': $ }
+   * };
+   *
+   * _.defaultsDeep(options, _.templateSettings);
+   *
+   * options.variable
+   * // => 'data'
+   *
+   * options.imports
+   * // => { '_': _, 'jq': $ }
+   */
+  function partialRight(func) {
+    return createBound(func, slice(arguments, 1), null, indicatorObject);
   }
 
   /**
@@ -4435,6 +4483,7 @@
   lodash.once = once;
   lodash.pairs = pairs;
   lodash.partial = partial;
+  lodash.partialRight = partialRight;
   lodash.pick = pick;
   lodash.pluck = pluck;
   lodash.range = range;

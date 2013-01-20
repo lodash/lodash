@@ -28,7 +28,7 @@
     source = source.replace(/^\/\**[\s\S]+?\*\/\n/, '');
 
     // move vars exposed by the Closure Compiler into the IIFE
-    source = source.replace(/^((?:(['"])use strict\2;)?(?:var (?:[a-z]+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^)]+\){)/, '$3$1');
+    source = source.replace(/^((?:var (?:\w+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^)]+\){)/, '$2$1');
 
     // correct overly aggressive Closure Compiler advanced optimizations
     source = source

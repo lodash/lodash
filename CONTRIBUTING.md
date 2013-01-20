@@ -7,12 +7,12 @@ Please make sure to [search the issue tracker](https://github.com/bestiejs/lodas
 
 Include updated unit tests in the `test` directory as part of your pull request.
 You can run the tests from the command line via `npm test`, or open `test/index.html` in a web browser.
-The `test/run-test.sh` script attempts to run the tests in [Rhino](http://www.mozilla.org/rhino/), [RingoJS](http://ringojs.org/), [Narwhal](https://github.com/280north/narwhal), and [Node](http://nodejs.org/), before running them in your default browser.
+The `test/run-test.sh` script attempts to run the tests in [Rhino](https://developer.mozilla.org/en-US/docs/Rhino), [RingoJS](http://ringojs.org/), [Narwhal](https://github.com/280north/narwhal), and [Node](http://nodejs.org/), before running them in your default browser.
 The [Backbone](http://backbonejs.org/) and [Underscore](http://http://underscorejs.org/) test suites are included as well.
 
 ## Contributor License Agreement
 
-Lo-Dash is preparing to join [Dojo Foundation](http://dojofoundation.org/).
+Lo-Dash is a member of the [Dojo Foundation](http://dojofoundation.org/).
 As such, we request that all contributors sign the Dojo Foundation [contributor license agreement](http://dojofoundation.org/about/claForm).
 
 For more information about CLAs, please check out Alex Russell’s excellent post, ["Why Do I Need to Sign This?"](http://infrequently.org/2008/06/why-do-i-need-to-sign-this/).

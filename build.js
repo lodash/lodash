@@ -66,7 +66,7 @@
   /** Used to track function dependencies */
   var dependencyMap = {
     'after': [],
-    'assign': ['isArguments'],
+    'assign': ['isArray', 'forEach', 'forOwn'],
     'at': ['isString'],
     'bind': ['isFunction', 'isObject'],
     'bindAll': ['bind', 'functions'],
@@ -78,7 +78,7 @@
     'contains': ['indexOf', 'isString'],
     'countBy': ['forEach', 'keys'],
     'debounce': [],
-    'defaults': ['isArguments'],
+    'defaults': ['isArray', 'forEach', 'forOwn'],
     'defer': [],
     'delay': [],
     'difference': ['indexOf'],
@@ -1257,6 +1257,9 @@
     // flag used to specify only creating the debug build
     var isDebug = options.indexOf('-d') > -1 || options.indexOf('--debug') > -1;
 
+    // flag used to indicate that a custom IIFE was specified
+    var isIIFE = typeof iife == 'string';
+
     // flag used to specify a legacy build
     var isLegacy = options.indexOf('legacy') > -1;
 
@@ -1464,6 +1467,24 @@
         source = removeVar(source, 'largeArraySize');
         source = removeKeysOptimization(source);
 
+        // replace `_.assign`
+        source = replaceFunction(source, 'assign', [
+          '  function assign(object) {',
+          '    if (!object) {',
+          '      return object;',
+          '    }',
+          '    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
+          '      var iteratee = arguments[argsIndex];',
+          '      if (iteratee) {',
+          '        for (var key in iteratee) {',
+          '          object[key] = iteratee[key];',
+          '        }',
+          '      }',
+          '    }',
+          '    return object;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.clone`
         if (useUnderscoreClone) {
           source = replaceFunction(source, 'clone', [
@@ -1488,6 +1509,26 @@
           '      });',
           '    }',
           '    return result;',
+          '  }'
+        ].join('\n'));
+
+        // replace `_.defaults`
+        source = replaceFunction(source, 'defaults', [
+          '  function defaults(object) {',
+          '    if (!object) {',
+          '      return object;',
+          '    }',
+          '    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
+          '      var iteratee = arguments[argsIndex];',
+          '      if (iteratee) {',
+          '        for (var key in iteratee) {',
+          '          if (object[key] == null) {',
+          '            object[key] = iteratee[key];',
+          '          }',
+          '        }',
+          '      }',
+          '    }',
+          '    return object;',
           '  }'
         ].join('\n'));
 
@@ -1590,7 +1631,7 @@
         source = replaceFunction(source, 'template', [
           '  function template(text, data, options) {',
           "    text || (text = '');",
-          '    options = iteratorTemplate ? defaults({}, options, lodash.templateSettings) : lodash.templateSettings;',
+          '    options = defaults({}, options, lodash.templateSettings);',
           '',
           '    var index = 0,',
           '        source = "__p += \'",',
@@ -1969,7 +2010,7 @@
 
     // customize Lo-Dash's IIFE
     (function() {
-      if (typeof iife == 'string') {
+      if (isIIFE) {
         var token = '%output%',
             index = iife.indexOf(token);
 
@@ -2133,6 +2174,7 @@
         'isMapped': isMapped,
         'isSilent': isSilent,
         'isTemplate': isTemplate,
+        'modes': isIIFE && ['simple', 'hybrid'],
         'outputPath': outputPath,
         'onComplete': function(data) {
           // inject "use strict" directive

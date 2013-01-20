@@ -80,6 +80,7 @@
    *  onComplete - The function called once minification has finished.
    */
   function minify(source, options) {
+    var modes = ['simple', 'advanced', 'hybrid'];
     source || (source = '');
     options || (options = {});
 
@@ -94,6 +95,11 @@
           isTemplate = options.indexOf('-t') > -1 || options.indexOf('--template') > -1,
           outputPath = path.join(path.dirname(filePath), path.basename(filePath, '.js') + '.min.js');
 
+      modes = options.reduce(function(result, value) {
+        var match = value.match(/modes=(.*)$/);
+        return match ? match[1].split(/, */) : result;
+      }, modes);
+
       outputPath = options.reduce(function(result, value, index) {
         if (/-o|--output/.test(value)) {
           result = options[index + 1];
@@ -107,10 +113,24 @@
         'isMapped': isMapped,
         'isSilent': isSilent,
         'isTemplate': isTemplate,
+        'modes': modes,
         'outputPath': outputPath
       };
 
       source = fs.readFileSync(filePath, 'utf8');
+    }
+
+    modes = options.modes || (options.modes = modes);
+
+    if (options.isMapped) {
+      modes = modes.filter(function(mode) {
+        return mode != 'hybrid';
+      });
+    }
+    if (options.isTemplate) {
+      modes = modes.filter(function(mode) {
+        mode != 'advanced';
+      });
     }
     // fetch the Closure Compiler
     getDependency({
@@ -166,8 +186,8 @@
     this.isTemplate = !!options.isTemplate;
     this.outputPath = options.outputPath;
 
-    source = preprocess(source, options);
-    this.source = source;
+    var modes = this.modes = options.modes;
+    source = this.source = preprocess(source, options);
 
     this.onComplete = options.onComplete || function(data) {
       var outputPath = this.outputPath,
@@ -180,7 +200,13 @@
     };
 
     // begin the minification process
-    closureCompile.call(this, source, 'simple', onClosureSimpleCompile.bind(this));
+    if (modes.indexOf('simple') > -1) {
+      closureCompile.call(this, source, 'simple', onClosureSimpleCompile.bind(this));
+    } else if (modes.indexOf('advanced') > -1) {
+      onClosureSimpleGzip.call(this);
+    } else {
+      onClosureAdvancedGzip.call(this);
+    }
   }
 
   /*--------------------------------------------------------------------------*/
@@ -281,13 +307,11 @@
         mapPath = getMapPath(outputPath),
         options = closureOptions.slice();
 
-    // use simple optimizations when minifying template files
-    options.push('--compilation_level=' + optimizationModes[this.isTemplate ? 'simple' : mode]);
+    options.push('--compilation_level=' + optimizationModes[mode]);
 
     if (isMapped) {
       options.push('--create_source_map=' + mapPath, '--source_map_format=V3');
     }
-
     // the standard error stream, standard output stream, and the Closure Compiler process
     var error = '',
         output = '',
@@ -416,13 +440,18 @@
     if (exception) {
       throw exception;
     }
-    if (!this.isSilent) {
-      console.log('Done. Size: %d bytes.', result.length);
+    if (result != null) {
+      if (!this.isSilent) {
+        console.log('Done. Size: %d bytes.', result.length);
+      }
+      this.compiled.simple.gzip = result;
     }
-    this.compiled.simple.gzip = result;
-
-    // next, compile the source using advanced optimizations
-    closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
+    // compile the source using advanced optimizations
+    if (this.modes.indexOf('advanced') > -1) {
+      closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
+    } else {
+      onComplete.call(this);
+    }
   }
 
   /**
@@ -456,18 +485,17 @@
     if (exception) {
       throw exception;
     }
-    if (!this.isSilent) {
-      console.log('Done. Size: %d bytes.', result.length);
+    if (result != null) {
+      if (!this.isSilent) {
+        console.log('Done. Size: %d bytes.', result.length);
+      }
+      this.compiled.advanced.gzip = result;
     }
-    this.compiled.advanced.gzip = result;
-
-    // if mapped, finish by choosing the smallest compressed file
-    if (this.isMapped) {
-      onComplete.call(this);
-    }
-    // else, minify the source using UglifyJS
-    else {
+    // minify the source using UglifyJS
+    if (!this.isMapped) {
       uglify.call(this, this.source, 'UglifyJS', onUglify.bind(this));
+    } else {
+      onComplete.call(this);
     }
   }
 
@@ -498,13 +526,18 @@
     if (exception) {
       throw exception;
     }
-    if (!this.isSilent) {
-      console.log('Done. Size: %d bytes.', result.length);
+    if (result != null) {
+      if (!this.isSilent) {
+        console.log('Done. Size: %d bytes.', result.length);
+      }
+      this.uglified.gzip = result;
     }
-    this.uglified.gzip = result;
-
-    // next, minify the already Closure Compiler simple optimized source using UglifyJS
-    uglify.call(this, this.compiled.simple.source, 'hybrid (simple)', onSimpleHybrid.bind(this));
+    // minify the already Closure Compiler simple optimized source using UglifyJS
+    if (this.modes.indexOf('hybrid') > -1) {
+      uglify.call(this, this.compiled.simple.source, 'hybrid (simple)', onSimpleHybrid.bind(this));
+    } else {
+      onComplete.call(this);
+    }
   }
 
   /**
@@ -534,13 +567,18 @@
     if (exception) {
       throw exception;
     }
-    if (!this.isSilent) {
-      console.log('Done. Size: %d bytes.', result.length);
+    if (result != null) {
+      if (!this.isSilent) {
+        console.log('Done. Size: %d bytes.', result.length);
+      }
+      this.hybrid.simple.gzip = result;
     }
-    this.hybrid.simple.gzip = result;
-
-    // next, minify the already Closure Compiler advance optimized source using UglifyJS
-    uglify.call(this, this.compiled.advanced.source, 'hybrid (advanced)', onAdvancedHybrid.bind(this));
+    // minify the already Closure Compiler advance optimized source using UglifyJS
+    if (this.modes.indexOf('advanced') > -1) {
+      uglify.call(this, this.compiled.advanced.source, 'hybrid (advanced)', onAdvancedHybrid.bind(this));
+    } else {
+      onComplete.call(this);
+    }
   }
 
   /**
@@ -570,11 +608,12 @@
     if (exception) {
       throw exception;
     }
-    if (!this.isSilent) {
-      console.log('Done. Size: %d bytes.', result.length);
+    if (result != null) {
+      if (!this.isSilent) {
+        console.log('Done. Size: %d bytes.', result.length);
+      }
+      this.hybrid.advanced.gzip = result;
     }
-    this.hybrid.advanced.gzip = result;
-
     // finish by choosing the smallest compressed file
     onComplete.call(this);
   }
@@ -591,27 +630,32 @@
         hybridSimple = this.hybrid.simple,
         hybridAdvanced = this.hybrid.advanced;
 
+    var objects = [
+      compiledSimple,
+      compiledAdvanced,
+      uglified,
+      hybridSimple,
+      hybridAdvanced
+    ];
+
+    var gzips = objects
+      .map(function(data) { return data.gzip; })
+      .filter(Boolean);
+
     // select the smallest gzipped file and use its minified counterpart as the
     // official minified release (ties go to the Closure Compiler)
-    var min = this.isMapped
-      ? Math.min(
-          compiledSimple.gzip.length,
-          compiledAdvanced.gzip.length
-        )
-      : Math.min(
-          compiledSimple.gzip.length,
-          compiledAdvanced.gzip.length,
-          uglified.gzip.length,
-          hybridSimple.gzip.length,
-          hybridAdvanced.gzip.length
-        );
+    var min = gzips.reduce(function(min, gzip) {
+      var length = gzip.length;
+      return min > length ? length : min;
+    }, Infinity);
 
     // pass the minified source to the "onComplete" callback
-    [compiledSimple, compiledAdvanced, uglified, hybridSimple, hybridAdvanced].some(function(data) {
+    objects.some(function(data) {
       var gzip = data.gzip;
       if (gzip && gzip.length == min) {
         data.outputPath = this.outputPath;
         this.onComplete(data);
+        return true;
       }
     }, this);
   }

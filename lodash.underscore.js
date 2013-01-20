@@ -787,15 +787,17 @@
    * _.assign({ 'name': 'moe' }, { 'age': 40 });
    * // => { 'name': 'moe', 'age': 40 }
    */
-  function assign(object, source, guard) {
-    var args = arguments,
-        index = 0,
-        length = typeof guard == 'number' ? 2 : args.length;
-
-    while (++index < length) {
-      (isArray(args[index]) ? forEach : forOwn)(args[index], function(value, key) {
-        object[key] = value;
-      });
+  function assign(object) {
+    if (!object) {
+      return object;
+    }
+    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {
+      var iteratee = arguments[argsIndex];
+      if (iteratee) {
+        for (var key in iteratee) {
+          object[key] = iteratee[key];
+        }
+      }
     }
     return object;
   }
@@ -857,17 +859,19 @@
    * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
-  function defaults(object, source, guard) {
-    var args = arguments,
-        index = 0,
-        length = typeof guard == 'number' ? 2 : args.length;
-
-    while (++index < length) {
-      (isArray(args[index]) ? forEach : forOwn)(args[index], function(value, key) {
-        if (object[key] == null) {
-          object[key] = value;
+  function defaults(object) {
+    if (!object) {
+      return object;
+    }
+    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {
+      var iteratee = arguments[argsIndex];
+      if (iteratee) {
+        for (var key in iteratee) {
+          if (object[key] == null) {
+            object[key] = iteratee[key];
+          }
         }
-      });
+      }
     }
     return object;
   }

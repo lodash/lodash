@@ -7,13 +7,10 @@
 
   /** Used to minify variables embedded in compiled strings */
   var compiledVars = [
-    'argsIndex',
-    'argsLength',
     'callback',
     'collection',
     'createCallback',
     'ctor',
-    'guard',
     'hasOwnProperty',
     'index',
     'isArguments',
@@ -21,14 +18,12 @@
     'iteratee',
     'length',
     'nativeKeys',
-    'object',
     'objectTypes',
     'ownIndex',
     'ownProps',
     'propertyIsEnumerable',
     'result',
     'skipProto',
-    'source',
     'thisArg'
   ];
 
@@ -152,6 +147,7 @@
     'opera',
     'pairs',
     'partial',
+    'partialRight',
     'pick',
     'pluck',
     'random',

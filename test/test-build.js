@@ -468,12 +468,12 @@
     var start = _.once(QUnit.start);
 
     asyncTest('`lodash`', function() {
-      build(['-s'], function(source, filePath) {
+      build(['-s'], function(data) {
         // used by r.js build optimizer
         var defineHasRegExp = /typeof\s+define\s*==(=)?\s*['"]function['"]\s*&&\s*typeof\s+define\.amd\s*==(=)?\s*['"]object['"]\s*&&\s*define\.amd/g,
-            basename = path.basename(filePath, '.js');
+            basename = path.basename(data.outputPath, '.js');
 
-        ok(!!defineHasRegExp.exec(source), basename);
+        ok(!!defineHasRegExp.exec(data.source), basename);
         start();
       });
     });
@@ -489,22 +489,22 @@
     asyncTest('`lodash template=*.jst`', function() {
       var start = _.after(2, _.once(QUnit.start));
 
-      build(['-s', 'template=' + templatePath + '/*.jst'], function(source, filePath) {
-        var basename = path.basename(filePath, '.js'),
+      build(['-s', 'template=' + templatePath + '/*.jst'], function(data) {
+        var basename = path.basename(data.outputPath, '.js'),
             context = createContext();
 
-        var data = {
+        var object = {
           'a': { 'people': ['moe', 'larry', 'curly'] },
           'b': { 'epithet': 'stooge' },
           'c': { 'name': 'ES6' }
         };
 
         context._ = _;
-        vm.runInContext(source, context);
+        vm.runInContext(data.source, context);
 
-        equal(_.templates.a(data.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
-        equal(_.templates.b(data.b), 'Hello stooge.', basename);
-        equal(_.templates.c(data.c), 'Hello ES6!', basename);
+        equal(_.templates.a(object.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
+        equal(_.templates.b(object.b), 'Hello stooge.', basename);
+        equal(_.templates.c(object.c), 'Hello ES6!', basename);
         delete _.templates;
         start();
       });
@@ -519,9 +519,9 @@
       asyncTest('`lodash template=*.jst` exports=amd' + (command ? ' ' + command : ''), function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', 'template=' + templatePath + '/*.jst', 'exports=amd'].concat(command || []), function(source, filePath) {
+        build(['-s', 'template=' + templatePath + '/*.jst', 'exports=amd'].concat(command || []), function(data) {
           var moduleId,
-              basename = path.basename(filePath, '.js'),
+              basename = path.basename(data.outputPath, '.js'),
               context = createContext();
 
           context.define = function(requires, factory) {
@@ -530,7 +530,7 @@
           };
 
           context.define.amd = {};
-          vm.runInContext(source, context);
+          vm.runInContext(data.source, context);
 
           equal(moduleId, (command ? 'underscore' : 'lodash'), basename);
           ok('a' in _.templates && 'b' in _.templates, basename);
@@ -542,12 +542,12 @@
       asyncTest('`lodash settings=...`' + (command ? ' ' + command : ''), function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/}'].concat(command || []), function(source, filePath) {
+        build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/}'].concat(command || []), function(data) {
           var moduleId,
-              basename = path.basename(filePath, '.js'),
+              basename = path.basename(data.outputPath, '.js'),
               context = createContext();
 
-          var data = {
+          var object = {
             'd': { 'name': 'Mustache' }
           };
 
@@ -557,10 +557,10 @@
           };
 
           context.define.amd = {};
-          vm.runInContext(source, context);
+          vm.runInContext(data.source, context);
 
           equal(moduleId, (command ? 'underscore' : 'lodash'), basename);
-          equal(_.templates.d(data.d), 'Hello Mustache!', basename);
+          equal(_.templates.d(object.d), 'Hello Mustache!', basename);
           delete _.templates;
           start();
         });
@@ -578,18 +578,18 @@
 
     asyncTest('debug only', function() {
       var start = _.once(QUnit.start);
-      build(['-d', '-s'], function(source, filePath) {
-        equal(path.basename(filePath, '.js'), 'lodash');
+      build(['-d', '-s'], function(data) {
+        equal(path.basename(data.outputPath, '.js'), 'lodash');
         start();
       });
     });
 
     asyncTest('debug custom', function() {
       var start = _.once(QUnit.start);
-      build(['-d', '-s', 'backbone'], function(source, filePath) {
-        equal(path.basename(filePath, '.js'), 'lodash.custom');
+      build(['-d', '-s', 'backbone'], function(data) {
+        equal(path.basename(data.outputPath, '.js'), 'lodash.custom');
 
-        var comment = source.match(reLicense);
+        var comment = data.source.match(reLicense);
         ok(reCustom.test(comment));
         start();
       });
@@ -597,18 +597,18 @@
 
     asyncTest('minified only', function() {
       var start = _.once(QUnit.start);
-      build(['-m', '-s'], function(source, filePath) {
-        equal(path.basename(filePath, '.js'), 'lodash.min');
+      build(['-m', '-s'], function(data) {
+        equal(path.basename(data.outputPath, '.js'), 'lodash.min');
         start();
       });
     });
 
     asyncTest('minified custom', function() {
       var start = _.once(QUnit.start);
-      build(['-m', '-s', 'backbone'], function(source, filePath) {
-        equal(path.basename(filePath, '.js'), 'lodash.custom.min');
+      build(['-m', '-s', 'backbone'], function(data) {
+        equal(path.basename(data.outputPath, '.js'), 'lodash.custom.min');
 
-        var comment = source.match(reLicense);
+        var comment = data.source.match(reLicense);
         ok(reCustom.test(comment));
         start();
       });
@@ -633,11 +633,11 @@
         if (index) {
           commands.push('strict');
         }
-        build(commands, function(source, filePath) {
-          var basename = path.basename(filePath, '.js'),
+        build(commands, function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
               context = createContext();
 
-          vm.runInContext(source, context);
+          vm.runInContext(data.source, context);
           var lodash = context._;
 
           var actual = _.every([
@@ -675,11 +675,11 @@
       asyncTest('`lodash ' + command +'`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', command], function(source, filePath) {
-          var basename = path.basename(filePath, '.js'),
+        build(['-s', command], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
               context = createContext();
 
-          vm.runInContext(source, context);
+          vm.runInContext(data.source, context);
           var lodash = context._;
 
           ok(lodash.chain(1) instanceof lodash, '_.chain: ' + basename);
@@ -713,13 +713,13 @@
     asyncTest('modified methods should work correctly', function() {
       var start = _.after(2, _.once(QUnit.start));
 
-      build(['-s', 'underscore'], function(source, filePath) {
+      build(['-s', 'underscore'], function(data) {
         var last,
             array = [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }],
-            basename = path.basename(filePath, '.js'),
+            basename = path.basename(data.outputPath, '.js'),
             context = createContext();
 
-        vm.runInContext(source, context);
+        vm.runInContext(data.source, context);
         var lodash = context._;
 
         var object = { 'fn': lodash.bind(function(foo) { return foo + this.bar; }, { 'bar': 1 }, 1) };
@@ -779,11 +779,11 @@
     asyncTest('should not have any Lo-Dash-only methods', function() {
       var start = _.after(2, _.once(QUnit.start));
 
-      build(['-s', 'underscore'], function(source, filePath) {
-        var basename = path.basename(filePath, '.js'),
+      build(['-s', 'underscore'], function(data) {
+        var basename = path.basename(data.outputPath, '.js'),
             context = createContext();
 
-        vm.runInContext(source, context);
+        vm.runInContext(data.source, context);
         var lodash = context._;
 
         _.each([
@@ -806,11 +806,11 @@
     asyncTest('`lodash underscore include=partial`', function() {
       var start = _.after(2, _.once(QUnit.start));
 
-      build(['-s', 'underscore', 'include=partial'], function(source, filePath) {
-        var basename = path.basename(filePath, '.js'),
+      build(['-s', 'underscore', 'include=partial'], function(data) {
+        var basename = path.basename(data.outputPath, '.js'),
             context = createContext();
 
-        vm.runInContext(source, context);
+        vm.runInContext(data.source, context);
         var lodash = context._;
 
         equal(lodash.partial(_.identity, 2)(), 2, '_.partial: ' + basename);
@@ -821,12 +821,12 @@
     asyncTest('`lodash underscore plus=clone`', function() {
       var start = _.after(2, _.once(QUnit.start));
 
-      build(['-s', 'underscore', 'plus=clone'], function(source, filePath) {
+      build(['-s', 'underscore', 'plus=clone'], function(data) {
         var array = [{ 'value': 1 }],
-            basename = path.basename(filePath, '.js'),
+            basename = path.basename(data.outputPath, '.js'),
             context = createContext();
 
-        vm.runInContext(source, context);
+        vm.runInContext(data.source, context);
         var lodash = context._,
             clone = lodash.clone(array, true);
 
@@ -854,10 +854,11 @@
       asyncTest('`lodash ' + command +'`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', command], function(source, filePath) {
-          var basename = path.basename(filePath, '.js'),
+        build(['-s', command], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
               context = createContext(),
-              pass = false;
+              pass = false,
+              source = data.source;
 
           switch(index) {
             case 0:
@@ -914,8 +915,8 @@
       asyncTest('`lodash ' + command +'`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', 'exports=none', command], function(source, filePath) {
-          var basename = path.basename(filePath, '.js'),
+        build(['-s', 'exports=none', command], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
               context = createContext();
 
           context.define = function(func) {
@@ -923,7 +924,7 @@
           };
 
           try {
-            vm.runInContext(source, context);
+            vm.runInContext(data.source, context);
           } catch(e) {
             console.log(e);
           }
@@ -950,8 +951,8 @@
       asyncTest('`lodash ' + command +'`', function() {
         var start = _.once(QUnit.start);
 
-        build(['-s'].concat(command.split(' ')), function(source, filePath) {
-          equal(path.basename(filePath, '.js'), 'a', command);
+        build(['-s'].concat(command.split(' ')), function(data) {
+          equal(path.basename(data.outputPath, '.js'), 'a', command);
           start();
         });
       });
@@ -978,9 +979,9 @@
           written = string;
         };
 
-        build([command, 'exports=', 'include='], function(source) {
+        build([command, 'exports=', 'include='], function(data) {
           process.stdout.write = write;
-          equal(written, source);
+          equal(written, data.source);
           equal(arguments.length, 1);
           start();
         });
@@ -996,12 +997,12 @@
     asyncTest('`lodash mobile`', function() {
       var start = _.after(2, _.once(QUnit.start));
 
-      build(['-s', 'mobile'], function(source, filePath) {
-        var basename = path.basename(filePath, '.js'),
+      build(['-s', 'mobile'], function(data) {
+        var basename = path.basename(data.outputPath, '.js'),
             context = createContext();
 
         try {
-          vm.runInContext(source, context);
+          vm.runInContext(data.source, context);
         } catch(e) {
           console.log(e);
         }
@@ -1065,15 +1066,15 @@
       asyncTest('`lodash ' + command +'`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['--silent'].concat(command.split(' ')), function(source, filePath) {
+        build(['--silent'].concat(command.split(' ')), function(data) {
           var methodNames,
-              basename = path.basename(filePath, '.js'),
+              basename = path.basename(data.outputPath, '.js'),
               context = createContext(),
               isUnderscore = /underscore/.test(command),
               exposeAssign = !isUnderscore;
 
           try {
-            vm.runInContext(source, context);
+            vm.runInContext(data.source, context);
           } catch(e) {
             console.log(e);
           }

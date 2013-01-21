@@ -303,32 +303,46 @@
    */
   function closureCompile(source, mode, callback) {
     var filePath = this.filePath,
-        outputPath = this.outputPath,
+        isAdvanced = mode == 'advanced',
         isMapped = this.isMapped,
         mapPath = getMapPath(outputPath),
-        options = closureOptions.slice();
+        options = closureOptions.slice(),
+        outputPath = this.outputPath;
+
+    // remove copyright header to make other modifications easier
+    var license = (/^(?:\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)*/.exec(source) || [''])[0];
+    if (license) {
+      source = source.replace(license, '');
+    }
+
+    var hasIIFE = /^;?\(function[^{]+{\s*/.test(source),
+        isStrict = hasIIFE && /^;?\(function[^{]+{\s*["']use strict["']/.test(source);
+
+    // to avoid stripping the IIFE, convert it to a function call
+    if (hasIIFE && isAdvanced) {
+      source = source
+        .replace(/\(function/, '__iife__$&')
+        .replace(/\(this\)\)([\s;]*(\n\/\/.+)?)$/, ', this)$1');
+    }
 
     options.push('--compilation_level=' + optimizationModes[mode]);
-
     if (isMapped) {
       options.push('--create_source_map=' + mapPath, '--source_map_format=V3');
     }
-    // the standard error stream, standard output stream, and the Closure Compiler process
-    var error = '',
-        output = '',
-        compiler = spawn('java', ['-jar', closurePath].concat(options));
 
+    var compiler = spawn('java', ['-jar', closurePath].concat(options));
     if (!this.isSilent) {
       console.log('Compressing ' + path.basename(outputPath, '.js') + ' using the Closure Compiler (' + mode + ')...');
     }
-    compiler.stdout.on('data', function(data) {
-      // append the data to the output stream
-      output += data;
+
+    var error = '';
+    compiler.stderr.on('data', function(data) {
+      error += data;
     });
 
-    compiler.stderr.on('data', function(data) {
-      // append the error message to the error stream
-      error += data;
+    var output = '';
+    compiler.stdout.on('data', function(data) {
+      output += data;
     });
 
     compiler.on('exit', function(status) {
@@ -336,6 +350,21 @@
       if (status) {
         var exception = new Error(error);
         exception.status = status;
+      }
+      // restore IIFE and move exposed vars inside the IIFE
+      if (hasIIFE && isAdvanced) {
+        output = output
+          .replace(/__iife__\(/, '(')
+          .replace(/,\s*this\)([\s;]*(\n\/\/.+)?)$/, '(this))$1')
+          .replace(/^((?:var (?:\w+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^{]+{)/, '$2$1');
+      }
+      // inject "use strict" directive
+      if (isStrict) {
+        output = output.replace(/^[\s\S]*?function[^{]+{/, '$&"use strict";');
+      }
+      // restore copyright header
+      if (license) {
+        output = license + output;
       }
       if (isMapped) {
         var mapOutput = fs.readFileSync(mapPath, 'utf8');
@@ -534,8 +563,13 @@
       this.uglified.gzip = result;
     }
     // minify the already Closure Compiler simple optimized source using UglifyJS
-    if (this.modes.indexOf('hybrid') > -1) {
-      uglify.call(this, this.compiled.simple.source, 'hybrid (simple)', onSimpleHybrid.bind(this));
+    var modes = this.modes;
+    if (modes.indexOf('hybrid') > -1) {
+      if (modes.indexOf('simple') > -1) {
+        uglify.call(this, this.compiled.simple.source, 'hybrid (simple)', onSimpleHybrid.bind(this));
+      } else if (modes.indexOf('advanced') > -1) {
+        onSimpleHybridGzip.call(this);
+      }
     } else {
       onComplete.call(this);
     }

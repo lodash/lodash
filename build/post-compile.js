@@ -24,21 +24,13 @@
    * @returns {String} Returns the processed source.
    */
   function postprocess(source) {
-    // remove old copyright/license header
+    // remove copyright header
     source = source.replace(/^\/\**[\s\S]+?\*\/\n/, '');
-
-    // move vars exposed by the Closure Compiler into the IIFE
-    source = source.replace(/^((?:var (?:\w+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^)]+\){)/, '$2$1');
 
     // correct overly aggressive Closure Compiler advanced optimizations
     source = source
       .replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}')
       .replace(/(document[^&]+&&)\s*\w+/, '$1!({toString:0}+"")');
-
-    // unescape properties (e.g. foo["bar"] => foo.bar)
-    source = source.replace(/(\w)\["([^."]+)"\]/g, function(match, left, right) {
-      return /\W/.test(right) ? match : (left + '.' + right);
-    });
 
     // flip `typeof` expressions to help optimize Safari and
     // correct the AMD module definition for AMD build optimizers
@@ -56,7 +48,7 @@
     if (!snippet) {
       return source;
     }
-    // add new copyright/license header
+    // add new copyright header
     var version = snippet[2];
     source = licenseTemplate.replace('<%= VERSION %>', version) + '\n;' + source;
 

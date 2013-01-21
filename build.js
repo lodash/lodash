@@ -2174,12 +2174,6 @@
     if (!isDebug) {
       outputPath || (outputPath = path.join(cwd, basename + '.min.js'));
 
-      // convert the IIFE into a function call so Closure Compiler (advanced) won't strip it
-      if (!isIIFE) {
-        source = source
-          .replace(/\(function/, 'iife$&')
-          .replace(/\(this\)\)(;\s*)$/, ', this)$1');
-      }
       minify(source, {
         'filePath': filePath,
         'isMapped': isMapped,
@@ -2188,16 +2182,6 @@
         'modes': isIIFE && ['simple', 'hybrid'],
         'outputPath': outputPath,
         'onComplete': function(data) {
-          // restore IIFE
-          if (!isIIFE) {
-            data.source = data.source
-              .replace(/iife\(/, '(')
-              .replace(/, *this\)([\s;]*(\n\/\/.+)?)$/, '(this))$1');
-          }
-          // inject "use strict" directive
-          if (isStrict) {
-            data.source = data.source.replace(/^([\s\S]*?function[^{]+{\s*)([^"'])/, '$1"use strict";$2');
-          }
           if (isCustom) {
             data.source = addCommandsToHeader(data.source, options);
           }

@@ -1,4 +1,5 @@
 # Lo-Dash <sup>v1.0.0-rc.3</sup>
+[![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
 An alternative to Underscore.js, delivering consistency, [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
 

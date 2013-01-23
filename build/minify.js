@@ -371,7 +371,7 @@
         fs.unlinkSync(mapPath);
 
         output = output
-          .replace(/[\s;]*$/, '\n//@ sourceMappingURL=' + path.basename(mapPath));
+          .replace(/[\s;]*$/, '\n/*\n//@ sourceMappingURL=' + path.basename(mapPath)) + '\n*/';
 
         mapOutput = mapOutput
           .replace(/("file":)""/, '$1"' + path.basename(outputPath) + '"')

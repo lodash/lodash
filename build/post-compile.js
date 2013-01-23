@@ -41,7 +41,7 @@
 
     // add trailing semicolon
     if (source) {
-      source = source.replace(/[\s;]*(\n\/\/.+)?$/, ';$1');
+      source = source.replace(/[\s;]*?(\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)*$/, ';$1');
     }
     // exit early if version snippet isn't found
     var snippet = /VERSION\s*[=:]\s*([\'"])(.*?)\1/.exec(source);

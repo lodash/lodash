@@ -182,23 +182,6 @@
     var noNodeClass = toString.call(document) == objectClass && !({ 'toString': 0 } + '');
   } catch(e) { }
 
-  /**
-   * Detect if sourceURL syntax is usable without erroring:
-   *
-   * The JS engine embedded in Adobe products will throw a syntax error when
-   * it encounters a single line comment beginning with the `@` symbol.
-   *
-   * The JS engine in Narwhal will generate the function `function anonymous(){//}`
-   * and throw a syntax error.
-   *
-   * Avoid comments beginning `@` symbols in IE because they are part of its
-   * non-standard conditional compilation support.
-   * http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
-   */
-  try {
-    var useSourceURL = (Function('//@')(), !isIeOpera);
-  } catch(e) { }
-
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
   cloneableClasses[funcClass] = false;
@@ -4284,11 +4267,11 @@
       source +
       'return __p\n}';
 
-    // use a sourceURL for easier debugging
+    // Use a sourceURL for easier debugging and wrap in a multi-line comment to
+    // avoid issues with Narwhal, IE conditional compilation, and the JS engine
+    // embedded in Adobe products.
     // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-    var sourceURL = useSourceURL
-      ? '\n//@ sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']')
-      : '';
+    var sourceURL = '\n/*\n//@ sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']') + '\n*/';
 
     try {
       var result = Function(importsKeys, 'return ' + source + sourceURL).apply(undefined, importsValues);

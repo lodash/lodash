@@ -143,23 +143,6 @@
    */
   var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
 
-  /**
-   * Detect if sourceURL syntax is usable without erroring:
-   *
-   * The JS engine embedded in Adobe products will throw a syntax error when
-   * it encounters a single line comment beginning with the `@` symbol.
-   *
-   * The JS engine in Narwhal will generate the function `function anonymous(){//}`
-   * and throw a syntax error.
-   *
-   * Avoid comments beginning `@` symbols in IE because they are part of its
-   * non-standard conditional compilation support.
-   * http://msdn.microsoft.com/en-us/library/121hztk3(v=vs.94).aspx
-   */
-  try {
-    var useSourceURL = (Function('//@')(), !isIeOpera);
-  } catch(e) { }
-
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
     'boolean': false,

@@ -2353,6 +2353,15 @@
     test('should return an empty array when passed an empty `properties` object', function() {
       deepEqual(_.where(array, {}), []);
     });
+
+    test('should deep compare `properties` values', function() {
+      var collection = [
+        { 'a': { 'b': 1 }, 'c': 2 },
+        { 'a': { 'b': 2 }, 'c': 3 }
+      ];
+
+      deepEqual(_.where(collection, { 'a': { 'b': 1 } }), [{ 'a': { 'b': 1 }, 'c': 2 }]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

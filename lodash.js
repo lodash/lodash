@@ -614,7 +614,7 @@
         var length = props.length,
             result = false;
         while (length--) {
-          if (!(result = object[props[length]] === func[props[length]])) {
+          if (!(result = isEqual(object[props[length]], func[props[length]]))) {
             break;
           }
         }

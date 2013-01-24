@@ -1733,13 +1733,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.without` iterating an array of 20 elements')
+    Benchmark.Suite('`_.without` iterating an array of 30 elements')
       .add(buildName, {
-        'fn': 'lodash.without.apply(lodash, [twentyValues].concat(twentyValues2));',
+        'fn': 'lodash.without.apply(lodash, [thirtyValues].concat(thirtyValues2));',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.without.apply(_, [twentyValues].concat(twentyValues2));',
+        'fn': '_.without.apply(_, [thirtyValues].concat(thirtyValues2));',
         'teardown': 'function multiArrays(){}'
       })
   );

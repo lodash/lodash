@@ -2090,6 +2090,16 @@
       equal(compiled(data), 'a');
     });
 
+    test('should work with "interpolate" delimiters containing global values', function() {
+      var compiled = _.template('<%= typeof QUnit.init %>');
+
+      try {
+        var actual = compiled();
+      } catch(e) { }
+
+      equal(actual, 'function');
+    });
+
     test('should parse delimiters with newlines', function() {
       var expected = '<<\nprint("<p>" + (value ? "yes" : "no") + "</p>")\n>>',
           compiled = _.template(expected, null, { 'evaluate': /<<(.+?)>>/g }),

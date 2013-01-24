@@ -31,9 +31,6 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
-  /** Used to detect template delimiter values that require a with-statement */
-  var reComplexDelimiter = /[-?+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
-
   /** Used to match HTML entities */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g;
 
@@ -44,9 +41,6 @@
 
   /** Used to match regexp flags from their coerced string values */
   var reFlags = /\w*$/;
-
-  /** Used to insert the data object variable into compiled template source */
-  var reInsertVariable = /(?:__e|__t = )\(\s*(?![\d\s"']|this\.)/g;
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
@@ -3570,12 +3564,17 @@
 
     text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {
       source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);
-      source +=
-        escapeValue ? "' +\n_.escape(" + escapeValue + ") +\n'" :
-        evaluateValue ? "';\n" + evaluateValue + ";\n__p += '" :
-        interpolateValue ? "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'" : '';
-
+      if (escapeValue) {
+        source += "' +\n_.escape(" + escapeValue + ") +\n'";
+      }
+      if (evaluateValue) {
+        source += "';\n" + evaluateValue + ";\n__p += '";
+      }
+      if (interpolateValue) {
+        source += "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
+      }
       index = offset + match.length;
+      return match;
     });
 
     source += "';\n";

@@ -116,10 +116,14 @@
       stringClass = '[object String]';
 
   /** Detect various environments */
-  var isIeOpera = !!window.attachEvent;
+  var isIeOpera = !!window.attachEvent,
+      isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-  var isBindFast = nativeBind && /\n|true/.test(nativeBind + isIeOpera);
+  var isBindFast = nativeBind && !isV8;
+
+  /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
+  var isKeysFast = nativeKeys && (isIeOpera || isV8);
 
   /**
    * Detect the JScript [[DontEnum]] bug:
@@ -353,7 +357,7 @@
     // array-like iteration:
     '<% if (arrays) { %>' +
     'var length = iteratee.length; index = -1;\n' +
-    "if (typeof length == 'number') {" +
+    "if (<%= arrays %>) {" +
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +
@@ -393,7 +397,7 @@
     '  <% } %>' +
 
     // iterate own properties using `Object.keys` if it's fast
-    '  <% if (isKeysNative && useHas) { %>\n' +
+    '  <% if (isKeysFast && useHas) { %>\n' +
     '  var ownIndex = -1,\n' +
     '      ownProps = objectTypes[typeof iteratee] ? nativeKeys(iteratee) : [],\n' +
     '      length = ownProps.length;\n\n' +
@@ -442,11 +446,23 @@
     'return result'
   );
 
+  /** Reusable iterator options for `assign` and `defaults` */
+  var assignIteratorOptions = {
+    'args': 'object, source, guard',
+    'top':
+      'var argsIndex = 0,\n' +
+      "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
+      'while (++argsIndex < argsLength) {\n' +
+      '  if ((iteratee = arguments[argsIndex])) {',
+    'loop': 'result[index] = iteratee[index]',
+    'bottom': '  }\n}'
+  };
+
   /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
   var eachIteratorOptions = {
-    'arrays': true,
     'args': 'collection, callback, thisArg',
     'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
+    'arrays': "typeof length == 'number'",
     'loop': 'if (callback(iteratee[index], index, collection) === false) return result'
   };
 
@@ -656,13 +672,13 @@
     var data = {
       // support properties
       'hasDontEnumBug': hasDontEnumBug,
-      'isKeysNative': nativeKeys,
+      'isKeysFast': isKeysFast,
       'nonEnumArgs': nonEnumArgs,
       'noCharByIndex': noCharByIndex,
       'shadowed': shadowed,
 
       // iterator options
-      'arrays': false,
+      'arrays': "isArray(iteratee)",
       'bottom': '',
       'loop': '',
       'top': '',
@@ -680,14 +696,14 @@
 
     // create the function factory
     var factory = Function(
-        'createCallback, hasOwnProperty, isArguments, isString, objectTypes, ' +
-        'nativeKeys, propertyIsEnumerable',
+        'createCallback, hasOwnProperty, isArguments, isArray, isString, ' +
+        'objectTypes, nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
     );
     // return the compiled function
     return factory(
-      createCallback, hasOwnProperty, isArguments, isString, objectTypes,
-      nativeKeys, propertyIsEnumerable
+      createCallback, hasOwnProperty, isArguments, isArray, isString,
+      objectTypes, nativeKeys, propertyIsEnumerable
     );
   }
 
@@ -873,6 +889,28 @@
   var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
 
   /**
+   * Checks if `value` is an array.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
+   * @example
+   *
+   * (function() { return _.isArray(arguments); })();
+   * // => false
+   *
+   * _.isArray([1, 2, 3]);
+   * // => true
+   */
+  var isArray = nativeIsArray || function(value) {
+    // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
+    // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
+    return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
+  };
+
+  /**
    * Creates an array composed of the own enumerable property names of `object`.
    *
    * @static
@@ -988,18 +1026,7 @@
    * _.assign({ 'name': 'moe' }, { 'age': 40 });
    * // => { 'name': 'moe', 'age': 40 }
    */
-  function assign(object, source, guard) {
-    var args = arguments,
-        index = 0,
-        length = typeof guard == 'number' ? 2 : args.length;
-
-    while (++index < length) {
-      (isArray(args[index]) ? forEach : forOwn)(args[index], function(value, key) {
-        object[key] = value;
-      });
-    }
-    return object;
-  }
+  var assign = createIterator(assignIteratorOptions);
 
   /**
    * Creates a clone of `value`. If `deep` is `true`, nested objects will also
@@ -1151,20 +1178,9 @@
    * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
    * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
    */
-  function defaults(object, source, guard) {
-    var args = arguments,
-        index = 0,
-        length = typeof guard == 'number' ? 2 : args.length;
-
-    while (++index < length) {
-      (isArray(args[index]) ? forEach : forOwn)(args[index], function(value, key) {
-        if (object[key] == null) {
-          object[key] = value;
-        }
-      });
-    }
-    return object;
-  }
+  var defaults = createIterator(assignIteratorOptions, {
+    'loop': 'if (result[index] == null) ' + assignIteratorOptions.loop
+  });
 
   /**
    * Creates a sorted array of all enumerable properties, own and inherited,
@@ -1235,28 +1251,6 @@
     }
     return result;
   }
-
-  /**
-   * Checks if `value` is an array.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
-   * @example
-   *
-   * (function() { return _.isArray(arguments); })();
-   * // => false
-   *
-   * _.isArray([1, 2, 3]);
-   * // => true
-   */
-  var isArray = nativeIsArray || function(value) {
-    // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
-    // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
-    return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
-  };
 
   /**
    * Checks if `value` is a boolean value.
@@ -3457,7 +3451,7 @@
   function without(array) {
     var index = -1,
         length = array ? array.length : 0,
-        contains = cachedContains(arguments, 1, 20),
+        contains = cachedContains(arguments, 1),
         result = [];
 
     while (++index < length) {

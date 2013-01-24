@@ -174,14 +174,13 @@
     'bottom',
     'firstArg',
     'hasDontEnumBug',
-    'isKeysNative',
+    'isKeysFast',
     'loop',
     'nonEnumArgs',
     'noCharByIndex',
     'shadowed',
     'top',
-    'useHas',
-    'useStrict'
+    'useHas'
   ];
 
   /** List of all Lo-Dash methods */
@@ -945,14 +944,16 @@
    * @returns {String} Returns the modified source.
    */
   function removeKeysOptimization(source) {
+    source = removeVar(source, 'isKeysFast');
+
     // remove optimized branch in `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(isKeysNative[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/, "'\\n' +\n$2");
+      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(isKeysFast[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/, "'\\n' +\n$2");
     });
 
     // remove data object property assignment in `createIterator`
     source = source.replace(matchFunction(source, 'createIterator'), function(match) {
-      return match.replace(/ *'isKeysNative':.+\n/, '');
+      return match.replace(/ *'isKeysFast':.+\n/, '');
     });
 
     return source;
@@ -1448,7 +1449,7 @@
       source = setUseStrictOption(source, isStrict);
 
       if (isLegacy) {
-        _.each(['getPrototypeOf', 'isBindFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
+        _.each(['getPrototypeOf', 'isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
           source = replaceVar(source, varName, 'false');
         });
 
@@ -1467,10 +1468,9 @@
         // remove `_.templateSettings.imports assignment
         source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
-        // remove large array and keys optimizations
+        // remove large array optimizations
         source = removeFunction(source, 'cachedContains');
         source = removeVar(source, 'largeArraySize');
-        source = removeKeysOptimization(source);
 
         // replace `_.assign`
         source = replaceFunction(source, 'assign', [
@@ -1769,6 +1769,7 @@
         }
       }
       if (isMobile) {
+        source = removeKeysOptimization(source);
         source = removeNoNodeClass(source);
 
         // remove `prototype` [[Enumerable]] fix from `_.keys`

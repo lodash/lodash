@@ -7,23 +7,29 @@
 
   /** Used to minify variables embedded in compiled strings */
   var compiledVars = [
+    'argsIndex',
+    'argsLength',
     'callback',
     'collection',
     'createCallback',
     'ctor',
+    'guard',
     'hasOwnProperty',
     'index',
     'isArguments',
+    'isArray',
     'isString',
     'iteratee',
     'length',
     'nativeKeys',
+    'object',
     'objectTypes',
     'ownIndex',
     'ownProps',
     'propertyIsEnumerable',
     'result',
     'skipProto',
+    'source',
     'thisArg'
   ];
 
@@ -34,14 +40,13 @@
     'bottom',
     'firstArg',
     'hasDontEnumBug',
-    'isKeysNative',
+    'isKeysFast',
     'loop',
     'nonEnumArgs',
     'noCharByIndex',
     'shadowed',
     'top',
-    'useHas',
-    'useStrict'
+    'useHas'
   ];
 
   /** Used to minify variables and string values to a single character */
@@ -328,11 +333,6 @@
           : modified.replace(RegExp("'" + property + "'", 'g'), "'" + minName + "'");
       });
 
-      if (isCreateIterator) {
-        // clip after the `data` object assignment to avoid minifying its values
-        source = source.replace(snippet, modified);
-        snippet = modified = modified.replace(/^[\s\S]+?data *= *{[^}]+}.+/, '');
-      }
       // minify snippet variables / arguments
       compiledVars.forEach(function(variable, index) {
         var minName = minNames[index];

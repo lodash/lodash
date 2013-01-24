@@ -114,10 +114,11 @@
       stringClass = '[object String]';
 
   /** Detect various environments */
-  var isIeOpera = !!window.attachEvent;
+  var isIeOpera = !!window.attachEvent,
+      isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-  var isBindFast = nativeBind && /\n|true/.test(nativeBind + isIeOpera);
+  var isBindFast = nativeBind && !isV8;
 
   /**
    * Detect if `Array#shift` and `Array#splice` augment array-like objects
@@ -167,8 +168,12 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a `lodash` object, that wraps the given `value`, to enable
-   * method chaining.
+   * Creates a `lodash` object, that wraps the given `value`, to enable method
+   * chaining.
+   *
+   * In addition to Lo-Dash methods, wrappers also have the following `Array` methods:
+   * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
+   * and `unshift`
    *
    * The chainable wrapper functions are:
    * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`, `compose`,
@@ -255,11 +260,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  /** Reusable iterator options for `assign` and `defaults` */
+  var assignIteratorOptions = {
+    'args': 'object, source, guard',
+    'top':
+      'var argsIndex = 0,\n' +
+      "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
+      'while (++argsIndex < argsLength) {\n' +
+      '  if ((iteratee = arguments[argsIndex])) {',
+    'loop': 'result[index] = iteratee[index]',
+    'bottom': '  }\n}'
+  };
+
   /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
   var eachIteratorOptions = {
-    'arrays': true,
     'args': 'collection, callback, thisArg',
     'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
+    'arrays': "typeof length == 'number'",
     'loop': 'if (callback(iteratee[index], index, collection) === false) return result'
   };
 
@@ -422,7 +439,7 @@
       'shadowed': shadowed,
 
       // iterator options
-      'arrays': false,
+      'arrays': "isArray(iteratee)",
       'bottom': '',
       'loop': '',
       'top': '',
@@ -440,14 +457,14 @@
 
     // create the function factory
     var factory = Function(
-        'createCallback, hasOwnProperty, isString, objectTypes, ' +
-        'nativeKeys, propertyIsEnumerable',
+        'createCallback, hasOwnProperty, isArray, isString, ' +
+        'objectTypes, nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + (data) + '\n}'
     );
     // return the compiled function
     return factory(
-      createCallback, hasOwnProperty, isString, objectTypes,
-      nativeKeys, propertyIsEnumerable
+      createCallback, hasOwnProperty, isArray, isString,
+      objectTypes, nativeKeys, propertyIsEnumerable
     );
   }
 
@@ -665,6 +682,28 @@
         }
       }    
     return result
+  };
+
+  /**
+   * Checks if `value` is an array.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
+   * @example
+   *
+   * (function() { return _.isArray(arguments); })();
+   * // => false
+   *
+   * _.isArray([1, 2, 3]);
+   * // => true
+   */
+  var isArray = nativeIsArray || function(value) {
+    // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
+    // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
+    return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
   };
 
   /**
@@ -928,28 +967,6 @@
     }
     return result;
   }
-
-  /**
-   * Checks if `value` is an array.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
-   * @example
-   *
-   * (function() { return _.isArray(arguments); })();
-   * // => false
-   *
-   * _.isArray([1, 2, 3]);
-   * // => true
-   */
-  var isArray = nativeIsArray || function(value) {
-    // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
-    // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
-    return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
-  };
 
   /**
    * Checks if `value` is a boolean value.

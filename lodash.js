@@ -33,9 +33,6 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
-  /** Used to detect template delimiter values that require a with-statement */
-  var reComplexDelimiter = /[-?+=!~*%&^<>|{(\/]|\[\D|\b(?:delete|in|instanceof|new|typeof|void)\b/;
-
   /** Used to match HTML entities */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g;
 
@@ -46,9 +43,6 @@
 
   /** Used to match regexp flags from their coerced string values */
   var reFlags = /\w*$/;
-
-  /** Used to insert the data object variable into compiled template source */
-  var reInsertVariable = /(?:__e|__t = )\(\s*(?![\d\s"']|this\.)/g;
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
@@ -4189,9 +4183,9 @@
         importsKeys = iteratorTemplate ? keys(imports) : ['_'],
         importsValues = iteratorTemplate ? values(imports) : [lodash];
 
-    var index = 0,
+    var isEvaluating,
+        index = 0,
         interpolate = options.interpolate || reNoMatch,
-        isEvaluating = !(importsKeys.length == 1 && importsKeys[0] == '_' && importsValues[0] === lodash),
         source = "__p += '";
 
     // compile regexp to match each delimiter
@@ -4213,12 +4207,12 @@
         source += "' +\n__e(" + escapeValue + ") +\n'";
       }
       if (evaluateValue) {
+        isEvaluating = true;
         source += "';\n" + evaluateValue + ";\n__p += '";
       }
       if (interpolateValue) {
         source += "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
       }
-      isEvaluating || (isEvaluating = evaluateValue || reComplexDelimiter.test(escapeValue || interpolateValue));
       index = offset + match.length;
 
       // the JS engine embedded in Adobe products requires returning the `match`
@@ -4236,18 +4230,8 @@
 
     if (!hasVariable) {
       variable = 'obj';
-      if (isEvaluating) {
-        source = 'with (' + variable + ') {\n' + source + '\n}\n';
-      }
-      else {
-        // avoid a with-statement by prepending data object references to property names
-        var reDoubleVariable = RegExp('(\\(\\s*)' + variable + '\\.' + variable + '\\b', 'g');
-        source = source
-          .replace(reInsertVariable, '$&' + variable + '.')
-          .replace(reDoubleVariable, '$1__d');
-      }
+      source = 'with (' + variable + ') {\n' + source + '\n}\n';
     }
-
     // cleanup code by stripping empty strings
     source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
       .replace(reEmptyStringMiddle, '$1')

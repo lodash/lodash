@@ -156,9 +156,9 @@ Unless specified by `-o` or `--output`, all files created are saved to the curre
 The following options are also supported:
 
  * `-c`, `--stdout` ......... Write output to standard output
- * `-d`, `--debug` ........... Write only the debug output
+ * `-d`, `--debug` ........... Write only the non-minified development output
  * `-h`, `--help` ............. Display help information
- * `-m`, `--minify` ......... Write only the minified output
+ * `-m`, `--minify` ......... Write only the minified production output
  * `-o`, `--output` ......... Write output to a given path/filename
  * `-p`, `--source-map` .. Generate a source map for the minified output
  * `-s`, `--silent` ......... Skip status updates normally logged to the console

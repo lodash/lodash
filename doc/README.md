@@ -1984,7 +1984,7 @@ deep[0] === stooges[0];
 
 Creates a deep clone of `value`. Functions and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and objects created by constructors other than `Object` are cloned to plain `Object` objects.
 
-Note: This function is loosely based on the structured clone algorithm. See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
+Note: This function is loosely based on the structured clone algorithm. See http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm.
 
 #### Arguments
 1. `value` *(Mixed)*: The value to deep clone.

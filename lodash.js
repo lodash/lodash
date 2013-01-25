@@ -653,7 +653,7 @@
    *
    * @private
    * @param {Object} [options1, options2, ...] The compile options object(s).
-   *  arrays - A boolean to specify support for iterating arrays and array-like objects.
+   *  arrays - A string of code to determine if the iteratee is an array or array-like.
    *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
    *  args - A string of comma separated arguments the iteration function will accept.
    *  top - A string of code to execute before the iteration branches.
@@ -672,7 +672,7 @@
       'shadowed': shadowed,
 
       // iterator options
-      'arrays': "isArray(iteratee)",
+      'arrays': 'isArray(iteratee)',
       'bottom': '',
       'loop': '',
       'top': '',
@@ -1129,7 +1129,7 @@
    * constructors other than `Object` are cloned to plain `Object` objects.
    *
    * Note: This function is loosely based on the structured clone algorithm.
-   * See http://www.w3.org/TR/html5/common-dom-interfaces.html#internal-structured-cloning-algorithm.
+   * See http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm.
    *
    * @static
    * @memberOf _
@@ -1366,9 +1366,9 @@
       // treat `+0` vs. `-0` as not equal
       return a !== 0 || (1 / a == 1 / b);
     }
-    // a strict comparison is necessary because `null == undefined`
+    // exit early for unlike `null` or `undefined` values
     if (a == null || b == null) {
-      return a === b;
+      return false;
     }
     // compare [[Class]] names
     var className = toString.call(a),

@@ -142,7 +142,7 @@ lodash template="./*.jst"
 
  * Use the `settings` argument to pass the template settings used when precompiling templates.
 ```bash
-lodash settings="{interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/g}"
+lodash settings="{interpolate:/\{\{([\s\S]+?)\}\}/g}"
 ```
 
  * Use the `moduleId` argument to specify the AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates.

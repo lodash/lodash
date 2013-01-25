@@ -579,7 +579,7 @@
       '    lodash template=...  File path pattern used to match template files to precompile',
       '                         (e.g. `lodash template=./*.jst`)',
       '    lodash settings=...  Template settings used when precompiling templates',
-      '                         (e.g. `lodash settings="{interpolate:/\\\\{\\\\{([\\\\s\\\\S]+?)\\\\}\\\\}/g}"`)',
+      '                         (e.g. `lodash settings="{interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/g}"`)',
       '    lodash moduleId=...  The AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates',
       '',
       '    All arguments, except `legacy` with `csp` or `mobile`, may be combined.',

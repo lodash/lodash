@@ -19,7 +19,7 @@
     'isArguments',
     'isArray',
     'isString',
-    'iteratee',
+    'iterable',
     'length',
     'nativeKeys',
     'object',

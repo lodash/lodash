@@ -339,8 +339,8 @@
    * @returns {String} Returns the interpolated text.
    */
   var iteratorTemplate = template(
-    // the `iteratee` may be reassigned by the `top` snippet
-    'var index, iteratee = <%= firstArg %>, ' +
+    // the `iterable` may be reassigned by the `top` snippet
+    'var index, iterable = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
     'result = <%= firstArg %>;\n' +
     // exit early if the first argument is falsey
@@ -350,13 +350,13 @@
 
     // array-like iteration:
     '<% if (arrays) { %>' +
-    'var length = iteratee.length; index = -1;\n' +
+    'var length = iterable.length; index = -1;\n' +
     "if (<%= arrays %>) {" +
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +
-    '  if (isString(iteratee)) {\n' +
-    "    iteratee = iteratee.split('')\n" +
+    '  if (isString(iterable)) {\n' +
+    "    iterable = iterable.split('')\n" +
     '  }' +
     '  <% } %>\n' +
 
@@ -370,8 +370,8 @@
     // object iteration:
     // add support for iterating over `arguments` objects if needed
     '  <%  } else if (nonEnumArgs) { %>\n' +
-    '  var length = iteratee.length; index = -1;\n' +
-    '  if (length && isArguments(iteratee)) {\n' +
+    '  var length = iterable.length; index = -1;\n' +
+    '  if (length && isArguments(iterable)) {\n' +
     '    while (++index < length) {\n' +
     "      index += '';\n" +
     '      <%= loop %>\n' +
@@ -386,14 +386,14 @@
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
     '  <% if (!hasDontEnumBug) { %>\n' +
-    "  var skipProto = typeof iteratee == 'function' && \n" +
-    "    propertyIsEnumerable.call(iteratee, 'prototype');\n" +
+    "  var skipProto = typeof iterable == 'function' && \n" +
+    "    propertyIsEnumerable.call(iterable, 'prototype');\n" +
     '  <% } %>' +
 
     // iterate own properties using `Object.keys` if it's fast
     '  <% if (isKeysFast && useHas) { %>\n' +
     '  var ownIndex = -1,\n' +
-    '      ownProps = objectTypes[typeof iteratee] ? nativeKeys(iteratee) : [],\n' +
+    '      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n' +
     '      length = ownProps.length;\n\n' +
     '  while (++ownIndex < length) {\n' +
     '    index = ownProps[ownIndex];\n' +
@@ -404,11 +404,11 @@
 
     // else using a for-in loop
     '  <% } else { %>\n' +
-    '  for (index in iteratee) {<%' +
+    '  for (index in iterable) {<%' +
     '    if (!hasDontEnumBug || useHas) { %>\n    if (<%' +
     "      if (!hasDontEnumBug) { %>!(skipProto && index == 'prototype')<% }" +
     '      if (!hasDontEnumBug && useHas) { %> && <% }' +
-    '      if (useHas) { %>hasOwnProperty.call(iteratee, index)<% }' +
+    '      if (useHas) { %>hasOwnProperty.call(iterable, index)<% }' +
     '    %>) {' +
     '    <% } %>\n' +
     '    <%= loop %>;' +
@@ -421,13 +421,13 @@
     // defaults to non-enumerable, Lo-Dash skips the `constructor`
     // property when it infers it's iterating over a `prototype` object.
     '  <% if (hasDontEnumBug) { %>\n\n' +
-    '  var ctor = iteratee.constructor;\n' +
+    '  var ctor = iterable.constructor;\n' +
     '    <% for (var k = 0; k < 7; k++) { %>\n' +
     "  index = '<%= shadowed[k] %>';\n" +
     '  if (<%' +
     "      if (shadowed[k] == 'constructor') {" +
-    '        %>!(ctor && ctor.prototype === iteratee) && <%' +
-    '      } %>hasOwnProperty.call(iteratee, index)) {\n' +
+    '        %>!(ctor && ctor.prototype === iterable) && <%' +
+    '      } %>hasOwnProperty.call(iterable, index)) {\n' +
     '    <%= loop %>\n' +
     '  }' +
     '    <% } %>' +
@@ -447,8 +447,8 @@
       'var argsIndex = 0,\n' +
       "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
       'while (++argsIndex < argsLength) {\n' +
-      '  if ((iteratee = arguments[argsIndex])) {',
-    'loop': 'result[index] = iteratee[index]',
+      '  if ((iterable = arguments[argsIndex])) {',
+    'loop': 'result[index] = iterable[index]',
     'bottom': '  }\n}'
   };
 
@@ -457,7 +457,7 @@
     'args': 'collection, callback, thisArg',
     'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
     'arrays': "typeof length == 'number'",
-    'loop': 'if (callback(iteratee[index], index, collection) === false) return result'
+    'loop': 'if (callback(iterable[index], index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
@@ -653,7 +653,7 @@
    *
    * @private
    * @param {Object} [options1, options2, ...] The compile options object(s).
-   *  arrays - A string of code to determine if the iteratee is an array or array-like.
+   *  arrays - A string of code to determine if the iterable is an array or array-like.
    *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
    *  args - A string of comma separated arguments the iteration function will accept.
    *  top - A string of code to execute before the iteration branches.
@@ -672,7 +672,7 @@
       'shadowed': shadowed,
 
       // iterator options
-      'arrays': 'isArray(iteratee)',
+      'arrays': 'isArray(iterable)',
       'bottom': '',
       'loop': '',
       'top': '',
@@ -2552,7 +2552,7 @@
    * // => [4, 5, 2, 3, 0, 1]
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
-    var iteratee = collection,
+    var iterable = collection,
         length = collection ? collection.length : 0,
         noaccum = arguments.length < 3;
 
@@ -2560,14 +2560,14 @@
       var props = keys(collection);
       length = props.length;
     } else if (noCharByIndex && isString(collection)) {
-      iteratee = collection.split('');
+      iterable = collection.split('');
     }
     callback = createCallback(callback, thisArg, indicatorObject);
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum
-        ? (noaccum = false, iteratee[index])
-        : callback(accumulator, iteratee[index], index, collection);
+        ? (noaccum = false, iterable[index])
+        : callback(accumulator, iterable[index], index, collection);
     });
     return accumulator;
   }

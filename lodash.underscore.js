@@ -261,8 +261,8 @@
       'var argsIndex = 0,\n' +
       "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
       'while (++argsIndex < argsLength) {\n' +
-      '  if ((iteratee = arguments[argsIndex])) {',
-    'loop': 'result[index] = iteratee[index]',
+      '  if ((iterable = arguments[argsIndex])) {',
+    'loop': 'result[index] = iterable[index]',
     'bottom': '  }\n}'
   };
 
@@ -271,7 +271,7 @@
     'args': 'collection, callback, thisArg',
     'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
     'arrays': "typeof length == 'number'",
-    'loop': 'if (callback(iteratee[index], index, collection) === false) return result'
+    'loop': 'if (callback(iterable[index], index, collection) === false) return result'
   };
 
   /** Reusable iterator options for `forIn` and `forOwn` */
@@ -415,7 +415,7 @@
    *
    * @private
    * @param {Object} [options1, options2, ...] The compile options object(s).
-   *  arrays - A string of code to determine if the iteratee is an array or array-like.
+   *  arrays - A string of code to determine if the iterable is an array or array-like.
    *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
    *  args - A string of comma separated arguments the iteration function will accept.
    *  top - A string of code to execute before the iteration branches.
@@ -433,7 +433,7 @@
       'shadowed': shadowed,
 
       // iterator options
-      'arrays': 'isArray(iteratee)',
+      'arrays': 'isArray(iterable)',
       'bottom': '',
       'loop': '',
       'top': '',
@@ -476,19 +476,19 @@
    * @returns {Array|Object|String} Returns `collection`.
    */
   var each = function (collection, callback, thisArg) {
-    var index, iteratee = collection, result = collection;
+    var index, iterable = collection, result = collection;
     if (!collection) return result;
     callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
-    var length = iteratee.length; index = -1;
+    var length = iterable.length; index = -1;
     if (typeof length == 'number') {  
       while (++index < length) {
-        if (callback(iteratee[index], index, collection) === indicatorObject) return result
+        if (callback(iterable[index], index, collection) === indicatorObject) return result
       }
     }
     else {  
-      for (index in iteratee) {
-        if (hasOwnProperty.call(iteratee, index)) {    
-        if (callback(iteratee[index], index, collection) === indicatorObject) return result;    
+      for (index in iterable) {
+        if (hasOwnProperty.call(iterable, index)) {    
+        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
         }
       }    
     }
@@ -635,12 +635,12 @@
    * // => alerts 'name' and 'bark' (order is not guaranteed)
    */
   var forIn = function (collection, callback) {
-    var index, iteratee = collection, result = collection;
+    var index, iterable = collection, result = collection;
     if (!collection) return result;
     callback || (callback = identity);
     
-      for (index in iteratee) {
-        if (callback(iteratee[index], index, collection) === indicatorObject) return result;    
+      for (index in iterable) {
+        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
       }    
     return result
   };
@@ -666,13 +666,13 @@
    * // => alerts '0', '1', and 'length' (order is not guaranteed)
    */
   var forOwn = function (collection, callback) {
-    var index, iteratee = collection, result = collection;
+    var index, iterable = collection, result = collection;
     if (!collection) return result;
     callback || (callback = identity);
     
-      for (index in iteratee) {
-        if (hasOwnProperty.call(iteratee, index)) {    
-        if (callback(iteratee[index], index, collection) === indicatorObject) return result;    
+      for (index in iterable) {
+        if (hasOwnProperty.call(iterable, index)) {    
+        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
         }
       }    
     return result
@@ -808,10 +808,10 @@
       return object;
     }
     for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {
-      var iteratee = arguments[argsIndex];
-      if (iteratee) {
-        for (var key in iteratee) {
-          object[key] = iteratee[key];
+      var iterable = arguments[argsIndex];
+      if (iterable) {
+        for (var key in iterable) {
+          object[key] = iterable[key];
         }
       }
     }
@@ -880,11 +880,11 @@
       return object;
     }
     for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {
-      var iteratee = arguments[argsIndex];
-      if (iteratee) {
-        for (var key in iteratee) {
+      var iterable = arguments[argsIndex];
+      if (iterable) {
+        for (var key in iterable) {
           if (object[key] == null) {
-            object[key] = iteratee[key];
+            object[key] = iterable[key];
           }
         }
       }
@@ -2049,7 +2049,7 @@
    * // => [4, 5, 2, 3, 0, 1]
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
-    var iteratee = collection,
+    var iterable = collection,
         length = collection ? collection.length : 0,
         noaccum = arguments.length < 3;
 
@@ -2061,8 +2061,8 @@
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum
-        ? (noaccum = false, iteratee[index])
-        : callback(accumulator, iteratee[index], index, collection);
+        ? (noaccum = false, iterable[index])
+        : callback(accumulator, iterable[index], index, collection);
     });
     return accumulator;
   }

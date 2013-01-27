@@ -1367,6 +1367,12 @@
     var buildMethods = !isTemplate && (function() {
       var result;
 
+      var includeMethods = options.reduce(function(accumulator, value) {
+        return /include/.test(value)
+          ? _.union(accumulator, optionToMethodsArray(source, value))
+          : accumulator;
+      }, []);
+
       var minusMethods = options.reduce(function(accumulator, value) {
         return /exclude|minus/.test(value)
           ? _.union(accumulator, optionToMethodsArray(source, value))
@@ -1379,21 +1385,16 @@
           : accumulator;
       }, []);
 
-      // add method names explicitly
-      options.some(function(value) {
-        return /include/.test(value) &&
-          (result = getDependencies(optionToMethodsArray(source, value)));
-      });
-
-      // include Lo-Dash's methods if explicitly requested
+      // set flags to include Lo-Dash's methods if explicitly requested
       if (isUnderscore) {
-        if (result) {
-          exposeAssign = result.indexOf('assign') > -1;
-          exposeForIn = result.indexOf('forIn') > -1;
-          exposeForOwn = result.indexOf('forOwn') > -1;
-          exposeIsPlainObject = result.indexOf('isPlainObject') > -1;
-        }
-        useUnderscoreClone = plusMethods.indexOf('clone') < 0;
+        var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
+        exposeAssign = methods.indexOf('assign') > -1;
+        exposeForIn = methods.indexOf('forIn') > -1;
+        exposeForOwn = methods.indexOf('forOwn') > -1;
+        exposeIsPlainObject = methods.indexOf('isPlainObject') > -1;
+
+        methods = _.without.apply(_, [plusMethods].concat(minusMethods));
+        useUnderscoreClone = methods.indexOf('clone') < 0;
       }
       // update dependencies
       if (isMobile) {
@@ -1403,11 +1404,11 @@
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
         dependencyMap.countBy = _.without(dependencyMap.countBy, 'isEqual', 'keys');
         dependencyMap.every = _.without(dependencyMap.every, 'isEqual', 'keys');
-        dependencyMap.filter = _.without(dependencyMap.filter, 'isEqual', 'keys');
+        dependencyMap.filter = _.without(dependencyMap.filter, 'isEqual');
         dependencyMap.find = _.without(dependencyMap.find, 'isEqual', 'keys');
         dependencyMap.groupBy = _.without(dependencyMap.groupBy, 'isEqual', 'keys');
         dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
-        dependencyMap.isEmpty =  ['isArray', 'isString'];
+        dependencyMap.isEmpty = ['isArray', 'isString'];
         dependencyMap.map = _.without(dependencyMap.map, 'isEqual', 'keys');
         dependencyMap.max = _.without(dependencyMap.max, 'isEqual', 'isString', 'keys');
         dependencyMap.min = _.without(dependencyMap.min, 'isEqual', 'isString', 'keys');
@@ -1423,6 +1424,11 @@
         if (useUnderscoreClone) {
           dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
         }
+      }
+
+      // add method names explicitly
+      if (includeMethods.length) {
+        result = getDependencies(includeMethods);
       }
       // add method names required by Backbone and Underscore builds
       if (isBackbone && !result) {
@@ -1445,7 +1451,7 @@
         result = _.union(result, getDependencies(plusMethods));
       }
       if (minusMethods.length) {
-        result = _.without.apply(_, [result].concat(minusMethods, getDependants(result)));
+        result = _.without.apply(_, [result].concat(minusMethods, getDependants(minusMethods)));
       }
       return result;
     }());
@@ -1922,18 +1928,10 @@
             source = source.replace(snippet, modified);
           }());
 
-          // replace `isArguments` and its fallback
-          (function() {
-            var snippet = matchFunction(source, 'isArguments').trimRight();
-            snippet = snippet.replace(/function isArguments/, 'lodash.isArguments = function');
-
-            source = removeFunction(source, 'isArguments');
-            source = source.replace(getIsArgumentsFallback(source), function(match) {
-              return snippet + '\n' + match
-                .replace(/isArguments/g, 'lodash.$&')
-                .replace(/noArgsClass/g, '!lodash.isArguments(arguments)');
-            });
-          }());
+          // replace `noArgsClass` in the `_.isArguments` fallback
+          source = source.replace(getIsArgumentsFallback(source), function(match) {
+            return match.replace(/noArgsClass/g, '!isArguments(arguments)');
+          });
 
           // remove chainability from `each` and `_.forEach`
           _.each(['each', 'forEach'], function(methodName) {

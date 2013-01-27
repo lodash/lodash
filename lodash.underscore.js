@@ -453,13 +453,13 @@
 
     // create the function factory
     var factory = Function(
-        'createCallback, hasOwnProperty, isArray, isString, ' +
+        'createCallback, hasOwnProperty, isArguments, isArray, isString, ' +
         'objectTypes, nativeKeys, propertyIsEnumerable',
       'return function(' + args + ') {\n' + (data) + '\n}'
     );
     // return the compiled function
     return factory(
-      createCallback, hasOwnProperty, isArray, isString,
+      createCallback, hasOwnProperty, isArguments, isArray, isString,
       objectTypes, nativeKeys, propertyIsEnumerable
     );
   }
@@ -581,6 +581,7 @@
   }
 
   /*--------------------------------------------------------------------------*/
+
   /**
    * Checks if `value` is an `arguments` object.
    *
@@ -597,13 +598,12 @@
    * _.isArguments([1, 2, 3]);
    * // => false
    */
-  lodash.isArguments = function(value) {
+  function isArguments(value) {
     return toString.call(value) == argsClass;
   }
-
   // fallback for browsers that can't detect `arguments` objects by [[Class]]
-  if (!lodash.isArguments(arguments)) {
-    lodash.isArguments = function(value) {
+  if (!isArguments(arguments)) {
+    isArguments = function(value) {
       return value ? hasOwnProperty.call(value, 'callee') : false;
     };
   }
@@ -852,7 +852,7 @@
    * // => false
    */
   function clone(value) {
-    return value && objectTypes[typeof value]
+    return isObject(value)
       ? (isArray(value) ? slice(value) : assign({}, value))
       : value
   }
@@ -3873,6 +3873,7 @@
   lodash.has = has;
   lodash.identity = identity;
   lodash.indexOf = indexOf;
+  lodash.isArguments = isArguments;
   lodash.isArray = isArray;
   lodash.isBoolean = isBoolean;
   lodash.isDate = isDate;

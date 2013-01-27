@@ -1243,7 +1243,7 @@
     /*------------------------------------------------------------------------*/
 
     // backup `dependencyMap` to restore later
-    var dependencyBackup = _.clone(dependencyMap, true);
+    var dependencyBackup = _.cloneDeep(dependencyMap);
 
     // used to specify a custom IIFE to wrap Lo-Dash
     var iife = options.reduce(function(result, value) {
@@ -1386,28 +1386,42 @@
       });
 
       // include Lo-Dash's methods if explicitly requested
-      if (isUnderscore && result) {
-        exposeAssign = result.indexOf('assign') > -1;
-        exposeForIn = result.indexOf('forIn') > -1;
-        exposeForOwn = result.indexOf('forOwn') > -1;
-        exposeIsPlainObject = result.indexOf('isPlainObject') > -1;
-        useUnderscoreClone = result.indexOf('clone') < 0;
+      if (isUnderscore) {
+        if (result) {
+          exposeAssign = result.indexOf('assign') > -1;
+          exposeForIn = result.indexOf('forIn') > -1;
+          exposeForOwn = result.indexOf('forOwn') > -1;
+          exposeIsPlainObject = result.indexOf('isPlainObject') > -1;
+        }
+        useUnderscoreClone = plusMethods.indexOf('clone') < 0;
       }
       // update dependencies
       if (isMobile) {
-        dependencyMap.reduceRight = ['forEach', 'keys'];
+        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isEqual', 'isString');
       }
       if (isUnderscore) {
-        dependencyMap.contains = ['indexOf'];
-        dependencyMap.isEqual = ['isArray', 'isFunction'];
-        dependencyMap.isEmpty = ['isArray', 'isString'];
-        dependencyMap.max = ['isArray'];
-        dependencyMap.min = ['isArray'];
-        dependencyMap.pick = [];
-        dependencyMap.template = ['defaults', 'escape'];
+        dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
+        dependencyMap.countBy = _.without(dependencyMap.countBy, 'isEqual', 'keys');
+        dependencyMap.every = _.without(dependencyMap.every, 'isEqual', 'keys');
+        dependencyMap.filter = _.without(dependencyMap.filter, 'isEqual', 'keys');
+        dependencyMap.find = _.without(dependencyMap.find, 'isEqual', 'keys');
+        dependencyMap.groupBy = _.without(dependencyMap.groupBy, 'isEqual', 'keys');
+        dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
+        dependencyMap.isEmpty =  ['isArray', 'isString'];
+        dependencyMap.map = _.without(dependencyMap.map, 'isEqual', 'keys');
+        dependencyMap.max = _.without(dependencyMap.max, 'isEqual', 'isString', 'keys');
+        dependencyMap.min = _.without(dependencyMap.min, 'isEqual', 'isString', 'keys');
+        dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
+        dependencyMap.reduce = _.without(dependencyMap.reduce, 'isEqual', 'keys');
+        dependencyMap.reject = _.without(dependencyMap.reject, 'isEqual', 'keys');
+        dependencyMap.some = _.without(dependencyMap.some, 'isEqual', 'keys');
+        dependencyMap.sortBy = _.without(dependencyMap.sortBy, 'isEqual', 'keys');
+        dependencyMap.sortedIndex = _.without(dependencyMap.sortedIndex, 'isEqual', 'keys');
+        dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
+        dependencyMap.uniq = _.without(dependencyMap.uniq, 'isEqual', 'keys');
 
         if (useUnderscoreClone) {
-          dependencyMap.clone = ['assign', 'isArray'];
+          dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
         }
       }
       // add method names required by Backbone and Underscore builds
@@ -1462,9 +1476,10 @@
       }
       if (isUnderscore) {
         // remove unneeded variables
-        source = removeVar(source, 'cloneableClasses');
-        source = removeVar(source, 'ctorByClass');
-
+        if (useUnderscoreClone) {
+          source = removeVar(source, 'cloneableClasses');
+          source = removeVar(source, 'ctorByClass');
+        }
         // remove `_.templateSettings.imports assignment
         source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
@@ -1494,7 +1509,7 @@
         if (useUnderscoreClone) {
           source = replaceFunction(source, 'clone', [
             '  function clone(value) {',
-            '    return value && objectTypes[typeof value]',
+            '    return isObject(value)',
             '      ? (isArray(value) ? slice(value) : assign({}, value))',
             '      : value',
             '  }'
@@ -1753,6 +1768,11 @@
           return match
             .replace(/^ *if *\(.+== argsClass[^}]+}\n/gm, '')
             .replace(/!argsAreObjects[^:]+:\s*/g, '');
+        });
+
+        // remove `_.isEqual` use from `createCallback`
+        source = source.replace(matchFunction(source, 'createCallback'), function(match) {
+          return match.replace(/isEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
         });
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
@@ -2127,12 +2147,10 @@
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs;|.+?nonEnumArgs *=.+/g, '');
       }
-      if (isRemoved(source, 'createIterator', 'bind', 'keys', 'template')) {
+      if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
         source = removeVar(source, 'isBindFast');
+        source = removeVar(source, 'isV8');
         source = removeVar(source, 'nativeBind');
-      }
-      if (isRemoved(source, 'createIterator', 'bind', 'isArray', 'isPlainObject', 'keys', 'template')) {
-        source = removeVar(source, 'reNative');
       }
       if (isRemoved(source, 'createIterator', 'keys')) {
         source = removeVar(source, 'nativeKeys');

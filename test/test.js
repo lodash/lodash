@@ -343,7 +343,7 @@
         ok(_.isEqual(object, clone));
 
         if (_.isObject(object)) {
-          notStrictEqual(clone, object);
+          notEqual(clone, object);
         } else {
           skipTest();
         }
@@ -2365,12 +2365,10 @@
     });
 
     test('should deep compare `properties` values', function() {
-      var collection = [
-        { 'a': { 'b': 1, 'c': 2 } },
-        { 'a': { 'b': 2, 'c': 3 } }
-      ];
+      var collection = [{ 'a': { 'b': 1, 'c': 2 } }],
+          expected = _.cloneDeep(collection);
 
-      deepEqual(_.where(collection, { 'a': { 'b': 1 } }), [{ 'a': { 'b': 1, 'c': 2 } }]);
+      deepEqual(_.where(collection, { 'a': { 'b': 1 } }), expected);
     });
   }());
 

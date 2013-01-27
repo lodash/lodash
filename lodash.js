@@ -1014,8 +1014,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  `_.reduce` without using its callback's `key and `object` arguments as sources.
+   * @param- {Object} [guard] Internally used to allow working with `_.reduce`
+   *  without using its callback's `key and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -1025,13 +1025,16 @@
   var assign = createIterator(assignIteratorOptions);
 
   /**
-   * Creates a shallow clone of `value`. Nested objects will be assigned by reference.
+   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
+   * be cloned, otherwise they will be assigned by reference.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to clone.
-   * @param- {Object} [deepIndicator] Internally used to indicate performing a deep clone.
+   * @param {Boolean} deep A flag to indicate a deep clone.
+   * @param- {Object} [guard] Internally used to allow working with "Collections"
+   *  methods without using their `callback` argument, `index`, for `deep`.
    * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
    * @param- {Array} [stackB=[]] Internally used to associate clones with their source counterparts.
    * @returns {Mixed} Returns the cloned `value`.
@@ -1046,13 +1049,12 @@
    * shallow[0] === stooges[0];
    * // => true
    *
-   * shallow == stooges;
+   * var deep = _.clone(stooges, true);
+   * deep[0] === stooges[0];
    * // => false
    */
-  function clone(value, deepIndicator, stackA, stackB) {
-    // allows working with "Collections" methods without using their `callback`
-    // arguments, `index|key` and `collection`
-    deepIndicator = deepIndicator == indicatorObject;
+  function clone(value, deep, guard, stackA, stackB) {
+    deep = !guard && deep;
 
     // inspect [[Class]]
     var isObj = isObject(value);
@@ -1064,7 +1066,7 @@
       var isArr = isArray(value);
     }
     // shallow clone
-    if (!isObj || !deepIndicator) {
+    if (!isObj || !deep) {
       return isObj
         ? (isArr ? slice(value) : assign({}, value))
         : value;
@@ -1102,7 +1104,7 @@
 
     // recursively populate clone (susceptible to call stack limits)
     (isArr ? forEach : forOwn)(value, function(objValue, key) {
-      result[key] = clone(objValue, indicatorObject, stackA, stackB);
+      result[key] = clone(objValue, deep, null, stackA, stackB);
     });
 
     // add array properties assigned by `RegExp#exec`
@@ -1142,7 +1144,7 @@
    * // => false
    */
   function cloneDeep(value) {
-    return clone(value, indicatorObject);
+    return clone(value, true);
   }
 
   /**
@@ -1156,8 +1158,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  `_.reduce` without using its callback's `key` and `object` arguments as sources.
+   * @param- {Object} [guard] Internally used to allow working with `_.reduce`
+   *  without using its callback's `key` and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *

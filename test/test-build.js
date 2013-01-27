@@ -774,6 +774,9 @@
         equal('imports' in lodash.templateSettings, false, '_.templateSettings should not have an "imports" property: ' + basename);
         equal(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);
 
+        var collection = [{ 'a': { 'b': 1, 'c': 2 } }];
+        deepEqual(lodash.where(collection, { 'a': { 'b': 1 } }), []);
+
         start();
       });
     });
@@ -833,8 +836,8 @@
         var lodash = context._,
             clone = lodash.clone(array, true);
 
-        deepEqual(array, clone, basename);
-        notEqual(array, clone, basename);
+        ok(_.isEqual(array, clone), basename);
+        notEqual(array[0], clone[0], basename);
         start();
       });
     });
@@ -1025,7 +1028,7 @@
         deepEqual(lodash.sortBy([3, 2, 1], _.identity), array, basename);
         ok(lodash.isEqual(circular1, circular2), basename);
 
-        var actual = lodash.clone(circular1, true);
+        var actual = lodash.cloneDeep(circular1);
         ok(actual != circular1 && actual.b == actual, basename);
         start();
       });
@@ -1065,78 +1068,94 @@
       })
     );
 
-    commands.forEach(function(command) {
-      asyncTest('`lodash ' + command +'`', function() {
-        var start = _.after(2, _.once(QUnit.start));
+    commands.forEach(function(origCommand) {
+      _.times(3, function(index) {
+        var command = origCommand;
 
-        build(['--silent'].concat(command.split(' ')), function(data) {
-          var methodNames,
-              basename = path.basename(data.outputPath, '.js'),
-              context = createContext(),
-              isUnderscore = /underscore/.test(command),
-              exposeAssign = !isUnderscore;
+        if (index == 1) {
+          if (/mobile/.test(command)) {
+            return;
+          }
+          command = 'mobile ' + command;
+        }
+        if (index == 2) {
+          if (/category|underscore/.test(command)) {
+            return;
+          }
+          command = 'underscore ' + command;
+        }
+        asyncTest('`lodash ' + command +'`', function() {
+          var start = _.after(2, _.once(QUnit.start));
 
-          try {
-            vm.runInContext(data.source, context);
-          } catch(e) {
-            console.log(e);
-          }
-          // add method names explicitly
-          if (/include/.test(command)) {
-            methodNames = command.match(/include=(\S*)/)[1].split(/, */);
-          }
-          // add method names required by Backbone and Underscore builds
-          if (/backbone/.test(command) && !methodNames) {
-            methodNames = backboneDependencies.slice();
-          }
-          if (isUnderscore) {
-            if (methodNames) {
-              exposeAssign = methodNames.indexOf('assign') > -1;
-            } else {
-              methodNames = underscoreMethods.slice();
+          build(['--silent'].concat(command.split(' ')), function(data) {
+            var methodNames,
+                basename = path.basename(data.outputPath, '.js'),
+                context = createContext(),
+                isUnderscore = /underscore/.test(command),
+                exposeAssign = !isUnderscore;
+
+            try {
+              vm.runInContext(data.source, context);
+            } catch(e) {
+              console.log(e);
             }
-          }
-          // add method names explicitly by category
-          if (/category/.test(command)) {
-            // resolve method names belonging to each category (case-insensitive)
-            methodNames = command.match(/category=(\S*)/)[1].split(/, */).reduce(function(result, category) {
-              var capitalized = category[0].toUpperCase() + category.toLowerCase().slice(1);
-              return result.concat(getMethodsByCategory(capitalized));
-            }, methodNames || []);
-          }
-          // init `methodNames` if it hasn't been inited
-          if (!methodNames) {
-            methodNames = allMethods.slice();
-          }
-          if (/plus/.test(command)) {
-            methodNames = methodNames.concat(command.match(/plus=(\S*)/)[1].split(/, */));
-          }
-          if (/minus/.test(command)) {
-            methodNames = _.without.apply(_, [methodNames]
-              .concat(expandMethodNames(command.match(/minus=(\S*)/)[1].split(/, */))));
-          }
-          if (/exclude/.test(command)) {
-            methodNames = _.without.apply(_, [methodNames]
-              .concat(expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))));
-          }
+            // add method names explicitly
+            if (/include/.test(command)) {
+              methodNames = command.match(/include=(\S*)/)[1].split(/, */);
+            }
+            // add method names required by Backbone and Underscore builds
+            if (/backbone/.test(command) && !methodNames) {
+              methodNames = backboneDependencies.slice();
+            }
+            if (isUnderscore) {
+              if (methodNames) {
+                exposeAssign = methodNames.indexOf('assign') > -1;
+              } else {
+                methodNames = underscoreMethods.slice();
+              }
+            }
+            // add method names explicitly by category
+            if (/category/.test(command)) {
+              // resolve method names belonging to each category (case-insensitive)
+              methodNames = command.match(/category=(\S*)/)[1].split(/, */).reduce(function(result, category) {
+                var capitalized = category[0].toUpperCase() + category.toLowerCase().slice(1);
+                return result.concat(getMethodsByCategory(capitalized));
+              }, methodNames || []);
+            }
+            // init `methodNames` if it hasn't been inited
+            if (!methodNames) {
+              methodNames = allMethods.slice();
+            }
+            if (/plus/.test(command)) {
+              methodNames = methodNames.concat(command.match(/plus=(\S*)/)[1].split(/, */));
+            }
+            if (/minus/.test(command)) {
+              methodNames = _.without.apply(_, [methodNames]
+                .concat(expandMethodNames(command.match(/minus=(\S*)/)[1].split(/, */))));
+            }
+            if (/exclude/.test(command)) {
+              methodNames = _.without.apply(_, [methodNames]
+                .concat(expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))));
+            }
 
-          // expand aliases and categories to real method names
-          methodNames = expandMethodNames(methodNames).reduce(function(result, methodName) {
-            return result.concat(methodName, getMethodsByCategory(methodName));
-          }, []);
+            // expand aliases and categories to real method names
+            methodNames = expandMethodNames(methodNames).reduce(function(result, methodName) {
+              return result.concat(methodName, getMethodsByCategory(methodName));
+            }, []);
 
-          // remove nonexistent and duplicate method names
-          methodNames = _.uniq(_.intersection(allMethods, expandMethodNames(methodNames)));
+            // remove nonexistent and duplicate method names
+            methodNames = _.uniq(_.intersection(allMethods, expandMethodNames(methodNames)));
 
-          if (!exposeAssign) {
-            methodNames = _.without(methodNames, 'assign');
-          }
-          var lodash = context._ || {};
-          methodNames.forEach(function(methodName) {
-            testMethod(lodash, methodName, basename);
+            if (!exposeAssign) {
+              methodNames = _.without(methodNames, 'assign');
+            }
+            var lodash = context._ || {};
+            methodNames.forEach(function(methodName) {
+              testMethod(lodash, methodName, basename);
+            });
+
+            start();
           });
-
-          start();
         });
       });
     });

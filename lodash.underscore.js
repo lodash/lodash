@@ -392,7 +392,7 @@
         var length = props.length,
             result = false;
         while (length--) {
-          if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
+          if (!(result = object[props[length]] === func[props[length]])) {
             break;
           }
         }
@@ -799,8 +799,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  `_.reduce` without using its callback's `key and `object` arguments as sources.
+   * @param- {Object} [guard] Internally used to allow working with `_.reduce`
+   *  without using its callback's `key and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -823,13 +823,16 @@
   }
 
   /**
-   * Creates a shallow clone of `value`. Nested objects will be assigned by reference.
+   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
+   * be cloned, otherwise they will be assigned by reference.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to clone.
-   * @param- {Object} [deepIndicator] Internally used to indicate performing a deep clone.
+   * @param {Boolean} deep A flag to indicate a deep clone.
+   * @param- {Object} [guard] Internally used to allow working with "Collections"
+   *  methods without using their `callback` argument, `index`, for `deep`.
    * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
    * @param- {Array} [stackB=[]] Internally used to associate clones with their source counterparts.
    * @returns {Mixed} Returns the cloned `value`.
@@ -844,7 +847,8 @@
    * shallow[0] === stooges[0];
    * // => true
    *
-   * shallow == stooges;
+   * var deep = _.clone(stooges, true);
+   * deep[0] === stooges[0];
    * // => false
    */
   function clone(value) {
@@ -864,8 +868,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  `_.reduce` without using its callback's `key` and `object` arguments as sources.
+   * @param- {Object} [guard] Internally used to allow working with `_.reduce`
+   *  without using its callback's `key` and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *

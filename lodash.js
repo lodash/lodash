@@ -47,7 +47,7 @@
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
     (objectRef.valueOf + '')
-      .replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&')
+      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
   );
 

@@ -123,7 +123,7 @@
     'map': ['identity', 'isArray', 'isEqual', 'keys'],
     'max': ['isArray', 'isEqual', 'isString', 'keys'],
     'memoize': [],
-    'merge': ['forEach', 'forOwn', 'isArray', 'isPlainObject'],
+    'merge': ['forEach', 'forOwn', 'isArray', 'isObject', 'isPlainObject'],
     'min': ['isArray', 'isEqual', 'isString', 'keys'],
     'mixin': ['forEach', 'forOwn', 'functions'],
     'noConflict': [],
@@ -133,7 +133,7 @@
     'pairs': ['keys'],
     'partial': ['isFunction', 'isObject'],
     'partialRight': ['isFunction', 'isObject'],
-    'pick': ['forIn'],
+    'pick': ['forIn', 'isObject'],
     'pluck': ['map'],
     'random': [],
     'range': [],
@@ -1766,7 +1766,7 @@
         if (buildMethods.indexOf('partial') < 0 && buildMethods.indexOf('partialRight') < 0) {
           source = source.replace(matchFunction(source, 'createBound'), function(match) {
             return match
-              .replace(/, *right/, '')
+              .replace(/, *right[^)]*/, '')
               .replace(/(function createBound\([^{]+{)[\s\S]+?(\n *function bound)/, '$1$2')
               .replace(/thisBinding *=[^}]+}/, 'thisBinding = thisArg;\n')
               .replace(/\(args *=.+/, 'partialArgs.concat(slice(args))');

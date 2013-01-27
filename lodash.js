@@ -342,9 +342,9 @@
     // the `iterable` may be reassigned by the `top` snippet
     'var index, iterable = <%= firstArg %>, ' +
     // assign the `result` variable an initial value
-    'result = <%= firstArg %>;\n' +
+    'result = iterable;\n' +
     // exit early if the first argument is falsey
-    'if (!<%= firstArg %>) return result;\n' +
+    'if (!iterable) return result;\n' +
     // add code before the iteration branches
     '<%= top %>;\n' +
 
@@ -447,7 +447,8 @@
       'var argsIndex = 0,\n' +
       "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
       'while (++argsIndex < argsLength) {\n' +
-      '  if ((iterable = arguments[argsIndex])) {',
+      '  iterable = arguments[argsIndex];\n' +
+      '  if (iterable && objectTypes[typeof iterable]) {',
     'loop': 'result[index] = iterable[index]',
     'bottom': '  }\n}'
   };
@@ -462,6 +463,7 @@
 
   /** Reusable iterator options for `forIn` and `forOwn` */
   var forOwnIteratorOptions = {
+    'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
     'arrays': false
   };
 
@@ -1023,16 +1025,13 @@
   var assign = createIterator(assignIteratorOptions);
 
   /**
-   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
-   * be cloned, otherwise they will be assigned by reference.
+   * Creates a shallow clone of `value`. Nested objects will be assigned by reference.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to clone.
-   * @param {Boolean} deep A flag to indicate a deep clone.
-   * @param- {Object} [guard] Internally used to allow this method to work with
-   *  others like `_.map` without using their callback `index` argument for `deep`.
+   * @param- {Object} [deep] Internally used to indicate performing a deep clone.
    * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
    * @param- {Array} [stackB=[]] Internally used to associate clones with their
    *  source counterparts.
@@ -1041,25 +1040,21 @@
    *
    * var stooges = [
    *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
+   *   { 'name': 'larry', 'age': 50 }
    * ];
    *
    * var shallow = _.clone(stooges);
    * shallow[0] === stooges[0];
    * // => true
    *
-   * var deep = _.clone(stooges, true);
-   * deep[0] === stooges[0];
+   * shallow == stooges;
    * // => false
    */
-  function clone(value, deep, guard, stackA, stackB) {
-    if (value == null) {
-      return value;
-    }
-    if (guard) {
-      deep = false;
-    }
+  function clone(value, deep, stackA, stackB) {
+    // allows working with "Collections" methods without using their `callback`
+    // arguments, `index|key` and `collection`
+    deep = deep == indicatorObject;
+
     // inspect [[Class]]
     var isObj = isObject(value);
     if (isObj) {
@@ -1108,7 +1103,7 @@
 
     // recursively populate clone (susceptible to call stack limits)
     (isArr ? forEach : forOwn)(value, function(objValue, key) {
-      result[key] = clone(objValue, deep, null, stackA, stackB);
+      result[key] = clone(objValue, indicatorObject, stackA, stackB);
     });
 
     // add array properties assigned by `RegExp#exec`
@@ -1140,8 +1135,7 @@
    *
    * var stooges = [
    *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
+   *   { 'name': 'larry', 'age': 50 }
    * ];
    *
    * var deep = _.cloneDeep(stooges);
@@ -1149,7 +1143,7 @@
    * // => false
    */
   function cloneDeep(value) {
-    return clone(value, true);
+    return clone(value, indicatorObject);
   }
 
   /**
@@ -1230,8 +1224,8 @@
    * @returns {Object} Returns the created inverted object.
    * @example
    *
-   *  _.invert({ 'first': 'Moe', 'second': 'Larry', 'third': 'Curly' });
-   * // => { 'Moe': 'first', 'Larry': 'second', 'Curly': 'third' } (order is not guaranteed)
+   *  _.invert({ 'first': 'moe', 'second': 'larry' });
+   * // => { 'moe': 'first', 'larry': 'second' } (order is not guaranteed)
    */
   function invert(object) {
     var index = -1,
@@ -1766,7 +1760,7 @@
         index = 0,
         length = 2;
 
-    if (!object) {
+    if (!isObject(object)) {
       return object;
     }
     if (indicator === indicatorObject) {
@@ -1777,6 +1771,9 @@
     else {
       stackA = [];
       stackB = [];
+
+      // allows working with `_.reduce` and `_.reduceRight` without
+      // using their `callback` arguments, `index|key` and `collection`
       if (typeof indicator != 'number') {
         length = args.length;
         callback = typeof (callback = args[length - 2]) == 'function'
@@ -1884,8 +1881,8 @@
    * @returns {Array} Returns new array of key-value pairs.
    * @example
    *
-   * _.pairs({ 'moe': 30, 'larry': 40, 'curly': 50 });
-   * // => [['moe', 30], ['larry', 40], ['curly', 50]] (order is not guaranteed)
+   * _.pairs({ 'moe': 30, 'larry': 40 });
+   * // => [['moe', 30], ['larry', 40]] (order is not guaranteed)
    */
   function pairs(object) {
     var index = -1,
@@ -1930,7 +1927,7 @@
     if (typeof callback != 'function') {
       var index = 0,
           props = concat.apply(arrayRef, arguments),
-          length = props.length;
+          length = isObject(object) ? props.length : 0;
 
       while (++index < length) {
         var key = props[index];
@@ -2376,14 +2373,16 @@
    * @returns {Mixed} Returns the maximum value.
    * @example
    *
+   * _.max([4, 2, 8, 6]);
+   * // => 8
+   *
    * var stooges = [
    *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
+   *   { 'name': 'larry', 'age': 50 }
    * ];
    *
    * _.max(stooges, function(stooge) { return stooge.age; });
-   * // => { 'name': 'curly', 'age': 60 };
+   * // => { 'name': 'larry', 'age': 50 };
    */
   function max(collection, callback, thisArg) {
     var computed = -Infinity,
@@ -2430,8 +2429,16 @@
    * @returns {Mixed} Returns the minimum value.
    * @example
    *
-   * _.min([10, 5, 100, 2, 1000]);
+   * _.min([4, 2, 8, 6]);
    * // => 2
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 }
+   * ];
+   *
+   * _.min(stooges, function(stooge) { return stooge.age; });
+   * // => { 'name': 'moe', 'age': 40 };
    */
   function min(collection, callback, thisArg) {
     var computed = Infinity,
@@ -2477,12 +2484,11 @@
    *
    * var stooges = [
    *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
+   *   { 'name': 'larry', 'age': 50 }
    * ];
    *
    * _.pluck(stooges, 'name');
-   * // => ['moe', 'larry', 'curly']
+   * // => ['moe', 'larry']
    */
   function pluck(collection, property) {
     return map(collection, property + '');
@@ -2711,8 +2717,8 @@
    * _.sortBy([1, 2, 3], function(num) { return this.sin(num); }, Math);
    * // => [3, 1, 2]
    *
-   * _.sortBy(['larry', 'brendan', 'moe'], 'length');
-   * // => ['moe', 'larry', 'brendan']
+   * _.sortBy(['banana', 'strawberry', 'apple'], 'length');
+   * // => ['apple', 'banana', 'strawberry']
    */
   function sortBy(collection, callback, thisArg) {
     var index = -1,
@@ -2772,8 +2778,7 @@
    *
    * var stooges = [
    *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 },
-   *   { 'name': 'curly', 'age': 60 }
+   *   { 'name': 'larry', 'age': 50 }
    * ];
    *
    * _.where(stooges, { 'age': 40 });
@@ -3164,8 +3169,8 @@
    *  corresponding values.
    * @example
    *
-   * _.object(['moe', 'larry', 'curly'], [30, 40, 50]);
-   * // => { 'moe': 30, 'larry': 40, 'curly': 50 }
+   * _.object(['moe', 'larry'], [30, 40]);
+   * // => { 'moe': 30, 'larry': 40 }
    */
   function object(keys, values) {
     var index = -1,
@@ -3470,8 +3475,8 @@
    * @returns {Array} Returns a new array of grouped elements.
    * @example
    *
-   * _.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]);
-   * // => [['moe', 30, true], ['larry', 40, false], ['curly', 50, false]]
+   * _.zip(['moe', 'larry'], [30, 40], [true, false]);
+   * // => [['moe', 30, true], ['larry', 40, false]]
    */
   function zip(array) {
     var index = -1,
@@ -3992,11 +3997,11 @@
    *   }
    * });
    *
-   * _.capitalize('larry');
-   * // => 'Larry'
+   * _.capitalize('moe');
+   * // => 'Moe'
    *
-   * _('curly').capitalize();
-   * // => 'Curly'
+   * _('moe').capitalize();
+   * // => 'Moe'
    */
   function mixin(object) {
     forEach(functions(object), function(methodName) {
@@ -4123,8 +4128,8 @@
    * // => 'hello moe'
    *
    * var list = '<% _.forEach(people, function(name) { %><li><%= name %></li><% }); %>';
-   * _.template(list, { 'people': ['moe', 'larry', 'curly'] });
-   * // => '<li>moe</li><li>larry</li><li>curly</li>'
+   * _.template(list, { 'people': ['moe', 'larry'] });
+   * // => '<li>moe</li><li>larry</li>'
    *
    * // using the "escape" delimiter to escape HTML in data property values
    * _.template('<b><%- value %></b>', { 'value': '<script>' });

@@ -188,7 +188,7 @@
           numbers = Array(limit),\
           fourNumbers = [5, 25, 10, 30],\
           nestedNumbers = [1, [2], [3, [[4]]]],\
-          twoNumbers = [12, 21];\
+          twoNumbers = [12, 23];\
       \
       for (index = 0; index < limit; index++) {\
         numbers[index] = index;\
@@ -295,7 +295,13 @@
         var object2 = {},\
             objects2 = Array(limit),\
             numbers2 = Array(limit),\
-            nestedNumbers2 = [1, [2], [3, [[4]]]];\
+            nestedNumbers2 = [1, [2], [3, [[4]]]],\
+            nestedNumbers3 = [1, [2], [5, [[6]]]],\
+            simpleObject = { "a": 1 },\
+            simpleObject2 = { "a": 2 },\
+            simpleObjects = [simpleObject],\
+            simpleObjects2 = [simpleObject2],\
+            twoNumbers2 = [18, 27];\
         \
         for (index = 0; index < limit; index++) {\
           object2["key" + index] = index;\
@@ -1041,11 +1047,15 @@
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing arrays')
       .add(buildName, {
-        'fn': 'lodash.isEqual(numbers, numbers2)',
+        'fn': '\
+          lodash.isEqual(numbers, numbers2);\
+          lodash.isEqual(twoNumbers, twoNumbers2);',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
-        'fn': '_.isEqual(numbers, numbers2)',
+        'fn': '\
+          _.isEqual(numbers, numbers2);\
+          _.isEqual(twoNumbers, twoNumbers2);',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1053,11 +1063,15 @@
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing nested arrays')
       .add(buildName, {
-        'fn': 'lodash.isEqual(nestedNumbers, nestedNumbers2)',
+        'fn': '\
+          lodash.isEqual(nestedNumbers, nestedNumbers2);\
+          lodash.isEqual(nestedNumbers2, nestedNumbers3);',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
-        'fn': '_.isEqual(nestedNumbers, nestedNumbers2)',
+        'fn': '\
+          _.isEqual(nestedNumbers, nestedNumbers2);\
+          _.isEqual(nestedNumbers2, nestedNumbers3);',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1065,11 +1079,15 @@
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing arrays of objects')
       .add(buildName, {
-        'fn': 'lodash.isEqual(objects, objects2)',
+        'fn': '\
+          lodash.isEqual(objects, objects2);\
+          lodash.isEqual(simpleObjects, simpleObjects2);',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
-        'fn': '_.isEqual(objects, objects2)',
+        'fn': '\
+          _.isEqual(objects, objects2);\
+          _.isEqual(simpleObjects, simpleObjects2);',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1077,11 +1095,15 @@
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing objects')
       .add(buildName, {
-        'fn': 'lodash.isEqual(object, object2)',
+        'fn': '\
+          lodash.isEqual(object, object2);\
+          lodash.isEqual(simpleObject, simpleObject2);',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
-        'fn': '_.isEqual(object, object2)',
+        'fn': '\
+          _.isEqual(object, object2);\
+          _.isEqual(simpleObject, simpleObject2);',
         'teardown': 'function isEqual(){}'
       })
   );

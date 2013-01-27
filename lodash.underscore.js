@@ -333,7 +333,7 @@
    * @param {Function|String} func The function to bind or the method name.
    * @param {Mixed} [thisArg] The `this` binding of `func`.
    * @param {Array} partialArgs An array of arguments to be partially applied.
-   * @param {Object} [right] Used to indicate partially applying arguments from the right.
+   * @param {Object} [rightIndicator] Used to indicate partially applying arguments from the right.
    * @returns {Function} Returns the new bound function.
    */
   function createBound(func, thisArg, partialArgs) {
@@ -392,7 +392,7 @@
         var length = props.length,
             result = false;
         while (length--) {
-          if (!(result = isEqual(object[props[length]], func[props[length]]))) {
+          if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
             break;
           }
         }
@@ -829,10 +829,9 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to clone.
-   * @param- {Object} [deep] Internally used to indicate performing a deep clone.
+   * @param- {Object} [deepIndicator] Internally used to indicate performing a deep clone.
    * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
-   * @param- {Array} [stackB=[]] Internally used to associate clones with their
-   *  source counterparts.
+   * @param- {Array} [stackB=[]] Internally used to associate clones with their source counterparts.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
    *
@@ -1057,6 +1056,8 @@
    * @category Objects
    * @param {Mixed} a The value to compare.
    * @param {Mixed} b The other value to compare.
+   * @param- {Object} [whereIndicator] Internally used to indicate that when
+   *  comparing objects, `a` has at least the properties of `b`.
    * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
    * @param- {Object} [stackB=[]] Internally used track traversed `b` objects.
    * @returns {Boolean} Returns `true`, if the values are equvalent, else `false`.
@@ -1071,21 +1072,26 @@
    * _.isEqual(moe, clone);
    * // => true
    */
-  function isEqual(a, b, stackA, stackB) {
+  function isEqual(a, b, whereIndicator, stackA, stackB) {
     // exit early for identical values
     if (a === b) {
       // treat `+0` vs. `-0` as not equal
       return a !== 0 || (1 / a == 1 / b);
     }
-    // exit early for unlike `null` or `undefined` values
-    if (a == null || b == null) {
+    var type = typeof a,
+        otherType = typeof b;
+
+    // exit early for unlike primitive values
+    if (a === a &&
+        (!a || (type != 'function' && type != 'object')) &&
+        (!b || (otherType != 'function' && otherType != 'object'))) {
       return false;
     }
     // compare [[Class]] names
     var className = toString.call(a),
-        otherName = toString.call(b);
+        otherClass = toString.call(b);
 
-    if (className != otherName) {
+    if (className != otherClass) {
       return false;
     }
     switch (className) {
@@ -1112,7 +1118,7 @@
     if (!isArr) {
       // unwrap any `lodash` wrapped values
       if (a.__wrapped__ || b.__wrapped__) {
-        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b);
+        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, whereIndicator);
       }
       // exit for functions and DOM nodes
       if (className != objectClass) {
@@ -1152,13 +1158,13 @@
     // recursively compare objects and arrays (susceptible to call stack limits)
     if (isArr) {
       // compare lengths to determine if a deep comparison is necessary
-      size = a.length;
-      result = size == b.length;
+      size = b.length;
+      result = whereIndicator == indicatorObject || size == a.length;
 
       if (result) {
         // deep compare the contents, ignoring non-numeric properties
         while (size--) {
-          if (!(result = isEqual(a[size], b[size], stackA, stackB))) {
+          if (!(result = isEqual(a[size], b[size], whereIndicator, stackA, stackB))) {
             break;
           }
         }
@@ -1167,20 +1173,20 @@
     }
     // deep compare objects using `forIn`, instead of `forOwn`, to avoid `Object.keys`
     // which, in this case, is more costly
-    forIn(a, function(value, key, a) {
-      if (hasOwnProperty.call(a, key)) {
+    forIn(b, function(value, key, b) {
+      if (hasOwnProperty.call(b, key)) {
         // count the number of properties.
         size++;
         // deep compare each property value.
-        return !(result = hasOwnProperty.call(b, key) && isEqual(value, b[key], stackA, stackB)) && indicatorObject;
+        return !(result = hasOwnProperty.call(a, key) && isEqual(a[key], value, whereIndicator, stackA, stackB)) && indicatorObject;
       }
     });
 
-    if (result) {
+    if (result && whereIndicator != indicatorObject) {
       // ensure both objects have the same number of properties
-      forIn(b, function(value, key, b) {
-        if (hasOwnProperty.call(b, key)) {
-          // `size` will be `-1` if `b` has more properties than `a`
+      forIn(a, function(value, key, a) {
+        if (hasOwnProperty.call(a, key)) {
+          // `size` will be `-1` if `a` has more properties than `b`
           return !(result = --size > -1) && indicatorObject;
         }
       });
@@ -2261,7 +2267,7 @@
 
   /**
    * Examines each element in a `collection`, returning an array of all elements
-   * that contain the given `properties`.
+   * that have the given `properties`.
    *
    * @static
    * @memberOf _

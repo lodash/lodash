@@ -2366,11 +2366,11 @@
 
     test('should deep compare `properties` values', function() {
       var collection = [
-        { 'a': { 'b': 1 }, 'c': 2 },
-        { 'a': { 'b': 2 }, 'c': 3 }
+        { 'a': { 'b': 1, 'c': 2 } },
+        { 'a': { 'b': 2, 'c': 3 } }
       ];
 
-      deepEqual(_.where(collection, { 'a': { 'b': 1 } }), [{ 'a': { 'b': 1 }, 'c': 2 }]);
+      deepEqual(_.where(collection, { 'a': { 'b': 1 } }), [{ 'a': { 'b': 1, 'c': 2 } }]);
     });
   }());
 

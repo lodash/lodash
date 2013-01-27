@@ -2774,7 +2774,9 @@
 
   /**
    * Examines each element in a `collection`, returning an array of all elements
-   * that have the given `properties`.
+   * that have the given `properties`. When checking `properties`, this method
+   * performs a deep comparison between values to determine if they are equivalent
+   * to each other.
    *
    * @static
    * @memberOf _

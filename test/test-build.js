@@ -724,13 +724,24 @@
         vm.runInContext(data.source, context);
         var lodash = context._;
 
-        var object = { 'fn': lodash.bind(function(foo) { return foo + this.bar; }, { 'bar': 1 }, 1) };
+        var object = {
+          'fn': lodash.bind(function(foo) {
+            return foo + this.bar;
+          }, { 'bar': 1 }, 1)
+        };
+
         equal(object.fn(), 2, '_.bind: ' + basename);
 
-        strictEqual(lodash.clone(array, true)[0], array[0], '_.clone should be shallow: ' + basename);
-        ok(lodash.contains({ 'a': 1, 'b': 2 }, 1), '_.contains should work with objects: ' + basename);
-        ok(lodash.contains([1, 2, 3], 1, 2), '_.contains should ignore `fromIndex`: ' + basename);
-        ok(!lodash.every([true, false, true]), '_.every: ' + basename);
+        var actual = lodash.clone('a', function() {
+          return this.a;
+        }, { 'a': 'A' });
+
+        equal(actual, 'a', '_.clone should ignore `callback` and `thisArg`: ' + basename);
+        strictEqual(lodash.clone(array, true)[0], array[0], '_.clone should ignore `deep`: ' + basename);
+
+        strictEqual(lodash.contains({ 'a': 1, 'b': 2 }, 1), true, '_.contains should work with objects: ' + basename);
+        strictEqual(lodash.contains([1, 2, 3], 1, 2), true, '_.contains should ignore `fromIndex`: ' + basename);
+        strictEqual(lodash.every([true, false, true]), false, '_.every: ' + basename);
 
         function Foo() {}
         Foo.prototype = { 'a': 1 };
@@ -738,7 +749,7 @@
         deepEqual(lodash.defaults({}, new Foo), Foo.prototype, '_.defaults should assign inherited `source` properties: ' + basename);
         deepEqual(lodash.extend({}, new Foo), Foo.prototype, '_.extend should assign inherited `source` properties: ' + basename);
 
-        var actual = lodash.find(array, function(value) {
+        actual = lodash.find(array, function(value) {
           return 'a' in value;
         });
 
@@ -758,6 +769,12 @@
         object = { 'a': 1, 'b': 2, 'c': 3 };
         equal(lodash.isEqual(object, { 'a': 1, 'b': 0, 'c': 3 }), false, '_.isEqual: ' + basename);
 
+        actual = lodash.isEqual('a', 'b', function(a, b) {
+          return this[a] == this[b];
+        }, { 'a': 1, 'b': 1 });
+
+        strictEqual(actual, false, '_.isEqual should ignore `callback` and `thisArg`: ' + basename);
+
         equal(lodash.max('abc'), -Infinity, '_.max should return `-Infinity` for strings: ' + basename);
         equal(lodash.min('abc'), Infinity, '_.min should return `Infinity` for strings: ' + basename);
 
@@ -769,10 +786,10 @@
         actual = lodash.pick(object, function(value) { return value != 3; });
         deepEqual(_.keys(actual), [], '_.pick should not accept a `callback`: ' + basename);
 
-        ok(lodash.some([false, true, false]), '_.some: ' + basename);
+        strictEqual(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
         equal('imports' in lodash.templateSettings, false, '_.templateSettings should not have an "imports" property: ' + basename);
-        equal(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);
+        strictEqual(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);
 
         var collection = [{ 'a': { 'b': 1, 'c': 2 } }];
         deepEqual(lodash.where(collection, { 'a': { 'b': 1 } }), []);
@@ -1026,7 +1043,7 @@
 
         deepEqual(lodash.merge(object1, object2), object3, basename);
         deepEqual(lodash.sortBy([3, 2, 1], _.identity), array, basename);
-        ok(lodash.isEqual(circular1, circular2), basename);
+        strictEqual(lodash.isEqual(circular1, circular2), true, basename);
 
         var actual = lodash.cloneDeep(circular1);
         ok(actual != circular1 && actual.b == actual, basename);
@@ -1091,7 +1108,7 @@
             var methodNames,
                 basename = path.basename(data.outputPath, '.js'),
                 context = createContext(),
-                isUnderscore = /underscore/.test(command),
+                isUnderscore = /backbone|underscore/.test(command),
                 exposeAssign = !isUnderscore;
 
             try {

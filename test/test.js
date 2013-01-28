@@ -340,7 +340,7 @@
     _.forOwn(objects, function(object, key) {
       test('should deep clone ' + key, function() {
         var clone = _.cloneDeep(object);
-        ok(_.isEqual(object, clone));
+        strictEqual(_.isEqual(object, clone), true);
 
         if (_.isObject(object)) {
           notEqual(clone, object);
@@ -391,6 +391,33 @@
       deepEqual(_.cloneDeep(shadowed), shadowed);
       notEqual(_.cloneDeep(shadowed), shadowed);
     });
+
+    _.each([
+      'clone',
+      'cloneDeep'
+    ],
+    function(methodName) {
+      var func = _[methodName],
+          klass = new Klass;
+
+      test('_.' + methodName + ' should pass the correct `callback` arguments', function() {
+        var args;
+
+        func(klass, function() {
+          args || (args = slice.call(arguments));
+        });
+
+        deepEqual(args, [klass]);
+      });
+
+      test('_.' + methodName + ' should correct set the `this` binding', function() {
+        var actual = func('a', function(value) {
+          return this[value];
+        }, { 'a': 'A' });
+
+        equal(actual, 'A');
+      });
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -405,23 +432,23 @@
     },
     function(collection, key) {
       test('should work with ' + key + ' and a positive `fromIndex`', function() {
-        ok(_.contains(collection, 1, 2));
+        strictEqual(_.contains(collection, 1, 2), true);
       });
 
       test('should work with ' + key + ' and a `fromIndex` >= collection\'s length', function() {
-        equal(_.contains(collection, 1, 6), false);
-        equal(_.contains(collection, undefined, 6), false);
-        equal(_.contains(collection, 1, 8), false);
-        equal(_.contains(collection, undefined, 8), false);
+        strictEqual(_.contains(collection, 1, 6), false);
+        strictEqual(_.contains(collection, undefined, 6), false);
+        strictEqual(_.contains(collection, 1, 8), false);
+        strictEqual(_.contains(collection, undefined, 8), false);
       });
 
       test('should work with ' + key + ' and a negative `fromIndex`', function() {
-        ok(_.contains(collection, 2, -3));
+        strictEqual(_.contains(collection, 2, -3), true);
       });
 
       test('should work with ' + key + ' and a negative `fromIndex` <= negative collection\'s length', function() {
-        ok(_.contains(collection, 1, -6));
-        ok(_.contains(collection, 2, -8));
+        strictEqual(_.contains(collection, 1, -6), true);
+        strictEqual(_.contains(collection, 2, -8), true);
       });
     });
 
@@ -431,8 +458,8 @@
     },
     function(collection, key) {
       test('should work with a string ' + key + ' for `collection`', function() {
-        ok(_.contains(collection, 'bc'));
-        ok(!_.contains(collection, 'd'));
+        strictEqual(_.contains(collection, 'bc'), true);
+        strictEqual(_.contains(collection, 'd'), false);
       });
     });
   }());
@@ -515,7 +542,7 @@
 
   (function() {
     test('should return `false` as soon as the `callback` result is falsey', function() {
-      ok(!_.every([true, null, true], _.identity));
+      strictEqual(_.every([true, null, true], _.identity), false);
     });
   }());
 
@@ -953,13 +980,13 @@
   (function() {
     test('should use strict equality in its duck type check', function() {
       var element = window.document ? document.body : { 'nodeType': 1 };
-      ok(_.isElement(element));
+      strictEqual(_.isElement(element), true);
 
-      equal(_.isElement({ 'nodeType': new Number(1) }), false);
-      equal(_.isElement({ 'nodeType': true }), false);
-      equal(_.isElement({ 'nodeType': [1] }), false);
-      equal(_.isElement({ 'nodeType': '1' }), false);
-      equal(_.isElement({ 'nodeType': '001' }), false);
+      strictEqual(_.isElement({ 'nodeType': new Number(1) }), false);
+      strictEqual(_.isElement({ 'nodeType': true }), false);
+      strictEqual(_.isElement({ 'nodeType': [1] }), false);
+      strictEqual(_.isElement({ 'nodeType': '1' }), false);
+      strictEqual(_.isElement({ 'nodeType': '001' }), false);
     });
   }());
 
@@ -977,25 +1004,25 @@
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
       function Foo() {}
       Foo.prototype.a = 1;
-      ok(_.isEmpty(Foo));
+      strictEqual(_.isEmpty(Foo), true);
 
       Foo.prototype = { 'a': 1 };
-      ok(_.isEmpty(Foo));
+      strictEqual(_.isEmpty(Foo), true);
     });
 
     test('should work with an object that has a `length` property', function() {
-      ok(!_.isEmpty({ 'length': 0 }));
+      strictEqual(_.isEmpty({ 'length': 0 }), false);
     });
 
     test('should work with jQuery/MooTools DOM query collections', function() {
       function Foo(elements) { Array.prototype.push.apply(this, elements); }
       Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
 
-      ok(_.isEmpty(new Foo([])));
+      strictEqual(_.isEmpty(new Foo([])), true);
     });
 
     test('should work with `arguments` objects (test in IE < 9)', function() {
-      equal(_.isEmpty(args), false);
+      strictEqual(_.isEmpty(args), false);
     });
   }(1, 2, 3));
 
@@ -1009,19 +1036,19 @@
           args2 = (function() { return arguments; }(1, 2, 3)),
           args3 = (function() { return arguments; }(1, 2));
 
-      ok(_.isEqual(args1, args2));
-      ok(!_.isEqual(args1, args3));
+      strictEqual(_.isEqual(args1, args2), true);
+      strictEqual(_.isEqual(args1, args3), false);
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
-      equal(_.isEqual(shadowed, {}), false);
+      strictEqual(_.isEqual(shadowed, {}), false);
     });
 
     test('should return `true` for like-objects from different documents', function() {
       // ensure `_._object` is assigned (unassigned in Opera 10.00)
       if (_._object) {
         var object = { 'a': 1, 'b': 2, 'c': 3 };
-        ok(_.isEqual(object, _._object));
+        strictEqual(_.isEqual(object, _._object), true);
       }
       else {
         skipTest();
@@ -1035,10 +1062,28 @@
           object2 = { 'a': 1, 'b': {}, 'c': 3 };
 
       array1[1] = array1;
-      equal(_.isEqual(array1, array2), false);
+      strictEqual(_.isEqual(array1, array2), false);
 
       object1.b = object1;
-      equal(_.isEqual(object1, object2), false);
+      strictEqual(_.isEqual(object1, object2), false);
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args;
+
+      _.isEqual('a', 'b', function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, ['a', 'b']);
+    });
+
+    test('should correct set the `this` binding', function() {
+      var actual = _.isEqual('a', 'b', function(a, b) {
+        return this[a] == this[b];
+      }, { 'a': 1, 'b': 1 });
+
+      strictEqual(actual, true);
     });
   }());
 
@@ -1048,18 +1093,18 @@
 
   (function() {
     test('should return `false` for non-numeric values', function() {
-      ok(!_.isFinite(null));
-      ok(!_.isFinite([]));
-      ok(!_.isFinite(true));
-      ok(!_.isFinite(''));
-      ok(!_.isFinite(' '));
-      ok(!_.isFinite('2px'));
+      strictEqual(_.isFinite(null), false);
+      strictEqual(_.isFinite([]), false);
+      strictEqual(_.isFinite(true), false);
+      strictEqual(_.isFinite(''), false);
+      strictEqual(_.isFinite(' '), false);
+      strictEqual(_.isFinite('2px'), false);
     });
 
     test('should return `true` for numeric string values', function() {
-      ok(_.isFinite('2'));
-      ok(_.isFinite('0'));
-      ok(_.isFinite('08'));
+      strictEqual(_.isFinite('2'), true);
+      strictEqual(_.isFinite('0'), true);
+      strictEqual(_.isFinite('08'), true);
     });
   }());
 
@@ -1089,7 +1134,7 @@
 
   (function() {
     test('returns `true` for `new Number(NaN)`', function() {
-      ok(_.isNaN(new Number(NaN)));
+      strictEqual(_.isNaN(new Number(NaN)), true);
     });
   }());
 
@@ -1103,9 +1148,9 @@
         this.a = 1;
       }
 
-      ok(!_.isPlainObject(new Foo(1)));
-      ok(!_.isPlainObject([1, 2, 3]));
-      ok(_.isPlainObject({ 'a': 1 }));
+      strictEqual(_.isPlainObject(new Foo(1)), false);
+      strictEqual(_.isPlainObject([1, 2, 3]), false);
+      strictEqual(_.isPlainObject({ 'a': 1 }), true);
     });
   }());
 
@@ -1671,13 +1716,13 @@
           min = Math.pow(2, 31),
           max = Math.pow(2, 62);
 
-      ok(_.every(array, function() {
+      strictEqual(_.every(array, function() {
         return _.random(min, max) >= min;
-      }));
+      }), true);
 
-      ok(_.some(array, function() {
+      strictEqual(_.some(array, function() {
         return _.random(Number.MAX_VALUE) > 0;
-      }));
+      }), true);
     });
 
     test('should coerce arguments to numbers', function() {
@@ -1904,7 +1949,7 @@
 
   (function() {
     test('should return `true` as soon as the `callback` result is truthy', function() {
-      ok(_.some([null, true, null], _.identity));
+      strictEqual(_.some([null, true, null], _.identity), true);
     });
   }());
 

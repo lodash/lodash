@@ -1266,11 +1266,8 @@
     // flag used to indicate that a custom IIFE was specified
     var isIIFE = typeof iife == 'string';
 
-    // flag used to specify a legacy build
-    var isLegacy = options.indexOf('legacy') > -1;
-
     // flag used to specify an Underscore build
-    var isUnderscore = options.indexOf('underscore') > -1;
+    var isUnderscore = isBackbone || options.indexOf('underscore') > -1;
 
     // flag used to specify creating a source map for the minified source
     var isMapped = options.indexOf('-p') > -1 || options.indexOf('--source-map') > -1;
@@ -1279,7 +1276,7 @@
     var isMinify = options.indexOf('-m') > -1 || options.indexOf('--minify') > -1;
 
     // flag used to specify a mobile build
-    var isMobile = !isLegacy && (isCSP || isUnderscore || options.indexOf('mobile') > -1);
+    var isMobile = isCSP || isUnderscore || options.indexOf('mobile') > -1;
 
     // flag used to specify a modularize build
     var isModularize = options.indexOf('modularize') > -1;
@@ -1293,6 +1290,9 @@
     // flag used to specify `_.assign`, `_.bindAll`, and `_.defaults` are
     // constructed using the "use strict" directive
     var isStrict = options.indexOf('strict') > -1;
+
+    // flag used to specify a legacy build
+    var isLegacy = !isMobile && options.indexOf('legacy') > -1;
 
     // used to specify methods of specific categories
     var categories = options.reduce(function(result, value) {
@@ -1434,7 +1434,7 @@
       if (isBackbone && !result) {
         result = getDependencies(backboneDependencies);
       }
-      if (isUnderscore && !result) {
+      else if (isUnderscore && !result) {
         result = getDependencies(underscoreMethods);
       }
       // add method names by category
@@ -1476,7 +1476,7 @@
         source = replaceVar(source, 'noArgsClass', 'true');
         source = removeKeysOptimization(source);
       }
-      if (isBackbone || isUnderscore) {
+      if (isUnderscore) {
         // add Underscore style chaining
         source = addChainMethods(source);
       }
@@ -1617,6 +1617,104 @@
           '      }',
           '    }',
           '    return true;',
+          '  }'
+        ].join('\n'));
+
+        // replace `_.isEqual`
+        source = replaceFunction(source, 'isEqual', [
+          '  function isEqual(a, b, stackA, stackB) {',
+          '    if (a === b) {',
+          '      return a !== 0 || (1 / a == 1 / b);',
+          '    }',
+          '    var type = typeof a,',
+          '        otherType = typeof b;',
+          '',
+          '    if (a === a &&',
+          "        (!a || (type != 'function' && type != 'object')) &&",
+          "        (!b || (otherType != 'function' && otherType != 'object'))) {",
+          '      return false;',
+          '    }',
+          '    var className = toString.call(a),',
+          '        otherClass = toString.call(b);',
+          '',
+          '    if (className != otherClass) {',
+          '      return false;',
+          '    }',
+          '    switch (className) {',
+          '      case boolClass:',
+          '      case dateClass:',
+          '        return +a == +b;',
+          '',
+          '      case numberClass:',
+          '        return a != +a',
+          '          ? b != +b',
+          '          : (a == 0 ? (1 / a == 1 / b) : a == +b);',
+          '',
+          '      case regexpClass:',
+          '      case stringClass:',
+          "        return a == b + '';",
+          '    }',
+          '    var isArr = className == arrayClass;',
+          '    if (!isArr) {',
+          '      if (a.__wrapped__ || b.__wrapped__) {',
+          '        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);',
+          '      }',
+          '      if (className != objectClass) {',
+          '        return false;',
+          '      }',
+          '      var ctorA = a.constructor,',
+          '          ctorB = b.constructor;',
+          '',
+          '      if (ctorA != ctorB && !(',
+          '            isFunction(ctorA) && ctorA instanceof ctorA &&',
+          '            isFunction(ctorB) && ctorB instanceof ctorB',
+          '          )) {',
+          '        return false;',
+          '      }',
+          '    }',
+          '    stackA || (stackA = []);',
+          '    stackB || (stackB = []);',
+          '',
+          '    var length = stackA.length;',
+          '    while (length--) {',
+          '      if (stackA[length] == a) {',
+          '        return stackB[length] == b;',
+          '      }',
+          '    }',
+          '    var result = true,',
+          '        size = 0;',
+          '',
+          '    stackA.push(a);',
+          '    stackB.push(b);',
+          '',
+          '    if (isArr) {',
+          '      size = b.length;',
+          '      result = size == a.length;',
+          '',
+          '      if (result) {',
+          '        while (size--) {',
+          '          if (!(result = isEqual(a[size], b[size], stackA, stackB))) {',
+          '            break;',
+          '          }',
+          '        }',
+          '      }',
+          '      return result;',
+          '    }',
+          '    forIn(b, function(value, key, b) {',
+          '      if (hasOwnProperty.call(b, key)) {',
+          '        size++;',
+          '        return !(result = hasOwnProperty.call(a, key) && isEqual(a[key], value, stackA, stackB)) && indicatorObject;',
+          '      }',
+          '    });',
+          '',
+          '    if (result) {',
+          '      forIn(a, function(value, key, a) {',
+          '        if (hasOwnProperty.call(a, key)) {',
+          '          return !(result = --size > -1) && indicatorObject;',
+          '        }',
+          '      });',
+          '    }',
+          '    return result;',
           '  }'
         ].join('\n'));
 
@@ -1768,13 +1866,6 @@
           '    return result',
           '  }'
         ].join('\n'));
-
-        // remove `arguments` object and `argsAreObjects` check from `_.isEqual`
-        source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-          return match
-            .replace(/^ *if *\(.+== argsClass[^}]+}\n/gm, '')
-            .replace(/!argsAreObjects[^:]+:\s*/g, '');
-        });
 
         // remove `_.isEqual` use from `createCallback`
         source = source.replace(matchFunction(source, 'createCallback'), function(match) {
@@ -2165,7 +2256,7 @@
     /*------------------------------------------------------------------------*/
 
     // used to specify creating a custom build
-    var isCustom = isBackbone || isLegacy || isMapped || isMobile || isStrict || isUnderscore ||
+    var isCustom = isLegacy || isMapped || isMobile || isStrict ||
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll);
 

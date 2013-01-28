@@ -603,18 +603,18 @@
   }
 
   /**
-   * Produces an iteration callback bound to an optional `thisArg`. If `func` is
-   * a property name, the callback will return the property value for a given element.
+   * Produces a callback bound to an optional `thisArg`. If `func` is a property
+   * name, the created callback will return the property value for a given element.
+   * If `func` is an object, the created callback will return `true` for elements
+   * that contain the equivalent object properties, otherwise it will return `false`.
    *
    * @private
-   * @param {Function|String} [func=identity|property] The function called per
-   * iteration or property name to query.
-   * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param {Object} [accumulating] Used to indicate that the callback should
-   *  accept an `accumulator` argument.
+   * @param {Mixed} [func=identity] The value to convert to a callback.
+   * @param {Mixed} [thisArg] The `this` binding of the created callback.
+   * @param {Number} [argCount=3] The number of arguments the callback accepts.
    * @returns {Function} Returns a callback function.
    */
-  function createCallback(func, thisArg, accumulating) {
+  function createCallback(func, thisArg, argCount) {
     if (!func) {
       return identity;
     }
@@ -630,7 +630,7 @@
         var length = props.length,
             result = false;
         while (length--) {
-          if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
+          if (!(result = isEqual(object[props[length]], func[props[length]], undefined, undefined, indicatorObject))) {
             break;
           }
         }
@@ -638,7 +638,17 @@
       };
     }
     if (typeof thisArg != 'undefined') {
-      if (accumulating) {
+      if (argCount === 1) {
+        return function(value) {
+          return func.call(thisArg, value);
+        };
+      }
+      if (argCount === 2) {
+        return function(a, b) {
+          return func.call(thisArg, a, b);
+        };
+      }
+      if (argCount === 4) {
         return function(accumulator, value, index, object) {
           return func.call(thisArg, accumulator, value, index, object);
         };
@@ -1025,18 +1035,21 @@
   var assign = createIterator(assignIteratorOptions);
 
   /**
-   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
-   * be cloned, otherwise they will be assigned by reference.
+   * Creates a clone of `value`. If `deep` is `true`, nested objects will also be
+   * cloned, otherwise they will be assigned by reference. If a `callback` function
+   * is passed, it will be executed to produce the cloned values. If `callback`
+   * returns the value it was passed, cloning will be handled by the method instead.
+   * The `callback` is bound to `thisArg` and invoked with one argument; (value).
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to clone.
-   * @param {Boolean} deep A flag to indicate a deep clone.
-   * @param- {Object} [guard] Internally used to allow working with "Collections"
-   *  methods without using their `callback` argument, `index`, for `deep`.
+   * @param {Boolean} [deep=false] A flag to indicate a deep clone.
+   * @param {Function} [callback] The function to customize cloning values.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
-   * @param- {Array} [stackB=[]] Internally used to associate clones with their source counterparts.
+   * @param- {Array} [stackB=[]] Internally used to associate clones with source counterparts.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
    *
@@ -1053,36 +1066,48 @@
    * deep[0] === stooges[0];
    * // => false
    */
-  function clone(value, deep, guard, stackA, stackB) {
-    deep = !guard && deep;
+  function clone(value, deep, callback, thisArg, stackA, stackB) {
+    var result = value;
 
+    // allows working with "Collections" methods without using their `callback`
+    // argument, `index|key`, for this method's `callback`
+    if (typeof deep == 'function') {
+      thisArg = callback;
+      callback = deep;
+      deep = false;
+    }
+    if (typeof callback == 'function') {
+      callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 1);
+      result = callback(result);
+      var done = value !== result;
+    }
     // inspect [[Class]]
-    var isObj = isObject(value);
+    var isObj = isObject(result);
     if (isObj) {
-      var className = toString.call(value);
-      if (!cloneableClasses[className] || (noNodeClass && isNode(value))) {
-        return value;
+      var className = toString.call(result);
+      if (!cloneableClasses[className] || (noNodeClass && isNode(result))) {
+        return result;
       }
-      var isArr = isArray(value);
+      var isArr = isArray(result);
     }
     // shallow clone
     if (!isObj || !deep) {
-      return isObj
-        ? (isArr ? slice(value) : assign({}, value))
-        : value;
+      return isObj && !done
+        ? (isArr ? slice(result) : assign({}, result))
+        : result;
     }
     var ctor = ctorByClass[className];
     switch (className) {
       case boolClass:
       case dateClass:
-        return new ctor(+value);
+        return done ? result : new ctor(+result);
 
       case numberClass:
       case stringClass:
-        return new ctor(value);
+        return done ? result : new ctor(result);
 
       case regexpClass:
-        return ctor(value.source, reFlags.exec(value));
+        return done ? result : ctor(result.source, reFlags.exec(result));
     }
     // check for circular references and return corresponding clone
     stackA || (stackA = []);
@@ -1095,27 +1120,29 @@
       }
     }
     // init cloned object
-    var result = isArr ? ctor(value.length) : {};
+    if (!done) {
+      result = isArr ? ctor(result.length) : {};
 
+      // add array properties assigned by `RegExp#exec`
+      if (isArr) {
+        if (hasOwnProperty.call(value, 'index')) {
+          result.index = value.index;
+        }
+        if (hasOwnProperty.call(value, 'input')) {
+          result.input = value.input;
+        }
+      }
+    }
     // add the source value to the stack of traversed objects
     // and associate it with its clone
     stackA.push(value);
     stackB.push(result);
 
     // recursively populate clone (susceptible to call stack limits)
-    (isArr ? forEach : forOwn)(value, function(objValue, key) {
-      result[key] = clone(objValue, deep, null, stackA, stackB);
+    (isArr ? forEach : forOwn)(done ? result : value, function(objValue, key) {
+      result[key] = clone(objValue, deep, callback, undefined, stackA, stackB);
     });
 
-    // add array properties assigned by `RegExp#exec`
-    if (isArr) {
-      if (hasOwnProperty.call(value, 'index')) {
-        result.index = value.index;
-      }
-      if (hasOwnProperty.call(value, 'input')) {
-        result.input = value.input;
-      }
-    }
     return result;
   }
 
@@ -1131,6 +1158,8 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to deep clone.
+   * @param {Function} [callback] The function called to produce custom cloned values.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the deep cloned `value`.
    * @example
    *
@@ -1143,8 +1172,8 @@
    * deep[0] === stooges[0];
    * // => false
    */
-  function cloneDeep(value) {
-    return clone(value, true);
+  function cloneDeep(value, callback, thisArg) {
+    return clone(value, true, callback, thisArg);
   }
 
   /**
@@ -1334,13 +1363,18 @@
 
   /**
    * Performs a deep comparison between two values to determine if they are
-   * equivalent to each other.
+   * equivalent to each other. If `callback` is passed, it will be executed to
+   * compare values. If `callback` returns a non-boolean value, comparisons will
+   * be handled by the method instead. The `callback` is bound to `thisArg` and
+   * invoked with two arguments; (a, b).
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} a The value to compare.
    * @param {Mixed} b The other value to compare.
+   * @param {Function} [callback] The function to customize comparing values.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @param- {Object} [whereIndicator] Internally used to indicate that when
    *  comparing objects, `a` has at least the properties of `b`.
    * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
@@ -1357,7 +1391,14 @@
    * _.isEqual(moe, clone);
    * // => true
    */
-  function isEqual(a, b, whereIndicator, stackA, stackB) {
+  function isEqual(a, b, callback, thisArg, whereIndicator, stackA, stackB) {
+    if (callback) {
+      callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 2);
+      var result = callback(a, b);
+      if (typeof result == 'boolean') {
+        return result;
+      }
+    }
     // exit early for identical values
     if (a === b) {
       // treat `+0` vs. `-0` as not equal
@@ -1409,7 +1450,7 @@
     if (!isArr) {
       // unwrap any `lodash` wrapped values
       if (a.__wrapped__ || b.__wrapped__) {
-        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, whereIndicator);
+        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, undefined, whereIndicator, stackA, stackB);
       }
       // exit for functions and DOM nodes
       if (className != objectClass || (noNodeClass && (isNode(a) || isNode(b)))) {
@@ -1439,8 +1480,8 @@
         return stackB[length] == b;
       }
     }
-    var result = true,
-        size = 0;
+    var size = 0;
+    result = true;
 
     // add `a` and `b` to the stack of traversed objects
     stackA.push(a);
@@ -1455,7 +1496,7 @@
       if (result) {
         // deep compare the contents, ignoring non-numeric properties
         while (size--) {
-          if (!(result = isEqual(a[size], b[size], whereIndicator, stackA, stackB))) {
+          if (!(result = isEqual(a[size], b[size], callback, undefined, whereIndicator, stackA, stackB))) {
             break;
           }
         }
@@ -1469,7 +1510,7 @@
         // count the number of properties.
         size++;
         // deep compare each property value.
-        return (result = hasOwnProperty.call(a, key) && isEqual(a[key], value, whereIndicator, stackA, stackB));
+        return (result = hasOwnProperty.call(a, key) && isEqual(a[key], value, callback, undefined, whereIndicator, stackA, stackB));
       }
     });
 
@@ -1728,15 +1769,15 @@
    * don't resolve to `undefined`, into the `destination` object. Subsequent sources
    * will overwrite propery assignments of previous sources. If a `callback` function
    * is passed, it will be executed to produce the merged values of the destination
-   * and source object properties. The `callback` is bound to `thisArg` and invoked
-   * with two arguments; (objectValue, sourceValue).
+   * and source properties. The `callback` is bound to `thisArg` and invoked with
+   * two arguments; (objectValue, sourceValue).
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param {Function} [callback] The function called for each property to merge.
+   * @param {Function} [callback] The function to customize merging properties.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @param- {Object} [deepIndicator] Internally used to indicate that `stackA`
    *  and `stackB` are arrays of traversed objects instead of source objects.
@@ -1785,7 +1826,7 @@
       if (typeof deepIndicator != 'number') {
         length = args.length;
         callback = typeof (callback = args[length - 2]) == 'function'
-          ? createCallback(callback, args[--length])
+          ? createCallback(callback, args[--length], 2)
           : (typeof (callback = args[length - 1]) == 'function' && callback);
       }
     }
@@ -1836,9 +1877,10 @@
   /**
    * Creates a shallow clone of `object` excluding the specified properties.
    * Property names may be specified as individual arguments or as arrays of
-   * property names. If `callback` is passed, it will be executed for each property
-   * in the `object`, omitting the properties `callback` returns truthy for. The
-   * `callback` is bound to `thisArg` and invoked with three arguments; (value, key, object).
+   * property names. If a `callback` function is passed, it will be executed
+   * for each property in the `object`, omitting the properties `callback`
+   * returns truthy for. The `callback` is bound to `thisArg` and invoked
+   * with three arguments; (value, key, object).
    *
    * @static
    * @memberOf _
@@ -2524,7 +2566,7 @@
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-    callback = createCallback(callback, thisArg, indicatorObject);
+    callback = createCallback(callback, thisArg, 4);
 
     if (isArray(collection)) {
       var index = -1,
@@ -2576,7 +2618,7 @@
     } else if (noCharByIndex && isString(collection)) {
       iterable = collection.split('');
     }
-    callback = createCallback(callback, thisArg, indicatorObject);
+    callback = createCallback(callback, thisArg, 4);
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum
@@ -3337,7 +3379,7 @@
         high = array ? array.length : low;
 
     // explicitly reference `identity` for better inlining in Firefox
-    callback = callback ? createCallback(callback, thisArg) : identity;
+    callback = callback ? createCallback(callback, thisArg, 1) : identity;
     value = callback(value);
 
     while (low < high) {

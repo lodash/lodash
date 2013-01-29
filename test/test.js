@@ -1,6 +1,9 @@
 ;(function(window, undefined) {
   'use strict';
 
+  /** The `lodash` basename */
+  var basename = 'lodash.js';
+
   /** Use a single load function */
   var load = typeof require == 'function' ? require : window.load;
 
@@ -21,11 +24,17 @@
     );
 
   /** The `lodash` function to test */
-  var _ =
-    window._ || (
-      _ = load('../lodash.js') || window._,
+  var _ = (function() {
+    try {
+      var filePath = require('fs').realpathSync(process.argv[2]);
+      basename = require('path').basename(filePath);
+    } catch(e) { }
+
+    return window._ || (
+      _ = load(filePath || '../lodash.js') || window._,
       _._ || _
     );
+  }());
 
   /** Used to pass falsey values to methods */
   var falsey = [
@@ -110,10 +119,10 @@
 
   // explicitly call `QUnit.module()` instead of `module()`
   // in case we are in a CLI environment
-  QUnit.module('lodash');
+  QUnit.module(basename);
 
   (function() {
-    test('supports loading lodash.js as the "lodash" module', function() {
+    test('supports loading ' + basename + ' as the "lodash" module', function() {
       if (window.document && window.require) {
         equal((lodashModule || {}).moduleName, 'lodash');
       } else {
@@ -121,7 +130,7 @@
       }
     });
 
-    test('supports loading lodash.js with the Require.js "shim" configuration option', function() {
+    test('supports loading ' + basename + ' with the Require.js "shim" configuration option', function() {
       if (window.document && window.require) {
         equal((shimmedModule || {}).moduleName, 'shimmed');
       } else {
@@ -129,7 +138,7 @@
       }
     });
 
-    test('supports loading lodash.js as the "underscore" module', function() {
+    test('supports loading ' + basename + ' as the "underscore" module', function() {
       if (window.document && window.require) {
         equal((underscoreModule || {}).moduleName, 'underscore');
       } else {

@@ -47,6 +47,6 @@
   },
   "scripts": {
     "build": "node ./build.js",
-    "test": "node ./test/test.js && node ./test/test.js ./lodash.min.js && node ./test/test-build.js"
+    "test": "node ./test/test.js && node ./test/test.js ./lodash.min.js && node ./test/test-build.js --time-limit 45"
   }
 }

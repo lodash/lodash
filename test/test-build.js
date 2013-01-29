@@ -14,6 +14,11 @@
   var QUnit = global.QUnit = require('../vendor/qunit/qunit/qunit.js');
   require('../vendor/qunit-clib/qunit-clib.js');
 
+  /** The time limit for the tests to run (minutes) */
+  var timeLimit = process.argv.reduce(function(result, value, index) {
+    return (/--time-limit/.test(value) && parseFloat(process.argv[index + 1])) || result;
+  }, Infinity);
+
   /** Used to associate aliases with their real names */
   var aliasToRealMap = {
     'all': 'every',
@@ -1178,4 +1183,9 @@
     });
   }());
 
+  /*--------------------------------------------------------------------------*/
+
+  if (isFinite(timeLimit)) {
+    setTimeout(process.exit, timeLimit * 6e4);
+  }
 }());

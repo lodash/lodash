@@ -1,11 +1,35 @@
 ;(function(window, undefined) {
   'use strict';
 
-  /** The `lodash` basename */
-  var basename = 'lodash.js';
+  /** Detect free variable `global` and use it as `window` */
+  var freeGlobal = typeof global == 'object' && global;
+  if (freeGlobal.global === freeGlobal) {
+    window = freeGlobal;
+  }
 
   /** Use a single load function */
   var load = typeof require == 'function' ? require : window.load;
+
+  /** The file path of the Lo-Dash file to test */
+  var filePath = (function() {
+    var min = 0;
+    var result = window.system
+      ? (min = 1, system.args)
+      : (window.process ? (min = 2, process.argv) : window.arguments);
+
+    result = result.length > min
+      ? result[result.length - 1]
+      : '../lodash.js';
+
+    try {
+      result = require('fs').realpathSync(result);
+    } catch(e) { }
+
+    return result;
+  }());
+
+  /** The basename of the Lo-Dash file to test */
+  var basename = /[\w.-]+$/.exec(filePath)[0];
 
   /** The `platform` object to check */
   var platform =
@@ -24,17 +48,10 @@
     );
 
   /** The `lodash` function to test */
-  var _ = (function() {
-    try {
-      var filePath = require('fs').realpathSync(process.argv[2]);
-      basename = require('path').basename(filePath);
-    } catch(e) { }
-
-    return window._ || (
-      _ = load(filePath || '../lodash.js') || window._,
+  var _ = window._ || (
+      _ = load(filePath) || window._,
       _._ || _
     );
-  }());
 
   /** Used to pass falsey values to methods */
   var falsey = [
@@ -2692,4 +2709,4 @@
   if (!window.document) {
     QUnit.start();
   }
-}(typeof global == 'object' && global || this));
+}(this));

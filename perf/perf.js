@@ -205,11 +205,9 @@
         };\
         \
         var lodashBoundNormal = lodash.bind(func, contextObject),\
-            lodashBoundCtor = lodash.bind(ctor, contextObject),\
             lodashBoundPartial = lodash.bind(func, contextObject, "hi");\
         \
         var _boundNormal = _.bind(func, contextObject),\
-            _boundCtor = _.bind(ctor, contextObject),\
             _boundPartial = _.bind(func, contextObject, "hi");\
       }\
       \
@@ -530,18 +528,6 @@
       })
       .add(otherName, {
         'fn': '_boundPartial("!")',
-        'teardown': 'function bind(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('bound and called in a `new` expression, i.e. `new bound` (edge case)')
-      .add(buildName, {
-        'fn': 'new lodashBoundCtor()',
-        'teardown': 'function bind(){}'
-      })
-      .add(otherName, {
-        'fn': 'new _boundCtor()',
         'teardown': 'function bind(){}'
       })
   );
@@ -867,6 +853,16 @@
         _.find(object, function(value, key) {\
           return /\D9$/.test(key);\
         })'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.find` with `properties`')
+      .add(buildName, '\
+        lodash.find(objects, { "num": 9 });'
+      )
+      .add(otherName, '\
+        _.findWhere(objects, { "num": 9 });'
       )
   );
 

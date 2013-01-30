@@ -1,12 +1,6 @@
 ;(function(window, undefined) {
   'use strict';
 
-  /** Detect free variable `global` and use it as `window` */
-  var freeGlobal = typeof global == 'object' && global;
-  if (freeGlobal.global === freeGlobal) {
-    window = freeGlobal;
-  }
-
   /** Use a single load function */
   var load = typeof require == 'function' ? require : window.load;
 
@@ -15,7 +9,7 @@
     var min = 0;
     var result = window.system
       ? (min = 1, system.args)
-      : (window.process ? (min = 2, process.argv) : window.arguments);
+      : (window.process ? (min = 2, process.argv) : (window.arguments || []));
 
     result = result.length > min
       ? result[result.length - 1]
@@ -2709,4 +2703,4 @@
   if (!window.document) {
     QUnit.start();
   }
-}(this));
+}(typeof global == 'object' && global || this));

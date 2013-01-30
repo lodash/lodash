@@ -21,13 +21,7 @@
 		</div>
 		<script src="../vendor/jquery/jquery.js"></script>
 		<script src="../vendor/platform.js/platform.js"></script>
-		<script>
-			// avoid syntax errors for `QUnit.throws` in older Firefoxes
-			document.write(platform.name == 'Firefox' && /^1\b/.test(platform.version)
-				? '<script src="../vendor/qunit/qunit/qunit-1.8.0.js"><\/script>'
-				: '<script src="../vendor/qunit/qunit/qunit.js"><\/script>'
-			);
-		</script>
+		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="test-ui.js"></script>
 		<script>
 			document.write('<script src="../' + ui.buildPath + '"><\/script>');
@@ -61,6 +55,10 @@
 				};
 
 				_.mixin(_);
+
+				_.mixin({
+					'findWhere': _.find
+				});
 
 				_.chain = function(value) {
 					value = new _(value);

@@ -11,8 +11,13 @@
       _ = require('../lodash.js');
 
   /** The unit testing framework */
-  var QUnit = global.QUnit = require('../vendor/qunit/qunit/qunit.js');
-  require('../vendor/qunit-clib/qunit-clib.js');
+  var QUnit = (
+    global.addEventListener || (global.addEventListener = Function.prototype),
+    global.QUnit = require('../vendor/qunit/qunit/qunit.js'),
+    load('../vendor/qunit-clib/qunit-clib.js'),
+    global.addEventListener === Function.prototype && delete global.addEventListener,
+    global.QUnit
+  );
 
   /** The time limit for the tests to run (minutes) */
   var timeLimit = process.argv.reduce(function(result, value, index) {
@@ -37,7 +42,10 @@
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
-    'unique': 'uniq'
+    'unique': 'uniq',
+
+    // method used by the `backbone` and `underscore` builds
+    'findWhere': 'find'
   };
 
   /** Used to associate real names with their aliases */
@@ -46,7 +54,7 @@
     'contains': ['include'],
     'every': ['all'],
     'filter': ['select'],
-    'find': ['detect'],
+    'find': ['detect', 'findWhere'],
     'first': ['head', 'take'],
     'forEach': ['each'],
     'functions': ['methods'],
@@ -263,7 +271,6 @@
     'forOwn',
     'isPlainObject',
     'merge',
-    'partial',
     'partialRight'
   ]));
 
@@ -797,7 +804,11 @@
         strictEqual(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);
 
         var collection = [{ 'a': { 'b': 1, 'c': 2 } }];
-        deepEqual(lodash.where(collection, { 'a': { 'b': 1 } }), []);
+        deepEqual(lodash.where(collection, { 'a': { 'b': 1 } }), [], '_.where performs shallow comparisons: ' + basename);
+
+        collection = [{ 'a': 1 }, { 'a': 1 }];
+        deepEqual(lodash.where(collection, { 'a': 1 }, true), collection[0], '_.where supports a `first` argument: ' + basename);
+        deepEqual(lodash.findWhere(collection, { 'a': 1 }), collection[0], '_.findWhere: ' + basename);
 
         start();
       });
@@ -821,7 +832,6 @@
           'forOwn',
           'isPlainObject',
           'merge',
-          'partial',
           'partialRight'
         ], function(methodName) {
           equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
@@ -1187,5 +1197,9 @@
 
   if (isFinite(timeLimit)) {
     setTimeout(process.exit, timeLimit * 6e4);
+  }
+  // explicitly call `QUnit.start()` for Narwhal, Node.js, Rhino, and RingoJS
+  if (!global.document) {
+    QUnit.start();
   }
 }());

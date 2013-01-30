@@ -260,6 +260,14 @@ $(document).ready(function() {
     equal(result[0].a, 1);
   });
 
+  test('findWhere', function() {
+    var list = [{a: 1, b: 2}, {a: 2, b: 2}, {a: 1, b: 3}, {a: 1, b: 4}, {a: 2, b: 4}];
+    var result = _.findWhere(list, {a: 1});
+    deepEqual(result, {a: 1, b: 2});
+    result = _.findWhere(list, {b: 4});
+    deepEqual(result, {a: 1, b: 4});
+  });
+
   test('max', function() {
     equal(3, _.max([1, 2, 3]), 'can perform a regular Math.max');
 

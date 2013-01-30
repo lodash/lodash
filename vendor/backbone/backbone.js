@@ -1,6 +1,6 @@
 //     Backbone.js 0.9.10
 
-//     (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
+//     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://backbonejs.org
@@ -89,15 +89,15 @@
   // Optimized internal dispatch function for triggering events. Tries to
   // keep the usual cases speedy (most Backbone events have 3 arguments).
   var triggerEvents = function(events, args) {
-    var ev, i = -1, l = events.length;
+    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
     switch (args.length) {
     case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx);
     return;
-    case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0]);
+    case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1);
     return;
-    case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0], args[1]);
+    case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2);
     return;
-    case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0], args[1], args[2]);
+    case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3);
     return;
     default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
     }
@@ -119,25 +119,24 @@
     // to a `callback` function. Passing `"all"` will bind the callback to
     // all events fired.
     on: function(name, callback, context) {
-      if (!(eventsApi(this, 'on', name, [callback, context]) && callback)) return this;
+      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
       this._events || (this._events = {});
-      var list = this._events[name] || (this._events[name] = []);
-      list.push({callback: callback, context: context, ctx: context || this});
+      var events = this._events[name] || (this._events[name] = []);
+      events.push({callback: callback, context: context, ctx: context || this});
       return this;
     },
 
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(name, callback, context) {
-      if (!(eventsApi(this, 'once', name, [callback, context]) && callback)) return this;
+      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
       var self = this;
       var once = _.once(function() {
         self.off(name, once);
         callback.apply(this, arguments);
       });
       once._callback = callback;
-      this.on(name, once, context);
-      return this;
+      return this.on(name, once, context);
     },
 
     // Remove one or many callbacks. If `context` is null, removes all
@@ -145,7 +144,7 @@
     // callbacks for the event. If `name` is null, removes all bound
     // callbacks for all events.
     off: function(name, callback, context) {
-      var list, ev, events, names, i, l, j, k;
+      var retain, ev, events, names, i, l, j, k;
       if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
       if (!name && !callback && !context) {
         this._events = {};
@@ -155,19 +154,19 @@
       names = name ? [name] : _.keys(this._events);
       for (i = 0, l = names.length; i < l; i++) {
         name = names[i];
-        if (list = this._events[name]) {
-          events = [];
+        if (events = this._events[name]) {
+          this._events[name] = retain = [];
           if (callback || context) {
-            for (j = 0, k = list.length; j < k; j++) {
-              ev = list[j];
+            for (j = 0, k = events.length; j < k; j++) {
+              ev = events[j];
               if ((callback && callback !== ev.callback &&
                                callback !== ev.callback._callback) ||
                   (context && context !== ev.context)) {
-                events.push(ev);
+                retain.push(ev);
               }
             }
           }
-          this._events[name] = events;
+          if (!retain.length) delete this._events[name];
         }
       }
 
@@ -189,21 +188,11 @@
       return this;
     },
 
-    // An inversion-of-control version of `on`. Tell *this* object to listen to
-    // an event in another object ... keeping track of what it's listening to.
-    listenTo: function(obj, name, callback) {
-      var listeners = this._listeners || (this._listeners = {});
-      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
-      listeners[id] = obj;
-      obj.on(name, typeof name === 'object' ? this : callback, this);
-      return this;
-    },
-
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
     stopListening: function(obj, name, callback) {
       var listeners = this._listeners;
-      if (!listeners) return;
+      if (!listeners) return this;
       if (obj) {
         obj.off(name, typeof name === 'object' ? this : callback, this);
         if (!name && !callback) delete listeners[obj._listenerId];
@@ -217,6 +206,20 @@
       return this;
     }
   };
+
+  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
+
+  // An inversion-of-control versions of `on` and `once`. Tell *this* object to listen to
+  // an event in another object ... keeping track of what it's listening to.
+  _.each(listenMethods, function(implementation, method) {
+    Events[method] = function(obj, name, callback) {
+      var listeners = this._listeners || (this._listeners = {});
+      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
+      listeners[id] = obj;
+      obj[implementation](name, typeof name === 'object' ? this : callback, this);
+      return this;
+    };
+  });
 
   // Aliases for backwards compatibility.
   Events.bind   = Events.on;
@@ -251,6 +254,9 @@
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
+
+    // The value returned during the last failed validation.
+    validationError: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -1299,7 +1305,7 @@
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents: function(events) {
-      if (!(events || (events = _.result(this, 'events')))) return;
+      if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
@@ -1315,6 +1321,7 @@
           this.$el.on(eventName, selector, method);
         }
       }
+      return this;
     },
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
@@ -1322,6 +1329,7 @@
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
       this.$el.off('.delegateEvents' + this.cid);
+      return this;
     },
 
     // Performs the initial configuration of a View with a set of options.

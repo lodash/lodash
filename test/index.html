@@ -8,13 +8,7 @@
 	<body>
 		<div id="qunit"></div>
 		<script src="../vendor/platform.js/platform.js"></script>
-		<script>
-			// avoid syntax errors for `QUnit.throws` in older Firefoxes
-			document.write(platform.name == 'Firefox' && /^1\b/.test(platform.version)
-				? '<script src="../vendor/qunit/qunit/qunit-1.8.0.js"><\/script>'
-				: '<script src="../vendor/qunit/qunit/qunit.js"><\/script>'
-			);
-		</script>
+		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="test-ui.js"></script>
 		<script>
 			// set a bad shim

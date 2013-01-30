@@ -42,7 +42,10 @@
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
-    'unique': 'uniq'
+    'unique': 'uniq',
+
+    // method used by the `backbone` and `underscore` builds
+    'findWhere': 'find'
   };
 
   /** Used to associate real names with their aliases */
@@ -51,7 +54,7 @@
     'contains': ['include'],
     'every': ['all'],
     'filter': ['select'],
-    'find': ['detect'],
+    'find': ['detect', 'findWhere'],
     'first': ['head', 'take'],
     'forEach': ['each'],
     'functions': ['methods'],
@@ -248,7 +251,6 @@
     'forOwn',
     'isPlainObject',
     'merge',
-    'partial',
     'partialRight'
   ]));
 
@@ -1850,6 +1852,13 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.where`
+        source = replaceFunction(source, 'where', [
+          '  function where(collection, properties, first) {',
+          '    return (first ? find : filter)(collection, properties);',
+          '  }'
+        ].join('\n'));
+
         // replace `_.without`
         source = replaceFunction(source, 'without', [
           '  function without(array) {',
@@ -1866,6 +1875,11 @@
           '    return result',
           '  }'
         ].join('\n'));
+
+        // add `_.findWhere` alias of `_.find`
+        source = source.replace(getMethodAssignments(source), function(match) {
+          return match.replace(/^( *)lodash.find *=.+/m, '$&\n$1lodash.findWhere = find;');
+        });
 
         // remove `_.isEqual` use from `createCallback`
         source = source.replace(matchFunction(source, 'createCallback'), function(match) {

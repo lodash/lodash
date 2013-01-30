@@ -193,7 +193,8 @@
 
     // properties used by the `backbone` and `underscore` builds
     '__chain__',
-    'chain'
+    'chain',
+    'findWhere'
   ];
 
   /*--------------------------------------------------------------------------*/

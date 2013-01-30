@@ -4194,8 +4194,6 @@
    * // => 'nonsense'
    */
   function result(object, property) {
-    // based on Backbone's private `getValue` function
-    // https://github.com/documentcloud/backbone/blob/0.9.2/backbone.js#L1419-1424
     var value = object ? object[property] : undefined;
     return isFunction(value) ? object[property]() : value;
   }

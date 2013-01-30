@@ -1753,6 +1753,14 @@
           '  }'
         ].join('\n'));
 
+        // replace `_.result`
+        source = replaceFunction(source, 'result', [
+          '  function result(object, property) {',
+          '    var value = object ? object[property] : null;',
+          '    return isFunction(value) ? object[property]() : value;',
+          '  }'
+        ].join('\n'));
+
         // replace `_.template`
         source = replaceFunction(source, 'template', [
           '  function template(text, data, options) {',

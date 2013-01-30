@@ -798,6 +798,7 @@
         actual = lodash.pick(object, function(value) { return value != 3; });
         deepEqual(_.keys(actual), [], '_.pick should not accept a `callback`: ' + basename);
 
+        strictEqual(lodash.result(), null, '_.result should return `null` when passed a falsey `object` argument: ' + basename);
         strictEqual(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
         equal('imports' in lodash.templateSettings, false, '_.templateSettings should not have an "imports" property: ' + basename);

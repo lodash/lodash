@@ -14,7 +14,7 @@
   var QUnit = (
     global.addEventListener || (global.addEventListener = Function.prototype),
     global.QUnit = require('../vendor/qunit/qunit/qunit.js'),
-    load('../vendor/qunit-clib/qunit-clib.js'),
+    require('../vendor/qunit-clib/qunit-clib.js'),
     global.addEventListener === Function.prototype && delete global.addEventListener,
     global.QUnit
   );

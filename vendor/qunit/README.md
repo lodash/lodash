@@ -23,9 +23,6 @@ If you are interested in helping developing QUnit, you are in the right place.
 For related discussions, visit the
 [QUnit and Testing forum](http://forum.jquery.com/qunit-and-testing).
 
-Planning for a qunitjs.com site and other testing tools related work now happens
-on the [jQuery Testing Team planning wiki](http://jquerytesting.pbworks.com/w/page/41556026/FrontPage).
-
 Development
 -----------
 
@@ -49,11 +46,17 @@ tag, update them again to the next version, commit and push commits and tags
 Put the 'v' in front of the tag, e.g. `v1.8.0`. Clean up the changelog, removing merge commits
 or whitespace cleanups.
 
-To upload to code.jquery.com (replace $version accordingly):
+To upload to code.jquery.com (replace $version accordingly), ssh to code.origin.jquery.com:
 
-	scp -q qunit/qunit.js jqadmin@code.origin.jquery.com:/var/www/html/code.jquery.com/qunit/qunit-$version.js
-	scp -q qunit/qunit.css jqadmin@code.origin.jquery.com:/var/www/html/code.jquery.com/qunit/qunit-$version.css
+	cp qunit/qunit.js /var/www/html/code.jquery.com/qunit/qunit-$version.js
+	cp qunit/qunit.css /var/www/html/code.jquery.com/qunit/qunit-$version.css
 
 Then update /var/www/html/code.jquery.com/index.html and purge it with:
 
 	curl -s http://code.origin.jquery.com/?reload
+
+Update web-base-template to link to those files for qunitjs.com.
+
+Publish to npm via
+
+	npm publish

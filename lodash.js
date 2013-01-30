@@ -2,7 +2,7 @@
  * @license
  * Lo-Dash 1.0.0-rc.3 <http://lodash.com/>
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.4.3 <http://underscorejs.org/>
+ * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
@@ -1065,6 +1065,16 @@
    * var deep = _.clone(stooges, true);
    * deep[0] === stooges[0];
    * // => false
+   *
+   * _.mixin({
+   *   'clone': _.partialRight(_.clone, function(value) {
+   *     return _.isElement(value) ? value.cloneNode(false) : value;
+   *   })
+   * });
+   *
+   * var clone = _.clone(document.body);
+   * clone.childNodes.length;
+   * // => 0
    */
   function clone(value, deep, callback, thisArg, stackA, stackB) {
     var result = value;
@@ -1147,18 +1157,21 @@
   }
 
   /**
-   * Creates a deep clone of `value`. Functions and DOM nodes are **not** cloned.
-   * The enumerable properties of `arguments` objects and objects created by
-   * constructors other than `Object` are cloned to plain `Object` objects.
+   * Creates a deep clone of `value`. If a `callback` function is passed, it will
+   * be executed to produce the cloned values. If `callback` returns the value it
+   * was passed, cloning will be handled by the method instead. The `callback` is
+   * bound to `thisArg` and invoked with one argument; (value).
    *
-   * Note: This function is loosely based on the structured clone algorithm.
+   * Note: This function is loosely based on the structured clone algorithm. Functions
+   * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
+   * objects created by constructors other than `Object` are cloned to plain `Object` objects.
    * See http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to deep clone.
-   * @param {Function} [callback] The function called to produce custom cloned values.
+   * @param {Function} [callback] The function to customize cloning values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the deep cloned `value`.
    * @example
@@ -1170,6 +1183,18 @@
    *
    * var deep = _.cloneDeep(stooges);
    * deep[0] === stooges[0];
+   * // => false
+   *
+   * var view = {
+   *   'id': 'docs',
+   *   'node': element
+   * };
+   *
+   * var clone = _.cloneDeep(view, function(value) {
+   *   return _.isElement(value) ? value.cloneNode(true) : value;
+   * });
+   *
+   * clone.node == view.node;
    * // => false
    */
   function cloneDeep(value, callback, thisArg) {
@@ -1382,13 +1407,25 @@
    * @returns {Boolean} Returns `true`, if the values are equvalent, else `false`.
    * @example
    *
-   * var moe = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
-   * var clone = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
+   * var moe = { 'name': 'moe', 'age': 40 };
+   * var copy = { 'name': 'moe', 'age': 40 };
    *
-   * moe == clone;
+   * moe == copy;
    * // => false
    *
-   * _.isEqual(moe, clone);
+   * _.isEqual(moe, copy);
+   * // => true
+   *
+   * var words = ['hello', 'goodbye'];
+   * var otherWords = ['hi', 'goodbye'];
+   *
+   * _.isEqual(words, otherWords, function(a, b) {
+   *   var reGreet = /^(?:hello|hi)$/i,
+   *       aGreet = _.isString(a) && reGreet.test(a),
+   *       bGreet = _.isString(b) && reGreet.test(b);
+   *
+   *   return (aGreet || bGreet) ? (aGreet == bGreet) : undefined;
+   * });
    * // => true
    */
   function isEqual(a, b, callback, thisArg, whereIndicator, stackA, stackB) {
@@ -1803,6 +1840,21 @@
    *
    * _.merge(names, ages);
    * // => { 'stooges': [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }] }
+   *
+   * var food = {
+   *   'fruits': ['apple'],
+   *   'vegetables': ['asparagus']
+   * };
+   *
+   * var otherFood = {
+   *   'fruits': ['banana'],
+   *   'vegetables': ['beets']
+   * };
+   *
+   * _.merge(food, otherFood, function(a, b) {
+   *   return _.isObject(a) ? (_.isArray(a) ? a.concat(b) : _.merge(a, b)) : b;
+   * });
+   * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['asparagus', 'beets'] }
    */
   function merge(object, source, deepIndicator) {
     var args = arguments,
@@ -2227,10 +2279,11 @@
   }
 
   /**
-   * Examines each element in a `collection`, returning the first one the `callback`
-   * returns truthy for. The function returns as soon as it finds an acceptable
-   * element, and does not iterate over the entire `collection`. The `callback` is
-   * bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
+   * Examines each element in a `collection`, returning the first that the
+   * `callback` returns truthy for. The function returns as soon as it finds
+   * an acceptable element, and does not iterate over the entire `collection`.
+   * The `callback` is bound to `thisArg` and invoked with three arguments;
+   * (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -2825,7 +2878,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Object} properties The object of property values to filter by.
-   * @returns {Array} Returns a new array of elements that contain the given `properties`.
+   * @returns {Array} Returns a new array of elements that have the given `properties`.
    * @example
    *
    * var stooges = [
@@ -3690,11 +3743,11 @@
    * @returns {Function} Returns the new composed function.
    * @example
    *
-   * var greet = function(name) { return 'hi: ' + name; };
+   * var greet = function(name) { return 'hi ' + name; };
    * var exclaim = function(statement) { return statement + '!'; };
    * var welcome = _.compose(exclaim, greet);
    * welcome('moe');
-   * // => 'hi: moe!'
+   * // => 'hi moe!'
    */
   function compose() {
     var funcs = arguments;
@@ -3874,10 +3927,10 @@
    * @returns {Function} Returns the new partially applied function.
    * @example
    *
-   * var greet = function(greeting, name) { return greeting + ': ' + name; };
+   * var greet = function(greeting, name) { return greeting + ' ' + name; };
    * var hi = _.partial(greet, 'hi');
    * hi('moe');
-   * // => 'hi: moe'
+   * // => 'hi moe'
    */
   function partial(func) {
     return createBound(func, slice(arguments, 1));
@@ -4143,7 +4196,7 @@
   function result(object, property) {
     // based on Backbone's private `getValue` function
     // https://github.com/documentcloud/backbone/blob/0.9.2/backbone.js#L1419-1424
-    var value = object ? object[property] : null;
+    var value = object ? object[property] : undefined;
     return isFunction(value) ? object[property]() : value;
   }
 
@@ -4209,11 +4262,11 @@
    * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
    *
    * // using the `variable` option to ensure a with-statement isn't used in the compiled template
-   * var compiled = _.template('hello <%= data.name %>!', null, { 'variable': 'data' });
+   * var compiled = _.template('hi <%= data.name %>!', null, { 'variable': 'data' });
    * compiled.source;
    * // => function(data) {
    *   var __t, __p = '', __e = _.escape;
-   *   __p += 'hello ' + ((__t = ( data.name )) == null ? '' : __t) + '!';
+   *   __p += 'hi ' + ((__t = ( data.name )) == null ? '' : __t) + '!';
    *   return __p;
    * }
    *

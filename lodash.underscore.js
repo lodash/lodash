@@ -3,7 +3,7 @@
  * Lo-Dash 1.0.0-rc.3 (Custom Build) <http://lodash.com/>
  * Build: `lodash underscore -d -o ./lodash.underscore.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.4.3 <http://underscorejs.org/>
+ * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
@@ -336,16 +336,31 @@
    * @param {Object} [rightIndicator] Used to indicate partially applying arguments from the right.
    * @returns {Function} Returns the new bound function.
    */
-  function createBound(func, thisArg, partialArgs) {
+  function createBound(func, thisArg, partialArgs, rightIndicator) {
+    var isFunc = isFunction(func),
+        isPartial = !partialArgs,
+        key = thisArg;
+
+    // juggle arguments
+    if (isPartial) {
+      partialArgs = thisArg;
+    }
+    if (!isFunc) {
+      thisArg = func;
+    }
+
     function bound() {
       // `Function#bind` spec
       // http://es5.github.com/#x15.3.4.5
       var args = arguments,
-          thisBinding = thisArg;
+          thisBinding = isPartial ? this : thisArg;
 
+      if (!isFunc) {
+        func = thisArg[key];
+      }
       if (partialArgs.length) {
         args = args.length
-          ? partialArgs.concat(slice(args))
+          ? (args = slice(args), rightIndicator ? args.concat(partialArgs) : partialArgs.concat(args))
           : partialArgs;
       }
       if (this instanceof bound) {
@@ -863,6 +878,16 @@
    * var deep = _.clone(stooges, true);
    * deep[0] === stooges[0];
    * // => false
+   *
+   * _.mixin({
+   *   'clone': _.partialRight(_.clone, function(value) {
+   *     return _.isElement(value) ? value.cloneNode(false) : value;
+   *   })
+   * });
+   *
+   * var clone = _.clone(document.body);
+   * clone.childNodes.length;
+   * // => 0
    */
   function clone(value) {
     return isObject(value)
@@ -1085,13 +1110,25 @@
    * @returns {Boolean} Returns `true`, if the values are equvalent, else `false`.
    * @example
    *
-   * var moe = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
-   * var clone = { 'name': 'moe', 'luckyNumbers': [13, 27, 34] };
+   * var moe = { 'name': 'moe', 'age': 40 };
+   * var copy = { 'name': 'moe', 'age': 40 };
    *
-   * moe == clone;
+   * moe == copy;
    * // => false
    *
-   * _.isEqual(moe, clone);
+   * _.isEqual(moe, copy);
+   * // => true
+   *
+   * var words = ['hello', 'goodbye'];
+   * var otherWords = ['hi', 'goodbye'];
+   *
+   * _.isEqual(words, otherWords, function(a, b) {
+   *   var reGreet = /^(?:hello|hi)$/i,
+   *       aGreet = _.isString(a) && reGreet.test(a),
+   *       bGreet = _.isString(b) && reGreet.test(b);
+   *
+   *   return (aGreet || bGreet) ? (aGreet == bGreet) : undefined;
+   * });
    * // => true
    */
   function isEqual(a, b, stackA, stackB) {
@@ -1683,10 +1720,11 @@
   }
 
   /**
-   * Examines each element in a `collection`, returning the first one the `callback`
-   * returns truthy for. The function returns as soon as it finds an acceptable
-   * element, and does not iterate over the entire `collection`. The `callback` is
-   * bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
+   * Examines each element in a `collection`, returning the first that the
+   * `callback` returns truthy for. The function returns as soon as it finds
+   * an acceptable element, and does not iterate over the entire `collection`.
+   * The `callback` is bound to `thisArg` and invoked with three arguments;
+   * (value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -2272,7 +2310,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Object} properties The object of property values to filter by.
-   * @returns {Array} Returns a new array of elements that contain the given `properties`.
+   * @returns {Array} Returns a new array of elements that have the given `properties`.
    * @example
    *
    * var stooges = [
@@ -2283,8 +2321,8 @@
    * _.where(stooges, { 'age': 40 });
    * // => [{ 'name': 'moe', 'age': 40 }]
    */
-  function where(collection, properties) {
-    return filter(collection, properties);
+  function where(collection, properties, first) {
+    return (first ? find : filter)(collection, properties);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -3073,11 +3111,11 @@
    * @returns {Function} Returns the new composed function.
    * @example
    *
-   * var greet = function(name) { return 'hi: ' + name; };
+   * var greet = function(name) { return 'hi ' + name; };
    * var exclaim = function(statement) { return statement + '!'; };
    * var welcome = _.compose(exclaim, greet);
    * welcome('moe');
-   * // => 'hi: moe!'
+   * // => 'hi moe!'
    */
   function compose() {
     var funcs = arguments;
@@ -3242,6 +3280,28 @@
       func = null;
       return result;
     };
+  }
+
+  /**
+   * Creates a function that, when called, invokes `func` with any additional
+   * `partial` arguments prepended to those passed to the new function. This
+   * method is similar to `_.bind`, except it does **not** alter the `this` binding.
+   *
+   * @static
+   * @memberOf _
+   * @category Functions
+   * @param {Function} func The function to partially apply arguments to.
+   * @param {Mixed} [arg1, arg2, ...] Arguments to be partially applied.
+   * @returns {Function} Returns the new partially applied function.
+   * @example
+   *
+   * var greet = function(greeting, name) { return greeting + ' ' + name; };
+   * var hi = _.partial(greet, 'hi');
+   * hi('moe');
+   * // => 'hi moe'
+   */
+  function partial(func) {
+    return createBound(func, slice(arguments, 1));
   }
 
   /**
@@ -3477,7 +3537,7 @@
   function result(object, property) {
     // based on Backbone's private `getValue` function
     // https://github.com/documentcloud/backbone/blob/0.9.2/backbone.js#L1419-1424
-    var value = object ? object[property] : null;
+    var value = object ? object[property] : undefined;
     return isFunction(value) ? object[property]() : value;
   }
 
@@ -3543,11 +3603,11 @@
    * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
    *
    * // using the `variable` option to ensure a with-statement isn't used in the compiled template
-   * var compiled = _.template('hello <%= data.name %>!', null, { 'variable': 'data' });
+   * var compiled = _.template('hi <%= data.name %>!', null, { 'variable': 'data' });
    * compiled.source;
    * // => function(data) {
    *   var __t, __p = '', __e = _.escape;
-   *   __p += 'hello ' + ((__t = ( data.name )) == null ? '' : __t) + '!';
+   *   __p += 'hi ' + ((__t = ( data.name )) == null ? '' : __t) + '!';
    *   return __p;
    * }
    *
@@ -3827,6 +3887,7 @@
   lodash.omit = omit;
   lodash.once = once;
   lodash.pairs = pairs;
+  lodash.partial = partial;
   lodash.pick = pick;
   lodash.pluck = pluck;
   lodash.range = range;
@@ -3864,6 +3925,7 @@
   lodash.escape = escape;
   lodash.every = every;
   lodash.find = find;
+  lodash.findWhere = find;
   lodash.has = has;
   lodash.identity = identity;
   lodash.indexOf = indexOf;

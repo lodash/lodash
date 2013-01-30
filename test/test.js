@@ -34,18 +34,19 @@
   /** The unit testing framework */
   var QUnit =
     window.QUnit || (
-      window.setTimeout || (window.addEventListener = window.setTimeout = / /),
-      window.QUnit = load('../vendor/qunit/qunit/qunit' + (platform.name == 'Narwhal' ? '-1.8.0' : '') + '.js') || window.QUnit,
+      window.addEventListener || (window.addEventListener = Function.prototype),
+      window.setTimeout || (window.setTimeout = Function.prototype),
+      window.QUnit = load('../vendor/qunit/qunit/qunit.js') || window.QUnit,
       load('../vendor/qunit-clib/qunit-clib.js'),
-      (window.addEventListener || 0).test && delete window.addEventListener,
+      window.addEventListener === Function.prototype && delete window.addEventListener,
       window.QUnit
     );
 
   /** The `lodash` function to test */
   var _ = window._ || (
-      _ = load(filePath) || window._,
-      _._ || _
-    );
+    _ = load(filePath) || window._,
+    _._ || _
+  );
 
   /** Used to pass falsey values to methods */
   var falsey = [
@@ -1862,6 +1863,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.result');
+
+  (function() {
+    test('should return `undefined` when passed a falsey `object` argument', function() {
+      strictEqual(_.result(), undefined);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.rest');
 
   (function() {
@@ -2699,7 +2710,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // explicitly call `QUnit.start()` for Narwhal, Rhino, and RingoJS
+  // explicitly call `QUnit.start()` for Narwhal, Node.js, Rhino, and RingoJS
   if (!window.document) {
     QUnit.start();
   }

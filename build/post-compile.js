@@ -10,7 +10,7 @@
     '/**',
     ' * @license',
     ' * Lo-Dash <%= VERSION %> lodash.com/license',
-    ' * Underscore.js 1.4.3 underscorejs.org/LICENSE',
+    ' * Underscore.js 1.4.4 underscorejs.org/LICENSE',
     ' */'
   ].join('\n');
 

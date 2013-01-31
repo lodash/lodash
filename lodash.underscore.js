@@ -848,10 +848,10 @@
   }
 
   /**
-   * Creates a clone of `value`. If `deep` is `true`, nested objects will also be
-   * cloned, otherwise they will be assigned by reference. If a `callback` function
-   * is passed, it will be executed to produce the cloned values. If `callback`
-   * returns the value it was passed, cloning will be handled by the method instead.
+   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
+   * be cloned, otherwise they will be assigned by reference. If a `callback`
+   * function is passed, it will be executed to produce the cloned values. If
+   * `callback` returns `undefined`, cloning will be handled by the method instead.
    * The `callback` is bound to `thisArg` and invoked with one argument; (value).
    *
    * @static
@@ -881,7 +881,7 @@
    *
    * _.mixin({
    *   'clone': _.partialRight(_.clone, function(value) {
-   *     return _.isElement(value) ? value.cloneNode(false) : value;
+   *     return _.isElement(value) ? value.cloneNode(false) : undefined;
    *   })
    * });
    *
@@ -1092,9 +1092,9 @@
   /**
    * Performs a deep comparison between two values to determine if they are
    * equivalent to each other. If `callback` is passed, it will be executed to
-   * compare values. If `callback` returns a non-boolean value, comparisons will
-   * be handled by the method instead. The `callback` is bound to `thisArg` and
-   * invoked with two arguments; (a, b).
+   * compare values. If `callback` returns `undefined`, comparisons will be handled
+   * by the method instead. The `callback` is bound to `thisArg` and invoked with
+   * two arguments; (a, b).
    *
    * @static
    * @memberOf _
@@ -1739,6 +1739,21 @@
    *
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => 2
+   *
+   * var food = [
+   *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },
+   *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },
+   *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' },
+   *   { 'name': 'carrot', 'organic': true,  'type': 'vegetable' }
+   * ];
+   *
+   * // using callback "where" shorthand
+   * var veggie = _.find(food, { 'type': 'vegetable' });
+   * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' },
+   *
+   * // using callback "pluck" shorthand
+   * var healthy = _.find(food, 'organic');
+   * // => { 'name': 'banana', 'organic': true, 'type': 'fruit' }
    */
   function find(collection, callback, thisArg) {
     var result;

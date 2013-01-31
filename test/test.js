@@ -438,6 +438,11 @@
 
         equal(actual, 'A');
       });
+
+      test('_.' + methodName + ' should handle cloning if `callback` returns `undefined`', function() {
+        var actual = _.clone({ 'a': { 'b': 'c' } }, function() { });
+        deepEqual(actual, { 'a': { 'b': 'c' } });
+      });
     });
   }(1, 2, 3));
 
@@ -1070,8 +1075,7 @@
       if (_._object) {
         var object = { 'a': 1, 'b': 2, 'c': 3 };
         strictEqual(_.isEqual(object, _._object), true);
-      }
-      else {
+      } else {
         skipTest();
       }
     });
@@ -1104,6 +1108,11 @@
         return this[a] == this[b];
       }, { 'a': 1, 'b': 1 });
 
+      strictEqual(actual, true);
+    });
+
+    test('should handle comparisons if `callback` returns `undefined`', function() {
+      var actual = _.isEqual('a', 'a', function() { });
       strictEqual(actual, true);
     });
   }());
@@ -1530,6 +1539,11 @@
         return this[b];
       }, [2]);
 
+      deepEqual(actual, { 'a': 2 });
+    });
+
+    test('should handle merging if `callback` returns `undefined`', function() {
+      var actual = _.merge({ 'a': 1 }, { 'a': 2 }, function() { });
       deepEqual(actual, { 'a': 2 });
     });
   }(1, 2, 3));

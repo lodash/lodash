@@ -1035,10 +1035,10 @@
   var assign = createIterator(assignIteratorOptions);
 
   /**
-   * Creates a clone of `value`. If `deep` is `true`, nested objects will also be
-   * cloned, otherwise they will be assigned by reference. If a `callback` function
-   * is passed, it will be executed to produce the cloned values. If `callback`
-   * returns the value it was passed, cloning will be handled by the method instead.
+   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
+   * be cloned, otherwise they will be assigned by reference. If a `callback`
+   * function is passed, it will be executed to produce the cloned values. If
+   * `callback` returns `undefined`, cloning will be handled by the method instead.
    * The `callback` is bound to `thisArg` and invoked with one argument; (value).
    *
    * @static
@@ -1068,7 +1068,7 @@
    *
    * _.mixin({
    *   'clone': _.partialRight(_.clone, function(value) {
-   *     return _.isElement(value) ? value.cloneNode(false) : value;
+   *     return _.isElement(value) ? value.cloneNode(false) : undefined;
    *   })
    * });
    *
@@ -1089,7 +1089,11 @@
     if (typeof callback == 'function') {
       callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 1);
       result = callback(result);
-      var done = value !== result;
+
+      var done = typeof result != 'undefined';
+      if (!done) {
+        result = value;
+      }
     }
     // inspect [[Class]]
     var isObj = isObject(result);
@@ -1389,9 +1393,9 @@
   /**
    * Performs a deep comparison between two values to determine if they are
    * equivalent to each other. If `callback` is passed, it will be executed to
-   * compare values. If `callback` returns a non-boolean value, comparisons will
-   * be handled by the method instead. The `callback` is bound to `thisArg` and
-   * invoked with two arguments; (a, b).
+   * compare values. If `callback` returns `undefined`, comparisons will be handled
+   * by the method instead. The `callback` is bound to `thisArg` and invoked with
+   * two arguments; (a, b).
    *
    * @static
    * @memberOf _
@@ -1432,8 +1436,8 @@
     if (callback) {
       callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 2);
       var result = callback(a, b);
-      if (typeof result == 'boolean') {
-        return result;
+      if (typeof result != 'undefined') {
+        return !!result;
       }
     }
     // exit early for identical values
@@ -1806,8 +1810,9 @@
    * don't resolve to `undefined`, into the `destination` object. Subsequent sources
    * will overwrite propery assignments of previous sources. If a `callback` function
    * is passed, it will be executed to produce the merged values of the destination
-   * and source properties. The `callback` is bound to `thisArg` and invoked with
-   * two arguments; (objectValue, sourceValue).
+   * and source properties. If `callback` returns `undefined`, merging will be
+   * handled by the method instead. The `callback` is bound to `thisArg` and
+   * invoked with two arguments; (objectValue, sourceValue).
    *
    * @static
    * @memberOf _
@@ -1843,18 +1848,18 @@
    *
    * var food = {
    *   'fruits': ['apple'],
-   *   'vegetables': ['asparagus']
+   *   'vegetables': ['beet']
    * };
    *
    * var otherFood = {
    *   'fruits': ['banana'],
-   *   'vegetables': ['beets']
+   *   'vegetables': ['carrot']
    * };
    *
    * _.merge(food, otherFood, function(a, b) {
-   *   return _.isObject(a) ? (_.isArray(a) ? a.concat(b) : _.merge(a, b)) : b;
+   *   return _.isArray(a) ? a.concat(b) : undefined;
    * });
-   * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['asparagus', 'beets'] }
+   * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot] }
    */
   function merge(object, source, deepIndicator) {
     var args = arguments,
@@ -1883,13 +1888,13 @@
       }
     }
     while (++index < length) {
-      var isArr = isArray(args[index]);
-      (isArr ? forEach : forOwn)(args[index], function(source, key) {
+      (isArray(args[index]) ? forEach : forOwn)(args[index], function(source, key) {
         var found,
-            isObj,
+            isArr,
+            result = source,
             value = object[key];
 
-        if (source && ((isObj = isPlainObject(source)) || isArray(source))) {
+        if (source && ((isArr = isArray(source)) || isPlainObject(source))) {
           // avoid merging previously merged cyclic sources
           var stackLength = stackA.length;
           while (stackLength--) {
@@ -1899,26 +1904,36 @@
             }
           }
           if (!found) {
-            value = isObj
-              ? (isPlainObject(value) ? value : {})
-              : (isArray(value) ? value : []);
+            value = isArr
+              ? (isArray(value) ? value : [])
+              : (isPlainObject(value) ? value : {});
 
             if (callback) {
-              value = callback(value, source);
+              result = callback(value, source);
+              if (typeof result != 'undefined') {
+                value = result;
+              }
             }
             // add `source` and associated `value` to the stack of traversed objects
             stackA.push(source);
             stackB.push(value);
 
             // recursively merge objects and arrays (susceptible to call stack limits)
-            value = value && merge(value, source, indicatorObject, callback, stackA, stackB);
+            if (!callback) {
+              value = merge(value, source, indicatorObject, callback, stackA, stackB);
+            }
           }
         }
-        else if (callback) {
-          value = callback(value, source);
-        }
-        else if (isArr || typeof source != 'undefined') {
-          value = source;
+        else {
+          if (callback) {
+            result = callback(value, source);
+            if (typeof result == 'undefined') {
+              result = source;
+            }
+          }
+          if (typeof result != 'undefined') {
+            value = result;
+          }
         }
         object[key] = value;
       });
@@ -2298,6 +2313,21 @@
    *
    * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
    * // => 2
+   *
+   * var food = [
+   *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },
+   *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },
+   *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' },
+   *   { 'name': 'carrot', 'organic': true,  'type': 'vegetable' }
+   * ];
+   *
+   * // using callback "where" shorthand
+   * var veggie = _.find(food, { 'type': 'vegetable' });
+   * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' },
+   *
+   * // using callback "pluck" shorthand
+   * var healthy = _.find(food, 'organic');
+   * // => { 'name': 'banana', 'organic': true, 'type': 'fruit' }
    */
   function find(collection, callback, thisArg) {
     var result;

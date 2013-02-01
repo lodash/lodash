@@ -1170,6 +1170,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isNumber');
+
+  (function() {
+    test('should avoid `[xpconnect wrapped native prototype]` in Firefox', function() {
+      strictEqual(_.isNumber(+"2"), true);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isPlainObject');
 
   (function() {

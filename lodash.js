@@ -133,9 +133,7 @@
    * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
    * (if the prototype or a property on the prototype has been set)
    * incorrectly sets a function's `prototype` property [[Enumerable]]
-   * value to `true`. Because of this Lo-Dash standardizes on skipping
-   * the the `prototype` property of functions regardless of its
-   * [[Enumerable]] value.
+   * value to `true`.
    */
   var hasEnumPrototype;
 
@@ -392,12 +390,7 @@
     '  } else {' +
     '  <% } %>' +
 
-    // Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
-    // (if the prototype or a property on the prototype has been set)
-    // incorrectly sets a function's `prototype` property [[Enumerable]]
-    // value to `true`. Because of this Lo-Dash standardizes on skipping
-    // the the `prototype` property of functions regardless of its
-    // [[Enumerable]] value.
+    // avoid iterating over `prototype` properties in older Firefox, Opera, and Safari
     '  <% if (hasEnumPrototype) { %>\n' +
     "  var skipProto = typeof iterable == 'function' && \n" +
     "    propertyIsEnumerable.call(iterable, 'prototype');\n" +

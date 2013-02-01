@@ -1782,6 +1782,10 @@
     return result;
   }
 
+  function findWhere(object, properties) {
+    return where(object, properties, true);
+  }
+
   /**
    * Iterates over a `collection`, executing the `callback` for each element in
    * the `collection`. The `callback` is bound to `thisArg` and invoked with three
@@ -2351,7 +2355,9 @@
    * // => [{ 'name': 'moe', 'age': 40 }]
    */
   function where(collection, properties, first) {
-    return (first ? find : filter)(collection, properties);
+    return (first && isEmpty(properties))
+      ? null
+      : (first ? find : filter)(collection, properties);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -3957,7 +3963,7 @@
   lodash.escape = escape;
   lodash.every = every;
   lodash.find = find;
-  lodash.findWhere = find;
+  lodash.findWhere = findWhere;
   lodash.has = has;
   lodash.identity = identity;
   lodash.indexOf = indexOf;

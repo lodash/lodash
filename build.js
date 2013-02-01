@@ -177,6 +177,7 @@
     'bottom',
     'firstArg',
     'hasDontEnumBug',
+    'hasEnumPrototype',
     'isKeysFast',
     'loop',
     'nonEnumArgs',
@@ -1924,8 +1925,9 @@
         // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
         source = source.replace(getIteratorTemplate(source), function(match) {
           return match
-            .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(!hasDontEnumBug *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
-            .replace(/!hasDontEnumBug *\|\|/g, '');
+            .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(hasDontEnumBug[\s\S]+?["']\1<% *} *%>.+/, '')
+            .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(hasEnumPrototype *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
+            .replace(/hasEnumPrototype *\|\|/g, '');
         });
       }
       vm.runInContext(source, context);
@@ -2095,10 +2097,10 @@
           }
         });
 
-        // remove `hasDontEnumBug`, `iteratesOwnLast`, and `nonEnumArgs` declarations and assignments
+        // remove `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs` declarations and assignments
         source = source
-          .replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '')
-          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|iteratesOwnLast|nonEnumArgs).+\n/g, '');
+          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs).+\n/g, '')
+          .replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '');
 
         // remove `iteratesOwnLast` from `shimIsPlainObject`
         source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
@@ -2256,6 +2258,7 @@
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
         source = removeFunction(source, 'createIterator');
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasEnumPrototype;|.+?hasEnumPrototype *=.+/g, '');
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs;|.+?nonEnumArgs *=.+/g, '');
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
@@ -2267,8 +2270,8 @@
         source = removeVar(source, 'nativeKeys');
         source = removeKeysOptimization(source);
       }
-      if (!source.match(/var (?:hasDontEnumBug|iteratesOwnLast|nonEnumArgs)\b/g)) {
-        // remove `hasDontEnumBug`, `iteratesOwnLast`, and `nonEnumArgs` assignments
+      if (!source.match(/var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs)\b/g)) {
+        // remove `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs` assignments
         source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/, '');
       }
     }

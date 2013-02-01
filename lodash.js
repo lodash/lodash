@@ -1973,11 +1973,11 @@
    * @returns {Object} Returns an object without the omitted properties.
    * @example
    *
-   * _.omit({ 'name': 'moe', 'age': 40, 'userid': 'moe1' }, 'userid');
-   * // => { 'name': 'moe', 'age': 40 }
+   * _.omit({ 'name': 'moe', 'age': 40 }, 'age');
+   * // => { 'name': 'moe' }
    *
-   * _.omit({ 'name': 'moe', '_hint': 'knucklehead', '_seed': '96c4eb' }, function(value, key) {
-   *   return key.charAt(0) == '_';
+   * _.omit({ 'name': 'moe', 'age': 40 }, function(value) {
+   *   return typeof value == 'number';
    * });
    * // => { 'name': 'moe' }
    */
@@ -2243,6 +2243,19 @@
    *
    * _.every([true, 1, null, 'yes'], Boolean);
    * // => false
+   *
+   * var stooges = [
+   *   { 'name': 'moe', 'age': 40 },
+   *   { 'name': 'larry', 'age': 50 }
+   * ];
+   *
+   * // using callback "where" shorthand
+   * _.every(stooges, { 'age': 50 });
+   * // => false
+   *
+   * // using callback "pluck" shorthand
+   * _.every(stooges, 'age');
+   * // => true
    */
   function every(collection, callback, thisArg) {
     var result = true;
@@ -2337,7 +2350,7 @@
    *
    * // using callback "where" shorthand
    * var veggie = _.find(food, { 'type': 'vegetable' });
-   * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' },
+   * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }
    *
    * // using callback "pluck" shorthand
    * var healthy = _.find(food, 'organic');
@@ -4246,12 +4259,17 @@
    * A micro-templating method that handles arbitrary delimiters, preserves
    * whitespace, and correctly escapes quotes within interpolated code.
    *
-   * Note: In the development build `_.template` utilizes sourceURLs for easier
+   * Note: In the development build, `_.template` utilizes sourceURLs for easier
    * debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
    *
    * Note: Lo-Dash may be used in Chrome extensions by either creating a `lodash csp`
-   * build and avoiding `_.template` use, or loading Lo-Dash in a sandboxed page.
-   * See http://developer.chrome.com/trunk/extensions/sandboxingEval.html
+   * build and using precompiled templates, or loading Lo-Dash in a sandbox.
+   *
+   * For more information on precompiling templates see:
+   * http://lodash.com/#custom-builds
+   *
+   * For more information on Chrome extension sandboxes see:
+   * http://developer.chrome.com/trunk/extensions/sandboxingEval.html
    *
    * @static
    * @memberOf _

@@ -127,6 +127,18 @@
    */
   var hasDontEnumBug;
 
+  /**
+   * Detect if a `prototype` properties are enumerable by default:
+   *
+   * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
+   * (if the prototype or a property on the prototype has been set)
+   * incorrectly sets a function's `prototype` property [[Enumerable]]
+   * value to `true`. Because of this Lo-Dash standardizes on skipping
+   * the the `prototype` property of functions regardless of its
+   * [[Enumerable]] value.
+   */
+  var hasEnumPrototype;
+
   /** Detect if own properties are iterated after inherited properties (IE < 9) */
   var iteratesOwnLast;
 
@@ -154,6 +166,7 @@
     for (prop in arguments) { nonEnumArgs = !prop; }
 
     hasDontEnumBug = !/valueOf/.test(props);
+    hasEnumPrototype = propertyIsEnumerable.call(ctor, 'prototype');
     iteratesOwnLast = props[0] != 'x';
   }(1));
 
@@ -385,7 +398,7 @@
     // value to `true`. Because of this Lo-Dash standardizes on skipping
     // the the `prototype` property of functions regardless of its
     // [[Enumerable]] value.
-    '  <% if (!hasDontEnumBug) { %>\n' +
+    '  <% if (hasEnumPrototype) { %>\n' +
     "  var skipProto = typeof iterable == 'function' && \n" +
     "    propertyIsEnumerable.call(iterable, 'prototype');\n" +
     '  <% } %>' +
@@ -397,22 +410,22 @@
     '      length = ownProps.length;\n\n' +
     '  while (++ownIndex < length) {\n' +
     '    index = ownProps[ownIndex];\n' +
-    "    <% if (!hasDontEnumBug) { %>if (!(skipProto && index == 'prototype')) {\n  <% } %>" +
+    "    <% if (hasEnumPrototype) { %>if (!(skipProto && index == 'prototype')) {\n  <% } %>" +
     '    <%= loop %>\n' +
-    '    <% if (!hasDontEnumBug) { %>}\n<% } %>' +
+    '    <% if (hasEnumPrototype) { %>}\n<% } %>' +
     '  }' +
 
     // else using a for-in loop
     '  <% } else { %>\n' +
     '  for (index in iterable) {<%' +
-    '    if (!hasDontEnumBug || useHas) { %>\n    if (<%' +
-    "      if (!hasDontEnumBug) { %>!(skipProto && index == 'prototype')<% }" +
-    '      if (!hasDontEnumBug && useHas) { %> && <% }' +
+    '    if (hasEnumPrototype || useHas) { %>\n    if (<%' +
+    "      if (hasEnumPrototype) { %>!(skipProto && index == 'prototype')<% }" +
+    '      if (hasEnumPrototype && useHas) { %> && <% }' +
     '      if (useHas) { %>hasOwnProperty.call(iterable, index)<% }' +
     '    %>) {' +
     '    <% } %>\n' +
     '    <%= loop %>;' +
-    '    <% if (!hasDontEnumBug || useHas) { %>\n    }<% } %>\n' +
+    '    <% if (hasEnumPrototype || useHas) { %>\n    }<% } %>\n' +
     '  }' +
     '  <% } %>' +
 
@@ -678,6 +691,7 @@
     var data = {
       // support properties
       'hasDontEnumBug': hasDontEnumBug,
+      'hasEnumPrototype': hasEnumPrototype,
       'isKeysFast': isKeysFast,
       'nonEnumArgs': nonEnumArgs,
       'noCharByIndex': noCharByIndex,
@@ -931,7 +945,7 @@
    */
   var keys = !nativeKeys ? shimKeys : function(object) {
     // avoid iterating over the `prototype` property
-    return typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
+    return hasEnumPrototype && typeof object == 'function' && propertyIsEnumerable.call(object, 'prototype')
       ? shimKeys(object)
       : (isObject(object) ? nativeKeys(object) : []);
   };

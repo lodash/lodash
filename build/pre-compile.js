@@ -40,6 +40,7 @@
     'bottom',
     'firstArg',
     'hasDontEnumBug',
+    'hasEnumPrototype',
     'isKeysFast',
     'loop',
     'nonEnumArgs',

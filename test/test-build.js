@@ -42,10 +42,7 @@
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
-    'unique': 'uniq',
-
-    // method used by the `backbone` and `underscore` builds
-    'findWhere': 'find'
+    'unique': 'uniq'
   };
 
   /** Used to associate real names with their aliases */
@@ -54,7 +51,7 @@
     'contains': ['include'],
     'every': ['all'],
     'filter': ['select'],
-    'find': ['detect', 'findWhere'],
+    'find': ['detect'],
     'first': ['head', 'take'],
     'forEach': ['each'],
     'functions': ['methods'],
@@ -798,7 +795,7 @@
         actual = lodash.pick(object, function(value) { return value != 3; });
         deepEqual(_.keys(actual), [], '_.pick should not accept a `callback`: ' + basename);
 
-        strictEqual(lodash.result(), null, '_.result should return `null` when passed a falsey `object` argument: ' + basename);
+        strictEqual(lodash.result(), null, '_.result should return `null` for falsey `object` arguments: ' + basename);
         strictEqual(lodash.some([false, true, false]), true, '_.some: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
         equal('imports' in lodash.templateSettings, false, '_.templateSettings should not have an "imports" property: ' + basename);
@@ -809,7 +806,10 @@
 
         collection = [{ 'a': 1 }, { 'a': 1 }];
         deepEqual(lodash.where(collection, { 'a': 1 }, true), collection[0], '_.where supports a `first` argument: ' + basename);
+        deepEqual(lodash.where(collection, {}, true), null, '_.where should return `null` when passed `first` and falsey `properties`: ' + basename);
+
         deepEqual(lodash.findWhere(collection, { 'a': 1 }), collection[0], '_.findWhere: ' + basename);
+        strictEqual(lodash.findWhere(collection, {}), null, '_.findWhere should return `null` for falsey `properties`: ' + basename);
 
         start();
       });
@@ -837,6 +837,23 @@
         ], function(methodName) {
           equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
         });
+
+        start();
+      });
+    });
+
+    asyncTest('`lodash underscore include=findWhere`', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
+      build(['-s', 'underscore', 'include=findWhere'], function(data) {
+        var basename = path.basename(data.outputPath, '.js'),
+            context = createContext();
+
+        vm.runInContext(data.source, context);
+        var lodash = context._;
+
+        var collection = [{ 'a': 1 }, { 'a': 1 }];
+        deepEqual(lodash.findWhere(collection, { 'a': 1 }), collection[0], '_.findWhere: ' + basename);
 
         start();
       });

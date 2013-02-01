@@ -42,10 +42,7 @@
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
-    'unique': 'uniq',
-
-    // method used by the `backbone` and `underscore` builds
-    'findWhere': 'find'
+    'unique': 'uniq'
   };
 
   /** Used to associate real names with their aliases */
@@ -54,7 +51,7 @@
     'contains': ['include'],
     'every': ['all'],
     'filter': ['select'],
-    'find': ['detect', 'findWhere'],
+    'find': ['detect'],
     'first': ['head', 'take'],
     'forEach': ['each'],
     'functions': ['methods'],
@@ -167,7 +164,8 @@
     'zip': ['max', 'pluck'],
 
     // method used by the `backbone` and `underscore` builds
-    'chain': ['mixin']
+    'chain': ['mixin'],
+    'findWhere': ['where']
   };
 
   /** Used to inline `iteratorTemplate` */
@@ -1423,6 +1421,7 @@
         dependencyMap.sortedIndex = _.without(dependencyMap.sortedIndex, 'isEqual', 'keys');
         dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
         dependencyMap.uniq = _.without(dependencyMap.uniq, 'isEqual', 'keys');
+        dependencyMap.where.push('find', 'isEmpty');
 
         if (useUnderscoreClone) {
           dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
@@ -1864,7 +1863,9 @@
         // replace `_.where`
         source = replaceFunction(source, 'where', [
           '  function where(collection, properties, first) {',
-          '    return (first ? find : filter)(collection, properties);',
+          '    return (first && isEmpty(properties))',
+          '      ? null',
+          '      : (first ? find : filter)(collection, properties);',
           '  }'
         ].join('\n'));
 
@@ -1885,9 +1886,19 @@
           '  }'
         ].join('\n'));
 
-        // add `_.findWhere` alias of `_.find`
+        // add `_.findWhere`
+        source = source.replace(matchFunction(source, 'find'), function (match) {
+          return match + [
+            '',
+            '  function findWhere(object, properties) {',
+            '    return where(object, properties, true);',
+            '  }',
+            ''
+          ].join('\n')
+        });
+
         source = source.replace(getMethodAssignments(source), function(match) {
-          return match.replace(/^( *)lodash.find *=.+/m, '$&\n$1lodash.findWhere = find;');
+          return match.replace(/^( *)lodash.find *=.+/m, '$&\n$1lodash.findWhere = findWhere;');
         });
 
         // remove `_.isEqual` use from `createCallback`

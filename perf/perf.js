@@ -388,33 +388,14 @@
           "list": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]\
         };\
         \
-        var tplBase =\
+        var tpl =\
           "<div>" +\
           "<h1 class=\'header1\'><%= header1 %></h1>" +\
           "<h2 class=\'header2\'><%= header2 %></h2>" +\
           "<h3 class=\'header3\'><%= header3 %></h3>" +\
           "<h4 class=\'header4\'><%= header4 %></h4>" +\
           "<h5 class=\'header5\'><%= header5 %></h5>" +\
-          "<h6 class=\'header6\'><%= header6 %></h6>";\
-        \
-        var tpl =\
-          tplBase +\
-          "<ul class=\'list\'>" +\
-          "<li class=\'item\'><%= list[0] %></li>" +\
-          "<li class=\'item\'><%= list[1] %></li>" +\
-          "<li class=\'item\'><%= list[2] %></li>" +\
-          "<li class=\'item\'><%= list[3] %></li>" +\
-          "<li class=\'item\'><%= list[4] %></li>" +\
-          "<li class=\'item\'><%= list[5] %></li>" +\
-          "<li class=\'item\'><%= list[6] %></li>" +\
-          "<li class=\'item\'><%= list[7] %></li>" +\
-          "<li class=\'item\'><%= list[8] %></li>" +\
-          "<li class=\'item\'><%= list[9] %></li>" +\
-          "</ul>" +\
-          "</div>";\
-        \
-        var tplWithEvaluate =\
-          tplBase +\
+          "<h6 class=\'header6\'><%= header6 %></h6>" +\
           "<ul class=\'list\'>" +\
           "<% for (var index = 0, length = list.length; index < length; index++) { %>" +\
           "<li class=\'item\'><%= list[index] %></li>" +\
@@ -422,33 +403,14 @@
           "</ul>" +\
           "</div>";\
         \
-        var tplBaseVerbose =\
+        var tplVerbose =\
           "<div>" +\
           "<h1 class=\'header1\'><%= data.header1 %></h1>" +\
           "<h2 class=\'header2\'><%= data.header2 %></h2>" +\
           "<h3 class=\'header3\'><%= data.header3 %></h3>" +\
           "<h4 class=\'header4\'><%= data.header4 %></h4>" +\
           "<h5 class=\'header5\'><%= data.header5 %></h5>" +\
-          "<h6 class=\'header6\'><%= data.header6 %></h6>";\
-        \
-        var tplVerbose =\
-          tplBaseVerbose +\
-          "<ul class=\'list\'>" +\
-          "<li class=\'item\'><%= data.list[0] %></li>" +\
-          "<li class=\'item\'><%= data.list[1] %></li>" +\
-          "<li class=\'item\'><%= data.list[2] %></li>" +\
-          "<li class=\'item\'><%= data.list[3] %></li>" +\
-          "<li class=\'item\'><%= data.list[4] %></li>" +\
-          "<li class=\'item\'><%= data.list[5] %></li>" +\
-          "<li class=\'item\'><%= data.list[6] %></li>" +\
-          "<li class=\'item\'><%= data.list[7] %></li>" +\
-          "<li class=\'item\'><%= data.list[8] %></li>" +\
-          "<li class=\'item\'><%= data.list[9] %></li>" +\
-          "</ul>" +\
-          "</div>";\
-        \
-        var tplVerboseWithEvaluate =\
-          tplBaseVerbose +\
+          "<h6 class=\'header6\'><%= data.header6 %></h6>" +\
           "<ul class=\'list\'>" +\
           "<% for (var index = 0, length = data.list.length; index < length; index++) { %>" +\
           "<li class=\'item\'><%= data.list[index] %></li>" +\
@@ -459,14 +421,10 @@
         var settingsObject = { "variable": "data" };\
         \
         var lodashTpl = lodash.template(tpl),\
-            lodashTplWithEvaluate = lodash.template(tplWithEvaluate),\
-            lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject),\
-            lodashTplVerboseWithEvaluate = lodash.template(tplVerboseWithEvaluate, null, settingsObject);\
+            lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject);\
         \
         var _tpl = _.template(tpl),\
-            _tplWithEvaluate = _.template(tplWithEvaluate),\
-            _tplVerbose = _.template(tplVerbose, null, settingsObject),\
-            _tplVerboseWithEvaluate = _.template(tplVerboseWithEvaluate, null, settingsObject);\
+            _tplVerbose = _.template(tplVerbose, null, settingsObject);\
       }'
   });
 
@@ -1533,7 +1491,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.template` without "evaluate" delimiters (slow path)')
+    Benchmark.Suite('`_.template` (slow path)')
       .add(buildName, {
         'fn': 'lodash.template(tpl, tplData)',
         'teardown': 'function template(){}'
@@ -1545,19 +1503,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.template` with "evaluate" delimiters (slow path)')
-      .add(buildName, {
-        'fn': 'lodash.template(tplWithEvaluate, tplData)',
-        'teardown': 'function template(){}'
-      })
-      .add(otherName, {
-        'fn': '_.template(tplWithEvaluate, tplData)',
-        'teardown': 'function template(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('compiled template without "evaluate" delimiters')
+    Benchmark.Suite('compiled template')
       .add(buildName, {
         'fn': 'lodashTpl(tplData)',
         'teardown': 'function template(){}'
@@ -1569,37 +1515,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('compiled template with "evaluate" delimiters')
-      .add(buildName, {
-        'fn': 'lodashTplWithEvaluate(tplData)',
-        'teardown': 'function template(){}'
-      })
-      .add(otherName, {
-        'fn': '_tplWithEvaluate(tplData)',
-        'teardown': 'function template(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('compiled template without a with-statement or "evaluate" delimiters')
+    Benchmark.Suite('compiled template without a with-statement')
       .add(buildName, {
         'fn': 'lodashTplVerbose(tplData)',
         'teardown': 'function template(){}'
       })
       .add(otherName, {
         'fn': '_tplVerbose(tplData)',
-        'teardown': 'function template(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('compiled template without a with-statement using "evaluate" delimiters')
-      .add(buildName, {
-        'fn': 'lodashTplVerboseWithEvaluate(tplData)',
-        'teardown': 'function template(){}'
-      })
-      .add(otherName, {
-        'fn': '_tplVerboseWithEvaluate(tplData)',
         'teardown': 'function template(){}'
       })
   );

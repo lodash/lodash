@@ -19,10 +19,17 @@
     global.QUnit
   );
 
-  /** The time limit for the tests to run (minutes) */
+  /** The time limit for the tests to run (milliseconds) */
   var timeLimit = process.argv.reduce(function(result, value, index) {
-    return (/--time-limit/.test(value) && parseFloat(process.argv[index + 1])) || result;
-  }, Infinity);
+    if (/--time-limit/.test(value)) {
+      return parseInt(process.argv[index + 1].replace(/(\d+h)?(\d+m)?(\d+s)?/, function(match, h, m, s) {
+        return ((parseInt(h) || 0) * 3600000) +
+               ((parseInt(m) || 0) * 60000) +
+               ((parseInt(s) || 0) * 1000);
+      })) || result;
+    }
+    return result;
+  }, 0);
 
   /** Used to associate aliases with their real names */
   var aliasToRealMap = {
@@ -1213,10 +1220,10 @@
 
   /*--------------------------------------------------------------------------*/
 
-  if (isFinite(timeLimit)) {
+  if (timeLimit > 0) {
     setTimeout(function() {
       process.exit(QUnit.config.stats.bad ? 1 : 0);
-    }, timeLimit * 6e4);
+    }, timeLimit);
   }
   // explicitly call `QUnit.start()` for Narwhal, Node.js, Rhino, and RingoJS
   if (!global.document) {

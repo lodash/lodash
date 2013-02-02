@@ -1214,7 +1214,9 @@
   /*--------------------------------------------------------------------------*/
 
   if (isFinite(timeLimit)) {
-    setTimeout(process.exit, timeLimit * 6e4);
+    setTimeout(function() {
+      process.exit(QUnit.config.stats.bad ? 1 : 0);
+    }, timeLimit * 6e4);
   }
   // explicitly call `QUnit.start()` for Narwhal, Node.js, Rhino, and RingoJS
   if (!global.document) {

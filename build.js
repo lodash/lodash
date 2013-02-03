@@ -2364,7 +2364,10 @@
 
     /*------------------------------------------------------------------------*/
 
-    // used to specify creating a custom build
+    // flag used to track if `outputPath` has been used by `callback`
+    var outputUsed = false;
+
+    // flag used to specify creating a custom build
     var isCustom = isLegacy || isMapped || isMobile || isModern || isStrict || isUnderscore ||
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll);
@@ -2384,8 +2387,12 @@
       }
       if (isDebug && isStdOut) {
         stdout.write(debugSource);
-        callback(debugSource);
-      } else if (!isStdOut) {
+        callback({
+          'source': debugSource
+        });
+      }
+      else if (!isStdOut) {
+        outputUsed = true;
         callback({
           'source': debugSource,
           'outputPath': outputPath || path.join(cwd, basename + '.js')
@@ -2394,7 +2401,7 @@
     }
     // begin the minification process
     if (!isDebug) {
-      if (outputPath && !isMinify) {
+      if (outputPath && outputUsed) {
         outputPath = path.join(path.dirname(outputPath), path.basename(outputPath, '.js') + '.min.js');
       } else if (!outputPath) {
         outputPath = path.join(cwd, basename + '.min.js');

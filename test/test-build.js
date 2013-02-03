@@ -1030,7 +1030,8 @@
   (function() {
     var commands = [
       '-c',
-      '--stdout'
+      '-c -d',
+      '--stdout',
     ];
 
     commands.forEach(function(command, index) {
@@ -1043,7 +1044,7 @@
           written = string;
         };
 
-        build([command, 'exports=', 'include='], function(data) {
+        build(['exports=', 'include='].concat(command.split(' ')), function(data) {
           process.stdout.write = write;
           equal(written, data.source);
           equal(arguments.length, 1);

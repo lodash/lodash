@@ -67,12 +67,6 @@
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
-  /** Used to fix the JScript [[DontEnum]] bug */
-  var shadowed = [
-    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
-    'toLocaleString', 'toString', 'valueOf'
-  ];
-
   /** Used to make template sourceURLs easier to identify */
   var templateCounter = 0;
 
@@ -127,16 +121,10 @@
   var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
     arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
 
+  /** Detect if an `arguments` object's indexes are non-enumerable (IE < 9) */
+
   /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
   var argsAreObjects = arguments.constructor == Object;
-
-  /**
-   * Detect lack of support for accessing string characters by index:
-   *
-   * IE < 8 can't access characters by index and IE 8 can only access
-   * characters by index on string literals.
-   */
-  var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
 
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
@@ -454,11 +442,6 @@
   function createIterator() {
     var data = {
       // support properties
-      'hasDontEnumBug': hasDontEnumBug,
-      'hasEnumPrototype': hasEnumPrototype,
-      'nonEnumArgs': nonEnumArgs,
-      'noCharByIndex': noCharByIndex,
-      'shadowed': shadowed,
 
       // iterator options
       'arrays': 'isArray(iterable)',
@@ -508,7 +491,7 @@
     if (!iterable) return result;
     callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
     var length = iterable.length; index = -1;
-    if (typeof length == 'number') {  
+    if (typeof length == 'number') {
       while (++index < length) {
         if (callback(iterable[index], index, collection) === indicatorObject) return result
       }

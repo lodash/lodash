@@ -73,7 +73,8 @@
   /** List of all Lo-Dash methods */
   var allMethods = _.functions(_)
     .filter(function(methodName) { return !/^_/.test(methodName); })
-    .concat('chain');
+    .concat('chain')
+    .sort();
 
   /** List of "Arrays" category methods */
   var arraysMethods = [
@@ -1102,6 +1103,7 @@
       'csp',
       'legacy',
       'mobile',
+      'modern',
       'strict',
       'underscore',
       'category=arrays',
@@ -1114,7 +1116,6 @@
       'include=each,filter,map',
       'include=once plus=bind,Chaining',
       'category=collections,functions',
-      'underscore backbone',
       'backbone legacy category=utilities minus=first,last',
       'underscore include=debounce,throttle plus=after minus=throttle',
       'underscore mobile strict category=functions exports=amd,global plus=pick,uniq',
@@ -1126,7 +1127,7 @@
     );
 
     commands.forEach(function(origCommand) {
-      _.times(3, function(index) {
+      _.times(4, function(index) {
         var command = origCommand;
 
         if (index == 1) {
@@ -1136,6 +1137,12 @@
           command = 'mobile ' + command;
         }
         if (index == 2) {
+          if (/modern/.test(command)) {
+            return;
+          }
+          command = 'modern ' + command;
+        }
+        if (index == 3) {
           if (/category|underscore/.test(command)) {
             return;
           }

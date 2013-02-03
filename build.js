@@ -563,8 +563,9 @@
       '',
       '    lodash backbone      Build with only methods required by Backbone',
       '    lodash csp           Build supporting default Content Security Policy restrictions',
-      '    lodash legacy        Build tailored for older browsers without ES5 support',
-      '    lodash mobile        Build with IE < 9 bug fixes & method compilation removed',
+      '    lodash legacy        Build tailored for older environments without ES5 support',
+      '    lodash modern        Build tailored for newer environments with ES5 support',
+      '    lodash mobile        Build without method compilation and bug fixes for old browsers',
       '    lodash strict        Build with `_.assign`, `_.bindAll`, & `_.defaults` in strict mode',
       '    lodash underscore    Build tailored for projects already using Underscore',
       '    lodash include=...   Comma separated method/category names to include in the build',
@@ -583,7 +584,7 @@
       '                         (e.g. `lodash settings="{interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/g}"`)',
       '    lodash moduleId=...  The AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates',
       '',
-      '    All arguments, except `legacy` with `csp` or `mobile`, may be combined.',
+      '    All arguments, except `legacy` with `csp`, `mobile`, `modern`, or `underscore`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
       '',
       '  Options:',
@@ -854,33 +855,47 @@
   }
 
   /**
-   * Removes the `createFunction` function from `source`.
+   * Removes all `argsAreObjects` references from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeCreateFunction(source) {
-    source = removeVar(source, 'isFirefox');
-    return removeFunction(source, 'createFunction')
-      .replace(/createFunction/g, 'Function')
-      .replace(/(?:\s*\/\/.*)*\s*if *\(isIeOpera[^}]+}\n/, '');
+  function removeArgsAreObjects(source) {
+    source = removeVar(source, 'argsAreObjects');
+
+    // remove `argsAreObjects` from `_.isArray`
+    source = source.replace(matchFunction(source, 'isArray'), function(match) {
+      return match.replace(/\(argsAreObjects && *([^)]+)\)/g, '$1');
+    });
+
+    // remove `argsAreObjects` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/!argsAreObjects[^:]+:\s*/g, '');
+    });
+
+    return source;
   }
 
   /**
-   * Removes the all references to `refName` from `createIterator` in `source`.
+   * Removes the all references to `varName` from `createIterator` in `source`.
    *
    * @private
    * @param {String} source The source to process.
-   * @param {String} refName The name of the reference to remove.
+   * @param {String} varName The name of the variable to remove.
    * @returns {String} Returns the modified source.
    */
-  function removeFromCreateIterator(source, refName) {
-    var snippet = matchFunction(source, 'createIterator');
-    if (snippet) {
+  function removeFromCreateIterator(source, varName) {
+    var  snippet = matchFunction(source, 'createIterator');
+    if ( snippet) {
+       // remove data object property assignment
+      var modified = snippet.replace(RegExp("^ *'" + varName + "': *" + varName + '.+\\n', 'm'), '');
+      source = source.replace(snippet, modified);
+
       // clip the snippet at the `factory` assignment
-      snippet = snippet.match(/Function\([\s\S]+$/)[0];
-      var modified = snippet.replace(RegExp('\\b' + refName + '\\b,? *', 'g'), '');
+      snippet = modified.match(/Function\([\s\S]+$/)[0];
+      modified = snippet.replace(RegExp('\\b' + varName + '\\b,? *', 'g'), '');
+
       source = source.replace(snippet, modified);
     }
     return source;
@@ -916,6 +931,59 @@
   }
 
   /**
+   * Removes all `hasDontEnumBug` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeHasDontEnumBug(source) {
+    source = removeFromCreateIterator(source, 'hasDontEnumBug');
+    source = removeFromCreateIterator(source, 'shadowed');
+
+    // remove `hasDontEnumBug` declaration and assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
+
+    // remove `shadowed` variable
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var shadowed[\s\S]+?;\n/, '');
+
+    // remove JScript `[[DontEnum]]` fix from `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(hasDontEnumBug[\s\S]+?["']\1<% *} *%>.+/, '');
+    });
+
+    return source;
+  }
+
+  /**
+   * Removes all `hasEnumPrototype` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeHasEnumPrototype(source) {
+    source = removeFromCreateIterator(source, 'hasEnumPrototype');
+
+    // remove `hasEnumPrototype` declaration and assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasEnumPrototype;|.+?hasEnumPrototype *=.+/g, '');
+
+    // remove `prototype` [[Enumerable]] fix from `_.keys`
+    source = source.replace(matchFunction(source, 'keys'), function(match) {
+      return match.replace(/(?:\s*\/\/.*)*(\s*return *).+?propertyIsEnumerable[\s\S]+?: */, '$1');
+    });
+
+    // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match
+        .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(hasEnumPrototype *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
+        .replace(/hasEnumPrototype *\|\|/g, '');
+    });
+
+    return source;
+  }
+
+  /**
    * Removes the `_.isArguments` fallback from `source`.
    *
    * @private
@@ -938,6 +1006,25 @@
   }
 
   /**
+   * Removes all `iteratesOwnLast` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeIteratesOwnLast(source) {
+    // remove `iteratesOwnLast` declaration and assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
+
+    // remove `iteratesOwnLast` from `shimIsPlainObject`
+    source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+      return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
+    });
+
+    return source;
+  }
+
+  /**
    * Removes the `Object.keys` object iteration optimization from `source`.
    *
    * @private
@@ -950,34 +1037,6 @@
     // remove optimized branch in `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(isKeysFast[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/, "'\\n' +\n$2");
-    });
-
-    // remove data object property assignment in `createIterator`
-    source = source.replace(matchFunction(source, 'createIterator'), function(match) {
-      return match.replace(/ *'isKeysFast':.+\n/, '');
-    });
-
-    return source;
-  }
-
-  /**
-   * Removes all `argsAreObjects` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeArgsAreObjects(source) {
-    source = removeVar(source, 'argsAreObjects');
-
-    // remove `argsAreObjects` from `_.isArray`
-    source = source.replace(matchFunction(source, 'isArray'), function(match) {
-      return match.replace(/\(argsAreObjects && *([^)]+)\)/g, '$1');
-    });
-
-    // remove `argsAreObjects` from `_.isEqual`
-    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/!argsAreObjects[^:]+:\s*/g, '');
     });
 
     return source;
@@ -1009,6 +1068,8 @@
    * @returns {String} Returns the modified source.
    */
   function removeNoCharByIndex(source) {
+    source = removeVar(source, 'noCharByIndex');
+
     // remove `noCharByIndex` from `_.at`
     source = source.replace(matchFunction(source, 'at'), function(match) {
       return match.replace(/^ *if *\(noCharByIndex[^}]+}\n/m, '');
@@ -1022,6 +1083,36 @@
     // remove `noCharByIndex` from `_.toArray`
     source = source.replace(matchFunction(source, 'toArray'), function(match) {
       return match.replace(/noCharByIndex[^:]+:/, '');
+    });
+
+    // `noCharByIndex` from `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match
+        .replace(/'if *\(<%= *arrays *%>[^']*/, '$&\\n')
+        .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(noCharByIndex[\s\S]+?["']\1<% *} *%>.+/, '');
+    });
+
+    return source;
+  }
+
+  /**
+   * Removes all `nonEnumArgs` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeNonEnumArgs(source) {
+    source = removeFromCreateIterator(source, 'nonEnumArgs');
+
+    // remove `nonEnumArgs` declaration and assignment
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs;|.+?nonEnumArgs *=.+/g, '');
+
+    // remove `nonEnumArgs` fix from `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match
+        .replace(/(?: *\/\/.*\n)*( *["'] *)<% *} *else *if *\(nonEnumArgs[\s\S]+?(\1<% *} *%>.+)/, '$2')
+        .replace(/ *\|\| *nonEnumArgs/, '');
     });
 
     return source;
@@ -1200,6 +1291,7 @@
         'csp',
         'legacy',
         'mobile',
+        'modern',
         'modularize',
         'strict',
         'underscore',
@@ -1267,9 +1359,6 @@
     // flag used to indicate that a custom IIFE was specified
     var isIIFE = typeof iife == 'string';
 
-    // flag used to specify an Underscore build
-    var isUnderscore = isBackbone || options.indexOf('underscore') > -1;
-
     // flag used to specify creating a source map for the minified source
     var isMapped = options.indexOf('-p') > -1 || options.indexOf('--source-map') > -1;
 
@@ -1277,7 +1366,10 @@
     var isMinify = options.indexOf('-m') > -1 || options.indexOf('--minify') > -1;
 
     // flag used to specify a mobile build
-    var isMobile = isCSP || isUnderscore || options.indexOf('mobile') > -1;
+    var isMobile = options.indexOf('mobile') > -1;
+
+    // flag used to specify a modern build
+    var isModern = isCSP || isMobile || options.indexOf('modern') > -1;
 
     // flag used to specify a modularize build
     var isModularize = options.indexOf('modularize') > -1;
@@ -1292,8 +1384,11 @@
     // constructed using the "use strict" directive
     var isStrict = options.indexOf('strict') > -1;
 
+    // flag used to specify an Underscore build
+    var isUnderscore = isBackbone || options.indexOf('underscore') > -1;
+
     // flag used to specify a legacy build
-    var isLegacy = !isMobile && options.indexOf('legacy') > -1;
+    var isLegacy = !(isModern || isUnderscore) && options.indexOf('legacy') > -1;
 
     // used to specify methods of specific categories
     var categories = options.reduce(function(result, value) {
@@ -1398,7 +1493,7 @@
         useUnderscoreClone = methods.indexOf('clone') < 0;
       }
       // update dependencies
-      if (isMobile) {
+      if (isModern || isUnderscore) {
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isEqual', 'isString');
       }
       if (isUnderscore) {
@@ -1478,23 +1573,24 @@
         source = replaceVar(source, 'noArgsClass', 'true');
         source = removeKeysOptimization(source);
       }
-      if (isUnderscore) {
-        // add Underscore style chaining
-        source = addChainMethods(source);
+      if (isMobile || isUnderscore) {
+        source = removeKeysOptimization(source);
+      }
+      if (isModern || isUnderscore) {
+        source = removeHasDontEnumBug(source);
+        source = removeHasEnumPrototype(source);
+        source = removeIteratesOwnLast(source);
+        source = removeNoCharByIndex(source);
+        source = removeNonEnumArgs(source);
+        source = removeNoNodeClass(source);
+      }
+      if (isModern) {
+        // remove `_.isPlainObject` fallback
+        source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
+          return match.replace(/!getPrototypeOf.+?: */, '');
+        });
       }
       if (isUnderscore) {
-        // remove unneeded variables
-        if (useUnderscoreClone) {
-          source = removeVar(source, 'cloneableClasses');
-          source = removeVar(source, 'ctorByClass');
-        }
-        // remove `_.templateSettings.imports assignment
-        source = source.replace(/,[^']*'imports':[^}]+}/, '');
-
-        // remove large array optimizations
-        source = removeFunction(source, 'cachedContains');
-        source = removeVar(source, 'largeArraySize');
-
         // replace `_.assign`
         source = replaceFunction(source, 'assign', [
           '  function assign(object) {',
@@ -1901,6 +1997,16 @@
           return match.replace(/^( *)lodash.find *=.+/m, '$&\n$1lodash.findWhere = findWhere;');
         });
 
+        // add Underscore style chaining
+        source = addChainMethods(source);
+
+        // remove `_.templateSettings.imports assignment
+        source = source.replace(/,[^']*'imports':[^}]+}/, '');
+
+        // remove large array optimizations
+        source = removeFunction(source, 'cachedContains');
+        source = removeVar(source, 'largeArraySize');
+
         // remove `_.isEqual` use from `createCallback`
         source = source.replace(matchFunction(source, 'createCallback'), function(match) {
           return match.replace(/isEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
@@ -1913,6 +2019,11 @@
           });
         });
 
+        // remove unneeded variables
+        if (useUnderscoreClone) {
+          source = removeVar(source, 'cloneableClasses');
+          source = removeVar(source, 'ctorByClass');
+        }
         // remove unused features from `createBound`
         if (buildMethods.indexOf('partial') < 0 && buildMethods.indexOf('partialRight') < 0) {
           source = source.replace(matchFunction(source, 'createBound'), function(match) {
@@ -1924,23 +2035,6 @@
           });
         }
       }
-      if (isMobile) {
-        source = removeKeysOptimization(source);
-        source = removeNoNodeClass(source);
-
-        // remove `prototype` [[Enumerable]] fix from `_.keys`
-        source = source.replace(matchFunction(source, 'keys'), function(match) {
-          return match.replace(/(?:\s*\/\/.*)*(\s*return *).+?propertyIsEnumerable[\s\S]+?: */, '$1');
-        });
-
-        // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
-        source = source.replace(getIteratorTemplate(source), function(match) {
-          return match
-            .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(hasDontEnumBug[\s\S]+?["']\1<% *} *%>.+/, '')
-            .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(hasEnumPrototype *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
-            .replace(/hasEnumPrototype *\|\|/g, '');
-        });
-      }
       vm.runInContext(source, context);
       return context._;
     }());
@@ -1951,15 +2045,6 @@
       source = buildTemplate(templatePattern, templateSettings);
     }
     else {
-      // simplify template snippets by removing unnecessary brackets
-      source = source.replace(
-        RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *([,\\n])", 'g'), "$1'$2"
-      );
-
-      source = source.replace(
-        RegExp("{(\\\\n' *\\+\\s*.*?\\+\\n\\s*' *)}(?:\\\\n)?' *\\+", 'g'), "$1;\\n'+"
-      );
-
       // remove methods from the build
       allMethods.forEach(function(otherName) {
         if (!_.contains(buildMethods, otherName)) {
@@ -2015,12 +2100,22 @@
 
           source = removeIsArgumentsFallback(source);
         }
-        source = removeCreateFunction(source);
       }
 
       /*----------------------------------------------------------------------*/
 
-      if (isMobile) {
+      if (isModern) {
+        source = removeArgsAreObjects(source);
+        source = removeHasObjectSpliceBug(source);
+        source = removeIsArgumentsFallback(source);
+      }
+      if (isModern || isUnderscore) {
+        source = removeNoArgsClass(source);
+        source = removeNoNodeClass(source);
+      }
+      if (isMobile || isUnderscore) {
+        source = removeVar(source, 'iteratorTemplate');
+
         // inline all functions defined with `createIterator`
         _.functions(lodash).forEach(function(methodName) {
           // strip leading underscores to match pseudo private functions
@@ -2032,67 +2127,27 @@
             });
           }
         });
+      }
+      if (isUnderscore) {
+        // remove `_.assign`, `_.forIn`, `_.forOwn`, and `_.isPlainObject` assignments
+        (function() {
+          var snippet = getMethodAssignments(source),
+              modified = snippet;
 
-        if (isUnderscore) {
-          // remove `_.assign`, `_.forIn`, `_.forOwn`, and `_.isPlainObject` assignments
-          (function() {
-            var snippet = getMethodAssignments(source),
-                modified = snippet;
-
-            if (!exposeAssign) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *= *.+\n/m, '');
-            }
-            if (!exposeForIn) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *= *.+\n/m, '');
-            }
-            if (!exposeForOwn) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forOwn *= *.+\n/m, '');
-            }
-            if (!exposeIsPlainObject) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *= *.+\n/m, '');
-            }
-            source = source.replace(snippet, modified);
-          }());
-
-          // replace `noArgsClass` in the `_.isArguments` fallback
-          source = source.replace(getIsArgumentsFallback(source), function(match) {
-            return match.replace(/noArgsClass/g, '!isArguments(arguments)');
-          });
-
-          // remove chainability from `each` and `_.forEach`
-          _.each(['each', 'forEach'], function(methodName) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
-              return match.replace(/\n *return .+?([};\s]+)$/, '$1');
-            });
-          });
-
-          // unexpose "exit early" feature of `each`, `_.forEach`, `_.forIn`, and `_.forOwn`
-          _.each(['each', 'forEach', 'forIn', 'forOwn'], function(methodName) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
-              return match.replace(/=== *false\)/g, '=== indicatorObject)');
-            });
-          });
-
-          // modify `_.every`, `_.find`, `_.isEqual`, and `_.some` to use the private `indicatorObject`
-          _.each(['every', 'isEqual'], function(methodName) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
-              return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-            });
-          });
-
-          source = source.replace(matchFunction(source, 'find'), function(match) {
-            return match.replace(/return false/, 'return indicatorObject');
-          });
-
-          source = source.replace(matchFunction(source, 'some'), function(match) {
-            return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
-          });
-        }
-        else {
-          source = removeArgsAreObjects(source);
-          source = removeHasObjectSpliceBug(source);
-          source = removeIsArgumentsFallback(source);
-        }
+          if (!exposeAssign) {
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *= *.+\n/m, '');
+          }
+          if (!exposeForIn) {
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *= *.+\n/m, '');
+          }
+          if (!exposeForOwn) {
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forOwn *= *.+\n/m, '');
+          }
+          if (!exposeIsPlainObject) {
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *= *.+\n/m, '');
+          }
+          source = source.replace(snippet, modified);
+        }());
 
         // remove `thisArg` from unexposed `forIn` and `forOwn`
         _.each([
@@ -2108,23 +2163,41 @@
           }
         });
 
-        // remove `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs` declarations and assignments
-        source = source
-          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs).+\n/g, '')
-          .replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '');
-
-        // remove `iteratesOwnLast` from `shimIsPlainObject`
-        source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-          return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
+        // replace `noArgsClass` in the `_.isArguments` fallback
+        source = source.replace(getIsArgumentsFallback(source), function(match) {
+          return match.replace(/noArgsClass/g, '!isArguments(arguments)');
         });
 
-        source = removeVar(source, 'iteratorTemplate');
-        source = removeCreateFunction(source);
-        source = removeNoArgsClass(source);
-        source = removeNoCharByIndex(source);
-        source = removeNoNodeClass(source);
+        // remove chainability from `each` and `_.forEach`
+        _.each(['each', 'forEach'], function(methodName) {
+          source = source.replace(matchFunction(source, methodName), function(match) {
+            return match.replace(/\n *return .+?([};\s]+)$/, '$1');
+          });
+        });
+
+        // unexpose "exit early" feature of `each`, `_.forEach`, `_.forIn`, and `_.forOwn`
+        _.each(['each', 'forEach', 'forIn', 'forOwn'], function(methodName) {
+          source = source.replace(matchFunction(source, methodName), function(match) {
+            return match.replace(/=== *false\)/g, '=== indicatorObject)');
+          });
+        });
+
+        // modify `_.every`, `_.find`, `_.isEqual`, and `_.some` to use the private `indicatorObject`
+        _.each(['every', 'isEqual'], function(methodName) {
+          source = source.replace(matchFunction(source, methodName), function(match) {
+            return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+          });
+        });
+
+        source = source.replace(matchFunction(source, 'find'), function(match) {
+          return match.replace(/return false/, 'return indicatorObject');
+        });
+
+        source = source.replace(matchFunction(source, 'some'), function(match) {
+          return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
+        });
       }
-      else {
+      if (!(isMobile || isUnderscore)) {
         // inline `iteratorTemplate` template
         source = source.replace(getIteratorTemplate(source), function() {
           var snippet = getFunctionSource(lodash._iteratorTemplate);
@@ -2236,6 +2309,10 @@
           .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+\n/g, '')
           .replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+\n/, '');
       }
+      if (!source.match(/var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs)\b/g)) {
+        // remove `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs` assignments
+        source = source.replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '');
+      }
 
       // assign debug source before further modifications that rely on the minifier
       // to remove unused variables and other dead code
@@ -2268,9 +2345,9 @@
       }
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
         source = removeFunction(source, 'createIterator');
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasEnumPrototype;|.+?hasEnumPrototype *=.+/g, '');
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs;|.+?nonEnumArgs *=.+/g, '');
+        source = removeHasDontEnumBug(source);
+        source = removeHasEnumPrototype(source);
+        source = removeNonEnumArgs(source);
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
         source = removeVar(source, 'isBindFast');
@@ -2281,10 +2358,6 @@
         source = removeVar(source, 'nativeKeys');
         source = removeKeysOptimization(source);
       }
-      if (!source.match(/var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs)\b/g)) {
-        // remove `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs` assignments
-        source = source.replace(/ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/, '');
-      }
     }
 
     source = cleanupSource(source);
@@ -2292,7 +2365,7 @@
     /*------------------------------------------------------------------------*/
 
     // used to specify creating a custom build
-    var isCustom = isLegacy || isMapped || isMobile || isStrict ||
+    var isCustom = isLegacy || isMapped || isMobile || isModern || isStrict || isUnderscore ||
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll);
 
@@ -2315,14 +2388,17 @@
       } else if (!isStdOut) {
         callback({
           'source': debugSource,
-          'outputPath': (isDebug && outputPath) || path.join(cwd, basename + '.js')
+          'outputPath': outputPath || path.join(cwd, basename + '.js')
         });
       }
     }
     // begin the minification process
     if (!isDebug) {
-      outputPath || (outputPath = path.join(cwd, basename + '.min.js'));
-
+      if (outputPath && !isMinify) {
+        outputPath = path.join(path.dirname(outputPath), path.basename(outputPath, '.js') + '.min.js');
+      } else if (!outputPath) {
+        outputPath = path.join(cwd, basename + '.min.js');
+      }
       minify(source, {
         'filePath': filePath,
         'isMapped': isMapped,

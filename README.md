@@ -58,7 +58,7 @@ For more information check out these screencasts over Lo-Dash:
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5~24, Firefox 1~18, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.17, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
+Lo-Dash has been tested in at least Chrome 5~24, Firefox 1~18, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.18, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
 
 ## Custom builds
 
@@ -71,17 +71,22 @@ lodash backbone
 ```
 
  * CSP builds, supporting default [Content Security Policy](http://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html) restrictions, may be created using the `csp` modifier argument.
-   The `csp` modifier is an alais of the `mobile` modifier. Chrome extensions will require [sandboxing](http://developer.chrome.com/extensions/sandboxingEval.html) or the use of either the `csp`, `mobile`, or `underscore` build.
+   The `csp` modifier is an alais of the `modern` modifier. Chrome extensions will require [sandboxing](http://developer.chrome.com/extensions/sandboxingEval.html) or the use of either the `mobile`, `modern`, or `underscore` build.
 ```bash
 lodash csp
 ```
 
- * Legacy builds, tailored for older browsers without [ES5 support](http://es5.github.com/), may be created using the `legacy` modifier argument.
+ * Legacy builds, tailored for older environments without [ES5 support](http://es5.github.com/), may be created using the `legacy` modifier argument.
 ```bash
 lodash legacy
 ```
 
- * Mobile builds, with IE < 9 bug fixes and method compilation removed, may be created using the `mobile` modifier argument.
+ * Modern builds, tailored for newer environments with ES5 support, may be created using the `modern` modifier argument.
+```bash
+lodash modern
+```
+
+ * Mobile builds, without method compilation and bug fixes for old browsers, may be created using the `mobile` modifier argument.
 ```bash
 lodash mobile
 ```
@@ -150,7 +155,7 @@ lodash settings="{interpolate:/\{\{([\s\S]+?)\}\}/g}"
 lodash moduleId="underscore"
 ```
 
-All arguments, except `legacy` with `csp` or `mobile`, may be combined.<br>
+All arguments, except `legacy` with `csp`, `mobile`, `modern`, or `underscore`, may be combined.<br>
 Unless specified by `-o` or `--output`, all files created are saved to the current working directory.
 
 The following options are also supported:

@@ -1347,47 +1347,47 @@
     // the path to the source file
     var filePath = path.join(__dirname, 'lodash.js');
 
-    // flag used to specify a Backbone build
+    // flag to specify a Backbone build
     var isBackbone = options.indexOf('backbone') > -1;
 
-    // flag used to specify a Content Security Policy build
+    // flag to specify a Content Security Policy build
     var isCSP = options.indexOf('csp') > -1 || options.indexOf('CSP') > -1;
 
-    // flag used to specify only creating the debug build
+    // flag to specify only creating the debug build
     var isDebug = options.indexOf('-d') > -1 || options.indexOf('--debug') > -1;
 
-    // flag used to indicate that a custom IIFE was specified
+    // flag to indicate that a custom IIFE was specified
     var isIIFE = typeof iife == 'string';
 
-    // flag used to specify creating a source map for the minified source
+    // flag to specify creating a source map for the minified source
     var isMapped = options.indexOf('-p') > -1 || options.indexOf('--source-map') > -1;
 
-    // flag used to specify only creating the minified build
+    // flag to specify only creating the minified build
     var isMinify = options.indexOf('-m') > -1 || options.indexOf('--minify') > -1;
 
-    // flag used to specify a mobile build
+    // flag to specify a mobile build
     var isMobile = options.indexOf('mobile') > -1;
 
-    // flag used to specify a modern build
+    // flag to specify a modern build
     var isModern = isCSP || isMobile || options.indexOf('modern') > -1;
 
-    // flag used to specify a modularize build
+    // flag to specify a modularize build
     var isModularize = options.indexOf('modularize') > -1;
 
-    // flag used to specify writing output to standard output
+    // flag to specify writing output to standard output
     var isStdOut = options.indexOf('-c') > -1 || options.indexOf('--stdout') > -1;
 
-    // flag used to specify skipping status updates normally logged to the console
+    // flag to specify skipping status updates normally logged to the console
     var isSilent = isStdOut || options.indexOf('-s') > -1 || options.indexOf('--silent') > -1;
 
-    // flag used to specify `_.assign`, `_.bindAll`, and `_.defaults` are
+    // flag to specify `_.assign`, `_.bindAll`, and `_.defaults` are
     // constructed using the "use strict" directive
     var isStrict = options.indexOf('strict') > -1;
 
-    // flag used to specify an Underscore build
+    // flag to specify an Underscore build
     var isUnderscore = isBackbone || options.indexOf('underscore') > -1;
 
-    // flag used to specify a legacy build
+    // flag to specify a legacy build
     var isLegacy = !(isModern || isUnderscore) && options.indexOf('legacy') > -1;
 
     // used to specify methods of specific categories
@@ -1436,22 +1436,22 @@
       'moduleId': moduleId
     }));
 
-    // flag used to specify a template build
+    // flag to specify a template build
     var isTemplate = !!templatePattern;
 
     // the lodash.js source
     var source = fs.readFileSync(filePath, 'utf8');
 
-    // flag used to specify replacing Lo-Dash's `_.clone` with Underscore's
+    // flag to specify replacing Lo-Dash's `_.clone` with Underscore's
     var useUnderscoreClone = isUnderscore;
 
-    // flags used to specify exposing Lo-Dash methods in an Underscore build
+    // flags to specify exposing Lo-Dash methods in an Underscore build
     var exposeAssign = !isUnderscore,
         exposeForIn = !isUnderscore,
         exposeForOwn = !isUnderscore,
         exposeIsPlainObject = !isUnderscore;
 
-    // flags used to specify export options
+    // flags to specify export options
     var isAMD = exportsOptions.indexOf('amd') > -1,
         isCommonJS = exportsOptions.indexOf('commonjs') > -1,
         isGlobal = exportsOptions.indexOf('global') > -1,
@@ -2364,10 +2364,10 @@
 
     /*------------------------------------------------------------------------*/
 
-    // flag used to track if `outputPath` has been used by `callback`
+    // flag to track if `outputPath` has been used by `callback`
     var outputUsed = false;
 
-    // flag used to specify creating a custom build
+    // flag to specify creating a custom build
     var isCustom = isLegacy || isMapped || isMobile || isModern || isStrict || isUnderscore ||
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll);

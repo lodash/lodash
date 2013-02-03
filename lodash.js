@@ -362,7 +362,7 @@
     // array-like iteration:
     '<% if (arrays) { %>' +
     'var length = iterable.length; index = -1;\n' +
-    "if (<%= arrays %>) {" +
+    'if (<%= arrays %>) {' +
 
     // add support for accessing string characters by index if needed
     '  <% if (noCharByIndex) { %>\n' +

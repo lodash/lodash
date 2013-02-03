@@ -2,7 +2,7 @@ cd "$(dirname "$0")"
 for cmd in rhino ringo narwhal node; do
   echo ""
   echo "Testing in $cmd..."
-  $cmd test.js
+  $cmd test.js && $cmd test.js ../lodash.min.js
 done
 
 echo ""

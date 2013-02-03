@@ -35,7 +35,7 @@
   var QUnit =
     window.QUnit || (
       window.addEventListener || (window.addEventListener = Function.prototype),
-      window.setTimeout || (window.setTimeout = Function.prototype),
+      window.setTimeout || (window.setTimeout = / /),
       window.QUnit = load('../vendor/qunit/qunit/qunit.js') || window.QUnit,
       load('../vendor/qunit-clib/qunit-clib.js'),
       window.addEventListener === Function.prototype && delete window.addEventListener,
@@ -609,7 +609,7 @@
 
     test('lodash.' + methodName + ' should not throw strict mode errors', function() {
       var object = { 'a': null, 'b': function(){} },
-          pass = true;
+          pass = !/dist\/lodash(\.min)?\.js/.test(typeof ui != 'undefined' ? ui.buildPath : filePath);
 
       if (freeze) {
         freeze(object);
@@ -620,7 +620,7 @@
             func(object, { 'a': 1 });
           }
         } catch(e) {
-          pass = false;
+          pass = !pass;
         }
         ok(pass);
       }

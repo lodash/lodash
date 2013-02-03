@@ -3,7 +3,7 @@
   "version": "1.0.0-rc.3",
   "description": "An alternative to Underscore.js, delivering consistency, customization, performance, and extra features.",
   "homepage": "http://lodash.com",
-  "main": "./lodash",
+  "main": "./dist/lodash",
   "keywords": [
     "browser",
     "client",
@@ -47,6 +47,6 @@
   },
   "scripts": {
     "build": "node ./build.js",
-    "test": "node ./test/test.js && node ./test/test.js ./lodash.min.js && node ./test/test-build.js"
+    "test": "node ./test/test.js ./dist/lodash.js && node ./test/test.js ./dist/lodash.min.js && node ./test/test-build.js"
   }
 }

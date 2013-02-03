@@ -19,7 +19,9 @@
   ui.buildPath = (function() {
     switch (build) {
       case 'lodash-prod':         return 'lodash.min.js';
-      case 'lodash-underscore':   return 'lodash.underscore.min.js';
+      case 'lodash-underscore':   return 'dist/lodash.underscore.min.js';
+      case 'lodash-modern':       return 'dist/lodash.min.js';
+      case 'lodash-modern-debug': return 'dist/lodash.js';
       case 'lodash-custom':       return 'lodash.custom.min.js';
       case 'lodash-custom-debug': return 'lodash.custom.js';
     }
@@ -58,8 +60,10 @@
           switch (build) {
             case 'lodash-prod':         return 1;
             case 'lodash-underscore':   return 2;
-            case 'lodash-custom':       return 3;
-            case 'lodash-custom-debug': return 4;
+            case 'lodash-modern':       return 3;
+            case 'lodash-modern-debug': return 4;
+            case 'lodash-custom':       return 5;
+            case 'lodash-custom-debug': return 6;
           }
           return 0;
         }());
@@ -86,6 +90,8 @@
       '<option value="lodash-dev">Developement</option>' +
       '<option value="lodash-prod">Production</option>' +
       '<option value="lodash-underscore">Underscore</option>' +
+      '<option value="lodash-modern">Modern</option>' +
+      '<option value="lodash-modern-debug">Modern (debug)</option>' +
       '<option value="lodash-custom">Custom</option>' +
       '<option value="lodash-custom-debug">Custom (debug)</option>' +
       '</select>';

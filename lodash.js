@@ -2944,9 +2944,7 @@
    * _.where(stooges, { 'age': 40 });
    * // => [{ 'name': 'moe', 'age': 40 }]
    */
-  function where(collection, properties) {
-    return filter(collection, properties);
-  }
+  var where = filter;
 
   /*--------------------------------------------------------------------------*/
 

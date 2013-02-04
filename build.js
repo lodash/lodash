@@ -621,7 +621,7 @@
    * @returns {String} Returns the method name's category.
    */
   function getCategory(source, methodName) {
-    var result = /@category *(\w+)/.exec(matchFunction(source, methodName));
+    var result = /@category +(\w+)/.exec(matchFunction(source, methodName));
     return result ? result[1] : '';
   }
 
@@ -816,7 +816,18 @@
       ')\\n'
     ));
 
-    return result ? result[0] : '';
+    if (result) {
+      return result[0];
+    }
+    // match variables that are explicitly defined as functions
+    result = source.match(RegExp(
+      // match multi-line comment block
+      '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
+      // match a simple variable declaration
+      ' *var ' + funcName + ' *=.+?;\\n'
+    ));
+
+    return /@type +Function/.test(result) ? result[0] : '';
   }
 
   /**

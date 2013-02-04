@@ -30,7 +30,7 @@
     // correct overly aggressive Closure Compiler advanced optimizations
     source = source
       .replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}')
-      .replace(/(document[^&]+&&)\s*\w+/, '$1!({toString:0}+"")');
+      .replace(/(document[^&]+&&)\s*(?:\w+|!\d)/, '$1!({toString:0}+"")');
 
     // flip `typeof` expressions to help optimize Safari and
     // correct the AMD module definition for AMD build optimizers

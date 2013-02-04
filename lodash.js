@@ -1461,6 +1461,11 @@
         (!b || (otherType != 'function' && otherType != 'object'))) {
       return false;
     }
+    // exit early for `null` and `undefined`, avoiding ES3's Function#call behavior
+    // http://es5.github.com/#x15.3.4.4
+    if (a == null || b == null) {
+      return a === b;
+    }
     // compare [[Class]] names
     var className = toString.call(a),
         otherClass = toString.call(b);

@@ -279,6 +279,25 @@
   QUnit.module('lodash.bindAll');
 
   (function() {
+    test('should bind all methods of `object`', function() {
+      function Foo() {
+        this._a = 1;
+        this._b = 2;
+        this.a = function() { return this._a; };
+      };
+
+      Foo.prototype.b = function() {return this._b; };
+
+      var object = new Foo;
+      _.bindAll(object);
+
+      var actual = _.map(_.functions(object), function(methodName) {
+        return object[methodName].call({});
+      });
+
+      deepEqual(actual, [1, 2]);
+    });
+
     test('should accept arrays of method names', function() {
       var object = {
         '_a': 1,

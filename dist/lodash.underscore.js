@@ -77,7 +77,6 @@
       getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
       hasOwnProperty = objectRef.hasOwnProperty,
       push = arrayRef.push,
-      propertyIsEnumerable = objectRef.propertyIsEnumerable,
       toString = objectRef.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
@@ -120,8 +119,6 @@
    */
   var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
     arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
-
-  /** Detect if an `arguments` object's indexes are non-enumerable (IE < 9) */
 
   /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
   var argsAreObjects = arguments.constructor == Object;
@@ -463,13 +460,13 @@
     // create the function factory
     var factory = Function(
         'createCallback, hasOwnProperty, isArguments, isArray, isString, ' +
-        'objectTypes, nativeKeys, propertyIsEnumerable',
+        'objectTypes, nativeKeys',
       'return function(' + args + ') {\n' + (data) + '\n}'
     );
     // return the compiled function
     return factory(
       createCallback, hasOwnProperty, isArguments, isArray, isString,
-      objectTypes, nativeKeys, propertyIsEnumerable
+      objectTypes, nativeKeys
     );
   }
 
@@ -481,6 +478,7 @@
    * iteration early by explicitly returning `false`.
    *
    * @private
+   * @type Function
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
@@ -625,6 +623,7 @@
    *
    * @static
    * @memberOf _
+   * @type Function
    * @category Objects
    * @param {Object} object The object to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
@@ -665,6 +664,7 @@
    *
    * @static
    * @memberOf _
+   * @type Function
    * @category Objects
    * @param {Object} object The object to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
@@ -727,7 +727,10 @@
    * // => ['one', 'two', 'three'] (order is not guaranteed)
    */
   var keys = !nativeKeys ? shimKeys : function(object) {
-    return (isObject(object) ? nativeKeys(object) : []);
+    if (!isObject(object)) {
+      return [];
+    }
+    return nativeKeys(object);
   };
 
   /**
@@ -804,6 +807,7 @@
    *
    * @static
    * @memberOf _
+   * @type Function
    * @alias extend
    * @category Objects
    * @param {Object} object The destination object.
@@ -887,6 +891,7 @@
    *
    * @static
    * @memberOf _
+   * @type Function
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.

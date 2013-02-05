@@ -26,7 +26,6 @@
     'objectTypes',
     'ownIndex',
     'ownProps',
-    'propertyIsEnumerable',
     'result',
     'skipProto',
     'source',

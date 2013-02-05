@@ -898,9 +898,13 @@
       var modified = snippet.replace(RegExp("^ *'" + varName + "': *" + varName + '.+\\n', 'm'), '');
       source = source.replace(snippet, modified);
 
-      // clip the snippet at the `factory` assignment
+      // clip at the `factory` assignment
       snippet = modified.match(/Function\([\s\S]+$/)[0];
-      modified = snippet.replace(RegExp('\\b' + varName + '\\b,? *', 'g'), '');
+
+      modified = snippet
+        .replace(RegExp('\\b' + varName + '\\b,? *', 'g'), '')
+        .replace(/, *',/, "',")
+        .replace(/,\s*\)/, ')')
 
       source = source.replace(snippet, modified);
     }

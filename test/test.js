@@ -628,7 +628,7 @@
 
     test('lodash.' + methodName + ' should not throw strict mode errors', function() {
       var object = { 'a': null, 'b': function(){} },
-          pass = !/dist\/lodash(\.min)?\.js/.test(typeof ui != 'undefined' ? ui.buildPath : filePath);
+          pass = true;
 
       if (freeze) {
         freeze(object);
@@ -639,7 +639,7 @@
             func(object, { 'a': 1 });
           }
         } catch(e) {
-          pass = !pass;
+          pass = false;
         }
         ok(pass);
       }

@@ -1,14 +1,13 @@
 /**
  * @license
  * Lo-Dash 1.0.0-rc.3 (Custom Build) <http://lodash.com/>
- * Build: `lodash strict modern -o ./dist/lodash.js`
+ * Build: `lodash modern -o ./dist/lodash.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
 ;(function(window, undefined) {
-  'use strict';
 
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports;
@@ -277,7 +276,7 @@
    */
   var iteratorTemplate = function(obj) {
     
-    var __p = '\'use strict\';\nvar index, iterable = ' +
+    var __p = 'var index, iterable = ' +
     (obj.firstArg ) +
     ', result = iterable;\nif (!iterable) return result;\n' +
     (obj.top ) +

@@ -805,29 +805,24 @@
       // match multi-line comment block (could be on a single line)
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/\\n)?' +
       // begin non-capturing group
-      '(?:' +
+      '( *)(?:' +
       // match a function declaration
-      '( *)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
-      // match a variable declaration with `createIterator`
-      ' +var ' + funcName + ' *=.*?createIterator\\((?:{|[a-zA-Z])[\\s\\S]+?\\);|' +
+      'function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
       // match a variable declaration with function expression
-      '( *)var ' + funcName + ' *=.*?function[\\s\\S]+?\\n\\2};' +
+      'var ' + funcName + ' *=.*?function[\\s\\S]+?\\n\\1};' +
       // end non-capturing group
       ')\\n'
     ));
 
-    if (result) {
-      return result[0];
-    }
     // match variables that are explicitly defined as functions
-    result = source.match(RegExp(
+    result || (result = source.match(RegExp(
       // match multi-line comment block
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
-      // match a simple variable declaration
-      ' *var ' + funcName + ' *=.+?;\\n'
-    ));
+      // match simple variable declarations and those with `createIterator`
+      ' *var ' + funcName + ' *=(?:.+?|.*?createIterator\\([\\s\\S]+?\\));\\n'
+    )));
 
-    return /@type +Function/.test(result) ? result[0] : '';
+    return /@type +Function|function\s*\w*\(/.test(result) ? result[0] : '';
   }
 
   /**
@@ -953,12 +948,12 @@
     source = removeFromCreateIterator(source, 'shadowed');
 
     // remove `hasDontEnumBug` declaration and assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug;|.+?hasDontEnumBug *=.+/g, '');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b.*|.+?hasDontEnumBug *=.+/g, '');
 
     // remove `shadowed` variable
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var shadowed[\s\S]+?;\n/, '');
 
-    // remove JScript `[[DontEnum]]` fix from `iteratorTemplate`
+    // remove `hasDontEnumBug` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(hasDontEnumBug[\s\S]+?["']\1<% *} *%>.+/, '');
     });
@@ -977,14 +972,16 @@
     source = removeFromCreateIterator(source, 'hasEnumPrototype');
 
     // remove `hasEnumPrototype` declaration and assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasEnumPrototype;|.+?hasEnumPrototype *=.+/g, '');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasEnumPrototype\b.*|.+?hasEnumPrototype *=.+/g, '');
 
-    // remove `prototype` [[Enumerable]] fix from `_.keys`
+    // remove `hasEnumPrototype` from `_.keys`
     source = source.replace(matchFunction(source, 'keys'), function(match) {
-      return match.replace(/(?:\s*\/\/.*)*(\s*return *).+?propertyIsEnumerable[\s\S]+?: */, '$1');
+      return match
+        .replace(/\(hasEnumPrototype[^)]+\)(?:\s*\|\|\s*)?/, '')
+        .replace(/\s*if *\(\s*\)[^}]+}/, '');
     });
 
-    // remove `prototype` [[Enumerable]] fix from `iteratorTemplate`
+    // remove `hasEnumPrototype` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(hasEnumPrototype *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
@@ -1025,7 +1022,7 @@
    */
   function removeIteratesOwnLast(source) {
     // remove `iteratesOwnLast` declaration and assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast\b.*|.+?iteratesOwnLast *=.+/g, '');
 
     // remove `iteratesOwnLast` from `shimIsPlainObject`
     source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
@@ -1117,9 +1114,16 @@
     source = removeFromCreateIterator(source, 'nonEnumArgs');
 
     // remove `nonEnumArgs` declaration and assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs;|.+?nonEnumArgs *=.+/g, '');
+    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs\b.*|.+?nonEnumArgs *=.+/g, '');
 
-    // remove `nonEnumArgs` fix from `iteratorTemplate`
+    // remove `nonEnumArgs` from `_.keys`
+    source = source.replace(matchFunction(source, 'keys'), function(match) {
+      return match
+        .replace(/(?:\s*\|\|\s*)?\(nonEnumArgs[^)]+\)\)/, '')
+        .replace(/\s*if *\(\s*\)[^}]+}/, '');
+    });
+
+    // remove `nonEnumArgs` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)*( *["'] *)<% *} *else *if *\(nonEnumArgs[\s\S]+?(\1<% *} *%>.+)/, '$2')

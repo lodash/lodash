@@ -565,7 +565,7 @@
       '    lodash csp           Build supporting default Content Security Policy restrictions',
       '    lodash legacy        Build tailored for older environments without ES5 support',
       '    lodash modern        Build tailored for newer environments with ES5 support',
-      '    lodash mobile        Build without method compilation and bug fixes for old browsers',
+      '    lodash mobile        Build without method compilation and most bug fixes for old browsers',
       '    lodash strict        Build with `_.assign`, `_.bindAll`, & `_.defaults` in strict mode',
       '    lodash underscore    Build tailored for projects already using Underscore',
       '    lodash include=...   Comma separated method/category names to include in the build',
@@ -1600,8 +1600,11 @@
         source = removeHasEnumPrototype(source);
         source = removeIteratesOwnLast(source);
         source = removeNoCharByIndex(source);
-        source = removeNonEnumArgs(source);
         source = removeNoNodeClass(source);
+
+        if (!isMobile) {
+          source = removeNonEnumArgs(source);
+        }
       }
       if (isModern) {
         // remove `_.isPlainObject` fallback
@@ -2123,9 +2126,6 @@
           source = removeIsArgumentsFallback(source);
         }
       }
-
-      /*----------------------------------------------------------------------*/
-
       if (isModern) {
         source = removeArgsAreObjects(source);
         source = removeHasObjectSpliceBug(source);
@@ -2300,10 +2300,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    if (isTemplate) {
-      debugSource = source;
-    }
-    else {
+    if (!isTemplate) {
       // modify/remove references to removed methods/variables
       if (isRemoved(source, 'invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
@@ -2331,16 +2328,7 @@
           .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+\n/g, '')
           .replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+\n/, '');
       }
-      if (!source.match(/var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs)\b/g)) {
-        // remove `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs` assignments
-        source = source.replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '');
-      }
-
-      // assign debug source before further modifications that rely on the minifier
-      // to remove unused variables and other dead code
-      debugSource = cleanupSource(source);
-
-      // remove associated functions, variables, and code snippets that the minifier may miss
+      // remove functions, variables, and snippets that the minifier may miss
       if (isRemoved(source, 'clone')) {
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
@@ -2350,7 +2338,7 @@
       }
       if (isRemoved(source, 'isPlainObject')) {
         source = removeVar(source, 'getPrototypeOf');
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast;|.+?iteratesOwnLast *=.+/g, '');
+        source = removeIteratesOwnLast(source);
       }
       if (isRemoved(source, 'keys')) {
         source = removeFunction(source, 'shimKeys');
@@ -2369,7 +2357,6 @@
         source = removeFunction(source, 'createIterator');
         source = removeHasDontEnumBug(source);
         source = removeHasEnumPrototype(source);
-        source = removeNonEnumArgs(source);
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
         source = removeVar(source, 'isBindFast');
@@ -2379,9 +2366,15 @@
       if (isRemoved(source, 'createIterator', 'keys')) {
         source = removeVar(source, 'nativeKeys');
         source = removeKeysOptimization(source);
+        source = removeNonEnumArgs(source);
+      }
+      if (!source.match(/var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs)\b/g)) {
+        // remove IIFE used to assign `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs`
+        source = source.replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '');
       }
     }
 
+    debugSource = cleanupSource(source);
     source = cleanupSource(source);
 
     /*------------------------------------------------------------------------*/

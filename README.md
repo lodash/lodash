@@ -86,7 +86,7 @@ lodash legacy
 lodash modern
 ```
 
- * Mobile builds, without method compilation and bug fixes for old browsers, may be created using the `mobile` modifier argument.
+ * Mobile builds, without method compilation and most bug fixes for old browsers, may be created using the `mobile` modifier argument.
 ```bash
 lodash mobile
 ```

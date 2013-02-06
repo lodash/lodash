@@ -1901,9 +1901,11 @@
       // using their `callback` arguments, `index|key` and `collection`
       if (typeof deepIndicator != 'number') {
         length = args.length;
-        callback = typeof (callback = args[length - 2]) == 'function'
-          ? createCallback(callback, args[--length], 2)
-          : (typeof (callback = args[length - 1]) == 'function' && callback);
+        if (typeof args[length - 2] == 'function') {
+          callback = createCallback(args[--length - 1], args[length--], 2);
+        } else if (typeof args[length - 1] == 'function') {
+          callback = args[--length];
+        }
       }
     }
     while (++index < length) {

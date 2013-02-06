@@ -1987,10 +1987,6 @@
   (function() {
     var args = arguments;
 
-    test('should detect the size of a string value', function() {
-      equal(_.size('abc'), 3);
-    });
-
     test('should allow a falsey `object` argument', function() {
       _.each(falsey, function(index, value) {
         try {
@@ -2013,6 +2009,16 @@
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       equal(_.size(shadowed), 7);
+    });
+
+    _.each({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection`', function() {
+        deepEqual(_.size(collection), 3);
+      });
     });
   }(1, 2, 3));
 

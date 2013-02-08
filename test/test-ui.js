@@ -18,7 +18,7 @@
   // expose Lo-Dash build file path
   ui.buildPath = (function() {
     switch (build) {
-      case 'lodash-prod':         return 'lodash.min.js';
+      case 'lodash-prod':         return 'dist/lodash.compat.min.js';
       case 'lodash-underscore':   return 'dist/lodash.underscore.min.js';
       case 'lodash-modern':       return 'dist/lodash.min.js';
       case 'lodash-modern-debug': return 'dist/lodash.js';

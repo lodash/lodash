@@ -34,19 +34,21 @@
   // expose Lo-Dash build file path
   ui.buildPath = (function() {
     switch (build) {
-      case 'lodash-dev':        return 'lodash.js';
-      case 'lodash-underscore': return 'lodash.underscore.min.js';
+      case 'lodash-dev':        return 'dist/lodash.compat.js';
+      case 'lodash-modern':     return 'dist/lodash.min.js';
+      case 'lodash-underscore': return 'dist/lodash.underscore.min.js';
       case 'lodash-custom':     return 'lodash.custom.min.js';
     }
-    return 'lodash.min.js';
+    return 'dist/lodash.compat.min.js';
   }());
 
   // expose other library file path
   ui.otherPath = (function() {
     switch (other) {
-      case 'lodash-dev':        return 'lodash.js';
-      case 'lodash-prod':       return 'lodash.min.js';
-      case 'lodash-underscore': return 'lodash.underscore.min.js';
+      case 'lodash-dev':        return 'dist/lodash.compat.js';
+      case 'lodash-prod':       return 'dist/lodash.compat.min.js';
+      case 'lodash-modern':     return 'dist/lodash.min.js';
+      case 'lodash-underscore': return 'dist/lodash.underscore.min.js';
       case 'lodash-custom':     return 'lodash.custom.min.js';
       case 'underscore-dev':    return 'vendor/underscore/underscore.js';
     }
@@ -76,6 +78,7 @@
       '<select id="perf-build">' +
       '<option value="lodash-dev">Lo-Dash</option>' +
       '<option value="lodash-prod">Lo-Dash (minified)</option>' +
+      '<option value="lodash-modern">Lo-Dash (modern)</option>' +
       '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
       '<option value="lodash-custom">Lo-Dash (custom)</option>' +
       '</select>';
@@ -89,6 +92,7 @@
       '<option value="underscore-prod">Underscore (minified)</option>' +
       '<option value="lodash-dev">Lo-Dash</option>' +
       '<option value="lodash-prod">Lo-Dash (minified)</option>' +
+      '<option value="lodash-modern">Lo-Dash (modern)</option>' +
       '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
       '<option value="lodash-custom">Lo-Dash (custom)</option>' +
       '</select>';
@@ -102,20 +106,22 @@
 
     buildList.selectedIndex = (function() {
       switch (build) {
-        case 'lodash-dev':          return 0;
-        case 'lodash-underscore':   return 2;
-        case 'lodash-custom':       return 3;
+        case 'lodash-dev':        return 0;
+        case 'lodash-modern':     return 2;
+        case 'lodash-underscore': return 3;
+        case 'lodash-custom':     return 4;
       }
       return 1;
     }());
 
     otherList.selectedIndex = (function() {
       switch (other) {
-        case 'underscore-dev':      return 0;
-        case 'lodash-dev':          return 2;
-        case 'lodash-prod':         return 3;
-        case 'lodash-underscore':   return 4;
-        case 'lodash-custom':       return 5;
+        case 'underscore-dev':    return 0;
+        case 'lodash-dev':        return 2;
+        case 'lodash-prod':       return 3;
+        case 'lodash-modern':     return 4;
+        case 'lodash-underscore': return 5;
+        case 'lodash-custom':     return 6;
       }
       return 1;
     }());

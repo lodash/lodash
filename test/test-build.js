@@ -1013,10 +1013,11 @@
 
     commands.forEach(function(command, index) {
       asyncTest('`lodash ' + command +'`', function() {
-        var start = _.once(QUnit.start);
+        var counter = -1,
+            start = _.after(2, _.once(QUnit.start));
 
         build(['-s'].concat(command.split(' ')), function(data) {
-          equal(path.basename(data.outputPath, '.js'), 'a', command);
+          equal(path.basename(data.outputPath, '.js'), (++counter ? 'a.min' : 'a'), command);
           start();
         });
       });

@@ -575,6 +575,10 @@
       equal(_.escape('/'), '/');
     });
 
+    test('should escape "\'" to "&#39;"', function() {
+      equal(_.escape("'"), "&#39;");
+    });
+
     test('should return an empty string when passed `null` or `undefined`', function() {
       equal(_.escape(null), '');
       equal(_.escape(undefined), '');
@@ -2382,7 +2386,7 @@
   QUnit.module('lodash.unescape');
 
   (function() {
-    var escaped = '&lt;h1&gt;Moe&#x27;s famous &quot;death by chocolate&quot; brownies &amp; cake&lt;\/h1&gt;',
+    var escaped = '&lt;h1&gt;Moe&#39;s famous &quot;death by chocolate&quot; brownies &amp; cake&lt;\/h1&gt;',
         unescaped = '<h1>Moe\'s famous "death by chocolate" brownies & cake<\/h1>';
 
     test('should unescape entities in the correct order', function() {

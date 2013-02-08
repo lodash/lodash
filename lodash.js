@@ -1203,7 +1203,7 @@
    * // => false
    *
    * var view = {
-   *   'id': 'docs',
+   *   'label': 'docs',
    *   'node': element
    * };
    *
@@ -2758,10 +2758,12 @@
   }
 
   /**
-   * Reduces a `collection` to a single value. The initial state of the reduction
-   * is `accumulator` and each successive step of it should be returned by the
-   * `callback`. The `callback` is bound to `thisArg` and invoked with four
-   * arguments; for arrays they are (accumulator, value, index|key, collection).
+   * Reduces a `collection` to a value that is the accumulated result of running
+   * each element in the `collection` through the `callback`, where each successive
+   * `callback` execution consumes the return value of the previous execution.
+   * If `accumulator` is not passed, the first element of the `collection` will be
+   * used as the initial `accumulator` value. The `callback` is bound to `thisArg`
+   * and invoked with four arguments; (accumulator, value, index|key, collection).
    *
    * @static
    * @memberOf _
@@ -2774,8 +2776,16 @@
    * @returns {Mixed} Returns the accumulated value.
    * @example
    *
-   * var sum = _.reduce([1, 2, 3], function(memo, num) { return memo + num; });
+   * var sum = _.reduce([1, 2, 3], function(sum, num) {
+   *   return sum + num;
+   * });
    * // => 6
+   *
+   * var mapped = _.reduce({ 'a': 1, 'b': 2, 'c': 3 }, function(result, num, key) {
+   *   result[key] = num * 3;
+   *   return result;
+   * }, {});
+   * // => { 'a': 3, 'b': 6, 'c': 9 }
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
@@ -3003,10 +3013,11 @@
   }
 
   /**
-   * Creates an array, stable sorted in ascending order by the results of
-   * running each element of `collection` through the `callback`. The `callback`
-   * is bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
-   * The `callback` argument may also be the name of a property to sort by (e.g. 'length').
+   * Creates an array of elements, sorted in ascending order by the results of
+   * running each element in the `collection` through the `callback`. This method
+   * performs a stable sort, that is, it will preserve the original sort order of
+   * equal elements. The `callback` is bound to `thisArg` and invoked with three
+   * arguments; (value, index|key, collection).
    *
    * If a property name is passed for `callback`, the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -4013,14 +4024,14 @@
    * @returns {Object} Returns `object`.
    * @example
    *
-   * var buttonView = {
-   *  'label': 'lodash',
-   *  'onClick': function() { alert('clicked: ' + this.label); }
+   * var view = {
+   *  'label': 'docs',
+   *  'onClick': function() { alert('clicked ' + this.label); }
    * };
    *
-   * _.bindAll(buttonView);
-   * jQuery('#lodash_button').on('click', buttonView.onClick);
-   * // => When the button is clicked, `this.label` will have the correct value
+   * _.bindAll(view);
+   * jQuery('#docs').on('click', view.onClick);
+   * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
     var funcs = concat.apply(arrayRef, arguments),

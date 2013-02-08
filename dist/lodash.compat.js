@@ -1,7 +1,6 @@
 /**
  * @license
- * Lo-Dash 1.0.0-rc.3 (Custom Build) <http://lodash.com/>
- * Build: `lodash modern -o ./dist/lodash.js`
+ * Lo-Dash 1.0.0-rc.3 <http://lodash.com/>
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -70,6 +69,12 @@
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
+  /** Used to fix the JScript [[DontEnum]] bug */
+  var shadowed = [
+    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
+    'toLocaleString', 'toString', 'valueOf'
+  ];
+
   /** Used to make template sourceURLs easier to identify */
   var templateCounter = 0;
 
@@ -112,6 +117,78 @@
 
   /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
   var isKeysFast = nativeKeys && (isIeOpera || isV8);
+
+  /**
+   * Detect the JScript [[DontEnum]] bug:
+   *
+   * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
+   * made non-enumerable as well.
+   */
+  var hasDontEnumBug;
+
+  /**
+   * Detect if a `prototype` properties are enumerable by default:
+   *
+   * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
+   * (if the prototype or a property on the prototype has been set)
+   * incorrectly sets a function's `prototype` property [[Enumerable]]
+   * value to `true`.
+   */
+  var hasEnumPrototype;
+
+  /** Detect if own properties are iterated after inherited properties (IE < 9) */
+  var iteratesOwnLast;
+
+  /**
+   * Detect if `Array#shift` and `Array#splice` augment array-like objects
+   * incorrectly:
+   *
+   * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
+   * and `splice()` functions that fail to remove the last element, `value[0]`,
+   * of array-like objects even though the `length` property is set to `0`.
+   * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
+   * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+   */
+  var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
+    arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
+
+  /** Detect if `arguments` object indexes are non-enumerable (Firefox < 4, IE < 9, Safari < 5.1) */
+  var nonEnumArgs = true;
+
+  (function() {
+    var props = [];
+    function ctor() { this.x = 1; }
+    ctor.prototype = { 'valueOf': 1, 'y': 1 };
+    for (var prop in new ctor) { props.push(prop); }
+    for (prop in arguments) { nonEnumArgs = !prop; }
+
+    hasDontEnumBug = !/valueOf/.test(props);
+    hasEnumPrototype = ctor.propertyIsEnumerable('prototype');
+    iteratesOwnLast = props[0] != 'x';
+  }(1));
+
+  /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
+  var argsAreObjects = arguments.constructor == Object;
+
+  /** Detect if `arguments` objects [[Class]] is unresolvable (Firefox < 4, IE < 9) */
+  var noArgsClass = !isArguments(arguments);
+
+  /**
+   * Detect lack of support for accessing string characters by index:
+   *
+   * IE < 8 can't access characters by index and IE 8 can only access
+   * characters by index on string literals.
+   */
+  var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
+
+  /**
+   * Detect if a node's [[Class]] is unresolvable (IE < 9)
+   * and that the JS engine won't error when attempting to coerce an object to
+   * a string without a `toString` function.
+   */
+  try {
+    var noNodeClass = toString.call(document) == objectClass && !({ 'toString': 0 } + '');
+  } catch(e) { }
 
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
@@ -281,20 +358,44 @@
      if (obj.arrays) {
     __p += 'var length = iterable.length; index = -1;\nif (' +
     (obj.arrays ) +
-    ') {\n  while (++index < length) {\n    ' +
+    ') {  ';
+     if (obj.noCharByIndex) {
+    __p += '\n  if (isString(iterable)) {\n    iterable = iterable.split(\'\')\n  }  ';
+     } ;
+    __p += '\n  while (++index < length) {\n    ' +
     (obj.loop ) +
     '\n  }\n}\nelse {  ';
+      } else if (obj.nonEnumArgs) {
+    __p += '\n  var length = iterable.length; index = -1;\n  if (length && isArguments(iterable)) {\n    while (++index < length) {\n      index += \'\';\n      ' +
+    (obj.loop ) +
+    '\n    }\n  } else {  ';
+     } ;
+    
+     if (obj.hasEnumPrototype) {
+    __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
      } ;
     
      if (obj.isKeysFast && obj.useHas) {
-    __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ' +
+    __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ';
+     if (obj.hasEnumPrototype) {
+    __p += 'if (!(skipProto && index == \'prototype\')) {\n  ';
+     } ;
+    __p += 
     (obj.loop ) +
-    '\n  }  ';
+    '';
+     if (obj.hasEnumPrototype) {
+    __p += '}\n';
+     } ;
+    __p += '  }  ';
      } else {
     __p += '\n  for (index in iterable) {';
-        if ( obj.useHas) {
+        if (obj.hasEnumPrototype || obj.useHas) {
     __p += '\n    if (';
-          if (obj.useHas) {
+          if (obj.hasEnumPrototype) {
+    __p += '!(skipProto && index == \'prototype\')';
+     }      if (obj.hasEnumPrototype && obj.useHas) {
+    __p += ' && ';
+     }      if (obj.useHas) {
     __p += 'hasOwnProperty.call(iterable, index)';
      }    ;
     __p += ') {    ';
@@ -302,13 +403,29 @@
     __p += 
     (obj.loop ) +
     ';    ';
-     if ( obj.useHas) {
+     if (obj.hasEnumPrototype || obj.useHas) {
     __p += '\n    }';
      } ;
     __p += '\n  }  ';
      } ;
     
-     if (obj.arrays) {
+     if (obj.hasDontEnumBug) {
+    __p += '\n\n  var ctor = iterable.constructor;\n    ';
+     for (var k = 0; k < 7; k++) {
+    __p += '\n  index = \'' +
+    (obj.shadowed[k] ) +
+    '\';\n  if (';
+          if (obj.shadowed[k] == 'constructor') {
+    __p += '!(ctor && ctor.prototype === iterable) && ';
+          } ;
+    __p += 'hasOwnProperty.call(iterable, index)) {\n    ' +
+    (obj.loop ) +
+    '\n  }    ';
+     } ;
+    
+     } ;
+    
+     if (obj.arrays || obj.nonEnumArgs) {
     __p += '\n}';
      } ;
     __p += 
@@ -556,7 +673,12 @@
   function createIterator() {
     var data = {
       // support properties
+      'hasDontEnumBug': hasDontEnumBug,
+      'hasEnumPrototype': hasEnumPrototype,
       'isKeysFast': isKeysFast,
+      'nonEnumArgs': nonEnumArgs,
+      'noCharByIndex': noCharByIndex,
+      'shadowed': shadowed,
 
       // iterator options
       'arrays': 'isArray(iterable)',
@@ -709,6 +831,12 @@
   function isArguments(value) {
     return toString.call(value) == argsClass;
   }
+  // fallback for browsers that can't detect `arguments` objects by [[Class]]
+  if (noArgsClass) {
+    isArguments = function(value) {
+      return value ? hasOwnProperty.call(value, 'callee') : false;
+    };
+  }
 
   /**
    * Iterates over `object`'s own and inherited enumerable properties, executing
@@ -785,7 +913,7 @@
   var isArray = nativeIsArray || function(value) {
     // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
     // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
-    return value instanceof Array || toString.call(value) == arrayClass;
+    return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
   };
 
   /**
@@ -804,6 +932,10 @@
   var keys = !nativeKeys ? shimKeys : function(object) {
     if (!isObject(object)) {
       return [];
+    }
+    if ((hasEnumPrototype && typeof object == 'function') ||
+        (nonEnumArgs && object.length && isArguments(object))) {
+      return shimKeys(object);
     }
     return nativeKeys(object);
   };
@@ -826,7 +958,17 @@
     }
     // check that the constructor is `Object` (i.e. `Object instanceof Object`)
     var ctor = value.constructor;
-    if ((!isFunction(ctor)) || ctor instanceof ctor) {
+    if ((!isFunction(ctor) && (!noNodeClass || !isNode(value))) || ctor instanceof ctor) {
+      // IE < 9 iterates inherited properties before own properties. If the first
+      // iterated property is an object's own property then there are no inherited
+      // enumerable properties.
+      if (iteratesOwnLast) {
+        forIn(value, function(value, key, object) {
+          result = !hasOwnProperty.call(object, key);
+          return false;
+        });
+        return result === false;
+      }
       // In most environments an object's own properties are iterated before
       // its inherited properties. If the last iterated property is an object's
       // own property then there are no inherited enumerable properties.
@@ -962,7 +1104,7 @@
     var isObj = isObject(result);
     if (isObj) {
       var className = toString.call(result);
-      if (!cloneableClasses[className]) {
+      if (!cloneableClasses[className] || (noNodeClass && isNode(result))) {
         return result;
       }
       var isArr = isArray(result);
@@ -1244,7 +1386,7 @@
         length = value.length;
 
     if ((className == arrayClass || className == stringClass ||
-        className == argsClass) ||
+        className == argsClass || (noArgsClass && isArguments(value))) ||
         (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
       return !length;
     }
@@ -1363,12 +1505,12 @@
         return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, undefined, whereIndicator, stackA, stackB);
       }
       // exit for functions and DOM nodes
-      if (className != objectClass) {
+      if (className != objectClass || (noNodeClass && (isNode(a) || isNode(b)))) {
         return false;
       }
       // in older versions of Opera, `arguments` objects have `Array` constructors
-      var ctorA = a.constructor,
-          ctorB = b.constructor;
+      var ctorA = !argsAreObjects && isArguments(a) ? Object : a.constructor,
+          ctorB = !argsAreObjects && isArguments(b) ? Object : b.constructor;
 
       // non `Object` object instances with different constructors are not equal
       if (ctorA != ctorB && !(
@@ -1611,7 +1753,7 @@
    * _.isPlainObject({ 'name': 'moe', 'age': 40 });
    * // => true
    */
-  var isPlainObject = function(value) {
+  var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
     if (!(value && typeof value == 'object')) {
       return false;
     }
@@ -1988,6 +2130,9 @@
         length = props.length,
         result = Array(length);
 
+    if (noCharByIndex && isString(collection)) {
+      collection = collection.split('');
+    }
     while(++index < length) {
       result[index] = collection[props[index]];
     }
@@ -2685,6 +2830,8 @@
     if (typeof length != 'number') {
       var props = keys(collection);
       length = props.length;
+    } else if (noCharByIndex && isString(collection)) {
+      iterable = collection.split('');
     }
     callback = createCallback(callback, thisArg, 4);
     forEach(collection, function(value, index, collection) {
@@ -2929,7 +3076,9 @@
    */
   function toArray(collection) {
     if (collection && typeof collection.length == 'number') {
-      return  slice(collection);
+      return noCharByIndex && isString(collection)
+        ? collection.split('')
+        : slice(collection);
     }
     return values(collection);
   }
@@ -4910,6 +5059,25 @@
       return new lodash(func.apply(this.__wrapped__, arguments));
     };
   });
+
+  // avoid array-like object bugs with `Array#shift` and `Array#splice`
+  // in Firefox < 10 and IE < 9
+  if (hasObjectSpliceBug) {
+    each(['pop', 'shift', 'splice'], function(methodName) {
+      var func = arrayRef[methodName],
+          isSplice = methodName == 'splice';
+
+      lodash.prototype[methodName] = function() {
+        var value = this.__wrapped__,
+            result = func.apply(value, arguments);
+
+        if (value.length === 0) {
+          delete value[0];
+        }
+        return isSplice ? new lodash(result) : result;
+      };
+    });
+  }
 
   /*--------------------------------------------------------------------------*/
 

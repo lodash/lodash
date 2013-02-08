@@ -494,7 +494,7 @@
    * @returns {Function} Returns a callback function.
    */
   function createCallback(func, thisArg, argCount) {
-    if (!func) {
+    if (func == null) {
       return identity;
     }
     var type = typeof func;
@@ -2586,6 +2586,7 @@
    *
    * @static
    * @memberOf _
+   * @type Function
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {String} property The property to pluck.
@@ -2600,9 +2601,7 @@
    * _.pluck(stooges, 'name');
    * // => ['moe', 'larry']
    */
-  function pluck(collection, property) {
-    return map(collection, property + '');
-  }
+  var pluck = map;
 
   /**
    * Reduces a `collection` to a value that is the accumulated result of running

@@ -2396,7 +2396,7 @@
     dependencyMap = dependencyBackup;
 
     // output debug build
-    if (!isMinify && (isCustom || isDebug || isTemplate)) {
+    if (!isMinify && (isCustom || isDebug || isTemplate || outputPath)) {
       if (isCustom) {
         debugSource = addCommandsToHeader(debugSource, options);
       }

@@ -3,8 +3,8 @@ node_js:
   - 0.6
   - 0.9
 env:
-  - TEST_COMMAND="node ./test/test.js"
-  - TEST_COMMAND="node ./test/test.js ./lodash.min.js"
+  - TEST_COMMAND="node ./test/test.js ./dist/lodash.js"
+  - TEST_COMMAND="node ./test/test.js ./dist/lodash.min.js"
   - TEST_COMMAND="node ./test/test-build.js --time-limit 49m45s"
 git:
   depth: 1

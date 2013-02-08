@@ -13,7 +13,7 @@
   /** Load Lo-Dash */
   var lodash =
     window.lodash || (
-      lodash = load('../lodash.js') || window._,
+      lodash = load('../dist/lodash.js') || window._,
       lodash = lodash._ || lodash,
       lodash.noConflict()
     );

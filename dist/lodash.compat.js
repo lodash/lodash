@@ -627,7 +627,7 @@
         var length = props.length,
             result = false;
         while (length--) {
-          if (!(result = isEqual(object[props[length]], func[props[length]], undefined, undefined, indicatorObject))) {
+          if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
             break;
           }
         }
@@ -1411,8 +1411,6 @@
    * @param {Mixed} b The other value to compare.
    * @param {Function} [callback] The function to customize comparing values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param- {Object} [whereIndicator] Internally used to indicate that when
-   *  comparing objects, `a` has at least the properties of `b`.
    * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
    * @param- {Object} [stackB=[]] Internally used track traversed `b` objects.
    * @returns {Boolean} Returns `true`, if the values are equvalent, else `false`.
@@ -1439,8 +1437,10 @@
    * });
    * // => true
    */
-  function isEqual(a, b, callback, thisArg, whereIndicator, stackA, stackB) {
-    if (callback) {
+  function isEqual(a, b, callback, thisArg, stackA, stackB) {
+    // used to indicate that when comparing objects, `a` has at least the properties of `b`
+    var whereIndicator = callback == indicatorObject;
+    if (callback && !whereIndicator) {
       callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 2);
       var result = callback(a, b);
       if (typeof result != 'undefined') {
@@ -1503,7 +1503,7 @@
     if (!isArr) {
       // unwrap any `lodash` wrapped values
       if (a.__wrapped__ || b.__wrapped__) {
-        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, undefined, whereIndicator, stackA, stackB);
+        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, thisArg, stackA, stackB);
       }
       // exit for functions and DOM nodes
       if (className != objectClass || (noNodeClass && (isNode(a) || isNode(b)))) {
@@ -1544,12 +1544,12 @@
     if (isArr) {
       // compare lengths to determine if a deep comparison is necessary
       size = b.length;
-      result = whereIndicator == indicatorObject || size == a.length;
+      result = whereIndicator || size == a.length;
 
       if (result) {
         // deep compare the contents, ignoring non-numeric properties
         while (size--) {
-          if (!(result = isEqual(a[size], b[size], callback, undefined, whereIndicator, stackA, stackB))) {
+          if (!(result = isEqual(a[size], b[size], callback, thisArg, stackA, stackB))) {
             break;
           }
         }
@@ -1563,11 +1563,11 @@
         // count the number of properties.
         size++;
         // deep compare each property value.
-        return (result = hasOwnProperty.call(a, key) && isEqual(a[key], value, callback, undefined, whereIndicator, stackA, stackB));
+        return (result = hasOwnProperty.call(a, key) && isEqual(a[key], value, callback, thisArg, stackA, stackB));
       }
     });
 
-    if (result && whereIndicator != indicatorObject) {
+    if (result && !whereIndicator) {
       // ensure both objects have the same number of properties
       forIn(a, function(value, key, a) {
         if (hasOwnProperty.call(a, key)) {

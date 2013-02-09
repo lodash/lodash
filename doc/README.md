@@ -2610,7 +2610,7 @@ _.isEmpty('');
 <!-- div -->
 
 ### <a id="_isequala-b--callback-thisarg"></a>`_.isEqual(a, b [, callback, thisArg])`
-<a href="#_isequala-b--callback-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1449 "View in source") [&#x24C9;][1]
+<a href="#_isequala-b--callback-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1447 "View in source") [&#x24C9;][1]
 
 Performs a deep comparison between two values to determine if they are equivalent to each other. If `callback` is passed, it will be executed to compare values. If `callback` returns `undefined`, comparisons will be handled by the method instead. The `callback` is bound to `thisArg` and invoked with two arguments; *(a, b)*.
 
@@ -3417,7 +3417,7 @@ _.times(3, function(n) { this.cast(n); }, mage);
 ### <a id="_unescapestring"></a>`_.unescape(string)`
 <a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4788 "View in source") [&#x24C9;][1]
 
-The opposite of `_.escape`, this method converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#x27;` in `string` to their corresponding characters.
+The opposite of `_.escape`, this method converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their corresponding characters.
 
 #### Arguments
 1. `string` *(String)*: The string to unescape.

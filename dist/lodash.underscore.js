@@ -1043,8 +1043,6 @@
    * @param {Mixed} b The other value to compare.
    * @param {Function} [callback] The function to customize comparing values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param- {Object} [whereIndicator] Internally used to indicate that when
-   *  comparing objects, `a` has at least the properties of `b`.
    * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
    * @param- {Object} [stackB=[]] Internally used track traversed `b` objects.
    * @returns {Boolean} Returns `true`, if the values are equvalent, else `false`.

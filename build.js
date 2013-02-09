@@ -2383,9 +2383,11 @@
     var outputUsed = false;
 
     // flag to specify creating a custom build
-    var isCustom = isLegacy || isMapped || isMobile || isModern || isStrict || isUnderscore ||
+    var isCustom = (
+      isLegacy || isMapped || isModern || isStrict || isUnderscore || outputPath ||
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
-      !_.isEqual(exportsOptions, exportsAll);
+      !_.isEqual(exportsOptions, exportsAll)
+    );
 
     // used as the basename of the output path
     var basename = outputPath
@@ -2396,7 +2398,7 @@
     dependencyMap = dependencyBackup;
 
     // output debug build
-    if (!isMinify && (isCustom || isDebug || isTemplate || outputPath)) {
+    if (!isMinify && (isCustom || isDebug || isTemplate)) {
       if (isCustom) {
         debugSource = addCommandsToHeader(debugSource, options);
       }

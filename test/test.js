@@ -2386,8 +2386,8 @@
   QUnit.module('lodash.unescape');
 
   (function() {
-    var escaped = '&lt;h1&gt;Moe&#39;s famous &quot;death by chocolate&quot; brownies &amp; cake&lt;\/h1&gt;',
-        unescaped = '<h1>Moe\'s famous "death by chocolate" brownies & cake<\/h1>';
+    var escaped = '&amp;&lt;&gt;&quot;&#39;\/',
+        unescaped = '&<>"\'\/';
 
     test('should unescape entities in the correct order', function() {
       equal(_.unescape('&amp;lt;'), '&lt;');

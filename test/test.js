@@ -2494,10 +2494,10 @@
     });
 
     test('should deep compare `properties` values', function() {
-      var collection = [{ 'a': { 'b': 1, 'c': 2 } }],
+      var collection = [{ 'a': { 'b': { 'c': 1, 'd': 2 }, 'e': 3 }, 'f': 4 }],
           expected = _.cloneDeep(collection);
 
-      deepEqual(_.where(collection, { 'a': { 'b': 1 } }), expected);
+      deepEqual(_.where(collection, { 'a': { 'b': { 'c': 1 } } }), expected);
     });
   }());
 

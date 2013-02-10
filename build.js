@@ -1390,10 +1390,10 @@
     var isMinify = options.indexOf('-m') > -1 || options.indexOf('--minify') > -1;
 
     // flag to specify a mobile build
-    var isMobile = options.indexOf('mobile') > -1;
+    var isMobile = isCSP || options.indexOf('mobile') > -1;
 
     // flag to specify a modern build
-    var isModern = isCSP || isMobile || options.indexOf('modern') > -1;
+    var isModern = isMobile || options.indexOf('modern') > -1;
 
     // flag to specify a modularize build
     var isModularize = options.indexOf('modularize') > -1;

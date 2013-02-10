@@ -1093,6 +1093,24 @@
         start();
       });
     });
+
+    asyncTest('`lodash csp`', function() {
+      var sources = [];
+
+      var check = _.after(2, _.once(function() {
+        equal(sources[0], sources[1]);
+        QUnit.start();
+      }));
+
+      var callback = function(data) {
+        // remove copyright header and append source
+        sources.push(data.source.replace(/^\/\**[\s\S]+?\*\/\n/, ''));
+        check();
+      };
+
+      build(['-s', '-d', 'csp'], callback);
+      build(['-s', '-d', 'mobile'], callback);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

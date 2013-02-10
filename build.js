@@ -716,7 +716,7 @@
    * @returns {String} Returns the `isArguments` fallback.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\(noArgsClass\)[\s\S]+?};\n\1}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:noArgsClass|!isArguments)[\s\S]+?};\n\1}/) || [''])[0];
   }
 
   /**
@@ -1063,6 +1063,11 @@
    */
   function removeNoArgsClass(source) {
     source = removeVar(source, 'noArgsClass');
+
+    // replace `noArgsClass` in the `_.isArguments` fallback
+    source = source.replace(getIsArgumentsFallback(source), function(match) {
+      return match.replace(/noArgsClass/g, '!isArguments(arguments)');
+    });
 
     // remove `noArgsClass` from `_.isEmpty`
     source = source.replace(matchFunction(source, 'isEmpty'), function(match) {
@@ -2183,11 +2188,6 @@
                 .replace(/^( *)callback *=.+/m, '$1callback || (callback = identity);')
             });
           }
-        });
-
-        // replace `noArgsClass` in the `_.isArguments` fallback
-        source = source.replace(getIsArgumentsFallback(source), function(match) {
-          return match.replace(/noArgsClass/g, '!isArguments(arguments)');
         });
 
         // remove chainability from `each` and `_.forEach`

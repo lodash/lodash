@@ -1,7 +1,27 @@
 (function(window) {
 
-  /** Use a single load function */
+  /** Use a single "load" function */
   var load = typeof require == 'function' ? require : window.load;
+
+  /** The file path of the Lo-Dash file to test */
+  var filePath = (function() {
+    var min = 0;
+    var result = window.phantom
+      ? phantom.args
+      : (window.system
+          ? (min = 1, system.args)
+          : (window.process ? (min = 2, process.argv) : (window.arguments || []))
+        );
+
+    var last = result[result.length - 1];
+    result = (result.length > min && last != 'test.js') ? last : '../lodash.js';
+
+    try {
+      result = require('fs').realpathSync(result);
+    } catch(e) { }
+
+    return result;
+  }());
 
   /** Load Benchmark.js */
   var Benchmark =
@@ -13,7 +33,7 @@
   /** Load Lo-Dash */
   var lodash =
     window.lodash || (
-      lodash = load('../dist/lodash.js') || window._,
+      lodash = load(filePath) || window._,
       lodash = lodash._ || lodash,
       lodash.noConflict()
     );
@@ -35,21 +55,26 @@
   var suites = [];
 
   /** The `ui` object */
-  var ui = window.ui || {};
+  var ui = window.ui || {
+    'buildPath': basename(filePath, '.js'),
+    'otherPath': 'underscore'
+  };
 
   /** The Lo-Dash build basename */
-  var buildName = basename(ui.buildPath || 'lodash', '.js');
+  var buildName = basename(ui.buildPath, '.js');
 
   /** The other library basename */
-  var otherName = basename(ui.otherPath || 'underscore', '.js');
-
-  /** Add `console.log()` support for Narwhal and RingoJS */
-  window.console || (window.console = { 'log': window.print });
+  var otherName = basename(ui.otherPath, '.js');
 
   /** Expose functions to the global object */
   window._ = _;
   window.Benchmark = Benchmark;
   window.lodash = lodash;
+
+  /** Add `console.log()` support for Narwhal and RingoJS */
+  if (!window.console && window.print) {
+    window.console = { 'log': window.print };
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -1691,7 +1716,7 @@
   }
 
   // in the browser, expose `run` to be called later
-  if (window.document) {
+  if (window.document && !window.phantom) {
     window.run = run;
   } else {
     run();

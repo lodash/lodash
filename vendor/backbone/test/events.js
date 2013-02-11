@@ -99,6 +99,11 @@ $(document).ready(function() {
     a.listenTo(b, 'event2', cb);
     a.stopListening(null, {event: cb});
     b.trigger('event event2');
+    b.off();
+    a.listenTo(b, 'event event2', cb);
+    a.stopListening(null, 'event');
+    a.stopListening();
+    b.trigger('event2');
   });
 
   test("listenToOnce and stopListening", 1, function() {

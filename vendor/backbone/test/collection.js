@@ -70,22 +70,20 @@ $(document).ready(function() {
     equal(col.get(col.first().cid), col.first());
   });
 
-  test("get with non-default ids", 4, function() {
+  test("get with non-default ids", 5, function() {
     var col = new Backbone.Collection();
-    var MongoModel = Backbone.Model.extend({
-      idAttribute: '_id'
-    });
+    var MongoModel = Backbone.Model.extend({idAttribute: '_id'});
     var model = new MongoModel({_id: 100});
-    col.push(model);
+    col.add(model);
     equal(col.get(100), model);
-    model.set({_id: 101});
-    equal(col.get(101), model);
+    equal(col.get(model.cid), model);
+    equal(col.get(model), model);
+    equal(col.get(101), void 0);
 
-    var Col2 = Backbone.Collection.extend({ model: MongoModel });
-    var col2 = new Col2();
-    col2.push(model);
-    equal(col2.get({_id: 101}), model);
-    equal(col2.get(model.clone()), model);
+    var col2 = new Backbone.Collection();
+    col2.model = MongoModel;
+    col2.add(model.attributes);
+    equal(col2.get(model.clone()), col2.first());
   });
 
   test("update index when id changes", 3, function() {
@@ -362,9 +360,7 @@ $(document).ready(function() {
 
   test("model destroy removes from all collections", 3, function() {
     var e = new Backbone.Model({id: 5, title: 'Othello'});
-    e.sync = function(method, model, options) {
-      options.success(model, [], options);
-    };
+    e.sync = function(method, model, options) { options.success(); };
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([e]);
     e.destroy();
@@ -396,6 +392,15 @@ $(document).ready(function() {
     equal(this.syncArgs.options.parse, false);
   });
 
+  test("fetch with an error response triggers an error event", 1, function () {
+    var collection = new Backbone.Collection();
+    collection.on('error', function () {
+      ok(true);
+    });
+    collection.sync = function (method, model, options) { options.error(); };
+    collection.fetch();
+  });
+
   test("ensure fetch only parses once", 1, function() {
     var collection = new Backbone.Collection;
     var counter = 0;
@@ -405,7 +410,7 @@ $(document).ready(function() {
     };
     collection.url = '/test';
     collection.fetch();
-    this.syncArgs.options.success([]);
+    this.syncArgs.options.success();
     equal(counter, 1);
   });
 
@@ -461,9 +466,10 @@ $(document).ready(function() {
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
-  test("where", 6, function() {
+  test("where and findWhere", 8, function() {
+    var model = new Backbone.Model({a: 1});
     var coll = new Backbone.Collection([
-      {a: 1},
+      model,
       {a: 1},
       {a: 1, b: 2},
       {a: 2, b: 2},
@@ -475,6 +481,8 @@ $(document).ready(function() {
     equal(coll.where({b: 1}).length, 0);
     equal(coll.where({b: 2}).length, 2);
     equal(coll.where({a: 1, b: 2}).length, 1);
+    equal(coll.findWhere({a: 1}), model);
+    equal(coll.findWhere({a: 4}), void 0);
   });
 
   test("Underscore methods", 13, function() {
@@ -484,10 +492,10 @@ $(document).ready(function() {
     equal(col.indexOf(b), 1);
     equal(col.size(), 4);
     equal(col.rest().length, 3);
-    ok(!_.include(col.rest()), a);
-    ok(!_.include(col.rest()), d);
+    ok(!_.include(col.rest(), a));
+    ok(_.include(col.rest(), d));
     ok(!col.isEmpty());
-    ok(!_.include(col.without(d)), d);
+    ok(!_.include(col.without(d), d));
     equal(col.max(function(model){ return model.id; }).id, 3);
     equal(col.min(function(model){ return model.id; }).id, 0);
     deepEqual(col.chain()
@@ -702,9 +710,7 @@ $(document).ready(function() {
   test("#1447 - create with wait adds model.", 1, function() {
     var collection = new Backbone.Collection;
     var model = new Backbone.Model;
-    model.sync = function(method, model, options){
-      options.success(model, [], options);
-    };
+    model.sync = function(method, model, options){ options.success(); };
     collection.on('add', function(){ ok(true); });
     collection.create(model, {wait: true});
   });
@@ -926,6 +932,35 @@ $(document).ready(function() {
     col.update({id: 1, other: 'value'});
     equal(col.first().get('key'), 'other');
     equal(col.length, 1);
+  });
+
+  test("`update` and model level `parse`", function() {
+    var Model = Backbone.Model.extend({
+      parse: function (res) { return res.model; }
+    });
+    var Collection = Backbone.Collection.extend({
+      model: Model,
+      parse: function (res) { return res.models; }
+    });
+    var model = new Model({id: 1});
+    var collection = new Collection(model);
+    collection.update({models: [
+      {model: {id: 1}},
+      {model: {id: 2}}
+    ]}, {parse: true});
+    equal(collection.first(), model);
+  });
+
+  test("`update` data is only parsed once", function() {
+    var collection = new Backbone.Collection();
+    collection.model = Backbone.Model.extend({
+      parse: function (data) {
+        equal(data.parsed, void 0);
+        data.parsed = true;
+        return data;
+      }
+    });
+    collection.update({}, {parse: true});
   });
 
   test("#1894 - Push should not trigger a sort", 0, function() {

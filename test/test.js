@@ -1,19 +1,21 @@
 ;(function(window, undefined) {
   'use strict';
 
-  /** Use a single load function */
+  /** Use a single "load" function */
   var load = typeof require == 'function' ? require : window.load;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
     var min = 0;
-    var result = window.system
-      ? (min = 1, system.args)
-      : (window.process ? (min = 2, process.argv) : (window.arguments || []));
+    var result = window.phantom
+      ? phantom.args
+      : (window.system
+          ? (min = 1, system.args)
+          : (window.process ? (min = 2, process.argv) : (window.arguments || []))
+        );
 
-    result = result.length > min
-      ? result[result.length - 1]
-      : '../lodash.js';
+    var last = result[result.length - 1];
+    result = (result.length > min && last != 'test.js') ? last : '../lodash.js';
 
     try {
       result = require('fs').realpathSync(result);
@@ -35,7 +37,7 @@
   var QUnit =
     window.QUnit || (
       window.addEventListener || (window.addEventListener = Function.prototype),
-      window.setTimeout || (window.setTimeout = / /),
+      window.setTimeout || (window.setTimeout = Function.prototype),
       window.QUnit = load('../vendor/qunit/qunit/qunit.js') || window.QUnit,
       load('../vendor/qunit-clib/qunit-clib.js'),
       window.addEventListener === Function.prototype && delete window.addEventListener,
@@ -114,7 +116,7 @@
 
   // add object from iframe
   (function() {
-    if (!window.document) {
+    if (!window.document || window.phantom) {
       return;
     }
     var body = document.body,
@@ -135,7 +137,7 @@
 
   (function() {
     test('supports loading ' + basename + ' as the "lodash" module', function() {
-      if (window.document && window.require) {
+      if (window.document && window.define && define.amd) {
         equal((lodashModule || {}).moduleName, 'lodash');
       } else {
         skipTest();
@@ -143,7 +145,7 @@
     });
 
     test('supports loading ' + basename + ' with the Require.js "shim" configuration option', function() {
-      if (window.document && window.require) {
+      if (window.document && window.define && define.amd) {
         equal((shimmedModule || {}).moduleName, 'shimmed');
       } else {
         skipTest();
@@ -151,7 +153,7 @@
     });
 
     test('supports loading ' + basename + ' as the "underscore" module', function() {
-      if (window.document && window.require) {
+      if (window.document && window.define && define.amd) {
         equal((underscoreModule || {}).moduleName, 'underscore');
       } else {
         skipTest();
@@ -159,7 +161,7 @@
     });
 
     test('avoids overwritten native methods', function() {
-      if (window.document) {
+      if (window.document && !window.phantom) {
         notDeepEqual(lodashBadShim.keys({ 'a': 1 }), []);
       } else {
         skipTest();
@@ -2653,6 +2655,9 @@
 
   (function() {
     test('should allow falsey arguments', function() {
+      var isExported = '_' in window,
+          oldDash = window._;
+
       var returnArrays = [
         'filter',
         'invoke',
@@ -2699,6 +2704,13 @@
           }
         });
 
+        if (methodName == 'noConflict') {
+          if (isExported) {
+            window._ = oldDash;
+          } else {
+            delete window._;
+          }
+        }
         if (_.indexOf(returnArrays, methodName) > -1) {
           deepEqual(actual, expected, '_.' + methodName + ' returns an array');
         }
@@ -2763,8 +2775,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // explicitly call `QUnit.start()` for Narwhal, Node.js, Rhino, and RingoJS
-  if (!window.document) {
+  // configure QUnit and call `QUnit.start()` for Narwhal, Node.js, PhantomJS, Rhino, and RingoJS
+  if (!window.document || window.phantom) {
+    QUnit.config.noglobals = true;
     QUnit.start();
   }
 }(typeof global == 'object' && global || this));

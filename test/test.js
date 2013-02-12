@@ -137,7 +137,7 @@
 
   (function() {
     test('supports loading ' + basename + ' as the "lodash" module', function() {
-      if (window.document && window.define && define.amd) {
+      if (window.define && define.amd) {
         equal((lodashModule || {}).moduleName, 'lodash');
       } else {
         skipTest();
@@ -145,7 +145,7 @@
     });
 
     test('supports loading ' + basename + ' with the Require.js "shim" configuration option', function() {
-      if (window.document && window.define && define.amd) {
+      if (window.define && define.amd) {
         equal((shimmedModule || {}).moduleName, 'shimmed');
       } else {
         skipTest();
@@ -153,7 +153,7 @@
     });
 
     test('supports loading ' + basename + ' as the "underscore" module', function() {
-      if (window.document && window.define && define.amd) {
+      if (window.define && define.amd) {
         equal((underscoreModule || {}).moduleName, 'underscore');
       } else {
         skipTest();

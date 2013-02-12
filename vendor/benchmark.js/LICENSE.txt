@@ -1,4 +1,4 @@
-Copyright 2010-2012 Mathias Bynens <http://mathiasbynens.be/>
+Copyright 2010-2013 Mathias Bynens <http://mathiasbynens.be/>
 Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
 Modified by John-David Dalton <http://allyoucanleet.com/>
 

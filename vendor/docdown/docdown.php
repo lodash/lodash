@@ -1,7 +1,7 @@
 <?php
 /*!
  * Docdown v1.0.0-pre
- * Copyright 2011-2012 John-David Dalton <http://allyoucanleet.com/>
+ * Copyright 2011-2013 John-David Dalton <http://allyoucanleet.com/>
  * Available under MIT license <http://mths.be/mit>
  */
 require(dirname(__FILE__) . '/src/DocDown/Generator.php');

@@ -53,7 +53,7 @@
    * Used to match ES6 template delimiters
    * http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6
    */
-  var reEsTemplate = /\$\{((?:(?=\\?)\\?[\s\S])*?)}/g;
+  var reEsTemplate = /\$\{((?:(?=\\?)\\?[\s\S])*?)\}/g;
 
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
@@ -3818,7 +3818,7 @@
    * http://lodash.com/#custom-builds
    *
    * For more information on Chrome extension sandboxes see:
-   * http://developer.chrome.com/trunk/extensions/sandboxingEval.html
+   * http://developer.chrome.com/stable/extensions/sandboxingEval.html
    *
    * @static
    * @memberOf _

@@ -561,7 +561,7 @@
       asyncTest('`lodash settings=...`' + (command ? ' ' + command : ''), function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/}'].concat(command || []), function(data) {
+        build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/{{([\\s\\S]+?)}}/}'].concat(command || []), function(data) {
           var moduleId,
               basename = path.basename(data.outputPath, '.js'),
               context = createContext();

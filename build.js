@@ -581,7 +581,7 @@
       '    lodash template=...  File path pattern used to match template files to precompile',
       '                         (e.g. `lodash template=./*.jst`)',
       '    lodash settings=...  Template settings used when precompiling templates',
-      '                         (e.g. `lodash settings="{interpolate:/\\{\\{([\\s\\S]+?)\\}\\}/g}"`)',
+      '                         (e.g. `lodash settings="{interpolate:/{{([\\s\\S]+?)}}/g}"`)',
       '    lodash moduleId=...  The AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates',
       '',
       '    All arguments, except `legacy` with `csp`, `mobile`, `modern`, or `underscore`, may be combined.',
@@ -2237,7 +2237,7 @@
             .replace(/'(?:\\n|\s)+'/g, "''")
             .replace(/__p *\+= *' *';/g, '')
             .replace(/(__p *\+= *)' *' *\+/g, '$1')
-            .replace(/({) *;|; *(\})/g, '$1$2')
+            .replace(/({) *;|; *(})/g, '$1$2')
             .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
 
           // remove the with-statement
@@ -2245,7 +2245,7 @@
 
           // minor cleanup
           snippet = snippet
-            .replace(/obj *\|\| *\(obj *= *\{}\);/, '')
+            .replace(/obj *\|\| *\(obj *= *{}\);/, '')
             .replace(/var __p = '';\s*__p \+=/, 'var __p =');
 
           // remove comments, including sourceURLs

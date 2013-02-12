@@ -3230,7 +3230,7 @@
       var n = 0,
           length = array.length;
 
-      if (typeof callback == 'function') {
+      if (typeof callback != 'number' && callback != null) {
         var index = -1;
         callback = createCallback(callback, thisArg);
         while (++index < length && callback(array[index], index, array)) {
@@ -3386,7 +3386,7 @@
     var n = 0,
         length = array.length;
 
-    if (typeof callback == 'function') {
+    if (typeof callback != 'number' && callback != null) {
       var index = length;
       callback = createCallback(callback, thisArg);
       while (index-- && callback(array[index], index, array)) {
@@ -3508,7 +3508,7 @@
       var n = 0,
           length = array.length;
 
-      if (typeof callback == 'function') {
+      if (typeof callback != 'number' && callback != null) {
         var index = length;
         callback = createCallback(callback, thisArg);
         while (index-- && callback(array[index], index, array)) {
@@ -3696,7 +3696,7 @@
    * // => [{ 'name': 'beet', 'type': 'vegetable' }]
    */
   function rest(array, callback, thisArg) {
-    if (typeof callback == 'function') {
+    if (typeof callback != 'number' && callback != null) {
       var n = 0,
           index = -1,
           length = array ? array.length : 0;

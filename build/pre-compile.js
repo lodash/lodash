@@ -245,9 +245,6 @@
       return (captured || '') + string;
     });
 
-    // add newline to `body + '}'` in `createFunction`
-    source = source.replace(/body *\+ *'}'/, 'body+"\\n}"');
-
     // remove whitespace from `_.template` related regexes
     source = source.replace(/(?:reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
       return match.replace(/ |\\n/g, '');

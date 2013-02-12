@@ -674,21 +674,26 @@
   QUnit.module('lodash.find');
 
   (function() {
-    var array = [
-      { 'a': 1, 'b': 2, 'c': 3 },
-      { 'a': 2, 'b': 2, 'c': 3 }
+    var objects = [
+      { 'a': 0, 'b': 0 },
+      { 'a': 1, 'b': 1 },
+      { 'a': 2, 'b': 2 }
     ];
 
     test('should return found `value`', function() {
-      equal(_.find(array, function(object) { return object.a == 1; }), array[0]);
+      equal(_.find(objects, function(object) { return object.a == 1; }), objects[1]);
     });
 
     test('should return `undefined` if `value` is not found', function() {
-      equal(_.find(array, function(object) { return object.a == 3; }), undefined);
+      equal(_.find(objects, function(object) { return object.a == 3; }), undefined);
     });
 
     test('should work with an object for `callback`', function() {
-      equal(_.find(array, { 'b': 2, 'c': 3 }), array[0]);
+      equal(_.find(objects, { 'b': 2 }), objects[2]);
+    });
+
+    test('should work with a string for `callback`', function() {
+      equal(_.find(objects, 'b'), objects[1]);
     });
   }());
 
@@ -698,6 +703,12 @@
 
   (function() {
     var array = [1, 2, 3];
+
+    var objects = [
+      { 'a': 2, 'b': 2 },
+      { 'a': 1, 'b': 1 },
+      { 'a': 0, 'b': 0 }
+    ];
 
     test('should return the first element', function() {
       strictEqual(_.first(array), 1);
@@ -754,6 +765,14 @@
     test('should not chain when no arguments are passed', function() {
       var actual = _(array).first();
       strictEqual(actual, 1);
+    });
+
+    test('should work with an object for `callback`', function() {
+      deepEqual(_.first(objects, { 'b': 2 }), objects.slice(0, 1));
+    });
+
+    test('should work with a string for `callback`', function() {
+      deepEqual(_.first(objects, 'b'), objects.slice(0, 2));
     });
   }());
 
@@ -965,6 +984,12 @@
   (function() {
     var array = [1, 2, 3];
 
+    var objects = [
+      { 'a': 0, 'b': 0 },
+      { 'a': 1, 'b': 1 },
+      { 'a': 2, 'b': 2 }
+    ];
+
     test('returns all elements for `n` of `0`', function() {
       deepEqual(_.initial(array, 0), [1, 2, 3]);
     });
@@ -1010,6 +1035,14 @@
       }, array);
 
       deepEqual(actual, [1]);
+    });
+
+    test('should work with an object for `callback`', function() {
+      deepEqual(_.initial(objects, { 'b': 2 }), objects.slice(0, 2));
+    });
+
+    test('should work with a string for `callback`', function() {
+      deepEqual(_.initial(objects, 'b'), objects.slice(0, 1));
     });
   }());
 
@@ -1306,6 +1339,12 @@
   (function() {
     var array = [1, 2, 3];
 
+    var objects = [
+      { 'a': 0, 'b': 0 },
+      { 'a': 1, 'b': 1 },
+      { 'a': 2, 'b': 2 }
+    ];
+
     test('should return the last element', function() {
       equal(_.last(array), 3);
     });
@@ -1361,6 +1400,14 @@
     test('should not chain when no arguments are passed', function() {
       var actual = _(array).last();
       equal(actual, 3);
+    });
+
+    test('should work with an object for `callback`', function() {
+      deepEqual(_.last(objects, { 'b': 2 }), objects.slice(-1));
+    });
+
+    test('should work with a string for `callback`', function() {
+      deepEqual(_.last(objects, 'b'), objects.slice(-2));
     });
   }());
 
@@ -1927,6 +1974,12 @@
   (function() {
     var array = [1, 2, 3];
 
+    var objects = [
+      { 'a': 2, 'b': 2 },
+      { 'a': 1, 'b': 1 },
+      { 'a': 0, 'b': 0 }
+    ];
+
     test('returns all elements for `n` of `0`', function() {
       deepEqual(_.rest(array, 0), [1, 2, 3]);
     });
@@ -1972,6 +2025,14 @@
       }, array);
 
       deepEqual(actual, [3]);
+    });
+
+    test('should work with an object for `callback`', function() {
+      deepEqual(_.rest(objects, { 'b': 2 }), objects.slice(-2));
+    });
+
+    test('should work with a string for `callback`', function() {
+      deepEqual(_.rest(objects, 'b'), objects.slice(-1));
     });
   }());
 

@@ -3311,7 +3311,7 @@ For more information on precompiling templates see:<br>
 http://lodash.com/#custom-builds
 
 For more information on Chrome extension sandboxes see:<br>
-http://developer.chrome.com/trunk/extensions/sandboxingEval.html
+http://developer.chrome.com/stable/extensions/sandboxingEval.html
 
 #### Arguments
 1. `text` *(String)*: The template text.

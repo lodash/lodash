@@ -242,12 +242,20 @@
   var assignIteratorOptions = {
     'args': 'object, source, guard',
     'top':
-      'var argsIndex = 0,\n' +
+      'var args = arguments,\n' +
+      '    argsIndex = 0,\n' +
       "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
+      'if (argsLength > 2) {\n' +
+      "  if (typeof args[argsLength - 2] == 'function') {\n" +
+      '    var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
+      "  } else if (typeof args[argsLength - 1] == 'function') {\n" +
+      '    callback = args[--argsLength];\n' +
+      '  }\n' +
+      '}\n' +
       'while (++argsIndex < argsLength) {\n' +
       '  iterable = arguments[argsIndex];\n' +
       '  if (iterable && objectTypes[typeof iterable]) {',
-    'loop': 'result[index] = iterable[index]',
+    'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]',
     'bottom': '  }\n}'
   };
 
@@ -752,9 +760,11 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Assigns own enumerable properties of source object(s) to the `destination`
+   * Assigns own enumerable properties of source object(s) to the destination
    * object. Subsequent sources will overwrite propery assignments of previous
-   * sources.
+   * sources. If a `callback` function is passed, it will be executed to produce
+   * the assigned values. The `callback` is bound to `thisArg` and invoked with
+   * two arguments; (objectValue, sourceValue).
    *
    * @static
    * @memberOf _
@@ -763,13 +773,21 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param- {Object} [guard] Internally used to allow working with `_.reduce`
-   *  without using its callback's `key and `object` arguments as sources.
+   * @param {Function} [callback] The function to customize assigning values.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns the destination object.
    * @example
    *
    * _.assign({ 'name': 'moe' }, { 'age': 40 });
    * // => { 'name': 'moe', 'age': 40 }
+   *
+   * var defaults = _.partialRight(_.assign, function(a, b) {
+   *   return typeof a == 'undefined' ? b : a;
+   * });
+   *
+   * var food = { 'name': 'apple' };
+   * defaults(food, { 'name': 'banana', 'type': 'fruit' });
+   * // => { 'name': 'apple', 'type': 'fruit' }
    */
   function assign(object) {
     if (!object) {
@@ -835,8 +853,8 @@
   }
 
   /**
-   * Assigns own enumerable properties of source object(s) to the `destination`
-   * object for all `destination` properties that resolve to `null`/`undefined`.
+   * Assigns own enumerable properties of source object(s) to the destination
+   * object for all destination properties that resolve to `null`/`undefined`.
    * Once a property is set, additional defaults of the same property will be
    * ignored.
    *
@@ -851,9 +869,9 @@
    * @returns {Object} Returns the destination object.
    * @example
    *
-   * var iceCream = { 'flavor': 'chocolate' };
-   * _.defaults(iceCream, { 'flavor': 'vanilla', 'sprinkles': 'rainbow' });
-   * // => { 'flavor': 'chocolate', 'sprinkles': 'rainbow' }
+   * var food = { 'name': 'apple' };
+   * _.defaults(food, { 'name': 'banana', 'type': 'fruit' });
+   * // => { 'name': 'apple', 'type': 'fruit' }
    */
   function defaults(object) {
     if (!object) {

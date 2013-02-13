@@ -2355,6 +2355,10 @@
       }
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
         source = removeFunction(source, 'createIterator');
+        source = removeVar(source, 'defaultsIteratorOptions');
+        source = removeVar(source, 'eachIteratorOptions');
+        source = removeVar(source, 'forOwnIteratorOptions');
+        source = removeVar(source, 'templateIterator');
         source = removeHasDontEnumBug(source);
         source = removeHasEnumPrototype(source);
       }

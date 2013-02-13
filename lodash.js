@@ -445,23 +445,16 @@
   );
 
   /** Reusable iterator options for `assign` and `defaults` */
-  var assignIteratorOptions = {
+  var defaultsIteratorOptions = {
     'args': 'object, source, guard',
     'top':
       'var args = arguments,\n' +
       '    argsIndex = 0,\n' +
-      "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
-      'if (argsLength > 2) {\n' +
-      "  if (typeof args[argsLength - 2] == 'function') {\n" +
-      '    var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
-      "  } else if (typeof args[argsLength - 1] == 'function') {\n" +
-      '    callback = args[--argsLength];\n' +
-      '  }\n' +
-      '}\n' +
+      "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
       'while (++argsIndex < argsLength) {\n' +
-      '  iterable = arguments[argsIndex];\n' +
+      '  iterable = args[argsIndex];\n' +
       '  if (iterable && objectTypes[typeof iterable]) {',
-    'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]',
+    'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
     'bottom': '  }\n}'
   };
 
@@ -1063,7 +1056,20 @@
    * defaults(food, { 'name': 'banana', 'type': 'fruit' });
    * // => { 'name': 'apple', 'type': 'fruit' }
    */
-  var assign = createIterator(assignIteratorOptions);
+  var assign = createIterator(defaultsIteratorOptions, {
+    'top':
+      defaultsIteratorOptions.top.replace(';',
+        ';\n' +
+        'if (argsLength > 2) {\n' +
+        "  if (typeof args[argsLength - 2] == 'function') {\n" +
+        '    var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
+        "  } else if (typeof args[argsLength - 1] == 'function') {\n" +
+        '    callback = args[--argsLength];\n' +
+        '  }\n' +
+        '}'
+      ),
+    'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]'
+  });
 
   /**
    * Creates a clone of `value`. If `deep` is `true`, nested objects will also
@@ -1238,9 +1244,8 @@
 
   /**
    * Assigns own enumerable properties of source object(s) to the destination
-   * object for all destination properties that resolve to `null`/`undefined`.
-   * Once a property is set, additional defaults of the same property will be
-   * ignored.
+   * object for all destination properties that resolve to `undefined`. Once a
+   * property is set, additional defaults of the same property will be ignored.
    *
    * @static
    * @memberOf _
@@ -1257,9 +1262,7 @@
    * _.defaults(food, { 'name': 'banana', 'type': 'fruit' });
    * // => { 'name': 'apple', 'type': 'fruit' }
    */
-  var defaults = createIterator(assignIteratorOptions, {
-    'loop': 'if (result[index] == null) ' + assignIteratorOptions.loop
-  });
+  var defaults = createIterator(defaultsIteratorOptions);
 
   /**
    * Creates a sorted array of all enumerable properties, own and inherited,

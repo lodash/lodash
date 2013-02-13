@@ -529,6 +529,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.defaults');
+
+  (function() {
+    test('should not overwrite `null` values', function() {
+      var actual = _.defaults({ 'a': null }, { 'a': 1 });
+      strictEqual(actual.a, null);
+    });
+
+    test('should overwrite `undefined` values', function() {
+      var actual = _.defaults({ 'a': undefined }, { 'a': 1 });
+      strictEqual(actual.a, 1);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.difference');
 
   (function() {
@@ -868,14 +884,18 @@
 
   QUnit.module('object assignments');
 
-  _.each(['assign', 'merge'], function(methodName) {
+  _.each(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' should merge problem JScript properties (test in IE < 9)', function() {
+    test('lodash.' + methodName + ' should assign problem JScript properties (test in IE < 9)', function() {
       var object = {
         'constructor': 1,
         'hasOwnProperty': 2,
-        'isPrototypeOf': 3
+        'isPrototypeOf': 3,
+        'propertyIsEnumerable': undefined,
+        'toLocaleString': undefined,
+        'toString': undefined,
+        'valueOf': undefined
       };
 
       var source = {
@@ -909,6 +929,10 @@
       _.reduce(array, func, actual);
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
     });
+  });
+
+  _.each(['assign', 'merge'], function(methodName) {
+    var func = _[methodName];
 
     test('lodash.' + methodName + ' should pass the correct `callback` arguments', function() {
       var args;
@@ -1627,7 +1651,6 @@
     });
 
     test('should not assign `undefined` values', function() {
-      var a
       var actual = _.merge({ 'a': 1 }, { 'a': undefined });
       strictEqual(actual.a, 1);
     });

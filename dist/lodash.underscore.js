@@ -238,43 +238,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** Reusable iterator options for `assign` and `defaults` */
-  var assignIteratorOptions = {
-    'args': 'object, source, guard',
-    'top':
-      'var args = arguments,\n' +
-      '    argsIndex = 0,\n' +
-      "    argsLength = typeof guard == 'number' ? 2 : arguments.length;\n" +
-      'if (argsLength > 2) {\n' +
-      "  if (typeof args[argsLength - 2] == 'function') {\n" +
-      '    var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
-      "  } else if (typeof args[argsLength - 1] == 'function') {\n" +
-      '    callback = args[--argsLength];\n' +
-      '  }\n' +
-      '}\n' +
-      'while (++argsIndex < argsLength) {\n' +
-      '  iterable = arguments[argsIndex];\n' +
-      '  if (iterable && objectTypes[typeof iterable]) {',
-    'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]',
-    'bottom': '  }\n}'
-  };
-
-  /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
-  var eachIteratorOptions = {
-    'args': 'collection, callback, thisArg',
-    'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
-    'arrays': "typeof length == 'number'",
-    'loop': 'if (callback(iterable[index], index, collection) === false) return result'
-  };
-
-  /** Reusable iterator options for `forIn` and `forOwn` */
-  var forOwnIteratorOptions = {
-    'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
-    'arrays': false
-  };
-
-  /*--------------------------------------------------------------------------*/
-
   /**
    * Used by `_.max` and `_.min` as the default `callback` when a given
    * `collection` is a string value.
@@ -854,9 +817,8 @@
 
   /**
    * Assigns own enumerable properties of source object(s) to the destination
-   * object for all destination properties that resolve to `null`/`undefined`.
-   * Once a property is set, additional defaults of the same property will be
-   * ignored.
+   * object for all destination properties that resolve to `undefined`. Once a
+   * property is set, additional defaults of the same property will be ignored.
    *
    * @static
    * @memberOf _

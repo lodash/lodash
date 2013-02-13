@@ -196,28 +196,6 @@
         ok(false);
       }
     });
-
-    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
-      function Foo() {}
-      Foo.prototype.c = 3;
-
-      Foo.a = 1;
-      Foo.b = 2;
-
-      var expected = { 'a': 1, 'b': 2 };
-      deepEqual(_.assign({}, Foo), expected);
-
-      Foo.prototype = { 'c': 3 };
-      deepEqual(_.assign({}, Foo), expected);
-    });
-
-    test('should work with `_.reduce`', function() {
-      var actual = { 'a': 1 },
-          array = [{ 'b': 2 }, { 'c': 3 }];
-
-      _.reduce(array, _.assign, actual);
-      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -858,7 +836,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('object iteration bugs');
+  QUnit.module('collection iteration bugs');
 
   _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
     var func = _[methodName];
@@ -883,6 +861,79 @@
       Foo.prototype = { 'a': 1 };
       func(Foo, callback);
       deepEqual(keys, []);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('object assignments');
+
+  _.each(['assign', 'merge'], function(methodName) {
+    var func = _[methodName];
+
+    test('lodash.' + methodName + ' should merge problem JScript properties (test in IE < 9)', function() {
+      var object = {
+        'constructor': 1,
+        'hasOwnProperty': 2,
+        'isPrototypeOf': 3
+      };
+
+      var source = {
+        'propertyIsEnumerable': 4,
+        'toLocaleString': 5,
+        'toString': 6,
+        'valueOf': 7
+      };
+
+      deepEqual(func(object, source), shadowed);
+    });
+
+    test('lodash.' + methodName + ' skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+      function Foo() {}
+      Foo.prototype.c = 3;
+
+      Foo.a = 1;
+      Foo.b = 2;
+
+      var expected = { 'a': 1, 'b': 2 };
+      deepEqual(func({}, Foo), expected);
+
+      Foo.prototype = { 'c': 3 };
+      deepEqual(func({}, Foo), expected);
+    });
+
+    test('lodash.' + methodName + ' should work with `_.reduce`', function() {
+      var actual = { 'a': 1},
+          array = [{ 'b': 2 }, { 'c': 3 }];
+
+      _.reduce(array, func, actual);
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
+    });
+
+    test('lodash.' + methodName + ' should pass the correct `callback` arguments', function() {
+      var args;
+
+      func({ 'a': 1 }, { 'a': 2 }, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 2]);
+    });
+
+    test('lodash.' + methodName + ' should correct set the `this` binding', function() {
+      var actual = func({}, { 'a': 0 }, function(a, b) {
+        return this[b];
+      }, [2]);
+
+      deepEqual(actual, { 'a': 2 });
+    });
+
+    test('lodash.' + methodName + ' should not treat a function as a `callback` if less than two arguments are passed', function() {
+      function callback() {}
+      callback.b = 2;
+
+      var actual = func({ 'a': 1 }, callback);
+      deepEqual(actual, { 'a': 1, 'b': 2 });
     });
   });
 
@@ -1552,23 +1603,6 @@
       ok(actual.bar.b === actual.foo.b && actual.foo.b.foo.c === actual.foo.b.foo.c.foo.b.foo.c);
     });
 
-    test('should merge problem JScript properties (test in IE < 9)', function() {
-      var object = {
-        'constructor': 1,
-        'hasOwnProperty': 2,
-        'isPrototypeOf': 3
-      };
-
-      var source = {
-        'propertyIsEnumerable': 4,
-        'toLocaleString': 5,
-        'toString': 6,
-        'valueOf': 7
-      };
-
-      deepEqual(_.merge(object, source), shadowed);
-    });
-
     test('should not treat `arguments` objects as plain objects', function() {
       var object = {
         'args': args
@@ -1587,14 +1621,6 @@
       deepEqual(_.merge({ 'a': 1 }, { 'a': 2 }, { 'a': 3 }, expected), expected);
     });
 
-    test('should work with `_.reduce`', function() {
-      var actual = { 'a': 1},
-          array = [{ 'b': 2 }, { 'c': 3 }];
-
-      _.reduce(array, _.merge, actual);
-      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
-    });
-
     test('should assign `null` values', function() {
       var actual = _.merge({ 'a': 1 }, { 'a': null });
       strictEqual(actual.a, null);
@@ -1604,24 +1630,6 @@
       var a
       var actual = _.merge({ 'a': 1 }, { 'a': undefined });
       strictEqual(actual.a, 1);
-    });
-
-    test('should pass the correct `callback` arguments', function() {
-      var args;
-
-      _.merge({ 'a': 1 }, { 'a': 2 }, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [1, 2]);
-    });
-
-    test('should correct set the `this` binding', function() {
-      var actual = _.merge({}, { 'a': 0 }, function(a, b) {
-        return this[b];
-      }, [2]);
-
-      deepEqual(actual, { 'a': 2 });
     });
 
     test('should handle merging if `callback` returns `undefined`', function() {

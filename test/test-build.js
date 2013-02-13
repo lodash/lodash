@@ -763,8 +763,17 @@
         function Foo() {}
         Foo.prototype = { 'a': 1 };
 
+        actual = lodash.defaults({ 'a': null }, { 'a': 1 });
+        strictEqual(actual.a, 1, '_.defaults should overwrite `null` values: ' + basename);
+
         deepEqual(lodash.defaults({}, new Foo), Foo.prototype, '_.defaults should assign inherited `source` properties: ' + basename);
         deepEqual(lodash.extend({}, new Foo), Foo.prototype, '_.extend should assign inherited `source` properties: ' + basename);
+
+        actual = lodash.extend({}, { 'a': 0 }, function(a, b) {
+          return this[b];
+        }, [2]);
+
+        strictEqual(actual.a, 0, '_.extend should ignore `callback` and `thisArg`: ' + basename);
 
         actual = lodash.find(array, function(value) {
           return 'a' in value;

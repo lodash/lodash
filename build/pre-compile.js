@@ -247,7 +247,7 @@
     });
 
     // remove whitespace from `_.template` related regexes
-    source = source.replace(/(?:reEmptyString\w+|reInsertVariable) *=.+/g, function(match) {
+    source = source.replace(/reEmptyString\w+ *=.+/g, function(match) {
       return match.replace(/ |\\n/g, '');
     });
 

@@ -945,11 +945,11 @@ _([1, 2, 3]).valueOf();
 ### <a id="_atcollection--index1-index2-"></a>`_.at(collection [, index1, index2, ...])`
 <a href="#_atcollection--index1-index2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2157 "View in source") [&#x24C9;][1]
 
-Creates an array of elements from the specified index(es), or keys, of the `collection`. Indexes may be specified as individual arguments or as arrays of indexes.
+Creates an array of elements from the specified indexes, or keys, of the `collection`. Indexes may be specified as individual arguments or as arrays of indexes.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
-2. `[index1, index2, ...]` *(Array|Number|String)*: The index(es) of `collection` to retrieve, either as individual arguments or arrays.
+2. `[index1, index2, ...]` *(Array|Number|String)*: The indexes of `collection` to retrieve, either as individual arguments or arrays.
 
 #### Returns
 *(Array)*: Returns a new array of elements corresponding to the  provided indexes.

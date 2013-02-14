@@ -1984,7 +1984,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates an array of elements from the specified index(es), or keys, of the
+   * Creates an array of elements from the specified indexes, or keys, of the
    * `collection`. Indexes may be specified as individual arguments or as arrays
    * of indexes.
    *
@@ -1992,7 +1992,7 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Array|Number|String} [index1, index2, ...] The index(es) of
+   * @param {Array|Number|String} [index1, index2, ...] The indexes of
    *  `collection` to retrieve, either as individual arguments or arrays.
    * @returns {Array} Returns a new array of elements corresponding to the
    *  provided indexes.

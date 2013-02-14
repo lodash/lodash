@@ -43,7 +43,7 @@
     "rhino"
   ],
   "jam": {
-    "main": "./dist/lodash.js"
+    "main": "./lodash.js"
   },
   "scripts": {
     "build": "node ./build.js",

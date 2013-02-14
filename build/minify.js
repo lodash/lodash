@@ -15,10 +15,10 @@
       postprocess = require('./post-compile.js');
 
   /** The Git object ID of `closure-compiler.tar.gz` */
-  var closureId = 'c92fd8f7f2b2096eb910c99d10ede0ec25d3c3cc';
+  var closureId = '23cf67d0f0b979d97631fc108a2a43bb82225994';
 
   /** The Git object ID of `uglifyjs.tar.gz` */
-  var uglifyId = '7948672b0f85eeaba258c7298b2422fc5ea594b2';
+  var uglifyId = '326ede8f4a3d8e0ae82cec7b9579d45892836629';
 
   /** The path of the directory that is the base of the repository */
   var basePath = fs.realpathSync(path.join(__dirname, '..'));

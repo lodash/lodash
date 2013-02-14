@@ -1,23 +1,29 @@
-# Lo-Dash <sup>v1.0.0-rc.3</sup>
+# Lo-Dash <sup>v1.0.0</sup>
 [![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
 An alternative to Underscore.js, delivering consistency, [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
 
 ## Download
 
-* Lo-Dash builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.3/lodash.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.3/lodash.min.js)
+* Lo-Dash builds (for modern environments):<br>
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.min.js)
+
+* Lo-Dash compatibility builds (for legacy and modern environments):<br>
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.compat.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.compat.min.js)
 
 * Underscore compatibility builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.3/lodash.underscore.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0-rc.3/lodash.underscore.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.underscore.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.underscore.min.js)
 
-* CDN copies of ≤ v1.0.0-rc.3’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
-[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash.js),
-[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash.min.js),
-[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash.underscore.js), and
-[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash.underscore.min.js)
+* CDN copies of ≤ v1.0.0’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.js),
+[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.min.js),<br>
+[Lo-Dash compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.compat.js),
+[Lo-Dash compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.compat.min.js),<br>
+[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.underscore.js), and
+[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.underscore.min.js)
 
 * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
@@ -42,23 +48,28 @@ For more information check out these screencasts over Lo-Dash:
 
  * AMD loader support ([RequireJS](http://requirejs.org/), [curl.js](https://github.com/cujojs/curl), etc.)
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
+ * [_.at](http://lodash.com/docs#at) for cherry-picking collection values
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”* defined](http://michaux.ca/articles/lazy-function-definition-pattern) methods
- * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for *“deep”* cloning arrays and objects
+ * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays and objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex` argument
  * [_.forEach](http://lodash.com/docs#forEach) is chainable and supports exiting iteration early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating over an object’s own and inherited properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating over an object’s own properties
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) checks if values are created by the `Object` constructor
- * [_.merge](http://lodash.com/docs#merge) for a *“deep”* [_.extend](http://lodash.com/docs#extend)
- * [_.partial](http://lodash.com/docs#partial) for partial application without `this` binding
- * [_.pick](http://lodash.com/docs#pick) and [_.omit](http://lodash.com/docs#omit) accepts `callback` and `thisArg` arguments
- * [_.template](http://lodash.com/docs#template) supports [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6) and utilizes [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl) for easier debugging
+ * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
+ * [_.partial](http://lodash.com/docs#partial) and [_.partialRight](http://lodash.com/docs#partialRight) for partial application without `this` binding
+ * [_.template](http://lodash.com/docs#template) supports [*“imports”* options](http://lodash.com/docs#templateSettings_imports), [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6), and [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
+ * [_.where](http://lodash.com/docs#where) supports deep object comparisons
+ * [_.clone](http://lodash.com/docs#clone), [_.omit](http://lodash.com/docs#omit), [_.pick](http://lodash.com/docs#pick),
+   [and more…](http://lodash.com/docs "_.assign, _.cloneDeep, _.first, _.initial, _.isEqual, _.last, _.merge, _.rest") accept `callback` and `thisArg` arguments
  * [_.contains](http://lodash.com/docs#contains), [_.size](http://lodash.com/docs#size), [_.toArray](http://lodash.com/docs#toArray),
-   [and more…](http://lodash.com/docs "_.countBy, _.every, _.filter, _.find, _.forEach, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.some, _.sortBy, _.where") accept strings
+   [and more…](http://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.forEach, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.some, _.sortBy, _.where") accept strings
+ * [_.filter](http://lodash.com/docs#filter), [_.find](http://lodash.com/docs#find), [_.map](http://lodash.com/docs#map),
+   [and more…](http://lodash.com/docs "_.countBy, _.every, _.first, _.groupBy, _.initial, _.last, _.max, _.min, _.reject, _.rest, _.some, _.sortBy, _.sortedIndex, _.uniq") support *“_.pluck”* and *“_.where”* `callback` shorthands
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5~24, Firefox 1~18, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.18, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
+Lo-Dash has been tested in at least Chrome 5~24, Firefox 1~18, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.19, Narwhal 0.3.2, PhantomJS 1.8.1, RingoJS 0.9, and Rhino 1.7RC5.
 
 ## Custom builds
 
@@ -70,8 +81,8 @@ To top it off, we handle all method dependency and alias mapping for you.
 lodash backbone
 ```
 
- * CSP builds, supporting default [Content Security Policy](http://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html) restrictions, may be created using the `csp` modifier argument.
-   The `csp` modifier is an alais of the `modern` modifier. Chrome extensions will require [sandboxing](http://developer.chrome.com/extensions/sandboxingEval.html) or the use of either the `mobile`, `modern`, or `underscore` build.
+ * CSP builds, supporting default [Content Security Policy](https://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html) restrictions, may be created using the `csp` modifier argument.
+   The `csp` modifier is an alais of the `mobile` modifier. Lo-Dash may be used in Chrome extensions by using either the `csp`, `mobile`, or `underscore` build and using precompiled templates, or loading Lo-Dash in a [sandbox](http://developer.chrome.com/stable/extensions/sandboxingEval.html).
 ```bash
 lodash csp
 ```
@@ -232,49 +243,30 @@ require({
 
 ## Release Notes
 
-### <sup>v1.0.0-rc.3</sup>
+### <sup>v1.0.0</sup>
 
 #### Compatibility Warnings
 
- * Made `_#join`, `_#pop`, and `_#shift` wrapper methods return unwrapped values
- * Made *“Functions”* methods wrapper counterparts return wrapped values
- * Removed `_.chain` and `_#chain` methods
+ * Made `_.defaults` preserve `null` values, instead of overwriting them
 
 #### Changes
 
- * Added [_.cloneDeep](http://lodash.com/docs#cloneDeep) alias of `_.clone(…, true)`
- * Added `_.once` to the `backbone` build method dependencies
- * Ensured `backbone` builds implement Underscore’s chaining behavior
- * Ensured the `settings=…` build option doesn’t clobber the default `moduleId`
- * Ensured Lo-Dash’s `npm` package installation avoids erroring when no other modules have been globally installed
- * Made compiled templates loaded via AMD use the Lo-Dash module for their `_` references
- * Removed the *“Collections”* method `_.forEach` dependency from *“Arrays”* method `_.intersection`
- * Optimized `_.isArray` and `_.isFunction` fallbacks as well as<br>
-   `_.intersection`, `_.isDate`, `_.isRegExp`, `_.reduce`, `_.reduceRight`, `_.union`, and `_.uniq`
-
-### <sup>v1.0.0-rc.2</sup>
-
- * Specified more method chaining behaviors
- * Updated `underscore` build compatibility to v1.4.3
-
-### <sup>v1.0.0-rc.1</sup>
-
-#### Compatibility Warnings
-
- * Made `_(…)` intuitively chain without needing to call `_#chain`
- * Made `_.isEqual` equate `arguments` objects to similar `Object` objects
- * Made `_.clone` copy the enumerable properties of `arguments` objects and objects<br>
-   created by constructors other than `Object` are cloned to plain `Object` objects
-
-#### Changes
-
- * Ensure Lo-Dash runs in the JS engine embedded in Adobe products
- * Ensured `_.reduce` and `_.reduceRight` pass the correct number of `callback` arguments
- * Ensured `_.throttle` nulls the `timeoutId`
- * Made deep `_.clone` more closely follow the structured clone algorithm and copy array properties assigned by `RegExp#exec`
- * Optimized compiled templates in Firefox
- * Optimized `_.forEach`, `_.forOwn`, `_.isNumber`, and `_.isString`
- * Simplified `iteratorTemplate`
+ * Added [_.at](http://lodash.com/docs#at) and [_.partialRight](http://lodash.com/docs#partialRight)
+ * Added [*“imports”*](http://lodash.com/docs#templateSettings_imports) option to `_.templateSettings`
+ * Added `modern` and `--source-map`/`-p` build options
+ * Added support for *“_.pluck”* and *“_.where”* `callback` shorthands
+ * Ensured `_.assign` and `_.defaults` support arrays
+ * Ensured `_.merge` assigns `null` values and produces dense arrays
+ * Deferred minifier downloads until the `lodash` utility requires them
+ * Flipped `noNodeClass` test to avoid triggering Firebug’s *“break on all errors”* feature
+ * Made `_.where` support deep object comparisons
+ * Optimized `_.invert`, `_.pairs`, and `_.values`
+ * Reduced `_.max`, `_.min`, `_.pluck`, `_.toArray`, and `_.where`
+ * Simplified `createIterator` and `iteratorTemplate`
+ * Tweaked `_.uniqueId` to avoid problems with buggy minifiers
+ * Updated `underscore` build compatibility to v1.4.4
+ * Added support for `callback` and `thisArg` arguments to `_.assign`, `_.clone`,<br>
+   `_.cloneDeep`, `_.first`, `_.last`, `_.initial`, `_.isEqual`, `_.merge`, and `_.rest`
 
 The full changelog is available [here](https://github.com/bestiejs/lodash/wiki/Changelog).
 

@@ -1014,6 +1014,17 @@
 
       deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
+
+    test('should work with a number for `callback`', function() {
+      var array = [
+        [1, 'a'],
+        [2, 'a'],
+        [2, 'b']
+      ];
+
+      deepEqual(_.groupBy(array, 0), { '1': [[1 , 'a']], '2': [[2, 'a'], [2, 'b']] });
+      deepEqual(_.groupBy(array, 1), { 'a': [[1 , 'a'], [2, 'a']], 'b': [[2, 'b']] });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -535,6 +535,8 @@
     ];
 
     commands.forEach(function(command) {
+      var expectedId = /underscore/.test(command) ? 'underscore' : 'lodash';
+
       asyncTest('`lodash template=*.jst` exports=amd' + (command ? ' ' + command : ''), function() {
         var start = _.after(2, _.once(QUnit.start));
 
@@ -551,8 +553,10 @@
           context.define.amd = {};
           vm.runInContext(data.source, context);
 
-          equal(moduleId, (command ? 'underscore' : 'lodash'), basename);
+          equal(moduleId, expectedId, basename);
           ok('a' in _.templates && 'b' in _.templates, basename);
+          equal(_.templates.a({ 'people': ['moe', 'larry'] }), '<ul>\n<li>moe</li><li>larry</li>\n</ul>', basename);
+
           delete _.templates;
           start();
         });
@@ -578,7 +582,7 @@
           context.define.amd = {};
           vm.runInContext(data.source, context);
 
-          equal(moduleId, (command ? 'underscore' : 'lodash'), basename);
+          equal(moduleId, expectedId, basename);
           equal(_.templates.d(object.d), 'Hello Mustache!', basename);
           delete _.templates;
           start();

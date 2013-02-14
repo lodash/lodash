@@ -4733,7 +4733,7 @@
       (isEvaluating
         ? ', __j = Array.prototype.join;\n' +
           "function print() { __p += __j.call(arguments, '') }\n"
-        : (hasVariable ? '' : ', __d = ' + variable + '.' + variable + ' || ' + variable) + ';\n'
+        : ';\n'
       ) +
       source +
       'return __p\n}';

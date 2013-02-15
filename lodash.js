@@ -1060,12 +1060,10 @@
     'top':
       defaultsIteratorOptions.top.replace(';',
         ';\n' +
-        'if (argsLength > 2) {\n' +
-        "  if (typeof args[argsLength - 2] == 'function') {\n" +
-        '    var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
-        "  } else if (typeof args[argsLength - 1] == 'function') {\n" +
-        '    callback = args[--argsLength];\n' +
-        '  }\n' +
+        "if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {\n" +
+        '  var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
+        "} else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {\n" +
+        '  callback = args[--argsLength];\n' +
         '}'
       ),
     'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]'
@@ -1922,12 +1920,10 @@
       if (typeof deepIndicator != 'number') {
         length = args.length;
       }
-      if (length > 2) {
-        if (typeof args[length - 2] == 'function') {
-          callback = createCallback(args[--length - 1], args[length--], 2);
-        } else if (typeof args[length - 1] == 'function') {
-          callback = args[--length];
-        }
+      if (length > 3 && typeof args[length - 2] == 'function') {
+        callback = createCallback(args[--length - 1], args[length--], 2);
+      } else if (length > 2 && typeof args[length - 1] == 'function') {
+        callback = args[--length];
       }
     }
     while (++index < length) {

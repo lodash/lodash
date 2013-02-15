@@ -537,7 +537,7 @@
     commands.forEach(function(command) {
       var expectedId = /underscore/.test(command) ? 'underscore' : 'lodash';
 
-      asyncTest('`lodash template=*.jst` exports=amd' + (command ? ' ' + command : ''), function() {
+      asyncTest('`lodash template=*.jst exports=amd' + (command ? ' ' + command : '') + '`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
         build(['-s', 'template=' + templatePath + '/*.jst', 'exports=amd'].concat(command || []), function(data) {
@@ -562,7 +562,7 @@
         });
       });
 
-      asyncTest('`lodash settings=...`' + (command ? ' ' + command : ''), function() {
+      asyncTest('`lodash settings=...' + (command ? ' ' + command : '') + '`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
         build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/{{([\\s\\S]+?)}}/}'].concat(command || []), function(data) {
@@ -640,6 +640,43 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('source maps');
+
+  (function() {
+    var commands = [
+      '-p',
+      '--source-map'
+    ];
+
+    var outputPaths = [
+      '',
+      '-o foo.js'
+    ];
+
+    commands.forEach(function(command) {
+      outputPaths.forEach(function(outputPath) {
+        asyncTest('`lodash ' + command + (outputPath ? ' ' + outputPath : '') + '`', function() {
+          var start = _.once(QUnit.start);
+          outputPath = outputPath ? outputPath.split(' ') : [];
+
+          build(['-s', '-m', command].concat(outputPath), function(data) {
+            var basename = path.basename(data.outputPath, '.js'),
+                comment = (/(\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)$/.exec(data.source) || [])[0],
+                sourceMap = JSON.parse(data.sourceMap);
+
+            ok(RegExp('/\\*\\n//@ sourceMappingURL=' + basename + '.map\\n\\*/').test(comment), basename);
+            equal(sourceMap.file, basename + '.js', basename);
+            deepEqual(sourceMap.sources, ['lodash.js'], basename);
+
+            start();
+          });
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('strict modifier');
 
   (function() {
@@ -648,7 +685,12 @@
       'b': undefined
     });
 
-    ['non-strict', 'strict'].forEach(function(strictMode, index) {
+    var modes = [
+      'non-strict',
+      'strict'
+    ];
+
+    modes.forEach(function(strictMode, index) {
       asyncTest(strictMode + ' should ' + (index ? 'error': 'silently fail') + ' attempting to overwrite read-only properties', function() {
         var commands = ['-s', 'include=bindAll,defaults,extend'],
             start = _.after(2, _.once(QUnit.start));

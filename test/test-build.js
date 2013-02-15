@@ -643,33 +643,38 @@
   QUnit.module('source maps');
 
   (function() {
-    var commands = [
+    var mapCommands = [
       '-p',
       '--source-map'
     ];
 
-    var outputPaths = [
+    var outputCommands = [
       '',
-      '-o foo.js'
+      '-o foo.js',
+      '-m -o bar.js'
     ];
 
-    commands.forEach(function(command) {
-      outputPaths.forEach(function(outputPath) {
-        asyncTest('`lodash ' + command + (outputPath ? ' ' + outputPath : '') + '`', function() {
-          var start = _.once(QUnit.start);
-          outputPath = outputPath ? outputPath.split(' ') : [];
-
-          build(['-s', '-m', command].concat(outputPath), function(data) {
+    mapCommands.forEach(function(mapCommand) {
+      outputCommands.forEach(function(outputCommand) {
+        asyncTest('`lodash ' + mapCommand + (outputCommand ? ' ' + outputCommand : '') + '`', function() {
+          var callback = _.once(function(data) {
             var basename = path.basename(data.outputPath, '.js'),
                 comment = (/(\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)$/.exec(data.source) || [])[0],
+                sources = /foo.js/.test(outputCommand) ? ['foo.js'] : ['lodash' + (outputCommand.length ? '' : '.custom') + '.js'],
                 sourceMap = JSON.parse(data.sourceMap);
 
             ok(RegExp('/\\*\\n//@ sourceMappingURL=' + basename + '.map\\n\\*/').test(comment), basename);
             equal(sourceMap.file, basename + '.js', basename);
-            deepEqual(sourceMap.sources, ['lodash.js'], basename);
+            deepEqual(sourceMap.sources, sources, basename);
 
-            start();
+            QUnit.start();
           });
+
+          outputCommand = outputCommand ? outputCommand.split(' ') : [];
+          if (outputCommand.indexOf('-m') < 0) {
+            callback = _.after(2, callback);
+          }
+          build(['-s', mapCommand].concat(outputCommand), callback);
         });
       });
     });

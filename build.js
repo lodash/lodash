@@ -2414,9 +2414,10 @@
       }
       else if (!isStdOut) {
         outputUsed = true;
+        filePath = outputPath || path.join(cwd, basename + '.js');
         callback({
           'source': debugSource,
-          'outputPath': outputPath || path.join(cwd, basename + '.js')
+          'outputPath': filePath
         });
       }
     }

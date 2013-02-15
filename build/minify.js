@@ -369,13 +369,12 @@
       if (isMapped) {
         var mapOutput = fs.readFileSync(mapPath, 'utf8');
         fs.unlinkSync(mapPath);
+        output = output.replace(/[\s;]*$/, '\n/*\n//@ sourceMappingURL=' + path.basename(mapPath)) + '\n*/';
 
-        output = output
-          .replace(/[\s;]*$/, '\n/*\n//@ sourceMappingURL=' + path.basename(mapPath)) + '\n*/';
-
-        mapOutput = mapOutput
-          .replace(/("file":)""/, '$1"' + path.basename(outputPath) + '"')
-          .replace(/("sources":)\["stdin"\]/, '$1["' + path.basename(filePath) + '"]');
+        mapOutput = JSON.parse(mapOutput);
+        mapOutput.file = path.basename(outputPath);
+        mapOutput.sources = [path.basename(filePath)];
+        mapOutput = JSON.stringify(mapOutput, null, 2);
       }
       callback(exception, output, mapOutput);
     });

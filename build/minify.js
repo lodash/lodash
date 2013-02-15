@@ -304,10 +304,10 @@
   function closureCompile(source, mode, callback) {
     var filePath = this.filePath,
         isAdvanced = mode == 'advanced',
+        outputPath = this.outputPath,
         isMapped = this.isMapped,
         mapPath = getMapPath(outputPath),
-        options = closureOptions.slice(),
-        outputPath = this.outputPath;
+        options = closureOptions.slice();
 
     // remove copyright header to make other modifications easier
     var license = (/^(?:\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)*/.exec(source) || [''])[0];

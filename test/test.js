@@ -952,12 +952,15 @@
       deepEqual(actual, { 'a': 2 });
     });
 
-    test('lodash.' + methodName + ' should not treat a function as a `callback` if less than two arguments are passed', function() {
+    test('lodash.' + methodName + ' should not treat the second argument as a `callback`', function() {
       function callback() {}
       callback.b = 2;
 
       var actual = func({ 'a': 1 }, callback);
       deepEqual(actual, { 'a': 1, 'b': 2 });
+
+      actual = func({ 'a': 1 }, callback, { 'c': 3 });
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
   });
 

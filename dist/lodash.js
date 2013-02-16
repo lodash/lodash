@@ -1418,16 +1418,27 @@
 
     // recursively compare objects and arrays (susceptible to call stack limits)
     if (isArr) {
-      // compare lengths to determine if a deep comparison is necessary
+      length = a.length;
       size = b.length;
-      result = whereIndicator || size == a.length;
 
-      if (result) {
-        // deep compare the contents, ignoring non-numeric properties
-        while (size--) {
-          if (!(result = isEqual(a[size], b[size], callback, thisArg, stackA, stackB))) {
-            break;
+      // compare lengths to determine if a deep comparison is necessary
+      result = size == a.length;
+      if (!result && !whereIndicator) {
+        return result;
+      }
+      // deep compare the contents, ignoring non-numeric properties
+      while (size--) {
+        var index = length,
+            value = b[size];
+
+        if (whereIndicator) {
+          while (index--) {
+            if ((result = isEqual(a[index], value, callback, thisArg, stackA, stackB))) {
+              break;
+            }
           }
+        } else if (!(result = isEqual(a[size], value, callback, thisArg, stackA, stackB))) {
+          break;
         }
       }
       return result;

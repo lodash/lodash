@@ -2607,6 +2607,14 @@
 
       deepEqual(_.where(collection, { 'a': { 'b': { 'c': 1 } } }), expected);
     });
+
+    test('should search of arrays for values', function() {
+      var collection = [{ 'a': [1, 2] }],
+          expected = _.cloneDeep(collection);
+
+      deepEqual(_.where(collection, { 'a': [] }), []);
+      deepEqual(_.where(collection, { 'a': [2] }), expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

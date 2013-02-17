@@ -3463,10 +3463,10 @@
    * _.defer(function() { alert('deferred'); });
    * // returns from the function before `alert` is called
    */
-  function defer(func) {
+  var defer = reNative.test(window.setImmediate) && bind(setImmediate, window) || function(func) {
     var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
-  }
+  };
 
   /**
    * Creates a function that memoizes the result of `func`. If `resolver` is

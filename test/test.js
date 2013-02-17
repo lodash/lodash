@@ -545,6 +545,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.defer');
+
+  (function() {
+    asyncTest('should accept additional arguments', function() {
+      _.defer(function() {
+        deepEqual(slice.call(arguments), [1, 2, 3]);
+        QUnit.start();
+      }, 1, 2, 3);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.difference');
 
   (function() {

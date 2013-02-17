@@ -56,7 +56,7 @@
    * Used to match ES6 template delimiters
    * http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6
    */
-  var reEsTemplate = /\$\{((?:(?=\\?)\\?[\s\S])*?)\}/g;
+  var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;

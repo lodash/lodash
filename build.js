@@ -989,7 +989,7 @@
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(hasEnumPrototype *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
-        .replace(/hasEnumPrototype *\|\|/g, '');
+        .replace(/hasEnumPrototype *\|\|\s*/g, '');
     });
 
     return source;
@@ -1071,7 +1071,7 @@
 
     // remove `noArgsClass` from `_.isEmpty`
     source = source.replace(matchFunction(source, 'isEmpty'), function(match) {
-      return match.replace(/ *\|\| *\(noArgsClass *&&[^)]+?\)\)/g, '');
+      return match.replace(/ *\|\|\s*\(noArgsClass *&&[^)]+?\)\)/g, '');
     });
 
     return source;
@@ -1136,7 +1136,7 @@
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)*( *["'] *)<% *} *else *if *\(nonEnumArgs[\s\S]+?(\1<% *} *%>.+)/, '$2')
-        .replace(/ *\|\| *nonEnumArgs/, '');
+        .replace(/ *\|\|\s*nonEnumArgs/, '');
     });
 
     return source;
@@ -1160,12 +1160,12 @@
 
     // remove `noNodeClass` from `_.clone`
     source = source.replace(matchFunction(source, 'clone'), function(match) {
-      return match.replace(/ *\|\| *\(noNodeClass[\s\S]+?\)\)/, '');
+      return match.replace(/ *\|\|\s*\(noNodeClass[\s\S]+?\)\)/, '');
     });
 
     // remove `noNodeClass` from `_.isEqual`
     source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/ *\|\| *\(noNodeClass[\s\S]+?\)\)\)/, '');
+      return match.replace(/ *\|\|\s*\(noNodeClass[\s\S]+?\)\)\)/, '');
     });
 
     return source;
@@ -2107,9 +2107,14 @@
           return match.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
         });
 
+        // remove native `setImmediate` branch in `_.defer`
+        source = source.replace(matchFunction(source, 'defer'), function(match) {
+          return match.replace(/reNative.*?\|\|\s*/, '');
+        });
+
         // remove native `Array.isArray` branch in `_.isArray`
         source = source.replace(matchFunction(source, 'isArray'), function(match) {
-          return match.replace(/nativeIsArray * \|\|/, '');
+          return match.replace(/nativeIsArray * \|\|\s*/, '');
         });
 
         // replace `_.keys` with `shimKeys`
@@ -2245,7 +2250,7 @@
 
           // minor cleanup
           snippet = snippet
-            .replace(/obj *\|\| *\(obj *= *{}\);/, '')
+            .replace(/obj *\|\|\s*\(obj *= *{}\);/, '')
             .replace(/var __p = '';\s*__p \+=/, 'var __p =');
 
           // remove comments, including sourceURLs

@@ -1262,6 +1262,16 @@
       var actual = _.isEqual('a', 'a', function() { });
       strictEqual(actual, true);
     });
+
+    test('should return a boolean value even if `callback` does not', function() {
+      var actual = _.isEqual('a', 'a', function() { return 'a'; });
+      strictEqual(actual, true);
+
+      _.each(falsey, function(value) {
+        var actual = _.isEqual('a', 'b', function() { return value; });
+        strictEqual(actual, false);
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -2413,8 +2413,8 @@
         });
       }
       else if (!isStdOut) {
-        outputUsed = true;
         filePath = outputPath || path.join(cwd, basename + '.js');
+        outputUsed = true;
         callback({
           'source': debugSource,
           'outputPath': filePath

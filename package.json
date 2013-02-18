@@ -1,52 +1,20 @@
 {
   "name": "lodash",
-  "version": "1.0.1",
-  "description": "An alternative to Underscore.js, delivering consistency, customization, performance, and extra features.",
-  "homepage": "http://lodash.com",
-  "main": "./dist/lodash",
-  "keywords": [
-    "browser",
-    "client",
-    "functional",
-    "performance",
-    "server",
-    "speed",
-    "util"
+  "version": "1.0.2",
+  "description": "A utility library delivering consistency, customization, performance, and extras.",
+  "homepage": "https://lodash.com/",
+  "license": "MIT",
+  "main": "./dist/lodash.js",
+  "keywords": ["browser", "client", "functional", "performance", "server", "speed", "util"],
+  "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+  "contributors": [
+    "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+    "Blaine Bublitz <blaine@iceddev.com> (http://www.iceddev.com/)",
+    "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
+    "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://lodash.com/license"
-    }
-  ],
-  "author": {
-    "name": "John-David Dalton",
-    "email": "john.david.dalton@gmail.com",
-    "web": "http://allyoucanleet.com/"
-  },
-  "bugs": {
-    "url": "https://github.com/bestiejs/lodash/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bestiejs/lodash.git"
-  },
-  "bin": {
-    "lodash": "./build.js"
-  },
-  "directories": {
-    "doc": "./doc",
-    "test": "./test"
-  },
-  "engines": [
-    "node",
-    "rhino"
-  ],
+  "repository": "lodash/lodash",
   "jam": {
-    "main": "./lodash.js"
-  },
-  "scripts": {
-    "build": "node ./build.js",
-    "test": "node ./test/test.js ./dist/lodash.js && node ./test/test.js ./dist/lodash.min.js && node ./test/test-build.js"
+    "main": "./dist/lodash.compat.js"
   }
 }

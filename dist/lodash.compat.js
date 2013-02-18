@@ -1,11 +1,11 @@
 /**
  * @license
- * Lo-Dash 1.0.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 1.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash -o ./dist/lodash.compat.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
- * Available under MIT license <http://lodash.com/license>
+ * Available under MIT license <https://lodash.com/license>
  */
 ;(function(window, undefined) {
 
@@ -4592,7 +4592,7 @@
    * build and using precompiled templates, or loading Lo-Dash in a sandbox.
    *
    * For more information on precompiling templates see:
-   * http://lodash.com/#custom-builds
+   * https://lodash.com/#custom-builds
    *
    * For more information on Chrome extension sandboxes see:
    * http://developer.chrome.com/stable/extensions/sandboxingEval.html
@@ -5066,7 +5066,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '1.0.1';
+  lodash.VERSION = '1.0.2';
 
   // add "Chaining" functions to the wrapper
   lodash.prototype.toString = wrapperToString;

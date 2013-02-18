@@ -7,8 +7,9 @@
       https = require('https'),
       path = require('path'),
       spawn = require('child_process').spawn,
+      zlib = require('zlib'),
       tar = require('../vendor/tar/tar.js'),
-      zlib = require('zlib');
+      _ = require('../lodash.js');
 
   /** Load other modules */
   var preprocess = require('./pre-compile.js'),
@@ -80,7 +81,12 @@
    *  onComplete - The function called once minification has finished.
    */
   function minify(source, options) {
+    // used to specify the source map URL
+    var sourceMapURL;
+
+    // used to specify the default minifer modes
     var modes = ['simple', 'advanced', 'hybrid'];
+
     source || (source = '');
     options || (options = {});
 
@@ -89,6 +95,35 @@
       // convert commands to an options object
       options = source;
 
+      // used to report invalid command-line arguments
+      var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
+        if (/^(?:-o|--output)$/.test(options[index - 1]) ||
+            /^modes=.*$/.test(value)) {
+          return true;
+        }
+        var result = [
+          '-o', '--output',
+          '-p', '--source-map',
+          '-s', '--silent',
+          '-t', '--template'
+        ].indexOf(value) > -1;
+
+        if (!result && /^(?:-p|--source-map)$/.test(options[index - 1])) {
+          result = true;
+          sourceMapURL = value;
+        }
+        return result;
+      });
+
+      // report invalid arguments
+      if (invalidArgs.length) {
+        console.log(
+          '\n' +
+          'Invalid argument' + (invalidArgs.length > 1 ? 's' : '') +
+          ' passed: ' + invalidArgs.join(', ')
+        );
+        return;
+      }
       var filePath = options[options.length - 1],
           isMapped = options.indexOf('-p') > -1 || options.indexOf('--source-map') > -1,
           isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1,
@@ -114,7 +149,8 @@
         'isSilent': isSilent,
         'isTemplate': isTemplate,
         'modes': modes,
-        'outputPath': outputPath
+        'outputPath': outputPath,
+        'sourceMapURL': sourceMapURL
       };
 
       source = fs.readFileSync(filePath, 'utf8');
@@ -186,6 +222,7 @@
     this.isSilent = !!options.isSilent;
     this.isTemplate = !!options.isTemplate;
     this.outputPath = options.outputPath;
+    this.sourceMapURL = options.sourceMapURL;
 
     var modes = this.modes = options.modes;
     source = this.source = preprocess(source, options);
@@ -304,10 +341,11 @@
   function closureCompile(source, mode, callback) {
     var filePath = this.filePath,
         isAdvanced = mode == 'advanced',
-        outputPath = this.outputPath,
         isMapped = this.isMapped,
+        options = closureOptions.slice(),
+        outputPath = this.outputPath,
         mapPath = getMapPath(outputPath),
-        options = closureOptions.slice();
+        sourceMapURL = this.sourceMapURL || path.basename(mapPath);
 
     // remove copyright header to make other modifications easier
     var license = (/^(?:\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)*/.exec(source) || [''])[0];
@@ -369,7 +407,7 @@
       if (isMapped) {
         var mapOutput = fs.readFileSync(mapPath, 'utf8');
         fs.unlinkSync(mapPath);
-        output = output.replace(/[\s;]*$/, '\n/*\n//@ sourceMappingURL=' + path.basename(mapPath)) + '\n*/';
+        output = output.replace(/[\s;]*$/, '\n/*\n//@ sourceMappingURL=' + sourceMapURL) + '\n*/';
 
         mapOutput = JSON.parse(mapOutput);
         mapOutput.file = path.basename(outputPath);

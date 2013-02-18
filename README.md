@@ -176,7 +176,7 @@ The following options are also supported:
  * `-h`, `--help` ............. Display help information
  * `-m`, `--minify` ......... Write only the minified production output
  * `-o`, `--output` ......... Write output to a given path/filename
- * `-p`, `--source-map` .. Generate a source map for the minified output
+ * `-p`, `--source-map` .. Generate a source map for the minified output, using an optional source map URL
  * `-s`, `--silent` ......... Skip status updates normally logged to the console
  * `-V`, `--version` ....... Output current version of Lo-Dash
 

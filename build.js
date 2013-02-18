@@ -2324,9 +2324,6 @@
       } else {
         source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n/, '$1\n');
       }
-      if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
-        source = removeVar(source, 'freeExports');
-      }
     }());
 
     /*------------------------------------------------------------------------*/
@@ -2408,6 +2405,12 @@
         // remove IIFE used to assign `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs`
         source = source.replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '');
       }
+    }
+    if ((source.match(/\bfreeModule\b/g) || []).length < 2) {
+      source = removeVar(source, 'freeModule');
+    }
+    if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
+      source = removeVar(source, 'freeExports');
     }
 
     debugSource = cleanupSource(source);

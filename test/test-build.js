@@ -645,7 +645,9 @@
   (function() {
     var mapCommands = [
       '-p',
-      '--source-map'
+      '-p custom.map',
+      '--source-map',
+      '--source-map custom.map'
     ];
 
     var outputCommands = [
@@ -661,9 +663,10 @@
             var basename = path.basename(data.outputPath, '.js'),
                 comment = (/(\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)$/.exec(data.source) || [])[0],
                 sources = /foo.js/.test(outputCommand) ? ['foo.js'] : ['lodash' + (outputCommand.length ? '' : '.custom') + '.js'],
-                sourceMap = JSON.parse(data.sourceMap);
+                sourceMap = JSON.parse(data.sourceMap),
+                sourceMapURL = (/\w+(?=\.map$)/.exec(mapCommand) || [basename])[0];
 
-            ok(RegExp('/\\*\\n//@ sourceMappingURL=' + basename + '.map\\n\\*/').test(comment), basename);
+            ok(RegExp('/\\*\\n//@ sourceMappingURL=' + sourceMapURL + '.map\\n\\*/').test(comment), basename);
             equal(sourceMap.file, basename + '.js', basename);
             deepEqual(sourceMap.sources, sources, basename);
 
@@ -674,7 +677,7 @@
           if (outputCommand.indexOf('-m') < 0) {
             callback = _.after(2, callback);
           }
-          build(['-s', mapCommand].concat(outputCommand), callback);
+          build(['-s'].concat(mapCommand.split(' '), outputCommand), callback);
         });
       });
     });

@@ -594,7 +594,7 @@
       '    -h, --help        Display help information',
       '    -m, --minify      Write only the minified production output',
       '    -o, --output      Write output to a given path/filename',
-      '    -p, --source-map  Generate a source map for the minified output',
+      '    -p, --source-map  Generate a source map for the minified output, using an optional source map URL',
       '    -s, --silent      Skip status updates normally logged to the console',
       '    -V, --version     Output current version of Lo-Dash',
       ''
@@ -1304,13 +1304,16 @@
     // the debug version of `source`
     var debugSource;
 
+    // used to specify the source map URL
+    var sourceMapURL;
+
     // used to report invalid command-line arguments
     var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
           /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=.*$/.test(value)) {
         return true;
       }
-      return [
+      var result = [
         'backbone',
         'csp',
         'legacy',
@@ -1328,6 +1331,12 @@
         '-s', '--silent',
         '-V', '--version'
       ].indexOf(value) > -1;
+
+      if (!result && /^(?:-p|--source-map)$/.test(options[index - 1])) {
+        result = true;
+        sourceMapURL = value;
+      }
+      return result;
     });
 
     // report invalid arguments
@@ -2440,6 +2449,7 @@
         'isTemplate': isTemplate,
         'modes': isIIFE && ['simple', 'hybrid'],
         'outputPath': outputPath,
+        'sourceMapURL': sourceMapURL,
         'onComplete': function(data) {
           if (isCustom) {
             data.source = addCommandsToHeader(data.source, options);

@@ -1201,6 +1201,7 @@
       'category=collections,functions',
       'backbone legacy category=utilities minus=first,last',
       'legacy include=defer',
+      'legacy underscore',
       'underscore include=debounce,throttle plus=after minus=throttle',
       'underscore mobile strict category=functions exports=amd,global plus=pick,uniq',
     ]
@@ -1227,7 +1228,7 @@
           command = 'modern ' + command;
         }
         if (index == 3) {
-          if (/category|underscore/.test(command)) {
+          if (/category|legacy|underscore/.test(command)) {
             return;
           }
           command = 'underscore ' + command;

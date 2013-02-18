@@ -1200,6 +1200,7 @@
       'include=once plus=bind,Chaining',
       'category=collections,functions',
       'backbone legacy category=utilities minus=first,last',
+      'legacy include=defer',
       'underscore include=debounce,throttle plus=after minus=throttle',
       'underscore mobile strict category=functions exports=amd,global plus=pick,uniq',
     ]
@@ -1214,13 +1215,13 @@
         var command = origCommand;
 
         if (index == 1) {
-          if (/mobile/.test(command)) {
+          if (/legacy|mobile/.test(command)) {
             return;
           }
           command = 'mobile ' + command;
         }
         if (index == 2) {
-          if (/modern/.test(command)) {
+          if (/legacy|modern/.test(command)) {
             return;
           }
           command = 'modern ' + command;

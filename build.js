@@ -472,8 +472,14 @@
 
     var source = [
       ';(function(window) {',
-      "  var freeExports = typeof exports == 'object' && exports &&",
-      "    (typeof global == 'object' && global && global == global.global && (window = global), exports);",
+      "  var freeExports = typeof exports == 'object' && exports;",
+      '',
+      "  var freeModule = typeof module == 'object' && module && module.exports == freeExports && module;",
+      '',
+      "  var freeGlobal = typeof global == 'object' && global;",
+      '  if (freeGlobal.global === freeGlobal) {',
+      '    window = freeGlobal;',
+      '  }',
       '',
       '  var templates = {},',
       '      _ = window._;',
@@ -505,8 +511,8 @@
       '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
       '    });',
       "  } else if (freeExports) {",
-      "    if (typeof module == 'object' && module && module.exports == freeExports) {",
-      '      (module.exports = templates).templates = templates;',
+      "    if (freeModule) {",
+      '      (freeModule.exports = templates).templates = templates;',
       '    } else {',
       '      freeExports.templates = templates;',
       '    }',
@@ -1182,6 +1188,17 @@
     return removeVar(source, 'hasObjectSpliceBug')
       // remove `hasObjectSpliceBug` fix from the `Array` function mixins
       .replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
+  }
+
+  /**
+   * Removes the `setImmediate` fork of `_.defer`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSetImmediate(source) {
+    return source.replace(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/, '');
   }
 
   /**
@@ -2110,6 +2127,8 @@
       /*----------------------------------------------------------------------*/
 
       if (isLegacy) {
+        source = removeSetImmediate(source);
+
         _.each(['isBindFast', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
           source = removeVar(source, varName);
         });
@@ -2117,11 +2136,6 @@
         // remove native `Function#bind` branch in `_.bind`
         source = source.replace(matchFunction(source, 'bind'), function(match) {
           return match.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
-        });
-
-        // remove native `setImmediate` branch in `_.defer`
-        source = source.replace(matchFunction(source, 'defer'), function(match) {
-          return match.replace(/reNative.*?\|\|\s*/, '');
         });
 
         // remove native `Array.isArray` branch in `_.isArray`
@@ -2296,7 +2310,7 @@
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
       }
       if (!isNode) {
-        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +module[\s\S]+?else *{([\s\S]+?\n)\1}\n/, '$1$2');
+        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n/, '$1$2');
       }
       if (!isCommonJS) {
         source = source.replace(/(?: *\/\/.*\n)*(?:( *)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n/, '');
@@ -2380,6 +2394,7 @@
         source = removeHasEnumPrototype(source);
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
+        source = removeSetImmediate(source);
         source = removeVar(source, 'isBindFast');
         source = removeVar(source, 'isV8');
         source = removeVar(source, 'nativeBind');

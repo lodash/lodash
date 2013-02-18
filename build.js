@@ -79,7 +79,7 @@
     'countBy': ['forEach', 'identity', 'isEqual', 'keys'],
     'debounce': [],
     'defaults': ['isArray', 'forEach', 'forOwn'],
-    'defer': [],
+    'defer': ['bind'],
     'delay': [],
     'difference': ['indexOf'],
     'escape': [],
@@ -1526,8 +1526,8 @@
         useUnderscoreClone = methods.indexOf('clone') < 0;
       }
       // update dependencies
-      if (isModern || isUnderscore) {
-        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isEqual', 'isString');
+      if (isLegacy) {
+        dependencyMap.defer = _.without(dependencyMap.defer, 'bind');
       }
       if (isUnderscore) {
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
@@ -1554,6 +1554,9 @@
         if (useUnderscoreClone) {
           dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
         }
+      }
+      if (isModern || isUnderscore) {
+        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isEqual', 'isString');
       }
 
       // add method names explicitly

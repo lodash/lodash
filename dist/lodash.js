@@ -12,6 +12,9 @@
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports;
 
+  /** Detect free variable `module` */
+  var freeModule = typeof module == 'object' && module && module.exports == freeExports && module;
+
   /** Detect free variable `global` and use it as `window` */
   var freeGlobal = typeof global == 'object' && global;
   if (freeGlobal.global === freeGlobal) {
@@ -4074,10 +4077,14 @@
    * _.defer(function() { alert('deferred'); });
    * // returns from the function before `alert` is called
    */
-  var defer = reNative.test(window.setImmediate) && bind(setImmediate, window) || function(func) {
+  function defer(func) {
     var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
-  };
+  }
+  // use Node's `setImmediate`, if available
+  if (isV8 && freeModule && typeof setImmediate == 'function') {
+    defer = bind(setImmediate, window);
+  }
 
   /**
    * Creates a function that memoizes the result of `func`. If `resolver` is
@@ -4961,8 +4968,8 @@
   // check for `exports` after `define` in case a build optimizer adds an `exports` object
   else if (freeExports) {
     // in Node.js or RingoJS v0.8.0+
-    if (typeof module == 'object' && module && module.exports == freeExports) {
-      (module.exports = lodash)._ = lodash;
+    if (freeModule) {
+      (freeModule.exports = lodash)._ = lodash;
     }
     // in Narwhal or RingoJS v0.7.0-
     else {

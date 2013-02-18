@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v1.0.0</sup>
+# Lo-Dash <sup>v1.0.1</sup>
 [![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
 An alternative to Underscore.js, delivering consistency, [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
@@ -6,24 +6,24 @@ An alternative to Underscore.js, delivering consistency, [customization](https:/
 ## Download
 
 * Lo-Dash builds (for modern environments):<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.1/dist/lodash.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.1/dist/lodash.min.js)
 
 * Lo-Dash compatibility builds (for legacy and modern environments):<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.compat.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.compat.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.1/dist/lodash.compat.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.1/dist/lodash.compat.min.js)
 
 * Underscore compatibility builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.underscore.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.0.0/dist/lodash.underscore.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.0.1/dist/lodash.underscore.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.0.1/dist/lodash.underscore.min.js)
 
-* CDN copies of ≤ v1.0.0’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
-[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.js),
-[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.min.js),<br>
-[Lo-Dash compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.compat.js),
-[Lo-Dash compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.compat.min.js),<br>
-[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.underscore.js), and
-[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0/lodash.underscore.min.js)
+* CDN copies of ≤ v1.0.1’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.1/lodash.js),
+[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.1/lodash.min.js),<br>
+[Lo-Dash compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.1/lodash.compat.js),
+[Lo-Dash compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.1/lodash.compat.min.js),<br>
+[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.1/lodash.underscore.js), and
+[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.1/lodash.underscore.min.js)
 
 * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
@@ -33,16 +33,20 @@ We’ve got [API docs](http://lodash.com/docs), [benchmarks](http://lodash.com/b
 
 For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
 
-## Screencasts
+## Resources
 
-For more information check out these screencasts over Lo-Dash:
+For more information check out these articles, screencasts, and other videos over Lo-Dash:
 
- * [Introducing Lo-Dash](https://vimeo.com/44154599)
- * [Lo-Dash optimizations and custom builds](https://vimeo.com/44154601)
- * [Lo-Dash’s origin and why it’s a better utility belt](https://vimeo.com/44154600)
- * [Unit testing in Lo-Dash](https://vimeo.com/45865290)
- * [Lo-Dash’s approach to native method use](https://vimeo.com/48576012)
- * [CascadiaJS: Lo-Dash for a better utility belt](http://www.youtube.com/watch?v=dpPy4f_SeEk)
+ * Posts
+  - [Say “Hello” to Lo-Dash](http://kitcambridge.be/blog/say-hello-to-lo-dash/)
+
+ * Videos
+  - [Introducing Lo-Dash](https://vimeo.com/44154599)
+  - [Lo-Dash optimizations and custom builds](https://vimeo.com/44154601)
+  - [Lo-Dash’s origin and why it’s a better utility belt](https://vimeo.com/44154600)
+  - [Unit testing in Lo-Dash](https://vimeo.com/45865290)
+  - [Lo-Dash’s approach to native method use](https://vimeo.com/48576012)
+  - [CascadiaJS: Lo-Dash for a better utility belt](http://www.youtube.com/watch?v=dpPy4f_SeEk)
 
 ## Features
 
@@ -69,7 +73,7 @@ For more information check out these screencasts over Lo-Dash:
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5~24, Firefox 1~18, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.19, Narwhal 0.3.2, PhantomJS 1.8.1, RingoJS 0.9, and Rhino 1.7RC5.
+Lo-Dash has been tested in at least Chrome 5~24, Firefox 1~18, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.20, Narwhal 0.3.2, PhantomJS 1.8.1, RingoJS 0.9, and Rhino 1.7RC5.
 
 ## Custom builds
 
@@ -243,30 +247,15 @@ require({
 
 ## Release Notes
 
-### <sup>v1.0.0</sup>
+### <sup>v1.0.1</sup>
 
-#### Compatibility Warnings
-
- * Made `_.defaults` preserve `null` values, instead of overwriting them
-
-#### Changes
-
- * Added [_.at](http://lodash.com/docs#at) and [_.partialRight](http://lodash.com/docs#partialRight)
- * Added [*“imports”*](http://lodash.com/docs#templateSettings_imports) option to `_.templateSettings`
- * Added `modern` and `--source-map`/`-p` build options
- * Added support for *“_.pluck”* and *“_.where”* `callback` shorthands
- * Ensured `_.assign` and `_.defaults` support arrays
- * Ensured `_.merge` assigns `null` values and produces dense arrays
- * Deferred minifier downloads until the `lodash` utility requires them
- * Flipped `noNodeClass` test to avoid triggering Firebug’s *“break on all errors”* feature
- * Made `_.where` support deep object comparisons
- * Optimized `_.invert`, `_.pairs`, and `_.values`
- * Reduced `_.max`, `_.min`, `_.pluck`, `_.toArray`, and `_.where`
- * Simplified `createIterator` and `iteratorTemplate`
- * Tweaked `_.uniqueId` to avoid problems with buggy minifiers
- * Updated `underscore` build compatibility to v1.4.4
- * Added support for `callback` and `thisArg` arguments to `_.assign`, `_.clone`,<br>
-   `_.cloneDeep`, `_.first`, `_.last`, `_.initial`, `_.isEqual`, `_.merge`, and `_.rest`
+ * Add support for specifying source map URLs in `-p`/`--source-map` build options
+ * Ensured the second argument passed to `_.assign` is not treated as a `callback`
+ * Ensured `-p`/`--source-map` build options correctly set the `sourceMappingURL`
+ * Made `-p`/`--source-map` build options set source map *“sources”* keys based on the builds performed
+ * Made `_.defer` use `setImmediate`, in Node.js, when available
+ * Made `_.where` search arrays for values regardless of their index position
+ * Removed dead code from `_.template`
 
 The full changelog is available [here](https://github.com/bestiejs/lodash/wiki/Changelog).
 

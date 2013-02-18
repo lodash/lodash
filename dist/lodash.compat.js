@@ -1,6 +1,6 @@
 /**
  * @license
- * Lo-Dash 1.0.0 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 1.0.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash -o ./dist/lodash.compat.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
@@ -186,7 +186,7 @@
   var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
 
   /**
-   * Detect if a node's [[Class]] is unresolvable (IE < 9)
+   * Detect if a DOM node's [[Class]] is unresolvable (IE < 9)
    * and that the JS engine won't error when attempting to coerce an object to
    * a string without a `toString` function.
    */
@@ -4231,7 +4231,7 @@
     var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
   }
-  // use Node's `setImmediate`, if available
+  // use `setImmediate` if it's available in Node.js
   if (isV8 && freeModule && typeof setImmediate == 'function') {
     defer = bind(setImmediate, window);
   }
@@ -5066,7 +5066,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '1.0.0';
+  lodash.VERSION = '1.0.1';
 
   // add "Chaining" functions to the wrapper
   lodash.prototype.toString = wrapperToString;

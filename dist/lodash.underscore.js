@@ -3439,7 +3439,7 @@
    * @param {Function} func The function to delay.
    * @param {Number} wait The number of milliseconds to delay execution.
    * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the function with.
-   * @returns {Number} Returns the `setTimeout` timeout id.
+   * @returns {Number} Returns the timer id.
    * @example
    *
    * var log = _.bind(console.log, console);
@@ -3460,7 +3460,7 @@
    * @category Functions
    * @param {Function} func The function to defer.
    * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the function with.
-   * @returns {Number} Returns the `setTimeout` timeout id.
+   * @returns {Number} Returns the timer id.
    * @example
    *
    * _.defer(function() { alert('deferred'); });

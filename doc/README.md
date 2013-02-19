@@ -1945,7 +1945,7 @@ Defers executing the `func` function until the current call stack has cleared. A
 2. `[arg1, arg2, ...]` *(Mixed)*: Arguments to invoke the function with.
 
 #### Returns
-*(Number)*: Returns the `setTimeout` timeout id.
+*(Number)*: Returns the timer id.
 
 #### Example
 ```js
@@ -1971,7 +1971,7 @@ Executes the `func` function after `wait` milliseconds. Additional arguments wil
 3. `[arg1, arg2, ...]` *(Mixed)*: Arguments to invoke the function with.
 
 #### Returns
-*(Number)*: Returns the `setTimeout` timeout id.
+*(Number)*: Returns the timer id.
 
 #### Example
 ```js

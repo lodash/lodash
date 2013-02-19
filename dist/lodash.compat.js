@@ -4684,7 +4684,7 @@
         interpolate = options.interpolate || reNoMatch,
         source = "__p += '";
 
-    // compile regexp to match each delimiter
+    // compile the regexp to match each delimiter
     var reDelimiters = RegExp(
       (options.escape || reNoMatch).source + '|' +
       interpolate.source + '|' +
@@ -4718,9 +4718,8 @@
 
     source += "';\n";
 
-    // if `variable` is not specified and the template contains "evaluate"
-    // delimiters, wrap a with-statement around the generated code to add the
-    // data object to the top of the scope chain
+    // if `variable` is not specified, wrap a with-statement around the generated
+    // code to add the data object to the top of the scope chain
     var variable = options.variable,
         hasVariable = variable;
 

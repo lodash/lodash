@@ -7,12 +7,24 @@
 ;(function(window) {
   'use strict';
 
+  /** Detect free variable `exports` */
+  var freeExports = typeof exports == 'object' && exports;
+
+  /** Detect free variable `global` and use it as `window` */
+  var freeGlobal = typeof global == 'object' && global;
+  if (freeGlobal.global === freeGlobal) {
+    window = freeGlobal;
+  }
+
+  /*--------------------------------------------------------------------------*/
+
   /**
-   * Timeout fallbacks based on the work of Andrea Giammarchi and Weston C.
-   * https://github.com/WebReflection/wru/blob/master/src/rhinoTimers.js
-   * http://stackoverflow.com/questions/2261705/how-to-run-a-javascript-function-asynchronously-without-using-settimeout
+   * Installs the CLI boilerplate additions on the `context` object.
+   *
+   * @private
+   * @param {Object} context The context object.
    */
-  (function() {
+  function runInContext(context) {
 
     /**
      * Schedules timer-based callbacks.
@@ -29,7 +41,7 @@
       // https://bugzilla.mozilla.org/show_bug.cgi?id=775566
       var task = ids[++counter] = new JavaAdapter(java.util.TimerTask, {
         'run': function() {
-          fn.apply(window, args);
+          fn.apply(context, args);
         }
       });
       // support non-functions
@@ -53,7 +65,7 @@
     /**
      * Clears the delay set by `setInterval` or `setTimeout`.
      *
-     * @memberOf window
+     * @memberOf context
      * @param {Number} id The ID of the timeout to be cleared.
      */
     function clearTimer(id) {
@@ -67,7 +79,7 @@
     /**
      * Executes a code snippet or function repeatedly, with a delay between each call.
      *
-     * @memberOf window
+     * @memberOf context
      * @param {Function|String} fn The function to call or string to evaluate.
      * @oaram {Number} delay The number of milliseconds to delay each `fn` call.
      * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
@@ -80,7 +92,7 @@
     /**
      * Executes a code snippet or a function after specified delay.
      *
-     * @memberOf window
+     * @memberOf context
      * @param {Function|String} fn The function to call or string to evaluate.
      * @oaram {Number} delay The number of milliseconds to delay the `fn` call.
      * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
@@ -90,28 +102,16 @@
       return schedule(fn, delay, slice.call(arguments, 2));
     }
 
-    try {
-      var counter = 0,
-          ids = {},
-          slice = Array.prototype.slice,
-          timer = new java.util.Timer;
+    /*------------------------------------------------------------------------*/
 
-      window.clearInterval =
-      window.clearTimeout = clearTimer;
-      window.setInterval = setInterval;
-      window.setTimeout = setTimeout;
-    } catch(e) { }
-  }());
+    /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
+    var console = context.console || (context.console = { 'log': context.print });
 
-  /*--------------------------------------------------------------------------*/
-
-  (function() {
+    /** Shorten `context.QUnit.QUnit` to `context.QUnit` */
+    var QUnit = context.QUnit = context.QUnit.QUnit || context.QUnit;
 
     /** Used as a horizontal rule in console output */
     var hr = '----------------------------------------';
-
-    /** Shorten `window.QUnit.QUnit` to `window.QUnit` */
-    window.QUnit && (QUnit = QUnit.QUnit || QUnit);
 
     /**
      * A logging callback triggered when all testing is completed.
@@ -134,14 +134,14 @@
         console.log('    Finished in ' + details.runtime + ' milliseconds.');
         console.log(hr);
 
-        // exit out of Rhino
+        // exit out of Narhwal, Rhino, or Ringo
         try {
           quit();
         } catch(e) { }
 
         // exit out of Node.js or PhantomJS
         try {
-          var process = window.process || window.phantom;
+          var process = context.process || context.phantom;
           if (details.failed) {
             console.error('Error: ' + details.failed + ' of ' + details.total + ' tests failed.');
             process.exit(1);
@@ -247,23 +247,42 @@
        */
       'assertions': []
     };
-  }());
+
+    /*------------------------------------------------------------------------*/
+
+    // Timeout fallbacks based on the work of Andrea Giammarchi and Weston C.
+    // https://github.com/WebReflection/wru/blob/master/src/rhinoTimers.js
+    // http://stackoverflow.com/questions/2261705/how-to-run-a-javascript-function-asynchronously-without-using-settimeout
+    try {
+      var counter = 0,
+          ids = {},
+          slice = Array.prototype.slice,
+          timer = new java.util.Timer;
+
+      context.clearInterval =
+      context.clearTimeout = clearTimer;
+      context.setInterval = setInterval;
+      context.setTimeout = setTimeout;
+    } catch(e) { }
+
+    // expose shortcuts
+    // exclude `module` because some environments have it as a built-in object
+    ('asyncTest deepEqual equal equals expect notDeepEqual notEqual notStrictEqual ' +
+     'ok raises same start stop strictEqual test throws').replace(/\S+/g, function(methodName) {
+      context[methodName] = QUnit[methodName];
+    });
+
+    // must call `QUnit.start()` in the test file if using QUnit < 1.3.0 with
+    // Node.js or any version of QUnit with Narwhal, PhantomJS, Rhino, or RingoJS
+    QUnit.init();
+  }
 
   /*--------------------------------------------------------------------------*/
 
-  // expose shortcuts
-  // exclude `module` because some environments have it as a built-in object
-  ('asyncTest deepEqual equal equals expect notDeepEqual notEqual notStrictEqual ' +
-   'ok raises same start stop strictEqual test throws').replace(/\S+/g, function(methodName) {
-    window[methodName] = QUnit[methodName];
-  });
-
-  // add `console.log()` support for Narwhal, Rhino, and RingoJS
-  if (!window.console && window.print) {
-    window.console = { 'log': window.print };
+  // expose QUnit CLIB
+  if (freeExports) {
+    freeExports.runInContext = runInContext;
+  } else {
+    runInContext(window);
   }
-  // must call `QUnit.start()` in the test file if using QUnit < 1.3.0 with
-  // Node.js or any version of QUnit with Narwhal, PhantomJS, Rhino, or RingoJS
-  QUnit.init();
-
-}(typeof global == 'object' && global || this));
+}(this));

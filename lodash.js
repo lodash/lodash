@@ -126,9 +126,9 @@
         Boolean = context.Boolean,
         Date = context.Date,
         Function = context.Function,
-        Object = context.Object,
-        Number = context.Number,
         Math = context.Math,
+        Number = context.Number,
+        Object = context.Object,
         RegExp = context.RegExp,
         String = context.String;
 

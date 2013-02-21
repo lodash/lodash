@@ -18,10 +18,10 @@
     result = (result.length > min && last != 'test.js') ? last : '../lodash.js';
 
     try {
-      result = require('fs').realpathSync(result);
-    } catch(e) { }
-
-    return result;
+      return require('fs').realpathSync(result);
+    } catch(e) {
+      return result;
+    }
   }());
 
   /** The basename of the Lo-Dash file to test */
@@ -34,21 +34,25 @@
     window.platform;
 
   /** The unit testing framework */
-  var QUnit =
-    window.QUnit || (
-      window.addEventListener || (window.addEventListener = Function.prototype),
-      window.setTimeout || (window.setTimeout = Function.prototype),
+  var QUnit = (function() {
+    var noop = Function.prototype;
+    return  window.QUnit || (
+      window.addEventListener || (window.addEventListener = noop),
+      window.setTimeout || (window.setTimeout = noop),
       window.QUnit = load('../vendor/qunit/qunit/qunit.js') || window.QUnit,
-      load('../vendor/qunit-clib/qunit-clib.js'),
-      window.addEventListener === Function.prototype && delete window.addEventListener,
+      (load('../vendor/qunit-clib/qunit-clib.js') || { 'runInContext': noop }).runInContext(window),
+      addEventListener === noop && delete window.addEventListener,
       window.QUnit
     );
+  }());
 
   /** The `lodash` function to test */
   var _ = window._ || (
     _ = load(filePath) || window._,
     _._ || _
   );
+
+  _ = _.runInContext(window);
 
   /** Used to pass falsey values to methods */
   var falsey = [
@@ -65,15 +69,16 @@
   var freeze = Object.freeze;
 
   /** Used to set property descriptors */
-  var setDescriptor = (function(fn) {
+  var setDescriptor = (function() {
     try {
-      var o = {};
-      return fn(o, o, o) && fn;
+      var o = {},
+          fn = (fn = Object.defineProperty)(o, o, o) && fn;
     } catch(e) { }
-  }(Object.defineProperty));
+    return fn;
+  }());
 
   /** Shortcut used to convert array-like objects to arrays */
-  var slice = [].slice;
+  var slice = Array.prototype.slice;
 
   /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
   var shadowed = {
@@ -2351,7 +2356,7 @@
     });
 
     test('should work with "interpolate" delimiters containing global values', function() {
-      var compiled = _.template('<%= typeof QUnit.init %>');
+      var compiled = _.template('<%= typeof Math.abs %>');
 
       try {
         var actual = compiled();
@@ -2395,18 +2400,39 @@
     });
 
     test('should clear timeout when `func` is called', function() {
-      var counter = 0,
-          oldDate = Date,
-          throttled = _.throttle(function() { counter++; }, 32);
+      var callCount = 0,
+          dateCount = 0;
+
+      var context = {
+        'Array': Array,
+        'Boolean': Boolean,
+        'Function': Function,
+        'Object': Object,
+        'Math': Math,
+        'Number': Number,
+        'RegExp': RegExp,
+        'String': String,
+        'clearTimeout': clearTimeout,
+        'isFinite': isFinite,
+        'isNaN': isNaN,
+        'setTimeout': setTimeout
+      };
+
+      var lodash = _.runInContext(_.extend(context, {
+        'Date': function() {
+          return ++dateCount < 3 ? new Date : Object(Infinity);
+        }
+      }));
+
+      var throttled = lodash.throttle(function() {
+        callCount++;
+      }, 32);
 
       throttled();
       throttled();
-
-      window.Date = function() { return Object(Infinity); };
       throttled();
-      window.Date = oldDate;
 
-      equal(counter, 2);
+      equal(callCount, 2);
     });
 
     asyncTest('supports recursive calls', function() {

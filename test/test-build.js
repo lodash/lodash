@@ -14,7 +14,7 @@
   var QUnit = (
     global.addEventListener || (global.addEventListener = Function.prototype),
     global.QUnit = require('../vendor/qunit/qunit/qunit.js'),
-    require('../vendor/qunit-clib/qunit-clib.js'),
+    require('../vendor/qunit-clib/qunit-clib.js').runInContext(global),
     global.addEventListener === Function.prototype && delete global.addEventListener,
     global.QUnit
   );
@@ -208,6 +208,7 @@
     'noConflict',
     'random',
     'result',
+    'runInContext',
     'template',
     'times',
     'unescape',
@@ -276,7 +277,8 @@
     'forOwn',
     'isPlainObject',
     'merge',
-    'partialRight'
+    'partialRight',
+    'runInContext'
   ]));
 
   /*--------------------------------------------------------------------------*/
@@ -462,6 +464,8 @@
       else if (utilityMethods.indexOf(methodName) > -1) {
         if (methodName == 'result') {
           func(object, 'b');
+        } else if (methodName == 'runInContext') {
+          func();
         } else if (methodName == 'template') {
           func(template, object);
           func(template, null, { 'imports': object })(object);
@@ -1297,6 +1301,9 @@
 
             if (!exposeAssign) {
               methodNames = _.without(methodNames, 'assign');
+            }
+            if (/utilities/.test(command) && /backbone|underscore/.test(command)) {
+              methodNames = _.without(methodNames, 'runInContext');
             }
             var lodash = context._ || {};
             methodNames.forEach(function(methodName) {

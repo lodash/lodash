@@ -142,6 +142,7 @@
     'reject': ['filter', 'identity', 'isEqual', 'keys'],
     'rest': [],
     'result': ['isFunction'],
+    'runInContext': [],
     'shuffle': ['forEach'],
     'size': ['keys'],
     'some': ['identity', 'isArray', 'isEqual', 'keys'],
@@ -250,7 +251,8 @@
     'forOwn',
     'isPlainObject',
     'merge',
-    'partialRight'
+    'partialRight',
+    'runInContext'
   ]));
 
   /** List of ways to export the `lodash` function */
@@ -350,14 +352,15 @@
     source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '');
 
     // move `mixin(lodash)` to after the method assignments
-    source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(lodash\).+/, '');
     source = source.replace(getMethodAssignments(source), function(match) {
+      var indent = /^ *(?=lodash)/m.exec(match)[0];
       return match + [
         '',
         '',
-        '  // add functions to `lodash.prototype`',
-        '  mixin(lodash);'
-      ].join('\n');
+        '// add functions to `lodash.prototype`',
+        'mixin(lodash);'
+      ].join('\n' + indent);
     });
 
     // add `__chain__` checks to `_.mixin`
@@ -378,38 +381,39 @@
 
     // replace wrapper `Array` method assignments
     source = source.replace(/^(?: *\/\/.*\n)*( *)each\(\['[\s\S]+?\n\1}$/m, function() {
-      return [
-        '  // add `Array` mutator functions to the wrapper',
-        "  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
-        '    var func = arrayRef[methodName];',
-        '    lodash.prototype[methodName] = function() {',
-        '      var value = this.__wrapped__;',
-        '      func.apply(value, arguments);',
+      var indent = arguments[1];
+      return indent + [
+        '// add `Array` mutator functions to the wrapper',
+        "each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
+        '  var func = arrayRef[methodName];',
+        '  lodash.prototype[methodName] = function() {',
+        '    var value = this.__wrapped__;',
+        '    func.apply(value, arguments);',
         '',
-        '      // avoid array-like object bugs with `Array#shift` and `Array#splice`',
-        '      // in Firefox < 10 and IE < 9',
-        '      if (hasObjectSpliceBug && value.length === 0) {',
-        '        delete value[0];',
-        '      }',
-        '      return this;',
-        '    };',
-        '  });',
+        '    // avoid array-like object bugs with `Array#shift` and `Array#splice`',
+        '    // in Firefox < 10 and IE < 9',
+        '    if (hasObjectSpliceBug && value.length === 0) {',
+        '      delete value[0];',
+        '    }',
+        '    return this;',
+        '  };',
+        '});',
         '',
-        '  // add `Array` accessor functions to the wrapper',
-        "  each(['concat', 'join', 'slice'], function(methodName) {",
-        '    var func = arrayRef[methodName];',
-        '    lodash.prototype[methodName] = function() {',
-        '      var value = this.__wrapped__,',
-        '          result = func.apply(value, arguments);',
+        '// add `Array` accessor functions to the wrapper',
+        "each(['concat', 'join', 'slice'], function(methodName) {",
+        '  var func = arrayRef[methodName];',
+        '  lodash.prototype[methodName] = function() {',
+        '    var value = this.__wrapped__,',
+        '        result = func.apply(value, arguments);',
         '',
-        '      if (this.__chain__) {',
-        '        result = new lodash(result);',
-        '        result.__chain__ = true;',
-        '      }',
-        '      return result;',
-        '    };',
-        '  });'
-      ].join('\n');
+        '    if (this.__chain__) {',
+        '      result = new lodash(result);',
+        '      result.__chain__ = true;',
+        '    }',
+        '    return result;',
+        '  };',
+        '});'
+      ].join('\n' + indent);
     });
 
     return source;
@@ -930,7 +934,21 @@
     // remove function
     var snippet = matchFunction(source, funcName);
     if (snippet) {
-      source = source.replace(snippet, '');
+      if (funcName == 'runInContext') {
+        source = source.replace(snippet, function() {
+          return snippet.replace(/^[\s\S]+?\n( *).+?context *=.+(\n[\s\S]+?\n)\1return lodash[\s\S]+$/, function() {
+            return arguments[2].replace(/^ {4}/gm, '  ');
+          });
+        });
+
+        source = source
+          .replace(/context/g, 'window')
+          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/m, '')
+          .replace(/(?: *\/\/.*\n)* *var lodash *= *runInContext.+\n/, '');
+      }
+      else {
+        source = source.replace(snippet, '');
+      }
     }
     // grab the method assignments snippet
     snippet = getMethodAssignments(source);
@@ -1647,6 +1665,8 @@
         });
       }
       if (isUnderscore) {
+        source = removeFunction(source, 'runInContext');
+
         // replace `_.assign`
         source = replaceFunction(source, 'assign', [
           '  function assign(object) {',

@@ -1302,9 +1302,6 @@
             if (!exposeAssign) {
               methodNames = _.without(methodNames, 'assign');
             }
-            if (/utilities/.test(command) && /backbone|underscore/.test(command)) {
-              methodNames = _.without(methodNames, 'runInContext');
-            }
             var lodash = context._ || {};
             methodNames.forEach(function(methodName) {
               testMethod(lodash, methodName, basename);

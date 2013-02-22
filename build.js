@@ -367,8 +367,8 @@
 
     // add `__chain__` checks to `_.mixin`
     source = source.replace(matchFunction(source, 'mixin'), function(match) {
-      return match.replace(/^ *return new lodash.+/m, function() {
-        var indent = getIndent(match);
+      return match.replace(/^( *)return new lodash.+/m, function() {
+        var indent = arguments[1];
         return indent + [
           '',
           'var result = func.apply(lodash, args);',
@@ -382,8 +382,7 @@
     });
 
     // replace wrapper `Array` method assignments
-    source = source.replace(/^(?: *\/\/.*\n)*( *)each\(\['[\s\S]+?\n\1}$/m, function(match) {
-      var indent = getIndent(match);
+    source = source.replace(/^(?: *\/\/.*\n)*( *)each\(\['[\s\S]+?\n\1}$/m, function(match, indent) {
       return indent + [
         '// add `Array` mutator functions to the wrapper',
         "each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
@@ -1227,9 +1226,10 @@
    * @returns {String} Returns the modified source.
    */
   function removeHasObjectSpliceBug(source) {
-    return removeVar(source, 'hasObjectSpliceBug')
-      // remove `hasObjectSpliceBug` fix from the `Array` function mixins
-      .replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
+    source = removeVar(source, 'hasObjectSpliceBug')
+
+    // remove `hasObjectSpliceBug` fix from the `Array` function mixins
+    return source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
   }
 
   /**
@@ -1691,8 +1691,6 @@
         });
       }
       if (isUnderscore) {
-        source = removeFunction(source, 'runInContext');
-
         // replace `_.assign`
         source = replaceFunction(source, 'assign', [
           'function assign(object) {',
@@ -2088,14 +2086,15 @@
         ].join('\n'));
 
         // add `_.findWhere`
-        source = source.replace(matchFunction(source, 'find'), function (match) {
+        source = source.replace(matchFunction(source, 'find'), function(match) {
+          var indent = getIndent(match);
           return match + [
             '',
             'function findWhere(object, properties) {',
             '  return where(object, properties, true);',
             '}',
             ''
-          ].join('\n')
+          ].join('\n' + indent);
         });
 
         source = source.replace(getMethodAssignments(source), function(match) {
@@ -2223,11 +2222,12 @@
         // inline all functions defined with `createIterator`
         _.functions(lodash).forEach(function(methodName) {
           // strip leading underscores to match pseudo private functions
-          var reFunc = RegExp('(^ *var ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n');
+          var reFunc = RegExp('^( *)(var ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
           if (reFunc.test(source)) {
             // extract, format, and inject the compiled function's source code
-            source = source.replace(reFunc, function(match, captured) {
-              return captured + getFunctionSource(lodash[methodName], getIndent(captured)) + ';\n';
+            source = source.replace(reFunc, function(match, indent, left) {
+              return (indent + left) +
+                getFunctionSource(lodash[methodName], indent) + ';\n';
             });
           }
         });
@@ -2393,9 +2393,9 @@
 
         // simplify the `lodash` function
         source = replaceFunction(source, 'lodash', [
-          '  function lodash() {',
-          '    // no operation performed',
-          '  }'
+          'function lodash() {',
+          '  // no operation performed',
+          '}'
         ].join('\n'));
 
         // remove all `lodash.prototype` additions
@@ -2409,6 +2409,9 @@
       if (isRemoved(source, 'clone')) {
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
+      }
+      if (isRemoved(source, 'defer')) {
+        source = removeSetImmediate(source);
       }
       if (isRemoved(source, 'isArray')) {
         source = removeVar(source, 'nativeIsArray');
@@ -2440,7 +2443,6 @@
         source = removeHasEnumPrototype(source);
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
-        source = removeSetImmediate(source);
         source = removeVar(source, 'isBindFast');
         source = removeVar(source, 'isV8');
         source = removeVar(source, 'nativeBind');

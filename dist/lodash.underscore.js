@@ -246,36 +246,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** Reusable iterator options for `assign` and `defaults` */
-  var defaultsIteratorOptions = {
-    'args': 'object, source, guard',
-    'top':
-      'var args = arguments,\n' +
-      '    argsIndex = 0,\n' +
-      "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
-      'while (++argsIndex < argsLength) {\n' +
-      '  iterable = args[argsIndex];\n' +
-      '  if (iterable && objectTypes[typeof iterable]) {',
-    'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
-    'bottom': '  }\n}'
-  };
-
-  /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
-  var eachIteratorOptions = {
-    'args': 'collection, callback, thisArg',
-    'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
-    'arrays': "typeof length == 'number'",
-    'loop': 'if (callback(iterable[index], index, collection) === false) return result'
-  };
-
-  /** Reusable iterator options for `forIn` and `forOwn` */
-  var forOwnIteratorOptions = {
-    'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
-    'arrays': false
-  };
-
-  /*--------------------------------------------------------------------------*/
-
   /**
    * Used by `_.max` and `_.min` as the default `callback` when a given
    * `collection` is a string value.
@@ -431,54 +401,6 @@
   }
 
   /**
-   * Creates compiled iteration functions.
-   *
-   * @private
-   * @param {Object} [options1, options2, ...] The compile options object(s).
-   *  arrays - A string of code to determine if the iterable is an array or array-like.
-   *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
-   *  args - A string of comma separated arguments the iteration function will accept.
-   *  top - A string of code to execute before the iteration branches.
-   *  loop - A string of code to execute in the object loop.
-   *  bottom - A string of code to execute after the iteration branches.
-   *
-   * @returns {Function} Returns the compiled function.
-   */
-  function createIterator() {
-    var data = {
-      // support properties
-
-      // iterator options
-      'arrays': 'isArray(iterable)',
-      'bottom': '',
-      'loop': '',
-      'top': '',
-      'useHas': true
-    };
-
-    // merge options into a template data object
-    for (var object, index = 0; object = arguments[index]; index++) {
-      for (var key in object) {
-        data[key] = object[key];
-      }
-    }
-    var args = data.args;
-    data.firstArg = /^[^,]+/.exec(args)[0];
-
-    // create the function factory
-    var factory = Function(
-        'createCallback, hasOwnProperty, isArguments, isArray, isString, ' +
-        'objectTypes, nativeKeys',
-      'return function(' + args + ') {\n' + (data) + '\n}'
-    );
-    // return the compiled function
-    return factory(
-      createCallback, hasOwnProperty, isArguments, isArray, isString,
-      objectTypes, nativeKeys
-    );
-  }
-
-  /**
    * A function compiled to iterate `arguments` objects, arrays, objects, and
    * strings consistenly across environments, executing the `callback` for each
    * element in the `collection`. The `callback` is bound to `thisArg` and invoked
@@ -492,7 +414,24 @@
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array|Object|String} Returns `collection`.
    */
-  var each = createIterator(eachIteratorOptions);
+  var each = function (collection, callback, thisArg) {
+    var index, iterable = collection, result = iterable;
+    if (!iterable) return result;
+    callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
+    var length = iterable.length; index = -1;
+    if (typeof length == 'number') {
+      while (++index < length) {
+        if (callback(iterable[index], index, collection) === indicatorObject) return result
+      }
+    }
+    else {  
+      for (index in iterable) {
+        if (hasOwnProperty.call(iterable, index)) {    
+        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
+        }
+      }  
+    }
+  };
 
   /**
    * Used by `template` to escape characters for inclusion in compiled
@@ -635,9 +574,17 @@
    * });
    * // => alerts 'name' and 'bark' (order is not guaranteed)
    */
-  var forIn = createIterator(eachIteratorOptions, forOwnIteratorOptions, {
-    'useHas': false
-  });
+  var forIn = function (collection, callback) {
+    var index, iterable = collection, result = iterable;
+    if (!iterable) return result;
+    if (!objectTypes[typeof iterable]) return result;
+    callback || (callback = identity);
+    
+      for (index in iterable) {
+        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
+      }  
+    return result
+  };
 
   /**
    * Iterates over an object's own enumerable properties, executing the `callback`
@@ -660,7 +607,19 @@
    * });
    * // => alerts '0', '1', and 'length' (order is not guaranteed)
    */
-  var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
+  var forOwn = function (collection, callback) {
+    var index, iterable = collection, result = iterable;
+    if (!iterable) return result;
+    if (!objectTypes[typeof iterable]) return result;
+    callback || (callback = identity);
+    
+      for (index in iterable) {
+        if (hasOwnProperty.call(iterable, index)) {    
+        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
+        }
+      }  
+    return result
+  };
 
   /**
    * Checks if `value` is an array.
@@ -1796,10 +1755,10 @@
     return result;
   }
 
-function findWhere(object, properties) {
-  return where(object, properties, true);
-}
-
+  function findWhere(object, properties) {
+    return where(object, properties, true);
+  }
+  
   /**
    * Iterates over a `collection`, executing the `callback` for each element in
    * the `collection`. The `callback` is bound to `thisArg` and invoked with three
@@ -3752,13 +3711,13 @@ function findWhere(object, properties) {
       lodash.prototype[methodName] = function() {
         var args = [this.__wrapped__];
         push.apply(args, arguments);
-  
-  var result = func.apply(lodash, args);
-  if (this.__chain__) {
-    result = new lodash(result);
-    result.__chain__ = true;
-  }
-  return result;
+        
+        var result = func.apply(lodash, args);
+        if (this.__chain__) {
+          result = new lodash(result);
+          result.__chain__ = true;
+        }
+        return result;
       };
     });
   }

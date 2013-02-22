@@ -21,18 +21,11 @@
     window = freeGlobal;
   }
 
-  /** Used for array and object method references */
-  var arrayRef = [],
-      objectRef = {};
-
   /** Used to generate unique IDs */
   var idCounter = 0;
 
   /** Used internally to indicate various things */
-  var indicatorObject = objectRef;
-
-  /** Used to restore the original `_` reference in `noConflict` */
-  var oldDash = window._;
+  var indicatorObject = {};
 
   /** Used to match HTML entities */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
@@ -44,13 +37,6 @@
 
   /** Used to match regexp flags from their coerced string values */
   var reFlags = /\w*$/;
-
-  /** Used to detect if a method is native */
-  var reNative = RegExp('^' +
-    (objectRef.valueOf + '')
-      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
-  );
 
   /**
    * Used to match ES6 template delimiters
@@ -73,24 +59,6 @@
   /** Used to make template sourceURLs easier to identify */
   var templateCounter = 0;
 
-  /** Native method shortcuts */
-  var ceil = Math.ceil,
-      concat = arrayRef.concat,
-      floor = Math.floor,
-      hasOwnProperty = objectRef.hasOwnProperty,
-      push = arrayRef.push,
-      toString = objectRef.toString;
-
-  /* Native method shortcuts for methods with the same name as other `lodash` methods */
-  var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
-      nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
-      nativeIsFinite = window.isFinite,
-      nativeIsNaN = window.isNaN,
-      nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
-      nativeMax = Math.max,
-      nativeMin = Math.min,
-      nativeRandom = Math.random;
-
   /** `Object#toString` result shortcuts */
   var argsClass = '[object Arguments]',
       arrayClass = '[object Array]',
@@ -101,29 +69,6 @@
       objectClass = '[object Object]',
       regexpClass = '[object RegExp]',
       stringClass = '[object String]';
-
-  /** Detect various environments */
-  var isIeOpera = !!window.attachEvent,
-      isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
-
-  /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-  var isBindFast = nativeBind && !isV8;
-
-  /**
-   * Detect if `Array#shift` and `Array#splice` augment array-like objects
-   * incorrectly:
-   *
-   * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
-   * and `splice()` functions that fail to remove the last element, `value[0]`,
-   * of array-like objects even though the `length` property is set to `0`.
-   * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-   * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
-   */
-  var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
-    arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
-
-  /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
-  var argsAreObjects = arguments.constructor == Object;
 
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
@@ -145,6 +90,66 @@
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
+
+  /*--------------------------------------------------------------------------*/
+
+  /** Used for `Array`, `Math`, and `Object` method references */
+  var arrayRef = Array(),
+      objectRef = Object();
+
+  /** Used to restore the original `_` reference in `noConflict` */
+  var oldDash = window._;
+
+  /** Used to detect if a method is native */
+  var reNative = RegExp('^' +
+    (objectRef.valueOf + '')
+      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
+  );
+
+  /** Native method shortcuts */
+  var ceil = Math.ceil,
+      clearTimeout = window.clearTimeout,
+      concat = arrayRef.concat,
+      floor = Math.floor,
+      hasOwnProperty = objectRef.hasOwnProperty,
+      push = arrayRef.push,
+      setTimeout = window.setTimeout,
+      toString = objectRef.toString;
+
+  /* Native method shortcuts for methods with the same name as other `lodash` methods */
+  var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
+      nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
+      nativeIsFinite = window.isFinite,
+      nativeIsNaN = window.isNaN,
+      nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
+      nativeMax = Math.max,
+      nativeMin = Math.min,
+      nativeRandom = Math.random;
+
+  /** Detect various environments */
+  var isIeOpera = !!window.attachEvent,
+      isJSC = !/\n{2,}/.test(Function()),
+      isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
+
+  /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
+  var isBindFast = nativeBind && !isV8;
+
+  /**
+   * Detect if `Array#shift` and `Array#splice` augment array-like objects
+   * incorrectly:
+   *
+   * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
+   * and `splice()` functions that fail to remove the last element, `value[0]`,
+   * of array-like objects even though the `length` property is set to `0`.
+   * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
+   * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+   */
+  var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
+    arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
+
+  /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
+  var argsAreObjects = arguments.constructor == Object;
 
   /*--------------------------------------------------------------------------*/
 
@@ -237,6 +242,36 @@
      * @type String
      */
     'variable': ''
+  };
+
+  /*--------------------------------------------------------------------------*/
+
+  /** Reusable iterator options for `assign` and `defaults` */
+  var defaultsIteratorOptions = {
+    'args': 'object, source, guard',
+    'top':
+      'var args = arguments,\n' +
+      '    argsIndex = 0,\n' +
+      "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
+      'while (++argsIndex < argsLength) {\n' +
+      '  iterable = args[argsIndex];\n' +
+      '  if (iterable && objectTypes[typeof iterable]) {',
+    'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
+    'bottom': '  }\n}'
+  };
+
+  /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
+  var eachIteratorOptions = {
+    'args': 'collection, callback, thisArg',
+    'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
+    'arrays': "typeof length == 'number'",
+    'loop': 'if (callback(iterable[index], index, collection) === false) return result'
+  };
+
+  /** Reusable iterator options for `forIn` and `forOwn` */
+  var forOwnIteratorOptions = {
+    'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
+    'arrays': false
   };
 
   /*--------------------------------------------------------------------------*/
@@ -396,6 +431,54 @@
   }
 
   /**
+   * Creates compiled iteration functions.
+   *
+   * @private
+   * @param {Object} [options1, options2, ...] The compile options object(s).
+   *  arrays - A string of code to determine if the iterable is an array or array-like.
+   *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
+   *  args - A string of comma separated arguments the iteration function will accept.
+   *  top - A string of code to execute before the iteration branches.
+   *  loop - A string of code to execute in the object loop.
+   *  bottom - A string of code to execute after the iteration branches.
+   *
+   * @returns {Function} Returns the compiled function.
+   */
+  function createIterator() {
+    var data = {
+      // support properties
+
+      // iterator options
+      'arrays': 'isArray(iterable)',
+      'bottom': '',
+      'loop': '',
+      'top': '',
+      'useHas': true
+    };
+
+    // merge options into a template data object
+    for (var object, index = 0; object = arguments[index]; index++) {
+      for (var key in object) {
+        data[key] = object[key];
+      }
+    }
+    var args = data.args;
+    data.firstArg = /^[^,]+/.exec(args)[0];
+
+    // create the function factory
+    var factory = Function(
+        'createCallback, hasOwnProperty, isArguments, isArray, isString, ' +
+        'objectTypes, nativeKeys',
+      'return function(' + args + ') {\n' + (data) + '\n}'
+    );
+    // return the compiled function
+    return factory(
+      createCallback, hasOwnProperty, isArguments, isArray, isString,
+      objectTypes, nativeKeys
+    );
+  }
+
+  /**
    * A function compiled to iterate `arguments` objects, arrays, objects, and
    * strings consistenly across environments, executing the `callback` for each
    * element in the `collection`. The `callback` is bound to `thisArg` and invoked
@@ -409,24 +492,7 @@
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array|Object|String} Returns `collection`.
    */
-  var each = function (collection, callback, thisArg) {
-    var index, iterable = collection, result = iterable;
-    if (!iterable) return result;
-    callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
-    var length = iterable.length; index = -1;
-    if (typeof length == 'number') {
-      while (++index < length) {
-        if (callback(iterable[index], index, collection) === indicatorObject) return result
-      }
-    }
-    else {  
-      for (index in iterable) {
-        if (hasOwnProperty.call(iterable, index)) {    
-        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
-        }
-      }  
-    }
-  };
+  var each = createIterator(eachIteratorOptions);
 
   /**
    * Used by `template` to escape characters for inclusion in compiled
@@ -569,17 +635,9 @@
    * });
    * // => alerts 'name' and 'bark' (order is not guaranteed)
    */
-  var forIn = function (collection, callback) {
-    var index, iterable = collection, result = iterable;
-    if (!iterable) return result;
-    if (!objectTypes[typeof iterable]) return result;
-    callback || (callback = identity);
-    
-      for (index in iterable) {
-        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
-      }  
-    return result
-  };
+  var forIn = createIterator(eachIteratorOptions, forOwnIteratorOptions, {
+    'useHas': false
+  });
 
   /**
    * Iterates over an object's own enumerable properties, executing the `callback`
@@ -602,19 +660,7 @@
    * });
    * // => alerts '0', '1', and 'length' (order is not guaranteed)
    */
-  var forOwn = function (collection, callback) {
-    var index, iterable = collection, result = iterable;
-    if (!iterable) return result;
-    if (!objectTypes[typeof iterable]) return result;
-    callback || (callback = identity);
-    
-      for (index in iterable) {
-        if (hasOwnProperty.call(iterable, index)) {    
-        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
-        }
-      }  
-    return result
-  };
+  var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
 
   /**
    * Checks if `value` is an array.
@@ -1058,7 +1104,7 @@
     }
     var type = typeof a,
         otherType = typeof b;
-
+  
     if (a === a &&
         (!a || (type != 'function' && type != 'object')) &&
         (!b || (otherType != 'function' && otherType != 'object'))) {
@@ -1069,7 +1115,7 @@
     }
     var className = toString.call(a),
         otherClass = toString.call(b);
-
+  
     if (className != otherClass) {
       return false;
     }
@@ -1077,12 +1123,12 @@
       case boolClass:
       case dateClass:
         return +a == +b;
-
+  
       case numberClass:
         return a != +a
           ? b != +b
           : (a == 0 ? (1 / a == 1 / b) : a == +b);
-
+  
       case regexpClass:
       case stringClass:
         return a == b + '';
@@ -1097,7 +1143,7 @@
       }
       var ctorA = a.constructor,
           ctorB = b.constructor;
-
+  
       if (ctorA != ctorB && !(
             isFunction(ctorA) && ctorA instanceof ctorA &&
             isFunction(ctorB) && ctorB instanceof ctorB
@@ -1107,7 +1153,7 @@
     }
     stackA || (stackA = []);
     stackB || (stackB = []);
-
+  
     var length = stackA.length;
     while (length--) {
       if (stackA[length] == a) {
@@ -1116,14 +1162,14 @@
     }
     var result = true,
         size = 0;
-
+  
     stackA.push(a);
     stackB.push(b);
-
+  
     if (isArr) {
       size = b.length;
       result = size == a.length;
-
+  
       if (result) {
         while (size--) {
           if (!(result = isEqual(a[size], b[size], stackA, stackB))) {
@@ -1139,7 +1185,7 @@
         return !(result = hasOwnProperty.call(a, key) && isEqual(a[key], value, stackA, stackB)) && indicatorObject;
       }
     });
-
+  
     if (result) {
       forIn(a, function(value, key, a) {
         if (hasOwnProperty.call(a, key)) {
@@ -1381,7 +1427,7 @@
   function omit(object) {
     var props = concat.apply(arrayRef, arguments),
         result = {};
-
+  
     forIn(object, function(value, key) {
       if (indexOf(props, key, 1) < 0) {
         result[key] = value;
@@ -1447,7 +1493,7 @@
         props = concat.apply(arrayRef, arguments),
         length = props.length,
         result = {};
-
+  
     while (++index < length) {
       var prop = props[index];
       if (prop in object) {
@@ -1750,9 +1796,9 @@
     return result;
   }
 
-  function findWhere(object, properties) {
-    return where(object, properties, true);
-  }
+function findWhere(object, properties) {
+  return where(object, properties, true);
+}
 
   /**
    * Iterates over a `collection`, executing the `callback` for each element in
@@ -2494,7 +2540,7 @@
         length = array.length,
         flattened = concat.apply(arrayRef, arguments),
         result = [];
-
+  
     while (++index < length) {
       var value = array[index]
       if (indexOf(flattened, value, length) < 0) {
@@ -2755,7 +2801,7 @@
         index = -1,
         length = array ? array.length : 0,
         result = [];
-
+  
     outer:
     while (++index < length) {
       var value = array[index];
@@ -3169,7 +3215,7 @@
         length = array ? array.length : 0,
         result = [],
         seen = result;
-
+  
     if (typeof isSorted == 'function') {
       thisArg = callback;
       callback = isSorted;
@@ -3182,7 +3228,7 @@
     while (++index < length) {
       var value = array[index],
           computed = callback ? callback(value, index, array) : value;
-
+  
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
             : indexOf(seen, computed) < 0
@@ -3215,7 +3261,7 @@
     var index = -1,
         length = array.length,
         result = [];
-
+  
     while (++index < length) {
       var value = array[index]
       if (indexOf(arguments, value, 1) < 0) {
@@ -3706,13 +3752,13 @@
       lodash.prototype[methodName] = function() {
         var args = [this.__wrapped__];
         push.apply(args, arguments);
-        
-        var result = func.apply(lodash, args);
-        if (this.__chain__) {
-          result = new lodash(result);
-          result.__chain__ = true;
-        }
-        return result;
+  
+  var result = func.apply(lodash, args);
+  if (this.__chain__) {
+    result = new lodash(result);
+    result.__chain__ = true;
+  }
+  return result;
       };
     });
   }
@@ -3881,17 +3927,17 @@
   function template(text, data, options) {
     text || (text = '');
     options = defaults({}, options, lodash.templateSettings);
-
+  
     var index = 0,
         source = "__p += '",
         variable = options.variable;
-
+  
     var reDelimiters = RegExp(
       (options.escape || reNoMatch).source + '|' +
       (options.interpolate || reNoMatch).source + '|' +
       (options.evaluate || reNoMatch).source + '|$'
     , 'g');
-
+  
     text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {
       source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);
       if (escapeValue) {
@@ -3906,7 +3952,7 @@
       index = offset + match.length;
       return match;
     });
-
+  
     source += "';\n";
     if (!variable) {
       variable = 'obj';
@@ -3917,7 +3963,7 @@
       "function print() { __p += __j.call(arguments, '') }\n" +
       source +
       'return __p\n}';
-
+  
     try {
       var result = Function('_', 'return ' + source)(lodash);
     } catch(e) {
@@ -4006,7 +4052,7 @@
   }
 
   /*--------------------------------------------------------------------------*/
-
+  
   /**
    * Creates a `lodash` object that wraps the given `value`.
    *
@@ -4034,7 +4080,8 @@
     value.__chain__ = true;
     return value;
   }
-
+  
+  
   /**
    * Invokes `interceptor` with the `value` as the first argument, and then
    * returns `value`. The purpose of this method is to "tap into" a method chain,
@@ -4060,7 +4107,7 @@
     interceptor(value);
     return value;
   }
-
+  
   /**
    * Enables method chaining on the wrapper object.
    *
@@ -4080,7 +4127,8 @@
     this.__chain__ = true;
     return this;
   }
-
+  
+  
   /**
    * Produces the `toString` result of the wrapped value.
    *
@@ -4249,7 +4297,7 @@
    * @type String
    */
   lodash.VERSION = '1.0.1';
-
+  
   // add functions to `lodash.prototype`
   mixin(lodash);
 
@@ -4263,7 +4311,7 @@
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__;
       func.apply(value, arguments);
-
+  
       // avoid array-like object bugs with `Array#shift` and `Array#splice`
       // in Firefox < 10 and IE < 9
       if (hasObjectSpliceBug && value.length === 0) {
@@ -4272,14 +4320,14 @@
       return this;
     };
   });
-
+  
   // add `Array` accessor functions to the wrapper
   each(['concat', 'join', 'slice'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__,
           result = func.apply(value, arguments);
-
+  
       if (this.__chain__) {
         result = new lodash(result);
         result.__chain__ = true;

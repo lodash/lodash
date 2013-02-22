@@ -169,13 +169,14 @@
 
     /** Detect various environments */
     var isIeOpera = !!context.attachEvent,
+        isJSC = !/\n{2,}/.test(Function()),
         isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
     /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
     var isBindFast = nativeBind && !isV8;
 
-    /* Detect if `Object.keys` exists and is inferred to be fast (IE, Opera, V8) */
-    var isKeysFast = nativeKeys && (isIeOpera || isV8);
+    /* Detect if `Object.keys` exists and is inferred to be fast (Firefox, IE, Opera, V8) */
+    var isKeysFast = nativeKeys && (isIeOpera || isV8 || !isJSC);
 
     /**
      * Detect the JScript [[DontEnum]] bug:

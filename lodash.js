@@ -133,8 +133,8 @@
         String = context.String;
 
     /** Used for `Array`, `Math`, and `Object` method references */
-    var arrayRef = Array.prototype,
-        objectRef = Object.prototype;
+    var arrayRef = Array(),
+        objectRef = Object();
 
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;

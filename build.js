@@ -476,7 +476,7 @@
 
     var source = [
       ';(function(window) {',
-      "  var freeExports = typeof exports == 'object' && exports;",
+      "  var freeExports = typeof exports == 'object' && typeof require == 'function' && exports;",
       '',
       "  var freeModule = typeof module == 'object' && module && module.exports == freeExports && module;",
       '',
@@ -515,6 +515,7 @@
       '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
       '    });',
       "  } else if (freeExports) {",
+      "    _ = require('" + options.moduleId + "');",
       "    if (freeModule) {",
       '      (freeModule.exports = templates).templates = templates;',
       '    } else {',

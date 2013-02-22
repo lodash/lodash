@@ -296,7 +296,9 @@
         });
 
         // replace with modified snippet
-        source = source.replace(snippet, modified);
+        source = source.replace(snippet, function() {
+          return modified;
+        });
       });
     }());
 
@@ -331,7 +333,10 @@
 
       if (isCreateIterator) {
         // clip before the `factory` call to avoid minifying its arguments
-        source = source.replace(snippet, modified);
+        source = source.replace(snippet, function() {
+          return modified;
+        });
+
         snippet = modified = modified.replace(/return factory\([\s\S]+$/, '');
       }
       // minify `createIterator` option property names
@@ -358,7 +363,9 @@
       });
 
       // replace with modified snippet
-      source = source.replace(snippet, modified);
+      source = source.replace(snippet, function() {
+        return modified;
+      });
     });
 
     return source;

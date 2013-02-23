@@ -588,7 +588,7 @@
       '    lodash exports=...   Comma separated names of ways to export the `lodash` function',
       '                         (i.e. “amd”, “commonjs”, “global”, “node”, and “none”)',
       '    lodash iife=...      Code to replace the immediately-invoked function expression that wraps Lo-Dash',
-      '                         (e.g. `lodash iife="!function(window,undefined){%output%}(this)"`)',
+      '                         (e.g. `lodash iife="!function(window){%output%}(this)"`)',
       '',
       '    lodash template=...  File path pattern used to match template files to precompile',
       '                         (e.g. `lodash template=./*.jst`)',
@@ -964,8 +964,8 @@
 
         source = source
           .replace(/context/g, 'window')
-          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/m, '')
-          .replace(/(?: *\/\/.*\n)* *var lodash *= *runInContext.+\n/, '');
+          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
+          .replace(/^ *var lodash *= *runInContext.+\n+/m, '');
       }
       else {
         source = source.replace(snippet, '');
@@ -1136,7 +1136,7 @@
 
     // remove `noCharByIndex` from `_.at`
     source = source.replace(matchFunction(source, 'at'), function(match) {
-      return match.replace(/^ *if *\(noCharByIndex[^}]+}\n/m, '');
+      return match.replace(/^ *if *\(noCharByIndex[^}]+}\n+/m, '');
     });
 
     // remove `noCharByIndex` from `_.reduceRight`
@@ -2359,19 +2359,19 @@
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
       }
       if (!isNode) {
-        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n/, '$1$2');
+        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
       }
       if (!isCommonJS) {
-        source = source.replace(/(?: *\/\/.*\n)*(?:( *)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n/, '');
+        source = source.replace(/(?: *\/\/.*\n)*(?:( *)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n+/, '');
       }
       if (!isGlobal) {
-        source = source.replace(/(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n/g, '$1$2\n');
+        source = source.replace(/(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
       }
       // remove `if (freeExports) {...}` if it's empty
       if (isAMD && isGlobal) {
-        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}\n/, '');
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}\n+/, '');
       } else {
-        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n/, '$1\n');
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n+/, '$1\n');
       }
     }());
 
@@ -2454,7 +2454,7 @@
       }
       if (!source.match(/var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs)\b/g)) {
         // remove IIFE used to assign `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs`
-        source = source.replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n/m, '');
+        source = source.replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n+/m, '');
       }
     }
     if ((source.match(/\bfreeModule\b/g) || []).length < 2) {

@@ -353,7 +353,7 @@
       source = source.replace(license, '');
     }
 
-    var hasIIFE = /^;?\(function[^{]+{\s*/.test(source),
+    var hasIIFE = /^;?\(function[^{]+{/.test(source),
         isStrict = hasIIFE && /^;?\(function[^{]+{\s*["']use strict["']/.test(source);
 
     // to avoid stripping the IIFE, convert it to a function call

@@ -6,7 +6,10 @@
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
-;(function(window, undefined) {
+;(function(window) {
+
+  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  var undefined;
 
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports;
@@ -115,7 +118,7 @@
    * @static
    * @memberOf _
    * @category Utilities
-   * @param {Object} context The context object.
+   * @param {Object} [context=window] The context object.
    * @returns {Function} Returns the `lodash` function.
    */
   function runInContext(context) {
@@ -5161,9 +5164,9 @@
 
   /*--------------------------------------------------------------------------*/
 
+  // expose Lo-Dash
   var lodash = runInContext();
 
-  // expose Lo-Dash
   // some AMD build optimizers, like r.js, check for specific condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
     // Expose Lo-Dash to the global object even when an AMD loader is present in

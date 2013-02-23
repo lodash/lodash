@@ -2,7 +2,7 @@
 ;(function() {
   'use strict';
 
-  /** The Node filesystem module */
+  /** The Node.js filesystem module */
   var fs = require('fs');
 
   /** Used to minify variables embedded in compiled strings */

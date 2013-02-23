@@ -2,7 +2,7 @@
 ;(function() {
   'use strict';
 
-  /** Load Node modules */
+  /** Load modules */
   var fs = require('fs'),
       https = require('https'),
       path = require('path'),
@@ -39,6 +39,9 @@
   /** The media type for raw blob data */
   var mediaType = 'application/vnd.github.v3.raw';
 
+  /** Used to detect the Node.js executable in command-line arguments */
+  var reNode = /(?:^|[\/\\])node(?:\.exe)?$/;
+
   /** Used to reference parts of the blob href */
   var location = (function() {
     var host = 'api.github.com',
@@ -59,7 +62,7 @@
     'advanced': 'ADVANCED_OPTIMIZATIONS'
   };
 
-  /** Reassign `existsSync` for older versions of Node */
+  /** Reassign `existsSync` for older versions of Node.js */
   fs.existsSync || (fs.existsSync = path.existsSync);
 
   /*--------------------------------------------------------------------------*/
@@ -96,7 +99,7 @@
       options = source;
 
       // used to report invalid command-line arguments
-      var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
+      var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
         if (/^(?:-o|--output)$/.test(options[index - 1]) ||
             /^modes=.*$/.test(value)) {
           return true;

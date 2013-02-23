@@ -18,6 +18,9 @@
   /** Shortcut used to push arrays of values to an array */
   var push = arrayRef.push;
 
+  /** Used to detect the Node.js executable in command-line arguments */
+  var reNode = /(?:^|[\/\\])node(?:\.exe)?$/;
+
   /** Shortcut used to convert array-like objects to arrays */
   var slice = arrayRef.slice;
 
@@ -431,7 +434,7 @@
   function addCommandsToHeader(source, commands) {
     return source.replace(/(\/\**\n)( \*)( *@license[\s*]+)( *Lo-Dash [\w.-]+)(.*)/, function() {
       // remove `node path/to/build.js` from `commands`
-      if (commands[0] == 'node') {
+      if (reNode.test(commands[0])) {
         commands.splice(0, 2);
       }
       // add quotes to commands with spaces or equals signs
@@ -1369,7 +1372,7 @@
     var sourceMapURL;
 
     // used to report invalid command-line arguments
-    var invalidArgs = _.reject(options.slice(options[0] == 'node' ? 2 : 0), function(value, index, options) {
+    var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
           /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=.*$/.test(value)) {
         return true;

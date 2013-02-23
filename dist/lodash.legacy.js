@@ -1,7 +1,7 @@
 /**
  * @license
  * Lo-Dash 1.0.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash -o ./dist/lodash.compat.js`
+ * Build: `lodash legacy -o ./dist/lodash.legacy.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -143,44 +143,27 @@
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
 
-    /** Used to detect if a method is native */
-    var reNative = RegExp('^' +
-      (objectRef.valueOf + '')
-        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
-    );
-
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
         concat = arrayRef.concat,
         floor = Math.floor,
-        getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
+        getPrototypeOf = false,
         hasOwnProperty = objectRef.hasOwnProperty,
         push = arrayRef.push,
         setTimeout = context.setTimeout,
         toString = objectRef.toString;
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
-    var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
-        nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
-        nativeIsFinite = context.isFinite,
+    var nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
-        nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeRandom = Math.random;
 
     /** Detect various environments */
     var isIeOpera = !!context.attachEvent,
-        isJSC = !/\n{2,}/.test(Function()),
-        isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
-
-    /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-    var isBindFast = nativeBind && !isV8;
-
-    /* Detect if `Object.keys` exists and is inferred to be fast (Firefox, IE, Opera, V8) */
-    var isKeysFast = nativeKeys && (isIeOpera || isV8 || !isJSC);
+        isJSC = !/\n{2,}/.test(Function());
 
     /**
      * Detect the JScript [[DontEnum]] bug:
@@ -235,7 +218,7 @@
     var argsAreObjects = arguments.constructor == Object;
 
     /** Detect if `arguments` objects [[Class]] is unresolvable (Firefox < 4, IE < 9) */
-    var noArgsClass = !isArguments(arguments);
+    var noArgsClass = true;
 
     /**
      * Detect lack of support for accessing string characters by index:
@@ -409,20 +392,6 @@
        if (obj.hasEnumPrototype) {
       __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
        } ;
-      
-       if (obj.isKeysFast && obj.useHas) {
-      __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ';
-       if (obj.hasEnumPrototype) {
-      __p += 'if (!(skipProto && index == \'prototype\')) {\n  ';
-       } ;
-      __p += 
-      (obj.loop ) +
-      '';
-       if (obj.hasEnumPrototype) {
-      __p += '}\n';
-       } ;
-      __p += '  }  ';
-       } else {
       __p += '\n  for (index in iterable) {';
           if (obj.hasEnumPrototype || obj.useHas) {
       __p += '\n    if (';
@@ -442,8 +411,6 @@
       __p += '\n    }';
        } ;
       __p += '\n  }  ';
-       } ;
-      
        if (obj.hasDontEnumBug) {
       __p += '\n\n  var ctor = iterable.constructor;\n    ';
        for (var k = 0; k < 7; k++) {
@@ -711,7 +678,6 @@
         // support properties
         'hasDontEnumBug': hasDontEnumBug,
         'hasEnumPrototype': hasEnumPrototype,
-        'isKeysFast': isKeysFast,
         'nonEnumArgs': nonEnumArgs,
         'noCharByIndex': noCharByIndex,
         'shadowed': shadowed,
@@ -736,14 +702,13 @@
       // create the function factory
       var factory = Function(
           'createCallback, hasOwnProperty, isArguments, isArray, isString, ' +
-          'objectTypes, nativeKeys',
+          'objectTypes',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
       // return the compiled function
       return factory(
         createCallback, hasOwnProperty, isArguments, isArray, isString,
-        objectTypes, nativeKeys
-      );
+        objectTypes);
     }
 
     /**
@@ -865,14 +830,8 @@
      * // => false
      */
     function isArguments(value) {
-      return toString.call(value) == argsClass;
-    }
-    // fallback for browsers that can't detect `arguments` objects by [[Class]]
-    if (noArgsClass) {
-      isArguments = function(value) {
         return value ? hasOwnProperty.call(value, 'callee') : false;
-      };
-    }
+  }
 
     /**
      * Iterates over `object`'s own and inherited enumerable properties, executing
@@ -946,7 +905,7 @@
      * _.isArray([1, 2, 3]);
      * // => true
      */
-    var isArray = nativeIsArray || function(value) {
+    var isArray = function(value) {
       // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
       // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
       return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
@@ -965,15 +924,12 @@
      * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
      * // => ['one', 'two', 'three'] (order is not guaranteed)
      */
-    var keys = !nativeKeys ? shimKeys : function(object) {
-      if (!isObject(object)) {
-        return [];
-      }
-      if ((hasEnumPrototype && typeof object == 'function') ||
-          (nonEnumArgs && object.length && isArguments(object))) {
-        return shimKeys(object);
-      }
-      return nativeKeys(object);
+    var keys = function(object) {
+      var result = [];
+      forOwn(object, function(value, key) {
+        result.push(key);
+      });
+      return result;
     };
 
     /**
@@ -1013,22 +969,6 @@
         });
         return result === false || hasOwnProperty.call(value, result);
       }
-      return result;
-    }
-
-    /**
-     * A fallback implementation of `Object.keys` that produces an array of the
-     * given object's own enumerable property names.
-     *
-     * @private
-     * @param {Object} object The object to inspect.
-     * @returns {Array} Returns a new array of property names.
-     */
-    function shimKeys(object) {
-      var result = [];
-      forOwn(object, function(value, key) {
-        result.push(key);
-      });
       return result;
     }
 
@@ -4061,12 +4001,7 @@
      * func();
      * // => 'hi moe'
      */
-    function bind(func, thisArg) {
-      // use `Function#bind` if it exists and is fast
-      // (in V8 `Function#bind` is slower except when partially applied)
-      return isBindFast || (nativeBind && arguments.length > 2)
-        ? nativeBind.call.apply(nativeBind, arguments)
-        : createBound(func, thisArg, slice(arguments, 2));
+    function bind(func, thisArg) {return createBound(func, thisArg, slice(arguments, 2));
     }
 
     /**
@@ -4261,10 +4196,6 @@
     function defer(func) {
       var args = slice(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
-    }
-    // use `setImmediate` if it's available in Node.js
-    if (isV8 && freeModule && typeof setImmediate == 'function') {
-      defer = bind(setImmediate, context);
     }
 
     /**

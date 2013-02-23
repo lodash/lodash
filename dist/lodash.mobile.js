@@ -1,7 +1,7 @@
 /**
  * @license
  * Lo-Dash 1.0.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash -o ./dist/lodash.compat.js`
+ * Build: `lodash mobile -o ./dist/lodash.mobile.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -61,12 +61,6 @@
 
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
-
-  /** Used to fix the JScript [[DontEnum]] bug */
-  var shadowed = [
-    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
-    'toLocaleString', 'toString', 'valueOf'
-  ];
 
   /** Used to make template sourceURLs easier to identify */
   var templateCounter = 0;
@@ -179,43 +173,6 @@
     /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
     var isBindFast = nativeBind && !isV8;
 
-    /* Detect if `Object.keys` exists and is inferred to be fast (Firefox, IE, Opera, V8) */
-    var isKeysFast = nativeKeys && (isIeOpera || isV8 || !isJSC);
-
-    /**
-     * Detect the JScript [[DontEnum]] bug:
-     *
-     * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
-     * made non-enumerable as well.
-     */
-    var hasDontEnumBug;
-
-    /**
-     * Detect if a `prototype` properties are enumerable by default:
-     *
-     * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
-     * (if the prototype or a property on the prototype has been set)
-     * incorrectly sets a function's `prototype` property [[Enumerable]]
-     * value to `true`.
-     */
-    var hasEnumPrototype;
-
-    /** Detect if own properties are iterated after inherited properties (IE < 9) */
-    var iteratesOwnLast;
-
-    /**
-     * Detect if `Array#shift` and `Array#splice` augment array-like objects
-     * incorrectly:
-     *
-     * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
-     * and `splice()` functions that fail to remove the last element, `value[0]`,
-     * of array-like objects even though the `length` property is set to `0`.
-     * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-     * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
-     */
-    var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
-      arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
-
     /** Detect if `arguments` object indexes are non-enumerable (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1) */
     var nonEnumArgs = true;
 
@@ -226,33 +183,7 @@
       for (var prop in new ctor) { props.push(prop); }
       for (prop in arguments) { nonEnumArgs = !prop; }
 
-      hasDontEnumBug = !/valueOf/.test(props);
-      hasEnumPrototype = ctor.propertyIsEnumerable('prototype');
-      iteratesOwnLast = props[0] != 'x';
     }(1));
-
-    /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
-    var argsAreObjects = arguments.constructor == Object;
-
-    /** Detect if `arguments` objects [[Class]] is unresolvable (Firefox < 4, IE < 9) */
-    var noArgsClass = !isArguments(arguments);
-
-    /**
-     * Detect lack of support for accessing string characters by index:
-     *
-     * IE < 8 can't access characters by index and IE 8 can only access
-     * characters by index on string literals.
-     */
-    var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
-
-    /**
-     * Detect if a DOM node's [[Class]] is unresolvable (IE < 9)
-     * and that the JS engine won't error when attempting to coerce an object to
-     * a string without a `toString` function.
-     */
-    try {
-      var noNodeClass = toString.call(document) == objectClass && !({ 'toString': 0 } + '');
-    } catch(e) { }
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -372,131 +303,6 @@
          */
         '_': lodash
       }
-    };
-
-    /*--------------------------------------------------------------------------*/
-
-    /**
-     * The template used to create iterator functions.
-     *
-     * @private
-     * @param {Obect} data The data object used to populate the text.
-     * @returns {String} Returns the interpolated text.
-     */
-    var iteratorTemplate = function(obj) {
-      
-      var __p = 'var index, iterable = ' +
-      (obj.firstArg ) +
-      ', result = iterable;\nif (!iterable) return result;\n' +
-      (obj.top ) +
-      ';\n';
-       if (obj.arrays) {
-      __p += 'var length = iterable.length; index = -1;\nif (' +
-      (obj.arrays ) +
-      ') {  ';
-       if (obj.noCharByIndex) {
-      __p += '\n  if (isString(iterable)) {\n    iterable = iterable.split(\'\')\n  }  ';
-       } ;
-      __p += '\n  while (++index < length) {\n    ' +
-      (obj.loop ) +
-      '\n  }\n}\nelse {  ';
-        } else if (obj.nonEnumArgs) {
-      __p += '\n  var length = iterable.length; index = -1;\n  if (length && isArguments(iterable)) {\n    while (++index < length) {\n      index += \'\';\n      ' +
-      (obj.loop ) +
-      '\n    }\n  } else {  ';
-       } ;
-      
-       if (obj.hasEnumPrototype) {
-      __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
-       } ;
-      
-       if (obj.isKeysFast && obj.useHas) {
-      __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ';
-       if (obj.hasEnumPrototype) {
-      __p += 'if (!(skipProto && index == \'prototype\')) {\n  ';
-       } ;
-      __p += 
-      (obj.loop ) +
-      '';
-       if (obj.hasEnumPrototype) {
-      __p += '}\n';
-       } ;
-      __p += '  }  ';
-       } else {
-      __p += '\n  for (index in iterable) {';
-          if (obj.hasEnumPrototype || obj.useHas) {
-      __p += '\n    if (';
-            if (obj.hasEnumPrototype) {
-      __p += '!(skipProto && index == \'prototype\')';
-       }      if (obj.hasEnumPrototype && obj.useHas) {
-      __p += ' && ';
-       }      if (obj.useHas) {
-      __p += 'hasOwnProperty.call(iterable, index)';
-       }    ;
-      __p += ') {    ';
-       } ;
-      __p += 
-      (obj.loop ) +
-      ';    ';
-       if (obj.hasEnumPrototype || obj.useHas) {
-      __p += '\n    }';
-       } ;
-      __p += '\n  }  ';
-       } ;
-      
-       if (obj.hasDontEnumBug) {
-      __p += '\n\n  var ctor = iterable.constructor;\n    ';
-       for (var k = 0; k < 7; k++) {
-      __p += '\n  index = \'' +
-      (obj.shadowed[k] ) +
-      '\';\n  if (';
-            if (obj.shadowed[k] == 'constructor') {
-      __p += '!(ctor && ctor.prototype === iterable) && ';
-            } ;
-      __p += 'hasOwnProperty.call(iterable, index)) {\n    ' +
-      (obj.loop ) +
-      '\n  }    ';
-       } ;
-      
-       } ;
-      
-       if (obj.arrays || obj.nonEnumArgs) {
-      __p += '\n}';
-       } ;
-      __p += 
-      (obj.bottom ) +
-      ';\nreturn result';
-      
-      
-      return __p
-    };
-
-    /** Reusable iterator options for `assign` and `defaults` */
-    var defaultsIteratorOptions = {
-      'args': 'object, source, guard',
-      'top':
-        'var args = arguments,\n' +
-        '    argsIndex = 0,\n' +
-        "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
-        'while (++argsIndex < argsLength) {\n' +
-        '  iterable = args[argsIndex];\n' +
-        '  if (iterable && objectTypes[typeof iterable]) {',
-      'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
-      'bottom': '  }\n}'
-    };
-
-    /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
-    var eachIteratorOptions = {
-      'args': 'collection, callback, thisArg',
-      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
-      'arrays': "typeof length == 'number'",
-      'loop': 'if (callback(iterable[index], index, collection) === false) return result'
-    };
-
-    /** Reusable iterator options for `forIn` and `forOwn` */
-    var forOwnIteratorOptions = {
-      'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
-      'arrays': false
     };
 
     /*--------------------------------------------------------------------------*/
@@ -693,60 +499,6 @@
     }
 
     /**
-     * Creates compiled iteration functions.
-     *
-     * @private
-     * @param {Object} [options1, options2, ...] The compile options object(s).
-     *  arrays - A string of code to determine if the iterable is an array or array-like.
-     *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
-     *  args - A string of comma separated arguments the iteration function will accept.
-     *  top - A string of code to execute before the iteration branches.
-     *  loop - A string of code to execute in the object loop.
-     *  bottom - A string of code to execute after the iteration branches.
-     *
-     * @returns {Function} Returns the compiled function.
-     */
-    function createIterator() {
-      var data = {
-        // support properties
-        'hasDontEnumBug': hasDontEnumBug,
-        'hasEnumPrototype': hasEnumPrototype,
-        'isKeysFast': isKeysFast,
-        'nonEnumArgs': nonEnumArgs,
-        'noCharByIndex': noCharByIndex,
-        'shadowed': shadowed,
-
-        // iterator options
-        'arrays': 'isArray(iterable)',
-        'bottom': '',
-        'loop': '',
-        'top': '',
-        'useHas': true
-      };
-
-      // merge options into a template data object
-      for (var object, index = 0; object = arguments[index]; index++) {
-        for (var key in object) {
-          data[key] = object[key];
-        }
-      }
-      var args = data.args;
-      data.firstArg = /^[^,]+/.exec(args)[0];
-
-      // create the function factory
-      var factory = Function(
-          'createCallback, hasOwnProperty, isArguments, isArray, isString, ' +
-          'objectTypes, nativeKeys',
-        'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
-      );
-      // return the compiled function
-      return factory(
-        createCallback, hasOwnProperty, isArguments, isArray, isString,
-        objectTypes, nativeKeys
-      );
-    }
-
-    /**
      * A function compiled to iterate `arguments` objects, arrays, objects, and
      * strings consistenly across environments, executing the `callback` for each
      * element in the `collection`. The `callback` is bound to `thisArg` and invoked
@@ -760,7 +512,25 @@
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
      * @returns {Array|Object|String} Returns `collection`.
      */
-    var each = createIterator(eachIteratorOptions);
+    var each = function (collection, callback, thisArg) {
+      var index, iterable = collection, result = iterable;
+      if (!iterable) return result;
+      callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
+      var length = iterable.length; index = -1;
+      if (typeof length == 'number') {
+        while (++index < length) {
+          if (callback(iterable[index], index, collection) === false) return result
+        }
+      }
+      else {  
+        for (index in iterable) {
+          if (hasOwnProperty.call(iterable, index)) {    
+          if (callback(iterable[index], index, collection) === false) return result;    
+          }
+        }  
+      }
+      return result
+    };
 
     /**
      * Used by `template` to escape characters for inclusion in compiled
@@ -867,12 +637,6 @@
     function isArguments(value) {
       return toString.call(value) == argsClass;
     }
-    // fallback for browsers that can't detect `arguments` objects by [[Class]]
-    if (noArgsClass) {
-      isArguments = function(value) {
-        return value ? hasOwnProperty.call(value, 'callee') : false;
-      };
-    }
 
     /**
      * Iterates over `object`'s own and inherited enumerable properties, executing
@@ -903,9 +667,17 @@
      * });
      * // => alerts 'name' and 'bark' (order is not guaranteed)
      */
-    var forIn = createIterator(eachIteratorOptions, forOwnIteratorOptions, {
-      'useHas': false
-    });
+    var forIn = function (collection, callback, thisArg) {
+      var index, iterable = collection, result = iterable;
+      if (!iterable) return result;
+      if (!objectTypes[typeof iterable]) return result;
+      callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
+      
+        for (index in iterable) {
+          if (callback(iterable[index], index, collection) === false) return result;    
+        }  
+      return result
+    };
 
     /**
      * Iterates over an object's own enumerable properties, executing the `callback`
@@ -928,7 +700,19 @@
      * });
      * // => alerts '0', '1', and 'length' (order is not guaranteed)
      */
-    var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
+    var forOwn = function (collection, callback, thisArg) {
+      var index, iterable = collection, result = iterable;
+      if (!iterable) return result;
+      if (!objectTypes[typeof iterable]) return result;
+      callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
+      
+        for (index in iterable) {
+          if (hasOwnProperty.call(iterable, index)) {    
+          if (callback(iterable[index], index, collection) === false) return result;    
+          }
+        }  
+      return result
+    };
 
     /**
      * Checks if `value` is an array.
@@ -949,7 +733,7 @@
     var isArray = nativeIsArray || function(value) {
       // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
       // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
-      return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
+      return value instanceof Array || toString.call(value) == arrayClass;
     };
 
     /**
@@ -969,8 +753,7 @@
       if (!isObject(object)) {
         return [];
       }
-      if ((hasEnumPrototype && typeof object == 'function') ||
-          (nonEnumArgs && object.length && isArguments(object))) {
+      if ((nonEnumArgs && object.length && isArguments(object))) {
         return shimKeys(object);
       }
       return nativeKeys(object);
@@ -994,17 +777,7 @@
       }
       // check that the constructor is `Object` (i.e. `Object instanceof Object`)
       var ctor = value.constructor;
-      if ((!isFunction(ctor) && (!noNodeClass || !isNode(value))) || ctor instanceof ctor) {
-        // IE < 9 iterates inherited properties before own properties. If the first
-        // iterated property is an object's own property then there are no inherited
-        // enumerable properties.
-        if (iteratesOwnLast) {
-          forIn(value, function(value, key, object) {
-            result = !hasOwnProperty.call(object, key);
-            return false;
-          });
-          return result === false;
-        }
+      if ((!isFunction(ctor)) || ctor instanceof ctor) {
         // In most environments an object's own properties are iterated before
         // its inherited properties. If the last iterated property is an object's
         // own property then there are no inherited enumerable properties.
@@ -1083,18 +856,37 @@
      * defaults(food, { 'name': 'banana', 'type': 'fruit' });
      * // => { 'name': 'apple', 'type': 'fruit' }
      */
-    var assign = createIterator(defaultsIteratorOptions, {
-      'top':
-        defaultsIteratorOptions.top.replace(';',
-          ';\n' +
-          "if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {\n" +
-          '  var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
-          "} else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {\n" +
-          '  callback = args[--argsLength];\n' +
-          '}'
-        ),
-      'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]'
-    });
+    var assign = function (object, source, guard) {
+      var index, iterable = object, result = iterable;
+      if (!iterable) return result;
+      var args = arguments,
+          argsIndex = 0,
+          argsLength = typeof guard == 'number' ? 2 : args.length;
+      if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
+        var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);
+      } else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {
+        callback = args[--argsLength];
+      }
+      while (++argsIndex < argsLength) {
+        iterable = args[argsIndex];
+        if (iterable && objectTypes[typeof iterable]) {;
+      var length = iterable.length; index = -1;
+      if (isArray(iterable)) {
+        while (++index < length) {
+          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
+        }
+      }
+      else {  
+        for (index in iterable) {
+          if (hasOwnProperty.call(iterable, index)) {    
+          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];    
+          }
+        }  
+      }
+        }
+      };
+      return result
+    };
 
     /**
      * Creates a clone of `value`. If `deep` is `true`, nested objects will also
@@ -1161,7 +953,7 @@
       var isObj = isObject(result);
       if (isObj) {
         var className = toString.call(result);
-        if (!cloneableClasses[className] || (noNodeClass && isNode(result))) {
+        if (!cloneableClasses[className]) {
           return result;
         }
         var isArr = isArray(result);
@@ -1287,7 +1079,32 @@
      * _.defaults(food, { 'name': 'banana', 'type': 'fruit' });
      * // => { 'name': 'apple', 'type': 'fruit' }
      */
-    var defaults = createIterator(defaultsIteratorOptions);
+    var defaults = function (object, source, guard) {
+      var index, iterable = object, result = iterable;
+      if (!iterable) return result;
+      var args = arguments,
+          argsIndex = 0,
+          argsLength = typeof guard == 'number' ? 2 : args.length;
+      while (++argsIndex < argsLength) {
+        iterable = args[argsIndex];
+        if (iterable && objectTypes[typeof iterable]) {;
+      var length = iterable.length; index = -1;
+      if (isArray(iterable)) {
+        while (++index < length) {
+          if (typeof result[index] == 'undefined') result[index] = iterable[index]
+        }
+      }
+      else {  
+        for (index in iterable) {
+          if (hasOwnProperty.call(iterable, index)) {    
+          if (typeof result[index] == 'undefined') result[index] = iterable[index];    
+          }
+        }  
+      }
+        }
+      };
+      return result
+    };
 
     /**
      * Creates a sorted array of all enumerable properties, own and inherited,
@@ -1440,7 +1257,7 @@
           length = value.length;
 
       if ((className == arrayClass || className == stringClass ||
-          className == argsClass || (noArgsClass && isArguments(value))) ||
+          className == argsClass) ||
           (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
         return !length;
       }
@@ -1559,12 +1376,12 @@
           return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, thisArg, stackA, stackB);
         }
         // exit for functions and DOM nodes
-        if (className != objectClass || (noNodeClass && (isNode(a) || isNode(b)))) {
+        if (className != objectClass) {
           return false;
         }
         // in older versions of Opera, `arguments` objects have `Array` constructors
-        var ctorA = !argsAreObjects && isArguments(a) ? Object : a.constructor,
-            ctorB = !argsAreObjects && isArguments(b) ? Object : b.constructor;
+        var ctorA = a.constructor,
+            ctorB = b.constructor;
 
         // non `Object` object instances with different constructors are not equal
         if (ctorA != ctorB && !(
@@ -1818,7 +1635,7 @@
      * _.isPlainObject({ 'name': 'moe', 'age': 40 });
      * // => true
      */
-    var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
+    var isPlainObject = function(value) {
       if (!(value && typeof value == 'object')) {
         return false;
       }
@@ -2194,9 +2011,6 @@
           length = props.length,
           result = Array(length);
 
-      if (noCharByIndex && isString(collection)) {
-        collection = collection.split('');
-      }
       while(++index < length) {
         result[index] = collection[props[index]];
       }
@@ -2893,8 +2707,6 @@
       if (typeof length != 'number') {
         var props = keys(collection);
         length = props.length;
-      } else if (noCharByIndex && isString(collection)) {
-        iterable = collection.split('');
       }
       callback = createCallback(callback, thisArg, 4);
       forEach(collection, function(value, index, collection) {
@@ -3139,9 +2951,7 @@
      */
     function toArray(collection) {
       if (collection && typeof collection.length == 'number') {
-        return noCharByIndex && isString(collection)
-          ? collection.split('')
-          : slice(collection);
+        return  slice(collection);
       }
       return values(collection);
     }
@@ -5128,25 +4938,6 @@
         return new lodash(func.apply(this.__wrapped__, arguments));
       };
     });
-
-    // avoid array-like object bugs with `Array#shift` and `Array#splice`
-    // in Firefox < 10 and IE < 9
-    if (hasObjectSpliceBug) {
-      each(['pop', 'shift', 'splice'], function(methodName) {
-        var func = arrayRef[methodName],
-            isSplice = methodName == 'splice';
-
-        lodash.prototype[methodName] = function() {
-          var value = this.__wrapped__,
-              result = func.apply(value, arguments);
-
-          if (value.length === 0) {
-            delete value[0];
-          }
-          return isSplice ? new lodash(result) : result;
-        };
-      });
-    }
 
     return lodash;
   }

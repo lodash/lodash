@@ -7,7 +7,10 @@
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
  * Available under MIT license <http://lodash.com/license>
  */
-;(function(window, undefined) {
+;(function(window) {
+
+  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  var undefined;
 
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports;

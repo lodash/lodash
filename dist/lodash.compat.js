@@ -274,6 +274,9 @@
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
+     * Chaining is supported in custom builds as long as the `value` method is
+     * implicitly or explicitly included in the build.
+     *
      * The chainable wrapper functions are:
      * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`, `compose`,
      * `concat`, `countBy`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
@@ -286,11 +289,12 @@
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`, `identity`,
-     * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
-     * `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`, `isObject`,
-     * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`, `lastIndexOf`,
-     * `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`, `result`,
-     * `shift`, `size`, `some`, `sortedIndex`, `template`, `unescape`, and `uniqueId`
+     * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
+     * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
+     * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
+     * `lastIndexOf`, `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`,
+     * `result`, `shift`, `size`, `some`, `sortedIndex`, `template`, `unescape`,
+     * `uniqueId`, and `value`
      *
      * The wrapper functions `first` and `last` return wrapped values when `n` is
      * passed, otherwise they return unwrapped values.

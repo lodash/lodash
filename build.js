@@ -151,7 +151,7 @@
     'some': ['identity', 'isArray', 'isEqual', 'keys'],
     'sortBy': ['forEach', 'identity', 'isEqual', 'keys'],
     'sortedIndex': ['identity', 'isEqual', 'keys'],
-    'tap': ['mixin'],
+    'tap': ['value'],
     'template': ['defaults', 'escape', 'keys', 'values'],
     'throttle': [],
     'times': [],
@@ -160,7 +160,7 @@
     'union': ['uniq'],
     'uniq': ['indexOf', 'isEqual', 'keys'],
     'uniqueId': [],
-    'value': ['mixin'],
+    'value': [],
     'values': ['keys'],
     'where': ['filter'],
     'without': ['indexOf'],
@@ -168,7 +168,7 @@
     'zip': ['max', 'pluck'],
 
     // method used by the `backbone` and `underscore` builds
-    'chain': ['mixin'],
+    'chain': ['value'],
     'findWhere': ['where']
   };
 
@@ -817,7 +817,10 @@
    */
   function isRemoved(source) {
     return slice.call(arguments, 1).every(function(funcName) {
-      return !matchFunction(source, funcName);
+      return !(
+        matchFunction(source, funcName) ||
+        RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=.+', 'm').test(source)
+      );
     });
   }
 
@@ -2406,7 +2409,10 @@
       if (isRemoved(source, 'isFunction')) {
         source = removeIsFunctionFallback(source);
       }
-      if (isRemoved(source, 'mixin')) {
+      if (isRemoved(source, 'mixin') || isRemoved(source, 'value')) {
+        source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
+      }
+      if (isRemoved(source, 'value')) {
         source = removeHasObjectSpliceBug(source);
 
         // simplify the `lodash` function
@@ -2416,12 +2422,20 @@
           '}'
         ].join('\n'));
 
+        // remove `lodash.prototype` method assignments from `_.mixin`
+        source = replaceFunction(source, 'mixin', [
+          'function mixin(object) {',
+          '  forEach(functions(object), function(methodName) {',
+          '    lodash[methodName] = object[methodName];',
+          '  });',
+          '}'
+        ].join('\n'));
+
         // remove all `lodash.prototype` additions
         source = source
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)each\(\['[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
+          .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+/g, '');
       }
       // remove functions, variables, and snippets that the minifier may miss
       if (isRemoved(source, 'clone')) {

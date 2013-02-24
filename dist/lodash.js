@@ -1548,12 +1548,6 @@
     function isFunction(value) {
       return typeof value == 'function';
     }
-    // fallback for older versions of Chrome and Safari
-    if (isFunction(/x/)) {
-      isFunction = function(value) {
-        return value instanceof Function || toString.call(value) == funcClass;
-      };
-    }
 
     /**
      * Checks if `value` is the language type of Object.

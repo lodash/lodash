@@ -12,6 +12,9 @@
       minify = require(path.join(__dirname, 'build', 'minify.js')),
       mkdirpSync = require(path.join(__dirname, 'build', 'mkdirp-sync.js'));
 
+  /** Add `path.sep` for older versions of Node.js */
+  path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
+
   /** The current working directory */
   var cwd = process.cwd();
 
@@ -22,7 +25,7 @@
   var push = arrayRef.push;
 
   /** Used to detect the Node.js executable in command-line arguments */
-  var reNode = /(?:^|[\/\\])node(?:\.exe)?$/;
+  var reNode = RegExp('(?:^|' + path.sep + ')node(?:\\.exe)?$');
 
   /** Shortcut used to convert array-like objects to arrays */
   var slice = arrayRef.slice;
@@ -268,6 +271,9 @@
     'global',
     'node'
   ];
+
+  /** Add `path.sep` for older versions of Node.js */
+  path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
 
   /*--------------------------------------------------------------------------*/
 

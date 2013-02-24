@@ -2,18 +2,19 @@
 ;(function() {
   'use strict';
 
-  /** Load modules */
+  /** Load Node.js modules */
   var fs = require('fs'),
       https = require('https'),
       path = require('path'),
       spawn = require('child_process').spawn,
-      zlib = require('zlib'),
-      tar = require('../vendor/tar/tar.js'),
-      _ = require('../lodash.js');
+      zlib = require('zlib');
 
   /** Load other modules */
-  var preprocess = require('./pre-compile.js'),
-      postprocess = require('./post-compile.js');
+  var _ = require('../lodash.js'),
+      mkdirpSync = require('./mkdirp-sync.js'),
+      preprocess = require('./pre-compile.js'),
+      postprocess = require('./post-compile.js'),
+      tar = require('../vendor/tar/tar.js');
 
   /** The Git object ID of `closure-compiler.tar.gz` */
   var closureId = '23cf67d0f0b979d97631fc108a2a43bb82225994';
@@ -141,7 +142,9 @@
       outputPath = options.reduce(function(result, value, index) {
         if (/-o|--output/.test(value)) {
           result = options[index + 1];
-          result = path.join(fs.realpathSync(path.dirname(result)), path.basename(result));
+          var dirname = path.dirname(result);
+          mkdirpSync(dirname);
+          result = path.join(fs.realpathSync(dirname), path.basename(result));
         }
         return result;
       }, outputPath);

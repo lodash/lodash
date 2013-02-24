@@ -1114,22 +1114,34 @@
   QUnit.module('output options');
 
   (function() {
-    var nestedDir = 'test/mkdir/';
+    var nestedPath = path.join(__dirname, 'a', 'b');
+
     var commands = [
       '-o a.js',
-      '--output a.js',
-      '-o ' + nestedDir + 'a.js'
+      '--output b.js',
+      '-o ./a/b/c.js'
     ];
 
-    commands.forEach(function(command, index) {
+    commands.forEach(function(command) {
       asyncTest('`lodash ' + command +'`', function() {
-        var counter = -1,
-            start = _.after(2, _.once(QUnit.start));
+        var counter = 0,
+            expected = /(\w+)(?=\.js$)/.exec(command)[0],
+            isDirs = _.contains(command, 'c.js');
 
+        var start = _.after(2, _.once(function() {
+          if (isDirs) {
+            fs.rmdirSync(nestedPath);
+          }
+          QUnit.start();
+        }));
+
+        if (isDirs) {
+          command = command.replace('./a/b/c.js', path.join(nestedPath, 'c.js'));
+        }
         build(['-s'].concat(command.split(' ')), function(data) {
-          equal(path.basename(data.outputPath, '.js'), (++counter ? 'a.min' : 'a'), command);
+          var basename = path.basename(data.outputPath, '.js');
+          equal(basename, expected + (counter++ ? '.min' : ''), command);
           start();
-          fs.existsSync(nestedDir) && fs.rmdirSync(nestedDir);
         });
       });
     });

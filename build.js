@@ -2,12 +2,15 @@
 ;(function() {
   'use strict';
 
-  /** Load modules */
+  /** Load Node.js modules */
   var fs = require('fs'),
       path = require('path'),
-      vm = require('vm'),
+      vm = require('vm');
+
+  /** Load other modules */
+  var _ = require(path.join(__dirname, 'lodash.js')),
       minify = require(path.join(__dirname, 'build', 'minify.js')),
-      _ = require(path.join(__dirname, 'lodash.js'));
+      mkdirpSync = require(path.join(__dirname, 'build', 'mkdirp-sync.js'));
 
   /** The current working directory */
   var cwd = process.cwd();
@@ -1513,15 +1516,9 @@
     var outputPath = options.reduce(function(result, value, index) {
       if (/-o|--output/.test(value)) {
         result = options[index + 1];
-        var cwd = process.cwd();
-        path.dirname(result).split(path.sep).forEach(function(pathSegment){
-          try {
-            fs.mkdirSync(pathSegment);
-          } catch(err){}
-          process.chdir(pathSegment);
-        });
-        process.chdir(cwd);
-        result = path.join(fs.realpathSync(path.dirname(result)), path.basename(result));
+        var dirname = path.dirname(result);
+        mkdirpSync(dirname);
+        result = path.join(fs.realpathSync(dirname), path.basename(result));
       }
       return result;
     }, '');

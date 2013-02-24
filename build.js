@@ -979,7 +979,7 @@
 
     // remove assignment and aliases
     var modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
-      return result.replace(RegExp('(?:\\n *//.*\\s*)* *lodash\\.' + otherName + ' *= *.+\\n'), '');
+      return result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + otherName + ' *= *.+\\n', 'm'), '');
     }, snippet);
 
     // replace with the modified snippet
@@ -1593,6 +1593,12 @@
       if (isLegacy) {
         dependencyMap.defer = _.without(dependencyMap.defer, 'bind');
       }
+      if (isModern) {
+        dependencyMap.isEmpty = _.without(dependencyMap.isEmpty, 'isArguments');
+        dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'isArguments');
+        dependencyMap.keys = _.without(dependencyMap.keys, 'isArguments');
+        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
+      }
       if (isUnderscore) {
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
         dependencyMap.countBy = _.without(dependencyMap.countBy, 'isEqual', 'keys');
@@ -1600,13 +1606,14 @@
         dependencyMap.filter = _.without(dependencyMap.filter, 'isEqual');
         dependencyMap.find = _.without(dependencyMap.find, 'isEqual', 'keys');
         dependencyMap.groupBy = _.without(dependencyMap.groupBy, 'isEqual', 'keys');
-        dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
         dependencyMap.isEmpty = ['isArray', 'isString'];
+        dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
         dependencyMap.map = _.without(dependencyMap.map, 'isEqual', 'keys');
         dependencyMap.max = _.without(dependencyMap.max, 'isEqual', 'isString', 'keys');
         dependencyMap.min = _.without(dependencyMap.min, 'isEqual', 'isString', 'keys');
         dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
         dependencyMap.reduce = _.without(dependencyMap.reduce, 'isEqual', 'keys');
+        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isEqual', 'isString');
         dependencyMap.reject = _.without(dependencyMap.reject, 'isEqual', 'keys');
         dependencyMap.some = _.without(dependencyMap.some, 'isEqual', 'keys');
         dependencyMap.sortBy = _.without(dependencyMap.sortBy, 'isEqual', 'keys');
@@ -1620,7 +1627,11 @@
         }
       }
       if (isModern || isUnderscore) {
-        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isEqual', 'isString');
+        dependencyMap.at = _.without(dependencyMap.at, 'isString');
+        dependencyMap.forEach = _.without(dependencyMap.forEach, 'isArguments', 'isString');
+        dependencyMap.forIn = _.without(dependencyMap.forIn, 'isArguments');
+        dependencyMap.forOwn = _.without(dependencyMap.forOwn, 'isArguments');
+        dependencyMap.toArray = _.without(dependencyMap.toArray, 'isString');
       }
 
       // add method names explicitly
@@ -1692,6 +1703,10 @@
         source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
           return match.replace(/!getPrototypeOf.+?: */, '');
         });
+
+        if (!isMobile) {
+          source = removeIsFunctionFallback(source);
+        }
       }
       if (isUnderscore) {
         // replace `_.assign`
@@ -2405,8 +2420,8 @@
         source = source
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)each\(\['[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+\n/g, '')
-          .replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+\n/, '');
+          .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+/g, '')
+          .replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
       }
       // remove functions, variables, and snippets that the minifier may miss
       if (isRemoved(source, 'clone')) {

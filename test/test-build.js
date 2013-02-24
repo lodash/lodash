@@ -2,16 +2,27 @@
 ;(function(undefined) {
   'use strict';
 
+  /** Load Node.js modules */
+  var fs = require('fs'),
+      path = require('path'),
+      vm = require('vm');
+
+  /** Load other modules */
+  var build = require('../build.js'),
+      minify = require('../build/minify'),
+      _ = require('../lodash.js');
+
   /** Used to avoid `noglobal` false positives caused by `errno` leaked in Node.js */
   global.errno = true;
 
-  /** Load modules */
-  var fs = require('fs'),
-      path = require('path'),
-      vm = require('vm'),
-      build = require('../build.js'),
-      minify = require('../build/minify'),
-      _ = require('../lodash.js');
+  /** Add `path.sep` for older versions of Node.js */
+  path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
+
+  /** The current working directory */
+  var cwd = process.cwd();
+
+  /** Used to prefix relative paths from the current directory */
+  var relativePrefix = '.' + path.sep;
 
   /** The unit testing framework */
   var QUnit = (
@@ -503,33 +514,46 @@
   QUnit.module('template builds');
 
   (function() {
-    var templatePath = __dirname + '/template';
+    var templatePath = path.join(__dirname, 'template');
 
-    asyncTest('`lodash template=*.jst`', function() {
-      var start = _.after(2, _.once(QUnit.start));
+    var commands = [
+      'template=' + path.join('template', '*.jst'),
+      'template=' + relativePrefix + path.join('template', '*.jst'),
+      'template=' + path.join(templatePath, '*.jst')
+    ];
 
-      build(['-s', 'template=' + templatePath + '/*.jst'], function(data) {
-        var basename = path.basename(data.outputPath, '.js'),
-            context = createContext();
+    commands.forEach(function(command) {
+      asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(function() {
+          process.chdir(cwd);
+          QUnit.start();
+        }));
 
-        var object = {
-          'a': { 'people': ['moe', 'larry', 'curly'] },
-          'b': { 'epithet': 'stooge' },
-          'c': { 'name': 'ES6' }
-        };
+        process.chdir(__dirname);
 
-        context._ = _;
-        vm.runInContext(data.source, context);
+        build(['-s', command], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
+              context = createContext();
 
-        equal(_.templates.a(object.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
-        equal(_.templates.b(object.b), 'Hello stooge.', basename);
-        equal(_.templates.c(object.c), 'Hello ES6!', basename);
-        delete _.templates;
-        start();
+          var object = {
+            'a': { 'people': ['moe', 'larry', 'curly'] },
+            'b': { 'epithet': 'stooge' },
+            'c': { 'name': 'ES6' }
+          };
+
+          context._ = _;
+          vm.runInContext(data.source, context);
+
+          equal(_.templates.a(object.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
+          equal(_.templates.b(object.b), 'Hello stooge.', basename);
+          equal(_.templates.c(object.c), 'Hello ES6!', basename);
+          delete _.templates;
+          start();
+        });
       });
     });
 
-    var commands = [
+    commands = [
       '',
       'moduleId=underscore'
     ];
@@ -540,7 +564,7 @@
       asyncTest('`lodash template=*.jst exports=amd' + (command ? ' ' + command : '') + '`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', 'template=' + templatePath + '/*.jst', 'exports=amd'].concat(command || []), function(data) {
+        build(['-s', 'template=' + path.join(templatePath, '*.jst'), 'exports=amd'].concat(command || []), function(data) {
           var moduleId,
               basename = path.basename(data.outputPath, '.js'),
               context = createContext();
@@ -565,7 +589,7 @@
       asyncTest('`lodash settings=...' + (command ? ' ' + command : '') + '`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', 'template=' + templatePath + '/*.tpl', 'settings={interpolate:/{{([\\s\\S]+?)}}/}'].concat(command || []), function(data) {
+        build(['-s', 'template=' + path.join(templatePath, '*.tpl'), 'settings={interpolate:/{{([\\s\\S]+?)}}/}'].concat(command || []), function(data) {
           var moduleId,
               basename = path.basename(data.outputPath, '.js'),
               context = createContext();
@@ -670,8 +694,11 @@
             equal(sourceMap.file, basename + '.js', basename);
             deepEqual(sourceMap.sources, sources, basename);
 
+            process.chdir(cwd);
             QUnit.start();
           });
+
+          process.chdir(__dirname);
 
           outputCommand = outputCommand ? outputCommand.split(' ') : [];
           if (outputCommand.indexOf('-m') < 0) {
@@ -1112,7 +1139,9 @@
     var commands = [
       '-o a.js',
       '--output b.js',
-      '-o ./a/b/c.js'
+      '-o ' + path.join('a', 'b', 'c.js'),
+      '-o ' + relativePrefix + path.join('a', 'b', 'c.js'),
+      '-o ' + path.join(nestedPath, 'c.js')
     ];
 
     commands.forEach(function(command) {
@@ -1126,12 +1155,12 @@
             fs.rmdirSync(nestedPath);
             fs.rmdirSync(path.dirname(nestedPath));
           }
+          process.chdir(cwd);
           QUnit.start();
         }));
 
-        if (dirs) {
-          command = command.replace('./a/b/c.js', path.join(nestedPath, 'c.js'));
-        }
+        process.chdir(__dirname);
+
         build(['-s'].concat(command.split(' ')), function(data) {
           var basename = path.basename(data.outputPath, '.js');
           equal(basename, expected + (counter++ ? '.min' : ''), command);

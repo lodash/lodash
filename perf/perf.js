@@ -14,7 +14,9 @@
         );
 
     var last = result[result.length - 1];
-    result = (result.length > min && last != 'test.js') ? last : '../lodash.js';
+    result = (result.length > min && !/test(?:\.js)?$/.test(last))
+      ? last
+      : '../lodash.js';
 
     try {
       result = require('fs').realpathSync(result);
@@ -55,10 +57,10 @@
   var suites = [];
 
   /** The `ui` object */
-  var ui = window.ui || {
+  var ui = window.ui || ({
     'buildPath': basename(filePath, '.js'),
     'otherPath': 'underscore'
-  };
+  });
 
   /** The Lo-Dash build basename */
   var buildName = basename(ui.buildPath, '.js');

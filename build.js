@@ -863,7 +863,7 @@
    * @returns {Array} Returns the new converted array.
    */
   function optionToArray(value) {
-    return value.match(/\w+=(.*)$/)[1].split(/, */);
+    return _.compact(value.match(/\w+=(.*)$/)[1].split(/, */));
   }
 
   /**

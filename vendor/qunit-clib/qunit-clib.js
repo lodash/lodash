@@ -19,12 +19,16 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Installs the CLI boilerplate additions on the `context` object.
+   * Installs the CLI boilerplate additions on the given `context` object.
    *
-   * @private
+   * @memberOf exports
    * @param {Object} context The context object.
    */
   function runInContext(context) {
+    // exit early if no `context` is provided or if `QUnit` does not exist
+    if (!context || !context.QUnit) {
+      return;
+    }
 
     /**
      * Schedules timer-based callbacks.

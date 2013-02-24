@@ -1,4 +1,4 @@
-# QUnit CLIB <sup>v1.2.0</sup>
+# QUnit CLIB <sup>v1.3.0</sup>
 ## command-line interface boilerplate
 
 QUnit CLIB helps extend QUnit's CLI support to many common CLI environments.
@@ -9,26 +9,29 @@ QUnit CLIB helps extend QUnit's CLI support to many common CLI environments.
 
 ## Support
 
-QUnit CLIB has been tested in at least Node.js 0.4.8-0.8.19, Narwhal v0.3.2, PhantomJS 1.8.1, RingoJS v0.9, and Rhino v1.7RC5.
+QUnit CLIB has been tested in at least Node.js 0.4.8-0.8.20, Narwhal 0.3.2, PhantomJS 1.8.1, RingoJS 0.9, and Rhino 1.7RC5.
 
 ## Usage
 
 ```js
-(function(window) {
+;(function(window) {
+  'use strict';
 
   // use a single "load" function
   var load = typeof require == 'function' ? require : window.load;
 
   // load QUnit and CLIB if needed
-  var QUnit =
-    window.QUnit || (
-      window.addEventListener || (window.addEventListener = Function.prototype),
-      window.setTimeout || (window.setTimeout = Function.prototype),
-      window.QUnit = load('path/to/qunit.js') || window.QUnit,
-      load('path/to/qunit-clib.js'),
-      window.addEventListener === Function.prototype && delete window.addEventListener,
+  var QUnit = (function() {
+    var noop = Function.prototype;
+    return  window.QUnit || (
+      window.addEventListener || (window.addEventListener = noop),
+      window.setTimeout || (window.setTimeout = noop),
+      window.QUnit = load('../vendor/qunit/qunit/qunit.js') || window.QUnit,
+      (load('../vendor/qunit-clib/qunit-clib.js') || { 'runInContext': noop }).runInContext(window),
+      addEventListener === noop && delete window.addEventListener,
       window.QUnit
     );
+  }());
 
   // explicitly call `QUnit.module()` instead of `module()`
   // in case we are in a CLI environment
@@ -38,9 +41,8 @@ QUnit CLIB has been tested in at least Node.js 0.4.8-0.8.19, Narwhal v0.3.2, Pha
     // ...
   });
 
-  // must call `QUnit.start()` if using QUnit < 1.3.0 with Node.js or any
-  // version of QUnit with Narwhal, PhantomJS, Rhino, or RingoJS
-  if (!window.document) {
+  // call `QUnit.start()` for Narwhal, Node.js, PhantomJS, Rhino, and RingoJS
+  if (!window.document || window.phantom) {
     QUnit.start();
   }
 }(typeof global == 'object' && global || this));
@@ -49,7 +51,6 @@ QUnit CLIB has been tested in at least Node.js 0.4.8-0.8.19, Narwhal v0.3.2, Pha
 ## Footnotes
 
   1. QUnit v1.3.0 does not work with Narwhal or Ringo < v0.8.0
-
   2. Rhino v1.7RC4 does not support timeout fallbacks `clearTimeout` and `setTimeout`
 
 ## Author

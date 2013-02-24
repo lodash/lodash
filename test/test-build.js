@@ -107,7 +107,6 @@
 
   /** List of "Chaining" category methods */
   var chainingMethods = [
-    'mixin',
     'tap',
     'value'
   ];
@@ -208,6 +207,7 @@
   var utilityMethods = [
     'escape',
     'identity',
+    'mixin',
     'noConflict',
     'random',
     'result',
@@ -391,16 +391,7 @@
         }
       }
       else if (chainingMethods.indexOf(methodName) > -1) {
-        if (methodName == 'chain') {
-          lodash.chain(array);
-          lodash(array).chain();
-        }
-        else if (methodName == 'mixin') {
-          lodash.mixin({});
-        }
-        else {
-          lodash(array)[methodName](noop);
-        }
+        lodash(array)[methodName](noop);
       }
       else if (collectionsMethods.indexOf(methodName) > -1) {
         if (/^(?:count|group|sort)By$/.test(methodName)) {
@@ -465,7 +456,9 @@
         }
       }
       else if (utilityMethods.indexOf(methodName) > -1) {
-        if (methodName == 'result') {
+        if (methodName == 'mixin') {
+          func({});
+        } else if (methodName == 'result') {
           func(object, 'b');
         } else if (methodName == 'runInContext') {
           func();
@@ -1125,17 +1118,17 @@
     commands.forEach(function(command) {
       asyncTest('`lodash ' + command +'`', function() {
         var counter = 0,
-            expected = /(\w+)(?=\.js$)/.exec(command)[0],
-            isDirs = _.contains(command, 'c.js');
+            dirs = _.contains(command, 'c.js'),
+            expected = /(\w+)(?=\.js$)/.exec(command)[0];
 
         var start = _.after(2, _.once(function() {
-          if (isDirs) {
+          if (dirs) {
             fs.rmdirSync(nestedPath);
           }
           QUnit.start();
         }));
 
-        if (isDirs) {
+        if (dirs) {
           command = command.replace('./a/b/c.js', path.join(nestedPath, 'c.js'));
         }
         build(['-s'].concat(command.split(' ')), function(data) {
@@ -1187,25 +1180,20 @@
       var start = _.after(2, _.once(QUnit.start));
 
       build(['-s', 'mobile'], function(data) {
-        var basename = path.basename(data.outputPath, '.js'),
-            context = createContext();
-
-        try {
-          vm.runInContext(data.source, context);
-        } catch(e) {
-          console.log(e);
-        }
-
         var array = [1, 2, 3],
+            basename = path.basename(data.outputPath, '.js'),
+            context = createContext(),
             object1 = [{ 'a': 1 }],
             object2 = [{ 'b': 2 }],
             object3 = [{ 'a': 1, 'b': 2 }],
             circular1 = { 'a': 1 },
-            circular2 = { 'a': 1 },
-            lodash = context._;
+            circular2 = { 'a': 1 };
 
         circular1.b = circular1;
         circular2.b = circular2;
+
+        vm.runInContext(data.source, context);
+        var lodash = context._;
 
         deepEqual(lodash.merge(object1, object2), object3, basename);
         deepEqual(lodash.sortBy([3, 2, 1], _.identity), array, basename);

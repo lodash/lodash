@@ -1124,6 +1124,7 @@
         var start = _.after(2, _.once(function() {
           if (dirs) {
             fs.rmdirSync(nestedPath);
+            fs.rmdirSync(path.dirname(nestedPath));
           }
           QUnit.start();
         }));

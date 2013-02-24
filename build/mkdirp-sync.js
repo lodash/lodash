@@ -19,19 +19,22 @@
    * @param {Number|String} mode The permission mode.
    */
   function mkdirpSync(dirname, mode) {
-    var separator = path.sep,
-        segments = dirname.split(separator),
+    var sep = path.sep,
         type = typeof mode;
 
+    // ensure relative paths are prefixed with `./`
+    if (!RegExp('^\\.?' + sep).test(dirname)) {
+      dirname = '.' + sep + dirname;
+    }
     if (!(type == 'number' || type == 'string')) {
       mode = '0777';
     }
-    segments.reduce(function(currPath, segment, index) {
+    dirname.split(sep).reduce(function(currPath, segment, index) {
       // skip leading separator of absolute paths
       if (index === 0 && currPath === '') {
-        return separator;
+        return sep;
       }
-      segment = currPath + (currPath === separator ? segment : separator + segment);
+      segment = currPath + (currPath === sep ? segment : sep + segment);
       try {
         segment = fs.realpathSync(segment);
       } catch(e) {

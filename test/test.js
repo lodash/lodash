@@ -15,7 +15,9 @@
         );
 
     var last = result[result.length - 1];
-    result = (result.length > min && last != 'test.js') ? last : '../lodash.js';
+    result = (result.length > min && !/test(?:\.js)?$/.test(last))
+      ? last
+      : '../lodash.js';
 
     try {
       return require('fs').realpathSync(result);
@@ -28,10 +30,11 @@
   var basename = /[\w.-]+$/.exec(filePath)[0];
 
   /** The `platform` object to check */
-  var platform =
+  var platform = (
     window.platform ||
     load('../vendor/platform.js/platform.js') ||
-    window.platform;
+    window.platform
+  );
 
   /** The unit testing framework */
   var QUnit = (function() {
@@ -47,12 +50,12 @@
   }());
 
   /** The `lodash` function to test */
-  var _ = window._ || (
-    _ = load(filePath) || window._,
-    _._ || _
-  );
-
-  _ = _.runInContext(window);
+  var _ =
+    window._ || (
+      _ = load(filePath) || window._,
+      _ = _._ || _,
+      _.runInContext(window)
+    );
 
   /** Used to pass falsey values to methods */
   var falsey = [

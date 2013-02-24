@@ -1513,6 +1513,14 @@
     var outputPath = options.reduce(function(result, value, index) {
       if (/-o|--output/.test(value)) {
         result = options[index + 1];
+        var cwd = process.cwd();
+        path.dirname(result).split(path.sep).forEach(function(pathSegment){
+          try {
+            fs.mkdirSync(pathSegment);
+          } catch(err){}
+          process.chdir(pathSegment);
+        });
+        process.chdir(cwd);
         result = path.join(fs.realpathSync(path.dirname(result)), path.basename(result));
       }
       return result;

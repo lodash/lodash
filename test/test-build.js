@@ -2,6 +2,9 @@
 ;(function(undefined) {
   'use strict';
 
+  /** Used to avoid `noglobal` false positives caused by `errno` leaked in Node.js */
+  global.errno = true;
+
   /** Load modules */
   var fs = require('fs'),
       path = require('path'),
@@ -12,10 +15,10 @@
 
   /** The unit testing framework */
   var QUnit = (
-    global.addEventListener || (global.addEventListener = Function.prototype),
+    global.addEventListener = Function.prototype,
     global.QUnit = require('../vendor/qunit/qunit/qunit.js'),
     require('../vendor/qunit-clib/qunit-clib.js').runInContext(global),
-    global.addEventListener === Function.prototype && delete global.addEventListener,
+    delete global.addEventListener,
     global.QUnit
   );
 
@@ -488,10 +491,10 @@
   QUnit.module('minified AMD snippet');
 
   (function() {
-    var start = _.once(QUnit.start);
+    var start = _.after(2, _.once(QUnit.start));
 
     asyncTest('`lodash`', function() {
-      build(['-s'], function(data) {
+      build(['-s', 'exclude='], function(data) {
         // used by r.js build optimizer
         var defineHasRegExp = /typeof\s+define\s*==(=)?\s*['"]function['"]\s*&&\s*typeof\s+define\.amd\s*==(=)?\s*['"]object['"]\s*&&\s*define\.amd/g,
             basename = path.basename(data.outputPath, '.js');
@@ -1206,6 +1209,7 @@
       'backbone legacy category=utilities minus=first,last',
       'legacy include=defer',
       'legacy underscore',
+      'modern strict include=isArguments,isArray,isFunction,isPlainObject,key',
       'underscore include=debounce,throttle plus=after minus=throttle',
       'underscore mobile strict category=functions exports=amd,global plus=pick,uniq',
     ]
@@ -1216,7 +1220,7 @@
     );
 
     commands.forEach(function(origCommand) {
-      _.times(5, function(index) {
+      _.times(4, function(index) {
         var command = origCommand;
 
         if (index == 1) {
@@ -1232,12 +1236,6 @@
           command = 'modern ' + command;
         }
         else if (index == 3) {
-          if (/strict/.test(command)) {
-            return;
-          }
-          command = 'strict ' + command;
-        }
-        else if (index == 4) {
           if (/category|legacy|underscore/.test(command)) {
             return;
           }
@@ -1327,8 +1325,6 @@
       process.exit(QUnit.config.stats.bad ? 1 : 0);
     }, timeLimit);
   }
-  // explicitly call `QUnit.start()` for Narwhal, Node.js, Rhino, and RingoJS
-  if (!global.document) {
-    QUnit.start();
-  }
+  QUnit.config.noglobals = true;
+  QUnit.start();
 }());

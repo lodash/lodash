@@ -3243,8 +3243,9 @@
     /**
      * Gets the first element of the `array`. If a number `n` is passed, the first
      * `n` elements of the `array` are returned. If a `callback` function is passed,
-     * the first elements the `callback` returns truthy for are returned. The `callback`
-     * is bound to `thisArg` and invoked with three arguments; (value, index, array).
+     * elements at the beginning of the array are returned as long as the `callback`
+     * returns truthy. The `callback` is bound to `thisArg` and invoked with three
+     * arguments; (value, index, array).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -3398,9 +3399,9 @@
     /**
      * Gets all but the last element of `array`. If a number `n` is passed, the
      * last `n` elements are excluded from the result. If a `callback` function
-     * is passed, the last elements the `callback` returns truthy for are excluded
-     * from the result. The `callback` is bound to `thisArg` and invoked with three
-     * arguments; (value, index, array).
+     * is passed, elements at the end of the array are excluded from the result
+     * as long as the `callback` returns truthy. The `callback` is bound to
+     * `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -3521,10 +3522,11 @@
     }
 
     /**
-     * Gets the last element of the `array`. If a number `n` is passed, the last
-     * `n` elements of the `array` are returned. If a `callback` function is passed,
-     * the last elements the `callback` returns truthy for are returned. The `callback`
-     * is bound to `thisArg` and invoked with three arguments; (value, index, array).
+     * Gets the last element of the `array`. If a number `n` is passed, the
+     * last `n` elements of the `array` are returned. If a `callback` function
+     * is passed, elements at the end of the array are returned as long as the
+     * `callback` returns truthy. The `callback` is bound to `thisArg` and
+     * invoked with three arguments;(value, index, array).
      *
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
@@ -3713,11 +3715,12 @@
     }
 
     /**
-     * The opposite of `_.initial`, this method gets all but the first value of `array`.
-     * If a number `n` is passed, the first `n` values are excluded from the result.
-     * If a `callback` function is passed, the first elements the `callback` returns
-     * truthy for are excluded from the result. The `callback` is bound to `thisArg`
-     * and invoked with three arguments; (value, index, array).
+     * The opposite of `_.initial`, this method gets all but the first value of
+     * `array`. If a number `n` is passed, the first `n` values are excluded from
+     * the result. If a `callback` function is passed, elements at the beginning
+     * of the array are excluded from the result as long as the `callback` returns
+     * truthy. The `callback` is bound to `thisArg` and invoked with three
+     * arguments; (value, index, array).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
      * callback will return the property value of the given element.

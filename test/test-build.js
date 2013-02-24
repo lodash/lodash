@@ -1073,6 +1073,44 @@
 
   /*--------------------------------------------------------------------------*/
 
+ QUnit.module('include command');
+
+  (function() {
+    var commands = [
+      'include=mixin',
+      'include=mixin,tap',
+      'include=mixin,value'
+    ];
+
+    commands.forEach(function(command, index) {
+      asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s', command], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
+              context = createContext(),
+              noop = function() {},
+              source = data.source;
+
+          vm.runInContext(data.source, context);
+          var lodash = context._;
+
+          lodash.mixin({ 'x': noop });
+          equal(lodash.x, noop, basename);
+
+          if (index) {
+            equal(typeof lodash.prototype.x, 'function', basename);
+          } else {
+            equal('x' in lodash.prototype.x, false, basename);
+          }
+          start();
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('output options');
 
   (function() {

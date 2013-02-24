@@ -1073,9 +1073,11 @@
   QUnit.module('output options');
 
   (function() {
+    var nestedDir = 'test/mkdir/';
     var commands = [
       '-o a.js',
-      '--output a.js'
+      '--output a.js',
+      '-o ' + nestedDir + 'a.js'
     ];
 
     commands.forEach(function(command, index) {
@@ -1086,6 +1088,7 @@
         build(['-s'].concat(command.split(' ')), function(data) {
           equal(path.basename(data.outputPath, '.js'), (++counter ? 'a.min' : 'a'), command);
           start();
+          fs.existsSync(nestedDir) && fs.rmdirSync(nestedDir);
         });
       });
     });

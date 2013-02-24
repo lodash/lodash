@@ -16,6 +16,12 @@
       postprocess = require('./post-compile.js'),
       tar = require('../vendor/tar/tar.js');
 
+  /** Add `fs.existsSync` for older versions of Node.js */
+  fs.existsSync || (fs.existsSync = path.existsSync);
+
+  /** Add `path.sep` for older versions of Node.js */
+  path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
+
   /** The Git object ID of `closure-compiler.tar.gz` */
   var closureId = '23cf67d0f0b979d97631fc108a2a43bb82225994';
 
@@ -41,7 +47,7 @@
   var mediaType = 'application/vnd.github.v3.raw';
 
   /** Used to detect the Node.js executable in command-line arguments */
-  var reNode = /(?:^|[\/\\])node(?:\.exe)?$/;
+  var reNode = RegExp('(?:^|' + path.sep + ')node(?:\\.exe)?$');
 
   /** Used to reference parts of the blob href */
   var location = (function() {
@@ -62,9 +68,6 @@
     'simple': 'SIMPLE_OPTIMIZATIONS',
     'advanced': 'ADVANCED_OPTIMIZATIONS'
   };
-
-  /** Reassign `existsSync` for older versions of Node.js */
-  fs.existsSync || (fs.existsSync = path.existsSync);
 
   /*--------------------------------------------------------------------------*/
 

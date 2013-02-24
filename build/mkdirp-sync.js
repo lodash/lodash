@@ -6,6 +6,11 @@
   var fs = require('fs'),
       path = require('path');
 
+  /** Add `path.sep` for older versions of Node.js */
+  path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
+
+  /*--------------------------------------------------------------------------*/
+
   /**
    * Makes the given `path` directory, without throwing errors for existing
    * directories and making parent directories as needed.
@@ -35,6 +40,8 @@
       return segment;
     });
   }
+
+  /*--------------------------------------------------------------------------*/
 
   // expose
   module.exports = mkdirpSync;

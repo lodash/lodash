@@ -2417,8 +2417,21 @@
       if (isRemoved(source, 'isFunction')) {
         source = removeIsFunctionFallback(source);
       }
-      if (isRemoved(source, 'mixin') || isRemoved(source, 'value')) {
-        source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
+      if (isRemoved(source, 'mixin')) {
+        // inline `_.mixin` call to ensure proper chaining behavior
+        source = source.replace(/^( *)mixin\(lodash\).+/m, function(match, indent) {
+          return indent + [
+            'forOwn(lodash, function(func, methodName) {',
+            '  lodash[methodName] = func;',
+            '',
+            '  lodash.prototype[methodName] = function() {',
+            '    var args = [this.__wrapped__];',
+            '    push.apply(args, arguments);',
+            '    return new lodash(func.apply(lodash, args));',
+            '  };',
+            '});'
+          ].join('\n' + indent);
+        });
       }
       if (isRemoved(source, 'value')) {
         source = removeHasObjectSpliceBug(source);

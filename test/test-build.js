@@ -1038,8 +1038,8 @@
 
   (function() {
     var commands = [
-      'iife=this["lodash"]=(function(window,undefined){%output%;return lodash}(this))',
-      'iife=define(function(window,undefined){return function(){%output%;return lodash}}(this));'
+      'iife=this["lodash"]=(function(window){%output%;return lodash}(this))',
+      'iife=define(function(window){return function(){%output%;return lodash}}(this));'
     ];
 
     commands.forEach(function(command) {
@@ -1216,7 +1216,7 @@
     );
 
     commands.forEach(function(origCommand) {
-      _.times(4, function(index) {
+      _.times(5, function(index) {
         var command = origCommand;
 
         if (index == 1) {
@@ -1225,13 +1225,19 @@
           }
           command = 'mobile ' + command;
         }
-        if (index == 2) {
+        else if (index == 2) {
           if (/legacy|modern/.test(command)) {
             return;
           }
           command = 'modern ' + command;
         }
-        if (index == 3) {
+        else if (index == 3) {
+          if (/strict/.test(command)) {
+            return;
+          }
+          command = 'strict ' + command;
+        }
+        else if (index == 4) {
           if (/category|legacy|underscore/.test(command)) {
             return;
           }

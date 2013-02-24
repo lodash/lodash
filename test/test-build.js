@@ -1101,7 +1101,7 @@
           if (index) {
             equal(typeof lodash.prototype.x, 'function', basename);
           } else {
-            equal('x' in lodash.prototype.x, false, basename);
+            equal('x' in lodash.prototype, false, basename);
           }
           start();
         });

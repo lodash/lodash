@@ -131,7 +131,7 @@
     'memoize': [],
     'merge': ['forEach', 'forOwn', 'isArray', 'isObject', 'isPlainObject'],
     'min': ['isArray', 'isEqual', 'isString', 'keys'],
-    'mixin': ['forEach', 'forOwn', 'functions'],
+    'mixin': ['forEach', 'functions'],
     'noConflict': [],
     'object': [],
     'omit': ['forIn', 'indexOf'],
@@ -163,7 +163,7 @@
     'union': ['uniq'],
     'uniq': ['indexOf', 'isEqual', 'keys'],
     'uniqueId': [],
-    'value': [],
+    'value': ['forOwn'],
     'values': ['keys'],
     'where': ['filter'],
     'without': ['indexOf'],
@@ -983,9 +983,12 @@
     // grab the method assignments snippet
     snippet = getMethodAssignments(source);
 
+    // remove method assignment  from `lodash.prototype`
+    source = source.replace(RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=.+\\n', 'm'), '');
+
     // remove assignment and aliases
     var modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
-      return result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + otherName + ' *= *.+\\n', 'm'), '');
+      return result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + otherName + ' *=.+\\n', 'm'), '');
     }, snippet);
 
     // replace with the modified snippet
@@ -2265,16 +2268,16 @@
               modified = snippet;
 
           if (!exposeAssign) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *= *.+\n/m, '');
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *=.+\n/m, '');
           }
           if (!exposeForIn) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *= *.+\n/m, '');
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *=.+\n/m, '');
           }
           if (!exposeForOwn) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forOwn *= *.+\n/m, '');
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forOwn *=.+\n/m, '');
           }
           if (!exposeIsPlainObject) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *= *.+\n/m, '');
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *=.+\n/m, '');
           }
           source = source.replace(snippet, function() {
             return modified;

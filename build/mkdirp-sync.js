@@ -12,35 +12,27 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Makes the given `path` directory, without throwing errors for existing
+   * Makes the given `dirname` directory, without throwing errors for existing
    * directories and making parent directories as needed.
    *
    * @param {String} dirname The path of the directory.
-   * @param {Number|String} mode The permission mode.
+   * @param {Number|String} [mode='0777'] The permission mode.
    */
   function mkdirpSync(dirname, mode) {
-    var sep = path.sep,
-        type = typeof mode;
+    var sep = path.sep;
 
     // ensure relative paths are prefixed with `./`
     if (!RegExp('^\\.?' + sep).test(dirname)) {
       dirname = '.' + sep + dirname;
     }
-    if (!(type == 'number' || type == 'string')) {
-      mode = '0777';
-    }
-    dirname.split(sep).reduce(function(currPath, segment, index) {
-      // skip leading separator of absolute paths
-      if (index === 0 && currPath === '') {
-        return sep;
-      }
-      segment = currPath + (currPath === sep ? segment : sep + segment);
+    dirname.split(sep).reduce(function(currPath, segment) {
+      currPath += sep + segment;
       try {
-        segment = fs.realpathSync(segment);
+        currPath = fs.realpathSync(currPath);
       } catch(e) {
-        fs.mkdirSync(segment, mode);
+        fs.mkdirSync(currPath, mode);
       }
-      return segment;
+      return currPath;
     });
   }
 

@@ -209,7 +209,7 @@ To avoid potential issues, update `npm` before installing Lo-Dash:
 npm install npm -g
 ```
 
-In [Node.js](http://nodejs.org/) and [RingoJS v0.8.0+](http://ringojs.org/):
+In [Node.js](http://nodejs.org/) and [RingoJS ≥ v0.8.0](http://ringojs.org/):
 
 ```js
 var _ = require('lodash');
@@ -220,7 +220,7 @@ var _ = require('lodash/lodash.underscore');
 
 **Note:** If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.
 
-In [RingoJS v0.7.0-](http://ringojs.org/):
+In [RingoJS ≤ v0.7.0](http://ringojs.org/):
 
 ```js
 var _ = require('lodash')._;

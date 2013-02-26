@@ -215,7 +215,7 @@ In [Node.js](http://nodejs.org/) and [RingoJS ≥ v0.8.0](http://ringojs.org/):
 var _ = require('lodash');
 
 // or as a drop-in replacement for Underscore
-var _ = require('lodash/lodash.underscore');
+var _ = require('lodash/dist/lodash.underscore');
 ```
 
 **Note:** If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.

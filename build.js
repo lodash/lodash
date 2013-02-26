@@ -1109,6 +1109,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeKeysOptimization(source) {
+    source = removeVar(source, 'isJSC');
     source = removeVar(source, 'isKeysFast');
 
     // remove optimized branch in `iteratorTemplate`

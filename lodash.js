@@ -172,8 +172,10 @@
 
     /** Detect various environments */
     var isIeOpera = !!context.attachEvent,
-        isJSC = !/\n{2,}/.test(Function()),
         isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
+
+    /* On its own line so it can be removed for mobile builds */
+    var isJSC = !/\n{2,}/.test(Function());
 
     /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
     var isBindFast = nativeBind && !isV8;

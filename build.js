@@ -93,6 +93,7 @@
     'difference': ['indexOf'],
     'escape': [],
     'every': ['identity', 'isArray', 'isEqual', 'keys'],
+    'fallback' : ['isUndefined'],
     'filter': ['identity', 'isArray', 'isEqual', 'keys'],
     'find': ['forEach', 'identity', 'isEqual', 'keys'],
     'first': [],

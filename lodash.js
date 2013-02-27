@@ -289,7 +289,7 @@
      * `union`, `uniq`, `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
-     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
+     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `fallback`, `find`, `has`,
      * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
      * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
@@ -4531,6 +4531,20 @@
       return string == null ? '' : (string + '').replace(reUnescapedHtml, escapeHtmlChar);
     }
 
+    function fallback(value, defaultValue, callback) {
+      if (callback == null) {
+        callback = function(v) {
+          return !isUndefined(v);
+        }
+      }
+
+      if (callback(value)) {
+        return value;
+      } else {
+        return defaultValue;
+      }
+    }
+
     /**
      * This function returns the first argument passed to it.
      *
@@ -5060,6 +5074,7 @@
     lodash.contains = contains;
     lodash.escape = escape;
     lodash.every = every;
+    lodash.fallback = fallback;
     lodash.find = find;
     lodash.has = has;
     lodash.identity = identity;

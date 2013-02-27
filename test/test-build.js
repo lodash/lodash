@@ -168,6 +168,7 @@
     'debounce',
     'defer',
     'delay',
+    'fallback',
     'memoize',
     'once',
     'partial',

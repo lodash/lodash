@@ -96,6 +96,7 @@
     'every',
     'exports',
     'extend',
+    'fallback',
     'filter',
     'find',
     'first',

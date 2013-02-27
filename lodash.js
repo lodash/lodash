@@ -173,7 +173,7 @@
         nativeRandom = Math.random;
 
     /** Detect various environments */
-    var isIeOpera = !!context.attachEvent,
+    var isIeOpera = reNative.test(context.attachEvent),
         isJSC = !/\n{2,}/.test(Function()),
         isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
@@ -5224,7 +5224,7 @@
     });
   }
   // check for `exports` after `define` in case a build optimizer adds an `exports` object
-  else if (freeExports) {
+  else if (freeExports && !freeExports.nodeType) {
     // in Node.js or RingoJS v0.8.0+
     if (freeModule) {
       (freeModule.exports = _)._ = _;

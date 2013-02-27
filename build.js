@@ -529,7 +529,7 @@
       '      _ = lodash;',
       '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
       '    });',
-      "  } else if (freeExports) {",
+      "  } else if (freeExports && !freeExports.nodeType) {",
       "    _ = require('" + options.moduleId + "');",
       "    if (freeModule) {",
       '      (freeModule.exports = templates).templates = templates;',
@@ -2417,9 +2417,9 @@
       }
       // remove `if (freeExports) {...}` if it's empty
       if (isAMD && isGlobal) {
-        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}\n+/, '');
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}\n+/, '');
       } else {
-        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n+/, '$1\n');
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n+/, '$1\n');
       }
     }());
 

@@ -672,6 +672,37 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.fallback');
+
+  (function() {
+    test('should prefer the first argument if callback returns true', function() {
+      var actual = _.fallback("foo", "bar", _.isString);
+      strictEqual(actual, "foo");
+    });
+
+    test('should prefer the second argument if callback returns false', function () {
+      var actual = _.fallback(35, "bar", _.isString);
+      strictEqual(actual, "bar");
+    });
+
+    test('should return second argument if first undefined and no callback', function () {
+      var actual = _.fallback(undefined, "bar");
+      strictEqual(actual, "bar");
+    });
+
+    test('should return first argument if first null and no callback', function () {
+      var actual = _.fallback(null, "bar");
+      strictEqual(actual, null);
+    });
+
+    test('should return first argument if first regular value and no callback', function () {
+      var actual = _.fallback("foo", "bar");
+      strictEqual(actual, "foo");
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.filter');
 
   (function() {

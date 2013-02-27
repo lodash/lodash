@@ -289,7 +289,7 @@
      * `union`, `uniq`, `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
-     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
+     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `fallback`, `find`, `has`,
      * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
      * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
@@ -4532,6 +4532,41 @@
     }
 
     /**
+     * Returns `value` if `callback` returns a truthy value for it. Returns `defaultValue`
+     * otherwise. If no `callback` is given, then fallback returns `value` if it's not
+     * undefined, which is helpful when you're trying to give your functions optional
+     * parameters.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {Mixed} value The value to return if `callback` returns a truthy value.
+     * @param {Mixed} defaultValue The value to return if `callback` returns a falsey value.
+     * @param {Function} [callback] Predicate function to check `value` with.
+     * @returns {Mixed} One of either `value` or `defaultValue`.
+     * @example
+     *
+     * // Default value of epsilon is 0.001
+     * function closeEnough(x, y, epsilon) {
+     *   epsilon = _(epsilon).fallback(0.001);
+     *   return Math.abs(x-y) <= epsilon;
+     * }
+     */
+    function fallback(value, defaultValue, callback) {
+      if (callback == null) {
+        callback = function(v) {
+          return !isUndefined(v);
+        }
+      }
+
+      if (callback(value)) {
+        return value;
+      } else {
+        return defaultValue;
+      }
+    }
+
+    /**
      * This function returns the first argument passed to it.
      *
      * @static
@@ -5060,6 +5095,7 @@
     lodash.contains = contains;
     lodash.escape = escape;
     lodash.every = every;
+    lodash.fallback = fallback;
     lodash.find = find;
     lodash.has = has;
     lodash.identity = identity;

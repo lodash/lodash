@@ -151,7 +151,7 @@
     'reject': ['filter', 'identity', 'isEqual', 'keys'],
     'rest': [],
     'result': ['isFunction'],
-    'runInContext': [],
+    'runInContext': ['extend'],
     'shuffle': ['forEach'],
     'size': ['keys'],
     'some': ['identity', 'isArray', 'isEqual', 'keys'],
@@ -972,15 +972,16 @@
     if (snippet) {
       if (funcName == 'runInContext') {
         source = source.replace(snippet, function() {
-          return snippet.replace(/^[\s\S]+?\n( *).+?context *=.+(\n[\s\S]+?\n)\1return lodash[\s\S]+$/, function() {
-            return arguments[2].replace(/^ {4}/gm, '  ');
-          });
+          return snippet
+            .replace(/^[\s\S]+?function runInContext[\s\S]+?context *= *context.+| *return lodash[\s\S]+$/g, '')
+            .replace(/^ {4}/gm, '  ');
         });
 
         source = source
           .replace(/context/g, 'window')
           .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
-          .replace(/^ *var lodash *= *runInContext.+\n+/m, '');
+          .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
+          .replace(/^ *var _ *=.+\n+/m, '');
       }
       else {
         source = source.replace(snippet, '');

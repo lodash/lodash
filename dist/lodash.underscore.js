@@ -333,10 +333,8 @@
           : partialArgs;
       }
       if (this instanceof bound) {
-        // ensure `new bound` is an instance of `bound` and `func`
-        noop.prototype = func.prototype;
-        thisBinding = new noop;
-        noop.prototype = null;
+        // ensure `new bound` is an instance of `func`
+        thisBinding = createObject(func.prototype);
 
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
@@ -404,6 +402,20 @@
       };
     }
     return func;
+  }
+
+  /**
+   * Creates a new object that inherits from the given `prototype` object.
+   *
+   * @private
+   * @param {Object} prototype The prototype object.
+   * @returns {Object} Returns the new object.
+   */
+  function createObject(prototype) {
+    noop.prototype = prototype;
+    var result = new noop;
+    noop.prototype = null;
+    return result;
   }
 
   /**

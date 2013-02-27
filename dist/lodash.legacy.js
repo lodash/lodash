@@ -136,7 +136,7 @@
         RegExp = context.RegExp,
         String = context.String;
 
-    /** Used for `Array`, `Math`, and `Object` method references */
+    /** Used for `Array` and `Object` method references */
     var arrayRef = Array(),
         objectRef = Object();
 
@@ -160,10 +160,6 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeRandom = Math.random;
-
-    /** Detect various environments */
-    var isIeOpera = !!context.attachEvent,
-        isJSC = !/\n{2,}/.test(Function());
 
     /**
      * Detect the JScript [[DontEnum]] bug:

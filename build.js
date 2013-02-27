@@ -844,8 +844,8 @@
    */
   function matchFunction(source, funcName) {
     var result = source.match(RegExp(
-      // match multi-line comment block (could be on a single line)
-      '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/\\n)?' +
+      // match multi-line comment block
+      '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
       // begin non-capturing group
       '( *)(?:' +
       // match a function declaration
@@ -1109,6 +1109,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeKeysOptimization(source) {
+    source = removeVar(source, 'isJSC');
     source = removeVar(source, 'isKeysFast');
 
     // remove optimized branch in `iteratorTemplate`
@@ -1280,7 +1281,8 @@
       // match a variable declaration that's not part of a declaration list
       '( *)var ' + varName + ' *= *(?:.+?(?:;|&&\\n[^;]+;)|(?:\\w+\\(|{)[\\s\\S]+?\\n\\1.+?;)\\n|' +
       // match a variable in a declaration list
-      '\\n +' + varName + ' *=.+?,'
+      '^ *' + varName + ' *=.+?,\\n',
+      'm'
     ), '');
 
     // remove a varaible at the start of a variable declaration list
@@ -1703,6 +1705,7 @@
       }
       if (isMobile || isUnderscore) {
         source = removeKeysOptimization(source);
+        source = removeSetImmediate(source);
       }
       if (isModern || isUnderscore) {
         source = removeHasDontEnumBug(source);
@@ -2209,7 +2212,7 @@
       if (isLegacy) {
         source = removeSetImmediate(source);
 
-        _.each(['isBindFast', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
+        _.each(['isBindFast', 'isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
           source = removeVar(source, varName);
         });
 

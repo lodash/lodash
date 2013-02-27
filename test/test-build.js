@@ -1239,12 +1239,17 @@
       var sources = [];
 
       var check = _.after(2, _.once(function() {
+        ok(_.every(sources, function(source) {
+          // remove `Function` in `_.template` before testing for additional use
+          return !/\bFunction\(/.test(source.replace(/= *\w+\(\w+, *['"]return.+?apply[^)]+\)/, ''));
+        }));
+
         equal(sources[0], sources[1]);
         QUnit.start();
       }));
 
       var callback = function(data) {
-        // remove copyright header and append source
+        // remove copyright header and append to `sources`
         sources.push(data.source.replace(/^\/\**[\s\S]+?\*\/\n/, ''));
         check();
       };

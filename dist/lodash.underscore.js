@@ -177,13 +177,13 @@
    * `union`, `uniq`, `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
    *
    * The non-chainable wrapper functions are:
-   * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`, `identity`,
-   * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
-   * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
-   * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
-   * `lastIndexOf`, `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`,
-   * `result`, `shift`, `size`, `some`, `sortedIndex`, `template`, `unescape`,
-   * `uniqueId`, and `value`
+   * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
+   * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
+   * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
+   * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
+   * `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `parseInt`,
+   * `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`,
+   * `sortedIndex`, `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
    *
    * The wrapper functions `first` and `last` return wrapped values when `n` is
    * passed, otherwise they return unwrapped values.

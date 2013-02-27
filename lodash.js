@@ -169,6 +169,7 @@
         nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
         nativeMax = Math.max,
         nativeMin = Math.min,
+        nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
 
     /** Detect various environments */
@@ -288,13 +289,13 @@
      * `union`, `uniq`, `unshift`, `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
-     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`, `identity`,
-     * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
-     * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
-     * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
-     * `lastIndexOf`, `mixin`, `noConflict`, `pop`, `random`, `reduce`, `reduceRight`,
-     * `result`, `shift`, `size`, `some`, `sortedIndex`, `template`, `unescape`,
-     * `uniqueId`, and `value`
+     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
+     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
+     * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
+     * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
+     * `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`,
+     * `sortedIndex`, `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
      *
      * The wrapper functions `first` and `last` return wrapped values when `n` is
      * passed, otherwise they return unwrapped values.
@@ -2114,6 +2115,27 @@
       }
       return result;
     }
+
+    /**
+     * Parses the given `value` into an integer of the specified `radix`.
+     *
+     * Note: This method avoids differences in ES3 and ES5 `parseInt`
+     * implementations. See http://es5.github.com/#E.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {Mixed} value The value to parse.
+     * @returns {Number} Returns the new integer value.
+     * @example
+     *
+     * _.parseInt('08');
+     * // => 8
+     */
+    var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
+      // Firefox and Opera have not changed to the ES5 specified implementation of `parseInt`
+      return nativeParseInt(isString(value) ? value.replace(/^0+(?=.$)/, '') : value, radix || 0);
+    };
 
     /**
      * Creates a shallow clone of `object` composed of the specified properties.
@@ -4666,7 +4688,6 @@
      *  interpolate - The "interpolate" delimiter regexp.
      *  sourceURL - The sourceURL of the template's compiled source.
      *  variable - The data object variable name.
-     *
      * @returns {Function|String} Returns a compiled function when no `data` object
      *  is given, else it returns the interpolated text.
      * @example
@@ -5063,6 +5084,7 @@
     lodash.lastIndexOf = lastIndexOf;
     lodash.mixin = mixin;
     lodash.noConflict = noConflict;
+    lodash.parseInt = parseInt;
     lodash.random = random;
     lodash.reduce = reduce;
     lodash.reduceRight = reduceRight;

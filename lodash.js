@@ -4531,6 +4531,26 @@
       return string == null ? '' : (string + '').replace(reUnescapedHtml, escapeHtmlChar);
     }
 
+    /**
+     * Returns value if callback returns a truthy value for it. Returns defaultValue
+     * otherwise. If no callback is given, then fallback returns value if it's not
+     * undefined, which is helpful when you're trying to give your functions optional
+     * parameters.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {Mixed} value The value to return if `callback` returns a truthy value.
+     * @param {Mixed} defaultValue The value to return if `callback` returns a falsey value.
+     * @param {Function} [callback] Predicate function to check `value` with.
+     * @returns {Mixed} One of either `value` or `defaultValue`.
+     * @example
+     *
+     * // Default value of epsilon is 0.001
+     * function closeEnough(x, y, epsilon) {
+     *   return Math.abs(x-y) <= _(epsilon).fallback(0.001);
+     * }
+     */
     function fallback(value, defaultValue, callback) {
       if (callback == null) {
         callback = function(v) {

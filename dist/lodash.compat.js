@@ -158,6 +158,7 @@
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectRef.hasOwnProperty,
         push = arrayRef.push,
+        setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
         toString = objectRef.toString;
 

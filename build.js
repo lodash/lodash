@@ -1239,7 +1239,7 @@
   }
 
   /**
-   * Removes all `hasObjectSpliceByg` references from `source`.
+   * Removes all `hasObjectSpliceBug` references from `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -1249,18 +1249,25 @@
     source = removeVar(source, 'hasObjectSpliceBug')
 
     // remove `hasObjectSpliceBug` fix from the `Array` function mixins
-    return source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
+
+    return source;
   }
 
   /**
-   * Removes the `setImmediate` fork of `_.defer`.
+   * Removes all `setImmediate` references from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
   function removeSetImmediate(source) {
-    return source.replace(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/, '');
+    source = removeVar(source, 'setImmediate');
+
+    // remove the `setImmediate` fork of `_.defer`.
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/, '');
+
+    return source;
   }
 
   /**

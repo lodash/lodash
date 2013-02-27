@@ -210,6 +210,7 @@
     'merge',
     'omit',
     'pairs',
+    'parseInt',
     'pick',
     'values'
   ];
@@ -291,6 +292,7 @@
     'forOwn',
     'isPlainObject',
     'merge',
+    'parseInt',
     'partialRight',
     'runInContext'
   ]));

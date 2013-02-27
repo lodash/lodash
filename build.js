@@ -140,6 +140,7 @@
     'omit': ['forIn', 'indexOf'],
     'once': [],
     'pairs': ['keys'],
+    'parseInt': ['isString'],
     'partial': ['isFunction', 'isObject'],
     'partialRight': ['isFunction', 'isObject'],
     'pick': ['forIn', 'isObject'],
@@ -260,6 +261,7 @@
     'forOwn',
     'isPlainObject',
     'merge',
+    'parseInt',
     'partialRight',
     'runInContext'
   ]));
@@ -2492,6 +2494,9 @@
       }
       if (isRemoved(source, 'keys')) {
         source = removeFunction(source, 'shimKeys');
+      }
+      if (isRemoved(source, 'parseInt')) {
+        source = removeVar(source, 'nativeParseInt');
       }
       if (isRemoved(source, 'template')) {
         // remove `templateSettings` assignment

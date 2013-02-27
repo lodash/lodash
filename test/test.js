@@ -1767,6 +1767,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.parseInt');
+
+  (function() {
+    test('should parse strings with leading zeros with a `radix` of 10 by default (test in Firefox and Opera)', function() {
+      equal(_.parseInt('08'), 8);
+    });
+
+    test('should internally use a radix of 10 if `radix` is `undefined` or `0`', function() {
+      equal(_.parseInt('10', 0), 10);
+      equal(_.parseInt('10'), 10);
+      equal(_.parseInt('10', undefined), 10);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('partial methods');
 
   _.each(['partial', 'partialRight'], function(methodName) {

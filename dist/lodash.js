@@ -130,7 +130,7 @@
         RegExp = context.RegExp,
         String = context.String;
 
-    /** Used for `Array`, `Math`, and `Object` method references */
+    /** Used for `Array` and `Object` method references */
     var arrayRef = Array(),
         objectRef = Object();
 

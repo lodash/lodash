@@ -1061,8 +1061,8 @@
 
   (function() {
     var commands = [
-      'iife=this["lodash"]=(function(window){%output%;return lodash}(this))',
-      'iife=define(function(window){return function(){%output%;return lodash}}(this));'
+      'iife=this["lodash"]=(function(window){%output%;return _}(this))',
+      'iife=define(function(window){return function(){%output%;return _}}(this));'
     ];
 
     commands.forEach(function(command) {

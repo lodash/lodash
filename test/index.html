@@ -4,12 +4,18 @@
 		<meta charset="utf-8">
 		<title>Lo-Dash Test Suite</title>
 		<link rel="stylesheet" href="../vendor/qunit/qunit/qunit.css">
+		<style>
+			#exports {
+				display: none;
+			}
+		</style>
 	</head>
 	<body>
-		<div id="qunit"></div>
 		<script src="../vendor/platform.js/platform.js"></script>
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="test-ui.js"></script>
+		<div id="qunit"></div>
+		<div id="exports"></div>
 		<script>
 			// set a bad shim
 			Object._keys = Object.keys;

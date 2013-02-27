@@ -96,7 +96,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** Used for `Array`, `Math`, and `Object` method references */
+  /** Used for `Array` and `Object` method references */
   var arrayRef = Array(),
       objectRef = Object();
 
@@ -132,7 +132,6 @@
 
   /** Detect various environments */
   var isIeOpera = !!window.attachEvent,
-      isJSC = !/\n{2,}/.test(Function()),
       isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
@@ -3484,10 +3483,6 @@
   function defer(func) {
     var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
-  }
-  // use `setImmediate` if it's available in Node.js
-  if (isV8 && freeModule && typeof setImmediate == 'function') {
-    defer = bind(setImmediate, window);
   }
 
   /**

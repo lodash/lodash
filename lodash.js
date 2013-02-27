@@ -4532,8 +4532,8 @@
     }
 
     /**
-     * Returns value if callback returns a truthy value for it. Returns defaultValue
-     * otherwise. If no callback is given, then fallback returns value if it's not
+     * Returns `value` if `callback` returns a truthy value for it. Returns `defaultValue`
+     * otherwise. If no `callback` is given, then fallback returns `value` if it's not
      * undefined, which is helpful when you're trying to give your functions optional
      * parameters.
      *
@@ -4548,7 +4548,8 @@
      *
      * // Default value of epsilon is 0.001
      * function closeEnough(x, y, epsilon) {
-     *   return Math.abs(x-y) <= _(epsilon).fallback(0.001);
+     *   epsilon = _(epsilon).fallback(0.001);
+     *   return Math.abs(x-y) <= epsilon;
      * }
      */
     function fallback(value, defaultValue, callback) {

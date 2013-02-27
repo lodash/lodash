@@ -2114,6 +2114,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.runInContext');
+
+  (function() {
+    test('should not require a fully populated `context` object', function() {
+      var pass = false;
+
+      var lodash = _.runInContext({
+        'setTimeout': function(callback) {
+          callback();
+        }
+      });
+
+      lodash.delay(function() { pass = true; }, 32);
+      ok(pass);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.shuffle');
 
   (function() {
@@ -2406,26 +2425,11 @@
       var callCount = 0,
           dateCount = 0;
 
-      var context = {
-        'Array': Array,
-        'Boolean': Boolean,
-        'Function': Function,
-        'Object': Object,
-        'Math': Math,
-        'Number': Number,
-        'RegExp': RegExp,
-        'String': String,
-        'clearTimeout': clearTimeout,
-        'isFinite': isFinite,
-        'isNaN': isNaN,
-        'setTimeout': setTimeout
-      };
-
-      var lodash = _.runInContext(_.extend(context, {
+      var lodash = _.runInContext({
         'Date': function() {
           return ++dateCount < 3 ? new Date : Object(Infinity);
         }
-      }));
+      });
 
       var throttled = lodash.throttle(function() {
         callCount++;

@@ -122,7 +122,7 @@
    * @returns {Function} Returns the `lodash` function.
    */
   function runInContext(context) {
-    context || (context = window);
+    context = context ? _.extend(createObject(window), context) : window;
 
     /** Native constructor references */
     var Array = context.Array,
@@ -630,10 +630,8 @@
             : partialArgs;
         }
         if (this instanceof bound) {
-          // ensure `new bound` is an instance of `bound` and `func`
-          noop.prototype = func.prototype;
-          thisBinding = new noop;
-          noop.prototype = null;
+          // ensure `new bound` is an instance of `func`
+          thisBinding = createObject(func.prototype);
 
           // mimic the constructor's `return` behavior
           // http://es5.github.com/#x13.2.2
@@ -755,6 +753,20 @@
         createCallback, hasOwnProperty, isArguments, isArray, isString,
         objectTypes, nativeKeys
       );
+    }
+
+    /**
+     * Creates a new object that inherits from the given `prototype` object.
+     *
+     * @private
+     * @param {Object} prototype The prototype object.
+     * @returns {Object} Returns the new object.
+     */
+    function createObject(prototype) {
+      noop.prototype = prototype;
+      var result = new noop;
+      noop.prototype = null;
+      return result;
     }
 
     /**
@@ -5172,7 +5184,7 @@
   /*--------------------------------------------------------------------------*/
 
   // expose Lo-Dash
-  var lodash = runInContext();
+  var _ = runInContext();
 
   // some AMD build optimizers, like r.js, check for specific condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
@@ -5180,27 +5192,27 @@
     // case Lo-Dash was injected by a third-party script and not intended to be
     // loaded as a module. The global assignment can be reverted in the Lo-Dash
     // module via its `noConflict()` method.
-    window._ = lodash;
+    window._ = _;
 
     // define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module
     define(function() {
-      return lodash;
+      return _;
     });
   }
   // check for `exports` after `define` in case a build optimizer adds an `exports` object
   else if (freeExports) {
     // in Node.js or RingoJS v0.8.0+
     if (freeModule) {
-      (freeModule.exports = lodash)._ = lodash;
+      (freeModule.exports = _)._ = _;
     }
     // in Narwhal or RingoJS v0.7.0-
     else {
-      freeExports._ = lodash;
+      freeExports._ = _;
     }
   }
   else {
     // in a browser or Rhino
-    window._ = lodash;
+    window._ = _;
   }
 }(this));

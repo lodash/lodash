@@ -159,6 +159,7 @@
     'once',
     'Number',
     'pairs',
+    'parseInt',
     'partial',
     'partialRight',
     'pick',

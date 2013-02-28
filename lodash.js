@@ -2111,9 +2111,9 @@
     }
 
     /**
-     * Parses the given `value` into an integer of the specified `radix`.
+     * Converts the given `value` into an integer of the specified `radix`.
      *
-     * Note: This method avoids differences in ES3 and ES5 `parseInt`
+     * Note: This method avoids differences in native ES3 and ES5 `parseInt`
      * implementations. See http://es5.github.com/#E.
      *
      * @static
@@ -2127,7 +2127,7 @@
      * // => 8
      */
     var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
-      // Firefox and Opera have not changed to the ES5 specified implementation of `parseInt`
+      // Firefox and Opera still follow the ES3 specified implementation of `parseInt`
       return nativeParseInt(isString(value) ? value.replace(/^0+(?=.$)/, '') : value, radix || 0);
     };
 

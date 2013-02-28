@@ -75,27 +75,17 @@
   var setDescriptor = (function() {
     try {
       var o = {},
-          fn = (fn = Object.defineProperty)(o, o, o) && fn;
+          fn = Object.defineProperty,
+          result = fn(o, o, o) && fn;
     } catch(e) { }
-    return fn;
+    return result;
   }());
 
   /** Shortcut used to convert array-like objects to arrays */
   var slice = Array.prototype.slice;
 
   /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
-  var shadowed = {
-    'constructor': 1,
-    'hasOwnProperty': 2,
-    'isPrototypeOf': 3,
-    'propertyIsEnumerable': 4,
-    'toLocaleString': 5,
-    'toString': 6,
-    'valueOf': 7
-  };
-
-  /** Used to check problem JScript properties too */
-  var shadowedKeys = [
+  var shadowedProps = [
     'constructor',
     'hasOwnProperty',
     'isPrototypeOf',
@@ -104,6 +94,9 @@
     'toString',
     'valueOf'
   ];
+
+  /** Used to check problem JScript properties too */
+  var shadowedObject = _.invert(shadowedProps);
 
   /*--------------------------------------------------------------------------*/
 
@@ -414,10 +407,10 @@
     });
 
     test('should clone problem JScript properties (test in IE < 9)', function() {
-      deepEqual(_.clone(shadowed), shadowed);
-      notEqual(_.clone(shadowed), shadowed);
-      deepEqual(_.cloneDeep(shadowed), shadowed);
-      notEqual(_.cloneDeep(shadowed), shadowed);
+      deepEqual(_.clone(shadowedObject), shadowedObject);
+      notEqual(_.clone(shadowedObject), shadowedObject);
+      deepEqual(_.cloneDeep(shadowedObject), shadowedObject);
+      notEqual(_.cloneDeep(shadowedObject), shadowedObject);
     });
 
     _.each([
@@ -880,8 +873,8 @@
 
     test('lodash.' + methodName + ' fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       var keys = [];
-      func(shadowed, function(value, key) { keys.push(key); });
-      deepEqual(keys.sort(), shadowedKeys);
+      func(shadowedObject, function(value, key) { keys.push(key); });
+      deepEqual(keys.sort(), shadowedProps);
     });
 
     test('lodash.' + methodName + ' skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
@@ -910,9 +903,9 @@
 
     test('lodash.' + methodName + ' should assign problem JScript properties (test in IE < 9)', function() {
       var object = {
-        'constructor': 1,
-        'hasOwnProperty': 2,
-        'isPrototypeOf': 3,
+        'constructor': '0',
+        'hasOwnProperty': '1',
+        'isPrototypeOf': '2',
         'propertyIsEnumerable': undefined,
         'toLocaleString': undefined,
         'toString': undefined,
@@ -920,13 +913,13 @@
       };
 
       var source = {
-        'propertyIsEnumerable': 4,
-        'toLocaleString': 5,
-        'toString': 6,
-        'valueOf': 7
+        'propertyIsEnumerable': '3',
+        'toLocaleString': '4',
+        'toString': '5',
+        'valueOf': '6'
       };
 
-      deepEqual(func(object, source), shadowed);
+      deepEqual(func(object, source), shadowedObject);
     });
 
     test('lodash.' + methodName + ' skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
@@ -1192,7 +1185,7 @@
     var args = arguments;
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
-      equal(_.isEmpty(shadowed), false);
+      equal(_.isEmpty(shadowedObject), false);
     });
 
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
@@ -1235,7 +1228,7 @@
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
-      strictEqual(_.isEqual(shadowed, {}), false);
+      strictEqual(_.isEqual(shadowedObject, {}), false);
     });
 
     test('should return `true` for like-objects from different documents', function() {
@@ -1434,7 +1427,7 @@
       Foo.prototype.a = 1;
 
       deepEqual(_.keys(Foo.prototype), ['a']);
-      deepEqual(_.keys(shadowed).sort(), shadowedKeys);
+      deepEqual(_.keys(shadowedObject).sort(), shadowedProps);
     });
 
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
@@ -2186,7 +2179,7 @@
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
-      equal(_.size(shadowed), 7);
+      equal(_.size(shadowedObject), 7);
     });
 
     _.each({
@@ -2655,8 +2648,8 @@
     });
 
     test('should filter by problem JScript properties (test in IE < 9)', function() {
-      var collection = [shadowed];
-      deepEqual(_.where(collection, shadowed), [shadowed]);
+      var collection = [shadowedObject];
+      deepEqual(_.where(collection, shadowedObject), [shadowedObject]);
     });
 
     test('should work with an object for `collection`', function() {

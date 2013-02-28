@@ -933,7 +933,9 @@
           'forOwn',
           'isPlainObject',
           'merge',
-          'partialRight'
+          'parseInt',
+          'partialRight',
+          'runInContext'
         ], function(methodName) {
           equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
         });

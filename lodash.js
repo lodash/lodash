@@ -65,7 +65,7 @@
   var contextProps = [
     'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object', 'RegExp',
     'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN', 'parseInt',
-    'setImmediate', 'setTimeout', 'toString'
+    'setImmediate', 'setTimeout'
   ];
 
   /** Used to fix the JScript [[DontEnum]] bug */

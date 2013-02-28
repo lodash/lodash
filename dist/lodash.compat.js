@@ -62,8 +62,15 @@
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
+  /** Used to assign default `context` object properties */
+  var contextProps = [
+    'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object', 'RegExp',
+    'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN', 'parseInt',
+    'setImmediate', 'setTimeout', 'toString'
+  ];
+
   /** Used to fix the JScript [[DontEnum]] bug */
-  var shadowed = [
+  var shadowedProps = [
     'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
     'toLocaleString', 'toString', 'valueOf'
   ];
@@ -123,7 +130,7 @@
    * @returns {Function} Returns the `lodash` function.
    */
   function runInContext(context) {
-    context = context ? _.extend(createObject(window), context) : window;
+    context = context ? _.defaults({}, context, _.pick(window, contextProps)) : window;
 
     /** Native constructor references */
     var Array = context.Array,
@@ -174,7 +181,7 @@
         nativeRandom = Math.random;
 
     /** Detect various environments */
-    var isIeOpera = !!context.attachEvent,
+    var isIeOpera = reNative.test(context.attachEvent),
         isJSC = !/\n{2,}/.test(Function()),
         isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
@@ -454,9 +461,9 @@
       __p += '\n\n  var ctor = iterable.constructor;\n    ';
        for (var k = 0; k < 7; k++) {
       __p += '\n  index = \'' +
-      (obj.shadowed[k] ) +
+      (obj.shadowedProps[k] ) +
       '\';\n  if (';
-            if (obj.shadowed[k] == 'constructor') {
+            if (obj.shadowedProps[k] == 'constructor') {
       __p += '!(ctor && ctor.prototype === iterable) && ';
             } ;
       __p += 'hasOwnProperty.call(iterable, index)) {\n    ' +
@@ -626,7 +633,9 @@
         }
         if (this instanceof bound) {
           // ensure `new bound` is an instance of `func`
-          thisBinding = createObject(func.prototype);
+          noop.prototype = func.prototype;
+          thisBinding = new noop;
+          noop.prototype = null;
 
           // mimic the constructor's `return` behavior
           // http://es5.github.com/#x13.2.2
@@ -707,7 +716,6 @@
      *  top - A string of code to execute before the iteration branches.
      *  loop - A string of code to execute in the object loop.
      *  bottom - A string of code to execute after the iteration branches.
-     *
      * @returns {Function} Returns the compiled function.
      */
     function createIterator() {
@@ -718,7 +726,7 @@
         'isKeysFast': isKeysFast,
         'nonEnumArgs': nonEnumArgs,
         'noCharByIndex': noCharByIndex,
-        'shadowed': shadowed,
+        'shadowedProps': shadowedProps,
 
         // iterator options
         'arrays': 'isArray(iterable)',
@@ -748,20 +756,6 @@
         createCallback, hasOwnProperty, isArguments, isArray, isString,
         objectTypes, nativeKeys
       );
-    }
-
-    /**
-     * Creates a new object that inherits from the given `prototype` object.
-     *
-     * @private
-     * @param {Object} prototype The prototype object.
-     * @returns {Object} Returns the new object.
-     */
-    function createObject(prototype) {
-      noop.prototype = prototype;
-      var result = new noop;
-      noop.prototype = null;
-      return result;
     }
 
     /**
@@ -2110,9 +2104,9 @@
     }
 
     /**
-     * Parses the given `value` into an integer of the specified `radix`.
+     * Converts the given `value` into an integer of the specified `radix`.
      *
-     * Note: This method avoids differences in ES3 and ES5 `parseInt`
+     * Note: This method avoids differences in native ES3 and ES5 `parseInt`
      * implementations. See http://es5.github.com/#E.
      *
      * @static
@@ -2126,7 +2120,7 @@
      * // => 8
      */
     var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
-      // Firefox and Opera have not changed to the ES5 specified implementation of `parseInt`
+      // Firefox and Opera still follow the ES3 specified implementation of `parseInt`
       return nativeParseInt(isString(value) ? value.replace(/^0+(?=.$)/, '') : value, radix || 0);
     };
 
@@ -4681,7 +4675,6 @@
      *  interpolate - The "interpolate" delimiter regexp.
      *  sourceURL - The sourceURL of the template's compiled source.
      *  variable - The data object variable name.
-     *
      * @returns {Function|String} Returns a compiled function when no `data` object
      *  is given, else it returns the interpolated text.
      * @example
@@ -5214,7 +5207,7 @@
     });
   }
   // check for `exports` after `define` in case a build optimizer adds an `exports` object
-  else if (freeExports) {
+  else if (freeExports && !freeExports.nodeType) {
     // in Node.js or RingoJS v0.8.0+
     if (freeModule) {
       (freeModule.exports = _)._ = _;

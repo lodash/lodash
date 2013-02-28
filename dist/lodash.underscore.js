@@ -131,7 +131,7 @@
       nativeRandom = Math.random;
 
   /** Detect various environments */
-  var isIeOpera = !!window.attachEvent,
+  var isIeOpera = reNative.test(window.attachEvent),
       isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
   /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
@@ -334,7 +334,9 @@
       }
       if (this instanceof bound) {
         // ensure `new bound` is an instance of `func`
-        thisBinding = createObject(func.prototype);
+        noop.prototype = func.prototype;
+        thisBinding = new noop;
+        noop.prototype = null;
 
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
@@ -402,20 +404,6 @@
       };
     }
     return func;
-  }
-
-  /**
-   * Creates a new object that inherits from the given `prototype` object.
-   *
-   * @private
-   * @param {Object} prototype The prototype object.
-   * @returns {Object} Returns the new object.
-   */
-  function createObject(prototype) {
-    noop.prototype = prototype;
-    var result = new noop;
-    noop.prototype = null;
-    return result;
   }
 
   /**
@@ -3844,7 +3832,6 @@
    *  interpolate - The "interpolate" delimiter regexp.
    *  sourceURL - The sourceURL of the template's compiled source.
    *  variable - The data object variable name.
-   *
    * @returns {Function|String} Returns a compiled function when no `data` object
    *  is given, else it returns the interpolated text.
    * @example
@@ -4314,7 +4301,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  if (freeExports) {
+  if (freeExports && !freeExports.nodeType) {
     // in Node.js or RingoJS v0.8.0+
     if (freeModule) {
       (freeModule.exports = lodash)._ = lodash;

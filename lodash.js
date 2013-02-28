@@ -61,8 +61,15 @@
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
+  /** Used to assign default `context` object properties */
+  var contextProps = [
+    'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object', 'RegExp',
+    'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN', 'parseInt',
+    'setImmediate', 'setTimeout', 'toString'
+  ];
+
   /** Used to fix the JScript [[DontEnum]] bug */
-  var shadowed = [
+  var shadowedProps = [
     'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
     'toLocaleString', 'toString', 'valueOf'
   ];
@@ -122,7 +129,7 @@
    * @returns {Function} Returns the `lodash` function.
    */
   function runInContext(context) {
-    context = context ? _.extend(createObject(window), context) : window;
+    context = context ? _.defaults({}, context, _.pick(window, contextProps)) : window;
 
     /** Native constructor references */
     var Array = context.Array,
@@ -467,9 +474,9 @@
       '  <% if (hasDontEnumBug) { %>\n\n' +
       '  var ctor = iterable.constructor;\n' +
       '    <% for (var k = 0; k < 7; k++) { %>\n' +
-      "  index = '<%= shadowed[k] %>';\n" +
+      "  index = '<%= shadowedProps[k] %>';\n" +
       '  if (<%' +
-      "      if (shadowed[k] == 'constructor') {" +
+      "      if (shadowedProps[k] == 'constructor') {" +
       '        %>!(ctor && ctor.prototype === iterable) && <%' +
       '      } %>hasOwnProperty.call(iterable, index)) {\n' +
       '    <%= loop %>\n' +
@@ -633,7 +640,9 @@
         }
         if (this instanceof bound) {
           // ensure `new bound` is an instance of `func`
-          thisBinding = createObject(func.prototype);
+          noop.prototype = func.prototype;
+          thisBinding = new noop;
+          noop.prototype = null;
 
           // mimic the constructor's `return` behavior
           // http://es5.github.com/#x13.2.2
@@ -714,7 +723,6 @@
      *  top - A string of code to execute before the iteration branches.
      *  loop - A string of code to execute in the object loop.
      *  bottom - A string of code to execute after the iteration branches.
-     *
      * @returns {Function} Returns the compiled function.
      */
     function createIterator() {
@@ -725,7 +733,7 @@
         'isKeysFast': isKeysFast,
         'nonEnumArgs': nonEnumArgs,
         'noCharByIndex': noCharByIndex,
-        'shadowed': shadowed,
+        'shadowedProps': shadowedProps,
 
         // iterator options
         'arrays': 'isArray(iterable)',
@@ -755,20 +763,6 @@
         createCallback, hasOwnProperty, isArguments, isArray, isString,
         objectTypes, nativeKeys
       );
-    }
-
-    /**
-     * Creates a new object that inherits from the given `prototype` object.
-     *
-     * @private
-     * @param {Object} prototype The prototype object.
-     * @returns {Object} Returns the new object.
-     */
-    function createObject(prototype) {
-      noop.prototype = prototype;
-      var result = new noop;
-      noop.prototype = null;
-      return result;
     }
 
     /**

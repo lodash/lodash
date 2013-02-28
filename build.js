@@ -152,7 +152,7 @@
     'reject': ['filter', 'identity', 'isEqual', 'keys'],
     'rest': [],
     'result': ['isFunction'],
-    'runInContext': ['extend'],
+    'runInContext': ['defaults', 'pick'],
     'shuffle': ['forEach'],
     'size': ['keys'],
     'some': ['identity', 'isArray', 'isEqual', 'keys'],
@@ -191,7 +191,7 @@
     'loop',
     'nonEnumArgs',
     'noCharByIndex',
-    'shadowed',
+    'shadowedProps',
     'top',
     'useHas'
   ];
@@ -290,7 +290,7 @@
     // add `_.chain`
     source = source.replace(matchFunction(source, 'tap'), function(match) {
       var indent = getIndent(match);
-      return indent + [
+      return match && (indent + [
         '',
         '/**',
         ' * Creates a `lodash` object that wraps the given `value`.',
@@ -321,13 +321,13 @@
         '}',
         '',
         match
-      ].join('\n' + indent);
+      ].join('\n' + indent));
     });
 
     // add `wrapperChain`
     source = source.replace(matchFunction(source, 'wrapperToString'), function(match) {
       var indent = getIndent(match);
-      return indent + [
+      return match && (indent + [
         '',
         '/**',
         ' * Enables method chaining on the wrapper object.',
@@ -350,7 +350,7 @@
         '}',
         '',
         match
-      ].join('\n' + indent);
+      ].join('\n' + indent));
     });
 
     // add `lodash.chain` assignment
@@ -937,25 +937,27 @@
    */
   function removeFromCreateIterator(source, varName) {
     var  snippet = matchFunction(source, 'createIterator');
-    if ( snippet) {
-       // remove data object property assignment
-      var modified = snippet.replace(RegExp("^ *'" + varName + "': *" + varName + '.+\\n', 'm'), '');
-      source = source.replace(snippet, function() {
-        return modified;
-      });
-
-      // clip at the `factory` assignment
-      snippet = modified.match(/Function\([\s\S]+$/)[0];
-
-      modified = snippet
-        .replace(RegExp('\\b' + varName + '\\b,? *', 'g'), '')
-        .replace(/, *',/, "',")
-        .replace(/,\s*\)/, ')')
-
-      source = source.replace(snippet, function() {
-        return modified;
-      });
+    if (!snippet) {
+      return source;
     }
+    // remove data object property assignment
+    var modified = snippet.replace(RegExp("^ *'" + varName + "': *" + varName + '.+\\n', 'm'), '');
+    source = source.replace(snippet, function() {
+      return modified;
+    });
+
+    // clip at the `factory` assignment
+    snippet = modified.match(/Function\([\s\S]+$/)[0];
+
+    modified = snippet
+      .replace(RegExp('\\b' + varName + '\\b,? *', 'g'), '')
+      .replace(/, *',/, "',")
+      .replace(/,\s*\)/, ')')
+
+    source = source.replace(snippet, function() {
+      return modified;
+    });
+
     return source;
   }
 
@@ -969,25 +971,13 @@
    * @returns {String} Returns the modified source.
    */
   function removeFunction(source, funcName) {
-    // remove function
-    var snippet = matchFunction(source, funcName);
-    if (snippet) {
-      if (funcName == 'runInContext') {
-        source = source.replace(snippet, function() {
-          return snippet
-            .replace(/^[\s\S]+?function runInContext[\s\S]+?context *= *context.+| *return lodash[\s\S]+$/g, '')
-            .replace(/^ {4}/gm, '  ');
-        });
+    var snippet;
 
-        source = source
-          .replace(/context/g, 'window')
-          .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
-          .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
-          .replace(/^ *var _ *=.+\n+/m, '');
-      }
-      else {
-        source = source.replace(snippet, '');
-      }
+    // remove function
+    if (funcName == 'runInContext') {
+      source = removeRunInContext(source, funcName);
+    } else if ((snippet = matchFunction(source, funcName))) {
+      source = source.replace(snippet, '');
     }
     // grab the method assignments snippet
     snippet = getMethodAssignments(source);
@@ -1016,14 +1006,12 @@
    * @returns {String} Returns the modified source.
    */
   function removeHasDontEnumBug(source) {
+    source = removeVar(source, 'shadowedProps');
     source = removeFromCreateIterator(source, 'hasDontEnumBug');
-    source = removeFromCreateIterator(source, 'shadowed');
+    source = removeFromCreateIterator(source, 'shadowedProps');
 
     // remove `hasDontEnumBug` declaration and assignment
     source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b.*|.+?hasDontEnumBug *=.+/g, '');
-
-    // remove `shadowed` variable
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var shadowed[\s\S]+?;\n/, '');
 
     // remove `hasDontEnumBug` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
@@ -1059,6 +1047,22 @@
         .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(hasEnumPrototype *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
         .replace(/hasEnumPrototype *\|\|\s*/g, '');
     });
+
+    return source;
+  }
+
+  /**
+   * Removes all `hasObjectSpliceBug` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeHasObjectSpliceBug(source) {
+    source = removeVar(source, 'hasObjectSpliceBug')
+
+    // remove `hasObjectSpliceBug` fix from the `Array` function mixins
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
 
     return source;
   }
@@ -1241,17 +1245,28 @@
   }
 
   /**
-   * Removes all `hasObjectSpliceBug` references from `source`.
+   * Removes all `runInContext` references from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeHasObjectSpliceBug(source) {
-    source = removeVar(source, 'hasObjectSpliceBug')
+  function removeRunInContext(source) {
+    source = removeVar(source, 'contextProps');
 
-    // remove `hasObjectSpliceBug` fix from the `Array` function mixins
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
+    // remove function scaffolding, leaving most of its content
+    source = source.replace(matchFunction(source, 'runInContext'), function(match) {
+      return match
+        .replace(/^[\s\S]+?function runInContext[\s\S]+?context *= *context.+| *return lodash[\s\S]+$/g, '')
+        .replace(/^ {4}/gm, '  ');
+    });
+
+    // cleanup adjusted source
+    source = source
+      .replace(/\bcontext\b/g, 'window')
+      .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
+      .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
+      .replace(/^ *var _ *=.+\n+/m, '');
 
     return source;
   }
@@ -1281,8 +1296,8 @@
    * @returns {String} Returns the modified source.
    */
   function removeVar(source, varName) {
-    // simplify `cloneableClasses`, `ctorByClass`, or `hasObjectSpliceBug`
-    if (/^(?:cloneableClasses|ctorByClass|hasObjectSpliceBug)$/.test(varName)) {
+    // simplify complex variable assignments
+    if (/^(?:cloneableClasses|contextProps|ctorByClass|hasObjectSpliceBug|shadowedProps)$/.test(varName)) {
       source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?\\n\\n'), '$1=null;\n\n');
     }
     source = source.replace(RegExp(
@@ -1313,16 +1328,19 @@
    * @returns {String} Returns the modified source.
    */
   function replaceFunction(source, funcName, funcValue) {
-    var match = matchFunction(source, funcName);
-    if (match) {
-      // clip snippet after the JSDoc comment block
-      match = match.replace(/^\s*(?:\/\/.*|\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)\n/, '');
-      source = source.replace(match, function() {
-        return funcValue
-          .replace(RegExp('^' + getIndent(funcValue), 'gm'), getIndent(match))
-          .trimRight() + '\n';
-      });
+    var snippet = matchFunction(source, funcName);
+    if (!snippet) {
+      return source;
     }
+    // clip snippet after the JSDoc comment block
+    snippet = snippet.replace(/^\s*(?:\/\/.*|\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)\n/, '');
+
+    source = source.replace(snippet, function() {
+      return funcValue
+        .replace(RegExp('^' + getIndent(funcValue), 'gm'), getIndent(snippet))
+        .trimRight() + '\n';
+    });
+
     return source;
   }
 
@@ -2136,13 +2154,13 @@
         // add `_.findWhere`
         source = source.replace(matchFunction(source, 'find'), function(match) {
           var indent = getIndent(match);
-          return match + [
+          return match && (match + [
             '',
             'function findWhere(object, properties) {',
             '  return where(object, properties, true);',
             '}',
             ''
-          ].join('\n' + indent);
+          ].join('\n' + indent));
         });
 
         source = source.replace(getMethodAssignments(source), function(match) {

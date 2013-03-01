@@ -130,7 +130,11 @@
    * @returns {Function} Returns the `lodash` function.
    */
   function runInContext(context) {
-    context = context ? _.defaults({}, context, _.pick(window, contextProps)) : window;
+    // Avoid issues with some ES3 environments that attempt to use values, named
+    // after built-in constructors like `Object`, for the creation of literals.
+    // ES5 clears this up by stating that literals must use built-in constructors.
+    // See http://es5.github.com/#x11.1.5.
+    context = context ? _.defaults(window.Object(), context, _.pick(window, contextProps)) : window;
 
     /** Native constructor references */
     var Array = context.Array,
@@ -1164,10 +1168,10 @@
         callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 1);
         result = callback(result);
 
-        var done = typeof result != 'undefined';
-        if (!done) {
-          result = value;
+        if (typeof result != 'undefined') {
+          return result;
         }
+        result = value;
       }
       // inspect [[Class]]
       var isObj = isObject(result);
@@ -1180,7 +1184,7 @@
       }
       // shallow clone
       if (!isObj || !deep) {
-        return isObj && !done
+        return isObj
           ? (isArr ? slice(result) : assign({}, result))
           : result;
       }
@@ -1188,14 +1192,14 @@
       switch (className) {
         case boolClass:
         case dateClass:
-          return done ? result : new ctor(+result);
+          return new ctor(+result);
 
         case numberClass:
         case stringClass:
-          return done ? result : new ctor(result);
+          return new ctor(result);
 
         case regexpClass:
-          return done ? result : ctor(result.source, reFlags.exec(result));
+          return ctor(result.source, reFlags.exec(result));
       }
       // check for circular references and return corresponding clone
       stackA || (stackA = []);
@@ -1208,17 +1212,15 @@
         }
       }
       // init cloned object
-      if (!done) {
-        result = isArr ? ctor(result.length) : {};
+      result = isArr ? ctor(result.length) : {};
 
-        // add array properties assigned by `RegExp#exec`
-        if (isArr) {
-          if (hasOwnProperty.call(value, 'index')) {
-            result.index = value.index;
-          }
-          if (hasOwnProperty.call(value, 'input')) {
-            result.input = value.input;
-          }
+      // add array properties assigned by `RegExp#exec`
+      if (isArr) {
+        if (hasOwnProperty.call(value, 'index')) {
+          result.index = value.index;
+        }
+        if (hasOwnProperty.call(value, 'input')) {
+          result.input = value.input;
         }
       }
       // add the source value to the stack of traversed objects
@@ -1227,7 +1229,7 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? forEach : forOwn)(done ? result : value, function(objValue, key) {
+      (isArr ? forEach : forOwn)(value, function(objValue, key) {
         result[key] = clone(objValue, deep, callback, undefined, stackA, stackB);
       });
 
@@ -1235,10 +1237,10 @@
     }
 
     /**
-     * Creates a deep clone of `value`. If a `callback` function is passed, it will
-     * be executed to produce the cloned values. If `callback` returns the value it
-     * was passed, cloning will be handled by the method instead. The `callback` is
-     * bound to `thisArg` and invoked with one argument; (value).
+     * Creates a deep clone of `value`. If a `callback` function is passed,
+     * it will be executed to produce the cloned values. If `callback` returns
+     * `undefined`, cloning will be handled by the method instead. The `callback`
+     * is bound to `thisArg` and invoked with one argument; (value).
      *
      * Note: This function is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -1269,7 +1271,7 @@
      * };
      *
      * var clone = _.cloneDeep(view, function(value) {
-     *   return _.isElement(value) ? value.cloneNode(true) : value;
+     *   return _.isElement(value) ? value.cloneNode(true) : undefined;
      * });
      *
      * clone.node == view.node;

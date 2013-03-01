@@ -1175,10 +1175,10 @@
         callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 1);
         result = callback(result);
 
-        var done = typeof result != 'undefined';
-        if (!done) {
-          result = value;
+        if (typeof result != 'undefined') {
+          return result;
         }
+        result = value;
       }
       // inspect [[Class]]
       var isObj = isObject(result);
@@ -1191,7 +1191,7 @@
       }
       // shallow clone
       if (!isObj || !deep) {
-        return isObj && !done
+        return isObj
           ? (isArr ? slice(result) : assign({}, result))
           : result;
       }
@@ -1199,14 +1199,14 @@
       switch (className) {
         case boolClass:
         case dateClass:
-          return done ? result : new ctor(+result);
+          return new ctor(+result);
 
         case numberClass:
         case stringClass:
-          return done ? result : new ctor(result);
+          return new ctor(result);
 
         case regexpClass:
-          return done ? result : ctor(result.source, reFlags.exec(result));
+          return ctor(result.source, reFlags.exec(result));
       }
       // check for circular references and return corresponding clone
       stackA || (stackA = []);
@@ -1219,17 +1219,15 @@
         }
       }
       // init cloned object
-      if (!done) {
-        result = isArr ? ctor(result.length) : {};
+      result = isArr ? ctor(result.length) : {};
 
-        // add array properties assigned by `RegExp#exec`
-        if (isArr) {
-          if (hasOwnProperty.call(value, 'index')) {
-            result.index = value.index;
-          }
-          if (hasOwnProperty.call(value, 'input')) {
-            result.input = value.input;
-          }
+      // add array properties assigned by `RegExp#exec`
+      if (isArr) {
+        if (hasOwnProperty.call(value, 'index')) {
+          result.index = value.index;
+        }
+        if (hasOwnProperty.call(value, 'input')) {
+          result.input = value.input;
         }
       }
       // add the source value to the stack of traversed objects
@@ -1238,7 +1236,7 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? forEach : forOwn)(done ? result : value, function(objValue, key) {
+      (isArr ? forEach : forOwn)(value, function(objValue, key) {
         result[key] = clone(objValue, deep, callback, undefined, stackA, stackB);
       });
 
@@ -1280,7 +1278,7 @@
      * };
      *
      * var clone = _.cloneDeep(view, function(value) {
-     *   return _.isElement(value) ? value.cloneNode(true) : value;
+     *   return _.isElement(value) ? value.cloneNode(true) : undefined;
      * });
      *
      * clone.node == view.node;

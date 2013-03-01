@@ -1246,10 +1246,10 @@
     }
 
     /**
-     * Creates a deep clone of `value`. If a `callback` function is passed, it will
-     * be executed to produce the cloned values. If `callback` returns the value it
-     * was passed, cloning will be handled by the method instead. The `callback` is
-     * bound to `thisArg` and invoked with one argument; (value).
+     * Creates a deep clone of `value`. If a `callback` function is passed,
+     * it will be executed to produce the cloned values. If `callback` returns
+     * `undefined`, cloning will be handled by the method instead. The `callback`
+     * is bound to `thisArg` and invoked with one argument; (value).
      *
      * Note: This function is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and

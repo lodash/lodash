@@ -138,7 +138,6 @@
     'min': ['isArray', 'isEqual', 'isString', 'keys'],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
-    'object': [],
     'omit': ['forIn', 'indexOf'],
     'once': [],
     'pairs': ['keys'],
@@ -175,6 +174,7 @@
     'without': ['indexOf'],
     'wrap': [],
     'zip': ['max', 'pluck'],
+    'zipObject': [],
 
     // method used by the `backbone` and `underscore` builds
     'chain': ['value'],
@@ -2262,13 +2262,18 @@
       if (isLegacy) {
         source = removeSetImmediate(source);
 
-        _.each(['isBindFast', 'isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
+        _.each(['isBindFast', 'isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeCreate', 'nativeKeys', 'reNative'], function(varName) {
           source = removeVar(source, varName);
         });
 
         // remove native `Function#bind` branch in `_.bind`
         source = source.replace(matchFunction(source, 'bind'), function(match) {
           return match.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
+        });
+
+        // remove native `Object.create` branch in `createObject`
+        source = source.replace(matchFunction(source, 'createObject'), function(match) {
+          return match.replace(/nativeCreate * \|\|\s*/, '');
         });
 
         // remove native `Array.isArray` branch in `_.isArray`
@@ -2523,7 +2528,7 @@
         source = source
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)each\(\['[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\s*lodash\.prototype.+/g, '');
+          .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.+/g, '');
       }
       // remove functions, variables, and snippets that the minifier may miss
       if (isRemoved(source, 'clone')) {

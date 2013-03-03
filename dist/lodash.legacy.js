@@ -166,8 +166,7 @@
         toString = objectRef.toString;
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
-    var nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
-        nativeIsFinite = context.isFinite,
+    var nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
         nativeMax = Math.max,
         nativeMin = Math.min,
@@ -728,7 +727,7 @@
      * @param {Object} prototype The prototype object.
      * @returns {Object} Returns the new object.
      */
-    var createObject = nativeCreate || function(prototype) {
+    var createObject = function(prototype) {
       noop.prototype = prototype;
       var result = new noop;
       noop.prototype = null;

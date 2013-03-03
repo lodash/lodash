@@ -381,21 +381,26 @@
       ].join('\n' + indent);
     });
 
-    // add `__chain__` checks to `_.mixin`
-    source = source.replace(matchFunction(source, 'mixin'), function(match) {
-      return match.replace(/^( *)return new lodash.+/m, function() {
-        var indent = arguments[1];
-        return indent + [
-          '',
-          'var result = func.apply(lodash, args);',
-          'if (this.__chain__) {',
-          '  result = new lodash(result);',
-          '  result.__chain__ = true;',
-          '}',
-          'return result;'
-        ].join('\n' + indent);
-      });
-    });
+    // replace `_.mixin`
+    source = replaceFunction(source, 'mixin', [
+      'function mixin(object) {',
+      '  forEach(functions(object), function(methodName) {',
+      '    var func = lodash[methodName] = object[methodName];',
+      '',
+      '    lodash.prototype[methodName] = function() {',
+      '      var args = [this.__wrapped__];',
+      '      push.apply(args, arguments);',
+      '',
+      '      var result = func.apply(lodash, args);',
+      '      if (this.__chain__) {',
+      '        result = createWrapper(result);',
+      '        result.__chain__ = true;',
+      '      }',
+      '      return result;',
+      '    };',
+      '  });',
+      '}'
+    ].join('\n'));
 
     // replace wrapper `Array` method assignments
     source = source.replace(/^(?: *\/\/.*\n)*( *)each\(\['[\s\S]+?\n\1}$/m, function(match, indent) {
@@ -1174,7 +1179,7 @@
 
     // remove `noCharByIndex` from `_.toArray`
     source = source.replace(matchFunction(source, 'toArray'), function(match) {
-      return match.replace(/noCharByIndex[^:]+:/, '');
+      return match.replace(/(return\b).+?noCharByIndex[^:]+:\s*/, '$1 ');
     });
 
     // `noCharByIndex` from `iteratorTemplate`
@@ -1753,7 +1758,7 @@
       if (isModern) {
         // remove `_.isPlainObject` fallback
         source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
-          return match.replace(/!getPrototypeOf.+?: */, '');
+          return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
         });
 
         if (!isMobile) {
@@ -1927,7 +1932,7 @@
           '  }',
           '  var isArr = className == arrayClass;',
           '  if (!isArr) {',
-          '    if (a.__wrapped__ || b.__wrapped__) {',
+          '    if (a instanceof lodash || b instanceof lodash) {',
           '      return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);',
           '    }',
           '    if (className != objectClass) {',
@@ -1986,6 +1991,19 @@
           '    });',
           '  }',
           '  return result;',
+          '}'
+        ].join('\n'));
+
+        // replace `lodash`
+        source = replaceFunction(source, 'lodash', [
+          'function lodash(value) {',
+          '  if (value instanceof lodash) {',
+          '    return value;',
+          '  }',
+          '  if (!(this instanceof lodash)) {',
+          '    return new lodash(value);',
+          '  }',
+          '  this.__wrapped__ = value;',
           '}'
         ].join('\n'));
 
@@ -2189,7 +2207,7 @@
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
         _.each(['max', 'min'], function(methodName) {
           source = source.replace(matchFunction(source, methodName), function(match) {
-            return match.replace(/!callback *&& *isString\(collection\)[\s\S]+?: */g, '');
+            return match.replace(/(return\b).+?callback *&& *isString[^:]+:\s*/g, '$1 ');
           });
         });
 
@@ -2469,9 +2487,14 @@
             '  lodash[methodName] = func;',
             '',
             '  lodash.prototype[methodName] = function() {',
-            '    var args = [this.__wrapped__];',
+            '    var value = this.__wrapped__,',
+            '        args = [value];',
+            '',
             '    push.apply(args, arguments);',
-            '    return new lodash(func.apply(lodash, args));',
+            '    var result = func.apply(lodash, args);',
+            "    return (value && typeof value == 'object' && value == result)",
+            '      ? this',
+            '      : createWrapper(result);',
             '  };',
             '});'
           ].join('\n' + indent);

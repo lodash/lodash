@@ -179,8 +179,8 @@
       ok(_() instanceof _);
     });
 
-    test('should return passed LoDash instances', function() {
-      var wrapped = _([]);
+    test('should return passed `lodash` instances', function() {
+      var wrapped = _(false);
       equal(_(wrapped), wrapped);
     });
   }());
@@ -810,9 +810,14 @@
   QUnit.module('lodash.forEach');
 
   (function() {
-    test('returns the collection', function() {
+    test('should return the collection', function() {
       var collection = [1, 2, 3];
       equal(_.forEach(collection, Boolean), collection);
+    });
+
+    test('should return the existing wrapper when chaining', function() {
+      var wrapper = _([1, 2, 3]);
+      equal(wrapper.forEach(Boolean), wrapper);
     });
 
     _.each({
@@ -900,6 +905,12 @@
 
   _.each(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
+
+    test('should return the existing wrapper when chaining', function() {
+      var wrapper = _({ 'a': 1 });
+      equal(wrapper[methodName]({ 'b': 2 }), wrapper);
+    });
+
 
     test('lodash.' + methodName + ' should assign problem JScript properties (test in IE < 9)', function() {
       var object = {

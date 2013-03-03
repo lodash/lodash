@@ -204,6 +204,7 @@
     'without',
     'wrap',
     'zip',
+    'zipObject',
 
     // properties used by the `backbone` and `underscore` builds
     '__chain__',

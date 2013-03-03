@@ -60,6 +60,7 @@
     'include': 'contains',
     'inject': 'reduce',
     'methods': 'functions',
+    'object': 'zipObject',
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
@@ -81,7 +82,8 @@
     'reduceRight': ['foldr'],
     'rest': ['drop', 'tail'],
     'some': ['any'],
-    'uniq': ['unique']
+    'uniq': ['unique'],
+    'zipObject': ['object']
   };
 
   /** List of all Lo-Dash methods */
@@ -113,7 +115,8 @@
     'uniq',
     'unique',
     'without',
-    'zip'
+    'zip',
+    'zipObject'
   ];
 
   /** List of "Chaining" category methods */
@@ -935,7 +938,8 @@
           'merge',
           'parseInt',
           'partialRight',
-          'runInContext'
+          'runInContext',
+          'zipObject'
         ], function(methodName) {
           equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
         });

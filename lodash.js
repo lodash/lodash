@@ -174,6 +174,7 @@
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
+        nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
@@ -319,7 +320,7 @@
      */
     function lodash(value) {
       // exit early if already wrapped, even if wrapped by a different `lodash` constructor
-      if (value && typeof value == 'object' && value.__wrapped__) {
+      if (value && typeof value == 'object' && hasOwnProperty.call(value, '__wrapped__')) {
         return value;
       }
       // allow invoking `lodash` without the `new` operator
@@ -644,9 +645,7 @@
         }
         if (this instanceof bound) {
           // ensure `new bound` is an instance of `func`
-          noop.prototype = func.prototype;
-          thisBinding = new noop;
-          noop.prototype = null;
+          thisBinding = createObject(func.prototype);
 
           // mimic the constructor's `return` behavior
           // http://es5.github.com/#x13.2.2
@@ -767,6 +766,33 @@
         createCallback, hasOwnProperty, isArguments, isArray, isString,
         objectTypes, nativeKeys
       );
+    }
+
+    /**
+     * Creates a new object that inherits from the given `prototype` object.
+     *
+     * @private
+     * @param {Object} prototype The prototype object.
+     * @returns {Object} Returns the new object.
+     */
+    var createObject = nativeCreate || function(prototype) {
+      noop.prototype = prototype;
+      var result = new noop;
+      noop.prototype = null;
+      return result;
+    };
+
+    /**
+     * A fast path for creating `lodash` wrapper objects.
+     *
+     * @private
+     * @param {Mixed} value The value to wrap in a `lodash` instance.
+     * @returns {Object} Returns a `lodash` instance.
+     */
+    function createWrapper(value) {
+      var result = createObject(lodash.prototype);
+      result.__wrapped__ = value;
+      return result;
     }
 
     /**
@@ -1562,7 +1588,7 @@
 
         case numberClass:
           // treat `NaN` vs. `NaN` as equal
-          return a != +a
+          return (a != +a)
             ? b != +b
             // but treat `+0` vs. `-0` as not equal
             : (a == 0 ? (1 / a == 1 / b) : a == +b);
@@ -1576,7 +1602,7 @@
       var isArr = className == arrayClass;
       if (!isArr) {
         // unwrap any `lodash` wrapped values
-        if (a.__wrapped__ || b.__wrapped__) {
+        if (hasOwnProperty.call(a, '__wrapped__ ') || hasOwnProperty.call(b, '__wrapped__')) {
           return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, thisArg, stackA, stackB);
         }
         // exit for functions and DOM nodes
@@ -2748,7 +2774,7 @@
           }
         }
       } else {
-        callback = !callback && isString(collection)
+        callback = (!callback && isString(collection))
           ? charAtCallback
           : createCallback(callback, thisArg);
 
@@ -2817,7 +2843,7 @@
           }
         }
       } else {
-        callback = !callback && isString(collection)
+        callback = (!callback && isString(collection))
           ? charAtCallback
           : createCallback(callback, thisArg);
 
@@ -3181,7 +3207,7 @@
      */
     function toArray(collection) {
       if (collection && typeof collection.length == 'number') {
-        return noCharByIndex && isString(collection)
+        return (noCharByIndex && isString(collection))
           ? collection.split('')
           : slice(collection);
       }
@@ -3848,7 +3874,7 @@
 
       while (low < high) {
         var mid = (low + high) >>> 1;
-        callback(array[mid]) < value
+        (callback(array[mid]) < value)
           ? low = mid + 1
           : high = mid;
       }
@@ -4573,9 +4599,14 @@
         var func = lodash[methodName] = object[methodName];
 
         lodash.prototype[methodName] = function() {
-          var args = [this.__wrapped__];
+          var value = this.__wrapped__,
+              args = [value];
+
           push.apply(args, arguments);
-          return new lodash(func.apply(lodash, args));
+          var result = func.apply(lodash, args);
+          return (value && typeof value == 'object' && value == result)
+            ? this
+            : createWrapper(result);
         };
       });
     }
@@ -5130,7 +5161,7 @@
           var result = func(this.__wrapped__, callback, thisArg);
           return callback == null || (thisArg && typeof callback != 'function')
             ? result
-            : new lodash(result);
+            : createWrapper(result);
         };
       }
     });
@@ -5172,7 +5203,7 @@
     each(['concat', 'slice', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
-        return new lodash(func.apply(this.__wrapped__, arguments));
+        return createWrapper(func.apply(this.__wrapped__, arguments));
       };
     });
 
@@ -5190,7 +5221,7 @@
           if (value.length === 0) {
             delete value[0];
           }
-          return isSplice ? new lodash(result) : result;
+          return isSplice ? createWrapper(result) : result;
         };
       });
     }

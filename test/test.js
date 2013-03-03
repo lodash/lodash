@@ -29,13 +29,6 @@
   /** The basename of the Lo-Dash file to test */
   var basename = /[\w.-]+$/.exec(filePath)[0];
 
-  /** The `platform` object to check */
-  var platform = (
-    window.platform ||
-    load('../vendor/platform.js/platform.js') ||
-    window.platform
-  );
-
   /** The unit testing framework */
   var QUnit = (function() {
     var noop = Function.prototype;
@@ -56,6 +49,13 @@
       _ = _._ || _,
       _.runInContext(window)
     );
+
+  /** The `platform` object to check */
+  var platform = (
+    window.platform ||
+    load('../vendor/platform.js/platform.js') ||
+    window.platform
+  );
 
   /** Used to pass falsey values to methods */
   var falsey = [

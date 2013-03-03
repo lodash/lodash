@@ -2207,7 +2207,7 @@
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
         _.each(['max', 'min'], function(methodName) {
           source = source.replace(matchFunction(source, methodName), function(match) {
-            return match.replace(/(return\b).+?callback *&& *isString[^:]+:\s*/g, '$1 ');
+            return match.replace(/=.+?callback *&& *isString[^:]+:\s*/g, '= ');
           });
         });
 

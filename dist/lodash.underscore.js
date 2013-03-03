@@ -122,6 +122,7 @@
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
+      nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
       nativeIsNaN = window.isNaN,
@@ -195,11 +196,9 @@
    * @returns {Object} Returns a `lodash` instance.
    */
   function lodash(value) {
-    // exit early if already wrapped, even if wrapped by a different `lodash` constructor
-    if (value && typeof value == 'object' && value.__wrapped__) {
+    if (value instanceof lodash) {
       return value;
     }
-    // allow invoking `lodash` without the `new` operator
     if (!(this instanceof lodash)) {
       return new lodash(value);
     }
@@ -334,9 +333,7 @@
       }
       if (this instanceof bound) {
         // ensure `new bound` is an instance of `func`
-        noop.prototype = func.prototype;
-        thisBinding = new noop;
-        noop.prototype = null;
+        thisBinding = createObject(func.prototype);
 
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
@@ -404,6 +401,33 @@
       };
     }
     return func;
+  }
+
+  /**
+   * Creates a new object that inherits from the given `prototype` object.
+   *
+   * @private
+   * @param {Object} prototype The prototype object.
+   * @returns {Object} Returns the new object.
+   */
+  var createObject = nativeCreate || function(prototype) {
+    noop.prototype = prototype;
+    var result = new noop;
+    noop.prototype = null;
+    return result;
+  };
+
+  /**
+   * A fast path for creating `lodash` wrapper objects.
+   *
+   * @private
+   * @param {Mixed} value The value to wrap in a `lodash` instance.
+   * @returns {Object} Returns a `lodash` instance.
+   */
+  function createWrapper(value) {
+    var result = createObject(lodash.prototype);
+    result.__wrapped__ = value;
+    return result;
   }
 
   /**
@@ -1100,7 +1124,7 @@
     }
     var isArr = className == arrayClass;
     if (!isArr) {
-      if (a.__wrapped__ || b.__wrapped__) {
+      if (a instanceof lodash || b instanceof lodash) {
         return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);
       }
       if (className != objectClass) {
@@ -2420,7 +2444,7 @@
    */
   function toArray(collection) {
     if (collection && typeof collection.length == 'number') {
-      return  slice(collection);
+      return slice(collection);
     }
     return values(collection);
   }
@@ -3076,7 +3100,7 @@
 
     while (low < high) {
       var mid = (low + high) >>> 1;
-      callback(array[mid]) < value
+      (callback(array[mid]) < value)
         ? low = mid + 1
         : high = mid;
     }
@@ -3713,14 +3737,14 @@
   function mixin(object) {
     forEach(functions(object), function(methodName) {
       var func = lodash[methodName] = object[methodName];
-
+  
       lodash.prototype[methodName] = function() {
         var args = [this.__wrapped__];
         push.apply(args, arguments);
-        
+  
         var result = func.apply(lodash, args);
         if (this.__chain__) {
-          result = new lodash(result);
+          result = createWrapper(result);
           result.__chain__ = true;
         }
         return result;

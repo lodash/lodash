@@ -1333,7 +1333,8 @@
                 basename = path.basename(data.outputPath, '.js'),
                 context = createContext(),
                 isUnderscore = /backbone|underscore/.test(command),
-                exposeAssign = !isUnderscore;
+                exposeAssign = !isUnderscore,
+                exposeZipObject = !isUnderscore;
 
             try {
               vm.runInContext(data.source, context);
@@ -1351,6 +1352,7 @@
             if (isUnderscore) {
               if (methodNames) {
                 exposeAssign = methodNames.indexOf('assign') > -1;
+                exposeZipObject = methodNames.indexOf('zipObject') > -1;
               } else {
                 methodNames = underscoreMethods.slice();
               }
@@ -1389,6 +1391,9 @@
 
             if (!exposeAssign) {
               methodNames = _.without(methodNames, 'assign');
+            }
+            if (!exposeZipObject) {
+              methodNames = _.without(methodNames, 'zipObject');
             }
             var lodash = context._ || {};
             methodNames.forEach(function(methodName) {

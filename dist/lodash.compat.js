@@ -698,12 +698,12 @@
           };
         }
         if (argCount === 4) {
-          return function(accumulator, value, index, object) {
-            return func.call(thisArg, accumulator, value, index, object);
+          return function(accumulator, value, index, collection) {
+            return func.call(thisArg, accumulator, value, index, collection);
           };
         }
-        return function(value, index, object) {
-          return func.call(thisArg, value, index, object);
+        return function(value, index, collection) {
+          return func.call(thisArg, value, index, collection);
         };
       }
       return func;
@@ -3661,39 +3661,6 @@
     }
 
     /**
-     * Creates an object composed from arrays of `keys` and `values`. Pass either
-     * a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]`, or
-     * two arrays, one of `keys` and one of corresponding `values`.
-     *
-     * @static
-     * @memberOf _
-     * @category Arrays
-     * @param {Array} keys The array of keys.
-     * @param {Array} [values=[]] The array of values.
-     * @returns {Object} Returns an object composed of the given keys and
-     *  corresponding values.
-     * @example
-     *
-     * _.object(['moe', 'larry'], [30, 40]);
-     * // => { 'moe': 30, 'larry': 40 }
-     */
-    function object(keys, values) {
-      var index = -1,
-          length = keys ? keys.length : 0,
-          result = {};
-
-      while (++index < length) {
-        var key = keys[index];
-        if (values) {
-          result[key] = values[index];
-        } else {
-          result[key[0]] = key[1];
-        }
-      }
-      return result;
-    }
-
-    /**
      * Creates an array of numbers (positive and/or negative) progressing from
      * `start` up to but not including `end`.
      *
@@ -4040,6 +4007,40 @@
 
       while (++index < length) {
         result[index] = pluck(arguments, index);
+      }
+      return result;
+    }
+
+    /**
+     * Creates an object composed from arrays of `keys` and `values`. Pass either
+     * a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]`, or
+     * two arrays, one of `keys` and one of corresponding `values`.
+     *
+     * @static
+     * @memberOf _
+     * @alias object
+     * @category Arrays
+     * @param {Array} keys The array of keys.
+     * @param {Array} [values=[]] The array of values.
+     * @returns {Object} Returns an object composed of the given keys and
+     *  corresponding values.
+     * @example
+     *
+     * _.zipObject(['moe', 'larry'], [30, 40]);
+     * // => { 'moe': 30, 'larry': 40 }
+     */
+    function zipObject(keys, values) {
+      var index = -1,
+          length = keys ? keys.length : 0,
+          result = {};
+
+      while (++index < length) {
+        var key = keys[index];
+        if (values) {
+          result[key] = values[index];
+        } else {
+          result[key[0]] = key[1];
+        }
       }
       return result;
     }
@@ -5003,7 +5004,6 @@
     lodash.memoize = memoize;
     lodash.merge = merge;
     lodash.min = min;
-    lodash.object = object;
     lodash.omit = omit;
     lodash.once = once;
     lodash.pairs = pairs;
@@ -5027,6 +5027,7 @@
     lodash.without = without;
     lodash.wrap = wrap;
     lodash.zip = zip;
+    lodash.zipObject = zipObject;
 
     // add aliases
     lodash.collect = map;
@@ -5034,6 +5035,7 @@
     lodash.each = forEach;
     lodash.extend = assign;
     lodash.methods = functions;
+    lodash.object = zipObject;
     lodash.select = filter;
     lodash.tail = rest;
     lodash.unique = uniq;

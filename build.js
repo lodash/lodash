@@ -48,6 +48,7 @@
     'include': 'contains',
     'inject': 'reduce',
     'methods': 'functions',
+    'object': 'zipObject',
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
@@ -69,7 +70,8 @@
     'reduceRight': ['foldr'],
     'rest': ['drop', 'tail'],
     'some': ['any'],
-    'uniq': ['unique']
+    'uniq': ['unique'],
+    'zipObject': ['object']
   };
 
   /** Used to track function dependencies */
@@ -1593,7 +1595,8 @@
     var exposeAssign = !isUnderscore,
         exposeForIn = !isUnderscore,
         exposeForOwn = !isUnderscore,
-        exposeIsPlainObject = !isUnderscore;
+        exposeIsPlainObject = !isUnderscore,
+        exposeZipObject = !isUnderscore;
 
     // flags to specify export options
     var isAMD = exportsOptions.indexOf('amd') > -1,
@@ -1632,6 +1635,7 @@
         exposeForIn = methods.indexOf('forIn') > -1;
         exposeForOwn = methods.indexOf('forOwn') > -1;
         exposeIsPlainObject = methods.indexOf('isPlainObject') > -1;
+        exposeZipObject = methods.indexOf('zipObject') > -1;
 
         methods = _.without.apply(_, [plusMethods].concat(minusMethods));
         useUnderscoreClone = methods.indexOf('clone') < 0;
@@ -2299,7 +2303,7 @@
         });
       }
       if (isUnderscore) {
-        // remove `_.assign`, `_.forIn`, `_.forOwn`, and `_.isPlainObject` assignments
+        // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, and `_.zipObject` assignments
         (function() {
           var snippet = getMethodAssignments(source),
               modified = snippet;
@@ -2315,6 +2319,9 @@
           }
           if (!exposeIsPlainObject) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *=.+\n/m, '');
+          }
+          if (!exposeZipObject) {
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.zipObject *=.+\n/m, '');
           }
           source = source.replace(snippet, function() {
             return modified;

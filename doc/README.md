@@ -254,7 +254,7 @@ Gets the first element of the `array`. If a number `n` is passed, the first `n` 
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
 *head, take*
@@ -374,7 +374,7 @@ Gets all but the last element of `array`. If a number `n` is passed, the last `n
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
@@ -455,7 +455,7 @@ Gets the last element of the `array`. If a number `n` is passed, the last `n` el
 
  If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
@@ -567,7 +567,7 @@ Creates an array of numbers *(positive and/or negative)* progressing from `start
 #### Arguments
 1. `[start=0]` *(Number)*: The start of the range.
 2. `end` *(Number)*: The end of the range.
-3. `[step=1]` *(Number)*: The value to increment or descrement by.
+3. `[step=1]` *(Number)*: The value to increment or decrement by.
 
 #### Returns
 *(Array)*: Returns a new range array.
@@ -604,7 +604,7 @@ The opposite of `_.initial`, this method gets all but the first value of `array`
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
 *drop, tail*
@@ -664,7 +664,7 @@ Uses a binary search to determine the smallest index at which the `value` should
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
 1. `array` *(Array)*: The array to iterate over.
@@ -737,7 +737,7 @@ Creates a duplicate-value-free version of the `array` using strict equality for 
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
 *unique*
@@ -1019,7 +1019,7 @@ Creates an object composed of keys returned from running each element of the `co
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -1055,7 +1055,7 @@ Checks if the `callback` returns a truthy value for **all** elements of a `colle
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
 *all*
@@ -1101,7 +1101,7 @@ Examines each element in a `collection`, returning an array of all elements the 
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
 *select*
@@ -1147,7 +1147,7 @@ Examines each element in a `collection`, returning the first that the `callback`
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
 *detect*
@@ -1227,7 +1227,7 @@ Creates an object composed of keys returned from running each element of the `co
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -1293,7 +1293,7 @@ Creates an array of values by running each element in the `collection` through t
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
 *collect*
@@ -1338,7 +1338,7 @@ Retrieves the maximum value of an `array`. If `callback` is passed, it will be e
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -1380,7 +1380,7 @@ Retrieves the minimum value of an `array`. If `callback` is passed, it will be e
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -1521,7 +1521,7 @@ The opposite of `_.filter`, this method returns the elements of a `collection` t
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -1618,7 +1618,7 @@ Checks if the `callback` returns a truthy value for **any** element of a `collec
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
 *any*
@@ -1664,7 +1664,7 @@ Creates an array of elements, sorted in ascending order by the results of runnin
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 
-If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the propeties of the given object, else `false`.
+If an object is passed for `callback`, the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to iterate over.
@@ -2171,7 +2171,7 @@ hello();
 ### <a id="_assignobject--source1-source2--callback-thisarg"></a>`_.assign(object [, source1, source2, ..., callback, thisArg])`
 <a href="#_assignobject--source1-source2--callback-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1109 "View in source") [&#x24C9;][1]
 
-Assigns own enumerable properties of source object(s) to the destination object. Subsequent sources will overwrite propery assignments of previous sources. If a `callback` function is passed, it will be executed to produce the assigned values. The `callback` is bound to `thisArg` and invoked with two arguments; *(objectValue, sourceValue)*.
+Assigns own enumerable properties of source object(s) to the destination object. Subsequent sources will overwrite property assignments of previous sources. If a `callback` function is passed, it will be executed to produce the assigned values. The `callback` is bound to `thisArg` and invoked with two arguments; *(objectValue, sourceValue)*.
 
 #### Aliases
 *extend*
@@ -2633,7 +2633,7 @@ Performs a deep comparison between two values to determine if they are equivalen
 4. `[thisArg]` *(Mixed)*: The `this` binding of `callback`.
 
 #### Returns
-*(Boolean)*: Returns `true`, if the values are equvalent, else `false`.
+*(Boolean)*: Returns `true`, if the values are equivalent, else `false`.
 
 #### Example
 ```js
@@ -2978,7 +2978,7 @@ _.keys({ 'one': 1, 'two': 2, 'three': 3 });
 ### <a id="_mergeobject--source1-source2--callback-thisarg"></a>`_.merge(object [, source1, source2, ..., callback, thisArg])`
 <a href="#_mergeobject--source1-source2--callback-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1961 "View in source") [&#x24C9;][1]
 
-Recursively merges own enumerable properties of the source object(s), that don't resolve to `undefined`, into the destination object. Subsequent sources will overwrite propery assignments of previous sources. If a `callback` function is passed, it will be executed to produce the merged values of the destination and source properties. If `callback` returns `undefined`, merging will be handled by the method instead. The `callback` is bound to `thisArg` and invoked with two arguments; *(objectValue, sourceValue)*.
+Recursively merges own enumerable properties of the source object(s), that don't resolve to `undefined`, into the destination object. Subsequent sources will overwrite property assignments of previous sources. If a `callback` function is passed, it will be executed to produce the merged values of the destination and source properties. If `callback` returns `undefined`, merging will be handled by the method instead. The `callback` is bound to `thisArg` and invoked with two arguments; *(objectValue, sourceValue)*.
 
 #### Arguments
 1. `object` *(Object)*: The destination object.

@@ -869,7 +869,7 @@
 
     /**
      * Assigns own enumerable properties of source object(s) to the destination
-     * object. Subsequent sources will overwrite propery assignments of previous
+     * object. Subsequent sources will overwrite property assignments of previous
      * sources. If a `callback` function is passed, it will be executed to produce
      * the assigned values. The `callback` is bound to `thisArg` and invoked with
      * two arguments; (objectValue, sourceValue).
@@ -1322,7 +1322,7 @@
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
      * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
      * @param- {Object} [stackB=[]] Internally used track traversed `b` objects.
-     * @returns {Boolean} Returns `true`, if the values are equvalent, else `false`.
+     * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
      * @example
      *
      * var moe = { 'name': 'moe', 'age': 40 };
@@ -1740,7 +1740,7 @@
     /**
      * Recursively merges own enumerable properties of the source object(s), that
      * don't resolve to `undefined`, into the destination object. Subsequent sources
-     * will overwrite propery assignments of previous sources. If a `callback` function
+     * will overwrite property assignments of previous sources. If a `callback` function
      * is passed, it will be executed to produce the merged values of the destination
      * and source properties. If `callback` returns `undefined`, merging will be
      * handled by the method instead. The `callback` is bound to `thisArg` and
@@ -2135,7 +2135,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2178,7 +2178,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2240,7 +2240,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2304,7 +2304,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2399,7 +2399,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`
      *
      * @static
@@ -2478,7 +2478,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2536,7 +2536,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2605,7 +2605,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2786,7 +2786,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2886,7 +2886,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -2950,7 +2950,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -3114,7 +3114,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -3270,7 +3270,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -3396,7 +3396,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -3504,7 +3504,7 @@
      * @category Arrays
      * @param {Number} [start=0] The start of the range.
      * @param {Number} end The end of the range.
-     * @param {Number} [step=1] The value to increment or descrement by.
+     * @param {Number} [step=1] The value to increment or decrement by.
      * @returns {Array} Returns a new range array.
      * @example
      *
@@ -3556,7 +3556,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -3629,7 +3629,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static
@@ -3713,7 +3713,7 @@
      * callback will return the property value of the given element.
      *
      * If an object is passed for `callback`, the created "_.where" style callback
-     * will return `true` for elements that have the propeties of the given object,
+     * will return `true` for elements that have the properties of the given object,
      * else `false`.
      *
      * @static

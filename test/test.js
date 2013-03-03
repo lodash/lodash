@@ -2610,6 +2610,18 @@
 
       deepEqual(actual, expected);
     });
+
+    _.each({
+      'an object': ['a'],
+      'a number': 0,
+      'a string': '0'
+    },
+    function(callback, key) {
+      test('should work with ' + key + ' for `callback`', function() {
+        var actual = _.uniq([['a'], ['b'], ['a']], callback);
+        deepEqual(actual, [['a'], ['b']]);
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

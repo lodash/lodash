@@ -3175,12 +3175,12 @@
         result = [],
         seen = result;
   
-    if (typeof isSorted == 'function') {
+    if (typeof isSorted != 'boolean' && isSorted != null) {
       thisArg = callback;
       callback = isSorted;
       isSorted = false;
     }
-    if (callback) {
+    if (callback != null) {
       seen = [];
       callback = createCallback(callback, thisArg);
     }

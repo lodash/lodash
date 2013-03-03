@@ -3787,7 +3787,7 @@
           seen = result;
 
       // juggle arguments
-      if (typeof isSorted == 'function') {
+      if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = callback;
         callback = isSorted;
         isSorted = false;
@@ -3797,7 +3797,7 @@
       if (isLarge) {
         var cache = {};
       }
-      if (callback) {
+      if (callback != null) {
         seen = [];
         callback = createCallback(callback, thisArg);
       }

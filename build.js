@@ -87,23 +87,24 @@
     'compact': [],
     'compose': [],
     'contains': ['indexOf', 'isString'],
-    'countBy': ['forEach', 'identity', 'isEqual', 'keys'],
+    'countBy': ['createCallback', 'forEach'],
+    'createCallback': ['identity', 'isEqual', 'keys'],
     'debounce': [],
     'defaults': ['isArray', 'forEach', 'forOwn'],
     'defer': ['bind'],
     'delay': [],
     'difference': ['indexOf'],
     'escape': [],
-    'every': ['identity', 'isArray', 'isEqual', 'keys'],
-    'filter': ['identity', 'isArray', 'isEqual', 'keys'],
-    'find': ['forEach', 'identity', 'isEqual', 'keys'],
+    'every': ['createCallback', 'isArray'],
+    'filter': ['createCallback', 'isArray'],
+    'find': ['createCallback', 'forEach'],
     'first': [],
     'flatten': ['isArray'],
-    'forEach': ['identity', 'isArguments', 'isArray', 'isString'],
-    'forIn': ['identity', 'isArguments'],
-    'forOwn': ['identity', 'isArguments'],
+    'forEach': ['createCallback', 'isArguments', 'isArray', 'isString'],
+    'forIn': ['createCallback', 'isArguments'],
+    'forOwn': ['createCallback', 'isArguments'],
     'functions': ['forIn', 'isFunction'],
-    'groupBy': ['forEach', 'identity', 'isEqual', 'keys'],
+    'groupBy': ['createCallback', 'forEach'],
     'has': [],
     'identity': [],
     'indexOf': ['sortedIndex'],
@@ -131,11 +132,11 @@
     'keys': ['forOwn', 'isArguments', 'isObject'],
     'last': [],
     'lastIndexOf': [],
-    'map': ['identity', 'isArray', 'isEqual', 'keys'],
-    'max': ['isArray', 'isEqual', 'isString', 'keys'],
+    'map': ['createCallback', 'isArray'],
+    'max': ['createCallback', 'isArray', 'isString'],
     'memoize': [],
     'merge': ['forEach', 'forOwn', 'isArray', 'isObject', 'isPlainObject'],
-    'min': ['isArray', 'isEqual', 'isString', 'keys'],
+    'min': ['createCallback', 'isArray', 'isString'],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
     'omit': ['forIn', 'indexOf'],
@@ -148,17 +149,17 @@
     'pluck': ['map'],
     'random': [],
     'range': [],
-    'reduce': ['identity', 'isArray', 'isEqual', 'keys'],
-    'reduceRight': ['forEach', 'identity', 'isEqual', 'isString', 'keys'],
-    'reject': ['filter', 'identity', 'isEqual', 'keys'],
+    'reduce': ['createCallback', 'isArray'],
+    'reduceRight': ['createCallback', 'forEach', 'isString', 'keys'],
+    'reject': ['createCallback', 'filter'],
     'rest': [],
     'result': ['isFunction'],
     'runInContext': ['defaults', 'pick'],
     'shuffle': ['forEach'],
     'size': ['keys'],
-    'some': ['identity', 'isArray', 'isEqual', 'keys'],
-    'sortBy': ['forEach', 'identity', 'isEqual', 'keys'],
-    'sortedIndex': ['identity', 'isEqual', 'keys'],
+    'some': ['createCallback', 'isArray'],
+    'sortBy': ['createCallback', 'forEach'],
+    'sortedIndex': ['createCallback', 'identity'],
     'tap': ['value'],
     'template': ['defaults', 'escape', 'keys', 'values'],
     'throttle': [],
@@ -166,7 +167,7 @@
     'toArray': ['isString', 'values'],
     'unescape': [],
     'union': ['uniq'],
-    'uniq': ['indexOf', 'isEqual', 'keys'],
+    'uniq': ['createCallback', 'indexOf'],
     'uniqueId': [],
     'value': ['forOwn'],
     'values': ['keys'],
@@ -259,6 +260,7 @@
     'at',
     'bindKey',
     'cloneDeep',
+    'createCallback',
     'forIn',
     'forOwn',
     'isPlainObject',
@@ -707,17 +709,23 @@
    * @private
    * @param {Array|String} methodName A single method name or array of
    *  dependencies to query.
+   * @param- {Object} [stackA=[]] Internally used track queried methods.
    * @returns {Array} Returns an array of method dependencies.
    */
-  function getDependencies(methodName) {
+  function getDependencies(methodName, stack) {
     var dependencies = Array.isArray(methodName) ? methodName : dependencyMap[methodName];
     if (!dependencies) {
       return [];
     }
+    stack || (stack = []);
+
     // recursively accumulate the dependencies of the `methodName` function, and
     // the dependencies of its dependencies, and so on
     return _.uniq(dependencies.reduce(function(result, otherName) {
-      result.push.apply(result, getDependencies(otherName).concat(otherName));
+      if (stack.indexOf(otherName) < 0) {
+        stack.push(otherName);
+        result.push.apply(result, getDependencies(otherName, stack).concat(otherName));
+      }
       return result;
     }, []));
   }
@@ -1598,6 +1606,7 @@
 
     // flags to specify exposing Lo-Dash methods in an Underscore build
     var exposeAssign = !isUnderscore,
+        exposeCreateCallback = !isUnderscore,
         exposeForIn = !isUnderscore,
         exposeForOwn = !isUnderscore,
         exposeIsPlainObject = !isUnderscore,
@@ -1637,6 +1646,7 @@
       if (isUnderscore) {
         var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
         exposeAssign = methods.indexOf('assign') > -1;
+        exposeCreateCallback = methods.indexOf('createCallback') > -1;
         exposeForIn = methods.indexOf('forIn') > -1;
         exposeForOwn = methods.indexOf('forOwn') > -1;
         exposeIsPlainObject = methods.indexOf('isPlainObject') > -1;
@@ -1657,25 +1667,13 @@
       }
       if (isUnderscore) {
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
-        dependencyMap.countBy = _.without(dependencyMap.countBy, 'isEqual', 'keys');
-        dependencyMap.every = _.without(dependencyMap.every, 'isEqual', 'keys');
-        dependencyMap.filter = _.without(dependencyMap.filter, 'isEqual');
-        dependencyMap.find = _.without(dependencyMap.find, 'isEqual', 'keys');
-        dependencyMap.groupBy = _.without(dependencyMap.groupBy, 'isEqual', 'keys');
         dependencyMap.isEmpty = ['isArray', 'isString'];
         dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
-        dependencyMap.map = _.without(dependencyMap.map, 'isEqual', 'keys');
-        dependencyMap.max = _.without(dependencyMap.max, 'isEqual', 'isString', 'keys');
-        dependencyMap.min = _.without(dependencyMap.min, 'isEqual', 'isString', 'keys');
+        dependencyMap.max = _.without(dependencyMap.max, 'isString');
+        dependencyMap.min = _.without(dependencyMap.min, 'isString');
         dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
-        dependencyMap.reduce = _.without(dependencyMap.reduce, 'isEqual', 'keys');
-        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isEqual', 'isString');
-        dependencyMap.reject = _.without(dependencyMap.reject, 'isEqual', 'keys');
-        dependencyMap.some = _.without(dependencyMap.some, 'isEqual', 'keys');
-        dependencyMap.sortBy = _.without(dependencyMap.sortBy, 'isEqual', 'keys');
-        dependencyMap.sortedIndex = _.without(dependencyMap.sortedIndex, 'isEqual', 'keys');
+        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
         dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
-        dependencyMap.uniq = _.without(dependencyMap.uniq, 'isEqual', 'keys');
         dependencyMap.where.push('find', 'isEmpty');
 
         if (useUnderscoreClone) {
@@ -2201,7 +2199,7 @@
 
         // remove `_.isEqual` use from `createCallback`
         source = source.replace(matchFunction(source, 'createCallback'), function(match) {
-          return match.replace(/isEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
+          return match.replace(/\bisEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
         });
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
@@ -2211,6 +2209,10 @@
           });
         });
 
+        // replace `lodash.createCallback` references with `createCallback`
+        if (!exposeCreateCallback) {
+          source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
+        }
         // remove unneeded variables
         if (useUnderscoreClone) {
           source = removeVar(source, 'cloneableClasses');
@@ -2333,6 +2335,9 @@
 
           if (!exposeAssign) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *=.+\n/m, '');
+          }
+          if (!exposeCreateCallback) {
+            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.createCallback *=.+\n/m, '');
           }
           if (!exposeForIn) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *=.+\n/m, '');

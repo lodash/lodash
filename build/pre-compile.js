@@ -12,7 +12,6 @@
     'argsLength',
     'callback',
     'collection',
-    'createCallback',
     'ctor',
     'guard',
     'hasOwnProperty',
@@ -22,6 +21,7 @@
     'isString',
     'iterable',
     'length',
+    'lodash',
     'nativeKeys',
     'object',
     'objectTypes',
@@ -88,6 +88,7 @@
     'compose',
     'contains',
     'countBy',
+    'createCallback',
     'criteria',
     'debounce',
     'defaults',
@@ -237,7 +238,10 @@
       return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
     });
 
-    // remove brackets from `_.escape()` in `_.template`
+    // remove brackets from `lodash.createCallback` in `_.assign`
+    source = source.replace("'  var callback = lodash['createCallback']", "'var callback=lodash.createCallback");
+
+    // remove brackets from `_.escape` in `_.template`
     source = source.replace(/__e *= *_\['escape']/g, '__e=_.escape');
 
     // remove brackets from `collection.indexOf` in `_.contains`

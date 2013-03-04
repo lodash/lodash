@@ -324,7 +324,7 @@
      * @returns {String} Returns the interpolated text.
      */
     var iteratorTemplate = function(obj) {
-      
+
       var __p = 'var index, iterable = ' +
       (obj.firstArg ) +
       ', result = iterable;\nif (!iterable) return result;\n' +
@@ -337,7 +337,7 @@
       (obj.loop ) +
       '\n  }\n}\nelse {  ';
        } ;
-      
+
        if (obj.isKeysFast && obj.useHas) {
       __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ' +
       (obj.loop ) +
@@ -359,15 +359,14 @@
        } ;
       __p += '\n  }  ';
        } ;
-      
+
        if (obj.arrays) {
       __p += '\n}';
        } ;
       __p += 
       (obj.bottom ) +
       ';\nreturn result';
-      
-      
+
       return __p
     };
 

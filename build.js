@@ -99,7 +99,7 @@
     'filter': ['createCallback', 'isArray'],
     'find': ['createCallback', 'forEach'],
     'first': [],
-    'flatten': ['isArray'],
+    'flatten': ['createCallback', 'isArray'],
     'forEach': ['createCallback', 'isArguments', 'isArray', 'isString'],
     'forIn': ['createCallback', 'isArguments'],
     'forOwn': ['createCallback', 'isArguments'],
@@ -1667,6 +1667,7 @@
       }
       if (isUnderscore) {
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
+        dependencyMap.flatten = _.without(dependencyMap.flatten, 'createCallback');
         dependencyMap.isEmpty = ['isArray', 'isString'];
         dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
         dependencyMap.max = _.without(dependencyMap.max, 'isString');
@@ -1843,7 +1844,26 @@
           '      result.push(value);',
           '    }',
           '  }',
-          '  return result',
+          '  return result;',
+          '}'
+        ].join('\n'));
+
+        // replace `_.flatten`
+        source = replaceFunction(source, 'flatten', [
+          'function flatten(array, isShallow) {',
+          '  var index = -1,',
+          '      length = array ? array.length : 0,',
+          '      result = [];',
+          '' ,
+          '  while (++index < length) {',
+          '    var value = array[index];',
+          '    if (isArray(value)) {',
+          '      push.apply(result, isShallow ? value : flatten(value));',
+          '    } else {',
+          '      result.push(value);',
+          '    }',
+          '  }',
+          '  return result;',
           '}'
         ].join('\n'));
 

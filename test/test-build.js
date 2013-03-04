@@ -821,8 +821,7 @@
       var start = _.after(2, _.once(QUnit.start));
 
       build(['-s', 'underscore'], function(data) {
-        var last,
-            array = [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }],
+        var array = [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }],
             basename = path.basename(data.outputPath, '.js'),
             context = createContext();
 
@@ -869,6 +868,7 @@
 
         equal(actual, _.first(array), '_.find: ' + basename);
 
+        var last;
         actual = lodash.forEach(array, function(value) {
           last = value;
           return false;
@@ -876,6 +876,15 @@
 
         equal(last, _.last(array), '_.forEach should not exit early: ' + basename);
         equal(actual, undefined, '_.forEach should return `undefined`: ' + basename);
+
+        array = [{ 'a': [1, 2] }, { 'a': [3] }];
+
+        actual = lodash.flatten(array, function(value, index) {
+          return this[index].a;
+        }, array);
+
+        deepEqual(actual, array, '_.flatten should should ignore `callback` and `thisArg`: ' + basename);
+        deepEqual(lodash.flatten(array, 'a'), array, '_.flatten should should ignore string `callback` values: ' + basename);
 
         object = { 'length': 0, 'splice': Array.prototype.splice };
         equal(lodash.isEmpty(object), false, '_.isEmpty should return `false` for jQuery/MooTools DOM query collections: ' + basename);

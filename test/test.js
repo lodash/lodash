@@ -789,6 +789,46 @@
   QUnit.module('lodash.flatten');
 
   (function() {
+    var array = [{ 'a': [1, [2]] }, { 'a': [3] }];
+
+    test('should work with a `callback`', function() {
+      var actual = _.flatten(array, function(value) {
+        return value.a;
+      });
+
+      deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should work with `isShallow` and `callback`', function() {
+      var actual = _.flatten(array, true, function(value) {
+        return value.a;
+      });
+
+      deepEqual(actual, [1, [2], 3]);
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args;
+
+      _.flatten(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [{ 'a': [1, [2]] }, 0, array]);
+    });
+
+    test('supports the `thisArg` argument', function() {
+      var actual = _.flatten(array, function(value, index) {
+        return this[index].a;
+      }, array);
+
+      deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should work with a string for `callback`', function() {
+      deepEqual(_.flatten(array, 'a'), [1, 2, 3]);
+    });
+
     test('should treat sparse arrays as dense', function() {
       var array = [[1, 2, 3], Array(3)],
           expected = [1, 2, 3],

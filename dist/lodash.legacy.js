@@ -467,7 +467,7 @@
     /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
     var eachIteratorOptions = {
       'args': 'collection, callback, thisArg',
-      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg)",
+      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg)",
       'arrays': "typeof length == 'number'",
       'loop': 'if (callback(iterable[index], index, collection) === false) return result'
     };
@@ -612,64 +612,6 @@
     }
 
     /**
-     * Produces a callback bound to an optional `thisArg`. If `func` is a property
-     * name, the created callback will return the property value for a given element.
-     * If `func` is an object, the created callback will return `true` for elements
-     * that contain the equivalent object properties, otherwise it will return `false`.
-     *
-     * @private
-     * @param {Mixed} [func=identity] The value to convert to a callback.
-     * @param {Mixed} [thisArg] The `this` binding of the created callback.
-     * @param {Number} [argCount=3] The number of arguments the callback accepts.
-     * @returns {Function} Returns a callback function.
-     */
-    function createCallback(func, thisArg, argCount) {
-      if (func == null) {
-        return identity;
-      }
-      var type = typeof func;
-      if (type != 'function') {
-        if (type != 'object') {
-          return function(object) {
-            return object[func];
-          };
-        }
-        var props = keys(func);
-        return function(object) {
-          var length = props.length,
-              result = false;
-          while (length--) {
-            if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
-              break;
-            }
-          }
-          return result;
-        };
-      }
-      if (typeof thisArg != 'undefined') {
-        if (argCount === 1) {
-          return function(value) {
-            return func.call(thisArg, value);
-          };
-        }
-        if (argCount === 2) {
-          return function(a, b) {
-            return func.call(thisArg, a, b);
-          };
-        }
-        if (argCount === 4) {
-          return function(accumulator, value, index, collection) {
-            return func.call(thisArg, accumulator, value, index, collection);
-          };
-        }
-        return function(value, index, collection) {
-          return func.call(thisArg, value, index, collection);
-        };
-      }
-      return func;
-    }
-
-    /**
      * Creates compiled iteration functions.
      *
      * @private
@@ -710,13 +652,13 @@
 
       // create the function factory
       var factory = Function(
-          'createCallback, hasOwnProperty, isArguments, isArray, isString, ' +
+          'hasOwnProperty, isArguments, isArray, isString, lodash, ' +
           'objectTypes',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
       // return the compiled function
       return factory(
-        createCallback, hasOwnProperty, isArguments, isArray, isString,
+        hasOwnProperty, isArguments, isArray, isString, lodash,
         objectTypes);
     }
 
@@ -1064,7 +1006,7 @@
         defaultsIteratorOptions.top.replace(';',
           ';\n' +
           "if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {\n" +
-          '  var callback = createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
+          '  var callback = lodash.createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
           "} else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {\n" +
           '  callback = args[--argsLength];\n' +
           '}'
@@ -1125,9 +1067,11 @@
         deep = false;
       }
       if (typeof callback == 'function') {
-        callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 1);
-        result = callback(result);
+        callback = (typeof thisArg == 'undefined')
+          ? callback
+          : lodash.createCallback(callback, thisArg, 1);
 
+        result = callback(result);
         if (typeof result != 'undefined') {
           return result;
         }
@@ -1438,8 +1382,8 @@
      * @param {Mixed} b The other value to compare.
      * @param {Function} [callback] The function to customize comparing values.
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
-     * @param- {Object} [stackB=[]] Internally used track traversed `b` objects.
+     * @param- {Array} [stackA=[]] Internally used track traversed `a` objects.
+     * @param- {Array} [stackB=[]] Internally used track traversed `b` objects.
      * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
      * @example
      *
@@ -1468,7 +1412,10 @@
       // used to indicate that when comparing objects, `a` has at least the properties of `b`
       var whereIndicator = callback === indicatorObject;
       if (callback && !whereIndicator) {
-        callback = typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 2);
+        callback = (typeof thisArg == 'undefined')
+          ? callback
+          : lodash.createCallback(callback, thisArg, 2);
+
         var result = callback(a, b);
         if (typeof result != 'undefined') {
           return !!result;
@@ -1933,7 +1880,7 @@
           length = args.length;
         }
         if (length > 3 && typeof args[length - 2] == 'function') {
-          callback = createCallback(args[--length - 1], args[length--], 2);
+          callback = lodash.createCallback(args[--length - 1], args[length--], 2);
         } else if (length > 2 && typeof args[length - 1] == 'function') {
           callback = args[--length];
         }
@@ -2023,7 +1970,7 @@
           result = {};
 
       if (isFunc) {
-        callback = createCallback(callback, thisArg);
+        callback = lodash.createCallback(callback, thisArg);
       } else {
         var props = concat.apply(arrayRef, arguments);
       }
@@ -2125,7 +2072,7 @@
           }
         }
       } else {
-        callback = createCallback(callback, thisArg);
+        callback = lodash.createCallback(callback, thisArg);
         forIn(object, function(value, key, object) {
           if (callback(value, key, object)) {
             result[key] = value;
@@ -2281,7 +2228,7 @@
      */
     function countBy(collection, callback, thisArg) {
       var result = {};
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
 
       forEach(collection, function(value, key, collection) {
         key = callback(value, key, collection) + '';
@@ -2333,7 +2280,7 @@
      */
     function every(collection, callback, thisArg) {
       var result = true;
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
 
       if (isArray(collection)) {
         var index = -1,
@@ -2394,7 +2341,7 @@
      */
     function filter(collection, callback, thisArg) {
       var result = [];
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
 
       if (isArray(collection)) {
         var index = -1,
@@ -2461,7 +2408,7 @@
      */
     function find(collection, callback, thisArg) {
       var result;
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
 
       forEach(collection, function(value, index, collection) {
         if (callback(value, index, collection)) {
@@ -2546,7 +2493,7 @@
      */
     function groupBy(collection, callback, thisArg) {
       var result = {};
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
 
       forEach(collection, function(value, key, collection) {
         key = callback(value, key, collection) + '';
@@ -2634,7 +2581,7 @@
           length = collection ? collection.length : 0,
           result = Array(typeof length == 'number' ? length : 0);
 
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
       if (isArray(collection)) {
         while (++index < length) {
           result[index] = callback(collection[index], index, collection);
@@ -2703,7 +2650,7 @@
       } else {
         callback = (!callback && isString(collection))
           ? charAtCallback
-          : createCallback(callback, thisArg);
+          : lodash.createCallback(callback, thisArg);
 
         each(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
@@ -2772,7 +2719,7 @@
       } else {
         callback = (!callback && isString(collection))
           ? charAtCallback
-          : createCallback(callback, thisArg);
+          : lodash.createCallback(callback, thisArg);
 
         each(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
@@ -2839,7 +2786,7 @@
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-      callback = createCallback(callback, thisArg, 4);
+      callback = lodash.createCallback(callback, thisArg, 4);
 
       if (isArray(collection)) {
         var index = -1,
@@ -2891,7 +2838,7 @@
       } else if (noCharByIndex && isString(collection)) {
         iterable = collection.split('');
       }
-      callback = createCallback(callback, thisArg, 4);
+      callback = lodash.createCallback(callback, thisArg, 4);
       forEach(collection, function(value, index, collection) {
         index = props ? props[--length] : --length;
         accumulator = noaccum
@@ -2941,7 +2888,7 @@
      * // => [{ 'name': 'carrot', 'organic': true, 'type': 'vegetable' }]
      */
     function reject(collection, callback, thisArg) {
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
       return filter(collection, function(value, index, collection) {
         return !callback(value, index, collection);
       });
@@ -3043,7 +2990,7 @@
      */
     function some(collection, callback, thisArg) {
       var result;
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
 
       if (isArray(collection)) {
         var index = -1,
@@ -3102,7 +3049,7 @@
           length = collection ? collection.length : 0,
           result = Array(typeof length == 'number' ? length : 0);
 
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
       forEach(collection, function(value, key, collection) {
         result[++index] = {
           'criteria': callback(value, key, collection),
@@ -3292,7 +3239,7 @@
 
         if (typeof callback != 'number' && callback != null) {
           var index = -1;
-          callback = createCallback(callback, thisArg);
+          callback = lodash.createCallback(callback, thisArg);
           while (++index < length && callback(array[index], index, array)) {
             n++;
           }
@@ -3449,7 +3396,7 @@
 
       if (typeof callback != 'number' && callback != null) {
         var index = length;
-        callback = createCallback(callback, thisArg);
+        callback = lodash.createCallback(callback, thisArg);
         while (index-- && callback(array[index], index, array)) {
           n++;
         }
@@ -3573,7 +3520,7 @@
 
         if (typeof callback != 'number' && callback != null) {
           var index = length;
-          callback = createCallback(callback, thisArg);
+          callback = lodash.createCallback(callback, thisArg);
           while (index-- && callback(array[index], index, array)) {
             n++;
           }
@@ -3733,7 +3680,7 @@
             index = -1,
             length = array ? array.length : 0;
 
-        callback = createCallback(callback, thisArg);
+        callback = lodash.createCallback(callback, thisArg);
         while (++index < length && callback(array[index], index, array)) {
           n++;
         }
@@ -3796,7 +3743,7 @@
           high = array ? array.length : low;
 
       // explicitly reference `identity` for better inlining in Firefox
-      callback = callback ? createCallback(callback, thisArg, 1) : identity;
+      callback = callback ? lodash.createCallback(callback, thisArg, 1) : identity;
       value = callback(value);
 
       while (low < high) {
@@ -3889,7 +3836,7 @@
       }
       if (callback != null) {
         seen = [];
-        callback = createCallback(callback, thisArg);
+        callback = lodash.createCallback(callback, thisArg);
       }
       while (++index < length) {
         var value = array[index],
@@ -4166,6 +4113,66 @@
         }
         return args[0];
       };
+    }
+
+    /**
+     * Produces a callback bound to an optional `thisArg`. If `func` is a property
+     * name, the created callback will return the property value for a given element.
+     * If `func` is an object, the created callback will return `true` for elements
+     * that contain the equivalent object properties, otherwise it will return `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Functions
+     * @param {Mixed} [func=identity] The value to convert to a callback.
+     * @param {Mixed} [thisArg] The `this` binding of the created callback.
+     * @param {Number} [argCount=3] The number of arguments the callback accepts.
+     * @returns {Function} Returns a callback function.
+     */
+    function createCallback(func, thisArg, argCount) {
+      if (func == null) {
+        return identity;
+      }
+      var type = typeof func;
+      if (type != 'function') {
+        if (type != 'object') {
+          return function(object) {
+            return object[func];
+          };
+        }
+        var props = keys(func);
+        return function(object) {
+          var length = props.length,
+              result = false;
+          while (length--) {
+            if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
+              break;
+            }
+          }
+          return result;
+        };
+      }
+      if (typeof thisArg != 'undefined') {
+        if (argCount === 1) {
+          return function(value) {
+            return func.call(thisArg, value);
+          };
+        }
+        if (argCount === 2) {
+          return function(a, b) {
+            return func.call(thisArg, a, b);
+          };
+        }
+        if (argCount === 4) {
+          return function(accumulator, value, index, collection) {
+            return func.call(thisArg, accumulator, value, index, collection);
+          };
+        }
+        return function(value, index, collection) {
+          return func.call(thisArg, value, index, collection);
+        };
+      }
+      return func;
     }
 
     /**
@@ -4938,6 +4945,7 @@
     lodash.compact = compact;
     lodash.compose = compose;
     lodash.countBy = countBy;
+    lodash.createCallback = createCallback;
     lodash.debounce = debounce;
     lodash.defaults = defaults;
     lodash.defer = defer;

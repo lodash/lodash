@@ -402,7 +402,7 @@
      * @returns {String} Returns the interpolated text.
      */
     var iteratorTemplate = function(obj) {
-      
+
       var __p = 'var index, iterable = ' +
       (obj.firstArg ) +
       ', result = iterable;\nif (!iterable) return result;\n' +
@@ -423,11 +423,11 @@
       (obj.loop ) +
       '\n    }\n  } else {  ';
        } ;
-      
+
        if (obj.hasEnumPrototype) {
       __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
        } ;
-      
+
        if (obj.isKeysFast && obj.useHas) {
       __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ';
        if (obj.hasEnumPrototype) {
@@ -461,7 +461,7 @@
        } ;
       __p += '\n  }  ';
        } ;
-      
+
        if (obj.hasDontEnumBug) {
       __p += '\n\n  var ctor = iterable.constructor;\n    ';
        for (var k = 0; k < 7; k++) {
@@ -475,17 +475,16 @@
       (obj.loop ) +
       '\n  }    ';
        } ;
-      
+
        } ;
-      
+
        if (obj.arrays || obj.nonEnumArgs) {
       __p += '\n}';
        } ;
       __p += 
       (obj.bottom ) +
       ';\nreturn result';
-      
-      
+
       return __p
     };
 

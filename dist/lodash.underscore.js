@@ -551,7 +551,7 @@
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;
     callback || (callback = identity);
-    
+
       for (index in iterable) {
         if (callback(iterable[index], index, collection) === indicatorObject) return result;    
       }  
@@ -584,7 +584,7 @@
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;
     callback || (callback = identity);
-    
+
       for (index in iterable) {
         if (hasOwnProperty.call(iterable, index)) {    
         if (callback(iterable[index], index, collection) === indicatorObject) return result;    
@@ -1035,7 +1035,7 @@
     }
     var type = typeof a,
         otherType = typeof b;
-  
+
     if (a === a &&
         (!a || (type != 'function' && type != 'object')) &&
         (!b || (otherType != 'function' && otherType != 'object'))) {
@@ -1046,7 +1046,7 @@
     }
     var className = toString.call(a),
         otherClass = toString.call(b);
-  
+
     if (className != otherClass) {
       return false;
     }
@@ -1054,12 +1054,12 @@
       case boolClass:
       case dateClass:
         return +a == +b;
-  
+
       case numberClass:
         return a != +a
           ? b != +b
           : (a == 0 ? (1 / a == 1 / b) : a == +b);
-  
+
       case regexpClass:
       case stringClass:
         return a == b + '';
@@ -1074,7 +1074,7 @@
       }
       var ctorA = a.constructor,
           ctorB = b.constructor;
-  
+
       if (ctorA != ctorB && !(
             isFunction(ctorA) && ctorA instanceof ctorA &&
             isFunction(ctorB) && ctorB instanceof ctorB
@@ -1084,7 +1084,7 @@
     }
     stackA || (stackA = []);
     stackB || (stackB = []);
-  
+
     var length = stackA.length;
     while (length--) {
       if (stackA[length] == a) {
@@ -1093,14 +1093,14 @@
     }
     var result = true,
         size = 0;
-  
+
     stackA.push(a);
     stackB.push(b);
-  
+
     if (isArr) {
       size = b.length;
       result = size == a.length;
-  
+
       if (result) {
         while (size--) {
           if (!(result = isEqual(a[size], b[size], stackA, stackB))) {
@@ -1116,7 +1116,7 @@
         return !(result = hasOwnProperty.call(a, key) && isEqual(a[key], value, stackA, stackB)) && indicatorObject;
       }
     });
-  
+
     if (result) {
       forIn(a, function(value, key, a) {
         if (hasOwnProperty.call(a, key)) {
@@ -1358,7 +1358,7 @@
   function omit(object) {
     var props = concat.apply(arrayRef, arguments),
         result = {};
-  
+
     forIn(object, function(value, key) {
       if (indexOf(props, key, 1) < 0) {
         result[key] = value;
@@ -1424,7 +1424,7 @@
         props = concat.apply(arrayRef, arguments),
         length = props.length,
         result = {};
-  
+
     while (++index < length) {
       var prop = props[index];
       if (prop in object) {
@@ -1730,7 +1730,7 @@
   function findWhere(object, properties) {
     return where(object, properties, true);
   }
-  
+
   /**
    * Iterates over a `collection`, executing the `callback` for each element in
    * the `collection`. The `callback` is bound to `thisArg` and invoked with three
@@ -2471,7 +2471,7 @@
         length = array.length,
         flattened = concat.apply(arrayRef, arguments),
         result = [];
-  
+
     while (++index < length) {
       var value = array[index]
       if (indexOf(flattened, value, length) < 0) {
@@ -2604,7 +2604,7 @@
     var index = -1,
         length = array ? array.length : 0,
         result = [];
-  
+
     while (++index < length) {
       var value = array[index];
       if (isArray(value)) {
@@ -2754,7 +2754,7 @@
         index = -1,
         length = array ? array.length : 0,
         result = [];
-  
+
     outer:
     while (++index < length) {
       var value = array[index];
@@ -3137,7 +3137,7 @@
         length = array ? array.length : 0,
         result = [],
         seen = result;
-  
+
     if (typeof isSorted != 'boolean' && isSorted != null) {
       thisArg = callback;
       callback = isSorted;
@@ -3150,7 +3150,7 @@
     while (++index < length) {
       var value = array[index],
           computed = callback ? callback(value, index, array) : value;
-  
+
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
             : indexOf(seen, computed) < 0
@@ -3183,7 +3183,7 @@
     var index = -1,
         length = array.length,
         result = [];
-  
+
     while (++index < length) {
       var value = array[index]
       if (indexOf(arguments, value, 1) < 0) {
@@ -3760,11 +3760,11 @@
   function mixin(object) {
     forEach(functions(object), function(methodName) {
       var func = lodash[methodName] = object[methodName];
-  
+
       lodash.prototype[methodName] = function() {
         var args = [this.__wrapped__];
         push.apply(args, arguments);
-  
+
         var result = func.apply(lodash, args);
         if (this.__chain__) {
           result = createWrapper(result);
@@ -3938,17 +3938,17 @@
   function template(text, data, options) {
     text || (text = '');
     options = defaults({}, options, lodash.templateSettings);
-  
+
     var index = 0,
         source = "__p += '",
         variable = options.variable;
-  
+
     var reDelimiters = RegExp(
       (options.escape || reNoMatch).source + '|' +
       (options.interpolate || reNoMatch).source + '|' +
       (options.evaluate || reNoMatch).source + '|$'
     , 'g');
-  
+
     text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {
       source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);
       if (escapeValue) {
@@ -3963,7 +3963,7 @@
       index = offset + match.length;
       return match;
     });
-  
+
     source += "';\n";
     if (!variable) {
       variable = 'obj';
@@ -3974,7 +3974,7 @@
       "function print() { __p += __j.call(arguments, '') }\n" +
       source +
       'return __p\n}';
-  
+
     try {
       var result = Function('_', 'return ' + source)(lodash);
     } catch(e) {
@@ -4063,7 +4063,7 @@
   }
 
   /*--------------------------------------------------------------------------*/
-  
+
   /**
    * Creates a `lodash` object that wraps the given `value`.
    *
@@ -4091,8 +4091,7 @@
     value.__chain__ = true;
     return value;
   }
-  
-  
+
   /**
    * Invokes `interceptor` with the `value` as the first argument, and then
    * returns `value`. The purpose of this method is to "tap into" a method chain,
@@ -4118,7 +4117,7 @@
     interceptor(value);
     return value;
   }
-  
+
   /**
    * Enables method chaining on the wrapper object.
    *
@@ -4138,8 +4137,7 @@
     this.__chain__ = true;
     return this;
   }
-  
-  
+
   /**
    * Produces the `toString` result of the wrapped value.
    *
@@ -4308,7 +4306,7 @@
    * @type String
    */
   lodash.VERSION = '1.0.1';
-  
+
   // add functions to `lodash.prototype`
   mixin(lodash);
 
@@ -4322,7 +4320,7 @@
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__;
       func.apply(value, arguments);
-  
+
       // avoid array-like object bugs with `Array#shift` and `Array#splice`
       // in Firefox < 10 and IE < 9
       if (hasObjectSpliceBug && value.length === 0) {
@@ -4331,14 +4329,14 @@
       return this;
     };
   });
-  
+
   // add `Array` accessor functions to the wrapper
   each(['concat', 'join', 'slice'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__,
           result = func.apply(value, arguments);
-  
+
       if (this.__chain__) {
         result = new lodash(result);
         result.__chain__ = true;

@@ -224,18 +224,18 @@
       }\
       \
       if (typeof bind != "undefined") {\
-        var contextObject = { "name": "moe" },\
+        var thisArg = { "name": "moe" },\
             ctor = function() {};\
         \
         var func = function(greeting, punctuation) {\
           return greeting + ", " + this.name + (punctuation || ".");\
         };\
         \
-        var lodashBoundNormal = lodash.bind(func, contextObject),\
-            lodashBoundPartial = lodash.bind(func, contextObject, "hi");\
+        var _boundNormal = _.bind(func, thisArg),\
+            _boundPartial = _.bind(func, thisArg, "hi");\
         \
-        var _boundNormal = _.bind(func, contextObject),\
-            _boundPartial = _.bind(func, contextObject, "hi");\
+        var lodashBoundNormal = lodash.bind(func, thisArg),\
+            lodashBoundPartial = lodash.bind(func, thisArg, "hi");\
       }\
       \
       if (typeof bindAll != "undefined") {\
@@ -249,6 +249,10 @@
             return object;\
           }, {});\
         }\
+      }\
+      if (typeof chaining != "undefined") {\
+        var _chaining = _(numbers).chain(),\
+            lodashChaining = lodash(numbers);\
       }\
       if (typeof compact != "undefined") {\
         var uncompacted = numbers.slice();\
@@ -454,6 +458,40 @@
             _tplVerbose = _.template(tplVerbose, null, settingsObject);\
       }'
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_(...)` with a number')
+      .add(buildName, '\
+        lodash(2)'
+      )
+      .add(otherName, '\
+        _(2)'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_(...)` with an object')
+      .add(buildName, '\
+        lodash(object)'
+      )
+      .add(otherName, '\
+        _(object)'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_(...).map(...)`')
+      .add(buildName, {
+        'fn': 'lodashChaining.map(lodash.identity)',
+        'teardown': 'function chaining(){}'
+      })
+      .add(otherName, {
+        'fn':  '_chaining.map(_.identity)',
+        'teardown': 'function chaining(){}'
+      })
+  );
 
   /*--------------------------------------------------------------------------*/
 
@@ -1716,7 +1754,6 @@
   if (Benchmark.platform + '') {
     log(Benchmark.platform);
   }
-
   // in the browser, expose `run` to be called later
   if (window.document && !window.phantom) {
     window.run = run;

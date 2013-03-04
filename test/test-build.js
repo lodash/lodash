@@ -167,6 +167,7 @@
     'bind',
     'bindAll',
     'bindKey',
+    'createCallback',
     'compose',
     'debounce',
     'defer',
@@ -291,6 +292,7 @@
     'at',
     'bindKey',
     'cloneDeep',
+    'createCallback',
     'forIn',
     'forOwn',
     'isPlainObject',
@@ -932,6 +934,7 @@
           'assign',
           'at',
           'bindKey',
+          'createCallback',
           'forIn',
           'forOwn',
           'isPlainObject',
@@ -1334,6 +1337,7 @@
                 context = createContext(),
                 isUnderscore = /backbone|underscore/.test(command),
                 exposeAssign = !isUnderscore,
+                exposeCreateCallback = !isUnderscore,
                 exposeZipObject = !isUnderscore;
 
             try {
@@ -1352,6 +1356,7 @@
             if (isUnderscore) {
               if (methodNames) {
                 exposeAssign = methodNames.indexOf('assign') > -1;
+                exposeCreateCallback = methodNames.indexOf('createCallback') > -1;
                 exposeZipObject = methodNames.indexOf('zipObject') > -1;
               } else {
                 methodNames = underscoreMethods.slice();
@@ -1391,6 +1396,9 @@
 
             if (!exposeAssign) {
               methodNames = _.without(methodNames, 'assign');
+            }
+            if (!exposeCreateCallback) {
+              methodNames = _.without(methodNames, 'createCallback');
             }
             if (!exposeZipObject) {
               methodNames = _.without(methodNames, 'zipObject');

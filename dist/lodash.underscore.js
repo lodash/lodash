@@ -346,64 +346,6 @@
   }
 
   /**
-   * Produces a callback bound to an optional `thisArg`. If `func` is a property
-   * name, the created callback will return the property value for a given element.
-   * If `func` is an object, the created callback will return `true` for elements
-   * that contain the equivalent object properties, otherwise it will return `false`.
-   *
-   * @private
-   * @param {Mixed} [func=identity] The value to convert to a callback.
-   * @param {Mixed} [thisArg] The `this` binding of the created callback.
-   * @param {Number} [argCount=3] The number of arguments the callback accepts.
-   * @returns {Function} Returns a callback function.
-   */
-  function createCallback(func, thisArg, argCount) {
-    if (func == null) {
-      return identity;
-    }
-    var type = typeof func;
-    if (type != 'function') {
-      if (type != 'object') {
-        return function(object) {
-          return object[func];
-        };
-      }
-      var props = keys(func);
-      return function(object) {
-        var length = props.length,
-            result = false;
-        while (length--) {
-          if (!(result = object[props[length]] === func[props[length]])) {
-            break;
-          }
-        }
-        return result;
-      };
-    }
-    if (typeof thisArg != 'undefined') {
-      if (argCount === 1) {
-        return function(value) {
-          return func.call(thisArg, value);
-        };
-      }
-      if (argCount === 2) {
-        return function(a, b) {
-          return func.call(thisArg, a, b);
-        };
-      }
-      if (argCount === 4) {
-        return function(accumulator, value, index, collection) {
-          return func.call(thisArg, accumulator, value, index, collection);
-        };
-      }
-      return function(value, index, collection) {
-        return func.call(thisArg, value, index, collection);
-      };
-    }
-    return func;
-  }
-
-  /**
    * Creates a new object that inherits from the given `prototype` object.
    *
    * @private
@@ -1061,8 +1003,8 @@
    * @param {Mixed} b The other value to compare.
    * @param {Function} [callback] The function to customize comparing values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param- {Object} [stackA=[]] Internally used track traversed `a` objects.
-   * @param- {Object} [stackB=[]] Internally used track traversed `b` objects.
+   * @param- {Array} [stackA=[]] Internally used track traversed `a` objects.
+   * @param- {Array} [stackB=[]] Internally used track traversed `b` objects.
    * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
    * @example
    *
@@ -3419,6 +3361,66 @@
       }
       return args[0];
     };
+  }
+
+  /**
+   * Produces a callback bound to an optional `thisArg`. If `func` is a property
+   * name, the created callback will return the property value for a given element.
+   * If `func` is an object, the created callback will return `true` for elements
+   * that contain the equivalent object properties, otherwise it will return `false`.
+   *
+   * @static
+   * @memberOf _
+   * @category Functions
+   * @param {Mixed} [func=identity] The value to convert to a callback.
+   * @param {Mixed} [thisArg] The `this` binding of the created callback.
+   * @param {Number} [argCount=3] The number of arguments the callback accepts.
+   * @returns {Function} Returns a callback function.
+   */
+  function createCallback(func, thisArg, argCount) {
+    if (func == null) {
+      return identity;
+    }
+    var type = typeof func;
+    if (type != 'function') {
+      if (type != 'object') {
+        return function(object) {
+          return object[func];
+        };
+      }
+      var props = keys(func);
+      return function(object) {
+        var length = props.length,
+            result = false;
+        while (length--) {
+          if (!(result = object[props[length]] === func[props[length]])) {
+            break;
+          }
+        }
+        return result;
+      };
+    }
+    if (typeof thisArg != 'undefined') {
+      if (argCount === 1) {
+        return function(value) {
+          return func.call(thisArg, value);
+        };
+      }
+      if (argCount === 2) {
+        return function(a, b) {
+          return func.call(thisArg, a, b);
+        };
+      }
+      if (argCount === 4) {
+        return function(accumulator, value, index, collection) {
+          return func.call(thisArg, accumulator, value, index, collection);
+        };
+      }
+      return function(value, index, collection) {
+        return func.call(thisArg, value, index, collection);
+      };
+    }
+    return func;
   }
 
   /**

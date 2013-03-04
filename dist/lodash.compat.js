@@ -3320,14 +3320,28 @@
     }
 
     /**
-     * Flattens a nested array (the nesting can be to any depth). If `shallow` is
-     * truthy, `array` will only be flattened a single level.
+     * Flattens a nested array (the nesting can be to any depth). If `isShallow`
+     * is truthy, `array` will only be flattened a single level. If `callback`
+     * is passed, each element of `array` is passed through a callback` before
+     * flattening. The `callback` is bound to `thisArg` and invoked with three
+     * arguments; (value, index, array).
+     *
+     * If a property name is passed for `callback`, the created "_.pluck" style
+     * callback will return the property value of the given element.
+     *
+     * If an object is passed for `callback`, the created "_.where" style callback
+     * will return `true` for elements that have the properties of the given object,
+     * else `false`.
      *
      * @static
      * @memberOf _
      * @category Arrays
      * @param {Array} array The array to compact.
-     * @param {Boolean} shallow A flag to indicate only flattening a single level.
+     * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
+     * @param {Function|Object|String} [callback=identity] The function called per
+     *  iteration. If a property name or object is passed, it will be used to create
+     *  a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns a new flattened array.
      * @example
      *
@@ -3336,18 +3350,38 @@
      *
      * _.flatten([1, [2], [3, [[4]]]], true);
      * // => [1, 2, 3, [[4]]];
+     *
+     * var stooges = [
+     *   { 'name': 'curly', 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] },
+     *   { 'name': 'moe', 'quotes': ['Spread out!', 'You knucklehead!'] }
+     * ];
+     *
+     * // using "_.pluck" callback shorthand
+     * _.flatten(stooges, 'quotes');
+     * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
      */
-    function flatten(array, shallow) {
+    function flatten(array, isShallow, callback, thisArg) {
       var index = -1,
           length = array ? array.length : 0,
           result = [];
 
+      // juggle arguments
+      if (typeof isShallow != 'boolean' && isShallow != null) {
+        thisArg = callback;
+        callback = isShallow;
+        isShallow = false;
+      }
+      if (callback != null) {
+        callback = lodash.createCallback(callback, thisArg);
+      }
       while (++index < length) {
         var value = array[index];
-
+        if (callback) {
+          value = callback(value, index, array);
+        }
         // recursively flatten arrays (susceptible to call stack limits)
         if (isArray(value)) {
-          push.apply(result, shallow ? value : flatten(value));
+          push.apply(result, isShallow ? value : flatten(value));
         } else {
           result.push(value);
         }

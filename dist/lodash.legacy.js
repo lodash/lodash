@@ -297,13 +297,13 @@
      * @returns {Object} Returns a `lodash` instance.
      */
     function lodash(value) {
-      // exit early if already wrapped, even if wrapped by a different `lodash` constructor
-      if (value && typeof value == 'object' && hasOwnProperty.call(value, '__wrapped__')) {
-        return value;
-      }
       // allow invoking `lodash` without the `new` operator
       if (!(this instanceof lodash)) {
         return new lodash(value);
+      }
+      // exit early if already wrapped, even if wrapped by a different `lodash` constructor
+      if (value && typeof value == 'object' && hasOwnProperty.call(value, '__wrapped__')) {
+        return value;
       }
       this.__wrapped__ = value;
     }

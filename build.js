@@ -2017,11 +2017,11 @@
         // replace `lodash`
         source = replaceFunction(source, 'lodash', [
           'function lodash(value) {',
-          '  if (value instanceof lodash) {',
-          '    return value;',
-          '  }',
           '  if (!(this instanceof lodash)) {',
           '    return new lodash(value);',
+          '  }',
+          '  if (value instanceof lodash) {',
+          '    return value;',
           '  }',
           '  this.__wrapped__ = value;',
           '}'

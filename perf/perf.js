@@ -482,13 +482,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_(...).map(...)`')
+    Benchmark.Suite('`_(...).tap(...)`')
       .add(buildName, {
-        'fn': 'lodashChaining.map(lodash.identity)',
+        'fn': 'lodashChaining.tap(lodash.identity)',
         'teardown': 'function chaining(){}'
       })
       .add(otherName, {
-        'fn':  '_chaining.map(_.identity)',
+        'fn':  '_chaining.tap(_.identity)',
         'teardown': 'function chaining(){}'
       })
   );

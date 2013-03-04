@@ -576,6 +576,8 @@
     return source
       // remove pseudo private properties
       .replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n')
+      // remove extraneous whitespace
+      .replace(/^ *\n/gm, '\n')
       // remove lines with just whitespace and semicolons
       .replace(/^ *;\n/gm, '')
       // consolidate multiple newlines

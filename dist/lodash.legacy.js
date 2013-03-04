@@ -379,7 +379,7 @@
      * @returns {String} Returns the interpolated text.
      */
     var iteratorTemplate = function(obj) {
-      
+
       var __p = 'var index, iterable = ' +
       (obj.firstArg ) +
       ', result = iterable;\nif (!iterable) return result;\n' +
@@ -400,7 +400,7 @@
       (obj.loop ) +
       '\n    }\n  } else {  ';
        } ;
-      
+
        if (obj.hasEnumPrototype) {
       __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
        } ;
@@ -436,17 +436,16 @@
       (obj.loop ) +
       '\n  }    ';
        } ;
-      
+
        } ;
-      
+
        if (obj.arrays || obj.nonEnumArgs) {
       __p += '\n}';
        } ;
       __p += 
       (obj.bottom ) +
       ';\nreturn result';
-      
-      
+
       return __p
     };
 

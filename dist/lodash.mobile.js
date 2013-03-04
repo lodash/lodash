@@ -655,7 +655,7 @@
       if (!iterable) return result;
       if (!objectTypes[typeof iterable]) return result;
       callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
-      
+
         for (index in iterable) {
           if (callback(iterable[index], index, collection) === false) return result;    
         }  
@@ -688,7 +688,7 @@
       if (!iterable) return result;
       if (!objectTypes[typeof iterable]) return result;
       callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
-      
+
         for (index in iterable) {
           if (hasOwnProperty.call(iterable, index)) {    
           if (callback(iterable[index], index, collection) === false) return result;    

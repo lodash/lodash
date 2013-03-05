@@ -23,10 +23,10 @@
   path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
 
   /** The Git object ID of `closure-compiler.tar.gz` */
-  var closureId = '23cf67d0f0b979d97631fc108a2a43bb82225994';
+  var closureId = 'a95a8007892aa824ce90c6aa3d3abb0489bf0fff';
 
   /** The Git object ID of `uglifyjs.tar.gz` */
-  var uglifyId = 'e28c7df12b160865f9be9fd24ffda31b2d60b079';
+  var uglifyId = '548bf495606eb4046c4573b1107f0225e274e1e1';
 
   /** The path of the directory that is the base of the repository */
   var basePath = fs.realpathSync(path.join(__dirname, '..'));

@@ -174,7 +174,6 @@
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
-        nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
@@ -319,15 +318,10 @@
      * @returns {Object} Returns a `lodash` instance.
      */
     function lodash(value) {
-      // allow invoking `lodash` without the `new` operator
-      if (!(this instanceof lodash)) {
-        return new lodash(value);
-      }
-      // exit early if already wrapped, even if wrapped by a different `lodash` constructor
-      if (value && typeof value == 'object' && hasOwnProperty.call(value, '__wrapped__')) {
-        return value;
-      }
-      this.__wrapped__ = value;
+      // don't wrap if already wrapped, even if wrapped by a different `lodash` constructor
+      return (value && typeof value == 'object' && hasOwnProperty.call(value, '__wrapped__'))
+       ? value
+       : new lodashWrapper(value);
     }
 
     /**
@@ -645,7 +639,9 @@
         }
         if (this instanceof bound) {
           // ensure `new bound` is an instance of `func`
-          thisBinding = createObject(func.prototype);
+          noop.prototype = func.prototype;
+          thisBinding = new noop;
+          noop.prototype = null;
 
           // mimic the constructor's `return` behavior
           // http://es5.github.com/#x13.2.2
@@ -711,33 +707,6 @@
     }
 
     /**
-     * Creates a new object that inherits from the given `prototype` object.
-     *
-     * @private
-     * @param {Object} prototype The prototype object.
-     * @returns {Object} Returns the new object.
-     */
-    var createObject = nativeCreate || function(prototype) {
-      noop.prototype = prototype;
-      var result = new noop;
-      noop.prototype = null;
-      return result;
-    };
-
-    /**
-     * A fast path for creating `lodash` wrapper objects.
-     *
-     * @private
-     * @param {Mixed} value The value to wrap in a `lodash` instance.
-     * @returns {Object} Returns a `lodash` instance.
-     */
-    function createWrapper(value) {
-      var result = createObject(lodash.prototype);
-      result.__wrapped__ = value;
-      return result;
-    }
-
-    /**
      * A function compiled to iterate `arguments` objects, arrays, objects, and
      * strings consistenly across environments, executing the `callback` for each
      * element in the `collection`. The `callback` is bound to `thisArg` and invoked
@@ -788,6 +757,19 @@
       // methods that are `typeof` "string" and still can coerce nodes to strings
       return typeof value.toString != 'function' && typeof (value + '') == 'string';
     }
+
+    /**
+     * A fast path for creating `lodash` wrapper objects.
+     *
+     * @private
+     * @param {Mixed} value The value to wrap in a `lodash` instance.
+     * @returns {Object} Returns a `lodash` instance.
+     */
+    function lodashWrapper(value) {
+      this.__wrapped__ = value;
+    }
+    // ensure `new lodashWrapper` is an instance of `lodash`
+    lodashWrapper.prototype = lodash.prototype;
 
     /**
      * A no-operation function.
@@ -4647,7 +4629,7 @@
           var result = func.apply(lodash, args);
           return (value && typeof value == 'object' && value == result)
             ? this
-            : createWrapper(result);
+            : new lodashWrapper(result);
         };
       });
     }
@@ -5203,7 +5185,7 @@
           var result = func(this.__wrapped__, callback, thisArg);
           return callback == null || (thisArg && typeof callback != 'function')
             ? result
-            : createWrapper(result);
+            : new lodashWrapper(result);
         };
       }
     });
@@ -5245,7 +5227,7 @@
     each(['concat', 'slice', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
-        return createWrapper(func.apply(this.__wrapped__, arguments));
+        return new lodashWrapper(func.apply(this.__wrapped__, arguments));
       };
     });
 
@@ -5263,7 +5245,7 @@
           if (value.length === 0) {
             delete value[0];
           }
-          return isSplice ? createWrapper(result) : result;
+          return isSplice ? new lodashWrapper(result) : result;
         };
       });
     }

@@ -122,7 +122,6 @@
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = slice.bind) && nativeBind,
-      nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
       nativeIsNaN = window.isNaN,
@@ -196,13 +195,9 @@
    * @returns {Object} Returns a `lodash` instance.
    */
   function lodash(value) {
-    if (!(this instanceof lodash)) {
-      return new lodash(value);
-    }
-    if (value instanceof lodash) {
-      return value;
-    }
-    this.__wrapped__ = value;
+    return (value instanceof lodash)
+      ? value
+      : new lodashWrapper(value)
   }
 
   /**
@@ -333,7 +328,9 @@
       }
       if (this instanceof bound) {
         // ensure `new bound` is an instance of `func`
-        thisBinding = createObject(func.prototype);
+        noop.prototype = func.prototype;
+        thisBinding = new noop;
+        noop.prototype = null;
 
         // mimic the constructor's `return` behavior
         // http://es5.github.com/#x13.2.2
@@ -343,33 +340,6 @@
       return func.apply(thisBinding, args);
     }
     return bound;
-  }
-
-  /**
-   * Creates a new object that inherits from the given `prototype` object.
-   *
-   * @private
-   * @param {Object} prototype The prototype object.
-   * @returns {Object} Returns the new object.
-   */
-  var createObject = nativeCreate || function(prototype) {
-    noop.prototype = prototype;
-    var result = new noop;
-    noop.prototype = null;
-    return result;
-  };
-
-  /**
-   * A fast path for creating `lodash` wrapper objects.
-   *
-   * @private
-   * @param {Mixed} value The value to wrap in a `lodash` instance.
-   * @returns {Object} Returns a `lodash` instance.
-   */
-  function createWrapper(value) {
-    var result = createObject(lodash.prototype);
-    result.__wrapped__ = value;
-    return result;
   }
 
   /**
@@ -440,6 +410,19 @@
     // methods that are `typeof` "string" and still can coerce nodes to strings
     return typeof value.toString != 'function' && typeof (value + '') == 'string';
   }
+
+  /**
+   * A fast path for creating `lodash` wrapper objects.
+   *
+   * @private
+   * @param {Mixed} value The value to wrap in a `lodash` instance.
+   * @returns {Object} Returns a `lodash` instance.
+   */
+  function lodashWrapper(value) {
+    this.__wrapped__ = value;
+  }
+  // ensure `new lodashWrapper` is an instance of `lodash`
+  lodashWrapper.prototype = lodash.prototype;
 
   /**
    * A no-operation function.

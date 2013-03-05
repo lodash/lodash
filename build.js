@@ -1145,6 +1145,25 @@
   }
 
   /**
+   * Removes all `lodashWrapper` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeLodashWrapper(source) {
+    source = removeFunction(source, 'lodashWrapper');
+
+    // remove `lodashWrapper.prototype` assignment
+    source = source.replace(/(?:\s*\/\/.*)*\n *lodashWrapper\.prototype *=.+/, '');
+
+    // replace `new lodashWrapper` with `new lodash`
+    source = source.replace(/\bnew lodashWrapper\b/g, 'new lodash');
+
+    return source;
+  }
+
+  /**
    * Removes all `noArgsClass` references from `source`.
    *
    * @private
@@ -2017,13 +2036,9 @@
         // replace `lodash`
         source = replaceFunction(source, 'lodash', [
           'function lodash(value) {',
-          '  if (!(this instanceof lodash)) {',
-          '    return new lodash(value);',
-          '  }',
-          '  if (value instanceof lodash) {',
-          '    return value;',
-          '  }',
-          '  this.__wrapped__ = value;',
+          '  return (value instanceof lodash)',
+          '    ? value',
+          '    : new lodashWrapper(value)',
           '}'
         ].join('\n'));
 
@@ -2286,18 +2301,13 @@
       if (isLegacy) {
         source = removeSetImmediate(source);
 
-        _.each(['isBindFast', 'isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeCreate', 'nativeKeys', 'reNative'], function(varName) {
+        _.each(['isBindFast', 'isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
           source = removeVar(source, varName);
         });
 
         // remove native `Function#bind` branch in `_.bind`
         source = source.replace(matchFunction(source, 'bind'), function(match) {
           return match.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
-        });
-
-        // remove native `Object.create` branch in `createObject`
-        source = source.replace(matchFunction(source, 'createObject'), function(match) {
-          return match.replace(/nativeCreate * \|\|\s*/, '');
         });
 
         // remove native `Array.isArray` branch in `_.isArray`
@@ -2534,6 +2544,7 @@
       }
       if (isRemoved(source, 'value')) {
         source = removeHasObjectSpliceBug(source);
+        source = removeLodashWrapper(source);
 
         // simplify the `lodash` function
         source = replaceFunction(source, 'lodash', [

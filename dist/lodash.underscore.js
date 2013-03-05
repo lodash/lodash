@@ -3750,7 +3750,7 @@
 
         var result = func.apply(lodash, args);
         if (this.__chain__) {
-          result = createWrapper(result);
+          result = new lodashWrapper(result);
           result.__chain__ = true;
         }
         return result;
@@ -4070,7 +4070,7 @@
    * // => 'moe is 40'
    */
   function chain(value) {
-    value = new lodash(value);
+    value = new lodashWrapper(value);
     value.__chain__ = true;
     return value;
   }
@@ -4321,7 +4321,7 @@
           result = func.apply(value, arguments);
 
       if (this.__chain__) {
-        result = new lodash(result);
+        result = new lodashWrapper(result);
         result.__chain__ = true;
       }
       return result;

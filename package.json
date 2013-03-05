@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "version": "1.0.1",
-  "description": "An alternative to Underscore.js, delivering consistency, customization, performance, and extra features.",
+  "description": "A low-level utility library delivering consistency, customization, performance, and extra features.",
   "homepage": "http://lodash.com",
   "main": "./dist/lodash",
   "keywords": [

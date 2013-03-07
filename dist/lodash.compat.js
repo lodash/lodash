@@ -189,84 +189,6 @@
         isJSC = !/\n{2,}/.test(Function()),
         isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
-    /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-    var isBindFast = nativeBind && !isV8;
-
-    /* Detect if `Object.keys` exists and is inferred to be fast (Firefox, IE, Opera, V8) */
-    var isKeysFast = nativeKeys && (isIeOpera || isV8 || !isJSC);
-
-    /**
-     * Detect the JScript [[DontEnum]] bug:
-     *
-     * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
-     * made non-enumerable as well.
-     */
-    var hasDontEnumBug;
-
-    /**
-     * Detect if a `prototype` properties are enumerable by default:
-     *
-     * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
-     * (if the prototype or a property on the prototype has been set)
-     * incorrectly sets a function's `prototype` property [[Enumerable]]
-     * value to `true`.
-     */
-    var hasEnumPrototype;
-
-    /** Detect if own properties are iterated after inherited properties (IE < 9) */
-    var iteratesOwnLast;
-
-    /**
-     * Detect if `Array#shift` and `Array#splice` augment array-like objects
-     * incorrectly:
-     *
-     * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
-     * and `splice()` functions that fail to remove the last element, `value[0]`,
-     * of array-like objects even though the `length` property is set to `0`.
-     * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-     * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
-     */
-    var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
-      arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
-
-    /** Detect if `arguments` object indexes are non-enumerable (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1) */
-    var nonEnumArgs = true;
-
-    (function() {
-      var props = [];
-      function ctor() { this.x = 1; }
-      ctor.prototype = { 'valueOf': 1, 'y': 1 };
-      for (var prop in new ctor) { props.push(prop); }
-      for (prop in arguments) { nonEnumArgs = !prop; }
-
-      hasDontEnumBug = !/valueOf/.test(props);
-      hasEnumPrototype = ctor.propertyIsEnumerable('prototype');
-      iteratesOwnLast = props[0] != 'x';
-    }(1));
-
-    /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
-    var argsAreObjects = arguments.constructor == Object;
-
-    /** Detect if `arguments` objects [[Class]] is unresolvable (Firefox < 4, IE < 9) */
-    var noArgsClass = !isArguments(arguments);
-
-    /**
-     * Detect lack of support for accessing string characters by index:
-     *
-     * IE < 8 can't access characters by index and IE 8 can only access
-     * characters by index on string literals.
-     */
-    var noCharByIndex = ('x'[0] + Object('x')[0]) != 'xx';
-
-    /**
-     * Detect if a DOM node's [[Class]] is unresolvable (IE < 9)
-     * and that the JS engine won't error when attempting to coerce an object to
-     * a string without a `toString` function.
-     */
-    try {
-      var noNodeClass = toString.call(document) == objectClass && !({ 'toString': 0 } + '');
-    } catch(e) { }
-
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
     ctorByClass[arrayClass] = Array;
@@ -324,6 +246,141 @@
        ? value
        : new lodashWrapper(value);
     }
+
+    /**
+     * An object used to flag environments features.
+     *
+     * @static
+     * @memberOf _
+     * @type Object
+     */
+    var support = lodash.support = {};
+
+    (function() {
+      var ctor = function() { this.x = 1; },
+          object = { '0': 1, 'length': 1 },
+          props = [];
+
+      ctor.prototype = { 'valueOf': 1, 'y': 1 };
+      for (var prop in new ctor) { props.push(prop); }
+
+      /**
+       * Detect if `arguments` objects are `Object` objects
+       * (all but Opera < 10.5).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.argsObject = arguments.constructor == Object;
+
+      /**
+       * Detect if `arguments` objects [[Class]] are resolvable
+       * (all but Firefox < 4, IE < 9).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.argsClass = isArguments(arguments);
+
+      /**
+       * Detect if `prototype` properties are enumerable by default.
+       *
+       * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
+       * (if the prototype or a property on the prototype has been set)
+       * incorrectly sets a function's `prototype` property [[Enumerable]]
+       * value to `true`.
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.enumPrototypes = ctor.propertyIsEnumerable('prototype');
+
+      /**
+       * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.fastBind = nativeBind && !isV8;
+
+      /**
+       * Detect if `Object.keys` exists and is inferred to be fast
+       * (Firefox, IE, Opera, V8).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.fastKeys = nativeKeys && (isIeOpera || isV8 || !isJSC);
+
+      /**
+       * Detect if own properties are iterated after inherited properties
+       * (all but IE < 9).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.ownLast = props[0] != 'x';
+
+      /**
+       * Detect if `arguments` object indexes are non-enumerable
+       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.nonEnumArgs = !arguments.propertyIsEnumerable(0);
+
+      /**
+       * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
+       *
+       * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
+       * made non-enumerable as well (a.k.a the JScript [[DontEnum]] bug).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.nonEnumShadows = !/valueOf/.test(props);
+
+      /**
+       * Detect if `Array#shift` and `Array#splice` augment array-like
+       * objects correctly.
+       *
+       * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
+       * and `splice()` functions that fail to remove the last element, `value[0]`,
+       * of array-like objects even though the `length` property is set to `0`.
+       * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
+       * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
+
+      /**
+       * Detect lack of support for accessing string characters by index.
+       *
+       * IE < 8 can't access characters by index and IE 8 can only access
+       * characters by index on string literals.
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.unindexedChars = ('x'[0] + Object('x')[0]) != 'xx';
+
+      /**
+       * Detect if a DOM node's [[Class]] is resolvable (all but IE < 9)
+       * and that the JS engine errors when attempting to coerce an object to
+       * a string without a `toString` function.
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      try {
+        support.nodeClass = !(toString.call(document) == objectClass && !({ 'toString': 0 } + ''));
+      } catch(e) {
+        support.nodeClass = true;
+      }
+    }(1));
 
     /**
      * By default, the template delimiters used by Lo-Dash are similar to those in
@@ -406,41 +463,41 @@
       __p += 'var length = iterable.length; index = -1;\nif (' +
       (obj.arrays ) +
       ') {  ';
-       if (obj.noCharByIndex) {
+       if (support.unindexedChars) {
       __p += '\n  if (isString(iterable)) {\n    iterable = iterable.split(\'\')\n  }  ';
        } ;
       __p += '\n  while (++index < length) {\n    ' +
       (obj.loop ) +
       '\n  }\n}\nelse {  ';
-        } else if (obj.nonEnumArgs) {
+        } else if (support.nonEnumArgs) {
       __p += '\n  var length = iterable.length; index = -1;\n  if (length && isArguments(iterable)) {\n    while (++index < length) {\n      index += \'\';\n      ' +
       (obj.loop ) +
       '\n    }\n  } else {  ';
        } ;
 
-       if (obj.hasEnumPrototype) {
+       if (support.enumPrototypes) {
       __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
        } ;
 
-       if (obj.isKeysFast && obj.useHas) {
+       if (support.fastKeys && obj.useHas) {
       __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ';
-       if (obj.hasEnumPrototype) {
+       if (support.enumPrototypes) {
       __p += 'if (!(skipProto && index == \'prototype\')) {\n  ';
        } ;
       __p += 
       (obj.loop ) +
       '';
-       if (obj.hasEnumPrototype) {
+       if (support.enumPrototypes) {
       __p += '}\n';
        } ;
       __p += '  }  ';
        } else {
       __p += '\n  for (index in iterable) {';
-          if (obj.hasEnumPrototype || obj.useHas) {
+          if (support.enumPrototypes || obj.useHas) {
       __p += '\n    if (';
-            if (obj.hasEnumPrototype) {
+            if (support.enumPrototypes) {
       __p += '!(skipProto && index == \'prototype\')';
-       }      if (obj.hasEnumPrototype && obj.useHas) {
+       }      if (support.enumPrototypes && obj.useHas) {
       __p += ' && ';
        }      if (obj.useHas) {
       __p += 'hasOwnProperty.call(iterable, index)';
@@ -450,13 +507,13 @@
       __p += 
       (obj.loop ) +
       ';    ';
-       if (obj.hasEnumPrototype || obj.useHas) {
+       if (support.enumPrototypes || obj.useHas) {
       __p += '\n    }';
        } ;
       __p += '\n  }  ';
        } ;
 
-       if (obj.hasDontEnumBug) {
+       if (support.nonEnumShadows) {
       __p += '\n\n  var ctor = iterable.constructor;\n    ';
        for (var k = 0; k < 7; k++) {
       __p += '\n  index = \'' +
@@ -472,7 +529,7 @@
 
        } ;
 
-       if (obj.arrays || obj.nonEnumArgs) {
+       if (obj.arrays || support.nonEnumArgs) {
       __p += '\n}';
        } ;
       __p += 
@@ -660,14 +717,8 @@
      */
     function createIterator() {
       var data = {
-        // support properties
-        'hasDontEnumBug': hasDontEnumBug,
-        'hasEnumPrototype': hasEnumPrototype,
-        'isKeysFast': isKeysFast,
-        'nonEnumArgs': nonEnumArgs,
-        'noCharByIndex': noCharByIndex,
+        // data properties
         'shadowedProps': shadowedProps,
-
         // iterator options
         'arrays': 'isArray(iterable)',
         'bottom': '',
@@ -833,7 +884,7 @@
       return toString.call(value) == argsClass;
     }
     // fallback for browsers that can't detect `arguments` objects by [[Class]]
-    if (noArgsClass) {
+    if (!support.argsClass) {
       isArguments = function(value) {
         return value ? hasOwnProperty.call(value, 'callee') : false;
       };
@@ -914,7 +965,7 @@
     var isArray = nativeIsArray || function(value) {
       // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
       // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
-      return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
+      return (support.argsObject && value instanceof Array) || toString.call(value) == arrayClass;
     };
 
     /**
@@ -934,8 +985,8 @@
       if (!isObject(object)) {
         return [];
       }
-      if ((hasEnumPrototype && typeof object == 'function') ||
-          (nonEnumArgs && object.length && isArguments(object))) {
+      if ((support.enumPrototypes && typeof object == 'function') ||
+          (support.nonEnumArgs && object.length && isArguments(object))) {
         return shimKeys(object);
       }
       return nativeKeys(object);
@@ -959,16 +1010,16 @@
       }
       // check that the constructor is `Object` (i.e. `Object instanceof Object`)
       var ctor = value.constructor;
-      if ((!isFunction(ctor) && (!noNodeClass || !isNode(value))) || ctor instanceof ctor) {
+      if ((!isFunction(ctor) && (support.nodeClass || !isNode(value))) || ctor instanceof ctor) {
         // IE < 9 iterates inherited properties before own properties. If the first
         // iterated property is an object's own property then there are no inherited
         // enumerable properties.
-        if (iteratesOwnLast) {
+        if (support.ownLast) {
           forIn(value, function(value, key, object) {
-            result = !hasOwnProperty.call(object, key);
+            result = hasOwnProperty.call(object, key);
             return false;
           });
-          return result === false;
+          return result === true;
         }
         // In most environments an object's own properties are iterated before
         // its inherited properties. If the last iterated property is an object's
@@ -1128,7 +1179,7 @@
       var isObj = isObject(result);
       if (isObj) {
         var className = toString.call(result);
-        if (!cloneableClasses[className] || (noNodeClass && isNode(result))) {
+        if (!cloneableClasses[className] || (!support.nodeClass && isNode(result))) {
           return result;
         }
         var isArr = isArray(result);
@@ -1405,7 +1456,7 @@
           length = value.length;
 
       if ((className == arrayClass || className == stringClass ||
-          className == argsClass || (noArgsClass && isArguments(value))) ||
+          (support.argsClass ? className == argsClass : isArguments(value))) ||
           (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
         return !length;
       }
@@ -1527,12 +1578,12 @@
           return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, thisArg, stackA, stackB);
         }
         // exit for functions and DOM nodes
-        if (className != objectClass || (noNodeClass && (isNode(a) || isNode(b)))) {
+        if (className != objectClass || (!support.nodeClass && (isNode(a) || isNode(b)))) {
           return false;
         }
         // in older versions of Opera, `arguments` objects have `Array` constructors
-        var ctorA = !argsAreObjects && isArguments(a) ? Object : a.constructor,
-            ctorB = !argsAreObjects && isArguments(b) ? Object : b.constructor;
+        var ctorA = !support.argsObject && isArguments(a) ? Object : a.constructor,
+            ctorB = !support.argsObject && isArguments(b) ? Object : b.constructor;
 
         // non `Object` object instances with different constructors are not equal
         if (ctorA != ctorB && !(
@@ -2183,7 +2234,7 @@
           length = props.length,
           result = Array(length);
 
-      if (noCharByIndex && isString(collection)) {
+      if (support.unindexedChars && isString(collection)) {
         collection = collection.split('');
       }
       while(++index < length) {
@@ -2882,7 +2933,7 @@
       if (typeof length != 'number') {
         var props = keys(collection);
         length = props.length;
-      } else if (noCharByIndex && isString(collection)) {
+      } else if (support.unindexedChars && isString(collection)) {
         iterable = collection.split('');
       }
       callback = lodash.createCallback(callback, thisArg, 4);
@@ -3128,7 +3179,7 @@
      */
     function toArray(collection) {
       if (collection && typeof collection.length == 'number') {
-        return (noCharByIndex && isString(collection))
+        return (support.unindexedChars && isString(collection))
           ? collection.split('')
           : slice(collection);
       }
@@ -4091,7 +4142,7 @@
     function bind(func, thisArg) {
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
-      return isBindFast || (nativeBind && arguments.length > 2)
+      return support.fastBind || (nativeBind && arguments.length > 2)
         ? nativeBind.call.apply(nativeBind, arguments)
         : createBound(func, thisArg, slice(arguments, 2));
     }
@@ -4912,7 +4963,7 @@
      * // => also calls `mage.castSpell(n)` three times
      */
     function times(n, callback, thisArg) {
-      n = +n || 0;
+      n = (n = +n) > -1 ? n : 0;
       var index = -1,
           result = Array(n);
 
@@ -5225,7 +5276,7 @@
 
     // avoid array-like object bugs with `Array#shift` and `Array#splice`
     // in Firefox < 10 and IE < 9
-    if (hasObjectSpliceBug) {
+    if (!support.spliceObjects) {
       each(['pop', 'shift', 'splice'], function(methodName) {
         var func = arrayRef[methodName],
             isSplice = methodName == 'splice';

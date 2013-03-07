@@ -181,21 +181,6 @@
     var isIeOpera = reNative.test(context.attachEvent),
         isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
-    /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-    var isBindFast = nativeBind && !isV8;
-
-    /** Detect if `arguments` object indexes are non-enumerable (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1) */
-    var nonEnumArgs = true;
-
-    (function() {
-      var props = [];
-      function ctor() { this.x = 1; }
-      ctor.prototype = { 'valueOf': 1, 'y': 1 };
-      for (var prop in new ctor) { props.push(prop); }
-      for (prop in arguments) { nonEnumArgs = !prop; }
-
-    }(1));
-
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
     ctorByClass[arrayClass] = Array;
@@ -253,6 +238,35 @@
        ? value
        : new lodashWrapper(value);
     }
+
+    /**
+     * An object used to flag environments features.
+     *
+     * @static
+     * @memberOf _
+     * @type Object
+     */
+    var support = lodash.support = {};
+
+    (function() {
+
+      /**
+       * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.fastBind = nativeBind && !isV8;
+
+      /**
+       * Detect if `arguments` object indexes are non-enumerable
+       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+       *
+       * @memberOf _.support
+       * @type Boolean
+       */
+      support.nonEnumArgs = !arguments.propertyIsEnumerable(0);
+    }(1));
 
     /**
      * By default, the template delimiters used by Lo-Dash are similar to those in
@@ -718,7 +732,7 @@
       if (!isObject(object)) {
         return [];
       }
-      if ((nonEnumArgs && object.length && isArguments(object))) {
+      if ((support.nonEnumArgs && object.length && isArguments(object))) {
         return shimKeys(object);
       }
       return nativeKeys(object);
@@ -1221,8 +1235,7 @@
       var className = toString.call(value),
           length = value.length;
 
-      if ((className == arrayClass || className == stringClass ||
-          className == argsClass) ||
+      if ((className == arrayClass || className == stringClass || className == argsClass ) ||
           (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
         return !length;
       }
@@ -3901,7 +3914,7 @@
     function bind(func, thisArg) {
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
-      return isBindFast || (nativeBind && arguments.length > 2)
+      return support.fastBind || (nativeBind && arguments.length > 2)
         ? nativeBind.call.apply(nativeBind, arguments)
         : createBound(func, thisArg, slice(arguments, 2));
     }
@@ -4718,7 +4731,7 @@
      * // => also calls `mage.castSpell(n)` three times
      */
     function times(n, callback, thisArg) {
-      n = +n || 0;
+      n = (n = +n) > -1 ? n : 0;
       var index = -1,
           result = Array(n);
 

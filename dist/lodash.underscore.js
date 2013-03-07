@@ -134,25 +134,6 @@
   var isIeOpera = reNative.test(window.attachEvent),
       isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
-  /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-  var isBindFast = nativeBind && !isV8;
-
-  /**
-   * Detect if `Array#shift` and `Array#splice` augment array-like objects
-   * incorrectly:
-   *
-   * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
-   * and `splice()` functions that fail to remove the last element, `value[0]`,
-   * of array-like objects even though the `length` property is set to `0`.
-   * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-   * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
-   */
-  var hasObjectSpliceBug = (hasObjectSpliceBug = { '0': 1, 'length': 1 },
-    arrayRef.splice.call(hasObjectSpliceBug, 0, 1), hasObjectSpliceBug[0]);
-
-  /** Detect if `arguments` objects are `Object` objects (all but Opera < 10.5) */
-  var argsAreObjects = arguments.constructor == Object;
-
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -199,6 +180,51 @@
       ? value
       : new lodashWrapper(value)
   }
+
+  /**
+   * An object used to flag environments features.
+   *
+   * @static
+   * @memberOf _
+   * @type Object
+   */
+  var support = lodash.support = {};
+
+  (function() {
+    var object = { '0': 1, 'length': 1 };
+
+    /**
+     * Detect if `arguments` objects are `Object` objects
+     * (all but Opera < 10.5).
+     *
+     * @memberOf _.support
+     * @type Boolean
+     */
+    support.argsObject = arguments.constructor == Object;
+
+    /**
+     * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
+     *
+     * @memberOf _.support
+     * @type Boolean
+     */
+    support.fastBind = nativeBind && !isV8;
+
+    /**
+     * Detect if `Array#shift` and `Array#splice` augment array-like
+     * objects correctly.
+     *
+     * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
+     * and `splice()` functions that fail to remove the last element, `value[0]`,
+     * of array-like objects even though the `length` property is set to `0`.
+     * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
+     * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+     *
+     * @memberOf _.support
+     * @type Boolean
+     */
+    support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
+  }(1));
 
   /**
    * By default, the template delimiters used by Lo-Dash are similar to those in
@@ -595,7 +621,7 @@
   var isArray = nativeIsArray || function(value) {
     // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
     // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
-    return (argsAreObjects && value instanceof Array) || toString.call(value) == arrayClass;
+    return (support.argsObject && value instanceof Array) || toString.call(value) == arrayClass;
   };
 
   /**
@@ -3295,7 +3321,7 @@
   function bind(func, thisArg) {
     // use `Function#bind` if it exists and is fast
     // (in V8 `Function#bind` is slower except when partially applied)
-    return isBindFast || (nativeBind && arguments.length > 2)
+    return support.fastBind || (nativeBind && arguments.length > 2)
       ? nativeBind.call.apply(nativeBind, arguments)
       : createBound(func, thisArg, slice(arguments, 2));
   }
@@ -3995,9 +4021,8 @@
    * // => also calls `mage.castSpell(n)` three times
    */
   function times(n, callback, thisArg) {
-    n = +n || 0;
     var index = -1,
-        result = Array(n);
+        result = Array(n > -1 ? n : 0);
 
     while (++index < n) {
       result[index] = callback.call(thisArg, index);
@@ -4306,7 +4331,7 @@
 
       // avoid array-like object bugs with `Array#shift` and `Array#splice`
       // in Firefox < 10 and IE < 9
-      if (hasObjectSpliceBug && value.length === 0) {
+      if (!support.spliceObjects && value.length === 0) {
         delete value[0];
       }
       return this;

@@ -188,13 +188,9 @@
     'arrays',
     'bottom',
     'firstArg',
-    'hasDontEnumBug',
-    'hasEnumPrototype',
-    'isKeysFast',
     'loop',
-    'nonEnumArgs',
-    'noCharByIndex',
     'shadowedProps',
+    'support',
     'top',
     'useHas'
   ];
@@ -416,7 +412,7 @@
         '',
         '    // avoid array-like object bugs with `Array#shift` and `Array#splice`',
         '    // in Firefox < 10 and IE < 9',
-        '    if (hasObjectSpliceBug && value.length === 0) {',
+        '    if (!support.spliceObjects && value.length === 0) {',
         '      delete value[0];',
         '    }',
         '    return this;',
@@ -774,7 +770,7 @@
    * @returns {String} Returns the `isArguments` fallback.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:noArgsClass|!isArguments)[\s\S]+?};\n\1}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!support\.argsClass|!isArguments)[\s\S]+?};\n\1}/) || [''])[0];
   }
 
   /**
@@ -922,29 +918,6 @@
   }
 
   /**
-   * Removes all `argsAreObjects` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeArgsAreObjects(source) {
-    source = removeVar(source, 'argsAreObjects');
-
-    // remove `argsAreObjects` from `_.isArray`
-    source = source.replace(matchFunction(source, 'isArray'), function(match) {
-      return match.replace(/\(argsAreObjects && *([^)]+)\)/g, '$1');
-    });
-
-    // remove `argsAreObjects` from `_.isEqual`
-    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/!argsAreObjects[^:]+:\s*/g, '');
-    });
-
-    return source;
-  }
-
-  /**
    * Removes the all references to `varName` from `createIterator` in `source`.
    *
    * @private
@@ -958,7 +931,7 @@
       return source;
     }
     // remove data object property assignment
-    var modified = snippet.replace(RegExp("^ *'" + varName + "': *" + varName + '.+\\n', 'm'), '');
+    var modified = snippet.replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + varName + "': *" + varName + '.+\\n+', 'm'), '');
     source = source.replace(snippet, function() {
       return modified;
     });
@@ -1016,75 +989,6 @@
   }
 
   /**
-   * Removes all `hasDontEnumBug` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeHasDontEnumBug(source) {
-    source = removeVar(source, 'shadowedProps');
-    source = removeFromCreateIterator(source, 'hasDontEnumBug');
-    source = removeFromCreateIterator(source, 'shadowedProps');
-
-    // remove `hasDontEnumBug` declaration and assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasDontEnumBug\b.*|.+?hasDontEnumBug *=.+/g, '');
-
-    // remove `hasDontEnumBug` from `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(hasDontEnumBug[\s\S]+?["']\1<% *} *%>.+/, '');
-    });
-
-    return source;
-  }
-
-  /**
-   * Removes all `hasEnumPrototype` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeHasEnumPrototype(source) {
-    source = removeFromCreateIterator(source, 'hasEnumPrototype');
-
-    // remove `hasEnumPrototype` declaration and assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var hasEnumPrototype\b.*|.+?hasEnumPrototype *=.+/g, '');
-
-    // remove `hasEnumPrototype` from `_.keys`
-    source = source.replace(matchFunction(source, 'keys'), function(match) {
-      return match
-        .replace(/\(hasEnumPrototype[^)]+\)(?:\s*\|\|\s*)?/, '')
-        .replace(/\s*if *\(\s*\)[^}]+}/, '');
-    });
-
-    // remove `hasEnumPrototype` from `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
-      return match
-        .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(hasEnumPrototype *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
-        .replace(/hasEnumPrototype *\|\|\s*/g, '');
-    });
-
-    return source;
-  }
-
-  /**
-   * Removes all `hasObjectSpliceBug` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeHasObjectSpliceBug(source) {
-    source = removeVar(source, 'hasObjectSpliceBug')
-
-    // remove `hasObjectSpliceBug` fix from the `Array` function mixins
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(hasObjectSpliceBug[\s\S]+?(?:{\s*}|\n\1})/, '');
-
-    return source;
-  }
-
-  /**
    * Removes the `_.isArguments` fallback from `source`.
    *
    * @private
@@ -1107,25 +1011,6 @@
   }
 
   /**
-   * Removes all `iteratesOwnLast` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeIteratesOwnLast(source) {
-    // remove `iteratesOwnLast` declaration and assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var iteratesOwnLast\b.*|.+?iteratesOwnLast *=.+/g, '');
-
-    // remove `iteratesOwnLast` from `shimIsPlainObject`
-    source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-      return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(iteratesOwnLast[\s\S]+?\n\1}/, '');
-    });
-
-    return source;
-  }
-
-  /**
    * Removes the `Object.keys` object iteration optimization from `source`.
    *
    * @private
@@ -1134,11 +1019,11 @@
    */
   function removeKeysOptimization(source) {
     source = removeVar(source, 'isJSC');
-    source = removeVar(source, 'isKeysFast');
+    source = removeSupportProp(source, 'fastKeys');
 
     // remove optimized branch in `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(isKeysFast[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/, "'\\n' +\n$2");
+      return match.replace(/^(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.fastKeys[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/m, "'\\n' +\n$2");
     });
 
     return source;
@@ -1164,117 +1049,217 @@
   }
 
   /**
-   * Removes all `noArgsClass` references from `source`.
+   * Removes all `support.argsObject` references from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeNoArgsClass(source) {
-    source = removeVar(source, 'noArgsClass');
+  function removeSupportArgsObject(source) {
+    source = removeSupportProp(source, 'argsObject');
 
-    // replace `noArgsClass` in the `_.isArguments` fallback
+    // remove `argsAreObjects` from `_.isArray`
+    source = source.replace(matchFunction(source, 'isArray'), function(match) {
+      return match.replace(/\(support\.argsObject && *([^)]+)\)/g, '$1');
+    });
+
+    // remove `argsAreObjects` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/!support.\argsObject[^:]+:\s*/g, '');
+    });
+
+    return source;
+  }
+
+  /**
+   * Removes all `support.argsClass` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportArgsClass(source) {
+    source = removeSupportProp(source, 'argsClass');
+
+    // replace `support.argsClass` in the `_.isArguments` fallback
     source = source.replace(getIsArgumentsFallback(source), function(match) {
-      return match.replace(/noArgsClass/g, '!isArguments(arguments)');
+      return match.replace(/!support\.argsClass/g, '!isArguments(arguments)');
     });
 
-    // remove `noArgsClass` from `_.isEmpty`
+    // remove `support.argsClass` from `_.isEmpty`
     source = source.replace(matchFunction(source, 'isEmpty'), function(match) {
-      return match.replace(/ *\|\|\s*\(noArgsClass *&&[^)]+?\)\)/g, '');
+      return match.replace(/\s*\(support\.argsClass *\?([^:]+):.+?\)\)/g, '$1');
     });
 
     return source;
   }
 
   /**
-   * Removes all `noCharByIndex` references from `source`.
+   * Removes all `support.enumPrototypes` references from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeNoCharByIndex(source) {
-    source = removeVar(source, 'noCharByIndex');
+  function removeSupportEnumPrototypes(source) {
+    source = removeSupportProp(source, 'enumPrototypes');
 
-    // remove `noCharByIndex` from `_.at`
-    source = source.replace(matchFunction(source, 'at'), function(match) {
-      return match.replace(/^ *if *\(noCharByIndex[^}]+}\n+/m, '');
-    });
-
-    // remove `noCharByIndex` from `_.reduceRight`
-    source = source.replace(matchFunction(source, 'reduceRight'), function(match) {
-      return match.replace(/}\s*else if *\(noCharByIndex[^}]+/, '');
-    });
-
-    // remove `noCharByIndex` from `_.toArray`
-    source = source.replace(matchFunction(source, 'toArray'), function(match) {
-      return match.replace(/(return\b).+?noCharByIndex[^:]+:\s*/, '$1 ');
-    });
-
-    // `noCharByIndex` from `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
-      return match
-        .replace(/'if *\(<%= *arrays *%>[^']*/, '$&\\n')
-        .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(noCharByIndex[\s\S]+?["']\1<% *} *%>.+/, '');
-    });
-
-    return source;
-  }
-
-  /**
-   * Removes all `nonEnumArgs` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeNonEnumArgs(source) {
-    source = removeFromCreateIterator(source, 'nonEnumArgs');
-
-    // remove `nonEnumArgs` declaration and assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var nonEnumArgs\b.*|.+?nonEnumArgs *=.+/g, '');
-
-    // remove `nonEnumArgs` from `_.keys`
+    // remove `support.enumPrototypes` from `_.keys`
     source = source.replace(matchFunction(source, 'keys'), function(match) {
       return match
-        .replace(/(?:\s*\|\|\s*)?\(nonEnumArgs[^)]+\)\)/, '')
+        .replace(/\(support\.enumPrototypes[^)]+\)(?:\s*\|\|\s*)?/, '')
+        .replace(/\s*if *\(\s*\)[^}]+}/, '');
+    });
+
+    // remove `support.enumPrototypes` from `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match
+        .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(support\.enumPrototypes *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
+        .replace(/support\.enumPrototypes *\|\|\s*/g, '');
+    });
+
+    return source;
+  }
+
+  /**
+   * Removes all `support.nodeClass` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportNodeClass(source) {
+    source = removeSupportProp(source, 'nodeClass');
+
+    // remove `support.nodeClass` from `shimIsPlainObject`
+    source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+      return match.replace(/ *&& *\(support\.nodeClass[\s\S]+?\)\)/, '');
+    });
+
+    // remove `support.nodeClass` from `_.clone`
+    source = source.replace(matchFunction(source, 'clone'), function(match) {
+      return match.replace(/ *\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)/, '');
+    });
+
+    // remove `support.nodeClass` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/ *\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)\)/, '');
+    });
+
+    return source;
+  }
+
+  /**
+   * Removes all `support.nonEnumArgs` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportNonEnumArgs(source) {
+    source = removeSupportProp(source, 'nonEnumArgs');
+
+    // remove `support.nonEnumArgs` from `_.keys`
+    source = source.replace(matchFunction(source, 'keys'), function(match) {
+      return match
+        .replace(/(?:\s*\|\|\s*)?\(support\.nonEnumArgs[^)]+\)\)/, '')
         .replace(/\s*if *\(\s*\)[^}]+}/, '');
     });
 
     // remove `nonEnumArgs` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
-        .replace(/(?: *\/\/.*\n)*( *["'] *)<% *} *else *if *\(nonEnumArgs[\s\S]+?(\1<% *} *%>.+)/, '$2')
-        .replace(/ *\|\|\s*nonEnumArgs/, '');
+        .replace(/(?: *\/\/.*\n)*( *["'] *)<% *} *else *if *\(support\.nonEnumArgs[\s\S]+?(\1<% *} *%>.+)/, '$2')
+        .replace(/ *\|\|\s*support\.nonEnumArgs/, '');
     });
 
     return source;
   }
 
   /**
-   * Removes all `noNodeClass` references from `source`.
+   * Removes all `support.nonEnumShadows` references from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeNoNodeClass(source) {
-    // remove `noNodeClass` assignment
-    source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *try *{(?:\s*\/\/.*)*\n *var noNodeClass[\s\S]+?catch[^}]+}\n/, '');
+  function removeSupportNonEnumShadows(source) {
+    source = removeSupportProp(source, 'nonEnumShadows');
+    source = removeVar(source, 'shadowedProps');
+    source = removeFromCreateIterator(source, 'shadowedProps');
 
-    // remove `noNodeClass` from `shimIsPlainObject`
+    // remove `support.nonEnumShadows` from `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.nonEnumShadows[\s\S]+?["']\1<% *} *%>.+/, '');
+    });
+
+    return source;
+  }
+
+  /**
+   * Removes all `support.ownLast` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportOwnLast(source) {
+    source = removeSupportProp(source, 'ownLast');
+
+    // remove `support.ownLast` from `shimIsPlainObject`
     source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-      return match.replace(/ *&& *\(!noNodeClass[\s\S]+?\)\)/, '');
+      return match.replace(/(?:\s*\/\/.*)*\n( *)if *\(support\.ownLast[\s\S]+?\n\1}/, '');
     });
 
-    // remove `noNodeClass` from `_.clone`
-    source = source.replace(matchFunction(source, 'clone'), function(match) {
-      return match.replace(/ *\|\|\s*\(noNodeClass[\s\S]+?\)\)/, '');
+    return source;
+  }
+
+  /**
+   * Removes all `support.spliceObjects` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportSpliceObjects(source) {
+    source = removeSupportProp(source, 'spliceObjects');
+
+    // remove `support.spliceObjects` fix from the `Array` function mixins
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(!support\.spliceObjects[\s\S]+?(?:{\s*}|\n\1})/, '');
+
+    return source;
+  }
+
+  /**
+   * Removes all `support.unindexedChars` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportUnindexedChars(source) {
+    source = removeSupportProp(source, 'unindexedChars');
+
+    // remove `support.unindexedChars` from `_.at`
+    source = source.replace(matchFunction(source, 'at'), function(match) {
+      return match.replace(/^ *if *\(support\.unindexedChars[^}]+}\n+/m, '');
     });
 
-    // remove `noNodeClass` from `_.isEqual`
-    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/ *\|\|\s*\(noNodeClass[\s\S]+?\)\)\)/, '');
+    // remove `support.unindexedChars` from `_.reduceRight`
+    source = source.replace(matchFunction(source, 'reduceRight'), function(match) {
+      return match.replace(/}\s*else if *\(support\.unindexedChars[^}]+/, '');
+    });
+
+    // remove `support.unindexedChars` from `_.toArray`
+    source = source.replace(matchFunction(source, 'toArray'), function(match) {
+      return match.replace(/(return\b).+?support\.unindexedChars[^:]+:\s*/, '$1 ');
+    });
+
+    // remove `support.unindexedChars` from `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match
+        .replace(/'if *\(<%= *arrays *%>[^']*/, '$&\\n')
+        .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.unindexedChars[\s\S]+?["']\1<% *} *%>.+/, '');
     });
 
     return source;
@@ -1324,6 +1309,27 @@
   }
 
   /**
+   * Removes a given property from the `support` object in `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} varName The name of the `support` property to remove.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportProp(source, propName) {
+    return source.replace(RegExp(
+      // match multi-line comment block
+      '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
+      // match a `try` block
+      '(?: *try\\b.+\\n)?' +
+      // match the `support` property assignment
+      ' *support\\.' + propName + ' *=.+\\n' +
+      // match `catch` block
+      '(?:( *).+?catch\\b[\\s\\S]+?\\n\\1}\\n)?'
+    ), '');
+  }
+
+  /**
    * Removes a given variable from `source`.
    *
    * @private
@@ -1333,7 +1339,7 @@
    */
   function removeVar(source, varName) {
     // simplify complex variable assignments
-    if (/^(?:cloneableClasses|contextProps|ctorByClass|hasObjectSpliceBug|shadowedProps)$/.test(varName)) {
+    if (/^(?:cloneableClasses|contextProps|ctorByClass|shadowedProps)$/.test(varName)) {
       source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?\\n\\n'), '$1=null;\n\n');
     }
     source = source.replace(RegExp(
@@ -1359,7 +1365,7 @@
    * Replaces the `funcName` function body in `source` with `funcValue`.
    *
    * @private
-   * @param {String} source The source to inspect.
+   * @param {String} source The source to process.
    * @param {String} varName The name of the function to replace.
    * @returns {String} Returns the modified source.
    */
@@ -1380,6 +1386,28 @@
     return source;
   }
 
+
+  /**
+   * Replaces the `support` object `propName` property value in `source` with `propValue`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} varName The name of the `support` property to replace.
+   * @returns {String} Returns the modified source.
+   */
+  function replaceSupportProp(source, propName, propValue) {
+    return source.replace(RegExp(
+      // match a `try` block
+      '(?: *try\\b.+\\n)?' +
+      // match the `support` property assignment
+      '( *support\\.' + propName + ' *=).+\\n' +
+      // match `catch` block
+      '(?:( *).+?catch\\b[\\s\\S]+?\\n\\2}\\n)?'
+    ), function(match, left) {
+      return left + ' ' + propValue + ';\n';
+    });
+  }
+
   /**
    * Replaces the `varName` variable declaration value in `source` with `varValue`.
    *
@@ -1391,22 +1419,22 @@
   function replaceVar(source, varName, varValue) {
     // replace a variable that's not part of a declaration list
     var result = source.replace(RegExp(
-      '(( *)var ' + varName + ' *= *)' +
+      '(( *)var ' + varName + ' *=)' +
       '(?:.+?;|(?:Function\\(.+?|.*?[^,])\\n[\\s\\S]+?\\n\\2.+?;)\\n'
-    ), function(match, captured) {
-      return captured + varValue + ';\n';
+    ), function(match, left) {
+      return left + ' ' + varValue + ';\n';
     });
 
     if (source == result) {
       // replace a varaible at the start or middle of a declaration list
-      result = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), function(match, captured) {
-        return captured + ' ' + varValue + ',';
+      result = source.replace(RegExp('((?:var|\\n) +' + varName + ' *=).+?,'), function(match, left) {
+        return left + ' ' + varValue + ',';
       });
     }
     if (source == result) {
       // replace a variable at the end of a variable declaration list
-      result = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), function(match, captured) {
-        return captured + ' ' + varValue + ';';
+      result = source.replace(RegExp('(,\\s*' + varName + ' *=).+?;'), function(match, left) {
+        return left + ' ' + varValue + ';';
       });
     }
     return result;
@@ -1753,11 +1781,14 @@
       source = setUseStrictOption(source, isStrict);
 
       if (isLegacy) {
-        _.each(['getPrototypeOf', 'isBindFast', 'isKeysFast', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
+        _.each(['getPrototypeOf', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
           source = replaceVar(source, varName, 'false');
         });
 
-        source = replaceVar(source, 'noArgsClass', 'true');
+        _.each(['argsClass', 'fastBind', 'fastKeys'], function(propName) {
+          source = replaceSupportProp(source, propName, 'false');
+        });
+
         source = removeKeysOptimization(source);
       }
       if (isMobile || isUnderscore) {
@@ -1765,14 +1796,14 @@
         source = removeSetImmediate(source);
       }
       if (isModern || isUnderscore) {
-        source = removeHasDontEnumBug(source);
-        source = removeHasEnumPrototype(source);
-        source = removeIteratesOwnLast(source);
-        source = removeNoCharByIndex(source);
-        source = removeNoNodeClass(source);
+        source = removeSupportNonEnumShadows(source);
+        source = removeSupportEnumPrototypes(source);
+        source = removeSupportOwnLast(source);
+        source = removeSupportUnindexedChars(source);
+        source = removeSupportNodeClass(source);
 
         if (!isMobile) {
-          source = removeNonEnumArgs(source);
+          source = removeSupportNonEnumArgs(source);
         }
       }
       if (isModern) {
@@ -2300,14 +2331,15 @@
 
       if (isLegacy) {
         source = removeSetImmediate(source);
+        source = removeSupportProp(source, 'fastBind');
 
-        _.each(['isBindFast', 'isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
+        _.each(['isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
           source = removeVar(source, varName);
         });
 
         // remove native `Function#bind` branch in `_.bind`
         source = source.replace(matchFunction(source, 'bind'), function(match) {
-          return match.replace(/(?:\s*\/\/.*)*\s*return isBindFast[^:]+:\s*/, 'return ');
+          return match.replace(/(?:\s*\/\/.*)*\s*return support\.fastBind[^:]+:\s*/, 'return ');
         });
 
         // remove native `Array.isArray` branch in `_.isArray`
@@ -2335,13 +2367,13 @@
         }
       }
       if (isModern) {
-        source = removeArgsAreObjects(source);
-        source = removeHasObjectSpliceBug(source);
+        source = removeSupportArgsObject(source);
+        source = removeSupportSpliceObjects(source);
         source = removeIsArgumentsFallback(source);
       }
       if (isModern || isUnderscore) {
-        source = removeNoArgsClass(source);
-        source = removeNoNodeClass(source);
+        source = removeSupportArgsClass(source);
+        source = removeSupportNodeClass(source);
       }
       if (isMobile || isUnderscore) {
         source = removeVar(source, 'iteratorTemplate');
@@ -2432,6 +2464,8 @@
         });
       }
       if (!(isMobile || isUnderscore)) {
+        source = removeFromCreateIterator(source, 'support');
+
         // inline `iteratorTemplate` template
         source = source.replace(getIteratorTemplate(source), function(match) {
           var indent = getIndent(match),
@@ -2451,7 +2485,8 @@
             .replace(/__p *\+= *' *';/g, '')
             .replace(/(__p *\+= *)' *' *\+/g, '$1')
             .replace(/({) *;|; *(})/g, '$1$2')
-            .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
+            .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)')
+            .replace(/obj\.(?=support)/g, '')
 
           // remove the with-statement
           snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
@@ -2543,7 +2578,7 @@
         });
       }
       if (isRemoved(source, 'value')) {
-        source = removeHasObjectSpliceBug(source);
+        source = removeSupportSpliceObjects(source);
         source = removeLodashWrapper(source);
 
         // simplify the `lodash` function
@@ -2581,7 +2616,7 @@
       }
       if (isRemoved(source, 'isPlainObject')) {
         source = removeVar(source, 'getPrototypeOf');
-        source = removeIteratesOwnLast(source);
+        source = removeSupportOwnLast(source);
       }
       if (isRemoved(source, 'keys')) {
         source = removeFunction(source, 'shimKeys');
@@ -2594,10 +2629,10 @@
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
       }
       if (isRemoved(source, 'isArguments', 'isEmpty')) {
-        source = removeNoArgsClass(source);
+        source = removeSupportArgsClass(source);
       }
       if (isRemoved(source, 'clone', 'isEqual', 'isPlainObject')) {
-        source = removeNoNodeClass(source);
+        source = removeSupportNodeClass(source);
       }
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
         source = removeFunction(source, 'createIterator');
@@ -2605,28 +2640,35 @@
         source = removeVar(source, 'eachIteratorOptions');
         source = removeVar(source, 'forOwnIteratorOptions');
         source = removeVar(source, 'templateIterator');
-        source = removeHasDontEnumBug(source);
-        source = removeHasEnumPrototype(source);
+        source = removeSupportNonEnumShadows(source);
+        source = removeSupportEnumPrototypes(source);
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
-        source = removeVar(source, 'isBindFast');
+        source = removeSupportProp(source, 'fastBind');
         source = removeVar(source, 'isV8');
         source = removeVar(source, 'nativeBind');
       }
       if (isRemoved(source, 'createIterator', 'keys')) {
         source = removeVar(source, 'nativeKeys');
         source = removeKeysOptimization(source);
-        source = removeNonEnumArgs(source);
+        source = removeSupportNonEnumArgs(source);
       }
-      if (!source.match(/var (?:hasDontEnumBug|hasEnumPrototype|iteratesOwnLast|nonEnumArgs)\b/g)) {
-        // remove IIFE used to assign `hasDontEnumBug`, `hasEnumPrototype`, `iteratesOwnLast`, and `nonEnumArgs`
-        source = source.replace(/^ *\(function\(\) *{[\s\S]+?}\(1\)\);\n+/m, '');
+      if (!/support\.(?:enumPrototypes|nonEnumShadows|ownLast)\b/.test(source)) {
+        // remove code used to resolve unneeded `support` properties
+        source = source.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *= *function[\s\S]+?\n *for.+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
+          if (/support\.spliceObjects\b/.test(match)) {
+            return match.replace(setup, indent + "var object = { '0': 1, 'length': 1 };\n");
+          } else if (/support\.nonEnumArgs\b/.test(match)) {
+            return match.replace(setup, '');
+          }
+          return body.replace(/^ {4}/gm, '  ');
+        });
       }
     }
-    if ((source.match(/\bfreeModule\b/g) || []).length < 2) {
+    if (_.size(source.match(/\bfreeModule\b/g)) < 2) {
       source = removeVar(source, 'freeModule');
     }
-    if ((source.match(/\bfreeExports\b/g) || []).length < 2) {
+    if (_.size(source.match(/\bfreeExports\b/g)) < 2) {
       source = removeVar(source, 'freeExports');
     }
 

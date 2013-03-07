@@ -2170,6 +2170,19 @@
           '}'
         ].join('\n'));
 
+        // replace `_.times`
+        source = replaceFunction(source, 'times', [
+          'function times(n, callback, thisArg) {',
+          '  var index = -1,',
+          '      result = Array(n > -1 ? n : 0);',
+          '',
+          '  while (++index < n) {',
+          '    result[index] = callback.call(thisArg, index);',
+          '  }',
+          '  return result;',
+          '}'
+        ].join('\n'));
+
         // replace `_.uniq`
         source = replaceFunction(source, 'uniq', [
           'function uniq(array, isSorted, callback, thisArg) {',

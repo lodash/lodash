@@ -911,6 +911,7 @@
 
         strictEqual(lodash.result(), null, '_.result should return `null` for falsey `object` arguments: ' + basename);
         strictEqual(lodash.some([false, true, false]), true, '_.some: ' + basename);
+        deepEqual(lodash.times(null, function() {}), [null], '_.times should not coerce `n` to a number: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
         equal('imports' in lodash.templateSettings, false, '_.templateSettings should not have an "imports" property: ' + basename);
         strictEqual(lodash.uniqueId(0), '1', '_.uniqueId should ignore a prefix of `0`: ' + basename);

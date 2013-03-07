@@ -2603,6 +2603,20 @@
     test('should return an array of the results of each `callback` execution', function() {
       deepEqual(_.times(3, function(n) { return n * 2; }), [0, 2, 4]);
     });
+
+    test('should coerce `n` to a number', function() {
+      deepEqual(_.times(null), []);
+    });
+
+    test('should not error on negative `n` values', function() {
+      var pass = true;
+      try {
+        _.times(-1);
+      } catch(e) {
+        pass = false;
+      }
+      ok(pass);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

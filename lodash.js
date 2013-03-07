@@ -4973,7 +4973,7 @@
      * // => also calls `mage.castSpell(n)` three times
      */
     function times(n, callback, thisArg) {
-      n = +n || 0;
+      n = (n = +n) > -1 ? n : 0;
       var index = -1,
           result = Array(n);
 

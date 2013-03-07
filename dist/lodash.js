@@ -183,12 +183,6 @@
         isJSC = !/\n{2,}/.test(Function()),
         isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
-    /* Detect if `Function#bind` exists and is inferred to be fast (all but V8) */
-    var isBindFast = nativeBind && !isV8;
-
-    /* Detect if `Object.keys` exists and is inferred to be fast (Firefox, IE, Opera, V8) */
-    var isKeysFast = nativeKeys && (isIeOpera || isV8 || !isJSC);
-
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
     ctorByClass[arrayClass] = Array;
@@ -246,6 +240,32 @@
        ? value
        : new lodashWrapper(value);
     }
+
+    /**
+     * An object used to flag environments features.
+     *
+     * @static
+     * @memberOf _
+     * @type Object
+     */
+    var support = lodash.support = {};
+
+    /**
+     * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
+     *
+     * @memberOf _.support
+     * @type Boolean
+     */
+    support.fastBind = nativeBind && !isV8;
+
+    /**
+     * Detect if `Object.keys` exists and is inferred to be fast
+     * (Firefox, IE, Opera, V8).
+     *
+     * @memberOf _.support
+     * @type Boolean
+     */
+    support.fastKeys = nativeKeys && (isIeOpera || isV8 || !isJSC);
 
     /**
      * By default, the template delimiters used by Lo-Dash are similar to those in
@@ -332,7 +352,7 @@
       '\n  }\n}\nelse {  ';
        } ;
 
-       if (obj.isKeysFast && obj.useHas) {
+       if (support.fastKeys && obj.useHas) {
       __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ' +
       (obj.loop ) +
       '\n  }  ';
@@ -542,9 +562,6 @@
      */
     function createIterator() {
       var data = {
-        // support properties
-        'isKeysFast': isKeysFast,
-
         // iterator options
         'arrays': 'isArray(iterable)',
         'bottom': '',
@@ -1261,8 +1278,7 @@
       var className = toString.call(value),
           length = value.length;
 
-      if ((className == arrayClass || className == stringClass ||
-          className == argsClass) ||
+      if ((className == arrayClass || className == stringClass || className == argsClass ) ||
           (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
         return !length;
       }
@@ -3935,7 +3951,7 @@
     function bind(func, thisArg) {
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
-      return isBindFast || (nativeBind && arguments.length > 2)
+      return support.fastBind || (nativeBind && arguments.length > 2)
         ? nativeBind.call.apply(nativeBind, arguments)
         : createBound(func, thisArg, slice(arguments, 2));
     }
@@ -4756,7 +4772,7 @@
      * // => also calls `mage.castSpell(n)` three times
      */
     function times(n, callback, thisArg) {
-      n = +n || 0;
+      n = (n = +n) > -1 ? n : 0;
       var index = -1,
           result = Array(n);
 

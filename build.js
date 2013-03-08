@@ -190,7 +190,6 @@
     'firstArg',
     'loop',
     'shadowedProps',
-    'support',
     'top',
     'useHas'
   ];
@@ -2498,8 +2497,7 @@
             .replace(/__p *\+= *' *';/g, '')
             .replace(/(__p *\+= *)' *' *\+/g, '$1')
             .replace(/({) *;|; *(})/g, '$1$2')
-            .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)')
-            .replace(/obj\.(?=support)/g, '')
+            .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
 
           // remove the with-statement
           snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');

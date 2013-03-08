@@ -2514,11 +2514,11 @@
       var callCount = 0,
           dateCount = 0;
 
-      var lodash = _.runInContext({
+      var lodash = _.runInContext(_.extend({}, window, {
         'Date': function() {
           return ++dateCount < 3 ? new Date : Object(Infinity);
         }
-      });
+      }));
 
       var throttled = lodash.throttle(function() {
         callCount++;

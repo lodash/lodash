@@ -259,8 +259,7 @@
     support.fastBind = nativeBind && !isV8;
 
     /**
-     * Detect if `Object.keys` exists and is inferred to be fast
-     * (Firefox, IE, Opera, V8).
+     * Detect if `Object.keys` exists and is inferred to be fast (Firefox, IE, Opera, V8).
      *
      * @memberOf _.support
      * @type Boolean
@@ -1183,7 +1182,7 @@
      * @example
      *
      *  _.invert({ 'first': 'moe', 'second': 'larry' });
-     * // => { 'moe': 'first', 'larry': 'second' } (order is not guaranteed)
+     * // => { 'moe': 'first', 'larry': 'second' }
      */
     function invert(object) {
       var index = -1,
@@ -1927,27 +1926,6 @@
     }
 
     /**
-     * Converts the given `value` into an integer of the specified `radix`.
-     *
-     * Note: This method avoids differences in native ES3 and ES5 `parseInt`
-     * implementations. See http://es5.github.com/#E.
-     *
-     * @static
-     * @memberOf _
-     * @category Objects
-     * @param {Mixed} value The value to parse.
-     * @returns {Number} Returns the new integer value.
-     * @example
-     *
-     * _.parseInt('08');
-     * // => 8
-     */
-    var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
-      // Firefox and Opera still follow the ES3 specified implementation of `parseInt`
-      return nativeParseInt(isString(value) ? value.replace(/^0+(?=.$)/, '') : value, radix || 0);
-    };
-
-    /**
      * Creates a shallow clone of `object` composed of the specified properties.
      * Property names may be specified as individual arguments or as arrays of property
      * names. If `callback` is passed, it will be executed for each property in the
@@ -2007,7 +1985,7 @@
      * @example
      *
      * _.values({ 'one': 1, 'two': 2, 'three': 3 });
-     * // => [1, 2, 3]
+     * // => [1, 2, 3] (order is not guaranteed)
      */
     function values(object) {
       var index = -1,
@@ -4504,6 +4482,27 @@
     }
 
     /**
+     * Converts the given `value` into an integer of the specified `radix`.
+     *
+     * Note: This method avoids differences in native ES3 and ES5 `parseInt`
+     * implementations. See http://es5.github.com/#E.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {Mixed} value The value to parse.
+     * @returns {Number} Returns the new integer value.
+     * @example
+     *
+     * _.parseInt('08');
+     * // => 8
+     */
+    var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
+      // Firefox and Opera still follow the ES3 specified implementation of `parseInt`
+      return nativeParseInt(isString(value) ? value.replace(/^0+(?=.$)/, '') : value, radix || 0);
+    };
+
+    /**
      * Produces a random number between `min` and `max` (inclusive). If only one
      * argument is passed, a number between `0` and the given number will be returned.
      *
@@ -4535,8 +4534,9 @@
 
     /**
      * Resolves the value of `property` on `object`. If `property` is a function,
-     * it will be invoked and its result returned, else the property value is
-     * returned. If `object` is falsey, then `null` is returned.
+     * it will be invoked with the `this` binding of `object` and its result returned,
+     * else the property value is returned. If `object` is falsey, then `undefined`
+     * is returned.
      *
      * @static
      * @memberOf _

@@ -247,10 +247,10 @@
 
       ctor.prototype = { 'valueOf': 1, 'y': 1 };
       for (var prop in new ctor) { props.push(prop); }
+      for (prop in arguments) { }
 
       /**
-       * Detect if `arguments` objects are `Object` objects
-       * (all but Opera < 10.5).
+       * Detect if `arguments` objects are `Object` objects (all but Opera < 10.5).
        *
        * @memberOf _.support
        * @type Boolean
@@ -280,8 +280,7 @@
       support.enumPrototypes = ctor.propertyIsEnumerable('prototype');
 
       /**
-       * Detect if own properties are iterated after inherited properties
-       * (all but IE < 9).
+       * Detect if own properties are iterated after inherited properties (all but IE < 9).
        *
        * @memberOf _.support
        * @type Boolean
@@ -295,7 +294,7 @@
        * @memberOf _.support
        * @type Boolean
        */
-      support.nonEnumArgs = !arguments.propertyIsEnumerable(0);
+      support.nonEnumArgs = prop != 0;
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
@@ -309,8 +308,7 @@
       support.nonEnumShadows = !/valueOf/.test(props);
 
       /**
-       * Detect if `Array#shift` and `Array#splice` augment array-like
-       * objects correctly.
+       * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
        *
        * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
        * and `splice()` functions that fail to remove the last element, `value[0]`,
@@ -1285,7 +1283,7 @@
      * @example
      *
      *  _.invert({ 'first': 'moe', 'second': 'larry' });
-     * // => { 'moe': 'first', 'larry': 'second' } (order is not guaranteed)
+     * // => { 'moe': 'first', 'larry': 'second' }
      */
     function invert(object) {
       var index = -1,
@@ -2036,27 +2034,6 @@
     }
 
     /**
-     * Converts the given `value` into an integer of the specified `radix`.
-     *
-     * Note: This method avoids differences in native ES3 and ES5 `parseInt`
-     * implementations. See http://es5.github.com/#E.
-     *
-     * @static
-     * @memberOf _
-     * @category Objects
-     * @param {Mixed} value The value to parse.
-     * @returns {Number} Returns the new integer value.
-     * @example
-     *
-     * _.parseInt('08');
-     * // => 8
-     */
-    var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
-      // Firefox and Opera still follow the ES3 specified implementation of `parseInt`
-      return nativeParseInt(isString(value) ? value.replace(/^0+(?=.$)/, '') : value, radix || 0);
-    };
-
-    /**
      * Creates a shallow clone of `object` composed of the specified properties.
      * Property names may be specified as individual arguments or as arrays of property
      * names. If `callback` is passed, it will be executed for each property in the
@@ -2116,7 +2093,7 @@
      * @example
      *
      * _.values({ 'one': 1, 'two': 2, 'three': 3 });
-     * // => [1, 2, 3]
+     * // => [1, 2, 3] (order is not guaranteed)
      */
     function values(object) {
       var index = -1,
@@ -4611,6 +4588,27 @@
     }
 
     /**
+     * Converts the given `value` into an integer of the specified `radix`.
+     *
+     * Note: This method avoids differences in native ES3 and ES5 `parseInt`
+     * implementations. See http://es5.github.com/#E.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {Mixed} value The value to parse.
+     * @returns {Number} Returns the new integer value.
+     * @example
+     *
+     * _.parseInt('08');
+     * // => 8
+     */
+    var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
+      // Firefox and Opera still follow the ES3 specified implementation of `parseInt`
+      return nativeParseInt(isString(value) ? value.replace(/^0+(?=.$)/, '') : value, radix || 0);
+    };
+
+    /**
      * Produces a random number between `min` and `max` (inclusive). If only one
      * argument is passed, a number between `0` and the given number will be returned.
      *
@@ -4642,8 +4640,9 @@
 
     /**
      * Resolves the value of `property` on `object`. If `property` is a function,
-     * it will be invoked and its result returned, else the property value is
-     * returned. If `object` is falsey, then `null` is returned.
+     * it will be invoked with the `this` binding of `object` and its result returned,
+     * else the property value is returned. If `object` is falsey, then `undefined`
+     * is returned.
      *
      * @static
      * @memberOf _

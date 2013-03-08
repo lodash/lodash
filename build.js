@@ -2670,11 +2670,11 @@
       }
       if (!/support\.(?:enumPrototypes|nonEnumShadows|ownLast)\b/.test(source)) {
         // remove code used to resolve unneeded `support` properties
-        source = source.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *= *function[\s\S]+?\n *for.+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
+        source = source.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *= *function[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
           if (/support\.spliceObjects\b/.test(match)) {
             return match.replace(setup, indent + "var object = { '0': 1, 'length': 1 };\n");
           } else if (/support\.nonEnumArgs\b/.test(match)) {
-            return match.replace(setup, '');
+            return match.replace(setup, indent + 'for (var prop in arguments) { }\n');
           }
           return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2));
         });

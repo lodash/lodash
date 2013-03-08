@@ -262,6 +262,7 @@
 
       ctor.prototype = { 'valueOf': 1, 'y': 1 };
       for (var prop in new ctor) { props.push(prop); }
+      for (prop in arguments) { }
 
       /**
        * Detect if `arguments` objects are `Object` objects (all but Opera < 10.5).
@@ -324,7 +325,7 @@
        * @memberOf _.support
        * @type Boolean
        */
-      support.nonEnumArgs = prop == '0';
+      support.nonEnumArgs = prop != 0;
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.

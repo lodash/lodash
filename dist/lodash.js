@@ -340,21 +340,21 @@
     var iteratorTemplate = function(obj) {
 
       var __p = 'var index, iterable = ' +
-      (obj.firstArg ) +
+      (obj.firstArg) +
       ', result = iterable;\nif (!iterable) return result;\n' +
-      (obj.top ) +
+      (obj.top) +
       ';\n';
        if (obj.arrays) {
       __p += 'var length = iterable.length; index = -1;\nif (' +
-      (obj.arrays ) +
+      (obj.arrays) +
       ') {\n  while (++index < length) {\n    ' +
-      (obj.loop ) +
+      (obj.loop) +
       '\n  }\n}\nelse {  ';
-       } ;
+       }
 
        if (support.fastKeys && obj.useHas) {
       __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ' +
-      (obj.loop ) +
+      (obj.loop) +
       '\n  }  ';
        } else {
       __p += '\n  for (index in iterable) {';
@@ -362,23 +362,23 @@
       __p += '\n    if (';
             if (obj.useHas) {
       __p += 'hasOwnProperty.call(iterable, index)';
-       }    ;
+       }
       __p += ') {    ';
-       } ;
+       }
       __p += 
-      (obj.loop ) +
+      (obj.loop) +
       ';    ';
        if (obj.useHas) {
       __p += '\n    }';
-       } ;
+       }
       __p += '\n  }  ';
-       } ;
+       }
 
        if (obj.arrays) {
       __p += '\n}';
-       } ;
+       }
       __p += 
-      (obj.bottom ) +
+      (obj.bottom) +
       ';\nreturn result';
 
       return __p

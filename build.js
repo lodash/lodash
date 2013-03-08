@@ -2495,9 +2495,10 @@
             .replace(/function print[^}]+}/, '')
             .replace(/'(?:\\n|\s)+'/g, "''")
             .replace(/__p *\+= *' *';/g, '')
+            .replace(/\s*\+\s*'';/g, ';')
             .replace(/(__p *\+= *)' *' *\+/g, '$1')
-            .replace(/({) *;|; *(})/g, '$1$2')
-            .replace(/\(\(__t *= *\( *([^)]+) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
+            .replace(/(?:; *)([{}])|([{}])(?: *;)/g, '$1$2')
+            .replace(/\(\(__t *= *\( *([^)]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
 
           // remove the with-statement
           snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');

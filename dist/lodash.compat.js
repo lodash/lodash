@@ -455,41 +455,40 @@
     var iteratorTemplate = function(obj) {
 
       var __p = 'var index, iterable = ' +
-      (obj.firstArg ) +
+      (obj.firstArg) +
       ', result = iterable;\nif (!iterable) return result;\n' +
-      (obj.top ) +
+      (obj.top) +
       ';\n';
        if (obj.arrays) {
       __p += 'var length = iterable.length; index = -1;\nif (' +
-      (obj.arrays ) +
+      (obj.arrays) +
       ') {  ';
        if (support.unindexedChars) {
       __p += '\n  if (isString(iterable)) {\n    iterable = iterable.split(\'\')\n  }  ';
-       } ;
+       }
       __p += '\n  while (++index < length) {\n    ' +
-      (obj.loop ) +
+      (obj.loop) +
       '\n  }\n}\nelse {  ';
         } else if (support.nonEnumArgs) {
       __p += '\n  var length = iterable.length; index = -1;\n  if (length && isArguments(iterable)) {\n    while (++index < length) {\n      index += \'\';\n      ' +
-      (obj.loop ) +
+      (obj.loop) +
       '\n    }\n  } else {  ';
-       } ;
+       }
 
        if (support.enumPrototypes) {
       __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
-       } ;
+       }
 
        if (support.fastKeys && obj.useHas) {
       __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? nativeKeys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ';
        if (support.enumPrototypes) {
       __p += 'if (!(skipProto && index == \'prototype\')) {\n  ';
-       } ;
+       }
       __p += 
-      (obj.loop ) +
-      '';
+      (obj.loop);
        if (support.enumPrototypes) {
       __p += '}\n';
-       } ;
+       }
       __p += '  }  ';
        } else {
       __p += '\n  for (index in iterable) {';
@@ -501,39 +500,39 @@
       __p += ' && ';
        }      if (obj.useHas) {
       __p += 'hasOwnProperty.call(iterable, index)';
-       }    ;
+       }
       __p += ') {    ';
-       } ;
+       }
       __p += 
-      (obj.loop ) +
+      (obj.loop) +
       ';    ';
        if (support.enumPrototypes || obj.useHas) {
       __p += '\n    }';
-       } ;
+       }
       __p += '\n  }  ';
-       } ;
+       }
 
        if (support.nonEnumShadows) {
       __p += '\n\n  var ctor = iterable.constructor;\n    ';
        for (var k = 0; k < 7; k++) {
       __p += '\n  index = \'' +
-      (obj.shadowedProps[k] ) +
+      (obj.shadowedProps[k]) +
       '\';\n  if (';
             if (obj.shadowedProps[k] == 'constructor') {
       __p += '!(ctor && ctor.prototype === iterable) && ';
-            } ;
+            }
       __p += 'hasOwnProperty.call(iterable, index)) {\n    ' +
-      (obj.loop ) +
+      (obj.loop) +
       '\n  }    ';
-       } ;
+       }
 
-       } ;
+       }
 
        if (obj.arrays || support.nonEnumArgs) {
       __p += '\n}';
-       } ;
+       }
       __p += 
-      (obj.bottom ) +
+      (obj.bottom) +
       ';\nreturn result';
 
       return __p

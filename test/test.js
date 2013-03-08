@@ -2244,7 +2244,6 @@
     });
   }(1, 2, 3));
 
-
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.some');
@@ -2324,6 +2323,36 @@
       array[index] = index;
       _.sortedIndex(array, index, function() { steps++; });
       equal(steps, 33);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.support');
+
+  (function() {
+    test('should contain properties with boolean values', function() {
+      var props = [
+        'argsObject',
+        'argsClass',
+        'enumPrototypes',
+        'fastBind',
+        'fastKeys',
+        'ownLast',
+        'nonEnumArgs',
+        'nonEnumShadows',
+        'spliceObjects',
+        'unindexedChars',
+        'nodeClass'
+      ];
+
+      _.each(props, function(prop) {
+        if (_.has(_.support, prop)) {
+          equal(typeof _.support[prop], 'boolean');
+        } else {
+          skipTest();
+        }
+      });
     });
   }());
 

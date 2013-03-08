@@ -2432,6 +2432,9 @@
           });
         }());
 
+        // unexpose `lodash.support`
+        source = source.replace(/lodash\.support *= */, '');
+
         // remove `thisArg` from unexposed `forIn` and `forOwn`
         _.each([
           { 'methodName': 'forIn', 'flag': exposeForIn },

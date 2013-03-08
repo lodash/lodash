@@ -188,7 +188,7 @@
    * @memberOf _
    * @type Object
    */
-  var support = lodash.support = {};
+  var support = {};
 
   (function() {
     var object = { '0': 1, 'length': 1 };

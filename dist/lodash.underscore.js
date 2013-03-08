@@ -194,8 +194,7 @@
     var object = { '0': 1, 'length': 1 };
 
     /**
-     * Detect if `arguments` objects are `Object` objects
-     * (all but Opera < 10.5).
+     * Detect if `arguments` objects are `Object` objects (all but Opera < 10.5).
      *
      * @memberOf _.support
      * @type Boolean
@@ -211,8 +210,7 @@
     support.fastBind = nativeBind && !isV8;
 
     /**
-     * Detect if `Array#shift` and `Array#splice` augment array-like
-     * objects correctly.
+     * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
      *
      * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
      * and `splice()` functions that fail to remove the last element, `value[0]`,
@@ -896,7 +894,7 @@
    * @example
    *
    *  _.invert({ 'first': 'moe', 'second': 'larry' });
-   * // => { 'moe': 'first', 'larry': 'second' } (order is not guaranteed)
+   * // => { 'moe': 'first', 'larry': 'second' }
    */
   function invert(object) {
     var index = -1,
@@ -1454,7 +1452,7 @@
    * @example
    *
    * _.values({ 'one': 1, 'two': 2, 'three': 3 });
-   * // => [1, 2, 3]
+   * // => [1, 2, 3] (order is not guaranteed)
    */
   function values(object) {
     var index = -1,
@@ -3833,8 +3831,9 @@
 
   /**
    * Resolves the value of `property` on `object`. If `property` is a function,
-   * it will be invoked and its result returned, else the property value is
-   * returned. If `object` is falsey, then `null` is returned.
+   * it will be invoked with the `this` binding of `object` and its result returned,
+   * else the property value is returned. If `object` is falsey, then `undefined`
+   * is returned.
    *
    * @static
    * @memberOf _

@@ -41,7 +41,6 @@
     'firstArg',
     'loop',
     'shadowedProps',
-    'support',
     'top',
     'useHas'
   ];

@@ -2673,7 +2673,7 @@
           } else if (/support\.nonEnumArgs\b/.test(match)) {
             return match.replace(setup, '');
           }
-          return body.replace(/^ {4}/gm, '  ');
+          return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2));
         });
       }
     }

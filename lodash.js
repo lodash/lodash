@@ -264,8 +264,7 @@
       for (var prop in new ctor) { props.push(prop); }
 
       /**
-       * Detect if `arguments` objects are `Object` objects
-       * (all but Opera < 10.5).
+       * Detect if `arguments` objects are `Object` objects (all but Opera < 10.5).
        *
        * @memberOf _.support
        * @type Boolean
@@ -303,8 +302,7 @@
       support.fastBind = nativeBind && !isV8;
 
       /**
-       * Detect if `Object.keys` exists and is inferred to be fast
-       * (Firefox, IE, Opera, V8).
+       * Detect if `Object.keys` exists and is inferred to be fast (Firefox, IE, Opera, V8).
        *
        * @memberOf _.support
        * @type Boolean
@@ -312,8 +310,7 @@
       support.fastKeys = nativeKeys && (isIeOpera || isV8 || !isJSC);
 
       /**
-       * Detect if own properties are iterated after inherited properties
-       * (all but IE < 9).
+       * Detect if own properties are iterated after inherited properties (all but IE < 9).
        *
        * @memberOf _.support
        * @type Boolean
@@ -327,7 +324,7 @@
        * @memberOf _.support
        * @type Boolean
        */
-      support.nonEnumArgs = !arguments.propertyIsEnumerable(0);
+      support.nonEnumArgs = prop == '0';
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
@@ -341,8 +338,7 @@
       support.nonEnumShadows = !/valueOf/.test(props);
 
       /**
-       * Detect if `Array#shift` and `Array#splice` augment array-like
-       * objects correctly.
+       * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
        *
        * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
        * and `splice()` functions that fail to remove the last element, `value[0]`,
@@ -4736,8 +4732,9 @@
 
     /**
      * Resolves the value of `property` on `object`. If `property` is a function,
-     * it will be invoked and its result returned, else the property value is
-     * returned. If `object` is falsey, then `null` is returned.
+     * it will be invoked with the `this` binding of `object` and its result returned,
+     * else the property value is returned. If `object` is falsey, then `undefined`
+     * is returned.
      *
      * @static
      * @memberOf _

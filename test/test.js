@@ -2944,15 +2944,32 @@
           oldDash = window._;
 
       var returnArrays = [
+        'at',
+        'compact',
+        'difference',
         'filter',
+        'flatten',
+        'functions',
+        'initial',
+        'intersection',
         'invoke',
+        'keys',
         'map',
+        'pairs',
         'pluck',
+        'range',
         'reject',
+        'rest',
         'shuffle',
         'sortBy',
+        'times',
         'toArray',
-        'where'
+        'union',
+        'uniq',
+        'values',
+        'where',
+        'without',
+        'zip'
       ];
 
       var funcs = _.without.apply(_, [_.functions(_)].concat([
@@ -2970,6 +2987,7 @@
         'memoize',
         'once',
         'partial',
+        'partialRight',
         'tap',
         'throttle',
         'wrap'
@@ -2977,9 +2995,12 @@
 
       _.each(funcs, function(methodName) {
         var actual = [],
-            expected = _.times(falsey.length, function() { return []; }),
             func = _[methodName],
             pass = true;
+
+        var expected = (methodName == 'union')
+          ? _.map(falsey, function(value, index) { return index ? [value] : []; })
+          : _.map(falsey, function() { return []; });
 
         _.each(falsey, function(value, index) {
           try {

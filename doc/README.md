@@ -896,7 +896,7 @@ The wrapper functions `first` and `last` return wrapped values when `n` is passe
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5080 "View in source") [&#x24C9;][1]
+<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5083 "View in source") [&#x24C9;][1]
 
 Invokes `interceptor` with the `value` as the first argument, and then returns `value`. The purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
 
@@ -926,7 +926,7 @@ _([1, 2, 3, 4])
 <!-- div -->
 
 ### <a id="_prototypetostring"></a>`_.prototype.toString()`
-<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5097 "View in source") [&#x24C9;][1]
+<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5100 "View in source") [&#x24C9;][1]
 
 Produces the `toString` result of the wrapped value.
 
@@ -947,7 +947,7 @@ _([1, 2, 3]).toString();
 <!-- div -->
 
 ### <a id="_prototypevalueof"></a>`_.prototype.valueOf()`
-<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5114 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5117 "View in source") [&#x24C9;][1]
 
 Extracts the wrapped value.
 
@@ -1945,9 +1945,11 @@ welcome('moe');
 <!-- div -->
 
 ### <a id="_createcallbackfuncidentity-thisarg-argcount3"></a>`_.createCallback([func=identity, thisArg, argCount=3])`
-<a href="#_createcallbackfuncidentity-thisarg-argcount3">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4287 "View in source") [&#x24C9;][1]
+<a href="#_createcallbackfuncidentity-thisarg-argcount3">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4290 "View in source") [&#x24C9;][1]
 
 Produces a callback bound to an optional `thisArg`. If `func` is a property name, the created callback will return the property value for a given element. If `func` is an object, the created callback will return `true` for elements that contain the equivalent object properties, otherwise it will return `false`.
+
+Note: All Lo-Dash methods, that accept a `callback` argument, internally use `_.createCallback`.
 
 #### Arguments
 1. `[func=identity]` *(Mixed)*: The value to convert to a callback.
@@ -1997,7 +1999,7 @@ _.toLookup(stooges, 'name');
 <!-- div -->
 
 ### <a id="_debouncefunc-wait-immediate"></a>`_.debounce(func, wait, immediate)`
-<a href="#_debouncefunc-wait-immediate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4353 "View in source") [&#x24C9;][1]
+<a href="#_debouncefunc-wait-immediate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4356 "View in source") [&#x24C9;][1]
 
 Creates a function that will delay the execution of `func` until after `wait` milliseconds have elapsed since the last time it was invoked. Pass `true` for `immediate` to cause debounce to invoke `func` on the leading, instead of the trailing, edge of the `wait` timeout. Subsequent calls to the debounced function will return the result of the last `func` call.
 
@@ -2023,7 +2025,7 @@ jQuery(window).on('resize', lazyLayout);
 <!-- div -->
 
 ### <a id="_deferfunc--arg1-arg2-"></a>`_.defer(func [, arg1, arg2, ...])`
-<a href="#_deferfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4395 "View in source") [&#x24C9;][1]
+<a href="#_deferfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4398 "View in source") [&#x24C9;][1]
 
 Defers executing the `func` function until the current call stack has cleared. Additional arguments will be passed to `func` when it is invoked.
 
@@ -2048,7 +2050,7 @@ _.defer(function() { alert('deferred'); });
 <!-- div -->
 
 ### <a id="_delayfunc-wait--arg1-arg2-"></a>`_.delay(func, wait [, arg1, arg2, ...])`
-<a href="#_delayfunc-wait--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4421 "View in source") [&#x24C9;][1]
+<a href="#_delayfunc-wait--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4424 "View in source") [&#x24C9;][1]
 
 Executes the `func` function after `wait` milliseconds. Additional arguments will be passed to `func` when it is invoked.
 
@@ -2075,7 +2077,7 @@ _.delay(log, 1000, 'logged later');
 <!-- div -->
 
 ### <a id="_memoizefunc--resolver"></a>`_.memoize(func [, resolver])`
-<a href="#_memoizefunc--resolver">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4445 "View in source") [&#x24C9;][1]
+<a href="#_memoizefunc--resolver">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4448 "View in source") [&#x24C9;][1]
 
 Creates a function that memoizes the result of `func`. If `resolver` is passed, it will be used to determine the cache key for storing the result based on the arguments passed to the memoized function. By default, the first argument passed to the memoized function is used as the cache key. The `func` is executed with the `this` binding of the memoized function.
 
@@ -2101,7 +2103,7 @@ var fibonacci = _.memoize(function(n) {
 <!-- div -->
 
 ### <a id="_oncefunc"></a>`_.once(func)`
-<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4472 "View in source") [&#x24C9;][1]
+<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4475 "View in source") [&#x24C9;][1]
 
 Creates a function that is restricted to execute `func` once. Repeat calls to the function will return the value of the first call. The `func` is executed with the `this` binding of the created function.
 
@@ -2127,7 +2129,7 @@ initialize();
 <!-- div -->
 
 ### <a id="_partialfunc--arg1-arg2-"></a>`_.partial(func [, arg1, arg2, ...])`
-<a href="#_partialfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4507 "View in source") [&#x24C9;][1]
+<a href="#_partialfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4510 "View in source") [&#x24C9;][1]
 
 Creates a function that, when called, invokes `func` with any additional `partial` arguments prepended to those passed to the new function. This method is similar to `_.bind`, except it does **not** alter the `this` binding.
 
@@ -2154,7 +2156,7 @@ hi('moe');
 <!-- div -->
 
 ### <a id="_partialrightfunc--arg1-arg2-"></a>`_.partialRight(func [, arg1, arg2, ...])`
-<a href="#_partialrightfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4538 "View in source") [&#x24C9;][1]
+<a href="#_partialrightfunc--arg1-arg2-">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4541 "View in source") [&#x24C9;][1]
 
 This method is similar to `_.partial`, except that `partial` arguments are appended to those passed to the new function.
 
@@ -2191,7 +2193,7 @@ options.imports
 <!-- div -->
 
 ### <a id="_throttlefunc-wait"></a>`_.throttle(func, wait)`
-<a href="#_throttlefunc-wait">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4560 "View in source") [&#x24C9;][1]
+<a href="#_throttlefunc-wait">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4563 "View in source") [&#x24C9;][1]
 
 Creates a function that, when executed, will only call the `func` function at most once per every `wait` milliseconds. If the throttled function is invoked more than once during the `wait` timeout, `func` will also be called on the trailing edge of the timeout. Subsequent calls to the throttled function will return the result of the last `func` call.
 
@@ -2216,7 +2218,7 @@ jQuery(window).on('scroll', throttled);
 <!-- div -->
 
 ### <a id="_wrapvalue-wrapper"></a>`_.wrap(value, wrapper)`
-<a href="#_wrapvalue-wrapper">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4613 "View in source") [&#x24C9;][1]
+<a href="#_wrapvalue-wrapper">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4616 "View in source") [&#x24C9;][1]
 
 Creates a function that passes `value` to the `wrapper` function as its first argument. Additional arguments passed to the function are appended to those passed to the `wrapper` function. The `wrapper` is executed with the `this` binding of the created function.
 
@@ -3232,7 +3234,7 @@ _.values({ 'one': 1, 'two': 2, 'three': 3 });
 <!-- div -->
 
 ### <a id="_escapestring"></a>`_.escape(string)`
-<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4637 "View in source") [&#x24C9;][1]
+<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4640 "View in source") [&#x24C9;][1]
 
 Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their corresponding HTML entities.
 
@@ -3256,7 +3258,7 @@ _.escape('Moe, Larry & Curly');
 <!-- div -->
 
 ### <a id="_identityvalue"></a>`_.identity(value)`
-<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4655 "View in source") [&#x24C9;][1]
+<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4658 "View in source") [&#x24C9;][1]
 
 This function returns the first argument passed to it.
 
@@ -3281,7 +3283,7 @@ moe === _.identity(moe);
 <!-- div -->
 
 ### <a id="_mixinobject"></a>`_.mixin(object)`
-<a href="#_mixinobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4681 "View in source") [&#x24C9;][1]
+<a href="#_mixinobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4684 "View in source") [&#x24C9;][1]
 
 Adds functions properties of `object` to the `lodash` function and chainable wrapper.
 
@@ -3311,7 +3313,7 @@ _('moe').capitalize();
 <!-- div -->
 
 ### <a id="_noconflict"></a>`_.noConflict()`
-<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4710 "View in source") [&#x24C9;][1]
+<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4713 "View in source") [&#x24C9;][1]
 
 Reverts the '_' variable to its previous value and returns a reference to the `lodash` function.
 
@@ -3331,7 +3333,7 @@ var lodash = _.noConflict();
 <!-- div -->
 
 ### <a id="_parseintvalue"></a>`_.parseInt(value)`
-<a href="#_parseintvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4731 "View in source") [&#x24C9;][1]
+<a href="#_parseintvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4734 "View in source") [&#x24C9;][1]
 
 Converts the given `value` into an integer of the specified `radix`.
 
@@ -3357,7 +3359,7 @@ _.parseInt('08');
 <!-- div -->
 
 ### <a id="_randommin0-max1"></a>`_.random([min=0, max=1])`
-<a href="#_randommin0-max1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4754 "View in source") [&#x24C9;][1]
+<a href="#_randommin0-max1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4757 "View in source") [&#x24C9;][1]
 
 Produces a random number between `min` and `max` *(inclusive)*. If only one argument is passed, a number between `0` and the given number will be returned.
 
@@ -3385,7 +3387,7 @@ _.random(5);
 <!-- div -->
 
 ### <a id="_resultobject-property"></a>`_.result(object, property)`
-<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4793 "View in source") [&#x24C9;][1]
+<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4796 "View in source") [&#x24C9;][1]
 
 Resolves the value of `property` on `object`. If `property` is a function, it will be invoked with the `this` binding of `object` and its result returned, else the property value is returned. If `object` is falsey, then `undefined` is returned.
 
@@ -3438,7 +3440,7 @@ Create a new `lodash` function using the given `context` object.
 <!-- div -->
 
 ### <a id="_templatetext-data-options"></a>`_.template(text, data, options)`
-<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4880 "View in source") [&#x24C9;][1]
+<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4883 "View in source") [&#x24C9;][1]
 
 A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.
 
@@ -3522,7 +3524,7 @@ fs.writeFileSync(path.join(cwd, 'jst.js'), '\
 <!-- div -->
 
 ### <a id="_timesn-callback--thisarg"></a>`_.times(n, callback [, thisArg])`
-<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5005 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5008 "View in source") [&#x24C9;][1]
 
 Executes the `callback` function `n` times, returning an array of the results of each `callback` execution. The `callback` is bound to `thisArg` and invoked with one argument; *(index)*.
 
@@ -3554,7 +3556,7 @@ _.times(3, function(n) { this.cast(n); }, mage);
 <!-- div -->
 
 ### <a id="_unescapestring"></a>`_.unescape(string)`
-<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5032 "View in source") [&#x24C9;][1]
+<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5035 "View in source") [&#x24C9;][1]
 
 The opposite of `_.escape`, this method converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their corresponding characters.
 
@@ -3578,7 +3580,7 @@ _.unescape('Moe, Larry &amp; Curly');
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5052 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5055 "View in source") [&#x24C9;][1]
 
 Generates a unique ID. If `prefix` is passed, the ID will be appended to it.
 
@@ -3631,7 +3633,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5286 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5289 "View in source") [&#x24C9;][1]
 
 *(String)*: The semantic version number.
 

@@ -4251,6 +4251,23 @@
      * @param {Mixed} [thisArg] The `this` binding of the created callback.
      * @param {Number} [argCount=3] The number of arguments the callback accepts.
      * @returns {Function} Returns a callback function.
+     * @example
+     *
+     * var stooges = [
+     *   { 'name': 'moe', 'age': 40 },
+     *   { 'name': 'larry', 'age': 50 }
+     * ];
+     *
+     * // wrap to create custom callback shorthands
+     * _.createCallback = _.wrap(_.createCallback, function(func, callback, thisArg) {
+     *   var match = /^(.+?)__([gl]t)(.+)$/.exec(callback);
+     *   return !match ? func(callback, thisArg) : function(object) {
+     *     return match[2] == 'gt' ? object[match[1]] > match[3] : object[match[1]] < match[3];
+     *   };
+     * });
+     *
+     * _.filter(stooges, 'age__gt45');
+     * // => [{ 'name': 'larry', 'age': 50 }]
      */
     function createCallback(func, thisArg, argCount) {
       if (func == null) {
@@ -4346,28 +4363,6 @@
     }
 
     /**
-     * Executes the `func` function after `wait` milliseconds. Additional arguments
-     * will be passed to `func` when it is invoked.
-     *
-     * @static
-     * @memberOf _
-     * @category Functions
-     * @param {Function} func The function to delay.
-     * @param {Number} wait The number of milliseconds to delay execution.
-     * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the function with.
-     * @returns {Number} Returns the timer id.
-     * @example
-     *
-     * var log = _.bind(console.log, console);
-     * _.delay(log, 1000, 'logged later');
-     * // => 'logged later' (Appears after one second.)
-     */
-    function delay(func, wait) {
-      var args = slice(arguments, 2);
-      return setTimeout(function() { func.apply(undefined, args); }, wait);
-    }
-
-    /**
      * Defers executing the `func` function until the current call stack has cleared.
      * Additional arguments will be passed to `func` when it is invoked.
      *
@@ -4389,6 +4384,28 @@
     // use `setImmediate` if it's available in Node.js
     if (isV8 && freeModule && typeof setImmediate == 'function') {
       defer = bind(setImmediate, context);
+    }
+
+    /**
+     * Executes the `func` function after `wait` milliseconds. Additional arguments
+     * will be passed to `func` when it is invoked.
+     *
+     * @static
+     * @memberOf _
+     * @category Functions
+     * @param {Function} func The function to delay.
+     * @param {Number} wait The number of milliseconds to delay execution.
+     * @param {Mixed} [arg1, arg2, ...] Arguments to invoke the function with.
+     * @returns {Number} Returns the timer id.
+     * @example
+     *
+     * var log = _.bind(console.log, console);
+     * _.delay(log, 1000, 'logged later');
+     * // => 'logged later' (Appears after one second.)
+     */
+    function delay(func, wait) {
+      var args = slice(arguments, 2);
+      return setTimeout(function() { func.apply(undefined, args); }, wait);
     }
 
     /**
@@ -4975,8 +4992,9 @@
       var index = -1,
           result = Array(n);
 
+      callback = createCallback(callback, thisArg, 1);
       while (++index < n) {
-        result[index] = callback.call(thisArg, index);
+        result[index] = callback(index);
       }
       return result;
     }

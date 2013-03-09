@@ -163,7 +163,7 @@
     'tap': ['value'],
     'template': ['defaults', 'escape', 'keys', 'values'],
     'throttle': [],
-    'times': [],
+    'times': ['createCallback'],
     'toArray': ['isString', 'values'],
     'unescape': [],
     'union': ['uniq'],

@@ -214,7 +214,6 @@
     'merge',
     'omit',
     'pairs',
-    'parseInt',
     'pick',
     'values'
   ];
@@ -225,6 +224,7 @@
     'identity',
     'mixin',
     'noConflict',
+    'parseInt',
     'random',
     'result',
     'runInContext',

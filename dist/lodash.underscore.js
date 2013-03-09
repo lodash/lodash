@@ -3264,9 +3264,11 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a function that is restricted to executing `func` only after it is
-   * called `n` times. The `func` is executed with the `this` binding of the
-   * created function.
+   * If `n` is greater than `0`, a function is created that is restricted to
+   * executing `func`, with the `this` binding and arguments of the created
+   * function, only after it is called `n` times. If `n` is less than `1`,
+   * `func` is executed immediately, without a `this` binding or additional
+   * arguments, and its result is returned.
    *
    * @static
    * @memberOf _
@@ -3421,6 +3423,19 @@
    *
    * _.filter(stooges, 'age__gt45');
    * // => [{ 'name': 'larry', 'age': 50 }]
+   *
+   * // create mixins with support for "_.pluck" and "_.where" callback shorthands
+   * _.mixin({
+   *   'toLookup': function(collection, callback, thisArg) {
+   *     callback = _.createCallback(callback, thisArg);
+   *     return _.reduce(collection, function(result, value, index, collection) {
+   *       return (result[callback(value, index, collection)] = value, result);
+   *     }, {});
+   *   }
+   * });
+   *
+   * _.toLookup(stooges, 'name');
+   * // => { 'moe': { 'name': 'moe', 'age': 40 }, 'larry': { 'name': 'larry', 'age': 50 } }
    */
   function createCallback(func, thisArg, argCount) {
     if (func == null) {

@@ -4235,6 +4235,9 @@
      * If `func` is an object, the created callback will return `true` for elements
      * that contain the equivalent object properties, otherwise it will return `false`.
      *
+     * Note: All Lo-Dash methods, that accept a `callback` argument, internally
+     * use `_.createCallback`.
+     *
      * @static
      * @memberOf _
      * @category Functions

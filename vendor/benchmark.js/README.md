@@ -15,13 +15,16 @@ For a list of upcoming features, check out our [roadmap](https://github.com/best
 
 ## Support
 
-Benchmark.js has been tested in at least Adobe AIR 3.1, Chrome 5~25, Firefox 1~19, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.22, Narwhal 0.3.2, PhantomJS 1.8.1, RingoJS 0.9, and Rhino 1.7RC5.
+Benchmark.js has been tested in at least Chrome 5~25, Firefox 1~19, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.22, Narwhal 0.3.2, PhantomJS 1.8.1, RingoJS 0.9, and Rhino 1.7RC5.
 
 ## Installation and usage
 
-In a browser or Adobe AIR:
+Benchmark.js’ only hard dependency is [Lo-Dash](http://lodash.com/).
+
+In a browser:
 
 ```html
+<script src="lodash.js"></script>
 <script src="benchmark.js"></script>
 ```
 
@@ -70,23 +73,12 @@ In an AMD loader like [RequireJS](http://requirejs.org/):
 ```js
 require({
   'paths': {
-    'benchmark': 'path/to/benchmark'
-  }
-},
-['benchmark'], function(Benchmark) {
-  console.log(Benchmark.version);
-});
-
-// or with platform.js
-// https://github.com/bestiejs/platform.js
-require({
-  'paths': {
     'benchmark': 'path/to/benchmark',
+    'lodash': 'path/to/lodash',
     'platform': 'path/to/platform'
   }
 },
-['benchmark', 'platform'], function(Benchmark, platform) {
-  Benchmark.platform = platform;
+['benchmark'], function(Benchmark) {
   console.log(Benchmark.platform.name);
 });
 ```
@@ -108,7 +100,7 @@ suite.add('RegExp#test', function() {
   console.log(String(event.target));
 })
 .on('complete', function() {
-  console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+  console.log('Fastest is ' + _.pluck(this.filter('fastest'), 'name'));
 })
 // run async
 .run({ 'async': true });

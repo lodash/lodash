@@ -15,7 +15,7 @@ For a list of upcoming features, check out our [roadmap](https://github.com/best
 
 ## Support
 
-Benchmark.js has been tested in at least Adobe AIR 3.1, Chrome 5-21, Firefox 1-15, IE 6-9, Opera 9.25-12, Safari 3-6, Node.js 0.8.8, Narwhal 0.3.2, RingoJS 0.8, and Rhino 1.7RC5.
+Benchmark.js has been tested in at least Adobe AIR 3.1, Chrome 5~25, Firefox 1~19, IE 6-10, Opera 9.25-12, Safari 3-6, Node.js 0.4.8-0.8.22, Narwhal 0.3.2, PhantomJS 1.8.1, RingoJS 0.9, and Rhino 1.7RC5.
 
 ## Installation and usage
 
@@ -121,7 +121,7 @@ suite.add('RegExp#test', function() {
 
 ## BestieJS
 
-Benchmark.js is part of the BestieJS *"Best in Class"* module collection. This means we promote solid browser/environment support, ES5 precedents, unit testing, and plenty of documentation.
+Benchmark.js is part of the BestieJS *"Best in Class"* module collection. This means we promote solid browser/environment support, ES5+ precedents, unit testing, and plenty of documentation.
 
 ## Authors
 

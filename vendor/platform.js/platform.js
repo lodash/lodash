@@ -992,7 +992,7 @@
     });
   }
   // check for `exports` after `define` in case a build optimizer adds an `exports` object
-  else if (freeExports) {
+  else if (freeExports && !freeExports.nodeType) {
     // in Narwhal, Node.js, or RingoJS
     forOwn(parse(), function(value, key) {
       freeExports[key] = value;
@@ -1000,8 +1000,6 @@
   }
   // in a browser or Rhino
   else {
-    // use square bracket notation so Closure Compiler won't munge `platform`
-    // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
     window.platform = parse();
   }
 }(this));

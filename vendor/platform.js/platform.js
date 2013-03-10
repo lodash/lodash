@@ -1002,6 +1002,6 @@
   else {
     // use square bracket notation so Closure Compiler won't munge `platform`
     // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
-    window['platform'] = parse();
+    window.platform = parse();
   }
 }(this));

@@ -49,12 +49,6 @@
     _.runInContext(window)
   ));
 
-  /** The `platform` object to check */
-  var platform = window.platform || (window.platform = (
-    load('../vendor/platform.js/platform.js') ||
-    window.platform
-  ));
-
   /** Used to pass falsey values to methods */
   var falsey = [
     ,

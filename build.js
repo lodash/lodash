@@ -1087,7 +1087,7 @@
 
     // remove `support.argsClass` from `_.isEmpty`
     source = source.replace(matchFunction(source, 'isEmpty'), function(match) {
-      return match.replace(/\s*\(support\.argsClass *\?([^:]+):.+?\)\)/g, '$1');
+      return match.replace(/\s*\(support\.argsClass\s*\?([^:]+):.+?\)\)/g, '$1');
     });
 
     // remove `support.argsClass` from `_.isPlainObject`
@@ -2345,7 +2345,7 @@
       source = source.replace(matchFunction(source, 'template'), function(match) {
         return match
           .replace(/iteratorTemplate *&& */g, '')
-          .replace(/iteratorTemplate *\? *([^:]+?) *:[^,;]+/g, '$1');
+          .replace(/iteratorTemplate\s*\?\s*([^:]+?)\s*:[^,;]+/g, '$1');
       });
 
       /*----------------------------------------------------------------------*/

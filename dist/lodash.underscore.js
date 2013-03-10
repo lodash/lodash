@@ -30,16 +30,13 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
-  /** Used to match HTML entities */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
-
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
-  /** Used to match regexp flags from their coerced string values */
-  var reFlags = /\w*$/;
+  /** Used to match HTML entities */
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
 
   /**
    * Used to match ES6 template delimiters
@@ -47,8 +44,14 @@
    */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
+  /** Used to match regexp flags from their coerced string values */
+  var reFlags = /\w*$/;
+
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
+
+  /** Used to match leading zeros to be removed */
+  var reLeadingZeros = /^0+(?=.$)/;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;

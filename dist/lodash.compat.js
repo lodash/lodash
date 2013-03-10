@@ -33,16 +33,13 @@
   /** Used by `cachedContains` as the default size when optimizations are enabled for large arrays */
   var largeArraySize = 30;
 
-  /** Used to match HTML entities */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
-
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
-  /** Used to match regexp flags from their coerced string values */
-  var reFlags = /\w*$/;
+  /** Used to match HTML entities */
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
 
   /**
    * Used to match ES6 template delimiters
@@ -50,8 +47,14 @@
    */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
+  /** Used to match regexp flags from their coerced string values */
+  var reFlags = /\w*$/;
+
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
+
+  /** Used to match leading zeros to be removed */
+  var reLeadingZeros = /^0+(?=.$)/;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
@@ -4723,7 +4726,7 @@
      */
     var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
       // Firefox and Opera still follow the ES3 specified implementation of `parseInt`
-      return nativeParseInt(isString(value) ? value.replace(/^0+(?=.$)/, '') : value, radix || 0);
+      return nativeParseInt(isString(value) ? value.replace(reLeadingZeros, '') : value, radix || 0);
     };
 
     /**

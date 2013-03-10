@@ -2567,7 +2567,7 @@
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
       }
       if (isRemoved(source, 'isArguments')) {
-        source = replaceVar(source, 'noArgsClass', 'false');
+        source = replaceSupportProp(source, 'argsClass', 'true');
       }
       if (isRemoved(source, 'isFunction')) {
         source = removeIsFunctionFallback(source);
@@ -2639,6 +2639,7 @@
       }
       if (isRemoved(source, 'parseInt')) {
         source = removeVar(source, 'nativeParseInt');
+        source = removeVar(source, 'reLeadingZeros');
       }
       if (isRemoved(source, 'template')) {
         // remove `templateSettings` assignment

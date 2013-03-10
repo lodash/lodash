@@ -50,9 +50,6 @@
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
 
-  /** Used to match leading zeros to be removed */
-  var reLeadingZeros = /^0+(?=.$)/;
-
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
 

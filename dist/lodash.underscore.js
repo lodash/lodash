@@ -656,7 +656,7 @@
   function shimIsPlainObject(value) {
     // avoid non-objects and false positives for `arguments` objects
     var result = false;
-    if (!(value && typeof value == 'object') || isArguments(value)) {
+    if (!(value && toString.call(value) == objectClass)) {
       return result;
     }
     // check that the constructor is `Object` (i.e. `Object instanceof Object`)

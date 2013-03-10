@@ -245,6 +245,9 @@
       return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
     });
 
+    // remove brackets from `lodash.createCallback` in `eachIteratorOptions`
+    source = source.replace('lodash[\'createCallback\'](callback, thisArg)"', 'lodash.createCallback(callback, thisArg)"');
+
     // remove brackets from `lodash.createCallback` in `_.assign`
     source = source.replace("'  var callback = lodash['createCallback']", "'var callback=lodash.createCallback");
 

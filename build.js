@@ -1090,6 +1090,13 @@
       return match.replace(/\s*\(support\.argsClass *\?([^:]+):.+?\)\)/g, '$1');
     });
 
+    // remove `support.argsClass` from `_.isPlainObject`
+    _.each(['shimIsPlainObject', 'isPlainObject'], function(methodName) {
+      source = source.replace(matchFunction(source, methodName), function(match) {
+        return match.replace(/\s*\|\|\s*\(!support\.argsClass[\s\S]+?\)\)/, '');
+      });
+    });
+
     return source;
   }
 
@@ -1114,7 +1121,7 @@
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(support\.enumPrototypes *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
-        .replace(/support\.enumPrototypes *\|\|\s*/g, '');
+        .replace(/support\.enumPrototypes\s*\|\|\s*/g, '');
     });
 
     return source;
@@ -1137,12 +1144,12 @@
 
     // remove `support.nodeClass` from `_.clone`
     source = source.replace(matchFunction(source, 'clone'), function(match) {
-      return match.replace(/ *\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)/, '');
+      return match.replace(/\s*\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)/, '');
     });
 
     // remove `support.nodeClass` from `_.isEqual`
     source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/ *\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)\)/, '');
+      return match.replace(/\s*\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)\)/, '');
     });
 
     return source;
@@ -1169,7 +1176,7 @@
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)*( *["'] *)<% *} *else *if *\(support\.nonEnumArgs[\s\S]+?(\1<% *} *%>.+)/, '$2')
-        .replace(/ *\|\|\s*support\.nonEnumArgs/, '');
+        .replace(/\s*\|\|\s*support\.nonEnumArgs/, '');
     });
 
     return source;
@@ -1710,6 +1717,7 @@
       if (isModern) {
         dependencyMap.isEmpty = _.without(dependencyMap.isEmpty, 'isArguments');
         dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'isArguments');
+        dependencyMap.isPlainObject = _.without(dependencyMap.isPlainObject, 'isArguments');
         dependencyMap.keys = _.without(dependencyMap.keys, 'isArguments');
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
       }
@@ -2357,7 +2365,7 @@
 
         // remove native `Array.isArray` branch in `_.isArray`
         source = source.replace(matchFunction(source, 'isArray'), function(match) {
-          return match.replace(/nativeIsArray * \|\|\s*/, '');
+          return match.replace(/nativeIsArray\s*\|\|\s*/, '');
         });
 
         // replace `_.keys` with `shimKeys`
@@ -2509,7 +2517,7 @@
 
           // minor cleanup
           snippet = snippet
-            .replace(/obj *\|\|\s*\(obj *= *{}\);/, '')
+            .replace(/obj\s*\|\|\s*\(obj *= *{}\);/, '')
             .replace(/var __p = '';\s*__p \+=/, 'var __p =');
 
           // remove comments, including sourceURLs

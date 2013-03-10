@@ -1406,6 +1406,13 @@
       strictEqual(_.isPlainObject([1, 2, 3]), false);
       strictEqual(_.isPlainObject({ 'a': 1 }), true);
     });
+
+    test('should return `false` for objects without a [[Class]] of "Object"', function() {
+      strictEqual(_.isPlainObject(arguments), false);
+      strictEqual(_.isPlainObject(Error), false);
+      strictEqual(_.isPlainObject(Math), false);
+      strictEqual(_.isPlainObject(window), false);
+    })
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -262,8 +262,7 @@
       support.argsObject = arguments.constructor == Object;
 
       /**
-       * Detect if `arguments` objects [[Class]] are resolvable
-       * (all but Firefox < 4, IE < 9).
+       * Detect if an `arguments` object's [[Class]] is resolvable (all but Firefox < 4, IE < 9).
        *
        * @memberOf _.support
        * @type Boolean

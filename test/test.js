@@ -43,19 +43,17 @@
   }());
 
   /** The `lodash` function to test */
-  var _ =
-    window._ || (
-      _ = load(filePath) || window._,
-      _ = _._ || _,
-      _.runInContext(window)
-    );
+  var _ = window._ || (window._ = (
+    _ = load(filePath) || window._,
+    _ = _._ || _,
+    _.runInContext(window)
+  ));
 
   /** The `platform` object to check */
-  var platform = (
-    window.platform ||
+  var platform = window.platform || (window.platform = (
     load('../vendor/platform.js/platform.js') ||
     window.platform
-  );
+  ));
 
   /** Used to pass falsey values to methods */
   var falsey = [

@@ -25,27 +25,25 @@
     return result;
   }());
 
-  /** Load Benchmark.js */
-  var Benchmark =
-    window.Benchmark || (
-      Benchmark = load('../vendor/benchmark.js/benchmark.js') || window.Benchmark,
-      Benchmark.Benchmark || Benchmark
-    );
-
   /** Load Lo-Dash */
-  var lodash =
-    window.lodash || (
-      lodash = load(filePath) || window._,
-      lodash = lodash._ || lodash,
-      lodash.noConflict()
-    );
+  var lodash = window.lodash || (window.lodash = (
+    lodash = load(filePath) || window._,
+    lodash = lodash._ || lodash,
+    lodash.noConflict()
+  ));
+
+  /** Load Benchmark.js */
+  var Benchmark = window.Benchmark || (window.Benchmark = (
+    Benchmark = load('../vendor/benchmark.js/benchmark.js') || window.Benchmark,
+    Benchmark = Benchmark.Benchmark || Benchmark,
+    Benchmark.runInContext(lodash.extend({}, window, { '_': lodash }))
+  ));
 
   /** Load Underscore */
-  var _ =
-    window._ || (
-      _ = load('../vendor/underscore/underscore.js') || window._,
-      _._ || _
-    );
+  var _ = window._ || (window._ = (
+    _ = load('../vendor/underscore/underscore.js') || window._,
+    _._ || _
+  ));
 
   /** Used to access the Firebug Lite panel (set by `run`) */
   var fbPanel;
@@ -67,16 +65,6 @@
 
   /** The other library basename */
   var otherName = basename(ui.otherPath, '.js');
-
-  /** Expose functions to the global object */
-  window._ = _;
-  window.Benchmark = Benchmark;
-  window.lodash = lodash;
-
-  /** Add `console.log()` support for Narwhal and RingoJS */
-  if (!window.console && window.print) {
-    window.console = { 'log': window.print };
-  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -201,8 +189,7 @@
   lodash.extend(Benchmark.options, {
     'async': true,
     'setup': '\
-      var window = Function("return this || global")(),\
-          _ = window._,\
+      var _ = window._,\
           lodash = window.lodash,\
           belt = this.name == "Lo-Dash" ? lodash : _;\
       \
@@ -468,6 +455,16 @@
       )
       .add(otherName, '\
         _(2)'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_(...)` with an array')
+      .add(buildName, '\
+        lodash(numbers)'
+      )
+      .add(otherName, '\
+        _(numbers)'
       )
   );
 

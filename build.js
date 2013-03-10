@@ -169,7 +169,7 @@
     'union': ['uniq'],
     'uniq': ['createCallback', 'indexOf'],
     'uniqueId': [],
-    'value': ['forOwn'],
+    'value': ['forOwn', 'isArray'],
     'values': ['keys'],
     'where': ['filter'],
     'without': ['indexOf'],
@@ -1723,6 +1723,7 @@
         dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
         dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
+        dependencyMap.value = _.without(dependencyMap.value, 'isArray');
         dependencyMap.where.push('find', 'isEmpty');
 
         if (useUnderscoreClone) {

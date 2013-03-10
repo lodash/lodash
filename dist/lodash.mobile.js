@@ -756,7 +756,7 @@
     function shimIsPlainObject(value) {
       // avoid non-objects and false positives for `arguments` objects
       var result = false;
-      if (!(value && typeof value == 'object') || isArguments(value)) {
+      if (!(value && toString.call(value) == objectClass)) {
         return result;
       }
       // check that the constructor is `Object` (i.e. `Object instanceof Object`)
@@ -1622,14 +1622,14 @@
      * // => true
      */
     var isPlainObject = function(value) {
-      if (!(value && typeof value == 'object')) {
+      if (!(value && toString.call(value) == objectClass)) {
         return false;
       }
       var valueOf = value.valueOf,
           objProto = typeof valueOf == 'function' && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
 
       return objProto
-        ? value == objProto || (getPrototypeOf(value) == objProto && !isArguments(value))
+        ? (value == objProto || getPrototypeOf(value) == objProto)
         : shimIsPlainObject(value);
     };
 

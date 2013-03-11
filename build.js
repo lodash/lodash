@@ -1708,7 +1708,7 @@
         exposeZipObject = methods.indexOf('zipObject') > -1;
 
         methods = _.without.apply(_, [plusMethods].concat(minusMethods));
-        useUnderscoreClone = methods.indexOf('clone') < 0;
+        useUnderscoreClone = methods.indexOf('clone') < 0 && methods.indexOf('cloneDeep') < 0;
       }
       // update dependencies
       if (isLegacy) {

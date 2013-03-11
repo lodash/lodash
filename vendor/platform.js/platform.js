@@ -20,7 +20,7 @@
   var reOpera = /Opera/;
 
   /** Used to resolve a value's internal [[Class]] */
-  var toString = {}.toString;
+  var toString = Object.prototype.toString;
 
   /** Detect Java environment */
   var java = /Java/.test(getClassOf(window.java)) && window.java;

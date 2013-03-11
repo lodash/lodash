@@ -48,6 +48,15 @@
   /** Used to access the Firebug Lite panel (set by `run`) */
   var fbPanel;
 
+  /** Used to match path separators */
+  var rePathSeparator = /[\/\\]/;
+
+  /** Used to detect primitive types */
+  var rePrimitive = /^(?:boolean|number|string|undefined)$/;
+
+  /** Used to match RegExp special characters */
+  var reSpecialChars = /[.*+?^=!:${}()|[\]\/\\]/g;
+
   /** Used to score performance */
   var score = { 'a': 0, 'b': 0 };
 
@@ -70,7 +79,7 @@
   var otherName = basename(ui.otherPath, '.js');
 
   /** Detect if in a browser environment */
-  var isBrowser = !!(window.document && window.navigator);
+  var isBrowser = isHostType(window, 'document') && isHostType(window, 'navigator');
 
   /** Detect Java environment */
   var isJava = !isBrowser && /Java/.test(toString.call(window.java));
@@ -90,10 +99,10 @@
    * @returns {String} Returns the basename.
    */
   function basename(filePath, extension) {
-    var result = (filePath || '').split(/[\\/]/).pop();
-    return arguments.length < 2
+    var result = (filePath || '').split(rePathSeparator).pop();
+    return (arguments.length < 2)
       ? result
-      : result.replace(RegExp(extension.replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&') + '$'), '');
+      : result.replace(RegExp(extension.replace(reSpecialChars, '\\$&') + '$'), '');
   }
 
   /**
@@ -107,6 +116,24 @@
   function getHz(bench) {
     var result = 1 / (bench.stats.mean + bench.stats.moe);
     return isFinite(result) ? result : 0;
+  }
+
+  /**
+   * Host objects can return type values that are different from their actual
+   * data type. The objects we are concerned with usually return non-primitive
+   * types of "object", "function", or "unknown".
+   *
+   * @private
+   * @param {Mixed} object The owner of the property.
+   * @param {String} property The property to check.
+   * @returns {Boolean} Returns `true` if the property value is a non-primitive, else `false`.
+   */
+  function isHostType(object, property) {
+    if (object == null) {
+      return false;
+    }
+    var type = typeof object[property];
+    return !rePrimitive.test(type) && (type != 'object' || !!object[property]);
   }
 
   /**
@@ -494,17 +521,19 @@
   );
 
   // avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo
-  !isJava && suites.push(
-    Benchmark.Suite('`_(...).tap(...)`')
-      .add(buildName, {
-        'fn': 'lodashChaining.tap(lodash.identity)',
-        'teardown': 'function chaining(){}'
-      })
-      .add(otherName, {
-        'fn':  '_chaining.tap(_.identity)',
-        'teardown': 'function chaining(){}'
-      })
-  );
+  if (!isJava) {
+    suites.push(
+      Benchmark.Suite('`_(...).tap(...)`')
+        .add(buildName, {
+          'fn': 'lodashChaining.tap(lodash.identity)',
+          'teardown': 'function chaining(){}'
+        })
+        .add(otherName, {
+          'fn':  '_chaining.tap(_.identity)',
+          'teardown': 'function chaining(){}'
+        })
+    );
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -893,17 +922,19 @@
   );
 
   // avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo
-  !isJava && suites.push(
-    Benchmark.Suite('`_.find` with `properties`')
-      .add(buildName, {
-        'fn': 'lodash.find(objects, whereObject)',
-        'teardown': 'function where(){}'
-      })
-      .add(otherName, {
-        'fn': '_.findWhere(objects, whereObject)',
-        'teardown': 'function where(){}'
-      })
-  );
+  if (!isJava) {
+    suites.push(
+      Benchmark.Suite('`_.find` with `properties`')
+        .add(buildName, {
+          'fn': 'lodash.find(objects, whereObject)',
+          'teardown': 'function where(){}'
+        })
+        .add(otherName, {
+          'fn': '_.findWhere(objects, whereObject)',
+          'teardown': 'function where(){}'
+        })
+    );
+  }
 
   /*--------------------------------------------------------------------------*/
 

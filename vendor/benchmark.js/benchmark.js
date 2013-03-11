@@ -30,6 +30,9 @@
   /** Used to assign each benchmark an incrimented id */
   var counter = 0;
 
+  /** Used to detect primitive types */
+  var rePrimitive = /^(?:boolean|number|string|undefined)$/;
+
   /** Used to assign default `context` object properties */
   var contextProps = [
     'Array', 'Date', 'Function', 'Math', 'Object', 'RegExp', 'String', '_',
@@ -613,7 +616,7 @@
     /**
      * Host objects can return type values that are different from their actual
      * data type. The objects we are concerned with usually return non-primitive
-     * types of object, function, or unknown.
+     * types of "object", "function", or "unknown".
      *
      * @private
      * @param {Mixed} object The owner of the property.
@@ -621,9 +624,11 @@
      * @returns {Boolean} Returns `true` if the property value is a non-primitive, else `false`.
      */
     function isHostType(object, property) {
-      var type = object != null ? typeof object[property] : 'number';
-      return !/^(?:boolean|number|string|undefined)$/.test(type) &&
-        (type == 'object' ? !!object[property] : true);
+      if (object == null) {
+        return false;
+      }
+      var type = typeof object[property];
+      return !rePrimitive.test(type) && (type != 'object' || !!object[property]);
     }
 
     /**

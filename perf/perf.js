@@ -1284,7 +1284,7 @@
         'teardown': 'function omit(){}'
       })
       .add(otherName, {
-        'fn': 'result = _.omit(wordToNumber, words)',
+        'fn': '_.omit(wordToNumber, words)',
         'teardown': 'function omit(){}'
       })
   );

@@ -994,21 +994,34 @@
       });
     });
 
-    asyncTest('`lodash underscore plus=clone`', function() {
-      var start = _.after(2, _.once(QUnit.start));
+    var commands = [
+      'plus=clone',
+      'plus=cloneDeep'
+    ];
 
-      build(['-s', 'underscore', 'plus=clone'], function(data) {
-        var array = [{ 'value': 1 }],
-            basename = path.basename(data.outputPath, '.js'),
-            context = createContext();
+    commands.forEach(function(command, index) {
+      asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
 
-        vm.runInContext(data.source, context);
-        var lodash = context._,
-            clone = lodash.clone(array, true);
+        build(['-s', 'underscore', command], function(data) {
+          var array = [{ 'value': 1 }],
+              basename = path.basename(data.outputPath, '.js'),
+              context = createContext();
 
-        ok(_.isEqual(array, clone), basename);
-        notEqual(array[0], clone[0], basename);
-        start();
+          vm.runInContext(data.source, context, true);
+          var lodash = context._;
+
+          _.each(index ? ['clone','cloneDeep'] : ['clone'], function(methodName) {
+            var clone = (methodName == 'clone')
+              ? lodash.clone(array, true)
+              : lodash.cloneDeep(array);
+
+            ok(_.isEqual(array, clone), basename);
+            notEqual(array[0], clone[0], basename);
+          });
+
+          start();
+        });
       });
     });
   }());

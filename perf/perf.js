@@ -14,7 +14,7 @@
         );
 
     var last = result[result.length - 1];
-    result = (result.length > min && !/test(?:\.js)?$/.test(last))
+    result = (result.length > min && !/perf(?:\.js)?$/.test(last))
       ? last
       : '../lodash.js';
 
@@ -54,6 +54,9 @@
   /** Used to queue benchmark suites */
   var suites = [];
 
+  /** Used to resolve a value's internal [[Class]] */
+  var toString = Object.prototype.toString;
+
   /** The `ui` object */
   var ui = window.ui || ({
     'buildPath': basename(filePath, '.js'),
@@ -65,6 +68,15 @@
 
   /** The other library basename */
   var otherName = basename(ui.otherPath, '.js');
+
+  /** Detect if in a browser environment */
+  var isBrowser = !!(window.document && window.navigator);
+
+  /** Detect Java environment */
+  var isJava = !isBrowser && /Java/.test(toString.call(window.java));
+
+  /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
+  var console = window.console || (window.console = { 'log': window.print });
 
   /*--------------------------------------------------------------------------*/
 
@@ -122,7 +134,7 @@
       fbPanel.getElementById('fbPanel1');
 
     log('\nSit back and relax, this may take a while.');
-    suites[0].run();
+    suites[0].run({ 'async': !isJava });
   }
 
   /*--------------------------------------------------------------------------*/
@@ -165,7 +177,7 @@
 
       if (suites.length) {
         // run next suite
-        suites[0].run();
+        suites[0].run({ 'async': !isJava });
       }
       else {
         var fastestTotalHz = Math.max(score.a, score.b),
@@ -443,6 +455,9 @@
         \
         var _tpl = _.template(tpl),\
             _tplVerbose = _.template(tplVerbose, null, settingsObject);\
+      }\
+      if (typeof where != "undefined") {\
+        var whereObject = { "num": 9 };\
       }'
   });
 
@@ -478,7 +493,8 @@
       )
   );
 
-  suites.push(
+  // avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo
+  !isJava && suites.push(
     Benchmark.Suite('`_(...).tap(...)`')
       .add(buildName, {
         'fn': 'lodashChaining.tap(lodash.identity)',
@@ -876,14 +892,17 @@
       )
   );
 
-  suites.push(
+  // avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo
+  !isJava && suites.push(
     Benchmark.Suite('`_.find` with `properties`')
-      .add(buildName, '\
-        lodash.find(objects, { "num": 9 });'
-      )
-      .add(otherName, '\
-        _.findWhere(objects, { "num": 9 });'
-      )
+      .add(buildName, {
+        'fn': 'lodash.find(objects, whereObject)',
+        'teardown': 'function where(){}'
+      })
+      .add(otherName, {
+        'fn': '_.findWhere(objects, whereObject)',
+        'teardown': 'function where(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/
@@ -1328,13 +1347,13 @@
     Benchmark.Suite('`_.reduce` iterating an object')
       .add(buildName, '\
         lodash.reduce(object, function(result, value, key) {\
-          result.push([key, value]);\
+          result.push(key, value);\
           return result;\
         }, []);'
       )
       .add(otherName, '\
         _.reduce(object, function(result, value, key) {\
-          result.push([key, value]);\
+          result.push(key, value);\
           return result;\
         }, []);'
       )
@@ -1362,13 +1381,13 @@
     Benchmark.Suite('`_.reduceRight` iterating an object')
       .add(buildName, '\
         lodash.reduceRight(object, function(result, value, key) {\
-          result.push([key, value]);\
+          result.push(key, value);\
           return result;\
         }, []);'
       )
       .add(otherName, '\
         _.reduceRight(object, function(result, value, key) {\
-          result.push([key, value]);\
+          result.push(key, value);\
           return result;\
         }, []);'
       )
@@ -1714,12 +1733,14 @@
 
   suites.push(
     Benchmark.Suite('`_.where`')
-      .add(buildName, '\
-        lodash.where(objects, { "num": 9 });'
-      )
-      .add(otherName, '\
-        _.where(objects, { "num": 9 });'
-      )
+      .add(buildName, {
+        'fn': 'lodash.where(objects, whereObject);',
+        'teardown': 'function where(){}'
+      })
+      .add(otherName, {
+        'fn': '_.where(objects, whereObject);',
+        'teardown': 'function where(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/

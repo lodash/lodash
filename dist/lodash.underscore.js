@@ -385,19 +385,12 @@
     var index, iterable = collection, result = iterable;
     if (!iterable) return result;
     callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
-    var length = iterable.length; index = -1;
-    if (typeof length == 'number') {
-      while (++index < length) {
-        if (callback(iterable[index], index, collection) === indicatorObject) return result
-      }
-    }
-    else {  
+
       for (index in iterable) {
         if (hasOwnProperty.call(iterable, index)) {    
         if (callback(iterable[index], index, collection) === indicatorObject) return result;    
         }
       }  
-    }
   };
 
   /**
@@ -1598,10 +1591,10 @@
     var result = true;
     callback = createCallback(callback, thisArg);
 
-    if (isArray(collection)) {
-      var index = -1,
-          length = collection.length;
+    var index = -1,
+        length = collection ? collection.length : 0;
 
+    if (typeof length == 'number') {
       while (++index < length) {
         if (!(result = !!callback(collection[index], index, collection))) {
           break;
@@ -1659,10 +1652,10 @@
     var result = [];
     callback = createCallback(callback, thisArg);
 
-    if (isArray(collection)) {
-      var index = -1,
-          length = collection.length;
+    var index = -1,
+        length = collection ? collection.length : 0;
 
+    if (typeof length == 'number') {
       while (++index < length) {
         var value = collection[index];
         if (callback(value, index, collection)) {
@@ -1762,10 +1755,10 @@
    * // => alerts each number value (order is not guaranteed)
    */
   function forEach(collection, callback, thisArg) {
-    if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
-      var index = -1,
-          length = collection.length;
+    var index = -1,
+        length = collection ? collection.length : 0;
 
+    if (callback && typeof thisArg == 'undefined' && typeof length == 'number') {
       while (++index < length) {
         if (callback(collection[index], index, collection) === indicatorObject) {
           break;
@@ -1897,15 +1890,16 @@
    */
   function map(collection, callback, thisArg) {
     var index = -1,
-        length = collection ? collection.length : 0,
-        result = Array(typeof length == 'number' ? length : 0);
+        length = collection ? collection.length : 0;
 
     callback = createCallback(callback, thisArg);
-    if (isArray(collection)) {
+    if (typeof length == 'number') {
+      var result = Array(length);
       while (++index < length) {
         result[index] = callback(collection[index], index, collection);
       }
     } else {
+      result = [];
       each(collection, function(value, key, collection) {
         result[++index] = callback(value, key, collection);
       });
@@ -1956,10 +1950,10 @@
     var computed = -Infinity,
         result = computed;
 
-    if (!callback && isArray(collection)) {
-      var index = -1,
-          length = collection.length;
+    var index = -1,
+        length = collection ? collection.length : 0;
 
+    if (!callback && typeof length == 'number') {
       while (++index < length) {
         var value = collection[index];
         if (value > result) {
@@ -2023,10 +2017,10 @@
     var computed = Infinity,
         result = computed;
 
-    if (!callback && isArray(collection)) {
-      var index = -1,
-          length = collection.length;
+    var index = -1,
+        length = collection ? collection.length : 0;
 
+    if (!callback && typeof length == 'number') {
       while (++index < length) {
         var value = collection[index];
         if (value < result) {
@@ -2100,13 +2094,14 @@
    * // => { 'a': 3, 'b': 6, 'c': 9 }
    */
   function reduce(collection, callback, accumulator, thisArg) {
+    if (!collection) return accumulator;
     var noaccum = arguments.length < 3;
     callback = createCallback(callback, thisArg, 4);
 
-    if (isArray(collection)) {
-      var index = -1,
-          length = collection.length;
+    var index = -1,
+        length = collection.length;
 
+    if (typeof length == 'number') {
       if (noaccum) {
         accumulator = collection[++index];
       }

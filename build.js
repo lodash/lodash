@@ -1720,14 +1720,19 @@
         dependencyMap.isPlainObject = _.without(dependencyMap.isPlainObject, 'isArguments');
         dependencyMap.keys = _.without(dependencyMap.keys, 'isArguments');
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
+
+        if (!isMobile) {
+          dependencyMap.max.push('forEach');
+          dependencyMap.min.push('forEach');
+        }
       }
       if (isUnderscore) {
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
         dependencyMap.flatten = _.without(dependencyMap.flatten, 'createCallback');
         dependencyMap.isEmpty = ['isArray', 'isString'];
         dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
-        dependencyMap.max = _.without(dependencyMap.max, 'isString');
-        dependencyMap.min = _.without(dependencyMap.min, 'isString');
+        dependencyMap.max = _.without(dependencyMap.max, 'isArray', 'isString');
+        dependencyMap.min = _.without(dependencyMap.min, 'isArray', 'isString');
         dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
         dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
@@ -1744,6 +1749,14 @@
         dependencyMap.forIn = _.without(dependencyMap.forIn, 'isArguments');
         dependencyMap.forOwn = _.without(dependencyMap.forOwn, 'isArguments');
         dependencyMap.toArray = _.without(dependencyMap.toArray, 'isString');
+
+        if (!isMobile) {
+          dependencyMap.every = _.without(dependencyMap.every, 'isArray');
+          dependencyMap.filter = _.without(dependencyMap.filter, 'isArray');
+          dependencyMap.forEach = _.without(dependencyMap.forEach, 'isArray');
+          dependencyMap.map = _.without(dependencyMap.map, 'isArray');
+          dependencyMap.reduce = _.without(dependencyMap.reduce, 'isArray');
+        }
       }
 
       // add method names explicitly
@@ -1812,6 +1825,52 @@
 
         if (!isMobile) {
           source = removeSupportNonEnumArgs(source);
+
+          // replace `_.map`
+          source = replaceFunction(source, 'map', [
+            'function map(collection, callback, thisArg) {',
+            '  var index = -1,',
+            '      length = collection ? collection.length : 0;',
+            '',
+            '  callback = createCallback(callback, thisArg);',
+            "  if (typeof length == 'number') {",
+            '    var result = Array(length);',
+            '    while (++index < length) {',
+            '      result[index] = callback(collection[index], index, collection);',
+            '    }',
+            '  } else {',
+            '    result = [];',
+            '    each(collection, function(value, key, collection) {',
+            '      result[++index] = callback(value, key, collection);',
+            '    });',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+
+          // replace `isArray(collection)` checks in "Collections" methods with simpler type checks
+          _.each(['every', 'filter', 'forEach', 'max', 'min', 'reduce'], function(methodName) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              if (methodName == 'reduce') {
+                match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');
+              }
+              else if (!isUnderscore && /^(?:max|min)$/.test(methodName)) {
+                return match.replace(/\beach\(/, 'forEach(');
+              }
+              return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
+                vars = vars
+                  .replace(/\b(length *=)[^;]+/, '$1 collection' + (methodName == 'reduce' ? '.length' : ' ? collection.length : 0'))
+                  .replace(RegExp('^  ' + indent, 'gm'), indent);
+
+                return vars + statement.replace(/\bisArray\([^\)]+\)/, "typeof length == 'number'");
+              });
+            });
+          });
+
+          // replace `arrays` property value of `eachIteratorOptions` with `false`
+          source = source.replace(/^( *)var eachIteratorOptions *= *[\s\S]+?\n\1};\n/m, function(match) {
+            return match.replace(/(^ *'arrays':)[^,]+/m, '$1 false');
+          });
         }
       }
       if (isModern) {

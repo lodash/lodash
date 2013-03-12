@@ -405,7 +405,7 @@
     var eachIteratorOptions = {
       'args': 'collection, callback, thisArg',
       'top': "callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg)",
-      'arrays': "typeof length == 'number'",
+      'arrays': false,
       'loop': 'if (callback(iterable[index], index, collection) === false) return result'
     };
 
@@ -2175,10 +2175,10 @@
       var result = true;
       callback = lodash.createCallback(callback, thisArg);
 
-      if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
+      var index = -1,
+          length = collection ? collection.length : 0;
 
+      if (typeof length == 'number') {
         while (++index < length) {
           if (!(result = !!callback(collection[index], index, collection))) {
             break;
@@ -2236,10 +2236,10 @@
       var result = [];
       callback = lodash.createCallback(callback, thisArg);
 
-      if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
+      var index = -1,
+          length = collection ? collection.length : 0;
 
+      if (typeof length == 'number') {
         while (++index < length) {
           var value = collection[index];
           if (callback(value, index, collection)) {
@@ -2335,10 +2335,10 @@
      * // => alerts each number value (order is not guaranteed)
      */
     function forEach(collection, callback, thisArg) {
-      if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
-        var index = -1,
-            length = collection.length;
+      var index = -1,
+          length = collection ? collection.length : 0;
 
+      if (callback && typeof thisArg == 'undefined' && typeof length == 'number') {
         while (++index < length) {
           if (callback(collection[index], index, collection) === false) {
             break;
@@ -2471,15 +2471,16 @@
      */
     function map(collection, callback, thisArg) {
       var index = -1,
-          length = collection ? collection.length : 0,
-          result = Array(typeof length == 'number' ? length : 0);
+          length = collection ? collection.length : 0;
 
-      callback = lodash.createCallback(callback, thisArg);
-      if (isArray(collection)) {
+      callback = createCallback(callback, thisArg);
+      if (typeof length == 'number') {
+        var result = Array(length);
         while (++index < length) {
           result[index] = callback(collection[index], index, collection);
         }
       } else {
+        result = [];
         each(collection, function(value, key, collection) {
           result[++index] = callback(value, key, collection);
         });
@@ -2545,7 +2546,7 @@
           ? charAtCallback
           : lodash.createCallback(callback, thisArg);
 
-        each(collection, function(value, index, collection) {
+        forEach(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
           if (current > computed) {
             computed = current;
@@ -2614,7 +2615,7 @@
           ? charAtCallback
           : lodash.createCallback(callback, thisArg);
 
-        each(collection, function(value, index, collection) {
+        forEach(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
           if (current < computed) {
             computed = current;
@@ -2678,13 +2679,14 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
     function reduce(collection, callback, accumulator, thisArg) {
+      if (!collection) return accumulator;
       var noaccum = arguments.length < 3;
       callback = lodash.createCallback(callback, thisArg, 4);
 
-      if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
+      var index = -1,
+          length = collection.length;
 
+      if (typeof length == 'number') {
         if (noaccum) {
           accumulator = collection[++index];
         }

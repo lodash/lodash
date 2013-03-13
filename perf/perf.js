@@ -277,7 +277,7 @@
         }\
       }\
       if (typeof chaining != "undefined") {\
-        var _chaining = _(numbers).chain(),\
+        var _chaining = _.chain ? _(numbers).chain() : _(numbers),\
             lodashChaining = lodash(numbers);\
       }\
       if (typeof compact != "undefined") {\
@@ -477,14 +477,16 @@
         \
         var settingsObject = { "variable": "data" };\
         \
-        var lodashTpl = lodash.template(tpl),\
-            lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject);\
-        \
         var _tpl = _.template(tpl),\
             _tplVerbose = _.template(tplVerbose, null, settingsObject);\
+        \
+        var lodashTpl = lodash.template(tpl),\
+            lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject);\
       }\
       if (typeof where != "undefined") {\
-        var whereObject = { "num": 9 };\
+        var _findWhere = _.findWhere || _.find,\
+            lodashFindWhere = lodash.findWhere || lodash.find,\
+            whereObject = { "num": 9 };\
       }'
   });
 
@@ -926,11 +928,11 @@
     suites.push(
       Benchmark.Suite('`_.find` with `properties`')
         .add(buildName, {
-          'fn': 'lodash.find(objects, whereObject)',
+          'fn': 'lodashFindWhere(objects, whereObject)',
           'teardown': 'function where(){}'
         })
         .add(otherName, {
-          'fn': '_.findWhere(objects, whereObject)',
+          'fn': '_findWhere(objects, whereObject)',
           'teardown': 'function where(){}'
         })
     );

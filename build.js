@@ -1873,6 +1873,9 @@
               }
               else if (/^(?:max|min)$/.test(methodName)) {
                 match = match.replace(/\beach\(/, 'forEach(');
+                if (!isUnderscore) {
+                  return match;
+                }
               }
               return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
                 vars = vars

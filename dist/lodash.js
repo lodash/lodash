@@ -2516,10 +2516,10 @@
       var computed = -Infinity,
           result = computed;
 
-      var index = -1,
-          length = collection ? collection.length : 0;
+      if (!callback && isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      if (!callback && typeof length == 'number') {
         while (++index < length) {
           var value = collection[index];
           if (value > result) {
@@ -2585,10 +2585,10 @@
       var computed = Infinity,
           result = computed;
 
-      var index = -1,
-          length = collection ? collection.length : 0;
+      if (!callback && isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      if (!callback && typeof length == 'number') {
         while (++index < length) {
           var value = collection[index];
           if (value < result) {

@@ -596,22 +596,6 @@
     }
 
     /**
-     * A function compiled to iterate `arguments` objects, arrays, objects, and
-     * strings consistenly across environments, executing the `callback` for each
-     * element in the `collection`. The `callback` is bound to `thisArg` and invoked
-     * with three arguments; (value, index|key, collection). Callbacks may exit
-     * iteration early by explicitly returning `false`.
-     *
-     * @private
-     * @type Function
-     * @param {Array|Object|String} collection The collection to iterate over.
-     * @param {Function} [callback=identity] The function called per iteration.
-     * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @returns {Array|Object|String} Returns `collection`.
-     */
-    var each = createIterator(eachIteratorOptions);
-
-    /**
      * Used by `template` to escape characters for inclusion in compiled
      * string literals.
      *
@@ -2077,7 +2061,7 @@
           : indexOf(collection, target, fromIndex)
         ) > -1;
       } else {
-        each(collection, function(value) {
+        forOwn(collection, function(value) {
           if (++index >= fromIndex) {
             return !(result = value === target);
           }
@@ -2185,7 +2169,7 @@
           }
         }
       } else {
-        each(collection, function(value, index, collection) {
+        forOwn(collection, function(value, index, collection) {
           return (result = !!callback(value, index, collection));
         });
       }
@@ -2247,7 +2231,7 @@
           }
         }
       } else {
-        each(collection, function(value, index, collection) {
+        forOwn(collection, function(value, index, collection) {
           if (callback(value, index, collection)) {
             result.push(value);
           }
@@ -2338,14 +2322,15 @@
       var index = -1,
           length = collection ? collection.length : 0;
 
-      if (callback && typeof thisArg == 'undefined' && typeof length == 'number') {
+      if (typeof length == 'number') {
+        callback = createCallback(callback, thisArg);
         while (++index < length) {
           if (callback(collection[index], index, collection) === false) {
             break;
           }
         }
       } else {
-        each(collection, callback, thisArg);
+        forOwn(collection, callback, thisArg);
       }
       return collection;
     }
@@ -2481,7 +2466,7 @@
         }
       } else {
         result = [];
-        each(collection, function(value, key, collection) {
+        forOwn(collection, function(value, key, collection) {
           result[++index] = callback(value, key, collection);
         });
       }
@@ -2531,10 +2516,10 @@
       var computed = -Infinity,
           result = computed;
 
-      if (!callback && isArray(collection)) {
-        var index = -1,
-            length = collection.length;
+      var index = -1,
+          length = collection ? collection.length : 0;
 
+      if (!callback && typeof length == 'number') {
         while (++index < length) {
           var value = collection[index];
           if (value > result) {
@@ -2600,10 +2585,10 @@
       var computed = Infinity,
           result = computed;
 
-      if (!callback && isArray(collection)) {
-        var index = -1,
-            length = collection.length;
+      var index = -1,
+          length = collection ? collection.length : 0;
 
+      if (!callback && typeof length == 'number') {
         while (++index < length) {
           var value = collection[index];
           if (value < result) {
@@ -2694,7 +2679,7 @@
           accumulator = callback(accumulator, collection[index], index, collection);
         }
       } else {
-        each(collection, function(value, index, collection) {
+        forOwn(collection, function(value, index, collection) {
           accumulator = noaccum
             ? (noaccum = false, value)
             : callback(accumulator, value, index, collection)
@@ -2885,17 +2870,17 @@
       var result;
       callback = lodash.createCallback(callback, thisArg);
 
-      if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
+      var index = -1,
+          length = collection ? collection.length : 0;
 
+      if (typeof length == 'number') {
         while (++index < length) {
           if ((result = callback(collection[index], index, collection))) {
             break;
           }
         }
       } else {
-        each(collection, function(value, index, collection) {
+        forOwn(collection, function(value, index, collection) {
           return !(result = callback(value, index, collection));
         });
       }
@@ -5101,7 +5086,7 @@
     lodash.prototype.valueOf = wrapperValueOf;
 
     // add `Array` functions that return unwrapped values
-    each(['join', 'pop', 'shift'], function(methodName) {
+    forEach(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return func.apply(this.__wrapped__, arguments);
@@ -5109,7 +5094,7 @@
     });
 
     // add `Array` functions that return the wrapped value
-    each(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
+    forEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
@@ -5118,7 +5103,7 @@
     });
 
     // add `Array` functions that return new wrapped values
-    each(['concat', 'slice', 'splice'], function(methodName) {
+    forEach(['concat', 'slice', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments));

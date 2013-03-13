@@ -965,7 +965,7 @@
     // remove function
     if (funcName == 'runInContext') {
       source = removeRunInContext(source, funcName);
-    } else if ((snippet = matchFunction(source, funcName))) {
+    } else if (funcName != 'each' && (snippet = matchFunction(source, funcName))) {
       source = source.replace(snippet, '');
     }
     // grab the method assignments snippet
@@ -1720,11 +1720,6 @@
         dependencyMap.isPlainObject = _.without(dependencyMap.isPlainObject, 'isArguments');
         dependencyMap.keys = _.without(dependencyMap.keys, 'isArguments');
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
-
-        if (!isMobile) {
-          dependencyMap.max.push('forEach');
-          dependencyMap.min.push('forEach');
-        }
       }
       if (isUnderscore) {
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
@@ -1755,6 +1750,8 @@
           dependencyMap.filter = _.without(dependencyMap.filter, 'isArray');
           dependencyMap.forEach = _.without(dependencyMap.forEach, 'isArray');
           dependencyMap.map = _.without(dependencyMap.map, 'isArray');
+          dependencyMap.max.push('forEach');
+          dependencyMap.min.push('forEach');
           dependencyMap.reduce = _.without(dependencyMap.reduce, 'isArray');
         }
       }
@@ -1826,6 +1823,26 @@
         if (!isMobile) {
           source = removeSupportNonEnumArgs(source);
 
+          // replace `_.forEach`
+          source = replaceFunction(source, 'forEach', [
+            'function forEach(collection, callback, thisArg) {',
+            '  var index = -1,',
+            '      length = collection ? collection.length : 0;',
+            '',
+            "  if (typeof length == 'number') {",
+            '    callback = createCallback(callback, thisArg);',
+            '    while (++index < length) {',
+            '      if (callback(collection[index], index, collection) === false) {',
+            '        break;',
+            '      }',
+            '    }',
+            '  } else {',
+            '    each(collection, callback, thisArg);',
+            '  }',
+            '  return collection;',
+            '}',
+          ].join('\n'));
+
           // replace `_.map`
           source = replaceFunction(source, 'map', [
             'function map(collection, callback, thisArg) {',
@@ -1849,13 +1866,13 @@
           ].join('\n'));
 
           // replace `isArray(collection)` checks in "Collections" methods with simpler type checks
-          _.each(['every', 'filter', 'forEach', 'max', 'min', 'reduce'], function(methodName) {
+          _.each(['every', 'filter', 'max', 'min', 'reduce', 'some'], function(methodName) {
             source = source.replace(matchFunction(source, methodName), function(match) {
               if (methodName == 'reduce') {
                 match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');
               }
-              else if (!isUnderscore && /^(?:max|min)$/.test(methodName)) {
-                return match.replace(/\beach\(/, 'forEach(');
+              else if (/^(?:max|min)$/.test(methodName)) {
+                match = match.replace(/\beach\(/, 'forEach(');
               }
               return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
                 vars = vars
@@ -2377,6 +2394,17 @@
           });
         }
       }
+      // replace `each` references with `forEach` and `forOwn`
+      if ((isUnderscore || (isModern && !isMobile)) &&
+            buildMethods.indexOf('forEach') > -1 &&
+            (buildMethods.indexOf('forOwn') > -1 || !exposeForOwn)
+          ) {
+        source = source
+          .replace(matchFunction(source, 'each'), '')
+          .replace(/^ *lodash\._each *=.+\n/gm, '')
+          .replace(/\beach(?=\(collection)/g, 'forOwn')
+          .replace(/\beach(?=\(\[)/g, 'forEach');
+      }
       vm.runInContext(source, context);
       return context._;
     }());
@@ -2520,7 +2548,9 @@
         // remove chainability from `each` and `_.forEach`
         _.each(['each', 'forEach'], function(methodName) {
           source = source.replace(matchFunction(source, methodName), function(match) {
-            return match.replace(/\n *return .+?([};\s]+)$/, '$1');
+            return match
+              .replace(/\n *return .+?([};\s]+)$/, '$1')
+              .replace(/\b(return) +result\b/, '$1')
           });
         });
 
@@ -2683,7 +2713,7 @@
         // remove all `lodash.prototype` additions
         source = source
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\n( *)each\(\['[\s\S]+?\n\1}.+/g, '')
+          .replace(/(?:\s*\/\/.*)*\n( *)(?:each|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.+/g, '');
       }
       // remove functions, variables, and snippets that the minifier may miss

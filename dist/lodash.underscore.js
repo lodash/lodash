@@ -368,32 +368,6 @@
   }
 
   /**
-   * A function compiled to iterate `arguments` objects, arrays, objects, and
-   * strings consistenly across environments, executing the `callback` for each
-   * element in the `collection`. The `callback` is bound to `thisArg` and invoked
-   * with three arguments; (value, index|key, collection). Callbacks may exit
-   * iteration early by explicitly returning `false`.
-   *
-   * @private
-   * @type Function
-   * @param {Array|Object|String} collection The collection to iterate over.
-   * @param {Function} [callback=identity] The function called per iteration.
-   * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Array|Object|String} Returns `collection`.
-   */
-  var each = function (collection, callback, thisArg) {
-    var index, iterable = collection, result = iterable;
-    if (!iterable) return result;
-    callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
-
-      for (index in iterable) {
-        if (hasOwnProperty.call(iterable, index)) {    
-        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
-        }
-      }  
-  };
-
-  /**
    * Used by `template` to escape characters for inclusion in compiled
    * string literals.
    *
@@ -1495,7 +1469,7 @@
     if (typeof length == 'number') {
       result = indexOf(collection, target) > -1;
     } else {
-      each(collection, function(value) {
+      forOwn(collection, function(value) {
         return (result = value === target) && indicatorObject;
       });
     }
@@ -1601,7 +1575,7 @@
         }
       }
     } else {
-      each(collection, function(value, index, collection) {
+      forOwn(collection, function(value, index, collection) {
         return !(result = !!callback(value, index, collection)) && indicatorObject;
       });
     }
@@ -1663,7 +1637,7 @@
         }
       }
     } else {
-      each(collection, function(value, index, collection) {
+      forOwn(collection, function(value, index, collection) {
         if (callback(value, index, collection)) {
           result.push(value);
         }
@@ -1758,14 +1732,15 @@
     var index = -1,
         length = collection ? collection.length : 0;
 
-    if (callback && typeof thisArg == 'undefined' && typeof length == 'number') {
+    if (typeof length == 'number') {
+      callback = createCallback(callback, thisArg);
       while (++index < length) {
         if (callback(collection[index], index, collection) === indicatorObject) {
           break;
         }
       }
     } else {
-      each(collection, callback, thisArg);
+      forOwn(collection, callback, thisArg);
     };
   }
 
@@ -1900,7 +1875,7 @@
       }
     } else {
       result = [];
-      each(collection, function(value, key, collection) {
+      forOwn(collection, function(value, key, collection) {
         result[++index] = callback(value, key, collection);
       });
     }
@@ -1963,7 +1938,7 @@
     } else {
       callback = createCallback(callback, thisArg);
 
-      each(collection, function(value, index, collection) {
+      forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
         if (current > computed) {
           computed = current;
@@ -2030,7 +2005,7 @@
     } else {
       callback = createCallback(callback, thisArg);
 
-      each(collection, function(value, index, collection) {
+      forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
         if (current < computed) {
           computed = current;
@@ -2109,7 +2084,7 @@
         accumulator = callback(accumulator, collection[index], index, collection);
       }
     } else {
-      each(collection, function(value, index, collection) {
+      forOwn(collection, function(value, index, collection) {
         accumulator = noaccum
           ? (noaccum = false, value)
           : callback(accumulator, value, index, collection)
@@ -2300,17 +2275,17 @@
     var result;
     callback = createCallback(callback, thisArg);
 
-    if (isArray(collection)) {
-      var index = -1,
-          length = collection.length;
+    var index = -1,
+        length = collection ? collection.length : 0;
 
+    if (typeof length == 'number') {
       while (++index < length) {
         if ((result = callback(collection[index], index, collection))) {
           break;
         }
       }
     } else {
-      each(collection, function(value, index, collection) {
+      forOwn(collection, function(value, index, collection) {
         return (result = callback(value, index, collection)) && indicatorObject;
       });
     }
@@ -4353,7 +4328,7 @@
   lodash.prototype.value = wrapperValueOf;
 
   // add `Array` mutator functions to the wrapper
-  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+  forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__;
@@ -4369,7 +4344,7 @@
   });
 
   // add `Array` accessor functions to the wrapper
-  each(['concat', 'join', 'slice'], function(methodName) {
+  forEach(['concat', 'join', 'slice'], function(methodName) {
     var func = arrayRef[methodName];
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__,

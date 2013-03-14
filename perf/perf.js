@@ -734,13 +734,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 30 elements')
+    Benchmark.Suite('`_.difference` iterating 100 elements')
       .add(buildName, {
-        'fn': 'lodash.difference(thirtyValues, thirtyValues2)',
+        'fn': 'lodash.difference(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.difference(thirtyValues, thirtyValues2)',
+        'fn': '_.difference(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );

@@ -2363,7 +2363,6 @@
 
         // remove large array optimizations
         source = removeFunction(source, 'cachedContains');
-        source = removeVar(source, 'largeArraySize');
 
         // remove `_.isEqual` use from `createCallback`
         source = source.replace(matchFunction(source, 'createCallback'), function(match) {

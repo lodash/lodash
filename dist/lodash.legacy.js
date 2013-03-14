@@ -30,9 +30,6 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
-  /** Used by `cachedContains` as the default size when optimizations are enabled for large arrays */
-  var largeArraySize = 30;
-
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -528,15 +525,13 @@
      * @private
      * @param {Array} array The array to search.
      * @param {Mixed} value The value to search for.
-     * @param {Number} [fromIndex=0] The index to search from.
-     * @param {Number} [largeSize=30] The length at which an array is considered large.
+     * @param {Number} fromIndex The index to search from.
+     * @param {Number} largeSize The length at which an array is considered large.
      * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
      */
     function cachedContains(array, fromIndex, largeSize) {
-      fromIndex || (fromIndex = 0);
-
       var length = array.length,
-          isLarge = (length - fromIndex) >= (largeSize || largeArraySize);
+          isLarge = (length - fromIndex) >= largeSize;
 
       if (isLarge) {
         var cache = {},
@@ -3166,7 +3161,7 @@
       var index = -1,
           length = array ? array.length : 0,
           flattened = concat.apply(arrayRef, arguments),
-          contains = cachedContains(flattened, length),
+          contains = cachedContains(flattened, length, 100),
           result = [];
 
       while (++index < length) {
@@ -3916,7 +3911,7 @@
     function without(array) {
       var index = -1,
           length = array ? array.length : 0,
-          contains = cachedContains(arguments, 1),
+          contains = cachedContains(arguments, 1, 30),
           result = [];
 
       while (++index < length) {

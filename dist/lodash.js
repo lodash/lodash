@@ -2318,7 +2318,7 @@
           length = collection ? collection.length : 0;
 
       if (typeof length == 'number') {
-        callback = createCallback(callback, thisArg);
+        callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
         while (++index < length) {
           if (callback(collection[index], index, collection) === false) {
             break;
@@ -2453,7 +2453,7 @@
       var index = -1,
           length = collection ? collection.length : 0;
 
-      callback = createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg);
       if (typeof length == 'number') {
         var result = Array(length);
         while (++index < length) {

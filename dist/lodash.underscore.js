@@ -1733,7 +1733,7 @@
         length = collection ? collection.length : 0;
 
     if (typeof length == 'number') {
-      callback = createCallback(callback, thisArg);
+      callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
       while (++index < length) {
         if (callback(collection[index], index, collection) === indicatorObject) {
           break;

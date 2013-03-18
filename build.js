@@ -893,7 +893,10 @@
    * @returns {Array} Returns the new converted array.
    */
   function optionToArray(value) {
-    return _.compact(value.match(/\w+=(.*)$/)[1].split(/, */));
+    return _.compact(_.isArray(value)
+      ? value
+      : value.match(/\w+=(.*)$/)[1].split(/, */)
+    );
   }
 
   /**
@@ -907,11 +910,6 @@
    */
   function optionToMethodsArray(source, value) {
     var methodNames = optionToArray(value);
-
-    // convert categories to method names
-    methodNames.forEach(function(category) {
-      push.apply(methodNames, getMethodsByCategory(source, category));
-    });
 
     // convert aliases to real method names
     methodNames = methodNames.map(getRealName);
@@ -1606,11 +1604,6 @@
     // flag to specify a legacy build
     var isLegacy = !(isModern || isUnderscore) && options.indexOf('legacy') > -1;
 
-    // used to specify methods of specific categories
-    var categories = options.reduce(function(result, value) {
-      return /category/.test(value) ? optionToArray(value) : result;
-    }, []);
-
     // used to specify the ways to export the `lodash` function
     var exportsOptions = options.reduce(function(result, value) {
       return /exports/.test(value) ? optionToArray(value).sort() : result;
@@ -1644,7 +1637,7 @@
         : result;
     }, '');
 
-    // used when precompiling template files
+    // used as the template settings for precompiled templates
     var templateSettings = options.reduce(function(result, value) {
       var match = value.match(/settings=(.+)$/);
       return match
@@ -1699,6 +1692,17 @@
         return /plus/.test(value)
           ? _.union(accumulator, optionToMethodsArray(source, value))
           : accumulator;
+      }, []);
+
+      var categories = options.reduce(function(accumulator, value) {
+        if (/category|exclude|include|minus|plus/.test(value)) {
+          var array = optionToArray(value);
+          accumulator =  _.union(accumulator, /category/.test(value)
+            ? array
+            : array.filter(function(category) { return /^[A-Z]/.test(category); })
+          );
+        }
+        return accumulator;
       }, []);
 
       // set flags to include Lo-Dash's methods if explicitly requested
@@ -1775,8 +1779,21 @@
       // add method names by category
       if (categories.length) {
         result = _.union(result || [], getDependencies(categories.reduce(function(accumulator, category) {
-          // resolve method names belonging to each category (case-insensitive)
-          return accumulator.concat(getMethodsByCategory(source, capitalize(category)));
+          // get method names belonging to each category (case-insensitive)
+          var methodNames = getMethodsByCategory(source, capitalize(category));
+
+          // limit category methods to those available for specific builds
+          if (isBackbone) {
+            methodNames = methodNames.filter(function(methodName) {
+              return _.contains(backboneDependencies, methodName);
+            });
+          }
+          else if (isUnderscore) {
+            methodNames = methodNames.filter(function(methodName) {
+              return _.contains(underscoreMethods, methodName);
+            });
+          }
+          return accumulator.concat(methodNames);
         }, [])));
       }
       if (!result) {

@@ -1037,7 +1037,7 @@
 
       case regexpClass:
       case stringClass:
-        return a == b + '';
+        return a == String(b);
     }
     var isArr = className == arrayClass;
     if (!isArr) {

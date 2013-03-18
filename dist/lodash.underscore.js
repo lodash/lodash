@@ -105,7 +105,7 @@
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
-    (objectRef.valueOf + '')
+    String(objectRef.valueOf)
       .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
   );
@@ -400,7 +400,7 @@
   function isNode(value) {
     // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
     // methods that are `typeof` "string" and still can coerce nodes to strings
-    return typeof value.toString != 'function' && typeof (value + '') == 'string';
+    return typeof value.toString != 'function' && typeof String(value) == 'string';
   }
 
   /**
@@ -736,8 +736,8 @@
    * @param {Boolean} [deep=false] A flag to indicate a deep clone.
    * @param {Function} [callback] The function to customize cloning values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
-   * @param- {Array} [stackB=[]] Internally used to associate clones with source counterparts.
+   * @param- {Array} [stackA=[]] Tracks traversed source objects.
+   * @param- {Array} [stackB=[]] Associates clones with source counterparts.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
    *
@@ -781,8 +781,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param- {Object} [guard] Internally used to allow working with `_.reduce`
-   *  without using its callback's `key` and `object` arguments as sources.
+   * @param- {Object} [guard] Allows working with `_.reduce` without using its
+   *  callback's `key` and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -978,8 +978,8 @@
    * @param {Mixed} b The other value to compare.
    * @param {Function} [callback] The function to customize comparing values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param- {Array} [stackA=[]] Internally used track traversed `a` objects.
-   * @param- {Array} [stackB=[]] Internally used track traversed `b` objects.
+   * @param- {Array} [stackA=[]] Tracks traversed `a` objects.
+   * @param- {Array} [stackB=[]] Tracks traversed `b` objects.
    * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
    * @example
    *
@@ -1514,7 +1514,7 @@
     callback = createCallback(callback, thisArg);
 
     forEach(collection, function(value, key, collection) {
-      key = callback(value, key, collection) + '';
+      key = String(callback(value, key, collection));
       (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
     });
     return result;
@@ -1667,39 +1667,49 @@
    *  iteration. If a property name or object is passed, it will be used to create
    *  a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Mixed} Returns the element that passed the callback check,
-   *  else `undefined`.
+   * @returns {Mixed} Returns the found element, else `undefined`.
    * @example
    *
-   * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
+   * _.find([1, 2, 3, 4], function(num) { return num % 2 == 0; });
    * // => 2
    *
    * var food = [
    *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },
    *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },
-   *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' },
-   *   { 'name': 'carrot', 'organic': true,  'type': 'vegetable' }
+   *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }
    * ];
    *
    * // using "_.where" callback shorthand
-   * var veggie = _.find(food, { 'type': 'vegetable' });
+   * _.find(food, { 'type': 'vegetable' });
    * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }
    *
    * // using "_.pluck" callback shorthand
-   * var healthy = _.find(food, 'organic');
+   * _.find(food, 'organic');
    * // => { 'name': 'banana', 'organic': true, 'type': 'fruit' }
    */
   function find(collection, callback, thisArg) {
-    var result;
     callback = createCallback(callback, thisArg);
 
-    forEach(collection, function(value, index, collection) {
-      if (callback(value, index, collection)) {
-        result = value;
-        return indicatorObject;
+    var index = -1,
+        length = collection ? collection.length : 0;
+
+    if (typeof length == 'number') {
+      while (++index < length) {
+        var value = collection[index];
+        if (callback(value, index, collection)) {
+          return value;
+        }
       }
-    });
-    return result;
+    } else {
+      var result;
+      forOwn(collection, function(value, index, collection) {
+        if (callback(value, index, collection)) {
+          result = value;
+          return indicatorObject;
+        }
+      });
+      return result;
+    }
   }
 
   function findWhere(object, properties) {
@@ -1783,7 +1793,7 @@
     callback = createCallback(callback, thisArg);
 
     forEach(collection, function(value, key, collection) {
-      key = callback(value, key, collection) + '';
+      key = String(callback(value, key, collection));
       (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
     });
     return result;
@@ -3370,8 +3380,7 @@
    * If `func` is an object, the created callback will return `true` for elements
    * that contain the equivalent object properties, otherwise it will return `false`.
    *
-   * Note: All Lo-Dash methods, that accept a `callback` argument, internally
-   * use `_.createCallback`.
+   * Note: All Lo-Dash methods, that accept a `callback` argument, use `_.createCallback`.
    *
    * @static
    * @memberOf _
@@ -3568,7 +3577,7 @@
   function memoize(func, resolver) {
     var cache = {};
     return function() {
-      var key = (resolver ? resolver.apply(this, arguments) : arguments[0]) + '';
+      var key = String(resolver ? resolver.apply(this, arguments) : arguments[0]);
       return hasOwnProperty.call(cache, key)
         ? cache[key]
         : (cache[key] = func.apply(this, arguments));
@@ -3727,7 +3736,7 @@
    * // => 'Moe, Larry &amp; Curly'
    */
   function escape(string) {
-    return string == null ? '' : (string + '').replace(reUnescapedHtml, escapeHtmlChar);
+    return string == null ? '' : String(string).replace(reUnescapedHtml, escapeHtmlChar);
   }
 
   /**
@@ -4051,7 +4060,7 @@
    * // => 'Moe, Larry & Curly'
    */
   function unescape(string) {
-    return string == null ? '' : (string + '').replace(reEscapedHtml, unescapeHtmlChar);
+    return string == null ? '' : String(string).replace(reEscapedHtml, unescapeHtmlChar);
   }
 
   /**
@@ -4164,7 +4173,7 @@
    * // => '1,2,3'
    */
   function wrapperToString() {
-    return this.__wrapped__ + '';
+    return String(this.__wrapped__);
   }
 
   /**

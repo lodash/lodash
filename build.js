@@ -1731,6 +1731,7 @@
       }
       if (isUnderscore) {
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
+        dependencyMap.createCallback = _.without(dependencyMap.createCallback, 'isEqual');
         dependencyMap.flatten = _.without(dependencyMap.flatten, 'createCallback');
         dependencyMap.isEmpty = ['isArray', 'isString'];
         dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
@@ -2107,7 +2108,7 @@
           '',
           '    case regexpClass:',
           '    case stringClass:',
-          "      return a == b + '';",
+          '      return a == String(b);',
           '  }',
           '  var isArr = className == arrayClass;',
           '  if (!isArr) {',

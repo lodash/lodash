@@ -836,8 +836,7 @@
      *
      * @static
      * @memberOf _
-     * @alias detect
-     * @category Object
+     * @category Objects
      * @param {Array|Object|String} collection The collection to iterate over.
      * @param {Function|Object|String} [callback=identity] The function called per
      *  iteration. If a property name or object is passed, it will be used to create
@@ -3219,7 +3218,6 @@
      *
      * @static
      * @memberOf _
-     * @alias detect
      * @category Arrays
      * @param {Array|Object|String} collection The collection to iterate over.
      * @param {Function|Object|String} [callback=identity] The function called per

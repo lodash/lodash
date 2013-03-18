@@ -33,6 +33,9 @@
     global.QUnit
   );
 
+  /** Shortcut used to push arrays of values to an array */
+  var push = Array.prototype.push;
+
   /** The time limit for the tests to run (milliseconds) */
   var timeLimit = process.argv.reduce(function(result, value, index) {
     if (/--time-limit/.test(value)) {
@@ -309,6 +312,17 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Capitalizes a given string.
+   *
+   * @private
+   * @param {String} string The string to capitalize.
+   * @returns {String} Returns the capitalized string.
+   */
+  function capitalize(string) {
+    return string[0].toUpperCase() + string.toLowerCase().slice(1);
+  }
+
+  /**
    * Creates a context object to use with `vm.runInContext`.
    *
    * @private
@@ -331,7 +345,7 @@
   function expandMethodNames(methodNames) {
     return methodNames.reduce(function(result, methodName) {
       var realName = getRealName(methodName);
-      result.push.apply(result, [realName].concat(getAliases(realName)));
+      push.apply(result, [realName].concat(getAliases(realName)));
       return result;
     }, []);
   }
@@ -1365,12 +1379,9 @@
             var methodNames,
                 basename = path.basename(data.outputPath, '.js'),
                 context = createContext(),
-                isUnderscore = /backbone|underscore/.test(command),
+                isBackbone = /backbone/.test(command),
+                isUnderscore = isBackbone || /underscore/.test(command),
                 exposeAssign = !isUnderscore,
-                exposeCreateCallback = !isUnderscore,
-                exposeForIn = !isUnderscore,
-                exposeForOwn = !isUnderscore,
-                exposeIsPlainObject = !isUnderscore,
                 exposeZipObject = !isUnderscore;
 
             try {
@@ -1389,21 +1400,14 @@
             if (isUnderscore) {
               if (methodNames) {
                 exposeAssign = methodNames.indexOf('assign') > -1;
-                exposeCreateCallback = methodNames.indexOf('createCallback') > -1;
                 exposeZipObject = methodNames.indexOf('zipObject') > -1;
               } else {
                 methodNames = underscoreMethods.slice();
               }
             }
-            // add method names explicitly by category
             if (/category/.test(command)) {
-              // resolve method names belonging to each category (case-insensitive)
-              methodNames = command.match(/category=(\S*)/)[1].split(/, */).reduce(function(result, category) {
-                var capitalized = category[0].toUpperCase() + category.toLowerCase().slice(1);
-                return result.concat(getMethodsByCategory(capitalized));
-              }, methodNames || []);
+              methodNames = (methodNames || []).concat(command.match(/category=(\S*)/)[1].split(/, */).map(capitalize));
             }
-            // init `methodNames` if it hasn't been inited
             if (!methodNames) {
               methodNames = allMethods.slice();
             }
@@ -1411,39 +1415,38 @@
               methodNames = methodNames.concat(command.match(/plus=(\S*)/)[1].split(/, */));
             }
             if (/minus/.test(command)) {
-              methodNames = _.without.apply(_, [methodNames]
-                .concat(expandMethodNames(command.match(/minus=(\S*)/)[1].split(/, */))));
+              methodNames = _.without.apply(_, [methodNames].concat(expandMethodNames(command.match(/minus=(\S*)/)[1].split(/, */))));
             }
             if (/exclude/.test(command)) {
-              methodNames = _.without.apply(_, [methodNames]
-                .concat(expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))));
+              methodNames = _.without.apply(_, [methodNames].concat(expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))));
             }
 
-            // expand aliases and categories to real method names
-            methodNames = expandMethodNames(methodNames).reduce(function(result, methodName) {
-              return result.concat(methodName, getMethodsByCategory(methodName));
-            }, []);
+            // expand categories to real method names
+            methodNames.slice().forEach(function(category) {
+              var result = getMethodsByCategory(category);
 
-            // remove nonexistent and duplicate method names
+              // limit category methods to those available for specific builds
+              if (isBackbone) {
+                result = result.filter(function(methodName) {
+                  return _.contains(backboneDependencies, methodName);
+                });
+              }
+              else if (isUnderscore) {
+                result = result.filter(function(methodName) {
+                  return _.contains(underscoreMethods, methodName);
+                });
+              }
+              if (result.length) {
+                methodNames = _.without(methodNames, category);
+                push.apply(methodNames, result);
+              }
+            });
+
+            // expand aliases and remove nonexistent and duplicate method names
             methodNames = _.uniq(_.intersection(allMethods, expandMethodNames(methodNames)));
 
-            if (isUnderscore) {
-              methodNames = _.without.apply(_, [methodNames].concat(['findIndex', 'findKey']));
-            }
             if (!exposeAssign) {
               methodNames = _.without(methodNames, 'assign');
-            }
-            if (!exposeCreateCallback) {
-              methodNames = _.without(methodNames, 'createCallback');
-            }
-            if (!exposeForIn) {
-              methodNames = _.without(methodNames, 'forIn');
-            }
-            if (!exposeForOwn) {
-              methodNames = _.without(methodNames, 'forOwn');
-            }
-            if (!exposeIsPlainObject) {
-              methodNames = _.without(methodNames, 'isPlainobject');
             }
             if (!exposeZipObject) {
               methodNames = _.without(methodNames, 'zipObject');

@@ -896,6 +896,37 @@
     }
 
     /**
+     * This method is similar to `_.find`, except that it returns the key of the
+     * element that passes the callback check, instead of the element itself.
+     *
+     * @static
+     * @memberOf _
+     * @alias detect
+     * @category Object
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function|Object|String} [callback=identity] The function called per
+     *  iteration. If a property name or object is passed, it will be used to create
+     *  a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Mixed} Returns the key of the found element, else `undefined`.
+     * @example
+     *
+     * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) { return num % 2 == 0; });
+     * // => 'b'
+     */
+    function findKey(collection, callback, thisArg) {
+      var result;
+      callback = lodash.createCallback(callback, thisArg);
+      forOwn(collection, function(value, key, collection) {
+        if (callback(value, key, collection)) {
+          result = key;
+          return false;
+        }
+      });
+      return result;
+    }
+
+    /**
      * Iterates over `object`'s own and inherited enumerable properties, executing
      * the `callback` for each property. The `callback` is bound to `thisArg` and
      * invoked with three arguments; (value, key, object). Callbacks may exit iteration
@@ -1131,8 +1162,8 @@
      * @param {Boolean} [deep=false] A flag to indicate a deep clone.
      * @param {Function} [callback] The function to customize cloning values.
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
-     * @param- {Array} [stackB=[]] Internally used to associate clones with source counterparts.
+     * @param- {Array} [stackA=[]] Tracks traversed source objects.
+     * @param- {Array} [stackB=[]] Associates clones with source counterparts.
      * @returns {Mixed} Returns the cloned `value`.
      * @example
      *
@@ -1299,8 +1330,8 @@
      * @category Objects
      * @param {Object} object The destination object.
      * @param {Object} [source1, source2, ...] The source objects.
-     * @param- {Object} [guard] Internally used to allow working with `_.reduce`
-     *  without using its callback's `key` and `object` arguments as sources.
+     * @param- {Object} [guard] Allows working with `_.reduce` without using its
+     *  callback's `key` and `object` arguments as sources.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -1485,8 +1516,8 @@
      * @param {Mixed} b The other value to compare.
      * @param {Function} [callback] The function to customize comparing values.
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @param- {Array} [stackA=[]] Internally used track traversed `a` objects.
-     * @param- {Array} [stackB=[]] Internally used track traversed `b` objects.
+     * @param- {Array} [stackA=[]] Tracks traversed `a` objects.
+     * @param- {Array} [stackB=[]] Tracks traversed `b` objects.
      * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
      * @example
      *
@@ -1921,11 +1952,10 @@
      * @param {Object} [source1, source2, ...] The source objects.
      * @param {Function} [callback] The function to customize merging properties.
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @param- {Object} [deepIndicator] Internally used to indicate that `stackA`
-     *  and `stackB` are arrays of traversed objects instead of source objects.
-     * @param- {Array} [stackA=[]] Internally used to track traversed source objects.
-     * @param- {Array} [stackB=[]] Internally used to associate values with their
-     *  source counterparts.
+     * @param- {Object} [deepIndicator] Indicates that `stackA` and `stackB` are
+     *  arrays of traversed objects, instead of source objects.
+     * @param- {Array} [stackA=[]] Tracks traversed source objects.
+     * @param- {Array} [stackB=[]] Associates values with source counterparts.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -2466,39 +2496,49 @@
      *  iteration. If a property name or object is passed, it will be used to create
      *  a "_.pluck" or "_.where" style callback, respectively.
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @returns {Mixed} Returns the element that passed the callback check,
-     *  else `undefined`.
+     * @returns {Mixed} Returns the found element, else `undefined`.
      * @example
      *
-     * var even = _.find([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
+     * _.find([1, 2, 3, 4], function(num) { return num % 2 == 0; });
      * // => 2
      *
      * var food = [
      *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },
      *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },
-     *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' },
-     *   { 'name': 'carrot', 'organic': true,  'type': 'vegetable' }
+     *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }
      * ];
      *
      * // using "_.where" callback shorthand
-     * var veggie = _.find(food, { 'type': 'vegetable' });
+     * _.find(food, { 'type': 'vegetable' });
      * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }
      *
      * // using "_.pluck" callback shorthand
-     * var healthy = _.find(food, 'organic');
+     * _.find(food, 'organic');
      * // => { 'name': 'banana', 'organic': true, 'type': 'fruit' }
      */
     function find(collection, callback, thisArg) {
-      var result;
       callback = lodash.createCallback(callback, thisArg);
 
-      forEach(collection, function(value, index, collection) {
-        if (callback(value, index, collection)) {
-          result = value;
-          return false;
+      if (isArray(collection)) {
+        var index = -1,
+            length = collection.length;
+
+        while (++index < length) {
+          var value = collection[index];
+          if (callback(value, index, collection)) {
+            return value;
+          }
         }
-      });
-      return result;
+      } else {
+        var result;
+        each(collection, function(value, index, collection) {
+          if (callback(value, index, collection)) {
+            result = value;
+            return false;
+          }
+        });
+        return result;
+      }
     }
 
     /**
@@ -3255,6 +3295,38 @@
         }
       }
       return result;
+    }
+
+    /**
+     * This method is similar to `_.find`, except that it returns the index of
+     * the element that passes the callback check, instead of the element itself.
+     *
+     * @static
+     * @memberOf _
+     * @alias detect
+     * @category Arrays
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function|Object|String} [callback=identity] The function called per
+     *  iteration. If a property name or object is passed, it will be used to create
+     *  a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Mixed} Returns the index of the found element, else `-1`.
+     * @example
+     *
+     * _.findIndex(['apple', 'banana', 'beet'], function(food) { return /^b/.test(food); });
+     * // => 1
+     */
+    function findIndex(collection, callback, thisArg) {
+      var index = -1,
+          length = collection ? collection.length : 0;
+
+      callback = lodash.createCallback(callback, thisArg);
+      while (++index < length) {
+        if (callback(collection[index], index, collection)) {
+          return index;
+        }
+      }
+      return -1;
     }
 
     /**
@@ -4244,8 +4316,7 @@
      * If `func` is an object, the created callback will return `true` for elements
      * that contain the equivalent object properties, otherwise it will return `false`.
      *
-     * Note: All Lo-Dash methods, that accept a `callback` argument, internally
-     * use `_.createCallback`.
+     * Note: All Lo-Dash methods, that accept a `callback` argument, use `_.createCallback`.
      *
      * @static
      * @memberOf _
@@ -5199,6 +5270,8 @@
     lodash.escape = escape;
     lodash.every = every;
     lodash.find = find;
+    lodash.findIndex = findIndex;
+    lodash.findKey = findKey;
     lodash.has = has;
     lodash.identity = identity;
     lodash.indexOf = indexOf;

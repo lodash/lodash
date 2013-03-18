@@ -671,8 +671,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.find');
-
   (function() {
     var objects = [
       { 'a': 0, 'b': 0 },
@@ -680,20 +678,31 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    test('should return found `value`', function() {
-      equal(_.find(objects, function(object) { return object.a == 1; }), objects[1]);
-    });
+    _.each({
+      'find': [objects[1], undefined, objects[2], objects[1]],
+      'findIndex': [1, -1, 2, 1],
+      'findKey': ['1', undefined, '2', '1']
+    },
+    function(expected, methodName) {
+      QUnit.module('lodash.' + methodName);
 
-    test('should return `undefined` if `value` is not found', function() {
-      equal(_.find(objects, function(object) { return object.a == 3; }), undefined);
-    });
+      var func = _[methodName];
 
-    test('should work with an object for `callback`', function() {
-      equal(_.find(objects, { 'b': 2 }), objects[2]);
-    });
+      test('should return the correct value', function() {
+        strictEqual(func(objects, function(object) { return object.a == 1; }), expected[0]);
+      });
 
-    test('should work with a string for `callback`', function() {
-      equal(_.find(objects, 'b'), objects[1]);
+      test('should return `' + expected[1] + '` if value is not found', function() {
+        strictEqual(func(objects, function(object) { return object.a == 3; }), expected[1]);
+      });
+
+      test('should work with an object for `callback`', function() {
+        strictEqual(func(objects, { 'b': 2 }), expected[2]);
+      });
+
+      test('should work with a string for `callback`', function() {
+        strictEqual(func(objects, 'b'), expected[3]);
+      });
     });
   }());
 

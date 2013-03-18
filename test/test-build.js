@@ -97,6 +97,7 @@
     'compact',
     'difference',
     'drop',
+    'findIndex',
     'first',
     'flatten',
     'head',
@@ -187,6 +188,7 @@
     'cloneDeep',
     'defaults',
     'extend',
+    'findKey',
     'forIn',
     'forOwn',
     'functions',
@@ -293,6 +295,8 @@
     'bindKey',
     'cloneDeep',
     'createCallback',
+    'findIndex',
+    'findKey',
     'forIn',
     'forOwn',
     'isPlainObject',
@@ -946,6 +950,8 @@
           'at',
           'bindKey',
           'createCallback',
+          'findIndex',
+          'findKey',
           'forIn',
           'forOwn',
           'isPlainObject',
@@ -1362,6 +1368,9 @@
                 isUnderscore = /backbone|underscore/.test(command),
                 exposeAssign = !isUnderscore,
                 exposeCreateCallback = !isUnderscore,
+                exposeForIn = !isUnderscore,
+                exposeForOwn = !isUnderscore,
+                exposeIsPlainObject = !isUnderscore,
                 exposeZipObject = !isUnderscore;
 
             try {
@@ -1418,11 +1427,23 @@
             // remove nonexistent and duplicate method names
             methodNames = _.uniq(_.intersection(allMethods, expandMethodNames(methodNames)));
 
+            if (isUnderscore) {
+              methodNames = _.without.apply(_, [methodNames].concat(['findIndex', 'findKey']));
+            }
             if (!exposeAssign) {
               methodNames = _.without(methodNames, 'assign');
             }
             if (!exposeCreateCallback) {
               methodNames = _.without(methodNames, 'createCallback');
+            }
+            if (!exposeForIn) {
+              methodNames = _.without(methodNames, 'forIn');
+            }
+            if (!exposeForOwn) {
+              methodNames = _.without(methodNames, 'forOwn');
+            }
+            if (!exposeIsPlainObject) {
+              methodNames = _.without(methodNames, 'isPlainobject');
             }
             if (!exposeZipObject) {
               methodNames = _.without(methodNames, 'zipObject');

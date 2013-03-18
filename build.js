@@ -97,7 +97,9 @@
     'escape': [],
     'every': ['createCallback', 'isArray'],
     'filter': ['createCallback', 'isArray'],
-    'find': ['createCallback', 'forEach'],
+    'find': ['createCallback', 'forEach', 'isArray'],
+    'findIndex': [],
+    'findKey': [],
     'first': [],
     'flatten': ['createCallback', 'isArray'],
     'forEach': ['createCallback', 'isArguments', 'isArray', 'isString'],
@@ -256,6 +258,8 @@
     'bindKey',
     'cloneDeep',
     'createCallback',
+    'findIndex',
+    'findKey',
     'forIn',
     'forOwn',
     'isPlainObject',
@@ -1747,6 +1751,7 @@
 
         if (!isMobile) {
           dependencyMap.every = _.without(dependencyMap.every, 'isArray');
+          dependencyMap.find = _.without(dependencyMap.find, 'isArray');
           dependencyMap.filter = _.without(dependencyMap.filter, 'isArray');
           dependencyMap.forEach = _.without(dependencyMap.forEach, 'isArray');
           dependencyMap.map = _.without(dependencyMap.map, 'isArray');
@@ -1866,7 +1871,7 @@
           ].join('\n'));
 
           // replace `isArray(collection)` checks in "Collections" methods with simpler type checks
-          _.each(['every', 'filter', 'max', 'min', 'reduce', 'some'], function(methodName) {
+          _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(methodName) {
             source = source.replace(matchFunction(source, methodName), function(match) {
               if (methodName == 'reduce') {
                 match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');

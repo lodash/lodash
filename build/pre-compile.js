@@ -106,6 +106,8 @@
     'fastKeys',
     'filter',
     'find',
+    'findIndex',
+    'findKey',
     'first',
     'flatten',
     'foldl',

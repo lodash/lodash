@@ -155,7 +155,7 @@
 
     /** Used to detect if a method is native */
     var reNative = RegExp('^' +
-      (objectRef.valueOf + '')
+      String(objectRef.valueOf)
         .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
         .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
     );
@@ -372,7 +372,7 @@
        * @type Boolean
        */
       try {
-        support.nodeClass = !(toString.call(document) == objectClass && !({ 'toString': 0 } + ''));
+        support.nodeClass = !(toString.call(document) == objectClass && !String({ 'toString': 0 }));
       } catch(e) {
         support.nodeClass = true;
       }
@@ -596,13 +596,13 @@
         while (++index < length) {
           // manually coerce `value` to a string because `hasOwnProperty`, in some
           // older versions of Firefox, coerces objects incorrectly
-          var key = array[index] + '';
+          var key = String(array[index]);
           (hasOwnProperty.call(cache, key) ? cache[key] : (cache[key] = [])).push(array[index]);
         }
       }
       return function(value) {
         if (isLarge) {
-          var key = value + '';
+          var key = String(value);
           return hasOwnProperty.call(cache, key) && indexOf(cache[key], value) > -1;
         }
         return indexOf(array, value, fromIndex) > -1;
@@ -803,7 +803,7 @@
     function isNode(value) {
       // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
       // methods that are `typeof` "string" and still can coerce nodes to strings
-      return typeof value.toString != 'function' && typeof (value + '') == 'string';
+      return typeof value.toString != 'function' && typeof String(value) == 'string';
     }
 
     /**
@@ -1605,7 +1605,7 @@
         case stringClass:
           // coerce regexes to strings (http://es5.github.com/#x15.10.6.4)
           // treat string primitives and their corresponding object instances as equal
-          return a == b + '';
+          return a == String(b);
       }
       var isArr = className == arrayClass;
       if (!isArr) {
@@ -2343,7 +2343,7 @@
       callback = lodash.createCallback(callback, thisArg);
 
       forEach(collection, function(value, key, collection) {
-        key = callback(value, key, collection) + '';
+        key = String(callback(value, key, collection));
         (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
       });
       return result;
@@ -2618,7 +2618,7 @@
       callback = lodash.createCallback(callback, thisArg);
 
       forEach(collection, function(value, key, collection) {
-        key = callback(value, key, collection) + '';
+        key = String(callback(value, key, collection));
         (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
       });
       return result;
@@ -3623,7 +3623,7 @@
       while (++index < length) {
         var value = array[index];
         if (isLarge) {
-          var key = value + '';
+          var key = String(value);
           var inited = hasOwnProperty.call(cache[0], key)
             ? !(seen = cache[0][key])
             : (seen = cache[0][key] = []);
@@ -4031,7 +4031,7 @@
             computed = callback ? callback(value, index, array) : value;
 
         if (isLarge) {
-          var key = computed + '';
+          var key = String(computed);
           var inited = hasOwnProperty.call(cache, key)
             ? !(seen = cache[key])
             : (seen = cache[key] = []);
@@ -4517,7 +4517,7 @@
     function memoize(func, resolver) {
       var cache = {};
       return function() {
-        var key = (resolver ? resolver.apply(this, arguments) : arguments[0]) + '';
+        var key = String(resolver ? resolver.apply(this, arguments) : arguments[0]);
         return hasOwnProperty.call(cache, key)
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));
@@ -4707,7 +4707,7 @@
      * // => 'Moe, Larry &amp; Curly'
      */
     function escape(string) {
-      return string == null ? '' : (string + '').replace(reUnescapedHtml, escapeHtmlChar);
+      return string == null ? '' : String(string).replace(reUnescapedHtml, escapeHtmlChar);
     }
 
     /**
@@ -5102,7 +5102,7 @@
      * // => 'Moe, Larry & Curly'
      */
     function unescape(string) {
-      return string == null ? '' : (string + '').replace(reEscapedHtml, unescapeHtmlChar);
+      return string == null ? '' : String(string).replace(reEscapedHtml, unescapeHtmlChar);
     }
 
     /**
@@ -5123,7 +5123,7 @@
      */
     function uniqueId(prefix) {
       var id = ++idCounter;
-      return (prefix == null ? '' : prefix + '') + id;
+      return String(prefix == null ? '' : prefix) + id;
     }
 
     /*--------------------------------------------------------------------------*/
@@ -5167,7 +5167,7 @@
      * // => '1,2,3'
      */
     function wrapperToString() {
-      return this.__wrapped__ + '';
+      return String(this.__wrapped__);
     }
 
     /**

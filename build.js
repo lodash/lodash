@@ -98,8 +98,8 @@
     'every': ['createCallback', 'isArray'],
     'filter': ['createCallback', 'isArray'],
     'find': ['createCallback', 'forEach', 'isArray'],
-    'findIndex': [],
-    'findKey': [],
+    'findIndex': ['createCallback'],
+    'findKey': ['createCallback'],
     'first': [],
     'flatten': ['createCallback', 'isArray'],
     'forEach': ['createCallback', 'isArguments', 'isArray', 'isString'],
@@ -190,10 +190,12 @@
     'arrays',
     'bottom',
     'firstArg',
+    'init',
     'loop',
     'shadowedProps',
     'top',
-    'useHas'
+    'useHas',
+    'useKeys'
   ];
 
   /** List of all Lo-Dash methods */
@@ -923,16 +925,19 @@
    *
    * @private
    * @param {String} source The source to process.
-   * @param {String} varName The name of the variable to remove.
+   * @param {String} identifier The name of the variable or property to remove.
    * @returns {String} Returns the modified source.
    */
-  function removeFromCreateIterator(source, varName) {
-    var  snippet = matchFunction(source, 'createIterator');
+  function removeFromCreateIterator(source, identifier) {
+    var snippet = matchFunction(source, 'createIterator');
     if (!snippet) {
       return source;
     }
     // remove data object property assignment
-    var modified = snippet.replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + varName + "': *" + varName + '.+\\n+', 'm'), '');
+    var modified = snippet
+      .replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + identifier + "':.+\\n+", 'm'), '')
+      .replace(/,(?=\s*})/, '');
+
     source = source.replace(snippet, function() {
       return modified;
     });
@@ -941,7 +946,7 @@
     snippet = modified.match(/Function\([\s\S]+$/)[0];
 
     modified = snippet
-      .replace(RegExp('\\b' + varName + '\\b,? *', 'g'), '')
+      .replace(RegExp('\\b' + identifier + '\\b,? *', 'g'), '')
       .replace(/, *',/, "',")
       .replace(/,\s*\)/, ')')
 
@@ -1019,12 +1024,11 @@
    * @returns {String} Returns the modified source.
    */
   function removeKeysOptimization(source) {
-    source = removeVar(source, 'isJSC');
-    source = removeSupportProp(source, 'fastKeys');
+    source = removeFromCreateIterator(source, 'useKeys');
 
     // remove optimized branch in `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/^(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.fastKeys[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/m, "'\\n' +\n$2");
+      return match.replace(/^(?: *\/\/.*\n)* *["']( *)<% *if *\(useHas *&& *useKeys[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/m, "'\\n' +\n$2");
     });
 
     return source;
@@ -1826,7 +1830,7 @@
           source = replaceVar(source, varName, 'false');
         });
 
-        _.each(['argsClass', 'fastBind', 'fastKeys'], function(propName) {
+        _.each(['argsClass', 'fastBind'], function(propName) {
           source = replaceSupportProp(source, propName, 'false');
         });
 
@@ -2484,17 +2488,20 @@
         if (!isRemoved(source, 'keys')) {
           source = source.replace(
             matchFunction(source, 'keys').replace(/[\s\S]+?var keys *= */, ''),
-            matchFunction(source, 'shimKeys').replace(/[\s\S]+?function shimKeys/, 'function').replace(/}\n$/, '};\n')
+            matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *= */, '')
           );
 
           source = removeFunction(source, 'shimKeys');
         }
         // replace `_.isArguments` with fallback
         if (!isRemoved(source, 'isArguments')) {
-          source = source.replace(
-            matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''),
-            getIsArgumentsFallback(source).match(/isArguments *= *function([\s\S]+?) *};/)[1] + '  }\n'
-          );
+          source = source.replace(matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''), function() {
+            var fallback = getIsArgumentsFallback(source),
+                body = fallback.match(/isArguments *= *function([\s\S]+? *});/)[1],
+                indent = getIndent(fallback);
+
+            return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2)) + '\n';
+          });
 
           source = removeIsArgumentsFallback(source);
         }

@@ -21,8 +21,8 @@
     'isString',
     'iterable',
     'length',
+    'keys',
     'lodash',
-    'nativeKeys',
     'object',
     'objectTypes',
     'ownIndex',
@@ -39,10 +39,12 @@
     'arrays',
     'bottom',
     'firstArg',
+    'init',
     'loop',
     'shadowedProps',
     'top',
-    'useHas'
+    'useHas',
+    'useKeys'
   ];
 
   /** Used to minify variables and string values to a single character */

@@ -265,17 +265,17 @@
     source = source.replace("result[length]['value']", 'result[length].value');
 
     // remove whitespace from string literals
-    source = source.replace(/^([ "'\w]+:)? *"[^"\\\n]*(?:\\.[^"\\\n]*)*"|'[^'\\\n]*(?:\\.[^'\\\n]*)*'/gm, function(string, captured) {
-      // remove object literal property name
-      if (/:$/.test(captured)) {
-        string = string.slice(captured.length);
+    source = source.replace(/^((?:[ "'\w]+:)? *)"[^"\\\n]*(?:\\.[^"\\\n]*)*"|'[^'\\\n]*(?:\\.[^'\\\n]*)*'/gm, function(string, left) {
+      // clip after an object literal property name or leading spaces
+      if (left) {
+        string = string.slice(left.length);
       }
       // avoids removing the '\n' of the `stringEscapes` object
       string = string.replace(/\[object |delete |else (?!{)|function | in |return\s+[\w"']|throw |typeof |use strict|var |@ |(["'])\\n\1|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
-      // prepend object literal property name
-      return (captured || '') + string;
+      // unclip
+      return (left || '') + string;
     });
 
     // remove whitespace from `_.template` related regexes
@@ -328,7 +328,7 @@
         // match the `iteratorTemplate`
         '( +)var iteratorTemplate\\b[\\s\\S]+?\\n\\1}',
         // match methods created by `createIterator` calls
-        'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]+?\\);\\n',
+        'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]*?\\);\\n',
         // match variables storing `createIterator` options
         '( +)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
         // match the the `createIterator` function
@@ -351,14 +351,6 @@
         return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
       });
 
-      if (isCreateIterator) {
-        // clip before the `factory` call to avoid minifying its arguments
-        source = source.replace(snippet, function() {
-          return modified;
-        });
-
-        snippet = modified = modified.replace(/return factory\([\s\S]+$/, '');
-      }
       // minify `createIterator` option property names
       iteratorOptions.forEach(function(property, index) {
         var minName = minNames[index];
@@ -370,15 +362,20 @@
       });
 
       // minify snippet variables / arguments
-      compiledVars.forEach(function(variable, index) {
+      compiledVars.forEach(function(varName, index) {
         var minName = minNames[index];
 
+        // minify variable names present in strings
+        if (isCreateIterator) {
+          modified = modified.replace(RegExp('(([\'"])[^\\n\\2]*?)\\b' + varName + '\\b(?=[^\\n\\2]*\\2[ ,+]+$)', 'gm'), '$1' + minName);
+        }
         // ensure properties in compiled strings aren't minified
-        modified = modified.replace(RegExp('([^.]\\b)' + variable + '\\b(?!\' *[\\]:])', 'g'), '$1' + minName);
-
+        else {
+          modified = modified.replace(RegExp('([^.])\\b' + varName + '\\b(?!\' *[\\]:])', 'g'), '$1' + minName);
+        }
         // correct `typeof` values
-        if (/^(?:boolean|function|object|number|string|undefined)$/.test(variable)) {
-          modified = modified.replace(RegExp("(typeof [^']+')" + minName + "'", 'g'), '$1' + variable + "'");
+        if (/^(?:boolean|function|object|number|string|undefined)$/.test(varName)) {
+          modified = modified.replace(RegExp("(typeof [^']+')" + minName + "'", 'g'), '$1' + varName + "'");
         }
       });
 

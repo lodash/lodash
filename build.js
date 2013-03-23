@@ -77,7 +77,7 @@
   /** Used to track function dependencies */
   var dependencyMap = {
     'after': [],
-    'assign': ['isArray', 'forEach', 'forOwn'],
+    'assign': ['isArray', 'keys'],
     'at': ['isString'],
     'bind': ['isFunction', 'isObject'],
     'bindAll': ['bind', 'functions'],
@@ -90,7 +90,7 @@
     'countBy': ['createCallback', 'forEach'],
     'createCallback': ['identity', 'isEqual', 'keys'],
     'debounce': [],
-    'defaults': ['isArray', 'forEach', 'forOwn'],
+    'defaults': ['isArray', 'keys'],
     'defer': ['bind'],
     'delay': [],
     'difference': ['indexOf'],
@@ -102,9 +102,9 @@
     'findKey': ['createCallback'],
     'first': [],
     'flatten': ['createCallback', 'isArray'],
-    'forEach': ['createCallback', 'isArguments', 'isArray', 'isString'],
+    'forEach': ['createCallback', 'isArguments', 'isArray', 'isString', 'keys'],
     'forIn': ['createCallback', 'isArguments'],
-    'forOwn': ['createCallback', 'isArguments'],
+    'forOwn': ['createCallback', 'isArguments', 'keys'],
     'functions': ['forIn', 'isFunction'],
     'groupBy': ['createCallback', 'forEach'],
     'has': [],
@@ -947,8 +947,8 @@
 
     modified = snippet
       .replace(RegExp('\\b' + identifier + '\\b,? *', 'g'), '')
-      .replace(/, *',/, "',")
-      .replace(/,\s*\)/, ')')
+      .replace(/, *(?=',)/, '')
+      .replace(/,(?=\s*\))/, '')
 
     source = source.replace(snippet, function() {
       return modified;
@@ -1354,6 +1354,9 @@
     if (/^(?:cloneableClasses|contextProps|ctorByClass|shadowedProps)$/.test(varName)) {
       source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?\\n\\n'), '$1=null;\n\n');
     }
+
+    source = removeFunction(source, varName);
+
     source = source.replace(RegExp(
       // match multi-line comment block
       '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n' +
@@ -1370,7 +1373,7 @@
     // remove a variable at the end of a variable declaration list
     source = source.replace(RegExp(',\\s*' + varName + ' *=.+?;'), ';');
 
-    return removeFromCreateIterator(source, varName);
+    return source;
   }
 
   /**
@@ -2723,6 +2726,8 @@
         });
       }
       if (isRemoved(source, 'value')) {
+        source = removeFunction(source, 'wrapperToString');
+        source = removeFunction(source, 'wrapperValueOf');
         source = removeSupportSpliceObjects(source);
         source = removeLodashWrapper(source);
 
@@ -2780,11 +2785,15 @@
       if (isRemoved(source, 'clone', 'isEqual', 'isPlainObject')) {
         source = removeSupportNodeClass(source);
       }
+      if (!/\beach\(/.test(source)) {
+        source = source.replace(matchFunction(source, 'each'), '');
+      }
       if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
         source = removeFunction(source, 'createIterator');
         source = removeVar(source, 'defaultsIteratorOptions');
         source = removeVar(source, 'eachIteratorOptions');
         source = removeVar(source, 'forOwnIteratorOptions');
+        source = removeVar(source, 'iteratorTemplate');
         source = removeVar(source, 'templateIterator');
         source = removeSupportNonEnumShadows(source);
         source = removeSupportEnumPrototypes(source);

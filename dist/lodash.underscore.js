@@ -1,7 +1,7 @@
 /**
  * @license
  * Lo-Dash 1.0.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash underscore -o ./dist/lodash.underscore.js`
+ * Build: `lodash underscore exports="amd,commonjs,global,node" -o ./dist/lodash.underscore.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -4375,7 +4375,23 @@
 
   /*--------------------------------------------------------------------------*/
 
-  if (freeExports && !freeExports.nodeType) {
+  // expose Lo-Dash
+  // some AMD build optimizers, like r.js, check for specific condition patterns like the following:
+  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
+    // Expose Lo-Dash to the global object even when an AMD loader is present in
+    // case Lo-Dash was injected by a third-party script and not intended to be
+    // loaded as a module. The global assignment can be reverted in the Lo-Dash
+    // module via its `noConflict()` method.
+    window._ = lodash;
+
+    // define as an anonymous module so, through path mapping, it can be
+    // referenced as the "underscore" module
+    define(function() {
+      return lodash;
+    });
+  }
+  // check for `exports` after `define` in case a build optimizer adds an `exports` object
+  else if (freeExports && !freeExports.nodeType) {
     // in Node.js or RingoJS v0.8.0+
     if (freeModule) {
       (freeModule.exports = lodash)._ = lodash;

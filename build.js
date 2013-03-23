@@ -1895,6 +1895,22 @@
             '}'
           ].join('\n'));
 
+          // replace `_.pluck`
+          source = replaceFunction(source, 'pluck', [
+            'function pluck(collection, property) {',
+            '  var index = -1,',
+            '      length = collection ? collection.length : 0;',
+            '',
+            "  if (typeof length == 'number') {",
+            '    var result = Array(length);',
+            '    while (++index < length) {',
+            '      result[index] = collection[index][property]',
+            '    }',
+            '  }',
+            '  return result || map(collection, property);',
+            '}'
+          ].join('\n'));
+
           // replace `isArray(collection)` checks in "Collections" methods with simpler type checks
           _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(methodName) {
             source = source.replace(matchFunction(source, methodName), function(match) {

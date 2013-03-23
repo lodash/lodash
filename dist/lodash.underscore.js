@@ -2057,7 +2057,18 @@
    * _.pluck(stooges, 'name');
    * // => ['moe', 'larry']
    */
-  var pluck = map;
+  function pluck(collection, property) {
+    var index = -1,
+        length = collection ? collection.length : 0;
+
+    if (typeof length == 'number') {
+      var result = Array(length);
+      while (++index < length) {
+        result[index] = collection[index][property]
+      }
+    }
+    return result || map(collection, property);
+  }
 
   /**
    * Reduces a `collection` to a value that is the accumulated result of running

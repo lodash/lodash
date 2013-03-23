@@ -2416,11 +2416,19 @@
           source = removeVar(source, 'ctorByClass');
         }
         // remove unused features from `createBound`
-        if (buildMethods.indexOf('partial') < 0 && buildMethods.indexOf('partialRight') < 0) {
+        if (buildMethods.indexOf('bindKey') < 0 && buildMethods.indexOf('partial') < 0 && buildMethods.indexOf('partialRight') < 0) {
           source = source.replace(matchFunction(source, 'createBound'), function(match) {
             return match
-              .replace(/, *right[^)]*/, '')
-              .replace(/(function createBound\([^{]+{)[\s\S]+?(\n *function bound)/, '$1$2')
+              .replace(/, *indicator[^)]*/, '')
+              .replace(/(function createBound\([^{]+{)[\s\S]+?(\n *)(function bound)/, function(match, part1, indent, part2) {
+                return [
+                  part1,
+                  'if (!isFunction(func)) {',
+                  '  throw new TypeError;',
+                  '}',
+                  part2
+                ].join(indent);
+              })
               .replace(/thisBinding *=[^}]+}/, 'thisBinding = thisArg;\n')
               .replace(/\(args *=.+/, 'partialArgs.concat(slice(args))');
           });

@@ -64,6 +64,7 @@
     'Object',
     'RegExp',
     'String',
+    'TypeError',
     'VERSION',
     '_',
     '__wrapped__',

@@ -139,7 +139,8 @@
         Number = context.Number,
         Object = context.Object,
         RegExp = context.RegExp,
-        String = context.String;
+        String = context.String,
+        TypeError = context.TypeError;
 
     /** Used for `Array` and `Object` method references */
     var arrayRef = Array(),
@@ -492,19 +493,24 @@
      * @param {Function|String} func The function to bind or the method name.
      * @param {Mixed} [thisArg] The `this` binding of `func`.
      * @param {Array} partialArgs An array of arguments to be partially applied.
-     * @param {Object} [rightIndicator] Used to indicate partially applying arguments from the right.
+     * @param {Object} [idicator] Used to indicate binding by key or partially
+     *  applying arguments from the right.
      * @returns {Function} Returns the new bound function.
      */
-    function createBound(func, thisArg, partialArgs, rightIndicator) {
+    function createBound(func, thisArg, partialArgs, indicator) {
       var isFunc = isFunction(func),
           isPartial = !partialArgs,
           key = thisArg;
 
       // juggle arguments
       if (isPartial) {
+        var rightIndicator = indicator;
         partialArgs = thisArg;
       }
-      if (!isFunc) {
+      else if (!isFunc) {
+        if (!indicator) {
+          throw new TypeError;
+        }
         thisArg = func;
       }
 
@@ -4058,7 +4064,7 @@
      * // => 'hi, moe!'
      */
     function bindKey(object, key) {
-      return createBound(object, key, slice(arguments, 2));
+      return createBound(object, key, slice(arguments, 2), indicatorObject);
     }
 
     /**

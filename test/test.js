@@ -245,6 +245,10 @@
 
       ok(new bound instanceof func);
     });
+
+    test('should throw a TypeError if `func` is not a function', function() {
+      raises(function() { _.bind(); }, TypeError);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

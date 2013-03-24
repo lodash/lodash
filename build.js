@@ -725,7 +725,7 @@
     // recursively accumulate the dependencies of the `methodName` function, and
     // the dependencies of its dependencies, and so on
     return _.uniq(dependencies.reduce(function(result, otherName) {
-      if (stack.indexOf(otherName) < 0) {
+      if (!_.contains(stack, otherName)) {
         stack.push(otherName);
         result.push.apply(result, getDependencies(otherName, stack).concat(otherName));
       }
@@ -751,7 +751,7 @@
       match = match.slice(1);
       return (
         '\n' + indent +
-        (match == '}' && source.indexOf('}', index + 2) < 0 ? '' : '  ')
+        (match == '}' && !_.contains(source, '}', index + 2) ? '' : '  ')
       ) + match;
     });
   }
@@ -1501,7 +1501,7 @@
           /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=.*$/.test(value)) {
         return true;
       }
-      var result = [
+      var result = _.contains([
         'backbone',
         'csp',
         'legacy',
@@ -1518,7 +1518,7 @@
         '-p', '--source-map',
         '-s', '--silent',
         '-V', '--version'
-      ].indexOf(value) > -1;
+      ], value);
 
       if (!result && /^(?:-p|--source-map)$/.test(options[index - 1])) {
         result = true;
@@ -1569,47 +1569,47 @@
     var filePath = path.join(__dirname, 'lodash.js');
 
     // flag to specify a Backbone build
-    var isBackbone = options.indexOf('backbone') > -1;
+    var isBackbone = _.contains(options, 'backbone');
 
     // flag to specify a Content Security Policy build
-    var isCSP = options.indexOf('csp') > -1 || options.indexOf('CSP') > -1;
+    var isCSP = _.contains(options, 'csp') || _.contains(options, 'CSP');
 
     // flag to specify only creating the debug build
-    var isDebug = options.indexOf('-d') > -1 || options.indexOf('--debug') > -1;
+    var isDebug = _.contains(options, '-d') || _.contains(options, '--debug');
 
     // flag to indicate that a custom IIFE was specified
     var isIIFE = typeof iife == 'string';
 
     // flag to specify creating a source map for the minified source
-    var isMapped = options.indexOf('-p') > -1 || options.indexOf('--source-map') > -1;
+    var isMapped = _.contains(options, '-p') || _.contains(options, '--source-map');
 
     // flag to specify only creating the minified build
-    var isMinify = options.indexOf('-m') > -1 || options.indexOf('--minify') > -1;
+    var isMinify = _.contains(options, '-m') || _.contains(options, '--minify');
 
     // flag to specify a mobile build
-    var isMobile = isCSP || options.indexOf('mobile') > -1;
+    var isMobile = isCSP || _.contains(options, 'mobile');
 
     // flag to specify a modern build
-    var isModern = isMobile || options.indexOf('modern') > -1;
+    var isModern = isMobile || _.contains(options, 'modern');
 
     // flag to specify a modularize build
-    var isModularize = options.indexOf('modularize') > -1;
+    var isModularize = _.contains(options, 'modularize');
 
     // flag to specify writing output to standard output
-    var isStdOut = options.indexOf('-c') > -1 || options.indexOf('--stdout') > -1;
+    var isStdOut = _.contains(options, '-c') || _.contains(options, '--stdout');
 
     // flag to specify skipping status updates normally logged to the console
-    var isSilent = isStdOut || options.indexOf('-s') > -1 || options.indexOf('--silent') > -1;
+    var isSilent = isStdOut || _.contains(options, '-s') || _.contains(options, '--silent');
 
     // flag to specify `_.assign`, `_.bindAll`, and `_.defaults` are
     // constructed using the "use strict" directive
-    var isStrict = options.indexOf('strict') > -1;
+    var isStrict = _.contains(options, 'strict');
 
     // flag to specify an Underscore build
-    var isUnderscore = isBackbone || options.indexOf('underscore') > -1;
+    var isUnderscore = isBackbone || _.contains(options, 'underscore');
 
     // flag to specify a legacy build
-    var isLegacy = !(isModern || isUnderscore) && options.indexOf('legacy') > -1;
+    var isLegacy = !(isModern || isUnderscore) && _.contains(options, 'legacy');
 
     // used to specify the ways to export the `lodash` function
     var exportsOptions = options.reduce(function(result, value) {
@@ -1672,10 +1672,10 @@
         exposeZipObject = !isUnderscore;
 
     // flags to specify export options
-    var isAMD = exportsOptions.indexOf('amd') > -1,
-        isCommonJS = exportsOptions.indexOf('commonjs') > -1,
-        isGlobal = exportsOptions.indexOf('global') > -1,
-        isNode = exportsOptions.indexOf('node') > -1;
+    var isAMD = _.contains(exportsOptions, 'amd'),
+        isCommonJS = _.contains(exportsOptions, 'commonjs'),
+        isGlobal = _.contains(exportsOptions, 'global'),
+        isNode = _.contains(exportsOptions, 'node');
 
     /*------------------------------------------------------------------------*/
 
@@ -1715,15 +1715,15 @@
       // set flags to include Lo-Dash's methods if explicitly requested
       if (isUnderscore) {
         var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
-        exposeAssign = methods.indexOf('assign') > -1;
-        exposeCreateCallback = methods.indexOf('createCallback') > -1;
-        exposeForIn = methods.indexOf('forIn') > -1;
-        exposeForOwn = methods.indexOf('forOwn') > -1;
-        exposeIsPlainObject = methods.indexOf('isPlainObject') > -1;
-        exposeZipObject = methods.indexOf('zipObject') > -1;
+        exposeAssign = _.contains(methods, 'assign');
+        exposeCreateCallback = _.contains(methods, 'createCallback');
+        exposeForIn = _.contains(methods, 'forIn');
+        exposeForOwn = _.contains(methods, 'forOwn');
+        exposeIsPlainObject = _.contains(methods, 'isPlainObject');
+        exposeZipObject = _.contains(methods, 'zipObject');
 
         methods = _.without.apply(_, [plusMethods].concat(minusMethods));
-        useUnderscoreClone = methods.indexOf('clone') < 0 && methods.indexOf('cloneDeep') < 0;
+        useUnderscoreClone = !_.contains(methods, 'clone') && !_.contains(methods, 'cloneDeep');
       }
       // update dependencies
       if (isLegacy) {
@@ -2432,7 +2432,9 @@
           source = removeVar(source, 'ctorByClass');
         }
         // remove unused features from `createBound`
-        if (buildMethods.indexOf('bindKey') < 0 && buildMethods.indexOf('partial') < 0 && buildMethods.indexOf('partialRight') < 0) {
+        if (_.every(['bindKey', 'partial', 'partialRight'], function(methodName) {
+              return !_.contains(buildMethods, methodName);
+            })) {
           source = source.replace(matchFunction(source, 'createBound'), function(match) {
             return match
               .replace(/, *indicator[^)]*/, '')
@@ -2452,8 +2454,8 @@
       }
       // replace `each` references with `forEach` and `forOwn`
       if ((isUnderscore || (isModern && !isMobile)) &&
-            buildMethods.indexOf('forEach') > -1 &&
-            (buildMethods.indexOf('forOwn') > -1 || !exposeForOwn)
+            _.contains(buildMethods, 'forEach') &&
+            (_.contains(buildMethods, 'forOwn') || !exposeForOwn)
           ) {
         source = source
           .replace(matchFunction(source, 'each'), '')

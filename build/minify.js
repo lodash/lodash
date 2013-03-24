@@ -132,9 +132,9 @@
         return;
       }
       var filePath = options[options.length - 1],
-          isMapped = options.indexOf('-p') > -1 || options.indexOf('--source-map') > -1,
-          isSilent = options.indexOf('-s') > -1 || options.indexOf('--silent') > -1,
-          isTemplate = options.indexOf('-t') > -1 || options.indexOf('--template') > -1,
+          isMapped = _.contains(options, '-p') || _.contains(options, '--source-map'),
+          isSilent = _.contains(options, '-s') || _.contains(options, '--silent'),
+          isTemplate = _.contains(options, '-t') || _.contains(options, '--template'),
           outputPath = path.join(path.dirname(filePath), path.basename(filePath, '.js') + '.min.js');
 
       modes = options.reduce(function(result, value) {
@@ -247,9 +247,9 @@
     };
 
     // begin the minification process
-    if (modes.indexOf('simple') > -1) {
+    if (_.contains(modes, 'simple')) {
       closureCompile.call(this, source, 'simple', onClosureSimpleCompile.bind(this));
-    } else if (modes.indexOf('advanced') > -1) {
+    } else if (_.contains(modes, 'advanced')) {
       onClosureSimpleGzip.call(this);
     } else {
       onClosureAdvancedGzip.call(this);
@@ -523,7 +523,7 @@
       this.compiled.simple.gzip = result;
     }
     // compile the source using advanced optimizations
-    if (this.modes.indexOf('advanced') > -1) {
+    if (_.contains(this.modes, 'advanced')) {
       closureCompile.call(this, this.source, 'advanced', onClosureAdvancedCompile.bind(this));
     } else {
       onClosureAdvancedGzip.call(this);
@@ -610,10 +610,10 @@
     }
     // minify the already Closure Compiler simple optimized source using UglifyJS
     var modes = this.modes;
-    if (modes.indexOf('hybrid') > -1) {
-      if (modes.indexOf('simple') > -1) {
+    if (_.contains(modes, 'hybrid')) {
+      if (_.contains(modes, 'simple')) {
         uglify.call(this, this.compiled.simple.source, 'hybrid (simple)', onSimpleHybrid.bind(this));
-      } else if (modes.indexOf('advanced') > -1) {
+      } else if (_.contains(modes, 'advanced')) {
         onSimpleHybridGzip.call(this);
       }
     } else {
@@ -655,7 +655,7 @@
       this.hybrid.simple.gzip = result;
     }
     // minify the already Closure Compiler advance optimized source using UglifyJS
-    if (this.modes.indexOf('advanced') > -1) {
+    if (_.contains(this.modes, 'advanced')) {
       uglify.call(this, this.compiled.advanced.source, 'hybrid (advanced)', onAdvancedHybrid.bind(this));
     } else {
       onComplete.call(this);

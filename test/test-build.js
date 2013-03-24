@@ -415,7 +415,7 @@
         func = lodash[methodName];
 
     try {
-      if (arraysMethods.indexOf(methodName) > -1) {
+      if (_.contains(arraysMethods, methodName)) {
         if (/(?:indexOf|sortedIndex|without)$/i.test(methodName)) {
           func(array, string);
         } else if (/^(?:difference|intersection|union|uniq|zip)/.test(methodName)) {
@@ -426,10 +426,10 @@
           func(array);
         }
       }
-      else if (chainingMethods.indexOf(methodName) > -1) {
+      else if (_.contains(chainingMethods, methodName)) {
         lodash(array)[methodName](noop);
       }
-      else if (collectionsMethods.indexOf(methodName) > -1) {
+      else if (_.contains(collectionsMethods, methodName)) {
         if (/^(?:count|group|sort)By$/.test(methodName)) {
           func(array, noop);
           func(array, string);
@@ -457,7 +457,7 @@
           func(object, noop, object);
         }
       }
-      else if (functionsMethods.indexOf(methodName) > -1) {
+      else if (_.contains(functionsMethods, methodName)) {
         if (methodName == 'after') {
           func(1, noop);
         } else if (methodName == 'bindAll') {
@@ -474,7 +474,7 @@
           func(noop);
         }
       }
-      else if (objectsMethods.indexOf(methodName) > -1) {
+      else if (_.contains(objectsMethods, methodName)) {
         if (methodName == 'clone') {
           func(object);
           func(object, true);
@@ -491,7 +491,7 @@
           func(object);
         }
       }
-      else if (utilityMethods.indexOf(methodName) > -1) {
+      else if (_.contains(utilityMethods, methodName)) {
         if (methodName == 'mixin') {
           func({});
         } else if (methodName == 'result') {
@@ -726,7 +726,7 @@
           process.chdir(__dirname);
 
           outputCommand = outputCommand ? outputCommand.split(' ') : [];
-          if (outputCommand.indexOf('-m') < 0) {
+          if (!_.contains(outputCommand, '-m')) {
             callback = _.after(2, callback);
           }
           build(['-s'].concat(mapCommand.split(' '), outputCommand), callback);
@@ -1399,8 +1399,8 @@
             }
             if (isUnderscore) {
               if (methodNames) {
-                exposeAssign = methodNames.indexOf('assign') > -1;
-                exposeZipObject = methodNames.indexOf('zipObject') > -1;
+                exposeAssign = _.contains(methodNames, 'assign');
+                exposeZipObject = _.contains(methodNames, 'zipObject');
               } else {
                 methodNames = underscoreMethods.slice();
               }

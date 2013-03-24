@@ -118,6 +118,7 @@
       hasOwnProperty = objectRef.hasOwnProperty,
       push = arrayRef.push,
       setTimeout = window.setTimeout,
+      slice = arrayRef.slice,
       toString = objectRef.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
@@ -353,7 +354,7 @@
       }
       if (partialArgs.length) {
         args = args.length
-          ? (args = slice(args), rightIndicator ? args.concat(partialArgs) : partialArgs.concat(args))
+          ? (args = slice.call(args), rightIndicator ? args.concat(partialArgs) : partialArgs.concat(args))
           : partialArgs;
       }
       if (this instanceof bound) {
@@ -431,36 +432,6 @@
   }
 
   /**
-   * A fallback implementation of `isPlainObject` that checks if a given `value`
-   * is an object created by the `Object` constructor, assuming objects created
-   * by the `Object` constructor have no inherited enumerable properties and that
-   * there are no `Object.prototype` extensions.
-   *
-   * @private
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if `value` is a plain object, else `false`.
-   */
-  function shimIsPlainObject(value) {
-    // avoid non-objects and false positives for `arguments` objects
-    var result = false;
-    if (!(value && toString.call(value) == objectClass)) {
-      return result;
-    }
-    // check that the constructor is `Object` (i.e. `Object instanceof Object`)
-    var ctor = value.constructor;
-    if ((!isFunction(ctor)) || ctor instanceof ctor) {
-      // In most environments an object's own properties are iterated before
-      // its inherited properties. If the last iterated property is an object's
-      // own property then there are no inherited enumerable properties.
-      forIn(value, function(value, key) {
-        result = key;
-      });
-      return result === false || hasOwnProperty.call(value, result);
-    }
-    return result;
-  }
-
-  /**
    * A fallback implementation of `Object.keys` that produces an array of the
    * given object's own enumerable property names.
    *
@@ -481,34 +452,6 @@
       }  
     return result
   };
-
-  /**
-   * Slices the `collection` from the `start` index up to, but not including,
-   * the `end` index.
-   *
-   * Note: This function is used, instead of `Array#slice`, to support node lists
-   * in IE < 9 and to ensure dense arrays are returned.
-   *
-   * @private
-   * @param {Array|Object|String} collection The collection to slice.
-   * @param {Number} start The start index.
-   * @param {Number} end The end index.
-   * @returns {Array} Returns the new array.
-   */
-  function slice(array, start, end) {
-    start || (start = 0);
-    if (typeof end == 'undefined') {
-      end = array ? array.length : 0;
-    }
-    var index = -1,
-        length = end - start || 0,
-        result = Array(length < 0 ? 0 : length);
-
-    while (++index < length) {
-      result[index] = array[start + index];
-    }
-    return result;
-  }
 
   /**
    * Used by `unescape` to convert HTML entities to characters.
@@ -701,7 +644,7 @@
    */
   function clone(value) {
     return isObject(value)
-      ? (isArray(value) ? slice(value) : assign({}, value))
+      ? (isArray(value) ? slice.call(value) : assign({}, value))
       : value
   }
 
@@ -1833,7 +1776,7 @@
    * // => [['1', '2', '3'], ['4', '5', '6']]
    */
   function invoke(collection, methodName) {
-    var args = slice(arguments, 2),
+    var args = slice.call(arguments, 2),
         index = -1,
         isFunc = typeof methodName == 'function',
         length = collection ? collection.length : 0,
@@ -2396,7 +2339,7 @@
    */
   function toArray(collection) {
     if (collection && typeof collection.length == 'number') {
-      return slice(collection);
+      return slice.call(collection);
     }
     return values(collection);
   }
@@ -2565,7 +2508,7 @@
           return array[0];
         }
       }
-      return slice(array, 0, nativeMin(nativeMax(0, n), length));
+      return slice.call(array, 0, nativeMin(nativeMax(0, n), length));
     }
   }
 
@@ -2740,7 +2683,7 @@
     } else {
       n = (callback == null || thisArg) ? 1 : callback || n;
     }
-    return slice(array, 0, nativeMin(nativeMax(0, length - n), length));
+    return slice.call(array, 0, nativeMin(nativeMax(0, length - n), length));
   }
 
   /**
@@ -2855,7 +2798,7 @@
           return array[length - 1];
         }
       }
-      return slice(array, nativeMax(0, length - n));
+      return slice.call(array, nativeMax(0, length - n));
     }
   }
 
@@ -3012,7 +2955,7 @@
     } else {
       n = (callback == null || thisArg) ? 1 : nativeMax(0, callback);
     }
-    return slice(array, n);
+    return slice.call(array, n);
   }
 
   /**
@@ -3326,7 +3269,7 @@
     // (in V8 `Function#bind` is slower except when partially applied)
     return support.fastBind || (nativeBind && arguments.length > 2)
       ? nativeBind.call.apply(nativeBind, arguments)
-      : createBound(func, thisArg, slice(arguments, 2));
+      : createBound(func, thisArg, slice.call(arguments, 2));
   }
 
   /**
@@ -3551,7 +3494,7 @@
    * // returns from the function before `alert` is called
    */
   function defer(func) {
-    var args = slice(arguments, 1);
+    var args = slice.call(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
   }
 
@@ -3573,7 +3516,7 @@
    * // => 'logged later' (Appears after one second.)
    */
   function delay(func, wait) {
-    var args = slice(arguments, 2);
+    var args = slice.call(arguments, 2);
     return setTimeout(function() { func.apply(undefined, args); }, wait);
   }
 
@@ -3659,7 +3602,7 @@
    * // => 'hi moe'
    */
   function partial(func) {
-    return createBound(func, slice(arguments, 1));
+    return createBound(func, slice.call(arguments, 1));
   }
 
   /**

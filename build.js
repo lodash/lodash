@@ -2426,6 +2426,11 @@
           });
         });
 
+        // replace `slice` with `slice.call`
+        source = removeFunction(source, 'slice');
+        source = source.replace(/^(( *)setTimeout = context.setTimeout)([,;])/m, '$1,\n$2slice = arrayRef.slice$3');
+        source = source.replace(/([^.]\bslice)\(/g, '$1.call(');
+
         // replace `lodash.createCallback` references with `createCallback`
         if (!exposeCreateCallback) {
           source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
@@ -2795,6 +2800,7 @@
         source = removeVar(source, 'nativeIsArray');
       }
       if (isRemoved(source, 'isPlainObject')) {
+        source = removeFunction(source, 'shimIsPlainObject');
         source = removeVar(source, 'getPrototypeOf');
         source = removeSupportOwnLast(source);
       }

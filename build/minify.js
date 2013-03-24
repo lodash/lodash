@@ -26,7 +26,7 @@
   var closureId = 'a95a8007892aa824ce90c6aa3d3abb0489bf0fff';
 
   /** The Git object ID of `uglifyjs.tar.gz` */
-  var uglifyId = '548bf495606eb4046c4573b1107f0225e274e1e1';
+  var uglifyId = '41308bd569db41a32d4f08af115875d0342e8bfb';
 
   /** The path of the directory that is the base of the repository */
   var basePath = fs.realpathSync(path.join(__dirname, '..'));
@@ -455,6 +455,7 @@
       toplevel.figure_out_scope();
       toplevel = toplevel.transform(uglifyJS.Compressor({
         'comparisons': false,
+        'unsafe': true,
         'unsafe_comps': true,
         'warnings': false
       }));

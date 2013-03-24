@@ -85,6 +85,13 @@ $(document).ready(function() {
     equal(view.counter, 3);
   });
 
+
+  test("delegateEvents ignore undefined methods", 0, function() {
+    var view = new Backbone.View({el: '<p></p>'});
+    view.delegateEvents({'click': 'undefinedMethod'});
+    view.$el.trigger('click');
+  });
+
   test("undelegateEvents", 6, function() {
     var counter1 = 0, counter2 = 0;
 

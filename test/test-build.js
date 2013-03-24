@@ -259,6 +259,7 @@
     'has',
     'indexOf',
     'initial',
+    'invert',
     'invoke',
     'isArray',
     'isEmpty',
@@ -274,7 +275,9 @@
     'max',
     'min',
     'mixin',
+    'omit',
     'once',
+    'pairs',
     'pick',
     'reduce',
     'reduceRight',
@@ -289,6 +292,7 @@
     'toArray',
     'uniqueId',
     'value',
+    'values',
     'without'
   ];
 

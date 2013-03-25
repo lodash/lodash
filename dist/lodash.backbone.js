@@ -337,19 +337,6 @@
   }
 
   /**
-   * Checks if `value` is a DOM node in IE < 9.
-   *
-   * @private
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true` if the `value` is a DOM node, else `false`.
-   */
-  function isNode(value) {
-    // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-    // methods that are `typeof` "string" and still can coerce nodes to strings
-    return typeof value.toString != 'function' && typeof String(value) == 'string';
-  }
-
-  /**
    * A fast path for creating `lodash` wrapper objects.
    *
    * @private
@@ -370,28 +357,6 @@
   function noop() {
     // no operation performed
   }
-
-  /**
-   * A fallback implementation of `Object.keys` that produces an array of the
-   * given object's own enumerable property names.
-   *
-   * @private
-   * @type Function
-   * @param {Object} object The object to inspect.
-   * @returns {Array} Returns a new array of property names.
-   */
-  var shimKeys = function (object) {
-    var index, iterable = object, result = [];
-    if (!iterable) return result;
-    if (!(objectTypes[typeof object])) return result;
-
-      for (index in iterable) {
-        if (hasOwnProperty.call(iterable, index)) {    
-        result.push(index);    
-        }
-      }  
-    return result
-  };
 
   /**
    * Used by `unescape` to convert HTML entities to characters.
@@ -452,6 +417,28 @@
     // `instanceof` may cause a memory leak in IE 7 if `value` is a host object
     // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
     return (support.argsObject && value instanceof Array) || toString.call(value) == arrayClass;
+  };
+
+  /**
+   * A fallback implementation of `Object.keys` that produces an array of the
+   * given object's own enumerable property names.
+   *
+   * @private
+   * @type Function
+   * @param {Object} object The object to inspect.
+   * @returns {Array} Returns a new array of property names.
+   */
+  var shimKeys = function (object) {
+    var index, iterable = object, result = [];
+    if (!iterable) return result;
+    if (!(objectTypes[typeof object])) return result;
+
+      for (index in iterable) {
+        if (hasOwnProperty.call(iterable, index)) {    
+        result.push(index);    
+        }
+      }  
+    return result
   };
 
   /**
@@ -2073,8 +2060,11 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    if (collection && typeof collection.length == 'number') {
+    if (isArray(collection)) {
       return slice.call(collection);
+    }
+    if (collection && typeof collection.length == 'number') {
+      return map(collection);
     }
     return values(collection);
   }

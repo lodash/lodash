@@ -471,40 +471,6 @@
     }
 
     /**
-     * A function compiled to iterate `arguments` objects, arrays, objects, and
-     * strings consistenly across environments, executing the `callback` for each
-     * element in the `collection`. The `callback` is bound to `thisArg` and invoked
-     * with three arguments; (value, index|key, collection). Callbacks may exit
-     * iteration early by explicitly returning `false`.
-     *
-     * @private
-     * @type Function
-     * @param {Array|Object|String} collection The collection to iterate over.
-     * @param {Function} [callback=identity] The function called per iteration.
-     * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @returns {Array|Object|String} Returns `collection`.
-     */
-    var each = function (collection, callback, thisArg) {
-      var index, iterable = collection, result = iterable;
-      if (!iterable) return result;
-      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
-      var length = iterable.length; index = -1;
-      if (typeof length == 'number') {
-        while (++index < length) {
-          if (callback(iterable[index], index, collection) === false) return result
-        }
-      }
-      else {  
-        for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
-          if (callback(iterable[index], index, collection) === false) return result;    
-          }
-        }  
-      }
-      return result
-    };
-
-    /**
      * Used by `template` to escape characters for inclusion in compiled
      * string literals.
      *
@@ -525,19 +491,6 @@
      */
     function escapeHtmlChar(match) {
       return htmlEscapes[match];
-    }
-
-    /**
-     * Checks if `value` is a DOM node in IE < 9.
-     *
-     * @private
-     * @param {Mixed} value The value to check.
-     * @returns {Boolean} Returns `true` if the `value` is a DOM node, else `false`.
-     */
-    function isNode(value) {
-      // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-      // methods that are `typeof` "string" and still can coerce nodes to strings
-      return typeof value.toString != 'function' && typeof String(value) == 'string';
     }
 
     /**
@@ -580,7 +533,8 @@
       }
       // check that the constructor is `Object` (i.e. `Object instanceof Object`)
       var ctor = value.constructor;
-      if ((!isFunction(ctor)) || ctor instanceof ctor) {
+
+      if (isFunction(ctor) ? ctor instanceof ctor : (support.nodeClass || !isNode(value))) {
         // In most environments an object's own properties are iterated before
         // its inherited properties. If the last iterated property is an object's
         // own property then there are no inherited enumerable properties.
@@ -591,28 +545,6 @@
       }
       return result;
     }
-
-    /**
-     * A fallback implementation of `Object.keys` that produces an array of the
-     * given object's own enumerable property names.
-     *
-     * @private
-     * @type Function
-     * @param {Object} object The object to inspect.
-     * @returns {Array} Returns a new array of property names.
-     */
-    var shimKeys = function (object) {
-      var index, iterable = object, result = [];
-      if (!iterable) return result;
-      if (!(objectTypes[typeof object])) return result;
-
-        for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
-          result.push(index);    
-          }
-        }  
-      return result
-    };
 
     /**
      * Slices the `collection` from the `start` index up to, but not including,
@@ -698,6 +630,28 @@
     };
 
     /**
+     * A fallback implementation of `Object.keys` that produces an array of the
+     * given object's own enumerable property names.
+     *
+     * @private
+     * @type Function
+     * @param {Object} object The object to inspect.
+     * @returns {Array} Returns a new array of property names.
+     */
+    var shimKeys = function (object) {
+      var index, iterable = object, result = [];
+      if (!iterable) return result;
+      if (!(objectTypes[typeof object])) return result;
+
+        for (index in iterable) {
+          if (hasOwnProperty.call(iterable, index)) {    
+          result.push(index);    
+          }
+        }  
+      return result
+    };
+
+    /**
      * Creates an array composed of the own enumerable property names of `object`.
      *
      * @static
@@ -718,6 +672,40 @@
         return shimKeys(object);
       }
       return nativeKeys(object);
+    };
+
+    /**
+     * A function compiled to iterate `arguments` objects, arrays, objects, and
+     * strings consistenly across environments, executing the `callback` for each
+     * element in the `collection`. The `callback` is bound to `thisArg` and invoked
+     * with three arguments; (value, index|key, collection). Callbacks may exit
+     * iteration early by explicitly returning `false`.
+     *
+     * @private
+     * @type Function
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Array|Object|String} Returns `collection`.
+     */
+    var each = function (collection, callback, thisArg) {
+      var index, iterable = collection, result = iterable;
+      if (!iterable) return result;
+      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
+      var length = iterable.length; index = -1;
+      if (typeof length == 'number') {
+        while (++index < length) {
+          if (callback(iterable[index], index, collection) === false) return result
+        }
+      }
+      else {  
+        for (index in iterable) {
+          if (hasOwnProperty.call(iterable, index)) {    
+          if (callback(iterable[index], index, collection) === false) return result;    
+          }
+        }  
+      }
+      return result
     };
 
     /**

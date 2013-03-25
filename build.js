@@ -1145,6 +1145,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeSupportNodeClass(source) {
+    source = removeFunction(source, 'isNode');
     source = removeSupportProp(source, 'nodeClass');
 
     // remove `support.nodeClass` from `shimIsPlainObject`
@@ -1751,6 +1752,7 @@
         dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
         dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
+        dependencyMap.toArray.push('isArray', 'map');
         dependencyMap.value = _.without(dependencyMap.value, 'isArray');
         dependencyMap.where.push('find', 'isEmpty');
 
@@ -2319,6 +2321,21 @@
           '  return result;',
           '}'
         ].join('\n'));
+
+        // replace `_.toArray`
+        if (useUnderscoreClone) {
+          source = replaceFunction(source, 'toArray', [
+            'function toArray(collection) {',
+            '  if (isArray(collection)) {',
+            '    return slice(collection);',
+            '  }',
+            "  if (collection && typeof collection.length == 'number') {",
+            '    return map(collection);',
+            '  }',
+            '  return values(collection);',
+            '}'
+          ].join('\n'));
+        }
 
         // replace `_.uniq`
         source = replaceFunction(source, 'uniq', [

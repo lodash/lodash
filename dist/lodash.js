@@ -615,19 +615,6 @@
     }
 
     /**
-     * Checks if `value` is a DOM node in IE < 9.
-     *
-     * @private
-     * @param {Mixed} value The value to check.
-     * @returns {Boolean} Returns `true` if the `value` is a DOM node, else `false`.
-     */
-    function isNode(value) {
-      // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-      // methods that are `typeof` "string" and still can coerce nodes to strings
-      return typeof value.toString != 'function' && typeof String(value) == 'string';
-    }
-
-    /**
      * A fast path for creating `lodash` wrapper objects.
      *
      * @private
@@ -667,7 +654,8 @@
       }
       // check that the constructor is `Object` (i.e. `Object instanceof Object`)
       var ctor = value.constructor;
-      if ((!isFunction(ctor)) || ctor instanceof ctor) {
+
+      if (isFunction(ctor) ? ctor instanceof ctor : (support.nodeClass || !isNode(value))) {
         // In most environments an object's own properties are iterated before
         // its inherited properties. If the last iterated property is an object's
         // own property then there are no inherited enumerable properties.
@@ -678,23 +666,6 @@
       }
       return result;
     }
-
-    /**
-     * A fallback implementation of `Object.keys` that produces an array of the
-     * given object's own enumerable property names.
-     *
-     * @private
-     * @type Function
-     * @param {Object} object The object to inspect.
-     * @returns {Array} Returns a new array of property names.
-     */
-    var shimKeys = createIterator({
-      'args': 'object',
-      'init': '[]',
-      'top': 'if (!(objectTypes[typeof object])) return result',
-      'loop': 'result.push(index)',
-      'arrays': false
-    });
 
     /**
      * Slices the `collection` from the `start` index up to, but not including,
@@ -778,6 +749,23 @@
       // http://ajaxian.com/archives/working-aroung-the-instanceof-memory-leak
       return value instanceof Array || toString.call(value) == arrayClass;
     };
+
+    /**
+     * A fallback implementation of `Object.keys` that produces an array of the
+     * given object's own enumerable property names.
+     *
+     * @private
+     * @type Function
+     * @param {Object} object The object to inspect.
+     * @returns {Array} Returns a new array of property names.
+     */
+    var shimKeys = createIterator({
+      'args': 'object',
+      'init': '[]',
+      'top': 'if (!(objectTypes[typeof object])) return result',
+      'loop': 'result.push(index)',
+      'arrays': false
+    });
 
     /**
      * Creates an array composed of the own enumerable property names of `object`.

@@ -364,7 +364,7 @@
        * @type Boolean
        */
       try {
-        support.nodeClass = !(toString.call(document) == objectClass && !String({ 'toString': 0 }));
+        support.nodeClass = !(toString.call(document) == objectClass && !({ 'toString': 0 } + ''));
       } catch(e) {
         support.nodeClass = true;
       }
@@ -510,15 +510,14 @@
       '    <%= loop %>;' +
       '    <% if (support.enumPrototypes || useHas) { %>\n    }<% } %>\n' +
       '  }' +
-      '  <% } %>' +
 
       // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
       // existing property and the `constructor` property of a prototype
       // defaults to non-enumerable, Lo-Dash skips the `constructor`
       // property when it infers it's iterating over a `prototype` object.
-      '  <% if (support.nonEnumShadows) { %>\n\n' +
+      '    <% if (support.nonEnumShadows) { %>\n\n' +
       '  var ctor = iterable.constructor;\n' +
-      '    <% for (var k = 0; k < 7; k++) { %>\n' +
+      '      <% for (var k = 0; k < 7; k++) { %>\n' +
       "  index = '<%= shadowedProps[k] %>';\n" +
       '  if (<%' +
       "      if (shadowedProps[k] == 'constructor') {" +
@@ -526,6 +525,7 @@
       '      } %>hasOwnProperty.call(iterable, index)) {\n' +
       '    <%= loop %>\n' +
       '  }' +
+      '      <% } %>' +
       '    <% } %>' +
       '  <% } %>' +
       '  <% if (arrays || support.nonEnumArgs) { %>\n}<% } %>\n' +
@@ -754,22 +754,6 @@
     }
 
     /**
-     * A function compiled to iterate `arguments` objects, arrays, objects, and
-     * strings consistenly across environments, executing the `callback` for each
-     * element in the `collection`. The `callback` is bound to `thisArg` and invoked
-     * with three arguments; (value, index|key, collection). Callbacks may exit
-     * iteration early by explicitly returning `false`.
-     *
-     * @private
-     * @type Function
-     * @param {Array|Object|String} collection The collection to iterate over.
-     * @param {Function} [callback=identity] The function called per iteration.
-     * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @returns {Array|Object|String} Returns `collection`.
-     */
-    var each = createIterator(eachIteratorOptions);
-
-    /**
      * Used by `template` to escape characters for inclusion in compiled
      * string literals.
      *
@@ -802,7 +786,7 @@
     function isNode(value) {
       // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
       // methods that are `typeof` "string" and still can coerce nodes to strings
-      return typeof value.toString != 'function' && typeof String(value) == 'string';
+      return typeof value.toString != 'function' && typeof (value + '') == 'string';
     }
 
     /**
@@ -845,7 +829,8 @@
       }
       // check that the constructor is `Object` (i.e. `Object instanceof Object`)
       var ctor = value.constructor;
-      if ((!isFunction(ctor) && (support.nodeClass || !isNode(value))) || ctor instanceof ctor) {
+
+      if (isFunction(ctor) ? ctor instanceof ctor : (support.nodeClass || !isNode(value))) {
         // IE < 9 iterates inherited properties before own properties. If the first
         // iterated property is an object's own property then there are no inherited
         // enumerable properties.
@@ -866,23 +851,6 @@
       }
       return result;
     }
-
-    /**
-     * A fallback implementation of `Object.keys` that produces an array of the
-     * given object's own enumerable property names.
-     *
-     * @private
-     * @type Function
-     * @param {Object} object The object to inspect.
-     * @returns {Array} Returns a new array of property names.
-     */
-    var shimKeys = createIterator({
-      'args': 'object',
-      'init': '[]',
-      'top': 'if (!(objectTypes[typeof object])) return result',
-      'loop': 'result.push(index)',
-      'arrays': false
-    });
 
     /**
      * Slices the `collection` from the `start` index up to, but not including,
@@ -974,6 +942,23 @@
     };
 
     /**
+     * A fallback implementation of `Object.keys` that produces an array of the
+     * given object's own enumerable property names.
+     *
+     * @private
+     * @type Function
+     * @param {Object} object The object to inspect.
+     * @returns {Array} Returns a new array of property names.
+     */
+    var shimKeys = createIterator({
+      'args': 'object',
+      'init': '[]',
+      'top': 'if (!(objectTypes[typeof object])) return result',
+      'loop': 'result.push(index)',
+      'arrays': false
+    });
+
+    /**
      * Creates an array composed of the own enumerable property names of `object`.
      *
      * @static
@@ -996,6 +981,22 @@
       }
       return nativeKeys(object);
     };
+
+    /**
+     * A function compiled to iterate `arguments` objects, arrays, objects, and
+     * strings consistenly across environments, executing the `callback` for each
+     * element in the `collection`. The `callback` is bound to `thisArg` and invoked
+     * with three arguments; (value, index|key, collection). Callbacks may exit
+     * iteration early by explicitly returning `false`.
+     *
+     * @private
+     * @type Function
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Array|Object|String} Returns `collection`.
+     */
+    var each = createIterator(eachIteratorOptions);
 
     /**
      * Used to convert characters to HTML entities:

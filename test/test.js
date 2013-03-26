@@ -2984,10 +2984,11 @@
         'zip'
       ];
 
-      var funcs = _.without.apply(_, [_.functions(_)].concat([
-        '_',
-        '_each',
-        '_iteratorTemplate',
+      var allMethods = _.reject(_.functions(_), function(methodName) {
+        return /^_/.test(methodName);
+      });
+
+      var funcs = _.without.apply(_, [allMethods].concat([
         'after',
         'bind',
         'bindAll',

@@ -197,7 +197,7 @@
        * @memberOf Benchmark.support
        * @type Boolean
        */
-      support.browser = doc && isHostType(context, 'navigator');
+      support.browser = doc && isHostType(context, 'navigator') && !isHostType(context, 'phantom');
 
       /**
        * Detect if Java is enabled/exposed.

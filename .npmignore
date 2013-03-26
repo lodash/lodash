@@ -18,6 +18,7 @@ vendor/docdown/
 vendor/firebug-lite/
 vendor/json3/
 vendor/jquery/
+vendor/platform.js/
 vendor/qunit/qunit/*.css
 vendor/qunit/qunit/*-1.8.0.js
 vendor/requirejs/

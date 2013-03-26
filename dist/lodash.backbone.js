@@ -180,7 +180,7 @@
   function lodash(value) {
     return (value instanceof lodash)
       ? value
-      : new lodashWrapper(value)
+      : new lodashWrapper(value);
   }
 
   /**
@@ -572,7 +572,7 @@
   function clone(value) {
     return isObject(value)
       ? (isArray(value) ? slice.call(value) : assign({}, value))
-      : value
+      : value;
   }
 
   /**
@@ -2537,7 +2537,7 @@
         result = [];
 
     while (++index < length) {
-      var value = array[index]
+      var value = array[index];
       if (indexOf(arguments, value, 1) < 0) {
         result.push(value);
       }

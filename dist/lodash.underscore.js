@@ -180,7 +180,7 @@
   function lodash(value) {
     return (value instanceof lodash)
       ? value
-      : new lodashWrapper(value)
+      : new lodashWrapper(value);
   }
 
   /**
@@ -632,7 +632,7 @@
   function clone(value) {
     return isObject(value)
       ? (isArray(value) ? slice.call(value) : assign({}, value))
-      : value
+      : value;
   }
 
   /**
@@ -1994,7 +1994,7 @@
     if (typeof length == 'number') {
       var result = Array(length);
       while (++index < length) {
-        result[index] = collection[index][property]
+        result[index] = collection[index][property];
       }
     }
     return result || map(collection, property);
@@ -2416,7 +2416,7 @@
         result = [];
 
     while (++index < length) {
-      var value = array[index]
+      var value = array[index];
       if (indexOf(flattened, value, length) < 0) {
         result.push(value);
       }
@@ -3128,7 +3128,7 @@
         result = [];
 
     while (++index < length) {
-      var value = array[index]
+      var value = array[index];
       if (indexOf(arguments, value, 1) < 0) {
         result.push(value);
       }

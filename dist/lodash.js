@@ -2662,7 +2662,7 @@
       if (typeof length == 'number') {
         var result = Array(length);
         while (++index < length) {
-          result[index] = collection[index][property]
+          result[index] = collection[index][property];
         }
       }
       return result || map(collection, property);

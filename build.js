@@ -1910,7 +1910,7 @@
             "  if (typeof length == 'number') {",
             '    var result = Array(length);',
             '    while (++index < length) {',
-            '      result[index] = collection[index][property]',
+            '      result[index] = collection[index][property];',
             '    }',
             '  }',
             '  return result || map(collection, property);',
@@ -1980,7 +1980,7 @@
             'function clone(value) {',
             '  return isObject(value)',
             '    ? (isArray(value) ? slice(value) : assign({}, value))',
-            '    : value',
+            '    : value;',
             '}'
           ].join('\n'));
         }
@@ -2030,7 +2030,7 @@
           '      result = [];',
           '',
           '  while (++index < length) {',
-          '    var value = array[index]',
+          '    var value = array[index];',
           '    if (indexOf(flattened, value, length) < 0) {',
           '      result.push(value);',
           '    }',
@@ -2208,7 +2208,7 @@
           'function lodash(value) {',
           '  return (value instanceof lodash)',
           '    ? value',
-          '    : new lodashWrapper(value)',
+          '    : new lodashWrapper(value);',
           '}'
         ].join('\n'));
 
@@ -2397,7 +2397,7 @@
           '      result = [];',
           '',
           '  while (++index < length) {',
-          '    var value = array[index]',
+          '    var value = array[index];',
           '    if (indexOf(arguments, value, 1) < 0) {',
           '      result.push(value);',
           '    }',

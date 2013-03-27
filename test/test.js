@@ -865,6 +865,20 @@
       equal(wrapper.forEach(Boolean), wrapper);
     });
 
+    test('supports the `thisArg` argument', function() {
+      var actual;
+
+      function callback(value, index) {
+        actual = this[index];
+      }
+
+      _.forEach([1], callback, [2]);
+      equal(actual, 2);
+
+      _.forEach({ 'a': 1 }, callback, { 'a': 2 });
+      equal(actual, 2);
+    });
+
     _.each({
       'literal': 'abc',
       'object': Object('abc')

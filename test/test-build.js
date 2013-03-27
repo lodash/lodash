@@ -878,10 +878,11 @@
         deepEqual(lodash.defaults({}, new Foo), Foo.prototype, '_.defaults should assign inherited `source` properties: ' + basename);
         deepEqual(lodash.extend({}, new Foo), Foo.prototype, '_.extend should assign inherited `source` properties: ' + basename);
 
-        actual = lodash.extend({}, { 'a': 0 }, function(a, b) {
-          return this[b];
-        }, [2]);
+        var callback = function(a, b) {
+          actual = this[b];
+        };
 
+        actual = lodash.extend({}, { 'a': 0 }, callback, [2]);
         strictEqual(actual.a, 0, '_.extend should ignore `callback` and `thisArg`: ' + basename);
 
         actual = lodash.find(array, function(value) {
@@ -899,16 +900,10 @@
         equal(last, _.last(array), '_.forEach should not exit early: ' + basename);
         equal(actual, undefined, '_.forEach should return `undefined`: ' + basename);
 
-        lodash.forEach([1], function(value, index) {
-          actual = this[index];
-        }, [2]);
-
+        lodash.forEach([1], callback, [2]);
         equal(actual, 2, '_.forEach supports the `thisArg` argument when iterating arrays: ' + basename);
 
-        lodash.forEach({ 'a': 1 }, function(value, key) {
-          actual = this[key];
-        }, { 'a': 2 });
-
+        lodash.forEach({ 'a': 1 }, callback, { 'a': 2 });
         equal(actual, 2, '_.forEach supports the `thisArg` argument when iterating objects: ' + basename);
 
         array = [{ 'a': [1, 2] }, { 'a': [3] }];

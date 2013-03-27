@@ -1,5 +1,4 @@
 # Lo-Dash <sup>v1.1.1</sup>
-[![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
 A low-level utility library delivering consistency, [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
 

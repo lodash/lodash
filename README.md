@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v1.1.0</sup>
+# Lo-Dash <sup>v1.1.1</sup>
 [![build status](https://secure.travis-ci.org/bestiejs/lodash.png)](http://travis-ci.org/bestiejs/lodash)
 
 A low-level utility library delivering consistency, [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
@@ -6,24 +6,24 @@ A low-level utility library delivering consistency, [customization](https://gith
 ## Download
 
 * Lo-Dash builds (for modern environments):<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.1.0/dist/lodash.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.1.0/dist/lodash.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.1.1/dist/lodash.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.1.1/dist/lodash.min.js)
 
 * Lo-Dash compatibility builds (for legacy and modern environments):<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.1.0/dist/lodash.compat.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.1.0/dist/lodash.compat.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.1.1/dist/lodash.compat.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.1.1/dist/lodash.compat.min.js)
 
 * Underscore compatibility builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.1.0/dist/lodash.underscore.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.1.0/dist/lodash.underscore.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.1.1/dist/lodash.underscore.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.1.1/dist/lodash.underscore.min.js)
 
-* CDN copies of ≤ v1.1.0’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
-[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.0/lodash.js),
-[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.0/lodash.min.js),<br>
-[Lo-Dash compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.0/lodash.compat.js),
-[Lo-Dash compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.0/lodash.compat.min.js),<br>
-[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.0/lodash.underscore.js), and
-[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.0/lodash.underscore.min.js)
+* CDN copies of ≤ v1.1.1’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.1/lodash.js),
+[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.1/lodash.min.js),<br>
+[Lo-Dash compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.1/lodash.compat.js),
+[Lo-Dash compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.1/lodash.compat.min.js),<br>
+[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.1/lodash.underscore.js), and
+[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.1.1/lodash.underscore.min.js)
 
 * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
@@ -251,6 +251,11 @@ require({
 ```
 
 ## Release Notes
+
+### <sup>v1.1.1</sup>
+
+ * Ensured the `underscore` build version of `_.forEach` accepts a `thisArg` argument
+ * Updated vendor/tar to work with Node v0.10.x
 
 ### <sup>v1.1.0</sup>
 

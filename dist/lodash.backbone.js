@@ -645,7 +645,6 @@
     var index, iterable = collection, result = iterable;
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;
-    callback || (callback = identity);
 
       for (index in iterable) {
         if (callback(iterable[index], index, collection) === indicatorObject) return result;    
@@ -678,7 +677,6 @@
     var index, iterable = collection, result = iterable;
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;
-    callback || (callback = identity);
 
       for (index in iterable) {
         if (hasOwnProperty.call(iterable, index)) {    
@@ -1451,15 +1449,15 @@
     var index = -1,
         length = collection ? collection.length : 0;
 
+    callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
     if (typeof length == 'number') {
-      callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
       while (++index < length) {
         if (callback(collection[index], index, collection) === indicatorObject) {
           break;
         }
       }
     } else {
-      forOwn(collection, callback, thisArg);
+      forOwn(collection, callback);
     };
   }
 

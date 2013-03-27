@@ -256,3 +256,4 @@ Reader.prototype.resume = function (who) {
 Reader.prototype._read = function () {
   this.error("Cannot read unknown type: "+this.type)
 }
+

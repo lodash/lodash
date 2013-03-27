@@ -290,13 +290,13 @@ Writer.prototype._finish = function () {
   return
 
   function setProps (current) {
+    todo += 3
     endChmod(me, me.props, current, me._path, next("chmod"))
     endChown(me, me.props, current, me._path, next("chown"))
-    endUtimes(me, me.props, current, me._path, next("chown"))
+    endUtimes(me, me.props, current, me._path, next("utimes"))
   }
 
   function next (what) {
-    todo ++
     return function (er) {
       // console.error("   W Finish", what, todo)
       if (errState) return

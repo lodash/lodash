@@ -899,6 +899,18 @@
         equal(last, _.last(array), '_.forEach should not exit early: ' + basename);
         equal(actual, undefined, '_.forEach should return `undefined`: ' + basename);
 
+        lodash.forEach([1], function(value, index) {
+          actual = this[index];
+        }, [2]);
+
+        equal(actual, 2, '_.forEach supports the `thisArg` argument when iterating arrays: ' + basename);
+
+        lodash.forEach({ 'a': 1 }, function(value, key) {
+          actual = this[key];
+        }, { 'a': 2 });
+
+        equal(actual, 2, '_.forEach supports the `thisArg` argument when iterating objects: ' + basename);
+
         array = [{ 'a': [1, 2] }, { 'a': [3] }];
 
         actual = lodash.flatten(array, function(value, index) {

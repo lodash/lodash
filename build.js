@@ -1865,15 +1865,15 @@
             '  var index = -1,',
             '      length = collection ? collection.length : 0;',
             '',
+            "  callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);",
             "  if (typeof length == 'number') {",
-            "    callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);",
             '    while (++index < length) {',
             '      if (callback(collection[index], index, collection) === false) {',
             '        break;',
             '      }',
             '    }',
             '  } else {',
-            '    each(collection, callback, thisArg);',
+            '    each(collection, callback);',
             '  }',
             '  return collection;',
             '}',
@@ -2627,7 +2627,7 @@
             source = source.replace(matchFunction(source, data.methodName), function(match) {
               return match
                 .replace(/(callback), *thisArg/g, '$1')
-                .replace(/^( *)callback *=.+/m, '$1callback || (callback = identity);')
+                .replace(/^ *callback *=.+\n/m, '');
             });
           }
         });

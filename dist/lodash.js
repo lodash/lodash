@@ -2346,15 +2346,15 @@
       var index = -1,
           length = collection ? collection.length : 0;
 
+      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
       if (typeof length == 'number') {
-        callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
         while (++index < length) {
           if (callback(collection[index], index, collection) === false) {
             break;
           }
         }
       } else {
-        forOwn(collection, callback, thisArg);
+        forOwn(collection, callback);
       }
       return collection;
     }

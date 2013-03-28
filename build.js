@@ -2323,19 +2323,17 @@
         ].join('\n'));
 
         // replace `_.toArray`
-        if (useUnderscoreClone) {
-          source = replaceFunction(source, 'toArray', [
-            'function toArray(collection) {',
-            '  if (isArray(collection)) {',
-            '    return slice(collection);',
-            '  }',
-            "  if (collection && typeof collection.length == 'number') {",
-            '    return map(collection);',
-            '  }',
-            '  return values(collection);',
-            '}'
-          ].join('\n'));
-        }
+        source = replaceFunction(source, 'toArray', [
+          'function toArray(collection) {',
+          '  if (isArray(collection)) {',
+          '    return slice(collection);',
+          '  }',
+          "  if (collection && typeof collection.length == 'number') {",
+          '    return map(collection);',
+          '  }',
+          '  return values(collection);',
+          '}'
+        ].join('\n'));
 
         // replace `_.uniq`
         source = replaceFunction(source, 'uniq', [

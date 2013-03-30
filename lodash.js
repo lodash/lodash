@@ -17,9 +17,9 @@
   /** Detect free variable `module` */
   var freeModule = typeof module == 'object' && module && module.exports == freeExports && module;
 
-  /** Detect free variable `global` and use it as `window` */
+  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
   var freeGlobal = typeof global == 'object' && global;
-  if (freeGlobal.global === freeGlobal) {
+  if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
     window = freeGlobal;
   }
 

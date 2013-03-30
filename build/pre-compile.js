@@ -214,6 +214,7 @@
     'values',
     'variable',
     'where',
+    'window',
     'without',
     'wrap',
     'zip',

@@ -510,7 +510,7 @@
       "  var freeModule = typeof module == 'object' && module && module.exports == freeExports && module;",
       '',
       "  var freeGlobal = typeof global == 'object' && global;",
-      '  if (freeGlobal.global === freeGlobal) {',
+      '  if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {',
       '    window = freeGlobal;',
       '  }',
       '',

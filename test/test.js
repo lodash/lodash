@@ -1074,6 +1074,36 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('`__proto__` property bugs');
+
+  (function() {
+    var stringLiteral = '__proto__',
+        stringObject = Object(stringLiteral),
+        expected = [stringLiteral, stringObject];
+
+    var array = _.times(100, function(count) {
+      return count % 2 ? stringObject : stringLiteral;
+    });
+
+    test('internal data objects should work with the `__proto__` key', function() {
+      deepEqual(_.difference(array, array), []);
+      deepEqual(_.intersection(array, array), expected);
+      deepEqual(_.uniq(array), expected);
+      deepEqual(_.without.apply(_, [array].concat(array)), []);
+    });
+
+    test('lodash.memoize should memoize values resolved to the `__proto__` key', function() {
+      var count = 0,
+          memoized = _.memoize(function() { return ++count; });
+
+      memoized('__proto__');
+      memoized('__proto__');
+      strictEqual(count, 1);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.groupBy');
 
   (function() {

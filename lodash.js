@@ -2005,6 +2005,7 @@
         var callback = args[3],
             stackA = args[4],
             stackB = args[5];
+            console.log(object)
       } else {
         stackA = [];
         stackB = [];
@@ -2041,9 +2042,10 @@
                 ? (isArray(value) ? value : [])
                 : (isPlainObject(value) ? value : {});
 
+              var isShallow;
               if (callback) {
                 result = callback(value, source);
-                if (typeof result != 'undefined') {
+                if ((isShallow = typeof result != 'undefined')) {
                   value = result;
                 }
               }
@@ -2052,13 +2054,14 @@
               stackB.push(value);
 
               // recursively merge objects and arrays (susceptible to call stack limits)
-              if (!callback) {
+              if (!isShallow) {
                 value = merge(value, source, indicatorObject, callback, stackA, stackB);
               }
             }
           }
           else {
             if (callback) {
+              console.log('hi')
               result = callback(value, source);
               if (typeof result == 'undefined') {
                 result = source;

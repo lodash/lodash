@@ -1801,8 +1801,15 @@
     });
 
     test('should handle merging if `callback` returns `undefined`', function() {
-      var actual = _.merge({ 'a': 1 }, { 'a': 2 }, function() { });
-      deepEqual(actual, { 'a': 2 });
+      var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, function() { });
+      deepEqual(actual, { 'a': { 'b': [0, 1] } });
+    });
+
+    test('should defer to `callback` when it returns a value other than `undefined`', function() {
+      var actual = _.merge({ 'a': { 'b': [0, 1] } }, { 'a': { 'b': [2] } }, function(a, b) {
+        return _.isArray(a) ? a.concat(b) : undefined;
+      });
+      deepEqual(actual, { 'a': { 'b': [0, 1, 2] } });
     });
   }(1, 2, 3));
 

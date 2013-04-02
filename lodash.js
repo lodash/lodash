@@ -2005,7 +2005,6 @@
         var callback = args[3],
             stackA = args[4],
             stackB = args[5];
-            console.log(object)
       } else {
         stackA = [];
         stackB = [];
@@ -2061,7 +2060,6 @@
           }
           else {
             if (callback) {
-              console.log('hi')
               result = callback(value, source);
               if (typeof result == 'undefined') {
                 result = source;

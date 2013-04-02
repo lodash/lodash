@@ -29,6 +29,9 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
+  /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
+  var keyPrefix = +new Date + '';
+
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -586,16 +589,14 @@
             index = fromIndex - 1;
 
         while (++index < length) {
-          // manually coerce `value` to a string because `hasOwnProperty`, in some
-          // older versions of Firefox, coerces objects incorrectly
-          var key = String(array[index]);
-          (hasOwnProperty.call(cache, key) ? cache[key] : (cache[key] = [])).push(array[index]);
+          var key = keyPrefix + array[index];
+          (cache[key] || (cache[key] = [])).push(array[index]);
         }
       }
       return function(value) {
         if (isLarge) {
-          var key = String(value);
-          return hasOwnProperty.call(cache, key) && indexOf(cache[key], value) > -1;
+          var key = keyPrefix + value;
+          return  cache[key] && indexOf(cache[key], value) > -1;
         }
         return indexOf(array, value, fromIndex) > -1;
       }
@@ -3623,8 +3624,8 @@
       while (++index < length) {
         var value = array[index];
         if (isLarge) {
-          var key = String(value);
-          var inited = hasOwnProperty.call(cache[0], key)
+          var key = keyPrefix + value;
+          var inited = cache[0][key]
             ? !(seen = cache[0][key])
             : (seen = cache[0][key] = []);
         }
@@ -4031,8 +4032,8 @@
             computed = callback ? callback(value, index, array) : value;
 
         if (isLarge) {
-          var key = String(computed);
-          var inited = hasOwnProperty.call(cache, key)
+          var key = keyPrefix + computed;
+          var inited = cache[key]
             ? !(seen = cache[key])
             : (seen = cache[key] = []);
         }
@@ -4517,7 +4518,7 @@
     function memoize(func, resolver) {
       var cache = {};
       return function() {
-        var key = String(resolver ? resolver.apply(this, arguments) : arguments[0]);
+        var key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);
         return hasOwnProperty.call(cache, key)
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));

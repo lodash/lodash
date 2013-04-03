@@ -118,6 +118,7 @@
     'union',
     'uniq',
     'unique',
+    'unzip',
     'without',
     'zip',
     'zipObject'
@@ -296,8 +297,8 @@
     'without'
   ];
 
-  /** List of methods used by Underscore */
-  var underscoreMethods = _.without.apply(_, [allMethods].concat([
+  /** List of Lo-Dash only methods */
+  var lodashOnlyMethods = [
     'at',
     'bindKey',
     'cloneDeep',
@@ -310,8 +311,12 @@
     'merge',
     'parseInt',
     'partialRight',
-    'runInContext'
-  ]));
+    'runInContext',
+    'unzip'
+  ];
+
+  /** List of methods used by Underscore */
+  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
 
   /*--------------------------------------------------------------------------*/
 
@@ -970,22 +975,7 @@
         vm.runInContext(data.source, context);
         var lodash = context._;
 
-        _.each([
-          'assign',
-          'at',
-          'bindKey',
-          'createCallback',
-          'findIndex',
-          'findKey',
-          'forIn',
-          'forOwn',
-          'isPlainObject',
-          'merge',
-          'parseInt',
-          'partialRight',
-          'runInContext',
-          'zipObject'
-        ], function(methodName) {
+        _.each(lodashOnlyMethods.concat('assign'), function(methodName) {
           equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
         });
 

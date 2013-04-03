@@ -222,8 +222,8 @@
      * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
      * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`, `range`,
      * `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-     * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `values`,
-     * `where`, `without`, `wrap`, and `zip`
+     * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `unzip`,
+     * `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
@@ -4052,6 +4052,37 @@
     }
 
     /**
+     * The inverse of `_.zip`, this method splits groups of elements into arrays
+     * composed of elements from each group at their corresponding indexes.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to process.
+     * @returns {Array} Returns a new array of the composed arrays.
+     * @example
+     *
+     * _.unzip([['moe', 30, true], ['larry', 40, false]]);
+     * // => [['moe', 'larry'], [30, 40], [true, false]];
+     */
+    function unzip(array) {
+      var index = -1,
+          length = array ? array.length : 0,
+          tupleLength = length ? max(pluck(array, 'length')) : 0,
+          result = Array(tupleLength);
+
+      while (++index < length) {
+        var tupleIndex = -1,
+            tuple = array[index];
+
+        while (++tupleIndex < tupleLength) {
+          (result[tupleIndex] || (result[tupleIndex] = Array(length)))[index] = tuple[tupleIndex];
+        }
+      }
+      return result;
+    }
+
+    /**
      * Creates an array with all occurrences of the passed values removed using
      * strict equality for comparisons, i.e. `===`.
      *
@@ -5242,6 +5273,7 @@
     lodash.toArray = toArray;
     lodash.union = union;
     lodash.uniq = uniq;
+    lodash.unzip = unzip;
     lodash.values = values;
     lodash.where = where;
     lodash.without = without;

@@ -159,8 +159,8 @@
    * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
    * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`, `range`,
    * `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-   * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `values`,
-   * `where`, `without`, `wrap`, and `zip`
+   * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `unzip`,
+   * `values`, `where`, `without`, `wrap`, and `zip`
    *
    * The non-chainable wrapper functions are:
    * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
@@ -2520,7 +2520,7 @@
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {Array} array The array to compact.
+   * @param {Array} array The array to flatten.
    * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
    * @param {Function|Object|String} [callback=identity] The function called per
    *  iteration. If a property name or object is passed, it will be used to create
@@ -2966,7 +2966,7 @@
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {Array} array The array to iterate over.
+   * @param {Array} array The array to inspect.
    * @param {Mixed} value The value to evaluate.
    * @param {Function|Object|String} [callback=identity] The function called per
    *  iteration. If a property name or object is passed, it will be used to create
@@ -4001,7 +4001,7 @@
   }
 
   /**
-   * The opposite of `_.escape`, this method converts the HTML entities
+   * The inverse of `_.escape`, this method converts the HTML entities
    * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
    * corresponding characters.
    *

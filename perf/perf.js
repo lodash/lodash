@@ -487,6 +487,10 @@
         var _findWhere = _.findWhere || _.find,\
             lodashFindWhere = lodash.findWhere || lodash.find,\
             whereObject = { "num": 9 };\
+      }\
+      if (typeof zip != "undefined") {\
+        var unzipped = [["a", "b", "c"], [1, 2, 3], [true, false, true]],\
+            zipped = [["a", 1, true], ["b", 2, false], ["c", 3, true]];\
       }'
   });
 
@@ -1753,6 +1757,20 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.unzip`')
+      .add(buildName, {
+        'fn': 'lodash.unzip(zipped);',
+        'teardown': 'function zip(){}'
+      })
+      .add(otherName, {
+        'fn': '_.unzip(zipped);',
+        'teardown': 'function zip(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.values`')
       .add(buildName, '\
         lodash.values(object)'
@@ -1797,6 +1815,20 @@
       .add(otherName, {
         'fn': '_.without.apply(_, [thirtyValues].concat(thirtyValues2));',
         'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.zip`')
+      .add(buildName, {
+        'fn': 'lodash.zip.apply(lodash, unzipped);',
+        'teardown': 'function zip(){}'
+      })
+      .add(otherName, {
+        'fn': '_.zip.apply(_, unzipped);',
+        'teardown': 'function zip(){}'
       })
   );
 

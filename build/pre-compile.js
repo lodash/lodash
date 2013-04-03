@@ -210,6 +210,7 @@
     'uniq',
     'unique',
     'uniqueId',
+    'unzip',
     'value',
     'values',
     'variable',

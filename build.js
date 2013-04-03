@@ -171,6 +171,7 @@
     'union': ['uniq'],
     'uniq': ['createCallback', 'indexOf'],
     'uniqueId': [],
+    'unzip': ['max', 'pluck'],
     'value': ['forOwn', 'isArray'],
     'values': ['keys'],
     'where': ['filter'],
@@ -258,8 +259,8 @@
     'without'
   ];
 
-  /** List of methods used by Underscore */
-  var underscoreMethods = _.without.apply(_, [allMethods].concat([
+  /** List of Lo-Dash only methods */
+  var lodashOnlyMethods = [
     'at',
     'bindKey',
     'cloneDeep',
@@ -272,8 +273,12 @@
     'merge',
     'parseInt',
     'partialRight',
-    'runInContext'
-  ]));
+    'runInContext',
+    'unzip'
+  ];
+
+  /** List of methods used by Underscore */
+  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
 
   /** List of ways to export the `lodash` function */
   var exportsAll = [

@@ -216,8 +216,8 @@
      * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
      * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`, `range`,
      * `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-     * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `values`,
-     * `where`, `without`, `wrap`, and `zip`
+     * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `unzip`,
+     * `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
@@ -1017,7 +1017,7 @@
      * @static
      * @memberOf _
      * @category Objects
-     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Object} object The object to search.
      * @param {Function|Object|String} [callback=identity] The function called per
      *  iteration. If a property name or object is passed, it will be used to create
      *  a "_.pluck" or "_.where" style callback, respectively.
@@ -1028,11 +1028,11 @@
      * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) { return num % 2 == 0; });
      * // => 'b'
      */
-    function findKey(collection, callback, thisArg) {
+    function findKey(object, callback, thisArg) {
       var result;
       callback = lodash.createCallback(callback, thisArg);
-      forOwn(collection, function(value, key, collection) {
-        if (callback(value, key, collection)) {
+      forOwn(object, function(value, key, object) {
+        if (callback(value, key, object)) {
           result = key;
           return false;
         }
@@ -3072,7 +3072,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Array} array The array to search.
      * @param {Function|Object|String} [callback=identity] The function called per
      *  iteration. If a property name or object is passed, it will be used to create
      *  a "_.pluck" or "_.where" style callback, respectively.
@@ -3080,16 +3080,18 @@
      * @returns {Mixed} Returns the index of the found element, else `-1`.
      * @example
      *
-     * _.findIndex(['apple', 'banana', 'beet'], function(food) { return /^b/.test(food); });
+     * _.findIndex(['apple', 'banana', 'beet'], function(food) {
+     *   return /^b/.test(food);
+     * });
      * // => 1
      */
-    function findIndex(collection, callback, thisArg) {
+    function findIndex(array, callback, thisArg) {
       var index = -1,
-          length = collection ? collection.length : 0;
+          length = array ? array.length : 0;
 
       callback = lodash.createCallback(callback, thisArg);
       while (++index < length) {
-        if (callback(collection[index], index, collection)) {
+        if (callback(array[index], index, array)) {
           return index;
         }
       }
@@ -3191,7 +3193,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} array The array to compact.
+     * @param {Array} array The array to flatten.
      * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
      * @param {Function|Object|String} [callback=identity] The function called per
      *  iteration. If a property name or object is passed, it will be used to create
@@ -3662,7 +3664,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} array The array to iterate over.
+     * @param {Array} array The array to inspect.
      * @param {Mixed} value The value to evaluate.
      * @param {Function|Object|String} [callback=identity] The function called per
      *  iteration. If a property name or object is passed, it will be used to create
@@ -3811,6 +3813,37 @@
             seen.push(computed);
           }
           result.push(value);
+        }
+      }
+      return result;
+    }
+
+    /**
+     * The inverse of `_.zip`, this method splits groups of elements into arrays
+     * composed of elements from each group at their corresponding indexes.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to process.
+     * @returns {Array} Returns a new array of the composed arrays.
+     * @example
+     *
+     * _.unzip([['moe', 30, true], ['larry', 40, false]]);
+     * // => [['moe', 'larry'], [30, 40], [true, false]];
+     */
+    function unzip(array) {
+      var index = -1,
+          length = array ? array.length : 0,
+          tupleLength = length ? max(pluck(array, 'length')) : 0,
+          result = Array(tupleLength);
+
+      while (++index < length) {
+        var tupleIndex = -1,
+            tuple = array[index];
+
+        while (++tupleIndex < tupleLength) {
+          (result[tupleIndex] || (result[tupleIndex] = Array(length)))[index] = tuple[tupleIndex];
         }
       }
       return result;
@@ -4850,7 +4883,7 @@
     }
 
     /**
-     * The opposite of `_.escape`, this method converts the HTML entities
+     * The inverse of `_.escape`, this method converts the HTML entities
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
      * corresponding characters.
      *
@@ -5003,6 +5036,7 @@
     lodash.toArray = toArray;
     lodash.union = union;
     lodash.uniq = uniq;
+    lodash.unzip = unzip;
     lodash.values = values;
     lodash.where = where;
     lodash.without = without;

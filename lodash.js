@@ -1550,11 +1550,8 @@
     function isEqual(a, b, callback, thisArg, stackA, stackB) {
       // used to indicate that when comparing objects, `a` has at least the properties of `b`
       var whereIndicator = callback === indicatorObject;
-      if (callback && !whereIndicator) {
-        callback = (typeof thisArg == 'undefined')
-          ? callback
-          : lodash.createCallback(callback, thisArg, 2);
-
+      if (typeof callback == 'function' && !whereIndicator) {
+        callback = lodash.createCallback(callback, thisArg, 2);
         var result = callback(a, b);
         if (typeof result != 'undefined') {
           return !!result;

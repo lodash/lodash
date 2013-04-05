@@ -1386,6 +1386,14 @@
         strictEqual(actual, false);
       });
     });
+
+    test('should ensure `callback` is a function', function() {
+      var array = [1, 2, 3],
+          eq = _.partial(_.isEqual, array),
+          actual = _.every([array, [1, 0, 3]], eq);
+
+      strictEqual(actual, false);
+    })
   }());
 
   /*--------------------------------------------------------------------------*/

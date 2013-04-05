@@ -710,6 +710,7 @@
      * @param {Object} [options1, options2, ...] The compile options object(s).
      *  arrays - A string of code to determine if the iterable is an array or array-like.
      *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
+     *  useKeys - A boolean to specify using `_.keys` for own property iteration.
      *  args - A string of comma separated arguments the iteration function will accept.
      *  top - A string of code to execute before the iteration branches.
      *  loop - A string of code to execute in the object loop.
@@ -1272,7 +1273,9 @@
      * @returns {Mixed} Returns the key of the found element, else `undefined`.
      * @example
      *
-     * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) { return num % 2 == 0; });
+     * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
+     *   return num % 2 == 0;
+     * });
      * // => 'b'
      */
     function findKey(object, callback, thisArg) {
@@ -2502,7 +2505,9 @@
      * @returns {Mixed} Returns the found element, else `undefined`.
      * @example
      *
-     * _.find([1, 2, 3, 4], function(num) { return num % 2 == 0; });
+     * _.find([1, 2, 3, 4], function(num) {
+     *   return num % 2 == 0;
+     * });
      * // => 2
      *
      * var food = [

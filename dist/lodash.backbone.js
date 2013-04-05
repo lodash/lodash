@@ -1384,7 +1384,9 @@
    * @returns {Mixed} Returns the found element, else `undefined`.
    * @example
    *
-   * _.find([1, 2, 3, 4], function(num) { return num % 2 == 0; });
+   * _.find([1, 2, 3, 4], function(num) {
+   *   return num % 2 == 0;
+   * });
    * // => 2
    *
    * var food = [

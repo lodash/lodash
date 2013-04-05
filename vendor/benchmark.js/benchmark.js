@@ -21,9 +21,9 @@
   /** Detect free variable `require` */
   var freeRequire = typeof require == 'function' && require;
 
-  /** Detect free variable `global` and use it as `window` */
+  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
   var freeGlobal = typeof global == 'object' && global;
-  if (freeGlobal.global === freeGlobal) {
+  if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
     window = freeGlobal;
   }
 
@@ -738,13 +738,7 @@
         cycle(deferred);
       }
       else if (++deferred.cycles < clone.count) {
-        // continue the test loop
-        if (support.timeout) {
-          // use setTimeout to avoid a call stack overflow if called recursively
-          setTimeout(function() { clone.compiled.call(deferred, context, timer); }, 0);
-        } else {
-          clone.compiled.call(deferred, context, timer);
-        }
+        clone.compiled.call(deferred, context, timer);
       }
       else {
         timer.stop(deferred);

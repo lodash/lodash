@@ -1612,7 +1612,9 @@
    * @returns {Mixed} Returns the found element, else `undefined`.
    * @example
    *
-   * _.find([1, 2, 3, 4], function(num) { return num % 2 == 0; });
+   * _.find([1, 2, 3, 4], function(num) {
+   *   return num % 2 == 0;
+   * });
    * // => 2
    *
    * var food = [
@@ -3425,44 +3427,53 @@
   /**
    * Creates a function that will delay the execution of `func` until after
    * `wait` milliseconds have elapsed since the last time it was invoked. Pass
-   * `true` for `immediate` to cause debounce to invoke `func` on the leading,
-   * instead of the trailing, edge of the `wait` timeout. Subsequent calls to
-   * the debounced function will return the result of the last `func` call.
+   * an `options` object to indicate that `func` should be invoked on the leading
+   * and/or trailing edge of the `wait` timeout. Subsequent calls to the debounced
+   * function will return the result of the last `func` call.
    *
    * @static
    * @memberOf _
    * @category Functions
    * @param {Function} func The function to debounce.
    * @param {Number} wait The number of milliseconds to delay.
-   * @param {Boolean} immediate A flag to indicate execution is on the leading
-   *  edge of the timeout.
+   * @param {Object} options The options object.
+   *  [leading=false] A boolean to specify execution on the leading edge of the timeout.
+   *  [trailing=true] A boolean to specify execution on the trailing edge of the timeout.
    * @returns {Function} Returns the new debounced function.
    * @example
    *
    * var lazyLayout = _.debounce(calculateLayout, 300);
    * jQuery(window).on('resize', lazyLayout);
    */
-  function debounce(func, wait, immediate) {
+  function debounce(func, wait, options) {
     var args,
         result,
         thisArg,
-        timeoutId;
+        timeoutId,
+        trailing = true;
 
     function delayed() {
       timeoutId = null;
-      if (!immediate) {
+      if (trailing) {
         result = func.apply(thisArg, args);
       }
     }
+    if (options === true) {
+      var leading = true;
+      trailing = false;
+    } else if (options) {
+      leading = options.leading;
+      trailing = options.trailing;
+    }
     return function() {
-      var isImmediate = immediate && !timeoutId;
+      var isLeading = leading && !timeoutId;
       args = arguments;
       thisArg = this;
 
       clearTimeout(timeoutId);
       timeoutId = setTimeout(delayed, wait);
 
-      if (isImmediate) {
+      if (isLeading) {
         result = func.apply(thisArg, args);
       }
       return result;
@@ -3597,39 +3608,57 @@
   }
 
   /**
-   * Creates a function that, when executed, will only call the `func`
-   * function at most once per every `wait` milliseconds. If the throttled
-   * function is invoked more than once during the `wait` timeout, `func` will
-   * also be called on the trailing edge of the timeout. Subsequent calls to the
-   * throttled function will return the result of the last `func` call.
+   * Creates a function that, when executed, will only call the `func` function
+   * at most once per every `wait` milliseconds. If the throttled function is
+   * invoked more than once during the `wait` timeout, `func` will also be called
+   * on the trailing edge of the timeout. Pass an `options` object to indicate
+   * that `func` should be invoked on the leading and/or trailing edge of the
+   * `wait` timeout. Subsequent calls to the throttled function will return
+   * the result of the last `func` call.
    *
    * @static
    * @memberOf _
    * @category Functions
    * @param {Function} func The function to throttle.
    * @param {Number} wait The number of milliseconds to throttle executions to.
+   * @param {Object} options The options object.
+   *  [leading=true] A boolean to specify execution on the leading edge of the timeout.
+   *  [trailing=true] A boolean to specify execution on the trailing edge of the timeout.
    * @returns {Function} Returns the new throttled function.
    * @example
    *
    * var throttled = _.throttle(updatePosition, 100);
    * jQuery(window).on('scroll', throttled);
    */
-  function throttle(func, wait) {
+  function throttle(func, wait, options) {
     var args,
         result,
         thisArg,
         timeoutId,
-        lastCalled = 0;
+        lastCalled = 0,
+        leading = true,
+        trailing = true;
 
     function trailingCall() {
       lastCalled = new Date;
       timeoutId = null;
-      result = func.apply(thisArg, args);
+
+      if (trailing) {
+        result = func.apply(thisArg, args);
+      }
+    }
+    if (options === false) {
+      leading = false;
+    } else if (options) {
+      leading = options.leading;
+      trailing = options.trailing;
     }
     return function() {
-      var now = new Date,
-          remaining = wait - (now - lastCalled);
-
+      var now = new Date;
+      if (!timeoutId && !leading) {
+        lastCalled = now;
+      }
+      var remaining = wait - (now - lastCalled);
       args = arguments;
       thisArg = this;
 

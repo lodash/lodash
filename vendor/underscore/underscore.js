@@ -506,16 +506,8 @@
   // `[['a',1],['b',2],['c',3]]` returns the array
   // [['a','b','c'],[1,2,3]].
   _.unzip = function(tuples) {
-      var results = [];
-      _.each(tuples, function (tuple, tupleIndex) {
-          _.each(tuple, function (value, itemIndex) {
-              if (results.length <= itemIndex) {
-                  results[itemIndex] = [];
-              }
-              results[itemIndex][tupleIndex] = value;
-          });
-      });
-      return results;
+      var maxLen = _.max(_.pluck(tuples, "length"))
+      return _.times(maxLen, _.partial(_.pluck, tuples));
   };
 
   // Converts lists into objects. Pass either a single array of `[key, value]`
@@ -1043,7 +1035,7 @@
 
   // Run a function **n** times.
   _.times = function(n, iterator, context) {
-    var accum = Array(n);
+    var accum = Array(Math.max(0, n));
     for (var i = 0; i < n; i++) accum[i] = iterator.call(context, i);
     return accum;
   };

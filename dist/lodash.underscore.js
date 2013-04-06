@@ -33,6 +33,9 @@
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
+  /** Used as the size when optimizations are enabled for large arrays */
+  var largeArraySize = 200;
+
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -121,7 +124,6 @@
       hasOwnProperty = objectRef.hasOwnProperty,
       push = arrayRef.push,
       setTimeout = window.setTimeout,
-      slice = arrayRef.slice,
       toString = objectRef.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
@@ -132,7 +134,8 @@
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
-      nativeRandom = Math.random;
+      nativeRandom = Math.random,
+      nativeSlice = arrayRef.slice;
 
   /** Detect various environments */
   var isIeOpera = reNative.test(window.attachEvent),
@@ -357,7 +360,7 @@
       }
       if (partialArgs.length) {
         args = args.length
-          ? (args = slice.call(args), rightIndicator ? args.concat(partialArgs) : partialArgs.concat(args))
+          ? (args = nativeSlice.call(args), rightIndicator ? args.concat(partialArgs) : partialArgs.concat(args))
           : partialArgs;
       }
       if (this instanceof bound) {
@@ -634,7 +637,7 @@
    */
   function clone(value) {
     return isObject(value)
-      ? (isArray(value) ? slice.call(value) : assign({}, value))
+      ? (isArray(value) ? nativeSlice.call(value) : assign({}, value))
       : value;
   }
 
@@ -1766,7 +1769,7 @@
    * // => [['1', '2', '3'], ['4', '5', '6']]
    */
   function invoke(collection, methodName) {
-    var args = slice.call(arguments, 2),
+    var args = nativeSlice.call(arguments, 2),
         index = -1,
         isFunc = typeof methodName == 'function',
         length = collection ? collection.length : 0,
@@ -2329,7 +2332,7 @@
    */
   function toArray(collection) {
     if (isArray(collection)) {
-      return slice.call(collection);
+      return nativeSlice.call(collection);
     }
     if (collection && typeof collection.length == 'number') {
       return map(collection);
@@ -2501,7 +2504,7 @@
           return array[0];
         }
       }
-      return slice.call(array, 0, nativeMin(nativeMax(0, n), length));
+      return nativeSlice.call(array, 0, nativeMin(nativeMax(0, n), length));
     }
   }
 
@@ -2676,7 +2679,7 @@
     } else {
       n = (callback == null || thisArg) ? 1 : callback || n;
     }
-    return slice.call(array, 0, nativeMin(nativeMax(0, length - n), length));
+    return nativeSlice.call(array, 0, nativeMin(nativeMax(0, length - n), length));
   }
 
   /**
@@ -2791,7 +2794,7 @@
           return array[length - 1];
         }
       }
-      return slice.call(array, nativeMax(0, length - n));
+      return nativeSlice.call(array, nativeMax(0, length - n));
     }
   }
 
@@ -2948,7 +2951,7 @@
     } else {
       n = (callback == null || thisArg) ? 1 : nativeMax(0, callback);
     }
-    return slice.call(array, n);
+    return nativeSlice.call(array, n);
   }
 
   /**
@@ -3126,17 +3129,7 @@
    * // => [2, 3, 4]
    */
   function without(array) {
-    var index = -1,
-        length = array.length,
-        result = [];
-
-    while (++index < length) {
-      var value = array[index];
-      if (indexOf(arguments, value, 1) < 0) {
-        result.push(value);
-      }
-    }
-    return result
+    return difference(array, nativeSlice.call(arguments, 1));
   }
 
   /**
@@ -3262,7 +3255,7 @@
     // (in V8 `Function#bind` is slower except when partially applied)
     return support.fastBind || (nativeBind && arguments.length > 2)
       ? nativeBind.call.apply(nativeBind, arguments)
-      : createBound(func, thisArg, slice.call(arguments, 2));
+      : createBound(func, thisArg, nativeSlice.call(arguments, 2));
   }
 
   /**
@@ -3496,7 +3489,7 @@
    * // returns from the function before `alert` is called
    */
   function defer(func) {
-    var args = slice.call(arguments, 1);
+    var args = nativeSlice.call(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
   }
 
@@ -3518,7 +3511,7 @@
    * // => 'logged later' (Appears after one second.)
    */
   function delay(func, wait) {
-    var args = slice.call(arguments, 2);
+    var args = nativeSlice.call(arguments, 2);
     return setTimeout(function() { func.apply(undefined, args); }, wait);
   }
 
@@ -3604,7 +3597,7 @@
    * // => 'hi moe'
    */
   function partial(func) {
-    return createBound(func, slice.call(arguments, 1));
+    return createBound(func, nativeSlice.call(arguments, 1));
   }
 
   /**

@@ -378,12 +378,14 @@
             fiftyValues2 = Array(50),\
             seventyFiveValues = Array(75),\
             seventyFiveValues2 = Array(75),\
-            hundredValues = Array(100),\
-            hundredValues2 = Array(100),\
+            oneHundredValues = Array(100),\
+            oneHundredValues2 = Array(100),\
+            twoHundredValues = Array(200),\
+            twoHundredValues2 = Array(200),\
             lowerChars = "abcdefghijklmnopqrstuvwxyz".split(""),\
             upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");\
         \
-        for (index = 0; index < 100; index++) {\
+        for (index = 0; index < 200; index++) {\
           if (index < 15) {\
             twentyValues[index] = lowerChars[index];\
             twentyValues2[index] = upperChars[index];\
@@ -403,13 +405,15 @@
             fortyValues[index] =\
             fiftyValues[index] =\
             seventyFiveValues[index] =\
-            hundredValues[index] = lowerChars[index];\
+            oneHundredValues[index] =\
+            twoHundredValues[index] = lowerChars[index];\
             \
             thirtyValues2[index] =\
             fortyValues2[index] =\
             fiftyValues2[index] =\
             seventyFiveValues2[index] =\
-            hundredValues2[index] = upperChars[index];\
+            oneHundredValues2[index] =\
+            twoHundredValues2[index] = upperChars[index];\
           }\
           else {\
             if (index < 30) {\
@@ -428,8 +432,12 @@
               seventyFiveValues[index] =\
               seventyFiveValues2[index] = index;\
             }\
-            hundredValues[index] =\
-            hundredValues2[index] = index;\
+            if (index < 100) {\
+              oneHundredValues[index] =\
+              oneHundredValues2[index] = index;\
+            }\
+            twoHundredValues[index] =\
+            twoHundredValues2[index] = index;\
           }\
         }\
       }\
@@ -738,13 +746,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 100 elements')
+    Benchmark.Suite('`_.difference` iterating 200 elements')
       .add(buildName, {
-        'fn': 'lodash.difference(hundredValues, hundredValues2)',
+        'fn': 'lodash.difference(twoHundredValues, twoHundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.difference(hundredValues, hundredValues2)',
+        'fn': '_.difference(twoHundredValues, twoHundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1047,13 +1055,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.intersection` iterating 100 elements')
+    Benchmark.Suite('`_.intersection` iterating 200 elements')
       .add(buildName, {
-        'fn': 'lodash.intersection(hundredValues, hundredValues2)',
+        'fn': 'lodash.intersection(twoHundredValues, twoHundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.intersection(hundredValues, hundredValues2)',
+        'fn': '_.intersection(twoHundredValues, twoHundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1743,13 +1751,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.uniq` iterating an array of 75 elements')
+    Benchmark.Suite('`_.uniq` iterating an array of 200 elements')
       .add(buildName, {
-        'fn': 'lodash.uniq(fiftyValues.concat(twentyFiveValues2));',
+        'fn': 'lodash.uniq(oneHundredValues.concat(oneHundredValues2));',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.uniq(fiftyValues.concat(twentyFiveValues2));',
+        'fn': '_.uniq(oneHundredValues.concat(oneHundredValues2));',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1804,18 +1812,6 @@
       .add(otherName, '\
         _.without(numbers, 9, 12, 14, 15)'
       )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.without` iterating an array of 30 elements')
-      .add(buildName, {
-        'fn': 'lodash.without.apply(lodash, [thirtyValues].concat(thirtyValues2));',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.without.apply(_, [thirtyValues].concat(thirtyValues2));',
-        'teardown': 'function multiArrays(){}'
-      })
   );
 
   /*--------------------------------------------------------------------------*/

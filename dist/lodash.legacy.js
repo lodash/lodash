@@ -33,6 +33,9 @@
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
+  /** Used as the size when optimizations are enabled for large arrays */
+  var largeArraySize = 200;
+
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -175,7 +178,8 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random;
+        nativeRandom = Math.random,
+        nativeSlice = arrayRef.slice;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -532,12 +536,11 @@
      * @param {Array} array The array to search.
      * @param {Mixed} value The value to search for.
      * @param {Number} fromIndex The index to search from.
-     * @param {Number} largeSize The length at which an array is considered large.
      * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
      */
-    function cachedContains(array, fromIndex, largeSize) {
+    function cachedContains(array, fromIndex) {
       var length = array.length,
-          isLarge = (length - fromIndex) >= largeSize;
+          isLarge = (length - fromIndex) >= largeArraySize;
 
       if (isLarge) {
         var cache = {},
@@ -639,7 +642,7 @@
         }
         if (partialArgs.length) {
           args = args.length
-            ? (args = slice(args), rightIndicator ? args.concat(partialArgs) : partialArgs.concat(args))
+            ? (args = nativeSlice.call(args), rightIndicator ? args.concat(partialArgs) : partialArgs.concat(args))
             : partialArgs;
         }
         if (this instanceof bound) {
@@ -2172,7 +2175,7 @@
      */
     function at(collection) {
       var index = -1,
-          props = concat.apply(arrayRef, slice(arguments, 1)),
+          props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
           length = props.length,
           result = Array(length);
 
@@ -2577,7 +2580,7 @@
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
     function invoke(collection, methodName) {
-      var args = slice(arguments, 2),
+      var args = nativeSlice.call(arguments, 2),
           index = -1,
           isFunc = typeof methodName == 'function',
           length = collection ? collection.length : 0,
@@ -3215,7 +3218,7 @@
       var index = -1,
           length = array ? array.length : 0,
           flattened = concat.apply(arrayRef, arguments),
-          contains = cachedContains(flattened, length, 100),
+          contains = cachedContains(flattened, length),
           result = [];
 
       while (++index < length) {
@@ -3546,7 +3549,7 @@
           cache = { '0': {} },
           index = -1,
           length = array ? array.length : 0,
-          isLarge = length >= 100,
+          isLarge = length >= largeArraySize,
           result = [],
           seen = result;
 
@@ -3565,7 +3568,7 @@
           }
           var argsIndex = argsLength;
           while (--argsIndex) {
-            if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(args[argsIndex], 0, 100)))(value)) {
+            if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(args[argsIndex], 0)))(value)) {
               continue outer;
             }
           }
@@ -3949,7 +3952,7 @@
         isSorted = false;
       }
       // init value cache for large arrays
-      var isLarge = !isSorted && length >= 75;
+      var isLarge = !isSorted && length >= largeArraySize;
       if (isLarge) {
         var cache = {};
       }
@@ -4027,18 +4030,7 @@
      * // => [2, 3, 4]
      */
     function without(array) {
-      var index = -1,
-          length = array ? array.length : 0,
-          contains = cachedContains(arguments, 1, 30),
-          result = [];
-
-      while (++index < length) {
-        var value = array[index];
-        if (!contains(value)) {
-          result.push(value);
-        }
-      }
-      return result;
+      return difference(array, nativeSlice.call(arguments, 1));
     }
 
     /**
@@ -4159,7 +4151,7 @@
      * func();
      * // => 'hi moe'
      */
-    function bind(func, thisArg) {return createBound(func, thisArg, slice(arguments, 2));
+    function bind(func, thisArg) {return createBound(func, thisArg, nativeSlice.call(arguments, 2));
     }
 
     /**
@@ -4232,7 +4224,7 @@
      * // => 'hi, moe!'
      */
     function bindKey(object, key) {
-      return createBound(object, key, slice(arguments, 2), indicatorObject);
+      return createBound(object, key, nativeSlice.call(arguments, 2), indicatorObject);
     }
 
     /**
@@ -4431,7 +4423,7 @@
      * // returns from the function before `alert` is called
      */
     function defer(func) {
-      var args = slice(arguments, 1);
+      var args = nativeSlice.call(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
     }
 
@@ -4453,7 +4445,7 @@
      * // => 'logged later' (Appears after one second.)
      */
     function delay(func, wait) {
-      var args = slice(arguments, 2);
+      var args = nativeSlice.call(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
     }
 
@@ -4539,7 +4531,7 @@
      * // => 'hi moe'
      */
     function partial(func) {
-      return createBound(func, slice(arguments, 1));
+      return createBound(func, nativeSlice.call(arguments, 1));
     }
 
     /**
@@ -4570,7 +4562,7 @@
      * // => { '_': _, 'jq': $ }
      */
     function partialRight(func) {
-      return createBound(func, slice(arguments, 1), null, indicatorObject);
+      return createBound(func, nativeSlice.call(arguments, 1), null, indicatorObject);
     }
 
     /**

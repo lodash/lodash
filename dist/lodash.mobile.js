@@ -4240,9 +4240,9 @@
       if (options === true) {
         var leading = true;
         trailing = false;
-      } else if (options) {
+      } else if (options && objectTypes[typeof options]) {
         leading = options.leading;
-        trailing = options.trailing;
+        trailing = 'trailing' in options ? options.trailing : trailing;
       }
       return function() {
         var isLeading = leading && !timeoutId;
@@ -4459,9 +4459,9 @@
       }
       if (options === false) {
         leading = false;
-      } else if (options) {
-        leading = options.leading;
-        trailing = options.trailing;
+      } else if (options && objectTypes[typeof options]) {
+        leading = 'leading' in options ? options.leading : leading;
+        trailing = 'trailing' in options ? options.trailing : trailing;
       }
       return function() {
         var now = new Date;

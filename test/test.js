@@ -507,18 +507,70 @@
 
   (function() {
     test('subsequent "immediate" debounced calls return the last `func` result', function() {
-      var debounced = _.debounce(function(value) { return value; }, 32, true),
+      var debounced = _.debounce(_.identity, 32, true),
           result = [debounced('x'), debounced('y')];
 
       deepEqual(result, ['x', 'x']);
     });
 
     asyncTest('subsequent debounced calls return the last `func` result', function() {
-      var debounced = _.debounce(function(value) { return value; }, 32);
+      var debounced = _.debounce(_.identity, 32);
       debounced('x');
 
       setTimeout(function() {
         equal(debounced('y'), 'x');
+        QUnit.start();
+      }, 64);
+    });
+
+    asyncTest('should apply default options correctly', function() {
+      var count = 0;
+
+      var debounced = _.debounce(function(value) {
+        count++;
+        return value;
+      }, 32, {});
+
+      strictEqual(debounced('x'), undefined);
+
+      setTimeout(function() {
+        strictEqual(count, 1);
+        QUnit.start();
+      }, 64);
+    });
+
+    test('should work with `leading` option', function() {
+      _.each([true, { 'leading': true }], function(options) {
+        var withLeading = _.debounce(_.identity, 32, options);
+        equal(withLeading('x'), 'x');
+      });
+
+      _.each([false, { 'leading': false }], function(options) {
+        var withoutLeading = _.debounce(_.identity, 32, options);
+        strictEqual(withoutLeading('x'), undefined);
+      });
+    });
+
+    asyncTest('should work with `trailing` option', function() {
+      var withCount = 0,
+          withoutCount = 0;
+
+      var withTrailing = _.debounce(function(value) {
+        withCount++;
+        return value;
+      }, 32, { 'trailing': true });
+
+      var withoutTrailing = _.debounce(function(value) {
+        withoutCount++;
+        return value;
+      }, 32, { 'trailing': false });
+
+      strictEqual(withTrailing('x'), undefined);
+      strictEqual(withoutTrailing('x'), undefined);
+
+      setTimeout(function() {
+        strictEqual(withCount, 1);
+        strictEqual(withoutCount, 0);
         QUnit.start();
       }, 64);
     });
@@ -2603,52 +2655,108 @@
     });
 
     asyncTest('supports recursive calls', function() {
-      var counter = 0;
+      var count = 0;
       var throttled = _.throttle(function() {
-        counter++;
-        if (counter < 10) {
+        count++;
+        if (count < 10) {
           throttled();
         }
       }, 32);
 
       throttled();
-      equal(counter, 1);
+      equal(count, 1);
 
       setTimeout(function() {
-        ok(counter < 3)
+        ok(count < 3)
         QUnit.start();
       }, 32);
     });
 
     asyncTest('should not trigger a trailing call when invoked once', function() {
-      var counter = 0,
-          throttled = _.throttle(function() { counter++; }, 32);
+      var count = 0,
+          throttled = _.throttle(function() { count++; }, 32);
 
       throttled();
-      equal(counter, 1);
+      equal(count, 1);
 
       setTimeout(function() {
-        equal(counter, 1);
+        equal(count, 1);
         QUnit.start();
       }, 96);
     });
 
     asyncTest('should trigger trailing call when invoked repeatedly', function() {
-      var counter = 0,
+      var count = 0,
           limit = 48,
-          throttled = _.throttle(function() { counter++; }, 32),
+          throttled = _.throttle(function() { count++; }, 32),
           start = new Date;
 
       while ((new Date - start) < limit) {
         throttled();
       }
-      var lastCount = counter;
+      var lastCount = count;
       ok(lastCount > 1);
 
       setTimeout(function() {
-        ok(counter > lastCount);
+        ok(count > lastCount);
         QUnit.start();
       }, 96);
+    });
+
+    asyncTest('should apply default options correctly', function() {
+      var count = 0;
+
+      var throttled = _.throttle(function(value) {
+        count++;
+        return value;
+      }, 32, {});
+
+      _.times(2, function() {
+        equal(throttled('x'), 'x');
+      });
+
+      setTimeout(function() {
+        strictEqual(count, 2);
+        QUnit.start();
+      }, 64);
+    });
+
+    test('should work with `leading` option', function() {
+      _.each([true, { 'leading': true }], function(options) {
+        var withLeading = _.throttle(_.identity, 32, options);
+        equal(withLeading('x'), 'x');
+      });
+
+      _.each([false, { 'leading': false }], function(options) {
+        var withoutLeading = _.throttle(_.identity, 32, options);
+        strictEqual(withoutLeading('x'), undefined);
+      });
+    });
+
+    asyncTest('should work with `trailing` option', function() {
+      var withCount = 0,
+          withoutCount = 0;
+
+      var withTrailing = _.throttle(function(value) {
+        withCount++;
+        return value;
+      }, 32, { 'trailing': true });
+
+      var withoutTrailing = _.throttle(function(value) {
+        withoutCount++;
+        return value;
+      }, 32, { 'trailing': false });
+
+      _.times(2, function() {
+        equal(withTrailing('x'), 'x');
+        equal(withoutTrailing('x'), 'x');
+      });
+
+      setTimeout(function() {
+        strictEqual(withCount, 2);
+        strictEqual(withoutCount, 1);
+        QUnit.start();
+      }, 64);
     });
   }());
 

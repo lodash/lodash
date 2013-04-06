@@ -175,7 +175,7 @@
     'value': ['forOwn', 'isArray'],
     'values': ['keys'],
     'where': ['filter'],
-    'without': ['indexOf'],
+    'without': ['difference'],
     'wrap': [],
     'zip': ['max', 'pluck'],
     'zipObject': [],
@@ -2392,23 +2392,6 @@
           '}'
         ].join('\n'));
 
-        // replace `_.without`
-        source = replaceFunction(source, 'without', [
-          'function without(array) {',
-          '  var index = -1,',
-          '      length = array.length,',
-          '      result = [];',
-          '',
-          '  while (++index < length) {',
-          '    var value = array[index];',
-          '    if (indexOf(arguments, value, 1) < 0) {',
-          '      result.push(value);',
-          '    }',
-          '  }',
-          '  return result',
-          '}'
-        ].join('\n'));
-
         // add `_.findWhere`
         source = source.replace(matchFunction(source, 'find'), function(match) {
           var indent = getIndent(match);
@@ -2446,10 +2429,9 @@
           });
         });
 
-        // replace `slice` with `slice.call`
+        // replace `slice` with `nativeSlice.call`
         source = removeFunction(source, 'slice');
-        source = source.replace(/^(( *)setTimeout = context.setTimeout)([,;])/m, '$1,\n$2slice = arrayRef.slice$3');
-        source = source.replace(/([^.]\bslice)\(/g, '$1.call(');
+        source = source.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
 
         // replace `lodash.createCallback` references with `createCallback`
         if (!exposeCreateCallback) {

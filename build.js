@@ -200,7 +200,7 @@
   ];
 
   /** List of all Lo-Dash methods */
-  var allMethods = _.keys(dependencyMap);
+  var allMethods = _.without(_.keys(dependencyMap), 'chain', 'findWhere');
 
   /** List of Backbone's Lo-Dash dependencies */
   var backboneDependencies = [
@@ -278,7 +278,9 @@
   ];
 
   /** List of methods used by Underscore */
-  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
+  var underscoreMethods = _.without
+    .apply(_, [allMethods].concat(lodashOnlyMethods))
+    .concat('chain', 'findWhere');
 
   /** List of ways to export the `lodash` function */
   var exportsAll = [
@@ -1670,17 +1672,6 @@
     // the lodash.js source
     var source = fs.readFileSync(filePath, 'utf8');
 
-    // flag to specify replacing Lo-Dash's `_.clone` with Underscore's
-    var useUnderscoreClone = isUnderscore;
-
-    // flags to specify exposing Lo-Dash methods in an Underscore build
-    var exposeAssign = !isUnderscore,
-        exposeCreateCallback = !isUnderscore,
-        exposeForIn = !isUnderscore,
-        exposeForOwn = !isUnderscore,
-        exposeIsPlainObject = !isUnderscore,
-        exposeZipObject = !isUnderscore;
-
     // flags to specify export options
     var isAMD = _.contains(exportsOptions, 'amd'),
         isCommonJS = _.contains(exportsOptions, 'commonjs'),
@@ -1689,52 +1680,52 @@
 
     /*------------------------------------------------------------------------*/
 
+    var useLodashMethod = function(methodName) {
+      if (_.contains(lodashOnlyMethods, methodName) || /^(?:assign|zipObject)$/.test(methodName)) {
+        var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
+        return _.contains(methods, methodName);
+      }
+      methods = _.without.apply(_, [plusMethods].concat(minusMethods));
+      return _.contains(methods, methodName);
+    };
+
+    // methods to include in the build
+    var includeMethods = options.reduce(function(accumulator, value) {
+      return /include/.test(value)
+        ? _.union(accumulator, optionToMethodsArray(source, value))
+        : accumulator;
+    }, []);
+
+    // methods to remove from the build
+    var minusMethods = options.reduce(function(accumulator, value) {
+      return /exclude|minus/.test(value)
+        ? _.union(accumulator, optionToMethodsArray(source, value))
+        : accumulator;
+    }, []);
+
+    // methods to add to the build
+    var plusMethods = options.reduce(function(accumulator, value) {
+      return /plus/.test(value)
+        ? _.union(accumulator, optionToMethodsArray(source, value))
+        : accumulator;
+    }, []);
+
+    // methods categories to include in the build
+    var categories = options.reduce(function(accumulator, value) {
+      if (/category|exclude|include|minus|plus/.test(value)) {
+        var array = optionToArray(value);
+        accumulator =  _.union(accumulator, /category/.test(value)
+          ? array.map(capitalize)
+          : array.filter(function(category) { return /^[A-Z]/.test(category); })
+        );
+      }
+      return accumulator;
+    }, []);
+
     // names of methods to include in the build
     var buildMethods = !isTemplate && (function() {
       var result;
 
-      var includeMethods = options.reduce(function(accumulator, value) {
-        return /include/.test(value)
-          ? _.union(accumulator, optionToMethodsArray(source, value))
-          : accumulator;
-      }, []);
-
-      var minusMethods = options.reduce(function(accumulator, value) {
-        return /exclude|minus/.test(value)
-          ? _.union(accumulator, optionToMethodsArray(source, value))
-          : accumulator;
-      }, []);
-
-      var plusMethods = options.reduce(function(accumulator, value) {
-        return /plus/.test(value)
-          ? _.union(accumulator, optionToMethodsArray(source, value))
-          : accumulator;
-      }, []);
-
-      var categories = options.reduce(function(accumulator, value) {
-        if (/category|exclude|include|minus|plus/.test(value)) {
-          var array = optionToArray(value);
-          accumulator =  _.union(accumulator, /category/.test(value)
-            ? array
-            : array.filter(function(category) { return /^[A-Z]/.test(category); })
-          );
-        }
-        return accumulator;
-      }, []);
-
-      // set flags to include Lo-Dash's methods if explicitly requested
-      if (isUnderscore) {
-        var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
-        exposeAssign = _.contains(methods, 'assign');
-        exposeCreateCallback = _.contains(methods, 'createCallback');
-        exposeForIn = _.contains(methods, 'forIn');
-        exposeForOwn = _.contains(methods, 'forOwn');
-        exposeIsPlainObject = _.contains(methods, 'isPlainObject');
-        exposeZipObject = _.contains(methods, 'zipObject');
-
-        methods = _.without.apply(_, [plusMethods].concat(minusMethods));
-        useUnderscoreClone = !_.contains(methods, 'clone') && !_.contains(methods, 'cloneDeep');
-      }
       // update dependencies
       if (isLegacy) {
         dependencyMap.defer = _.without(dependencyMap.defer, 'bind');
@@ -1761,7 +1752,7 @@
         dependencyMap.value = _.without(dependencyMap.value, 'isArray');
         dependencyMap.where.push('find', 'isEmpty');
 
-        if (useUnderscoreClone) {
+        if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
           dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
         }
       }
@@ -1783,7 +1774,6 @@
           dependencyMap.reduce = _.without(dependencyMap.reduce, 'isArray');
         }
       }
-
       // add method names explicitly
       if (includeMethods.length) {
         result = getDependencies(includeMethods);
@@ -1798,9 +1788,18 @@
       // add method names by category
       if (categories.length) {
         result = _.union(result || [], getDependencies(categories.reduce(function(accumulator, category) {
-          // get method names belonging to each category (case-insensitive)
-          var methodNames = getMethodsByCategory(source, capitalize(category));
+          // get method names belonging to each category
+          var methodNames = getMethodsByCategory(source, category);
 
+          // add `chain` and `findWhere`
+          if (isUnderscore) {
+            if (_.contains(categories, 'Chaining')) {
+              methodNames.push('chain');
+            }
+            if (_.contains(categories, 'Collections')) {
+              methodNames.push('findWhere');
+            }
+          }
           // limit category methods to those available for specific builds
           if (isBackbone) {
             methodNames = methodNames.filter(function(methodName) {
@@ -1980,7 +1979,7 @@
         ].join('\n'));
 
         // replace `_.clone`
-        if (useUnderscoreClone) {
+        if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
           source = replaceFunction(source, 'clone', [
             'function clone(value) {',
             '  return isObject(value)',
@@ -2392,25 +2391,6 @@
           '}'
         ].join('\n'));
 
-        // add `_.findWhere`
-        source = source.replace(matchFunction(source, 'find'), function(match) {
-          var indent = getIndent(match);
-          return match && (match + [
-            '',
-            'function findWhere(object, properties) {',
-            '  return where(object, properties, true);',
-            '}',
-            ''
-          ].join('\n' + indent));
-        });
-
-        source = source.replace(getMethodAssignments(source), function(match) {
-          return match.replace(/^( *)lodash.find *=.+/m, '$&\n$1lodash.findWhere = findWhere;');
-        });
-
-        // add Underscore style chaining
-        source = addChainMethods(source);
-
         // remove `_.templateSettings.imports assignment
         source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
@@ -2434,11 +2414,11 @@
         source = source.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
 
         // replace `lodash.createCallback` references with `createCallback`
-        if (!exposeCreateCallback) {
+        if (!useLodashMethod('createCallback')) {
           source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
         }
         // remove unneeded variables
-        if (useUnderscoreClone) {
+        if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
           source = removeVar(source, 'cloneableClasses');
           source = removeVar(source, 'ctorByClass');
         }
@@ -2463,10 +2443,54 @@
           });
         }
       }
+      // add `_.findWhere`
+      if (_.contains(buildMethods, 'findWhere')) {
+        source = source.replace(matchFunction(source, 'find'), function(match) {
+          var indent = getIndent(match);
+          return match && (match + [
+            '',
+            '/**',
+            ' * Examines each element in a `collection`, returning the first that',
+            ' * has the given `properties`. When checking `properties`, this method',
+            ' * performs a deep comparison between values to determine if they are',
+            ' * equivalent to each other.',
+            ' *',
+            ' * @static',
+            ' * @memberOf _',
+            ' * @category Collections',
+            ' * @param {Array|Object|String} collection The collection to iterate over.',
+            ' * @param {Object} properties The object of property values to filter by.',
+            ' * @returns {Mixed} Returns the found element, else `undefined`.',
+            ' * @example',
+            ' *',
+            ' * var food = [',
+            " *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },",
+            " *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },",
+            " *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }",
+            ' * ];',
+            ' *',
+            " * _.findWhere(food, { 'type': 'vegetable' });",
+            " * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }",
+            ' */',
+            'function findWhere(object, properties) {',
+            '  return where(object, properties, true);',
+            '}',
+            ''
+          ].join('\n' + indent));
+        });
+
+        source = source.replace(getMethodAssignments(source), function(match) {
+          return match.replace(/^( *)lodash.find *=.+/m, '$&\n$1lodash.findWhere = findWhere;');
+        });
+      }
+      // add Underscore's chaining methods
+      if (_.contains(buildMethods, 'chain')) {
+        source = addChainMethods(source);
+      }
       // replace `each` references with `forEach` and `forOwn`
       if ((isUnderscore || (isModern && !isMobile)) &&
             _.contains(buildMethods, 'forEach') &&
-            (_.contains(buildMethods, 'forOwn') || !exposeForOwn)
+            (_.contains(buildMethods, 'forOwn') || !useLodashMethod('forOwn'))
           ) {
         source = source
           .replace(matchFunction(source, 'each'), '')
@@ -2577,22 +2601,22 @@
           var snippet = getMethodAssignments(source),
               modified = snippet;
 
-          if (!exposeAssign) {
+          if (!useLodashMethod('assign')) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *=.+\n/m, '');
           }
-          if (!exposeCreateCallback) {
+          if (!useLodashMethod('createCallback')) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.createCallback *=.+\n/m, '');
           }
-          if (!exposeForIn) {
+          if (!useLodashMethod('forIn')) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *=.+\n/m, '');
           }
-          if (!exposeForOwn) {
+          if (!useLodashMethod('forOwn')) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forOwn *=.+\n/m, '');
           }
-          if (!exposeIsPlainObject) {
+          if (!useLodashMethod('isPlainObject')) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *=.+\n/m, '');
           }
-          if (!exposeZipObject) {
+          if (!useLodashMethod('zipObject')) {
             modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.zipObject *=.+\n/m, '');
           }
           source = source.replace(snippet, function() {
@@ -2604,12 +2628,9 @@
         source = source.replace(/lodash\.support *= */, '');
 
         // remove `thisArg` from unexposed `forIn` and `forOwn`
-        _.each([
-          { 'methodName': 'forIn', 'flag': exposeForIn },
-          { 'methodName': 'forOwn', 'flag': exposeForOwn }
-        ], function(data) {
-          if (!data.flag) {
-            source = source.replace(matchFunction(source, data.methodName), function(match) {
+        _.each(['forIn', 'forOwn'], function(methodName) {
+          if (!useLodashMethod(methodName)) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
               return match
                 .replace(/(callback), *thisArg/g, '$1')
                 .replace(/^ *callback *=.+\n/m, '');
@@ -2618,19 +2639,23 @@
         });
 
         // remove chainability from `each` and `_.forEach`
-        _.each(['each', 'forEach'], function(methodName) {
-          source = source.replace(matchFunction(source, methodName), function(match) {
-            return match
-              .replace(/\n *return .+?([};\s]+)$/, '$1')
-              .replace(/\b(return) +result\b/, '$1')
+        if (!useLodashMethod('forEach')) {
+          _.each(['each', 'forEach'], function(methodName) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match
+                .replace(/\n *return .+?([};\s]+)$/, '$1')
+                .replace(/\b(return) +result\b/, '$1')
+            });
           });
-        });
+        }
 
         // unexpose "exit early" feature of `each`, `_.forEach`, `_.forIn`, and `_.forOwn`
         _.each(['each', 'forEach', 'forIn', 'forOwn'], function(methodName) {
-          source = source.replace(matchFunction(source, methodName), function(match) {
-            return match.replace(/=== *false\)/g, '=== indicatorObject)');
-          });
+          if (methodName == 'each' || !useLodashMethod(methodName)) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match.replace(/=== *false\)/g, '=== indicatorObject)');
+            });
+          }
         });
 
         // modify `_.every`, `_.find`, `_.isEqual`, and `_.some` to use the private `indicatorObject`

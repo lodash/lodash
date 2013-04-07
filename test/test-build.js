@@ -90,10 +90,9 @@
   };
 
   /** List of all Lo-Dash methods */
-  var allMethods = _.functions(_)
-    .filter(function(methodName) { return !/^_/.test(methodName); })
-    .concat('chain')
-    .sort();
+  var allMethods = _.functions(_).filter(function(methodName) {
+    return !/^_/.test(methodName);
+  });
 
   /** List of "Arrays" category methods */
   var arraysMethods = [
@@ -143,6 +142,7 @@
     'every',
     'filter',
     'find',
+    'findWhere',
     'foldl',
     'foldr',
     'forEach',
@@ -316,7 +316,9 @@
   ];
 
   /** List of methods used by Underscore */
-  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
+  var underscoreMethods = _.without
+    .apply(_, [allMethods].concat(lodashOnlyMethods))
+    .concat('chain', 'findWhere');
 
   /*--------------------------------------------------------------------------*/
 

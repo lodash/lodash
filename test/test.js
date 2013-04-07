@@ -196,6 +196,8 @@
   QUnit.module('lodash.at');
 
   (function() {
+    var args = arguments;
+
     test('should return `undefined` for nonexistent keys', function() {
       var actual = _.at(['a', 'b',  'c'], [0, 2, 4]);
       deepEqual(actual, ['a', 'c', undefined]);
@@ -208,6 +210,11 @@
     test('should accept multiple key arguments', function() {
       var actual = _.at(['a', 'b', 'c', 'd'], 0, 2, 3);
       deepEqual(actual, ['a', 'c', 'd']);
+    });
+
+    test('should work with an `arguments` object for `collection`', function() {
+      var actual = _.at(args, [0, 2]);
+      deepEqual(actual, ['a', 'c']);
     });
 
     test('should work with an object for `collection`', function() {
@@ -224,7 +231,7 @@
         deepEqual(_.at(collection, [0, 2]), ['a', 'c']);
       });
     });
-  }());
+  }('a', 'b', 'c'));
 
   /*--------------------------------------------------------------------------*/
 
@@ -295,6 +302,12 @@
 
       deepEqual(actual, [1, 2, 3, undefined]);
     });
+
+    test('should work with an array `object` argument', function() {
+      var array = ['push', 'pop'];
+      _.bindAll(array);
+      equal(array.pop, Array.prototype.pop);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -334,7 +347,7 @@
     };
 
     var objects = {
-      'an arguments object': arguments,
+      'an `arguments` object': arguments,
       'an array': ['a', 'b', 'c', ''],
       'an array-like-object': { '0': 'a', '1': 'b', '2': 'c',  '3': '', 'length': 5 },
       'boolean': false,
@@ -1900,6 +1913,10 @@
       deepEqual(_.omit(new Foo, 'a'), expected);
     });
 
+    test('should work with an array `object` argument', function() {
+      deepEqual(_.omit([1, 2, 3], '0', '2'), { '1': 2 });
+    });
+
     test('should work with a `callback` argument', function() {
       var actual = _.omit(object, function(value) {
         return value == 1;
@@ -2022,6 +2039,10 @@
       Foo.prototype = object;
 
       deepEqual(_.pick(new Foo, 'b'), { 'b': 2 });
+    });
+
+    test('should work with an array `object` argument', function() {
+      deepEqual(_.pick([1, 2, 3], '1'), { '1': 2 });
     });
 
     test('should work with a `callback` argument', function() {
@@ -2855,6 +2876,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.union');
+
+  (function() {
+    test('should produce correct results when passed a falsey `array` argument', function() {
+      var expected = [1, 2, 3],
+          actual = _.union(null, expected);
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.uniq');
 
   (function() {
@@ -2867,10 +2901,14 @@
     });
 
     test('should distinguish between numbers and numeric strings', function() {
-      var expected = ['2', 2, Object('2'), Object(2)],
-          actual = _.uniq(expected);
+      var array = [],
+          expected = ['2', 2, Object('2'), Object(2)];
 
-      deepEqual(actual, expected);
+      _.times(50, function() {
+        array.push.apply(array, expected);
+      });
+
+      deepEqual(_.uniq(expected), expected);
     });
 
     _.each({
@@ -3167,6 +3205,37 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('"Arrays" methods');
+
+ (function() {
+    var args = arguments;
+
+    test('should work with `arguments` objects', function() {
+      function message(methodName) {
+        return '_.' + methodName + ' should work with `arguments` objects';
+      }
+
+      deepEqual(_.compact(args), [1, [3], 5], message('compact'));
+      deepEqual(_.difference(args, [null]), [1, [3], 5], message('difference'));
+      deepEqual(_.findIndex(args, _.identity), 0, message('findIndex'));
+      deepEqual(_.first(args), 1, message('first'));
+      deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
+      deepEqual(_.indexOf(args, 5), 4, message('indexOf'));
+      deepEqual(_.initial(args, 4), [1], message('initial'));
+      deepEqual(_.intersection(args, [1]), [1], message('intersection'));
+      deepEqual(_.last(args), 5, message('last'));
+      deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
+      deepEqual(_.rest(args, 4), [5], message('rest'));
+      deepEqual(_.sortedIndex(args, 6), 5, message('sortedIndex'));
+      deepEqual(_.union(args, [null, 6]), [1, null, [3], 5, 6], message('union'));
+      deepEqual(_.uniq(args), [1, null, [3], 5], message('uniq'));
+      deepEqual(_.without(args, null), [1, [3], 5], message('without'));
+      deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));
+    });
+  }(1, null, [3], null, 5));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash methods');
 
   (function() {
@@ -3227,12 +3296,9 @@
 
       _.each(funcs, function(methodName) {
         var actual = [],
+            expected = _.map(falsey, function() { return []; }),
             func = _[methodName],
             pass = true;
-
-        var expected = (methodName == 'union')
-          ? _.map(falsey, function(value, index) { return index ? [value] : []; })
-          : _.map(falsey, function() { return []; });
 
         _.each(falsey, function(value, index) {
           try {

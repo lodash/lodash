@@ -3205,7 +3205,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('"Arrays" methods');
+  QUnit.module('"Arrays" category methods');
 
  (function() {
     var args = arguments;

@@ -90,9 +90,12 @@
   };
 
   /** List of all Lo-Dash methods */
-  var allMethods = _.functions(_).filter(function(methodName) {
+  var lodashMethods = _.functions(_).filter(function(methodName) {
     return !/^_/.test(methodName);
   });
+
+  /** List of all methods */
+  var allMethods = lodashMethods.concat('chain', 'findWhere');
 
   /** List of "Arrays" category methods */
   var arraysMethods = [
@@ -125,6 +128,7 @@
 
   /** List of "Chaining" category methods */
   var chainingMethods = [
+    'chain',
     'tap',
     'value'
   ];
@@ -315,10 +319,8 @@
     'unzip'
   ];
 
-  /** List of methods used by Underscore */
-  var underscoreMethods = _.without
-    .apply(_, [allMethods].concat(lodashOnlyMethods))
-    .concat('chain', 'findWhere');
+  /** List of Underscore methods */
+  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
 
   /*--------------------------------------------------------------------------*/
 
@@ -804,14 +806,15 @@
   (function() {
     var commands = [
       'backbone',
-      'underscore'
+      'underscore',
+      'modern plus=chain'
     ];
 
     commands.forEach(function(command) {
       asyncTest('`lodash ' + command +'`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
-        build(['-s', command], function(data) {
+        build(['-s'].concat(command.split(' ')), function(data) {
           var basename = path.basename(data.outputPath, '.js'),
               context = createContext();
 
@@ -834,6 +837,37 @@
           ok(wrapped.pop() instanceof lodash, '_#pop returns wrapped values: ' + basename);
           ok(wrapped.shift() instanceof lodash, '_#shift returns wrapped values: ' + basename);
           deepEqual(wrapped.splice(0, 0).value(), [2], '_#splice returns wrapper: ' + basename);
+
+          start();
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('modifiers with findWhere');
+
+  (function() {
+    var commands = [
+      'underscore include=findWhere',
+      'modern include=findWhere',
+      'plus=findWhere'
+    ];
+
+    commands.forEach(function(command) {
+      asyncTest('`lodash ' + command + '`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s'].concat(command.split(' ')), function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
+              context = createContext();
+
+          vm.runInContext(data.source, context);
+          var lodash = context._;
+
+          var collection = [{ 'a': 1 }, { 'a': 1 }];
+          deepEqual(lodash.findWhere(collection, { 'a': 1 }), collection[0], '_.findWhere: ' + basename);
 
           start();
         });
@@ -980,23 +1014,6 @@
         _.each(lodashOnlyMethods.concat('assign'), function(methodName) {
           equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
         });
-
-        start();
-      });
-    });
-
-    asyncTest('`lodash underscore include=findWhere`', function() {
-      var start = _.after(2, _.once(QUnit.start));
-
-      build(['-s', 'underscore', 'include=findWhere'], function(data) {
-        var basename = path.basename(data.outputPath, '.js'),
-            context = createContext();
-
-        vm.runInContext(data.source, context);
-        var lodash = context._;
-
-        var collection = [{ 'a': 1 }, { 'a': 1 }];
-        deepEqual(lodash.findWhere(collection, { 'a': 1 }), collection[0], '_.findWhere: ' + basename);
 
         start();
       });
@@ -1412,7 +1429,7 @@
               methodNames = (methodNames || []).concat(command.match(/category=(\S*)/)[1].split(/, */).map(capitalize));
             }
             if (!methodNames) {
-              methodNames = allMethods.slice();
+              methodNames = lodashMethods.slice();
             }
             if (/plus/.test(command)) {
               methodNames = methodNames.concat(command.match(/plus=(\S*)/)[1].split(/, */));
@@ -1429,16 +1446,13 @@
               var result = getMethodsByCategory(category);
 
               // limit category methods to those available for specific builds
-              if (isBackbone) {
-                result = result.filter(function(methodName) {
-                  return _.contains(backboneDependencies, methodName);
-                });
-              }
-              else if (isUnderscore) {
-                result = result.filter(function(methodName) {
-                  return _.contains(underscoreMethods, methodName);
-                });
-              }
+              result = result.filter(function(methodName) {
+                return _.contains(
+                  isBackbone ? backboneDependencies :
+                  isUnderscore ? underscoreMethods :
+                  lodashMethods, methodName
+                );
+              });
               if (result.length) {
                 methodNames = _.without(methodNames, category);
                 push.apply(methodNames, result);

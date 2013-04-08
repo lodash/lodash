@@ -1276,11 +1276,11 @@
    * // => { 'name': 'moe' }
    */
   function omit(object) {
-    var props = concat.apply(arrayRef, arguments),
+    var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         result = {};
 
     forIn(object, function(value, key) {
-      if (indexOf(props, key, 1) < 0) {
+      if (indexOf(props, key) < 0) {
         result[key] = value;
       }
     });
@@ -1340,8 +1340,8 @@
    * // => { 'name': 'moe' }
    */
   function pick(object) {
-    var index = 0,
-        props = concat.apply(arrayRef, arguments),
+    var index = -1,
+        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         length = props.length,
         result = {};
 
@@ -1659,6 +1659,29 @@
     }
   }
 
+  /**
+   * Examines each element in a `collection`, returning the first that
+   * has the given `properties`. When checking `properties`, this method
+   * performs a deep comparison between values to determine if they are
+   * equivalent to each other.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|String} collection The collection to iterate over.
+   * @param {Object} properties The object of property values to filter by.
+   * @returns {Mixed} Returns the found element, else `undefined`.
+   * @example
+   *
+   * var food = [
+   *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },
+   *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },
+   *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }
+   * ];
+   *
+   * _.findWhere(food, { 'type': 'vegetable' });
+   * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }
+   */
   function findWhere(object, properties) {
     return where(object, properties, true);
   }
@@ -2418,12 +2441,12 @@
   function difference(array) {
     var index = -1,
         length = array.length,
-        flattened = concat.apply(arrayRef, arguments),
+        flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         result = [];
 
     while (++index < length) {
       var value = array[index];
-      if (indexOf(flattened, value, length) < 0) {
+      if (indexOf(flattened, value) < 0) {
         result.push(value);
       }
     }
@@ -3034,7 +3057,10 @@
    * _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
    * // => [1, 2, 3, 101, 10]
    */
-  function union() {
+  function union(array) {
+    if (!isArray(array)) {
+      arguments[0] = array ? nativeSlice.call(array) : arrayRef;
+    }
     return uniq(concat.apply(arrayRef, arguments));
   }
 
@@ -3282,8 +3308,8 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = concat.apply(arrayRef, arguments),
-        index = funcs.length > 1 ? 0 : (funcs = functions(object), -1),
+    var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
+        index = -1,
         length = funcs.length;
 
     while (++index < length) {

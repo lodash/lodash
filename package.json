@@ -29,19 +29,11 @@
   "bin": {
     "lodash": "./build.js"
   },
-  "directories": {
-    "doc": "./doc",
-    "test": "./test"
-  },
   "engines": [
     "node",
     "rhino"
   ],
   "jam": {
     "main": "./lodash.js"
-  },
-  "scripts": {
-    "build": "node ./build.js",
-    "test": "node ./test/test.js ./dist/lodash.js && node ./test/test.js ./dist/lodash.min.js && node ./test/test-build.js"
   }
 }

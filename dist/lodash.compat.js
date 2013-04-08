@@ -573,16 +573,15 @@
      * @private
      * @param {Array} array The array to search.
      * @param {Mixed} value The value to search for.
-     * @param {Number} fromIndex The index to search from.
      * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
      */
-    function cachedContains(array, fromIndex) {
+    function cachedContains(array) {
       var length = array.length,
-          isLarge = (length - fromIndex) >= largeArraySize;
+          isLarge = length >= largeArraySize;
 
       if (isLarge) {
         var cache = {},
-            index = fromIndex - 1;
+            index = -1;
 
         while (++index < length) {
           var key = keyPrefix + array[index];
@@ -594,7 +593,7 @@
           var key = keyPrefix + value;
           return  cache[key] && indexOf(cache[key], value) > -1;
         }
-        return indexOf(array, value, fromIndex) > -1;
+        return indexOf(array, value) > -1;
       }
     }
 
@@ -2101,12 +2100,12 @@
       if (isFunc) {
         callback = lodash.createCallback(callback, thisArg);
       } else {
-        var props = concat.apply(arrayRef, arguments);
+        var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1));
       }
       forIn(object, function(value, key, object) {
         if (isFunc
               ? !callback(value, key, object)
-              : indexOf(props, key, 1) < 0
+              : indexOf(props, key) < 0
             ) {
           result[key] = value;
         }
@@ -2169,8 +2168,8 @@
     function pick(object, callback, thisArg) {
       var result = {};
       if (typeof callback != 'function') {
-        var index = 0,
-            props = concat.apply(arrayRef, arguments),
+        var index = -1,
+            props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
             length = isObject(object) ? props.length : 0;
 
         while (++index < length) {
@@ -3282,8 +3281,8 @@
     function difference(array) {
       var index = -1,
           length = array ? array.length : 0,
-          flattened = concat.apply(arrayRef, arguments),
-          contains = cachedContains(flattened, length),
+          flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+          contains = cachedContains(flattened),
           result = [];
 
       while (++index < length) {
@@ -3633,7 +3632,7 @@
           }
           var argsIndex = argsLength;
           while (--argsIndex) {
-            if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(args[argsIndex], 0)))(value)) {
+            if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(args[argsIndex])))(value)) {
               continue outer;
             }
           }
@@ -3957,7 +3956,10 @@
      * _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
      * // => [1, 2, 3, 101, 10]
      */
-    function union() {
+    function union(array) {
+      if (!isArray(array)) {
+        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
+      }
       return uniq(concat.apply(arrayRef, arguments));
     }
 
@@ -4248,8 +4250,8 @@
      * // => alerts 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
-      var funcs = concat.apply(arrayRef, arguments),
-          index = funcs.length > 1 ? 0 : (funcs = functions(object), -1),
+      var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
+          index = -1,
           length = funcs.length;
 
       while (++index < length) {

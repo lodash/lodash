@@ -1048,11 +1048,11 @@
    * // => { 'name': 'moe' }
    */
   function omit(object) {
-    var props = concat.apply(arrayRef, arguments),
+    var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         result = {};
 
     forIn(object, function(value, key) {
-      if (indexOf(props, key, 1) < 0) {
+      if (indexOf(props, key) < 0) {
         result[key] = value;
       }
     });
@@ -1112,8 +1112,8 @@
    * // => { 'name': 'moe' }
    */
   function pick(object) {
-    var index = 0,
-        props = concat.apply(arrayRef, arguments),
+    var index = -1,
+        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         length = props.length,
         result = {};
 
@@ -2096,12 +2096,12 @@
   function difference(array) {
     var index = -1,
         length = array.length,
-        flattened = concat.apply(arrayRef, arguments),
+        flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         result = [];
 
     while (++index < length) {
       var value = array[index];
-      if (indexOf(flattened, value, length) < 0) {
+      if (indexOf(flattened, value) < 0) {
         result.push(value);
       }
     }
@@ -2628,8 +2628,8 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = concat.apply(arrayRef, arguments),
-        index = funcs.length > 1 ? 0 : (funcs = functions(object), -1),
+    var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
+        index = -1,
         length = funcs.length;
 
     while (++index < length) {

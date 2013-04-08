@@ -3967,10 +3967,10 @@
      * // => [1, 2, 3, 101, 10]
      */
     function union(array) {
-      return uniq(isArray(array)
-        ? concat.apply(arrayRef, arguments)
-        : concat.apply(array ? nativeSlice.call(array) : arrayRef, nativeSlice.call(arguments, 1))
-      );
+      if (!isArray(array)) {
+        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
+      }
+      return uniq(concat.apply(arrayRef, arguments));
     }
 
     /**

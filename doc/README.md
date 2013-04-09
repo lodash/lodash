@@ -3540,7 +3540,7 @@ http://developer.chrome.com/stable/extensions/sandboxingEval.html
 
 #### Arguments
 1. `text` *(String)*: The template text.
-2. `data` *(Obect)*: The data object used to populate the text.
+2. `data` *(Object)*: The data object used to populate the text.
 3. `options` *(Object)*: The options object. escape - The "escape" delimiter regexp. evaluate - The "evaluate" delimiter regexp. interpolate - The "interpolate" delimiter regexp. sourceURL - The sourceURL of the template's compiled source. variable - The data object variable name.
 
 #### Returns

@@ -25,7 +25,7 @@
   var push = arrayRef.push;
 
   /** Used to detect the Node.js executable in command-line arguments */
-  var reNode = RegExp('(?:^|' + path.sep + ')node(?:\\.exe)?$');
+  var reNode = RegExp('(?:^|' + path.sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')node(?:\\.exe)?$');
 
   /** Shortcut used to convert array-like objects to arrays */
   var slice = arrayRef.slice;
@@ -290,9 +290,6 @@
     'global',
     'node'
   ];
-
-  /** Add `path.sep` for older versions of Node.js */
-  path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
 
   /*--------------------------------------------------------------------------*/
 

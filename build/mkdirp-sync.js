@@ -22,7 +22,7 @@
     var sep = path.sep;
 
     // ensure relative paths are prefixed with `./`
-    if (!RegExp('^\\.?' + sep).test(dirname)) {
+    if (!RegExp('^\\.?' + sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(dirname)) {
       dirname = '.' + sep + dirname;
     }
     dirname.split(sep).reduce(function(currPath, segment) {

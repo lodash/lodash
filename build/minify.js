@@ -47,7 +47,7 @@
   var mediaType = 'application/vnd.github.v3.raw';
 
   /** Used to detect the Node.js executable in command-line arguments */
-  var reNode = RegExp('(?:^|' + path.sep + ')node(?:\\.exe)?$');
+  var reNode = RegExp('(?:^|' + path.sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')node(?:\\.exe)?$');
 
   /** Used to reference parts of the blob href */
   var location = (function() {

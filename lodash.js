@@ -444,7 +444,7 @@
      * The template used to create iterator functions.
      *
      * @private
-     * @param {Obect} data The data object used to populate the text.
+     * @param {Object} data The data object used to populate the text.
      * @returns {String} Returns the interpolated text.
      */
     var iteratorTemplate = template(
@@ -4945,7 +4945,7 @@
      * @memberOf _
      * @category Utilities
      * @param {String} text The template text.
-     * @param {Obect} data The data object used to populate the text.
+     * @param {Object} data The data object used to populate the text.
      * @param {Object} options The options object.
      *  escape - The "escape" delimiter regexp.
      *  evaluate - The "evaluate" delimiter regexp.

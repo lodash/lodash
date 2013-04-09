@@ -1964,16 +1964,17 @@
               }
             }
             if (!found) {
-              value = isArr
-                ? (isArray(value) ? value : [])
-                : (isPlainObject(value) ? value : {});
-
               var isShallow;
               if (callback) {
                 result = callback(value, source);
                 if ((isShallow = typeof result != 'undefined')) {
                   value = result;
                 }
+              }
+              if (!isShallow) {
+                value = isArr
+                  ? (isArray(value) ? value : [])
+                  : (isPlainObject(value) ? value : {});
               }
               // add `source` and associated `value` to the stack of traversed objects
               stackA.push(source);

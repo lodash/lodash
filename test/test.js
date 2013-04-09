@@ -1085,12 +1085,21 @@
 
     test('lodash.' + methodName + ' should pass the correct `callback` arguments', function() {
       var args;
-
       func({ 'a': 1 }, { 'a': 2 }, function() {
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [1, 2]);
+      deepEqual(args, [1, 2], 'primitive property values');
+
+      var array = [1, 2],
+          object = { 'b': 2 };
+
+      args = null;
+      func({ 'a': array }, { 'a': object }, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [array, object], 'non-primitive property values');
     });
 
     test('lodash.' + methodName + ' should correct set the `this` binding', function() {
@@ -1883,6 +1892,18 @@
         return _.isArray(a) ? a.concat(b) : undefined;
       });
       deepEqual(actual, { 'a': { 'b': [0, 1, 2] } });
+    });
+
+    test('should pass the correct values to `callback`', function() {
+      var argsList = [],
+          array = [1, 2],
+          object = { 'b': 2 };
+
+      _.merge({ 'a': array }, { 'a': object }, function(a, b) {
+        argsList.push(slice.call(arguments));
+      });
+
+      deepEqual(argsList, [[array, object], [undefined, 2]]);
     });
   }(1, 2, 3));
 

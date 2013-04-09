@@ -3,17 +3,16 @@
   'use strict';
 
   /** Load Node.js modules */
-  var fs = require('fs'),
-      path = require('path'),
-      vm = require('vm');
+  var vm = require('vm');
 
   /** Load other modules */
-  var _ = require(path.join(__dirname, 'lodash.js')),
-      minify = require(path.join(__dirname, 'build', 'minify.js')),
-      mkdirpSync = require(path.join(__dirname, 'build', 'mkdirp-sync.js'));
+  var _ = require('./lodash.js'),
+      minify = require('./build/minify.js'),
+      util = require('./build/util.js');
 
-  /** Add `path.sep` for older versions of Node.js */
-  path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
+  /** Module shortcuts */
+  var fs = util.fs,
+      path = util.path;
 
   /** The current working directory */
   var cwd = process.cwd();
@@ -25,7 +24,7 @@
   var push = arrayRef.push;
 
   /** Used to detect the Node.js executable in command-line arguments */
-  var reNode = RegExp('(?:^|' + path.sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')node(?:\\.exe)?$');
+  var reNode = RegExp('(?:^|' + path.sepEscaped + ')node(?:\\.exe)?$');
 
   /** Shortcut used to convert array-like objects to arrays */
   var slice = arrayRef.slice;
@@ -1640,7 +1639,7 @@
       if (/-o|--output/.test(value)) {
         result = options[index + 1];
         var dirname = path.dirname(result);
-        mkdirpSync(dirname);
+        fs.mkdirpSync(dirname);
         result = path.join(fs.realpathSync(dirname), path.basename(result));
       }
       return result;
@@ -1829,12 +1828,6 @@
 
     // load customized Lo-Dash module
     var lodash = !isTemplate && (function() {
-      var context = vm.createContext({
-        'clearTimeout': clearTimeout,
-        'console': console,
-        'setTimeout': setTimeout
-      });
-
       source = setUseStrictOption(source, isStrict);
 
       if (isLegacy) {
@@ -2499,6 +2492,13 @@
           .replace(/\beach(?=\(collection)/g, 'forOwn')
           .replace(/\beach(?=\(\[)/g, 'forEach');
       }
+
+      var context = vm.createContext({
+        'clearTimeout': clearTimeout,
+        'console': console,
+        'setTimeout': setTimeout
+      });
+
       vm.runInContext(source, context);
       return context._;
     }());

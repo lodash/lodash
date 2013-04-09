@@ -3,20 +3,20 @@
   'use strict';
 
   /** Load Node.js modules */
-  var fs = require('fs'),
-      path = require('path'),
-      vm = require('vm');
+  var vm = require('vm');
 
   /** Load other modules */
-  var build = require('../build.js'),
-      minify = require('../build/minify'),
-      _ = require('../lodash.js');
+  var _ = require('../lodash.js'),
+      build = require('../build.js'),
+      minify = require('../build/minify.js'),
+      util = require('../build/util.js');
+
+  /** Module shortcuts */
+  var fs = util.fs,
+      path = util.path;
 
   /** Used to avoid `noglobal` false positives caused by `errno` leaked in Node.js */
   global.errno = true;
-
-  /** Add `path.sep` for older versions of Node.js */
-  path.sep || (path.sep = process.platform == 'win32' ? '\\' : '/');
 
   /** The current working directory */
   var cwd = process.cwd();

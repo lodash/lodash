@@ -4,7 +4,7 @@
   "description": "A low-level utility library delivering consistency, customization, performance, and extra features.",
   "homepage": "http://lodash.com",
   "license": "MIT",
-  "main": "./dist/lodash",
+  "main": "./dist/lodash.js",
   "keywords": [
     "browser",
     "client",

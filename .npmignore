@@ -1,7 +1,7 @@
 .*
 *.custom.*
 *.d.ts
-CONTRIBUTING.md
+*.md
 doc
 node_modules
 perf

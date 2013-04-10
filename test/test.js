@@ -1972,6 +1972,41 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.once');
+
+  (function() {
+    test('should ignore recursive calls', function() {
+      var count = 0;
+
+      var func = _.once(function() {
+        count++;
+        func();
+      });
+
+      func();
+      strictEqual(count, 1);
+    });
+
+    test('should not throw more than once', function() {
+      var pass = true;
+
+      var func = _.once(function() {
+        throw new Error;
+      });
+
+      raises(function() { func(); }, Error);
+
+      try {
+        func();
+      } catch(e) {
+        pass = false;
+      }
+      ok(pass);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.parseInt');
 
   (function() {

@@ -209,7 +209,7 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object, that wraps the given `value`, to enable method
+     * Creates a `lodash` object, which wraps the given `value`, to enable method
      * chaining.
      *
      * In addition to Lo-Dash methods, wrappers also have the following `Array` methods:
@@ -247,6 +247,26 @@
      * @category Chaining
      * @param {Mixed} value The value to wrap in a `lodash` instance.
      * @returns {Object} Returns a `lodash` instance.
+     * @example
+     *
+     * var wrapped = _([1, 2, 3]);
+     *
+     * // returns an unwrapped value
+     * wrapped.reduce(function(sum, num) {
+     *   return sum + num;
+     * });
+     * // => 6
+     *
+     * // returns a wrapped value
+     * var squares = wrapped.map(function(num) {
+     *   return num * num;
+     * });
+     *
+     * _.isArray(squares);
+     * // => false
+     *
+     * _.isArray(squares.value());
+     * // => true
      */
     function lodash(value) {
       // don't wrap if already wrapped, even if wrapped by a different `lodash` constructor
@@ -807,7 +827,7 @@
     }
 
     /**
-     * A fallback implementation of `isPlainObject` that checks if a given `value`
+     * A fallback implementation of `isPlainObject` which checks if a given `value`
      * is an object created by the `Object` constructor, assuming objects created
      * by the `Object` constructor have no inherited enumerable properties and that
      * there are no `Object.prototype` extensions.
@@ -937,7 +957,7 @@
     };
 
     /**
-     * A fallback implementation of `Object.keys` that produces an array of the
+     * A fallback implementation of `Object.keys` which produces an array of the
      * given object's own enumerable property names.
      *
      * @private
@@ -2875,7 +2895,7 @@
     var pluck = map;
 
     /**
-     * Reduces a `collection` to a value that is the accumulated result of running
+     * Reduces a `collection` to a value which is the accumulated result of running
      * each element in the `collection` through the `callback`, where each successive
      * `callback` execution consumes the return value of the previous execution.
      * If `accumulator` is not passed, the first element of the `collection` will be

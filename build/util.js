@@ -9,6 +9,9 @@
   /** Load other modules */
   var _ = require('../lodash.js');
 
+  /** Used to indicate if running in Windows */
+  var isWindows = process.platform == 'win32';
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -17,7 +20,7 @@
    * @memberOf util.path
    * @type String
    */
-  var sep = path.sep || (process.platform == 'win32' ? '\\' : '/');
+  var sep = path.sep || (isWindows ? '\\' : '/');
 
   /**
    * The escaped path separator used for inclusion in RegExp strings.
@@ -26,6 +29,9 @@
    * @type String
    */
   var sepEscaped = sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  /** Used to determine if a path is prefixed with a drive letter, dot, or slash */
+  var rePrefixed = RegExp('^(?:' + (isWindows ? '[a-zA-Z]:|' : '') + '\\.?)' + sepEscaped);
 
   /*--------------------------------------------------------------------------*/
 
@@ -39,7 +45,7 @@
    */
   function mkdirpSync(dirname, mode) {
     // ensure relative paths are prefixed with `./`
-    if (!RegExp('^\\.?' + sepEscaped).test(dirname)) {
+    if (!rePrefixed.test(dirname)) {
       dirname = '.' + sep + dirname;
     }
     dirname.split(sep).reduce(function(currPath, segment) {

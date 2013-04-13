@@ -4869,9 +4869,6 @@
      * Note: In the development build, `_.template` utilizes sourceURLs for easier
      * debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
      *
-     * Note: Lo-Dash may be used in Chrome extensions by either creating a `lodash csp`
-     * build and using precompiled templates, or loading Lo-Dash in a sandbox.
-     *
      * For more information on precompiling templates see:
      * http://lodash.com/#custom-builds
      *

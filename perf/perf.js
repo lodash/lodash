@@ -182,23 +182,31 @@
           aHz = getHz(this[0]),
           bHz = getHz(this[1]);
 
-      if (fastest.length > 1) {
-        log('It\'s too close to call.');
-        aHz = bHz = slowestHz;
+      for (var index = 0, length = this.length; index < length; index++) {
+        var bench = this[index];
+        if (bench.error) {
+          var errored = true;
+          log(bench.error);
+        }
       }
-      else {
-        var percent = ((fastestHz / slowestHz) - 1) * 100;
+      if (!errored) {
+        if (fastest.length > 1) {
+          log('It\'s too close to call.');
+          aHz = bHz = slowestHz;
+        }
+        else {
+          var percent = ((fastestHz / slowestHz) - 1) * 100;
 
-        log(
-          fastest[0].name + ' is ' +
-          formatNumber(percent < 1 ? percent.toFixed(2) : Math.round(percent)) +
-          '% faster.'
-        );
+          log(
+            fastest[0].name + ' is ' +
+            formatNumber(percent < 1 ? percent.toFixed(2) : Math.round(percent)) +
+            '% faster.'
+          );
+        }
+        // add score adjusted for margin of error
+        score.a += aHz;
+        score.b += bHz;
       }
-      // add score adjusted for margin of error
-      score.a += aHz;
-      score.b += bHz;
-
       // remove current suite from queue
       suites.shift();
 

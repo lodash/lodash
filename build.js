@@ -402,10 +402,10 @@
     ].join('\n'));
 
     // replace wrapper `Array` method assignments
-    source = source.replace(/^(?: *\/\/.*\n)*( *)each\(\['[\s\S]+?\n\1}$/m, function(match, indent) {
+    source = source.replace(/^(?:(?: *\/\/.*\n)*(?: *if *\(.+\n)?( *)(each|forEach)\(\['[\s\S]+?\n\1}\);(?:\n *})?\n+)+/m, function(match, indent, funcName) {
       return indent + [
         '// add `Array` mutator functions to the wrapper',
-        "each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
+        funcName + "(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
         '  var func = arrayRef[methodName];',
         '  lodash.prototype[methodName] = function() {',
         '    var value = this.__wrapped__;',
@@ -421,7 +421,7 @@
         '});',
         '',
         '// add `Array` accessor functions to the wrapper',
-        "each(['concat', 'join', 'slice'], function(methodName) {",
+        funcName + "(['concat', 'join', 'slice'], function(methodName) {",
         '  var func = arrayRef[methodName];',
         '  lodash.prototype[methodName] = function() {',
         '    var value = this.__wrapped__,',
@@ -433,7 +433,8 @@
         '    }',
         '    return result;',
         '  };',
-        '});'
+        '});',
+        ''
       ].join('\n' + indent);
     });
 

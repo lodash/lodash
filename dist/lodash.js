@@ -350,92 +350,6 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * The template used to create iterator functions.
-     *
-     * @private
-     * @param {Object} data The data object used to populate the text.
-     * @returns {String} Returns the interpolated text.
-     */
-    var iteratorTemplate = function(obj) {
-
-      var __p = 'var index, iterable = ' +
-      (obj.firstArg) +
-      ', result = ' +
-      (obj.init) +
-      ';\nif (!iterable) return result;\n' +
-      (obj.top) +
-      ';\n';
-       if (obj.arrays) {
-      __p += 'var length = iterable.length; index = -1;\nif (' +
-      (obj.arrays) +
-      ') {\n  while (++index < length) {\n    ' +
-      (obj.loop) +
-      '\n  }\n}\nelse {  ';
-       }
-
-       if (obj.useHas && obj.useKeys) {
-      __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n    ' +
-      (obj.loop) +
-      '\n  }  ';
-       } else {
-      __p += '\n  for (index in iterable) {';
-          if (obj.useHas) {
-      __p += '\n    if (';
-            if (obj.useHas) {
-      __p += 'hasOwnProperty.call(iterable, index)';
-       }
-      __p += ') {    ';
-       }
-      __p += 
-      (obj.loop) +
-      ';    ';
-       if (obj.useHas) {
-      __p += '\n    }';
-       }
-      __p += '\n  }  ';
-       }
-
-       if (obj.arrays) {
-      __p += '\n}';
-       }
-      __p += 
-      (obj.bottom) +
-      ';\nreturn result';
-
-      return __p
-    };
-
-    /** Reusable iterator options for `assign` and `defaults` */
-    var defaultsIteratorOptions = {
-      'args': 'object, source, guard',
-      'top':
-        'var args = arguments,\n' +
-        '    argsIndex = 0,\n' +
-        "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
-        'while (++argsIndex < argsLength) {\n' +
-        '  iterable = args[argsIndex];\n' +
-        '  if (iterable && objectTypes[typeof iterable]) {',
-      'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
-      'bottom': '  }\n}'
-    };
-
-    /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
-    var eachIteratorOptions = {
-      'args': 'collection, callback, thisArg',
-      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg)",
-      'arrays': false,
-      'loop': 'if (callback(iterable[index], index, collection) === false) return result'
-    };
-
-    /** Reusable iterator options for `forIn` and `forOwn` */
-    var forOwnIteratorOptions = {
-      'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
-      'arrays': false
-    };
-
-    /*--------------------------------------------------------------------------*/
-
-    /**
      * Creates a function optimized to search large arrays for a given `value`,
      * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
      *
@@ -565,54 +479,6 @@
         return func.apply(thisBinding, args);
       }
       return bound;
-    }
-
-    /**
-     * Creates compiled iteration functions.
-     *
-     * @private
-     * @param {Object} [options1, options2, ...] The compile options object(s).
-     *  arrays - A string of code to determine if the iterable is an array or array-like.
-     *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
-     *  useKeys - A boolean to specify using `_.keys` for own property iteration.
-     *  args - A string of comma separated arguments the iteration function will accept.
-     *  top - A string of code to execute before the iteration branches.
-     *  loop - A string of code to execute in the object loop.
-     *  bottom - A string of code to execute after the iteration branches.
-     * @returns {Function} Returns the compiled function.
-     */
-    function createIterator() {
-      var data = {
-        // iterator options
-        'arrays': 'isArray(iterable)',
-        'bottom': '',
-        'init': 'iterable',
-        'loop': '',
-        'top': '',
-        'useHas': true,
-        'useKeys': !!keys
-      };
-
-      // merge options into a template data object
-      for (var object, index = 0; object = arguments[index]; index++) {
-        for (var key in object) {
-          data[key] = object[key];
-        }
-      }
-      var args = data.args;
-      data.firstArg = /^[^,]+/.exec(args)[0];
-
-      // create the function factory
-      var factory = Function(
-          'hasOwnProperty, isArguments, isArray, isString, keys, ' +
-          'lodash, objectTypes',
-        'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
-      );
-      // return the compiled function
-      return factory(
-        hasOwnProperty, isArguments, isArray, isString, keys,
-        lodash, objectTypes
-      );
     }
 
     /**
@@ -783,13 +649,18 @@
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns a new array of property names.
      */
-    var shimKeys = createIterator({
-      'args': 'object',
-      'init': '[]',
-      'top': 'if (!(objectTypes[typeof object])) return result',
-      'loop': 'result.push(index)',
-      'arrays': false
-    });
+    var shimKeys = function (object) {
+      var index, iterable = object, result = [];
+      if (!iterable) return result;
+      if (!(objectTypes[typeof object])) return result;
+
+        for (index in iterable) {
+          if (hasOwnProperty.call(iterable, index)) {    
+          result.push(index);    
+          }
+        }    
+      return result
+    };
 
     /**
      * Creates an array composed of the own enumerable property names of `object`.
@@ -862,18 +733,40 @@
      * defaults(food, { 'name': 'banana', 'type': 'fruit' });
      * // => { 'name': 'apple', 'type': 'fruit' }
      */
-    var assign = createIterator(defaultsIteratorOptions, {
-      'top':
-        defaultsIteratorOptions.top.replace(';',
-          ';\n' +
-          "if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {\n" +
-          '  var callback = lodash.createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
-          "} else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {\n" +
-          '  callback = args[--argsLength];\n' +
-          '}'
-        ),
-      'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]'
-    });
+    var assign = function (object, source, guard) {
+      var index, iterable = object, result = iterable;
+      if (!iterable) return result;
+      var args = arguments,
+          argsIndex = 0,
+          argsLength = typeof guard == 'number' ? 2 : args.length;
+      if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
+        var callback = lodash.createCallback(args[--argsLength - 1], args[argsLength--], 2);
+      } else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {
+        callback = args[--argsLength];
+      }
+      while (++argsIndex < argsLength) {
+        iterable = args[argsIndex];
+        if (iterable && objectTypes[typeof iterable]) {;
+      var length = iterable.length; index = -1;
+      if (isArray(iterable)) {
+        while (++index < length) {
+          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
+        }
+      }
+      else {    
+        var ownIndex = -1,
+            ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
+            length = ownProps.length;
+
+        while (++ownIndex < length) {
+          index = ownProps[ownIndex];
+          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
+        }    
+      }
+        }
+      };
+      return result
+    };
 
     /**
      * Creates a clone of `value`. If `deep` is `true`, nested objects will also
@@ -1066,7 +959,35 @@
      * _.defaults(food, { 'name': 'banana', 'type': 'fruit' });
      * // => { 'name': 'apple', 'type': 'fruit' }
      */
-    var defaults = createIterator(defaultsIteratorOptions);
+    var defaults = function (object, source, guard) {
+      var index, iterable = object, result = iterable;
+      if (!iterable) return result;
+      var args = arguments,
+          argsIndex = 0,
+          argsLength = typeof guard == 'number' ? 2 : args.length;
+      while (++argsIndex < argsLength) {
+        iterable = args[argsIndex];
+        if (iterable && objectTypes[typeof iterable]) {;
+      var length = iterable.length; index = -1;
+      if (isArray(iterable)) {
+        while (++index < length) {
+          if (typeof result[index] == 'undefined') result[index] = iterable[index]
+        }
+      }
+      else {    
+        var ownIndex = -1,
+            ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
+            length = ownProps.length;
+
+        while (++ownIndex < length) {
+          index = ownProps[ownIndex];
+          if (typeof result[index] == 'undefined') result[index] = iterable[index]
+        }    
+      }
+        }
+      };
+      return result
+    };
 
     /**
      * This method is similar to `_.find`, except that it returns the key of the
@@ -1129,9 +1050,17 @@
      * });
      * // => alerts 'name' and 'bark' (order is not guaranteed)
      */
-    var forIn = createIterator(eachIteratorOptions, forOwnIteratorOptions, {
-      'useHas': false
-    });
+    var forIn = function (collection, callback, thisArg) {
+      var index, iterable = collection, result = iterable;
+      if (!iterable) return result;
+      if (!objectTypes[typeof iterable]) return result;
+      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
+
+        for (index in iterable) {
+          if (callback(iterable[index], index, collection) === false) return result;    
+        }    
+      return result
+    };
 
     /**
      * Iterates over an object's own enumerable properties, executing the `callback`
@@ -1154,7 +1083,22 @@
      * });
      * // => alerts '0', '1', and 'length' (order is not guaranteed)
      */
-    var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
+    var forOwn = function (collection, callback, thisArg) {
+      var index, iterable = collection, result = iterable;
+      if (!iterable) return result;
+      if (!objectTypes[typeof iterable]) return result;
+      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
+
+        var ownIndex = -1,
+            ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
+            length = ownProps.length;
+
+        while (++ownIndex < length) {
+          index = ownProps[ownIndex];
+          if (callback(iterable[index], index, collection) === false) return result
+        }    
+      return result
+    };
 
     /**
      * Creates a sorted array of all enumerable properties, own and inherited,

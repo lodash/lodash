@@ -1330,7 +1330,7 @@
       };
 
       build(['-s', '-d', 'csp'], callback);
-      build(['-s', '-d', 'mobile'], callback);
+      build(['-s', '-d', 'modern'], callback);
     });
   }());
 

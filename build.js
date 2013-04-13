@@ -608,7 +608,6 @@
       '  Commands:',
       '',
       '    lodash backbone      Build with only methods required by Backbone',
-      '    lodash csp           Build supporting default Content Security Policy restrictions',
       '    lodash legacy        Build tailored for older environments without ES5 support',
       '    lodash modern        Build tailored for newer environments with ES5 support',
       '    lodash mobile        Build without method compilation and most bug fixes for old browsers',
@@ -630,7 +629,7 @@
       '                         (e.g. `lodash settings="{interpolate:/{{([\\s\\S]+?)}}/g}"`)',
       '    lodash moduleId=...  The AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates',
       '',
-      '    All arguments, except `legacy` with `csp`, `mobile`, `modern`, or `underscore`, may be combined.',
+      '    All arguments, except `legacy` with `mobile`, `modern`, or `underscore`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
       '',
       '  Options:',
@@ -1599,10 +1598,10 @@
     var isMinify = _.contains(options, '-m') || _.contains(options, '--minify');
 
     // flag to specify a mobile build
-    var isMobile = isCSP || _.contains(options, 'mobile');
+    var isMobile = _.contains(options, 'mobile');
 
     // flag to specify a modern build
-    var isModern = isMobile || _.contains(options, 'modern');
+    var isModern = isCSP || isMobile || _.contains(options, 'modern');
 
     // flag to specify a modularize build
     var isModularize = _.contains(options, 'modularize');

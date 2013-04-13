@@ -74,7 +74,7 @@
     * @memberOf util
     * @type Object
     */
-    'fs': _.defaults({}, fs, {
+    'fs': _.defaults(_.cloneDeep(fs), {
       'existsSync': fs.existsSync || path.existsSync,
       'mkdirpSync': mkdirpSync
     }),
@@ -85,7 +85,7 @@
     * @memberOf util
     * @type Object
     */
-    'path': _.defaults({}, path, {
+    'path': _.defaults(_.cloneDeep(path), {
       'sep': sep,
       'sepEscaped': sepEscaped
     })

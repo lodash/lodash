@@ -972,7 +972,7 @@ _.isArray(squares.value());
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5231 "View in source") [&#x24C9;][1]
+<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5228 "View in source") [&#x24C9;][1]
 
 Invokes `interceptor` with the `value` as the first argument, and then returns `value`. The purpose of this method is to "tap into" a method chain, in order to perform operations on intermediate results within the chain.
 
@@ -1002,7 +1002,7 @@ _([1, 2, 3, 4])
 <!-- div -->
 
 ### <a id="_prototypetostring"></a>`_.prototype.toString()`
-<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5248 "View in source") [&#x24C9;][1]
+<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5245 "View in source") [&#x24C9;][1]
 
 Produces the `toString` result of the wrapped value.
 
@@ -1023,7 +1023,7 @@ _([1, 2, 3]).toString();
 <!-- div -->
 
 ### <a id="_prototypevalueof"></a>`_.prototype.valueOf()`
-<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5265 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5262 "View in source") [&#x24C9;][1]
 
 Extracts the wrapped value.
 
@@ -3546,13 +3546,11 @@ Create a new `lodash` function using the given `context` object.
 <!-- div -->
 
 ### <a id="_templatetext-data-options"></a>`_.template(text, data, options)`
-<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5031 "View in source") [&#x24C9;][1]
+<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5028 "View in source") [&#x24C9;][1]
 
 A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.
 
 Note: In the development build, `_.template` utilizes sourceURLs for easier debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-
-Note: Lo-Dash may be used in Chrome extensions by either creating a `lodash csp` build and using precompiled templates, or loading Lo-Dash in a sandbox.
 
 For more information on precompiling templates see:<br>
 http://lodash.com/#custom-builds
@@ -3630,7 +3628,7 @@ fs.writeFileSync(path.join(cwd, 'jst.js'), '\
 <!-- div -->
 
 ### <a id="_timesn-callback--thisarg"></a>`_.times(n, callback [, thisArg])`
-<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5156 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5153 "View in source") [&#x24C9;][1]
 
 Executes the `callback` function `n` times, returning an array of the results of each `callback` execution. The `callback` is bound to `thisArg` and invoked with one argument; *(index)*.
 
@@ -3662,7 +3660,7 @@ _.times(3, function(n) { this.cast(n); }, mage);
 <!-- div -->
 
 ### <a id="_unescapestring"></a>`_.unescape(string)`
-<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5183 "View in source") [&#x24C9;][1]
+<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5180 "View in source") [&#x24C9;][1]
 
 The inverse of `_.escape`, this method converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their corresponding characters.
 
@@ -3686,7 +3684,7 @@ _.unescape('Moe, Larry &amp; Curly');
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5203 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5200 "View in source") [&#x24C9;][1]
 
 Generates a unique ID. If `prefix` is passed, the ID will be appended to it.
 
@@ -3739,7 +3737,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5440 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5437 "View in source") [&#x24C9;][1]
 
 *(String)*: The semantic version number.
 

@@ -380,18 +380,6 @@
     // remove `lodash.prototype` batch method assignments
     source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '');
 
-    // move `mixin(lodash)` to after the method assignments
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(lodash\).+/, '');
-    source = source.replace(getMethodAssignments(source), function(match) {
-      var indent = /^ *(?=lodash\.)/m.exec(match)[0];
-      return match + [
-        '',
-        '',
-        '// add functions to `lodash.prototype`',
-        'mixin(lodash);'
-      ].join('\n' + indent);
-    });
-
     // replace `_.mixin`
     source = replaceFunction(source, 'mixin', [
       'function mixin(object) {',
@@ -446,6 +434,18 @@
         '    return result;',
         '  };',
         '});'
+      ].join('\n' + indent);
+    });
+
+    // move `mixin(lodash)` to after the method assignments
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(lodash\).+/, '');
+    source = source.replace(getMethodAssignments(source), function(match) {
+      var indent = /^ *(?=lodash\.)/m.exec(match)[0];
+      return match + [
+        '',
+        '',
+        '// add functions to `lodash.prototype`',
+        'mixin(lodash);'
       ].join('\n' + indent);
     });
 
@@ -986,8 +986,11 @@
     // grab the method assignments snippet
     snippet = getMethodAssignments(source);
 
-    // remove method assignment  from `lodash.prototype`
+    // remove method assignment from `lodash.prototype`
     source = source.replace(RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=.+\\n', 'm'), '');
+
+    // remove pseudo private methods
+    source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\._' + funcName + ' *=.+\\n', 'm'), '');
 
     // remove assignment and aliases
     var modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
@@ -1831,21 +1834,68 @@
       source = setUseStrictOption(source, isStrict);
 
       if (isLegacy) {
+        source = removeKeysOptimization(source);
+        source = removeSetImmediate(source);
+        source = removeSupportProp(source, 'fastBind');
+        source = replaceSupportProp(source, 'argsClass', 'false');
+
         _.each(['getPrototypeOf', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
           source = replaceVar(source, varName, 'false');
         });
 
-        _.each(['argsClass', 'fastBind'], function(propName) {
-          source = replaceSupportProp(source, propName, 'false');
+        _.each(['isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
+          source = removeVar(source, varName);
         });
 
-        source = removeKeysOptimization(source);
+        // remove native `Function#bind` branch in `_.bind`
+        source = source.replace(matchFunction(source, 'bind'), function(match) {
+          return match.replace(/(?:\s*\/\/.*)*\s*return support\.fastBind[^:]+:\s*/, 'return ');
+        });
+
+        // remove native `Array.isArray` branch in `_.isArray`
+        source = source.replace(matchFunction(source, 'isArray'), function(match) {
+          return match.replace(/nativeIsArray\s*\|\|\s*/, '');
+        });
+
+        // replace `_.keys` with `shimKeys`
+        source = source.replace(
+          matchFunction(source, 'keys').replace(/[\s\S]+?var keys *= */, ''),
+          matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *= */, '')
+        );
+
+        source = removeFunction(source, 'shimKeys');
+
+        // replace `_.isArguments` with fallback
+        source = source.replace(matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''), function() {
+          var fallback = getIsArgumentsFallback(source),
+              body = fallback.match(/isArguments *= *function([\s\S]+? *});/)[1],
+              indent = getIndent(fallback);
+
+          return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2)) + '\n';
+        });
+
+        source = removeIsArgumentsFallback(source);
+      }
+      if (isModern) {
+        source = removeSupportArgsObject(source);
+        source = removeSupportSpliceObjects(source);
+        source = removeIsArgumentsFallback(source);
+
+        // remove `_.isPlainObject` fallback
+        source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
+          return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
+        });
+
+        if (!isMobile) {
+          source = removeIsFunctionFallback(source);
+        }
       }
       if (isMobile || isUnderscore) {
         source = removeKeysOptimization(source);
         source = removeSetImmediate(source);
       }
       if (isModern || isUnderscore) {
+        source = removeSupportArgsClass(source);
         source = removeSupportNonEnumShadows(source);
         source = removeSupportEnumPrototypes(source);
         source = removeSupportOwnLast(source);
@@ -1939,16 +1989,6 @@
           source = source.replace(/^( *)var eachIteratorOptions *= *[\s\S]+?\n\1};\n/m, function(match) {
             return match.replace(/(^ *'arrays':)[^,]+/m, '$1 false');
           });
-        }
-      }
-      if (isModern) {
-        // remove `_.isPlainObject` fallback
-        source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
-          return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
-        });
-
-        if (!isMobile) {
-          source = removeIsFunctionFallback(source);
         }
       }
       if (isUnderscore) {
@@ -2383,11 +2423,18 @@
           '}'
         ].join('\n'));
 
+        // unexpose `lodash.support`
+        source = source.replace(/lodash\.support *= */, '');
+
         // remove `_.templateSettings.imports assignment
         source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
         // remove large array optimizations
         source = removeFunction(source, 'cachedContains');
+
+        // replace `slice` with `nativeSlice.call`
+        source = removeFunction(source, 'slice');
+        source = source.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
 
         // remove `_.isEqual` use from `createCallback`
         source = source.replace(matchFunction(source, 'createCallback'), function(match) {
@@ -2401,18 +2448,35 @@
           });
         });
 
-        // replace `slice` with `nativeSlice.call`
-        source = removeFunction(source, 'slice');
-        source = source.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
+        // modify `_.every`, `_.find`, `_.isEqual`, and `_.some` to use the private `indicatorObject`
+        _.each(['every', 'isEqual'], function(methodName) {
+          source = source.replace(matchFunction(source, methodName), function(match) {
+            return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+          });
+        });
 
-        // replace `lodash.createCallback` references with `createCallback`
-        if (!useLodashMethod('createCallback')) {
-          source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
-        }
+        source = source.replace(matchFunction(source, 'find'), function(match) {
+          return match.replace(/return false/, 'return indicatorObject');
+        });
+
+        source = source.replace(matchFunction(source, 'some'), function(match) {
+          return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
+        });
+
         // remove unneeded variables
         if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
           source = removeVar(source, 'cloneableClasses');
           source = removeVar(source, 'ctorByClass');
+        }
+        // remove chainability from `each` and `_.forEach`
+        if (!useLodashMethod('forEach')) {
+          _.each(['each', 'forEach'], function(methodName) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match
+                .replace(/\n *return .+?([};\s]+)$/, '$1')
+                .replace(/\b(return) +result\b/, '$1')
+            });
+          });
         }
         // remove unused features from `createBound`
         if (_.every(['bindKey', 'partial', 'partialRight'], function(methodName) {
@@ -2516,12 +2580,6 @@
         }
       });
 
-      // remove `isArguments` fallback before `isArguments` is transformed by
-      // other parts of the build process
-      if (isRemoved(source, 'isArguments')) {
-        source = removeIsArgumentsFallback(source);
-      }
-
       // remove `iteratorTemplate` dependency checks from `_.template`
       source = source.replace(matchFunction(source, 'template'), function(match) {
         return match
@@ -2531,58 +2589,7 @@
 
       /*----------------------------------------------------------------------*/
 
-      if (isLegacy) {
-        source = removeSetImmediate(source);
-        source = removeSupportProp(source, 'fastBind');
-
-        _.each(['isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
-          source = removeVar(source, varName);
-        });
-
-        // remove native `Function#bind` branch in `_.bind`
-        source = source.replace(matchFunction(source, 'bind'), function(match) {
-          return match.replace(/(?:\s*\/\/.*)*\s*return support\.fastBind[^:]+:\s*/, 'return ');
-        });
-
-        // remove native `Array.isArray` branch in `_.isArray`
-        source = source.replace(matchFunction(source, 'isArray'), function(match) {
-          return match.replace(/nativeIsArray\s*\|\|\s*/, '');
-        });
-
-        // replace `_.keys` with `shimKeys`
-        if (!isRemoved(source, 'keys')) {
-          source = source.replace(
-            matchFunction(source, 'keys').replace(/[\s\S]+?var keys *= */, ''),
-            matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *= */, '')
-          );
-
-          source = removeFunction(source, 'shimKeys');
-        }
-        // replace `_.isArguments` with fallback
-        if (!isRemoved(source, 'isArguments')) {
-          source = source.replace(matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''), function() {
-            var fallback = getIsArgumentsFallback(source),
-                body = fallback.match(/isArguments *= *function([\s\S]+? *});/)[1],
-                indent = getIndent(fallback);
-
-            return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2)) + '\n';
-          });
-
-          source = removeIsArgumentsFallback(source);
-        }
-      }
-      if (isModern) {
-        source = removeSupportArgsObject(source);
-        source = removeSupportSpliceObjects(source);
-        source = removeIsArgumentsFallback(source);
-      }
       if (isModern || isUnderscore) {
-        source = removeSupportArgsClass(source);
-        source = removeSupportNodeClass(source);
-      }
-      if (isMobile || isUnderscore) {
-        source = removeVar(source, 'iteratorTemplate');
-
         // inline all functions defined with `createIterator`
         _.functions(lodash).forEach(function(methodName) {
           // strip leading underscores to match pseudo private functions
@@ -2595,86 +2602,62 @@
             });
           }
         });
-      }
-      if (isUnderscore) {
-        // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, and `_.zipObject` assignments
-        (function() {
-          var snippet = getMethodAssignments(source),
-              modified = snippet;
 
-          if (!useLodashMethod('assign')) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *=.+\n/m, '');
-          }
+        if (isUnderscore) {
+          // unexpose "exit early" feature of `each`, `_.forEach`, `_.forIn`, and `_.forOwn`
+          _.each(['each', 'forEach', 'forIn', 'forOwn'], function(methodName) {
+            if (methodName == 'each' || !useLodashMethod(methodName)) {
+              source = source.replace(matchFunction(source, methodName), function(match) {
+                return match.replace(/=== *false\)/g, '=== indicatorObject)');
+              });
+            }
+          });
+
+          // remove `thisArg` from unexposed `forIn` and `forOwn`
+          _.each(['forIn', 'forOwn'], function(methodName) {
+            if (!useLodashMethod(methodName)) {
+              source = source.replace(matchFunction(source, methodName), function(match) {
+                return match
+                  .replace(/(callback), *thisArg/g, '$1')
+                  .replace(/^ *callback *=.+\n/m, '');
+              });
+            }
+          });
+
+          // replace `lodash.createCallback` references with `createCallback`
           if (!useLodashMethod('createCallback')) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.createCallback *=.+\n/m, '');
+            source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
           }
-          if (!useLodashMethod('forIn')) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *=.+\n/m, '');
-          }
-          if (!useLodashMethod('forOwn')) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forOwn *=.+\n/m, '');
-          }
-          if (!useLodashMethod('isPlainObject')) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *=.+\n/m, '');
-          }
-          if (!useLodashMethod('zipObject')) {
-            modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.zipObject *=.+\n/m, '');
-          }
-          source = source.replace(snippet, function() {
-            return modified;
-          });
-        }());
+          // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, and `_.zipObject` assignments
+          (function() {
+            var snippet = getMethodAssignments(source),
+                modified = snippet;
 
-        // unexpose `lodash.support`
-        source = source.replace(/lodash\.support *= */, '');
-
-        // remove `thisArg` from unexposed `forIn` and `forOwn`
-        _.each(['forIn', 'forOwn'], function(methodName) {
-          if (!useLodashMethod(methodName)) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
-              return match
-                .replace(/(callback), *thisArg/g, '$1')
-                .replace(/^ *callback *=.+\n/m, '');
+            if (!useLodashMethod('assign')) {
+              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *=.+\n/m, '');
+            }
+            if (!useLodashMethod('createCallback')) {
+              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.createCallback *=.+\n/m, '');
+            }
+            if (!useLodashMethod('forIn')) {
+              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *=.+\n/m, '');
+            }
+            if (!useLodashMethod('forOwn')) {
+              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forOwn *=.+\n/m, '');
+            }
+            if (!useLodashMethod('isPlainObject')) {
+              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *=.+\n/m, '');
+            }
+            if (!useLodashMethod('zipObject')) {
+              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.zipObject *=.+\n/m, '');
+            }
+            source = source.replace(snippet, function() {
+              return modified;
             });
-          }
-        });
-
-        // remove chainability from `each` and `_.forEach`
-        if (!useLodashMethod('forEach')) {
-          _.each(['each', 'forEach'], function(methodName) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
-              return match
-                .replace(/\n *return .+?([};\s]+)$/, '$1')
-                .replace(/\b(return) +result\b/, '$1')
-            });
-          });
+          }());
         }
-
-        // unexpose "exit early" feature of `each`, `_.forEach`, `_.forIn`, and `_.forOwn`
-        _.each(['each', 'forEach', 'forIn', 'forOwn'], function(methodName) {
-          if (methodName == 'each' || !useLodashMethod(methodName)) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
-              return match.replace(/=== *false\)/g, '=== indicatorObject)');
-            });
-          }
-        });
-
-        // modify `_.every`, `_.find`, `_.isEqual`, and `_.some` to use the private `indicatorObject`
-        _.each(['every', 'isEqual'], function(methodName) {
-          source = source.replace(matchFunction(source, methodName), function(match) {
-            return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-          });
-        });
-
-        source = source.replace(matchFunction(source, 'find'), function(match) {
-          return match.replace(/return false/, 'return indicatorObject');
-        });
-
-        source = source.replace(matchFunction(source, 'some'), function(match) {
-          return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
-        });
       }
-      if (!(isMobile || isUnderscore)) {
+      else {
         source = removeFromCreateIterator(source, 'support');
 
         // inline `iteratorTemplate` template
@@ -2756,16 +2739,51 @@
 
     /*------------------------------------------------------------------------*/
 
+    // modify/remove references to removed methods/variables
     if (!isTemplate) {
-      // modify/remove references to removed methods/variables
+      if (isRemoved(source, 'clone')) {
+        source = removeVar(source, 'cloneableClasses');
+        source = removeVar(source, 'ctorByClass');
+      }
+      if (isRemoved(source, 'clone', 'isEqual', 'isPlainObject')) {
+        source = removeSupportNodeClass(source);
+      }
+      if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
+        source = removeSupportProp(source, 'fastBind');
+        source = removeVar(source, 'isV8');
+        source = removeVar(source, 'nativeBind');
+      }
+      if (isRemoved(source, 'createIterator', 'keys')) {
+        source = removeVar(source, 'nativeKeys');
+        source = removeKeysOptimization(source);
+        source = removeSupportNonEnumArgs(source);
+      }
+      if (isRemoved(source, 'defer')) {
+        source = removeSetImmediate(source);
+      }
       if (isRemoved(source, 'invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
       }
       if (isRemoved(source, 'isArguments')) {
+        source = removeIsArgumentsFallback(source);
         source = replaceSupportProp(source, 'argsClass', 'true');
+      }
+      if (isRemoved(source, 'isArguments', 'isEmpty')) {
+        source = removeSupportArgsClass(source);
+      }
+      if (isRemoved(source, 'isArray')) {
+        source = removeVar(source, 'nativeIsArray');
       }
       if (isRemoved(source, 'isFunction')) {
         source = removeIsFunctionFallback(source);
+      }
+      if (isRemoved(source, 'isPlainObject')) {
+        source = removeFunction(source, 'shimIsPlainObject');
+        source = removeVar(source, 'getPrototypeOf');
+        source = removeSupportOwnLast(source);
+      }
+      if (isRemoved(source, 'keys')) {
+        source = removeFunction(source, 'shimKeys');
       }
       if (isRemoved(source, 'mixin')) {
         // inline `_.mixin` call to ensure proper chaining behavior
@@ -2787,6 +2805,14 @@
             '});'
           ].join('\n' + indent);
         });
+      }
+      if (isRemoved(source, 'parseInt')) {
+        source = removeVar(source, 'nativeParseInt');
+        source = removeVar(source, 'reLeadingZeros');
+      }
+      if (isRemoved(source, 'template')) {
+        // remove `templateSettings` assignment
+        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
       }
       if (isRemoved(source, 'value')) {
         source = removeFunction(source, 'wrapperToString');
@@ -2816,39 +2842,6 @@
           .replace(/(?:\s*\/\/.*)*\n( *)(?:each|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.+/g, '');
       }
-      // remove functions, variables, and snippets that the minifier may miss
-      if (isRemoved(source, 'clone')) {
-        source = removeVar(source, 'cloneableClasses');
-        source = removeVar(source, 'ctorByClass');
-      }
-      if (isRemoved(source, 'defer')) {
-        source = removeSetImmediate(source);
-      }
-      if (isRemoved(source, 'isArray')) {
-        source = removeVar(source, 'nativeIsArray');
-      }
-      if (isRemoved(source, 'isPlainObject')) {
-        source = removeFunction(source, 'shimIsPlainObject');
-        source = removeVar(source, 'getPrototypeOf');
-        source = removeSupportOwnLast(source);
-      }
-      if (isRemoved(source, 'keys')) {
-        source = removeFunction(source, 'shimKeys');
-      }
-      if (isRemoved(source, 'parseInt')) {
-        source = removeVar(source, 'nativeParseInt');
-        source = removeVar(source, 'reLeadingZeros');
-      }
-      if (isRemoved(source, 'template')) {
-        // remove `templateSettings` assignment
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
-      }
-      if (isRemoved(source, 'isArguments', 'isEmpty')) {
-        source = removeSupportArgsClass(source);
-      }
-      if (isRemoved(source, 'clone', 'isEqual', 'isPlainObject')) {
-        source = removeSupportNodeClass(source);
-      }
       if (!/\beach\(/.test(source)) {
         source = source.replace(matchFunction(source, 'each'), '');
       }
@@ -2861,16 +2854,6 @@
         source = removeVar(source, 'templateIterator');
         source = removeSupportNonEnumShadows(source);
         source = removeSupportEnumPrototypes(source);
-      }
-      if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
-        source = removeSupportProp(source, 'fastBind');
-        source = removeVar(source, 'isV8');
-        source = removeVar(source, 'nativeBind');
-      }
-      if (isRemoved(source, 'createIterator', 'keys')) {
-        source = removeVar(source, 'nativeKeys');
-        source = removeKeysOptimization(source);
-        source = removeSupportNonEnumArgs(source);
       }
       if (!/support\.(?:enumPrototypes|nonEnumShadows|ownLast)\b/.test(source)) {
         // remove code used to resolve unneeded `support` properties

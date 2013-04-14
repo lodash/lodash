@@ -27,14 +27,8 @@
     // remove copyright header
     source = source.replace(/^\/\**[\s\S]+?\*\/\n/, '');
 
-    // correct overly aggressive Closure Compiler advanced optimizations
-    source = source
-      .replace(/prototype\s*=\s*{\s*valueOf\s*:\s*1\s*}/, 'prototype={valueOf:1,y:1}')
-      .replace(/(document[^&]+&&)\s*(?:\w+|!\d)/, '$1!({toString:0}+"")')
-
-    source = source.replace(/(\w+\.prototype\s*=\s*)\w+(?=\.prototype;)/, function(match, left) {
-      return left + /\w+(?=\.VERSION)/.exec(source);
-    });
+    // correct overly aggressive Closure Compiler advanced optimization
+    source = source.replace(/(document[^&]+&&)\s*(?:\w+|!\d)/, '$1!({toString:0}+"")');
 
     // flip `typeof` expressions to help optimize Safari and
     // correct the AMD module definition for AMD build optimizers

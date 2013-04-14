@@ -277,26 +277,35 @@
      */
     var support = lodash.support = {};
 
-    (function() {
-      for (var prop in arguments) { }
+    /**
+     * Detect if `prototype` properties are enumerable by default.
+     *
+     * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
+     * (if the prototype or a property on the prototype has been set)
+     * incorrectly sets a function's `prototype` property [[Enumerable]]
+     * value to `true`.
+     *
+     * @memberOf _.support
+     * @type Boolean
+     */
+    support.enumPrototypes = true;
 
-      /**
-       * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
-       *
-       * @memberOf _.support
-       * @type Boolean
-       */
-      support.fastBind = nativeBind && !isV8;
+    /**
+     * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
+     *
+     * @memberOf _.support
+     * @type Boolean
+     */
+    support.fastBind = nativeBind && !isV8;
 
-      /**
-       * Detect if `arguments` object indexes are non-enumerable
-       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
-       *
-       * @memberOf _.support
-       * @type Boolean
-       */
-      support.nonEnumArgs = prop != 0;
-    }(1));
+    /**
+     * Detect if `arguments` object indexes are non-enumerable
+     * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+     *
+     * @memberOf _.support
+     * @type Boolean
+     */
+    support.nonEnumArgs = true;
 
     /**
      * By default, the template delimiters used by Lo-Dash are similar to those in
@@ -666,11 +675,21 @@
       if (!iterable) return result;
       if (!(objectTypes[typeof object])) return result;
 
+        var length = iterable.length; index = -1;
+        if (length && isArguments(iterable)) {
+          while (++index < length) {
+            index += '';
+            result.push(index)
+          }
+        } else {    
+        var skipProto = typeof iterable == 'function';
+
         for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
+          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
           result.push(index);    
           }
         }  
+      }
       return result
     };
 
@@ -691,7 +710,8 @@
       if (!isObject(object)) {
         return [];
       }
-      if ((support.nonEnumArgs && object.length && isArguments(object))) {
+      if ((support.enumPrototypes && typeof object == 'function') ||
+          (support.nonEnumArgs && object.length && isArguments(object))) {
         return shimKeys(object);
       }
       return nativeKeys(object);
@@ -721,9 +741,11 @@
           if (callback(iterable[index], index, collection) === false) return result
         }
       }
-      else {  
+      else {    
+        var skipProto = typeof iterable == 'function';
+
         for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
+          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
           if (callback(iterable[index], index, collection) === false) return result;    
           }
         }  
@@ -802,9 +824,11 @@
           result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
         }
       }
-      else {  
+      else {    
+        var skipProto = typeof iterable == 'function';
+
         for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
+          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
           result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];    
           }
         }  
@@ -1020,9 +1044,11 @@
           if (typeof result[index] == 'undefined') result[index] = iterable[index]
         }
       }
-      else {  
+      else {    
+        var skipProto = typeof iterable == 'function';
+
         for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
+          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
           if (typeof result[index] == 'undefined') result[index] = iterable[index];    
           }
         }  
@@ -1099,9 +1125,21 @@
       if (!objectTypes[typeof iterable]) return result;
       callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
 
+        var length = iterable.length; index = -1;
+        if (length && isArguments(iterable)) {
+          while (++index < length) {
+            index += '';
+            if (callback(iterable[index], index, collection) === false) return result
+          }
+        } else {    
+        var skipProto = typeof iterable == 'function';
+
         for (index in iterable) {
+          if (!(skipProto && index == 'prototype')) {    
           if (callback(iterable[index], index, collection) === false) return result;    
+          }
         }  
+      }
       return result
     };
 
@@ -1132,11 +1170,21 @@
       if (!objectTypes[typeof iterable]) return result;
       callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
 
+        var length = iterable.length; index = -1;
+        if (length && isArguments(iterable)) {
+          while (++index < length) {
+            index += '';
+            if (callback(iterable[index], index, collection) === false) return result
+          }
+        } else {    
+        var skipProto = typeof iterable == 'function';
+
         for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
+          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
           if (callback(iterable[index], index, collection) === false) return result;    
           }
         }  
+      }
       return result
     };
 
@@ -1668,7 +1716,7 @@
      * _.isPlainObject({ 'name': 'moe', 'age': 40 });
      * // => true
      */
-    var isPlainObject = function(value) {
+    var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
       if (!(value && toString.call(value) == objectClass)) {
         return false;
       }

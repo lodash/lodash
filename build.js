@@ -1735,11 +1735,14 @@
         dependencyMap.defer = _.without(dependencyMap.defer, 'bind');
       }
       if (isModern) {
-        dependencyMap.isEmpty = _.without(dependencyMap.isEmpty, 'isArguments');
-        dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'isArguments');
-        dependencyMap.isPlainObject = _.without(dependencyMap.isPlainObject, 'isArguments');
-        dependencyMap.keys = _.without(dependencyMap.keys, 'isArguments');
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
+
+        if (!isMobile) {
+          dependencyMap.isEmpty = _.without(dependencyMap.isEmpty, 'isArguments');
+          dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'isArguments');
+          dependencyMap.isPlainObject = _.without(dependencyMap.isPlainObject, 'isArguments');
+          dependencyMap.keys = _.without(dependencyMap.keys, 'isArguments');
+        }
       }
       if (isUnderscore) {
         dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
@@ -1763,16 +1766,16 @@
       }
       if (isModern || isUnderscore) {
         dependencyMap.at = _.without(dependencyMap.at, 'isString');
-        dependencyMap.forEach = _.without(dependencyMap.forEach, 'isArguments', 'isString');
-        dependencyMap.forIn = _.without(dependencyMap.forIn, 'isArguments');
-        dependencyMap.forOwn = _.without(dependencyMap.forOwn, 'isArguments');
+        dependencyMap.forEach = _.without(dependencyMap.forEach, 'isString');
         dependencyMap.toArray = _.without(dependencyMap.toArray, 'isString');
 
         if (!isMobile) {
           dependencyMap.every = _.without(dependencyMap.every, 'isArray');
           dependencyMap.find = _.without(dependencyMap.find, 'isArray');
           dependencyMap.filter = _.without(dependencyMap.filter, 'isArray');
-          dependencyMap.forEach = _.without(dependencyMap.forEach, 'isArray');
+          dependencyMap.forEach = _.without(dependencyMap.forEach, 'isArguments', 'isArray');
+          dependencyMap.forIn = _.without(dependencyMap.forIn, 'isArguments');
+          dependencyMap.forOwn = _.without(dependencyMap.forOwn, 'isArguments');
           dependencyMap.map = _.without(dependencyMap.map, 'isArray');
           dependencyMap.max.push('forEach');
           dependencyMap.min.push('forEach');
@@ -1891,13 +1894,17 @@
         source = removeSupportSpliceObjects(source);
         source = removeIsArgumentsFallback(source);
 
-        // remove `_.isPlainObject` fallback
-        source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
-          return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
-        });
-
-        if (!isMobile) {
+        if (isMobile) {
+          source = replaceSupportProp(source, 'enumPrototypes', 'true');
+          source = replaceSupportProp(source, 'nonEnumArgs', 'true');
+        }
+        else {
           source = removeIsFunctionFallback(source);
+
+          // remove `shimIsPlainObject` from `_.isPlainObject`
+          source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
+            return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
+          });
         }
       }
       if (isMobile || isUnderscore) {
@@ -1907,12 +1914,12 @@
       if (isModern || isUnderscore) {
         source = removeSupportArgsClass(source);
         source = removeSupportNonEnumShadows(source);
-        source = removeSupportEnumPrototypes(source);
         source = removeSupportOwnLast(source);
         source = removeSupportUnindexedChars(source);
         source = removeSupportNodeClass(source);
 
         if (!isMobile) {
+          source = removeSupportEnumPrototypes(source);
           source = removeSupportNonEnumArgs(source);
 
           // replace `_.forEach`
@@ -2866,19 +2873,33 @@
         source = removeVar(source, 'iteratorTemplate');
         source = removeVar(source, 'templateIterator');
         source = removeSupportNonEnumShadows(source);
-        source = removeSupportEnumPrototypes(source);
       }
-      if (!/support\.(?:enumPrototypes|nonEnumShadows|ownLast)\b/.test(source)) {
-        // remove code used to resolve unneeded `support` properties
-        source = source.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *= *function[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
-          if (/support\.spliceObjects\b/.test(match)) {
-            return match.replace(setup, indent + "var object = { '0': 1, 'length': 1 };\n");
-          } else if (/support\.nonEnumArgs\b/.test(match)) {
-            return match.replace(setup, indent + 'for (var prop in arguments) { }\n');
-          }
-          return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2));
-        });
-      }
+      // remove code used to resolve unneeded `support` properties
+      source = source.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *= *function[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
+        var modified = setup;
+        if (!/support\.spliceObjects *=(?! *(?:false|true))/.test(match)) {
+          modified = modified.replace(/^ *object *=.+\n/m, '');
+        }
+        if (!/support\.enumPrototypes *=(?! *(?:false|true))/.test(match) &&
+            !/support\.nonEnumShadows *=(?! *(?:false|true))/.test(match) &&
+            !/support\.ownLast *=(?! *(?:false|true))/.test(match)) {
+          modified = modified
+            .replace(/\bctor *=.+\s+/, '')
+            .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
+            .replace(/(?:,\n)? *props *=[^;]+/, '')
+            .replace(/^ *for *\((?=prop)/, '$&var ')
+        }
+        if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(match)) {
+          modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
+        }
+        // cleanup the empty var statement
+        modified = modified.replace(/^ *var;\n/m, '');
+
+        // if no setup then remove IIFE
+        return /^\s*$/.test(modified)
+          ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
+          : match.replace(setup, modified);
+      });
     }
     if (_.size(source.match(/\bfreeModule\b/g)) < 2) {
       source = removeVar(source, 'freeModule');

@@ -1,1 +1,2 @@
-* text eol=lf
+* text=auto
+*.js text eol=lf

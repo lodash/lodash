@@ -1270,7 +1270,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('nodep option');
+  QUnit.module('no-dep option');
 
   (function() {
     var commands = [

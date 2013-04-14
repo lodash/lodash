@@ -1526,6 +1526,7 @@
         '-d', '--debug',
         '-h', '--help',
         '-m', '--minify',
+        '-n', '--no-dep',
         '-o', '--output',
         '-p', '--source-map',
         '-s', '--silent',
@@ -1606,6 +1607,9 @@
 
     // flag to specify a modularize build
     var isModularize = _.contains(options, 'modularize');
+
+    // flag to specify a no-dependency build
+    var isNoDep = _.contains(options, '-n') || _.contains(options, '--no-dep');
 
     // flag to specify writing output to standard output
     var isStdOut = _.contains(options, '-c') || _.contains(options, '--stdout');
@@ -1777,18 +1781,18 @@
       }
       // add method names explicitly
       if (includeMethods.length) {
-        result = getDependencies(includeMethods);
+        result = includeMethods;
       }
       // add method names required by Backbone and Underscore builds
       if (isBackbone && !result) {
-        result = getDependencies(backboneDependencies);
+        result = backboneDependencies;
       }
       else if (isUnderscore && !result) {
-        result = getDependencies(underscoreMethods);
+        result = underscoreMethods;
       }
       // add method names by category
       if (categories.length) {
-        result = _.union(result || [], getDependencies(categories.reduce(function(accumulator, category) {
+        result = _.union(result || [], categories.reduce(function(accumulator, category) {
           // get method names belonging to each category
           var methodNames = getMethodsByCategory(source, category);
 
@@ -1813,16 +1817,22 @@
             });
           }
           return accumulator.concat(methodNames);
-        }, [])));
+        }, []));
       }
       if (!result) {
         result = lodashMethods.slice();
       }
       if (plusMethods.length) {
-        result = _.union(result, getDependencies(plusMethods));
+        result = _.union(result, plusMethods);
       }
       if (minusMethods.length) {
-        result = _.without.apply(_, [result].concat(minusMethods, getDependants(minusMethods)));
+        result = _.without.apply(_, [result].concat(minusMethods, isNoDep
+          ? minusMethods
+          : getDependants(minusMethods)
+        ));
+      }
+      if (!isNoDep) {
+        result = getDependencies(result);
       }
       return result;
     }());
@@ -2786,8 +2796,11 @@
         source = removeFunction(source, 'shimKeys');
       }
       if (isRemoved(source, 'mixin')) {
-        // inline `_.mixin` call to ensure proper chaining behavior
+        // if possible, inline the `_.mixin` call to ensure proper chaining behavior
         source = source.replace(/^( *)mixin\(lodash\).+/m, function(match, indent) {
+          if (isRemoved(source, 'forOwn')) {
+            return '';
+          }
           return indent + [
             'forOwn(lodash, function(func, methodName) {',
             '  lodash[methodName] = func;',
@@ -2884,7 +2897,7 @@
 
     // flag to specify creating a custom build
     var isCustom = (
-      isLegacy || isMapped || isModern || isStrict || isUnderscore || outputPath ||
+      isLegacy || isMapped || isModern || isNoDep || isStrict || isUnderscore || outputPath ||
       /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll)
     );

@@ -1270,7 +1270,35 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('output options');
+  QUnit.module('nodep option');
+
+  (function() {
+    var commands = [
+      '-n',
+      '--no-dep'
+    ];
+
+    commands.forEach(function(command) {
+      asyncTest('`lodash modern include=each ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s', 'modern', 'include=each', command], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
+              context = createContext();
+
+          vm.runInContext(data.source, context);
+          var lodash = context._;
+
+          deepEqual(_.functions(lodash), ['each', 'forEach'], basename);
+          start();
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('output option');
 
   (function() {
     var nestedPath = path.join(__dirname, 'a', 'b');
@@ -1311,7 +1339,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('stdout options');
+  QUnit.module('stdout option');
 
   (function() {
     var commands = [

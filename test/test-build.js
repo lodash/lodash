@@ -582,9 +582,12 @@
           context._ = _;
           vm.runInContext(data.source, context);
 
-          equal(_.templates.a(object.a).replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
+          var actual = _.templates.a(object.a);
+          equal(actual.replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li><li>curly</li></ul>', basename);
+
           equal(_.templates.b(object.b), 'Hello stooge.', basename);
           equal(_.templates.c(object.c), 'Hello ES6!', basename);
+
           delete _.templates;
           start();
         });
@@ -617,7 +620,9 @@
 
           equal(moduleId, expectedId, basename);
           ok('a' in _.templates && 'b' in _.templates, basename);
-          equal(_.templates.a({ 'people': ['moe', 'larry'] }), '<ul>\n<li>moe</li><li>larry</li>\n</ul>', basename);
+
+          var actual = _.templates.a({ 'people': ['moe', 'larry'] });
+          equal(actual.replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li></ul>', basename);
 
           delete _.templates;
           start();

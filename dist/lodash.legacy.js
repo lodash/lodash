@@ -279,12 +279,12 @@
       for (prop in arguments) { }
 
       /**
-       * Detect if `arguments` objects are `Object` objects (all but Opera < 10.5).
+       * Detect if `arguments` objects are `Object` objects (all but Narwhal and Opera < 10.5).
        *
        * @memberOf _.support
        * @type Boolean
        */
-      support.argsObject = arguments.constructor == Object;
+      support.argsObject = arguments.constructor == Object && !(arguments instanceof Array);
 
       /**
        * Detect if an `arguments` object's [[Class]] is resolvable (all but Firefox < 4, IE < 9).

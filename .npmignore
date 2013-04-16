@@ -2,6 +2,7 @@
 *.custom.*
 *.d.ts
 *.md
+bower.json
 doc
 node_modules
 perf

@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v1.1.1</sup>
+# Lo-Dash <sup>v1.2.0</sup>
 
 <!-- div -->
 
@@ -3775,7 +3775,7 @@ A reference to the `lodash` function.
 ### <a id="_supportargsobject"></a>`_.support.argsObject`
 <a href="#_supportargsobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L301 "View in source") [&#x24C9;][1]
 
-*(Boolean)*: Detect if `arguments` objects are `Object` objects *(all but Opera < `10.5`)*.
+*(Boolean)*: Detect if `arguments` objects are `Object` objects *(all but Narwhal and Opera < `10.5`)*.
 
 * * *
 

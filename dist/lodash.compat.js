@@ -1,6 +1,6 @@
 /**
  * @license
- * Lo-Dash 1.1.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 1.2.0 (Custom Build) <http://lodash.com/>
  * Build: `lodash -o ./dist/lodash.compat.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
@@ -5425,7 +5425,7 @@
      * @memberOf _
      * @type String
      */
-    lodash.VERSION = '1.1.1';
+    lodash.VERSION = '1.2.0';
 
     // add "Chaining" functions to the wrapper
     lodash.prototype.toString = wrapperToString;

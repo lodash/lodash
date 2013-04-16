@@ -5,6 +5,7 @@
 *.txt
 build.js
 index.js
+bower.json
 build
 doc
 node_modules

@@ -1076,7 +1076,7 @@
 
     // remove `argsAreObjects` from `_.isArray`
     source = source.replace(matchFunction(source, 'isArray'), function(match) {
-      return match.replace(/\(support\.argsObject && *([^)]+)\)/g, '$1');
+      return match.replace(/\(support\.argsObject\s*&&\s*([^)]+)\)/g, '$1');
     });
 
     // remove `argsAreObjects` from `_.isEqual`
@@ -1867,7 +1867,7 @@
 
         // remove native `Array.isArray` branch in `_.isArray`
         source = source.replace(matchFunction(source, 'isArray'), function(match) {
-          return match.replace(/nativeIsArray\s*\|\|\s*/, '');
+          return match.replace(/\s*\(nativeIsArray.+/, ' toString.call(value) == arrayClass;');
         });
 
         // replace `_.keys` with `shimKeys`
@@ -2006,6 +2006,11 @@
           source = source.replace(/^( *)var eachIteratorOptions *= *[\s\S]+?\n\1};\n/m, function(match) {
             return match.replace(/(^ *'arrays':)[^,]+/m, '$1 false');
           });
+
+          // remove `toString.call` use from `_.isArray`
+          source = source.replace(matchFunction(source, 'isArray'), function(match) {
+            return match.replace(/\s*\(nativeIsArray.+/, ' nativeIsArray(value);');
+          });
         }
       }
       if (isUnderscore) {
@@ -2135,6 +2140,13 @@
           '  }',
           '  return result;',
           '}'
+        ].join('\n'));
+
+        // replace `_.isArray`
+        source = replaceFunction(source, 'isArray', [
+          'var isArray = nativeIsArray || function(value) {',
+          '  return toString.call(value) == arrayClass;',
+          '};'
         ].join('\n'));
 
         // replace `_.isEmpty`
@@ -2458,6 +2470,14 @@
           return match.replace(/\bisEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
         });
 
+        // remove `instanceof` use from `_.isDate`, `_.isFunction`, and `_.isRegExp`
+        _.each(['isDate', 'isFunction', 'isRegExp'], function(methodName) {
+          var snippet = methodName == 'isFunction' ? getIsFunctionFallback(source) : matchFunction(source, methodName);
+          source = source.replace(snippet, function(match) {
+            return match.replace(/\w+\s+instanceof\s+\w+\s*\|\|\s*/g, '');
+          });
+        });
+
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
         _.each(['max', 'min'], function(methodName) {
           source = source.replace(matchFunction(source, methodName), function(match) {
@@ -2479,6 +2499,8 @@
         source = source.replace(matchFunction(source, 'some'), function(match) {
           return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
         });
+
+
 
         // remove unneeded variables
         if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
@@ -2580,6 +2602,7 @@
         'setTimeout': setTimeout
       });
 
+      fs.writeFileSync('lodash.custom.js', source, 'utf-8')
       vm.runInContext(source, context);
       return context._;
     }());

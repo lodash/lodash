@@ -2059,6 +2059,36 @@
           '}'
         ].join('\n'));
 
+        // replace `_.debounce`
+        source = replaceFunction(source, 'debounce', [
+          'function debounce(func, wait, immediate) {',
+          '  var args,',
+          '      result,',
+          '      thisArg,',
+          '      timeoutId;',
+          '',
+          '  function delayed() {',
+          '    timeoutId = null;',
+          '    if (!immediate) {',
+          '      result = func.apply(thisArg, args);',
+          '    }',
+          '  }',
+          '  return function() {',
+          '    var isImmediate = immediate && !timeoutId;',
+          '    args = arguments;',
+          '    thisArg = this;',
+          '',
+          '    clearTimeout(timeoutId);',
+          '    timeoutId = setTimeout(delayed, wait);',
+          '',
+          '    if (isImmediate) {',
+          '      result = func.apply(thisArg, args);',
+          '    }',
+          '    return result;',
+          '  };',
+          '}'
+        ].join('\n'));
+
         // replace `_.defaults`
         source = replaceFunction(source, 'defaults', [
           'function defaults(object) {',
@@ -2371,6 +2401,41 @@
           '  }',
           '  result.source = source;',
           '  return result;',
+          '}'
+        ].join('\n'));
+
+        // replace `_.throttle`
+        source = replaceFunction(source, 'throttle', [
+          'function throttle(func, wait) {',
+          '  var args,',
+          '      result,',
+          '      thisArg,',
+          '      timeoutId,',
+          '      lastCalled = 0;',
+          '',
+          '  function trailingCall() {',
+          '    lastCalled = new Date;',
+          '    timeoutId = null;',
+          '    result = func.apply(thisArg, args);',
+          '  }',
+          '  return function() {',
+          '    var now = new Date,',
+          '        remaining = wait - (now - lastCalled);',
+          '',
+          '    args = arguments;',
+          '    thisArg = this;',
+          '',
+          '    if (remaining <= 0) {',
+          '      clearTimeout(timeoutId);',
+          '      timeoutId = null;',
+          '      lastCalled = now;',
+          '      result = func.apply(thisArg, args);',
+          '    }',
+          '    else if (!timeoutId) {',
+          '      timeoutId = setTimeout(trailingCall, remaining);',
+          '    }',
+          '    return result;',
+          '  };',
           '}'
         ].join('\n'));
 

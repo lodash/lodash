@@ -222,12 +222,12 @@
     var object = { '0': 1, 'length': 1 };
 
     /**
-     * Detect if `arguments` objects are `Object` objects (all but Opera < 10.5).
+     * Detect if `arguments` objects are `Object` objects (all but Narwhal and Opera < 10.5).
      *
      * @memberOf _.support
      * @type Boolean
      */
-    support.argsObject = arguments.constructor == Object;
+    support.argsObject = arguments.constructor == Object && !(arguments instanceof Array);
 
     /**
      * Detect if `Function#bind` exists and is inferred to be fast (all but V8).

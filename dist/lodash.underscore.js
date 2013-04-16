@@ -3482,35 +3482,27 @@
    * var lazyLayout = _.debounce(calculateLayout, 300);
    * jQuery(window).on('resize', lazyLayout);
    */
-  function debounce(func, wait, options) {
+  function debounce(func, wait, immediate) {
     var args,
         result,
         thisArg,
-        timeoutId,
-        trailing = true;
+        timeoutId;
 
     function delayed() {
       timeoutId = null;
-      if (trailing) {
+      if (!immediate) {
         result = func.apply(thisArg, args);
       }
     }
-    if (options === true) {
-      var leading = true;
-      trailing = false;
-    } else if (options && objectTypes[typeof options]) {
-      leading = options.leading;
-      trailing = 'trailing' in options ? options.trailing : trailing;
-    }
     return function() {
-      var isLeading = leading && !timeoutId;
+      var isImmediate = immediate && !timeoutId;
       args = arguments;
       thisArg = this;
 
       clearTimeout(timeoutId);
       timeoutId = setTimeout(delayed, wait);
 
-      if (isLeading) {
+      if (isImmediate) {
         result = func.apply(thisArg, args);
       }
       return result;
@@ -3667,35 +3659,22 @@
    * var throttled = _.throttle(updatePosition, 100);
    * jQuery(window).on('scroll', throttled);
    */
-  function throttle(func, wait, options) {
+  function throttle(func, wait) {
     var args,
         result,
         thisArg,
         timeoutId,
-        lastCalled = 0,
-        leading = true,
-        trailing = true;
+        lastCalled = 0;
 
     function trailingCall() {
       lastCalled = new Date;
       timeoutId = null;
-
-      if (trailing) {
-        result = func.apply(thisArg, args);
-      }
-    }
-    if (options === false) {
-      leading = false;
-    } else if (options && objectTypes[typeof options]) {
-      leading = 'leading' in options ? options.leading : leading;
-      trailing = 'trailing' in options ? options.trailing : trailing;
+      result = func.apply(thisArg, args);
     }
     return function() {
-      var now = new Date;
-      if (!timeoutId && !leading) {
-        lastCalled = now;
-      }
-      var remaining = wait - (now - lastCalled);
+      var now = new Date,
+          remaining = wait - (now - lastCalled);
+
       args = arguments;
       thisArg = this;
 

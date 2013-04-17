@@ -249,7 +249,6 @@ require({
 
 ### <sup>v1.2.0</sup>
 
- * Added Bower package support
  * Added `_.unzip`
  * Added an `options` argument to `_.debounce` and `_.throttle`
  * Allowed non-`underscore` builds to include `_.findWhere` and `_.chain`
@@ -257,10 +256,11 @@ require({
  * Ensured build utility runs on Windows
  * Ensured `underscore` build versions of *“isType”* methods align with Underscore
  * Ensured methods avoid issues with the `__proto__` property
+ * Ensured `_.isEqual` uses a `callback` only if it’s a function
  * Ensured `_.merge` applies a `callback` to nested properties
  * Ensured `_.merge` passes the correct `callback` arguments when comparing objects
  * Made Lo-Dash work with Browserify
- * Removed method compilation from the `modern`
+ * Removed method compilation from the `modern` build
 
 The full changelog is available [here](https://github.com/bestiejs/lodash/wiki/Changelog).
 

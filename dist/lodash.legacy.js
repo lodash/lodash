@@ -4397,13 +4397,14 @@
      */
     function debounce(func, wait, options) {
       var args,
+          inited,
           result,
           thisArg,
           timeoutId,
           trailing = true;
 
       function delayed() {
-        timeoutId = null;
+        inited = timeoutId = null;
         if (trailing) {
           result = func.apply(thisArg, args);
         }
@@ -4416,15 +4417,15 @@
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
       return function() {
-        var isLeading = leading && !timeoutId;
         args = arguments;
         thisArg = this;
-
         clearTimeout(timeoutId);
-        timeoutId = setTimeout(delayed, wait);
 
-        if (isLeading) {
+        if (!inited && leading) {
+          inited = true;
           result = func.apply(thisArg, args);
+        } else {
+          timeoutId = setTimeout(delayed, wait);
         }
         return result;
       };
@@ -4621,10 +4622,9 @@
           trailing = true;
 
       function trailingCall() {
-        lastCalled = new Date;
         timeoutId = null;
-
         if (trailing) {
+          lastCalled = new Date;
           result = func.apply(thisArg, args);
         }
       }

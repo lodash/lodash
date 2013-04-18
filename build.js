@@ -2667,7 +2667,6 @@
         'setTimeout': setTimeout
       });
 
-      fs.writeFileSync('lodash.custom.js', source, 'utf-8')
       vm.runInContext(source, context);
       return context._;
     }());

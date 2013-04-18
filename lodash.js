@@ -4462,6 +4462,10 @@
      * and/or trailing edge of the `wait` timeout. Subsequent calls to the debounced
      * function will return the result of the last `func` call.
      *
+     * Note: If `leading` and `trailing` options are `true`, `func` will be called
+     * on the trailing edge of the timeout only if the the throttled function is
+     * invoked more than once during the `wait` timeout.
+     *
      * @static
      * @memberOf _
      * @category Functions
@@ -4676,12 +4680,14 @@
 
     /**
      * Creates a function that, when executed, will only call the `func` function
-     * at most once per every `wait` milliseconds. If the throttled function is
-     * invoked more than once during the `wait` timeout, `func` will also be called
-     * on the trailing edge of the timeout. Pass an `options` object to indicate
-     * that `func` should be invoked on the leading and/or trailing edge of the
-     * `wait` timeout. Subsequent calls to the throttled function will return
-     * the result of the last `func` call.
+     * at most once per every `wait` milliseconds. Pass an `options` object to
+     * indicate that `func` should be invoked on the leading and/or trailing edge
+     * of the `wait` timeout. Subsequent calls to the throttled function will
+     * return the result of the last `func` call.
+     *
+     * Note: If `leading` and `trailing` options are `true`, `func` will be called
+     * on the trailing edge of the timeout only if the the throttled function is
+     * invoked more than once during the `wait` timeout.
      *
      * @static
      * @memberOf _

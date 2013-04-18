@@ -2843,10 +2843,26 @@
       });
 
       setTimeout(function() {
-        strictEqual(withCount, 2);
+        equal(withCount, 2);
         strictEqual(withoutCount, 1);
         QUnit.start();
       }, 64);
+    });
+
+    asyncTest('should not update `lastCalled`, at the end of the timeout, when `trailing` is `false`', function() {
+      var count = 0;
+
+      var throttled = _.throttle(function() {
+        count++;
+      }, 64, { 'trailing': false });
+
+      _.times(2, throttled);
+      setTimeout(function() { _.times(2, throttled); }, 100);
+
+      setTimeout(function() {
+        equal(count, 2);
+        QUnit.start();
+      }, 128);
     });
   }());
 

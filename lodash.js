@@ -4476,6 +4476,11 @@
      *
      * var lazyLayout = _.debounce(calculateLayout, 300);
      * jQuery(window).on('resize', lazyLayout);
+     *
+     * jQuery('.postbox').on('click', _.debounce(sendMail, 200, {
+     *   'leading': true,
+     *   'trailing': false
+     * });
      */
     function debounce(func, wait, options) {
       var args,
@@ -4699,6 +4704,10 @@
      *
      * var throttled = _.throttle(updatePosition, 100);
      * jQuery(window).on('scroll', throttled);
+     *
+     * jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
+     *   'trailing': false
+     * }));
      */
     function throttle(func, wait, options) {
       var args,

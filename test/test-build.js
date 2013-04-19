@@ -961,11 +961,6 @@
 
         strictEqual(actual, false, '_.isEqual should ignore `callback` and `thisArg`: ' + basename);
 
-        _.each(['isArray', 'isBoolean', 'isDate', 'isFunction', 'isNumber', 'isRegExp', 'isString'], function(methodName) {
-          var proto = global[methodName.slice(2)].prototype;
-          strictEqual(lodash[methodName](Object.create(proto)), false, '_.' + methodName + ' returns `false` for subclassed values: ' + basename);
-        });
-
         equal(lodash.max('abc'), -Infinity, '_.max should return `-Infinity` for strings: ' + basename);
         equal(lodash.min('abc'), Infinity, '_.min should return `Infinity` for strings: ' + basename);
 

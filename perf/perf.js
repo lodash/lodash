@@ -1199,7 +1199,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.isArguments`, `_.isDate`, `_.isFunction`, `_.isNumber`, `_.isRegExp`')
+    Benchmark.Suite('`_.isArguments`, `_.isDate`, `_.isFunction`, `_.isNumber`, `_.isObject`, `_.isRegExp`')
       .add(buildName, '\
         lodash.isArguments(arguments);\
         lodash.isArguments(object);\
@@ -1209,6 +1209,8 @@
         lodash.isFunction(object);\
         lodash.isNumber(1);\
         lodash.isNumber(object);\
+        lodash.isObject(object);\
+        lodash.isObject(1);\
         lodash.isRegExp(regexp);\
         lodash.isRegExp(object);'
       )
@@ -1221,6 +1223,8 @@
         _.isFunction(object);\
         _.isNumber(1);\
         _.isNumber(object);\
+        _.isObject(object);\
+        _.isObject(1);\
         _.isRegExp(regexp);\
         _.isRegExp(object);'
       )

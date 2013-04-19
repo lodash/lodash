@@ -787,6 +787,19 @@
   }
 
   /**
+   * Gets the `_.isArray` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `isArray` fallback.
+   */
+  function getIsArrayFallback(source) {
+    return matchFunction(source, 'isArray')
+      .replace(/^[\s\S]+?=\s*nativeIsArray\b/, '')
+      .replace(/[;\s]+$/, '');
+  }
+
+  /**
    * Gets the `_.isFunction` fallback from `source`.
    *
    * @private
@@ -1017,6 +1030,17 @@
   }
 
   /**
+   * Removes the `_.isArray` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeIsArrayFallback(source) {
+    return source.replace(getIsArrayFallback(source), '');
+  }
+
+  /**
    * Removes the `_.isFunction` fallback from `source`.
    *
    * @private
@@ -1073,11 +1097,6 @@
    */
   function removeSupportArgsObject(source) {
     source = removeSupportProp(source, 'argsObject');
-
-    // remove `argsAreObjects` from `_.isArray`
-    source = source.replace(matchFunction(source, 'isArray'), function(match) {
-      return match.replace(/\(support\.argsObject\s*&&\s*([^)]+)\)/g, '$1');
-    });
 
     // remove `argsAreObjects` from `_.isEqual`
     source = source.replace(matchFunction(source, 'isEqual'), function(match) {
@@ -1867,7 +1886,7 @@
 
         // remove native `Array.isArray` branch in `_.isArray`
         source = source.replace(matchFunction(source, 'isArray'), function(match) {
-          return match.replace(/\s*\(nativeIsArray.+/, ' toString.call(value) == arrayClass;');
+          return match.replace(/\bnativeIsArray\s*\|\|\s*/, '');
         });
 
         // replace `_.keys` with `shimKeys`
@@ -1919,6 +1938,7 @@
         source = removeSupportNodeClass(source);
 
         if (!isMobile) {
+          source = removeIsArrayFallback(source);
           source = removeSupportEnumPrototypes(source);
           source = removeSupportNonEnumArgs(source);
 
@@ -2005,11 +2025,6 @@
           // replace `arrays` property value of `eachIteratorOptions` with `false`
           source = source.replace(/^( *)var eachIteratorOptions *= *[\s\S]+?\n\1};\n/m, function(match) {
             return match.replace(/(^ *'arrays':)[^,]+/m, '$1 false');
-          });
-
-          // remove `toString.call` use from `_.isArray`
-          source = source.replace(matchFunction(source, 'isArray'), function(match) {
-            return match.replace(/\s*\(nativeIsArray.+/, ' nativeIsArray(value);');
           });
         }
       }
@@ -2533,14 +2548,6 @@
         // remove `_.isEqual` use from `createCallback`
         source = source.replace(matchFunction(source, 'createCallback'), function(match) {
           return match.replace(/\bisEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
-        });
-
-        // remove `instanceof` use from `_.isDate`, `_.isFunction`, and `_.isRegExp`
-        _.each(['isDate', 'isFunction', 'isRegExp'], function(methodName) {
-          var snippet = methodName == 'isFunction' ? getIsFunctionFallback(source) : matchFunction(source, methodName);
-          source = source.replace(snippet, function(match) {
-            return match.replace(/\w+\s+instanceof\s+\w+\s*\|\|\s*/g, '');
-          });
         });
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`

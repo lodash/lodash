@@ -4272,7 +4272,7 @@
      * function will return the result of the last `func` call.
      *
      * Note: If `leading` and `trailing` options are `true`, `func` will be called
-     * on the trailing edge of the timeout only if the the throttled function is
+     * on the trailing edge of the timeout only if the the debounced function is
      * invoked more than once during the `wait` timeout.
      *
      * @static
@@ -4289,7 +4289,7 @@
      * var lazyLayout = _.debounce(calculateLayout, 300);
      * jQuery(window).on('resize', lazyLayout);
      *
-     * jQuery('.postbox').on('click', _.debounce(sendMail, 200, {
+     * jQuery('#postbox').on('click', _.debounce(sendMail, 200, {
      *   'leading': true,
      *   'trailing': false
      * });

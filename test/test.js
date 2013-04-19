@@ -1611,6 +1611,15 @@
       equal(typeof func({ 'a': 1 }), expected);
       equal(typeof func('a'), expected);
     });
+
+    test('should return `false` for subclassed values', function() {
+      _.each(['isArray', 'isBoolean', 'isDate', 'isFunction', 'isNumber', 'isRegExp', 'isString'], function(methodName) {
+        function Foo() {}
+        Foo.prototype = window[methodName.slice(2)].prototype;
+
+        strictEqual(_[methodName](new Foo), false, '_.' + methodName + ' returns `false`');
+      });
+    });
   });
 
   /*--------------------------------------------------------------------------*/

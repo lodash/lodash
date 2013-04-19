@@ -2080,7 +2080,7 @@ _.toLookup(stooges, 'name');
 
 Creates a function that will delay the execution of `func` until after `wait` milliseconds have elapsed since the last time it was invoked. Pass an `options` object to indicate that `func` should be invoked on the leading and/or trailing edge of the `wait` timeout. Subsequent calls to the debounced function will return the result of the last `func` call.
 
-Note: If `leading` and `trailing` options are `true`, `func` will be called on the trailing edge of the timeout only if the the throttled function is invoked more than once during the `wait` timeout.
+Note: If `leading` and `trailing` options are `true`, `func` will be called on the trailing edge of the timeout only if the the debounced function is invoked more than once during the `wait` timeout.
 
 #### Arguments
 1. `func` *(Function)*: The function to debounce.
@@ -2095,7 +2095,7 @@ Note: If `leading` and `trailing` options are `true`, `func` will be called on t
 var lazyLayout = _.debounce(calculateLayout, 300);
 jQuery(window).on('resize', lazyLayout);
 
-jQuery('.postbox').on('click', _.debounce(sendMail, 200, {
+jQuery('#postbox').on('click', _.debounce(sendMail, 200, {
   'leading': true,
   'trailing': false
 });

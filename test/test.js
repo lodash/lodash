@@ -1,17 +1,28 @@
 ;(function(window, undefined) {
   'use strict';
 
+  /** Method and object shortcuts */
+  var document = window.document,
+      amd = window.define && define.amd,
+      body = document && document.body,
+      create = Object.create,
+      freeze = Object.freeze,
+      phantom = window.phantom,
+      process = window.process,
+      slice = Array.prototype.slice,
+      system = window.system;
+
   /** Use a single "load" function */
   var load = typeof require == 'function' ? require : window.load;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
     var min = 0;
-    var result = window.phantom
+    var result = phantom
       ? phantom.args
-      : (window.system
+      : (system
           ? (min = 1, system.args)
-          : (window.process ? (min = 2, process.argv) : (window.arguments || []))
+          : (process ? (min = 2, process.argv) : (window.arguments || []))
         );
 
     var last = result[result.length - 1];
@@ -60,9 +71,6 @@
     undefined
   ];
 
-  /** Shortcut used to make object properties immutable */
-  var freeze = Object.freeze;
-
   /** Used to set property descriptors */
   var setDescriptor = (function() {
     try {
@@ -72,9 +80,6 @@
     } catch(e) { }
     return result;
   }());
-
-  /** Shortcut used to convert array-like objects to arrays */
-  var slice = Array.prototype.slice;
 
   /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
   var shadowedProps = [
@@ -109,14 +114,13 @@
 
   // add object from iframe
   (function() {
-    if (!window.document || window.phantom) {
+    if (!document || phantom) {
       return;
     }
-    var body = document.body,
-        iframe = document.createElement('iframe');
-
+    var iframe = document.createElement('iframe');
     iframe.frameBorder = iframe.height = iframe.width = 0;
     body.appendChild(iframe);
+
     var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
     idoc.write("<script>parent._._object = { 'a': 1, 'b': 2, 'c': 3 };<\/script>");
     idoc.close();
@@ -130,7 +134,7 @@
 
   (function() {
     test('supports loading ' + basename + ' as the "lodash" module', function() {
-      if (window.define && define.amd) {
+      if (amd) {
         equal((lodashModule || {}).moduleName, 'lodash');
       } else {
         skipTest();
@@ -138,7 +142,7 @@
     });
 
     test('supports loading ' + basename + ' with the Require.js "shim" configuration option', function() {
-      if (window.define && define.amd) {
+      if (amd) {
         equal((shimmedModule || {}).moduleName, 'shimmed');
       } else {
         skipTest();
@@ -146,7 +150,7 @@
     });
 
     test('supports loading ' + basename + ' as the "underscore" module', function() {
-      if (window.define && define.amd) {
+      if (amd) {
         equal((underscoreModule || {}).moduleName, 'underscore');
       } else {
         skipTest();
@@ -154,7 +158,7 @@
     });
 
     test('avoids overwritten native methods', function() {
-      if (window.document && !window.phantom) {
+      if (document && !phantom) {
         notDeepEqual(lodashBadShim.keys({ 'a': 1 }), []);
       } else {
         skipTest();
@@ -342,7 +346,7 @@
     Klass.prototype = { 'b': 1 };
 
     var nonCloneable = {
-      'an element': window.document && document.body,
+      'an element': body,
       'a function': Klass
     };
 
@@ -1353,7 +1357,7 @@
 
   (function() {
     test('should use strict equality in its duck type check', function() {
-      var element = window.document ? document.body : { 'nodeType': 1 };
+      var element = body || { 'nodeType': 1 };
       strictEqual(_.isElement(element), true);
 
       strictEqual(_.isElement({ 'nodeType': new Number(1) }), false);
@@ -1557,9 +1561,20 @@
       strictEqual(_.isPlainObject(new Foo(1)), false);
       strictEqual(_.isPlainObject([1, 2, 3]), false);
       strictEqual(_.isPlainObject({ 'a': 1 }), true);
+
+      if (create) {
+        strictEqual(_.isPlainObject(create(null)), true);
+      } else {
+        skipTest();
+      }
+      if (document) {
+        strictEqual(_.isPlainObject(body), false);
+      } else {
+        skipTest();
+      }
     });
 
-    test('should return `false` for objects without a [[Class]] of "Object"', function() {
+    test('should return `false` for Object objects without a [[Class]] of "Object"', function() {
       strictEqual(_.isPlainObject(arguments), false);
       strictEqual(_.isPlainObject(Error), false);
       strictEqual(_.isPlainObject(Math), false);
@@ -1600,7 +1615,7 @@
       equal(typeof func(true), expected);
       equal(typeof func(false), expected);
       equal(typeof func(new Date), expected);
-      equal(typeof func(window.document && document.body), expected);
+      equal(typeof func(body), expected);
       equal(typeof func({}), expected);
       equal(typeof func(undefined), expected);
       equal(typeof func(Infinity), expected);
@@ -2905,10 +2920,9 @@
     });
 
     test('should work with a node list for `collection` (test in IE < 9)', function() {
-      if (window.document) {
+      if (document) {
         try {
           var nodeList = document.getElementsByTagName('body'),
-              body = nodeList[0],
               actual = _.toArray(nodeList);
         } catch(e) { }
         deepEqual(actual, [body]);
@@ -3475,7 +3489,7 @@
 
   // configure QUnit and call `QUnit.start()` for
   // Narwhal, Node.js, PhantomJS, Rhino, and RingoJS
-  if (!window.document || window.phantom) {
+  if (!document || phantom) {
     QUnit.config.noglobals = true;
     QUnit.start();
   }

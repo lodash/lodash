@@ -1176,7 +1176,7 @@
 
     // remove `support.nodeClass` from `shimIsPlainObject`
     source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-      return match.replace(/ *&& *\(support\.nodeClass[\s\S]+?\)\)/, '');
+      return match.replace(/\(support\.nodeClass[\s\S]+?\)\)/, 'true');
     });
 
     // remove `support.nodeClass` from `_.clone`

@@ -545,7 +545,7 @@
       // check that the constructor is `Object` (i.e. `Object instanceof Object`)
       var ctor = value.constructor;
 
-      if (isFunction(ctor) ? ctor instanceof ctor : (support.nodeClass || !isNode(value))) {
+      if (isFunction(ctor) ? ctor instanceof ctor : true) {
         // In most environments an object's own properties are iterated before
         // its inherited properties. If the last iterated property is an object's
         // own property then there are no inherited enumerable properties.

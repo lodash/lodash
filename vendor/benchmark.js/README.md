@@ -100,7 +100,7 @@ suite.add('RegExp#test', function() {
   console.log(String(event.target));
 })
 .on('complete', function() {
-  console.log('Fastest is ' + _.pluck(this.filter('fastest'), 'name'));
+  console.log('Fastest is ' + this.filter('fastest').pluck('name'));
 })
 // run async
 .run({ 'async': true });

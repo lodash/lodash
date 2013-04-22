@@ -30,6 +30,9 @@
   /** Used to assign each benchmark an incrimented id */
   var counter = 0;
 
+  /** Used to make every compiled test unique */
+  var uidCounter = 0;
+
   /** Used to detect primitive types */
   var rePrimitive = /^(?:boolean|number|string|undefined)$/;
 
@@ -139,6 +142,7 @@
         max = Math.max,
         min = Math.min,
         pow = Math.pow,
+        push = arrayRef.push,
         setTimeout = context.setTimeout,
         shift = arrayRef.shift,
         slice = arrayRef.slice,
@@ -1444,10 +1448,9 @@
         // ...the z-stat is greater than 1.96 or less than -1.96
         // http://www.statisticslectures.com/topics/mannwhitneyu/
         zStat = getZ(u);
-        return abs(zStat) > 1.96 ? (zStat > 0 ? -1 : 1) : 0;
+        return abs(zStat) > 1.96 ? (u == u1 ? 1 : -1) : 0;
       }
       // ...the U value is less than or equal the critical U value
-      // http://www.geoib.com/mann-whitney-u-test.html
       critical = maxSize < 5 || minSize < 3 ? 0 : uTable[maxSize][minSize - 3];
       return u <= critical ? (u == u1 ? 1 : -1) : 0;
     }
@@ -1560,22 +1563,18 @@
     function clock() {
       var applet,
           options = Benchmark.options,
+          templateData = {},
           timers = [{ 'ns': timer.ns, 'res': max(0.0015, getRes('ms')), 'unit': 'ms' }];
-
-      var templateData = {
-        'begin': interpolate('s#=new n#'),
-        'end': interpolate('r#=(new n#-s#)/1e3'),
-        'uid': uid
-      };
 
       // lazy define for hi-res timers
       clock = function(clone) {
         var deferred;
+        templateData.uid = uid + uidCounter++;
+
         if (clone instanceof Deferred) {
           deferred = clone;
           clone = deferred.benchmark;
         }
-
         var bench = clone._original,
             fn = bench.fn,
             fnArg = deferred ? getFirstArgument(fn) || 'deferred' : '',
@@ -1587,6 +1586,45 @@
           'fnArg': fnArg,
           'teardown': getSource(bench.teardown, interpolate('m#.teardown()'))
         });
+
+        // use API of chosen timer
+        if (timer.unit == 'ns') {
+          if (timer.ns.nanoTime) {
+            _.extend(templateData, {
+              'begin': interpolate('s#=n#.nanoTime()'),
+              'end': interpolate('r#=(n#.nanoTime()-s#)/1e9')
+            });
+          } else {
+            _.extend(templateData, {
+              'begin': interpolate('s#=n#()'),
+              'end': interpolate('r#=n#(s#);r#=r#[0]+(r#[1]/1e9)')
+            });
+          }
+        }
+        else if (timer.unit == 'us') {
+          if (timer.ns.stop) {
+            _.extend(templateData, {
+              'begin': interpolate('s#=n#.start()'),
+              'end': interpolate('r#=n#.microseconds()/1e6')
+            });
+          } else if (perfName) {
+            _.extend(templateData, {
+              'begin': interpolate('s#=n#.' + perfName + '()'),
+              'end': interpolate('r#=(n#.' + perfName + '()-s#)/1e3')
+            });
+          } else {
+            _.extend(templateData, {
+              'begin': interpolate('s#=n#()'),
+              'end': interpolate('r#=(n#()-s#)/1e6')
+            });
+          }
+        }
+        else {
+          _.extend(templateData, {
+            'begin': interpolate('s#=new n#'),
+            'end': interpolate('r#=(new n#-s#)/1e3')
+          });
+        }
 
         var count = bench.count = clone.count,
             decompilable = support.decompilation || stringable,
@@ -1609,6 +1647,16 @@
             ns = timer.ns = new applet.Packages.nano;
           }
         }
+        // define `timer` methods
+        timer.start = createFunction(
+          interpolate('o#'),
+          interpolate('var n#=this.ns,${begin};o#.elapsed=0;o#.timeStamp=s#')
+        );
+
+        timer.stop = createFunction(
+          interpolate('o#'),
+          interpolate('var n#=this.ns,s#=o#.timeStamp,${end};o#.elapsed=r#')
+        );
 
         // Compile in setup/teardown functions and the test loop.
         // Create a new compiled test, instead of using the cached `bench.compiled`,
@@ -1643,7 +1691,7 @@
             // pretest to determine if compiled code is exits early, usually by a
             // rogue `return` statement, by checking for a return object with the uid
             bench.count = 1;
-            compiled = (compiled.call(bench, context, timer) || {}).uid == uid && compiled;
+            compiled = (compiled.call(bench, context, timer) || {}).uid == templateData.uid && compiled;
             bench.count = count;
           }
         } catch(e) {
@@ -1762,7 +1810,7 @@
        */
       function interpolate(string) {
         // replaces all occurrences of `#` with a unique number and template tokens with content
-        return _.template(string.replace(/\#/g, /\d+/.exec(uid)), templateData || {});
+        return _.template(string.replace(/\#/g, /\d+/.exec(templateData.uid)), templateData);
       }
 
       /*----------------------------------------------------------------------*/
@@ -1816,50 +1864,6 @@
       if (timer.res == Infinity) {
         throw new Error('Benchmark.js was unable to find a working timer.');
       }
-      // use API of chosen timer
-      if (timer.unit == 'ns') {
-        if (timer.ns.nanoTime) {
-          _.extend(templateData, {
-            'begin': interpolate('s#=n#.nanoTime()'),
-            'end': interpolate('r#=(n#.nanoTime()-s#)/1e9')
-          });
-        } else {
-          _.extend(templateData, {
-            'begin': interpolate('s#=n#()'),
-            'end': interpolate('r#=n#(s#);r#=r#[0]+(r#[1]/1e9)')
-          });
-        }
-      }
-      else if (timer.unit == 'us') {
-        if (timer.ns.stop) {
-          _.extend(templateData, {
-            'begin': interpolate('s#=n#.start()'),
-            'end': interpolate('r#=n#.microseconds()/1e6')
-          });
-        } else if (perfName) {
-          _.extend(templateData, {
-            'begin': interpolate('s#=n#.' + perfName + '()'),
-            'end': interpolate('r#=(n#.' + perfName + '()-s#)/1e3')
-          });
-        } else {
-          _.extend(templateData, {
-            'begin': interpolate('s#=n#()'),
-            'end': interpolate('r#=(n#()-s#)/1e6')
-          });
-        }
-      }
-
-      // define `timer` methods
-      timer.start = createFunction(
-        interpolate('o#'),
-        interpolate('var n#=this.ns,${begin};o#.elapsed=0;o#.timeStamp=s#')
-      );
-
-      timer.stop = createFunction(
-        interpolate('o#'),
-        interpolate('var n#=this.ns,s#=o#.timeStamp,${end};o#.elapsed=r#')
-      );
-
       // resolve time span required to achieve a percent uncertainty of at most 1%
       // http://spiff.rit.edu/classes/phys273/uncert/uncert.html
       options.minTime || (options.minTime = max(timer.res / 2 / 0.01, 0.05));
@@ -2356,6 +2360,11 @@
       'support': support
     });
 
+    // Add Lo-Dash methods to Benchmark
+    _.each(['each', 'forEach', 'forOwn', 'has', 'indexOf', 'map', 'pluck', 'reduce'], function(methodName) {
+      Benchmark[methodName] = _[methodName];
+    });
+
     /*------------------------------------------------------------------------*/
 
     _.extend(Benchmark.prototype, {
@@ -2777,11 +2786,12 @@
       'off': off,
       'on': on,
       'pop': arrayRef.pop,
-      'push': arrayRef.push,
+      'push': push,
       'reset': resetSuite,
       'run': runSuite,
       'reverse': arrayRef.reverse,
       'shift': shift,
+      'slice': arrayRef.slice,
       'sort': arrayRef.sort,
       'splice': arrayRef.splice,
       'unshift': arrayRef.unshift
@@ -2797,6 +2807,16 @@
     });
 
     /*------------------------------------------------------------------------*/
+
+    // add Lo-Dash methods as Suite methods
+    _.each(['each', 'forEach', 'indexOf', 'map', 'pluck', 'reduce'], function(methodName) {
+      var func = _[methodName];
+      Suite.prototype[methodName] = function() {
+        var args = [this];
+        push.apply(args, arguments);
+        return func.apply(_, args);
+      };
+    });
 
     // avoid array-like object bugs with `Array#shift` and `Array#splice`
     // in Firefox < 10 and IE < 9

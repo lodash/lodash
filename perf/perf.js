@@ -58,7 +58,7 @@
   var reSpecialChars = /[.*+?^=!:${}()|[\]\/\\]/g;
 
   /** Used to score performance */
-  var score = { 'a': 0, 'b': 0 };
+  var score = { 'a': [], 'b': [] };
 
   /** Used to queue benchmark suites */
   var suites = [];
@@ -103,6 +103,20 @@
     return (arguments.length < 2)
       ? result
       : result.replace(RegExp(extension.replace(reSpecialChars, '\\$&') + '$'), '');
+  }
+
+  /**
+   * Computes the geometric mean (log-average) of an array of values.
+   * See http://en.wikipedia.org/wiki/Geometric_mean#Relationship_with_arithmetic_mean_of_logarithms.
+   *
+   * @private
+   * @param {Array} array The array of values.
+   * @returns {Number} The geometric mean.
+   */
+  function getGeometricMean(array) {
+    return Math.pow(Math.E, _.reduce(array, function(sum, x) {
+      return sum + Math.log(x);
+    }, 0) / array.length) || 0;
   }
 
   /**
@@ -174,14 +188,6 @@
       log(event.target);
     },
     'onComplete': function() {
-      var formatNumber = Benchmark.formatNumber,
-          fastest = this.filter('fastest'),
-          fastestHz = getHz(fastest[0]),
-          slowest = this.filter('slowest'),
-          slowestHz = getHz(slowest[0]),
-          aHz = getHz(this[0]),
-          bHz = getHz(this[1]);
-
       for (var index = 0, length = this.length; index < length; index++) {
         var bench = this[index];
         if (bench.error) {
@@ -190,6 +196,14 @@
         }
       }
       if (!errored) {
+        var formatNumber = Benchmark.formatNumber,
+            fastest = this.filter('fastest'),
+            fastestHz = getHz(fastest[0]),
+            slowest = this.filter('slowest'),
+            slowestHz = getHz(slowest[0]),
+            aHz = getHz(this[0]),
+            bHz = getHz(this[1]);
+
         if (fastest.length > 1) {
           log('It\'s too close to call.');
           aHz = bHz = slowestHz;
@@ -204,8 +218,8 @@
           );
         }
         // add score adjusted for margin of error
-        score.a += aHz;
-        score.b += bHz;
+        score.a.push(aHz);
+        score.b.push(bHz);
       }
       // remove current suite from queue
       suites.shift();
@@ -215,14 +229,16 @@
         suites[0].run({ 'async': !isJava });
       }
       else {
-        var fastestTotalHz = Math.max(score.a, score.b),
-            slowestTotalHz = Math.min(score.a, score.b),
-            totalPercent = formatNumber(Math.round(((fastestTotalHz  / slowestTotalHz) - 1) * 100)),
-            totalX = fastestTotalHz / slowestTotalHz,
-            message = 'is ' + totalPercent + '% ' + (totalX == 1 ? '' : '(' + formatNumber(totalX.toFixed(2)) + 'x) ') + 'faster than';
+        var aMeanHz = getGeometricMean(score.a),
+            bMeanHz = getGeometricMean(score.b),
+            fastestMeanHz = Math.max(aMeanHz, bMeanHz),
+            slowestMeanHz = Math.min(aMeanHz, bMeanHz),
+            xFaster = fastestMeanHz / slowestMeanHz,
+            percentFaster = formatNumber(Math.round((xFaster - 1) * 100)),
+            message = 'is ' + percentFaster + '% ' + (xFaster == 1 ? '' : '(' + formatNumber(xFaster.toFixed(2)) + 'x) ') + 'faster than';
 
         // report results
-        if (score.a >= score.b) {
+        if (aMeanHz >= bMeanHz) {
           log('\n' + buildName + ' ' + message + ' ' + otherName + '.');
         } else {
           log('\n' + otherName + ' ' + message + ' ' + buildName + '.');
@@ -273,13 +289,14 @@
       }\
       \
       if (typeof bindAll != "undefined") {\
-        var bindAllObjects = Array(this.count),\
-            funcNames = belt.functions(lodash);\
+        var bindAllCount = -1,\
+            bindAllObjects = Array(this.count),\
+            funcNames = belt.functions(belt).slice(0, 40);\
         \
         // potentially expensive\n\
         for (index = 0; index < this.count; index++) {\
           bindAllObjects[index] = belt.reduce(funcNames, function(object, funcName) {\
-            object[funcName] = lodash[funcName];\
+            object[funcName] = belt[funcName];\
             return object;\
           }, {});\
         }\
@@ -624,11 +641,11 @@
   suites.push(
     Benchmark.Suite('`_.bindAll` iterating arguments')
       .add(buildName, {
-        'fn': 'lodash.bindAll.apply(lodash, [bindAllObjects.pop()].concat(funcNames))',
+        'fn': 'lodash.bindAll.apply(lodash, [bindAllObjects[++bindAllCount]].concat(funcNames))',
         'teardown': 'function bindAll(){}'
       })
       .add(otherName, {
-        'fn': '_.bindAll.apply(_, [bindAllObjects.pop()].concat(funcNames))',
+        'fn': '_.bindAll.apply(_, [bindAllObjects[++bindAllCount]].concat(funcNames))',
         'teardown': 'function bindAll(){}'
       })
   );
@@ -636,11 +653,11 @@
   suites.push(
     Benchmark.Suite('`_.bindAll` iterating the `object`')
       .add(buildName, {
-        'fn': 'lodash.bindAll(bindAllObjects.pop())',
+        'fn': 'lodash.bindAll(bindAllObjects[++bindAllCount])',
         'teardown': 'function bindAll(){}'
       })
       .add(otherName, {
-        'fn': '_.bindAll(bindAllObjects.pop())',
+        'fn': '_.bindAll(bindAllObjects[++bindAllCount])',
         'teardown': 'function bindAll(){}'
       })
   );
@@ -1032,22 +1049,14 @@
 
   suites.push(
     Benchmark.Suite('`_.indexOf`')
-      .add(buildName, '\
-        lodash.indexOf(numbers, 9)'
-      )
-      .add(otherName, '\
-        _.indexOf(numbers, 9)'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.indexOf` with `isSorted`')
-      .add(buildName, '\
-        lodash.indexOf(numbers, 19, true)'
-      )
-      .add(otherName, '\
-        _.indexOf(numbers, 19, true)'
-      )
+      .add(buildName, {
+        'fn': 'lodash.indexOf(twoHundredValues, 199)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(buildName, {
+        'fn': '_.indexOf(twoHundredValues, 199)',
+        'teardown': 'function multiArrays(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/
@@ -1137,13 +1146,13 @@
       .add(buildName, {
         'fn': '\
           lodash.isEqual(numbers, numbers2);\
-          lodash.isEqual(twoNumbers, twoNumbers2);',
+          lodash.isEqual(twoNumbers, twoNumbers2)',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
         'fn': '\
           _.isEqual(numbers, numbers2);\
-          _.isEqual(twoNumbers, twoNumbers2);',
+          _.isEqual(twoNumbers, twoNumbers2)',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1153,13 +1162,13 @@
       .add(buildName, {
         'fn': '\
           lodash.isEqual(nestedNumbers, nestedNumbers2);\
-          lodash.isEqual(nestedNumbers2, nestedNumbers3);',
+          lodash.isEqual(nestedNumbers2, nestedNumbers3)',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
         'fn': '\
           _.isEqual(nestedNumbers, nestedNumbers2);\
-          _.isEqual(nestedNumbers2, nestedNumbers3);',
+          _.isEqual(nestedNumbers2, nestedNumbers3)',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1169,13 +1178,13 @@
       .add(buildName, {
         'fn': '\
           lodash.isEqual(objects, objects2);\
-          lodash.isEqual(simpleObjects, simpleObjects2);',
+          lodash.isEqual(simpleObjects, simpleObjects2)',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
         'fn': '\
           _.isEqual(objects, objects2);\
-          _.isEqual(simpleObjects, simpleObjects2);',
+          _.isEqual(simpleObjects, simpleObjects2)',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1185,13 +1194,13 @@
       .add(buildName, {
         'fn': '\
           lodash.isEqual(object, object2);\
-          lodash.isEqual(simpleObject, simpleObject2);',
+          lodash.isEqual(simpleObject, simpleObject2)',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
         'fn': '\
           _.isEqual(object, object2);\
-          _.isEqual(simpleObject, simpleObject2);',
+          _.isEqual(simpleObject, simpleObject2)',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1212,7 +1221,7 @@
         lodash.isObject(object);\
         lodash.isObject(1);\
         lodash.isRegExp(regexp);\
-        lodash.isRegExp(object);'
+        lodash.isRegExp(object)'
       )
       .add(otherName, '\
         _.isArguments(arguments);\
@@ -1226,7 +1235,7 @@
         _.isObject(object);\
         _.isObject(1);\
         _.isRegExp(regexp);\
-        _.isRegExp(object);'
+        _.isRegExp(object)'
       )
   );
 
@@ -1390,13 +1399,13 @@
         lodash.reduce(numbers, function(result, value, index) {\
           result[index] = value;\
           return result;\
-        }, {});'
+        }, {})'
       )
       .add(otherName, '\
         _.reduce(numbers, function(result, value, index) {\
           result[index] = value;\
           return result;\
-        }, {});'
+        }, {})'
       )
   );
 
@@ -1406,13 +1415,13 @@
         lodash.reduce(object, function(result, value, key) {\
           result.push(key, value);\
           return result;\
-        }, []);'
+        }, [])'
       )
       .add(otherName, '\
         _.reduce(object, function(result, value, key) {\
           result.push(key, value);\
           return result;\
-        }, []);'
+        }, [])'
       )
   );
 
@@ -1424,13 +1433,13 @@
         lodash.reduceRight(numbers, function(result, value, index) {\
           result[index] = value;\
           return result;\
-        }, {});'
+        }, {})'
       )
       .add(otherName, '\
         _.reduceRight(numbers, function(result, value, index) {\
           result[index] = value;\
           return result;\
-        }, {});'
+        }, {})'
       )
   );
 
@@ -1440,13 +1449,13 @@
         lodash.reduceRight(object, function(result, value, key) {\
           result.push(key, value);\
           return result;\
-        }, []);'
+        }, [])'
       )
       .add(otherName, '\
         _.reduceRight(object, function(result, value, key) {\
           result.push(key, value);\
           return result;\
-        }, []);'
+        }, [])'
       )
   );
 
@@ -1599,16 +1608,6 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.sortedIndex`')
-      .add(buildName, '\
-        lodash.sortedIndex(numbers, 25)'
-      )
-      .add(otherName, '\
-        _.sortedIndex(numbers, 25)'
-      )
-  );
-
-  suites.push(
     Benchmark.Suite('`_.sortedIndex` with `callback`')
       .add(buildName, {
         'fn': '\
@@ -1727,11 +1726,11 @@
   suites.push(
     Benchmark.Suite('`_.union` iterating an array of 75 elements')
       .add(buildName, {
-        'fn': 'lodash.union(fiftyValues, twentyFiveValues2);',
+        'fn': 'lodash.union(fiftyValues, twentyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.union(fiftyValues, twentyFiveValues2);',
+        'fn': '_.union(fiftyValues, twentyFiveValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1753,7 +1752,7 @@
       .add(buildName, '\
         lodash.uniq(numbers.concat(twoNumbers, fourNumbers), function(num) {\
           return num % 2;\
-        });'
+        })'
       )
       .add(otherName, '\
         _.uniq(numbers.concat(twoNumbers, fourNumbers), function(num) {\
@@ -1765,11 +1764,11 @@
   suites.push(
     Benchmark.Suite('`_.uniq` iterating an array of 200 elements')
       .add(buildName, {
-        'fn': 'lodash.uniq(oneHundredValues.concat(oneHundredValues2));',
+        'fn': 'lodash.uniq(oneHundredValues.concat(oneHundredValues2))',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.uniq(oneHundredValues.concat(oneHundredValues2));',
+        'fn': '_.uniq(oneHundredValues.concat(oneHundredValues2))',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1779,11 +1778,11 @@
   suites.push(
     Benchmark.Suite('`_.unzip`')
       .add(buildName, {
-        'fn': 'lodash.unzip(zipped);',
+        'fn': 'lodash.unzip(zipped)',
         'teardown': 'function zip(){}'
       })
       .add(otherName, {
-        'fn': '_.unzip(zipped);',
+        'fn': '_.unzip(zipped)',
         'teardown': 'function zip(){}'
       })
   );
@@ -1805,11 +1804,11 @@
   suites.push(
     Benchmark.Suite('`_.where`')
       .add(buildName, {
-        'fn': 'lodash.where(objects, whereObject);',
+        'fn': 'lodash.where(objects, whereObject)',
         'teardown': 'function where(){}'
       })
       .add(otherName, {
-        'fn': '_.where(objects, whereObject);',
+        'fn': '_.where(objects, whereObject)',
         'teardown': 'function where(){}'
       })
   );
@@ -1831,11 +1830,11 @@
   suites.push(
     Benchmark.Suite('`_.zip`')
       .add(buildName, {
-        'fn': 'lodash.zip.apply(lodash, unzipped);',
+        'fn': 'lodash.zip.apply(lodash, unzipped)',
         'teardown': 'function zip(){}'
       })
       .add(otherName, {
-        'fn': '_.zip.apply(_, unzipped);',
+        'fn': '_.zip.apply(_, unzipped)',
         'teardown': 'function zip(){}'
       })
   );

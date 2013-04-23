@@ -951,7 +951,7 @@
      * // => true
      */
     var isArray = nativeIsArray || function(value) {
-      return value && typeof value == 'object' && toString.call(value) == arrayClass;
+      return value ? (typeof value == 'object' && toString.call(value) == arrayClass) : false;
     };
 
     /**
@@ -1457,7 +1457,7 @@
      * // => true
      */
     function isDate(value) {
-      return value ? typeof value == 'object' && toString.call(value) == dateClass : false;
+      return value ? (typeof value == 'object' && toString.call(value) == dateClass) : false;
     }
 
     /**
@@ -1911,7 +1911,7 @@
      * // => true
      */
     function isRegExp(value) {
-      return value ? typeof value == 'object' && toString.call(value) == regexpClass : false;
+      return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;
     }
 
     /**

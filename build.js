@@ -1916,6 +1916,7 @@
         if (isMobile) {
           source = replaceSupportProp(source, 'enumPrototypes', 'true');
           source = replaceSupportProp(source, 'nonEnumArgs', 'true');
+          source = removeIsArrayFallback(source);
         }
         else {
           source = removeIsFunctionFallback(source);
@@ -1938,7 +1939,6 @@
         source = removeSupportNodeClass(source);
 
         if (!isMobile) {
-          source = removeIsArrayFallback(source);
           source = removeSupportEnumPrototypes(source);
           source = removeSupportNonEnumArgs(source);
 
@@ -2185,13 +2185,6 @@
           '  }',
           '  return result;',
           '}'
-        ].join('\n'));
-
-        // replace `_.isArray`
-        source = replaceFunction(source, 'isArray', [
-          'var isArray = nativeIsArray || function(value) {',
-          '  return toString.call(value) == arrayClass;',
-          '};'
         ].join('\n'));
 
         // replace `_.isEmpty`

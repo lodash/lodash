@@ -655,9 +655,7 @@
      * _.isArray([1, 2, 3]);
      * // => true
      */
-    var isArray = nativeIsArray || function(value) {
-      return value && typeof value == 'object' && toString.call(value) == arrayClass;
-    };
+    var isArray = nativeIsArray;
 
     /**
      * A fallback implementation of `Object.keys` which produces an array of the
@@ -1287,7 +1285,7 @@
      * // => true
      */
     function isDate(value) {
-      return value ? typeof value == 'object' && toString.call(value) == dateClass : false;
+      return value ? (typeof value == 'object' && toString.call(value) == dateClass) : false;
     }
 
     /**
@@ -1740,7 +1738,7 @@
      * // => true
      */
     function isRegExp(value) {
-      return value ? typeof value == 'object' && toString.call(value) == regexpClass : false;
+      return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;
     }
 
     /**

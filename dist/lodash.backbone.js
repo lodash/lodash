@@ -440,7 +440,7 @@
    * // => true
    */
   var isArray = nativeIsArray || function(value) {
-    return toString.call(value) == arrayClass;
+    return value ? (typeof value == 'object' && toString.call(value) == arrayClass) : false;
   };
 
   /**
@@ -1019,7 +1019,7 @@
    * // => true
    */
   function isRegExp(value) {
-    return value ? typeof value == 'object' && toString.call(value) == regexpClass : false;
+    return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;
   }
 
   /**

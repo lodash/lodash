@@ -1,6 +1,9 @@
 ;(function(window) {
   'use strict';
 
+  /** The base path of the builds */
+  var basePath = '../';
+
   /** The Lo-Dash build to load */
   var build = (/build=([^&]+)/.exec(location.search) || [])[1];
 
@@ -33,28 +36,36 @@
 
   // expose Lo-Dash build file path
   ui.buildPath = (function() {
+    var result;
     switch (build) {
-      case 'lodash-compat':     return 'dist/lodash.compat.min.js';
-      case 'lodash-mobile':     return 'dist/lodash.mobile.min.js';
-      case 'lodash-underscore': return 'dist/lodash.underscore.min.js';
-      case 'lodash-custom-dev': return 'lodash.custom.js';
-      case 'lodash-custom':     return 'lodash.custom.min.js';
+      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
+      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
+      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
+      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
+      case 'lodash-modern':
+      case  undefined:          result = 'dist/lodash.min.js'; break;
+      default:                  result = build;
     }
-    return 'dist/lodash.min.js';
+    return result == build ? result : (basePath + result);
   }());
 
   // expose other library file path
   ui.otherPath = (function() {
+    var result;
     switch (other) {
-      case 'lodash-compat':     return 'dist/lodash.compat.min.js';
-      case 'lodash-mobile':     return 'dist/lodash.mobile.min.js';
-      case 'lodash-modern':     return 'dist/lodash.min.js';
-      case 'lodash-underscore': return 'dist/lodash.underscore.min.js';
-      case 'lodash-custom-dev': return 'lodash.custom.js';
-      case 'lodash-custom':     return 'lodash.custom.min.js';
-      case 'underscore-dev':    return 'vendor/underscore/underscore.js';
+      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
+      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
+      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
+      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
+      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
+      case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
+      case 'underscore':
+      case  undefined:          result = 'vendor/underscore/underscore-min.js'; break;
+      default:                  result = other;
     }
-    return 'vendor/underscore/underscore-min.js';
+    return result == other ? result : (basePath + result);
   }());
 
   // initialize controls

@@ -39,6 +39,7 @@
     var result;
     switch (build) {
       case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
       case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
       case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
@@ -55,6 +56,7 @@
     var result;
     switch (other) {
       case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
       case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
       case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
       case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;

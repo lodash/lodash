@@ -67,16 +67,16 @@
   var toString = Object.prototype.toString;
 
   /** The `ui` object */
-  var ui = window.ui || ({
+  var ui = window.ui || (window.ui = {
     'buildPath': basename(filePath, '.js'),
     'otherPath': 'underscore'
   });
 
   /** The Lo-Dash build basename */
-  var buildName = basename(ui.buildPath, '.js');
+  var buildName = window.buildName = basename(ui.buildPath, '.js');
 
   /** The other library basename */
-  var otherName = basename(ui.otherPath, '.js');
+  var otherName = window.otherName = basename(ui.otherPath, '.js');
 
   /** Detect if in a browser environment */
   var isBrowser = isHostType(window, 'document') && isHostType(window, 'navigator');
@@ -256,7 +256,7 @@
     'setup': '\
       var _ = window._,\
           lodash = window.lodash,\
-          belt = this.name == "Lo-Dash" ? lodash : _;\
+          belt = this.name == buildName ? lodash : _;\
       \
       var index,\
           date = new Date,\

@@ -192,10 +192,12 @@
         var bench = this[index];
         if (bench.error) {
           var errored = true;
-          log(bench.error);
         }
       }
-      if (!errored) {
+      if (errored) {
+        log('There was a problem, skipping...');
+      }
+      else {
         var formatNumber = Benchmark.formatNumber,
             fastest = this.filter('fastest'),
             fastestHz = getHz(fastest[0]),
@@ -290,8 +292,11 @@
       \
       if (typeof bindAll != "undefined") {\
         var bindAllCount = -1,\
-            bindAllObjects = Array(this.count),\
-            funcNames = belt.functions(belt).slice(0, 40);\
+            bindAllObjects = Array(this.count);\
+        \
+        var funcNames = belt.reject(belt.functions(belt).slice(0, 40), function(funcName) {\
+          return /^_/.test(funcName);\
+        });\
         \
         // potentially expensive\n\
         for (index = 0; index < this.count; index++) {\

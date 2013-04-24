@@ -766,7 +766,7 @@ _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 ### <a id="_uniqarray--issortedfalse-callbackidentity-thisarg"></a>`_.uniq(array [, isSorted=false, callback=identity, thisArg])`
 <a href="#_uniqarray--issortedfalse-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L4038 "View in source") [&#x24C9;][1]
 
-Creates a duplicate-value-free version of the `array` using strict equality for comparisons, i.e. `===`. If the `array` is already sorted, passing `true` for `isSorted` will run a faster algorithm. If `callback` is passed, each element of `array` is passed through a callback` before uniqueness is computed. The `callback` is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
+Creates a duplicate-value-free version of the `array` using strict equality for comparisons, i.e. `===`. If the `array` is already sorted, passing `true` for `isSorted` will run a faster algorithm. If `callback` is passed, each element of `array` is passed through a `callback` before uniqueness is computed. The `callback` is bound to `thisArg` and invoked with three arguments: *(value, index, array)*.
 
 If a property name is passed for `callback`, the created "_.pluck" style callback will return the property value of the given element.
 

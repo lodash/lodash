@@ -2552,7 +2552,7 @@
   /**
    * Flattens a nested array (the nesting can be to any depth). If `isShallow`
    * is truthy, `array` will only be flattened a single level. If `callback`
-   * is passed, each element of `array` is passed through a callback` before
+   * is passed, each element of `array` is passed through a `callback` before
    * flattening. The `callback` is bound to `thisArg` and invoked with three
    * arguments; (value, index, array).
    *
@@ -3086,7 +3086,7 @@
    * Creates a duplicate-value-free version of the `array` using strict equality
    * for comparisons, i.e. `===`. If the `array` is already sorted, passing `true`
    * for `isSorted` will run a faster algorithm. If `callback` is passed, each
-   * element of `array` is passed through a callback` before uniqueness is computed.
+   * element of `array` is passed through a `callback` before uniqueness is computed.
    * The `callback` is bound to `thisArg` and invoked with three arguments; (value, index, array).
    *
    * If a property name is passed for `callback`, the created "_.pluck" style

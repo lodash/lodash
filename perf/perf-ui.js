@@ -131,8 +131,10 @@
         case 'lodash-underscore': return 4;
         case 'lodash-custom-dev': return 5;
         case 'lodash-custom':     return 6;
+        case 'lodash-modern':
+        case undefined:           return 3;
       }
-      return 3;
+      return -1;
     }());
 
     otherList.selectedIndex = (function() {
@@ -145,8 +147,10 @@
         case 'lodash-underscore': return 6;
         case 'lodash-custom-dev': return 7;
         case 'lodash-custom':     return 8;
+        case 'underscore':
+        case undefined:           return 1;
       }
-      return 1;
+      return -1;
     }());
 
     addListener(buildList, 'change', eventHandler);

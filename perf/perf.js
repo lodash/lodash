@@ -114,7 +114,7 @@
    * @returns {Number} The geometric mean.
    */
   function getGeometricMean(array) {
-    return Math.pow(Math.E, _.reduce(array, function(sum, x) {
+    return Math.pow(Math.E, lodash.reduce(array, function(sum, x) {
       return sum + Math.log(x);
     }, 0) / array.length) || 0;
   }

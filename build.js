@@ -1909,7 +1909,6 @@
         source = removeIsArgumentsFallback(source);
       }
       if (isModern) {
-        source = removeSupportArgsObject(source);
         source = removeSupportSpliceObjects(source);
         source = removeIsArgumentsFallback(source);
 
@@ -1933,6 +1932,7 @@
       }
       if (isModern || isUnderscore) {
         source = removeSupportArgsClass(source);
+        source = removeSupportArgsObject(source);
         source = removeSupportNonEnumShadows(source);
         source = removeSupportOwnLast(source);
         source = removeSupportUnindexedChars(source);

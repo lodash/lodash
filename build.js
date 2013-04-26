@@ -1382,8 +1382,8 @@
    */
   function removeVar(source, varName) {
     // simplify complex variable assignments
-    if (/^(?:cloneableClasses|contextProps|ctorByClass|shadowedProps)$/.test(varName)) {
-      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?\\n\\n'), '$1=null;\n\n');
+    if (/^(?:cloneableClasses|contextProps|ctorByClass|shadowedProps|whitespace)$/.test(varName)) {
+      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?;\\n\\n'), '$1=null;\n\n');
     }
 
     source = removeFunction(source, varName);
@@ -2915,7 +2915,8 @@
       }
       if (isRemoved(source, 'parseInt')) {
         source = removeVar(source, 'nativeParseInt');
-        source = removeVar(source, 'reLeadingZeros');
+        source = removeVar(source, 'reLeadingSpacesAndZeros');
+        source = removeVar(source, 'whitespace');
       }
       if (isRemoved(source, 'template')) {
         // remove `templateSettings` assignment

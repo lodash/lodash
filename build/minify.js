@@ -310,7 +310,10 @@
         // containing Base64-encoded blob data. Overriding the `Accept` header
         // with the GitHub raw media type returns the blob data directly.
         // See http://developer.github.com/v3/media/.
-        'Accept': mediaType
+        'Accept': mediaType,
+        // As of 2013-04-24, the GitHub API mandates the `User-Agent` header
+        // for all requests.
+        'User-Agent': 'Lo-Dash/' + _.VERSION
       }
     }, function(response) {
       var decompressor = zlib.createUnzip(),

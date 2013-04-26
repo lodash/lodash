@@ -4886,6 +4886,7 @@
      * @memberOf _
      * @category Utilities
      * @param {Mixed} value The value to parse.
+     * @param {Number} [radix=10] The numeric base (2, 8, 10, 16, etc).
      * @returns {Number} Returns the new integer value.
      * @example
      *
@@ -4894,7 +4895,7 @@
      */
     var parseInt = nativeParseInt('08') == 8 ? nativeParseInt : function(value, radix) {
       // Firefox and Opera still follow the ES3 specified implementation of `parseInt`
-      return nativeParseInt(isString(value) ? value.replace(reLeadingZeros, '') : value, radix || 0);
+      return nativeParseInt(isString(value) ? value.replace(reLeadingZeros, '') : value, radix || 10);
     };
 
     /**

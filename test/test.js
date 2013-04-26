@@ -2047,14 +2047,22 @@
   QUnit.module('lodash.parseInt');
 
   (function() {
-    test('should parse strings with leading zeros with a `radix` of 10 by default (test in Firefox and Opera)', function() {
+    test('should parse strings with leading whitespace and zeros with a `radix` of 10 by default (test in Chrome, Firefox, and Opera)', function() {
+      var whitespace = ' \t\x0B\x0C\xA0\ufeff\x0A\x0D\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
       equal(_.parseInt('08'), 8);
+      equal(_.parseInt(whitespace + '08'), 8);
     });
 
-    test('should internally use a radix of 10 if `radix` is `undefined` or `0`', function() {
+    test('should use a radix of `10`, for non-hexadecimals, if `radix` is `undefined` or `0`', function() {
       equal(_.parseInt('10', 0), 10);
       equal(_.parseInt('10'), 10);
       equal(_.parseInt('10', undefined), 10);
+    });
+
+    test('should use a radix of `16`, for hexadecimals, if `radix` is `undefined` or `0`', function() {
+      equal(_.parseInt('0x20', 0), 32);
+      equal(_.parseInt('0x20'), 32);
+      equal(_.parseInt('0x20', undefined), 32);
     });
   }());
 

@@ -58,7 +58,7 @@
   /** Used to detect and test whitespace */
   var whitespace = (
     // whitespace
-    ' \t\x0B\x0C\xA0\ufeff' +
+    ' \t\x0B\f\xA0\ufeff' +
 
     // line terminators
     '\n\r\u2028\u2029' +

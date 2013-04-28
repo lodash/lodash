@@ -34,6 +34,6 @@
     "rhino"
   ],
   "jam": {
-    "main": "./lodash.js"
+    "main": "./dist/lodash.compat.js"
   }
 }

@@ -55,5 +55,6 @@ QUnit CLIB has been tested in at least Node.js 0.4.8-0.10.5, Narwhal 0.3.2, Phan
 
 ## Author
 
-* [John-David Dalton](http://allyoucanleet.com/)
-  [![twitter/jdalton](http://gravatar.com/avatar/299a3d891ff1920b69c364d061007043?s=70)](https://twitter.com/jdalton "Follow @jdalton on Twitter")
+| [![twitter/jdalton](http://gravatar.com/avatar/299a3d891ff1920b69c364d061007043?s=70)](http://twitter.com/jdalton "Follow @jdalton on Twitter") |
+|---|
+| [John-David Dalton](http://allyoucanleet.com/) |

@@ -646,9 +646,7 @@
      * _.isArray([1, 2, 3]);
      * // => true
      */
-    var isArray = nativeIsArray || function(value) {
-      return value ? (typeof value == 'object' && toString.call(value) == arrayClass) : false;
-    };
+    var isArray = nativeIsArray;
 
     /**
      * A fallback implementation of `Object.keys` which produces an array of the

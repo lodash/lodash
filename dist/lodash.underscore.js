@@ -1222,7 +1222,7 @@
    * // => true
    */
   function isRegExp(value) {
-    return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;
+    return value ? (objectTypes[typeof value] && toString.call(value) == regexpClass) : false;
   }
 
   /**

@@ -1924,6 +1924,13 @@
           source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
             return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
           });
+
+          // replace `_.isRegExp`
+          source = replaceFunction(source, 'isRegExp', [
+            'function isRegExp(value) {',
+            "  return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;",
+            '}'
+          ].join('\n'));
         }
       }
       if (isMobile || isUnderscore) {

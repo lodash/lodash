@@ -3,6 +3,7 @@
 *.d.ts
 *.md
 bower.json
+component.json
 doc
 node_modules
 perf

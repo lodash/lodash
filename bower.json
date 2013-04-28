@@ -10,6 +10,8 @@
     "*.txt",
     "build.js",
     "index.js",
+    "component.json",
+    "package.json",
     "build",
     "doc",
     "node_modules",

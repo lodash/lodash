@@ -6,6 +6,7 @@
 build.js
 index.js
 bower.json
+component.json
 build
 doc
 node_modules

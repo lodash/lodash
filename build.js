@@ -1915,9 +1915,9 @@
         if (isMobile) {
           source = replaceSupportProp(source, 'enumPrototypes', 'true');
           source = replaceSupportProp(source, 'nonEnumArgs', 'true');
-          source = removeIsArrayFallback(source);
         }
         else {
+          source = removeIsArrayFallback(source);
           source = removeIsFunctionFallback(source);
 
           // remove `shimIsPlainObject` from `_.isPlainObject`

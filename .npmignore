@@ -1,6 +1,7 @@
 .*
 *.custom.*
 *.d.ts
+*.map
 *.md
 bower.json
 component.json

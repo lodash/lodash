@@ -10,7 +10,8 @@
       phantom = window.phantom,
       process = window.process,
       slice = Array.prototype.slice,
-      system = window.system;
+      system = window.system,
+      toString = Object.prototype.toString;
 
   /** Use a single "load" function */
   var load = typeof require == 'function' ? require : window.load;
@@ -1626,16 +1627,23 @@
       equal(typeof func({ 'a': 1 }), expected);
       equal(typeof func('a'), expected);
     });
+  });
 
+  (function() {
     test('should return `false` for subclassed values', function() {
       _.each(['isArray', 'isBoolean', 'isDate', 'isFunction', 'isNumber', 'isRegExp', 'isString'], function(methodName) {
         function Foo() {}
         Foo.prototype = window[methodName.slice(2)].prototype;
 
-        strictEqual(_[methodName](new Foo), false, '_.' + methodName + ' returns `false`');
+        var object = new Foo;
+        if (toString.call(object) == '[object Object]') {
+          strictEqual(_[methodName](object), false, '_.' + methodName + ' returns `false`');
+        } else {
+          skipTest();
+        }
       });
     });
-  });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

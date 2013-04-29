@@ -1,28 +1,28 @@
-# Lo-Dash <sup>v1.2.0</sup>
+# Lo-Dash <sup>v1.2.1</sup>
 
 A low-level utility library delivering consistency, [customization](https://github.com/bestiejs/lodash#custom-builds), [performance](http://lodash.com/benchmarks), and [extra features](https://github.com/bestiejs/lodash#features).
 
 ## Download
 
 * Lo-Dash builds (for modern environments):<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.2.0/dist/lodash.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.2.0/dist/lodash.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.min.js)
 
 * Lo-Dash compatibility builds (for legacy and modern environments):<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.2.0/dist/lodash.compat.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.2.0/dist/lodash.compat.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.compat.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.compat.min.js)
 
 * Underscore compatibility builds:<br>
-[Development](https://raw.github.com/bestiejs/lodash/v1.2.0/dist/lodash.underscore.js) and
-[Production](https://raw.github.com/bestiejs/lodash/v1.2.0/dist/lodash.underscore.min.js)
+[Development](https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.underscore.js) and
+[Production](https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.underscore.min.js)
 
-* CDN copies of ≤ v1.2.0’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
-[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.js),
-[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.min.js),<br>
-[Lo-Dash compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.compat.js),
-[Lo-Dash compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.compat.min.js),<br>
-[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.underscore.js), and
-[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.underscore.min.js)
+* CDN copies of ≤ v1.2.1’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.js),
+[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.min.js),<br>
+[Lo-Dash compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.compat.js),
+[Lo-Dash compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.compat.min.js),<br>
+[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.underscore.js), and
+[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.underscore.min.js)
 
 * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
 
@@ -79,12 +79,13 @@ For more information check out these articles, screencasts, and other videos ove
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5~26, Firefox 2~19, IE 6-10, Opera 9.25~12, Safari 3-6, Node.js 0.4.8-0.10.4, Narwhal 0.3.2, PhantomJS 1.9.0, RingoJS 0.9, and Rhino 1.7RC5.
+Lo-Dash has been tested in at least Chrome 5~26, Firefox 2~20, IE 6-10, Opera 9.25~12, Safari 3-6, Node.js 0.4.8-0.10.5, Narwhal 0.3.2, PhantomJS 1.9.0, RingoJS 0.9, and Rhino 1.7RC5.
 
 ## Custom builds
 
 Custom builds make it easy to create lightweight versions of Lo-Dash containing only the methods you need.
 To top it off, we handle all method dependency and alias mapping for you.
+For a more detailed summary over the differences between various builds, check out our [wiki entry](https://github.com/bestiejs/lodash/wiki/build-differences).
 
  * Backbone builds, with only methods required by Backbone, may be created using the `backbone` modifier argument.
 ```bash
@@ -247,20 +248,14 @@ require({
 
 ## Release Notes
 
-### <sup>v1.2.0</sup>
+### <sup>v1.2.1</sup>
 
- * Added `_.unzip`
- * Added an `options` argument to `_.debounce` and `_.throttle`
- * Allowed non-`underscore` builds to include `_.findWhere` and `_.chain`
- * Ensured *“Arrays”* and *“Objects”* category methods work with `arguments` objects and arrays respectively
- * Ensured build utility runs on Windows
- * Ensured `underscore` build versions of *“isType”* methods align with Underscore
- * Ensured methods avoid issues with the `__proto__` property
- * Ensured `_.isEqual` uses a `callback` only if it’s a function
- * Ensured `_.merge` applies a `callback` to nested properties
- * Ensured `_.merge` passes the correct `callback` arguments when comparing objects
- * Made Lo-Dash work with Browserify
- * Removed method compilation from the `modern` build
+ * Added Component package support
+ * Updated the build utility to work with changes in GitHub’s API
+ * Ensured `_.isPlainObject` works with objects created by `Object.create(null)`
+ * Ensured *“isType”* methods return `false` for subclassed values
+ * Ensured debounced functions, with `leading` and `trailing` calls enabled,<br>
+   only perform trailing calls after they’re called more than once
 
 The full changelog is available [here](https://github.com/bestiejs/lodash/wiki/Changelog).
 

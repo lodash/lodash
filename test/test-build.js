@@ -771,6 +771,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('modern modifier');
+
+  (function() {
+    asyncTest('`lodash modern`', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
+      build(['-s', 'modern'], function(data) {
+        var basename = path.basename(data.outputPath, '.js'),
+            context = createContext();
+
+        vm.runInContext(data.source, context);
+        var lodash = context._;
+
+        strictEqual(lodash.isPlainObject(Object.create(null)), true, basename);
+        start();
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('source-map modifier');
 
   (function() {

@@ -6,6 +6,7 @@
     ".*",
     "*.custom.*",
     "*.d.ts",
+    "*.map",
     "*.md",
     "*.txt",
     "build.js",

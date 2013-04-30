@@ -4106,17 +4106,11 @@
      */
     function unzip(array) {
       var index = -1,
-          length = array ? array.length : 0,
-          tupleLength = length ? max(pluck(array, 'length')) : 0,
-          result = Array(tupleLength);
+          length = array ? max(pluck(array, 'length')) : 0,
+          result = Array(length < 0 ? 0 : length);
 
       while (++index < length) {
-        var tupleIndex = -1,
-            tuple = array[index];
-
-        while (++tupleIndex < tupleLength) {
-          (result[tupleIndex] || (result[tupleIndex] = Array(length)))[index] = tuple[tupleIndex];
-        }
+        result[index] = pluck(array, index);
       }
       return result;
     }
@@ -4157,14 +4151,7 @@
      * // => [['moe', 30, true], ['larry', 40, false]]
      */
     function zip(array) {
-      var index = -1,
-          length = array ? max(pluck(arguments, 'length')) : 0,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = pluck(arguments, index);
-      }
-      return result;
+      return array ? unzip(arguments) : [];
     }
 
     /**

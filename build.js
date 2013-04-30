@@ -176,7 +176,7 @@
     'where': ['filter'],
     'without': ['difference'],
     'wrap': [],
-    'zip': ['max', 'pluck'],
+    'zip': ['unzip'],
     'zipObject': [],
 
     // method used by the `backbone` and `underscore` builds

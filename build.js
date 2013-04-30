@@ -2074,7 +2074,7 @@
           '    result = indexOf(collection, target) > -1;',
           '  } else {',
           '    each(collection, function(value) {',
-          '      return (result = value === target) && indicatorObject;',
+          '      return !(result = value === target);',
           '    });',
           '  }',
           '  return result;',
@@ -2298,14 +2298,14 @@
           '  forIn(b, function(value, key, b) {',
           '    if (hasOwnProperty.call(b, key)) {',
           '      size++;',
-          '      return !(result = hasOwnProperty.call(a, key) && isEqual(a[key], value, stackA, stackB)) && indicatorObject;',
+          '      return (result = hasOwnProperty.call(a, key) && isEqual(a[key], value, stackA, stackB));',
           '    }',
           '  });',
           '',
           '  if (result) {',
           '    forIn(a, function(value, key, a) {',
           '      if (hasOwnProperty.call(a, key)) {',
-          '        return !(result = --size > -1) && indicatorObject;',
+          '        return (result = --size > -1);',
           '      }',
           '    });',
           '  }',
@@ -2545,48 +2545,34 @@
         source = removeFunction(source, 'slice');
         source = source.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
 
-        // remove `_.isEqual` use from `createCallback`
-        source = source.replace(matchFunction(source, 'createCallback'), function(match) {
-          return match.replace(/\bisEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
-        });
-
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
         _.each(['max', 'min'], function(methodName) {
-          source = source.replace(matchFunction(source, methodName), function(match) {
-            return match.replace(/=.+?callback *&& *isString[^:]+:\s*/g, '= ');
-          });
+          if (!useLodashMethod(methodName)) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match.replace(/=.+?callback *&& *isString[^:]+:\s*/g, '= ');
+            });
+          }
         });
 
-        // modify `_.every`, `_.find`, `_.isEqual`, and `_.some` to use the private `indicatorObject`
-        _.each(['every', 'isEqual'], function(methodName) {
-          source = source.replace(matchFunction(source, methodName), function(match) {
+        // modify `_.isEqual` and `shimIsPlainObject` to use the private `indicatorObject`
+        if (!useLodashMethod('forIn')) {
+          source = source.replace(matchFunction(source, 'isEqual'), function(match) {
             return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
           });
-        });
 
-        source = source.replace(matchFunction(source, 'find'), function(match) {
-          return match.replace(/return false/, 'return indicatorObject');
-        });
-
-        source = source.replace(matchFunction(source, 'some'), function(match) {
-          return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
-        });
-
-
-
+          source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+            return match.replace(/return false/, 'return indicatorObject');
+          });
+        }
         // remove unneeded variables
         if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
           source = removeVar(source, 'cloneableClasses');
           source = removeVar(source, 'ctorByClass');
         }
-        // remove chainability from `each` and `_.forEach`
-        if (!useLodashMethod('forEach')) {
-          _.each(['each', 'forEach'], function(methodName) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
-              return match
-                .replace(/\n *return .+?([};\s]+)$/, '$1')
-                .replace(/\b(return) +result\b/, '$1')
-            });
+        // remove `_.isEqual` use from `createCallback`
+        if (!useLodashMethod('where')) {
+          source = source.replace(matchFunction(source, 'createCallback'), function(match) {
+            return match.replace(/\bisEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
           });
         }
         // remove unused features from `createBound`
@@ -2667,6 +2653,22 @@
           .replace(/\beach(?=\(collection)/g, 'forOwn')
           .replace(/\beach(?=\(\[)/g, 'forEach');
       }
+      // modify `_.contains`, `_.every`, `_.find`, and `_.some` to use the private `indicatorObject`
+      if (isUnderscore && (/\beach\(/.test(source) || !useLodashMethod('forOwn'))) {
+        source = source.replace(matchFunction(source, 'every'), function(match) {
+          return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+        });
+
+        source = source.replace(matchFunction(source, 'find'), function(match) {
+          return match.replace(/return false/, 'return indicatorObject');
+        });
+
+        _.each(['contains', 'some'], function(methodName) {
+          source = source.replace(matchFunction(source, methodName), function(match) {
+            return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
+          });
+        });
+      }
 
       var context = vm.createContext({
         'clearTimeout': clearTimeout,
@@ -2738,6 +2740,16 @@
           // replace `lodash.createCallback` references with `createCallback`
           if (!useLodashMethod('createCallback')) {
             source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
+          }
+          // remove chainability from `each` and `_.forEach`
+          if (!useLodashMethod('forEach')) {
+            _.each(['each', 'forEach'], function(methodName) {
+              source = source.replace(matchFunction(source, methodName), function(match) {
+                return match
+                  .replace(/\n *return .+?([};\s]+)$/, '$1')
+                  .replace(/\b(return) +result\b/, '$1')
+              });
+            });
           }
           // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, and `_.zipObject` assignments
           (function() {

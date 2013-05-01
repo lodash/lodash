@@ -558,14 +558,19 @@
     });
 
     asyncTest('should work with `leading` option', function() {
-      var counts = [0, 0, 0];
+      var withLeadingAndTrailing,
+          counts = [0, 0, 0];
+
       _.each([true, { 'leading': true }], function(options, index) {
-        var withLeading = _.debounce(function(value) {
+        var debounced = _.debounce(function(value) {
           counts[index]++;
           return value;
         }, 32, options);
 
-        equal(withLeading('x'), 'x');
+        if (index == 1) {
+          withLeadingAndTrailing = debounced;
+        }
+        equal(debounced('x'), 'x');
       });
 
       _.times(2, _.debounce(function() { counts[2]++; }, 32, { 'leading': true }));
@@ -578,6 +583,10 @@
 
       setTimeout(function() {
         deepEqual(counts, [1, 1, 2]);
+
+        withLeadingAndTrailing('x');
+        equal(counts[1], 2);
+
         QUnit.start();
       }, 64);
     });

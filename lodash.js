@@ -4482,17 +4482,16 @@
      */
     function debounce(func, wait, options) {
       var args,
-          calledTwice,
-          inited,
           result,
           thisArg,
           timeoutId,
+          callCount = 0,
           trailing = true;
 
       function delayed() {
-        var callTrailing = trailing && ((leading && calledTwice) || !leading);
-        calledTwice = inited = timeoutId = null;
-        if (callTrailing) {
+        var isCalled = trailing && (!leading || callCount > 1);
+        callCount = timeoutId = 0;
+        if (isCalled) {
           result = func.apply(thisArg, args);
         }
       }
@@ -4508,11 +4507,8 @@
         thisArg = this;
         clearTimeout(timeoutId);
 
-        if (!inited && leading) {
-          inited = true;
+        if (leading && ++callCount < 2) {
           result = func.apply(thisArg, args);
-        } else {
-          calledTwice = true;
         }
         timeoutId = setTimeout(delayed, wait);
         return result;

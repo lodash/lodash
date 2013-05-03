@@ -585,7 +585,6 @@
         'while (++argsIndex < argsLength) {\n' +
         '  iterable = args[argsIndex];\n' +
         '  if (iterable && objectTypes[typeof iterable]) {',
-      'arrays': false,
       'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
       'bottom': '  }\n}'
     };
@@ -759,7 +758,7 @@
         'support': support,
 
         // iterator options
-        'arrays': 'isArray(iterable)',
+        'arrays': '',
         'bottom': '',
         'init': 'iterable',
         'loop': '',
@@ -989,8 +988,7 @@
       'args': 'object',
       'init': '[]',
       'top': 'if (!(objectTypes[typeof object])) return result',
-      'loop': 'result.push(index)',
-      'arrays': false
+      'loop': 'result.push(index)'
     });
 
     /**

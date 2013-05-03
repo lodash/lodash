@@ -706,19 +706,21 @@
       deepEqual(func({}, new Foo), {});
     });
 
-    test('lodash.' + methodName + ' should treat sparse arrays as dense', function() {
-      var array = Array(3);
-      array[0] = 1;
-      array[2] = 3;
+    if (methodName == 'merge') {
+      test('lodash.' + methodName + ' should treat sparse arrays as dense', function() {
+        var array = Array(3);
+        array[0] = 1;
+        array[2] = 3;
 
-      var actual = func([], array),
-          expected = array.slice();
+        var actual = func([], array),
+            expected = array.slice();
 
-      expected[1] = undefined;
+        expected[1] = undefined;
 
-      ok(1 in actual);
-      deepEqual(actual, expected);
-    });
+        ok(1 in actual);
+        deepEqual(actual, expected);
+      });
+    }
   });
 
   /*--------------------------------------------------------------------------*/

@@ -585,6 +585,7 @@
         'while (++argsIndex < argsLength) {\n' +
         '  iterable = args[argsIndex];\n' +
         '  if (iterable && objectTypes[typeof iterable]) {',
+      'arrays': false,
       'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
       'bottom': '  }\n}'
     };

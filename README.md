@@ -85,7 +85,7 @@ Lo-Dash has been tested in at least Chrome 5~26, Firefox 2~20, IE 6-10, Opera 9.
 
 Custom builds make it easy to create lightweight versions of Lo-Dash containing only the methods you need.
 To top it off, we handle all method dependency and alias mapping for you.
-For a more detailed summary over the differences between various builds, check out our [wiki entry](https://github.com/bestiejs/lodash/wiki/build-differences).
+For a more detailed summary over the differences between various builds, check out the [wiki page](https://github.com/bestiejs/lodash/wiki/build-differences).
 
  * Backbone builds, with only methods required by Backbone, may be created using the `backbone` modifier argument.
 ```bash

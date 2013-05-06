@@ -1958,7 +1958,7 @@
      * // => true
      */
     function isRegExp(value) {
-      return !!(value && objectTypes[typeof value]) && toString.call(value) == regexpClass);
+      return !!(value && objectTypes[typeof value]) && toString.call(value) == regexpClass;
     }
 
     /**

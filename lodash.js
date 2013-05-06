@@ -217,6 +217,25 @@
     ctorByClass[regexpClass] = RegExp;
     ctorByClass[stringClass] = String;
 
+    /** Used to avoid iterating non-enumerable properties in IE < 9 */
+    var nonEnumProps = {};
+    nonEnumProps[arrayClass] = nonEnumProps[dateClass] = nonEnumProps[numberClass] = { 'constructor': 1, 'toLocaleString': 1, 'toString': 1, 'valueOf': 1 };
+    nonEnumProps[boolClass] = nonEnumProps[stringClass] = { 'constructor': 1, 'toString': 1, 'valueOf': 1 };
+    nonEnumProps[funcClass] = nonEnumProps[regexpClass] = { 'constructor': 1, 'toString': 1 };
+    nonEnumProps[objectClass] = { 'constructor': 1 };
+
+    (function() {
+      var length = shadowedProps.length;
+      while (length--) {
+        var prop = shadowedProps[length];
+        for (var className in nonEnumProps) {
+          if (hasOwnProperty.call(nonEnumProps, className) && nonEnumProps[className][prop] !== 1) {
+            nonEnumProps[className][prop] = 0;
+          }
+        }
+      }
+    }());
+
     /*--------------------------------------------------------------------------*/
 
     /**
@@ -555,13 +574,21 @@
       // defaults to non-enumerable, Lo-Dash skips the `constructor`
       // property when it infers it's iterating over a `prototype` object.
       '    <% if (support.nonEnumShadows) { %>\n\n' +
-      '  var ctor = iterable.constructor;\n' +
+      '  var iterated = {' +
       '      <% for (var k = 0; k < 7; k++) { %>\n' +
+      "      '<%= shadowedProps[k] %>': 0<%= (k < 6 ? ',' : '') %>" +
+      '      <% } %>\n' +
+      '  };\n\n' +
+      '  var className = toString.call(iterable),\n' +
+      '      ctor = iterable.constructor,\n' +
+      '      proto = ctor && ctor.prototype,\n' +
+      '      isProto = iterable === proto,\n' +
+      '      nonEnum = nonEnumProps[className];\n\n' +
+      '      <% for (k = 0; k < 7; k++) { %>\n' +
       "  index = '<%= shadowedProps[k] %>';\n" +
-      '  if (<%' +
-      "      if (shadowedProps[k] == 'constructor') {" +
-      '        %>!(ctor && ctor.prototype === iterable) && <%' +
-      '      } %>hasOwnProperty.call(iterable, index)) {\n' +
+      '  if (!iterated[index] && (iterated[index] = (!(isProto && nonEnum[index]) && hasOwnProperty.call(iterable, index))<%' +
+      '        if (!useHas) { %> || (!nonEnum[index] && iterable[index] !== objectRef[index])<% }' +
+      '    %>)) {\n' +
       '    <%= loop %>\n' +
       '  }' +
       '      <% } %>' +
@@ -778,14 +805,14 @@
 
       // create the function factory
       var factory = Function(
-          'hasOwnProperty, isArguments, isArray, isString, keys, ' +
-          'lodash, objectTypes',
+          'hasOwnProperty, isArguments, isArray, isString, keys, lodash, ' +
+          'objectRef, objectTypes, nonEnumProps, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
       // return the compiled function
       return factory(
-        hasOwnProperty, isArguments, isArray, isString, keys,
-        lodash, objectTypes
+        hasOwnProperty, isArguments, isArray, isString, keys, lodash,
+        objectRef, objectTypes, nonEnumProps, toString
       );
     }
 

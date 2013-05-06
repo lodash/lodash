@@ -1810,7 +1810,7 @@
       // http://es5.github.com/#x8
       // and avoid a V8 bug
       // http://code.google.com/p/v8/issues/detail?id=2291
-      return value ? objectTypes[typeof value] : false;
+      return !!(value && objectTypes[typeof value]);
     }
 
     /**
@@ -1931,7 +1931,7 @@
      * // => true
      */
     function isRegExp(value) {
-      return value ? (objectTypes[typeof value] && toString.call(value) == regexpClass) : false;
+      return !!(value && objectTypes[typeof value]) && toString.call(value) == regexpClass);
     }
 
     /**

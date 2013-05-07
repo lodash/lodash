@@ -1764,41 +1764,64 @@
         }
       }
       if (isUnderscore) {
-        dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
-        dependencyMap.createCallback = _.without(dependencyMap.createCallback, 'isEqual');
-        dependencyMap.findWhere = ['where'];
-        dependencyMap.flatten = _.without(dependencyMap.flatten, 'createCallback');
-        dependencyMap.isEmpty = ['isArray', 'isString'];
-        dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
-        dependencyMap.max = _.without(dependencyMap.max, 'isArray', 'isString');
-        dependencyMap.min = _.without(dependencyMap.min, 'isArray', 'isString');
-        dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
-        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
-        dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
-        dependencyMap.toArray.push('isArray', 'map');
-        dependencyMap.value = _.without(dependencyMap.value, 'isArray');
-        dependencyMap.where.push('find', 'isEmpty');
-
         if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
           dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
         }
+        if (!useLodashMethod('contains')) {
+          dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
+        }
+        if (!useLodashMethod('flatten')) {
+          dependencyMap.flatten = _.without(dependencyMap.flatten, 'createCallback');
+        }
+        if (!useLodashMethod('isEmpty')) {
+          dependencyMap.isEmpty = ['isArray', 'isString'];
+        }
+        if (!useLodashMethod('isEqual')) {
+          dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
+        }
+        if (!useLodashMethod('pick')){
+          dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
+        }
+        if (!useLodashMethod('where')) {
+          dependencyMap.createCallback = _.without(dependencyMap.createCallback, 'isEqual');
+          dependencyMap.where.push('find', 'isEmpty');
+        }
+        if (!useLodashMethod('template')) {
+          dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
+        }
+        if (!useLodashMethod('toArray')) {
+          dependencyMap.toArray.push('isArray', 'map');
+        }
+
+        _.each(['max', 'min'], function(methodName) {
+          if (!useLodashMethod(methodName)) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArray', 'isString');
+          }
+        });
+
+        dependencyMap.findWhere = ['where'];
+        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
+        dependencyMap.value = _.without(dependencyMap.value, 'isArray');
       }
       if (isModern || isUnderscore) {
-        dependencyMap.at = _.without(dependencyMap.at, 'isString');
-        dependencyMap.forEach = _.without(dependencyMap.forEach, 'isString');
-        dependencyMap.toArray = _.without(dependencyMap.toArray, 'isString');
+        _.each(['at', 'forEach', 'toArray'], function(methodName) {
+          if (!(isUnderscore && useLodashMethod(methodName))) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isString');
+          }
+        });
 
         if (!isMobile) {
-          dependencyMap.every = _.without(dependencyMap.every, 'isArray');
-          dependencyMap.find = _.without(dependencyMap.find, 'isArray');
-          dependencyMap.filter = _.without(dependencyMap.filter, 'isArray');
-          dependencyMap.forEach = _.without(dependencyMap.forEach, 'isArguments', 'isArray');
-          dependencyMap.forIn = _.without(dependencyMap.forIn, 'isArguments');
-          dependencyMap.forOwn = _.without(dependencyMap.forOwn, 'isArguments');
-          dependencyMap.map = _.without(dependencyMap.map, 'isArray');
-          dependencyMap.max.push('forEach');
-          dependencyMap.min.push('forEach');
-          dependencyMap.reduce = _.without(dependencyMap.reduce, 'isArray');
+          _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce'], function(methodName) {
+            if (!(isUnderscore && useLodashMethod(methodName))) {
+              dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArguments', 'isArray');
+            }
+          });
+
+          _.each(['max', 'min'], function(methodName) {
+            if (!(isUnderscore && useLodashMethod(methodName))) {
+              dependencyMap[methodName].push('forEach');
+            }
+          });
         }
       }
       // add method names explicitly
@@ -2036,24 +2059,34 @@
         }
       }
       if (isUnderscore) {
-        // replace `_.assign`
-        source = replaceFunction(source, 'assign', [
-          'function assign(object) {',
-          '  if (!object) {',
-          '    return object;',
-          '  }',
-          '  for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
-          '    var iterable = arguments[argsIndex];',
-          '    if (iterable) {',
-          '      for (var key in iterable) {',
-          '        object[key] = iterable[key];',
-          '      }',
-          '    }',
-          '  }',
-          '  return object;',
+        // replace `lodash`
+        source = replaceFunction(source, 'lodash', [
+          'function lodash(value) {',
+          '  return (value instanceof lodash)',
+          '    ? value',
+          '    : new lodashWrapper(value);',
           '}'
         ].join('\n'));
 
+        // replace `_.assign`
+        if (!useLodashMethod('assign')) {
+          source = replaceFunction(source, 'assign', [
+            'function assign(object) {',
+            '  if (!object) {',
+            '    return object;',
+            '  }',
+            '  for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
+            '    var iterable = arguments[argsIndex];',
+            '    if (iterable) {',
+            '      for (var key in iterable) {',
+            '        object[key] = iterable[key];',
+            '      }',
+            '    }',
+            '  }',
+            '  return object;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.clone`
         if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
           source = replaceFunction(source, 'clone', [
@@ -2064,479 +2097,503 @@
             '}'
           ].join('\n'));
         }
-
         // replace `_.contains`
-        source = replaceFunction(source, 'contains', [
-          'function contains(collection, target) {',
-          '  var length = collection ? collection.length : 0,',
-          '      result = false;',
-          "  if (typeof length == 'number') {",
-          '    result = indexOf(collection, target) > -1;',
-          '  } else {',
-          '    each(collection, function(value) {',
-          '      return !(result = value === target);',
-          '    });',
-          '  }',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('contains')) {
+          source = replaceFunction(source, 'contains', [
+            'function contains(collection, target) {',
+            '  var length = collection ? collection.length : 0,',
+            '      result = false;',
+            "  if (typeof length == 'number') {",
+            '    result = indexOf(collection, target) > -1;',
+            '  } else {',
+            '    each(collection, function(value) {',
+            '      return !(result = value === target);',
+            '    });',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.debounce`
-        source = replaceFunction(source, 'debounce', [
-          'function debounce(func, wait, immediate) {',
-          '  var args,',
-          '      result,',
-          '      thisArg,',
-          '      timeoutId;',
-          '',
-          '  function delayed() {',
-          '    timeoutId = null;',
-          '    if (!immediate) {',
-          '      result = func.apply(thisArg, args);',
-          '    }',
-          '  }',
-          '  return function() {',
-          '    var isImmediate = immediate && !timeoutId;',
-          '    args = arguments;',
-          '    thisArg = this;',
-          '',
-          '    clearTimeout(timeoutId);',
-          '    timeoutId = setTimeout(delayed, wait);',
-          '',
-          '    if (isImmediate) {',
-          '      result = func.apply(thisArg, args);',
-          '    }',
-          '    return result;',
-          '  };',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('debounce')) {
+          source = replaceFunction(source, 'debounce', [
+            'function debounce(func, wait, immediate) {',
+            '  var args,',
+            '      result,',
+            '      thisArg,',
+            '      timeoutId;',
+            '',
+            '  function delayed() {',
+            '    timeoutId = null;',
+            '    if (!immediate) {',
+            '      result = func.apply(thisArg, args);',
+            '    }',
+            '  }',
+            '  return function() {',
+            '    var isImmediate = immediate && !timeoutId;',
+            '    args = arguments;',
+            '    thisArg = this;',
+            '',
+            '    clearTimeout(timeoutId);',
+            '    timeoutId = setTimeout(delayed, wait);',
+            '',
+            '    if (isImmediate) {',
+            '      result = func.apply(thisArg, args);',
+            '    }',
+            '    return result;',
+            '  };',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.defaults`
-        source = replaceFunction(source, 'defaults', [
-          'function defaults(object) {',
-          '  if (!object) {',
-          '    return object;',
-          '  }',
-          '  for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
-          '    var iterable = arguments[argsIndex];',
-          '    if (iterable) {',
-          '      for (var key in iterable) {',
-          '        if (object[key] == null) {',
-          '          object[key] = iterable[key];',
-          '        }',
-          '      }',
-          '    }',
-          '  }',
-          '  return object;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('defaults')) {
+          source = replaceFunction(source, 'defaults', [
+            'function defaults(object) {',
+            '  if (!object) {',
+            '    return object;',
+            '  }',
+            '  for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
+            '    var iterable = arguments[argsIndex];',
+            '    if (iterable) {',
+            '      for (var key in iterable) {',
+            '        if (object[key] == null) {',
+            '          object[key] = iterable[key];',
+            '        }',
+            '      }',
+            '    }',
+            '  }',
+            '  return object;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.difference`
-        source = replaceFunction(source, 'difference', [
-          'function difference(array) {',
-          '  var index = -1,',
-          '      length = array.length,',
-          '      flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
-          '      result = [];',
-          '',
-          '  while (++index < length) {',
-          '    var value = array[index];',
-          '    if (indexOf(flattened, value) < 0) {',
-          '      result.push(value);',
-          '    }',
-          '  }',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('difference')) {
+          source = replaceFunction(source, 'difference', [
+            'function difference(array) {',
+            '  var index = -1,',
+            '      length = array.length,',
+            '      flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '      result = [];',
+            '',
+            '  while (++index < length) {',
+            '    var value = array[index];',
+            '    if (indexOf(flattened, value) < 0) {',
+            '      result.push(value);',
+            '    }',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.flatten`
-        source = replaceFunction(source, 'flatten', [
-          'function flatten(array, isShallow) {',
-          '  var index = -1,',
-          '      length = array ? array.length : 0,',
-          '      result = [];',
-          '' ,
-          '  while (++index < length) {',
-          '    var value = array[index];',
-          '    if (isArray(value)) {',
-          '      push.apply(result, isShallow ? value : flatten(value));',
-          '    } else {',
-          '      result.push(value);',
-          '    }',
-          '  }',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('flatten')) {
+          source = replaceFunction(source, 'flatten', [
+            'function flatten(array, isShallow) {',
+            '  var index = -1,',
+            '      length = array ? array.length : 0,',
+            '      result = [];',
+            '' ,
+            '  while (++index < length) {',
+            '    var value = array[index];',
+            '    if (isArray(value)) {',
+            '      push.apply(result, isShallow ? value : flatten(value));',
+            '    } else {',
+            '      result.push(value);',
+            '    }',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.intersection`
-        source = replaceFunction(source, 'intersection', [
-          'function intersection(array) {',
-          '  var args = arguments,',
-          '      argsLength = args.length,',
-          '      index = -1,',
-          '      length = array ? array.length : 0,',
-          '      result = [];',
-          '',
-          '  outer:',
-          '  while (++index < length) {',
-          '    var value = array[index];',
-          '    if (indexOf(result, value) < 0) {',
-          '      var argsIndex = argsLength;',
-          '      while (--argsIndex) {',
-          '        if (indexOf(args[argsIndex], value) < 0) {',
-          '          continue outer;',
-          '        }',
-          '      }',
-          '      result.push(value);',
-          '    }',
-          '  }',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('intersection')) {
+          source = replaceFunction(source, 'intersection', [
+            'function intersection(array) {',
+            '  var args = arguments,',
+            '      argsLength = args.length,',
+            '      index = -1,',
+            '      length = array ? array.length : 0,',
+            '      result = [];',
+            '',
+            '  outer:',
+            '  while (++index < length) {',
+            '    var value = array[index];',
+            '    if (indexOf(result, value) < 0) {',
+            '      var argsIndex = argsLength;',
+            '      while (--argsIndex) {',
+            '        if (indexOf(args[argsIndex], value) < 0) {',
+            '          continue outer;',
+            '        }',
+            '      }',
+            '      result.push(value);',
+            '    }',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.isEmpty`
-        source = replaceFunction(source, 'isEmpty', [
-          'function isEmpty(value) {',
-          '  if (!value) {',
-          '    return true;',
-          '  }',
-          '  if (isArray(value) || isString(value)) {',
-          '    return !value.length;',
-          '  }',
-          '  for (var key in value) {',
-          '    if (hasOwnProperty.call(value, key)) {',
-          '      return false;',
-          '    }',
-          '  }',
-          '  return true;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('isEmpty')) {
+          source = replaceFunction(source, 'isEmpty', [
+            'function isEmpty(value) {',
+            '  if (!value) {',
+            '    return true;',
+            '  }',
+            '  if (isArray(value) || isString(value)) {',
+            '    return !value.length;',
+            '  }',
+            '  for (var key in value) {',
+            '    if (hasOwnProperty.call(value, key)) {',
+            '      return false;',
+            '    }',
+            '  }',
+            '  return true;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.isEqual`
-        source = replaceFunction(source, 'isEqual', [
-          'function isEqual(a, b, stackA, stackB) {',
-          '  if (a === b) {',
-          '    return a !== 0 || (1 / a == 1 / b);',
-          '  }',
-          '  var type = typeof a,',
-          '      otherType = typeof b;',
-          '',
-          '  if (a === a &&',
-          "      (!a || (type != 'function' && type != 'object')) &&",
-          "      (!b || (otherType != 'function' && otherType != 'object'))) {",
-          '    return false;',
-          '  }',
-          '  if (a == null || b == null) {',
-          '    return a === b;',
-          '  }',
-          '  var className = toString.call(a),',
-          '      otherClass = toString.call(b);',
-          '',
-          '  if (className != otherClass) {',
-          '    return false;',
-          '  }',
-          '  switch (className) {',
-          '    case boolClass:',
-          '    case dateClass:',
-          '      return +a == +b;',
-          '',
-          '    case numberClass:',
-          '      return a != +a',
-          '        ? b != +b',
-          '        : (a == 0 ? (1 / a == 1 / b) : a == +b);',
-          '',
-          '    case regexpClass:',
-          '    case stringClass:',
-          '      return a == String(b);',
-          '  }',
-          '  var isArr = className == arrayClass;',
-          '  if (!isArr) {',
-          '    if (a instanceof lodash || b instanceof lodash) {',
-          '      return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);',
-          '    }',
-          '    if (className != objectClass) {',
-          '      return false;',
-          '    }',
-          '    var ctorA = a.constructor,',
-          '        ctorB = b.constructor;',
-          '',
-          '    if (ctorA != ctorB && !(',
-          '          isFunction(ctorA) && ctorA instanceof ctorA &&',
-          '          isFunction(ctorB) && ctorB instanceof ctorB',
-          '        )) {',
-          '      return false;',
-          '    }',
-          '  }',
-          '  stackA || (stackA = []);',
-          '  stackB || (stackB = []);',
-          '',
-          '  var length = stackA.length;',
-          '  while (length--) {',
-          '    if (stackA[length] == a) {',
-          '      return stackB[length] == b;',
-          '    }',
-          '  }',
-          '  var result = true,',
-          '      size = 0;',
-          '',
-          '  stackA.push(a);',
-          '  stackB.push(b);',
-          '',
-          '  if (isArr) {',
-          '    size = b.length;',
-          '    result = size == a.length;',
-          '',
-          '    if (result) {',
-          '      while (size--) {',
-          '        if (!(result = isEqual(a[size], b[size], stackA, stackB))) {',
-          '          break;',
-          '        }',
-          '      }',
-          '    }',
-          '    return result;',
-          '  }',
-          '  forIn(b, function(value, key, b) {',
-          '    if (hasOwnProperty.call(b, key)) {',
-          '      size++;',
-          '      return (result = hasOwnProperty.call(a, key) && isEqual(a[key], value, stackA, stackB));',
-          '    }',
-          '  });',
-          '',
-          '  if (result) {',
-          '    forIn(a, function(value, key, a) {',
-          '      if (hasOwnProperty.call(a, key)) {',
-          '        return (result = --size > -1);',
-          '      }',
-          '    });',
-          '  }',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
-        // replace `lodash`
-        source = replaceFunction(source, 'lodash', [
-          'function lodash(value) {',
-          '  return (value instanceof lodash)',
-          '    ? value',
-          '    : new lodashWrapper(value);',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('isEqual')) {
+          source = replaceFunction(source, 'isEqual', [
+            'function isEqual(a, b, stackA, stackB) {',
+            '  if (a === b) {',
+            '    return a !== 0 || (1 / a == 1 / b);',
+            '  }',
+            '  var type = typeof a,',
+            '      otherType = typeof b;',
+            '',
+            '  if (a === a &&',
+            "      (!a || (type != 'function' && type != 'object')) &&",
+            "      (!b || (otherType != 'function' && otherType != 'object'))) {",
+            '    return false;',
+            '  }',
+            '  if (a == null || b == null) {',
+            '    return a === b;',
+            '  }',
+            '  var className = toString.call(a),',
+            '      otherClass = toString.call(b);',
+            '',
+            '  if (className != otherClass) {',
+            '    return false;',
+            '  }',
+            '  switch (className) {',
+            '    case boolClass:',
+            '    case dateClass:',
+            '      return +a == +b;',
+            '',
+            '    case numberClass:',
+            '      return a != +a',
+            '        ? b != +b',
+            '        : (a == 0 ? (1 / a == 1 / b) : a == +b);',
+            '',
+            '    case regexpClass:',
+            '    case stringClass:',
+            '      return a == String(b);',
+            '  }',
+            '  var isArr = className == arrayClass;',
+            '  if (!isArr) {',
+            '    if (a instanceof lodash || b instanceof lodash) {',
+            '      return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);',
+            '    }',
+            '    if (className != objectClass) {',
+            '      return false;',
+            '    }',
+            '    var ctorA = a.constructor,',
+            '        ctorB = b.constructor;',
+            '',
+            '    if (ctorA != ctorB && !(',
+            '          isFunction(ctorA) && ctorA instanceof ctorA &&',
+            '          isFunction(ctorB) && ctorB instanceof ctorB',
+            '        )) {',
+            '      return false;',
+            '    }',
+            '  }',
+            '  stackA || (stackA = []);',
+            '  stackB || (stackB = []);',
+            '',
+            '  var length = stackA.length;',
+            '  while (length--) {',
+            '    if (stackA[length] == a) {',
+            '      return stackB[length] == b;',
+            '    }',
+            '  }',
+            '  var result = true,',
+            '      size = 0;',
+            '',
+            '  stackA.push(a);',
+            '  stackB.push(b);',
+            '',
+            '  if (isArr) {',
+            '    size = b.length;',
+            '    result = size == a.length;',
+            '',
+            '    if (result) {',
+            '      while (size--) {',
+            '        if (!(result = isEqual(a[size], b[size], stackA, stackB))) {',
+            '          break;',
+            '        }',
+            '      }',
+            '    }',
+            '    return result;',
+            '  }',
+            '  forIn(b, function(value, key, b) {',
+            '    if (hasOwnProperty.call(b, key)) {',
+            '      size++;',
+            '      return (result = hasOwnProperty.call(a, key) && isEqual(a[key], value, stackA, stackB));',
+            '    }',
+            '  });',
+            '',
+            '  if (result) {',
+            '    forIn(a, function(value, key, a) {',
+            '      if (hasOwnProperty.call(a, key)) {',
+            '        return (result = --size > -1);',
+            '      }',
+            '    });',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.omit`
-        source = replaceFunction(source, 'omit', [
-          'function omit(object) {',
-          '  var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
-          '      result = {};',
-          '',
-          '  forIn(object, function(value, key) {',
-          '    if (indexOf(props, key) < 0) {',
-          '      result[key] = value;',
-          '    }',
-          '  });',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('omit')) {
+          source = replaceFunction(source, 'omit', [
+            'function omit(object) {',
+            '  var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '      result = {};',
+            '',
+            '  forIn(object, function(value, key) {',
+            '    if (indexOf(props, key) < 0) {',
+            '      result[key] = value;',
+            '    }',
+            '  });',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.pick`
-        source = replaceFunction(source, 'pick', [
-          'function pick(object) {',
-          '  var index = -1,',
-          '      props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
-          '      length = props.length,',
-          '      result = {};',
-          '',
-          '  while (++index < length) {',
-          '    var prop = props[index];',
-          '    if (prop in object) {',
-          '      result[prop] = object[prop];',
-          '    }',
-          '  }',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('pick')) {
+          source = replaceFunction(source, 'pick', [
+            'function pick(object) {',
+            '  var index = -1,',
+            '      props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '      length = props.length,',
+            '      result = {};',
+            '',
+            '  while (++index < length) {',
+            '    var prop = props[index];',
+            '    if (prop in object) {',
+            '      result[prop] = object[prop];',
+            '    }',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.result`
-        source = replaceFunction(source, 'result', [
-          'function result(object, property) {',
-          '  var value = object ? object[property] : null;',
-          '  return isFunction(value) ? object[property]() : value;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('result')) {
+          source = replaceFunction(source, 'result', [
+            'function result(object, property) {',
+            '  var value = object ? object[property] : null;',
+            '  return isFunction(value) ? object[property]() : value;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.template`
-        source = replaceFunction(source, 'template', [
-          'function template(text, data, options) {',
-          "  text || (text = '');",
-          '  options = defaults({}, options, lodash.templateSettings);',
-          '',
-          '  var index = 0,',
-          '      source = "__p += \'",',
-          '      variable = options.variable;',
-          '',
-          '  var reDelimiters = RegExp(',
-          "    (options.escape || reNoMatch).source + '|' +",
-          "    (options.interpolate || reNoMatch).source + '|' +",
-          "    (options.evaluate || reNoMatch).source + '|$'",
-          "  , 'g');",
-          '',
-          '  text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {',
-          '    source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);',
-          '    if (escapeValue) {',
-          '      source += "\' +\\n_.escape(" + escapeValue + ") +\\n\'";',
-          '    }',
-          '    if (evaluateValue) {',
-          '      source += "\';\\n" + evaluateValue + ";\\n__p += \'";',
-          '    }',
-          '    if (interpolateValue) {',
-          '      source += "\' +\\n((__t = (" + interpolateValue + ")) == null ? \'\' : __t) +\\n\'";',
-          '    }',
-          '    index = offset + match.length;',
-          '    return match;',
-          '  });',
-          '',
-          '  source += "\';\\n";',
-          '  if (!variable) {',
-          "    variable = 'obj';",
-          "    source = 'with (' + variable + ' || {}) {\\n' + source + '\\n}\\n';",
-          '  }',
-          "  source = 'function(' + variable + ') {\\n' +",
-          '    "var __t, __p = \'\', __j = Array.prototype.join;\\n" +',
-          '    "function print() { __p += __j.call(arguments, \'\') }\\n" +',
-          '    source +',
-          "    'return __p\\n}';",
-          '',
-          '  try {',
-          "    var result = Function('_', 'return ' + source)(lodash);",
-          '  } catch(e) {',
-          '    e.source = source;',
-          '    throw e;',
-          '  }',
-          '  if (data) {',
-          '    return result(data);',
-          '  }',
-          '  result.source = source;',
-          '  return result;',
-          '}'
-        ].join('\n'));
+        if (!useLodashMethod('template')) {
+          // remove `_.templateSettings.imports assignment
+          source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
+          source = replaceFunction(source, 'template', [
+            'function template(text, data, options) {',
+            "  text || (text = '');",
+            '  options = defaults({}, options, lodash.templateSettings);',
+            '',
+            '  var index = 0,',
+            '      source = "__p += \'",',
+            '      variable = options.variable;',
+            '',
+            '  var reDelimiters = RegExp(',
+            "    (options.escape || reNoMatch).source + '|' +",
+            "    (options.interpolate || reNoMatch).source + '|' +",
+            "    (options.evaluate || reNoMatch).source + '|$'",
+            "  , 'g');",
+            '',
+            '  text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {',
+            '    source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);',
+            '    if (escapeValue) {',
+            '      source += "\' +\\n_.escape(" + escapeValue + ") +\\n\'";',
+            '    }',
+            '    if (evaluateValue) {',
+            '      source += "\';\\n" + evaluateValue + ";\\n__p += \'";',
+            '    }',
+            '    if (interpolateValue) {',
+            '      source += "\' +\\n((__t = (" + interpolateValue + ")) == null ? \'\' : __t) +\\n\'";',
+            '    }',
+            '    index = offset + match.length;',
+            '    return match;',
+            '  });',
+            '',
+            '  source += "\';\\n";',
+            '  if (!variable) {',
+            "    variable = 'obj';",
+            "    source = 'with (' + variable + ' || {}) {\\n' + source + '\\n}\\n';",
+            '  }',
+            "  source = 'function(' + variable + ') {\\n' +",
+            '    "var __t, __p = \'\', __j = Array.prototype.join;\\n" +',
+            '    "function print() { __p += __j.call(arguments, \'\') }\\n" +',
+            '    source +',
+            "    'return __p\\n}';",
+            '',
+            '  try {',
+            "    var result = Function('_', 'return ' + source)(lodash);",
+            '  } catch(e) {',
+            '    e.source = source;',
+            '    throw e;',
+            '  }',
+            '  if (data) {',
+            '    return result(data);',
+            '  }',
+            '  result.source = source;',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.throttle`
-        source = replaceFunction(source, 'throttle', [
-          'function throttle(func, wait) {',
-          '  var args,',
-          '      result,',
-          '      thisArg,',
-          '      timeoutId,',
-          '      lastCalled = 0;',
-          '',
-          '  function trailingCall() {',
-          '    lastCalled = new Date;',
-          '    timeoutId = null;',
-          '    result = func.apply(thisArg, args);',
-          '  }',
-          '  return function() {',
-          '    var now = new Date,',
-          '        remaining = wait - (now - lastCalled);',
-          '',
-          '    args = arguments;',
-          '    thisArg = this;',
-          '',
-          '    if (remaining <= 0) {',
-          '      clearTimeout(timeoutId);',
-          '      timeoutId = null;',
-          '      lastCalled = now;',
-          '      result = func.apply(thisArg, args);',
-          '    }',
-          '    else if (!timeoutId) {',
-          '      timeoutId = setTimeout(trailingCall, remaining);',
-          '    }',
-          '    return result;',
-          '  };',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('throttle')) {
+          source = replaceFunction(source, 'throttle', [
+            'function throttle(func, wait) {',
+            '  var args,',
+            '      result,',
+            '      thisArg,',
+            '      timeoutId,',
+            '      lastCalled = 0;',
+            '',
+            '  function trailingCall() {',
+            '    lastCalled = new Date;',
+            '    timeoutId = null;',
+            '    result = func.apply(thisArg, args);',
+            '  }',
+            '  return function() {',
+            '    var now = new Date,',
+            '        remaining = wait - (now - lastCalled);',
+            '',
+            '    args = arguments;',
+            '    thisArg = this;',
+            '',
+            '    if (remaining <= 0) {',
+            '      clearTimeout(timeoutId);',
+            '      timeoutId = null;',
+            '      lastCalled = now;',
+            '      result = func.apply(thisArg, args);',
+            '    }',
+            '    else if (!timeoutId) {',
+            '      timeoutId = setTimeout(trailingCall, remaining);',
+            '    }',
+            '    return result;',
+            '  };',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.times`
-        source = replaceFunction(source, 'times', [
-          'function times(n, callback, thisArg) {',
-          '  var index = -1,',
-          '      result = Array(n > -1 ? n : 0);',
-          '',
-          '  while (++index < n) {',
-          '    result[index] = callback.call(thisArg, index);',
-          '  }',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('times')) {
+          source = replaceFunction(source, 'times', [
+            'function times(n, callback, thisArg) {',
+            '  var index = -1,',
+            '      result = Array(n > -1 ? n : 0);',
+            '',
+            '  while (++index < n) {',
+            '    result[index] = callback.call(thisArg, index);',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.toArray`
-        source = replaceFunction(source, 'toArray', [
-          'function toArray(collection) {',
-          '  if (isArray(collection)) {',
-          '    return slice(collection);',
-          '  }',
-          "  if (collection && typeof collection.length == 'number') {",
-          '    return map(collection);',
-          '  }',
-          '  return values(collection);',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('toArray')) {
+          source = replaceFunction(source, 'toArray', [
+            'function toArray(collection) {',
+            '  if (isArray(collection)) {',
+            '    return slice(collection);',
+            '  }',
+            "  if (collection && typeof collection.length == 'number') {",
+            '    return map(collection);',
+            '  }',
+            '  return values(collection);',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.uniq`
-        source = replaceFunction(source, 'uniq', [
-          'function uniq(array, isSorted, callback, thisArg) {',
-          '  var index = -1,',
-          '      length = array ? array.length : 0,',
-          '      result = [],',
-          '      seen = result;',
-          '',
-          "  if (typeof isSorted != 'boolean' && isSorted != null) {",
-          '    thisArg = callback;',
-          '    callback = isSorted;',
-          '    isSorted = false;',
-          '  }',
-          '  if (callback != null) {',
-          '    seen = [];',
-          '    callback = lodash.createCallback(callback, thisArg);',
-          '  }',
-          '  while (++index < length) {',
-          '    var value = array[index],',
-          '        computed = callback ? callback(value, index, array) : value;',
-          '',
-          '    if (isSorted',
-          '          ? !index || seen[seen.length - 1] !== computed',
-          '          : indexOf(seen, computed) < 0',
-          '        ) {',
-          '      if (callback) {',
-          '        seen.push(computed);',
-          '      }',
-          '      result.push(value);',
-          '    }',
-          '  }',
-          '  return result;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('uniq')) {
+          source = replaceFunction(source, 'uniq', [
+            'function uniq(array, isSorted, callback, thisArg) {',
+            '  var index = -1,',
+            '      length = array ? array.length : 0,',
+            '      result = [],',
+            '      seen = result;',
+            '',
+            "  if (typeof isSorted != 'boolean' && isSorted != null) {",
+            '    thisArg = callback;',
+            '    callback = isSorted;',
+            '    isSorted = false;',
+            '  }',
+            '  if (callback != null) {',
+            '    seen = [];',
+            '    callback = lodash.createCallback(callback, thisArg);',
+            '  }',
+            '  while (++index < length) {',
+            '    var value = array[index],',
+            '        computed = callback ? callback(value, index, array) : value;',
+            '',
+            '    if (isSorted',
+            '          ? !index || seen[seen.length - 1] !== computed',
+            '          : indexOf(seen, computed) < 0',
+            '        ) {',
+            '      if (callback) {',
+            '        seen.push(computed);',
+            '      }',
+            '      result.push(value);',
+            '    }',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.uniqueId`
-        source = replaceFunction(source, 'uniqueId', [
-          'function uniqueId(prefix) {',
-          "  var id = ++idCounter + '';",
-          '  return prefix ? prefix + id : id;',
-          '}'
-        ].join('\n'));
-
+        if (!useLodashMethod('uniqueId')) {
+          source = replaceFunction(source, 'uniqueId', [
+            'function uniqueId(prefix) {',
+            "  var id = ++idCounter + '';",
+            '  return prefix ? prefix + id : id;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.where`
-        source = replaceFunction(source, 'where', [
-          'function where(collection, properties, first) {',
-          '  return (first && isEmpty(properties))',
-          '    ? null',
-          '    : (first ? find : filter)(collection, properties);',
-          '}'
-        ].join('\n'));
+        if (!useLodashMethod('where')) {
+          source = replaceFunction(source, 'where', [
+            'function where(collection, properties, first) {',
+            '  return (first && isEmpty(properties))',
+            '    ? null',
+            '    : (first ? find : filter)(collection, properties);',
+            '}'
+          ].join('\n'));
+        }
+        // replace `_.zip`
+        if (!useLodashMethod('unzip')) {
+          source = replaceFunction(source, 'zip', [
+            'function zip(array) {',
+            '  var index = -1,',
+            "      length = array ? max(pluck(arguments, 'length')) : 0,",
+            '      result = Array(length < 0 ? 0 : length);',
+            '',
+            '  while (++index < length) {',
+            '    result[index] = pluck(arguments, index);',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
 
         // unexpose `lodash.support`
         source = source.replace(/lodash\.support *= */, '');
-
-        // remove `_.templateSettings.imports assignment
-        source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
         // remove large array optimizations
         source = removeFunction(source, 'cachedContains');
@@ -2756,24 +2813,12 @@
             var snippet = getMethodAssignments(source),
                 modified = snippet;
 
-            if (!useLodashMethod('assign')) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.assign *=.+\n/m, '');
-            }
-            if (!useLodashMethod('createCallback')) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.createCallback *=.+\n/m, '');
-            }
-            if (!useLodashMethod('forIn')) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forIn *=.+\n/m, '');
-            }
-            if (!useLodashMethod('forOwn')) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.forOwn *=.+\n/m, '');
-            }
-            if (!useLodashMethod('isPlainObject')) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.isPlainObject *=.+\n/m, '');
-            }
-            if (!useLodashMethod('zipObject')) {
-              modified = modified.replace(/^(?: *\/\/.*\s*)* *lodash\.zipObject *=.+\n/m, '');
-            }
+            _.each(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'zipObject'], function(methodName) {
+              if (!useLodashMethod(methodName)) {
+                modified = modified.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + methodName + ' *=.+\\n', 'm'), '');
+              }
+            });
+
             source = source.replace(snippet, function() {
               return modified;
             });

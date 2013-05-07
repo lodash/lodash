@@ -14,6 +14,9 @@
     'className',
     'collection',
     'ctor',
+    'ctorByClass',
+    'errorClass',
+    'errorProto',
     'guard',
     'hasOwnProperty',
     'index',
@@ -22,14 +25,13 @@
     'isProto',
     'isString',
     'iterable',
-    'iterated',
     'length',
     'keys',
     'lodash',
     'nonEnum',
     'nonEnumProps',
     'object',
-    'objectRef',
+    'objectProto',
     'objectTypes',
     'ownIndex',
     'ownProps',
@@ -37,7 +39,10 @@
     'result',
     'skipProto',
     'source',
-    'thisArg'
+    'stringClass',
+    'stringProto',
+    'thisArg',
+    'toString'
   ];
 
   /** Used to minify `iteratorTemplate` data properties */

@@ -999,12 +999,25 @@
 
   (function() {
     test('iterates over inherited properties', function() {
-      function Dog(name) { this.name = name; }
-      Dog.prototype.bark = function() { /* Woof, woof! */ };
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
 
       var keys = [];
-      _.forIn(new Dog('Dagny'), function(value, key) { keys.push(key); });
-      deepEqual(keys.sort(), ['bark', 'name']);
+      _.forIn(new Foo, function(value, key) { keys.push(key); });
+      deepEqual(keys.sort(), ['a', 'b']);
+    });
+
+    test('fixes the JScript [[DontEnum]] bug with inherited properties (test in IE < 9)', function() {
+      function Foo() {}
+      Foo.prototype = shadowedObject;
+
+      function Bar() {}
+      Bar.prototype = new Foo;
+      Bar.prototype.constructor = Bar;
+
+      var keys = [];
+      _.forIn(shadowedObject, function(value, key) { keys.push(key); });
+      deepEqual(keys.sort(), shadowedProps);
     });
   }());
 
@@ -1033,6 +1046,26 @@
       var keys = [];
       func(shadowedObject, function(value, key) { keys.push(key); });
       deepEqual(keys.sort(), shadowedProps);
+    });
+
+    test('lodash.' + methodName + ' does not iterate over non-enumerable properties (test in IE < 9)', function() {
+      _.forOwn({
+        'Array': Array.prototype,
+        'Boolean': Boolean.prototype,
+        'Date': Date.prototype,
+        'Error': Error.prototype,
+        'Function': Function.prototype,
+        'Object': Object.prototype,
+        'Number': Number.prototype,
+        'TypeError': TypeError.prototype,
+        'RegExp': RegExp.prototype,
+        'String': String.prototype
+      },
+      function(object, builtin) {
+        var keys = [];
+        func(object, function(value, key) { keys.push(key); });
+        deepEqual(keys, [], 'non-enumerable properties on ' + builtin + '.prototype');
+      });
     });
 
     test('lodash.' + methodName + ' skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {

@@ -18,16 +18,16 @@
   var cwd = process.cwd();
 
   /** Used for array method references */
-  var arrayRef = [];
+  var arrayProto = Array.prototype;
 
   /** Shortcut used to push arrays of values to an array */
-  var push = arrayRef.push;
+  var push = arrayProto.push;
 
   /** Used to detect the Node.js executable in command-line arguments */
   var reNode = RegExp('(?:^|' + path.sepEscaped + ')node(?:\\.exe)?$');
 
   /** Shortcut used to convert array-like objects to arrays */
-  var slice = arrayRef.slice;
+  var slice = arrayProto.slice;
 
   /** Shortcut to the `stdout` object */
   var stdout = process.stdout;
@@ -406,7 +406,7 @@
       return indent + [
         '// add `Array` mutator functions to the wrapper',
         funcName + "(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
-        '  var func = arrayRef[methodName];',
+        '  var func = arrayProto[methodName];',
         '  lodash.prototype[methodName] = function() {',
         '    var value = this.__wrapped__;',
         '    func.apply(value, arguments);',
@@ -422,7 +422,7 @@
         '',
         '// add `Array` accessor functions to the wrapper',
         funcName + "(['concat', 'join', 'slice'], function(methodName) {",
-        '  var func = arrayRef[methodName];',
+        '  var func = arrayProto[methodName];',
         '  lodash.prototype[methodName] = function() {',
         '    var value = this.__wrapped__,',
         '        result = func.apply(value, arguments);',
@@ -2172,7 +2172,7 @@
             'function difference(array) {',
             '  var index = -1,',
             '      length = array.length,',
-            '      flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '      flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),',
             '      result = [];',
             '',
             '  while (++index < length) {',
@@ -2357,7 +2357,7 @@
         if (!useLodashMethod('omit')) {
           source = replaceFunction(source, 'omit', [
             'function omit(object) {',
-            '  var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '  var props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),',
             '      result = {};',
             '',
             '  forIn(object, function(value, key) {',
@@ -2374,7 +2374,7 @@
           source = replaceFunction(source, 'pick', [
             'function pick(object) {',
             '  var index = -1,',
-            '      props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '      props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),',
             '      length = props.length,',
             '      result = {};',
             '',

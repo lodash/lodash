@@ -44,6 +44,11 @@
       return (other ? other + ' ' : '') + expression + equality + type;
     });
 
+    // add a space so `define` is detected by the Dojo builder
+    source = source.replace(/.define\(/, function(match) {
+      return (/^\S/.test(match) ? ' ' : '') + match;
+    });
+
     // add trailing semicolon
     if (source) {
       source = source.replace(/[\s;]*?(\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)*$/, ';$1');

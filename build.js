@@ -2812,12 +2812,12 @@
               });
             });
           }
-          // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, and `_.zipObject` assignments
+          // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
           (function() {
             var snippet = getMethodAssignments(source),
                 modified = snippet;
 
-            _.each(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'zipObject'], function(methodName) {
+            _.each(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(methodName) {
               if (!useLodashMethod(methodName)) {
                 modified = modified.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + methodName + ' *=.+\\n', 'm'), '');
               }

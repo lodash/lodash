@@ -82,9 +82,9 @@
 
   /** Used to assign default `context` object properties */
   var contextProps = [
-    'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object', 'RegExp',
-    'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN', 'parseInt',
-    'setImmediate', 'setTimeout'
+    'Array', 'Boolean', 'Date', 'Error', 'Function', 'Math', 'Number', 'Object',
+    'RegExp', 'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN',
+    'parseInt', 'setImmediate', 'setTimeout'
   ];
 
   /** Used to make template sourceURLs easier to identify */
@@ -95,6 +95,7 @@
       arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
+      errorClass = '[object Error]',
       funcClass = '[object Function]',
       numberClass = '[object Number]',
       objectClass = '[object Object]',
@@ -152,6 +153,7 @@
     var Array = context.Array,
         Boolean = context.Boolean,
         Date = context.Date,
+        Error = context.Error,
         Function = context.Function,
         Math = context.Math,
         Number = context.Number,
@@ -161,15 +163,17 @@
         TypeError = context.TypeError;
 
     /** Used for `Array` and `Object` method references */
-    var arrayRef = Array(),
-        objectRef = Object();
+    var arrayProto = Array.prototype,
+        errorProto = Error.prototype,
+        objectProto = Object.prototype,
+        stringProto = String.prototype;
 
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
 
     /** Used to detect if a method is native */
     var reNative = RegExp('^' +
-      String(objectRef.valueOf)
+      String(objectProto.valueOf)
         .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
         .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
     );
@@ -177,14 +181,14 @@
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
-        concat = arrayRef.concat,
+        concat = arrayProto.concat,
         floor = Math.floor,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
-        hasOwnProperty = objectRef.hasOwnProperty,
-        push = arrayRef.push,
+        hasOwnProperty = objectProto.hasOwnProperty,
+        push = arrayProto.push,
         setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
-        toString = objectRef.toString;
+        toString = objectProto.toString;
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
@@ -196,7 +200,7 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
-        nativeSlice = arrayRef.slice;
+        nativeSlice = arrayProto.slice;
 
     /** Detect various environments */
     var isIeOpera = reNative.test(context.attachEvent),
@@ -207,6 +211,8 @@
     ctorByClass[arrayClass] = Array;
     ctorByClass[boolClass] = Boolean;
     ctorByClass[dateClass] = Date;
+    ctorByClass[errorClass] = Error;
+    ctorByClass[funcClass] = Function;
     ctorByClass[objectClass] = Object;
     ctorByClass[numberClass] = Number;
     ctorByClass[regexpClass] = RegExp;
@@ -660,8 +666,7 @@
     var shimKeys = function (object) {
       var index, iterable = object, result = [];
       if (!iterable) return result;
-      if (!(objectTypes[typeof object])) return result;
-
+      if (!(objectTypes[typeof object])) return result;  
         for (index in iterable) {
           if (hasOwnProperty.call(iterable, index)) {    
           result.push(index);    
@@ -754,14 +759,7 @@
       }
       while (++argsIndex < argsLength) {
         iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {;
-      var length = iterable.length; index = -1;
-      if (isArray(iterable)) {
-        while (++index < length) {
-          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
-        }
-      }
-      else {    
+        if (iterable && objectTypes[typeof iterable]) {;  
         var ownIndex = -1,
             ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
             length = ownProps.length;
@@ -770,7 +768,6 @@
           index = ownProps[ownIndex];
           result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
         }    
-      }
         }
       };
       return result
@@ -975,14 +972,7 @@
           argsLength = typeof guard == 'number' ? 2 : args.length;
       while (++argsIndex < argsLength) {
         iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {;
-      var length = iterable.length; index = -1;
-      if (isArray(iterable)) {
-        while (++index < length) {
-          if (typeof result[index] == 'undefined') result[index] = iterable[index]
-        }
-      }
-      else {    
+        if (iterable && objectTypes[typeof iterable]) {;  
         var ownIndex = -1,
             ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
             length = ownProps.length;
@@ -991,7 +981,6 @@
           index = ownProps[ownIndex];
           if (typeof result[index] == 'undefined') result[index] = iterable[index]
         }    
-      }
         }
       };
       return result
@@ -1062,8 +1051,7 @@
       var index, iterable = collection, result = iterable;
       if (!iterable) return result;
       if (!objectTypes[typeof iterable]) return result;
-      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
-
+      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);  
         for (index in iterable) {
           if (callback(iterable[index], index, collection) === false) return result;    
         }    
@@ -1095,8 +1083,7 @@
       var index, iterable = collection, result = iterable;
       if (!iterable) return result;
       if (!objectTypes[typeof iterable]) return result;
-      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
-
+      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);  
         var ownIndex = -1,
             ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
             length = ownProps.length;
@@ -1535,7 +1522,7 @@
       // http://es5.github.com/#x8
       // and avoid a V8 bug
       // http://code.google.com/p/v8/issues/detail?id=2291
-      return value ? objectTypes[typeof value] : false;
+      return !!(value && objectTypes[typeof value]);
     }
 
     /**
@@ -1864,7 +1851,7 @@
       if (isFunc) {
         callback = lodash.createCallback(callback, thisArg);
       } else {
-        var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1));
+        var props = concat.apply(arrayProto, nativeSlice.call(arguments, 1));
       }
       forIn(object, function(value, key, object) {
         if (isFunc
@@ -1933,7 +1920,7 @@
       var result = {};
       if (typeof callback != 'function') {
         var index = -1,
-            props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+            props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
             length = isObject(object) ? props.length : 0;
 
         while (++index < length) {
@@ -2003,7 +1990,7 @@
      */
     function at(collection) {
       var index = -1,
-          props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+          props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
           length = props.length,
           result = Array(length);
 
@@ -3052,7 +3039,7 @@
     function difference(array) {
       var index = -1,
           length = array ? array.length : 0,
-          flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+          flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
           contains = cachedContains(flattened),
           result = [];
 
@@ -3729,9 +3716,9 @@
      */
     function union(array) {
       if (!isArray(array)) {
-        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
+        arguments[0] = array ? nativeSlice.call(array) : arrayProto;
       }
-      return uniq(concat.apply(arrayRef, arguments));
+      return uniq(concat.apply(arrayProto, arguments));
     }
 
     /**
@@ -3837,17 +3824,11 @@
      */
     function unzip(array) {
       var index = -1,
-          length = array ? array.length : 0,
-          tupleLength = length ? max(pluck(array, 'length')) : 0,
-          result = Array(tupleLength);
+          length = array ? max(pluck(array, 'length')) : 0,
+          result = Array(length < 0 ? 0 : length);
 
       while (++index < length) {
-        var tupleIndex = -1,
-            tuple = array[index];
-
-        while (++tupleIndex < tupleLength) {
-          (result[tupleIndex] || (result[tupleIndex] = Array(length)))[index] = tuple[tupleIndex];
-        }
+        result[index] = pluck(array, index);
       }
       return result;
     }
@@ -3888,14 +3869,7 @@
      * // => [['moe', 30, true], ['larry', 40, false]]
      */
     function zip(array) {
-      var index = -1,
-          length = array ? max(pluck(arguments, 'length')) : 0,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = pluck(arguments, index);
-      }
-      return result;
+      return array ? unzip(arguments) : [];
     }
 
     /**
@@ -4021,7 +3995,7 @@
      * // => alerts 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
-      var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
+      var funcs = arguments.length > 1 ? concat.apply(arrayProto, nativeSlice.call(arguments, 1)) : functions(object),
           index = -1,
           length = funcs.length;
 
@@ -4226,15 +4200,16 @@
      */
     function debounce(func, wait, options) {
       var args,
-          inited,
           result,
           thisArg,
           timeoutId,
+          callCount = 0,
           trailing = true;
 
       function delayed() {
-        inited = timeoutId = null;
-        if (trailing) {
+        var isCalled = trailing && (!leading || callCount > 1);
+        callCount = timeoutId = 0;
+        if (isCalled) {
           result = func.apply(thisArg, args);
         }
       }
@@ -4250,12 +4225,10 @@
         thisArg = this;
         clearTimeout(timeoutId);
 
-        if (!inited && leading) {
-          inited = true;
+        if (leading && ++callCount < 2) {
           result = func.apply(thisArg, args);
-        } else {
-          timeoutId = setTimeout(delayed, wait);
         }
+        timeoutId = setTimeout(delayed, wait);
         return result;
       };
     }
@@ -5201,7 +5174,7 @@
 
     // add `Array` functions that return unwrapped values
     forEach(['join', 'pop', 'shift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         return func.apply(this.__wrapped__, arguments);
       };
@@ -5209,7 +5182,7 @@
 
     // add `Array` functions that return the wrapped value
     forEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
         return this;
@@ -5218,7 +5191,7 @@
 
     // add `Array` functions that return new wrapped values
     forEach(['concat', 'slice', 'splice'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments));
       };

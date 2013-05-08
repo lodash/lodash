@@ -82,9 +82,9 @@
 
   /** Used to assign default `context` object properties */
   var contextProps = [
-    'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object', 'RegExp',
-    'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN', 'parseInt',
-    'setImmediate', 'setTimeout'
+    'Array', 'Boolean', 'Date', 'Error', 'Function', 'Math', 'Number', 'Object',
+    'RegExp', 'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN',
+    'parseInt', 'setImmediate', 'setTimeout'
   ];
 
   /** Used to fix the JScript [[DontEnum]] bug */
@@ -101,6 +101,7 @@
       arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
+      errorClass = '[object Error]',
       funcClass = '[object Function]',
       numberClass = '[object Number]',
       objectClass = '[object Object]',
@@ -158,6 +159,7 @@
     var Array = context.Array,
         Boolean = context.Boolean,
         Date = context.Date,
+        Error = context.Error,
         Function = context.Function,
         Math = context.Math,
         Number = context.Number,
@@ -167,8 +169,10 @@
         TypeError = context.TypeError;
 
     /** Used for `Array` and `Object` method references */
-    var arrayRef = Array(),
-        objectRef = Object();
+    var arrayProto = Array.prototype,
+        errorProto = Error.prototype,
+        objectProto = Object.prototype,
+        stringProto = String.prototype;
 
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
@@ -176,13 +180,13 @@
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
-        concat = arrayRef.concat,
+        concat = arrayProto.concat,
         floor = Math.floor,
         getPrototypeOf = false,
-        hasOwnProperty = objectRef.hasOwnProperty,
-        push = arrayRef.push,
+        hasOwnProperty = objectProto.hasOwnProperty,
+        push = arrayProto.push,
         setTimeout = context.setTimeout,
-        toString = objectRef.toString;
+        toString = objectProto.toString;
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeIsFinite = context.isFinite,
@@ -191,17 +195,38 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
-        nativeSlice = arrayRef.slice;
+        nativeSlice = arrayProto.slice;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
     ctorByClass[arrayClass] = Array;
     ctorByClass[boolClass] = Boolean;
     ctorByClass[dateClass] = Date;
+    ctorByClass[errorClass] = Error;
+    ctorByClass[funcClass] = Function;
     ctorByClass[objectClass] = Object;
     ctorByClass[numberClass] = Number;
     ctorByClass[regexpClass] = RegExp;
     ctorByClass[stringClass] = String;
+
+    /** Used to avoid iterating non-enumerable properties in IE < 9 */
+    var nonEnumProps = {};
+    nonEnumProps[arrayClass] = nonEnumProps[dateClass] = nonEnumProps[numberClass] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
+    nonEnumProps[boolClass] = nonEnumProps[stringClass] = { 'constructor': true, 'toString': true, 'valueOf': true };
+    nonEnumProps[errorClass] = nonEnumProps[funcClass] = nonEnumProps[regexpClass] = { 'constructor': true, 'toString': true };
+    nonEnumProps[objectClass] = { 'constructor': true };
+
+    (function() {
+      var length = shadowedProps.length;
+      while (length--) {
+        var prop = shadowedProps[length];
+        for (var className in nonEnumProps) {
+          if (hasOwnProperty.call(nonEnumProps, className) && !hasOwnProperty.call(nonEnumProps[className], prop)) {
+            nonEnumProps[className][prop] = false;
+          }
+        }
+      }
+    }());
 
     /*--------------------------------------------------------------------------*/
 
@@ -359,7 +384,7 @@
        * @memberOf _.support
        * @type Boolean
        */
-      support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
+      support.spliceObjects = (arrayProto.splice.call(object, 0, 1), !object[0]);
 
       /**
        * Detect lack of support for accessing string characters by index.
@@ -465,9 +490,9 @@
       (obj.init) +
       ';\nif (!iterable) return result;\n' +
       (obj.top) +
-      ';\n';
+      ';';
        if (obj.arrays) {
-      __p += 'var length = iterable.length; index = -1;\nif (' +
+      __p += '\nvar length = iterable.length; index = -1;\nif (' +
       (obj.arrays) +
       ') {  ';
        if (support.unindexedChars) {
@@ -476,7 +501,7 @@
       __p += '\n  while (++index < length) {\n    ' +
       (obj.loop) +
       '\n  }\n}\nelse {  ';
-        } else if (support.nonEnumArgs) {
+       } else if (support.nonEnumArgs) {
       __p += '\n  var length = iterable.length; index = -1;\n  if (length && isArguments(iterable)) {\n    while (++index < length) {\n      index += \'\';\n      ' +
       (obj.loop) +
       '\n    }\n  } else {  ';
@@ -505,19 +530,19 @@
        }
       __p += '\n  }    ';
        if (support.nonEnumShadows) {
-      __p += '\n\n  var ctor = iterable.constructor;\n      ';
-       for (var k = 0; k < 7; k++) {
-      __p += '\n  index = \'' +
+      __p += '\n\n  if (iterable !== objectProto) {\n    var ctor = iterable.constructor,\n        proto = ctor && ctor.prototype,\n        isProto = iterable === proto,\n        nonEnum = nonEnumProps[objectClass];\n\n    if (isProto) {\n      var className = iterable === stringProto ? stringClass : iterable === errorProto ? errorClass : toString.call(iterable),\n          nonEnum = nonEnumProps[iterable === (ctorByClass[className] && ctorByClass[className].prototype) ? className : objectClass];\n    }\n      ';
+       for (k = 0; k < 7; k++) {
+      __p += '\n    index = \'' +
       (obj.shadowedProps[k]) +
-      '\';\n  if (';
-            if (obj.shadowedProps[k] == 'constructor') {
-      __p += '!(ctor && ctor.prototype === iterable) && ';
-            }
-      __p += 'hasOwnProperty.call(iterable, index)) {\n    ' +
-      (obj.loop) +
-      '\n  }      ';
+      '\';\n    if ((!(isProto && nonEnum[index]) && hasOwnProperty.call(iterable, index))';
+              if (!obj.useHas) {
+      __p += ' || (!nonEnum[index] && iterable[index] !== objectProto[index])';
        }
-
+      __p += ') {\n      ' +
+      (obj.loop) +
+      '\n    }      ';
+       }
+      __p += '\n  }    ';
        }
 
        if (obj.arrays || support.nonEnumArgs) {
@@ -711,7 +736,7 @@
         // data properties
         'shadowedProps': shadowedProps,
         // iterator options
-        'arrays': 'isArray(iterable)',
+        'arrays': '',
         'bottom': '',
         'init': 'iterable',
         'loop': '',
@@ -730,14 +755,16 @@
 
       // create the function factory
       var factory = Function(
-          'hasOwnProperty, isArguments, isArray, isString, keys, ' +
-          'lodash, objectTypes',
+          'ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments, ' +
+          'isArray, isString, keys, lodash, objectClass, objectProto, objectTypes, ' +
+          'nonEnumProps, stringClass, stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
       // return the compiled function
       return factory(
-        hasOwnProperty, isArguments, isArray, isString, keys,
-        lodash, objectTypes
+        ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments,
+        isArray, isString, keys, lodash, objectClass, objectProto, objectTypes,
+        nonEnumProps, stringClass, stringProto, toString
       );
     }
 
@@ -938,8 +965,7 @@
       'args': 'object',
       'init': '[]',
       'top': 'if (!(objectTypes[typeof object])) return result',
-      'loop': 'result.push(index)',
-      'arrays': false
+      'loop': 'result.push(index)'
     });
 
     /**
@@ -1737,7 +1763,7 @@
       // http://es5.github.com/#x8
       // and avoid a V8 bug
       // http://code.google.com/p/v8/issues/detail?id=2291
-      return value ? objectTypes[typeof value] : false;
+      return !!(value && objectTypes[typeof value]);
     }
 
     /**
@@ -1858,7 +1884,7 @@
      * // => true
      */
     function isRegExp(value) {
-      return value ? (objectTypes[typeof value] && toString.call(value) == regexpClass) : false;
+      return !!(value && objectTypes[typeof value]) && toString.call(value) == regexpClass;
     }
 
     /**
@@ -2066,7 +2092,7 @@
       if (isFunc) {
         callback = lodash.createCallback(callback, thisArg);
       } else {
-        var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1));
+        var props = concat.apply(arrayProto, nativeSlice.call(arguments, 1));
       }
       forIn(object, function(value, key, object) {
         if (isFunc
@@ -2135,7 +2161,7 @@
       var result = {};
       if (typeof callback != 'function') {
         var index = -1,
-            props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+            props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
             length = isObject(object) ? props.length : 0;
 
         while (++index < length) {
@@ -2205,7 +2231,7 @@
      */
     function at(collection) {
       var index = -1,
-          props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+          props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
           length = props.length,
           result = Array(length);
 
@@ -3247,7 +3273,7 @@
     function difference(array) {
       var index = -1,
           length = array ? array.length : 0,
-          flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+          flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
           contains = cachedContains(flattened),
           result = [];
 
@@ -3924,9 +3950,9 @@
      */
     function union(array) {
       if (!isArray(array)) {
-        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
+        arguments[0] = array ? nativeSlice.call(array) : arrayProto;
       }
-      return uniq(concat.apply(arrayRef, arguments));
+      return uniq(concat.apply(arrayProto, arguments));
     }
 
     /**
@@ -4032,17 +4058,11 @@
      */
     function unzip(array) {
       var index = -1,
-          length = array ? array.length : 0,
-          tupleLength = length ? max(pluck(array, 'length')) : 0,
-          result = Array(tupleLength);
+          length = array ? max(pluck(array, 'length')) : 0,
+          result = Array(length < 0 ? 0 : length);
 
       while (++index < length) {
-        var tupleIndex = -1,
-            tuple = array[index];
-
-        while (++tupleIndex < tupleLength) {
-          (result[tupleIndex] || (result[tupleIndex] = Array(length)))[index] = tuple[tupleIndex];
-        }
+        result[index] = pluck(array, index);
       }
       return result;
     }
@@ -4083,14 +4103,7 @@
      * // => [['moe', 30, true], ['larry', 40, false]]
      */
     function zip(array) {
-      var index = -1,
-          length = array ? max(pluck(arguments, 'length')) : 0,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = pluck(arguments, index);
-      }
-      return result;
+      return array ? unzip(arguments) : [];
     }
 
     /**
@@ -4211,7 +4224,7 @@
      * // => alerts 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
-      var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
+      var funcs = arguments.length > 1 ? concat.apply(arrayProto, nativeSlice.call(arguments, 1)) : functions(object),
           index = -1,
           length = funcs.length;
 
@@ -4416,15 +4429,16 @@
      */
     function debounce(func, wait, options) {
       var args,
-          inited,
           result,
           thisArg,
           timeoutId,
+          callCount = 0,
           trailing = true;
 
       function delayed() {
-        inited = timeoutId = null;
-        if (trailing) {
+        var isCalled = trailing && (!leading || callCount > 1);
+        callCount = timeoutId = 0;
+        if (isCalled) {
           result = func.apply(thisArg, args);
         }
       }
@@ -4440,12 +4454,10 @@
         thisArg = this;
         clearTimeout(timeoutId);
 
-        if (!inited && leading) {
-          inited = true;
+        if (leading && ++callCount < 2) {
           result = func.apply(thisArg, args);
-        } else {
-          timeoutId = setTimeout(delayed, wait);
         }
+        timeoutId = setTimeout(delayed, wait);
         return result;
       };
     }
@@ -5387,7 +5399,7 @@
 
     // add `Array` functions that return unwrapped values
     each(['join', 'pop', 'shift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         return func.apply(this.__wrapped__, arguments);
       };
@@ -5395,7 +5407,7 @@
 
     // add `Array` functions that return the wrapped value
     each(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
         return this;
@@ -5404,7 +5416,7 @@
 
     // add `Array` functions that return new wrapped values
     each(['concat', 'slice', 'splice'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments));
       };
@@ -5414,7 +5426,7 @@
     // in Firefox < 10 and IE < 9
     if (!support.spliceObjects) {
       each(['pop', 'shift', 'splice'], function(methodName) {
-        var func = arrayRef[methodName],
+        var func = arrayProto[methodName],
             isSplice = methodName == 'splice';
 
         lodash.prototype[methodName] = function() {

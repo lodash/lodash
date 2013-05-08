@@ -73,6 +73,7 @@
       arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
+      errorClass = '[object Error]',
       funcClass = '[object Function]',
       numberClass = '[object Number]',
       objectClass = '[object Object]',
@@ -103,15 +104,17 @@
   /*--------------------------------------------------------------------------*/
 
   /** Used for `Array` and `Object` method references */
-  var arrayRef = Array(),
-      objectRef = Object();
+  var arrayProto = Array.prototype,
+      errorProto = Error.prototype,
+      objectProto = Object.prototype,
+      stringProto = String.prototype;
 
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
-    String(objectRef.valueOf)
+    String(objectProto.valueOf)
       .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
   );
@@ -119,12 +122,12 @@
   /** Native method shortcuts */
   var ceil = Math.ceil,
       clearTimeout = window.clearTimeout,
-      concat = arrayRef.concat,
+      concat = arrayProto.concat,
       floor = Math.floor,
-      hasOwnProperty = objectRef.hasOwnProperty,
-      push = arrayRef.push,
+      hasOwnProperty = objectProto.hasOwnProperty,
+      push = arrayProto.push,
       setTimeout = window.setTimeout,
-      toString = objectRef.toString;
+      toString = objectProto.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
@@ -135,7 +138,7 @@
       nativeMax = Math.max,
       nativeMin = Math.min,
       nativeRandom = Math.random,
-      nativeSlice = arrayRef.slice;
+      nativeSlice = arrayProto.slice;
 
   /** Detect various environments */
   var isIeOpera = reNative.test(window.attachEvent),
@@ -241,7 +244,7 @@
      * @memberOf _.support
      * @type Boolean
      */
-    support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
+    support.spliceObjects = (arrayProto.splice.call(object, 0, 1), !object[0]);
   }(1));
 
   /*--------------------------------------------------------------------------*/
@@ -448,7 +451,6 @@
     var index, iterable = object, result = [];
     if (!iterable) return result;
     if (!(objectTypes[typeof object])) return result;
-
       for (index in iterable) {
         if (hasOwnProperty.call(iterable, index)) {    
         result.push(index);    
@@ -661,7 +663,6 @@
     var index, iterable = collection, result = iterable;
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;
-
       for (index in iterable) {
         if (callback(iterable[index], index, collection) === indicatorObject) return result;    
       }  
@@ -693,7 +694,6 @@
     var index, iterable = collection, result = iterable;
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;
-
       for (index in iterable) {
         if (hasOwnProperty.call(iterable, index)) {    
         if (callback(iterable[index], index, collection) === indicatorObject) return result;    
@@ -994,7 +994,7 @@
     // http://es5.github.com/#x8
     // and avoid a V8 bug
     // http://code.google.com/p/v8/issues/detail?id=2291
-    return value ? objectTypes[typeof value] : false;
+    return !!(value && objectTypes[typeof value]);
   }
 
   /**
@@ -1011,7 +1011,7 @@
    * // => true
    */
   function isRegExp(value) {
-    return value ? (objectTypes[typeof value] && toString.call(value) == regexpClass) : false;
+    return !!(value && objectTypes[typeof value]) && toString.call(value) == regexpClass;
   }
 
   /**
@@ -1058,7 +1058,7 @@
    * // => { 'name': 'moe' }
    */
   function omit(object) {
-    var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+    var props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
         result = {};
 
     forIn(object, function(value, key) {
@@ -1123,7 +1123,7 @@
    */
   function pick(object) {
     var index = -1,
-        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+        props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
         length = props.length,
         result = {};
 
@@ -2106,7 +2106,7 @@
   function difference(array) {
     var index = -1,
         length = array.length,
-        flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+        flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
         result = [];
 
     while (++index < length) {
@@ -2638,7 +2638,7 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
+    var funcs = arguments.length > 1 ? concat.apply(arrayProto, nativeSlice.call(arguments, 1)) : functions(object),
         index = -1,
         length = funcs.length;
 
@@ -3098,7 +3098,7 @@
 
     // add `Array` mutator functions to the wrapper
     forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__;
         func.apply(value, arguments);
@@ -3114,7 +3114,7 @@
 
     // add `Array` accessor functions to the wrapper
     forEach(['concat', 'join', 'slice'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__,
             result = func.apply(value, arguments);

@@ -1228,8 +1228,12 @@
    */
   function removeSupportNonEnumShadows(source) {
     source = removeSupportProp(source, 'nonEnumShadows');
+    source = removeVar(source, 'nonEnumProps');
     source = removeVar(source, 'shadowedProps');
     source = removeFromCreateIterator(source, 'shadowedProps');
+
+    // remove nested `nonEnumProps` assignments
+    source = source.replace(/^ *\(function[\s\S]+?\n *var length\b[\s\S]+?shadowedProps[\s\S]+?}\(\)\);\n/m, '');
 
     // remove `support.nonEnumShadows` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
@@ -1382,7 +1386,7 @@
    */
   function removeVar(source, varName) {
     // simplify complex variable assignments
-    if (/^(?:cloneableClasses|contextProps|ctorByClass|shadowedProps|whitespace)$/.test(varName)) {
+    if (/^(?:cloneableClasses|contextProps|ctorByClass|nonEnumProps|shadowedProps|whitespace)$/.test(varName)) {
       source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?;\\n\\n'), '$1=null;\n\n');
     }
 

@@ -512,10 +512,10 @@
       // exit early if the first argument is falsey
       'if (!iterable) return result;\n' +
       // add code before the iteration branches
-      '<%= top %>;\n' +
+      '<%= top %>;' +
 
       // array-like iteration:
-      '<% if (arrays) { %>' +
+      '<% if (arrays) { %>\n' +
       'var length = iterable.length; index = -1;\n' +
       'if (<%= arrays %>) {' +
 
@@ -535,7 +535,7 @@
 
       // object iteration:
       // add support for iterating over `arguments` objects if needed
-      '  <%  } else if (support.nonEnumArgs) { %>\n' +
+      '  <% } else if (support.nonEnumArgs) { %>\n' +
       '  var length = iterable.length; index = -1;\n' +
       '  if (length && isArguments(iterable)) {\n' +
       '    while (++index < length) {\n' +

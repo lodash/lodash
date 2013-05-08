@@ -45,8 +45,8 @@
     });
 
     // add a space so `define` is detected by the Dojo builder
-    source = source.replace(/.define\(/, function(match) {
-      return (/^\S/.test(match) ? ' ' : '') + match;
+    source = source.replace(/(.)(define\()/, function(match, prelude, define) {
+      return prelude + (/^\S/.test(prelude) ? ' ' : '') +  define;
     });
 
     // add trailing semicolon

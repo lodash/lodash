@@ -5570,6 +5570,10 @@
       freeExports._ = _;
     }
   }
+  // AngularJS module definition (AngularJS discourages to keep anything in global window)
+  else if (typeof angular == 'object' && typeof angular.module == 'function') {
+    angular.module('lodash', []).constant('_', _);
+  }
   else {
     // in a browser or Rhino
     window._ = _;

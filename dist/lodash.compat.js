@@ -281,6 +281,7 @@
      *
      * @name _
      * @constructor
+     * @alias chain
      * @category Chaining
      * @param {Mixed} value The value to wrap in a `lodash` instance.
      * @returns {Object} Returns a `lodash` instance.
@@ -4598,13 +4599,16 @@
      * });
      */
     function memoize(func, resolver) {
-      var cache = {};
-      return function() {
-        var key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);
+      function memoized() {
+        var cache = memoized.cache,
+            key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);
+
         return hasOwnProperty.call(cache, key)
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));
-      };
+      }
+      memoized.cache = {};
+      return memoized;
     }
 
     /**
@@ -5355,6 +5359,7 @@
     lodash.zipObject = zipObject;
 
     // add aliases
+    lodash.chain = lodash;
     lodash.collect = map;
     lodash.drop = rest;
     lodash.each = forEach;

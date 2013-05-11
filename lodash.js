@@ -280,6 +280,7 @@
      *
      * @name _
      * @constructor
+     * @alias chain
      * @category Chaining
      * @param {Mixed} value The value to wrap in a `lodash` instance.
      * @returns {Object} Returns a `lodash` instance.
@@ -5375,6 +5376,7 @@
     lodash.zipObject = zipObject;
 
     // add aliases
+    lodash.chain = lodash;
     lodash.collect = map;
     lodash.drop = rest;
     lodash.each = forEach;

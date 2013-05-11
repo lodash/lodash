@@ -95,7 +95,7 @@
   });
 
   /** List of all methods */
-  var allMethods = lodashMethods.concat('chain', 'findWhere');
+  var allMethods = lodashMethods.concat('findWhere');
 
   /** List of "Arrays" category methods */
   var arraysMethods = [

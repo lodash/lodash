@@ -182,6 +182,7 @@
    *
    * @name _
    * @constructor
+   * @alias chain
    * @category Chaining
    * @param {Mixed} value The value to wrap in a `lodash` instance.
    * @returns {Object} Returns a `lodash` instance.
@@ -3020,6 +3021,7 @@
   lodash.without = without;
 
   // add aliases
+  lodash.chain = chain;
   lodash.collect = map;
   lodash.drop = rest;
   lodash.each = forEach;
@@ -3077,8 +3079,6 @@
   lodash.head = first;
 
   /*--------------------------------------------------------------------------*/
-
-  lodash.chain = chain;
 
   /**
    * The semantic version number.

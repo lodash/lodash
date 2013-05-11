@@ -180,7 +180,6 @@
     'zipObject': [],
 
     // method used by the `backbone` and `underscore` builds
-    'chain': ['value'],
     'findWhere': ['find']
   };
 
@@ -202,7 +201,7 @@
   var allMethods = _.without(_.keys(dependencyMap));
 
   /** List of Lo-Dash methods */
-  var lodashMethods = _.without(allMethods, 'chain', 'findWhere');
+  var lodashMethods = _.without(allMethods, 'findWhere');
 
   /** List of Backbone's Lo-Dash dependencies */
   var backboneDependencies = [
@@ -280,7 +279,9 @@
   ];
 
   /** List of Underscore methods */
-  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
+  var underscoreMethods = _.without
+    .apply(_, [allMethods].concat(lodashOnlyMethods))
+    .concat('chain');
 
   /** List of ways to export the `lodash` function */
   var exportsAll = [
@@ -366,9 +367,9 @@
       ].join('\n' + indent));
     });
 
-    // add `lodash.chain` assignment
+    // replace `lodash.chain` assignment
     source = source.replace(getMethodAssignments(source), function(match) {
-      return match.replace(/^(?: *\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\n)?( *)lodash\.VERSION *=/m, '$1lodash.chain = chain;\n\n$&');
+      return match.replace(/^( *lodash\.chain *= *).+/m, '$1chain;');
     });
 
     // add `lodash.prototype.chain` assignment
@@ -1803,6 +1804,7 @@
           }
         });
 
+        dependencyMap.chain = ['value'];
         dependencyMap.findWhere = ['where'];
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
         dependencyMap.value = _.without(dependencyMap.value, 'isArray');
@@ -2355,6 +2357,20 @@
             '  }',
             '  return result;',
             '}'
+          ].join('\n'));
+        }
+        // replace `_.memoize`
+        if (!useLodashMethod('memoize')) {
+           source = replaceFunction(source, 'memoize', [
+              'function memoize(func, resolver) {',
+              '  var cache = {};',
+              '  return function() {',
+              '    var key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);',
+              '    return hasOwnProperty.call(cache, key)',
+              '      ? cache[key]',
+              '      : (cache[key] = func.apply(this, arguments));',
+              '  };',
+              '}'
           ].join('\n'));
         }
         // replace `_.omit`

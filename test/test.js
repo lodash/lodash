@@ -1282,6 +1282,18 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.has');
+
+  (function() {
+    test('should return `false` for primitives', function() {
+      _.each(falsey.concat(1, 'a'), function(value) {
+        strictEqual(_.has(value, 'valueOf'), false);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.indexOf');
 
   (function() {

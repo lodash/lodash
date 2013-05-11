@@ -264,7 +264,7 @@
      * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`, `range`,
      * `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
      * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `unzip`,
-     * `values`, `where`, `without`, `wrap`, and `zip`
+     * `values`, `where`, `without`, `wrap`, `zip` and `combine`
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
@@ -4151,6 +4151,46 @@
     }
 
     /**
+     * Takes array arguments and returns an array of array containing
+     * combinations of elements from the array arguments.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array Array to combine.
+     * @returns {Array} Returns a new array of the combinations of the supplied arrays.
+     * @example
+     *
+     * _.combine([1, 2], [3, 4]);
+     * // => [ [1, 3], [1, 4], [2, 3], [2, 4] ]
+     */
+    function combine () {
+      var r = [],
+          arg = arguments,
+          max = arg.length - 1;
+
+      var fn = function (arr, i) {
+          var cur = arg[i] || [];
+
+          for (var j = 0, l = cur.length; j < l; j++) {
+              var a = arr.slice(0);
+
+              a.push(cur[j]);
+
+              if (i == max) {
+                  r.push(a);
+              } else {
+                  fn(a, i + 1);
+              }
+          }
+      }
+
+      fn([], 0);
+
+      return r;
+    }
+
+    /**
      * Creates an array with all occurrences of the passed values removed using
      * strict equality for comparisons, i.e. `===`.
      *
@@ -5370,6 +5410,7 @@
     lodash.unzip = unzip;
     lodash.values = values;
     lodash.where = where;
+    lodash.combine = combine;
     lodash.without = without;
     lodash.wrap = wrap;
     lodash.zip = zip;

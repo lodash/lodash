@@ -178,6 +178,7 @@
     'wrap': [],
     'zip': ['unzip'],
     'zipObject': [],
+    'combine': [],
 
     // method used by the `backbone` and `underscore` builds
     'findWhere': ['find']
@@ -275,7 +276,8 @@
     'parseInt',
     'partialRight',
     'runInContext',
-    'unzip'
+    'unzip',
+    'combine'
   ];
 
   /** List of Underscore methods */

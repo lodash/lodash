@@ -3137,6 +3137,37 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.combine');
+
+  (function() {
+      var object = {
+          'no arguments': [
+            [],
+            []
+          ],
+          'empty tuples': [
+            [[], []],
+            []
+          ],
+          '1-tuples': [
+              [['moe'], ['larry']],
+              [['moe', 'larry']]
+          ],
+          '2-tuples': [
+              [['moe', 30], ['larry', 40]],
+              [['moe', 'larry'], ['moe', 40], [30, 'larry'], [30, 40]]
+          ]
+      };
+
+      _.forOwn(object, function(pair, key) {
+          test('should work with ' + key, function() {
+              deepEqual(_.combine.apply(_, pair[0]), pair[1]);
+          });
+      });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.unzip');
 
   (function() {

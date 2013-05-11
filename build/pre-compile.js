@@ -93,6 +93,7 @@
     'bind',
     'bindAll',
     'bindKey',
+    'cache',
     'clearTimeout',
     'clone',
     'cloneDeep',

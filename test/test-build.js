@@ -123,7 +123,8 @@
     'unzip',
     'without',
     'zip',
-    'zipObject'
+    'zipObject',
+    'combine'
   ];
 
   /** List of "Chaining" category methods */

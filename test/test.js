@@ -1900,6 +1900,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.memoize');
+
+  (function() {
+    test('should expose a `cache` object on the `memoized` function', function() {
+      var memoized = _.memoize(_.identity);
+      memoized('x');
+
+      var cache = memoized.cache,
+          key = _.keys(cache)[0];
+
+      equal(cache[key], 'x');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.merge');
 
   (function() {

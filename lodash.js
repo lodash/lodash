@@ -4961,8 +4961,13 @@
       if (max == null) {
         max = min;
         min = 0;
+      } else {
+        max = +max || 0;
       }
-      return min + floor(nativeRandom() * ((+max || 0) - min + 1));
+      var rand = nativeRandom();
+      return (min % 1 || max % 1)
+        ? min + nativeMin(rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1))), max)
+        : min + floor(rand * (max - min + 1));
     }
 
     /**

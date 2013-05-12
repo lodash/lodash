@@ -2306,6 +2306,15 @@
     test('should coerce arguments to numbers', function() {
       strictEqual(_.random('1', '1'), 1);
     });
+
+    test('should support floats', function() {
+      var min = 1.5,
+          max = 1.6,
+          actual = _.random(min, max);
+
+      ok(actual % 1);
+      ok(actual >= min && actual <= max);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -185,6 +185,7 @@
         getPrototypeOf = false,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
+        propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
         toString = objectProto.toString;
 
@@ -333,6 +334,14 @@
       support.argsClass = false;
 
       /**
+       * Detect if `name` or `message` properties of `Error.prototype` are
+       * enumerable by default. (IE < 9, Safari < 5.1)
+       *
+       * @type Boolean
+       */
+      support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') || propertyIsEnumerable.call(errorProto, 'name');
+
+      /**
        * Detect if `prototype` properties are enumerable by default.
        *
        * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
@@ -343,7 +352,7 @@
        * @memberOf _.support
        * @type Boolean
        */
-      support.enumPrototypes = ctor.propertyIsEnumerable('prototype');
+      support.enumPrototypes = propertyIsEnumerable.call(ctor, 'prototype');
 
       /**
        * Detect if own properties are iterated after inherited properties (all but IE < 9).
@@ -501,37 +510,37 @@
        }
       __p += '\n  while (++index < length) {\n    ' +
       (obj.loop) +
-      '\n  }\n}\nelse {  ';
+      ';\n  }\n}\nelse {  ';
        } else if (support.nonEnumArgs) {
       __p += '\n  var length = iterable.length; index = -1;\n  if (length && isArguments(iterable)) {\n    while (++index < length) {\n      index += \'\';\n      ' +
       (obj.loop) +
-      '\n    }\n  } else {  ';
+      ';\n    }\n  } else {  ';
        }
 
        if (support.enumPrototypes) {
       __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
        }
-      __p += '\n  for (index in iterable) {';
-          if (support.enumPrototypes || obj.useHas) {
-      __p += '\n    if (';
-            if (support.enumPrototypes) {
-      __p += '!(skipProto && index == \'prototype\')';
-       }      if (support.enumPrototypes && obj.useHas) {
-      __p += ' && ';
-       }      if (obj.useHas) {
-      __p += 'hasOwnProperty.call(iterable, index)';
+
+       if (support.enumErrorProps || support.nonEnumShadows) {
+      __p += '\n  var skipErrorProps = iterable === errorProto || iterable instanceof Error;\n  ';
        }
-      __p += ') {    ';
+
+          var conditions = [];    if (support.enumPrototypes) { conditions.push('!(skipProto && index == "prototype")'); }    if (support.enumErrorProps)  { conditions.push('!(skipErrorProps && (index == "message" || index == "name"))'); }
+      __p += '\n  for (index in iterable) {\n';
+          if (obj.useHas) { conditions.push("hasOwnProperty.call(iterable, index)"); }    if (conditions.length) {
+      __p += '    if (' +
+      ((__t = ( conditions.join(' && ') )) == null ? '' : __t) +
+      ') {\n  ';
        }
       __p += 
       (obj.loop) +
       ';    ';
-       if (support.enumPrototypes || obj.useHas) {
+       if (conditions.length) {
       __p += '\n    }';
        }
       __p += '\n  }    ';
        if (support.nonEnumShadows) {
-      __p += '\n\n  if (iterable !== objectProto) {\n    var ctor = iterable.constructor,\n        proto = ctor && ctor.prototype,\n        isProto = iterable === proto,\n        nonEnum = nonEnumProps[objectClass];\n\n    if (isProto) {\n      var className = iterable === stringProto ? stringClass : iterable === errorProto ? errorClass : toString.call(iterable),\n          nonEnum = nonEnumProps[iterable === (ctorByClass[className] && ctorByClass[className].prototype) ? className : objectClass];\n    }\n      ';
+      __p += '\n\n  if (iterable !== objectProto) {\n    var ctor = iterable.constructor,\n        isProto = iterable === (ctor && ctor.prototype),\n        className = iterable === stringProto ? stringClass : iterable === errorProto ? errorClass : toString.call(iterable),\n        nonEnum = nonEnumProps[className];\n      ';
        for (k = 0; k < 7; k++) {
       __p += '\n    index = \'' +
       (obj.shadowedProps[k]) +
@@ -541,7 +550,7 @@
        }
       __p += ') {\n      ' +
       (obj.loop) +
-      '\n    }      ';
+      ';\n    }      ';
        }
       __p += '\n  }    ';
        }
@@ -757,15 +766,15 @@
       // create the function factory
       var factory = Function(
           'ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments, ' +
-          'isArray, isString, keys, lodash, objectClass, objectProto, objectTypes, ' +
-          'nonEnumProps, stringClass, stringProto, toString',
+          'isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
+          'stringClass, stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
       // return the compiled function
       return factory(
         ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments,
-        isArray, isString, keys, lodash, objectClass, objectProto, objectTypes,
-        nonEnumProps, stringClass, stringProto, toString
+        isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
+        stringClass, stringProto, toString
       );
     }
 
@@ -1096,7 +1105,7 @@
 
       // allows working with "Collections" methods without using their `callback`
       // argument, `index|key`, for this method's `callback`
-      if (typeof deep == 'function') {
+      if (typeof deep != 'boolean' && deep != null) {
         thisArg = callback;
         callback = deep;
         deep = false;
@@ -3447,7 +3456,7 @@
       // juggle arguments
       if (typeof isShallow != 'boolean' && isShallow != null) {
         thisArg = callback;
-        callback = isShallow;
+        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : undefined;
         isShallow = false;
       }
       if (callback != null) {
@@ -4008,7 +4017,7 @@
       // juggle arguments
       if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = callback;
-        callback = isSorted;
+        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : undefined;
         isSorted = false;
       }
       // init value cache for large arrays
@@ -4870,8 +4879,13 @@
       if (max == null) {
         max = min;
         min = 0;
+      } else {
+        max = +max || 0;
       }
-      return min + floor(nativeRandom() * ((+max || 0) - min + 1));
+      var rand = nativeRandom();
+      return (min % 1 || max % 1)
+        ? min + nativeMin(rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1))), max)
+        : min + floor(rand * (max - min + 1));
     }
 
     /**

@@ -186,6 +186,7 @@
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
+        propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
         toString = objectProto.toString;
 
@@ -255,6 +256,7 @@
      *
      * @name _
      * @constructor
+     * @alias chain
      * @category Chaining
      * @param {Mixed} value The value to wrap in a `lodash` instance.
      * @returns {Object} Returns a `lodash` instance.
@@ -294,6 +296,14 @@
      * @type Object
      */
     var support = lodash.support = {};
+
+    /**
+     * Detect if `name` or `message` properties of `Error.prototype` are
+     * enumerable by default. (IE < 9, Safari < 5.1)
+     *
+     * @type Boolean
+     */
+    support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') || propertyIsEnumerable.call(errorProto, 'name');
 
     /**
      * Detect if `prototype` properties are enumerable by default.
@@ -694,14 +704,14 @@
         if (length && isArguments(iterable)) {
           while (++index < length) {
             index += '';
-            result.push(index)
+            result.push(index);
           }
         } else {    
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
-          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
-          result.push(index);    
+          if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
+            result.push(index);    
           }
         }  
       }
@@ -753,15 +763,15 @@
       var length = iterable.length; index = -1;
       if (typeof length == 'number') {
         while (++index < length) {
-          if (callback(iterable[index], index, collection) === false) return result
+          if (callback(iterable[index], index, collection) === false) return result;
         }
       }
       else {    
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
-          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
-          if (callback(iterable[index], index, collection) === false) return result;    
+          if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
+            if (callback(iterable[index], index, collection) === false) return result;    
           }
         }  
       }
@@ -832,24 +842,24 @@
       }
       while (++argsIndex < argsLength) {
         iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {;
+        if (iterable && objectTypes[typeof iterable]) {
         var length = iterable.length; index = -1;
         if (length && isArguments(iterable)) {
           while (++index < length) {
             index += '';
-            result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
+            result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];
           }
         } else {    
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
-          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
-          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];    
+          if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
+            result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];    
           }
         }  
       }
         }
-      };
+      }
       return result
     };
 
@@ -900,7 +910,7 @@
 
       // allows working with "Collections" methods without using their `callback`
       // argument, `index|key`, for this method's `callback`
-      if (typeof deep == 'function') {
+      if (typeof deep != 'boolean' && deep != null) {
         thisArg = callback;
         callback = deep;
         deep = false;
@@ -1052,24 +1062,24 @@
           argsLength = typeof guard == 'number' ? 2 : args.length;
       while (++argsIndex < argsLength) {
         iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {;
+        if (iterable && objectTypes[typeof iterable]) {
         var length = iterable.length; index = -1;
         if (length && isArguments(iterable)) {
           while (++index < length) {
             index += '';
-            if (typeof result[index] == 'undefined') result[index] = iterable[index]
+            if (typeof result[index] == 'undefined') result[index] = iterable[index];
           }
         } else {    
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
-          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
-          if (typeof result[index] == 'undefined') result[index] = iterable[index];    
+          if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
+            if (typeof result[index] == 'undefined') result[index] = iterable[index];    
           }
         }  
       }
         }
-      };
+      }
       return result
     };
 
@@ -1143,14 +1153,14 @@
         if (length && isArguments(iterable)) {
           while (++index < length) {
             index += '';
-            if (callback(iterable[index], index, collection) === false) return result
+            if (callback(iterable[index], index, collection) === false) return result;
           }
         } else {    
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
-          if (!(skipProto && index == 'prototype')) {    
-          if (callback(iterable[index], index, collection) === false) return result;    
+          if (!(skipProto && index == "prototype")) {
+            if (callback(iterable[index], index, collection) === false) return result;    
           }
         }  
       }
@@ -1187,14 +1197,14 @@
         if (length && isArguments(iterable)) {
           while (++index < length) {
             index += '';
-            if (callback(iterable[index], index, collection) === false) return result
+            if (callback(iterable[index], index, collection) === false) return result;
           }
         } else {    
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
-          if (!(skipProto && index == 'prototype') && hasOwnProperty.call(iterable, index)) {    
-          if (callback(iterable[index], index, collection) === false) return result;    
+          if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
+            if (callback(iterable[index], index, collection) === false) return result;    
           }
         }  
       }
@@ -3310,7 +3320,7 @@
       // juggle arguments
       if (typeof isShallow != 'boolean' && isShallow != null) {
         thisArg = callback;
-        callback = isShallow;
+        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : undefined;
         isShallow = false;
       }
       if (callback != null) {
@@ -3871,7 +3881,7 @@
       // juggle arguments
       if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = callback;
-        callback = isSorted;
+        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : undefined;
         isSorted = false;
       }
       // init value cache for large arrays
@@ -4393,13 +4403,16 @@
      * });
      */
     function memoize(func, resolver) {
-      var cache = {};
-      return function() {
-        var key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);
+      function memoized() {
+        var cache = memoized.cache,
+            key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);
+
         return hasOwnProperty.call(cache, key)
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));
-      };
+      }
+      memoized.cache = {};
+      return memoized;
     }
 
     /**
@@ -4735,8 +4748,13 @@
       if (max == null) {
         max = min;
         min = 0;
+      } else {
+        max = +max || 0;
       }
-      return min + floor(nativeRandom() * ((+max || 0) - min + 1));
+      var rand = nativeRandom();
+      return (min % 1 || max % 1)
+        ? min + nativeMin(rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1))), max)
+        : min + floor(rand * (max - min + 1));
     }
 
     /**
@@ -5150,6 +5168,7 @@
     lodash.zipObject = zipObject;
 
     // add aliases
+    lodash.chain = lodash;
     lodash.collect = map;
     lodash.drop = rest;
     lodash.each = forEach;

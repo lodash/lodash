@@ -32,7 +32,6 @@
     'nonEnum',
     'nonEnumProps',
     'object',
-    'objectClass',
     'objectProto',
     'objectTypes',
     'ownIndex',

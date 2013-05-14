@@ -536,7 +536,7 @@
       var filePath = path.join(directory, filename);
       if (pattern.test(filename)) {
         var text = fs.readFileSync(filePath, 'utf8'),
-            precompiled = getFunctionSource(_.template(text, null, options)),
+            precompiled = cleanupCompiled(getFunctionSource(_.template(text, null, options))),
             prop = filename.replace(/\..*$/, '');
 
         source.push("  templates['" + prop.replace(/['\n\r\t]/g, '\\$&') + "'] = " + precompiled + ';', '');
@@ -574,6 +574,17 @@
    */
   function capitalize(string) {
     return string[0].toUpperCase() + string.toLowerCase().slice(1);
+  }
+
+  /**
+   * Removes unnecessary semicolons and whitespace from compiled code.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function cleanupCompiled(source) {
+    return source.replace(/([{}]) *;/g, '$1');
   }
 
   /**
@@ -2788,7 +2799,7 @@
             // extract, format, and inject the compiled function's source code
             source = source.replace(reFunc, function(match, indent, left) {
               return (indent + left) +
-                getFunctionSource(lodash[methodName], indent) + ';\n';
+                cleanupCompiled(getFunctionSource(lodash[methodName], indent)) + ';\n';
             });
           }
         });
@@ -2851,7 +2862,7 @@
         // inline `iteratorTemplate` template
         source = source.replace(getIteratorTemplate(source), function(match) {
           var indent = getIndent(match),
-              snippet = getFunctionSource(lodash._iteratorTemplate, indent);
+              snippet = cleanupCompiled(getFunctionSource(lodash._iteratorTemplate, indent));
 
           // prepend data object references to property names to avoid having to
           // use a with-statement
@@ -2867,7 +2878,6 @@
             .replace(/__p *\+= *' *';/g, '')
             .replace(/\s*\+\s*'';/g, ';')
             .replace(/(__p *\+= *)' *' *\+/g, '$1')
-            .replace(/(?:; *)([{}])|([{}])(?: *;)/g, '$1$2')
             .replace(/\(\(__t *= *\( *([^)]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
 
           // remove the with-statement

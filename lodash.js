@@ -191,6 +191,7 @@
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
+        propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
         toString = objectProto.toString;
@@ -347,6 +348,14 @@
       support.argsClass = isArguments(arguments);
 
       /**
+       * Detect if `name` or `message` properties of `Error.prototype` are
+       * enumerable by default. (IE < 9, Safari < 5.1)
+       *
+       * @type Boolean
+       */
+      support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') || propertyIsEnumerable.call(errorProto, 'name');
+
+      /**
        * Detect if `prototype` properties are enumerable by default.
        *
        * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
@@ -357,7 +366,7 @@
        * @memberOf _.support
        * @type Boolean
        */
-      support.enumPrototypes = ctor.propertyIsEnumerable('prototype');
+      support.enumPrototypes = propertyIsEnumerable.call(ctor, 'prototype');
 
       /**
        * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
@@ -529,7 +538,7 @@
 
       // iterate over the array-like value
       '  while (++index < length) {\n' +
-      '    <%= loop %>\n' +
+      '    <%= loop %>;\n' +
       '  }\n' +
       '}\n' +
       'else {' +
@@ -541,7 +550,7 @@
       '  if (length && isArguments(iterable)) {\n' +
       '    while (++index < length) {\n' +
       "      index += '';\n" +
-      '      <%= loop %>\n' +
+      '      <%= loop %>;\n' +
       '    }\n' +
       '  } else {' +
       '  <% } %>' +
@@ -551,29 +560,37 @@
       "  var skipProto = typeof iterable == 'function';\n" +
       '  <% } %>' +
 
-      // iterate own properties using `Object.keys` if it's fast
+      // avoid iterating over `Error.prototype` properties in older IE and Safari
+      '  <% if (support.enumErrorProps || support.nonEnumShadows) { %>\n' +
+      '  var skipErrorProps = iterable === errorProto || iterable instanceof Error;\n' +
+      '  <% } %>' +
+
+      // define conditions used in the loop
+      '  <%' +
+      '    var conditions = [];' +
+      '    if (support.enumPrototypes) { conditions.push("!(skipProto && index == \'prototype\')"); }' +
+      '    if (support.enumErrorProps)  { conditions.push("!(skipErrorProps && (index == \'message\' || index == \'name\'))"); }' +
+      '  %>' +
+
+      // iterate own properties using `Object.keys`
       '  <% if (useHas && useKeys) { %>\n' +
       '  var ownIndex = -1,\n' +
       '      ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],\n' +
       '      length = ownProps.length;\n\n' +
       '  while (++ownIndex < length) {\n' +
-      '    index = ownProps[ownIndex];\n' +
-      "    <% if (support.enumPrototypes) { %>if (!(skipProto && index == 'prototype')) {\n  <% } %>" +
-      '    <%= loop %>\n' +
-      '    <% if (support.enumPrototypes) { %>}\n<% } %>' +
+      '    index = ownProps[ownIndex];\n<%' +
+      "    if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
+      '    <%= loop %>;' +
+      '    <% if (conditions.length) { %>\n    }<% } %>\n' +
       '  }' +
 
       // else using a for-in loop
       '  <% } else { %>\n' +
-      '  for (index in iterable) {<%' +
-      '    if (support.enumPrototypes || useHas) { %>\n    if (<%' +
-      "      if (support.enumPrototypes) { %>!(skipProto && index == 'prototype')<% }" +
-      '      if (support.enumPrototypes && useHas) { %> && <% }' +
-      '      if (useHas) { %>hasOwnProperty.call(iterable, index)<% }' +
-      '    %>) {' +
-      '    <% } %>\n' +
+      '  for (index in iterable) {\n<%' +
+      '    if (useHas) { conditions.push("hasOwnProperty.call(iterable, index)"); }' +
+      "    if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
       '    <%= loop %>;' +
-      '    <% if (support.enumPrototypes || useHas) { %>\n    }<% } %>\n' +
+      '    <% if (conditions.length) { %>\n    }<% } %>\n' +
       '  }' +
 
       // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
@@ -583,19 +600,15 @@
       '    <% if (support.nonEnumShadows) { %>\n\n' +
       '  if (iterable !== objectProto) {\n' +
       "    var ctor = iterable.constructor,\n" +
-      '        proto = ctor && ctor.prototype,\n' +
-      '        isProto = iterable === proto,\n' +
-      '        nonEnum = nonEnumProps[objectClass];\n\n' +
-      '    if (isProto) {\n' +
-      "      var className = iterable === stringProto ? stringClass : iterable === errorProto ? errorClass : toString.call(iterable),\n" +
-      '          nonEnum = nonEnumProps[iterable === (ctorByClass[className] && ctorByClass[className].prototype) ? className : objectClass];\n' +
-      '    }\n' +
+      '        isProto = iterable === (ctor && ctor.prototype),\n' +
+      '        className = iterable === stringProto ? stringClass : iterable === errorProto ? errorClass : toString.call(iterable),\n' +
+      '        nonEnum = nonEnumProps[className];\n' +
       '      <% for (k = 0; k < 7; k++) { %>\n' +
       "    index = '<%= shadowedProps[k] %>';\n" +
       '    if ((!(isProto && nonEnum[index]) && hasOwnProperty.call(iterable, index))<%' +
       '        if (!useHas) { %> || (!nonEnum[index] && iterable[index] !== objectProto[index])<% }' +
       '      %>) {\n' +
-      '      <%= loop %>\n' +
+      '      <%= loop %>;\n' +
       '    }' +
       '      <% } %>\n' +
       '  }' +

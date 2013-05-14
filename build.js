@@ -1149,6 +1149,27 @@
   }
 
   /**
+   * Removes all `support.enumErrorProps` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportEnumErrorProps(source) {
+    source = removeSupportProp(source, 'enumErrorProps');
+
+    // remove `support.enumErrorProps` from `iteratorTemplate`
+    source = source.replace(getIteratorTemplate(source), function(match) {
+      return match
+        .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(support\.enumErrorProps *(?:&&|\))(.+?}["']|[\s\S]+?<% *} *(?:%>|["'])).+/g, '')
+        .replace(/support\.enumErrorProps\s*\|\|\s*/g, '');
+    });
+
+    return source;
+  }
+
+
+  /**
    * Removes all `support.enumPrototypes` references from `source`.
    *
    * @private
@@ -1168,7 +1189,7 @@
     // remove `support.enumPrototypes` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
-        .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(support\.enumPrototypes *(?:&&|\))[\s\S]+?<% *} *(?:%>|["']).+/g, '')
+        .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(support\.enumPrototypes *(?:&&|\))(.+?}["']|[\s\S]+?<% *} *(?:%>|["'])).+/g, '')
         .replace(/support\.enumPrototypes\s*\|\|\s*/g, '');
     });
 
@@ -1249,7 +1270,9 @@
 
     // remove `support.nonEnumShadows` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.nonEnumShadows[\s\S]+?["']\1<% *} *%>.+/, '');
+      return match
+        .replace(/\s*\|\|\s*support\.nonEnumShadows/, '')
+        .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.nonEnumShadows[\s\S]+?["']\1<% *} *%>.+/, '');
     });
 
     return source;
@@ -1986,6 +2009,7 @@
         source = removeSupportNodeClass(source);
 
         if (!isMobile) {
+          source = removeSupportEnumErrorProps(source);
           source = removeSupportEnumPrototypes(source);
           source = removeSupportNonEnumArgs(source);
 

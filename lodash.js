@@ -568,8 +568,8 @@
       // define conditions used in the loop
       '  <%' +
       '    var conditions = [];' +
-      '    if (support.enumPrototypes) { conditions.push("!(skipProto && index == \'prototype\')"); }' +
-      '    if (support.enumErrorProps)  { conditions.push("!(skipErrorProps && (index == \'message\' || index == \'name\'))"); }' +
+      '    if (support.enumPrototypes) { conditions.push(\'!(skipProto && index == "prototype")\'); }' +
+      '    if (support.enumErrorProps)  { conditions.push(\'!(skipErrorProps && (index == "message" || index == "name"))\'); }' +
       '  %>' +
 
       // iterate own properties using `Object.keys`
@@ -826,15 +826,15 @@
       // create the function factory
       var factory = Function(
           'ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments, ' +
-          'isArray, isString, keys, lodash, objectClass, objectProto, objectTypes, ' +
-          'nonEnumProps, stringClass, stringProto, toString',
+          'isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
+          'stringClass, stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
       // return the compiled function
       return factory(
         ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments,
-        isArray, isString, keys, lodash, objectClass, objectProto, objectTypes,
-        nonEnumProps, stringClass, stringProto, toString
+        isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
+        stringClass, stringProto, toString
       );
     }
 

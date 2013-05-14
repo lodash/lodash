@@ -186,6 +186,7 @@
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
+        propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
         toString = objectProto.toString;
@@ -667,10 +668,10 @@
     var shimKeys = function (object) {
       var index, iterable = object, result = [];
       if (!iterable) return result;
-      if (!(objectTypes[typeof object])) return result;  
+      if (!(objectTypes[typeof object])) return result;    
         for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {    
-          result.push(index);    
+          if (hasOwnProperty.call(iterable, index)) {
+            result.push(index);    
           }
         }    
       return result
@@ -760,17 +761,17 @@
       }
       while (++argsIndex < argsLength) {
         iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {;  
+        if (iterable && objectTypes[typeof iterable]) {    
         var ownIndex = -1,
             ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
             length = ownProps.length;
 
         while (++ownIndex < length) {
           index = ownProps[ownIndex];
-          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]
+          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];    
         }    
         }
-      };
+      }
       return result
     };
 
@@ -821,7 +822,7 @@
 
       // allows working with "Collections" methods without using their `callback`
       // argument, `index|key`, for this method's `callback`
-      if (typeof deep == 'function') {
+      if (typeof deep != 'boolean' && deep != null) {
         thisArg = callback;
         callback = deep;
         deep = false;
@@ -973,17 +974,17 @@
           argsLength = typeof guard == 'number' ? 2 : args.length;
       while (++argsIndex < argsLength) {
         iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {;  
+        if (iterable && objectTypes[typeof iterable]) {    
         var ownIndex = -1,
             ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
             length = ownProps.length;
 
         while (++ownIndex < length) {
           index = ownProps[ownIndex];
-          if (typeof result[index] == 'undefined') result[index] = iterable[index]
+          if (typeof result[index] == 'undefined') result[index] = iterable[index];    
         }    
         }
-      };
+      }
       return result
     };
 
@@ -1052,7 +1053,7 @@
       var index, iterable = collection, result = iterable;
       if (!iterable) return result;
       if (!objectTypes[typeof iterable]) return result;
-      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);  
+      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);    
         for (index in iterable) {
           if (callback(iterable[index], index, collection) === false) return result;    
         }    
@@ -1084,14 +1085,14 @@
       var index, iterable = collection, result = iterable;
       if (!iterable) return result;
       if (!objectTypes[typeof iterable]) return result;
-      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);  
+      callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);    
         var ownIndex = -1,
             ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],
             length = ownProps.length;
 
         while (++ownIndex < length) {
           index = ownProps[ownIndex];
-          if (callback(iterable[index], index, collection) === false) return result
+          if (callback(iterable[index], index, collection) === false) return result;    
         }    
       return result
     };
@@ -3213,7 +3214,7 @@
       // juggle arguments
       if (typeof isShallow != 'boolean' && isShallow != null) {
         thisArg = callback;
-        callback = isShallow;
+        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : undefined;
         isShallow = false;
       }
       if (callback != null) {
@@ -3774,7 +3775,7 @@
       // juggle arguments
       if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = callback;
-        callback = isSorted;
+        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : undefined;
         isSorted = false;
       }
       // init value cache for large arrays
@@ -4645,8 +4646,13 @@
       if (max == null) {
         max = min;
         min = 0;
+      } else {
+        max = +max || 0;
       }
-      return min + floor(nativeRandom() * ((+max || 0) - min + 1));
+      var rand = nativeRandom();
+      return (min % 1 || max % 1)
+        ? min + nativeMin(rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1))), max)
+        : min + floor(rand * (max - min + 1));
     }
 
     /**

@@ -13,6 +13,7 @@
     'callback',
     'className',
     'collection',
+    'conditions',
     'ctor',
     'ctorByClass',
     'errorClass',
@@ -36,8 +37,8 @@
     'objectTypes',
     'ownIndex',
     'ownProps',
-    'proto',
     'result',
+    'skipErrorProps',
     'skipProto',
     'source',
     'stringClass',
@@ -112,6 +113,7 @@
     'difference',
     'drop',
     'each',
+    'enumErrorProps',
     'enumPrototypes',
     'environment',
     'escape',
@@ -290,7 +292,7 @@
         string = string.slice(left.length);
       }
       // avoids removing the '\n' of the `stringEscapes` object
-      string = string.replace(/\[object |delete |else (?!{)|function | in |return\s+[\w"']|throw |typeof |use strict|var |@ |(["'])\\n\1|\\\\n|\\n|\s+/g, function(match) {
+      string = string.replace(/\[object |delete |else (?!{)|function | in | instanceof |return\s+[\w"']|throw |typeof |use strict|var |@ |(["'])\\n\1|\\\\n|\\n|\s+/g, function(match) {
         return match == false || match == '\\n' ? '' : match;
       });
       // unclip

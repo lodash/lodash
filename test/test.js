@@ -392,11 +392,11 @@
       });
     });
 
-    test('should shallow clone when used as `callback` for `_.map`', function() {
+    test('should perform a shallow clone when used as `callback` for `_.map`', function() {
       var expected = [{ 'a': [0] }, { 'b': [1] }],
           actual = _.map(expected, _.clone);
 
-      ok(actual != expected && actual.a == expected.a && actual.b == expected.b);
+      ok(actual[0] != expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
     });
 
     test('should deep clone `index` and `input` array properties', function() {
@@ -926,6 +926,13 @@
 
     test('should work with a string for `callback`', function() {
       deepEqual(_.flatten(array, 'a'), [1, 2, 3]);
+    });
+
+    test('should perform a deep flatten when used as `callback` for `_.map`', function() {
+      var array = [[[['a']]], [[['b']]]],
+          actual = _.map(array, _.flatten);
+
+      deepEqual(actual, [['a'], ['b']]);
     });
 
     test('should treat sparse arrays as dense', function() {
@@ -3103,6 +3110,13 @@
       }, Math);
 
       deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should perform an unsorted uniq operation when used as `callback` for `_.map`', function() {
+      var array = [[2, 1, 2], [1, 2, 1]],
+          actual = _.map(array, _.uniq);
+
+      deepEqual(actual, [[2, 1], [1, 2]]);
     });
 
     test('should distinguish between numbers and numeric strings', function() {

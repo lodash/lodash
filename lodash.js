@@ -1178,7 +1178,7 @@
 
       // allows working with "Collections" methods without using their `callback`
       // argument, `index|key`, for this method's `callback`
-      if (typeof deep == 'function') {
+      if (typeof deep != 'boolean' && deep != null) {
         thisArg = callback;
         callback = deep;
         deep = false;
@@ -3529,7 +3529,7 @@
       // juggle arguments
       if (typeof isShallow != 'boolean' && isShallow != null) {
         thisArg = callback;
-        callback = isShallow;
+        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : undefined;
         isShallow = false;
       }
       if (callback != null) {
@@ -4090,7 +4090,7 @@
       // juggle arguments
       if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = callback;
-        callback = isSorted;
+        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : undefined;
         isSorted = false;
       }
       // init value cache for large arrays

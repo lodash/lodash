@@ -3022,7 +3022,6 @@
   lodash.without = without;
 
   // add aliases
-  lodash.chain = chain;
   lodash.collect = map;
   lodash.drop = rest;
   lodash.each = forEach;
@@ -3030,6 +3029,10 @@
   lodash.methods = functions;
   lodash.select = filter;
   lodash.tail = rest;
+
+  // add chain compat
+  lodash.chain = chain;
+  lodash.prototype.chain = wrapperChain;
 
   /*--------------------------------------------------------------------------*/
 
@@ -3094,7 +3097,6 @@
   mixin(lodash);
 
   // add "Chaining" functions to the wrapper
-  lodash.prototype.chain = wrapperChain;
   lodash.prototype.value = wrapperValueOf;
 
     // add `Array` mutator functions to the wrapper

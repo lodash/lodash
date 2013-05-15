@@ -5168,7 +5168,6 @@
     lodash.zipObject = zipObject;
 
     // add aliases
-    lodash.chain = lodash;
     lodash.collect = map;
     lodash.drop = rest;
     lodash.each = forEach;
@@ -5178,6 +5177,10 @@
     lodash.select = filter;
     lodash.tail = rest;
     lodash.unique = uniq;
+
+    // add chain compat
+    lodash.chain = lodash;
+    lodash.prototype.chain = function() { return this; };
 
     // add functions to `lodash.prototype`
     mixin(lodash);

@@ -338,6 +338,23 @@
     });
   }());
 
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.chain');
+
+  (function() {
+    test('should return a wrapped value', function() {
+      var actual = _.chain({ 'a': 0 });
+      ok(actual instanceof _);
+    });
+
+    test('should return the existing wrapper when chaining', function() {
+      var wrapper = _({ 'a': 0 });
+      equal(wrapper.chain(), wrapper);
+    });
+  }());
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('cloning');

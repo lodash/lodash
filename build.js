@@ -367,13 +367,12 @@
       ].join('\n' + indent));
     });
 
-    // replace `lodash.chain` assignment
+    // replace `chain` assignments
     source = source.replace(getMethodAssignments(source), function(match) {
-      return match.replace(/^( *lodash\.chain *= *).+/m, '$1chain;');
+      return match
+        .replace(/^( *lodash\.chain *= *)[\s\S]+?(?=;\n)/m, '$1chain')
+        .replace(/^( *lodash\.prototype\.chain *= *)[\s\S]+?(?=;\n)/m, '$1wrapperChain');
     });
-
-    // add `lodash.prototype.chain` assignment
-    source = source.replace(/^( *)lodash\.prototype\.value *=.+\n/m, '$1lodash.prototype.chain = wrapperChain;\n$&');
 
     // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
     source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');

@@ -71,6 +71,7 @@
     'Array',
     'Boolean',
     'Date',
+    'Error',
     'Function',
     'Math',
     'Number',

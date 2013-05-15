@@ -180,6 +180,7 @@
     'zipObject': [],
 
     // method used by the `backbone` and `underscore` builds
+    'chain': ['value'],
     'findWhere': ['find']
   };
 
@@ -198,7 +199,7 @@
   ];
 
   /** List of all methods */
-  var allMethods = _.without(_.keys(dependencyMap));
+  var allMethods = _.keys(dependencyMap);
 
   /** List of Lo-Dash methods */
   var lodashMethods = _.without(allMethods, 'findWhere');
@@ -279,9 +280,7 @@
   ];
 
   /** List of Underscore methods */
-  var underscoreMethods = _.without
-    .apply(_, [allMethods].concat(lodashOnlyMethods))
-    .concat('chain');
+  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
 
   /** List of ways to export the `lodash` function */
   var exportsAll = [
@@ -367,13 +366,6 @@
       ].join('\n' + indent));
     });
 
-    // replace `chain` assignments
-    source = source.replace(getMethodAssignments(source), function(match) {
-      return match
-        .replace(/^( *lodash\.chain *= *)[\s\S]+?(?=;\n)/m, '$1chain')
-        .replace(/^( *lodash\.prototype\.chain *= *)[\s\S]+?(?=;\n)/m, '$1wrapperChain');
-    });
-
     // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
     source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');
 
@@ -438,6 +430,11 @@
       ].join('\n' + indent);
     });
 
+    // replace `_.chain` assignment
+    source = source.replace(getMethodAssignments(source), function(match) {
+      return match.replace(/^( *lodash\.chain *= *)[\s\S]+?(?=;\n)/m, '$1chain')
+    });
+
     // move `mixin(lodash)` to after the method assignments
     source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(lodash\).+/, '');
     source = source.replace(getMethodAssignments(source), function(match) {
@@ -449,6 +446,11 @@
         'mixin(lodash);'
       ].join('\n' + indent);
     });
+
+    // move the `lodash.prototype.chain` assignment to after `mixin(lodash)`
+    source = source
+      .replace(/^ *lodash\.prototype\.chain *=[\s\S]+?;\n/m, '')
+      .replace(/^( *)lodash\.prototype\.value *=/m, '$1lodash.prototype.chain = wrapperChain;\n$&');
 
     return source;
   }
@@ -679,7 +681,11 @@
    */
   function getCategory(source, methodName) {
     var result = /@category +(\w+)/.exec(matchFunction(source, methodName));
-    return result ? result[1] : '';
+    if (result) {
+      return result[1];
+    }
+    // check for the `_.chain` alias
+    return methodName == 'chain' ? 'Chaining' : '';
   }
 
   /**
@@ -880,7 +886,7 @@
     return slice.call(arguments, 1).every(function(funcName) {
       return !(
         matchFunction(source, funcName) ||
-        RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=.+', 'm').test(source)
+        RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm').test(source)
       );
     });
   }
@@ -1007,18 +1013,19 @@
     } else if (funcName != 'each' && (snippet = matchFunction(source, funcName))) {
       source = source.replace(snippet, '');
     }
+
+    // remove method assignment from `lodash.prototype`
+    source = source.replace(RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
+
+    // remove pseudo private methods
+    source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\._' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
+
     // grab the method assignments snippet
     snippet = getMethodAssignments(source);
 
-    // remove method assignment from `lodash.prototype`
-    source = source.replace(RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=.+\\n', 'm'), '');
-
-    // remove pseudo private methods
-    source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\._' + funcName + ' *=.+\\n', 'm'), '');
-
     // remove assignment and aliases
     var modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
-      return result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + otherName + ' *=.+\\n', 'm'), '');
+      return result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + otherName + ' *=[\\s\\S]+?;\\n', 'm'), '');
     }, snippet);
 
     // replace with the modified snippet
@@ -1837,7 +1844,6 @@
           }
         });
 
-        dependencyMap.chain = ['value'];
         dependencyMap.findWhere = ['where'];
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
         dependencyMap.value = _.without(dependencyMap.value, 'isArray');
@@ -2750,7 +2756,7 @@
         });
       }
       // add Underscore's chaining methods
-      if (_.contains(buildMethods, 'chain')) {
+      if (isUnderscore ? !_.contains(plusMethods, 'chain') : _.contains(plusMethods, 'chain')) {
         source = addChainMethods(source);
       }
       // replace `each` references with `forEach` and `forOwn`
@@ -2901,7 +2907,7 @@
             .replace(/__p *\+= *' *';/g, '')
             .replace(/\s*\+\s*'';/g, ';')
             .replace(/(__p *\+= *)' *' *\+/g, '$1')
-            .replace(/\(\(__t *= *\( *([^)]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
+            .replace(/\(\(__t *= *\( *([\s\S]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
 
           // remove the with-statement
           snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
@@ -3040,6 +3046,7 @@
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
       }
       if (isRemoved(source, 'value')) {
+        source = removeFunction(source, 'chain');
         source = removeFunction(source, 'wrapperToString');
         source = removeFunction(source, 'wrapperValueOf');
         source = removeSupportSpliceObjects(source);
@@ -3065,7 +3072,7 @@
         source = source
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)(?:each|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.+/g, '');
+          .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
       }
       if (!/\beach\(/.test(source)) {
         source = source.replace(matchFunction(source, 'each'), '');

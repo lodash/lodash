@@ -5404,12 +5404,12 @@
     lodash.tail = rest;
     lodash.unique = uniq;
 
-    // add chain compat
-    lodash.chain = lodash;
-    lodash.prototype.chain = function() { return this; };
-
     // add functions to `lodash.prototype`
     mixin(lodash);
+
+    // add Underscore `_.chain` compat
+    lodash.chain = lodash;
+    lodash.prototype.chain = function() { return this; };
 
     /*--------------------------------------------------------------------------*/
 

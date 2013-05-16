@@ -351,6 +351,7 @@
        * Detect if `name` or `message` properties of `Error.prototype` are
        * enumerable by default. (IE < 9, Safari < 5.1)
        *
+       * @memberOf _.support
        * @type Boolean
        */
       support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') || propertyIsEnumerable.call(errorProto, 'name');

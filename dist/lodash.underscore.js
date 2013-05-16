@@ -4292,9 +4292,8 @@
   lodash.tail = rest;
   lodash.unique = uniq;
 
-  // add chain compat
+  // add Underscore `_.chain` compat
   lodash.chain = chain;
-  lodash.prototype.chain = wrapperChain;
 
   /*--------------------------------------------------------------------------*/
 
@@ -4372,6 +4371,7 @@
   mixin(lodash);
 
   // add "Chaining" functions to the wrapper
+  lodash.prototype.chain = wrapperChain;
   lodash.prototype.value = wrapperValueOf;
 
     // add `Array` mutator functions to the wrapper

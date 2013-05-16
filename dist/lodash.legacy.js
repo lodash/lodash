@@ -529,7 +529,7 @@
       __p += '\n  for (index in iterable) {\n';
           if (obj.useHas) { conditions.push("hasOwnProperty.call(iterable, index)"); }    if (conditions.length) {
       __p += '    if (' +
-      ((__t = ( conditions.join(' && ') )) == null ? '' : __t) +
+      (conditions.join(' && ')) +
       ') {\n  ';
        }
       __p += 
@@ -5309,12 +5309,12 @@
     lodash.tail = rest;
     lodash.unique = uniq;
 
-    // add chain compat
-    lodash.chain = lodash;
-    lodash.prototype.chain = function() { return this; };
-
     // add functions to `lodash.prototype`
     mixin(lodash);
+
+    // add Underscore `_.chain` compat
+    lodash.chain = lodash;
+    lodash.prototype.chain = function() { return this; };
 
     /*--------------------------------------------------------------------------*/
 

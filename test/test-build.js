@@ -1334,7 +1334,8 @@
       '--output b.js',
       '-o ' + path.join('a', 'b', 'c.js'),
       '-o ' + relativePrefix + path.join('a', 'b', 'c.js'),
-      '-o ' + path.join(nestedPath, 'c.js')
+      '-o ' + path.join(nestedPath, 'c.js'),
+      '-o name_with_keywords_like_category_include_exclude_plus_minus.js'
     ];
 
     commands.forEach(function(command) {

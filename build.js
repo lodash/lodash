@@ -1638,7 +1638,7 @@
 
     // used to specify a custom IIFE to wrap Lo-Dash
     var iife = options.reduce(function(result, value) {
-      var match = value.match(/iife=(.*)/);
+      var match = value.match(/^iife=(.*)$/);
       return match ? match[1] : result;
     }, null);
 
@@ -1693,7 +1693,7 @@
 
     // used to specify the ways to export the `lodash` function
     var exportsOptions = options.reduce(function(result, value) {
-      return /exports/.test(value) ? optionToArray(value).sort() : result;
+      return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
     }, isUnderscore
       ? ['commonjs', 'global', 'node']
       : exportsAll.slice()
@@ -1701,13 +1701,13 @@
 
     // used to specify the AMD module ID of Lo-Dash used by precompiled templates
     var moduleId = options.reduce(function(result, value) {
-      var match = value.match(/moduleId=(.*)/);
+      var match = value.match(/^moduleId=(.*)$/);
       return match ? match[1] : result;
     }, 'lodash');
 
     // used to specify the output path for builds
     var outputPath = options.reduce(function(result, value, index) {
-      if (/-o|--output/.test(value)) {
+      if (/^(?:-o|--output)$/.test(value)) {
         result = options[index + 1];
         var dirname = path.dirname(result);
         fs.mkdirpSync(dirname);
@@ -1718,7 +1718,7 @@
 
     // used to match external template files to precompile
     var templatePattern = options.reduce(function(result, value) {
-      var match = value.match(/template=(.+)$/);
+      var match = value.match(/^template=(.+)$/);
       return match
         ? path.join(fs.realpathSync(path.dirname(match[1])), path.basename(match[1]))
         : result;
@@ -1726,7 +1726,7 @@
 
     // used as the template settings for precompiled templates
     var templateSettings = options.reduce(function(result, value) {
-      var match = value.match(/settings=(.+)$/);
+      var match = value.match(/^settings=(.+)$/);
       return match
         ? _.assign(result, Function('return {' + match[1].replace(/^{|}$/g, '') + '}')())
         : result;
@@ -1759,30 +1759,30 @@
 
     // methods to include in the build
     var includeMethods = options.reduce(function(accumulator, value) {
-      return /include/.test(value)
+      return /^include=.*$/.test(value)
         ? _.union(accumulator, optionToMethodsArray(source, value))
         : accumulator;
     }, []);
 
     // methods to remove from the build
     var minusMethods = options.reduce(function(accumulator, value) {
-      return /exclude|minus/.test(value)
+      return /^(?:exclude|minus)=.*$/.test(value)
         ? _.union(accumulator, optionToMethodsArray(source, value))
         : accumulator;
     }, []);
 
     // methods to add to the build
     var plusMethods = options.reduce(function(accumulator, value) {
-      return /plus/.test(value)
+      return /^plus=.*$/.test(value)
         ? _.union(accumulator, optionToMethodsArray(source, value))
         : accumulator;
     }, []);
 
     // methods categories to include in the build
     var categories = options.reduce(function(accumulator, value) {
-      if (/category|exclude|include|minus|plus/.test(value)) {
+      if (/^(category|exclude|include|minus|plus)=.+$/.test(value)) {
         var array = optionToArray(value);
-        accumulator =  _.union(accumulator, /category/.test(value)
+        accumulator =  _.union(accumulator, /^category=.*$/.test(value)
           ? array.map(capitalize)
           : array.filter(function(category) { return /^[A-Z]/.test(category); })
         );
@@ -3131,7 +3131,7 @@
     // flag to specify creating a custom build
     var isCustom = (
       isLegacy || isMapped || isModern || isNoDep || isStrict || isUnderscore || outputPath ||
-      /(?:category|exclude|exports|iife|include|minus|plus)=/.test(options) ||
+      /(?:category|exclude|exports|iife|include|minus|plus)=.*$/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll)
     );
 

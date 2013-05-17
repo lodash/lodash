@@ -3183,11 +3183,10 @@
             data.source = addCommandsToHeader(data.source, options);
           }
           if (isStdOut) {
+            delete data.outputPath;
             stdout.write(data.source);
-            callback(data);
-          } else {
-            callback(data);
           }
+          callback(data);
         }
       });
     }

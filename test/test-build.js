@@ -1387,6 +1387,8 @@
 
         build(['exports=', 'include='].concat(command.split(' ')), function(data) {
           process.stdout.write = write;
+
+          strictEqual('outputPath' in data, false);
           equal(written, data.source);
           equal(arguments.length, 1);
           start();

@@ -82,7 +82,7 @@
 
   /** Used to assign default `context` object properties */
   var contextProps = [
-    'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object',
+    'Array', 'Boolean', 'Date', 'Error', 'Function', 'Math', 'Number', 'Object',
     'RegExp', 'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN',
     'parseInt', 'setImmediate', 'setTimeout'
   ];
@@ -153,6 +153,7 @@
     var Array = context.Array,
         Boolean = context.Boolean,
         Date = context.Date,
+        Error = context.Error,
         Function = context.Function,
         Math = context.Math,
         Number = context.Number,
@@ -163,6 +164,7 @@
 
     /** Used for `Array` and `Object` method references */
     var arrayProto = Array.prototype,
+        errorProto = Error.prototype,
         objectProto = Object.prototype,
         stringProto = String.prototype;
 

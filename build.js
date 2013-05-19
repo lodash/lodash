@@ -2806,6 +2806,7 @@
           .replace(matchFunction(source, 'each'), '')
           .replace(/^ *lodash\._each *=.+\n/gm, '')
           .replace(/\beach(?=\(collection)/g, 'forOwn')
+          .replace(/(\?\s*)each(?=\s*:)/g, '$1forEach')
           .replace(/\beach(?=\(\[)/g, 'forEach');
       }
       // modify `_.contains`, `_.every`, `_.find`, and `_.some` to use the private `indicatorObject`

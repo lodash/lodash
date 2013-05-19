@@ -1993,7 +1993,7 @@
           accumulator = createObject(proto);
         }
       }
-      (isArr ? each : forOwn)(object, function(value, index, object) {
+      (isArr ? forEach : forOwn)(object, function(value, index, object) {
         return callback(accumulator, value, index, object);
       });
       return accumulator;

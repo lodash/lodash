@@ -182,7 +182,6 @@
         clearTimeout = context.clearTimeout,
         concat = arrayProto.concat,
         floor = Math.floor,
-        getPrototypeOf = false,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
@@ -250,8 +249,8 @@
      * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
      * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`, `range`,
      * `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-     * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `unzip`,
-     * `values`, `where`, `without`, `wrap`, and `zip`
+     * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+     * `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
@@ -337,6 +336,7 @@
        * Detect if `name` or `message` properties of `Error.prototype` are
        * enumerable by default. (IE < 9, Safari < 5.1)
        *
+       * @memberOf _.support
        * @type Boolean
        */
       support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') || propertyIsEnumerable.call(errorProto, 'name');
@@ -713,9 +713,7 @@
         }
         if (this instanceof bound) {
           // ensure `new bound` is an instance of `func`
-          noop.prototype = func.prototype;
-          thisBinding = new noop;
-          noop.prototype = null;
+          thisBinding = createObject(func.prototype);
 
           // mimic the constructor's `return` behavior
           // http://es5.github.com/#x13.2.2
@@ -779,6 +777,22 @@
     }
 
     /**
+     * Creates a new object with the specified `prototype`.
+     *
+     * @private
+     * @param {Object} prototype The prototype object.
+     * @returns {Object} Returns the new object.
+     */
+    function createObject(prototype) {
+      if (isObject(prototype)) {
+        noop.prototype = prototype;
+        var result = new noop;
+        noop.prototype = null;
+      }
+      return result || {};
+    }
+
+    /**
      * Used by `template` to escape characters for inclusion in compiled
      * string literals.
      *
@@ -834,47 +848,6 @@
      */
     function noop() {
       // no operation performed
-    }
-
-    /**
-     * A fallback implementation of `isPlainObject` which checks if a given `value`
-     * is an object created by the `Object` constructor, assuming objects created
-     * by the `Object` constructor have no inherited enumerable properties and that
-     * there are no `Object.prototype` extensions.
-     *
-     * @private
-     * @param {Mixed} value The value to check.
-     * @returns {Boolean} Returns `true`, if `value` is a plain object, else `false`.
-     */
-    function shimIsPlainObject(value) {
-      // avoid non-objects and false positives for `arguments` objects
-      var result = false;
-      if (!(value && toString.call(value) == objectClass) || (!support.argsClass && isArguments(value))) {
-        return result;
-      }
-      // check that the constructor is `Object` (i.e. `Object instanceof Object`)
-      var ctor = value.constructor;
-
-      if (isFunction(ctor) ? ctor instanceof ctor : (support.nodeClass || !isNode(value))) {
-        // IE < 9 iterates inherited properties before own properties. If the first
-        // iterated property is an object's own property then there are no inherited
-        // enumerable properties.
-        if (support.ownLast) {
-          forIn(value, function(value, key, object) {
-            result = hasOwnProperty.call(object, key);
-            return false;
-          });
-          return result === true;
-        }
-        // In most environments an object's own properties are iterated before
-        // its inherited properties. If the last iterated property is an object's
-        // own property then there are no inherited enumerable properties.
-        forIn(value, function(value, key) {
-          result = key;
-        });
-        return result === false || hasOwnProperty.call(value, result);
-      }
-      return result;
     }
 
     /**
@@ -1868,17 +1841,36 @@
      * _.isPlainObject({ 'name': 'moe', 'age': 40 });
      * // => true
      */
-    var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
+    var isPlainObject = function(value) {
+      // avoid non-objects and false positives for `arguments` objects
+      var result = false;
       if (!(value && toString.call(value) == objectClass) || (!support.argsClass && isArguments(value))) {
-        return false;
+        return result;
       }
-      var valueOf = value.valueOf,
-          objProto = typeof valueOf == 'function' && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
+      // check that the constructor is `Object` (i.e. `Object instanceof Object`)
+      var ctor = value.constructor;
 
-      return objProto
-        ? (value == objProto || getPrototypeOf(value) == objProto)
-        : shimIsPlainObject(value);
-    };
+      if (isFunction(ctor) ? ctor instanceof ctor : (support.nodeClass || !isNode(value))) {
+        // IE < 9 iterates inherited properties before own properties. If the first
+        // iterated property is an object's own property then there are no inherited
+        // enumerable properties.
+        if (support.ownLast) {
+          forIn(value, function(value, key, object) {
+            result = hasOwnProperty.call(object, key);
+            return false;
+          });
+          return result === true;
+        }
+        // In most environments an object's own properties are iterated before
+        // its inherited properties. If the last iterated property is an object's
+        // own property then there are no inherited enumerable properties.
+        forIn(value, function(value, key) {
+          result = key;
+        });
+        return result === false || hasOwnProperty.call(value, result);
+      }
+      return result;
+    }
 
     /**
      * Checks if `value` is a regular expression.
@@ -2189,6 +2181,56 @@
         });
       }
       return result;
+    }
+
+    /**
+     * Transforms an `object` to an new `accumulator` object which is the result
+     * of running each of its elements through the `callback`, with each `callback`
+     * execution potentially mutating the `accumulator` object. The `callback`is
+     * bound to `thisArg` and invoked with four arguments; (accumulator, value, key, object).
+     * Callbacks may exit iteration early by explicitly returning `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [accumulator] The custom accumulator value.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Mixed} Returns the accumulated value.
+     * @example
+     *
+     * var squares = _.transform([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function(result, num) {
+     *   num *= num;
+     *   if (num % 2) {
+     *     return result.push(num) < 3;
+     *   }
+     * });
+     * // => [1, 9, 25]
+     *
+     * var mapped = _.transform({ 'a': 1, 'b': 2, 'c': 3 }, function(result, num, key) {
+     *   result[key] = num * 3;
+     * });
+     * // => { 'a': 3, 'b': 6, 'c': 9 }
+     */
+    function transform(object, callback, accumulator, thisArg) {
+      var isArr = isArray(object);
+      callback = lodash.createCallback(callback, thisArg, 4);
+
+      if (arguments.length < 3) {
+        if (isArr) {
+          accumulator = [];
+        } else {
+          var ctor = object && object.constructor,
+              proto = ctor && ctor.prototype;
+
+          accumulator = createObject(proto);
+        }
+      }
+      (isArr ? each : forOwn)(object, function(value, index, object) {
+        return callback(accumulator, value, index, object);
+      });
+      return accumulator;
     }
 
     /**
@@ -4455,7 +4497,7 @@
       if (options === true) {
         var leading = true;
         trailing = false;
-      } else if (options && objectTypes[typeof options]) {
+      } else if (isObject(options)) {
         leading = options.leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
@@ -4680,7 +4722,7 @@
       }
       if (options === false) {
         leading = false;
-      } else if (options && objectTypes[typeof options]) {
+      } else if (isObject(options)) {
         leading = 'leading' in options ? options.leading : leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
@@ -5288,6 +5330,7 @@
     lodash.throttle = throttle;
     lodash.times = times;
     lodash.toArray = toArray;
+    lodash.transform = transform;
     lodash.union = union;
     lodash.uniq = uniq;
     lodash.unzip = unzip;

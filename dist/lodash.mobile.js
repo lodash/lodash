@@ -192,6 +192,7 @@
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
+        nativeCreate = reNative.test(nativeCreate =  Object.create) && nativeCreate,
         nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
@@ -239,8 +240,8 @@
      * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
      * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`, `range`,
      * `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-     * `tap`, `throttle`, `times`, `toArray`, `union`, `uniq`, `unshift`, `unzip`,
-     * `values`, `where`, `without`, `wrap`, and `zip`
+     * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+     * `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
@@ -301,6 +302,7 @@
      * Detect if `name` or `message` properties of `Error.prototype` are
      * enumerable by default. (IE < 9, Safari < 5.1)
      *
+     * @memberOf _.support
      * @type Boolean
      */
     support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') || propertyIsEnumerable.call(errorProto, 'name');
@@ -516,9 +518,7 @@
         }
         if (this instanceof bound) {
           // ensure `new bound` is an instance of `func`
-          noop.prototype = func.prototype;
-          thisBinding = new noop;
-          noop.prototype = null;
+          thisBinding = createObject(func.prototype);
 
           // mimic the constructor's `return` behavior
           // http://es5.github.com/#x13.2.2
@@ -528,6 +528,28 @@
         return func.apply(thisBinding, args);
       }
       return bound;
+    }
+
+    /**
+     * Creates a new object with the specified `prototype`.
+     *
+     * @private
+     * @param {Object} prototype The prototype object.
+     * @returns {Object} Returns the new object.
+     */
+    function createObject(prototype) {
+      return isObject(prototype) ? nativeCreate(prototype) : {};
+    }
+    // fallback for browsers without `Object.create`
+    if  (!nativeCreate) {
+      var createObject = function(prototype) {
+        if (isObject(prototype)) {
+          noop.prototype = prototype;
+          var result = new noop;
+          noop.prototype = null;
+        }
+        return result || {};
+      };
     }
 
     /**
@@ -2060,6 +2082,56 @@
         });
       }
       return result;
+    }
+
+    /**
+     * Transforms an `object` to an new `accumulator` object which is the result
+     * of running each of its elements through the `callback`, with each `callback`
+     * execution potentially mutating the `accumulator` object. The `callback`is
+     * bound to `thisArg` and invoked with four arguments; (accumulator, value, key, object).
+     * Callbacks may exit iteration early by explicitly returning `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [accumulator] The custom accumulator value.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Mixed} Returns the accumulated value.
+     * @example
+     *
+     * var squares = _.transform([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function(result, num) {
+     *   num *= num;
+     *   if (num % 2) {
+     *     return result.push(num) < 3;
+     *   }
+     * });
+     * // => [1, 9, 25]
+     *
+     * var mapped = _.transform({ 'a': 1, 'b': 2, 'c': 3 }, function(result, num, key) {
+     *   result[key] = num * 3;
+     * });
+     * // => { 'a': 3, 'b': 6, 'c': 9 }
+     */
+    function transform(object, callback, accumulator, thisArg) {
+      var isArr = isArray(object);
+      callback = lodash.createCallback(callback, thisArg, 4);
+
+      if (arguments.length < 3) {
+        if (isArr) {
+          accumulator = [];
+        } else {
+          var ctor = object && object.constructor,
+              proto = ctor && ctor.prototype;
+
+          accumulator = createObject(proto);
+        }
+      }
+      (isArr ? each : forOwn)(object, function(value, index, object) {
+        return callback(accumulator, value, index, object);
+      });
+      return accumulator;
     }
 
     /**
@@ -4324,7 +4396,7 @@
       if (options === true) {
         var leading = true;
         trailing = false;
-      } else if (options && objectTypes[typeof options]) {
+      } else if (isObject(options)) {
         leading = options.leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
@@ -4549,7 +4621,7 @@
       }
       if (options === false) {
         leading = false;
-      } else if (options && objectTypes[typeof options]) {
+      } else if (isObject(options)) {
         leading = 'leading' in options ? options.leading : leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
@@ -5157,6 +5229,7 @@
     lodash.throttle = throttle;
     lodash.times = times;
     lodash.toArray = toArray;
+    lodash.transform = transform;
     lodash.union = union;
     lodash.uniq = uniq;
     lodash.unzip = unzip;

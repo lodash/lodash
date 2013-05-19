@@ -3158,7 +3158,7 @@
     if (_.size(source.match(/\bfreeExports\b/g)) < 2) {
       source = removeVar(source, 'freeExports');
     }
-    if (!/^ *support\.(?:skipErrorProps|nonEnumShadows) *=/m.test(source)) {
+    if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
       source = removeVar(source, 'Error');
       source = removeVar(source, 'errorProto');
       source = removeFromCreateIterator(source, 'errorClass');

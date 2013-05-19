@@ -218,7 +218,6 @@
     ctorByClass[arrayClass] = Array;
     ctorByClass[boolClass] = Boolean;
     ctorByClass[dateClass] = Date;
-    ctorByClass[errorClass] = Error;
     ctorByClass[funcClass] = Function;
     ctorByClass[objectClass] = Object;
     ctorByClass[numberClass] = Number;
@@ -563,7 +562,7 @@
       '  <% } %>' +
 
       // avoid iterating over `Error.prototype` properties in older IE and Safari
-      '  <% if (support.enumErrorProps || support.nonEnumShadows) { %>\n' +
+      '  <% if (support.enumErrorProps) { %>\n' +
       '  var skipErrorProps = iterable === errorProto || iterable instanceof Error;\n' +
       '  <% } %>' +
 
@@ -825,16 +824,16 @@
 
       // create the function factory
       var factory = Function(
-          'ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments, ' +
-          'isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
-          'stringClass, stringProto, toString',
+          'errorClass, errorProto, hasOwnProperty, isArguments, isArray, isString, ' +
+          'keys, lodash, objectProto, objectTypes, nonEnumProps, stringClass, ' +
+          'stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
       // return the compiled function
       return factory(
-        ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments,
-        isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
-        stringClass, stringProto, toString
+        errorClass, errorProto, hasOwnProperty, isArguments, isArray, isString,
+        keys, lodash, objectProto, objectTypes, nonEnumProps, stringClass,
+        stringProto, toString
       );
     }
 

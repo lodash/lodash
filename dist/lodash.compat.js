@@ -219,7 +219,6 @@
     ctorByClass[arrayClass] = Array;
     ctorByClass[boolClass] = Boolean;
     ctorByClass[dateClass] = Date;
-    ctorByClass[errorClass] = Error;
     ctorByClass[funcClass] = Function;
     ctorByClass[objectClass] = Object;
     ctorByClass[numberClass] = Number;
@@ -546,7 +545,7 @@
       __p += '\n  var skipProto = typeof iterable == \'function\';\n  ';
        }
 
-       if (support.enumErrorProps || support.nonEnumShadows) {
+       if (support.enumErrorProps) {
       __p += '\n  var skipErrorProps = iterable === errorProto || iterable instanceof Error;\n  ';
        }
 
@@ -807,16 +806,16 @@
 
       // create the function factory
       var factory = Function(
-          'ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments, ' +
-          'isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
-          'stringClass, stringProto, toString',
+          'errorClass, errorProto, hasOwnProperty, isArguments, isArray, isString, ' +
+          'keys, lodash, objectProto, objectTypes, nonEnumProps, stringClass, ' +
+          'stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
       // return the compiled function
       return factory(
-        ctorByClass, errorClass, errorProto, hasOwnProperty, isArguments,
-        isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
-        stringClass, stringProto, toString
+        errorClass, errorProto, hasOwnProperty, isArguments, isArray, isString,
+        keys, lodash, objectProto, objectTypes, nonEnumProps, stringClass,
+        stringProto, toString
       );
     }
 
@@ -2315,7 +2314,7 @@
       var isArr = isArray(object);
       callback = lodash.createCallback(callback, thisArg, 4);
 
-      if (arguments.length < 3) {
+      if (accumulator == null) {
         if (isArr) {
           accumulator = [];
         } else {

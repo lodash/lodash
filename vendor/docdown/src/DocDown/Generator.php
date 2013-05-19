@@ -321,9 +321,7 @@ class Generator {
 
           $api[$member] = $entry;
           foreach ($entry->getAliases() as $alias) {
-            $api[$member] = $alias;
-            $alias->static = array();
-            $alias->plugin = array();
+            $api[$member]->static[] = $alias;
           }
         }
         else if ($entry->isStatic()) {

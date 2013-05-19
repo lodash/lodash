@@ -1675,7 +1675,7 @@
               // start timer
               't#.start(d#);' +
               // execute `deferred.fn` and return a dummy object
-              '}d#.fn();return{}'
+              '}d#.fn();return{uid:"${uid}"}'
 
             : 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count,n#=t#.ns;${setup}\n${begin};' +
               'while(i#--){${fn}\n}${end};${teardown}\nreturn{elapsed:r#,uid:"${uid}"}'

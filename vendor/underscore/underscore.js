@@ -365,7 +365,7 @@
     return low;
   };
 
-  // Safely convert anything iterable into a real, live array.
+  // Safely create a real, live array from anything iterable.
   _.toArray = function(obj) {
     if (!obj) return [];
     if (_.isArray(obj)) return slice.call(obj);
@@ -425,7 +425,7 @@
   // Internal implementation of a recursive `flatten` function.
   var flatten = function(input, shallow, output) {
     each(input, function(value) {
-      if (_.isArray(value)) {
+      if (_.isArray(value) || _.isArguments(value)) {
         shallow ? push.apply(output, value) : flatten(value, shallow, output);
       } else {
         output.push(value);
@@ -468,7 +468,7 @@
   // Produce an array that contains the union: each distinct element from all of
   // the passed-in arrays.
   _.union = function() {
-    return _.uniq(concat.apply(ArrayProto, arguments));
+    return _.uniq(_.flatten(arguments, true));
   };
 
   // Produce an array that contains every item shared between all the
@@ -492,13 +492,7 @@
   // Zip together multiple lists into a single array -- elements that share
   // an index go together.
   _.zip = function() {
-    var args = slice.call(arguments);
-    var length = _.max(_.pluck(args, 'length'));
-    var results = new Array(length);
-    for (var i = 0; i < length; i++) {
-      results[i] = _.pluck(args, "" + i);
-    }
-    return results;
+    return _.unzip(slice.call(arguments));
   };
 
   // The inverse operation to `_.zip`. If given an array of pairs it
@@ -507,9 +501,13 @@
   // three element array and so on. For example, `_.unzip` given
   // `[['a',1],['b',2],['c',3]]` returns the array
   // [['a','b','c'],[1,2,3]].
-  _.unzip = function(tuples) {
-      var maxLen = _.max(_.pluck(tuples, "length"))
-      return _.times(maxLen, _.partial(_.pluck, tuples));
+  _.unzip = function(list) {
+    var length = _.max(_.pluck(list, "length").concat(0));
+    var results = new Array(length);
+    for (var i = 0; i < length; i++) {
+      results[i] = _.pluck(list, '' + i);
+    }
+    return results;
   };
 
   // Converts lists into objects. Pass either a single array of `[key, value]`

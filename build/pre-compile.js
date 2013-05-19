@@ -372,6 +372,11 @@
         return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
       });
 
+      // remove unnecessary semicolons in strings
+      modified = modified.replace(/;(?:}["']|(?:\\n|\s)*["']\s*\+\s*["'](?:\\n|\s)*})/g, function(match) {
+        return match.slice(1);
+      });
+
       // minify `createIterator` option property names
       iteratorOptions.forEach(function(property, index) {
         var minName = minNames[index];

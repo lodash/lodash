@@ -1300,9 +1300,7 @@
 
     // remove `support.nonEnumShadows` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
-      return match
-        .replace(/\s*\|\|\s*support\.nonEnumShadows/, '')
-        .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.nonEnumShadows[\s\S]+?["']\1<% *} *%>.+/, '');
+      return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.nonEnumShadows[\s\S]+?["']\1<% *} *%>.+/, '');
     });
 
     return source;
@@ -1826,10 +1824,9 @@
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
 
         if (!isMobile) {
-          dependencyMap.isEmpty = _.without(dependencyMap.isEmpty, 'isArguments');
-          dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'isArguments');
-          dependencyMap.isPlainObject = _.without(dependencyMap.isPlainObject, 'isArguments');
-          dependencyMap.keys = _.without(dependencyMap.keys, 'isArguments');
+          _.each(['isEmpty', 'isEqual', 'isPlainObject', 'keys'], function(methodName) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArguments');
+          });
         }
       }
       if (isUnderscore) {
@@ -3159,6 +3156,17 @@
     }
     if (_.size(source.match(/\bfreeExports\b/g)) < 2) {
       source = removeVar(source, 'freeExports');
+    }
+    if (!/^ *support\.(?:skipErrorProps|nonEnumShadows) *=/m.test(source)) {
+      source = removeVar(source, 'Error');
+      source = removeVar(source, 'errorProto');
+      source = removeFromCreateIterator(source, 'errorClass');
+      source = removeFromCreateIterator(source, 'errorProto');
+
+      // remove 'Error' from the `contextProps` array
+      source = source.replace(/^ *var contextProps *=[\s\S]+?;/m, function(match) {
+        return match.replace(/'Error', */, '');
+      });
     }
 
     debugSource = cleanupSource(source);

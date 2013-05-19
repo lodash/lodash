@@ -1284,7 +1284,7 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? forEach : forOwn)(value, function(objValue, key) {
+      (isArr ? each : forOwn)(value, function(objValue, key) {
         result[key] = clone(objValue, deep, callback, undefined, stackA, stackB);
       });
 

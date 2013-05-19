@@ -88,7 +88,7 @@
     'contains': ['indexOf', 'isString'],
     'countBy': ['createCallback', 'forEach'],
     'createCallback': ['identity', 'isEqual', 'keys'],
-    'debounce': [],
+    'debounce': ['isObject'],
     'defaults': ['isArray', 'keys'],
     'defer': ['bind'],
     'delay': [],
@@ -163,9 +163,10 @@
     'sortedIndex': ['createCallback', 'identity'],
     'tap': ['value'],
     'template': ['defaults', 'escape', 'keys', 'values'],
-    'throttle': [],
+    'throttle': ['isObject'],
     'times': ['createCallback'],
     'toArray': ['isString', 'values'],
+    'transform': ['createCallback', 'forOwn', 'isArray', 'isObject'],
     'unescape': [],
     'union': ['isArray', 'uniq'],
     'uniq': ['createCallback', 'indexOf'],
@@ -276,6 +277,7 @@
     'parseInt',
     'partialRight',
     'runInContext',
+    'transform',
     'unzip'
   ];
 
@@ -800,7 +802,7 @@
    * @returns {String} Returns the `isArguments` fallback.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!support\.argsClass|!isArguments)[\s\S]+?};\n\1}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!support\.argsClass|!isArguments)[\s\S]+?\n *};\n\1}/) || [''])[0];
   }
 
   /**
@@ -824,7 +826,18 @@
    * @returns {String} Returns the `isFunction` fallback.
    */
   function getIsFunctionFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?};\n\1}/) || [''])[0];
+    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?\n *};\n\1}/) || [''])[0];
+  }
+
+  /**
+   * Gets the `createObject` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `isArguments` fallback.
+   */
+  function getCreateObjectFallback(source) {
+    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!nativeCreate)[\s\S]+?\n *};\n\1}/) || [''])[0];
   }
 
   /**
@@ -1067,6 +1080,17 @@
    */
   function removeIsFunctionFallback(source) {
     return source.replace(getIsFunctionFallback(source), '');
+  }
+
+  /**
+   * Removes the `createObject` fallback from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeCreateObjectFallback(source) {
+    return source.replace(getCreateObjectFallback(source), '');
   }
 
   /**
@@ -1939,11 +1963,11 @@
         source = removeSupportProp(source, 'fastBind');
         source = replaceSupportProp(source, 'argsClass', 'false');
 
-        _.each(['getPrototypeOf', 'nativeBind', 'nativeIsArray', 'nativeKeys'], function(varName) {
+        _.each(['getPrototypeOf'], function(varName) {
           source = replaceVar(source, varName, 'false');
         });
 
-        _.each(['isIeOpera', 'isV8', 'nativeBind', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
+        _.each(['isIeOpera', 'isV8', 'nativeBind', 'nativeCreate', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
           source = removeVar(source, varName);
         });
 
@@ -1957,6 +1981,23 @@
           return match.replace(/\bnativeIsArray\s*\|\|\s*/, '');
         });
 
+        // replace `createObject` and `isArguments` with their fallbacks
+        _.each({
+          'createObject': { 'get': getCreateObjectFallback, 'remove': removeCreateObjectFallback },
+          'isArguments': { 'get': getIsArgumentsFallback, 'remove': removeIsArgumentsFallback }
+        },
+        function(util, methodName) {
+          source = source.replace(matchFunction(source, methodName).replace(RegExp('[\\s\\S]+?function ' + methodName), ''), function() {
+            var snippet = util.get(source),
+                body = snippet.match(RegExp(methodName + ' *= *function([\\s\\S]+?\\n *});'))[1],
+                indent = getIndent(snippet);
+
+            return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2)) + '\n';
+          });
+
+          source = util.remove(source);
+        });
+
         // replace `_.keys` with `shimKeys`
         source = source.replace(
           matchFunction(source, 'keys').replace(/[\s\S]+?var keys *= */, ''),
@@ -1964,17 +2005,6 @@
         );
 
         source = removeFunction(source, 'shimKeys');
-
-        // replace `_.isArguments` with fallback
-        source = source.replace(matchFunction(source, 'isArguments').replace(/[\s\S]+?function isArguments/, ''), function() {
-          var fallback = getIsArgumentsFallback(source),
-              body = fallback.match(/isArguments *= *function([\s\S]+? *});/)[1],
-              indent = getIndent(fallback);
-
-          return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2)) + '\n';
-        });
-
-        source = removeIsArgumentsFallback(source);
       }
       if (isModern) {
         source = removeSupportSpliceObjects(source);
@@ -1987,6 +2017,7 @@
         else {
           source = removeIsArrayFallback(source);
           source = removeIsFunctionFallback(source);
+          source = removeCreateObjectFallback(source);
 
           // remove `shimIsPlainObject` from `_.isPlainObject`
           source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {

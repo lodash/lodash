@@ -1963,11 +1963,7 @@
         source = removeSupportProp(source, 'fastBind');
         source = replaceSupportProp(source, 'argsClass', 'false');
 
-        _.each(['getPrototypeOf'], function(varName) {
-          source = replaceVar(source, varName, 'false');
-        });
-
-        _.each(['isIeOpera', 'isV8', 'nativeBind', 'nativeCreate', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
+        _.each(['isIeOpera', 'isV8', 'getPrototypeOf', 'nativeBind', 'nativeCreate', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
           source = removeVar(source, varName);
         });
 
@@ -1997,6 +1993,14 @@
 
           source = util.remove(source);
         });
+
+        // replace `_.isPlainObject` with `shimIsPlainObject`
+        source = source.replace(
+          matchFunction(source, 'isPlainObject').replace(/[\s\S]+?var isPlainObject *= */, ''),
+          matchFunction(source, 'shimIsPlainObject').replace(/[\s\S]+?function shimIsPlainObject/, 'function')
+        );
+
+        source = removeFunction(source, 'shimIsPlainObject');
 
         // replace `_.keys` with `shimKeys`
         source = source.replace(

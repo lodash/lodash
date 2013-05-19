@@ -15,7 +15,6 @@
     'collection',
     'conditions',
     'ctor',
-    'ctorByClass',
     'errorClass',
     'errorProto',
     'guard',

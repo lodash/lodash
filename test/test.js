@@ -860,7 +860,7 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual = _.first(array, function(value, index) {
         return this[index] < 3;
       }, array);
@@ -933,7 +933,7 @@
       deepEqual(args, [{ 'a': [1, [2]] }, 0, array]);
     });
 
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual = _.flatten(array, function(value, index) {
         return this[index].a;
       }, array);
@@ -983,7 +983,7 @@
       equal(wrapper.forEach(Boolean), wrapper);
     });
 
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual;
 
       function callback(value, index) {
@@ -1267,7 +1267,7 @@
   QUnit.module('lodash.groupBy');
 
   (function() {
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual = _.groupBy([4.2, 6.1, 6.4], function(num) {
         return this.floor(num);
       }, Math);
@@ -1404,7 +1404,7 @@
       deepEqual(args, [3, 2, array]);
     });
 
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual = _.initial(array, function(value, index) {
         return this[index] > 1;
       }, array);
@@ -1798,7 +1798,7 @@
       deepEqual(args, [3, 2, array]);
     });
 
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual = _.last(array, function(value, index) {
         return this[index] > 1;
       }, array);
@@ -2642,7 +2642,7 @@
       deepEqual(actual, collection);
     });
 
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual = _.sortBy([1, 2, 3], function(num) {
         return this.sin(num);
       }, Math);
@@ -2664,7 +2664,7 @@
   QUnit.module('lodash.sortedIndex');
 
   (function() {
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual = _.sortedIndex([1, 2, 3], 4, function(num) {
         return this.sin(num);
       }, Math);
@@ -3079,6 +3079,67 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.transform');
+
+  (function() {
+    test('should produce an that is an instance of the given object\'s constructor', function() {
+      function Foo() {
+        this.a = 1;
+        this.b = 2;
+        this.c = 3;
+      }
+
+      var actual = _.transform(new Foo, function(result, value, key) {
+        result[key] = value * value;
+      });
+
+      ok(actual instanceof Foo);
+      deepEqual(_.clone(actual), { 'a': 1, 'b': 4, 'c': 9 });
+    });
+
+    test('should treat sparse arrays as dense', function() {
+      var actual = _.transform(Array(1), function(result, value, index) {
+        result[index] = String(value);
+      });
+
+      deepEqual(actual, ['undefined']);
+    });
+
+    _.each({
+      'array': [1, 2, 3],
+      'object': { 'a': 1, 'b': 2, 'c': 3 }
+    },
+    function(object, key) {
+      test('should pass the correct `callback` arguments when transforming an ' + key, function() {
+        var args;
+
+        _.transform(object, function() {
+          args || (args = slice.call(arguments));
+        });
+
+        var first = args[0];
+        if (key == 'array') {
+          ok(first != object && _.isArray(first));
+          deepEqual(args, [first, 1, 0, object]);
+        } else {
+          ok(first != object && _.isPlainObject(first));
+          deepEqual(args, [first, 1, 'a', object]);
+        }
+      });
+
+      test('should support the `thisArg` argument when transforming an ' + key, function() {
+        var actual = _.transform(object, function(result, value, key) {
+          result[key] = this[key];
+        }, null, object);
+
+        notEqual(actual, object);
+        deepEqual(actual, object);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.unescape');
 
   (function() {
@@ -3121,7 +3182,7 @@
   QUnit.module('lodash.uniq');
 
   (function() {
-    test('supports the `thisArg` argument', function() {
+    test('should support the `thisArg` argument', function() {
       var actual = _.uniq([1, 2, 1.5, 3, 2.5], function(num) {
         return this.floor(num);
       }, Math);

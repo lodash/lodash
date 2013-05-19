@@ -2332,7 +2332,7 @@
       var isArr = isArray(object);
       callback = lodash.createCallback(callback, thisArg, 4);
 
-      if (arguments.length < 3) {
+      if (accumulator == null) {
         if (isArr) {
           accumulator = [];
         } else {

@@ -225,6 +225,7 @@
     'omit',
     'pairs',
     'pick',
+    'transform',
     'values'
   ];
 
@@ -316,6 +317,7 @@
     'parseInt',
     'partialRight',
     'runInContext',
+    'transform',
     'unzip'
   ];
 

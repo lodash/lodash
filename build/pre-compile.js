@@ -222,6 +222,7 @@
     'times',
     'toArray',
     'trailing',
+    'transform',
     'unescape',
     'unindexedChars',
     'union',

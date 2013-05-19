@@ -105,7 +105,6 @@
 
   /** Used for `Array` and `Object` method references */
   var arrayProto = Array.prototype,
-      errorProto = Error.prototype,
       objectProto = Object.prototype,
       stringProto = String.prototype;
 

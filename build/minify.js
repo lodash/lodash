@@ -3,8 +3,8 @@
   'use strict';
 
   /** Load Node.js modules */
-  var https = require('https'),
-      spawn = require('child_process').spawn,
+  var cp = require('child_process'),
+      https = require('https'),
       zlib = require('zlib');
 
   /** Load other modules */
@@ -58,6 +58,17 @@
       'pathname': pathname
     };
   }());
+
+  /**
+   * Java command-line options used for faster minification.
+   * See https://code.google.com/p/closure-compiler/wiki/FAQ#What_are_the_recommended_Java_VM_command-line_options?.
+   */
+  var javaOptions = [];
+  cp.exec('java -version -client -d32', function(error) {
+    if (!error && process.platform != 'win32') {
+      javaOptions.push('-client', '-d32');
+    }
+  });
 
   /** The Closure Compiler optimization modes */
   var optimizationModes = {
@@ -375,8 +386,7 @@
     if (isMapped) {
       options.push('--create_source_map=' + mapPath, '--source_map_format=V3');
     }
-
-    var compiler = spawn('java', ['-jar', closurePath].concat(options));
+    var compiler = cp.spawn('java', javaOptions.concat('-jar', closurePath, options));
     if (!this.isSilent) {
       console.log('Compressing ' + path.basename(outputPath, '.js') + ' using the Closure Compiler (' + mode + ')...');
     }

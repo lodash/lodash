@@ -19,10 +19,10 @@
       path = util.path;
 
   /** The Git object ID of `closure-compiler.tar.gz` */
-  var closureId = '7815712f73ccb21f587bf3fb72a2f50be788515d';
+  var closureId = '9fd5d61c1b706e7505aeb5187941c2c5497e5fd8';
 
   /** The Git object ID of `uglifyjs.tar.gz` */
-  var uglifyId = 'fb620e8672ad194b3ab501790e19c40c8ac79286';
+  var uglifyId = '48cae9c0cd76acf812f90d4f98de499ac61ec105';
 
   /** The path of the directory that is the base of the repository */
   var basePath = fs.realpathSync(path.join(__dirname, '..'));

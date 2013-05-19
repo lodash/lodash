@@ -1862,6 +1862,12 @@
           dependencyMap.toArray.push('isArray', 'map');
         }
 
+        _.each(['debounce', 'throttle'], function(methodName) {
+          if (!useLodashMethod(methodName)) {
+            dependencyMap[methodName] = [];
+          }
+        });
+
         _.each(['max', 'min'], function(methodName) {
           if (!useLodashMethod(methodName)) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArray', 'isString');
@@ -1997,7 +2003,7 @@
         // replace `_.isPlainObject` with `shimIsPlainObject`
         source = source.replace(
           matchFunction(source, 'isPlainObject').replace(/[\s\S]+?var isPlainObject *= */, ''),
-          matchFunction(source, 'shimIsPlainObject').replace(/[\s\S]+?function shimIsPlainObject/, 'function')
+          matchFunction(source, 'shimIsPlainObject').replace(/[\s\S]+?function shimIsPlainObject/, 'function').replace(/\s*$/, '')
         );
 
         source = removeFunction(source, 'shimIsPlainObject');

@@ -1870,7 +1870,7 @@
         return result === false || hasOwnProperty.call(value, result);
       }
       return result;
-    }
+    };
 
     /**
      * Checks if `value` is a regular expression.

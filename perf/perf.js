@@ -776,6 +776,18 @@
   );
 
   suites.push(
+    Benchmark.Suite('`_.difference` iterating 75 elements')
+      .add(buildName, {
+        'fn': 'lodash.difference(seventyFiveValues, seventyFiveValues2)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.difference(seventyFiveValues, seventyFiveValues2)',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
     Benchmark.Suite('`_.difference` iterating 200 elements')
       .add(buildName, {
         'fn': 'lodash.difference(twoHundredValues, twoHundredValues2)',
@@ -1074,6 +1086,18 @@
       .add(otherName, '\
         _.intersection(numbers, twoNumbers, fourNumbers)'
       )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.intersection` iterating 75 elements')
+      .add(buildName, {
+        'fn': 'lodash.intersection(seventyFiveValues, seventyFiveValues2)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.intersection(seventyFiveValues, seventyFiveValues2)',
+        'teardown': 'function multiArrays(){}'
+      })
   );
 
   suites.push(
@@ -1731,11 +1755,23 @@
   suites.push(
     Benchmark.Suite('`_.union` iterating an array of 75 elements')
       .add(buildName, {
-        'fn': 'lodash.union(fiftyValues, twentyFiveValues2)',
+        'fn': 'lodash.union(twentyFiveValues, fiftyValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.union(fiftyValues, twentyFiveValues2)',
+        'fn': '_.union(twentyFiveValues, fiftyValues2)',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.union` iterating an array of 200 elements')
+      .add(buildName, {
+        'fn': 'lodash.union(oneHundredValues, oneHundredValues2)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.union(oneHundredValues, oneHundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1764,6 +1800,18 @@
           return num % 2;\
         })'
       )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.uniq` iterating an array of 75 elements')
+      .add(buildName, {
+        'fn': 'lodash.uniq(twentyFiveValues.concat(fiftyValues2))',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.uniq(twentyFiveValues.concat(fiftyValues2))',
+        'teardown': 'function multiArrays(){}'
+      })
   );
 
   suites.push(

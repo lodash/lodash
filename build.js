@@ -1385,6 +1385,9 @@
   function removeRunInContext(source) {
     source = removeVar(source, 'contextProps');
 
+    // replace reference in `reThis` assignment
+    source = source.replace(/\btest\(runInContext\)/, 'test(function() { return this; })');
+
     // remove function scaffolding, leaving most of its content
     source = source.replace(matchFunction(source, 'runInContext'), function(match) {
       return match

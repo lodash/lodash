@@ -2000,7 +2000,7 @@
         // replace `_.isPlainObject` with `shimIsPlainObject`
         source = source.replace(
           matchFunction(source, 'isPlainObject').replace(/[\s\S]+?var isPlainObject *= */, ''),
-          matchFunction(source, 'shimIsPlainObject').replace(/[\s\S]+?function shimIsPlainObject/, 'function').replace(/\s*$/, '')
+          matchFunction(source, 'shimIsPlainObject').replace(/[\s\S]+?function shimIsPlainObject/, 'function').replace(/\s*$/, ';\n')
         );
 
         source = removeFunction(source, 'shimIsPlainObject');

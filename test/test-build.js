@@ -1129,6 +1129,80 @@
 
   /*--------------------------------------------------------------------------*/
 
+ QUnit.module('exclude command');
+
+  (function() {
+    var commands = [
+      'exclude',
+      'minus'
+    ];
+
+    commands.forEach(function(command) {
+      asyncTest('`lodash ' + command + '=runInContext`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s', command + '=runInContext'], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
+              context = createContext(),
+              source = data.source;
+
+          vm.runInContext(data.source, context);
+
+          var lodash = context._,
+              array = [0];
+
+          var actual = lodash.map(array, function() {
+            return String(this[0]);
+          }, array);
+
+          deepEqual(actual, ['0'], basename);
+          equal('runInContext' in lodash, false, basename);
+          start();
+        });
+      });
+
+      asyncTest('`lodash ' + command + '=mixin`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s', command + '=mixin'], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
+              context = createContext(),
+              source = data.source;
+
+          vm.runInContext(data.source, context);
+          var lodash = context._;
+
+          var actual = lodash([1, 2, 3])
+            .map(function(num) { return num * num; })
+            .value();
+
+          deepEqual(actual, [1, 4, 9], basename);
+          equal('mixin' in lodash, false, basename);
+          start();
+        });
+      });
+
+      asyncTest('`lodash ' + command + '=value`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s', command + '=value'], function(data) {
+          var basename = path.basename(data.outputPath, '.js'),
+              context = createContext(),
+              source = data.source;
+
+          vm.runInContext(data.source, context);
+          var lodash = context._;
+
+          strictEqual(lodash([1]), undefined, basename);
+          deepEqual(_.keys(lodash.prototype), [], basename);
+          start();
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('exports command');
 
   (function() {
@@ -1440,19 +1514,19 @@
         var command = origCommand;
 
         if (index == 1) {
-          if (/legacy|mobile/.test(command)) {
+          if (/\b(?:legacy|mobile)\b/.test(command)) {
             return;
           }
           command = 'mobile ' + command;
         }
         else if (index == 2) {
-          if (/legacy|modern/.test(command)) {
+          if (/\b(?:legacy|modern)\b/.test(command)) {
             return;
           }
           command = 'modern ' + command;
         }
         else if (index == 3) {
-          if (/category|legacy|underscore/.test(command)) {
+          if (/\b(?:category|legacy|underscore)\b/.test(command)) {
             return;
           }
           command = 'underscore ' + command;
@@ -1464,8 +1538,8 @@
             var methodNames,
                 basename = path.basename(data.outputPath, '.js'),
                 context = createContext(),
-                isBackbone = /backbone/.test(command),
-                isUnderscore = isBackbone || /underscore/.test(command),
+                isBackbone = /\bbackbone\b/.test(command),
+                isUnderscore = isBackbone || /\bunderscore\b/.test(command),
                 exposeAssign = !isUnderscore,
                 exposeZipObject = !isUnderscore;
 
@@ -1475,11 +1549,11 @@
               console.log(e);
             }
             // add method names explicitly
-            if (/include/.test(command)) {
-              methodNames = command.match(/include=(\S*)/)[1].split(/, */);
+            if (/\binclude=/.test(command)) {
+              methodNames = command.match(/\binclude=(\S*)/)[1].split(/, */);
             }
             // add method names required by Backbone and Underscore builds
-            if (/backbone/.test(command) && !methodNames) {
+            if (/\bbackbone\b/.test(command) && !methodNames) {
               methodNames = backboneDependencies.slice();
             }
             if (isUnderscore) {
@@ -1490,20 +1564,20 @@
                 methodNames = underscoreMethods.slice();
               }
             }
-            if (/category/.test(command)) {
-              methodNames = (methodNames || []).concat(command.match(/category=(\S*)/)[1].split(/, */).map(capitalize));
+            if (/\bcategory=/.test(command)) {
+              methodNames = (methodNames || []).concat(command.match(/\bcategory=(\S*)/)[1].split(/, */).map(capitalize));
             }
             if (!methodNames) {
               methodNames = lodashMethods.slice();
             }
-            if (/plus/.test(command)) {
-              methodNames = methodNames.concat(command.match(/plus=(\S*)/)[1].split(/, */));
+            if (/\bplus=/.test(command)) {
+              methodNames = methodNames.concat(command.match(/\bplus=(\S*)/)[1].split(/, */));
             }
-            if (/minus/.test(command)) {
-              methodNames = _.without.apply(_, [methodNames].concat(expandMethodNames(command.match(/minus=(\S*)/)[1].split(/, */))));
+            if (/\bminus=/.test(command)) {
+              methodNames = _.without.apply(_, [methodNames].concat(expandMethodNames(command.match(/\bminus=(\S*)/)[1].split(/, */))));
             }
-            if (/exclude/.test(command)) {
-              methodNames = _.without.apply(_, [methodNames].concat(expandMethodNames(command.match(/exclude=(\S*)/)[1].split(/, */))));
+            if (/\bexclude=/.test(command)) {
+              methodNames = _.without.apply(_, [methodNames].concat(expandMethodNames(command.match(/\bexclude=(\S*)/)[1].split(/, */))));
             }
 
             // expand categories to real method names

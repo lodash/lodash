@@ -2698,9 +2698,6 @@
         // unexpose `lodash.support`
         source = source.replace(/lodash\.support *= */, '');
 
-        // remove large array optimizations
-        source = removeFunction(source, 'createCache');
-
         // replace `slice` with `nativeSlice.call`
         source = removeFunction(source, 'slice');
         source = source.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
@@ -3118,10 +3115,7 @@
           .replace(/(?:\s*\/\/.*)*\n( *)(?:each|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
       }
-      if (!/\beach\(/.test(source)) {
-        source = source.replace(matchFunction(source, 'each'), '');
-      }
-      if ((source.match(/\bcreateIterator\b/g) || []).length < 2) {
+      if (_.size(source.match(/\bcreateIterator\b/g)) < 2) {
         source = removeFunction(source, 'createIterator');
         source = removeVar(source, 'defaultsIteratorOptions');
         source = removeVar(source, 'eachIteratorOptions');
@@ -3130,6 +3124,24 @@
         source = removeVar(source, 'templateIterator');
         source = removeSupportNonEnumShadows(source);
       }
+      if (_.size(source.match(/\bcreateCache\b/g)) < 2) {
+        source = removeFunction(source, 'createCache');
+      }
+      if (!/\beach\(/.test(source)) {
+        source = source.replace(matchFunction(source, 'each'), '');
+      }
+      if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
+        source = removeVar(source, 'Error');
+        source = removeVar(source, 'errorProto');
+        source = removeFromCreateIterator(source, 'errorClass');
+        source = removeFromCreateIterator(source, 'errorProto');
+
+        // remove 'Error' from the `contextProps` array
+        source = source.replace(/^ *var contextProps *=[\s\S]+?;/m, function(match) {
+          return match.replace(/'Error', */, '');
+        });
+      }
+
       // remove code used to resolve unneeded `support` properties
       source = source.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *= *function[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
         var modified = setup;
@@ -3162,17 +3174,6 @@
     }
     if (_.size(source.match(/\bfreeExports\b/g)) < 2) {
       source = removeVar(source, 'freeExports');
-    }
-    if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
-      source = removeVar(source, 'Error');
-      source = removeVar(source, 'errorProto');
-      source = removeFromCreateIterator(source, 'errorClass');
-      source = removeFromCreateIterator(source, 'errorProto');
-
-      // remove 'Error' from the `contextProps` array
-      source = source.replace(/^ *var contextProps *=[\s\S]+?;/m, function(match) {
-        return match.replace(/'Error', */, '');
-      });
     }
 
     debugSource = cleanupSource(source);

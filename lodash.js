@@ -4639,8 +4639,8 @@
       var args,
           result,
           thisArg,
-          timeoutId,
           callCount = 0,
+          timeoutId = null,
           trailing = true;
 
       function delayed() {
@@ -4660,6 +4660,9 @@
       return function() {
         args = arguments;
         thisArg = this;
+
+        // avoid issues with Titanium and `undefined` timeout ids
+        // https://github.com/appcelerator/titanium_mobile/blob/3_1_0_GA/android/titanium/src/java/ti/modules/titanium/TitaniumModule.java#L185-L192
         clearTimeout(timeoutId);
 
         if (leading && ++callCount < 2) {
@@ -4868,9 +4871,9 @@
       var args,
           result,
           thisArg,
-          timeoutId,
           lastCalled = 0,
           leading = true,
+          timeoutId = null,
           trailing = true;
 
       function trailingCall() {

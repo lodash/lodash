@@ -34,7 +34,7 @@
   var keyPrefix = +new Date + '';
 
   /** Used as the size when optimizations are enabled for large arrays */
-  var largeArraySize = 200;
+  var largeArraySize = 75;
 
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -55,6 +55,9 @@
 
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
+
+  /** Used to detect functions containing a `this` reference */
+  var reThis = (reThis = /\bthis\b/) && reThis.test(function() { return this; }) && reThis;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
@@ -123,6 +126,7 @@
       clearTimeout = window.clearTimeout,
       concat = arrayProto.concat,
       floor = Math.floor,
+      fnToString = Function.prototype.toString,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayProto.push,
       propertyIsEnumerable = objectProto.propertyIsEnumerable,
@@ -2740,27 +2744,27 @@
         return result;
       };
     }
-    if (typeof thisArg != 'undefined') {
-      if (argCount === 1) {
-        return function(value) {
-          return func.call(thisArg, value);
-        };
-      }
-      if (argCount === 2) {
-        return function(a, b) {
-          return func.call(thisArg, a, b);
-        };
-      }
-      if (argCount === 4) {
-        return function(accumulator, value, index, collection) {
-          return func.call(thisArg, accumulator, value, index, collection);
-        };
-      }
-      return function(value, index, collection) {
-        return func.call(thisArg, value, index, collection);
+    if (typeof thisArg == 'undefined' || (reThis && !reThis.test(fnToString.call(func)))) {
+      return func;
+    }
+    if (argCount === 1) {
+      return function(value) {
+        return func.call(thisArg, value);
       };
     }
-    return func;
+    if (argCount === 2) {
+      return function(a, b) {
+        return func.call(thisArg, a, b);
+      };
+    }
+    if (argCount === 4) {
+      return function(accumulator, value, index, collection) {
+        return func.call(thisArg, accumulator, value, index, collection);
+      };
+    }
+    return function(value, index, collection) {
+      return func.call(thisArg, value, index, collection);
+    };
   }
 
   /**

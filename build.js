@@ -714,17 +714,20 @@
   }
 
   /**
-   * Gets an array of depenants for a method by a given name.
+   * Gets an array of depenants for the given method name(s).
    *
    * @private
-   * @param {String} methodName The method name.
+   * @param {String} methodName A method name or array of method names.
    * @returns {Array} Returns an array of method dependants.
    */
   function getDependants(methodName) {
-    // iterate over the `dependencyMap`, adding the names of methods that
-    // have `methodName` as a dependency
+    // iterate over the `dependencyMap`, adding names of methods
+    // that have the `methodName` as a dependency
+    var methodNames = _.isArray(methodName) ? methodName : [methodName];
     return _.reduce(dependencyMap, function(result, dependencies, otherName) {
-      if (_.contains(dependencies, methodName)) {
+      if (_.some(methodNames, function(methodName) {
+            return _.contains(dependencies, methodName);
+          })) {
         result.push(otherName);
       }
       return result;
@@ -737,13 +740,12 @@
    * plus any additional detected sub-dependencies.
    *
    * @private
-   * @param {Array|String} methodName A single method name or array of
-   *  dependencies to query.
+   * @param {Array|String} methodName A method name or array of dependencies to query.
    * @param- {Object} [stackA=[]] Internally used track queried methods.
    * @returns {Array} Returns an array of method dependencies.
    */
   function getDependencies(methodName, stack) {
-    var dependencies = Array.isArray(methodName) ? methodName : dependencyMap[methodName];
+    var dependencies = _.isArray(methodName) ? methodName : dependencyMap[methodName];
     if (!dependencies) {
       return [];
     }

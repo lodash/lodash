@@ -60,15 +60,30 @@
   }());
 
   /**
-   * Java command-line options used for faster minification.
+   * Retrieves the Java command-line options used for faster minification by
+   * the Closure Compiler, invoking the `callback` when finished. Subsequent
+   * invocations will lazily return the original options. The callback is
+   * invoked with one argument: `(javaOptions)`.
+   *
    * See https://code.google.com/p/closure-compiler/wiki/FAQ#What_are_the_recommended_Java_VM_command-line_options?.
+   *
+   * @param {Function} callback The function called once the options have
+   * been retrieved.
    */
-  var javaOptions = [];
-  cp.exec('java -version -client -d32', function(error) {
-    if (!error && process.platform != 'win32') {
-      javaOptions.push('-client', '-d32');
-    }
-  });
+  function getJavaOptions(callback) {
+    var javaOptions = [];
+    cp.exec('java -version -client -d32', function(error) {
+      if (!error && process.platform != 'win32') {
+        javaOptions.push('-client', '-d32');
+      }
+      getJavaOptions = function getJavaOptions(callback) {
+        process.nextTick(function () {
+          callback(javaOptions);
+        });
+      };
+      callback(javaOptions);
+    });
+  }
 
   /** The Closure Compiler optimization modes */
   var optimizationModes = {
@@ -386,57 +401,60 @@
     if (isMapped) {
       options.push('--create_source_map=' + mapPath, '--source_map_format=V3');
     }
-    var compiler = cp.spawn('java', javaOptions.concat('-jar', closurePath, options));
-    if (!this.isSilent) {
-      console.log('Compressing ' + path.basename(outputPath, '.js') + ' using the Closure Compiler (' + mode + ')...');
-    }
 
-    var error = '';
-    compiler.stderr.on('data', function(data) {
-      error += data;
-    });
+    getJavaOptions(function onJavaOptions(javaOptions) {
+      var compiler = cp.spawn('java', javaOptions.concat('-jar', closurePath, options));
+      if (!this.isSilent) {
+        console.log('Compressing ' + path.basename(outputPath, '.js') + ' using the Closure Compiler (' + mode + ')...');
+      }
 
-    var output = '';
-    compiler.stdout.on('data', function(data) {
-      output += data;
-    });
+      var error = '';
+      compiler.stderr.on('data', function(data) {
+        error += data;
+      });
 
-    compiler.on('exit', function(status) {
-      // `status` contains the process exit code
-      if (status) {
-        var exception = new Error(error);
-        exception.status = status;
-      }
-      // restore IIFE and move exposed vars inside the IIFE
-      if (hasIIFE && isAdvanced) {
-        output = output
-          .replace(/__iife__\(/, '(')
-          .replace(/,\s*this\)([\s;]*(\n\/\/.+)?)$/, '(this))$1')
-          .replace(/^((?:var (?:\w+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^{]+{)/, '$2$1');
-      }
-      // inject "use strict" directive
-      if (isStrict) {
-        output = output.replace(/^[\s\S]*?function[^{]+{/, '$&"use strict";');
-      }
-      // restore copyright header
-      if (license) {
-        output = license + output;
-      }
-      if (isMapped) {
-        var mapOutput = fs.readFileSync(mapPath, 'utf8');
-        fs.unlinkSync(mapPath);
-        output = output.replace(/[\s;]*$/, '\n/*\n//@ sourceMappingURL=' + sourceMapURL) + '\n*/';
+      var output = '';
+      compiler.stdout.on('data', function(data) {
+        output += data;
+      });
 
-        mapOutput = JSON.parse(mapOutput);
-        mapOutput.file = path.basename(outputPath);
-        mapOutput.sources = [path.basename(filePath)];
-        mapOutput = JSON.stringify(mapOutput, null, 2);
-      }
-      callback(exception, output, mapOutput);
-    });
+      compiler.on('exit', function(status) {
+        // `status` contains the process exit code
+        if (status) {
+          var exception = new Error(error);
+          exception.status = status;
+        }
+        // restore IIFE and move exposed vars inside the IIFE
+        if (hasIIFE && isAdvanced) {
+          output = output
+            .replace(/__iife__\(/, '(')
+            .replace(/,\s*this\)([\s;]*(\n\/\/.+)?)$/, '(this))$1')
+            .replace(/^((?:var (?:\w+=(?:!0|!1|null)[,;])+)?)([\s\S]*?function[^{]+{)/, '$2$1');
+        }
+        // inject "use strict" directive
+        if (isStrict) {
+          output = output.replace(/^[\s\S]*?function[^{]+{/, '$&"use strict";');
+        }
+        // restore copyright header
+        if (license) {
+          output = license + output;
+        }
+        if (isMapped) {
+          var mapOutput = fs.readFileSync(mapPath, 'utf8');
+          fs.unlinkSync(mapPath);
+          output = output.replace(/[\s;]*$/, '\n/*\n//@ sourceMappingURL=' + sourceMapURL) + '\n*/';
 
-    // proxy the standard input to the Closure Compiler
-    compiler.stdin.end(source);
+          mapOutput = JSON.parse(mapOutput);
+          mapOutput.file = path.basename(outputPath);
+          mapOutput.sources = [path.basename(filePath)];
+          mapOutput = JSON.stringify(mapOutput, null, 2);
+        }
+        callback(exception, output, mapOutput);
+      });
+
+      // proxy the standard input to the Closure Compiler
+      compiler.stdin.end(source);
+    }.bind(this));
   }
 
   /**

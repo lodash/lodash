@@ -34,7 +34,7 @@
   var keyPrefix = +new Date + '';
 
   /** Used as the size when optimizations are enabled for large arrays */
-  var largeArraySize = 200;
+  var largeArraySize = 75;
 
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -55,6 +55,9 @@
 
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
+
+  /** Used to detect functions containing a `this` reference */
+  var reThis = (reThis = /\bthis\b/) && reThis.test(runInContext) && reThis;
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -181,6 +184,7 @@
         clearTimeout = context.clearTimeout,
         concat = arrayProto.concat,
         floor = Math.floor,
+        fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
@@ -376,26 +380,72 @@
      * @param {Mixed} value The value to search for.
      * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
      */
-    function cachedContains(array) {
-      var length = array.length,
-          isLarge = length >= largeArraySize;
+    function createCache(array) {
+      var bailout,
+          index = -1,
+          length = array.length,
+          isLarge = length >= largeArraySize,
+          objCache = {};
 
-      if (isLarge) {
-        var cache = {},
-            index = -1;
+      var caches = {
+        'false': false,
+        'function': false,
+        'null': false,
+        'number': {},
+        'object': objCache,
+        'string': {},
+        'true': false,
+        'undefined': false
+      };
 
-        while (++index < length) {
-          var key = keyPrefix + array[index];
-          (cache[key] || (cache[key] = [])).push(array[index]);
+      function cacheContains(value) {
+        var type = typeof value;
+        if (type == 'boolean' || value == null) {
+          return caches[value];
+        }
+        var cache = caches[type] || (type = 'object', objCache),
+            key = type == 'number' ? value : keyPrefix + value;
+
+        return type == 'object'
+          ? (cache[key] ? indexOf(cache[key], value) > -1 : false)
+          : !!cache[key];
+      }
+
+      function cachePush(value) {
+        var type = typeof value;
+        if (type == 'boolean' || value == null) {
+          caches[value] = true;
+        } else {
+          var cache = caches[type] || (type = 'object', objCache),
+              key = type == 'number' ? value : keyPrefix + value;
+
+          if (type == 'object') {
+            bailout = (cache[key] || (cache[key] = [])).push(value) == length;
+          } else {
+            cache[key] = true;
+          }
         }
       }
-      return function(value) {
-        if (isLarge) {
-          var key = keyPrefix + value;
-          return  cache[key] && indexOf(cache[key], value) > -1;
-        }
+
+      function simpleContains(value) {
         return indexOf(array, value) > -1;
       }
+
+      function simplePush(value) {
+        array.push(value);
+      }
+
+      if (isLarge) {
+        while (++index < length) {
+          cachePush(array[index]);
+        }
+        if (bailout) {
+          isLarge = caches = objCache = null;
+        }
+      }
+      return isLarge
+        ? { 'contains': cacheContains, 'push': cachePush }
+        : { 'push': simplePush, 'contains' : simpleContains };
     }
 
     /**
@@ -3099,7 +3149,7 @@
       var index = -1,
           length = array ? array.length : 0,
           flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
-          contains = cachedContains(flattened),
+          contains = createCache(flattened).contains,
           result = [];
 
       while (++index < length) {
@@ -3427,29 +3477,21 @@
     function intersection(array) {
       var args = arguments,
           argsLength = args.length,
-          cache = { '0': {} },
+          cache = createCache([]),
+          caches = {},
           index = -1,
           length = array ? array.length : 0,
           isLarge = length >= largeArraySize,
-          result = [],
-          seen = result;
+          result = [];
 
       outer:
       while (++index < length) {
         var value = array[index];
-        if (isLarge) {
-          var key = keyPrefix + value;
-          var inited = cache[0][key]
-            ? !(seen = cache[0][key])
-            : (seen = cache[0][key] = []);
-        }
-        if (inited || indexOf(seen, value) < 0) {
-          if (isLarge) {
-            seen.push(value);
-          }
+        if (!cache.contains(value)) {
           var argsIndex = argsLength;
+          cache.push(value);
           while (--argsIndex) {
-            if (!(cache[argsIndex] || (cache[argsIndex] = cachedContains(args[argsIndex])))(value)) {
+            if (!(caches[argsIndex] || (caches[argsIndex] = createCache(args[argsIndex]).contains))(value)) {
               continue outer;
             }
           }
@@ -3837,26 +3879,20 @@
       }
       // init value cache for large arrays
       var isLarge = !isSorted && length >= largeArraySize;
-      if (isLarge) {
-        var cache = {};
-      }
       if (callback != null) {
         seen = [];
         callback = lodash.createCallback(callback, thisArg);
+      }
+      if (isLarge) {
+        seen = createCache([]);
       }
       while (++index < length) {
         var value = array[index],
             computed = callback ? callback(value, index, array) : value;
 
-        if (isLarge) {
-          var key = keyPrefix + computed;
-          var inited = cache[key]
-            ? !(seen = cache[key])
-            : (seen = cache[key] = []);
-        }
         if (isSorted
               ? !index || seen[seen.length - 1] !== computed
-              : inited || indexOf(seen, computed) < 0
+              : (isLarge ? !seen.contains(computed) : indexOf(seen, computed) < 0)
             ) {
           if (callback || isLarge) {
             seen.push(computed);
@@ -4204,27 +4240,27 @@
           return result;
         };
       }
-      if (typeof thisArg != 'undefined') {
-        if (argCount === 1) {
-          return function(value) {
-            return func.call(thisArg, value);
-          };
-        }
-        if (argCount === 2) {
-          return function(a, b) {
-            return func.call(thisArg, a, b);
-          };
-        }
-        if (argCount === 4) {
-          return function(accumulator, value, index, collection) {
-            return func.call(thisArg, accumulator, value, index, collection);
-          };
-        }
-        return function(value, index, collection) {
-          return func.call(thisArg, value, index, collection);
+      if (typeof thisArg == 'undefined' || (reThis && !reThis.test(fnToString.call(func)))) {
+        return func;
+      }
+      if (argCount === 1) {
+        return function(value) {
+          return func.call(thisArg, value);
         };
       }
-      return func;
+      if (argCount === 2) {
+        return function(a, b) {
+          return func.call(thisArg, a, b);
+        };
+      }
+      if (argCount === 4) {
+        return function(accumulator, value, index, collection) {
+          return func.call(thisArg, accumulator, value, index, collection);
+        };
+      }
+      return function(value, index, collection) {
+        return func.call(thisArg, value, index, collection);
+      };
     }
 
     /**
@@ -4261,8 +4297,8 @@
       var args,
           result,
           thisArg,
-          timeoutId,
           callCount = 0,
+          timeoutId = null,
           trailing = true;
 
       function delayed() {
@@ -4282,6 +4318,9 @@
       return function() {
         args = arguments;
         thisArg = this;
+
+        // avoid issues with Titanium and `undefined` timeout ids
+        // https://github.com/appcelerator/titanium_mobile/blob/3_1_0_GA/android/titanium/src/java/ti/modules/titanium/TitaniumModule.java#L185-L192
         clearTimeout(timeoutId);
 
         if (leading && ++callCount < 2) {
@@ -4490,9 +4529,9 @@
       var args,
           result,
           thisArg,
-          timeoutId,
           lastCalled = 0,
           leading = true,
+          timeoutId = null,
           trailing = true;
 
       function trailingCall() {

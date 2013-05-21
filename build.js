@@ -2699,7 +2699,7 @@
         source = source.replace(/lodash\.support *= */, '');
 
         // remove large array optimizations
-        source = removeFunction(source, 'cachedContains');
+        source = removeFunction(source, 'createCache');
 
         // replace `slice` with `nativeSlice.call`
         source = removeFunction(source, 'slice');

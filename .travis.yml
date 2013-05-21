@@ -7,7 +7,7 @@ env:
   - TEST_COMMAND="phantomjs ./test/test.js ../dist/lodash.compat.min.js"
   - TEST_COMMAND="node ./test/test.js ../dist/lodash.js"
   - TEST_COMMAND="node ./test/test.js ../dist/lodash.min.js"
-  - TEST_COMMAND="node ./test/test-build.js --time-limit 49m30s"
+  - TEST_COMMAND="node ./test/test-build.js --time-limit 48m"
 git:
   depth: 1
 branches:

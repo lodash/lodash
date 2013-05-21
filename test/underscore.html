@@ -34,7 +34,7 @@
 				    push = arrayProto.push,
 				    slice = arrayProto.slice;
 
-				if (_.chain) {
+				if (_.chain().__chain__) {
 					return;
 				}
 				_.mixin = function(object) {

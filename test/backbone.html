@@ -33,13 +33,6 @@
 				'debounce': lodash.debounce,
 				'defer': lodash.defer
 			});
-			if (!_.chain) {
-				_.mixin({
-					'chain': function(value) {
-						return new _(value);
-					}
-				});
-			}
 		</script>
 		<script src="../vendor/backbone/backbone.js"></script>
 		<script src="../vendor/backbone/test/environment.js"></script>

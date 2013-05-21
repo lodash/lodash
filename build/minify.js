@@ -59,32 +59,6 @@
     };
   }());
 
-  /**
-   * Retrieves the Java command-line options used for faster minification by
-   * the Closure Compiler, invoking the `callback` when finished. Subsequent
-   * invocations will lazily return the original options. The callback is
-   * invoked with one argument: `(javaOptions)`.
-   *
-   * See https://code.google.com/p/closure-compiler/wiki/FAQ#What_are_the_recommended_Java_VM_command-line_options?.
-   *
-   * @param {Function} callback The function called once the options have
-   * been retrieved.
-   */
-  function getJavaOptions(callback) {
-    var javaOptions = [];
-    cp.exec('java -version -client -d32', function(error) {
-      if (!error && process.platform != 'win32') {
-        javaOptions.push('-client', '-d32');
-      }
-      getJavaOptions = function getJavaOptions(callback) {
-        process.nextTick(function () {
-          callback(javaOptions);
-        });
-      };
-      callback(javaOptions);
-    });
-  }
-
   /** The Closure Compiler optimization modes */
   var optimizationModes = {
     'simple': 'SIMPLE_OPTIMIZATIONS',
@@ -351,6 +325,30 @@
   }
 
   /**
+   * Retrieves the Java command-line options used for faster minification by
+   * the Closure Compiler, invoking the `callback` when finished. Subsequent
+   * calls will lazily return the previously retrieved options. The `callback`
+   * is invoked with one argument; (options).
+   *
+   * See https://code.google.com/p/closure-compiler/wiki/FAQ#What_are_the_recommended_Java_VM_command-line_options?.
+   *
+   * @private
+   * @param {Function} callback The function called once the options have been retrieved.
+   */
+  function getJavaOptions(callback) {
+    var result = [];
+    cp.exec('java -version -client -d32', function(error) {
+      if (!error && process.platform != 'win32') {
+        result.push('-client', '-d32');
+      }
+      getJavaOptions = function(callback) {
+        _.defer(callback, result);
+      };
+      callback(result);
+    });
+  }
+
+  /**
    * Resolves the source map path from the given output path.
    *
    * @private
@@ -376,6 +374,7 @@
     var filePath = this.filePath,
         isAdvanced = mode == 'advanced',
         isMapped = this.isMapped,
+        isSilent = this.isSilent,
         options = closureOptions.slice(),
         outputPath = this.outputPath,
         mapPath = getMapPath(outputPath),
@@ -402,9 +401,9 @@
       options.push('--create_source_map=' + mapPath, '--source_map_format=V3');
     }
 
-    getJavaOptions(function onJavaOptions(javaOptions) {
+    getJavaOptions(function(javaOptions) {
       var compiler = cp.spawn('java', javaOptions.concat('-jar', closurePath, options));
-      if (!this.isSilent) {
+      if (!isSilent) {
         console.log('Compressing ' + path.basename(outputPath, '.js') + ' using the Closure Compiler (' + mode + ')...');
       }
 
@@ -454,7 +453,7 @@
 
       // proxy the standard input to the Closure Compiler
       compiler.stdin.end(source);
-    }.bind(this));
+    });
   }
 
   /**

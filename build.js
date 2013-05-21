@@ -1096,6 +1096,26 @@
   }
 
   /**
+   * Removes the binding optimization from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeBindingOptimization(source) {
+    source = removeVar(source, 'fnToString');
+    source = removeVar(source, 'reThis');
+
+    // remove `reThis` from `createCallback`
+    source = source.replace(matchFunction(source, 'createCallback'), function(match) {
+      return match.replace(/\s*\|\|\s*\(reThis[\s\S]+?\)\)\)/, '');
+    });
+
+    return source;
+  }
+
+
+  /**
    * Removes the `Object.keys` object iteration optimization from `source`.
    *
    * @private
@@ -1270,7 +1290,7 @@
     // remove `support.nonEnumArgs` from `_.keys`
     source = source.replace(matchFunction(source, 'keys'), function(match) {
       return match
-        .replace(/(?:\s*\|\|\s*)?\(support\.nonEnumArgs[^)]+\)\)/, '')
+        .replace(/(?:\s*\|\|\s*)?\(support\.nonEnumArgs[\s\S]+?\)\)/, '')
         .replace(/\s*if *\(\s*\)[^}]+}/, '');
     });
 
@@ -2043,6 +2063,9 @@
             '}'
           ].join('\n'));
         }
+      }
+      if (isLegacy || isMobile || isUnderscore) {
+        source = removeBindingOptimization(source);
       }
       if (isMobile || isUnderscore) {
         source = removeKeysOptimization(source);

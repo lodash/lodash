@@ -56,9 +56,6 @@
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
 
-  /** Used to detect functions containing a `this` reference */
-  var reThis = (reThis = /\bthis\b/) && reThis.test(runInContext) && reThis;
-
   /** Used to detect and test whitespace */
   var whitespace = (
     // whitespace
@@ -186,7 +183,6 @@
         clearTimeout = context.clearTimeout,
         concat = arrayProto.concat,
         floor = Math.floor,
-        fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
@@ -4360,7 +4356,7 @@
           return result;
         };
       }
-      if (typeof thisArg == 'undefined' || (reThis && !reThis.test(fnToString.call(func)))) {
+      if (typeof thisArg == 'undefined') {
         return func;
       }
       if (argCount === 1) {

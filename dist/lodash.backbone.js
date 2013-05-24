@@ -252,15 +252,25 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Used by `_.max` and `_.min` as the default `callback` when a given
-   * `collection` is a string value.
+   * A basic version of `_.indexOf` without support for binary searches
+   * or `fromIndex` constraints.
    *
    * @private
-   * @param {String} value The character to inspect.
-   * @returns {Number} Returns the code unit of given character.
+   * @param {Array} array The array to search.
+   * @param {Mixed} value The value to search for.
+   * @param {Number} [fromIndex=0] The index to search from.
+   * @returns {Number} Returns the index of the matched value or `-1`.
    */
-  function charAtCallback(value) {
-    return value.charCodeAt(0);
+  function basicIndexOf(array, value, fromIndex) {
+    var index = (fromIndex || 0) - 1,
+        length = array.length;
+
+    while (++index < length) {
+      if (array[index] === value) {
+        return index;
+      }
+    }
+    return -1;
   }
 
   /**
@@ -357,18 +367,6 @@
   }
 
   /**
-   * Used by `template` to escape characters for inclusion in compiled
-   * string literals.
-   *
-   * @private
-   * @param {String} match The matched character to escape.
-   * @returns {String} Returns the escaped character.
-   */
-  function escapeStringChar(match) {
-    return '\\' + stringEscapes[match];
-  }
-
-  /**
    * Used by `escape` to convert characters to HTML entities.
    *
    * @private
@@ -399,17 +397,6 @@
    */
   function noop() {
     // no operation performed
-  }
-
-  /**
-   * Used by `unescape` to convert HTML entities to characters.
-   *
-   * @private
-   * @param {String} match The matched character to unescape.
-   * @returns {String} Returns the unescaped character.
-   */
-  function unescapeHtmlChar(match) {
-    return htmlUnescapes[match];
   }
 
   /*--------------------------------------------------------------------------*/
@@ -1084,7 +1071,7 @@
         result = {};
 
     forIn(object, function(value, key) {
-      if (indexOf(props, key) < 0) {
+      if (basicIndexOf(props, key) < 0) {
         result[key] = value;
       }
     });
@@ -1215,8 +1202,8 @@
   function contains(collection, target) {
     var length = collection ? collection.length : 0,
         result = false;
-    if (typeof length == 'number') {
-      result = indexOf(collection, target) > -1;
+    if (length && typeof length == 'number') {
+      result = basicIndexOf(collection, target) > -1;
     } else {
       forOwn(collection, function(value) {
         return (result = value === target) && indicatorObject;
@@ -2133,7 +2120,7 @@
 
     while (++index < length) {
       var value = array[index];
-      if (indexOf(flattened, value) < 0) {
+      if (basicIndexOf(flattened, value) < 0) {
         result.push(value);
       }
     }
@@ -2243,21 +2230,14 @@
    * // => 2
    */
   function indexOf(array, value, fromIndex) {
-    var index = -1,
-        length = array ? array.length : 0;
-
     if (typeof fromIndex == 'number') {
-      index = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0) - 1;
+      var length = array ? array.length : 0;
+      fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0);
     } else if (fromIndex) {
-      index = sortedIndex(array, value);
+      var index = sortedIndex(array, value);
       return array[index] === value ? index : -1;
     }
-    while (++index < length) {
-      if (array[index] === value) {
-        return index;
-      }
-    }
-    return -1;
+    return array ? basicIndexOf(array, value, fromIndex) : -1;
   }
 
   /**

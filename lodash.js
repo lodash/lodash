@@ -4200,7 +4200,7 @@
      * Creates a duplicate-value-free version of the `array` using strict equality
      * for comparisons, i.e. `===`. If the `array` is already sorted, passing `true`
      * for `isSorted` will run a faster algorithm. If `callback` is passed, each
-     * element of `array` is passed through a `callback` before uniqueness is computed.
+     * element of `array` is passed through the `callback` before uniqueness is computed.
      * The `callback` is bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
@@ -4229,11 +4229,11 @@
      * _.uniq([1, 1, 2, 2, 3], true);
      * // => [1, 2, 3]
      *
-     * _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return Math.floor(num); });
-     * // => [1, 2, 3]
+     * _.uniq(['A', 'b', 'C', 'a', 'B', 'c'], function(letter) { return letter.toLowerCase(); });
+     * // => ['A', 'b', 'C']
      *
-     * _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return this.floor(num); }, Math);
-     * // => [1, 2, 3]
+     * _.uniq([1, 2.5, 3, 1.5, 2, 3.5], function(num) { return this.floor(num); }, Math);
+     * // => [1, 2.5, 3]
      *
      * // using "_.pluck" callback shorthand
      * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');

@@ -296,6 +296,28 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * A basic version of `_.indexOf` without support for binary searches
+   * or `fromIndex` constraints.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {Mixed} value The value to search for.
+   * @param {Number} [fromIndex=0] The index to search from.
+   * @returns {Number} Returns the index of the matched value or `-1`.
+   */
+  function basicIndexOf(array, value, fromIndex) {
+    var index = (fromIndex || 0) - 1,
+        length = array.length;
+
+    while (++index < length) {
+      if (array[index] === value) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  /**
    * Used by `_.max` and `_.min` as the default `callback` when a given
    * `collection` is a string value.
    *
@@ -395,6 +417,85 @@
   }
 
   /**
+   * Creates a function optimized to search large arrays for a given `value`,
+   * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
+   *
+   * @private
+   * @param {Array} [array=[]] The array to search.
+   * @param {Mixed} value The value to search for.
+   * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
+   */
+  function createCache(array) {
+    array || (array = []);
+
+    var bailout,
+        index = -1,
+        length = array.length,
+        isLarge = length >= largeArraySize,
+        objCache = {};
+
+    var caches = {
+      'false': false,
+      'function': false,
+      'null': false,
+      'number': {},
+      'object': objCache,
+      'string': {},
+      'true': false,
+      'undefined': false
+    };
+
+    function basicContains(value) {
+      return basicIndexOf(array, value) > -1;
+    }
+
+    function basicPush(value) {
+      array.push(value);
+    }
+
+    function cacheContains(value) {
+      var type = typeof value;
+      if (type == 'boolean' || value == null) {
+        return caches[value];
+      }
+      var cache = caches[type] || (type = 'object', objCache),
+          key = type == 'number' ? value : keyPrefix + value;
+
+      return type == 'object'
+        ? (cache[key] ? basicIndexOf(cache[key], value) > -1 : false)
+        : !!cache[key];
+    }
+
+    function cachePush(value) {
+      var type = typeof value;
+      if (type == 'boolean' || value == null) {
+        caches[value] = true;
+      } else {
+        var cache = caches[type] || (type = 'object', objCache),
+            key = type == 'number' ? value : keyPrefix + value;
+
+        if (type == 'object') {
+          bailout = (cache[key] || (cache[key] = [])).push(value) == length;
+        } else {
+          cache[key] = true;
+        }
+      }
+    }
+
+    if (isLarge) {
+      while (++index < length) {
+        cachePush(array[index]);
+      }
+      if (bailout) {
+        isLarge = caches = objCache = null;
+      }
+    }
+    return isLarge
+      ? { 'contains': cacheContains, 'push': cachePush }
+      : { 'contains': basicContains, 'push': basicPush };
+  }
+
+  /**
    * Creates a new object with the specified `prototype`.
    *
    * @private
@@ -417,6 +518,17 @@
   }
 
   /**
+   * Used by `escape` to convert characters to HTML entities.
+   *
+   * @private
+   * @param {String} match The matched character to escape.
+   * @returns {String} Returns the escaped character.
+   */
+  function escapeHtmlChar(match) {
+    return htmlEscapes[match];
+  }
+
+  /**
    * Used by `template` to escape characters for inclusion in compiled
    * string literals.
    *
@@ -426,17 +538,6 @@
    */
   function escapeStringChar(match) {
     return '\\' + stringEscapes[match];
-  }
-
-  /**
-   * Used by `escape` to convert characters to HTML entities.
-   *
-   * @private
-   * @param {String} match The matched character to escape.
-   * @returns {String} Returns the escaped character.
-   */
-  function escapeHtmlChar(match) {
-    return htmlEscapes[match];
   }
 
   /**
@@ -459,6 +560,29 @@
    */
   function noop() {
     // no operation performed
+  }
+
+  /**
+   * Creates a function that juggles arguments, allowing argument overloading
+   * for `_.flatten` and `_.uniq`, before passing them to the given `func`.
+   *
+   * @private
+   * @param {Function} func The function to wrap.
+   * @returns {Function} Returns the new function.
+   */
+  function overloadWrapper(func) {
+    return function(array, flag, callback, thisArg) {
+      // juggle arguments
+      if (typeof flag != 'boolean' && flag != null) {
+        thisArg = callback;
+        callback = !(thisArg && thisArg[flag] === array) ? flag : undefined;
+        flag = false;
+      }
+      if (callback != null) {
+        callback = createCallback(callback, thisArg);
+      }
+      return func(array, flag, callback, thisArg);
+    };
   }
 
   /**
@@ -1312,7 +1436,7 @@
         result = {};
 
     forIn(object, function(value, key) {
-      if (indexOf(props, key) < 0) {
+      if (basicIndexOf(props, key) < 0) {
         result[key] = value;
       }
     });
@@ -1443,8 +1567,8 @@
   function contains(collection, target) {
     var length = collection ? collection.length : 0,
         result = false;
-    if (typeof length == 'number') {
-      result = indexOf(collection, target) > -1;
+    if (length && typeof length == 'number') {
+      result = basicIndexOf(collection, target) > -1;
     } else {
       forOwn(collection, function(value) {
         return (result = value === target) && indicatorObject;
@@ -2478,7 +2602,7 @@
 
     while (++index < length) {
       var value = array[index];
-      if (indexOf(flattened, value) < 0) {
+      if (basicIndexOf(flattened, value) < 0) {
         result.push(value);
       }
     }
@@ -2645,21 +2769,14 @@
    * // => 2
    */
   function indexOf(array, value, fromIndex) {
-    var index = -1,
-        length = array ? array.length : 0;
-
     if (typeof fromIndex == 'number') {
-      index = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0) - 1;
+      var length = array ? array.length : 0;
+      fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0);
     } else if (fromIndex) {
-      index = sortedIndex(array, value);
+      var index = sortedIndex(array, value);
       return array[index] === value ? index : -1;
     }
-    while (++index < length) {
-      if (array[index] === value) {
-        return index;
-      }
-    }
-    return -1;
+    return array ? basicIndexOf(array, value, fromIndex) : -1;
   }
 
   /**
@@ -2762,10 +2879,10 @@
     outer:
     while (++index < length) {
       var value = array[index];
-      if (indexOf(result, value) < 0) {
+      if (basicIndexOf(result, value) < 0) {
         var argsIndex = argsLength;
         while (--argsIndex) {
-          if (indexOf(args[argsIndex], value) < 0) {
+          if (basicIndexOf(args[argsIndex], value) < 0) {
             continue outer;
           }
         }
@@ -3100,7 +3217,7 @@
    * Creates a duplicate-value-free version of the `array` using strict equality
    * for comparisons, i.e. `===`. If the `array` is already sorted, passing `true`
    * for `isSorted` will run a faster algorithm. If `callback` is passed, each
-   * element of `array` is passed through a `callback` before uniqueness is computed.
+   * element of `array` is passed through the `callback` before uniqueness is computed.
    * The `callback` is bound to `thisArg` and invoked with three arguments; (value, index, array).
    *
    * If a property name is passed for `callback`, the created "_.pluck" style
@@ -3129,11 +3246,11 @@
    * _.uniq([1, 1, 2, 2, 3], true);
    * // => [1, 2, 3]
    *
-   * _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return Math.floor(num); });
-   * // => [1, 2, 3]
+   * _.uniq(['A', 'b', 'C', 'a', 'B', 'c'], function(letter) { return letter.toLowerCase(); });
+   * // => ['A', 'b', 'C']
    *
-   * _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return this.floor(num); }, Math);
-   * // => [1, 2, 3]
+   * _.uniq([1, 2.5, 3, 1.5, 2, 3.5], function(num) { return this.floor(num); }, Math);
+   * // => [1, 2.5, 3]
    *
    * // using "_.pluck" callback shorthand
    * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
@@ -3160,7 +3277,7 @@
 
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
-            : indexOf(seen, computed) < 0
+            : basicIndexOf(seen, computed) < 0
           ) {
         if (callback) {
           seen.push(computed);

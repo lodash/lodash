@@ -372,80 +372,25 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates a function optimized to search large arrays for a given `value`,
-     * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
+     * A basic version of `_.indexOf` without support for binary searches
+     * or `fromIndex` constraints.
      *
      * @private
      * @param {Array} array The array to search.
      * @param {Mixed} value The value to search for.
-     * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
+     * @param {Number} [fromIndex=0] The index to search from.
+     * @returns {Number} Returns the index of the matched value or `-1`.
      */
-    function createCache(array) {
-      var bailout,
-          index = -1,
-          length = array.length,
-          isLarge = length >= largeArraySize,
-          objCache = {};
+    function basicIndexOf(array, value, fromIndex) {
+      var index = (fromIndex || 0) - 1,
+          length = array.length;
 
-      var caches = {
-        'false': false,
-        'function': false,
-        'null': false,
-        'number': {},
-        'object': objCache,
-        'string': {},
-        'true': false,
-        'undefined': false
-      };
-
-      function cacheContains(value) {
-        var type = typeof value;
-        if (type == 'boolean' || value == null) {
-          return caches[value];
-        }
-        var cache = caches[type] || (type = 'object', objCache),
-            key = type == 'number' ? value : keyPrefix + value;
-
-        return type == 'object'
-          ? (cache[key] ? indexOf(cache[key], value) > -1 : false)
-          : !!cache[key];
-      }
-
-      function cachePush(value) {
-        var type = typeof value;
-        if (type == 'boolean' || value == null) {
-          caches[value] = true;
-        } else {
-          var cache = caches[type] || (type = 'object', objCache),
-              key = type == 'number' ? value : keyPrefix + value;
-
-          if (type == 'object') {
-            bailout = (cache[key] || (cache[key] = [])).push(value) == length;
-          } else {
-            cache[key] = true;
-          }
+      while (++index < length) {
+        if (array[index] === value) {
+          return index;
         }
       }
-
-      function simpleContains(value) {
-        return indexOf(array, value) > -1;
-      }
-
-      function simplePush(value) {
-        array.push(value);
-      }
-
-      if (isLarge) {
-        while (++index < length) {
-          cachePush(array[index]);
-        }
-        if (bailout) {
-          isLarge = caches = objCache = null;
-        }
-      }
-      return isLarge
-        ? { 'contains': cacheContains, 'push': cachePush }
-        : { 'push': simplePush, 'contains' : simpleContains };
+      return -1;
     }
 
     /**
@@ -548,6 +493,85 @@
     }
 
     /**
+     * Creates a function optimized to search large arrays for a given `value`,
+     * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
+     *
+     * @private
+     * @param {Array} [array=[]] The array to search.
+     * @param {Mixed} value The value to search for.
+     * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
+     */
+    function createCache(array) {
+      array || (array = []);
+
+      var bailout,
+          index = -1,
+          length = array.length,
+          isLarge = length >= largeArraySize,
+          objCache = {};
+
+      var caches = {
+        'false': false,
+        'function': false,
+        'null': false,
+        'number': {},
+        'object': objCache,
+        'string': {},
+        'true': false,
+        'undefined': false
+      };
+
+      function basicContains(value) {
+        return basicIndexOf(array, value) > -1;
+      }
+
+      function basicPush(value) {
+        array.push(value);
+      }
+
+      function cacheContains(value) {
+        var type = typeof value;
+        if (type == 'boolean' || value == null) {
+          return caches[value];
+        }
+        var cache = caches[type] || (type = 'object', objCache),
+            key = type == 'number' ? value : keyPrefix + value;
+
+        return type == 'object'
+          ? (cache[key] ? basicIndexOf(cache[key], value) > -1 : false)
+          : !!cache[key];
+      }
+
+      function cachePush(value) {
+        var type = typeof value;
+        if (type == 'boolean' || value == null) {
+          caches[value] = true;
+        } else {
+          var cache = caches[type] || (type = 'object', objCache),
+              key = type == 'number' ? value : keyPrefix + value;
+
+          if (type == 'object') {
+            bailout = (cache[key] || (cache[key] = [])).push(value) == length;
+          } else {
+            cache[key] = true;
+          }
+        }
+      }
+
+      if (isLarge) {
+        while (++index < length) {
+          cachePush(array[index]);
+        }
+        if (bailout) {
+          isLarge = caches = objCache = null;
+        }
+      }
+      return isLarge
+        ? { 'contains': cacheContains, 'push': cachePush }
+        : { 'contains': basicContains, 'push': basicPush };
+    }
+
+    /**
      * Creates a new object with the specified `prototype`.
      *
      * @private
@@ -556,6 +580,17 @@
      */
     function createObject(prototype) {
       return isObject(prototype) ? nativeCreate(prototype) : {};
+    }
+
+    /**
+     * Used by `escape` to convert characters to HTML entities.
+     *
+     * @private
+     * @param {String} match The matched character to escape.
+     * @returns {String} Returns the escaped character.
+     */
+    function escapeHtmlChar(match) {
+      return htmlEscapes[match];
     }
 
     /**
@@ -568,17 +603,6 @@
      */
     function escapeStringChar(match) {
       return '\\' + stringEscapes[match];
-    }
-
-    /**
-     * Used by `escape` to convert characters to HTML entities.
-     *
-     * @private
-     * @param {String} match The matched character to escape.
-     * @returns {String} Returns the escaped character.
-     */
-    function escapeHtmlChar(match) {
-      return htmlEscapes[match];
     }
 
     /**
@@ -601,6 +625,29 @@
      */
     function noop() {
       // no operation performed
+    }
+
+    /**
+     * Creates a function that juggles arguments, allowing argument overloading
+     * for `_.flatten` and `_.uniq`, before passing them to the given `func`.
+     *
+     * @private
+     * @param {Function} func The function to wrap.
+     * @returns {Function} Returns the new function.
+     */
+    function overloadWrapper(func) {
+      return function(array, flag, callback, thisArg) {
+        // juggle arguments
+        if (typeof flag != 'boolean' && flag != null) {
+          thisArg = callback;
+          callback = !(thisArg && thisArg[flag] === array) ? flag : undefined;
+          flag = false;
+        }
+        if (callback != null) {
+          callback = lodash.createCallback(callback, thisArg);
+        }
+        return func(array, flag, callback, thisArg);
+      };
     }
 
     /**
@@ -1915,7 +1962,7 @@
       forIn(object, function(value, key, object) {
         if (isFunc
               ? !callback(value, key, object)
-              : indexOf(props, key) < 0
+              : basicIndexOf(props, key) < 0
             ) {
           result[key] = value;
         }
@@ -2142,10 +2189,10 @@
           result = false;
 
       fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
-      if (typeof length == 'number') {
+      if (length && typeof length == 'number') {
         result = (isString(collection)
           ? collection.indexOf(target, fromIndex)
-          : indexOf(collection, target, fromIndex)
+          : basicIndexOf(collection, target, fromIndex)
         ) > -1;
       } else {
         forOwn(collection, function(value) {
@@ -3313,20 +3360,11 @@
      * _.flatten(stooges, 'quotes');
      * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
      */
-    function flatten(array, isShallow, callback, thisArg) {
+    var flatten = overloadWrapper(function flatten(array, isShallow, callback) {
       var index = -1,
           length = array ? array.length : 0,
           result = [];
 
-      // juggle arguments
-      if (typeof isShallow != 'boolean' && isShallow != null) {
-        thisArg = callback;
-        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : undefined;
-        isShallow = false;
-      }
-      if (callback != null) {
-        callback = lodash.createCallback(callback, thisArg);
-      }
       while (++index < length) {
         var value = array[index];
         if (callback) {
@@ -3340,7 +3378,7 @@
         }
       }
       return result;
-    }
+    });
 
     /**
      * Gets the index at which the first occurrence of `value` is found using
@@ -3367,21 +3405,14 @@
      * // => 2
      */
     function indexOf(array, value, fromIndex) {
-      var index = -1,
-          length = array ? array.length : 0;
-
       if (typeof fromIndex == 'number') {
-        index = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0) - 1;
+        var length = array ? array.length : 0;
+        fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0);
       } else if (fromIndex) {
-        index = sortedIndex(array, value);
+        var index = sortedIndex(array, value);
         return array[index] === value ? index : -1;
       }
-      while (++index < length) {
-        if (array[index] === value) {
-          return index;
-        }
-      }
-      return -1;
+      return array ? basicIndexOf(array, value, fromIndex) : -1;
     }
 
     /**
@@ -3477,7 +3508,7 @@
     function intersection(array) {
       var args = arguments,
           argsLength = args.length,
-          cache = createCache([]),
+          cache = createCache(),
           caches = {},
           index = -1,
           length = array ? array.length : 0,
@@ -3826,7 +3857,7 @@
      * Creates a duplicate-value-free version of the `array` using strict equality
      * for comparisons, i.e. `===`. If the `array` is already sorted, passing `true`
      * for `isSorted` will run a faster algorithm. If `callback` is passed, each
-     * element of `array` is passed through a `callback` before uniqueness is computed.
+     * element of `array` is passed through the `callback` before uniqueness is computed.
      * The `callback` is bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
@@ -3855,44 +3886,30 @@
      * _.uniq([1, 1, 2, 2, 3], true);
      * // => [1, 2, 3]
      *
-     * _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return Math.floor(num); });
-     * // => [1, 2, 3]
+     * _.uniq(['A', 'b', 'C', 'a', 'B', 'c'], function(letter) { return letter.toLowerCase(); });
+     * // => ['A', 'b', 'C']
      *
-     * _.uniq([1, 2, 1.5, 3, 2.5], function(num) { return this.floor(num); }, Math);
-     * // => [1, 2, 3]
+     * _.uniq([1, 2.5, 3, 1.5, 2, 3.5], function(num) { return this.floor(num); }, Math);
+     * // => [1, 2.5, 3]
      *
      * // using "_.pluck" callback shorthand
      * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
-    function uniq(array, isSorted, callback, thisArg) {
+    var uniq = overloadWrapper(function(array, isSorted, callback) {
       var index = -1,
           length = array ? array.length : 0,
+          isLarge = !isSorted && length >= largeArraySize,
           result = [],
-          seen = result;
+          seen = isLarge ? createCache() : (callback ? [] : result);
 
-      // juggle arguments
-      if (typeof isSorted != 'boolean' && isSorted != null) {
-        thisArg = callback;
-        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : undefined;
-        isSorted = false;
-      }
-      // init value cache for large arrays
-      var isLarge = !isSorted && length >= largeArraySize;
-      if (callback != null) {
-        seen = [];
-        callback = lodash.createCallback(callback, thisArg);
-      }
-      if (isLarge) {
-        seen = createCache([]);
-      }
       while (++index < length) {
         var value = array[index],
             computed = callback ? callback(value, index, array) : value;
 
         if (isSorted
               ? !index || seen[seen.length - 1] !== computed
-              : (isLarge ? !seen.contains(computed) : indexOf(seen, computed) < 0)
+              : (isLarge ? !seen.contains(computed) : basicIndexOf(seen, computed) < 0)
             ) {
           if (callback || isLarge) {
             seen.push(computed);
@@ -3901,7 +3918,7 @@
         }
       }
       return result;
-    }
+    });
 
     /**
      * The inverse of `_.zip`, this method splits groups of elements into arrays

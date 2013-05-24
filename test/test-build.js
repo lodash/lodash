@@ -334,7 +334,7 @@
    * @returns {String} Returns the capitalized string.
    */
   function capitalize(string) {
-    return string[0].toUpperCase() + string.toLowerCase().slice(1);
+    return string[0].toUpperCase() + string.slice(1);
   }
 
   /**
@@ -1565,7 +1565,9 @@
               }
             }
             if (/\bcategory=/.test(command)) {
-              methodNames = (methodNames || []).concat(command.match(/\bcategory=(\S*)/)[1].split(/, */).map(capitalize));
+              methodNames = (methodNames || []).concat(command.match(/\bcategory=(\S*)/)[1].split(/, */).map(function(category) {
+                return capitalize(category.toLowerCase());
+              }));
             }
             if (!methodNames) {
               methodNames = lodashMethods.slice();

@@ -5,6 +5,7 @@
   "ignore": [
     ".*",
     "*.custom.*",
+    "*.template.*",
     "*.d.ts",
     "*.map",
     "*.md",

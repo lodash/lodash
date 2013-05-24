@@ -1,5 +1,6 @@
 .*
 *.custom.*
+*.template.*
 *.d.ts
 *.map
 *.md

@@ -652,7 +652,7 @@
           vm.runInContext(data.source, context);
 
           equal(moduleId, expectedId, basename);
-          equal(_.templates.d(object.d), 'Hello Mustache!', basename);
+          equal(_.templates.d(object.d), 'Hallå Mustache!', basename);
           delete _.templates;
           start();
         });

@@ -375,6 +375,7 @@
         isAdvanced = mode == 'advanced',
         isMapped = this.isMapped,
         isSilent = this.isSilent,
+        isTemplate = this.isTemplate,
         options = closureOptions.slice(),
         outputPath = this.outputPath,
         mapPath = getMapPath(outputPath),
@@ -399,6 +400,9 @@
     options.push('--compilation_level=' + optimizationModes[mode]);
     if (isMapped) {
       options.push('--create_source_map=' + mapPath, '--source_map_format=V3');
+    }
+    if (isTemplate) {
+      options.push('--charset=UTF-8');
     }
 
     getJavaOptions(function(javaOptions) {
@@ -497,7 +501,7 @@
       // 4. output
       // restrict lines to 500 characters for consistency with the Closure Compiler
       var stream = uglifyJS.OutputStream({
-        'ascii_only': true,
+        'ascii_only': !this.isTemplate,
         'comments': /@cc_on|@license|@preserve/i,
         'max_line_len': 500,
       });

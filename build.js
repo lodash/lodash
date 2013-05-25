@@ -1319,14 +1319,11 @@
     source = removeFunction(source, 'isNode');
     source = removeSupportProp(source, 'nodeClass');
 
-    // remove `support.nodeClass` from `shimIsPlainObject`
-    source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-      return match.replace(/\(support\.nodeClass[\s\S]+?\)\)/, 'true');
-    });
-
-    // remove `support.nodeClass` from `_.clone`
-    source = source.replace(matchFunction(source, 'clone'), function(match) {
-      return match.replace(/\s*\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)/, '');
+    // remove `support.nodeClass` from `_.clone` and `shimIsPlainObject`
+    _.each(['clone', 'shimIsPlainObject'], function(methodName) {
+      source = source.replace(matchFunction(source, methodName), function(match) {
+        return match.replace(/\s*\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)/, '');
+      });
     });
 
     // remove `support.nodeClass` from `_.isEqual`

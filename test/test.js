@@ -1655,12 +1655,16 @@
       }
     });
 
+    test('should return `true` for empty objects', function() {
+      strictEqual(_.isPlainObject({}), true);
+    });
+
     test('should return `false` for Object objects without a [[Class]] of "Object"', function() {
       strictEqual(_.isPlainObject(arguments), false);
       strictEqual(_.isPlainObject(Error), false);
       strictEqual(_.isPlainObject(Math), false);
       strictEqual(_.isPlainObject(window), false);
-    })
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

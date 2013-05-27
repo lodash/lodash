@@ -1952,7 +1952,7 @@
 
         _.each(['difference', 'intersection', 'uniq'], function(methodName) {
           if (!useLodashMethod(methodName)) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createCache');
+            dependencyMap[methodName] = ['getIndexOf'].concat(_.without(dependencyMap[methodName], 'createCache'));
           }
         });
 

@@ -729,8 +729,9 @@
 
       var bailout,
           index = -1,
+          indexOf = getIndexOf(),
           length = array.length,
-          isLarge = length >= largeArraySize,
+          isLarge = length >= largeArraySize && lodash.indexOf != indexOf,
           objCache = {};
 
       var caches = {
@@ -745,7 +746,7 @@
       };
 
       function basicContains(value) {
-        return basicIndexOf(array, value) > -1;
+        return indexOf(array, value) > -1;
       }
 
       function basicPush(value) {
@@ -882,6 +883,19 @@
      */
     function escapeStringChar(match) {
       return '\\' + stringEscapes[match];
+    }
+
+    /**
+     * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
+     * customized, this method returns the custom method, otherwise it returns
+     * the `basicIndexOf` function.
+     *
+     * @private
+     * @returns {Function} Returns the "indexOf" function.
+     */
+    function getIndexOf(array, value, fromIndex) {
+      var result = (result = lodash.indexOf) == indexOf ? basicIndexOf : result;
+      return result;
     }
 
     /**
@@ -2179,7 +2193,8 @@
      * // => { 'name': 'moe' }
      */
     function omit(object, callback, thisArg) {
-      var isFunc = typeof callback == 'function',
+      var indexOf = getIndexOf(),
+          isFunc = typeof callback == 'function',
           result = {};
 
       if (isFunc) {
@@ -2190,7 +2205,7 @@
       forIn(object, function(value, key, object) {
         if (isFunc
               ? !callback(value, key, object)
-              : basicIndexOf(props, key) < 0
+              : indexOf(props, key) < 0
             ) {
           result[key] = value;
         }
@@ -2416,6 +2431,7 @@
      */
     function contains(collection, target, fromIndex) {
       var index = -1,
+          indexOf = getIndexOf(),
           length = collection ? collection.length : 0,
           result = false;
 
@@ -2423,7 +2439,7 @@
       if (length && typeof length == 'number') {
         result = (isString(collection)
           ? collection.indexOf(target, fromIndex)
-          : basicIndexOf(collection, target, fromIndex)
+          : indexOf(collection, target, fromIndex)
         ) > -1;
       } else {
         basicEach(collection, function(value) {
@@ -4119,6 +4135,7 @@
      */
     var uniq = overloadWrapper(function(array, isSorted, callback) {
       var index = -1,
+          indexOf = getIndexOf(),
           length = array ? array.length : 0,
           isLarge = !isSorted && length >= largeArraySize,
           result = [],
@@ -4130,7 +4147,7 @@
 
         if (isSorted
               ? !index || seen[seen.length - 1] !== computed
-              : (isLarge ? !seen.contains(computed) : basicIndexOf(seen, computed) < 0)
+              : (isLarge ? !seen.contains(computed) : indexOf(seen, computed) < 0)
             ) {
           if (callback || isLarge) {
             seen.push(computed);

@@ -430,8 +430,9 @@
 
     var bailout,
         index = -1,
+        indexOf = getIndexOf(),
         length = array.length,
-        isLarge = length >= largeArraySize,
+        isLarge = length >= largeArraySize && lodash.indexOf != indexOf,
         objCache = {};
 
     var caches = {
@@ -446,7 +447,7 @@
     };
 
     function basicContains(value) {
-      return basicIndexOf(array, value) > -1;
+      return indexOf(array, value) > -1;
     }
 
     function basicPush(value) {
@@ -538,6 +539,19 @@
    */
   function escapeStringChar(match) {
     return '\\' + stringEscapes[match];
+  }
+
+  /**
+   * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
+   * customized, this method returns the custom method, otherwise it returns
+   * the `basicIndexOf` function.
+   *
+   * @private
+   * @returns {Function} Returns the "indexOf" function.
+   */
+  function getIndexOf(array, value, fromIndex) {
+    var result = (result = lodash.indexOf) == indexOf ? basicIndexOf : result;
+    return result;
   }
 
   /**
@@ -1432,11 +1446,12 @@
    * // => { 'name': 'moe' }
    */
   function omit(object) {
-    var props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+    var indexOf = getIndexOf(),
+        props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
         result = {};
 
     forIn(object, function(value, key) {
-      if (basicIndexOf(props, key) < 0) {
+      if (indexOf(props, key) < 0) {
         result[key] = value;
       }
     });
@@ -1565,10 +1580,11 @@
    * // => true
    */
   function contains(collection, target) {
-    var length = collection ? collection.length : 0,
+    var indexOf = getIndexOf(),
+        length = collection ? collection.length : 0,
         result = false;
     if (length && typeof length == 'number') {
-      result = basicIndexOf(collection, target) > -1;
+      result = indexOf(collection, target) > -1;
     } else {
       forOwn(collection, function(value) {
         return (result = value === target) && indicatorObject;
@@ -2596,13 +2612,14 @@
    */
   function difference(array) {
     var index = -1,
+        indexOf = getIndexOf(),
         length = array.length,
         flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
         result = [];
 
     while (++index < length) {
       var value = array[index];
-      if (basicIndexOf(flattened, value) < 0) {
+      if (indexOf(flattened, value) < 0) {
         result.push(value);
       }
     }
@@ -2873,16 +2890,17 @@
     var args = arguments,
         argsLength = args.length,
         index = -1,
+        indexOf = getIndexOf(),
         length = array ? array.length : 0,
         result = [];
 
     outer:
     while (++index < length) {
       var value = array[index];
-      if (basicIndexOf(result, value) < 0) {
+      if (indexOf(result, value) < 0) {
         var argsIndex = argsLength;
         while (--argsIndex) {
-          if (basicIndexOf(args[argsIndex], value) < 0) {
+          if (indexOf(args[argsIndex], value) < 0) {
             continue outer;
           }
         }
@@ -3258,6 +3276,7 @@
    */
   function uniq(array, isSorted, callback, thisArg) {
     var index = -1,
+        indexOf = getIndexOf(),
         length = array ? array.length : 0,
         result = [],
         seen = result;
@@ -3277,7 +3296,7 @@
 
       if (isSorted
             ? !index || seen[seen.length - 1] !== computed
-            : basicIndexOf(seen, computed) < 0
+            : indexOf(seen, computed) < 0
           ) {
         if (callback) {
           seen.push(computed);

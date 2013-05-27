@@ -72,6 +72,9 @@
     undefined
   ];
 
+  /** Used as the size when optimizations are enabled for large arrays */
+  var largeArraySize = 75;
+
   /** Used to set property descriptors */
   var setDescriptor = (function() {
     try {
@@ -1241,7 +1244,7 @@
         stringObject = Object(stringLiteral),
         expected = [stringLiteral, stringObject];
 
-    var array = _.times(100, function(count) {
+    var array = _.times(largeArraySize, function(count) {
       return count % 2 ? stringObject : stringLiteral;
     });
 
@@ -1349,6 +1352,68 @@
 
     test('should work with `isSorted`', function() {
       strictEqual(_.indexOf([1, 2, 3], 1, true), 0);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('custom `_.indexOf` methods');
+
+  (function() {
+    function custom(array, value, fromIndex) {
+      var index = (fromIndex || 0) - 1,
+          length = array.length;
+
+      while (++index < length) {
+        var other = array[index];
+        if (other === value ||
+            (_.isObject(value) && other instanceof Foo) ||
+            (other === 'x' && /[13]/.test(value))) {
+          return index;
+        }
+      }
+      return -1;
+    }
+
+    function Foo() {}
+
+    var array = [1, new Foo, 3, new Foo],
+        indexOf = _.indexOf;
+
+    test('_.contains should work with a custom `_.indexOf` method', function() {
+      _.indexOf = custom;
+      ok(_.contains(array, new Foo));
+      _.indexOf = indexOf;
+    });
+
+    test('_.difference should work with a custom `_.indexOf` method', function() {
+      _.indexOf = custom;
+      deepEqual(_.difference(array, [new Foo]), [1, 3]);
+      _.indexOf = indexOf;
+    });
+
+    test('_.intersection should work with a custom `_.indexOf` method', function() {
+      _.indexOf = custom;
+      deepEqual(_.intersection(array, [new Foo]), [array[1]]);
+      _.indexOf = indexOf;
+    });
+
+    test('_.omit should work with a custom `_.indexOf` method', function() {
+      _.indexOf = custom;
+      deepEqual(_.omit(array, ['x']), { '0': 1, '2': 3 });
+      _.indexOf = indexOf;
+    });
+
+    test('_.uniq should work with a custom `_.indexOf` method', function() {
+      _.indexOf = custom;
+      deepEqual(_.uniq(array), array.slice(0, 3));
+
+      var largeArray = _.times(largeArraySize, function() {
+        return new Foo;
+      });
+
+      deepEqual(_.uniq(largeArray), [largeArray[0]]);
+      _.indexOf = indexOf;
     });
   }());
 
@@ -3203,13 +3268,14 @@
 
     test('should distinguish between numbers and numeric strings', function() {
       var array = [],
-          expected = ['2', 2, Object('2'), Object(2)];
+          expected = ['2', 2, Object('2'), Object(2)],
+          count = Math.ceil(largeArraySize / expected.length);
 
-      _.times(50, function() {
+      _.times(count, function() {
         array.push.apply(array, expected);
       });
 
-      deepEqual(_.uniq(expected), expected);
+      deepEqual(_.uniq(array), expected);
     });
 
     _.each({

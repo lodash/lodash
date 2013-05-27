@@ -2221,7 +2221,7 @@
               }
               return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
                 vars = vars
-                  .replace(/\b(length *=)[^;]+/, '$1 collection' + (methodName == 'reduce' ? '.length' : ' ? collection.length : 0'))
+                  .replace(/\b(length *=)[^;=]+/, '$1 collection' + (methodName == 'reduce' ? '.length' : ' ? collection.length : 0'))
                   .replace(RegExp('^  ' + indent, 'gm'), indent);
 
                 return vars + statement.replace(/\bisArray\([^\)]+\)/, "typeof length == 'number'");
@@ -3263,7 +3263,7 @@
           modified = modified
             .replace(/\bctor *=.+\s+/, '')
             .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
-            .replace(/(?:,\n)? *props *=[^;]+/, '')
+            .replace(/(?:,\n)? *props *=[^;=]+/, '')
             .replace(/^ *for *\((?=prop)/, '$&var ')
         }
         if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(match)) {

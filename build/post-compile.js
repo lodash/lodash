@@ -41,12 +41,17 @@
     [/(\w+)\s*=\s*!1\b/, /(\w+)\s*=\s*!0\b/].forEach(function(regexp, index) {
       var varName = (regexp.exec(source) || 0)[1];
       if (varName) {
-        source = source.replace(RegExp('([!=]==\\s*)' + varName + '|' + varName + '(\\s*[!=]==)', 'g'), '$1' + !!index + '$2');
+        source = source.replace(RegExp('([!=]==\\s*)' + varName + '\\b|\\b' + varName + '(\\s*[!=]==)', 'g'), function(match, prelude, postlude, at) {
+          // avoid replacing local variables with the same name
+          return RegExp('\\b' + varName + '\\s*(?:,|=[^=])').test(source.slice(at - 10, at))
+            ? match
+            : (prelude || '') + !!index + (postlude || '');
+        });
       }
     });
 
     // replace `!1` and `!0` in expressions with `false` and `true` values
-    [/([!=]==)\s*!1|(.)!1\s*([!=]==)/g, /([!=]==)\s*!0|(.)!0\s*([!=]==)/g].forEach(function(regexp, index) {
+    [/([!=]==)\s*!1\b|(.)!1\s*([!=]==)/g, /([!=]==)\s*!0\b|(.)!0\s*([!=]==)/g].forEach(function(regexp, index) {
       source = source.replace(regexp, function(match, prelude, chr, postlude) {
         return (prelude || chr + (/\w/.test(chr) ? ' ' : '')) + !!index + (postlude || '');
       });

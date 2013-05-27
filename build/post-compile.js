@@ -38,17 +38,19 @@
       );
 
     // replace vars for `false` and `true` with boolean literals
-    [/(\w+)\s*=\s*!1\b/.exec(source), /(\w+)\s*=\s*!0\b/.exec(source)].forEach(function(varName, index) {
+    [/(\w+)\s*=\s*!1\b/, /(\w+)\s*=\s*!0\b/].forEach(function(regexp, index) {
+      var varName = (regexp.exec(source) || 0)[1];
       if (varName) {
-        varName = varName[1];
         source = source.replace(RegExp('([!=]==\\s*)' + varName + '|' + varName + '(\\s*[!=]==)', 'g'), '$1' + !!index + '$2');
       }
     });
 
     // replace `!1` and `!0` in expressions with `false` and `true` values
-    source = source
-      .replace(/([!=]==\s*)!1|!1(\s*[!=]==)/g, '$1false$2')
-      .replace(/([!=]==\s*)!0|!0(\s*[!=]==)/g, '$1true$2');
+    [/([!=]==)\s*!1|(.)!1\s*([!=]==)/g, /([!=]==)\s*!0|(.)!0\s*([!=]==)/g].forEach(function(regexp, index) {
+      source = source.replace(regexp, function(match, prelude, chr, postlude) {
+        return (prelude || chr + (/\w/.test(chr) ? ' ' : '')) + !!index + (postlude || '');
+      });
+    });
 
     // flip `typeof` expressions to help optimize Safari and
     // correct the AMD module definition for AMD build optimizers

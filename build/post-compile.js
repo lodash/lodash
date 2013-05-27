@@ -37,6 +37,19 @@
         '\\u1680\\u180e\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200a\\u202f\\u205f\\u3000"'
       );
 
+    // replace vars for `false` and `true` with boolean literals
+    [/(\w+)\s*=\s*!1\b/.exec(source), /(\w+)\s*=\s*!0\b/.exec(source)].forEach(function(varName, index) {
+      if (varName) {
+        varName = varName[1];
+        source = source.replace(RegExp('([!=]==\\s*)' + varName + '|' + varName + '(\\s*[!=]==)', 'g'), '$1' + !!index + '$2');
+      }
+    });
+
+    // replace `!1` and `!0` in expressions with `false` and `true` values
+    source = source
+      .replace(/([!=]==\s*)!1|!1(\s*[!=]==)/g, '$1false$2')
+      .replace(/([!=]==\s*)!0|!0(\s*[!=]==)/g, '$1true$2');
+
     // flip `typeof` expressions to help optimize Safari and
     // correct the AMD module definition for AMD build optimizers
     // (e.g. from `"number" == typeof x` to `typeof x == "number")

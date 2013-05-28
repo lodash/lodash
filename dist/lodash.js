@@ -2401,7 +2401,7 @@
      *
      * @static
      * @memberOf _
-     * @alias detect
+     * @alias detect, findWhere
      * @category Collections
      * @param {Array|Object|String} collection The collection to iterate over.
      * @param {Function|Object|String} [callback=identity] The function called per
@@ -5207,7 +5207,7 @@
     // add functions to `lodash.prototype`
     mixin(lodash);
 
-    // add Underscore `_.chain` compat
+    // add Underscore compat
     lodash.chain = lodash;
     lodash.prototype.chain = function() { return this; };
 
@@ -5262,6 +5262,7 @@
     lodash.all = every;
     lodash.any = some;
     lodash.detect = find;
+    lodash.findWhere = find;
     lodash.foldl = reduce;
     lodash.foldr = reduceRight;
     lodash.include = contains;

@@ -327,7 +327,7 @@
 
       if (partialArgs.length) {
         args = args.length
-          ? partialArgs.concat(slice(args))
+          ? partialArgs.concat(nativeSlice.call(args))
           : partialArgs;
       }
       if (this instanceof bound) {
@@ -1411,7 +1411,7 @@
    *
    * @static
    * @memberOf _
-   * @alias detect
+   * @alias detect, findWhere
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called per
@@ -3046,7 +3046,7 @@
   lodash.select = filter;
   lodash.tail = rest;
 
-  // add Underscore `_.chain` compat
+  // add Underscore compat
   lodash.chain = chain;
 
   /*--------------------------------------------------------------------------*/

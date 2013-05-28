@@ -1777,7 +1777,7 @@
    *
    * @static
    * @memberOf _
-   * @alias detect
+   * @alias detect, findWhere
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called per
@@ -4152,8 +4152,9 @@
    * ');
    */
   function template(text, data, options) {
+    var settings = lodash.templateSettings;
     text || (text = '');
-    options = defaults({}, options, lodash.templateSettings);
+    options = defaults({}, options, settings);
 
     var index = 0,
         source = "__p += '",
@@ -4448,7 +4449,7 @@
   lodash.tail = rest;
   lodash.unique = uniq;
 
-  // add Underscore `_.chain` compat
+  // add Underscore compat
   lodash.chain = chain;
 
   /*--------------------------------------------------------------------------*/
@@ -4459,7 +4460,6 @@
   lodash.escape = escape;
   lodash.every = every;
   lodash.find = find;
-  lodash.findWhere = findWhere;
   lodash.has = has;
   lodash.identity = identity;
   lodash.indexOf = indexOf;
@@ -4497,6 +4497,7 @@
   lodash.all = every;
   lodash.any = some;
   lodash.detect = find;
+  lodash.findWhere = findWhere;
   lodash.foldl = reduce;
   lodash.foldr = reduceRight;
   lodash.include = contains;

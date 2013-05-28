@@ -57,6 +57,7 @@
     'drop': 'rest',
     'each': 'forEach',
     'extend': 'assign',
+    'findWhere': 'find',
     'foldl': 'reduce',
     'foldr': 'reduceRight',
     'head': 'first',
@@ -76,7 +77,7 @@
     'contains': ['include'],
     'every': ['all'],
     'filter': ['select'],
-    'find': ['detect'],
+    'find': ['detect', 'findWhere'],
     'first': ['head', 'take'],
     'forEach': ['each'],
     'functions': ['methods'],
@@ -95,7 +96,7 @@
   });
 
   /** List of all methods */
-  var allMethods = lodashMethods.concat('findWhere');
+  var allMethods = lodashMethods.slice();
 
   /** List of "Arrays" category methods */
   var arraysMethods = [
@@ -1333,37 +1334,6 @@
           } else {
             equal('x' in lodash.prototype, false, basename);
           }
-          start();
-        });
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('commands with findWhere');
-
-  (function() {
-    var commands = [
-      'underscore include=findWhere',
-      'modern include=findWhere',
-      'plus=findWhere'
-    ];
-
-    commands.forEach(function(command) {
-      asyncTest('`lodash ' + command + '`', function() {
-        var start = _.after(2, _.once(QUnit.start));
-
-        build(['-s'].concat(command.split(' ')), function(data) {
-          var basename = path.basename(data.outputPath, '.js'),
-              context = createContext();
-
-          vm.runInContext(data.source, context);
-          var lodash = context._;
-
-          var collection = [{ 'a': 1 }, { 'a': 1 }];
-          deepEqual(lodash.findWhere(collection, { 'a': 1 }), collection[0], '_.findWhere: ' + basename);
-
           start();
         });
       });

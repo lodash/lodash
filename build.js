@@ -44,6 +44,7 @@
     'drop': 'rest',
     'each': 'forEach',
     'extend': 'assign',
+    'findWhere': 'find',
     'foldl': 'reduce',
     'foldr': 'reduceRight',
     'head': 'first',
@@ -63,7 +64,7 @@
     'contains': ['include'],
     'every': ['all'],
     'filter': ['select'],
-    'find': ['detect'],
+    'find': ['detect', 'findWhere'],
     'first': ['head', 'take'],
     'forEach': ['each'],
     'functions': ['methods'],
@@ -230,7 +231,7 @@
   var allMethods = _.keys(dependencyMap);
 
   /** List of Lo-Dash methods */
-  var lodashMethods = _.without(allMethods, 'findWhere');
+  var lodashMethods = allMethods.slice();
 
   /** List of Backbone's Lo-Dash dependencies */
   var backboneDependencies = [
@@ -2364,6 +2365,47 @@
             '}'
           ].join('\n'));
         }
+        // add Underscore's `_.findWhere`
+        if (!useLodashMethod('findWhere') && !useLodashMethod('where')) {
+          source = source.replace(matchFunction(source, 'find'), function(match) {
+            var indent = getIndent(match);
+            return match && (match + [
+              '',
+              '/**',
+              ' * Examines each element in a `collection`, returning the first that',
+              ' * has the given `properties`. When checking `properties`, this method',
+              ' * performs a deep comparison between values to determine if they are',
+              ' * equivalent to each other.',
+              ' *',
+              ' * @static',
+              ' * @memberOf _',
+              ' * @category Collections',
+              ' * @param {Array|Object|String} collection The collection to iterate over.',
+              ' * @param {Object} properties The object of property values to filter by.',
+              ' * @returns {Mixed} Returns the found element, else `undefined`.',
+              ' * @example',
+              ' *',
+              ' * var food = [',
+              " *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },",
+              " *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },",
+              " *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }",
+              ' * ];',
+              ' *',
+              " * _.findWhere(food, { 'type': 'vegetable' });",
+              " * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }",
+              ' */',
+              'function findWhere(object, properties) {',
+              '  return where(object, properties, true);',
+              '}',
+              ''
+            ].join('\n' + indent));
+          });
+
+          // replace alias assignment
+          source = source.replace(getMethodAssignments(source), function(match) {
+            return match.replace(/^( *lodash.findWhere *= *).+/m, '$1findWhere;');
+          });
+        }
         // replace `_.flatten`
         if (!useLodashMethod('flatten')) {
           source = replaceFunction(source, 'flatten', [
@@ -2845,48 +2887,6 @@
               .replace(/\(args *=.+/, 'partialArgs.concat(slice(args))');
           });
         }
-      }
-      // add Underscore's `_.findWhere`
-      if (_.contains(buildMethods, 'findWhere')) {
-        if (isUnderscore) {
-          source = source.replace(matchFunction(source, 'find'), function(match) {
-            var indent = getIndent(match);
-            return match && (match + [
-              '',
-              '/**',
-              ' * Examines each element in a `collection`, returning the first that',
-              ' * has the given `properties`. When checking `properties`, this method',
-              ' * performs a deep comparison between values to determine if they are',
-              ' * equivalent to each other.',
-              ' *',
-              ' * @static',
-              ' * @memberOf _',
-              ' * @category Collections',
-              ' * @param {Array|Object|String} collection The collection to iterate over.',
-              ' * @param {Object} properties The object of property values to filter by.',
-              ' * @returns {Mixed} Returns the found element, else `undefined`.',
-              ' * @example',
-              ' *',
-              ' * var food = [',
-              " *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },",
-              " *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },",
-              " *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }",
-              ' * ];',
-              ' *',
-              " * _.findWhere(food, { 'type': 'vegetable' });",
-              " * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }",
-              ' */',
-              'function findWhere(object, properties) {',
-              '  return where(object, properties, true);',
-              '}',
-              ''
-            ].join('\n' + indent));
-          });
-        }
-        source = source.replace(getMethodAssignments(source), function(match) {
-          var methodName = isUnderscore ? 'findWhere' : 'find';
-          return match.replace(/^( *)lodash.find *=.+/m, '$&\n$1lodash.findWhere = ' + methodName + ';');
-        });
       }
       // add Underscore's chaining methods
       if (isUnderscore ? !_.contains(plusMethods, 'chain') : _.contains(plusMethods, 'chain')) {

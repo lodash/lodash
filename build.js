@@ -2909,26 +2909,6 @@
         // replace `basicEach` with `_.forEach` in the method assignment snippet
         source = source.replace(/\bbasicEach(?=\(\[)/g, 'forEach');
       }
-      // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
-      if (isUnderscore && (/\bbasicEach\(/.test(source) || !useLodashMethod('forOwn'))) {
-        source = source.replace(matchFunction(source, 'every'), function(match) {
-          return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-        });
-
-        source = source.replace(matchFunction(source, 'find'), function(match) {
-          return match.replace(/return false/, 'return indicatorObject');
-        });
-
-        source = source.replace(matchFunction(source, 'transform'), function(match) {
-          return match.replace(/return callback[^)]+\)/, '$& && indicatorObject');
-        });
-
-        _.each(['contains', 'some'], function(methodName) {
-          source = source.replace(matchFunction(source, methodName), function(match) {
-            return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
-          });
-        });
-      }
 
       var context = vm.createContext({
         'clearTimeout': clearTimeout,
@@ -2987,6 +2967,27 @@
               });
             }
           });
+
+          // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
+          if (isUnderscore && (/\bbasicEach\(/.test(source) || !useLodashMethod('forOwn'))) {
+            source = source.replace(matchFunction(source, 'every'), function(match) {
+              return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+            });
+
+            source = source.replace(matchFunction(source, 'find'), function(match) {
+              return match.replace(/return false/, 'return indicatorObject');
+            });
+
+            source = source.replace(matchFunction(source, 'transform'), function(match) {
+              return match.replace(/return callback[^)]+\)/, '$& && indicatorObject');
+            });
+
+            _.each(['contains', 'some'], function(methodName) {
+              source = source.replace(matchFunction(source, methodName), function(match) {
+                return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
+              });
+            });
+          }
 
           // remove `thisArg` from unexposed `forIn` and `forOwn`
           _.each(['forIn', 'forOwn'], function(methodName) {

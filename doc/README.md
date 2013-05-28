@@ -3330,7 +3330,7 @@ _.pick({ 'name': 'moe', '_userid': 'moe1' }, function(value, key) {
 ### <a id="_transformcollection--callbackidentity-accumulator-thisarg"></a>`_.transform(collection [, callback=identity, accumulator, thisArg])`
 <a href="#_transformcollection--callbackidentity-accumulator-thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L2443 "View in source") [&#x24C9;][1]
 
-Transforms an `object` to an new `accumulator` object which is the result of running each of its elements through the `callback`, with each `callback` execution potentially mutating the `accumulator` object. The `callback`is bound to `thisArg` and invoked with four arguments; *(accumulator, value, key, object)*. Callbacks may exit iteration early by explicitly returning `false`.
+Transforms an `object` to a new `accumulator` object which is the result of running each of its elements through the `callback`, with each `callback` execution potentially mutating the `accumulator` object. The `callback` is bound to `thisArg` and invoked with four arguments; *(accumulator, value, key, object)*. Callbacks may exit iteration early by explicitly returning `false`.
 
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.

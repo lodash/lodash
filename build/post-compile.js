@@ -2,8 +2,9 @@
 ;(function() {
   'use strict';
 
-  /** The Node.js filesystem module */
-  var fs = require('fs');
+  /** Load Node.js modules */
+  var fs = require('fs'),
+      vm = require('vm');
 
   /** The minimal license/copyright template */
   var licenseTemplate = [
@@ -24,9 +25,6 @@
    * @returns {String} Returns the processed source.
    */
   function postprocess(source) {
-    // remove copyright header
-    source = source.replace(/^\/\**[\s\S]+?\*\/\n/, '');
-
     // correct overly aggressive Closure Compiler advanced optimization
     source = source
       .replace(/(document[^&]+&&)\s*(?:\w+|!\d)/, '$1!({toString:0}+"")')
@@ -37,15 +35,23 @@
         '\\u1680\\u180e\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200a\\u202f\\u205f\\u3000"'
       );
 
-    // replace vars for `false` and `true` with boolean literals
-    [/(\w+)\s*=\s*!1\b/, /(\w+)\s*=\s*!0\b/].forEach(function(regexp, index) {
-      var varName = (regexp.exec(source) || 0)[1];
-      if (varName) {
-        source = source.replace(RegExp('([!=]==\\s*)' + varName + '\\b|\\b' + varName + '(\\s*[!=]==)', 'g'), function(match, prelude, postlude, at) {
+    try {
+      var context = vm.createContext({});
+      vm.runInContext(source, context);
+    } catch(e) { }
+
+    ['forEach', 'forIn', 'forOwn'].forEach(function(methodName) {
+      var pairs = /[!=]==\s*([a-zA-Z]+)(?!\()|([a-zA-Z]+)\s*[!=]==/.exec((context._ || {})[methodName]),
+          varName = pairs && (pairs[1] || pairs[2]),
+          value = (value = varName && RegExp('\\b' + varName + '\\s*=\\s*!([01])\\b').exec(source)) && !+value[1];
+
+      if (typeof value == 'boolean') {
+        // replace vars for `false` and `true` with boolean literals
+        source = source.replace(RegExp('([!=]==\\s*)' + varName + '\\b(?!\\()|\\b' + varName + '(\\s*[!=]==)', 'g'), function(match, prelude, postlude, at) {
           // avoid replacing local variables with the same name
           return RegExp('\\b' + varName + '\\s*(?:,|=[^=])').test(source.slice(at - 10, at))
             ? match
-            : (prelude || '') + !!index + (postlude || '');
+            : (prelude || '') + value + (postlude || '');
         });
       }
     });
@@ -78,6 +84,9 @@
     if (!snippet) {
       return source;
     }
+    // remove copyright header
+    source = source.replace(/^\/\**[\s\S]+?\*\/\n/, '');
+
     // add new copyright header
     var version = snippet[2];
     source = licenseTemplate.replace('<%= VERSION %>', version) + '\n;' + source;

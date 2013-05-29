@@ -1089,9 +1089,20 @@
         'String': String.prototype
       },
       function(object, builtin) {
-        var keys = [];
-        func(object, function(value, key) { keys.push(key); });
-        deepEqual(keys, [], 'non-enumerable properties on ' + builtin + '.prototype');
+        var message = 'non-enumerable properties on ' + builtin + '.prototype',
+            props = [];
+
+        func(object, function(value, prop) {
+          props.push(prop);
+        });
+
+        if (/Error/.test(builtin)) {
+          ok(_.every(['constructor', 'toString'], function(prop) {
+            return !_.contains(props, prop);
+          }), message);
+        } else {
+          deepEqual(props, [], message);
+        }
       });
     });
 

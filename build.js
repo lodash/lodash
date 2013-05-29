@@ -208,7 +208,7 @@
 
     // method used by the `backbone` and `underscore` builds
     'chain': ['value'],
-    'findWhere': ['find']
+    'findWhere': ['where']
   };
 
   /** Used to inline `iteratorTemplate` */
@@ -231,7 +231,7 @@
   var allMethods = _.keys(dependencyMap);
 
   /** List of Lo-Dash methods */
-  var lodashMethods = allMethods.slice();
+  var lodashMethods = _.without(allMethods, 'findWhere');
 
   /** List of Backbone's Lo-Dash dependencies */
   var backboneDependencies = [
@@ -729,7 +729,9 @@
    * @returns {Array} Returns an array of aliases.
    */
   function getAliases(methodName) {
-    return realToAliasMap[methodName] || [];
+    return (realToAliasMap[methodName] || []).filter(function(methodName) {
+      return !dependencyMap[methodName];
+    });
   }
 
   /**
@@ -945,7 +947,7 @@
    * @returns {String} Returns the real method name.
    */
   function getRealName(methodName) {
-    return aliasToRealMap[methodName] || methodName;
+    return (!dependencyMap[methodName] && aliasToRealMap[methodName]) || methodName;
   }
 
   /**
@@ -1860,6 +1862,11 @@
       return _.contains(methods, methodName);
     };
 
+    // delete the `_.findWhere` dependency map to enable its alias mapping
+    if (!isUnderscore || useLodashMethod('findWhere')) {
+      delete dependencyMap.findWhere;
+    }
+
     // methods to include in the build
     var includeMethods = options.reduce(function(accumulator, value) {
       return /^include=.*$/.test(value)
@@ -1934,15 +1941,15 @@
         if (!useLodashMethod('pick')){
           dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
         }
-        if (!useLodashMethod('where')) {
-          dependencyMap.createCallback = _.without(dependencyMap.createCallback, 'isEqual');
-          dependencyMap.where.push('find', 'isEmpty');
-        }
         if (!useLodashMethod('template')) {
           dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
         }
         if (!useLodashMethod('toArray')) {
           dependencyMap.toArray.push('isArray', 'map');
+        }
+        if (!useLodashMethod('where')) {
+          dependencyMap.createCallback = _.without(dependencyMap.createCallback, 'isEqual');
+          dependencyMap.where.push('find', 'isEmpty');
         }
 
         _.each(['debounce', 'throttle'], function(methodName) {
@@ -1962,11 +1969,10 @@
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'charAtCallback', 'isArray', 'isString');
           }
         });
-
-        dependencyMap.findWhere = ['where'];
-        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
       }
       if (isModern || isUnderscore) {
+        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
+
         _.each(['at', 'forEach', 'toArray'], function(methodName) {
           if (!(isUnderscore && useLodashMethod(methodName))) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isString');
@@ -2006,10 +2012,10 @@
 
           // add `chain` and `findWhere`
           if (isUnderscore) {
-            if (_.contains(categories, 'Chaining')) {
+            if (_.contains(categories, 'Chaining') && !_.contains(methodNames, 'chain')) {
               methodNames.push('chain');
             }
-            if (_.contains(categories, 'Collections')) {
+            if (_.contains(categories, 'Collections') && !_.contains(methodNames, 'findWhere')) {
               methodNames.push('findWhere');
             }
           }
@@ -2125,7 +2131,7 @@
         source = removeBindingOptimization(source);
       }
       if (isLegacy || isMobile || isUnderscore) {
-        if (!useLodashMethod('assign') && !useLodashMethod('defaults') && !useLodashMethod('forIn') && !useLodashMethod('forOwn')) {
+        if (isMobile || (!useLodashMethod('assign') && !useLodashMethod('defaults') && !useLodashMethod('forIn') && !useLodashMethod('forOwn'))) {
           source = removeKeysOptimization(source);
         }
         if (!useLodashMethod('defer')) {
@@ -2928,7 +2934,8 @@
     else {
       // remove methods from the build
       allMethods.forEach(function(otherName) {
-        if (!_.contains(buildMethods, otherName)) {
+        if (!_.contains(buildMethods, otherName) &&
+            !(otherName == 'findWhere' && !isUnderscore)) {
           source = removeFunction(source, otherName);
         }
       });
@@ -3300,7 +3307,7 @@
     }
 
     debugSource = cleanupSource(source);
-    source = cleanupSource(source);
+    source = debugSource;
 
     /*------------------------------------------------------------------------*/
 

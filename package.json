@@ -2,7 +2,7 @@
   "name": "lodash",
   "version": "1.2.1",
   "description": "A low-level utility library delivering consistency, customization, performance, and extra features.",
-  "homepage": "http://lodash.com",
+  "homepage": "http://lodash.com/",
   "license": "MIT",
   "main": "./dist/lodash.js",
   "keywords": [
@@ -28,6 +28,11 @@
   },
   "bin": {
     "lodash": "./build.js"
+  },
+  "devDependencies": {
+    "istanbul": "~0.1.35",
+    "grunt": "~0.4.1",
+    "grunt-shell": "~0.2.2"
   },
   "engines": [
     "node",

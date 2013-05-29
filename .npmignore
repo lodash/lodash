@@ -6,8 +6,9 @@
 *.md
 bower.json
 component.json
+coverage
 doc
-node_modules
+Gruntfile.js
 perf
 test
 vendor/*.gz

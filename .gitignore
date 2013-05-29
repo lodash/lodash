@@ -6,3 +6,6 @@
 node_modules
 vendor/closure-compiler
 vendor/uglifyjs
+coverage/index.html
+coverage/*.json
+coverage/lodash/vendor

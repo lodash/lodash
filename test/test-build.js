@@ -6,7 +6,7 @@
   var vm = require('vm');
 
   /** Load other modules */
-  var _ = require('../lodash.js'),
+  var _ = require('../dist/lodash.js'),
       build = require('../build.js'),
       minify = require('../build/minify.js'),
       util = require('../build/util.js');
@@ -1437,6 +1437,110 @@
           strictEqual('outputPath' in data, false);
           equal(written, data.source);
           equal(arguments.length, 1);
+          start();
+        });
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('mixed underscore and lodash methods');
+
+  (function() {
+    var methodNames = [
+      'assign',
+      'bindKey',
+      'clone',
+      'contains',
+      'debouce',
+      'defaults',
+      'defer',
+      'difference',
+      'every',
+      'filter',
+      'find',
+      'findWhere',
+      'first',
+      'flatten',
+      'forEach',
+      'forOwn',
+      'intersection',
+      'initial',
+      'isEmpty',
+      'isEqual',
+      'isPlainObject',
+      'isRegExp',
+      'last',
+      'map',
+      'max',
+      'memoize',
+      'min',
+      'omit',
+      'partial',
+      'partialRight',
+      'pick',
+      'pluck',
+      'reduce',
+      'result',
+      'rest',
+      'some',
+      'tap',
+      'template',
+      'throttle',
+      'times',
+      'toArray',
+      'transform',
+      'uniq',
+      'uniqueId',
+      'value',
+      'where',
+      'zip'
+    ];
+
+    function strip(value) {
+      return String(value)
+        .replace(/^ *\/\/.*/gm, '')
+        .replace(/\b(?:basicEach|context|forEach|forOwn|window)\b/g, '')
+        .replace(/\blodash\.(createCallback\()\b/g, '$1')
+        .replace(/[\s;]/g, '');
+    }
+
+    methodNames.forEach(function(methodName) {
+      var command = 'underscore plus=' + methodName;
+
+      if (methodName == 'createCallback') {
+        command += ',where';
+      }
+      if (methodName == 'zip') {
+        command += ',unzip';
+      }
+      if (methodName != 'chain' && _.contains(chainingMethods.concat('mixin'), methodName)) {
+        command += ',chain';
+      }
+      if (_.contains(['isEqual', 'isPlainObject'], methodName)) {
+        command += ',forIn';
+      }
+      if (_.contains(['contains', 'every', 'find', 'some', 'transform'], methodName)) {
+        command += ',forOwn';
+      }
+      asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s'].concat(command.split(' ')), function(data) {
+          var array = [{ 'value': 1 }],
+              basename = path.basename(data.outputPath, '.js'),
+              context = createContext();
+
+          vm.runInContext(data.source, context, true);
+          var lodash = context._;
+
+          if (methodName == 'chain' || methodName == 'defer') {
+            notEqual(strip(lodash[methodName]), strip(_[methodName]), basename);
+          } else if (!/\.min$/.test(basename)) {
+            equal(strip(lodash[methodName]), strip(_[methodName]), basename);
+          }
+          testMethod(lodash, methodName, basename);
           start();
         });
       });

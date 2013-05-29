@@ -57,7 +57,6 @@
     'drop': 'rest',
     'each': 'forEach',
     'extend': 'assign',
-    'findWhere': 'find',
     'foldl': 'reduce',
     'foldr': 'reduceRight',
     'head': 'first',
@@ -77,7 +76,7 @@
     'contains': ['include'],
     'every': ['all'],
     'filter': ['select'],
-    'find': ['detect', 'findWhere'],
+    'find': ['detect'],
     'first': ['head', 'take'],
     'forEach': ['each'],
     'functions': ['methods'],
@@ -90,13 +89,13 @@
     'zipObject': ['object']
   };
 
-  /** List of all Lo-Dash methods */
-  var lodashMethods = _.functions(_).filter(function(methodName) {
+  /** List of all methods */
+  var allMethods = _.functions(_).filter(function(methodName) {
     return !/^_/.test(methodName);
   });
 
-  /** List of all methods */
-  var allMethods = lodashMethods.slice();
+  /** List of all Lo-Dash methods */
+  var lodashMethods = _.without(allMethods, 'findWhere');
 
   /** List of "Arrays" category methods */
   var arraysMethods = [
@@ -464,7 +463,7 @@
           func(array, 'slice');
           func(object, 'toFixed');
         }
-        else if (methodName == 'where') {
+        else if (methodName == 'findWhere' || methodName == 'where') {
           func(array, object);
           func(object, object);
         }
@@ -1445,7 +1444,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('mixed underscore and lodash methods');
+  QUnit.module('underscore builds with lodash methods');
 
   (function() {
     var methodNames = [
@@ -1482,6 +1481,7 @@
       'pick',
       'pluck',
       'reduce',
+      'reduceRight',
       'result',
       'rest',
       'some',
@@ -1535,7 +1535,7 @@
           vm.runInContext(data.source, context, true);
           var lodash = context._;
 
-          if (methodName == 'chain' || methodName == 'defer') {
+          if (methodName == 'chain' || methodName == 'defer' || methodName == 'findWhere') {
             notEqual(strip(lodash[methodName]), strip(_[methodName]), basename);
           } else if (!/\.min$/.test(basename)) {
             equal(strip(lodash[methodName]), strip(_[methodName]), basename);

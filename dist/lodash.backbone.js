@@ -1466,6 +1466,33 @@
   }
 
   /**
+   * Examines each element in a `collection`, returning the first that
+   * has the given `properties`. When checking `properties`, this method
+   * performs a deep comparison between values to determine if they are
+   * equivalent to each other.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|String} collection The collection to iterate over.
+   * @param {Object} properties The object of property values to filter by.
+   * @returns {Mixed} Returns the found element, else `undefined`.
+   * @example
+   *
+   * var food = [
+   *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },
+   *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },
+   *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }
+   * ];
+   *
+   * _.findWhere(food, { 'type': 'vegetable' });
+   * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }
+   */
+  function findWhere(object, properties) {
+    return where(object, properties, true);
+  }
+
+  /**
    * Iterates over a `collection`, executing the `callback` for each element in
    * the `collection`. The `callback` is bound to `thisArg` and invoked with three
    * arguments; (value, index|key, collection). Callbacks may exit iteration early
@@ -3082,6 +3109,7 @@
   lodash.all = every;
   lodash.any = some;
   lodash.detect = find;
+  lodash.findWhere = findWhere;
   lodash.foldl = reduce;
   lodash.foldr = reduceRight;
   lodash.include = contains;

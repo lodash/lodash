@@ -3740,7 +3740,8 @@
    * passed, it will be used to determine the cache key for storing the result
    * based on the arguments passed to the memoized function. By default, the first
    * argument passed to the memoized function is used as the cache key. The `func`
-   * is executed with the `this` binding of the memoized function.
+   * is executed with the `this` binding of the memoized function. The result
+   * cache is exposed as the `cache` property on the memoized function.
    *
    * @static
    * @memberOf _

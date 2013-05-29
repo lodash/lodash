@@ -9,7 +9,7 @@ QUnit CLIB helps extend QUnit’s CLI support to many common CLI environments.
 
 ## Support
 
-QUnit CLIB has been tested in at least Node.js 0.4.8-0.10.5, Narwhal 0.3.2, PhantomJS 1.9.0, RingoJS 0.9, and Rhino 1.7RC5.
+QUnit CLIB has been tested in at least Node.js 0.4.8-0.10.7, Narwhal 0.3.2, PhantomJS 1.9.0, RingoJS 0.9, and Rhino 1.7RC5.
 
 ## Usage
 

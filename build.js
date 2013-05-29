@@ -2052,8 +2052,6 @@
       source = setUseStrictOption(source, isStrict);
 
       if (isLegacy) {
-        source = removeKeysOptimization(source);
-        source = removeSetImmediate(source);
         source = removeSupportProp(source, 'fastBind');
         source = replaceSupportProp(source, 'argsClass', 'false');
 
@@ -2121,21 +2119,18 @@
           source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
             return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
           });
-
-          // replace `_.isRegExp`
-          source = replaceFunction(source, 'isRegExp', [
-            'function isRegExp(value) {',
-            "  return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;",
-            '}'
-          ].join('\n'));
         }
       }
-      if (isLegacy || isMobile || isUnderscore) {
+      if ((isLegacy || isMobile || isUnderscore) && !useLodashMethod('createCallback')) {
         source = removeBindingOptimization(source);
       }
-      if (isMobile || isUnderscore) {
-        source = removeKeysOptimization(source);
-        source = removeSetImmediate(source);
+      if (isLegacy || isMobile || isUnderscore) {
+        if (!useLodashMethod('assign') && !useLodashMethod('defaults') && !useLodashMethod('forIn') && !useLodashMethod('forOwn')) {
+          source = removeKeysOptimization(source);
+        }
+        if (!useLodashMethod('defer')) {
+          source = removeSetImmediate(source);
+        }
       }
       if (isModern || isUnderscore) {
         source = removeSupportArgsClass(source);
@@ -2169,6 +2164,15 @@
             '  return collection;',
             '}',
           ].join('\n'));
+
+          // replace `_.isRegExp`
+          if (!isUnderscore || (isUnderscore && useLodashMethod('isRegExp'))) {
+            source = replaceFunction(source, 'isRegExp', [
+              'function isRegExp(value) {',
+              "  return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;",
+              '}'
+            ].join('\n'));
+          }
 
           // replace `_.map`
           source = replaceFunction(source, 'map', [
@@ -2216,7 +2220,7 @@
               }
               else if (/^(?:max|min)$/.test(methodName)) {
                 match = match.replace(/\bbasicEach\(/, 'forEach(');
-                if (!isUnderscore) {
+                if (!isUnderscore || useLodashMethod(methodName)) {
                   return match;
                 }
               }
@@ -2641,8 +2645,9 @@
 
           source = replaceFunction(source, 'template', [
             'function template(text, data, options) {',
+            '  var settings = lodash.templateSettings;',
             "  text || (text = '');",
-            '  options = defaults({}, options, lodash.templateSettings);',
+            '  options = iteratorTemplate ? defaults({}, options, settings) : settings;',
             '',
             '  var index = 0,',
             '      source = "__p += \'",',
@@ -2834,8 +2839,13 @@
         source = source.replace(/lodash\.support *= */, '');
 
         // replace `slice` with `nativeSlice.call`
-        source = removeFunction(source, 'slice');
-        source = source.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
+        _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(methodName) {
+          if (!useLodashMethod(methodName)) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
+            });
+          }
+        });
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
         _.each(['max', 'min'], function(methodName) {
@@ -2846,16 +2856,6 @@
           }
         });
 
-        // modify `_.isEqual` and `shimIsPlainObject` to use the private `indicatorObject`
-        if (!useLodashMethod('forIn')) {
-          source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-            return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-          });
-
-          source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-            return match.replace(/return false/, 'return indicatorObject');
-          });
-        }
         // remove unneeded variables
         if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
           source = removeVar(source, 'cloneableClasses');
@@ -2884,7 +2884,7 @@
                 ].join(indent);
               })
               .replace(/thisBinding *=[^}]+}/, 'thisBinding = thisArg;\n')
-              .replace(/\(args *=.+/, 'partialArgs.concat(slice(args))');
+              .replace(/\(args *=.+/, 'partialArgs.concat(nativeSlice.call(args))');
           });
         }
       }
@@ -2986,6 +2986,16 @@
               source = source.replace(matchFunction(source, methodName), function(match) {
                 return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
               });
+            });
+          }
+          // modify `_.isEqual` and `shimIsPlainObject` to use the private `indicatorObject`
+          if (!useLodashMethod('forIn')) {
+            source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+              return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+            });
+
+            source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+              return match.replace(/return false/, 'return indicatorObject');
             });
           }
 
@@ -3239,6 +3249,9 @@
 
       if (!/\bbasicEach\(/.test(source)) {
         source = removeFunction(source, 'basicEach');
+      }
+      if (_.size(source.match(/[^.]slice\(/g)) < 2) {
+        source = removeFunction(source, 'slice');
       }
       if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
         source = removeVar(source, 'Error');

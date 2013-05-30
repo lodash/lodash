@@ -30,9 +30,7 @@
     "lodash": "./build.js"
   },
   "devDependencies": {
-    "istanbul": "~0.1.35",
-    "grunt": "~0.4.1",
-    "grunt-shell": "~0.2.2"
+    "istanbul": "~0.1.35"
   },
   "engines": [
     "node",

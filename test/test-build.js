@@ -1535,7 +1535,7 @@
           vm.runInContext(data.source, context, true);
           var lodash = context._;
 
-          if (methodName == 'chain' || methodName == 'defer' || methodName == 'findWhere') {
+          if (methodName == 'chain' || methodName == 'findWhere' || (methodName == 'defer' && global.setImmediate)) {
             notEqual(strip(lodash[methodName]), strip(_[methodName]), basename);
           } else if (!/\.min$/.test(basename)) {
             equal(strip(lodash[methodName]), strip(_[methodName]), basename);

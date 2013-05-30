@@ -246,15 +246,6 @@ require({
 });
 ```
 
-## Unit tests & code coverage
-
-After cloning this repository, run `npm install` to install the dependencies needed for Lo-Dash development and testing. You may want to install Istanbul _globally_ using `npm install istanbul -g`.
-
-Once that’s done, you can run the unit tests in Node using `npm test` or `node test/test.js`. To run the tests in Rhino, Ringo, Narwhal, PhantomJS, and web browsers as well, use `grunt test`.
-
-To generate [the code coverage report](http://rawgithub.com/bestiejs/lodash/master/coverage/lodash/lodash.js.html), use `grunt cover`.
-
-
 ## Release Notes
 
 ### <sup>v1.2.1</sup>

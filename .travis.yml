@@ -3,6 +3,7 @@ node_js:
   - 0.6
   - 0.9
 env:
+  - TEST_COMMAND="istanbul cover ./test/test.js"
   - TEST_COMMAND="phantomjs ./test/test.js ../dist/lodash.compat.js"
   - TEST_COMMAND="phantomjs ./test/test.js ../dist/lodash.compat.min.js"
   - TEST_COMMAND="node ./test/test.js ../dist/lodash.js"
@@ -16,5 +17,6 @@ branches:
 before_script:
   - "tar -xzvf vendor/closure-compiler.tar.gz -C vendor"
   - "tar -xzvf vendor/uglifyjs.tar.gz -C vendor"
+  - "npm install -g istanbul"
 script:
   $TEST_COMMAND

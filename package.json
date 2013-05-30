@@ -29,9 +29,6 @@
   "bin": {
     "lodash": "./build.js"
   },
-  "devDependencies": {
-    "istanbul": "~0.1.35"
-  },
   "engines": [
     "node",
     "rhino"

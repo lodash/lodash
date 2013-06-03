@@ -3231,6 +3231,9 @@
       if (isRemoved(source, 'getObject', 'releaseObject')) {
         source = removeVar(source, 'objectPool');
       }
+      if (isRemoved(source, 'releaseArray', 'releaseObject')) {
+        source = removeVar(source, 'maxPoolSize');
+      }
       if (isRemoved(source, 'invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
       }

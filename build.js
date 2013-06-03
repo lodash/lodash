@@ -85,7 +85,7 @@
     'bind': ['createBound'],
     'bindAll': ['bind', 'functions'],
     'bindKey': ['createBound'],
-    'clone': ['assign', 'forEach', 'forOwn', 'isArray', 'isObject', 'isNode', 'slice'],
+    'clone': ['assign', 'forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isNode', 'releaseArray', 'slice'],
     'cloneDeep': ['clone'],
     'compact': [],
     'compose': [],
@@ -114,7 +114,7 @@
     'identity': [],
     'indexOf': ['basicIndexOf', 'sortedIndex'],
     'initial': ['slice'],
-    'intersection': ['createCache'],
+    'intersection': ['createCache', 'getArray', 'releaseArray'],
     'invert': ['keys'],
     'invoke': ['forEach'],
     'isArguments': [],
@@ -123,7 +123,7 @@
     'isDate': [],
     'isElement': [],
     'isEmpty': ['forOwn', 'isArguments', 'isFunction'],
-    'isEqual': ['forIn', 'isArguments', 'isFunction', 'isNode'],
+    'isEqual': ['forIn', 'getArray', 'isArguments', 'isFunction', 'isNode', 'releaseArray'],
     'isFinite': [],
     'isFunction': [],
     'isNaN': ['isNumber'],
@@ -140,7 +140,7 @@
     'map': ['basicEach', 'createCallback', 'isArray'],
     'max': ['basicEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'memoize': [],
-    'merge': ['forEach', 'forOwn', 'isArray', 'isObject', 'isPlainObject'],
+    'merge': ['forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isPlainObject', 'releaseArray'],
     'min': ['basicEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
@@ -163,7 +163,7 @@
     'shuffle': ['forEach'],
     'size': ['keys'],
     'some': ['basicEach', 'createCallback', 'isArray'],
-    'sortBy': ['compareAscending', 'createCallback', 'forEach'],
+    'sortBy': ['compareAscending', 'createCallback', 'forEach', 'getObject', 'releaseObject'],
     'sortedIndex': ['createCallback', 'identity'],
     'tap': ['value'],
     'template': ['defaults', 'escape', 'escapeStringChar', 'keys', 'values'],
@@ -173,7 +173,7 @@
     'transform': ['createCallback', 'createObject', 'forOwn', 'isArray'],
     'unescape': ['unescapeHtmlChar'],
     'union': ['isArray', 'uniq'],
-    'uniq': ['createCache', 'getIndexOf', 'overloadWrapper'],
+    'uniq': ['createCache', 'getArray', 'getIndexOf', 'overloadWrapper', 'releaseArray'],
     'uniqueId': [],
     'unzip': ['max', 'pluck'],
     'value': ['basicEach', 'forOwn', 'isArray', 'lodashWrapper'],
@@ -190,17 +190,21 @@
     'charAtCallback': [],
     'compareAscending': [],
     'createBound': ['createObject', 'isFunction', 'isObject'],
-    'createCache': ['basicIndexOf', 'getIndexOf'],
-    'createIterator': ['iteratorTemplate'],
+    'createCache': ['basicIndexOf', 'getArray', 'getIndexOf', 'getObject', 'releaseObject'],
+    'createIterator': ['getObject', 'iteratorTemplate', 'releaseObject'],
     'createObject': [ 'isObject', 'noop'],
     'escapeHtmlChar': [],
     'escapeStringChar': [],
+    'getArray': [],
     'getIndexOf': ['basicIndexOf', 'indexOf'],
+    'getObject': [],
     'iteratorTemplate': [],
     'isNode': [],
     'lodashWrapper': [],
     'noop': [],
     'overloadWrapper': ['createCallback'],
+    'releaseArray': [],
+    'releaseObject': [],
     'shimIsPlainObject': ['forIn', 'isArguments', 'isFunction', 'isNode'],
     'shimKeys': ['createIterator', 'isArguments'],
     'slice': [],
@@ -222,9 +226,7 @@
     'shadowedProps',
     'top',
     'useHas',
-    'useKeys',
-    'shimIsPlainObject',
-    'shimKyes'
+    'useKeys'
   ];
 
   /** List of all methods */
@@ -309,9 +311,6 @@
     'unzip'
   ];
 
-  /** List of Underscore methods */
-  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
-
   /** List of ways to export the `lodash` function */
   var exportsAll = [
     'amd',
@@ -341,15 +340,22 @@
     'createIterator',
     'escapeHtmlChar',
     'escapeStringChar',
+    'getArray',
+    'getObject',
     'isNode',
     'iteratorTemplate',
     'lodashWrapper',
     'overloadWrapper',
+    'releaseArray',
+    'releaseObject',
     'shimIsPlainObject',
     'shimKeys',
     'slice',
     'unescapeHtmlChar'
-  ]
+  ];
+
+  /** List of Underscore methods */
+  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods, privateMethods));
 
   /*--------------------------------------------------------------------------*/
 
@@ -990,7 +996,7 @@
       // match a function declaration
       'function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
       // match a variable declaration with function expression
-      'var ' + funcName + ' *=.*?function[\\s\\S]+?\\n\\1};' +
+      'var ' + funcName + ' *=.*?function[\\s\\S]+?\\n\\1}(?:\\(\\)\\))?;' +
       // end non-capturing group
       ')\\n'
     )));
@@ -1051,24 +1057,30 @@
       return source;
     }
     // remove data object property assignment
-    var modified = snippet
-      .replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + identifier + "':.+\\n+", 'm'), '')
-      .replace(/,(?=\s*})/, '');
+    var modified = snippet.replace(RegExp("^(?: *\\/\\/.*\\n)* *data\\." + identifier + " *= *(.+\\n+)", 'm'), function(match, postlude) {
+      return /\bdata\b/.test(postlude) ? postlude : '';
+    });
 
     source = source.replace(snippet, function() {
       return modified;
     });
 
-    // clip at the `factory` assignment
+    // clip to the `factory` assignment
     snippet = modified.match(/Function\([\s\S]+$/)[0];
 
-    modified = snippet
-      .replace(RegExp('\\b' + identifier + '\\b,? *', 'g'), '')
-      .replace(/, *(?=',)/, '')
-      .replace(/,(?=\s*\))/, '')
+    // remove `factory` arguments
+    source = source.replace(snippet, function(match) {
+      return match
+        .replace(RegExp('\\b' + identifier + '\\b,? *', 'g'), '')
+        .replace(/, *(?=',)/, '')
+        .replace(/,(?=\s*\))/, '');
+    });
 
-    source = source.replace(snippet, function() {
-      return modified;
+    // remove property assignment from `getObject`
+    source = source.replace(matchFunction(source, 'getObject'), function(match) {
+      return match
+        .replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + identifier + "':.+\\n+", 'm'), '')
+        .replace(/,(?=\s*})/, '');
     });
 
     return source;
@@ -1952,6 +1964,15 @@
           dependencyMap.where.push('find', 'isEmpty');
         }
 
+        _.each(['clone', 'difference', 'intersection', 'isEqual', 'sortBy', 'uniq'], function(methodName) {
+          if (methodName == 'clone'
+                ? (!useLodashMethod('clone') && !useLodashMethod('cloneDeep'))
+                : !useLodashMethod(methodName)
+              ) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'getArray', 'getObject', 'releaseArray', 'releaseObject');
+          }
+        });
+
         _.each(['debounce', 'throttle'], function(methodName) {
           if (!useLodashMethod(methodName)) {
             dependencyMap[methodName] = [];
@@ -1964,6 +1985,12 @@
           }
         });
 
+        _.each(['flatten', 'uniq'], function(methodName) {
+          if (!useLodashMethod(methodName)) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'overloadWrapper');
+          }
+        });
+
         _.each(['max', 'min'], function(methodName) {
           if (!useLodashMethod(methodName)) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'charAtCallback', 'isArray', 'isString');
@@ -1972,6 +1999,12 @@
       }
       if (isModern || isUnderscore) {
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
+
+        _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(methodName) {
+          if (!(isUnderscore && useLodashMethod(methodName))) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
+          }
+        });
 
         _.each(['at', 'forEach', 'toArray'], function(methodName) {
           if (!(isUnderscore && useLodashMethod(methodName))) {
@@ -2644,6 +2677,32 @@
             '}'
           ].join('\n'));
         }
+        // replace `_.sortBy`
+        if (!useLodashMethod('sortBy')) {
+          source = replaceFunction(source, 'sortBy', [
+            'function sortBy(collection, callback, thisArg) {',
+            '  var index = -1,',
+            '      length = collection ? collection.length : 0,',
+            "      result = Array(typeof length == 'number' ? length : 0);",
+            '',
+            '  callback = lodash.createCallback(callback, thisArg);',
+            '  forEach(collection, function(value, key, collection) {',
+            '    result[++index] = {',
+            "      'criteria': callback(value, key, collection),",
+            "      'index': index,",
+            "      'value': value",
+            '    };',
+            '  });',
+            '',
+            '  length = result.length;',
+            '  result.sort(compareAscending);',
+            '  while (length--) {',
+            '    result[length] = result[length].value;',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // replace `_.template`
         if (!useLodashMethod('template')) {
           // remove `_.templateSettings.imports assignment
@@ -2846,7 +2905,10 @@
 
         // replace `slice` with `nativeSlice.call`
         _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(methodName) {
-          if (!useLodashMethod(methodName)) {
+          if (methodName == 'clone'
+                ? (!useLodashMethod('clone') && !useLodashMethod('cloneDeep'))
+                : !useLodashMethod(methodName)
+              ) {
             source = source.replace(matchFunction(source, methodName), function(match) {
               return match.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
             });
@@ -3162,6 +3224,12 @@
       if (isRemoved(source, 'escape', 'unescape')) {
         source = removeVar(source, 'htmlEscapes');
         source = removeVar(source, 'htmlUnescapes');
+      }
+      if (isRemoved(source, 'getArray', 'releaseArray')) {
+        source = removeVar(source, 'arrayPool');
+      }
+      if (isRemoved(source, 'getObject', 'releaseObject')) {
+        source = removeVar(source, 'objectPool');
       }
       if (isRemoved(source, 'invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");

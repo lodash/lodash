@@ -312,11 +312,32 @@
     // remove debug sourceURL use in `_.template`
     source = source.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
 
-    // minify internal properties used by 'compareAscending' and `_.sortBy`
+    // minify internal properties
     (function() {
-      var properties = ['criteria', 'index', 'value'],
-          snippets = source.match(/( +)function (?:compareAscending|sortBy)\b[\s\S]+?\n\1}/g);
+      var methods = [
+        'compareAscending',
+        'createCache',
+        'difference',
+        'getObject',
+        'intersection',
+        'releaseObject',
+        'sortBy',
+        'uniq'
+      ];
 
+      var props = [
+        'array',
+        'cache',
+        'contains',
+        'criteria',
+        'index',
+        'indexOf',
+        'initArray',
+        'release',
+        'value'
+      ];
+
+      var snippets = source.match(RegExp('^( +)(?:var|function) +(?:' + methods.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));
       if (!snippets) {
         return;
       }
@@ -324,11 +345,12 @@
         var modified = snippet;
 
         // minify properties
-        properties.forEach(function(property, index) {
-          var minName = minNames[index],
-              reBracketProp = RegExp("\\['(" + property + ")'\\]", 'g'),
-              reDotProp = RegExp('\\.' + property + '\\b', 'g'),
-              rePropColon = RegExp("([^?\\s])\\s*([\"'])?\\b" + property + "\\2 *:", 'g');
+        props.forEach(function(prop, index) {
+          // use minified names different than those chosen for `iteratorOptions`
+          var minName = minNames[iteratorOptions.length + index],
+              reBracketProp = RegExp("\\['(" + prop + ")'\\]", 'g'),
+              reDotProp = RegExp('\\.' + prop + '\\b', 'g'),
+              rePropColon = RegExp("([^?\\s])\\s*([\"'])?\\b" + prop + "\\2 *:", 'g');
 
           modified = modified
             .replace(reBracketProp, "['" + minName + "']")
@@ -352,8 +374,8 @@
         'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]*?\\);\\n',
         // match variables storing `createIterator` options
         '( +)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
-        // match the the `createIterator` function
-        '( +)function createIterator\\b[\\s\\S]+?\\n\\3}'
+        // match the `createIterator`, `getObject`, and `releaseObject` functions
+        '( +)function (?:createIterator|getObject|releaseObject)\\b[\\s\\S]+?\\n\\3}'
       ].join('|'), 'g')
     );
 
@@ -363,7 +385,7 @@
     }
 
     snippets.forEach(function(snippet, index) {
-      var isCreateIterator = /function createIterator\b/.test(snippet),
+      var isFunc = /^ *function +/m.test(snippet),
           isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
           modified = snippet;
 
@@ -392,8 +414,8 @@
         var minName = minNames[index];
 
         // minify variable names present in strings
-        if (isCreateIterator) {
-          modified = modified.replace(RegExp('(([\'"])[^\\n\\2]*?)\\b' + varName + '\\b(?=[^\\n\\2]*\\2[ ,+]+$)', 'gm'), '$1' + minName);
+        if (isFunc) {
+          modified = modified.replace(RegExp('(([\'"])[^\\n\\2]*?)\\b' + varName + '\\b(?=[^\\n\\2]*\\2[ ,+;]+$)', 'gm'), '$1' + minName);
         }
         // ensure properties in compiled strings aren't minified
         else {

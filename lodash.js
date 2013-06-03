@@ -41,7 +41,7 @@
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
   /** Used to match HTML entities */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#xae|#xa9);/g;
 
   /**
    * Used to match ES6 template delimiters
@@ -1225,7 +1225,9 @@
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#39;'
+      "'": '&#39;',
+      '®':'&#xae;',
+      '©':'&#xa9;'
     };
 
     /** Used to convert HTML entities to characters */

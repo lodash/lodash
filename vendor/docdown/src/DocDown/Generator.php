@@ -121,7 +121,7 @@ class Generator {
     $string = preg_replace('/(^|\s)(\([^)]+\))/', '$1*$2*', $string);
 
     // mark numbers as inline code
-    $string = preg_replace('/ (-?\d+(?:.\d+)?)(?!\.[^\n])/', ' `$1`', $string);
+    $string = preg_replace('/[\t ](-?\d+(?:.\d+)?)(?!\.[^\n])/', ' `$1`', $string);
 
     // detokenize inline code snippets
     $counter = 0;
@@ -557,7 +557,7 @@ class Generator {
     array_push($result, $closeTag, $closeTag, '', '  [1]: #' . $toc . ' "Jump back to the TOC."');
 
     // cleanup whitespace
-    return trim(preg_replace('/ +\n/', "\n", join($result, "\n")));
+    return trim(preg_replace('/[\t ]+\n/', "\n", join($result, "\n")));
   }
 }
 ?>

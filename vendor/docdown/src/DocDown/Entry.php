@@ -58,7 +58,7 @@ class Entry {
    * @returns {Array} The array of entries.
    */
   public static function getEntries( $source ) {
-    preg_match_all('#/\*\*(?![-!])[\s\S]*?\*/\s*[^\n]+#', $source, $result);
+    preg_match_all('#/\*\*(?![-!])[\s\S]*?\*/\s*.+#', $source, $result);
     return array_pop($result);
   }
 
@@ -77,7 +77,7 @@ class Entry {
         $this->isCtor() ||
         count($this->getParams()) ||
         count($this->getReturns()) ||
-        preg_match('/\* *@function\b/', $this->entry)
+        preg_match('/\*[\t ]*@function\b/', $this->entry)
       );
     }
     return $this->_isFunction;
@@ -94,10 +94,10 @@ class Entry {
    */
   public function getAliases( $index = null ) {
     if (!isset($this->_aliases)) {
-      preg_match('#\* *@alias\s+([^\n]+)#', $this->entry, $result);
+      preg_match('#\*[\t ]*@alias\s+(.+)#', $this->entry, $result);
 
       if (count($result)) {
-        $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
+        $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]));
         $result = preg_split('/,\s*/', $result);
         natsort($result);
 
@@ -129,7 +129,7 @@ class Entry {
     }
     // resolve name
     // avoid $this->getName() because it calls $this->getCall()
-    preg_match('#\* *@name\s+([^\n]+)#', $this->entry, $name);
+    preg_match('#\*[\t ]*@name\s+(.+)#', $this->entry, $name);
     if (count($name)) {
       $name = trim($name[1]);
     } else {
@@ -163,9 +163,9 @@ class Entry {
       return $this->_category;
     }
 
-    preg_match('#\* *@category\s+([^\n]+)#', $this->entry, $result);
+    preg_match('#\*[\t ]*@category\s+(.+)#', $this->entry, $result);
     if (count($result)) {
-      $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
+      $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]));
     } else {
       $result = $this->getType() == 'Function' ? 'Methods' : 'Properties';
     }
@@ -187,9 +187,9 @@ class Entry {
     preg_match('#/\*\*(?:\s*\*)?([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
     if (count($result)) {
       $type = $this->getType();
-      $result = preg_replace('/:\n *\* */', ":<br>\n", $result[1]);
-      $result = preg_replace('/(?:^|\n) *\*\n *\* */', "\n\n", $result);
-      $result = preg_replace('/(?:^|\n) *\* ?/', ' ', $result);
+      $result = preg_replace('/:\n[\t ]*\*[\t ]*/', ":<br>\n", $result[1]);
+      $result = preg_replace('/(?:^|\n)[\t ]*\*\n[\t ]*\*[\t ]*/', "\n\n", $result);
+      $result = preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result);
       $result = trim($result);
       $result = ($type == 'Function' ? '' : '(' . str_replace('|', ', ', trim($type, '{}')) . '): ') . $result;
     }
@@ -208,9 +208,9 @@ class Entry {
       return $this->_example;
     }
 
-    preg_match('#\* *@example\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
+    preg_match('#\*[\t ]*@example\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
     if (count($result)) {
-      $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', "\n", $result[1]));
+      $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', "\n", $result[1]));
       $result = '```' . $this->lang . "\n" . $result . "\n```";
     }
     $this->_example = $result;
@@ -235,7 +235,7 @@ class Entry {
    */
   public function isCtor() {
     if (!isset($this->_isCtor)) {
-      $this->_isCtor = !!preg_match('/\* *@constructor\b/', $this->entry);
+      $this->_isCtor = !!preg_match('/\*[\t ]*@constructor\b/', $this->entry);
     }
     return $this->_isCtor;
   }
@@ -248,7 +248,7 @@ class Entry {
    */
   public function isLicense() {
     if (!isset($this->_isLicense)) {
-      $this->_isLicense = !!preg_match('/\* *@license\b/', $this->entry);
+      $this->_isLicense = !!preg_match('/\*[\t ]*@license\b/', $this->entry);
     }
     return $this->_isLicense;
   }
@@ -274,7 +274,7 @@ class Entry {
    */
   public function isPrivate() {
     if (!isset($this->_isPrivate)) {
-      $this->_isPrivate = $this->isLicense() || !!preg_match('/\* *@private\b/', $this->entry) || !preg_match('/\* *@[a-z]+\b/', $this->entry);
+      $this->_isPrivate = $this->isLicense() || !!preg_match('/\*[\t ]*@private\b/', $this->entry) || !preg_match('/\*[\t ]*@[a-z]+\b/', $this->entry);
     }
     return $this->_isPrivate;
   }
@@ -291,7 +291,7 @@ class Entry {
     }
 
     $public = !$this->isPrivate();
-    $result = $public && !!preg_match('/\* *@static\b/', $this->entry);
+    $result = $public && !!preg_match('/\*[\t ]*@static\b/', $this->entry);
 
     // set in cases where it isn't explicitly stated
     if ($public && !$result) {
@@ -334,9 +334,9 @@ class Entry {
    */
   public function getMembers( $index = null ) {
     if (!isset($this->_members)) {
-      preg_match('#\* *@member(?:Of)?\s+([^\n]+)#', $this->entry, $result);
+      preg_match('#\*[\t ]*@member(?:Of)?\s+(.+)#', $this->entry, $result);
       if (count($result)) {
-        $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
+        $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]));
         $result = preg_split('/,\s*/', $result);
         natsort($result);
       }
@@ -358,9 +358,9 @@ class Entry {
       return $this->_name;
     }
 
-    preg_match('#\* *@name\s+([^\n]+)#', $this->entry, $result);
+    preg_match('#\*[\t ]*@name\s+(.+)#', $this->entry, $result);
     if (count($result)) {
-      $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
+      $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]));
     } else {
       $result = array_shift(explode('(', $this->getCall()));
     }
@@ -377,7 +377,7 @@ class Entry {
    */
   public function getParams( $index = null ) {
     if (!isset($this->_params)) {
-      preg_match_all('#\* *@param\s+\{([^}]+)\}\s+(\[.+\]|[$\w|]+(?:\[.+\])?)\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#i', $this->entry, $result);
+      preg_match_all('#\*[\t ]*@param\s+\{([^}]+)\}\s+(\[.+\]|[$\w|]+(?:\[.+\])?)\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#i', $this->entry, $result);
       if (count($result = array_filter(array_slice($result, 1)))) {
         // repurpose array
         foreach ($result as $param) {
@@ -385,7 +385,7 @@ class Entry {
             if (!is_array($result[0][$key])) {
               $result[0][$key] = array();
             }
-            $result[0][$key][] = trim(preg_replace('/(?:^|\n)\s*\* */', ' ', $value));
+            $result[0][$key][] = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]*/', ' ', $value));
           }
         }
         $result = $result[0];
@@ -408,11 +408,11 @@ class Entry {
       return $this->_returns;
     }
 
-    preg_match('#\* *@returns\s+\{([^}]+)\}\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
+    preg_match('#\*[\t ]*@returns\s+\{([^}]+)\}\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#', $this->entry, $result);
     if (count($result)) {
       $result = array_map('trim', array_slice($result, 1));
       $result[0] = str_replace('|', ', ', $result[0]);
-      $result[1] = preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]);
+      $result[1] = preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]);
     }
     $this->_returns = $result;
     return $result;
@@ -429,9 +429,9 @@ class Entry {
       return $this->_type;
     }
 
-    preg_match('#\* *@type\s+([^\n]+)#', $this->entry, $result);
+    preg_match('#\*[\t ]*@type\s+(.+)#', $this->entry, $result);
     if (count($result)) {
-      $result = trim(preg_replace('/(?:^|\n)\s*\* ?/', ' ', $result[1]));
+      $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]));
     } else {
       $result = $this->isFunction() ? 'Function' : 'Unknown';
     }

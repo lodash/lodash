@@ -1056,7 +1056,7 @@
     ];
 
     commands.forEach(function(command, index) {
-      asyncTest('`lodash ' + command +'`', function() {
+      asyncTest('`lodash underscore ' + command +'`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
         build(['-s', 'underscore', command], function(data) {

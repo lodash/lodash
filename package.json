@@ -35,5 +35,27 @@
   ],
   "jam": {
     "main": "./dist/lodash.compat.js"
+  },
+  "volo": {
+    "type": "directory",
+    "ignore": [
+      ".*",
+      "*.custom.*",
+      "*.template.*",
+      "*.d.ts",
+      "*.map",
+      "*.md",
+      "*.txt",
+      "build.js",
+      "index.js",
+      "bower.json",
+      "component.json",
+      "build",
+      "doc",
+      "node_modules",
+      "perf",
+      "test",
+      "vendor"
+    ]
   }
 }

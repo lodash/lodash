@@ -24,6 +24,10 @@
     window = freeGlobal;
   }
 
+  /** Used to pool arrays and objects used internally */
+  var arrayPool = [],
+      objectPool = [];
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -35,6 +39,9 @@
 
   /** Used as the size when optimizations are enabled for large arrays */
   var largeArraySize = 75;
+
+  /** Used as the max size of the `arrayPool` and `objectPool` */
+  var maxPoolSize = 10;
 
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -139,6 +146,82 @@
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
+
+  /**
+   * Gets an array from the array pool or creates a new one if the pool is empty.
+   *
+   * @private
+   * @returns {Array} The array from the pool.
+   */
+  function getArray() {
+    return arrayPool.pop() || [];
+  }
+
+  /**
+   * Gets an object from the object pool or creates a new one if the pool is empty.
+   *
+   * @private
+   * @returns {Object} The object from the pool.
+   */
+  function getObject() {
+    return objectPool.pop() || {
+      'args': null,
+      'array': null,
+      'arrays': null,
+      'bottom': null,
+      'contains': null,
+      'criteria': null,
+      'false': null,
+      'firstArg': null,
+      'function': null,
+      'index': null,
+      'indexOf': null,
+      'init': null,
+      'initedArray': null,
+      'loop': null,
+      'null': null,
+      'number': null,
+      'object': null,
+      'push': null,
+      'release': null,
+      'shadowedProps': null,
+      'string': null,
+      'top': null,
+      'true': null,
+      'undefined': null,
+      'useHas': null,
+      'useKeys': null,
+      'value': null
+    };
+  }
+
+  /**
+   * Releases the given `array` back to the array pool.
+   *
+   * @private
+   * @param {Array} [array] The array to release.
+   */
+  function releaseArray(array) {
+    if (arrayPool.length == maxPoolSize) {
+      arrayPool.length = maxPoolSize - 1;
+    }
+    array.length = 0;
+    arrayPool.push(array);
+  }
+
+  /**
+   * Releases the given `object` back to the object pool.
+   *
+   * @private
+   * @param {Object} [object] The object to release.
+   */
+  function releaseObject(object) {
+    if (objectPool.length == maxPoolSize) {
+      objectPool.length = maxPoolSize - 1;
+    }
+    object.array = object.cache = object.criteria = object.object = object.number = object.string = object.value = null;
+    objectPool.push(object);
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -556,7 +639,7 @@
           var conditions = [];    if (support.enumPrototypes) { conditions.push('!(skipProto && index == "prototype")'); }    if (support.enumErrorProps)  { conditions.push('!(skipErrorProps && (index == "message" || index == "name"))'); }
 
        if (obj.useHas && obj.useKeys) {
-      __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] ? keys(iterable) : [],\n      length = ownProps.length;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n';
+      __p += '\n  var ownIndex = -1,\n      ownProps = objectTypes[typeof iterable] && keys(iterable),\n      length = ownProps ? ownProps.length : 0;\n\n  while (++ownIndex < length) {\n    index = ownProps[ownIndex];\n';
           if (conditions.length) {
       __p += '    if (' +
       (conditions.join(' && ')) +
@@ -771,42 +854,28 @@
      * @param {Mixed} value The value to search for.
      * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
      */
-    function createCache(array) {
-      array || (array = []);
-
-      var bailout,
-          index = -1,
-          indexOf = getIndexOf(),
-          length = array.length,
-          isLarge = length >= largeArraySize && lodash.indexOf != indexOf,
-          objCache = {};
-
-      var caches = {
-        'false': false,
-        'function': false,
-        'null': false,
-        'number': {},
-        'object': objCache,
-        'string': {},
-        'true': false,
-        'undefined': false
-      };
+    var createCache = (function() {
 
       function basicContains(value) {
-        return indexOf(array, value) > -1;
+        return this.indexOf(this.array, value) > -1;
       }
 
       function basicPush(value) {
-        array.push(value);
+        this.array.push(value);
       }
 
       function cacheContains(value) {
-        var type = typeof value;
+        var cache = this.cache,
+            type = typeof value;
+
         if (type == 'boolean' || value == null) {
-          return caches[value];
+          return cache[value];
         }
-        var cache = caches[type] || (type = 'object', objCache),
-            key = type == 'number' ? value : keyPrefix + value;
+        if (type != 'number' && type != 'string') {
+          type = 'object';
+        }
+        var key = type == 'number' ? value : keyPrefix + value;
+        cache = cache[type] || (cache[type] = {});
 
         return type == 'object'
           ? (cache[key] ? basicIndexOf(cache[key], value) > -1 : false)
@@ -814,12 +883,17 @@
       }
 
       function cachePush(value) {
-        var type = typeof value;
+        var cache = this.cache,
+            type = typeof value;
+
         if (type == 'boolean' || value == null) {
-          caches[value] = true;
+          cache[value] = true;
         } else {
-          var cache = caches[type] || (type = 'object', objCache),
-              key = type == 'number' ? value : keyPrefix + value;
+          if (type != 'number' && type != 'string') {
+            type = 'object';
+          }
+          var key = type == 'number' ? value : keyPrefix + value;
+          cache = cache[type] || (cache[type] = {});
 
           if (type == 'object') {
             bailout = (cache[key] || (cache[key] = [])).push(value) == length;
@@ -829,18 +903,50 @@
         }
       }
 
-      if (isLarge) {
-        while (++index < length) {
-          cachePush(array[index]);
+      function release() {
+        var cache = this.cache;
+        if (cache.initedArray) {
+          releaseArray(this.array);
         }
-        if (bailout) {
-          isLarge = caches = objCache = null;
-        }
+        releaseObject(cache);
       }
-      return isLarge
-        ? { 'contains': cacheContains, 'push': cachePush }
-        : { 'contains': basicContains, 'push': basicPush };
-    }
+
+      return function(array) {
+        var bailout,
+            index = -1,
+            indexOf = getIndexOf(),
+            initedArray = !array && (array = getArray()),
+            length = array.length,
+            isLarge = length >= largeArraySize && lodash.indexOf !== indexOf;
+
+        var cache = getObject();
+        cache.initedArray = initedArray;
+        cache['false'] = cache['function'] = cache['null'] = cache['true'] = cache['undefined'] = false;
+
+        var result = getObject();
+        result.array = array;
+        result.cache = cache;
+        result.contains = cacheContains;
+        result.indexOf = indexOf;
+        result.push = cachePush;
+        result.release = release;
+
+        if (isLarge) {
+          while (++index < length) {
+            result.push(array[index]);
+          }
+          if (bailout) {
+            isLarge = false;
+            result.release();
+          }
+        }
+        if (!isLarge) {
+          result.contains = basicContains;
+          result.push = basicPush;
+        }
+        return result;
+      };
+    }());
 
     /**
      * Creates compiled iteration functions.
@@ -857,18 +963,15 @@
      * @returns {Function} Returns the compiled function.
      */
     function createIterator() {
-      var data = {
-        // data properties
-        'shadowedProps': shadowedProps,
-        // iterator options
-        'arrays': '',
-        'bottom': '',
-        'init': 'iterable',
-        'loop': '',
-        'top': '',
-        'useHas': true,
-        'useKeys': !!keys
-      };
+      var data = getObject();
+
+      // data properties
+      data.shadowedProps = shadowedProps;
+      // iterator options
+      data.arrays = data.bottom = data.loop = data.top = '';
+      data.init = 'iterable';
+      data.useHas = true;
+      data.useKeys = !!keys;
 
       // merge options into a template data object
       for (var object, index = 0; object = arguments[index]; index++) {
@@ -881,16 +984,19 @@
 
       // create the function factory
       var factory = Function(
-          'errorClass, errorProto, hasOwnProperty, isArguments, isArray, isString, ' +
-          'keys, lodash, objectProto, objectTypes, nonEnumProps, stringClass, ' +
-          'stringProto, toString',
+          'errorClass, errorProto, hasOwnProperty, isArguments, isArray, ' +
+          'isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
+          'stringClass, stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
+
+      releaseObject(data);
+
       // return the compiled function
       return factory(
-        errorClass, errorProto, hasOwnProperty, isArguments, isArray, isString,
-        keys, lodash, objectProto, objectTypes, nonEnumProps, stringClass,
-        stringProto, toString
+        errorClass, errorProto, hasOwnProperty, isArguments, isArray,
+        isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
+        stringClass, stringProto, toString
       );
     }
 
@@ -948,7 +1054,7 @@
      * @returns {Function} Returns the "indexOf" function.
      */
     function getIndexOf(array, value, fromIndex) {
-      var result = (result = lodash.indexOf) == indexOf ? basicIndexOf : result;
+      var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
       return result;
     }
 
@@ -1349,8 +1455,9 @@
           return ctor(result.source, reFlags.exec(result));
       }
       // check for circular references and return corresponding clone
-      stackA || (stackA = []);
-      stackB || (stackB = []);
+      var initedStack = !stackA;
+      stackA || (stackA = getArray());
+      stackB || (stackB = getArray());
 
       var length = stackA.length;
       while (length--) {
@@ -1380,6 +1487,10 @@
         result[key] = clone(objValue, deep, callback, undefined, stackA, stackB);
       });
 
+      if (initedStack) {
+        releaseArray(stackA);
+        releaseArray(stackB);
+      }
       return result;
     }
 
@@ -1826,8 +1937,9 @@
       // assume cyclic structures are equal
       // the algorithm for detecting cyclic structures is adapted from ES 5.1
       // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
-      stackA || (stackA = []);
-      stackB || (stackB = []);
+      var initedStack = !stackA;
+      stackA || (stackA = getArray());
+      stackB || (stackB = getArray());
 
       var length = stackA.length;
       while (length--) {
@@ -1888,6 +2000,10 @@
             return (result = --size > -1);
           }
         });
+      }
+      if (initedStack) {
+        releaseArray(stackA);
+        releaseArray(stackB);
       }
       return result;
     }
@@ -2198,8 +2314,9 @@
             stackA = args[4],
             stackB = args[5];
       } else {
-        stackA = [];
-        stackB = [];
+        var initedStack = true;
+        stackA = getArray();
+        stackB = getArray();
 
         // allows working with `_.reduce` and `_.reduceRight` without
         // using their `callback` arguments, `index|key` and `collection`
@@ -2264,6 +2381,11 @@
           }
           object[key] = value;
         });
+      }
+
+      if (initedStack) {
+        releaseArray(stackA);
+        releaseArray(stackB);
       }
       return object;
     }
@@ -3424,17 +3546,18 @@
 
       callback = lodash.createCallback(callback, thisArg);
       forEach(collection, function(value, key, collection) {
-        result[++index] = {
-          'criteria': callback(value, key, collection),
-          'index': index,
-          'value': value
-        };
+        var object = result[++index] = getObject();
+        object.criteria = callback(value, key, collection);
+        object.index = index;
+        object.value = value;
       });
 
       length = result.length;
       result.sort(compareAscending);
       while (length--) {
-        result[length] = result[length].value;
+        var object = result[length];
+        result[length] = object.value;
+        releaseObject(object);
       }
       return result;
     }
@@ -3536,15 +3659,16 @@
       var index = -1,
           length = array ? array.length : 0,
           flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
-          contains = createCache(flattened).contains,
+          cache = createCache(flattened),
           result = [];
 
       while (++index < length) {
         var value = array[index];
-        if (!contains(value)) {
+        if (!cache.contains(value)) {
           result.push(value);
         }
       }
+      cache.release();
       return result;
     }
 
@@ -3848,27 +3972,34 @@
     function intersection(array) {
       var args = arguments,
           argsLength = args.length,
-          cache = createCache(),
-          caches = {},
           index = -1,
           length = array ? array.length : 0,
-          isLarge = length >= largeArraySize,
           result = [];
+
+      var caches = getArray();
+      caches[0] = createCache();
 
       outer:
       while (++index < length) {
-        var value = array[index];
+        var cache = caches[0],
+            value = array[index];
+
         if (!cache.contains(value)) {
           var argsIndex = argsLength;
           cache.push(value);
           while (--argsIndex) {
-            if (!(caches[argsIndex] || (caches[argsIndex] = createCache(args[argsIndex]).contains))(value)) {
+            cache = caches[argsIndex] || (caches[argsIndex] = createCache(args[argsIndex]));
+            if (!cache.contains(value)) {
               continue outer;
             }
           }
           result.push(value);
         }
       }
+      while (argsLength--) {
+        caches[argsLength].release();
+      }
+      releaseArray(caches);
       return result;
     }
 
@@ -4240,9 +4371,9 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          isLarge = !isSorted && length >= largeArraySize,
+          isLarge = !isSorted && length >= largeArraySize && lodash.indexOf !== indexOf,
           result = [],
-          seen = isLarge ? createCache() : (callback ? [] : result);
+          seen = isLarge ? createCache() : (callback ? getArray() : result);
 
       while (++index < length) {
         var value = array[index],
@@ -4257,6 +4388,11 @@
           }
           result.push(value);
         }
+      }
+      if (isLarge) {
+        seen.release();
+      } else if (callback) {
+        releaseArray(seen);
       }
       return result;
     });

@@ -386,7 +386,7 @@
    * @returns {Function} Returns the "indexOf" function.
    */
   function getIndexOf(array, value, fromIndex) {
-    var result = (result = lodash.indexOf) == indexOf ? basicIndexOf : result;
+    var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
     return result;
   }
 

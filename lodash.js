@@ -167,6 +167,7 @@
       'args': null,
       'array': null,
       'arrays': null,
+      'bottom': null,
       'contains': null,
       'criteria': null,
       'false': null,
@@ -175,7 +176,8 @@
       'index': null,
       'indexOf': null,
       'init': null,
-      'initArray': null,
+      'initedArray': null,
+      'loop': null,
       'null': null,
       'number': null,
       'object': null,
@@ -184,6 +186,7 @@
       'shadowedProps': null,
       'string': null,
       'support': null,
+      'top': null,
       'true': null,
       'undefined': null,
       'useHas': null,
@@ -919,7 +922,7 @@
 
       function release() {
         var cache = this.cache;
-        if (cache.initArray) {
+        if (cache.initedArray) {
           releaseArray(this.array);
         }
         releaseObject(cache);
@@ -928,19 +931,20 @@
       return function(array) {
         var bailout,
             index = -1,
-            initArray = !array && (array = getArray()),
+            indexOf = getIndexOf(),
+            initedArray = !array && (array = getArray()),
             length = array.length,
-            isLarge = length >= largeArraySize && lodash.indexOf != indexOf;
+            isLarge = length >= largeArraySize && lodash.indexOf !== indexOf;
 
         var cache = getObject();
-        cache.initArray = initArray;
+        cache.initedArray = initedArray;
         cache['false'] = cache['function'] = cache['null'] = cache['true'] = cache['undefined'] = false;
 
         var result = getObject();
         result.array = array;
-        result.indexOf = getIndexOf();
         result.cache = cache;
         result.contains = cacheContains;
+        result.indexOf = indexOf;
         result.push = cachePush;
         result.release = release;
 
@@ -1069,7 +1073,7 @@
      * @returns {Function} Returns the "indexOf" function.
      */
     function getIndexOf(array, value, fromIndex) {
-      var result = (result = lodash.indexOf) == indexOf ? basicIndexOf : result;
+      var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
       return result;
     }
 
@@ -1470,7 +1474,7 @@
           return ctor(result.source, reFlags.exec(result));
       }
       // check for circular references and return corresponding clone
-      var initStack = !stackA;
+      var initedStack = !stackA;
       stackA || (stackA = getArray());
       stackB || (stackB = getArray());
 
@@ -1502,7 +1506,7 @@
         result[key] = clone(objValue, deep, callback, undefined, stackA, stackB);
       });
 
-      if (initStack) {
+      if (initedStack) {
         releaseArray(stackA);
         releaseArray(stackB);
       }
@@ -1952,7 +1956,7 @@
       // assume cyclic structures are equal
       // the algorithm for detecting cyclic structures is adapted from ES 5.1
       // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
-      var initStack = !stackA;
+      var initedStack = !stackA;
       stackA || (stackA = getArray());
       stackB || (stackB = getArray());
 
@@ -2016,7 +2020,7 @@
           }
         });
       }
-      if (initStack) {
+      if (initedStack) {
         releaseArray(stackA);
         releaseArray(stackB);
       }
@@ -2329,7 +2333,7 @@
             stackA = args[4],
             stackB = args[5];
       } else {
-        var initStack = true;
+        var initedStack = true;
         stackA = getArray();
         stackB = getArray();
 
@@ -2398,7 +2402,7 @@
         });
       }
 
-      if (initStack) {
+      if (initedStack) {
         releaseArray(stackA);
         releaseArray(stackB);
       }
@@ -3987,12 +3991,11 @@
     function intersection(array) {
       var args = arguments,
           argsLength = args.length,
-          caches = getArray(),
           index = -1,
           length = array ? array.length : 0,
-          isLarge = length >= largeArraySize,
           result = [];
 
+      var caches = getArray();
       caches[0] = createCache();
 
       outer:
@@ -4385,9 +4388,9 @@
      */
     var uniq = overloadWrapper(function(array, isSorted, callback) {
       var index = -1,
+          indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          isLarge = !isSorted && length >= largeArraySize,
-          indexOf = isLarge || getIndexOf(),
+          isLarge = !isSorted && length >= largeArraySize && lodash.indexOf !== indexOf,
           result = [],
           seen = isLarge ? createCache() : (callback ? getArray() : result);
 

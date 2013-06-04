@@ -224,6 +224,7 @@
     'init',
     'loop',
     'shadowedProps',
+    'support',
     'top',
     'useHas',
     'useKeys'
@@ -1044,7 +1045,7 @@
   }
 
   /**
-   * Removes the all references to `varName` from `createIterator` in `source`.
+   * Removes all references to `identifier` from `createIterator` in `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -1076,14 +1077,23 @@
         .replace(/,(?=\s*\))/, '');
     });
 
-    // remove property assignment from `getObject`
-    source = source.replace(matchFunction(source, 'getObject'), function(match) {
+    return removeFromGetObject(source, identifier);
+  }
+
+  /**
+   * Removes all references to `identifier` from `getObject` in `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} identifier The name of the property to remove.
+   * @returns {String} Returns the modified source.
+   */
+  function removeFromGetObject(source, identifier) {
+    return source.replace(matchFunction(source, 'getObject'), function(match) {
       return match
         .replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + identifier + "':.+\\n+", 'm'), '')
         .replace(/,(?=\s*})/, '');
     });
-
-    return source;
   }
 
   /**
@@ -3014,6 +3024,10 @@
       if (isModern || isUnderscore) {
         source = removeFunction(source, 'createIterator');
 
+        iteratorOptions.forEach(function(prop) {
+          source = removeFromGetObject(source, prop);
+        });
+
         // inline all functions defined with `createIterator`
         _.functions(lodash).forEach(function(methodName) {
           // strip leading underscores to match pseudo private functions
@@ -3120,8 +3134,10 @@
 
           // prepend data object references to property names to avoid having to
           // use a with-statement
-          iteratorOptions.forEach(function(property) {
-            snippet = snippet.replace(RegExp('([^\\w.])\\b' + property + '\\b', 'g'), '$1obj.' + property);
+          iteratorOptions.forEach(function(prop) {
+            if (prop !== 'support') {
+              snippet = snippet.replace(RegExp('([^\\w.])\\b' + prop + '\\b', 'g'), '$1obj.' + prop);
+            }
           });
 
           // remove unnecessary code

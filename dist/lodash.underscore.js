@@ -318,18 +318,6 @@
   }
 
   /**
-   * Used by `_.max` and `_.min` as the default `callback` when a given
-   * `collection` is a string value.
-   *
-   * @private
-   * @param {String} value The character to inspect.
-   * @returns {Number} Returns the code unit of given character.
-   */
-  function charAtCallback(value) {
-    return value.charCodeAt(0);
-  }
-
-  /**
    * Used by `sortBy` to compare transformed `collection` values, stable sorting
    * them in ascending order.
    *
@@ -417,86 +405,6 @@
   }
 
   /**
-   * Creates a function optimized to search large arrays for a given `value`,
-   * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
-   *
-   * @private
-   * @param {Array} [array=[]] The array to search.
-   * @param {Mixed} value The value to search for.
-   * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
-   */
-  function createCache(array) {
-    array || (array = []);
-
-    var bailout,
-        index = -1,
-        indexOf = getIndexOf(),
-        length = array.length,
-        isLarge = length >= largeArraySize && lodash.indexOf != indexOf,
-        objCache = {};
-
-    var caches = {
-      'false': false,
-      'function': false,
-      'null': false,
-      'number': {},
-      'object': objCache,
-      'string': {},
-      'true': false,
-      'undefined': false
-    };
-
-    function basicContains(value) {
-      return indexOf(array, value) > -1;
-    }
-
-    function basicPush(value) {
-      array.push(value);
-    }
-
-    function cacheContains(value) {
-      var type = typeof value;
-      if (type == 'boolean' || value == null) {
-        return caches[value];
-      }
-      var cache = caches[type] || (type = 'object', objCache),
-          key = type == 'number' ? value : keyPrefix + value;
-
-      return type == 'object'
-        ? (cache[key] ? basicIndexOf(cache[key], value) > -1 : false)
-        : !!cache[key];
-    }
-
-    function cachePush(value) {
-      var type = typeof value;
-      if (type == 'boolean' || value == null) {
-        caches[value] = true;
-      } else {
-        var cache = caches[type] || (type = 'object', objCache),
-            key = type == 'number' ? value : keyPrefix + value;
-
-        if (type == 'object') {
-          bailout = (cache[key] || (cache[key] = [])).push(value) == length;
-        } else {
-          cache[key] = true;
-        }
-      }
-    }
-
-    if (isLarge) {
-      while (++index < length) {
-        cachePush(array[index]);
-      }
-      if (bailout) {
-        isLarge = caches = objCache = null;
-      }
-    }
-    return isLarge
-      ? { 'contains': cacheContains, 'push': cachePush }
-      : { 'contains': basicContains, 'push': basicPush };
-  }
-
-  /**
    * Creates a new object with the specified `prototype`.
    *
    * @private
@@ -550,7 +458,7 @@
    * @returns {Function} Returns the "indexOf" function.
    */
   function getIndexOf(array, value, fromIndex) {
-    var result = (result = lodash.indexOf) == indexOf ? basicIndexOf : result;
+    var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
     return result;
   }
 
@@ -574,29 +482,6 @@
    */
   function noop() {
     // no operation performed
-  }
-
-  /**
-   * Creates a function that juggles arguments, allowing argument overloading
-   * for `_.flatten` and `_.uniq`, before passing them to the given `func`.
-   *
-   * @private
-   * @param {Function} func The function to wrap.
-   * @returns {Function} Returns the new function.
-   */
-  function overloadWrapper(func) {
-    return function(array, flag, callback, thisArg) {
-      // juggle arguments
-      if (typeof flag != 'boolean' && flag != null) {
-        thisArg = callback;
-        callback = !(thisArg && thisArg[flag] === array) ? flag : undefined;
-        flag = false;
-      }
-      if (callback != null) {
-        callback = createCallback(callback, thisArg);
-      }
-      return func(array, flag, callback, thisArg);
-    };
   }
 
   /**

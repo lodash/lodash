@@ -332,7 +332,7 @@
         'criteria',
         'index',
         'indexOf',
-        'initArray',
+        'initedArray',
         'release',
         'value'
       ];

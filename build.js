@@ -1058,8 +1058,8 @@
       return source;
     }
     // remove data object property assignment
-    var modified = snippet.replace(RegExp("^(?: *\\/\\/.*\\n)* *data\\." + identifier + " *= *(.+\\n+)", 'm'), function(match, postlude) {
-      return /\bdata\b/.test(postlude) ? postlude : '';
+    var modified = snippet.replace(RegExp("^(?: *\\/\\/.*\\n)* *(\\w+)\\." + identifier + " *= *(.+\\n+)", 'm'), function(match, object, postlude) {
+      return RegExp('\\b' + object + '\\.').test(postlude) ? postlude : '';
     });
 
     source = source.replace(snippet, function() {
@@ -1077,23 +1077,31 @@
         .replace(/,(?=\s*\))/, '');
     });
 
-    return removeFromGetObject(source, identifier);
+    return removeFromObjectPoolFunctions(source, identifier);
   }
 
   /**
-   * Removes all references to `identifier` from `getObject` in `source`.
+   * Removes all references to `identifier` from the `objectPool` functions in `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @param {String} identifier The name of the property to remove.
    * @returns {String} Returns the modified source.
    */
-  function removeFromGetObject(source, identifier) {
-    return source.replace(matchFunction(source, 'getObject'), function(match) {
-      return match
-        .replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + identifier + "':.+\\n+", 'm'), '')
-        .replace(/,(?=\s*})/, '');
+  function removeFromObjectPoolFunctions(source, identifier) {
+    _.each(['getObject', 'releaseObject'], function(methodName) {
+      source = source.replace(matchFunction(source, methodName), function(match) {
+        // remove object property assignments
+        return match
+          .replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + identifier + "':.+\\n+", 'm'), '')
+          .replace(/,(?=\s*})/, '')
+          .replace(RegExp("^(?: *\\/\\/.*\\n)* *(\\w+)\\." + identifier + " *= *(.+\\n+)", 'm'), function(match, object, postlude) {
+            return RegExp('\\b' + object + '\\.').test(postlude) ? postlude : '';
+          });
+      });
     });
+
+    return source;
   }
 
   /**
@@ -3025,7 +3033,7 @@
         source = removeFunction(source, 'createIterator');
 
         iteratorOptions.forEach(function(prop) {
-          source = removeFromGetObject(source, prop);
+          source = removeFromObjectPoolFunctions(source, prop);
         });
 
         // inline all functions defined with `createIterator`
@@ -3299,6 +3307,11 @@
         source = removeVar(source, 'nativeParseInt');
         source = removeVar(source, 'reLeadingSpacesAndZeros');
         source = removeVar(source, 'whitespace');
+      }
+      if (isRemoved(source, 'sortBy')) {
+        source = removeFromObjectPoolFunctions(source, 'criteria');
+        source = removeFromObjectPoolFunctions(source, 'index');
+        source = removeFromObjectPoolFunctions(source, 'value');
       }
       if (isRemoved(source, 'template')) {
         // remove `templateSettings` assignment

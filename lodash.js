@@ -166,23 +166,17 @@
     return objectPool.pop() || {
       'args': null,
       'array': null,
-      'arrays': null,
       'bottom': null,
-      'contains': null,
       'criteria': null,
       'false': null,
       'firstArg': null,
-      'function': null,
       'index': null,
-      'indexOf': null,
       'init': null,
-      'initedArray': null,
       'loop': null,
       'null': null,
       'number': null,
       'object': null,
       'push': null,
-      'release': null,
       'shadowedProps': null,
       'string': null,
       'support': null,
@@ -216,6 +210,10 @@
    * @param {Object} [object] The object to release.
    */
   function releaseObject(object) {
+    var cache = object.cache;
+    if (cache) {
+      releaseObject(cache);
+    }
     if (objectPool.length == maxPoolSize) {
       objectPool.length = maxPoolSize - 1;
     }
@@ -614,9 +612,9 @@
       '<%= top %>;' +
 
       // array-like iteration:
-      '<% if (arrays) { %>\n' +
+      '<% if (array) { %>\n' +
       'var length = iterable.length; index = -1;\n' +
-      'if (<%= arrays %>) {' +
+      'if (<%= array %>) {' +
 
       // add support for accessing string characters by index if needed
       '  <% if (support.unindexedChars) { %>\n' +
@@ -703,7 +701,7 @@
       '  }' +
       '    <% } %>' +
       '  <% } %>' +
-      '  <% if (arrays || support.nonEnumArgs) { %>\n}<% } %>\n' +
+      '  <% if (array || support.nonEnumArgs) { %>\n}<% } %>\n' +
 
       // add code to the bottom of the iteration function
       '<%= bottom %>;\n' +
@@ -729,14 +727,14 @@
     var eachIteratorOptions = {
       'args': 'collection, callback, thisArg',
       'top': "callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg)",
-      'arrays': "typeof length == 'number'",
+      'array': "typeof length == 'number'",
       'loop': 'if (callback(iterable[index], index, collection) === false) return result'
     };
 
     /** Reusable iterator options for `forIn` and `forOwn` */
     var forOwnIteratorOptions = {
       'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
-      'arrays': false
+      'array': false
     };
 
     /*--------------------------------------------------------------------------*/
@@ -871,33 +869,43 @@
      * @param {Mixed} value The value to search for.
      * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
      */
-    var createCache = (function() {
+    function createCache(array) {
+      var index = -1,
+          length = array.length;
 
-      function basicContains(value) {
-        return this.indexOf(this.array, value) > -1;
+      var cache = getObject();
+      cache['false'] = cache['null'] = cache['true'] = cache['undefined'] = false;
+
+      var result = getObject();
+      result.array = array;
+      result.cache = cache;
+      result.push = cachePush;
+
+      while (++index < length) {
+        result.push(array[index]);
       }
+      return cache.object === false
+        ? releaseObject(result)
+        : result;
+    }
 
-      function basicPush(value) {
-        this.array.push(value);
+    function cacheIndexOf(cache, value) {
+      var type = typeof value;
+      cache = cache.cache;
+
+      if (type == 'boolean' || value == null) {
+        return cache[value];
       }
-
-      function cacheContains(value) {
-        var cache = this.cache,
-            type = typeof value;
-
-        if (type == 'boolean' || value == null) {
-          return cache[value];
-        }
-        if (type != 'number' && type != 'string') {
-          type = 'object';
-        }
-        var key = type == 'number' ? value : keyPrefix + value;
-        cache = cache[type] || (cache[type] = {});
-
-        return type == 'object'
-          ? (cache[key] ? basicIndexOf(cache[key], value) > -1 : false)
-          : !!cache[key];
+      if (type != 'number' && type != 'string') {
+        type = 'object';
       }
+      var key = type == 'number' ? value : keyPrefix + value;
+      cache = cache[type] || (cache[type] = {});
+
+      return type == 'object'
+        ? (cache[key] && basicIndexOf(cache[key], value) > -1 ? 0 : -1)
+        : (cache[key] ? 0 : -1);
+    }
 
       function cachePush(value) {
         var cache = this.cache,
@@ -909,68 +917,26 @@
           if (type != 'number' && type != 'string') {
             type = 'object';
           }
-          var key = type == 'number' ? value : keyPrefix + value;
-          cache = cache[type] || (cache[type] = {});
+          var key = type == 'number' ? value : keyPrefix + value,
+              typeCache = cache[type] || (cache[type] = {});
 
           if (type == 'object') {
-            bailout = (cache[key] || (cache[key] = [])).push(value) == length;
+            if ((typeCache[key] || (typeCache[key] = [])).push(value) === this.array.length) {
+              cache[type] = false;
+            }
           } else {
-            cache[key] = true;
+            typeCache[key] = true;
           }
         }
       }
 
-      function release() {
-        var cache = this.cache;
-        if (cache.initedArray) {
-          releaseArray(this.array);
-        }
-        releaseObject(cache);
-      }
-
-      return function(array) {
-        var bailout,
-            index = -1,
-            indexOf = getIndexOf(),
-            initedArray = !array && (array = getArray()),
-            length = array.length,
-            isLarge = length >= largeArraySize && lodash.indexOf !== indexOf;
-
-        var cache = getObject();
-        cache.initedArray = initedArray;
-        cache['false'] = cache['function'] = cache['null'] = cache['true'] = cache['undefined'] = false;
-
-        var result = getObject();
-        result.array = array;
-        result.cache = cache;
-        result.contains = cacheContains;
-        result.indexOf = indexOf;
-        result.push = cachePush;
-        result.release = release;
-
-        if (isLarge) {
-          while (++index < length) {
-            result.push(array[index]);
-          }
-          if (bailout) {
-            isLarge = false;
-            result.release();
-          }
-        }
-        if (!isLarge) {
-          result.contains = basicContains;
-          result.push = basicPush;
-        }
-        return result;
-      };
-    }());
 
     /**
      * Creates compiled iteration functions.
      *
      * @private
      * @param {Object} [options1, options2, ...] The compile options object(s).
-     *  arrays - A string of code to determine if the iterable is an array or array-like.
+     *  array - A string of code to determine if the iterable is an array or array-like.
      *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
      *  useKeys - A boolean to specify using `_.keys` for own property iteration.
      *  args - A string of comma separated arguments the iteration function will accept.
@@ -987,7 +953,7 @@
       data.support = support;
 
       // iterator options
-      data.arrays = data.bottom = data.loop = data.top = '';
+      data.array = data.bottom = data.loop = data.top = '';
       data.init = 'iterable';
       data.useHas = true;
       data.useKeys = !!keys;
@@ -3676,18 +3642,31 @@
      */
     function difference(array) {
       var index = -1,
+          indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
-          cache = createCache(flattened),
+          seen = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
           result = [];
 
+      var isLarge = length >= largeArraySize && indexOf == basicIndexOf;
+
+      if (isLarge) {
+        var cache = createCache(seen);
+        if (cache) {
+          indexOf = cacheIndexOf;
+          seen = cache;
+        } else {
+          isLarge = false;
+        }
+      }
       while (++index < length) {
         var value = array[index];
-        if (!cache.contains(value)) {
+        if (indexOf(seen, value) < 0) {
           result.push(value);
         }
       }
-      cache.release();
+      if (isLarge) {
+        releaseObject(seen);
+      }
       return result;
     }
 
@@ -3991,33 +3970,48 @@
     function intersection(array) {
       var args = arguments,
           argsLength = args.length,
+          caches = getArray(),
           index = -1,
+          indexOf = getIndexOf(),
           length = array ? array.length : 0,
           result = [];
 
-      var caches = getArray();
-      caches[0] = createCache();
+      var isLarge = length >= largeArraySize && indexOf == basicIndexOf;
+      caches[0] = getArray();
 
+      if (isLarge) {
+        var cache = createCache(caches[0]);
+        if (cache) {
+          indexOf = cacheIndexOf;
+          caches[0] = cache;
+        } else {
+          isLarge = false;
+        }
+      }
       outer:
       while (++index < length) {
-        var cache = caches[0],
+        var seen = caches[0],
             value = array[index];
 
-        if (!cache.contains(value)) {
+        if (indexOf(seen, value) < 0) {
           var argsIndex = argsLength;
-          cache.push(value);
+          seen.push(value);
           while (--argsIndex) {
-            cache = caches[argsIndex] || (caches[argsIndex] = createCache(args[argsIndex]));
-            if (!cache.contains(value)) {
+            seen = isLarge ? (caches[argsIndex] || (caches[argsIndex] = createCache(args[argsIndex]))) : args[argsIndex];
+            if (indexOf(seen, value) < 0) {
               continue outer;
             }
           }
           result.push(value);
         }
       }
-      while (argsLength--) {
-        caches[argsLength].release();
+      seen = isLarge ? caches[0].array : caches[0];
+      if (isLarge) {
+        while (argsLength--) {
+          releaseObject(caches[argsLength]);
+        }
       }
+      releaseArray(seen);
       releaseArray(caches);
       return result;
     }
@@ -4390,17 +4384,28 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          isLarge = !isSorted && length >= largeArraySize && lodash.indexOf !== indexOf,
-          result = [],
-          seen = isLarge ? createCache() : (callback ? getArray() : result);
+          result = [];
 
+      var isLarge = !isSorted && length >= largeArraySize && indexOf == basicIndexOf,
+          seen = (callback || isLarge) ? getArray() : result;
+
+      if (isLarge) {
+        var cache = createCache(seen);
+        if (cache) {
+          indexOf = cacheIndexOf;
+          seen = cache;
+        } else {
+          isLarge = false;
+          seen = callback ? seen : (releaseArray(seen), result);
+        }
+      }
       while (++index < length) {
         var value = array[index],
             computed = callback ? callback(value, index, array) : value;
 
         if (isSorted
               ? !index || seen[seen.length - 1] !== computed
-              : (isLarge ? !seen.contains(computed) : indexOf(seen, computed) < 0)
+              : indexOf(seen, computed) < 0
             ) {
           if (callback || isLarge) {
             seen.push(computed);
@@ -4409,7 +4414,8 @@
         }
       }
       if (isLarge) {
-        seen.release();
+        releaseArray(seen.array);
+        releaseObject(seen);
       } else if (callback) {
         releaseArray(seen);
       }

@@ -2004,6 +2004,17 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.max and lodash.min chaining');
+
+  _.each(['max', 'min'], function(methodName) {
+    test('lodash.' + methodName + ' should resolve the correct value when passed an array containing only one value', function() {
+      var actual = _([40])[methodName]().value();
+      strictEqual(actual, 40);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.memoize');
 
   (function() {

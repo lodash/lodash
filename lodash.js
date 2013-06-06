@@ -217,7 +217,7 @@
           typeCache = cache[type] || (cache[type] = {});
 
       if (type == 'object') {
-        if ((typeCache[key] || (typeCache[key] = [])).push(value) === this.array.length) {
+        if ((typeCache[key] || (typeCache[key] = [])).push(value) == this.array.length) {
           cache[type] = false;
         }
       } else {
@@ -3661,7 +3661,7 @@
           seen = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
           result = [];
 
-      var isLarge = length >= largeArraySize && indexOf == basicIndexOf;
+      var isLarge = length >= largeArraySize && indexOf === basicIndexOf;
 
       if (isLarge) {
         var cache = createCache(seen);
@@ -3994,7 +3994,7 @@
 
       while (++argsIndex < argsLength) {
         var value = argsIndex ? args[argsIndex] : seen;
-        caches[argsIndex] = indexOf == basicIndexOf && (value && value.length) >= largeArraySize && createCache(value);
+        caches[argsIndex] = indexOf === basicIndexOf && (value && value.length) >= largeArraySize && createCache(value);
       }
       outer:
       while (++index < length) {
@@ -4394,7 +4394,7 @@
           length = array ? array.length : 0,
           result = [];
 
-      var isLarge = !isSorted && length >= largeArraySize && indexOf == basicIndexOf,
+      var isLarge = !isSorted && length >= largeArraySize && indexOf === basicIndexOf,
           seen = (callback || isLarge) ? getArray() : result;
 
       if (isLarge) {
@@ -5196,7 +5196,7 @@
 
           push.apply(args, arguments);
           var result = func.apply(lodash, args);
-          return (value && typeof value == 'object' && value == result)
+          return (value && typeof value == 'object' && value === result)
             ? this
             : new lodashWrapper(result);
         };

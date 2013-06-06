@@ -48,7 +48,7 @@
   /** Used to minify `iteratorTemplate` data properties */
   var iteratorOptions = [
     'args',
-    'arrays',
+    'array',
     'bottom',
     'firstArg',
     'init',
@@ -326,14 +326,9 @@
       ];
 
       var props = [
-        'array',
         'cache',
-        'contains',
         'criteria',
         'index',
-        'indexOf',
-        'initedArray',
-        'release',
         'value'
       ];
 

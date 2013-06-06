@@ -96,7 +96,7 @@
     'defaults': ['createIterator', 'isArguments', 'keys'],
     'defer': ['bind'],
     'delay': [],
-    'difference': ['createCache'],
+    'difference': ['cacheIndexOf', 'createCache', 'getIndexOf', 'releaseObject'],
     'escape': ['escapeHtmlChar'],
     'every': ['basicEach', 'createCallback', 'isArray'],
     'filter': ['basicEach', 'createCallback', 'isArray'],
@@ -114,7 +114,7 @@
     'identity': [],
     'indexOf': ['basicIndexOf', 'sortedIndex'],
     'initial': ['slice'],
-    'intersection': ['createCache', 'getArray', 'releaseArray'],
+    'intersection': ['cacheIndexOf', 'createCache', 'getArray', 'getIndexOf', 'releaseArray', 'releaseObject'],
     'invert': ['keys'],
     'invoke': ['forEach'],
     'isArguments': [],
@@ -173,7 +173,7 @@
     'transform': ['createCallback', 'createObject', 'forOwn', 'isArray'],
     'unescape': ['unescapeHtmlChar'],
     'union': ['isArray', 'uniq'],
-    'uniq': ['createCache', 'getArray', 'getIndexOf', 'overloadWrapper', 'releaseArray'],
+    'uniq': ['cacheIndexOf', 'createCache', 'getArray', 'getIndexOf', 'overloadWrapper', 'releaseArray', 'releaseObject'],
     'uniqueId': [],
     'unzip': ['max', 'pluck'],
     'value': ['basicEach', 'forOwn', 'isArray', 'lodashWrapper'],
@@ -187,10 +187,12 @@
     // private methods
     'basicEach': ['createIterator', 'isArguments', 'isArray', 'isString', 'keys'],
     'basicIndexOf': [],
+    'cacheIndexOf': ['basicIndexOf'],
+    'cachePush': [],
     'charAtCallback': [],
     'compareAscending': [],
     'createBound': ['createObject', 'isFunction', 'isObject'],
-    'createCache': ['basicIndexOf', 'getArray', 'getIndexOf', 'getObject', 'releaseObject'],
+    'createCache': ['cachePush', 'getObject', 'releaseObject'],
     'createIterator': ['getObject', 'iteratorTemplate', 'releaseObject'],
     'createObject': [ 'isObject', 'noop'],
     'escapeHtmlChar': [],
@@ -218,7 +220,7 @@
   /** Used to inline `iteratorTemplate` */
   var iteratorOptions = [
     'args',
-    'arrays',
+    'array',
     'bottom',
     'firstArg',
     'init',
@@ -334,6 +336,8 @@
   var privateMethods = [
     'basicEach',
     'basicIndex',
+    'cacheIndexOf',
+    'cachePush',
     'charAtCallback',
     'compareAscending',
     'createBound',
@@ -1077,31 +1081,41 @@
         .replace(/,(?=\s*\))/, '');
     });
 
-    return removeFromObjectPoolFunctions(source, identifier);
+    return removeFromGetObject(source, identifier);
   }
 
   /**
-   * Removes all references to `identifier` from the `objectPool` functions in `source`.
+   * Removes all references to `identifier` from `getObject` in `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @param {String} identifier The name of the property to remove.
    * @returns {String} Returns the modified source.
    */
-  function removeFromObjectPoolFunctions(source, identifier) {
-    _.each(['getObject', 'releaseObject'], function(methodName) {
-      source = source.replace(matchFunction(source, methodName), function(match) {
-        // remove object property assignments
-        return match
-          .replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + identifier + "':.+\\n+", 'm'), '')
-          .replace(/,(?=\s*})/, '')
-          .replace(RegExp("^(?: *\\/\\/.*\\n)* *(\\w+)\\." + identifier + " *= *(.+\\n+)", 'm'), function(match, object, postlude) {
-            return RegExp('\\b' + object + '\\.').test(postlude) ? postlude : '';
-          });
+  function removeFromGetObject(source, identifier) {
+    return source.replace(matchFunction(source, 'getObject'), function(match) {
+      // remove object property assignments
+      return match
+        .replace(RegExp("^(?: *\\/\\/.*\\n)* *'" + identifier + "':.+\\n+", 'm'), '')
+        .replace(/,(?=\s*})/, '');
+    });
+  }
+
+  /**
+   * Removes all references to `identifier` from `releaseObject` in `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} identifier The name of the property to remove.
+   * @returns {String} Returns the modified source.
+   */
+  function removeFromReleaseObject(source, identifier) {
+    return source.replace(matchFunction(source, 'releaseObject'), function(match) {
+      // remove object property assignments
+      return match.replace(RegExp("(?:(^ *)| *)(\\w+)\\." + identifier + " *= *(.+\\n+)", 'm'), function(match, indent, object, postlude) {
+        return (indent || '') + RegExp('\\b' + object + '\\.').test(postlude) ? postlude : '';
       });
     });
-
-    return source;
   }
 
   /**
@@ -1481,7 +1495,7 @@
     // remove `support.unindexedChars` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
       return match
-        .replace(/'if *\(<%= *arrays *%>[^']*/, '$&\\n')
+        .replace(/'if *\(<%= *array *%>[^']*/, '$&\\n')
         .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.unindexedChars[\s\S]+?["']\1<% *} *%>.+/, '');
     });
 
@@ -1999,7 +2013,7 @@
 
         _.each(['difference', 'intersection', 'uniq'], function(methodName) {
           if (!useLodashMethod(methodName)) {
-            dependencyMap[methodName] = ['getIndexOf'].concat(_.without(dependencyMap[methodName], 'createCache'));
+            dependencyMap[methodName] = ['getIndexOf'].concat(_.without(dependencyMap[methodName], 'cacheIndexOf', 'createCache'));
           }
         });
 
@@ -2291,9 +2305,9 @@
             });
           });
 
-          // replace `arrays` property value of `eachIteratorOptions` with `false`
+          // replace `array` property value of `eachIteratorOptions` with `false`
           source = source.replace(/^( *)var eachIteratorOptions *= *[\s\S]+?\n\1};\n/m, function(match) {
-            return match.replace(/(^ *'arrays':)[^,]+/m, '$1 false');
+            return match.replace(/(^ *'array':)[^,]+/m, '$1 false');
           });
         }
       }
@@ -3033,7 +3047,9 @@
         source = removeFunction(source, 'createIterator');
 
         iteratorOptions.forEach(function(prop) {
-          source = removeFromObjectPoolFunctions(source, prop);
+          if (prop != 'array') {
+            source = removeFromGetObject(source, prop);
+          }
         });
 
         // inline all functions defined with `createIterator`
@@ -3309,9 +3325,11 @@
         source = removeVar(source, 'whitespace');
       }
       if (isRemoved(source, 'sortBy')) {
-        source = removeFromObjectPoolFunctions(source, 'criteria');
-        source = removeFromObjectPoolFunctions(source, 'index');
-        source = removeFromObjectPoolFunctions(source, 'value');
+        _.each([removeFromGetObject, removeFromReleaseObject], function(func) {
+          source = func(source, 'criteria');
+          source = func(source, 'index');
+          source = func(source, 'value');
+        });
       }
       if (isRemoved(source, 'template')) {
         // remove `templateSettings` assignment

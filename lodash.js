@@ -146,6 +146,166 @@
     '\u2029': 'u2029'
   };
 
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * A basic implementation of `_.indexOf` without support for binary searches
+   * or `fromIndex` constraints.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {Mixed} value The value to search for.
+   * @param {Number} [fromIndex=0] The index to search from.
+   * @returns {Number} Returns the index of the matched value or `-1`.
+   */
+  function basicIndexOf(array, value, fromIndex) {
+    var index = (fromIndex || 0) - 1,
+        length = array.length;
+
+    while (++index < length) {
+      if (array[index] === value) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * An implementation of `_.contains` for cache objects that mimics the return
+   * signature of `_.indexOf` by returning `0` if the value is found, else `-1`.
+   *
+   * @private
+   * @param {Object} cache The cache object to inspect.
+   * @param {Mixed} value The value to search for.
+   * @returns {Number} Returns `0` if `value` is found, else `-1`.
+   */
+  function cacheIndexOf(cache, value) {
+    var type = typeof value;
+    cache = cache.cache;
+
+    if (type == 'boolean' || value == null) {
+      return cache[value];
+    }
+    if (type != 'number' && type != 'string') {
+      type = 'object';
+    }
+    var key = type == 'number' ? value : keyPrefix + value;
+    cache = cache[type] || (cache[type] = {});
+
+    return type == 'object'
+      ? (cache[key] && basicIndexOf(cache[key], value) > -1 ? 0 : -1)
+      : (cache[key] ? 0 : -1);
+  }
+
+  /**
+   * Adds a given `value` to the corresponding cache object.
+   *
+   * @private
+   * @param {Mixed} value The value to add to the cache.
+   */
+  function cachePush(value) {
+    var cache = this.cache,
+        type = typeof value;
+
+    if (type == 'boolean' || value == null) {
+      cache[value] = true;
+    } else {
+      if (type != 'number' && type != 'string') {
+        type = 'object';
+      }
+      var key = type == 'number' ? value : keyPrefix + value,
+          typeCache = cache[type] || (cache[type] = {});
+
+      if (type == 'object') {
+        if ((typeCache[key] || (typeCache[key] = [])).push(value) === this.array.length) {
+          cache[type] = false;
+        }
+      } else {
+        typeCache[key] = true;
+      }
+    }
+  }
+
+  /**
+   * Used by `_.max` and `_.min` as the default `callback` when a given
+   * `collection` is a string value.
+   *
+   * @private
+   * @param {String} value The character to inspect.
+   * @returns {Number} Returns the code unit of given character.
+   */
+  function charAtCallback(value) {
+    return value.charCodeAt(0);
+  }
+
+  /**
+   * Used by `sortBy` to compare transformed `collection` values, stable sorting
+   * them in ascending order.
+   *
+   * @private
+   * @param {Object} a The object to compare to `b`.
+   * @param {Object} b The object to compare to `a`.
+   * @returns {Number} Returns the sort order indicator of `1` or `-1`.
+   */
+  function compareAscending(a, b) {
+    var ai = a.index,
+        bi = b.index;
+
+    a = a.criteria;
+    b = b.criteria;
+
+    // ensure a stable sort in V8 and other engines
+    // http://code.google.com/p/v8/issues/detail?id=90
+    if (a !== b) {
+      if (a > b || typeof a == 'undefined') {
+        return 1;
+      }
+      if (a < b || typeof b == 'undefined') {
+        return -1;
+      }
+    }
+    return ai < bi ? -1 : 1;
+  }
+
+  /**
+   * Creates a cache object to optimize linear searches of large arrays.
+   *
+   * @private
+   * @param {Array} [array=[]] The array to search.
+   * @returns {Null|Object} Returns the cache object or `null` if caching should not be used.
+   */
+  function createCache(array) {
+    var index = -1,
+        length = array.length;
+
+    var cache = getObject();
+    cache['false'] = cache['null'] = cache['true'] = cache['undefined'] = false;
+
+    var result = getObject();
+    result.array = array;
+    result.cache = cache;
+    result.push = cachePush;
+
+    while (++index < length) {
+      result.push(array[index]);
+    }
+    return cache.object === false
+      ? (releaseObject(result), null)
+      : result;
+  }
+
+  /**
+   * Used by `template` to escape characters for inclusion in compiled
+   * string literals.
+   *
+   * @private
+   * @param {String} match The matched character to escape.
+   * @returns {String} Returns the escaped character.
+   */
+  function escapeStringChar(match) {
+    return '\\' + stringEscapes[match];
+  }
+
   /**
    * Gets an array from the array pool or creates a new one if the pool is empty.
    *
@@ -190,6 +350,28 @@
   }
 
   /**
+   * Checks if `value` is a DOM node in IE < 9.
+   *
+   * @private
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true` if the `value` is a DOM node, else `false`.
+   */
+  function isNode(value) {
+    // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
+    // methods that are `typeof` "string" and still can coerce nodes to strings
+    return typeof value.toString != 'function' && typeof (value + '') == 'string';
+  }
+
+  /**
+   * A no-operation function.
+   *
+   * @private
+   */
+  function noop() {
+    // no operation performed
+  }
+
+  /**
    * Releases the given `array` back to the array pool.
    *
    * @private
@@ -219,6 +401,34 @@
     }
     object.array = object.cache = object.criteria = object.object = object.number = object.string = object.value = null;
     objectPool.push(object);
+  }
+
+  /**
+   * Slices the `collection` from the `start` index up to, but not including,
+   * the `end` index.
+   *
+   * Note: This function is used, instead of `Array#slice`, to support node lists
+   * in IE < 9 and to ensure dense arrays are returned.
+   *
+   * @private
+   * @param {Array|Object|String} collection The collection to slice.
+   * @param {Number} start The start index.
+   * @param {Number} end The end index.
+   * @returns {Array} Returns the new array.
+   */
+  function slice(array, start, end) {
+    start || (start = 0);
+    if (typeof end == 'undefined') {
+      end = array ? array.length : 0;
+    }
+    var index = -1,
+        length = end - start || 0,
+        result = Array(length < 0 ? 0 : length);
+
+    while (++index < length) {
+      result[index] = array[start + index];
+    }
+    return result;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -398,6 +608,19 @@
        ? value
        : new lodashWrapper(value);
     }
+
+    /**
+     * A fast path for creating `lodash` wrapper objects.
+     *
+     * @private
+     * @param {Mixed} value The value to wrap in a `lodash` instance.
+     * @returns {Object} Returns a `lodash` instance.
+     */
+    function lodashWrapper(value) {
+      this.__wrapped__ = value;
+    }
+    // ensure `new lodashWrapper` is an instance of `lodash`
+    lodashWrapper.prototype = lodash.prototype;
 
     /**
      * An object used to flag environments features.
@@ -740,69 +963,6 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * A basic version of `_.indexOf` without support for binary searches
-     * or `fromIndex` constraints.
-     *
-     * @private
-     * @param {Array} array The array to search.
-     * @param {Mixed} value The value to search for.
-     * @param {Number} [fromIndex=0] The index to search from.
-     * @returns {Number} Returns the index of the matched value or `-1`.
-     */
-    function basicIndexOf(array, value, fromIndex) {
-      var index = (fromIndex || 0) - 1,
-          length = array.length;
-
-      while (++index < length) {
-        if (array[index] === value) {
-          return index;
-        }
-      }
-      return -1;
-    }
-
-    /**
-     * Used by `_.max` and `_.min` as the default `callback` when a given
-     * `collection` is a string value.
-     *
-     * @private
-     * @param {String} value The character to inspect.
-     * @returns {Number} Returns the code unit of given character.
-     */
-    function charAtCallback(value) {
-      return value.charCodeAt(0);
-    }
-
-    /**
-     * Used by `sortBy` to compare transformed `collection` values, stable sorting
-     * them in ascending order.
-     *
-     * @private
-     * @param {Object} a The object to compare to `b`.
-     * @param {Object} b The object to compare to `a`.
-     * @returns {Number} Returns the sort order indicator of `1` or `-1`.
-     */
-    function compareAscending(a, b) {
-      var ai = a.index,
-          bi = b.index;
-
-      a = a.criteria;
-      b = b.criteria;
-
-      // ensure a stable sort in V8 and other engines
-      // http://code.google.com/p/v8/issues/detail?id=90
-      if (a !== b) {
-        if (a > b || typeof a == 'undefined') {
-          return 1;
-        }
-        if (a < b || typeof b == 'undefined') {
-          return -1;
-        }
-      }
-      return ai < bi ? -1 : 1;
-    }
-
-    /**
      * Creates a function that, when called, invokes `func` with the `this` binding
      * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
      * bound function.
@@ -859,77 +1019,6 @@
       }
       return bound;
     }
-
-    /**
-     * Creates a function optimized to search large arrays for a given `value`,
-     * starting at `fromIndex`, using strict equality for comparisons, i.e. `===`.
-     *
-     * @private
-     * @param {Array} [array=[]] The array to search.
-     * @param {Mixed} value The value to search for.
-     * @returns {Boolean} Returns `true`, if `value` is found, else `false`.
-     */
-    function createCache(array) {
-      var index = -1,
-          length = array.length;
-
-      var cache = getObject();
-      cache['false'] = cache['null'] = cache['true'] = cache['undefined'] = false;
-
-      var result = getObject();
-      result.array = array;
-      result.cache = cache;
-      result.push = cachePush;
-
-      while (++index < length) {
-        result.push(array[index]);
-      }
-      return cache.object === false
-        ? releaseObject(result)
-        : result;
-    }
-
-    function cacheIndexOf(cache, value) {
-      var type = typeof value;
-      cache = cache.cache;
-
-      if (type == 'boolean' || value == null) {
-        return cache[value];
-      }
-      if (type != 'number' && type != 'string') {
-        type = 'object';
-      }
-      var key = type == 'number' ? value : keyPrefix + value;
-      cache = cache[type] || (cache[type] = {});
-
-      return type == 'object'
-        ? (cache[key] && basicIndexOf(cache[key], value) > -1 ? 0 : -1)
-        : (cache[key] ? 0 : -1);
-    }
-
-      function cachePush(value) {
-        var cache = this.cache,
-            type = typeof value;
-
-        if (type == 'boolean' || value == null) {
-          cache[value] = true;
-        } else {
-          if (type != 'number' && type != 'string') {
-            type = 'object';
-          }
-          var key = type == 'number' ? value : keyPrefix + value,
-              typeCache = cache[type] || (cache[type] = {});
-
-          if (type == 'object') {
-            if ((typeCache[key] || (typeCache[key] = [])).push(value) === this.array.length) {
-              cache[type] = false;
-            }
-          } else {
-            typeCache[key] = true;
-          }
-        }
-      }
-
 
     /**
      * Creates compiled iteration functions.
@@ -1019,18 +1108,6 @@
     }
 
     /**
-     * Used by `template` to escape characters for inclusion in compiled
-     * string literals.
-     *
-     * @private
-     * @param {String} match The matched character to escape.
-     * @returns {String} Returns the escaped character.
-     */
-    function escapeStringChar(match) {
-      return '\\' + stringEscapes[match];
-    }
-
-    /**
      * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
      * customized, this method returns the custom method, otherwise it returns
      * the `basicIndexOf` function.
@@ -1041,41 +1118,6 @@
     function getIndexOf(array, value, fromIndex) {
       var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
       return result;
-    }
-
-    /**
-     * Checks if `value` is a DOM node in IE < 9.
-     *
-     * @private
-     * @param {Mixed} value The value to check.
-     * @returns {Boolean} Returns `true` if the `value` is a DOM node, else `false`.
-     */
-    function isNode(value) {
-      // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-      // methods that are `typeof` "string" and still can coerce nodes to strings
-      return typeof value.toString != 'function' && typeof (value + '') == 'string';
-    }
-
-    /**
-     * A fast path for creating `lodash` wrapper objects.
-     *
-     * @private
-     * @param {Mixed} value The value to wrap in a `lodash` instance.
-     * @returns {Object} Returns a `lodash` instance.
-     */
-    function lodashWrapper(value) {
-      this.__wrapped__ = value;
-    }
-    // ensure `new lodashWrapper` is an instance of `lodash`
-    lodashWrapper.prototype = lodash.prototype;
-
-    /**
-     * A no-operation function.
-     *
-     * @private
-     */
-    function noop() {
-      // no operation performed
     }
 
     /**
@@ -1139,34 +1181,6 @@
         result = key;
       });
       return result === undefined || hasOwnProperty.call(value, result);
-    }
-
-    /**
-     * Slices the `collection` from the `start` index up to, but not including,
-     * the `end` index.
-     *
-     * Note: This function is used, instead of `Array#slice`, to support node lists
-     * in IE < 9 and to ensure dense arrays are returned.
-     *
-     * @private
-     * @param {Array|Object|String} collection The collection to slice.
-     * @param {Number} start The start index.
-     * @param {Number} end The end index.
-     * @returns {Array} Returns the new array.
-     */
-    function slice(array, start, end) {
-      start || (start = 0);
-      if (typeof end == 'undefined') {
-        end = array ? array.length : 0;
-      }
-      var index = -1,
-          length = end - start || 0,
-          result = Array(length < 0 ? 0 : length);
-
-      while (++index < length) {
-        result[index] = array[start + index];
-      }
-      return result;
     }
 
     /**
@@ -1485,7 +1499,7 @@
      * `undefined`, cloning will be handled by the method instead. The `callback`
      * is bound to `thisArg` and invoked with one argument; (value).
      *
-     * Note: This function is loosely based on the structured clone algorithm. Functions
+     * Note: This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
      * objects created by constructors other than `Object` are cloned to plain `Object` objects.
      * See http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm.
@@ -3970,49 +3984,43 @@
     function intersection(array) {
       var args = arguments,
           argsLength = args.length,
+          argsIndex = -1,
           caches = getArray(),
           index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          result = [];
+          result = [],
+          seen = getArray();
 
-      var isLarge = length >= largeArraySize && indexOf == basicIndexOf;
-      caches[0] = getArray();
-
-      if (isLarge) {
-        var cache = createCache(caches[0]);
-        if (cache) {
-          indexOf = cacheIndexOf;
-          caches[0] = cache;
-        } else {
-          isLarge = false;
-        }
+      while (++argsIndex < argsLength) {
+        var value = argsIndex ? args[argsIndex] : seen;
+        caches[argsIndex] = indexOf == basicIndexOf && (value && value.length) >= largeArraySize && createCache(value);
       }
       outer:
       while (++index < length) {
-        var seen = caches[0],
-            value = array[index];
+        var cache = caches[0];
+        value = array[index];
 
-        if (indexOf(seen, value) < 0) {
-          var argsIndex = argsLength;
+        if ((cache ? cacheIndexOf : indexOf)(cache || seen, value) < 0) {
+          argsIndex = argsLength;
           seen.push(value);
           while (--argsIndex) {
-            seen = isLarge ? (caches[argsIndex] || (caches[argsIndex] = createCache(args[argsIndex]))) : args[argsIndex];
-            if (indexOf(seen, value) < 0) {
+            cache = caches[argsIndex];
+            if ((cache ? cacheIndexOf : indexOf)(cache || args[argsIndex], value) < 0) {
               continue outer;
             }
           }
           result.push(value);
         }
       }
-      seen = isLarge ? caches[0].array : caches[0];
-      if (isLarge) {
-        while (argsLength--) {
-          releaseObject(caches[argsLength]);
+      while (argsLength--) {
+        cache = caches[argsLength];
+        if (cache) {
+          releaseObject(cache);
         }
       }
-      releaseArray(seen);
       releaseArray(caches);
+      releaseArray(seen);
       return result;
     }
 
@@ -5139,7 +5147,7 @@
     }
 
     /**
-     * This function returns the first argument passed to it.
+     * This method returns the first argument passed to it.
      *
      * @static
      * @memberOf _

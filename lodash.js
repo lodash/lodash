@@ -3993,20 +3993,22 @@
           seen = getArray();
 
       while (++argsIndex < argsLength) {
-        var value = argsIndex ? args[argsIndex] : seen;
-        caches[argsIndex] = indexOf === basicIndexOf && (value && value.length) >= largeArraySize && createCache(value);
+        var value = args[argsIndex];
+        caches[argsIndex] = indexOf === basicIndexOf &&
+          (value ? value.length : 0) >= largeArraySize &&
+          createCache(argsIndex ? args[argsIndex] : seen);
       }
       outer:
       while (++index < length) {
         var cache = caches[0];
         value = array[index];
 
-        if ((cache ? cacheIndexOf : indexOf)(cache || seen, value) < 0) {
+        if ((cache ? cacheIndexOf(cache, value) : indexOf(seen, value)) < 0) {
           argsIndex = argsLength;
-          seen.push(value);
+          (cache || seen).push(value);
           while (--argsIndex) {
             cache = caches[argsIndex];
-            if ((cache ? cacheIndexOf : indexOf)(cache || args[argsIndex], value) < 0) {
+            if ((cache ? cacheIndexOf(cache, value) : indexOf(args[argsIndex], value)) < 0) {
               continue outer;
             }
           }

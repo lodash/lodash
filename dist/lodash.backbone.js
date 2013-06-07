@@ -103,6 +103,68 @@
 
   /*--------------------------------------------------------------------------*/
 
+  /**
+   * A basic implementation of `_.indexOf` without support for binary searches
+   * or `fromIndex` constraints.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {Mixed} value The value to search for.
+   * @param {Number} [fromIndex=0] The index to search from.
+   * @returns {Number} Returns the index of the matched value or `-1`.
+   */
+  function basicIndexOf(array, value, fromIndex) {
+    var index = (fromIndex || 0) - 1,
+        length = array.length;
+
+    while (++index < length) {
+      if (array[index] === value) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Used by `sortBy` to compare transformed `collection` values, stable sorting
+   * them in ascending order.
+   *
+   * @private
+   * @param {Object} a The object to compare to `b`.
+   * @param {Object} b The object to compare to `a`.
+   * @returns {Number} Returns the sort order indicator of `1` or `-1`.
+   */
+  function compareAscending(a, b) {
+    var ai = a.index,
+        bi = b.index;
+
+    a = a.criteria;
+    b = b.criteria;
+
+    // ensure a stable sort in V8 and other engines
+    // http://code.google.com/p/v8/issues/detail?id=90
+    if (a !== b) {
+      if (a > b || typeof a == 'undefined') {
+        return 1;
+      }
+      if (a < b || typeof b == 'undefined') {
+        return -1;
+      }
+    }
+    return ai < bi ? -1 : 1;
+  }
+
+  /**
+   * A no-operation function.
+   *
+   * @private
+   */
+  function noop() {
+    // no operation performed
+  }
+
+  /*--------------------------------------------------------------------------*/
+
   /** Used for `Array` and `Object` method references */
   var arrayProto = Array.prototype,
       objectProto = Object.prototype,
@@ -215,6 +277,19 @@
   }
 
   /**
+   * A fast path for creating `lodash` wrapper objects.
+   *
+   * @private
+   * @param {Mixed} value The value to wrap in a `lodash` instance.
+   * @returns {Object} Returns a `lodash` instance.
+   */
+  function lodashWrapper(value) {
+    this.__wrapped__ = value;
+  }
+  // ensure `new lodashWrapper` is an instance of `lodash`
+  lodashWrapper.prototype = lodash.prototype;
+
+  /**
    * An object used to flag environments features.
    *
    * @static
@@ -250,57 +325,6 @@
   }(1));
 
   /*--------------------------------------------------------------------------*/
-
-  /**
-   * A basic version of `_.indexOf` without support for binary searches
-   * or `fromIndex` constraints.
-   *
-   * @private
-   * @param {Array} array The array to search.
-   * @param {Mixed} value The value to search for.
-   * @param {Number} [fromIndex=0] The index to search from.
-   * @returns {Number} Returns the index of the matched value or `-1`.
-   */
-  function basicIndexOf(array, value, fromIndex) {
-    var index = (fromIndex || 0) - 1,
-        length = array.length;
-
-    while (++index < length) {
-      if (array[index] === value) {
-        return index;
-      }
-    }
-    return -1;
-  }
-
-  /**
-   * Used by `sortBy` to compare transformed `collection` values, stable sorting
-   * them in ascending order.
-   *
-   * @private
-   * @param {Object} a The object to compare to `b`.
-   * @param {Object} b The object to compare to `a`.
-   * @returns {Number} Returns the sort order indicator of `1` or `-1`.
-   */
-  function compareAscending(a, b) {
-    var ai = a.index,
-        bi = b.index;
-
-    a = a.criteria;
-    b = b.criteria;
-
-    // ensure a stable sort in V8 and other engines
-    // http://code.google.com/p/v8/issues/detail?id=90
-    if (a !== b) {
-      if (a > b || typeof a == 'undefined') {
-        return 1;
-      }
-      if (a < b || typeof b == 'undefined') {
-        return -1;
-      }
-    }
-    return ai < bi ? -1 : 1;
-  }
 
   /**
    * Creates a function that, when called, invokes `func` with the `this` binding
@@ -388,28 +412,6 @@
   function getIndexOf(array, value, fromIndex) {
     var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
     return result;
-  }
-
-  /**
-   * A fast path for creating `lodash` wrapper objects.
-   *
-   * @private
-   * @param {Mixed} value The value to wrap in a `lodash` instance.
-   * @returns {Object} Returns a `lodash` instance.
-   */
-  function lodashWrapper(value) {
-    this.__wrapped__ = value;
-  }
-  // ensure `new lodashWrapper` is an instance of `lodash`
-  lodashWrapper.prototype = lodash.prototype;
-
-  /**
-   * A no-operation function.
-   *
-   * @private
-   */
-  function noop() {
-    // no operation performed
   }
 
   /*--------------------------------------------------------------------------*/
@@ -2814,7 +2816,7 @@
   }
 
   /**
-   * This function returns the first argument passed to it.
+   * This method returns the first argument passed to it.
    *
    * @static
    * @memberOf _

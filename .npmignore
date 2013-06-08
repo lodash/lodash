@@ -4,6 +4,7 @@
 *.d.ts
 *.map
 *.md
+lodash.js
 bower.json
 component.json
 doc

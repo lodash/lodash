@@ -5,8 +5,8 @@
   "description": "A low-level utility library delivering consistency, customization, performance, and extra features.",
   "license": "MIT",
   "scripts": [
-    "./index.js",
-    "./dist/lodash.compat.js"
+    "index.js",
+    "dist/lodash.compat.js"
   ],
   "keywords": [
     "browser",

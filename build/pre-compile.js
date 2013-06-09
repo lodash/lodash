@@ -87,6 +87,7 @@
     'any',
     'argsClass',
     'argsObject',
+    'array',
     'assign',
     'at',
     'attachEvent',
@@ -133,6 +134,7 @@
     'forEach',
     'forIn',
     'forOwn',
+    'function',
     'functions',
     'global',
     'groupBy',
@@ -183,6 +185,8 @@
     'nodeClass',
     'nonEnumArgs',
     'nonEnumShadows',
+    'null',
+    'number',
     'object',
     'omit',
     'once',
@@ -211,6 +215,7 @@
     'sortedIndex',
     'source',
     'spliceObjects',
+    'string',
     'support',
     'tail',
     'take',
@@ -222,6 +227,7 @@
     'toArray',
     'trailing',
     'transform',
+    'undefined',
     'unescape',
     'unindexedChars',
     'union',
@@ -315,11 +321,11 @@
     // minify internal properties
     (function() {
       var methods = [
+        'cacheIndexOf',
+        'cachePush',
         'compareAscending',
         'createCache',
-        'difference',
         'getObject',
-        'intersection',
         'releaseObject',
         'sortBy',
         'uniq'
@@ -332,7 +338,7 @@
         'value'
       ];
 
-      var snippets = source.match(RegExp('^( +)(?:var|function) +(?:' + methods.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));
+      var snippets = source.match(RegExp('^( *)(?:var|function) +(?:' + methods.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));
       if (!snippets) {
         return;
       }
@@ -364,14 +370,14 @@
     var snippets = source.match(
       RegExp([
         // match the `iteratorTemplate`
-        '( +)var iteratorTemplate\\b[\\s\\S]+?\\n\\1}',
+        '^( *)var iteratorTemplate\\b[\\s\\S]+?\\n\\1}',
         // match methods created by `createIterator` calls
         'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]*?\\);\\n',
         // match variables storing `createIterator` options
-        '( +)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
-        // match the `createIterator`, `getObject`, and `releaseObject` functions
-        '( +)function (?:createIterator|getObject|releaseObject)\\b[\\s\\S]+?\\n\\3}'
-      ].join('|'), 'g')
+        '^( *)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
+        // match `cachePush`, `createCache`, `createIterator`, `getObject`, `releaseObject`, and `uniq` functions
+        '^( *)(?:var|function) +(?:cachePush|createCache|createIterator|getObject|releaseObject|uniq)\\b[\\s\\S]+?\\n\\3}'
+      ].join('|'), 'gm')
     );
 
     // exit early if no compilable snippets
@@ -380,7 +386,7 @@
     }
 
     snippets.forEach(function(snippet, index) {
-      var isFunc = /^ *function +/m.test(snippet),
+      var isFunc = /\bfunction *[ \w]*\(/.test(snippet),
           isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
           modified = snippet;
 
@@ -409,16 +415,24 @@
         var minName = minNames[index];
 
         // minify variable names present in strings
-        if (isFunc) {
-          modified = modified.replace(RegExp('(([\'"])[^\\n\\2]*?)\\b' + varName + '\\b(?=[^\\n\\2]*\\2[ ,+;]+$)', 'gm'), '$1' + minName);
+        if (isFunc && !isIteratorTemplate) {
+          modified = modified.replace(RegExp('((["\'])[^\\n\\2]*?)\\b' + varName + '\\b(?=[^\\n\\2]*\\2[ ,+;]+$)', 'gm'), function(match, prelude) {
+            return prelude + minName;
+          });
         }
         // ensure properties in compiled strings aren't minified
         else {
-          modified = modified.replace(RegExp('([^.])\\b' + varName + '\\b(?!\' *[\\]:])', 'g'), '$1' + minName);
+          modified = modified.replace(RegExp('([^.])\\b' + varName + '\\b(?!\' *[\\]:])', 'g'), function(match, prelude) {
+             return prelude + minName;
+          });
         }
-        // correct `typeof` values
+        // correct `typeof` string values
         if (/^(?:boolean|function|object|number|string|undefined)$/.test(varName)) {
-          modified = modified.replace(RegExp("(typeof [^']+')" + minName + "'", 'g'), '$1' + varName + "'");
+          modified = modified.replace(RegExp('(= *)(["\'])' + minName + '\\2|(["\'])' + minName + '\\3( *=)', 'g'), function(match, prelude, preQuote, postQuote, postlude) {
+            return prelude
+              ? prelude + preQuote + varName + preQuote
+              : postQuote + varName + postQuote + postlude;
+          });
         }
       });
 

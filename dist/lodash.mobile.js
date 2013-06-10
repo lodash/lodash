@@ -12,18 +12,6 @@
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
 
-  /** Detect free variable `exports` */
-  var freeExports = typeof exports == 'object' && exports;
-
-  /** Detect free variable `module` */
-  var freeModule = typeof module == 'object' && module && module.exports == freeExports && module;
-
-  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
-  var freeGlobal = typeof global == 'object' && global;
-  if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-    window = freeGlobal;
-  }
-
   /** Used to pool arrays and objects used internally */
   var arrayPool = [],
       objectPool = [];
@@ -137,6 +125,18 @@
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
+
+  /** Detect free variable `exports` */
+  var freeExports = objectTypes[typeof exports] && exports;
+
+  /** Detect free variable `module` */
+  var freeModule = objectTypes[typeof module] && module && module.exports == freeExports && module;
+
+  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
+  var freeGlobal = objectTypes[typeof global] && global;
+  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
+    window = freeGlobal;
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -318,15 +318,18 @@
     return objectPool.pop() || {
       'array': null,
       'criteria': null,
-      'false': null,
-      'index': null,
-      'null': null,
+      'false': false,
+      'index': 0,
+      'leading': false,
+      'maxWait': 0,
+      'null': false,
       'number': null,
       'object': null,
       'push': null,
       'string': null,
-      'true': null,
-      'undefined': null,
+      'trailing': false,
+      'true': false,
+      'undefined': false,
       'value': null
     };
   }
@@ -431,9 +434,16 @@
         String = context.String,
         TypeError = context.TypeError;
 
-    /** Used for `Array` and `Object` method references */
-    var arrayProto = Array.prototype,
-        errorProto = Error.prototype,
+    /**
+     * Used for `Array` method references.
+     *
+     * Normally `Array.prototype` would suffice, however, using an array literal
+     * avoids issues in Narwhal.
+     */
+    var arrayRef = [];
+
+    /** Used for native method references */
+    var errorProto = Error.prototype,
         objectProto = Object.prototype,
         stringProto = String.prototype;
 
@@ -450,11 +460,11 @@
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
-        concat = arrayProto.concat,
+        concat = arrayRef.concat,
         floor = Math.floor,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
-        push = arrayProto.push,
+        push = arrayRef.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
         toString = objectProto.toString;
@@ -470,7 +480,7 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
-        nativeSlice = arrayProto.slice;
+        nativeSlice = arrayRef.slice;
 
     /** Detect various environments */
     var isIeOpera = reNative.test(context.attachEvent),
@@ -2192,7 +2202,7 @@
       if (isFunc) {
         callback = lodash.createCallback(callback, thisArg);
       } else {
-        var props = concat.apply(arrayProto, nativeSlice.call(arguments, 1));
+        var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1));
       }
       forIn(object, function(value, key, object) {
         if (isFunc
@@ -2261,7 +2271,7 @@
       var result = {};
       if (typeof callback != 'function') {
         var index = -1,
-            props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+            props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
             length = isObject(object) ? props.length : 0;
 
         while (++index < length) {
@@ -2382,7 +2392,7 @@
      */
     function at(collection) {
       var index = -1,
-          props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+          props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
           length = props.length,
           result = Array(length);
 
@@ -3420,7 +3430,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          seen = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+          seen = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
           result = [];
 
       var isLarge = length >= largeArraySize && indexOf === basicIndexOf;
@@ -4104,9 +4114,9 @@
      */
     function union(array) {
       if (!isArray(array)) {
-        arguments[0] = array ? nativeSlice.call(array) : arrayProto;
+        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
       }
-      return uniq(concat.apply(arrayProto, arguments));
+      return uniq(concat.apply(arrayRef, arguments));
     }
 
     /**
@@ -4381,7 +4391,7 @@
      * // => alerts 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
-      var funcs = arguments.length > 1 ? concat.apply(arrayProto, nativeSlice.call(arguments, 1)) : functions(object),
+      var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
           index = -1,
           length = funcs.length;
 
@@ -4572,6 +4582,7 @@
      * @param {Number} wait The number of milliseconds to delay.
      * @param {Object} options The options object.
      *  [leading=false] A boolean to specify execution on the leading edge of the timeout.
+     *  [maxWait] The maximum time `func` is allowed to be delayed before it's called.
      *  [trailing=true] A boolean to specify execution on the trailing edge of the timeout.
      * @returns {Function} Returns the new debounced function.
      * @example
@@ -4589,35 +4600,67 @@
           result,
           thisArg,
           callCount = 0,
+          lastCalled = 0,
+          maxWait = false,
+          maxTimeoutId = null,
           timeoutId = null,
           trailing = true;
 
-      function delayed() {
+      function trailingCall() {
         var isCalled = trailing && (!leading || callCount > 1);
-        callCount = timeoutId = 0;
+        callCount = 0;
+
+        clearTimeout(maxTimeoutId);
+        clearTimeout(timeoutId);
+        maxTimeoutId = timeoutId = null;
+
         if (isCalled) {
+          lastCalled = new Date;
           result = func.apply(thisArg, args);
         }
       }
+      wait = nativeMax(0, wait || 0);
       if (options === true) {
         var leading = true;
         trailing = false;
       } else if (isObject(options)) {
+        maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
         leading = options.leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
       return function() {
+        var now = new Date;
+        if (!timeoutId && !leading) {
+          lastCalled = now;
+        }
+        var remaining = (maxWait || wait) - (now - lastCalled);
         args = arguments;
         thisArg = this;
+        callCount++;
 
         // avoid issues with Titanium and `undefined` timeout ids
         // https://github.com/appcelerator/titanium_mobile/blob/3_1_0_GA/android/titanium/src/java/ti/modules/titanium/TitaniumModule.java#L185-L192
         clearTimeout(timeoutId);
+        timeoutId = null;
 
-        if (leading && ++callCount < 2) {
-          result = func.apply(thisArg, args);
+        if (maxWait === false) {
+          if (leading && callCount < 2) {
+            result = func.apply(thisArg, args);
+          }
+        } else {
+          if (remaining <= 0) {
+            clearTimeout(maxTimeoutId);
+            maxTimeoutId = null;
+            lastCalled = now;
+            result = func.apply(thisArg, args);
+          }
+          else if (!maxTimeoutId) {
+            maxTimeoutId = setTimeout(trailingCall, remaining);
+          }
         }
-        timeoutId = setTimeout(delayed, wait);
+        if (wait !== maxWait) {
+          timeoutId = setTimeout(trailingCall, wait);
+        }
         return result;
       };
     }
@@ -4814,47 +4857,23 @@
      * }));
      */
     function throttle(func, wait, options) {
-      var args,
-          result,
-          thisArg,
-          lastCalled = 0,
-          leading = true,
-          timeoutId = null,
+      var leading = true,
           trailing = true;
 
-      function trailingCall() {
-        timeoutId = null;
-        if (trailing) {
-          lastCalled = new Date;
-          result = func.apply(thisArg, args);
-        }
-      }
       if (options === false) {
         leading = false;
       } else if (isObject(options)) {
         leading = 'leading' in options ? options.leading : leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
-      return function() {
-        var now = new Date;
-        if (!timeoutId && !leading) {
-          lastCalled = now;
-        }
-        var remaining = wait - (now - lastCalled);
-        args = arguments;
-        thisArg = this;
+      options = getObject();
+      options.leading = leading;
+      options.maxWait = wait;
+      options.trailing = trailing;
 
-        if (remaining <= 0) {
-          clearTimeout(timeoutId);
-          timeoutId = null;
-          lastCalled = now;
-          result = func.apply(thisArg, args);
-        }
-        else if (!timeoutId) {
-          timeoutId = setTimeout(trailingCall, remaining);
-        }
-        return result;
-      };
+      var result = debounce(func, wait, options);
+      releaseObject(options);
+      return result;
     }
 
     /**
@@ -5574,7 +5593,7 @@
 
     // add `Array` functions that return unwrapped values
     basicEach(['join', 'pop', 'shift'], function(methodName) {
-      var func = arrayProto[methodName];
+      var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return func.apply(this.__wrapped__, arguments);
       };
@@ -5582,7 +5601,7 @@
 
     // add `Array` functions that return the wrapped value
     basicEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
-      var func = arrayProto[methodName];
+      var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
         return this;
@@ -5591,7 +5610,7 @@
 
     // add `Array` functions that return new wrapped values
     basicEach(['concat', 'slice', 'splice'], function(methodName) {
-      var func = arrayProto[methodName];
+      var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments));
       };

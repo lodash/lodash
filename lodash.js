@@ -324,27 +324,30 @@
    */
   function getObject() {
     return objectPool.pop() || {
-      'args': null,
+      'args': '',
       'array': null,
-      'bottom': null,
+      'bottom': '',
       'criteria': null,
-      'false': null,
-      'firstArg': null,
-      'index': null,
-      'init': null,
-      'loop': null,
-      'null': null,
+      'false': false,
+      'firstArg': '',
+      'index': 0,
+      'init': '',
+      'leading': false,
+      'loop': '',
+      'maxWait': 0,
+      'null': false,
       'number': null,
       'object': null,
       'push': null,
       'shadowedProps': null,
       'string': null,
       'support': null,
-      'top': null,
-      'true': null,
-      'undefined': null,
-      'useHas': null,
-      'useKeys': null,
+      'top': '',
+      'trailing': false,
+      'true': false,
+      'undefined': false,
+      'useHas': false,
+      'useKeys': false,
       'value': null
     };
   }
@@ -4810,6 +4813,7 @@
      * @param {Number} wait The number of milliseconds to delay.
      * @param {Object} options The options object.
      *  [leading=false] A boolean to specify execution on the leading edge of the timeout.
+     *  [maxWait] The maximum time `func` is allowed to be delayed before it's called.
      *  [trailing=true] A boolean to specify execution on the trailing edge of the timeout.
      * @returns {Function} Returns the new debounced function.
      * @example
@@ -4827,35 +4831,67 @@
           result,
           thisArg,
           callCount = 0,
+          lastCalled = 0,
+          maxWait = false,
+          maxTimeoutId = null,
           timeoutId = null,
           trailing = true;
 
-      function delayed() {
+      function trailingCall() {
         var isCalled = trailing && (!leading || callCount > 1);
-        callCount = timeoutId = 0;
+        callCount = 0;
+
+        clearTimeout(maxTimeoutId);
+        clearTimeout(timeoutId);
+        maxTimeoutId = timeoutId = null;
+
         if (isCalled) {
+          lastCalled = new Date;
           result = func.apply(thisArg, args);
         }
       }
+      wait = nativeMax(0, wait || 0);
       if (options === true) {
         var leading = true;
         trailing = false;
       } else if (isObject(options)) {
+        maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
         leading = options.leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
       return function() {
+        var now = new Date;
+        if (!timeoutId && !leading) {
+          lastCalled = now;
+        }
+        var remaining = (maxWait || wait) - (now - lastCalled);
         args = arguments;
         thisArg = this;
+        callCount++;
 
         // avoid issues with Titanium and `undefined` timeout ids
         // https://github.com/appcelerator/titanium_mobile/blob/3_1_0_GA/android/titanium/src/java/ti/modules/titanium/TitaniumModule.java#L185-L192
         clearTimeout(timeoutId);
+        timeoutId = null;
 
-        if (leading && ++callCount < 2) {
-          result = func.apply(thisArg, args);
+        if (maxWait === false) {
+          if (leading && callCount < 2) {
+            result = func.apply(thisArg, args);
+          }
+        } else {
+          if (remaining <= 0) {
+            clearTimeout(maxTimeoutId);
+            maxTimeoutId = null;
+            lastCalled = now;
+            result = func.apply(thisArg, args);
+          }
+          else if (!maxTimeoutId) {
+            maxTimeoutId = setTimeout(trailingCall, remaining);
+          }
         }
-        timeoutId = setTimeout(delayed, wait);
+        if (wait !== maxWait) {
+          timeoutId = setTimeout(trailingCall, wait);
+        }
         return result;
       };
     }
@@ -5056,47 +5092,23 @@
      * }));
      */
     function throttle(func, wait, options) {
-      var args,
-          result,
-          thisArg,
-          lastCalled = 0,
-          leading = true,
-          timeoutId = null,
+      var leading = true,
           trailing = true;
 
-      function trailingCall() {
-        timeoutId = null;
-        if (trailing) {
-          lastCalled = new Date;
-          result = func.apply(thisArg, args);
-        }
-      }
       if (options === false) {
         leading = false;
       } else if (isObject(options)) {
         leading = 'leading' in options ? options.leading : leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
-      return function() {
-        var now = new Date;
-        if (!timeoutId && !leading) {
-          lastCalled = now;
-        }
-        var remaining = wait - (now - lastCalled);
-        args = arguments;
-        thisArg = this;
+      options = getObject();
+      options.leading = leading;
+      options.maxWait = wait;
+      options.trailing = trailing;
 
-        if (remaining <= 0) {
-          clearTimeout(timeoutId);
-          timeoutId = null;
-          lastCalled = now;
-          result = func.apply(thisArg, args);
-        }
-        else if (!timeoutId) {
-          timeoutId = setTimeout(trailingCall, remaining);
-        }
-        return result;
-      };
+      var result = debounce(func, wait, options);
+      releaseObject(options);
+      return result;
     }
 
     /**

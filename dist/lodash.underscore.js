@@ -12,18 +12,6 @@
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
 
-  /** Detect free variable `exports` */
-  var freeExports = typeof exports == 'object' && exports;
-
-  /** Detect free variable `module` */
-  var freeModule = typeof module == 'object' && module && module.exports == freeExports && module;
-
-  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
-  var freeGlobal = typeof global == 'object' && global;
-  if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-    window = freeGlobal;
-  }
-
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -101,6 +89,18 @@
     '\u2029': 'u2029'
   };
 
+  /** Detect free variable `exports` */
+  var freeExports = objectTypes[typeof exports] && exports;
+
+  /** Detect free variable `module` */
+  var freeModule = objectTypes[typeof module] && module && module.exports == freeExports && module;
+
+  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
+  var freeGlobal = objectTypes[typeof global] && global;
+  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
+    window = freeGlobal;
+  }
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -177,9 +177,16 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** Used for `Array` and `Object` method references */
-  var arrayProto = Array.prototype,
-      objectProto = Object.prototype,
+  /**
+   * Used for `Array` method references.
+   *
+   * Normally `Array.prototype` would suffice, however, using an array literal
+   * avoids issues in Narwhal.
+   */
+  var arrayRef = [];
+
+  /** Used for native method references */
+  var objectProto = Object.prototype,
       stringProto = String.prototype;
 
   /** Used to restore the original `_` reference in `noConflict` */
@@ -195,10 +202,10 @@
   /** Native method shortcuts */
   var ceil = Math.ceil,
       clearTimeout = window.clearTimeout,
-      concat = arrayProto.concat,
+      concat = arrayRef.concat,
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
-      push = arrayProto.push,
+      push = arrayRef.push,
       propertyIsEnumerable = objectProto.propertyIsEnumerable,
       setTimeout = window.setTimeout,
       toString = objectProto.toString;
@@ -213,7 +220,7 @@
       nativeMax = Math.max,
       nativeMin = Math.min,
       nativeRandom = Math.random,
-      nativeSlice = arrayProto.slice;
+      nativeSlice = arrayRef.slice;
 
   /** Detect various environments */
   var isIeOpera = reNative.test(window.attachEvent),
@@ -333,7 +340,7 @@
      * @memberOf _.support
      * @type Boolean
      */
-    support.spliceObjects = (arrayProto.splice.call(object, 0, 1), !object[0]);
+    support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
   }(1));
 
   /**
@@ -1334,7 +1341,7 @@
    */
   function omit(object) {
     var indexOf = getIndexOf(),
-        props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         result = {};
 
     forIn(object, function(value, key) {
@@ -1399,7 +1406,7 @@
    */
   function pick(object) {
     var index = -1,
-        props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         length = props.length,
         result = {};
 
@@ -2501,7 +2508,7 @@
     var index = -1,
         indexOf = getIndexOf(),
         length = array.length,
-        flattened = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+        flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
         result = [];
 
     while (++index < length) {
@@ -3113,9 +3120,9 @@
    */
   function union(array) {
     if (!isArray(array)) {
-      arguments[0] = array ? nativeSlice.call(array) : arrayProto;
+      arguments[0] = array ? nativeSlice.call(array) : arrayRef;
     }
-    return uniq(concat.apply(arrayProto, arguments));
+    return uniq(concat.apply(arrayRef, arguments));
   }
 
   /**
@@ -3388,7 +3395,7 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = arguments.length > 1 ? concat.apply(arrayProto, nativeSlice.call(arguments, 1)) : functions(object),
+    var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
         index = -1,
         length = funcs.length;
 
@@ -3541,6 +3548,7 @@
    * @param {Number} wait The number of milliseconds to delay.
    * @param {Object} options The options object.
    *  [leading=false] A boolean to specify execution on the leading edge of the timeout.
+   *  [maxWait] The maximum time `func` is allowed to be delayed before it's called.
    *  [trailing=true] A boolean to specify execution on the trailing edge of the timeout.
    * @returns {Function} Returns the new debounced function.
    * @example
@@ -4421,7 +4429,7 @@
 
     // add `Array` mutator functions to the wrapper
     forEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-      var func = arrayProto[methodName];
+      var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__;
         func.apply(value, arguments);
@@ -4437,7 +4445,7 @@
 
     // add `Array` accessor functions to the wrapper
     forEach(['concat', 'join', 'slice'], function(methodName) {
-      var func = arrayProto[methodName];
+      var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__,
             result = func.apply(value, arguments);

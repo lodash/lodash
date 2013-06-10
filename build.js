@@ -167,7 +167,7 @@
     'sortedIndex': ['createCallback', 'identity'],
     'tap': ['value'],
     'template': ['defaults', 'escape', 'escapeStringChar', 'keys', 'values'],
-    'throttle': ['isObject'],
+    'throttle': ['debounce'],
     'times': ['createCallback'],
     'toArray': ['isString', 'slice', 'values'],
     'transform': ['createCallback', 'createObject', 'forOwn', 'isArray'],
@@ -3341,6 +3341,11 @@
       if (isRemoved(source, 'template')) {
         // remove `templateSettings` assignment
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
+      }
+      if (isRemoved(source, 'throttle')) {
+        _.each(['leading', 'maxWait', 'trailing'], function(prop) {
+          source = removeFromGetObject(source, prop);
+        });
       }
       if (isRemoved(source, 'value')) {
         source = removeFunction(source, 'chain');

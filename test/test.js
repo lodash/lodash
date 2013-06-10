@@ -634,6 +634,34 @@
         QUnit.start();
       }, 64);
     });
+
+    asyncTest('should work with `maxWait` option', function() {
+      var limit = 96,
+          withCount = 0,
+          withoutCount = 0;
+
+      var withMaxWait = _.debounce(function() {
+        withCount++;
+      }, 32, { 'maxWait': 64 });
+
+      var withoutMaxWait = _.debounce(function() {
+        withoutCount++;
+      }, 32);
+
+      var start = new Date;
+      while ((new Date - start) < limit) {
+        withMaxWait();
+        withoutMaxWait();
+      }
+      strictEqual(withCount, 1);
+      strictEqual(withoutCount, 0);
+
+      setTimeout(function() {
+        strictEqual(withCount, 2);
+        strictEqual(withoutCount, 1);
+        QUnit.start();
+      }, 64);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

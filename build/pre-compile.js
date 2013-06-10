@@ -176,6 +176,7 @@
     'leading',
     'map',
     'max',
+    'maxWait',
     'memoize',
     'merge',
     'methods',

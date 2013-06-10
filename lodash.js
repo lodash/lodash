@@ -465,9 +465,16 @@
         String = context.String,
         TypeError = context.TypeError;
 
-    /** Used for `Array` and `Object` method references */
-    var arrayProto = Array.prototype,
-        errorProto = Error.prototype,
+    /**
+     * Used for `Array` method references.
+     *
+     * Normally `Array.prototype` would suffice, however, using an array literal
+     * avoids issues in Narwhal.
+     */
+    var arrayRef = [];
+
+    /** Used for native method references */
+    var errorProto = Error.prototype,
         objectProto = Object.prototype,
         stringProto = String.prototype;
 
@@ -484,12 +491,12 @@
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
-        concat = arrayProto.concat,
+        concat = arrayRef.concat,
         floor = Math.floor,
         fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
-        push = arrayProto.push,
+        push = arrayRef.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
@@ -506,7 +513,7 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
-        nativeSlice = arrayProto.slice;
+        nativeSlice = arrayRef.slice;
 
     /** Detect various environments */
     var isIeOpera = reNative.test(context.attachEvent),
@@ -729,7 +736,7 @@
        * @memberOf _.support
        * @type Boolean
        */
-      support.spliceObjects = (arrayProto.splice.call(object, 0, 1), !object[0]);
+      support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
 
       /**
        * Detect lack of support for accessing string characters by index.
@@ -2426,7 +2433,7 @@
       if (isFunc) {
         callback = lodash.createCallback(callback, thisArg);
       } else {
-        var props = concat.apply(arrayProto, nativeSlice.call(arguments, 1));
+        var props = concat.apply(arrayRef, nativeSlice.call(arguments, 1));
       }
       forIn(object, function(value, key, object) {
         if (isFunc
@@ -2495,7 +2502,7 @@
       var result = {};
       if (typeof callback != 'function') {
         var index = -1,
-            props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+            props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
             length = isObject(object) ? props.length : 0;
 
         while (++index < length) {
@@ -2616,7 +2623,7 @@
      */
     function at(collection) {
       var index = -1,
-          props = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+          props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
           length = props.length,
           result = Array(length);
 
@@ -3661,7 +3668,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          seen = concat.apply(arrayProto, nativeSlice.call(arguments, 1)),
+          seen = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
           result = [];
 
       var isLarge = length >= largeArraySize && indexOf === basicIndexOf;
@@ -4345,9 +4352,9 @@
      */
     function union(array) {
       if (!isArray(array)) {
-        arguments[0] = array ? nativeSlice.call(array) : arrayProto;
+        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
       }
-      return uniq(concat.apply(arrayProto, arguments));
+      return uniq(concat.apply(arrayRef, arguments));
     }
 
     /**
@@ -4622,7 +4629,7 @@
      * // => alerts 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
-      var funcs = arguments.length > 1 ? concat.apply(arrayProto, nativeSlice.call(arguments, 1)) : functions(object),
+      var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
           index = -1,
           length = funcs.length;
 
@@ -5828,7 +5835,7 @@
 
     // add `Array` functions that return unwrapped values
     basicEach(['join', 'pop', 'shift'], function(methodName) {
-      var func = arrayProto[methodName];
+      var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return func.apply(this.__wrapped__, arguments);
       };
@@ -5836,7 +5843,7 @@
 
     // add `Array` functions that return the wrapped value
     basicEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
-      var func = arrayProto[methodName];
+      var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
         return this;
@@ -5845,7 +5852,7 @@
 
     // add `Array` functions that return new wrapped values
     basicEach(['concat', 'slice', 'splice'], function(methodName) {
-      var func = arrayProto[methodName];
+      var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments));
       };
@@ -5855,7 +5862,7 @@
     // in Firefox < 10 and IE < 9
     if (!support.spliceObjects) {
       basicEach(['pop', 'shift', 'splice'], function(methodName) {
-        var func = arrayProto[methodName],
+        var func = arrayRef[methodName],
             isSplice = methodName == 'splice';
 
         lodash.prototype[methodName] = function() {

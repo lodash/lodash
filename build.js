@@ -167,7 +167,7 @@
     'sortedIndex': ['createCallback', 'identity'],
     'tap': ['value'],
     'template': ['defaults', 'escape', 'escapeStringChar', 'keys', 'values'],
-    'throttle': ['debounce'],
+    'throttle': ['debounce', 'getObject', 'isObject', 'releaseObject'],
     'times': ['createCallback'],
     'toArray': ['isString', 'slice', 'values'],
     'transform': ['createCallback', 'createObject', 'forOwn', 'isArray'],

@@ -4490,34 +4490,42 @@
           timeoutId = null,
           trailing = true;
 
-      function trailingCall() {
-        var isCalled = trailing && (!leading || callCount > 1);
-        callCount = 0;
-
+      function clear() {
         clearTimeout(maxTimeoutId);
         clearTimeout(timeoutId);
+        callCount = 0;
         maxTimeoutId = timeoutId = null;
+      }
 
+      function delayed() {
+        var isCalled = trailing && (!leading || callCount > 1);
+        clear();
         if (isCalled) {
+          if (maxWait !== false) {
+            lastCalled = new Date;
+          }
+          result = func.apply(thisArg, args);
+        }
+      }
+
+      function maxDelayed() {
+        clear();
+        if (trailing || (maxWait !== wait)) {
           lastCalled = new Date;
           result = func.apply(thisArg, args);
         }
       }
+
       wait = nativeMax(0, wait || 0);
       if (options === true) {
         var leading = true;
         trailing = false;
       } else if (isObject(options)) {
-        maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
         leading = options.leading;
+        maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
       return function() {
-        var now = new Date;
-        if (!timeoutId && !leading) {
-          lastCalled = now;
-        }
-        var remaining = (maxWait || wait) - (now - lastCalled);
         args = arguments;
         thisArg = this;
         callCount++;
@@ -4525,13 +4533,17 @@
         // avoid issues with Titanium and `undefined` timeout ids
         // https://github.com/appcelerator/titanium_mobile/blob/3_1_0_GA/android/titanium/src/java/ti/modules/titanium/TitaniumModule.java#L185-L192
         clearTimeout(timeoutId);
-        timeoutId = null;
 
         if (maxWait === false) {
           if (leading && callCount < 2) {
             result = func.apply(thisArg, args);
           }
         } else {
+          var now = new Date;
+          if (!maxTimeoutId && !leading) {
+            lastCalled = now;
+          }
+          var remaining = maxWait - (now - lastCalled);
           if (remaining <= 0) {
             clearTimeout(maxTimeoutId);
             maxTimeoutId = null;
@@ -4539,11 +4551,11 @@
             result = func.apply(thisArg, args);
           }
           else if (!maxTimeoutId) {
-            maxTimeoutId = setTimeout(trailingCall, remaining);
+            maxTimeoutId = setTimeout(maxDelayed, remaining);
           }
         }
         if (wait !== maxWait) {
-          timeoutId = setTimeout(trailingCall, wait);
+          timeoutId = setTimeout(delayed, wait);
         }
         return result;
       };

@@ -1070,7 +1070,7 @@
         'fn': 'lodash.indexOf(twoHundredValues, 199)',
         'teardown': 'function multiArrays(){}'
       })
-      .add(buildName, {
+      .add(otherName, {
         'fn': '_.indexOf(twoHundredValues, 199)',
         'teardown': 'function multiArrays(){}'
       })

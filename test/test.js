@@ -2427,9 +2427,10 @@
 
     test('supports not passing a `max` argument', function() {
       var actual = _.random(5),
+          limit = 50,
           start = new Date;
 
-      while ((new Date - start) < 50 && actual == 5) {
+      while ((new Date - start) < limit && actual == 5) {
         actual = _.random(5);
       }
       notEqual(actual, 5);

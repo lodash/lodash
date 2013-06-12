@@ -1,4 +1,4 @@
-# Lo-Dash <sup>v1.3.0</sup>
+# Lo-Dash <sup>v1.3.1</sup>
 
 <!-- div -->
 

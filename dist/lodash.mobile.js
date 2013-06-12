@@ -29,7 +29,7 @@
   var largeArraySize = 75;
 
   /** Used as the max size of the `arrayPool` and `objectPool` */
-  var maxPoolSize = 10;
+  var maxPoolSize = 40;
 
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -317,6 +317,7 @@
   function getObject() {
     return objectPool.pop() || {
       'array': null,
+      'cache': null,
       'criteria': null,
       'false': false,
       'index': 0,
@@ -350,11 +351,10 @@
    * @param {Array} [array] The array to release.
    */
   function releaseArray(array) {
-    if (arrayPool.length == maxPoolSize) {
-      arrayPool.length = maxPoolSize - 1;
-    }
     array.length = 0;
-    arrayPool.push(array);
+    if (arrayPool.length < maxPoolSize) {
+      arrayPool.push(array);
+    }
   }
 
   /**
@@ -368,11 +368,10 @@
     if (cache) {
       releaseObject(cache);
     }
-    if (objectPool.length == maxPoolSize) {
-      objectPool.length = maxPoolSize - 1;
-    }
     object.array = object.cache = object.criteria = object.object = object.number = object.string = object.value = null;
-    objectPool.push(object);
+    if (objectPool.length < maxPoolSize) {
+      objectPool.push(object);
+    }
   }
 
   /**

@@ -656,9 +656,12 @@
       strictEqual(withCount, 1);
       strictEqual(withoutCount, 0);
 
+      var lastWithCount = withCount,
+          lastWithoutCount = withoutCount;
+
       setTimeout(function() {
-        strictEqual(withCount, 2);
-        strictEqual(withoutCount, 1);
+        ok(withCount > lastWithCount);
+        ok(withoutCount > lastWithoutCount && withoutCount < withCount);
         QUnit.start();
       }, 64);
     });

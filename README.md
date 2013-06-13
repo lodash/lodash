@@ -270,6 +270,7 @@ require({
  * Ensured debounced function with, `leading` and `trailing` options, works as expected
  * Ensured minified builds work with the Dojo builder
  * Ensured minification avoids deoptimizing expressions containing boolean values
+ * Ensured support for `--output` paths containing build command keywords
  * Ensured unknown types return `false` in `_.isObject` and `_.isRegExp`
  * Ensured `_.clone`, `_.flatten`, and `_.uniq` can be used as a `callback` for methods like `_.map`
  * Ensured `_.forIn` works on objects with longer inheritance chains in IE < 9

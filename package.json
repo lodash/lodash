@@ -17,8 +17,25 @@
   "author": {
     "name": "John-David Dalton",
     "email": "john.david.dalton@gmail.com",
-    "web": "http://allyoucanleet.com/"
+    "url": "http://allyoucanleet.com/"
   },
+  "contributors": [
+    {
+      "name": "John-David Dalton",
+      "email": "john.david.dalton@gmail.com",
+      "url": "http://allyoucanleet.com/"
+    },
+    {
+      "name": "Mathias Bynens",
+      "email": "mathias@qiwi.be",
+      "url": "http://mathiasbynens.be/"
+    },
+    {
+      "name": "Kit Cambridge",
+      "email": "github@kitcambridge.be",
+      "url": "http://kitcambridge.be/"
+    }
+  ],
   "bugs": {
     "url": "https://github.com/bestiejs/lodash/issues"
   },

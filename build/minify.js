@@ -445,7 +445,7 @@
         if (isMapped) {
           var mapOutput = fs.readFileSync(mapPath, 'utf8');
           fs.unlinkSync(mapPath);
-          output = output.replace(/[\s;]*$/, '\n/*\n//@ sourceMappingURL=' + sourceMapURL) + '\n*/';
+          output = output.replace(/[\s;]*$/, '\n/*\n//# sourceMappingURL=' + sourceMapURL) + '\n*/';
 
           mapOutput = JSON.parse(mapOutput);
           mapOutput.file = path.basename(outputPath);

@@ -832,7 +832,7 @@
                 sourceMap = JSON.parse(data.sourceMap),
                 sourceMapURL = (/\w+(?=\.map$)/.exec(mapCommand) || [basename])[0];
 
-            ok(RegExp('/\\*\\n//@ sourceMappingURL=' + sourceMapURL + '.map\\n\\*/').test(comment), basename);
+            ok(RegExp('/\\*\\n//# sourceMappingURL=' + sourceMapURL + '.map\\n\\*/').test(comment), basename);
             equal(sourceMap.file, basename + '.js', basename);
             deepEqual(sourceMap.sources, sources, basename);
 

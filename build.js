@@ -235,9 +235,6 @@
   /** List of all methods */
   var allMethods = _.keys(dependencyMap);
 
-  /** List of Lo-Dash methods */
-  var lodashMethods = _.without(allMethods, 'findWhere');
-
   /** List of Backbone's Lo-Dash dependencies */
   var backboneDependencies = [
     'bind',
@@ -358,6 +355,9 @@
     'slice',
     'unescapeHtmlChar'
   ];
+
+  /** List of Lo-Dash methods */
+  var lodashMethods = _.without.apply(_, [allMethods].concat(privateMethods));
 
   /** List of Underscore methods */
   var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods, privateMethods));
@@ -1025,7 +1025,7 @@
       result.push(varA || varB || varC);
     });
 
-    return _.without.apply(_, [_.uniq(result)].concat(allMethods)).sort();
+    return _.without.apply(_, [_.uniq(result)].concat(lodashMethods)).sort();
   }
 
   /**
@@ -3100,8 +3100,7 @@
     else {
       // remove methods from the build
       allMethods.forEach(function(otherName) {
-        if (!_.contains(buildMethods, otherName) &&
-            !(otherName == 'findWhere' && !isUnderscore)) {
+        if (!_.contains(buildMethods, otherName)) {
           source = removeFunction(source, otherName);
         }
       });

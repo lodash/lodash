@@ -503,7 +503,7 @@
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
-        nativeCreate = reNative.test(nativeCreate =  Object.create) && nativeCreate,
+        nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
@@ -1094,7 +1094,7 @@
       return isObject(prototype) ? nativeCreate(prototype) : {};
     }
     // fallback for browsers without `Object.create`
-    if  (!nativeCreate) {
+    if (!nativeCreate) {
       var createObject = function(prototype) {
         if (isObject(prototype)) {
           noop.prototype = prototype;

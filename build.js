@@ -664,7 +664,9 @@
    * @returns {String} Returns the modified source.
    */
   function cleanupCompiled(source) {
-    return source.replace(/([{}]) *;/g, '$1');
+    return source
+      .replace(/\b(function) *(\()/g, '$1$2')
+      .replace(/([{}]) *;/g, '$1');
   }
 
   /**
@@ -979,32 +981,6 @@
   }
 
   /**
-   * Gets the number of times a given variable is referenced in `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @param {String} varName The name of the variable.
-   * @returns {Number} Returns the number of times `varName` is referenced.
-   */
-  function getRefCount(source, varName) {
-    var indentA = isRemoved(source, 'runInContext') ? ' {2}' : ' {2,4}',
-        indentB = isRemoved(source, 'runInContext') ? ' {6}' : ' {6,8}',
-        snippet = source.replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, '');
-
-    var match = RegExp(
-      '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
-      '^'  + indentA + 'var ' + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
-      '^'  + indentB + varName + ' *=.+?[,;]\\n'
-    ,'m')
-    .exec(snippet);
-
-    if (match) {
-      snippet = snippet.slice(0, match.index) + snippet.slice(match.index + match[0].length);
-    }
-    return _.size(match && snippet.match(RegExp('[^.\\w]' + varName + '\\b', 'g')));
-  }
-
-  /**
    * Creates a sorted array of all variables defined outside of Lo-Dash methods.
    *
    * @private
@@ -1018,7 +994,7 @@
         result = [];
 
     snippet.replace(RegExp(
-      '^(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
+      '^(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
       '^'  + indentA + 'var (\\w+) *=.+?,\\n(?= *\\w+ *=)|' +
       '^'  + indentB + '(\\w+) *=.+?[,;]\\n'
     ,'gm'), function(match, indent, varA, varB, varC) {
@@ -1046,6 +1022,37 @@
   }
 
   /**
+   * Determines if given variable is used in `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} varName The name of the variable.
+   * @param {Boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
+   * @returns {Boolean} Returns `true` if the variable is used, else `false`.
+   */
+  function isVarUsed(source, varName, isShallow) {
+    if (isShallow == null) {
+      isShallow = isRemoved(source, 'runInContext');
+    }
+    var indentA = isShallow ? ' {2}' : ' {2,4}',
+        indentB = isShallow ? ' {6}' : ' {6,8}',
+        snippet = source.replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, '');
+
+    var match = RegExp(
+      '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
+      '^'  + indentA + 'var ' + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
+      '^'  + indentB + varName + ' *=.+?[,;]\\n'
+    , 'm')
+    .exec(snippet);
+
+    if (!match) {
+      return false;
+    }
+    snippet = snippet.slice(0, match.index) + snippet.slice(match.index + match[0].length);
+    return RegExp('[^.\\w"\']' + varName + '\\b').test(snippet);
+  }
+
+  /**
    * Searches `source` for a `funcName` function declaration, expression, or
    * assignment and returns the matched snippet.
    *
@@ -1068,7 +1075,7 @@
       // match a function declaration
       'function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
       // match a variable declaration with function expression
-      'var ' + funcName + ' *=.*?function[\\s\\S]+?\\n\\1}(?:\\(\\)\\))?;' +
+      'var ' + funcName + ' *=.*?function\\(.+?\{\\n[\\s\\S]+?\\n\\1}(?:\\(\\)\\))?;' +
       // end non-capturing group
       ')\\n'
     )));
@@ -1278,9 +1285,6 @@
    * @returns {String} Returns the modified source.
    */
   function removeBindingOptimization(source) {
-    source = removeVar(source, 'fnToString');
-    source = removeVar(source, 'reThis');
-
     // remove `reThis` from `createCallback`
     source = source.replace(matchFunction(source, 'createCallback'), function(match) {
       return match.replace(/\s*\|\|\s*\(reThis[\s\S]+?\)\)\)/, '');
@@ -1486,7 +1490,6 @@
   function removeSupportNonEnumShadows(source) {
     source = removeSupportProp(source, 'nonEnumShadows');
     source = removeVar(source, 'nonEnumProps');
-    source = removeVar(source, 'shadowedProps');
     source = removeFromCreateIterator(source, 'shadowedProps');
 
     // remove nested `nonEnumProps` assignments
@@ -1577,8 +1580,6 @@
    * @returns {String} Returns the modified source.
    */
   function removeRunInContext(source) {
-    source = removeVar(source, 'contextProps');
-
     // replace reference in `reThis` assignment
     source = source.replace(/\btest\(runInContext\)/, 'test(function() { return this; })');
 
@@ -1607,8 +1608,6 @@
    * @returns {String} Returns the modified source.
    */
   function removeSetImmediate(source) {
-    source = removeVar(source, 'setImmediate');
-
     // remove the `setImmediate` fork of `_.defer`.
     source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/, '');
 
@@ -1646,7 +1645,7 @@
   function removeVar(source, varName) {
     // simplify complex variable assignments
     if (/^(?:cloneableClasses|contextProps|ctorByClass|freeGlobal|nonEnumProps|shadowedProps|whitespace)$/.test(varName)) {
-      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?[;}]\\n\\n'), '$1=null;\n\n');
+      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?[;}]\\n\\n'), '$1 null;\n\n');
     }
 
     source = removeFunction(source, varName);
@@ -1654,7 +1653,7 @@
     // match a variable declaration that's not part of a declaration list
     source = source.replace(RegExp(
       multilineComment +
-      '( *)var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
+      '( *)var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
     ), '');
 
     // match a variable declaration in a declaration list
@@ -2198,10 +2197,6 @@
         source = removeSupportProp(source, 'fastBind');
         source = replaceSupportProp(source, 'argsClass', 'false');
 
-        _.each(['isIeOpera', 'isV8', 'getPrototypeOf', 'nativeBind', 'nativeCreate', 'nativeIsArray', 'nativeKeys', 'reNative'], function(varName) {
-          source = removeVar(source, varName);
-        });
-
         // remove native `Function#bind` branch in `_.bind`
         source = source.replace(matchFunction(source, 'bind'), function(match) {
           return match.replace(/(?:\s*\/\/.*)*\s*return support\.fastBind[^:]+:\s*/, 'return ');
@@ -2367,7 +2362,7 @@
                   return match;
                 }
               }
-              return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
+              return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *\{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
                 vars = vars
                   .replace(/\b(length *=)[^;=]+/, '$1 collection' + (methodName == 'reduce' ? '.length' : ' ? collection.length : 0'))
                   .replace(RegExp('^  ' + indent, 'gm'), indent);
@@ -3028,11 +3023,6 @@
           }
         });
 
-        // remove unneeded variables
-        if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
-          source = removeVar(source, 'cloneableClasses');
-          source = removeVar(source, 'ctorByClass');
-        }
         // remove `_.isEqual` use from `createCallback`
         if (!useLodashMethod('where')) {
           source = source.replace(matchFunction(source, 'createCallback'), function(match) {
@@ -3305,7 +3295,8 @@
 
     // modify/remove references to removed methods/variables
     if (!isTemplate) {
-      if (isRemoved(source, 'clone')) {
+      if (isRemoved(source, 'clone') ||
+          isUnderscore && (!useLodashMethod('clone') && !useLodashMethod('cloneDeep'))) {
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
       }
@@ -3465,21 +3456,26 @@
 
       // remove unused variables
       (function() {
-        var varMap = {},
-            varNames = getVars(source);
+        var useMap = {},
+            varNames = getVars(source),
+            isShallow = isRemoved(source, 'runInContext');
 
         while (varNames.length) {
           varNames = _.sortBy(varNames, function(varName) {
-            var count = getRefCount(source, varName);
-            varMap[varName] = count;
-            return count;
+            var result = isVarUsed(source, varName, isShallow);
+            useMap[varName] = result;
+            return result;
           });
 
-          var varName = varNames[0];
-          if (!varMap[varName]) {
-            source = removeVar(source, varName);
+          if (useMap[varNames[0]]) {
+            varNames.shift();
           }
-          varNames.shift();
+          else {
+            while (!useMap[varNames[0]]) {
+              source = removeVar(source, varNames[0]);
+              varNames.shift();
+            }
+          }
         }
       }());
     }

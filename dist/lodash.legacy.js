@@ -5374,7 +5374,7 @@
       // avoid issues with Narwhal, IE conditional compilation, and the JS engine
       // embedded in Adobe products.
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-      var sourceURL = '\n/*\n//@ sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']') + '\n*/';
+      var sourceURL = '\n/*\n//# sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']') + '\n*/';
 
       try {
         var result = Function(importsKeys, 'return ' + source + sourceURL).apply(undefined, importsValues);

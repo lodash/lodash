@@ -1005,7 +1005,7 @@
   }
 
   /**
-   * Gets all variables defined outside of Lo-Dash methods.
+   * Creates a sorted array of all variables defined outside of Lo-Dash methods.
    *
    * @private
    * @param {String} source The source to process.
@@ -1025,7 +1025,7 @@
       result.push(varA || varB || varC);
     });
 
-    return _.uniq(result).sort();
+    return _.without.apply(_, [_.uniq(result)].concat(allMethods)).sort();
   }
 
   /**
@@ -3477,7 +3477,7 @@
           });
 
           var varName = varNames[0];
-          if (varMap[varName] < 2) {
+          if (!varMap[varName]) {
             source = removeVar(source, varName);
           }
           varNames.shift();

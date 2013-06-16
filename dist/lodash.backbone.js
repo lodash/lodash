@@ -18,50 +18,14 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
-  /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
-  var keyPrefix = +new Date + '';
-
-  /** Used as the size when optimizations are enabled for large arrays */
-  var largeArraySize = 75;
-
-  /** Used to match empty string literals in compiled template source */
-  var reEmptyStringLeading = /\b__p \+= '';/g,
-      reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
-      reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
-
-  /** Used to match HTML entities */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
-
-  /**
-   * Used to match ES6 template delimiters
-   * http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6
-   */
-  var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
-
-  /** Used to match regexp flags from their coerced string values */
-  var reFlags = /\w*$/;
-
-  /** Used to match "interpolate" template delimiters */
-  var reInterpolate = /<%=([\s\S]+?)%>/g;
-
-  /** Used to ensure capturing order of template delimiters */
-  var reNoMatch = /($^)/;
-
   /** Used to match HTML characters */
   var reUnescapedHtml = /[&<>"']/g;
-
-  /** Used to match unescaped characters in compiled string literals */
-  var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
-
-  /** Used to make template sourceURLs easier to identify */
-  var templateCounter = 0;
 
   /** `Object#toString` result shortcuts */
   var argsClass = '[object Arguments]',
       arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
-      errorClass = '[object Error]',
       funcClass = '[object Function]',
       numberClass = '[object Number]',
       objectClass = '[object Object]',
@@ -76,17 +40,6 @@
     'number': false,
     'string': false,
     'undefined': false
-  };
-
-  /** Used to escape characters for inclusion in compiled string literals */
-  var stringEscapes = {
-    '\\': '\\',
-    "'": "'",
-    '\n': 'n',
-    '\r': 'r',
-    '\t': 't',
-    '\u2028': 'u2028',
-    '\u2029': 'u2029'
   };
 
   /** Detect free variable `exports` */
@@ -174,11 +127,7 @@
   var arrayRef = [];
 
   /** Used for native method references */
-  var objectProto = Object.prototype,
-      stringProto = String.prototype;
-
-  /** Used to restore the original `_` reference in `noConflict` */
-  var oldDash = window._;
+  var objectProto = Object.prototype;
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
@@ -188,22 +137,16 @@
   );
 
   /** Native method shortcuts */
-  var ceil = Math.ceil,
-      clearTimeout = window.clearTimeout,
-      concat = arrayRef.concat,
+  var concat = arrayRef.concat,
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
-      propertyIsEnumerable = objectProto.propertyIsEnumerable,
-      setTimeout = window.setTimeout,
       toString = objectProto.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
-      nativeCreate = reNative.test(nativeCreate =  Object.create) && nativeCreate,
+      nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
-      nativeIsFinite = window.isFinite,
-      nativeIsNaN = window.isNaN,
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
@@ -386,7 +329,7 @@
     return isObject(prototype) ? nativeCreate(prototype) : {};
   }
   // fallback for browsers without `Object.create`
-  if  (!nativeCreate) {
+  if (!nativeCreate) {
     var createObject = function(prototype) {
       if (isObject(prototype)) {
         noop.prototype = prototype;
@@ -525,9 +468,6 @@
     '"': '&quot;',
     "'": '&#39;'
   };
-
-  /** Used to convert HTML entities to characters */
-  var htmlUnescapes = invert(htmlEscapes);
 
   /*--------------------------------------------------------------------------*/
 

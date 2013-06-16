@@ -21,25 +21,8 @@
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
-  /** Used as the size when optimizations are enabled for large arrays */
-  var largeArraySize = 75;
-
-  /** Used to match empty string literals in compiled template source */
-  var reEmptyStringLeading = /\b__p \+= '';/g,
-      reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
-      reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
-
   /** Used to match HTML entities */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
-
-  /**
-   * Used to match ES6 template delimiters
-   * http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6
-   */
-  var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
-
-  /** Used to match regexp flags from their coerced string values */
-  var reFlags = /\w*$/;
 
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
@@ -53,15 +36,11 @@
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
-  /** Used to make template sourceURLs easier to identify */
-  var templateCounter = 0;
-
   /** `Object#toString` result shortcuts */
   var argsClass = '[object Arguments]',
       arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
-      errorClass = '[object Error]',
       funcClass = '[object Function]',
       numberClass = '[object Number]',
       objectClass = '[object Object]',
@@ -186,8 +165,7 @@
   var arrayRef = [];
 
   /** Used for native method references */
-  var objectProto = Object.prototype,
-      stringProto = String.prototype;
+  var objectProto = Object.prototype;
 
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = window._;
@@ -206,13 +184,12 @@
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
-      propertyIsEnumerable = objectProto.propertyIsEnumerable,
       setTimeout = window.setTimeout,
       toString = objectProto.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
-      nativeCreate = reNative.test(nativeCreate =  Object.create) && nativeCreate,
+      nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = window.isFinite,
       nativeIsNaN = window.isNaN,
@@ -458,7 +435,7 @@
     return isObject(prototype) ? nativeCreate(prototype) : {};
   }
   // fallback for browsers without `Object.create`
-  if  (!nativeCreate) {
+  if (!nativeCreate) {
     var createObject = function(prototype) {
       if (isObject(prototype)) {
         noop.prototype = prototype;

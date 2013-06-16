@@ -17,20 +17,20 @@
   /** The current working directory */
   var cwd = process.cwd();
 
-  /** Used for array method references */
-  var arrayRef = Array.prototype;
+  /** Used for array and object method references */
+  var arrayRef = Array.prototype,
+      objectRef = Object.prototype;
 
-  /** Shortcut used to push arrays of values to an array */
-  var push = arrayRef.push;
+  /** Native method shortcuts */
+  var hasOwnProperty = objectRef.hasOwnProperty,
+      push = arrayRef.push,
+      slice = arrayRef.slice;
 
   /** Used to create regexes that may detect multi-line comment blocks */
-  var multilineComment = '(?:\\n +/\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n';
+  var multilineComment = '(?:\\n */\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n';
 
   /** Used to detect the Node.js executable in command-line arguments */
   var reNode = RegExp('(?:^|' + path.sepEscaped + ')node(?:\\.exe)?$');
-
-  /** Shortcut used to convert array-like objects to arrays */
-  var slice = arrayRef.slice;
 
   /** Shortcut to the `stdout` object */
   var stdout = process.stdout;
@@ -687,7 +687,9 @@
       // consolidate consecutive horizontal rule comment separators
       .replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
         return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
-      });
+      })
+      // remove unneeded horizontal rule comment separators
+      .replace(/(\{\n)\s*\/\*-+\*\/\n/g, '$1');
   }
 
   /**
@@ -747,8 +749,9 @@
    * @returns {Array} Returns an array of aliases.
    */
   function getAliases(methodName) {
-    return (realToAliasMap[methodName] || []).filter(function(methodName) {
-      return !dependencyMap[methodName];
+    var aliases = hasOwnProperty.call(realToAliasMap, methodName) && realToAliasMap[methodName];
+    return _.filter(aliases, function(methodName) {
+      return !hasOwnProperty.call(dependencyMap, methodName);
     });
   }
 
@@ -824,7 +827,10 @@
    * @returns {Array} Returns an array of method dependencies.
    */
   function getDependencies(methodName, stack) {
-    var dependencies = _.isArray(methodName) ? methodName : dependencyMap[methodName];
+    var dependencies = _.isArray(methodName)
+      ? methodName
+      : (hasOwnProperty.call(dependencyMap, methodName) && dependencyMap[methodName]);
+
     if (!dependencies) {
       return [];
     }
@@ -965,7 +971,61 @@
    * @returns {String} Returns the real method name.
    */
   function getRealName(methodName) {
-    return (!dependencyMap[methodName] && aliasToRealMap[methodName]) || methodName;
+    return (
+      !hasOwnProperty.call(dependencyMap, methodName) &&
+      hasOwnProperty.call(aliasToRealMap, methodName) &&
+      aliasToRealMap[methodName]
+    ) || methodName;
+  }
+
+  /**
+   * Gets the number of times a given variable is referenced in `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} varName The name of the variable.
+   * @returns {Number} Returns the number of times `varName` is referenced.
+   */
+  function getRefCount(source, varName) {
+    var indentA = isRemoved(source, 'runInContext') ? ' {2}' : ' {2,4}',
+        indentB = isRemoved(source, 'runInContext') ? ' {6}' : ' {6,8}',
+        snippet = source.replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, '');
+
+    var match = RegExp(
+      '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
+      '^'  + indentA + 'var ' + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
+      '^'  + indentB + varName + ' *=.+?[,;]\\n'
+    ,'m')
+    .exec(snippet);
+
+    if (match) {
+      snippet = snippet.slice(0, match.index) + snippet.slice(match.index + match[0].length);
+    }
+    return _.size(match && snippet.match(RegExp('[^.\\w]' + varName + '\\b', 'g')));
+  }
+
+  /**
+   * Gets all variables defined outside of Lo-Dash methods.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {Array} Returns a new array of variable names.
+   */
+  function getVars(source) {
+    var indentA = isRemoved(source, 'runInContext') ? ' {2}' : ' {2,4}',
+        indentB = isRemoved(source, 'runInContext') ? ' {6}' : ' {6,8}',
+        snippet = source.replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, ''),
+        result = [];
+
+    snippet.replace(RegExp(
+      '^(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
+      '^'  + indentA + 'var (\\w+) *=.+?,\\n(?= *\\w+ *=)|' +
+      '^'  + indentB + '(\\w+) *=.+?[,;]\\n'
+    ,'gm'), function(match, indent, varA, varB, varC) {
+      result.push(varA || varB || varC);
+    });
+
+    return _.uniq(result).sort();
   }
 
   /**
@@ -1585,26 +1645,25 @@
    */
   function removeVar(source, varName) {
     // simplify complex variable assignments
-    if (/^(?:cloneableClasses|contextProps|ctorByClass|nonEnumProps|shadowedProps|whitespace)$/.test(varName)) {
-      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?;\\n\\n'), '$1=null;\n\n');
+    if (/^(?:cloneableClasses|contextProps|ctorByClass|freeGlobal|nonEnumProps|shadowedProps|whitespace)$/.test(varName)) {
+      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?[;}]\\n\\n'), '$1=null;\n\n');
     }
 
     source = removeFunction(source, varName);
 
+    // match a variable declaration that's not part of a declaration list
     source = source.replace(RegExp(
       multilineComment +
-      // match a variable declaration that's not part of a declaration list
-      '( *)var ' + varName + ' *= *(?:.+?(?:;|&&\\n[^;]+;)|(?:\\w+\\(|{)[\\s\\S]+?\\n\\1.+?;)\\n|' +
-      // match a variable in a declaration list
-      '^ *' + varName + ' *=.+?,\\n',
-      'm'
+      '( *)var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
     ), '');
 
-    // remove a varaible at the start of a variable declaration list
-    source = source.replace(RegExp('(var +)' + varName + ' *=.+?,\\s+'), '$1');
+    // match a variable declaration in a declaration list
+    source = source.replace(RegExp(
+      '( *(?:var +)?\\w+ *=.+?),\\n *' + varName + ' *=.+?([,;])(?=\\n)'
+    ), '$1$2');
 
-    // remove a variable at the end of a variable declaration list
-    source = source.replace(RegExp(',\\s*' + varName + ' *=.+?;'), ';');
+    // remove a varaible at the start of a declaration list
+    source = source.replace(RegExp('(var +)' + varName + ' *=.+?,\\n *'), '$1');
 
     return source;
   }
@@ -2126,7 +2185,7 @@
     /*------------------------------------------------------------------------*/
 
     // load customized Lo-Dash module
-    var lodash = !isTemplate && (function() {
+    var lodash = !isModularize && !isTemplate && (function() {
       source = setUseStrictOption(source, isStrict);
 
       if (isLegacy) {
@@ -3199,27 +3258,13 @@
 
     /*------------------------------------------------------------------------*/
 
-    // customize Lo-Dash's IIFE
-    (function() {
-      if (isIIFE) {
-        var token = '%output%',
-            index = iife.indexOf(token);
-
-        source = source.match(/^\/\**[\s\S]+?\*\/\n/) +
-          iife.slice(0, index) +
-          source.replace(/^[\s\S]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
-          iife.slice(index + token.length);
-      }
-    }());
-
-    /*------------------------------------------------------------------------*/
-
     // customize Lo-Dash's export bootstrap
     (function() {
       if (!isAMD) {
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
       }
       if (!isNode) {
+        source = removeVar(source, 'freeGlobal');
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
       }
       if (!isCommonJS) {
@@ -3238,6 +3283,21 @@
 
     /*------------------------------------------------------------------------*/
 
+    // customize Lo-Dash's IIFE
+    (function() {
+      if (isIIFE) {
+        var token = '%output%',
+            index = iife.indexOf(token);
+
+        source = source.match(/^\/\**[\s\S]+?\*\/\n/) +
+          iife.slice(0, index) +
+          source.replace(/^[\s\S]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
+          iife.slice(index + token.length);
+      }
+    }());
+
+    /*------------------------------------------------------------------------*/
+
     // modify/remove references to removed methods/variables
     if (!isTemplate) {
       if (isRemoved(source, 'clone')) {
@@ -3248,38 +3308,17 @@
         source = removeSupportNodeClass(source);
       }
       if (isRemoved(source, 'createIterator')) {
-        source = removeVar(source, 'defaultsIteratorOptions');
-        source = removeVar(source, 'eachIteratorOptions');
-        source = removeVar(source, 'forOwnIteratorOptions');
-        source = removeVar(source, 'iteratorTemplate');
-        source = removeVar(source, 'templateIterator');
         source = removeSupportNonEnumShadows(source);
       }
       if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
         source = removeSupportProp(source, 'fastBind');
-        source = removeVar(source, 'isV8');
-        source = removeVar(source, 'nativeBind');
       }
       if (isRemoved(source, 'createIterator', 'keys')) {
-        source = removeVar(source, 'nativeKeys');
         source = removeKeysOptimization(source);
         source = removeSupportNonEnumArgs(source);
       }
       if (isRemoved(source, 'defer')) {
         source = removeSetImmediate(source);
-      }
-      if (isRemoved(source, 'escape', 'unescape')) {
-        source = removeVar(source, 'htmlEscapes');
-        source = removeVar(source, 'htmlUnescapes');
-      }
-      if (isRemoved(source, 'getArray', 'releaseArray')) {
-        source = removeVar(source, 'arrayPool');
-      }
-      if (isRemoved(source, 'getObject', 'releaseObject')) {
-        source = removeVar(source, 'objectPool');
-      }
-      if (isRemoved(source, 'releaseArray', 'releaseObject')) {
-        source = removeVar(source, 'maxPoolSize');
       }
       if (isRemoved(source, 'invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
@@ -3291,12 +3330,9 @@
         source = removeSupportArgsClass(source);
       }
       if (isRemoved(source, 'isArray')) {
-        source = removeVar(source, 'nativeIsArray');
         source = removeIsArrayFallback(source);
       }
       if (isRemoved(source, 'isPlainObject')) {
-        source = removeFunction(source, 'shimIsPlainObject');
-        source = removeVar(source, 'getPrototypeOf');
         source = removeSupportOwnLast(source);
       }
       if (isRemoved(source, 'keys')) {
@@ -3325,11 +3361,6 @@
             '});'
           ].join('\n' + indent);
         });
-      }
-      if (isRemoved(source, 'parseInt')) {
-        source = removeVar(source, 'nativeParseInt');
-        source = removeVar(source, 'reLeadingSpacesAndZeros');
-        source = removeVar(source, 'whitespace');
       }
       if (isRemoved(source, 'sortBy')) {
         _.each([removeFromGetObject, removeFromReleaseObject], function(func) {
@@ -3391,8 +3422,6 @@
         source = removeFunction(source, 'slice');
       }
       if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
-        source = removeVar(source, 'Error');
-        source = removeVar(source, 'errorProto');
         source = removeFromCreateIterator(source, 'errorClass');
         source = removeFromCreateIterator(source, 'errorProto');
 
@@ -3428,6 +3457,26 @@
           ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
           : match.replace(setup, modified);
       });
+
+      // remove unused variables
+      (function() {
+        var varMap = {},
+            varNames = getVars(source);
+
+        while (varNames.length) {
+          varNames = _.sortBy(varNames, function(varName) {
+            var count = getRefCount(source, varName);
+            varMap[varName] = count;
+            return count;
+          });
+
+          var varName = varNames[0];
+          if (varMap[varName] < 2) {
+            source = removeVar(source, varName);
+          }
+          varNames.shift();
+        }
+      }());
     }
     if (_.size(source.match(/\bfreeModule\b/g)) < 2) {
       source = removeVar(source, 'freeModule');

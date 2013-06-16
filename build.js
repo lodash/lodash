@@ -1789,7 +1789,7 @@
     // used to report invalid command-line arguments
     var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=.*$/.test(value)) {
+          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=[\s\S]*$/.test(value)) {
         return true;
       }
       var result = _.contains([
@@ -1853,7 +1853,7 @@
 
     // used to specify a custom IIFE to wrap Lo-Dash
     var iife = options.reduce(function(result, value) {
-      var match = value.match(/^iife=(.*)$/);
+      var match = value.match(/^iife=([\s\S]*)$/);
       return match ? match[1] : result;
     }, null);
 
@@ -2107,6 +2107,12 @@
         _.each(['at', 'forEach', 'toArray'], function(methodName) {
           if (!(isUnderscore && useLodashMethod(methodName))) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isString');
+          }
+        });
+
+        _.each(['clone', 'isEqual', 'shimIsPlainObject'], function(methodName) {
+          if (!(isUnderscore && useLodashMethod(methodName))) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isNode');
           }
         });
 

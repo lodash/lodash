@@ -94,9 +94,6 @@
     return !/^_/.test(methodName);
   });
 
-  /** List of all Lo-Dash methods */
-  var lodashMethods = _.without(allMethods, 'findWhere');
-
   /** List of "Arrays" category methods */
   var arraysMethods = [
     'compact',
@@ -320,6 +317,10 @@
     'transform',
     'unzip'
   ];
+
+
+  /** List of all Lo-Dash methods */
+  var lodashMethods = allMethods.slice();
 
   /** List of Underscore methods */
   var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));

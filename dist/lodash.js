@@ -863,7 +863,7 @@
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns a new array of property names.
      */
-    var shimKeys = function (object) {
+    var shimKeys = function(object) {
       var index, iterable = object, result = [];
       if (!iterable) return result;
       if (!(objectTypes[typeof object])) return result;    
@@ -946,7 +946,7 @@
      * defaults(food, { 'name': 'banana', 'type': 'fruit' });
      * // => { 'name': 'apple', 'type': 'fruit' }
      */
-    var assign = function (object, source, guard) {
+    var assign = function(object, source, guard) {
       var index, iterable = object, result = iterable;
       if (!iterable) return result;
       var args = arguments,
@@ -1169,7 +1169,7 @@
      * _.defaults(food, { 'name': 'banana', 'type': 'fruit' });
      * // => { 'name': 'apple', 'type': 'fruit' }
      */
-    var defaults = function (object, source, guard) {
+    var defaults = function(object, source, guard) {
       var index, iterable = object, result = iterable;
       if (!iterable) return result;
       var args = arguments,
@@ -1252,7 +1252,7 @@
      * });
      * // => alerts 'name' and 'bark' (order is not guaranteed)
      */
-    var forIn = function (collection, callback, thisArg) {
+    var forIn = function(collection, callback, thisArg) {
       var index, iterable = collection, result = iterable;
       if (!iterable) return result;
       if (!objectTypes[typeof iterable]) return result;
@@ -1284,7 +1284,7 @@
      * });
      * // => alerts '0', '1', and 'length' (order is not guaranteed)
      */
-    var forOwn = function (collection, callback, thisArg) {
+    var forOwn = function(collection, callback, thisArg) {
       var index, iterable = collection, result = iterable;
       if (!iterable) return result;
       if (!objectTypes[typeof iterable]) return result;

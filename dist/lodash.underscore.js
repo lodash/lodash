@@ -538,7 +538,7 @@
    * @param {Object} object The object to inspect.
    * @returns {Array} Returns a new array of property names.
    */
-  var shimKeys = function (object) {
+  var shimKeys = function(object) {
     var index, iterable = object, result = [];
     if (!iterable) return result;
     if (!(objectTypes[typeof object])) return result;  
@@ -750,7 +750,7 @@
    * });
    * // => alerts 'name' and 'bark' (order is not guaranteed)
    */
-  var forIn = function (collection, callback) {
+  var forIn = function(collection, callback) {
     var index, iterable = collection, result = iterable;
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;
@@ -781,7 +781,7 @@
    * });
    * // => alerts '0', '1', and 'length' (order is not guaranteed)
    */
-  var forOwn = function (collection, callback) {
+  var forOwn = function(collection, callback) {
     var index, iterable = collection, result = iterable;
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;

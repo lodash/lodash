@@ -217,6 +217,23 @@
     'findWhere': ['where']
   };
 
+  /** Used to track property dependencies */
+  var propDependencyMap = {
+    'at': ['support'],
+    'bind': ['support'],
+    'clone': ['support'],
+    'isArguments': ['support'],
+    'isEmpty': ['support'],
+    'isEqual': ['support'],
+    'isPlainObject': ['support'],
+    'iteratorTemplate': ['support'],
+    'keys': ['support'],
+    'reduceRight': ['support'],
+    'shimIsPlainObject': ['support'],
+    'template': ['templateSettings'],
+    'toArray': ['support']
+  };
+
   /** Used to inline `iteratorTemplate` */
   var iteratorOptions = [
     'args',
@@ -2151,6 +2168,12 @@
       if (isModern || isUnderscore) {
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
 
+        _.each(['at', 'clone', 'isArguments', 'isEmpty', 'isEqual', 'isPlainObject', 'reduceRight', 'shimIsPlainObject', 'toArray'], function(methodName) {
+          if (!(isUnderscore && useLodashMethod(methodName))) {
+            propDependencyMap[methodName] = _.without(propDependencyMap[methodName], 'support');
+          }
+        });
+
         _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(methodName) {
           if (!(isUnderscore && useLodashMethod(methodName))) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
@@ -2181,6 +2204,10 @@
               dependencyMap[methodName].push('forEach');
             }
           });
+
+          if (!(isUnderscore && useLodashMethod('keys'))) {
+            propDependencyMap.keys = _.without(propDependencyMap.keys, 'support');
+          }
         }
       }
       // add method names explicitly

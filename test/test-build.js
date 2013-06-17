@@ -318,7 +318,6 @@
     'unzip'
   ];
 
-
   /** List of all Lo-Dash methods */
   var lodashMethods = allMethods.slice();
 

@@ -357,7 +357,7 @@
   ];
 
   /** List of Lo-Dash methods */
-  var lodashMethods = _.without.apply(_, [allMethods].concat(privateMethods));
+  var lodashMethods = _.without.apply(_, [allMethods, 'findWhere'].concat(privateMethods));
 
   /** List of Underscore methods */
   var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods, privateMethods));
@@ -1062,8 +1062,13 @@
       isShallow = isRemoved(source, 'runInContext');
     }
     var indentA = isShallow ? ' {2}' : ' {2,4}',
-        indentB = isShallow ? ' {6}' : ' {6,8}',
-        snippet = source.replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, '');
+        indentB = isShallow ? ' {6}' : ' {6,8}';
+
+    var snippet = source
+      // remove comments
+      .replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, '')
+      // remove pseudo private properties
+      .replace(/^ *lodash\._[^=]+=.+\n/gm, '');
 
     var match = RegExp(
       '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
@@ -3109,7 +3114,7 @@
         source = removeFunction(source, 'basicEach');
 
         // remove `lodash._basicEach` pseudo property
-        source = source.replace(/^ *lodash\._basicEach *=.+\n/m, '');
+        source = source.replace(/^ *lodash\._basicEach *=[\s\S]+?;\n/m, '');
 
         // replace `basicEach` with `_.forOwn` in "Collections" methods
         source = source.replace(/\bbasicEach(?=\(collection)/g, 'forOwn');
@@ -3139,7 +3144,8 @@
     else {
       // remove methods from the build
       allMethods.forEach(function(otherName) {
-        if (!_.contains(buildMethods, otherName)) {
+        if (!_.contains(buildMethods, otherName) &&
+            !(otherName == 'findWhere' && !isUnderscore)) {
           source = removeFunction(source, otherName);
         }
       });

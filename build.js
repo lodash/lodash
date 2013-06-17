@@ -513,9 +513,9 @@
       var indent = /^ *(?=lodash\.)/m.exec(match)[0];
       return match + [
         '',
-        '',
         '// add functions to `lodash.prototype`',
-        'mixin(lodash);'
+        'mixin(lodash);',
+        ''
       ].join('\n' + indent);
     });
 
@@ -543,8 +543,9 @@
       }
       // add quotes to commands with spaces or equals signs
       commands = _.map(commands, function(command) {
-        var separator = (command.match(/[= ]/) || [''])[0];
+        var separator = command.match(/[= ]/);
         if (separator) {
+          separator = separator[0];
           var pair = command.split(separator);
           command = pair[0] + separator + '"' + pair[1] + '"';
         }
@@ -691,7 +692,7 @@
         return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
       })
       // remove unneeded horizontal rule comment separators
-      .replace(/(\{\n)\s*\/\*-+\*\/\n/g, '$1');
+      .replace(/(\{\n)\s*\/\*-+\*\/\n|\n *\/\*-+\*\/\n(\s*\})/gm, '$1$2');
   }
 
   /**
@@ -891,7 +892,8 @@
    * @returns {String} Returns the `isArguments` fallback.
    */
   function getIsArgumentsFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!support\.argsClass|!isArguments)[\s\S]+?\n *};\n\1}/) || [''])[0];
+    var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!support\.argsClass|!isArguments)[\s\S]+?\n *};\n\1}/);
+    return result ? result[0] : '';
   }
 
   /**
@@ -915,7 +917,8 @@
    * @returns {String} Returns the `isFunction` fallback.
    */
   function getIsFunctionFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?\n *};\n\1}/) || [''])[0];
+    var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?\n *};\n\1}/);
+    return result ? result[0] : '';
   }
 
   /**
@@ -926,7 +929,8 @@
    * @returns {String} Returns the `isArguments` fallback.
    */
   function getCreateObjectFallback(source) {
-    return (source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!nativeCreate)[\s\S]+?\n *};\n\1}/) || [''])[0];
+    var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!nativeCreate)[\s\S]+?\n *};\n\1}/);
+    return result ? result[0] : '';
   }
 
   /**
@@ -937,7 +941,8 @@
    * @returns {String} Returns the `iteratorTemplate`.
    */
   function getIteratorTemplate(source) {
-    return (source.match(/^( *)var iteratorTemplate *= *[\s\S]+?\n\1.+?;\n/m) || [''])[0];
+    var result = source.match(/^( *)var iteratorTemplate *= *[\s\S]+?\n\1.+?;\n/m);
+    return result ? result[0] : '';
   }
 
   /**
@@ -948,7 +953,13 @@
    * @returns {String} Returns the method assignments snippet.
    */
   function getMethodAssignments(source) {
-    return (source.match(/\/\*-+\*\/\n(?:\s*\/\/.*)*\s*lodash\.\w+ *=[\s\S]+?lodash\.VERSION *=.+/) || [''])[0];
+    var result = source.match(RegExp(
+      '/\\*-+\\*/\\n' +
+      '(?:\\s*//.*)*\\s*lodash\\.\\w+ *=[\\s\\S]+?\\n' +
+      '(?=\\s*/\\*-+\\*/\\n\\s*' + multilineComment + ' *lodash\\.VERSION *=)'
+    ));
+
+    return result ? result[0] : '';
   }
 
   /**
@@ -978,6 +989,22 @@
       hasOwnProperty.call(aliasToRealMap, methodName) &&
       aliasToRealMap[methodName]
     ) || methodName;
+  }
+
+  /**
+   * Gets the `support` object assignment snippet from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `support` snippet.
+   */
+  function getSupport(source) {
+    var result = source.match(RegExp(
+      multilineComment +
+      '( *)var support *=[\\s\\S]+?\n\\1}\\(1\\)\\);\\n'
+    , 'm'));
+
+    return result ? result[0] : '';
   }
 
   /**
@@ -1293,7 +1320,6 @@
     return source;
   }
 
-
   /**
    * Removes the `Object.keys` object iteration optimization from `source`.
    *
@@ -1332,18 +1358,64 @@
   }
 
   /**
-   * Removes all `support.argsObject` references from `source`.
+   * Removes all `runInContext` references from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeSupportArgsObject(source) {
-    source = removeSupportProp(source, 'argsObject');
+  function removeRunInContext(source) {
+    // replace reference in `reThis` assignment
+    source = source.replace(/\btest\(runInContext\)/, 'test(function() { return this; })');
 
-    // remove `argsAreObjects` from `_.isEqual`
-    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-      return match.replace(/!support.\argsObject[^:]+:\s*/g, '');
+    // remove function scaffolding, leaving most of its content
+    source = source.replace(matchFunction(source, 'runInContext'), function(match) {
+      return match
+        .replace(/^[\s\S]+?function runInContext[\s\S]+?context *= *context.+| *return lodash[\s\S]+$/g, '')
+        .replace(/^ {4}/gm, '  ');
+    });
+
+    // cleanup adjusted source
+    source = source
+      .replace(/\bcontext\b/g, 'window')
+      .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
+      .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
+      .replace(/^ *var _ *=.+\n+/m, '');
+
+    return source;
+  }
+
+  /**
+   * Removes all `setImmediate` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSetImmediate(source) {
+    // remove the `setImmediate` fork of `_.defer`.
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/, '');
+
+    return source;
+  }
+
+  /**
+   * Removes all `support` object references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupport(source) {
+    source = source.replace(getSupport(source), '');
+
+    _.each([
+      removeSupportArgsClass, removeSupportArgsObject, removeSupportEnumErrorProps,
+      removeSupportEnumPrototypes, removeSupportNodeClass, removeSupportNonEnumArgs,
+      removeSupportNonEnumShadows, removeSupportOwnLast, removeSupportSpliceObjects,
+      removeSupportUnindexedChars
+    ], function(func) {
+      source = func(source);
     });
 
     return source;
@@ -1380,6 +1452,24 @@
   }
 
   /**
+   * Removes all `support.argsObject` references from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSupportArgsObject(source) {
+    source = removeSupportProp(source, 'argsObject');
+
+    // remove `argsAreObjects` from `_.isEqual`
+    source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+      return match.replace(/!support.\argsObject[^:]+:\s*/g, '');
+    });
+
+    return source;
+  }
+
+  /**
    * Removes all `support.enumErrorProps` references from `source`.
    *
    * @private
@@ -1398,7 +1488,6 @@
 
     return source;
   }
-
 
   /**
    * Removes all `support.enumPrototypes` references from `source`.
@@ -1573,48 +1662,6 @@
   }
 
   /**
-   * Removes all `runInContext` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeRunInContext(source) {
-    // replace reference in `reThis` assignment
-    source = source.replace(/\btest\(runInContext\)/, 'test(function() { return this; })');
-
-    // remove function scaffolding, leaving most of its content
-    source = source.replace(matchFunction(source, 'runInContext'), function(match) {
-      return match
-        .replace(/^[\s\S]+?function runInContext[\s\S]+?context *= *context.+| *return lodash[\s\S]+$/g, '')
-        .replace(/^ {4}/gm, '  ');
-    });
-
-    // cleanup adjusted source
-    source = source
-      .replace(/\bcontext\b/g, 'window')
-      .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
-      .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
-      .replace(/^ *var _ *=.+\n+/m, '');
-
-    return source;
-  }
-
-  /**
-   * Removes all `setImmediate` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeSetImmediate(source) {
-    // remove the `setImmediate` fork of `_.defer`.
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/, '');
-
-    return source;
-  }
-
-  /**
    * Removes a given property from the `support` object in `source`.
    *
    * @private
@@ -1623,15 +1670,17 @@
    * @returns {String} Returns the modified source.
    */
   function removeSupportProp(source, propName) {
-    return source.replace(RegExp(
-      multilineComment +
-      // match a `try` block
-      '(?: *try\\b.+\\n)?' +
-      // match the `support` property assignment
-      ' *support\\.' + propName + ' *=.+\\n' +
-      // match `catch` block
-      '(?:( *).+?catch\\b[\\s\\S]+?\\n\\1}\\n)?'
-    ), '');
+    return source.replace(getSupport(source), function(match) {
+      return match.replace(RegExp(
+        multilineComment +
+        // match a `try` block
+        '(?: *try\\b.+\\n)?' +
+        // match the `support` property assignment
+        ' *support\\.' + propName + ' *=.+\\n' +
+        // match `catch` block
+        '(?:( *).+?catch\\b[\\s\\S]+?\\n\\1}\\n)?'
+      ), '');
+    });
   }
 
   /**
@@ -3199,7 +3248,7 @@
 
             _.each(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(methodName) {
               if (!useLodashMethod(methodName)) {
-                modified = modified.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + methodName + ' *=.+\\n', 'm'), '');
+                modified = modified.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + methodName + ' *=[\\s\\S]+?;\\n', 'm'), '');
               }
             });
 
@@ -3321,6 +3370,7 @@
       }
       if (isRemoved(source, 'isArguments')) {
         source = replaceSupportProp(source, 'argsClass', 'true');
+        source = removeIsArgumentsFallback(source);
       }
       if (isRemoved(source, 'isArguments', 'isEmpty')) {
         source = removeSupportArgsClass(source);
@@ -3428,30 +3478,33 @@
       }
 
       // remove code used to resolve unneeded `support` properties
-      source = source.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *= *function[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
-        var modified = setup;
-        if (!/support\.spliceObjects *=(?! *(?:false|true))/.test(match)) {
-          modified = modified.replace(/^ *object *=.+\n/m, '');
-        }
-        if (!/support\.enumPrototypes *=(?! *(?:false|true))/.test(match) &&
-            !/support\.nonEnumShadows *=(?! *(?:false|true))/.test(match) &&
-            !/support\.ownLast *=(?! *(?:false|true))/.test(match)) {
-          modified = modified
-            .replace(/\bctor *=.+\s+/, '')
-            .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
-            .replace(/(?:,\n)? *props *=[^;=]+/, '')
-            .replace(/^ *for *\((?=prop)/, '$&var ')
-        }
-        if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(match)) {
-          modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
-        }
-        // cleanup the empty var statement
-        modified = modified.replace(/^ *var;\n/m, '');
+      source = source.replace(getSupport(source), function(match) {
+        return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
+          var modified = setup;
 
-        // if no setup then remove IIFE
-        return /^\s*$/.test(modified)
-          ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
-          : match.replace(setup, modified);
+          if (!/support\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
+            modified = modified.replace(/^ *object *=.+\n/m, '');
+          }
+          if (!/support\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
+              !/support\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
+              !/support\.ownLast *=(?! *(?:false|true))/.test(body)) {
+            modified = modified
+              .replace(/\bctor *=.+\s+/, '')
+              .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
+              .replace(/(?:,\n)? *props *=[^;=]+/, '')
+              .replace(/^ *for *\((?=prop)/, '$&var ')
+          }
+          if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
+            modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
+          }
+          // cleanup the empty var statement
+          modified = modified.replace(/^ *var;\n/m, '');
+
+          // if no setup then remove IIFE
+          return /^\s*$/.test(modified)
+            ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
+            : match.replace(setup, modified);
+        });
       });
 
       // remove unused variables
@@ -3471,7 +3524,7 @@
             varNames.shift();
           }
           else {
-            while (!useMap[varNames[0]]) {
+            while (varNames.length && !useMap[varNames[0]]) {
               source = removeVar(source, varNames[0]);
               varNames.shift();
             }

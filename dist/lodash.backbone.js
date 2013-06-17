@@ -3043,6 +3043,9 @@
   lodash.take = first;
   lodash.head = first;
 
+  // add functions to `lodash.prototype`
+  mixin(lodash);
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -3053,9 +3056,6 @@
    * @type String
    */
   lodash.VERSION = '1.3.1';
-
-  // add functions to `lodash.prototype`
-  mixin(lodash);
 
   // add "Chaining" functions to the wrapper
   lodash.prototype.chain = wrapperChain;

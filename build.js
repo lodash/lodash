@@ -3575,8 +3575,8 @@
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
       }
 
-      // remove method fallbacks
-      _.each(['createObject', 'isArguments', 'isArray', 'isFunction'], function(methodName) {
+      // remove forks of removed methods
+      _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(methodName) {
         if (_.size(source.match(RegExp(methodName + '\\(', 'g'))) < 2) {
           source = eval('remove' + capitalize(methodName) + 'Fallback')(source);
         }

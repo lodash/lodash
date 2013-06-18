@@ -105,7 +105,7 @@
     'findKey': ['createCallback', 'forOwn'],
     'first': ['slice'],
     'flatten': ['isArray', 'overloadWrapper'],
-    'forEach': ['basicEach', 'createCallback', 'isArguments', 'isArray', 'isString', 'keys'],
+    'forEach': ['basicEach', 'createCallback', 'isArray'],
     'forIn': ['createCallback', 'createIterator', 'isArguments'],
     'forOwn': ['createCallback', 'createIterator', 'isArguments', 'keys'],
     'functions': ['forIn', 'isFunction'],
@@ -219,17 +219,29 @@
 
   /** Used to track property dependencies */
   var propDependencyMap = {
+    'assign': ['objectTypes'],
     'at': ['support'],
+    'basicEach': ['objectTypes'],
     'bind': ['support'],
+    'bindKey': ['indicatorObject'],
     'clone': ['support'],
+    'createCallback': ['indicatorObject'],
+    'defaults': ['objectTypes'],
+    'forIn': ['objectTypes'],
+    'forOwn': ['objectTypes'],
     'isArguments': ['support'],
-    'isEmpty': ['support'],
+    'isEmpty': ['indicatorObject', 'support'],
     'isEqual': ['support'],
+    'isObject': ['objectTypes'],
     'isPlainObject': ['support'],
+    'isRegExp': ['objectTypes'],
     'iteratorTemplate': ['support'],
     'keys': ['support'],
+    'merge': ['indicatorObject'],
+    'partialRight': ['indicatorObject'],
     'reduceRight': ['support'],
     'shimIsPlainObject': ['support'],
+    'shimKeys': ['objectTypes'],
     'template': ['templateSettings'],
     'toArray': ['support']
   };
@@ -695,21 +707,25 @@
    * @returns {String} Returns the modified source.
    */
   function cleanupSource(source) {
+    source = removePseudoPrivate(source);
+
     return source
-      // remove pseudo private properties
-      .replace(/(?:(?:\s*\/\/.*)*\s*lodash\._[^=]+=.+\n)+/g, '\n')
+      // consolidate consecutive horizontal rule comment separators
+      .replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
+        return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
+      })
+      // remove unneeded single line comments
+      .replace(/(\{\s*)?(\n *\/\/.*)(\s*\})/g, function(match, prelude, comment, postlude) {
+        return (!prelude && postlude) ? postlude : match;
+      })
+      // remove unneeded horizontal rule comment separators
+      .replace(/(\{\n)\s*\/\*-+\*\/\n|^ *\/\*-+\*\/\n(\s*\})/gm, '$1$2')
       // remove extraneous whitespace
       .replace(/^ *\n/gm, '\n')
       // remove lines with just whitespace and semicolons
       .replace(/^ *;\n/gm, '')
       // consolidate multiple newlines
-      .replace(/\n{3,}/g, '\n\n')
-      // consolidate consecutive horizontal rule comment separators
-      .replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
-        return separators.match(/^\s*/)[0] + separators.slice(separators.lastIndexOf('/*'));
-      })
-      // remove unneeded horizontal rule comment separators
-      .replace(/(\{\n)\s*\/\*-+\*\/\n|\n *\/\*-+\*\/\n(\s*\})/gm, '$1$2');
+      .replace(/\n{3,}/g, '\n\n');
   }
 
   /**
@@ -843,16 +859,20 @@
    *
    * @private
    * @param {Array|String} methodName A method name or array of dependencies to query.
+   * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependencies.
    * @param- {Object} [stackA=[]] Internally used track queried methods.
    * @returns {Array} Returns an array of method dependencies.
    */
-  function getDependencies(methodName, stack) {
+  function getDependencies(methodName, isShallow, stack) {
     var dependencies = _.isArray(methodName)
       ? methodName
       : (hasOwnProperty.call(dependencyMap, methodName) && dependencyMap[methodName]);
 
-    if (!dependencies) {
+    if (!dependencies || !dependencies.length) {
       return [];
+    }
+    if (isShallow) {
+      return dependencies.slice();
     }
     stack || (stack = []);
 
@@ -861,7 +881,7 @@
     return _.uniq(dependencies.reduce(function(result, otherName) {
       if (!_.contains(stack, otherName)) {
         stack.push(otherName);
-        result.push.apply(result, getDependencies(otherName, stack).concat(otherName));
+        result.push.apply(result, getDependencies(otherName, isShallow, stack).concat(otherName));
       }
       return result;
     }, []));
@@ -1034,9 +1054,9 @@
   function getVars(source) {
     var indentA = isRemoved(source, 'runInContext') ? ' {2}' : ' {2,4}',
         indentB = isRemoved(source, 'runInContext') ? ' {6}' : ' {6,8}',
-        snippet = source.replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, ''),
         result = [];
 
+    var snippet = removeComments(source);
     snippet.replace(RegExp(
       '^(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
       '^'  + indentA + 'var (\\w+) *=.+?,\\n(?= *\\w+ *=)|' +
@@ -1081,11 +1101,8 @@
     var indentA = isShallow ? ' {2}' : ' {2,4}',
         indentB = isShallow ? ' {6}' : ' {6,8}';
 
-    var snippet = source
-      // remove comments
-      .replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, '')
-      // remove pseudo private properties
-      .replace(/^ *lodash\._[^=]+=.+\n/gm, '');
+    var snippet = removePseudoPrivate(source);
+    snippet = removeComments(source);
 
     var match = RegExp(
       '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
@@ -1097,6 +1114,7 @@
     if (!match) {
       return false;
     }
+    // remove the variable assignment from the source
     snippet = snippet.slice(0, match.index) + snippet.slice(match.index + match[0].length);
     return RegExp('[^.\\w"\']' + varName + '\\b').test(snippet);
   }
@@ -1169,6 +1187,17 @@
 
     // remove nonexistent and duplicate method names
     return _.uniq(_.intersection(allMethods, methodNames));
+  }
+
+  /**
+   * Removes all comments from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeComments(source) {
+    return source.replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, '');
   }
 
   /**
@@ -1260,14 +1289,12 @@
       source = source.replace(snippet, '');
     }
 
+    snippet = getMethodAssignments(source);
+
+    source = removePseudoPrivate(source, funcName);
+
     // remove method assignment from `lodash.prototype`
     source = source.replace(RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
-
-    // remove pseudo private methods
-    source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\._' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
-
-    // grab the method assignments snippet
-    snippet = getMethodAssignments(source);
 
     // remove assignment and aliases
     var modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
@@ -1377,6 +1404,20 @@
     source = source.replace(/\bnew lodashWrapper\b/g, 'new lodash');
 
     return source;
+  }
+
+  /**
+   * Removes the specified pseudo private property from `source`. If a `propName`
+   * is not specified, all pseudo private properties are removed.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} [funcName] The name of the property to remove.
+   * @returns {String} Returns the modified source.
+   */
+  function removePseudoPrivate(source, propName) {
+    propName || (propName = '\\w+');
+    return source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\._' + propName + ' *=[\\s\\S]+?;\\n', 'gm'), '');
   }
 
   /**
@@ -2131,6 +2172,22 @@
           dependencyMap.createCallback = _.without(dependencyMap.createCallback, 'isEqual');
           dependencyMap.where.push('find', 'isEmpty');
         }
+        if (!useLodashMethod('forOwn')) {
+          _.each(['contains', 'every', 'find', 'transform', 'forOwn', 'some'], function(methodName) {
+            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
+          });
+        }
+        if (!useLodashMethod('forIn')) {
+          _.each(['isEqual', 'shimIsPlainObject'], function(methodName) {
+            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
+          });
+        }
+
+        _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(methodName) {
+          if (methodName == 'basicEach' || !useLodashMethod(methodName)) {
+            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
+          }
+        });
 
         _.each(['clone', 'difference', 'intersection', 'isEqual', 'sortBy', 'uniq'], function(methodName) {
           if (methodName == 'clone'
@@ -2138,6 +2195,15 @@
                 : !useLodashMethod(methodName)
               ) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'getArray', 'getObject', 'releaseArray', 'releaseObject');
+          }
+        });
+
+        _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(methodName) {
+          if (methodName == 'clone'
+                ? (!useLodashMethod('clone') && !useLodashMethod('cloneDeep'))
+                : !useLodashMethod(methodName)
+              ) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'slice');
           }
         });
 
@@ -2193,6 +2259,16 @@
         });
 
         if (!isMobile) {
+          _.each(['clone', 'transform', 'value'], function(methodName) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'basicEach');
+            dependencyMap[methodName].push('forEach');
+          });
+
+          _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(methodName) {
+            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'basicEach');
+            dependencyMap[methodName].push('forOwn');
+          });
+
           _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce'], function(methodName) {
             if (!(isUnderscore && useLodashMethod(methodName))) {
               dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArguments', 'isArray');
@@ -3136,12 +3212,9 @@
         source = addChainMethods(source);
       }
       // replace `basicEach` references with `forEach` and `forOwn`
-      if ((isUnderscore || (isModern && !isMobile)) &&
-          _.contains(buildMethods, 'forEach') && _.contains(buildMethods, 'forOwn')) {
+      if (isUnderscore || (isModern && !isMobile)) {
         source = removeFunction(source, 'basicEach');
-
-        // remove `lodash._basicEach` pseudo property
-        source = source.replace(/^ *lodash\._basicEach *=[\s\S]+?;\n/m, '');
+        source = removePseudoPrivate(source, 'basicEach');
 
         // replace `basicEach` with `_.forOwn` in "Collections" methods
         source = source.replace(/\bbasicEach(?=\(collection)/g, 'forOwn');
@@ -3219,7 +3292,7 @@
           });
 
           // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
-          if (isUnderscore && (/\bbasicEach\(/.test(source) || !useLodashMethod('forOwn'))) {
+          if (isUnderscore && !useLodashMethod('forOwn')) {
             source = source.replace(matchFunction(source, 'every'), function(match) {
               return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
             });
@@ -3494,12 +3567,6 @@
         }
       });
 
-      if (!/\bbasicEach\(/.test(source)) {
-        source = removeFunction(source, 'basicEach');
-      }
-      if (_.size(source.match(/[^.]slice\(/g)) < 2) {
-        source = removeFunction(source, 'slice');
-      }
       if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
         source = removeFromCreateIterator(source, 'errorClass');
         source = removeFromCreateIterator(source, 'errorProto');
@@ -3581,8 +3648,8 @@
     var outputUsed = false;
 
     // flag to specify creating a custom build
-    var isCustom = (
-      isLegacy || isMapped || isModern || isNoDep || isStrict || isUnderscore || outputPath ||
+    var isCustom = !isNoDep && (
+      isLegacy || isMapped || isModern || isStrict || isUnderscore || outputPath ||
       /(?:category|exclude|exports|iife|include|minus|plus)=.*$/.test(options) ||
       !_.isEqual(exportsOptions, exportsAll)
     );

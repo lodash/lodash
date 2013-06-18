@@ -832,6 +832,30 @@
   }
 
   /**
+   * Gets the `createObject` fork from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `createObject` fork.
+   */
+  function getCreateObjectFork(source) {
+    var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!nativeCreate)[\s\S]+?\n *};\n\1}/);
+    return result ? result[0] : '';
+  }
+
+  /**
+   * Gets the `_.defer` fork from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `_.defer` fork.
+   */
+  function getDeferFork(source) {
+    var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/);
+    return result ? result[0] : '';
+  }
+
+  /**
    * Gets an array of depenants for the given method name(s).
    *
    * @private
@@ -922,51 +946,39 @@
   }
 
   /**
-   * Gets the `_.isArguments` fallback from `source`.
+   * Gets the `_.isArguments` fork from `source`.
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `isArguments` fallback.
+   * @returns {String} Returns the `isArguments` fork.
    */
-  function getIsArgumentsFallback(source) {
+  function getIsArgumentsFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!support\.argsClass|!isArguments)[\s\S]+?\n *};\n\1}/);
     return result ? result[0] : '';
   }
 
   /**
-   * Gets the `_.isArray` fallback from `source`.
+   * Gets the `_.isArray` fork from `source`.
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `isArray` fallback.
+   * @returns {String} Returns the `isArray` fork.
    */
-  function getIsArrayFallback(source) {
+  function getIsArrayFork(source) {
     return matchFunction(source, 'isArray')
       .replace(/^[\s\S]+?=\s*nativeIsArray\b/, '')
       .replace(/[;\s]+$/, '');
   }
 
   /**
-   * Gets the `_.isFunction` fallback from `source`.
+   * Gets the `_.isFunction` fork from `source`.
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `isFunction` fallback.
+   * @returns {String} Returns the `isFunction` fork.
    */
-  function getIsFunctionFallback(source) {
+  function getIsFunctionFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?\n *};\n\1}/);
-    return result ? result[0] : '';
-  }
-
-  /**
-   * Gets the `createObject` fallback from `source`.
-   *
-   * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the `isArguments` fallback.
-   */
-  function getCreateObjectFallback(source) {
-    var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!nativeCreate)[\s\S]+?\n *};\n\1}/);
     return result ? result[0] : '';
   }
 
@@ -1201,6 +1213,28 @@
   }
 
   /**
+   * Removes the `createObject` fork from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeCreateObjectFork(source) {
+    return source.replace(getCreateObjectFork(source), '');
+  }
+
+  /**
+   * Removes the `_.defer` fork from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeDeferFork(source) {
+    return source.replace(getDeferFork(source), '');
+  }
+
+  /**
    * Removes all references to `identifier` from `createIterator` in `source`.
    *
    * @private
@@ -1310,47 +1344,36 @@
   }
 
   /**
-   * Removes the `_.isArguments` fallback from `source`.
+   * Removes the `_.isArguments` fork from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeIsArgumentsFallback(source) {
-    return source.replace(getIsArgumentsFallback(source), '');
+  function removeIsArgumentsFork(source) {
+    return source.replace(getIsArgumentsFork(source), '');
   }
 
   /**
-   * Removes the `_.isArray` fallback from `source`.
+   * Removes the `_.isArray` fork from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeIsArrayFallback(source) {
-    return source.replace(getIsArrayFallback(source), '');
+  function removeIsArrayFork(source) {
+    return source.replace(getIsArrayFork(source), '');
   }
 
   /**
-   * Removes the `_.isFunction` fallback from `source`.
+   * Removes the `_.isFunction` fork from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeIsFunctionFallback(source) {
-    return source.replace(getIsFunctionFallback(source), '');
-  }
-
-  /**
-   * Removes the `createObject` fallback from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeCreateObjectFallback(source) {
-    return source.replace(getCreateObjectFallback(source), '');
+  function removeIsFunctionFork(source) {
+    return source.replace(getIsFunctionFork(source), '');
   }
 
   /**
@@ -1449,20 +1472,6 @@
   }
 
   /**
-   * Removes all `setImmediate` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeSetImmediate(source) {
-    // remove the `setImmediate` fork of `_.defer`.
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/, '');
-
-    return source;
-  }
-
-  /**
    * Removes all `support` object references from `source`.
    *
    * @private
@@ -1494,8 +1503,8 @@
   function removeSupportArgsClass(source) {
     source = removeSupportProp(source, 'argsClass');
 
-    // replace `support.argsClass` in the `_.isArguments` fallback
-    source = source.replace(getIsArgumentsFallback(source), function(match) {
+    // replace `support.argsClass` in the `_.isArguments` fork
+    source = source.replace(getIsArgumentsFork(source), function(match) {
       return match.replace(/!support\.argsClass/g, '!isArguments(arguments)');
     });
 
@@ -2364,11 +2373,11 @@
           return match.replace(/\bnativeIsArray\s*\|\|\s*/, '');
         });
 
-        // replace `createObject` and `isArguments` with their fallbacks
+        // replace `createObject` and `isArguments` with their forks
         _.each(['createObject', 'isArguments'], function(methodName) {
           var capitalized = capitalize(methodName),
-              get = eval('get' + capitalized + 'Fallback'),
-              remove =  eval('remove' + capitalized + 'Fallback');
+              get = eval('get' + capitalized + 'Fork'),
+              remove =  eval('remove' + capitalized + 'Fork');
 
           source = source.replace(matchFunction(source, methodName).replace(RegExp('[\\s\\S]+?function ' + methodName), ''), function() {
             var snippet = get(source),
@@ -2399,16 +2408,16 @@
       }
       if (isModern) {
         source = removeSupportSpliceObjects(source);
-        source = removeIsArgumentsFallback(source);
+        source = removeIsArgumentsFork(source);
 
         if (isMobile) {
           source = replaceSupportProp(source, 'enumPrototypes', 'true');
           source = replaceSupportProp(source, 'nonEnumArgs', 'true');
         }
         else {
-          source = removeIsArrayFallback(source);
-          source = removeIsFunctionFallback(source);
-          source = removeCreateObjectFallback(source);
+          source = removeIsArrayFork(source);
+          source = removeIsFunctionFork(source);
+          source = removeCreateObjectFork(source);
 
           // remove `shimIsPlainObject` from `_.isPlainObject`
           source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
@@ -2422,9 +2431,6 @@
       if (isLegacy || isMobile || isUnderscore) {
         if (isMobile || (!useLodashMethod('assign') && !useLodashMethod('defaults') && !useLodashMethod('forIn') && !useLodashMethod('forOwn'))) {
           source = removeKeysOptimization(source);
-        }
-        if (!useLodashMethod('defer')) {
-          source = removeSetImmediate(source);
         }
       }
       if (isModern || isUnderscore) {

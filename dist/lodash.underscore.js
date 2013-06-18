@@ -179,12 +179,10 @@
 
   /** Native method shortcuts */
   var ceil = Math.ceil,
-      clearTimeout = window.clearTimeout,
       concat = arrayRef.concat,
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
-      setTimeout = window.setTimeout,
       toString = objectProto.toString;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */

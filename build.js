@@ -1472,6 +1472,11 @@
       .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
       .replace(/^ *var _ *=.+\n+/m, '');
 
+    // remove local timer variables
+    source = removeVar(source, 'clearTimeout');
+    source = removeVar(source, 'setImmediate');
+    source = removeVar(source, 'setTimeout');
+
     return source;
   }
 
@@ -2435,6 +2440,9 @@
       if (isLegacy || isMobile || isUnderscore) {
         if (isMobile || (!useLodashMethod('assign') && !useLodashMethod('defaults') && !useLodashMethod('forIn') && !useLodashMethod('forOwn'))) {
           source = removeKeysOptimization(source);
+        }
+        if (!useLodashMethod('defer')) {
+          source = removeDeferFork(source);
         }
       }
       if (isModern || isUnderscore) {
@@ -3477,9 +3485,6 @@
       if (isRemoved(source, 'createIterator', 'keys')) {
         source = removeKeysOptimization(source);
         source = removeSupportNonEnumArgs(source);
-      }
-      if (isRemoved(source, 'defer')) {
-        source = removeSetImmediate(source);
       }
       if (isRemoved(source, 'invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");

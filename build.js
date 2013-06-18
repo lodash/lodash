@@ -1061,11 +1061,15 @@
    *
    * @private
    * @param {String} source The source to process.
+   * @param {Boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
    * @returns {Array} Returns a new array of variable names.
    */
-  function getVars(source) {
-    var indentA = isRemoved(source, 'runInContext') ? ' {2}' : ' {2,4}',
-        indentB = isRemoved(source, 'runInContext') ? ' {6}' : ' {6,8}',
+  function getVars(source, isShallow) {
+    if (isShallow == null) {
+      isShallow = isRemoved(source, 'runInContext');
+    }
+    var indentA = isShallow ? ' {2}' : ' {2,4}',
+        indentB = isShallow ? ' {6}' : ' {6,8}',
         result = [];
 
     var snippet = removeComments(source);
@@ -3615,9 +3619,9 @@
 
       // remove unused variables
       (function() {
-        var useMap = {},
-            varNames = getVars(source),
-            isShallow = isRemoved(source, 'runInContext');
+        var isShallow = isRemoved(source, 'runInContext'),
+            useMap = {},
+            varNames = getVars(source, isShallow);
 
         while (varNames.length) {
           varNames = _.sortBy(varNames, function(varName) {

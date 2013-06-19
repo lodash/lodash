@@ -1002,12 +1002,7 @@
    * @returns {String} Returns the method assignments snippet.
    */
   function getMethodAssignments(source) {
-    var result = source.match(RegExp(
-      '/\\*-+\\*/\\n' +
-      '(?:\\s*//.*)*\\s*lodash\\.\\w+ *=[\\s\\S]+?\\n' +
-      '(?=\\s*/\\*-+\\*/\\n\\s*' + multilineComment + ' *lodash\\.VERSION *=)'
-    ));
-
+    var result = source.match(/\n\n(?:\s*\/\/.*)*\s*lodash\.\w+ *=[\s\S]+?\n *lodash\.VERSION *=.+\n/);
     return result ? result[0] : '';
   }
 
@@ -1431,6 +1426,17 @@
     source = source.replace(/\bnew lodashWrapper\b/g, 'new lodash');
 
     return source;
+  }
+
+  /**
+   * Removes the Lo-Dash method assignments snippet from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the modified source.
+   */
+  function removeMethodAssignments(source) {
+    return source.replace(getMethodAssignments(source), '');
   }
 
   /**
@@ -3473,41 +3479,12 @@
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
       }
-      if (isRemoved(source, 'clone', 'isEqual', 'isPlainObject')) {
-        source = removeSupportNodeClass(source);
-      }
-      if (isRemoved(source, 'createIterator')) {
-        source = removeSupportNonEnumShadows(source);
-      }
-      if (isRemoved(source, 'createIterator', 'bind', 'keys')) {
-        source = removeSupportProp(source, 'fastBind');
-      }
-      if (isRemoved(source, 'createIterator', 'keys')) {
-        source = removeKeysOptimization(source);
-        source = removeSupportNonEnumArgs(source);
-      }
       if (isRemoved(source, 'invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
       }
-      if (isRemoved(source, 'isArguments')) {
-        source = replaceSupportProp(source, 'argsClass', 'true');
-        source = removeIsArgumentsFallback(source);
-      }
-      if (isRemoved(source, 'isArguments', 'isEmpty')) {
-        source = removeSupportArgsClass(source);
-      }
-      if (isRemoved(source, 'isArray')) {
-        source = removeIsArrayFallback(source);
-      }
-      if (isRemoved(source, 'isPlainObject')) {
-        source = removeSupportOwnLast(source);
-      }
-      if (isRemoved(source, 'keys')) {
-        source = removeFunction(source, 'shimKeys');
-      }
       if (isRemoved(source, 'mixin')) {
         // if possible, inline the `_.mixin` call to ensure proper chaining behavior
-        source = source.replace(/^( *)mixin\(lodash\).+/m, function(match, indent) {
+        source = source.replace(/^( *)mixin\(lodash\).*/m, function(match, indent) {
           if (isRemoved(source, 'forOwn')) {
             return '';
           }
@@ -3529,27 +3506,17 @@
           ].join('\n' + indent);
         });
       }
-      if (isRemoved(source, 'sortBy')) {
-        _.each([removeFromGetObject, removeFromReleaseObject], function(func) {
-          source = func(source, 'criteria');
-          source = func(source, 'index');
-          source = func(source, 'value');
-        });
+      if (!_.contains(buildMethods, 'shimKeys') && isRemoved(source, 'keys')) {
+        source = removeFunction(source, 'shimKeys');
       }
       if (isRemoved(source, 'template')) {
         // remove `templateSettings` assignment
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
       }
-      if (isRemoved(source, 'throttle')) {
-        _.each(['leading', 'maxWait', 'trailing'], function(prop) {
-          source = removeFromGetObject(source, prop);
-        });
-      }
       if (isRemoved(source, 'value')) {
         source = removeFunction(source, 'chain');
         source = removeFunction(source, 'wrapperToString');
         source = removeFunction(source, 'wrapperValueOf');
-        source = removeSupportSpliceObjects(source);
         source = removeLodashWrapper(source);
 
         // simplify the `lodash` function
@@ -3574,52 +3541,104 @@
           .replace(/(?:\s*\/\/.*)*\n( *)(?:basicEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
       }
+      if (isNoDep) {
+        _.each(buildMethods, function(methodName) {
+          _.each(getAliases(methodName), function(alias) {
+            source = removeFunction(source, alias);
+          });
 
-      // remove forks of removed methods
-      _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(methodName) {
-        if (_.size(source.match(RegExp(methodName + '\\(', 'g'))) < 2) {
-          source = eval('remove' + capitalize(methodName) + 'Fallback')(source);
+          _.each(propDependencyMap[methodName], function(varName) {
+            source = removeVar(source, varName);
+          });
+        });
+
+        source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
+
+        source = removeSupport(source);
+      }
+      else {
+        if (isRemoved(source, 'bind')) {
+          source = removeSupportProp(source, 'fastBind');
         }
-      });
+        if (isRemoved(source, 'clone', 'isEqual', 'isPlainObject')) {
+          source = removeSupportNodeClass(source);
+        }
+        if (isRemoved(source, 'createIterator')) {
+          source = removeSupportNonEnumShadows(source);
+        }
+        if (isRemoved(source, 'isArguments')) {
+          source = replaceSupportProp(source, 'argsClass', 'true');
+        }
+        if (isRemoved(source, 'isArguments', 'isEmpty')) {
+          source = removeSupportArgsClass(source);
+        }
+        if (isRemoved(source, 'isPlainObject')) {
+          source = removeSupportOwnLast(source);
+        }
+        if (isRemoved(source, 'keys')) {
+          source = removeKeysOptimization(source);
+          source = removeSupportNonEnumArgs(source);
+        }
+        if (isRemoved(source, 'sortBy')) {
+          _.each([removeFromGetObject, removeFromReleaseObject], function(func) {
+            source = func(source, 'criteria');
+            source = func(source, 'index');
+            source = func(source, 'value');
+          });
+        }
+        if (isRemoved(source, 'throttle')) {
+          _.each(['leading', 'maxWait', 'trailing'], function(prop) {
+            source = removeFromGetObject(source, prop);
+          });
+        }
+        if (isRemoved(source, 'value')) {
+          source = removeSupportSpliceObjects(source);
+        }
+        if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
+          source = removeFromCreateIterator(source, 'errorClass');
+          source = removeFromCreateIterator(source, 'errorProto');
 
-      if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
-        source = removeFromCreateIterator(source, 'errorClass');
-        source = removeFromCreateIterator(source, 'errorProto');
+          // remove 'Error' from the `contextProps` array
+          source = source.replace(/^ *var contextProps *=[\s\S]+?;/m, function(match) {
+            return match.replace(/'Error', */, '');
+          });
+        }
+        // remove code used to resolve unneeded `support` properties
+        source = source.replace(getSupport(source), function(match) {
+          return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
+            var modified = setup;
 
-        // remove 'Error' from the `contextProps` array
-        source = source.replace(/^ *var contextProps *=[\s\S]+?;/m, function(match) {
-          return match.replace(/'Error', */, '');
+            if (!/support\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
+              modified = modified.replace(/^ *object *=.+\n/m, '');
+            }
+            if (!/support\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
+                !/support\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
+                !/support\.ownLast *=(?! *(?:false|true))/.test(body)) {
+              modified = modified
+                .replace(/\bctor *=.+\s+/, '')
+                .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
+                .replace(/(?:,\n)? *props *=[^;=]+/, '')
+                .replace(/^ *for *\((?=prop)/, '$&var ')
+            }
+            if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
+              modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
+            }
+            // cleanup the empty var statement
+            modified = modified.replace(/^ *var;\n/m, '');
+
+            // if no setup then remove IIFE
+            return /^\s*$/.test(modified)
+              ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
+              : match.replace(setup, modified);
+          });
         });
       }
 
-      // remove code used to resolve unneeded `support` properties
-      source = source.replace(getSupport(source), function(match) {
-        return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
-          var modified = setup;
-
-          if (!/support\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
-            modified = modified.replace(/^ *object *=.+\n/m, '');
-          }
-          if (!/support\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
-              !/support\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
-              !/support\.ownLast *=(?! *(?:false|true))/.test(body)) {
-            modified = modified
-              .replace(/\bctor *=.+\s+/, '')
-              .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
-              .replace(/(?:,\n)? *props *=[^;=]+/, '')
-              .replace(/^ *for *\((?=prop)/, '$&var ')
-          }
-          if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
-            modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
-          }
-          // cleanup the empty var statement
-          modified = modified.replace(/^ *var;\n/m, '');
-
-          // if no setup then remove IIFE
-          return /^\s*$/.test(modified)
-            ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
-            : match.replace(setup, modified);
-        });
+      // remove forks of removed methods
+      _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(methodName) {
+        if (isRemoved(source, methodName)) {
+          source = eval('remove' + capitalize(methodName) + 'Fork')(source);
+        }
       });
 
       // remove unused variables
@@ -3652,6 +3671,12 @@
     }
     if (_.size(source.match(/\bfreeExports\b/g)) < 2) {
       source = removeVar(source, 'freeExports');
+    }
+    if (!isAMD && !isCommonJS && !isGlobal && !isNode) {
+      source = removeFunction(source, 'lodash');
+      source = removeLodashWrapper(source);
+      source = removePseudoPrivate(source);
+      source = removeMethodAssignments(source);
     }
 
     debugSource = cleanupSource(source);

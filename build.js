@@ -1060,9 +1060,6 @@
    * @returns {Array} Returns a new array of variable names.
    */
   function getVars(source, isShallow) {
-    if (isShallow == null) {
-      isShallow = isRemoved(source, 'runInContext');
-    }
     var indentA = isShallow ? ' {2}' : ' {2,4}',
         indentB = isShallow ? ' {6}' : ' {6,8}',
         result = [];
@@ -1080,23 +1077,6 @@
   }
 
   /**
-   * Determines if all functions of the given names have been removed from `source`.
-   *
-   * @private
-   * @param {String} source The source to inspect.
-   * @param {String} [funcName1, funcName2, ...] The names of functions to check.
-   * @returns {Boolean} Returns `true` if all functions have been removed, else `false`.
-   */
-  function isRemoved(source) {
-    return slice.call(arguments, 1).every(function(funcName) {
-      return !(
-        matchFunction(source, funcName) ||
-        RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm').test(source)
-      );
-    });
-  }
-
-  /**
    * Determines if given variable is used in `source`.
    *
    * @private
@@ -1106,9 +1086,6 @@
    * @returns {Boolean} Returns `true` if the variable is used, else `false`.
    */
   function isVarUsed(source, varName, isShallow) {
-    if (isShallow == null) {
-      isShallow = isRemoved(source, 'runInContext');
-    }
     var indentA = isShallow ? ' {2}' : ' {2,4}',
         indentB = isShallow ? ' {6}' : ' {6,8}';
 
@@ -2098,7 +2075,13 @@
 
     /*------------------------------------------------------------------------*/
 
-    var useLodashMethod = function(methodName) {
+    var isExcluded = function() {
+      return _.every(arguments, function(methodName) {
+        return !_.contains(buildMethods, methodName);
+      });
+    };
+
+    var isLodashMethod = function(methodName) {
       if (_.contains(lodashOnlyMethods, methodName) || /^(?:assign|zipObject)$/.test(methodName)) {
         var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
         return _.contains(methods, methodName);
@@ -2108,7 +2091,7 @@
     };
 
     // delete the `_.findWhere` dependency map to enable its alias mapping
-    if (!isUnderscore || useLodashMethod('findWhere')) {
+    if (!isUnderscore || isLodashMethod('findWhere')) {
       delete dependencyMap.findWhere;
     }
 
@@ -2168,55 +2151,55 @@
         }
       }
       if (isUnderscore) {
-        if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
+        if (!isLodashMethod('clone') && !isLodashMethod('cloneDeep')) {
           dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
         }
-        if (!useLodashMethod('contains')) {
+        if (!isLodashMethod('contains')) {
           dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
         }
-        if (!useLodashMethod('flatten')) {
+        if (!isLodashMethod('flatten')) {
           dependencyMap.flatten = _.without(dependencyMap.flatten, 'createCallback');
         }
-        if (!useLodashMethod('isEmpty')) {
+        if (!isLodashMethod('isEmpty')) {
           dependencyMap.isEmpty = ['isArray', 'isString'];
         }
-        if (!useLodashMethod('isEqual')) {
+        if (!isLodashMethod('isEqual')) {
           dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
         }
-        if (!useLodashMethod('pick')){
+        if (!isLodashMethod('pick')){
           dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
         }
-        if (!useLodashMethod('template')) {
+        if (!isLodashMethod('template')) {
           dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
         }
-        if (!useLodashMethod('toArray')) {
+        if (!isLodashMethod('toArray')) {
           dependencyMap.toArray.push('isArray', 'map');
         }
-        if (!useLodashMethod('where')) {
+        if (!isLodashMethod('where')) {
           dependencyMap.createCallback = _.without(dependencyMap.createCallback, 'isEqual');
           dependencyMap.where.push('find', 'isEmpty');
         }
-        if (!useLodashMethod('forOwn')) {
+        if (!isLodashMethod('forOwn')) {
           _.each(['contains', 'every', 'find', 'transform', 'forOwn', 'some'], function(methodName) {
             (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
           });
         }
-        if (!useLodashMethod('forIn')) {
+        if (!isLodashMethod('forIn')) {
           _.each(['isEqual', 'shimIsPlainObject'], function(methodName) {
             (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
           });
         }
 
         _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(methodName) {
-          if (methodName == 'basicEach' || !useLodashMethod(methodName)) {
+          if (methodName == 'basicEach' || !isLodashMethod(methodName)) {
             (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
           }
         });
 
         _.each(['clone', 'difference', 'intersection', 'isEqual', 'sortBy', 'uniq'], function(methodName) {
           if (methodName == 'clone'
-                ? (!useLodashMethod('clone') && !useLodashMethod('cloneDeep'))
-                : !useLodashMethod(methodName)
+                ? (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))
+                : !isLodashMethod(methodName)
               ) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'getArray', 'getObject', 'releaseArray', 'releaseObject');
           }
@@ -2224,33 +2207,33 @@
 
         _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(methodName) {
           if (methodName == 'clone'
-                ? (!useLodashMethod('clone') && !useLodashMethod('cloneDeep'))
-                : !useLodashMethod(methodName)
+                ? (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))
+                : !isLodashMethod(methodName)
               ) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'slice');
           }
         });
 
         _.each(['debounce', 'throttle'], function(methodName) {
-          if (!useLodashMethod(methodName)) {
+          if (!isLodashMethod(methodName)) {
             dependencyMap[methodName] = [];
           }
         });
 
         _.each(['difference', 'intersection', 'uniq'], function(methodName) {
-          if (!useLodashMethod(methodName)) {
+          if (!isLodashMethod(methodName)) {
             dependencyMap[methodName] = ['getIndexOf'].concat(_.without(dependencyMap[methodName], 'cacheIndexOf', 'createCache'));
           }
         });
 
         _.each(['flatten', 'uniq'], function(methodName) {
-          if (!useLodashMethod(methodName)) {
+          if (!isLodashMethod(methodName)) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'overloadWrapper');
           }
         });
 
         _.each(['max', 'min'], function(methodName) {
-          if (!useLodashMethod(methodName)) {
+          if (!isLodashMethod(methodName)) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'charAtCallback', 'isArray', 'isString');
           }
         });
@@ -2259,25 +2242,25 @@
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
 
         _.each(['at', 'clone', 'isArguments', 'isEmpty', 'isEqual', 'isPlainObject', 'reduceRight', 'shimIsPlainObject', 'toArray'], function(methodName) {
-          if (!(isUnderscore && useLodashMethod(methodName))) {
+          if (!(isUnderscore && isLodashMethod(methodName))) {
             propDependencyMap[methodName] = _.without(propDependencyMap[methodName], 'support');
           }
         });
 
         _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(methodName) {
-          if (!(isUnderscore && useLodashMethod(methodName))) {
+          if (!(isUnderscore && isLodashMethod(methodName))) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
           }
         });
 
         _.each(['at', 'forEach', 'toArray'], function(methodName) {
-          if (!(isUnderscore && useLodashMethod(methodName))) {
+          if (!(isUnderscore && isLodashMethod(methodName))) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isString');
           }
         });
 
         _.each(['clone', 'isEqual', 'shimIsPlainObject'], function(methodName) {
-          if (!(isUnderscore && useLodashMethod(methodName))) {
+          if (!(isUnderscore && isLodashMethod(methodName))) {
             dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isNode');
           }
         });
@@ -2294,18 +2277,18 @@
           });
 
           _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce'], function(methodName) {
-            if (!(isUnderscore && useLodashMethod(methodName))) {
+            if (!(isUnderscore && isLodashMethod(methodName))) {
               dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArguments', 'isArray');
             }
           });
 
           _.each(['max', 'min'], function(methodName) {
-            if (!(isUnderscore && useLodashMethod(methodName))) {
+            if (!(isUnderscore && isLodashMethod(methodName))) {
               dependencyMap[methodName].push('forEach');
             }
           });
 
-          if (!(isUnderscore && useLodashMethod('keys'))) {
+          if (!(isUnderscore && isLodashMethod('keys'))) {
             propDependencyMap.keys = _.without(propDependencyMap.keys, 'support');
           }
         }
@@ -2440,14 +2423,14 @@
           });
         }
       }
-      if ((isLegacy || isMobile || isUnderscore) && !useLodashMethod('createCallback')) {
+      if ((isLegacy || isMobile || isUnderscore) && !isLodashMethod('createCallback')) {
         source = removeBindingOptimization(source);
       }
       if (isLegacy || isMobile || isUnderscore) {
-        if (isMobile || (!useLodashMethod('assign') && !useLodashMethod('defaults') && !useLodashMethod('forIn') && !useLodashMethod('forOwn'))) {
+        if (isMobile || (!isLodashMethod('assign') && !isLodashMethod('defaults') && !isLodashMethod('forIn') && !isLodashMethod('forOwn'))) {
           source = removeKeysOptimization(source);
         }
-        if (!useLodashMethod('defer')) {
+        if (!isLodashMethod('defer')) {
           source = removeDeferFork(source);
         }
       }
@@ -2485,7 +2468,7 @@
           ].join('\n'));
 
           // replace `_.isRegExp`
-          if (!isUnderscore || (isUnderscore && useLodashMethod('isRegExp'))) {
+          if (!isUnderscore || (isUnderscore && isLodashMethod('isRegExp'))) {
             source = replaceFunction(source, 'isRegExp', [
               'function isRegExp(value) {',
               "  return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;",
@@ -2539,7 +2522,7 @@
               }
               else if (/^(?:max|min)$/.test(methodName)) {
                 match = match.replace(/\bbasicEach\(/, 'forEach(');
-                if (!isUnderscore || useLodashMethod(methodName)) {
+                if (!isUnderscore || isLodashMethod(methodName)) {
                   return match;
                 }
               }
@@ -2570,7 +2553,7 @@
         ].join('\n'));
 
         // replace `_.assign`
-        if (!useLodashMethod('assign')) {
+        if (!isLodashMethod('assign')) {
           source = replaceFunction(source, 'assign', [
             'function assign(object) {',
             '  if (!object) {',
@@ -2589,7 +2572,7 @@
           ].join('\n'));
         }
         // replace `_.clone`
-        if (!useLodashMethod('clone') && !useLodashMethod('cloneDeep')) {
+        if (!isLodashMethod('clone') && !isLodashMethod('cloneDeep')) {
           source = replaceFunction(source, 'clone', [
             'function clone(value) {',
             '  return isObject(value)',
@@ -2599,7 +2582,7 @@
           ].join('\n'));
         }
         // replace `_.contains`
-        if (!useLodashMethod('contains')) {
+        if (!isLodashMethod('contains')) {
           source = replaceFunction(source, 'contains', [
             'function contains(collection, target) {',
             '  var indexOf = getIndexOf(),',
@@ -2617,7 +2600,7 @@
           ].join('\n'));
         }
         // replace `_.debounce`
-        if (!useLodashMethod('debounce')) {
+        if (!isLodashMethod('debounce')) {
           source = replaceFunction(source, 'debounce', [
             'function debounce(func, wait, immediate) {',
             '  var args,',
@@ -2648,7 +2631,7 @@
           ].join('\n'));
         }
         // replace `_.defaults`
-        if (!useLodashMethod('defaults')) {
+        if (!isLodashMethod('defaults')) {
           source = replaceFunction(source, 'defaults', [
             'function defaults(object) {',
             '  if (!object) {',
@@ -2669,7 +2652,7 @@
           ].join('\n'));
         }
         // replace `_.difference`
-        if (!useLodashMethod('difference')) {
+        if (!isLodashMethod('difference')) {
           source = replaceFunction(source, 'difference', [
             'function difference(array) {',
             '  var index = -1,',
@@ -2689,7 +2672,7 @@
           ].join('\n'));
         }
         // add Underscore's `_.findWhere`
-        if (!useLodashMethod('findWhere') && !useLodashMethod('where')) {
+        if (!isLodashMethod('findWhere') && !isLodashMethod('where')) {
           source = source.replace(matchFunction(source, 'find'), function(match) {
             var indent = getIndent(match);
             return match && (match + [
@@ -2730,7 +2713,7 @@
           });
         }
         // replace `_.flatten`
-        if (!useLodashMethod('flatten')) {
+        if (!isLodashMethod('flatten')) {
           source = replaceFunction(source, 'flatten', [
             'function flatten(array, isShallow) {',
             '  var index = -1,',
@@ -2750,7 +2733,7 @@
           ].join('\n'));
         }
         // replace `_.intersection`
-        if (!useLodashMethod('intersection')) {
+        if (!isLodashMethod('intersection')) {
           source = replaceFunction(source, 'intersection', [
             'function intersection(array) {',
             '  var args = arguments,',
@@ -2778,7 +2761,7 @@
           ].join('\n'));
         }
         // replace `_.isEmpty`
-        if (!useLodashMethod('isEmpty')) {
+        if (!isLodashMethod('isEmpty')) {
           source = replaceFunction(source, 'isEmpty', [
             'function isEmpty(value) {',
             '  if (!value) {',
@@ -2797,7 +2780,7 @@
           ].join('\n'));
         }
         // replace `_.isEqual`
-        if (!useLodashMethod('isEqual')) {
+        if (!isLodashMethod('isEqual')) {
           source = replaceFunction(source, 'isEqual', [
             'function isEqual(a, b, stackA, stackB) {',
             '  if (a === b) {',
@@ -2899,7 +2882,7 @@
           ].join('\n'));
         }
         // replace `_.memoize`
-        if (!useLodashMethod('memoize')) {
+        if (!isLodashMethod('memoize')) {
            source = replaceFunction(source, 'memoize', [
               'function memoize(func, resolver) {',
               '  var cache = {};',
@@ -2913,7 +2896,7 @@
           ].join('\n'));
         }
         // replace `_.omit`
-        if (!useLodashMethod('omit')) {
+        if (!isLodashMethod('omit')) {
           source = replaceFunction(source, 'omit', [
             'function omit(object) {',
             '  var indexOf = getIndexOf(),',
@@ -2930,7 +2913,7 @@
           ].join('\n'));
         }
         // replace `_.pick`
-        if (!useLodashMethod('pick')) {
+        if (!isLodashMethod('pick')) {
           source = replaceFunction(source, 'pick', [
             'function pick(object) {',
             '  var index = -1,',
@@ -2949,7 +2932,7 @@
           ].join('\n'));
         }
         // replace `_.result`
-        if (!useLodashMethod('result')) {
+        if (!isLodashMethod('result')) {
           source = replaceFunction(source, 'result', [
             'function result(object, property) {',
             '  var value = object ? object[property] : null;',
@@ -2958,7 +2941,7 @@
           ].join('\n'));
         }
         // replace `_.sortBy`
-        if (!useLodashMethod('sortBy')) {
+        if (!isLodashMethod('sortBy')) {
           source = replaceFunction(source, 'sortBy', [
             'function sortBy(collection, callback, thisArg) {',
             '  var index = -1,',
@@ -2984,7 +2967,7 @@
           ].join('\n'));
         }
         // replace `_.template`
-        if (!useLodashMethod('template')) {
+        if (!isLodashMethod('template')) {
           // remove `_.templateSettings.imports assignment
           source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
@@ -3045,7 +3028,7 @@
           ].join('\n'));
         }
         // replace `_.throttle`
-        if (!useLodashMethod('throttle')) {
+        if (!isLodashMethod('throttle')) {
           source = replaceFunction(source, 'throttle', [
             'function throttle(func, wait) {',
             '  var args,',
@@ -3081,7 +3064,7 @@
           ].join('\n'));
         }
         // replace `_.times`
-        if (!useLodashMethod('times')) {
+        if (!isLodashMethod('times')) {
           source = replaceFunction(source, 'times', [
             'function times(n, callback, thisArg) {',
             '  var index = -1,',
@@ -3095,7 +3078,7 @@
           ].join('\n'));
         }
         // replace `_.toArray`
-        if (!useLodashMethod('toArray')) {
+        if (!isLodashMethod('toArray')) {
           source = replaceFunction(source, 'toArray', [
             'function toArray(collection) {',
             '  if (isArray(collection)) {',
@@ -3109,7 +3092,7 @@
           ].join('\n'));
         }
         // replace `_.uniq`
-        if (!useLodashMethod('uniq')) {
+        if (!isLodashMethod('uniq')) {
           source = replaceFunction(source, 'uniq', [
             'function uniq(array, isSorted, callback, thisArg) {',
             '  var index = -1,',
@@ -3146,7 +3129,7 @@
           ].join('\n'));
         }
         // replace `_.uniqueId`
-        if (!useLodashMethod('uniqueId')) {
+        if (!isLodashMethod('uniqueId')) {
           source = replaceFunction(source, 'uniqueId', [
             'function uniqueId(prefix) {',
             "  var id = ++idCounter + '';",
@@ -3155,7 +3138,7 @@
           ].join('\n'));
         }
         // replace `_.where`
-        if (!useLodashMethod('where')) {
+        if (!isLodashMethod('where')) {
           source = replaceFunction(source, 'where', [
             'function where(collection, properties, first) {',
             '  return (first && isEmpty(properties))',
@@ -3165,7 +3148,7 @@
           ].join('\n'));
         }
         // replace `_.zip`
-        if (!useLodashMethod('unzip')) {
+        if (!isLodashMethod('unzip')) {
           source = replaceFunction(source, 'zip', [
             'function zip(array) {',
             '  var index = -1,',
@@ -3186,8 +3169,8 @@
         // replace `slice` with `nativeSlice.call`
         _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(methodName) {
           if (methodName == 'clone'
-                ? (!useLodashMethod('clone') && !useLodashMethod('cloneDeep'))
-                : !useLodashMethod(methodName)
+                ? (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))
+                : !isLodashMethod(methodName)
               ) {
             source = source.replace(matchFunction(source, methodName), function(match) {
               return match.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
@@ -3197,7 +3180,7 @@
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
         _.each(['max', 'min'], function(methodName) {
-          if (!useLodashMethod(methodName)) {
+          if (!isLodashMethod(methodName)) {
             source = source.replace(matchFunction(source, methodName), function(match) {
               return match.replace(/=.+?callback *&& *isString[^:]+:\s*/g, '= ');
             });
@@ -3205,7 +3188,7 @@
         });
 
         // remove `_.isEqual` use from `createCallback`
-        if (!useLodashMethod('where')) {
+        if (!isLodashMethod('where')) {
           source = source.replace(matchFunction(source, 'createCallback'), function(match) {
             return match.replace(/\bisEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
           });
@@ -3308,7 +3291,7 @@
         if (isUnderscore) {
           // unexpose "exit early" feature of `basicEach`, `_.forEach`, `_.forIn`, and `_.forOwn`
           _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(methodName) {
-            if (methodName == 'basicEach' || !useLodashMethod(methodName)) {
+            if (methodName == 'basicEach' || !isLodashMethod(methodName)) {
               source = source.replace(matchFunction(source, methodName), function(match) {
                 return match.replace(/=== *false\)/g, '=== indicatorObject)');
               });
@@ -3316,7 +3299,7 @@
           });
 
           // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
-          if (isUnderscore && !useLodashMethod('forOwn')) {
+          if (isUnderscore && !isLodashMethod('forOwn')) {
             source = source.replace(matchFunction(source, 'every'), function(match) {
               return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
             });
@@ -3336,7 +3319,7 @@
             });
           }
           // modify `_.isEqual` and `shimIsPlainObject` to use the private `indicatorObject`
-          if (!useLodashMethod('forIn')) {
+          if (!isLodashMethod('forIn')) {
             source = source.replace(matchFunction(source, 'isEqual'), function(match) {
               return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
             });
@@ -3348,7 +3331,7 @@
 
           // remove `thisArg` from unexposed `forIn` and `forOwn`
           _.each(['forIn', 'forOwn'], function(methodName) {
-            if (!useLodashMethod(methodName)) {
+            if (!isLodashMethod(methodName)) {
               source = source.replace(matchFunction(source, methodName), function(match) {
                 return match
                   .replace(/(callback), *thisArg/g, '$1')
@@ -3358,11 +3341,11 @@
           });
 
           // replace `lodash.createCallback` references with `createCallback`
-          if (!useLodashMethod('createCallback')) {
+          if (!isLodashMethod('createCallback')) {
             source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
           }
           // remove chainability from `basicEach` and `_.forEach`
-          if (!useLodashMethod('forEach')) {
+          if (!isLodashMethod('forEach')) {
             _.each(['basicEach', 'forEach'], function(methodName) {
               source = source.replace(matchFunction(source, methodName), function(match) {
                 return match
@@ -3377,7 +3360,7 @@
                 modified = snippet;
 
             _.each(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(methodName) {
-              if (!useLodashMethod(methodName)) {
+              if (!isLodashMethod(methodName)) {
                 modified = modified.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + methodName + ' *=[\\s\\S]+?;\\n', 'm'), '');
               }
             });
@@ -3474,18 +3457,18 @@
 
     // modify/remove references to removed methods/variables
     if (!isTemplate) {
-      if (isRemoved(source, 'clone') ||
-          isUnderscore && (!useLodashMethod('clone') && !useLodashMethod('cloneDeep'))) {
+      if (isExcluded('clone') ||
+          isUnderscore && (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))) {
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
       }
-      if (isRemoved(source, 'invert')) {
+      if (isExcluded('invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
       }
-      if (isRemoved(source, 'mixin')) {
+      if (isExcluded('mixin')) {
         // if possible, inline the `_.mixin` call to ensure proper chaining behavior
         source = source.replace(/^( *)mixin\(lodash\).*/m, function(match, indent) {
-          if (isRemoved(source, 'forOwn')) {
+          if (isExcluded('forOwn')) {
             return '';
           }
           return indent + [
@@ -3506,14 +3489,14 @@
           ].join('\n' + indent);
         });
       }
-      if (!_.contains(buildMethods, 'shimKeys') && isRemoved(source, 'keys')) {
+      if (!_.contains(buildMethods, 'shimKeys') && isExcluded('keys')) {
         source = removeFunction(source, 'shimKeys');
       }
-      if (isRemoved(source, 'template')) {
+      if (isExcluded('template')) {
         // remove `templateSettings` assignment
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
       }
-      if (isRemoved(source, 'value')) {
+      if (isExcluded('value')) {
         source = removeFunction(source, 'chain');
         source = removeFunction(source, 'wrapperToString');
         source = removeFunction(source, 'wrapperValueOf');
@@ -3553,45 +3536,44 @@
         });
 
         source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
-
         source = removeSupport(source);
       }
       else {
-        if (isRemoved(source, 'bind')) {
+        if (isExcluded('bind')) {
           source = removeSupportProp(source, 'fastBind');
         }
-        if (isRemoved(source, 'clone', 'isEqual', 'isPlainObject')) {
+        if (isExcluded('clone', 'isEqual', 'isPlainObject')) {
           source = removeSupportNodeClass(source);
         }
-        if (isRemoved(source, 'createIterator')) {
+        if (isExcluded('createIterator')) {
           source = removeSupportNonEnumShadows(source);
         }
-        if (isRemoved(source, 'isArguments')) {
+        if (isExcluded('isArguments')) {
           source = replaceSupportProp(source, 'argsClass', 'true');
         }
-        if (isRemoved(source, 'isArguments', 'isEmpty')) {
+        if (isExcluded('isArguments', 'isEmpty')) {
           source = removeSupportArgsClass(source);
         }
-        if (isRemoved(source, 'isPlainObject')) {
+        if (isExcluded('isPlainObject')) {
           source = removeSupportOwnLast(source);
         }
-        if (isRemoved(source, 'keys')) {
+        if (isExcluded('keys')) {
           source = removeKeysOptimization(source);
           source = removeSupportNonEnumArgs(source);
         }
-        if (isRemoved(source, 'sortBy')) {
+        if (isExcluded('sortBy')) {
           _.each([removeFromGetObject, removeFromReleaseObject], function(func) {
             source = func(source, 'criteria');
             source = func(source, 'index');
             source = func(source, 'value');
           });
         }
-        if (isRemoved(source, 'throttle')) {
+        if (isExcluded('throttle')) {
           _.each(['leading', 'maxWait', 'trailing'], function(prop) {
             source = removeFromGetObject(source, prop);
           });
         }
-        if (isRemoved(source, 'value')) {
+        if (isExcluded('value')) {
           source = removeSupportSpliceObjects(source);
         }
         if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
@@ -3636,14 +3618,14 @@
 
       // remove forks of removed methods
       _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(methodName) {
-        if (isRemoved(source, methodName)) {
+        if (isExcluded(methodName)) {
           source = eval('remove' + capitalize(methodName) + 'Fork')(source);
         }
       });
 
       // remove unused variables
       (function() {
-        var isShallow = isRemoved(source, 'runInContext'),
+        var isShallow = isExcluded('runInContext'),
             useMap = {},
             varNames = getVars(source, isShallow);
 

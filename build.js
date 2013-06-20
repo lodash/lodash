@@ -1756,9 +1756,13 @@
    * @returns {String} Returns the modified source.
    */
   function removeVar(source, varName) {
+    // defer to specialized removal functions
+    if (varName == 'support') {
+      return removeSupport(source);
+    }
     // simplify complex variable assignments
     if (/^(?:cloneableClasses|contextProps|ctorByClass|freeGlobal|nonEnumProps|shadowedProps|whitespace)$/.test(varName)) {
-      source = source.replace(RegExp('(var ' + varName + ' *=)[\\s\\S]+?[;}]\\n\\n'), '$1 null;\n\n');
+      source = source.replace(RegExp('(var ' + varName + ') *=[\\s\\S]+?[;}]\\n\\n'), '$1 = null;\n\n');
     }
 
     source = removeFunction(source, varName);
@@ -3535,8 +3539,8 @@
           });
         });
 
+        // remove all horizontal rule comment separators
         source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
-        source = removeSupport(source);
       }
       else {
         if (isExcluded('bind')) {

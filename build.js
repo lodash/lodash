@@ -729,6 +729,28 @@
   }
 
   /**
+   * The default callback used for `build` invocations.
+   *
+   * @private
+   * @param {Object} data The data for the given build.
+   *  gzip - The gzipped output of the built source
+   *  outputPath - The path where the built source is to be written
+   *  source - The built source output
+   *  sourceMap - The source map output
+   */
+  function defaultBuildCallback(data) {
+    var outputPath = data.outputPath,
+        sourceMap = data.sourceMap;
+
+    if (outputPath) {
+      fs.writeFileSync(outputPath, data.source, 'utf8');
+      if (sourceMap) {
+        fs.writeFileSync(path.join(path.dirname(outputPath), path.basename(outputPath, '.js') + '.map'), sourceMap, 'utf8');
+      }
+    }
+  }
+
+  /**
    * Writes the help message to standard output.
    *
    * @private
@@ -1292,10 +1314,12 @@
   function removeFunction(source, funcName) {
     var snippet;
 
-    // remove function
+    // defer to specialized removal functions
     if (funcName == 'runInContext') {
-      source = removeRunInContext(source, funcName);
-    } else if ((snippet = matchFunction(source, funcName))) {
+      return removeRunInContext(source, funcName);
+    }
+    // remove function
+    if ((snippet = matchFunction(source, funcName))) {
       source = source.replace(snippet, '');
     }
 
@@ -1886,15 +1910,16 @@
 
   /**
    * Creates a debug and/or minified build, executing the `callback` for each.
-   * The `callback` is invoked with two arguments; (filePath, outputSource).
+   * The `callback` is invoked with one argument; (data).
    *
    * Note: For a list of commands see `displayHelp()` or run `lodash --help`.
    *
    * @param {Array} [options=[]] An array of commands.
-   * @param {Function} callback The function called per build.
+   * @param {Function} [callback=defaultBuildCallback] The function called per build.
    */
   function build(options, callback) {
     options || (options = []);
+    callback || (callback = defaultBuildCallback);
 
     // the debug version of `source`
     var debugSource;
@@ -3745,16 +3770,6 @@
   }
   else {
     // or invoked directly
-    build(process.argv, function(data) {
-      var outputPath = data.outputPath,
-          sourceMap = data.sourceMap;
-
-      if (outputPath) {
-        fs.writeFileSync(outputPath, data.source, 'utf8');
-        if (sourceMap) {
-          fs.writeFileSync(path.join(path.dirname(outputPath), path.basename(outputPath, '.js') + '.map'), sourceMap, 'utf8');
-        }
-      }
-    });
+    build(process.argv);
   }
 }());

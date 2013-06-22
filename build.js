@@ -1345,7 +1345,7 @@
       return modified;
     });
 
-    return removeFromCreateIterator(source, funcName);
+    return source;
   }
 
   /**
@@ -1496,6 +1496,18 @@
   }
 
   /**
+   * Removes the `support.spliceObjects` fix from the `Array` function mixins
+   * snippet of `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSpliceObjectsFix(source) {
+    return source.replace(/(?:\s*\/\/.*)*\n( *)if *\(!support\.spliceObjects[\s\S]+?(?:\{\s*}|\n\1})/, '');
+  }
+
+  /**
    * Removes all strings from `source`.
    *
    * @private
@@ -1514,18 +1526,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeSupport(source) {
-    source = source.replace(getSupport(source), '');
-
-    _.each([
-      removeSupportArgsClass, removeSupportArgsObject, removeSupportEnumErrorProps,
-      removeSupportEnumPrototypes, removeSupportNodeClass, removeSupportNonEnumArgs,
-      removeSupportNonEnumShadows, removeSupportOwnLast, removeSupportSpliceObjects,
-      removeSupportUnindexedChars
-    ], function(func) {
-      source = func(source);
-    });
-
-    return source;
+    return source.replace(getSupport(source), '');
   }
 
   /**
@@ -1684,8 +1685,10 @@
    */
   function removeSupportNonEnumShadows(source) {
     source = removeSupportProp(source, 'nonEnumShadows');
-    source = removeVar(source, 'nonEnumProps');
     source = removeFromCreateIterator(source, 'shadowedProps');
+
+    source = removeVar(source, 'nonEnumProps');
+    source = removeFromCreateIterator(source, 'nonEnumProps');
 
     // remove nested `nonEnumProps` assignments
     source = source.replace(/^ *\(function[\s\S]+?\n *var length\b[\s\S]+?shadowedProps[\s\S]+?}\(\)\);\n/m, '');
@@ -1725,10 +1728,7 @@
    */
   function removeSupportSpliceObjects(source) {
     source = removeSupportProp(source, 'spliceObjects');
-
-    // remove `support.spliceObjects` fix from the `Array` function mixins
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)if *\(!support\.spliceObjects[\s\S]+?(?:{\s*}|\n\1})/, '');
-
+    source = removeSpliceObjectsFix(source);
     return source;
   }
 
@@ -3443,6 +3443,9 @@
         if (!_.contains(buildMethods, otherName) &&
             !(otherName == 'findWhere' && !isUnderscore)) {
           source = removeFunction(source, otherName);
+          if (!isNoDep) {
+            source = removeFromCreateIterator(source, otherName);
+          }
         }
       });
 
@@ -3536,6 +3539,7 @@
       }
       if (isExcluded('value')) {
         source = removeLodashWrapper(source);
+        source = removeSpliceObjectsFix(source);
 
         // simplify the `lodash` function
         source = replaceFunction(source, 'lodash', [

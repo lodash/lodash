@@ -1131,7 +1131,7 @@
     }
     // remove the variable assignment from the source
     source = source.slice(0, match.index) + source.slice(match.index + match[0].length);
-    return RegExp('[^.\\w"\']' + varName + '\\b').test(source);
+    return RegExp('[^\\w"\'.]' + varName + '\\b').test(source);
   }
 
   /**
@@ -1493,6 +1493,17 @@
     source = removeVar(source, 'setTimeout');
 
     return source;
+  }
+
+  /**
+   * Removes all strings from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeStrings(source) {
+    return source.replace(/(['"])[^\1\n\\]*?(?:\\.[^\1\n\\]*?)*\1/g, '');
   }
 
   /**
@@ -3214,7 +3225,7 @@
                 : !isLodashMethod(methodName)
               ) {
             source = source.replace(matchFunction(source, methodName), function(match) {
-              return match.replace(/([^.])\bslice\(/g, '$1nativeSlice.call(');
+              return match.replace(/([^\w.])slice\(/g, '$1nativeSlice.call(');
             });
           }
         });
@@ -3287,23 +3298,6 @@
       source = buildTemplate(templatePattern, templateSettings);
     }
     else {
-      // remove methods from the build
-      allMethods.forEach(function(otherName) {
-        if (!_.contains(buildMethods, otherName) &&
-            !(otherName == 'findWhere' && !isUnderscore)) {
-          source = removeFunction(source, otherName);
-        }
-      });
-
-      // remove `iteratorTemplate` dependency checks from `_.template`
-      source = source.replace(matchFunction(source, 'template'), function(match) {
-        return match
-          .replace(/iteratorTemplate *&& */g, '')
-          .replace(/iteratorTemplate\s*\?\s*([^:]+?)\s*:[^,;]+/g, '$1');
-      });
-
-      /*----------------------------------------------------------------------*/
-
       if (isModern || isUnderscore) {
         iteratorOptions.forEach(function(prop) {
           if (prop != 'array') {
@@ -3415,7 +3409,7 @@
           // use a with-statement
           iteratorOptions.forEach(function(prop) {
             if (prop !== 'support') {
-              snippet = snippet.replace(RegExp('([^\\w.])\\b' + prop + '\\b', 'g'), '$1obj.' + prop);
+              snippet = snippet.replace(RegExp('([^\\w.])' + prop + '\\b', 'g'), '$1obj.' + prop);
             }
           });
 
@@ -3443,6 +3437,21 @@
           return indent + 'var iteratorTemplate = ' + snippet + ';\n';
         });
       }
+
+      // remove methods from the build
+      allMethods.forEach(function(otherName) {
+        if (!_.contains(buildMethods, otherName) &&
+            !(otherName == 'findWhere' && !isUnderscore)) {
+          source = removeFunction(source, otherName);
+        }
+      });
+
+      // remove `iteratorTemplate` dependency checks from `_.template`
+      source = source.replace(matchFunction(source, 'template'), function(match) {
+        return match
+          .replace(/iteratorTemplate *&& */g, '')
+          .replace(/iteratorTemplate\s*\?\s*([^:]+?)\s*:[^,;]+/g, '$1');
+      });
     }
 
     /*------------------------------------------------------------------------*/
@@ -3657,7 +3666,7 @@
       (function() {
         var isShallow = isExcluded('runInContext'),
             useMap = {},
-            snippet = removePseudoPrivates(removeComments(source)),
+            snippet = removePseudoPrivates(removeStrings(removeComments(source))),
             varNames = getVars(snippet, isShallow);
 
         while (varNames.length) {

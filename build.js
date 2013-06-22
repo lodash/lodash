@@ -1446,6 +1446,20 @@
   }
 
   /**
+   * Removes `nonEnumProps` array assignments from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeNonEnumProps(source) {
+    // remove nested `nonEnumProps` assignments
+    source = removeVar(source, 'nonEnumProps');
+    source = source.replace(/^ *\(function.+?\n *var length\b[\s\S]+?shadowedProps[\s\S]+?}\(\)\);\n/m, '');
+    return source;
+  }
+
+  /**
    * Removes all pseudo private properties from `source`. If a `propName` is
    * specified, only the specified property is removed.
    *
@@ -1519,7 +1533,7 @@
   }
 
   /**
-   * Removes all `support` object references from `source`.
+   * Removes the `support` object declaration from `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -1684,14 +1698,9 @@
    * @returns {String} Returns the modified source.
    */
   function removeSupportNonEnumShadows(source) {
-    source = removeSupportProp(source, 'nonEnumShadows');
-    source = removeFromCreateIterator(source, 'shadowedProps');
-
-    source = removeVar(source, 'nonEnumProps');
     source = removeFromCreateIterator(source, 'nonEnumProps');
-
-    // remove nested `nonEnumProps` assignments
-    source = source.replace(/^ *\(function[\s\S]+?\n *var length\b[\s\S]+?shadowedProps[\s\S]+?}\(\)\);\n/m, '');
+    source = removeFromCreateIterator(source, 'shadowedProps');
+    source = removeSupportProp(source, 'nonEnumShadows');
 
     // remove `support.nonEnumShadows` from `iteratorTemplate`
     source = source.replace(getIteratorTemplate(source), function(match) {
@@ -3505,6 +3514,9 @@
           isUnderscore && (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))) {
         source = removeVar(source, 'cloneableClasses');
         source = removeVar(source, 'ctorByClass');
+      }
+      if (isExcluded('createIterator')) {
+        source = removeNonEnumProps(source);
       }
       if (isExcluded('invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");

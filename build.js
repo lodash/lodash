@@ -202,7 +202,7 @@
     'getObject': [],
     'iteratorTemplate': [],
     'isNode': [],
-    'lodashWrapper': [],
+    'lodashWrapper': ['wrapperToString', 'wrapperValueOf'],
     'noop': [],
     'overloadWrapper': ['createCallback'],
     'releaseArray': [],
@@ -211,6 +211,8 @@
     'shimKeys': ['createIterator'],
     'slice': [],
     'unescapeHtmlChar': [],
+    'wrapperToString': [],
+    'wrapperValueOf': [],
 
     // method used by the `backbone` and `underscore` builds
     'chain': ['value'],
@@ -877,20 +879,28 @@
    *
    * @private
    * @param {String} methodName A method name or array of method names.
+   * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependants.
+   * @param- {Array} [stackA=[]] Internally used track queried methods.
    * @returns {Array} Returns an array of method dependants.
    */
-  function getDependants(methodName) {
+  function getDependants(methodName, isShallow, stack) {
+    var methodNames = _.isArray(methodName) ? methodName : [methodName];
+    stack || (stack = []);
+
     // iterate over the `dependencyMap`, adding names of methods
     // that have the `methodName` as a dependency
-    var methodNames = _.isArray(methodName) ? methodName : [methodName];
-    return _.reduce(dependencyMap, function(result, dependencies, otherName) {
-      if (_.some(methodNames, function(methodName) {
+    return _.uniq(_.reduce(dependencyMap, function(result, dependencies, otherName) {
+      if (!_.contains(stack, otherName) && _.some(methodNames, function(methodName) {
             return _.contains(dependencies, methodName);
           })) {
+        stack.push(otherName);
         result.push(otherName);
+        if (isShallow) {
+          result.push.apply(result, getDependants(otherName, isShallow, stack));
+        }
       }
       return result;
-    }, []);
+    }, []));
   }
 
   /**
@@ -901,7 +911,7 @@
    * @private
    * @param {Array|String} methodName A method name or array of dependencies to query.
    * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependencies.
-   * @param- {Object} [stackA=[]] Internally used track queried methods.
+   * @param- {Array} [stackA=[]] Internally used track queried methods.
    * @returns {Array} Returns an array of method dependencies.
    */
   function getDependencies(methodName, isShallow, stack) {
@@ -1019,7 +1029,11 @@
    * @returns {String} Returns the method assignments snippet.
    */
   function getMethodAssignments(source) {
-    var result = source.match(/\n\n(?:\s*\/\/.*)*\s*lodash\.\w+ *=[\s\S]+?\n *lodash\.VERSION *=.+\n/);
+    var result = source.match(RegExp(
+      '(?:\\n\\n(?:\\s*//.*)*\\s*lodash\\.\\w+ *=[\\s\\S]+?)?' +
+      multilineComment +
+      ' *lodash\\.VERSION *=[\\s\\S]+?;\\n'
+    ));
     return result ? result[0] : '';
   }
 
@@ -1314,12 +1328,12 @@
       source = source.replace(snippet, '');
     }
 
-    snippet = getMethodAssignments(source);
+    // remove method assignment from `lodash.prototype`
+    source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.prototype\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
 
     source = removePseudoPrivates(source, funcName);
 
-    // remove method assignment from `lodash.prototype`
-    source = source.replace(RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
+    snippet = getMethodAssignments(source);
 
     // remove assignment and aliases
     var modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
@@ -1606,7 +1620,6 @@
    * @returns {String} Returns the modified source.
    */
   function removeSupportNodeClass(source) {
-    source = removeFunction(source, 'isNode');
     source = removeSupportProp(source, 'nodeClass');
 
     // remove `support.nodeClass` from `_.clone` and `shimIsPlainObject`
@@ -1983,8 +1996,9 @@
 
     /*------------------------------------------------------------------------*/
 
-    // backup `dependencyMap` to restore later
-    var dependencyBackup = _.cloneDeep(dependencyMap);
+    // backup dependencies to restore later
+    var dependencyMapBackup = _.cloneDeep(dependencyMap),
+        propDependencyMapBackup = _.cloneDeep(propDependencyMap);
 
     // used to specify a custom IIFE to wrap Lo-Dash
     var iife = options.reduce(function(result, value) {
@@ -2158,6 +2172,8 @@
       // update dependencies
       if (isLegacy) {
         dependencyMap.defer = _.without(dependencyMap.defer, 'bind');
+        dependencyMap.isPlainObject = _.without(dependencyMap.isPlainObject, 'shimIsPlainObject');
+        dependencyMap.keys = _.without(dependencyMap.keys, 'shimKeys');
       }
       if (isModern) {
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
@@ -2264,29 +2280,25 @@
       if (isModern || isUnderscore) {
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
 
-        _.forOwn(propDependencyMap, function(methodName, dependencies) {
-          if (methodName != 'bind' &&
-              !(isMobile && methodName == 'keys') &&
-              !(isUnderscore && isLodashMethod(methodName))) {
-            propDependencyMap[methodName] = _.without(dependencies, 'support');
-          }
-        });
-
         _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(methodName) {
           if (!(isUnderscore && isLodashMethod(methodName))) {
             var dependencies = dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
-            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('objectTypes', 'support');
+            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('objectTypes');
 
-            dependencies.push('isArguments');
-            if (methodName == 'basicEach') {
-              dependencies.push('isArray', 'isString');
-            }
             if (methodName != 'shimKeys') {
               dependencies.push('createCallback');
             }
             if (/^(?:assign|basicEach|defaults|forOwn)$/.test(methodName)) {
               dependencies.push('keys');
             }
+          }
+        });
+
+        _.forOwn(propDependencyMap, function(dependencies, methodName) {
+          if (methodName != 'bind' &&
+              !(isMobile && methodName == 'keys') &&
+              !(isUnderscore && isLodashMethod(methodName))) {
+            propDependencyMap[methodName] = _.without(dependencies, 'support');
           }
         });
 
@@ -2313,7 +2325,7 @@
             dependencyMap[methodName].push('forOwn');
           });
 
-          _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce'], function(methodName) {
+          _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'shimKeys'], function(methodName) {
             if (!(isUnderscore && isLodashMethod(methodName))) {
               dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArguments', 'isArray');
             }
@@ -2427,15 +2439,11 @@
           matchFunction(source, 'shimIsPlainObject').replace(/[\s\S]+?function shimIsPlainObject/, 'function').replace(/\s*$/, ';\n')
         );
 
-        source = removeFunction(source, 'shimIsPlainObject');
-
         // replace `_.keys` with `shimKeys`
         source = source.replace(
           matchFunction(source, 'keys').replace(/[\s\S]+?var keys *= */, ''),
           matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *= */, '')
         );
-
-        source = removeFunction(source, 'shimKeys');
       }
       if (isModern) {
         source = removeSupportSpliceObjects(source);
@@ -3253,9 +3261,6 @@
       }
       // replace `basicEach` references with `forEach` and `forOwn`
       if (isUnderscore || (isModern && !isMobile)) {
-        source = removeFunction(source, 'basicEach');
-        source = removePseudoPrivates(source, 'basicEach');
-
         // replace `basicEach` with `_.forOwn` in "Collections" methods
         source = source.replace(/\bbasicEach(?=\(collection)/g, 'forOwn');
 
@@ -3300,8 +3305,6 @@
       /*----------------------------------------------------------------------*/
 
       if (isModern || isUnderscore) {
-        source = removeFunction(source, 'createIterator');
-
         iteratorOptions.forEach(function(prop) {
           if (prop != 'array') {
             source = removeFromGetObject(source, prop);
@@ -3373,10 +3376,6 @@
             }
           });
 
-          // replace `lodash.createCallback` references with `createCallback`
-          if (!isLodashMethod('createCallback')) {
-            source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
-          }
           // remove chainability from `basicEach` and `_.forEach`
           if (!isLodashMethod('forEach')) {
             _.each(['basicEach', 'forEach'], function(methodName) {
@@ -3500,11 +3499,11 @@
       }
       if (isExcluded('mixin')) {
         // if possible, inline the `_.mixin` call to ensure proper chaining behavior
-        source = source.replace(/^( *)mixin\(lodash\).*/m, function(match, indent) {
+        source = source.replace(/((?:\s*\/\/.*)\n)( *)mixin\(lodash\).*/m, function(match, prelude, indent) {
           if (isExcluded('forOwn')) {
             return '';
           }
-          return indent + [
+          return prelude + indent + [
             'forOwn(lodash, function(func, methodName) {',
             '  lodash[methodName] = func;',
             '',
@@ -3522,17 +3521,11 @@
           ].join('\n' + indent);
         });
       }
-      if (!_.contains(buildMethods, 'shimKeys') && isExcluded('keys')) {
-        source = removeFunction(source, 'shimKeys');
-      }
       if (isExcluded('template')) {
         // remove `templateSettings` assignment
         source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
       }
       if (isExcluded('value')) {
-        source = removeFunction(source, 'chain');
-        source = removeFunction(source, 'wrapperToString');
-        source = removeFunction(source, 'wrapperValueOf');
         source = removeLodashWrapper(source);
 
         // simplify the `lodash` function
@@ -3556,6 +3549,10 @@
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)(?:basicEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
+      }
+      if (isNoDep || (isUnderscore && !isLodashMethod('createCallback'))) {
+        // replace `lodash.createCallback` references with `createCallback`
+        source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
       }
       if (isNoDep) {
         _.each(buildMethods, function(methodName) {
@@ -3716,8 +3713,9 @@
       ? path.basename(outputPath, '.js')
       : 'lodash' + (isTemplate ? '.template' : isCustom ? '.custom' : '');
 
-    // restore `dependencyMap`
-    dependencyMap = dependencyBackup;
+    // restore dependency maps
+    dependencyMap = dependencyMapBackup;
+    propDependencyMap = propDependencyMapBackup;
 
     // output debug build
     if (!isMinify && (isCustom || isDebug || isTemplate)) {

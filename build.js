@@ -80,7 +80,7 @@
   /** Used to track function dependencies */
   var dependencyMap = {
     'after': [],
-    'assign': ['createIterator', 'isArguments', 'keys'],
+    'assign': ['createIterator'],
     'at': ['isString'],
     'bind': ['createBound'],
     'bindAll': ['bind', 'functions'],
@@ -93,7 +93,7 @@
     'countBy': ['createCallback', 'forEach'],
     'createCallback': ['identity', 'isEqual', 'keys'],
     'debounce': ['isObject'],
-    'defaults': ['createIterator', 'isArguments', 'keys'],
+    'defaults': ['createIterator'],
     'defer': ['bind'],
     'delay': [],
     'difference': ['cacheIndexOf', 'createCache', 'getIndexOf', 'releaseObject'],
@@ -106,8 +106,8 @@
     'first': ['slice'],
     'flatten': ['isArray', 'overloadWrapper'],
     'forEach': ['basicEach', 'createCallback', 'isArray'],
-    'forIn': ['createCallback', 'createIterator', 'isArguments'],
-    'forOwn': ['createCallback', 'createIterator', 'isArguments', 'keys'],
+    'forIn': ['createIterator'],
+    'forOwn': ['createIterator'],
     'functions': ['forIn', 'isFunction'],
     'groupBy': ['createCallback', 'forEach'],
     'has': [],
@@ -185,7 +185,7 @@
     'zipObject': [],
 
     // private methods
-    'basicEach': ['createIterator', 'isArguments', 'isArray', 'isString', 'keys'],
+    'basicEach': ['createIterator'],
     'basicIndexOf': [],
     'cacheIndexOf': ['basicIndexOf'],
     'cachePush': [],
@@ -193,7 +193,7 @@
     'compareAscending': [],
     'createBound': ['createObject', 'isFunction', 'isObject'],
     'createCache': ['cachePush', 'getObject', 'releaseObject'],
-    'createIterator': ['getObject', 'iteratorTemplate', 'releaseObject'],
+    'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'keys', 'releaseObject'],
     'createObject': [ 'isObject', 'noop'],
     'escapeHtmlChar': [],
     'escapeStringChar': [],
@@ -208,7 +208,7 @@
     'releaseArray': [],
     'releaseObject': [],
     'shimIsPlainObject': ['forIn', 'isArguments', 'isFunction', 'isNode'],
-    'shimKeys': ['createIterator', 'isArguments'],
+    'shimKeys': ['createIterator'],
     'slice': [],
     'unescapeHtmlChar': [],
 
@@ -219,19 +219,15 @@
 
   /** Used to track property dependencies */
   var propDependencyMap = {
-    'assign': ['objectTypes'],
     'at': ['support'],
-    'basicEach': ['objectTypes'],
     'bind': ['support'],
     'bindKey': ['indicatorObject'],
     'clone': ['support'],
     'createCallback': ['indicatorObject'],
-    'defaults': ['objectTypes'],
-    'forIn': ['objectTypes'],
-    'forOwn': ['objectTypes'],
+    'createIterator': ['objectTypes', 'support'],
     'isArguments': ['support'],
-    'isEmpty': ['indicatorObject', 'support'],
-    'isEqual': ['support'],
+    'isEmpty': ['support'],
+    'isEqual': ['indicatorObject', 'support'],
     'isObject': ['objectTypes'],
     'isPlainObject': ['support'],
     'isRegExp': ['objectTypes'],
@@ -241,7 +237,6 @@
     'partialRight': ['indicatorObject'],
     'reduceRight': ['support'],
     'shimIsPlainObject': ['support'],
-    'shimKeys': ['objectTypes'],
     'template': ['templateSettings'],
     'toArray': ['support']
   };
@@ -707,7 +702,7 @@
    * @returns {String} Returns the modified source.
    */
   function cleanupSource(source) {
-    source = removePseudoPrivate(source);
+    source = removePseudoPrivates(source);
 
     return source
       // consolidate consecutive horizontal rule comment separators
@@ -1086,8 +1081,7 @@
         indentB = isShallow ? ' {6}' : ' {6,8}',
         result = [];
 
-    var snippet = removeComments(source);
-    snippet.replace(RegExp(
+    source.replace(RegExp(
       '^(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
       '^'  + indentA + 'var (\\w+) *=.+?,\\n(?= *\\w+ *=)|' +
       '^'  + indentB + '(\\w+) *=.+?[,;]\\n'
@@ -1111,22 +1105,19 @@
     var indentA = isShallow ? ' {2}' : ' {2,4}',
         indentB = isShallow ? ' {6}' : ' {6,8}';
 
-    var snippet = removePseudoPrivate(source);
-    snippet = removeComments(source);
-
     var match = RegExp(
       '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
       '^'  + indentA + 'var ' + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
       '^'  + indentB + varName + ' *=.+?[,;]\\n'
     , 'm')
-    .exec(snippet);
+    .exec(source);
 
     if (!match) {
       return false;
     }
     // remove the variable assignment from the source
-    snippet = snippet.slice(0, match.index) + snippet.slice(match.index + match[0].length);
-    return RegExp('[^.\\w"\']' + varName + '\\b').test(snippet);
+    source = source.slice(0, match.index) + source.slice(match.index + match[0].length);
+    return RegExp('[^.\\w"\']' + varName + '\\b').test(source);
   }
 
   /**
@@ -1325,7 +1316,7 @@
 
     snippet = getMethodAssignments(source);
 
-    source = removePseudoPrivate(source, funcName);
+    source = removePseudoPrivates(source, funcName);
 
     // remove method assignment from `lodash.prototype`
     source = source.replace(RegExp('^ *lodash\\.prototype\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
@@ -1441,15 +1432,15 @@
   }
 
   /**
-   * Removes the specified pseudo private property from `source`. If a `propName`
-   * is not specified, all pseudo private properties are removed.
+   * Removes all pseudo private properties from `source`. If a `propName` is
+   * specified, only the specified property is removed.
    *
    * @private
    * @param {String} source The source to process.
    * @param {String} [funcName] The name of the property to remove.
    * @returns {String} Returns the modified source.
    */
-  function removePseudoPrivate(source, propName) {
+  function removePseudoPrivates(source, propName) {
     propName || (propName = '\\w+');
     return source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\._' + propName + ' *=[\\s\\S]+?;\\n', 'gm'), '');
   }
@@ -1464,6 +1455,9 @@
   function removeRunInContext(source) {
     // replace reference in `reThis` assignment
     source = source.replace(/\btest\(runInContext\)/, 'test(function() { return this; })');
+
+    // remove assignment
+    source = source.replace(/^(?: *\/\/.*\s*)* *lodash\.runInContext *=[\s\S]+?;\n/m, '');
 
     // remove function scaffolding, leaving most of its content
     source = source.replace(matchFunction(source, 'runInContext'), function(match) {
@@ -2209,7 +2203,7 @@
           dependencyMap.where.push('find', 'isEmpty');
         }
         if (!isLodashMethod('forOwn')) {
-          _.each(['contains', 'every', 'find', 'transform', 'forOwn', 'some'], function(methodName) {
+          _.each(['contains', 'every', 'find', 'forOwn', 'some', 'transform'], function(methodName) {
             (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
           });
         }
@@ -2270,15 +2264,29 @@
       if (isModern || isUnderscore) {
         dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
 
-        _.each(['at', 'clone', 'isArguments', 'isEmpty', 'isEqual', 'isPlainObject', 'reduceRight', 'shimIsPlainObject', 'toArray'], function(methodName) {
-          if (!(isUnderscore && isLodashMethod(methodName))) {
-            propDependencyMap[methodName] = _.without(propDependencyMap[methodName], 'support');
+        _.forOwn(propDependencyMap, function(methodName, dependencies) {
+          if (methodName != 'bind' &&
+              !(isMobile && methodName == 'keys') &&
+              !(isUnderscore && isLodashMethod(methodName))) {
+            propDependencyMap[methodName] = _.without(dependencies, 'support');
           }
         });
 
         _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(methodName) {
           if (!(isUnderscore && isLodashMethod(methodName))) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
+            var dependencies = dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
+            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('objectTypes', 'support');
+
+            dependencies.push('isArguments');
+            if (methodName == 'basicEach') {
+              dependencies.push('isArray', 'isString');
+            }
+            if (methodName != 'shimKeys') {
+              dependencies.push('createCallback');
+            }
+            if (/^(?:assign|basicEach|defaults|forOwn)$/.test(methodName)) {
+              dependencies.push('keys');
+            }
           }
         });
 
@@ -2316,10 +2324,6 @@
               dependencyMap[methodName].push('forEach');
             }
           });
-
-          if (!(isUnderscore && isLodashMethod('keys'))) {
-            propDependencyMap.keys = _.without(propDependencyMap.keys, 'support');
-          }
         }
       }
       // add method names explicitly
@@ -3250,7 +3254,7 @@
       // replace `basicEach` references with `forEach` and `forOwn`
       if (isUnderscore || (isModern && !isMobile)) {
         source = removeFunction(source, 'basicEach');
-        source = removePseudoPrivate(source, 'basicEach');
+        source = removePseudoPrivates(source, 'basicEach');
 
         // replace `basicEach` with `_.forOwn` in "Collections" methods
         source = source.replace(/\bbasicEach(?=\(collection)/g, 'forOwn');
@@ -3558,10 +3562,10 @@
           _.each(getAliases(methodName), function(alias) {
             source = removeFunction(source, alias);
           });
+        });
 
-          _.each(propDependencyMap[methodName], function(varName) {
-            source = removeVar(source, varName);
-          });
+        _.each(['indicatorObject', 'objectTypes', 'support', 'templateSettings'], function(varName) {
+          source = removeVar(source, varName);
         });
 
         // remove all horizontal rule comment separators
@@ -3656,11 +3660,12 @@
       (function() {
         var isShallow = isExcluded('runInContext'),
             useMap = {},
-            varNames = getVars(source, isShallow);
+            snippet = removePseudoPrivates(removeComments(source)),
+            varNames = getVars(snippet, isShallow);
 
         while (varNames.length) {
           varNames = _.sortBy(varNames, function(varName) {
-            var result = isVarUsed(source, varName, isShallow);
+            var result = isVarUsed(snippet, varName, isShallow);
             useMap[varName] = result;
             return result;
           });
@@ -3670,6 +3675,7 @@
           }
           else {
             while (varNames.length && !useMap[varNames[0]]) {
+              snippet = removeVar(snippet, varNames[0]);
               source = removeVar(source, varNames[0]);
               varNames.shift();
             }
@@ -3686,7 +3692,7 @@
     if (!isAMD && !isCommonJS && !isGlobal && !isNode) {
       source = removeFunction(source, 'lodash');
       source = removeLodashWrapper(source);
-      source = removePseudoPrivate(source);
+      source = removePseudoPrivates(source);
       source = removeMethodAssignments(source);
     }
 

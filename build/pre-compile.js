@@ -293,7 +293,7 @@
     source = source.replace("result[length]['value']", 'result[length].value');
 
     // remove whitespace from string literals
-    source = source.replace(/^((?:[ "'\w]+:)? *)"[^"\\\n]*(?:\\.[^"\\\n]*)*"|'[^'\\\n]*(?:\\.[^'\\\n]*)*'/gm, function(string, left) {
+    source = source.replace(/^((?:[ "'\w]+:)? *)"[^"\n\\]*(?:\\.[^"\n\\]*)*"|'[^'\n\\]*(?:\\.[^'\n\\]*)*'/gm, function(string, left) {
       // clip after an object literal property name or leading spaces
       if (left) {
         string = string.slice(left.length);

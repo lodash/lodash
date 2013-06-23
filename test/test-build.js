@@ -1363,16 +1363,11 @@
 
     commands.forEach(function(command) {
       asyncTest('`lodash modern include=each ' + command +'`', function() {
-        var start = _.after(2, _.once(QUnit.start));
+        var start = _.once(QUnit.start);
 
         build(['-s', 'modern', 'include=each', command], function(data) {
-          var basename = path.basename(data.outputPath, '.js'),
-              context = createContext();
-
-          vm.runInContext(data.source, context);
-          var lodash = context._;
-
-          deepEqual(_.functions(lodash), ['each', 'forEach'], basename);
+          var basename = path.basename(data.outputPath, '.js');
+          strictEqual(/function createCallback\b/.test(data.source), false, basename);
           start();
         });
       });
@@ -1582,12 +1577,11 @@
       'include=each,filter,map',
       'include=once plus=bind,Chaining',
       'category=collections,functions',
-      'backbone legacy category=utilities minus=first,last',
+      'backbone category=utilities minus=first,last',
       'legacy include=defer',
-      'legacy underscore',
       'modern strict include=isArguments,isArray,isFunction,isPlainObject,key',
       'underscore include=debounce,throttle plus=after minus=throttle',
-      'underscore mobile strict category=functions exports=amd,global plus=pick,uniq',
+      'underscore strict category=functions exports=amd,global plus=pick,uniq',
     ]
     .concat(
       allMethods.map(function(methodName) {
@@ -1595,27 +1589,14 @@
       })
     );
 
-    commands.forEach(function(origCommand) {
-      _.times(4, function(index) {
-        var command = origCommand;
+    var reNonCombinable = /\b(?:backbone|legacy|mobile|modern|underscore)\b/;
 
-        if (index == 1) {
-          if (/\b(?:legacy|mobile)\b/.test(command)) {
-            return;
-          }
-          command = 'mobile ' + command;
-        }
-        else if (index == 2) {
-          if (/\b(?:legacy|modern)\b/.test(command)) {
-            return;
-          }
-          command = 'modern ' + command;
-        }
-        else if (index == 3) {
-          if (/\b(?:category|legacy|underscore)\b/.test(command)) {
-            return;
-          }
-          command = 'underscore ' + command;
+    commands.forEach(function(origCommand) {
+      _.each(['', 'mobile', 'modern', 'underscore'], function(otherCommand) {
+        var command = (otherCommand + ' ' + origCommand).trim();
+        if ((otherCommand && reNonCombinable.test(origCommand)) ||
+            (otherCommand == 'underscore' && /\bcategory\b/.test(origCommand))) {
+          return;
         }
         asyncTest('`lodash ' + command +'`', function() {
           var start = _.after(2, _.once(QUnit.start));

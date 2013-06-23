@@ -1029,6 +1029,27 @@
       });
     });
 
+    asyncTest('should not have AMD support', function() {
+      var start = _.after(2, _.once(QUnit.start));
+
+      build(['-s', 'underscore'], function(data) {
+        var basename = path.basename(data.outputPath, '.js'),
+            context = createContext(),
+            pass = true;
+
+        context.define = function(fn) {
+          pass = false;
+          context._ = fn();
+        };
+
+        context.define.amd = {};
+        vm.runInContext(source, context);
+
+        ok(pass, basename);
+        start();
+      });
+    });
+
     asyncTest('should not have any Lo-Dash-only methods', function() {
       var start = _.after(2, _.once(QUnit.start));
 
@@ -1579,9 +1600,9 @@
       'category=collections,functions',
       'backbone category=utilities minus=first,last',
       'legacy include=defer',
+      'mobile strict category=functions exports=amd,global plus=pick,uniq',
       'modern strict include=isArguments,isArray,isFunction,isPlainObject,key',
-      'underscore include=debounce,throttle plus=after minus=throttle',
-      'underscore strict category=functions exports=amd,global plus=pick,uniq',
+      'underscore include=debounce,throttle plus=after minus=throttle'
     ]
     .concat(
       allMethods.map(function(methodName) {

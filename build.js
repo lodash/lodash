@@ -1177,22 +1177,15 @@
   }
 
   /**
-   * Converts a comma separated options string into an array containing
-   * only real method names.
+   * Converts a comma separated options string into an array of method names.
    *
    * @private
-   * @param {String} source The source to inspect.
    * @param {String} value The option to convert.
    * @returns {Array} Returns the new converted array.
    */
-  function optionToMethodsArray(source, value) {
-    var methodNames = optionToArray(value);
-
+  function optionToMethodsArray(value) {
     // convert aliases to real method names
-    methodNames = methodNames.map(getRealName);
-
-    // remove nonexistent and duplicate method names
-    return _.uniq(_.intersection(allMethods, methodNames));
+    return optionToArray(value).map(getRealName);
   }
 
   /**
@@ -1945,95 +1938,8 @@
     // used to specify the source map URL
     var sourceMapURL;
 
-    // methods categories to include in the build
-    var categories = options.reduce(function(accumulator, value) {
-      if (/^(category|exclude|include|minus|plus)=.+$/.test(value)) {
-        var array = optionToArray(value);
-        accumulator =  _.union(accumulator, /^category=.*$/.test(value)
-          ? array.map(function(category) { return capitalize(category.toLowerCase()); })
-          : array.filter(function(category) { return /^[A-Z]/.test(category); })
-        );
-      }
-      return accumulator;
-    }, []);
-
-    // used to specify the ways to export the `lodash` function
-    var exportsOptions = options.reduce(function(result, value) {
-      return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
-    }, isUnderscore
-      ? ['commonjs', 'global', 'node']
-      : exportsAll.slice()
-    );
-
-    // used to detect invalid command-line arguments
-    var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
-      if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=[\s\S]*$/.test(value)) {
-        return true;
-      }
-      var result = _.contains([
-        'backbone',
-        'csp',
-        'legacy',
-        'mobile',
-        'modern',
-        'modularize',
-        'strict',
-        'underscore',
-        '-c', '--stdout',
-        '-d', '--debug',
-        '-h', '--help',
-        '-m', '--minify',
-        '-n', '--no-dep',
-        '-o', '--output',
-        '-p', '--source-map',
-        '-s', '--silent',
-        '-V', '--version'
-      ], value);
-
-      if (!result && /^(?:-p|--source-map)$/.test(options[index - 1])) {
-        result = true;
-        sourceMapURL = value;
-      }
-      return result;
-    });
-
     // used to capture warnings for invalid command-line arguments
     var warnings = [];
-
-    // report invalid command and option arguments
-    if (invalidArgs.length) {
-      warnings.push('Invalid argument' + (invalidArgs.length > 1 ? 's' : '') + ' passed: ' + invalidArgs.join(', '));
-    }
-    // report invalid command combinations
-    invalidArgs = _.intersection(options, ['backbone', 'legacy', 'mobile', 'modern', 'underscore']);
-    if (invalidArgs.length > 1) {
-      warnings.push('The `' + invalidArgs.slice(0, -1).join('`, `') + '`' + (invalidArgs.length > 2 ? ',' : '') + ' and `' + _.last(invalidArgs) + '` commands may not be combined.');
-    }
-    // report invalid command entries
-    _.forOwn({
-      'category': {
-        'entries': categories,
-        'validEntries': ['Arrays', 'Chaining', 'Collections', 'Functions', 'Objects', 'Utilities']
-      },
-      'exports': {
-        'entries': exportsOptions,
-        'validEntries': ['amd', 'commonjs', 'global', 'node', 'none']
-      }
-    }, function(data, commandName) {
-      invalidArgs = _.difference(data.entries, data.validEntries);
-      if (invalidArgs.length) {
-        warnings.push('Invalid `' + commandName + '` entr' + (invalidArgs.length > 1 ? 'ies' : 'y') + ' passed: ' + invalidArgs.join(', '));
-      }
-    });
-
-    if (warnings.length) {
-      console.log([''].concat(
-        warnings,
-        'For more information type: lodash --help'
-      ).join('\n'));
-      return;
-    }
 
     // display help message
     if (_.find(options, function(arg) {
@@ -2112,11 +2018,164 @@
     // flag to specify a legacy build
     var isLegacy = !(isModern || isUnderscore) && _.contains(options, 'legacy');
 
+    // methods categories to include in the build
+    var categories = options.reduce(function(accumulator, value) {
+      if (/^(category|exclude|include|minus|plus)=.+$/.test(value)) {
+        var array = optionToArray(value);
+        accumulator =  _.union(accumulator, /^category=.*$/.test(value)
+          ? array.map(function(category) { return capitalize(category.toLowerCase()); })
+          : array.filter(function(category) { return /^[A-Z]/.test(category); })
+        );
+      }
+      return accumulator;
+    }, []);
+
+    // used to specify the ways to export the `lodash` function
+    var exportsOptions = options.reduce(function(result, value) {
+      return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
+    }, isUnderscore
+      ? ['commonjs', 'global', 'node']
+      : exportsAll.slice()
+    );
+
     // used to specify the AMD module ID of Lo-Dash used by precompiled templates
     var moduleId = options.reduce(function(result, value) {
       var match = value.match(/^moduleId=(.*)$/);
       return match ? match[1] : result;
     }, 'lodash');
+
+    // flags to specify export options
+    var isAMD = _.contains(exportsOptions, 'amd'),
+        isCommonJS = _.contains(exportsOptions, 'commonjs'),
+        isGlobal = _.contains(exportsOptions, 'global'),
+        isNode = _.contains(exportsOptions, 'node');
+
+    // delete the `_.findWhere` dependency map to enable its alias mapping
+    if (!isUnderscore || isLodashMethod('findWhere')) {
+      delete dependencyMap.findWhere;
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    var isExcluded = function() {
+      return _.every(arguments, function(methodName) {
+        return !_.contains(buildMethods, methodName);
+      });
+    };
+
+    var isLodashMethod = function(methodName) {
+      if (_.contains(lodashOnlyMethods, methodName) || /^(?:assign|zipObject)$/.test(methodName)) {
+        var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
+        return _.contains(methods, methodName);
+      }
+      methods = _.without.apply(_, [plusMethods].concat(minusMethods));
+      return _.contains(methods, methodName);
+    };
+
+    // methods to include in the build
+    var includeMethods = options.reduce(function(accumulator, value) {
+      return /^include=.*$/.test(value)
+        ? _.union(accumulator, optionToMethodsArray(value))
+        : accumulator;
+    }, []);
+
+    // methods to remove from the build
+    var minusMethods = options.reduce(function(accumulator, value) {
+      return /^(?:exclude|minus)=.*$/.test(value)
+        ? _.union(accumulator, optionToMethodsArray(value))
+        : accumulator;
+    }, []);
+
+    // methods to add to the build
+    var plusMethods = options.reduce(function(accumulator, value) {
+      return /^plus=.*$/.test(value)
+        ? _.union(accumulator, optionToMethodsArray(value))
+        : accumulator;
+    }, []);
+
+    /*------------------------------------------------------------------------*/
+
+    // used to detect invalid command-line arguments
+    var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
+      if (/^(?:-o|--output)$/.test(options[index - 1]) ||
+          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=[\s\S]*$/.test(value)) {
+        return true;
+      }
+      var result = _.contains([
+        'backbone',
+        'csp',
+        'legacy',
+        'mobile',
+        'modern',
+        'modularize',
+        'strict',
+        'underscore',
+        '-c', '--stdout',
+        '-d', '--debug',
+        '-h', '--help',
+        '-m', '--minify',
+        '-n', '--no-dep',
+        '-o', '--output',
+        '-p', '--source-map',
+        '-s', '--silent',
+        '-V', '--version'
+      ], value);
+
+      if (!result && /^(?:-p|--source-map)$/.test(options[index - 1])) {
+        result = true;
+        sourceMapURL = value;
+      }
+      return result;
+    });
+
+    // report invalid command and option arguments
+    if (invalidArgs.length) {
+      warnings.push('Invalid argument' + (invalidArgs.length > 1 ? 's' : '') + ' passed: ' + invalidArgs.join(', '));
+    }
+    // report invalid command combinations
+    invalidArgs = _.intersection(options, ['backbone', 'legacy', 'mobile', 'modern', 'underscore']);
+    if (invalidArgs.length > 1) {
+      warnings.push('The `' + invalidArgs.slice(0, -1).join('`, `') + '`' + (invalidArgs.length > 2 ? ',' : '') + ' and `' + _.last(invalidArgs) + '` commands may not be combined.');
+    }
+    // report invalid command entries
+    _.forOwn({
+      'category': {
+        'entries': categories,
+        'validEntries': ['Arrays', 'Chaining', 'Collections', 'Functions', 'Objects', 'Utilities']
+      },
+      'exports': {
+        'entries': exportsOptions,
+        'validEntries': ['amd', 'commonjs', 'global', 'node', 'none']
+      },
+      'include': {
+        'entries': includeMethods,
+        'validEntries': allMethods
+      },
+      'minus': {
+        'entries': minusMethods,
+        'validEntries': allMethods
+      },
+      'plus': {
+        'entries': plusMethods,
+        'validEntries': allMethods
+      }
+    }, function(data, commandName) {
+      invalidArgs = _.difference(data.entries, data.validEntries);
+      if (invalidArgs.length) {
+        warnings.push('Invalid `' + commandName + '` entr' + (invalidArgs.length > 1 ? 'ies' : 'y') + ' passed: ' + invalidArgs.join(', '));
+      }
+    });
+
+    if (warnings.length) {
+      dependencyMap = dependencyMapBackup;
+      console.log([''].concat(
+        warnings,
+        'For more information type: lodash --help'
+      ).join('\n'));
+      return;
+    }
+
+    /*------------------------------------------------------------------------*/
 
     // used to specify the output path for builds
     var outputPath = options.reduce(function(result, value, index) {
@@ -2153,54 +2212,7 @@
     // the lodash.js source
     var source = fs.readFileSync(filePath, 'utf8');
 
-    // flags to specify export options
-    var isAMD = _.contains(exportsOptions, 'amd'),
-        isCommonJS = _.contains(exportsOptions, 'commonjs'),
-        isGlobal = _.contains(exportsOptions, 'global'),
-        isNode = _.contains(exportsOptions, 'node');
-
     /*------------------------------------------------------------------------*/
-
-    var isExcluded = function() {
-      return _.every(arguments, function(methodName) {
-        return !_.contains(buildMethods, methodName);
-      });
-    };
-
-    var isLodashMethod = function(methodName) {
-      if (_.contains(lodashOnlyMethods, methodName) || /^(?:assign|zipObject)$/.test(methodName)) {
-        var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
-        return _.contains(methods, methodName);
-      }
-      methods = _.without.apply(_, [plusMethods].concat(minusMethods));
-      return _.contains(methods, methodName);
-    };
-
-    // delete the `_.findWhere` dependency map to enable its alias mapping
-    if (!isUnderscore || isLodashMethod('findWhere')) {
-      delete dependencyMap.findWhere;
-    }
-
-    // methods to include in the build
-    var includeMethods = options.reduce(function(accumulator, value) {
-      return /^include=.*$/.test(value)
-        ? _.union(accumulator, optionToMethodsArray(source, value))
-        : accumulator;
-    }, []);
-
-    // methods to remove from the build
-    var minusMethods = options.reduce(function(accumulator, value) {
-      return /^(?:exclude|minus)=.*$/.test(value)
-        ? _.union(accumulator, optionToMethodsArray(source, value))
-        : accumulator;
-    }, []);
-
-    // methods to add to the build
-    var plusMethods = options.reduce(function(accumulator, value) {
-      return /^plus=.*$/.test(value)
-        ? _.union(accumulator, optionToMethodsArray(source, value))
-        : accumulator;
-    }, []);
 
     // names of methods to include in the build
     var buildMethods = !isTemplate && (function() {
@@ -3452,7 +3464,7 @@
           .replace(/\(\(__t *= *\( *([\s\S]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
 
         // remove the with-statement
-        snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
+        snippet = snippet.replace(/^ *with *\(.+?\) *{\n/m, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
 
         // minor cleanup
         snippet = snippet

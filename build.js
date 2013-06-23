@@ -2050,11 +2050,6 @@
         isGlobal = _.contains(exportsOptions, 'global'),
         isNode = _.contains(exportsOptions, 'node');
 
-    // delete the `_.findWhere` dependency map to enable its alias mapping
-    if (!isUnderscore || isLodashMethod('findWhere')) {
-      delete dependencyMap.findWhere;
-    }
-
     /*------------------------------------------------------------------------*/
 
     var isExcluded = function() {
@@ -2071,6 +2066,11 @@
       methods = _.without.apply(_, [plusMethods].concat(minusMethods));
       return _.contains(methods, methodName);
     };
+
+    // delete the `_.findWhere` dependency map to enable its alias mapping
+    if (!isUnderscore || isLodashMethod('findWhere')) {
+      delete dependencyMap.findWhere;
+    }
 
     // methods to include in the build
     var includeMethods = options.reduce(function(accumulator, value) {

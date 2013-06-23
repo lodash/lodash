@@ -345,16 +345,6 @@
     'node'
   ];
 
-  /** List of valid method categories */
-  var methodCategories = [
-    'Arrays',
-    'Chaining',
-    'Collections',
-    'Functions',
-    'Objects',
-    'Utilities'
-  ];
-
   /** List of private methods */
   var privateMethods = [
     'basicEach',
@@ -759,10 +749,11 @@
       '',
       '    lodash backbone      Build with only methods required by Backbone',
       '    lodash legacy        Build tailored for older environments without ES5 support',
-      '    lodash modern        Build tailored for newer environments with ES5 support',
       '    lodash mobile        Build without method compilation and most bug fixes for old browsers',
+      '    lodash modern        Build tailored for newer environments with ES5 support',
       '    lodash strict        Build with `_.assign`, `_.bindAll`, & `_.defaults` in strict mode',
       '    lodash underscore    Build tailored for projects already using Underscore',
+      '',
       '    lodash include=...   Comma separated method/category names to include in the build',
       '    lodash minus=...     Comma separated method/category names to remove from those included in the build',
       '    lodash plus=...      Comma separated method/category names to add to those included in the build',
@@ -779,7 +770,7 @@
       '                         (e.g. `lodash settings="{interpolate:/{{([\\s\\S]+?)}}/g}"`)',
       '    lodash moduleId=...  The AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates',
       '',
-      '    All arguments, except `legacy` with `mobile`, `modern`, or `underscore`, may be combined.',
+      '    All arguments, except `backbone`, `legacy`, `mobile`, `modern`, and `underscore`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
       '',
       '  Options:',
@@ -1954,7 +1945,27 @@
     // used to specify the source map URL
     var sourceMapURL;
 
-    // used to report invalid command-line arguments
+    // methods categories to include in the build
+    var categories = options.reduce(function(accumulator, value) {
+      if (/^(category|exclude|include|minus|plus)=.+$/.test(value)) {
+        var array = optionToArray(value);
+        accumulator =  _.union(accumulator, /^category=.*$/.test(value)
+          ? array.map(function(category) { return capitalize(category.toLowerCase()); })
+          : array.filter(function(category) { return /^[A-Z]/.test(category); })
+        );
+      }
+      return accumulator;
+    }, []);
+
+    // used to specify the ways to export the `lodash` function
+    var exportsOptions = options.reduce(function(result, value) {
+      return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
+    }, isUnderscore
+      ? ['commonjs', 'global', 'node']
+      : exportsAll.slice()
+    );
+
+    // used to detect invalid command-line arguments
     var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
           /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=[\s\S]*$/.test(value)) {
@@ -1987,14 +1998,40 @@
       return result;
     });
 
-    // report invalid arguments
+    // used to capture warnings for invalid command-line arguments
+    var warnings = [];
+
+    // report invalid command and option arguments
     if (invalidArgs.length) {
-      console.log(
-        '\n' +
-        'Invalid argument' + (invalidArgs.length > 1 ? 's' : '') +
-        ' passed: ' + invalidArgs.join(', ')
-      );
-      displayHelp();
+      warnings.push('Invalid argument' + (invalidArgs.length > 1 ? 's' : '') + ' passed: ' + invalidArgs.join(', '));
+    }
+    // report invalid command combinations
+    invalidArgs = _.intersection(options, ['backbone', 'legacy', 'mobile', 'modern', 'underscore']);
+    if (invalidArgs.length > 1) {
+      warnings.push('The `' + invalidArgs.slice(0, -1).join('`, `') + '`' + (invalidArgs.length > 2 ? ',' : '') + ' and `' + _.last(invalidArgs) + '` commands may not be combined.');
+    }
+    // report invalid command entries
+    _.forOwn({
+      'category': {
+        'entries': categories,
+        'validEntries': ['Arrays', 'Chaining', 'Collections', 'Functions', 'Objects', 'Utilities']
+      },
+      'exports': {
+        'entries': exportsOptions,
+        'validEntries': ['amd', 'commonjs', 'global', 'node', 'none']
+      }
+    }, function(data, commandName) {
+      invalidArgs = _.difference(data.entries, data.validEntries);
+      if (invalidArgs.length) {
+        warnings.push('Invalid `' + commandName + '` entr' + (invalidArgs.length > 1 ? 'ies' : 'y') + ' passed: ' + invalidArgs.join(', '));
+      }
+    });
+
+    if (warnings.length) {
+      console.log([''].concat(
+        warnings,
+        'For more information type: lodash --help'
+      ).join('\n'));
       return;
     }
 
@@ -2074,14 +2111,6 @@
 
     // flag to specify a legacy build
     var isLegacy = !(isModern || isUnderscore) && _.contains(options, 'legacy');
-
-    // used to specify the ways to export the `lodash` function
-    var exportsOptions = options.reduce(function(result, value) {
-      return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
-    }, isUnderscore
-      ? ['commonjs', 'global', 'node']
-      : exportsAll.slice()
-    );
 
     // used to specify the AMD module ID of Lo-Dash used by precompiled templates
     var moduleId = options.reduce(function(result, value) {
@@ -2171,18 +2200,6 @@
       return /^plus=.*$/.test(value)
         ? _.union(accumulator, optionToMethodsArray(source, value))
         : accumulator;
-    }, []);
-
-    // methods categories to include in the build
-    var categories = options.reduce(function(accumulator, value) {
-      if (/^(category|exclude|include|minus|plus)=.+$/.test(value)) {
-        var array = optionToArray(value);
-        accumulator =  _.union(accumulator, /^category=.*$/.test(value)
-          ? array.map(function(category) { return capitalize(category.toLowerCase()); })
-          : array.filter(function(category) { return /^[A-Z]/.test(category); })
-        );
-      }
-      return accumulator;
     }, []);
 
     // names of methods to include in the build

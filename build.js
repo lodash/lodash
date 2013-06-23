@@ -3333,14 +3333,16 @@
 
         // inline all functions defined with `createIterator`
         _.functions(lodash).forEach(function(methodName) {
-          // strip leading underscores to match pseudo private functions
-          var reFunc = RegExp('^( *)(var ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
-          if (reFunc.test(source)) {
-            // extract, format, and inject the compiled function's source code
-            source = source.replace(reFunc, function(match, indent, left) {
-              return (indent + left) +
-                cleanupCompiled(getFunctionSource(lodash[methodName], indent)) + ';\n';
-            });
+          if (!(isUnderscore && isLodashMethod(methodName))) {
+            // strip leading underscores to match pseudo private functions
+            var reFunc = RegExp('^( *)(var ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
+            if (reFunc.test(source)) {
+              // extract, format, and inject the compiled function's source code
+              source = source.replace(reFunc, function(match, indent, left) {
+                return (indent + left) +
+                  cleanupCompiled(getFunctionSource(lodash[methodName], indent)) + ';\n';
+              });
+            }
           }
         });
 
@@ -3423,46 +3425,48 @@
           }());
         }
       }
-      else {
-        source = removeFromCreateIterator(source, 'support');
 
-        // inline `iteratorTemplate` template
-        source = source.replace(getIteratorTemplate(source), function(match) {
-          var indent = getIndent(match),
-              snippet = cleanupCompiled(getFunctionSource(lodash._iteratorTemplate, indent));
+      source = removeFromCreateIterator(source, 'support');
 
-          // prepend data object references to property names to avoid having to
-          // use a with-statement
-          iteratorOptions.forEach(function(prop) {
-            if (prop !== 'support') {
-              snippet = snippet.replace(RegExp('([^\\w.])' + prop + '\\b', 'g'), '$1obj.' + prop);
-            }
-          });
+      // inline `iteratorTemplate` template
+      source = source.replace(getIteratorTemplate(source), function(match) {
+        var indent = getIndent(match),
+            snippet = cleanupCompiled(getFunctionSource(lodash._iteratorTemplate, indent));
 
-          // remove unnecessary code
-          snippet = snippet
-            .replace(/var __t.+/, "var __p = '';")
-            .replace(/function print[^}]+}/, '')
-            .replace(/'(?:\\n|\s)+'/g, "''")
-            .replace(/__p *\+= *' *';/g, '')
-            .replace(/\s*\+\s*'';/g, ';')
-            .replace(/(__p *\+= *)' *' *\+/g, '$1')
-            .replace(/\(\(__t *= *\( *([\s\S]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
-
-          // remove the with-statement
-          snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
-
-          // minor cleanup
-          snippet = snippet
-            .replace(/obj\s*\|\|\s*\(obj *= *{}\);/, '')
-            .replace(/var __p = '';\s*__p \+=/, 'var __p =');
-
-          // remove comments, including sourceURLs
-          snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
-
-          return indent + 'var iteratorTemplate = ' + snippet + ';\n';
+        // prepend data object references to property names to avoid having to
+        // use a with-statement
+        iteratorOptions.forEach(function(prop) {
+          if (prop !== 'support') {
+            snippet = snippet.replace(RegExp('([^\\w.])' + prop + '\\b', 'g'), '$1obj.' + prop);
+          }
         });
-      }
+
+        // remove unnecessary code
+        snippet = snippet
+          .replace(/var __t.+/, "var __p = '';")
+          .replace(/function print[^}]+}/, '')
+          .replace(/'(?:\\n|\s)+'/g, "''")
+          .replace(/__p *\+= *' *';/g, '')
+          .replace(/\s*\+\s*'';/g, ';')
+          .replace(/(__p *\+= *)' *' *\+/g, '$1')
+          .replace(/\(\(__t *= *\( *([\s\S]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
+
+        // remove the with-statement
+        snippet = snippet.replace(/ *with *\(.+?\) *{/, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
+
+        // minor cleanup
+        snippet = snippet
+          .replace(/obj\s*\|\|\s*\(obj *= *{}\);/, '')
+          .replace(/var __p = '';\s*__p \+=/, 'var __p =');
+
+        // remove comments, including sourceURLs
+        snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
+
+        // replace `iteratorTemplate` assignment
+        snippet = indent + 'var iteratorTemplate = ' + snippet + ';\n';
+
+        return snippet;
+      });
 
       // remove methods from the build
       allMethods.forEach(function(otherName) {
@@ -3597,6 +3601,9 @@
         source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
       }
       if (isNoDep) {
+        // remove all horizontal rule comment separators
+        source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
+
         _.each(buildMethods, function(methodName) {
           _.each(getAliases(methodName), function(alias) {
             source = removeFunction(source, alias);
@@ -3607,8 +3614,12 @@
           source = removeVar(source, varName);
         });
 
-        // remove all horizontal rule comment separators
-        source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
+        if (!isAMD && !isCommonJS && !isGlobal && !isNode) {
+          source = removeFunction(source, 'lodash');
+          source = removeLodashWrapper(source);
+          source = removePseudoPrivates(source);
+          source = removeMethodAssignments(source);
+        }
       }
       else {
         if (isExcluded('bind')) {
@@ -3727,12 +3738,6 @@
     }
     if (_.size(source.match(/\bfreeExports\b/g)) < 2) {
       source = removeVar(source, 'freeExports');
-    }
-    if (!isAMD && !isCommonJS && !isGlobal && !isNode) {
-      source = removeFunction(source, 'lodash');
-      source = removeLodashWrapper(source);
-      source = removePseudoPrivates(source);
-      source = removeMethodAssignments(source);
     }
 
     debugSource = cleanupSource(source);

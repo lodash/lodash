@@ -824,8 +824,13 @@
     if (result) {
       return result[1];
     }
-    // check for the `_.chain` alias
-    return methodName == 'chain' ? 'Chaining' : '';
+    if (methodName == 'chain') {
+      return 'Chaining';
+    }
+    if (methodName == 'findWhere') {
+      return 'Collections';
+    }
+    return '';
   }
 
   /**
@@ -2140,23 +2145,15 @@
     // expand categories to methods
     _.each([includeMethods, minusMethods, plusMethods], function(methodNames) {
       var categories = _.intersection(methodNames, methodCategories);
+
       categories.forEach(function(category) {
         var otherMethods = getMethodsByCategory(source, category);
 
-        // add `chain` and `findWhere`
-        if (isUnderscore) {
-          if (_.contains(categories, 'Chaining') && !_.contains(otherMethods, 'chain')) {
-            otherMethods.push('chain');
-          }
-          if (_.contains(categories, 'Collections') && !_.contains(otherMethods, 'findWhere')) {
-            otherMethods.push('findWhere');
-          }
-        }
         // limit method names to those available for specific builds
         if (isBackbone) {
-          otherMethods = _.intersection(methodNames, backboneDependencies);
+          otherMethods = _.intersection(otherMethods, backboneDependencies);
         } else if (isUnderscore) {
-          otherMethods = _.intersection(methodNames, underscoreMethods);
+          otherMethods = _.intersection(otherMethods, underscoreMethods);
         }
         push.apply(methodNames, otherMethods);
       });

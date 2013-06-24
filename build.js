@@ -383,10 +383,10 @@
   ];
 
   /** List of Lo-Dash methods */
-  var lodashMethods = _.without.apply(_, [allMethods, 'findWhere'].concat(privateMethods));
+  var lodashMethods = _.difference(allMethods, privateMethods.concat('findWhere'));
 
   /** List of Underscore methods */
-  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods, privateMethods));
+  var underscoreMethods = _.difference(allMethods, lodashOnlyMethods.concat(privateMethods));
 
   /*--------------------------------------------------------------------------*/
 
@@ -1109,7 +1109,7 @@
       result.push(varA || varB || varC);
     });
 
-    return _.without.apply(_, [_.uniq(result)].concat(lodashMethods)).sort();
+    return _.difference(_.uniq(result), allMethods).sort();
   }
 
   /**
@@ -2098,10 +2098,10 @@
 
     var isLodashMethod = function(methodName) {
       if (_.contains(lodashOnlyMethods, methodName) || /^(?:assign|zipObject)$/.test(methodName)) {
-        var methods = _.without.apply(_, [_.union(includeMethods, plusMethods)].concat(minusMethods));
+        var methods = _.difference(_.union(includeMethods, plusMethods), minusMethods);
         return _.contains(methods, methodName);
       }
-      methods = _.without.apply(_, [plusMethods].concat(minusMethods));
+      methods = _.difference(plusMethods, minusMethods);
       return _.contains(methods, methodName);
     };
 
@@ -2160,9 +2160,9 @@
     });
 
     // remove categories from method names
-    includeMethods = _.without.apply(_, [includeMethods].concat(methodCategories));
-    minusMethods = _.without.apply(_, [minusMethods].concat(methodCategories));
-    plusMethods = _.without.apply(_, [plusMethods].concat(methodCategories));
+    includeMethods = _.difference(includeMethods, methodCategories);
+    minusMethods = _.difference(minusMethods, methodCategories);
+    plusMethods = _.difference(plusMethods, methodCategories);
 
     /*------------------------------------------------------------------------*/
 
@@ -2439,10 +2439,10 @@
         result = _.union(result, plusMethods);
       }
       if (minusMethods.length) {
-        result = _.without.apply(_, [result].concat(minusMethods, isNoDep
+        result = _.difference(result, isNoDep
           ? minusMethods
-          : getDependants(minusMethods)
-        ));
+          : minusMethods.concat(getDependants(minusMethods))
+        );
       }
       if (!isNoDep) {
         result = getDependencies(result);

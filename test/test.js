@@ -3697,7 +3697,7 @@
         return /^_/.test(methodName);
       });
 
-      var funcs = _.without.apply(_, [allMethods].concat([
+      var funcs = _.difference(allMethods, [
         'after',
         'bind',
         'bindAll',
@@ -3713,7 +3713,7 @@
         'tap',
         'throttle',
         'wrap'
-      ]));
+      ]);
 
       _.each(funcs, function(methodName) {
         var actual = [],

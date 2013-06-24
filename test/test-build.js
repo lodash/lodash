@@ -1619,8 +1619,7 @@
           var start = _.after(2, _.once(QUnit.start));
 
           build(['--silent'].concat(command.split(' ')), function(data) {
-            var methodNames,
-                basename = path.basename(data.outputPath, '.js'),
+            var basename = path.basename(data.outputPath, '.js'),
                 context = createContext(),
                 isBackbone = /\bbackbone\b/.test(command),
                 isUnderscore = isBackbone || /\bunderscore\b/.test(command),
@@ -1634,7 +1633,13 @@
             }
             // add method names explicitly
             if (/\binclude=/.test(command)) {
-              methodNames = command.match(/\binclude=(\S*)/)[1].split(/, */);
+              var methodNames = command.match(/\binclude=(\S*)/)[1].split(/, */);
+            }
+            if (/\bcategory=/.test(command)) {
+              var categories = command.match(/\bcategory=(\S*)/)[1].split(/, */);
+              methodNames = (methodNames || []).concat(categories.map(function(category) {
+                return capitalize(category.toLowerCase());
+              }));
             }
             // add method names required by Backbone and Underscore builds
             if (/\bbackbone\b/.test(command) && !methodNames) {
@@ -1648,44 +1653,41 @@
                 methodNames = underscoreMethods.slice();
               }
             }
-            if (/\bcategory=/.test(command)) {
-              methodNames = (methodNames || []).concat(command.match(/\bcategory=(\S*)/)[1].split(/, */).map(function(category) {
-                return capitalize(category.toLowerCase());
-              }));
-            }
             if (!methodNames) {
               methodNames = lodashMethods.slice();
             }
             if (/\bplus=/.test(command)) {
-              methodNames = methodNames.concat(command.match(/\bplus=(\S*)/)[1].split(/, */));
+              var otherNames = command.match(/\bplus=(\S*)/)[1].split(/, */);
+              methodNames = methodNames.concat(expandMethodNames(otherNames));
             }
             if (/\bminus=/.test(command)) {
-              methodNames = _.difference(methodNames, expandMethodNames(command.match(/\bminus=(\S*)/)[1].split(/, */)));
+              otherNames = command.match(/\bminus=(\S*)/)[1].split(/, */);
+              methodNames = _.difference(methodNames, expandMethodNames(otherNames));
             }
             if (/\bexclude=/.test(command)) {
-              methodNames = _.difference(methodNames, expandMethodNames(command.match(/\bexclude=(\S*)/)[1].split(/, */)));
+              otherNames = command.match(/\bexclude=(\S*)/)[1].split(/, */);
+              methodNames = _.difference(methodNames, expandMethodNames(otherNames));
             }
 
-            // expand categories to real method names
+            // expand categories to method names
             methodNames.slice().forEach(function(category) {
-              var result = getMethodsByCategory(category);
+              var otherNames = getMethodsByCategory(category);
 
-              // limit category methods to those available for specific builds
-              result = result.filter(function(methodName) {
-                return _.contains(
-                  isBackbone ? backboneDependencies :
-                  isUnderscore ? underscoreMethods :
-                  lodashMethods, methodName
-                );
-              });
-              if (result.length) {
+              // limit method names to those available for specific builds
+              otherNames = _.intersection(otherNames,
+                isBackbone ? backboneDependencies :
+                isUnderscore ? underscoreMethods :
+                lodashMethods
+              );
+
+              if (otherNames.length) {
                 methodNames = _.without(methodNames, category);
-                push.apply(methodNames, result);
+                push.apply(methodNames, otherNames);
               }
             });
 
             // expand aliases and remove nonexistent and duplicate method names
-            methodNames = _.uniq(_.intersection(allMethods, expandMethodNames(methodNames)));
+            methodNames = _.uniq(_.intersection(expandMethodNames(methodNames), allMethods));
 
             if (!exposeAssign) {
               methodNames = _.without(methodNames, 'assign');

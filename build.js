@@ -345,6 +345,16 @@
     'node'
   ];
 
+  /** List of method categories */
+  var methodCategories = [
+    'Arrays',
+    'Chaining',
+    'Collections',
+    'Functions',
+    'Objects',
+    'Utilities'
+  ];
+
   /** List of private methods */
   var privateMethods = [
     'basicEach',
@@ -2018,18 +2028,6 @@
     // flag to specify a legacy build
     var isLegacy = !(isModern || isUnderscore) && _.contains(options, 'legacy');
 
-    // methods categories to include in the build
-    var categories = options.reduce(function(accumulator, value) {
-      if (/^(category|exclude|include|minus|plus)=.+$/.test(value)) {
-        var array = optionToArray(value);
-        accumulator =  _.union(accumulator, /^category=.*$/.test(value)
-          ? array.map(function(category) { return capitalize(category.toLowerCase()); })
-          : array.filter(function(category) { return /^[A-Z]/.test(category); })
-        );
-      }
-      return accumulator;
-    }, []);
-
     // used to specify the ways to export the `lodash` function
     var exportsOptions = options.reduce(function(result, value) {
       return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
@@ -2044,11 +2042,46 @@
       return match ? match[1] : result;
     }, 'lodash');
 
+    // used to specify the output path for builds
+    var outputPath = options.reduce(function(result, value, index) {
+      if (/^(?:-o|--output)$/.test(value)) {
+        result = options[index + 1];
+        var dirname = path.dirname(result);
+        fs.mkdirpSync(dirname);
+        result = path.join(fs.realpathSync(dirname), path.basename(result));
+      }
+      return result;
+    }, '');
+
+    // used to match external template files to precompile
+    var templatePattern = options.reduce(function(result, value) {
+      var match = value.match(/^template=(.+)$/);
+      return match
+        ? path.join(fs.realpathSync(path.dirname(match[1])), path.basename(match[1]))
+        : result;
+    }, '');
+
+    // used as the template settings for precompiled templates
+    var templateSettings = options.reduce(function(result, value) {
+      var match = value.match(/^settings=(.+)$/);
+      return match
+        ? _.assign(result, Function('return {' + match[1].replace(/^{|}$/g, '') + '}')())
+        : result;
+    }, _.assign(_.clone(_.templateSettings), {
+      'moduleId': moduleId
+    }));
+
     // flags to specify export options
     var isAMD = _.contains(exportsOptions, 'amd'),
         isCommonJS = _.contains(exportsOptions, 'commonjs'),
         isGlobal = _.contains(exportsOptions, 'global'),
         isNode = _.contains(exportsOptions, 'node');
+
+    // flag to specify a template build
+    var isTemplate = !!templatePattern;
+
+    // the lodash.js source
+    var source = fs.readFileSync(filePath, 'utf8');
 
     /*------------------------------------------------------------------------*/
 
@@ -2072,12 +2105,23 @@
       delete dependencyMap.findWhere;
     }
 
+    // methods categories to include in the build
+    var categories = options.reduce(function(accumulator, value) {
+      if (/^category=.+$/.test(value)) {
+        var array = optionToArray(value);
+        accumulator = _.union(array.map(function(category) {
+          return capitalize(category.toLowerCase());
+        }));
+      }
+      return accumulator;
+    }, []);
+
     // methods to include in the build
     var includeMethods = options.reduce(function(accumulator, value) {
       return /^include=.*$/.test(value)
         ? _.union(accumulator, optionToMethodsArray(value))
         : accumulator;
-    }, []);
+    }, categories.slice());
 
     // methods to remove from the build
     var minusMethods = options.reduce(function(accumulator, value) {
@@ -2092,6 +2136,36 @@
         ? _.union(accumulator, optionToMethodsArray(value))
         : accumulator;
     }, []);
+
+    // expand categories to methods
+    _.each([includeMethods, minusMethods, plusMethods], function(methods) {
+      var categories = _.intersection(methods, methodCategories);
+      categories.forEach(function(category) {
+        var otherMethods = getMethodsByCategory(source, category);
+
+        // add `chain` and `findWhere`
+        if (isUnderscore) {
+          if (_.contains(categories, 'Chaining') && !_.contains(otherMethods, 'chain')) {
+            otherMethods.push('chain');
+          }
+          if (_.contains(categories, 'Collections') && !_.contains(otherMethods, 'findWhere')) {
+            otherMethods.push('findWhere');
+          }
+        }
+        // limit category methods to those available for specific builds
+        if (isBackbone) {
+          otherMethods = _.intersection(methodNames, backboneDependencies);
+        } else if (isUnderscore) {
+          otherMethods = _.intersection(methodNames, underscoreMethods);
+        }
+        push.apply(methods, otherMethods);
+      });
+    });
+
+    // remove categories from method names
+    includeMethods = _.without.apply(_, [includeMethods].concat(methodCategories));
+    minusMethods = _.without.apply(_, [minusMethods].concat(methodCategories));
+    plusMethods = _.without.apply(_, [plusMethods].concat(methodCategories));
 
     /*------------------------------------------------------------------------*/
 
@@ -2141,7 +2215,7 @@
     _.forOwn({
       'category': {
         'entries': categories,
-        'validEntries': ['Arrays', 'Chaining', 'Collections', 'Functions', 'Objects', 'Utilities']
+        'validEntries': methodCategories
       },
       'exports': {
         'entries': exportsOptions,
@@ -2174,43 +2248,6 @@
       ).join('\n'));
       return;
     }
-
-    /*------------------------------------------------------------------------*/
-
-    // used to specify the output path for builds
-    var outputPath = options.reduce(function(result, value, index) {
-      if (/^(?:-o|--output)$/.test(value)) {
-        result = options[index + 1];
-        var dirname = path.dirname(result);
-        fs.mkdirpSync(dirname);
-        result = path.join(fs.realpathSync(dirname), path.basename(result));
-      }
-      return result;
-    }, '');
-
-    // used to match external template files to precompile
-    var templatePattern = options.reduce(function(result, value) {
-      var match = value.match(/^template=(.+)$/);
-      return match
-        ? path.join(fs.realpathSync(path.dirname(match[1])), path.basename(match[1]))
-        : result;
-    }, '');
-
-    // used as the template settings for precompiled templates
-    var templateSettings = options.reduce(function(result, value) {
-      var match = value.match(/^settings=(.+)$/);
-      return match
-        ? _.assign(result, Function('return {' + match[1].replace(/^{|}$/g, '') + '}')())
-        : result;
-    }, _.assign(_.clone(_.templateSettings), {
-      'moduleId': moduleId
-    }));
-
-    // flag to specify a template build
-    var isTemplate = !!templatePattern;
-
-    // the lodash.js source
-    var source = fs.readFileSync(filePath, 'utf8');
 
     /*------------------------------------------------------------------------*/
 
@@ -2397,35 +2434,6 @@
       }
       else if (isUnderscore && !result) {
         result = underscoreMethods;
-      }
-      // add method names by category
-      if (categories.length) {
-        result = _.union(result || [], categories.reduce(function(accumulator, category) {
-          // get method names belonging to each category
-          var methodNames = getMethodsByCategory(source, category);
-
-          // add `chain` and `findWhere`
-          if (isUnderscore) {
-            if (_.contains(categories, 'Chaining') && !_.contains(methodNames, 'chain')) {
-              methodNames.push('chain');
-            }
-            if (_.contains(categories, 'Collections') && !_.contains(methodNames, 'findWhere')) {
-              methodNames.push('findWhere');
-            }
-          }
-          // limit category methods to those available for specific builds
-          if (isBackbone) {
-            methodNames = methodNames.filter(function(methodName) {
-              return _.contains(backboneDependencies, methodName);
-            });
-          }
-          else if (isUnderscore) {
-            methodNames = methodNames.filter(function(methodName) {
-              return _.contains(underscoreMethods, methodName);
-            });
-          }
-          return accumulator.concat(methodNames);
-        }, []));
       }
       if (!result) {
         result = lodashMethods.slice();

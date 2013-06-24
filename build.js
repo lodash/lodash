@@ -2138,8 +2138,8 @@
     }, []);
 
     // expand categories to methods
-    _.each([includeMethods, minusMethods, plusMethods], function(methods) {
-      var categories = _.intersection(methods, methodCategories);
+    _.each([includeMethods, minusMethods, plusMethods], function(methodNames) {
+      var categories = _.intersection(methodNames, methodCategories);
       categories.forEach(function(category) {
         var otherMethods = getMethodsByCategory(source, category);
 
@@ -2152,13 +2152,13 @@
             otherMethods.push('findWhere');
           }
         }
-        // limit category methods to those available for specific builds
+        // limit method names to those available for specific builds
         if (isBackbone) {
           otherMethods = _.intersection(methodNames, backboneDependencies);
         } else if (isUnderscore) {
           otherMethods = _.intersection(methodNames, underscoreMethods);
         }
-        push.apply(methods, otherMethods);
+        push.apply(methodNames, otherMethods);
       });
     });
 

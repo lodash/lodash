@@ -1043,7 +1043,7 @@
         };
 
         context.define.amd = {};
-        vm.runInContext(source, context);
+        vm.runInContext(data.source, context);
 
         ok(pass, basename);
         start();
@@ -1176,8 +1176,7 @@
 
         build(['-s', command + '=runInContext'], function(data) {
           var basename = path.basename(data.outputPath, '.js'),
-              context = createContext(),
-              source = data.source;
+              context = createContext();
 
           vm.runInContext(data.source, context);
 
@@ -1199,8 +1198,7 @@
 
         build(['-s', command + '=mixin'], function(data) {
           var basename = path.basename(data.outputPath, '.js'),
-              context = createContext(),
-              source = data.source;
+              context = createContext();
 
           vm.runInContext(data.source, context);
           var lodash = context._;
@@ -1220,8 +1218,7 @@
 
         build(['-s', command + '=value'], function(data) {
           var basename = path.basename(data.outputPath, '.js'),
-              context = createContext(),
-              source = data.source;
+              context = createContext();
 
           vm.runInContext(data.source, context);
           var lodash = context._;
@@ -1352,8 +1349,7 @@
         build(['-s', command], function(data) {
           var basename = path.basename(data.outputPath, '.js'),
               context = createContext(),
-              noop = function() {},
-              source = data.source;
+              noop = function() {};
 
           vm.runInContext(data.source, context);
           var lodash = context._;
@@ -1480,7 +1476,7 @@
       'bindKey',
       'clone',
       'contains',
-      'debouce',
+      'debounce',
       'defaults',
       'defer',
       'difference',
@@ -1601,7 +1597,7 @@
       'backbone category=utilities minus=first,last',
       'legacy include=defer',
       'mobile strict category=functions exports=amd,global plus=pick,uniq',
-      'modern strict include=isArguments,isArray,isFunction,isPlainObject,key',
+      'modern strict include=isArguments,isArray,isFunction,isPlainObject,keys',
       'underscore include=debounce,throttle plus=after minus=throttle'
     ]
     .concat(

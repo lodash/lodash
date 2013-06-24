@@ -322,7 +322,7 @@
   var lodashMethods = allMethods.slice();
 
   /** List of Underscore methods */
-  var underscoreMethods = _.without.apply(_, [allMethods].concat(lodashOnlyMethods));
+  var underscoreMethods = _.difference(allMethods, lodashOnlyMethods);
 
   /*--------------------------------------------------------------------------*/
 
@@ -1660,10 +1660,10 @@
               methodNames = methodNames.concat(command.match(/\bplus=(\S*)/)[1].split(/, */));
             }
             if (/\bminus=/.test(command)) {
-              methodNames = _.without.apply(_, [methodNames].concat(expandMethodNames(command.match(/\bminus=(\S*)/)[1].split(/, */))));
+              methodNames = _.difference(methodNames, expandMethodNames(command.match(/\bminus=(\S*)/)[1].split(/, */)));
             }
             if (/\bexclude=/.test(command)) {
-              methodNames = _.without.apply(_, [methodNames].concat(expandMethodNames(command.match(/\bexclude=(\S*)/)[1].split(/, */))));
+              methodNames = _.difference(methodNames, expandMethodNames(command.match(/\bexclude=(\S*)/)[1].split(/, */)));
             }
 
             // expand categories to real method names

@@ -2142,7 +2142,7 @@
         : accumulator;
     }, []);
 
-    // expand categories to methods
+    // expand categories to method names
     _.each([includeMethods, minusMethods, plusMethods], function(methodNames) {
       var categories = _.intersection(methodNames, methodCategories);
 

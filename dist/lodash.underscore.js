@@ -3528,13 +3528,21 @@
    * @returns {Function} Returns the new debounced function.
    * @example
    *
-   * var lazyLayout = _.debounce(calculateLayout, 300);
+   * // avoid costly calculations while the window size is in flux
+   * var lazyLayout = _.debounce(calculateLayout, 150);
    * jQuery(window).on('resize', lazyLayout);
    *
-   * jQuery('#postbox').on('click', _.debounce(sendMail, 200, {
+   * // execute `sendMail` when the click event is fired, debouncing subsequent calls
+   * jQuery('#postbox').on('click', _.debounce(sendMail, 300, {
    *   'leading': true,
    *   'trailing': false
    * });
+   *
+   * // ensure `batchLog` is executed once after 1 second of debounced calls
+   * var source = new EventSource('/stream');
+   * source.addEventListener('message', _.debounce(batchLog, 250, {
+   *   'maxWait': 1000
+   * }, false);
    */
   function debounce(func, wait, immediate) {
     var args,
@@ -3713,9 +3721,11 @@
    * @returns {Function} Returns the new throttled function.
    * @example
    *
+   * // avoid excessively updating the position while scrolling
    * var throttled = _.throttle(updatePosition, 100);
    * jQuery(window).on('scroll', throttled);
    *
+   * // execute `renewToken` when the click event is fired, but not more than once every 5 minutes
    * jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
    *   'trailing': false
    * }));

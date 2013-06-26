@@ -243,23 +243,127 @@
     'toArray': ['support']
   };
 
-  /** Used to inline `iteratorTemplate` */
-  var iteratorOptions = [
-    'args',
-    'array',
-    'bottom',
-    'firstArg',
-    'init',
-    'loop',
-    'shadowedProps',
-    'support',
-    'top',
-    'useHas',
-    'useKeys'
-  ];
-
-  /** List of all methods */
-  var allMethods = _.keys(dependencyMap);
+  /** Used to track the categories of methods */
+  var categoryMap = {
+    'Arrays': [
+      'compact',
+      'difference',
+      'findIndex',
+      'first',
+      'flatten',
+      'indexOf',
+      'initial',
+      'intersection',
+      'last',
+      'lastIndexOf',
+      'range',
+      'rest',
+      'sortedIndex',
+      'union',
+      'uniq',
+      'unzip',
+      'without',
+      'zip',
+      'zipObject'
+    ],
+    'Chaining': [
+      'chain',
+      'tap',
+      'value'
+    ],
+    'Collections': [
+      'at',
+      'contains',
+      'countBy',
+      'every',
+      'filter',
+      'find',
+      'findWhere',
+      'forEach',
+      'groupBy',
+      'invoke',
+      'map',
+      'max',
+      'min',
+      'pluck',
+      'reduce',
+      'reduceRight',
+      'reject',
+      'shuffle',
+      'size',
+      'some',
+      'sortBy',
+      'toArray',
+      'where'
+    ],
+    'Functions': [
+      'after',
+      'bind',
+      'bindAll',
+      'bindKey',
+      'createCallback',
+      'compose',
+      'debounce',
+      'defer',
+      'delay',
+      'memoize',
+      'once',
+      'partial',
+      'partialRight',
+      'throttle',
+      'wrap'
+    ],
+    'Objects': [
+      'assign',
+      'clone',
+      'cloneDeep',
+      'defaults',
+      'findKey',
+      'forIn',
+      'forOwn',
+      'functions',
+      'has',
+      'invert',
+      'isArguments',
+      'isArray',
+      'isBoolean',
+      'isDate',
+      'isElement',
+      'isEmpty',
+      'isEqual',
+      'isFinite',
+      'isFunction',
+      'isNaN',
+      'isNull',
+      'isNumber',
+      'isObject',
+      'isPlainObject',
+      'isRegExp',
+      'isString',
+      'isUndefined',
+      'keys',
+      'merge',
+      'omit',
+      'pairs',
+      'pick',
+      'transform',
+      'values'
+    ],
+    'Utilities': [
+      'escape',
+      'identity',
+      'mixin',
+      'noConflict',
+      'parseInt',
+      'random',
+      'result',
+      'runInContext',
+      'template',
+      'times',
+      'unescape',
+      'uniqueId'
+    ]
+  };
 
   /** List of Backbone's Lo-Dash dependencies */
   var backboneDependencies = [
@@ -345,14 +449,19 @@
     'node'
   ];
 
-  /** List of method categories */
-  var methodCategories = [
-    'Arrays',
-    'Chaining',
-    'Collections',
-    'Functions',
-    'Objects',
-    'Utilities'
+  /** Used to inline `iteratorTemplate` */
+  var iteratorOptions = [
+    'args',
+    'array',
+    'bottom',
+    'firstArg',
+    'init',
+    'loop',
+    'shadowedProps',
+    'support',
+    'top',
+    'useHas',
+    'useKeys'
   ];
 
   /** List of private methods */
@@ -381,6 +490,12 @@
     'slice',
     'unescapeHtmlChar'
   ];
+
+  /** List of all methods */
+  var allMethods = _.keys(dependencyMap);
+
+  /** List of method categories */
+  var methodCategories = _.keys(categoryMap);
 
   /** List of Lo-Dash methods */
   var lodashMethods = _.difference(allMethods, privateMethods.concat('findWhere'));
@@ -607,7 +722,7 @@
   function buildTemplate(pattern, options) {
     pattern || (pattern = path.join(cwd, '*.jst'));
 
-    var directory = path.dirname(pattern);
+    var directory = fs.realpathSync(path.dirname(pattern));
 
     var source = [
       ';(function(window) {',
@@ -640,14 +755,15 @@
     );
 
     fs.readdirSync(directory).forEach(function(filename) {
-      var filePath = path.join(directory, filename);
-      if (pattern.test(filename)) {
-        var text = fs.readFileSync(filePath, 'utf8'),
-            precompiled = cleanupCompiled(getFunctionSource(_.template(text, null, options))),
-            prop = filename.replace(/\..*$/, '');
-
-        source.push("  templates['" + prop.replace(/['\n\r\t]/g, '\\$&') + "'] = " + precompiled + ';', '');
+      if (!pattern.test(filename)) {
+        return;
       }
+      var filePath = path.join(directory, filename),
+          text = fs.readFileSync(filePath, 'utf8'),
+          precompiled = cleanupCompiled(getFunctionSource(_.template(text, null, options))),
+          prop = filename.replace(/\..*$/, '');
+
+      source.push("  templates['" + prop.replace(/['\n\r\t]/g, '\\$&') + "'] = " + precompiled + ';', '');
     });
 
     source.push(
@@ -806,8 +922,8 @@
    */
   function getAliases(methodName) {
     var aliases = hasOwnProperty.call(realToAliasMap, methodName) && realToAliasMap[methodName];
-    return _.filter(aliases, function(methodName) {
-      return !hasOwnProperty.call(dependencyMap, methodName);
+    return _.reject(aliases, function(methodName) {
+      return hasOwnProperty.call(dependencyMap, methodName);
     });
   }
 
@@ -815,45 +931,30 @@
    * Gets the category of the given method name.
    *
    * @private
-   * @param {String} source The source to inspect.
    * @param {String} methodName The method name.
    * @returns {String} Returns the method name's category.
    */
-  function getCategory(source, methodName) {
-    var result = /@category +(\w+)/.exec(matchFunction(source, methodName));
-    if (result) {
-      return result[1];
-    }
-    if (methodName == 'chain') {
-      return 'Chaining';
-    }
-    if (methodName == 'findWhere') {
-      return 'Collections';
-    }
-    return '';
+  function getCategory(methodName) {
+    methodName = getRealName(methodName);
+    return _.findKey(categoryMap, function(methodNames) {
+      return _.contains(methodNames, methodName);
+    }) || '';
   }
 
   /**
    * Gets an array of category dependencies for a given category.
    *
    * @private
-   * @param {String} source The source to inspect.
    * @param {String} category The category.
    * @returns {Array} Returns an array of cetegory dependants.
    */
-  function getCategoryDependencies(source, category) {
-    var methods = _.uniq(getMethodsByCategory(source, category).reduce(function(result, methodName) {
+  function getCategoryDependencies(category) {
+    var methods = _.uniq(_.transform(getMethodsByCategory(category), function(result, methodName) {
       push.apply(result, getDependencies(methodName));
-      return result;
-    }, []));
-
-    var categories = _.uniq(methods.map(function(methodName) {
-      return getCategory(source, methodName);
     }));
 
-    return categories.filter(function(other) {
-      return other != category;
-    });
+    var categories = _.uniq(methods.map(getCategory));
+    return _.without(categories, category);
   }
 
   /**
@@ -895,7 +996,7 @@
 
     // iterate over the `dependencyMap`, adding names of methods
     // that have the `methodName` as a dependency
-    return _.uniq(_.reduce(dependencyMap, function(result, dependencies, otherName) {
+    return _.uniq(_.transform(dependencyMap, function(result, dependencies, otherName) {
       if (!_.contains(stack, otherName) && _.some(methodNames, function(methodName) {
             return _.contains(dependencies, methodName);
           })) {
@@ -905,7 +1006,6 @@
           result.push.apply(result, getDependants(otherName, isShallow, stack));
         }
       }
-      return result;
     }, []));
   }
 
@@ -935,13 +1035,12 @@
 
     // recursively accumulate the dependencies of the `methodName` function, and
     // the dependencies of its dependencies, and so on
-    return _.uniq(dependencies.reduce(function(result, otherName) {
+    return _.uniq(_.transform(dependencies, function(result, otherName) {
       if (!_.contains(stack, otherName)) {
         stack.push(otherName);
         result.push.apply(result, getDependencies(otherName, isShallow, stack).concat(otherName));
       }
-      return result;
-    }, []));
+    }));
   }
 
   /**
@@ -1047,14 +1146,11 @@
    * Gets the names of methods in `source` belonging to the given `category`.
    *
    * @private
-   * @param {String} source The source to inspect.
    * @param {String} category The category to filter by.
    * @returns {Array} Returns a new array of method names belonging to the given category.
    */
-  function getMethodsByCategory(source, category) {
-    return allMethods.filter(function(methodName) {
-      return getCategory(source, methodName) == category;
-    });
+  function getMethodsByCategory(category) {
+    return categoryMap[category] || [];
   }
 
   /**
@@ -2062,7 +2158,7 @@
     var templatePattern = options.reduce(function(result, value) {
       var match = value.match(/^template=(.+)$/);
       return match
-        ? path.join(fs.realpathSync(path.dirname(match[1])), path.basename(match[1]))
+        ? match[1]
         : result;
     }, '');
 
@@ -2147,7 +2243,7 @@
       var categories = _.intersection(methodNames, methodCategories);
 
       categories.forEach(function(category) {
-        var otherMethods = getMethodsByCategory(source, category);
+        var otherMethods = getMethodsByCategory(category);
 
         // limit method names to those available for specific builds
         if (isBackbone) {

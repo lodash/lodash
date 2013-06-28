@@ -422,23 +422,15 @@
     'without'
   ];
 
-  /** List of Lo-Dash only methods */
-  var lodashOnlyMethods = [
-    'at',
-    'bindKey',
-    'cloneDeep',
-    'createCallback',
-    'findIndex',
-    'findKey',
-    'forIn',
-    'forOwn',
-    'isPlainObject',
-    'merge',
-    'parseInt',
-    'partialRight',
-    'runInContext',
-    'transform',
-    'unzip'
+  /** List of variables with complex assignments */
+  var complexVars = [
+    'cloneableClasses',
+    'contextProps',
+    'ctorByClass',
+    'freeGlobal',
+    'nonEnumProps',
+    'shadowedProps',
+    'whitespace'
   ];
 
   /** List of ways to export the `lodash` function */
@@ -462,6 +454,25 @@
     'top',
     'useHas',
     'useKeys'
+  ];
+
+  /** List of Lo-Dash only methods */
+  var lodashOnlyMethods = [
+    'at',
+    'bindKey',
+    'cloneDeep',
+    'createCallback',
+    'findIndex',
+    'findKey',
+    'forIn',
+    'forOwn',
+    'isPlainObject',
+    'merge',
+    'parseInt',
+    'partialRight',
+    'runInContext',
+    'transform',
+    'unzip'
   ];
 
   /** List of private methods */
@@ -1179,7 +1190,7 @@
     var result = source.match(RegExp(
       multilineComment +
       '( *)var support *=[\\s\\S]+?\n\\1}\\(1\\)\\);\\n'
-    , 'm'));
+    ));
 
     return result ? result[0] : '';
   }
@@ -1222,9 +1233,11 @@
         indentB = isShallow ? ' {6}' : ' {6,8}';
 
     var match = RegExp(
-      '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
-      '^'  + indentA + 'var ' + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
-      '^'  + indentB + varName + ' *=.+?[,;]\\n'
+      (varName != 'freeGlobal' && _.contains(complexVars, varName))
+        ? '^'  + indentA + 'var '  + varName + ' *=[\\s\\S]+?(?:\\(function[\\s\\S]+?\\(\\)\\);\\n(?=\\n)|[;}]\\n(?=\\n(?!\\s*\\(func)))'
+        : '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
+          '^'  + indentA + 'var '  + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
+          '^'  + indentB + varName + ' *=.+?[,;]\\n'
     , 'm')
     .exec(source);
 
@@ -1541,20 +1554,6 @@
   }
 
   /**
-   * Removes `nonEnumProps` array assignments from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeNonEnumProps(source) {
-    // remove nested `nonEnumProps` assignments
-    source = removeVar(source, 'nonEnumProps');
-    source = source.replace(/^ *\(function.+?\n *var length\b[\s\S]+?shadowedProps[\s\S]+?}\(\)\);\n/m, '');
-    return source;
-  }
-
-  /**
    * Removes all pseudo private properties from `source`. If a `propName` is
    * specified, only the specified property is removed.
    *
@@ -1624,7 +1623,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeStrings(source) {
-    return source.replace(/(['"])[^\1\n\\]*?(?:\\.[^\1\n\\]*?)*\1/g, '');
+    return source.replace(/(["'])(?:(?!\1)[^\n\\]|\\.)*\1/g, '');
   }
 
   /**
@@ -1907,8 +1906,12 @@
       return removeSupport(source);
     }
     // simplify complex variable assignments
-    if (/^(?:cloneableClasses|contextProps|ctorByClass|freeGlobal|nonEnumProps|shadowedProps|whitespace)$/.test(varName)) {
-      source = source.replace(RegExp('(var ' + varName + ') *=[\\s\\S]+?[;}]\\n\\n'), '$1 = null;\n\n');
+    if (_.contains(complexVars, varName)) {
+      source = source.replace(RegExp(
+        '^( *var ' + varName + ') *=[\\s\\S]+?' +
+        '(?:\\(function[\\s\\S]+?\\(\\)\\);(?=\\n\\n)|' +
+        '[;}](?=\\n\\n(?!\\s*\\(func)))'
+      , 'm'), '$1 = null;')
     }
 
     source = removeFunction(source, varName);
@@ -3644,14 +3647,6 @@
 
     // modify/remove references to removed methods/variables
     if (!isTemplate) {
-      if (isExcluded('clone') ||
-          isUnderscore && (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))) {
-        source = removeVar(source, 'cloneableClasses');
-        source = removeVar(source, 'ctorByClass');
-      }
-      if (isExcluded('createIterator')) {
-        source = removeNonEnumProps(source);
-      }
       if (isExcluded('invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
       }

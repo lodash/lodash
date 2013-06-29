@@ -1229,23 +1229,12 @@
    * @returns {Boolean} Returns `true` if the variable is used, else `false`.
    */
   function isVarUsed(source, varName, isShallow) {
-    var indentA = isShallow ? ' {2}' : ' {2,4}',
-        indentB = isShallow ? ' {6}' : ' {6,8}';
-
-    var match = RegExp(
-      (varName != 'freeGlobal' && _.contains(complexVars, varName))
-        ? '^'  + indentA + 'var '  + varName + ' *=[\\s\\S]+?(?:\\(function[\\s\\S]+?\\(\\)\\);\\n(?=\\n)|[;}]\\n(?=\\n(?!\\s*\\(func)))'
-        : '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
-          '^'  + indentA + 'var '  + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
-          '^'  + indentB + varName + ' *=.+?[,;]\\n'
-    , 'm')
-    .exec(source);
-
+    var match = matchVar(source, varName, isShallow);
     if (!match) {
       return false;
     }
     // remove the variable assignment from the source
-    source = source.slice(0, match.index) + source.slice(match.index + match[0].length);
+    source = source.replace(match, '');
     return RegExp('[^\\w"\'.]' + varName + '\\b').test(source);
   }
 
@@ -1284,6 +1273,31 @@
     )));
 
     return /@type +Function|\b(?:function\s*\w*|createIterator|overloadWrapper)\(/.test(result) ? result[0] : '';
+  }
+
+  /**
+   * Searches `source` for a `varName` variable assignment and returns
+   * the matched snippet.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @param {String} varName The name of the variable to match.
+   * @param {Boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
+   * @returns {String} Returns the matched variable snippet.
+   */
+  function matchVar(source, varName, isShallow) {
+    var indentA = isShallow ? ' {2}' : ' {2,4}',
+        indentB = isShallow ? ' {6}' : ' {6,8}';
+
+    var result = source.match(RegExp(
+      (varName != 'freeGlobal' && _.contains(complexVars, varName))
+        ? '^'  + indentA + 'var '  + varName + ' *=[\\s\\S]+?(?:\\(function[\\s\\S]+?\\(\\)\\);\\n(?=\\n)|[;}]\\n(?=\\n(?!\\s*\\(func)))'
+        : '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
+          '^'  + indentA + 'var '  + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
+          '^'  + indentB + varName + ' *=.+?[,;]\\n'
+    , 'm'));
+
+    return result ? result[0] : '';
   }
 
   /**

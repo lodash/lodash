@@ -1539,6 +1539,22 @@
   }
 
   /**
+   * Removes all Lo-Dash assignments from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the modified source.
+   */
+  function removeAssignments(source) {
+    source = removePseudoPrivates(source);
+    source = removeMethodAssignments(source);
+
+    // remove intermediate assignments
+    source = source.replace(/(=\s*)lodash\.\w+\s*=\s*/g, '$1');
+    return source;
+  }
+
+  /**
    * Removes the Lo-Dash method assignments snippet from `source`.
    *
    * @private
@@ -3566,17 +3582,6 @@
         return snippet;
       });
 
-      // remove methods from the build
-      allMethods.forEach(function(otherName) {
-        if (!_.contains(buildMethods, otherName) &&
-            !(otherName == 'findWhere' && !isUnderscore)) {
-          source = removeFunction(source, otherName);
-          if (!isNoDep) {
-            source = removeFromCreateIterator(source, otherName);
-          }
-        }
-      });
-
       // remove `iteratorTemplate` dependency checks from `_.template`
       source = source.replace(matchFunction(source, 'template'), function(match) {
         return match
@@ -3789,6 +3794,17 @@
         });
       }
 
+      // remove methods from the build
+      allMethods.forEach(function(otherName) {
+        if (!_.contains(buildMethods, otherName) &&
+            !(otherName == 'findWhere' && !isUnderscore)) {
+          source = removeFunction(source, otherName);
+          if (!isNoDep) {
+            source = removeFromCreateIterator(source, otherName);
+          }
+        }
+      });
+
       // remove forks of removed methods
       _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(methodName) {
         if (isExcluded(methodName)) {
@@ -3805,7 +3821,7 @@
 
         while (varNames.length) {
           varNames = _.sortBy(varNames, function(varName) {
-            var result = isVarUsed(snippet, varName, isShallow);
+            var result = _.contains(includeVars, varName) || isVarUsed(snippet, varName, isShallow);
             useMap[varName] = result;
             return result;
           });

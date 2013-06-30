@@ -1005,9 +1005,9 @@
 
     // iterate over the `dependencyMap`, adding names of methods
     // that have the `methodName` as a dependency
-    return _.uniq(_.transform(dependencyMap, function(result, dependencies, otherName) {
+    return _.uniq(_.transform(dependencyMap, function(result, deps, otherName) {
       if (!_.contains(stack, otherName) && _.some(methodNames, function(methodName) {
-            return _.contains(dependencies, methodName);
+            return _.contains(deps, methodName);
           })) {
         stack.push(otherName);
         result.push(otherName);
@@ -1030,21 +1030,21 @@
    * @returns {Array} Returns an array of method dependencies.
    */
   function getDependencies(methodName, isShallow, stack) {
-    var dependencies = _.isArray(methodName)
+    var deps = _.isArray(methodName)
       ? methodName
       : (hasOwnProperty.call(dependencyMap, methodName) && dependencyMap[methodName]);
 
-    if (!dependencies || !dependencies.length) {
+    if (!deps || !deps.length) {
       return [];
     }
     if (isShallow) {
-      return dependencies.slice();
+      return deps.slice();
     }
     stack || (stack = []);
 
     // recursively accumulate the dependencies of the `methodName` function, and
     // the dependencies of its dependencies, and so on
-    return _.uniq(_.transform(dependencies, function(result, otherName) {
+    return _.uniq(_.transform(deps, function(result, otherName) {
       if (!_.contains(stack, otherName)) {
         stack.push(otherName);
         result.push.apply(result, getDependencies(otherName, isShallow, stack).concat(otherName));

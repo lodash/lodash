@@ -3512,29 +3512,8 @@
     if (isTemplate) {
       source = buildTemplate(templatePattern, templateSettings);
     }
-    else if (isModern || isUnderscore) {
+    else {
       source = removeFromCreateIterator(source, 'support');
-
-      iteratorOptions.forEach(function(prop) {
-        if (prop != 'array') {
-          source = removeFromGetObject(source, prop);
-        }
-      });
-
-      // inline all functions defined with `createIterator`
-      _.functions(lodash).forEach(function(funcName) {
-        if (!(isUnderscore && isLodashFunc(funcName))) {
-          // strip leading underscores to match pseudo private functions
-          var reFunc = RegExp('^( *)(var ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
-          if (reFunc.test(source)) {
-            // extract, format, and inject the compiled function's source code
-            source = source.replace(reFunc, function(match, indent, left) {
-              return (indent + left) +
-                cleanupCompiled(getFunctionSource(lodash[funcName], indent)) + ';\n';
-            });
-          }
-        }
-      });
 
       // inline `iteratorTemplate` template
       source = replaceFunction(source, 'iteratorTemplate', (function() {
@@ -3580,6 +3559,28 @@
         return match
           .replace(/iteratorTemplate *&& */g, '')
           .replace(/iteratorTemplate\s*\?\s*([^:]+?)\s*:[^,;]+/g, '$1');
+      });
+    }
+    if (isModern || isUnderscore) {
+      iteratorOptions.forEach(function(prop) {
+        if (prop != 'array') {
+          source = removeFromGetObject(source, prop);
+        }
+      });
+
+      // inline all functions defined with `createIterator`
+      _.functions(lodash).forEach(function(funcName) {
+        if (!(isUnderscore && isLodashFunc(funcName))) {
+          // strip leading underscores to match pseudo private functions
+          var reFunc = RegExp('^( *)(var ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
+          if (reFunc.test(source)) {
+            // extract, format, and inject the compiled function's source code
+            source = source.replace(reFunc, function(match, indent, left) {
+              return (indent + left) +
+                cleanupCompiled(getFunctionSource(lodash[funcName], indent)) + ';\n';
+            });
+          }
+        }
       });
 
       if (isUnderscore) {

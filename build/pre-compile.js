@@ -340,7 +340,7 @@
       ];
 
       // minify `iteratorObject.keys`
-      source.replace(/\b(iteratorObject(?:\.|\['))keys\b/g, function(match, prelude) {
+      source = source.replace(/\b(iteratorObject(?:\.|\['))keys\b/g, function(match, prelude) {
         return prelude + minNames[iteratorOptions.length + props.length];
       });
 

@@ -2376,6 +2376,13 @@
           });
         }
       }
+      if (isModularize) {
+        varMethodDependencyMap.templateSettings = ['escape'];
+
+        _.each(['createIterator', 'lodash', 'value'], function(methodName) {
+          dependencyMap[methodName] = _.without(dependencyMap[methodName], 'lodash', 'lodashWrapper');
+        })
+      }
       if (isUnderscore) {
         if (!isLodashMethod('clone') && !isLodashMethod('cloneDeep')) {
           dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
@@ -3705,29 +3712,45 @@
           .replace(/(?:\s*\/\/.*)*\n( *)(?:basicEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
       }
-      if (isNoDep || (isUnderscore && !isLodashMethod('createCallback'))) {
+      if (isNoDep) {
+        source = removeFromCreateIterator(source, 'lodash');
+
         // replace `lodash.createCallback` references with `createCallback`
         source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
-      }
-      if (isNoDep) {
+
         // remove all horizontal rule comment separators
         source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
 
+        // remove debug sourceURL use in `_.template`
+        source = source.replace(matchFunction(source, 'template'), function(match) {
+          return match.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
+        });
+
+        // replace `_` use in `_.templateSettings.imports`
+        source = source.replace(matchVar(source, 'templateSettings'), function(match) {
+          return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
+        });
+
+        // remove method aliases
         _.each(buildMethods, function(methodName) {
           _.each(getAliases(methodName), function(alias) {
             source = removeFunction(source, alias);
           });
         });
 
-        _.each(['indicatorObject', 'objectTypes', 'support', 'templateSettings'], function(varName) {
-          source = removeVar(source, varName);
+        // remove method variable dependencies
+        _.each(varDependencies, function(varName) {
+          if (!_.contains(includeVars, varName)) {
+            source = removeVar(source, varName);
+          }
         });
 
         if (!isAMD && !isCommonJS && !isGlobal && !isNode) {
-          source = removeFunction(source, 'lodash');
+          if (isExcluded('lodash')) {
+            source = removeFunction(source, 'lodash');
+          }
           source = removeLodashWrapper(source);
-          source = removePseudoPrivates(source);
-          source = removeMethodAssignments(source);
+          source = removeAssignments(source);
         }
       }
       else {

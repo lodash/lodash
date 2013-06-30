@@ -21,6 +21,9 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
+  /** Used to avoid reference errors in `createIterator` */
+  var iteratorObject = {};
+
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
@@ -663,7 +666,7 @@
        * @memberOf _.support
        * @type Boolean
        */
-      support.argsClass = isArguments(arguments);
+      support.argsClass = toString.call(arguments) == argsClass;
 
       /**
        * Detect if `name` or `message` properties of `Error.prototype` are
@@ -1044,7 +1047,8 @@
      * @returns {Function} Returns the compiled function.
      */
     function createIterator() {
-      var data = getObject();
+      var data = getObject(),
+          keys = iteratorObject.keys;
 
       // data properties
       data.shadowedProps = shadowedProps;
@@ -1067,8 +1071,8 @@
 
       // create the function factory
       var factory = Function(
-          'errorClass, errorProto, hasOwnProperty, isArguments, isArray, ' +
-          'isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
+          'errorClass, errorProto, hasOwnProperty, indicatorObject, isArguments, ' +
+          'isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
           'stringClass, stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
@@ -1077,8 +1081,8 @@
 
       // return the compiled function
       return factory(
-        errorClass, errorProto, hasOwnProperty, isArguments, isArray,
-        isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
+        errorClass, errorProto, hasOwnProperty, indicatorObject, isArguments,
+        isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
         stringClass, stringProto, toString
       );
     }
@@ -1280,7 +1284,7 @@
      * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
      * // => ['one', 'two', 'three'] (order is not guaranteed)
      */
-    var keys = !nativeKeys ? shimKeys : function(object) {
+    var keys = iteratorObject.keys = !nativeKeys ? shimKeys : function(object) {
       if (!isObject(object)) {
         return [];
       }

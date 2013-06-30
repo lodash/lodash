@@ -1605,7 +1605,7 @@
       .replace(/\bcontext\b/g, 'window')
       .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
       .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
-      .replace(/^ *var _ *=.+\n+/m, '');
+      .replace(/^(?: *\/\/.*\s*)* *var _ *=.+\n+/m, '');
 
     // remove local timer variables
     source = removeVar(source, 'clearTimeout');

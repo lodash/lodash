@@ -967,22 +967,6 @@
   }
 
   /**
-   * Gets an array of category dependencies for a given category.
-   *
-   * @private
-   * @param {String} category The category.
-   * @returns {Array} Returns an array of cetegory dependants.
-   */
-  function getCategoryDependencies(category) {
-    var methods = _.uniq(_.transform(getMethodsByCategory(category), function(result, methodName) {
-      push.apply(result, getDependencies(methodName));
-    }));
-
-    var categories = _.uniq(methods.map(getCategory));
-    return _.without(categories, category);
-  }
-
-  /**
    * Gets the `createObject` fork from `source`.
    *
    * @private
@@ -1194,22 +1178,6 @@
   }
 
   /**
-   * Gets the `support` object assignment snippet from `source`.
-   *
-   * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the `support` snippet.
-   */
-  function getSupport(source) {
-    var result = source.match(RegExp(
-      multilineComment +
-      '( *)var support *=[\\s\\S]+?\n\\1}\\(1\\)\\);\\n'
-    ));
-
-    return result ? result[0] : '';
-  }
-
-  /**
    * Creates a sorted array of all variables defined outside of Lo-Dash methods.
    *
    * @private
@@ -1305,7 +1273,7 @@
 
     var result = source.match(RegExp(
       (varName != 'freeGlobal' && _.contains(complexVars, varName))
-        ? '^'  + indentA + 'var '  + varName + ' *=[\\s\\S]+?(?:\\(function[\\s\\S]+?\\(\\)\\);\\n(?=\\n)|[;}]\\n(?=\\n(?!\\s*\\(func)))'
+        ? '^'  + indentA + 'var '  + varName + ' *=[\\s\\S]+?(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|[;}]\\n(?=\\n(?!\\s*\\(func)))'
         : '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
           '^'  + indentA + 'var '  + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
           '^'  + indentB + varName + ' *=.+?[,;]\\n'
@@ -1582,8 +1550,8 @@
   }
 
   /**
-   * Removes all pseudo private properties from `source`. If a `propName` is
-   * specified, only the specified property is removed.
+   * Removes all pseudo private Lo-Dash properties from `source`. If a `propName`
+   * is specified, only the specified property is removed.
    *
    * @private
    * @param {String} source The source to process.
@@ -1652,17 +1620,6 @@
    */
   function removeStrings(source) {
     return source.replace(/(["'])(?:(?!\1)[^\n\\]|\\.)*\1/g, '');
-  }
-
-  /**
-   * Removes the `support` object declaration from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeSupport(source) {
-    return source.replace(getSupport(source), '');
   }
 
   /**
@@ -1907,7 +1864,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeSupportProp(source, propName) {
-    return source.replace(getSupport(source), function(match) {
+    return source.replace(matchVar(source, 'support'), function(match) {
       return match.replace(RegExp(
         multilineComment +
         // match a `try` block
@@ -1929,15 +1886,11 @@
    * @returns {String} Returns the modified source.
    */
   function removeVar(source, varName) {
-    // defer to specialized removal functions
-    if (varName == 'support') {
-      return removeSupport(source);
-    }
     // simplify complex variable assignments
     if (_.contains(complexVars, varName)) {
       source = source.replace(RegExp(
         '^( *var ' + varName + ') *=[\\s\\S]+?' +
-        '(?:\\(function[\\s\\S]+?\\(\\)\\);(?=\\n\\n)|' +
+        '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);(?=\\n\\n)|' +
         '[;}](?=\\n\\n(?!\\s*\\(func)))'
       , 'm'), '$1 = null;')
     }
@@ -3806,7 +3759,7 @@
           });
         }
         // remove code used to resolve unneeded `support` properties
-        source = source.replace(getSupport(source), function(match) {
+        source = source.replace(matchVar(source, 'support'), function(match) {
           return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
             var modified = setup;
 

@@ -22,6 +22,9 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
+  /** Used to avoid reference errors in `createIterator` */
+  var iteratorObject = {};
+
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
@@ -979,7 +982,8 @@
      * @returns {Function} Returns the compiled function.
      */
     function createIterator() {
-      var data = getObject();
+      var data = getObject(),
+          keys = iteratorObject.keys;
 
       // data properties
       data.shadowedProps = shadowedProps;
@@ -998,8 +1002,8 @@
 
       // create the function factory
       var factory = Function(
-          'errorClass, errorProto, hasOwnProperty, isArguments, isArray, ' +
-          'isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
+          'errorClass, errorProto, hasOwnProperty, indicatorObject, isArguments, ' +
+          'isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
           'stringClass, stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
@@ -1008,8 +1012,8 @@
 
       // return the compiled function
       return factory(
-        errorClass, errorProto, hasOwnProperty, isArguments, isArray,
-        isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
+        errorClass, errorProto, hasOwnProperty, indicatorObject, isArguments,
+        isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
         stringClass, stringProto, toString
       );
     }
@@ -1143,7 +1147,7 @@
      * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
      * // => ['one', 'two', 'three'] (order is not guaranteed)
      */
-    var keys = createIterator({
+    var keys = iteratorObject.keys = createIterator({
       'args': 'object',
       'init': '[]',
       'top': 'if (!(objectTypes[typeof object])) return result',

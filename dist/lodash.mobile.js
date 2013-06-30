@@ -22,6 +22,9 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
+  /** Used to avoid reference errors in `createIterator` */
+  var iteratorObject = {};
+
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
@@ -940,7 +943,7 @@
      * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
      * // => ['one', 'two', 'three'] (order is not guaranteed)
      */
-    var keys = !nativeKeys ? shimKeys : function(object) {
+    var keys = iteratorObject.keys = !nativeKeys ? shimKeys : function(object) {
       if (!isObject(object)) {
         return [];
       }

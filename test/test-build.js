@@ -89,158 +89,127 @@
     'zipObject': ['object']
   };
 
-  /** List of all methods */
-  var allMethods = _.functions(_).filter(function(methodName) {
-    return !/^_/.test(methodName);
-  });
-
-  /** List of "Arrays" category methods */
-  var arraysMethods = [
-    'compact',
-    'difference',
-    'drop',
-    'findIndex',
-    'first',
-    'flatten',
-    'head',
-    'indexOf',
-    'initial',
-    'intersection',
-    'last',
-    'lastIndexOf',
-    'object',
-    'range',
-    'rest',
-    'sortedIndex',
-    'tail',
-    'take',
-    'union',
-    'uniq',
-    'unique',
-    'unzip',
-    'without',
-    'zip',
-    'zipObject'
-  ];
-
-  /** List of "Chaining" category methods */
-  var chainingMethods = [
-    'chain',
-    'tap',
-    'value'
-  ];
-
-  /** List of "Collections" category methods */
-  var collectionsMethods = [
-    'all',
-    'any',
-    'at',
-    'collect',
-    'contains',
-    'countBy',
-    'detect',
-    'each',
-    'every',
-    'filter',
-    'find',
-    'findWhere',
-    'foldl',
-    'foldr',
-    'forEach',
-    'groupBy',
-    'include',
-    'inject',
-    'invoke',
-    'map',
-    'max',
-    'min',
-    'pluck',
-    'reduce',
-    'reduceRight',
-    'reject',
-    'select',
-    'shuffle',
-    'size',
-    'some',
-    'sortBy',
-    'toArray',
-    'where'
-  ];
-
-  /** List of "Functions" category methods */
-  var functionsMethods = [
-    'after',
-    'bind',
-    'bindAll',
-    'bindKey',
-    'createCallback',
-    'compose',
-    'debounce',
-    'defer',
-    'delay',
-    'memoize',
-    'once',
-    'partial',
-    'partialRight',
-    'throttle',
-    'wrap'
-  ];
-
-  /** List of "Objects" category methods */
-  var objectsMethods = [
-    'assign',
-    'clone',
-    'cloneDeep',
-    'defaults',
-    'extend',
-    'findKey',
-    'forIn',
-    'forOwn',
-    'functions',
-    'has',
-    'invert',
-    'isArguments',
-    'isArray',
-    'isBoolean',
-    'isDate',
-    'isElement',
-    'isEmpty',
-    'isEqual',
-    'isFinite',
-    'isFunction',
-    'isNaN',
-    'isNull',
-    'isNumber',
-    'isObject',
-    'isPlainObject',
-    'isRegExp',
-    'isString',
-    'isUndefined',
-    'keys',
-    'methods',
-    'merge',
-    'omit',
-    'pairs',
-    'pick',
-    'transform',
-    'values'
-  ];
-
-  /** List of "Utilities" category methods */
-  var utilityMethods = [
-    'escape',
-    'identity',
-    'mixin',
-    'noConflict',
-    'parseInt',
-    'random',
-    'result',
-    'runInContext',
-    'template',
-    'times',
-    'unescape',
-    'uniqueId'
-  ];
+  /** Used to track the category of functions */
+  var categoryMap = {
+    'Arrays': [
+      'compact',
+      'difference',
+      'findIndex',
+      'first',
+      'flatten',
+      'indexOf',
+      'initial',
+      'intersection',
+      'last',
+      'lastIndexOf',
+      'range',
+      'rest',
+      'sortedIndex',
+      'union',
+      'uniq',
+      'unzip',
+      'without',
+      'zip',
+      'zipObject'
+    ],
+    'Chaining': [
+      'chain',
+      'tap',
+      'value'
+    ],
+    'Collections': [
+      'at',
+      'contains',
+      'countBy',
+      'every',
+      'filter',
+      'find',
+      'findWhere',
+      'forEach',
+      'groupBy',
+      'invoke',
+      'map',
+      'max',
+      'min',
+      'pluck',
+      'reduce',
+      'reduceRight',
+      'reject',
+      'shuffle',
+      'size',
+      'some',
+      'sortBy',
+      'toArray',
+      'where'
+    ],
+    'Functions': [
+      'after',
+      'bind',
+      'bindAll',
+      'bindKey',
+      'createCallback',
+      'compose',
+      'debounce',
+      'defer',
+      'delay',
+      'memoize',
+      'once',
+      'partial',
+      'partialRight',
+      'throttle',
+      'wrap'
+    ],
+    'Objects': [
+      'assign',
+      'clone',
+      'cloneDeep',
+      'defaults',
+      'findKey',
+      'forIn',
+      'forOwn',
+      'functions',
+      'has',
+      'invert',
+      'isArguments',
+      'isArray',
+      'isBoolean',
+      'isDate',
+      'isElement',
+      'isEmpty',
+      'isEqual',
+      'isFinite',
+      'isFunction',
+      'isNaN',
+      'isNull',
+      'isNumber',
+      'isObject',
+      'isPlainObject',
+      'isRegExp',
+      'isString',
+      'isUndefined',
+      'keys',
+      'merge',
+      'omit',
+      'pairs',
+      'pick',
+      'transform',
+      'values'
+    ],
+    'Utilities': [
+      'escape',
+      'identity',
+      'mixin',
+      'noConflict',
+      'parseInt',
+      'random',
+      'result',
+      'runInContext',
+      'template',
+      'times',
+      'unescape',
+      'uniqueId'
+    ]
+  };
 
   /** List of Backbone's Lo-Dash dependencies */
   var backboneDependencies = [
@@ -299,8 +268,8 @@
     'without'
   ];
 
-  /** List of Lo-Dash only methods */
-  var lodashOnlyMethods = [
+  /** List of Lo-Dash only functions */
+  var lodashOnlyFuncs = [
     'at',
     'bindKey',
     'cloneDeep',
@@ -318,11 +287,16 @@
     'unzip'
   ];
 
-  /** List of all Lo-Dash methods */
-  var lodashMethods = allMethods.slice();
+  /** List of all functions */
+  var allFuncs = _.functions(_).filter(function(funcName) {
+    return !/^_/.test(funcName);
+  });
 
-  /** List of Underscore methods */
-  var underscoreMethods = _.difference(allMethods, lodashOnlyMethods);
+  /** List of all Lo-Dash functions */
+  var lodashFuncs = allFuncs.slice();
+
+  /** List of Underscore functions */
+  var underscoreFuncs = _.difference(allFuncs, lodashOnlyFuncs);
 
   /*--------------------------------------------------------------------------*/
 
@@ -351,15 +325,15 @@
   }
 
   /**
-   * Expands a list of method names to include real and alias names.
+   * Expands a list of function names to include real and alias names.
    *
    * @private
-   * @param {Array} methodNames The array of method names to expand.
-   * @returns {Array} Returns a new array of expanded method names.
+   * @param {Array} funcNames The array of function names to expand.
+   * @returns {Array} Returns a new array of expanded function names.
    */
-  function expandMethodNames(methodNames) {
-    return methodNames.reduce(function(result, methodName) {
-      var realName = getRealName(methodName);
+  function expandFuncNames(funcNames) {
+    return funcNames.reduce(function(result, funcName) {
+      var realName = getRealName(funcName);
       push.apply(result, [realName].concat(getAliases(realName)));
       return result;
     }, []);
@@ -377,31 +351,6 @@
   }
 
   /**
-   * Gets the names of methods belonging to the given `category`.
-   *
-   * @private
-   * @param {String} category The category to filter by.
-   * @returns {Array} Returns a new array of method names belonging to the given category.
-   */
-  function getMethodsByCategory(category) {
-    switch (category) {
-      case 'Arrays':
-        return arraysMethods.slice();
-      case 'Chaining':
-        return chainingMethods.slice();
-      case 'Collections':
-        return collectionsMethods.slice();
-      case 'Functions':
-        return functionsMethods.slice();
-      case 'Objects':
-        return objectsMethods.slice();
-      case 'Utilities':
-        return utilityMethods.slice();
-    }
-    return [];
-  }
-
-  /**
    * Gets the real name, not alias, of a given function name.
    *
    * @private
@@ -413,11 +362,11 @@
   }
 
   /**
-   * Tests if a given method on the `lodash` object can be called successfully.
+   * Tests if a given method can be called successfully.
    *
    * @private
    * @param {Object} lodash The built Lo-Dash object.
-   * @param {String} methodName The name of the Lo-Dash method to test.
+   * @param {String} funcName The name of the method to test.
    * @param {String} message The unit test message.
    */
   function testMethod(lodash, methodName, message) {
@@ -430,7 +379,7 @@
         func = lodash[methodName];
 
     try {
-      if (_.contains(arraysMethods, methodName)) {
+      if (_.contains(arraysFuncs, methodName)) {
         if (/(?:indexOf|sortedIndex|without)$/i.test(methodName)) {
           func(array, string);
         } else if (/^(?:difference|intersection|union|uniq|zip)/.test(methodName)) {
@@ -441,10 +390,10 @@
           func(array);
         }
       }
-      else if (_.contains(chainingMethods, methodName)) {
+      else if (_.contains(chainingFuncs, methodName)) {
         lodash(array)[methodName](noop);
       }
-      else if (_.contains(collectionsMethods, methodName)) {
+      else if (_.contains(collectionsFuncs, methodName)) {
         if (/^(?:count|group|sort)By$/.test(methodName)) {
           func(array, noop);
           func(array, string);
@@ -472,7 +421,7 @@
           func(object, noop, object);
         }
       }
-      else if (_.contains(functionsMethods, methodName)) {
+      else if (_.contains(functionsFuncs, methodName)) {
         if (methodName == 'after') {
           func(1, noop);
         } else if (methodName == 'bindAll') {
@@ -489,7 +438,7 @@
           func(noop);
         }
       }
-      else if (_.contains(objectsMethods, methodName)) {
+      else if (_.contains(categoryMap.Objects, methodName)) {
         if (methodName == 'clone') {
           func(object);
           func(object, true);
@@ -506,7 +455,7 @@
           func(object);
         }
       }
-      else if (_.contains(utilityMethods, methodName)) {
+      else if (_.contains(categoryMap.Utilities, methodName)) {
         if (methodName == 'mixin') {
           func({});
         } else if (methodName == 'result') {
@@ -1060,8 +1009,8 @@
         vm.runInContext(data.source, context);
         var lodash = context._;
 
-        _.each(lodashOnlyMethods.concat('assign'), function(methodName) {
-          equal(lodash[methodName], undefined, '_.' + methodName + ' should not exist: ' + basename);
+        _.each(lodashOnlyFuncs.concat('assign'), function(funcName) {
+          equal(lodash[funcName], undefined, '_.' + funcName + ' should not exist: ' + basename);
         });
 
         start();
@@ -1100,8 +1049,8 @@
           vm.runInContext(data.source, context, true);
           var lodash = context._;
 
-          _.each(index ? ['clone','cloneDeep'] : ['clone'], function(methodName) {
-            var clone = (methodName == 'clone')
+          _.each(index ? ['clone','cloneDeep'] : ['clone'], function(funcName) {
+            var clone = (funcName == 'clone')
               ? lodash.clone(array, true)
               : lodash.cloneDeep(array);
 
@@ -1471,7 +1420,7 @@
   QUnit.module('underscore builds with lodash methods');
 
   (function() {
-    var methodNames = [
+    var funcNames = [
       'assign',
       'bindKey',
       'clone',
@@ -1530,22 +1479,22 @@
         .replace(/[\s;]/g, '');
     }
 
-    methodNames.forEach(function(methodName) {
-      var command = 'underscore plus=' + methodName;
+    funcNames.forEach(function(funcName) {
+      var command = 'underscore plus=' + funcName;
 
-      if (methodName == 'createCallback') {
+      if (funcName == 'createCallback') {
         command += ',where';
       }
-      if (methodName == 'zip') {
+      if (funcName == 'zip') {
         command += ',unzip';
       }
-      if (methodName != 'chain' && _.contains(chainingMethods.concat('mixin'), methodName)) {
+      if (funcName != 'chain' && _.contains(chainingFuncs.concat('mixin'), funcName)) {
         command += ',chain';
       }
-      if (_.contains(['isEqual', 'isPlainObject'], methodName)) {
+      if (_.contains(['isEqual', 'isPlainObject'], funcName)) {
         command += ',forIn';
       }
-      if (_.contains(['contains', 'every', 'find', 'some', 'transform'], methodName)) {
+      if (_.contains(['contains', 'every', 'find', 'some', 'transform'], funcName)) {
         command += ',forOwn';
       }
       asyncTest('`lodash ' + command +'`', function() {
@@ -1559,12 +1508,12 @@
           vm.runInContext(data.source, context, true);
           var lodash = context._;
 
-          if (methodName == 'chain' || methodName == 'findWhere' || (methodName == 'defer' && global.setImmediate)) {
-            notEqual(strip(lodash[methodName]), strip(_[methodName]), basename);
+          if (funcName == 'chain' || funcName == 'findWhere' || (funcName == 'defer' && global.setImmediate)) {
+            notEqual(strip(lodash[funcName]), strip(_[funcName]), basename);
           } else if (!/\.min$/.test(basename)) {
-            equal(strip(lodash[methodName]), strip(_[methodName]), basename);
+            equal(strip(lodash[funcName]), strip(_[funcName]), basename);
           }
-          testMethod(lodash, methodName, basename);
+          testMethod(lodash, funcName, basename);
           start();
         });
       });
@@ -1601,8 +1550,8 @@
       'underscore include=debounce,throttle plus=after minus=throttle'
     ]
     .concat(
-      allMethods.map(function(methodName) {
-        return 'include=' + methodName;
+      allFuncs.map(function(funcName) {
+        return 'include=' + funcName;
       })
     );
 
@@ -1631,73 +1580,73 @@
             } catch(e) {
               console.log(e);
             }
-            // add method names explicitly
+            // add function names explicitly
             if (/\binclude=/.test(command)) {
-              var methodNames = command.match(/\binclude=(\S*)/)[1].split(/, */);
+              var funcNames = command.match(/\binclude=(\S*)/)[1].split(/, */);
             }
             if (/\bcategory=/.test(command)) {
               var categories = command.match(/\bcategory=(\S*)/)[1].split(/, */);
-              methodNames = (methodNames || []).concat(categories.map(function(category) {
+              funcNames = (funcNames || []).concat(categories.map(function(category) {
                 return capitalize(category.toLowerCase());
               }));
             }
-            // add method names required by Backbone and Underscore builds
-            if (/\bbackbone\b/.test(command) && !methodNames) {
-              methodNames = backboneDependencies.slice();
+            // add function names required by Backbone and Underscore builds
+            if (/\bbackbone\b/.test(command) && !funcNames) {
+              funcNames = backboneDependencies.slice();
             }
             if (isUnderscore) {
-              if (methodNames) {
-                exposeAssign = _.contains(methodNames, 'assign');
-                exposeZipObject = _.contains(methodNames, 'zipObject');
+              if (funcNames) {
+                exposeAssign = _.contains(funcNames, 'assign');
+                exposeZipObject = _.contains(funcNames, 'zipObject');
               } else {
-                methodNames = underscoreMethods.slice();
+                funcNames = underscoreFuncs.slice();
               }
             }
-            if (!methodNames) {
-              methodNames = lodashMethods.slice();
+            if (!funcNames) {
+              funcNames = lodashFuncs.slice();
             }
             if (/\bplus=/.test(command)) {
               var otherNames = command.match(/\bplus=(\S*)/)[1].split(/, */);
-              methodNames = methodNames.concat(expandMethodNames(otherNames));
+              funcNames = funcNames.concat(expandFuncNames(otherNames));
             }
             if (/\bminus=/.test(command)) {
               otherNames = command.match(/\bminus=(\S*)/)[1].split(/, */);
-              methodNames = _.difference(methodNames, expandMethodNames(otherNames));
+              funcNames = _.difference(funcNames, expandFuncNames(otherNames));
             }
             if (/\bexclude=/.test(command)) {
               otherNames = command.match(/\bexclude=(\S*)/)[1].split(/, */);
-              methodNames = _.difference(methodNames, expandMethodNames(otherNames));
+              funcNames = _.difference(funcNames, expandFuncNames(otherNames));
             }
 
-            // expand categories to method names
-            methodNames.slice().forEach(function(category) {
-              var otherNames = getMethodsByCategory(category);
+            // expand categories to function names
+            funcNames.slice().forEach(function(category) {
+              var otherNames = categoryMap[category];
 
-              // limit method names to those available for specific builds
+              // limit function names to those available for specific builds
               otherNames = _.intersection(otherNames,
                 isBackbone ? backboneDependencies :
-                isUnderscore ? underscoreMethods :
-                lodashMethods
+                isUnderscore ? underscoreFuncs :
+                lodashFuncs
               );
 
               if (otherNames.length) {
-                methodNames = _.without(methodNames, category);
-                push.apply(methodNames, otherNames);
+                funcNames = _.without(funcNames, category);
+                push.apply(funcNames, otherNames);
               }
             });
 
-            // expand aliases and remove nonexistent and duplicate method names
-            methodNames = _.uniq(_.intersection(expandMethodNames(methodNames), allMethods));
+            // expand aliases and remove nonexistent and duplicate function names
+            funcNames = _.uniq(_.intersection(expandFuncNames(funcNames), allFuncs));
 
             if (!exposeAssign) {
-              methodNames = _.without(methodNames, 'assign');
+              funcNames = _.without(funcNames, 'assign');
             }
             if (!exposeZipObject) {
-              methodNames = _.without(methodNames, 'zipObject');
+              funcNames = _.without(funcNames, 'zipObject');
             }
             var lodash = context._ || {};
-            methodNames.forEach(function(methodName) {
-              testMethod(lodash, methodName, basename);
+            funcNames.forEach(function(funcName) {
+              testMethod(lodash, funcName, basename);
             });
 
             start();

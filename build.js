@@ -2111,8 +2111,7 @@
 
     // backup dependencies to restore later
     var dependencyMapBackup = _.cloneDeep(dependencyMap),
-        varDependencyMapBackup = _.cloneDeep(varDependencyMap),
-        varMethodDependencyMapBackup = _.cloneDeep(varMethodDependencyMap);
+        varDependencyMapBackup = _.cloneDeep(varDependencyMap);
 
     // used to specify a custom IIFE to wrap Lo-Dash
     var iife = options.reduce(function(result, value) {
@@ -2416,7 +2415,10 @@
         }
       }
       if (isModularize) {
-        varMethodDependencyMap.templateSettings = ['escape'];
+        _.each(['contains', 'difference', 'intersection', 'omit', 'uniq'], function(methodName) {
+          dependencyMap[methodName] = _.without(dependencyMap[methodName], 'getIndexOf');
+          dependencyMap[methodName].push( 'basicEach');
+        })
 
         _.each(['createIterator', 'lodash', 'value'], function(methodName) {
           dependencyMap[methodName] = _.without(dependencyMap[methodName], 'lodash', 'lodashWrapper');
@@ -3945,7 +3947,6 @@
     // restore dependency maps
     dependencyMap = dependencyMapBackup;
     varDependencyMap = varDependencyMapBackup;
-    varMethodDependencyMap = varMethodDependencyMapBackup;
 
     // output debug build
     if (!isMinify && (isCustom || isDebug || isTemplate)) {

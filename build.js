@@ -1168,6 +1168,22 @@
   }
 
   /**
+   * Gets the `templateSettings` assignment from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `templateSettings`.
+   */
+  function getTemplateSettings(source) {
+    var result = source.match(RegExp(
+      multilineComment +
+      '( *)(?:var +|lodash\\.)templateSettings *=[\\s\\S]+?\\n\\1};\\n'
+    ));
+
+    return result ? result[0] : '';
+  }
+
+  /**
    * Creates a sorted array of all variables defined outside of Lo-Dash methods.
    *
    * @private
@@ -1444,6 +1460,22 @@
     source = source.replace(snippet, function() {
       return modified;
     });
+
+    return source;
+  }
+
+  /**
+   * Removes all references to `getIndexOf` from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeGetIndexOf(source) {
+    source = removeFunction(source, 'getIndexOf');
+
+    // replace all `getIndexOf` calls with `basicEach`
+    source = source.replace(/\bgetIndexOf\(\)/g, 'basicEach');
 
     return source;
   }
@@ -1887,6 +1919,17 @@
         '(?:( *).+?catch\\b[\\s\\S]+?\\n\\1}\\n)?'
       ), '');
     });
+  }
+
+  /**
+   * Removes the `templateSettings` assignment from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the modified source.
+   */
+  function removeTemplateSettings(source) {
+    return source.replace(getTemplateSettings(source), '');
   }
 
   /**
@@ -3677,9 +3720,8 @@
           ].join('\n' + indent);
         });
       }
-      if (isExcluded('template')) {
-        // remove `templateSettings` assignment
-        source = source.replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *lodash\.templateSettings[\s\S]+?};\n/, '');
+      if (!_.contains(includeVars, 'templateSettings') && isExcluded('template')) {
+        source = removeTemplateSettings(source);
       }
       if (isExcluded('value')) {
         source = removeLodashWrapper(source);
@@ -3710,8 +3752,10 @@
       if (isNoDep) {
         source = removeFromCreateIterator(source, 'lodash');
 
-        // replace `lodash.createCallback` references with `createCallback`
-        source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
+        source = removeGetIndexOf(source);
+
+        // remove`lodash` namespace from properties
+        source = source.replace(/\blodash\.(\w+)\b(?!\s*=)/g, '$1');
 
         // remove all horizontal rule comment separators
         source = source.replace(/^ *\/\*-+\*\/\n/gm, '');

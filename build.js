@@ -1126,18 +1126,6 @@
   }
 
   /**
-   * Gets the `iteratorTemplate` from `source`.
-   *
-   * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the `iteratorTemplate`.
-   */
-  function getIteratorTemplate(source) {
-    var result = source.match(/^( *)var iteratorTemplate *= *[\s\S]+?\n\1.+?;\n/m);
-    return result ? result[0] : '';
-  }
-
-  /**
    * Gets the Lo-Dash method assignments snippet from `source`.
    *
    * @private
@@ -1234,8 +1222,8 @@
   function matchFunction(source, funcName) {
     var result = source.match(RegExp(
       multilineComment +
-      // match variable declarations with `createIterator` or `overloadWrapper`
-      '( *)var ' + funcName + ' *=.*?(?:createIterator\\([\\s\\S]+?|overloadWrapper\\([\\s\\S]+?\\n\\1})\\);\\n'
+      // match variable declarations with `createIterator`, `overloadWrapper`, and `template`
+      '( *)var ' + funcName + ' *=.*?(?:createIterator|overloadWrapper|template)\\((?:.+|[\\s\\S]+?\\n\\1}?)\\);\\n'
     ));
 
     result || (result = source.match(RegExp(
@@ -1256,7 +1244,13 @@
       '( *)var ' + funcName + ' *=.+?;\\n'
     )));
 
-    return /@type +Function|\b(?:function\s*\w*|createIterator|overloadWrapper)\(/.test(result) ? result[0] : '';
+    if (/@type +Function\b/.test(result)) {
+      return result[0];
+    }
+    if (/(?:function(?:\s+\w+)?\b|createIterator|overloadWrapper|template)\(/.test(result)) {
+      return result[0];
+    }
+    return '';
   }
 
   /**
@@ -1514,7 +1508,7 @@
     source = removeFromCreateIterator(source, 'useKeys');
 
     // remove optimized branch in `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
+    source = source.replace(matchFunction(source, 'iteratorTemplate'), function(match) {
       return match.replace(/^(?: *\/\/.*\n)* *["']( *)<% *if *\(useHas *&& *useKeys[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/m, "'\\n' +\n$2");
     });
 
@@ -1699,7 +1693,7 @@
     source = removeSupportProp(source, 'enumErrorProps');
 
     // remove `support.enumErrorProps` from `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
+    source = source.replace(matchFunction(source, 'iteratorTemplate'), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(support\.enumErrorProps *(?:&&|\))(.+?}["']|[\s\S]+?<% *} *(?:%>|["'])).+/g, '')
         .replace(/support\.enumErrorProps\s*\|\|\s*/g, '');
@@ -1726,7 +1720,7 @@
     });
 
     // remove `support.enumPrototypes` from `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
+    source = source.replace(matchFunction(source, 'iteratorTemplate'), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)* *["'] *(?:<% *)?if *\(support\.enumPrototypes *(?:&&|\))(.+?}["']|[\s\S]+?<% *} *(?:%>|["'])).+/g, '')
         .replace(/support\.enumPrototypes\s*\|\|\s*/g, '');
@@ -1778,7 +1772,7 @@
     });
 
     // remove `nonEnumArgs` from `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
+    source = source.replace(matchFunction(source, 'iteratorTemplate'), function(match) {
       return match
         .replace(/(?: *\/\/.*\n)*( *["'] *)<% *} *else *if *\(support\.nonEnumArgs[\s\S]+?(\1<% *} *%>.+)/, '$2')
         .replace(/\s*\|\|\s*support\.nonEnumArgs/, '');
@@ -1800,7 +1794,7 @@
     source = removeSupportProp(source, 'nonEnumShadows');
 
     // remove `support.nonEnumShadows` from `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
+    source = source.replace(matchFunction(source, 'iteratorTemplate'), function(match) {
       return match.replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.nonEnumShadows[\s\S]+?["']\1<% *} *%>.+/, '');
     });
 
@@ -1864,7 +1858,7 @@
     });
 
     // remove `support.unindexedChars` from `iteratorTemplate`
-    source = source.replace(getIteratorTemplate(source), function(match) {
+    source = source.replace(matchFunction(source, 'iteratorTemplate'), function(match) {
       return match
         .replace(/'if *\(<%= *array *%>[^']*/, '$&\\n')
         .replace(/(?: *\/\/.*\n)* *["']( *)<% *if *\(support\.unindexedChars[\s\S]+?["']\1<% *} *%>.+/, '');
@@ -2023,7 +2017,7 @@
     source = source.replace(/^([\s\S]*?function[^{]+{)(?:\s*'use strict';)?/, '$1' + (value ? "\n  'use strict';" : ''));
 
     // replace `strict` branch in `iteratorTemplate` with hard-coded option
-    source = source.replace(getIteratorTemplate(source), function(match) {
+    source = source.replace(matchFunction(source, 'iteratorTemplate'), function(match) {
       return match.replace(/(template\()(?:\s*"'use strict.+)?/, '$1' + (value ? '\n    "\'use strict\';\\n" +' : ''));
     });
 
@@ -3379,7 +3373,7 @@
         }
 
         // unexpose `lodash.support`
-        source = source.replace(/lodash\.support *= */, '');
+        source = source.replace(/\blodash\.support *= */, '');
 
         // replace `slice` with `nativeSlice.call`
         _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(methodName) {
@@ -3566,9 +3560,8 @@
       source = removeFromCreateIterator(source, 'support');
 
       // inline `iteratorTemplate` template
-      source = source.replace(getIteratorTemplate(source), function(match) {
-        var indent = getIndent(match),
-            snippet = cleanupCompiled(getFunctionSource(lodash._iteratorTemplate, indent));
+      source = replaceFunction(source, 'iteratorTemplate', (function() {
+        var snippet = cleanupCompiled(getFunctionSource(lodash._iteratorTemplate));
 
         // prepend data object references to property names to avoid having to
         // use a with-statement
@@ -3600,10 +3593,10 @@
         snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
 
         // replace `iteratorTemplate` assignment
-        snippet = indent + 'var iteratorTemplate = ' + snippet + ';\n';
+        snippet = 'var iteratorTemplate = ' + snippet + ';\n';
 
         return snippet;
-      });
+      }()));
 
       // remove `iteratorTemplate` dependency checks from `_.template`
       source = source.replace(matchFunction(source, 'template'), function(match) {

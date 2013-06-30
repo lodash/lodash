@@ -78,7 +78,7 @@
   };
 
   /** Used to track function dependencies */
-  var dependencyMap = {
+  var funcDependencyMap = {
     'after': [],
     'assign': ['createIterator'],
     'at': ['isString'],
@@ -184,7 +184,7 @@
     'zip': ['unzip'],
     'zipObject': [],
 
-    // private methods
+    // private functions
     'basicEach': ['createIterator'],
     'basicIndexOf': [],
     'cacheIndexOf': ['basicIndexOf'],
@@ -215,36 +215,43 @@
     'wrapperToString': [],
     'wrapperValueOf': [],
 
-    // method used by the `backbone` and `underscore` builds
+    // used by the `backbone` and `underscore` builds
     'chain': ['value'],
     'findWhere': ['where']
   };
 
-  /** Used to track variable dependencies of methods */
-  var varDependencyMap = {
+  /** Used to track Lo-Dash property dependencies of functions */
+  var propDependencyMap = {
     'at': ['support'],
     'bind': ['support'],
-    'bindKey': ['indicatorObject'],
     'clone': ['support'],
-    'createCallback': ['indicatorObject'],
-    'createIterator': ['indicatorObject', 'iteratorObject', 'objectTypes'],
     'isArguments': ['support'],
     'isEmpty': ['support'],
-    'isEqual': ['indicatorObject', 'support'],
-    'isObject': ['objectTypes'],
+    'isEqual': ['support'],
     'isPlainObject': ['support'],
-    'isRegExp': ['objectTypes'],
     'iteratorTemplate': ['support'],
-    'keys': ['iteratorObject', 'support'],
-    'merge': ['indicatorObject'],
-    'partialRight': ['indicatorObject'],
+    'keys': ['support'],
     'reduceRight': ['support'],
     'shimIsPlainObject': ['support'],
-    'template': ['reInterpolate', 'templateSettings'],
+    'template': ['templateSettings'],
     'toArray': ['support']
   };
 
-  /** Used to track the categories of methods */
+  /** Used to track variable dependencies of functions */
+  var varDependencyMap = {
+    'bindKey': ['indicatorObject'],
+    'createCallback': ['indicatorObject'],
+    'createIterator': ['indicatorObject', 'iteratorObject', 'objectTypes'],
+    'isEqual': ['indicatorObject'],
+    'isObject': ['objectTypes'],
+    'isRegExp': ['objectTypes'],
+    'keys': ['iteratorObject'],
+    'merge': ['indicatorObject'],
+    'partialRight': ['indicatorObject'],
+    'template': ['reInterpolate'],
+  };
+
+  /** Used to track the category of functions */
   var categoryMap = {
     'Arrays': [
       'compact',
@@ -423,6 +430,17 @@
     'without'
   ];
 
+  /** List of all function categories */
+  var allCategories = _.keys(categoryMap);
+
+  /** List of all the ways to export the `lodash` function */
+  var allExports = [
+    'amd',
+    'commonjs',
+    'global',
+    'node'
+  ];
+
   /** List of variables with complex assignments */
   var complexVars = [
     'cloneableClasses',
@@ -434,14 +452,6 @@
     'support',
     'templateSettings',
     'whitespace'
-  ];
-
-  /** List of ways to export the `lodash` function */
-  var exportsAll = [
-    'amd',
-    'commonjs',
-    'global',
-    'node'
   ];
 
   /** Used to inline `iteratorTemplate` */
@@ -459,8 +469,8 @@
     'useKeys'
   ];
 
-  /** List of Lo-Dash only methods */
-  var lodashOnlyMethods = [
+  /** List of Lo-Dash only functions */
+  var lodashOnlyFuncs = [
     'at',
     'bindKey',
     'cloneDeep',
@@ -478,8 +488,8 @@
     'unzip'
   ];
 
-  /** List of private methods */
-  var privateMethods = [
+  /** List of private functions */
+  var privateFuncs = [
     'basicEach',
     'basicIndex',
     'cacheIndexOf',
@@ -509,19 +519,21 @@
     'wrapperValueOf'
   ];
 
-  /** List of all methods */
-  var allMethods = _.keys(dependencyMap);
+  /** List of all functions */
+  var allFuncs = _.keys(funcDependencyMap);
 
-  /** List of method categories */
-  var methodCategories = _.keys(categoryMap);
+  /** List of Lo-Dash functions */
+  var lodashFuncs = _.difference(allFuncs, privateFuncs.concat('findWhere'));
 
-  /** List of Lo-Dash methods */
-  var lodashMethods = _.difference(allMethods, privateMethods.concat('findWhere'));
+  /** List of Underscore functions */
+  var underscoreFuncs = _.difference(allFuncs, lodashOnlyFuncs.concat(privateFuncs));
 
-  /** List of Underscore methods */
-  var underscoreMethods = _.difference(allMethods, lodashOnlyMethods.concat(privateMethods));
+  /** List of all property dependencies */
+  var propDependencies = _.uniq(_.transform(propDependencyMap, function(result, propNames) {
+    push.apply(result, propNames);
+  }, []));
 
-  /** List of all method variable dependencies */
+  /** List of all variable dependencies */
   var varDependencies = _.uniq(_.transform(varDependencyMap, function(result, varNames) {
     push.apply(result, varNames);
   }, []));
@@ -535,7 +547,7 @@
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function addChainMethods(source) {
+  function addChainFuncs(source) {
     // add `_.chain`
     source = source.replace(matchFunction(source, 'tap'), function(match) {
       var indent = getIndent(match);
@@ -606,15 +618,15 @@
     source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');
 
     // remove `lodash.prototype` batch method assignments
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '');
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *funcName\)[\s\S]+?\n\1}.+/g, '');
 
     // replace `_.mixin`
     source = replaceFunction(source, 'mixin', [
       'function mixin(object) {',
-      '  forEach(functions(object), function(methodName) {',
-      '    var func = lodash[methodName] = object[methodName];',
+      '  forEach(functions(object), function(funcName) {',
+      '    var func = lodash[funcName] = object[funcName];',
       '',
-      '    lodash.prototype[methodName] = function() {',
+      '    lodash.prototype[funcName] = function() {',
       '      var args = [this.__wrapped__];',
       '      push.apply(args, arguments);',
       '',
@@ -633,9 +645,9 @@
     source = source.replace(/^(?:(?: *\/\/.*\n)*(?: *if *\(.+\n)?( *)(basicEach|forEach)\(\['[\s\S]+?\n\1}\);(?:\n *})?\n+)+/m, function(match, indent, funcName) {
       return indent + [
         '// add `Array` mutator functions to the wrapper',
-        funcName + "(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
-        '  var func = arrayRef[methodName];',
-        '  lodash.prototype[methodName] = function() {',
+        funcName + "(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(funcName) {",
+        '  var func = arrayRef[funcName];',
+        '  lodash.prototype[funcName] = function() {',
         '    var value = this.__wrapped__;',
         '    func.apply(value, arguments);',
         '',
@@ -649,9 +661,9 @@
         '});',
         '',
         '// add `Array` accessor functions to the wrapper',
-        funcName + "(['concat', 'join', 'slice'], function(methodName) {",
-        '  var func = arrayRef[methodName];',
-        '  lodash.prototype[methodName] = function() {',
+        funcName + "(['concat', 'join', 'slice'], function(funcName) {",
+        '  var func = arrayRef[funcName];',
+        '  lodash.prototype[funcName] = function() {',
         '    var value = this.__wrapped__,',
         '        result = func.apply(value, arguments);',
         '',
@@ -898,17 +910,17 @@
       '',
       '  Commands:',
       '',
-      '    lodash backbone      Build with only methods required by Backbone',
+      '    lodash backbone      Build with only functions required by Backbone',
       '    lodash legacy        Build tailored for older environments without ES5 support',
-      '    lodash mobile        Build without method compilation and most bug fixes for old browsers',
+      '    lodash mobile        Build without function compilation and most bug fixes for old browsers',
       '    lodash modern        Build tailored for newer environments with ES5 support',
       '    lodash strict        Build with `_.assign`, `_.bindAll`, & `_.defaults` in strict mode',
       '    lodash underscore    Build tailored for projects already using Underscore',
       '',
-      '    lodash include=...   Comma separated method/category names to include in the build',
-      '    lodash minus=...     Comma separated method/category names to remove from those included in the build',
-      '    lodash plus=...      Comma separated method/category names to add to those included in the build',
-      '    lodash category=...  Comma separated categories of methods to include in the build (case-insensitive)',
+      '    lodash include=...   Comma separated function/category names to include in the build',
+      '    lodash minus=...     Comma separated function/category names to remove from those included in the build',
+      '    lodash plus=...      Comma separated function/category names to add to those included in the build',
+      '    lodash category=...  Comma separated categories of functions to include in the build (case-insensitive)',
       '                         (i.e. “arrays”, “chaining”, “collections”, “functions”, “objects”, and “utilities”)',
       '    lodash exports=...   Comma separated names of ways to export the `lodash` function',
       '                         (i.e. “amd”, “commonjs”, “global”, “node”, and “none”)',
@@ -942,27 +954,27 @@
    * Gets the aliases associated with a given function name.
    *
    * @private
-   * @param {String} methodName The name of the method to get aliases for.
+   * @param {String} funcName The name of the function to get aliases for.
    * @returns {Array} Returns an array of aliases.
    */
-  function getAliases(methodName) {
-    var aliases = hasOwnProperty.call(realToAliasMap, methodName) && realToAliasMap[methodName];
-    return _.reject(aliases, function(methodName) {
-      return hasOwnProperty.call(dependencyMap, methodName);
+  function getAliases(funcName) {
+    var aliases = hasOwnProperty.call(realToAliasMap, funcName) && realToAliasMap[funcName];
+    return _.reject(aliases, function(funcName) {
+      return hasOwnProperty.call(funcDependencyMap, funcName);
     });
   }
 
   /**
-   * Gets the category of the given method name.
+   * Gets the category of the given function name.
    *
    * @private
-   * @param {String} methodName The method name.
-   * @returns {String} Returns the method name's category.
+   * @param {String} funcName The function name.
+   * @returns {String} Returns the function name's category.
    */
-  function getCategory(methodName) {
-    methodName = getRealName(methodName);
-    return _.findKey(categoryMap, function(methodNames) {
-      return _.contains(methodNames, methodName);
+  function getCategory(funcName) {
+    funcName = getRealName(funcName);
+    return _.findKey(categoryMap, function(funcNames) {
+      return _.contains(funcNames, funcName);
     }) || '';
   }
 
@@ -991,23 +1003,23 @@
   }
 
   /**
-   * Gets an array of depenants for the given method name(s).
+   * Gets an array of depenants for the given function name(s).
    *
    * @private
-   * @param {String} methodName A method name or array of method names.
+   * @param {String} funcName A function name or array of function names.
    * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependants.
-   * @param- {Array} [stackA=[]] Internally used track queried methods.
-   * @returns {Array} Returns an array of method dependants.
+   * @param- {Array} [stackA=[]] Internally used track queried functions.
+   * @returns {Array} Returns an array of function dependants.
    */
-  function getDependants(methodName, isShallow, stack) {
-    var methodNames = _.isArray(methodName) ? methodName : [methodName];
+  function getDependants(funcName, isShallow, stack) {
+    var funcNames = _.isArray(funcName) ? funcName : [funcName];
     stack || (stack = []);
 
-    // iterate over the `dependencyMap`, adding names of methods
-    // that have the `methodName` as a dependency
-    return _.uniq(_.transform(dependencyMap, function(result, deps, otherName) {
-      if (!_.contains(stack, otherName) && _.some(methodNames, function(methodName) {
-            return _.contains(deps, methodName);
+    // iterate over the `funcDependencyMap`, adding names of functions
+    // that have the `funcName` as a dependency
+    return _.uniq(_.transform(funcDependencyMap, function(result, deps, otherName) {
+      if (!_.contains(stack, otherName) && _.some(funcNames, function(funcName) {
+            return _.contains(deps, funcName);
           })) {
         stack.push(otherName);
         result.push(otherName);
@@ -1019,20 +1031,20 @@
   }
 
   /**
-   * Gets an array of dependencies for a given method name. If passed an array
+   * Gets an array of dependencies for a given function name. If passed an array
    * of dependencies it will return an array containing the given dependencies
    * plus any additional detected sub-dependencies.
    *
    * @private
-   * @param {Array|String} methodName A method name or array of dependencies to query.
+   * @param {Array|String} funcName A function name or array of dependencies to query.
    * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependencies.
-   * @param- {Array} [stackA=[]] Internally used track queried methods.
-   * @returns {Array} Returns an array of method dependencies.
+   * @param- {Array} [stackA=[]] Internally used track queried functions.
+   * @returns {Array} Returns an array of function dependencies.
    */
-  function getDependencies(methodName, isShallow, stack) {
-    var deps = _.isArray(methodName)
-      ? methodName
-      : (hasOwnProperty.call(dependencyMap, methodName) && dependencyMap[methodName]);
+  function getDependencies(funcName, isShallow, stack) {
+    var deps = _.isArray(funcName)
+      ? funcName
+      : (hasOwnProperty.call(funcDependencyMap, funcName) && funcDependencyMap[funcName]);
 
     if (!deps || !deps.length) {
       return [];
@@ -1042,7 +1054,7 @@
     }
     stack || (stack = []);
 
-    // recursively accumulate the dependencies of the `methodName` function, and
+    // recursively accumulate the dependencies of the `funcName` function, and
     // the dependencies of its dependencies, and so on
     return _.uniq(_.transform(deps, function(result, otherName) {
       if (!_.contains(stack, otherName)) {
@@ -1142,29 +1154,29 @@
   }
 
   /**
-   * Gets the names of methods in `source` belonging to the given `category`.
+   * Gets the names of functions in `source` belonging to the given `category`.
    *
    * @private
    * @param {String} category The category to filter by.
-   * @returns {Array} Returns a new array of method names belonging to the given category.
+   * @returns {Array} Returns a new array of function names belonging to the given category.
    */
   function getMethodsByCategory(category) {
     return categoryMap[category] || [];
   }
 
   /**
-   * Gets the real name, not alias, of a given method name.
+   * Gets the real name, not alias, of a given function name.
    *
    * @private
-   * @param {String} methodName The name of the method to resolve.
-   * @returns {String} Returns the real method name.
+   * @param {String} funcName The name of the function to resolve.
+   * @returns {String} Returns the real function name.
    */
-  function getRealName(methodName) {
+  function getRealName(funcName) {
     return (
-      !hasOwnProperty.call(dependencyMap, methodName) &&
-      hasOwnProperty.call(aliasToRealMap, methodName) &&
-      aliasToRealMap[methodName]
-    ) || methodName;
+      !hasOwnProperty.call(funcDependencyMap, funcName) &&
+      hasOwnProperty.call(aliasToRealMap, funcName) &&
+      aliasToRealMap[funcName]
+    ) || funcName;
   }
 
   /**
@@ -1184,7 +1196,7 @@
   }
 
   /**
-   * Creates a sorted array of all variables defined outside of Lo-Dash methods.
+   * Creates a sorted array of all variables defined outside of Lo-Dash functions.
    *
    * @private
    * @param {String} source The source to process.
@@ -1204,7 +1216,7 @@
       result.push(varA || varB || varC);
     });
 
-    return _.difference(_.uniq(result), allMethods).sort();
+    return _.difference(_.uniq(result), allFuncs).sort();
   }
 
   /**
@@ -1309,14 +1321,14 @@
   }
 
   /**
-   * Converts a comma separated options string into an array of method names.
+   * Converts a comma separated options string into an array of function names.
    *
    * @private
    * @param {String} value The option to convert.
    * @returns {Array} Returns the new converted array.
    */
   function optionToMethodsArray(value) {
-    // convert aliases to real method names
+    // convert aliases to real function names
     return optionToArray(value).map(getRealName);
   }
 
@@ -1687,8 +1699,8 @@
     });
 
     // remove `support.argsClass` from `_.isPlainObject`
-    _.each(['shimIsPlainObject', 'isPlainObject'], function(methodName) {
-      source = source.replace(matchFunction(source, methodName), function(match) {
+    _.each(['shimIsPlainObject', 'isPlainObject'], function(funcName) {
+      source = source.replace(matchFunction(source, funcName), function(match) {
         return match.replace(/\s*\|\|\s*\(!support\.argsClass[\s\S]+?\)\)/, '');
       });
     });
@@ -1772,8 +1784,8 @@
     source = removeSupportProp(source, 'nodeClass');
 
     // remove `support.nodeClass` from `_.clone` and `shimIsPlainObject`
-    _.each(['clone', 'shimIsPlainObject'], function(methodName) {
-      source = source.replace(matchFunction(source, methodName), function(match) {
+    _.each(['clone', 'shimIsPlainObject'], function(funcName) {
+      source = source.replace(matchFunction(source, funcName), function(match) {
         return match.replace(/\s*\|\|\s*\(!support\.nodeClass[\s\S]+?\)\)/, '');
       });
     });
@@ -2110,7 +2122,8 @@
     /*------------------------------------------------------------------------*/
 
     // backup dependencies to restore later
-    var dependencyMapBackup = _.cloneDeep(dependencyMap),
+    var funcDependencyMapBackup = _.cloneDeep(funcDependencyMap),
+        propDependencyMapBackup = _.cloneDeep(propDependencyMap),
         varDependencyMapBackup = _.cloneDeep(varDependencyMap);
 
     // used to specify a custom IIFE to wrap Lo-Dash
@@ -2173,7 +2186,7 @@
       return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
     }, isUnderscore
       ? ['commonjs', 'global', 'node']
-      : exportsAll.slice()
+      : allExports.slice()
     );
 
     // used to specify the AMD module ID of Lo-Dash used by precompiled templates
@@ -2226,27 +2239,27 @@
     /*------------------------------------------------------------------------*/
 
     var isExcluded = function() {
-      return _.every(arguments, function(methodName) {
-        return !_.contains(buildMethods, methodName);
+      return _.every(arguments, function(funcName) {
+        return !_.contains(buildFuncs, funcName);
       });
     };
 
-    var isLodashMethod = function(methodName) {
-      if (_.contains(lodashOnlyMethods, methodName) || /^(?:assign|zipObject)$/.test(methodName)) {
-        var methods = _.difference(_.union(includeMethods, plusMethods), minusMethods);
-        return _.contains(methods, methodName);
+    var isLodashFunc = function(funcName) {
+      if (_.contains(lodashOnlyFuncs, funcName) || /^(?:assign|zipObject)$/.test(funcName)) {
+        var funcNames = _.difference(_.union(includeFuncs, plusFuncs), minusFuncs);
+        return _.contains(funcNames, funcName);
       }
-      methods = _.difference(plusMethods, minusMethods);
-      return _.contains(methods, methodName);
+      funcNames = _.difference(plusFuncs, minusFuncs);
+      return _.contains(funcNames, funcName);
     };
 
     // delete the `_.findWhere` dependency map to enable its alias mapping
-    if (!isUnderscore || isLodashMethod('findWhere')) {
-      delete dependencyMap.findWhere;
+    if (!isUnderscore || isLodashFunc('findWhere')) {
+      delete funcDependencyMap.findWhere;
     }
 
-    // methods categories to include in the build
-    var categories = options.reduce(function(accumulator, value) {
+    // categories of functions to include in the build
+    var categoryOptions = options.reduce(function(accumulator, value) {
       if (/^category=.+$/.test(value)) {
         var array = optionToArray(value);
         accumulator = _.union(array.map(function(category) {
@@ -2256,12 +2269,12 @@
       return accumulator;
     }, []);
 
-    // methods to include in the build
-    var includeMethods = options.reduce(function(accumulator, value) {
+    // functions to include in the build
+    var includeFuncs = options.reduce(function(accumulator, value) {
       return /^include=.*$/.test(value)
         ? _.union(accumulator, optionToMethodsArray(value))
         : accumulator;
-    }, categories.slice());
+    }, categoryOptions.slice());
 
     // variables to include in the build
     var includeVars = options.reduce(function(accumulator, value) {
@@ -2270,41 +2283,41 @@
         : accumulator;
     }, []);
 
-    // methods to remove from the build
-    var minusMethods = options.reduce(function(accumulator, value) {
+    // functions to remove from the build
+    var minusFuncs = options.reduce(function(accumulator, value) {
       return /^(?:exclude|minus)=.*$/.test(value)
         ? _.union(accumulator, optionToMethodsArray(value))
         : accumulator;
     }, []);
 
-    // methods to add to the build
-    var plusMethods = options.reduce(function(accumulator, value) {
+    // functions to add to the build
+    var plusFuncs = options.reduce(function(accumulator, value) {
       return /^plus=.*$/.test(value)
         ? _.union(accumulator, optionToMethodsArray(value))
         : accumulator;
     }, []);
 
-    // expand categories to method names
-    _.each([includeMethods, minusMethods, plusMethods], function(methodNames) {
-      var categories = _.intersection(methodNames, methodCategories);
+    // expand categories to function names
+    _.each([includeFuncs, minusFuncs, plusFuncs], function(funcNames) {
+      var categories = _.intersection(funcNames, allCategories);
 
       categories.forEach(function(category) {
-        var otherMethods = getMethodsByCategory(category);
+        var otherFuncs = getMethodsByCategory(category);
 
-        // limit method names to those available for specific builds
+        // limit function names to those available for specific builds
         if (isBackbone) {
-          otherMethods = _.intersection(otherMethods, backboneDependencies);
+          otherFuncs = _.intersection(otherFuncs, backboneDependencies);
         } else if (isUnderscore) {
-          otherMethods = _.intersection(otherMethods, underscoreMethods);
+          otherFuncs = _.intersection(otherFuncs, underscoreFuncs);
         }
-        push.apply(methodNames, otherMethods);
+        push.apply(funcNames, otherFuncs);
       });
     });
 
-    // remove categories from method names
-    includeMethods = _.difference(includeMethods, methodCategories);
-    minusMethods = _.difference(minusMethods, methodCategories);
-    plusMethods = _.difference(plusMethods, methodCategories);
+    // remove categories from function names
+    includeFuncs = _.difference(includeFuncs, allCategories);
+    minusFuncs = _.difference(minusFuncs, allCategories);
+    plusFuncs = _.difference(plusFuncs, allCategories);
 
     /*------------------------------------------------------------------------*/
 
@@ -2354,23 +2367,23 @@
     _.forOwn({
       'category': {
         'entries': categories,
-        'validEntries': methodCategories
+        'validEntries': allCategories
       },
       'exports': {
         'entries': exportsOptions,
         'validEntries': ['amd', 'commonjs', 'global', 'node', 'none']
       },
       'include': {
-        'entries': includeMethods,
-        'validEntries': allMethods
+        'entries': includeFuncs,
+        'validEntries': allFuncs
       },
       'minus': {
-        'entries': minusMethods,
-        'validEntries': allMethods
+        'entries': minusFuncs,
+        'validEntries': allFuncs
       },
       'plus': {
-        'entries': plusMethods,
-        'validEntries': allMethods
+        'entries': plusFuncs,
+        'validEntries': allFuncs
       }
     }, function(data, commandName) {
       invalidArgs = _.difference(data.entries, data.validEntries.concat('none'));
@@ -2380,7 +2393,7 @@
     });
 
     if (warnings.length) {
-      dependencyMap = dependencyMapBackup;
+      funcDependencyMap = funcDependencyMapBackup;
       console.log([''].concat(
         warnings,
         'For more information type: lodash --help'
@@ -2390,202 +2403,202 @@
 
     /*------------------------------------------------------------------------*/
 
-    // names of methods to include in the build
-    var buildMethods = !isTemplate && (function() {
+    // names of functions to include in the build
+    var buildFuncs = !isTemplate && (function() {
       var result;
 
       // update dependencies
       if (isLegacy) {
-        dependencyMap.defer = _.without(dependencyMap.defer, 'bind');
-        dependencyMap.isPlainObject = _.without(dependencyMap.isPlainObject, 'shimIsPlainObject');
-        dependencyMap.keys = _.without(dependencyMap.keys, 'shimKeys');
+        funcDependencyMap.defer = _.without(funcDependencyMap.defer, 'bind');
+        funcDependencyMap.isPlainObject = _.without(funcDependencyMap.isPlainObject, 'shimIsPlainObject');
+        funcDependencyMap.keys = _.without(funcDependencyMap.keys, 'shimKeys');
       }
       if (isModern) {
-        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
+        funcDependencyMap.reduceRight = _.without(funcDependencyMap.reduceRight, 'isString');
 
         if (isMobile) {
-          _.each(['assign', 'defaults'], function(methodName) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'keys');
+          _.each(['assign', 'defaults'], function(funcName) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'keys');
           });
         }
         else {
-          _.each(['isEmpty', 'isEqual', 'isPlainObject', 'keys'], function(methodName) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArguments');
+          _.each(['isEmpty', 'isEqual', 'isPlainObject', 'keys'], function(funcName) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'isArguments');
           });
         }
       }
       if (isModularize) {
-        _.each(['contains', 'difference', 'intersection', 'omit', 'uniq'], function(methodName) {
-          dependencyMap[methodName] = _.without(dependencyMap[methodName], 'getIndexOf');
-          dependencyMap[methodName].push( 'basicEach');
+        _.each(['contains', 'difference', 'intersection', 'omit', 'uniq'], function(funcName) {
+          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'getIndexOf');
+          funcDependencyMap[funcName].push( 'basicEach');
         })
 
-        _.each(['createIterator', 'lodash', 'value'], function(methodName) {
-          dependencyMap[methodName] = _.without(dependencyMap[methodName], 'lodash', 'lodashWrapper');
+        _.each(['createIterator', 'lodash', 'value'], function(funcName) {
+          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'lodash', 'lodashWrapper');
         })
       }
       if (isUnderscore) {
-        if (!isLodashMethod('clone') && !isLodashMethod('cloneDeep')) {
-          dependencyMap.clone = _.without(dependencyMap.clone, 'forEach', 'forOwn');
+        if (!isLodashFunc('clone') && !isLodashFunc('cloneDeep')) {
+          funcDependencyMap.clone = _.without(funcDependencyMap.clone, 'forEach', 'forOwn');
         }
-        if (!isLodashMethod('contains')) {
-          dependencyMap.contains = _.without(dependencyMap.contains, 'isString');
+        if (!isLodashFunc('contains')) {
+          funcDependencyMap.contains = _.without(funcDependencyMap.contains, 'isString');
         }
-        if (!isLodashMethod('flatten')) {
-          dependencyMap.flatten = _.without(dependencyMap.flatten, 'createCallback');
+        if (!isLodashFunc('flatten')) {
+          funcDependencyMap.flatten = _.without(funcDependencyMap.flatten, 'createCallback');
         }
-        if (!isLodashMethod('isEmpty')) {
-          dependencyMap.isEmpty = ['isArray', 'isString'];
+        if (!isLodashFunc('isEmpty')) {
+          funcDependencyMap.isEmpty = ['isArray', 'isString'];
         }
-        if (!isLodashMethod('isEqual')) {
-          dependencyMap.isEqual = _.without(dependencyMap.isEqual, 'forIn', 'isArguments');
+        if (!isLodashFunc('isEqual')) {
+          funcDependencyMap.isEqual = _.without(funcDependencyMap.isEqual, 'forIn', 'isArguments');
         }
-        if (!isLodashMethod('pick')){
-          dependencyMap.pick = _.without(dependencyMap.pick, 'forIn', 'isObject');
+        if (!isLodashFunc('pick')){
+          funcDependencyMap.pick = _.without(funcDependencyMap.pick, 'forIn', 'isObject');
         }
-        if (!isLodashMethod('template')) {
-          dependencyMap.template = _.without(dependencyMap.template, 'keys', 'values');
+        if (!isLodashFunc('template')) {
+          funcDependencyMap.template = _.without(funcDependencyMap.template, 'keys', 'values');
         }
-        if (!isLodashMethod('toArray')) {
-          dependencyMap.toArray.push('isArray', 'map');
+        if (!isLodashFunc('toArray')) {
+          funcDependencyMap.toArray.push('isArray', 'map');
         }
-        if (!isLodashMethod('where')) {
-          dependencyMap.createCallback = _.without(dependencyMap.createCallback, 'isEqual');
-          dependencyMap.where.push('find', 'isEmpty');
+        if (!isLodashFunc('where')) {
+          funcDependencyMap.createCallback = _.without(funcDependencyMap.createCallback, 'isEqual');
+          funcDependencyMap.where.push('find', 'isEmpty');
         }
-        if (!isLodashMethod('forOwn')) {
-          _.each(['contains', 'every', 'find', 'forOwn', 'some', 'transform'], function(methodName) {
-            (varDependencyMap[methodName] || (varDependencyMap[methodName] = [])).push('indicatorObject');
+        if (!isLodashFunc('forOwn')) {
+          _.each(['contains', 'every', 'find', 'forOwn', 'some', 'transform'], function(funcName) {
+            (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('indicatorObject');
           });
         }
-        if (!isLodashMethod('forIn')) {
-          _.each(['isEqual', 'shimIsPlainObject'], function(methodName) {
-            (varDependencyMap[methodName] || (varDependencyMap[methodName] = [])).push('indicatorObject');
+        if (!isLodashFunc('forIn')) {
+          _.each(['isEqual', 'shimIsPlainObject'], function(funcName) {
+            (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('indicatorObject');
           });
         }
 
-        _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(methodName) {
-          if (methodName == 'basicEach' || !isLodashMethod(methodName)) {
-            (varDependencyMap[methodName] || (varDependencyMap[methodName] = [])).push('indicatorObject');
+        _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
+          if (funcName == 'basicEach' || !isLodashFunc(funcName)) {
+            (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('indicatorObject');
           }
         });
 
-        _.each(['clone', 'difference', 'intersection', 'isEqual', 'sortBy', 'uniq'], function(methodName) {
-          if (methodName == 'clone'
-                ? (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))
-                : !isLodashMethod(methodName)
+        _.each(['clone', 'difference', 'intersection', 'isEqual', 'sortBy', 'uniq'], function(funcName) {
+          if (funcName == 'clone'
+                ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
+                : !isLodashFunc(funcName)
               ) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'getArray', 'getObject', 'releaseArray', 'releaseObject');
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'getArray', 'getObject', 'releaseArray', 'releaseObject');
           }
         });
 
-        _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(methodName) {
-          if (methodName == 'clone'
-                ? (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))
-                : !isLodashMethod(methodName)
+        _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {
+          if (funcName == 'clone'
+                ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
+                : !isLodashFunc(funcName)
               ) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'slice');
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'slice');
           }
         });
 
-        _.each(['debounce', 'throttle'], function(methodName) {
-          if (!isLodashMethod(methodName)) {
-            dependencyMap[methodName] = [];
+        _.each(['debounce', 'throttle'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            funcDependencyMap[funcName] = [];
           }
         });
 
-        _.each(['difference', 'intersection', 'uniq'], function(methodName) {
-          if (!isLodashMethod(methodName)) {
-            dependencyMap[methodName] = ['getIndexOf'].concat(_.without(dependencyMap[methodName], 'cacheIndexOf', 'createCache'));
+        _.each(['difference', 'intersection', 'uniq'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            funcDependencyMap[funcName] = ['getIndexOf'].concat(_.without(funcDependencyMap[funcName], 'cacheIndexOf', 'createCache'));
           }
         });
 
-        _.each(['flatten', 'uniq'], function(methodName) {
-          if (!isLodashMethod(methodName)) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'overloadWrapper');
+        _.each(['flatten', 'uniq'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'overloadWrapper');
           }
         });
 
-        _.each(['max', 'min'], function(methodName) {
-          if (!isLodashMethod(methodName)) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'charAtCallback', 'isArray', 'isString');
+        _.each(['max', 'min'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'charAtCallback', 'isArray', 'isString');
           }
         });
       }
       if (isModern || isUnderscore) {
-        dependencyMap.reduceRight = _.without(dependencyMap.reduceRight, 'isString');
+        funcDependencyMap.reduceRight = _.without(funcDependencyMap.reduceRight, 'isString');
 
-        _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(methodName) {
-          if (!(isUnderscore && isLodashMethod(methodName))) {
-            var deps = dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
-            (varDependencyMap[methodName] || (varDependencyMap[methodName] = [])).push('objectTypes');
+        _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(funcName) {
+          if (!(isUnderscore && isLodashFunc(funcName))) {
+            var deps = funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'createIterator');
+            (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('objectTypes');
 
-            if (methodName != 'shimKeys') {
+            if (funcName != 'shimKeys') {
               deps.push('createCallback');
             }
-            if (/^(?:assign|basicEach|defaults|forOwn)$/.test(methodName)) {
+            if (/^(?:assign|basicEach|defaults|forOwn)$/.test(funcName)) {
               deps.push('keys');
             }
           }
         });
 
-        _.forOwn(varDependencyMap, function(deps, methodName) {
-          if (methodName != 'bind' &&
-              !(isMobile && methodName == 'keys') &&
-              !(isUnderscore && isLodashMethod(methodName))) {
-            varDependencyMap[methodName] = _.without(deps, 'support');
+        _.forOwn(propDependencyMap, function(deps, funcName) {
+          if (funcName != 'bind' &&
+              !(isMobile && funcName == 'keys') &&
+              !(isUnderscore && isLodashFunc(funcName))) {
+            propDependencyMap[funcName] = _.without(deps, 'support');
           }
         });
 
-        _.each(['at', 'forEach', 'toArray'], function(methodName) {
-          if (!(isUnderscore && isLodashMethod(methodName))) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isString');
+        _.each(['at', 'forEach', 'toArray'], function(funcName) {
+          if (!(isUnderscore && isLodashFunc(funcName))) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'isString');
           }
         });
 
-        _.each(['clone', 'isEqual', 'shimIsPlainObject'], function(methodName) {
-          if (!(isUnderscore && isLodashMethod(methodName))) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isNode');
+        _.each(['clone', 'isEqual', 'shimIsPlainObject'], function(funcName) {
+          if (!(isUnderscore && isLodashFunc(funcName))) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'isNode');
           }
         });
 
         if (!isMobile) {
-          _.each(['clone', 'transform', 'value'], function(methodName) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'basicEach');
-            dependencyMap[methodName].push('forEach');
+          _.each(['clone', 'transform', 'value'], function(funcName) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'basicEach');
+            funcDependencyMap[funcName].push('forEach');
           });
 
-          _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(methodName) {
-            dependencyMap[methodName] = _.without(dependencyMap[methodName], 'basicEach');
-            dependencyMap[methodName].push('forOwn');
+          _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(funcName) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'basicEach');
+            funcDependencyMap[funcName].push('forOwn');
           });
 
-          _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'shimKeys'], function(methodName) {
-            if (!(isUnderscore && isLodashMethod(methodName))) {
-              dependencyMap[methodName] = _.without(dependencyMap[methodName], 'isArguments', 'isArray');
+          _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'shimKeys'], function(funcName) {
+            if (!(isUnderscore && isLodashFunc(funcName))) {
+              funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'isArguments', 'isArray');
             }
           });
 
-          _.each(['max', 'min'], function(methodName) {
-            if (!(isUnderscore && isLodashMethod(methodName))) {
-              dependencyMap[methodName].push('forEach');
+          _.each(['max', 'min'], function(funcName) {
+            if (!(isUnderscore && isLodashFunc(funcName))) {
+              funcDependencyMap[funcName].push('forEach');
             }
           });
         }
       }
-      // add method names explicitly
-      if (includeMethods.length) {
-        result = includeMethods;
+      // add function names explicitly
+      if (includeFuncs.length) {
+        result = includeFuncs;
       }
-      // add method names required by Backbone and Underscore builds
+      // add function names required by Backbone and Underscore builds
       if (isBackbone && !result) {
         result = backboneDependencies;
       }
       else if (isUnderscore && !result) {
-        result = underscoreMethods;
+        result = underscoreFuncs;
       }
       if (!result) {
-        result = lodashMethods.slice();
+        result = lodashFuncs.slice();
       }
       // remove special "none" entry
       if (result == 'none') {
@@ -2593,14 +2606,14 @@
       } else {
         result = _.without(result, 'none');
       }
-      // add and subtract method names
-      if (plusMethods.length) {
-        result = _.union(result, plusMethods);
+      // add and subtract function names
+      if (plusFuncs.length) {
+        result = _.union(result, plusFuncs);
       }
-      if (minusMethods.length) {
+      if (minusFuncs.length) {
         result = _.difference(result, isNoDep
-          ? minusMethods
-          : minusMethods.concat(getDependants(minusMethods))
+          ? minusFuncs
+          : minusFuncs.concat(getDependants(minusFuncs))
         );
       }
       if (!isNoDep) {
@@ -2630,14 +2643,14 @@
         });
 
         // replace `createObject` and `isArguments` with their forks
-        _.each(['createObject', 'isArguments'], function(methodName) {
-          var capitalized = capitalize(methodName),
+        _.each(['createObject', 'isArguments'], function(funcName) {
+          var capitalized = capitalize(funcName),
               get = eval('get' + capitalized + 'Fork'),
               remove =  eval('remove' + capitalized + 'Fork');
 
-          source = source.replace(matchFunction(source, methodName).replace(RegExp('[\\s\\S]+?function ' + methodName), ''), function() {
+          source = source.replace(matchFunction(source, funcName).replace(RegExp('[\\s\\S]+?function ' + funcName), ''), function() {
             var snippet = get(source),
-                body = snippet.match(RegExp(methodName + ' *= *function([\\s\\S]+?\\n *});'))[1],
+                body = snippet.match(RegExp(funcName + ' *= *function([\\s\\S]+?\\n *});'))[1],
                 indent = getIndent(snippet);
 
             return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2)) + '\n';
@@ -2677,14 +2690,14 @@
           });
         }
       }
-      if ((isLegacy || isMobile || isUnderscore) && !isLodashMethod('createCallback')) {
+      if ((isLegacy || isMobile || isUnderscore) && !isLodashFunc('createCallback')) {
         source = removeBindingOptimization(source);
       }
       if (isLegacy || isMobile || isUnderscore) {
-        if (isMobile || (!isLodashMethod('assign') && !isLodashMethod('defaults') && !isLodashMethod('forIn') && !isLodashMethod('forOwn'))) {
+        if (isMobile || (!isLodashFunc('assign') && !isLodashFunc('defaults') && !isLodashFunc('forIn') && !isLodashFunc('forOwn'))) {
           source = removeKeysOptimization(source);
         }
-        if (!isLodashMethod('defer')) {
+        if (!isLodashFunc('defer')) {
           source = removeDeferFork(source);
         }
       }
@@ -2722,7 +2735,7 @@
           ].join('\n'));
 
           // replace `_.isRegExp`
-          if (!isUnderscore || (isUnderscore && isLodashMethod('isRegExp'))) {
+          if (!isUnderscore || (isUnderscore && isLodashFunc('isRegExp'))) {
             source = replaceFunction(source, 'isRegExp', [
               'function isRegExp(value) {',
               "  return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;",
@@ -2768,21 +2781,21 @@
             '}'
           ].join('\n'));
 
-          // replace `isArray(collection)` checks in "Collections" methods with simpler type checks
-          _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(methodName) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
-              if (methodName == 'reduce') {
+          // replace `isArray(collection)` checks in "Collections" functions with simpler type checks
+          _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(funcName) {
+            source = source.replace(matchFunction(source, funcName), function(match) {
+              if (funcName == 'reduce') {
                 match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');
               }
-              else if (/^(?:max|min)$/.test(methodName)) {
+              else if (/^(?:max|min)$/.test(funcName)) {
                 match = match.replace(/\bbasicEach\(/, 'forEach(');
-                if (!isUnderscore || isLodashMethod(methodName)) {
+                if (!isUnderscore || isLodashFunc(funcName)) {
                   return match;
                 }
               }
               return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *\{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
                 vars = vars
-                  .replace(/\b(length *=)[^;=]+/, '$1 collection' + (methodName == 'reduce' ? '.length' : ' ? collection.length : 0'))
+                  .replace(/\b(length *=)[^;=]+/, '$1 collection' + (funcName == 'reduce' ? '.length' : ' ? collection.length : 0'))
                   .replace(RegExp('^  ' + indent, 'gm'), indent);
 
                 return vars + statement.replace(/\bisArray\([^\)]+\)/, "typeof length == 'number'");
@@ -2807,7 +2820,7 @@
         ].join('\n'));
 
         // replace `_.assign`
-        if (!isLodashMethod('assign')) {
+        if (!isLodashFunc('assign')) {
           source = replaceFunction(source, 'assign', [
             'function assign(object) {',
             '  if (!object) {',
@@ -2826,7 +2839,7 @@
           ].join('\n'));
         }
         // replace `_.clone`
-        if (!isLodashMethod('clone') && !isLodashMethod('cloneDeep')) {
+        if (!isLodashFunc('clone') && !isLodashFunc('cloneDeep')) {
           source = replaceFunction(source, 'clone', [
             'function clone(value) {',
             '  return isObject(value)',
@@ -2836,7 +2849,7 @@
           ].join('\n'));
         }
         // replace `_.contains`
-        if (!isLodashMethod('contains')) {
+        if (!isLodashFunc('contains')) {
           source = replaceFunction(source, 'contains', [
             'function contains(collection, target) {',
             '  var indexOf = getIndexOf(),',
@@ -2854,7 +2867,7 @@
           ].join('\n'));
         }
         // replace `_.debounce`
-        if (!isLodashMethod('debounce')) {
+        if (!isLodashFunc('debounce')) {
           source = replaceFunction(source, 'debounce', [
             'function debounce(func, wait, immediate) {',
             '  var args,',
@@ -2885,7 +2898,7 @@
           ].join('\n'));
         }
         // replace `_.defaults`
-        if (!isLodashMethod('defaults')) {
+        if (!isLodashFunc('defaults')) {
           source = replaceFunction(source, 'defaults', [
             'function defaults(object) {',
             '  if (!object) {',
@@ -2906,7 +2919,7 @@
           ].join('\n'));
         }
         // replace `_.difference`
-        if (!isLodashMethod('difference')) {
+        if (!isLodashFunc('difference')) {
           source = replaceFunction(source, 'difference', [
             'function difference(array) {',
             '  var index = -1,',
@@ -2926,7 +2939,7 @@
           ].join('\n'));
         }
         // add Underscore's `_.findWhere`
-        if (!isLodashMethod('findWhere') && !isLodashMethod('where')) {
+        if (!isLodashFunc('findWhere') && !isLodashFunc('where')) {
           source = source.replace(matchFunction(source, 'find'), function(match) {
             var indent = getIndent(match);
             return match && (match + [
@@ -2967,7 +2980,7 @@
           });
         }
         // replace `_.flatten`
-        if (!isLodashMethod('flatten')) {
+        if (!isLodashFunc('flatten')) {
           source = replaceFunction(source, 'flatten', [
             'function flatten(array, isShallow) {',
             '  var index = -1,',
@@ -2987,7 +3000,7 @@
           ].join('\n'));
         }
         // replace `_.intersection`
-        if (!isLodashMethod('intersection')) {
+        if (!isLodashFunc('intersection')) {
           source = replaceFunction(source, 'intersection', [
             'function intersection(array) {',
             '  var args = arguments,',
@@ -3015,7 +3028,7 @@
           ].join('\n'));
         }
         // replace `_.isEmpty`
-        if (!isLodashMethod('isEmpty')) {
+        if (!isLodashFunc('isEmpty')) {
           source = replaceFunction(source, 'isEmpty', [
             'function isEmpty(value) {',
             '  if (!value) {',
@@ -3034,7 +3047,7 @@
           ].join('\n'));
         }
         // replace `_.isEqual`
-        if (!isLodashMethod('isEqual')) {
+        if (!isLodashFunc('isEqual')) {
           source = replaceFunction(source, 'isEqual', [
             'function isEqual(a, b, stackA, stackB) {',
             '  if (a === b) {',
@@ -3136,7 +3149,7 @@
           ].join('\n'));
         }
         // replace `_.memoize`
-        if (!isLodashMethod('memoize')) {
+        if (!isLodashFunc('memoize')) {
            source = replaceFunction(source, 'memoize', [
               'function memoize(func, resolver) {',
               '  var cache = {};',
@@ -3150,7 +3163,7 @@
           ].join('\n'));
         }
         // replace `_.omit`
-        if (!isLodashMethod('omit')) {
+        if (!isLodashFunc('omit')) {
           source = replaceFunction(source, 'omit', [
             'function omit(object) {',
             '  var indexOf = getIndexOf(),',
@@ -3167,7 +3180,7 @@
           ].join('\n'));
         }
         // replace `_.pick`
-        if (!isLodashMethod('pick')) {
+        if (!isLodashFunc('pick')) {
           source = replaceFunction(source, 'pick', [
             'function pick(object) {',
             '  var index = -1,',
@@ -3186,7 +3199,7 @@
           ].join('\n'));
         }
         // replace `_.result`
-        if (!isLodashMethod('result')) {
+        if (!isLodashFunc('result')) {
           source = replaceFunction(source, 'result', [
             'function result(object, property) {',
             '  var value = object ? object[property] : null;',
@@ -3195,7 +3208,7 @@
           ].join('\n'));
         }
         // replace `_.sortBy`
-        if (!isLodashMethod('sortBy')) {
+        if (!isLodashFunc('sortBy')) {
           source = replaceFunction(source, 'sortBy', [
             'function sortBy(collection, callback, thisArg) {',
             '  var index = -1,',
@@ -3221,7 +3234,7 @@
           ].join('\n'));
         }
         // replace `_.template`
-        if (!isLodashMethod('template')) {
+        if (!isLodashFunc('template')) {
           // remove `_.templateSettings.imports assignment
           source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
@@ -3282,7 +3295,7 @@
           ].join('\n'));
         }
         // replace `_.throttle`
-        if (!isLodashMethod('throttle')) {
+        if (!isLodashFunc('throttle')) {
           source = replaceFunction(source, 'throttle', [
             'function throttle(func, wait) {',
             '  var args,',
@@ -3318,7 +3331,7 @@
           ].join('\n'));
         }
         // replace `_.times`
-        if (!isLodashMethod('times')) {
+        if (!isLodashFunc('times')) {
           source = replaceFunction(source, 'times', [
             'function times(n, callback, thisArg) {',
             '  var index = -1,',
@@ -3332,7 +3345,7 @@
           ].join('\n'));
         }
         // replace `_.toArray`
-        if (!isLodashMethod('toArray')) {
+        if (!isLodashFunc('toArray')) {
           source = replaceFunction(source, 'toArray', [
             'function toArray(collection) {',
             '  if (isArray(collection)) {',
@@ -3346,7 +3359,7 @@
           ].join('\n'));
         }
         // replace `_.uniq`
-        if (!isLodashMethod('uniq')) {
+        if (!isLodashFunc('uniq')) {
           source = replaceFunction(source, 'uniq', [
             'function uniq(array, isSorted, callback, thisArg) {',
             '  var index = -1,',
@@ -3383,7 +3396,7 @@
           ].join('\n'));
         }
         // replace `_.uniqueId`
-        if (!isLodashMethod('uniqueId')) {
+        if (!isLodashFunc('uniqueId')) {
           source = replaceFunction(source, 'uniqueId', [
             'function uniqueId(prefix) {',
             "  var id = ++idCounter + '';",
@@ -3392,7 +3405,7 @@
           ].join('\n'));
         }
         // replace `_.where`
-        if (!isLodashMethod('where')) {
+        if (!isLodashFunc('where')) {
           source = replaceFunction(source, 'where', [
             'function where(collection, properties, first) {',
             '  return (first && isEmpty(properties))',
@@ -3402,7 +3415,7 @@
           ].join('\n'));
         }
         // replace `_.zip`
-        if (!isLodashMethod('unzip')) {
+        if (!isLodashFunc('unzip')) {
           source = replaceFunction(source, 'zip', [
             'function zip(array) {',
             '  var index = -1,',
@@ -3421,35 +3434,35 @@
         source = source.replace(/\blodash\.support *= */, '');
 
         // replace `slice` with `nativeSlice.call`
-        _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(methodName) {
-          if (methodName == 'clone'
-                ? (!isLodashMethod('clone') && !isLodashMethod('cloneDeep'))
-                : !isLodashMethod(methodName)
+        _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {
+          if (funcName == 'clone'
+                ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
+                : !isLodashFunc(funcName)
               ) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
+            source = source.replace(matchFunction(source, funcName), function(match) {
               return match.replace(/([^\w.])slice\(/g, '$1nativeSlice.call(');
             });
           }
         });
 
         // remove conditional `charCodeCallback` use from `_.max` and `_.min`
-        _.each(['max', 'min'], function(methodName) {
-          if (!isLodashMethod(methodName)) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
+        _.each(['max', 'min'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            source = source.replace(matchFunction(source, funcName), function(match) {
               return match.replace(/=.+?callback *&& *isString[^:]+:\s*/g, '= ');
             });
           }
         });
 
         // remove `_.isEqual` use from `createCallback`
-        if (!isLodashMethod('where')) {
+        if (!isLodashFunc('where')) {
           source = source.replace(matchFunction(source, 'createCallback'), function(match) {
             return match.replace(/\bisEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
           });
         }
         // remove unused features from `createBound`
-        if (_.every(['bindKey', 'partial', 'partialRight'], function(methodName) {
-              return !_.contains(buildMethods, methodName);
+        if (_.every(['bindKey', 'partial', 'partialRight'], function(funcName) {
+              return !_.contains(buildFuncs, funcName);
             })) {
           source = source.replace(matchFunction(source, 'createBound'), function(match) {
             return match
@@ -3468,19 +3481,19 @@
           });
         }
       }
-      // add Underscore's chaining methods
-      if (isUnderscore ? !_.contains(plusMethods, 'chain') : _.contains(plusMethods, 'chain')) {
-        source = addChainMethods(source);
+      // add Underscore's chaining functions
+      if (isUnderscore ? !_.contains(plusFuncs, 'chain') : _.contains(plusFuncs, 'chain')) {
+        source = addChainFuncs(source);
       }
       // replace `basicEach` references with `forEach` and `forOwn`
       if (isUnderscore || (isModern && !isMobile)) {
-        // replace `basicEach` with `_.forOwn` in "Collections" methods
+        // replace `basicEach` with `_.forOwn` in "Collections" functions
         source = source.replace(/\bbasicEach(?=\(collection)/g, 'forOwn');
 
-        // replace `basicEach` with `_.forEach` in the rest of the methods
+        // replace `basicEach` with `_.forEach` in the rest of the functions
         source = source.replace(/(\?\s*)basicEach(?=\s*:)/g, '$1forEach');
 
-        // replace `basicEach` with `_.forEach` in the method assignment snippet
+        // replace `basicEach` with `_.forEach` in the function assignment snippet
         source = source.replace(/\bbasicEach(?=\(\[)/g, 'forEach');
       }
 
@@ -3509,15 +3522,15 @@
       });
 
       // inline all functions defined with `createIterator`
-      _.functions(lodash).forEach(function(methodName) {
-        if (!(isUnderscore && isLodashMethod(methodName))) {
+      _.functions(lodash).forEach(function(funcName) {
+        if (!(isUnderscore && isLodashFunc(funcName))) {
           // strip leading underscores to match pseudo private functions
-          var reFunc = RegExp('^( *)(var ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
+          var reFunc = RegExp('^( *)(var ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
           if (reFunc.test(source)) {
             // extract, format, and inject the compiled function's source code
             source = source.replace(reFunc, function(match, indent, left) {
               return (indent + left) +
-                cleanupCompiled(getFunctionSource(lodash[methodName], indent)) + ';\n';
+                cleanupCompiled(getFunctionSource(lodash[funcName], indent)) + ';\n';
             });
           }
         }
@@ -3571,16 +3584,16 @@
 
       if (isUnderscore) {
         // unexpose "exit early" feature of `basicEach`, `_.forEach`, `_.forIn`, and `_.forOwn`
-        _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(methodName) {
-          if (methodName == 'basicEach' || !isLodashMethod(methodName)) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
+        _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
+          if (funcName == 'basicEach' || !isLodashFunc(funcName)) {
+            source = source.replace(matchFunction(source, funcName), function(match) {
               return match.replace(/=== *false\)/g, '=== indicatorObject)');
             });
           }
         });
 
         // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
-        if (isUnderscore && !isLodashMethod('forOwn')) {
+        if (isUnderscore && !isLodashFunc('forOwn')) {
           source = source.replace(matchFunction(source, 'every'), function(match) {
             return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
           });
@@ -3593,14 +3606,14 @@
             return match.replace(/return callback[^)]+\)/, '$& && indicatorObject');
           });
 
-          _.each(['contains', 'some'], function(methodName) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
+          _.each(['contains', 'some'], function(funcName) {
+            source = source.replace(matchFunction(source, funcName), function(match) {
               return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
             });
           });
         }
         // modify `_.isEqual` and `shimIsPlainObject` to use the private `indicatorObject`
-        if (!isLodashMethod('forIn')) {
+        if (!isLodashFunc('forIn')) {
           source = source.replace(matchFunction(source, 'isEqual'), function(match) {
             return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
           });
@@ -3611,9 +3624,9 @@
         }
 
         // remove `thisArg` from unexposed `forIn` and `forOwn`
-        _.each(['forIn', 'forOwn'], function(methodName) {
-          if (!isLodashMethod(methodName)) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
+        _.each(['forIn', 'forOwn'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            source = source.replace(matchFunction(source, funcName), function(match) {
               return match
                 .replace(/(callback), *thisArg/g, '$1')
                 .replace(/^ *callback *=.+\n/m, '');
@@ -3622,9 +3635,9 @@
         });
 
         // remove chainability from `basicEach` and `_.forEach`
-        if (!isLodashMethod('forEach')) {
-          _.each(['basicEach', 'forEach'], function(methodName) {
-            source = source.replace(matchFunction(source, methodName), function(match) {
+        if (!isLodashFunc('forEach')) {
+          _.each(['basicEach', 'forEach'], function(funcName) {
+            source = source.replace(matchFunction(source, funcName), function(match) {
               return match
                 .replace(/\n *return .+?([};\s]+)$/, '$1')
                 .replace(/\b(return) +result\b/, '$1')
@@ -3633,10 +3646,10 @@
         }
         // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
         source = source.replace(getMethodAssignments(source), function(match) {
-          return _.reduce(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, methodName) {
-            return isLodashMethod(methodName)
+          return _.reduce(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
+            return isLodashFunc(funcName)
               ? result
-              : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + methodName + ' *=[\\s\\S]+?;\\n', 'm'), '');
+              : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
           }, match);
         });
       }
@@ -3682,7 +3695,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // modify/remove references to removed methods/variables
+    // modify/remove references to removed functions/variables
     if (!isTemplate) {
       if (isExcluded('invert')) {
         source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
@@ -3694,10 +3707,10 @@
             return '';
           }
           return prelude + indent + [
-            'forOwn(lodash, function(func, methodName) {',
-            '  lodash[methodName] = func;',
+            'forOwn(lodash, function(func, funcName) {',
+            '  lodash[funcName] = func;',
             '',
-            '  lodash.prototype[methodName] = function() {',
+            '  lodash.prototype[funcName] = function() {',
             '    var value = this.__wrapped__,',
             '        args = [value];',
             '',
@@ -3728,15 +3741,15 @@
         // remove `lodash.prototype` method assignments from `_.mixin`
         source = replaceFunction(source, 'mixin', [
           'function mixin(object) {',
-          '  forEach(functions(object), function(methodName) {',
-          '    lodash[methodName] = object[methodName];',
+          '  forEach(functions(object), function(funcName) {',
+          '    lodash[funcName] = object[funcName];',
           '  });',
           '}'
         ].join('\n'));
 
         // remove all `lodash.prototype` additions
         source = source
-          .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '')
+          .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *funcName\)[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)(?:basicEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
       }
@@ -3763,14 +3776,14 @@
           return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
         });
 
-        // remove method aliases
-        _.each(buildMethods, function(methodName) {
-          _.each(getAliases(methodName), function(alias) {
+        // remove function aliases
+        _.each(buildFuncs, function(funcName) {
+          _.each(getAliases(funcName), function(alias) {
             source = removeFunction(source, alias);
           });
         });
 
-        // remove method variable dependencies
+        // remove function variable dependencies
         _.each(varDependencies, function(varName) {
           if (!_.contains(includeVars, varName)) {
             source = removeVar(source, varName);
@@ -3863,9 +3876,9 @@
         });
       }
 
-      // remove methods from the build
-      allMethods.forEach(function(otherName) {
-        if (!_.contains(buildMethods, otherName) &&
+      // remove functions from the build
+      allFuncs.forEach(function(otherName) {
+        if (!_.contains(buildFuncs, otherName) &&
             !(otherName == 'findWhere' && !isUnderscore)) {
           source = removeFunction(source, otherName);
           if (!isNoDep) {
@@ -3874,10 +3887,10 @@
         }
       });
 
-      // remove forks of removed methods
-      _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(methodName) {
-        if (isExcluded(methodName)) {
-          source = eval('remove' + capitalize(methodName) + 'Fork')(source);
+      // remove forks of removed functions
+      _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(funcName) {
+        if (isExcluded(funcName)) {
+          source = eval('remove' + capitalize(funcName) + 'Fork')(source);
         }
       });
 
@@ -3927,7 +3940,7 @@
     var isCustom = !isNoDep && (
       isLegacy || isMapped || isModern || isStrict || isUnderscore || outputPath ||
       /(?:category|exclude|exports|iife|include|minus|plus)=.*$/.test(options) ||
-      !_.isEqual(exportsOptions, exportsAll)
+      !_.isEqual(exportsOptions, allExports)
     );
 
     // used as the basename of the output path
@@ -3936,7 +3949,8 @@
       : 'lodash' + (isTemplate ? '.template' : isCustom ? '.custom' : '');
 
     // restore dependency maps
-    dependencyMap = dependencyMapBackup;
+    funcDependencyMap = funcDependencyMapBackup;
+    propDependencyMap = propDependencyMapBackup;
     varDependencyMap = varDependencyMapBackup;
 
     // output debug build

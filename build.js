@@ -659,15 +659,15 @@
     source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');
 
     // remove `lodash.prototype` batch method assignments
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *funcName\)[\s\S]+?\n\1}.+/g, '');
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '');
 
     // replace `_.mixin`
     source = replaceFunction(source, 'mixin', [
       'function mixin(object) {',
-      '  forEach(functions(object), function(funcName) {',
-      '    var func = lodash[funcName] = object[funcName];',
+      '  forEach(functions(object), function(methodName) {',
+      '    var func = lodash[methodName] = object[methodName];',
       '',
-      '    lodash.prototype[funcName] = function() {',
+      '    lodash.prototype[methodName] = function() {',
       '      var args = [this.__wrapped__];',
       '      push.apply(args, arguments);',
       '',
@@ -683,12 +683,12 @@
     ].join('\n'));
 
     // replace wrapper `Array` method assignments
-    source = source.replace(/^(?:(?: *\/\/.*\n)*(?: *if *\(.+\n)?( *)(basicEach|forEach)\(\['[\s\S]+?\n\1}\);(?:\n *})?\n+)+/m, function(match, indent, funcName) {
+    source = source.replace(/^(?:(?: *\/\/.*\n)*(?: *if *\(.+\n)?( *)(basicEach|forEach)\(\['[\s\S]+?\n\1}\);(?:\n *})?\n+)+/m, function(match, indent, methodName) {
       return indent + [
         '// add `Array` mutator functions to the wrapper',
-        funcName + "(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(funcName) {",
-        '  var func = arrayRef[funcName];',
-        '  lodash.prototype[funcName] = function() {',
+        methodName + "(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {",
+        '  var func = arrayRef[methodName];',
+        '  lodash.prototype[methodName] = function() {',
         '    var value = this.__wrapped__;',
         '    func.apply(value, arguments);',
         '',
@@ -702,9 +702,9 @@
         '});',
         '',
         '// add `Array` accessor functions to the wrapper',
-        funcName + "(['concat', 'join', 'slice'], function(funcName) {",
-        '  var func = arrayRef[funcName];',
-        '  lodash.prototype[funcName] = function() {',
+        methodName + "(['concat', 'join', 'slice'], function(methodName) {",
+        '  var func = arrayRef[methodName];',
+        '  lodash.prototype[methodName] = function() {',
         '    var value = this.__wrapped__,',
         '        result = func.apply(value, arguments);',
         '',
@@ -1611,7 +1611,7 @@
    *
    * @private
    * @param {String} source The source to process.
-   * @param {String} [funcName] The name of the property to remove.
+   * @param {String} [propName] The name of the property to remove.
    * @returns {String} Returns the modified source.
    */
   function removePseudoPrivates(source, propName) {
@@ -3712,10 +3712,10 @@
             return '';
           }
           return prelude + indent + [
-            'forOwn(lodash, function(func, funcName) {',
-            '  lodash[funcName] = func;',
+            'forOwn(lodash, function(func, methodName) {',
+            '  lodash[methodName] = func;',
             '',
-            '  lodash.prototype[funcName] = function() {',
+            '  lodash.prototype[methodName] = function() {',
             '    var value = this.__wrapped__,',
             '        args = [value];',
             '',
@@ -3746,8 +3746,8 @@
         // remove `lodash.prototype` method assignments from `_.mixin`
         source = replaceFunction(source, 'mixin', [
           'function mixin(object) {',
-          '  forEach(functions(object), function(funcName) {',
-          '    lodash[funcName] = object[funcName];',
+          '  forEach(functions(object), function(methodName) {',
+          '    lodash[methodName] = object[methodName];',
           '  });',
           '}'
         ].join('\n'));

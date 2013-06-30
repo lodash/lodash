@@ -176,7 +176,7 @@
     'uniq': ['cacheIndexOf', 'createCache', 'getArray', 'getIndexOf', 'overloadWrapper', 'releaseArray', 'releaseObject'],
     'uniqueId': [],
     'unzip': ['max', 'pluck'],
-    'value': ['basicEach', 'forOwn', 'isArray', 'lodashWrapper'],
+    'value': ['basicEach', 'forOwn', 'isArray', 'lodash', 'wrapperValueOf', 'lodashWrapper'],
     'values': ['keys'],
     'where': ['filter'],
     'without': ['difference'],
@@ -193,15 +193,16 @@
     'compareAscending': [],
     'createBound': ['createObject', 'isFunction', 'isObject'],
     'createCache': ['cachePush', 'getObject', 'releaseObject'],
-    'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'keys', 'releaseObject'],
+    'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'lodash', 'releaseObject'],
     'createObject': [ 'isObject', 'noop'],
     'escapeHtmlChar': [],
     'escapeStringChar': [],
     'getArray': [],
     'getIndexOf': ['basicIndexOf', 'indexOf'],
     'getObject': [],
-    'iteratorTemplate': [],
     'isNode': [],
+    'iteratorTemplate': [],
+    'lodash': ['lodashWrapper'],
     'lodashWrapper': ['wrapperToString', 'wrapperValueOf'],
     'noop': [],
     'overloadWrapper': ['createCallback'],
@@ -219,14 +220,14 @@
     'findWhere': ['where']
   };
 
-  /** Used to track property dependencies */
-  var propDependencyMap = {
+  /** Used to track variable dependencies of methods */
+  var varDependencyMap = {
     'at': ['support'],
     'bind': ['support'],
     'bindKey': ['indicatorObject'],
     'clone': ['support'],
     'createCallback': ['indicatorObject'],
-    'createIterator': ['objectTypes', 'support'],
+    'createIterator': ['indicatorObject', 'iteratorObject', 'objectTypes'],
     'isArguments': ['support'],
     'isEmpty': ['support'],
     'isEqual': ['indicatorObject', 'support'],
@@ -234,12 +235,12 @@
     'isPlainObject': ['support'],
     'isRegExp': ['objectTypes'],
     'iteratorTemplate': ['support'],
-    'keys': ['support'],
+    'keys': ['iteratorObject', 'support'],
     'merge': ['indicatorObject'],
     'partialRight': ['indicatorObject'],
     'reduceRight': ['support'],
     'shimIsPlainObject': ['support'],
-    'template': ['templateSettings'],
+    'template': ['reInterpolate', 'templateSettings'],
     'toArray': ['support']
   };
 
@@ -430,6 +431,8 @@
     'freeGlobal',
     'nonEnumProps',
     'shadowedProps',
+    'support',
+    'templateSettings',
     'whitespace'
   ];
 
@@ -492,14 +495,18 @@
     'getObject',
     'isNode',
     'iteratorTemplate',
+    'lodash',
     'lodashWrapper',
+    'noop',
     'overloadWrapper',
     'releaseArray',
     'releaseObject',
     'shimIsPlainObject',
     'shimKeys',
     'slice',
-    'unescapeHtmlChar'
+    'unescapeHtmlChar',
+    'wrapperToString',
+    'wrapperValueOf'
   ];
 
   /** List of all methods */
@@ -513,6 +520,11 @@
 
   /** List of Underscore methods */
   var underscoreMethods = _.difference(allMethods, lodashOnlyMethods.concat(privateMethods));
+
+  /** List of all method variable dependencies */
+  var varDependencies = _.uniq(_.transform(varDependencyMap, function(result, varNames) {
+    push.apply(result, varNames);
+  }, []));
 
   /*--------------------------------------------------------------------------*/
 
@@ -2089,7 +2101,8 @@
 
     // backup dependencies to restore later
     var dependencyMapBackup = _.cloneDeep(dependencyMap),
-        propDependencyMapBackup = _.cloneDeep(propDependencyMap);
+        varDependencyMapBackup = _.cloneDeep(varDependencyMap),
+        varMethodDependencyMapBackup = _.cloneDeep(varMethodDependencyMap);
 
     // used to specify a custom IIFE to wrap Lo-Dash
     var iife = options.reduce(function(result, value) {
@@ -2416,18 +2429,18 @@
         }
         if (!isLodashMethod('forOwn')) {
           _.each(['contains', 'every', 'find', 'forOwn', 'some', 'transform'], function(methodName) {
-            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
+            (varDependencyMap[methodName] || (varDependencyMap[methodName] = [])).push('indicatorObject');
           });
         }
         if (!isLodashMethod('forIn')) {
           _.each(['isEqual', 'shimIsPlainObject'], function(methodName) {
-            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
+            (varDependencyMap[methodName] || (varDependencyMap[methodName] = [])).push('indicatorObject');
           });
         }
 
         _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(methodName) {
           if (methodName == 'basicEach' || !isLodashMethod(methodName)) {
-            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('indicatorObject');
+            (varDependencyMap[methodName] || (varDependencyMap[methodName] = [])).push('indicatorObject');
           }
         });
 
@@ -2478,23 +2491,23 @@
 
         _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(methodName) {
           if (!(isUnderscore && isLodashMethod(methodName))) {
-            var dependencies = dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
-            (propDependencyMap[methodName] || (propDependencyMap[methodName] = [])).push('objectTypes');
+            var deps = dependencyMap[methodName] = _.without(dependencyMap[methodName], 'createIterator');
+            (varDependencyMap[methodName] || (varDependencyMap[methodName] = [])).push('objectTypes');
 
             if (methodName != 'shimKeys') {
-              dependencies.push('createCallback');
+              deps.push('createCallback');
             }
             if (/^(?:assign|basicEach|defaults|forOwn)$/.test(methodName)) {
-              dependencies.push('keys');
+              deps.push('keys');
             }
           }
         });
 
-        _.forOwn(propDependencyMap, function(dependencies, methodName) {
+        _.forOwn(varDependencyMap, function(deps, methodName) {
           if (methodName != 'bind' &&
               !(isMobile && methodName == 'keys') &&
               !(isUnderscore && isLodashMethod(methodName))) {
-            propDependencyMap[methodName] = _.without(dependencies, 'support');
+            varDependencyMap[methodName] = _.without(deps, 'support');
           }
         });
 
@@ -2608,7 +2621,7 @@
 
         // replace `_.keys` with `shimKeys`
         source = source.replace(
-          matchFunction(source, 'keys').replace(/[\s\S]+?var keys *= */, ''),
+          matchFunction(source, 'keys').replace(/[\s\S]+?var keys.*= */, ''),
           matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *= */, '')
         );
       }
@@ -3884,7 +3897,8 @@
 
     // restore dependency maps
     dependencyMap = dependencyMapBackup;
-    propDependencyMap = propDependencyMapBackup;
+    varDependencyMap = varDependencyMapBackup;
+    varMethodDependencyMap = varMethodDependencyMapBackup;
 
     // output debug build
     if (!isMinify && (isCustom || isDebug || isTemplate)) {

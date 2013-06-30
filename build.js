@@ -2276,12 +2276,11 @@
         : accumulator;
     }, categoryOptions.slice());
 
+    // properties to include in the build
+    var includeProps = _.intersection(includeFuncs, propDependencies);
+
     // variables to include in the build
-    var includeVars = options.reduce(function(accumulator, value) {
-      return /^vars=.*$/.test(value)
-        ? _.union(accumulator, optionToArray(value))
-        : accumulator;
-    }, []);
+    var includeVars = _.intersection(includeFuncs, varDependencies);
 
     // functions to remove from the build
     var minusFuncs = options.reduce(function(accumulator, value) {
@@ -2315,7 +2314,7 @@
     });
 
     // remove categories from function names
-    includeFuncs = _.difference(includeFuncs, allCategories);
+    includeFuncs = _.difference(includeFuncs, allCategories, includeProps, includeVars);
     minusFuncs = _.difference(minusFuncs, allCategories);
     plusFuncs = _.difference(plusFuncs, allCategories);
 
@@ -2324,7 +2323,7 @@
     // used to detect invalid command-line arguments
     var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template|vars)=[\s\S]*$/.test(value)) {
+          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=[\s\S]*$/.test(value)) {
         return true;
       }
       var result = _.contains([

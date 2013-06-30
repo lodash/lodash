@@ -783,7 +783,7 @@
       }
       var filePath = path.join(directory, filename),
           text = fs.readFileSync(filePath, 'utf8'),
-          precompiled = cleanupCompiled(getFunctionSource(_.template(text, null, options))),
+          precompiled = cleanupCompiled(getFunctionSource(_.template(text, null, options), 2)),
           prop = filename.replace(/\..*$/, '');
 
       source.push("  templates['" + prop.replace(/['\n\r\t]/g, '\\$&') + "'] = " + precompiled + ';', '');
@@ -1057,13 +1057,15 @@
    *
    * @private
    * @param {Function} func The function to process.
-   * @param {String} indent The function indent.
+   * @param {Number|String} [indent=0] The level to indent.
    * @returns {String} Returns the formatted source.
    */
   function getFunctionSource(func, indent) {
     var source = func.source || (func + '');
-    if (indent == null) {
-      indent = '  ';
+
+    indent || (indent = '');
+    if (typeof indent == 'number') {
+      indent = Array(indent + 1).join(' ');
     }
     // format leading whitespace
     return source.replace(/\n(?:.*)/g, function(match, index) {

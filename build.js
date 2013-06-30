@@ -3638,9 +3638,9 @@
             index = iife.indexOf(token);
 
         source = source.match(/^\/\**[\s\S]+?\*\/\n/) +
-          iife.slice(0, index) +
+          (index > -1 ? iife.slice(0, index) : iife) +
           source.replace(/^[\s\S]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
-          iife.slice(index + token.length);
+          (index > -1 ? iife.slice(index + token.length) : '')
       }
     }());
 

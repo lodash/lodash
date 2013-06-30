@@ -2225,6 +2225,13 @@
         : accumulator;
     }, categories.slice());
 
+    // variables to include in the build
+    var includeVars = options.reduce(function(accumulator, value) {
+      return /^vars=.*$/.test(value)
+        ? _.union(accumulator, optionToArray(value))
+        : accumulator;
+    }, []);
+
     // methods to remove from the build
     var minusMethods = options.reduce(function(accumulator, value) {
       return /^(?:exclude|minus)=.*$/.test(value)
@@ -2266,7 +2273,7 @@
     // used to detect invalid command-line arguments
     var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
       if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=[\s\S]*$/.test(value)) {
+          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template|vars)=[\s\S]*$/.test(value)) {
         return true;
       }
       var result = _.contains([
@@ -2328,7 +2335,7 @@
         'validEntries': allMethods
       }
     }, function(data, commandName) {
-      invalidArgs = _.difference(data.entries, data.validEntries);
+      invalidArgs = _.difference(data.entries, data.validEntries.concat('none'));
       if (invalidArgs.length) {
         warnings.push('Invalid `' + commandName + '` entr' + (invalidArgs.length > 1 ? 'ies' : 'y') + ' passed: ' + invalidArgs.join(', '));
       }
@@ -2532,6 +2539,13 @@
       if (!result) {
         result = lodashMethods.slice();
       }
+      // remove special "none" entry
+      if (result == 'none') {
+        result = [];
+      } else {
+        result = _.without(result, 'none');
+      }
+      // add and subtract method names
       if (plusMethods.length) {
         result = _.union(result, plusMethods);
       }

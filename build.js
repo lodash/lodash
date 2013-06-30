@@ -3499,110 +3499,29 @@
     if (isTemplate) {
       source = buildTemplate(templatePattern, templateSettings);
     }
-    else {
-      if (isModern || isUnderscore) {
-        iteratorOptions.forEach(function(prop) {
-          if (prop != 'array') {
-            source = removeFromGetObject(source, prop);
-          }
-        });
-
-        // inline all functions defined with `createIterator`
-        _.functions(lodash).forEach(function(methodName) {
-          if (!(isUnderscore && isLodashMethod(methodName))) {
-            // strip leading underscores to match pseudo private functions
-            var reFunc = RegExp('^( *)(var ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
-            if (reFunc.test(source)) {
-              // extract, format, and inject the compiled function's source code
-              source = source.replace(reFunc, function(match, indent, left) {
-                return (indent + left) +
-                  cleanupCompiled(getFunctionSource(lodash[methodName], indent)) + ';\n';
-              });
-            }
-          }
-        });
-
-        if (isUnderscore) {
-          // unexpose "exit early" feature of `basicEach`, `_.forEach`, `_.forIn`, and `_.forOwn`
-          _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(methodName) {
-            if (methodName == 'basicEach' || !isLodashMethod(methodName)) {
-              source = source.replace(matchFunction(source, methodName), function(match) {
-                return match.replace(/=== *false\)/g, '=== indicatorObject)');
-              });
-            }
-          });
-
-          // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
-          if (isUnderscore && !isLodashMethod('forOwn')) {
-            source = source.replace(matchFunction(source, 'every'), function(match) {
-              return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-            });
-
-            source = source.replace(matchFunction(source, 'find'), function(match) {
-              return match.replace(/return false/, 'return indicatorObject');
-            });
-
-            source = source.replace(matchFunction(source, 'transform'), function(match) {
-              return match.replace(/return callback[^)]+\)/, '$& && indicatorObject');
-            });
-
-            _.each(['contains', 'some'], function(methodName) {
-              source = source.replace(matchFunction(source, methodName), function(match) {
-                return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
-              });
-            });
-          }
-          // modify `_.isEqual` and `shimIsPlainObject` to use the private `indicatorObject`
-          if (!isLodashMethod('forIn')) {
-            source = source.replace(matchFunction(source, 'isEqual'), function(match) {
-              return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-            });
-
-            source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-              return match.replace(/return false/, 'return indicatorObject');
-            });
-          }
-
-          // remove `thisArg` from unexposed `forIn` and `forOwn`
-          _.each(['forIn', 'forOwn'], function(methodName) {
-            if (!isLodashMethod(methodName)) {
-              source = source.replace(matchFunction(source, methodName), function(match) {
-                return match
-                  .replace(/(callback), *thisArg/g, '$1')
-                  .replace(/^ *callback *=.+\n/m, '');
-              });
-            }
-          });
-
-          // remove chainability from `basicEach` and `_.forEach`
-          if (!isLodashMethod('forEach')) {
-            _.each(['basicEach', 'forEach'], function(methodName) {
-              source = source.replace(matchFunction(source, methodName), function(match) {
-                return match
-                  .replace(/\n *return .+?([};\s]+)$/, '$1')
-                  .replace(/\b(return) +result\b/, '$1')
-              });
-            });
-          }
-          // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
-          (function() {
-            var snippet = getMethodAssignments(source),
-                modified = snippet;
-
-            _.each(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(methodName) {
-              if (!isLodashMethod(methodName)) {
-                modified = modified.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + methodName + ' *=[\\s\\S]+?;\\n', 'm'), '');
-              }
-            });
-
-            source = source.replace(snippet, function() {
-              return modified;
-            });
-          }());
-        }
-      }
-
+    else if (isModern || isUnderscore) {
       source = removeFromCreateIterator(source, 'support');
+
+      iteratorOptions.forEach(function(prop) {
+        if (prop != 'array') {
+          source = removeFromGetObject(source, prop);
+        }
+      });
+
+      // inline all functions defined with `createIterator`
+      _.functions(lodash).forEach(function(methodName) {
+        if (!(isUnderscore && isLodashMethod(methodName))) {
+          // strip leading underscores to match pseudo private functions
+          var reFunc = RegExp('^( *)(var ' + methodName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
+          if (reFunc.test(source)) {
+            // extract, format, and inject the compiled function's source code
+            source = source.replace(reFunc, function(match, indent, left) {
+              return (indent + left) +
+                cleanupCompiled(getFunctionSource(lodash[methodName], indent)) + ';\n';
+            });
+          }
+        }
+      });
 
       // inline `iteratorTemplate` template
       source = replaceFunction(source, 'iteratorTemplate', (function() {
@@ -3649,47 +3568,117 @@
           .replace(/iteratorTemplate *&& */g, '')
           .replace(/iteratorTemplate\s*\?\s*([^:]+?)\s*:[^,;]+/g, '$1');
       });
+
+      if (isUnderscore) {
+        // unexpose "exit early" feature of `basicEach`, `_.forEach`, `_.forIn`, and `_.forOwn`
+        _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(methodName) {
+          if (methodName == 'basicEach' || !isLodashMethod(methodName)) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match.replace(/=== *false\)/g, '=== indicatorObject)');
+            });
+          }
+        });
+
+        // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
+        if (isUnderscore && !isLodashMethod('forOwn')) {
+          source = source.replace(matchFunction(source, 'every'), function(match) {
+            return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+          });
+
+          source = source.replace(matchFunction(source, 'find'), function(match) {
+            return match.replace(/return false/, 'return indicatorObject');
+          });
+
+          source = source.replace(matchFunction(source, 'transform'), function(match) {
+            return match.replace(/return callback[^)]+\)/, '$& && indicatorObject');
+          });
+
+          _.each(['contains', 'some'], function(methodName) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
+            });
+          });
+        }
+        // modify `_.isEqual` and `shimIsPlainObject` to use the private `indicatorObject`
+        if (!isLodashMethod('forIn')) {
+          source = source.replace(matchFunction(source, 'isEqual'), function(match) {
+            return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+          });
+
+          source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+            return match.replace(/return false/, 'return indicatorObject');
+          });
+        }
+
+        // remove `thisArg` from unexposed `forIn` and `forOwn`
+        _.each(['forIn', 'forOwn'], function(methodName) {
+          if (!isLodashMethod(methodName)) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match
+                .replace(/(callback), *thisArg/g, '$1')
+                .replace(/^ *callback *=.+\n/m, '');
+            });
+          }
+        });
+
+        // remove chainability from `basicEach` and `_.forEach`
+        if (!isLodashMethod('forEach')) {
+          _.each(['basicEach', 'forEach'], function(methodName) {
+            source = source.replace(matchFunction(source, methodName), function(match) {
+              return match
+                .replace(/\n *return .+?([};\s]+)$/, '$1')
+                .replace(/\b(return) +result\b/, '$1')
+            });
+          });
+        }
+        // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
+        source = source.replace(getMethodAssignments(source), function(match) {
+          return _.reduce(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, methodName) {
+            return isLodashMethod(methodName)
+              ? result
+              : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + methodName + ' *=[\\s\\S]+?;\\n', 'm'), '');
+          }, match);
+        });
+      }
     }
 
     /*------------------------------------------------------------------------*/
 
     // customize Lo-Dash's export bootstrap
-    (function() {
-      if (!isAMD) {
-        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
-      }
-      if (!isNode) {
-        source = removeVar(source, 'freeGlobal');
-        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
-      }
-      if (!isCommonJS) {
-        source = source.replace(/(?: *\/\/.*\n)*(?:( *)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n+/, '');
-      }
-      if (!isGlobal) {
-        source = source.replace(/(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
-      }
-      // remove `if (freeExports) {...}` if it's empty
-      if (isAMD && isGlobal) {
-        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}\n+/, '');
-      } else {
-        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n+/, '$1\n');
-      }
-    }());
+    if (!isAMD) {
+      source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
+    }
+    if (!isNode) {
+      source = removeVar(source, 'freeGlobal');
+      source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
+    }
+    if (!isCommonJS) {
+      source = source.replace(/(?: *\/\/.*\n)*(?:( *)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n+/, '');
+    }
+    if (!isGlobal) {
+      source = source.replace(/(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
+    }
+    // remove `if (freeExports) {...}` if it's empty
+    if (isAMD && isGlobal) {
+      source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}\n+/, '');
+    } else {
+      source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n+/, '$1\n');
+    }
 
     /*------------------------------------------------------------------------*/
 
     // customize Lo-Dash's IIFE
-    (function() {
-      if (isIIFE) {
+    if (isIIFE) {
+      source = (function() {
         var token = '%output%',
             index = iife.indexOf(token);
 
-        source = source.match(/^\/\**[\s\S]+?\*\/\n/) +
+        return source.match(/^\/\**[\s\S]+?\*\/\n/) +
           (index > -1 ? iife.slice(0, index) : iife) +
           source.replace(/^[\s\S]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
-          (index > -1 ? iife.slice(index + token.length) : '')
-      }
-    }());
+          (index > -1 ? iife.slice(index + token.length) : '');
+      }());
+    }
 
     /*------------------------------------------------------------------------*/
 
@@ -3722,7 +3711,7 @@
           ].join('\n' + indent);
         });
       }
-      if (!_.contains(includeVars, 'templateSettings') && isExcluded('template')) {
+      if (isExcluded('template') && !_.contains(includeProps, 'templateSettings')) {
         source = removeTemplateSettings(source);
       }
       if (isExcluded('value')) {
@@ -3753,10 +3742,12 @@
       }
       if (isNoDep) {
         source = removeFromCreateIterator(source, 'lodash');
-
         source = removeGetIndexOf(source);
 
-        // remove`lodash` namespace from properties
+        // convert the `lodash.templateSettings` property assignment to a variable assignment
+        source = source.replace(/\b(lodash\.)(?=templateSettings *=)/, 'var ');
+
+        // remove the `lodash` namespace from properties
         source = source.replace(/\blodash\.(\w+)\b(?!\s*=)/g, '$1');
 
         // remove all horizontal rule comment separators

@@ -861,7 +861,9 @@
       // remove lines with just whitespace and semicolons
       .replace(/^ *;\n/gm, '')
       // consolidate multiple newlines
-      .replace(/\n{3,}/g, '\n\n');
+      .replace(/\n{3,}/g, '\n\n')
+      // add trailing newline
+      .trim() + '\n'
   }
 
   /**

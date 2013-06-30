@@ -2360,13 +2360,17 @@
     }
     // report invalid command combinations
     invalidArgs = _.intersection(options, ['backbone', 'legacy', 'mobile', 'modern', 'underscore']);
-    if (invalidArgs.length > 1) {
-      warnings.push('The `' + invalidArgs.slice(0, -1).join('`, `') + '`' + (invalidArgs.length > 2 ? ',' : '') + ' and `' + _.last(invalidArgs) + '` commands may not be combined.');
+
+    if (isTemplate) {
+      invalidArgs.push('template');
+    }
+    if (invalidArgs.length > 2) {
+      warnings.push('The `' + invalidArgs.slice(0, -1).join('`, `') + '`' + (invalidArgs.length > 2 ? ',' : '') + ' and `' + invalidArgs.slice(-1) + '` commands may not be combined.');
     }
     // report invalid command entries
     _.forOwn({
       'category': {
-        'entries': categories,
+        'entries': categoryOptions,
         'validEntries': allCategories
       },
       'exports': {

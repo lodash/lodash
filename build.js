@@ -541,13 +541,54 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Adds build `commands` to the copyright/license header of the `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {Array} [commands=[]] An array of commands.
+   * @returns {String} Returns the modified source.
+   */
+  function addCommandsToHeader(source, commands) {
+    return source.replace(/(\/\**\n)( \*)( *@license[\s*]+)( *Lo-Dash [\w.-]+)(.*)/, function() {
+      // remove `node path/to/build.js` from `commands`
+      if (reNode.test(commands[0])) {
+        commands.splice(0, 2);
+      }
+      // add quotes to commands with spaces or equals signs
+      commands = _.map(commands, function(command) {
+        var separator = command.match(/[= ]/);
+        if (separator) {
+          separator = separator[0];
+          var pair = command.split(separator);
+          command = pair[0] + separator + '"' + pair[1] + '"';
+        }
+        // escape newlines, carriage returns, multi-line comment end tokens
+        command = command
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r')
+          .replace(/\*\//g, '*\\/');
+
+        return command;
+      });
+      // add build commands to copyright/license header
+      var parts = slice.call(arguments, 1);
+      return (
+        parts[0] +
+        parts[1] +
+        parts[2] + parts[3] + ' (Custom Build)' + parts[4] + '\n' +
+        parts[1] + ' Build: `lodash ' + commands.join(' ') + '`'
+      );
+    });
+  }
+
+  /**
    * Adds support for Underscore style chaining to the `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function addChainFuncs(source) {
+  function addUnderscoreChaining(source) {
     // add `_.chain`
     source = source.replace(matchFunction(source, 'tap'), function(match) {
       var indent = getIndent(match);
@@ -701,47 +742,6 @@
       .replace(/^( *)lodash\.prototype\.value *=/m, '$1lodash.prototype.chain = wrapperChain;\n$&');
 
     return source;
-  }
-
-  /**
-   * Adds build `commands` to the copyright/license header of the `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @param {Array} [commands=[]] An array of commands.
-   * @returns {String} Returns the modified source.
-   */
-  function addCommandsToHeader(source, commands) {
-    return source.replace(/(\/\**\n)( \*)( *@license[\s*]+)( *Lo-Dash [\w.-]+)(.*)/, function() {
-      // remove `node path/to/build.js` from `commands`
-      if (reNode.test(commands[0])) {
-        commands.splice(0, 2);
-      }
-      // add quotes to commands with spaces or equals signs
-      commands = _.map(commands, function(command) {
-        var separator = command.match(/[= ]/);
-        if (separator) {
-          separator = separator[0];
-          var pair = command.split(separator);
-          command = pair[0] + separator + '"' + pair[1] + '"';
-        }
-        // escape newlines, carriage returns, multi-line comment end tokens
-        command = command
-          .replace(/\n/g, '\\n')
-          .replace(/\r/g, '\\r')
-          .replace(/\*\//g, '*\\/');
-
-        return command;
-      });
-      // add build commands to copyright/license header
-      var parts = slice.call(arguments, 1);
-      return (
-        parts[0] +
-        parts[1] +
-        parts[2] + parts[3] + ' (Custom Build)' + parts[4] + '\n' +
-        parts[1] + ' Build: `lodash ' + commands.join(' ') + '`'
-      );
-    });
   }
 
   /**
@@ -3483,7 +3483,7 @@
       }
       // add Underscore's chaining functions
       if (isUnderscore ? !_.contains(plusFuncs, 'chain') : _.contains(plusFuncs, 'chain')) {
-        source = addChainFuncs(source);
+        source = addUnderscoreChaining(source);
       }
       // replace `basicEach` references with `forEach` and `forOwn`
       if (isUnderscore || (isModern && !isMobile)) {

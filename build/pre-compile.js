@@ -321,7 +321,7 @@
 
     // minify internal properties
     (function() {
-      var methods = [
+      var methodNames = [
         'cacheIndexOf',
         'cachePush',
         'compareAscending',
@@ -339,7 +339,12 @@
         'value'
       ];
 
-      var snippets = source.match(RegExp('^( *)(?:var|function) +(?:' + methods.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));
+      // minify `iteratorObject.keys`
+      source.replace(/\b(iteratorObject(?:\.|\['))keys\b/g, function(match, prelude) {
+        return prelude + minNames[iteratorOptions.length + props.length];
+      });
+
+      var snippets = source.match(RegExp('^( *)(?:var|function) +(?:' + methodNames.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));
       if (!snippets) {
         return;
       }

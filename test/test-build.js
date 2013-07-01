@@ -380,7 +380,7 @@
         func = lodash[methodName];
 
     try {
-      if (_.contains(arraysFuncs, methodName)) {
+      if (_.contains(categoryMap.Arrays, methodName)) {
         if (/(?:indexOf|sortedIndex|without)$/i.test(methodName)) {
           func(array, string);
         } else if (/^(?:difference|intersection|union|uniq|zip)/.test(methodName)) {
@@ -391,10 +391,10 @@
           func(array);
         }
       }
-      else if (_.contains(chainingFuncs, methodName)) {
+      else if (_.contains(categoryMap.Chaining, methodName)) {
         lodash(array)[methodName](noop);
       }
-      else if (_.contains(collectionsFuncs, methodName)) {
+      else if (_.contains(categoryMap.Collections, methodName)) {
         if (/^(?:count|group|sort)By$/.test(methodName)) {
           func(array, noop);
           func(array, string);
@@ -422,7 +422,7 @@
           func(object, noop, object);
         }
       }
-      else if (_.contains(functionsFuncs, methodName)) {
+      else if (_.contains(categoryMap.Functions, methodName)) {
         if (methodName == 'after') {
           func(1, noop);
         } else if (methodName == 'bindAll') {
@@ -1489,7 +1489,7 @@
       if (funcName == 'zip') {
         command += ',unzip';
       }
-      if (funcName != 'chain' && _.contains(chainingFuncs.concat('mixin'), funcName)) {
+      if (funcName != 'chain' && _.contains(categoryMap.Chaining.concat('mixin'), funcName)) {
         command += ',chain';
       }
       if (_.contains(['isEqual', 'isPlainObject'], funcName)) {
@@ -1621,7 +1621,9 @@
 
             // expand categories to function names
             funcNames.slice().forEach(function(category) {
-              var otherNames = categoryMap[category];
+              var otherNames = _.filter(categoryMap[category], function(identifier) {
+                return typeof _[identifier] == 'function';
+              });
 
               // limit function names to those available for specific builds
               otherNames = _.intersection(otherNames,

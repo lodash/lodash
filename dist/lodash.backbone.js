@@ -1211,7 +1211,7 @@
    */
   function countBy(collection, callback, thisArg) {
     var result = {};
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
 
     forEach(collection, function(value, key, collection) {
       key = String(callback(value, key, collection));
@@ -1263,7 +1263,7 @@
    */
   function every(collection, callback, thisArg) {
     var result = true;
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
 
     var index = -1,
         length = collection ? collection.length : 0;
@@ -1324,7 +1324,7 @@
    */
   function filter(collection, callback, thisArg) {
     var result = [];
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
 
     var index = -1,
         length = collection ? collection.length : 0;
@@ -1390,7 +1390,7 @@
    * // => { 'name': 'banana', 'organic': true, 'type': 'fruit' }
    */
   function find(collection, callback, thisArg) {
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
 
     var index = -1,
         length = collection ? collection.length : 0;
@@ -1440,7 +1440,7 @@
     var index = -1,
         length = collection ? collection.length : 0;
 
-    callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);
+    callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
     if (typeof length == 'number') {
       while (++index < length) {
         if (callback(collection[index], index, collection) === indicatorObject) {
@@ -1488,7 +1488,7 @@
    */
   function groupBy(collection, callback, thisArg) {
     var result = {};
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
 
     forEach(collection, function(value, key, collection) {
       key = String(callback(value, key, collection));
@@ -1575,7 +1575,7 @@
     var index = -1,
         length = collection ? collection.length : 0;
 
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
     if (typeof length == 'number') {
       var result = Array(length);
       while (++index < length) {
@@ -1644,7 +1644,7 @@
         }
       }
     } else {
-      callback = lodash.createCallback(callback, thisArg);
+      callback = createCallback(callback, thisArg);
 
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -1711,7 +1711,7 @@
         }
       }
     } else {
-      callback = lodash.createCallback(callback, thisArg);
+      callback = createCallback(callback, thisArg);
 
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -1757,7 +1757,7 @@
   function reduce(collection, callback, accumulator, thisArg) {
     if (!collection) return accumulator;
     var noaccum = arguments.length < 3;
-    callback = lodash.createCallback(callback, thisArg, 4);
+    callback = createCallback(callback, thisArg, 4);
 
     var index = -1,
         length = collection.length;
@@ -1807,7 +1807,7 @@
       var props = keys(collection);
       length = props.length;
     }
-    callback = lodash.createCallback(callback, thisArg, 4);
+    callback = createCallback(callback, thisArg, 4);
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
       accumulator = noaccum
@@ -1857,7 +1857,7 @@
    * // => [{ 'name': 'carrot', 'organic': true, 'type': 'vegetable' }]
    */
   function reject(collection, callback, thisArg) {
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
     return filter(collection, function(value, index, collection) {
       return !callback(value, index, collection);
     });
@@ -1959,7 +1959,7 @@
    */
   function some(collection, callback, thisArg) {
     var result;
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
 
     var index = -1,
         length = collection ? collection.length : 0;
@@ -2018,7 +2018,7 @@
         length = collection ? collection.length : 0,
         result = Array(typeof length == 'number' ? length : 0);
 
-    callback = lodash.createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg);
     forEach(collection, function(value, key, collection) {
       result[++index] = {
         'criteria': callback(value, key, collection),
@@ -2156,7 +2156,7 @@
 
       if (typeof callback != 'number' && callback != null) {
         var index = -1;
-        callback = lodash.createCallback(callback, thisArg);
+        callback = createCallback(callback, thisArg);
         while (++index < length && callback(array[index], index, array)) {
           n++;
         }
@@ -2270,7 +2270,7 @@
 
     if (typeof callback != 'number' && callback != null) {
       var index = length;
-      callback = lodash.createCallback(callback, thisArg);
+      callback = createCallback(callback, thisArg);
       while (index-- && callback(array[index], index, array)) {
         n++;
       }
@@ -2344,7 +2344,7 @@
 
       if (typeof callback != 'number' && callback != null) {
         var index = length;
-        callback = lodash.createCallback(callback, thisArg);
+        callback = createCallback(callback, thisArg);
         while (index-- && callback(array[index], index, array)) {
           n++;
         }
@@ -2455,7 +2455,7 @@
           index = -1,
           length = array ? array.length : 0;
 
-      callback = lodash.createCallback(callback, thisArg);
+      callback = createCallback(callback, thisArg);
       while (++index < length && callback(array[index], index, array)) {
         n++;
       }
@@ -2518,7 +2518,7 @@
         high = array ? array.length : low;
 
     // explicitly reference `identity` for better inlining in Firefox
-    callback = callback ? lodash.createCallback(callback, thisArg, 1) : identity;
+    callback = callback ? createCallback(callback, thisArg, 1) : identity;
     value = callback(value);
 
     while (low < high) {

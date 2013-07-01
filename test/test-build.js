@@ -89,7 +89,7 @@
     'zipObject': ['object']
   };
 
-  /** Used to track the category of functions */
+  /** Used to track the category of identifiers */
   var categoryMap = {
     'Arrays': [
       'compact',
@@ -205,6 +205,7 @@
       'result',
       'runInContext',
       'template',
+      'templateSettings',
       'times',
       'unescape',
       'uniqueId'

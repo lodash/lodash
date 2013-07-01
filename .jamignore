@@ -13,6 +13,7 @@ bower.json
 component.json
 build
 doc
+modularize
 node_modules
 perf
 test

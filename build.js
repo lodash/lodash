@@ -2601,15 +2601,17 @@
       if (includeFuncs.length) {
         result = includeFuncs;
       }
-      // add function names required by Backbone and Underscore builds
-      if (isBackbone && !result) {
-        result = backboneDependencies;
-      }
-      else if (isUnderscore && !result) {
-        result = underscoreFuncs;
-      }
-      if (!result) {
-        result = lodashFuncs.slice();
+      // add default function names
+      if (!includeProps.length && !includeVars.length) {
+        if (isBackbone && !result) {
+          result = backboneDependencies;
+        }
+        else if (isUnderscore && !result) {
+          result = underscoreFuncs;
+        }
+        if (!result) {
+          result = lodashFuncs.slice();
+        }
       }
       // remove special "none" entry
       if (result == 'none') {
@@ -2627,11 +2629,30 @@
           : minusFuncs.concat(getDependants(minusFuncs))
         );
       }
+      if (isModularize) {
+        result = _.difference(result, getNamesByCategory('Chaining'), 'runInContext');
+      }
       if (!isNoDep) {
         result = getDependencies(result);
       }
       return result;
     }());
+
+    if (!isNoDep) {
+      // additional variables to include in the build
+      includeProps = _.uniq(_.transform(propDependencyMap, function(result, propNames, funcName) {
+        if (_.contains(buildFuncs, funcName)) {
+          push.apply(result, propNames);
+        }
+      }, includeProps));
+
+      // additional properties to include in the build
+      includeVars = _.uniq(_.transform(varDependencyMap, function(result, varNames, funcName) {
+        if (_.contains(buildFuncs, funcName)) {
+          push.apply(result, varNames);
+        }
+      }, includeVars));
+    }
 
     /*------------------------------------------------------------------------*/
 
@@ -3763,49 +3784,20 @@
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
       }
       if (isNoDep) {
+        source = removeAssignments(source);
         source = removeFromCreateIterator(source, 'lodash');
         source = removeGetIndexOf(source);
+        source = removeLodashWrapper(source);
 
-        // convert the `lodash.templateSettings` property assignment to a variable assignment
-        source = source.replace(/\b(lodash\.)(?=templateSettings *=)/, 'var ');
-
-        // remove the `lodash` namespace from properties
-        source = source.replace(/\blodash\.(\w+)\b(?!\s*=)/g, '$1');
-
-        // remove all horizontal rule comment separators
-        source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
-
-        // remove debug sourceURL use in `_.template`
-        source = source.replace(matchFunction(source, 'template'), function(match) {
-          return match.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
-        });
-
-        // replace `_` use in `_.templateSettings.imports`
-        source = source.replace(matchVar(source, 'templateSettings'), function(match) {
-          return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
-        });
-
+        if (isExcluded('lodash')) {
+          source = removeFunction(source, 'lodash');
+        }
         // remove function aliases
         _.each(buildFuncs, function(funcName) {
           _.each(getAliases(funcName), function(alias) {
             source = removeFunction(source, alias);
           });
         });
-
-        // remove function variable dependencies
-        _.each(varDependencies, function(varName) {
-          if (!_.contains(includeVars, varName)) {
-            source = removeVar(source, varName);
-          }
-        });
-
-        if (!isAMD && !isCommonJS && !isGlobal && !isNode) {
-          if (isExcluded('lodash')) {
-            source = removeFunction(source, 'lodash');
-          }
-          source = removeLodashWrapper(source);
-          source = removeAssignments(source);
-        }
       }
       else {
         if (isExcluded('bind')) {
@@ -3903,6 +3895,20 @@
         }
       });
 
+      // remove unneeded function properties dependencies
+      _.each(propDependencies, function(propName) {
+        if (!_.contains(includeProps, propName)) {
+          source = removeProp(source, propName);
+        }
+      });
+
+      // remove unneeded function variable dependencies
+      _.each(varDependencies, function(varName) {
+        if (!_.contains(includeVars, varName)) {
+          source = removeVar(source, varName);
+        }
+      });
+
       // remove unused variables
       (function() {
         var isShallow = isExcluded('runInContext'),
@@ -3929,6 +3935,27 @@
           }
         }
       }());
+
+      if (isNoDep) {
+        // convert the `lodash.templateSettings` property assignment to a variable assignment
+        source = source.replace(/\b(lodash\.)(?=templateSettings *=)/, 'var ');
+
+        // remove the `lodash` namespace from properties
+        source = source.replace(/\blodash\.(\w+)\b(?!\s*=)/g, '$1');
+
+        // remove all horizontal rule comment separators
+        source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
+
+        // remove debug sourceURL use in `_.template`
+        source = source.replace(matchFunction(source, 'template'), function(match) {
+          return match.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
+        });
+
+        // replace `_` use in `_.templateSettings.imports`
+        source = source.replace(matchVar(source, 'templateSettings'), function(match) {
+          return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
+        });
+      }
     }
     if (_.size(source.match(/\bfreeModule\b/g)) < 2) {
       source = removeVar(source, 'freeModule');

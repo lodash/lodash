@@ -242,6 +242,7 @@
     'bindKey': ['indicatorObject'],
     'createCallback': ['indicatorObject'],
     'createIterator': ['indicatorObject', 'iteratorObject', 'objectTypes'],
+    'defer': ['objectTypes'],
     'isEqual': ['indicatorObject'],
     'isObject': ['objectTypes'],
     'isRegExp': ['objectTypes'],

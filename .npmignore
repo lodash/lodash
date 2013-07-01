@@ -8,6 +8,7 @@
 bower.json
 component.json
 doc
+modularize
 perf
 test
 vendor/*.gz

@@ -251,7 +251,7 @@
     'template': ['reInterpolate'],
   };
 
-  /** Used to track the category of functions */
+  /** Used to track the category of identifiers */
   var categoryMap = {
     'Arrays': [
       'compact',
@@ -367,6 +367,7 @@
       'result',
       'runInContext',
       'template',
+      'templateSettings',
       'times',
       'unescape',
       'uniqueId'
@@ -450,7 +451,6 @@
     'nonEnumProps',
     'shadowedProps',
     'support',
-    'templateSettings',
     'whitespace'
   ];
 
@@ -523,10 +523,10 @@
   var allFuncs = _.keys(funcDependencyMap);
 
   /** List of Lo-Dash functions */
-  var lodashFuncs = _.difference(allFuncs, privateFuncs.concat('findWhere'));
+  var lodashFuncs = _.difference(allFuncs, privateFuncs, 'findWhere');
 
   /** List of Underscore functions */
-  var underscoreFuncs = _.difference(allFuncs, lodashOnlyFuncs.concat(privateFuncs));
+  var underscoreFuncs = _.difference(allFuncs, lodashOnlyFuncs, privateFuncs);
 
   /** List of all property dependencies */
   var propDependencies = _.uniq(_.transform(propDependencyMap, function(result, propNames) {
@@ -2374,7 +2374,7 @@
       },
       'exports': {
         'entries': exportsOptions,
-        'validEntries': ['amd', 'commonjs', 'global', 'node', 'none']
+        'validEntries': allExports
       },
       'include': {
         'entries': includeFuncs,
@@ -2389,7 +2389,7 @@
         'validEntries': allFuncs
       }
     }, function(data, commandName) {
-      invalidArgs = _.difference(data.entries, data.validEntries.concat('none'));
+      invalidArgs = _.difference(data.entries, data.validEntries, 'none');
       if (invalidArgs.length) {
         warnings.push('Invalid `' + commandName + '` entr' + (invalidArgs.length > 1 ? 'ies' : 'y') + ' passed: ' + invalidArgs.join(', '));
       }

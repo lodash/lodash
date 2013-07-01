@@ -80,12 +80,12 @@
   /** Used to track function dependencies */
   var funcDependencyMap = {
     'after': [],
-    'assign': ['createIterator'],
+    'assign': ['createCallback', 'createIterator'],
     'at': ['isString'],
     'bind': ['createBound'],
     'bindAll': ['bind', 'functions'],
     'bindKey': ['createBound'],
-    'clone': ['assign', 'forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isNode', 'releaseArray', 'slice'],
+    'clone': ['assign', 'createCallback', 'forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isNode', 'releaseArray', 'slice'],
     'cloneDeep': ['clone'],
     'compact': [],
     'compose': [],
@@ -93,7 +93,7 @@
     'countBy': ['createCallback', 'forEach'],
     'createCallback': ['identity', 'isEqual', 'keys'],
     'debounce': ['isObject'],
-    'defaults': ['createIterator'],
+    'defaults': ['createCallback', 'createIterator'],
     'defer': ['bind'],
     'delay': [],
     'difference': ['cacheIndexOf', 'createCache', 'getIndexOf', 'releaseObject'],
@@ -103,7 +103,7 @@
     'find': ['basicEach', 'createCallback', 'isArray'],
     'findIndex': ['createCallback'],
     'findKey': ['createCallback', 'forOwn'],
-    'first': ['slice'],
+    'first': ['createCallback', 'slice'],
     'flatten': ['isArray', 'overloadWrapper'],
     'forEach': ['basicEach', 'createCallback', 'isArray'],
     'forIn': ['createIterator'],
@@ -113,7 +113,7 @@
     'has': [],
     'identity': [],
     'indexOf': ['basicIndexOf', 'sortedIndex'],
-    'initial': ['slice'],
+    'initial': ['createCallback', 'slice'],
     'intersection': ['cacheIndexOf', 'createCache', 'getArray', 'getIndexOf', 'releaseArray', 'releaseObject'],
     'invert': ['keys'],
     'invoke': ['forEach'],
@@ -123,7 +123,7 @@
     'isDate': [],
     'isElement': [],
     'isEmpty': ['forOwn', 'isArguments', 'isFunction'],
-    'isEqual': ['forIn', 'getArray', 'isArguments', 'isFunction', 'isNode', 'releaseArray'],
+    'isEqual': ['createCallback', 'forIn', 'getArray', 'isArguments', 'isFunction', 'isNode', 'releaseArray'],
     'isFinite': [],
     'isFunction': [],
     'isNaN': ['isNumber'],
@@ -135,29 +135,29 @@
     'isString': [],
     'isUndefined': [],
     'keys': ['isArguments', 'isObject', 'shimKeys'],
-    'last': ['slice'],
+    'last': ['createCallback', 'slice'],
     'lastIndexOf': [],
     'map': ['basicEach', 'createCallback', 'isArray'],
     'max': ['basicEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'memoize': [],
-    'merge': ['forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isPlainObject', 'releaseArray'],
+    'merge': ['createCallback', 'forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isPlainObject', 'releaseArray'],
     'min': ['basicEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
-    'omit': ['forIn', 'getIndexOf'],
+    'omit': ['createCallback', 'forIn', 'getIndexOf'],
     'once': [],
     'pairs': ['keys'],
     'parseInt': ['isString'],
     'partial': ['createBound'],
     'partialRight': ['createBound'],
-    'pick': ['forIn', 'isObject'],
+    'pick': ['createCallback', 'forIn', 'isObject'],
     'pluck': ['map'],
     'random': [],
     'range': [],
     'reduce': ['basicEach', 'createCallback', 'isArray'],
     'reduceRight': ['createCallback', 'forEach', 'isString', 'keys'],
     'reject': ['createCallback', 'filter'],
-    'rest': ['slice'],
+    'rest': ['createCallback', 'slice'],
     'result': ['isFunction'],
     'runInContext': ['defaults', 'pick'],
     'shuffle': ['forEach'],
@@ -2580,9 +2580,6 @@
         if (!isLodashFunc('contains')) {
           funcDependencyMap.contains = _.without(funcDependencyMap.contains, 'isString');
         }
-        if (!isLodashFunc('flatten')) {
-          funcDependencyMap.flatten = _.without(funcDependencyMap.flatten, 'createCallback');
-        }
         if (!isLodashFunc('isEmpty')) {
           funcDependencyMap.isEmpty = ['isArray', 'isString'];
         }
@@ -2634,6 +2631,15 @@
                 : !isLodashFunc(funcName)
               ) {
             funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'slice');
+          }
+        });
+
+        _.each(['clone', 'flatten', 'isEqual',  'omit', 'pick'], function(funcName) {
+          if (funcName == 'clone'
+                ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
+                : !isLodashFunc(funcName)
+              ) {
+            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'createCallback');
           }
         });
 

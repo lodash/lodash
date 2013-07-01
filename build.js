@@ -745,13 +745,135 @@
   }
 
   /**
+   * Creates modules for each of the specified `identifiers`.
+   *
+   * @private
+   * @param {Array} includes An array identifiers to modularize.
+   * @param {Array} [options=[]] An array of build commands
+   */
+  function buildModule(identifiers, options) {
+    options || (options = []);
+
+    var commands = [
+      'backbone',
+      'csp',
+      'exports=',
+      'legacy',
+      'mobile',
+      'modern',
+      'strict',
+      'underscore',
+      '-c', '--stdout',
+      '-o', '--output'
+    ];
+
+    // normalize `--output` to `-o`
+    options = _.map(options, function(value) {
+      return value == '--output' ?  '-o' : value;
+    });
+
+    // remove unneeded options
+    options = _.filter(options, function(value, index) {
+      return commands.some(function(command) {
+        return !value.indexOf(command);
+      }) || options[index - 1] == '-o';
+    });
+
+    // provide a destination if one isn't given
+    if (!_.contains(options, '-o')) {
+      options.push('-o', '.' + path.sep + 'modularize');
+    }
+
+    var exportsOptions = options.reduce(function(result, value) {
+      return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
+    }, []);
+
+    var categories = _.uniq(_.compact(identifiers.map(getCategory))),
+        isAMD = _.contains(exportsOptions, 'amd'),
+        outputPath = options[_.indexOf(options, '-o') + 1];
+
+    var topLevel = {
+      'lodash': true,
+      'support': true
+    };
+
+    function getDepPaths(dependencies) {
+      return dependencies.map(function(depName) {
+        return getPath(depName) + depName;
+      });
+    }
+
+    function getPath(identifier) {
+      return topLevel[identifier]
+        ? ''
+        : (getCategory(identifier) || 'internals').toLowerCase() + '/';
+    }
+
+    // create modules for each identifier
+    identifiers.forEach(function(identifier) {
+      var deps = getDependencies(identifier, true)
+          .concat(propDependencyMap[identifier] || [])
+          .concat(varDependencyMap[identifier] || [])
+          .sort();
+
+      if (identifier == 'templateSettings') {
+        deps = ['escape', 'reInterpolate'];
+      }
+      var depArgs = deps.join(', '),
+          depPaths = deps.length ? "['" + getDepPaths(deps).join("', '") + "'], " : '',
+          iife = [];
+
+      if (isAMD) {
+        iife.push(
+          'define(' + depPaths + 'function(' + depArgs + ') {',
+          '%output%',
+          '  return ' + identifier + ';',
+          '});'
+        );
+      }
+      build(options.concat(
+        '-d', '-n', '-s',
+        'exports=none',
+        'include=' + identifier,
+        'iife=' + iife.join('\n'),
+        '-o', path.join(outputPath, getPath(identifier) + identifier + '.js')
+      ));
+    });
+
+    // create category modules
+    categories.forEach(function(category) {
+      var deps = _.intersection(categoryMap[category], identifiers).sort(),
+          depArgs =  deps.join(', '),
+          depPaths = deps.length ? "['" + getDepPaths(deps).join("', '") + "'], " : '',
+          iife = [];
+
+      if (isAMD) {
+        iife.push(
+          'define(' + depPaths + 'function(' + depArgs + ') {',
+          '  return {',
+          deps.map(function(dep) { return "    '" + dep + "': " + dep; }).join(',\n'),
+          '  };',
+          '});'
+        );
+      }
+      build(options.concat(
+        '-d', '-n', '-s',
+        'exports=none',
+        'include=none',
+        'iife=' + iife.join('\n'),
+        '-o', path.join(outputPath, category.toLowerCase() + '.js')
+      ));
+    });
+  }
+
+  /**
    * Compiles template files matched by the given file path `pattern` into a
    * single source, extending `_.templates` with precompiled templates named after
    * each template file's basename.
    *
    * @private
    * @param {String} [pattern='<cwd>/*.jst'] The file path pattern.
-   * @param {Object} options The options object.
+   * @param {Object} options The template options object.
    * @returns {String} Returns the compiled source.
    */
   function buildTemplate(pattern, options) {
@@ -916,6 +1038,8 @@
       '    lodash modern        Build tailored for newer environments with ES5 support',
       '    lodash strict        Build with `_.assign`, `_.bindAll`, & `_.defaults` in strict mode',
       '    lodash underscore    Build tailored for projects already using Underscore',
+      '',
+      '    lodash modularize    Splits Lo-Dash into modules',
       '',
       '    lodash include=...   Comma separated function/category names to include in the build',
       '    lodash minus=...     Comma separated function/category names to remove from those included in the build',
@@ -2095,7 +2219,7 @@
    *
    * Note: For a list of commands see `displayHelp()` or run `lodash --help`.
    *
-   * @param {Array} [options=[]] An array of commands.
+   * @param {Array} [options=[]] An array of build commands.
    * @param {Function} [callback=defaultBuildCallback] The function called per build.
    */
   function build(options, callback) {
@@ -3541,6 +3665,15 @@
 
     /*------------------------------------------------------------------------*/
 
+    if (isModularize) {
+      options = _.reject(options, function(value) {
+        return /^(exports=).*$/.test(value);
+      });
+
+      options.push('exports=' + exportsOptions);
+      buildModule(buildFuncs.concat(includeProps, includeVars), options);
+      return;
+    }
     if (isTemplate) {
       source = buildTemplate(templatePattern, templateSettings);
     }

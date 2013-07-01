@@ -660,7 +660,7 @@
     source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');
 
     // remove `lodash.prototype` batch method assignments
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *methodName\)[\s\S]+?\n\1}.+/g, '');
+    source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '');
 
     // replace `_.mixin`
     source = replaceFunction(source, 'mixin', [
@@ -2434,7 +2434,9 @@
       var categories = _.intersection(funcNames, allCategories);
 
       categories.forEach(function(category) {
-        var otherFuncs = getNamesByCategory(category);
+        var otherFuncs = getNamesByCategory(category).filter(function(identifier) {
+          return typeof _[identifier] == 'function';
+        });
 
         // limit function names to those available for specific builds
         if (isBackbone) {
@@ -3657,7 +3659,7 @@
         source = source.replace(/(\?\s*)basicEach(?=\s*:)/g, '$1forEach');
 
         // replace `basicEach` with `_.forEach` in the function assignment snippet
-        source = source.replace(/\bbasicEach(?=\(\[)/g, 'forEach');
+        source = source.replace(/\bbasicEach(?=\(\[')/g, 'forEach');
       }
 
       var context = vm.createContext({
@@ -3807,6 +3809,10 @@
           }
         });
 
+        // replace `lodash.createCallback` references with `createCallback`
+        if (!isLodashFunc('createCallback')) {
+          source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
+        }
         // remove chainability from `basicEach` and `_.forEach`
         if (!isLodashFunc('forEach')) {
           _.each(['basicEach', 'forEach'], function(funcName) {
@@ -3919,7 +3925,7 @@
 
         // remove all `lodash.prototype` additions
         source = source
-          .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash, *function\(func, *funcName\)[\s\S]+?\n\1}.+/g, '')
+          .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)(?:basicEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
       }
@@ -4020,7 +4026,8 @@
       // remove functions from the build
       allFuncs.forEach(function(otherName) {
         if (!_.contains(buildFuncs, otherName) &&
-            !(otherName == 'findWhere' && !isUnderscore)) {
+            !(otherName == 'findWhere' && !isUnderscore) &&
+            !(otherName == 'lodash' && !isNoDep)) {
           source = removeFunction(source, otherName);
           if (!isNoDep) {
             source = removeFromCreateIterator(source, otherName);
@@ -4039,13 +4046,6 @@
       _.each(propDependencies, function(propName) {
         if (!_.contains(includeProps, propName)) {
           source = removeProp(source, propName);
-        }
-      });
-
-      // remove unneeded function variable dependencies
-      _.each(varDependencies, function(varName) {
-        if (!_.contains(includeVars, varName)) {
-          source = removeVar(source, varName);
         }
       });
 
@@ -4077,7 +4077,7 @@
       }());
 
       if (isNoDep) {
-        // convert the `lodash.templateSettings` property assignment to a variable assignment
+        // replace the `lodash.templateSettings` property assignment with a variable assignment
         source = source.replace(/\b(lodash\.)(?=templateSettings *=)/, 'var ');
 
         // remove the `lodash` namespace from properties

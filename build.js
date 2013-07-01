@@ -965,16 +965,16 @@
   }
 
   /**
-   * Gets the category of the given function name.
+   * Gets the category of the given `identifier`.
    *
    * @private
-   * @param {String} funcName The function name.
-   * @returns {String} Returns the function name's category.
+   * @param {String} identifier The identifier to query.
+   * @returns {String} Returns the identifier's category.
    */
-  function getCategory(funcName) {
-    funcName = getRealName(funcName);
-    return _.findKey(categoryMap, function(funcNames) {
-      return _.contains(funcNames, funcName);
+  function getCategory(identifier) {
+    identifier = getRealName(identifier);
+    return _.findKey(categoryMap, function(identifiers) {
+      return _.contains(identifiers, identifier);
     }) || '';
   }
 
@@ -1154,13 +1154,13 @@
   }
 
   /**
-   * Gets the names of functions in `source` belonging to the given `category`.
+   * Gets the names of identifiers in `source` that belong to the given `category`.
    *
    * @private
    * @param {String} category The category to filter by.
-   * @returns {Array} Returns a new array of function names belonging to the given category.
+   * @returns {Array} Returns a new array of names.
    */
-  function getMethodsByCategory(category) {
+  function getNamesByCategory(category) {
     return categoryMap[category] || [];
   }
 
@@ -1606,6 +1606,25 @@
   }
 
   /**
+   * Removes a given Lo-Dash property from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @param {String} propName The name of the property to remove.
+   * @returns {String} Returns the modified source.
+   */
+  function removeProp(source, propName) {
+    return source.replace(RegExp(
+      multilineComment +
+      '(?: *|(.*?=))lodash\\.' + propName + '\\s*=[\\s\\S]+?' +
+      '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
+      '[;}]\\n(?=\\n(?!\\s*\\(func)))'
+    ), function(match, prelude) {
+      return prelude ? 'undefined' : '';
+    });
+  }
+
+  /**
    * Removes all pseudo private Lo-Dash properties from `source`. If a `propName`
    * is specified, only the specified property is removed.
    *
@@ -1931,17 +1950,6 @@
         '(?:( *).+?catch\\b[\\s\\S]+?\\n\\1}\\n)?'
       ), '');
     });
-  }
-
-  /**
-   * Removes the `templateSettings` assignment from `source`.
-   *
-   * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the modified source.
-   */
-  function removeTemplateSettings(source) {
-    return source.replace(getTemplateSettings(source), '');
   }
 
   /**
@@ -2301,7 +2309,7 @@
       var categories = _.intersection(funcNames, allCategories);
 
       categories.forEach(function(category) {
-        var otherFuncs = getMethodsByCategory(category);
+        var otherFuncs = getNamesByCategory(category);
 
         // limit function names to those available for specific builds
         if (isBackbone) {
@@ -3727,9 +3735,6 @@
             '});'
           ].join('\n' + indent);
         });
-      }
-      if (isExcluded('template') && !_.contains(includeProps, 'templateSettings')) {
-        source = removeTemplateSettings(source);
       }
       if (isExcluded('value')) {
         source = removeLodashWrapper(source);

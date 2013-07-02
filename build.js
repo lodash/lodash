@@ -1611,8 +1611,8 @@
   function removeGetIndexOf(source) {
     source = removeFunction(source, 'getIndexOf');
 
-    // replace all `getIndexOf` calls with `basicEach`
-    source = source.replace(/\bgetIndexOf\(\)/g, 'basicEach');
+    // replace all `getIndexOf` calls with `basicIndexOf`
+    source = source.replace(/\bgetIndexOf\(\)/g, 'basicIndexOf');
 
     return source;
   }
@@ -2551,28 +2551,26 @@
         funcDependencyMap.isPlainObject = _.without(funcDependencyMap.isPlainObject, 'shimIsPlainObject');
         funcDependencyMap.keys = _.without(funcDependencyMap.keys, 'shimKeys');
       }
-      if (isModern) {
-        funcDependencyMap.reduceRight = _.without(funcDependencyMap.reduceRight, 'isString');
-
-        if (isMobile) {
-          _.each(['assign', 'defaults'], function(funcName) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'keys');
-          });
-        }
-        else {
-          _.each(['isEmpty', 'isEqual', 'isPlainObject', 'keys'], function(funcName) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'isArguments');
-          });
-        }
+      if (isMobile) {
+        _.each(['assign', 'defaults'], function(funcName) {
+          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'keys');
+        });
+      }
+      else if (isModern) {
+        _.forOwn(funcDependencyMap, function(deps, funcName) {
+          if (_.contains(deps, 'isArguments')) {
+            funcDependencyMap[funcName] = _.without(deps, 'isArguments');
+          }
+        });
       }
       if (isModularize) {
-        _.each(['contains', 'difference', 'intersection', 'omit', 'uniq'], function(funcName) {
-          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'getIndexOf');
-          funcDependencyMap[funcName].push( 'basicEach');
-        })
-
-        _.each(['createIterator', 'lodash', 'value'], function(funcName) {
-          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'lodash', 'lodashWrapper');
+        _.forOwn(funcDependencyMap, function(deps, funcName) {
+          if (_.contains(deps, 'getIndexOf')) {
+            (deps = funcDependencyMap[funcName] = _.without(deps, 'getIndexOf')).push( 'basicIndexOf');
+          }
+          if (_.contains(deps, 'lodash') || _.contains(deps, 'lodashWrapper')) {
+            funcDependencyMap[funcName] = _.without(deps, 'lodash', 'lodashWrapper');
+          }
         })
       }
       if (isUnderscore) {
@@ -2627,15 +2625,6 @@
           }
         });
 
-        _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {
-          if (funcName == 'clone'
-                ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
-                : !isLodashFunc(funcName)
-              ) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'slice');
-          }
-        });
-
         _.each(['clone', 'flatten', 'isEqual',  'omit', 'pick'], function(funcName) {
           if (funcName == 'clone'
                 ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
@@ -2651,36 +2640,33 @@
           }
         });
 
-        _.each(['difference', 'intersection', 'uniq'], function(funcName) {
-          if (!isLodashFunc(funcName)) {
-            funcDependencyMap[funcName] = ['getIndexOf'].concat(_.without(funcDependencyMap[funcName], 'cacheIndexOf', 'createCache'));
-          }
-        });
-
-        _.each(['flatten', 'uniq'], function(funcName) {
-          if (!isLodashFunc(funcName)) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'overloadWrapper');
-          }
-        });
-
-        _.each(['max', 'min'], function(funcName) {
-          if (!isLodashFunc(funcName)) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'charAtCallback', 'isArray', 'isString');
+        _.forOwn(funcDependencyMap, function(deps, funcName) {
+          if (funcName == 'clone'
+                  ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
+                  : !isLodashFunc(funcName)
+                ) {
+            if (_.contains(deps, 'charAtCallback')) {
+              deps = funcDependencyMap[funcName] = _.without(deps, 'charAtCallback', 'isArray', 'isString')
+            }
+            if (_.contains(deps, 'overloadWrapper')) {
+              deps = funcDependencyMap[funcName] = _.without(deps, 'overloadWrapper');
+            }
+            if (_.contains(deps, 'slice')) {
+              deps = funcDependencyMap[funcName] = _.without(deps, 'slice');
+            }
+            if (_.contains(deps, 'createCache')) {
+              (funcDependencyMap[funcName] = _.without(deps, 'cacheIndexOf', 'createCache')).push('getIndexOf');
+            }
           }
         });
       }
       if (isModern || isUnderscore) {
-        funcDependencyMap.reduceRight = _.without(funcDependencyMap.reduceRight, 'isString');
-
         _.each(['assign', 'basicEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(funcName) {
           if (!(isUnderscore && isLodashFunc(funcName))) {
-            var deps = funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'createIterator');
             (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('objectTypes');
 
-            if (funcName != 'shimKeys') {
-              deps.push('createCallback');
-            }
-            if (/^(?:assign|basicEach|defaults|forOwn)$/.test(funcName)) {
+            var deps = funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'createIterator');
+            if (funcName != 'forIn' && funcName != 'shimKeys') {
               deps.push('keys');
             }
           }
@@ -2694,27 +2680,22 @@
           }
         });
 
-        _.each(['at', 'forEach', 'toArray'], function(funcName) {
-          if (!(isUnderscore && isLodashFunc(funcName))) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'isString');
+        _.forOwn(funcDependencyMap, function(deps, funcName) {
+          if (_.contains(deps, 'isNode')) {
+            deps = funcDependencyMap[funcName] = _.without(deps, 'isNode');
           }
-        });
-
-        _.each(['clone', 'isEqual', 'shimIsPlainObject'], function(funcName) {
-          if (!(isUnderscore && isLodashFunc(funcName))) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'isNode');
+          if (_.contains(deps, 'toString') && (funcName != 'contains' && funcName != 'parseInt')) {
+            funcDependencyMap[funcName] = _.without(deps, 'isString');
           }
         });
 
         if (!isMobile) {
           _.each(['clone', 'transform', 'value'], function(funcName) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'basicEach');
-            funcDependencyMap[funcName].push('forEach');
+            (funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'basicEach')).push('forEach');
           });
 
           _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(funcName) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'basicEach');
-            funcDependencyMap[funcName].push('forOwn');
+            (funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'basicEach')).push('forOwn');
           });
 
           _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'shimKeys'], function(funcName) {

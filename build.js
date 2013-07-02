@@ -249,7 +249,7 @@
     'keys': ['iteratorObject'],
     'merge': ['indicatorObject'],
     'partialRight': ['indicatorObject'],
-    'template': ['reInterpolate'],
+    'template': ['reInterpolate']
   };
 
   /** Used to track the category of identifiers */

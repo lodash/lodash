@@ -220,9 +220,7 @@
           typeCache = cache[type] || (cache[type] = {});
 
       if (type == 'object') {
-        if ((typeCache[key] || (typeCache[key] = [])).push(value) == this.array.length) {
-          cache[type] = false;
-        }
+        (typeCache[key] || (typeCache[key] = [])).push(value);
       } else {
         typeCache[key] = true;
       }
@@ -279,8 +277,13 @@
    */
   function createCache(array) {
     var index = -1,
-        length = array.length;
+        length = array.length,
+        first = array[0],
+        last = array[length - 1];
 
+    if (first && typeof first == 'object' && last && typeof last == 'object') {
+      return false;
+    }
     var cache = getObject();
     cache['false'] = cache['null'] = cache['true'] = cache['undefined'] = false;
 
@@ -292,9 +295,7 @@
     while (++index < length) {
       result.push(array[index]);
     }
-    return cache.object === false
-      ? (releaseObject(result), null)
-      : result;
+    return result;
   }
 
   /**

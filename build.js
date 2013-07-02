@@ -3973,35 +3973,6 @@
             return match.replace(/'Error', */, '');
           });
         }
-        // remove code used to resolve unneeded `support` properties
-        source = source.replace(matchVar(source, 'support'), function(match) {
-          return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
-            var modified = setup;
-
-            if (!/support\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
-              modified = modified.replace(/^ *object *=.+\n/m, '');
-            }
-            if (!/support\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
-                !/support\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
-                !/support\.ownLast *=(?! *(?:false|true))/.test(body)) {
-              modified = modified
-                .replace(/\bctor *=.+\s+/, '')
-                .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
-                .replace(/(?:,\n)? *props *=[^;=]+/, '')
-                .replace(/^ *for *\((?=prop)/, '$&var ')
-            }
-            if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
-              modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
-            }
-            // cleanup the empty var statement
-            modified = modified.replace(/^ *var;\n/m, '');
-
-            // if no setup then remove IIFE
-            return /^\s*$/.test(modified)
-              ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
-              : match.replace(setup, modified);
-          });
-        });
       }
 
       // remove functions from the build
@@ -4056,6 +4027,36 @@
           }
         }
       }());
+
+      // remove code used to resolve unneeded `support` properties
+      source = source.replace(matchVar(source, 'support'), function(match) {
+        return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
+          var modified = setup;
+
+          if (!/support\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
+            modified = modified.replace(/^ *object *=.+\n/m, '');
+          }
+          if (!/support\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
+              !/support\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
+              !/support\.ownLast *=(?! *(?:false|true))/.test(body)) {
+            modified = modified
+              .replace(/\bctor *=.+\s+/, '')
+              .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
+              .replace(/(?:,\n)? *props *=[^;=]+/, '')
+              .replace(/^ *for *\((?=prop)/, '$&var ')
+          }
+          if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
+            modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
+          }
+          // cleanup the empty var statement
+          modified = modified.replace(/^ *var;\n/m, '');
+
+          // if no setup then remove IIFE
+          return /^\s*$/.test(modified)
+            ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
+            : match.replace(setup, modified);
+        });
+      });
 
       if (isNoDep) {
         // replace the `lodash.templateSettings` property assignment with a variable assignment

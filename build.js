@@ -2498,7 +2498,7 @@
     if (isTemplate) {
       invalidArgs.push('template');
     }
-    if (invalidArgs.length > 2) {
+    if (invalidArgs.length > 1) {
       warnings.push('The `' + invalidArgs.slice(0, -1).join('`, `') + '`' + (invalidArgs.length > 2 ? ',' : '') + ' and `' + invalidArgs.slice(-1) + '` commands may not be combined.');
     }
     // report invalid command entries

@@ -819,12 +819,11 @@
         asyncTest('`lodash ' + mapCommand + (outputCommand ? ' ' + outputCommand : '') + '`', function() {
           var callback = _.once(function(data) {
             var basename = path.basename(data.outputPath, '.js'),
-                comment = (/(\s*\/\/.*\s*|\s*\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/\s*)$/.exec(data.source) || [])[0],
                 sources = /foo.js/.test(outputCommand) ? ['foo.js'] : ['lodash' + (outputCommand.length ? '' : '.custom') + '.js'],
                 sourceMap = JSON.parse(data.sourceMap),
                 sourceMapURL = (/\w+(?=\.map$)/.exec(mapCommand) || [basename])[0];
 
-            ok(RegExp('/\\*\\n//@ sourceMappingURL=' + sourceMapURL + '.map\\n\\*/').test(comment), basename);
+            ok(RegExp('\\n//# sourceMappingURL=' + sourceMapURL + '.map$').test(data.source), basename);
             equal(sourceMap.file, basename + '.js', basename);
             deepEqual(sourceMap.sources, sources, basename);
 

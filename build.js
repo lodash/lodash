@@ -30,7 +30,7 @@
   var multilineComment = '(?:\\n */\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n';
 
   /** Used to detect the Node.js executable in command-line arguments */
-  var reNode = RegExp('(?:^|' + path.sepEscaped + ')node(?:\\.exe)?$');
+  var reNode = RegExp('(?:^|' + path.sepEscaped + ')node(?:\\.exe)?$', 'i');
 
   /** Shortcut to the `stdout` object */
   var stdout = process.stdout;

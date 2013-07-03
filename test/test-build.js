@@ -482,6 +482,48 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('build command checks');
+
+  (function() {
+    var reHelp = /lodash --help/,
+        write = process.stdout.write;
+
+    var commands = [
+      'node.EXE build -s modern',
+      '-s strict underscore'
+    ];
+
+    commands.forEach(function(command) {
+      asyncTest('`lodash ' + command +'` is valid', function() {
+        var start = _.after(2, _.once(function() {
+          ok(true, 'should be valid');
+          QUnit.start();
+        }));
+
+        build(command.split(' '), start);
+      });
+    });
+
+    commands = [
+      'mobile underscore',
+      'modern template=./*.jst'
+    ];
+
+    commands.forEach(function(command) {
+      asyncTest('`lodash ' + command +'` is not valid', function() {
+        process.stdout.write = _.once(function(string) {
+          ok(reHelp.test(string));
+          process.stdout.write = write;
+          QUnit.start();
+        });
+
+        build(command.split(' '), function() {});
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('minified AMD snippet');
 
   (function() {
@@ -1388,6 +1430,8 @@
   QUnit.module('stdout option');
 
   (function() {
+    var write = process.stdout.write;
+
     var commands = [
       '-c',
       '-c -d',
@@ -1397,19 +1441,18 @@
     commands.forEach(function(command, index) {
       asyncTest('`lodash ' + command +'`', function() {
         var written,
-            start = _.once(QUnit.start),
-            write = process.stdout.write;
+            start = _.once(QUnit.start);
 
         process.stdout.write = function(string) {
           written = string;
         };
 
         build(['exports=', 'include='].concat(command.split(' ')), function(data) {
-          process.stdout.write = write;
-
           strictEqual('outputPath' in data, false);
           equal(written, data.source);
           equal(arguments.length, 1);
+
+          process.stdout.write = write;
           start();
         });
       });
@@ -1621,8 +1664,8 @@
 
             // expand categories to function names
             funcNames.slice().forEach(function(category) {
-              var otherNames = _.filter(categoryMap[category], function(identifier) {
-                return typeof _[identifier] == 'function';
+              var otherNames = _.filter(categoryMap[category], function(key) {
+                return typeof _[key] == 'function';
               });
 
               // limit function names to those available for specific builds

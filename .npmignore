@@ -15,7 +15,9 @@ vendor/*.gz
 vendor/backbone
 vendor/benchmark.js
 vendor/closure-compiler
+vendor/curl
 vendor/docdown
+vendor/dojo
 vendor/firebug-lite
 vendor/jquery
 vendor/json3

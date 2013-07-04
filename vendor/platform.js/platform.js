@@ -299,6 +299,7 @@
       'WebPositive',
       'Opera Mini',
       'Opera',
+      { 'label': 'Opera', 'pattern': 'OPR' },
       'Chrome',
       { 'label': 'Chrome Mobile', 'pattern': '(?:CriOS|CrMo)' },
       { 'label': 'Firefox', 'pattern': '(?:Firefox|Minefield)' },
@@ -459,6 +460,7 @@
             .replace(/Macintosh/, 'Mac OS')
             .replace(/_PowerPC/i, ' OS')
             .replace(/(OS X) [^ \d]+/i, '$1')
+            .replace(/Mac (OS X)/, '$1')
             .replace(/\/(\d)/, ' $1')
             .replace(/_/g, '.')
             .replace(/(?: BePC|[ .]*fc[ \d.]+)$/i, '')
@@ -555,7 +557,7 @@
     }
     // detect Android browsers
     else if (manufacturer && manufacturer != 'Google' &&
-        /Chrome|Vita/.test(name + ';' + product)) {
+        ((/Chrome/.test(name) && !/Mobile Safari/.test(ua)) || /Vita/.test(product))) {
       name = 'Android Browser';
       os = /Android/.test(os) ? os : 'Android';
     }
@@ -575,7 +577,7 @@
     // detect non-Opera versions (order is important)
     if (!version) {
       version = getVersion([
-        '(?:Cloud9|CriOS|CrMo|Opera ?Mini|Raven|Silk(?!/[\\d.]+$))',
+        '(?:Cloud9|CriOS|CrMo|Opera ?Mini|OPR|Raven|Silk(?!/[\\d.]+$))',
         'Version',
         qualify(name),
         '(?:Firefox|Minefield|NetFront)'
@@ -585,9 +587,9 @@
     if (layout == 'iCab' && parseFloat(version) > 3) {
       layout = ['WebKit'];
     } else if ((data =
-          /Opera/.test(name) && 'Presto' ||
+          /Opera/.test(name) && (/OPR/.test(ua) ? 'Blink' : 'Presto') ||
           /\b(?:Midori|Nook|Safari)\b/i.test(ua) && 'WebKit' ||
-          !layout && /\bMSIE\b/i.test(ua) && (/^Mac/.test(os) ? 'Tasman' : 'Trident')
+          !layout && /\bMSIE\b/i.test(ua) && (os == 'Mac OS' ? 'Tasman' : 'Trident')
         )) {
       layout = [data];
     }
@@ -688,7 +690,7 @@
       description.unshift('desktop mode');
     }
     // add mobile postfix
-    else if ((name == 'IE' || name && !product && !/Browser|Mobi/.test(name)) &&
+    else if ((name == 'Chrome' || name == 'IE' || name && !product && !/Browser|Mobi/.test(name)) &&
         (os == 'Windows CE' || /Mobi/i.test(ua))) {
       name += ' Mobile';
     }
@@ -796,7 +798,7 @@
       name = 'Chrome Mobile';
       version = null;
 
-      if (/Mac OS X/.test(os)) {
+      if (/OS X/.test(os)) {
         manufacturer = 'Apple';
         os = 'iOS 4.3+';
       } else {

@@ -79,6 +79,10 @@
 
   /** Used to track function dependencies */
   var funcDependencyMap = {
+    // properties
+    'templateSettings': ['escape'],
+
+    // public functions
     'after': [],
     'assign': ['createCallback', 'createIterator'],
     'at': ['isString'],
@@ -215,7 +219,7 @@
     'wrapperToString': [],
     'wrapperValueOf': [],
 
-    // used by the `backbone` and `underscore` builds
+    // functions used by the `backbone` and `underscore` builds
     'chain': ['value'],
     'findWhere': ['where']
   };
@@ -239,17 +243,23 @@
 
   /** Used to track variable dependencies of functions */
   var varDependencyMap = {
+    'bind': ['reNative'],
     'bindKey': ['indicatorObject'],
     'createCallback': ['indicatorObject'],
     'createIterator': ['indicatorObject', 'iteratorObject', 'objectTypes'],
-    'defer': ['objectTypes'],
+    'createObject': ['reNative'],
+    'defer': ['objectTypes', 'reNative'],
+    'isArray': ['reNative'],
     'isEqual': ['indicatorObject'],
     'isObject': ['objectTypes'],
+    'isPlainObject': ['reNative'],
     'isRegExp': ['objectTypes'],
-    'keys': ['iteratorObject'],
+    'keys': ['iteratorObject', 'reNative'],
     'merge': ['indicatorObject'],
     'partialRight': ['indicatorObject'],
-    'template': ['reInterpolate']
+    'support': ['reNative'],
+    'template': ['reInterpolate'],
+    'templateSettings': ['reInterpolate']
   };
 
   /** Used to track the category of identifiers */
@@ -521,7 +531,10 @@
   ];
 
   /** List of all functions */
-  var allFuncs = _.keys(funcDependencyMap);
+  var allFuncs = _.keys(funcDependencyMap).filter(function(key) {
+    var type = typeof _[key];
+    return type == 'function' || type == 'undefined';
+  });
 
   /** List of Lo-Dash functions */
   var lodashFuncs = _.difference(allFuncs, privateFuncs, 'findWhere');
@@ -822,9 +835,6 @@
           .concat(varDependencyMap[identifier] || [])
           .sort();
 
-      if (identifier == 'templateSettings') {
-        deps = ['escape', 'reInterpolate'];
-      }
       var modulePath = getPath(identifier),
           depArgs = deps.join(', '),
           depPaths = '[' + (deps.length ? "'" + getDepPaths(deps, modulePath).join("', '") + "'" : '') + '], ',
@@ -1747,7 +1757,7 @@
   function removeProp(source, propName) {
     return source.replace(RegExp(
       multilineComment +
-      '(?: *|(.*?=))lodash\\.' + propName + '\\s*=[\\s\\S]+?' +
+      '(?: *|(.*?=))lodash\\._?' + propName + '\\s*=[\\s\\S]+?' +
       '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
       '[;}]\\n(?=\\n(?!\\s*\\(func)))'
     ), function(match, prelude) {
@@ -2440,8 +2450,9 @@
       var categories = _.intersection(funcNames, allCategories);
 
       categories.forEach(function(category) {
-        var otherFuncs = getNamesByCategory(category).filter(function(identifier) {
-          return typeof _[identifier] == 'function';
+        var otherFuncs = getNamesByCategory(category).filter(function(key) {
+          var type = typeof _[key];
+          return type == 'function' || type == 'undefined';
         });
 
         // limit function names to those available for specific builds
@@ -2556,6 +2567,10 @@
         funcDependencyMap.defer = _.without(funcDependencyMap.defer, 'bind');
         funcDependencyMap.isPlainObject = _.without(funcDependencyMap.isPlainObject, 'shimIsPlainObject');
         funcDependencyMap.keys = _.without(funcDependencyMap.keys, 'shimKeys');
+
+        _.forOwn(varDependencyMap, function(deps, varName) {
+          varDependencyMap[varName] = _.without(deps, 'reNative');
+        });
       }
       if (isMobile) {
         _.each(['assign', 'defaults'], function(funcName) {
@@ -3914,7 +3929,7 @@
         source = source
           .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n( *)(?:basicEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype.[\s\S]+?;/g, '');
+          .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype\.[\s\S]+?;/g, '');
       }
       if (isNoDep) {
         source = removeAssignments(source);
@@ -3970,13 +3985,15 @@
         if (isExcluded('value')) {
           source = removeSupportSpliceObjects(source);
         }
-        if (!/^ *support\.(?:enumErrorProps|nonEnumShadows) *=/m.test(source)) {
+        if (!/\.(?:enumErrorProps|nonEnumShadows) *=/.test(source)) {
           source = removeFromCreateIterator(source, 'errorClass');
           source = removeFromCreateIterator(source, 'errorProto');
 
           // remove 'Error' from the `contextProps` array
           source = source.replace(/^ *var contextProps *=[\s\S]+?;/m, function(match) {
-            return match.replace(/'Error', */, '');
+            return match
+              .replace(/'Error',? */, '')
+              .replace(/,(?=\s*])/, '');
           });
         }
       }
@@ -4000,7 +4017,7 @@
         }
       });
 
-      // remove unneeded function properties dependencies
+      // remove unneeded property dependencies
       _.each(propDependencies, function(propName) {
         if (!_.contains(includeProps, propName)) {
           source = removeProp(source, propName);
@@ -4039,19 +4056,19 @@
         return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
           var modified = setup;
 
-          if (!/support\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
+          if (!/\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
             modified = modified.replace(/^ *object *=.+\n/m, '');
           }
-          if (!/support\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
-              !/support\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
-              !/support\.ownLast *=(?! *(?:false|true))/.test(body)) {
+          if (!/\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
+              !/\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
+              !/\.ownLast *=(?! *(?:false|true))/.test(body)) {
             modified = modified
               .replace(/\bctor *=.+\s+/, '')
               .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
               .replace(/(?:,\n)? *props *=[^;=]+/, '')
               .replace(/^ *for *\((?=prop)/, '$&var ')
           }
-          if (!/support\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
+          if (!/\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
             modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
           }
           // cleanup the empty var statement
@@ -4082,6 +4099,13 @@
         // replace `_` use in `_.templateSettings.imports`
         source = source.replace(matchVar(source, 'templateSettings'), function(match) {
           return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
+        });
+
+        // remove unneeded variable dependencies
+        _.each(varDependencies, function(varName) {
+          if (!_.contains(includeVars, varName)) {
+            source = removeVar(source, varName);
+          }
         });
       }
     }

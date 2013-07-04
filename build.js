@@ -791,24 +791,29 @@
 
     var categories = _.uniq(_.compact(identifiers.map(getCategory))),
         isAMD = _.contains(exportsOptions, 'amd'),
-        outputPath = options[_.indexOf(options, '-o') + 1];
+        outputPath = options[_.indexOf(options, '-o') + 1],
+        sep = '/';
 
     var topLevel = {
       'lodash': true,
       'support': true
     };
 
-    function getDepPaths(dependencies) {
+    var getDepPaths = function(dependencies, fromPath) {
+      fromPath || (fromPath = '');
       return dependencies.map(function(depName) {
-        return getPath(depName) + depName;
-      });
-    }
+        var toPath = getPath(depName),
+            relative = (path.relative(fromPath, toPath) || '.').replace(RegExp(path.sepEscaped, 'g'), sep);
 
-    function getPath(identifier) {
+        return relative + sep + depName;
+      });
+    };
+
+    var getPath = function(identifier) {
       return topLevel[identifier]
         ? ''
-        : (getCategory(identifier) || 'internals').toLowerCase() + '/';
-    }
+        : (getCategory(identifier) || 'internals').toLowerCase() + sep;
+    };
 
     // create modules for each identifier
     identifiers.forEach(function(identifier) {
@@ -820,8 +825,9 @@
       if (identifier == 'templateSettings') {
         deps = ['escape', 'reInterpolate'];
       }
-      var depArgs = deps.join(', '),
-          depPaths = deps.length ? "['" + getDepPaths(deps).join("', '") + "'], " : '',
+      var modulePath = getPath(identifier),
+          depArgs = deps.join(', '),
+          depPaths = '[' + (deps.length ? "'" + getDepPaths(deps, modulePath).join("', '") + "'" : '') + '], ',
           iife = [];
 
       if (isAMD) {
@@ -837,7 +843,7 @@
         'exports=none',
         'include=' + identifier,
         'iife=' + iife.join('\n'),
-        '-o', path.join(outputPath, getPath(identifier) + identifier + '.js')
+        '-o', path.join(outputPath, modulePath + identifier + '.js')
       ));
     });
 
@@ -845,7 +851,7 @@
     categories.forEach(function(category) {
       var deps = _.intersection(categoryMap[category], identifiers).sort(),
           depArgs =  deps.join(', '),
-          depPaths = deps.length ? "['" + getDepPaths(deps).join("', '") + "'], " : '',
+          depPaths = "['" + getDepPaths(deps).join("', '") + "'], ",
           iife = [];
 
       if (isAMD) {

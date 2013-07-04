@@ -1664,7 +1664,8 @@
             // expand categories to function names
             funcNames.slice().forEach(function(category) {
               var otherNames = _.filter(categoryMap[category], function(key) {
-                return typeof _[key] == 'function';
+                var type = typeof _[key];
+                return type == 'function' || type == 'undefined';
               });
 
               // limit function names to those available for specific builds

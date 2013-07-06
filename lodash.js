@@ -976,6 +976,88 @@
     /*--------------------------------------------------------------------------*/
 
     /**
+     * A basic implementation of `_.flatten` without support for `callback`
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Array} array The array to flatten.
+     * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
+     * @param {Function} [callback] The function called per iteration.
+     * @returns {Array} Returns a new flattened array.
+     */
+    function basicFlatten(array, isShallow, callback) {
+      var index = -1,
+          length = array ? array.length : 0,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index];
+        if (callback) {
+          value = callback(value, index, array);
+        }
+        // recursively flatten arrays (susceptible to call stack limits)
+        if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
+          push.apply(result, isShallow ? value : basicFlatten(value));
+        } else {
+          result.push(value);
+        }
+      }
+      return result;
+    }
+
+    /**
+     * A basic implementation of `_.uniq` without support for `callback` shorthands
+     * or `thisArg` binding.
+     *
+     * @private
+     * @param {Array} array The array to process.
+     * @param {Boolean} [isSorted=false] A flag to indicate that the `array` is already sorted.
+     * @param {Function} [callback] The function called per iteration.
+     * @returns {Array} Returns a duplicate-value-free array.
+     */
+    function basicUniq(array, isSorted, callback) {
+      var index = -1,
+          indexOf = getIndexOf(),
+          length = array ? array.length : 0,
+          result = [];
+
+      var isLarge = !isSorted && length >= largeArraySize && indexOf === basicIndexOf,
+          seen = (callback || isLarge) ? getArray() : result;
+
+      if (isLarge) {
+        var cache = createCache(seen);
+        if (cache) {
+          indexOf = cacheIndexOf;
+          seen = cache;
+        } else {
+          isLarge = false;
+          seen = callback ? seen : (releaseArray(seen), result);
+        }
+      }
+      while (++index < length) {
+        var value = array[index],
+            computed = callback ? callback(value, index, array) : value;
+
+        if (isSorted
+              ? !index || seen[seen.length - 1] !== computed
+              : indexOf(seen, computed) < 0
+            ) {
+          if (callback || isLarge) {
+            seen.push(computed);
+          }
+          result.push(value);
+        }
+      }
+      if (isLarge) {
+        releaseArray(seen.array);
+        releaseObject(seen);
+      } else if (callback) {
+        releaseArray(seen);
+      }
+      return result;
+    }
+
+    /**
      * Creates a function that, when called, invokes `func` with the `this` binding
      * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
      * bound function.
@@ -3850,25 +3932,7 @@
      * _.flatten(stooges, 'quotes');
      * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
      */
-    var flatten = overloadWrapper(function flatten(array, isShallow, callback) {
-      var index = -1,
-          length = array ? array.length : 0,
-          result = [];
-
-      while (++index < length) {
-        var value = array[index];
-        if (callback) {
-          value = callback(value, index, array);
-        }
-        // recursively flatten arrays (susceptible to call stack limits)
-        if (isArray(value)) {
-          push.apply(result, isShallow ? value : flatten(value));
-        } else {
-          result.push(value);
-        }
-      }
-      return result;
-    });
+    var flatten = overloadWrapper(basicFlatten);
 
     /**
      * Gets the index at which the first occurrence of `value` is found using
@@ -4355,10 +4419,10 @@
      * // => [1, 2, 3, 101, 10]
      */
     function union(array) {
-      if (!isArray(array)) {
-        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
+      if (!array) {
+        arguments[0] = arrayRef;
       }
-      return uniq(concat.apply(arrayRef, arguments));
+      return basicUniq(basicFlatten(arguments, true));
     }
 
     /**
@@ -4404,47 +4468,7 @@
      * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
-    var uniq = overloadWrapper(function(array, isSorted, callback) {
-      var index = -1,
-          indexOf = getIndexOf(),
-          length = array ? array.length : 0,
-          result = [];
-
-      var isLarge = !isSorted && length >= largeArraySize && indexOf === basicIndexOf,
-          seen = (callback || isLarge) ? getArray() : result;
-
-      if (isLarge) {
-        var cache = createCache(seen);
-        if (cache) {
-          indexOf = cacheIndexOf;
-          seen = cache;
-        } else {
-          isLarge = false;
-          seen = callback ? seen : (releaseArray(seen), result);
-        }
-      }
-      while (++index < length) {
-        var value = array[index],
-            computed = callback ? callback(value, index, array) : value;
-
-        if (isSorted
-              ? !index || seen[seen.length - 1] !== computed
-              : indexOf(seen, computed) < 0
-            ) {
-          if (callback || isLarge) {
-            seen.push(computed);
-          }
-          result.push(value);
-        }
-      }
-      if (isLarge) {
-        releaseArray(seen.array);
-        releaseObject(seen);
-      } else if (callback) {
-        releaseArray(seen);
-      }
-      return result;
-    });
+    var uniq = overloadWrapper(basicUniq);
 
     /**
      * The inverse of `_.zip`, this method splits groups of elements into arrays

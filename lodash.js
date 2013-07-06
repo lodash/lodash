@@ -4571,17 +4571,14 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * If `n` is greater than `0`, a function is created that is restricted to
-     * executing `func`, with the `this` binding and arguments of the created
-     * function, only after it is called `n` times. If `n` is less than `1`,
-     * `func` is executed immediately, without a `this` binding or additional
-     * arguments, and its result is returned.
+     * Creates a function this is restricted to executing `func`, with the `this`
+     * binding and arguments of the created function, only after it is called `n` times.
      *
      * @static
      * @memberOf _
      * @category Functions
      * @param {Number} n The number of times the function must be called before
-     * it is executed.
+     *  `func` is executed.
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
      * @example
@@ -4593,9 +4590,6 @@
      * // `renderNotes` is run once, after all notes have saved
      */
     function after(n, func) {
-      if (n < 1) {
-        return func();
-      }
       return function() {
         if (--n < 1) {
           return func.apply(this, arguments);

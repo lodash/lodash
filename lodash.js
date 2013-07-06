@@ -1227,12 +1227,12 @@
      * // => false
      */
     function isArguments(value) {
-      return toString.call(value) == argsClass;
+      return (value && typeof value == 'object') ? toString.call(value) == argsClass : false;
     }
     // fallback for browsers that can't detect `arguments` objects by [[Class]]
     if (!support.argsClass) {
       isArguments = function(value) {
-        return value ? hasOwnProperty.call(value, 'callee') : false;
+        return (value && typeof value == 'object') ? hasOwnProperty.call(value, 'callee') : false;
       };
     }
 
@@ -1253,7 +1253,7 @@
      * // => true
      */
     var isArray = nativeIsArray || function(value) {
-      return value ? (typeof value == 'object' && toString.call(value) == arrayClass) : false;
+      return (value && typeof value == 'object') ? toString.call(value) == arrayClass : false;
     };
 
     /**
@@ -2222,7 +2222,7 @@
      * // => true
      */
     function isRegExp(value) {
-      return !!(value && objectTypes[typeof value]) && toString.call(value) == regexpClass;
+      return (value && objectTypes[typeof value]) ? toString.call(value) == regexpClass : false;
     }
 
     /**

@@ -939,7 +939,13 @@
   QUnit.module('lodash.flatten');
 
   (function() {
-    var array = [{ 'a': [1, [2]] }, { 'a': [3] }];
+    var args = arguments,
+        array = [{ 'a': [1, [2]] }, { 'a': [3] }];
+
+    test('should flatten `arguments` objects', function() {
+      var actual = _.flatten([args, args]);
+      deepEqual(actual, [1, 2, 3, 1, 2, 3]);
+    });
 
     test('should work with a `callback`', function() {
       var actual = _.flatten(array, function(value) {
@@ -1000,7 +1006,7 @@
       deepEqual(actual2, expected);
       ok(4 in actual2);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 

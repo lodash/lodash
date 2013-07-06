@@ -3092,7 +3092,7 @@
             '    var iterable = arguments[argsIndex];',
             '    if (iterable) {',
             '      for (var key in iterable) {',
-            '        if (object[key] == null) {',
+            "        if (typeof object[key] == 'undefined') {",
             '          object[key] = iterable[key];',
             '        }',
             '      }',
@@ -3386,7 +3386,7 @@
         if (!isLodashFunc('result')) {
           source = replaceFunction(source, 'result', [
             'function result(object, property) {',
-            '  var value = object ? object[property] : null;',
+            '  var value = object ? object[property] : undefined;',
             '  return isFunction(value) ? object[property]() : value;',
             '}'
           ].join('\n'));

@@ -222,7 +222,7 @@ var lodash = require('lodash');
 var lodash = require('lodash/dist/lodash.underscore');
 ```
 
-**Note:** You can't name a variable '''_''' in Node.js. See [REPL docs.](http://nodejs.org/api/repl.html#repl_repl_features)
+**Note:** You can't name a variable ```_``` in Node.js. See [REPL docs.](http://nodejs.org/api/repl.html#repl_repl_features)
 
 **Note:** If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.
 

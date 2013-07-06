@@ -213,16 +213,24 @@ To avoid potential issues, update `npm` before installing Lo-Dash:
 npm install npm -g
 ```
 
-In [Node.js](http://nodejs.org/) and [RingoJS ≥ v0.8.0](http://ringojs.org/):
+In [Node.js](http://nodejs.org/):
+
+```js
+var lodash = require('lodash');
+
+// or as a drop-in replacement for Underscore
+var lodash = require('lodash/dist/lodash.underscore');
+```
+
+**Note:** You can't name a variable '''_''' in Node.js. See [REPL docs.](http://nodejs.org/api/repl.html#repl_repl_features)
+
+**Note:** If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.
+
+In [RingoJS ≥ v0.8.0](http://ringojs.org/):
 
 ```js
 var _ = require('lodash');
-
-// or as a drop-in replacement for Underscore
-var _ = require('lodash/dist/lodash.underscore');
 ```
-
-**Note:** If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.
 
 In [RingoJS ≤ v0.7.0](http://ringojs.org/):
 

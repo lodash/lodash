@@ -108,7 +108,7 @@
     'findIndex': ['createCallback'],
     'findKey': ['createCallback', 'forOwn'],
     'first': ['createCallback', 'slice'],
-    'flatten': ['isArray', 'overloadWrapper'],
+    'flatten': ['basicFlatten', 'overloadWrapper'],
     'forEach': ['basicEach', 'createCallback', 'isArray'],
     'forIn': ['createIterator'],
     'forOwn': ['createIterator'],
@@ -176,8 +176,8 @@
     'toArray': ['isString', 'slice', 'values'],
     'transform': ['createCallback', 'createObject', 'forOwn', 'isArray'],
     'unescape': ['unescapeHtmlChar'],
-    'union': ['isArray', 'uniq'],
-    'uniq': ['cacheIndexOf', 'createCache', 'getArray', 'getIndexOf', 'overloadWrapper', 'releaseArray', 'releaseObject'],
+    'union': ['basicFlatten', 'basicUniq'],
+    'uniq': ['basicUniq', 'overloadWrapper'],
     'uniqueId': [],
     'unzip': ['max', 'pluck'],
     'value': ['basicEach', 'forOwn', 'isArray', 'lodash', 'wrapperValueOf', 'lodashWrapper'],
@@ -190,7 +190,9 @@
 
     // private functions
     'basicEach': ['createIterator'],
+    'basicFlatten': ['isArguments', 'isArray'],
     'basicIndexOf': [],
+    'basicUniq': ['cacheIndexOf', 'createCache', 'getArray', 'getIndexOf', 'releaseArray', 'releaseObject'],
     'cacheIndexOf': ['basicIndexOf'],
     'cachePush': [],
     'charAtCallback': [],
@@ -502,7 +504,9 @@
   /** List of private functions */
   var privateFuncs = [
     'basicEach',
+    'basicFlatten',
     'basicIndex',
+    'basicUniq',
     'cacheIndexOf',
     'cachePush',
     'charAtCallback',
@@ -2631,6 +2635,19 @@
           });
         }
 
+        _.each(['flatten', 'uniq'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            var basicFuncName = 'basic' + capitalize(funcName);
+
+            (funcDependencyMap.union = _.without(funcDependencyMap.union, basicFuncName)).push(funcName);
+
+            funcDependencyMap[funcName] = _.without(
+              funcDependencyMap[funcName].concat(funcDependencyMap[basicFuncName], funcDependencyMap.overloadWrapper),
+              basicFuncName, 'overloadWrapper'
+            );
+          }
+        });
+
         _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
           if (funcName == 'basicEach' || !isLodashFunc(funcName)) {
             (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('indicatorObject');
@@ -3156,7 +3173,7 @@
             '' ,
             '  while (++index < length) {',
             '    var value = array[index];',
-            '    if (isArray(value)) {',
+            "    if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {",
             '      push.apply(result, isShallow ? value : flatten(value));',
             '    } else {',
             '      result.push(value);',
@@ -3599,6 +3616,16 @@
 
         // unexpose `lodash.support`
         source = source.replace(/\blodash\.support *= */, '');
+
+        // replace `basicFlatten` and `basicUniq` with `flatten` and `uniq` in `_.union`
+        _.each(['flatten', 'uniq'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            source = source.replace(matchFunction(source, 'union'), function(match) {
+              var basicFuncName = 'basic' + capitalize(funcName);
+              return match.replace(RegExp('\\b' + basicFuncName + '\\b', 'g'), funcName);
+            });
+          }
+        });
 
         // replace `slice` with `nativeSlice.call`
         _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {

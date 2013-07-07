@@ -65,6 +65,8 @@ $(document).ready(function() {
     deepEqual(_.flatten(list, true), [1,2,3,[[[4]]]], 'can shallowly flatten nested arrays');
     var result = (function(){ return _.flatten(arguments); })(1, [2], [3, [[[4]]]]);
     deepEqual(result, [1,2,3,4], 'works on an arguments object');
+    list = [[1], [2], [3], [[4]]];
+    deepEqual(_.flatten(list, true), [1, 2, 3, [4]], 'can shallowly flatten arrays containing only other arrays');
   });
 
   test("without", function() {
@@ -73,7 +75,7 @@ $(document).ready(function() {
     var result = (function(){ return _.without(arguments, 0, 1); })(1, 2, 1, 0, 3, 1, 4);
     equal(result.join(', '), '2, 3, 4', 'works on an arguments object');
 
-    var list = [{one : 1}, {two : 2}];
+    list = [{one : 1}, {two : 2}];
     ok(_.without(list, {one : 1}).length == 2, 'uses real object identity for comparisons.');
     ok(_.without(list, list[0]).length == 1, 'ditto.');
   });
@@ -82,17 +84,17 @@ $(document).ready(function() {
     var list = [1, 2, 1, 3, 1, 4];
     equal(_.uniq(list).join(', '), '1, 2, 3, 4', 'can find the unique values of an unsorted array');
 
-    var list = [1, 1, 1, 2, 2, 3];
+    list = [1, 1, 1, 2, 2, 3];
     equal(_.uniq(list, true).join(', '), '1, 2, 3', 'can find the unique values of a sorted array faster');
 
-    var list = [{name:'moe'}, {name:'curly'}, {name:'larry'}, {name:'curly'}];
+    list = [{name:'moe'}, {name:'curly'}, {name:'larry'}, {name:'curly'}];
     var iterator = function(value) { return value.name; };
     equal(_.map(_.uniq(list, false, iterator), iterator).join(', '), 'moe, curly, larry', 'can find the unique values of an array using a custom iterator');
 
     equal(_.map(_.uniq(list, iterator), iterator).join(', '), 'moe, curly, larry', 'can find the unique values of an array using a custom iterator without specifying whether array is sorted');
 
-    var iterator = function(value) { return value +1; };
-    var list = [1, 2, 2, 3, 4, 4];
+    iterator = function(value) { return value +1; };
+    list = [1, 2, 2, 3, 4, 4];
     equal(_.uniq(list, true, iterator).join(', '), '1, 2, 3, 4', 'iterator works with sorted array');
 
     var result = (function(){ return _.uniq(arguments); })(1, 2, 1, 3, 1, 4);
@@ -111,15 +113,20 @@ $(document).ready(function() {
     var result = _.union([1, 2, 3], [2, 30, 1], [1, 40]);
     equal(result.join(' '), '1 2 3 30 40', 'takes the union of a list of arrays');
 
-    var result = _.union([1, 2, 3], [2, 30, 1], [1, 40, [1]]);
+    result = _.union([1, 2, 3], [2, 30, 1], [1, 40, [1]]);
     equal(result.join(' '), '1 2 3 30 40 1', 'takes the union of a list of nested arrays');
+
+    var args = null;
+    (function(){ args = arguments; })(1, 2, 3);
+    result = _.union(args, [2, 30, 1], [1, 40]);
+    equal(result.join(' '), '1 2 3 30 40', 'takes the union of a list of arrays');
   });
 
   test("difference", function() {
     var result = _.difference([1, 2, 3], [2, 30, 40]);
     equal(result.join(' '), '1 3', 'takes the difference of two arrays');
 
-    var result = _.difference([1, 2, 3, 4], [2, 30, 40], [1, 11, 111]);
+    result = _.difference([1, 2, 3, 4], [2, 30, 40], [1, 11, 111]);
     equal(result.join(' '), '3 4', 'takes the difference of three arrays');
   });
 
@@ -127,6 +134,19 @@ $(document).ready(function() {
     var names = ['moe', 'larry', 'curly'], ages = [30, 40, 50], leaders = [true];
     var stooges = _.zip(names, ages, leaders);
     equal(String(stooges), 'moe,30,true,larry,40,,curly,50,', 'zipped together arrays of different lengths');
+  });
+
+  test('unzip', function() {
+    var stoogesUnzipped = _.unzip(['moe',30, 'stooge 1'],['larry',40, 'stooge 2'],['curly',50, 'stooge 3']);
+    deepEqual(stoogesUnzipped, [['moe','larry','curly'],[30,40,50], ['stooge 1', 'stooge 2', 'stooge 3']], 'unzipped pairs');
+
+    // In the case of difference lengths of the tuples undefineds
+    // should be used as placeholder
+    stoogesUnzipped = _.unzip(['moe',30],['larry',40],['curly',50, 'extra data']);
+    deepEqual(stoogesUnzipped, [['moe','larry','curly'],[30,40,50], [undefined, undefined, 'extra data']], 'unzipped pairs');
+
+    var emptyUnzipped = _.unzip([]);
+    deepEqual(emptyUnzipped, [], 'unzipped empty');
   });
 
   test('object', function() {
@@ -152,7 +172,8 @@ $(document).ready(function() {
     equal(result, 1, 'works on an arguments object');
     equal(_.indexOf(null, 2), -1, 'handles nulls properly');
 
-    var numbers = [10, 20, 30, 40, 50], num = 35;
+    var num = 35;
+    numbers = [10, 20, 30, 40, 50];
     var index = _.indexOf(numbers, num, true);
     equal(index, -1, '35 is not in the list');
 
@@ -179,7 +200,7 @@ $(document).ready(function() {
     equal(_.lastIndexOf(numbers, 0), 8, 'lastIndexOf the other element');
     var result = (function(){ return _.lastIndexOf(arguments, 1); })(1, 0, 1, 0, 0, 1, 0, 0, 0);
     equal(result, 5, 'works on an arguments object');
-    equal(_.indexOf(null, 2), -1, 'handles nulls properly');
+    equal(_.lastIndexOf(null, 2), -1, 'handles nulls properly');
 
     numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3];
     var index = _.lastIndexOf(numbers, 2, 2);

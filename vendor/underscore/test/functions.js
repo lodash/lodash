@@ -34,7 +34,10 @@ $(document).ready(function() {
     // To test this with a modern browser, set underscore's nativeBind to undefined
     var F = function () { return this; };
     var Boundf = _.bind(F, {hello: "moe curly"});
+    var newBoundf = new Boundf();
+    equal(newBoundf.hello, undefined, "function should not be bound to the context, to comply with ECMAScript 5");
     equal(Boundf().hello, "moe curly", "When called without the new operator, it's OK to be bound to the context");
+    ok(newBoundf instanceof F, "a bound instance is an instance of the original function");
   });
 
   test("partial", function() {
@@ -63,18 +66,21 @@ $(document).ready(function() {
       getName : function() { return 'name: ' + this.name; },
       sayHi   : function() { return 'hi: ' + this.name; }
     };
-    _.bindAll(moe);
+
+    raises(function() { _.bindAll(moe); }, Error, 'throws an error for bindAll with no functions named');
+
+    _.bindAll(moe, 'sayHi');
     curly.sayHi = moe.sayHi;
-    equal(curly.sayHi(), 'hi: moe', 'calling bindAll with no arguments binds all functions to the object');
+    equal(curly.sayHi(), 'hi: moe');
   });
 
   test("memoize", function() {
     var fib = function(n) {
       return n < 2 ? n : fib(n - 1) + fib(n - 2);
     };
-    var fastFib = _.memoize(fib);
     equal(fib(10), 55, 'a memoized version of fibonacci produces identical results');
-    equal(fastFib(10), 55, 'a memoized version of fibonacci produces identical results');
+    fib = _.memoize(fib); // Redefine `fib` for memoization
+    equal(fib(10), 55, 'a memoized version of fibonacci produces identical results');
 
     var o = function(str) {
       return str;
@@ -177,6 +183,41 @@ $(document).ready(function() {
     }, 96);
   });
 
+  asyncTest("throttle does not trigger leading call when leading is set to false", 2, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 60, {leading: false});
+
+    throttledIncr(); throttledIncr();
+    ok(counter === 0);
+
+    _.delay(function() {
+      ok(counter == 1);
+      start();
+    }, 96);
+  });
+
+  asyncTest("throttle does not trigger trailing call when trailing is set to false", 4, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 60, {trailing: false});
+
+    throttledIncr(); throttledIncr(); throttledIncr();
+    ok(counter === 1);
+
+    _.delay(function() {
+      ok(counter == 1);
+
+      throttledIncr(); throttledIncr();
+      ok(counter == 2);
+
+      _.delay(function() {
+        ok(counter == 2);
+        start();
+      }, 96);
+    }, 96);
+  });
+
   asyncTest("debounce", 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
@@ -221,10 +262,18 @@ $(document).ready(function() {
     equal(num, 1);
   });
 
+  test("Recursive onced function.", 1, function() {
+    var f = _.once(function(){
+      ok(true);
+      f();
+    });
+    f();
+  });
+
   test("wrap", function() {
     var greet = function(name){ return "hi: " + name; };
     var backwards = _.wrap(greet, function(func, name){ return func(name) + ' ' + name.split('').reverse().join(''); });
-    equal(backwards('moe'), 'hi: moe eom', 'wrapped the saluation function');
+    equal(backwards('moe'), 'hi: moe eom', 'wrapped the salutation function');
 
     var inner = function(){ return "Hello "; };
     var obj   = {name : "Moe"};
@@ -259,7 +308,8 @@ $(document).ready(function() {
 
     equal(testAfter(5, 5), 1, "after(N) should fire after being called N times");
     equal(testAfter(5, 4), 0, "after(N) should not fire unless called N times");
-    equal(testAfter(0, 0), 1, "after(0) should fire immediately");
+    equal(testAfter(0, 0), 0, "after(0) should not fire immediately");
+    equal(testAfter(0, 1), 1, "after(0) should fire when first invoked");
   });
 
 });

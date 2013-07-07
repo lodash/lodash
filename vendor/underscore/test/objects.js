@@ -46,7 +46,7 @@ $(document).ready(function() {
     var result;
     equal(_.extend({}, {a:'b'}).a, 'b', 'can extend an object with the attributes of another');
     equal(_.extend({a:'x'}, {a:'b'}).a, 'b', 'properties in source override destination');
-    equal(_.extend({x:'x'}, {a:'b'}).x, 'x', 'properties not in source dont get overriden');
+    equal(_.extend({x:'x'}, {a:'b'}).x, 'x', "properties not in source don't get overriden");
     result = _.extend({x:'x'}, {a:'a'}, {b:'b'});
     ok(_.isEqual(result, {x:'x', a:'a', b:'b'}), 'can extend from multiple source objects');
     result = _.extend({x:'x'}, {a:'a', x:2}, {a:'b'});
@@ -92,12 +92,13 @@ $(document).ready(function() {
 
   test("defaults", function() {
     var result;
-    var options = {zero: 0, one: 1, empty: "", nan: NaN, string: "string"};
+    var options = {zero: 0, one: 1, empty: "", nan: NaN, nothing: null};
 
-    _.defaults(options, {zero: 1, one: 10, twenty: 20});
+    _.defaults(options, {zero: 1, one: 10, twenty: 20, nothing: 'str'});
     equal(options.zero, 0, 'value exists');
     equal(options.one, 1, 'value exists');
     equal(options.twenty, 20, 'default applied');
+    equal(options.nothing, null, "null isn't overridden");
 
     _.defaults(options, {empty: "full"}, {nan: "nan"}, {word: "word"}, {word: "dog"});
     equal(options.empty, "", 'value exists');
@@ -431,15 +432,19 @@ $(document).ready(function() {
   });
 
   test("isArray", function() {
+    ok(!_.isArray(undefined), 'undefined vars are not arrays');
     ok(!_.isArray(arguments), 'the arguments object is not an array');
     ok(_.isArray([1, 2, 3]), 'but arrays are');
     ok(_.isArray(iArray), 'even from another frame');
   });
 
   test("isString", function() {
+    var obj = new String("I am a string object");
     ok(!_.isString(document.body), 'the document body is not a string');
     ok(_.isString([1, 2, 3].join(', ')), 'but strings are');
     ok(_.isString(iString), 'even from another frame');
+    ok(_.isString("I am a string literal"), 'string literals are');
+    ok(_.isString(obj), 'so are String objects');
   });
 
   test("isNumber", function() {
@@ -468,10 +473,12 @@ $(document).ready(function() {
   });
 
   test("isFunction", function() {
+    ok(!_.isFunction(undefined), 'undefined vars are not functions');
     ok(!_.isFunction([1, 2, 3]), 'arrays are not functions');
     ok(!_.isFunction('moe'), 'strings are not functions');
     ok(_.isFunction(_.isFunction), 'but functions are');
     ok(_.isFunction(iFunction), 'even from another frame');
+    ok(_.isFunction(function(){}), 'even anonymous ones');
   });
 
   test("isDate", function() {

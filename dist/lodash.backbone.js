@@ -9,6 +9,9 @@
  */
 ;(function(window) {
 
+  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  var undefined;
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -18,8 +21,8 @@
   /** Used to avoid reference errors in `createIterator` */
   var iteratorObject = {};
 
-  /** Used to match HTML characters */
-  var reUnescapedHtml = /[&<>"']/g;
+  /** Used to match HTML entities and HTML characters */
+  var reUnescapedHtml = /[&<>"'\/]/g;
 
   /** `Object#toString` result shortcuts */
   var argsClass = '[object Arguments]',
@@ -383,12 +386,12 @@
    * // => false
    */
   function isArguments(value) {
-    return toString.call(value) == argsClass;
+    return (value && typeof value == 'object') ? toString.call(value) == argsClass : false;
   }
   // fallback for browsers that can't detect `arguments` objects by [[Class]]
   if (!isArguments(arguments)) {
     isArguments = function(value) {
-      return value ? hasOwnProperty.call(value, 'callee') : false;
+      return (value && typeof value == 'object') ? hasOwnProperty.call(value, 'callee') : false;
     };
   }
 
@@ -409,7 +412,7 @@
    * // => true
    */
   var isArray = nativeIsArray || function(value) {
-    return value ? (typeof value == 'object' && toString.call(value) == arrayClass) : false;
+    return (value && typeof value == 'object') ? toString.call(value) == arrayClass : false;
   };
 
   /**
@@ -466,7 +469,8 @@
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;'
+    "'": '&#x27;',
+    '/': '&#x2F;'
   };
 
   /*--------------------------------------------------------------------------*/
@@ -592,7 +596,7 @@
       var iterable = arguments[argsIndex];
       if (iterable) {
         for (var key in iterable) {
-          if (object[key] == null) {
+          if (typeof object[key] == 'undefined') {
             object[key] = iterable[key];
           }
         }
@@ -982,7 +986,7 @@
    * // => true
    */
   function isRegExp(value) {
-    return !!(value && objectTypes[typeof value]) && toString.call(value) == regexpClass;
+    return (value && objectTypes[typeof value]) ? toString.call(value) == regexpClass : false;
   }
 
   /**
@@ -2848,7 +2852,7 @@
    * // => 'nonsense'
    */
   function result(object, property) {
-    var value = object ? object[property] : null;
+    var value = object ? object[property] : undefined;
     return isFunction(value) ? object[property]() : value;
   }
 

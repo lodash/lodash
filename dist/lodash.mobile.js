@@ -34,13 +34,26 @@
   /** Used as the max size of the `arrayPool` and `objectPool` */
   var maxPoolSize = 40;
 
+  /** Used to detect and test whitespace */
+  var whitespace = (
+    // whitespace
+    ' \t\x0B\f\xA0\ufeff' +
+
+    // line terminators
+    '\n\r\u2028\u2029' +
+
+    // unicode category "Zs" space separators
+    '\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
+  );
+
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
-  /** Used to match HTML entities */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
+  /** Used to match HTML entities and HTML characters */
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
+      reUnescapedHtml = /[&<>"']/g;
 
   /**
    * Used to match ES6 template delimiters
@@ -54,26 +67,11 @@
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
 
-  /** Used to detect and test whitespace */
-  var whitespace = (
-    // whitespace
-    ' \t\x0B\f\xA0\ufeff' +
-
-    // line terminators
-    '\n\r\u2028\u2029' +
-
-    // unicode category "Zs" space separators
-    '\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
-  );
-
   /** Used to match leading whitespace and zeros to be removed */
   var reLeadingSpacesAndZeros = RegExp('^[' + whitespace + ']*0+(?=.$)');
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
-
-  /** Used to match HTML characters */
-  var reUnescapedHtml = /[&<>"']/g;
 
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
@@ -693,6 +691,88 @@
     /*--------------------------------------------------------------------------*/
 
     /**
+     * A basic implementation of `_.flatten` without support for `callback`
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Array} array The array to flatten.
+     * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
+     * @param {Function} [callback] The function called per iteration.
+     * @returns {Array} Returns a new flattened array.
+     */
+    function basicFlatten(array, isShallow, callback) {
+      var index = -1,
+          length = array ? array.length : 0,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index];
+        if (callback) {
+          value = callback(value, index, array);
+        }
+        // recursively flatten arrays (susceptible to call stack limits)
+        if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
+          push.apply(result, isShallow ? value : basicFlatten(value));
+        } else {
+          result.push(value);
+        }
+      }
+      return result;
+    }
+
+    /**
+     * A basic implementation of `_.uniq` without support for `callback` shorthands
+     * or `thisArg` binding.
+     *
+     * @private
+     * @param {Array} array The array to process.
+     * @param {Boolean} [isSorted=false] A flag to indicate that the `array` is already sorted.
+     * @param {Function} [callback] The function called per iteration.
+     * @returns {Array} Returns a duplicate-value-free array.
+     */
+    function basicUniq(array, isSorted, callback) {
+      var index = -1,
+          indexOf = getIndexOf(),
+          length = array ? array.length : 0,
+          result = [];
+
+      var isLarge = !isSorted && length >= largeArraySize && indexOf === basicIndexOf,
+          seen = (callback || isLarge) ? getArray() : result;
+
+      if (isLarge) {
+        var cache = createCache(seen);
+        if (cache) {
+          indexOf = cacheIndexOf;
+          seen = cache;
+        } else {
+          isLarge = false;
+          seen = callback ? seen : (releaseArray(seen), result);
+        }
+      }
+      while (++index < length) {
+        var value = array[index],
+            computed = callback ? callback(value, index, array) : value;
+
+        if (isSorted
+              ? !index || seen[seen.length - 1] !== computed
+              : indexOf(seen, computed) < 0
+            ) {
+          if (callback || isLarge) {
+            seen.push(computed);
+          }
+          result.push(value);
+        }
+      }
+      if (isLarge) {
+        releaseArray(seen.array);
+        releaseObject(seen);
+      } else if (callback) {
+        releaseArray(seen);
+      }
+      return result;
+    }
+
+    /**
      * Creates a function that, when called, invokes `func` with the `this` binding
      * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
      * bound function.
@@ -877,7 +957,7 @@
      * // => false
      */
     function isArguments(value) {
-      return toString.call(value) == argsClass;
+      return (value && typeof value == 'object') ? toString.call(value) == argsClass : false;
     }
 
     /**
@@ -897,7 +977,7 @@
      * // => true
      */
     var isArray = nativeIsArray || function(value) {
-      return value ? (typeof value == 'object' && toString.call(value) == arrayClass) : false;
+      return (value && typeof value == 'object') ? toString.call(value) == arrayClass : false;
     };
 
     /**
@@ -1988,7 +2068,7 @@
      * // => true
      */
     function isRegExp(value) {
-      return !!(value && objectTypes[typeof value]) && toString.call(value) == regexpClass;
+      return (value && objectTypes[typeof value]) ? toString.call(value) == regexpClass : false;
     }
 
     /**
@@ -3609,25 +3689,7 @@
      * _.flatten(stooges, 'quotes');
      * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
      */
-    var flatten = overloadWrapper(function flatten(array, isShallow, callback) {
-      var index = -1,
-          length = array ? array.length : 0,
-          result = [];
-
-      while (++index < length) {
-        var value = array[index];
-        if (callback) {
-          value = callback(value, index, array);
-        }
-        // recursively flatten arrays (susceptible to call stack limits)
-        if (isArray(value)) {
-          push.apply(result, isShallow ? value : flatten(value));
-        } else {
-          result.push(value);
-        }
-      }
-      return result;
-    });
+    var flatten = overloadWrapper(basicFlatten);
 
     /**
      * Gets the index at which the first occurrence of `value` is found using
@@ -4114,10 +4176,10 @@
      * // => [1, 2, 3, 101, 10]
      */
     function union(array) {
-      if (!isArray(array)) {
-        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
+      if (!array) {
+        arguments[0] = arrayRef;
       }
-      return uniq(concat.apply(arrayRef, arguments));
+      return basicUniq(basicFlatten(arguments, true));
     }
 
     /**
@@ -4163,47 +4225,7 @@
      * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
-    var uniq = overloadWrapper(function(array, isSorted, callback) {
-      var index = -1,
-          indexOf = getIndexOf(),
-          length = array ? array.length : 0,
-          result = [];
-
-      var isLarge = !isSorted && length >= largeArraySize && indexOf === basicIndexOf,
-          seen = (callback || isLarge) ? getArray() : result;
-
-      if (isLarge) {
-        var cache = createCache(seen);
-        if (cache) {
-          indexOf = cacheIndexOf;
-          seen = cache;
-        } else {
-          isLarge = false;
-          seen = callback ? seen : (releaseArray(seen), result);
-        }
-      }
-      while (++index < length) {
-        var value = array[index],
-            computed = callback ? callback(value, index, array) : value;
-
-        if (isSorted
-              ? !index || seen[seen.length - 1] !== computed
-              : indexOf(seen, computed) < 0
-            ) {
-          if (callback || isLarge) {
-            seen.push(computed);
-          }
-          result.push(value);
-        }
-      }
-      if (isLarge) {
-        releaseArray(seen.array);
-        releaseObject(seen);
-      } else if (callback) {
-        releaseArray(seen);
-      }
-      return result;
-    });
+    var uniq = overloadWrapper(basicUniq);
 
     /**
      * The inverse of `_.zip`, this method splits groups of elements into arrays
@@ -4219,8 +4241,9 @@
      * _.unzip([['moe', 30, true], ['larry', 40, false]]);
      * // => [['moe', 'larry'], [30, 40], [true, false]];
      */
-    function unzip(array) {
-      var index = -1,
+    function unzip() {
+      var array = arguments.length > 1 ? arguments : arguments[0],
+          index = -1,
           length = array ? max(pluck(array, 'length')) : 0,
           result = Array(length < 0 ? 0 : length);
 
@@ -4306,17 +4329,14 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * If `n` is greater than `0`, a function is created that is restricted to
-     * executing `func`, with the `this` binding and arguments of the created
-     * function, only after it is called `n` times. If `n` is less than `1`,
-     * `func` is executed immediately, without a `this` binding or additional
-     * arguments, and its result is returned.
+     * Creates a function this is restricted to executing `func`, with the `this`
+     * binding and arguments of the created function, only after it is called `n` times.
      *
      * @static
      * @memberOf _
      * @category Functions
      * @param {Number} n The number of times the function must be called before
-     * it is executed.
+     *  `func` is executed.
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
      * @example
@@ -4328,9 +4348,6 @@
      * // `renderNotes` is run once, after all notes have saved
      */
     function after(n, func) {
-      if (n < 1) {
-        return func();
-      }
       return function() {
         if (--n < 1) {
           return func.apply(this, arguments);

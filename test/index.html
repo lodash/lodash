@@ -36,9 +36,9 @@
 			document.write('<script src="../' + ui.buildPath + '"><\/script>');
 
 			// load test.js if not using require.js
-			document.write(QUnit.urlParams.norequire
+			document.write(QUnit.urlParams.loader == 'none'
 				? '<script src="test.js"><\/script>'
-				: '<script src="../vendor/requirejs/require.js"><\/script>'
+				: '<script data-dojo-config="async:1,parseOnLoad:false" src="../' + ui.loaderPath + '"><\/script>'
 			);
 		</script>
 		<script>
@@ -47,36 +47,43 @@
 			    shimmedModule,
 			    underscoreModule;
 
+			if (window.curl) {
+				var require = curl;
+			}
 			window.require && require(
 			(function() {
 				var modulePath = ui.buildPath.replace(/\.js$/, '');
 				return {
-					'baseUrl': '../vendor/requirejs/',
+					'baseUrl': './',
 					'urlArgs': 't=' + (+new Date),
 					'paths': {
-						'lodash': '../../' + modulePath,
-						'shimmed': './../../' + modulePath,
-						'underscore': '../underscore/../../' + modulePath
+						'lodash': '../' + modulePath,
+						'shimmed': '../abc/../' + modulePath,
+						'underscore': '../xyz/../' + modulePath
 					},
+					'aliases': [
+						['shimmed', 'lodash'],
+						['underscore', 'lodash']
+					],
 					'shim': {
 						'shimmed': {
-						    'exports': '_'
+							'exports': '_'
 						}
 					}
 				};
 			}()),
 			['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
-				if (lodash && lodash.noConflict) {
-					lodashModule = lodash.noConflict();
-					lodashModule.moduleName = 'lodash';
-				}
-				if (shimmed.noConflict) {
+				if (shimmed && shimmed.noConflict) {
 					shimmedModule = shimmed.noConflict();
 					shimmedModule.moduleName = 'shimmed';
 				}
 				if (underscore && underscore.noConflict) {
 					underscoreModule = underscore.noConflict();
 					underscoreModule.moduleName = 'underscore';
+				}
+				if (lodash && lodash.noConflict) {
+					lodashModule = lodash.noConflict();
+					lodashModule.moduleName = 'lodash';
 				}
 				require(['test.js']);
 			});

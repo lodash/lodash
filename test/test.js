@@ -32,7 +32,7 @@
       : '../lodash.js';
 
     try {
-      return require('fs').realpathSync(result);
+      return global.require('fs').realpathSync(result);
     } catch(e) {
       return result;
     }
@@ -99,6 +99,11 @@
   /** Used to check problem JScript properties too */
   var shadowedObject = _.invert(shadowedProps);
 
+  /** The `ui` object */
+  var ui = window.ui || (window.ui = {
+    'loaderPath': ''
+  });
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -146,7 +151,7 @@
     });
 
     test('supports loading ' + basename + ' with the Require.js "shim" configuration option', function() {
-      if (amd) {
+      if (amd && /requirejs/.test(ui.loaderPath)) {
         equal((shimmedModule || {}).moduleName, 'shimmed');
       } else {
         skipTest();
@@ -154,7 +159,7 @@
     });
 
     test('supports loading ' + basename + ' as the "underscore" module', function() {
-      if (amd) {
+      if (amd && !/dojo/.test(ui.loaderPath)) {
         equal((underscoreModule || {}).moduleName, 'underscore');
       } else {
         skipTest();

@@ -608,7 +608,7 @@
     commands.forEach(function(command) {
       var expectedId = /underscore/.test(command) ? 'underscore' : 'lodash';
 
-      asyncTest('`lodash template=*.jst exports=amd' + (command ? ' ' + command : '') + '`', function() {
+      asyncTest('`lodash exports=amd' + (command ? ' ' + command + '`' : '` using the default `moduleId`'), function() {
         var start = _.after(2, _.once(QUnit.start));
 
         build(['-s', 'template=' + path.join(templatePath, '*.jst'), 'exports=amd'].concat(command || []), function(data) {
@@ -624,10 +624,11 @@
           context.define.amd = {};
           vm.runInContext(data.source, context);
 
+          var templates = _.templates;
           equal(moduleId, expectedId, basename);
-          ok('a' in _.templates && 'b' in _.templates, basename);
+          ok('a' in templates && 'b' in templates && 'c' in templates, basename);
 
-          var actual = _.templates.a({ 'people': ['moe', 'larry'] });
+          var actual = templates.a({ 'people': ['moe', 'larry'] });
           equal(actual.replace(/[\r\n]+/g, ''), '<ul><li>moe</li><li>larry</li></ul>', basename);
 
           delete _.templates;
@@ -657,6 +658,72 @@
 
           equal(moduleId, expectedId, basename);
           equal(_.templates.d(object.d), 'Hallå Mustache!', basename);
+          delete _.templates;
+          start();
+        });
+      });
+    });
+
+    var defaultTemplates = { 'c': function() { return ''; } };
+
+    var exportsCommands = [
+      'exports=amd',
+      'exports=commonjs',
+      'exports=global',
+      'exports=node',
+      'exports=none'
+    ];
+
+    exportsCommands.forEach(function(command, index) {
+      asyncTest('`lodash ' + command +'`', function() {
+        var start = _.after(2, _.once(QUnit.start));
+
+        build(['-s',  'template=' + path.join(templatePath, '*.jst'), command], function(data) {
+          var templates,
+              basename = path.basename(data.outputPath, '.js'),
+              context = createContext(),
+              source = data.source;
+
+          switch(index) {
+            case 0:
+              context.define = function(requires, factory) { factory(_); };
+              context.define.amd = {};
+              vm.runInContext(source, context);
+
+              templates = _.templates || defaultTemplates;
+              break;
+
+            case 1:
+              context.exports = {};
+              context.require = function() { return _; };
+              vm.runInContext(source, context);
+
+              templates = context.exports.templates || defaultTemplates;
+              break;
+
+            case 2:
+              context._ = _;
+              vm.runInContext(source, context);
+
+              templates = context._.templates || defaultTemplates;
+              break;
+
+            case 3:
+              context.exports = {};
+              context.require = function() { return _; };
+              context.module = { 'exports': context.exports };
+              vm.runInContext(source, context);
+
+              templates = context.module.exports || defaultTemplates;
+              break;
+
+            case 4:
+              vm.runInContext(source, context);
+              strictEqual(context._, undefined, basename);
+          }
+          if (templates) {
+            equal(templates.c({ 'name': 'Moe' }), 'Hello Moe!', basename);
+          }
           delete _.templates;
           start();
         });
@@ -1247,18 +1314,21 @@
 
           switch(index) {
             case 0:
-              context.define = function(fn) {
+              context.define = function(factory) {
                 pass = true;
-                context._ = fn();
+                context._ = factory();
               };
               context.define.amd = {};
               vm.runInContext(source, context);
+
               ok(pass, basename);
+              ok(_.isFunction(context._), basename);
               break;
 
             case 1:
               context.exports = {};
               vm.runInContext(source, context);
+
               ok(_.isFunction(context.exports._), basename);
               strictEqual(context._, undefined, basename);
               break;
@@ -1272,6 +1342,7 @@
               context.exports = {};
               context.module = { 'exports': context.exports };
               vm.runInContext(source, context);
+
               ok(_.isFunction(context.module.exports), basename);
               strictEqual(context._, undefined, basename);
               break;

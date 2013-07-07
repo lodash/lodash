@@ -1152,7 +1152,7 @@
    * @private
    * @param {String} funcName A function name or array of function names.
    * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependants.
-   * @param- {Array} [stackA=[]] Internally used track queried functions.
+   * @param- {Array} [stackA=[]] Internally used track queried function names.
    * @returns {Array} Returns an array of function dependants.
    */
   function getDependants(funcName, isShallow, stack) {
@@ -1176,13 +1176,13 @@
 
   /**
    * Gets an array of dependencies for a given function name. If passed an array
-   * of dependencies it will return an array containing the given dependencies
+   * of dependencies, it will return an array containing the given dependencies
    * plus any additional detected sub-dependencies.
    *
    * @private
    * @param {Array|String} funcName A function name or array of dependencies to query.
    * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependencies.
-   * @param- {Array} [stackA=[]] Internally used track queried functions.
+   * @param- {Array} [stackA=[]] Internally used track queried function names.
    * @returns {Array} Returns an array of function dependencies.
    */
   function getDependencies(funcName, isShallow, stack) {
@@ -2667,6 +2667,12 @@
           }
         });
 
+        _.each(['difference', 'intersection', 'uniq'], function(funcName) {
+          if (!isLodashFunc(funcName)) {
+            (funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'cacheIndexOf', 'createCache')).push('getIndexOf');
+          }
+        });
+
         _.each(['basicEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
           if (funcName == 'basicEach' || !isLodashFunc(funcName)) {
             (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('indicatorObject');
@@ -2683,27 +2689,18 @@
         });
 
         _.forOwn(funcDependencyMap, function(deps, funcName) {
-          if (funcName == 'clone'
-                  ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
-                  : !isLodashFunc(funcName)
-                ) {
+          if (_.every(getDependants(funcName).concat(funcName), function(otherName) {
+                return !isLodashFunc(otherName);
+              })) {
+            deps = funcDependencyMap[funcName];
             if (_.contains(deps, 'charAtCallback')) {
               deps = funcDependencyMap[funcName] = _.without(deps, 'charAtCallback', 'isArray', 'isString');
             }
             if (_.contains(deps, 'overloadWrapper')) {
               deps = funcDependencyMap[funcName] = _.without(deps, 'overloadWrapper');
             }
-            if (_.contains(deps, 'releaseArray')) {
-              deps = funcDependencyMap[funcName] = _.without(deps, 'getArray', 'releaseArray');
-            }
-            if (_.contains(deps, 'releaseObject')) {
-              deps = funcDependencyMap[funcName] = _.without(deps, 'getObject', 'releaseObject');
-            }
             if (_.contains(deps, 'slice')) {
-              deps = funcDependencyMap[funcName] = _.without(deps, 'slice');
-            }
-            if (_.contains(deps, 'createCache')) {
-              (funcDependencyMap[funcName] = _.without(deps, 'cacheIndexOf', 'createCache')).push('getIndexOf');
+              funcDependencyMap[funcName] = _.without(deps, 'slice');
             }
           }
         });
@@ -2737,6 +2734,21 @@
           }
         });
 
+        if (isUnderscore) {
+          _.forOwn(funcDependencyMap, function(deps, funcName) {
+            if (_.every(getDependants(funcName).concat(funcName), function(otherName) {
+                  return !isLodashFunc(otherName);
+                })) {
+              deps = funcDependencyMap[funcName];
+              if (_.contains(deps, 'releaseArray')) {
+                deps = funcDependencyMap[funcName] = _.without(deps, 'getArray', 'releaseArray');
+              }
+              if (_.contains(deps, 'releaseObject')) {
+                funcDependencyMap[funcName] = _.without(deps, 'getObject', 'releaseObject');
+              }
+            }
+          });
+        }
         if (!isMobile) {
           _.each(['clone', 'transform', 'value'], function(funcName) {
             (funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'basicEach')).push('forEach');

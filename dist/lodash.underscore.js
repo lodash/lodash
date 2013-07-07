@@ -3179,32 +3179,6 @@
   }
 
   /**
-   * The inverse of `_.zip`, this method splits groups of elements into arrays
-   * composed of elements from each group at their corresponding indexes.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to process.
-   * @returns {Array} Returns a new array of the composed arrays.
-   * @example
-   *
-   * _.unzip([['moe', 30, true], ['larry', 40, false]]);
-   * // => [['moe', 'larry'], [30, 40], [true, false]];
-   */
-  function unzip() {
-    var array = arguments.length > 1 ? arguments : arguments[0],
-        index = -1,
-        length = array ? max(pluck(array, 'length')) : 0,
-        result = Array(length < 0 ? 0 : length);
-
-    while (++index < length) {
-      result[index] = pluck(array, index);
-    }
-    return result;
-  }
-
-  /**
    * Creates an array with all occurrences of the passed values removed using
    * strict equality for comparisons, i.e. `===`.
    *
@@ -3224,13 +3198,13 @@
   }
 
   /**
-   * Groups the elements of each array at their corresponding indexes. Useful for
-   * separate data sources that are coordinated through matching array indexes.
-   * For a matrix of nested arrays, `_.zip.apply(...)` can transpose the matrix
-   * in a similar fashion.
+   * Creates an array of grouped elements, the first of which contains the first
+   * elements of the given arrays, the second of which contains the second
+   * elements of the given arrays, and so on.
    *
    * @static
    * @memberOf _
+   * @alias unzip
    * @category Arrays
    * @param {Array} [array1, array2, ...] Arrays to process.
    * @returns {Array} Returns a new array of grouped elements.
@@ -3239,8 +3213,16 @@
    * _.zip(['moe', 'larry'], [30, 40], [true, false]);
    * // => [['moe', 30, true], ['larry', 40, false]]
    */
-  function zip(array) {
-    return array ? unzip(arguments) : [];
+  function zip() {
+    var array = arguments.length > 1 ? arguments : arguments[0],
+        index = -1,
+        length = array ? max(pluck(array, 'length')) : 0,
+        result = Array(length < 0 ? 0 : length);
+
+    while (++index < length) {
+      result[index] = pluck(array, index);
+    }
+    return result;
   }
 
   /**
@@ -4344,7 +4326,6 @@
   lodash.toArray = toArray;
   lodash.union = union;
   lodash.uniq = uniq;
-  lodash.unzip = unzip;
   lodash.values = values;
   lodash.where = where;
   lodash.without = without;
@@ -4361,6 +4342,7 @@
   lodash.select = filter;
   lodash.tail = rest;
   lodash.unique = uniq;
+  lodash.unzip = zip;
 
   // add Underscore compat
   lodash.chain = chain;

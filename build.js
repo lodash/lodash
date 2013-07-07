@@ -1437,7 +1437,7 @@
   function matchProp(source, propName) {
     var result = source.match(RegExp(
       multilineComment +
-      'lodash\\._?' + propName + '\\s*=[\\s\\S]+?' +
+      '(?: *|.*?=\\s*)lodash\\._?' + propName + '\\s*=[\\s\\S]+?' +
       '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
       '[;}]\\n(?=\\n(?!\\s*\\(func)))'
     ));
@@ -1778,13 +1778,13 @@
    * @returns {String} Returns the modified source.
    */
   function removeProp(source, propName) {
-    return source.replace(RegExp(
-      multilineComment +
-      '(?: *|(.*?=))lodash\\._?' + propName + '\\s*=[\\s\\S]+?' +
-      '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
-      '[;}]\\n(?=\\n(?!\\s*\\(func)))'
-    ), function(match, prelude) {
-      return prelude ? 'undefined' : '';
+    return source.replace(matchProp(source, propName), function(match) {
+      var snippet = RegExp(
+        multilineComment +
+        '.*?=\\s*(?=lodash\\._?' + propName + '\\s*=)'
+      ).exec(match);
+
+      return snippet ? snippet[0] + 'undefined;\n' : '';
     });
   }
 

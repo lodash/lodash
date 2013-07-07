@@ -497,8 +497,7 @@
     'parseInt',
     'partialRight',
     'runInContext',
-    'transform',
-    'unzip'
+    'transform'
   ];
 
   /** List of private functions */
@@ -1365,7 +1364,7 @@
   }
 
   /**
-   * Determines if given variable is used in `source`.
+   * Determines if a variable, of the given `varName`, is used in `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -1424,6 +1423,26 @@
       return result[0];
     }
     return '';
+  }
+
+  /**
+   * Searches `source` for a Lo-Dash property, of the given `propName`, and
+   * returns the matched snippet.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @param {String} propName The name of the property to match.
+   * @returns {String} Returns the matched property snippet.
+   */
+  function matchProp(source, propName) {
+    var result = source.match(RegExp(
+      multilineComment +
+      'lodash\\._?' + propName + '\\s*=[\\s\\S]+?' +
+      '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
+      '[;}]\\n(?=\\n(?!\\s*\\(func)))'
+    ));
+
+    return result ? result[0] : '';
   }
 
   /**
@@ -1751,7 +1770,7 @@
   }
 
   /**
-   * Removes a given Lo-Dash property from `source`.
+   * Removes a Lo-Dash property, of the given `propName`, from `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -2098,7 +2117,7 @@
   }
 
   /**
-   * Removes a given variable from `source`.
+   * Removes a variable, of the given `varName`, from `source`.
    *
    * @private
    * @param {String} source The source to process.
@@ -2654,15 +2673,6 @@
           }
         });
 
-        _.each(['clone', 'difference', 'intersection', 'isEqual', 'sortBy', 'uniq'], function(funcName) {
-          if (funcName == 'clone'
-                ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
-                : !isLodashFunc(funcName)
-              ) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'getArray', 'getObject', 'releaseArray', 'releaseObject');
-          }
-        });
-
         _.each(['clone', 'flatten', 'isEqual',  'omit', 'pick'], function(funcName) {
           if (funcName == 'clone'
                 ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
@@ -2672,22 +2682,22 @@
           }
         });
 
-        _.each(['debounce', 'throttle'], function(funcName) {
-          if (!isLodashFunc(funcName)) {
-            funcDependencyMap[funcName] = [];
-          }
-        });
-
         _.forOwn(funcDependencyMap, function(deps, funcName) {
           if (funcName == 'clone'
                   ? (!isLodashFunc('clone') && !isLodashFunc('cloneDeep'))
                   : !isLodashFunc(funcName)
                 ) {
             if (_.contains(deps, 'charAtCallback')) {
-              deps = funcDependencyMap[funcName] = _.without(deps, 'charAtCallback', 'isArray', 'isString')
+              deps = funcDependencyMap[funcName] = _.without(deps, 'charAtCallback', 'isArray', 'isString');
             }
             if (_.contains(deps, 'overloadWrapper')) {
               deps = funcDependencyMap[funcName] = _.without(deps, 'overloadWrapper');
+            }
+            if (_.contains(deps, 'releaseArray')) {
+              deps = funcDependencyMap[funcName] = _.without(deps, 'getArray', 'releaseArray');
+            }
+            if (_.contains(deps, 'releaseObject')) {
+              deps = funcDependencyMap[funcName] = _.without(deps, 'getObject', 'releaseObject');
             }
             if (_.contains(deps, 'slice')) {
               deps = funcDependencyMap[funcName] = _.without(deps, 'slice');
@@ -3047,37 +3057,6 @@
             '    });',
             '  }',
             '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.debounce`
-        if (!isLodashFunc('debounce')) {
-          source = replaceFunction(source, 'debounce', [
-            'function debounce(func, wait, immediate) {',
-            '  var args,',
-            '      result,',
-            '      thisArg,',
-            '      timeoutId = null;',
-            '',
-            '  function delayed() {',
-            '    timeoutId = null;',
-            '    if (!immediate) {',
-            '      result = func.apply(thisArg, args);',
-            '    }',
-            '  }',
-            '  return function() {',
-            '    var isImmediate = immediate && !timeoutId;',
-            '    args = arguments;',
-            '    thisArg = this;',
-            '',
-            '    clearTimeout(timeoutId);',
-            '    timeoutId = setTimeout(delayed, wait);',
-            '',
-            '    if (isImmediate) {',
-            '      result = func.apply(thisArg, args);',
-            '    }',
-            '    return result;',
-            '  };',
             '}'
           ].join('\n'));
         }
@@ -3481,36 +3460,22 @@
         // replace `_.throttle`
         if (!isLodashFunc('throttle')) {
           source = replaceFunction(source, 'throttle', [
-            'function throttle(func, wait) {',
-            '  var args,',
-            '      result,',
-            '      thisArg,',
-            '      lastCalled = 0,',
-            '      timeoutId = null;',
+            'function throttle(func, wait, options) {',
+            '  var leading = true,',
+            '      trailing = true;',
             '',
-            '  function trailingCall() {',
-            '    lastCalled = new Date;',
-            '    timeoutId = null;',
-            '    result = func.apply(thisArg, args);',
+            '  if (options === false) {',
+            '    leading = false;',
+            '  } else if (isObject(options)) {',
+            "    leading = 'leading' in options ? options.leading : leading;",
+            "    trailing = 'trailing' in options ? options.trailing : trailing;",
             '  }',
-            '  return function() {',
-            '    var now = new Date,',
-            '        remaining = wait - (now - lastCalled);',
+            '  options = {};',
+            '  options.leading = leading;',
+            '  options.maxWait = wait;',
+            '  options.trailing = trailing;',
             '',
-            '    args = arguments;',
-            '    thisArg = this;',
-            '',
-            '    if (remaining <= 0) {',
-            '      clearTimeout(timeoutId);',
-            '      timeoutId = null;',
-            '      lastCalled = now;',
-            '      result = func.apply(thisArg, args);',
-            '    }',
-            '    else if (!timeoutId) {',
-            '      timeoutId = setTimeout(trailingCall, remaining);',
-            '    }',
-            '    return result;',
-            '  };',
+            '  return debounce(func, wait, options);',
             '}'
           ].join('\n'));
         }
@@ -3598,24 +3563,27 @@
             '}'
           ].join('\n'));
         }
-        // replace `_.zip`
-        if (!isLodashFunc('unzip')) {
-          source = replaceFunction(source, 'zip', [
-            'function zip(array) {',
-            '  var index = -1,',
-            "      length = array ? max(pluck(arguments, 'length')) : 0,",
-            '      result = Array(length < 0 ? 0 : length);',
-            '',
-            '  while (++index < length) {',
-            '    result[index] = pluck(arguments, index);',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
+        // unexpose `lodash.support`
+        if (!isLodashFunc('support')) {
+          source = source.replace(/\blodash\.support *= */, '');
         }
 
-        // unexpose `lodash.support`
-        source = source.replace(/\blodash\.support *= */, '');
+        // add an `/` entry to `htmlEscapes`, `reEscapedHtml`, and `reUnescapedHtml`
+        if (!isLodashFunc('escape')) {
+          source = source.replace(matchVar(source, 'htmlEscapes'), function(match) {
+            return match
+              .replace('#39', '#x27')
+              .replace(/(\n *)}/, ",$1  '/': '&#x2F;'$1}");
+          });
+
+          source = source.replace(matchVar(source, 'reEscapedHtml'), function(match) {
+            return match.replace(/\/.*\//, "/&(?:amp|lt|gt|quot|#x27|#x2F);/");
+          });
+
+          source = source.replace(matchVar(source, 'reUnescapedHtml'), function(match) {
+            return match.replace(/\/.*\//, '/[&<>"\'\\/]/');
+          });
+        }
 
         // replace `basicFlatten` and `basicUniq` with `flatten` and `uniq` in `_.union`
         _.each(['flatten', 'uniq'], function(funcName) {
@@ -3852,9 +3820,9 @@
             });
           });
         }
-        // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
+        // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, and `_.zipObject` assignments
         source = source.replace(getMethodAssignments(source), function(match) {
-          return _.reduce(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
+          return _.reduce(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'zipObject'], function(result, funcName) {
             return isLodashFunc(funcName)
               ? result
               : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
@@ -3906,7 +3874,12 @@
     // modify/remove references to removed functions/variables
     if (!isTemplate) {
       if (isExcluded('invert')) {
-        source = replaceVar(source, 'htmlUnescapes', "{'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&#x27;':\"'\"}");
+        source = replaceVar(source, 'htmlUnescapes', JSON.stringify(_.invert(JSON.parse(
+          matchVar(source, 'htmlEscapes')
+            .replace(/([^"])'(?!")/g, '$1"')
+            .replace(/'"'/, '"\\""')
+            .match(/\{[\s\S]+?}/)[0]
+        ))));
       }
       if (isExcluded('mixin')) {
         // if possible, inline the `_.mixin` call to ensure proper chaining behavior
@@ -4124,7 +4097,7 @@
         });
 
         // replace `_` use in `_.templateSettings.imports`
-        source = source.replace(matchVar(source, 'templateSettings'), function(match) {
+        source = source.replace(matchProp(source, 'templateSettings'), function(match) {
           return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
         });
 

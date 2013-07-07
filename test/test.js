@@ -3368,58 +3368,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.unzip');
-
-  (function() {
-    var object = {
-      'an empty array': [
-        [],
-        []
-      ],
-      '0-tuples': [
-        [[], []],
-        []
-      ],
-      '1-tuples': [
-        [['moe'], ['larry']],
-        [['moe', 'larry']]
-      ],
-      '2-tuples': [
-        [['moe', 30], ['larry', 40]],
-        [['moe', 'larry'], [30, 40]]
-      ],
-      '3-tuples': [
-        [['moe', 30, true], ['larry', 40, false]],
-        [['moe', 'larry'], [30, 40], [true, false]]
-      ]
-    };
-
-    _.forOwn(object, function(pair, key) {
-      test('should work with ' + key, function() {
-        var actual = _.unzip(pair[0]);
-        deepEqual(actual, pair[1]);
-        deepEqual(_.zip.apply(_, actual), pair[1].length ? pair[0] : pair[1]);
-      });
-    });
-
-    test('should work with tuples of different lengths', function() {
-      var pair = [
-        [['moe', 30], ['larry', 40, false]],
-        [['moe', 'larry'], [30, 40], [undefined, false]]
-      ];
-
-      var actual = _.unzip(pair[0]);
-      ok(1 in actual);
-      deepEqual(actual, pair[1]);
-
-      actual = _.zip.apply(_, actual);
-      ok(2 in actual[0]);
-      deepEqual(actual, [['moe', 30, undefined], ['larry', 40, false]]);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.where');
 
   (function() {
@@ -3481,6 +3429,59 @@
 
       deepEqual(_.where(collection, { 'a': [] }), []);
       deepEqual(_.where(collection, { 'a': [2] }), expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.zip');
+
+  (function() {
+    var object = {
+      'an empty array': [
+        [],
+        []
+      ],
+      '0-tuples': [
+        [[], []],
+        []
+      ],
+      '2-tuples': [
+        [['moe', 'larry'], [30, 40]],
+        [['moe', 30], ['larry', 40]]
+      ],
+      '3-tuples': [
+        [['moe', 'larry'], [30, 40], [true, false]],
+        [['moe', 30, true], ['larry', 40, false]]
+      ]
+    };
+
+    _.forOwn(object, function(pair, key) {
+      test('should work with ' + key, function() {
+        var actual = _.zip.apply(_, pair[0]);
+        deepEqual(actual, pair[1]);
+        deepEqual(_.zip.apply(_, actual), actual.length ? pair[0] : []);
+      });
+    });
+
+    test('should work with tuples of different lengths', function() {
+      var pair = [
+        [['moe', 30], ['larry', 40, false]],
+        [['moe', 'larry'], [30, 40], [undefined, false]]
+      ];
+
+      var actual = _.zip(pair[0]);
+      ok(0 in actual[2]);
+      deepEqual(actual, pair[1]);
+
+      actual = _.zip.apply(_, actual);
+      ok(2 in actual[0]);
+      deepEqual(actual, [['moe', 30, undefined], ['larry', 40, false]]);
+    });
+
+    test('should be able to consume the output of `_.unzip`', function() {
+      var expected = [['moe', 'larry'], [30, 40]];
+      deepEqual(_.unzip(_.zip(_.unzip(_.zip(expected)))), expected);
     });
   }());
 

@@ -67,7 +67,8 @@
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
-    'unique': 'uniq'
+    'unique': 'uniq',
+    'unzip': 'zip'
   };
 
   /** Used to associate real names with their aliases */
@@ -86,6 +87,7 @@
     'rest': ['drop', 'tail'],
     'some': ['any'],
     'uniq': ['unique'],
+    'zip': ['unzip'],
     'zipObject': ['object']
   };
 
@@ -107,7 +109,6 @@
       'sortedIndex',
       'union',
       'uniq',
-      'unzip',
       'without',
       'zip',
       'zipObject'
@@ -284,8 +285,7 @@
     'parseInt',
     'partialRight',
     'runInContext',
-    'transform',
-    'unzip'
+    'transform'
   ];
 
   /** List of all functions */
@@ -999,9 +999,6 @@
         function Foo() {}
         Foo.prototype = { 'a': 1 };
 
-        actual = lodash.defaults({ 'a': null }, { 'a': 1 });
-        strictEqual(actual.a, 1, '_.defaults should overwrite `null` values: ' + basename);
-
         deepEqual(lodash.defaults({}, new Foo), Foo.prototype, '_.defaults should assign inherited `source` properties: ' + basename);
         deepEqual(lodash.extend({}, new Foo), Foo.prototype, '_.extend should assign inherited `source` properties: ' + basename);
 
@@ -1065,7 +1062,6 @@
         actual = lodash.pick(object, function(value) { return value != 3; });
         deepEqual(_.keys(actual), [], '_.pick should not accept a `callback`: ' + basename);
 
-        strictEqual(lodash.result(), null, '_.result should return `null` for falsey `object` arguments: ' + basename);
         strictEqual(lodash.some([false, true, false]), true, '_.some: ' + basename);
         deepEqual(lodash.times(null, function() {}), [null], '_.times should not coerce `n` to a number: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
@@ -1581,8 +1577,7 @@
       'uniq',
       'uniqueId',
       'value',
-      'where',
-      'zip'
+      'where'
     ];
 
     function strip(value) {
@@ -1598,9 +1593,6 @@
 
       if (funcName == 'createCallback') {
         command += ',where';
-      }
-      if (funcName == 'zip') {
-        command += ',unzip';
       }
       if (funcName != 'chain' && _.contains(categoryMap.Chaining.concat('mixin'), funcName)) {
         command += ',chain';

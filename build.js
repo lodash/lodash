@@ -3842,10 +3842,10 @@
       source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
     }
     if (!isCommonJS) {
-      source = source.replace(/(?: *\/\/.*\n)*(?:( *)else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n+/, '');
+      source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n+/, '$1$2\n');
     }
     if (!isGlobal) {
-      source = source.replace(/(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
+      source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
     }
     // remove `if (freeExports) {...}` if it's empty
     if (isAMD && isGlobal) {

@@ -80,9 +80,9 @@ For more information check out these articles, screencasts, and other videos ove
 
 ## Support
 
-Lo-Dash has been tested in at least Chrome 5~27, Firefox 2~21, IE 6-10, Opera 9.25~12, Safari 3-6, Node.js 0.4.8-0.10.12*, Narwhal 0.3.2, PhantomJS 1.9.0, RingoJS 0.9, and Rhino 1.7RC5.
+Lo-Dash has been tested in at least Chrome 5~27, Firefox 2~22, IE 6-10, Opera 9.25~15, Safari 3-6, Node.js 0.4.8-0.10.12*, Narwhal 0.3.2, PhantomJS 1.9.0, RingoJS 0.9, and Rhino 1.7RC5.
 
-\* Node bugs [#5622](https://github.com/joyent/node/issues/5622) and [#5688](https://github.com/joyent/node/issues/5688) prevent the `lodash` command-line utility from creating minified builds in Node.js 0.10.8-0.10.11
+\* Node.js 0.10.8-0.10.11 [have](https://github.com/joyent/node/issues/5622) [bugs](https://github.com/joyent/node/issues/5688) that prevent the `lodash` command-line utility from creating minified builds.
 
 ## Custom builds
 
@@ -222,7 +222,9 @@ var _ = require('lodash');
 var _ = require('lodash/dist/lodash.underscore');
 ```
 
-**Note:** If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.
+**Notes:**
+ * Don’t assign Lo-Dash to the [special variable `_`](http://nodejs.org/api/repl.html#repl_repl_features) when inside the REPL.
+ * If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it.
 
 In [RingoJS ≤ v0.7.0](http://ringojs.org/):
 

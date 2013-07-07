@@ -55,7 +55,8 @@
     'select': 'filter',
     'tail': 'rest',
     'take': 'first',
-    'unique': 'uniq'
+    'unique': 'uniq',
+    'unzip': 'zip'
   };
 
   /** Used to associate real names with their aliases */
@@ -74,6 +75,7 @@
     'rest': ['drop', 'tail'],
     'some': ['any'],
     'uniq': ['unique'],
+    'zip': ['unzip'],
     'zipObject': ['object']
   };
 
@@ -179,13 +181,12 @@
     'union': ['basicFlatten', 'basicUniq'],
     'uniq': ['basicUniq', 'overloadWrapper'],
     'uniqueId': [],
-    'unzip': ['max', 'pluck'],
     'value': ['basicEach', 'forOwn', 'isArray', 'lodash', 'wrapperValueOf', 'lodashWrapper'],
     'values': ['keys'],
     'where': ['filter'],
     'without': ['difference'],
     'wrap': [],
-    'zip': ['unzip'],
+    'zip': ['max', 'pluck'],
     'zipObject': [],
 
     // private functions
@@ -282,7 +283,6 @@
       'sortedIndex',
       'union',
       'uniq',
-      'unzip',
       'without',
       'zip',
       'zipObject'

@@ -4097,7 +4097,7 @@
         });
 
         // replace `_` use in `_.templateSettings.imports`
-        source = source.replace(matchProp(source, 'templateSettings'), function(match) {
+        source = source.replace(matchVar(source, 'templateSettings'), function(match) {
           return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
         });
 

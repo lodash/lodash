@@ -1079,6 +1079,10 @@
         deepEqual(lodash.findWhere(collection, { 'a': 1 }), collection[0], '_.findWhere: ' + basename);
         strictEqual(lodash.findWhere(collection, {}), null, '_.findWhere should return `null` for falsey `properties`: ' + basename);
 
+        var expected = [[['moe', 30, true]], [['larry', 40, false]]];
+        actual = lodash.unzip(lodash.zip(['moe', 'larry'], [30, 40], [true, false]));
+        deepEqual(actual, expected, '_.zip is unable to correctly consume it\'s output: ' + basename);
+
         start();
       });
     });
@@ -1577,7 +1581,8 @@
       'uniq',
       'uniqueId',
       'value',
-      'where'
+      'where',
+      'zip'
     ];
 
     function strip(value) {

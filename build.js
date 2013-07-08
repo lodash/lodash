@@ -3598,6 +3598,21 @@
             '}'
           ].join('\n'));
         }
+        // replace `_.zip`
+        if(!isLodashFunc('zip')) {
+          source = replaceFunction(source, 'zip', [
+            'function zip() {',
+            '  var index = -1,',
+            "      length = max(pluck(arguments, 'length')),",
+            '      result = Array(length < 0 ? 0 : length);',
+            '',
+            '  while (++index < length) {',
+            '    result[index] = pluck(arguments, index);',
+            '  }',
+            '  return result;',
+            '}'
+          ].join('\n'));
+        }
         // unexpose `lodash.support`
         if (!isLodashFunc('support')) {
           source = source.replace(/\blodash\.support *= */, '');

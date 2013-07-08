@@ -53,10 +53,11 @@
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'lodash-compat-dev':
+      case 'lodash-modularize':
       case  undefined:          result = 'lodash.js'; break;
-      default:                  result = build;
+      default:                  return build;
     }
-    return result == build ? result : (basePath + result);
+    return basePath + result;
   }());
 
   // expose module loader file path
@@ -67,9 +68,9 @@
       case 'dojo':      result = 'vendor/dojo/dojo.js'; break;
       case 'requirejs':
       case  undefined:  result = 'vendor/requirejs/require.js'; break;
-      default:          result = loader;
+      default:          return loader;
     }
-    return result == loader ? result : (basePath + result);
+    return basePath + result;
   }());
 
   // initialize controls
@@ -105,17 +106,21 @@
             case 'lodash-underscore': return 7;
             case 'lodash-custom-dev': return 8;
             case 'lodash-custom':     return 9;
+            case 'lodash-compat-dev':
+            case undefined:           return 0;
           }
-          return 0;
+          return -1;
         }());
 
         loaderList.selectedIndex = (function() {
           switch (loader) {
-            case 'none':     return 0
-            case 'curl':     return 1;
-            case 'dojo':     return 2;
+            case 'none':      return 0
+            case 'curl':      return 1;
+            case 'dojo':      return 2;
+            case 'requirejs':
+            case undefined:   return 3;
           }
-          return 3;
+          return -1;
         }());
 
         addEvent(buildList, 'change', eventHandler);

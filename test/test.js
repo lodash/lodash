@@ -3513,7 +3513,7 @@
       deepEqual(actual, [['moe', 30, undefined], ['larry', 40, false]]);
     });
 
-    test('should be able to consume the output of `_.unzip`', function() {
+    test('should correctly consume it\'s output', function() {
       var expected = [['moe', 'larry'], [30, 40]];
       deepEqual(_.unzip(_.zip(_.unzip(_.zip(expected)))), expected);
     });

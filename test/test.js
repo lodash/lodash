@@ -12,7 +12,7 @@
       slice = Array.prototype.slice,
       system = window.system,
       toString = Object.prototype.toString,
-      Worker = window.Worker;
+      Worker = !phantom && window.Worker;
 
   /** Use a single "load" function */
   var load = !amd && typeof require == 'function' ? require : window.load;

@@ -805,7 +805,7 @@
       return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
     }, []);
 
-    var categories = _.uniq(_.compact(identifiers.map(getCategory))),
+    var categories = _.uniq(_.compact(identifiers.map(getCategory))).sort(),
         isAMD = _.contains(exportsOptions, 'amd'),
         outputPath = options[_.indexOf(options, '-o') + 1],
         sep = '/';
@@ -884,6 +884,29 @@
         '-o', path.join(outputPath, category.toLowerCase() + '.js')
       ));
     });
+
+    // create lodash module
+    (function() {
+      var deps = _.invoke(categories, 'toLowerCase'),
+          depArgs =  deps.join(', '),
+          depPaths = "['" + deps.join("', './") + "'], ",
+          iife = [];
+
+      if (isAMD) {
+        iife.push(
+          'define(' + depPaths + 'function(' + depArgs + ') {',
+          "  return objects.assign(function lodash() {}, { 'VERSION': '" + _.VERSION + "' }, " + depArgs + ');',
+          '});'
+        );
+      }
+      build(options.concat(
+        '-d', '-n', '-s',
+        'exports=none',
+        'include=none',
+        'iife=' + iife.join('\n'),
+        '-o', path.join(outputPath, 'lodash.js')
+      ));
+    }());
   }
 
   /**

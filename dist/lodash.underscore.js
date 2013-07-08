@@ -3214,13 +3214,12 @@
    * // => [['moe', 30, true], ['larry', 40, false]]
    */
   function zip() {
-    var array = arguments.length > 1 ? arguments : arguments[0],
-        index = -1,
-        length = array ? max(pluck(array, 'length')) : 0,
+    var index = -1,
+        length = max(pluck(arguments, 'length')),
         result = Array(length < 0 ? 0 : length);
 
     while (++index < length) {
-      result[index] = pluck(array, index);
+      result[index] = pluck(arguments, index);
     }
     return result;
   }

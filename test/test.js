@@ -2,12 +2,12 @@
   'use strict';
 
   /** Method and object shortcuts */
-  var document = window.document,
+  var phantom = window.phantom,
+      document = !phantom && window.document,
       amd = window.define && define.amd,
       body = document && document.body,
       create = Object.create,
       freeze = Object.freeze,
-      phantom = window.phantom,
       process = window.process,
       slice = Array.prototype.slice,
       system = window.system,
@@ -117,7 +117,7 @@
 
   // add object from iframe
   (function() {
-    if (!document || phantom) {
+    if (!document) {
       return;
     }
     var iframe = document.createElement('iframe');
@@ -196,7 +196,7 @@
     });
 
     test('avoids overwritten native methods', function() {
-      if (document && !phantom) {
+      if (document) {
         notDeepEqual(lodashBadShim.keys({ 'a': 1 }), []);
       } else {
         skipTest();
@@ -3843,7 +3843,7 @@
 
   // configure QUnit and call `QUnit.start()` for
   // Narwhal, Node.js, PhantomJS, Rhino, and RingoJS
-  if (!document || phantom) {
+  if (!document) {
     QUnit.config.noglobals = true;
     QUnit.start();
   }

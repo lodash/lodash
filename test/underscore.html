@@ -19,34 +19,31 @@
 			</div>
 			<img id="chart_image" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
 		</div>
+		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="../vendor/jquery/jquery.js"></script>
 		<script src="../vendor/platform.js/platform.js"></script>
-		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="test-ui.js"></script>
 		<script>
-			document.write('<script src="../' + ui.buildPath + '"><\/script>');
-		</script>
-		<script>
-			(function() {
+			function init(lodash) {
 				var arrayProto = Array.prototype,
 				    concat = arrayProto.concat,
 				    pop = arrayProto.pop,
 				    push = arrayProto.push,
 				    slice = arrayProto.slice;
 
-				if (_.chain().__chain__) {
+				if (lodash.chain && lodash.chain().__chain__) {
 					return;
 				}
-				_.mixin = function(object) {
-					_.forEach(_.functions(object), function(methodName) {
-						var func = _[methodName] = object[methodName];
-						_.prototype[methodName] = function() {
+				lodash.mixin = function(object) {
+					lodash.forEach(lodash.functions(object), function(methodName) {
+						var func = lodash[methodName] = object[methodName];
+						lodash.prototype[methodName] = function() {
 							var args = [this.__wrapped__];
 							push.apply(args, arguments);
 
-							var result = func.apply(_, args);
+							var result = func.apply(lodash, args);
 							if (this.__chain__) {
-								result = new _(result);
+								result = new lodash(result);
 								result.__chain__ = true;
 							}
 							return result;
@@ -54,44 +51,93 @@
 					});
 				};
 
-				_.mixin(_);
+				lodash.mixin(lodash);
 
-				_.mixin({
-					'findWhere': _.find
-				});
-
-				_.chain = function(value) {
-					value = new _(value);
+				lodash.chain = function(value) {
+					value = new lodash(value);
 					value.__chain__ = true;
 					return value;
 				};
 
-				_.prototype.chain = function() {
+				lodash.prototype.chain = function() {
 					this.__chain__ = true;
 					return this;
 				};
 
-				_.prototype.concat = function() {
+				lodash.prototype.concat = function() {
 					var result = concat.apply(this.__wrapped__, arguments);
 					if (this.__chain__) {
-						result = new _(result);
+						result = new lodash(result);
 						result.__chain__ = true;
 					}
 					return result;
 				};
 
-				_.prototype.pop = function() {
+				lodash.prototype.pop = function() {
 					pop.apply(this.__wrapped__, arguments);
 					return this;
 				};
-			}());
+
+				// expose lodash
+				window._ = lodash;
+			}
+
+			// load Lo-Dash again to overwrite the existing `_` value
+			document.write('<script src="' + ui.buildPath + '"><\/script>');
+
+			// load test.js if not using require.js
+			document.write(ui.urlParams.loader != 'none'
+				? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
+				: ([
+					'<script src="../vendor/underscore/test/collections.js"><\/script>',
+					'<script src="../vendor/underscore/test/arrays.js"><\/script>',
+					'<script src="../vendor/underscore/test/functions.js"><\/script>',
+					'<script src="../vendor/underscore/test/objects.js"><\/script>',
+					'<script src="../vendor/underscore/test/utility.js"><\/script>',
+					'<script src="../vendor/underscore/test/chaining.js"><\/script>'
+				  ].join('\n'))
+			);
 		</script>
-		<script src="../vendor/underscore/test/collections.js"></script>
-		<script src="../vendor/underscore/test/arrays.js"></script>
-		<script src="../vendor/underscore/test/functions.js"></script>
-		<script src="../vendor/underscore/test/objects.js"></script>
-		<script src="../vendor/underscore/test/utility.js"></script>
-		<script src="../vendor/underscore/test/chaining.js"></script>
+		<script>
+			if (window.curl) {
+				var require = curl;
+			}
+			if (!window.require) {
+				init(_);
+			}
+			// load Lo-Dash as a module
+			window.require && require(
+			(function() {
+				var reModularize = /modularize/;
+
+				var baseUrl = reModularize.test(ui.urlParams.build)
+					? '../modularize/'
+					: '';
+
+				var modulePath = reModularize.test(ui.urlParams.build)
+					? 'lodash'
+					: ui.buildPath.replace(/\.js$/, '');
+
+				return {
+					'baseUrl': baseUrl,
+					'urlArgs': 't=' + (+new Date),
+					'paths': {
+						'lodash': modulePath
+					}
+				};
+			}()),
+			['lodash'], function(lodash) {
+				init(lodash);
+				require([
+					'../vendor/underscore/test/collections.js',
+					'../vendor/underscore/test/arrays.js',
+					'../vendor/underscore/test/functions.js',
+					'../vendor/underscore/test/objects.js',
+					'../vendor/underscore/test/utility.js',
+					'../vendor/underscore/test/utility.js'
+				]);
+			});
+		</script>
 		<script type="text/html" id="template">
 			<%
 			// a comment

@@ -52,9 +52,18 @@
 			}
 			window.require && require(
 			(function() {
-				var modulePath = ui.buildPath.replace(/\.js$/, '');
+				var reModularize = /modularize/;
+
+				var baseUrl = reModularize.test(ui.urlParams.build)
+					? '../modularize/'
+					: '';
+
+				var modulePath = reModularize.test(ui.urlParams.build)
+					? 'lodash'
+					: ui.buildPath.replace(/\.js$/, '');
+
 				return {
-					'baseUrl': (/modularize/.test(ui.urlParams.build) ? 'modularize/' : ''),
+					'baseUrl': baseUrl,
 					'urlArgs': 't=' + (+new Date),
 					'paths': {
 						'lodash': modulePath,

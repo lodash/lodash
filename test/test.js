@@ -11,7 +11,8 @@
       process = window.process,
       slice = Array.prototype.slice,
       system = window.system,
-      toString = Object.prototype.toString;
+      toString = Object.prototype.toString,
+      Worker = window.Worker;
 
   /** Use a single "load" function */
   var load = !amd && typeof require == 'function' ? require : window.load;
@@ -62,15 +63,7 @@
   ));
 
   /** Used to pass falsey values to methods */
-  var falsey = [
-    ,
-    '',
-    0,
-    false,
-    NaN,
-    null,
-    undefined
-  ];
+  var falsey = [, '', 0, false, NaN, null, undefined];
 
   /** Used as the size when optimizations are enabled for large arrays */
   var largeArraySize = 75;
@@ -101,6 +94,7 @@
 
   /** The `ui` object */
   var ui = window.ui || (window.ui = {
+    'buildPath': filePath,
     'loaderPath': ''
   });
 
@@ -135,6 +129,19 @@
     idoc.close();
   }());
 
+  // add web worker
+  (function() {
+    if (!Worker) {
+      return;
+    }
+    var worker = new Worker('./worker.js');
+    worker.addEventListener('message', function(e) {
+      _._VERSION = e.data || '';
+    }, false);
+
+    worker.postMessage(ui.buildPath);
+  }());
+
   /*--------------------------------------------------------------------------*/
 
   // explicitly call `QUnit.module()` instead of `module()`
@@ -163,6 +170,27 @@
         equal((underscoreModule || {}).moduleName, 'underscore');
       } else {
         skipTest();
+      }
+    });
+
+    asyncTest('supports loading ' + basename + ' in a web worker', function() {
+      if (Worker) {
+        var limit = 1000,
+            start = new Date,
+            wait = 16;
+
+        setTimeout(function attempt() {
+          var actual = _._VERSION;
+          if ((new Date - start) < limit && typeof actual != 'string') {
+            setTimeout(attempt, wait);
+          } else {
+            equal(actual, _.VERSION);
+            QUnit.start();
+          }
+        }, wait);
+      } else {
+        skipTest();
+        QUnit.start();
       }
     });
 

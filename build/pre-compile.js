@@ -321,15 +321,14 @@
 
     // minify internal properties
     (function() {
-      var methodNames = [
+      var funcNames = [
         'cacheIndexOf',
         'cachePush',
         'compareAscending',
         'createCache',
         'getObject',
         'releaseObject',
-        'sortBy',
-        'uniq'
+        'sortBy'
       ];
 
       var props = [
@@ -344,7 +343,7 @@
         return prelude + minNames[iteratorOptions.length + props.length];
       });
 
-      var snippets = source.match(RegExp('^( *)(?:var|function) +(?:' + methodNames.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));
+      var snippets = source.match(RegExp('^( *)(?:var|function) +(?:' + funcNames.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));
       if (!snippets) {
         return;
       }
@@ -381,8 +380,8 @@
         'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]*?\\);\\n',
         // match variables storing `createIterator` options
         '^( *)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
-        // match `cachePush`, `createCache`, `createIterator`, `getObject`, `releaseObject`, and `uniq` functions
-        '^( *)(?:var|function) +(?:cachePush|createCache|createIterator|getObject|releaseObject|uniq)\\b[\\s\\S]+?\\n\\3}'
+        // match `basicUniq`, `cachePush`, `createCache`, `createIterator`, `getObject`, and `releaseObject` functions
+        '^( *)(?:var|function) +(?:basicUniq|cachePush|createCache|createIterator|getObject|releaseObject)\\b[\\s\\S]+?\\n\\3}'
       ].join('|'), 'gm')
     );
 

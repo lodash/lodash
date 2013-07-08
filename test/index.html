@@ -22,7 +22,7 @@
 			Object.keys = function() { return []; };
 
 			// load Lo-Dash and expose it to the bad `Object.keys` shim
-			document.write('<script src="../' + ui.buildPath + '"><\/script>');
+			document.write('<script src="' + ui.buildPath + '"><\/script>');
 		</script>
 		<script>
 			// store Lo-Dash to test for bad shim detection
@@ -33,12 +33,12 @@
 			delete Object._keys;
 
 			// load Lo-Dash again to overwrite the existing `_` value
-			document.write('<script src="../' + ui.buildPath + '"><\/script>');
+			document.write('<script src="' + ui.buildPath + '"><\/script>');
 
 			// load test.js if not using require.js
-			document.write(QUnit.urlParams.loader == 'none'
-				? '<script src="test.js"><\/script>'
-				: '<script data-dojo-config="async:1,parseOnLoad:false" src="../' + ui.loaderPath + '"><\/script>'
+			document.write(ui.urlParams.loader != 'none'
+				? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
+				: '<script src="test.js"><\/script>'
 			);
 		</script>
 		<script>
@@ -54,7 +54,7 @@
 			(function() {
 				var modulePath = ui.buildPath.replace(/\.js$/, '');
 				return {
-					'baseUrl': '../' + (/modularize/.test(QUnit.urlParams.build) ? 'modularize/' : ''),
+					'baseUrl': (/modularize/.test(ui.urlParams.build) ? 'modularize/' : ''),
 					'urlArgs': 't=' + (+new Date),
 					'paths': {
 						'lodash': modulePath,

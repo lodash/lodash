@@ -1,8 +1,8 @@
 ;(function(window) {
   'use strict';
 
-  /** `QUnit.addEvent` shortcut */
-  var addEvent = QUnit.addEvent;
+  /** The base path of the builds */
+  var basePath = '../';
 
   /** The Lo-Dash build to load */
   var build = (/build=([^&]+)/.exec(location.search) || [])[1];
@@ -15,35 +15,62 @@
 
   /*--------------------------------------------------------------------------*/
 
+  /**
+   * Registers an event listener on an element.
+   *
+   * @private
+   * @param {Element} element The element.
+   * @param {String} eventName The name of the event.
+   * @param {Function} handler The event handler.
+   * @returns {Element} The element.
+   */
+  function addEvent(element, eventName, handler) {
+    if (typeof element.addEventListener != 'undefined') {
+      element.addEventListener(eventName, handler, false);
+    } else if (typeof element.attachEvent != 'undefined') {
+      element.attachEvent('on' + eventName, handler);
+    }
+  }
+
+  /*--------------------------------------------------------------------------*/
+
+  // expose `ui.urlParams` properties
+  ui.urlParams = {
+    'build': build,
+    'loader': loader
+  };
+
   // expose Lo-Dash build file path
   ui.buildPath = (function() {
+    var result;
     switch (build) {
-      case 'lodash-compat':     return 'dist/lodash.compat.min.js';
-      case 'lodash-modern-dev': return 'dist/lodash.js';
-      case 'lodash-modern':     return 'dist/lodash.min.js';
-      case 'lodash-legacy':     return 'dist/lodash.legacy.min.js';
-      case 'lodash-mobile':     return 'dist/lodash.mobile.min.js';
-      case 'lodash-underscore': return 'dist/lodash.underscore.min.js';
-      case 'lodash-custom-dev': return 'lodash.custom.js';
-      case 'lodash-custom':     return 'lodash.custom.min.js';
+      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-modern-dev': result = 'dist/lodash.js'; break;
+      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
+      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
+      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
+      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
+      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
+      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
+      case 'lodash-compat-dev':
+      case  undefined:          result = 'lodash.js'; break;
+      default:                  result = build;
     }
-    return 'lodash.js';
+    return result == build ? result : (basePath + result);
   }());
 
   // expose module loader file path
   ui.loaderPath = (function() {
+    var result;
     switch (loader) {
-      case 'curl': return 'vendor/curl/src/curl.js';
-      case 'dojo': return 'vendor/dojo/dojo.js';
+      case 'curl':      result = 'vendor/curl/src/curl.js'; break;
+      case 'dojo':      result = 'vendor/dojo/dojo.js'; break;
+      case 'requirejs':
+      case  undefined:  result = 'vendor/requirejs/require.js'; break;
+      default:          result = loader;
     }
-    return 'vendor/requirejs/require.js';
+    return result == loader ? result : (basePath + result);
   }());
-
-  // assign `QUnit.urlParams` properties
-  QUnit.extend(QUnit.urlParams, {
-    'build': build,
-    'loader': loader
-  });
 
   // initialize controls
   addEvent(window, 'load', function() {

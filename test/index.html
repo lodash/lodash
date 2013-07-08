@@ -26,7 +26,7 @@
 		</script>
 		<script>
 			// store Lo-Dash to test for bad shim detection
-			var lodashBadShim = _;
+			var lodashBadShim = window._;
 
 			// restore nativeKeys
 			Object.keys = Object._keys;
@@ -54,12 +54,12 @@
 			(function() {
 				var modulePath = ui.buildPath.replace(/\.js$/, '');
 				return {
-					'baseUrl': './',
+					'baseUrl': '../' + (/modularize/.test(QUnit.urlParams.build) ? 'modularize/' : ''),
 					'urlArgs': 't=' + (+new Date),
 					'paths': {
-						'lodash': '../' + modulePath,
-						'shimmed': '../abc/../' + modulePath,
-						'underscore': '../xyz/../' + modulePath
+						'lodash': modulePath,
+						'shimmed': './abc/../' + modulePath,
+						'underscore': './xyz/../' + modulePath
 					},
 					'aliases': [
 						['shimmed', 'lodash'],

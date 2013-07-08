@@ -14,7 +14,7 @@
       toString = Object.prototype.toString;
 
   /** Use a single "load" function */
-  var load = typeof require == 'function' ? require : window.load;
+  var load = !amd && typeof require == 'function' ? require : window.load;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {

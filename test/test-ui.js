@@ -23,7 +23,6 @@
       case 'lodash-modern':     return 'dist/lodash.min.js';
       case 'lodash-legacy':     return 'dist/lodash.legacy.min.js';
       case 'lodash-mobile':     return 'dist/lodash.mobile.min.js';
-      case 'lodash-modularize': return 'modularize/lodash.js';
       case 'lodash-underscore': return 'dist/lodash.underscore.min.js';
       case 'lodash-custom-dev': return 'lodash.custom.js';
       case 'lodash-custom':     return 'lodash.custom.min.js';

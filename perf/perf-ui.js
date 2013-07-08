@@ -34,6 +34,12 @@
 
   /*--------------------------------------------------------------------------*/
 
+  // expose `ui.urlParams` properties
+  ui.urlParams = {
+    'build': build,
+    'other': other
+  };
+
   // expose Lo-Dash build file path
   ui.buildPath = (function() {
     var result;
@@ -46,9 +52,9 @@
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'lodash-modern':
       case  undefined:          result = 'dist/lodash.min.js'; break;
-      default:                  result = build;
+      default:                  return build;
     }
-    return result == build ? result : (basePath + result);
+    return basePath + result;
   }());
 
   // expose other library file path
@@ -65,9 +71,9 @@
       case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
       case 'underscore':
       case  undefined:          result = 'vendor/underscore/underscore-min.js'; break;
-      default:                  result = other;
+      default:                  return other;
     }
-    return result == other ? result : (basePath + result);
+    return basePath + result;
   }());
 
   // initialize controls

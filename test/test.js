@@ -176,18 +176,19 @@
     asyncTest('supports loading ' + basename + ' in a web worker', function() {
       if (Worker) {
         var limit = 1000,
-            start = new Date,
-            wait = 16;
+            start = new Date;
 
-        setTimeout(function attempt() {
+        var attempt = function() {
           var actual = _._VERSION;
           if ((new Date - start) < limit && typeof actual != 'string') {
-            setTimeout(attempt, wait);
-          } else {
-            equal(actual, _.VERSION);
-            QUnit.start();
+            setTimeout(attempt, 16);
+            return;
           }
-        }, wait);
+          equal(actual, _.VERSION);
+          QUnit.start();
+        };
+
+        attempt();
       } else {
         skipTest();
         QUnit.start();

@@ -1251,26 +1251,6 @@
         });
       });
 
-      asyncTest('`lodash ' + command + '=mixin`', function() {
-        var start = _.after(2, _.once(QUnit.start));
-
-        build(['-s', command + '=mixin'], function(data) {
-          var basename = path.basename(data.outputPath, '.js'),
-              context = createContext();
-
-          vm.runInContext(data.source, context);
-          var lodash = context._;
-
-          var actual = lodash([1, 2, 3])
-            .map(function(num) { return num * num; })
-            .value();
-
-          deepEqual(actual, [1, 4, 9], basename);
-          equal('mixin' in lodash, false, basename);
-          start();
-        });
-      });
-
       asyncTest('`lodash ' + command + '=value`', function() {
         var start = _.after(2, _.once(QUnit.start));
 
@@ -1281,7 +1261,7 @@
           vm.runInContext(data.source, context);
           var lodash = context._;
 
-          strictEqual(lodash([1]), undefined, basename);
+          ok(lodash([1]) instanceof lodash, basename);
           deepEqual(_.keys(lodash.prototype), [], basename);
           start();
         });
@@ -1418,12 +1398,8 @@
 
           lodash.mixin({ 'x': noop });
           equal(lodash.x, noop, basename);
+          equal(typeof lodash.prototype.x, 'function', basename);
 
-          if (index) {
-            equal(typeof lodash.prototype.x, 'function', basename);
-          } else {
-            equal('x' in lodash.prototype, false, basename);
-          }
           start();
         });
       });

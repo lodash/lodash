@@ -3939,8 +3939,8 @@
           '}'
         ].join('\n'));
       }
-      if (isExcluded('mixin')) {
-        // remove `mixin` call
+      if (isExcluded('mixin') || isExcluded('value')) {
+        // remove `_.mixin` call
         source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(.+?\).+/, '');
       }
       if (isExcluded('value')) {

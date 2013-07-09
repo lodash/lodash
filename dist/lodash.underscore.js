@@ -24,10 +24,6 @@
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
-  /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27|#x2F);/g,
-      reUnescapedHtml = /[&<>"'\/]/g;
-
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
 
@@ -588,6 +584,10 @@
 
   /** Used to convert HTML entities to characters */
   var htmlUnescapes = invert(htmlEscapes);
+
+  /** Used to match HTML entities and HTML characters */
+  var reEscapedHtml = RegExp('(' + keys(htmlUnescapes).join('|') + ')', 'g'),
+      reUnescapedHtml = RegExp('[' + keys(htmlEscapes).join('') + ']', 'g');
 
   /*--------------------------------------------------------------------------*/
 

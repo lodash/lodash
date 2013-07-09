@@ -21,9 +21,6 @@
   /** Used to avoid reference errors in `createIterator` */
   var iteratorObject = {};
 
-  /** Used to match HTML entities and HTML characters */
-  var reUnescapedHtml = /[&<>"'\/]/g;
-
   /** `Object#toString` result shortcuts */
   var argsClass = '[object Arguments]',
       arrayClass = '[object Array]',
@@ -472,6 +469,9 @@
     "'": '&#x27;',
     '/': '&#x2F;'
   };
+
+  /** Used to match HTML entities and HTML characters */
+  var reUnescapedHtml = RegExp('[' + keys(htmlEscapes).join('') + ']', 'g');
 
   /*--------------------------------------------------------------------------*/
 

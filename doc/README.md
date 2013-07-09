@@ -902,7 +902,7 @@ _.zipObject(['moe', 'larry'], [30, 40]);
 <!-- div -->
 
 ### <a id="_value"></a>`_(value)`
-<a href="#_value">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L616 "View in source") [&#x24C9;][1]
+<a href="#_value">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L612 "View in source") [&#x24C9;][1]
 
 Creates a `lodash` object, which wraps the given `value`, to enable method chaining.
 
@@ -2666,7 +2666,7 @@ _.invert({ 'first': 'moe', 'second': 'larry' });
 <!-- div -->
 
 ### <a id="_isargumentsvalue"></a>`_.isArguments(value)`
-<a href="#_isargumentsvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1309 "View in source") [&#x24C9;][1]
+<a href="#_isargumentsvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1305 "View in source") [&#x24C9;][1]
 
 Checks if `value` is an `arguments` object.
 
@@ -2693,7 +2693,7 @@ _.isArguments([1, 2, 3]);
 <!-- div -->
 
 ### <a id="_isarrayvalue"></a>`_.isArray(value)`
-<a href="#_isarrayvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1335 "View in source") [&#x24C9;][1]
+<a href="#_isarrayvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1331 "View in source") [&#x24C9;][1]
 
 Checks if `value` is an array.
 
@@ -3152,7 +3152,7 @@ _.isUndefined(void 0);
 <!-- div -->
 
 ### <a id="_keysobject"></a>`_.keys(object)`
-<a href="#_keysobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1368 "View in source") [&#x24C9;][1]
+<a href="#_keysobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L1364 "View in source") [&#x24C9;][1]
 
 Creates an array composed of the own enumerable property names of `object`.
 
@@ -3575,7 +3575,7 @@ _.result(object, 'stuff');
 <!-- div -->
 
 ### <a id="_runincontextcontextwindow"></a>`_.runInContext([context=window])`
-<a href="#_runincontextcontextwindow">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L449 "View in source") [&#x24C9;][1]
+<a href="#_runincontextcontextwindow">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L445 "View in source") [&#x24C9;][1]
 
 Create a new `lodash` function using the given `context` object.
 
@@ -3765,7 +3765,7 @@ _.uniqueId();
 <!-- div -->
 
 ### <a id="_templatesettingsimports_"></a>`_.templateSettings.imports._`
-<a href="#_templatesettingsimports_">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L825 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsimports_">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L821 "View in source") [&#x24C9;][1]
 
 A reference to the `lodash` function.
 
@@ -3796,7 +3796,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_support"></a>`_.support`
-<a href="#_support">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L643 "View in source") [&#x24C9;][1]
+<a href="#_support">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L639 "View in source") [&#x24C9;][1]
 
 *(Object)*: An object used to flag environments features.
 
@@ -3808,7 +3808,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_supportargsclass"></a>`_.support.argsClass`
-<a href="#_supportargsclass">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L668 "View in source") [&#x24C9;][1]
+<a href="#_supportargsclass">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L664 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if an `arguments` object's [[Class]] is resolvable *(all but Firefox < `4`, IE < `9`)*.
 
@@ -3820,7 +3820,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_supportargsobject"></a>`_.support.argsObject`
-<a href="#_supportargsobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L660 "View in source") [&#x24C9;][1]
+<a href="#_supportargsobject">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L656 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if `arguments` objects are `Object` objects *(all but Narwhal and Opera < `10.5`)*.
 
@@ -3832,7 +3832,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_supportenumerrorprops"></a>`_.support.enumErrorProps`
-<a href="#_supportenumerrorprops">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L677 "View in source") [&#x24C9;][1]
+<a href="#_supportenumerrorprops">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L673 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if `name` or `message` properties of `Error.prototype` are enumerable by default. *(IE < `9`, Safari < `5.1`)*
 
@@ -3844,7 +3844,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_supportenumprototypes"></a>`_.support.enumPrototypes`
-<a href="#_supportenumprototypes">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L690 "View in source") [&#x24C9;][1]
+<a href="#_supportenumprototypes">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L686 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if `prototype` properties are enumerable by default.
 
@@ -3858,7 +3858,7 @@ Firefox < `3.6`, Opera > `9.50` - Opera < `11.60`, and Safari < `5.1` *(if the p
 <!-- div -->
 
 ### <a id="_supportfastbind"></a>`_.support.fastBind`
-<a href="#_supportfastbind">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L698 "View in source") [&#x24C9;][1]
+<a href="#_supportfastbind">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L694 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if `Function#bind` exists and is inferred to be fast *(all but V8)*.
 
@@ -3870,7 +3870,7 @@ Firefox < `3.6`, Opera > `9.50` - Opera < `11.60`, and Safari < `5.1` *(if the p
 <!-- div -->
 
 ### <a id="_supportnonenumargs"></a>`_.support.nonEnumArgs`
-<a href="#_supportnonenumargs">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L715 "View in source") [&#x24C9;][1]
+<a href="#_supportnonenumargs">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L711 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if `arguments` object indexes are non-enumerable *(Firefox < `4`, IE < `9`, PhantomJS, Safari < `5.1`)*.
 
@@ -3882,7 +3882,7 @@ Firefox < `3.6`, Opera > `9.50` - Opera < `11.60`, and Safari < `5.1` *(if the p
 <!-- div -->
 
 ### <a id="_supportnonenumshadows"></a>`_.support.nonEnumShadows`
-<a href="#_supportnonenumshadows">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L726 "View in source") [&#x24C9;][1]
+<a href="#_supportnonenumshadows">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L722 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if properties shadowing those on `Object.prototype` are non-enumerable.
 
@@ -3896,7 +3896,7 @@ In IE < `9` an objects own properties, shadowing non-enumerable ones, are made n
 <!-- div -->
 
 ### <a id="_supportownlast"></a>`_.support.ownLast`
-<a href="#_supportownlast">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L706 "View in source") [&#x24C9;][1]
+<a href="#_supportownlast">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L702 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if own properties are iterated after inherited properties *(all but IE < `9`)*.
 
@@ -3908,7 +3908,7 @@ In IE < `9` an objects own properties, shadowing non-enumerable ones, are made n
 <!-- div -->
 
 ### <a id="_supportspliceobjects"></a>`_.support.spliceObjects`
-<a href="#_supportspliceobjects">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L740 "View in source") [&#x24C9;][1]
+<a href="#_supportspliceobjects">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L736 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
 
@@ -3922,7 +3922,7 @@ Firefox < `10`, IE compatibility mode, and IE < `9` have buggy Array `shift()` a
 <!-- div -->
 
 ### <a id="_supportunindexedchars"></a>`_.support.unindexedChars`
-<a href="#_supportunindexedchars">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L751 "View in source") [&#x24C9;][1]
+<a href="#_supportunindexedchars">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L747 "View in source") [&#x24C9;][1]
 
 *(Boolean)*: Detect lack of support for accessing string characters by index.
 
@@ -3936,7 +3936,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 <!-- div -->
 
 ### <a id="_templatesettings"></a>`_.templateSettings`
-<a href="#_templatesettings">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L777 "View in source") [&#x24C9;][1]
+<a href="#_templatesettings">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L773 "View in source") [&#x24C9;][1]
 
 *(Object)*: By default, the template delimiters used by Lo-Dash are similar to those in embedded Ruby *(ERB)*. Change the following template settings to use alternative delimiters.
 
@@ -3948,7 +3948,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 <!-- div -->
 
 ### <a id="_templatesettingsescape"></a>`_.templateSettings.escape`
-<a href="#_templatesettingsescape">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L785 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsescape">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L781 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect `data` property values to be HTML-escaped.
 
@@ -3960,7 +3960,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 <!-- div -->
 
 ### <a id="_templatesettingsevaluate"></a>`_.templateSettings.evaluate`
-<a href="#_templatesettingsevaluate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L793 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsevaluate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L789 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect code to be evaluated.
 
@@ -3972,7 +3972,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 <!-- div -->
 
 ### <a id="_templatesettingsinterpolate"></a>`_.templateSettings.interpolate`
-<a href="#_templatesettingsinterpolate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L801 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsinterpolate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L797 "View in source") [&#x24C9;][1]
 
 *(RegExp)*: Used to detect `data` property values to inject.
 
@@ -3984,7 +3984,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 <!-- div -->
 
 ### <a id="_templatesettingsvariable"></a>`_.templateSettings.variable`
-<a href="#_templatesettingsvariable">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L809 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsvariable">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L805 "View in source") [&#x24C9;][1]
 
 *(String)*: Used to reference the data object in the template text.
 
@@ -3996,7 +3996,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 <!-- div -->
 
 ### <a id="_templatesettingsimports"></a>`_.templateSettings.imports`
-<a href="#_templatesettingsimports">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L817 "View in source") [&#x24C9;][1]
+<a href="#_templatesettingsimports">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L813 "View in source") [&#x24C9;][1]
 
 *(Object)*: Used to import variables into the compiled template.
 

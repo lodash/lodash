@@ -103,7 +103,7 @@
     'defer': ['bind'],
     'delay': [],
     'difference': ['cacheIndexOf', 'createCache', 'getIndexOf', 'releaseObject'],
-    'escape': ['escapeHtmlChar'],
+    'escape': ['escapeHtmlChar', 'keys'],
     'every': ['basicEach', 'createCallback', 'isArray'],
     'filter': ['basicEach', 'createCallback', 'isArray'],
     'find': ['basicEach', 'createCallback', 'isArray'],
@@ -177,11 +177,11 @@
     'times': ['createCallback'],
     'toArray': ['isString', 'slice', 'values'],
     'transform': ['createCallback', 'createObject', 'forOwn', 'isArray'],
-    'unescape': ['unescapeHtmlChar'],
+    'unescape': ['keys', 'unescapeHtmlChar'],
     'union': ['basicFlatten', 'basicUniq'],
     'uniq': ['basicUniq', 'overloadWrapper'],
     'uniqueId': [],
-    'value': ['basicEach', 'forOwn', 'isArray', 'lodash', 'wrapperValueOf', 'lodashWrapper'],
+    'value': ['basicEach', 'forOwn', 'isArray', 'lodash', 'mixin', 'wrapperValueOf', 'lodashWrapper'],
     'values': ['keys'],
     'where': ['filter'],
     'without': ['difference'],
@@ -218,7 +218,7 @@
     'shimIsPlainObject': ['forIn', 'isArguments', 'isFunction', 'isNode'],
     'shimKeys': ['createIterator'],
     'slice': [],
-    'unescapeHtmlChar': [],
+    'unescapeHtmlChar': ['invert'],
     'wrapperToString': [],
     'wrapperValueOf': [],
 
@@ -1190,7 +1190,7 @@
           })) {
         stack.push(otherName);
         result.push(otherName);
-        if (isShallow) {
+        if (!isShallow) {
           result.push.apply(result, getDependants(otherName, isShallow, stack));
         }
       }
@@ -1415,35 +1415,25 @@
    * @returns {String} Returns the matched function snippet.
    */
   function matchFunction(source, funcName) {
-    var result = source.match(RegExp(
-      multilineComment +
+    var result = _.reduce([
       // match variable declarations with `createIterator`, `overloadWrapper`, and `template`
-      '( *)var ' + funcName + ' *=.*?(?:createIterator|overloadWrapper|template)\\((?:.+|[\\s\\S]+?\\n\\1}?)\\);\\n'
-    ));
-
-    result || (result = source.match(RegExp(
-      multilineComment +
-      // begin non-capturing group
-      '( *)(?:' +
+      '( *)var ' + funcName + ' *=.*?(?:createIterator|overloadWrapper|template)\\((?:.+|[\\s\\S]+?\\n\\1}?)\\);\\n',
       // match a function declaration
-      'function ' + funcName + '\\b[\\s\\S]+?\\n\\1}|' +
+      '( *)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}\\n',
       // match a variable declaration with function expression
-      'var ' + funcName + ' *=.*?function\\(.+?\{\\n[\\s\\S]+?\\n\\1}(?:\\(\\)\\))?;' +
-      // end non-capturing group
-      ')\\n'
-    )));
-
-    result || (result = source.match(RegExp(
-      multilineComment +
+      '( *)var ' + funcName + ' *=.*?function\\(.+?\{\\n[\\s\\S]+?\\n\\1}(?:\\(\\)\\))?;\\n',
       // match simple variable declarations
       '( *)var ' + funcName + ' *=.+?;\\n'
-    )));
+    ], function(result, reSource) {
+      return result || ((result = source.match(RegExp(
+        multilineComment +
+        reSource
+      ))) && result[0]) || '';
+    }, null);
 
-    if (/@type +Function\b/.test(result)) {
-      return result[0];
-    }
-    if (/(?:function(?:\s+\w+)?\b|createIterator|overloadWrapper|template)\(/.test(result)) {
-      return result[0];
+    if (/@type +Function\b/.test(result) ||
+        /(?:function(?:\s+\w+)?\b|createIterator|overloadWrapper|template)\(/.test(result)) {
+      return result;
     }
     return '';
   }
@@ -1480,17 +1470,29 @@
    */
   function matchVar(source, varName, isShallow) {
     var indentA = isShallow ? ' {2}' : ' {2,4}',
-        indentB = isShallow ? ' {6}' : ' {6,8}';
+        indentB = isShallow ? ' {6}' : ' {6,8}',
+        reSources = [];
 
-    var result = source.match(RegExp(
-      (varName != 'freeGlobal' && _.contains(complexVars, varName))
-        ? '^'  + indentA + 'var '  + varName + ' *=[\\s\\S]+?(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|[;}]\\n(?=\\n(?!\\s*\\(func)))'
-        : '^(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
-          '^'  + indentA + 'var '  + varName + ' *=.+?,\\n(?= *\\w+ *=)|' +
-          '^'  + indentB + varName + ' *=.+?[,;]\\n'
-    , 'm'));
-
-    return result ? result[0] : '';
+    if (varName != 'freeGlobal' && _.contains(complexVars, varName)) {
+      // match complex variable assignments
+      reSources.push(
+        indentA + 'var '  + varName + ' *=[\\s\\S]+?(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|[;}]\\n(?=\\n(?!\\s*\\(func)))'
+      );
+    } else {
+      reSources.push(
+        // match a varaible at the start of a declaration list
+        indentA + 'var '  + varName + ' *=.+?,\\n(?= *\\w+ *=)',
+        // match a variable declaration in a declaration list
+        indentB + varName + ' *=.+?[,;]\\n',
+        // match a variable that is not part of a declaration list
+        '(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
+      );
+    }
+    return _.reduce(reSources, function(result, reSource) {
+      return result || ((result = source.match(RegExp(
+        '^' + reSource
+      , 'm'))) && result[0]) || '';
+    }, null);
   }
 
   /**
@@ -2157,21 +2159,34 @@
       , 'm'), '$1 = null;')
     }
 
-    source = removeFunction(source, varName);
-
-    // match a variable declaration that's not part of a declaration list
-    source = source.replace(RegExp(
-      multilineComment +
-      '( *)var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
-    ), '');
-
-    // match a variable declaration in a declaration list
-    source = source.replace(RegExp(
-      '( *(?:var +)?\\w+ *=.+?),\\n *' + varName + ' *=.+?([,;])(?=\\n)'
-    ), '$1$2');
-
-    // remove a varaible at the start of a declaration list
-    source = source.replace(RegExp('(var +)' + varName + ' *=.+?,\\n *'), '$1');
+    _.some([
+      function() {
+        return removeFunction(source, varName);
+      },
+      function() {
+        // remove a varaible at the start of a declaration list
+        return source.replace(RegExp('(var +)' + varName + ' *=.+?,\\n *'), '$1');
+      },
+      function() {
+        // remove a variable declaration in a declaration list
+        return source.replace(RegExp(
+          '( *(?:var +)?\\w+ *=.+?),\\n *' + varName + ' *=.+?([,;])(?=\\n)'
+        ), '$1$2');
+      },
+      function() {
+        // remove a variable that is not part of a declaration list
+        return source.replace(RegExp(
+          multilineComment +
+          '( *)var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
+        ), '');
+      }
+    ], function(func) {
+      var result = func();
+      if (result !== source) {
+        source = result;
+        return true;
+      }
+    });
 
     return source;
   }
@@ -3617,21 +3632,12 @@
         if (!isLodash('support')) {
           source = source.replace(/\blodash\.support *= */, '');
         }
-
-        // add an `/` entry to `htmlEscapes`, `reEscapedHtml`, and `reUnescapedHtml`
+        // replace `htmlEscapes` entries with hex entities
         if (!isLodash('escape')) {
           source = source.replace(matchVar(source, 'htmlEscapes'), function(match) {
             return match
               .replace('#39', '#x27')
               .replace(/(\n *)}/, ",$1  '/': '&#x2F;'$1}");
-          });
-
-          source = source.replace(matchVar(source, 'reEscapedHtml'), function(match) {
-            return match.replace(/\/.*\//, "/&(?:amp|lt|gt|quot|#x27|#x2F);/");
-          });
-
-          source = source.replace(matchVar(source, 'reUnescapedHtml'), function(match) {
-            return match.replace(/\/.*\//, '/[&<>"\'\\/]/');
           });
         }
 
@@ -3923,41 +3929,8 @@
 
     // modify/remove references to removed functions/variables
     if (!isTemplate) {
-      if (isExcluded('invert')) {
-        source = replaceVar(source, 'htmlUnescapes', JSON.stringify(_.invert(JSON.parse(
-          matchVar(source, 'htmlEscapes')
-            .replace(/([^"])'(?!")/g, '$1"')
-            .replace(/'"'/, '"\\""')
-            .match(/\{[\s\S]+?}/)[0]
-        ))));
-      }
-      if (isExcluded('mixin')) {
-        // if possible, inline the `_.mixin` call to ensure proper chaining behavior
-        source = source.replace(/((?:\s*\/\/.*)\n)( *)mixin\(lodash\).*/m, function(match, prelude, indent) {
-          if (isExcluded('forOwn')) {
-            return '';
-          }
-          return prelude + indent + [
-            'forOwn(lodash, function(func, methodName) {',
-            '  lodash[methodName] = func;',
-            '',
-            '  lodash.prototype[methodName] = function() {',
-            '    var value = this.__wrapped__,',
-            '        args = [value];',
-            '',
-            '    push.apply(args, arguments);',
-            '    var result = func.apply(lodash, args);',
-            "    return (value && typeof value == 'object' && value == result)",
-            '      ? this',
-            '      : new lodashWrapper(result);',
-            '  };',
-            '});'
-          ].join('\n' + indent);
-        });
-      }
-      if (isExcluded('value')) {
+      if (isExcluded('lodashWrapper')) {
         source = removeLodashWrapper(source);
-        source = removeSpliceObjectsFix(source);
 
         // simplify the `lodash` function
         source = replaceFunction(source, 'lodash', [
@@ -3965,15 +3938,13 @@
           '  // no operation performed',
           '}'
         ].join('\n'));
-
-        // remove `lodash.prototype` method assignments from `_.mixin`
-        source = replaceFunction(source, 'mixin', [
-          'function mixin(object) {',
-          '  forEach(functions(object), function(methodName) {',
-          '    lodash[methodName] = object[methodName];',
-          '  });',
-          '}'
-        ].join('\n'));
+      }
+      if (isExcluded('mixin')) {
+        // remove `mixin` call
+        source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(.+?\).+/, '');
+      }
+      if (isExcluded('value')) {
+        source = removeSpliceObjectsFix(source);
 
         // remove all `lodash.prototype` additions
         source = source

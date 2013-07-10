@@ -134,19 +134,17 @@ $(document).ready(function() {
     var names = ['moe', 'larry', 'curly'], ages = [30, 40, 50], leaders = [true];
     var stooges = _.zip(names, ages, leaders);
     equal(String(stooges), 'moe,30,true,larry,40,,curly,50,', 'zipped together arrays of different lengths');
-  });
 
-  test('unzip', function() {
-    var stoogesUnzipped = _.unzip(['moe',30, 'stooge 1'],['larry',40, 'stooge 2'],['curly',50, 'stooge 3']);
-    deepEqual(stoogesUnzipped, [['moe','larry','curly'],[30,40,50], ['stooge 1', 'stooge 2', 'stooge 3']], 'unzipped pairs');
+    stooges = _.zip(['moe',30, 'stooge 1'],['larry',40, 'stooge 2'],['curly',50, 'stooge 3']);
+    deepEqual(stooges, [['moe','larry','curly'],[30,40,50], ['stooge 1', 'stooge 2', 'stooge 3']], 'zipped pairs');
 
     // In the case of difference lengths of the tuples undefineds
     // should be used as placeholder
-    stoogesUnzipped = _.unzip(['moe',30],['larry',40],['curly',50, 'extra data']);
-    deepEqual(stoogesUnzipped, [['moe','larry','curly'],[30,40,50], [undefined, undefined, 'extra data']], 'unzipped pairs');
+    stooges = _.zip(['moe',30],['larry',40],['curly',50, 'extra data']);
+    deepEqual(stooges, [['moe','larry','curly'],[30,40,50], [undefined, undefined, 'extra data']], 'zipped pairs with empties');
 
-    var emptyUnzipped = _.unzip([]);
-    deepEqual(emptyUnzipped, [], 'unzipped empty');
+    var empty = _.zip([]);
+    deepEqual(empty, [], 'unzipped empty');
   });
 
   test('object', function() {

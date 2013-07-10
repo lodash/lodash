@@ -142,6 +142,20 @@ $(document).ready(function() {
     _.delay(function(){ equal(counter, 2, "incr was called twice"); start(); }, 64);
   });
 
+  asyncTest("more throttling", 3, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 30);
+    throttledIncr(); throttledIncr();
+    ok(counter == 1);
+    _.delay(function(){
+      ok(counter == 2);
+      throttledIncr();
+      ok(counter == 3);
+      start();
+    }, 85);
+  });
+
   asyncTest("throttle repeatedly with results", 6, function() {
     var counter = 0;
     var incr = function(){ return ++counter; };
@@ -195,6 +209,42 @@ $(document).ready(function() {
       ok(counter == 1);
       start();
     }, 96);
+  });
+
+  asyncTest("more throttle does not trigger leading call when leading is set to false", 3, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 100, {leading: false});
+
+    throttledIncr();
+    _.delay(throttledIncr, 50);
+    _.delay(throttledIncr, 60);
+    _.delay(throttledIncr, 200);
+    ok(counter === 0);
+
+    _.delay(function() {
+      ok(counter == 1);
+    }, 250);
+
+    _.delay(function() {
+      ok(counter == 2);
+      start();
+    }, 350);
+  });
+
+  asyncTest("one more throttle with leading: false test", 2, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 100, {leading: false});
+
+    var time = new Date;
+    while (new Date - time < 350) throttledIncr();
+    ok(counter === 3);
+
+    _.delay(function() {
+      equal(counter, 4);
+      start();
+    }, 200);
   });
 
   asyncTest("throttle does not trigger trailing call when trailing is set to false", 4, function() {

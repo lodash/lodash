@@ -10,8 +10,7 @@
   var licenseTemplate = [
     '/**',
     ' * @license',
-    ' * Lo-Dash <%= VERSION %> lodash.com/license',
-    ' * Underscore.js 1.4.4 underscorejs.org/LICENSE',
+    ' * Lo-Dash <%= VERSION %> lodash.com/license | Underscore.js 1.5.1 underscorejs.org/LICENSE',
     ' */'
   ].join('\n');
 

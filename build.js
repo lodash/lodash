@@ -1372,17 +1372,27 @@
    */
   function getVars(source, isShallow) {
     var indentA = isShallow ? ' {2}' : ' {2,4}',
-        indentB = isShallow ? ' {6}' : ' {6,8}',
-        result = [];
+        indentB = isShallow ? ' {6}' : ' {6,8}';
 
-    source.replace(RegExp(
-      '^(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n|' +
-      '^'  + indentA + 'var (\\w+) *=.+?,\\n(?= *\\w+ *=)|' +
-      '^'  + indentB + '(\\w+) *=.+?[,;]\\n'
-    ,'gm'), function(match, indent, varA, varB, varC) {
-      result.push(varA || varB || varC);
-    });
+    var result = _.reduce([
+      // match a varaible at the start of a declaration list
+      indentA + 'var (\\w+) *=.+?,\\n(?= *\\w+ *=)',
+      // match a variable declaration in a declaration list
+      indentB + '(\\w+) *=.+?[,;]\\n',
+      // match a variable that is not part of a declaration list
+      '(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:&&\\n[^;]+)?|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
+    ], function(result, reSource) {
+      source = source.replace(RegExp('^' + reSource, 'gm'), function(match, indent, varName) {
+        if (typeof varName == 'number') {
+          varName = indent;
+        }
+        result.push(varName);
+        return '';
+      });
+      return result;
+    }, []);
 
+    // remove duplicates and function names
     return _.difference(_.uniq(result), allFuncs).sort();
   }
 
@@ -1422,13 +1432,13 @@
       '( *)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}\\n',
       // match a variable declaration with function expression
       '( *)var ' + funcName + ' *=.*?function\\(.+?\{\\n[\\s\\S]+?\\n\\1}(?:\\(\\)\\))?;\\n',
-      // match simple variable declarations
+      // match a simple variable declaration
       '( *)var ' + funcName + ' *=.+?;\\n'
     ], function(result, reSource) {
-      return result || ((result = source.match(RegExp(
+      return result || (result = source.match(RegExp(
         multilineComment +
         reSource
-      ))) && result[0]) || '';
+      ))) && result[0];
     }, null);
 
     if (/@type +Function\b/.test(result) ||
@@ -1470,29 +1480,30 @@
    */
   function matchVar(source, varName, isShallow) {
     var indentA = isShallow ? ' {2}' : ' {2,4}',
-        indentB = isShallow ? ' {6}' : ' {6,8}',
-        reSources = [];
+        indentB = isShallow ? ' {6}' : ' {6,8}';
 
+    var reSources = [
+      // match a varaible at the start of a declaration list
+      indentA + 'var ' + varName + ' *=.+?,\\n(?= *\\w+ *=)',
+      // match a variable declaration in a declaration list
+      indentB + varName + ' *=.+?[,;]\\n',
+      // match a variable that is not part of a declaration list
+      '(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:&&\\n[^;]+)?|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
+    ];
+
+    // match complex variable assignments
     if (varName != 'freeGlobal' && _.contains(complexVars, varName)) {
-      // match complex variable assignments
-      reSources.push(
-        indentA + 'var '  + varName + ' *=[\\s\\S]+?(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|[;}]\\n(?=\\n(?!\\s*\\(func)))'
-      );
-    } else {
-      reSources.push(
-        // match a varaible at the start of a declaration list
-        indentA + 'var '  + varName + ' *=.+?,\\n(?= *\\w+ *=)',
-        // match a variable declaration in a declaration list
-        indentB + varName + ' *=.+?[,;]\\n',
-        // match a variable that is not part of a declaration list
-        '(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
-      );
+      reSources = [
+        indentA + 'var '  + varName + ' *=[\\s\\S]+?' +
+        '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
+        '[;}]\\n(?=\\n(?!\\s*\\(func)))'
+      ];
     }
     return _.reduce(reSources, function(result, reSource) {
-      return result || ((result = source.match(RegExp(
+      return result || (result = source.match(RegExp(
         '^' + reSource
-      , 'm'))) && result[0]) || '';
-    }, null);
+      , 'm'))) && result[0];
+    }, null) || '';
   }
 
   /**

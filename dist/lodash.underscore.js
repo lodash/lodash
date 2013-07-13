@@ -176,7 +176,6 @@
 
   /** Native method shortcuts */
   var ceil = Math.ceil,
-      concat = arrayRef.concat,
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
@@ -1318,7 +1317,7 @@
    */
   function omit(object) {
     var indexOf = getIndexOf(),
-        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+        props = flatten(nativeSlice.call(arguments, 1)),
         result = {};
 
     forIn(object, function(value, key) {
@@ -1367,8 +1366,9 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Array|Function|String} callback|[prop1, prop2, ...] The function called
-   *  per iteration or properties to pick, either as individual arguments or arrays.
+   * @param {Array|Function|String} callback|[prop1, prop2, ...] The function
+   *  called per iteration or property names to pick, specified as individual
+   *  property names or arrays of property names.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
@@ -1383,7 +1383,7 @@
    */
   function pick(object) {
     var index = -1,
-        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+        props = flatten(nativeSlice.call(arguments, 1)),
         length = props.length,
         result = {};
 
@@ -2466,16 +2466,17 @@
   }
 
   /**
-   * Creates an array of `array` elements not present in the other arrays
-   * using strict equality for comparisons, i.e. `===`.
+   * Creates an arrat with all occurrences of the passed values removed using
+   * using strict equality for comparisons, i.e. `===`. Values to exclude may
+   * be specified as individual arguments or as arrays.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to process.
-   * @param {Array} [array1, array2, ...] Arrays to check.
-   * @returns {Array} Returns a new array of `array` elements not present in the
-   *  other arrays.
+   * @param {Array} [array1, array2, ...] The values to exclude, specified as
+   *  individual values or arrays of values.
+   * @returns {Array} Returns a new filtered array.
    * @example
    *
    * _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
@@ -2485,7 +2486,7 @@
     var index = -1,
         indexOf = getIndexOf(),
         length = array.length,
-        flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+        flattened = flatten(nativeSlice.call(arguments, 1)),
         result = [];
 
     while (++index < length) {
@@ -3096,10 +3097,7 @@
    * // => [1, 2, 3, 101, 10]
    */
   function union(array) {
-    if (!array) {
-      arguments[0] = arrayRef;
-    }
-    return uniq(flatten(arguments, true));
+    return uniq(flatten(compact(arguments), true));
   }
 
   /**
@@ -3179,14 +3177,14 @@
   }
 
   /**
-   * Creates an array with all occurrences of the passed values removed using
+   * Creates an array excluding all occurrences of the passed values using
    * strict equality for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to filter.
-   * @param {Mixed} [value1, value2, ...] Values to remove.
+   * @param {Mixed} [value1, value2, ...] Values to exclude.
    * @returns {Array} Returns a new filtered array.
    * @example
    *
@@ -3327,7 +3325,8 @@
    * @memberOf _
    * @category Functions
    * @param {Object} object The object to bind and assign the bound methods to.
-   * @param {String} [methodName1, methodName2, ...] Method names on the object to bind.
+   * @param {String} [methodName1, methodName2, ...] The object method names to
+   *  bind, specified as individual values or arrays of values.
    * @returns {Object} Returns `object`.
    * @example
    *
@@ -3341,7 +3340,7 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
+    var funcs = arguments.length > 1 ? flatten(nativeSlice.call(arguments, 1)) : functions(object),
         index = -1,
         length = funcs.length;
 

@@ -87,9 +87,9 @@
     // public functions
     'after': [],
     'assign': ['createCallback', 'createIterator'],
-    'at': ['isString'],
+    'at': ['basicFlatten', 'isString'],
     'bind': ['createBound'],
-    'bindAll': ['bind', 'functions'],
+    'bindAll': ['basicFlatten', 'bind', 'functions'],
     'bindKey': ['createBound'],
     'clone': ['assign', 'createCallback', 'forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isNode', 'releaseArray', 'slice'],
     'cloneDeep': ['clone'],
@@ -102,7 +102,7 @@
     'defaults': ['createCallback', 'createIterator'],
     'defer': ['bind'],
     'delay': [],
-    'difference': ['cacheIndexOf', 'createCache', 'getIndexOf', 'releaseObject'],
+    'difference': ['basicFlatten', 'cacheIndexOf', 'createCache', 'getIndexOf', 'releaseObject'],
     'escape': ['escapeHtmlChar', 'keys'],
     'every': ['basicEach', 'createCallback', 'isArray'],
     'filter': ['basicEach', 'createCallback', 'isArray'],
@@ -150,13 +150,13 @@
     'min': ['basicEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'mixin': ['forEach', 'functions'],
     'noConflict': [],
-    'omit': ['createCallback', 'forIn', 'getIndexOf'],
+    'omit': ['basicFlatten', 'createCallback', 'forIn', 'getIndexOf'],
     'once': [],
     'pairs': ['keys'],
     'parseInt': ['isString'],
     'partial': ['createBound'],
     'partialRight': ['createBound'],
-    'pick': ['createCallback', 'forIn', 'isObject'],
+    'pick': ['basicFlatten', 'createCallback', 'forIn', 'isObject'],
     'pluck': ['map'],
     'random': [],
     'range': [],
@@ -178,7 +178,7 @@
     'toArray': ['isString', 'slice', 'values'],
     'transform': ['createCallback', 'createObject', 'forOwn', 'isArray'],
     'unescape': ['keys', 'unescapeHtmlChar'],
-    'union': ['basicFlatten', 'basicUniq'],
+    'union': ['basicFlatten', 'basicUniq', 'compact'],
     'uniq': ['basicUniq', 'overloadWrapper'],
     'uniqueId': [],
     'value': ['basicEach', 'forOwn', 'isArray', 'lodash', 'mixin', 'wrapperValueOf', 'lodashWrapper'],
@@ -2664,7 +2664,7 @@
           if (_.contains(deps, 'lodash') || _.contains(deps, 'lodashWrapper')) {
             funcDependencyMap[funcName] = _.without(deps, 'lodash', 'lodashWrapper');
           }
-        })
+        });
       }
       if (isUnderscore) {
         if (!isLodash('clone') && !isLodash('cloneDeep')) {
@@ -2707,7 +2707,11 @@
           if (!isLodash(funcName)) {
             var basicFuncName = 'basic' + capitalize(funcName);
 
-            (funcDependencyMap.union = _.without(funcDependencyMap.union, basicFuncName)).push(funcName);
+            _.forOwn(funcDependencyMap, function(deps, otherName) {
+              if (_.contains(deps, basicFuncName)) {
+                (funcDependencyMap[otherName] = _.without(deps, basicFuncName)).push(funcName);
+              }
+            });
 
             funcDependencyMap[funcName] = _.without(
               funcDependencyMap[funcName].concat(funcDependencyMap[basicFuncName], funcDependencyMap.overloadWrapper),
@@ -3149,7 +3153,7 @@
             '  var index = -1,',
             '      indexOf = getIndexOf(),',
             '      length = array.length,',
-            '      flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '      flattened = flatten(nativeSlice.call(arguments, 1)),',
             '      result = [];',
             '',
             '  while (++index < length) {',
@@ -3391,7 +3395,7 @@
           source = replaceFunction(source, 'omit', [
             'function omit(object) {',
             '  var indexOf = getIndexOf(),',
-            '      props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '      props = flatten(nativeSlice.call(arguments, 1)),',
             '      result = {};',
             '',
             '  forIn(object, function(value, key) {',
@@ -3408,7 +3412,7 @@
           source = replaceFunction(source, 'pick', [
             'function pick(object) {',
             '  var index = -1,',
-            '      props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),',
+            '      props = flatten(nativeSlice.call(arguments, 1)),',
             '      length = props.length,',
             '      result = {};',
             '',
@@ -3652,16 +3656,6 @@
           });
         }
 
-        // replace `basicFlatten` and `basicUniq` with `flatten` and `uniq` in `_.union`
-        _.each(['flatten', 'uniq'], function(funcName) {
-          if (!isLodash(funcName)) {
-            source = source.replace(matchFunction(source, 'union'), function(match) {
-              var basicFuncName = 'basic' + capitalize(funcName);
-              return match.replace(RegExp('\\b' + basicFuncName + '\\b', 'g'), funcName);
-            });
-          }
-        });
-
         // replace `slice` with `nativeSlice.call`
         _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {
           if (funcName == 'clone'
@@ -3670,6 +3664,20 @@
               ) {
             source = source.replace(matchFunction(source, funcName), function(match) {
               return match.replace(/([^\w.])slice\(/g, '$1nativeSlice.call(');
+            });
+          }
+        });
+
+        // replace `basicFlatten` with `flatten` and `basicUniq` with `uniq`
+        _.each(['flatten', 'uniq'], function(funcName) {
+          if (!isLodash(funcName)) {
+            var basicFuncName = 'basic' + capitalize(funcName);
+            _.forOwn(funcDependencyMap, function(deps, otherName) {
+              if (_.contains(deps, funcName)) {
+                source = source.replace(matchFunction(source, otherName), function(match) {
+                  return match.replace(RegExp('\\b' + basicFuncName + '\\b', 'g'), funcName);
+                });
+              }
             });
           }
         });

@@ -157,7 +157,7 @@
    */
   function basicIndexOf(array, value, fromIndex) {
     var index = (fromIndex || 0) - 1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     while (++index < length) {
       if (array[index] === value) {

@@ -305,6 +305,8 @@
   QUnit.module('lodash.bindAll');
 
   (function() {
+    var args = arguments;
+
     test('should bind all methods of `object`', function() {
       function Foo() {
         this._a = 1;
@@ -350,7 +352,22 @@
       _.bindAll(array);
       equal(array.pop, Array.prototype.pop);
     });
-  }());
+
+    test('should work with `arguments` objects as secondary arguments', function() {
+      var object = {
+        '_a': 1,
+        'a': function() { return this._a; }
+      };
+
+      _.bindAll(object, args);
+
+      var actual = _.map(_.functions(object), function(methodName) {
+        return object[methodName].call({});
+      });
+
+      deepEqual(actual, [1]);
+    });
+  }('a'));
 
   /*--------------------------------------------------------------------------*/
 
@@ -735,8 +752,8 @@
   QUnit.module('lodash.difference');
 
   (function() {
-    test('should work when using `cachedContains`', function() {
-      var array1 = _.range(27),
+    test('should work with large arrays', function() {
+      var array1 = _.range(largeArraySize),
           array2 = array1.slice(),
           a = {},
           b = {},
@@ -746,6 +763,11 @@
       array2.push(b, c, a);
 
       deepEqual(_.difference(array1, array2), []);
+    });
+
+    test('should not accept individual secondary values', function() {
+      var array = [1, null, 3];
+      deepEqual(_.difference(array, null, 3), array);
     });
   }());
 
@@ -2215,7 +2237,8 @@
   QUnit.module('lodash.omit');
 
   (function() {
-    var object = { 'a': 1, 'b': 2 },
+    var args = arguments,
+        object = { 'a': 1, 'b': 2 },
         expected = { 'b': 2 };
 
     test('should accept individual property names', function() {
@@ -2235,6 +2258,10 @@
       Foo.prototype = object;
 
       deepEqual(_.omit(new Foo, 'a'), expected);
+    });
+
+    test('should work with `arguments` objects as secondary arguments', function() {
+      deepEqual(_.omit(object, args), expected);
     });
 
     test('should work with an array `object` argument', function() {
@@ -2271,7 +2298,7 @@
 
       deepEqual(actual, expected);
     });
-  }());
+  }('a'));
 
   /*--------------------------------------------------------------------------*/
 
@@ -2399,13 +2426,19 @@
   QUnit.module('lodash.pick');
 
   (function() {
-    var object = { 'a': 1, 'b': 2 };
+    var args = arguments,
+        object = { 'a': 1, 'b': 2 },
+        expected = { 'b': 2 };
 
     test('should iterate over inherited properties', function() {
       function Foo() {}
       Foo.prototype = object;
 
-      deepEqual(_.pick(new Foo, 'b'), { 'b': 2 });
+      deepEqual(_.pick(new Foo, 'b'), expected);
+    });
+
+    test('should work with `arguments` objects as secondary arguments', function() {
+      deepEqual(_.pick(object, args), expected);
     });
 
     test('should work with an array `object` argument', function() {
@@ -2417,7 +2450,7 @@
         return value == 2;
       });
 
-      deepEqual(actual, { 'b': 2 });
+      deepEqual(actual, expected);
     });
 
     test('should pass the correct `callback` arguments', function() {
@@ -2440,9 +2473,9 @@
         return value == this.b;
       }, { 'b': 2 });
 
-      deepEqual(actual, { 'b': 2 });
+      deepEqual(actual, expected);
     });
-  }());
+  }('b'));
 
   /*--------------------------------------------------------------------------*/
 
@@ -3338,6 +3371,10 @@
 
       deepEqual(actual, expected);
     });
+
+    test('should not accept individual secondary values', function() {
+      deepEqual(_.union([1], 1, 2, 3), [1]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3670,15 +3707,24 @@
   QUnit.module('"Arrays" category methods');
 
  (function() {
-    var args = arguments;
+    var args = arguments,
+        array = [1, 2, 3, 4, 5, 6];
 
     test('should work with `arguments` objects', function() {
       function message(methodName) {
         return '_.' + methodName + ' should work with `arguments` objects';
       }
 
-      deepEqual(_.compact(args), [1, [3], 5], message('compact'));
+      deepEqual(_.at(args, 0, 4), [1, 5], message('at'));
+      deepEqual(_.at(array, args), [2, undefined, 4, undefined, 6], '_.at should work with `arguments` objects as secondary arguments');
+
       deepEqual(_.difference(args, [null]), [1, [3], 5], message('difference'));
+      deepEqual(_.difference(array, args), [2, 3, 4, 6], '_.difference should work with `arguments` objects as secondary arguments');
+
+      deepEqual(_.union(args, [null, 6]), [1, null, [3], 5, 6], message('union'));
+      deepEqual(_.union(array, args), array.concat([null, [3]]), '_.union should work with `arguments` objects as secondary arguments');
+
+      deepEqual(_.compact(args), [1, [3], 5], message('compact'));
       deepEqual(_.findIndex(args, _.identity), 0, message('findIndex'));
       deepEqual(_.first(args), 1, message('first'));
       deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
@@ -3689,10 +3735,29 @@
       deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
       deepEqual(_.rest(args, 4), [5], message('rest'));
       deepEqual(_.sortedIndex(args, 6), 5, message('sortedIndex'));
-      deepEqual(_.union(args, [null, 6]), [1, null, [3], 5, 6], message('union'));
       deepEqual(_.uniq(args), [1, null, [3], 5], message('uniq'));
       deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));
+    });
+
+    test('should allow falsey primary arguments', function() {
+      function message(methodName) {
+        return '_.' + methodName + ' should allow falsey primary arguments';
+      }
+
+      deepEqual(_.difference(null, array), [], message('difference'));
+      deepEqual(_.intersection(null, array), [], message('intersection'));
+      deepEqual(_.union(null, array), array, message('union'));
+    });
+
+    test('should allow falsey secondary arguments', function() {
+      function message(methodName) {
+        return '_.' + methodName + ' should allow falsey secondary arguments';
+      }
+
+      deepEqual(_.difference(array, null), array, message('difference'));
+      deepEqual(_.intersection(array, null), [], message('intersection'));
+      deepEqual(_.union(array, null), array, message('union'));
     });
   }(1, null, [3], null, 5));
 

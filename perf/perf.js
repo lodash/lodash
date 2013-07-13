@@ -76,7 +76,10 @@
   var buildName = window.buildName = basename(ui.buildPath, '.js');
 
   /** The other library basename */
-  var otherName = window.otherName = basename(ui.otherPath, '.js');
+  var otherName = window.otherName = (function() {
+    var result = basename(ui.otherPath, '.js');
+    return result + (result == buildName ? ' (2)' : '');
+  }());
 
   /** Detect if in a browser environment */
   var isBrowser = isHostType(window, 'document') && isHostType(window, 'navigator');
@@ -527,8 +530,7 @@
             whereObject = { "num": 9 };\
       }\
       if (typeof zip != "undefined") {\
-        var unzipped = [["a", "b", "c"], [1, 2, 3], [true, false, true]],\
-            zipped = [["a", 1, true], ["b", 2, false], ["c", 3, true]];\
+        var unzipped = [["a", "b", "c"], [1, 2, 3], [true, false, true]];\
       }'
   });
 
@@ -1823,20 +1825,6 @@
       .add(otherName, {
         'fn': '_.uniq(oneHundredValues.concat(oneHundredValues2))',
         'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
-    Benchmark.Suite('`_.unzip`')
-      .add(buildName, {
-        'fn': 'lodash.unzip(zipped)',
-        'teardown': 'function zip(){}'
-      })
-      .add(otherName, {
-        'fn': '_.unzip(zipped)',
-        'teardown': 'function zip(){}'
       })
   );
 

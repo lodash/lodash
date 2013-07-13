@@ -137,8 +137,7 @@
   );
 
   /** Native method shortcuts */
-  var concat = arrayRef.concat,
-      floor = Math.floor,
+  var floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
       toString = objectProto.toString;
@@ -1034,7 +1033,7 @@
    */
   function omit(object) {
     var indexOf = getIndexOf(),
-        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+        props = flatten(nativeSlice.call(arguments, 1)),
         result = {};
 
     forIn(object, function(value, key) {
@@ -1083,8 +1082,9 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Array|Function|String} callback|[prop1, prop2, ...] The function called
-   *  per iteration or properties to pick, either as individual arguments or arrays.
+   * @param {Array|Function|String} callback|[prop1, prop2, ...] The function
+   *  called per iteration or property names to pick, specified as individual
+   *  property names or arrays of property names.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns an object composed of the picked properties.
    * @example
@@ -1099,7 +1099,7 @@
    */
   function pick(object) {
     var index = -1,
-        props = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+        props = flatten(nativeSlice.call(arguments, 1)),
         length = props.length,
         result = {};
 
@@ -2065,16 +2065,17 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates an array of `array` elements not present in the other arrays
-   * using strict equality for comparisons, i.e. `===`.
+   * Creates an arrat with all occurrences of the passed values removed using
+   * using strict equality for comparisons, i.e. `===`. Values to exclude may
+   * be specified as individual arguments or as arrays.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to process.
-   * @param {Array} [array1, array2, ...] Arrays to check.
-   * @returns {Array} Returns a new array of `array` elements not present in the
-   *  other arrays.
+   * @param {Array} [array1, array2, ...] The values to exclude, specified as
+   *  individual values or arrays of values.
+   * @returns {Array} Returns a new filtered array.
    * @example
    *
    * _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
@@ -2084,7 +2085,7 @@
     var index = -1,
         indexOf = getIndexOf(),
         length = array.length,
-        flattened = concat.apply(arrayRef, nativeSlice.call(arguments, 1)),
+        flattened = flatten(nativeSlice.call(arguments, 1)),
         result = [];
 
     while (++index < length) {
@@ -2172,6 +2173,63 @@
       }
       return nativeSlice.call(array, 0, nativeMin(nativeMax(0, n), length));
     }
+  }
+
+  /**
+   * Flattens a nested array (the nesting can be to any depth). If `isShallow`
+   * is truthy, `array` will only be flattened a single level. If `callback`
+   * is passed, each element of `array` is passed through a `callback` before
+   * flattening. The `callback` is bound to `thisArg` and invoked with three
+   * arguments; (value, index, array).
+   *
+   * If a property name is passed for `callback`, the created "_.pluck" style
+   * callback will return the property value of the given element.
+   *
+   * If an object is passed for `callback`, the created "_.where" style callback
+   * will return `true` for elements that have the properties of the given object,
+   * else `false`.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to flatten.
+   * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
+   * @param {Function|Object|String} [callback=identity] The function called per
+   *  iteration. If a property name or object is passed, it will be used to create
+   *  a "_.pluck" or "_.where" style callback, respectively.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Array} Returns a new flattened array.
+   * @example
+   *
+   * _.flatten([1, [2], [3, [[4]]]]);
+   * // => [1, 2, 3, 4];
+   *
+   * _.flatten([1, [2], [3, [[4]]]], true);
+   * // => [1, 2, 3, [[4]]];
+   *
+   * var stooges = [
+   *   { 'name': 'curly', 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] },
+   *   { 'name': 'moe', 'quotes': ['Spread out!', 'You knucklehead!'] }
+   * ];
+   *
+   * // using "_.pluck" callback shorthand
+   * _.flatten(stooges, 'quotes');
+   * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
+   */
+  function flatten(array, isShallow) {
+    var index = -1,
+        length = array ? array.length : 0,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
+        push.apply(result, isShallow ? value : flatten(value));
+      } else {
+        result.push(value);
+      }
+    }
+    return result;
   }
 
   /**
@@ -2535,14 +2593,14 @@
   }
 
   /**
-   * Creates an array with all occurrences of the passed values removed using
+   * Creates an array excluding all occurrences of the passed values using
    * strict equality for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to filter.
-   * @param {Mixed} [value1, value2, ...] Values to remove.
+   * @param {Mixed} [value1, value2, ...] Values to exclude.
    * @returns {Array} Returns a new filtered array.
    * @example
    *
@@ -2595,7 +2653,8 @@
    * @memberOf _
    * @category Functions
    * @param {Object} object The object to bind and assign the bound methods to.
-   * @param {String} [methodName1, methodName2, ...] Method names on the object to bind.
+   * @param {String} [methodName1, methodName2, ...] The object method names to
+   *  bind, specified as individual values or arrays of values.
    * @returns {Object} Returns `object`.
    * @example
    *
@@ -2609,7 +2668,7 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = arguments.length > 1 ? concat.apply(arrayRef, nativeSlice.call(arguments, 1)) : functions(object),
+    var funcs = arguments.length > 1 ? flatten(nativeSlice.call(arguments, 1)) : functions(object),
         index = -1,
         length = funcs.length;
 
@@ -2968,6 +3027,7 @@
   lodash.defaults = defaults;
   lodash.difference = difference;
   lodash.filter = filter;
+  lodash.flatten = flatten;
   lodash.forEach = forEach;
   lodash.functions = functions;
   lodash.groupBy = groupBy;

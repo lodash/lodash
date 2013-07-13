@@ -1074,10 +1074,10 @@
 
         collection = [{ 'a': 1 }, { 'a': 1 }];
         deepEqual(lodash.where(collection, { 'a': 1 }, true), collection[0], '_.where supports a `first` argument: ' + basename);
-        deepEqual(lodash.where(collection, {}, true), null, '_.where should return `null` when passed `first` and falsey `properties`: ' + basename);
+        deepEqual(lodash.where(collection, {}, true), undefined, '_.where should return `undefined` when passed `first` and falsey `properties`: ' + basename);
 
         deepEqual(lodash.findWhere(collection, { 'a': 1 }), collection[0], '_.findWhere: ' + basename);
-        strictEqual(lodash.findWhere(collection, {}), null, '_.findWhere should return `null` for falsey `properties`: ' + basename);
+        strictEqual(lodash.findWhere(collection, {}), undefined, '_.findWhere should return `undefined` for falsey `properties`: ' + basename);
 
         var expected = [[['moe', 30, true]], [['larry', 40, false]]];
         actual = lodash.unzip(lodash.zip(['moe', 'larry'], [30, 40], [true, false]));

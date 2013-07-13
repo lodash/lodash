@@ -3623,7 +3623,7 @@
           source = replaceFunction(source, 'where', [
             'function where(collection, properties, first) {',
             '  return (first && isEmpty(properties))',
-            '    ? null',
+            '    ? undefined',
             '    : (first ? find : filter)(collection, properties);',
             '}'
           ].join('\n'));

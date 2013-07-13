@@ -24,7 +24,7 @@
    * @param {Function} handler The event handler.
    * @returns {Element} The element.
    */
-  function addEvent(element, eventName, handler) {
+  function addListener(element, eventName, handler) {
     if (typeof element.addEventListener != 'undefined') {
       element.addEventListener(eventName, handler, false);
     } else if (typeof element.attachEvent != 'undefined') {
@@ -74,7 +74,7 @@
   }());
 
   // initialize controls
-  addEvent(window, 'load', function() {
+  addListener(window, 'load', function() {
     function eventHandler(event) {
       var search = location.search.replace(/^\?|&?(?:build|loader)=[^&]*&?/g, '');
       if (event.stopPropagation) {
@@ -123,8 +123,8 @@
           return -1;
         }());
 
-        addEvent(buildList, 'change', eventHandler);
-        addEvent(loaderList, 'change', eventHandler);
+        addListener(buildList, 'change', eventHandler);
+        addListener(loaderList, 'change', eventHandler);
       }
       else {
         setTimeout(init, 15);

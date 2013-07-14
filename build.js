@@ -2860,19 +2860,34 @@
     }());
 
     if (!isNoDep) {
-      // additional variables to include in the build
-      includeProps = _.uniq(_.transform(propDependencyMap, function(result, propNames, funcName) {
-        if (_.contains(buildFuncs, funcName)) {
-          push.apply(result, propNames);
-        }
-      }, includeProps));
+      (function() {
+        function expand(result, depMap, funcNames, stack) {
+          stack || (stack = []);
+          return _.uniq(_.transform(funcNames || depMap, function(result, identifiers, funcName) {
+            // juggle arguments
+            if (funcNames) {
+              funcName = identifiers;
+              identifiers = depMap[funcName] || [];
+            }
+            if (!_.contains(stack, funcName) && _.contains(buildFuncs, funcName)) {
+              var deps = _.uniq(_.transform(identifiers, function(deps, identifier) {
+                push.apply(deps, getDependencies(identifier));
+              }));
 
-      // additional properties to include in the build
-      includeVars = _.uniq(_.transform(varDependencyMap, function(result, varNames, funcName) {
-        if (_.contains(buildFuncs, funcName)) {
-          push.apply(result, varNames);
+              stack.push(funcName);
+              push.apply(result, identifiers);
+
+              buildFuncs = _.union(buildFuncs, deps);
+              expand(result, depMap, deps);
+            }
+          }, result));
         }
-      }, includeVars));
+        // add properties to include in the build
+        expand(includeProps, propDependencyMap);
+
+        // add variables to include in the build
+        expand(includeVars, varDependencyMap);
+      }());
     }
 
     /*------------------------------------------------------------------------*/

@@ -1189,6 +1189,12 @@
    * @returns {Array} Returns an array of function dependants.
    */
   function getDependants(funcName, isShallow, stack) {
+    // allows working with ES5 Array methods without using their callback
+    // arguments for `isShallow` and `stack`
+    if (typeof isShallow != 'boolean' && isShallow != null) {
+      isShallow = false;
+      stack = null;
+    }
     var funcNames = _.isArray(funcName) ? funcName : [funcName];
     stack || (stack = []);
 
@@ -1225,6 +1231,11 @@
 
     if (!deps || !deps.length) {
       return [];
+    }
+    // juggle arguments to allow working with ES5 Array methods
+    if (typeof isShallow != 'boolean' && isShallow != null) {
+      isShallow = false;
+      stack = null;
     }
     if (isShallow) {
       return deps.slice();
@@ -2860,16 +2871,17 @@
     }());
 
     if (!isNoDep) {
+      // add properties, variables, and their function dependencies to include in the build
       (function() {
         function expand(result, depMap, funcNames, stack) {
           stack || (stack = []);
-          return _.uniq(_.transform(funcNames || depMap, function(result, identifiers, funcName) {
+          return _.uniq(_.reduce(funcNames || depMap, function(result, identifiers, funcName) {
             // juggle arguments
             if (funcNames) {
               funcName = identifiers;
               identifiers = depMap[funcName] || [];
             }
-            if (!_.contains(stack, funcName) && _.contains(buildFuncs, funcName)) {
+            if (!_.contains(stack, funcName) && (funcNames || _.contains(buildFuncs, funcName))) {
               var deps = _.uniq(_.transform(identifiers, function(deps, identifier) {
                 push.apply(deps, getDependencies(identifier));
               }));
@@ -2878,15 +2890,14 @@
               push.apply(result, identifiers);
 
               buildFuncs = _.union(buildFuncs, deps);
-              expand(result, depMap, deps);
+              result = expand(result, depMap, deps);
             }
+            return result;
           }, result));
         }
-        // add properties to include in the build
-        expand(includeProps, propDependencyMap);
 
-        // add variables to include in the build
-        expand(includeVars, varDependencyMap);
+        includeProps = expand(includeProps, propDependencyMap);
+        includeVars = expand(includeVars, varDependencyMap);
       }());
     }
 

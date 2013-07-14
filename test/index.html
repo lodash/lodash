@@ -96,7 +96,13 @@
 						lodashModule = lodash.noConflict();
 						lodashModule.moduleName = 'lodash';
 					}
-					require(['test.js'], function() {
+
+					var testPath = (window.curl
+						? ui.loaderPath.replace(/[\w.-]+$/, 'curl/plugin/js!')
+						: ''
+					) + 'test.js';
+
+					require([testPath], function() {
 						QUnit.start();
 					});
 				});

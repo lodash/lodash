@@ -2476,6 +2476,7 @@
     };
 
     var isLodash = function(funcName) {
+      funcName = getRealName(funcName);
       if (_.contains(lodashOnlyFuncs, funcName) || /^(?:assign|zipObject)$/.test(funcName)) {
         var funcNames = _.difference(_.union(includeFuncs, plusFuncs), minusFuncs);
         return _.contains(funcNames, funcName);
@@ -3853,9 +3854,9 @@
             });
           });
         }
-        // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, and `_.zipObject` assignments
+        // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
         source = source.replace(getMethodAssignments(source), function(match) {
-          return _.reduce(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'zipObject'], function(result, funcName) {
+          return _.reduce(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
             return isLodash(funcName)
               ? result
               : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');

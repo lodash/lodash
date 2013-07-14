@@ -829,8 +829,11 @@
       fromPath || (fromPath = '');
       return dependencies.map(function(depName) {
         var toPath = getPath(depName),
-            relative = (path.relative(fromPath, toPath) || '.').replace(RegExp(path.sepEscaped, 'g'), sep);
+            relative = path.relative(fromPath, toPath).replace(RegExp(path.sepEscaped, 'g'), sep);
 
+        if (relative.charAt(0) != '.') {
+          relative = '.' + (relative ? sep + relative : '');
+        }
         return relative + sep + depName;
       });
     };

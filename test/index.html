@@ -49,40 +49,48 @@
 			if (window.curl) {
 				var require = curl;
 			}
-			if (window.require) {
+			(function() {
+				if (!window.require) {
+					return;
+				}
+				var isModularize = /modularize/.test(ui.urlParams.build);
+
+				var baseUrl = isModularize
+					? '../modularize/'
+					: '';
+
+				var modulePath = isModularize
+					? 'lodash'
+					: ui.buildPath.replace(/\.js$/, '');
+
+				var testPath = (
+					(window.curl ? ui.loaderPath.replace(/[\w.-]+$/, 'curl/plugin/js!') : '') +
+					(isModularize ? '../test/' : '') +
+				       'test.js'
+				);
+
+				console.log(testPath)
 				QUnit.config.autostart = false;
 
 				// load Lo-Dash as a module
-				require((function() {
-					var reModularize = /modularize/;
-
-					var baseUrl = reModularize.test(ui.urlParams.build)
-						? '../modularize/'
-						: '';
-
-					var modulePath = reModularize.test(ui.urlParams.build)
-						? 'lodash'
-						: ui.buildPath.replace(/\.js$/, '');
-
-					return {
-						'baseUrl': baseUrl,
-						'urlArgs': 't=' + (+new Date),
-						'paths': {
-							'lodash': modulePath,
-							'shimmed': './abc/../' + modulePath,
-							'underscore': './xyz/../' + modulePath
-						},
-						'aliases': [
-							['shimmed', 'lodash'],
-							['underscore', 'lodash']
-						],
-						'shim': {
-							'shimmed': {
-								'exports': '_'
-							}
+				require({
+					'baseUrl': baseUrl,
+					'urlArgs': 't=' + (+new Date),
+					'paths': {
+						'lodash': modulePath,
+						'shimmed': './abc/../' + modulePath,
+						'underscore': './xyz/../' + modulePath
+					},
+					'aliases': [
+						['shimmed', 'lodash'],
+						['underscore', 'lodash']
+					],
+					'shim': {
+						'shimmed': {
+							'exports': '_'
 						}
-					};
-				}()),
+					}
+				},
 				['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
 					if (shimmed && shimmed.noConflict) {
 						shimmedModule = shimmed.noConflict();
@@ -96,17 +104,11 @@
 						lodashModule = lodash.noConflict();
 						lodashModule.moduleName = 'lodash';
 					}
-
-					var testPath = (window.curl
-						? ui.loaderPath.replace(/[\w.-]+$/, 'curl/plugin/js!')
-						: ''
-					) + 'test.js';
-
 					require([testPath], function() {
 						QUnit.start();
 					});
 				});
-			}
+			}());
 
 			// set a more readable browser name
 			window.onload = function() {

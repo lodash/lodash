@@ -971,7 +971,7 @@
         var value = array[index];
         // recursively flatten arrays (susceptible to call stack limits)
         if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
-          push.apply(result, isShallow ? value : basicFlatten(value));
+          push.apply(result, isShallow ? value : basicFlatten(value, isShallow, isArgArrays));
         } else if (!isArgArrays) {
           result.push(value);
         }

@@ -538,7 +538,7 @@
   });
 
   /** List of Lo-Dash functions */
-  var lodashFuncs = _.difference(allFuncs, privateFuncs, 'findWhere');
+  var lodashFuncs = _.difference(allFuncs, privateFuncs, ['findWhere']);
 
   /** List of Underscore functions */
   var underscoreFuncs = _.difference(allFuncs, lodashOnlyFuncs, privateFuncs);
@@ -2611,7 +2611,7 @@
         'validEntries': allFuncs
       }
     }, function(data, commandName) {
-      invalidArgs = _.difference(data.entries, data.validEntries, 'none');
+      invalidArgs = _.difference(data.entries, data.validEntries, ['none']);
       if (invalidArgs.length) {
         warnings.push('Invalid `' + commandName + '` entr' + (invalidArgs.length > 1 ? 'ies' : 'y') + ' passed: ' + invalidArgs.join(', '));
       }
@@ -2838,7 +2838,7 @@
         );
       }
       if (isModularize) {
-        result = _.difference(result, getNamesByCategory('Chaining'), 'runInContext');
+        result = _.difference(result, getNamesByCategory('Chaining'), ['runInContext']);
       }
       if (!isNoDep) {
         result = getDependencies(result);
@@ -3134,7 +3134,7 @@
             '  var index = -1,',
             '      indexOf = getIndexOf(),',
             '      length = array.length,',
-            '      flattened = flatten(nativeSlice.call(arguments, 1)),',
+            '      flattened = basicFlatten(arguments, true, true, 1),',
             '      result = [];',
             '',
             '  while (++index < length) {',
@@ -3364,7 +3364,7 @@
           source = replaceFunction(source, 'omit', [
             'function omit(object) {',
             '  var indexOf = getIndexOf(),',
-            '      props = flatten(nativeSlice.call(arguments, 1)),',
+            '      props = basicFlatten(arguments, true, false, 1),',
             '      result = {};',
             '',
             '  forIn(object, function(value, key) {',
@@ -3381,7 +3381,7 @@
           source = replaceFunction(source, 'pick', [
             'function pick(object) {',
             '  var index = -1,',
-            '      props = flatten(nativeSlice.call(arguments, 1)),',
+            '      props = basicFlatten(arguments, true, false, 1),',
             '      length = props.length,',
             '      result = {};',
             '',

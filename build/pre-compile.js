@@ -338,8 +338,8 @@
         'value'
       ];
 
-      // minify `iteratorObject.keys`
-      source = source.replace(/\b(iteratorObject(?:\.|\['))keys\b/g, function(match, prelude) {
+      // minify `dependencyObject` properties
+      source = source.replace(/\b(dependencyObject(?:\.|\['))\w+/g, function(match, prelude) {
         return prelude + minNames[iteratorOptions.length + props.length];
       });
 

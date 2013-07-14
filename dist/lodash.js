@@ -1076,8 +1076,8 @@
     function clone(value, deep, callback, thisArg, stackA, stackB) {
       var result = value;
 
-      // allows working with "Collections" methods without using their `callback`
-      // argument, `index|key`, for this method's `callback`
+      // allows working with "Collections" methods without using their `index`
+      // and `collection` arguments for `deep` and `callback`
       if (typeof deep != 'boolean' && deep != null) {
         thisArg = callback;
         callback = deep;
@@ -1218,8 +1218,8 @@
      * @category Objects
      * @param {Object} object The destination object.
      * @param {Object} [source1, source2, ...] The source objects.
-     * @param- {Object} [guard] Allows working with `_.reduce` without using its
-     *  callback's `key` and `object` arguments as sources.
+     * @param- {Object} [guard] Allows working with `_.reduce` without using
+     *  their `key` and `object` arguments as sources.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -2020,8 +2020,8 @@
         stackA = getArray();
         stackB = getArray();
 
-        // allows working with `_.reduce` and `_.reduceRight` without
-        // using their `callback` arguments, `index|key` and `collection`
+        // allows working with `_.reduce` and `_.reduceRight` without using
+        // their `index` and `collection` arguments
         if (typeof deepIndicator != 'number') {
           length = args.length;
         }

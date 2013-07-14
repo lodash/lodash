@@ -21,8 +21,8 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
-  /** Used to avoid reference errors in `createIterator` */
-  var iteratorObject = {};
+  /** Used to avoid reference errors and circular dependency errors */
+  var dependencyObject = {};
 
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
@@ -1122,7 +1122,7 @@
      */
     function createIterator() {
       var data = getObject(),
-          keys = iteratorObject.keys;
+          keys = dependencyObject.keys;
 
       // data properties
       data.shadowedProps = shadowedProps;
@@ -1335,7 +1335,7 @@
      * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
      * // => ['one', 'two', 'three'] (order is not guaranteed)
      */
-    var keys = iteratorObject.keys = !nativeKeys ? shimKeys : function(object) {
+    var keys = dependencyObject.keys = !nativeKeys ? shimKeys : function(object) {
       if (!isObject(object)) {
         return [];
       }
@@ -1917,7 +1917,7 @@
      * });
      * // => true
      */
-    function isEqual(a, b, callback, thisArg, stackA, stackB) {
+    var isEqual = dependencyObject.isEqual = function(a, b, callback, thisArg, stackA, stackB) {
       // used to indicate that when comparing objects, `a` has at least the properties of `b`
       var whereIndicator = callback === indicatorObject;
       if (typeof callback == 'function' && !whereIndicator) {
@@ -2073,7 +2073,7 @@
         releaseArray(stackB);
       }
       return result;
-    }
+    };
 
     /**
      * Checks if `value` is, or can be coerced to, a finite number.
@@ -4767,7 +4767,7 @@
           var length = props.length,
               result = false;
           while (length--) {
-            if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
+            if (!(result = dependencyObject.isEqual(object[props[length]], func[props[length]], indicatorObject))) {
               break;
             }
           }

@@ -71,15 +71,28 @@
 
 				QUnit.config.autostart = false;
 
+				var paths = {
+					'shimmed': './abc/../' + modulePath,
+					'underscore': './xyz/../' + modulePath
+				};
+
+				var packages = [];
+
+				if (isModularize) {
+					packages.push({
+						'name': 'lodash',
+						'location': '.',
+						'main': 'lodash'
+					});
+				} else {
+					paths.lodash = modulePath;
+				}
+
 				// load Lo-Dash as a module
 				require({
 					'baseUrl': baseUrl,
 					'urlArgs': 't=' + (+new Date),
-					'paths': {
-						'lodash': modulePath,
-						'shimmed': './abc/../' + modulePath,
-						'underscore': './xyz/../' + modulePath
-					},
+					'paths': paths,
 					'aliases': [
 						['shimmed', 'lodash'],
 						['underscore', 'lodash']
@@ -88,7 +101,8 @@
 						'shimmed': {
 							'exports': '_'
 						}
-					}
+					},
+					'packages': packages
 				},
 				['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
 					if (shimmed && shimmed.noConflict) {

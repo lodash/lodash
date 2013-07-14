@@ -102,44 +102,49 @@
 			if (window.curl) {
 				var require = curl;
 			}
-			if (!window.require) {
-				init(_);
-			} else {
+			(function() {
+				if (!window.require) {
+					init(_);
+					return;
+				}
+				var modulePath = ui.buildPath.replace(/\.js$/, ''),
+				    reBasename = /[\w.-]+$/;
+
+				var locationPath = /modularize/.test(ui.urlParams.build)
+					? '../modularize'
+					: modulePath.replace(reBasename, '');
+
+				var pluginPath = window.curl
+					? ui.loaderPath.replace(reBasename, 'curl/plugin/js!')
+					: '';
+
 				QUnit.config.autostart = false;
 
 				// load Lo-Dash as a module
-				require((function() {
-					var reModularize = /modularize/;
-
-					var baseUrl = reModularize.test(ui.urlParams.build)
-						? '../modularize/'
-						: '';
-
-					var modulePath = reModularize.test(ui.urlParams.build)
-						? 'lodash'
-						: ui.buildPath.replace(/\.js$/, '');
-
-					return {
-						'baseUrl': baseUrl,
-						'urlArgs': 't=' + (+new Date),
-						'paths': {
-							'lodash': modulePath
+				require({
+					'baseUrl': './',
+					'urlArgs': 't=' + (+new Date),
+					'packages': [
+						{
+							'name': 'lodash',
+							'location': locationPath,
+							'main': 'lodash'
 						}
-					};
-				}()),
+					]
+				},
 				['lodash'], function(lodash) {
 					init(lodash);
 					require([
-						'../vendor/underscore/test/collections.js',
-						'../vendor/underscore/test/arrays.js',
-						'../vendor/underscore/test/functions.js',
-						'../vendor/underscore/test/objects.js',
-						'../vendor/underscore/test/utility.js'
+						pluginPath + '../vendor/underscore/test/collections.js',
+						pluginPath + '../vendor/underscore/test/arrays.js',
+						pluginPath + '../vendor/underscore/test/functions.js',
+						pluginPath + '../vendor/underscore/test/objects.js',
+						pluginPath + '../vendor/underscore/test/utility.js'
 					], function() {
 						QUnit.start();
 					});
 				});
-			}
+			}());
 		</script>
 		<script type="text/html" id="template">
 			<%

@@ -84,6 +84,11 @@
     // properties
     'templateSettings': ['escape'],
 
+    // variables
+    'htmlUnescapes': ['invert'],
+    'reEscapedHtml': ['keys'],
+    'reUnescapedHtml': ['keys'],
+
     // public functions
     'after': [],
     'assign': ['createCallback', 'createIterator'],
@@ -217,7 +222,7 @@
     'shimIsPlainObject': ['forIn', 'isArguments', 'isFunction', 'isNode'],
     'shimKeys': ['createIterator'],
     'slice': [],
-    'unescapeHtmlChar': ['invert'],
+    'unescapeHtmlChar': [],
     'wrapperToString': [],
     'wrapperValueOf': [],
 
@@ -226,7 +231,7 @@
     'findWhere': ['where']
   };
 
-  /** Used to track Lo-Dash property dependencies of functions */
+  /** Used to track Lo-Dash property dependencies of identifiers */
   var propDependencyMap = {
     'at': ['support'],
     'bind': ['support'],
@@ -243,7 +248,7 @@
     'toArray': ['support']
   };
 
-  /** Used to track variable dependencies of functions */
+  /** Used to track variable dependencies of identifiers */
   var varDependencyMap = {
     'bind': ['reNative'],
     'bindKey': ['indicatorObject'],
@@ -251,6 +256,9 @@
     'createIterator': ['indicatorObject', 'iteratorObject', 'objectTypes'],
     'createObject': ['reNative'],
     'defer': ['objectTypes', 'reNative'],
+    'escape': ['reUnescapedHtml'],
+    'escapeHtmlChar': ['htmlEscapes'],
+    'htmlUnescapes': ['htmlEscapes'],
     'isArray': ['reNative'],
     'isEqual': ['indicatorObject'],
     'isObject': ['objectTypes'],
@@ -259,9 +267,13 @@
     'keys': ['iteratorObject', 'reNative'],
     'merge': ['indicatorObject'],
     'partialRight': ['indicatorObject'],
+    'reEscapedHtml': ['htmlUnescapes'],
+    'reUnescapedHtml': ['htmlEscapes'],
     'support': ['reNative'],
     'template': ['reInterpolate'],
-    'templateSettings': ['reInterpolate']
+    'templateSettings': ['reInterpolate'],
+    'unescape': ['reEscapedHtml'],
+    'unescapeHtmlChar': ['htmlUnescapes']
   };
 
   /** Used to track the category of identifiers */
@@ -531,18 +543,6 @@
     'wrapperValueOf'
   ];
 
-  /** List of all functions */
-  var allFuncs = _.keys(funcDependencyMap).filter(function(key) {
-    var type = typeof _[key];
-    return type == 'function' || type == 'undefined';
-  });
-
-  /** List of Lo-Dash functions */
-  var lodashFuncs = _.difference(allFuncs, privateFuncs, ['findWhere']);
-
-  /** List of Underscore functions */
-  var underscoreFuncs = _.difference(allFuncs, lodashOnlyFuncs, privateFuncs);
-
   /** List of all property dependencies */
   var propDependencies = _.uniq(_.transform(propDependencyMap, function(result, propNames) {
     push.apply(result, propNames);
@@ -552,6 +552,18 @@
   var varDependencies = _.uniq(_.transform(varDependencyMap, function(result, varNames) {
     push.apply(result, varNames);
   }, []));
+
+  /** List of all functions */
+  var allFuncs = _.difference(_.keys(funcDependencyMap), propDependencies, varDependencies).filter(function(key) {
+    var type = typeof _[key];
+    return type == 'function' || type == 'undefined';
+  });
+
+  /** List of Lo-Dash functions */
+  var lodashFuncs = _.difference(allFuncs, privateFuncs, ['findWhere']);
+
+  /** List of Underscore functions */
+  var underscoreFuncs = _.difference(allFuncs, lodashOnlyFuncs, privateFuncs);
 
   /*--------------------------------------------------------------------------*/
 

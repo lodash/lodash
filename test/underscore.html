@@ -107,8 +107,10 @@
 					init(_);
 					return;
 				}
-				var modulePath = ui.buildPath.replace(/\.js$/, ''),
-				    reBasename = /[\w.-]+$/;
+				var reBasename = /[\w.-]+$/,
+				    basePath = (location.origin + location.pathname).split(/\btest\b/).slice(0, -1).join('test'),
+				    modulePath = ui.buildPath.replace(/\.js$/, ''),
+				    moduleMain = modulePath.match(reBasename)[0];
 
 				var locationPath = /modularize/.test(ui.urlParams.build)
 					? '../modularize'
@@ -128,18 +130,18 @@
 						{
 							'name': 'lodash',
 							'location': locationPath,
-							'main': 'lodash'
+							'main': moduleMain
 						}
 					]
 				},
 				['lodash'], function(lodash) {
 					init(lodash);
 					require([
-						pluginPath + '/vendor/underscore/test/collections.js',
-						pluginPath + '/vendor/underscore/test/arrays.js',
-						pluginPath + '/vendor/underscore/test/functions.js',
-						pluginPath + '/vendor/underscore/test/objects.js',
-						pluginPath + '/vendor/underscore/test/utility.js'
+						pluginPath + basePath + '/vendor/underscore/test/collections.js',
+						pluginPath + basePath + '/vendor/underscore/test/arrays.js',
+						pluginPath + basePath + '/vendor/underscore/test/functions.js',
+						pluginPath + basePath + '/vendor/underscore/test/objects.js',
+						pluginPath + basePath + '/vendor/underscore/test/utility.js'
 					], function() {
 						QUnit.start();
 					});

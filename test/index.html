@@ -53,17 +53,20 @@
 				if (!window.require) {
 					return;
 				}
-				var modulePath = ui.buildPath.replace(/\.js$/, ''),
-				    reBasename = /[\w.-]+$/;
+				var reBasename = /[\w.-]+$/,
+				    basePath = (location.origin + location.pathname).split(/\btest\b/).slice(0, -1).join('test'),
+				    modulePath = ui.buildPath.replace(/\.js$/, ''),
+				    moduleMain = modulePath.match(reBasename)[0];
 
 				var locationPath = /modularize/.test(ui.urlParams.build)
 					? '../modularize'
 					: modulePath.replace(reBasename, '');
 
-				var testPath = (
-					(window.curl ? ui.loaderPath.replace(reBasename, 'curl/plugin/js!') : '') +
-				       'test.js'
-				);
+				var pluginPath = window.curl
+					? ui.loaderPath.replace(reBasename, 'curl/plugin/js!')
+					: '';
+
+				var testPath = pluginPath + basePath + '/test/test.js';
 
 				QUnit.config.autostart = false;
 
@@ -83,7 +86,7 @@
 						{
 							'name': 'lodash',
 							'location': locationPath,
-							'main': 'lodash'
+							'main': moduleMain
 						}
 					],
 					'shim': {

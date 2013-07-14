@@ -42,7 +42,6 @@
 			);
 		</script>
 		<script>
-			// load Lo-Dash as a module
 			var lodashModule,
 			    shimmedModule,
 			    underscoreModule;
@@ -50,52 +49,58 @@
 			if (window.curl) {
 				var require = curl;
 			}
-			window.require && require(
-			(function() {
-				var reModularize = /modularize/;
+			if (window.require) {
+				QUnit.config.autostart = false;
 
-				var baseUrl = reModularize.test(ui.urlParams.build)
-					? '../modularize/'
-					: '';
+				// load Lo-Dash as a module
+				require((function() {
+					var reModularize = /modularize/;
 
-				var modulePath = reModularize.test(ui.urlParams.build)
-					? 'lodash'
-					: ui.buildPath.replace(/\.js$/, '');
+					var baseUrl = reModularize.test(ui.urlParams.build)
+						? '../modularize/'
+						: '';
 
-				return {
-					'baseUrl': baseUrl,
-					'urlArgs': 't=' + (+new Date),
-					'paths': {
-						'lodash': modulePath,
-						'shimmed': './abc/../' + modulePath,
-						'underscore': './xyz/../' + modulePath
-					},
-					'aliases': [
-						['shimmed', 'lodash'],
-						['underscore', 'lodash']
-					],
-					'shim': {
-						'shimmed': {
-							'exports': '_'
+					var modulePath = reModularize.test(ui.urlParams.build)
+						? 'lodash'
+						: ui.buildPath.replace(/\.js$/, '');
+
+					return {
+						'baseUrl': baseUrl,
+						'urlArgs': 't=' + (+new Date),
+						'paths': {
+							'lodash': modulePath,
+							'shimmed': './abc/../' + modulePath,
+							'underscore': './xyz/../' + modulePath
+						},
+						'aliases': [
+							['shimmed', 'lodash'],
+							['underscore', 'lodash']
+						],
+						'shim': {
+							'shimmed': {
+								'exports': '_'
+							}
 						}
+					};
+				}()),
+				['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
+					if (shimmed && shimmed.noConflict) {
+						shimmedModule = shimmed.noConflict();
+						shimmedModule.moduleName = 'shimmed';
 					}
-				};
-			}()),
-			['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
-				if (shimmed && shimmed.noConflict) {
-					shimmedModule = shimmed.noConflict();
-					shimmedModule.moduleName = 'shimmed';
-				}
-				if (underscore && underscore.noConflict) {
-					underscoreModule = underscore.noConflict();
-					underscoreModule.moduleName = 'underscore';
-				}
-				if (lodash && lodash.noConflict) {
-					lodashModule = lodash.noConflict();
-					lodashModule.moduleName = 'lodash';
-				}
-				require(['test.js']);
-			});
+					if (underscore && underscore.noConflict) {
+						underscoreModule = underscore.noConflict();
+						underscoreModule.moduleName = 'underscore';
+					}
+					if (lodash && lodash.noConflict) {
+						lodashModule = lodash.noConflict();
+						lodashModule.moduleName = 'lodash';
+					}
+					require(['test.js'], function() {
+						QUnit.start();
+					});
+				});
+			}
 
 			// set a more readable browser name
 			window.onload = function() {
@@ -105,7 +110,7 @@
 						ua.innerHTML = platform;
 						clearInterval(timeoutId);
 					}
-				}, 15);
+				}, 16);
 			};
 		</script>
 	</body>

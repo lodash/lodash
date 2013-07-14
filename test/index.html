@@ -53,56 +53,44 @@
 				if (!window.require) {
 					return;
 				}
-				var isModularize = /modularize/.test(ui.urlParams.build);
+				var modulePath = ui.buildPath.replace(/\.js$/, ''),
+				    reBasename = /[\w.-]+$/;
 
-				var baseUrl = isModularize
-					? '../modularize/'
-					: '';
-
-				var modulePath = isModularize
-					? 'lodash'
-					: ui.buildPath.replace(/\.js$/, '');
+				var locationPath = /modularize/.test(ui.urlParams.build)
+					? '../modularize'
+					: modulePath.replace(reBasename, '');
 
 				var testPath = (
-					(window.curl ? ui.loaderPath.replace(/[\w.-]+$/, 'curl/plugin/js!') : '') +
-					(isModularize ? '../test/' : '') +
+					(window.curl ? ui.loaderPath.replace(reBasename, 'curl/plugin/js!') : '') +
 				       'test.js'
 				);
 
 				QUnit.config.autostart = false;
 
-				var paths = {
-					'shimmed': './abc/../' + modulePath,
-					'underscore': './xyz/../' + modulePath
-				};
-
-				var packages = [];
-
-				if (isModularize) {
-					packages.push({
-						'name': 'lodash',
-						'location': '.',
-						'main': 'lodash'
-					});
-				} else {
-					paths.lodash = modulePath;
-				}
-
 				// load Lo-Dash as a module
 				require({
-					'baseUrl': baseUrl,
+					'baseUrl': './',
 					'urlArgs': 't=' + (+new Date),
-					'paths': paths,
+					'paths': {
+						'shimmed': './abc/../' + modulePath,
+						'underscore': './xyz/../' + modulePath
+					},
 					'aliases': [
 						['shimmed', 'lodash'],
 						['underscore', 'lodash']
+					],
+					'packages': [
+						{
+							'name': 'lodash',
+							'location': locationPath,
+							'main': 'lodash'
+						}
 					],
 					'shim': {
 						'shimmed': {
 							'exports': '_'
 						}
-					},
-					'packages': packages
+					}
 				},
 				['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
 					if (shimmed && shimmed.noConflict) {

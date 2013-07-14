@@ -1080,7 +1080,7 @@
         strictEqual(lodash.findWhere(collection, {}), undefined, '_.findWhere should return `undefined` for falsey `properties`: ' + basename);
 
         var expected = [[['moe', 30, true]], [['larry', 40, false]]];
-        actual = lodash.unzip(lodash.zip(['moe', 'larry'], [30, 40], [true, false]));
+        actual = lodash.zip(lodash.zip(['moe', 'larry'], [30, 40], [true, false]));
         deepEqual(actual, expected, '_.zip is unable to correctly consume it\'s output: ' + basename);
 
         start();

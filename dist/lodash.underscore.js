@@ -4366,7 +4366,6 @@
   lodash.select = filter;
   lodash.tail = rest;
   lodash.unique = uniq;
-  lodash.unzip = zip;
 
   // add Underscore compat
   lodash.chain = chain;

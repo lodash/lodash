@@ -91,7 +91,7 @@
    */
   function basicIndexOf(array, value, fromIndex) {
     var index = (fromIndex || 0) - 1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     while (++index < length) {
       if (array[index] === value) {
@@ -102,7 +102,7 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed `collection` values, stable sorting
+   * Used by `sortBy` to compare transformed `collection` elements, stable sorting
    * them in ascending order.
    *
    * @private
@@ -361,6 +361,68 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * A basic implementation of `_.flatten` without support for `callback`
+   * shorthands or `thisArg` binding.
+   *
+   * @private
+   * @param {Array} array The array to flatten.
+   * @param {Boolean} [isShallow=false] A flag to restrict flattening to a single level.
+   * @param {Boolean} [isArgArrays=false] A flag to restrict flattening to arrays and `arguments` objects.
+   * @param {Number} [fromIndex=0] The index to start from.
+   * @returns {Array} Returns a new flattened array.
+   */
+  function basicFlatten(array, isShallow, isArgArrays, fromIndex) {
+    var index = (fromIndex || 0) - 1,
+        length = array ? array.length : 0,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      // recursively flatten arrays (susceptible to call stack limits)
+      if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
+        push.apply(result, isShallow ? value : basicFlatten(value));
+      } else if (!isArgArrays) {
+        result.push(value);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * A basic implementation of `_.uniq` without support for `callback` shorthands
+   * or `thisArg` binding.
+   *
+   * @private
+   * @param {Array} array The array to process.
+   * @param {Boolean} [isSorted=false] A flag to indicate that the `array` is already sorted.
+   * @param {Function} [callback] The function called per iteration.
+   * @returns {Array} Returns a duplicate-value-free array.
+   */
+  function basicUniq(array, isSorted, callback) {
+    var index = -1,
+        indexOf = getIndexOf(),
+        length = array ? array.length : 0,
+        result = [],
+        seen = callback ? [] : result;
+
+    while (++index < length) {
+      var value = array[index],
+          computed = callback ? callback(value, index, array) : value;
+
+      if (isSorted
+            ? !index || seen[seen.length - 1] !== computed
+            : indexOf(seen, computed) < 0
+          ) {
+        if (callback) {
+          seen.push(computed);
+        }
+        result.push(value);
+      }
+    }
+    return result;
+  }
+
+  /**
    * Creates a function that, when called, invokes `func` with the `this` binding
    * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
    * bound function.
@@ -430,7 +492,7 @@
   }
   // fallback for browsers without `Object.create`
   if (!nativeCreate) {
-    var createObject = function(prototype) {
+    createObject = function(prototype) {
       if (isObject(prototype)) {
         noop.prototype = prototype;
         var result = new noop;
@@ -459,7 +521,7 @@
    * @private
    * @returns {Function} Returns the "indexOf" function.
    */
-  function getIndexOf(array, value, fromIndex) {
+  function getIndexOf() {
     var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
     return result;
   }
@@ -793,8 +855,8 @@
   };
 
   /**
-   * Creates a sorted array of all enumerable properties, own and inherited,
-   * of `object` that have function values.
+   * Creates a sorted array of property names of all enumerable properties,
+   * own and inherited, of `object` that have function values.
    *
    * @static
    * @memberOf _
@@ -2445,7 +2507,7 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to compact.
-   * @returns {Array} Returns a new filtered array.
+   * @returns {Array} Returns a new array of filtered values.
    * @example
    *
    * _.compact([0, 1, false, 2, '', 3]);
@@ -2466,17 +2528,15 @@
   }
 
   /**
-   * Creates an arrat with all occurrences of the passed values removed using
-   * using strict equality for comparisons, i.e. `===`. Values to exclude may
-   * be specified as individual arguments or as arrays.
+   * Creates an array excluding all values of the passed-in arrays using
+   * strict equality for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to process.
-   * @param {Array} [array1, array2, ...] The values to exclude, specified as
-   *  individual values or arrays of values.
-   * @returns {Array} Returns a new filtered array.
+   * @param {Array} [array1, array2, ...] The arrays of values to exclude.
+   * @returns {Array} Returns a new array of filtered values.
    * @example
    *
    * _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
@@ -2594,7 +2654,7 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to flatten.
-   * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
+   * @param {Boolean} [isShallow=false] A flag to restrict flattening to a single level.
    * @param {Function|Object|String} [callback=identity] The function called per
    *  iteration. If a property name or object is passed, it will be used to create
    *  a "_.pluck" or "_.where" style callback, respectively.
@@ -2618,19 +2678,7 @@
    * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
    */
   function flatten(array, isShallow) {
-    var index = -1,
-        length = array ? array.length : 0,
-        result = [];
-
-    while (++index < length) {
-      var value = array[index];
-      if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
-        push.apply(result, isShallow ? value : flatten(value));
-      } else {
-        result.push(value);
-      }
-    }
-    return result;
+    return basicFlatten(array, isShallow);
   }
 
   /**
@@ -2744,15 +2792,14 @@
   }
 
   /**
-   * Computes the intersection of all the passed-in arrays using strict equality
-   * for comparisons, i.e. `===`.
+   * Creates an array of unique values present in all passed-in arrays using
+   * strict equality for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {Array} [array1, array2, ...] Arrays to process.
-   * @returns {Array} Returns a new array of unique elements that are present
-   *  in **all** of the arrays.
+   * @param {Array} [array1, array2, ...] The arrays to inspect.
+   * @returns {Array} Returns an array of composite values.
    * @example
    *
    * _.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
@@ -3082,22 +3129,21 @@
   }
 
   /**
-   * Computes the union of the passed-in arrays using strict equality for
-   * comparisons, i.e. `===`.
+   * Creates an array of unique values, in order, of the passed-in arrays
+   * using strict equality for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {Array} [array1, array2, ...] Arrays to process.
-   * @returns {Array} Returns a new array of unique values, in order, that are
-   *  present in one or more of the arrays.
+   * @param {Array} [array1, array2, ...] The arrays to inspect.
+   * @returns {Array} Returns an array of composite values.
    * @example
    *
    * _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
    * // => [1, 2, 3, 101, 10]
    */
   function union(array) {
-    return uniq(flatten(compact(arguments), true));
+    return basicUniq(basicFlatten(arguments, true, true));
   }
 
   /**
@@ -3144,48 +3190,28 @@
    * // => [{ 'x': 1 }, { 'x': 2 }]
    */
   function uniq(array, isSorted, callback, thisArg) {
-    var index = -1,
-        indexOf = getIndexOf(),
-        length = array ? array.length : 0,
-        result = [],
-        seen = result;
-
+    // juggle arguments
     if (typeof isSorted != 'boolean' && isSorted != null) {
       thisArg = callback;
-      callback = isSorted;
+      callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : undefined;
       isSorted = false;
     }
     if (callback != null) {
-      seen = [];
       callback = createCallback(callback, thisArg);
     }
-    while (++index < length) {
-      var value = array[index],
-          computed = callback ? callback(value, index, array) : value;
-
-      if (isSorted
-            ? !index || seen[seen.length - 1] !== computed
-            : indexOf(seen, computed) < 0
-          ) {
-        if (callback) {
-          seen.push(computed);
-        }
-        result.push(value);
-      }
-    }
-    return result;
+    return basicUniq(array, isSorted, callback);
   }
 
   /**
-   * Creates an array excluding all occurrences of the passed values using
-   * strict equality for comparisons, i.e. `===`.
+   * Creates an array excluding all passed values using strict equality for
+   * comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to filter.
-   * @param {Mixed} [value1, value2, ...] Values to exclude.
-   * @returns {Array} Returns a new filtered array.
+   * @param {Mixed} [value1, value2, ...] The values to exclude.
+   * @returns {Array} Returns a new array of filtered values.
    * @example
    *
    * _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
@@ -3326,7 +3352,7 @@
    * @category Functions
    * @param {Object} object The object to bind and assign the bound methods to.
    * @param {String} [methodName1, methodName2, ...] The object method names to
-   *  bind, specified as individual values or arrays of values.
+   *  bind, specified as individual method names or arrays of method names.
    * @returns {Object} Returns `object`.
    * @example
    *
@@ -3340,7 +3366,7 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = arguments.length > 1 ? flatten(nativeSlice.call(arguments, 1)) : functions(object),
+    var funcs = arguments.length > 1 ? basicFlatten(arguments, true, false, 1) : functions(object),
         index = -1,
         length = funcs.length;
 

@@ -68,7 +68,7 @@
    */
   function basicIndexOf(array, value, fromIndex) {
     var index = (fromIndex || 0) - 1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     while (++index < length) {
       if (array[index] === value) {
@@ -79,7 +79,7 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed `collection` values, stable sorting
+   * Used by `sortBy` to compare transformed `collection` elements, stable sorting
    * them in ascending order.
    *
    * @private
@@ -276,6 +276,34 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * A basic implementation of `_.flatten` without support for `callback`
+   * shorthands or `thisArg` binding.
+   *
+   * @private
+   * @param {Array} array The array to flatten.
+   * @param {Boolean} [isShallow=false] A flag to restrict flattening to a single level.
+   * @param {Boolean} [isArgArrays=false] A flag to restrict flattening to arrays and `arguments` objects.
+   * @param {Number} [fromIndex=0] The index to start from.
+   * @returns {Array} Returns a new flattened array.
+   */
+  function basicFlatten(array, isShallow, isArgArrays, fromIndex) {
+    var index = (fromIndex || 0) - 1,
+        length = array ? array.length : 0,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      // recursively flatten arrays (susceptible to call stack limits)
+      if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
+        push.apply(result, isShallow ? value : basicFlatten(value));
+      } else if (!isArgArrays) {
+        result.push(value);
+      }
+    }
+    return result;
+  }
+
+  /**
    * Creates a function that, when called, invokes `func` with the `this` binding
    * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
    * bound function.
@@ -329,7 +357,7 @@
   }
   // fallback for browsers without `Object.create`
   if (!nativeCreate) {
-    var createObject = function(prototype) {
+    createObject = function(prototype) {
       if (isObject(prototype)) {
         noop.prototype = prototype;
         var result = new noop;
@@ -358,7 +386,7 @@
    * @private
    * @returns {Function} Returns the "indexOf" function.
    */
-  function getIndexOf(array, value, fromIndex) {
+  function getIndexOf() {
     var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
     return result;
   }
@@ -677,8 +705,8 @@
   };
 
   /**
-   * Creates a sorted array of all enumerable properties, own and inherited,
-   * of `object` that have function values.
+   * Creates a sorted array of property names of all enumerable properties,
+   * own and inherited, of `object` that have function values.
    *
    * @static
    * @memberOf _
@@ -2065,17 +2093,15 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates an arrat with all occurrences of the passed values removed using
-   * using strict equality for comparisons, i.e. `===`. Values to exclude may
-   * be specified as individual arguments or as arrays.
+   * Creates an array excluding all values of the passed-in arrays using
+   * strict equality for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to process.
-   * @param {Array} [array1, array2, ...] The values to exclude, specified as
-   *  individual values or arrays of values.
-   * @returns {Array} Returns a new filtered array.
+   * @param {Array} [array1, array2, ...] The arrays of values to exclude.
+   * @returns {Array} Returns a new array of filtered values.
    * @example
    *
    * _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
@@ -2173,63 +2199,6 @@
       }
       return nativeSlice.call(array, 0, nativeMin(nativeMax(0, n), length));
     }
-  }
-
-  /**
-   * Flattens a nested array (the nesting can be to any depth). If `isShallow`
-   * is truthy, `array` will only be flattened a single level. If `callback`
-   * is passed, each element of `array` is passed through a `callback` before
-   * flattening. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, index, array).
-   *
-   * If a property name is passed for `callback`, the created "_.pluck" style
-   * callback will return the property value of the given element.
-   *
-   * If an object is passed for `callback`, the created "_.where" style callback
-   * will return `true` for elements that have the properties of the given object,
-   * else `false`.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to flatten.
-   * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
-   * @param {Function|Object|String} [callback=identity] The function called per
-   *  iteration. If a property name or object is passed, it will be used to create
-   *  a "_.pluck" or "_.where" style callback, respectively.
-   * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Array} Returns a new flattened array.
-   * @example
-   *
-   * _.flatten([1, [2], [3, [[4]]]]);
-   * // => [1, 2, 3, 4];
-   *
-   * _.flatten([1, [2], [3, [[4]]]], true);
-   * // => [1, 2, 3, [[4]]];
-   *
-   * var stooges = [
-   *   { 'name': 'curly', 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] },
-   *   { 'name': 'moe', 'quotes': ['Spread out!', 'You knucklehead!'] }
-   * ];
-   *
-   * // using "_.pluck" callback shorthand
-   * _.flatten(stooges, 'quotes');
-   * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
-   */
-  function flatten(array, isShallow) {
-    var index = -1,
-        length = array ? array.length : 0,
-        result = [];
-
-    while (++index < length) {
-      var value = array[index];
-      if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
-        push.apply(result, isShallow ? value : flatten(value));
-      } else {
-        result.push(value);
-      }
-    }
-    return result;
   }
 
   /**
@@ -2593,15 +2562,15 @@
   }
 
   /**
-   * Creates an array excluding all occurrences of the passed values using
-   * strict equality for comparisons, i.e. `===`.
+   * Creates an array excluding all passed values using strict equality for
+   * comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to filter.
-   * @param {Mixed} [value1, value2, ...] Values to exclude.
-   * @returns {Array} Returns a new filtered array.
+   * @param {Mixed} [value1, value2, ...] The values to exclude.
+   * @returns {Array} Returns a new array of filtered values.
    * @example
    *
    * _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
@@ -2654,7 +2623,7 @@
    * @category Functions
    * @param {Object} object The object to bind and assign the bound methods to.
    * @param {String} [methodName1, methodName2, ...] The object method names to
-   *  bind, specified as individual values or arrays of values.
+   *  bind, specified as individual method names or arrays of method names.
    * @returns {Object} Returns `object`.
    * @example
    *
@@ -2668,7 +2637,7 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = arguments.length > 1 ? flatten(nativeSlice.call(arguments, 1)) : functions(object),
+    var funcs = arguments.length > 1 ? basicFlatten(arguments, true, false, 1) : functions(object),
         index = -1,
         length = funcs.length;
 
@@ -3027,7 +2996,6 @@
   lodash.defaults = defaults;
   lodash.difference = difference;
   lodash.filter = filter;
-  lodash.flatten = flatten;
   lodash.forEach = forEach;
   lodash.functions = functions;
   lodash.groupBy = groupBy;

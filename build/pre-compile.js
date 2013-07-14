@@ -331,6 +331,11 @@
         'sortBy'
       ];
 
+      var depObjProps = [
+        'isEqual',
+        'keys'
+      ];
+
       var props = [
         'cache',
         'criteria',
@@ -339,18 +344,19 @@
       ];
 
       // minify `dependencyObject` properties
-      source = source.replace(/\b(dependencyObject(?:\.|\['))\w+/g, function(match, prelude) {
-        return prelude + minNames[iteratorOptions.length + props.length];
+      depObjProps.forEach(function(prop, index) {
+        source = source.replace(RegExp("\\b(dependencyObject(?:\\.|\\['))" + prop + '\\b', 'g'), function(match, prelude) {
+          return prelude + minNames[iteratorOptions.length + props.length + index];
+        });
       });
 
+      // minify other properties used in functions
       var snippets = source.match(RegExp('^( *)(?:var|function) +(?:' + funcNames.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));
       if (!snippets) {
         return;
       }
       snippets.forEach(function(snippet) {
         var modified = snippet;
-
-        // minify properties
         props.forEach(function(prop, index) {
           // use minified names different than those chosen for `iteratorOptions`
           var minName = minNames[iteratorOptions.length + index],

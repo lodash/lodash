@@ -902,7 +902,7 @@
     (function() {
       var deps = _.invoke(categories, 'toLowerCase'),
           depArgs =  deps.join(', '),
-          depPaths = "['" + deps.join("', './") + "'], ",
+          depPaths = "['" + (deps.length ? './' + deps.join("', './") : '') + "'], ",
           iife = [];
 
       if (isAMD) {

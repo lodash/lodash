@@ -295,7 +295,7 @@
       var value = array[index];
       // recursively flatten arrays (susceptible to call stack limits)
       if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
-        push.apply(result, isShallow ? value : basicFlatten(value));
+        push.apply(result, isShallow ? value : basicFlatten(value, isShallow, isArgArrays));
       } else if (!isArgArrays) {
         result.push(value);
       }
@@ -1061,7 +1061,7 @@
    */
   function omit(object) {
     var indexOf = getIndexOf(),
-        props = flatten(nativeSlice.call(arguments, 1)),
+        props = basicFlatten(arguments, true, false, 1),
         result = {};
 
     forIn(object, function(value, key) {
@@ -1127,7 +1127,7 @@
    */
   function pick(object) {
     var index = -1,
-        props = flatten(nativeSlice.call(arguments, 1)),
+        props = basicFlatten(arguments, true, false, 1),
         length = props.length,
         result = {};
 
@@ -2111,7 +2111,7 @@
     var index = -1,
         indexOf = getIndexOf(),
         length = array.length,
-        flattened = flatten(nativeSlice.call(arguments, 1)),
+        flattened = basicFlatten(arguments, true, true, 1),
         result = [];
 
     while (++index < length) {

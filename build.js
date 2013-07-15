@@ -231,6 +231,12 @@
     'findWhere': ['where']
   };
 
+  /** Used to track circular dependencies of identifiers */
+  var circularDependencyMap = {
+    'createCallback': ['isEqual'],
+    'createIterator': ['keys']
+  };
+
   /** Used to track Lo-Dash property dependencies of identifiers */
   var propDependencyMap = {
     'at': ['support'],
@@ -252,19 +258,19 @@
   var varDependencyMap = {
     'bind': ['reNative'],
     'bindKey': ['indicatorObject'],
-    'createCallback': ['dependencyObject', 'indicatorObject'],
-    'createIterator': ['dependencyObject', 'indicatorObject', 'objectTypes'],
+    'createCallback': ['indicatorObject'],
+    'createIterator': ['indicatorObject', 'objectTypes'],
     'createObject': ['reNative'],
     'defer': ['objectTypes', 'reNative'],
     'escape': ['reUnescapedHtml'],
     'escapeHtmlChar': ['htmlEscapes'],
     'htmlUnescapes': ['htmlEscapes'],
     'isArray': ['reNative'],
-    'isEqual': ['dependencyObject', 'indicatorObject'],
+    'isEqual': ['indicatorObject'],
     'isObject': ['objectTypes'],
     'isPlainObject': ['reNative'],
     'isRegExp': ['objectTypes'],
-    'keys': ['dependencyObject', 'reNative'],
+    'keys': ['reNative'],
     'merge': ['indicatorObject'],
     'partialRight': ['indicatorObject'],
     'reEscapedHtml': ['htmlUnescapes'],
@@ -827,14 +833,14 @@
 
     var getDepPaths = function(dependencies, fromPath) {
       fromPath || (fromPath = '');
-      return dependencies.map(function(depName) {
-        var toPath = getPath(depName),
+      return dependencies.map(function(dep) {
+        var toPath = getPath(dep),
             relative = path.relative(fromPath, toPath).replace(RegExp(path.sepEscaped, 'g'), sep);
 
         if (relative.charAt(0) != '.') {
           relative = '.' + (relative ? sep + relative : '');
         }
-        return relative + sep + depName;
+        return relative + sep + dep;
       });
     };
 
@@ -846,10 +852,14 @@
 
     // create modules for each identifier
     identifiers.forEach(function(identifier) {
-      var deps = getDependencies(identifier, true)
-          .concat(propDependencyMap[identifier] || [])
-          .concat(varDependencyMap[identifier] || [])
-          .sort();
+      var circDeps = circularDependencyMap[identifier];
+
+      var deps = _.difference(
+        getDependencies(identifier, true)
+        .concat(propDependencyMap[identifier] || [])
+        .concat(varDependencyMap[identifier] || [])
+      , circDeps)
+      .sort();
 
       var modulePath = getPath(identifier),
           depArgs = deps.join(', '),
@@ -870,7 +880,16 @@
         'include=' + identifier,
         'iife=' + iife.join('\n'),
         '-o', path.join(outputPath, modulePath + identifier + '.js')
-      ));
+      ), function(data) {
+        // replace deps inline
+        _.each(circDeps, function(dep) {
+          // avoid identifiers in strings
+          data.source = data.source.replace(RegExp('(["\'])(?:(?!\\1)[^\\n\\\\]|\\\\.)*\\1|\\b' + dep + '\\b', 'g'), function(match) {
+            return /^["']/.test(match) ? match : "require('" + match + "')";
+          });
+        });
+        defaultBuildCallback(data);
+      });
     });
 
     // create category modules
@@ -2681,11 +2700,6 @@
           }
         });
       }
-      if (isNoDep) {
-        // avoid circular dependencies
-        funcDependencyMap.createCallback = _.without(funcDependencyMap.createCallback, 'isEqual');
-        funcDependencyMap.createIterator = _.without(funcDependencyMap.createIterator, 'keys');
-      }
       else if (isModularize) {
         _.forOwn(funcDependencyMap, function(deps, funcName) {
           if (_.contains(deps, 'getIndexOf')) {
@@ -3293,7 +3307,7 @@
         // replace `_.isEqual`
         if (!isLodash('isEqual')) {
           source = replaceFunction(source, 'isEqual', [
-            'var isEqual = dependencyObject.isEqual = function(a, b, stackA, stackB) {',
+            'function isEqual(a, b, stackA, stackB) {',
             '  if (a === b) {',
             '    return a !== 0 || (1 / a == 1 / b);',
             '  }',
@@ -3389,7 +3403,7 @@
             '    });',
             '  }',
             '  return result;',
-            '};'
+            '}'
           ].join('\n'));
         }
         // replace `_.memoize`

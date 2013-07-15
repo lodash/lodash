@@ -16,15 +16,31 @@ A low-level utility library delivering consistency, [customization](https://gith
 [Development](https://raw.github.com/bestiejs/lodash/v1.3.1/dist/lodash.underscore.js) and
 [Production](https://raw.github.com/bestiejs/lodash/v1.3.1/dist/lodash.underscore.min.js)
 
-* CDN copies of ≤ v1.3.1’s builds are available on [cdnjs](http://cdnjs.com/) thanks to [CloudFlare](http://www.cloudflare.com/):<br>
-[Lo-Dash dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.js),
-[Lo-Dash prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.min.js),<br>
-[Lo-Dash compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.compat.js),
-[Lo-Dash compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.compat.min.js),<br>
-[Underscore compat-dev](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.underscore.js), and
-[Underscore compat-prod](http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.underscore.min.js)
-
 * For optimal file size, [create a custom build](https://github.com/bestiejs/lodash#custom-builds) with only the features you need
+
+### CDN
+
+* [jsDelivr](http://www.jsdelivr.com/#!lodash) hosts a full rainbow of build flavors & may be [fastest](http://www.cdnperf.com/) for most, thanks to [many sponsors](http://www.jsdelivr.com/about.php):<br>
+[dev](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.js),
+[prod](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.min.js),<br>
+[compat-dev](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.compat.js),
+[compat-prod](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.compat.min.js),<br>
+[Backbone compat-dev](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.backbone.js), 
+[Backbone compat-prod](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.backbone.min.js)<br>
+[Legacy-dev](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.legacy.js), 
+[Legacy-prod](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.legacy.min.js)<br>
+[Mobile compat-dev](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.mobile.js), 
+[Mobile compat-prod](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.mobile.min.js)<br>
+[Underscore compat-dev](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.underscore.js), and
+[Underscore compat-prod](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.underscore.min.js)
+
+* [cdnjs](http://cdnjs.com/) hosts current and most older versions thanks to [CloudFlare](http://www.cloudflare.com/):<br>
+[Lo-Dash dev](//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.js),
+[Lo-Dash prod](//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.min.js),<br>
+[Lo-Dash compat-dev](//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.compat.js),
+[Lo-Dash compat-prod](//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.compat.min.js),<br>
+[Underscore compat-dev](//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.underscore.js), and
+[Underscore compat-prod](//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.underscore.min.js)
 
 ## Dive in
 

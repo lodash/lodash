@@ -102,7 +102,7 @@
     'compose': [],
     'contains': ['basicEach', 'getIndexOf', 'isString'],
     'countBy': ['createCallback', 'forEach'],
-    'createCallback': ['identity', 'keys'],
+    'createCallback': ['identity', 'isEqual', 'keys'],
     'debounce': ['isObject'],
     'defaults': ['createCallback', 'createIterator'],
     'defer': ['bind'],
@@ -205,7 +205,7 @@
     'compareAscending': [],
     'createBound': ['createObject', 'isFunction', 'isObject'],
     'createCache': ['cachePush', 'getObject', 'releaseObject'],
-    'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'lodash', 'releaseObject'],
+    'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'keys', 'iteratorTemplate', 'lodash', 'releaseObject'],
     'createObject': [ 'isObject', 'noop'],
     'escapeHtmlChar': [],
     'escapeStringChar': [],
@@ -902,7 +902,7 @@
     (function() {
       var deps = _.invoke(categories, 'toLowerCase'),
           depArgs =  deps.join(', '),
-          depPaths = "['" + (deps.length ? './' + deps.join("', './") : '') + "'], ",
+          depPaths = "['" + deps.map(function(dep) { return './' + dep; }).join("', '") + "'], ",
           iife = [];
 
       if (isAMD) {
@@ -2681,7 +2681,12 @@
           }
         });
       }
-      if (isModularize) {
+      if (isNoDep) {
+        // avoid circular dependencies
+        funcDependencyMap.createCallback = _.without(funcDependencyMap.createCallback, 'isEqual');
+        funcDependencyMap.createIterator = _.without(funcDependencyMap.createIterator, 'keys');
+      }
+      else if (isModularize) {
         _.forOwn(funcDependencyMap, function(deps, funcName) {
           if (_.contains(deps, 'getIndexOf')) {
             (deps = funcDependencyMap[funcName] = _.without(deps, 'getIndexOf')).push( 'basicIndexOf');
@@ -2873,8 +2878,8 @@
       return result;
     }());
 
+    // add properties, variables, and their function dependencies to include in the build
     if (!isNoDep) {
-      // add properties, variables, and their function dependencies to include in the build
       (function() {
         function expand(result, depMap, funcNames, stack) {
           stack || (stack = []);
@@ -3384,7 +3389,7 @@
             '    });',
             '  }',
             '  return result;',
-            '}'
+            '};'
           ].join('\n'));
         }
         // replace `_.memoize`
@@ -3682,7 +3687,7 @@
         // remove `_.isEqual` use from `createCallback`
         if (!isLodash('where')) {
           source = source.replace(matchFunction(source, 'createCallback'), function(match) {
-            return match.replace(/\bisEqual\(([^,]+), *([^,]+)[^)]+\)/, '$1 === $2');
+            return match.replace(/=.+?\bisEqual\((.+?), *(.+?),.+?\)/, '= $1 === $2');
           });
         }
         // remove unused features from `createBound`

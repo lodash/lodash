@@ -20,7 +20,7 @@ A low-level utility library delivering consistency, [customization](https://gith
 
 ### CDN
 
-* [jsDelivr](http://www.jsdelivr.com/#!lodash) hosts a full rainbow of build flavors & may be [fastest](http://www.cdnperf.com/) for most, thanks to [many sponsors](http://www.jsdelivr.com/about.php):
+* [jsDelivr](http://www.jsdelivr.com/#!lodash) hosts a full rainbow of build flavors & may be [fastest](http://www.cdnperf.com/) for most, thanks to [many sponsors](http://www.jsdelivr.com/about.php):<br>
 [dev](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.js),
 [prod](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.min.js),<br>
 [compat-dev](//cdn.jsdelivr.net/ajax/libs/lodash.js/1.3.1/lodash.compat.js),

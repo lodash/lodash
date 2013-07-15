@@ -331,24 +331,12 @@
         'sortBy'
       ];
 
-      var depObjProps = [
-        'isEqual',
-        'keys'
-      ];
-
       var props = [
         'cache',
         'criteria',
         'index',
         'value'
       ];
-
-      // minify `dependencyObject` properties
-      depObjProps.forEach(function(prop, index) {
-        source = source.replace(RegExp("\\b(dependencyObject(?:\\.|\\['))" + prop + '\\b', 'g'), function(match, prelude) {
-          return prelude + minNames[iteratorOptions.length + props.length + index];
-        });
-      });
 
       // minify other properties used in functions
       var snippets = source.match(RegExp('^( *)(?:var|function) +(?:' + funcNames.join('|') + ')\\b[\\s\\S]+?\\n\\1}', 'gm'));

@@ -22,9 +22,6 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
-  /** Used to avoid reference errors and circular dependency errors */
-  var dependencyObject = {};
-
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
@@ -921,10 +918,13 @@
       var index, iterable = object, result = [];
       if (!iterable) return result;
       if (!(objectTypes[typeof object])) return result;    
-        for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {
-            result.push(index);    
-          }
+        var ownIndex = -1,
+            ownProps = objectTypes[typeof iterable] && keys(iterable),
+            length = ownProps ? ownProps.length : 0;
+
+        while (++ownIndex < length) {
+          index = ownProps[ownIndex];
+          result.push(index);    
         }    
       return result
     };
@@ -942,7 +942,7 @@
      * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
      * // => ['one', 'two', 'three'] (order is not guaranteed)
      */
-    var keys = dependencyObject.keys = !nativeKeys ? shimKeys : function(object) {
+    var keys = !nativeKeys ? shimKeys : function(object) {
       if (!isObject(object)) {
         return [];
       }
@@ -1558,7 +1558,7 @@
      * });
      * // => true
      */
-    var isEqual = dependencyObject.isEqual = function(a, b, callback, thisArg, stackA, stackB) {
+    function isEqual(a, b, callback, thisArg, stackA, stackB) {
       // used to indicate that when comparing objects, `a` has at least the properties of `b`
       var whereIndicator = callback === indicatorObject;
       if (typeof callback == 'function' && !whereIndicator) {
@@ -1714,7 +1714,7 @@
         releaseArray(stackB);
       }
       return result;
-    };
+    }
 
     /**
      * Checks if `value` is, or can be coerced to, a finite number.
@@ -1846,6 +1846,8 @@
 
     /**
      * Checks if `value` is a number.
+     *
+     * Note: `NaN` is considered a number. See http://es5.github.io/#x8.5.
      *
      * @static
      * @memberOf _
@@ -4409,7 +4411,7 @@
           var length = props.length,
               result = false;
           while (length--) {
-            if (!(result = dependencyObject.isEqual(object[props[length]], func[props[length]], indicatorObject))) {
+            if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
               break;
             }
           }

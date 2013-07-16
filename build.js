@@ -623,7 +623,7 @@
    */
   function addUnderscoreChaining(source) {
     // add `_.chain`
-    source = source.replace(matchFunction(source, 'tap'), function(match) {
+    source = source.replace(matchFunction(source, 'tap', true), function(match) {
       var indent = getIndent(match);
       return match && (indent + [
         '',
@@ -660,7 +660,7 @@
     });
 
     // add `wrapperChain`
-    source = source.replace(matchFunction(source, 'wrapperToString'), function(match) {
+    source = source.replace(matchFunction(source, 'wrapperToString', true), function(match) {
       var indent = getIndent(match);
       return match && (indent + [
         '',
@@ -831,16 +831,21 @@
       'support': true
     };
 
-    var getDepPaths = function(dependencies, fromPath) {
+    var getDepPath = function(dep, fromPath) {
       fromPath || (fromPath = '');
-      return dependencies.map(function(dep) {
-        var toPath = getPath(dep),
-            relative = path.relative(fromPath, toPath).replace(RegExp(path.sepEscaped, 'g'), sep);
 
-        if (relative.charAt(0) != '.') {
-          relative = '.' + (relative ? sep + relative : '');
-        }
-        return relative + sep + dep;
+      var toPath = getPath(dep),
+          relative = path.relative(fromPath, toPath).replace(RegExp(path.sepEscaped, 'g'), sep);
+
+      if (relative.charAt(0) != '.') {
+        relative = '.' + (relative ? sep + relative : '');
+      }
+      return relative + sep + dep;
+    };
+
+    var getDepPaths = function(dependencies, fromPath) {
+      return dependencies.map(function(dep) {
+        return getDepPath(dep, fromPath);
       });
     };
 
@@ -881,11 +886,11 @@
         'iife=' + iife.join('\n'),
         '-o', path.join(outputPath, modulePath + identifier + '.js')
       ), function(data) {
-        // replace deps inline
+        // replace circular dependencies inline
         _.each(circDeps, function(dep) {
           // avoid identifiers in strings
           data.source = data.source.replace(RegExp('(["\'])(?:(?!\\1)[^\\n\\\\]|\\\\.)*\\1|\\b' + dep + '\\b', 'g'), function(match) {
-            return /^["']/.test(match) ? match : "require('" + match + "')";
+            return /^["']/.test(match) ? match : "require('" + getDepPath(match, modulePath) + "')";
           });
         });
         defaultBuildCallback(data);
@@ -1465,30 +1470,31 @@
    * @private
    * @param {String} source The source to inspect.
    * @param {String} funcName The name of the function to match.
+   * @param {Boolean} [leadingComments] A flag to indicate including leading comments.
    * @returns {String} Returns the matched function snippet.
    */
-  function matchFunction(source, funcName) {
+  function matchFunction(source, funcName, leadingComments) {
     var result = _.reduce([
       // match variable declarations with `createIterator` and `template`
-      '( *)var ' + funcName + ' *=.*?(?:createIterator|template)\\((?:.+|[\\s\\S]+?\\n\\1}?)\\);\\n',
+      '( *)var ' + funcName + ' *=.*?(?:createIterator|template)\\((?:.+|[\\s\\S]+?\\n\\3}?)\\);\\n',
       // match a function declaration
-      '( *)function ' + funcName + '\\b[\\s\\S]+?\\n\\1}\\n',
+      '( *)function ' + funcName + '\\b[\\s\\S]+?\\n\\3}\\n',
       // match a variable declaration with function expression
-      '( *)var ' + funcName + ' *=.*?function\\(.+?\{\\n[\\s\\S]+?\\n\\1}(?:\\(\\)\\))?;\\n',
+      '( *)var ' + funcName + ' *=.*?function\\(.+?\{\\n[\\s\\S]+?\\n\\3}(?:\\(\\)\\))?;\\n',
       // match a simple variable declaration
-      '( *)var ' + funcName + ' *=.+?;\\n'
+      ' *var ' + funcName + ' *=.+?;\\n'
     ], function(result, reSource) {
       return result || (result = source.match(RegExp(
-        multilineComment +
-        reSource
-      ))) && result[0];
+        '(' + multilineComment + ')' +
+        '(' + reSource + ')'
+      ))) && result.slice(1, 3);
     }, null);
 
-    if (/@type +Function\b/.test(result) ||
-        /(?:function(?:\s+\w+)?\b|createIterator|template)\(/.test(result)) {
-      return result;
-    }
-    return '';
+    return result && (
+           /@type +Function\b/.test(result[0]) ||
+           /(?:function(?:\s+\w+)?\b|createIterator|template)\(/.test(result[1]))
+      ? (leadingComments ? result[0] : '') + result[1]
+      : '';
   }
 
   /**
@@ -1498,11 +1504,12 @@
    * @private
    * @param {String} source The source to inspect.
    * @param {String} propName The name of the property to match.
+   * @param {Boolean} [leadingComments] A flag to indicate including leading comments.
    * @returns {String} Returns the matched property snippet.
    */
-  function matchProp(source, propName) {
+  function matchProp(source, propName, leadingComments) {
     var result = source.match(RegExp(
-      multilineComment +
+      (leadingComments ? multilineComment : '\\n') +
       '(?: *|.*?=\\s*)lodash\\._?' + propName + '\\s*=[\\s\\S]+?' +
       '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
       '[;}]\\n(?=\\n(?!\\s*\\(func)))'
@@ -1695,7 +1702,7 @@
       return removeRunInContext(source, funcName);
     }
     // remove function
-    if ((snippet = matchFunction(source, funcName))) {
+    if ((snippet = matchFunction(source, funcName, true))) {
       source = source.replace(snippet, '');
     }
 
@@ -1857,14 +1864,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeProp(source, propName) {
-    return source.replace(matchProp(source, propName), function(match) {
-      var snippet = RegExp(
-        multilineComment +
-        '.*?=\\s*(?=lodash\\._?' + propName + '\\s*=)'
-      ).exec(match);
-
-      return snippet ? snippet[0] + 'undefined;\n' : '';
-    });
+    return source.replace(matchProp(source, propName, true), '');
   }
 
   /**
@@ -1896,7 +1896,7 @@
     source = source.replace(/^(?: *\/\/.*\s*)* *lodash\.runInContext *=[\s\S]+?;\n/m, '');
 
     // remove function scaffolding, leaving most of its content
-    source = source.replace(matchFunction(source, 'runInContext'), function(match) {
+    source = source.replace(matchFunction(source, 'runInContext', true), function(match) {
       return match
         .replace(/^[\s\S]+?function runInContext[\s\S]+?context *= *context.+| *return lodash[\s\S]+$/g, '')
         .replace(/^ {4}/gm, '  ');
@@ -2258,9 +2258,6 @@
     if (!snippet) {
       return source;
     }
-    // clip snippet after the JSDoc comment block
-    snippet = snippet.replace(/^\s*(?:\/\/.*|\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)\n/, '');
-
     source = source.replace(snippet, function() {
       return funcValue
         .replace(RegExp('^' + getIndent(funcValue), 'gm'), getIndent(snippet))
@@ -2962,14 +2959,14 @@
 
         // replace `_.isPlainObject` with `shimIsPlainObject`
         source = source.replace(
-          matchFunction(source, 'isPlainObject').replace(/[\s\S]+?var isPlainObject *= */, ''),
-          matchFunction(source, 'shimIsPlainObject').replace(/[\s\S]+?function shimIsPlainObject/, 'function').replace(/\s*$/, ';\n')
+          matchFunction(source, 'isPlainObject').replace(/^ *var isPlainObject *= */m, ''),
+          matchFunction(source, 'shimIsPlainObject').replace(/^ *function shimIsPlainObject/m, 'function').replace(/\s*$/, ';\n')
         );
 
         // replace `_.keys` with `shimKeys`
         source = source.replace(
-          matchFunction(source, 'keys').replace(/[\s\S]+?var keys.*= */, ''),
-          matchFunction(source, 'shimKeys').replace(/[\s\S]+?var shimKeys *= */, '')
+          matchFunction(source, 'keys').replace(/^ *var keys.*= */m, ''),
+          matchFunction(source, 'shimKeys').replace(/^ *var shimKeys *= */m, '')
         );
       }
       if (isModern) {
@@ -3664,10 +3661,6 @@
             '}'
           ].join('\n'));
         }
-        // unexpose `lodash.support`
-        if (!isLodash('support')) {
-          source = source.replace(/\blodash\.support *= */, '');
-        }
         // replace `htmlEscapes` entries with hex entities
         if (!isLodash('escape')) {
           source = source.replace(matchVar(source, 'htmlEscapes'), function(match) {
@@ -3978,23 +3971,7 @@
           .replace(/(?:\s*\/\/.*)*\n( *)(?:basicEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
           .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype\.[\s\S]+?;/g, '');
       }
-      if (isNoDep) {
-        source = removeAssignments(source);
-        source = removeFromCreateIterator(source, 'lodash');
-        source = removeGetIndexOf(source);
-        source = removeLodashWrapper(source);
-
-        if (isExcluded('lodash')) {
-          source = removeFunction(source, 'lodash');
-        }
-        // remove function aliases
-        _.each(buildFuncs, function(funcName) {
-          _.each(getAliases(funcName), function(alias) {
-            source = removeFunction(source, alias);
-          });
-        });
-      }
-      else {
+      if (!isNoDep) {
         if (isExcluded('bind')) {
           source = removeSupportProp(source, 'fastBind');
         }
@@ -4044,6 +4021,36 @@
           });
         }
       }
+
+      // remove code used to resolve unneeded `support` properties
+      source = source.replace(matchVar(source, 'support'), function(match) {
+        return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
+          var modified = setup;
+
+          if (!/\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
+            modified = modified.replace(/^ *object *=.+\n/m, '');
+          }
+          if (!/\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
+              !/\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
+              !/\.ownLast *=(?! *(?:false|true))/.test(body)) {
+            modified = modified
+              .replace(/\bctor *=.+\s+/, '')
+              .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
+              .replace(/(?:,\n)? *props *=[^;=]+/, '')
+              .replace(/^ *for *\((?=prop)/, '$&var ')
+          }
+          if (!/\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
+            modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
+          }
+          // cleanup the empty var statement
+          modified = modified.replace(/^ *var;\n/m, '');
+
+          // if no setup then remove IIFE
+          return /^\s*$/.test(modified)
+            ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
+            : match.replace(setup, modified);
+        });
+      });
 
       // remove functions from the build
       allFuncs.forEach(function(otherName) {
@@ -4098,37 +4105,15 @@
         }
       }());
 
-      // remove code used to resolve unneeded `support` properties
-      source = source.replace(matchVar(source, 'support'), function(match) {
-        return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
-          var modified = setup;
-
-          if (!/\.spliceObjects *=(?! *(?:false|true))/.test(body)) {
-            modified = modified.replace(/^ *object *=.+\n/m, '');
-          }
-          if (!/\.enumPrototypes *=(?! *(?:false|true))/.test(body) &&
-              !/\.nonEnumShadows *=(?! *(?:false|true))/.test(body) &&
-              !/\.ownLast *=(?! *(?:false|true))/.test(body)) {
-            modified = modified
-              .replace(/\bctor *=.+\s+/, '')
-              .replace(/^ *ctor\.prototype.+\s+.+\n/m, '')
-              .replace(/(?:,\n)? *props *=[^;=]+/, '')
-              .replace(/^ *for *\((?=prop)/, '$&var ')
-          }
-          if (!/\.nonEnumArgs *=(?! *(?:false|true))/.test(body)) {
-            modified = modified.replace(/^ *for *\(.+? arguments.+\n/m, '');
-          }
-          // cleanup the empty var statement
-          modified = modified.replace(/^ *var;\n/m, '');
-
-          // if no setup then remove IIFE
-          return /^\s*$/.test(modified)
-            ? body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2))
-            : match.replace(setup, modified);
-        });
-      });
-
       if (isNoDep) {
+        source = removeAssignments(source);
+        source = removeFromCreateIterator(source, 'lodash');
+        source = removeGetIndexOf(source);
+        source = removeLodashWrapper(source);
+
+        if (isExcluded('lodash')) {
+          source = removeFunction(source, 'lodash');
+        }
         // replace the `lodash.templateSettings` property assignment with a variable assignment
         source = source.replace(/\b(lodash\.)(?=templateSettings *=)/, 'var ');
 
@@ -4154,6 +4139,19 @@
             source = removeVar(source, varName);
           }
         });
+
+        // remove function aliases
+        _.each(buildFuncs, function(funcName) {
+          _.each(getAliases(funcName), function(alias) {
+            source = removeFunction(source, alias);
+          });
+        });
+      }
+      else if (isUnderscore) {
+        // unexpose `lodash.support`
+        if (!isLodash('support')) {
+          source = source.replace(/\blodash\.support *= */, '');
+        }
       }
     }
     if (_.size(source.match(/\bfreeModule\b/g)) < 2) {

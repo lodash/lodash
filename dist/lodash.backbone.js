@@ -18,9 +18,6 @@
   /** Used internally to indicate various things */
   var indicatorObject = {};
 
-  /** Used to avoid reference errors and circular dependency errors */
-  var dependencyObject = {};
-
   /** `Object#toString` result shortcuts */
   var argsClass = '[object Arguments]',
       arrayClass = '[object Array]',
@@ -473,7 +470,7 @@
    * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
    * // => ['one', 'two', 'three'] (order is not guaranteed)
    */
-  var keys = dependencyObject.keys = !nativeKeys ? shimKeys : function(object) {
+  var keys = !nativeKeys ? shimKeys : function(object) {
     if (!isObject(object)) {
       return [];
     }
@@ -850,7 +847,7 @@
    * });
    * // => true
    */
-  var isEqual = dependencyObject.isEqual = function(a, b, stackA, stackB) {
+  function isEqual(a, b, stackA, stackB) {
     if (a === b) {
       return a !== 0 || (1 / a == 1 / b);
     }
@@ -946,7 +943,7 @@
       });
     }
     return result;
-  };
+  }
 
   /**
    * Checks if `value` is a function.

@@ -1128,7 +1128,7 @@
       data.array = data.bottom = data.loop = data.top = '';
       data.init = 'iterable';
       data.useHas = true;
-      data.useKeys = !!keys;
+      data.useKeys = true;
 
       // merge options into a template data object
       for (var object, index = 0; object = arguments[index]; index++) {

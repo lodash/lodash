@@ -2208,6 +2208,8 @@
     /**
      * Checks if `value` is a number.
      *
+     * Note: `NaN` is considered a number. See http://es5.github.io/#x8.5.
+     *
      * @static
      * @memberOf _
      * @category Objects

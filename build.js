@@ -1638,7 +1638,7 @@
     }
     // remove data object property assignment
     var modified = snippet.replace(RegExp("^(?: *\\/\\/.*\\n)* *(\\w+)\\." + identifier + " *= *(.+\\n+)", 'm'), function(match, object, postlude) {
-      return RegExp('\\b' + object + '\\.').test(postlude) ? postlude : '';
+      return RegExp('\\b' + object + '\\.').test(postlude) ? postlude : '\n';
     });
 
     source = source.replace(snippet, function() {
@@ -1651,7 +1651,7 @@
     // remove `factory` arguments
     source = source.replace(snippet, function(match) {
       return match
-        .replace(RegExp('\\b' + identifier + '\\b,? *', 'g'), '')
+        .replace(RegExp("[^\\n(,']*?\\b" + identifier + "[^\\n),']*(?:, *)?", 'g'), ' ')
         .replace(/, *(?=',)/, '')
         .replace(/,(?=\s*\))/, '');
     });
@@ -1807,6 +1807,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeKeysOptimization(source) {
+    source = removeFromCreateIterator(source, 'keys');
     source = removeFromCreateIterator(source, 'useKeys');
 
     // remove optimized branch in `iteratorTemplate`
@@ -3727,7 +3728,7 @@
         }
       }
       // add Underscore's chaining functions
-      if (isUnderscore ? !_.contains(plusFuncs, 'chain') : _.contains(plusFuncs, 'chain')) {
+      if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
         source = addUnderscoreChaining(source);
       }
       // replace `basicEach` references with `forEach` and `forOwn`

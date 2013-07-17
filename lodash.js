@@ -5369,6 +5369,7 @@
      * @param {Object} options The options object.
      *  escape - The "escape" delimiter regexp.
      *  evaluate - The "evaluate" delimiter regexp.
+     *  imports - An object of properties to import into the compiled template as local variables.
      *  interpolate - The "interpolate" delimiter regexp.
      *  sourceURL - The sourceURL of the template's compiled source.
      *  variable - The data object variable name.
@@ -5381,13 +5382,14 @@
      * compiled({ 'name': 'moe' });
      * // => 'hello moe'
      *
-     * var list = '<% _.forEach(people, function(name) { %><li><%= name %></li><% }); %>';
-     * _.template(list, { 'people': ['moe', 'larry'] });
-     * // => '<li>moe</li><li>larry</li>'
-     *
      * // using the "escape" delimiter to escape HTML in data property values
      * _.template('<b><%- value %></b>', { 'value': '<script>' });
      * // => '<b>&lt;script&gt;</b>'
+     *
+     * // using the "evaluate" delimiter to generate HTML
+     * var list = '<% _.forEach(people, function(name) { %><li><%= name %></li><% }); %>';
+     * _.template(list, { 'people': ['moe', 'larry'] });
+     * // => '<li>moe</li><li>larry</li>'
      *
      * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
      * _.template('hello ${ name }', { 'name': 'curly' });
@@ -5397,13 +5399,18 @@
      * _.template('<% print("hello " + epithet); %>!', { 'epithet': 'stooge' });
      * // => 'hello stooge!'
      *
-     * // using custom template delimiters
+     * // using a custom template delimiters
      * _.templateSettings = {
      *   'interpolate': /{{([\s\S]+?)}}/g
      * };
      *
      * _.template('hello {{ name }}!', { 'name': 'mustache' });
      * // => 'hello mustache!'
+     *
+     * // using the `imports` option to import jQuery
+     * var list = '<% $.each(people, function(name) { %><li><%= name %></li><% }); %>';
+     * _.template(list, { 'people': ['moe', 'larry'] }, { 'imports': { '$': jQuery });
+     * // => '<li>moe</li><li>larry</li>'
      *
      * // using the `sourceURL` option to specify a custom sourceURL for the template
      * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });

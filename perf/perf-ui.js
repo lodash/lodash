@@ -79,7 +79,10 @@
   // initialize controls
   addListener(window, 'load', function() {
     function eventHandler(event) {
-      var search = location.search.replace(/^\?|&?(?:build|other)=[^&]*&?/g, '');
+      var buildIndex = buildList.selectedIndex,
+          otherIndex = otherList.selectedIndex,
+          search = location.search.replace(/^\?|&?(?:build|other)=[^&]*&?/g, '');
+
       if (event.stopPropagation) {
         event.stopPropagation();
       } else {
@@ -88,8 +91,8 @@
       location.href =
         location.href.split('?')[0] + '?' +
         (search ? search + '&' : '') +
-        'build=' + buildList[buildList.selectedIndex].value + '&' +
-        'other=' + otherList[otherList.selectedIndex].value;
+        'build=' + (buildIndex < 0 ? build : buildList[buildIndex].value) + '&' +
+        'other=' + (otherIndex < 0 ? other : otherList[otherIndex].value);
     }
 
     var span1 = document.createElement('span');

@@ -319,7 +319,7 @@
     }
     function bound() {
       // `Function#bind` spec
-      // http://es5.github.com/#x15.3.4.5
+      // http://es5.github.io/#x15.3.4.5
       var args = arguments,
           thisBinding = thisArg;
 
@@ -333,7 +333,7 @@
         thisBinding = createObject(func.prototype);
 
         // mimic the constructor's `return` behavior
-        // http://es5.github.com/#x13.2.2
+        // http://es5.github.io/#x13.2.2
         var result = func.apply(thisBinding, args);
         return isObject(result) ? result : thisBinding;
       }
@@ -855,8 +855,8 @@
         otherType = typeof b;
 
     if (a === a &&
-        (!a || (type != 'function' && type != 'object')) &&
-        (!b || (otherType != 'function' && otherType != 'object'))) {
+        !(a && objectTypes[type]) &&
+        !(b && objectTypes[otherType])) {
       return false;
     }
     if (a == null || b == null) {
@@ -990,7 +990,7 @@
    */
   function isObject(value) {
     // check if the value is the ECMAScript language type of Object
-    // http://es5.github.com/#x8
+    // http://es5.github.io/#x8
     // and avoid a V8 bug
     // http://code.google.com/p/v8/issues/detail?id=2291
     return !!(value && objectTypes[typeof value]);

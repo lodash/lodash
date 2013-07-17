@@ -1152,7 +1152,7 @@
       // return the compiled function
       return factory(
         errorClass, errorProto, hasOwnProperty, indicatorObject, isArguments,
-        isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps,
+        isArray, isString, data.useKeys && keys, lodash, objectProto, objectTypes, nonEnumProps,
         stringClass, stringProto, toString
       );
     }
@@ -1315,7 +1315,8 @@
       'args': 'object',
       'init': '[]',
       'top': 'if (!(objectTypes[typeof object])) return result',
-      'loop': 'result.push(index)'
+      'loop': 'result.push(index)',
+      'useKeys': false
     });
 
     /**

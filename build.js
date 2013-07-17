@@ -832,10 +832,11 @@
     };
 
     var getDepPath = function(dep, fromPath) {
-      fromPath || (fromPath = '');
-
+      if (dep == 'require') {
+        return dep;
+      }
       var toPath = getPath(dep),
-          relative = path.relative(fromPath, toPath).replace(RegExp(path.sepEscaped, 'g'), sep);
+          relative = path.relative(fromPath || '', toPath).replace(RegExp(path.sepEscaped, 'g'), sep);
 
       if (relative.charAt(0) != '.') {
         relative = '.' + (relative ? sep + relative : '');
@@ -857,19 +858,26 @@
 
     // create modules for each identifier
     identifiers.forEach(function(identifier) {
-      var circDeps = circularDependencyMap[identifier];
+      var circDeps = circularDependencyMap[identifier],
+          modulePath = getPath(identifier),
+          iife = [];
 
       var deps = _.difference(
         getDependencies(identifier, true)
-        .concat(propDependencyMap[identifier] || [])
-        .concat(varDependencyMap[identifier] || [])
+        .concat(propDependencyMap[identifier] || arrayRef)
+        .concat(varDependencyMap[identifier] || arrayRef)
       , circDeps)
       .sort();
 
-      var modulePath = getPath(identifier),
-          depArgs = deps.join(', '),
-          depPaths = '[' + (deps.length ? "'" + getDepPaths(deps, modulePath).join("', '") + "'" : '') + '], ',
-          iife = [];
+      if (circDeps) {
+        deps.unshift('require');
+      }
+      var depArgs = deps.join(', ');
+
+      if (circDeps) {
+        push.apply(deps, circDeps);
+      }
+      var depPaths = '[' + (deps.length ? "'" + getDepPaths(deps, modulePath).join("', '") + "'" : '') + '], ';
 
       if (isAMD) {
         iife.push(

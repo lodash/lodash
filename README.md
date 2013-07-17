@@ -89,7 +89,7 @@ For a more detailed summary over the differences between various builds, check o
 lodash backbone
 ```
 
- * Legacy builds, tailored for older environments without [ES5 support](http://es5.github.com/), may be created using the `legacy` modifier argument.
+ * Legacy builds, tailored for older environments without [ES5 support](http://es5.github.io/), may be created using the `legacy` modifier argument.
 ```bash
 lodash legacy
 ```
@@ -104,7 +104,7 @@ lodash modern
 lodash mobile
 ```
 
- * Strict builds, with `_.bindAll`, `_.defaults`, and `_.extend` in [strict mode](http://es5.github.com/#C), may be created using the `strict` modifier argument.
+ * Strict builds, with `_.bindAll`, `_.defaults`, and `_.extend` in [strict mode](http://es5.github.io/#C), may be created using the `strict` modifier argument.
 ```bash
 lodash strict
 ```

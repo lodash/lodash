@@ -414,7 +414,7 @@
     // Avoid issues with some ES3 environments that attempt to use values, named
     // after built-in constructors like `Object`, for the creation of literals.
     // ES5 clears this up by stating that literals must use built-in constructors.
-    // See http://es5.github.com/#x11.1.5.
+    // See http://es5.github.io/#x11.1.5.
     context = context ? _.defaults(window.Object(), context, _.pick(window, contextProps)) : window;
 
     /** Native constructor references */
@@ -765,7 +765,7 @@
 
       function bound() {
         // `Function#bind` spec
-        // http://es5.github.com/#x15.3.4.5
+        // http://es5.github.io/#x15.3.4.5
         var args = arguments,
             thisBinding = isPartial ? this : thisArg;
 
@@ -782,7 +782,7 @@
           thisBinding = createObject(func.prototype);
 
           // mimic the constructor's `return` behavior
-          // http://es5.github.com/#x13.2.2
+          // http://es5.github.io/#x13.2.2
           var result = func.apply(thisBinding, args);
           return isObject(result) ? result : thisBinding;
         }
@@ -918,13 +918,10 @@
       var index, iterable = object, result = [];
       if (!iterable) return result;
       if (!(objectTypes[typeof object])) return result;    
-        var ownIndex = -1,
-            ownProps = objectTypes[typeof iterable] && keys(iterable),
-            length = ownProps ? ownProps.length : 0;
-
-        while (++ownIndex < length) {
-          index = ownProps[ownIndex];
-          result.push(index);    
+        for (index in iterable) {
+          if (hasOwnProperty.call(iterable, index)) {
+            result.push(index);    
+          }
         }    
       return result
     };
@@ -1578,12 +1575,12 @@
 
       // exit early for unlike primitive values
       if (a === a &&
-          (!a || (type != 'function' && type != 'object')) &&
-          (!b || (otherType != 'function' && otherType != 'object'))) {
+          !(a && objectTypes[type]) &&
+          !(b && objectTypes[otherType])) {
         return false;
       }
       // exit early for `null` and `undefined`, avoiding ES3's Function#call behavior
-      // http://es5.github.com/#x15.3.4.4
+      // http://es5.github.io/#x15.3.4.4
       if (a == null || b == null) {
         return a === b;
       }
@@ -1616,7 +1613,7 @@
 
         case regexpClass:
         case stringClass:
-          // coerce regexes to strings (http://es5.github.com/#x15.10.6.4)
+          // coerce regexes to strings (http://es5.github.io/#x15.10.6.4)
           // treat string primitives and their corresponding object instances as equal
           return a == String(b);
       }
@@ -1644,7 +1641,7 @@
       }
       // assume cyclic structures are equal
       // the algorithm for detecting cyclic structures is adapted from ES 5.1
-      // section 15.12.3, abstract operation `JO` (http://es5.github.com/#x15.12.3)
+      // section 15.12.3, abstract operation `JO` (http://es5.github.io/#x15.12.3)
       var initedStack = !stackA;
       stackA || (stackA = getArray());
       stackB || (stackB = getArray());
@@ -1720,7 +1717,7 @@
      * Checks if `value` is, or can be coerced to, a finite number.
      *
      * Note: This is not the same as native `isFinite`, which will return true for
-     * booleans and empty strings. See http://es5.github.com/#x15.1.2.5.
+     * booleans and empty strings. See http://es5.github.io/#x15.1.2.5.
      *
      * @static
      * @memberOf _
@@ -1787,7 +1784,7 @@
      */
     function isObject(value) {
       // check if the value is the ECMAScript language type of Object
-      // http://es5.github.com/#x8
+      // http://es5.github.io/#x8
       // and avoid a V8 bug
       // http://code.google.com/p/v8/issues/detail?id=2291
       return !!(value && objectTypes[typeof value]);
@@ -1797,7 +1794,7 @@
      * Checks if `value` is `NaN`.
      *
      * Note: This is not the same as native `isNaN`, which will return `true` for
-     * `undefined` and other values. See http://es5.github.com/#x15.1.2.4.
+     * `undefined` and other values. See http://es5.github.io/#x15.1.2.4.
      *
      * @static
      * @memberOf _
@@ -4908,7 +4905,7 @@
      * `value` is a hexadecimal, in which case a `radix` of `16` is used.
      *
      * Note: This method avoids differences in native ES3 and ES5 `parseInt`
-     * implementations. See http://es5.github.com/#E.
+     * implementations. See http://es5.github.io/#E.
      *
      * @static
      * @memberOf _
@@ -5014,6 +5011,7 @@
      * @param {Object} options The options object.
      *  escape - The "escape" delimiter regexp.
      *  evaluate - The "evaluate" delimiter regexp.
+     *  imports - An object of properties to import into the compiled template as local variables.
      *  interpolate - The "interpolate" delimiter regexp.
      *  sourceURL - The sourceURL of the template's compiled source.
      *  variable - The data object variable name.
@@ -5026,13 +5024,14 @@
      * compiled({ 'name': 'moe' });
      * // => 'hello moe'
      *
-     * var list = '<% _.forEach(people, function(name) { %><li><%= name %></li><% }); %>';
-     * _.template(list, { 'people': ['moe', 'larry'] });
-     * // => '<li>moe</li><li>larry</li>'
-     *
      * // using the "escape" delimiter to escape HTML in data property values
      * _.template('<b><%- value %></b>', { 'value': '<script>' });
      * // => '<b>&lt;script&gt;</b>'
+     *
+     * // using the "evaluate" delimiter to generate HTML
+     * var list = '<% _.forEach(people, function(name) { %><li><%= name %></li><% }); %>';
+     * _.template(list, { 'people': ['moe', 'larry'] });
+     * // => '<li>moe</li><li>larry</li>'
      *
      * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
      * _.template('hello ${ name }', { 'name': 'curly' });
@@ -5042,13 +5041,18 @@
      * _.template('<% print("hello " + epithet); %>!', { 'epithet': 'stooge' });
      * // => 'hello stooge!'
      *
-     * // using custom template delimiters
+     * // using a custom template delimiters
      * _.templateSettings = {
      *   'interpolate': /{{([\s\S]+?)}}/g
      * };
      *
      * _.template('hello {{ name }}!', { 'name': 'mustache' });
      * // => 'hello mustache!'
+     *
+     * // using the `imports` option to import jQuery
+     * var list = '<% $.each(people, function(name) { %><li><%= name %></li><% }); %>';
+     * _.template(list, { 'people': ['moe', 'larry'] }, { 'imports': { '$': jQuery });
+     * // => '<li>moe</li><li>larry</li>'
      *
      * // using the `sourceURL` option to specify a custom sourceURL for the template
      * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });

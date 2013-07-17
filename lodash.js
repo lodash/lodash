@@ -1934,8 +1934,8 @@
 
       // exit early for unlike primitive values
       if (a === a &&
-          (!a || (type != 'function' && type != 'object')) &&
-          (!b || (otherType != 'function' && otherType != 'object'))) {
+          !(a && objectTypes[type]) &&
+          !(b && objectTypes[otherType])) {
         return false;
       }
       // exit early for `null` and `undefined`, avoiding ES3's Function#call behavior

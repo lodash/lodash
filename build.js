@@ -102,7 +102,7 @@
     'compose': [],
     'contains': ['basicEach', 'getIndexOf', 'isString'],
     'countBy': ['createCallback', 'forEach'],
-    'createCallback': ['identity', 'isEqual', 'keys'],
+    'createCallback': ['identity', 'isEqual', 'isObject', 'keys'],
     'debounce': ['isObject'],
     'defaults': ['createCallback', 'createIterator'],
     'defer': ['bind'],
@@ -3657,6 +3657,15 @@
             '    : (first ? find : filter)(collection, properties);',
             '}'
           ].join('\n'));
+
+          // simplify `_.createCallback`
+          source = source.replace(matchFunction(source, 'createCallback'), function(match) {
+            return match
+              // remove unnecessary fast path
+              .replace(/^(( *)var props *=.+?),[\s\S]+?\n\2}/m, '$1;')
+              // remove `_.isEqual` use
+              .replace(/=.+?\bisEqual\((.+?), *(.+?),.+?\)/, '= $1 === $2');
+          });
         }
         // replace `_.zip`
         if(!isLodash('zip')) {
@@ -3703,12 +3712,6 @@
           }
         });
 
-        // remove `_.isEqual` use from `createCallback`
-        if (!isLodash('where')) {
-          source = source.replace(matchFunction(source, 'createCallback'), function(match) {
-            return match.replace(/=.+?\bisEqual\((.+?), *(.+?),.+?\)/, '= $1 === $2');
-          });
-        }
         // remove unused features from `createBound`
         if (_.every(['bindKey', 'partial', 'partialRight'], function(funcName) {
               return !_.contains(buildFuncs, funcName);

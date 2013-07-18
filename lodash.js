@@ -1205,6 +1205,34 @@
     }
 
     /**
+     * Checks if `func` references the `this` keyword.
+     *
+     * @private
+     * @param {Function} func The function to inspect.
+     * @returns {Boolean} Returns `true` if `this` is referenced, else `false`.
+     */
+    function hasThis(func) {
+      var result = func.__hasThis__;
+      if (typeof result == 'boolean') {
+        return result;
+      }
+      result = reThis.test(fnToString.call(func));
+      defineProperty(func, '__hasThis__', {
+        'configurable': true,
+        'enumerable': false,
+        'writable': true,
+        'value': result
+      });
+      return result;
+    }
+    // fallback for older browsers
+    if (!defineProperty || !reThis) {
+      hasThis = function() {
+        return true;
+      };
+    }
+
+    /**
      * A fallback implementation of `isPlainObject` which checks if a given `value`
      * is an object created by the `Object` constructor, assuming objects created
      * by the `Object` constructor have no inherited enumerable properties and that
@@ -4784,7 +4812,7 @@
           return result;
         };
       }
-      if (typeof thisArg == 'undefined' || (reThis && !reThis.test(fnToString.call(func)))) {
+      if (typeof thisArg == 'undefined' || !hasThis(func)) {
         return func;
       }
       if (argCount === 1) {

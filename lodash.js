@@ -4762,10 +4762,20 @@
             return object[func];
           };
         }
-        var props = keys(func);
+        var props = keys(func),
+            key = props[0],
+            a = func[key];
+
+        if (props.length == 1 && a === a && !isObject(a)) {
+          return function(object) {
+            var b = object[key];
+            return a === b && (a !== 0 || (1 / a == 1 / b));
+          };
+        }
         return function(object) {
           var length = props.length,
               result = false;
+
           while (length--) {
             if (!(result = isEqual(object[props[length]], func[props[length]], indicatorObject))) {
               break;

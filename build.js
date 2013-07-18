@@ -1361,6 +1361,18 @@
   }
 
   /**
+   * Gets the `hasThis` fork from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the `isFunction` fork.
+   */
+  function getHasThisFork(source) {
+    var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\(!defineProperty\s*\|\|\s*!reThis\)[\s\S]+?\n\1}/);
+    return result ? result[0] : '';
+  }
+
+  /**
    * Gets the Lo-Dash method assignments snippet from `source`.
    *
    * @private
@@ -1784,19 +1796,32 @@
   }
 
   /**
-   * Removes the binding optimization from `source`.
+   * Removes `hasThis` and its binding optimizations from `source`.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
-  function removeBindingOptimization(source) {
-    // remove `reThis` from `createCallback`
+  function removeHasThis(source) {
+    source = removeFunction(source, 'hasThis');
+
+    // remove `hasThis` use `_.createCallback`
     source = source.replace(matchFunction(source, 'createCallback'), function(match) {
-      return match.replace(/\s*\|\|\s*\(reThis[\s\S]+?\)\)\)/, '');
+      return match.replace(/\s*\|\|\s*!hasThis\(.+?\)/, '');
     });
 
     return source;
+  }
+
+  /**
+   * Removes the `hasThis` fork from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeHasThisFork(source) {
+    return source.replace(getHasThisFork(source), '');
   }
 
   /**
@@ -2982,8 +3007,9 @@
         );
       }
       if (isModern) {
-        source = removeSupportSpliceObjects(source);
         source = removeIsArgumentsFork(source);
+        source = removeHasThisFork(source);
+        source = removeSupportSpliceObjects(source);
 
         if (isMobile) {
           source = replaceSupportProp(source, 'enumPrototypes', 'true');
@@ -3001,7 +3027,7 @@
         }
       }
       if ((isLegacy || isMobile || isUnderscore) && !isLodash('createCallback')) {
-        source = removeBindingOptimization(source);
+        source = removeHasThis(source);
       }
       if (isLegacy || isMobile || isUnderscore) {
         if (isMobile || (!isLodash('assign') && !isLodash('defaults') && !isLodash('forIn') && !isLodash('forOwn'))) {
@@ -4080,7 +4106,7 @@
       });
 
       // remove forks of removed functions
-      _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(funcName) {
+      _.each(['createObject', 'defer', 'hasThis', 'isArguments', 'isArray', 'isFunction'], function(funcName) {
         if (isExcluded(funcName)) {
           source = eval('remove' + capitalize(funcName) + 'Fork')(source);
         }

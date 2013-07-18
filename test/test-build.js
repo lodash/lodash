@@ -1054,6 +1054,10 @@
         equal(lodash.max('abc'), -Infinity, '_.max should return `-Infinity` for strings: ' + basename);
         equal(lodash.min('abc'), Infinity, '_.min should return `Infinity` for strings: ' + basename);
 
+        object = {};
+        lodash.mixin(object, { 'a': function(a) { return a[0]; } });
+        equal('a' in object, false, '_.mixin should not accept a destination object: ' + basename);
+
         // avoid issues comparing objects with `deepEqual`
         object = { 'a': 1, 'b': 2, 'c': 3 };
         actual = lodash.omit(object, function(value) { return value == 3; });

@@ -4561,7 +4561,7 @@
         var key = keys[index];
         if (values) {
           result[key] = values[index];
-        } else {
+        } else if (key) {
           result[key[0]] = key[1];
         }
       }

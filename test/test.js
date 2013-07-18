@@ -3576,6 +3576,17 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.zipObject');
+
+  (function() {
+    test('should skip falsey elements in a given two dimensional array', function() {
+      var actual = _.zipObject([['a', 1], ['b', 2]].concat(falsey));
+      deepEqual(actual, { 'a': 1, 'b': 2 });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).shift');
 
   (function() {

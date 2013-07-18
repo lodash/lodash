@@ -2234,6 +2234,24 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.mixin');
+
+  (function() {
+    test('should accept an `object` argument', function() {
+      var lodash = {};
+      _.mixin(lodash, { 'a': function(a) { return a[0]; } });
+      strictEqual(lodash.a(['a']), 'a');
+    });
+
+    test('should accept a function `object` argument', function() {
+      var lodash = _.runInContext();
+      _.mixin(lodash, { 'a': function(a) { return a[0]; } });
+      strictEqual(lodash(['a']).a().value(), 'a');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.omit');
 
   (function() {

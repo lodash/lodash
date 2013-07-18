@@ -485,6 +485,7 @@
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
+        defineProperty = reNative.test(defineProperty = Object.defineProperty) && defineProperty,
         floor = Math.floor,
         fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
@@ -5223,20 +5224,26 @@
      * _('moe').capitalize();
      * // => 'Moe'
      */
-    function mixin(object) {
-      forEach(functions(object), function(methodName) {
-        var func = lodash[methodName] = object[methodName];
+    function mixin(object, source) {
+      if (!source) {
+        source = object;
+        object = lodash;
+      }
+      var isFunc = isFunction(object);
+      forEach(functions(source), function(methodName) {
+        var func = object[methodName] = source[methodName];
+        if (isFunc) {
+          object.prototype[methodName] = function() {
+            var value = this.__wrapped__,
+                args = [value];
 
-        lodash.prototype[methodName] = function() {
-          var value = this.__wrapped__,
-              args = [value];
-
-          push.apply(args, arguments);
-          var result = func.apply(lodash, args);
-          return (value && typeof value == 'object' && value === result)
-            ? this
-            : new lodashWrapper(result);
-        };
+            push.apply(args, arguments);
+            var result = func.apply(object, args);
+            return (value && typeof value == 'object' && value === result)
+              ? this
+              : new lodashWrapper(result);
+          };
+        }
       });
     }
 

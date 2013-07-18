@@ -153,7 +153,7 @@
     'memoize': [],
     'merge': ['createCallback', 'forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isPlainObject', 'releaseArray'],
     'min': ['basicEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
-    'mixin': ['forEach', 'functions'],
+    'mixin': ['forEach', 'functions', 'isFunction'],
     'noConflict': [],
     'omit': ['basicFlatten', 'createCallback', 'forIn', 'getIndexOf'],
     'once': [],
@@ -2715,6 +2715,9 @@
             funcDependencyMap[funcName] = _.without(deps, 'lodash', 'lodashWrapper');
           }
         });
+      }
+      if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
+        funcDependencyMap.mixin = _.without(funcDependencyMap.mixin, 'isFunction');
       }
       if (isUnderscore) {
         if (!isLodash('clone') && !isLodash('cloneDeep')) {

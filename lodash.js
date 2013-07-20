@@ -1687,10 +1687,10 @@
     }
 
     /**
-     * Iterates over `object`'s own and inherited enumerable properties, executing
-     * the `callback` for each property. The `callback` is bound to `thisArg` and
-     * invoked with three arguments; (value, key, object). Callbacks may exit iteration
-     * early by explicitly returning `false`.
+     * Iterates over own and inherited enumerable properties of a given `object`,
+     * executing the `callback` for each property. The `callback` is bound to
+     * `thisArg` and invoked with three arguments; (value, key, object).
+     * Callbacks may exit iteration early by explicitly returning `false`.
      *
      * @static
      * @memberOf _
@@ -1720,10 +1720,10 @@
     });
 
     /**
-     * Iterates over an object's own enumerable properties, executing the `callback`
-     * for each property. The `callback` is bound to `thisArg` and invoked with three
-     * arguments; (value, key, object). Callbacks may exit iteration early by explicitly
-     * returning `false`.
+     * Iterates over own enumerable properties of a given `object`, executing the
+     * `callback` for each property. The `callback` is bound to `thisArg` and
+     * invoked with three arguments; (value, key, object). Callbacks may exit
+     * iteration early by explicitly returning `false`.
      *
      * @static
      * @memberOf _
@@ -2212,7 +2212,7 @@
     function isNaN(value) {
       // `NaN` as a primitive is the only value that is not equal to itself
       // (perform the [[Class]] check first to avoid errors with some host objects in IE)
-      return isNumber(value) && value != +value
+      return isNumber(value) && value != +value;
     }
 
     /**
@@ -2879,9 +2879,9 @@
     }
 
     /**
-     * Examines each element in a `collection`, returning an array of all elements
-     * the `callback` returns truthy for. The `callback` is bound to `thisArg` and
-     * invoked with three arguments; (value, index|key, collection).
+     * Iterates over elements of a `collection`, returning an array of all elements
+     * the `callback` returns truthy for. The `callback` is bound to `thisArg`
+     * and invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -2943,9 +2943,9 @@
     }
 
     /**
-     * Examines each element in a `collection`, returning the first that the `callback`
-     * returns truthy for. The `callback` is bound to `thisArg` and invoked with three
-     * arguments; (value, index|key, collection).
+     * Iterates over elements of a `collection`, returning the first that the
+     * `callback` returns truthy for. The `callback` is bound to `thisArg` and
+     * invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -3011,10 +3011,10 @@
     }
 
     /**
-     * Iterates over a `collection`, executing the `callback` for each element in
-     * the `collection`. The `callback` is bound to `thisArg` and invoked with three
-     * arguments; (value, index|key, collection). Callbacks may exit iteration early
-     * by explicitly returning `false`.
+     * Iterates over elements of a `collection`, executing the `callback` for
+     * each element. The `callback` is bound to `thisArg` and invoked with three
+     * arguments; (value, index|key, collection). Callbacks may exit iteration
+     * early by explicitly returning `false`.
      *
      * @static
      * @memberOf _
@@ -3400,8 +3400,8 @@
     }
 
     /**
-     * This method is similar to `_.reduce`, except that it iterates over a
-     * `collection` from right to left.
+     * This method is similar to `_.reduce`, except that it iterates over elements
+     * of a `collection` from right to left.
      *
      * @static
      * @memberOf _
@@ -3681,10 +3681,9 @@
     }
 
     /**
-     * Examines each element in a `collection`, returning an array of all elements
-     * that have the given `properties`. When checking `properties`, this method
-     * performs a deep comparison between values to determine if they are equivalent
-     * to each other.
+     * Performs a deep comparison of each element in a `collection` to the given
+     * `properties` object, returning an array of all elements that have equivalent
+     * property values.
      *
      * @static
      * @memberOf _
@@ -3696,12 +3695,15 @@
      * @example
      *
      * var stooges = [
-     *   { 'name': 'moe', 'age': 40 },
-     *   { 'name': 'larry', 'age': 50 }
+     *   { 'name': 'curly', 'age': 30, 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] },
+     *   { 'name': 'moe', 'age': '40', 'quotes': ['Spread out!', 'You knucklehead!'] }
      * ];
      *
      * _.where(stooges, { 'age': 40 });
-     * // => [{ 'name': 'moe', 'age': 40 }]
+     * // => [{ 'name': 'moe', 'age': '40', 'quotes': ['Spread out!', 'You knucklehead!'] }]
+     *
+     * _.where(stooges, { 'quotes': ['Poifect!'] });
+     * // => [{ 'name': 'curly', 'age': 30, 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] }]
      */
     var where = filter;
 

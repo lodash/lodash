@@ -50,6 +50,9 @@
     "node",
     "rhino"
   ],
+  "files": [
+    "dist/lodash.js"
+  ],
   "jam": {
     "main": "./dist/lodash.compat.js"
   },

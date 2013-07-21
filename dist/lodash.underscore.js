@@ -77,7 +77,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * A basic implementation of `_.indexOf` without support for binary searches
+   * A base implementation of `_.indexOf` without support for binary searches
    * or `fromIndex` constraints.
    *
    * @private
@@ -86,7 +86,7 @@
    * @param {Number} [fromIndex=0] The index to search from.
    * @returns {Number} Returns the index of the matched value or `-1`.
    */
-  function basicIndexOf(array, value, fromIndex) {
+  function baseIndexOf(array, value, fromIndex) {
     var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0;
 
@@ -173,6 +173,7 @@
 
   /** Native method shortcuts */
   var ceil = Math.ceil,
+      concat = arrayRef.concat,
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
@@ -358,7 +359,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * A basic implementation of `_.flatten` without support for `callback`
+   * A base implementation of `_.flatten` without support for `callback`
    * shorthands or `thisArg` binding.
    *
    * @private
@@ -368,7 +369,7 @@
    * @param {Number} [fromIndex=0] The index to start from.
    * @returns {Array} Returns a new flattened array.
    */
-  function basicFlatten(array, isShallow, isArgArrays, fromIndex) {
+  function baseFlatten(array, isShallow, isArgArrays, fromIndex) {
     var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0,
         result = [];
@@ -377,7 +378,7 @@
       var value = array[index];
       // recursively flatten arrays (susceptible to call stack limits)
       if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
-        push.apply(result, isShallow ? value : basicFlatten(value, isShallow, isArgArrays));
+        push.apply(result, isShallow ? value : baseFlatten(value, isShallow, isArgArrays));
       } else if (!isArgArrays) {
         result.push(value);
       }
@@ -386,7 +387,118 @@
   }
 
   /**
-   * A basic implementation of `_.uniq` without support for `callback` shorthands
+   * A base implementation of `_.isEqual`, without support for `thisArg` binding,
+   * that allows partial "_.where" style comparisons.
+   *
+   * @private
+   * @param {Mixed} a The value to compare.
+   * @param {Mixed} b The other value to compare.
+   * @param {Function} [callback] The function to customize comparing values.
+   * @param {Function} [isWhere=false] A flag to indicate performing partial comparisons.
+   * @param {Array} [stackA=[]] Tracks traversed `a` objects.
+   * @param {Array} [stackB=[]] Tracks traversed `b` objects.
+   * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
+   */
+  function baseIsEqual(a, b, stackA, stackB) {
+    if (a === b) {
+      return a !== 0 || (1 / a == 1 / b);
+    }
+    var type = typeof a,
+        otherType = typeof b;
+
+    if (a === a &&
+        !(a && objectTypes[type]) &&
+        !(b && objectTypes[otherType])) {
+      return false;
+    }
+    if (a == null || b == null) {
+      return a === b;
+    }
+    var className = toString.call(a),
+        otherClass = toString.call(b);
+
+    if (className != otherClass) {
+      return false;
+    }
+    switch (className) {
+      case boolClass:
+      case dateClass:
+        return +a == +b;
+
+      case numberClass:
+        return a != +a
+          ? b != +b
+          : (a == 0 ? (1 / a == 1 / b) : a == +b);
+
+      case regexpClass:
+      case stringClass:
+        return a == String(b);
+    }
+    var isArr = className == arrayClass;
+    if (!isArr) {
+      if (a instanceof lodash || b instanceof lodash) {
+        return baseIsEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);
+      }
+      if (className != objectClass) {
+        return false;
+      }
+      var ctorA = a.constructor,
+          ctorB = b.constructor;
+
+      if (ctorA != ctorB && !(
+            isFunction(ctorA) && ctorA instanceof ctorA &&
+            isFunction(ctorB) && ctorB instanceof ctorB
+          )) {
+        return false;
+      }
+    }
+    stackA || (stackA = []);
+    stackB || (stackB = []);
+
+    var length = stackA.length;
+    while (length--) {
+      if (stackA[length] == a) {
+        return stackB[length] == b;
+      }
+    }
+    var result = true,
+        size = 0;
+
+    stackA.push(a);
+    stackB.push(b);
+
+    if (isArr) {
+      size = b.length;
+      result = size == a.length;
+
+      if (result) {
+        while (size--) {
+          if (!(result = baseIsEqual(a[size], b[size], stackA, stackB))) {
+            break;
+          }
+        }
+      }
+      return result;
+    }
+    forIn(b, function(value, key, b) {
+      if (hasOwnProperty.call(b, key)) {
+        size++;
+        return !(result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, stackA, stackB)) && indicatorObject;
+      }
+    });
+
+    if (result) {
+      forIn(a, function(value, key, a) {
+        if (hasOwnProperty.call(a, key)) {
+          return !(result = --size > -1) && indicatorObject;
+        }
+      });
+    }
+    return result;
+  }
+
+  /**
+   * A base implementation of `_.uniq` without support for `callback` shorthands
    * or `thisArg` binding.
    *
    * @private
@@ -395,7 +507,7 @@
    * @param {Function} [callback] The function called per iteration.
    * @returns {Array} Returns a duplicate-value-free array.
    */
-  function basicUniq(array, isSorted, callback) {
+  function baseUniq(array, isSorted, callback) {
     var index = -1,
         indexOf = getIndexOf(),
         length = array ? array.length : 0,
@@ -426,53 +538,56 @@
    *
    * @private
    * @param {Function|String} func The function to bind or the method name.
-   * @param {Mixed} [thisArg] The `this` binding of `func`.
-   * @param {Array} partialArgs An array of arguments to be partially applied.
-   * @param {Object} [idicator] Used to indicate binding by key or partially
-   *  applying arguments from the right.
+   * @param {Mixed} thisArg The `this` binding of `func`.
+   * @param {Array} partialArgs An array of arguments to be prepended to those passed to the new function.
+   * @param {Array} partialRightArgs An array of arguments to be appended to those passed to the new function.
+   * @param {Boolean} [isPartial=false] A flag to indicate performing only partial application.
+   * @param {Boolean} [isAlt=false] A flag to indicate `_.bindKey` or `_.partialRight` behavior.
    * @returns {Function} Returns the new bound function.
    */
-  function createBound(func, thisArg, partialArgs, indicator) {
-    var isFunc = isFunction(func),
-        isPartial = !partialArgs,
-        key = thisArg;
+  function createBound(func, thisArg, partialArgs, partialRightArgs, isPartial, isAlt) {
+    var isFunc = isFunction(func);
 
-    // juggle arguments
-    if (isPartial) {
-      var rightIndicator = indicator;
-      partialArgs = thisArg;
+    // except for `_.bindKey`, throw when `func` is not a function
+    if (!isFunc && (isPartial || !isAlt)) {
+      throw new TypeError;
     }
-    else if (!isFunc) {
-      if (!indicator) {
-        throw new TypeError;
-      }
+    var key = thisArg;
+
+    // juggle arguments for `_.bindKey`
+    if (!isPartial && isAlt) {
       thisArg = func;
     }
+    // use `Function#bind` if it exists and is fast
+    // (in V8 `Function#bind` is slower except when partially applied)
+    if (!isPartial && !isAlt && (support.fastBind || (nativeBind && partialArgs.length))) {
+      var bound = nativeBind.call.apply(nativeBind, concat.call(arrayRef, func, thisArg, partialArgs));
+    }
+    else {
+      bound = function() {
+        // `Function#bind` spec
+        // http://es5.github.io/#x15.3.4.5
+        var args = arguments,
+            thisBinding = isPartial ? this : thisArg;
 
-    function bound() {
-      // `Function#bind` spec
-      // http://es5.github.io/#x15.3.4.5
-      var args = arguments,
-          thisBinding = isPartial ? this : thisArg;
+        if (!isFunc) {
+          func = thisArg[key];
+        }
+        if (partialArgs.length || partialRightArgs.length) {
+          args = concat.apply(partialArgs, args);
+          push.apply(args, partialRightArgs);
+        }
+        if (this instanceof bound) {
+          // ensure `new bound` is an instance of `func`
+          thisBinding = createObject(func.prototype);
 
-      if (!isFunc) {
-        func = thisArg[key];
-      }
-      if (partialArgs.length) {
-        args = args.length
-          ? (args = nativeSlice.call(args), rightIndicator ? args.concat(partialArgs) : partialArgs.concat(args))
-          : partialArgs;
-      }
-      if (this instanceof bound) {
-        // ensure `new bound` is an instance of `func`
-        thisBinding = createObject(func.prototype);
-
-        // mimic the constructor's `return` behavior
-        // http://es5.github.io/#x13.2.2
-        var result = func.apply(thisBinding, args);
-        return isObject(result) ? result : thisBinding;
-      }
-      return func.apply(thisBinding, args);
+          // mimic the constructor's `return` behavior
+          // http://es5.github.io/#x13.2.2
+          var result = func.apply(thisBinding, args);
+          return isObject(result) ? result : thisBinding;
+        }
+        return func.apply(thisBinding, args);
+      };
     }
     return bound;
   }
@@ -513,13 +628,13 @@
   /**
    * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
    * customized, this method returns the custom method, otherwise it returns
-   * the `basicIndexOf` function.
+   * the `baseIndexOf` function.
    *
    * @private
    * @returns {Function} Returns the "indexOf" function.
    */
   function getIndexOf() {
-    var result = (result = lodash.indexOf) === indexOf ? basicIndexOf : result;
+    var result = (result = lodash.indexOf) === indexOf ? baseIndexOf : result;
     return result;
   }
 
@@ -708,8 +823,6 @@
    * @param {Boolean} [deep=false] A flag to indicate a deep clone.
    * @param {Function} [callback] The function to customize cloning values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param- {Array} [stackA=[]] Tracks traversed source objects.
-   * @param- {Array} [stackB=[]] Associates clones with source counterparts.
    * @returns {Mixed} Returns the cloned `value`.
    * @example
    *
@@ -780,10 +893,10 @@
   }
 
   /**
-   * Iterates over `object`'s own and inherited enumerable properties, executing
-   * the `callback` for each property. The `callback` is bound to `thisArg` and
-   * invoked with three arguments; (value, key, object). Callbacks may exit iteration
-   * early by explicitly returning `false`.
+   * Iterates over own and inherited enumerable properties of a given `object`,
+   * executing the `callback` for each property. The `callback` is bound to
+   * `thisArg` and invoked with three arguments; (value, key, object).
+   * Callbacks may exit iteration early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -819,10 +932,10 @@
   };
 
   /**
-   * Iterates over an object's own enumerable properties, executing the `callback`
-   * for each property. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, key, object). Callbacks may exit iteration early by explicitly
-   * returning `false`.
+   * Iterates over own enumerable properties of a given `object`, executing the
+   * `callback` for each property. The `callback` is bound to `thisArg` and
+   * invoked with three arguments; (value, key, object). Callbacks may exit
+   * iteration early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -1022,8 +1135,6 @@
    * @param {Mixed} b The other value to compare.
    * @param {Function} [callback] The function to customize comparing values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @param- {Array} [stackA=[]] Tracks traversed `a` objects.
-   * @param- {Array} [stackB=[]] Tracks traversed `b` objects.
    * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
    * @example
    *
@@ -1048,102 +1159,8 @@
    * });
    * // => true
    */
-  function isEqual(a, b, stackA, stackB) {
-    if (a === b) {
-      return a !== 0 || (1 / a == 1 / b);
-    }
-    var type = typeof a,
-        otherType = typeof b;
-
-    if (a === a &&
-        !(a && objectTypes[type]) &&
-        !(b && objectTypes[otherType])) {
-      return false;
-    }
-    if (a == null || b == null) {
-      return a === b;
-    }
-    var className = toString.call(a),
-        otherClass = toString.call(b);
-
-    if (className != otherClass) {
-      return false;
-    }
-    switch (className) {
-      case boolClass:
-      case dateClass:
-        return +a == +b;
-
-      case numberClass:
-        return a != +a
-          ? b != +b
-          : (a == 0 ? (1 / a == 1 / b) : a == +b);
-
-      case regexpClass:
-      case stringClass:
-        return a == String(b);
-    }
-    var isArr = className == arrayClass;
-    if (!isArr) {
-      if (a instanceof lodash || b instanceof lodash) {
-        return isEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);
-      }
-      if (className != objectClass) {
-        return false;
-      }
-      var ctorA = a.constructor,
-          ctorB = b.constructor;
-
-      if (ctorA != ctorB && !(
-            isFunction(ctorA) && ctorA instanceof ctorA &&
-            isFunction(ctorB) && ctorB instanceof ctorB
-          )) {
-        return false;
-      }
-    }
-    stackA || (stackA = []);
-    stackB || (stackB = []);
-
-    var length = stackA.length;
-    while (length--) {
-      if (stackA[length] == a) {
-        return stackB[length] == b;
-      }
-    }
-    var result = true,
-        size = 0;
-
-    stackA.push(a);
-    stackB.push(b);
-
-    if (isArr) {
-      size = b.length;
-      result = size == a.length;
-
-      if (result) {
-        while (size--) {
-          if (!(result = isEqual(a[size], b[size], stackA, stackB))) {
-            break;
-          }
-        }
-      }
-      return result;
-    }
-    forIn(b, function(value, key, b) {
-      if (hasOwnProperty.call(b, key)) {
-        size++;
-        return !(result = hasOwnProperty.call(a, key) && isEqual(a[key], value, stackA, stackB)) && indicatorObject;
-      }
-    });
-
-    if (result) {
-      forIn(a, function(value, key, a) {
-        if (hasOwnProperty.call(a, key)) {
-          return !(result = --size > -1) && indicatorObject;
-        }
-      });
-    }
-    return result;
+  function isEqual(a, b) {
+    return baseIsEqual(a, b);
   }
 
   /**
@@ -1257,7 +1274,7 @@
   function isNaN(value) {
     // `NaN` as a primitive is the only value that is not equal to itself
     // (perform the [[Class]] check first to avoid errors with some host objects in IE)
-    return isNumber(value) && value != +value
+    return isNumber(value) && value != +value;
   }
 
   /**
@@ -1378,7 +1395,7 @@
    */
   function omit(object) {
     var indexOf = getIndexOf(),
-        props = basicFlatten(arguments, true, false, 1),
+        props = baseFlatten(arguments, true, false, 1),
         result = {};
 
     forIn(object, function(value, key) {
@@ -1444,7 +1461,7 @@
    */
   function pick(object) {
     var index = -1,
-        props = basicFlatten(arguments, true, false, 1),
+        props = baseFlatten(arguments, true, false, 1),
         length = props.length,
         result = {};
 
@@ -1632,9 +1649,9 @@
   }
 
   /**
-   * Examines each element in a `collection`, returning an array of all elements
-   * the `callback` returns truthy for. The `callback` is bound to `thisArg` and
-   * invoked with three arguments; (value, index|key, collection).
+   * Iterates over elements of a `collection`, returning an array of all elements
+   * the `callback` returns truthy for. The `callback` is bound to `thisArg`
+   * and invoked with three arguments; (value, index|key, collection).
    *
    * If a property name is passed for `callback`, the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -1696,9 +1713,9 @@
   }
 
   /**
-   * Examines each element in a `collection`, returning the first that the `callback`
-   * returns truthy for. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, index|key, collection).
+   * Iterates over elements of a `collection`, returning the first that the
+   * `callback` returns truthy for. The `callback` is bound to `thisArg` and
+   * invoked with three arguments; (value, index|key, collection).
    *
    * If a property name is passed for `callback`, the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -1791,10 +1808,10 @@
   }
 
   /**
-   * Iterates over a `collection`, executing the `callback` for each element in
-   * the `collection`. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, index|key, collection). Callbacks may exit iteration early
-   * by explicitly returning `false`.
+   * Iterates over elements of a `collection`, executing the `callback` for
+   * each element. The `callback` is bound to `thisArg` and invoked with three
+   * arguments; (value, index|key, collection). Callbacks may exit iteration
+   * early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -2189,8 +2206,8 @@
   }
 
   /**
-   * This method is similar to `_.reduce`, except that it iterates over a
-   * `collection` from right to left.
+   * This method is similar to `_.reduce`, except that it iterates over elements
+   * of a `collection` from right to left.
    *
    * @static
    * @memberOf _
@@ -2468,10 +2485,9 @@
   }
 
   /**
-   * Examines each element in a `collection`, returning an array of all elements
-   * that have the given `properties`. When checking `properties`, this method
-   * performs a deep comparison between values to determine if they are equivalent
-   * to each other.
+   * Performs a deep comparison of each element in a `collection` to the given
+   * `properties` object, returning an array of all elements that have equivalent
+   * property values.
    *
    * @static
    * @memberOf _
@@ -2483,12 +2499,15 @@
    * @example
    *
    * var stooges = [
-   *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 }
+   *   { 'name': 'curly', 'age': 30, 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] },
+   *   { 'name': 'moe', 'age': '40', 'quotes': ['Spread out!', 'You knucklehead!'] }
    * ];
    *
    * _.where(stooges, { 'age': 40 });
-   * // => [{ 'name': 'moe', 'age': 40 }]
+   * // => [{ 'name': 'moe', 'age': '40', 'quotes': ['Spread out!', 'You knucklehead!'] }]
+   *
+   * _.where(stooges, { 'quotes': ['Poifect!'] });
+   * // => [{ 'name': 'curly', 'age': 30, 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] }]
    */
   function where(collection, properties, first) {
     return (first && isEmpty(properties))
@@ -2545,7 +2564,7 @@
     var index = -1,
         indexOf = getIndexOf(),
         length = array.length,
-        flattened = basicFlatten(arguments, true, true, 1),
+        flattened = baseFlatten(arguments, true, true, 1),
         result = [];
 
     while (++index < length) {
@@ -2677,7 +2696,7 @@
    * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
    */
   function flatten(array, isShallow) {
-    return basicFlatten(array, isShallow);
+    return baseFlatten(array, isShallow);
   }
 
   /**
@@ -2712,7 +2731,7 @@
       var index = sortedIndex(array, value);
       return array[index] === value ? index : -1;
     }
-    return array ? basicIndexOf(array, value, fromIndex) : -1;
+    return array ? baseIndexOf(array, value, fromIndex) : -1;
   }
 
   /**
@@ -3142,7 +3161,7 @@
    * // => [1, 2, 3, 101, 10]
    */
   function union(array) {
-    return basicUniq(basicFlatten(arguments, true, true));
+    return baseUniq(baseFlatten(arguments, true, true));
   }
 
   /**
@@ -3198,7 +3217,7 @@
     if (callback != null) {
       callback = createCallback(callback, thisArg);
     }
-    return basicUniq(array, isSorted, callback);
+    return baseUniq(array, isSorted, callback);
   }
 
   /**
@@ -3274,7 +3293,7 @@
       var key = keys[index];
       if (values) {
         result[key] = values[index];
-      } else {
+      } else if (key) {
         result[key[0]] = key[1];
       }
     }
@@ -3333,11 +3352,7 @@
    * // => 'hi moe'
    */
   function bind(func, thisArg) {
-    // use `Function#bind` if it exists and is fast
-    // (in V8 `Function#bind` is slower except when partially applied)
-    return support.fastBind || (nativeBind && arguments.length > 2)
-      ? nativeBind.call.apply(nativeBind, arguments)
-      : createBound(func, thisArg, nativeSlice.call(arguments, 2));
+    return createBound(func, thisArg, nativeSlice.call(arguments, 2), []);
   }
 
   /**
@@ -3365,7 +3380,7 @@
    * // => alerts 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
-    var funcs = arguments.length > 1 ? basicFlatten(arguments, true, false, 1) : functions(object),
+    var funcs = arguments.length > 1 ? baseFlatten(arguments, true, false, 1) : functions(object),
         index = -1,
         length = funcs.length;
 
@@ -3469,6 +3484,7 @@
       return function(object) {
         var length = props.length,
             result = false;
+
         while (length--) {
           if (!(result = object[props[length]] === func[props[length]])) {
             break;
@@ -3746,7 +3762,7 @@
    * // => 'hi moe'
    */
   function partial(func) {
-    return createBound(func, nativeSlice.call(arguments, 1));
+    return createBound(func, null, nativeSlice.call(arguments, 1), [], true);
   }
 
   /**

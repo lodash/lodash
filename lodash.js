@@ -1093,7 +1093,7 @@
      * @param {Mixed} a The value to compare.
      * @param {Mixed} b The other value to compare.
      * @param {Function} [callback] The function to customize comparing values.
-     * @param {Function} [isWhere] A flag to indicate performing partial comparisons.
+     * @param {Function} [isWhere=false] A flag to indicate performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `a` objects.
      * @param {Array} [stackB=[]] Tracks traversed `b` objects.
      * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
@@ -1378,15 +1378,18 @@
      *
      * @private
      * @param {Function|String} func The function to bind or the method name.
-     * @param {Mixed} [thisArg] The `this` binding of `func`.
-     * @param {Array} partialArgs An array of arguments to be partially applied.
-     * @param {Object} [idicator] Used to indicate binding by key or partially
-     *  applying arguments from the right.
+     * @param {Mixed} thisArg The `this` binding of `func`.
+     * @param {Array} partialArgs An array of arguments to be prepended to those passed to the new function.
+     * @param {Array} partialRightArgs An array of arguments to be appended to those passed to the new function.
+     * @param {Boolean} [isPartial=false] A flag to indicate performing only partial application.
+     * @param {Boolean} [isAlt=false] A flag to indicate `_.bindKey` or `_.partialRight` behavior.
      * @returns {Function} Returns the new bound function.
      */
     function createBound(func, thisArg, partialArgs, partialRightArgs, isPartial, isAlt) {
       var isFunc = isFunction(func);
-      if (!isFunc && !(isAlt && !isPartial)) {
+
+      // except for `_.bindKey`, throw when `func` is not a function
+      if (!isFunc && (isPartial || !isAlt)) {
         throw new TypeError;
       }
       var args = func.__bindData__,
@@ -1401,17 +1404,17 @@
         }
         return createBound.apply(null, args);
       }
-      // juggle arguments
-      if (!isPartial && !isFunc) {
+      // juggle arguments for `_.bindKey`
+      if (!isPartial && isAlt) {
         thisArg = func;
       }
+      // use `Function#bind` if it exists and is fast
+      // (in V8 `Function#bind` is slower except when partially applied)
       if (!isPartial && !isAlt && (support.fastBind || (nativeBind && partialArgs.length))) {
-        // use `Function#bind` if it exists and is fast
-        // (in V8 `Function#bind` is slower except when partially applied)
-        var result = nativeBind.call.apply(nativeBind, concat.call(arrayRef, func, thisArg, partialArgs));
+        var bound = nativeBind.call.apply(nativeBind, concat.call(arrayRef, func, thisArg, partialArgs));
       }
       else {
-        var result = function bound() {
+        bound = function() {
           // `Function#bind` spec
           // http://es5.github.io/#x15.3.4.5
           var args = arguments,
@@ -1436,8 +1439,8 @@
           return func.apply(thisBinding, args);
         };
       }
-      setBindData(result, nativeSlice.call(arguments));
-      return result
+      setBindData(bound, nativeSlice.call(arguments));
+      return bound;
     }
 
     /**

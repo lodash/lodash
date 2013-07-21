@@ -3836,6 +3836,7 @@
         'after',
         'bind',
         'bindAll',
+        'bindKey',
         'compose',
         'debounce',
         'defer',

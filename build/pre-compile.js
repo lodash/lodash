@@ -80,6 +80,8 @@
     'TypeError',
     'VERSION',
     '_',
+    '__bindData__',
+    '__chain__',
     '__wrapped__',
     'after',
     'all',
@@ -95,6 +97,7 @@
     'bindAll',
     'bindKey',
     'cache',
+    'chain',
     'clearTimeout',
     'clone',
     'cloneDeep',
@@ -127,6 +130,7 @@
     'find',
     'findIndex',
     'findKey',
+    'findWhere',
     'first',
     'flatten',
     'foldl',
@@ -244,12 +248,7 @@
     'without',
     'wrap',
     'zip',
-    'zipObject',
-
-    // properties used by the `backbone` and `underscore` builds
-    '__chain__',
-    'chain',
-    'findWhere'
+    'zipObject'
   ];
 
   /*--------------------------------------------------------------------------*/
@@ -374,8 +373,8 @@
         'createIterator\\((?:{|[a-zA-Z]+)[\\s\\S]*?\\);\\n',
         // match variables storing `createIterator` options
         '^( *)var [a-zA-Z]+IteratorOptions\\b[\\s\\S]+?\\n\\2}',
-        // match `basicUniq`, `cachePush`, `createCache`, `createIterator`, `getObject`, and `releaseObject` functions
-        '^( *)(?:var|function) +(?:basicUniq|cachePush|createCache|createIterator|getObject|releaseObject)\\b[\\s\\S]+?\\n\\3}'
+        // match `baseUniq`, `cachePush`, `createCache`, `createIterator`, `getObject`, and `releaseObject` functions
+        '^( *)(?:var|function) +(?:baseUniq|cachePush|createCache|createIterator|getObject|releaseObject)\\b[\\s\\S]+?\\n\\3}'
       ].join('|'), 'gm')
     );
 

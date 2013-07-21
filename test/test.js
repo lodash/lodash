@@ -687,7 +687,7 @@
     });
 
     asyncTest('should work with `maxWait` option', function() {
-      var limit = 96,
+      var limit = 128,
           withCount = 0,
           withoutCount = 0;
 
@@ -2518,7 +2518,7 @@
 
     test('supports not passing a `max` argument', function() {
       var actual = _.random(5),
-          limit = 50,
+          limit = 60,
           start = new Date;
 
       while ((new Date - start) < limit && actual == 5) {
@@ -3136,8 +3136,8 @@
 
     asyncTest('should trigger trailing call when invoked repeatedly', function() {
       var count = 0,
-          limit = 48,
-          throttled = _.throttle(function() { count++; }, 32),
+          limit = 96,
+          throttled = _.throttle(function() { count++; }, 64),
           start = new Date;
 
       while ((new Date - start) < limit) {

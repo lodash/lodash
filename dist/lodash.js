@@ -1071,10 +1071,11 @@
      * @returns {Function} Returns the new bound function.
      */
     function createBound(func, thisArg, partialArgs, partialRightArgs, isPartial, isAlt) {
-      var isFunc = isFunction(func);
+      var isBindKey = isAlt && !isPartial,
+          isFunc = isFunction(func);
 
-      // except for `_.bindKey`, throw when `func` is not a function
-      if (!isFunc && (isPartial || !isAlt)) {
+      // throw if `func` is not a function when not behaving as `_.bindKey`
+      if (!isFunc && !isBindKey) {
         throw new TypeError;
       }
       var args = func.__bindData__,
@@ -1083,19 +1084,25 @@
       if (args) {
         push.apply(args[2], partialArgs);
         push.apply(args[3], partialRightArgs);
+
+        // add `thisArg` to previous `_.partial` and `_.partialRight` arguments
         if (!isPartial && args[4]) {
           args[1] = thisArg;
           args[4] = false;
+          args[5] = isAlt;
         }
         return createBound.apply(null, args);
       }
-      // juggle arguments for `_.bindKey`
-      if (!isPartial && isAlt) {
+      // take a snapshot of `arguments` before juggling
+      args = nativeSlice.call(arguments);
+
+      // juggle arguments for `_.bindKey` behavior
+      if (isBindKey) {
         thisArg = func;
       }
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
-      if (!isPartial && !isAlt && (support.fastBind || (nativeBind && partialArgs.length))) {
+      if (!isPartial && !isAlt && !partialRightArgs.length && (support.fastBind || (nativeBind && partialArgs.length))) {
         var bound = nativeBind.call.apply(nativeBind, concat.call(arrayRef, func, thisArg, partialArgs));
       }
       else {
@@ -1105,7 +1112,7 @@
           var args = arguments,
               thisBinding = isPartial ? this : thisArg;
 
-          if (!isFunc) {
+          if (isBindKey) {
             func = thisArg[key];
           }
           if (partialArgs.length || partialRightArgs.length) {
@@ -1124,7 +1131,7 @@
           return func.apply(thisBinding, args);
         };
       }
-      setBindData(bound, nativeSlice.call(arguments));
+      setBindData(bound, args);
       return bound;
     }
 
@@ -1160,23 +1167,6 @@
      */
     function getIndexOf() {
       var result = (result = lodash.indexOf) === indexOf ? baseIndexOf : result;
-      return result;
-    }
-
-    /**
-     * Checks if `func` references the `this` keyword.
-     *
-     * @private
-     * @param {Function} func The function to inspect.
-     * @returns {Boolean} Returns `true` if `this` is referenced, else `false`.
-     */
-    function hasThis(func) {
-      var result = func.__bindData__;
-      if (typeof result != 'undefined') {
-        return result === true || (result && result[4]);
-      }
-      result = !reThis || reThis.test(fnToString.call(func));
-      setBindData(func, result);
       return result;
     }
 
@@ -4467,6 +4457,7 @@
       }
       var type = typeof func;
       if (type != 'function') {
+        // handle "_.pluck" style callback shorthands
         if (type != 'object') {
           return function(object) {
             return object[func];
@@ -4476,7 +4467,10 @@
             key = props[0],
             a = func[key];
 
+        // handle "_.where" style callback shorthands
         if (props.length == 1 && a === a && !isObject(a)) {
+          // fast path the common case of passing an object with a single
+          // property containing a primitive value
           return function(object) {
             var b = object[key];
             return a === b && (a !== 0 || (1 / a == 1 / b));
@@ -4494,8 +4488,19 @@
           return result;
         };
       }
-      if (typeof thisArg == 'undefined' || !hasThis(func)) {
+      var bindData = func.__bindData__;
+      if (typeof bindData == 'undefined') {
+        // checks if `func` references the `this` keyword and stores the result
+        bindData = !reThis || reThis.test(fnToString.call(func));
+        setBindData(func, bindData);
+      }
+      if (typeof thisArg == 'undefined' || !bindData) {
         return func;
+      }
+      else if (bindData !== true) {
+        // exit early if already bound or leverage bind optimizations if
+        // created by `_.partial` or `_.partialRight`
+        return bindData[4] ? bind(func, thisArg) : func;
       }
       if (argCount === 1) {
         return function(value) {

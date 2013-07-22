@@ -427,21 +427,22 @@
    * @returns {Function} Returns the new bound function.
    */
   function createBound(func, thisArg, partialArgs, partialRightArgs, isPartial, isAlt) {
-    var isFunc = isFunction(func);
+    var isBindKey = isAlt && !isPartial,
+        isFunc = isFunction(func);
 
-    // except for `_.bindKey`, throw when `func` is not a function
-    if (!isFunc && (isPartial || !isAlt)) {
+    // throw if `func` is not a function when not behaving as `_.bindKey`
+    if (!isFunc && !isBindKey) {
       throw new TypeError;
     }
     var key = thisArg;
 
-    // juggle arguments for `_.bindKey`
-    if (!isPartial && isAlt) {
+    // juggle arguments for `_.bindKey` behavior
+    if (isBindKey) {
       thisArg = func;
     }
     // use `Function#bind` if it exists and is fast
     // (in V8 `Function#bind` is slower except when partially applied)
-    if (!isPartial && !isAlt && (support.fastBind || (nativeBind && partialArgs.length))) {
+    if (!isPartial && !isAlt && !partialRightArgs.length && (support.fastBind || (nativeBind && partialArgs.length))) {
       var bound = nativeBind.call.apply(nativeBind, concat.call(arrayRef, func, thisArg, partialArgs));
     }
     else {
@@ -451,7 +452,7 @@
         var args = arguments,
             thisBinding = isPartial ? this : thisArg;
 
-        if (!isFunc) {
+        if (isBindKey) {
           func = thisArg[key];
         }
         if (partialArgs.length || partialRightArgs.length) {
@@ -2726,6 +2727,7 @@
     }
     var type = typeof func;
     if (type != 'function') {
+      // handle "_.pluck" style callback shorthands
       if (type != 'object') {
         return function(object) {
           return object[func];

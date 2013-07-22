@@ -1099,21 +1099,22 @@
      * @returns {Function} Returns the new bound function.
      */
     function createBound(func, thisArg, partialArgs, partialRightArgs, isPartial, isAlt) {
-      var isFunc = isFunction(func);
+      var isBindKey = isAlt && !isPartial,
+          isFunc = isFunction(func);
 
-      // except for `_.bindKey`, throw when `func` is not a function
-      if (!isFunc && (isPartial || !isAlt)) {
+      // throw if `func` is not a function when not behaving as `_.bindKey`
+      if (!isFunc && !isBindKey) {
         throw new TypeError;
       }
       var key = thisArg;
 
-      // juggle arguments for `_.bindKey`
-      if (!isPartial && isAlt) {
+      // juggle arguments for `_.bindKey` behavior
+      if (isBindKey) {
         thisArg = func;
       }
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
-      if (!isPartial && !isAlt && (support.fastBind || (nativeBind && partialArgs.length))) {
+      if (!isPartial && !isAlt && !partialRightArgs.length && (support.fastBind || (nativeBind && partialArgs.length))) {
         var bound = nativeBind.call.apply(nativeBind, concat.call(arrayRef, func, thisArg, partialArgs));
       }
       else {
@@ -1123,7 +1124,7 @@
           var args = arguments,
               thisBinding = isPartial ? this : thisArg;
 
-          if (!isFunc) {
+          if (isBindKey) {
             func = thisArg[key];
           }
           if (partialArgs.length || partialRightArgs.length) {
@@ -4539,6 +4540,7 @@
       }
       var type = typeof func;
       if (type != 'function') {
+        // handle "_.pluck" style callback shorthands
         if (type != 'object') {
           return function(object) {
             return object[func];
@@ -4548,7 +4550,10 @@
             key = props[0],
             a = func[key];
 
+        // handle "_.where" style callback shorthands
         if (props.length == 1 && a === a && !isObject(a)) {
+          // fast path the common case of passing an object with a single
+          // property containing a primitive value
           return function(object) {
             var b = object[key];
             return a === b && (a !== 0 || (1 / a == 1 / b));

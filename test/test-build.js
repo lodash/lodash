@@ -505,6 +505,7 @@
     });
 
     commands = [
+      'csp backbone',
       'mobile underscore',
       'modern template=./*.jst'
     ];
@@ -1646,7 +1647,7 @@
       })
     );
 
-    var reNonCombinable = /\b(?:backbone|legacy|mobile|modern|underscore)\b/;
+    var reNonCombinable = /\b(?:backbone|csp|legacy|mobile|modern|underscore)\b/;
 
     commands.forEach(function(origCommand) {
       _.each(['', 'mobile', 'modern', 'underscore'], function(otherCommand) {

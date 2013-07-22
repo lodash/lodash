@@ -1150,7 +1150,7 @@
       '                         (e.g. `lodash settings="{interpolate:/{{([\\s\\S]+?)}}/g}"`)',
       '    lodash moduleId=...  The AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates',
       '',
-      '    All arguments, except `backbone`, `legacy`, `mobile`, `modern`, and `underscore`, may be combined.',
+      '    All arguments, except `backbone`, `csp`, `legacy`, `mobile`, `modern`, and `underscore`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
       '',
       '  Options:',
@@ -2650,7 +2650,7 @@
       warnings.push('Invalid argument' + (invalidArgs.length > 1 ? 's' : '') + ' passed: ' + invalidArgs.join(', '));
     }
     // report invalid command combinations
-    invalidArgs = _.intersection(options, ['backbone', 'legacy', 'mobile', 'modern', 'underscore']);
+    invalidArgs = _.intersection(options, ['backbone', 'csp', 'legacy', 'mobile', 'modern', 'underscore']);
 
     if (isTemplate) {
       invalidArgs.push('template');

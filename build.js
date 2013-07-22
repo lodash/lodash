@@ -3030,7 +3030,7 @@
           });
         }
       }
-      if (isLegacy || isMobile || isUnderscore) {
+      if (!isModern || isMobile) {
         source = removeEsOptimization(source);
       }
       if (isLegacy || isMobile || isUnderscore) {

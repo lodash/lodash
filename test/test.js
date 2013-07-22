@@ -9,6 +9,7 @@
       create = Object.create,
       freeze = Object.freeze,
       process = window.process,
+      push = Array.prototype.push,
       slice = Array.prototype.slice,
       system = window.system,
       toString = Object.prototype.toString,
@@ -72,8 +73,8 @@
   var setDescriptor = (function() {
     try {
       var o = {},
-          fn = Object.defineProperty,
-          result = fn(o, o, o) && fn;
+          func = Object.defineProperty,
+          result = func(o, o, o) && func;
     } catch(e) { }
     return result;
   }());
@@ -506,7 +507,7 @@
       var func = _[methodName],
           klass = new Klass;
 
-      test('_.' + methodName + ' should pass the correct `callback` arguments', function() {
+      test('`_.' + methodName + '` should pass the correct `callback` arguments', function() {
         var args;
 
         func(klass, function() {
@@ -516,7 +517,7 @@
         deepEqual(args, [klass]);
       });
 
-      test('_.' + methodName + ' should correct set the `this` binding', function() {
+      test('`_.' + methodName + '` should correct set the `this` binding', function() {
         var actual = func('a', function(value) {
           return this[value];
         }, { 'a': 'A' });
@@ -524,7 +525,7 @@
         equal(actual, 'A');
       });
 
-      test('_.' + methodName + ' should handle cloning if `callback` returns `undefined`', function() {
+      test('`_.' + methodName + '` should handle cloning if `callback` returns `undefined`', function() {
         var actual = _.clone({ 'a': { 'b': 'c' } }, function() { });
         deepEqual(actual, { 'a': { 'b': 'c' } });
       });
@@ -587,6 +588,28 @@
 
       strictEqual(actual.constructor, 1);
       equal(actual.hasOwnProperty, 2);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.createCallback');
+
+  (function() {
+    test('should work with functions created by `_.partial` and `_.partialRight`', function() {
+      function func() {
+        var result = [this.x];
+        push.apply(result, arguments);
+        return result;
+      }
+      var expected = [1, 2, 3],
+          object = { 'x': 1 },
+          callback = _.createCallback(_.partial(func, 2), object);
+
+      deepEqual(callback(3), expected);
+
+      callback = _.createCallback(_.partialRight(func, 3), object);
+      deepEqual(callback(2), expected);
     });
   }());
 
@@ -807,14 +830,14 @@
   _.each(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' should not assign inherited `source` properties', function() {
+    test('`_.' + methodName + '` should not assign inherited `source` properties', function() {
       function Foo() {}
       Foo.prototype = { 'a': 1 };
       deepEqual(func({}, new Foo), {});
     });
 
     if (methodName == 'merge') {
-      test('lodash.' + methodName + ' should treat sparse arrays as dense', function() {
+      test('`_.' + methodName + '` should treat sparse arrays as dense', function() {
         var array = Array(3);
         array[0] = 1;
         array[2] = 3;
@@ -837,7 +860,7 @@
   _.each(['assign', 'bindAll', 'defaults'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' should not throw strict mode errors', function() {
+    test('`_.' + methodName + '` should not throw strict mode errors', function() {
       var object = { 'a': null, 'b': function(){} },
           pass = true;
 
@@ -1162,13 +1185,13 @@
   _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
+    test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
       var keys = [];
       func(shadowedObject, function(value, key) { keys.push(key); });
       deepEqual(keys.sort(), shadowedProps);
     });
 
-    test('lodash.' + methodName + ' does not iterate over non-enumerable properties (test in IE < 9)', function() {
+    test('`_.' + methodName + '` does not iterate over non-enumerable properties (test in IE < 9)', function() {
       _.forOwn({
         'Array': Array.prototype,
         'Boolean': Boolean.prototype,
@@ -1199,7 +1222,7 @@
       });
     });
 
-    test('lodash.' + methodName + ' skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+    test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
@@ -1229,7 +1252,7 @@
     });
 
 
-    test('lodash.' + methodName + ' should assign problem JScript properties (test in IE < 9)', function() {
+    test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', function() {
       var object = {
         'constructor': '0',
         'hasOwnProperty': '1',
@@ -1250,7 +1273,7 @@
       deepEqual(func(object, source), shadowedObject);
     });
 
-    test('lodash.' + methodName + ' skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
+    test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', function() {
       function Foo() {}
       Foo.prototype.c = 3;
 
@@ -1264,7 +1287,7 @@
       deepEqual(func({}, Foo), expected);
     });
 
-    test('lodash.' + methodName + ' should work with `_.reduce`', function() {
+    test('`_.' + methodName + '` should work with `_.reduce`', function() {
       var actual = { 'a': 1},
           array = [{ 'b': 2 }, { 'c': 3 }];
 
@@ -1276,7 +1299,7 @@
   _.each(['assign', 'merge'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' should pass the correct `callback` arguments', function() {
+    test('`_.' + methodName + '` should pass the correct `callback` arguments', function() {
       var args;
       func({ 'a': 1 }, { 'a': 2 }, function() {
         args || (args = slice.call(arguments));
@@ -1295,7 +1318,7 @@
       deepEqual(args, [array, object], 'non-primitive property values');
     });
 
-    test('lodash.' + methodName + ' should correct set the `this` binding', function() {
+    test('`_.' + methodName + '` should correct set the `this` binding', function() {
       var actual = func({}, { 'a': 0 }, function(a, b) {
         return this[b];
       }, [2]);
@@ -1303,7 +1326,7 @@
       deepEqual(actual, { 'a': 2 });
     });
 
-    test('lodash.' + methodName + ' should not treat the second argument as a `callback`', function() {
+    test('`_.' + methodName + '` should not treat the second argument as a `callback`', function() {
       function callback() {}
       callback.b = 2;
 
@@ -1322,7 +1345,7 @@
   _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' can exit early when iterating arrays', function() {
+    test('`_.' + methodName + '` can exit early when iterating arrays', function() {
       var array = [1, 2, 3],
           values = [];
 
@@ -1330,7 +1353,7 @@
       deepEqual(values, [1]);
     });
 
-    test('lodash.' + methodName + ' can exit early when iterating objects', function() {
+    test('`_.' + methodName + '` can exit early when iterating objects', function() {
       var object = { 'a': 1, 'b': 2, 'c': 3 },
           values = [];
 
@@ -1484,31 +1507,31 @@
     var array = [1, new Foo, 3, new Foo],
         indexOf = _.indexOf;
 
-    test('_.contains should work with a custom `_.indexOf` method', function() {
+    test('`_.contains` should work with a custom `_.indexOf` method', function() {
       _.indexOf = custom;
       ok(_.contains(array, new Foo));
       _.indexOf = indexOf;
     });
 
-    test('_.difference should work with a custom `_.indexOf` method', function() {
+    test('`_.difference` should work with a custom `_.indexOf` method', function() {
       _.indexOf = custom;
       deepEqual(_.difference(array, [new Foo]), [1, 3]);
       _.indexOf = indexOf;
     });
 
-    test('_.intersection should work with a custom `_.indexOf` method', function() {
+    test('`_.intersection` should work with a custom `_.indexOf` method', function() {
       _.indexOf = custom;
       deepEqual(_.intersection(array, [new Foo]), [array[1]]);
       _.indexOf = indexOf;
     });
 
-    test('_.omit should work with a custom `_.indexOf` method', function() {
+    test('`_.omit` should work with a custom `_.indexOf` method', function() {
       _.indexOf = custom;
       deepEqual(_.omit(array, ['x']), { '0': 1, '2': 3 });
       _.indexOf = indexOf;
     });
 
-    test('_.uniq should work with a custom `_.indexOf` method', function() {
+    test('`_.uniq` should work with a custom `_.indexOf` method', function() {
       _.indexOf = custom;
       deepEqual(_.uniq(array), array.slice(0, 3));
 
@@ -1643,7 +1666,7 @@
     });
 
     test('should work with jQuery/MooTools DOM query collections', function() {
-      function Foo(elements) { Array.prototype.push.apply(this, elements); }
+      function Foo(elements) { push.apply(this, elements); }
       Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
 
       strictEqual(_.isEmpty(new Foo([])), true);
@@ -1861,7 +1884,7 @@
   function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' should return a boolean', function() {
+    test('`_.' + methodName + '` should return a boolean', function() {
       var expected = 'boolean';
 
       equal(typeof func(arguments), expected);
@@ -1890,7 +1913,7 @@
 
         var object = new Foo;
         if (toString.call(object) == '[object Object]') {
-          strictEqual(_[methodName](object), false, '_.' + methodName + ' returns `false`');
+          strictEqual(_[methodName](object), false, '`_.' + methodName + '` returns `false`');
         } else {
           skipTest();
         }
@@ -2074,7 +2097,7 @@
   _.each(['max', 'min'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' should iterate an object', function() {
+    test('`_.' + methodName + '` should iterate an object', function() {
       var actual = func({ 'a': 1, 'b': 2, 'c': 3 });
       equal(actual, methodName == 'max' ? 3 : 1);
     });
@@ -2087,7 +2110,7 @@
   _.each(['max', 'min'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' should iterate a string', function() {
+    test('`_.' + methodName + '` should iterate a string', function() {
       _.each(['abc', Object('abc')], function(value) {
         var actual = func(value);
         equal(actual, methodName == 'max' ? 'c' : 'a');
@@ -2100,7 +2123,7 @@
   QUnit.module('lodash.max and lodash.min chaining');
 
   _.each(['max', 'min'], function(methodName) {
-    test('lodash.' + methodName + ' should resolve the correct value when passed an array containing only one value', function() {
+    test('`_.' + methodName + '` should resolve the correct value when passed an array containing only one value', function() {
       var actual = _([40])[methodName]().value();
       strictEqual(actual, 40);
     });
@@ -2384,14 +2407,14 @@
   _.each(['partial', 'partialRight'], function(methodName) {
     var func = _[methodName];
 
-    test('lodash.' + methodName + ' partially applies an argument, without additional arguments', function() {
+    test('`_.' + methodName + '` partially applies an argument, without additional arguments', function() {
       var arg = 'a',
           fn = function(x) { return x; };
 
       equal(func(fn, arg)(), arg);
     });
 
-    test('lodash.' + methodName + ' partially applies an argument, with additional arguments', function() {
+    test('`_.' + methodName + '` partially applies an argument, with additional arguments', function() {
       var arg1 = 'a',
           arg2 = 'b',
           expected = [arg1, arg2],
@@ -2403,19 +2426,19 @@
       deepEqual(func(fn, arg1)(arg2), expected);
     });
 
-    test('lodash.' + methodName + ' works without partially applying arguments, without additional arguments', function() {
+    test('`_.' + methodName + '` works without partially applying arguments, without additional arguments', function() {
       var fn = function() { return arguments.length; };
       strictEqual(func(fn)(), 0);
     });
 
-    test('lodash.' + methodName + ' works without partially applying arguments, with additional arguments', function() {
+    test('`_.' + methodName + '` works without partially applying arguments, with additional arguments', function() {
       var arg = 'a',
           fn = function(x) { return x; };
 
       equal(func(fn)(arg), arg);
     });
 
-    test('lodash.' + methodName + ' should not alter the `this` binding of either function', function() {
+    test('`_.' + methodName + '` should not alter the `this` binding of either function', function() {
       var object = { 'a': 1 },
           fn = function() { return this.a; };
 
@@ -2436,6 +2459,62 @@
 
       var deepDefaults = _.partialRight(_.merge, _.defaults);
       deepEqual(deepDefaults(object, source), expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('methods using `createBound`');
+
+  (function() {
+    test('combinations of partial functions should work', function() {
+      function func() {
+        return slice.call(arguments);
+      }
+      var a = _.partial(func),
+          b = _.partialRight(a, 3),
+          c = _.partial(b, 1);
+
+      deepEqual(c(2), [1, 2, 3]);
+    });
+
+    test('combinations of bound and partial functions should work', function() {
+      function func() {
+        var result = [this.x];
+        push.apply(result, arguments);
+        return result;
+      }
+      var expected = [1, 2, 3, 4],
+          object = { 'func': func, 'x': 1 };
+
+      var a = _.bindKey(object, 'func'),
+          b = _.partialRight(a, 4),
+          c = _.partial(b, 2);
+
+      deepEqual(c(3), expected);
+
+      a = _.bind(func, object);
+      b = _.partialRight(a, 4);
+      c = _.partial(b, 2);
+
+      deepEqual(c(3), expected);
+
+      a = _.partial(func, 2);
+      b = _.bind(a, object);
+      c = _.partialRight(b, 4);
+
+      deepEqual(c(3), expected);
+    });
+
+    test('recursively bound functions should work', function() {
+      function func() {
+        return this.x;
+      }
+      var a = _.bind(func, { 'x': 1 }),
+          b = _.bind(a, { 'x': 2 }),
+          c = _.bind(b, { 'x': 3 });
+
+      strictEqual(c(), 1);
     });
   }());
 
@@ -2791,7 +2870,7 @@
     });
 
     test('should work with jQuery/MooTools DOM query collections', function() {
-      function Foo(elements) { Array.prototype.push.apply(this, elements); }
+      function Foo(elements) { push.apply(this, elements); }
       Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
 
       equal(_.size(new Foo([1, 2, 3])), 3);
@@ -3421,7 +3500,7 @@
           count = Math.ceil(largeArraySize / expected.length);
 
       _.times(count, function() {
-        array.push.apply(array, expected);
+        push.apply(array, expected);
       });
 
       deepEqual(_.uniq(array), expected);
@@ -3649,7 +3728,7 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('_.' + methodName + ' should return a wrapped value', function() {
+      test('`_.' + methodName + '` should return a wrapped value', function() {
         ok(wrapped[methodName]() instanceof _);
       });
     });
@@ -3697,7 +3776,7 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('_.' + methodName + ' should return an unwrapped value', function() {
+      test('`_.' + methodName + '` should return an unwrapped value', function() {
         var result = methodName == 'reduceRight'
           ? wrapped[methodName](_.identity)
           : wrapped[methodName]();
@@ -3721,11 +3800,11 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('_.' + methodName + ' should return an unwrapped value', function() {
+      test('`_.' + methodName + '` should return an unwrapped value', function() {
         equal(typeof wrapped[methodName](), 'number');
       });
 
-      test('_.' + methodName + ' should return a wrapped value', function() {
+      test('`_.' + methodName + '` should return a wrapped value', function() {
         ok(wrapped[methodName](1) instanceof _);
       });
     });
@@ -3741,7 +3820,7 @@
 
     test('should work with `arguments` objects', function() {
       function message(methodName) {
-        return '_.' + methodName + ' should work with `arguments` objects';
+        return '`_.' + methodName + '` should work with `arguments` objects';
       }
 
       deepEqual(_.at(args, 0, 4), [1, 5], message('at'));
@@ -3771,7 +3850,7 @@
 
     test('should allow falsey primary arguments', function() {
       function message(methodName) {
-        return '_.' + methodName + ' should allow falsey primary arguments';
+        return '`_.' + methodName + '` should allow falsey primary arguments';
       }
 
       deepEqual(_.difference(null, array), [], message('difference'));
@@ -3781,7 +3860,7 @@
 
     test('should allow falsey secondary arguments', function() {
       function message(methodName) {
-        return '_.' + methodName + ' should allow falsey secondary arguments';
+        return '`_.' + methodName + '` should allow falsey secondary arguments';
       }
 
       deepEqual(_.difference(array, null), array, message('difference'));
@@ -3875,7 +3954,7 @@
         if (_.indexOf(returnArrays, methodName) > -1) {
           deepEqual(actual, expected, '_.' + methodName + ' returns an array');
         }
-        ok(pass, '_.' + methodName + ' allows falsey arguments');
+        ok(pass, '`_.' + methodName + '` allows falsey arguments');
       });
     });
 
@@ -3911,7 +3990,7 @@
 
       _.each(funcs, function(methodName) {
         var func = _[methodName],
-            message = '_.' + methodName + ' handles `null` `thisArg` arguments';
+            message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
 
         thisArg = undefined;
 

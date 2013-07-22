@@ -102,7 +102,7 @@
     'compose': [],
     'contains': ['baseEach', 'getIndexOf', 'isString'],
     'countBy': ['createCallback', 'forEach'],
-    'createCallback': ['hasThis', 'identity', 'isEqual', 'isObject', 'keys'],
+    'createCallback': ['bind', 'identity', 'isEqual', 'isObject', 'keys', 'setBindData'],
     'debounce': ['isObject'],
     'defaults': ['createCallback', 'createIterator'],
     'defer': ['bind'],
@@ -215,7 +215,6 @@
     'getArray': [],
     'getIndexOf': ['baseIndexOf', 'indexOf'],
     'getObject': [],
-    'hasThis': ['setBindData'],
     'isNode': [],
     'iteratorTemplate': [],
     'lodash': ['lodashWrapper'],
@@ -539,7 +538,6 @@
     'escapeStringChar',
     'getArray',
     'getObject',
-    'hasThis',
     'isNode',
     'iteratorTemplate',
     'lodash',
@@ -1638,17 +1636,22 @@
    * @returns {String} Returns the modified source.
    */
   function removeEsOptimization(source) {
-    // remove `__bindData` logic and `setBindData` function calls from `createBound`
+    // remove `__bindData__` logic and `setBindData` function calls from `createBound`
     source = source.replace(matchFunction(source, 'createBound'), function(match) {
       return match
         .replace(/\bargs *=.+?__bindData__.+\s+/, '')
-        .replace(/^( *)if *\(args\)[\s\S]+?\n\1}/m, '')
-        .replace(/^.+?setBindData.+\n/m, '')
+        .replace(/(?:\s*\/\/.*)*\n( *)if *\(args\)[\s\S]+?\n\1}/m, '')
+        .replace(/(?:\s*\/\/.*)*\n.+args *= *nativeSlice.+/, '')
+        .replace(/(?:\s*\/\/.*)*\n.+?setBindData.+/m, '')
+
     });
 
-    // remove `hasThis` use `_.createCallback`
+    // remove `__bindData__` logic and `setBindData` function calls from `_.createCallback`
     source = source.replace(matchFunction(source, 'createCallback'), function(match) {
-      return match.replace(/\s*\|\|\s*!hasThis\(.+?\)/, '');
+      return match
+        .replace(/^( *)var bindData *=[\s\S]+?\n\1}\n/m, '')
+        .replace(/\s*\|\|\s*!bindData\b/, '')
+        .replace(/^( *)else if \(bindData[\s\S]+?\n\1}\n/m, '')
     });
 
     return source;
@@ -2732,8 +2735,9 @@
         });
       }
       if (isLegacy || isMobile || isUnderscore) {
-        funcDependencyMap.createBound = _.without(funcDependencyMap.createBound, 'setBindData');
-        funcDependencyMap.createCallback = _.without(funcDependencyMap.createCallback, 'hasThis');
+        _.each(['createBound', 'createCallback'], function(funcName) {
+          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'bind', 'setBindData');
+        });
       }
       if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
         funcDependencyMap.mixin = _.without(funcDependencyMap.mixin, 'isFunction');

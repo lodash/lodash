@@ -710,7 +710,7 @@
     });
 
     asyncTest('should work with `maxWait` option', function() {
-      var limit = 128,
+      var limit = 100,
           withCount = 0,
           withoutCount = 0;
 

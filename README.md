@@ -168,7 +168,7 @@ lodash settings="{interpolate:/\{\{([\s\S]+?)\}\}/g}"
 lodash moduleId="underscore"
 ```
 
-All arguments, except `legacy` with `mobile`, `modern`, or `underscore`, may be combined.<br>
+All arguments, except `backbone`, `csp`, `legacy`, `mobile`, `modern`, and `underscore`, may be combined.<br>
 Unless specified by `-o` or `--output`, all files created are saved to the current working directory.
 
 The following options are also supported:

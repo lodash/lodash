@@ -1639,10 +1639,9 @@
     // remove `__bindData__` logic and `setBindData` function calls from `createBound`
     source = source.replace(matchFunction(source, 'createBound'), function(match) {
       return match
-        .replace(/\bargs *=.+?__bindData__.+\s+/, '')
-        .replace(/(?:\s*\/\/.*)*\n( *)if *\(args\)[\s\S]+?\n\1}/m, '')
+        .replace(/(?:\s*\/\/.*)*\n( *)var args *=[\s\S]+?\n\1}/, '')
         .replace(/(?:\s*\/\/.*)*\n.+args *= *nativeSlice.+/, '')
-        .replace(/(?:\s*\/\/.*)*\n.+?setBindData.+/m, '')
+        .replace(/(?:\s*\/\/.*)*\n.+?setBindData.+/, '')
 
     });
 
@@ -3060,7 +3059,7 @@
             '  var index = -1,',
             '      length = collection ? collection.length : 0;',
             '',
-            "  callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg);",
+            "  callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg, 3);",
             "  if (typeof length == 'number') {",
             '    while (++index < length) {',
             '      if (callback(collection[index], index, collection) === false) {',
@@ -3089,7 +3088,7 @@
             '  var index = -1,',
             '      length = collection ? collection.length : 0;',
             '',
-            '  callback = lodash.createCallback(callback, thisArg);',
+            '  callback = lodash.createCallback(callback, thisArg, 3);',
             "  if (typeof length == 'number') {",
             '    var result = Array(length);',
             '    while (++index < length) {',
@@ -3518,7 +3517,7 @@
             '      length = collection ? collection.length : 0,',
             "      result = Array(typeof length == 'number' ? length : 0);",
             '',
-            '  callback = lodash.createCallback(callback, thisArg);',
+            '  callback = lodash.createCallback(callback, thisArg, 3);',
             '  forEach(collection, function(value, key, collection) {',
             '    result[++index] = {',
             "      'criteria': callback(value, key, collection),",

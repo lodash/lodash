@@ -134,11 +134,11 @@
   );
 
   /** Native method shortcuts */
-  var concat = arrayRef.concat,
-      floor = Math.floor,
+  var floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
-      toString = objectProto.toString;
+      toString = objectProto.toString,
+      unshift = arrayRef.unshift;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
@@ -434,16 +434,12 @@
     if (!isFunc && !isBindKey) {
       throw new TypeError;
     }
-    var key = thisArg;
-
-    // juggle arguments for `_.bindKey` behavior
-    if (isBindKey) {
-      thisArg = func;
-    }
     // use `Function#bind` if it exists and is fast
     // (in V8 `Function#bind` is slower except when partially applied)
     if (!isPartial && !isAlt && !partialRightArgs.length && (support.fastBind || (nativeBind && partialArgs.length))) {
-      var bound = nativeBind.call.apply(nativeBind, concat.call(arrayRef, func, thisArg, partialArgs));
+      args = [func, thisArg];
+      push.apply(args, partialArgs);
+      var bound = nativeBind.call.apply(nativeBind, args);
     }
     else {
       bound = function() {
@@ -456,7 +452,7 @@
           func = thisArg[key];
         }
         if (partialArgs.length || partialRightArgs.length) {
-          args = concat.apply(partialArgs, args);
+          unshift.apply(args, partialArgs);
           push.apply(args, partialRightArgs);
         }
         if (this instanceof bound) {
@@ -470,6 +466,10 @@
         }
         return func.apply(thisBinding, args);
       };
+    }
+    if (isBindKey) {
+      var key = thisArg;
+      thisArg = func;
     }
     return bound;
   }
@@ -1274,7 +1274,7 @@
    */
   function countBy(collection, callback, thisArg) {
     var result = {};
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
 
     forEach(collection, function(value, key, collection) {
       key = String(callback(value, key, collection));
@@ -1326,7 +1326,7 @@
    */
   function every(collection, callback, thisArg) {
     var result = true;
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
 
     var index = -1,
         length = collection ? collection.length : 0;
@@ -1387,7 +1387,7 @@
    */
   function filter(collection, callback, thisArg) {
     var result = [];
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
 
     var index = -1,
         length = collection ? collection.length : 0;
@@ -1453,7 +1453,7 @@
    * // => { 'name': 'banana', 'organic': true, 'type': 'fruit' }
    */
   function find(collection, callback, thisArg) {
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
 
     var index = -1,
         length = collection ? collection.length : 0;
@@ -1503,7 +1503,7 @@
     var index = -1,
         length = collection ? collection.length : 0;
 
-    callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg);
+    callback = callback && typeof thisArg == 'undefined' ? callback : createCallback(callback, thisArg, 3);
     if (typeof length == 'number') {
       while (++index < length) {
         if (callback(collection[index], index, collection) === indicatorObject) {
@@ -1551,7 +1551,7 @@
    */
   function groupBy(collection, callback, thisArg) {
     var result = {};
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
 
     forEach(collection, function(value, key, collection) {
       key = String(callback(value, key, collection));
@@ -1638,7 +1638,7 @@
     var index = -1,
         length = collection ? collection.length : 0;
 
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
     if (typeof length == 'number') {
       var result = Array(length);
       while (++index < length) {
@@ -1707,7 +1707,7 @@
         }
       }
     } else {
-      callback = createCallback(callback, thisArg);
+      callback = createCallback(callback, thisArg, 3);
 
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -1774,7 +1774,7 @@
         }
       }
     } else {
-      callback = createCallback(callback, thisArg);
+      callback = createCallback(callback, thisArg, 3);
 
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -1920,7 +1920,7 @@
    * // => [{ 'name': 'carrot', 'organic': true, 'type': 'vegetable' }]
    */
   function reject(collection, callback, thisArg) {
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
     return filter(collection, function(value, index, collection) {
       return !callback(value, index, collection);
     });
@@ -2022,7 +2022,7 @@
    */
   function some(collection, callback, thisArg) {
     var result;
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
 
     var index = -1,
         length = collection ? collection.length : 0;
@@ -2081,7 +2081,7 @@
         length = collection ? collection.length : 0,
         result = Array(typeof length == 'number' ? length : 0);
 
-    callback = createCallback(callback, thisArg);
+    callback = createCallback(callback, thisArg, 3);
     forEach(collection, function(value, key, collection) {
       result[++index] = {
         'criteria': callback(value, key, collection),
@@ -2218,7 +2218,7 @@
 
       if (typeof callback != 'number' && callback != null) {
         var index = -1;
-        callback = createCallback(callback, thisArg);
+        callback = createCallback(callback, thisArg, 3);
         while (++index < length && callback(array[index], index, array)) {
           n++;
         }
@@ -2332,7 +2332,7 @@
 
     if (typeof callback != 'number' && callback != null) {
       var index = length;
-      callback = createCallback(callback, thisArg);
+      callback = createCallback(callback, thisArg, 3);
       while (index-- && callback(array[index], index, array)) {
         n++;
       }
@@ -2406,7 +2406,7 @@
 
       if (typeof callback != 'number' && callback != null) {
         var index = length;
-        callback = createCallback(callback, thisArg);
+        callback = createCallback(callback, thisArg, 3);
         while (index-- && callback(array[index], index, array)) {
           n++;
         }
@@ -2517,7 +2517,7 @@
           index = -1,
           length = array ? array.length : 0;
 
-      callback = createCallback(callback, thisArg);
+      callback = createCallback(callback, thisArg, 3);
       while (++index < length && callback(array[index], index, array)) {
         n++;
       }
@@ -2688,7 +2688,7 @@
    * @category Functions
    * @param {Mixed} [func=identity] The value to convert to a callback.
    * @param {Mixed} [thisArg] The `this` binding of the created callback.
-   * @param {Number} [argCount=3] The number of arguments the callback accepts.
+   * @param {Number} [argCount] The number of arguments the callback accepts.
    * @returns {Function} Returns a callback function.
    * @example
    *
@@ -2749,23 +2749,22 @@
     if (typeof thisArg == 'undefined') {
       return func;
     }
-    if (argCount === 1) {
-      return function(value) {
+    switch (argCount) {
+      case 1: return function(value) {
         return func.call(thisArg, value);
       };
-    }
-    if (argCount === 2) {
-      return function(a, b) {
+      case 2: return function(a, b) {
         return func.call(thisArg, a, b);
       };
-    }
-    if (argCount === 4) {
-      return function(accumulator, value, index, collection) {
+      case 3: return function(value, index, collection) {
+        return func.call(thisArg, value, index, collection);
+      };
+      case 4: return function(accumulator, value, index, collection) {
         return func.call(thisArg, accumulator, value, index, collection);
       };
     }
-    return function(value, index, collection) {
-      return func.call(thisArg, value, index, collection);
+    return function() {
+      return func.apply(thisArg, arguments);
     };
   }
 

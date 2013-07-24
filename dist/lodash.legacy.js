@@ -879,34 +879,6 @@
       return __p
     };
 
-    /** Reusable iterator options for `assign` and `defaults` */
-    var defaultsIteratorOptions = {
-      'args': 'object, source, guard',
-      'top':
-        'var args = arguments,\n' +
-        '    argsIndex = 0,\n' +
-        "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
-        'while (++argsIndex < argsLength) {\n' +
-        '  iterable = args[argsIndex];\n' +
-        '  if (iterable && objectTypes[typeof iterable]) {',
-      'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
-      'bottom': '  }\n}'
-    };
-
-    /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
-    var eachIteratorOptions = {
-      'args': 'collection, callback, thisArg',
-      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg, 3)",
-      'array': "typeof length == 'number'",
-      'loop': 'if (callback(iterable[index], index, collection) === false) return result'
-    };
-
-    /** Reusable iterator options for `forIn` and `forOwn` */
-    var forOwnIteratorOptions = {
-      'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
-      'array': false
-    };
-
     /*--------------------------------------------------------------------------*/
 
     /**
@@ -1338,7 +1310,7 @@
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
       if (!isPartial && !isAlt && !partialRightArgs.length && (support.fastBind || (nativeBind && partialArgs.length))) {
-        args = [func, thisArg];
+        var args = [func, thisArg];
         push.apply(args, partialArgs);
         var bound = nativeBind.call.apply(nativeBind, args);
       }
@@ -1382,7 +1354,7 @@
      * @param {Object} [options1, options2, ...] The compile options object(s).
      *  array - A string of code to determine if the iterable is an array or array-like.
      *  useHas - A boolean to specify using `hasOwnProperty` checks in the object loop.
-     *  useKeys - A boolean to specify using `_.keys` for own property iteration.
+     *  keys - A reference to `_.keys` for use in own property iteration.
      *  args - A string of comma separated arguments the iteration function will accept.
      *  top - A string of code to execute before the iteration branches.
      *  loop - A string of code to execute in the object loop.
@@ -1537,25 +1509,36 @@
       'args': 'object',
       'init': '[]',
       'top': 'if (!(objectTypes[typeof object])) return result',
-      'loop': 'result.push(index)',
-      'useKeys': false
+      'loop': 'result.push(index)'
     });
 
-    /**
-     * A function compiled to iterate `arguments` objects, arrays, objects, and
-     * strings consistenly across environments, executing the `callback` for each
-     * element in the `collection`. The `callback` is bound to `thisArg` and invoked
-     * with three arguments; (value, index|key, collection). Callbacks may exit
-     * iteration early by explicitly returning `false`.
-     *
-     * @private
-     * @type Function
-     * @param {Array|Object|String} collection The collection to iterate over.
-     * @param {Function} [callback=identity] The function called per iteration.
-     * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @returns {Array|Object|String} Returns `collection`.
-     */
-    var baseEach = createIterator(eachIteratorOptions);
+    /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
+    var eachIteratorOptions = {
+      'args': 'collection, callback, thisArg',
+      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg, 3)",
+      'array': "typeof length == 'number'",
+      'loop': 'if (callback(iterable[index], index, collection) === false) return result'
+    };
+
+    /** Reusable iterator options for `assign` and `defaults` */
+    var defaultsIteratorOptions = {
+      'args': 'object, source, guard',
+      'top':
+        'var args = arguments,\n' +
+        '    argsIndex = 0,\n' +
+        "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
+        'while (++argsIndex < argsLength) {\n' +
+        '  iterable = args[argsIndex];\n' +
+        '  if (iterable && objectTypes[typeof iterable]) {',
+      'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
+      'bottom': '  }\n}'
+    };
+
+    /** Reusable iterator options for `forIn` and `forOwn` */
+    var forOwnIteratorOptions = {
+      'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
+      'array': false
+    };
 
     /**
      * Used to convert characters to HTML entities:
@@ -1579,6 +1562,22 @@
     /** Used to match HTML entities and HTML characters */
     var reEscapedHtml = RegExp('(' + keys(htmlUnescapes).join('|') + ')', 'g'),
         reUnescapedHtml = RegExp('[' + keys(htmlEscapes).join('') + ']', 'g');
+
+    /**
+     * A function compiled to iterate `arguments` objects, arrays, objects, and
+     * strings consistenly across environments, executing the `callback` for each
+     * element in the `collection`. The `callback` is bound to `thisArg` and invoked
+     * with three arguments; (value, index|key, collection). Callbacks may exit
+     * iteration early by explicitly returning `false`.
+     *
+     * @private
+     * @type Function
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Array|Object|String} Returns `collection`.
+     */
+    var baseEach = createIterator(eachIteratorOptions);
 
     /*--------------------------------------------------------------------------*/
 

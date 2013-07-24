@@ -437,7 +437,7 @@
     // use `Function#bind` if it exists and is fast
     // (in V8 `Function#bind` is slower except when partially applied)
     if (!isPartial && !isAlt && !partialRightArgs.length && (support.fastBind || (nativeBind && partialArgs.length))) {
-      args = [func, thisArg];
+      var args = [func, thisArg];
       push.apply(args, partialArgs);
       var bound = nativeBind.call.apply(nativeBind, args);
     }

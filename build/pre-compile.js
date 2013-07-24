@@ -20,6 +20,7 @@
     'guard',
     'hasOwnProperty',
     'index',
+    'indicatorObject',
     'isArguments',
     'isArray',
     'isProto',
@@ -52,11 +53,11 @@
     'bottom',
     'firstArg',
     'init',
+    'keys',
     'loop',
     'shadowedProps',
     'top',
-    'useHas',
-    'useKeys'
+    'useHas'
   ];
 
   /** Used to minify variables and string values to a single character */
@@ -270,26 +271,6 @@
     if (options.isTemplate) {
       return source;
     }
-    // add brackets to whitelisted properties so the Closure Compiler won't mung them
-    // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
-    source = source.replace(RegExp('\\.(' + propWhitelist.join('|') + ')\\b', 'g'), function(match, prop) {
-      return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
-    });
-
-    // remove brackets from `lodash.createCallback` in `eachIteratorOptions`
-    source = source.replace('lodash[\'createCallback\'](callback, thisArg)"', 'lodash.createCallback(callback, thisArg)"');
-
-    // remove brackets from `lodash.createCallback` in `_.assign`
-    source = source.replace("'  var callback = lodash['createCallback']", "'var callback=lodash.createCallback");
-
-    // remove brackets from `_.escape` in `_.template`
-    source = source.replace(/__e *= *_\['escape']/g, '__e=_.escape');
-
-    // remove brackets from `collection.indexOf` in `_.contains`
-    source = source.replace("collection['indexOf'](target)", 'collection.indexOf(target)');
-
-    // remove brackets from `result[length].value` in `_.sortBy`
-    source = source.replace("result[length]['value']", 'result[length].value');
 
     // remove whitespace from string literals
     source = source.replace(/^((?:[ "'\w]+:)? *)"[^"\n\\]*?(?:\\.[^"\n\\]*?)*"|'[^'\n\\]*?(?:\\.[^'\n\\]*?)*'/gm, function(string, left) {
@@ -388,42 +369,19 @@
           isIteratorTemplate = /var iteratorTemplate\b/.test(snippet),
           modified = snippet;
 
-      // add brackets to iterator option properties so the Closure Compiler won't mung them
-      modified = modified.replace(RegExp('\\.(' + iteratorOptions.join('|') + ')\\b', 'g'), function(match, prop) {
-        return "['" + prop.replace(/['\n\r\t]/g, '\\$&') + "']";
-      });
-
       // remove unnecessary semicolons in strings
       modified = modified.replace(/;(?:}["']|(?:\\n|\s)*["']\s*\+\s*["'](?:\\n|\s)*})/g, function(match) {
         return match.slice(1);
-      });
-
-      // minify `createIterator` option property names
-      iteratorOptions.forEach(function(property, index) {
-        var minName = minNames[index];
-
-        // minify variables in `iteratorTemplate` or property names in everything else
-        modified = isIteratorTemplate
-          ? modified.replace(RegExp('\\b' + property + '\\b', 'g'), minName)
-          : modified.replace(RegExp("'" + property + "'", 'g'), "'" + minName + "'");
       });
 
       // minify snippet variables / arguments
       compiledVars.forEach(function(varName, index) {
         var minName = minNames[index];
 
-        // minify variable names present in strings
-        if (isFunc && !isIteratorTemplate) {
-          modified = modified.replace(RegExp('((["\'])[^\\n\\2]*?)\\b' + varName + '\\b(?=[^\\n\\2]*\\2[ ,+;]+$)', 'gm'), function(match, prelude) {
-            return prelude + minName;
-          });
-        }
-        // ensure properties in compiled strings aren't minified
-        else {
-          modified = modified.replace(RegExp('([^.])\\b' + varName + '\\b(?!\' *[\\]:])', 'g'), function(match, prelude) {
-             return prelude + minName;
-          });
-        }
+        modified = modified.replace(/(["'])(?:(?!\1)[^\n\\]|\\.)*\1/g, function(match) {
+          return match.replace(RegExp('([^.])\\b' + varName + '\\b', 'g'), '$1' + minName);
+        });
+
         // correct `typeof` string values
         if (/^(?:boolean|function|object|number|string|undefined)$/.test(varName)) {
           modified = modified.replace(RegExp('(= *)(["\'])' + minName + '\\2|(["\'])' + minName + '\\3( *=)', 'g'), function(match, prelude, preQuote, postQuote, postlude) {
@@ -434,10 +392,31 @@
         }
       });
 
+      // minify `createIterator` option property names
+      iteratorOptions.forEach(function(property, index) {
+        var minName = minNames[index];
+
+        // minify iterator option variables
+        modified = modified.replace(/(["'])(?:(?!\1)[^\n\\]|\\.)*\1/g, function(match, quote) {
+          return match.replace(RegExp('([^.])\\b' + property + '\\b', 'g'), '$1' + minName)
+        });
+
+        // minify iterator option properties, adding brackets so the Closure Compiler won't mung them
+        modified = modified.replace(RegExp('(["\'])(?:(?!\\1)[^\\n\\\\]|\\\\.)*\\1|\\.' + property + '\\b', 'g'), function(match, quote) {
+          return quote ? match : "['" + minName + "']";
+        });
+      });
+
       // replace with modified snippet
       source = source.replace(snippet, function() {
         return modified;
       });
+    });
+
+    // add brackets to whitelisted properties so the Closure Compiler won't mung them
+    // http://code.google.com/closure/compiler/docs/api-tutorial3.html#export
+    source = source.replace(RegExp('(["\'])(?:(?!\\1)[^\\n\\\\]|\\\\.)*\\1|\\.(' + propWhitelist.join('|') + ')\\b', 'g'), function(match, quote, prop) {
+      return quote ? match : "['" + prop + "']";
     });
 
     return source;

@@ -85,6 +85,8 @@
     'templateSettings': ['escape'],
 
     // variables
+    'defaultsIteratorOptions': ['keys'],
+    'eachIteratorOptions': ['keys'],
     'htmlUnescapes': ['invert'],
     'reEscapedHtml': ['keys'],
     'reUnescapedHtml': ['keys'],
@@ -208,7 +210,7 @@
     'compareAscending': [],
     'createBound': ['createObject', 'isFunction', 'isObject', 'setBindData'],
     'createCache': ['cachePush', 'getObject', 'releaseObject'],
-    'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'keys', 'iteratorTemplate', 'lodash', 'releaseObject'],
+    'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'lodash', 'releaseObject'],
     'createObject': [ 'isObject', 'noop'],
     'escapeHtmlChar': [],
     'escapeStringChar': [],
@@ -235,12 +237,6 @@
     'findWhere': ['where']
   };
 
-  /** Used to track circular dependencies of identifiers */
-  var circularDependencyMap = {
-    'createCallback': ['isEqual'],
-    'createIterator': ['keys']
-  };
-
   /** Used to track Lo-Dash property dependencies of identifiers */
   var propDependencyMap = {
     'at': ['support'],
@@ -261,14 +257,20 @@
 
   /** Used to track variable dependencies of identifiers */
   var varDependencyMap = {
+    'assign': ['defaultsIteratorOptions'],
+    'baseEach': ['eachIteratorOptions'],
     'baseIsEqual': ['objectTypes'],
     'bind': ['reNative'],
     'createIterator': ['indicatorObject', 'objectTypes'],
     'createBound': ['reNative'],
     'createObject': ['reNative'],
+    'defaults': ['defaultsIteratorOptions'],
     'defer': ['objectTypes', 'reNative'],
     'escape': ['reUnescapedHtml'],
     'escapeHtmlChar': ['htmlEscapes'],
+    'forIn': ['eachIteratorOptions', 'forOwnIteratorOptions'],
+    'forOwn': ['eachIteratorOptions', 'forOwnIteratorOptions'],
+    'forOwnIteratorOptions': ['eachIteratorOptions'],
     'htmlUnescapes': ['htmlEscapes'],
     'isArray': ['reNative'],
     'isObject': ['objectTypes'],
@@ -494,12 +496,12 @@
     'bottom',
     'firstArg',
     'init',
+    'keys',
     'loop',
     'shadowedProps',
     'support',
     'top',
-    'useHas',
-    'useKeys'
+    'useHas'
   ];
 
   /** List of Lo-Dash only functions */
@@ -865,26 +867,16 @@
 
     // create modules for each identifier
     identifiers.forEach(function(identifier) {
-      var circDeps = circularDependencyMap[identifier],
-          modulePath = getPath(identifier),
+      var modulePath = getPath(identifier),
           iife = [];
 
-      var deps = _.difference(
-        getDependencies(identifier, true)
+      var deps = getDependencies(identifier, true)
         .concat(propDependencyMap[identifier] || arrayRef)
         .concat(varDependencyMap[identifier] || arrayRef)
-      , circDeps)
-      .sort();
+        .sort();
 
-      if (circDeps) {
-        deps.unshift('require');
-      }
-      var depArgs = deps.join(', ');
-
-      if (circDeps) {
-        push.apply(deps, circDeps);
-      }
-      var depPaths = '[' + (deps.length ? "'" + getDepPaths(deps, modulePath).join("', '") + "'" : '') + '], ';
+      var depArgs = deps.join(', '),
+          depPaths = '[' + (deps.length ? "'" + getDepPaths(deps, modulePath).join("', '") + "'" : '') + '], ';
 
       if (isAMD) {
         iife.push(
@@ -900,16 +892,7 @@
         'include=' + identifier,
         'iife=' + iife.join('\n'),
         '-o', path.join(outputPath, modulePath + identifier + '.js')
-      ), function(data) {
-        // replace circular dependencies inline
-        _.each(circDeps, function(dep) {
-          // avoid identifiers in strings
-          data.source = data.source.replace(RegExp('(["\'])(?:(?!\\1)[^\\n\\\\]|\\\\.)*\\1|\\b' + dep + '\\b', 'g'), function(match) {
-            return /^["']/.test(match) ? match : "require('" + getDepPath(match, modulePath) + "')";
-          });
-        });
-        defaultBuildCallback(data);
-      });
+      ));
     });
 
     // create category modules
@@ -1644,6 +1627,7 @@
         .replace(/(?:\s*\/\/.*)*\n( *)var args *=[\s\S]+?\n\1}/, '')
         .replace(/(?:\s*\/\/.*)*\n.+args *= *nativeSlice.+/, '')
         .replace(/(?:\s*\/\/.*)*\n.+?setBindData.+/, '')
+        .replace(/^( *)(args *=)/m, '$1var $2')
 
     });
 
@@ -1827,11 +1811,19 @@
    */
   function removeKeysOptimization(source) {
     source = removeFromCreateIterator(source, 'keys');
-    source = removeFromCreateIterator(source, 'useKeys');
+
+    // remove "keys" iterator options
+    _.each(['defaultsIteratorOptions', 'eachIteratorOptions'], function(varName) {
+      source = source.replace(matchVar(source, varName), function(match) {
+        return match
+          .replace(/^ *'keys':.+\n+/m, '')
+          .replace(/,(?=\s*})/, '');
+      });
+    });
 
     // remove optimized branch in `iteratorTemplate`
     source = source.replace(matchFunction(source, 'iteratorTemplate'), function(match) {
-      return match.replace(/^(?: *\/\/.*\n)* *["']( *)<% *if *\(useHas *&& *useKeys[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/m, "'\\n' +\n$2");
+      return match.replace(/^(?: *\/\/.*\n)* *["']( *)<% *if *\(useHas *&& *keys[\s\S]+?["']\1<% *} *else *{ *%>.+\n([\s\S]+?) *["']\1<% *} *%>.+/m, "'\\n' +\n$2");
     });
 
     return source;
@@ -2828,8 +2820,7 @@
       if (isModern || isUnderscore) {
         _.each(['assign', 'baseEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(funcName) {
           if (!(isUnderscore && isLodash(funcName))) {
-            (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('objectTypes');
-
+            (varDependencyMap[funcName] = _.without(varDependencyMap[funcName], 'defaultsIteratorOptions', 'eachIteratorOptions', 'forOwnIteratorOptions')).push('objectTypes');
             var deps = funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'createIterator');
             if (funcName != 'forIn' && funcName != 'shimKeys') {
               deps.push('keys');
@@ -3800,7 +3791,9 @@
         // use a with-statement
         iteratorOptions.forEach(function(prop) {
           if (prop !== 'support') {
-            snippet = snippet.replace(RegExp('([^\\w.])' + prop + '\\b', 'g'), '$1obj.' + prop);
+            snippet = snippet.replace(RegExp('(["\'])(?:(?!\\1)[^\\n\\\\]|\\\\.)*\\1|([^.])\\b' + prop + '\\b', 'g'), function(match, quote, prelude) {
+              return quote ? match : (prelude + 'obj.' + prop);
+            });
           }
         });
 

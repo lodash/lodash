@@ -4848,19 +4848,19 @@
           return result;
         };
       }
-      var bindData = func.__bindData__;
+      // exit early if there is no `thisArg`
+      if (typeof thisArg == 'undefined') {
+        return func;
+      }
+      var bindData = !func.name || func.__bindData__;
       if (typeof bindData == 'undefined') {
         // checks if `func` references the `this` keyword and stores the result
         bindData = !reThis || reThis.test(fnToString.call(func));
         setBindData(func, bindData);
       }
-      if (typeof thisArg == 'undefined' || !bindData) {
+      // exit early if there are no `this` references or `func` is bound
+      if (bindData !== true && !(bindData && bindData[4])) {
         return func;
-      }
-      else if (bindData !== true) {
-        // exit early if already bound or leverage bind optimizations if
-        // created by `_.partial` or `_.partialRight`
-        return bindData[4] ? bind(func, thisArg) : func;
       }
       switch (argCount) {
         case 1: return function(value) {
@@ -4876,9 +4876,7 @@
           return func.call(thisArg, accumulator, value, index, collection);
         };
       }
-      return function() {
-        return func.apply(thisArg, arguments);
-      };
+      return bind(func, thisArg);
     }
 
     /**

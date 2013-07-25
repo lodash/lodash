@@ -1634,9 +1634,8 @@
     // remove `__bindData__` logic and `setBindData` function calls from `_.createCallback`
     source = source.replace(matchFunction(source, 'createCallback'), function(match) {
       return match
-        .replace(/^( *)var bindData *=[\s\S]+?\n\1}\n/m, '')
-        .replace(/\s*\|\|\s*!bindData\b/, '')
-        .replace(/^( *)else if \(bindData[\s\S]+?\n\1}\n/m, '')
+        .replace(/(?:\s*\/\/.*)\n( *)var bindData *=[\s\S]+?\n\1}/, '')
+        .replace(/(?:\s*\/\/.*)\n( *)if *\(bindData[\s\S]+?\n\1}/, '');
     });
 
     return source;
@@ -2729,7 +2728,7 @@
       }
       if (isLegacy || isMobile || isUnderscore) {
         _.each(['createBound', 'createCallback'], function(funcName) {
-          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'bind', 'setBindData');
+          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'setBindData');
         });
       }
       if (_.contains(plusFuncs, 'chain') == !isUnderscore) {

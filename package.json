@@ -50,6 +50,12 @@
     "node",
     "rhino"
   ],
+  "files": [
+    "build.js",
+    "LICENSE.txt",
+    "dist/lodash.js",
+    "dist/lodash.underscore.js"
+  ],
   "jam": {
     "main": "./dist/lodash.compat.js"
   },

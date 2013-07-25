@@ -104,7 +104,7 @@
     'compose': [],
     'contains': ['baseEach', 'getIndexOf', 'isString'],
     'countBy': ['createCallback', 'forEach'],
-    'createCallback': ['bind', 'identity', 'isEqual', 'isObject', 'keys', 'setBindData'],
+    'createCallback': ['baseIsEqual', 'bind', 'identity', 'isObject', 'keys', 'setBindData'],
     'debounce': ['isObject'],
     'defaults': ['createCallback', 'createIterator'],
     'defer': ['bind'],
@@ -1670,7 +1670,7 @@
     // remove `factory` arguments
     source = source.replace(snippet, function(match) {
       return match
-        .replace(RegExp("[^\\n(,']*?\\b" + identifier + "[^\\n),']*(?:, *)?", 'g'), ' ')
+        .replace(RegExp("[^\\n(,']*?\\b" + identifier + "\\b[^\\n),']*(?:, *)?", 'g'), ' ')
         .replace(/, *(?=',)/, '')
         .replace(/,(?=\s*\))/, '');
     });

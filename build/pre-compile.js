@@ -357,12 +357,7 @@
         // match `baseUniq`, `cachePush`, `createCache`, `createIterator`, `getObject`, and `releaseObject` functions
         '^( *)(?:var|function) +(?:baseUniq|cachePush|createCache|createIterator|getObject|releaseObject)\\b[\\s\\S]+?\\n\\3}'
       ].join('|'), 'gm')
-    );
-
-    // exit early if no compilable snippets
-    if (!snippets) {
-      return source;
-    }
+    ) || [];
 
     snippets.forEach(function(snippet, index) {
       var isFunc = /\bfunction *[ \w]*\(/.test(snippet),

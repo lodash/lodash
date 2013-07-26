@@ -287,10 +287,17 @@
         };\
         \
         var _boundNormal = _.bind(func, thisArg),\
+            _boundMultiple = = _boundNormal,\
             _boundPartial = _.bind(func, thisArg, "hi");\
         \
         var lodashBoundNormal = lodash.bind(func, thisArg),\
+            lodashBoundMultiple = lodashBoundNormal,\
             lodashBoundPartial = lodash.bind(func, thisArg, "hi");\
+        \
+        for (index = 0; index < 10; index++) {\
+          _boundMultiple = _.bind(_boundMultiple, { "name": "moe" + index });\
+          lodashBoundMultiple = lodash.bind(lodashBoundMultiple, { "name": "moe" + index });\
+        }\
       }\
       \
       if (typeof bindAll != "undefined") {\
@@ -639,6 +646,18 @@
       })
       .add(otherName, {
         'fn': '_boundPartial("!")',
+        'teardown': 'function bind(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('bound multiple times')
+      .add(buildName, {
+        'fn': 'lodashBoundMultiple()',
+        'teardown': 'function bind(){}'
+      })
+      .add(otherName, {
+        'fn': '_boundMultiple()',
         'teardown': 'function bind(){}'
       })
   );
@@ -1060,6 +1079,42 @@
       })
       .add(otherName, {
         'fn': '_.groupBy(wordToNumber, function(num) { return num >> 1; })',
+        'teardown': 'function countBy(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.indexBy` with `callback` iterating an array')
+      .add(buildName, '\
+        lodash.indexBy(numbers, function(num) { return num >> 1; })'
+      )
+      .add(otherName, '\
+        _.indexBy(numbers, function(num) { return num >> 1; })'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.indexBy` with `property` name iterating an array')
+      .add(buildName, {
+        'fn': 'lodash.indexBy(words, "length")',
+        'teardown': 'function countBy(){}'
+      })
+      .add(otherName, {
+        'fn': '_.indexBy(words, "length")',
+        'teardown': 'function countBy(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.indexBy` with `callback` iterating an object')
+      .add(buildName, {
+        'fn': 'lodash.indexBy(wordToNumber, function(num) { return num >> 1; })',
+        'teardown': 'function countBy(){}'
+      })
+      .add(otherName, {
+        'fn': '_.indexBy(wordToNumber, function(num) { return num >> 1; })',
         'teardown': 'function countBy(){}'
       })
   );

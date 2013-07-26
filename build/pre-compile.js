@@ -149,6 +149,7 @@
     'imports',
     'include',
     'index',
+    'indexBy',
     'indexOf',
     'initial',
     'inject',

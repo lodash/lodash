@@ -171,12 +171,12 @@
    * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
    * `compose`, `concat`, `countBy`, `createCallback`, `debounce`, `defaults`,
    * `defer`, `delay`, `difference`, `filter`, `flatten`, `forEach`, `forIn`,
-   * `forOwn`, `functions`, `groupBy`, `initial`, `intersection`, `invert`,
-   * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
-   * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`, `range`,
-   * `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-   * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
-   * `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
+   * `forOwn`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
+   * `invert`, `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`,
+   * `omit`, `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`,
+   * `range`, `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
+   * `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`,
+   * `unshift`, `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
    *
    * The non-chainable wrapper functions are:
    * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
@@ -410,6 +410,28 @@
       });
     }
     return result;
+  }
+
+  /**
+   * Creates a function that aggregates a collection, creating an object composed
+   * of keys generated from the results of running each element of the collection
+   * through a callback. The given `setter` function sets the keys and values
+   * of the composed object.
+   *
+   * @private
+   * @param {Function} setter The setter function.
+   * @returns {Function} Returns the new aggregator function.
+   */
+  function createAggregator(setter) {
+    return function(collection, callback, thisArg) {
+      var result = {};
+      callback = createCallback(callback, thisArg, 3);
+      forEach(collection, function(value, key, collection) {
+        key = String(callback(value, key, collection));
+        setter(result, value, key, collection);
+      });
+      return result;
+    };
   }
 
   /**
@@ -1240,10 +1262,11 @@
   }
 
   /**
-   * Creates an object composed of keys returned from running each element of the
-   * `collection` through the given `callback`. The corresponding value of each key
-   * is the number of times the key was returned by the `callback`. The `callback`
-   * is bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
+   * Creates an object composed of keys generated from the results of running
+   * each element of the `collection` through the given `callback`. The corresponding
+   * value of each key is the number of times the key was returned by the `callback`.
+   * The `callback` is bound to `thisArg` and invoked with three arguments;
+   * (value, index|key, collection).
    *
    * If a property name is passed for `callback`, the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -1272,16 +1295,9 @@
    * _.countBy(['one', 'two', 'three'], 'length');
    * // => { '3': 2, '5': 1 }
    */
-  function countBy(collection, callback, thisArg) {
-    var result = {};
-    callback = createCallback(callback, thisArg, 3);
-
-    forEach(collection, function(value, key, collection) {
-      key = String(callback(value, key, collection));
-      (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
-    });
-    return result;
-  }
+  var countBy = createAggregator(function(result, value, key) {
+    (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
+  });
 
   /**
    * Checks if the `callback` returns a truthy value for **all** elements of a
@@ -1516,10 +1532,11 @@
   }
 
   /**
-   * Creates an object composed of keys returned from running each element of the
-   * `collection` through the `callback`. The corresponding value of each key is
-   * an array of elements passed to `callback` that returned the key. The `callback`
-   * is bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
+   * Creates an object composed of keys generated from the results of running
+   * each element of the `collection` through the `callback`. The corresponding
+   * value of each key is an array of the elements responsible for generating
+   * the key. The `callback` is bound to `thisArg` and invoked with three
+   * arguments; (value, index|key, collection).
    *
    * If a property name is passed for `callback`, the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -1549,16 +1566,9 @@
    * _.groupBy(['one', 'two', 'three'], 'length');
    * // => { '3': ['one', 'two'], '5': ['three'] }
    */
-  function groupBy(collection, callback, thisArg) {
-    var result = {};
-    callback = createCallback(callback, thisArg, 3);
-
-    forEach(collection, function(value, key, collection) {
-      key = String(callback(value, key, collection));
-      (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
-    });
-    return result;
-  }
+  var groupBy = createAggregator(function(result, value, key) {
+    (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
+  });
 
   /**
    * Invokes the method named by `methodName` on each element in the `collection`,
@@ -2746,6 +2756,7 @@
         return result;
       };
     }
+    // exit early if there is no `thisArg`
     if (typeof thisArg == 'undefined') {
       return func;
     }
@@ -2763,9 +2774,7 @@
         return func.call(thisArg, accumulator, value, index, collection);
       };
     }
-    return function() {
-      return func.apply(thisArg, arguments);
-    };
+    return bind(func, thisArg);
   }
 
   /**

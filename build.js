@@ -103,7 +103,7 @@
     'compact': [],
     'compose': [],
     'contains': ['baseEach', 'getIndexOf', 'isString'],
-    'countBy': ['createCallback', 'forEach'],
+    'countBy': ['createAggregator'],
     'createCallback': ['baseIsEqual', 'bind', 'identity', 'isObject', 'keys', 'setBindData'],
     'debounce': ['isObject'],
     'defaults': ['createCallback', 'createIterator'],
@@ -122,9 +122,10 @@
     'forIn': ['createIterator'],
     'forOwn': ['createIterator'],
     'functions': ['forIn', 'isFunction'],
-    'groupBy': ['createCallback', 'forEach'],
+    'groupBy': ['createAggregator'],
     'has': [],
     'identity': [],
+    'indexBy': ['createAggregator'],
     'indexOf': ['baseIndexOf', 'sortedIndex'],
     'initial': ['createCallback', 'slice'],
     'intersection': ['cacheIndexOf', 'createCache', 'getArray', 'getIndexOf', 'releaseArray', 'releaseObject'],
@@ -208,6 +209,7 @@
     'cachePush': [],
     'charAtCallback': [],
     'compareAscending': [],
+    'createAggregator': ['createCallback', 'forEach'],
     'createBound': ['createObject', 'isFunction', 'isObject', 'setBindData'],
     'createCache': ['cachePush', 'getObject', 'releaseObject'],
     'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'lodash', 'releaseObject'],
@@ -224,7 +226,7 @@
     'noop': [],
     'releaseArray': [],
     'releaseObject': [],
-    'setBindData': [],
+    'setBindData': ['noop'],
     'shimIsPlainObject': ['forIn', 'isArguments', 'isFunction', 'isNode'],
     'shimKeys': ['createIterator'],
     'slice': [],
@@ -324,6 +326,7 @@
       'findWhere',
       'forEach',
       'groupBy',
+      'indexBy',
       'invoke',
       'map',
       'max',
@@ -514,6 +517,7 @@
     'findKey',
     'forIn',
     'forOwn',
+    'indexBy',
     'isPlainObject',
     'merge',
     'parseInt',
@@ -1185,7 +1189,7 @@
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `createObject` fork.
+   * @returns {String} Returns the fork.
    */
   function getCreateObjectFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!nativeCreate)[\s\S]+?\n *};\n\1}/);
@@ -1197,7 +1201,7 @@
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `_.defer` fork.
+   * @returns {String} Returns the fork.
    */
   function getDeferFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/);
@@ -1318,7 +1322,7 @@
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `isArguments` fork.
+   * @returns {String} Returns the fork.
    */
   function getIsArgumentsFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!support\.argsClass|!isArguments)[\s\S]+?\n *};\n\1}/);
@@ -1330,7 +1334,7 @@
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `isArray` fork.
+   * @returns {String} Returns the fork.
    */
   function getIsArrayFork(source) {
     return matchFunction(source, 'isArray')
@@ -1343,7 +1347,7 @@
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `isFunction` fork.
+   * @returns {String} Returns the fork.
    */
   function getIsFunctionFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?\n *};\n\1}/);
@@ -1393,11 +1397,23 @@
   }
 
   /**
+   * Gets the `setBindData` fork from `source`.
+   *
+   * @private
+   * @param {String} source The source to inspect.
+   * @returns {String} Returns the fork.
+   */
+  function getSetBindDataFork(source) {
+    var result = matchFunction(source, 'setBindData').match(/!defineProperty[^:]+:\s*/);
+    return result ? result[0] : '';
+  }
+
+  /**
    * Gets the `templateSettings` assignment from `source`.
    *
    * @private
    * @param {String} source The source to inspect.
-   * @returns {String} Returns the `templateSettings`.
+   * @returns {String} Returns the assignment.
    */
   function getTemplateSettings(source) {
     var result = source.match(RegExp(
@@ -1473,8 +1489,8 @@
    */
   function matchFunction(source, funcName, leadingComments) {
     var result = _.reduce([
-      // match variable declarations with `createIterator` and `template`
-      '( *)var ' + funcName + ' *=.*?(?:createIterator|template)\\((?:.+|[\\s\\S]+?\\n\\3}?)\\);\\n',
+      // match variable declarations using `createAggregator`, `createIterator` and `template`
+      '( *)var ' + funcName + ' *=.*?(?:create[A-Z][a-z]+|template)\\((?:.+|[\\s\\S]+?\\n\\3}?)\\);\\n',
       // match a function declaration
       '( *)function ' + funcName + '\\b[\\s\\S]+?\\n\\3}\\n',
       // match a variable declaration with function expression
@@ -1490,7 +1506,7 @@
 
     return result && (
            /@type +Function\b/.test(result[0]) ||
-           /(?:function(?:\s+\w+)?\b|createIterator|template)\(/.test(result[1]))
+           /(?:function(?:\s+\w+)?\b|create[A-Z][a-z]+|template)\(/.test(result[1]))
       ? (leadingComments ? result[0] : '') + result[1]
       : '';
   }
@@ -1634,8 +1650,8 @@
     // remove `__bindData__` logic and `setBindData` function calls from `_.createCallback`
     source = source.replace(matchFunction(source, 'createCallback'), function(match) {
       return match
-        .replace(/(?:\s*\/\/.*)\n( *)var bindData *=[\s\S]+?\n\1}/, '')
-        .replace(/(?:\s*\/\/.*)\n( *)if *\(bindData[\s\S]+?\n\1}/, '');
+        .replace(/(?:\s*\/\/.*)*\n( *)var bindData *=[\s\S]+?\n\1}/, '')
+        .replace(/(?:\s*\/\/.*)*\n( *)if *\(bindData[\s\S]+?\n\1}/, '');
     });
 
     return source;
@@ -1934,6 +1950,19 @@
     source = removeVar(source, 'setTimeout');
 
     return source;
+  }
+
+  /**
+   * Removes the `setBindData` fork from `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeSetBindDataFork(source) {
+    return source = source.replace(matchFunction(source, 'isArray'), function(match) {
+      return match.replace(getSetBindDataFork(source), '');
+    });
   }
 
   /**
@@ -2710,8 +2739,10 @@
         });
       }
       else if (isModern) {
+        funcDependencyMap.setBindData = _.without(funcDependencyMap.setBindData, 'noop');
+
         _.forOwn(funcDependencyMap, function(deps, funcName) {
-          if (_.contains(deps, 'isArguments')) {
+          if (funcName != 'baseFlatten' && _.contains(deps, 'isArguments')) {
             funcDependencyMap[funcName] = _.without(deps, 'isArguments');
           }
         });
@@ -3004,6 +3035,7 @@
       }
       if (isModern) {
         source = removeIsArgumentsFork(source);
+        source = removeSetBindDataFork(source);
         source = removeSupportSpliceObjects(source);
 
         if (isMobile) {

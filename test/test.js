@@ -581,13 +581,40 @@
   QUnit.module('lodash.countBy');
 
   (function() {
+    test('should support the `thisArg` argument', function() {
+      var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
+        return this.floor(num);
+      }, Math);
+
+      deepEqual(actual, { '4': 1, '6': 2 });
+    });
+
     test('should only add values to own, not inherited, properties', function() {
       var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
-      strictEqual(actual.constructor, 1);
-      equal(actual.hasOwnProperty, 2);
+      deepEqual(actual.constructor, 1);
+      deepEqual(actual.hasOwnProperty, 2);
+    });
+
+    test('should work with an object for `collection`', function() {
+      var actual = _.countBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
+        return Math.floor(num);
+      });
+
+      deepEqual(actual, { '4': 1, '6': 2 });
+    });
+
+    test('should work with a number for `callback`', function() {
+      var array = [
+        [1, 'a'],
+        [2, 'a'],
+        [2, 'b']
+      ];
+
+      deepEqual(_.countBy(array, 0), { '1': 1, '2': 2 });
+      deepEqual(_.countBy(array, 1), { 'a': 2, 'b': 1 });
     });
   }());
 
@@ -1431,6 +1458,48 @@
 
       deepEqual(_.groupBy(array, 0), { '1': [[1 , 'a']], '2': [[2, 'a'], [2, 'b']] });
       deepEqual(_.groupBy(array, 1), { 'a': [[1 , 'a'], [2, 'a']], 'b': [[2, 'b']] });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.indexBy');
+
+  (function() {
+    test('should support the `thisArg` argument', function() {
+      var actual = _.indexBy([4.2, 6.1, 6.4], function(num) {
+        return this.floor(num);
+      }, Math);
+
+      deepEqual(actual, { '4': 4.2, '6': 6.4 });
+    });
+
+    test('should only add values to own, not inherited, properties', function() {
+      var actual = _.indexBy([4.2, 6.1, 6.4], function(num) {
+        return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
+      });
+
+      deepEqual(actual.constructor, 4.2);
+      deepEqual(actual.hasOwnProperty, 6.4);
+    });
+
+    test('should work with an object for `collection`', function() {
+      var actual = _.indexBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
+        return Math.floor(num);
+      });
+
+      deepEqual(actual, { '4': 4.2, '6': 6.4 });
+    });
+
+    test('should work with a number for `callback`', function() {
+      var array = [
+        [1, 'a'],
+        [2, 'a'],
+        [2, 'b']
+      ];
+
+      deepEqual(_.indexBy(array, 0), { '1': [1 , 'a'], '2': [2, 'b'] });
+      deepEqual(_.indexBy(array, 1), { 'a': [2, 'a'], 'b': [2, 'b'] });
     });
   }());
 

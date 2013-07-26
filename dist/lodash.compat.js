@@ -557,12 +557,12 @@
      * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
      * `compose`, `concat`, `countBy`, `createCallback`, `debounce`, `defaults`,
      * `defer`, `delay`, `difference`, `filter`, `flatten`, `forEach`, `forIn`,
-     * `forOwn`, `functions`, `groupBy`, `initial`, `intersection`, `invert`,
-     * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
-     * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`, `range`,
-     * `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-     * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
-     * `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
+     * `forOwn`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
+     * `invert`, `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`,
+     * `omit`, `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`,
+     * `range`, `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
+     * `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`,
+     * `unshift`, `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
@@ -1323,6 +1323,28 @@
     }
 
     /**
+     * Creates a function that aggregates a collection, creating an object composed
+     * of keys generated from the results of running each element of the collection
+     * through a callback. The given `setter` function sets the keys and values
+     * of the composed object.
+     *
+     * @private
+     * @param {Function} setter The setter function.
+     * @returns {Function} Returns the new aggregator function.
+     */
+    function createAggregator(setter) {
+      return function(collection, callback, thisArg) {
+        var result = {};
+        callback = lodash.createCallback(callback, thisArg, 3);
+        forEach(collection, function(value, key, collection) {
+          key = String(callback(value, key, collection));
+          setter(result, value, key, collection);
+        });
+        return result;
+      };
+    }
+
+    /**
      * Creates a function that, when called, invokes `func` with the `this` binding
      * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
      * bound function.
@@ -1489,14 +1511,14 @@
      * @param {Function} func The function to set data on.
      * @param {Mixed} value The value to set.
      */
-    function setBindData(func, value) {
+    var setBindData = !defineProperty ? noop : function(func, value) {
       defineProperty(func, '__bindData__', {
         'configurable': false,
         'enumerable': false,
         'value': value,
         'writable': false
       });
-    }
+    };
 
     /**
      * A fallback implementation of `isPlainObject` which checks if a given `value`
@@ -2247,7 +2269,7 @@
      * Checks if `value` is `NaN`.
      *
      * Note: This is not the same as native `isNaN`, which will return `true` for
-     * `undefined` and other values. See http://es5.github.io/#x15.1.2.4.
+     * `undefined` and other non-numeric values. See http://es5.github.io/#x15.1.2.4.
      *
      * @static
      * @memberOf _
@@ -2769,10 +2791,11 @@
     }
 
     /**
-     * Creates an object composed of keys returned from running each element of the
-     * `collection` through the given `callback`. The corresponding value of each key
-     * is the number of times the key was returned by the `callback`. The `callback`
-     * is bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
+     * Creates an object composed of keys generated from the results of running
+     * each element of the `collection` through the given `callback`. The corresponding
+     * value of each key is the number of times the key was returned by the `callback`.
+     * The `callback` is bound to `thisArg` and invoked with three arguments;
+     * (value, index|key, collection).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -2801,16 +2824,9 @@
      * _.countBy(['one', 'two', 'three'], 'length');
      * // => { '3': 2, '5': 1 }
      */
-    function countBy(collection, callback, thisArg) {
-      var result = {};
-      callback = lodash.createCallback(callback, thisArg, 3);
-
-      forEach(collection, function(value, key, collection) {
-        key = String(callback(value, key, collection));
-        (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
-      });
-      return result;
-    }
+    var countBy = createAggregator(function(result, value, key) {
+      (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
+    });
 
     /**
      * Checks if the `callback` returns a truthy value for **all** elements of a
@@ -3045,10 +3061,11 @@
     }
 
     /**
-     * Creates an object composed of keys returned from running each element of the
-     * `collection` through the `callback`. The corresponding value of each key is
-     * an array of elements passed to `callback` that returned the key. The `callback`
-     * is bound to `thisArg` and invoked with three arguments; (value, index|key, collection).
+     * Creates an object composed of keys generated from the results of running
+     * each element of the `collection` through the `callback`. The corresponding
+     * value of each key is an array of the elements responsible for generating
+     * the key. The `callback` is bound to `thisArg` and invoked with three
+     * arguments; (value, index|key, collection).
      *
      * If a property name is passed for `callback`, the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -3078,16 +3095,52 @@
      * _.groupBy(['one', 'two', 'three'], 'length');
      * // => { '3': ['one', 'two'], '5': ['three'] }
      */
-    function groupBy(collection, callback, thisArg) {
-      var result = {};
-      callback = lodash.createCallback(callback, thisArg, 3);
+    var groupBy = createAggregator(function(result, value, key) {
+      (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
+    });
 
-      forEach(collection, function(value, key, collection) {
-        key = String(callback(value, key, collection));
-        (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
-      });
-      return result;
-    }
+    /**
+     * Creates an object composed of keys generated from the results of running
+     * each element of the `collection` through the given `callback`. The corresponding
+     * value of each key is the last element responsible for generating the key.
+     * The `callback` is bound to `thisArg` and invoked with three arguments;
+     * (value, index|key, collection).
+     *
+     * If a property name is passed for `callback`, the created "_.pluck" style
+     * callback will return the property value of the given element.
+     *
+     * If an object is passed for `callback`, the created "_.where" style callback
+     * will return `true` for elements that have the properties of the given object,
+     * else `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Collections
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function|Object|String} [callback=identity] The function called per
+     *  iteration. If a property name or object is passed, it will be used to create
+     *  a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Object} Returns the composed aggregate object.
+     * @example
+     *
+     * var keys = [
+     *   { 'dir': 'left', 'code': 97 },
+     *   { 'dir': 'right', 'code': 100 }
+     * ];
+     *
+     * _.indexBy(keys, 'dir');
+     * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
+     *
+     * _.indexBy(keys, function(key) { return String.fromCharCode(key.code); });
+     * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
+     *
+     * _.indexBy(stooges, function(key) { this.fromCharCode(key.code); }, String);
+     * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
+     */
+    var indexBy = createAggregator(function(result, value, key) {
+      result[key] = value;
+    });
 
     /**
      * Invokes the method named by `methodName` on each element in the `collection`,
@@ -4225,7 +4278,8 @@
 
     /**
      * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to but not including `end`.
+     * `start` up to but not including `end`. If `start` is less than `stop` a
+     * zero-length range is created unless a negative `step` is specified.
      *
      * @static
      * @memberOf _
@@ -4810,6 +4864,7 @@
           return result;
         };
       }
+      // exit early if there is no `thisArg`
       if (typeof thisArg == 'undefined') {
         return func;
       }
@@ -4827,9 +4882,7 @@
           return func.call(thisArg, accumulator, value, index, collection);
         };
       }
-      return function() {
-        return func.apply(thisArg, arguments);
-      };
+      return bind(func, thisArg);
     }
 
     /**
@@ -5739,6 +5792,7 @@
     lodash.forOwn = forOwn;
     lodash.functions = functions;
     lodash.groupBy = groupBy;
+    lodash.indexBy = indexBy;
     lodash.initial = initial;
     lodash.intersection = intersection;
     lodash.invert = invert;

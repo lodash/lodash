@@ -50,7 +50,7 @@ For more information check out these articles, screencasts, and other videos ove
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays and objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex` argument
  * [_.debounce](http://lodash.com/docs#debounce) and [_.throttle](http://lodash.com/docs#throttle) accept an `options` argument for more control
- * [_.createCallback](http://lodash.com/docs#createCallback) to customize how callback arguments are handled and support callback shorthands in mixins
+ * [_.createCallback](http://lodash.com/docs#createCallback) to extend callback support in Lo-Dash methods and mixins
  * [_.findIndex](http://lodash.com/docs#findIndex) and [_.findKey](http://lodash.com/docs#findKey) for finding indexes and keys of collections
  * [_.forEach](http://lodash.com/docs#forEach) is chainable and supports exiting iteration early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating over an object’s own and inherited properties
@@ -217,8 +217,7 @@ var _ = require('lodash/dist/lodash.underscore');
 **Notes:**
  * Don’t assign Lo-Dash to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when inside the REPL
  * If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it
- * Node.js 0.10.8-0.10.11 [have](https://github.com/joyent/node/issues/5622) [bugs](https://github.com/joyent/node/issues/5688) that prevent the `lodash` command-line utility from creating minified builds
-
+ * Node.js 0.10.8-0.10.11 [have](https://github.com/joyent/node/issues/5622) [bugs](https://github.com/joyent/node/issues/5688) that prevent creating minified builds
 
 In [RingoJS ≤ v0.7.0](http://ringojs.org/):
 

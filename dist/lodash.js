@@ -312,7 +312,9 @@
     return objectPool.pop() || {
       'array': null,
       'cache': null,
+      'configurable': false,
       'criteria': null,
+      'enumerable': false,
       'false': false,
       'index': 0,
       'leading': false,
@@ -325,7 +327,8 @@
       'trailing': false,
       'true': false,
       'undefined': false,
-      'value': null
+      'value': null,
+      'writable': false
     };
   }
 
@@ -1199,12 +1202,10 @@
      * @param {Mixed} value The value to set.
      */
     var setBindData = !defineProperty ? noop : function(func, value) {
-      defineProperty(func, '__bindData__', {
-        'configurable': false,
-        'enumerable': false,
-        'value': value,
-        'writable': false
-      });
+      var descriptor = getObject();
+      descriptor.value = value;
+      defineProperty(func, '__bindData__', descriptor);
+      releaseObject(descriptor);
     };
 
     /**

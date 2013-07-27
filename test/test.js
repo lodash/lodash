@@ -581,6 +581,11 @@
   QUnit.module('lodash.countBy');
 
   (function() {
+    test('should use `_.identity` when no `callback` is passed', function() {
+      var actual = _.countBy([4, 6, 6]);
+      deepEqual(actual, { '4': 1, '6':  2 });
+    });
+
     test('should support the `thisArg` argument', function() {
       var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
         return this.floor(num);
@@ -1424,6 +1429,11 @@
   QUnit.module('lodash.groupBy');
 
   (function() {
+    test('should use `_.identity` when no `callback` is passed', function() {
+      var actual = _.groupBy([4, 6, 6]);
+      deepEqual(actual, { '4': [4], '6':  [6, 6] });
+    });
+
     test('should support the `thisArg` argument', function() {
       var actual = _.groupBy([4.2, 6.1, 6.4], function(num) {
         return this.floor(num);
@@ -1466,6 +1476,11 @@
   QUnit.module('lodash.indexBy');
 
   (function() {
+    test('should use `_.identity` when no `callback` is passed', function() {
+      var actual = _.indexBy([4, 6, 6]);
+      deepEqual(actual, { '4': 4, '6': 6 });
+    });
+
     test('should support the `thisArg` argument', function() {
       var actual = _.indexBy([4.2, 6.1, 6.4], function(num) {
         return this.floor(num);
@@ -3002,6 +3017,11 @@
       });
 
       deepEqual(actual, collection);
+    });
+
+    test('should use `_.identity` when no `callback` is passed', function() {
+      var actual = _.sortBy([3, 2, 1]);
+      deepEqual(actual, [1, 2, 3]);
     });
 
     test('should support the `thisArg` argument', function() {

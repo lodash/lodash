@@ -226,7 +226,7 @@
     'noop': [],
     'releaseArray': [],
     'releaseObject': [],
-    'setBindData': ['noop'],
+    'setBindData': ['getObject', 'noop', 'releaseObject'],
     'shimIsPlainObject': ['forIn', 'isArguments', 'isFunction', 'isNode'],
     'shimKeys': ['createIterator'],
     'slice': [],
@@ -4049,13 +4049,6 @@
           source = removeKeysOptimization(source);
           source = removeSupportNonEnumArgs(source);
         }
-        if (isExcluded('sortBy')) {
-          _.each([removeFromGetObject, removeFromReleaseObject], function(func) {
-            source = func(source, 'criteria');
-            source = func(source, 'index');
-            source = func(source, 'value');
-          });
-        }
         if (isExcluded('throttle')) {
           _.each(['leading', 'maxWait', 'trailing'], function(prop) {
             source = removeFromGetObject(source, prop);
@@ -4075,6 +4068,18 @@
               .replace(/,(?=\s*])/, '');
           });
         }
+        _.each([removeFromGetObject, removeFromReleaseObject], function(func) {
+          if (isExcluded('setBindData')) {
+            source = func(source, 'configurable');
+            source = func(source, 'enumerable');
+            source = func(source, 'writable');
+          }
+          if (isExcluded('sortBy')) {
+            source = func(source, 'criteria');
+            source = func(source, 'index');
+            source = func(source, 'value');
+          }
+        });
       }
 
       // remove functions from the build

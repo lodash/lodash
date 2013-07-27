@@ -321,7 +321,9 @@
       'array': null,
       'bottom': '',
       'cache': null,
+      'configurable': false,
       'criteria': null,
+      'enumerable': false,
       'false': false,
       'firstArg': '',
       'index': 0,
@@ -341,7 +343,8 @@
       'true': false,
       'undefined': false,
       'useHas': false,
-      'value': null
+      'value': null,
+      'writable': false
     };
   }
 
@@ -1512,12 +1515,10 @@
      * @param {Mixed} value The value to set.
      */
     var setBindData = !defineProperty ? noop : function(func, value) {
-      defineProperty(func, '__bindData__', {
-        'configurable': false,
-        'enumerable': false,
-        'value': value,
-        'writable': false
-      });
+      var descriptor = getObject();
+      descriptor.value = value;
+      defineProperty(func, '__bindData__', descriptor);
+      releaseObject(descriptor);
     };
 
     /**

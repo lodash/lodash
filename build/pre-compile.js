@@ -105,6 +105,7 @@
     'collect',
     'compact',
     'compose',
+    'configurable',
     'contains',
     'countBy',
     'createCallback',
@@ -117,6 +118,7 @@
     'difference',
     'drop',
     'each',
+    'enumerable',
     'enumErrorProps',
     'enumPrototypes',
     'environment',
@@ -249,6 +251,7 @@
     'window',
     'without',
     'wrap',
+    'writable',
     'zip',
     'zipObject'
   ];

@@ -31,7 +31,7 @@
 				    push = arrayProto.push,
 				    slice = arrayProto.slice;
 
-				if (lodash.chain && lodash.chain().__chain__) {
+				if (lodash().each().__chain__) {
 					return;
 				}
 				lodash.mixin = function(object) {
@@ -52,31 +52,6 @@
 				};
 
 				lodash.mixin(lodash);
-
-				lodash.chain = function(value) {
-					value = new lodash(value);
-					value.__chain__ = true;
-					return value;
-				};
-
-				lodash.prototype.chain = function() {
-					this.__chain__ = true;
-					return this;
-				};
-
-				lodash.prototype.concat = function() {
-					var result = concat.apply(this.__wrapped__, arguments);
-					if (this.__chain__) {
-						result = new lodash(result);
-						result.__chain__ = true;
-					}
-					return result;
-				};
-
-				lodash.prototype.pop = function() {
-					pop.apply(this.__wrapped__, arguments);
-					return this;
-				};
 
 				// expose lodash
 				window._ = lodash;

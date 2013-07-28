@@ -585,7 +585,6 @@
      *
      * @name _
      * @constructor
-     * @alias chain
      * @category Chaining
      * @param {Mixed} value The value to wrap in a `lodash` instance.
      * @returns {Object} Returns a `lodash` instance.
@@ -622,9 +621,11 @@
      *
      * @private
      * @param {Mixed} value The value to wrap in a `lodash` instance.
+     * @param {Boolean} chainAll A flag to enable chaining for all methods
      * @returns {Object} Returns a `lodash` instance.
      */
-    function lodashWrapper(value) {
+    function lodashWrapper(value, chainAll) {
+      this.__chain__ = !!chainAll;
       this.__wrapped__ = value;
     }
     // ensure `new lodashWrapper` is an instance of `lodash`
@@ -5957,6 +5958,34 @@
     /*--------------------------------------------------------------------------*/
 
     /**
+     * Creates a `lodash` object that wraps the given `value`.
+     *
+     * @static
+     * @memberOf _
+     * @category Chaining
+     * @param {Mixed} value The value to wrap.
+     * @returns {Object} Returns the wrapper object.
+     * @example
+     *
+     * var stooges = [
+     *   { 'name': 'moe', 'age': 40 },
+     *   { 'name': 'larry', 'age': 50 },
+     *   { 'name': 'curly', 'age': 60 }
+     * ];
+     *
+     * var youngest = _.chain(stooges)
+     *     .sortBy(function(stooge) { return stooge.age; })
+     *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
+     *     .first();
+     * // => 'moe is 40'
+     */
+    function chain(value) {
+      value = new lodashWrapper(value);
+      value.__chain__ = true;
+      return value;
+    }
+
+    /**
      * Invokes `interceptor` with the `value` as the first argument, and then
      * returns `value`. The purpose of this method is to "tap into" a method chain,
      * in order to perform operations on intermediate results within the chain.
@@ -5980,6 +6009,26 @@
     function tap(value, interceptor) {
       interceptor(value);
       return value;
+    }
+
+    /**
+     * Enables method chaining on the wrapper object.
+     *
+     * @name chain
+     * @memberOf _
+     * @category Chaining
+     * @returns {Mixed} Returns the wrapper object.
+     * @example
+     *
+     * var sum = _([1, 2, 3])
+     *     .chain()
+     *     .reduce(function(sum, num) { return sum + num; })
+     *     .value()
+     * // => 6`
+     */
+    function wrapperChain() {
+      this.__chain__ = true;
+      return this;
     }
 
     /**
@@ -6024,6 +6073,7 @@
     lodash.bind = bind;
     lodash.bindAll = bindAll;
     lodash.bindKey = bindKey;
+    lodash.chain = chain;
     lodash.compact = compact;
     lodash.compose = compose;
     lodash.countBy = countBy;
@@ -6095,10 +6145,6 @@
     // add functions to `lodash.prototype`
     mixin(lodash);
 
-    // add Underscore compat
-    lodash.chain = lodash;
-    lodash.prototype.chain = function() { return this; };
-
     /*--------------------------------------------------------------------------*/
 
     // add functions that return unwrapped values when chaining
@@ -6162,9 +6208,14 @@
     forOwn(lodash, function(func, methodName) {
       if (!lodash.prototype[methodName]) {
         lodash.prototype[methodName] = function() {
-          var args = [this.__wrapped__];
+          var args = [this.__wrapped__],
+              chainAll = this.__chain__;
+
           push.apply(args, arguments);
-          return func.apply(lodash, args);
+          var result = func.apply(lodash, args);
+          return chainAll
+            ? new lodashWrapper(result, chainAll)
+            : result;
         };
       }
     });
@@ -6182,10 +6233,12 @@
     forOwn(lodash, function(func, methodName) {
       if (!lodash.prototype[methodName]) {
         lodash.prototype[methodName]= function(callback, thisArg) {
-          var result = func(this.__wrapped__, callback, thisArg);
-          return callback == null || (thisArg && typeof callback != 'function')
+          var chainAll = this.__chain__,
+              result = func(this.__wrapped__, callback, thisArg);
+
+          return !chainAll && (callback == null || (thisArg && typeof callback != 'function'))
             ? result
-            : new lodashWrapper(result);
+            : new lodashWrapper(result, chainAll);
         };
       }
     });
@@ -6202,6 +6255,7 @@
     lodash.VERSION = '1.3.1';
 
     // add "Chaining" functions to the wrapper
+    lodash.prototype.chain = wrapperChain;
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.value = wrapperValueOf;
     lodash.prototype.valueOf = wrapperValueOf;
@@ -6210,7 +6264,12 @@
     baseEach(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
-        return func.apply(this.__wrapped__, arguments);
+        var chainAll = this.__chain__,
+            result = func.apply(this.__wrapped__, arguments);
+
+        return chainAll
+          ? new lodashWrapper(result, chainAll)
+          : result;
       };
     });
 
@@ -6227,7 +6286,7 @@
     baseEach(['concat', 'slice', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
-        return new lodashWrapper(func.apply(this.__wrapped__, arguments));
+        return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
       };
     });
 
@@ -6239,13 +6298,16 @@
             isSplice = methodName == 'splice';
 
         lodash.prototype[methodName] = function() {
-          var value = this.__wrapped__,
+          var chainAll = this.__chain__,
+              value = this.__wrapped__,
               result = func.apply(value, arguments);
 
           if (value.length === 0) {
             delete value[0];
           }
-          return isSplice ? new lodashWrapper(result) : result;
+          return (chainAll || isSplice)
+            ? new lodashWrapper(result, chainAll)
+            : result;
         };
       });
     }

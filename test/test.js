@@ -408,6 +408,19 @@
       var wrapper = _({ 'a': 0 });
       equal(wrapper.chain(), wrapper);
     });
+
+    test('should enable chaining of methods that return unwrapped values by default', function() {
+      var array = ['abc'];
+
+      ok(_.chain(array).first() instanceof _);
+      ok(_(array).chain().first() instanceof _);
+
+      ok(_.chain(array).isArray() instanceof _);
+      ok(_(array).chain().isArray() instanceof _);
+
+      ok(_.chain(array).first().first() instanceof _);
+      ok(_(array).chain().first().first() instanceof _);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

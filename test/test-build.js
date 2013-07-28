@@ -1214,8 +1214,9 @@
           vm.runInContext(data.source, context);
           var lodash = context._;
 
-          ok(lodash.chain(1) instanceof lodash, '_.chain: ' + basename);
-          ok(lodash(1).chain() instanceof lodash, '_#chain: ' + basename);
+          var array = ['abc'];
+          ok(lodash.chain(array).first().first() instanceof lodash, '_.chain: ' + basename);
+          ok(lodash(array).chain().first().first() instanceof lodash, '_#chain: ' + basename);
 
           var wrapped = lodash(1);
           strictEqual(wrapped.identity(), 1, '_(...) wrapped values are not chainable by default: ' + basename);

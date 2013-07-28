@@ -204,7 +204,7 @@
     'zipObject': [],
 
     // private functions
-    'baseClone': ['assign', 'forEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isNode', 'releaseArray', 'slice'],
+    'baseClone': ['assign', 'baseEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isNode', 'releaseArray', 'slice'],
     'baseEach': ['createIterator'],
     'baseFlatten': ['isArguments', 'isArray'],
     'baseIndexOf': [],
@@ -3968,9 +3968,9 @@
             });
           });
         }
-        // remove `_.assign`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
+        // remove `_.assign`, `_.forEachRight`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
         source = source.replace(getMethodAssignments(source), function(match) {
-          return _.reduce(['assign', 'createCallback', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
+          return _.reduce(['assign', 'createCallback', 'forEachRight', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
             return isLodash(funcName)
               ? result
               : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
@@ -4012,7 +4012,7 @@
 
         return source.match(/^\/\**[\s\S]+?\*\/\n/) +
           (index > -1 ? iife.slice(0, index) : iife) +
-          source.replace(/^[\s\S]+?\(function[^{]+?{|}\(this\)\)[;\s]*$/g, '') +
+          source.replace(/^[\s\S]+?\(function[^{]+{|}\(this\)\)[;\s]*$/g, '') +
           (index > -1 ? iife.slice(index + token.length) : '');
       }());
     }

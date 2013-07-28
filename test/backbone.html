@@ -30,8 +30,8 @@
 		</script>
 		<script>
 			_.mixin({
-				'debounce': lodash.debounce,
-				'defer': lodash.defer
+				'debounce': _.debounce || lodash.debounce,
+				'defer': _.defer || lodash.defer
 			});
 		</script>
 		<script src="../vendor/backbone/backbone.js"></script>

@@ -653,72 +653,6 @@
    * @returns {String} Returns the modified source.
    */
   function addUnderscoreChaining(source) {
-    // add `_.chain`
-    source = source.replace(matchFunction(source, 'tap', true), function(match) {
-      var indent = getIndent(match);
-      return match && (indent + [
-        '',
-        '/**',
-        ' * Creates a `lodash` object that wraps the given `value`.',
-        ' *',
-        ' * @static',
-        ' * @memberOf _',
-        ' * @category Chaining',
-        ' * @param {Mixed} value The value to wrap.',
-        ' * @returns {Object} Returns the wrapper object.',
-        ' * @example',
-        ' *',
-        ' * var stooges = [',
-        " *   { 'name': 'moe', 'age': 40 },",
-        " *   { 'name': 'larry', 'age': 50 },",
-        " *   { 'name': 'curly', 'age': 60 }",
-        ' * ];',
-        ' *',
-        ' * var youngest = _.chain(stooges)',
-        ' *     .sortBy(function(stooge) { return stooge.age; })',
-        " *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })",
-        ' *     .first();',
-        " * // => 'moe is 40'",
-        ' */',
-        'function chain(value) {',
-        '  value = new lodashWrapper(value);',
-        '  value.__chain__ = true;',
-        '  return value;',
-        '}',
-        '',
-        match
-      ].join('\n' + indent));
-    });
-
-    // add `wrapperChain`
-    source = source.replace(matchFunction(source, 'wrapperToString', true), function(match) {
-      var indent = getIndent(match);
-      return match && (indent + [
-        '',
-        '/**',
-        ' * Enables method chaining on the wrapper object.',
-        ' *',
-        ' * @name chain',
-        ' * @memberOf _',
-        ' * @category Chaining',
-        ' * @returns {Mixed} Returns the wrapper object.',
-        ' * @example',
-        ' *',
-        ' * var sum = _([1, 2, 3])',
-        ' *     .chain()',
-        ' *     .reduce(function(sum, num) { return sum + num; })',
-        ' *     .value()',
-        ' * // => 6`',
-        ' */',
-        'function wrapperChain() {',
-        '  this.__chain__ = true;',
-        '  return this;',
-        '}',
-        '',
-        match
-      ].join('\n' + indent));
-    });
-
     // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
     source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');
 
@@ -783,11 +717,6 @@
       ].join('\n' + indent);
     });
 
-    // replace `_.chain` assignment
-    source = source.replace(getMethodAssignments(source), function(match) {
-      return match.replace(/^( *lodash\.chain *= *)[\s\S]+?(?=;\n)/m, '$1chain')
-    });
-
     // move `mixin(lodash)` to after the method assignments
     source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(lodash\).+/, '');
     source = source.replace(getMethodAssignments(source), function(match) {
@@ -799,11 +728,6 @@
         ''
       ].join('\n' + indent);
     });
-
-    // move the `lodash.prototype.chain` assignment to after `mixin(lodash)`
-    source = source
-      .replace(/^ *lodash\.prototype\.chain *=[\s\S]+?;\n/m, '')
-      .replace(/^( *)lodash\.prototype\.value *=/m, '$1lodash.prototype.chain = wrapperChain;\n$&');
 
     return source;
   }

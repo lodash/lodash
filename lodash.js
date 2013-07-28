@@ -1643,6 +1643,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Objects
      * @param {Mixed} value The value to check.
      * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.

@@ -524,7 +524,6 @@
      *
      * @name _
      * @constructor
-     * @alias chain
      * @category Chaining
      * @param {Mixed} value The value to wrap in a `lodash` instance.
      * @returns {Object} Returns a `lodash` instance.
@@ -561,9 +560,11 @@
      *
      * @private
      * @param {Mixed} value The value to wrap in a `lodash` instance.
+     * @param {Boolean} chainAll A flag to enable chaining for all methods
      * @returns {Object} Returns a `lodash` instance.
      */
-    function lodashWrapper(value) {
+    function lodashWrapper(value, chainAll) {
+      this.__chain__ = !!chainAll;
       this.__wrapped__ = value;
     }
     // ensure `new lodashWrapper` is an instance of `lodash`
@@ -1280,6 +1281,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Objects
      * @param {Mixed} value The value to check.
      * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
@@ -1621,7 +1623,7 @@
     };
 
     /**
-     * This method is similar to `_.find`, except that it returns the key of the
+     * This method is like `_.findIndex`, except that it returns the key of the
      * element that passes the callback check, instead of the element itself.
      *
      * @static
@@ -1638,12 +1640,44 @@
      * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
      *   return num % 2 == 0;
      * });
-     * // => 'b'
+     * // => 'b' (order is not guaranteed)
      */
     function findKey(object, callback, thisArg) {
       var result;
       callback = lodash.createCallback(callback, thisArg, 3);
       forOwn(object, function(value, key, object) {
+        if (callback(value, key, object)) {
+          result = key;
+          return false;
+        }
+      });
+      return result;
+    }
+
+    /**
+     * This method is like `_.findKey`, except that it iterates over elements
+     * of a `collection` in the opposite order.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {Object} object The object to search.
+     * @param {Function|Object|String} [callback=identity] The function called per
+     *  iteration. If a property name or object is passed, it will be used to create
+     *  a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Mixed} Returns the key of the found element, else `undefined`.
+     * @example
+     *
+     * _.findLastKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
+     *   return num % 2 == 1;
+     * });
+     * // => returns `c`, assuming `_.findKey` returns `a`
+     */
+    function findLastKey(object, callback, thisArg) {
+      var result;
+      callback = lodash.createCallback(callback, thisArg);
+      forOwnRight(object, function(value, key, object) {
         if (callback(value, key, object)) {
           result = key;
           return false;
@@ -1673,13 +1707,13 @@
      * }
      *
      * Dog.prototype.bark = function() {
-     *   alert('Woof, woof!');
+     *   console.log('Woof, woof!');
      * };
      *
      * _.forIn(new Dog('Dagny'), function(value, key) {
-     *   alert(key);
+     *   console.log(key);
      * });
-     * // => alerts 'name' and 'bark' (order is not guaranteed)
+     * // => logs 'bark' and 'name' (order is not guaranteed)
      */
     var forIn = function(collection, callback, thisArg) {
       var index, iterable = collection, result = iterable;
@@ -1705,6 +1739,50 @@
     };
 
     /**
+     * This method is like `_.forIn`, except that it iterates over elements
+     * of a `collection` in the opposite order.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {Object} object The object to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * function Dog(name) {
+     *   this.name = name;
+     * }
+     *
+     * Dog.prototype.bark = function() {
+     *   console.log('Woof, woof!');
+     * };
+     *
+     * _.forInRight(new Dog('Dagny'), function(value, key) {
+     *   console.log(key);
+     * });
+     * // => logs 'name' and 'bark' assuming `_.forIn ` logs 'bark' and 'name'
+     */
+    function forInRight(object, callback, thisArg) {
+      var index = -1,
+          pairs = [];
+
+      forIn(object, function(value, key) {
+        pairs.push(value, key);
+      });
+
+      var length = pairs.length;
+      callback = lodash.createCallback(callback, thisArg, 3);
+      while (++index < length) {
+        if (callback(pairs[index], pairs[++index], object) === false) {
+          break;
+        }
+      }
+      return object;
+    }
+
+    /**
      * Iterates over own enumerable properties of a given `object`, executing the
      * `callback` for each property. The `callback` is bound to `thisArg` and
      * invoked with three arguments; (value, key, object). Callbacks may exit
@@ -1721,9 +1799,9 @@
      * @example
      *
      * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
-     *   alert(key);
+     *   console.log(key);
      * });
-     * // => alerts '0', '1', and 'length' (order is not guaranteed)
+     * // => logs '0', '1', and 'length' (order is not guaranteed)
      */
     var forOwn = function(collection, callback, thisArg) {
       var index, iterable = collection, result = iterable;
@@ -1747,6 +1825,38 @@
       }
       return result
     };
+
+    /**
+     * This method is like `_.forOwn`, except that it iterates over elements
+     * of a `collection` in the opposite order.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {Object} object The object to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * _.forOwnRight({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
+     *   console.log(key);
+     * });
+     * // => logs 'length', '1', and '0' assuming `_.forOwn` logs '0', '1', and 'length'
+     */
+    function forOwnRight(object, callback, thisArg) {
+      var props = keys(object),
+          length = props.length;
+
+      callback = lodash.createCallback(callback, thisArg, 3);
+      while (length--) {
+        var key = props[length];
+        if (callback(object[key], key, object) === false) {
+          break;
+        }
+      }
+      return object;
+    }
 
     /**
      * Creates a sorted array of property names of all enumerable properties,
@@ -2788,6 +2898,38 @@
     }
 
     /**
+     * This method is like `_.find`, except that it iterates over elements
+     * of a `collection` from right to left.
+     *
+     * @static
+     * @memberOf _
+     * @category Collections
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function|Object|String} [callback=identity] The function called per
+     *  iteration. If a property name or object is passed, it will be used to create
+     *  a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Mixed} Returns the found element, else `undefined`.
+     * @example
+     *
+     * _.findLast([1, 2, 3, 4], function(num) {
+     *   return num % 2 == 1;
+     * });
+     * // => 3
+     */
+    function findLast(collection, callback, thisArg) {
+      var result;
+      callback = lodash.createCallback(callback, thisArg);
+      forEachRight(collection, function(value, index, collection) {
+        if (callback(value, index, collection)) {
+          result = value;
+          return false;
+        }
+      });
+      return result;
+    }
+
+    /**
      * Iterates over elements of a `collection`, executing the `callback` for
      * each element. The `callback` is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection). Callbacks may exit iteration
@@ -2803,11 +2945,11 @@
      * @returns {Array|Object|String} Returns `collection`.
      * @example
      *
-     * _([1, 2, 3]).forEach(alert).join(',');
-     * // => alerts each number and returns '1,2,3'
+     * _([1, 2, 3]).forEach(function(num) { console.log(num); }).join(',');
+     * // => logs each number and returns '1,2,3'
      *
-     * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, alert);
-     * // => alerts each number value (order is not guaranteed)
+     * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { console.log(num); });
+     * // => logs each number value and returns the object (order is not guaranteed)
      */
     function forEach(collection, callback, thisArg) {
       if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
@@ -2822,6 +2964,41 @@
       } else {
         baseEach(collection, callback, thisArg);
       }
+      return collection;
+    }
+
+    /**
+     * This method is like `_.forEach`, except that it iterates over elements
+     * of a `collection` from right to left.
+     *
+     * @static
+     * @memberOf _
+     * @alias each
+     * @category Collections
+     * @param {Array|Object|String} collection The collection to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Array|Object|String} Returns `collection`.
+     * @example
+     *
+     * _([1, 2, 3]).forEachRight(function(num) { console.log(num); }).join(',');
+     * // => logs each number from right to left and returns '3,2,1'
+     */
+    function forEachRight(collection, callback, thisArg) {
+      var iterable = collection,
+          length = collection ? collection.length : 0;
+
+      if (typeof length != 'number') {
+        var props = keys(collection);
+        length = props.length;
+      } else if (support.unindexedChars && isString(collection)) {
+        iterable = collection.split('');
+      }
+      callback = lodash.createCallback(callback, thisArg, 3);
+      forEach(collection, function(value, index, collection) {
+        index = props ? props[--length] : --length;
+        callback(iterable[index], index, collection);
+      });
       return collection;
     }
 
@@ -3214,7 +3391,7 @@
     }
 
     /**
-     * This method is similar to `_.reduce`, except that it iterates over elements
+     * This method is like `_.reduce`, except that it iterates over elements
      * of a `collection` from right to left.
      *
      * @static
@@ -3233,20 +3410,12 @@
      * // => [4, 5, 2, 3, 0, 1]
      */
     function reduceRight(collection, callback, accumulator, thisArg) {
-      var iterable = collection,
-          length = collection ? collection.length : 0,
-          noaccum = arguments.length < 3;
-
-      if (typeof length != 'number') {
-        var props = keys(collection);
-        length = props.length;
-      }
+      var noaccum = arguments.length < 3;
       callback = lodash.createCallback(callback, thisArg, 4);
-      forEach(collection, function(value, index, collection) {
-        index = props ? props[--length] : --length;
+      forEachRight(collection, function(value, index, collection) {
         accumulator = noaccum
-          ? (noaccum = false, iterable[index])
-          : callback(accumulator, iterable[index], index, collection);
+          ? (noaccum = false, value)
+          : callback(accumulator, value, index, collection);
       });
       return accumulator;
     }
@@ -3593,8 +3762,8 @@
     }
 
     /**
-     * This method is similar to `_.find`, except that it returns the index of
-     * the element that passes the callback check, instead of the element itself.
+     * This method is like `_.find`, except that it returns the index of the
+     * element that passes the callback check, instead of the element itself.
      *
      * @static
      * @memberOf _
@@ -3618,6 +3787,39 @@
 
       callback = lodash.createCallback(callback, thisArg, 3);
       while (++index < length) {
+        if (callback(array[index], index, array)) {
+          return index;
+        }
+      }
+      return -1;
+    }
+
+    /**
+     * This method is like `_.findIndex`, except that it iterates over elements
+     * of a `collection` from right to left.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to search.
+     * @param {Function|Object|String} [callback=identity] The function called per
+     *  iteration. If a property name or object is passed, it will be used to create
+     *  a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Mixed} Returns the index of the found element, else `-1`.
+     * @example
+     *
+     * _.findLastIndex(['apple', 'banana', 'beet'], function(food) {
+     *   return /^b/.test(food);
+     * });
+     * // => 2
+     */
+    function findLastIndex(array, callback, thisArg) {
+      var index = -1,
+          length = array ? array.length : 0;
+
+      callback = lodash.createCallback(callback, thisArg);
+      while (length--) {
         if (callback(array[index], index, array)) {
           return index;
         }
@@ -4453,12 +4655,12 @@
      *
      * var view = {
      *  'label': 'docs',
-     *  'onClick': function() { alert('clicked ' + this.label); }
+     *  'onClick': function() { console.log('clicked ' + this.label); }
      * };
      *
      * _.bindAll(view);
      * jQuery('#docs').on('click', view.onClick);
-     * // => alerts 'clicked docs', when the button is clicked
+     * // => logs 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
       var funcs = arguments.length > 1 ? baseFlatten(arguments, true, false, 1) : functions(object),
@@ -4523,11 +4725,22 @@
      * @returns {Function} Returns the new composed function.
      * @example
      *
-     * var greet = function(name) { return 'hi ' + name; };
-     * var exclaim = function(statement) { return statement + '!'; };
-     * var welcome = _.compose(exclaim, greet);
-     * welcome('moe');
-     * // => 'hi moe!'
+     * var realNameMap = {
+     *   'curly': 'jerome'
+     * };
+     *
+     * var format = function(name) {
+     *   name = realNameMap[name.toLowerCase()] || name;
+     *   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+     * };
+     *
+     * var greet = function(formatted) {
+     *   return 'Hiya ' + formatted + '!';
+     * };
+     *
+     * var welcome = _.compose(greet, format);
+     * welcome('curly');
+     * // => 'Hiya Jerome!'
      */
     function compose() {
       var funcs = arguments;
@@ -4779,8 +4992,8 @@
      * @returns {Number} Returns the timer id.
      * @example
      *
-     * _.defer(function() { alert('deferred'); });
-     * // returns from the function before `alert` is called
+     * _.defer(function() { console.log('deferred'); });
+     * // returns from the function before 'deferred' is logged
      */
     function defer(func) {
       var args = nativeSlice.call(arguments, 1);
@@ -4899,7 +5112,7 @@
     }
 
     /**
-     * This method is similar to `_.partial`, except that `partial` arguments are
+     * This method is like `_.partial`, except that `partial` arguments are
      * appended to those passed to the new function.
      *
      * @static
@@ -5466,6 +5679,34 @@
     /*--------------------------------------------------------------------------*/
 
     /**
+     * Creates a `lodash` object that wraps the given `value`.
+     *
+     * @static
+     * @memberOf _
+     * @category Chaining
+     * @param {Mixed} value The value to wrap.
+     * @returns {Object} Returns the wrapper object.
+     * @example
+     *
+     * var stooges = [
+     *   { 'name': 'moe', 'age': 40 },
+     *   { 'name': 'larry', 'age': 50 },
+     *   { 'name': 'curly', 'age': 60 }
+     * ];
+     *
+     * var youngest = _.chain(stooges)
+     *     .sortBy(function(stooge) { return stooge.age; })
+     *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
+     *     .first();
+     * // => 'moe is 40'
+     */
+    function chain(value) {
+      value = new lodashWrapper(value);
+      value.__chain__ = true;
+      return value;
+    }
+
+    /**
      * Invokes `interceptor` with the `value` as the first argument, and then
      * returns `value`. The purpose of this method is to "tap into" a method chain,
      * in order to perform operations on intermediate results within the chain.
@@ -5480,15 +5721,35 @@
      *
      * _([1, 2, 3, 4])
      *  .filter(function(num) { return num % 2 == 0; })
-     *  .tap(alert)
+     *  .tap(function(array) { console.log(array); })
      *  .map(function(num) { return num * num; })
      *  .value();
-     * // => // [2, 4] (alerted)
+     * // => // [2, 4] (logged)
      * // => [4, 16]
      */
     function tap(value, interceptor) {
       interceptor(value);
       return value;
+    }
+
+    /**
+     * Enables method chaining on the wrapper object.
+     *
+     * @name chain
+     * @memberOf _
+     * @category Chaining
+     * @returns {Mixed} Returns the wrapper object.
+     * @example
+     *
+     * var sum = _([1, 2, 3])
+     *     .chain()
+     *     .reduce(function(sum, num) { return sum + num; })
+     *     .value()
+     * // => 6`
+     */
+    function wrapperChain() {
+      this.__chain__ = true;
+      return this;
     }
 
     /**
@@ -5533,6 +5794,7 @@
     lodash.bind = bind;
     lodash.bindAll = bindAll;
     lodash.bindKey = bindKey;
+    lodash.chain = chain;
     lodash.compact = compact;
     lodash.compose = compose;
     lodash.countBy = countBy;
@@ -5545,8 +5807,11 @@
     lodash.filter = filter;
     lodash.flatten = flatten;
     lodash.forEach = forEach;
+    lodash.forEachRight = forEachRight;
     lodash.forIn = forIn;
+    lodash.forInRight = forInRight;
     lodash.forOwn = forOwn;
+    lodash.forOwnRight = forOwnRight;
     lodash.functions = functions;
     lodash.groupBy = groupBy;
     lodash.indexBy = indexBy;
@@ -5601,10 +5866,6 @@
     // add functions to `lodash.prototype`
     mixin(lodash);
 
-    // add Underscore compat
-    lodash.chain = lodash;
-    lodash.prototype.chain = function() { return this; };
-
     /*--------------------------------------------------------------------------*/
 
     // add functions that return unwrapped values when chaining
@@ -5615,7 +5876,10 @@
     lodash.every = every;
     lodash.find = find;
     lodash.findIndex = findIndex;
+    lodash.findLast = findLast;
+    lodash.findLastIndex = findLastIndex;
     lodash.findKey = findKey;
+    lodash.findLastKey = findLastKey;
     lodash.has = has;
     lodash.identity = identity;
     lodash.indexOf = indexOf;
@@ -5665,9 +5929,14 @@
     forOwn(lodash, function(func, methodName) {
       if (!lodash.prototype[methodName]) {
         lodash.prototype[methodName] = function() {
-          var args = [this.__wrapped__];
+          var args = [this.__wrapped__],
+              chainAll = this.__chain__;
+
           push.apply(args, arguments);
-          return func.apply(lodash, args);
+          var result = func.apply(lodash, args);
+          return chainAll
+            ? new lodashWrapper(result, chainAll)
+            : result;
         };
       }
     });
@@ -5685,10 +5954,12 @@
     forOwn(lodash, function(func, methodName) {
       if (!lodash.prototype[methodName]) {
         lodash.prototype[methodName]= function(callback, thisArg) {
-          var result = func(this.__wrapped__, callback, thisArg);
-          return callback == null || (thisArg && typeof callback != 'function')
+          var chainAll = this.__chain__,
+              result = func(this.__wrapped__, callback, thisArg);
+
+          return !chainAll && (callback == null || (thisArg && typeof callback != 'function'))
             ? result
-            : new lodashWrapper(result);
+            : new lodashWrapper(result, chainAll);
         };
       }
     });
@@ -5705,6 +5976,7 @@
     lodash.VERSION = '1.3.1';
 
     // add "Chaining" functions to the wrapper
+    lodash.prototype.chain = wrapperChain;
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.value = wrapperValueOf;
     lodash.prototype.valueOf = wrapperValueOf;
@@ -5713,7 +5985,12 @@
     baseEach(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
-        return func.apply(this.__wrapped__, arguments);
+        var chainAll = this.__chain__,
+            result = func.apply(this.__wrapped__, arguments);
+
+        return chainAll
+          ? new lodashWrapper(result, chainAll)
+          : result;
       };
     });
 
@@ -5730,7 +6007,7 @@
     baseEach(['concat', 'slice', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
-        return new lodashWrapper(func.apply(this.__wrapped__, arguments));
+        return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
       };
     });
 

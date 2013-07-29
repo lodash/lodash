@@ -192,7 +192,6 @@
    *
    * @name _
    * @constructor
-   * @alias chain
    * @category Chaining
    * @param {Mixed} value The value to wrap in a `lodash` instance.
    * @returns {Object} Returns a `lodash` instance.
@@ -228,9 +227,11 @@
    *
    * @private
    * @param {Mixed} value The value to wrap in a `lodash` instance.
+   * @param {Boolean} chainAll A flag to enable chaining for all methods
    * @returns {Object} Returns a `lodash` instance.
    */
-  function lodashWrapper(value) {
+  function lodashWrapper(value, chainAll) {
+    this.__chain__ = !!chainAll;
     this.__wrapped__ = value;
   }
   // ensure `new lodashWrapper` is an instance of `lodash`
@@ -575,6 +576,7 @@
    *
    * @static
    * @memberOf _
+   * @type Function
    * @category Objects
    * @param {Mixed} value The value to check.
    * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
@@ -802,13 +804,13 @@
    * }
    *
    * Dog.prototype.bark = function() {
-   *   alert('Woof, woof!');
+   *   console.log('Woof, woof!');
    * };
    *
    * _.forIn(new Dog('Dagny'), function(value, key) {
-   *   alert(key);
+   *   console.log(key);
    * });
-   * // => alerts 'name' and 'bark' (order is not guaranteed)
+   * // => logs 'bark' and 'name' (order is not guaranteed)
    */
   var forIn = function(collection, callback) {
     var index, iterable = collection, result = iterable;
@@ -837,9 +839,9 @@
    * @example
    *
    * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
-   *   alert(key);
+   *   console.log(key);
    * });
-   * // => alerts '0', '1', and 'length' (order is not guaranteed)
+   * // => logs '0', '1', and 'length' (order is not guaranteed)
    */
   var forOwn = function(collection, callback) {
     var index, iterable = collection, result = iterable;
@@ -1509,11 +1511,11 @@
    * @returns {Array|Object|String} Returns `collection`.
    * @example
    *
-   * _([1, 2, 3]).forEach(alert).join(',');
-   * // => alerts each number and returns '1,2,3'
+   * _([1, 2, 3]).forEach(function(num) { console.log(num); }).join(',');
+   * // => logs each number and returns '1,2,3'
    *
-   * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, alert);
-   * // => alerts each number value (order is not guaranteed)
+   * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { console.log(num); });
+   * // => logs each number value and returns the object (order is not guaranteed)
    */
   function forEach(collection, callback, thisArg) {
     var index = -1,
@@ -1529,6 +1531,41 @@
     } else {
       forOwn(collection, callback);
     };
+  }
+
+  /**
+   * This method is like `_.forEach`, except that it iterates over elements
+   * of a `collection` from right to left.
+   *
+   * @static
+   * @memberOf _
+   * @alias each
+   * @category Collections
+   * @param {Array|Object|String} collection The collection to iterate over.
+   * @param {Function} [callback=identity] The function called per iteration.
+   * @param {Mixed} [thisArg] The `this` binding of `callback`.
+   * @returns {Array|Object|String} Returns `collection`.
+   * @example
+   *
+   * _([1, 2, 3]).forEachRight(function(num) { console.log(num); }).join(',');
+   * // => logs each number from right to left and returns '3,2,1'
+   */
+  function forEachRight(collection, callback, thisArg) {
+    var iterable = collection,
+        length = collection ? collection.length : 0;
+
+    if (typeof length != 'number') {
+      var props = keys(collection);
+      length = props.length;
+    } else if (support.unindexedChars && isString(collection)) {
+      iterable = collection.split('');
+    }
+    callback = createCallback(callback, thisArg, 3);
+    forEach(collection, function(value, index, collection) {
+      index = props ? props[--length] : --length;
+      callback(iterable[index], index, collection);
+    });
+    return collection;
   }
 
   /**
@@ -1853,7 +1890,7 @@
   }
 
   /**
-   * This method is similar to `_.reduce`, except that it iterates over elements
+   * This method is like `_.reduce`, except that it iterates over elements
    * of a `collection` from right to left.
    *
    * @static
@@ -1872,20 +1909,12 @@
    * // => [4, 5, 2, 3, 0, 1]
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
-    var iterable = collection,
-        length = collection ? collection.length : 0,
-        noaccum = arguments.length < 3;
-
-    if (typeof length != 'number') {
-      var props = keys(collection);
-      length = props.length;
-    }
+    var noaccum = arguments.length < 3;
     callback = createCallback(callback, thisArg, 4);
-    forEach(collection, function(value, index, collection) {
-      index = props ? props[--length] : --length;
+    forEachRight(collection, function(value, index, collection) {
       accumulator = noaccum
-        ? (noaccum = false, iterable[index])
-        : callback(accumulator, iterable[index], index, collection);
+        ? (noaccum = false, value)
+        : callback(accumulator, value, index, collection);
     });
     return accumulator;
   }
@@ -2666,12 +2695,12 @@
    *
    * var view = {
    *  'label': 'docs',
-   *  'onClick': function() { alert('clicked ' + this.label); }
+   *  'onClick': function() { console.log('clicked ' + this.label); }
    * };
    *
    * _.bindAll(view);
    * jQuery('#docs').on('click', view.onClick);
-   * // => alerts 'clicked docs', when the button is clicked
+   * // => logs 'clicked docs', when the button is clicked
    */
   function bindAll(object) {
     var funcs = arguments.length > 1 ? baseFlatten(arguments, true, false, 1) : functions(object),
@@ -3029,6 +3058,7 @@
 
   lodash.bind = bind;
   lodash.bindAll = bindAll;
+  lodash.chain = chain;
   lodash.countBy = countBy;
   lodash.defaults = defaults;
   lodash.difference = difference;
@@ -3063,9 +3093,6 @@
   lodash.methods = functions;
   lodash.select = filter;
   lodash.tail = rest;
-
-  // add Underscore compat
-  lodash.chain = chain;
 
   /*--------------------------------------------------------------------------*/
 

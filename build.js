@@ -26,6 +26,18 @@
       push = arrayRef.push,
       slice = arrayRef.slice;
 
+  /** Memoize regexp creation */
+  var RegExp = (function() {
+    var cache = {};
+    return function(pattern, flags) {
+      if (flags && /g/.test(flags)) {
+        return global.RegExp(pattern, flags);
+      }
+      var key = '/' + pattern + '/' + (flags || '');
+      return cache[key] || (cache[key] = global.RegExp(pattern, flags));
+    };
+  }());
+
   /** Used to create regexes that may detect multi-line comment blocks */
   var multilineComment = '(?:\\n */\\*[^*]*\\*+(?:[^/][^*]*\\*+)*/)?\\n';
 
@@ -195,7 +207,7 @@
     'union': ['baseFlatten', 'baseUniq'],
     'uniq': ['baseUniq', 'createCallback'],
     'uniqueId': [],
-    'value': ['baseEach', 'forOwn', 'isArray', 'lodash', 'mixin', 'wrapperValueOf', 'lodashWrapper'],
+    'value': ['baseEach', 'forOwn', 'isArray', 'lodash', 'mixin', 'lodashWrapper'],
     'values': ['keys'],
     'where': ['filter'],
     'without': ['difference'],
@@ -228,7 +240,7 @@
     'isNode': [],
     'iteratorTemplate': [],
     'lodash': ['lodashWrapper'],
-    'lodashWrapper': ['wrapperToString', 'wrapperValueOf'],
+    'lodashWrapper': ['wrapperChain', 'wrapperToString', 'wrapperValueOf'],
     'noop': [],
     'releaseArray': [],
     'releaseObject': [],
@@ -237,6 +249,7 @@
     'shimKeys': ['createIterator'],
     'slice': [],
     'unescapeHtmlChar': [],
+    'wrapperChain': [],
     'wrapperToString': [],
     'wrapperValueOf': [],
 
@@ -736,55 +749,52 @@
    * Creates modules for each of the specified `identifiers`.
    *
    * @private
-   * @param {Array} includes An array identifiers to modularize.
-   * @param {Array} [options=[]] An array of build commands
+   * @param {Object} state An array identifiers to modularize.
    */
-  function buildModule(identifiers, options) {
-    options || (options = []);
+  function buildModule(state) {
+    var buildFuncs = state.buildFuncs,
+        funcDepMap = state.funcDepMap,
+        includeProps = state.includeProps,
+        includeVars = state.includeVars,
+        isAMD = state.isAMD,
+        isBackbone = state.isBackbone,
+        isCommonJS = state.isCommonJS,
+        isCSP = state.isCSP,
+        isGlobal = state.isGlobal,
+        isLegacy = state.isLegacy,
+        isMapped = state.isMapped,
+        isMobile = state.isMobile,
+        isModern = state.isModern,
+        isNode = state.isNode,
+        isStdOut = state.isStdOut,
+        isStrict = state.isStrict,
+        isUnderscore = state.isUnderscore,
+        outputPath = state.outputPath,
+        propDepMap = state.propDepMap,
+        varDepMap = state.varDepMap;
 
-    var commands = [
-      'backbone',
-      'csp',
-      'exports=',
-      'legacy',
-      'mobile',
-      'modern',
-      'strict',
-      'underscore',
-      '-c', '--stdout',
-      '-o', '--output'
-    ];
-
-    // normalize `--output` to `-o`
-    options = _.map(options, function(value) {
-      return value == '--output' ?  '-o' : value;
-    });
-
-    // remove unneeded options
-    options = _.filter(options, function(value, index) {
-      return commands.some(function(command) {
-        return !value.indexOf(command);
-      }) || options[index - 1] == '-o';
-    });
-
-    // provide a destination if one isn't given
-    if (!_.contains(options, '-o')) {
-      options.push('-o', '.' + path.sep + 'modularize');
-    }
-
-    var exportsOptions = options.reduce(function(result, value) {
-      return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
-    }, []);
-
-    var categories = _.uniq(_.compact(identifiers.map(getCategory))).sort(),
-        isAMD = _.contains(exportsOptions, 'amd'),
-        outputPath = options[_.indexOf(options, '-o') + 1],
+    var identifiers = buildFuncs.concat(includeProps, includeVars),
         sep = '/';
+
+    var categories = _.uniq(_.compact(identifiers.map(function(identifier) {
+      return getCategory(identifier, funcDepMap);
+    }))).sort();
 
     var topLevel = {
       'lodash': true,
       'support': true
     };
+
+    // set state
+    state.buildFuncs = [];
+    state.plusFuncs = [];
+    state.minusFuncs = [];
+    state.isAMD = state.isCommonJS = state.isGlobal = state.isNode = false;
+
+    // provide a destination if one isn't given
+    if (!outputPath) {
+      outputPath = '.' + path.sep + 'modularize';
+    }
 
     var getDepPath = function(dep, fromPath) {
       if (dep == 'require') {
@@ -808,7 +818,7 @@
     var getPath = function(identifier) {
       return topLevel[identifier]
         ? ''
-        : (getCategory(identifier) || 'internals').toLowerCase() + sep;
+        : (getCategory(identifier, funcDepMap) || 'internals').toLowerCase() + sep;
     };
 
     // create modules for each identifier
@@ -816,9 +826,9 @@
       var modulePath = getPath(identifier),
           iife = [];
 
-      var deps = getDependencies(identifier, true)
-        .concat(propDependencyMap[identifier] || arrayRef)
-        .concat(varDependencyMap[identifier] || arrayRef)
+      var deps = getDependencies(identifier, funcDepMap, true)
+        .concat(propDepMap[identifier] || arrayRef)
+        .concat(varDepMap[identifier] || arrayRef)
         .sort();
 
       var depArgs = deps.join(', '),
@@ -832,14 +842,30 @@
           '});'
         );
       }
-      build(options.concat(
-        '-d', '-n', '-s',
-        'exports=none',
-        'include=' + identifier,
-        'iife=' + iife.join('\n'),
-        '-o', path.join(outputPath, modulePath + identifier + '.js')
-      ));
+      state.iife = iife.join('\n');
+
+      var include = [identifier];
+      state.buildFuncs = state.includeFuncs = [];
+      state.includeProps = [];
+      state.includeVars = [];
+
+      if (_.contains(includeProps, identifier)) {
+        state.includeProps = include;
+      }
+      else if (_.contains(includeVars, identifier)) {
+        state.includeVars = include;
+      }
+      else {
+        state.buildFuncs = state.includeFuncs = include;
+      }
+      state.outputPath = path.join(outputPath, modulePath + identifier + '.js');
+      build(state);
     });
+
+    // clear state
+    state.buildFuncs = state.includeFuncs = [];
+    state.includeProps = [];
+    state.includeVars = [];
 
     // create category modules
     categories.forEach(function(category) {
@@ -851,19 +877,16 @@
       if (isAMD) {
         iife.push(
           'define(' + depPaths + 'function(' + depArgs + ') {',
+          '%output%',
           '  return {',
           deps.map(function(dep) { return "    '" + dep + "': " + dep; }).join(',\n'),
           '  };',
           '});'
         );
       }
-      build(options.concat(
-        '-d', '-n', '-s',
-        'exports=none',
-        'include=none',
-        'iife=' + iife.join('\n'),
-        '-o', path.join(outputPath, category.toLowerCase() + '.js')
-      ));
+      state.iife = iife.join('\n');
+      state.outputPath = path.join(outputPath, category.toLowerCase() + '.js');
+      build(state);
     });
 
     // create lodash module
@@ -876,17 +899,14 @@
       if (isAMD) {
         iife.push(
           'define(' + depPaths + 'function(' + depArgs + ') {',
+          '%output%',
           "  return objects.assign(function lodash() {}, { 'VERSION': '" + _.VERSION + "' }, " + depArgs + ');',
           '});'
         );
       }
-      build(options.concat(
-        '-d', '-n', '-s',
-        'exports=none',
-        'include=none',
-        'iife=' + iife.join('\n'),
-        '-o', path.join(outputPath, 'lodash.js')
-      ));
+      state.iife = iife.join('\n');
+      state.outputPath = path.join(outputPath, 'lodash.js');
+      build(state);
     }());
   }
 
@@ -994,15 +1014,13 @@
   }
 
   /**
-   * Removes unnecessary comments, whitespace, and pseudo private properties.
+   * Removes unnecessary comments, and whitespace.
    *
    * @private
    * @param {String} source The source to process.
    * @returns {String} Returns the modified source.
    */
   function cleanupSource(source) {
-    source = removePseudoPrivates(source);
-
     return source
       // consolidate consecutive horizontal rule comment separators
       .replace(/(?:\s*\/\*-+\*\/\s*){2,}/g, function(separators) {
@@ -1103,12 +1121,14 @@
    *
    * @private
    * @param {String} funcName The name of the function to get aliases for.
+   * @param {Object} [depMap] The dependency map used to validate aliases.
    * @returns {Array} Returns an array of aliases.
    */
-  function getAliases(funcName) {
+  function getAliases(funcName, depMap) {
     var aliases = hasOwnProperty.call(realToAliasMap, funcName) && realToAliasMap[funcName];
+    depMap || (depMap = funcDependencyMap);
     return _.reject(aliases, function(funcName) {
-      return hasOwnProperty.call(funcDependencyMap, funcName);
+      return hasOwnProperty.call(depMap, funcName);
     });
   }
 
@@ -1117,10 +1137,11 @@
    *
    * @private
    * @param {String} identifier The identifier to query.
+   * @param {Object} [depMap] The dependency map used to resolve the identifier.
    * @returns {String} Returns the identifier's category.
    */
-  function getCategory(identifier) {
-    identifier = getRealName(identifier);
+  function getCategory(identifier, depMap) {
+    identifier = getRealName(identifier, depMap);
     return _.findKey(categoryMap, function(identifiers) {
       return _.contains(identifiers, identifier);
     }) || '';
@@ -1155,31 +1176,23 @@
    *
    * @private
    * @param {String} funcName A function name or array of function names.
-   * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependants.
+   * @param {Object} [depMap] The dependency map used to look up dependants.
    * @param- {Array} [stackA=[]] Internally used track queried function names.
    * @returns {Array} Returns an array of function dependants.
    */
-  function getDependants(funcName, isShallow, stack) {
-    // allows working with ES5 Array methods without using their callback
-    // arguments for `isShallow` and `stack`
-    if (typeof isShallow != 'boolean' && isShallow != null) {
-      isShallow = false;
-      stack = null;
-    }
+  function getDependants(funcName, depMap, stack) {
     var funcNames = _.isArray(funcName) ? funcName : [funcName];
+    depMap || (depMap = funcDependencyMap);
     stack || (stack = []);
 
-    // iterate over the `funcDependencyMap`, adding names of functions
-    // that have the `funcName` as a dependency
-    return _.uniq(_.transform(funcDependencyMap, function(result, deps, otherName) {
+    // iterate over the dependency map, adding names of functions that have `funcName` as a dependency
+    return _.uniq(_.transform(depMap, function(result, deps, otherName) {
       if (!_.contains(stack, otherName) && _.some(funcNames, function(funcName) {
             return _.contains(deps, funcName);
           })) {
         stack.push(otherName);
         result.push(otherName);
-        if (!isShallow) {
-          result.push.apply(result, getDependants(otherName, isShallow, stack));
-        }
+        push.apply(result, getDependants(otherName, depMap, stack));
       }
     }, []));
   }
@@ -1191,22 +1204,30 @@
    *
    * @private
    * @param {Array|String} funcName A function name or array of dependencies to query.
+   * @param {Object} [depMap] The dependency map used to look up dependants.
    * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependencies.
    * @param- {Array} [stackA=[]] Internally used track queried function names.
    * @returns {Array} Returns an array of function dependencies.
    */
-  function getDependencies(funcName, isShallow, stack) {
-    var deps = _.isArray(funcName)
-      ? funcName
-      : (hasOwnProperty.call(funcDependencyMap, funcName) && funcDependencyMap[funcName]);
-
-    if (!deps || !deps.length) {
-      return [];
+  function getDependencies(funcName, depMap, isShallow, stack) {
+    // juggle arguments
+    if (typeof depMap != 'object' && typeof isShallow != 'boolean') {
+      isShallow = depMap;
+      depMap = null;
     }
-    // juggle arguments to allow working with ES5 Array methods
+    // allow working with ES5 Array methods
     if (typeof isShallow != 'boolean' && isShallow != null) {
       isShallow = false;
       stack = null;
+    }
+    depMap || (depMap = funcDependencyMap);
+
+    var deps = _.isArray(funcName)
+      ? funcName
+      : (hasOwnProperty.call(depMap, funcName) && depMap[funcName]);
+
+    if (!deps || !deps.length) {
+      return [];
     }
     if (isShallow) {
       return deps.slice();
@@ -1218,7 +1239,7 @@
     return _.uniq(_.transform(deps, function(result, otherName) {
       if (!_.contains(stack, otherName)) {
         stack.push(otherName);
-        result.push.apply(result, getDependencies(otherName, isShallow, stack).concat(otherName));
+        push.apply(result, getDependencies(otherName, depMap, isShallow, stack).concat(otherName));
       }
     }));
   }
@@ -1328,11 +1349,12 @@
    *
    * @private
    * @param {String} funcName The name of the function to resolve.
+   * @param {Object} [depMap] The dependency map used to validate the real name.
    * @returns {String} Returns the real function name.
    */
-  function getRealName(funcName) {
+  function getRealName(funcName, depMap) {
     return (
-      !hasOwnProperty.call(funcDependencyMap, funcName) &&
+      !hasOwnProperty.call(depMap || funcDependencyMap, funcName) &&
       hasOwnProperty.call(aliasToRealMap, funcName) &&
       aliasToRealMap[funcName]
     ) || funcName;
@@ -1531,11 +1553,15 @@
    *
    * @private
    * @param {String} value The option to convert.
+   * @param {Object} [depMap] The dependency map used to resolve real names.
    * @returns {Array} Returns the new converted array.
    */
-  function optionToMethodsArray(value) {
-    // convert aliases to real function names
-    return optionToArray(value).map(getRealName);
+  function optionToMethodsArray(value, depMap) {
+    depMap || (depMap = funcDependencyMap);
+    return optionToArray(value).map(function(identifier) {
+      // convert aliases to real function names
+      return getRealName(identifier, depMap);
+    });
   }
 
   /**
@@ -1689,24 +1715,6 @@
     if ((snippet = matchFunction(source, funcName, true))) {
       source = source.replace(snippet, '');
     }
-
-    // remove method assignment from `lodash.prototype`
-    source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.prototype\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
-
-    source = removePseudoPrivates(source, funcName);
-
-    snippet = getMethodAssignments(source);
-
-    // remove assignment and aliases
-    var modified = getAliases(funcName).concat(funcName).reduce(function(result, otherName) {
-      return result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + otherName + ' *=[\\s\\S]+?;\\n', 'm'), '');
-    }, snippet);
-
-    // replace with the modified snippet
-    source = source.replace(snippet, function() {
-      return modified;
-    });
-
     return source;
   }
 
@@ -1813,7 +1821,6 @@
    * @returns {String} Returns the modified source.
    */
   function removeAssignments(source) {
-    source = removePseudoPrivates(source);
     source = removeMethodAssignments(source);
 
     // remove intermediate assignments
@@ -1845,17 +1852,14 @@
   }
 
   /**
-   * Removes all pseudo private Lo-Dash properties from `source`. If a `propName`
-   * is specified, only the specified property is removed.
+   * Removes all pseudo private Lo-Dash properties from `source`.
    *
    * @private
    * @param {String} source The source to process.
-   * @param {String} [propName] The name of the property to remove.
    * @returns {String} Returns the modified source.
    */
-  function removePseudoPrivates(source, propName) {
-    propName || (propName = '\\w+');
-    return source.replace(RegExp('^(?: *//.*\\s*)* *lodash\\._' + propName + ' *=[\\s\\S]+?;\\n', 'gm'), '');
+  function removePseudoPrivates(source) {
+    return source.replace(/^(?: *\/\/.*\s*)* *lodash\._\w+ *=[\s\S]+?;\n/gm, '');
   }
 
   /**
@@ -2338,8 +2342,8 @@
    *
    * Note: For a list of commands see `displayHelp()` or run `lodash --help`.
    *
-   * @param {Array} [options=[]] An array of build commands.
-   * @param {Function} [callback=defaultBuildCallback] The function called per build.
+   * @param {Array|Object} [options=[]] An array of build commands or the state object.
+   * @param {Function} [callback=defaultBuildCallback] The function called or per build.
    */
   function build(options, callback) {
     options || (options = []);
@@ -2348,146 +2352,17 @@
     // the debug version of `source`
     var debugSource;
 
+    // used to specify the output path for builds
+    var outputPath;
+
     // used to specify the source map URL
     var sourceMapURL;
 
+    // use to pre-populate the build state
+    var state = _.isObject(options) && !_.isArray(options) && options;
+
     // used to capture warnings for invalid command-line arguments
     var warnings = [];
-
-    // display help message
-    if (_.find(options, function(arg) {
-          return /^(?:-h|--help)$/.test(arg);
-        })) {
-      displayHelp();
-      return;
-    }
-
-    // display `lodash.VERSION`
-    if (_.find(options, function(arg) {
-          return /^(?:-V|--version)$/.test(arg);
-        })) {
-      console.log(_.VERSION);
-      return;
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    // backup dependencies to restore later
-    var funcDependencyMapBackup = _.cloneDeep(funcDependencyMap),
-        propDependencyMapBackup = _.cloneDeep(propDependencyMap),
-        varDependencyMapBackup = _.cloneDeep(varDependencyMap);
-
-    // used to specify a custom IIFE to wrap Lo-Dash
-    var iife = options.reduce(function(result, value) {
-      var match = value.match(/^iife=([\s\S]*)$/);
-      return match ? match[1] : result;
-    }, null);
-
-    // the path to the source file
-    var filePath = path.join(__dirname, 'lodash.js');
-
-    // flag to specify a Backbone build
-    var isBackbone = _.contains(options, 'backbone');
-
-    // flag to specify a Content Security Policy build
-    var isCSP = _.contains(options, 'csp') || _.contains(options, 'CSP');
-
-    // flag to specify only creating the debug build
-    var isDebug = _.contains(options, '-d') || _.contains(options, '--debug');
-
-    // flag to indicate that a custom IIFE was specified
-    var isIIFE = typeof iife == 'string';
-
-    // flag to specify creating a source map for the minified source
-    var isMapped = _.contains(options, '-p') || _.contains(options, '--source-map');
-
-    // flag to specify only creating the minified build
-    var isMinify = _.contains(options, '-m') || _.contains(options, '--minify');
-
-    // flag to specify a mobile build
-    var isMobile = _.contains(options, 'mobile');
-
-    // flag to specify a modern build
-    var isModern = isCSP || isMobile || _.contains(options, 'modern');
-
-    // flag to specify a modularize build
-    var isModularize = _.contains(options, 'modularize');
-
-    // flag to specify a no-dependency build
-    var isNoDep = _.contains(options, '-n') || _.contains(options, '--no-dep');
-
-    // flag to specify writing output to standard output
-    var isStdOut = _.contains(options, '-c') || _.contains(options, '--stdout');
-
-    // flag to specify skipping status updates normally logged to the console
-    var isSilent = isStdOut || _.contains(options, '-s') || _.contains(options, '--silent');
-
-    // flag to specify `_.assign`, `_.bindAll`, and `_.defaults` are
-    // constructed using the "use strict" directive
-    var isStrict = _.contains(options, 'strict');
-
-    // flag to specify an Underscore build
-    var isUnderscore = isBackbone || _.contains(options, 'underscore');
-
-    // flag to specify a legacy build
-    var isLegacy = !(isModern || isUnderscore) && _.contains(options, 'legacy');
-
-    // used to specify the ways to export the `lodash` function
-    var exportsOptions = options.reduce(function(result, value) {
-      return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
-    }, isUnderscore
-      ? ['commonjs', 'global', 'node']
-      : allExports.slice()
-    );
-
-    // used to specify the AMD module ID of Lo-Dash used by precompiled templates
-    var moduleId = options.reduce(function(result, value) {
-      var match = value.match(/^moduleId=(.*)$/);
-      return match ? match[1] : result;
-    }, 'lodash');
-
-    // used to specify the output path for builds
-    var outputPath = options.reduce(function(result, value, index) {
-      if (/^(?:-o|--output)$/.test(value)) {
-        result = options[index + 1];
-        var dirname = path.dirname(result);
-        fs.mkdirpSync(dirname);
-        result = path.join(fs.realpathSync(dirname), path.basename(result));
-      }
-      return result;
-    }, '');
-
-    // used to match external template files to precompile
-    var templatePattern = options.reduce(function(result, value) {
-      var match = value.match(/^template=(.+)$/);
-      return match
-        ? match[1]
-        : result;
-    }, '');
-
-    // used as the template settings for precompiled templates
-    var templateSettings = options.reduce(function(result, value) {
-      var match = value.match(/^settings=(.+)$/);
-      return match
-        ? _.assign(result, Function('return {' + match[1].replace(/^{|}$/g, '') + '}')())
-        : result;
-    }, _.assign(_.clone(_.templateSettings), {
-      'moduleId': moduleId
-    }));
-
-    // flags to specify export options
-    var isAMD = _.contains(exportsOptions, 'amd'),
-        isCommonJS = _.contains(exportsOptions, 'commonjs'),
-        isGlobal = _.contains(exportsOptions, 'global'),
-        isNode = _.contains(exportsOptions, 'node');
-
-    // flag to specify a template build
-    var isTemplate = !!templatePattern;
-
-    // the lodash.js source
-    var source = fs.readFileSync(filePath, 'utf8');
-
-    /*------------------------------------------------------------------------*/
 
     var isExcluded = function() {
       return _.every(arguments, function(funcName) {
@@ -2505,398 +2380,552 @@
       return _.contains(funcNames, funcName);
     };
 
-    // delete the `_.findWhere` dependency map to enable its alias mapping
-    if (!isUnderscore || isLodash('findWhere')) {
-      delete funcDependencyMap.findWhere;
+    if (state) {
+      var buildFuncs = state.buildFuncs,
+          filePath = state.filePath,
+          funcDepMap = state.funcDepMap,
+          iife = state.iife,
+          includeFuncs = state.includeFuncs,
+          includeProps = state.includeProps,
+          includeVars = state.includeVars,
+          isAMD = state.isAMD,
+          isBackbone = state.isBackbone,
+          isCommonJS = state.isCommonJS,
+          isCSP = state.isCSP,
+          isDebug = true,
+          isGlobal = state.isGlobal,
+          isIIFE = state.isIIFE,
+          isLegacy = state.isLegacy,
+          isMapped = state.isMapped,
+          isMobile = state.isMobile,
+          isModern = state.isModern,
+          isNode = state.isNode,
+          isNoDep = true,
+          isStdOut = state.isStdOut,
+          isSilent = true,
+          isStrict = state.isStrict,
+          isUnderscore = state.isUnderscore,
+          minusFuncs = state.minusFuncs,
+          options = state.options,
+          outputPath = state.outputPath,
+          plusFuncs = state.plusFuncs,
+          propDepMap = state.propDepMap,
+          source = state.source,
+          varDepMap = state.varDepMap;
     }
-
-    // categories of functions to include in the build
-    var categoryOptions = options.reduce(function(accumulator, value) {
-      if (/^category=.+$/.test(value)) {
-        var array = optionToArray(value);
-        accumulator = _.union(array.map(function(category) {
-          return capitalize(category.toLowerCase());
-        }));
+    else {
+      // display help message
+      if (_.find(options, function(arg) {
+            return /^(?:-h|--help)$/.test(arg);
+          })) {
+        displayHelp();
+        return;
       }
-      return accumulator;
-    }, []);
 
-    // functions to include in the build
-    var includeFuncs = options.reduce(function(accumulator, value) {
-      return /^include=.*$/.test(value)
-        ? _.union(accumulator, optionToMethodsArray(value))
-        : accumulator;
-    }, categoryOptions.slice());
+      // display `lodash.VERSION`
+      if (_.find(options, function(arg) {
+            return /^(?:-V|--version)$/.test(arg);
+          })) {
+        console.log(_.VERSION);
+        return;
+      }
 
-    // properties to include in the build
-    var includeProps = _.intersection(includeFuncs, propDependencies);
+      /*----------------------------------------------------------------------*/
 
-    // variables to include in the build
-    var includeVars = _.intersection(includeFuncs, varDependencies);
+      // clone dependencies to modify
+      var funcDepMap = _.cloneDeep(funcDependencyMap),
+          propDepMap = _.cloneDeep(propDependencyMap),
+          varDepMap = _.cloneDeep(varDependencyMap);
 
-    // functions to remove from the build
-    var minusFuncs = options.reduce(function(accumulator, value) {
-      return /^(?:exclude|minus)=.*$/.test(value)
-        ? _.union(accumulator, optionToMethodsArray(value))
-        : accumulator;
-    }, []);
+      // the path to the source file
+      var filePath = path.join(__dirname, 'lodash.js');
 
-    // functions to add to the build
-    var plusFuncs = options.reduce(function(accumulator, value) {
-      return /^plus=.*$/.test(value)
-        ? _.union(accumulator, optionToMethodsArray(value))
-        : accumulator;
-    }, []);
+      // used to specify a custom IIFE to wrap Lo-Dash
+      var iife = options.reduce(function(result, value) {
+        var match = value.match(/^iife=([\s\S]*)$/);
+        return match ? match[1] : result;
+      }, null);
 
-    // expand categories to function names
-    _.each([includeFuncs, minusFuncs, plusFuncs], function(funcNames) {
-      var categories = _.intersection(funcNames, allCategories);
+      // flag to specify a Backbone build
+      var isBackbone = _.contains(options, 'backbone');
 
-      categories.forEach(function(category) {
-        var otherFuncs = getNamesByCategory(category).filter(function(key) {
-          var type = typeof _[key];
-          return type == 'function' || type == 'undefined';
-        });
+      // flag to specify a Content Security Policy build
+      var isCSP = _.contains(options, 'csp') || _.contains(options, 'CSP');
 
-        // limit function names to those available for specific builds
-        if (isBackbone) {
-          otherFuncs = _.intersection(otherFuncs, backboneDependencies);
-        } else if (isUnderscore) {
-          otherFuncs = _.intersection(otherFuncs, underscoreFuncs);
+      // flag to specify only creating the debug build
+      var isDebug = _.contains(options, '-d') || _.contains(options, '--debug');
+
+      // flag to indicate that a custom IIFE was specified
+      var isIIFE = typeof iife == 'string';
+
+      // flag to specify creating a source map for the minified source
+      var isMapped = _.contains(options, '-p') || _.contains(options, '--source-map');
+
+      // flag to specify only creating the minified build
+      var isMinify = _.contains(options, '-m') || _.contains(options, '--minify');
+
+      // flag to specify a mobile build
+      var isMobile = _.contains(options, 'mobile');
+
+      // flag to specify a modern build
+      var isModern = isCSP || isMobile || _.contains(options, 'modern');
+
+      // flag to specify a modularize build
+      var isModularize = _.contains(options, 'modularize');
+
+      // flag to specify a no-dependency build
+      var isNoDep = _.contains(options, '-n') || _.contains(options, '--no-dep');
+
+      // flag to specify writing output to standard output
+      var isStdOut = _.contains(options, '-c') || _.contains(options, '--stdout');
+
+      // flag to specify skipping status updates normally logged to the console
+      var isSilent = isStdOut || _.contains(options, '-s') || _.contains(options, '--silent');
+
+      // flag to specify `_.assign`, `_.bindAll`, and `_.defaults` are
+      // constructed using the "use strict" directive
+      var isStrict = _.contains(options, 'strict');
+
+      // flag to specify an Underscore build
+      var isUnderscore = isBackbone || _.contains(options, 'underscore');
+
+      // flag to specify a legacy build
+      var isLegacy = !(isModern || isUnderscore) && _.contains(options, 'legacy');
+
+      // used to specify the ways to export the `lodash` function
+      var exportsOptions = options.reduce(function(result, value) {
+        return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
+      }, isUnderscore
+        ? ['commonjs', 'global', 'node']
+        : allExports.slice()
+      );
+
+      // used to specify the AMD module ID of Lo-Dash used by precompiled templates
+      var moduleId = options.reduce(function(result, value) {
+        var match = value.match(/^moduleId=(.*)$/);
+        return match ? match[1] : result;
+      }, 'lodash');
+
+      // used to match external template files to precompile
+      var templatePattern = options.reduce(function(result, value) {
+        var match = value.match(/^template=(.+)$/);
+        return match
+          ? match[1]
+          : result;
+      }, '');
+
+      // used as the template settings for precompiled templates
+      var templateSettings = options.reduce(function(result, value) {
+        var match = value.match(/^settings=(.+)$/);
+        return match
+          ? _.assign(result, Function('return {' + match[1].replace(/^{|}$/g, '') + '}')())
+          : result;
+      }, _.assign(_.clone(_.templateSettings), {
+        'moduleId': moduleId
+      }));
+
+      // flags to specify export options
+      var isAMD = _.contains(exportsOptions, 'amd'),
+          isCommonJS = _.contains(exportsOptions, 'commonjs'),
+          isGlobal = _.contains(exportsOptions, 'global'),
+          isNode = _.contains(exportsOptions, 'node');
+
+      // flag to specify a template build
+      var isTemplate = !!templatePattern;
+
+      // the lodash.js source
+      var source = fs.readFileSync(filePath, 'utf8');
+
+      /*----------------------------------------------------------------------*/
+
+      // delete the `_.findWhere` dependency map to enable its alias mapping
+      if (!isUnderscore || isLodash('findWhere')) {
+        delete funcDepMap.findWhere;
+      }
+
+      // categories of functions to include in the build
+      var categoryOptions = options.reduce(function(accumulator, value) {
+        if (/^category=.+$/.test(value)) {
+          var array = optionToArray(value);
+          accumulator = _.union(array.map(function(category) {
+            return capitalize(category.toLowerCase());
+          }));
         }
-        push.apply(funcNames, otherFuncs);
+        return accumulator;
+      }, []);
+
+      // functions to include in the build
+      var includeFuncs = options.reduce(function(accumulator, value) {
+        return /^include=.*$/.test(value)
+          ? _.union(accumulator, optionToMethodsArray(value, funcDepMap))
+          : accumulator;
+      }, categoryOptions.slice());
+
+      // properties to include in the build
+      var includeProps = _.intersection(includeFuncs, propDependencies);
+
+      // variables to include in the build
+      var includeVars = _.intersection(includeFuncs, varDependencies);
+
+      // functions to remove from the build
+      var minusFuncs = options.reduce(function(accumulator, value) {
+        return /^(?:exclude|minus)=.*$/.test(value)
+          ? _.union(accumulator, optionToMethodsArray(value, funcDepMap))
+          : accumulator;
+      }, []);
+
+      // functions to add to the build
+      var plusFuncs = options.reduce(function(accumulator, value) {
+        return /^plus=.*$/.test(value)
+          ? _.union(accumulator, optionToMethodsArray(value, funcDepMap))
+          : accumulator;
+      }, []);
+
+      // expand categories to function names
+      _.each([includeFuncs, minusFuncs, plusFuncs], function(funcNames) {
+        var categories = _.intersection(funcNames, allCategories);
+
+        categories.forEach(function(category) {
+          var otherFuncs = getNamesByCategory(category).filter(function(key) {
+            var type = typeof _[key];
+            return type == 'function' || type == 'undefined';
+          });
+
+          // limit function names to those available for specific builds
+          if (isBackbone) {
+            otherFuncs = _.intersection(otherFuncs, backboneDependencies);
+          } else if (isUnderscore) {
+            otherFuncs = _.intersection(otherFuncs, underscoreFuncs);
+          }
+          push.apply(funcNames, otherFuncs);
+        });
       });
-    });
 
-    // remove categories from function names
-    includeFuncs = _.difference(includeFuncs, allCategories, includeProps, includeVars);
-    minusFuncs = _.difference(minusFuncs, allCategories);
-    plusFuncs = _.difference(plusFuncs, allCategories);
+      // remove categories from function names
+      includeFuncs = _.difference(includeFuncs, allCategories, includeProps, includeVars);
+      minusFuncs = _.difference(minusFuncs, allCategories);
+      plusFuncs = _.difference(plusFuncs, allCategories);
 
-    /*------------------------------------------------------------------------*/
+      /*----------------------------------------------------------------------*/
 
-    // used to detect invalid command-line arguments
-    var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
-      if (/^(?:-o|--output)$/.test(options[index - 1]) ||
-          /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=[\s\S]*$/.test(value)) {
-        return true;
-      }
-      var result = _.contains([
-        'backbone',
-        'csp',
-        'legacy',
-        'mobile',
-        'modern',
-        'modularize',
-        'strict',
-        'underscore',
-        '-c', '--stdout',
-        '-d', '--debug',
-        '-h', '--help',
-        '-m', '--minify',
-        '-n', '--no-dep',
-        '-o', '--output',
-        '-p', '--source-map',
-        '-s', '--silent',
-        '-V', '--version'
-      ], value);
+      // used to detect invalid command-line arguments
+      var invalidArgs = _.reject(options.slice(reNode.test(options[0]) ? 2 : 0), function(value, index, options) {
+        if (/^(?:-o|--output)$/.test(options[index - 1]) ||
+            /^(?:category|exclude|exports|iife|include|moduleId|minus|plus|settings|template)=[\s\S]*$/.test(value)) {
+          return true;
+        }
+        var result = _.contains([
+          'backbone',
+          'csp',
+          'legacy',
+          'mobile',
+          'modern',
+          'modularize',
+          'strict',
+          'underscore',
+          '-c', '--stdout',
+          '-d', '--debug',
+          '-h', '--help',
+          '-m', '--minify',
+          '-n', '--no-dep',
+          '-o', '--output',
+          '-p', '--source-map',
+          '-s', '--silent',
+          '-V', '--version'
+        ], value);
 
-      if (!result && /^(?:-p|--source-map)$/.test(options[index - 1])) {
-        result = true;
-        sourceMapURL = value;
-      }
-      return result;
-    });
+        if (!result && /^(?:-p|--source-map)$/.test(options[index - 1])) {
+          result = true;
+          sourceMapURL = value;
+        }
+        return result;
+      });
 
-    // report invalid command and option arguments
-    if (invalidArgs.length) {
-      warnings.push('Invalid argument' + (invalidArgs.length > 1 ? 's' : '') + ' passed: ' + invalidArgs.join(', '));
-    }
-    // report invalid command combinations
-    invalidArgs = _.intersection(options, ['backbone', 'csp', 'legacy', 'mobile', 'modern', 'underscore']);
-
-    if (isTemplate) {
-      invalidArgs.push('template');
-    }
-    if (invalidArgs.length > 1) {
-      warnings.push('The `' + invalidArgs.slice(0, -1).join('`, `') + '`' + (invalidArgs.length > 2 ? ',' : '') + ' and `' + invalidArgs.slice(-1) + '` commands may not be combined.');
-    }
-    // report invalid command entries
-    _.forOwn({
-      'category': {
-        'entries': categoryOptions,
-        'validEntries': allCategories
-      },
-      'exports': {
-        'entries': exportsOptions,
-        'validEntries': allExports
-      },
-      'include': {
-        'entries': includeFuncs,
-        'validEntries': allFuncs
-      },
-      'minus': {
-        'entries': minusFuncs,
-        'validEntries': allFuncs
-      },
-      'plus': {
-        'entries': plusFuncs,
-        'validEntries': allFuncs
-      }
-    }, function(data, commandName) {
-      invalidArgs = _.difference(data.entries, data.validEntries, ['none']);
+      // report invalid command and option arguments
       if (invalidArgs.length) {
-        warnings.push('Invalid `' + commandName + '` entr' + (invalidArgs.length > 1 ? 'ies' : 'y') + ' passed: ' + invalidArgs.join(', '));
+        warnings.push('Invalid argument' + (invalidArgs.length > 1 ? 's' : '') + ' passed: ' + invalidArgs.join(', '));
       }
-    });
+      // report invalid command combinations
+      invalidArgs = _.intersection(options, ['backbone', 'csp', 'legacy', 'mobile', 'modern', 'underscore']);
 
-    if (warnings.length) {
-      funcDependencyMap = funcDependencyMapBackup;
-      console.log([''].concat(
-        warnings,
-        'For more information type: lodash --help'
-      ).join('\n'));
-      return;
-    }
+      if (isTemplate) {
+        invalidArgs.push('template');
+      }
+      if (invalidArgs.length > 1) {
+        warnings.push('The `' + invalidArgs.slice(0, -1).join('`, `') + '`' + (invalidArgs.length > 2 ? ',' : '') + ' and `' + invalidArgs.slice(-1) + '` commands may not be combined.');
+      }
+      // report invalid command entries
+      _.forOwn({
+        'category': {
+          'entries': categoryOptions,
+          'validEntries': allCategories
+        },
+        'exports': {
+          'entries': exportsOptions,
+          'validEntries': allExports
+        },
+        'include': {
+          'entries': includeFuncs,
+          'validEntries': allFuncs
+        },
+        'minus': {
+          'entries': minusFuncs,
+          'validEntries': allFuncs
+        },
+        'plus': {
+          'entries': plusFuncs,
+          'validEntries': allFuncs
+        }
+      }, function(data, commandName) {
+        invalidArgs = _.difference(data.entries, data.validEntries, ['none']);
+        if (invalidArgs.length) {
+          warnings.push('Invalid `' + commandName + '` entr' + (invalidArgs.length > 1 ? 'ies' : 'y') + ' passed: ' + invalidArgs.join(', '));
+        }
+      });
 
-    /*------------------------------------------------------------------------*/
+      if (warnings.length) {
+        funcDepMap = funcDepMapBackup;
+        console.log([''].concat(
+          warnings,
+          'For more information type: lodash --help'
+        ).join('\n'));
+        return;
+      }
 
-    // names of functions to include in the build
-    var buildFuncs = !isTemplate && (function() {
-      var result;
+      /*----------------------------------------------------------------------*/
 
-      // update dependencies
-      if (isLegacy) {
-        funcDependencyMap.defer = _.without(funcDependencyMap.defer, 'bind');
-        funcDependencyMap.isPlainObject = _.without(funcDependencyMap.isPlainObject, 'shimIsPlainObject');
-        funcDependencyMap.keys = _.without(funcDependencyMap.keys, 'shimKeys');
+      // names of functions to include in the build
+      var buildFuncs = !isTemplate && (function() {
+        var result;
 
-        _.forOwn(varDependencyMap, function(deps, varName) {
-          varDependencyMap[varName] = _.without(deps, 'reNative');
-        });
-      }
-      if (isMobile) {
-        _.each(['assign', 'defaults'], function(funcName) {
-          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'keys');
-        });
-      }
-      else if (isModern) {
-        funcDependencyMap.setBindData = _.without(funcDependencyMap.setBindData, 'noop');
+        // update dependencies
+        if (isLegacy) {
+          funcDepMap.defer = _.without(funcDepMap.defer, 'bind');
+          funcDepMap.isPlainObject = _.without(funcDepMap.isPlainObject, 'shimIsPlainObject');
+          funcDepMap.keys = _.without(funcDepMap.keys, 'shimKeys');
 
-        _.forOwn(funcDependencyMap, function(deps, funcName) {
-          if (funcName != 'baseFlatten' && _.contains(deps, 'isArguments')) {
-            funcDependencyMap[funcName] = _.without(deps, 'isArguments');
-          }
-        });
-      }
-      else if (isModularize) {
-        _.forOwn(funcDependencyMap, function(deps, funcName) {
-          if (_.contains(deps, 'getIndexOf')) {
-            (deps = funcDependencyMap[funcName] = _.without(deps, 'getIndexOf')).push( 'baseIndexOf');
-          }
-          if (_.contains(deps, 'lodash') || _.contains(deps, 'lodashWrapper')) {
-            funcDependencyMap[funcName] = _.without(deps, 'lodash', 'lodashWrapper');
-          }
-        });
-      }
-      if (isLegacy || isMobile || isUnderscore) {
-        _.each(['createBound', 'createCallback'], function(funcName) {
-          funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'setBindData');
-        });
-      }
-      if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
-        funcDependencyMap.mixin = _.without(funcDependencyMap.mixin, 'isFunction');
-      }
-      if (isUnderscore) {
-        if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
-          (funcDependencyMap.clone = _.without(funcDependencyMap.clone, 'baseClone')).push('assign', 'isArray', 'isObject');
-        }
-        if (!isLodash('contains')) {
-          funcDependencyMap.contains = _.without(funcDependencyMap.contains, 'isString');
-        }
-        if (!isLodash('flatten')) {
-          funcDependencyMap.flatten = _.without(funcDependencyMap.flatten, 'map');
-        }
-        if (!isLodash('isEmpty')) {
-          funcDependencyMap.isEmpty = ['isArray', 'isString'];
-        }
-        if (!isLodash('baseIsEqual') && !isLodash('isEqual')) {
-          funcDependencyMap.baseIsEqual = _.without(funcDependencyMap.baseIsEqual, 'forIn', 'isArguments');
-        }
-        if (!isLodash('pick')){
-          funcDependencyMap.pick = _.without(funcDependencyMap.pick, 'forIn', 'isObject');
-        }
-        if (!isLodash('template')) {
-          funcDependencyMap.template = _.without(funcDependencyMap.template, 'keys', 'values');
-        }
-        if (!isLodash('toArray')) {
-          funcDependencyMap.toArray.push('isArray', 'map');
-        }
-        if (!isLodash('where')) {
-          funcDependencyMap.createCallback = _.without(funcDependencyMap.createCallback, 'baseIsEqual');
-          funcDependencyMap.where.push('find', 'isEmpty');
-        }
-        if (!isLodash('forOwn')) {
-          _.each(['contains', 'every', 'find', 'forOwn', 'some', 'transform'], function(funcName) {
-            (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('indicatorObject');
+          _.forOwn(varDepMap, function(deps, varName) {
+            varDepMap[varName] = _.without(deps, 'reNative');
           });
         }
-        if (!isLodash('forIn')) {
-          _.each(['baseIsEqual', 'shimIsPlainObject'], function(funcName) {
-            (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('indicatorObject');
+        if (isMobile) {
+          _.each(['assign', 'defaults'], function(funcName) {
+            funcDepMap[funcName] = _.without(funcDepMap[funcName], 'keys');
           });
         }
+        else if (isModern) {
+          funcDepMap.setBindData = _.without(funcDepMap.setBindData, 'noop');
 
-        _.each(['baseUniq', 'difference', 'intersection'], function(funcName) {
-          if (!isLodash(funcName)) {
-            (funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'cacheIndexOf', 'createCache')).push('getIndexOf');
-          }
-        });
-
-        _.each(['baseEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
-          if (funcName == 'baseEach' || !isLodash(funcName)) {
-            (varDependencyMap[funcName] || (varDependencyMap[funcName] = [])).push('indicatorObject');
-          }
-        });
-
-        _.each(['clone', 'isEqual', 'omit', 'pick'], function(funcName) {
-          if (funcName == 'isEqual') {
-            if (isLodash('baseIsEqual') || isLodash('isEqual')) {
-              return;
+          _.forOwn(funcDepMap, function(deps, funcName) {
+            if (funcName != 'baseFlatten' && _.contains(deps, 'isArguments')) {
+              funcDepMap[funcName] = _.without(deps, 'isArguments');
             }
-          }
-          if (funcName == 'clone') {
-            if (isLodash('baseClone') || isLodash('clone') || isLodash('cloneDeep')) {
-              return;
-            }
-          }
-          if (!isLodash(funcName)) {
-            funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'createCallback');
-          }
-        });
-
-        _.forOwn(funcDependencyMap, function(deps, funcName) {
-          if (_.every(getDependants(funcName).concat(funcName), function(otherName) {
-                return !isLodash(otherName);
-              })) {
-            deps = funcDependencyMap[funcName];
-            if (_.contains(deps, 'charAtCallback')) {
-              deps = funcDependencyMap[funcName] = _.without(deps, 'charAtCallback', 'isArray', 'isString');
-            }
-            if (_.contains(deps, 'slice')) {
-              funcDependencyMap[funcName] = _.without(deps, 'slice');
-            }
-          }
-        });
-      }
-      if (isModern || isUnderscore) {
-        _.each(['assign', 'baseEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(funcName) {
-          if (!(isUnderscore && isLodash(funcName))) {
-            (varDependencyMap[funcName] = _.without(varDependencyMap[funcName], 'defaultsIteratorOptions', 'eachIteratorOptions', 'forOwnIteratorOptions')).push('objectTypes');
-            var deps = funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'createIterator');
-            if (funcName != 'forIn' && funcName != 'shimKeys') {
-              deps.push('keys');
-            }
-          }
-        });
-
-        _.forOwn(propDependencyMap, function(deps, funcName) {
-          if (funcName != 'bind' &&
-              !(isMobile && funcName == 'keys') &&
-              !(isUnderscore && isLodash(funcName))) {
-            propDependencyMap[funcName] = _.without(deps, 'support');
-          }
-        });
-
-        _.forOwn(funcDependencyMap, function(deps, funcName) {
-          if (_.contains(deps, 'isNode')) {
-            deps = funcDependencyMap[funcName] = _.without(deps, 'isNode');
-          }
-          if (_.contains(deps, 'toString') && (funcName != 'contains' && funcName != 'parseInt')) {
-            funcDependencyMap[funcName] = _.without(deps, 'isString');
-          }
-        });
-
+          });
+        }
+        if (isLegacy || isMobile || isUnderscore) {
+          _.each(['createBound', 'createCallback'], function(funcName) {
+            funcDepMap[funcName] = _.without(funcDepMap[funcName], 'setBindData');
+          });
+        }
+        if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
+          funcDepMap.mixin = _.without(funcDepMap.mixin, 'isFunction');
+        }
         if (isUnderscore) {
-          _.forOwn(funcDependencyMap, function(deps, funcName) {
-            if (_.every(getDependants(funcName).concat(funcName), function(otherName) {
+          if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
+            (funcDepMap.clone = _.without(funcDepMap.clone, 'baseClone')).push('assign', 'isArray', 'isObject');
+          }
+          if (!isLodash('contains')) {
+            funcDepMap.contains = _.without(funcDepMap.contains, 'isString');
+          }
+          if (!isLodash('flatten')) {
+            funcDepMap.flatten = _.without(funcDepMap.flatten, 'map');
+          }
+          if (!isLodash('isEmpty')) {
+            funcDepMap.isEmpty = ['isArray', 'isString'];
+          }
+          if (!isLodash('baseIsEqual') && !isLodash('isEqual')) {
+            funcDepMap.baseIsEqual = _.without(funcDepMap.baseIsEqual, 'forIn', 'isArguments');
+          }
+          if (!isLodash('pick')){
+            funcDepMap.pick = _.without(funcDepMap.pick, 'forIn', 'isObject');
+          }
+          if (!isLodash('template')) {
+            funcDepMap.template = _.without(funcDepMap.template, 'keys', 'values');
+          }
+          if (!isLodash('toArray')) {
+            funcDepMap.toArray.push('isArray', 'map');
+          }
+          if (!isLodash('where')) {
+            funcDepMap.createCallback = _.without(funcDepMap.createCallback, 'baseIsEqual');
+            funcDepMap.where.push('find', 'isEmpty');
+          }
+          if (!isLodash('forOwn')) {
+            _.each(['contains', 'every', 'find', 'forOwn', 'some', 'transform'], function(funcName) {
+              (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
+            });
+          }
+          if (!isLodash('forIn')) {
+            _.each(['baseIsEqual', 'shimIsPlainObject'], function(funcName) {
+              (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
+            });
+          }
+
+          _.each(['baseUniq', 'difference', 'intersection'], function(funcName) {
+            if (!isLodash(funcName)) {
+              (funcDepMap[funcName] = _.without(funcDepMap[funcName], 'cacheIndexOf', 'createCache')).push('getIndexOf');
+            }
+          });
+
+          _.each(['baseEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
+            if (funcName == 'baseEach' || !isLodash(funcName)) {
+              (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
+            }
+          });
+
+          _.each(['clone', 'isEqual', 'omit', 'pick'], function(funcName) {
+            if (funcName == 'isEqual') {
+              if (isLodash('baseIsEqual') || isLodash('isEqual')) {
+                return;
+              }
+            }
+            if (funcName == 'clone') {
+              if (isLodash('baseClone') || isLodash('clone') || isLodash('cloneDeep')) {
+                return;
+              }
+            }
+            if (!isLodash(funcName)) {
+              funcDepMap[funcName] = _.without(funcDepMap[funcName], 'createCallback');
+            }
+          });
+
+          _.forOwn(funcDepMap, function(deps, funcName) {
+            if (_.every(getDependants(funcName, funcDepMap).concat(funcName), function(otherName) {
                   return !isLodash(otherName);
                 })) {
-              deps = funcDependencyMap[funcName];
-              if (_.contains(deps, 'releaseArray')) {
-                deps = funcDependencyMap[funcName] = _.without(deps, 'getArray', 'releaseArray');
+              deps = funcDepMap[funcName];
+              if (_.contains(deps, 'charAtCallback')) {
+                deps = funcDepMap[funcName] = _.without(deps, 'charAtCallback', 'isArray', 'isString');
               }
-              if (_.contains(deps, 'releaseObject')) {
-                funcDependencyMap[funcName] = _.without(deps, 'getObject', 'releaseObject');
+              if (_.contains(deps, 'slice')) {
+                funcDepMap[funcName] = _.without(deps, 'slice');
               }
             }
           });
         }
-        if (!isMobile) {
-          _.each(['baseClone', 'transform', 'value'], function(funcName) {
-            (funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'baseEach')).push('forEach');
-          });
-
-          _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(funcName) {
-            (funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'baseEach')).push('forOwn');
-          });
-
-          _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'shimKeys'], function(funcName) {
+        if (isModern || isUnderscore) {
+          _.each(['assign', 'baseEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(funcName) {
             if (!(isUnderscore && isLodash(funcName))) {
-              funcDependencyMap[funcName] = _.without(funcDependencyMap[funcName], 'isArguments', 'isArray');
+              (varDepMap[funcName] = _.without(varDepMap[funcName], 'defaultsIteratorOptions', 'eachIteratorOptions', 'forOwnIteratorOptions')).push('objectTypes');
+              var deps = funcDepMap[funcName] = _.without(funcDepMap[funcName], 'createIterator');
+              if (funcName != 'forIn' && funcName != 'shimKeys') {
+                deps.push('keys');
+              }
             }
           });
 
-          _.each(['max', 'min'], function(funcName) {
-            if (!(isUnderscore && isLodash(funcName))) {
-              funcDependencyMap[funcName].push('forEach');
+          _.forOwn(propDepMap, function(deps, funcName) {
+            if (funcName != 'bind' &&
+                !(isMobile && funcName == 'keys') &&
+                !(isUnderscore && isLodash(funcName))) {
+              propDepMap[funcName] = _.without(deps, 'support');
+            }
+          });
+
+          _.forOwn(funcDepMap, function(deps, funcName) {
+            if (_.contains(deps, 'isNode')) {
+              deps = funcDepMap[funcName] = _.without(deps, 'isNode');
+            }
+            if (_.contains(deps, 'toString') && (funcName != 'contains' && funcName != 'parseInt')) {
+              funcDepMap[funcName] = _.without(deps, 'isString');
+            }
+          });
+
+          if (isUnderscore) {
+            _.forOwn(funcDepMap, function(deps, funcName) {
+              if (_.every(getDependants(funcName, funcDepMap).concat(funcName), function(otherName) {
+                    return !isLodash(otherName);
+                  })) {
+                deps = funcDepMap[funcName];
+                if (_.contains(deps, 'releaseArray')) {
+                  deps = funcDepMap[funcName] = _.without(deps, 'getArray', 'releaseArray');
+                }
+                if (_.contains(deps, 'releaseObject')) {
+                  funcDepMap[funcName] = _.without(deps, 'getObject', 'releaseObject');
+                }
+              }
+            });
+          }
+          if (!isMobile) {
+            _.each(['baseClone', 'transform', 'value'], function(funcName) {
+              (funcDepMap[funcName] = _.without(funcDepMap[funcName], 'baseEach')).push('forEach');
+            });
+
+            _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(funcName) {
+              (funcDepMap[funcName] = _.without(funcDepMap[funcName], 'baseEach')).push('forOwn');
+            });
+
+            _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'shimKeys'], function(funcName) {
+              if (!(isUnderscore && isLodash(funcName))) {
+                funcDepMap[funcName] = _.without(funcDepMap[funcName], 'isArguments', 'isArray');
+              }
+            });
+
+            _.each(['max', 'min'], function(funcName) {
+              if (!(isUnderscore && isLodash(funcName))) {
+                funcDepMap[funcName].push('forEach');
+              }
+            });
+          }
+        }
+        if (isModularize) {
+          _.forOwn(funcDepMap, function(deps, funcName) {
+            if (_.contains(deps, 'getIndexOf')) {
+              (deps = funcDepMap[funcName] = _.without(deps, 'getIndexOf')).push( 'baseIndexOf');
+            }
+            if (_.contains(deps, 'lodash') || _.contains(deps, 'lodashWrapper')) {
+              funcDepMap[funcName] = _.without(deps, 'lodash', 'lodashWrapper');
             }
           });
         }
-      }
-      // add function names explicitly
-      if (includeFuncs.length) {
-        result = includeFuncs;
-      }
-      // add default function names
-      if (!includeProps.length && !includeVars.length) {
-        if (isBackbone && !result) {
-          result = backboneDependencies;
+        // add function names explicitly
+        if (includeFuncs.length) {
+          result = includeFuncs;
         }
-        else if (isUnderscore && !result) {
-          result = underscoreFuncs;
+        // add default function names
+        if (!includeProps.length && !includeVars.length) {
+          if (isBackbone && !result) {
+            result = backboneDependencies;
+          }
+          else if (isUnderscore && !result) {
+            result = underscoreFuncs;
+          }
+          if (!result) {
+            result = lodashFuncs.slice();
+          }
         }
-        if (!result) {
-          result = lodashFuncs.slice();
+        // remove special "none" entry
+        if (result == 'none') {
+          result = [];
+        } else {
+          result = _.without(result, 'none');
         }
-      }
-      // remove special "none" entry
-      if (result == 'none') {
-        result = [];
-      } else {
-        result = _.without(result, 'none');
-      }
-      // add and subtract function names
-      if (plusFuncs.length) {
-        result = _.union(result, plusFuncs);
-      }
-      if (minusFuncs.length) {
-        result = _.difference(result, isNoDep
-          ? minusFuncs
-          : minusFuncs.concat(getDependants(minusFuncs))
-        );
-      }
-      if (isModularize) {
-        result = _.difference(result, getNamesByCategory('Chaining'), ['runInContext']);
-      }
-      if (!isNoDep) {
-        result = getDependencies(result);
-      }
-      return result;
-    }());
+        // add and subtract function names
+        if (plusFuncs.length) {
+          result = _.union(result, plusFuncs);
+        }
+        if (minusFuncs.length) {
+          result = _.difference(result, isNoDep
+            ? minusFuncs
+            : minusFuncs.concat(getDependants(minusFuncs, funcDepMap))
+          );
+        }
+        if (isModularize) {
+          result = _.difference(result, getNamesByCategory('Chaining'), ['runInContext']);
+        }
+        return getDependencies(result, funcDepMap);
+      }());
 
-    // add properties, variables, and their function dependencies to include in the build
-    if (!isNoDep) {
+      // add properties, variables, and their function dependencies to include in the build
       (function() {
         function expand(result, depMap, funcNames, stack) {
           stack || (stack = []);
@@ -2908,7 +2937,7 @@
             }
             if (!_.contains(stack, funcName) && (funcNames || _.contains(buildFuncs, funcName))) {
               var deps = _.uniq(_.transform(identifiers, function(deps, identifier) {
-                push.apply(deps, getDependencies(identifier));
+                push.apply(deps, getDependencies(identifier, funcDepMap));
               }));
 
               stack.push(funcName);
@@ -2921,1009 +2950,1041 @@
           }, result));
         }
 
-        includeProps = expand(includeProps, propDependencyMap);
-        includeVars = expand(includeVars, varDependencyMap);
+        includeProps = expand(includeProps, propDepMap);
+        includeVars = expand(includeVars, varDepMap);
       }());
-    }
 
-    /*------------------------------------------------------------------------*/
+      /*----------------------------------------------------------------------*/
 
-    // load customized Lo-Dash module
-    var lodash = !isModularize && !isTemplate && (function() {
-      source = setUseStrictOption(source, isStrict);
+      // load customized Lo-Dash module
+      var lodash = !isTemplate && (function() {
+        source = setUseStrictOption(source, isStrict);
 
-      if (isLegacy) {
-        source = removeSupportProp(source, 'fastBind');
-        source = replaceSupportProp(source, 'argsClass', 'false');
+        if (isLegacy) {
+          source = removeSupportProp(source, 'fastBind');
+          source = replaceSupportProp(source, 'argsClass', 'false');
 
-        // remove native `Function#bind` branch in `_.bind`
-        source = source.replace(matchFunction(source, 'bind'), function(match) {
-          return match.replace(/(?:\s*\/\/.*)*\s*return support\.fastBind[^:]+:\s*/, 'return ');
-        });
-
-        // remove native `Array.isArray` branch in `_.isArray`
-        source = source.replace(matchFunction(source, 'isArray'), function(match) {
-          return match.replace(/\bnativeIsArray\s*\|\|\s*/, '');
-        });
-
-        // replace `createObject` and `isArguments` with their forks
-        _.each(['createObject', 'isArguments'], function(funcName) {
-          var capitalized = capitalize(funcName),
-              get = eval('get' + capitalized + 'Fork'),
-              remove =  eval('remove' + capitalized + 'Fork');
-
-          source = source.replace(matchFunction(source, funcName).replace(RegExp('[\\s\\S]+?function ' + funcName), ''), function() {
-            var snippet = get(source),
-                body = snippet.match(RegExp(funcName + ' *= *function([\\s\\S]+?\\n *});'))[1],
-                indent = getIndent(snippet);
-
-            return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2)) + '\n';
+          // remove native `Function#bind` branch in `_.bind`
+          source = source.replace(matchFunction(source, 'bind'), function(match) {
+            return match.replace(/(?:\s*\/\/.*)*\s*return support\.fastBind[^:]+:\s*/, 'return ');
           });
 
-          source = remove(source);
-        });
-
-        // replace `_.isPlainObject` with `shimIsPlainObject`
-        source = source.replace(
-          matchFunction(source, 'isPlainObject').replace(/^ *var isPlainObject *= */m, ''),
-          matchFunction(source, 'shimIsPlainObject').replace(/^ *function shimIsPlainObject/m, 'function').replace(/\s*$/, ';\n')
-        );
-
-        // replace `_.keys` with `shimKeys`
-        source = source.replace(
-          matchFunction(source, 'keys').replace(/^ *var keys.*= */m, ''),
-          matchFunction(source, 'shimKeys').replace(/^ *var shimKeys *= */m, '')
-        );
-      }
-      if (isModern) {
-        source = removeIsArgumentsFork(source);
-        source = removeSetBindDataFork(source);
-        source = removeSupportSpliceObjects(source);
-
-        if (isMobile) {
-          source = replaceSupportProp(source, 'enumPrototypes', 'true');
-          source = replaceSupportProp(source, 'nonEnumArgs', 'true');
-        }
-        else {
-          source = removeIsArrayFork(source);
-          source = removeIsFunctionFork(source);
-          source = removeCreateObjectFork(source);
-
-          // remove `shimIsPlainObject` from `_.isPlainObject`
-          source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
-            return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
+          // remove native `Array.isArray` branch in `_.isArray`
+          source = source.replace(matchFunction(source, 'isArray'), function(match) {
+            return match.replace(/\bnativeIsArray\s*\|\|\s*/, '');
           });
-        }
-      }
-      if (!isModern || isMobile) {
-        source = removeEsOptimization(source);
-      }
-      if (isLegacy || isMobile || isUnderscore) {
-        if (isMobile || (!isLodash('assign') && !isLodash('defaults') && !isLodash('forIn') && !isLodash('forOwn'))) {
-          source = removeKeysOptimization(source);
-        }
-        if (!isLodash('defer')) {
-          source = removeDeferFork(source);
-        }
-      }
-      if (isModern || isUnderscore) {
-        source = removeSupportArgsClass(source);
-        source = removeSupportArgsObject(source);
-        source = removeSupportNonEnumShadows(source);
-        source = removeSupportOwnLast(source);
-        source = removeSupportUnindexedChars(source);
-        source = removeSupportNodeClass(source);
 
-        if (!isMobile) {
-          source = removeSupportEnumErrorProps(source);
-          source = removeSupportEnumPrototypes(source);
-          source = removeSupportNonEnumArgs(source);
+          // replace `createObject` and `isArguments` with their forks
+          _.forOwn({
+            'createObject': [getCreateObjectFork, removeCreateObjectFork],
+            'isArguments': [getIsArgumentsFork, removeIsArgumentsFork]
+          },
+          function(funcs, funcName) {
+            var getFork = funcs[0],
+                removeFork =  funcs[1];
 
-          // replace `_.forEach`
-          source = replaceFunction(source, 'forEach', [
-            'function forEach(collection, callback, thisArg) {',
-            '  var index = -1,',
-            '      length = collection ? collection.length : 0;',
-            '',
-            "  callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg, 3);",
-            "  if (typeof length == 'number') {",
-            '    while (++index < length) {',
-            '      if (callback(collection[index], index, collection) === false) {',
-            '        break;',
-            '      }',
-            '    }',
-            '  } else {',
-            '    baseEach(collection, callback);',
-            '  }',
-            '  return collection;',
-            '}',
+            source = source.replace(matchFunction(source, funcName).replace(RegExp('[\\s\\S]+?function ' + funcName), ''), function() {
+              var snippet = getFork(source),
+                  body = snippet.match(RegExp(funcName + ' *= *function([\\s\\S]+?\\n *});'))[1],
+                  indent = getIndent(snippet);
+
+              return body.replace(RegExp('^' + indent, 'gm'), indent.slice(0, -2)) + '\n';
+            });
+
+            source = removeFork(source);
+          });
+
+          // replace `_.isPlainObject` with `shimIsPlainObject`
+          source = source.replace(
+            matchFunction(source, 'isPlainObject').replace(/^ *var isPlainObject *= */m, ''),
+            matchFunction(source, 'shimIsPlainObject').replace(/^ *function shimIsPlainObject/m, 'function').replace(/\s*$/, ';\n')
+          );
+
+          // replace `_.keys` with `shimKeys`
+          source = source.replace(
+            matchFunction(source, 'keys').replace(/^ *var keys.*= */m, ''),
+            matchFunction(source, 'shimKeys').replace(/^ *var shimKeys *= */m, '')
+          );
+        }
+        if (isModern) {
+          source = removeIsArgumentsFork(source);
+          source = removeSetBindDataFork(source);
+          source = removeSupportSpliceObjects(source);
+
+          if (isMobile) {
+            source = replaceSupportProp(source, 'enumPrototypes', 'true');
+            source = replaceSupportProp(source, 'nonEnumArgs', 'true');
+          }
+          else {
+            source = removeIsArrayFork(source);
+            source = removeIsFunctionFork(source);
+            source = removeCreateObjectFork(source);
+
+            // remove `shimIsPlainObject` from `_.isPlainObject`
+            source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {
+              return match.replace(/!getPrototypeOf[^:]+:\s*/, '');
+            });
+          }
+        }
+        if (!isModern || isMobile) {
+          source = removeEsOptimization(source);
+        }
+        if (isLegacy || isMobile || isUnderscore) {
+          if (isMobile || (!isLodash('assign') && !isLodash('defaults') && !isLodash('forIn') && !isLodash('forOwn'))) {
+            source = removeKeysOptimization(source);
+          }
+          if (!isLodash('defer')) {
+            source = removeDeferFork(source);
+          }
+        }
+        if (isModern || isUnderscore) {
+          source = removeSupportArgsClass(source);
+          source = removeSupportArgsObject(source);
+          source = removeSupportNonEnumShadows(source);
+          source = removeSupportOwnLast(source);
+          source = removeSupportUnindexedChars(source);
+          source = removeSupportNodeClass(source);
+
+          if (!isMobile) {
+            source = removeSupportEnumErrorProps(source);
+            source = removeSupportEnumPrototypes(source);
+            source = removeSupportNonEnumArgs(source);
+
+            // replace `_.forEach`
+            source = replaceFunction(source, 'forEach', [
+              'function forEach(collection, callback, thisArg) {',
+              '  var index = -1,',
+              '      length = collection ? collection.length : 0;',
+              '',
+              "  callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg, 3);",
+              "  if (typeof length == 'number') {",
+              '    while (++index < length) {',
+              '      if (callback(collection[index], index, collection) === false) {',
+              '        break;',
+              '      }',
+              '    }',
+              '  } else {',
+              '    baseEach(collection, callback);',
+              '  }',
+              '  return collection;',
+              '}',
+            ].join('\n'));
+
+            // replace `_.isRegExp`
+            if (!isUnderscore || (isUnderscore && isLodash('isRegExp'))) {
+              source = replaceFunction(source, 'isRegExp', [
+                'function isRegExp(value) {',
+                "  return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;",
+                '}'
+              ].join('\n'));
+            }
+
+            // replace `_.map`
+            source = replaceFunction(source, 'map', [
+              'function map(collection, callback, thisArg) {',
+              '  var index = -1,',
+              '      length = collection ? collection.length : 0;',
+              '',
+              '  callback = lodash.createCallback(callback, thisArg, 3);',
+              "  if (typeof length == 'number') {",
+              '    var result = Array(length);',
+              '    while (++index < length) {',
+              '      result[index] = callback(collection[index], index, collection);',
+              '    }',
+              '  } else {',
+              '    result = [];',
+              '    baseEach(collection, function(value, key, collection) {',
+              '      result[++index] = callback(value, key, collection);',
+              '    });',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+
+            // replace `_.pluck`
+            source = replaceFunction(source, 'pluck', [
+              'function pluck(collection, property) {',
+              '  var index = -1,',
+              '      length = collection ? collection.length : 0;',
+              '',
+              "  if (typeof length == 'number') {",
+              '    var result = Array(length);',
+              '    while (++index < length) {',
+              '      result[index] = collection[index][property];',
+              '    }',
+              '  }',
+              '  return result || map(collection, property);',
+              '}'
+            ].join('\n'));
+
+            // replace `isArray(collection)` checks in "Collections" functions with simpler type checks
+            _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(funcName) {
+              source = source.replace(matchFunction(source, funcName), function(match) {
+                if (funcName == 'reduce') {
+                  match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');
+                }
+                else if (/^(?:max|min)$/.test(funcName)) {
+                  match = match.replace(/\bbaseEach\(/, 'forEach(');
+                  if (!isUnderscore || isLodash(funcName)) {
+                    return match;
+                  }
+                }
+                return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *\{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
+                  vars = vars
+                    .replace(/\b(length *=)[^;=]+/, '$1 collection' + (funcName == 'reduce' ? '.length' : ' ? collection.length : 0'))
+                    .replace(RegExp('^  ' + indent, 'gm'), indent);
+
+                  return vars + statement.replace(/\bisArray\([^\)]+\)/, "typeof length == 'number'");
+                });
+              });
+            });
+
+            // replace `array` property value of `eachIteratorOptions` with `false`
+            source = source.replace(/^( *)var eachIteratorOptions *= *[\s\S]+?\n\1};\n/m, function(match) {
+              return match.replace(/(^ *'array':)[^,]+/m, '$1 false');
+            });
+          }
+        }
+        if (isUnderscore) {
+          // replace `lodash`
+          source = replaceFunction(source, 'lodash', [
+            'function lodash(value) {',
+            '  return (value instanceof lodash)',
+            '    ? value',
+            '    : new lodashWrapper(value);',
+            '}'
           ].join('\n'));
 
-          // replace `_.isRegExp`
-          if (!isUnderscore || (isUnderscore && isLodash('isRegExp'))) {
-            source = replaceFunction(source, 'isRegExp', [
-              'function isRegExp(value) {',
-              "  return value ? (typeof value == 'object' && toString.call(value) == regexpClass) : false;",
+          // replace `_.assign`
+          if (!isLodash('assign')) {
+            source = replaceFunction(source, 'assign', [
+              'function assign(object) {',
+              '  if (!object) {',
+              '    return object;',
+              '  }',
+              '  for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
+              '    var iterable = arguments[argsIndex];',
+              '    if (iterable) {',
+              '      for (var key in iterable) {',
+              '        object[key] = iterable[key];',
+              '      }',
+              '    }',
+              '  }',
+              '  return object;',
               '}'
             ].join('\n'));
           }
+          // replace `_.clone`
+          if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
+            source = replaceFunction(source, 'clone', [
+              'function clone(value) {',
+              '  return isObject(value)',
+              '    ? (isArray(value) ? slice(value) : assign({}, value))',
+              '    : value;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.contains`
+          if (!isLodash('contains')) {
+            source = replaceFunction(source, 'contains', [
+              'function contains(collection, target) {',
+              '  var indexOf = getIndexOf(),',
+              '      length = collection ? collection.length : 0,',
+              '      result = false;',
+              "  if (length && typeof length == 'number') {",
+              '    result = indexOf(collection, target) > -1;',
+              '  } else {',
+              '    baseEach(collection, function(value) {',
+              '      return !(result = value === target);',
+              '    });',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.defaults`
+          if (!isLodash('defaults')) {
+            source = replaceFunction(source, 'defaults', [
+              'function defaults(object) {',
+              '  if (!object) {',
+              '    return object;',
+              '  }',
+              '  for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
+              '    var iterable = arguments[argsIndex];',
+              '    if (iterable) {',
+              '      for (var key in iterable) {',
+              "        if (typeof object[key] == 'undefined') {",
+              '          object[key] = iterable[key];',
+              '        }',
+              '      }',
+              '    }',
+              '  }',
+              '  return object;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.difference`
+          if (!isLodash('difference')) {
+            source = replaceFunction(source, 'difference', [
+              'function difference(array) {',
+              '  var index = -1,',
+              '      indexOf = getIndexOf(),',
+              '      length = array.length,',
+              '      flattened = baseFlatten(arguments, true, true, 1),',
+              '      result = [];',
+              '',
+              '  while (++index < length) {',
+              '    var value = array[index];',
+              '    if (indexOf(flattened, value) < 0) {',
+              '      result.push(value);',
+              '    }',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // add Underscore's `_.findWhere`
+          if (!isLodash('findWhere') && !isLodash('where')) {
+            source = source.replace(matchFunction(source, 'find'), function(match) {
+              var indent = getIndent(match);
+              return match && (match + [
+                '',
+                '/**',
+                ' * Examines each element in a `collection`, returning the first that',
+                ' * has the given `properties`. When checking `properties`, this method',
+                ' * performs a deep comparison between values to determine if they are',
+                ' * equivalent to each other.',
+                ' *',
+                ' * @static',
+                ' * @memberOf _',
+                ' * @category Collections',
+                ' * @param {Array|Object|String} collection The collection to iterate over.',
+                ' * @param {Object} properties The object of property values to filter by.',
+                ' * @returns {Mixed} Returns the found element, else `undefined`.',
+                ' * @example',
+                ' *',
+                ' * var food = [',
+                " *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },",
+                " *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },",
+                " *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }",
+                ' * ];',
+                ' *',
+                " * _.findWhere(food, { 'type': 'vegetable' });",
+                " * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }",
+                ' */',
+                'function findWhere(object, properties) {',
+                '  return where(object, properties, true);',
+                '}',
+                ''
+              ].join('\n' + indent));
+            });
 
-          // replace `_.map`
-          source = replaceFunction(source, 'map', [
-            'function map(collection, callback, thisArg) {',
-            '  var index = -1,',
-            '      length = collection ? collection.length : 0;',
-            '',
-            '  callback = lodash.createCallback(callback, thisArg, 3);',
-            "  if (typeof length == 'number') {",
-            '    var result = Array(length);',
-            '    while (++index < length) {',
-            '      result[index] = callback(collection[index], index, collection);',
-            '    }',
-            '  } else {',
-            '    result = [];',
-            '    baseEach(collection, function(value, key, collection) {',
-            '      result[++index] = callback(value, key, collection);',
-            '    });',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
+            // replace alias assignment
+            source = source.replace(getMethodAssignments(source), function(match) {
+              return match.replace(/^( *lodash.findWhere *= *).+/m, '$1findWhere;');
+            });
+          }
+          // replace `_.flatten`
+          if (!isLodash('flatten')) {
+            source = replaceFunction(source, 'flatten', [
+              'function flatten(array, isShallow) {',
+              '  return baseFlatten(array, isShallow);',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.intersection`
+          if (!isLodash('intersection')) {
+            source = replaceFunction(source, 'intersection', [
+              'function intersection(array) {',
+              '  var args = arguments,',
+              '      argsLength = args.length,',
+              '      index = -1,',
+              '      indexOf = getIndexOf(),',
+              '      length = array ? array.length : 0,',
+              '      result = [];',
+              '',
+              '  outer:',
+              '  while (++index < length) {',
+              '    var value = array[index];',
+              '    if (indexOf(result, value) < 0) {',
+              '      var argsIndex = argsLength;',
+              '      while (--argsIndex) {',
+              '        if (indexOf(args[argsIndex], value) < 0) {',
+              '          continue outer;',
+              '        }',
+              '      }',
+              '      result.push(value);',
+              '    }',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.isEmpty`
+          if (!isLodash('isEmpty')) {
+            source = replaceFunction(source, 'isEmpty', [
+              'function isEmpty(value) {',
+              '  if (!value) {',
+              '    return true;',
+              '  }',
+              '  if (isArray(value) || isString(value)) {',
+              '    return !value.length;',
+              '  }',
+              '  for (var key in value) {',
+              '    if (hasOwnProperty.call(value, key)) {',
+              '      return false;',
+              '    }',
+              '  }',
+              '  return true;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.isEqual`
+          if (!isLodash('baseIsEqual') && !isLodash('isEqual')) {
+            source = replaceFunction(source, 'isEqual', [
+              'function isEqual(a, b) {',
+              '  return baseIsEqual(a, b);',
+              '}'
+            ].join('\n'));
 
-          // replace `_.pluck`
-          source = replaceFunction(source, 'pluck', [
-            'function pluck(collection, property) {',
-            '  var index = -1,',
-            '      length = collection ? collection.length : 0;',
-            '',
-            "  if (typeof length == 'number') {",
-            '    var result = Array(length);',
-            '    while (++index < length) {',
-            '      result[index] = collection[index][property];',
-            '    }',
-            '  }',
-            '  return result || map(collection, property);',
-            '}'
-          ].join('\n'));
+            source = replaceFunction(source, 'baseIsEqual', [
+              'function baseIsEqual(a, b, stackA, stackB) {',
+              '  if (a === b) {',
+              '    return a !== 0 || (1 / a == 1 / b);',
+              '  }',
+              '  var type = typeof a,',
+              '      otherType = typeof b;',
+              '',
+              '  if (a === a &&',
+              "      !(a && objectTypes[type]) &&",
+              "      !(b && objectTypes[otherType])) {",
+              '    return false;',
+              '  }',
+              '  if (a == null || b == null) {',
+              '    return a === b;',
+              '  }',
+              '  var className = toString.call(a),',
+              '      otherClass = toString.call(b);',
+              '',
+              '  if (className != otherClass) {',
+              '    return false;',
+              '  }',
+              '  switch (className) {',
+              '    case boolClass:',
+              '    case dateClass:',
+              '      return +a == +b;',
+              '',
+              '    case numberClass:',
+              '      return a != +a',
+              '        ? b != +b',
+              '        : (a == 0 ? (1 / a == 1 / b) : a == +b);',
+              '',
+              '    case regexpClass:',
+              '    case stringClass:',
+              '      return a == String(b);',
+              '  }',
+              '  var isArr = className == arrayClass;',
+              '  if (!isArr) {',
+              '    if (a instanceof lodash || b instanceof lodash) {',
+              '      return baseIsEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);',
+              '    }',
+              '    if (className != objectClass) {',
+              '      return false;',
+              '    }',
+              '    var ctorA = a.constructor,',
+              '        ctorB = b.constructor;',
+              '',
+              '    if (ctorA != ctorB && !(',
+              '          isFunction(ctorA) && ctorA instanceof ctorA &&',
+              '          isFunction(ctorB) && ctorB instanceof ctorB',
+              '        )) {',
+              '      return false;',
+              '    }',
+              '  }',
+              '  stackA || (stackA = []);',
+              '  stackB || (stackB = []);',
+              '',
+              '  var length = stackA.length;',
+              '  while (length--) {',
+              '    if (stackA[length] == a) {',
+              '      return stackB[length] == b;',
+              '    }',
+              '  }',
+              '  var result = true,',
+              '      size = 0;',
+              '',
+              '  stackA.push(a);',
+              '  stackB.push(b);',
+              '',
+              '  if (isArr) {',
+              '    size = b.length;',
+              '    result = size == a.length;',
+              '',
+              '    if (result) {',
+              '      while (size--) {',
+              '        if (!(result = baseIsEqual(a[size], b[size], stackA, stackB))) {',
+              '          break;',
+              '        }',
+              '      }',
+              '    }',
+              '    return result;',
+              '  }',
+              '  forIn(b, function(value, key, b) {',
+              '    if (hasOwnProperty.call(b, key)) {',
+              '      size++;',
+              '      return (result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, stackA, stackB));',
+              '    }',
+              '  });',
+              '',
+              '  if (result) {',
+              '    forIn(a, function(value, key, a) {',
+              '      if (hasOwnProperty.call(a, key)) {',
+              '        return (result = --size > -1);',
+              '      }',
+              '    });',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.memoize`
+          if (!isLodash('memoize')) {
+             source = replaceFunction(source, 'memoize', [
+                'function memoize(func, resolver) {',
+                '  var cache = {};',
+                '  return function() {',
+                '    var key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);',
+                '    return hasOwnProperty.call(cache, key)',
+                '      ? cache[key]',
+                '      : (cache[key] = func.apply(this, arguments));',
+                '  };',
+                '}'
+            ].join('\n'));
+          }
+          // replace `_.omit`
+          if (!isLodash('omit')) {
+            source = replaceFunction(source, 'omit', [
+              'function omit(object) {',
+              '  var indexOf = getIndexOf(),',
+              '      props = baseFlatten(arguments, true, false, 1),',
+              '      result = {};',
+              '',
+              '  forIn(object, function(value, key) {',
+              '    if (indexOf(props, key) < 0) {',
+              '      result[key] = value;',
+              '    }',
+              '  });',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.pick`
+          if (!isLodash('pick')) {
+            source = replaceFunction(source, 'pick', [
+              'function pick(object) {',
+              '  var index = -1,',
+              '      props = baseFlatten(arguments, true, false, 1),',
+              '      length = props.length,',
+              '      result = {};',
+              '',
+              '  while (++index < length) {',
+              '    var prop = props[index];',
+              '    if (prop in object) {',
+              '      result[prop] = object[prop];',
+              '    }',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.result`
+          if (!isLodash('result')) {
+            source = replaceFunction(source, 'result', [
+              'function result(object, property) {',
+              '  var value = object ? object[property] : undefined;',
+              '  return isFunction(value) ? object[property]() : value;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.sortBy`
+          if (!isLodash('sortBy')) {
+            source = replaceFunction(source, 'sortBy', [
+              'function sortBy(collection, callback, thisArg) {',
+              '  var index = -1,',
+              '      length = collection ? collection.length : 0,',
+              "      result = Array(typeof length == 'number' ? length : 0);",
+              '',
+              '  callback = lodash.createCallback(callback, thisArg, 3);',
+              '  forEach(collection, function(value, key, collection) {',
+              '    result[++index] = {',
+              "      'criteria': callback(value, key, collection),",
+              "      'index': index,",
+              "      'value': value",
+              '    };',
+              '  });',
+              '',
+              '  length = result.length;',
+              '  result.sort(compareAscending);',
+              '  while (length--) {',
+              '    result[length] = result[length].value;',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.template`
+          if (!isLodash('template')) {
+            // remove `_.templateSettings.imports assignment
+            source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
-          // replace `isArray(collection)` checks in "Collections" functions with simpler type checks
-          _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(funcName) {
-            source = source.replace(matchFunction(source, funcName), function(match) {
-              if (funcName == 'reduce') {
-                match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');
-              }
-              else if (/^(?:max|min)$/.test(funcName)) {
-                match = match.replace(/\bbaseEach\(/, 'forEach(');
-                if (!isUnderscore || isLodash(funcName)) {
-                  return match;
-                }
-              }
-              return match.replace(/^(( *)if *\(.*?\bisArray\([^\)]+\).*?\) *\{\n)(( *)var index[^;]+.+\n+)/m, function(snippet, statement, indent, vars) {
-                vars = vars
-                  .replace(/\b(length *=)[^;=]+/, '$1 collection' + (funcName == 'reduce' ? '.length' : ' ? collection.length : 0'))
-                  .replace(RegExp('^  ' + indent, 'gm'), indent);
+            source = replaceFunction(source, 'template', [
+              'function template(text, data, options) {',
+              '  var settings = lodash.templateSettings;',
+              "  text || (text = '');",
+              '  options = iteratorTemplate ? defaults({}, options, settings) : settings;',
+              '',
+              '  var index = 0,',
+              '      source = "__p += \'",',
+              '      variable = options.variable;',
+              '',
+              '  var reDelimiters = RegExp(',
+              "    (options.escape || reNoMatch).source + '|' +",
+              "    (options.interpolate || reNoMatch).source + '|' +",
+              "    (options.evaluate || reNoMatch).source + '|$'",
+              "  , 'g');",
+              '',
+              '  text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {',
+              '    source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);',
+              '    if (escapeValue) {',
+              '      source += "\' +\\n_.escape(" + escapeValue + ") +\\n\'";',
+              '    }',
+              '    if (evaluateValue) {',
+              '      source += "\';\\n" + evaluateValue + ";\\n__p += \'";',
+              '    }',
+              '    if (interpolateValue) {',
+              '      source += "\' +\\n((__t = (" + interpolateValue + ")) == null ? \'\' : __t) +\\n\'";',
+              '    }',
+              '    index = offset + match.length;',
+              '    return match;',
+              '  });',
+              '',
+              '  source += "\';\\n";',
+              '  if (!variable) {',
+              "    variable = 'obj';",
+              "    source = 'with (' + variable + ' || {}) {\\n' + source + '\\n}\\n';",
+              '  }',
+              "  source = 'function(' + variable + ') {\\n' +",
+              '    "var __t, __p = \'\', __j = Array.prototype.join;\\n" +',
+              '    "function print() { __p += __j.call(arguments, \'\') }\\n" +',
+              '    source +',
+              "    'return __p\\n}';",
+              '',
+              '  try {',
+              "    var result = Function('_', 'return ' + source)(lodash);",
+              '  } catch(e) {',
+              '    e.source = source;',
+              '    throw e;',
+              '  }',
+              '  if (data) {',
+              '    return result(data);',
+              '  }',
+              '  result.source = source;',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.throttle`
+          if (!isLodash('throttle')) {
+            source = replaceFunction(source, 'throttle', [
+              'function throttle(func, wait, options) {',
+              '  var leading = true,',
+              '      trailing = true;',
+              '',
+              '  if (options === false) {',
+              '    leading = false;',
+              '  } else if (isObject(options)) {',
+              "    leading = 'leading' in options ? options.leading : leading;",
+              "    trailing = 'trailing' in options ? options.trailing : trailing;",
+              '  }',
+              '  options = {};',
+              '  options.leading = leading;',
+              '  options.maxWait = wait;',
+              '  options.trailing = trailing;',
+              '',
+              '  return debounce(func, wait, options);',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.times`
+          if (!isLodash('times')) {
+            source = replaceFunction(source, 'times', [
+              'function times(n, callback, thisArg) {',
+              '  var index = -1,',
+              '      result = Array(n > -1 ? n : 0);',
+              '',
+              '  while (++index < n) {',
+              '    result[index] = callback.call(thisArg, index);',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.toArray`
+          if (!isLodash('toArray')) {
+            source = replaceFunction(source, 'toArray', [
+              'function toArray(collection) {',
+              '  if (isArray(collection)) {',
+              '    return slice(collection);',
+              '  }',
+              "  if (collection && typeof collection.length == 'number') {",
+              '    return map(collection);',
+              '  }',
+              '  return values(collection);',
+              '}'
+            ].join('\n'));
+          }
+          // replace `baseUniq`
+          if (!isLodash('uniq')) {
+            source = replaceFunction(source, 'baseUniq', [
+              'function baseUniq(array, isSorted, callback) {',
+              '  var index = -1,',
+              '      indexOf = getIndexOf(),',
+              '      length = array ? array.length : 0,',
+              '      result = [],',
+              '      seen = callback ? [] : result;',
+              '',
+              '  while (++index < length) {',
+              '    var value = array[index],',
+              '        computed = callback ? callback(value, index, array) : value;',
+              '',
+              '    if (isSorted',
+              '          ? !index || seen[seen.length - 1] !== computed',
+              '          : indexOf(seen, computed) < 0',
+              '        ) {',
+              '      if (callback) {',
+              '        seen.push(computed);',
+              '      }',
+              '      result.push(value);',
+              '    }',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.uniqueId`
+          if (!isLodash('uniqueId')) {
+            source = replaceFunction(source, 'uniqueId', [
+              'function uniqueId(prefix) {',
+              "  var id = ++idCounter + '';",
+              '  return prefix ? prefix + id : id;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `_.where`
+          if (!isLodash('where')) {
+            source = replaceFunction(source, 'where', [
+              'function where(collection, properties, first) {',
+              '  return (first && isEmpty(properties))',
+              '    ? undefined',
+              '    : (first ? find : filter)(collection, properties);',
+              '}'
+            ].join('\n'));
 
-                return vars + statement.replace(/\bisArray\([^\)]+\)/, "typeof length == 'number'");
+            // simplify `_.createCallback`
+            source = source.replace(matchFunction(source, 'createCallback'), function(match) {
+              return match
+                // remove unnecessary fast path
+                .replace(/^(( *)var props *=.+?),[\s\S]+?\n\2}/m, '$1;')
+                // remove `baseIsEqual` use
+                .replace(/=.+?\bbaseIsEqual\((.+?), *(.+?),.+?\)/, '= $1 === $2');
+            });
+          }
+          // replace `_.zip`
+          if(!isLodash('zip')) {
+            source = replaceFunction(source, 'zip', [
+              'function zip() {',
+              '  var index = -1,',
+              "      length = max(pluck(arguments, 'length')),",
+              '      result = Array(length < 0 ? 0 : length);',
+              '',
+              '  while (++index < length) {',
+              '    result[index] = pluck(arguments, index);',
+              '  }',
+              '  return result;',
+              '}'
+            ].join('\n'));
+          }
+          // replace `htmlEscapes` entries with hex entities
+          if (!isLodash('escape')) {
+            source = source.replace(matchVar(source, 'htmlEscapes'), function(match) {
+              return match
+                .replace('#39', '#x27')
+                .replace(/(\n *)}/, ",$1  '/': '&#x2F;'$1}");
+            });
+          }
+
+          // replace `slice` with `nativeSlice.call`
+          _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {
+            if (funcName == 'clone'
+                  ? (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep'))
+                  : !isLodash(funcName)
+                ) {
+              source = source.replace(matchFunction(source, funcName), function(match) {
+                return match.replace(/([^\w.])slice\(/g, '$1nativeSlice.call(');
+              });
+            }
+          });
+
+          // remove conditional `charCodeCallback` use from `_.max` and `_.min`
+          _.each(['max', 'min'], function(funcName) {
+            if (!isLodash(funcName)) {
+              source = source.replace(matchFunction(source, funcName), function(match) {
+                return match.replace(/=.+?callback *&& *isString[^:]+:\s*/g, '= ');
+              });
+            }
+          });
+        }
+        // add Underscore's chaining functions
+        if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
+          source = addUnderscoreChaining(source);
+        }
+        // replace `baseEach` references with `forEach` and `forOwn`
+        if (isUnderscore || (isModern && !isMobile)) {
+          // replace `baseEach` with `_.forOwn` in "Collections" functions
+          source = source.replace(/\bbaseEach(?=\(collection)/g, 'forOwn');
+
+          // replace `baseEach` with `_.forEach` in the rest of the functions
+          source = source.replace(/(\?\s*)baseEach(?=\s*:)/g, '$1forEach');
+
+          // replace `baseEach` with `_.forEach` in the function assignment snippet
+          source = source.replace(/\bbaseEach(?=\(\[')/g, 'forEach');
+        }
+
+        var context = vm.createContext({
+          'clearTimeout': clearTimeout,
+          'console': console,
+          'setTimeout': setTimeout
+        });
+
+        vm.runInContext(source, context);
+        return context._;
+      }());
+
+      /*----------------------------------------------------------------------*/
+
+      if (isTemplate) {
+        source = buildTemplate(templatePattern, templateSettings);
+      }
+      else {
+        source = removeFromCreateIterator(source, 'support');
+        source = removePseudoPrivates(source);
+
+        // inline `iteratorTemplate` template
+        source = replaceFunction(source, 'iteratorTemplate', (function() {
+          var snippet = cleanupCompiled(getFunctionSource(lodash._iteratorTemplate));
+
+          // prepend data object references to property names to avoid having to
+          // use a with-statement
+          iteratorOptions.forEach(function(prop) {
+            if (prop !== 'support') {
+              snippet = snippet.replace(RegExp('(["\'])(?:(?!\\1)[^\\n\\\\]|\\\\.)*\\1|([^.])\\b' + prop + '\\b', 'g'), function(match, quote, prelude) {
+                return quote ? match : (prelude + 'obj.' + prop);
+              });
+            }
+          });
+
+          // remove unnecessary code
+          snippet = snippet
+            .replace(/var __t.+/, "var __p = '';")
+            .replace(/function print[^}]+}/, '')
+            .replace(/'(?:\\n|\s)+'/g, "''")
+            .replace(/__p *\+= *' *';/g, '')
+            .replace(/\s*\+\s*'';/g, ';')
+            .replace(/(__p *\+= *)' *' *\+/g, '$1')
+            .replace(/\(\(__t *= *\( *([\s\S]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
+
+          // remove the with-statement
+          snippet = snippet.replace(/^ *with *\(.+?\) *{\n/m, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
+
+          // minor cleanup
+          snippet = snippet
+            .replace(/obj\s*\|\|\s*\(obj *= *{}\);/, '')
+            .replace(/var __p = '';\s*__p \+=/, 'var __p =');
+
+          // remove comments, including sourceURLs
+          snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
+
+          // replace `iteratorTemplate` assignment
+          snippet = 'var iteratorTemplate = ' + snippet + ';\n';
+
+          return snippet;
+        }()));
+
+        // remove `iteratorTemplate` dependency checks from `_.template`
+        source = source.replace(matchFunction(source, 'template'), function(match) {
+          return match
+            .replace(/iteratorTemplate *&& */g, '')
+            .replace(/iteratorTemplate\s*\?\s*([^:]+?)\s*:[^,;]+/g, '$1');
+        });
+      }
+      if (isModern || isUnderscore) {
+        iteratorOptions.forEach(function(prop) {
+          if (prop != 'array') {
+            source = removeFromGetObject(source, prop);
+          }
+        });
+
+        // inline all functions defined with `createIterator`
+        _.functions(lodash).forEach(function(funcName) {
+          if (!(isUnderscore && isLodash(funcName))) {
+            // strip leading underscores to match pseudo private functions
+            var reFunc = RegExp('^( *)(var ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
+            if (reFunc.test(source)) {
+              // extract, format, and inject the compiled function's source code
+              source = source.replace(reFunc, function(match, indent, left) {
+                return (indent + left) +
+                  cleanupCompiled(getFunctionSource(lodash[funcName], indent)) + ';\n';
+              });
+            }
+          }
+        });
+
+        if (isUnderscore) {
+          // unexpose "exit early" feature of `baseEach`, `_.forEach`, `_.forIn`, and `_.forOwn`
+          _.each(['baseEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
+            if (funcName == 'baseEach' || !isLodash(funcName)) {
+              source = source.replace(matchFunction(source, funcName), function(match) {
+                return match.replace(/=== *false\)/g, '=== indicatorObject)');
+              });
+            }
+          });
+
+          // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
+          if (isUnderscore && !isLodash('forOwn')) {
+            source = source.replace(matchFunction(source, 'every'), function(match) {
+              return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+            });
+
+            source = source.replace(matchFunction(source, 'find'), function(match) {
+              return match.replace(/return false/, 'return indicatorObject');
+            });
+
+            source = source.replace(matchFunction(source, 'transform'), function(match) {
+              return match.replace(/return callback[^)]+\)/, '$& && indicatorObject');
+            });
+
+            _.each(['contains', 'some'], function(funcName) {
+              source = source.replace(matchFunction(source, funcName), function(match) {
+                return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
               });
             });
+          }
+          // modify `baseEqual` and `shimIsPlainObject` to use the private `indicatorObject`
+          if (!isLodash('forIn')) {
+            source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
+              return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+            });
+
+            source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+              return match.replace(/return false/, 'return indicatorObject');
+            });
+          }
+
+          // remove `thisArg` from unexposed `forIn` and `forOwn`
+          _.each(['forIn', 'forOwn'], function(funcName) {
+            if (!isLodash(funcName)) {
+              source = source.replace(matchFunction(source, funcName), function(match) {
+                return match
+                  .replace(/(callback), *thisArg/g, '$1')
+                  .replace(/^ *callback *=.+\n/m, '');
+              });
+            }
           });
 
-          // replace `array` property value of `eachIteratorOptions` with `false`
-          source = source.replace(/^( *)var eachIteratorOptions *= *[\s\S]+?\n\1};\n/m, function(match) {
-            return match.replace(/(^ *'array':)[^,]+/m, '$1 false');
-          });
-        }
-      }
-      if (isUnderscore) {
-        // replace `lodash`
-        source = replaceFunction(source, 'lodash', [
-          'function lodash(value) {',
-          '  return (value instanceof lodash)',
-          '    ? value',
-          '    : new lodashWrapper(value);',
-          '}'
-        ].join('\n'));
-
-        // replace `_.assign`
-        if (!isLodash('assign')) {
-          source = replaceFunction(source, 'assign', [
-            'function assign(object) {',
-            '  if (!object) {',
-            '    return object;',
-            '  }',
-            '  for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
-            '    var iterable = arguments[argsIndex];',
-            '    if (iterable) {',
-            '      for (var key in iterable) {',
-            '        object[key] = iterable[key];',
-            '      }',
-            '    }',
-            '  }',
-            '  return object;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.clone`
-        if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
-          source = replaceFunction(source, 'clone', [
-            'function clone(value) {',
-            '  return isObject(value)',
-            '    ? (isArray(value) ? slice(value) : assign({}, value))',
-            '    : value;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.contains`
-        if (!isLodash('contains')) {
-          source = replaceFunction(source, 'contains', [
-            'function contains(collection, target) {',
-            '  var indexOf = getIndexOf(),',
-            '      length = collection ? collection.length : 0,',
-            '      result = false;',
-            "  if (length && typeof length == 'number') {",
-            '    result = indexOf(collection, target) > -1;',
-            '  } else {',
-            '    baseEach(collection, function(value) {',
-            '      return !(result = value === target);',
-            '    });',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.defaults`
-        if (!isLodash('defaults')) {
-          source = replaceFunction(source, 'defaults', [
-            'function defaults(object) {',
-            '  if (!object) {',
-            '    return object;',
-            '  }',
-            '  for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {',
-            '    var iterable = arguments[argsIndex];',
-            '    if (iterable) {',
-            '      for (var key in iterable) {',
-            "        if (typeof object[key] == 'undefined') {",
-            '          object[key] = iterable[key];',
-            '        }',
-            '      }',
-            '    }',
-            '  }',
-            '  return object;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.difference`
-        if (!isLodash('difference')) {
-          source = replaceFunction(source, 'difference', [
-            'function difference(array) {',
-            '  var index = -1,',
-            '      indexOf = getIndexOf(),',
-            '      length = array.length,',
-            '      flattened = baseFlatten(arguments, true, true, 1),',
-            '      result = [];',
-            '',
-            '  while (++index < length) {',
-            '    var value = array[index];',
-            '    if (indexOf(flattened, value) < 0) {',
-            '      result.push(value);',
-            '    }',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // add Underscore's `_.findWhere`
-        if (!isLodash('findWhere') && !isLodash('where')) {
-          source = source.replace(matchFunction(source, 'find'), function(match) {
-            var indent = getIndent(match);
-            return match && (match + [
-              '',
-              '/**',
-              ' * Examines each element in a `collection`, returning the first that',
-              ' * has the given `properties`. When checking `properties`, this method',
-              ' * performs a deep comparison between values to determine if they are',
-              ' * equivalent to each other.',
-              ' *',
-              ' * @static',
-              ' * @memberOf _',
-              ' * @category Collections',
-              ' * @param {Array|Object|String} collection The collection to iterate over.',
-              ' * @param {Object} properties The object of property values to filter by.',
-              ' * @returns {Mixed} Returns the found element, else `undefined`.',
-              ' * @example',
-              ' *',
-              ' * var food = [',
-              " *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },",
-              " *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },",
-              " *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }",
-              ' * ];',
-              ' *',
-              " * _.findWhere(food, { 'type': 'vegetable' });",
-              " * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }",
-              ' */',
-              'function findWhere(object, properties) {',
-              '  return where(object, properties, true);',
-              '}',
-              ''
-            ].join('\n' + indent));
-          });
-
-          // replace alias assignment
+          // replace `lodash.createCallback` references with `createCallback`
+          if (!isLodash('createCallback')) {
+            source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
+          }
+          // remove chainability from `baseEach` and `_.forEach`
+          if (!isLodash('forEach')) {
+            _.each(['baseEach', 'forEach'], function(funcName) {
+              source = source.replace(matchFunction(source, funcName), function(match) {
+                return match
+                  .replace(/\n *return .+?([};\s]+)$/, '$1')
+                  .replace(/\b(return) +result\b/, '$1')
+              });
+            });
+          }
+          // remove `_.assign`, `_.forEachRight`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
           source = source.replace(getMethodAssignments(source), function(match) {
-            return match.replace(/^( *lodash.findWhere *= *).+/m, '$1findWhere;');
+            return _.reduce(['assign', 'createCallback', 'forEachRight', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
+              return isLodash(funcName)
+                ? result
+                : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
+            }, match);
           });
         }
-        // replace `_.flatten`
-        if (!isLodash('flatten')) {
-          source = replaceFunction(source, 'flatten', [
-            'function flatten(array, isShallow) {',
-            '  return baseFlatten(array, isShallow);',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.intersection`
-        if (!isLodash('intersection')) {
-          source = replaceFunction(source, 'intersection', [
-            'function intersection(array) {',
-            '  var args = arguments,',
-            '      argsLength = args.length,',
-            '      index = -1,',
-            '      indexOf = getIndexOf(),',
-            '      length = array ? array.length : 0,',
-            '      result = [];',
-            '',
-            '  outer:',
-            '  while (++index < length) {',
-            '    var value = array[index];',
-            '    if (indexOf(result, value) < 0) {',
-            '      var argsIndex = argsLength;',
-            '      while (--argsIndex) {',
-            '        if (indexOf(args[argsIndex], value) < 0) {',
-            '          continue outer;',
-            '        }',
-            '      }',
-            '      result.push(value);',
-            '    }',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.isEmpty`
-        if (!isLodash('isEmpty')) {
-          source = replaceFunction(source, 'isEmpty', [
-            'function isEmpty(value) {',
-            '  if (!value) {',
-            '    return true;',
-            '  }',
-            '  if (isArray(value) || isString(value)) {',
-            '    return !value.length;',
-            '  }',
-            '  for (var key in value) {',
-            '    if (hasOwnProperty.call(value, key)) {',
-            '      return false;',
-            '    }',
-            '  }',
-            '  return true;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.isEqual`
-        if (!isLodash('baseIsEqual') && !isLodash('isEqual')) {
-          source = replaceFunction(source, 'isEqual', [
-            'function isEqual(a, b) {',
-            '  return baseIsEqual(a, b);',
-            '}'
-          ].join('\n'));
-
-          source = replaceFunction(source, 'baseIsEqual', [
-            'function baseIsEqual(a, b, stackA, stackB) {',
-            '  if (a === b) {',
-            '    return a !== 0 || (1 / a == 1 / b);',
-            '  }',
-            '  var type = typeof a,',
-            '      otherType = typeof b;',
-            '',
-            '  if (a === a &&',
-            "      !(a && objectTypes[type]) &&",
-            "      !(b && objectTypes[otherType])) {",
-            '    return false;',
-            '  }',
-            '  if (a == null || b == null) {',
-            '    return a === b;',
-            '  }',
-            '  var className = toString.call(a),',
-            '      otherClass = toString.call(b);',
-            '',
-            '  if (className != otherClass) {',
-            '    return false;',
-            '  }',
-            '  switch (className) {',
-            '    case boolClass:',
-            '    case dateClass:',
-            '      return +a == +b;',
-            '',
-            '    case numberClass:',
-            '      return a != +a',
-            '        ? b != +b',
-            '        : (a == 0 ? (1 / a == 1 / b) : a == +b);',
-            '',
-            '    case regexpClass:',
-            '    case stringClass:',
-            '      return a == String(b);',
-            '  }',
-            '  var isArr = className == arrayClass;',
-            '  if (!isArr) {',
-            '    if (a instanceof lodash || b instanceof lodash) {',
-            '      return baseIsEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);',
-            '    }',
-            '    if (className != objectClass) {',
-            '      return false;',
-            '    }',
-            '    var ctorA = a.constructor,',
-            '        ctorB = b.constructor;',
-            '',
-            '    if (ctorA != ctorB && !(',
-            '          isFunction(ctorA) && ctorA instanceof ctorA &&',
-            '          isFunction(ctorB) && ctorB instanceof ctorB',
-            '        )) {',
-            '      return false;',
-            '    }',
-            '  }',
-            '  stackA || (stackA = []);',
-            '  stackB || (stackB = []);',
-            '',
-            '  var length = stackA.length;',
-            '  while (length--) {',
-            '    if (stackA[length] == a) {',
-            '      return stackB[length] == b;',
-            '    }',
-            '  }',
-            '  var result = true,',
-            '      size = 0;',
-            '',
-            '  stackA.push(a);',
-            '  stackB.push(b);',
-            '',
-            '  if (isArr) {',
-            '    size = b.length;',
-            '    result = size == a.length;',
-            '',
-            '    if (result) {',
-            '      while (size--) {',
-            '        if (!(result = baseIsEqual(a[size], b[size], stackA, stackB))) {',
-            '          break;',
-            '        }',
-            '      }',
-            '    }',
-            '    return result;',
-            '  }',
-            '  forIn(b, function(value, key, b) {',
-            '    if (hasOwnProperty.call(b, key)) {',
-            '      size++;',
-            '      return (result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, stackA, stackB));',
-            '    }',
-            '  });',
-            '',
-            '  if (result) {',
-            '    forIn(a, function(value, key, a) {',
-            '      if (hasOwnProperty.call(a, key)) {',
-            '        return (result = --size > -1);',
-            '      }',
-            '    });',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.memoize`
-        if (!isLodash('memoize')) {
-           source = replaceFunction(source, 'memoize', [
-              'function memoize(func, resolver) {',
-              '  var cache = {};',
-              '  return function() {',
-              '    var key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);',
-              '    return hasOwnProperty.call(cache, key)',
-              '      ? cache[key]',
-              '      : (cache[key] = func.apply(this, arguments));',
-              '  };',
-              '}'
-          ].join('\n'));
-        }
-        // replace `_.omit`
-        if (!isLodash('omit')) {
-          source = replaceFunction(source, 'omit', [
-            'function omit(object) {',
-            '  var indexOf = getIndexOf(),',
-            '      props = baseFlatten(arguments, true, false, 1),',
-            '      result = {};',
-            '',
-            '  forIn(object, function(value, key) {',
-            '    if (indexOf(props, key) < 0) {',
-            '      result[key] = value;',
-            '    }',
-            '  });',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.pick`
-        if (!isLodash('pick')) {
-          source = replaceFunction(source, 'pick', [
-            'function pick(object) {',
-            '  var index = -1,',
-            '      props = baseFlatten(arguments, true, false, 1),',
-            '      length = props.length,',
-            '      result = {};',
-            '',
-            '  while (++index < length) {',
-            '    var prop = props[index];',
-            '    if (prop in object) {',
-            '      result[prop] = object[prop];',
-            '    }',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.result`
-        if (!isLodash('result')) {
-          source = replaceFunction(source, 'result', [
-            'function result(object, property) {',
-            '  var value = object ? object[property] : undefined;',
-            '  return isFunction(value) ? object[property]() : value;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.sortBy`
-        if (!isLodash('sortBy')) {
-          source = replaceFunction(source, 'sortBy', [
-            'function sortBy(collection, callback, thisArg) {',
-            '  var index = -1,',
-            '      length = collection ? collection.length : 0,',
-            "      result = Array(typeof length == 'number' ? length : 0);",
-            '',
-            '  callback = lodash.createCallback(callback, thisArg, 3);',
-            '  forEach(collection, function(value, key, collection) {',
-            '    result[++index] = {',
-            "      'criteria': callback(value, key, collection),",
-            "      'index': index,",
-            "      'value': value",
-            '    };',
-            '  });',
-            '',
-            '  length = result.length;',
-            '  result.sort(compareAscending);',
-            '  while (length--) {',
-            '    result[length] = result[length].value;',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.template`
-        if (!isLodash('template')) {
-          // remove `_.templateSettings.imports assignment
-          source = source.replace(/,[^']*'imports':[^}]+}/, '');
-
-          source = replaceFunction(source, 'template', [
-            'function template(text, data, options) {',
-            '  var settings = lodash.templateSettings;',
-            "  text || (text = '');",
-            '  options = iteratorTemplate ? defaults({}, options, settings) : settings;',
-            '',
-            '  var index = 0,',
-            '      source = "__p += \'",',
-            '      variable = options.variable;',
-            '',
-            '  var reDelimiters = RegExp(',
-            "    (options.escape || reNoMatch).source + '|' +",
-            "    (options.interpolate || reNoMatch).source + '|' +",
-            "    (options.evaluate || reNoMatch).source + '|$'",
-            "  , 'g');",
-            '',
-            '  text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {',
-            '    source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);',
-            '    if (escapeValue) {',
-            '      source += "\' +\\n_.escape(" + escapeValue + ") +\\n\'";',
-            '    }',
-            '    if (evaluateValue) {',
-            '      source += "\';\\n" + evaluateValue + ";\\n__p += \'";',
-            '    }',
-            '    if (interpolateValue) {',
-            '      source += "\' +\\n((__t = (" + interpolateValue + ")) == null ? \'\' : __t) +\\n\'";',
-            '    }',
-            '    index = offset + match.length;',
-            '    return match;',
-            '  });',
-            '',
-            '  source += "\';\\n";',
-            '  if (!variable) {',
-            "    variable = 'obj';",
-            "    source = 'with (' + variable + ' || {}) {\\n' + source + '\\n}\\n';",
-            '  }',
-            "  source = 'function(' + variable + ') {\\n' +",
-            '    "var __t, __p = \'\', __j = Array.prototype.join;\\n" +',
-            '    "function print() { __p += __j.call(arguments, \'\') }\\n" +',
-            '    source +',
-            "    'return __p\\n}';",
-            '',
-            '  try {',
-            "    var result = Function('_', 'return ' + source)(lodash);",
-            '  } catch(e) {',
-            '    e.source = source;',
-            '    throw e;',
-            '  }',
-            '  if (data) {',
-            '    return result(data);',
-            '  }',
-            '  result.source = source;',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.throttle`
-        if (!isLodash('throttle')) {
-          source = replaceFunction(source, 'throttle', [
-            'function throttle(func, wait, options) {',
-            '  var leading = true,',
-            '      trailing = true;',
-            '',
-            '  if (options === false) {',
-            '    leading = false;',
-            '  } else if (isObject(options)) {',
-            "    leading = 'leading' in options ? options.leading : leading;",
-            "    trailing = 'trailing' in options ? options.trailing : trailing;",
-            '  }',
-            '  options = {};',
-            '  options.leading = leading;',
-            '  options.maxWait = wait;',
-            '  options.trailing = trailing;',
-            '',
-            '  return debounce(func, wait, options);',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.times`
-        if (!isLodash('times')) {
-          source = replaceFunction(source, 'times', [
-            'function times(n, callback, thisArg) {',
-            '  var index = -1,',
-            '      result = Array(n > -1 ? n : 0);',
-            '',
-            '  while (++index < n) {',
-            '    result[index] = callback.call(thisArg, index);',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.toArray`
-        if (!isLodash('toArray')) {
-          source = replaceFunction(source, 'toArray', [
-            'function toArray(collection) {',
-            '  if (isArray(collection)) {',
-            '    return slice(collection);',
-            '  }',
-            "  if (collection && typeof collection.length == 'number') {",
-            '    return map(collection);',
-            '  }',
-            '  return values(collection);',
-            '}'
-          ].join('\n'));
-        }
-        // replace `baseUniq`
-        if (!isLodash('uniq')) {
-          source = replaceFunction(source, 'baseUniq', [
-            'function baseUniq(array, isSorted, callback) {',
-            '  var index = -1,',
-            '      indexOf = getIndexOf(),',
-            '      length = array ? array.length : 0,',
-            '      result = [],',
-            '      seen = callback ? [] : result;',
-            '',
-            '  while (++index < length) {',
-            '    var value = array[index],',
-            '        computed = callback ? callback(value, index, array) : value;',
-            '',
-            '    if (isSorted',
-            '          ? !index || seen[seen.length - 1] !== computed',
-            '          : indexOf(seen, computed) < 0',
-            '        ) {',
-            '      if (callback) {',
-            '        seen.push(computed);',
-            '      }',
-            '      result.push(value);',
-            '    }',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.uniqueId`
-        if (!isLodash('uniqueId')) {
-          source = replaceFunction(source, 'uniqueId', [
-            'function uniqueId(prefix) {',
-            "  var id = ++idCounter + '';",
-            '  return prefix ? prefix + id : id;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `_.where`
-        if (!isLodash('where')) {
-          source = replaceFunction(source, 'where', [
-            'function where(collection, properties, first) {',
-            '  return (first && isEmpty(properties))',
-            '    ? undefined',
-            '    : (first ? find : filter)(collection, properties);',
-            '}'
-          ].join('\n'));
-
-          // simplify `_.createCallback`
-          source = source.replace(matchFunction(source, 'createCallback'), function(match) {
-            return match
-              // remove unnecessary fast path
-              .replace(/^(( *)var props *=.+?),[\s\S]+?\n\2}/m, '$1;')
-              // remove `baseIsEqual` use
-              .replace(/=.+?\bbaseIsEqual\((.+?), *(.+?),.+?\)/, '= $1 === $2');
-          });
-        }
-        // replace `_.zip`
-        if(!isLodash('zip')) {
-          source = replaceFunction(source, 'zip', [
-            'function zip() {',
-            '  var index = -1,',
-            "      length = max(pluck(arguments, 'length')),",
-            '      result = Array(length < 0 ? 0 : length);',
-            '',
-            '  while (++index < length) {',
-            '    result[index] = pluck(arguments, index);',
-            '  }',
-            '  return result;',
-            '}'
-          ].join('\n'));
-        }
-        // replace `htmlEscapes` entries with hex entities
-        if (!isLodash('escape')) {
-          source = source.replace(matchVar(source, 'htmlEscapes'), function(match) {
-            return match
-              .replace('#39', '#x27')
-              .replace(/(\n *)}/, ",$1  '/': '&#x2F;'$1}");
-          });
-        }
-
-        // replace `slice` with `nativeSlice.call`
-        _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {
-          if (funcName == 'clone'
-                ? (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep'))
-                : !isLodash(funcName)
-              ) {
-            source = source.replace(matchFunction(source, funcName), function(match) {
-              return match.replace(/([^\w.])slice\(/g, '$1nativeSlice.call(');
-            });
-          }
-        });
-
-        // remove conditional `charCodeCallback` use from `_.max` and `_.min`
-        _.each(['max', 'min'], function(funcName) {
-          if (!isLodash(funcName)) {
-            source = source.replace(matchFunction(source, funcName), function(match) {
-              return match.replace(/=.+?callback *&& *isString[^:]+:\s*/g, '= ');
-            });
-          }
-        });
-      }
-      // add Underscore's chaining functions
-      if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
-        source = addUnderscoreChaining(source);
-      }
-      // replace `baseEach` references with `forEach` and `forOwn`
-      if (isUnderscore || (isModern && !isMobile)) {
-        // replace `baseEach` with `_.forOwn` in "Collections" functions
-        source = source.replace(/\bbaseEach(?=\(collection)/g, 'forOwn');
-
-        // replace `baseEach` with `_.forEach` in the rest of the functions
-        source = source.replace(/(\?\s*)baseEach(?=\s*:)/g, '$1forEach');
-
-        // replace `baseEach` with `_.forEach` in the function assignment snippet
-        source = source.replace(/\bbaseEach(?=\(\[')/g, 'forEach');
       }
 
-      var context = vm.createContext({
-        'clearTimeout': clearTimeout,
-        'console': console,
-        'setTimeout': setTimeout
-      });
+      /*----------------------------------------------------------------------*/
 
-      vm.runInContext(source, context);
-      return context._;
-    }());
-
-    /*------------------------------------------------------------------------*/
-
-    if (isModularize) {
-      options = _.reject(options, function(value) {
-        return /^(exports=).*$/.test(value);
-      });
-
-      options.push('exports=' + exportsOptions);
-      buildModule(buildFuncs.concat(includeProps, includeVars), options);
-      return;
-    }
-    if (isTemplate) {
-      source = buildTemplate(templatePattern, templateSettings);
-    }
-    else {
-      source = removeFromCreateIterator(source, 'support');
-
-      // inline `iteratorTemplate` template
-      source = replaceFunction(source, 'iteratorTemplate', (function() {
-        var snippet = cleanupCompiled(getFunctionSource(lodash._iteratorTemplate));
-
-        // prepend data object references to property names to avoid having to
-        // use a with-statement
-        iteratorOptions.forEach(function(prop) {
-          if (prop !== 'support') {
-            snippet = snippet.replace(RegExp('(["\'])(?:(?!\\1)[^\\n\\\\]|\\\\.)*\\1|([^.])\\b' + prop + '\\b', 'g'), function(match, quote, prelude) {
-              return quote ? match : (prelude + 'obj.' + prop);
-            });
-          }
-        });
-
-        // remove unnecessary code
-        snippet = snippet
-          .replace(/var __t.+/, "var __p = '';")
-          .replace(/function print[^}]+}/, '')
-          .replace(/'(?:\\n|\s)+'/g, "''")
-          .replace(/__p *\+= *' *';/g, '')
-          .replace(/\s*\+\s*'';/g, ';')
-          .replace(/(__p *\+= *)' *' *\+/g, '$1')
-          .replace(/\(\(__t *= *\( *([\s\S]+?) *\)\) *== *null *\? *'' *: *__t\)/g, '($1)');
-
-        // remove the with-statement
-        snippet = snippet.replace(/^ *with *\(.+?\) *{\n/m, '\n').replace(/}([^}]*}[^}]*$)/, '$1');
-
-        // minor cleanup
-        snippet = snippet
-          .replace(/obj\s*\|\|\s*\(obj *= *{}\);/, '')
-          .replace(/var __p = '';\s*__p \+=/, 'var __p =');
-
-        // remove comments, including sourceURLs
-        snippet = snippet.replace(/\s*\/\/.*(?:\n|$)/g, '');
-
-        // replace `iteratorTemplate` assignment
-        snippet = 'var iteratorTemplate = ' + snippet + ';\n';
-
-        return snippet;
-      }()));
-
-      // remove `iteratorTemplate` dependency checks from `_.template`
-      source = source.replace(matchFunction(source, 'template'), function(match) {
-        return match
-          .replace(/iteratorTemplate *&& */g, '')
-          .replace(/iteratorTemplate\s*\?\s*([^:]+?)\s*:[^,;]+/g, '$1');
-      });
-    }
-    if (isModern || isUnderscore) {
-      iteratorOptions.forEach(function(prop) {
-        if (prop != 'array') {
-          source = removeFromGetObject(source, prop);
-        }
-      });
-
-      // inline all functions defined with `createIterator`
-      _.functions(lodash).forEach(function(funcName) {
-        if (!(isUnderscore && isLodash(funcName))) {
-          // strip leading underscores to match pseudo private functions
-          var reFunc = RegExp('^( *)(var ' + funcName.replace(/^_/, '') + ' *= *)createIterator\\(((?:{|[a-zA-Z])[\\s\\S]+?)\\);\\n', 'm');
-          if (reFunc.test(source)) {
-            // extract, format, and inject the compiled function's source code
-            source = source.replace(reFunc, function(match, indent, left) {
-              return (indent + left) +
-                cleanupCompiled(getFunctionSource(lodash[funcName], indent)) + ';\n';
-            });
-          }
-        }
-      });
-
-      if (isUnderscore) {
-        // unexpose "exit early" feature of `baseEach`, `_.forEach`, `_.forIn`, and `_.forOwn`
-        _.each(['baseEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
-          if (funcName == 'baseEach' || !isLodash(funcName)) {
-            source = source.replace(matchFunction(source, funcName), function(match) {
-              return match.replace(/=== *false\)/g, '=== indicatorObject)');
-            });
-          }
-        });
-
-        // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
-        if (isUnderscore && !isLodash('forOwn')) {
-          source = source.replace(matchFunction(source, 'every'), function(match) {
-            return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-          });
-
-          source = source.replace(matchFunction(source, 'find'), function(match) {
-            return match.replace(/return false/, 'return indicatorObject');
-          });
-
-          source = source.replace(matchFunction(source, 'transform'), function(match) {
-            return match.replace(/return callback[^)]+\)/, '$& && indicatorObject');
-          });
-
-          _.each(['contains', 'some'], function(funcName) {
-            source = source.replace(matchFunction(source, funcName), function(match) {
-              return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
-            });
-          });
-        }
-        // modify `baseEqual` and `shimIsPlainObject` to use the private `indicatorObject`
-        if (!isLodash('forIn')) {
-          source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
-            return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-          });
-
-          source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-            return match.replace(/return false/, 'return indicatorObject');
-          });
-        }
-
-        // remove `thisArg` from unexposed `forIn` and `forOwn`
-        _.each(['forIn', 'forOwn'], function(funcName) {
-          if (!isLodash(funcName)) {
-            source = source.replace(matchFunction(source, funcName), function(match) {
-              return match
-                .replace(/(callback), *thisArg/g, '$1')
-                .replace(/^ *callback *=.+\n/m, '');
-            });
-          }
-        });
-
-        // replace `lodash.createCallback` references with `createCallback`
-        if (!isLodash('createCallback')) {
-          source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
-        }
-        // remove chainability from `baseEach` and `_.forEach`
-        if (!isLodash('forEach')) {
-          _.each(['baseEach', 'forEach'], function(funcName) {
-            source = source.replace(matchFunction(source, funcName), function(match) {
-              return match
-                .replace(/\n *return .+?([};\s]+)$/, '$1')
-                .replace(/\b(return) +result\b/, '$1')
-            });
-          });
-        }
-        // remove `_.assign`, `_.forEachRight`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
-        source = source.replace(getMethodAssignments(source), function(match) {
-          return _.reduce(['assign', 'createCallback', 'forEachRight', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
-            return isLodash(funcName)
-              ? result
-              : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');
-          }, match);
-        });
+      // customize Lo-Dash's export bootstrap
+      if (!isAMD || isModularize) {
+        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
       }
-    }
+      if (!isNode || isModularize) {
+        source = removeVar(source, 'freeGlobal');
+        source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
+      }
+      if (!isCommonJS || isModularize) {
+        source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n+/, '$1$2\n');
+      }
+      if (!isGlobal || isModularize) {
+        source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
+      }
+      // remove `if (freeExports) {...}` if it's empty
+      if (isAMD && isGlobal && !isModularize) {
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}\n+/, '');
+      } else {
+        source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n+/, '$1\n');
+      }
 
-    /*------------------------------------------------------------------------*/
+      /*----------------------------------------------------------------------*/
 
-    // customize Lo-Dash's export bootstrap
-    if (!isAMD) {
-      source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
-    }
-    if (!isNode) {
-      source = removeVar(source, 'freeGlobal');
-      source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
-    }
-    if (!isCommonJS) {
-      source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n+/, '$1$2\n');
-    }
-    if (!isGlobal) {
-      source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
-    }
-    // remove `if (freeExports) {...}` if it's empty
-    if (isAMD && isGlobal) {
-      source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}\n+/, '');
-    } else {
-      source = source.replace(/(?: *\/\/.*\n)* *(?:else )?if *\(freeExports.*?\) *{\s*}(?:\s*else *{([\s\S]+?) *})?\n+/, '$1\n');
+      // exit early to create modules
+      if (isModularize) {
+        buildModule({
+          'buildFuncs': buildFuncs,
+          'filePath': filePath,
+          'funcDepMap': funcDepMap,
+          'includeFuncs': includeFuncs,
+          'includeProps': includeProps,
+          'includeVars': includeVars,
+          'isAMD': isAMD,
+          'isBackbone': isBackbone,
+          'isCommonJS': isCommonJS,
+          'isCSP': isCSP,
+          'isDebug': true,
+          'isGlobal': isGlobal,
+          'isIIFE': true,
+          'isLegacy': isLegacy,
+          'isMapped': isMapped,
+          'isMobile': isMobile,
+          'isModern': isModern,
+          'isNode': isNode,
+          'isStdOut': isStdOut,
+          'isStrict': isStrict,
+          'isUnderscore': isUnderscore,
+          'minusFuncs': minusFuncs,
+          'options': options,
+          'outputPath': outputPath,
+          'plusFuncs': plusFuncs,
+          'propDepMap': propDepMap,
+          'source': source,
+          'varDepMap': varDepMap
+        });
+        return;
+      }
     }
 
     /*------------------------------------------------------------------------*/
@@ -3932,12 +3993,15 @@
     if (isIIFE) {
       source = (function() {
         var token = '%output%',
+            header = source.match(/^\/\**[\s\S]+?\*\/\n/),
             index = iife.indexOf(token);
 
-        return source.match(/^\/\**[\s\S]+?\*\/\n/) +
-          (index > -1 ? iife.slice(0, index) : iife) +
-          source.replace(/^[\s\S]+?\(function[^{]+{|}\(this\)\)[;\s]*$/g, '') +
-          (index > -1 ? iife.slice(index + token.length) : '');
+        return header + (index < 0
+          ? iife
+          : iife.slice(0, index).replace(/\n+$/, '') +
+            source.replace(/^[\s\S]+?\(function[^{]+{\n|\s*}\(this\)\)[;\s]*$/g, '\n') +
+            iife.slice(index + token.length).replace(/^\n+/, '')
+        );
       }());
     }
 
@@ -4023,23 +4087,32 @@
           }
         });
       }
-
       // remove functions from the build
-      allFuncs.forEach(function(otherName) {
-        if (!_.contains(buildFuncs, otherName) &&
-            !(otherName == 'findWhere' && !isUnderscore) &&
-            !(otherName == 'lodash' && !isNoDep)) {
-          source = removeFunction(source, otherName);
+      allFuncs.forEach(function(funcName) {
+        if (!_.contains(buildFuncs, funcName) &&
+            !(funcName == 'findWhere' && !isUnderscore) &&
+            !(funcName == 'lodash' && !isNoDep)) {
+          source = removeFunction(source, funcName);
           if (!isNoDep) {
-            source = removeFromCreateIterator(source, otherName);
+            source = removeFromCreateIterator(source, funcName);
+            _.each(getAliases(funcName, funcDepMap).concat(funcName), function(funcName) {
+              source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash(?:\\.prototype)?\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'gm'), '');
+            });
           }
         }
       });
 
       // remove forks of removed functions
-      _.each(['createObject', 'defer', 'isArguments', 'isArray', 'isFunction'], function(funcName) {
+      _.forOwn({
+        'createObject': removeCreateObjectFork,
+        'defer': removeDeferFork,
+        'isArguments': removeIsArgumentsFork,
+        'isArray': removeIsArrayFork,
+        'isFunction': removeIsFunctionFork
+      },
+      function(removeFork, funcName) {
         if (isExcluded(funcName)) {
-          source = eval('remove' + capitalize(funcName) + 'Fork')(source);
+          source = removeFork(source);
         }
       });
 
@@ -4084,7 +4157,7 @@
       (function() {
         var isShallow = isExcluded('runInContext'),
             useMap = {},
-            snippet = removePseudoPrivates(removeStrings(removeComments(source))),
+            snippet = removeStrings(removeComments(source)),
             varNames = getVars(snippet, isShallow);
 
         while (varNames.length) {
@@ -4144,7 +4217,7 @@
 
         // remove function aliases
         _.each(buildFuncs, function(funcName) {
-          _.each(getAliases(funcName), function(alias) {
+          _.each(getAliases(funcName, funcDepMap), function(alias) {
             source = removeFunction(source, alias);
           });
         });
@@ -4168,6 +4241,22 @@
 
     /*------------------------------------------------------------------------*/
 
+    // resolve `outputPath` and create directories if needed
+    outputPath = (function() {
+      var result = outputPath || options.reduce(function(result, value, index) {
+        if (/^(?:-o|--output)$/.test(value)) {
+          result = options[index + 1];
+          return path.join(fs.realpathSync(path.dirname(result)), path.basename(result));
+        }
+        return result;
+      }, '');
+
+      if (result) {
+        fs.mkdirpSync(path.dirname(result));
+      }
+      return result;
+    }());
+
     // flag to track if `outputPath` has been used by `callback`
     var outputUsed = false;
 
@@ -4182,11 +4271,6 @@
     var basename = outputPath
       ? path.basename(outputPath, '.js')
       : 'lodash' + (isTemplate ? '.template' : isCustom ? '.custom' : '');
-
-    // restore dependency maps
-    funcDependencyMap = funcDependencyMapBackup;
-    propDependencyMap = propDependencyMapBackup;
-    varDependencyMap = varDependencyMapBackup;
 
     // output debug build
     if (!isMinify && (isCustom || isDebug || isTemplate)) {

@@ -105,7 +105,7 @@
 
     // public functions
     'after': [],
-    'assign': ['createCallback', 'createIterator'],
+    'assign': ['createIterator'],
     'at': ['baseFlatten', 'isString'],
     'bind': ['createBound'],
     'bindAll': ['baseFlatten', 'bind', 'functions'],
@@ -118,7 +118,7 @@
     'countBy': ['createAggregator'],
     'createCallback': ['baseIsEqual', 'bind', 'identity', 'isObject', 'keys', 'setBindData'],
     'debounce': ['isObject'],
-    'defaults': ['createCallback', 'createIterator'],
+    'defaults': ['createIterator'],
     'defer': ['bind'],
     'delay': [],
     'difference': ['baseFlatten', 'cacheIndexOf', 'createCache', 'getIndexOf', 'releaseObject'],
@@ -773,7 +773,8 @@
         propDepMap = state.propDepMap,
         varDepMap = state.varDepMap;
 
-    var identifiers = buildFuncs.concat(includeProps, includeVars),
+    var empty = [],
+        identifiers = buildFuncs.concat(includeProps, includeVars),
         sep = '/';
 
     var categories = _.uniq(_.compact(identifiers.map(function(identifier) {
@@ -784,17 +785,6 @@
       'lodash': true,
       'support': true
     };
-
-    // set state
-    state.buildFuncs = [];
-    state.plusFuncs = [];
-    state.minusFuncs = [];
-    state.isAMD = state.isCommonJS = state.isGlobal = state.isNode = false;
-
-    // provide a destination if one isn't given
-    if (!outputPath) {
-      outputPath = '.' + path.sep + 'modularize';
-    }
 
     var getDepPath = function(dep, fromPath) {
       if (dep == 'require') {
@@ -821,6 +811,14 @@
         : (getCategory(identifier, funcDepMap) || 'internals').toLowerCase() + sep;
     };
 
+    // prepare state
+    state.plusFuncs = state.minusFuncs = empty;
+    state.isAMD = state.isCommonJS = state.isGlobal = state.isNode = false;
+
+    // provide a destination if one isn't given
+    if (!outputPath) {
+      outputPath = '.' + path.sep + 'modularize';
+    }
     // create modules for each identifier
     identifiers.forEach(function(identifier) {
       var modulePath = getPath(identifier),
@@ -842,13 +840,11 @@
           '});'
         );
       }
+      state.buildFuncs = state.includeFuncs = state.includeProps = state.includeVars = empty;
       state.iife = iife.join('\n');
+      state.outputPath = path.join(outputPath, modulePath + identifier + '.js');
 
       var include = [identifier];
-      state.buildFuncs = state.includeFuncs = [];
-      state.includeProps = [];
-      state.includeVars = [];
-
       if (_.contains(includeProps, identifier)) {
         state.includeProps = include;
       }
@@ -858,14 +854,11 @@
       else {
         state.buildFuncs = state.includeFuncs = include;
       }
-      state.outputPath = path.join(outputPath, modulePath + identifier + '.js');
       build(state);
     });
 
     // clear state
-    state.buildFuncs = state.includeFuncs = [];
-    state.includeProps = [];
-    state.includeVars = [];
+    state.buildFuncs = state.includeFuncs = state.includeProps = state.includeVars = empty;
 
     // create category modules
     categories.forEach(function(category) {
@@ -2701,11 +2694,13 @@
         // update dependencies
         if (isLegacy) {
           funcDepMap.defer = _.without(funcDepMap.defer, 'bind');
-          funcDepMap.isPlainObject = _.without(funcDepMap.isPlainObject, 'shimIsPlainObject');
-          funcDepMap.keys = _.without(funcDepMap.keys, 'shimKeys');
+          funcDepMap.isPlainObject = funcDepMap.shimIsPlainObject.slice();
+          funcDepMap.keys = funcDepMap.shimKeys.slice();
 
-          _.forOwn(varDepMap, function(deps, varName) {
-            varDepMap[varName] = _.without(deps, 'reNative');
+          _.forOwn(varDepMap, function(deps, funcName) {
+            if (funcName != 'createBound') {
+              varDepMap[funcName] = _.without(deps, 'reNative');
+            }
           });
         }
         if (isMobile) {
@@ -2817,6 +2812,9 @@
             if (!(isUnderscore && isLodash(funcName))) {
               (varDepMap[funcName] = _.without(varDepMap[funcName], 'defaultsIteratorOptions', 'eachIteratorOptions', 'forOwnIteratorOptions')).push('objectTypes');
               var deps = funcDepMap[funcName] = _.without(funcDepMap[funcName], 'createIterator');
+              if (funcName != 'shimKeys') {
+                deps.push('createCallback');
+              }
               if (funcName != 'forIn' && funcName != 'shimKeys') {
                 deps.push('keys');
               }
@@ -2878,6 +2876,7 @@
           }
         }
         if (isModularize) {
+          funcDepMap.createIterator.push('createCallback');
           _.forOwn(funcDepMap, function(deps, funcName) {
             if (_.contains(deps, 'getIndexOf')) {
               (deps = funcDepMap[funcName] = _.without(deps, 'getIndexOf')).push( 'baseIndexOf');
@@ -2944,7 +2943,7 @@
               push.apply(result, identifiers);
 
               buildFuncs = _.union(buildFuncs, deps);
-              result = expand(result, depMap, deps);
+              result = expand(result, depMap, deps, stack);
             }
             return result;
           }, result));
@@ -4182,7 +4181,6 @@
 
       if (isNoDep) {
         source = removeAssignments(source);
-        source = removeFromCreateIterator(source, 'lodash');
         source = removeGetIndexOf(source);
         source = removeLodashWrapper(source);
 
@@ -4206,6 +4204,11 @@
         // replace `_` use in `_.templateSettings.imports`
         source = source.replace(matchVar(source, 'templateSettings'), function(match) {
           return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
+        });
+
+        // replace `lodash` with `createCallback` in `createIterator`
+        source = source.replace(matchFunction(source, 'createIterator'), function(match) {
+          return match.replace(/\blodash\b/g, 'createCallback');
         });
 
         // remove unneeded variable dependencies

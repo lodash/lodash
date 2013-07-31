@@ -184,11 +184,13 @@
     'partialRight': ['createBound'],
     'pick': ['baseFlatten', 'createCallback', 'forIn', 'isObject'],
     'pluck': ['map'],
+    'pull': [],
     'random': [],
     'range': [],
     'reduce': ['baseEach', 'createCallback', 'isArray'],
     'reduceRight': ['createCallback', 'forEachRight'],
     'reject': ['createCallback', 'filter'],
+    'remove': ['baseEach', 'createCallback', 'isArray'],
     'rest': ['createCallback', 'slice'],
     'result': ['isFunction'],
     'runInContext': ['defaults', 'pick'],
@@ -322,6 +324,7 @@
       'intersection',
       'last',
       'lastIndexOf',
+      'pull',
       'range',
       'rest',
       'sortedIndex',
@@ -357,6 +360,7 @@
       'reduce',
       'reduceRight',
       'reject',
+      'remove',
       'shuffle',
       'size',
       'some',
@@ -553,6 +557,8 @@
     'merge',
     'parseInt',
     'partialRight',
+    'pull',
+    'remove',
     'runInContext',
     'transform'
   ];
@@ -2677,7 +2683,6 @@
       });
 
       if (warnings.length) {
-        funcDepMap = funcDepMapBackup;
         console.log([''].concat(
           warnings,
           'For more information type: lodash --help'
@@ -2693,65 +2698,65 @@
 
         // update dependencies
         if (isLegacy) {
-          funcDepMap.defer = _.without(funcDepMap.defer, 'bind');
+          _.pull(funcDepMap.defer, 'bind');
           funcDepMap.isPlainObject = funcDepMap.shimIsPlainObject.slice();
           funcDepMap.keys = funcDepMap.shimKeys.slice();
 
           _.forOwn(varDepMap, function(deps, funcName) {
             if (funcName != 'createBound') {
-              varDepMap[funcName] = _.without(deps, 'reNative');
+              _.pull(deps, 'reNative');
             }
           });
         }
         if (isMobile) {
           _.each(['assign', 'defaults'], function(funcName) {
-            funcDepMap[funcName] = _.without(funcDepMap[funcName], 'keys');
+            _.pull(funcDepMap[funcName], 'keys');
           });
         }
         else if (isModern) {
-          funcDepMap.setBindData = _.without(funcDepMap.setBindData, 'noop');
+          _.pull(funcDepMap.setBindData, 'noop');
 
           _.forOwn(funcDepMap, function(deps, funcName) {
             if (funcName != 'baseFlatten' && _.contains(deps, 'isArguments')) {
-              funcDepMap[funcName] = _.without(deps, 'isArguments');
+              _.pull(deps, 'isArguments');
             }
           });
         }
         if (isLegacy || isMobile || isUnderscore) {
           _.each(['createBound', 'createCallback'], function(funcName) {
-            funcDepMap[funcName] = _.without(funcDepMap[funcName], 'setBindData');
+            _.pull(funcDepMap[funcName], 'setBindData');
           });
         }
         if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
-          funcDepMap.mixin = _.without(funcDepMap.mixin, 'isFunction');
+          _.pull(funcDepMap.mixin, 'isFunction');
         }
         if (isUnderscore) {
           if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
-            (funcDepMap.clone = _.without(funcDepMap.clone, 'baseClone')).push('assign', 'isArray', 'isObject');
+            _.pull(funcDepMap.clone, 'baseClone').push('assign', 'isArray', 'isObject');
           }
           if (!isLodash('contains')) {
-            funcDepMap.contains = _.without(funcDepMap.contains, 'isString');
+            _.pull(funcDepMap.contains, 'isString');
           }
           if (!isLodash('flatten')) {
-            funcDepMap.flatten = _.without(funcDepMap.flatten, 'map');
+            _.pull(funcDepMap.flatten, 'map');
           }
           if (!isLodash('isEmpty')) {
             funcDepMap.isEmpty = ['isArray', 'isString'];
           }
           if (!isLodash('baseIsEqual') && !isLodash('isEqual')) {
-            funcDepMap.baseIsEqual = _.without(funcDepMap.baseIsEqual, 'forIn', 'isArguments');
+            _.pull(funcDepMap.baseIsEqual, 'forIn', 'isArguments');
           }
           if (!isLodash('pick')){
-            funcDepMap.pick = _.without(funcDepMap.pick, 'forIn', 'isObject');
+            _.pull(funcDepMap.pick, 'forIn', 'isObject');
           }
           if (!isLodash('template')) {
-            funcDepMap.template = _.without(funcDepMap.template, 'keys', 'values');
+            _.pull(funcDepMap.template, 'keys', 'values');
           }
           if (!isLodash('toArray')) {
             funcDepMap.toArray.push('isArray', 'map');
           }
           if (!isLodash('where')) {
-            funcDepMap.createCallback = _.without(funcDepMap.createCallback, 'baseIsEqual');
+            _.pull(funcDepMap.createCallback, 'baseIsEqual');
             funcDepMap.where.push('find', 'isEmpty');
           }
           if (!isLodash('forOwn')) {
@@ -2767,7 +2772,7 @@
 
           _.each(['baseUniq', 'difference', 'intersection'], function(funcName) {
             if (!isLodash(funcName)) {
-              (funcDepMap[funcName] = _.without(funcDepMap[funcName], 'cacheIndexOf', 'createCache')).push('getIndexOf');
+              _.pull(funcDepMap[funcName], 'cacheIndexOf', 'createCache').push('getIndexOf');
             }
           });
 
@@ -2789,7 +2794,7 @@
               }
             }
             if (!isLodash(funcName)) {
-              funcDepMap[funcName] = _.without(funcDepMap[funcName], 'createCallback');
+              _.pull(funcDepMap[funcName], 'createCallback');
             }
           });
 
@@ -2799,10 +2804,10 @@
                 })) {
               deps = funcDepMap[funcName];
               if (_.contains(deps, 'charAtCallback')) {
-                deps = funcDepMap[funcName] = _.without(deps, 'charAtCallback', 'isArray', 'isString');
+                _.pull(deps, 'charAtCallback', 'isArray', 'isString');
               }
               if (_.contains(deps, 'slice')) {
-                funcDepMap[funcName] = _.without(deps, 'slice');
+                _.pull(deps, 'slice');
               }
             }
           });
@@ -2810,8 +2815,9 @@
         if (isModern || isUnderscore) {
           _.each(['assign', 'baseEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(funcName) {
             if (!(isUnderscore && isLodash(funcName))) {
-              (varDepMap[funcName] = _.without(varDepMap[funcName], 'defaultsIteratorOptions', 'eachIteratorOptions', 'forOwnIteratorOptions')).push('objectTypes');
-              var deps = funcDepMap[funcName] = _.without(funcDepMap[funcName], 'createIterator');
+              var deps = _.pull(funcDepMap[funcName], 'createIterator');
+              _.pull(varDepMap[funcName] || (varDepMap[funcName] = []), 'defaultsIteratorOptions', 'eachIteratorOptions', 'forOwnIteratorOptions').push('objectTypes');
+
               if (funcName != 'shimKeys') {
                 deps.push('createCallback');
               }
@@ -2825,16 +2831,16 @@
             if (funcName != 'bind' &&
                 !(isMobile && funcName == 'keys') &&
                 !(isUnderscore && isLodash(funcName))) {
-              propDepMap[funcName] = _.without(deps, 'support');
+              _.pull(deps, 'support');
             }
           });
 
           _.forOwn(funcDepMap, function(deps, funcName) {
             if (_.contains(deps, 'isNode')) {
-              deps = funcDepMap[funcName] = _.without(deps, 'isNode');
+              _.pull(deps, 'isNode');
             }
             if (_.contains(deps, 'toString') && (funcName != 'contains' && funcName != 'parseInt')) {
-              funcDepMap[funcName] = _.without(deps, 'isString');
+              _.pull(deps, 'isString');
             }
           });
 
@@ -2845,26 +2851,26 @@
                   })) {
                 deps = funcDepMap[funcName];
                 if (_.contains(deps, 'releaseArray')) {
-                  deps = funcDepMap[funcName] = _.without(deps, 'getArray', 'releaseArray');
+                  _.pull(deps, 'getArray', 'releaseArray');
                 }
                 if (_.contains(deps, 'releaseObject')) {
-                  funcDepMap[funcName] = _.without(deps, 'getObject', 'releaseObject');
+                  _.pull(deps, 'getObject', 'releaseObject');
                 }
               }
             });
           }
           if (!isMobile) {
             _.each(['baseClone', 'transform', 'value'], function(funcName) {
-              (funcDepMap[funcName] = _.without(funcDepMap[funcName], 'baseEach')).push('forEach');
+              _.pull(funcDepMap[funcName], 'baseEach').push('forEach');
             });
 
-            _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(funcName) {
-              (funcDepMap[funcName] = _.without(funcDepMap[funcName], 'baseEach')).push('forOwn');
+            _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'remove', 'some'], function(funcName) {
+             _.pull(funcDepMap[funcName], 'baseEach').push('forOwn');
             });
 
-            _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'shimKeys'], function(funcName) {
+            _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'remove', 'shimKeys'], function(funcName) {
               if (!(isUnderscore && isLodash(funcName))) {
-                funcDepMap[funcName] = _.without(funcDepMap[funcName], 'isArguments', 'isArray');
+                _.pull(funcDepMap[funcName], 'isArguments', 'isArray');
               }
             });
 
@@ -2879,10 +2885,10 @@
           funcDepMap.createIterator.push('createCallback');
           _.forOwn(funcDepMap, function(deps, funcName) {
             if (_.contains(deps, 'getIndexOf')) {
-              (deps = funcDepMap[funcName] = _.without(deps, 'getIndexOf')).push( 'baseIndexOf');
+              _.pull(deps, 'getIndexOf').push( 'baseIndexOf');
             }
             if (_.contains(deps, 'lodash') || _.contains(deps, 'lodashWrapper')) {
-              funcDepMap[funcName] = _.without(deps, 'lodash', 'lodashWrapper');
+              _.pull(deps, 'lodash', 'lodashWrapper');
             }
           });
         }
@@ -2906,7 +2912,7 @@
         if (result == 'none') {
           result = [];
         } else {
-          result = _.without(result, 'none');
+          _.pull(result, 'none');
         }
         // add and subtract function names
         if (plusFuncs.length) {
@@ -3117,7 +3123,7 @@
             ].join('\n'));
 
             // replace `isArray(collection)` checks in "Collections" functions with simpler type checks
-            _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(funcName) {
+            _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'remove', 'some'], function(funcName) {
               source = source.replace(matchFunction(source, funcName), function(match) {
                 if (funcName == 'reduce') {
                   match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');
@@ -4245,20 +4251,19 @@
     /*------------------------------------------------------------------------*/
 
     // resolve `outputPath` and create directories if needed
-    outputPath = (function() {
-      var result = outputPath || options.reduce(function(result, value, index) {
+    if (!outputPath) {
+      outputPath = options.reduce(function(result, value, index) {
         if (/^(?:-o|--output)$/.test(value)) {
           result = options[index + 1];
-          return path.join(fs.realpathSync(path.dirname(result)), path.basename(result));
+          var dirname = path.dirname(result);
+          fs.mkdirpSync(dirname);
+          result = path.join(fs.realpathSync(dirname), path.basename(result));
         }
         return result;
       }, '');
-
-      if (result) {
-        fs.mkdirpSync(path.dirname(result));
-      }
-      return result;
-    }());
+    } else {
+      fs.mkdirpSync(path.dirname(outputPath));
+    }
 
     // flag to track if `outputPath` has been used by `callback`
     var outputUsed = false;

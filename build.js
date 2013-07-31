@@ -111,7 +111,7 @@
     'bindAll': ['baseFlatten', 'bind', 'functions'],
     'bindKey': ['createBound'],
     'clone': ['baseClone', 'createCallback'],
-    'cloneDeep': ['clone'],
+    'cloneDeep': ['baseClone', 'createCallback'],
     'compact': [],
     'compose': [],
     'contains': ['baseEach', 'getIndexOf', 'isString'],
@@ -172,7 +172,7 @@
     'map': ['baseEach', 'createCallback', 'isArray'],
     'max': ['baseEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'memoize': [],
-    'merge': ['baseMerge', 'createCallback', 'getArray', 'releaseArray'],
+    'merge': ['baseMerge', 'createCallback', 'getArray', 'isObject', 'releaseArray'],
     'min': ['baseEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'mixin': ['forEach', 'functions', 'isFunction'],
     'noConflict': [],
@@ -223,7 +223,7 @@
     'baseFlatten': ['isArguments', 'isArray'],
     'baseIndexOf': [],
     'baseIsEqual': ['forIn', 'getArray', 'isArguments', 'isFunction', 'isNode', 'releaseArray'],
-    'baseMerge': ['forEach', 'forOwn', 'isArray', 'isObject', 'isPlainObject'],
+    'baseMerge': ['forEach', 'forOwn', 'isArray', 'isPlainObject'],
     'baseUniq': ['cacheIndexOf', 'createCache', 'getArray', 'getIndexOf', 'releaseArray', 'releaseObject'],
     'cacheIndexOf': ['baseIndexOf'],
     'cachePush': [],
@@ -266,13 +266,13 @@
     'bind': ['support'],
     'clone': ['support'],
     'createBound': ['support'],
+    'forEachRight': ['support'],
     'isArguments': ['support'],
     'isEmpty': ['support'],
     'isEqual': ['support'],
     'isPlainObject': ['support'],
     'iteratorTemplate': ['support'],
     'keys': ['support'],
-    'reduceRight': ['support'],
     'shimIsPlainObject': ['support'],
     'template': ['templateSettings'],
     'toArray': ['support']
@@ -737,7 +737,7 @@
     });
 
     // move `mixin(lodash)` to after the method assignments
-    source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(lodash\).+/, '');
+    source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
     source = source.replace(getMethodAssignments(source), function(match) {
       var indent = /^ *(?=lodash\.)/m.exec(match)[0];
       return match + [
@@ -2699,13 +2699,13 @@
         // update dependencies
         if (isLegacy) {
           _.pull(funcDepMap.defer, 'bind');
+          _.pull(propDepMap.createBound, 'support');
+
           funcDepMap.isPlainObject = funcDepMap.shimIsPlainObject.slice();
           funcDepMap.keys = funcDepMap.shimKeys.slice();
 
-          _.forOwn(varDepMap, function(deps, funcName) {
-            if (funcName != 'createBound') {
-              _.pull(deps, 'reNative');
-            }
+          _.forOwn(varDepMap, function(deps) {
+            _.pull(deps, 'reNative');
           });
         }
         if (isMobile) {
@@ -2744,7 +2744,7 @@
             funcDepMap.isEmpty = ['isArray', 'isString'];
           }
           if (!isLodash('baseIsEqual') && !isLodash('isEqual')) {
-            _.pull(funcDepMap.baseIsEqual, 'forIn', 'isArguments');
+            _.pull(funcDepMap.baseIsEqual, 'isArguments');
           }
           if (!isLodash('pick')){
             _.pull(funcDepMap.pick, 'forIn', 'isObject');
@@ -2828,7 +2828,7 @@
           });
 
           _.forOwn(propDepMap, function(deps, funcName) {
-            if (funcName != 'bind' &&
+            if (funcName != 'createBound' &&
                 !(isMobile && funcName == 'keys') &&
                 !(isUnderscore && isLodash(funcName))) {
               _.pull(deps, 'support');
@@ -2885,7 +2885,7 @@
           funcDepMap.createIterator.push('createCallback');
           _.forOwn(funcDepMap, function(deps, funcName) {
             if (_.contains(deps, 'getIndexOf')) {
-              _.pull(deps, 'getIndexOf').push( 'baseIndexOf');
+              _.pull(deps, 'getIndexOf').push('baseIndexOf');
             }
             if (_.contains(deps, 'lodash') || _.contains(deps, 'lodashWrapper')) {
               _.pull(deps, 'lodash', 'lodashWrapper');
@@ -2971,7 +2971,7 @@
 
           // remove native `Function#bind` branch in `_.bind`
           source = source.replace(matchFunction(source, 'bind'), function(match) {
-            return match.replace(/(?:\s*\/\/.*)*\s*return support\.fastBind[^:]+:\s*/, 'return ');
+            return match.replace(/(?:\s*\/\/.*)*\n( *)if *\([^{]+?nativeBind[\s\S]+?\n\1}/, '');
           });
 
           // remove native `Array.isArray` branch in `_.isArray`
@@ -3390,7 +3390,7 @@
               '  }',
               '  var isArr = className == arrayClass;',
               '  if (!isArr) {',
-              '    if (a instanceof lodash || b instanceof lodash) {',
+              "    if (hasOwnProperty.call(a, '__wrapped__ ') || hasOwnProperty.call(b, '__wrapped__')) {",
               '      return baseIsEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);',
               '    }',
               '    if (className != objectClass) {',
@@ -3864,8 +3864,25 @@
             }
           });
 
+          // remove `thisArg` from unexposed `forIn` and `forOwn`
+          _.each(['forIn', 'forOwn'], function(funcName) {
+            if (!isLodash(funcName)) {
+              source = source.replace(matchFunction(source, funcName), function(match) {
+                return match
+                  .replace(/(callback), *thisArg/g, '$1')
+                  .replace(/^ *callback *=.+\n/m, '');
+              });
+            }
+          });
+
+          // replace complex lodash wrapper checks with simpler ones
+          if (!isModularize) {
+            source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
+              return match.replace(/hasOwnProperty\.call\((\w+), *'__wrapped__'\)/g, '$1 instanceof lodash')
+            });
+          }
           // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
-          if (isUnderscore && !isLodash('forOwn')) {
+          if (!isLodash('forOwn')) {
             source = source.replace(matchFunction(source, 'every'), function(match) {
               return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
             });
@@ -3894,18 +3911,6 @@
               return match.replace(/return false/, 'return indicatorObject');
             });
           }
-
-          // remove `thisArg` from unexposed `forIn` and `forOwn`
-          _.each(['forIn', 'forOwn'], function(funcName) {
-            if (!isLodash(funcName)) {
-              source = source.replace(matchFunction(source, funcName), function(match) {
-                return match
-                  .replace(/(callback), *thisArg/g, '$1')
-                  .replace(/^ *callback *=.+\n/m, '');
-              });
-            }
-          });
-
           // replace `lodash.createCallback` references with `createCallback`
           if (!isLodash('createCallback')) {
             source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
@@ -4026,7 +4031,7 @@
       }
       if (isExcluded('mixin') || isExcluded('value')) {
         // remove `_.mixin` call
-        source = source.replace(/(?:\s*\/\/.*)*\n( *)mixin\(.+?\).+/, '');
+        source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
       }
       if (isExcluded('value')) {
         source = removeSpliceObjectsFix(source);
@@ -4197,7 +4202,7 @@
         source = source.replace(/\b(lodash\.)(?=templateSettings *=)/, 'var ');
 
         // remove the `lodash` namespace from properties
-        source = source.replace(/\blodash\.(\w+)\b(?!\s*=)/g, '$1');
+        source = source.replace(/\blodash\.(?!com)(\w+)\b(?!\s*=)/g, '$1');
 
         // remove all horizontal rule comment separators
         source = source.replace(/^ *\/\*-+\*\/\n/gm, '');

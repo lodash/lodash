@@ -55,10 +55,11 @@
 				}
 				var reBasename = /[\w.-]+$/,
 				    basePath = (location.origin + location.pathname).split(/\btest\b/).slice(0, -1).join('test'),
+				    isModularize = /modularize/.test(ui.urlParams.build),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
 				    moduleMain = modulePath.match(reBasename)[0];
 
-				var locationPath = /modularize/.test(ui.urlParams.build)
+				var locationPath = isModularize
 					? '../modularize'
 					: modulePath.replace(reBasename, '');
 
@@ -107,6 +108,9 @@
 					if (lodash && lodash.noConflict) {
 						lodashModule = lodash.noConflict();
 						lodashModule.moduleName = 'lodash';
+					}
+					if (isModularize) {
+						window._ = lodash;
 					}
 					require([testPath], function() {
 						QUnit.start();

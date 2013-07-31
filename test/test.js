@@ -96,7 +96,8 @@
   /** The `ui` object */
   var ui = window.ui || (window.ui = {
     'buildPath': filePath,
-    'loaderPath': ''
+    'loaderPath': '',
+    'urlParams': {}
   });
 
   /*--------------------------------------------------------------------------*/
@@ -132,7 +133,8 @@
 
   // add web worker
   (function() {
-    if (!Worker) {
+    if (!Worker || /modularize/.test(ui.urlParams.build)) {
+      _._VERSION = _.VERSION;
       return;
     }
     var worker = new Worker('./worker.js');
@@ -265,7 +267,7 @@
       deepEqual(actual, [1, 3]);
     });
 
-    _.each({
+    _.forEach({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -512,7 +514,7 @@
       notEqual(_.cloneDeep(shadowedObject), shadowedObject);
     });
 
-    _.each([
+    _.forEach([
       'clone',
       'cloneDeep'
     ],
@@ -550,7 +552,7 @@
   QUnit.module('lodash.contains');
 
   (function() {
-    _.each({
+    _.forEach({
       'an array': [1, 2, 3, 1, 2, 3],
       'an object': { 'a': 1, 'b': 2, 'c': 3, 'd': 1, 'e': 2, 'f': 3 },
       'a string': '123123'
@@ -577,7 +579,7 @@
       });
     });
 
-    _.each({
+    _.forEach({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -700,7 +702,7 @@
       var withLeadingAndTrailing,
           counts = [0, 0, 0];
 
-      _.each([true, { 'leading': true }], function(options, index) {
+      _.forEach([true, { 'leading': true }], function(options, index) {
         var debounced = _.debounce(function(value) {
           counts[index]++;
           return value;
@@ -715,7 +717,7 @@
       _.times(2, _.debounce(function() { counts[2]++; }, 32, { 'leading': true }));
       strictEqual(counts[2], 1);
 
-      _.each([false, { 'leading': false }], function(options) {
+      _.forEach([false, { 'leading': false }], function(options) {
         var withoutLeading = _.debounce(_.identity, 32, options);
         strictEqual(withoutLeading('x'), undefined);
       });
@@ -872,7 +874,7 @@
 
   QUnit.module('source property checks');
 
-  _.each(['assign', 'defaults', 'merge'], function(methodName) {
+  _.forEach(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should not assign inherited `source` properties', function() {
@@ -902,7 +904,7 @@
 
   QUnit.module('strict mode checks');
 
-  _.each(['assign', 'bindAll', 'defaults'], function(methodName) {
+  _.forEach(['assign', 'bindAll', 'defaults'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should not throw strict mode errors', function() {
@@ -951,7 +953,7 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    _.each({
+    _.forEach({
       'find': [objects[1], undefined, objects[2], objects[1]],
       'findIndex': [1, -1, 2, 1],
       'findKey': ['1', undefined, '2', '1']
@@ -1161,7 +1163,7 @@
       equal(actual, 2);
     });
 
-    _.each({
+    _.forEach({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -1227,7 +1229,7 @@
 
   QUnit.module('collection iteration bugs');
 
-  _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
+  _.forEach(['forEach', 'forIn', 'forOwn'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
@@ -1288,7 +1290,7 @@
 
   QUnit.module('object assignments');
 
-  _.each(['assign', 'defaults', 'merge'], function(methodName) {
+  _.forEach(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
     test('should return the existing wrapper when chaining', function() {
@@ -1341,7 +1343,7 @@
     });
   });
 
-  _.each(['assign', 'merge'], function(methodName) {
+  _.forEach(['assign', 'merge'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should pass the correct `callback` arguments', function() {
@@ -1387,7 +1389,7 @@
 
   QUnit.module('exit early');
 
-  _.each(['forEach', 'forIn', 'forOwn'], function(methodName) {
+  _.forEach(['forEach', 'forIn', 'forOwn'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` can exit early when iterating arrays', function() {
@@ -1537,7 +1539,7 @@
 
   (function() {
     test('should return `false` for primitives', function() {
-      _.each(falsey.concat(1, 'a'), function(value) {
+      _.forEach(falsey.concat(1, 'a'), function(value) {
         strictEqual(_.has(value, 'valueOf'), false);
       });
     });
@@ -1659,7 +1661,7 @@
     });
 
     test('should allow a falsey `array` argument', function() {
-      _.each(falsey, function(index, value) {
+      _.forEach(falsey, function(index, value) {
         try {
           var actual = index ? _.initial(value) : _.initial();
         } catch(e) { }
@@ -1842,7 +1844,7 @@
       var actual = _.isEqual('a', 'a', function() { return 'a'; });
       strictEqual(actual, true);
 
-      _.each(falsey, function(value) {
+      _.forEach(falsey, function(value) {
         var actual = _.isEqual('a', 'b', function() { return value; });
         strictEqual(actual, false);
       });
@@ -1960,7 +1962,7 @@
 
   QUnit.module('isType checks');
 
-  _.each([
+  _.forEach([
     'isArguments',
     'isArray',
     'isBoolean',
@@ -2004,7 +2006,7 @@
 
   (function() {
     test('should return `false` for subclassed values', function() {
-      _.each(['isArray', 'isBoolean', 'isDate', 'isFunction', 'isNumber', 'isRegExp', 'isString'], function(methodName) {
+      _.forEach(['isArray', 'isBoolean', 'isDate', 'isFunction', 'isNumber', 'isRegExp', 'isString'], function(methodName) {
         function Foo() {}
         Foo.prototype = window[methodName.slice(2)].prototype;
 
@@ -2191,7 +2193,7 @@
 
   QUnit.module('lodash.max and lodash.min object iteration');
 
-  _.each(['max', 'min'], function(methodName) {
+  _.forEach(['max', 'min'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should iterate an object', function() {
@@ -2204,11 +2206,11 @@
 
   QUnit.module('lodash.max and lodash.min string iteration');
 
-  _.each(['max', 'min'], function(methodName) {
+  _.forEach(['max', 'min'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should iterate a string', function() {
-      _.each(['abc', Object('abc')], function(value) {
+      _.forEach(['abc', Object('abc')], function(value) {
         var actual = func(value);
         equal(actual, methodName == 'max' ? 'c' : 'a');
       });
@@ -2219,7 +2221,7 @@
 
   QUnit.module('lodash.max and lodash.min chaining');
 
-  _.each(['max', 'min'], function(methodName) {
+  _.forEach(['max', 'min'], function(methodName) {
     test('`_.' + methodName + '` should resolve the correct value when passed an array containing only one value', function() {
       var actual = _([40])[methodName]().value();
       strictEqual(actual, 40);
@@ -2501,7 +2503,7 @@
 
   QUnit.module('partial methods');
 
-  _.each(['partial', 'partialRight'], function(methodName) {
+  _.forEach(['partial', 'partialRight'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` partially applies an argument, without additional arguments', function() {
@@ -2739,7 +2741,7 @@
     var func = _.range;
 
     test('should treat falsey `start` arguments as `0`', function() {
-      _.each(falsey, function(value, index) {
+      _.forEach(falsey, function(value, index) {
         if (index) {
           deepEqual(_.range(value), []);
           deepEqual(_.range(value, 1), [0]);
@@ -2771,7 +2773,7 @@
       deepEqual(args, [1, 2, 1, array]);
     });
 
-    _.each({
+    _.forEach({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -2822,7 +2824,7 @@
       deepEqual(args, expected);
     });
 
-    _.each({
+    _.forEach({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -2869,7 +2871,7 @@
     });
 
     test('should allow a falsey `array` argument', function() {
-      _.each(falsey, function(index, value) {
+      _.forEach(falsey, function(index, value) {
         try {
           var actual = index ? _.rest(value) : _.rest();
         } catch(e) { }
@@ -2958,7 +2960,7 @@
     var args = arguments;
 
     test('should allow a falsey `object` argument', function() {
-      _.each(falsey, function(index, value) {
+      _.forEach(falsey, function(index, value) {
         try {
           var actual = index ? _.size(value) : _.size();
         } catch(e) { }
@@ -2981,7 +2983,7 @@
       equal(_.size(shadowedObject), 7);
     });
 
-    _.each({
+    _.forEach({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -3099,7 +3101,7 @@
         'nodeClass'
       ];
 
-      _.each(props, function(prop) {
+      _.forEach(props, function(prop) {
         if (_.has(_.support, prop)) {
           equal(typeof _.support[prop], 'boolean');
         } else {
@@ -3137,7 +3139,7 @@
     });
 
     test('should work with complex "interpolate" delimiters', function() {
-      _.each({
+      _.forEach({
         '<%= a + b %>': '3',
         '<%= b - a %>': '1',
         '<%= a = b %>': '2',
@@ -3267,7 +3269,7 @@
       var callCount = 0,
           dateCount = 0;
 
-      var lodash = _.runInContext(_.extend({}, window, {
+      var lodash = _.runInContext(_.assign({}, window, {
         'Date': function() {
           return ++dateCount < 3 ? new Date : Object(Infinity);
         }
@@ -3352,12 +3354,12 @@
     });
 
     test('should work with `leading` option', function() {
-      _.each([true, { 'leading': true }], function(options) {
+      _.forEach([true, { 'leading': true }], function(options) {
         var withLeading = _.throttle(_.identity, 32, options);
         equal(withLeading('x'), 'x');
       });
 
-      _.each([false, { 'leading': false }], function(options) {
+      _.forEach([false, { 'leading': false }], function(options) {
         var withoutLeading = _.throttle(_.identity, 32, options);
         strictEqual(withoutLeading('x'), undefined);
       });
@@ -3500,7 +3502,7 @@
       deepEqual(actual, ['undefined']);
     });
 
-    _.each({
+    _.forEach({
       'array': [1, 2, 3],
       'object': { 'a': 1, 'b': 2, 'c': 3 }
     },
@@ -3608,7 +3610,7 @@
       deepEqual(_.uniq(array), expected);
     });
 
-    _.each({
+    _.forEach({
       'an object': ['a'],
       'a number': 0,
       'a string': '0'
@@ -3829,7 +3831,7 @@
       'splice'
     ];
 
-    _.each(funcs, function(methodName) {
+    _.forEach(funcs, function(methodName) {
       test('`_.' + methodName + '` should return a wrapped value', function() {
         ok(wrapped[methodName]() instanceof _);
       });
@@ -3877,7 +3879,7 @@
       'some'
     ];
 
-    _.each(funcs, function(methodName) {
+    _.forEach(funcs, function(methodName) {
       test('`_.' + methodName + '` should return an unwrapped value', function() {
         var result = methodName == 'reduceRight'
           ? wrapped[methodName](_.identity)
@@ -3901,7 +3903,7 @@
       'last'
     ];
 
-    _.each(funcs, function(methodName) {
+    _.forEach(funcs, function(methodName) {
       test('`_.' + methodName + '` should return an unwrapped value', function() {
         equal(typeof wrapped[methodName](), 'number');
       });
@@ -4032,13 +4034,13 @@
         'wrap'
       ]);
 
-      _.each(funcs, function(methodName) {
+      _.forEach(funcs, function(methodName) {
         var actual = [],
             expected = _.map(falsey, function() { return []; }),
             func = _[methodName],
             pass = true;
 
-        _.each(falsey, function(value, index) {
+        _.forEach(falsey, function(value, index) {
           try {
             actual.push(index ? func(value) : func());
           } catch(e) {
@@ -4090,7 +4092,7 @@
         'uniq'
       ];
 
-      _.each(funcs, function(methodName) {
+      _.forEach(funcs, function(methodName) {
         var func = _[methodName],
             message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
 

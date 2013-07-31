@@ -497,6 +497,7 @@
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
+        splice = arrayRef.splice,
         toString = objectProto.toString,
         unshift = arrayRef.unshift;
 
@@ -1667,7 +1668,7 @@
      * @private
      * @type Function
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns a new array of property names.
+     * @returns {Array} Returns an array of property names.
      */
     var shimKeys = createIterator({
       'args': 'object',
@@ -1683,7 +1684,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns a new array of property names.
+     * @returns {Array} Returns an array of property names.
      * @example
      *
      * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
@@ -2137,7 +2138,7 @@
      * @alias methods
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns a new array of property names that have function values.
+     * @returns {Array} Returns an array of property names that have function values.
      * @example
      *
      * _.functions(_);
@@ -2834,7 +2835,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns a new array of property values.
+     * @returns {Array} Returns an array of property values.
      * @example
      *
      * _.values({ 'one': 1, 'two': 2, 'three': 3 });
@@ -3741,6 +3742,64 @@
     }
 
     /**
+     * Removes all elements from the `collection` that thw `callback` returns truthy
+     * for and returns an array of removed elements. The `callback` is bound to
+     * `thisArg` and invoked with three arguments; (value, index|key, collection).
+     *
+     * If a property name is passed for `callback`, the created "_.pluck" style
+     * callback will return the property value of the given element.
+     *
+     * If an object is passed for `callback`, the created "_.where" style callback
+     * will return `true` for elements that have the properties of the given object,
+     * else `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Collections
+     * @param {Array|Object|String} collection The collection to modify.
+     * @param {Function|Object|String} [callback=identity] The function called per
+     *  iteration. If a property name or object is passed, it will be used to create
+     *  a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Array} Returns a new array of removed elements.
+     * @example
+     *
+     * var array = [1, 2, 3, 4, 5, 6];
+     * var evens = _.remove(array, function(num) { return num % 2 == 0; });
+     *
+     * console.log(array);
+     * // => [1, 3, 5]
+     *
+     * console.log(evens);
+     * // => [2, 4, 6]
+     */
+    function remove(collection, callback, thisArg) {
+      var result = [];
+      callback = lodash.createCallback(callback, thisArg, 3);
+
+      if (isArray(collection)) {
+        var index = -1,
+            length = collection.length;
+
+        while (++index < length) {
+          var value = collection[index];
+          if (callback(value, index, collection)) {
+            result.push(value);
+            splice.call(collection, index, 1);
+          }
+        }
+      } else {
+        baseEach(collection, function(value, key, collection) {
+          if (callback(value, key, collection)) {
+            result.push(value);
+            delete collection[key];
+          }
+        });
+      }
+      return result;
+    }
+
+    /**
      * Creates an array of shuffled `array` values, using a version of the
      * Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
      *
@@ -4513,6 +4572,41 @@
         }
       }
       return -1;
+    }
+
+    /**
+     * Removes all passed values from the given array using strict equality for
+     * comparisons, i.e. `===`.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to modify.
+     * @param {Mixed} [value1, value2, ...] The values to remove.
+     * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [1, 2, 3, 1, 2, 3];
+     * _.pull(array, 2, 3);
+     * console.log(array);
+     * // => [1, 1]
+     */
+    function pull(array) {
+      var args = arguments,
+          argsIndex = 0,
+          argsLength = args.length,
+          length = array ? array.length : 0;
+
+      while (++argsIndex < argsLength) {
+        var index = -1,
+            value = args[argsIndex];
+        while (++index < length) {
+          if (array[index] === value) {
+            splice.call(array, index, 1);
+          }
+        }
+      }
+      return array;
     }
 
     /**
@@ -5902,7 +5996,7 @@
      * @param {Number} n The number of times to execute the callback.
      * @param {Function} callback The function called per iteration.
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @returns {Array} Returns a new array of the results of each `callback` execution.
+     * @returns {Array} Returns an array of the results of each `callback` execution.
      * @example
      *
      * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
@@ -6122,8 +6216,10 @@
     lodash.partialRight = partialRight;
     lodash.pick = pick;
     lodash.pluck = pluck;
+    lodash.pull = pull;
     lodash.range = range;
     lodash.reject = reject;
+    lodash.remove = remove;
     lodash.rest = rest;
     lodash.shuffle = shuffle;
     lodash.sortBy = sortBy;

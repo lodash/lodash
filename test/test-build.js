@@ -105,6 +105,7 @@
       'intersection',
       'last',
       'lastIndexOf',
+      'pull',
       'range',
       'rest',
       'sortedIndex',
@@ -140,6 +141,7 @@
       'reduce',
       'reduceRight',
       'reject',
+      'remove',
       'shuffle',
       'size',
       'some',
@@ -298,6 +300,8 @@
     'merge',
     'parseInt',
     'partialRight',
+    'pull',
+    'remove',
     'runInContext',
     'transform'
   ];
@@ -1740,7 +1744,7 @@
               );
 
               if (otherNames.length) {
-                funcNames = _.without(funcNames, category);
+                _.pull(funcNames, category);
                 push.apply(funcNames, otherNames);
               }
             });
@@ -1749,10 +1753,10 @@
             funcNames = _.uniq(_.intersection(expandFuncNames(funcNames), allFuncs));
 
             if (!exposeAssign) {
-              funcNames = _.without(funcNames, 'assign');
+              _.pull(funcNames, 'assign');
             }
             if (!exposeZipObject) {
-              funcNames = _.without(funcNames, 'zipObject');
+              _.pull(funcNames, 'zipObject');
             }
             var lodash = context._ || {};
             funcNames.forEach(function(funcName) {

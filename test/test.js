@@ -100,6 +100,9 @@
     'urlParams': {}
   });
 
+  /** Used to indicate testing a modularized build */
+  var isModularize = /modularize/.test(ui.urlParams.build);
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -133,8 +136,7 @@
 
   // add web worker
   (function() {
-    if (!Worker || /modularize/.test(ui.urlParams.build)) {
-      _._VERSION = _.VERSION;
+    if (!Worker || isModularize) {
       return;
     }
     var worker = new Worker('./worker.js');
@@ -177,7 +179,7 @@
     });
 
     asyncTest('supports loading ' + basename + ' in a web worker', function() {
-      if (Worker) {
+      if (Worker && !isModularize) {
         var limit = 1000,
             start = new Date;
 
@@ -1607,39 +1609,59 @@
         indexOf = _.indexOf;
 
     test('`_.contains` should work with a custom `_.indexOf` method', function() {
-      _.indexOf = custom;
-      ok(_.contains(array, new Foo));
-      _.indexOf = indexOf;
+      if (!isModularize) {
+        _.indexOf = custom;
+        ok(_.contains(array, new Foo));
+        _.indexOf = indexOf;
+      } else {
+        skipTest();
+      }
     });
 
     test('`_.difference` should work with a custom `_.indexOf` method', function() {
-      _.indexOf = custom;
-      deepEqual(_.difference(array, [new Foo]), [1, 3]);
-      _.indexOf = indexOf;
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.difference(array, [new Foo]), [1, 3]);
+        _.indexOf = indexOf;
+      } else {
+        skipTest();
+      }
     });
 
     test('`_.intersection` should work with a custom `_.indexOf` method', function() {
-      _.indexOf = custom;
-      deepEqual(_.intersection(array, [new Foo]), [array[1]]);
-      _.indexOf = indexOf;
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.intersection(array, [new Foo]), [array[1]]);
+        _.indexOf = indexOf;
+      } else {
+        skipTest();
+      }
     });
 
     test('`_.omit` should work with a custom `_.indexOf` method', function() {
-      _.indexOf = custom;
-      deepEqual(_.omit(array, ['x']), { '0': 1, '2': 3 });
-      _.indexOf = indexOf;
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.omit(array, ['x']), { '0': 1, '2': 3 });
+        _.indexOf = indexOf;
+      } else {
+        skipTest();
+      }
     });
 
     test('`_.uniq` should work with a custom `_.indexOf` method', function() {
-      _.indexOf = custom;
-      deepEqual(_.uniq(array), array.slice(0, 3));
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.uniq(array), array.slice(0, 3));
 
-      var largeArray = _.times(largeArraySize, function() {
-        return new Foo;
-      });
+        var largeArray = _.times(largeArraySize, function() {
+          return new Foo;
+        });
 
-      deepEqual(_.uniq(largeArray), [largeArray[0]]);
-      _.indexOf = indexOf;
+        deepEqual(_.uniq(largeArray), [largeArray[0]]);
+        _.indexOf = indexOf;
+      } else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -3753,7 +3775,7 @@
 
     test('should correctly consume it\'s output', function() {
       var expected = [['moe', 'larry'], [30, 40]];
-      deepEqual(_.unzip(_.zip(_.unzip(_.zip(expected)))), expected);
+      deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);
     });
   }());
 

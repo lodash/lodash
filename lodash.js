@@ -143,7 +143,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * A base implementation of `_.indexOf` without support for binary searches
+   * The base implementation of `_.indexOf` without support for binary searches
    * or `fromIndex` constraints.
    *
    * @private
@@ -945,7 +945,7 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * A base implementation of `_.clone` without argument juggling or support
+     * The base implementation of `_.clone` without argument juggling or support
      * for `thisArg` binding.
      *
      * @private
@@ -1035,7 +1035,52 @@
     }
 
     /**
-     * A base implementation of `_.flatten` without support for `callback`
+     * The base implementation of `_.createCallback` without support for creating
+     * "_.pluck" or "_.where" style callbacks.
+     *
+     * @private
+     * @param {Mixed} [func=identity] The value to convert to a callback.
+     * @param {Mixed} [thisArg] The `this` binding of the created callback.
+     * @param {Number} [argCount] The number of arguments the callback accepts.
+     * @returns {Function} Returns a callback function.
+     */
+    function baseCreateCallback(func, thisArg, argCount) {
+      if (typeof func != 'function') {
+        return identity;
+      }
+      // exit early if there is no `thisArg`
+      if (typeof thisArg == 'undefined') {
+        return func;
+      }
+      var bindData = !func.name || func.__bindData__;
+      if (typeof bindData == 'undefined') {
+        // checks if `func` references the `this` keyword and stores the result
+        bindData = !reThis || reThis.test(fnToString.call(func));
+        setBindData(func, bindData);
+      }
+      // exit early if there are no `this` references or `func` is bound
+      if (bindData !== true && !(bindData && bindData[4])) {
+        return func;
+      }
+      switch (argCount) {
+        case 1: return function(value) {
+          return func.call(thisArg, value);
+        };
+        case 2: return function(a, b) {
+          return func.call(thisArg, a, b);
+        };
+        case 3: return function(value, index, collection) {
+          return func.call(thisArg, value, index, collection);
+        };
+        case 4: return function(accumulator, value, index, collection) {
+          return func.call(thisArg, accumulator, value, index, collection);
+        };
+      }
+      return bind(func, thisArg);
+    }
+
+    /**
+     * The base implementation of `_.flatten` without support for `callback`
      * shorthands or `thisArg` binding.
      *
      * @private
@@ -1063,7 +1108,7 @@
     }
 
     /**
-     * A base implementation of `_.isEqual`, without support for `thisArg` binding,
+     * The base implementation of `_.isEqual`, without support for `thisArg` binding,
      * that allows partial "_.where" style comparisons.
      *
      * @private
@@ -1232,7 +1277,7 @@
     }
 
     /**
-     * A base implementation of `_.merge` without argument juggling or support
+     * The base implementation of `_.merge` without argument juggling or support
      * for `thisArg` binding.
      *
      * @private
@@ -1297,7 +1342,7 @@
     }
 
     /**
-     * A base implementation of `_.uniq` without support for `callback` shorthands
+     * The base implementation of `_.uniq` without support for `callback` shorthands
      * or `thisArg` binding.
      *
      * @private
@@ -1485,9 +1530,9 @@
 
       // create the function factory
       var factory = Function(
-          'errorClass, errorProto, hasOwnProperty, indicatorObject, isArguments, ' +
-          'isArray, isString, keys, lodash, objectProto, objectTypes, nonEnumProps, ' +
-          'stringClass, stringProto, toString',
+          'baseCreateCallback, errorClass, errorProto, hasOwnProperty, ' +
+          'indicatorObject, isArguments, isArray, isString, keys, objectProto, ' +
+          'objectTypes, nonEnumProps, stringClass, stringProto, toString',
         'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
       );
 
@@ -1495,9 +1540,9 @@
 
       // return the compiled function
       return factory(
-        errorClass, errorProto, hasOwnProperty, indicatorObject, isArguments,
-        isArray, isString, data.keys, lodash, objectProto, objectTypes, nonEnumProps,
-        stringClass, stringProto, toString
+        baseCreateCallback, errorClass, errorProto, hasOwnProperty,
+        indicatorObject, isArguments, isArray, isString, data.keys, objectProto,
+        objectTypes, nonEnumProps, stringClass, stringProto, toString
       );
     }
 
@@ -1704,7 +1749,7 @@
     /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
     var eachIteratorOptions = {
       'args': 'collection, callback, thisArg',
-      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg, 3)",
+      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3)",
       'array': "typeof length == 'number'",
       'keys': keys,
       'loop': 'if (callback(iterable[index], index, collection) === false) return result'
@@ -1807,7 +1852,7 @@
         defaultsIteratorOptions.top.replace(';',
           ';\n' +
           "if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {\n" +
-          '  var callback = lodash.createCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
+          '  var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
           "} else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {\n" +
           '  callback = args[--argsLength];\n' +
           '}'
@@ -1863,7 +1908,7 @@
         callback = deep;
         deep = false;
       }
-      return baseClone(value, deep, typeof callback == 'function' && lodash.createCallback(callback, thisArg, 1));
+      return baseClone(value, deep, typeof callback == 'function' && baseCreateCallback(callback, thisArg, 1));
     }
 
     /**
@@ -1908,7 +1953,7 @@
      * // => false
      */
     function cloneDeep(value, callback, thisArg) {
-      return baseClone(value, true, typeof callback == 'function' && lodash.createCallback(callback, thisArg, 1));
+      return baseClone(value, true, typeof callback == 'function' && baseCreateCallback(callback, thisArg, 1));
     }
 
     /**
@@ -2065,7 +2110,7 @@
       });
 
       var length = pairs.length;
-      callback = lodash.createCallback(callback, thisArg, 3);
+      callback = baseCreateCallback(callback, thisArg, 3);
       while (++index < length) {
         if (callback(pairs[index], pairs[++index], object) === false) {
           break;
@@ -2119,7 +2164,7 @@
       var props = keys(object),
           length = props.length;
 
-      callback = lodash.createCallback(callback, thisArg, 3);
+      callback = baseCreateCallback(callback, thisArg, 3);
       while (length--) {
         var key = props[length];
         if (callback(object[key], key, object) === false) {
@@ -2329,7 +2374,7 @@
      * // => true
      */
     function isEqual(a, b, callback, thisArg) {
-      return baseIsEqual(a, b, typeof callback == 'function' && lodash.createCallback(callback, thisArg, 2));
+      return baseIsEqual(a, b, typeof callback == 'function' && baseCreateCallback(callback, thisArg, 2));
     }
 
     /**
@@ -2636,7 +2681,7 @@
         length = args.length;
       }
       if (length > 3 && typeof args[length - 2] == 'function') {
-        var callback = lodash.createCallback(args[--length - 1], args[length--], 2);
+        var callback = baseCreateCallback(args[--length - 1], args[length--], 2);
       } else if (length > 2 && typeof args[length - 1] == 'function') {
         callback = args[--length];
       }
@@ -2810,7 +2855,7 @@
      */
     function transform(object, callback, accumulator, thisArg) {
       var isArr = isArray(object);
-      callback = lodash.createCallback(callback, thisArg, 4);
+      callback = baseCreateCallback(callback, thisArg, 4);
 
       if (accumulator == null) {
         if (isArr) {
@@ -3269,7 +3314,7 @@
       } else if (support.unindexedChars && isString(collection)) {
         iterable = collection.split('');
       }
-      callback = lodash.createCallback(callback, thisArg, 3);
+      callback = baseCreateCallback(callback, thisArg, 3);
       forEach(collection, function(value, index, collection) {
         index = props ? props[--length] : --length;
         callback(iterable[index], index, collection);
@@ -3643,7 +3688,7 @@
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-      callback = lodash.createCallback(callback, thisArg, 4);
+      callback = baseCreateCallback(callback, thisArg, 4);
 
       if (isArray(collection)) {
         var index = -1,
@@ -3686,7 +3731,7 @@
      */
     function reduceRight(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-      callback = lodash.createCallback(callback, thisArg, 4);
+      callback = baseCreateCallback(callback, thisArg, 4);
       forEachRight(collection, function(value, index, collection) {
         accumulator = noaccum
           ? (noaccum = false, value)
@@ -3785,7 +3830,8 @@
           var value = collection[index];
           if (callback(value, index, collection)) {
             result.push(value);
-            splice.call(collection, index, 1);
+            splice.call(collection, index--, 1);
+            length--;
           }
         }
       } else {
@@ -4602,7 +4648,8 @@
             value = args[argsIndex];
         while (++index < length) {
           if (array[index] === value) {
-            splice.call(array, index, 1);
+            splice.call(array, index--, 1);
+            length--;
           }
         }
       }
@@ -5131,8 +5178,6 @@
      * If `func` is an object, the created callback will return `true` for elements
      * that contain the equivalent object properties, otherwise it will return `false`.
      *
-     * Note: All Lo-Dash methods, that accept a `callback` argument, use `_.createCallback`.
-     *
      * @static
      * @memberOf _
      * @category Functions
@@ -5172,71 +5217,40 @@
      * // => { 'moe': { 'name': 'moe', 'age': 40 }, 'larry': { 'name': 'larry', 'age': 50 } }
      */
     function createCallback(func, thisArg, argCount) {
-      if (func == null) {
-        return identity;
-      }
       var type = typeof func;
-      if (type != 'function') {
-        // handle "_.pluck" style callback shorthands
-        if (type != 'object') {
-          return function(object) {
-            return object[func];
-          };
-        }
-        var props = keys(func),
-            key = props[0],
-            a = func[key];
-
-        // handle "_.where" style callback shorthands
-        if (props.length == 1 && a === a && !isObject(a)) {
-          // fast path the common case of passing an object with a single
-          // property containing a primitive value
-          return function(object) {
-            var b = object[key];
-            return a === b && (a !== 0 || (1 / a == 1 / b));
-          };
-        }
+      if (func == null || type == 'function') {
+        return baseCreateCallback(func, thisArg, argCount);
+      }
+      // handle "_.pluck" style callback shorthands
+      if (type != 'object') {
         return function(object) {
-          var length = props.length,
-              result = false;
+          return object[func];
+        };
+      }
+      var props = keys(func),
+          key = props[0],
+          a = func[key];
 
-          while (length--) {
-            if (!(result = baseIsEqual(object[props[length]], func[props[length]], null, true))) {
-              break;
-            }
+      // handle "_.where" style callback shorthands
+      if (props.length == 1 && a === a && !isObject(a)) {
+        // fast path the common case of passing an object with a single
+        // property containing a primitive value
+        return function(object) {
+          var b = object[key];
+          return a === b && (a !== 0 || (1 / a == 1 / b));
+        };
+      }
+      return function(object) {
+        var length = props.length,
+            result = false;
+
+        while (length--) {
+          if (!(result = baseIsEqual(object[props[length]], func[props[length]], null, true))) {
+            break;
           }
-          return result;
-        };
-      }
-      // exit early if there is no `thisArg`
-      if (typeof thisArg == 'undefined') {
-        return func;
-      }
-      var bindData = !func.name || func.__bindData__;
-      if (typeof bindData == 'undefined') {
-        // checks if `func` references the `this` keyword and stores the result
-        bindData = !reThis || reThis.test(fnToString.call(func));
-        setBindData(func, bindData);
-      }
-      // exit early if there are no `this` references or `func` is bound
-      if (bindData !== true && !(bindData && bindData[4])) {
-        return func;
-      }
-      switch (argCount) {
-        case 1: return function(value) {
-          return func.call(thisArg, value);
-        };
-        case 2: return function(a, b) {
-          return func.call(thisArg, a, b);
-        };
-        case 3: return function(value, index, collection) {
-          return func.call(thisArg, value, index, collection);
-        };
-        case 4: return function(accumulator, value, index, collection) {
-          return func.call(thisArg, accumulator, value, index, collection);
-        };
-      }
-      return bind(func, thisArg);
+        }
+        return result;
+      };
     }
 
     /**
@@ -6013,7 +6027,7 @@
       var index = -1,
           result = Array(n);
 
-      callback = lodash.createCallback(callback, thisArg, 1);
+      callback = baseCreateCallback(callback, thisArg, 1);
       while (++index < n) {
         result[index] = callback(index);
       }

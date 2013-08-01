@@ -5202,19 +5202,6 @@
      *
      * _.filter(stooges, 'age__gt45');
      * // => [{ 'name': 'larry', 'age': 50 }]
-     *
-     * // create mixins with support for "_.pluck" and "_.where" callback shorthands
-     * _.mixin({
-     *   'toLookup': function(collection, callback, thisArg) {
-     *     callback = _.createCallback(callback, thisArg);
-     *     return _.reduce(collection, function(result, value, index, collection) {
-     *       return (result[callback(value, index, collection)] = value, result);
-     *     }, {});
-     *   }
-     * });
-     *
-     * _.toLookup(stooges, 'name');
-     * // => { 'moe': { 'name': 'moe', 'age': 40 }, 'larry': { 'name': 'larry', 'age': 50 } }
      */
     function createCallback(func, thisArg, argCount) {
       var type = typeof func;
@@ -5681,15 +5668,18 @@
      * // => 'Moe'
      */
     function mixin(object, source) {
+      var ctor = object,
+          isFunc = !source || isFunction(ctor);
+
       if (!source) {
+        ctor = lodashWrapper;
         source = object;
         object = lodash;
       }
-      var isFunc = isFunction(object);
       forEach(functions(source), function(methodName) {
         var func = object[methodName] = source[methodName];
         if (isFunc) {
-          object.prototype[methodName] = function() {
+          ctor.prototype[methodName] = function() {
             var value = this.__wrapped__,
                 args = [value];
 
@@ -5697,7 +5687,7 @@
             var result = func.apply(object, args);
             return (value && typeof value == 'object' && value === result)
               ? this
-              : new lodashWrapper(result);
+              : new ctor(result);
           };
         }
       });

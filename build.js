@@ -1499,7 +1499,7 @@
   function matchProp(source, propName, leadingComments) {
     var result = source.match(RegExp(
       (leadingComments ? multilineComment : '\\n') +
-      '(?: *|.*?=\\s*)lodash\\._?' + propName + '\\s*=[\\s\\S]+?' +
+      '(?: {2}var ' + propName + '\\b.+|(?: *|.*?=\\s*)lodash\\._?' + propName + '\\s*)=[\\s\\S]+?' +
       '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
       '[;}]\\n(?=\\n(?!\\s*\\(func)))'
     ));
@@ -1831,6 +1831,13 @@
 
     // replace `new lodashWrapper` with `new lodash`
     source = source.replace(/\bnew lodashWrapper\b/g, 'new lodash');
+
+    // remove `lodashWrapper` from `_.mixin`
+    source = source.replace(matchFunction(source, 'mixin'), function(match) {
+      return match
+        .replace(/!source\s*\|\|\s*/g, '')
+        .replace(/(?:\s*\/\/.*)*\n( *)if *\(!source[\s\S]+?\n\1}/, '');
+    });
 
     return source;
   }
@@ -2198,7 +2205,7 @@
    * @returns {String} Returns the modified source.
    */
   function removeSupportProp(source, propName) {
-    return source.replace(matchVar(source, 'support'), function(match) {
+    return source.replace(matchProp(source, 'support'), function(match) {
       return match.replace(RegExp(
         multilineComment +
         // match a `try` block
@@ -2940,7 +2947,7 @@
           );
         }
         if (isModularize) {
-          result = _.difference(result, getNamesByCategory('Chaining'), ['runInContext']);
+          _.pull(result, 'runInContext');
         }
         return getDependencies(result, funcDepMap);
       }());
@@ -3949,6 +3956,36 @@
             }, match);
           });
         }
+        if (isModularize) {
+          source = removeAssignments(source);
+          source = removeGetIndexOf(source);
+
+          // replace the `lodash.templateSettings` property assignment with a variable assignment
+          source = source.replace(/\b(lodash\.)(?=templateSettings *=)/, 'var ');
+
+          // remove the `lodash` namespace from properties
+          source = source.replace(/\blodash\.(?!com|prototype)(\w+)\b(?!\s*=)/g, '$1');
+
+          // remove all horizontal rule comment separators
+          source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
+
+          // remove debug sourceURL use in `_.template`
+          source = source.replace(matchFunction(source, 'template'), function(match) {
+            return match.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
+          });
+
+          // replace `_` use in `_.templateSettings.imports`
+          source = source.replace(matchProp(source, 'templateSettings'), function(match) {
+            return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
+          });
+
+          // remove function aliases
+          _.each(buildFuncs, function(funcName) {
+            _.each(getAliases(funcName, funcDepMap), function(alias) {
+              source = removeFunction(source, alias);
+            });
+          });
+        }
       }
 
       /*----------------------------------------------------------------------*/
@@ -4149,7 +4186,7 @@
       });
 
       // remove code used to resolve unneeded `support` properties
-      source = source.replace(matchVar(source, 'support'), function(match) {
+      source = source.replace(matchProp(source, 'support'), function(match) {
         return match.replace(/^ *\(function[\s\S]+?\n(( *)var ctor *=[\s\S]+?(?:\n *for.+)+\n)([\s\S]+?)}\(1\)\);\n/m, function(match, setup, indent, body) {
           var modified = setup;
 
@@ -4213,37 +4250,11 @@
         if (isExcluded('lodash')) {
           source = removeFunction(source, 'lodash');
         }
-        // replace the `lodash.templateSettings` property assignment with a variable assignment
-        source = source.replace(/\b(lodash\.)(?=templateSettings *=)/, 'var ');
-
-        // remove the `lodash` namespace from properties
-        source = source.replace(/\blodash\.(?!com)(\w+)\b(?!\s*=)/g, '$1');
-
-        // remove all horizontal rule comment separators
-        source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
-
-        // remove debug sourceURL use in `_.template`
-        source = source.replace(matchFunction(source, 'template'), function(match) {
-          return match.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
-        });
-
-        // replace `_` use in `_.templateSettings.imports`
-        source = source.replace(matchVar(source, 'templateSettings'), function(match) {
-          return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
-        });
-
         // remove unneeded variable dependencies
         _.each(varDependencies, function(varName) {
           if (!_.contains(includeVars, varName)) {
             source = removeVar(source, varName);
           }
-        });
-
-        // remove function aliases
-        _.each(buildFuncs, function(funcName) {
-          _.each(getAliases(funcName, funcDepMap), function(alias) {
-            source = removeFunction(source, alias);
-          });
         });
       }
       else if (isUnderscore) {

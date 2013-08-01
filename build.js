@@ -110,13 +110,13 @@
     'bind': ['createBound'],
     'bindAll': ['baseFlatten', 'bind', 'functions'],
     'bindKey': ['createBound'],
-    'clone': ['baseClone', 'createCallback'],
-    'cloneDeep': ['baseClone', 'createCallback'],
+    'clone': ['baseClone', 'baseCreateCallback'],
+    'cloneDeep': ['baseClone', 'baseCreateCallback'],
     'compact': [],
     'compose': [],
     'contains': ['baseEach', 'getIndexOf', 'isString'],
     'countBy': ['createAggregator'],
-    'createCallback': ['baseIsEqual', 'bind', 'identity', 'isObject', 'keys', 'setBindData'],
+    'createCallback': ['baseCreateCallback', 'baseIsEqual', 'isObject', 'keys'],
     'debounce': ['isObject'],
     'defaults': ['createIterator'],
     'defer': ['bind'],
@@ -133,12 +133,12 @@
     'findLastKey': ['createCallback', 'forOwnRight'],
     'first': ['createCallback', 'slice'],
     'flatten': ['baseFlatten', 'map'],
-    'forEach': ['baseEach', 'createCallback', 'isArray'],
-    'forEachRight': ['createCallback', 'forEach', 'isString', 'keys'],
+    'forEach': ['baseCreateCallback', 'baseEach', 'isArray'],
+    'forEachRight': ['baseCreateCallback', 'forEach', 'isString', 'keys'],
     'forIn': ['createIterator'],
-    'forInRight': ['createCallback', 'forIn'],
+    'forInRight': ['baseCreateCallback', 'forIn'],
     'forOwn': ['createIterator'],
-    'forOwnRight': ['createCallback', 'keys'],
+    'forOwnRight': ['baseCreateCallback', 'keys'],
     'functions': ['forIn', 'isFunction'],
     'groupBy': ['createAggregator'],
     'has': [],
@@ -155,7 +155,7 @@
     'isDate': [],
     'isElement': [],
     'isEmpty': ['forOwn', 'isArguments', 'isFunction'],
-    'isEqual': ['baseIsEqual', 'createCallback'],
+    'isEqual': ['baseCreateCallback', 'baseIsEqual'],
     'isFinite': [],
     'isFunction': [],
     'isNaN': ['isNumber'],
@@ -172,7 +172,7 @@
     'map': ['baseEach', 'createCallback', 'isArray'],
     'max': ['baseEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'memoize': [],
-    'merge': ['baseMerge', 'createCallback', 'getArray', 'isObject', 'releaseArray'],
+    'merge': ['baseCreateCallback', 'baseMerge', 'getArray', 'isObject', 'releaseArray'],
     'min': ['baseEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'mixin': ['forEach', 'functions', 'isFunction'],
     'noConflict': [],
@@ -187,8 +187,8 @@
     'pull': [],
     'random': [],
     'range': [],
-    'reduce': ['baseEach', 'createCallback', 'isArray'],
-    'reduceRight': ['createCallback', 'forEachRight'],
+    'reduce': ['baseCreateCallback', 'baseEach', 'isArray'],
+    'reduceRight': ['baseCreateCallback', 'forEachRight'],
     'reject': ['createCallback', 'filter'],
     'remove': ['baseEach', 'createCallback', 'isArray'],
     'rest': ['createCallback', 'slice'],
@@ -202,9 +202,9 @@
     'tap': ['value'],
     'template': ['defaults', 'escape', 'escapeStringChar', 'keys', 'values'],
     'throttle': ['debounce', 'getObject', 'isObject', 'releaseObject'],
-    'times': ['createCallback'],
+    'times': ['baseCreateCallback'],
     'toArray': ['isString', 'slice', 'values'],
-    'transform': ['createCallback', 'createObject', 'forOwn', 'isArray'],
+    'transform': ['baseCreateCallback', 'createObject', 'forOwn', 'isArray'],
     'unescape': ['keys', 'unescapeHtmlChar'],
     'union': ['baseFlatten', 'baseUniq'],
     'uniq': ['baseUniq', 'createCallback'],
@@ -219,6 +219,7 @@
 
     // private functions
     'baseClone': ['assign', 'baseEach', 'forOwn', 'getArray', 'isArray', 'isObject', 'isNode', 'releaseArray', 'slice'],
+    'baseCreateCallback': ['bind', 'identity', 'setBindData'],
     'baseEach': ['createIterator'],
     'baseFlatten': ['isArguments', 'isArray'],
     'baseIndexOf': [],
@@ -232,7 +233,7 @@
     'createAggregator': ['createCallback', 'forEach'],
     'createBound': ['createObject', 'isFunction', 'isObject', 'setBindData'],
     'createCache': ['cachePush', 'getObject', 'releaseObject'],
-    'createIterator': ['getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'lodash', 'releaseObject'],
+    'createIterator': ['baseCreateCallback', 'getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'releaseObject'],
     'createObject': [ 'isObject', 'noop'],
     'escapeHtmlChar': [],
     'escapeStringChar': [],
@@ -283,24 +284,34 @@
     'assign': ['defaultsIteratorOptions'],
     'baseEach': ['eachIteratorOptions'],
     'baseIsEqual': ['objectTypes'],
+    'baseUniq': ['largeArraySize'],
     'bind': ['reNative'],
+    'cacheIndexOf': ['keyPrefix'],
+    'cachePush': ['keyPrefix'],
     'createIterator': ['indicatorObject', 'objectTypes'],
     'createBound': ['reNative'],
     'createObject': ['reNative'],
     'defaults': ['defaultsIteratorOptions'],
     'defer': ['objectTypes', 'reNative'],
+    'difference': ['largeArraySize'],
     'escape': ['reUnescapedHtml'],
     'escapeHtmlChar': ['htmlEscapes'],
     'forIn': ['eachIteratorOptions', 'forOwnIteratorOptions'],
     'forOwn': ['eachIteratorOptions', 'forOwnIteratorOptions'],
     'forOwnIteratorOptions': ['eachIteratorOptions'],
+    'getArray': ['arrayPool'],
+    'getObject': ['objectPool'],
     'htmlUnescapes': ['htmlEscapes'],
+    'intersection': ['largeArraySize'],
     'isArray': ['reNative'],
     'isObject': ['objectTypes'],
     'isPlainObject': ['reNative'],
     'isRegExp': ['objectTypes'],
     'keys': ['reNative'],
+    'memoize': ['keyPrefix'],
     'reEscapedHtml': ['htmlUnescapes'],
+    'releaseArray': ['arrayPool', 'maxPoolSize'],
+    'releaseObject': ['maxPoolSize', 'objectPool'],
     'reUnescapedHtml': ['htmlEscapes'],
     'setBindData': ['reNative'],
     'support': ['reNative'],
@@ -566,6 +577,7 @@
   /** List of private functions */
   var privateFuncs = [
     'baseClone',
+    'baseCreateCallback',
     'baseEach',
     'baseFlatten',
     'baseIndexOf',
@@ -752,10 +764,10 @@
   }
 
   /**
-   * Creates modules for each of the specified `identifiers`.
+   * Creates modules based on the build state passed.
    *
    * @private
-   * @param {Object} state An array identifiers to modularize.
+   * @param {Object} state The build state object.
    */
   function buildModule(state) {
     var buildFuncs = state.buildFuncs,
@@ -1614,8 +1626,8 @@
 
     });
 
-    // remove `__bindData__` logic and `setBindData` function calls from `_.createCallback`
-    source = source.replace(matchFunction(source, 'createCallback'), function(match) {
+    // remove `__bindData__` logic and `setBindData` function calls from `baseCreateCallback`
+    source = source.replace(matchFunction(source, 'baseCreateCallback'), function(match) {
       return match
         .replace(/(?:\s*\/\/.*)*\n( *)var bindData *=[\s\S]+?\n\1}/, '')
         .replace(/(?:\s*\/\/.*)*\n( *)if *\(bindData[\s\S]+?\n\1}/, '');
@@ -1728,7 +1740,18 @@
     source = removeFunction(source, 'getIndexOf');
 
     // replace all `getIndexOf` calls with `baseIndexOf`
-    source = source.replace(/\bgetIndexOf\(\)/g, 'baseIndexOf');
+    _.each(['baseUniq', 'contains', 'difference', 'intersection', 'omit'], function(funcName) {
+      source = source.replace(matchFunction(source, funcName), function(match) {
+        return match.replace(/\bgetIndexOf\(\)/g, 'baseIndexOf');
+      });
+    });
+
+    // simplify `isLarge` assignments
+    _.each(['baseUniq', 'difference'], function(funcName) {
+      source = source.replace(matchFunction(source, funcName), function(match) {
+        return match.replace(/\b(largeArraySize).+?baseIndexOf\b/g, '$1');
+      });
+    });
 
     return source;
   }
@@ -2146,8 +2169,8 @@
       return match.replace(/^ *if *\(support\.unindexedChars[^}]+}\n+/m, '');
     });
 
-    // remove `support.unindexedChars` from `_.reduceRight`
-    source = source.replace(matchFunction(source, 'reduceRight'), function(match) {
+    // remove `support.unindexedChars` from `_.forEachRight`
+    source = source.replace(matchFunction(source, 'forEachRight'), function(match) {
       return match.replace(/}\s*else if *\(support\.unindexedChars[^}]+/, '');
     });
 
@@ -2723,7 +2746,7 @@
           });
         }
         if (isLegacy || isMobile || isUnderscore) {
-          _.each(['createBound', 'createCallback'], function(funcName) {
+          _.each(['baseCreateCallback', 'createBound'], function(funcName) {
             _.pull(funcDepMap[funcName], 'setBindData');
           });
         }
@@ -2782,19 +2805,12 @@
             }
           });
 
-          _.each(['clone', 'isEqual', 'omit', 'pick'], function(funcName) {
-            if (funcName == 'isEqual') {
-              if (isLodash('baseIsEqual') || isLodash('isEqual')) {
-                return;
-              }
-            }
-            if (funcName == 'clone') {
-              if (isLodash('baseClone') || isLodash('clone') || isLodash('cloneDeep')) {
-                return;
-              }
-            }
-            if (!isLodash(funcName)) {
-              _.pull(funcDepMap[funcName], 'createCallback');
+          _.each(['isEqual', 'omit', 'pick'], function(funcName) {
+            if (funcName == 'isEqual'
+                  ? (!isLodash('baseIsEqual') && !isLodash('isEqual'))
+                  : !isLodash(funcName)
+                ) {
+              _.pull(funcDepMap[funcName], 'baseCreateCallback', 'createCallback');
             }
           });
 
@@ -2818,8 +2834,8 @@
               var deps = _.pull(funcDepMap[funcName], 'createIterator');
               _.pull(varDepMap[funcName] || (varDepMap[funcName] = []), 'defaultsIteratorOptions', 'eachIteratorOptions', 'forOwnIteratorOptions').push('objectTypes');
 
-              if (funcName != 'shimKeys') {
-                deps.push('createCallback');
+              if (funcName != 'defaults' && funcName != 'shimKeys') {
+                deps.push('baseCreateCallback');
               }
               if (funcName != 'forIn' && funcName != 'shimKeys') {
                 deps.push('keys');
@@ -2882,7 +2898,6 @@
           }
         }
         if (isModularize) {
-          funcDepMap.createIterator.push('createCallback');
           _.forOwn(funcDepMap, function(deps, funcName) {
             if (_.contains(deps, 'getIndexOf')) {
               _.pull(deps, 'getIndexOf').push('baseIndexOf');
@@ -3061,7 +3076,7 @@
               '  var index = -1,',
               '      length = collection ? collection.length : 0;',
               '',
-              "  callback = callback && typeof thisArg == 'undefined' ? callback : lodash.createCallback(callback, thisArg, 3);",
+              "  callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);",
               "  if (typeof length == 'number') {",
               '    while (++index < length) {',
               '      if (callback(collection[index], index, collection) === false) {',
@@ -4215,11 +4230,6 @@
         // replace `_` use in `_.templateSettings.imports`
         source = source.replace(matchVar(source, 'templateSettings'), function(match) {
           return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
-        });
-
-        // replace `lodash` with `createCallback` in `createIterator`
-        source = source.replace(matchFunction(source, 'createIterator'), function(match) {
-          return match.replace(/\blodash\b/g, 'createCallback');
         });
 
         // remove unneeded variable dependencies

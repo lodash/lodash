@@ -10,6 +10,7 @@
     'args',
     'argsIndex',
     'argsLength',
+    'baseCreateCallback',
     'callback',
     'className',
     'collection',

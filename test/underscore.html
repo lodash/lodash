@@ -31,7 +31,7 @@
 				    push = arrayProto.push,
 				    slice = arrayProto.slice;
 
-				if (lodash().each().__chain__) {
+				if (!lodash().map()) {
 					return;
 				}
 				lodash.mixin = function(object) {

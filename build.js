@@ -68,7 +68,8 @@
     'tail': 'rest',
     'take': 'first',
     'unique': 'uniq',
-    'unzip': 'zip'
+    'unzip': 'zip',
+    'value': 'wrapperValueOf'
   };
 
   /** Used to associate real names with their aliases */
@@ -87,6 +88,7 @@
     'rest': ['drop', 'tail'],
     'some': ['any'],
     'uniq': ['unique'],
+    'wrapperValueOf': ['value'],
     'zip': ['unzip'],
     'zipObject': ['object']
   };
@@ -110,6 +112,7 @@
     'bind': ['createBound'],
     'bindAll': ['baseFlatten', 'bind', 'functions'],
     'bindKey': ['createBound'],
+    'chain': [],
     'clone': ['baseClone', 'baseCreateCallback'],
     'cloneDeep': ['baseClone', 'baseCreateCallback'],
     'compact': [],
@@ -199,7 +202,7 @@
     'some': ['baseEach', 'createCallback', 'isArray'],
     'sortBy': ['compareAscending', 'createCallback', 'forEach', 'getObject', 'releaseObject'],
     'sortedIndex': ['createCallback', 'identity'],
-    'tap': ['value'],
+    'tap': [],
     'template': ['defaults', 'escape', 'escapeStringChar', 'keys', 'values'],
     'throttle': ['debounce', 'getObject', 'isObject', 'releaseObject'],
     'times': ['baseCreateCallback'],
@@ -209,11 +212,13 @@
     'union': ['baseFlatten', 'baseUniq'],
     'uniq': ['baseUniq', 'createCallback'],
     'uniqueId': [],
-    'value': ['baseEach', 'forOwn', 'isArray', 'lodash', 'mixin', 'lodashWrapper'],
     'values': ['keys'],
     'where': ['filter'],
     'without': ['difference'],
     'wrap': [],
+    'wrapperChain': [],
+    'wrapperToString': [],
+    'wrapperValueOf': ['baseEach', 'forOwn', 'lodashWrapper', 'wrapperChain', 'wrapperToString'],
     'zip': ['max', 'pluck'],
     'zipObject': [],
 
@@ -243,7 +248,7 @@
     'isNode': [],
     'iteratorTemplate': [],
     'lodash': ['lodashWrapper'],
-    'lodashWrapper': ['wrapperChain', 'wrapperToString', 'wrapperValueOf'],
+    'lodashWrapper': [],
     'noop': [],
     'releaseArray': [],
     'releaseObject': [],
@@ -252,12 +257,8 @@
     'shimKeys': ['createIterator'],
     'slice': [],
     'unescapeHtmlChar': [],
-    'wrapperChain': [],
-    'wrapperToString': [],
-    'wrapperValueOf': [],
 
-    // functions used by the `backbone` and `underscore` builds
-    'chain': ['value'],
+    // used by the `backbone` and `underscore` builds
     'findWhere': ['where']
   };
 
@@ -348,7 +349,9 @@
     'Chaining': [
       'chain',
       'tap',
-      'value'
+      'wrapperChain',
+      'wrapperToString',
+      'wrapperValueOf'
     ],
     'Collections': [
       'at',
@@ -506,7 +509,9 @@
     'uniqueId',
     'value',
     'values',
-    'without'
+    'without',
+    'wrapperChain',
+    'wrapperValueOf'
   ];
 
   /** List of all function categories */
@@ -607,8 +612,7 @@
     'shimKeys',
     'slice',
     'unescapeHtmlChar',
-    'wrapperToString',
-    'wrapperValueOf'
+    'wrapperToString'
   ];
 
   /** List of all property dependencies */
@@ -748,16 +752,20 @@
       ].join('\n' + indent);
     });
 
-    // move `mixin(lodash)` to after the method assignments
-    source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
+    // move `mixin(lodash)`
     source = source.replace(getMethodAssignments(source), function(match) {
-      var indent = /^ *(?=lodash\.)/m.exec(match)[0];
-      return match + [
-        '',
-        '// add functions to `lodash.prototype`',
-        'mixin(lodash);',
-        ''
-      ].join('\n' + indent);
+      // remove `mixin(lodash)`
+      match = match.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
+
+      // insert `mixin(lodash)` before `_.VERSION`
+      return match.replace(/(?:\n *\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n( *)lodash\.VERSION/, function(match, indent) {
+        return [
+          '',
+          '// add functions to `lodash.prototype`',
+          'mixin(lodash);',
+          match
+        ].join('\n' + indent);
+      });
     });
 
     return source;
@@ -1336,11 +1344,7 @@
    * @returns {String} Returns the method assignments snippet.
    */
   function getMethodAssignments(source) {
-    var result = source.match(RegExp(
-      '(?:\\n\\n(?:\\s*//.*)*\\s*lodash\\.\\w+ *=[\\s\\S]+?)?' +
-      multilineComment +
-      ' *lodash\\.VERSION *=[\\s\\S]+?;\\n'
-    ));
+    var result = source.match(/\n\n(?:\s*\/\/.*)*\s*lodash\.\w+ *=[\s\S]+lodash\.\w+ *=.+/);
     return result ? result[0] : '';
   }
 
@@ -1825,12 +1829,26 @@
    */
   function removeLodashWrapper(source) {
     source = removeFunction(source, 'lodashWrapper');
+    source = removeSpliceObjectsFix(source);
 
     // remove `lodashWrapper.prototype` assignment
     source = source.replace(/(?:\s*\/\/.*)*\n *lodashWrapper\.prototype *=.+/, '');
 
     // replace `new lodashWrapper` with `new lodash`
     source = source.replace(/\bnew lodashWrapper\b/g, 'new lodash');
+
+    // remove all `lodash.prototype` additions
+    source = source
+      .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '')
+      .replace(/(?:\s*\/\/.*)*\n( *)(?:baseEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
+      .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype\.[\s\S]+?;/g, '');
+
+    // replace `lodash` with a simpler version
+    source = replaceFunction(source, 'lodash', [
+      'function lodash() {',
+      '  // no operation performed',
+      '}'
+    ].join('\n'));
 
     // remove `lodashWrapper` from `_.mixin`
     source = source.replace(matchFunction(source, 'mixin'), function(match) {
@@ -2764,6 +2782,9 @@
           if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
             _.pull(funcDepMap.clone, 'baseClone').push('assign', 'isArray', 'isObject');
           }
+          if (!isLodash('chain')) {
+            _.pull(funcDepMap.wrapperValueOf, 'wrapperToString');
+          }
           if (!isLodash('contains')) {
             _.pull(funcDepMap.contains, 'isString');
           }
@@ -2834,6 +2855,12 @@
               }
             }
           });
+
+          _.forOwn(varDepMap, function(deps, funcName) {
+            if (!isLodash(funcName)) {
+              _.pull(deps, 'arrayPool', 'largeArraySize', 'maxPoolSize', 'objectPool');
+            }
+          });
         }
         if (isModern || isUnderscore) {
           _.each(['assign', 'baseEach', 'defaults', 'forIn', 'forOwn', 'shimKeys'], function(funcName) {
@@ -2883,7 +2910,7 @@
             });
           }
           if (!isMobile) {
-            _.each(['baseClone', 'transform', 'value'], function(funcName) {
+            _.each(['baseClone', 'transform', 'wrapperValueOf'], function(funcName) {
               _.pull(funcDepMap[funcName], 'baseEach').push('forEach');
             });
 
@@ -2905,6 +2932,8 @@
           }
         }
         if (isModularize) {
+          funcDepMap.wrapperValueOf.length = 0;
+
           _.forOwn(funcDepMap, function(deps, funcName) {
             if (_.contains(deps, 'getIndexOf')) {
               _.pull(deps, 'getIndexOf').push('baseIndexOf');
@@ -3957,7 +3986,6 @@
           });
         }
         if (isModularize) {
-          source = removeAssignments(source);
           source = removeGetIndexOf(source);
 
           // replace the `lodash.templateSettings` property assignment with a variable assignment
@@ -3977,13 +4005,6 @@
           // replace `_` use in `_.templateSettings.imports`
           source = source.replace(matchProp(source, 'templateSettings'), function(match) {
             return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
-          });
-
-          // remove function aliases
-          _.each(buildFuncs, function(funcName) {
-            _.each(getAliases(funcName, funcDepMap), function(alias) {
-              source = removeFunction(source, alias);
-            });
           });
         }
       }
@@ -4071,28 +4092,12 @@
 
     // modify/remove references to removed functions/variables
     if (!isTemplate) {
-      if (isExcluded('lodashWrapper')) {
-        source = removeLodashWrapper(source);
-
-        // simplify the `lodash` function
-        source = replaceFunction(source, 'lodash', [
-          'function lodash() {',
-          '  // no operation performed',
-          '}'
-        ].join('\n'));
-      }
-      if (isExcluded('mixin') || isExcluded('value')) {
+      if (isExcluded('mixin')) {
         // remove `_.mixin` call
         source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
       }
-      if (isExcluded('value')) {
-        source = removeSpliceObjectsFix(source);
-
-        // remove all `lodash.prototype` additions
-        source = source
-          .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\n( *)(?:baseEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
-          .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype\.[\s\S]+?;/g, '');
+      if (isExcluded('lodashWrapper')) {
+        source = removeLodashWrapper(source);
       }
       if (!isNoDep) {
         if (isExcluded('bind')) {
@@ -4122,9 +4127,6 @@
             source = removeFromGetObject(source, prop);
           });
         }
-        if (isExcluded('value')) {
-          source = removeSupportSpliceObjects(source);
-        }
         if (!/\.(?:enumErrorProps|nonEnumShadows) *=/.test(source)) {
           source = removeFromCreateIterator(source, 'errorClass');
           source = removeFromCreateIterator(source, 'errorProto');
@@ -4149,6 +4151,7 @@
           }
         });
       }
+
       // remove functions from the build
       allFuncs.forEach(function(funcName) {
         if (!_.contains(buildFuncs, funcName) &&
@@ -4243,12 +4246,9 @@
       }());
 
       if (isNoDep) {
-        source = removeAssignments(source);
-        source = removeGetIndexOf(source);
-        source = removeLodashWrapper(source);
-
         if (isExcluded('lodash')) {
           source = removeFunction(source, 'lodash');
+          source = removeAssignments(source);
         }
         // remove unneeded variable dependencies
         _.each(varDependencies, function(varName) {

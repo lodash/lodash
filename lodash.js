@@ -582,7 +582,7 @@
      * `sortedIndex`, `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
      *
      * The wrapper functions `first` and `last` return wrapped values when `n` is
-     * passed, otherwise they return unwrapped values.
+     * provided, otherwise they return unwrapped values.
      *
      * @name _
      * @constructor
@@ -1417,14 +1417,14 @@
 
     /**
      * Creates a function that, when called, invokes `func` with the `this` binding
-     * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
+     * of `thisArg` and prepends any `partialArgs` to the arguments provided to the
      * bound function.
      *
      * @private
      * @param {Function|String} func The function to bind or the method name.
      * @param {Mixed} thisArg The `this` binding of `func`.
-     * @param {Array} partialArgs An array of arguments to be prepended to those passed to the new function.
-     * @param {Array} partialRightArgs An array of arguments to be appended to those passed to the new function.
+     * @param {Array} partialArgs An array of arguments to be prepended to those provided to the new function.
+     * @param {Array} partialRightArgs An array of arguments to be appended to those provided to the new function.
      * @param {Boolean} [isPartial=false] A flag to indicate performing only partial application.
      * @param {Boolean} [isAlt=false] A flag to indicate `_.bindKey` or `_.partialRight` behavior.
      * @returns {Function} Returns the new bound function.
@@ -1980,7 +1980,7 @@
 
     /**
      * This method is like `_.findIndex`, except that it returns the key of the
-     * element that passes the callback check, instead of the element itself.
+     * first element that passes the callback check, instead of the element itself.
      *
      * @static
      * @memberOf _
@@ -3044,7 +3044,7 @@
      *  per iteration. If a property name or object is provided, it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @returns {Boolean} Returns `true` if all elements pass the callback check,
+     * @returns {Boolean} Returns `true` if all elements passed the callback check,
      *  else `false`.
      * @example
      *
@@ -3407,7 +3407,7 @@
     /**
      * Invokes the method named by `methodName` on each element in the `collection`,
      * returning an array of the results of each invoked method. Additional arguments
-     * will be passed to each invoked method. If `methodName` is a function, it will
+     * will be provided to each invoked method. If `methodName` is a function, it will
      * be invoked for, and `this` bound to, each element in the `collection`.
      *
      * @static
@@ -3660,7 +3660,7 @@
      * Reduces a `collection` to a value which is the accumulated result of running
      * each element in the `collection` through the `callback`, where each successive
      * `callback` execution consumes the return value of the previous execution.
-     * If `accumulator` is not passed, the first element of the `collection` will be
+     * If `accumulator` is not provided, the first element of the `collection` will be
      * used as the initial `accumulator` value. The `callback` is bound to `thisArg`
      * and invoked with four arguments; (accumulator, value, index|key, collection).
      *
@@ -3919,7 +3919,7 @@
      *  per iteration. If a property name or object is provided, it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {Mixed} [thisArg] The `this` binding of `callback`.
-     * @returns {Boolean} Returns `true` if any element passes the callback check,
+     * @returns {Boolean} Returns `true` if any element passed the callback check,
      *  else `false`.
      * @example
      *
@@ -4098,8 +4098,8 @@
     }
 
     /**
-     * Creates an array excluding all values of the passed-in arrays using
-     * strict equality for comparisons, i.e. `===`.
+     * Creates an array excluding all values of the provided arrays using strict
+     * equality for comparisons, i.e. `===`.
      *
      * @static
      * @memberOf _
@@ -4143,7 +4143,7 @@
     }
 
     /**
-     * This method is like `_.find`, except that it returns the index of the
+     * This method is like `_.find`, except that it returns the index of the first
      * element that passes the callback check, instead of the element itself.
      *
      * @static
@@ -4451,7 +4451,7 @@
     }
 
     /**
-     * Creates an array of unique values present in all passed-in arrays using
+     * Creates an array of unique values present in all provided arrays using
      * strict equality for comparisons, i.e. `===`.
      *
      * @static
@@ -4621,7 +4621,7 @@
     }
 
     /**
-     * Removes all passed values from the given array using strict equality for
+     * Removes all provided values from the given array using strict equality for
      * comparisons, i.e. `===`.
      *
      * @static
@@ -4846,8 +4846,8 @@
     }
 
     /**
-     * Creates an array of unique values, in order, of the passed-in arrays
-     * using strict equality for comparisons, i.e. `===`.
+     * Creates an array of unique values, in order, of the provided arrays using
+     * strict equality for comparisons, i.e. `===`.
      *
      * @static
      * @memberOf _
@@ -4921,7 +4921,7 @@
     }
 
     /**
-     * Creates an array excluding all passed values using strict equality for
+     * Creates an array excluding all provided values using strict equality for
      * comparisons, i.e. `===`.
      *
      * @static
@@ -5033,7 +5033,7 @@
     /**
      * Creates a function that, when called, invokes `func` with the `this`
      * binding of `thisArg` and prepends any additional `bind` arguments to those
-     * passed to the bound function.
+     * provided to the bound function.
      *
      * @static
      * @memberOf _
@@ -5094,7 +5094,7 @@
 
     /**
      * Creates a function that, when called, invokes the method at `object[key]`
-     * and prepends any additional `bindKey` arguments to those passed to the bound
+     * and prepends any additional `bindKey` arguments to those provided to the bound
      * function. This method differs from `_.bind` by allowing bound functions to
      * reference methods that will be redefined or don't yet exist.
      * See http://michaux.ca/articles/lazy-function-definition-pattern.
@@ -5131,7 +5131,7 @@
     }
 
     /**
-     * Creates a function that is the composition of the passed functions,
+     * Creates a function that is the composition of the provided functions,
      * where each function consumes the return value of the function that follows.
      * For example, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
      * Each function is executed with the `this` binding of the composed function.
@@ -5364,7 +5364,7 @@
 
     /**
      * Defers executing the `func` function until the current call stack has cleared.
-     * Additional arguments will be passed to `func` when it is invoked.
+     * Additional arguments will be provided to `func` when it is invoked.
      *
      * @static
      * @memberOf _
@@ -5388,7 +5388,7 @@
 
     /**
      * Executes the `func` function after `wait` milliseconds. Additional arguments
-     * will be passed to `func` when it is invoked.
+     * will be provided to `func` when it is invoked.
      *
      * @static
      * @memberOf _
@@ -5410,11 +5410,11 @@
 
     /**
      * Creates a function that memoizes the result of `func`. If `resolver` is
-     * passed, it will be used to determine the cache key for storing the result
-     * based on the arguments passed to the memoized function. By default, the first
-     * argument passed to the memoized function is used as the cache key. The `func`
-     * is executed with the `this` binding of the memoized function. The result
-     * cache is exposed as the `cache` property on the memoized function.
+     * provided, it will be used to determine the cache key for storing the result
+     * based on the arguments provided to the memoized function. By default, the
+     * first argument provided to the memoized function is used as the cache key.
+     * The `func` is executed with the `this` binding of the memoized function.
+     * The result cache is exposed as the `cache` property on the memoized function.
      *
      * @static
      * @memberOf _
@@ -5477,7 +5477,7 @@
 
     /**
      * Creates a function that, when called, invokes `func` with any additional
-     * `partial` arguments prepended to those passed to the new function. This
+     * `partial` arguments prepended to those provided to the new function. This
      * method is similar to `_.bind`, except it does **not** alter the `this` binding.
      *
      * @static
@@ -5499,7 +5499,7 @@
 
     /**
      * This method is like `_.partial`, except that `partial` arguments are
-     * appended to those passed to the new function.
+     * appended to those provided to the new function.
      *
      * @static
      * @memberOf _
@@ -5581,8 +5581,8 @@
 
     /**
      * Creates a function that passes `value` to the `wrapper` function as its
-     * first argument. Additional arguments passed to the function are appended
-     * to those passed to the `wrapper` function. The `wrapper` is executed with
+     * first argument. Additional arguments provided to the function are appended
+     * to those provided to the `wrapper` function. The `wrapper` is executed with
      * the `this` binding of the created function.
      *
      * @static
@@ -5629,7 +5629,7 @@
     }
 
     /**
-     * This method returns the first argument passed to it.
+     * This method returns the first argument provided to it.
      *
      * @static
      * @memberOf _

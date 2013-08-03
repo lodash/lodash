@@ -3821,6 +3821,12 @@
                 .replace(/(\n *)}/, ",$1  '/': '&#x2F;'$1}");
             });
           }
+          // remove support for a `step` of `0` in `_.range`
+          if (!isLodash('range')) {
+            source = source.replace(matchFunction(source, 'range'), function(match) {
+              return match.replace(/typeof *step[^:]+:/, '+step ||');
+            });
+          }
 
           // replace `slice` with `nativeSlice.call`
           _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {

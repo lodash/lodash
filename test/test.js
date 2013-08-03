@@ -218,7 +218,7 @@
       ok(_() instanceof _);
     });
 
-    test('should return passed `lodash` instances', function() {
+    test('should return provided `lodash` instances', function() {
       var wrapped = _(false);
       equal(_(wrapped), wrapped);
     });
@@ -250,7 +250,7 @@
       deepEqual(actual, ['a', 'c', undefined]);
     });
 
-    test('should return an empty array when no keys are passed', function() {
+    test('should return an empty array when no keys are provided', function() {
       deepEqual(_.at(['a', 'b', 'c']), []);
     });
 
@@ -598,7 +598,7 @@
   QUnit.module('lodash.countBy');
 
   (function() {
-    test('should use `_.identity` when no `callback` is passed', function() {
+    test('should use `_.identity` when no `callback` is provided', function() {
       var actual = _.countBy([4, 6, 6]);
       deepEqual(actual, { '4': 1, '6':  2 });
     });
@@ -856,7 +856,7 @@
       equal(_.escape("'"), "&#39;");
     });
 
-    test('should return an empty string when passed `null` or `undefined`', function() {
+    test('should return an empty string when provided `null` or `undefined`', function() {
       equal(_.escape(null), '');
       equal(_.escape(undefined), '');
     });
@@ -1048,7 +1048,7 @@
       ok(actual instanceof _);
     });
 
-    test('should not chain when no arguments are passed', function() {
+    test('should not chain when arguments are not provided', function() {
       var actual = _(array).first();
       strictEqual(actual, 1);
     });
@@ -1446,7 +1446,7 @@
   QUnit.module('lodash.groupBy');
 
   (function() {
-    test('should use `_.identity` when no `callback` is passed', function() {
+    test('should use `_.identity` when no `callback` is provided', function() {
       var actual = _.groupBy([4, 6, 6]);
       deepEqual(actual, { '4': [4], '6':  [6, 6] });
     });
@@ -1493,7 +1493,7 @@
   QUnit.module('lodash.indexBy');
 
   (function() {
-    test('should use `_.identity` when no `callback` is passed', function() {
+    test('should use `_.identity` when no `callback` is provided', function() {
       var actual = _.indexBy([4, 6, 6]);
       deepEqual(actual, { '4': 4, '6': 6 });
     });
@@ -2141,7 +2141,7 @@
       ok(actual instanceof _);
     });
 
-    test('should not chain when no arguments are passed', function() {
+    test('should not chain when arguments are not provided', function() {
       var actual = _(array).last();
       equal(actual, 3);
     });
@@ -2244,7 +2244,7 @@
   QUnit.module('lodash.max and lodash.min chaining');
 
   _.forEach(['max', 'min'], function(methodName) {
-    test('`_.' + methodName + '` should resolve the correct value when passed an array containing only one value', function() {
+    test('`_.' + methodName + '` should resolve the correct value when provided an array containing only one value', function() {
       var actual = _([40])[methodName]().value();
       strictEqual(actual, 40);
     });
@@ -2719,7 +2719,7 @@
   QUnit.module('lodash.random');
 
   (function() {
-    test('should return `0` or `1` when no arguments are passed', function() {
+    test('should return `0` or `1` when arguments are not provided', function() {
       var actual = _.random();
       ok(actual === 0 || actual === 1);
     });
@@ -2878,7 +2878,7 @@
   QUnit.module('lodash.result');
 
   (function() {
-    test('should return `undefined` when passed a falsey `object` argument', function() {
+    test('should return `undefined` when provided a falsey `object` argument', function() {
       strictEqual(_.result(), undefined);
     });
   }());
@@ -3067,7 +3067,7 @@
       deepEqual(actual, collection);
     });
 
-    test('should use `_.identity` when no `callback` is passed', function() {
+    test('should use `_.identity` when no `callback` is provided', function() {
       var actual = _.sortBy([3, 2, 1]);
       deepEqual(actual, [1, 2, 3]);
     });
@@ -3593,7 +3593,7 @@
       equal(_.unescape(_.escape(unescaped)), unescaped);
     });
 
-    test('should return an empty string when passed `null` or `undefined`', function() {
+    test('should return an empty string when provided `null` or `undefined`', function() {
       equal(_.unescape(null), '');
       equal(_.unescape(undefined), '');
     });
@@ -3604,7 +3604,7 @@
   QUnit.module('lodash.union');
 
   (function() {
-    test('should produce correct results when passed a falsey `array` argument', function() {
+    test('should produce correct results when provided a falsey `array` argument', function() {
       var expected = [1, 2, 3],
           actual = _.union(null, expected);
 
@@ -3722,7 +3722,7 @@
       deepEqual(_.where(collection, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1, 'b': 2 }]);
     });
 
-    test('should return an empty array when passed an empty `properties` object', function() {
+    test('should return an empty array when provided an empty `properties` object', function() {
       deepEqual(_.where(array, {}), []);
     });
 

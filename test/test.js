@@ -2785,6 +2785,10 @@
       var actual = [func('0',1), func('1'), func(0, 1, '1')];
       deepEqual(actual, [[0], [0], [0]]);
     });
+
+    test('should support a `step` of `0`', function() {
+      deepEqual(_.range(1, 4, 0), [1, 1, 1]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

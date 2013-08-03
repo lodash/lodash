@@ -4682,12 +4682,15 @@
      * _.range(0, -10, -1);
      * // => [0, -1, -2, -3, -4, -5, -6, -7, -8, -9]
      *
+     * _.range(1, 4, 0);
+     * // => [1, 1, 1]
+     *
      * _.range(0);
      * // => []
      */
     function range(start, end, step) {
       start = +start || 0;
-      step = isNumber(step) ? step : 1;
+      step = typeof step == 'number' ? step : 1;
 
       if (end == null) {
         end = start;

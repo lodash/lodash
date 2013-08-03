@@ -2388,7 +2388,15 @@
     });
 
     test('should accept a function `object` argument', function() {
-      var lodash = _.runInContext();
+      function lodash(value) {
+        if (!(this instanceof lodash)) {
+          return new lodash(value);
+        }
+        this.__wrapped__ = value;
+      }
+
+      lodash.prototype.value = _.prototype.value;
+
       _.mixin(lodash, { 'a': function(a) { return a[0]; } });
       strictEqual(lodash(['a']).a().value(), 'a');
     });
@@ -2950,16 +2958,19 @@
 
   (function() {
     test('should not require a fully populated `context` object', function() {
-      var pass = false;
+      if (!isModularize) {
+        var lodash = _.runInContext({
+          'setTimeout': function(callback) {
+            callback();
+          }
+        });
 
-      var lodash = _.runInContext({
-        'setTimeout': function(callback) {
-          callback();
-        }
-      });
-
-      lodash.delay(function() { pass = true; }, 32);
-      ok(pass);
+        var pass = false;
+        lodash.delay(function() { pass = true; }, 32);
+        ok(pass);
+      } else {
+        skipTest();
+      }
     });
   }());
 
@@ -3288,24 +3299,29 @@
     });
 
     test('should clear timeout when `func` is called', function() {
-      var callCount = 0,
-          dateCount = 0;
+      if (!isModularize) {
+        var callCount = 0,
+            dateCount = 0;
 
-      var lodash = _.runInContext(_.assign({}, window, {
-        'Date': function() {
-          return ++dateCount < 3 ? new Date : Object(Infinity);
-        }
-      }));
+        var lodash = _.runInContext(_.assign({}, window, {
+          'Date': function() {
+            return ++dateCount < 3 ? new Date : Object(Infinity);
+          }
+        }));
 
-      var throttled = lodash.throttle(function() {
-        callCount++;
-      }, 32);
+        var throttled = lodash.throttle(function() {
+          callCount++;
+        }, 32);
 
-      throttled();
-      throttled();
-      throttled();
+        throttled();
+        throttled();
+        throttled();
 
-      equal(callCount, 2);
+        equal(callCount, 2);
+      }
+      else {
+        skipTest();
+      }
     });
 
     asyncTest('supports recursive calls', function() {

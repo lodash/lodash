@@ -112,7 +112,7 @@
     'bind': ['createBound'],
     'bindAll': ['baseFlatten', 'bind', 'functions'],
     'bindKey': ['createBound'],
-    'chain': [],
+    'chain': ['lodashWrapper'],
     'clone': ['baseClone', 'baseCreateCallback'],
     'cloneDeep': ['baseClone', 'baseCreateCallback'],
     'compact': [],
@@ -218,7 +218,7 @@
     'wrap': [],
     'wrapperChain': [],
     'wrapperToString': [],
-    'wrapperValueOf': ['baseEach', 'forOwn', 'lodashWrapper', 'wrapperChain', 'wrapperToString'],
+    'wrapperValueOf': ['baseEach', 'forOwn', 'mixin', 'wrapperChain', 'wrapperToString'],
     'zip': ['max', 'pluck'],
     'zipObject': [],
 
@@ -247,7 +247,7 @@
     'getObject': [],
     'isNode': [],
     'iteratorTemplate': [],
-    'lodash': ['lodashWrapper'],
+    'lodash': ['isArray', 'lodashWrapper'],
     'lodashWrapper': [],
     'noop': [],
     'releaseArray': [],
@@ -348,6 +348,7 @@
     ],
     'Chaining': [
       'chain',
+      'lodash',
       'tap',
       'wrapperChain',
       'wrapperToString',
@@ -487,6 +488,7 @@
     'keys',
     'last',
     'lastIndexOf',
+    'lodash',
     'map',
     'max',
     'min',
@@ -576,7 +578,8 @@
     'pull',
     'remove',
     'runInContext',
-    'transform'
+    'transform',
+    'wrapperToString'
   ];
 
   /** List of private functions */
@@ -602,7 +605,6 @@
     'getObject',
     'isNode',
     'iteratorTemplate',
-    'lodash',
     'lodashWrapper',
     'noop',
     'releaseArray',
@@ -611,8 +613,7 @@
     'shimIsPlainObject',
     'shimKeys',
     'slice',
-    'unescapeHtmlChar',
-    'wrapperToString'
+    'unescapeHtmlChar'
   ];
 
   /** List of all property dependencies */
@@ -772,7 +773,7 @@
   }
 
   /**
-   * Creates modules based on the build state passed.
+   * Creates modules based on the provided build state.
    *
    * @private
    * @param {Object} state The build state object.
@@ -800,7 +801,7 @@
         varDepMap = state.varDepMap;
 
     var empty = [],
-        identifiers = buildFuncs.concat(includeProps, includeVars),
+        identifiers = _.pull(buildFuncs.concat(includeProps, includeVars), 'lodash'),
         sep = '/';
 
     var categories = _.uniq(_.compact(identifiers.map(function(identifier) {
@@ -813,9 +814,6 @@
     };
 
     var getDepPath = function(dep, fromPath) {
-      if (dep == 'require') {
-        return dep;
-      }
       var toPath = getPath(dep),
           relative = path.relative(fromPath || '', toPath).replace(RegExp(path.sepEscaped, 'g'), sep);
 
@@ -883,6 +881,80 @@
       build(state);
     });
 
+    // create lodash module
+    (function() {
+      var categoryDeps =  _.invoke(categories, 'toLowerCase'),
+          identifier = 'lodash',
+          modulePath = getPath(identifier);
+
+      var deps = getDependencies(identifier, funcDepMap, true)
+        .concat(propDepMap[identifier] || arrayRef)
+        .concat(varDepMap[identifier] || arrayRef)
+        .sort();
+
+      var categoryDepPaths = categoryDeps.map(function(dep) { return './' + dep; }),
+          depArgs = categoryDeps.concat(deps).join(', '),
+          depPaths = categoryDepPaths.concat(getDepPaths(deps, modulePath)),
+          iife = [];
+
+      depPaths = '[' + (depPaths.length ? "'" + depPaths.join("', '") + "'" : '') + '], ';
+
+      if (isAMD) {
+        iife.push(
+          'define(' + depPaths + 'function(' + depArgs + ') {',
+          '%output%',
+          '  return lodash;',
+          '});'
+        );
+      }
+      state.iife = iife.join('\n');
+      state.buildFuncs = state.includeFuncs = [identifier];
+      state.includeProps = state.includeVars = empty;
+      state.outputPath = path.join(outputPath, identifier + '.js');
+
+      build(state, function(data) {
+        var source = data.source;
+
+        // add category namespaces to each lodash function assignment
+        source = source.replace(/(lodash(?:\.prototype)?\.\w+\s*=\s*)(\w+)/g, function(match, prelude, identifier) {
+          return prelude + getCategory(identifier, funcDepMap).toLowerCase() + '.' + identifier;
+        });
+
+        if (_.contains(identifiers, 'mixin')) {
+          source = source.replace(/^ *lodashWrapper\.prototype\s*=[^;]+;\n/m, function(match) {
+            return match + [
+              '',
+              '  // wrap `_.mixin` so it works when provided only one argument',
+              '  mixin = (function(fn) {',
+              '    return function(object, source) {',
+              '      if (!source) {',
+              '        source = object;',
+              '        object = lodash;',
+              '      }',
+              '      return fn(object, source);',
+              '    };',
+              '  }(mixin));',
+              ''
+            ].join('\n');
+          });
+        }
+
+        source = source.replace(/^ *return lodash;$/m, function(match) {
+          var prelude = '';
+          if (_.contains(identifiers, 'support')) {
+            prelude += '  lodash.support = support;\n';
+          }
+          if (_.contains(identifiers, 'templateSettings')) {
+            prelude += '  (lodash.templateSettings = utilities.templateSettings).imports._ = lodash;\n';
+          }
+          return prelude + match;
+        });
+
+        data.source = source;
+        defaultBuildCallback(data);
+      });
+    }());
+
     // clear state
     state.buildFuncs = state.includeFuncs = state.includeProps = state.includeVars = empty;
 
@@ -907,26 +979,6 @@
       state.outputPath = path.join(outputPath, category.toLowerCase() + '.js');
       build(state);
     });
-
-    // create lodash module
-    (function() {
-      var deps = _.invoke(categories, 'toLowerCase'),
-          depArgs =  deps.join(', '),
-          depPaths = "['" + deps.map(function(dep) { return './' + dep; }).join("', '") + "'], ",
-          iife = [];
-
-      if (isAMD) {
-        iife.push(
-          'define(' + depPaths + 'function(' + depArgs + ') {',
-          '%output%',
-          "  return objects.assign(function lodash() {}, { 'VERSION': '" + _.VERSION + "' }, " + depArgs + ');',
-          '});'
-        );
-      }
-      state.iife = iife.join('\n');
-      state.outputPath = path.join(outputPath, 'lodash.js');
-      build(state);
-    }());
   }
 
   /**
@@ -1217,9 +1269,9 @@
   }
 
   /**
-   * Gets an array of dependencies for a given function name. If passed an array
-   * of dependencies, it will return an array containing the given dependencies
-   * plus any additional detected sub-dependencies.
+   * Gets an array of dependencies for a given function name. If an array of
+   * dependencies is provided, it will return an array containing the given
+   * dependencies plus any additional detected sub-dependencies.
    *
    * @private
    * @param {Array|String} funcName A function name or array of dependencies to query.
@@ -1344,7 +1396,7 @@
    * @returns {String} Returns the method assignments snippet.
    */
   function getMethodAssignments(source) {
-    var result = source.match(/\n\n(?:\s*\/\/.*)*\s*lodash\.\w+ *=[\s\S]+lodash\.\w+ *=.+/);
+    var result = source.match(/\n\n(?:\s*\/\/.*)*\s*lodash\.\w+\s*=[\s\S]+lodash\.\w+\s=.+/);
     return result ? result[0] : '';
   }
 
@@ -1503,7 +1555,7 @@
   function matchProp(source, propName, leadingComments) {
     var result = source.match(RegExp(
       (leadingComments ? multilineComment : '\\n') +
-      '(?: {2}var ' + propName + '\\b.+|(?: *|.*?=\\s*)lodash\\._?' + propName + '\\s*)=[\\s\\S]+?' +
+      '(?: {2,4}var ' + propName + '\\b.+|(?: *|.*?=\\s*)lodash\\._?' + propName + '\\s*)=[\\s\\S]+?' +
       '(?:\\(function[\\s\\S]+?\\([^)]*\\)\\);\\n(?=\\n)|' +
       '[;}]\\n(?=\\n(?!\\s*\\(func)))'
     ));
@@ -1577,6 +1629,37 @@
       // convert aliases to real function names
       return getRealName(identifier, depMap);
     });
+  }
+
+  /**
+   * Removes support for Lo-Dash wrapper chaining in `source`.
+   *
+   * @private
+   * @param {String} source The source to process.
+   * @returns {String} Returns the modified source.
+   */
+  function removeChaining(source) {
+    source = removeSpliceObjectsFix(source);
+
+    // remove all `lodash.prototype` additions
+    source = source
+      .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '')
+      .replace(/(?:\s*\/\/.*)*\n( *)(?:baseEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
+      .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype\.[\s\S]+?;/g, '');
+
+    // replace `lodash` with a simpler version
+    source = replaceFunction(source, 'lodash', [
+      'function lodash() {',
+      '  // no operation performed',
+      '}'
+    ].join('\n'));
+
+    //replace `lodashWrapper` with `lodash` in `_.mixin`
+    source = source.replace(matchFunction(source, 'mixin'), function(match) {
+      return match.replace(/\blodashWrapper\b/, 'lodash');
+    });
+
+    return source;
   }
 
   /**
@@ -1820,45 +1903,6 @@
     return source;
   }
 
-  /**
-   * Removes all `lodashWrapper` references from `source`.
-   *
-   * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
-   */
-  function removeLodashWrapper(source) {
-    source = removeFunction(source, 'lodashWrapper');
-    source = removeSpliceObjectsFix(source);
-
-    // remove `lodashWrapper.prototype` assignment
-    source = source.replace(/(?:\s*\/\/.*)*\n *lodashWrapper\.prototype *=.+/, '');
-
-    // replace `new lodashWrapper` with `new lodash`
-    source = source.replace(/\bnew lodashWrapper\b/g, 'new lodash');
-
-    // remove all `lodash.prototype` additions
-    source = source
-      .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '')
-      .replace(/(?:\s*\/\/.*)*\n( *)(?:baseEach|forEach)\(\['[\s\S]+?\n\1}.+/g, '')
-      .replace(/(?:\s*\/\/.*)*\n *lodash\.prototype\.[\s\S]+?;/g, '');
-
-    // replace `lodash` with a simpler version
-    source = replaceFunction(source, 'lodash', [
-      'function lodash() {',
-      '  // no operation performed',
-      '}'
-    ].join('\n'));
-
-    // remove `lodashWrapper` from `_.mixin`
-    source = source.replace(matchFunction(source, 'mixin'), function(match) {
-      return match
-        .replace(/!source\s*\|\|\s*/g, '')
-        .replace(/(?:\s*\/\/.*)*\n( *)if *\(!source[\s\S]+?\n\1}/, '');
-    });
-
-    return source;
-  }
 
   /**
    * Removes all Lo-Dash assignments from `source`.
@@ -2782,6 +2826,9 @@
           if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
             _.pull(funcDepMap.clone, 'baseClone').push('assign', 'isArray', 'isObject');
           }
+          if (!isLodash('baseIsEqual') && !isLodash('isEqual')) {
+            _.pull(funcDepMap.baseIsEqual, 'isArguments');
+          }
           if (!isLodash('chain')) {
             _.pull(funcDepMap.wrapperValueOf, 'wrapperToString');
           }
@@ -2794,8 +2841,8 @@
           if (!isLodash('isEmpty')) {
             funcDepMap.isEmpty = ['isArray', 'isString'];
           }
-          if (!isLodash('baseIsEqual') && !isLodash('isEqual')) {
-            _.pull(funcDepMap.baseIsEqual, 'isArguments');
+          if (!isLodash('lodash')) {
+            _.pull(funcDepMap.flatten, 'isArray');
           }
           if (!isLodash('pick')){
             _.pull(funcDepMap.pick, 'forIn', 'isObject');
@@ -2932,14 +2979,13 @@
           }
         }
         if (isModularize) {
+          _.pull(funcDepMap.wrapperValueOf, 'wrapperChain', 'wrapperToString');
+          push.apply(funcDepMap.lodash, ['support'].concat(funcDepMap.wrapperValueOf));
           funcDepMap.wrapperValueOf.length = 0;
 
           _.forOwn(funcDepMap, function(deps, funcName) {
             if (_.contains(deps, 'getIndexOf')) {
               _.pull(deps, 'getIndexOf').push('baseIndexOf');
-            }
-            if (_.contains(deps, 'lodash') || _.contains(deps, 'lodashWrapper')) {
-              _.pull(deps, 'lodash', 'lodashWrapper');
             }
           });
         }
@@ -2970,10 +3016,7 @@
           result = _.union(result, plusFuncs);
         }
         if (minusFuncs.length) {
-          result = _.difference(result, isNoDep
-            ? minusFuncs
-            : minusFuncs.concat(getDependants(minusFuncs, funcDepMap))
-          );
+          result = _.difference(result, minusFuncs.concat(getDependants(minusFuncs, funcDepMap)));
         }
         if (isModularize) {
           _.pull(result, 'runInContext');
@@ -3997,12 +4040,17 @@
           // remove all horizontal rule comment separators
           source = source.replace(/^ *\/\*-+\*\/\n/gm, '');
 
+          // remove `lodash` branch in `_.mixin`
+          source = source.replace(matchFunction(source, 'mixin'), function(match) {
+            return match.replace(/(?: *\/\/.*\n)*( *)if *\(!source[\s\S]+?\n\1}/, '');
+          });
+
           // remove debug sourceURL use in `_.template`
           source = source.replace(matchFunction(source, 'template'), function(match) {
             return match.replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
           });
 
-          // replace `_` use in `_.templateSettings.imports`
+          // replace `lodash` use in `_.templateSettings.imports`
           source = source.replace(matchProp(source, 'templateSettings'), function(match) {
             return match.replace(/(:\s*)lodash\b/, "$1{ 'escape': escape }");
           });
@@ -4092,12 +4140,16 @@
 
     // modify/remove references to removed functions/variables
     if (!isTemplate) {
-      if (isExcluded('mixin')) {
+      if (isExcluded('lodash')) {
+        source = removeChaining(source);
+      }
+      if (isExcluded(isNoDep ? 'lodash' : 'mixin')) {
         // remove `_.mixin` call
         source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
       }
-      if (isExcluded('lodashWrapper')) {
-        source = removeLodashWrapper(source);
+      if (isExcluded(isNoDep ? 'lodash' : 'lodashWrapper')) {
+        // remove `lodashWrapper.prototype` assignment
+        source = source.replace(/(?:\s*\/\/.*)*\n *lodashWrapper\.prototype *=.+/, '');
       }
       if (!isNoDep) {
         if (isExcluded('bind')) {
@@ -4121,6 +4173,9 @@
         if (isExcluded('keys')) {
           source = removeKeysOptimization(source);
           source = removeSupportNonEnumArgs(source);
+        }
+        if (isExcluded('lodashWrapper')) {
+          source = removeChaining(source);
         }
         if (isExcluded('throttle')) {
           _.each(['leading', 'maxWait', 'trailing'], function(prop) {
@@ -4247,7 +4302,6 @@
 
       if (isNoDep) {
         if (isExcluded('lodash')) {
-          source = removeFunction(source, 'lodash');
           source = removeAssignments(source);
         }
         // remove unneeded variable dependencies

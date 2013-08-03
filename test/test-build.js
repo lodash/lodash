@@ -117,8 +117,11 @@
     ],
     'Chaining': [
       'chain',
+      'lodash',
       'tap',
-      'value'
+      'wrapperChain',
+      'wrapperToString',
+      'wrapperValueOf'
     ],
     'Collections': [
       'at',
@@ -254,6 +257,7 @@
     'keys',
     'last',
     'lastIndexOf',
+    'lodash',
     'map',
     'max',
     'min',

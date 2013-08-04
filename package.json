@@ -54,7 +54,9 @@
     "build.js",
     "LICENSE.txt",
     "dist/lodash.js",
-    "dist/lodash.underscore.js"
+    "dist/lodash.min.js",
+    "dist/lodash.underscore.js",
+    "dist/lodash.underscore.min.js"
   ],
   "jam": {
     "main": "./dist/lodash.compat.js"

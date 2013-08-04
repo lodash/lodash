@@ -188,7 +188,7 @@
    * `sortedIndex`, `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
    *
    * The wrapper functions `first` and `last` return wrapped values when `n` is
-   * passed, otherwise they return unwrapped values.
+   * provided, otherwise they return unwrapped values.
    *
    * @name _
    * @constructor
@@ -472,14 +472,14 @@
 
   /**
    * Creates a function that, when called, invokes `func` with the `this` binding
-   * of `thisArg` and prepends any `partialArgs` to the arguments passed to the
+   * of `thisArg` and prepends any `partialArgs` to the arguments provided to the
    * bound function.
    *
    * @private
    * @param {Function|String} func The function to bind or the method name.
    * @param {Mixed} thisArg The `this` binding of `func`.
-   * @param {Array} partialArgs An array of arguments to be prepended to those passed to the new function.
-   * @param {Array} partialRightArgs An array of arguments to be appended to those passed to the new function.
+   * @param {Array} partialArgs An array of arguments to be prepended to those provided to the new function.
+   * @param {Array} partialRightArgs An array of arguments to be appended to those provided to the new function.
    * @param {Boolean} [isPartial=false] A flag to indicate performing only partial application.
    * @param {Boolean} [isAlt=false] A flag to indicate `_.bindKey` or `_.partialRight` behavior.
    * @returns {Function} Returns the new bound function.
@@ -1357,7 +1357,7 @@
    *  per iteration. If a property name or object is provided, it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Boolean} Returns `true` if all elements pass the callback check,
+   * @returns {Boolean} Returns `true` if all elements passed the callback check,
    *  else `false`.
    * @example
    *
@@ -1643,7 +1643,7 @@
   /**
    * Invokes the method named by `methodName` on each element in the `collection`,
    * returning an array of the results of each invoked method. Additional arguments
-   * will be passed to each invoked method. If `methodName` is a function, it will
+   * will be provided to each invoked method. If `methodName` is a function, it will
    * be invoked for, and `this` bound to, each element in the `collection`.
    *
    * @static
@@ -1871,7 +1871,7 @@
    * Reduces a `collection` to a value which is the accumulated result of running
    * each element in the `collection` through the `callback`, where each successive
    * `callback` execution consumes the return value of the previous execution.
-   * If `accumulator` is not passed, the first element of the `collection` will be
+   * If `accumulator` is not provided, the first element of the `collection` will be
    * used as the initial `accumulator` value. The `callback` is bound to `thisArg`
    * and invoked with four arguments; (accumulator, value, index|key, collection).
    *
@@ -2072,7 +2072,7 @@
    *  per iteration. If a property name or object is provided, it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Boolean} Returns `true` if any element passes the callback check,
+   * @returns {Boolean} Returns `true` if any element passed the callback check,
    *  else `false`.
    * @example
    *
@@ -2196,8 +2196,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates an array excluding all values of the passed-in arrays using
-   * strict equality for comparisons, i.e. `===`.
+   * Creates an array excluding all values of the provided arrays using strict
+   * equality for comparisons, i.e. `===`.
    *
    * @static
    * @memberOf _
@@ -2665,7 +2665,7 @@
   }
 
   /**
-   * Creates an array excluding all passed values using strict equality for
+   * Creates an array excluding all provided values using strict equality for
    * comparisons, i.e. `===`.
    *
    * @static
@@ -2688,7 +2688,7 @@
   /**
    * Creates a function that, when called, invokes `func` with the `this`
    * binding of `thisArg` and prepends any additional `bind` arguments to those
-   * passed to the bound function.
+   * provided to the bound function.
    *
    * @static
    * @memberOf _
@@ -2858,7 +2858,7 @@
   }
 
   /**
-   * This method returns the first argument passed to it.
+   * This method returns the first argument provided to it.
    *
    * @static
    * @memberOf _

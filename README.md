@@ -41,7 +41,7 @@ For more information check out these articles, screencasts, and other videos ove
   - [Lo-Dash’s approach to native method use](https://vimeo.com/48576012)
   - [CascadiaJS: Lo-Dash for a better utility belt](http://www.youtube.com/watch?v=dpPy4f_SeEk)
 
-## Features
+## Features you won’t find in Underscore
 
  * AMD loader support ([RequireJS](http://requirejs.org/), [curl.js](https://github.com/cujojs/curl), [dojo](https://github.com/dojo/dojo), etc.)
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
@@ -58,7 +58,7 @@ For more information check out these articles, screencasts, and other videos ove
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) checks if values are created by the `Object` constructor
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent cross-environment behavior
- * [_.partial](http://lodash.com/docs#partial) and [_.partialRight](http://lodash.com/docs#partialRight) for partial application without `this` binding
+ * [_.partialRight](http://lodash.com/docs#partialRight) and [friends](http://lodash.com/docs#partial) for partial application without `this` binding
  * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking and extended environment support
  * [_.support](http://lodash.com/docs#support) to flag environment features
  * [_.template](http://lodash.com/docs#template) supports [*“imports”* options](http://lodash.com/docs#templateSettings_imports), [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6), and [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)

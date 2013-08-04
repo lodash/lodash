@@ -274,6 +274,12 @@ $(document).ready(function() {
     deepEqual(result, {a: 1, b: 2});
     result = _.findWhere(list, {b: 4});
     deepEqual(result, {a: 1, b: 4});
+
+    result = _.findWhere(list, {c:1})
+    ok(_.isUndefined(result), "undefined when not found");
+
+    result = _.findWhere([], {c:1});
+    ok(_.isUndefined(result), "undefined when searching empty list");
   });
 
   test('max', function() {

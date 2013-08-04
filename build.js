@@ -178,7 +178,7 @@
     'memoize': [],
     'merge': ['baseCreateCallback', 'baseMerge', 'getArray', 'isObject', 'releaseArray'],
     'min': ['baseEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
-    'mixin': ['forEach', 'functions', 'isFunction'],
+    'mixin': ['forEach', 'functions', 'isFunction', 'lodash'],
     'noConflict': [],
     'omit': ['baseFlatten', 'createCallback', 'forIn', 'getIndexOf'],
     'once': [],
@@ -697,21 +697,30 @@
 
     // replace `_.mixin`
     source = replaceFunction(source, 'mixin', [
-      'function mixin(object) {',
-      '  forEach(functions(object), function(methodName) {',
-      '    var func = lodash[methodName] = object[methodName];',
+      'function mixin(object, source) {',
+      '  var ctor = object,',
+      '      isFunc = !source || isFunction(ctor);',
       '',
-      '    lodash.prototype[methodName] = function() {',
-      '      var args = [this.__wrapped__];',
-      '      push.apply(args, arguments);',
+      '  if (!source) {',
+      '    ctor = lodashWrapper;',
+      '    source = object;',
+      '    object = lodash;',
+      '  }',
+      '  forEach(functions(source), function(methodName) {',
+      '    var func = object[methodName] = source[methodName];',
+      '    if (isFunc) {',
+      '      ctor.prototype[methodName] = function() {',
+      '        var args = [this.__wrapped__];',
+      '        push.apply(args, arguments);',
       '',
-      '      var result = func.apply(lodash, args);',
-      '      if (this.__chain__) {',
-      '        result = new lodashWrapper(result);',
-      '        result.__chain__ = true;',
-      '      }',
-      '      return result;',
-      '    };',
+      '        var result = func.apply(object, args);',
+      '        if (this.__chain__) {',
+      '          result = new ctor(result);',
+      '          result.__chain__ = true;',
+      '        }',
+      '        return result;',
+      '      };',
+      '    }',
       '  });',
       '}'
     ].join('\n'));
@@ -1966,7 +1975,7 @@
       .replace(/\bcontext\b/g, 'window')
       .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
       .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
-      .replace(/^(?: *\/\/.*\s*)* *var _ *=.+\n+/m, '');
+      .replace(/^(?: *\/\/.*\s*)* *var _ *= *runInContext\b.+\n+/m, '');
 
     // remove local timer variables
     source = removeVar(source, 'clearTimeout');
@@ -2789,16 +2798,11 @@
         }
         if (isModularize) {
           funcDepMap.lodash.push('support', 'baseEach', 'forOwn', 'mixin');
-
-          _.forOwn(funcDepMap, function(deps, funcName) {
-            if (_.contains(deps, 'getIndexOf')) {
-              _.pull(deps, 'getIndexOf').push('baseIndexOf');
-            }
-          });
+          _.pull(funcDepMap.mixin, 'lodash');
         }
         else {
           funcDepMap.chain.push('wrapperChain');
-          funcDepMap.wrapperValueOf.push('baseEach', 'chain', 'forOwn', 'lodash', 'mixin', 'wrapperChain', 'wrapperToString');
+          funcDepMap.wrapperValueOf.push('baseEach', 'chain', 'forOwn', 'mixin', 'wrapperChain', 'wrapperToString');
 
           _.each(['lodashWrapper', 'tap', 'wrapperChain', 'wrapperToString'], function(funcName) {
             funcDepMap[funcName].push('wrapperValueOf');
@@ -2813,9 +2817,6 @@
           _.each(['baseCreateCallback', 'createBound'], function(funcName) {
             _.pull(funcDepMap[funcName], 'setBindData');
           });
-        }
-        if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
-          _.pull(funcDepMap.mixin, 'isFunction');
         }
         if (isUnderscore) {
           if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
@@ -2837,7 +2838,7 @@
             funcDepMap.isEmpty = ['isArray', 'isString'];
           }
           if (!isLodash('lodash')) {
-            _.pull(funcDepMap.flatten, 'isArray');
+            _.pull(funcDepMap.lodash, 'isArray');
           }
           if (!isLodash('pick')){
             _.pull(funcDepMap.pick, 'forIn', 'isObject');
@@ -2852,26 +2853,37 @@
             _.pull(funcDepMap.createCallback, 'baseIsEqual');
             funcDepMap.where.push('find', 'isEmpty');
           }
-          if (!isLodash('forOwn')) {
-            _.each(['contains', 'every', 'find', 'forOwn', 'some', 'transform'], function(funcName) {
+          // unexpose "exit early" feature from functions
+          if (!isLodash('forEach') && !isLodash('forIn') && !isLodash('forOwn') && !isLodash('forOwnRight')) {
+            _.each(['baseEach', 'forEach', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(funcName) {
               (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
             });
-          }
-          if (!isLodash('forIn')) {
+
+            // modify functions that use `_.forEach` to use the private `indicatorObject`
+            _.each(['findLast', 'forEachRight', 'transform'], function(funcName) {
+              (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
+            });
+
+            // modify functions that use `_.forIn` to use the private `indicatorObject`
             _.each(['baseIsEqual', 'shimIsPlainObject'], function(funcName) {
               (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
             });
+
+            // modify functions that use `_.forOwn` to use the private `indicatorObject`
+            _.each(['contains', 'every', 'find', 'some'], function(funcName) {
+              (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
+            });
+
+            // modify functions that use `_.forOwnRight` to use the private `indicatorObject`
+            (varDepMap.findLastKey || (varDepMap.findLastKey = [])).push('indicatorObject');
           }
 
           _.each(['baseUniq', 'difference', 'intersection'], function(funcName) {
-            if (!isLodash(funcName)) {
+            if (funcName == 'baseUniq'
+                  ? (!isLodash('baseUniq') && !isLodash('uniq'))
+                  : !isLodash(funcName)
+                ) {
               _.pull(funcDepMap[funcName], 'cacheIndexOf', 'createCache').push('getIndexOf');
-            }
-          });
-
-          _.each(['baseEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
-            if (funcName == 'baseEach' || !isLodash(funcName)) {
-              (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
             }
           });
 
@@ -2984,6 +2996,13 @@
               }
             });
           }
+        }
+        if (isModularize) {
+          _.forOwn(funcDepMap, function(deps, funcName) {
+            if (_.contains(deps, 'getIndexOf')) {
+              _.pull(deps, 'getIndexOf').push('baseIndexOf');
+            }
+          });
         }
         // add function names explicitly
         if (includeFuncs.length) {
@@ -3629,12 +3648,11 @@
           }
           // replace `_.template`
           if (!isLodash('template')) {
-            // remove `_.templateSettings.imports assignment
-            source = source.replace(/,[^']*'imports':[^}]+}/, '');
-
             source = replaceFunction(source, 'template', [
               'function template(text, data, options) {',
-              '  var settings = lodash.templateSettings;',
+              '  var _ = lodash.templateSettings.imports._,',
+              '      settings = _.templateSettings;',
+              '',
               "  text || (text = '');",
               '  options = iteratorTemplate ? defaults({}, options, settings) : settings;',
               '',
@@ -3675,7 +3693,7 @@
               "    'return __p\\n}';",
               '',
               '  try {',
-              "    var result = Function('_', 'return ' + source)(lodash);",
+              "    var result = Function('_', 'return ' + source)(_);",
               '  } catch(e) {',
               '    e.source = source;',
               '    throw e;',
@@ -3739,7 +3757,7 @@
             ].join('\n'));
           }
           // replace `baseUniq`
-          if (!isLodash('uniq')) {
+          if (!isLodash('baseUniq') && !isLodash('uniq')) {
             source = replaceFunction(source, 'baseUniq', [
               'function baseUniq(array, isSorted, callback) {',
               '  var index = -1,',
@@ -3953,17 +3971,77 @@
           });
 
           if (isUnderscore) {
-            // unexpose "exit early" feature of `baseEach`, `_.forEach`, `_.forIn`, and `_.forOwn`
-            _.each(['baseEach', 'forEach', 'forIn', 'forOwn'], function(funcName) {
-              if (funcName == 'baseEach' || !isLodash(funcName)) {
+            // replace complex lodash wrapper checks with simpler ones
+            if (!isModularize) {
+              source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
+                return match.replace(/hasOwnProperty\.call\((\w+), *'__wrapped__'\)/g, '$1 instanceof lodash')
+              });
+            }
+            // replace `lodash.createCallback` references with `createCallback`
+            if (!isLodash('createCallback')) {
+              source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
+            }
+            // unexpose "exit early" feature from functions
+            if (!isLodash('forEach') && !isLodash('forIn') && !isLodash('forOwn') && !isLodash('forOwnRight')) {
+              _.each(['baseEach', 'forEach', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(funcName) {
                 source = source.replace(matchFunction(source, funcName), function(match) {
                   return match.replace(/=== *false\)/g, '=== indicatorObject)');
+                });
+              });
+
+              // modify functions that use `_.forEach` to use the private `indicatorObject`
+              source = source.replace(matchFunction(source, 'findLast'), function(match) {
+                return match.replace(/return false/, 'return indicatorObject');
+              });
+
+              source = source.replace(matchFunction(source, 'forEachRight'), function(match) {
+                return match.replace(/return callback[^)]+\)/, '$& === false && indicatorObject');
+              });
+
+              source = source.replace(matchFunction(source, 'transform'), function(match) {
+                return match.replace(/return callback[^)]+\)/, '$& === false && indicatorObject');
+              });
+
+              // modify functions that use `_.forIn` to use the private `indicatorObject`
+              source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
+                return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+              });
+
+              source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
+                return match.replace(/return false/, 'return indicatorObject');
+              });
+
+              // modify functions that use `_.forOwn` to use the private `indicatorObject`
+              source = source.replace(matchFunction(source, 'every'), function(match) {
+                return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+              });
+
+              source = source.replace(matchFunction(source, 'find'), function(match) {
+                return match.replace(/return false/, 'return indicatorObject');
+              });
+
+              _.each(['contains', 'some'], function(funcName) {
+                source = source.replace(matchFunction(source, funcName), function(match) {
+                  return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
+                });
+              });
+
+              // modify functions that use `_.forOwnRight` to use the private `indicatorObject`
+              source = source.replace(matchFunction(source, 'findLastKey'), function(match) {
+                return match.replace(/return false/, 'return indicatorObject');
+              });
+            }
+            // remove chainability
+            _.each(['baseEach', 'forEach', 'forEachRight'], function(funcName) {
+              if (funcName == 'baseEach' || !isLodash(funcName)) {
+                source = source.replace(matchFunction(source, funcName), function(match) {
+                  return match.replace(/\n *return .+?([}\s]+)$/, '$1');
                 });
               }
             });
 
-            // remove `thisArg` from unexposed `forIn` and `forOwn`
-            _.each(['forIn', 'forOwn'], function(funcName) {
+            // remove `thisArg` from unexposed `forEachRight`, `forIn` and `forOwn`
+            _.each(['forEachRight', 'forIn', 'forOwn'], function(funcName) {
               if (!isLodash(funcName)) {
                 source = source.replace(matchFunction(source, funcName), function(match) {
                   return match
@@ -3973,56 +4051,6 @@
               }
             });
 
-            // replace complex lodash wrapper checks with simpler ones
-            if (!isModularize) {
-              source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
-                return match.replace(/hasOwnProperty\.call\((\w+), *'__wrapped__'\)/g, '$1 instanceof lodash')
-              });
-            }
-            // modify `_.contains`, `_.every`, `_.find`, `_.some`, and `_.transform` to use the private `indicatorObject`
-            if (!isLodash('forOwn')) {
-              source = source.replace(matchFunction(source, 'every'), function(match) {
-                return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-              });
-
-              source = source.replace(matchFunction(source, 'find'), function(match) {
-                return match.replace(/return false/, 'return indicatorObject');
-              });
-
-              source = source.replace(matchFunction(source, 'transform'), function(match) {
-                return match.replace(/return callback[^)]+\)/, '$& && indicatorObject');
-              });
-
-              _.each(['contains', 'some'], function(funcName) {
-                source = source.replace(matchFunction(source, funcName), function(match) {
-                  return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
-                });
-              });
-            }
-            // modify `baseEqual` and `shimIsPlainObject` to use the private `indicatorObject`
-            if (!isLodash('forIn')) {
-              source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
-                return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-              });
-
-              source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-                return match.replace(/return false/, 'return indicatorObject');
-              });
-            }
-            // replace `lodash.createCallback` references with `createCallback`
-            if (!isLodash('createCallback')) {
-              source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
-            }
-            // remove chainability from `baseEach` and `_.forEach`
-            if (!isLodash('forEach')) {
-              _.each(['baseEach', 'forEach'], function(funcName) {
-                source = source.replace(matchFunction(source, funcName), function(match) {
-                  return match
-                    .replace(/\n *return .+?([};\s]+)$/, '$1')
-                    .replace(/\b(return) +result\b/, '$1')
-                });
-              });
-            }
             // remove `_.assign`, `_.forEachRight`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
             source = source.replace(getMethodAssignments(source), function(match) {
               return _.reduce(['assign', 'createCallback', 'forEachRight', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
@@ -4058,7 +4086,7 @@
           source = source.replace(matchFunction(source, 'template'), function(match) {
             return match
               // assign `settings` variable from the reassigned `templateSettings.imports`
-              .replace(/= *templateSettings\b/, '$&.imports._.templateSettings')
+              .replace(/= *templateSettings(?=[,;])/, '$&.imports._.templateSettings')
               // remove debug sourceURL use in `_.template`
               .replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
           });

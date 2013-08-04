@@ -118,7 +118,7 @@
     // Avoid issues with some ES3 environments that attempt to use values, named
     // after built-in constructors like `Object`, for the creation of literals.
     // ES5 clears this up by stating that literals must use built-in constructors.
-    // See http://es5.github.com/#x11.1.5.
+    // See http://es5.github.io/#x11.1.5.
     context = context ? _.defaults(window.Object(), context, _.pick(window, contextProps)) : window;
 
     /** Native constructor references */
@@ -131,8 +131,8 @@
         String = context.String;
 
     /** Used for `Array` and `Object` method references */
-    var arrayRef = Array(),
-        objectRef = Object();
+    var arrayRef = [],
+        objectProto = Object.prototype;
 
     /** Native method shortcuts */
     var abs = Math.abs,
@@ -147,7 +147,7 @@
         shift = arrayRef.shift,
         slice = arrayRef.slice,
         sqrt = Math.sqrt,
-        toString = objectRef.toString;
+        toString = objectProto.toString;
 
     /** Detect DOM document object */
     var doc = isHostType(context, 'document') && context.document;
@@ -704,20 +704,20 @@
      * A helper function for setting options/event handlers.
      *
      * @private
-     * @param {Object} bench The benchmark instance.
+     * @param {Object} object The benchmark or suite instance.
      * @param {Object} [options={}] Options object.
      */
-    function setOptions(bench, options) {
-      options = _.extend({}, bench.constructor.options, options);
-      bench.options = _.forOwn(options, function(value, key) {
+    function setOptions(object, options) {
+      options = _.extend({}, object.constructor.options, options);
+      object.options = _.forOwn(options, function(value, key) {
         if (value != null) {
           // add event listeners
           if (/^on[A-Z]/.test(key)) {
             _.each(key.split(' '), function(key) {
-              bench.on(key.slice(2).toLowerCase(), value);
+              object.on(key.slice(2).toLowerCase(), value);
             });
-          } else if (!_.has(bench, key)) {
-            bench[key] = cloneDeep(value);
+          } else if (!_.has(object, key)) {
+            object[key] = cloneDeep(value);
           }
         }
       });

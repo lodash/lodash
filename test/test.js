@@ -957,8 +957,11 @@
 
     _.forEach({
       'find': [objects[1], undefined, objects[2], objects[1]],
+      'findLast': [objects[1], undefined, objects[2], objects[2]],
       'findIndex': [1, -1, 2, 1],
-      'findKey': ['1', undefined, '2', '1']
+      'findLastIndex': [1, -1, 2, 2],
+      'findKey': ['1', undefined, '2', '1'],
+      'findLastKey': ['1', undefined, '2', '2']
     },
     function(expected, methodName) {
       QUnit.module('lodash.' + methodName);
@@ -1138,30 +1141,32 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.forEach');
+  QUnit.module('forEach methods');
 
-  (function() {
-    test('should return the collection', function() {
+  _.forEach(['forEach', 'forEachRight'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should return the collection', function() {
       var collection = [1, 2, 3];
-      equal(_.forEach(collection, Boolean), collection);
+      equal(func(collection, Boolean), collection);
     });
 
-    test('should return the existing wrapper when chaining', function() {
+    test('`_.' + methodName + '` should return the existing wrapper when chaining', function() {
       var wrapper = _([1, 2, 3]);
-      equal(wrapper.forEach(Boolean), wrapper);
+      equal(wrapper[methodName](Boolean), wrapper);
     });
 
-    test('should support the `thisArg` argument', function() {
+    test('`_.' + methodName + '` should support the `thisArg` argument', function() {
       var actual;
 
       function callback(value, index) {
         actual = this[index];
       }
 
-      _.forEach([1], callback, [2]);
+      func([1], callback, [2]);
       equal(actual, 2);
 
-      _.forEach({ 'a': 1 }, callback, { 'a': 2 });
+      func({ 'a': 1 }, callback, { 'a': 2 });
       equal(actual, 2);
     });
 
@@ -1170,36 +1175,43 @@
       'object': Object('abc')
     },
     function(collection, key) {
-      test('should work with a string ' + key + ' for `collection` (test in IE < 9)', function() {
+      test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', function() {
         var args,
             values = [];
 
-        _.forEach(collection, function(value) {
+        func(collection, function(value) {
           args || (args = slice.call(arguments));
           values.push(value);
         });
 
-        deepEqual(args, ['a', 0, collection]);
-        deepEqual(values, ['a', 'b', 'c']);
+        if (methodName == 'forEach') {
+          deepEqual(args, ['a', 0, collection]);
+          deepEqual(values, ['a', 'b', 'c']);
+        } else {
+          deepEqual(args, ['c', 2, collection]);
+          deepEqual(values, ['c', 'b', 'a']);
+        }
       });
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.forIn');
+  QUnit.module('forIn methods');
 
-  (function() {
-    test('iterates over inherited properties', function() {
+  _.forEach(['forIn', 'forInRight'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` iterates over inherited properties', function() {
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
 
       var keys = [];
-      _.forIn(new Foo, function(value, key) { keys.push(key); });
+      func(new Foo, function(value, key) { keys.push(key); });
       deepEqual(keys.sort(), ['a', 'b']);
     });
 
-    test('fixes the JScript [[DontEnum]] bug with inherited properties (test in IE < 9)', function() {
+    test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug with inherited properties (test in IE < 9)', function() {
       function Foo() {}
       Foo.prototype = shadowedObject;
 
@@ -1208,30 +1220,32 @@
       Bar.prototype.constructor = Bar;
 
       var keys = [];
-      _.forIn(shadowedObject, function(value, key) { keys.push(key); });
+      func(shadowedObject, function(value, key) { keys.push(key); });
       deepEqual(keys.sort(), shadowedProps);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.forOwn');
+  QUnit.module('forOwn methods');
 
-  (function() {
+  _.forEach(['forOwn', 'forOwnRight'], function(methodName) {
+    var func = _[methodName];
+
     test('iterates over the `length` property', function() {
       var keys = [],
           object = { '0': 'zero', '1': 'one', 'length': 2 };
 
-      _.forOwn(object, function(value, key) { keys.push(key); });
+      func(object, function(value, key) { keys.push(key); });
       deepEqual(keys.sort(), ['0', '1', 'length']);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('collection iteration bugs');
 
-  _.forEach(['forEach', 'forIn', 'forOwn'], function(methodName) {
+  _.forEach(['forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
@@ -1391,7 +1405,7 @@
 
   QUnit.module('exit early');
 
-  _.forEach(['forEach', 'forIn', 'forOwn'], function(methodName) {
+  _.forEach(['forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` can exit early when iterating arrays', function() {
@@ -1399,7 +1413,7 @@
           values = [];
 
       func(array, function(value) { values.push(value); return false; });
-      deepEqual(values, [1]);
+      deepEqual(values, [/Right/.test(methodName) ? 3 : 1]);
     });
 
     test('`_.' + methodName + '` can exit early when iterating objects', function() {
@@ -3980,6 +3994,7 @@
 
       deepEqual(_.compact(args), [1, [3], 5], message('compact'));
       deepEqual(_.findIndex(args, _.identity), 0, message('findIndex'));
+      deepEqual(_.findLastIndex(args, _.identity), 4, message('findLastIndex'));
       deepEqual(_.first(args), 1, message('first'));
       deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
       deepEqual(_.indexOf(args, 5), 4, message('indexOf'));
@@ -4115,6 +4130,7 @@
         'every',
         'filter',
         'find',
+        'findLast',
         'forEach',
         'forIn',
         'forOwn',

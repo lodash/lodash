@@ -172,6 +172,7 @@
     'keys': ['isArguments', 'isObject', 'shimKeys'],
     'last': ['createCallback', 'slice'],
     'lastIndexOf': [],
+    'lodash': ['isArray', 'lodashWrapper'],
     'map': ['baseEach', 'createCallback', 'isArray'],
     'max': ['baseEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'memoize': [],
@@ -218,7 +219,7 @@
     'wrap': [],
     'wrapperChain': [],
     'wrapperToString': [],
-    'wrapperValueOf': ['baseEach', 'forOwn', 'mixin', 'wrapperChain', 'wrapperToString'],
+    'wrapperValueOf': [],
     'zip': ['max', 'pluck'],
     'zipObject': [],
 
@@ -247,7 +248,6 @@
     'getObject': [],
     'isNode': [],
     'iteratorTemplate': [],
-    'lodash': ['isArray', 'lodashWrapper'],
     'lodashWrapper': [],
     'noop': [],
     'releaseArray': [],
@@ -1641,6 +1641,9 @@
   function removeChaining(source) {
     source = removeSpliceObjectsFix(source);
 
+    // remove `_.mixin` call
+    source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
+
     // remove all `lodash.prototype` additions
     source = source
       .replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '')
@@ -1654,7 +1657,7 @@
       '}'
     ].join('\n'));
 
-    //replace `lodashWrapper` with `lodash` in `_.mixin`
+    // replace `lodashWrapper` with `lodash` in `_.mixin`
     source = source.replace(matchFunction(source, 'mixin'), function(match) {
       return match.replace(/\blodashWrapper\b/, 'lodash');
     });
@@ -2800,6 +2803,23 @@
             _.pull(deps, 'reNative');
           });
         }
+        if (isModularize) {
+          funcDepMap.lodash.push('support', 'baseEach', 'forOwn', 'mixin');
+
+          _.forOwn(funcDepMap, function(deps, funcName) {
+            if (_.contains(deps, 'getIndexOf')) {
+              _.pull(deps, 'getIndexOf').push('baseIndexOf');
+            }
+          });
+        }
+        else {
+          funcDepMap.chain.push('wrapperChain');
+          funcDepMap.wrapperValueOf.push('baseEach', 'chain', 'forOwn', 'lodash', 'mixin', 'wrapperChain', 'wrapperToString');
+
+          _.each(['lodashWrapper', 'tap', 'wrapperChain', 'wrapperToString'], function(funcName) {
+            funcDepMap[funcName].push('wrapperValueOf');
+          });
+        }
         if (isMobile) {
           _.each(['assign', 'defaults'], function(funcName) {
             _.pull(funcDepMap[funcName], 'keys');
@@ -2957,7 +2977,7 @@
             });
           }
           if (!isMobile) {
-            _.each(['baseClone', 'transform', 'wrapperValueOf'], function(funcName) {
+            _.each(['baseClone', 'lodash', 'transform', 'wrapperValueOf'], function(funcName) {
               _.pull(funcDepMap[funcName], 'baseEach').push('forEach');
             });
 
@@ -2977,17 +2997,6 @@
               }
             });
           }
-        }
-        if (isModularize) {
-          _.pull(funcDepMap.wrapperValueOf, 'wrapperChain', 'wrapperToString');
-          push.apply(funcDepMap.lodash, ['support'].concat(funcDepMap.wrapperValueOf));
-          funcDepMap.wrapperValueOf.length = 0;
-
-          _.forOwn(funcDepMap, function(deps, funcName) {
-            if (_.contains(deps, 'getIndexOf')) {
-              _.pull(deps, 'getIndexOf').push('baseIndexOf');
-            }
-          });
         }
         // add function names explicitly
         if (includeFuncs.length) {
@@ -3073,7 +3082,7 @@
             return match.replace(/\bnativeIsArray\s*\|\|\s*/, '');
           });
 
-          // replace `createObject` and `isArguments` with their forks
+          // replace `createObject` and `_.isArguments` with their forks
           _.forOwn({
             'createObject': [getCreateObjectFork, removeCreateObjectFork],
             'isArguments': [getIsArgumentsFork, removeIsArgumentsFork]
@@ -3824,7 +3833,9 @@
           // remove support for a `step` of `0` in `_.range`
           if (!isLodash('range')) {
             source = source.replace(matchFunction(source, 'range'), function(match) {
-              return match.replace(/typeof *step[^:]+:/, '+step ||');
+              return match
+                .replace(/typeof *step[^:]+:/, '+step ||')
+                .replace(/\(step.*\|\|.+?\)/, 'step')
             });
           }
 
@@ -4146,16 +4157,16 @@
 
     // modify/remove references to removed functions/variables
     if (!isTemplate) {
-      if (isExcluded('lodash')) {
-        source = removeChaining(source);
+      if (isExcluded(isNoDep ? 'lodash' : 'lodashWrapper')) {
+        // remove `lodashWrapper.prototype` assignment
+        source = source.replace(/(?:\s*\/\/.*)*\n *lodashWrapper\.prototype *=.+/, '');
       }
       if (isExcluded(isNoDep ? 'lodash' : 'mixin')) {
         // remove `_.mixin` call
         source = source.replace(/(?:\s*\/\/.*)*\s*mixin\(lodash\).+/, '');
       }
-      if (isExcluded(isNoDep ? 'lodash' : 'lodashWrapper')) {
-        // remove `lodashWrapper.prototype` assignment
-        source = source.replace(/(?:\s*\/\/.*)*\n *lodashWrapper\.prototype *=.+/, '');
+      if (isExcluded(isNoDep ? 'lodash' : 'wrapperValueOf')) {
+        source = removeChaining(source);
       }
       if (!isNoDep) {
         if (isExcluded('bind')) {
@@ -4221,9 +4232,7 @@
           source = removeFunction(source, funcName);
           if (!isNoDep) {
             source = removeFromCreateIterator(source, funcName);
-            _.each(getAliases(funcName, funcDepMap).concat(funcName), function(funcName) {
-              source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash(?:\\.prototype)?\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'gm'), '');
-            });
+            source = source.replace(RegExp('^(?: *//.*\\s*)* *lodash(?:\\.prototype)?\\.\\w+ *= *' + funcName + ';\\n', 'gm'), '');
           }
         }
       });

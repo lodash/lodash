@@ -1290,7 +1290,7 @@
           vm.runInContext(data.source, context);
           var lodash = context._;
 
-          ok(lodash([1]) instanceof lodash, basename);
+          equal(lodash([1]) instanceof lodash, false, basename);
           deepEqual(_.keys(lodash.prototype), [], basename);
           start();
         });

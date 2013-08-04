@@ -468,7 +468,7 @@
         }
         else if (/^(?:defaults|extend|merge)$/.test(methodName)) {
           func({}, object);
-        } else if (/^(?:forIn|forOwn)$/.test(methodName)) {
+        } else if (/^for(?:In|Own)(?:Right)?$/.test(methodName)) {
           func(object, noop);
         } else if (/^(?:omit|pick)$/.test(methodName)) {
           func(object, 'b');
@@ -1551,11 +1551,20 @@
       'every',
       'filter',
       'find',
+      'findIndex',
+      'findKey',
+      'findLast',
+      'findLastIndex',
+      'findLastKey',
       'findWhere',
       'first',
       'flatten',
       'forEach',
+      'forEachRight',
+      'forIn',
+      'forInRight',
       'forOwn',
+      'forOwnRight',
       'intersection',
       'initial',
       'isEmpty',
@@ -1617,17 +1626,29 @@
         var start = _.after(2, _.once(QUnit.start));
 
         build(['-s'].concat(command.split(' ')), function(data) {
-          var array = [{ 'value': 1 }],
-              basename = path.basename(data.outputPath, '.js'),
+          var basename = path.basename(data.outputPath, '.js'),
               context = createContext();
 
           vm.runInContext(data.source, context, true);
-          var lodash = context._;
 
+          var lodash = context._,
+              func = lodash[funcName],
+              array = [1, 2, 3],
+              object = { 'a': 1, 'b': 2, 'c': 3 },
+              result = [];
+
+          if (/^for(?:Each|In|Own)(?:Right)?$/.test(funcName)) {
+            func(/^forEach/.test(funcName) ? array : object, function(value) {
+              result.push(value);
+              return false;
+            });
+
+            equal(result.length, 1, basename);
+          }
           if (funcName == 'chain' || funcName == 'findWhere' || (funcName == 'defer' && global.setImmediate)) {
-            notEqual(strip(lodash[funcName]), strip(_[funcName]), basename);
+            notEqual(strip(func), strip(_[funcName]), basename);
           } else if (!/\.min$/.test(basename)) {
-            equal(strip(lodash[funcName]), strip(_[funcName]), basename);
+            equal(strip(func), strip(_[funcName]), basename);
           }
           testMethod(lodash, funcName, basename);
           start();

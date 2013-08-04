@@ -107,6 +107,8 @@ $(document).ready(function() {
     equal(_(stooges).intersection(leaders).join(''), 'moe', 'can perform an OO-style intersection');
     var result = (function(){ return _.intersection(arguments, leaders); })('moe', 'curly', 'larry');
     equal(result.join(''), 'moe', 'works on an arguments object');
+    var theSixStooges = ['moe', 'moe', 'curly', 'curly', 'larry', 'larry'];
+    equal(_.intersection(theSixStooges, leaders).join(''), 'moe', 'returns a duplicate-free array');
   });
 
   test("union", function() {

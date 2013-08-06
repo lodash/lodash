@@ -957,11 +957,11 @@
 
     _.forEach({
       'find': [objects[1], undefined, objects[2], objects[1]],
-      'findLast': [objects[1], undefined, objects[2], objects[2]],
+      'findLast': [objects[2], undefined, objects[2], objects[2]],
       'findIndex': [1, -1, 2, 1],
-      'findLastIndex': [1, -1, 2, 2],
+      'findLastIndex': [2, -1, 2, 2],
       'findKey': ['1', undefined, '2', '1'],
-      'findLastKey': ['1', undefined, '2', '2']
+      'findLastKey': ['2', undefined, '2', '2']
     },
     function(expected, methodName) {
       QUnit.module('lodash.' + methodName);
@@ -969,7 +969,11 @@
       var func = _[methodName];
 
       test('should return the correct value', function() {
-        strictEqual(func(objects, function(object) { return object.a == 1; }), expected[0]);
+        strictEqual(func(objects, function(object) { return object.a; }), expected[0]);
+      });
+
+      test('should work with a `thisArg`', function() {
+        strictEqual(func(objects, function(object, index) { return this[index].a; }, objects), expected[0]);
       });
 
       test('should return `' + expected[1] + '` if value is not found', function() {

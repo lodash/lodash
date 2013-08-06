@@ -686,9 +686,10 @@
    *
    * @private
    * @param {String} source The source to process.
+   * @param {Boolean} [isModularize=false] A flag to specify a modularize build
    * @returns {String} Returns the modified source.
    */
-  function addUnderscoreChaining(source) {
+  function addUnderscoreChaining(source, isModularize) {
     // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
     source = source.replace(/^ *lodash\.prototype\.(?:toString|valueOf) *=.+\n/gm, '');
 
@@ -696,35 +697,57 @@
     source = source.replace(/(?:\s*\/\/.*)*\n( *)forOwn\(lodash,[\s\S]+?\n\1}.+/g, '');
 
     // replace `_.mixin`
-    source = replaceFunction(source, 'mixin', [
-      'function mixin(object, source) {',
-      '  var ctor = object,',
-      '      isFunc = !source || isFunction(ctor);',
-      '',
-      '  if (!source) {',
-      '    ctor = lodashWrapper;',
-      '    source = object;',
-      '    object = lodash;',
-      '  }',
-      '  forEach(functions(source), function(methodName) {',
-      '    var func = object[methodName] = source[methodName];',
-      '    if (isFunc) {',
-      '      ctor.prototype[methodName] = function() {',
-      '        var args = [this.__wrapped__];',
-      '        push.apply(args, arguments);',
-      '',
-      '        var result = func.apply(object, args);',
-      '        if (this.__chain__) {',
-      '          result = new ctor(result);',
-      '          result.__chain__ = true;',
-      '        }',
-      '        return result;',
-      '      };',
-      '    }',
-      '  });',
-      '}'
-    ].join('\n'));
-
+    if (!isModularize) {
+      source = replaceFunction(source, 'mixin', [
+        'function mixin(object) {',
+        '  forEach(functions(object), function(methodName) {',
+        '    var func = lodash[methodName] = object[methodName];',
+        '',
+        '    lodash.prototype[methodName] = function() {',
+        '      var args = [this.__wrapped__];',
+        '      push.apply(args, arguments);',
+        '',
+        '      var result = func.apply(lodash, args);',
+        '      if (this.__chain__) {',
+        '        result = new lodashWrapper(result);',
+        '        result.__chain__ = true;',
+        '      }',
+        '      return result;',
+        '    };',
+        '  });',
+        '}'
+      ].join('\n'));
+    }
+    else {
+      source = replaceFunction(source, 'mixin', [
+        'function mixin(object, source) {',
+        '  var ctor = object,',
+        '      isFunc = !source || isFunction(ctor);',
+        '',
+        '  if (!source) {',
+        '    ctor = lodashWrapper;',
+        '    source = object;',
+        '    object = lodash;',
+        '  }',
+        '  forEach(functions(source), function(methodName) {',
+        '    var func = object[methodName] = source[methodName];',
+        '    if (isFunc) {',
+        '      ctor.prototype[methodName] = function() {',
+        '        var args = [this.__wrapped__];',
+        '        push.apply(args, arguments);',
+        '',
+        '        var result = func.apply(object, args);',
+        '        if (this.__chain__) {',
+        '          result = new ctor(result);',
+        '          result.__chain__ = true;',
+        '        }',
+        '        return result;',
+        '      };',
+        '    }',
+        '  });',
+        '}'
+      ].join('\n'));
+    }
     // replace wrapper `Array` method assignments
     source = source.replace(/^(?:(?: *\/\/.*\n)*(?: *if *\(.+\n)?( *)(baseEach|forEach)\(\['[\s\S]+?\n\1}\);(?:\n *})?\n+)+/m, function(match, indent, methodName) {
       return indent + [
@@ -1156,7 +1179,7 @@
       '',
       '    lodash backbone      Build with only functions required by Backbone',
       '    lodash legacy        Build tailored for older environments without ES5 support',
-      '    lodash mobile        Build without function compilation and most bug fixes for old browsers',
+      '    lodash mobile        Build without function compilation and bug fixes for old browsers',
       '    lodash modern        Build tailored for newer environments with ES5 support',
       '    lodash strict        Build with `_.assign`, `_.bindAll`, & `_.defaults` in strict mode',
       '    lodash underscore    Build tailored for projects already using Underscore',
@@ -1164,8 +1187,8 @@
       '    lodash modularize    Splits Lo-Dash into modules',
       '',
       '    lodash include=...   Comma separated function/category names to include in the build',
-      '    lodash minus=...     Comma separated function/category names to remove from those included in the build',
-      '    lodash plus=...      Comma separated function/category names to add to those included in the build',
+      '    lodash minus=...     Comma separated function/category names to remove from the build',
+      '    lodash plus=...      Comma separated function/category names to add to the build',
       '    lodash category=...  Comma separated categories of functions to include in the build (case-insensitive)',
       '                         (i.e. “arrays”, “chaining”, “collections”, “functions”, “objects”, and “utilities”)',
       '    lodash exports=...   Comma separated names of ways to export the `lodash` function',
@@ -1177,9 +1200,9 @@
       '                         (e.g. `lodash template=./*.jst`)',
       '    lodash settings=...  Template settings used when precompiling templates',
       '                         (e.g. `lodash settings="{interpolate:/{{([\\s\\S]+?)}}/g}"`)',
-      '    lodash moduleId=...  The AMD module ID of Lo-Dash, which defaults to “lodash”, used by precompiled templates',
+      '    lodash moduleId=...  The AMD module ID, which defaults to “lodash”, for precompiled templates',
       '',
-      '    All arguments, except `backbone`, `csp`, `legacy`, `mobile`, `modern`, and `underscore`, may be combined.',
+      '    All commands, except `backbone`, `csp`, `legacy`, `mobile`, `modern`, and `underscore`, may be combined.',
       '    Unless specified by `-o` or `--output`, all files created are saved to the current working directory.',
       '',
       '  Options:',
@@ -2818,6 +2841,9 @@
             _.pull(funcDepMap[funcName], 'setBindData');
           });
         }
+        if (!isModularize && _.contains(plusFuncs, 'chain') == !isUnderscore) {
+          _.pull(funcDepMap.mixin, 'isFunction');
+        }
         if (isUnderscore) {
           if (!isLodash('baseClone') && !isLodash('clone') && !isLodash('cloneDeep')) {
             _.pull(funcDepMap.clone, 'baseClone').push('assign', 'isArray', 'isObject');
@@ -2849,12 +2875,14 @@
           if (!isLodash('toArray')) {
             funcDepMap.toArray.push('isArray', 'map');
           }
-          if (!isLodash('where')) {
+          if (!isLodash('findWhere') || !isLodash('where')) {
             _.pull(funcDepMap.createCallback, 'baseIsEqual');
             funcDepMap.where.push('find', 'isEmpty');
           }
           // unexpose "exit early" feature from functions
-          if (!isLodash('forEach') && !isLodash('forIn') && !isLodash('forOwn') && !isLodash('forOwnRight')) {
+          if (!isLodash('forEach') && !isLodash('forEachRight') &&
+              !isLodash('forIn') && !isLodash('forInRight') &&
+              !isLodash('forOwn') && !isLodash('forOwnRight')) {
             _.each(['baseEach', 'forEach', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(funcName) {
               (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
             });
@@ -2870,7 +2898,7 @@
             });
 
             // modify functions that use `_.forOwn` to use the private `indicatorObject`
-            _.each(['contains', 'every', 'find', 'some'], function(funcName) {
+            _.each(['contains', 'every', 'find', 'findKey', 'some'], function(funcName) {
               (varDepMap[funcName] || (varDepMap[funcName] = [])).push('indicatorObject');
             });
 
@@ -3650,7 +3678,7 @@
           if (!isLodash('template')) {
             source = replaceFunction(source, 'template', [
               'function template(text, data, options) {',
-              '  var _ = lodash.templateSettings.imports._,',
+              '  var _ = lodash,',
               '      settings = _.templateSettings;',
               '',
               "  text || (text = '');",
@@ -3843,7 +3871,15 @@
                 .replace(/\(step.*\|\|.+?\)/, 'step')
             });
           }
+          if (!isModularize) {
+            // remove `_.templateSettings.imports assignment
+            source = source.replace(/,[^']*'imports':[^}]+}/, '');
 
+            // replace complex lodash wrapper checks with simpler ones
+            source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
+              return match.replace(/hasOwnProperty\.call\((\w+), *'__wrapped__'\)/g, '$1 instanceof lodash')
+            });
+          }
           // replace `slice` with `nativeSlice.call`
           _.each(['clone', 'first', 'initial', 'last', 'rest', 'toArray'], function(funcName) {
             if (funcName == 'clone'
@@ -3867,7 +3903,7 @@
         }
         // add Underscore's chaining functions
         if (_.contains(plusFuncs, 'chain') == !isUnderscore) {
-          source = addUnderscoreChaining(source);
+          source = addUnderscoreChaining(source, isModularize);
         }
         // replace `baseEach` references with `forEach` and `forOwn`
         if (isUnderscore || (isModern && !isMobile)) {
@@ -3971,64 +4007,42 @@
           });
 
           if (isUnderscore) {
-            // replace complex lodash wrapper checks with simpler ones
-            if (!isModularize) {
-              source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
-                return match.replace(/hasOwnProperty\.call\((\w+), *'__wrapped__'\)/g, '$1 instanceof lodash')
-              });
-            }
             // replace `lodash.createCallback` references with `createCallback`
             if (!isLodash('createCallback')) {
               source = source.replace(/\blodash\.(createCallback\()\b/g, '$1');
             }
             // unexpose "exit early" feature from functions
-            if (!isLodash('forEach') && !isLodash('forIn') && !isLodash('forOwn') && !isLodash('forOwnRight')) {
+            if (!isLodash('forEach') && !isLodash('forEachRight') &&
+                !isLodash('forIn') && !isLodash('forInRight') &&
+                !isLodash('forOwn') && !isLodash('forOwnRight')) {
               _.each(['baseEach', 'forEach', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(funcName) {
                 source = source.replace(matchFunction(source, funcName), function(match) {
                   return match.replace(/=== *false\)/g, '=== indicatorObject)');
                 });
               });
 
-              // modify functions that use `_.forEach` to use the private `indicatorObject`
-              source = source.replace(matchFunction(source, 'findLast'), function(match) {
-                return match.replace(/return false/, 'return indicatorObject');
+              _.each(['forEachRight', 'transform'], function(funcName) {
+                source = source.replace(matchFunction(source, funcName), function(match) {
+                  return match.replace(/return callback[^)]+\)/, '$& === false && indicatorObject');
+                });
               });
 
-              source = source.replace(matchFunction(source, 'forEachRight'), function(match) {
-                return match.replace(/return callback[^)]+\)/, '$& === false && indicatorObject');
+              _.each(['baseIsEqual', 'every'], function(funcName) {
+                source = source.replace(matchFunction(source, funcName), function(match) {
+                  return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
+                });
               });
 
-              source = source.replace(matchFunction(source, 'transform'), function(match) {
-                return match.replace(/return callback[^)]+\)/, '$& === false && indicatorObject');
-              });
-
-              // modify functions that use `_.forIn` to use the private `indicatorObject`
-              source = source.replace(matchFunction(source, 'baseIsEqual'), function(match) {
-                return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-              });
-
-              source = source.replace(matchFunction(source, 'shimIsPlainObject'), function(match) {
-                return match.replace(/return false/, 'return indicatorObject');
-              });
-
-              // modify functions that use `_.forOwn` to use the private `indicatorObject`
-              source = source.replace(matchFunction(source, 'every'), function(match) {
-                return match.replace(/\(result *= *(.+?)\);/g, '!(result = $1) && indicatorObject;');
-              });
-
-              source = source.replace(matchFunction(source, 'find'), function(match) {
-                return match.replace(/return false/, 'return indicatorObject');
+              _.each(['find', 'findKey', 'findLast', 'findLastKey', 'shimIsPlainObject'], function(funcName) {
+                source = source.replace(matchFunction(source, funcName), function(match) {
+                  return match.replace(/return false/, 'return indicatorObject');
+                });
               });
 
               _.each(['contains', 'some'], function(funcName) {
                 source = source.replace(matchFunction(source, funcName), function(match) {
                   return match.replace(/!\(result *= *(.+?)\);/, '(result = $1) && indicatorObject;');
                 });
-              });
-
-              // modify functions that use `_.forOwnRight` to use the private `indicatorObject`
-              source = source.replace(matchFunction(source, 'findLastKey'), function(match) {
-                return match.replace(/return false/, 'return indicatorObject');
               });
             }
             // remove chainability
@@ -4084,8 +4098,12 @@
           });
 
           source = source.replace(matchFunction(source, 'template'), function(match) {
+            if (isUnderscore) {
+              // assign `_` via `template.imports`
+              return match.replace(/_ *= *lodash\b/, '$&.templateSettings.imports._');
+            }
             return match
-              // assign `settings` variable from the reassigned `templateSettings.imports`
+              // assign `settings` via `template.imports`
               .replace(/= *templateSettings(?=[,;])/, '$&.imports._.templateSettings')
               // remove debug sourceURL use in `_.template`
               .replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');

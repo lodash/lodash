@@ -1712,7 +1712,7 @@
      */
     function findLastKey(object, callback, thisArg) {
       var result;
-      callback = lodash.createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg, 3);
       forOwnRight(object, function(value, key, object) {
         if (callback(value, key, object)) {
           result = key;
@@ -1801,17 +1801,16 @@
      * // => logs 'name' and 'bark' assuming `_.forIn ` logs 'bark' and 'name'
      */
     function forInRight(object, callback, thisArg) {
-      var index = -1,
-          pairs = [];
+      var pairs = [];
 
       forIn(object, function(value, key) {
-        pairs.push(value, key);
+        pairs.push(key, value);
       });
 
       var length = pairs.length;
       callback = baseCreateCallback(callback, thisArg, 3);
-      while (++index < length) {
-        if (callback(pairs[index], pairs[++index], object) === false) {
+      while (length--) {
+        if (callback(pairs[length--], pairs[length], object) === false) {
           break;
         }
       }
@@ -2955,7 +2954,7 @@
      */
     function findLast(collection, callback, thisArg) {
       var result;
-      callback = lodash.createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg, 3);
       forEachRight(collection, function(value, index, collection) {
         if (callback(value, index, collection)) {
           result = value;
@@ -3031,7 +3030,7 @@
       callback = baseCreateCallback(callback, thisArg, 3);
       forEach(collection, function(value, index, collection) {
         index = props ? props[--length] : --length;
-        callback(iterable[index], index, collection);
+        return callback(iterable[index], index, collection);
       });
       return collection;
     }
@@ -3908,13 +3907,11 @@
      * // => 2
      */
     function findLastIndex(array, callback, thisArg) {
-      var index = -1,
-          length = array ? array.length : 0;
-
-      callback = lodash.createCallback(callback, thisArg);
+      var length = array ? array.length : 0;
+      callback = lodash.createCallback(callback, thisArg, 3);
       while (length--) {
-        if (callback(array[index], index, array)) {
-          return index;
+        if (callback(array[length], length, array)) {
+          return length;
         }
       }
       return -1;

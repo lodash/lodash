@@ -2032,7 +2032,7 @@
      */
     function findLastKey(object, callback, thisArg) {
       var result;
-      callback = lodash.createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg, 3);
       forOwnRight(object, function(value, key, object) {
         if (callback(value, key, object)) {
           result = key;
@@ -3238,7 +3238,7 @@
      */
     function findLast(collection, callback, thisArg) {
       var result;
-      callback = lodash.createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg, 3);
       forEachRight(collection, function(value, index, collection) {
         if (callback(value, index, collection)) {
           result = value;
@@ -4196,7 +4196,7 @@
      */
     function findLastIndex(array, callback, thisArg) {
       var length = array ? array.length : 0;
-      callback = lodash.createCallback(callback, thisArg);
+      callback = lodash.createCallback(callback, thisArg, 3);
       while (length--) {
         if (callback(array[length], length, array)) {
           return length;

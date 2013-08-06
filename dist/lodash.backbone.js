@@ -1565,7 +1565,7 @@
       }
     } else {
       forOwn(collection, callback);
-    };
+    }
   }
 
   /**
@@ -1585,7 +1585,7 @@
    * _([1, 2, 3]).forEachRight(function(num) { console.log(num); }).join(',');
    * // => logs each number from right to left and returns '3,2,1'
    */
-  function forEachRight(collection, callback, thisArg) {
+  function forEachRight(collection, callback) {
     var iterable = collection,
         length = collection ? collection.length : 0;
 
@@ -1593,12 +1593,10 @@
       var props = keys(collection);
       length = props.length;
     }
-    callback = baseCreateCallback(callback, thisArg, 3);
     forEach(collection, function(value, index, collection) {
       index = props ? props[--length] : --length;
-      callback(iterable[index], index, collection);
+      return callback(iterable[index], index, collection) === false && indicatorObject;
     });
-    return collection;
   }
 
   /**

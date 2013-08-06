@@ -1599,6 +1599,8 @@
       'zip'
     ];
 
+    var tested = {};
+
     function strip(value) {
       return String(value)
         .replace(/^ *\/\/.*/gm, '')
@@ -1608,50 +1610,74 @@
     }
 
     funcNames.forEach(function(funcName) {
-      var command = 'underscore plus=' + funcName;
+      _.times(2, function(index) {
+        var command = 'underscore plus=' + funcName,
+            expected = !(funcName == 'defer' && global.setImmediate);
 
-      if (funcName == 'createCallback') {
-        command += ',where';
-      }
-      if (funcName != 'chain' && _.contains(categoryMap.Chaining.concat('mixin'), funcName)) {
-        command += ',chain';
-      }
-      if (_.contains(['isEqual', 'isPlainObject'], funcName)) {
-        command += ',forIn';
-      }
-      if (_.contains(['contains', 'every', 'find', 'some', 'transform'], funcName)) {
-        command += ',forOwn';
-      }
-      asyncTest('`lodash ' + command +'`', function() {
-        var start = _.after(2, _.once(QUnit.start));
-
-        build(['-s'].concat(command.split(' ')), function(data) {
-          var basename = path.basename(data.outputPath, '.js'),
-              context = createContext();
-
-          vm.runInContext(data.source, context, true);
-
-          var lodash = context._,
-              func = lodash[funcName],
-              array = [1, 2, 3],
-              object = { 'a': 1, 'b': 2, 'c': 3 },
-              result = [];
-
-          if (/^for(?:Each|In|Own)(?:Right)?$/.test(funcName)) {
-            func(/^forEach/.test(funcName) ? array : object, function(value) {
-              result.push(value);
-              return false;
-            });
-
-            equal(result.length, 1, basename);
+        if (funcName == 'createCallback') {
+          expected = !!index;
+          if (index) {
+            command += ',where';
           }
-          if (funcName == 'chain' || funcName == 'findWhere' || (funcName == 'defer' && global.setImmediate)) {
-            notEqual(strip(func), strip(_[funcName]), basename);
-          } else if (!/\.min$/.test(basename)) {
-            equal(strip(func), strip(_[funcName]), basename);
+        }
+        if (funcName != 'chain' && _.contains(categoryMap.Chaining.concat('mixin'), funcName)) {
+          expected = funcName == 'tap' || !!index;
+          if (index) {
+            command += ',chain';
           }
-          testMethod(lodash, funcName, basename);
-          start();
+        }
+        if (_.contains(['contains', 'every', 'find', 'findKey', 'findWhere', 'some', 'transform'], funcName)) {
+          expected = !!index;
+          if (index) {
+            command += ',forOwn';
+          }
+        }
+        if (funcName == 'findLast') {
+          expected = !!index;
+          if (index) {
+            command += ',forEachRight';
+          }
+        }
+        if (funcName == 'findLastKey') {
+          expected = !!index;
+          if (index) {
+            command += ',forOwnRight';
+          }
+        }
+        if (tested[command]) {
+          return;
+        }
+        tested[command] = true;
+
+        asyncTest('`lodash ' + command +'`', function() {
+          var start = _.after(2, _.once(QUnit.start));
+
+          build(['-s'].concat(command.split(' ')), function(data) {
+            var basename = path.basename(data.outputPath, '.js'),
+                context = createContext();
+
+            vm.runInContext(data.source, context, true);
+
+            var lodash = context._,
+                func = lodash[funcName],
+                array = [1, 2, 3],
+                object = { 'a': 1, 'b': 2, 'c': 3 },
+                result = [];
+
+            if (/^for(?:Each|In|Own)(?:Right)?$/.test(funcName)) {
+              func(/^forEach/.test(funcName) ? array : object, function(value) {
+                result.push(value);
+                return false;
+              });
+
+              equal(result.length, 1, basename);
+            }
+            if (!/\.min$/.test(basename)) {
+              equal(strip(func) === strip(_[funcName]), expected, basename);
+            }
+            testMethod(lodash, funcName, basename);
+            start();
+          });
         });
       });
     });

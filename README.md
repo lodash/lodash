@@ -113,9 +113,7 @@ In an AMD loader:
 
 ```js
 require({
-  'paths': {
-    'underscore': 'path/to/lodash'
-  }
+  'paths': { 'underscore': 'path/to/lodash' }
 },
 ['underscore'], function(_) {
   console.log(_.VERSION);

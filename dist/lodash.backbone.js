@@ -45,7 +45,7 @@
   /** Detect free variable `module` */
   var freeModule = objectTypes[typeof module] && module && module.exports == freeExports && module;
 
-  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `window` */
   var freeGlobal = objectTypes[typeof global] && global;
   if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
     window = freeGlobal;
@@ -157,7 +157,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a `lodash` object, which wraps the given `value`, to enable method
+   * Creates a `lodash` object which wraps the given value to enable method
    * chaining.
    *
    * In addition to Lo-Dash methods, wrappers also have the following `Array` methods:
@@ -310,7 +310,7 @@
   }
 
   /**
-   * The base implementation of `_.flatten` without support for `callback`
+   * The base implementation of `_.flatten` without support for callback
    * shorthands or `thisArg` binding.
    *
    * @private
@@ -348,7 +348,7 @@
    * @param {Function} [isWhere=false] A flag to indicate performing partial comparisons.
    * @param {Array} [stackA=[]] Tracks traversed `a` objects.
    * @param {Array} [stackB=[]] Tracks traversed `b` objects.
-   * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
+   * @returns {Boolean} Returns `true` if the values are equivalent, else `false`.
    */
   function baseIsEqual(a, b, stackA, stackB) {
     if (a === b) {
@@ -587,7 +587,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is an `arguments` object, else `false`.
+   * @returns {Boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
    * @example
    *
    * (function() { return _.isArguments(arguments); })(1, 2, 3);
@@ -614,7 +614,7 @@
    * @type Function
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
+   * @returns {Boolean} Returns `true` if the `value` is an array, else `false`.
    * @example
    *
    * (function() { return _.isArray(arguments); })();
@@ -649,7 +649,7 @@
   };
 
   /**
-   * Creates an array composed of the own enumerable property names of `object`.
+   * Creates an array composed of the own enumerable property names of an object.
    *
    * @static
    * @memberOf _
@@ -693,9 +693,9 @@
   /**
    * Assigns own enumerable properties of source object(s) to the destination
    * object. Subsequent sources will overwrite property assignments of previous
-   * sources. If a `callback` function is provided, it will be executed to produce
-   * the assigned values. The `callback` is bound to `thisArg` and invoked with
-   * two arguments; (objectValue, sourceValue).
+   * sources. If a callback is provided it will be executed to produce the
+   * assigned values. The callback is bound to `thisArg` and invoked with two
+   * arguments; (objectValue, sourceValue).
    *
    * @static
    * @memberOf _
@@ -736,11 +736,11 @@
   }
 
   /**
-   * Creates a clone of `value`. If `deep` is `true`, nested objects will also
-   * be cloned, otherwise they will be assigned by reference. If a `callback`
-   * function is provided, it will be executed to produce the cloned values. If
-   * `callback` returns `undefined`, cloning will be handled by the method instead.
-   * The `callback` is bound to `thisArg` and invoked with one argument; (value).
+   * Creates a clone of `value`. If `deep` is `true` nested objects will also
+   * be cloned, otherwise they will be assigned by reference. If a callback
+   * is provided it will be executed to produce the cloned values. If the
+   * callback returns `undefined` cloning will be handled by the method instead.
+   * The callback is bound to `thisArg` and invoked with one argument; (value).
    *
    * @static
    * @memberOf _
@@ -819,10 +819,10 @@
   }
 
   /**
-   * Iterates over own and inherited enumerable properties of a given `object`,
-   * executing the `callback` for each property. The `callback` is bound to
-   * `thisArg` and invoked with three arguments; (value, key, object).
-   * Callbacks may exit iteration early by explicitly returning `false`.
+   * Iterates over own and inherited enumerable properties of an object,
+   * executing the callback for each property. The callback is bound to `thisArg`
+   * and invoked with three arguments; (value, key, object). Callbacks may exit
+   * iteration early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -858,10 +858,10 @@
   };
 
   /**
-   * Iterates over own enumerable properties of a given `object`, executing the
-   * `callback` for each property. The `callback` is bound to `thisArg` and
-   * invoked with three arguments; (value, key, object). Callbacks may exit
-   * iteration early by explicitly returning `false`.
+   * Iterates over own enumerable properties of an object, executing the callback
+   * for each property. The callback is bound to `thisArg` and invoked with three
+   * arguments; (value, key, object). Callbacks may exit iteration early by
+   * explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -935,7 +935,7 @@
   }
 
   /**
-   * Creates an object composed of the inverted keys and values of the given `object`.
+   * Creates an object composed of the inverted keys and values of the given object.
    *
    * @static
    * @memberOf _
@@ -969,7 +969,7 @@
    * @memberOf _
    * @category Objects
    * @param {Array|Object|String} value The value to inspect.
-   * @returns {Boolean} Returns `true`, if the `value` is empty, else `false`.
+   * @returns {Boolean} Returns `true` if the `value` is empty, else `false`.
    * @example
    *
    * _.isEmpty([1, 2, 3]);
@@ -998,10 +998,10 @@
 
   /**
    * Performs a deep comparison between two values to determine if they are
-   * equivalent to each other. If `callback` is provided, it will be executed to
-   * compare values. If `callback` returns `undefined`, comparisons will be handled
-   * by the method instead. The `callback` is bound to `thisArg` and invoked with
-   * two arguments; (a, b).
+   * equivalent to each other. If a callback is provided it will be executed
+   * to compare values. If the callback returns `undefined` comparisons will
+   * be handled by the method instead. The callback is bound to `thisArg` and
+   * invoked with two arguments; (a, b).
    *
    * @static
    * @memberOf _
@@ -1010,7 +1010,7 @@
    * @param {Mixed} b The other value to compare.
    * @param {Function} [callback] The function to customize comparing values.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Boolean} Returns `true`, if the values are equivalent, else `false`.
+   * @returns {Boolean} Returns `true` if the values are equivalent, else `false`.
    * @example
    *
    * var moe = { 'name': 'moe', 'age': 40 };
@@ -1045,7 +1045,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is a function, else `false`.
+   * @returns {Boolean} Returns `true` if the `value` is a function, else `false`.
    * @example
    *
    * _.isFunction(_);
@@ -1069,7 +1069,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is an object, else `false`.
+   * @returns {Boolean} Returns `true` if the `value` is an object, else `false`.
    * @example
    *
    * _.isObject({});
@@ -1096,7 +1096,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is a regular expression, else `false`.
+   * @returns {Boolean} Returns `true` if the `value` is a regular expression, else `false`.
    * @example
    *
    * _.isRegExp(/moe/);
@@ -1113,7 +1113,7 @@
    * @memberOf _
    * @category Objects
    * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is a string, else `false`.
+   * @returns {Boolean} Returns `true` if the `value` is a string, else `false`.
    * @example
    *
    * _.isString('moe');
@@ -1126,10 +1126,10 @@
   /**
    * Creates a shallow clone of `object` excluding the specified properties.
    * Property names may be specified as individual arguments or as arrays of
-   * property names. If a `callback` function is provided, it will be executed
-   * for each property in the `object`, omitting the properties `callback`
-   * returns truthy for. The `callback` is bound to `thisArg` and invoked
-   * with three arguments; (value, key, object).
+   * property names. If a callback is provided it will be executed for each
+   * property of `object` omitting the properties the callback returns truthy
+   * for. The callback is bound to `thisArg` and invoked with three arguments;
+   * (value, key, object).
    *
    * @static
    * @memberOf _
@@ -1163,7 +1163,7 @@
   }
 
   /**
-   * Creates a two dimensional array of the given object's key-value pairs,
+   * Creates a two dimensional array of an object's key-value pairs,
    * i.e. `[[key1, value1], [key2, value2]]`.
    *
    * @static
@@ -1191,10 +1191,11 @@
 
   /**
    * Creates a shallow clone of `object` composed of the specified properties.
-   * Property names may be specified as individual arguments or as arrays of property
-   * names. If `callback` is provided, it will be executed for each property in the
-   * `object`, picking the properties `callback` returns truthy for. The `callback`
-   * is bound to `thisArg` and invoked with three arguments; (value, key, object).
+   * Property names may be specified as individual arguments or as arrays of
+   * property names. If a callback is provided it will be executed for each
+   * property of `object` picking the properties the callback returns truthy
+   * for. The callback is bound to `thisArg` and invoked with three arguments;
+   * (value, key, object).
    *
    * @static
    * @memberOf _
@@ -1258,9 +1259,9 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Checks if a given `target` element is present in a `collection` using strict
-   * equality for comparisons, i.e. `===`. If `fromIndex` is negative, it is used
-   * as the offset from the end of the collection.
+   * Checks if a given value is present in a collection using strict equality
+   * for comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
+   * offset from the end of the collection.
    *
    * @static
    * @memberOf _
@@ -1300,15 +1301,15 @@
 
   /**
    * Creates an object composed of keys generated from the results of running
-   * each element of the `collection` through the given `callback`. The corresponding
-   * value of each key is the number of times the key was returned by the `callback`.
-   * The `callback` is bound to `thisArg` and invoked with three arguments;
+   * each element of `collection` through the callback. The corresponding value
+   * of each key is the number of times the key was returned by the callback.
+   * The callback is bound to `thisArg` and invoked with three arguments;
    * (value, index|key, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -1317,7 +1318,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns the composed aggregate object.
@@ -1337,14 +1338,14 @@
   });
 
   /**
-   * Checks if the `callback` returns a truthy value for **all** elements of a
-   * `collection`. The `callback` is bound to `thisArg` and invoked with three
+   * Checks if the given callback returns truthy value for **all** elements of
+   * a collection. The callback is bound to `thisArg` and invoked with three
    * arguments; (value, index|key, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -1354,7 +1355,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Boolean} Returns `true` if all elements passed the callback check,
@@ -1399,14 +1400,14 @@
   }
 
   /**
-   * Iterates over elements of a `collection`, returning an array of all elements
-   * the `callback` returns truthy for. The `callback` is bound to `thisArg`
-   * and invoked with three arguments; (value, index|key, collection).
+   * Iterates over elements of a collection, returning an array of all elements
+   * the callback returns truthy for. The callback is bound to `thisArg` and
+   * invoked with three arguments; (value, index|key, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -1416,7 +1417,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of elements that passed the callback check.
@@ -1463,14 +1464,14 @@
   }
 
   /**
-   * Iterates over elements of a `collection`, returning the first that the
-   * `callback` returns truthy for. The `callback` is bound to `thisArg` and
+   * Iterates over elements of a collection, returning the first element that
+   * the callback returns truthy for. The callback is bound to `thisArg` and
    * invoked with three arguments; (value, index|key, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -1480,7 +1481,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the found element, else `undefined`.
@@ -1531,10 +1532,10 @@
   }
 
   /**
-   * Iterates over elements of a `collection`, executing the `callback` for
-   * each element. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, index|key, collection). Callbacks may exit iteration
-   * early by explicitly returning `false`.
+   * Iterates over elements of a collection, executing the callback for each
+   * element. The callback is bound to `thisArg` and invoked with three arguments;
+   * (value, index|key, collection). Callbacks may exit iteration early by
+   * explicitly returning `false`.
    *
    * @static
    * @memberOf _
@@ -1569,7 +1570,7 @@
   }
 
   /**
-   * This method is like `_.forEach`, except that it iterates over elements
+   * This method is like `_.forEach` except that it iterates over elements
    * of a `collection` from right to left.
    *
    * @static
@@ -1601,15 +1602,15 @@
 
   /**
    * Creates an object composed of keys generated from the results of running
-   * each element of the `collection` through the `callback`. The corresponding
-   * value of each key is an array of the elements responsible for generating
-   * the key. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, index|key, collection).
+   * each element of a collection through the callback. The corresponding value
+   * of each key is an array of the elements responsible for generating the key.
+   * The callback is bound to `thisArg` and invoked with three arguments;
+   * (value, index|key, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`
    *
@@ -1618,7 +1619,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns the composed aggregate object.
@@ -1639,10 +1640,10 @@
   });
 
   /**
-   * Invokes the method named by `methodName` on each element in the `collection`,
+   * Invokes the method named by `methodName` on each element in the `collection`
    * returning an array of the results of each invoked method. Additional arguments
-   * will be provided to each invoked method. If `methodName` is a function, it will
-   * be invoked for, and `this` bound to, each element in the `collection`.
+   * will be provided to each invoked method. If `methodName` is a function it
+   * will be invoked for, and `this` bound to, each element in the `collection`.
    *
    * @static
    * @memberOf _
@@ -1674,14 +1675,14 @@
   }
 
   /**
-   * Creates an array of values by running each element in the `collection`
-   * through the `callback`. The `callback` is bound to `thisArg` and invoked with
+   * Creates an array of values by running each element in the collection
+   * through the callback. The callback is bound to `thisArg` and invoked with
    * three arguments; (value, index|key, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -1691,7 +1692,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of the results of each `callback` execution.
@@ -1732,15 +1733,15 @@
   }
 
   /**
-   * Retrieves the maximum value of an `array`. If `callback` is provided,
-   * it will be executed for each value in the `array` to generate the
-   * criterion by which the value is ranked. The `callback` is bound to
-   * `thisArg` and invoked with three arguments; (value, index, collection).
+   * Retrieves the maximum value of an array. If a callback is provided it
+   * will be executed for each value in the array to generate the criterion by
+   * which the value is ranked. The callback is bound to `thisArg` and invoked
+   * with three arguments; (value, index, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -1749,7 +1750,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the maximum value.
@@ -1799,15 +1800,15 @@
   }
 
   /**
-   * Retrieves the minimum value of an `array`. If `callback` is provided,
-   * it will be executed for each value in the `array` to generate the
-   * criterion by which the value is ranked. The `callback` is bound to `thisArg`
-   * and invoked with three arguments; (value, index, collection).
+   * Retrieves the minimum value of an array. If a callback is provided it
+   * will be executed for each value in the array to generate the criterion by
+   * which the value is ranked. The callback is bound to `thisArg` and invoked
+   * with three arguments; (value, index, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -1816,7 +1817,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the minimum value.
@@ -1866,11 +1867,11 @@
   }
 
   /**
-   * Reduces a `collection` to a value which is the accumulated result of running
-   * each element in the `collection` through the `callback`, where each successive
-   * `callback` execution consumes the return value of the previous execution.
-   * If `accumulator` is not provided, the first element of the `collection` will be
-   * used as the initial `accumulator` value. The `callback` is bound to `thisArg`
+   * Reduces a collection to a value which is the accumulated result of running
+   * each element in the collection through the callback, where each successive
+   * callback execution consumes the return value of the previous execution. If
+   * `accumulator` is not provided the first element of the collection will be
+   * used as the initial `accumulator` value. The callback is bound to `thisArg`
    * and invoked with four arguments; (accumulator, value, index|key, collection).
    *
    * @static
@@ -1921,7 +1922,7 @@
   }
 
   /**
-   * This method is like `_.reduce`, except that it iterates over elements
+   * This method is like `_.reduce` except that it iterates over elements
    * of a `collection` from right to left.
    *
    * @static
@@ -1951,13 +1952,13 @@
   }
 
   /**
-   * The opposite of `_.filter`, this method returns the elements of a
-   * `collection` that `callback` does **not** return truthy for.
+   * The opposite of `_.filter` this method returns the elements of a
+   * collection that the callback does **not** return truthy for.
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -1966,11 +1967,10 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Array} Returns a new array of elements that did **not** pass the
-   *  callback check.
+   * @returns {Array} Returns a new array of elements that failed the callback check.
    * @example
    *
    * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
@@ -1997,8 +1997,8 @@
   }
 
   /**
-   * Creates an array of shuffled `array` values, using a version of the
-   * Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
+   * Creates an array of shuffled values, using a version of the Fisher-Yates
+   * shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
    *
    * @static
    * @memberOf _
@@ -2049,15 +2049,15 @@
   }
 
   /**
-   * Checks if the `callback` returns a truthy value for **any** element of a
-   * `collection`. The function returns as soon as it finds passing value, and
-   * does not iterate over the entire `collection`. The `callback` is bound to
+   * Checks if the callback returns a truthy value for **any** element of a
+   * collection. The function returns as soon as it finds a passing value and
+   * does not iterate over the entire collection. The callback is bound to
    * `thisArg` and invoked with three arguments; (value, index|key, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -2067,7 +2067,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Boolean} Returns `true` if any element passed the callback check,
@@ -2113,15 +2113,15 @@
 
   /**
    * Creates an array of elements, sorted in ascending order by the results of
-   * running each element in the `collection` through the `callback`. This method
-   * performs a stable sort, that is, it will preserve the original sort order of
-   * equal elements. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, index|key, collection).
+   * running each element in a collection through the callback. This method
+   * performs a stable sort, that is, it will preserve the original sort order
+   * of equal elements. The callback is bound to `thisArg` and invoked with
+   * three arguments; (value, index|key, collection).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -2130,7 +2130,7 @@
    * @category Collections
    * @param {Array|Object|String} collection The collection to iterate over.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of sorted elements.
@@ -2225,16 +2225,16 @@
   }
 
   /**
-   * Gets the first element of the `array`. If a number `n` is provided, the first
-   * `n` elements of the `array` are returned. If a `callback` function is provided,
-   * elements at the beginning of the array are returned as long as the `callback`
-   * returns truthy. The `callback` is bound to `thisArg` and invoked with three
-   * arguments; (value, index, array).
+   * Gets the first element of an array. If a number `n` is provided the first
+   * `n` elements of the array are returned. If a callback is provided elements
+   * at the beginning of the array are returned as long as the callback returns
+   * truthy. The callback is bound to `thisArg` and invoked with three arguments;
+   * (value, index, array).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -2245,7 +2245,7 @@
    * @param {Array} array The array to query.
    * @param {Function|Object|Number|String} [callback|n] The function called
    *  per element or the number of elements to return. If a property name or
-   *  object is provided, it will be used to create a "_.pluck" or "_.where"
+   *  object is provided it will be used to create a "_.pluck" or "_.where"
    *  style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the first element(s) of `array`.
@@ -2304,16 +2304,16 @@
 
   /**
    * Gets the index at which the first occurrence of `value` is found using
-   * strict equality for comparisons, i.e. `===`. If the `array` is already
-   * sorted, passing `true` for `fromIndex` will run a faster binary search.
+   * strict equality for comparisons, i.e. `===`. If the array is already sorted
+   * providing `true` for `fromIndex` will run a faster binary search.
    *
    * @static
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to search.
    * @param {Mixed} value The value to search for.
-   * @param {Boolean|Number} [fromIndex=0] The index to search from or `true` to
-   *  perform a binary search on a sorted `array`.
+   * @param {Boolean|Number} [fromIndex=0] The index to search from or `true`
+   *  to perform a binary search on a sorted array.
    * @returns {Number} Returns the index of the matched value or `-1`.
    * @example
    *
@@ -2338,16 +2338,16 @@
   }
 
   /**
-   * Gets all but the last element of `array`. If a number `n` is provided, the
-   * last `n` elements are excluded from the result. If a `callback` function
-   * is provided, elements at the end of the array are excluded from the result
-   * as long as the `callback` returns truthy. The `callback` is bound to
-   * `thisArg` and invoked with three arguments; (value, index, array).
+   * Gets all but the last element of an array. If a number `n` is provided
+   * the last `n` elements are excluded from the result. If a callback is
+   * provided elements at the end of the array are excluded from the result
+   * as long as the callback returns truthy. The callback is bound to `thisArg`
+   * and invoked with three arguments; (value, index, array).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -2357,7 +2357,7 @@
    * @param {Array} array The array to query.
    * @param {Function|Object|Number|String} [callback|n=1] The function called
    *  per element or the number of elements to exclude. If a property name or
-   *  object is provided, it will be used to create a "_.pluck" or "_.where"
+   *  object is provided it will be used to create a "_.pluck" or "_.where"
    *  style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a slice of `array`.
@@ -2413,17 +2413,17 @@
   }
 
   /**
-   * Gets the last element of the `array`. If a number `n` is provided, the
-   * last `n` elements of the `array` are returned. If a `callback` function
-   * is provided, elements at the end of the array are returned as long as the
-   * `callback` returns truthy. The `callback` is bound to `thisArg` and
-   * invoked with three arguments;(value, index, array).
+   * Gets the last element of an array. If a number `n` is provided the last
+   * `n` elements of the array are returned. If a callback is provided elements
+   * at the end of the array are returned as long as the callback returns truthy.
+   * The callback is bound to `thisArg` and invoked with three arguments;
+   * (value, index, array).
    *
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -2433,7 +2433,7 @@
    * @param {Array} array The array to query.
    * @param {Function|Object|Number|String} [callback|n] The function called
    *  per element or the number of elements to return. If a property name or
-   *  object is provided, it will be used to create a "_.pluck" or "_.where"
+   *  object is provided it will be used to create a "_.pluck" or "_.where"
    *  style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Mixed} Returns the last element(s) of `array`.
@@ -2524,17 +2524,17 @@
   }
 
   /**
-   * The opposite of `_.initial`, this method gets all but the first value of
-   * `array`. If a number `n` is provided, the first `n` values are excluded from
-   * the result. If a `callback` function is provided, elements at the beginning
-   * of the array are excluded from the result as long as the `callback` returns
-   * truthy. The `callback` is bound to `thisArg` and invoked with three
+   * The opposite of `_.initial` this method gets all but the first value of
+   * an array. If a number `n` is provided the first `n` values are excluded
+   * from the result. If a callback function is provided elements at the beginning
+   * of the array are excluded from the result as long as the callback returns
+   * truthy. The callback is bound to `thisArg` and invoked with three
    * arguments; (value, index, array).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -2545,7 +2545,7 @@
    * @param {Array} array The array to query.
    * @param {Function|Object|Number|String} [callback|n=1] The function called
    *  per element or the number of elements to exclude. If a property name or
-   *  object is provided, it will be used to create a "_.pluck" or "_.where"
+   *  object is provided it will be used to create a "_.pluck" or "_.where"
    *  style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a slice of `array`.
@@ -2598,16 +2598,16 @@
   }
 
   /**
-   * Uses a binary search to determine the smallest index at which the `value`
-   * should be inserted into `array` in order to maintain the sort order of the
-   * sorted `array`. If `callback` is provided, it will be executed for `value`
-   * and each element in `array` to compute their sort ranking. The `callback`
-   * is bound to `thisArg` and invoked with one argument; (value).
+   * Uses a binary search to determine the smallest index at which a value
+   * should be inserted into a given sorted array in order to maintain the sort
+   * order of the array. If a callback is provided it will be executed for
+   * `value` and each element of `array` to compute their sort ranking. The
+   * callback is bound to `thisArg` and invoked with one argument; (value).
    *
-   * If a property name is provided for `callback`, the created "_.pluck" style
+   * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
    *
-   * If an object is provided for `callback`, the created "_.where" style callback
+   * If an object is provided for `callback` the created "_.where" style callback
    * will return `true` for elements that have the properties of the given object,
    * else `false`.
    *
@@ -2617,10 +2617,10 @@
    * @param {Array} array The array to inspect.
    * @param {Mixed} value The value to evaluate.
    * @param {Function|Object|String} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided, it will be used
+   *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {Mixed} [thisArg] The `this` binding of `callback`.
-   * @returns {Number} Returns the index at which the value should be inserted
+   * @returns {Number} Returns the index at which `value` should be inserted
    *  into `array`.
    * @example
    *
@@ -2710,10 +2710,10 @@
   }
 
   /**
-   * Binds methods on `object` to `object`, overwriting the existing method.
-   * Method names may be specified as individual arguments or as arrays of method
-   * names. If no method names are provided, all the function properties of `object`
-   * will be bound.
+   * Binds methods of an object to the object itself, overwriting the existing
+   * method. Method names may be specified as individual arguments or as arrays
+   * of method names. If no method names are provided all the function properties
+   * of `object` will be bound.
    *
    * @static
    * @memberOf _
@@ -2747,8 +2747,8 @@
 
   /**
    * Produces a callback bound to an optional `thisArg`. If `func` is a property
-   * name, the created callback will return the property value for a given element.
-   * If `func` is an object, the created callback will return `true` for elements
+   * name the created callback will return the property value for a given element.
+   * If `func` is an object the created callback will return `true` for elements
    * that contain the equivalent object properties, otherwise it will return `false`.
    *
    * @static
@@ -2874,12 +2874,13 @@
   }
 
   /**
-   * Adds functions properties of `object` to the `lodash` function and chainable
-   * wrapper.
+   * Adds function properties of a source object to the `lodash` function and
+   * chainable wrapper.
    *
    * @static
    * @memberOf _
    * @category Utilities
+   * @param {Object} object The object of function properties to add to `lodash`.
    * @param {Object} object The object of function properties to add to `lodash`.
    * @example
    *
@@ -2914,9 +2915,9 @@
   }
 
   /**
-   * Resolves the value of `property` on `object`. If `property` is a function,
+   * Resolves the value of `property` on `object`. If `property` is a function
    * it will be invoked with the `this` binding of `object` and its result returned,
-   * else the property value is returned. If `object` is falsey, then `undefined`
+   * else the property value is returned. If `object` is falsey then `undefined`
    * is returned.
    *
    * @static
@@ -2946,7 +2947,7 @@
   }
 
   /**
-   * Generates a unique ID. If `prefix` is provided, the ID will be appended to it.
+   * Generates a unique ID. If `prefix` is provided the ID will be appended to it.
    *
    * @static
    * @memberOf _

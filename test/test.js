@@ -2734,6 +2734,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.pull');
+
+  (function() {
+    test('should modify and return the array', function() {
+      var array = [1, 2, 3],
+          actual = _.pull(array, 1, 3);
+
+      deepEqual(array, [2]);
+      ok(actual === array);
+    })
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.random');
 
   (function() {
@@ -2892,6 +2906,44 @@
         deepEqual(args, ['c', 'b', 1, collection]);
         equal(actual, 'cba');
       });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.remove');
+
+  (function() {
+    test('should modify the array and return removed elements', function() {
+      var array = [1, 2, 3];
+
+      var actual = _.remove(array, function(value) {
+        return value < 3;
+      });
+
+      deepEqual(array, [3]);
+      deepEqual(actual, [1, 2]);
+    });
+
+    test('should pass the correct `callback` arguments', function() {
+      var args,
+          array = [1, 2, 3];
+
+      _.remove(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 0, array]);
+    });
+
+    test('should support the `thisArg` argument', function() {
+      var array = [1, 2, 3];
+
+      var actual = _.remove(array, function(value, index) {
+        return this[index] < 3;
+      }, array);
+
+      deepEqual(actual, [1, 2]);
     });
   }());
 
@@ -4011,6 +4063,9 @@
       deepEqual(_.uniq(args), [1, null, [3], 5], message('uniq'));
       deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));
+
+      deepEqual(_.pull(args, null), { '0': 1, '1': [3], '2': 5 }, message('pull'));
+      deepEqual(_.remove(args, function(value) { return typeof value == 'number'; }), [1, 5], message('remove'));
     });
 
     test('should allow falsey primary arguments', function() {
@@ -4125,7 +4180,6 @@
 
     test('should handle `null` `thisArg` arguments', function() {
       var thisArg,
-          array = ['a'],
           callback = function() { thisArg = this; },
           expected = (function() { return this; }).call(null);
 
@@ -4134,10 +4188,17 @@
         'every',
         'filter',
         'find',
+        'findIndex',
+        'findKey',
         'findLast',
+        'findLastIndex',
+        'findLastKey',
         'forEach',
+        'forEachRight',
         'forIn',
+        'forInRight',
         'forOwn',
+        'forOwnRight',
         'groupBy',
         'map',
         'max',
@@ -4147,6 +4208,7 @@
         'reduce',
         'reduceRight',
         'reject',
+        'remove',
         'some',
         'sortBy',
         'sortedIndex',
@@ -4155,7 +4217,8 @@
       ];
 
       _.forEach(funcs, function(methodName) {
-        var func = _[methodName],
+        var array = ['a'],
+            func = _[methodName],
             message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
 
         thisArg = undefined;

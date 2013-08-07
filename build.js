@@ -194,7 +194,7 @@
     'reduce': ['baseCreateCallback', 'baseEach', 'isArray'],
     'reduceRight': ['baseCreateCallback', 'forEachRight'],
     'reject': ['createCallback', 'filter'],
-    'remove': ['baseEach', 'createCallback', 'isArray'],
+    'remove': ['createCallback'],
     'rest': ['createCallback', 'slice'],
     'result': ['isFunction'],
     'runInContext': ['defaults', 'pick'],
@@ -338,6 +338,7 @@
       'lastIndexOf',
       'pull',
       'range',
+      'remove',
       'rest',
       'sortedIndex',
       'union',
@@ -375,7 +376,6 @@
       'reduce',
       'reduceRight',
       'reject',
-      'remove',
       'shuffle',
       'size',
       'some',
@@ -3001,11 +3001,11 @@
               _.pull(funcDepMap[funcName], 'baseEach').push('forEach');
             });
 
-            _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'remove', 'some'], function(funcName) {
+            _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(funcName) {
              _.pull(funcDepMap[funcName], 'baseEach').push('forOwn');
             });
 
-            _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'remove', 'shimKeys'], function(funcName) {
+            _.each(['every', 'find', 'filter', 'forEach', 'forIn', 'forOwn', 'map', 'reduce', 'shimKeys'], function(funcName) {
               if (!(isUnderscore && isLodash(funcName))) {
                 _.pull(funcDepMap[funcName], 'isArray');
               }
@@ -3260,7 +3260,7 @@
             ].join('\n'));
 
             // replace `isArray(collection)` checks in "Collections" functions with simpler type checks
-            _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'remove', 'some'], function(funcName) {
+            _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(funcName) {
               source = source.replace(matchFunction(source, funcName), function(match) {
                 if (funcName == 'reduce') {
                   match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');

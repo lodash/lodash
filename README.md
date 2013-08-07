@@ -42,7 +42,7 @@ For a list of upcoming features, check out our [roadmap](https://github.com/best
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) for checking if values are created by `Object`
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
- * [_.partialRight](http://lodash.com/docs#partialRight) & [friends](http://lodash.com/docs#partial) for partial application without binding
+ * [_.partialRight](http://lodash.com/docs#partialRight) for [partial application](http://lodash.com/docs#partial) from the right
  * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking
  * [_.support](http://lodash.com/docs#support) for flagging environment features
  * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6)

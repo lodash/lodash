@@ -4647,11 +4647,10 @@
       return result;
     }
 
-
     /**
-     * Removes all elements from the given array that the callback returns truthy
-     * for and returns an array of removed elements. The callback is bound to
-     * `thisArg` and invoked with three arguments; (value, index, array).
+     * Removes all elements from an array that the callback returns truthy for
+     * and returns an array of removed elements. The callback is bound to `thisArg`
+     * and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -4663,7 +4662,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array|Object|String} array The array to modify.
+     * @param {Array} array The array to modify.
      * @param {Function|Object|String} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
@@ -4682,7 +4681,7 @@
      */
     function remove(array, callback, thisArg) {
       var index = -1,
-          length = array.length,
+          length = array ? array.length : 0,
           result = [];
 
       callback = lodash.createCallback(callback, thisArg, 3);

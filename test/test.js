@@ -3429,22 +3429,25 @@
       }, 96);
     });
 
-    asyncTest('should trigger trailing call when invoked repeatedly', function() {
-      var count = 0,
-          limit = 96,
-          throttled = _.throttle(function() { count++; }, 64),
-          start = new Date;
+    _.times(2, function(index) {
+      asyncTest('should trigger trailing call when invoked repeatedly' + (index ? ' and `leading` is `false`' : '') , function() {
+        var count = 0,
+            limit = 160,
+            options = index ? { 'leading': false } : {},
+            throttled = _.throttle(function() { count++; }, 64, options),
+            start = new Date;
 
-      while ((new Date - start) < limit) {
-        throttled();
-      }
-      var lastCount = count;
-      ok(lastCount > 1);
+        while ((new Date - start) < limit) {
+          throttled();
+        }
+        var lastCount = count;
+        ok(count > 1);
 
-      setTimeout(function() {
-        ok(count > lastCount);
-        QUnit.start();
-      }, 96);
+        setTimeout(function() {
+          ok(count > lastCount);
+          QUnit.start();
+        }, 96);
+      });
     });
 
     asyncTest('should apply default options correctly', function() {

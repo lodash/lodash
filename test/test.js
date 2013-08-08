@@ -4067,8 +4067,11 @@
       deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));
 
-      deepEqual(_.pull(args, null), { '0': 1, '1': [3], '2': 5 }, message('pull'));
-      deepEqual(_.remove(args, function(value) { return typeof value == 'number'; }), [1, 5], message('remove'));
+      _.pull(args, null);
+      deepEqual([args[0], args[1], args[2]], [1, [3], 5], message('pull'));
+
+      _.remove(args, function(value) { return typeof value == 'number'; });
+      deepEqual(_.values(args), [[3]], message('remove'));
     });
 
     test('should allow falsey primary arguments', function() {

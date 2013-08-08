@@ -769,12 +769,12 @@
   var shimKeys = function(object) {
     var index, iterable = object, result = [];
     if (!iterable) return result;
-    if (!(objectTypes[typeof object])) return result;  
+    if (!(objectTypes[typeof object])) return result;
       for (index in iterable) {
         if (hasOwnProperty.call(iterable, index)) {
-          result.push(index);    
+          result.push(index);
         }
-      }  
+      }
     return result
   };
 
@@ -986,8 +986,8 @@
     if (!iterable) return result;
     if (!objectTypes[typeof iterable]) return result;
       for (index in iterable) {
-        if (callback(iterable[index], index, collection) === indicatorObject) return result;    
-      }  
+        if (callback(iterable[index], index, collection) === indicatorObject) return result;
+      }
     return result
   };
 
@@ -1018,9 +1018,9 @@
     if (!objectTypes[typeof iterable]) return result;
       for (index in iterable) {
         if (hasOwnProperty.call(iterable, index)) {
-          if (callback(iterable[index], index, collection) === indicatorObject) return result;    
+          if (callback(iterable[index], index, collection) === indicatorObject) return result;
         }
-      }  
+      }
     return result
   };
 

@@ -1352,14 +1352,14 @@
             index += '';
             result.push(index);
           }
-        } else {    
+        } else {
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
           if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
-            result.push(index);    
+            result.push(index);
           }
-        }  
+        }
       }
       return result
     };
@@ -1435,14 +1435,14 @@
           if (callback(iterable[index], index, collection) === false) return result;
         }
       }
-      else {    
+      else {
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
           if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
-            if (callback(iterable[index], index, collection) === false) return result;    
+            if (callback(iterable[index], index, collection) === false) return result;
           }
-        }  
+        }
       }
       return result
     };
@@ -1499,14 +1499,14 @@
             index += '';
             result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];
           }
-        } else {    
+        } else {
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
           if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
-            result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];    
+            result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];
           }
-        }  
+        }
       }
         }
       }
@@ -1644,14 +1644,14 @@
             index += '';
             if (typeof result[index] == 'undefined') result[index] = iterable[index];
           }
-        } else {    
+        } else {
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
           if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
-            if (typeof result[index] == 'undefined') result[index] = iterable[index];    
+            if (typeof result[index] == 'undefined') result[index] = iterable[index];
           }
-        }  
+        }
       }
         }
       }
@@ -1762,14 +1762,14 @@
             index += '';
             if (callback(iterable[index], index, collection) === false) return result;
           }
-        } else {    
+        } else {
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
           if (!(skipProto && index == "prototype")) {
-            if (callback(iterable[index], index, collection) === false) return result;    
+            if (callback(iterable[index], index, collection) === false) return result;
           }
-        }  
+        }
       }
       return result
     };
@@ -1849,14 +1849,14 @@
             index += '';
             if (callback(iterable[index], index, collection) === false) return result;
           }
-        } else {    
+        } else {
         var skipProto = typeof iterable == 'function';
 
         for (index in iterable) {
           if (!(skipProto && index == "prototype") && hasOwnProperty.call(iterable, index)) {
-            if (callback(iterable[index], index, collection) === false) return result;    
+            if (callback(iterable[index], index, collection) === false) return result;
           }
-        }  
+        }
       }
       return result
     };

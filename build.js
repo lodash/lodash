@@ -1135,10 +1135,10 @@
       })
       // remove unneeded horizontal rule comment separators
       .replace(/(\{\n)\s*\/\*-+\*\/\n|^ *\/\*-+\*\/\n(\s*\})/gm, '$1$2')
-      // remove extraneous whitespace
-      .replace(/^ *\n/gm, '\n')
-      // remove lines with just whitespace and semicolons
+      // remove lines with just spaces and semicolons
       .replace(/^ *;\n/gm, '')
+      // remove trailing spaces from lines
+      .replace(/ *$/gm, '')
       // consolidate multiple newlines
       .replace(/\n{3,}/g, '\n\n')
       // add trailing newline

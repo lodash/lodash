@@ -848,7 +848,7 @@
       (conditions.join(' && ')) +
       ') {\n  ';
        }
-      __p += 
+      __p +=
       (obj.loop) +
       ';    ';
        if (conditions.length) {
@@ -874,7 +874,7 @@
        if (obj.array || support.nonEnumArgs) {
       __p += '\n}';
        }
-      __p += 
+      __p +=
       (obj.bottom) +
       ';\nreturn result';
 

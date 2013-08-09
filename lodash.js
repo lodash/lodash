@@ -1445,6 +1445,7 @@
       var isBind = bitmask & 1,
           isBindKey = bitmask & 2,
           isCurry = bitmask & 4,
+          isPartial = bitmask & 8,
           isPartialRight = bitmask & 16;
 
       if (!isBindKey && !isFunction(func)) {
@@ -1458,10 +1459,10 @@
         if (isCurry && !(bindData[1] & 4)) {
           bindData[5] = arity;
         }
-        if (partialArgs) {
+        if (isPartial) {
           push.apply(bindData[2] || (bindData[2] = []), partialArgs);
         }
-        if (partialRightArgs) {
+        if (isPartialRight) {
           push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
         }
         bindData[1] |= bitmask;

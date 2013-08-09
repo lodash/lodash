@@ -458,6 +458,7 @@
         fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
+        now = reNative.test(now = Date.now) && now,
         push = arrayRef.push,
         setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
@@ -5007,7 +5008,7 @@
         clear();
         if (isCalled) {
           if (maxWait !== false) {
-            lastCalled = new Date;
+            lastCalled = now();
           }
           result = func.apply(thisArg, args);
         }
@@ -5016,7 +5017,7 @@
       var maxDelayed = function() {
         clear();
         if (trailing || (maxWait !== wait)) {
-          lastCalled = new Date;
+          lastCalled = now();
           result = func.apply(thisArg, args);
         }
       };
@@ -5035,15 +5036,15 @@
             result = func.apply(thisArg, args);
           }
         } else {
-          var now = new Date;
+          var stamp = now();
           if (!maxTimeoutId && !leading) {
-            lastCalled = now;
+            lastCalled = stamp;
           }
-          var remaining = maxWait - (now - lastCalled);
+          var remaining = maxWait - (stamp - lastCalled);
           if (remaining <= 0) {
             clearTimeout(maxTimeoutId);
             maxTimeoutId = null;
-            lastCalled = now;
+            lastCalled = stamp;
             result = func.apply(thisArg, args);
           }
           else if (!maxTimeoutId) {

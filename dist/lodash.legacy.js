@@ -5192,7 +5192,7 @@
         clear();
         if (isCalled) {
           if (maxWait !== false) {
-            lastCalled = new Date;
+            lastCalled = +new Date;
           }
           result = func.apply(thisArg, args);
         }
@@ -5201,7 +5201,7 @@
       var maxDelayed = function() {
         clear();
         if (trailing || (maxWait !== wait)) {
-          lastCalled = new Date;
+          lastCalled = +new Date;
           result = func.apply(thisArg, args);
         }
       };
@@ -5220,15 +5220,15 @@
             result = func.apply(thisArg, args);
           }
         } else {
-          var now = new Date;
+          var stamp = +new Date;
           if (!maxTimeoutId && !leading) {
-            lastCalled = now;
+            lastCalled = stamp;
           }
-          var remaining = maxWait - (now - lastCalled);
+          var remaining = maxWait - (stamp - lastCalled);
           if (remaining <= 0) {
             clearTimeout(maxTimeoutId);
             maxTimeoutId = null;
-            lastCalled = now;
+            lastCalled = stamp;
             result = func.apply(thisArg, args);
           }
           else if (!maxTimeoutId) {

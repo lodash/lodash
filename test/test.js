@@ -679,6 +679,20 @@
       equal(curried(1, 2, 3), 6);
     });
 
+    test('should work with partial methods', function() {
+      function func(a, b, c) {
+        return a + b + c;
+      }
+
+      var curried = _.curry(func),
+          a = _.partial(curried, 1),
+          b = _.partialRight(a, 3),
+          c = _.partialRight(a(2), 3);
+
+      equal(b(2), 6);
+      equal(c(), 6);
+    });
+
     test('should not alter the `this` binding', function() {
       function func(a, b, c) {
         return this[a] + this[b] + this[c];

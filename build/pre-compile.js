@@ -111,6 +111,7 @@
     'countBy',
     'createCallback',
     'criteria',
+    'curry',
     'debounce',
     'defaults',
     'defer',

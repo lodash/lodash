@@ -120,6 +120,7 @@
     'contains': ['baseEach', 'getIndexOf', 'isString'],
     'countBy': ['createAggregator'],
     'createCallback': ['baseCreateCallback', 'baseIsEqual', 'isObject', 'keys'],
+    'curry': ['createBound'],
     'debounce': ['isObject'],
     'defaults': ['createIterator'],
     'defer': ['bind'],
@@ -390,6 +391,7 @@
       'bindKey',
       'createCallback',
       'compose',
+      'curry',
       'debounce',
       'defer',
       'delay',
@@ -560,6 +562,7 @@
     'bindKey',
     'cloneDeep',
     'createCallback',
+    'curry',
     'findIndex',
     'findKey',
     'findLast',
@@ -3867,7 +3870,7 @@
           if (!isLodash('range')) {
             source = source.replace(matchFunction(source, 'range'), function(match) {
               return match
-                .replace(/typeof *step[^:]+:/, '+step ||')
+                .replace(/typeof *step[^:]+:/, '')
                 .replace(/\(step.*\|\|.+?\)/, 'step')
             });
           }

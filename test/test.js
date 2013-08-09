@@ -3151,6 +3151,20 @@
   QUnit.module('lodash.sortBy');
 
   (function() {
+    test('should sort in ascending order', function() {
+      var actual = _.pluck(_.sortBy([
+        { 'num': 991 },
+        { 'num': 212 },
+        { 'num': 11 },
+        { 'num': 16 },
+        { 'num': 74 },
+        { 'num': 0 },
+        { 'num': 1515 }
+      ], 'num'), 'num');
+
+      deepEqual(actual, [0, 11, 16, 74, 212, 991, 1515]);
+    });
+
     test('should perform a stable sort (test in IE > 8, Opera, and V8)', function() {
       function Pair(x, y) {
         this.x = x;

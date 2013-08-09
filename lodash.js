@@ -256,7 +256,11 @@
         return -1;
       }
     }
-    return ai < bi ? -1 : 1;
+    // The JS engine embedded in Adobe applications like InDesign has a buggy
+    // `Array#sort` implementation that causes it, under certain circumstances,
+    // to return the same value for `a` and `b`.
+    // See https://github.com/jashkenas/underscore/pull/1247
+    return ai < bi ? -1 : (ai > bi ? 1 : 0);
   }
 
   /**

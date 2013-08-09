@@ -664,6 +664,38 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.curry');
+
+  (function() {
+    test('should curry based on the number of arguments provided', function() {
+      function func(a, b, c) {
+        return a + b + c;
+      }
+
+      var curried = _.curry(func);
+
+      equal(curried(1)(2)(3), 6);
+      equal(curried(1, 2)(3), 6);
+      equal(curried(1, 2, 3), 6);
+    });
+
+    test('should not alter the `this` binding', function() {
+      function func(a, b, c) {
+        return this[a] + this[b] + this[c];
+      }
+
+      var object = { 'a': 1, 'b': 2, 'c': 3 };
+
+      equal(_.curry(_.bind(func, object), 3)('a')('b')('c'), 6);
+      equal(_.bind(_.curry(func), object)('a')('b')('c'), 6);
+
+      object.func = _.curry(func);
+      equal(object.func('a', 'b', 'c'), 6);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.debounce');
 
   (function() {
@@ -1700,7 +1732,7 @@
       deepEqual(_.initial(array, 0), [1, 2, 3]);
     });
 
-    test('should allow a falsey `array` argument', function() {
+    test('should accept a falsey `array` argument', function() {
       _.forEach(falsey, function(index, value) {
         try {
           var actual = index ? _.initial(value) : _.initial();
@@ -2585,12 +2617,15 @@
       equal(func(fn)(arg), arg);
     });
 
-    test('`_.' + methodName + '` should not alter the `this` binding of either function', function() {
+    test('`_.' + methodName + '` should not alter the `this` binding', function() {
       var object = { 'a': 1 },
           fn = function() { return this.a; };
 
       strictEqual(func(_.bind(fn, object))(), object.a);
       strictEqual(_.bind(func(fn), object)(), object.a);
+
+      object.fn = func(fn);
+      strictEqual(object.fn(), object.a);
     });
   });
 
@@ -2974,7 +3009,7 @@
       deepEqual(_.rest(array, 0), [1, 2, 3]);
     });
 
-    test('should allow a falsey `array` argument', function() {
+    test('should accept a falsey `array` argument', function() {
       _.forEach(falsey, function(index, value) {
         try {
           var actual = index ? _.rest(value) : _.rest();
@@ -3066,7 +3101,7 @@
   (function() {
     var args = arguments;
 
-    test('should allow a falsey `object` argument', function() {
+    test('should accept a falsey `object` argument', function() {
       _.forEach(falsey, function(index, value) {
         try {
           var actual = index ? _.size(value) : _.size();
@@ -4074,9 +4109,9 @@
       deepEqual(_.values(args), [[3]], message('remove'));
     });
 
-    test('should allow falsey primary arguments', function() {
+    test('should accept falsey primary arguments', function() {
       function message(methodName) {
-        return '`_.' + methodName + '` should allow falsey primary arguments';
+        return '`_.' + methodName + '` should accept falsey primary arguments';
       }
 
       deepEqual(_.difference(null, array), [], message('difference'));
@@ -4084,9 +4119,9 @@
       deepEqual(_.union(null, array), array, message('union'));
     });
 
-    test('should allow falsey secondary arguments', function() {
+    test('should accept falsey secondary arguments', function() {
       function message(methodName) {
-        return '`_.' + methodName + '` should allow falsey secondary arguments';
+        return '`_.' + methodName + '` should accept falsey secondary arguments';
       }
 
       deepEqual(_.difference(array, null), array, message('difference'));
@@ -4100,63 +4135,64 @@
   QUnit.module('lodash methods');
 
   (function() {
-    test('should allow falsey arguments', function() {
+    var allMethods = _.reject(_.functions(_), function(methodName) {
+      return /^_/.test(methodName);
+    });
+
+    var returnArrays = [
+      'at',
+      'compact',
+      'difference',
+      'filter',
+      'flatten',
+      'functions',
+      'initial',
+      'intersection',
+      'invoke',
+      'keys',
+      'map',
+      'pairs',
+      'pluck',
+      'range',
+      'reject',
+      'rest',
+      'shuffle',
+      'sortBy',
+      'times',
+      'toArray',
+      'union',
+      'uniq',
+      'values',
+      'where',
+      'without',
+      'zip'
+    ];
+
+    var rejectFalsey = [
+      'after',
+      'bind',
+      'compose',
+      'curry',
+      'debounce',
+      'defer',
+      'delay',
+      'memoize',
+      'once',
+      'partial',
+      'partialRight',
+      'tap',
+      'throttle',
+      'wrap'
+    ];
+
+    var acceptFalsey = _.difference(allMethods, rejectFalsey);
+
+    test('should accept falsey arguments', function() {
       var isExported = '_' in window,
           oldDash = window._;
 
-      var returnArrays = [
-        'at',
-        'compact',
-        'difference',
-        'filter',
-        'flatten',
-        'functions',
-        'initial',
-        'intersection',
-        'invoke',
-        'keys',
-        'map',
-        'pairs',
-        'pluck',
-        'range',
-        'reject',
-        'rest',
-        'shuffle',
-        'sortBy',
-        'times',
-        'toArray',
-        'union',
-        'uniq',
-        'values',
-        'where',
-        'without',
-        'zip'
-      ];
 
-      var allMethods = _.reject(_.functions(_), function(methodName) {
-        return /^_/.test(methodName);
-      });
-
-      var funcs = _.difference(allMethods, [
-        'after',
-        'bind',
-        'bindAll',
-        'bindKey',
-        'compose',
-        'debounce',
-        'defer',
-        'delay',
-        'functions',
-        'memoize',
-        'once',
-        'partial',
-        'partialRight',
-        'tap',
-        'throttle',
-        'wrap'
-      ]);
-
-      _.forEach(funcs, function(methodName) {
+      _.forEach(acceptFalsey, function(methodName) {
         var actual = [],
             expected = _.map(falsey, function() { return []; }),
             func = _[methodName],
@@ -4180,7 +4216,27 @@
         if (_.indexOf(returnArrays, methodName) > -1) {
           deepEqual(actual, expected, '_.' + methodName + ' returns an array');
         }
-        ok(pass, '`_.' + methodName + '` allows falsey arguments');
+        ok(pass, '`_.' + methodName + '` accepts falsey arguments');
+      });
+    });
+
+    test('should reject falsey arguments', function() {
+      _.forEach(rejectFalsey, function(methodName) {
+        var actual = [],
+            expected = _.map(falsey, function() { return true; }),
+            func = _[methodName];
+
+        _.forEach(falsey, function(value, index) {
+          var pass = false;
+          try {
+            index ? func(value) : func();
+          } catch(e) {
+            pass = true;
+          }
+          actual.push(pass);
+        });
+
+        deepEqual(actual, expected, '`_.' + methodName + '` rejects falsey arguments');
       });
     });
 

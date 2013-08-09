@@ -4702,8 +4702,6 @@
      *
      * console.log(evens);
      * // => [2, 4, 6]
-     *
-     *
      */
     function remove(array, callback, thisArg) {
       var index = -1,
@@ -5039,6 +5037,9 @@
      * // `renderNotes` is run once, after all notes have saved
      */
     function after(n, func) {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       return function() {
         if (--n < 1) {
           return func.apply(this, arguments);
@@ -5177,7 +5178,14 @@
      * // => 'Hiya Jerome!'
      */
     function compose() {
-      var funcs = arguments;
+      var funcs = arguments,
+          length = funcs.length || 1;
+
+      while (length--) {
+        if (!isFunction(funcs[length])) {
+          throw new TypeError;
+        }
+      }
       return function() {
         var args = arguments,
             length = funcs.length;
@@ -5340,32 +5348,9 @@
           timeoutId = null,
           trailing = true;
 
-      function clear() {
-        clearTimeout(maxTimeoutId);
-        clearTimeout(timeoutId);
-        callCount = 0;
-        maxTimeoutId = timeoutId = null;
+      if (!isFunction(func)) {
+        throw new TypeError;
       }
-
-      function delayed() {
-        var isCalled = trailing && (!leading || callCount > 1);
-        clear();
-        if (isCalled) {
-          if (maxWait !== false) {
-            lastCalled = new Date;
-          }
-          result = func.apply(thisArg, args);
-        }
-      }
-
-      function maxDelayed() {
-        clear();
-        if (trailing || (maxWait !== wait)) {
-          lastCalled = new Date;
-          result = func.apply(thisArg, args);
-        }
-      }
-
       wait = nativeMax(0, wait || 0);
       if (options === true) {
         var leading = true;
@@ -5375,6 +5360,32 @@
         maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
+      var clear = function() {
+        clearTimeout(maxTimeoutId);
+        clearTimeout(timeoutId);
+        callCount = 0;
+        maxTimeoutId = timeoutId = null;
+      };
+
+      var delayed = function() {
+        var isCalled = trailing && (!leading || callCount > 1);
+        clear();
+        if (isCalled) {
+          if (maxWait !== false) {
+            lastCalled = new Date;
+          }
+          result = func.apply(thisArg, args);
+        }
+      };
+
+      var maxDelayed = function() {
+        clear();
+        if (trailing || (maxWait !== wait)) {
+          lastCalled = new Date;
+          result = func.apply(thisArg, args);
+        }
+      };
+
       return function() {
         args = arguments;
         thisArg = this;
@@ -5427,12 +5438,20 @@
      * // returns from the function before 'deferred' is logged
      */
     function defer(func) {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       var args = nativeSlice.call(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
     }
-    // use `setImmediate` if it's available in Node.js
+    // use `setImmediate` if available in Node.js
     if (isV8 && freeModule && typeof setImmediate == 'function') {
-      defer = bind(setImmediate, context);
+      defer = function(func) {
+        if (!isFunction(func)) {
+          throw new TypeError;
+        }
+        return setImmediate.apply(context, arguments);
+      };
     }
 
     /**
@@ -5453,6 +5472,9 @@
      * // => 'logged later' (Appears after one second.)
      */
     function delay(func, wait) {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       var args = nativeSlice.call(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
     }
@@ -5478,7 +5500,10 @@
      * });
      */
     function memoize(func, resolver) {
-      function memoized() {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
+      var memoized = function() {
         var cache = memoized.cache,
             key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);
 
@@ -5511,6 +5536,9 @@
       var ran,
           result;
 
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       return function() {
         if (ran) {
           return result;
@@ -5612,6 +5640,9 @@
       var leading = true,
           trailing = true;
 
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       if (options === false) {
         leading = false;
       } else if (isObject(options)) {
@@ -5650,6 +5681,9 @@
      * // => 'before, hello moe, after'
      */
     function wrap(value, wrapper) {
+      if (!isFunction(wrapper)) {
+        throw new TypeError;
+      }
       return function() {
         var args = [value];
         push.apply(args, arguments);

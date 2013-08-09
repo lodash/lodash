@@ -254,7 +254,11 @@
         return -1;
       }
     }
-    return ai < bi ? -1 : 1;
+    // The JS engine embedded in Adobe applications like InDesign has a buggy
+    // `Array#sort` implementation that causes it, under certain circumstances,
+    // to return the same value for `a` and `b`.
+    // See https://github.com/jashkenas/underscore/pull/1247
+    return ai < bi ? -1 : (ai > bi ? 1 : 0);
   }
 
   /**
@@ -487,8 +491,7 @@
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
         splice = arrayRef.splice,
-        toString = objectProto.toString,
-        unshift = arrayRef.unshift;
+        toString = objectProto.toString;
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
@@ -1345,60 +1348,59 @@
     }
 
     /**
-     * Creates a function that, when called, invokes `func` with the `this` binding
-     * of `thisArg` and prepends any `partialArgs` to the arguments provided to the
-     * bound function.
+     * Creates a function that, when called, either curries or invokes `func`
+     * with an optional `this` binding and partially applied arguments.
      *
      * @private
-     * @param {Function|String} func The function to bind or the method name.
-     * @param {Mixed} thisArg The `this` binding of `func`.
-     * @param {Array} partialArgs An array of arguments to be prepended to those provided to the new function.
-     * @param {Array} partialRightArgs An array of arguments to be appended to those provided to the new function.
-     * @param {Boolean} [isPartial=false] A flag to indicate performing only partial application.
-     * @param {Boolean} [isAlt=false] A flag to indicate `_.bindKey` or `_.partialRight` behavior.
+     * @param {Function|String} func The function or method name to reference.
+     * @param {Number} bitmask The bitmask of method flags to compose.
+     *  The bitmask may be composed of the following flags:
+     *  1 - `_.bind`
+     *  2 - `_.bindKey`
+     *  4 - `_.curry`
+     *  8 - `_.partial`
+     *  16 - `_.partialRight`
+     * @param {Array} [partialArgs] An array of arguments to prepend to those
+     *  provided to the new function.
+     * @param {Array} [partialRightArgs] An array of arguments to append to those
+     *  provided to the new function.
+     * @param {Mixed} [thisArg] The `this` binding of `func`.
+     * @param {Number} [arity] The arity of `func`.
      * @returns {Function} Returns the new bound function.
      */
-    function createBound(func, thisArg, partialArgs, partialRightArgs, isPartial, isAlt) {
-      var isBindKey = isAlt && !isPartial,
-          isFunc = isFunction(func);
+    function createBound(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
+      var isBind = bitmask & 1,
+          isBindKey = bitmask & 2,
+          isCurry = bitmask & 4,
+          isPartialRight = bitmask & 16;
 
-      // throw if `func` is not a function when not behaving as `_.bindKey`
-      if (!isFunc && !isBindKey) {
+      if (!isBindKey && !isFunction(func)) {
         throw new TypeError;
+      }
+      var bindData = func && func.__bindData__;
+      if (bindData) {
+        if (isBind && !(bindData[1] & 1)) {
+          bindData[4] = thisArg;
+        }
+        if (isCurry && !(bindData[1] & 4)) {
+          bindData[5] = arity;
+        }
+        if (partialArgs) {
+          push.apply(bindData[2] || (bindData[2] = []), partialArgs);
+        }
+        if (partialRightArgs) {
+          push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
+        }
+        bindData[1] |= bitmask;
+        return createBound.apply(null, bindData);
       }
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
-      if (!isPartial && !isAlt && !partialRightArgs.length && (support.fastBind || (nativeBind && partialArgs.length))) {
-        var args = [func, thisArg];
-        push.apply(args, partialArgs);
-        var bound = nativeBind.call.apply(nativeBind, args);
+      if (isBind && !(isBindKey || isCurry || isPartialRight) &&
+          (support.fastBind || (nativeBind && partialArgs.length))) {;
       }
-      else {
-        bound = function() {
-          // `Function#bind` spec
-          // http://es5.github.io/#x15.3.4.5
-          var args = arguments,
-              thisBinding = isPartial ? this : thisArg;
-
-          if (isBindKey) {
-            func = thisArg[key];
-          }
-          if (partialArgs.length || partialRightArgs.length) {
-            unshift.apply(args, partialArgs);
-            push.apply(args, partialRightArgs);
-          }
-          if (this instanceof bound) {
-            // ensure `new bound` is an instance of `func`
-            thisBinding = createObject(func.prototype);
-
-            // mimic the constructor's `return` behavior
-            // http://es5.github.io/#x13.2.2
-            var result = func.apply(thisBinding, args);
-            return isObject(result) ? result : thisBinding;
-          }
-          return func.apply(thisBinding, args);
-        };
-      }
+      // take a snapshot of `arguments` before juggling
+      bindData = nativeSlice.call(arguments);
       if (isBindKey) {
         var key = thisArg;
         thisArg = func;
@@ -4470,7 +4472,7 @@
      */
     function range(start, end, step) {
       start = +start || 0;
-      step = typeof step == 'number' ? step : 1;
+      step = typeof step == 'number' ? step : (+step || 1);
 
       if (end == null) {
         end = start;
@@ -4855,6 +4857,9 @@
      * // `renderNotes` is run once, after all notes have saved
      */
     function after(n, func) {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       return function() {
         if (--n < 1) {
           return func.apply(this, arguments);
@@ -4885,7 +4890,7 @@
      * // => 'hi moe'
      */
     function bind(func, thisArg) {
-      return createBound(func, thisArg, nativeSlice.call(arguments, 2), []);
+      return createBound(func, 9, nativeSlice.call(arguments, 2), null, thisArg);
     }
 
     /**
@@ -4959,7 +4964,7 @@
      * // => 'hi, moe!'
      */
     function bindKey(object, key) {
-      return createBound(object, key, nativeSlice.call(arguments, 2), [], false, true);
+      return createBound(object, 11, nativeSlice.call(arguments, 2), null, key);
     }
 
     /**
@@ -4993,7 +4998,14 @@
      * // => 'Hiya Jerome!'
      */
     function compose() {
-      var funcs = arguments;
+      var funcs = arguments,
+          length = funcs.length || 1;
+
+      while (length--) {
+        if (!isFunction(funcs[length])) {
+          throw new TypeError;
+        }
+      }
       return function() {
         var args = arguments,
             length = funcs.length;
@@ -5074,6 +5086,39 @@
     }
 
     /**
+     * Creates a function which accepts one or more arguments of `func` that when
+     * invoked either executes `func` returning its result, if all `func` arguments
+     * have been provided, or returns a function that accepts one or more of the
+     * remaining `func` arguments, and so on. The arity of `func` can be specified
+     * if `func.length` is not sufficient.
+     *
+     * @static
+     * @memberOf _
+     * @category Functions
+     * @param {Function} func The function to curry.
+     * @param {Number} [arity=func.length] The arity of `func`.
+     * @returns {Function} Returns the new curried function.
+     * @example
+     *
+     * var curried = _.curry(function(a, b, c) {
+     *   console.log(a + b + c);
+     * });
+     *
+     * curried(1)(2)(3);
+     * // => 6
+     *
+     * curried(1, 2)(3);
+     * // => 6
+     *
+     * curried(1, 2, 3);
+     * // => 6
+     */
+    function curry(func, arity) {
+      arity = typeof arity == 'number' ? arity : (+arity || func.length);
+      return createBound(func, 4, null, null, null, arity);
+    }
+
+    /**
      * Creates a function that will delay the execution of `func` until after
      * `wait` milliseconds have elapsed since the last time it was invoked.
      * Provide an options object to indicate that `func` should be invoked on
@@ -5123,32 +5168,9 @@
           timeoutId = null,
           trailing = true;
 
-      function clear() {
-        clearTimeout(maxTimeoutId);
-        clearTimeout(timeoutId);
-        callCount = 0;
-        maxTimeoutId = timeoutId = null;
+      if (!isFunction(func)) {
+        throw new TypeError;
       }
-
-      function delayed() {
-        var isCalled = trailing && (!leading || callCount > 1);
-        clear();
-        if (isCalled) {
-          if (maxWait !== false) {
-            lastCalled = new Date;
-          }
-          result = func.apply(thisArg, args);
-        }
-      }
-
-      function maxDelayed() {
-        clear();
-        if (trailing || (maxWait !== wait)) {
-          lastCalled = new Date;
-          result = func.apply(thisArg, args);
-        }
-      }
-
       wait = nativeMax(0, wait || 0);
       if (options === true) {
         var leading = true;
@@ -5158,6 +5180,32 @@
         maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
+      var clear = function() {
+        clearTimeout(maxTimeoutId);
+        clearTimeout(timeoutId);
+        callCount = 0;
+        maxTimeoutId = timeoutId = null;
+      };
+
+      var delayed = function() {
+        var isCalled = trailing && (!leading || callCount > 1);
+        clear();
+        if (isCalled) {
+          if (maxWait !== false) {
+            lastCalled = new Date;
+          }
+          result = func.apply(thisArg, args);
+        }
+      };
+
+      var maxDelayed = function() {
+        clear();
+        if (trailing || (maxWait !== wait)) {
+          lastCalled = new Date;
+          result = func.apply(thisArg, args);
+        }
+      };
+
       return function() {
         args = arguments;
         thisArg = this;
@@ -5210,6 +5258,9 @@
      * // returns from the function before 'deferred' is logged
      */
     function defer(func) {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       var args = nativeSlice.call(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
     }
@@ -5232,6 +5283,9 @@
      * // => 'logged later' (Appears after one second.)
      */
     function delay(func, wait) {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       var args = nativeSlice.call(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
     }
@@ -5257,7 +5311,10 @@
      * });
      */
     function memoize(func, resolver) {
-      function memoized() {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
+      var memoized = function() {
         var cache = memoized.cache,
             key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);
 
@@ -5290,6 +5347,9 @@
       var ran,
           result;
 
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       return function() {
         if (ran) {
           return result;
@@ -5322,7 +5382,7 @@
      * // => 'hi moe'
      */
     function partial(func) {
-      return createBound(func, null, nativeSlice.call(arguments, 1), [], true);
+      return createBound(func, 8, nativeSlice.call(arguments, 1));
     }
 
     /**
@@ -5353,7 +5413,7 @@
      * // => { '_': _, 'jq': $ }
      */
     function partialRight(func) {
-      return createBound(func, null, [], nativeSlice.call(arguments, 1), true, true);
+      return createBound(func, 16, null, nativeSlice.call(arguments, 1));
     }
 
     /**
@@ -5391,6 +5451,9 @@
       var leading = true,
           trailing = true;
 
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
       if (options === false) {
         leading = false;
       } else if (isObject(options)) {
@@ -5429,6 +5492,9 @@
      * // => 'before, hello moe, after'
      */
     function wrap(value, wrapper) {
+      if (!isFunction(wrapper)) {
+        throw new TypeError;
+      }
       return function() {
         var args = [value];
         push.apply(args, arguments);
@@ -6019,6 +6085,7 @@
     lodash.compose = compose;
     lodash.countBy = countBy;
     lodash.createCallback = createCallback;
+    lodash.curry = curry;
     lodash.debounce = debounce;
     lodash.defaults = defaults;
     lodash.defer = defer;

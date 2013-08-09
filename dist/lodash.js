@@ -458,7 +458,7 @@
         fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
-        now = reNative.test(now = Date.now) && now,
+        now = reNative.test(now = Date.now) && now || function() { return +new Date; },
         push = arrayRef.push,
         setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
@@ -1154,6 +1154,7 @@
       var isBind = bitmask & 1,
           isBindKey = bitmask & 2,
           isCurry = bitmask & 4,
+          isPartial = bitmask & 8,
           isPartialRight = bitmask & 16;
 
       if (!isBindKey && !isFunction(func)) {
@@ -1167,10 +1168,10 @@
         if (isCurry && !(bindData[1] & 4)) {
           bindData[5] = arity;
         }
-        if (partialArgs) {
+        if (isPartial) {
           push.apply(bindData[2] || (bindData[2] = []), partialArgs);
         }
-        if (partialRightArgs) {
+        if (isPartialRight) {
           push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
         }
         bindData[1] |= bitmask;
@@ -1354,7 +1355,9 @@
      * _.isArray([1, 2, 3]);
      * // => true
      */
-    var isArray = nativeIsArray;
+    var isArray = nativeIsArray || function(value) {
+      return (value && typeof value == 'object') ? toString.call(value) == arrayClass : false;
+    };
 
     /**
      * A fallback implementation of `Object.keys` which produces an array of the

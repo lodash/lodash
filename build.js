@@ -106,7 +106,7 @@
     'reUnescapedHtml': ['keys'],
 
     // public functions
-    'after': [],
+    'after': ['isFunction'],
     'assign': ['createIterator'],
     'at': ['baseFlatten', 'isString'],
     'bind': ['createBound'],
@@ -116,15 +116,15 @@
     'clone': ['baseClone', 'baseCreateCallback'],
     'cloneDeep': ['baseClone', 'baseCreateCallback'],
     'compact': [],
-    'compose': [],
+    'compose': ['isFunction'],
     'contains': ['baseEach', 'getIndexOf', 'isString'],
     'countBy': ['createAggregator'],
     'createCallback': ['baseCreateCallback', 'baseIsEqual', 'isObject', 'keys'],
     'curry': ['createBound'],
-    'debounce': ['isObject'],
+    'debounce': ['isFunction', 'isObject'],
     'defaults': ['createIterator'],
-    'defer': ['bind'],
-    'delay': [],
+    'defer': ['isFunction'],
+    'delay': ['isFunction'],
     'difference': ['baseFlatten', 'cacheIndexOf', 'createCache', 'getIndexOf', 'releaseObject'],
     'escape': ['escapeHtmlChar', 'keys'],
     'every': ['baseEach', 'createCallback', 'isArray'],
@@ -176,13 +176,13 @@
     'lodash': ['isArray', 'lodashWrapper'],
     'map': ['baseEach', 'createCallback', 'isArray'],
     'max': ['baseEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
-    'memoize': [],
+    'memoize': ['isFunction'],
     'merge': ['baseCreateCallback', 'baseMerge', 'getArray', 'isObject', 'releaseArray'],
     'min': ['baseEach', 'charAtCallback', 'createCallback', 'isArray', 'isString'],
     'mixin': ['forEach', 'functions', 'isFunction', 'lodash'],
     'noConflict': [],
     'omit': ['baseFlatten', 'createCallback', 'forIn', 'getIndexOf'],
-    'once': [],
+    'once': ['isFunction'],
     'pairs': ['keys'],
     'parseInt': ['isString'],
     'partial': ['createBound'],
@@ -206,7 +206,7 @@
     'sortedIndex': ['createCallback', 'identity'],
     'tap': [],
     'template': ['defaults', 'escape', 'escapeStringChar', 'keys', 'values'],
-    'throttle': ['debounce', 'getObject', 'isObject', 'releaseObject'],
+    'throttle': ['debounce', 'getObject', 'isFunction', 'isObject', 'releaseObject'],
     'times': ['baseCreateCallback'],
     'toArray': ['isString', 'slice', 'values'],
     'transform': ['baseCreateCallback', 'baseEach', 'createObject', 'forOwn', 'isArray'],
@@ -217,7 +217,7 @@
     'values': ['keys'],
     'where': ['filter'],
     'without': ['difference'],
-    'wrap': [],
+    'wrap': ['isFunction'],
     'wrapperChain': [],
     'wrapperToString': [],
     'wrapperValueOf': [],
@@ -2812,7 +2812,6 @@
 
         // update dependencies
         if (isLegacy) {
-          _.pull(funcDepMap.defer, 'bind');
           _.pull(propDepMap.createBound, 'support');
 
           funcDepMap.isPlainObject = funcDepMap.shimIsPlainObject.slice();
@@ -3164,6 +3163,11 @@
             source = removeIsArrayFork(source);
             source = removeIsFunctionFork(source);
             source = removeCreateObjectFork(source);
+
+            // remove Adobe JS engine fix from `compareAscending`
+            source = source.replace(matchFunction(source, 'compareAscending'), function(match) {
+              return match.replace(/(?: *\/\/.*\n)*( *return ai[^:]+:).+/, '$1 1;');
+            });
 
             // remove `shimIsPlainObject` from `_.isPlainObject`
             source = source.replace(matchFunction(source, 'isPlainObject'), function(match) {

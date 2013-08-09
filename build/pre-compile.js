@@ -202,6 +202,7 @@
     'nodeClass',
     'nonEnumArgs',
     'nonEnumShadows',
+    'now',
     'null',
     'number',
     'object',

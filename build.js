@@ -3106,7 +3106,7 @@
           source = removeSupportProp(source, 'fastBind');
           source = replaceSupportProp(source, 'argsClass', 'false');
 
-          // remove native `Function#bind` branch in `_.bind`
+          // remove native `Function#bind` branch in `createBound`
           source = source.replace(matchFunction(source, 'createBound'), function(match) {
             return match.replace(/(?:\s*\/\/.*)*\n( *)if *\([^{]+?nativeBind[\s\S]+?\n\1else *\{([\s\S]+?)\n\1}/, function(match, indent, snippet) {
               return snippet
@@ -3169,6 +3169,11 @@
             // remove Adobe JS engine fix from `compareAscending`
             source = source.replace(matchFunction(source, 'compareAscending'), function(match) {
               return match.replace(/(?: *\/\/.*\n)*( *return ai[^:]+:).+/, '$1 1;');
+            });
+
+            // replace `+new Date` with `Date.now` use in `_.debounce
+            source = source.replace(matchFunction(source, 'debounce'), function(match) {
+              return match.replace(/\+new Date\b/g, 'now()');
             });
 
             // remove `shimIsPlainObject` from `_.isPlainObject`

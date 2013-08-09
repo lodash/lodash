@@ -1728,11 +1728,9 @@
     // remove `__bindData__` logic and `setBindData` function calls from `createBound`
     source = source.replace(matchFunction(source, 'createBound'), function(match) {
       return match
-        .replace(/(?:\s*\/\/.*)*\n( *)var args *=[\s\S]+?\n\1}/, '')
-        .replace(/(?:\s*\/\/.*)*\n.+args *= *nativeSlice.+/, '')
-        .replace(/(?:\s*\/\/.*)*\n.+?setBindData.+/, '')
-        .replace(/^( *)(args *=)/m, '$1var $2')
-
+        .replace(/(?:\s*\/\/.*)*\n( *)var bindData *=[\s\S]+?\n\1}/, '')
+        .replace(/(?:\s*\/\/.*)*\n.+bindData *= *nativeSlice.+/, '')
+        .replace(/(?:\s*\/\/.*)*\n.+?setBindData.+/, '');
     });
 
     // remove `__bindData__` logic and `setBindData` function calls from `baseCreateCallback`
@@ -3109,8 +3107,12 @@
           source = replaceSupportProp(source, 'argsClass', 'false');
 
           // remove native `Function#bind` branch in `_.bind`
-          source = source.replace(matchFunction(source, 'bind'), function(match) {
-            return match.replace(/(?:\s*\/\/.*)*\n( *)if *\([^{]+?nativeBind[\s\S]+?\n\1}/, '');
+          source = source.replace(matchFunction(source, 'createBound'), function(match) {
+            return match.replace(/(?:\s*\/\/.*)*\n( *)if *\([^{]+?nativeBind[\s\S]+?\n\1else *\{([\s\S]+?)\n\1}/, function(match, indent, snippet) {
+              return snippet
+                .replace(/^  /gm, '')
+                .replace(/^( *)bound(?= *=)/m, '$1var bound');
+            });
           });
 
           // remove native `Array.isArray` branch in `_.isArray`

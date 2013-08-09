@@ -64,9 +64,9 @@ For a list of upcoming features, check out our [roadmap](https://github.com/best
  * Videos
   - [Introduction](https://vimeo.com/44154599)
   - [Origins](https://vimeo.com/44154600)
-  - [Optimizations & custom builds](https://vimeo.com/44154601)
+  - [Optimizations & builds](https://vimeo.com/44154601)
   - [Native method use](https://vimeo.com/48576012)
-  - [Unit testing](https://vimeo.com/45865290)
+  - [Testing](https://vimeo.com/45865290)
   - [CascadiaJS ’12](http://www.youtube.com/watch?v=dpPy4f_SeEk)
 
 ## Support

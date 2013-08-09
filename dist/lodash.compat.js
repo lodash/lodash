@@ -1413,6 +1413,7 @@
       var isBind = bitmask & 1,
           isBindKey = bitmask & 2,
           isCurry = bitmask & 4,
+          isPartial = bitmask & 8,
           isPartialRight = bitmask & 16;
 
       if (!isBindKey && !isFunction(func)) {

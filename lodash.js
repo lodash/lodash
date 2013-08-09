@@ -497,7 +497,7 @@
         fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
-        now = reNative.test(now = Date.now) && now,
+        now = reNative.test(now = Date.now) && now || function() { return +new Date; },
         push = arrayRef.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setImmediate = context.setImmediate,

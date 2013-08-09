@@ -3162,7 +3162,6 @@
             source = replaceSupportProp(source, 'nonEnumArgs', 'true');
           }
           else {
-            source = removeIsArrayFork(source);
             source = removeIsFunctionFork(source);
             source = removeCreateObjectFork(source);
 

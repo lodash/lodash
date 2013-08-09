@@ -180,7 +180,8 @@
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
-      toString = objectProto.toString;
+      toString = objectProto.toString,
+      unshift = arrayRef.unshift;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
@@ -622,30 +623,47 @@
     if (!isBindKey && !isFunction(func)) {
       throw new TypeError;
     }
-    var bindData = func && func.__bindData__;
-    if (bindData) {
-      if (isBind && !(bindData[1] & 1)) {
-        bindData[4] = thisArg;
-      }
-      if (isCurry && !(bindData[1] & 4)) {
-        bindData[5] = arity;
-      }
-      if (partialArgs) {
-        push.apply(bindData[2] || (bindData[2] = []), partialArgs);
-      }
-      if (partialRightArgs) {
-        push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
-      }
-      bindData[1] |= bitmask;
-      return createBound.apply(null, bindData);
-    }
     // use `Function#bind` if it exists and is fast
     // (in V8 `Function#bind` is slower except when partially applied)
     if (isBind && !(isBindKey || isCurry || isPartialRight) &&
-        (support.fastBind || (nativeBind && partialArgs.length))) {;
+        (support.fastBind || (nativeBind && partialArgs.length))) {
+      var args = [func, thisArg];
+      push.apply(args, partialArgs);
+      var bound = nativeBind.call.apply(nativeBind, args);
     }
-    // take a snapshot of `arguments` before juggling
-    bindData = nativeSlice.call(arguments);
+    else {
+      bound = function() {
+        // `Function#bind` spec
+        // http://es5.github.io/#x15.3.4.5
+        var args = arguments,
+            thisBinding = isBind ? thisArg : this;
+
+        if (partialArgs) {
+          unshift.apply(args, partialArgs);
+        }
+        if (partialRightArgs) {
+          push.apply(args, partialRightArgs);
+        }
+        if (isCurry && args.length < arity) {
+          bindData[2] = args;
+          bindData[3] = null;
+          return createBound(bound, bitmask & ~8 & ~16);
+        }
+        if (isBindKey) {
+          func = thisBinding[key];
+        }
+        if (this instanceof bound) {
+          // ensure `new bound` is an instance of `func`
+          thisBinding = createObject(func.prototype);
+
+          // mimic the constructor's `return` behavior
+          // http://es5.github.io/#x13.2.2
+          var result = func.apply(thisBinding, args);
+          return isObject(result) ? result : thisBinding;
+        }
+        return func.apply(thisBinding, args);
+      };
+    }
     if (isBindKey) {
       var key = thisArg;
       thisArg = func;

@@ -475,13 +475,6 @@
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
 
-    /** Used to detect if a method is native */
-    var reNative = RegExp('^' +
-      String(objectProto.valueOf)
-        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
-    );
-
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
@@ -491,11 +484,11 @@
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
         splice = arrayRef.splice,
-        toString = objectProto.toString;
+        toString = objectProto.toString,
+        unshift = arrayRef.unshift;
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
-    var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
-        nativeIsFinite = context.isFinite,
+    var nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
         nativeMax = Math.max,
         nativeMin = Math.min,
@@ -1377,30 +1370,37 @@
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError;
       }
-      var bindData = func && func.__bindData__;
-      if (bindData) {
-        if (isBind && !(bindData[1] & 1)) {
-          bindData[4] = thisArg;
-        }
-        if (isCurry && !(bindData[1] & 4)) {
-          bindData[5] = arity;
-        }
+      var bound = function() {
+        // `Function#bind` spec
+        // http://es5.github.io/#x15.3.4.5
+        var args = arguments,
+            thisBinding = isBind ? thisArg : this;
+
         if (partialArgs) {
-          push.apply(bindData[2] || (bindData[2] = []), partialArgs);
+          unshift.apply(args, partialArgs);
         }
         if (partialRightArgs) {
-          push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
+          push.apply(args, partialRightArgs);
         }
-        bindData[1] |= bitmask;
-        return createBound.apply(null, bindData);
-      }
-      // use `Function#bind` if it exists and is fast
-      // (in V8 `Function#bind` is slower except when partially applied)
-      if (isBind && !(isBindKey || isCurry || isPartialRight) &&
-          (support.fastBind || (nativeBind && partialArgs.length))) {;
-      }
-      // take a snapshot of `arguments` before juggling
-      bindData = nativeSlice.call(arguments);
+        if (isCurry && args.length < arity) {
+          bindData[2] = args;
+          bindData[3] = null;
+          return createBound(bound, bitmask & ~8 & ~16);
+        }
+        if (isBindKey) {
+          func = thisBinding[key];
+        }
+        if (this instanceof bound) {
+          // ensure `new bound` is an instance of `func`
+          thisBinding = createObject(func.prototype);
+
+          // mimic the constructor's `return` behavior
+          // http://es5.github.io/#x13.2.2
+          var result = func.apply(thisBinding, args);
+          return isObject(result) ? result : thisBinding;
+        }
+        return func.apply(thisBinding, args);
+      };
       if (isBindKey) {
         var key = thisArg;
         thisArg = func;

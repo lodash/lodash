@@ -1020,16 +1020,19 @@
   }
 
   /**
-   * Compiles template files matched by the given file path `pattern` into a
-   * single source, extending `_.templates` with precompiled templates named after
+   * Compiles template files based on the provided build state using the single
+   * source, extending `_.templates` with precompiled templates named after
    * each template file's basename.
    *
    * @private
-   * @param {String} [pattern='<cwd>/*.jst'] The file path pattern.
-   * @param {Object} options The template options object.
+   * @param {Object} state The build state object.
    * @returns {String} Returns the compiled source.
    */
-  function buildTemplate(pattern, options) {
+  function buildTemplate(state) {
+    var pattern = state.templatePattern,
+        settings = state.templateSettings,
+        moduleId = settings.moduleId;
+
     pattern || (pattern = path.join(cwd, '*.jst'));
 
     var directory = fs.realpathSync(path.dirname(pattern));
@@ -1070,7 +1073,7 @@
       }
       var filePath = path.join(directory, filename),
           text = fs.readFileSync(filePath, 'utf8'),
-          precompiled = cleanupCompiled(getFunctionSource(_.template(text, null, options), 2)),
+          precompiled = cleanupCompiled(getFunctionSource(_.template(text, null, settings), 2)),
           prop = filename.replace(/\..*$/, '');
 
       source.push("  templates['" + prop.replace(/['\n\r\t]/g, '\\$&') + "'] = " + precompiled + ';', '');
@@ -1078,12 +1081,12 @@
 
     source.push(
       "  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {",
-      "    define(['" + options.moduleId + "'], function(lodash) {",
+      "    define(['" + moduleId + "'], function(lodash) {",
       '      _ = lodash;',
       '      lodash.templates = lodash.extend(lodash.templates || {}, templates);',
       '    });',
       "  } else if (freeExports && !freeExports.nodeType) {",
-      "    _ = require('" + options.moduleId + "');",
+      "    _ = require('" + moduleId + "');",
       "    if (freeModule) {",
       '      (freeModule.exports = templates).templates = templates;',
       '    } else {',
@@ -3941,7 +3944,10 @@
       /*----------------------------------------------------------------------*/
 
       if (isTemplate) {
-        source = buildTemplate(templatePattern, templateSettings);
+        source = buildTemplate({
+          'templatePattern': templatePattern,
+          'templateSettings': templateSettings
+        });
       }
       else {
         source = removeFromCreateIterator(source, 'support');

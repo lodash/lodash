@@ -700,10 +700,18 @@
 
       var object = { 'a': 1, 'b': 2, 'c': 3 };
 
-      equal(_.curry(_.bind(func, object), 3)('a')('b')('c'), 6);
-      equal(_.bind(_.curry(func), object)('a')('b')('c'), 6);
+      ok(_.isEqual(_.curry(_.bind(func, object), 3)('a')('b')('c'), NaN));
+      ok(_.isEqual(_.curry(_.bind(func, object), 3)('a', 'b')('c'), NaN));
+      equal(_.curry(_.bind(func, object), 3)('a', 'b', 'c'), 6);
+
+      ok(_.isEqual(_.bind(_.curry(func), object)('a')('b')('c'), NaN));
+      ok(_.isEqual(_.bind(_.curry(func), object)('a', 'b')('c'), NaN));
+      equal(_.bind(_.curry(func), object)('a', 'b', 'c'), 6);
 
       object.func = _.curry(func);
+
+      ok(_.isEqual(object.func('a')('b')('c'), NaN));
+      ok(_.isEqual(object.func('a', 'b')('c'), NaN));
       equal(object.func('a', 'b', 'c'), 6);
     });
   }());

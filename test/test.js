@@ -695,7 +695,8 @@
 
     test('should not alter the `this` binding', function() {
       function func(a, b, c) {
-        return this[a] + this[b] + this[c];
+        var value = this || {};
+        return value[a] + value[b] + value[c];
       }
 
       var object = { 'a': 1, 'b': 2, 'c': 3 };

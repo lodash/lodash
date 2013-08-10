@@ -293,6 +293,7 @@
     'createIterator': ['indicatorObject', 'objectTypes'],
     'createBound': ['reNative'],
     'createObject': ['reNative'],
+    'debounce': ['reNative'],
     'defaults': ['defaultsIteratorOptions'],
     'defer': ['objectTypes', 'reNative'],
     'difference': ['largeArraySize'],
@@ -3164,11 +3165,6 @@
           else {
             source = removeIsFunctionFork(source);
             source = removeCreateObjectFork(source);
-
-            // remove Adobe JS engine fix from `compareAscending`
-            source = source.replace(matchFunction(source, 'compareAscending'), function(match) {
-              return match.replace(/(?: *\/\/.*\n)*( *return ai[^:]+:).+/, '$1 1;');
-            });
 
             // replace `+new Date` with `Date.now` use in `_.debounce
             source = source.replace(matchFunction(source, 'debounce'), function(match) {

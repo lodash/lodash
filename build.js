@@ -4109,7 +4109,7 @@
           source = source.replace(matchFunction(source, 'template'), function(match) {
             if (isUnderscore) {
               // assign `_` via `template.imports`
-              return match.replace(/_ *= *lodash\b/, '$&.templateSettings.imports._');
+              return match.replace(/(_ *= *)lodash\b/, '$1templateSettings.imports._');
             }
             return match
               // assign `settings` via `template.imports`

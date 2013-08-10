@@ -55,6 +55,7 @@
     'detect': 'find',
     'drop': 'rest',
     'each': 'forEach',
+    'eachRight': 'forEachRight',
     'extend': 'assign',
     'findWhere': 'find',
     'foldl': 'reduce',
@@ -81,6 +82,7 @@
     'find': ['detect', 'findWhere'],
     'first': ['head', 'take'],
     'forEach': ['each'],
+    'forEachRight': ['eachRight'],
     'functions': ['methods'],
     'map': ['collect'],
     'reduce': ['foldl', 'inject'],
@@ -4074,9 +4076,9 @@
               }
             });
 
-            // remove `_.assign`, `_.forEachRight`, `_.forIn`, `_.forOwn`, `_.isPlainObject`, `_.unzip`, and `_.zipObject` assignments
+            // unexpose methods
             source = source.replace(getMethodAssignments(source), function(match) {
-              return _.reduce(['assign', 'createCallback', 'forEachRight', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
+              return _.reduce(['assign', 'createCallback', 'eachRight', 'forEachRight', 'forIn', 'forOwn', 'isPlainObject', 'unzip', 'zipObject'], function(result, funcName) {
                 return isLodash(funcName)
                   ? result
                   : result.replace(RegExp('^(?: *//.*\\s*)* *lodash\\.' + funcName + ' *=[\\s\\S]+?;\\n', 'm'), '');

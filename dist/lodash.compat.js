@@ -1441,9 +1441,7 @@
             push.apply(args, partialRightArgs);
           }
           if (isCurry && args.length < arity) {
-            bindData[2] = args;
-            bindData[3] = null;
-            return createBound(bound, bitmask & ~8 & ~16);
+            return createBound(func, 12, args, null, null, arity);
           }
           if (isBindKey) {
             func = thisBinding[key];

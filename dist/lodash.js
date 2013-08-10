@@ -231,7 +231,7 @@
    * @returns {Number} Returns the sort order indicator of `1` or `-1`.
    */
   function compareAscending(a, b) {
-    var ac = a.criteria;
+    var ac = a.criteria,
         bc = b.criteria;
 
     // ensure a stable sort in V8 and other engines

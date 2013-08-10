@@ -560,23 +560,25 @@
      *
      * The chainable wrapper functions are:
      * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
-     * `compose`, `concat`, `countBy`, `createCallback`, `debounce`, `defaults`,
-     * `defer`, `delay`, `difference`, `filter`, `flatten`, `forEach`, `forIn`,
-     * `forOwn`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
-     * `invert`, `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`,
-     * `omit`, `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `push`,
-     * `range`, `reject`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
-     * `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`,
-     * `unshift`, `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
+     * `compose`, `concat`, `countBy`, `createCallback`, `curry`, `debounce`,
+     * `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`, `forEach`,
+     * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
+     * `groupBy`, `indexBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`,
+     * `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`, `once`, `pairs`,
+     * `partial`, `partialRight`, `pick`, `pluck`, `pull`, `push`, `range`, `reject`,
+     * `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
+     * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+     * `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
      *
      * The non-chainable wrapper functions are:
-     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `has`,
-     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
-     * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
-     * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
-     * `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `parseInt`,
-     * `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`,
-     * `sortedIndex`, `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
+     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `findIndex`,
+     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `has`, `identity`,
+     * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
+     * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
+     * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
+     * `lastIndexOf`, `mixin`, `noConflict`, `parseInt`, `pop`, `random`, `reduce`,
+     * `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`, `runInContext`,
+     * `template`, `unescape`, `uniqueId`, and `value`
      *
      * The wrapper functions `first` and `last` return wrapped values when `n` is
      * provided, otherwise they return unwrapped values.
@@ -3264,7 +3266,7 @@
      *
      * @static
      * @memberOf _
-     * @alias each
+     * @alias eachRight
      * @category Collections
      * @param {Array|Object|String} collection The collection to iterate over.
      * @param {Function} [callback=identity] The function called per iteration.
@@ -6280,6 +6282,7 @@
     lodash.collect = map;
     lodash.drop = rest;
     lodash.each = forEach;
+    lodash.eachRight = forEachRight;
     lodash.extend = assign;
     lodash.methods = functions;
     lodash.object = zipObject;
@@ -6301,9 +6304,9 @@
     lodash.every = every;
     lodash.find = find;
     lodash.findIndex = findIndex;
+    lodash.findKey = findKey;
     lodash.findLast = findLast;
     lodash.findLastIndex = findLastIndex;
-    lodash.findKey = findKey;
     lodash.findLastKey = findLastKey;
     lodash.has = has;
     lodash.identity = identity;

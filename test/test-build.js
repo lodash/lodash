@@ -1546,7 +1546,6 @@
       'bindKey',
       'clone',
       'contains',
-      'debounce',
       'defaults',
       'defer',
       'difference',

@@ -85,19 +85,16 @@
    * @returns {Number} Returns the sort order indicator of `1` or `-1`.
    */
   function compareAscending(a, b) {
-    var ai = a.index,
-        bi = b.index;
-
-    a = a.criteria;
-    b = b.criteria;
+    var ac = a.criteria;
+        bc = b.criteria;
 
     // ensure a stable sort in V8 and other engines
     // http://code.google.com/p/v8/issues/detail?id=90
-    if (a !== b) {
-      if (a > b || typeof a == 'undefined') {
+    if (ac !== bc) {
+      if (ac > bc || typeof ac == 'undefined') {
         return 1;
       }
-      if (a < b || typeof b == 'undefined') {
+      if (ac < bc || typeof bc == 'undefined') {
         return -1;
       }
     }
@@ -105,7 +102,7 @@
     // `Array#sort` implementation that causes it, under certain circumstances,
     // to return the same value for `a` and `b`.
     // See https://github.com/jashkenas/underscore/pull/1247
-    return ai < bi ? -1 : (ai > bi ? 1 : 0);
+    return a.index - b.index;
   }
 
   /**
@@ -485,8 +482,9 @@
    *  1 - `_.bind`
    *  2 - `_.bindKey`
    *  4 - `_.curry`
-   *  8 - `_.partial`
-   *  16 - `_.partialRight`
+   *  8 - `_.curry` (bound)
+   *  16 - `_.partial`
+   *  32 - `_.partialRight`
    * @param {Array} [partialArgs] An array of arguments to prepend to those
    *  provided to the new function.
    * @param {Array} [partialRightArgs] An array of arguments to append to those
@@ -499,8 +497,9 @@
     var isBind = bitmask & 1,
         isBindKey = bitmask & 2,
         isCurry = bitmask & 4,
-        isPartial = bitmask & 8,
-        isPartialRight = bitmask & 16;
+        isCurryBound = bitmask & 8,
+        isPartial = bitmask & 16,
+        isPartialRight = bitmask & 32;
 
     if (!isBindKey && !isFunction(func)) {
       throw new TypeError;
@@ -527,7 +526,8 @@
           push.apply(args, partialRightArgs);
         }
         if (isCurry && args.length < arity) {
-          return createBound(func, 12, args, null, null, arity);
+          bitmask |= 16 & ~32
+          return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
         }
         if (isBindKey) {
           func = thisBinding[key];
@@ -2725,7 +2725,7 @@
    * // => 'hi moe'
    */
   function bind(func, thisArg) {
-    return createBound(func, 9, nativeSlice.call(arguments, 2), null, thisArg);
+    return createBound(func, 17, nativeSlice.call(arguments, 2), null, thisArg);
   }
 
   /**

@@ -5376,9 +5376,7 @@
         var isCalled = trailing && (!leading || callCount > 1);
         clear();
         if (isCalled) {
-          if (maxWait !== false) {
-            lastCalled = +new Date;
-          }
+          lastCalled = +new Date;
           result = func.apply(thisArg, args);
         }
       };

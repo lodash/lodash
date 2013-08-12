@@ -287,7 +287,7 @@
         };\
         \
         var _boundNormal = _.bind(func, thisArg),\
-            _boundMultiple = = _boundNormal,\
+            _boundMultiple = _boundNormal,\
             _boundPartial = _.bind(func, thisArg, "hi");\
         \
         var lodashBoundNormal = lodash.bind(func, thisArg),\

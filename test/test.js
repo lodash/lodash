@@ -2801,7 +2801,28 @@
 
       deepEqual(array, [2]);
       ok(actual === array);
-    })
+    });
+
+    test('should preserve holes in arrays', function() {
+      var array = [1, 2, 3, 4];
+      delete array[1];
+      delete array[3];
+
+      _.pull(array, 1);
+      equal(0 in array, false);
+      equal(2 in array, false);
+
+      _.pull(array, undefined);
+      deepEqual(array, [3]);
+    });
+
+    test('should treat holes as `undefined`', function() {
+      var array = [1, 2, 3];
+      delete array[1];
+
+      _.pull(array, undefined);
+      deepEqual(array, [1, 3]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

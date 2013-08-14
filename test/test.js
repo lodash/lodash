@@ -2811,9 +2811,6 @@
       _.pull(array, 1);
       equal(0 in array, false);
       equal(2 in array, false);
-
-      _.pull(array, undefined);
-      deepEqual(array, [3]);
     });
 
     test('should treat holes as `undefined`', function() {
@@ -3023,6 +3020,24 @@
       }, array);
 
       deepEqual(actual, [1, 2]);
+    });
+
+    test('should preserve holes in arrays', function() {
+      var array = [1, 2, 3, 4];
+      delete array[1];
+      delete array[3];
+
+      _.remove(array, function(value) { return value === 1; });
+      equal(0 in array, false);
+      equal(2 in array, false);
+    });
+
+    test('should treat holes as `undefined`', function() {
+      var array = [1, 2, 3];
+      delete array[1];
+
+      _.remove(array, function(value) { return value == null; });
+      deepEqual(array, [1, 3]);
     });
   }());
 

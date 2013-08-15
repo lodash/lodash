@@ -1566,7 +1566,7 @@
      * @example
      *
      * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
-     * // => ['one', 'two', 'three'] (order is not guaranteed)
+     * // => ['one', 'two', 'three'] (property order is not guaranteed across environments)
      */
     var keys = createIterator({
       'args': 'object',
@@ -1823,7 +1823,7 @@
      * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
      *   return num % 2 == 0;
      * });
-     * // => 'b' (order is not guaranteed)
+     * // => 'b' (property order is not guaranteed across environments)
      */
     function findKey(object, callback, thisArg) {
       var result;
@@ -1896,7 +1896,7 @@
      * _.forIn(new Dog('Dagny'), function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'bark' and 'name' (order is not guaranteed)
+     * // => logs 'bark' and 'name' (property order is not guaranteed across environments)
      */
     var forIn = createIterator(eachIteratorOptions, forOwnIteratorOptions, {
       'useHas': false
@@ -1964,7 +1964,7 @@
      * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
      *   console.log(key);
      * });
-     * // => logs '0', '1', and 'length' (order is not guaranteed)
+     * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
      */
     var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
 
@@ -2601,7 +2601,7 @@
      * @example
      *
      * _.pairs({ 'moe': 30, 'larry': 40 });
-     * // => [['moe', 30], ['larry', 40]] (order is not guaranteed)
+     * // => [['moe', 30], ['larry', 40]] (property order is not guaranteed across environments)
      */
     function pairs(object) {
       var index = -1,
@@ -2729,7 +2729,7 @@
      * @example
      *
      * _.values({ 'one': 1, 'two': 2, 'three': 3 });
-     * // => [1, 2, 3] (order is not guaranteed)
+     * // => [1, 2, 3] (property order is not guaranteed across environments)
      */
     function values(object) {
       var index = -1,
@@ -3114,7 +3114,7 @@
      * // => logs each number and returns '1,2,3'
      *
      * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { console.log(num); });
-     * // => logs each number value and returns the object (order is not guaranteed)
+     * // => logs each number and returns the object (property order is not guaranteed across environments)
      */
     function forEach(collection, callback, thisArg) {
       if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
@@ -3312,7 +3312,7 @@
      * // => [3, 6, 9]
      *
      * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
-     * // => [3, 6, 9] (order is not guaranteed)
+     * // => [3, 6, 9] (property order is not guaranteed across environments)
      *
      * var stooges = [
      *   { 'name': 'moe', 'age': 40 },
@@ -5192,9 +5192,7 @@
         var isCalled = trailing && (!leading || callCount > 1);
         clear();
         if (isCalled) {
-          if (maxWait !== false) {
-            lastCalled = +new Date;
-          }
+          lastCalled = +new Date;
           result = func.apply(thisArg, args);
         }
       };

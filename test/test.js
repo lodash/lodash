@@ -269,6 +269,13 @@
       deepEqual(actual, [1, 3]);
     });
 
+    test('should work when used as `callback` for `_.map`', function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.at);
+
+      deepEqual(actual, [[1], [5], [9]]);
+    });
+
     _.forEach({
       'literal': 'abc',
       'object': Object('abc')
@@ -940,6 +947,13 @@
       deepEqual(func({}, new Foo), {});
     });
 
+    test('should work when used as `callback` for `_.reduce`', function() {
+      var array = [{ 'a':  1 }, { 'b': 2 }, { 'c': 3 }],
+          actual = _.reduce(array, _.merge);
+
+      deepEqual(actual, { 'a':  1, 'b': 2, 'c': 3 });
+    });
+
     if (methodName == 'merge') {
       test('`_.' + methodName + '` should treat sparse arrays as dense', function() {
         var array = Array(3);
@@ -1064,6 +1078,13 @@
 
     test('should return the first two elements', function() {
       deepEqual(_.first(array, 2), [1, 2]);
+    });
+
+    test('should work when used as `callback` for `_.map`', function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.first);
+
+      deepEqual(actual, [1, 4, 7]);
     });
 
     test('should work with a `callback`', function() {
@@ -1771,6 +1792,13 @@
       deepEqual(_.initial(array, 2), [1]);
     });
 
+    test('should work when used as `callback` for `_.map`', function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.initial);
+
+      deepEqual(actual, [[1, 2], [4, 5], [7, 8]]);
+    });
+
     test('should work with a `callback`', function() {
       var actual = _.initial(array, function(num) {
         return num > 1;
@@ -2167,6 +2195,13 @@
 
     test('should return the last two elements', function() {
       deepEqual(_.last(array, 2), [2, 3]);
+    });
+
+    test('should work when used as `callback` for `_.map`', function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.last);
+
+      deepEqual(actual, [3, 6, 9]);
     });
 
     test('should work with a `callback`', function() {
@@ -3080,6 +3115,13 @@
 
     test('should exclude the first two elements', function() {
       deepEqual(_.rest(array, 2), [3]);
+    });
+
+    test('should work when used as `callback` for `_.map`', function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.rest);
+
+      deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
     });
 
     test('should work with a `callback`', function() {

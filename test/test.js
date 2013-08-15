@@ -993,7 +993,7 @@
 
   (function() {
     test('should not modify the resulting value from within `callback`', function() {
-      var actual = _.filter([0], function(value, index, array) {
+      var actual = _.filter([0], function(num, index, array) {
         return (array[index] = 1);
       });
 
@@ -1085,7 +1085,7 @@
     });
 
     test('should support the `thisArg` argument', function() {
-      var actual = _.first(array, function(value, index) {
+      var actual = _.first(array, function(num, index) {
         return this[index] < 3;
       }, array);
 
@@ -1103,7 +1103,7 @@
 
       ok(actual instanceof _);
 
-      actual = _(array).first(function(value, index) {
+      actual = _(array).first(function(num, index) {
         return this[index] < 3;
       }, array);
 
@@ -1138,16 +1138,16 @@
     });
 
     test('should work with a `callback`', function() {
-      var actual = _.flatten(array, function(value) {
-        return value.a;
+      var actual = _.flatten(array, function(object) {
+        return object.a;
       });
 
       deepEqual(actual, [1, 2, 3]);
     });
 
     test('should work with `isShallow` and `callback`', function() {
-      var actual = _.flatten(array, true, function(value) {
-        return value.a;
+      var actual = _.flatten(array, true, function(object) {
+        return object.a;
       });
 
       deepEqual(actual, [1, [2], 3]);
@@ -1164,7 +1164,7 @@
     });
 
     test('should support the `thisArg` argument', function() {
-      var actual = _.flatten(array, function(value, index) {
+      var actual = _.flatten(array, function(object, index) {
         return this[index].a;
       }, array);
 
@@ -1218,7 +1218,7 @@
     test('`_.' + methodName + '` should support the `thisArg` argument', function() {
       var actual;
 
-      function callback(value, index) {
+      function callback(num, index) {
         actual = this[index];
       }
 
@@ -1292,11 +1292,11 @@
     var func = _[methodName];
 
     test('iterates over the `length` property', function() {
-      var keys = [],
-          object = { '0': 'zero', '1': 'one', 'length': 2 };
+      var object = { '0': 'zero', '1': 'one', 'length': 2 },
+          props = [];
 
-      func(object, function(value, key) { keys.push(key); });
-      deepEqual(keys.sort(), ['0', '1', 'length']);
+      func(object, function(value, prop) { props.push(prop); });
+      deepEqual(props.sort(), ['0', '1', 'length']);
     });
   });
 
@@ -1308,9 +1308,9 @@
     var func = _[methodName];
 
     test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
-      var keys = [];
-      func(shadowedObject, function(value, key) { keys.push(key); });
-      deepEqual(keys.sort(), shadowedProps);
+      var props = [];
+      func(shadowedObject, function(value, prop) { props.push(prop); });
+      deepEqual(props.sort(), shadowedProps);
     });
 
     test('`_.' + methodName + '` does not iterate over non-enumerable properties (test in IE < 9)', function() {
@@ -1330,15 +1330,14 @@
         var message = 'non-enumerable properties on ' + builtin + '.prototype',
             props = [];
 
-        func(object, function(value, prop) {
-          props.push(prop);
-        });
+        func(object, function(value, prop) { props.push(prop); });
 
         if (/Error/.test(builtin)) {
           ok(_.every(['constructor', 'toString'], function(prop) {
             return !_.contains(props, prop);
           }), message);
-        } else {
+        }
+        else {
           deepEqual(props, [], message);
         }
       });
@@ -1348,16 +1347,16 @@
       function Foo() {}
       Foo.prototype.a = 1;
 
-      var keys = [];
-      function callback(value, key) { keys.push(key); }
+      var props = [];
+      function callback(value, prop) { props.push(prop); }
 
       func(Foo, callback);
-      deepEqual(keys, []);
-      keys.length = 0;
+      deepEqual(props, []);
+      props.length = 0;
 
       Foo.prototype = { 'a': 1 };
       func(Foo, callback);
-      deepEqual(keys, []);
+      deepEqual(props, []);
     });
   });
 
@@ -1791,7 +1790,7 @@
     });
 
     test('should support the `thisArg` argument', function() {
-      var actual = _.initial(array, function(value, index) {
+      var actual = _.initial(array, function(num, index) {
         return this[index] > 1;
       }, array);
 
@@ -2189,7 +2188,7 @@
     });
 
     test('should support the `thisArg` argument', function() {
-      var actual = _.last(array, function(value, index) {
+      var actual = _.last(array, function(num, index) {
         return this[index] > 1;
       }, array);
 
@@ -2207,7 +2206,7 @@
 
       ok(actual instanceof _);
 
-      actual = _(array).last(function(value, index) {
+      actual = _(array).last(function(num, index) {
         return this[index] > 1;
       }, array);
 
@@ -2267,9 +2266,7 @@
 
   (function() {
     test('should return the correct result when iterating an object', function() {
-      var actual = _.map({ 'a': 1, 'b': 2, 'c': 3 }, function(value) {
-        return value;
-      });
+      var actual = _.map({ 'a': 1, 'b': 2, 'c': 3 });
       deepEqual(actual, [1, 2, 3]);
     });
 
@@ -2512,8 +2509,8 @@
     });
 
     test('should work with a `callback` argument', function() {
-      var actual = _.omit(object, function(value) {
-        return value == 1;
+      var actual = _.omit(object, function(num) {
+        return num === 1;
       });
 
       deepEqual(actual, expected);
@@ -2535,8 +2532,8 @@
     });
 
     test('should correct set the `this` binding', function() {
-      var actual = _.omit(object, function(value) {
-        return value == this.a;
+      var actual = _.omit(object, function(num) {
+        return num === this.a;
       }, { 'a': 1 });
 
       deepEqual(actual, expected);
@@ -2748,8 +2745,8 @@
     });
 
     test('should work with a `callback` argument', function() {
-      var actual = _.pick(object, function(value) {
-        return value == 2;
+      var actual = _.pick(object, function(num) {
+        return num === 2;
       });
 
       deepEqual(actual, expected);
@@ -2771,8 +2768,8 @@
     });
 
     test('should correct set the `this` binding', function() {
-      var actual = _.pick(object, function(value) {
-        return value == this.b;
+      var actual = _.pick(object, function(num) {
+        return num === this.b;
       }, { 'b': 2 });
 
       deepEqual(actual, expected);
@@ -2993,8 +2990,8 @@
     test('should modify the array and return removed elements', function() {
       var array = [1, 2, 3];
 
-      var actual = _.remove(array, function(value) {
-        return value < 3;
+      var actual = _.remove(array, function(num) {
+        return num < 3;
       });
 
       deepEqual(array, [3]);
@@ -3015,7 +3012,7 @@
     test('should support the `thisArg` argument', function() {
       var array = [1, 2, 3];
 
-      var actual = _.remove(array, function(value, index) {
+      var actual = _.remove(array, function(num, index) {
         return this[index] < 3;
       }, array);
 
@@ -3027,7 +3024,7 @@
       delete array[1];
       delete array[3];
 
-      _.remove(array, function(value) { return value === 1; });
+      _.remove(array, function(num) { return num === 1; });
       equal(0 in array, false);
       equal(2 in array, false);
     });
@@ -3036,7 +3033,7 @@
       var array = [1, 2, 3];
       delete array[1];
 
-      _.remove(array, function(value) { return value == null; });
+      _.remove(array, function(num) { return num == null; });
       deepEqual(array, [1, 3]);
     });
   }());
@@ -3104,7 +3101,7 @@
     });
 
     test('supports the `thisArg` argument', function() {
-      var actual = _.rest(array, function(value, index) {
+      var actual = _.rest(array, function(num, index) {
         return this[index] < 3;
       }, array);
 

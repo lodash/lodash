@@ -2585,9 +2585,10 @@
      * // => ['moe', 'curly']
      */
     function at(collection) {
-      var index = -1,
-          props = baseFlatten(arguments, true, false, 1),
-          length = props.length,
+      var args = arguments,
+          index = -1,
+          props = baseFlatten(args, true, false, 1),
+          length = (args[2] && args[2][args[1]] === collection) ? 1 : props.length,
           result = Array(length);
 
       while(++index < length) {

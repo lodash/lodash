@@ -4,7 +4,7 @@
  * Copyright 2011-2013 John-David Dalton <http://allyoucanleet.com/>
  * Available under MIT license <http://mths.be/mit>
  */
-require(dirname(__FILE__) . '/src/DocDown/Generator.php');
+require(dirname(__FILE__) . '/src/DocDown/MarkdownGenerator.php');
 
 /**
  * Generates Markdown from JSDoc entries in a given file.
@@ -32,7 +32,7 @@ require(dirname(__FILE__) . '/src/DocDown/Generator.php');
  * ));
  */
 function docdown( $options = array() ) {
-  $gen = new Generator($options);
+  $gen = new MarkdownGenerator($options);
   return $gen->generate();
 }
 ?>

@@ -2401,7 +2401,7 @@
         result = Array(typeof length == 'number' ? length : 0);
 
     forEach(collection, function(value) {
-      var rand = floor(nativeRandom() * (++index + 1));
+      var rand = random(++index);
       result[index] = result[rand];
       result[rand] = value;
     });
@@ -2669,11 +2669,10 @@
   }
 
   /**
-   * Gets the first element of an array. If a number `n` is provided the first
-   * `n` elements of the array are returned. If a callback is provided elements
-   * at the beginning of the array are returned as long as the callback returns
-   * truthy. The callback is bound to `thisArg` and invoked with three arguments;
-   * (value, index, array).
+   * Gets the first element or first `n` elements of an array. If a callback
+   * is provided elements at the beginning of the array are returned as long
+   * as the callback returns truthy. The callback is bound to `thisArg` and
+   * invoked with three arguments; (value, index, array).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -2827,11 +2826,10 @@
   }
 
   /**
-   * Gets all but the last element of an array. If a number `n` is provided
-   * the last `n` elements are excluded from the result. If a callback is
-   * provided elements at the end of the array are excluded from the result
-   * as long as the callback returns truthy. The callback is bound to `thisArg`
-   * and invoked with three arguments; (value, index, array).
+   * Gets all but the last element or last `n` elements of an array. If a
+   * callback is provided elements at the end of the array are excluded from
+   * the result as long as the callback returns truthy. The callback is bound
+   * to `thisArg` and invoked with three arguments; (value, index, array).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -2940,12 +2938,10 @@
   }
 
   /**
-   * Gets the last element of an array. If a number `n` is provided the last
-   * `n` elements of the array are returned. If a callback is provided elements
-   * at the end of the array are returned as long as the callback returns truthy.
-   * The callback is bound to `thisArg` and invoked with three arguments;
-   * (value, index, array).
-   *
+   * Gets the last element or last `n` elements of an array. If a callback is
+   * provided elements at the end of the array are returned as long as the
+   * callback returns truthy. The callback is bound to `thisArg` and invoked
+   * with three arguments; (value, index, array).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -3104,12 +3100,11 @@
   }
 
   /**
-   * The opposite of `_.initial` this method gets all but the first value of
-   * an array. If a number `n` is provided the first `n` values are excluded
-   * from the result. If a callback function is provided elements at the beginning
-   * of the array are excluded from the result as long as the callback returns
-   * truthy. The callback is bound to `thisArg` and invoked with three
-   * arguments; (value, index, array).
+   * The opposite of `_.initial` this method gets all but the first element or
+   * first `n` elements of an array. If a callback function is provided elements
+   * at the beginning of the array are excluded from the result as long as the
+   * callback returns truthy. The callback is bound to `thisArg` and invoked
+   * with three arguments; (value, index, array).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.

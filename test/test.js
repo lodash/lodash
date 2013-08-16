@@ -1080,6 +1080,22 @@
       deepEqual(_.first(array, 2), [1, 2]);
     });
 
+    test('should return an empty array when `n` < `1`', function() {
+      _.each([0, -1, -2], function(n) {
+        deepEqual(_.first(array, n), []);
+      });
+    });
+
+    test('should return all elements when `n` >= `array.length`', function() {
+      _.each([3, 4], function(n) {
+        deepEqual(_.first(array, n), array.slice());
+      });
+    });
+
+    test('should return `undefined` when querying empty arrays', function() {
+      strictEqual(_.first([]), undefined);
+    });
+
     test('should work when used as `callback` for `_.map`', function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.first);
@@ -1771,10 +1787,6 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    test('returns all elements for `n` of `0`', function() {
-      deepEqual(_.initial(array, 0), [1, 2, 3]);
-    });
-
     test('should accept a falsey `array` argument', function() {
       _.forEach(falsey, function(index, value) {
         try {
@@ -1788,8 +1800,24 @@
       deepEqual(_.initial(array), [1, 2]);
     });
 
-    test('should exlcude the last two elements', function() {
+    test('should exclude the last two elements', function() {
       deepEqual(_.initial(array, 2), [1]);
+    });
+
+    test('should return an empty when querying empty arrays', function() {
+      deepEqual(_.initial([]), []);
+    });
+
+    test('should return all elements when `n` < `1`', function() {
+      _.each([0, -1, -2], function(n) {
+        deepEqual(_.initial(array, n), array.slice());
+      });
+    });
+
+    test('should return an empty array when `n` >= `array.length`', function() {
+      _.each([3, 4], function(n) {
+        deepEqual(_.initial(array, n), []);
+      });
     });
 
     test('should work when used as `callback` for `_.map`', function() {
@@ -2195,6 +2223,22 @@
 
     test('should return the last two elements', function() {
       deepEqual(_.last(array, 2), [2, 3]);
+    });
+
+    test('should return an empty array when `n` < `1`', function() {
+      _.each([0, -1, -2], function(n) {
+        deepEqual(_.last(array, n), []);
+      });
+    });
+
+    test('should return all elements when `n` >= `array.length`', function() {
+      _.each([3, 4], function(n) {
+        deepEqual(_.last(array, n), array.slice());
+      });
+    });
+
+    test('should return `undefined` when querying empty arrays', function() {
+      strictEqual(_.last([]), undefined);
     });
 
     test('should work when used as `callback` for `_.map`', function() {
@@ -3096,10 +3140,6 @@
       { 'a': 0, 'b': 0 }
     ];
 
-    test('returns all elements for `n` of `0`', function() {
-      deepEqual(_.rest(array, 0), [1, 2, 3]);
-    });
-
     test('should accept a falsey `array` argument', function() {
       _.forEach(falsey, function(index, value) {
         try {
@@ -3115,6 +3155,22 @@
 
     test('should exclude the first two elements', function() {
       deepEqual(_.rest(array, 2), [3]);
+    });
+
+    test('should return all elements when `n` < `1`', function() {
+      _.each([0, -1, -2], function(n) {
+        deepEqual(_.rest(array, n), [1, 2, 3]);
+      });
+    });
+
+    test('should return an empty array when `n` >= `array.length`', function() {
+      _.each([3, 4], function(n) {
+        deepEqual(_.rest(array, n), []);
+      });
+    });
+
+    test('should return an empty when querying empty arrays', function() {
+      deepEqual(_.rest([]), []);
     });
 
     test('should work when used as `callback` for `_.map`', function() {
@@ -3178,6 +3234,69 @@
       } else {
         skipTest();
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sample');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    test('should return a random element', function() {
+      var actual = _.sample(array);
+      ok(_.contains(array, actual));
+    });
+
+    test('should return two random elements', function() {
+      var actual = _.sample(array, 2);
+      ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
+    });
+
+    test('should return an empty array when `n` < `1`', function() {
+      _.each([0, -1, -2], function(n) {
+        deepEqual(_.sample(array, n), []);
+      });
+    });
+
+    test('should return all elements when `n` >= `array.length`', function() {
+      _.each([3, 4], function(n) {
+        deepEqual(_.sample(array, n).sort(), array.slice());
+      });
+    });
+
+    test('should return `undefined` when sampling an empty array', function() {
+      strictEqual(_.sample([]), undefined);
+    });
+
+    test('should sample an object', function() {
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          actual = _.sample(object);
+
+      ok(_.contains(array, actual));
+
+      actual = _.sample(object, 2);
+      ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
+    });
+
+    test('should work when used as `callback` for `_.map`', function() {
+      var a = [1, 2, 3],
+          b = [4, 5, 6],
+          c = [7, 8, 9],
+          actual = _.map([a, b, c], _.sample);
+
+      ok(_.contains(a, actual[0]) && _.contains(b, actual[1]) && _.contains(c, actual[2]));
+    });
+
+    test('should chain when passing `n`', function() {
+      var actual = _(array).sample(2);
+      ok(actual instanceof _);
+    });
+
+    test('should not chain when arguments are not provided', function() {
+      var actual = _(array).sample();
+      ok(_.contains(array, actual));
     });
   }());
 

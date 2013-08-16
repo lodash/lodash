@@ -225,6 +225,7 @@
     'rest',
     'result',
     'runInContext',
+    'sample',
     'select',
     'setImmediate',
     'setTimeout',

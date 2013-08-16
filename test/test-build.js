@@ -145,6 +145,7 @@
       'reduce',
       'reduceRight',
       'reject',
+      'sample',
       'shuffle',
       'size',
       'some',
@@ -309,6 +310,7 @@
     'pull',
     'remove',
     'runInContext',
+    'sample',
     'transform'
   ];
 

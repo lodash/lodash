@@ -2037,7 +2037,7 @@
         result = Array(typeof length == 'number' ? length : 0);
 
     forEach(collection, function(value) {
-      var rand = floor(nativeRandom() * (++index + 1));
+      var rand = random(++index);
       result[index] = result[rand];
       result[rand] = value;
     });
@@ -2246,11 +2246,10 @@
   }
 
   /**
-   * Gets the first element of an array. If a number `n` is provided the first
-   * `n` elements of the array are returned. If a callback is provided elements
-   * at the beginning of the array are returned as long as the callback returns
-   * truthy. The callback is bound to `thisArg` and invoked with three arguments;
-   * (value, index, array).
+   * Gets the first element or first `n` elements of an array. If a callback
+   * is provided elements at the beginning of the array are returned as long
+   * as the callback returns truthy. The callback is bound to `thisArg` and
+   * invoked with three arguments; (value, index, array).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -2359,11 +2358,10 @@
   }
 
   /**
-   * Gets all but the last element of an array. If a number `n` is provided
-   * the last `n` elements are excluded from the result. If a callback is
-   * provided elements at the end of the array are excluded from the result
-   * as long as the callback returns truthy. The callback is bound to `thisArg`
-   * and invoked with three arguments; (value, index, array).
+   * Gets all but the last element or last `n` elements of an array. If a
+   * callback is provided elements at the end of the array are excluded from
+   * the result as long as the callback returns truthy. The callback is bound
+   * to `thisArg` and invoked with three arguments; (value, index, array).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -2434,12 +2432,10 @@
   }
 
   /**
-   * Gets the last element of an array. If a number `n` is provided the last
-   * `n` elements of the array are returned. If a callback is provided elements
-   * at the end of the array are returned as long as the callback returns truthy.
-   * The callback is bound to `thisArg` and invoked with three arguments;
-   * (value, index, array).
-   *
+   * Gets the last element or last `n` elements of an array. If a callback is
+   * provided elements at the end of the array are returned as long as the
+   * callback returns truthy. The callback is bound to `thisArg` and invoked
+   * with three arguments; (value, index, array).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -2545,12 +2541,11 @@
   }
 
   /**
-   * The opposite of `_.initial` this method gets all but the first value of
-   * an array. If a number `n` is provided the first `n` values are excluded
-   * from the result. If a callback function is provided elements at the beginning
-   * of the array are excluded from the result as long as the callback returns
-   * truthy. The callback is bound to `thisArg` and invoked with three
-   * arguments; (value, index, array).
+   * The opposite of `_.initial` this method gets all but the first element or
+   * first `n` elements of an array. If a callback function is provided elements
+   * at the beginning of the array are excluded from the result as long as the
+   * callback returns truthy. The callback is bound to `thisArg` and invoked
+   * with three arguments; (value, index, array).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
    * callback will return the property value of the given element.
@@ -2939,6 +2934,42 @@
   }
 
   /**
+   * Produces a random number between `min` and `max` (inclusive). If only one
+   * argument is provided a number between `0` and the given number will be
+   * returned.
+   *
+   * @static
+   * @memberOf _
+   * @category Utilities
+   * @param {Number} [min=0] The minimum possible value.
+   * @param {Number} [max=1] The maximum possible value.
+   * @returns {Number} Returns a random number.
+   * @example
+   *
+   * _.random(0, 5);
+   * // => a number between 0 and 5
+   *
+   * _.random(5);
+   * // => also a number between 0 and 5
+   */
+  function random(min, max) {
+    if (min == null && max == null) {
+      max = 1;
+    }
+    min = +min || 0;
+    if (max == null) {
+      max = min;
+      min = 0;
+    } else {
+      max = +max || 0;
+    }
+    var rand = nativeRandom();
+    return (min % 1 || max % 1)
+      ? min + nativeMin(rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1))), max)
+      : min + floor(rand * (max - min + 1));
+  }
+
+  /**
    * Resolves the value of `property` on `object`. If `property` is a function
    * it will be invoked with the `this` binding of `object` and its result returned,
    * else the property value is returned. If `object` is falsey then `undefined`
@@ -3119,6 +3150,7 @@
   lodash.isString = isString;
   lodash.lastIndexOf = lastIndexOf;
   lodash.mixin = mixin;
+  lodash.random = random;
   lodash.reduce = reduce;
   lodash.reduceRight = reduceRight;
   lodash.result = result;

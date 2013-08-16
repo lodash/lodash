@@ -201,7 +201,8 @@
     'rest': ['createCallback', 'slice'],
     'result': ['isFunction'],
     'runInContext': ['defaults', 'pick'],
-    'shuffle': ['forEach'],
+    'sample': ['random', 'shuffle', 'toArray'],
+    'shuffle': ['forEach', 'random'],
     'size': ['keys'],
     'some': ['baseEach', 'createCallback', 'isArray'],
     'sortBy': ['compareAscending', 'createCallback', 'forEach', 'getObject', 'releaseObject'],
@@ -380,6 +381,7 @@
       'reduce',
       'reduceRight',
       'reject',
+      'sample',
       'shuffle',
       'size',
       'some',
@@ -584,6 +586,7 @@
     'pull',
     'remove',
     'runInContext',
+    'sample',
     'transform',
     'wrapperToString'
   ];

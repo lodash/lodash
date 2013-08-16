@@ -5,13 +5,13 @@ require(dirname(__FILE__) . "/Entry.php");
 /**
  * Generates Markdown from JSDoc entries.
  */
-class Generator {
+class MarkdownGenerator {
 
   /**
    * The HTML for the close tag.
    *
    * @static
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @type String
    */
   public $closeTag = "\n<!-- /div -->\n";
@@ -19,7 +19,7 @@ class Generator {
   /**
    * An array of JSDoc entries.
    *
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @type Array
    */
   public $entries = array();
@@ -28,7 +28,7 @@ class Generator {
    * The HTML for the open tag.
    *
    * @static
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @type String
    */
   public $openTag = "\n<!-- div -->\n";
@@ -36,7 +36,7 @@ class Generator {
   /**
    * An options array used to configure the generator.
    *
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @type Array
    */
   public $options = array();
@@ -44,7 +44,7 @@ class Generator {
   /**
    * The file's source code.
    *
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @type String
    */
   public $source = '';
@@ -52,7 +52,7 @@ class Generator {
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The Generator constructor.
+   * The MarkdownGenerator constructor.
    *
    * @constructor
    * @param {String} $source The source code to parse.
@@ -103,7 +103,7 @@ class Generator {
    *
    * @private
    * @static
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @param {String} $string The string to format.
    * @returns {String} The formatted string.
    */
@@ -137,7 +137,7 @@ class Generator {
    *
    * @private
    * @static
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @param {String} $string The string to modify.
    * @param {Array|Object} $object The template object.
    * @returns {String} The modified string.
@@ -165,7 +165,7 @@ class Generator {
       }
       $string = preg_replace($pattern, trim($replacement), $string);
     }
-    return Generator::format($string);
+    return MarkdownGenerator::format($string);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -174,7 +174,7 @@ class Generator {
    * Adds the given `$entries` to the `$result` array.
    *
    * @private
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @param {Array} $result The result array to modify.
    * @param {Array} $entries The entries to add to the `$result`.
    */
@@ -188,7 +188,7 @@ class Generator {
       array_push(
         $result,
         $this->openTag,
-        Generator::interpolate("### <a id=\"#{hash}\"></a>`#{member}#{separator}#{call}`\n<a href=\"##{hash}\">#</a> [&#x24C8;](#{href} \"View in source\") [&#x24C9;][1]\n\n#{desc}", $entry)
+        MarkdownGenerator::interpolate("### <a id=\"#{hash}\"></a>`#{member}#{separator}#{call}`\n<a href=\"##{hash}\">#</a> [&#x24C8;](#{href} \"View in source\") [&#x24C9;][1]\n\n#{desc}", $entry)
       );
 
       // @alias
@@ -203,7 +203,7 @@ class Generator {
       if (count($params = $entry->getParams())) {
         array_push($result, '', '#### Arguments');
         foreach ($params as $index => $param) {
-          $result[] = Generator::interpolate('#{num}. `#{name}` (#{type}): #{desc}', array(
+          $result[] = MarkdownGenerator::interpolate('#{num}. `#{name}` (#{type}): #{desc}', array(
             'desc' => $param[2],
             'name' => $param[1],
             'num'  => $index + 1,
@@ -216,7 +216,7 @@ class Generator {
         array_push(
           $result, '',
           '#### Returns',
-          Generator::interpolate('(#{type}): #{desc}', array('desc' => $returns[1], 'type' => $returns[0]))
+          MarkdownGenerator::interpolate('(#{type}): #{desc}', array('desc' => $returns[1], 'type' => $returns[0]))
         );
       }
       // @example
@@ -231,7 +231,7 @@ class Generator {
    * Resolves the entry's hash used to navigate the documentation.
    *
    * @private
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @param {Number|Object} $entry The entry object.
    * @param {String} $member The name of the member.
    * @returns {String} The url hash.
@@ -250,7 +250,7 @@ class Generator {
    * Resolves the entry's url for the specific line number.
    *
    * @private
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @param {Number|Object} $entry The entry object.
    * @returns {String} The url.
    */
@@ -263,7 +263,7 @@ class Generator {
    * Extracts the character used to separate the entry's name from its member.
    *
    * @private
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @param {Number|Object} $entry The entry object.
    * @returns {String} The separator.
    */
@@ -277,7 +277,7 @@ class Generator {
   /**
    * Generates Markdown from JSDoc entries.
    *
-   * @memberOf Generator
+   * @memberOf MarkdownGenerator
    * @returns {String} The rendered Markdown.
    */
   public function generate() {
@@ -453,7 +453,7 @@ class Generator {
         );
         // add entries
         foreach ($entries as $entry) {
-          $result[] = Generator::interpolate('* [`#{member}#{separator}#{name}`](##{hash})', $entry);
+          $result[] = MarkdownGenerator::interpolate('* [`#{member}#{separator}#{name}`](##{hash})', $entry);
         }
       }
     }
@@ -475,7 +475,7 @@ class Generator {
         array_push(
           $result,
           $openTag, '## ' . (count($result) == 2 ? '<a id="' . $toc . '"></a>' : '') . '`' . $member . '`',
-          Generator::interpolate('* [`' . $member . '`](##{hash})', $entry)
+          MarkdownGenerator::interpolate('* [`' . $member . '`](##{hash})', $entry)
         );
 
         // add static and plugin sub-entries
@@ -490,7 +490,7 @@ class Generator {
           }
           foreach ($entry->{$kind} as $subentry) {
             $subentry->member = $member;
-            $result[] = Generator::interpolate('* [`#{member}#{separator}#{name}`](##{hash})', $subentry);
+            $result[] = MarkdownGenerator::interpolate('* [`#{member}#{separator}#{name}`](##{hash})', $subentry);
           }
         }
       }

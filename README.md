@@ -40,6 +40,7 @@ For a list of upcoming features, check out our [roadmap](https://github.com/best
  * [_.forIn](http://lodash.com/docs#forIn) for iterating own & inherited properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating own properties
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) for checking if values are created by `Object`
+ * [_.memoize](http://lodash.com/docs#memoize) exposes the `cache` of memoized functions
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.partialRight](http://lodash.com/docs#partialRight) for [partial application](http://lodash.com/docs#partial) from the right

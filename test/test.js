@@ -3298,6 +3298,20 @@
       var actual = _(array).sample();
       ok(_.contains(array, actual));
     });
+
+    _.forEach({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection`', function() {
+        var actual = _.sample(collection);
+        ok(_.contains(collection, actual));
+
+        actual = _.sample(collection, 2);
+        ok(actual[0] !== actual[1] && _.contains(collection, actual[0]) && _.contains(collection, actual[1]));
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

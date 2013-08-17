@@ -3323,6 +3323,17 @@
       var actual = _.shuffle({ 'a': 1, 'b': 2, 'c': 3 });
       deepEqual(actual.sort(), [1, 2, 3]);
     });
+
+    _.forEach({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection`', function() {
+        var actual = _.shuffle(collection);
+        deepEqual(actual.sort(), ['a','b', 'c']);
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

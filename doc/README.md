@@ -85,7 +85,7 @@
 * [`_.reduce`](#_reducecollection--callbackidentity-accumulator-thisarg)
 * [`_.reduceRight`](#_reducerightcollection--callbackidentity-accumulator-thisarg)
 * [`_.reject`](#_rejectcollection--callbackidentity-thisarg)
-* [`_.sample`](#_samplecollection)
+* [`_.sample`](#_samplecollection--n)
 * [`_.select`](#_filtercollection--callbackidentity-thisarg)
 * [`_.shuffle`](#_shufflecollection)
 * [`_.size`](#_sizecollection)
@@ -1910,13 +1910,14 @@ _.reject(food, { 'type': 'fruit' });
 
 <!-- div -->
 
-### <a id="_samplecollection"></a>`_.sample(collection)`
-<a href="#_samplecollection">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3834 "View in source") [&#x24C9;][1]
+### <a id="_samplecollection--n"></a>`_.sample(collection [, n])`
+<a href="#_samplecollection--n">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L3837 "View in source") [&#x24C9;][1]
 
 Retrieves a random element or `n` random elements from a collection.
 
 #### Arguments
 1. `collection` *(Array|Object|String)*: The collection to sample.
+2. `[n]` *(Number)*: The number of elements to sample.
 
 #### Returns
 *(Array)*: Returns the random sample(s) of `collection`.

@@ -1996,8 +1996,8 @@
      * @category Objects
      * @param {Object} object The destination object.
      * @param {Object} [source1, source2, ...] The source objects.
-     * @param- {Object} [guard] Allows working with `_.reduce` without using
-     *  their `key` and `object` arguments as sources.
+     * @param- {Object} [guard] Allows working with `_.reduce` without using its
+     *  `key` and `object` arguments as sources.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -3822,6 +3822,9 @@
      * @memberOf _
      * @category Collections
      * @param {Array|Object|String} collection The collection to sample.
+     * @param {Number} [n] The number of elements to sample.
+     * @param- {Object} [guard] Allows working with functions, like `_.map`,
+     *  without using their `key` and `object` arguments as sources.
      * @returns {Array} Returns the random sample(s) of `collection`.
      * @example
      *
@@ -3835,11 +3838,8 @@
       if (!isArray(collection)) {
         collection = toArray(collection);
       }
-      var index = -1,
-          maxIndex = collection.length - 1;
-
       if (n == null || guard) {
-        return collection[random(maxIndex)];
+        return collection[random(collection.length - 1)];
       }
       var result = shuffle(collection);
       result.length = nativeMin(nativeMax(0, n), result.length);

@@ -201,7 +201,7 @@
     'rest': ['createCallback', 'slice'],
     'result': ['isFunction'],
     'runInContext': ['defaults', 'pick'],
-    'sample': ['random', 'shuffle', 'toArray'],
+    'sample': ['isArray', 'random', 'shuffle', 'toArray'],
     'shuffle': ['forEach', 'random'],
     'size': ['keys'],
     'some': ['baseEach', 'createCallback', 'isArray'],

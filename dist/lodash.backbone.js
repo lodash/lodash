@@ -813,8 +813,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {Object} [source1, source2, ...] The source objects.
-   * @param- {Object} [guard] Allows working with `_.reduce` without using
-   *  their `key` and `object` arguments as sources.
+   * @param- {Object} [guard] Allows working with `_.reduce` without using its
+   *  `key` and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *

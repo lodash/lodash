@@ -531,7 +531,8 @@
     'amd',
     'commonjs',
     'global',
-    'node'
+    'node',
+    'npm'
   ];
 
   /** List of variables with complex assignments */
@@ -834,6 +835,7 @@
         isMobile = state.isMobile,
         isModern = state.isModern,
         isNode = state.isNode,
+        isNpm = state.isNpm,
         isStdOut = state.isStdOut,
         isStrict = state.isStrict,
         isUnderscore = state.isUnderscore,
@@ -894,17 +896,30 @@
         .concat(varDepMap[identifier] || arrayRef)
         .sort();
 
-      var depArgs = deps.join(', '),
-          depPaths = '[' + (deps.length ? "'" + getDepPaths(deps, modulePath).join("', '") + "'" : '') + '], ';
+      var depPaths = getDepPaths(deps, modulePath);
 
       if (isAMD) {
+        depPaths = '[' + (deps.length ? "'" + depPaths.join("', '") + "'" : '') + '], ';
         iife.push(
-          'define(' + depPaths + 'function(' + depArgs + ') {',
+          'define(' + depPaths + 'function(' + deps.join(', ') + ') {',
           '%output%',
           '  return ' + identifier + ';',
           '});'
         );
       }
+      else if (isNode) {
+        if (isNpm) {
+          depPaths = deps.map(function(dep) { return 'lodash.' + dep; });
+        }
+        iife.push(
+          _.reduce(depPaths, function(result, path, index) {
+            return result + (result ? ',\n      ' : '  var ') + deps[index] + " = require('" + path + "')";
+          }, '') + ';',
+          '%output%',
+          'module.expoorts = ' + identifier + ';'
+        );
+      }
+
       state.buildFuncs = state.includeFuncs = state.includeProps = state.includeVars = empty;
       state.iife = iife.join('\n');
       state.outputPath = path.join(outputPath, modulePath + identifier + '.js');
@@ -919,7 +934,14 @@
       else {
         state.buildFuncs = state.includeFuncs = include;
       }
-      build(state);
+      build(state, function(data) {
+        var source = data.source;
+        if (isNode) {
+          source = source.replace(/^  /gm, '');
+        }
+        data.source = source;
+        defaultBuildCallback(data);
+      });
     });
 
     // create lodash module
@@ -938,9 +960,8 @@
           depPaths = categoryDepPaths.concat(getDepPaths(deps, modulePath)),
           iife = [];
 
-      depPaths = '[' + (depPaths.length ? "'" + depPaths.join("', '") + "'" : '') + '], ';
-
       if (isAMD) {
+        depPaths = '[' + (depPaths.length ? "'" + depPaths.join("', '") + "'" : '') + '], ';
         iife.push(
           'define(' + depPaths + 'function(' + depArgs + ') {',
           '%output%',
@@ -948,6 +969,24 @@
           '});'
         );
       }
+      else if (isNode) {
+        if (isNpm) {
+          deps = _.union(deps, _.transform(categories, function(result, category) {
+            push.apply(result, _.intersection(categoryMap[category], identifiers));
+          }))
+          .sort();
+
+          depPaths = deps.map(function(dep) { return 'lodash.' + dep; });
+        }
+        iife.push(
+          _.reduce(depPaths, function(result, path, index) {
+            return result + (result ? ',\n      ' : '  var ') + deps[index] + " = require('" + path + "')";
+          }, '') + ';',
+          '%output%',
+          'module.expoorts = ' + identifier + ';'
+        );
+      }
+
       state.iife = iife.join('\n');
       state.buildFuncs = state.includeFuncs = [identifier];
       state.includeProps = state.includeVars = empty;
@@ -957,10 +996,11 @@
         var source = data.source;
 
         // add category namespaces to each lodash function assignment
-        source = source.replace(/(lodash(?:\.prototype)?\.\w+\s*=\s*)(\w+)/g, function(match, prelude, identifier) {
-          return prelude + getCategory(identifier, funcDepMap).toLowerCase() + '.' + identifier;
-        });
-
+        if (!isNode) {
+          source = source.replace(/(lodash(?:\.prototype)?\.\w+\s*=\s*)(\w+)/g, function(match, prelude, identifier) {
+            return prelude + getCategory(identifier, funcDepMap).toLowerCase() + '.' + identifier;
+          });
+        }
         if (_.contains(identifiers, 'mixin')) {
           source = source.replace(/^ *lodashWrapper\.prototype\s*=[^;]+;\n/m, function(match) {
             return match + [
@@ -991,6 +1031,10 @@
           return prelude + match;
         });
 
+
+        if (isNode) {
+          source = source.replace(/^  /gm, '');
+        }
         data.source = source;
         defaultBuildCallback(data);
       });
@@ -1000,26 +1044,28 @@
     state.buildFuncs = state.includeFuncs = state.includeProps = state.includeVars = empty;
 
     // create category modules
-    categories.forEach(function(category) {
-      var deps = _.intersection(categoryMap[category], identifiers).sort(),
-          depArgs =  deps.join(', '),
-          depPaths = "['" + getDepPaths(deps).join("', '") + "'], ",
-          iife = [];
+    if (!isNpm) {
+      categories.forEach(function(category) {
+        var deps = _.intersection(categoryMap[category], identifiers).sort(),
+            depArgs =  deps.join(', '),
+            depPaths = "['" + getDepPaths(deps).join("', '") + "'], ",
+            iife = [];
 
-      if (isAMD) {
-        iife.push(
-          'define(' + depPaths + 'function(' + depArgs + ') {',
-          '%output%',
-          '  return {',
-          deps.map(function(dep) { return "    '" + dep + "': " + dep; }).join(',\n'),
-          '  };',
-          '});'
-        );
-      }
-      state.iife = iife.join('\n');
-      state.outputPath = path.join(outputPath, category.toLowerCase() + '.js');
-      build(state);
-    });
+        if (isAMD) {
+          iife.push(
+            'define(' + depPaths + 'function(' + depArgs + ') {',
+            '%output%',
+            '  return {',
+            deps.map(function(dep) { return "    '" + dep + "': " + dep; }).join(',\n'),
+            '  };',
+            '});'
+          );
+        }
+        state.iife = iife.join('\n');
+        state.outputPath = path.join(outputPath, category.toLowerCase() + '.js');
+        build(state);
+      });
+    }
   }
 
   /**
@@ -2613,12 +2659,17 @@
       var isLegacy = !(isModern || isUnderscore) && _.contains(options, 'legacy');
 
       // used to specify the ways to export the `lodash` function
-      var exportsOptions = options.reduce(function(result, value) {
-        return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
-      }, isUnderscore
-        ? ['commonjs', 'global', 'node']
-        : allExports.slice()
-      );
+      var exportsOptions = (function() {
+        var result = options.reduce(function(result, value) {
+          return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
+        }, isUnderscore
+          ? ['commonjs', 'global', 'node']
+          : allExports.slice()
+        );
+        return isModularize
+          ? _.first(result, 1)
+          : _.pull(result, 'npm');
+      }());
 
       // used to specify the AMD module ID of Lo-Dash used by precompiled templates
       var moduleId = options.reduce(function(result, value) {
@@ -2648,7 +2699,8 @@
       var isAMD = _.contains(exportsOptions, 'amd'),
           isCommonJS = _.contains(exportsOptions, 'commonjs'),
           isGlobal = _.contains(exportsOptions, 'global'),
-          isNode = _.contains(exportsOptions, 'node');
+          isNpm =  _.contains(exportsOptions, 'npm'),
+          isNode = isNpm || _.contains(exportsOptions, 'node');
 
       // flag to specify a template build
       var isTemplate = !!templatePattern;
@@ -4177,6 +4229,7 @@
           'isMobile': isMobile,
           'isModern': isModern,
           'isNode': isNode,
+          'isNpm': isNpm,
           'isStdOut': isStdOut,
           'isStrict': isStrict,
           'isUnderscore': isUnderscore,

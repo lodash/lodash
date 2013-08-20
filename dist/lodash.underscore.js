@@ -3781,6 +3781,20 @@
    * var fibonacci = _.memoize(function(n) {
    *   return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
    * });
+   *
+   * var data = {
+   *   'moe': { 'name': 'moe', 'age': 40 },
+   *   'curly': { 'name': 'curly', 'age': 60 }
+   * };
+   *
+   * // modifying the result cache
+   * var stooge = _.memoize(function(name) { return data[name]; }, _.identity);
+   * stooge('curly');
+   * // => { 'name': 'curly', 'age': 60 }
+   *
+   * stooge.cache.curly.name = 'jerome';
+   * stooge('curly');
+   * // => { 'name': 'jerome', 'age': 60 }
    */
   function memoize(func, resolver) {
     var cache = {};

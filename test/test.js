@@ -2405,13 +2405,13 @@
 
   (function() {
     test('should expose a `cache` object on the `memoized` function', function() {
-      var memoized = _.memoize(_.identity);
+      var memoized = _.memoize(_.identity, _.identity);
+
       memoized('x');
+      equal(memoized.cache.x, 'x');
 
-      var cache = memoized.cache,
-          key = _.keys(cache)[0];
-
-      equal(cache[key], 'x');
+      memoized.cache.x = 'y';
+      equal(memoized('x'), 'y');
     });
   }());
 

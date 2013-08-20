@@ -899,9 +899,8 @@
       var depPaths = getDepPaths(deps, modulePath);
 
       if (isAMD) {
-        depPaths = '[' + (deps.length ? "'" + depPaths.join("', '") + "'" : '') + '], ';
         iife.push(
-          'define(' + depPaths + 'function(' + deps.join(', ') + ') {',
+          'define([' + (depPaths.length ? "'" + depPaths.join("', '") + "'" : '') + '], function(' + deps.join(', ') + ') {',
           '%output%',
           '  return ' + identifier + ';',
           '});'
@@ -916,7 +915,7 @@
             return result + (result ? ',\n      ' : '  var ') + deps[index] + " = require('" + path + "')";
           }, '') + ';',
           '%output%',
-          'module.expoorts = ' + identifier + ';'
+          'module.exports = ' + identifier + ';'
         );
       }
 
@@ -961,9 +960,8 @@
           iife = [];
 
       if (isAMD) {
-        depPaths = '[' + (depPaths.length ? "'" + depPaths.join("', '") + "'" : '') + '], ';
         iife.push(
-          'define(' + depPaths + 'function(' + depArgs + ') {',
+          'define([' + (depPaths.length ? "'" + depPaths.join("', '") + "'" : '') + '], function(' + depArgs + ') {',
           '%output%',
           '  return lodash;',
           '});'
@@ -977,13 +975,16 @@
           .sort();
 
           depPaths = deps.map(function(dep) { return 'lodash.' + dep; });
+        } else {
+          deps = categoryDeps.concat(deps);
         }
+
         iife.push(
           _.reduce(depPaths, function(result, path, index) {
-            return result + (result ? ',\n      ' : '  var ') + deps[index] + " = require('" + path + "')";
-          }, '') + ';',
+              return result + (result ? ',\n      ' : '  var ') + deps[index] + " = require('" + path + "')";
+            }, '') + ';',
           '%output%',
-          'module.expoorts = ' + identifier + ';'
+          'module.exports = ' + identifier + ';'
         );
       }
 
@@ -996,7 +997,7 @@
         var source = data.source;
 
         // add category namespaces to each lodash function assignment
-        if (!isNode) {
+        if (!isNpm) {
           source = source.replace(/(lodash(?:\.prototype)?\.\w+\s*=\s*)(\w+)/g, function(match, prelude, identifier) {
             return prelude + getCategory(identifier, funcDepMap).toLowerCase() + '.' + identifier;
           });
@@ -1031,7 +1032,6 @@
           return prelude + match;
         });
 
-
         if (isNode) {
           source = source.replace(/^  /gm, '');
         }
@@ -1047,18 +1047,25 @@
     if (!isNpm) {
       categories.forEach(function(category) {
         var deps = _.intersection(categoryMap[category], identifiers).sort(),
-            depArgs =  deps.join(', '),
-            depPaths = "['" + getDepPaths(deps).join("', '") + "'], ",
+            depPaths = getDepPaths(deps),
             iife = [];
 
         if (isAMD) {
           iife.push(
-            'define(' + depPaths + 'function(' + depArgs + ') {',
+            "define(['" + depPaths.join("', '") + "'], function(" + deps.join(', ') + ') {',
             '%output%',
             '  return {',
             deps.map(function(dep) { return "    '" + dep + "': " + dep; }).join(',\n'),
             '  };',
             '});'
+          );
+        }
+        else if (isNode) {
+          iife.push(
+            '%output%',
+            'module.exports = {',
+            depPaths.map(function(path, index) { return "  '" + deps[index] + "': require('" + path + "')"; }).join(',\n'),
+            '};'
           );
         }
         state.iife = iife.join('\n');
@@ -1579,7 +1586,7 @@
     }
     // remove the variable assignment from the source
     source = source.replace(match, '');
-    return RegExp('[^\\w"\'.]' + varName + '\\b').test(source);
+    return RegExp('[^\\w"\'.]' + varName + '\\b(?!\\s*=)').test(source);
   }
 
   /**
@@ -4190,7 +4197,6 @@
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
       }
       if (!isNode || isModularize) {
-        source = removeVar(source, 'freeGlobal');
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
       }
       if (!isCommonJS || isModularize) {
@@ -4243,24 +4249,6 @@
         });
         return;
       }
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    // customize Lo-Dash's IIFE
-    if (isIIFE) {
-      source = (function() {
-        var token = '%output%',
-            header = source.match(/^\/\**[\s\S]+?\*\/\n/),
-            index = iife.indexOf(token);
-
-        return header + (index < 0
-          ? iife
-          : iife.slice(0, index).replace(/\n+$/, '') +
-            source.replace(/^[\s\S]+?\(function[^{]+{\n|\s*}\(this\)\)[;\s]*$/g, '\n') +
-            iife.slice(index + token.length).replace(/^\n+/, '')
-        );
-      }());
     }
 
     /*------------------------------------------------------------------------*/
@@ -4423,6 +4411,9 @@
             }
           }
         }
+        if (!useMap.window) {
+          source = removeVar(source, 'freeGlobal');
+        }
       }());
 
       if (isNoDep) {
@@ -4450,10 +4441,28 @@
       source = removeVar(source, 'freeExports');
     }
 
-    debugSource = cleanupSource(source);
-    source = debugSource;
+    /*------------------------------------------------------------------------*/
+
+    // customize Lo-Dash's IIFE
+    if (isIIFE) {
+      source = (function() {
+        var token = '%output%',
+            header = source.match(/^\/\**[\s\S]+?\*\/\n/),
+            index = iife.indexOf(token);
+
+        return header + (index < 0
+          ? iife
+          : iife.slice(0, index) +
+            source.replace(/^[\s\S]+?\(function[^{]+{\n+|\s*}\.call\(this\)\)[;\s]*$/g, '\n') +
+            iife.slice(index + token.length)
+        );
+      }());
+    }
 
     /*------------------------------------------------------------------------*/
+
+    debugSource = cleanupSource(source);
+    source = debugSource;
 
     // resolve `outputPath` and create directories if needed
     if (!outputPath) {

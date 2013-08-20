@@ -6,7 +6,7 @@
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
-;(function(window) {
+;(function() {
 
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
@@ -127,6 +127,9 @@
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
+
+  /** Used as a reference to the global object */
+  var window = this;
 
   /** Detect free variable `exports` */
   var freeExports = objectTypes[typeof exports] && exports;
@@ -6600,4 +6603,4 @@
     // in a browser or Rhino
     window._ = _;
   }
-}(this));
+}.call(this));

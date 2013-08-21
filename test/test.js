@@ -60,7 +60,7 @@
   var _ = window._ || (window._ = (
     _ = load(filePath) || window._,
     _ = _._ || _,
-    _.runInContext(window)
+    (_.runInContext ? _.runInContext(window) : _)
   ));
 
   /** Used to pass falsey values to methods */
@@ -101,7 +101,7 @@
   });
 
   /** Used to indicate testing a modularized build */
-  var isModularize = /modularize/.test(ui.urlParams.build);
+  var isModularize = /modularize/.test([ui.buildPath, ui.urlParams.build]);
 
   /*--------------------------------------------------------------------------*/
 

@@ -1021,7 +1021,7 @@
           });
         }
 
-        source = source.replace(/^ *return lodash;$/m, function(match) {
+        source = source.replace(/^ *(return +|module\.exports\s*=\s*)lodash;$/m, function(match) {
           var prelude = '';
           if (_.contains(identifiers, 'support')) {
             prelude += '  lodash.support = support;\n';
@@ -4187,6 +4187,12 @@
               // remove debug sourceURL use in `_.template`
               .replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
           });
+
+          // remove `freeGlobal` and replace `context` with `global`
+          if (isNode) {
+            source = source.replace(/\bcontext(?=\.)/g, 'global');
+          }
+          source = removeRunInContext(source);
         }
       }
 
@@ -4197,6 +4203,7 @@
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(typeof +define[\s\S]+?else /, '$1');
       }
       if (!isNode || isModularize) {
+        source = removeVar(source, 'freeGlobal');
         source = source.replace(/(?: *\/\/.*\n)*( *)if *\(freeModule[\s\S]+?else *{([\s\S]+?\n)\1}\n+/, '$1$2');
       }
       if (!isCommonJS || isModularize) {
@@ -4391,7 +4398,7 @@
         var isShallow = isExcluded('runInContext'),
             useMap = {},
             snippet = removeStrings(removeComments(source)),
-            varNames = getVars(snippet, isShallow);
+            varNames = _.difference(getVars(snippet, isShallow), includeProps);
 
         while (varNames.length) {
           varNames = _.sortBy(varNames, function(varName) {

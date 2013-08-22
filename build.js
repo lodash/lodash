@@ -2669,13 +2669,11 @@
       var exportsOptions = (function() {
         var result = options.reduce(function(result, value) {
           return /^exports=.*$/.test(value) ? optionToArray(value).sort() : result;
-        }, isUnderscore
-          ? ['commonjs', 'global', 'node']
-          : allExports.slice()
+        }, isModularize
+          ? []
+          : (isUnderscore ? ['commonjs', 'global', 'node'] : _.without(allExports, 'npm'))
         );
-        return isModularize
-          ? _.first(result, 1)
-          : _.pull(result, 'npm');
+        return isModularize ? _.first(result, 1) : result;
       }());
 
       // used to specify the AMD module ID of Lo-Dash used by precompiled templates
@@ -4493,7 +4491,7 @@
     var isCustom = !isNoDep && (
       isLegacy || isMapped || isModern || isStrict || isUnderscore || outputPath ||
       /(?:category|exclude|exports|iife|include|minus|plus)=.*$/.test(options) ||
-      !_.isEqual(exportsOptions, allExports)
+      !_.isEqual(exportsOptions, ['amd', 'commonjs', 'global', 'node'])
     );
 
     // used as the basename of the output path

@@ -1156,7 +1156,7 @@
       // reset if the state has changed
       else if ((suite.aborted || suite.running) &&
           (suite.emit(event = Event('reset')), !event.cancelled)) {
-        suite.running = false;
+        suite.aborted = suite.running = false;
         if (!aborting) {
           invoke(suite, 'reset');
         }
@@ -1569,16 +1569,119 @@
       // lazy define for hi-res timers
       clock = function(clone) {
         var deferred;
-        templateData.uid = uid + uidCounter++;
 
         if (clone instanceof Deferred) {
           deferred = clone;
           clone = deferred.benchmark;
         }
         var bench = clone._original,
-            fn = bench.fn,
-            fnArg = deferred ? getFirstArgument(fn) || 'deferred' : '',
-            stringable = isStringable(fn);
+            stringable = isStringable(bench.fn),
+            count = bench.count = clone.count,
+            decompilable = support.decompilation || stringable,
+            id = bench.id,
+            name = bench.name || (typeof id == 'number' ? '<Test #' + id + '>' : id),
+            result = 0;
+
+        // init `minTime` if needed
+        clone.minTime = bench.minTime || (bench.minTime = bench.options.minTime = options.minTime);
+
+        // repair nanosecond timer
+        // (some Chrome builds erase the `ns` variable after millions of executions)
+        if (applet) {
+          try {
+            timer.ns.nanoTime();
+          } catch(e) {
+            // use non-element to avoid issues with libs that augment them
+            timer.ns = new applet.Packages.nano;
+          }
+        }
+
+        // Compile in setup/teardown functions and the test loop.
+        // Create a new compiled test, instead of using the cached `bench.compiled`,
+        // to avoid potential engine optimizations enabled over the life of the test.
+        var funcBody = deferred
+          ? 'var d#=this,${fnArg}=d#,m#=d#.benchmark._original,f#=m#.fn,su#=m#.setup,td#=m#.teardown;' +
+            // when `deferred.cycles` is `0` then...
+            'if(!d#.cycles){' +
+            // set `deferred.fn`
+            'd#.fn=function(){var ${fnArg}=d#;if(typeof f#=="function"){try{${fn}\n}catch(e#){f#(d#)}}else{${fn}\n}};' +
+            // set `deferred.teardown`
+            'd#.teardown=function(){d#.cycles=0;if(typeof td#=="function"){try{${teardown}\n}catch(e#){td#()}}else{${teardown}\n}};' +
+            // execute the benchmark's `setup`
+            'if(typeof su#=="function"){try{${setup}\n}catch(e#){su#()}}else{${setup}\n};' +
+            // start timer
+            't#.start(d#);' +
+            // execute `deferred.fn` and return a dummy object
+            '}d#.fn();return{uid:"${uid}"}'
+
+          : 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count,n#=t#.ns;${setup}\n${begin};' +
+            'while(i#--){${fn}\n}${end};${teardown}\nreturn{elapsed:r#,uid:"${uid}"}';
+
+        var compiled = bench.compiled = clone.compiled = createCompiled(bench, deferred, funcBody),
+            isEmpty = !(templateData.fn || stringable);
+
+        try {
+          if (isEmpty) {
+            // Firefox may remove dead code from Function#toString results
+            // http://bugzil.la/536085
+            throw new Error('The test "' + name + '" is empty. This may be the result of dead code removal.');
+          }
+          else if (!deferred) {
+            // pretest to determine if compiled code is exits early, usually by a
+            // rogue `return` statement, by checking for a return object with the uid
+            bench.count = 1;
+            compiled = (compiled.call(bench, context, timer) || {}).uid == templateData.uid && compiled;
+            bench.count = count;
+          }
+        } catch(e) {
+          compiled = null;
+          clone.error = e || new Error(String(e));
+          bench.count = count;
+        }
+        // fallback when a test exits early or errors during pretest
+        if (decompilable && !compiled && !deferred && !isEmpty) {
+          funcBody = (
+            clone.error && !stringable
+              ? 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count'
+              : 'function f#(){${fn}\n}var r#,s#,m#=this,i#=m#.count'
+            ) +
+            ',n#=t#.ns;${setup}\n${begin};m#.f#=f#;while(i#--){m#.f#()}${end};' +
+            'delete m#.f#;${teardown}\nreturn{elapsed:r#}';
+
+          compiled = createCompiled(bench, deferred, funcBody);
+
+          try {
+            // pretest one more time to check for errors
+            bench.count = 1;
+            compiled.call(bench, context, timer);
+            bench.count = count;
+            delete clone.error;
+          }
+          catch(e) {
+            bench.count = count;
+            if (!clone.error) {
+              clone.error = e || new Error(String(e));
+            }
+          }
+        }
+        // if no errors run the full test loop
+        if (!clone.error) {
+          compiled = bench.compiled = clone.compiled = createCompiled(bench, deferred, funcBody);
+          result = compiled.call(deferred || bench, context, timer).elapsed;
+        }
+        return result;
+      };
+
+      /*----------------------------------------------------------------------*/
+
+      /**
+       * Creates a compiled function from the given function `body`.
+       */
+      function createCompiled(bench, deferred, body) {
+        var fn = bench.fn,
+            fnArg = deferred ? getFirstArgument(fn) || 'deferred' : '';
+
+        templateData.uid = uid + uidCounter++;
 
         _.extend(templateData, {
           'setup': getSource(bench.setup, interpolate('m#.setup()')),
@@ -1625,28 +1728,6 @@
             'end': interpolate('r#=(new n#-s#)/1e3')
           });
         }
-
-        var count = bench.count = clone.count,
-            decompilable = support.decompilation || stringable,
-            id = bench.id,
-            isEmpty = !(templateData.fn || stringable),
-            name = bench.name || (typeof id == 'number' ? '<Test #' + id + '>' : id),
-            ns = timer.ns,
-            result = 0;
-
-        // init `minTime` if needed
-        clone.minTime = bench.minTime || (bench.minTime = bench.options.minTime = options.minTime);
-
-        // repair nanosecond timer
-        // (some Chrome builds erase the `ns` variable after millions of executions)
-        if (applet) {
-          try {
-            ns.nanoTime();
-          } catch(e) {
-            // use non-element to avoid issues with libs that augment them
-            ns = timer.ns = new applet.Packages.nano;
-          }
-        }
         // define `timer` methods
         timer.start = createFunction(
           interpolate('o#'),
@@ -1658,92 +1739,7 @@
           interpolate('var n#=this.ns,s#=o#.timeStamp,${end};o#.elapsed=r#')
         );
 
-        // Compile in setup/teardown functions and the test loop.
-        // Create a new compiled test, instead of using the cached `bench.compiled`,
-        // to avoid potential engine optimizations enabled over the life of the test.
-        var compiled = bench.compiled = createCompiled(
-          deferred
-            ? 'var d#=this,${fnArg}=d#,m#=d#.benchmark._original,f#=m#.fn,su#=m#.setup,td#=m#.teardown;' +
-              // when `deferred.cycles` is `0` then...
-              'if(!d#.cycles){' +
-              // set `deferred.fn`
-              'd#.fn=function(){var ${fnArg}=d#;if(typeof f#=="function"){try{${fn}\n}catch(e#){f#(d#)}}else{${fn}\n}};' +
-              // set `deferred.teardown`
-              'd#.teardown=function(){d#.cycles=0;if(typeof td#=="function"){try{${teardown}\n}catch(e#){td#()}}else{${teardown}\n}};' +
-              // execute the benchmark's `setup`
-              'if(typeof su#=="function"){try{${setup}\n}catch(e#){su#()}}else{${setup}\n};' +
-              // start timer
-              't#.start(d#);' +
-              // execute `deferred.fn` and return a dummy object
-              '}d#.fn();return{uid:"${uid}"}'
-
-            : 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count,n#=t#.ns;${setup}\n${begin};' +
-              'while(i#--){${fn}\n}${end};${teardown}\nreturn{elapsed:r#,uid:"${uid}"}'
-        );
-
-        try {
-          if (isEmpty) {
-            // Firefox may remove dead code from Function#toString results
-            // http://bugzil.la/536085
-            throw new Error('The test "' + name + '" is empty. This may be the result of dead code removal.');
-          }
-          else if (!deferred) {
-            // pretest to determine if compiled code is exits early, usually by a
-            // rogue `return` statement, by checking for a return object with the uid
-            bench.count = 1;
-            compiled = (compiled.call(bench, context, timer) || {}).uid == templateData.uid && compiled;
-            bench.count = count;
-          }
-        } catch(e) {
-          compiled = null;
-          clone.error = e || new Error(String(e));
-          bench.count = count;
-        }
-        // fallback when a test exits early or errors during pretest
-        if (decompilable && !compiled && !deferred && !isEmpty) {
-          compiled = createCompiled(
-            (clone.error && !stringable
-              ? 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count'
-              : 'function f#(){${fn}\n}var r#,s#,m#=this,i#=m#.count'
-            ) +
-            ',n#=t#.ns;${setup}\n${begin};m#.f#=f#;while(i#--){m#.f#()}${end};' +
-            'delete m#.f#;${teardown}\nreturn{elapsed:r#}'
-          );
-
-          try {
-            // pretest one more time to check for errors
-            bench.count = 1;
-            compiled.call(bench, context, timer);
-            bench.compiled = compiled;
-            bench.count = count;
-            delete clone.error;
-          }
-          catch(e) {
-            bench.count = count;
-            if (clone.error) {
-              compiled = null;
-            } else {
-              bench.compiled = compiled;
-              clone.error = e || new Error(String(e));
-            }
-          }
-        }
-        // assign `compiled` to `clone` before calling in case a deferred benchmark
-        // immediately calls `deferred.resolve()`
-        clone.compiled = compiled;
-        // if no errors run the full test loop
-        if (!clone.error) {
-          result = compiled.call(deferred || bench, context, timer).elapsed;
-        }
-        return result;
-      };
-
-      /*----------------------------------------------------------------------*/
-
-      /**
-       * Creates a compiled function from the given function `body`.
-       */
-      function createCompiled(body) {
+        // create compiled test
         return createFunction(
           interpolate('window,t#'),
           'var global = window, clearTimeout = global.clearTimeout, setTimeout = global.setTimeout;\n' +

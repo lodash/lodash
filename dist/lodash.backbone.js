@@ -7,7 +7,7 @@
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
-;(function(window) {
+;(function() {
 
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
@@ -39,16 +39,19 @@
     'undefined': false
   };
 
+  /** Used as a reference to the global object */
+  var root = (objectTypes[typeof window] && window) || this;
+
   /** Detect free variable `exports` */
   var freeExports = objectTypes[typeof exports] && exports;
 
   /** Detect free variable `module` */
   var freeModule = objectTypes[typeof module] && module && module.exports == freeExports && module;
 
-  /** Detect free variable `global` from Node.js or Browserified code and use it as `window` */
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
   var freeGlobal = objectTypes[typeof global] && global;
   if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
-    window = freeGlobal;
+    root = freeGlobal;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -152,7 +155,7 @@
       nativeSlice = arrayRef.slice;
 
   /** Detect various environments */
-  var isIeOpera = reNative.test(window.attachEvent),
+  var isIeOpera = reNative.test(root.attachEvent),
       isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
   /*--------------------------------------------------------------------------*/
@@ -3235,7 +3238,7 @@
     // case Lo-Dash was injected by a third-party script and not intended to be
     // loaded as a module. The global assignment can be reverted in the Lo-Dash
     // module via its `noConflict()` method.
-    window._ = lodash;
+    root._ = lodash;
 
     // define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module
@@ -3256,6 +3259,6 @@
   }
   else {
     // in a browser or Rhino
-    window._ = lodash;
+    root._ = lodash;
   }
-}(this));
+}.call(this));

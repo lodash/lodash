@@ -7,7 +7,7 @@
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
-;(function(window) {
+;(function() {
 
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
@@ -62,16 +62,19 @@
     '\u2029': 'u2029'
   };
 
+  /** Used as a reference to the global object */
+  var root = (objectTypes[typeof window] && window) || this;
+
   /** Detect free variable `exports` */
   var freeExports = objectTypes[typeof exports] && exports;
 
   /** Detect free variable `module` */
   var freeModule = objectTypes[typeof module] && module && module.exports == freeExports && module;
 
-  /** Detect free variable `global` from Node.js or Browserified code and use it as `window` */
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
   var freeGlobal = objectTypes[typeof global] && global;
   if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
-    window = freeGlobal;
+    root = freeGlobal;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -163,7 +166,7 @@
   var objectProto = Object.prototype;
 
   /** Used to restore the original `_` reference in `noConflict` */
-  var oldDash = window._;
+  var oldDash = root._;
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
@@ -184,8 +187,8 @@
   var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
       nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
-      nativeIsFinite = window.isFinite,
-      nativeIsNaN = window.isNaN,
+      nativeIsFinite = root.isFinite,
+      nativeIsNaN = root.isNaN,
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
@@ -193,7 +196,7 @@
       nativeSlice = arrayRef.slice;
 
   /** Detect various environments */
-  var isIeOpera = reNative.test(window.attachEvent),
+  var isIeOpera = reNative.test(root.attachEvent),
       isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
 
   /*--------------------------------------------------------------------------*/
@@ -4038,7 +4041,7 @@
    * var lodash = _.noConflict();
    */
   function noConflict() {
-    window._ = oldDash;
+    root._ = oldDash;
     return this;
   }
 
@@ -4600,7 +4603,7 @@
     // case Lo-Dash was injected by a third-party script and not intended to be
     // loaded as a module. The global assignment can be reverted in the Lo-Dash
     // module via its `noConflict()` method.
-    window._ = lodash;
+    root._ = lodash;
 
     // define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module
@@ -4621,6 +4624,6 @@
   }
   else {
     // in a browser or Rhino
-    window._ = lodash;
+    root._ = lodash;
   }
-}(this));
+}.call(this));

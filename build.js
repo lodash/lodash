@@ -1094,7 +1094,7 @@
     var directory = fs.realpathSync(path.dirname(pattern));
 
     var source = [
-      ';(function(window) {',
+      ';(function(root) {',
       '  var undefined;',
       '',
       '  var objectTypes = {',
@@ -1108,11 +1108,11 @@
       '',
       "  var freeGlobal = objectTypes[typeof global] && global;",
       '  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {',
-      '    window = freeGlobal;',
+      '    root = freeGlobal;',
       '  }',
       '',
       '  var templates = {},',
-      '      _ = window._;',
+      '      _ = root._;',
       ''
     ];
 
@@ -1259,7 +1259,7 @@
       '    lodash exports=...   Comma separated names of ways to export the `lodash` function',
       '                         (i.e. “amd”, “commonjs”, “global”, “node”, and “none”)',
       '    lodash iife=...      Code to replace the immediately-invoked function expression that wraps Lo-Dash',
-      '                         (e.g. `lodash iife="!function(window){%output%}(this)"`)',
+      '                         (e.g. `lodash iife="!function(){%output%}()"`)',
       '',
       '    lodash template=...  File path pattern used to match template files to precompile',
       '                         (e.g. `lodash template=./*.jst`)',
@@ -2058,7 +2058,7 @@
 
     // cleanup adjusted source
     source = source
-      .replace(/\bcontext\b/g, 'window')
+      .replace(/\bcontext\b/g, 'root')
       .replace(/(?:\n +\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/)?\n *var Array *=[\s\S]+?;\n/, '')
       .replace(/(return *|= *)_([;)])/g, '$1lodash$2')
       .replace(/^(?: *\/\/.*\s*)* *var _ *= *runInContext\b.+\n+/m, '');
@@ -4208,7 +4208,7 @@
         source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else *{)?\s*freeExports\.\w+ *=[\s\S]+?(?:\n\1})?\n+/, '$1$2\n');
       }
       if (!isGlobal || isModularize) {
-        source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:window\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
+        source = source.replace(/(?: *\/\/.*\n)*(?:( *)(})? *else(?: *if *\(_\))? *{)?(?:\s*\/\/.*)*\s*(?:root\._|_\.templates) *=[\s\S]+?(?:\n\1})?\n+/g, '$1$2\n');
       }
       // remove `if (freeExports) {...}` if it's empty
       if (isAMD && isGlobal && !isModularize) {
@@ -4416,7 +4416,7 @@
             }
           }
         }
-        if (!useMap.window) {
+        if (!useMap.root) {
           source = removeVar(source, 'freeGlobal');
         }
       }());

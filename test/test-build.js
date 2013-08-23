@@ -347,6 +347,7 @@
   function createContext() {
     return vm.createContext({
       'clearTimeout': clearTimeout,
+      'console': console,
       'setTimeout': setTimeout
     });
   }
@@ -1376,8 +1377,8 @@
 
   (function() {
     var commands = [
-      'iife=this["lodash"]=(function(window){%output%;return _}(this))',
-      'iife=define(function(window){return function(){%output%;return _}}(this));'
+      'iife=this["lodash"]=(function(){%output%;return _}())',
+      'iife=define(function(){return (function(){%output%;return _}())});'
     ];
 
     commands.forEach(function(command) {
@@ -1607,7 +1608,7 @@
     function strip(value) {
       return String(value)
         .replace(/^ *\/\/.*/gm, '')
-        .replace(/\b(?:basicEach|context|forEach|forOwn|window)\b/g, '')
+        .replace(/\b(?:basicEach|context|forEach|forOwn)\b/g, '')
         .replace(/\blodash\.(createCallback\()\b/g, '$1')
         .replace(/[\s;]/g, '');
     }

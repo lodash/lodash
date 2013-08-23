@@ -7,7 +7,7 @@
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
-;(function(window) {
+;(function() {
 
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
@@ -119,16 +119,19 @@
     '\u2029': 'u2029'
   };
 
+  /** Used as a reference to the global object */
+  var root = (objectTypes[typeof window] && window) || this;
+
   /** Detect free variable `exports` */
   var freeExports = objectTypes[typeof exports] && exports;
 
   /** Detect free variable `module` */
   var freeModule = objectTypes[typeof module] && module && module.exports == freeExports && module;
 
-  /** Detect free variable `global` from Node.js or Browserified code and use it as `window` */
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
   var freeGlobal = objectTypes[typeof global] && global;
   if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
-    window = freeGlobal;
+    root = freeGlobal;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -408,7 +411,7 @@
    * @static
    * @memberOf _
    * @category Utilities
-   * @param {Object} [context=window] The context object.
+   * @param {Object} [context=root] The context object.
    * @returns {Function} Returns the `lodash` function.
    */
   function runInContext(context) {
@@ -416,7 +419,7 @@
     // after built-in constructors like `Object`, for the creation of literals.
     // ES5 clears this up by stating that literals must use built-in constructors.
     // See http://es5.github.io/#x11.1.5.
-    context = context ? _.defaults(window.Object(), context, _.pick(window, contextProps)) : window;
+    context = context ? _.defaults(root.Object(), context, _.pick(root, contextProps)) : root;
 
     /** Native constructor references */
     var Array = context.Array,
@@ -6191,7 +6194,7 @@
     // case Lo-Dash was injected by a third-party script and not intended to be
     // loaded as a module. The global assignment can be reverted in the Lo-Dash
     // module via its `noConflict()` method.
-    window._ = _;
+    root._ = _;
 
     // define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module
@@ -6212,6 +6215,6 @@
   }
   else {
     // in a browser or Rhino
-    window._ = _;
+    root._ = _;
   }
-}(this));
+}.call(this));

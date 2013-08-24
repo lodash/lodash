@@ -5375,6 +5375,7 @@
     function debounce(func, wait, options) {
       var args,
           result,
+          stamp,
           thisArg,
           callCount = 0,
           lastCalled = 0,
@@ -5395,24 +5396,29 @@
         maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
-      var clear = function() {
-        clearTimeout(maxTimeoutId);
-        clearTimeout(timeoutId);
-        callCount = 0;
-        maxTimeoutId = timeoutId = null;
-      };
-
       var delayed = function() {
-        var isCalled = trailing && (!leading || callCount > 1);
-        clear();
-        if (isCalled) {
-          lastCalled = +new Date;
-          result = func.apply(thisArg, args);
+        var remaining = wait - (new Date - stamp);
+        if (remaining <= 0) {
+          var isCalled = trailing && (!leading || callCount > 1);
+          callCount = 0;
+          timeoutId = null;
+          if (maxTimeoutId) {
+            clearTimeout(maxTimeoutId);
+            maxTimeoutId = null;
+          }
+          if (isCalled) {
+            lastCalled = +new Date;
+            result = func.apply(thisArg, args);
+          }
+        } else {
+          timeoutId = setTimeout(delayed, remaining);
         }
       };
 
       var maxDelayed = function() {
-        clear();
+        callCount = 0;
+        clearTimeout(timeoutId);
+        maxTimeoutId = timeoutId = null;
         if (trailing || (maxWait !== wait)) {
           lastCalled = +new Date;
           result = func.apply(thisArg, args);
@@ -5421,26 +5427,24 @@
 
       return function() {
         args = arguments;
+        stamp = +new Date;
         thisArg = this;
         callCount++;
-
-        // avoid issues with Titanium and `undefined` timeout ids
-        // https://github.com/appcelerator/titanium_mobile/blob/3_1_0_GA/android/titanium/src/java/ti/modules/titanium/TitaniumModule.java#L185-L192
-        clearTimeout(timeoutId);
 
         if (maxWait === false) {
           if (leading && callCount < 2) {
             result = func.apply(thisArg, args);
           }
         } else {
-          var stamp = +new Date;
           if (!maxTimeoutId && !leading) {
             lastCalled = stamp;
           }
           var remaining = maxWait - (stamp - lastCalled);
           if (remaining <= 0) {
-            clearTimeout(maxTimeoutId);
-            maxTimeoutId = null;
+            if (maxTimeoutId) {
+              clearTimeout(maxTimeoutId);
+              maxTimeoutId = null;
+            }
             lastCalled = stamp;
             result = func.apply(thisArg, args);
           }
@@ -5448,7 +5452,7 @@
             maxTimeoutId = setTimeout(maxDelayed, remaining);
           }
         }
-        if (wait !== maxWait) {
+        if (!timeoutId && wait !== maxWait) {
           timeoutId = setTimeout(delayed, wait);
         }
         return result;

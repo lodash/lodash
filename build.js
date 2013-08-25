@@ -112,7 +112,7 @@
     'assign': ['createIterator'],
     'at': ['baseFlatten', 'isString'],
     'bind': ['createBound'],
-    'bindAll': ['baseFlatten', 'bind', 'functions'],
+    'bindAll': ['baseFlatten', 'createBound', 'functions'],
     'bindKey': ['createBound'],
     'chain': ['lodashWrapper'],
     'clone': ['baseClone', 'baseCreateCallback'],
@@ -140,7 +140,7 @@
     'first': ['createCallback', 'slice'],
     'flatten': ['baseFlatten', 'map'],
     'forEach': ['baseCreateCallback', 'baseEach', 'isArray'],
-    'forEachRight': ['baseCreateCallback', 'forEach', 'isString', 'keys'],
+    'forEachRight': ['baseCreateCallback', 'baseEach', 'isArray', 'isString', 'keys'],
     'forIn': ['createIterator'],
     'forInRight': ['baseCreateCallback', 'forIn'],
     'forOwn': ['createIterator'],
@@ -240,7 +240,7 @@
     'cachePush': [],
     'charAtCallback': [],
     'compareAscending': [],
-    'createAggregator': ['createCallback', 'forEach'],
+    'createAggregator': ['baseEach', 'createCallback', 'isArray'],
     'createBound': ['createObject', 'isFunction', 'isObject', 'setBindData'],
     'createCache': ['cachePush', 'getObject', 'releaseObject'],
     'createIterator': ['baseCreateCallback', 'getObject', 'isArguments', 'isArray', 'isString', 'iteratorTemplate', 'releaseObject'],
@@ -1791,7 +1791,6 @@
     source = source.replace(matchFunction(source, 'createBound'), function(match) {
       return match
         .replace(/(?:\s*\/\/.*)*\n( *)var bindData *=[\s\S]+?\n\1}/, '')
-        .replace(/(?:\s*\/\/.*)*\n.+bindData *= *nativeSlice.+/, '')
         .replace(/(?:\s*\/\/.*)*\n.+?setBindData.+/, '');
     });
 
@@ -2318,11 +2317,6 @@
     // remove `support.unindexedChars` from `_.at`
     source = source.replace(matchFunction(source, 'at'), function(match) {
       return match.replace(/^ *if *\(support\.unindexedChars[^}]+}\n+/m, '');
-    });
-
-    // remove `support.unindexedChars` from `_.forEachRight`
-    source = source.replace(matchFunction(source, 'forEachRight'), function(match) {
-      return match.replace(/}\s*else if *\(support\.unindexedChars[^}]+/, '');
     });
 
     // remove `support.unindexedChars` from `_.toArray`
@@ -3067,7 +3061,7 @@
               _.pull(funcDepMap[funcName], 'baseEach').push('forEach');
             });
 
-            _.each(['contains', 'every', 'filter', 'find', 'forEach', 'map', 'max', 'min', 'reduce', 'some'], function(funcName) {
+            _.each(['contains', 'createAggregator', 'every', 'filter', 'find', 'forEach', 'forEachRight', 'map', 'max', 'min', 'reduce', 'some'], function(funcName) {
              _.pull(funcDepMap[funcName], 'baseEach').push('forOwn');
             });
 
@@ -3233,7 +3227,7 @@
 
             // replace `+new Date` with `Date.now` use in `_.debounce
             source = source.replace(matchFunction(source, 'debounce'), function(match) {
-              return match.replace(/\+new Date\b/g, 'now()');
+              return match.replace(/\+?new Date\b/g, 'now()');
             });
 
             // remove `shimIsPlainObject` from `_.isPlainObject`
@@ -3281,6 +3275,29 @@
               '    }',
               '  } else {',
               '    baseEach(collection, callback);',
+              '  }',
+              '  return collection;',
+              '}',
+            ].join('\n'));
+
+            // replace `_.forEachRight`
+            source = replaceFunction(source, 'forEachRight', [
+              'function forEachRight(collection, callback, thisArg) {',
+              '  var length = collection ? collection.length : 0;',
+              "  callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);",
+              "  if (typeof length == 'number') {",
+              '    while (length--) {',
+              '      if (callback(collection[length], length, collection) === false) {',
+              '        break;',
+              '      }',
+              '    }',
+              '  } else {',
+              '    var props = keys(collection);',
+              '    length = props.length;',
+              '    baseEach(collection, function(value, key, collection) {',
+              '      key = props ? props[--length] : --length;',
+              '      return callback(collection[key], key, collection);',
+              '    });',
               '  }',
               '  return collection;',
               '}',
@@ -3334,7 +3351,7 @@
             ].join('\n'));
 
             // replace `isArray(collection)` checks in "Collections" functions with simpler type checks
-            _.each(['every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(funcName) {
+            _.each(['createAggregator', 'every', 'filter', 'find', 'max', 'min', 'reduce', 'some'], function(funcName) {
               source = source.replace(matchFunction(source, funcName), function(match) {
                 if (funcName == 'reduce') {
                   match = match.replace(/^( *)var noaccum\b/m, '$1if (!collection) return accumulator;\n$&');

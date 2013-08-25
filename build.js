@@ -657,9 +657,9 @@
    * Adds build `commands` to the copyright/license header of the `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {Array} [commands=[]] An array of commands.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {array} [commands=[]] An array of commands.
+   * @returns {string} Returns the modified source.
    */
   function addCommandsToHeader(source, commands) {
     return source.replace(/(\/\**\n)( \*)( *@license[\s*]+)( *Lo-Dash [\w.-]+)(.*)/, function() {
@@ -698,9 +698,9 @@
    * Adds support for Underscore style chaining to the `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {Boolean} [isModularize=false] A flag to specify a modularize build
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {boolean} [isModularize=false] A flag to specify a modularize build
+   * @returns {string} Returns the modified source.
    */
   function addUnderscoreChaining(source, isModularize) {
     // remove `lodash.prototype.toString` and `lodash.prototype.valueOf` assignments
@@ -821,7 +821,7 @@
    * Creates modules based on the provided build state.
    *
    * @private
-   * @param {Object} state The build state object.
+   * @param {object} state The build state object.
    */
   function buildModule(state) {
     var buildFuncs = state.buildFuncs,
@@ -1084,8 +1084,8 @@
    * each template file's basename.
    *
    * @private
-   * @param {Object} state The build state object.
-   * @returns {String} Returns the compiled source.
+   * @param {object} state The build state object.
+   * @returns {string} Returns the compiled source.
    */
   function buildTemplate(state) {
     var pattern = state.templatePattern,
@@ -1164,8 +1164,8 @@
    * Capitalizes a given string.
    *
    * @private
-   * @param {String} string The string to capitalize.
-   * @returns {String} Returns the capitalized string.
+   * @param {string} string The string to capitalize.
+   * @returns {string} Returns the capitalized string.
    */
   function capitalize(string) {
     return string[0].toUpperCase() + string.slice(1);
@@ -1175,8 +1175,8 @@
    * Removes unnecessary semicolons and whitespace from compiled code.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function cleanupCompiled(source) {
     return source
@@ -1188,8 +1188,8 @@
    * Removes unnecessary comments, and whitespace.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function cleanupSource(source) {
     return source
@@ -1217,7 +1217,7 @@
    * The default callback used for `build` invocations.
    *
    * @private
-   * @param {Object} data The data for the given build.
+   * @param {object} data The data for the given build.
    *  gzip - The gzipped output of the built source
    *  outputPath - The path where the built source is to be written
    *  source - The built source output
@@ -1291,9 +1291,9 @@
    * Gets the aliases associated with a given function name.
    *
    * @private
-   * @param {String} funcName The name of the function to get aliases for.
-   * @param {Object} [depMap] The dependency map used to validate aliases.
-   * @returns {Array} Returns an array of aliases.
+   * @param {string} funcName The name of the function to get aliases for.
+   * @param {object} [depMap] The dependency map used to validate aliases.
+   * @returns {array} Returns an array of aliases.
    */
   function getAliases(funcName, depMap) {
     var aliases = hasOwnProperty.call(realToAliasMap, funcName) && realToAliasMap[funcName];
@@ -1307,9 +1307,9 @@
    * Gets the category of the given `identifier`.
    *
    * @private
-   * @param {String} identifier The identifier to query.
-   * @param {Object} [depMap] The dependency map used to resolve the identifier.
-   * @returns {String} Returns the identifier's category.
+   * @param {string} identifier The identifier to query.
+   * @param {object} [depMap] The dependency map used to resolve the identifier.
+   * @returns {string} Returns the identifier's category.
    */
   function getCategory(identifier, depMap) {
     identifier = getRealName(identifier, depMap);
@@ -1322,8 +1322,8 @@
    * Gets the `createObject` fork from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the fork.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the fork.
    */
   function getCreateObjectFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!nativeCreate)[\s\S]+?\n *};\n\1}/);
@@ -1334,8 +1334,8 @@
    * Gets the `_.defer` fork from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the fork.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the fork.
    */
   function getDeferFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\(isV8 *&& *freeModule[\s\S]+?\n\1}/);
@@ -1346,10 +1346,10 @@
    * Gets an array of depenants for the given function name(s).
    *
    * @private
-   * @param {String} funcName A function name or array of function names.
-   * @param {Object} [depMap] The dependency map used to look up dependants.
-   * @param- {Array} [stackA=[]] Internally used track queried function names.
-   * @returns {Array} Returns an array of function dependants.
+   * @param {string} funcName A function name or array of function names.
+   * @param {object} [depMap] The dependency map used to look up dependants.
+   * @param- {array} [stackA=[]] Internally used track queried function names.
+   * @returns {array} Returns an array of function dependants.
    */
   function getDependants(funcName, depMap, stack) {
     var funcNames = _.isArray(funcName) ? funcName : [funcName];
@@ -1374,11 +1374,11 @@
    * dependencies plus any additional detected sub-dependencies.
    *
    * @private
-   * @param {Array|String} funcName A function name or array of dependencies to query.
-   * @param {Object} [depMap] The dependency map used to look up dependants.
-   * @param {Boolean} [isShallow=false] A flag to indicate getting only the immediate dependencies.
-   * @param- {Array} [stackA=[]] Internally used track queried function names.
-   * @returns {Array} Returns an array of function dependencies.
+   * @param {(string|string[])} funcName A function name or array of dependencies to query.
+   * @param {object} [depMap] The dependency map used to look up dependants.
+   * @param {boolean} [isShallow=false] A flag to indicate getting only the immediate dependencies.
+   * @param- {array} [stackA=[]] Internally used track queried function names.
+   * @returns {array} Returns an array of function dependencies.
    */
   function getDependencies(funcName, depMap, isShallow, stack) {
     // juggle arguments
@@ -1419,9 +1419,9 @@
    * Gets the formatted source of the given function.
    *
    * @private
-   * @param {Function} func The function to process.
-   * @param {Number|String} [indent=0] The level to indent.
-   * @returns {String} Returns the formatted source.
+   * @param {function} func The function to process.
+   * @param {(number|string)} [indent=0] The level to indent.
+   * @returns {string} Returns the formatted source.
    */
   function getFunctionSource(func, indent) {
     var source = func.source || (func + '');
@@ -1444,8 +1444,8 @@
    * Gets the indent of the given function.
    *
    * @private
-   * @param {Function} func The function to process.
-   * @returns {String} Returns the indent.
+   * @param {function} func The function to process.
+   * @returns {string} Returns the indent.
    */
   function getIndent(func) {
     return /^ *(?=\S)/m.exec(func.source || func)[0];
@@ -1455,8 +1455,8 @@
    * Gets the `_.isArguments` fork from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the fork.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the fork.
    */
   function getIsArgumentsFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\((?:!support\.argsClass|!isArguments)[\s\S]+?\n *};\n\1}/);
@@ -1467,8 +1467,8 @@
    * Gets the `_.isArray` fork from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the fork.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the fork.
    */
   function getIsArrayFork(source) {
     return matchFunction(source, 'isArray')
@@ -1480,8 +1480,8 @@
    * Gets the `_.isFunction` fork from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the fork.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the fork.
    */
   function getIsFunctionFork(source) {
     var result = source.match(/(?:\s*\/\/.*)*\n( *)if *\(isFunction\(\/x\/[\s\S]+?\n *};\n\1}/);
@@ -1492,8 +1492,8 @@
    * Gets the Lo-Dash method assignments snippet from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the method assignments snippet.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the method assignments snippet.
    */
   function getMethodAssignments(source) {
     var result = source.match(/\n\n(?:\s*\/\/.*)*\s*lodash\.\w+\s*=[\s\S]+lodash\.\w+\s=.+/);
@@ -1504,8 +1504,8 @@
    * Gets the names of identifiers in `source` that belong to the given `category`.
    *
    * @private
-   * @param {String} category The category to filter by.
-   * @returns {Array} Returns a new array of names.
+   * @param {string} category The category to filter by.
+   * @returns {array} Returns a new array of names.
    */
   function getNamesByCategory(category) {
     return categoryMap[category] || [];
@@ -1515,9 +1515,9 @@
    * Gets the real name, not alias, of a given function name.
    *
    * @private
-   * @param {String} funcName The name of the function to resolve.
-   * @param {Object} [depMap] The dependency map used to validate the real name.
-   * @returns {String} Returns the real function name.
+   * @param {string} funcName The name of the function to resolve.
+   * @param {object} [depMap] The dependency map used to validate the real name.
+   * @returns {string} Returns the real function name.
    */
   function getRealName(funcName, depMap) {
     return (
@@ -1531,8 +1531,8 @@
    * Gets the `setBindData` fork from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the fork.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the fork.
    */
   function getSetBindDataFork(source) {
     var result = matchFunction(source, 'setBindData').match(/!defineProperty[^:]+:\s*/);
@@ -1543,9 +1543,9 @@
    * Creates a sorted array of all variables defined outside of Lo-Dash functions.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {Boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
-   * @returns {Array} Returns a new array of variable names.
+   * @param {string} source The source to process.
+   * @param {boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
+   * @returns {array} Returns a new array of variable names.
    */
   function getVars(source, isShallow) {
     var indentA = isShallow ? ' {2}' : ' {2,4}',
@@ -1577,10 +1577,10 @@
    * Determines if a variable, of the given `varName`, is used in `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} varName The name of the variable.
-   * @param {Boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
-   * @returns {Boolean} Returns `true` if the variable is used, else `false`.
+   * @param {string} source The source to process.
+   * @param {string} varName The name of the variable.
+   * @param {boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
+   * @returns {boolean} Returns `true` if the variable is used, else `false`.
    */
   function isVarUsed(source, varName, isShallow) {
     var match = matchVar(source, varName, isShallow);
@@ -1597,10 +1597,10 @@
    * assignment and returns the matched snippet.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @param {String} funcName The name of the function to match.
-   * @param {Boolean} [leadingComments] A flag to indicate including leading comments.
-   * @returns {String} Returns the matched function snippet.
+   * @param {string} source The source to inspect.
+   * @param {string} funcName The name of the function to match.
+   * @param {boolean} [leadingComments] A flag to indicate including leading comments.
+   * @returns {string} Returns the matched function snippet.
    */
   function matchFunction(source, funcName, leadingComments) {
     var result = _.reduce([
@@ -1631,10 +1631,10 @@
    * returns the matched snippet.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @param {String} propName The name of the property to match.
-   * @param {Boolean} [leadingComments] A flag to indicate including leading comments.
-   * @returns {String} Returns the matched property snippet.
+   * @param {string} source The source to inspect.
+   * @param {string} propName The name of the property to match.
+   * @param {boolean} [leadingComments] A flag to indicate including leading comments.
+   * @returns {string} Returns the matched property snippet.
    */
   function matchProp(source, propName, leadingComments) {
     var result = source.match(RegExp(
@@ -1652,10 +1652,10 @@
    * the matched snippet.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @param {String} varName The name of the variable to match.
-   * @param {Boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
-   * @returns {String} Returns the matched variable snippet.
+   * @param {string} source The source to inspect.
+   * @param {string} varName The name of the variable to match.
+   * @param {boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
+   * @returns {string} Returns the matched variable snippet.
    */
   function matchVar(source, varName, isShallow) {
     var indentA = isShallow ? ' {2}' : ' {2,4}',
@@ -1689,8 +1689,8 @@
    * Converts a comma separated options string into an array.
    *
    * @private
-   * @param {String} value The option to convert.
-   * @returns {Array} Returns the new converted array.
+   * @param {string} value The option to convert.
+   * @returns {array} Returns the new converted array.
    */
   function optionToArray(value) {
     return _.compact(_.isArray(value)
@@ -1703,9 +1703,9 @@
    * Converts a comma separated options string into an array of function names.
    *
    * @private
-   * @param {String} value The option to convert.
-   * @param {Object} [depMap] The dependency map used to resolve real names.
-   * @returns {Array} Returns the new converted array.
+   * @param {string} value The option to convert.
+   * @param {object} [depMap] The dependency map used to resolve real names.
+   * @returns {array} Returns the new converted array.
    */
   function optionToMethodsArray(value, depMap) {
     depMap || (depMap = funcDependencyMap);
@@ -1719,8 +1719,8 @@
    * Removes support for Lo-Dash wrapper chaining in `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeChaining(source) {
     source = removeSpliceObjectsFix(source);
@@ -1753,8 +1753,8 @@
    * Removes all comments from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeComments(source) {
     return source.replace(/^ *(?:\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\/|\/\/.+)\n/gm, '');
@@ -1764,8 +1764,8 @@
    * Removes the `createObject` fork from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeCreateObjectFork(source) {
     return source.replace(getCreateObjectFork(source), '');
@@ -1775,8 +1775,8 @@
    * Removes the `_.defer` fork from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeDeferFork(source) {
     return source.replace(getDeferFork(source), '');
@@ -1786,8 +1786,8 @@
    * Removes ES5 specific optimizations from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeEsOptimization(source) {
     // remove `__bindData__` logic and `setBindData` function calls from `createBound`
@@ -1811,9 +1811,9 @@
    * Removes all references to `identifier` from `createIterator` in `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} identifier The name of the variable or property to remove.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} identifier The name of the variable or property to remove.
+   * @returns {string} Returns the modified source.
    */
   function removeFromCreateIterator(source, identifier) {
     var snippet = matchFunction(source, 'createIterator');
@@ -1847,9 +1847,9 @@
    * Removes all references to `identifier` from `getObject` in `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} identifier The name of the property to remove.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} identifier The name of the property to remove.
+   * @returns {string} Returns the modified source.
    */
   function removeFromGetObject(source, identifier) {
     return source.replace(matchFunction(source, 'getObject'), function(match) {
@@ -1864,9 +1864,9 @@
    * Removes all references to `identifier` from `releaseObject` in `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} identifier The name of the property to remove.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} identifier The name of the property to remove.
+   * @returns {string} Returns the modified source.
    */
   function removeFromReleaseObject(source, identifier) {
     return source.replace(matchFunction(source, 'releaseObject'), function(match) {
@@ -1882,9 +1882,9 @@
    * associated code from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} funcName The name of the function to remove.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} funcName The name of the function to remove.
+   * @returns {string} Returns the modified source.
    */
   function removeFunction(source, funcName) {
     var snippet;
@@ -1904,8 +1904,8 @@
    * Removes all references to `getIndexOf` from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeGetIndexOf(source) {
     source = removeFunction(source, 'getIndexOf');
@@ -1931,8 +1931,8 @@
    * Removes the `_.isArguments` fork from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeIsArgumentsFork(source) {
     return source.replace(getIsArgumentsFork(source), '');
@@ -1942,8 +1942,8 @@
    * Removes the `_.isArray` fork from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeIsArrayFork(source) {
     return source.replace(getIsArrayFork(source), '');
@@ -1953,8 +1953,8 @@
    * Removes the `_.isFunction` fork from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeIsFunctionFork(source) {
     return source.replace(getIsFunctionFork(source), '');
@@ -1964,8 +1964,8 @@
    * Removes the `Object.keys` object iteration optimization from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeKeysOptimization(source) {
     source = removeFromCreateIterator(source, 'keys');
@@ -1992,8 +1992,8 @@
    * Removes all Lo-Dash assignments from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the modified source.
    */
   function removeAssignments(source) {
     source = removeMethodAssignments(source);
@@ -2007,8 +2007,8 @@
    * Removes the Lo-Dash method assignments snippet from `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the modified source.
    */
   function removeMethodAssignments(source) {
     return source.replace(getMethodAssignments(source), '');
@@ -2018,9 +2018,9 @@
    * Removes a Lo-Dash property, of the given `propName`, from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} propName The name of the property to remove.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} propName The name of the property to remove.
+   * @returns {string} Returns the modified source.
    */
   function removeProp(source, propName) {
     return source.replace(matchProp(source, propName, true), '');
@@ -2030,8 +2030,8 @@
    * Removes all pseudo private Lo-Dash properties from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removePseudoPrivates(source) {
     return source.replace(/^(?: *\/\/.*\s*)* *lodash\._\w+ *=[\s\S]+?;\n/gm, '');
@@ -2041,8 +2041,8 @@
    * Removes all `runInContext` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeRunInContext(source) {
     // replace reference in `reThis` assignment
@@ -2077,8 +2077,8 @@
    * Removes the `setBindData` fork from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSetBindDataFork(source) {
     return source = source.replace(matchFunction(source, 'isArray'), function(match) {
@@ -2091,8 +2091,8 @@
    * snippet of `source`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to inspect.
+   * @returns {string} Returns the modified source.
    */
   function removeSpliceObjectsFix(source) {
     return source.replace(/(?:\s*\/\/.*)*\n( *)if *\(!support\.spliceObjects[\s\S]+?(?:\{\s*}|\n\1})/, '');
@@ -2102,8 +2102,8 @@
    * Removes all strings from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeStrings(source) {
     return source.replace(/(["'])(?:(?!\1)[^\n\\]|\\.)*\1/g, '');
@@ -2113,8 +2113,8 @@
    * Removes all `support.argsClass` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportArgsClass(source) {
     source = removeSupportProp(source, 'argsClass');
@@ -2143,8 +2143,8 @@
    * Removes all `support.argsObject` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportArgsObject(source) {
     source = removeSupportProp(source, 'argsObject');
@@ -2161,8 +2161,8 @@
    * Removes all `support.enumErrorProps` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportEnumErrorProps(source) {
     source = removeSupportProp(source, 'enumErrorProps');
@@ -2181,8 +2181,8 @@
    * Removes all `support.enumPrototypes` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportEnumPrototypes(source) {
     source = removeSupportProp(source, 'enumPrototypes');
@@ -2208,8 +2208,8 @@
    * Removes all `support.nodeClass` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportNodeClass(source) {
     source = removeSupportProp(source, 'nodeClass');
@@ -2233,8 +2233,8 @@
    * Removes all `support.nonEnumArgs` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportNonEnumArgs(source) {
     source = removeSupportProp(source, 'nonEnumArgs');
@@ -2260,8 +2260,8 @@
    * Removes all `support.nonEnumShadows` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportNonEnumShadows(source) {
     source = removeFromCreateIterator(source, 'nonEnumProps');
@@ -2280,8 +2280,8 @@
    * Removes all `support.ownLast` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportOwnLast(source) {
     source = removeSupportProp(source, 'ownLast');
@@ -2298,8 +2298,8 @@
    * Removes all `support.spliceObjects` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportSpliceObjects(source) {
     source = removeSupportProp(source, 'spliceObjects');
@@ -2311,8 +2311,8 @@
    * Removes all `support.unindexedChars` references from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportUnindexedChars(source) {
     source = removeSupportProp(source, 'unindexedChars');
@@ -2341,9 +2341,9 @@
    * Removes a given property from the `support` object in `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} varName The name of the `support` property to remove.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} varName The name of the `support` property to remove.
+   * @returns {string} Returns the modified source.
    */
   function removeSupportProp(source, propName) {
     return source.replace(matchProp(source, 'support'), function(match) {
@@ -2363,9 +2363,9 @@
    * Removes a variable, of the given `varName`, from `source`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} varName The name of the variable to remove.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} varName The name of the variable to remove.
+   * @returns {string} Returns the modified source.
    */
   function removeVar(source, varName) {
     // simplify complex variable assignments
@@ -2413,9 +2413,9 @@
    * Replaces the `funcName` function body in `source` with `funcValue`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} varName The name of the function to replace.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} varName The name of the function to replace.
+   * @returns {string} Returns the modified source.
    */
   function replaceFunction(source, funcName, funcValue) {
     var snippet = matchFunction(source, funcName);
@@ -2435,9 +2435,9 @@
    * Replaces the `support` object `propName` property value in `source` with `propValue`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {String} varName The name of the `support` property to replace.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {string} varName The name of the `support` property to replace.
+   * @returns {string} Returns the modified source.
    */
   function replaceSupportProp(source, propName, propValue) {
     return source.replace(RegExp(
@@ -2456,9 +2456,9 @@
    * Replaces the `varName` variable declaration value in `source` with `varValue`.
    *
    * @private
-   * @param {String} source The source to inspect.
-   * @param {String} varName The name of the variable to replace.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to inspect.
+   * @param {string} varName The name of the variable to replace.
+   * @returns {string} Returns the modified source.
    */
   function replaceVar(source, varName, varValue) {
     // replace a variable that's not part of a declaration list
@@ -2488,9 +2488,9 @@
    * Hard-codes the `strict` template option value for `iteratorTemplate`.
    *
    * @private
-   * @param {String} source The source to process.
-   * @param {Boolean} value The value to set.
-   * @returns {String} Returns the modified source.
+   * @param {string} source The source to process.
+   * @param {boolean} value The value to set.
+   * @returns {string} Returns the modified source.
    */
   function setUseStrictOption(source, value) {
     // inject or remove the "use strict" directive
@@ -2512,8 +2512,8 @@
    *
    * Note: For a list of commands see `displayHelp()` or run `lodash --help`.
    *
-   * @param {Array|Object} [options=[]] An array of build commands or the state object.
-   * @param {Function} [callback=defaultBuildCallback] The function called or per build.
+   * @param {(array|object)} [options=[]] An array of build commands or the state object.
+   * @param {function} [callback=defaultBuildCallback] The function called or per build.
    */
   function build(options, callback) {
     options || (options = []);
@@ -3499,9 +3499,9 @@
                 ' * @static',
                 ' * @memberOf _',
                 ' * @category Collections',
-                ' * @param {Array|Object|String} collection The collection to iterate over.',
-                ' * @param {Object} properties The object of property values to filter by.',
-                ' * @returns {Mixed} Returns the found element, else `undefined`.',
+                ' * @param {(array|object|string)} collection The collection to iterate over.',
+                ' * @param {object} properties The object of property values to filter by.',
+                ' * @returns {*} Returns the found element, else `undefined`.',
                 ' * @example',
                 ' *',
                 ' * var food = [',

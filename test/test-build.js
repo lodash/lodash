@@ -331,8 +331,8 @@
    * Capitalizes a given string.
    *
    * @private
-   * @param {String} string The string to capitalize.
-   * @returns {String} Returns the capitalized string.
+   * @param {string} string The string to capitalize.
+   * @returns {string} Returns the capitalized string.
    */
   function capitalize(string) {
     return string[0].toUpperCase() + string.slice(1);
@@ -342,7 +342,7 @@
    * Creates a context object to use with `vm.runInContext`.
    *
    * @private
-   * @returns {Object} Returns a new context object.
+   * @returns {object} Returns a new context object.
    */
   function createContext() {
     return vm.createContext({
@@ -356,8 +356,8 @@
    * Expands a list of function names to include real and alias names.
    *
    * @private
-   * @param {Array} funcNames The array of function names to expand.
-   * @returns {Array} Returns a new array of expanded function names.
+   * @param {array} funcNames The array of function names to expand.
+   * @returns {array} Returns a new array of expanded function names.
    */
   function expandFuncNames(funcNames) {
     return funcNames.reduce(function(result, funcName) {
@@ -371,8 +371,8 @@
    * Gets the aliases associated with a given function name.
    *
    * @private
-   * @param {String} funcName The name of the function to get aliases for.
-   * @returns {Array} Returns an array of aliases.
+   * @param {string} funcName The name of the function to get aliases for.
+   * @returns {array} Returns an array of aliases.
    */
   function getAliases(funcName) {
     return realToAliasMap[funcName] || [];
@@ -382,8 +382,8 @@
    * Gets the real name, not alias, of a given function name.
    *
    * @private
-   * @param {String} funcName The name of the function to resolve.
-   * @returns {String} Returns the real name.
+   * @param {string} funcName The name of the function to resolve.
+   * @returns {string} Returns the real name.
    */
   function getRealName(funcName) {
     return aliasToRealMap[funcName] || funcName;
@@ -393,9 +393,9 @@
    * Tests if a given method can be called successfully.
    *
    * @private
-   * @param {Object} lodash The built Lo-Dash object.
-   * @param {String} funcName The name of the method to test.
-   * @param {String} message The unit test message.
+   * @param {object} lodash The built Lo-Dash object.
+   * @param {string} funcName The name of the method to test.
+   * @param {string} message The unit test message.
    */
   function testMethod(lodash, methodName, message) {
     var pass = true,

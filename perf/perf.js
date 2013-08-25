@@ -97,9 +97,9 @@
    * it will be removed from the basename.
    *
    * @private
-   * @param {String} path The file path to inspect.
-   * @param {String} extension The extension to remove.
-   * @returns {String} Returns the basename.
+   * @param {string} path The file path to inspect.
+   * @param {string} extension The extension to remove.
+   * @returns {string} Returns the basename.
    */
   function basename(filePath, extension) {
     var result = (filePath || '').split(rePathSeparator).pop();
@@ -113,8 +113,8 @@
    * See http://en.wikipedia.org/wiki/Geometric_mean#Relationship_with_arithmetic_mean_of_logarithms.
    *
    * @private
-   * @param {Array} array The array of values.
-   * @returns {Number} The geometric mean.
+   * @param {array} array The array of values.
+   * @returns {number} The geometric mean.
    */
   function getGeometricMean(array) {
     return Math.pow(Math.E, lodash.reduce(array, function(sum, x) {
@@ -127,8 +127,8 @@
    * margin of error.
    *
    * @private
-   * @param {Object} bench The benchmark object.
-   * @returns {Number} Returns the adjusted Hz.
+   * @param {object} bench The benchmark object.
+   * @returns {number} Returns the adjusted Hz.
    */
   function getHz(bench) {
     var result = 1 / (bench.stats.mean + bench.stats.moe);
@@ -141,9 +141,9 @@
    * types of "object", "function", or "unknown".
    *
    * @private
-   * @param {Mixed} object The owner of the property.
-   * @param {String} property The property to check.
-   * @returns {Boolean} Returns `true` if the property value is a non-primitive, else `false`.
+   * @param {*} object The owner of the property.
+   * @param {string} property The property to check.
+   * @returns {boolean} Returns `true` if the property value is a non-primitive, else `false`.
    */
   function isHostType(object, property) {
     if (object == null) {
@@ -157,7 +157,7 @@
    * Logs text to the console.
    *
    * @private
-   * @param {String} text The text to log.
+   * @param {string} text The text to log.
    */
   function log(text) {
     console.log(text + '');

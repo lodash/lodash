@@ -4004,6 +4004,17 @@
       deepEqual(actual, [[2, 1], [1, 2]]);
     });
 
+    test('should work with large arrays of boolean, `null`, and `undefined` values', function() {
+      var array = [],
+          expected = [true, false, null, undefined],
+          count = Math.ceil(largeArraySize / expected.length);
+
+      _.times(count, function() {
+        push.apply(array, expected);
+      });
+      deepEqual(_.uniq(array), expected);
+    });
+
     test('should distinguish between numbers and numeric strings', function() {
       var array = [],
           expected = ['2', 2, Object('2'), Object(2)],

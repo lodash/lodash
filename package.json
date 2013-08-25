@@ -61,6 +61,9 @@
   "jam": {
     "main": "./dist/lodash.compat.js"
   },
+  "scripts": {
+    "test": "node test/test.js"
+  },
   "volo": {
     "type": "directory",
     "ignore": [

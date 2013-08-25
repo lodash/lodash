@@ -543,6 +543,7 @@
     'cloneableClasses',
     'contextProps',
     'ctorByClass',
+    'defineProperty',
     'freeGlobal',
     'nonEnumProps',
     'shadowedProps',
@@ -1557,7 +1558,7 @@
       // match a variable declaration in a declaration list
       indentB + '(\\w+) *=.+?[,;]\\n',
       // match a variable that is not part of a declaration list
-      '(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:&&\\n[^;]+)?|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
+      '(' + indentA + ')var (\\w+) *(?:|= *(?:.+?(?:&&\\n[^;]+)?|(?:[(\\w]+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
     ], function(result, reSource) {
       source = source.replace(RegExp('^' + reSource, 'gm'), function(match, indent, varName) {
         if (typeof varName == 'number') {
@@ -1620,7 +1621,7 @@
     }, null);
 
     return result && (
-           /@type +Function\b/.test(result[0]) ||
+           /@type +function\b/i.test(result[0]) ||
            /(?:function(?:\s+\w+)?\b|create[A-Z][a-z]+|template)\(/.test(result[1]))
       ? (leadingComments ? result[0] : '') + result[1]
       : '';
@@ -1667,7 +1668,7 @@
       // match a variable declaration in a declaration list
       indentB + varName + ' *=.+?[,;]\\n',
       // match a variable that is not part of a declaration list
-      '(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:&&\\n[^;]+)?|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
+      '(' + indentA + ')var ' + varName + ' *(?:|= *(?:.+?(?:&&\\n[^;]+)?|(?:[(\\w]+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
     ];
 
     // match complex variable assignments
@@ -2395,7 +2396,7 @@
         // remove a variable that is not part of a declaration list
         return source.replace(RegExp(
           multilineComment +
-          '( *)var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:\\w+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
+          '( *)var ' + varName + ' *(?:|= *(?:.+?(?:|&&\\n[^;]+)|(?:[(\\w]+\\(|[{[(]\\n)[\\s\\S]+?\\n\\1[^\\n ]+?));\\n'
         ), '');
       }
     ], function(func) {
@@ -3244,10 +3245,8 @@
             });
           }
         }
-        if (!isModern || isMobile) {
-          source = removeEsOptimization(source);
-        }
         if (isLegacy || isMobile || isUnderscore) {
+          source = removeEsOptimization(source);
           if (isMobile || (!isLodash('assign') && !isLodash('defaults') && !isLodash('forIn') && !isLodash('forOwn'))) {
             source = removeKeysOptimization(source);
           }

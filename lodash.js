@@ -492,7 +492,6 @@
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
-        defineProperty = reNative.test(defineProperty = Object.defineProperty) && defineProperty,
         floor = Math.floor,
         fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
@@ -505,6 +504,15 @@
         splice = arrayRef.splice,
         toString = objectProto.toString,
         unshift = arrayRef.unshift;
+
+    var defineProperty = (function() {
+      try {
+        var o = {},
+            func = reNative.test(func = Object.defineProperty) && func,
+            result = func(o, o, o) && func;
+      } catch(e) { }
+      return result;
+    }());
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
@@ -2039,7 +2047,7 @@
      *  iteration. If a property name or object is provided it will be used to
      *  create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the key of the found element, else `undefined`.
+     * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
      *
      * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
@@ -2071,7 +2079,7 @@
      *  iteration. If a property name or object is provided it will be used to
      *  create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the key of the found element, else `undefined`.
+     * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
      *
      * _.findLastKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
@@ -4183,7 +4191,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the index of the found element, else `-1`.
+     * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
      * _.findIndex(['apple', 'banana', 'beet'], function(food) {
@@ -4216,7 +4224,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the index of the found element, else `-1`.
+     * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
      * _.findLastIndex(['apple', 'banana', 'beet'], function(food) {

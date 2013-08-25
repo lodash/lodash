@@ -298,7 +298,7 @@
     'createObject': ['reNative'],
     'debounce': ['reNative'],
     'defaults': ['defaultsIteratorOptions'],
-    'defer': ['objectTypes', 'reNative'],
+    'defer': ['objectTypes', 'reNative', 'root'],
     'difference': ['largeArraySize'],
     'escape': ['reUnescapedHtml'],
     'escapeHtmlChar': ['htmlEscapes'],
@@ -310,17 +310,20 @@
     'htmlUnescapes': ['htmlEscapes'],
     'intersection': ['largeArraySize'],
     'isArray': ['reNative'],
+    'isFinite': ['root'],
     'isObject': ['objectTypes'],
     'isPlainObject': ['reNative'],
     'isRegExp': ['objectTypes'],
     'keys': ['reNative'],
     'memoize': ['keyPrefix'],
+    'parseInt': ['root'],
     'reEscapedHtml': ['htmlUnescapes'],
     'releaseArray': ['arrayPool', 'maxPoolSize'],
     'releaseObject': ['maxPoolSize', 'objectPool'],
     'reUnescapedHtml': ['htmlEscapes'],
+    'root': ['objectTypes'],
     'setBindData': ['reNative'],
-    'support': ['reNative'],
+    'support': ['reNative', 'root'],
     'template': ['reInterpolate'],
     'templateSettings': ['reInterpolate'],
     'unescape': ['reEscapedHtml'],
@@ -2880,8 +2883,13 @@
           });
         }
         if (isModularize) {
+          _.forOwn(varDepMap, function(deps, funcName) {
+            _.pull(deps, 'root');
+          });
+
           funcDepMap.lodash.push('support', 'baseEach', 'forOwn', 'mixin');
           _.pull(funcDepMap.mixin, 'lodash');
+          delete varDepMap.root;
         }
         else {
           funcDepMap.chain.push('wrapperChain');
@@ -4203,9 +4211,9 @@
               .replace(/(?:\s*\/\/.*\n)* *var sourceURL[^;]+;|\+ *sourceURL/g, '');
           });
 
-          // remove `freeGlobal` and replace `context` with `global`
-          if (isNode) {
-            source = source.replace(/\bcontext(?=\.)/g, 'global');
+          // replace `root` with the appropriate global object for the specified `exports` option
+          if (isAMD || isNode) {
+            source = source.replace(/\bcontext(?=\.)/g, isAMD ? 'window' : 'global');
           }
           source = removeRunInContext(source);
         }

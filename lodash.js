@@ -1414,10 +1414,20 @@
       return function(collection, callback, thisArg) {
         var result = {};
         callback = lodash.createCallback(callback, thisArg, 3);
-        forEach(collection, function(value, key, collection) {
-          key = String(callback(value, key, collection));
-          setter(result, value, key, collection);
-        });
+
+        if (isArray(collection)) {
+          var index = -1,
+              length = collection.length;
+
+          while (++index < length) {
+            var value = collection[index];
+            setter(result, value, callback(value, index, collection), collection);
+          }
+        } else {
+          baseEach(collection, function(value, key, collection) {
+            setter(result, value, callback(value, key, collection), collection);
+          });
+        }
         return result;
       };
     }
@@ -1450,10 +1460,19 @@
           isCurry = bitmask & 4,
           isCurryBound = bitmask & 8,
           isPartial = bitmask & 16,
-          isPartialRight = bitmask & 32;
+          isPartialRight = bitmask & 32,
+          key = func;
 
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError;
+      }
+      if (isPartial && !partialArgs.length) {
+        bitmask &= ~16;
+        isPartial = partialArgs = false;
+      }
+      if (isPartialRight && !partialRightArgs.length) {
+        bitmask &= ~32;
+        isPartialRight = partialRightArgs = false;
       }
       var bindData = func && func.__bindData__;
       if (bindData) {
@@ -1478,10 +1497,14 @@
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
       if (isBind && !(isBindKey || isCurry || isPartialRight) &&
-          (support.fastBind || (nativeBind && partialArgs.length))) {
-        var args = [func, thisArg];
-        push.apply(args, partialArgs);
-        var bound = nativeBind.call.apply(nativeBind, args);
+          (support.fastBind || (nativeBind && isPartial))) {
+        if (isPartial) {
+          var args = [thisArg];
+          push.apply(args, partialArgs);
+        }
+        var bound = isPartial
+          ? nativeBind.apply(func, args)
+          : nativeBind.call(func, thisArg);
       }
       else {
         bound = function() {
@@ -1490,14 +1513,14 @@
           var args = arguments,
               thisBinding = isBind ? thisArg : this;
 
-          if (partialArgs) {
+          if (isPartial) {
             unshift.apply(args, partialArgs);
           }
-          if (partialRightArgs) {
+          if (isPartialRight) {
             push.apply(args, partialRightArgs);
           }
           if (isCurry && args.length < arity) {
-            bitmask |= 16 & ~32
+            bitmask |= 16 & ~32;
             return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
           }
           if (isBindKey) {
@@ -1515,13 +1538,7 @@
           return func.apply(thisBinding, args);
         };
       }
-      // take a snapshot of `arguments` before juggling
-      bindData = nativeSlice.call(arguments);
-      if (isBindKey) {
-        var key = thisArg;
-        thisArg = func;
-      }
-      setBindData(bound, bindData);
+      setBindData(bound, nativeSlice.call(arguments));
       return bound;
     }
 
@@ -3341,17 +3358,25 @@
       var iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length != 'number') {
-        var props = keys(collection);
-        length = props.length;
-      } else if (support.unindexedChars && isString(collection)) {
-        iterable = collection.split('');
+      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      if (isArray(collection)) {
+        while (length--) {
+          if (callback(collection[length], length, collection) === false) {
+            break;
+          }
+        }
+      } else {
+        if (typeof length != 'number') {
+          var props = keys(collection);
+          length = props.length;
+        } else if (support.unindexedChars && isString(collection)) {
+          iterable = collection.split('');
+        }
+        baseEach(collection, function(value, key, collection) {
+          key = props ? props[--length] : --length;
+          return callback(iterable[key], key, collection);
+        });
       }
-      callback = baseCreateCallback(callback, thisArg, 3);
-      forEach(collection, function(value, index, collection) {
-        index = props ? props[--length] : --length;
-        return callback(iterable[index], index, collection);
-      });
       return collection;
     }
 
@@ -4373,7 +4398,7 @@
         var index = sortedIndex(array, value);
         return array[index] === value ? index : -1;
       }
-      return array ? baseIndexOf(array, value, fromIndex) : -1;
+      return baseIndexOf(array, value, fromIndex);
     }
 
     /**
@@ -5139,7 +5164,7 @@
 
       while (++index < length) {
         var key = funcs[index];
-        object[key] = bind(object[key], object);
+        object[key] = createBound(object[key], 1, null, null, object);
       }
       return object;
     }
@@ -5179,7 +5204,7 @@
      * // => 'hi, moe!'
      */
     function bindKey(object, key) {
-      return createBound(object, 19, nativeSlice.call(arguments, 2), null, key);
+      return createBound(key, 19, nativeSlice.call(arguments, 2), null, object);
     }
 
     /**
@@ -5400,12 +5425,11 @@
         var remaining = wait - (new Date - stamp);
         if (remaining <= 0) {
           var isCalled = trailing && (!leading || callCount > 1);
-          callCount = 0;
-          timeoutId = null;
           if (maxTimeoutId) {
             clearTimeout(maxTimeoutId);
-            maxTimeoutId = null;
           }
+          callCount = 0;
+          maxTimeoutId = timeoutId = null;
           if (isCalled) {
             lastCalled = +new Date;
             result = func.apply(thisArg, args);
@@ -5416,8 +5440,10 @@
       };
 
       var maxDelayed = function() {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
         callCount = 0;
-        clearTimeout(timeoutId);
         maxTimeoutId = timeoutId = null;
         if (trailing || (maxWait !== wait)) {
           lastCalled = +new Date;

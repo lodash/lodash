@@ -587,10 +587,20 @@
     return function(collection, callback, thisArg) {
       var result = {};
       callback = createCallback(callback, thisArg, 3);
-      forEach(collection, function(value, key, collection) {
-        key = String(callback(value, key, collection));
-        setter(result, value, key, collection);
-      });
+
+      var index = -1,
+          length = collection ? collection.length : 0;
+
+      if (typeof length == 'number') {
+        while (++index < length) {
+          var value = collection[index];
+          setter(result, value, callback(value, index, collection), collection);
+        }
+      } else {
+        forOwn(collection, function(value, key, collection) {
+          setter(result, value, callback(value, key, collection), collection);
+        });
+      }
       return result;
     };
   }
@@ -623,18 +633,31 @@
         isCurry = bitmask & 4,
         isCurryBound = bitmask & 8,
         isPartial = bitmask & 16,
-        isPartialRight = bitmask & 32;
+        isPartialRight = bitmask & 32,
+        key = func;
 
     if (!isBindKey && !isFunction(func)) {
       throw new TypeError;
     }
+    if (isPartial && !partialArgs.length) {
+      bitmask &= ~16;
+      isPartial = partialArgs = false;
+    }
+    if (isPartialRight && !partialRightArgs.length) {
+      bitmask &= ~32;
+      isPartialRight = partialRightArgs = false;
+    }
     // use `Function#bind` if it exists and is fast
     // (in V8 `Function#bind` is slower except when partially applied)
     if (isBind && !(isBindKey || isCurry || isPartialRight) &&
-        (support.fastBind || (nativeBind && partialArgs.length))) {
-      var args = [func, thisArg];
-      push.apply(args, partialArgs);
-      var bound = nativeBind.call.apply(nativeBind, args);
+        (support.fastBind || (nativeBind && isPartial))) {
+      if (isPartial) {
+        var args = [thisArg];
+        push.apply(args, partialArgs);
+      }
+      var bound = isPartial
+        ? nativeBind.apply(func, args)
+        : nativeBind.call(func, thisArg);
     }
     else {
       bound = function() {
@@ -643,14 +666,14 @@
         var args = arguments,
             thisBinding = isBind ? thisArg : this;
 
-        if (partialArgs) {
+        if (isPartial) {
           unshift.apply(args, partialArgs);
         }
-        if (partialRightArgs) {
+        if (isPartialRight) {
           push.apply(args, partialRightArgs);
         }
         if (isCurry && args.length < arity) {
-          bitmask |= 16 & ~32
+          bitmask |= 16 & ~32;
           return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
         }
         if (isBindKey) {
@@ -667,10 +690,6 @@
         }
         return func.apply(thisBinding, args);
       };
-    }
-    if (isBindKey) {
-      var key = thisArg;
-      thisArg = func;
     }
     return bound;
   }
@@ -1942,17 +1961,21 @@
    * // => logs each number from right to left and returns '3,2,1'
    */
   function forEachRight(collection, callback) {
-    var iterable = collection,
-        length = collection ? collection.length : 0;
-
-    if (typeof length != 'number') {
+    var length = collection ? collection.length : 0;
+    if (typeof length == 'number') {
+      while (length--) {
+        if (callback(collection[length], length, collection) === false) {
+          break;
+        }
+      }
+    } else {
       var props = keys(collection);
       length = props.length;
+      forOwn(collection, function(value, key, collection) {
+        key = props ? props[--length] : --length;
+        return callback(collection[key], key, collection) === false && indicatorObject;
+      });
     }
-    forEach(collection, function(value, index, collection) {
-      index = props ? props[--length] : --length;
-      return callback(iterable[index], index, collection) === false && indicatorObject;
-    });
   }
 
   /**
@@ -2825,7 +2848,7 @@
       var index = sortedIndex(array, value);
       return array[index] === value ? index : -1;
     }
-    return array ? baseIndexOf(array, value, fromIndex) : -1;
+    return baseIndexOf(array, value, fromIndex);
   }
 
   /**
@@ -3484,7 +3507,7 @@
 
     while (++index < length) {
       var key = funcs[index];
-      object[key] = bind(object[key], object);
+      object[key] = createBound(object[key], 1, null, null, object);
     }
     return object;
   }
@@ -3637,6 +3660,7 @@
   function debounce(func, wait, options) {
     var args,
         result,
+        stamp,
         thisArg,
         callCount = 0,
         lastCalled = 0,
@@ -3657,24 +3681,30 @@
       maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
       trailing = 'trailing' in options ? options.trailing : trailing;
     }
-    var clear = function() {
-      clearTimeout(maxTimeoutId);
-      clearTimeout(timeoutId);
-      callCount = 0;
-      maxTimeoutId = timeoutId = null;
-    };
-
     var delayed = function() {
-      var isCalled = trailing && (!leading || callCount > 1);
-      clear();
-      if (isCalled) {
-        lastCalled = +new Date;
-        result = func.apply(thisArg, args);
+      var remaining = wait - (new Date - stamp);
+      if (remaining <= 0) {
+        var isCalled = trailing && (!leading || callCount > 1);
+        if (maxTimeoutId) {
+          clearTimeout(maxTimeoutId);
+        }
+        callCount = 0;
+        maxTimeoutId = timeoutId = null;
+        if (isCalled) {
+          lastCalled = +new Date;
+          result = func.apply(thisArg, args);
+        }
+      } else {
+        timeoutId = setTimeout(delayed, remaining);
       }
     };
 
     var maxDelayed = function() {
-      clear();
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      callCount = 0;
+      maxTimeoutId = timeoutId = null;
       if (trailing || (maxWait !== wait)) {
         lastCalled = +new Date;
         result = func.apply(thisArg, args);
@@ -3683,26 +3713,24 @@
 
     return function() {
       args = arguments;
+      stamp = +new Date;
       thisArg = this;
       callCount++;
-
-      // avoid issues with Titanium and `undefined` timeout ids
-      // https://github.com/appcelerator/titanium_mobile/blob/3_1_0_GA/android/titanium/src/java/ti/modules/titanium/TitaniumModule.java#L185-L192
-      clearTimeout(timeoutId);
 
       if (maxWait === false) {
         if (leading && callCount < 2) {
           result = func.apply(thisArg, args);
         }
       } else {
-        var stamp = +new Date;
         if (!maxTimeoutId && !leading) {
           lastCalled = stamp;
         }
         var remaining = maxWait - (stamp - lastCalled);
         if (remaining <= 0) {
-          clearTimeout(maxTimeoutId);
-          maxTimeoutId = null;
+          if (maxTimeoutId) {
+            clearTimeout(maxTimeoutId);
+            maxTimeoutId = null;
+          }
           lastCalled = stamp;
           result = func.apply(thisArg, args);
         }
@@ -3710,7 +3738,7 @@
           maxTimeoutId = setTimeout(maxDelayed, remaining);
         }
       }
-      if (wait !== maxWait) {
+      if (!timeoutId && wait !== maxWait) {
         timeoutId = setTimeout(delayed, wait);
       }
       return result;

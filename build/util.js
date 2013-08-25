@@ -18,7 +18,7 @@
    * The path separator.
    *
    * @memberOf util.path
-   * @type String
+   * @type string
    */
   var sep = path.sep || (isWindows ? '\\' : '/');
 
@@ -26,7 +26,7 @@
    * The escaped path separator used for inclusion in RegExp strings.
    *
    * @memberOf util.path
-   * @type String
+   * @type string
    */
   var sepEscaped = sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -40,8 +40,8 @@
    * directories and making parent directories as needed.
    *
    * @memberOf util.fs
-   * @param {String} dirname The path of the directory.
-   * @param {Number|String} [mode='0777'] The permission mode.
+   * @param {string} dirname The path of the directory.
+   * @param {(number|string)} [mode='0777'] The permission mode.
    */
   function mkdirpSync(dirname, mode) {
     // ensure relative paths are prefixed with `./`
@@ -64,7 +64,7 @@
   /**
    * The utility object.
    *
-   * @type Object
+   * @type object
    */
   var util = {
 
@@ -72,7 +72,7 @@
     * The file system object.
     *
     * @memberOf util
-    * @type Object
+    * @type object
     */
     'fs': _.defaults(_.cloneDeep(fs), {
       'existsSync': fs.existsSync || path.existsSync,
@@ -83,7 +83,7 @@
     * The path object.
     *
     * @memberOf util
-    * @type Object
+    * @type object
     */
     'path': _.defaults(_.cloneDeep(path), {
       'sep': sep,

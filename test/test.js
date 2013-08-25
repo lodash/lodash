@@ -109,7 +109,7 @@
    * Skips a given number of tests with a passing result.
    *
    * @private
-   * @param {Number} [count=1] The number of tests to skip.
+   * @param {number} [count=1] The number of tests to skip.
    */
   function skipTest(count) {
     count || (count = 1);

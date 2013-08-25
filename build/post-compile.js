@@ -20,8 +20,8 @@
    * Post-process a given minified Lo-Dash `source`, preparing it for
    * deployment.
    *
-   * @param {String} source The source to process.
-   * @returns {String} Returns the processed source.
+   * @param {string} source The source to process.
+   * @returns {string} Returns the processed source.
    */
   function postprocess(source) {
     // correct overly aggressive Closure Compiler advanced optimization

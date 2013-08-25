@@ -72,12 +72,12 @@
    * callback when finished. The `onComplete` callback is invoked with one
    * argument; (outputSource).
    *
-   * @param {Array|String} [source=''] The source to minify or array of commands.
+   * @param {(string|string[])} [source=''] The source to minify or array of commands.
    *  -o, --output - Write output to a given path/filename.
    *  -s, --silent - Skip status updates normally logged to the console.
    *  -t, --template - Applies template specific minifier options.
    *
-   * @param {Object} [options={}] The options object.
+   * @param {object} [options={}] The options object.
    *  outputPath - Write output to a given path/filename.
    *  isSilent - Skip status updates normally logged to the console.
    *  isTemplate - Applies template specific minifier options.
@@ -205,8 +205,8 @@
    *
    * @private
    * @constructor
-   * @param {String} source The source to minify.
-   * @param {Object} options The options object.
+   * @param {string} source The source to minify.
+   * @param {object} options The options object.
    *  outputPath - Write output to a given path/filename.
    *  isSilent - Skip status updates normally logged to the console.
    *  isTemplate - Applies template specific minifier options.
@@ -260,7 +260,7 @@
    * `git hash-object path/to/dependency.tar.gz`.
    *
    * @private
-   * @param {Object} options The options object.
+   * @param {object} options The options object.
    *  id - The Git object ID of the `.tar.gz` file.
    *  onComplete - The function called once the extraction has finished.
    *  path - The path of the extraction directory.
@@ -333,7 +333,7 @@
    * See https://code.google.com/p/closure-compiler/wiki/FAQ#What_are_the_recommended_Java_VM_command-line_options?.
    *
    * @private
-   * @param {Function} callback The function called once the options have been retrieved.
+   * @param {function} callback The function called once the options have been retrieved.
    */
   function getJavaOptions(callback) {
     var result = [];
@@ -352,8 +352,8 @@
    * Resolves the source map path from the given output path.
    *
    * @private
-   * @param {String} outputPath The output path.
-   * @returns {String} Returns the source map path.
+   * @param {string} outputPath The output path.
+   * @returns {string} Returns the source map path.
    */
   function getMapPath(outputPath) {
     return path.join(path.dirname(outputPath), path.basename(outputPath, '.js') + '.map');
@@ -366,9 +366,9 @@
    * minified result, and any exceptions encountered, to a `callback` function.
    *
    * @private
-   * @param {String} source The JavaScript source to minify.
-   * @param {String} mode The optimization mode.
-   * @param {Function} callback The function called once the process has completed.
+   * @param {string} source The JavaScript source to minify.
+   * @param {string} mode The optimization mode.
+   * @param {function} callback The function called once the process has completed.
    */
   function closureCompile(source, mode, callback) {
     var filePath = this.filePath,
@@ -466,9 +466,9 @@
    * for symmetry.
    *
    * @private
-   * @param {String} source The JavaScript source to minify.
-   * @param {String} label The label to log.
-   * @param {Function} callback The function called once the process has completed.
+   * @param {string} source The JavaScript source to minify.
+   * @param {string} label The label to log.
+   * @param {function} callback The function called once the process has completed.
    */
   function uglify(source, label, callback) {
     if (!this.isSilent) {
@@ -520,9 +520,9 @@
    * The Closure Compiler callback for simple optimizations.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting minified source.
-   * @param {String} map The source map output.
+   * @param {object} [exception] The error object.
+   * @param {string} result The resulting minified source.
+   * @param {string} map The source map output.
    */
   function onClosureSimpleCompile(exception, result, map) {
     if (exception) {
@@ -540,7 +540,7 @@
    * The Closure Compiler `gzip` callback for simple optimizations.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
+   * @param {object} [exception] The error object.
    * @param {Buffer} result The resulting gzipped source.
    */
   function onClosureSimpleGzip(exception, result) {
@@ -565,9 +565,9 @@
    * The Closure Compiler callback for advanced optimizations.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting minified source.
-   * @param {String} map The source map output.
+   * @param {object} [exception] The error object.
+   * @param {string} result The resulting minified source.
+   * @param {string} map The source map output.
    */
   function onClosureAdvancedCompile(exception, result, map) {
     if (exception) {
@@ -585,7 +585,7 @@
    * The Closure Compiler `gzip` callback for advanced optimizations.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
+   * @param {object} [exception] The error object.
    * @param {Buffer} result The resulting gzipped source.
    */
   function onClosureAdvancedGzip(exception, result) {
@@ -610,8 +610,8 @@
    * The UglifyJS callback.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting minified source.
+   * @param {object} [exception] The error object.
+   * @param {string} result The resulting minified source.
    */
   function onUglify(exception, result) {
     if (exception) {
@@ -626,7 +626,7 @@
    * The UglifyJS `gzip` callback.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
+   * @param {object} [exception] The error object.
    * @param {Buffer} result The resulting gzipped source.
    */
   function onUglifyGzip(exception, result) {
@@ -656,8 +656,8 @@
    * The hybrid callback for simple optimizations.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting minified source.
+   * @param {object} [exception] The error object.
+   * @param {string} result The resulting minified source.
    */
   function onSimpleHybrid(exception, result) {
     if (exception) {
@@ -672,7 +672,7 @@
    * The hybrid `gzip` callback for simple optimizations.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
+   * @param {object} [exception] The error object.
    * @param {Buffer} result The resulting gzipped source.
    */
   function onSimpleHybridGzip(exception, result) {
@@ -697,8 +697,8 @@
    * The hybrid callback for advanced optimizations.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
-   * @param {String} result The resulting minified source.
+   * @param {object} [exception] The error object.
+   * @param {string} result The resulting minified source.
    */
   function onAdvancedHybrid(exception, result) {
     if (exception) {
@@ -713,7 +713,7 @@
    * The hybrid `gzip` callback for advanced optimizations.
    *
    * @private
-   * @param {Object|Undefined} exception The error object.
+   * @param {object} [exception] The error object.
    * @param {Buffer} result The resulting gzipped source.
    */
   function onAdvancedHybridGzip(exception, result) {

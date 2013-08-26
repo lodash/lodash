@@ -65,8 +65,8 @@
    * Capitalizes a string value.
    *
    * @private
-   * @param {String} string The string to capitalize.
-   * @returns {String} The capitalized string.
+   * @param {string} string The string to capitalize.
+   * @returns {string} The capitalized string.
    */
   function capitalize(string) {
     string = String(string);
@@ -77,8 +77,8 @@
    * An iteration utility for arrays and objects.
    *
    * @private
-   * @param {Array|Object} object The object to iterate over.
-   * @param {Function} callback The function called per iteration.
+   * @param {(array|object)} object The object to iterate over.
+   * @param {function} callback The function called per iteration.
    */
   function each(object, callback) {
     var index = -1,
@@ -97,8 +97,8 @@
    * Trim and conditionally capitalize string values.
    *
    * @private
-   * @param {String} string The string to format.
-   * @returns {String} The formatted string.
+   * @param {string} string The string to format.
+   * @returns {string} The formatted string.
    */
   function format(string) {
     string = trim(string);
@@ -111,8 +111,8 @@
    * Iterates over an object's own properties, executing the `callback` for each.
    *
    * @private
-   * @param {Object} object The object to iterate over.
-   * @param {Function} callback The function executed per own property.
+   * @param {object} object The object to iterate over.
+   * @param {function} callback The function executed per own property.
    */
   function forOwn(object, callback) {
     for (var key in object) {
@@ -124,8 +124,8 @@
    * Gets the internal [[Class]] of a value.
    *
    * @private
-   * @param {Mixed} value The value.
-   * @returns {String} The [[Class]].
+   * @param {*} value The value.
+   * @returns {string} The [[Class]].
    */
   function getClassOf(value) {
     return value == null
@@ -137,9 +137,9 @@
    * Checks if an object has the specified key as a direct property.
    *
    * @private
-   * @param {Object} object The object to check.
-   * @param {String} key The key to check for.
-   * @returns {Boolean} Returns `true` if key is a direct property, else `false`.
+   * @param {object} object The object to check.
+   * @param {string} key The key to check for.
+   * @returns {boolean} Returns `true` if key is a direct property, else `false`.
    */
   function hasKey() {
     // lazy define for others (not as accurate)
@@ -173,9 +173,9 @@
    * types of object, function, or unknown.
    *
    * @private
-   * @param {Mixed} object The owner of the property.
-   * @param {String} property The property to check.
-   * @returns {Boolean} Returns `true` if the property value is a non-primitive, else `false`.
+   * @param {*} object The owner of the property.
+   * @param {string} property The property to check.
+   * @returns {boolean} Returns `true` if the property value is a non-primitive, else `false`.
    */
   function isHostType(object, property) {
     var type = object != null ? typeof object[property] : 'number';
@@ -188,8 +188,8 @@
    * spaces optional.
    *
    * @private
-   * @param {String} string The string to qualify.
-   * @returns {String} The qualified string.
+   * @param {string} string The string to qualify.
+   * @returns {string} The qualified string.
    */
   function qualify(string) {
     return String(string).replace(/([ -])(?!$)/g, '$1?');
@@ -199,10 +199,10 @@
    * A bare-bones` Array#reduce` like utility function.
    *
    * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} callback The function called per iteration.
-   * @param {Mixed} accumulator Initial value of the accumulator.
-   * @returns {Mixed} The accumulator.
+   * @param {array} array The array to iterate over.
+   * @param {function} callback The function called per iteration.
+   * @param {*} accumulator Initial value of the accumulator.
+   * @returns {*} The accumulator.
    */
   function reduce(array, callback) {
     var accumulator = null;
@@ -216,8 +216,8 @@
    * Removes leading and trailing whitespace from a string.
    *
    * @private
-   * @param {String} string The string to trim.
-   * @returns {String} The trimmed string.
+   * @param {string} string The string to trim.
+   * @returns {string} The trimmed string.
    */
   function trim(string) {
     return String(string).replace(/^ +| +$/g, '');
@@ -229,8 +229,8 @@
    * Creates a new platform object.
    *
    * @memberOf platform
-   * @param {String} [ua = navigator.userAgent] The user agent string.
-   * @returns {Object} A platform object.
+   * @param {string} [ua = navigator.userAgent] The user agent string.
+   * @returns {object} A platform object.
    */
   function parse(ua) {
 
@@ -377,8 +377,8 @@
      * Picks the layout engine from an array of guesses.
      *
      * @private
-     * @param {Array} guesses An array of guesses.
-     * @returns {String|Null} The detected layout engine.
+     * @param {array} guesses An array of guesses.
+     * @returns {(null|string)} The detected layout engine.
      */
     function getLayout(guesses) {
       return reduce(guesses, function(result, guess) {
@@ -392,8 +392,8 @@
      * Picks the manufacturer from an array of guesses.
      *
      * @private
-     * @param {Array} guesses An array of guesses.
-     * @returns {String|Null} The detected manufacturer.
+     * @param {array} guesses An array of guesses.
+     * @returns {(null|string)} The detected manufacturer.
      */
     function getManufacturer(guesses) {
       return reduce(guesses, function(result, value, key) {
@@ -410,8 +410,8 @@
      * Picks the browser name from an array of guesses.
      *
      * @private
-     * @param {Array} guesses An array of guesses.
-     * @returns {String|Null} The detected browser name.
+     * @param {array} guesses An array of guesses.
+     * @returns {(null|string)} The detected browser name.
      */
     function getName(guesses) {
       return reduce(guesses, function(result, guess) {
@@ -425,8 +425,8 @@
      * Picks the OS name from an array of guesses.
      *
      * @private
-     * @param {Array} guesses An array of guesses.
-     * @returns {String|Null} The detected OS name.
+     * @param {array} guesses An array of guesses.
+     * @returns {(null|string)} The detected OS name.
      */
     function getOS(guesses) {
       return reduce(guesses, function(result, guess) {
@@ -475,8 +475,8 @@
      * Picks the product name from an array of guesses.
      *
      * @private
-     * @param {Array} guesses An array of guesses.
-     * @returns {String|Null} The detected product name.
+     * @param {array} guesses An array of guesses.
+     * @returns {(null|string)} The detected product name.
      */
     function getProduct(guesses) {
       return reduce(guesses, function(result, guess) {
@@ -504,8 +504,8 @@
      * Resolves the version using an array of UA patterns.
      *
      * @private
-     * @param {Array} patterns An array of UA patterns.
-     * @returns {String|Null} The detected version.
+     * @param {array} patterns An array of UA patterns.
+     * @returns {(null|string)} The detected version.
      */
     function getVersion(patterns) {
       return reduce(patterns, function(result, pattern) {
@@ -521,7 +521,7 @@
      *
      * @name toString
      * @memberOf platform
-     * @returns {String} Returns `platform.description` if available, else an empty string.
+     * @returns {string} Returns `platform.description` if available, else an empty string.
      */
     function toStringPlatform() {
       return this.description || '';
@@ -862,7 +862,7 @@
      * The platform object.
      *
      * @name platform
-     * @type Object
+     * @type object
      */
     return {
 
@@ -870,7 +870,7 @@
        * The browser/environment version.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type string|Null
        */
       'version': name && version && (description.unshift(version), version),
 
@@ -878,7 +878,7 @@
        * The name of the browser/environment.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type string|Null
        */
       'name': name && (description.unshift(name), name),
 
@@ -886,7 +886,7 @@
        * The name of the operating system.
        *
        * @memberOf platform
-       * @type Object
+       * @type object
        */
       'os': os
         ? (name &&
@@ -898,7 +898,7 @@
            * The CPU architecture the OS is built for.
            *
            * @memberOf platform.os
-           * @type Number|Null
+           * @type number|Null
            */
           'architecture': null,
 
@@ -906,7 +906,7 @@
            * The family of the OS.
            *
            * @memberOf platform.os
-           * @type String|Null
+           * @type string|Null
            */
           'family': null,
 
@@ -914,7 +914,7 @@
            * The version of the OS.
            *
            * @memberOf platform.os
-           * @type String|Null
+           * @type string|Null
            */
           'version': null,
 
@@ -922,7 +922,7 @@
            * Returns the OS string.
            *
            * @memberOf platform.os
-           * @returns {String} The OS string.
+           * @returns {string} The OS string.
            */
           'toString': function() { return 'null'; }
         },
@@ -931,7 +931,7 @@
        * The platform description.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type string|Null
        */
       'description': description.length ? description.join(' ') : ua,
 
@@ -939,7 +939,7 @@
        * The name of the browser layout engine.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type string|Null
        */
       'layout': layout && layout[0],
 
@@ -947,7 +947,7 @@
        * The name of the product's manufacturer.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type string|Null
        */
       'manufacturer': manufacturer,
 
@@ -955,7 +955,7 @@
        * The alpha/beta release indicator.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type string|Null
        */
       'prerelease': prerelease,
 
@@ -963,7 +963,7 @@
        * The name of the product hosting the browser.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type string|Null
        */
       'product': product,
 
@@ -971,7 +971,7 @@
        * The browser's user agent string.
        *
        * @memberOf platform
-       * @type String|Null
+       * @type string|Null
        */
       'ua': ua,
 

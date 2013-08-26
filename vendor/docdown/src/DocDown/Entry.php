@@ -11,7 +11,7 @@ class Entry {
    * The documentation entry.
    *
    * @memberOf Entry
-   * @type String
+   * @type string
    */
   public $entry = '';
 
@@ -19,7 +19,7 @@ class Entry {
    * The language highlighter used for code examples.
    *
    * @memberOf Entry
-   * @type String
+   * @type string
    */
   public $lang = '';
 
@@ -27,7 +27,7 @@ class Entry {
    * The source code.
    *
    * @memberOf Entry
-   * @type String
+   * @type string
    */
   public $source = '';
 
@@ -37,9 +37,9 @@ class Entry {
    * The Entry constructor.
    *
    * @constructor
-   * @param {String} $entry The documentation entry to analyse.
-   * @param {String} $source The source code.
-   * @param {String} [$lang ='js'] The language highlighter used for code examples.
+   * @param {string} $entry The documentation entry to analyse.
+   * @param {string} $source The source code.
+   * @param {string} [$lang ='js'] The language highlighter used for code examples.
    */
   public function __construct( $entry, $source, $lang = 'js' ) {
     $this->entry = $entry;
@@ -54,8 +54,8 @@ class Entry {
    *
    * @static
    * @memberOf Entry
-   * @param {String} $source The source code.
-   * @returns {Array} The array of entries.
+   * @param {string} $source The source code.
+   * @returns {array} The array of entries.
    */
   public static function getEntries( $source ) {
     preg_match_all('#/\*\*(?![-!])[\s\S]*?\*/\s*.+#', $source, $result);
@@ -69,7 +69,7 @@ class Entry {
    *
    * @private
    * @memberOf Entry
-   * @returns {Boolean} Returns `true` if the entry is a function reference, else `false`.
+   * @returns {boolean} Returns `true` if the entry is a function reference, else `false`.
    */
   private function isFunction() {
     if (!isset($this->_isFunction)) {
@@ -89,8 +89,8 @@ class Entry {
    * Extracts the entry's `alias` objects.
    *
    * @memberOf Entry
-   * @param {Number} $index The index of the array value to return.
-   * @returns {Array|String} The entry's `alias` objects.
+   * @param {number} $index The index of the array value to return.
+   * @returns {(array|string)} The entry's `alias` objects.
    */
   public function getAliases( $index = null ) {
     if (!isset($this->_aliases)) {
@@ -116,7 +116,7 @@ class Entry {
    * Extracts the function call from the entry.
    *
    * @memberOf Entry
-   * @returns {String} The function call.
+   * @returns {string} The function call.
    */
   public function getCall() {
     if (isset($this->_call)) {
@@ -140,12 +140,12 @@ class Entry {
       // compose parts
       $result = array($result);
       $params = $this->getParams();
+
       foreach ($params as $param) {
         $result[] = $param[1];
       }
       // format
       $result = $name .'('. implode(array_slice($result, 1), ', ') .')';
-      $result = str_replace(', [', ' [, ', str_replace('], [', ', ', $result));
     }
 
     $this->_call = $result ? $result : $name;
@@ -156,7 +156,7 @@ class Entry {
    * Extracts the entry's `category` data.
    *
    * @memberOf Entry
-   * @returns {String} The entry's `category` data.
+   * @returns {string} The entry's `category` data.
    */
   public function getCategory() {
     if (isset($this->_category)) {
@@ -167,7 +167,7 @@ class Entry {
     if (count($result)) {
       $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]));
     } else {
-      $result = $this->getType() == 'Function' ? 'Methods' : 'Properties';
+      $result = $this->getType() == 'function' ? 'Methods' : 'Properties';
     }
     $this->_category = $result;
     return $result;
@@ -177,7 +177,7 @@ class Entry {
    * Extracts the entry's description.
    *
    * @memberOf Entry
-   * @returns {String} The entry's description.
+   * @returns {string} The entry's description.
    */
   public function getDesc() {
     if (isset($this->_desc)) {
@@ -191,7 +191,7 @@ class Entry {
       $result = preg_replace('/(?:^|\n)[\t ]*\*\n[\t ]*\*[\t ]*/', "\n\n", $result);
       $result = preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result);
       $result = trim($result);
-      $result = ($type == 'Function' ? '' : '(' . str_replace('|', ', ', trim($type, '{}')) . '): ') . $result;
+      $result = ($type == 'function' ? '' : '(' . str_replace('|', ', ', trim($type, '{}')) . '): ') . $result;
     }
     $this->_desc = $result;
     return $result;
@@ -201,7 +201,7 @@ class Entry {
    * Extracts the entry's `example` data.
    *
    * @memberOf Entry
-   * @returns {String} The entry's `example` data.
+   * @returns {string} The entry's `example` data.
    */
   public function getExample() {
     if (isset($this->_example)) {
@@ -221,7 +221,7 @@ class Entry {
    * Checks if the entry is an alias.
    *
    * @memberOf Entry
-   * @returns {Boolean} Returns `false`.
+   * @returns {boolean} Returns `false`.
    */
   public function isAlias() {
     return false;
@@ -231,7 +231,7 @@ class Entry {
    * Checks if the entry is a constructor.
    *
    * @memberOf Entry
-   * @returns {Boolean} Returns `true` if a constructor, else `false`.
+   * @returns {boolean} Returns `true` if a constructor, else `false`.
    */
   public function isCtor() {
     if (!isset($this->_isCtor)) {
@@ -244,7 +244,7 @@ class Entry {
    * Checks if the entry is a license.
    *
    * @memberOf Entry
-   * @returns {Boolean} Returns `true` if a license, else `false`.
+   * @returns {boolean} Returns `true` if a license, else `false`.
    */
   public function isLicense() {
     if (!isset($this->_isLicense)) {
@@ -257,7 +257,7 @@ class Entry {
    * Checks if the entry *is* assigned to a prototype.
    *
    * @memberOf Entry
-   * @returns {Boolean} Returns `true` if assigned to a prototype, else `false`.
+   * @returns {boolean} Returns `true` if assigned to a prototype, else `false`.
    */
   public function isPlugin() {
     if (!isset($this->_isPlugin)) {
@@ -270,7 +270,7 @@ class Entry {
    * Checks if the entry is private.
    *
    * @memberOf Entry
-   * @returns {Boolean} Returns `true` if private, else `false`.
+   * @returns {boolean} Returns `true` if private, else `false`.
    */
   public function isPrivate() {
     if (!isset($this->_isPrivate)) {
@@ -283,7 +283,7 @@ class Entry {
    * Checks if the entry is *not* assigned to a prototype.
    *
    * @memberOf Entry
-   * @returns {Boolean} Returns `true` if not assigned to a prototype, else `false`.
+   * @returns {boolean} Returns `true` if not assigned to a prototype, else `false`.
    */
   public function isStatic() {
     if (isset($this->_isStatic)) {
@@ -315,7 +315,7 @@ class Entry {
    * Resolves the entry's line number.
    *
    * @memberOf Entry
-   * @returns {Number} The entry's line number.
+   * @returns {number} The entry's line number.
    */
   public function getLineNumber() {
     if (!isset($this->_lineNumber)) {
@@ -329,8 +329,8 @@ class Entry {
    * Extracts the entry's `member` data.
    *
    * @memberOf Entry
-   * @param {Number} $index The index of the array value to return.
-   * @returns {Array|String} The entry's `member` data.
+   * @param {number} $index The index of the array value to return.
+   * @returns {(array|string)} The entry's `member` data.
    */
   public function getMembers( $index = null ) {
     if (!isset($this->_members)) {
@@ -351,7 +351,7 @@ class Entry {
    * Extracts the entry's `name` data.
    *
    * @memberOf Entry
-   * @returns {String} The entry's `name` data.
+   * @returns {string} The entry's `name` data.
    */
   public function getName() {
     if (isset($this->_name)) {
@@ -372,23 +372,26 @@ class Entry {
    * Extracts the entry's `param` data.
    *
    * @memberOf Entry
-   * @param {Number} $index The index of the array value to return.
-   * @returns {Array} The entry's `param` data.
+   * @param {number} $index The index of the array value to return.
+   * @returns {array} The entry's `param` data.
    */
   public function getParams( $index = null ) {
     if (!isset($this->_params)) {
-      preg_match_all('#\*[\t ]*@param\s+\{([^}]+)\}\s+(\[.+\]|[$\w|]+(?:\[.+\])?)\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#i', $this->entry, $result);
-      if (count($result = array_filter(array_slice($result, 1)))) {
-        // repurpose array
-        foreach ($result as $param) {
-          foreach ($param as $key => $value) {
-            if (!is_array($result[0][$key])) {
-              $result[0][$key] = array();
+      preg_match_all('#\*[\t ]*@param\s+\{\(?([^})]+)\)?\}\s+(\[.+\]|[$\w|]+(?:\[.+\])?)\s+([\s\S]*?)(?=\*\s\@[a-z]|\*/)#i', $this->entry, $matchTuples);
+      $matchTuples = array_filter(array_slice($matchTuples, 1));
+      $result = array();
+
+      if (count($matchTuples)) {
+        foreach ($matchTuples as $tupleKey => $tuple) {
+          foreach ($tuple as $key => $value) {
+            if (!isset($result[$key])) {
+              $result[$key] = array();
             }
-            $result[0][$key][] = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]*/', ' ', $value));
+            $result[$key][] = $tupleKey
+              ? trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]*/', ' ', $value))
+              : trim($value);
           }
         }
-        $result = $result[0];
       }
       $this->_params = $result;
     }
@@ -401,7 +404,7 @@ class Entry {
    * Extracts the entry's `returns` data.
    *
    * @memberOf Entry
-   * @returns {String} The entry's `returns` data.
+   * @returns {string} The entry's `returns` data.
    */
   public function getReturns() {
     if (isset($this->_returns)) {
@@ -422,18 +425,18 @@ class Entry {
    * Extracts the entry's `type` data.
    *
    * @memberOf Entry
-   * @returns {String} The entry's `type` data.
+   * @returns {string} The entry's `type` data.
    */
   public function getType() {
     if (isset($this->_type)) {
       return $this->_type;
     }
 
-    preg_match('#\*[\t ]*@type\s+(.+)#', $this->entry, $result);
+    preg_match('#\*[\t ]*@type\s(?:\{\(?)?([^)}\n]+)#', $this->entry, $result);
     if (count($result)) {
-      $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]));
+      $result = trim(strtolower($result[1]));
     } else {
-      $result = $this->isFunction() ? 'Function' : 'Unknown';
+      $result = $this->isFunction() ? 'function' : 'unknown';
     }
     $this->_type = $result;
     return $result;

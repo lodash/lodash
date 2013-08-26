@@ -19,8 +19,8 @@ class Alias {
    * The Alias constructor.
    *
    * @constructor
-   * @param {String} $name The alias name.
-   * @param {Object} $owner The alias owner.
+   * @param {string} $name The alias name.
+   * @param {object} $owner The alias owner.
    */
   public function __construct( $name, $owner ) {
     $this->owner = $owner;
@@ -47,8 +47,8 @@ class Alias {
    * Extracts the entry's `alias` objects.
    *
    * @memberOf Alias
-   * @param {Number} $index The index of the array value to return.
-   * @returns {Array|String} The entry's `alias` objects.
+   * @param {number} $index The index of the array value to return.
+   * @returns {(array|string)} The entry's `alias` objects.
    */
   public function getAliases( $index = null ) {
     $result = array();
@@ -61,7 +61,7 @@ class Alias {
    * Extracts the function call from the owner entry.
    *
    * @memberOf Alias
-   * @returns {String} The function call.
+   * @returns {string} The function call.
    */
   public function getCall() {
     return $this->_call;
@@ -71,7 +71,7 @@ class Alias {
    * Extracts the owner entry's `category` data.
    *
    * @memberOf Alias
-   * @returns {String} The owner entry's `category` data.
+   * @returns {string} The owner entry's `category` data.
    */
   public function getCategory() {
     return $this->_category;
@@ -81,7 +81,7 @@ class Alias {
    * Extracts the owner entry's description.
    *
    * @memberOf Alias
-   * @returns {String} The owner entry's description.
+   * @returns {string} The owner entry's description.
    */
   public function getDesc() {
     return $this->_desc;
@@ -91,7 +91,7 @@ class Alias {
    * Extracts the owner entry's `example` data.
    *
    * @memberOf Alias
-   * @returns {String} The owner entry's `example` data.
+   * @returns {string} The owner entry's `example` data.
    */
   public function getExample() {
     return $this->_example;
@@ -101,7 +101,7 @@ class Alias {
    * Checks if the entry is an alias.
    *
    * @memberOf Alias
-   * @returns {Boolean} Returns `true`.
+   * @returns {boolean} Returns `true`.
    */
   public function isAlias() {
     return true;
@@ -111,7 +111,7 @@ class Alias {
    * Checks if the owner entry is a constructor.
    *
    * @memberOf Alias
-   * @returns {Boolean} Returns `true` if a constructor, else `false`.
+   * @returns {boolean} Returns `true` if a constructor, else `false`.
    */
   public function isCtor() {
     return $this->_isCtor;
@@ -121,7 +121,7 @@ class Alias {
    * Checks if the owner entry is a license.
    *
    * @memberOf Alias
-   * @returns {Boolean} Returns `true` if a license, else `false`.
+   * @returns {boolean} Returns `true` if a license, else `false`.
    */
   public function isLicense() {
     return $this->_isLicense;
@@ -131,7 +131,7 @@ class Alias {
    * Checks if the owner entry *is* assigned to a prototype.
    *
    * @memberOf Alias
-   * @returns {Boolean} Returns `true` if assigned to a prototype, else `false`.
+   * @returns {boolean} Returns `true` if assigned to a prototype, else `false`.
    */
   public function isPlugin() {
     return $this->_isPlugin;
@@ -141,7 +141,7 @@ class Alias {
    * Checks if the owner entry is private.
    *
    * @memberOf Alias
-   * @returns {Boolean} Returns `true` if private, else `false`.
+   * @returns {boolean} Returns `true` if private, else `false`.
    */
   public function isPrivate() {
     return $this->_isPrivate;
@@ -151,7 +151,7 @@ class Alias {
    * Checks if the owner entry is *not* assigned to a prototype.
    *
    * @memberOf Alias
-   * @returns {Boolean} Returns `true` if not assigned to a prototype, else `false`.
+   * @returns {boolean} Returns `true` if not assigned to a prototype, else `false`.
    */
   public function isStatic() {
     return $this->_isStatic;
@@ -161,7 +161,7 @@ class Alias {
    * Resolves the owner entry's line number.
    *
    * @memberOf Alias
-   * @returns {Number} The owner entry's line number.
+   * @returns {number} The owner entry's line number.
    */
   public function getLineNumber() {
     return $this->_lineNumber;
@@ -171,8 +171,8 @@ class Alias {
    * Extracts the owner entry's `member` data.
    *
    * @memberOf Alias
-   * @param {Number} $index The index of the array value to return.
-   * @returns {Array|String} The owner entry's `member` data.
+   * @param {number} $index The index of the array value to return.
+   * @returns {(array|string)} The owner entry's `member` data.
    */
   public function getMembers( $index = null ) {
     return $index !== null
@@ -184,7 +184,7 @@ class Alias {
    * Extracts the owner entry's `name` data.
    *
    * @memberOf Alias
-   * @returns {String} The owner entry's `name` data.
+   * @returns {string} The owner entry's `name` data.
    */
   public function getName() {
     return $this->_name;
@@ -194,8 +194,8 @@ class Alias {
    * Extracts the owner entry's `param` data.
    *
    * @memberOf Alias
-   * @param {Number} $index The index of the array value to return.
-   * @returns {Array} The owner entry's `param` data.
+   * @param {number} $index The index of the array value to return.
+   * @returns {array} The owner entry's `param` data.
    */
   public function getParams( $index = null ) {
     return $index !== null
@@ -207,7 +207,7 @@ class Alias {
    * Extracts the owner entry's `returns` data.
    *
    * @memberOf Alias
-   * @returns {String} The owner entry's `returns` data.
+   * @returns {string} The owner entry's `returns` data.
    */
   public function getReturns() {
     return $this->_returns;
@@ -217,7 +217,7 @@ class Alias {
    * Extracts the owner entry's `type` data.
    *
    * @memberOf Alias
-   * @returns {String} The owner entry's `type` data.
+   * @returns {string} The owner entry's `type` data.
    */
   public function getType() {
     return $this->_type;

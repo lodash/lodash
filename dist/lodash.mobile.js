@@ -1713,7 +1713,7 @@
      *  iteration. If a property name or object is provided it will be used to
      *  create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the key of the found element, else `undefined`.
+     * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
      *
      * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
@@ -1745,7 +1745,7 @@
      *  iteration. If a property name or object is provided it will be used to
      *  create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the key of the found element, else `undefined`.
+     * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
      *
      * _.findLastKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
@@ -3891,7 +3891,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the index of the found element, else `-1`.
+     * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
      * _.findIndex(['apple', 'banana', 'beet'], function(food) {
@@ -3924,7 +3924,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the index of the found element, else `-1`.
+     * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
      * _.findLastIndex(['apple', 'banana', 'beet'], function(food) {

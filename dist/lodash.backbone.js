@@ -1914,28 +1914,6 @@
   }
 
   /**
-   * Retrieves the value of a specified property from all elements in the `collection`.
-   *
-   * @static
-   * @memberOf _
-   * @type function
-   * @category Collections
-   * @param {(array|object|string)} collection The collection to iterate over.
-   * @param {string} property The property to pluck.
-   * @returns {array} Returns a new array of property values.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'moe', 'age': 40 },
-   *   { 'name': 'larry', 'age': 50 }
-   * ];
-   *
-   * _.pluck(stooges, 'name');
-   * // => ['moe', 'larry']
-   */
-  var pluck = map;
-
-  /**
    * Reduces a collection to a value which is the accumulated result of running
    * each element in the collection through the callback, where each successive
    * callback execution consumes the return value of the previous execution. If
@@ -2259,33 +2237,6 @@
     }
     return values(collection);
   }
-
-  /**
-   * Performs a deep comparison of each element in a `collection` to the given
-   * `properties` object, returning an array of all elements that have equivalent
-   * property values.
-   *
-   * @static
-   * @memberOf _
-   * @type function
-   * @category Collections
-   * @param {(array|object|string)} collection The collection to iterate over.
-   * @param {object} properties The object of property values to filter by.
-   * @returns {array} Returns a new array of elements that have the given `properties`.
-   * @example
-   *
-   * var stooges = [
-   *   { 'name': 'curly', 'age': 30, 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] },
-   *   { 'name': 'moe', 'age': '40', 'quotes': ['Spread out!', 'You knucklehead!'] }
-   * ];
-   *
-   * _.where(stooges, { 'age': 40 });
-   * // => [{ 'name': 'moe', 'age': '40', 'quotes': ['Spread out!', 'You knucklehead!'] }]
-   *
-   * _.where(stooges, { 'quotes': ['Poifect!'] });
-   * // => [{ 'name': 'curly', 'age': 30, 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] }]
-   */
-  var where = filter;
 
   /*--------------------------------------------------------------------------*/
 

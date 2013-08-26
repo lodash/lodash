@@ -66,6 +66,9 @@
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
 
+  /** Used to detect functions containing a `this` reference */
+  var reThis = (reThis = /\bthis\b/) && reThis.test(runInContext) && reThis;
+
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
@@ -489,8 +492,8 @@
     /** Native method shortcuts */
     var ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
-        defineProperty = reNative.test(defineProperty = Object.defineProperty) && defineProperty,
         floor = Math.floor,
+        fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayRef.push,
@@ -500,6 +503,15 @@
         splice = arrayRef.splice,
         toString = objectProto.toString,
         unshift = arrayRef.unshift;
+
+    var defineProperty = (function() {
+      try {
+        var o = {},
+            func = reNative.test(func = Object.defineProperty) && func,
+            result = func(o, o, o) && func;
+      } catch(e) { }
+      return result;
+    }());
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
     var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
@@ -1037,6 +1049,16 @@
       if (typeof thisArg == 'undefined') {
         return func;
       }
+      var bindData = !func.name || func.__bindData__;
+      if (typeof bindData == 'undefined') {
+        // checks if `func` references the `this` keyword and stores the result
+        bindData = !reThis || reThis.test(fnToString.call(func));
+        setBindData(func, bindData);
+      }
+      // exit early if there are no `this` references or `func` is bound
+      if (bindData !== true && !(bindData && bindData[1] & 1)) {
+        return func;
+      }
       switch (argCount) {
         case 1: return function(value) {
           return func.call(thisArg, value);
@@ -1442,6 +1464,26 @@
         bitmask &= ~32;
         isPartialRight = partialRightArgs = false;
       }
+      var bindData = func && func.__bindData__;
+      if (bindData) {
+        if (isBind && !(bindData[1] & 1)) {
+          bindData[4] = thisArg;
+        }
+        if (!isBind && bindData[1] & 1) {
+          bitmask |= 8;
+        }
+        if (isCurry && !(bindData[1] & 4)) {
+          bindData[5] = arity;
+        }
+        if (isPartial) {
+          push.apply(bindData[2] || (bindData[2] = []), partialArgs);
+        }
+        if (isPartialRight) {
+          push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
+        }
+        bindData[1] |= bitmask;
+        return createBound.apply(null, bindData);
+      }
       // use `Function#bind` if it exists and is fast
       // (in V8 `Function#bind` is slower except when partially applied)
       if (isBind && !(isBindKey || isCurry || isPartialRight) &&
@@ -1486,6 +1528,7 @@
           return func.apply(thisBinding, args);
         };
       }
+      setBindData(bound, nativeSlice.call(arguments));
       return bound;
     }
 
@@ -1985,7 +2028,7 @@
      *  iteration. If a property name or object is provided it will be used to
      *  create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the key of the found element, else `undefined`.
+     * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
      *
      * _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
@@ -2017,7 +2060,7 @@
      *  iteration. If a property name or object is provided it will be used to
      *  create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the key of the found element, else `undefined`.
+     * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
      *
      * _.findLastKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
@@ -4129,7 +4172,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the index of the found element, else `-1`.
+     * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
      * _.findIndex(['apple', 'banana', 'beet'], function(food) {
@@ -4162,7 +4205,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the index of the found element, else `-1`.
+     * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
      * _.findLastIndex(['apple', 'banana', 'beet'], function(food) {

@@ -25,11 +25,8 @@
 		<script src="test-ui.js"></script>
 		<script>
 			function init(lodash) {
-				var arrayProto = Array.prototype,
-				    concat = arrayProto.concat,
-				    pop = arrayProto.pop,
-				    push = arrayProto.push,
-				    slice = arrayProto.slice;
+				var arrayRef = [],
+				    push = arrayRef.push;
 
 				if (!lodash().map()) {
 					return;
@@ -50,6 +47,15 @@
 						};
 					});
 				};
+
+				lodash.forEach(['pop', 'shift'], function(methodName) {
+					var func = arrayRef[methodName];
+					lodash.prototype[methodName] = function() {
+						func.apply(this.__wrapped__, arguments);
+						return this;
+					};
+				});
+
 
 				lodash.mixin(lodash);
 
@@ -116,7 +122,8 @@
 						pluginPath + basePath + '/vendor/underscore/test/arrays.js',
 						pluginPath + basePath + '/vendor/underscore/test/functions.js',
 						pluginPath + basePath + '/vendor/underscore/test/objects.js',
-						pluginPath + basePath + '/vendor/underscore/test/utility.js'
+						pluginPath + basePath + '/vendor/underscore/test/utility.js',
+						pluginPath + basePath + '/vendor/underscore/test/chaining.js'
 					], function() {
 						QUnit.start();
 					});

@@ -70,7 +70,7 @@
   var largeArraySize = 75;
 
   /** Used to set property descriptors */
-  var setDescriptor = (function() {
+  var defineProperty = (function() {
     try {
       var o = {},
           func = Object.defineProperty,
@@ -2350,9 +2350,9 @@
     });
 
     test('should handle object arguments with non-numeric length properties', function() {
-      if (setDescriptor) {
+      if (defineProperty) {
         var object = {};
-        setDescriptor(object, 'length', { 'value': 'x' });
+        defineProperty(object, 'length', { 'value': 'x' });
         deepEqual(_.map(object, _.identity), []);
       } else {
         skipTest();

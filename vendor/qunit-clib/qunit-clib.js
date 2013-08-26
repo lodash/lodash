@@ -22,7 +22,7 @@
    * Installs the CLI boilerplate additions on the given `context` object.
    *
    * @memberOf exports
-   * @param {Object} context The context object.
+   * @param {object} context The context object.
    */
   function runInContext(context) {
     // exit early if no `context` is provided or if `QUnit` does not exist
@@ -34,11 +34,11 @@
      * Schedules timer-based callbacks.
      *
      * @private
-     * @param {Function|String} fn The function to call.
-     * @oaram {Number} delay The number of milliseconds to delay the `fn` call.
+     * @param {(function|string)} fn The function to call.
+     * @param {number} delay The number of milliseconds to delay the `fn` call.
      * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
-     * @param {Boolean} repeated A flag to specify whether `fn` is called repeatedly.
-     * @returns {Number} The the ID of the timeout.
+     * @param {boolean} repeated A flag to specify whether `fn` is called repeatedly.
+     * @returns {number} The the ID of the timeout.
      */
     function schedule(fn, delay, args, repeated) {
       // Rhino 1.7RC4 will error assigning `task` below
@@ -70,7 +70,7 @@
      * Clears the delay set by `setInterval` or `setTimeout`.
      *
      * @memberOf context
-     * @param {Number} id The ID of the timeout to be cleared.
+     * @param {number} id The ID of the timeout to be cleared.
      */
     function clearTimer(id) {
       if (ids[id]) {
@@ -84,10 +84,10 @@
      * Executes a code snippet or function repeatedly, with a delay between each call.
      *
      * @memberOf context
-     * @param {Function|String} fn The function to call or string to evaluate.
-     * @oaram {Number} delay The number of milliseconds to delay each `fn` call.
+     * @param {(function|string)} fn The function to call or string to evaluate.
+     * @param {number} delay The number of milliseconds to delay each `fn` call.
      * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
-     * @returns {Number} The the ID of the timeout.
+     * @returns {number} The the ID of the timeout.
      */
     function setInterval(fn, delay) {
       return schedule(fn, delay, slice.call(arguments, 2), true);
@@ -97,10 +97,10 @@
      * Executes a code snippet or a function after specified delay.
      *
      * @memberOf context
-     * @param {Function|String} fn The function to call or string to evaluate.
-     * @oaram {Number} delay The number of milliseconds to delay the `fn` call.
+     * @param {(function|string)} fn The function to call or string to evaluate.
+     * @param {number} delay The number of milliseconds to delay the `fn` call.
      * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
-     * @returns {Number} The the ID of the timeout.
+     * @returns {number} The the ID of the timeout.
      */
     function setTimeout(fn, delay) {
       return schedule(fn, delay, slice.call(arguments, 2));
@@ -121,7 +121,7 @@
      * A logging callback triggered when all testing is completed.
      *
      * @memberOf QUnit
-     * @param {Object} details An object with properties `failed`, `passed`, `runtime`, and `total`.
+     * @param {object} details An object with properties `failed`, `passed`, `runtime`, and `total`.
      */
     QUnit.done(function() {
       var ran;
@@ -160,7 +160,7 @@
      * A logging callback triggered after every assertion.
      *
      * @memberOf QUnit
-     * @param {Object} details An object with properties `actual`, `expected`, `message`, and `result`.
+     * @param {object} details An object with properties `actual`, `expected`, `message`, and `result`.
      */
     QUnit.log(function(details) {
       var expected = details.expected,
@@ -183,7 +183,7 @@
      * A logging callback triggered at the start of every test module.
      *
      * @memberOf QUnit
-     * @param {Object} details An object with property `name`.
+     * @param {object} details An object with property `name`.
      */
     QUnit.moduleStart(function(details) {
       console.log(hr);
@@ -195,9 +195,9 @@
      * Converts an object into a string representation.
      *
      * @memberOf QUnit
-     * @type Function
-     * @param {Object} object The object to stringify.
-     * @returns {String} The result string.
+     * @type function
+     * @param {object} object The object to stringify.
+     * @returns {string} The result string.
      */
     QUnit.jsDump.parsers.object = (function() {
       var func = QUnit.jsDump.parsers.object;
@@ -217,7 +217,7 @@
      * A logging callback triggered after a test is completed.
      *
      * @memberOf QUnit
-     * @param {Object} details An object with properties `failed`, `name`, `passed`, and `total`.
+     * @param {object} details An object with properties `failed`, `name`, `passed`, and `total`.
      */
     QUnit.testDone(function(details) {
       var assertions = QUnit.config.testStats.assertions,
@@ -239,7 +239,7 @@
      * An object used to hold information about the current running test.
      *
      * @memberOf QUnit.config
-     * @type Object
+     * @type object
      */
     QUnit.config.testStats = {
 

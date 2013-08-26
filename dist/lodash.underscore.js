@@ -2264,7 +2264,18 @@
    * _.pluck(stooges, 'name');
    * // => ['moe', 'larry']
    */
-  var pluck = map;
+  function pluck(collection, property) {
+    var index = -1,
+        length = collection ? collection.length : 0;
+
+    if (typeof length == 'number') {
+      var result = Array(length);
+      while (++index < length) {
+        result[index] = collection[index][property];
+      }
+    }
+    return result || map(collection, property);
+  }
 
   /**
    * Reduces a collection to a value which is the accumulated result of running
@@ -2616,7 +2627,11 @@
    * _.where(stooges, { 'quotes': ['Poifect!'] });
    * // => [{ 'name': 'curly', 'age': 30, 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] }]
    */
-  var where = filter;
+  function where(collection, properties, first) {
+    return (first && isEmpty(properties))
+      ? undefined
+      : (first ? find : filter)(collection, properties);
+  }
 
   /*--------------------------------------------------------------------------*/
 

@@ -668,6 +668,18 @@
       callback = _.createCallback(_.partialRight(func, 3), object);
       deepEqual(callback(2), expected);
     });
+
+    test('should work without an `argCount`', function() {
+      var args,
+          expected = ['a', 'b', 'c', 'd', 'e'];
+
+      var callback = _.createCallback(function() {
+        args = slice.call(arguments);
+      });
+
+      callback.apply(null, expected);
+      deepEqual(args, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

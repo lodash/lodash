@@ -3011,11 +3011,9 @@
       fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
       if (isArray(collection)) {
         result = indexOf(collection, target, fromIndex) > -1;
-      }
-      else if (typeof length == 'number' && isString(collection)) {
-        result = collection.indexOf(target, fromIndex) > -1;
-      }
-      else {
+      } else if (typeof length == 'number') {
+        result = (isString(collection) ? collection.indexOf(target, fromIndex) : indexOf(collection, target, fromIndex)) > -1;
+      } else {
         baseEach(collection, function(value) {
           if (++index >= fromIndex) {
             return !(result = value === target);
@@ -6593,7 +6591,7 @@
   // expose Lo-Dash
   var _ = runInContext();
 
-  // some AMD build optimizers, like r.js, check for specific condition patterns like the following:
+  // some AMD build optimizers, like r.js, check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
     // Expose Lo-Dash to the global object even when an AMD loader is present in
     // case Lo-Dash was injected by a third-party script and not intended to be

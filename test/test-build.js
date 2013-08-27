@@ -1096,7 +1096,6 @@
 
         deepEqual(lodash.range(1, 4, 0), [1, 2, 3], '_.range should not support a `step` of `0`');
         strictEqual(lodash.some([false, true, false]), true, '_.some: ' + basename);
-        deepEqual(lodash.times(null, function() {}), [null], '_.times should not coerce `n` to a number: ' + basename);
         equal(lodash.template('${a}', object), '${a}', '_.template should ignore ES6 delimiters: ' + basename);
         equal('support' in lodash, false, '_.support should not exist: ' + basename);
         equal('imports' in lodash.templateSettings, false, '_.templateSettings should not have an "imports" property: ' + basename);

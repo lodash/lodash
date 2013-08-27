@@ -2944,7 +2944,7 @@
           if (!isLodash('toArray')) {
             funcDepMap.toArray.push('isArray', 'map');
           }
-          if (!isLodash('findWhere') || !isLodash('where')) {
+          if (!isLodash('findWhere') && !isLodash('where')) {
             _.pull(funcDepMap.createCallback, 'baseIsEqual');
             funcDepMap.where.push('find', 'isEmpty');
           }
@@ -3483,7 +3483,7 @@
               '}'
             ].join('\n'));
           }
-          // add Underscore's `_.findWhere`
+          // add Underscore's `_.findWhere` and `_.where`
           if (!isLodash('findWhere') && !isLodash('where')) {
             source = source.replace(matchFunction(source, 'find'), function(match) {
               var indent = getIndent(match);
@@ -3517,6 +3517,24 @@
                 '}',
                 ''
               ].join('\n' + indent));
+            });
+
+            // replace `_.where`
+            source = replaceFunction(source, 'where', [
+              'function where(collection, properties, first) {',
+              '  return (first && isEmpty(properties))',
+              '    ? undefined',
+              '    : (first ? find : filter)(collection, properties);',
+              '}'
+            ].join('\n'));
+
+            // simplify `_.createCallback`
+            source = source.replace(matchFunction(source, 'createCallback'), function(match) {
+              return match
+                // remove unnecessary fast path
+                .replace(/^(( *)var props *=.+?),[\s\S]+?\n\2}/m, '$1;')
+                // remove `baseIsEqual` use
+                .replace(/=.+?\bbaseIsEqual\((.+?), *(.+?),.+?\)/, '= $1 === $2');
             });
 
             // replace alias assignment
@@ -3737,15 +3755,6 @@
               '}'
             ].join('\n'));
           }
-          // replace `_.result`
-          if (!isLodash('result')) {
-            source = replaceFunction(source, 'result', [
-              'function result(object, property) {',
-              '  var value = object ? object[property] : undefined;',
-              '  return isFunction(value) ? object[property]() : value;',
-              '}'
-            ].join('\n'));
-          }
           // replace `_.sortBy`
           if (!isLodash('sortBy')) {
             source = replaceFunction(source, 'sortBy', [
@@ -3854,20 +3863,6 @@
               '}'
             ].join('\n'));
           }
-          // replace `_.times`
-          if (!isLodash('times')) {
-            source = replaceFunction(source, 'times', [
-              'function times(n, callback, thisArg) {',
-              '  var index = -1,',
-              '      result = Array(n > -1 ? n : 0);',
-              '',
-              '  while (++index < n) {',
-              '    result[index] = callback.call(thisArg, index);',
-              '  }',
-              '  return result;',
-              '}'
-            ].join('\n'));
-          }
           // replace `_.toArray`
           if (!isLodash('toArray')) {
             source = replaceFunction(source, 'toArray', [
@@ -3918,25 +3913,6 @@
               '  return prefix ? prefix + id : id;',
               '}'
             ].join('\n'));
-          }
-          // replace `_.where`
-          if (!isLodash('where')) {
-            source = replaceFunction(source, 'where', [
-              'function where(collection, properties, first) {',
-              '  return (first && isEmpty(properties))',
-              '    ? undefined',
-              '    : (first ? find : filter)(collection, properties);',
-              '}'
-            ].join('\n'));
-
-            // simplify `_.createCallback`
-            source = source.replace(matchFunction(source, 'createCallback'), function(match) {
-              return match
-                // remove unnecessary fast path
-                .replace(/^(( *)var props *=.+?),[\s\S]+?\n\2}/m, '$1;')
-                // remove `baseIsEqual` use
-                .replace(/=.+?\bbaseIsEqual\((.+?), *(.+?),.+?\)/, '= $1 === $2');
-            });
           }
           // replace `_.zip`
           if(!isLodash('zip')) {

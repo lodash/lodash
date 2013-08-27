@@ -8,7 +8,7 @@
   // Baseline setup
   // --------------
 
-  // Establish the root object, `window` in the browser, or `exports` on the server.
+  // Establish the root object, `window` in the browser, or `global` on the server.
   var root = this;
 
   // Save the previous value of the `_` variable.
@@ -78,13 +78,14 @@
     if (nativeForEach && obj.forEach === nativeForEach) {
       obj.forEach(iterator, context);
     } else if (obj.length === +obj.length) {
-      for (var i = 0, length = obj.length; i < length; i++) {
+      for (var i = 0, l = obj.length; i < l; i++) {
         if (iterator.call(context, obj[i], i, obj) === breaker) return;
       }
     } else {
-      var keys = _.keys(obj);
-      for (var i = 0, length = keys.length; i < length; i++) {
-        if (iterator.call(context, obj[keys[i]], keys[i], obj) === breaker) return;
+      for (var key in obj) {
+        if (_.has(obj, key)) {
+          if (iterator.call(context, obj[key], key, obj) === breaker) return;
+        }
       }
     }
   };
@@ -306,9 +307,9 @@
     var iterator = lookupIterator(value);
     return _.pluck(_.map(obj, function(value, index, list) {
       return {
-        value: value,
-        index: index,
-        criteria: iterator.call(context, value, index, list)
+        value : value,
+        index : index,
+        criteria : iterator.call(context, value, index, list)
       };
     }).sort(function(left, right) {
       var a = left.criteria;
@@ -317,41 +318,38 @@
         if (a > b || a === void 0) return 1;
         if (a < b || b === void 0) return -1;
       }
-      return left.index - right.index;
+      return left.index < right.index ? -1 : 1;
     }), 'value');
   };
 
   // An internal function used for aggregate "group by" operations.
-  var group = function(behavior) {
-    return function(obj, value, context) {
-      var result = {};
-      var iterator = value == null ? _.identity : lookupIterator(value);
-      each(obj, function(value, index) {
-        var key = iterator.call(context, value, index, obj);
-        behavior(result, key, value);
-      });
-      return result;
-    };
+  var group = function(obj, value, context, behavior) {
+    var result = {};
+    var iterator = lookupIterator(value == null ? _.identity : value);
+    each(obj, function(value, index) {
+      var key = iterator.call(context, value, index, obj);
+      behavior(result, key, value);
+    });
+    return result;
   };
 
   // Groups the object's values by a criterion. Pass either a string attribute
   // to group by, or a function that returns the criterion.
-  _.groupBy = group(function(result, key, value) {
-    (_.has(result, key) ? result[key] : (result[key] = [])).push(value);
-  });
-
-  // Indexes the object's values by a criterion, similar to `groupBy`, but for
-  // when you know that your index values will be unique.
-  _.indexBy = group(function(result, key, value) {
-    result[key] = value;
-  });
+  _.groupBy = function(obj, value, context) {
+    return group(obj, value, context, function(result, key, value) {
+      (_.has(result, key) ? result[key] : (result[key] = [])).push(value);
+    });
+  };
 
   // Counts instances of an object that group by a certain criterion. Pass
   // either a string attribute to count by, or a function that returns the
   // criterion.
-  _.countBy = group(function(result, key, value) {
-    _.has(result, key) ? result[key]++ : result[key] = 1;
-  });
+  _.countBy = function(obj, value, context) {
+    return group(obj, value, context, function(result, key) {
+      if (!_.has(result, key)) result[key] = 0;
+      result[key]++;
+    });
+  };
 
   // Use a comparator function to figure out the smallest index at which
   // an object should be inserted so as to maintain order. Uses binary search.
@@ -388,7 +386,7 @@
   // allows it to work with `_.map`.
   _.first = _.head = _.take = function(array, n, guard) {
     if (array == null) return void 0;
-    return (n == null) || guard ? array[0] : slice.call(array, 0, n);
+    return (n != null) && !guard ? slice.call(array, 0, n) : array[0];
   };
 
   // Returns everything but the last entry of the array. Especially useful on
@@ -403,10 +401,10 @@
   // values in the array. The **guard** check allows it to work with `_.map`.
   _.last = function(array, n, guard) {
     if (array == null) return void 0;
-    if ((n == null) || guard) {
-      return array[array.length - 1];
-    } else {
+    if ((n != null) && !guard) {
       return slice.call(array, Math.max(array.length - n, 0));
+    } else {
+      return array[array.length - 1];
     }
   };
 
@@ -438,7 +436,7 @@
     return output;
   };
 
-  // Flatten out an array, either recursively (by default), or just one level.
+  // Return a completely flattened version of an array.
   _.flatten = function(array, shallow) {
     return flatten(array, shallow, []);
   };
@@ -510,7 +508,7 @@
   _.object = function(list, values) {
     if (list == null) return {};
     var result = {};
-    for (var i = 0, length = list.length; i < length; i++) {
+    for (var i = 0, l = list.length; i < l; i++) {
       if (values) {
         result[list[i]] = values[i];
       } else {
@@ -528,17 +526,17 @@
   // for **isSorted** to use binary search.
   _.indexOf = function(array, item, isSorted) {
     if (array == null) return -1;
-    var i = 0, length = array.length;
+    var i = 0, l = array.length;
     if (isSorted) {
       if (typeof isSorted == 'number') {
-        i = (isSorted < 0 ? Math.max(0, length + isSorted) : isSorted);
+        i = (isSorted < 0 ? Math.max(0, l + isSorted) : isSorted);
       } else {
         i = _.sortedIndex(array, item);
         return array[i] === item ? i : -1;
       }
     }
     if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item, isSorted);
-    for (; i < length; i++) if (array[i] === item) return i;
+    for (; i < l; i++) if (array[i] === item) return i;
     return -1;
   };
 
@@ -564,11 +562,11 @@
     }
     step = arguments[2] || 1;
 
-    var length = Math.max(Math.ceil((stop - start) / step), 0);
+    var len = Math.max(Math.ceil((stop - start) / step), 0);
     var idx = 0;
-    var range = new Array(length);
+    var range = new Array(len);
 
-    while(idx < length) {
+    while(idx < len) {
       range[idx++] = start;
       start += step;
     }
@@ -756,33 +754,22 @@
 
   // Retrieve the values of an object's properties.
   _.values = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var values = new Array(length);
-    for (var i = 0; i < length; i++) {
-      values[i] = obj[keys[i]];
-    }
+    var values = [];
+    for (var key in obj) if (_.has(obj, key)) values.push(obj[key]);
     return values;
   };
 
   // Convert an object into a list of `[key, value]` pairs.
   _.pairs = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var pairs = new Array(length);
-    for (var i = 0; i < length; i++) {
-      pairs[i] = [keys[i], obj[keys[i]]];
-    }
+    var pairs = [];
+    for (var key in obj) if (_.has(obj, key)) pairs.push([key, obj[key]]);
     return pairs;
   };
 
   // Invert the keys and values of an object. The values must be serializable.
   _.invert = function(obj) {
     var result = {};
-    var keys = _.keys(obj);
-    for (var i = 0, length = keys.length; i < length; i++) {
-      result[obj[keys[i]]] = keys[i];
-    }
+    for (var key in obj) if (_.has(obj, key)) result[obj[key]] = key;
     return result;
   };
 
@@ -1066,7 +1053,8 @@
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#x27;'
+      "'": '&#x27;',
+      '/': '&#x2F;'
     }
   };
   entityMap.unescape = _.invert(entityMap.escape);
@@ -1097,7 +1085,7 @@
 
   // Add your own custom functions to the Underscore object.
   _.mixin = function(obj) {
-    each(_.functions(obj), function(name) {
+    each(_.functions(obj), function(name){
       var func = _[name] = obj[name];
       _.prototype[name] = function() {
         var args = [this._wrapped];

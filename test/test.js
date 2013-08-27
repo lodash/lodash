@@ -562,6 +562,7 @@
 
   (function() {
     _.forEach({
+      'an `arguments` object': arguments,
       'an array': [1, 2, 3, 1, 2, 3],
       'an object': { 'a': 1, 'b': 2, 'c': 3, 'd': 1, 'e': 2, 'f': 3 },
       'a string': '123123'
@@ -598,7 +599,7 @@
         strictEqual(_.contains(collection, 'd'), false);
       });
     });
-  }());
+  }(1, 2, 3, 1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 

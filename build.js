@@ -119,7 +119,7 @@
     'cloneDeep': ['baseClone', 'baseCreateCallback'],
     'compact': [],
     'compose': ['isFunction'],
-    'contains': ['baseEach', 'getIndexOf', 'isString'],
+    'contains': ['baseEach', 'getIndexOf', 'isArray', 'isString'],
     'countBy': ['createAggregator'],
     'createCallback': ['baseCreateCallback', 'baseIsEqual', 'isObject', 'keys'],
     'curry': ['createBound'],
@@ -2924,7 +2924,7 @@
             _.pull(funcDepMap.wrapperValueOf, 'wrapperToString');
           }
           if (!isLodash('contains')) {
-            _.pull(funcDepMap.contains, 'isString');
+            _.pull(funcDepMap.contains, 'isArray', 'isString');
           }
           if (!isLodash('flatten')) {
             _.pull(funcDepMap.flatten, 'map');

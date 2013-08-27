@@ -113,7 +113,7 @@
    * See http://en.wikipedia.org/wiki/Geometric_mean#Relationship_with_arithmetic_mean_of_logarithms.
    *
    * @private
-   * @param {array} array The array of values.
+   * @param {Array} array The array of values.
    * @returns {number} The geometric mean.
    */
   function getGeometricMean(array) {
@@ -127,7 +127,7 @@
    * margin of error.
    *
    * @private
-   * @param {object} bench The benchmark object.
+   * @param {Object} bench The benchmark object.
    * @returns {number} Returns the adjusted Hz.
    */
   function getHz(bench) {
@@ -591,7 +591,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.bind` (uses native `Function#bind` if available and inferred fast)')
+    Benchmark.Suite('`_.bind` with partially applied arguments (uses native `Function#bind` if available and inferred fast)')
       .add(buildName, {
         'fn': 'lodash.bind(func, { "name": "moe" }, "hi")',
         'teardown': 'function bind(){}'

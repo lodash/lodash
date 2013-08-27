@@ -41,7 +41,7 @@
    *
    * @memberOf util.fs
    * @param {string} dirname The path of the directory.
-   * @param {(number|string)} [mode='0777'] The permission mode.
+   * @param {number|string} [mode='0777'] The permission mode.
    */
   function mkdirpSync(dirname, mode) {
     // ensure relative paths are prefixed with `./`
@@ -64,7 +64,7 @@
   /**
    * The utility object.
    *
-   * @type object
+   * @type Object
    */
   var util = {
 
@@ -72,7 +72,7 @@
     * The file system object.
     *
     * @memberOf util
-    * @type object
+    * @type Object
     */
     'fs': _.defaults(_.cloneDeep(fs), {
       'existsSync': fs.existsSync || path.existsSync,
@@ -83,7 +83,7 @@
     * The path object.
     *
     * @memberOf util
-    * @type object
+    * @type Object
     */
     'path': _.defaults(_.cloneDeep(path), {
       'sep': sep,

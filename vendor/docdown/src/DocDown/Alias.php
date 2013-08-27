@@ -20,7 +20,7 @@ class Alias {
    *
    * @constructor
    * @param {string} $name The alias name.
-   * @param {object} $owner The alias owner.
+   * @param {Object} $owner The alias owner.
    */
   public function __construct( $name, $owner ) {
     $this->owner = $owner;
@@ -48,7 +48,7 @@ class Alias {
    *
    * @memberOf Alias
    * @param {number} $index The index of the array value to return.
-   * @returns {(array|string)} The entry's `alias` objects.
+   * @returns {Array|string} The entry's `alias` objects.
    */
   public function getAliases( $index = null ) {
     $result = array();
@@ -172,7 +172,7 @@ class Alias {
    *
    * @memberOf Alias
    * @param {number} $index The index of the array value to return.
-   * @returns {(array|string)} The owner entry's `member` data.
+   * @returns {Array|string} The owner entry's `member` data.
    */
   public function getMembers( $index = null ) {
     return $index !== null
@@ -195,7 +195,7 @@ class Alias {
    *
    * @memberOf Alias
    * @param {number} $index The index of the array value to return.
-   * @returns {array} The owner entry's `param` data.
+   * @returns {Array} The owner entry's `param` data.
    */
   public function getParams( $index = null ) {
     return $index !== null

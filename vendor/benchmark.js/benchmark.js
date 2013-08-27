@@ -105,8 +105,8 @@
    *
    * @static
    * @memberOf Benchmark
-   * @param {object} [context=window] The context object.
-   * @returns {function} Returns the `Benchmark` function.
+   * @param {Object} [context=window] The context object.
+   * @returns {Function} Returns the `Benchmark` function.
    */
   function runInContext(context) {
     // exit early if unable to acquire lodash
@@ -181,7 +181,7 @@
      *
      * @static
      * @memberOf Benchmark
-     * @type object
+     * @type Object
      */
     var support = {};
 
@@ -245,7 +245,7 @@
      * Timer object used by `clock()` and `Deferred#resolve`.
      *
      * @private
-     * @type object
+     * @type Object
      */
     var timer = {
 
@@ -254,7 +254,7 @@
       *
       * @private
       * @memberOf timer
-      * @type {(function|object)}
+      * @type {Function|Object}
       */
       'ns': Date,
 
@@ -263,7 +263,7 @@
       *
       * @private
       * @memberOf timer
-      * @param {object} deferred The deferred instance.
+      * @param {Object} deferred The deferred instance.
       */
       'start': null, // lazy defined in `clock()`
 
@@ -272,7 +272,7 @@
       *
       * @private
       * @memberOf timer
-      * @param {object} deferred The deferred instance.
+      * @param {Object} deferred The deferred instance.
       */
       'stop': null // lazy defined in `clock()`
     };
@@ -284,8 +284,8 @@
      *
      * @constructor
      * @param {string} name A name to identify the benchmark.
-     * @param {(function|string)} fn The test to benchmark.
-     * @param {object} [options={}] Options object.
+     * @param {Function|string} fn The test to benchmark.
+     * @param {Object} [options={}] Options object.
      * @example
      *
      * // basic usage (the `new` operator is optional)
@@ -394,7 +394,7 @@
      *
      * @constructor
      * @memberOf Benchmark
-     * @param {object} clone The cloned benchmark instance.
+     * @param {Object} clone The cloned benchmark instance.
      */
     function Deferred(clone) {
       var deferred = this;
@@ -410,7 +410,7 @@
      *
      * @constructor
      * @memberOf Benchmark
-     * @param {(object|string)} type The event type.
+     * @param {Object|string} type The event type.
      */
     function Event(type) {
       var event = this;
@@ -428,7 +428,7 @@
      * @constructor
      * @memberOf Benchmark
      * @param {string} name A name to identify the suite.
-     * @param {object} [options={}] Options object.
+     * @param {Object} [options={}] Options object.
      * @example
      *
      * // basic usage (the `new` operator is optional)
@@ -499,7 +499,7 @@
      * @private
      * @param {string} args The comma separated function arguments.
      * @param {string} body The function body.
-     * @returns {function} The new function.
+     * @returns {Function} The new function.
      */
     function createFunction() {
       // lazy define
@@ -523,8 +523,8 @@
      * Delay the execution of a function based on the benchmark's `delay` property.
      *
      * @private
-     * @param {object} bench The benchmark instance.
-     * @param {object} fn The function to execute.
+     * @param {Object} bench The benchmark instance.
+     * @param {Object} fn The function to execute.
      */
     function delay(bench, fn) {
       bench._timerId = _.delay(fn, bench.delay * 1e3);
@@ -545,7 +545,7 @@
      * Gets the name of the first argument from a function's source.
      *
      * @private
-     * @param {function} fn The function.
+     * @param {Function} fn The function.
      * @returns {string} The argument name.
      */
     function getFirstArgument(fn) {
@@ -558,7 +558,7 @@
      * See http://en.wikipedia.org/wiki/Geometric_mean#Relationship_with_arithmetic_mean_of_logarithms.
      *
      * @private
-     * @param {array} sample The sample.
+     * @param {Array} sample The sample.
      * @returns {number} The geometric mean.
      */
     function getGeometricMean(sample) {
@@ -571,7 +571,7 @@
      * Computes the arithmetic mean of a sample.
      *
      * @private
-     * @param {array} sample The sample.
+     * @param {Array} sample The sample.
      * @returns {number} The mean.
      */
     function getMean(sample) {
@@ -584,7 +584,7 @@
      * Gets the source code of a function.
      *
      * @private
-     * @param {function} fn The function.
+     * @param {Function} fn The function.
      * @param {string} altSource A string used when a function's source code is unretrievable.
      * @returns {string} The function's source code.
      */
@@ -704,8 +704,8 @@
      * A helper function for setting options/event handlers.
      *
      * @private
-     * @param {object} object The benchmark or suite instance.
-     * @param {object} [options={}] Options object.
+     * @param {Object} object The benchmark or suite instance.
+     * @param {Object} [options={}] Options object.
      */
     function setOptions(object, options) {
       options = _.extend({}, object.constructor.options, options);
@@ -758,10 +758,10 @@
      *
      * @static
      * @memberOf Benchmark
-     * @param {array} array The array to iterate over.
-     * @param {(function|string)} callback The function/alias called per iteration.
+     * @param {Array} array The array to iterate over.
+     * @param {Function|string} callback The function/alias called per iteration.
      * @param {*} thisArg The `this` binding for the callback.
-     * @returns {array} A new array of values that passed callback filter.
+     * @returns {Array} A new array of values that passed callback filter.
      * @example
      *
      * // get odd numbers
@@ -818,10 +818,10 @@
      *
      * @static
      * @memberOf Benchmark
-     * @param {array} benches Array of benchmarks to iterate over.
-     * @param {(object|string)} name The name of the method to invoke OR options object.
+     * @param {Array} benches Array of benchmarks to iterate over.
+     * @param {Object|string} name The name of the method to invoke OR options object.
      * @param {...*} [arg] Arguments to invoke the method with.
-     * @returns {array} A new array of values returned from each method invoked.
+     * @returns {Array} A new array of values returned from each method invoked.
      * @example
      *
      * // invoke `reset` on all benchmarks
@@ -999,7 +999,7 @@
      *
      * @static
      * @memberOf Benchmark
-     * @param {(array|object)} object The object to operate on.
+     * @param {Array|Object} object The object to operate on.
      * @param {string} [separator1=','] The separator used between key-value pairs.
      * @param {string} [separator2=': '] The separator used between keys and values.
      * @returns {string} The joined result.
@@ -1023,7 +1023,7 @@
      *
      * @name abort
      * @memberOf Benchmark.Suite
-     * @returns {object} The suite instance.
+     * @returns {Object} The suite instance.
      */
     function abortSuite() {
       var event,
@@ -1053,9 +1053,9 @@
      *
      * @memberOf Benchmark.Suite
      * @param {string} name A name to identify the benchmark.
-     * @param {(function|string)} fn The test to benchmark.
-     * @param {object} [options={}] Options object.
-     * @returns {object} The benchmark instance.
+     * @param {Function|string} fn The test to benchmark.
+     * @param {Object} [options={}] Options object.
+     * @returns {Object} The benchmark instance.
      * @example
      *
      * // basic usage
@@ -1101,8 +1101,8 @@
      *
      * @name clone
      * @memberOf Benchmark.Suite
-     * @param {object} options Options object to overwrite cloned options.
-     * @returns {object} The new suite instance.
+     * @param {Object} options Options object to overwrite cloned options.
+     * @returns {Object} The new suite instance.
      */
     function cloneSuite(options) {
       var suite = this,
@@ -1124,8 +1124,8 @@
      *
      * @name filter
      * @memberOf Benchmark.Suite
-     * @param {(function|string)} callback The function/alias called per iteration.
-     * @returns {object} A new suite of benchmarks that passed callback filter.
+     * @param {Function|string} callback The function/alias called per iteration.
+     * @returns {Object} A new suite of benchmarks that passed callback filter.
      */
     function filterSuite(callback) {
       var suite = this,
@@ -1140,7 +1140,7 @@
      *
      * @name reset
      * @memberOf Benchmark.Suite
-     * @returns {object} The suite instance.
+     * @returns {Object} The suite instance.
      */
     function resetSuite() {
       var event,
@@ -1169,8 +1169,8 @@
      *
      * @name run
      * @memberOf Benchmark.Suite
-     * @param {object} [options={}] Options object.
-     * @returns {object} The suite instance.
+     * @param {Object} [options={}] Options object.
+     * @returns {Object} The suite instance.
      * @example
      *
      * // basic usage
@@ -1215,7 +1215,7 @@
      * Executes all registered listeners of the specified event type.
      *
      * @memberOf Benchmark, Benchmark.Suite
-     * @param {(object|string)} type The event type or object.
+     * @param {Object|string} type The event type or object.
      * @returns {*} Returns the return value of the last listener executed.
      */
     function emit(type) {
@@ -1246,7 +1246,7 @@
      *
      * @memberOf Benchmark, Benchmark.Suite
      * @param {string} type The event type.
-     * @returns {array} The listeners array.
+     * @returns {Array} The listeners array.
      */
     function listeners(type) {
       var object = this,
@@ -1262,8 +1262,8 @@
      *
      * @memberOf Benchmark, Benchmark.Suite
      * @param {string} [type] The event type.
-     * @param {function} [listener] The function to unregister.
-     * @returns {object} The benchmark instance.
+     * @param {Function} [listener] The function to unregister.
+     * @returns {Object} The benchmark instance.
      * @example
      *
      * // unregister a listener for an event type
@@ -1313,8 +1313,8 @@
      *
      * @memberOf Benchmark, Benchmark.Suite
      * @param {string} type The event type.
-     * @param {function} listener The function to register.
-     * @returns {object} The benchmark instance.
+     * @param {Function} listener The function to register.
+     * @returns {Object} The benchmark instance.
      * @example
      *
      * // register a listener for an event type
@@ -1342,7 +1342,7 @@
      * Aborts the benchmark without recording times.
      *
      * @memberOf Benchmark
-     * @returns {object} The benchmark instance.
+     * @returns {Object} The benchmark instance.
      */
     function abort() {
       var event,
@@ -1375,8 +1375,8 @@
      * Creates a new benchmark using the same test and options.
      *
      * @memberOf Benchmark
-     * @param {object} options Options object to overwrite cloned options.
-     * @returns {object} The new benchmark instance.
+     * @param {Object} options Options object to overwrite cloned options.
+     * @returns {Object} The new benchmark instance.
      * @example
      *
      * var bizarro = bench.clone({
@@ -1405,7 +1405,7 @@
      * Determines if a benchmark is faster than another.
      *
      * @memberOf Benchmark
-     * @param {object} other The benchmark to compare.
+     * @param {Object} other The benchmark to compare.
      * @returns {number} Returns `-1` if slower, `1` if faster, and `0` if indeterminate.
      */
     function compare(other) {
@@ -1459,7 +1459,7 @@
      * Reset properties and abort if running.
      *
      * @memberOf Benchmark
-     * @returns {object} The benchmark instance.
+     * @returns {Object} The benchmark instance.
      */
     function reset() {
       var data,
@@ -1557,7 +1557,7 @@
      * Clocks the time taken to execute a test per cycle (secs).
      *
      * @private
-     * @param {object} bench The benchmark instance.
+     * @param {Object} bench The benchmark instance.
      * @returns {number} The time taken.
      */
     function clock() {
@@ -1872,8 +1872,8 @@
      * Computes stats on benchmark results.
      *
      * @private
-     * @param {object} bench The benchmark instance.
-     * @param {object} options The options object.
+     * @param {Object} bench The benchmark instance.
+     * @param {Object} options The options object.
      */
     function compute(bench, options) {
       options || (options = {});
@@ -2026,8 +2026,8 @@
      * Cycles a benchmark until a run `count` can be established.
      *
      * @private
-     * @param {object} clone The cloned benchmark instance.
-     * @param {object} options The options object.
+     * @param {Object} clone The cloned benchmark instance.
+     * @param {Object} options The options object.
      */
     function cycle(clone, options) {
       options || (options = {});
@@ -2130,8 +2130,8 @@
      * Runs the benchmark.
      *
      * @memberOf Benchmark
-     * @param {object} [options={}] Options object.
-     * @returns {object} The benchmark instance.
+     * @param {Object} [options={}] Options object.
+     * @returns {Object} The benchmark instance.
      * @example
      *
      * // basic usage
@@ -2187,7 +2187,7 @@
        *
        * @static
        * @memberOf Benchmark
-       * @type object
+       * @type Object
        */
       'options': {
 
@@ -2270,7 +2270,7 @@
          * An event listener called when the benchmark is aborted.
          *
          * @memberOf Benchmark.options
-         * @type function
+         * @type Function
          */
         'onAbort': undefined,
 
@@ -2278,7 +2278,7 @@
          * An event listener called when the benchmark completes running.
          *
          * @memberOf Benchmark.options
-         * @type function
+         * @type Function
          */
         'onComplete': undefined,
 
@@ -2286,7 +2286,7 @@
          * An event listener called after each run cycle.
          *
          * @memberOf Benchmark.options
-         * @type function
+         * @type Function
          */
         'onCycle': undefined,
 
@@ -2294,7 +2294,7 @@
          * An event listener called when a test errors.
          *
          * @memberOf Benchmark.options
-         * @type function
+         * @type Function
          */
         'onError': undefined,
 
@@ -2302,7 +2302,7 @@
          * An event listener called when the benchmark is reset.
          *
          * @memberOf Benchmark.options
-         * @type function
+         * @type Function
          */
         'onReset': undefined,
 
@@ -2310,7 +2310,7 @@
          * An event listener called when the benchmark starts running.
          *
          * @memberOf Benchmark.options
-         * @type function
+         * @type Function
          */
         'onStart': undefined
       },
@@ -2321,7 +2321,7 @@
        *
        * @static
        * @memberOf Benchmark
-       * @type object
+       * @type Object
        */
       'platform': context.platform || req('platform') || ({
         'description': context.navigator && context.navigator.userAgent || null,
@@ -2393,7 +2393,7 @@
        * The compiled test function.
        *
        * @memberOf Benchmark
-       * @type function|...string
+       * @type {Function|string}
        */
       'compiled': undefined,
 
@@ -2401,7 +2401,7 @@
        * The error object if the test failed.
        *
        * @memberOf Benchmark
-       * @type object
+       * @type Object
        */
       'error': undefined,
 
@@ -2409,7 +2409,7 @@
        * The test to benchmark.
        *
        * @memberOf Benchmark
-       * @type function|...string
+       * @type {Function|string}
        */
       'fn': undefined,
 
@@ -2433,7 +2433,7 @@
        * Compiled into the test and executed immediately **before** the test loop.
        *
        * @memberOf Benchmark
-       * @type function|...string
+       * @type {Function|string}
        * @example
        *
        * // basic usage
@@ -2496,7 +2496,7 @@
        * Compiled into the test and executed immediately **after** the test loop.
        *
        * @memberOf Benchmark
-       * @type function|...string
+       * @type {Function|string}
        */
       'teardown': noop,
 
@@ -2504,7 +2504,7 @@
        * An object of stats including mean, margin or error, and standard deviation.
        *
        * @memberOf Benchmark
-       * @type object
+       * @type Object
        */
       'stats': {
 
@@ -2569,7 +2569,7 @@
        * An object of timing data including cycle, elapsed, period, start, and stop.
        *
        * @memberOf Benchmark
-       * @type object
+       * @type Object
        */
       'times': {
 
@@ -2628,7 +2628,7 @@
        * The deferred benchmark instance.
        *
        * @memberOf Benchmark.Deferred
-       * @type object
+       * @type Object
        */
       'benchmark': null,
 
@@ -2685,7 +2685,7 @@
        * The object whose listeners are currently being processed.
        *
        * @memberOf Benchmark.Event
-       * @type object
+       * @type Object
        */
       'currentTarget': undefined,
 
@@ -2701,7 +2701,7 @@
        * The object to which the event was originally emitted.
        *
        * @memberOf Benchmark.Event
-       * @type object
+       * @type Object
        */
       'target': undefined,
 
@@ -2729,7 +2729,7 @@
      *
      * @static
      * @memberOf Benchmark.Suite
-     * @type object
+     * @type Object
      */
     Suite.options = {
 

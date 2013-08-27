@@ -56,7 +56,7 @@ class MarkdownGenerator {
    *
    * @constructor
    * @param {string} $source The source code to parse.
-   * @param {array} $options The options array.
+   * @param {Array} $options The options array.
    */
   public function __construct( $source, $options = array() ) {
     // juggle arguments
@@ -139,7 +139,7 @@ class MarkdownGenerator {
    * @static
    * @memberOf MarkdownGenerator
    * @param {string} $string The string to modify.
-   * @param {(array|object)} $object The template object.
+   * @param {Array|Object} $object The template object.
    * @returns {string} The modified string.
    */
   private static function interpolate( $string, $object ) {
@@ -175,8 +175,8 @@ class MarkdownGenerator {
    *
    * @private
    * @memberOf MarkdownGenerator
-   * @param {array} $result The result array to modify.
-   * @param {array} $entries The entries to add to the `$result`.
+   * @param {Array} $result The result array to modify.
+   * @param {Array} $entries The entries to add to the `$result`.
    */
   private function addEntries( &$result, $entries ) {
     foreach ($entries as $entry) {
@@ -235,7 +235,7 @@ class MarkdownGenerator {
    *
    * @private
    * @memberOf MarkdownGenerator
-   * @param {(number|object)} $entry The entry object.
+   * @param {number|Object} $entry The entry object.
    * @param {string} $member The name of the member.
    * @returns {string} The url hash.
    */
@@ -255,7 +255,7 @@ class MarkdownGenerator {
    *
    * @private
    * @memberOf MarkdownGenerator
-   * @param {(number|object)} $entry The entry object.
+   * @param {number|Object} $entry The entry object.
    * @returns {string} The url.
    */
   private function getLineUrl( $entry ) {
@@ -268,7 +268,7 @@ class MarkdownGenerator {
    *
    * @private
    * @memberOf MarkdownGenerator
-   * @param {(number|object)} $entry The entry object.
+   * @param {number|Object} $entry The entry object.
    * @returns {string} The separator.
    */
   private function getSeparator( $entry ) {
@@ -315,7 +315,7 @@ class MarkdownGenerator {
         }
 
         // append entry to api member
-        if (!$member || $entry->isCtor() || ($entry->getType() == 'object' &&
+        if (!$member || $entry->isCtor() || ($entry->getType() == 'Object' &&
             !preg_match('/[=:]\s*(?:null|undefined)\s*[,;]?$/', $entry->entry))) {
 
           // assign the real entry, replacing the temporary entry if it exist
@@ -400,7 +400,7 @@ class MarkdownGenerator {
         foreach ($entry->{$kind} as $subentry) {
           $name = $subentry->getName();
           // functions w/o ALL-CAPs names are last
-          $sortBy['a'][] = $subentry->getType() == 'function' && !preg_match('/^[A-Z_]+$/', $name);
+          $sortBy['a'][] = $subentry->getType() == 'Function' && !preg_match('/^[A-Z_]+$/', $name);
           // ALL-CAPs properties first
           $sortBy['b'][] = preg_match('/^[A-Z_]+$/', $name);
           // lowercase alphanumeric sort
@@ -541,7 +541,7 @@ class MarkdownGenerator {
           $subentries = is_string($kind) ? $entry->{$kind} : array($kind);
 
           // add sub-entry name
-          if ($kind != 'static' && $entry->getType() != 'object' &&
+          if ($kind != 'static' && $entry->getType() != 'Object' &&
                 count($subentries) && $subentries[0] != $kind) {
             if ($kind == 'plugin') {
               $result[] = $closeTag;

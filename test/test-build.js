@@ -342,7 +342,7 @@
    * Creates a context object to use with `vm.runInContext`.
    *
    * @private
-   * @returns {object} Returns a new context object.
+   * @returns {Object} Returns a new context object.
    */
   function createContext() {
     return vm.createContext({
@@ -356,8 +356,8 @@
    * Expands a list of function names to include real and alias names.
    *
    * @private
-   * @param {array} funcNames The array of function names to expand.
-   * @returns {array} Returns a new array of expanded function names.
+   * @param {Array} funcNames The array of function names to expand.
+   * @returns {Array} Returns a new array of expanded function names.
    */
   function expandFuncNames(funcNames) {
     return funcNames.reduce(function(result, funcName) {
@@ -372,7 +372,7 @@
    *
    * @private
    * @param {string} funcName The name of the function to get aliases for.
-   * @returns {array} Returns an array of aliases.
+   * @returns {Array} Returns an array of aliases.
    */
   function getAliases(funcName) {
     return realToAliasMap[funcName] || [];
@@ -393,7 +393,7 @@
    * Tests if a given method can be called successfully.
    *
    * @private
-   * @param {object} lodash The built Lo-Dash object.
+   * @param {Object} lodash The built Lo-Dash object.
    * @param {string} funcName The name of the method to test.
    * @param {string} message The unit test message.
    */

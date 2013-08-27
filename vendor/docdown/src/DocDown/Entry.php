@@ -55,7 +55,7 @@ class Entry {
    * @static
    * @memberOf Entry
    * @param {string} $source The source code.
-   * @returns {array} The array of entries.
+   * @returns {Array} The array of entries.
    */
   public static function getEntries( $source ) {
     preg_match_all('#/\*\*(?![-!])[\s\S]*?\*/\s*.+#', $source, $result);
@@ -90,7 +90,7 @@ class Entry {
    *
    * @memberOf Entry
    * @param {number} $index The index of the array value to return.
-   * @returns {(array|string)} The entry's `alias` objects.
+   * @returns {Array|string} The entry's `alias` objects.
    */
   public function getAliases( $index = null ) {
     if (!isset($this->_aliases)) {
@@ -167,7 +167,7 @@ class Entry {
     if (count($result)) {
       $result = trim(preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result[1]));
     } else {
-      $result = $this->getType() == 'function' ? 'Methods' : 'Properties';
+      $result = $this->getType() == 'Function' ? 'Methods' : 'Properties';
     }
     $this->_category = $result;
     return $result;
@@ -191,7 +191,7 @@ class Entry {
       $result = preg_replace('/(?:^|\n)[\t ]*\*\n[\t ]*\*[\t ]*/', "\n\n", $result);
       $result = preg_replace('/(?:^|\n)[\t ]*\*[\t ]?/', ' ', $result);
       $result = trim($result);
-      $result = ($type == 'function' ? '' : '(' . str_replace('|', ', ', trim($type, '{}')) . '): ') . $result;
+      $result = ($type == 'Function' ? '' : '(' . str_replace('|', ', ', trim($type, '{}')) . '): ') . $result;
     }
     $this->_desc = $result;
     return $result;
@@ -330,7 +330,7 @@ class Entry {
    *
    * @memberOf Entry
    * @param {number} $index The index of the array value to return.
-   * @returns {(array|string)} The entry's `member` data.
+   * @returns {Array|string} The entry's `member` data.
    */
   public function getMembers( $index = null ) {
     if (!isset($this->_members)) {
@@ -373,7 +373,7 @@ class Entry {
    *
    * @memberOf Entry
    * @param {number} $index The index of the array value to return.
-   * @returns {array} The entry's `param` data.
+   * @returns {Array} The entry's `param` data.
    */
   public function getParams( $index = null ) {
     if (!isset($this->_params)) {
@@ -434,9 +434,12 @@ class Entry {
 
     preg_match('#\*[\t ]*@type\s(?:\{\(?)?([^)}\n]+)#', $this->entry, $result);
     if (count($result)) {
-      $result = trim(strtolower($result[1]));
+      $result = trim($result[1]);
+      if (preg_match('/^(?:array|function|object|regexp)$/', $result)) {
+        $result = ucfirst($result);
+      }
     } else {
-      $result = $this->isFunction() ? 'function' : 'unknown';
+      $result = $this->isFunction() ? 'Function' : 'unknown';
     }
     $this->_type = $result;
     return $result;

@@ -659,7 +659,7 @@
    *
    * @private
    * @param {string} source The source to process.
-   * @param {array} [commands=[]] An array of commands.
+   * @param {Array} [commands=[]] An array of commands.
    * @returns {string} Returns the modified source.
    */
   function addCommandsToHeader(source, commands) {
@@ -822,7 +822,7 @@
    * Creates modules based on the provided build state.
    *
    * @private
-   * @param {object} state The build state object.
+   * @param {Object} state The build state object.
    */
   function buildModule(state) {
     var buildFuncs = state.buildFuncs,
@@ -1085,7 +1085,7 @@
    * each template file's basename.
    *
    * @private
-   * @param {object} state The build state object.
+   * @param {Object} state The build state object.
    * @returns {string} Returns the compiled source.
    */
   function buildTemplate(state) {
@@ -1218,7 +1218,7 @@
    * The default callback used for `build` invocations.
    *
    * @private
-   * @param {object} data The data for the given build.
+   * @param {Object} data The data for the given build.
    *  gzip - The gzipped output of the built source
    *  outputPath - The path where the built source is to be written
    *  source - The built source output
@@ -1293,8 +1293,8 @@
    *
    * @private
    * @param {string} funcName The name of the function to get aliases for.
-   * @param {object} [depMap] The dependency map used to validate aliases.
-   * @returns {array} Returns an array of aliases.
+   * @param {Object} [depMap] The dependency map used to validate aliases.
+   * @returns {Array} Returns an array of aliases.
    */
   function getAliases(funcName, depMap) {
     var aliases = hasOwnProperty.call(realToAliasMap, funcName) && realToAliasMap[funcName];
@@ -1309,7 +1309,7 @@
    *
    * @private
    * @param {string} identifier The identifier to query.
-   * @param {object} [depMap] The dependency map used to resolve the identifier.
+   * @param {Object} [depMap] The dependency map used to resolve the identifier.
    * @returns {string} Returns the identifier's category.
    */
   function getCategory(identifier, depMap) {
@@ -1348,9 +1348,9 @@
    *
    * @private
    * @param {string} funcName A function name or array of function names.
-   * @param {object} [depMap] The dependency map used to look up dependants.
-   * @param- {array} [stackA=[]] Internally used track queried function names.
-   * @returns {array} Returns an array of function dependants.
+   * @param {Object} [depMap] The dependency map used to look up dependants.
+   * @param- {Array} [stackA=[]] Internally used track queried function names.
+   * @returns {Array} Returns an array of function dependants.
    */
   function getDependants(funcName, depMap, stack) {
     var funcNames = _.isArray(funcName) ? funcName : [funcName];
@@ -1375,11 +1375,11 @@
    * dependencies plus any additional detected sub-dependencies.
    *
    * @private
-   * @param {(string|string[])} funcName A function name or array of dependencies to query.
-   * @param {object} [depMap] The dependency map used to look up dependants.
+   * @param {string|string[]} funcName A function name or array of dependencies to query.
+   * @param {Object} [depMap] The dependency map used to look up dependants.
    * @param {boolean} [isShallow=false] A flag to indicate getting only the immediate dependencies.
-   * @param- {array} [stackA=[]] Internally used track queried function names.
-   * @returns {array} Returns an array of function dependencies.
+   * @param- {Array} [stackA=[]] Internally used track queried function names.
+   * @returns {Array} Returns an array of function dependencies.
    */
   function getDependencies(funcName, depMap, isShallow, stack) {
     // juggle arguments
@@ -1420,8 +1420,8 @@
    * Gets the formatted source of the given function.
    *
    * @private
-   * @param {function} func The function to process.
-   * @param {(number|string)} [indent=0] The level to indent.
+   * @param {Function} func The function to process.
+   * @param {number|string} [indent=0] The level to indent.
    * @returns {string} Returns the formatted source.
    */
   function getFunctionSource(func, indent) {
@@ -1445,7 +1445,7 @@
    * Gets the indent of the given function.
    *
    * @private
-   * @param {function} func The function to process.
+   * @param {Function} func The function to process.
    * @returns {string} Returns the indent.
    */
   function getIndent(func) {
@@ -1506,7 +1506,7 @@
    *
    * @private
    * @param {string} category The category to filter by.
-   * @returns {array} Returns a new array of names.
+   * @returns {Array} Returns a new array of names.
    */
   function getNamesByCategory(category) {
     return categoryMap[category] || [];
@@ -1517,7 +1517,7 @@
    *
    * @private
    * @param {string} funcName The name of the function to resolve.
-   * @param {object} [depMap] The dependency map used to validate the real name.
+   * @param {Object} [depMap] The dependency map used to validate the real name.
    * @returns {string} Returns the real function name.
    */
   function getRealName(funcName, depMap) {
@@ -1546,7 +1546,7 @@
    * @private
    * @param {string} source The source to process.
    * @param {boolean} [isShallow=false] A flag to indicate looking for varaibles one closure deep.
-   * @returns {array} Returns a new array of variable names.
+   * @returns {Array} Returns a new array of variable names.
    */
   function getVars(source, isShallow) {
     var indentA = isShallow ? ' {2}' : ' {2,4}',
@@ -1621,7 +1621,7 @@
     }, null);
 
     return result && (
-           /@type +function\b/i.test(result[0]) ||
+           /@type +Function\b/i.test(result[0]) ||
            /(?:function(?:\s+\w+)?\b|create[A-Z][a-z]+|template)\(/.test(result[1]))
       ? (leadingComments ? result[0] : '') + result[1]
       : '';
@@ -1691,7 +1691,7 @@
    *
    * @private
    * @param {string} value The option to convert.
-   * @returns {array} Returns the new converted array.
+   * @returns {Array} Returns the new converted array.
    */
   function optionToArray(value) {
     return _.compact(_.isArray(value)
@@ -1705,8 +1705,8 @@
    *
    * @private
    * @param {string} value The option to convert.
-   * @param {object} [depMap] The dependency map used to resolve real names.
-   * @returns {array} Returns the new converted array.
+   * @param {Object} [depMap] The dependency map used to resolve real names.
+   * @returns {Array} Returns the new converted array.
    */
   function optionToMethodsArray(value, depMap) {
     depMap || (depMap = funcDependencyMap);
@@ -2513,8 +2513,8 @@
    *
    * Note: For a list of commands see `displayHelp()` or run `lodash --help`.
    *
-   * @param {(array|object)} [options=[]] An array of build commands or the state object.
-   * @param {function} [callback=defaultBuildCallback] The function called or per build.
+   * @param {Array|Object} [options=[]] An array of build commands or the state object.
+   * @param {Function} [callback=defaultBuildCallback] The function called or per build.
    */
   function build(options, callback) {
     options || (options = []);
@@ -3498,8 +3498,8 @@
                 ' * @static',
                 ' * @memberOf _',
                 ' * @category Collections',
-                ' * @param {(array|object|string)} collection The collection to iterate over.',
-                ' * @param {object} properties The object of property values to filter by.',
+                ' * @param {Array|Object|string} collection The collection to iterate over.',
+                ' * @param {Object} properties The object of property values to filter by.',
                 ' * @returns {*} Returns the found element, else `undefined`.',
                 ' * @example',
                 ' *',

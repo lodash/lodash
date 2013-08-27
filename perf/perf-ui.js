@@ -21,7 +21,7 @@
    * @private
    * @param {Element} element The element.
    * @param {string} eventName The name of the event.
-   * @param {function} handler The event handler.
+   * @param {Function} handler The event handler.
    * @returns {Element} The element.
    */
   function addListener(element, eventName, handler) {

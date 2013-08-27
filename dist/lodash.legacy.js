@@ -2834,12 +2834,13 @@
           result = false;
 
       fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
-      if (length && typeof length == 'number') {
-        result = (isString(collection)
-          ? collection.indexOf(target, fromIndex)
-          : indexOf(collection, target, fromIndex)
-        ) > -1;
-      } else {
+      if (isArray(collection)) {
+        result = indexOf(collection, target, fromIndex) > -1;
+      }
+      else if (typeof length == 'number' && isString(collection)) {
+        result = collection.indexOf(target, fromIndex) > -1;
+      }
+      else {
         baseEach(collection, function(value) {
           if (++index >= fromIndex) {
             return !(result = value === target);

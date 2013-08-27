@@ -274,7 +274,7 @@
    * Pre-process a given Lo-Dash `source`, preparing it for minification.
    *
    * @param {string} [source=''] The source to process.
-   * @param {object} [options={}] The options object.
+   * @param {Object} [options={}] The options object.
    * @returns {string} Returns the processed source.
    */
   function preprocess(source, options) {

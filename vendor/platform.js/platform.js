@@ -77,8 +77,8 @@
    * An iteration utility for arrays and objects.
    *
    * @private
-   * @param {(array|object)} object The object to iterate over.
-   * @param {function} callback The function called per iteration.
+   * @param {Array|Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
    */
   function each(object, callback) {
     var index = -1,
@@ -111,8 +111,8 @@
    * Iterates over an object's own properties, executing the `callback` for each.
    *
    * @private
-   * @param {object} object The object to iterate over.
-   * @param {function} callback The function executed per own property.
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function executed per own property.
    */
   function forOwn(object, callback) {
     for (var key in object) {
@@ -137,7 +137,7 @@
    * Checks if an object has the specified key as a direct property.
    *
    * @private
-   * @param {object} object The object to check.
+   * @param {Object} object The object to check.
    * @param {string} key The key to check for.
    * @returns {boolean} Returns `true` if key is a direct property, else `false`.
    */
@@ -199,8 +199,8 @@
    * A bare-bones` Array#reduce` like utility function.
    *
    * @private
-   * @param {array} array The array to iterate over.
-   * @param {function} callback The function called per iteration.
+   * @param {Array} array The array to iterate over.
+   * @param {Function} callback The function called per iteration.
    * @param {*} accumulator Initial value of the accumulator.
    * @returns {*} The accumulator.
    */
@@ -230,7 +230,7 @@
    *
    * @memberOf platform
    * @param {string} [ua = navigator.userAgent] The user agent string.
-   * @returns {object} A platform object.
+   * @returns {Object} A platform object.
    */
   function parse(ua) {
 
@@ -377,8 +377,8 @@
      * Picks the layout engine from an array of guesses.
      *
      * @private
-     * @param {array} guesses An array of guesses.
-     * @returns {(null|string)} The detected layout engine.
+     * @param {Array} guesses An array of guesses.
+     * @returns {null|string} The detected layout engine.
      */
     function getLayout(guesses) {
       return reduce(guesses, function(result, guess) {
@@ -392,8 +392,8 @@
      * Picks the manufacturer from an array of guesses.
      *
      * @private
-     * @param {array} guesses An array of guesses.
-     * @returns {(null|string)} The detected manufacturer.
+     * @param {Array} guesses An array of guesses.
+     * @returns {null|string} The detected manufacturer.
      */
     function getManufacturer(guesses) {
       return reduce(guesses, function(result, value, key) {
@@ -410,8 +410,8 @@
      * Picks the browser name from an array of guesses.
      *
      * @private
-     * @param {array} guesses An array of guesses.
-     * @returns {(null|string)} The detected browser name.
+     * @param {Array} guesses An array of guesses.
+     * @returns {null|string} The detected browser name.
      */
     function getName(guesses) {
       return reduce(guesses, function(result, guess) {
@@ -425,8 +425,8 @@
      * Picks the OS name from an array of guesses.
      *
      * @private
-     * @param {array} guesses An array of guesses.
-     * @returns {(null|string)} The detected OS name.
+     * @param {Array} guesses An array of guesses.
+     * @returns {null|string} The detected OS name.
      */
     function getOS(guesses) {
       return reduce(guesses, function(result, guess) {
@@ -475,8 +475,8 @@
      * Picks the product name from an array of guesses.
      *
      * @private
-     * @param {array} guesses An array of guesses.
-     * @returns {(null|string)} The detected product name.
+     * @param {Array} guesses An array of guesses.
+     * @returns {null|string} The detected product name.
      */
     function getProduct(guesses) {
       return reduce(guesses, function(result, guess) {
@@ -504,8 +504,8 @@
      * Resolves the version using an array of UA patterns.
      *
      * @private
-     * @param {array} patterns An array of UA patterns.
-     * @returns {(null|string)} The detected version.
+     * @param {Array} patterns An array of UA patterns.
+     * @returns {null|string} The detected version.
      */
     function getVersion(patterns) {
       return reduce(patterns, function(result, pattern) {
@@ -862,7 +862,7 @@
      * The platform object.
      *
      * @name platform
-     * @type object
+     * @type Object
      */
     return {
 
@@ -870,7 +870,7 @@
        * The browser/environment version.
        *
        * @memberOf platform
-       * @type string|Null
+       * @type string|null
        */
       'version': name && version && (description.unshift(version), version),
 
@@ -878,7 +878,7 @@
        * The name of the browser/environment.
        *
        * @memberOf platform
-       * @type string|Null
+       * @type string|null
        */
       'name': name && (description.unshift(name), name),
 
@@ -886,7 +886,7 @@
        * The name of the operating system.
        *
        * @memberOf platform
-       * @type object
+       * @type Object
        */
       'os': os
         ? (name &&
@@ -898,7 +898,7 @@
            * The CPU architecture the OS is built for.
            *
            * @memberOf platform.os
-           * @type number|Null
+           * @type number|null
            */
           'architecture': null,
 
@@ -906,7 +906,7 @@
            * The family of the OS.
            *
            * @memberOf platform.os
-           * @type string|Null
+           * @type string|null
            */
           'family': null,
 
@@ -914,7 +914,7 @@
            * The version of the OS.
            *
            * @memberOf platform.os
-           * @type string|Null
+           * @type string|null
            */
           'version': null,
 
@@ -931,7 +931,7 @@
        * The platform description.
        *
        * @memberOf platform
-       * @type string|Null
+       * @type string|null
        */
       'description': description.length ? description.join(' ') : ua,
 
@@ -939,7 +939,7 @@
        * The name of the browser layout engine.
        *
        * @memberOf platform
-       * @type string|Null
+       * @type string|null
        */
       'layout': layout && layout[0],
 
@@ -947,7 +947,7 @@
        * The name of the product's manufacturer.
        *
        * @memberOf platform
-       * @type string|Null
+       * @type string|null
        */
       'manufacturer': manufacturer,
 
@@ -955,7 +955,7 @@
        * The alpha/beta release indicator.
        *
        * @memberOf platform
-       * @type string|Null
+       * @type string|null
        */
       'prerelease': prerelease,
 
@@ -963,7 +963,7 @@
        * The name of the product hosting the browser.
        *
        * @memberOf platform
-       * @type string|Null
+       * @type string|null
        */
       'product': product,
 
@@ -971,7 +971,7 @@
        * The browser's user agent string.
        *
        * @memberOf platform
-       * @type string|Null
+       * @type string|null
        */
       'ua': ua,
 

@@ -9,7 +9,7 @@ require(dirname(__FILE__) . '/src/DocDown/MarkdownGenerator.php');
 /**
  * Generates Markdown from JSDoc entries in a given file.
  *
- * @param {array} [$options=array()] The options array.
+ * @param {Array} [$options=array()] The options array.
  * @returns {string} The generated Markdown.
  * @example
  *

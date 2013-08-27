@@ -107,14 +107,14 @@
 * [`_.compose`](#_composefunc)
 * [`_.createCallback`](#_createcallbackfuncidentity--thisarg--argcount)
 * [`_.curry`](#_curryfunc--arityfunclength)
-* [`_.debounce`](#_debouncefunc-wait-options)
+* [`_.debounce`](#_debouncefunc-wait--options--optionsleadingfalse--optionsmaxwait--optionstrailingtrue)
 * [`_.defer`](#_deferfunc--arg)
 * [`_.delay`](#_delayfunc-wait--arg)
 * [`_.memoize`](#_memoizefunc--resolver)
 * [`_.once`](#_oncefunc)
 * [`_.partial`](#_partialfunc--arg)
 * [`_.partialRight`](#_partialrightfunc--arg)
-* [`_.throttle`](#_throttlefunc-wait-options)
+* [`_.throttle`](#_throttlefunc-wait--options--optionsleadingtrue--optionstrailingtrue)
 * [`_.wrap`](#_wrapvalue-wrapper)
 
 <!-- /div -->
@@ -177,7 +177,7 @@
 * [`_.random`](#_randommin0--max1)
 * [`_.result`](#_resultobject-property)
 * [`_.runInContext`](#_runincontextcontextroot)
-* [`_.template`](#_templatetext-data-options)
+* [`_.template`](#_templatetext-data--options--optionsescape--optionsevaluate--optionsimports--optionsinterpolate--sourceurl--variable)
 * [`_.times`](#_timesn-callback--thisarg)
 * [`_.unescape`](#_unescapestring)
 * [`_.uniqueId`](#_uniqueidprefix)
@@ -236,10 +236,10 @@
 Creates an array with all falsey values removed. The values `false`, `null`, `0`, `""`, `undefined`, and `NaN` are all falsey.
 
 #### Arguments
-1. `array` *(array)*: The array to compact.
+1. `array` *(Array)*: The array to compact.
 
 #### Returns
-*(array)*: Returns a new array of filtered values.
+*(Array)*: Returns a new array of filtered values.
 
 #### Example
 ```js
@@ -260,11 +260,11 @@ _.compact([0, 1, false, 2, '', 3]);
 Creates an array excluding all values of the provided arrays using strict equality for comparisons, i.e. `===`.
 
 #### Arguments
-1. `array` *(array)*: The array to process.
-2. `[array]` *(...array)*: The arrays of values to exclude.
+1. `array` *(Array)*: The array to process.
+2. `[array]` *(...Array)*: The arrays of values to exclude.
 
 #### Returns
-*(array)*: Returns a new array of filtered values.
+*(Array)*: Returns a new array of filtered values.
 
 #### Example
 ```js
@@ -285,8 +285,8 @@ _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
 This method is like `_.find` except that it returns the index of the first element that passes the callback check, instead of the element itself.
 
 #### Arguments
-1. `array` *(array)*: The array to search.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `array` *(Array)*: The array to search.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -313,8 +313,8 @@ _.findIndex(['apple', 'banana', 'beet'], function(food) {
 This method is like `_.findIndex` except that it iterates over elements of a `collection` from right to left.
 
 #### Arguments
-1. `array` *(array)*: The array to search.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `array` *(Array)*: The array to search.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -348,8 +348,8 @@ If an object is provided for `callback` the created "_.where" style callback wil
 *head, take*
 
 #### Arguments
-1. `array` *(array)*: The array to query.
-2. `[callback]` *(function|object|number|string)*: The function called per element or the number of elements to return. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `array` *(Array)*: The array to query.
+2. `[callback]` *(Function|Object|number|string)*: The function called per element or the number of elements to return. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -405,13 +405,13 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `array` *(array)*: The array to flatten.
+1. `array` *(Array)*: The array to flatten.
 2. `[isShallow=false]` *(boolean)*: A flag to restrict flattening to a single level.
-3. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+3. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a new flattened array.
+*(Array)*: Returns a new flattened array.
 
 #### Example
 ```js
@@ -444,7 +444,7 @@ _.flatten(stooges, 'quotes');
 Gets the index at which the first occurrence of `value` is found using strict equality for comparisons, i.e. `===`. If the array is already sorted providing `true` for `fromIndex` will run a faster binary search.
 
 #### Arguments
-1. `array` *(array)*: The array to search.
+1. `array` *(Array)*: The array to search.
 2. `value` *(\*)*: The value to search for.
 3. `[fromIndex=0]` *(boolean|number)*: The index to search from or `true` to perform a binary search on a sorted array.
 
@@ -480,12 +480,12 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `array` *(array)*: The array to query.
-2. `[callback=1]` *(function|object|number|string)*: The function called per element or the number of elements to exclude. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `array` *(Array)*: The array to query.
+2. `[callback=1]` *(Function|Object|number|string)*: The function called per element or the number of elements to exclude. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a slice of `array`.
+*(Array)*: Returns a slice of `array`.
 
 #### Example
 ```js
@@ -533,10 +533,10 @@ _.initial(food, { 'type': 'vegetable' });
 Creates an array of unique values present in all provided arrays using strict equality for comparisons, i.e. `===`.
 
 #### Arguments
-1. `[array]` *(...array)*: The arrays to inspect.
+1. `[array]` *(...Array)*: The arrays to inspect.
 
 #### Returns
-*(array)*: Returns an array of composite values.
+*(Array)*: Returns an array of composite values.
 
 #### Example
 ```js
@@ -561,8 +561,8 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `array` *(array)*: The array to query.
-2. `[callback]` *(function|object|number|string)*: The function called per element or the number of elements to return. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `array` *(Array)*: The array to query.
+2. `[callback]` *(Function|Object|number|string)*: The function called per element or the number of elements to return. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -614,7 +614,7 @@ _.last(food, { 'type': 'vegetable' });
 Gets the index at which the last occurrence of `value` is found using strict equality for comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the offset from the end of the collection.
 
 #### Arguments
-1. `array` *(array)*: The array to search.
+1. `array` *(Array)*: The array to search.
 2. `value` *(\*)*: The value to search for.
 3. `[fromIndex=array.length-1]` *(number)*: The index to search from.
 
@@ -643,11 +643,11 @@ _.lastIndexOf([1, 2, 3, 1, 2, 3], 2, 3);
 Removes all provided values from the given array using strict equality for comparisons, i.e. `===`.
 
 #### Arguments
-1. `array` *(array)*: The array to modify.
+1. `array` *(Array)*: The array to modify.
 2. `[value]` *(...\*)*: The values to remove.
 
 #### Returns
-*(array)*: Returns `array`.
+*(Array)*: Returns `array`.
 
 #### Example
 ```js
@@ -675,7 +675,7 @@ Creates an array of numbers *(positive and/or negative)* progressing from `start
 3. `[step=1]` *(number)*: The value to increment or decrement by.
 
 #### Returns
-*(array)*: Returns a new range array.
+*(Array)*: Returns a new range array.
 
 #### Example
 ```js
@@ -715,12 +715,12 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `array` *(array)*: The array to modify.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `array` *(Array)*: The array to modify.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a new array of removed elements.
+*(Array)*: Returns a new array of removed elements.
 
 #### Example
 ```js
@@ -754,12 +754,12 @@ If an object is provided for `callback` the created "_.where" style callback wil
 *drop, tail*
 
 #### Arguments
-1. `array` *(array)*: The array to query.
-2. `[callback=1]` *(function|object|number|string)*: The function called per element or the number of elements to exclude. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `array` *(Array)*: The array to query.
+2. `[callback=1]` *(Function|Object|number|string)*: The function called per element or the number of elements to exclude. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a slice of `array`.
+*(Array)*: Returns a slice of `array`.
 
 #### Example
 ```js
@@ -811,9 +811,9 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `array` *(array)*: The array to inspect.
+1. `array` *(Array)*: The array to inspect.
 2. `value` *(\*)*: The value to evaluate.
-3. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+3. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -856,10 +856,10 @@ _.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
 Creates an array of unique values, in order, of the provided arrays using strict equality for comparisons, i.e. `===`.
 
 #### Arguments
-1. `[array]` *(...array)*: The arrays to inspect.
+1. `[array]` *(...Array)*: The arrays to inspect.
 
 #### Returns
-*(array)*: Returns an array of composite values.
+*(Array)*: Returns an array of composite values.
 
 #### Example
 ```js
@@ -887,13 +887,13 @@ If an object is provided for `callback` the created "_.where" style callback wil
 *unique*
 
 #### Arguments
-1. `array` *(array)*: The array to process.
+1. `array` *(Array)*: The array to process.
 2. `[isSorted=false]` *(boolean)*: A flag to indicate that `array` is sorted.
-3. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+3. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a duplicate-value-free array.
+*(Array)*: Returns a duplicate-value-free array.
 
 #### Example
 ```js
@@ -927,11 +927,11 @@ _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
 Creates an array excluding all provided values using strict equality for comparisons, i.e. `===`.
 
 #### Arguments
-1. `array` *(array)*: The array to filter.
+1. `array` *(Array)*: The array to filter.
 2. `[value]` *(...\*)*: The values to exclude.
 
 #### Returns
-*(array)*: Returns a new array of filtered values.
+*(Array)*: Returns a new array of filtered values.
 
 #### Example
 ```js
@@ -955,10 +955,10 @@ Creates an array of grouped elements, the first of which contains the first elem
 *unzip*
 
 #### Arguments
-1. `[array]` *(...array)*: Arrays to process.
+1. `[array]` *(...Array)*: Arrays to process.
 
 #### Returns
-*(array)*: Returns a new array of grouped elements.
+*(Array)*: Returns a new array of grouped elements.
 
 #### Example
 ```js
@@ -982,11 +982,11 @@ Creates an object composed from arrays of `keys` and `values`. Provide either a 
 *object*
 
 #### Arguments
-1. `keys` *(array)*: The array of keys.
-2. `[values=[]]` *(array)*: The array of values.
+1. `keys` *(Array)*: The array of keys.
+2. `[values=[]]` *(Array)*: The array of values.
 
 #### Returns
-*(object)*: Returns an object composed of the given keys and  corresponding values.
+*(Object)*: Returns an object composed of the given keys and  corresponding values.
 
 #### Example
 ```js
@@ -1030,7 +1030,7 @@ The wrapper functions `first` and `last` return wrapped values when `n` is provi
 1. `value` *(\*)*: The value to wrap in a `lodash` instance.
 
 #### Returns
-*(object)*: Returns a `lodash` instance.
+*(Object)*: Returns a `lodash` instance.
 
 #### Example
 ```js
@@ -1062,7 +1062,7 @@ _.isArray(squares.value());
 <!-- div -->
 
 ### <a id="_chainvalue"></a>`_.chain(value)`
-<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6262 "View in source") [&#x24C9;][1]
+<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6266 "View in source") [&#x24C9;][1]
 
 Creates a `lodash` object that wraps the given `value`.
 
@@ -1070,7 +1070,7 @@ Creates a `lodash` object that wraps the given `value`.
 1. `value` *(\*)*: The value to wrap.
 
 #### Returns
-*(object)*: Returns the wrapper object.
+*(Object)*: Returns the wrapper object.
 
 #### Example
 ```js
@@ -1095,13 +1095,13 @@ var youngest = _.chain(stooges)
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6290 "View in source") [&#x24C9;][1]
+<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6294 "View in source") [&#x24C9;][1]
 
 Invokes `interceptor` with the `value` as the first argument and then returns `value`. The purpose of this method is to "tap into" a method chain in order to perform operations on intermediate results within the chain.
 
 #### Arguments
 1. `value` *(\*)*: The value to provide to `interceptor`.
-2. `interceptor` *(function)*: The function to invoke.
+2. `interceptor` *(Function)*: The function to invoke.
 
 #### Returns
 *(\*)*: Returns `value`.
@@ -1125,7 +1125,7 @@ _([1, 2, 3, 4])
 <!-- div -->
 
 ### <a id="_prototypechain"></a>`_.prototype.chain()`
-<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6310 "View in source") [&#x24C9;][1]
+<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6314 "View in source") [&#x24C9;][1]
 
 Enables method chaining on the wrapper object.
 
@@ -1149,7 +1149,7 @@ var sum = _([1, 2, 3])
 <!-- div -->
 
 ### <a id="_prototypetostring"></a>`_.prototype.toString()`
-<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6327 "View in source") [&#x24C9;][1]
+<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6331 "View in source") [&#x24C9;][1]
 
 Produces the `toString` result of the wrapped value.
 
@@ -1170,7 +1170,7 @@ _([1, 2, 3]).toString();
 <!-- div -->
 
 ### <a id="_prototypevalueof"></a>`_.prototype.valueOf()`
-<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6344 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6348 "View in source") [&#x24C9;][1]
 
 Extracts the wrapped value.
 
@@ -1206,11 +1206,11 @@ _([1, 2, 3]).valueOf();
 Creates an array of elements from the specified indexes, or keys, of the `collection`. Indexes may be specified as individual arguments or as arrays of indexes.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
 2. `[index]` *(...(number|number[]|string|string[])*: The indexes of `collection` to retrieve, specified as individual indexes or arrays of indexes.
 
 #### Returns
-*(array)*: Returns a new array of elements corresponding to the  provided indexes.
+*(Array)*: Returns a new array of elements corresponding to the  provided indexes.
 
 #### Example
 ```js
@@ -1237,7 +1237,7 @@ Checks if a given value is present in a collection using strict equality for com
 *include*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
 2. `target` *(\*)*: The value to check for.
 3. `[fromIndex=0]` *(number)*: The index to search from.
 
@@ -1276,12 +1276,12 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns the composed aggregate object.
+*(Object)*: Returns the composed aggregate object.
 
 #### Example
 ```js
@@ -1315,8 +1315,8 @@ If an object is provided for `callback` the created "_.where" style callback wil
 *all*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -1361,12 +1361,12 @@ If an object is provided for `callback` the created "_.where" style callback wil
 *select*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a new array of elements that passed the callback check.
+*(Array)*: Returns a new array of elements that passed the callback check.
 
 #### Example
 ```js
@@ -1407,8 +1407,8 @@ If an object is provided for `callback` the created "_.where" style callback wil
 *detect, findWhere*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -1449,8 +1449,8 @@ _.find(food, 'organic');
 This method is like `_.find` except that it iterates over elements of a `collection` from right to left.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -1480,12 +1480,12 @@ Iterates over elements of a collection, executing the callback for each element.
 *each*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*((array, object, string)*): Returns `collection`.
+*(Array, Object, string)*: Returns `collection`.
 
 #### Example
 ```js
@@ -1512,12 +1512,12 @@ This method is like `_.forEach` except that it iterates over elements of a `coll
 *eachRight*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*((array, object, string)*): Returns `collection`.
+*(Array, Object, string)*: Returns `collection`.
 
 #### Example
 ```js
@@ -1542,12 +1542,12 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns the composed aggregate object.
+*(Object)*: Returns the composed aggregate object.
 
 #### Example
 ```js
@@ -1579,12 +1579,12 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns the composed aggregate object.
+*(Object)*: Returns the composed aggregate object.
 
 #### Example
 ```js
@@ -1616,12 +1616,12 @@ _.indexBy(stooges, function(key) { this.fromCharCode(key.code); }, String);
 Invokes the method named by `methodName` on each element in the `collection` returning an array of the results of each invoked method. Additional arguments will be provided to each invoked method. If `methodName` is a function it will be invoked for, and `this` bound to, each element in the `collection`.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `methodName` *(function|string)*: The name of the method to invoke or the function invoked per iteration.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `methodName` *(Function|string)*: The name of the method to invoke or the function invoked per iteration.
 3. `[arg]` *(...\*)*: Arguments to invoke the method with.
 
 #### Returns
-*(array)*: Returns a new array of the results of each invoked method.
+*(Array)*: Returns a new array of the results of each invoked method.
 
 #### Example
 ```js
@@ -1652,12 +1652,12 @@ If an object is provided for `callback` the created "_.where" style callback wil
 *collect*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a new array of the results of each `callback` execution.
+*(Array)*: Returns a new array of the results of each `callback` execution.
 
 #### Example
 ```js
@@ -1694,8 +1694,8 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -1736,8 +1736,8 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -1774,11 +1774,11 @@ _.min(stooges, 'age');
 Retrieves the value of a specified property from all elements in the `collection`.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
 2. `property` *(string)*: The property to pluck.
 
 #### Returns
-*(array)*: Returns a new array of property values.
+*(Array)*: Returns a new array of property values.
 
 #### Example
 ```js
@@ -1807,8 +1807,8 @@ Reduces a collection to a value which is the accumulated result of running each 
 *foldl, inject*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[accumulator]` *(\*)*: Initial value of the accumulator.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
@@ -1845,8 +1845,8 @@ This method is like `_.reduce` except that it iterates over elements of a `colle
 *foldr*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[accumulator]` *(\*)*: Initial value of the accumulator.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
@@ -1877,12 +1877,12 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a new array of elements that failed the callback check.
+*(Array)*: Returns a new array of elements that failed the callback check.
 
 #### Example
 ```js
@@ -1916,11 +1916,11 @@ _.reject(food, { 'type': 'fruit' });
 Retrieves a random element or `n` random elements from a collection.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to sample.
+1. `collection` *(Array|Object|string)*: The collection to sample.
 2. `[n]` *(number)*: The number of elements to sample.
 
 #### Returns
-*(array)*: Returns the random sample(s) of `collection`.
+*(Array)*: Returns the random sample(s) of `collection`.
 
 #### Example
 ```js
@@ -1944,10 +1944,10 @@ _.sample([1, 2, 3, 4], 2);
 Creates an array of shuffled values, using a version of the Fisher-Yates shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to shuffle.
+1. `collection` *(Array|Object|string)*: The collection to shuffle.
 
 #### Returns
-*(array)*: Returns a new shuffled collection.
+*(Array)*: Returns a new shuffled collection.
 
 #### Example
 ```js
@@ -1968,7 +1968,7 @@ _.shuffle([1, 2, 3, 4, 5, 6]);
 Gets the size of the `collection` by returning `collection.length` for arrays and array-like objects or the number of own enumerable properties for objects.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to inspect.
+1. `collection` *(Array|Object|string)*: The collection to inspect.
 
 #### Returns
 *(number)*: Returns `collection.length` or number of own enumerable properties.
@@ -2005,8 +2005,8 @@ If an object is provided for `callback` the created "_.where" style callback wil
 *any*
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -2048,12 +2048,12 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns a new array of sorted elements.
+*(Array)*: Returns a new array of sorted elements.
 
 #### Example
 ```js
@@ -2081,10 +2081,10 @@ _.sortBy(['banana', 'strawberry', 'apple'], 'length');
 Converts the `collection` to an array.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to convert.
+1. `collection` *(Array|Object|string)*: The collection to convert.
 
 #### Returns
-*(array)*: Returns the new converted array.
+*(Array)*: Returns the new converted array.
 
 #### Example
 ```js
@@ -2105,11 +2105,11 @@ Converts the `collection` to an array.
 Performs a deep comparison of each element in a `collection` to the given `properties` object, returning an array of all elements that have equivalent property values.
 
 #### Arguments
-1. `collection` *(array|object|string)*: The collection to iterate over.
-2. `properties` *(object)*: The object of property values to filter by.
+1. `collection` *(Array|Object|string)*: The collection to iterate over.
+2. `properties` *(Object)*: The object of property values to filter by.
 
 #### Returns
-*(array)*: Returns a new array of elements that have the given `properties`.
+*(Array)*: Returns a new array of elements that have the given `properties`.
 
 #### Example
 ```js
@@ -2146,10 +2146,10 @@ Creates a function this is restricted to executing `func` with the `this` bindin
 
 #### Arguments
 1. `n` *(number)*: The number of times the function must be called before `func` is executed.
-2. `func` *(function)*: The function to restrict.
+2. `func` *(Function)*: The function to restrict.
 
 #### Returns
-*(function)*: Returns the new restricted function.
+*(Function)*: Returns the new restricted function.
 
 #### Example
 ```js
@@ -2173,12 +2173,12 @@ _.forEach(notes, function(note) {
 Creates a function that, when called, invokes `func` with the `this` binding of `thisArg` and prepends any additional `bind` arguments to those provided to the bound function.
 
 #### Arguments
-1. `func` *(function)*: The function to bind.
+1. `func` *(Function)*: The function to bind.
 2. `[thisArg]` *(\*)*: The `this` binding of `func`.
 3. `[arg]` *(...\*)*: Arguments to be partially applied.
 
 #### Returns
-*(function)*: Returns the new bound function.
+*(Function)*: Returns the new bound function.
 
 #### Example
 ```js
@@ -2199,16 +2199,16 @@ func();
 <!-- div -->
 
 ### <a id="_bindallobject--methodname"></a>`_.bindAll(object, [methodName])`
-<a href="#_bindallobject--methodname">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5168 "View in source") [&#x24C9;][1]
+<a href="#_bindallobject--methodname">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5170 "View in source") [&#x24C9;][1]
 
 Binds methods of an object to the object itself, overwriting the existing method. Method names may be specified as individual arguments or as arrays of method names. If no method names are provided all the function properties of `object` will be bound.
 
 #### Arguments
-1. `object` *(object)*: The object to bind and assign the bound methods to.
+1. `object` *(Object)*: The object to bind and assign the bound methods to.
 2. `[methodName]` *(...string)*: The object method names to bind, specified as individual method names or arrays of method names.
 
 #### Returns
-*(object)*: Returns `object`.
+*(Object)*: Returns `object`.
 
 #### Example
 ```js
@@ -2230,17 +2230,17 @@ jQuery('#docs').on('click', view.onClick);
 <!-- div -->
 
 ### <a id="_bindkeyobject-key--arg"></a>`_.bindKey(object, key, [arg])`
-<a href="#_bindkeyobject-key--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5214 "View in source") [&#x24C9;][1]
+<a href="#_bindkeyobject-key--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5216 "View in source") [&#x24C9;][1]
 
 Creates a function that, when called, invokes the method at `object[key]` and prepends any additional `bindKey` arguments to those provided to the bound function. This method differs from `_.bind` by allowing bound functions to reference methods that will be redefined or don't yet exist. See http://michaux.ca/articles/lazy-function-definition-pattern.
 
 #### Arguments
-1. `object` *(object)*: The object the method belongs to.
+1. `object` *(Object)*: The object the method belongs to.
 2. `key` *(string)*: The key of the method.
 3. `[arg]` *(...\*)*: Arguments to be partially applied.
 
 #### Returns
-*(function)*: Returns the new bound function.
+*(Function)*: Returns the new bound function.
 
 #### Example
 ```js
@@ -2271,15 +2271,15 @@ func();
 <!-- div -->
 
 ### <a id="_composefunc"></a>`_.compose([func])`
-<a href="#_composefunc">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5248 "View in source") [&#x24C9;][1]
+<a href="#_composefunc">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5252 "View in source") [&#x24C9;][1]
 
 Creates a function that is the composition of the provided functions, where each function consumes the return value of the function that follows. For example, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`. Each function is executed with the `this` binding of the composed function.
 
 #### Arguments
-1. `[func]` *(...function)*: Functions to compose.
+1. `[func]` *(...Function)*: Functions to compose.
 
 #### Returns
-*(function)*: Returns the new composed function.
+*(Function)*: Returns the new composed function.
 
 #### Example
 ```js
@@ -2309,7 +2309,7 @@ welcome('curly');
 <!-- div -->
 
 ### <a id="_createcallbackfuncidentity--thisarg--argcount"></a>`_.createCallback([func=identity], [thisArg], [argCount])`
-<a href="#_createcallbackfuncidentity--thisarg--argcount">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5299 "View in source") [&#x24C9;][1]
+<a href="#_createcallbackfuncidentity--thisarg--argcount">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5303 "View in source") [&#x24C9;][1]
 
 Produces a callback bound to an optional `thisArg`. If `func` is a property name the created callback will return the property value for a given element. If `func` is an object the created callback will return `true` for elements that contain the equivalent object properties, otherwise it will return `false`.
 
@@ -2319,7 +2319,7 @@ Produces a callback bound to an optional `thisArg`. If `func` is a property name
 3. `[argCount]` *(number)*: The number of arguments the callback accepts.
 
 #### Returns
-*(function)*: Returns a callback function.
+*(Function)*: Returns a callback function.
 
 #### Example
 ```js
@@ -2348,16 +2348,16 @@ _.filter(stooges, 'age__gt45');
 <!-- div -->
 
 ### <a id="_curryfunc--arityfunclength"></a>`_.curry(func, [arity=func.length])`
-<a href="#_curryfunc--arityfunclength">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5364 "View in source") [&#x24C9;][1]
+<a href="#_curryfunc--arityfunclength">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5368 "View in source") [&#x24C9;][1]
 
 Creates a function which accepts one or more arguments of `func` that when invoked either executes `func` returning its result, if all `func` arguments have been provided, or returns a function that accepts one or more of the remaining `func` arguments, and so on. The arity of `func` can be specified if `func.length` is not sufficient.
 
 #### Arguments
-1. `func` *(function)*: The function to curry.
+1. `func` *(Function)*: The function to curry.
 2. `[arity=func.length]` *(number)*: The arity of `func`.
 
 #### Returns
-*(function)*: Returns the new curried function.
+*(Function)*: Returns the new curried function.
 
 #### Example
 ```js
@@ -2382,20 +2382,23 @@ curried(1, 2, 3);
 
 <!-- div -->
 
-### <a id="_debouncefunc-wait-options"></a>`_.debounce(func, wait, options)`
-<a href="#_debouncefunc-wait-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5408 "View in source") [&#x24C9;][1]
+### <a id="_debouncefunc-wait--options--optionsleadingfalse--optionsmaxwait--optionstrailingtrue"></a>`_.debounce(func, wait, [options], [options.leading=false], [options.maxWait], [options.trailing=true])`
+<a href="#_debouncefunc-wait--options--optionsleadingfalse--optionsmaxwait--optionstrailingtrue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5412 "View in source") [&#x24C9;][1]
 
 Creates a function that will delay the execution of `func` until after `wait` milliseconds have elapsed since the last time it was invoked. Provide an options object to indicate that `func` should be invoked on the leading and/or trailing edge of the `wait` timeout. Subsequent calls to the debounced function will return the result of the last `func` call.
 
 Note: If `leading` and `trailing` options are `true` `func` will be called on the trailing edge of the timeout only if the the debounced function is invoked more than once during the `wait` timeout.
 
 #### Arguments
-1. `func` *(function)*: The function to debounce.
+1. `func` *(Function)*: The function to debounce.
 2. `wait` *(number)*: The number of milliseconds to delay.
-3. `options` *(object)*: The options object. [leading=false] A boolean to specify execution on the leading edge of the timeout. [maxWait] The maximum time `func` is allowed to be delayed before it's called. [trailing=true] A boolean to specify execution on the trailing edge of the timeout.
+3. `[options]` *(Object)*: The options object.
+4. `[options.leading=false]` *(boolean)*: Specify execution on the leading edge of the timeout.
+5. `[options.maxWait]` *(number)*: The maximum time `func` is allowed to be delayed before it's called.
+6. `[options.trailing=true]` *(boolean)*: Specify execution on the trailing edge of the timeout.
 
 #### Returns
-*(function)*: Returns the new debounced function.
+*(Function)*: Returns the new debounced function.
 
 #### Example
 ```js
@@ -2424,12 +2427,12 @@ source.addEventListener('message', _.debounce(batchLog, 250, {
 <!-- div -->
 
 ### <a id="_deferfunc--arg"></a>`_.defer(func, [arg])`
-<a href="#_deferfunc--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5511 "View in source") [&#x24C9;][1]
+<a href="#_deferfunc--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5515 "View in source") [&#x24C9;][1]
 
 Defers executing the `func` function until the current call stack has cleared. Additional arguments will be provided to `func` when it is invoked.
 
 #### Arguments
-1. `func` *(function)*: The function to defer.
+1. `func` *(Function)*: The function to defer.
 2. `[arg]` *(...\*)*: Arguments to invoke the function with.
 
 #### Returns
@@ -2449,12 +2452,12 @@ _.defer(function() { console.log('deferred'); });
 <!-- div -->
 
 ### <a id="_delayfunc-wait--arg"></a>`_.delay(func, wait, [arg])`
-<a href="#_delayfunc-wait--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5545 "View in source") [&#x24C9;][1]
+<a href="#_delayfunc-wait--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5549 "View in source") [&#x24C9;][1]
 
 Executes the `func` function after `wait` milliseconds. Additional arguments will be provided to `func` when it is invoked.
 
 #### Arguments
-1. `func` *(function)*: The function to delay.
+1. `func` *(Function)*: The function to delay.
 2. `wait` *(number)*: The number of milliseconds to delay execution.
 3. `[arg]` *(...\*)*: Arguments to invoke the function with.
 
@@ -2476,16 +2479,16 @@ _.delay(log, 1000, 'logged later');
 <!-- div -->
 
 ### <a id="_memoizefunc--resolver"></a>`_.memoize(func, [resolver])`
-<a href="#_memoizefunc--resolver">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5587 "View in source") [&#x24C9;][1]
+<a href="#_memoizefunc--resolver">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5591 "View in source") [&#x24C9;][1]
 
 Creates a function that memoizes the result of `func`. If `resolver` is provided it will be used to determine the cache key for storing the result based on the arguments provided to the memoized function. By default, the first argument provided to the memoized function is used as the cache key. The `func` is executed with the `this` binding of the memoized function. The result cache is exposed as the `cache` property on the memoized function.
 
 #### Arguments
-1. `func` *(function)*: The function to have its output memoized.
-2. `[resolver]` *(function)*: A function used to resolve the cache key.
+1. `func` *(Function)*: The function to have its output memoized.
+2. `[resolver]` *(Function)*: A function used to resolve the cache key.
 
 #### Returns
-*(function)*: Returns the new memoizing function.
+*(Function)*: Returns the new memoizing function.
 
 #### Example
 ```js
@@ -2516,15 +2519,15 @@ stooge('curly');
 <!-- div -->
 
 ### <a id="_oncefunc"></a>`_.once(func)`
-<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5620 "View in source") [&#x24C9;][1]
+<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5624 "View in source") [&#x24C9;][1]
 
 Creates a function that is restricted to execute `func` once. Repeat calls to the function will return the value of the first call. The `func` is executed with the `this` binding of the created function.
 
 #### Arguments
-1. `func` *(function)*: The function to restrict.
+1. `func` *(Function)*: The function to restrict.
 
 #### Returns
-*(function)*: Returns the new restricted function.
+*(Function)*: Returns the new restricted function.
 
 #### Example
 ```js
@@ -2542,16 +2545,16 @@ initialize();
 <!-- div -->
 
 ### <a id="_partialfunc--arg"></a>`_.partial(func, [arg])`
-<a href="#_partialfunc--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5658 "View in source") [&#x24C9;][1]
+<a href="#_partialfunc--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5662 "View in source") [&#x24C9;][1]
 
 Creates a function that, when called, invokes `func` with any additional `partial` arguments prepended to those provided to the new function. This method is similar to `_.bind` except it does **not** alter the `this` binding.
 
 #### Arguments
-1. `func` *(function)*: The function to partially apply arguments to.
+1. `func` *(Function)*: The function to partially apply arguments to.
 2. `[arg]` *(...\*)*: Arguments to be partially applied.
 
 #### Returns
-*(function)*: Returns the new partially applied function.
+*(Function)*: Returns the new partially applied function.
 
 #### Example
 ```js
@@ -2569,16 +2572,16 @@ hi('moe');
 <!-- div -->
 
 ### <a id="_partialrightfunc--arg"></a>`_.partialRight(func, [arg])`
-<a href="#_partialrightfunc--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5689 "View in source") [&#x24C9;][1]
+<a href="#_partialrightfunc--arg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5693 "View in source") [&#x24C9;][1]
 
 This method is like `_.partial` except that `partial` arguments are appended to those provided to the new function.
 
 #### Arguments
-1. `func` *(function)*: The function to partially apply arguments to.
+1. `func` *(Function)*: The function to partially apply arguments to.
 2. `[arg]` *(...\*)*: Arguments to be partially applied.
 
 #### Returns
-*(function)*: Returns the new partially applied function.
+*(Function)*: Returns the new partially applied function.
 
 #### Example
 ```js
@@ -2605,20 +2608,22 @@ options.imports
 
 <!-- div -->
 
-### <a id="_throttlefunc-wait-options"></a>`_.throttle(func, wait, options)`
-<a href="#_throttlefunc-wait-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5724 "View in source") [&#x24C9;][1]
+### <a id="_throttlefunc-wait--options--optionsleadingtrue--optionstrailingtrue"></a>`_.throttle(func, wait, [options], [options.leading=true], [options.trailing=true])`
+<a href="#_throttlefunc-wait--options--optionsleadingtrue--optionstrailingtrue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5728 "View in source") [&#x24C9;][1]
 
 Creates a function that, when executed, will only call the `func` function at most once per every `wait` milliseconds. Provide an options object to indicate that `func` should be invoked on the leading and/or trailing edge of the `wait` timeout. Subsequent calls to the throttled function will return the result of the last `func` call.
 
 Note: If `leading` and `trailing` options are `true` `func` will be called on the trailing edge of the timeout only if the the throttled function is invoked more than once during the `wait` timeout.
 
 #### Arguments
-1. `func` *(function)*: The function to throttle.
+1. `func` *(Function)*: The function to throttle.
 2. `wait` *(number)*: The number of milliseconds to throttle executions to.
-3. `options` *(object)*: The options object. [leading=true] A boolean to specify execution on the leading edge of the timeout. [trailing=true] A boolean to specify execution on the trailing edge of the timeout.
+3. `[options]` *(Object)*: The options object.
+4. `[options.leading=true]` *(boolean)*: Specify execution on the leading edge of the timeout.
+5. `[options.trailing=true]` *(boolean)*: Specify execution on the trailing edge of the timeout.
 
 #### Returns
-*(function)*: Returns the new throttled function.
+*(Function)*: Returns the new throttled function.
 
 #### Example
 ```js
@@ -2640,16 +2645,16 @@ jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
 <!-- div -->
 
 ### <a id="_wrapvalue-wrapper"></a>`_.wrap(value, wrapper)`
-<a href="#_wrapvalue-wrapper">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5768 "View in source") [&#x24C9;][1]
+<a href="#_wrapvalue-wrapper">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5772 "View in source") [&#x24C9;][1]
 
 Creates a function that provides `value` to the wrapper function as its first argument. Additional arguments provided to the function are appended to those provided to the wrapper function. The wrapper is executed with the `this` binding of the created function.
 
 #### Arguments
 1. `value` *(\*)*: The value to wrap.
-2. `wrapper` *(function)*: The wrapper function.
+2. `wrapper` *(Function)*: The wrapper function.
 
 #### Returns
-*(function)*: Returns the new function.
+*(Function)*: Returns the new function.
 
 #### Example
 ```js
@@ -2684,13 +2689,13 @@ Assigns own enumerable properties of source object(s) to the destination object.
 *extend*
 
 #### Arguments
-1. `object` *(object)*: The destination object.
-2. `[source]` *(...object)*: The source objects.
-3. `[callback]` *(function)*: The function to customize assigning values.
+1. `object` *(Object)*: The destination object.
+2. `[source]` *(...Object)*: The source objects.
+3. `[callback]` *(Function)*: The function to customize assigning values.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns the destination object.
+*(Object)*: Returns the destination object.
 
 #### Example
 ```js
@@ -2721,7 +2726,7 @@ Creates a clone of `value`. If `deep` is `true` nested objects will also be clon
 #### Arguments
 1. `value` *(\*)*: The value to clone.
 2. `[deep=false]` *(boolean)*: A flag to indicate a deep clone.
-3. `[callback]` *(function)*: The function to customize cloning values.
+3. `[callback]` *(Function)*: The function to customize cloning values.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -2769,7 +2774,7 @@ Note: This method is loosely based on the structured clone algorithm. Functions 
 
 #### Arguments
 1. `value` *(\*)*: The value to deep clone.
-2. `[callback]` *(function)*: The function to customize cloning values.
+2. `[callback]` *(Function)*: The function to customize cloning values.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -2812,11 +2817,11 @@ clone.node == view.node;
 Assigns own enumerable properties of source object(s) to the destination object for all destination properties that resolve to `undefined`. Once a property is set, additional defaults of the same property will be ignored.
 
 #### Arguments
-1. `object` *(object)*: The destination object.
-2. `[source]` *(...object)*: The source objects.
+1. `object` *(Object)*: The destination object.
+2. `[source]` *(...Object)*: The source objects.
 
 #### Returns
-*(object)*: Returns the destination object.
+*(Object)*: Returns the destination object.
 
 #### Example
 ```js
@@ -2838,8 +2843,8 @@ _.defaults(food, { 'name': 'banana', 'type': 'fruit' });
 This method is like `_.findIndex` except that it returns the key of the first element that passes the callback check, instead of the element itself.
 
 #### Arguments
-1. `object` *(object)*: The object to search.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `object` *(Object)*: The object to search.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -2866,8 +2871,8 @@ _.findKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
 This method is like `_.findKey` except that it iterates over elements of a `collection` in the opposite order.
 
 #### Arguments
-1. `object` *(object)*: The object to search.
-2. `[callback=identity]` *(function|object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
+1. `object` *(Object)*: The object to search.
+2. `[callback=identity]` *(Function|Object|string)*: The function called per iteration. If a property name or object is provided it will be used to create a "_.pluck" or "_.where" style callback, respectively.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -2894,12 +2899,12 @@ _.findLastKey({ 'a': 1, 'b': 2, 'c': 3, 'd': 4 }, function(num) {
 Iterates over own and inherited enumerable properties of an object, executing the callback for each property. The callback is bound to `thisArg` and invoked with three arguments; *(value, key, object)*. Callbacks may exit iteration early by explicitly returning `false`.
 
 #### Arguments
-1. `object` *(object)*: The object to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `object` *(Object)*: The object to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns `object`.
+*(Object)*: Returns `object`.
 
 #### Example
 ```js
@@ -2930,12 +2935,12 @@ _.forIn(new Dog('Dagny'), function(value, key) {
 This method is like `_.forIn` except that it iterates over elements of a `collection` in the opposite order.
 
 #### Arguments
-1. `object` *(object)*: The object to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `object` *(Object)*: The object to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns `object`.
+*(Object)*: Returns `object`.
 
 #### Example
 ```js
@@ -2966,12 +2971,12 @@ _.forInRight(new Dog('Dagny'), function(value, key) {
 Iterates over own enumerable properties of an object, executing the callback for each property. The callback is bound to `thisArg` and invoked with three arguments; *(value, key, object)*. Callbacks may exit iteration early by explicitly returning `false`.
 
 #### Arguments
-1. `object` *(object)*: The object to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `object` *(Object)*: The object to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns `object`.
+*(Object)*: Returns `object`.
 
 #### Example
 ```js
@@ -2994,12 +2999,12 @@ _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
 This method is like `_.forOwn` except that it iterates over elements of a `collection` in the opposite order.
 
 #### Arguments
-1. `object` *(object)*: The object to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `object` *(Object)*: The object to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns `object`.
+*(Object)*: Returns `object`.
 
 #### Example
 ```js
@@ -3025,10 +3030,10 @@ Creates a sorted array of property names of all enumerable properties, own and i
 *methods*
 
 #### Arguments
-1. `object` *(object)*: The object to inspect.
+1. `object` *(Object)*: The object to inspect.
 
 #### Returns
-*(array)*: Returns an array of property names that have function values.
+*(Array)*: Returns an array of property names that have function values.
 
 #### Example
 ```js
@@ -3049,7 +3054,7 @@ _.functions(_);
 Checks if the specified object `property` exists and is a direct property, instead of an inherited property.
 
 #### Arguments
-1. `object` *(object)*: The object to check.
+1. `object` *(Object)*: The object to check.
 2. `property` *(string)*: The property to check for.
 
 #### Returns
@@ -3074,10 +3079,10 @@ _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
 Creates an object composed of the inverted keys and values of the given object.
 
 #### Arguments
-1. `object` *(object)*: The object to invert.
+1. `object` *(Object)*: The object to invert.
 
 #### Returns
-*(object)*: Returns the created inverted object.
+*(Object)*: Returns the created inverted object.
 
 #### Example
 ```js
@@ -3224,7 +3229,7 @@ _.isElement(document.body);
 Checks if `value` is empty. Arrays, strings, or `arguments` objects with a length of `0` and objects with no own enumerable properties are considered "empty".
 
 #### Arguments
-1. `value` *(array|object|string)*: The value to inspect.
+1. `value` *(Array|Object|string)*: The value to inspect.
 
 #### Returns
 *(boolean)*: Returns `true` if the `value` is empty, else `false`.
@@ -3256,7 +3261,7 @@ Performs a deep comparison between two values to determine if they are equivalen
 #### Arguments
 1. `a` *(\*)*: The value to compare.
 2. `b` *(\*)*: The other value to compare.
-3. `[callback]` *(function)*: The function to customize comparing values.
+3. `[callback]` *(Function)*: The function to customize comparing values.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
@@ -3586,10 +3591,10 @@ _.isUndefined(void 0);
 Creates an array composed of the own enumerable property names of an object.
 
 #### Arguments
-1. `object` *(object)*: The object to inspect.
+1. `object` *(Object)*: The object to inspect.
 
 #### Returns
-*(array)*: Returns an array of property names.
+*(Array)*: Returns an array of property names.
 
 #### Example
 ```js
@@ -3610,13 +3615,13 @@ _.keys({ 'one': 1, 'two': 2, 'three': 3 });
 Recursively merges own enumerable properties of the source object(s), that don't resolve to `undefined` into the destination object. Subsequent sources will overwrite property assignments of previous sources. If a callback is provided it will be executed to produce the merged values of the destination and source properties. If the callback returns `undefined` merging will be handled by the method instead. The callback is bound to `thisArg` and invoked with two arguments; *(objectValue, sourceValue)*.
 
 #### Arguments
-1. `object` *(object)*: The destination object.
-2. `[source]` *(...object)*: The source objects.
-3. `[callback]` *(function)*: The function to customize merging properties.
+1. `object` *(Object)*: The destination object.
+2. `[source]` *(...Object)*: The source objects.
+3. `[callback]` *(Function)*: The function to customize merging properties.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns the destination object.
+*(Object)*: Returns the destination object.
 
 #### Example
 ```js
@@ -3666,12 +3671,12 @@ _.merge(food, otherFood, function(a, b) {
 Creates a shallow clone of `object` excluding the specified properties. Property names may be specified as individual arguments or as arrays of property names. If a callback is provided it will be executed for each property of `object` omitting the properties the callback returns truthy for. The callback is bound to `thisArg` and invoked with three arguments; *(value, key, object)*.
 
 #### Arguments
-1. `object` *(object)*: The source object.
-2. `[callback]` *(function|...string|string[])*: The properties to omit or the function called per iteration.
+1. `object` *(Object)*: The source object.
+2. `[callback]` *(Function|...string|string[])*: The properties to omit or the function called per iteration.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns an object without the omitted properties.
+*(Object)*: Returns an object without the omitted properties.
 
 #### Example
 ```js
@@ -3697,10 +3702,10 @@ _.omit({ 'name': 'moe', 'age': 40 }, function(value) {
 Creates a two dimensional array of an object's key-value pairs, i.e. `[[key1, value1], [key2, value2]]`.
 
 #### Arguments
-1. `object` *(object)*: The object to inspect.
+1. `object` *(Object)*: The object to inspect.
 
 #### Returns
-*(array)*: Returns new array of key-value pairs.
+*(Array)*: Returns new array of key-value pairs.
 
 #### Example
 ```js
@@ -3721,12 +3726,12 @@ _.pairs({ 'moe': 30, 'larry': 40 });
 Creates a shallow clone of `object` composed of the specified properties. Property names may be specified as individual arguments or as arrays of property names. If a callback is provided it will be executed for each property of `object` picking the properties the callback returns truthy for. The callback is bound to `thisArg` and invoked with three arguments; *(value, key, object)*.
 
 #### Arguments
-1. `object` *(object)*: The source object.
-2. `[callback]` *(function|...string|string[])*: The function called per iteration or property names to pick, specified as individual property names or arrays of property names.
+1. `object` *(Object)*: The source object.
+2. `[callback]` *(Function|...string|string[])*: The function called per iteration or property names to pick, specified as individual property names or arrays of property names.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(object)*: Returns an object composed of the picked properties.
+*(Object)*: Returns an object composed of the picked properties.
 
 #### Example
 ```js
@@ -3752,8 +3757,8 @@ _.pick({ 'name': 'moe', '_userid': 'moe1' }, function(value, key) {
 An alternative to `_.reduce` this method transforms `object` to a new `accumulator` object which is the result of running each of its elements through a callback, with each callback execution potentially mutating the `accumulator` object. The callback is bound to `thisArg` and invoked with four arguments; *(accumulator, value, key, object)*. Callbacks may exit iteration early by explicitly returning `false`.
 
 #### Arguments
-1. `collection` *(array|object)*: The collection to iterate over.
-2. `[callback=identity]` *(function)*: The function called per iteration.
+1. `collection` *(Array|Object)*: The collection to iterate over.
+2. `[callback=identity]` *(Function)*: The function called per iteration.
 3. `[accumulator]` *(\*)*: The custom accumulator value.
 4. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
@@ -3789,10 +3794,10 @@ var mapped = _.transform({ 'a': 1, 'b': 2, 'c': 3 }, function(result, num, key) 
 Creates an array composed of the own enumerable property values of `object`.
 
 #### Arguments
-1. `object` *(object)*: The object to inspect.
+1. `object` *(Object)*: The object to inspect.
 
 #### Returns
-*(array)*: Returns an array of property values.
+*(Array)*: Returns an array of property values.
 
 #### Example
 ```js
@@ -3815,7 +3820,7 @@ _.values({ 'one': 1, 'two': 2, 'three': 3 });
 <!-- div -->
 
 ### <a id="_escapestring"></a>`_.escape(string)`
-<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5795 "View in source") [&#x24C9;][1]
+<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5799 "View in source") [&#x24C9;][1]
 
 Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their corresponding HTML entities.
 
@@ -3839,7 +3844,7 @@ _.escape('Moe, Larry & Curly');
 <!-- div -->
 
 ### <a id="_identityvalue"></a>`_.identity(value)`
-<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5813 "View in source") [&#x24C9;][1]
+<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5817 "View in source") [&#x24C9;][1]
 
 This method returns the first argument provided to it.
 
@@ -3864,13 +3869,13 @@ moe === _.identity(moe);
 <!-- div -->
 
 ### <a id="_mixinobject-object"></a>`_.mixin(object, object)`
-<a href="#_mixinobject-object">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5840 "View in source") [&#x24C9;][1]
+<a href="#_mixinobject-object">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5844 "View in source") [&#x24C9;][1]
 
 Adds function properties of a source object to the `lodash` function and chainable wrapper.
 
 #### Arguments
-1. `object` *(object)*: The object of function properties to add to `lodash`.
-2. `object` *(object)*: The object of function properties to add to `lodash`.
+1. `object` *(Object)*: The object of function properties to add to `lodash`.
+2. `object` *(Object)*: The object of function properties to add to `lodash`.
 
 #### Example
 ```js
@@ -3895,12 +3900,12 @@ _('moe').capitalize();
 <!-- div -->
 
 ### <a id="_noconflict"></a>`_.noConflict()`
-<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5878 "View in source") [&#x24C9;][1]
+<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5882 "View in source") [&#x24C9;][1]
 
 Reverts the '_' variable to its previous value and returns a reference to the `lodash` function.
 
 #### Returns
-*(function)*: Returns the `lodash` function.
+*(Function)*: Returns the `lodash` function.
 
 #### Example
 ```js
@@ -3915,7 +3920,7 @@ var lodash = _.noConflict();
 <!-- div -->
 
 ### <a id="_parseintvalue--radix"></a>`_.parseInt(value, [radix])`
-<a href="#_parseintvalue--radix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5902 "View in source") [&#x24C9;][1]
+<a href="#_parseintvalue--radix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5906 "View in source") [&#x24C9;][1]
 
 Converts the given `value` into an integer of the specified `radix`. If `radix` is `undefined` or `0` a `radix` of `10` is used unless the `value` is a hexadecimal, in which case a `radix` of `16` is used.
 
@@ -3942,7 +3947,7 @@ _.parseInt('08');
 <!-- div -->
 
 ### <a id="_randommin0--max1"></a>`_.random([min=0], [max=1])`
-<a href="#_randommin0--max1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5926 "View in source") [&#x24C9;][1]
+<a href="#_randommin0--max1">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5930 "View in source") [&#x24C9;][1]
 
 Produces a random number between `min` and `max` *(inclusive)*. If only one argument is provided a number between `0` and the given number will be returned.
 
@@ -3970,12 +3975,12 @@ _.random(5);
 <!-- div -->
 
 ### <a id="_resultobject-property"></a>`_.result(object, property)`
-<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5970 "View in source") [&#x24C9;][1]
+<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5974 "View in source") [&#x24C9;][1]
 
 Resolves the value of `property` on `object`. If `property` is a function it will be invoked with the `this` binding of `object` and its result returned, else the property value is returned. If `object` is falsey then `undefined` is returned.
 
 #### Arguments
-1. `object` *(object)*: The object to inspect.
+1. `object` *(Object)*: The object to inspect.
 2. `property` *(string)*: The property to get the value of.
 
 #### Returns
@@ -4010,10 +4015,10 @@ _.result(object, 'stuff');
 Create a new `lodash` function using the given `context` object.
 
 #### Arguments
-1. `[context=root]` *(object)*: The context object.
+1. `[context=root]` *(Object)*: The context object.
 
 #### Returns
-*(function)*: Returns the `lodash` function.
+*(Function)*: Returns the `lodash` function.
 
 * * *
 
@@ -4022,8 +4027,8 @@ Create a new `lodash` function using the given `context` object.
 
 <!-- div -->
 
-### <a id="_templatetext-data-options"></a>`_.template(text, data, options)`
-<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6061 "View in source") [&#x24C9;][1]
+### <a id="_templatetext-data--options--optionsescape--optionsevaluate--optionsimports--optionsinterpolate--sourceurl--variable"></a>`_.template(text, data, [options], [options.escape], [options.evaluate], [options.imports], [options.interpolate], [sourceURL], [variable])`
+<a href="#_templatetext-data--options--optionsescape--optionsevaluate--optionsimports--optionsinterpolate--sourceurl--variable">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6065 "View in source") [&#x24C9;][1]
 
 A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.
 
@@ -4037,11 +4042,17 @@ http://developer.chrome.com/stable/extensions/sandboxingEval.html
 
 #### Arguments
 1. `text` *(string)*: The template text.
-2. `data` *(object)*: The data object used to populate the text.
-3. `options` *(object)*: The options object. escape - The "escape" delimiter regexp. evaluate - The "evaluate" delimiter regexp. imports - An object of properties to import into the compiled template as local variables. interpolate - The "interpolate" delimiter regexp. sourceURL - The sourceURL of the template's compiled source. variable - The data object variable name.
+2. `data` *(Object)*: The data object used to populate the text.
+3. `[options]` *(Object)*: The options object.
+4. `[options.escape]` *(RegExp)*: The "escape" delimiter.
+5. `[options.evaluate]` *(RegExp)*: The "evaluate" delimiter.
+6. `[options.imports]` *(Object)*: An object to import into the template as local variables.
+7. `[options.interpolate]` *(RegExp)*: The "interpolate" delimiter.
+8. `[sourceURL]` *(string)*: The sourceURL of the template's compiled source.
+9. `[variable]` *(string)*: The data object variable name.
 
 #### Returns
-*((function, string)*): Returns a compiled function when no `data` object  is given, else it returns the interpolated text.
+*(Function, string)*: Returns a compiled function when no `data` object  is given, else it returns the interpolated text.
 
 #### Example
 ```js
@@ -4111,17 +4122,17 @@ fs.writeFileSync(path.join(cwd, 'jst.js'), '\
 <!-- div -->
 
 ### <a id="_timesn-callback--thisarg"></a>`_.times(n, callback, [thisArg])`
-<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6186 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback--thisarg">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6190 "View in source") [&#x24C9;][1]
 
 Executes the callback `n` times, returning an array of the results of each callback execution. The callback is bound to `thisArg` and invoked with one argument; *(index)*.
 
 #### Arguments
 1. `n` *(number)*: The number of times to execute the callback.
-2. `callback` *(function)*: The function called per iteration.
+2. `callback` *(Function)*: The function called per iteration.
 3. `[thisArg]` *(\*)*: The `this` binding of `callback`.
 
 #### Returns
-*(array)*: Returns an array of the results of each `callback` execution.
+*(Array)*: Returns an array of the results of each `callback` execution.
 
 #### Example
 ```js
@@ -4143,7 +4154,7 @@ _.times(3, function(n) { this.cast(n); }, mage);
 <!-- div -->
 
 ### <a id="_unescapestring"></a>`_.unescape(string)`
-<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6213 "View in source") [&#x24C9;][1]
+<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6217 "View in source") [&#x24C9;][1]
 
 The inverse of `_.escape` this method converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their corresponding characters.
 
@@ -4167,7 +4178,7 @@ _.unescape('Moe, Larry &amp; Curly');
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6233 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6237 "View in source") [&#x24C9;][1]
 
 Generates a unique ID. If `prefix` is provided the ID will be appended to it.
 
@@ -4220,7 +4231,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6542 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L6546 "View in source") [&#x24C9;][1]
 
 *(string)*: The semantic version number.
 
@@ -4234,7 +4245,7 @@ A reference to the `lodash` function.
 ### <a id="_support"></a>`_.support`
 <a href="#_support">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L657 "View in source") [&#x24C9;][1]
 
-*(object)*: An object used to flag environments features.
+*(Object)*: An object used to flag environments features.
 
 * * *
 
@@ -4374,7 +4385,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 ### <a id="_templatesettings"></a>`_.templateSettings`
 <a href="#_templatesettings">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L791 "View in source") [&#x24C9;][1]
 
-*(object)*: By default, the template delimiters used by Lo-Dash are similar to those in embedded Ruby *(ERB)*. Change the following template settings to use alternative delimiters.
+*(Object)*: By default, the template delimiters used by Lo-Dash are similar to those in embedded Ruby *(ERB)*. Change the following template settings to use alternative delimiters.
 
 * * *
 
@@ -4386,7 +4397,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 ### <a id="_templatesettingsescape"></a>`_.templateSettings.escape`
 <a href="#_templatesettingsescape">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L799 "View in source") [&#x24C9;][1]
 
-*(regexp)*: Used to detect `data` property values to be HTML-escaped.
+*(RegExp)*: Used to detect `data` property values to be HTML-escaped.
 
 * * *
 
@@ -4398,7 +4409,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 ### <a id="_templatesettingsevaluate"></a>`_.templateSettings.evaluate`
 <a href="#_templatesettingsevaluate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L807 "View in source") [&#x24C9;][1]
 
-*(regexp)*: Used to detect code to be evaluated.
+*(RegExp)*: Used to detect code to be evaluated.
 
 * * *
 
@@ -4410,7 +4421,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 ### <a id="_templatesettingsinterpolate"></a>`_.templateSettings.interpolate`
 <a href="#_templatesettingsinterpolate">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L815 "View in source") [&#x24C9;][1]
 
-*(regexp)*: Used to detect `data` property values to inject.
+*(RegExp)*: Used to detect `data` property values to inject.
 
 * * *
 
@@ -4434,7 +4445,7 @@ IE < `8` can't access characters by index and IE `8` can only access characters 
 ### <a id="_templatesettingsimports"></a>`_.templateSettings.imports`
 <a href="#_templatesettingsimports">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L831 "View in source") [&#x24C9;][1]
 
-*(object)*: Used to import variables into the compiled template.
+*(Object)*: Used to import variables into the compiled template.
 
 * * *
 

@@ -54,6 +54,9 @@
   /** Used to match regexp flags from their coerced string values */
   var reFlags = /\w*$/;
 
+  /** Used to detected named functions */
+  var reFuncName = /^function[ \n\r\t]+\w/;
+
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;
 
@@ -610,6 +613,14 @@
     support.fastBind = nativeBind && !isV8;
 
     /**
+     * Detect if `Function#name` is supported (all but IE).
+     *
+     * @memberOf _.support
+     * @type boolean
+     */
+    support.funcNames = typeof Function.name == 'string';
+
+    /**
      * By default, the template delimiters used by Lo-Dash are similar to those in
      * embedded Ruby (ERB). Change the following template settings to use alternative
      * delimiters.
@@ -780,14 +791,20 @@
       if (typeof thisArg == 'undefined') {
         return func;
       }
-      var bindData = !func.name || func.__bindData__;
+      var bindData = func.__bindData__ || (support.funcNames && !func.name);
       if (typeof bindData == 'undefined') {
-        // checks if `func` references the `this` keyword and stores the result
-        bindData = !reThis || reThis.test(fnToString.call(func));
-        setBindData(func, bindData);
+        var source = reThis && fnToString.call(func);
+        if (!support.funcNames && source && !reFuncName.test(source)) {
+          bindData = true;
+        }
+        if (support.funcNames || !bindData) {
+          // checks if `func` references the `this` keyword and stores the result
+          bindData = !reThis || reThis.test(source);
+          setBindData(func, bindData);
+        }
       }
       // exit early if there are no `this` references or `func` is bound
-      if (bindData !== true && !(bindData && bindData[1] & 1)) {
+      if (bindData !== true && (bindData && bindData[1] & 1)) {
         return func;
       }
       switch (argCount) {

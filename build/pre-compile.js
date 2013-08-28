@@ -198,6 +198,7 @@
     'methods',
     'min',
     'mixin',
+    'name',
     'noConflict',
     'nodeClass',
     'nonEnumArgs',

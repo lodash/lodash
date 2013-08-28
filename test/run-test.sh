@@ -10,9 +10,5 @@ echo "Testing in node..."
 node test.js ../dist/lodash.js && node test.js ../dist/lodash.min.js
 
 echo ""
-echo "Testing build..."
-node test-build.js
-
-echo ""
 echo "Testing in a browser..."
 open index.html

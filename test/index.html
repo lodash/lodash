@@ -54,7 +54,7 @@
 					return;
 				}
 				var reBasename = /[\w.-]+$/,
-				    basePath = (location.origin + location.pathname).split(/\btest\b/).slice(0, -1).join('test'),
+				    basePath = ('//' + location.hostname + location.pathname).replace(/\btest\/$/, ''),
 				    isModularize = /modularize/.test(ui.urlParams.build),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
 				    moduleMain = modulePath.match(reBasename)[0];

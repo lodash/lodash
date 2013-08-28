@@ -6,5 +6,3 @@
 *.map
 modularize
 node_modules
-vendor/closure-compiler
-vendor/uglifyjs

@@ -8,15 +8,12 @@ env:
   - TEST_COMMAND="phantomjs ./test/test.js ../dist/lodash.compat.min.js"
   - TEST_COMMAND="node ./test/test.js ../dist/lodash.js"
   - TEST_COMMAND="node ./test/test.js ../dist/lodash.min.js"
-  - TEST_COMMAND="node ./test/test-build.js --time-limit 48m"
 git:
   depth: 1
 branches:
   only:
     - master
 before_script:
-  - "tar -xzvf vendor/closure-compiler.tar.gz -C vendor"
-  - "tar -xzvf vendor/uglifyjs.tar.gz -C vendor"
   - "npm install -g istanbul"
 script:
   $TEST_COMMAND

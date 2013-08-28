@@ -1791,6 +1791,8 @@
    * @returns {string} Returns the modified source.
    */
   function removeEsOptimization(source) {
+    source = removeSupportProp(source, 'funcNames');
+
     // remove `__bindData__` logic and `setBindData` function calls from `createBound`
     source = source.replace(matchFunction(source, 'createBound'), function(match) {
       return match

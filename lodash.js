@@ -5103,8 +5103,8 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates a function this is restricted to executing `func` with the `this`
-     * binding and arguments of the created function, only after it is called `n` times.
+     * Creates a function that executes `func`, with  the `this` binding and
+     * arguments of the created function, only after being called `n` times.
      *
      * @static
      * @memberOf _
@@ -5115,11 +5115,16 @@
      * @returns {Function} Returns the new restricted function.
      * @example
      *
-     * var renderNotes = _.after(notes.length, render);
-     * _.forEach(notes, function(note) {
-     *   note.asyncSave({ 'success': renderNotes });
+     * var saves = ['profile', 'settings'];
+     *
+     * var done = _.after(saves.length, function() {
+     *   console.log('Done saving!');
      * });
-     * // `renderNotes` is run once, after all notes have saved
+     *
+     * _.forEach(saves, function(type) {
+     *   asyncSave({ 'type': type, 'complete': done });
+     * });
+     * // => logs 'Done saving!', after all saves have completed
      */
     function after(n, func) {
       if (!isFunction(func)) {

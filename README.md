@@ -5,16 +5,16 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 ## Download
 
 * Modern builds:
-[Development](https://raw.github.com/bestiejs/lodash/v1.3.1/dist/lodash.js) &
-[Production](https://raw.github.com/bestiejs/lodash/v1.3.1/dist/lodash.min.js)
+[Development](https://raw.github.com/lodash/lodash/1.3.1/dist/lodash.js) &
+[Production](https://raw.github.com/lodash/lodash/1.3.1/dist/lodash.min.js)
 
 * Compatibility builds:
-[Development](https://raw.github.com/bestiejs/lodash/v1.3.1/dist/lodash.compat.js) &
-[Production](https://raw.github.com/bestiejs/lodash/v1.3.1/dist/lodash.compat.min.js)
+[Development](https://raw.github.com/lodash/lodash/1.3.1/dist/lodash.compat.js) &
+[Production](https://raw.github.com/lodash/lodash/1.3.1/dist/lodash.compat.min.js)
 
 * Underscore builds:
-[Development](https://raw.github.com/bestiejs/lodash/v1.3.1/dist/lodash.underscore.js) &
-[Production](https://raw.github.com/bestiejs/lodash/v1.3.1/dist/lodash.underscore.min.js)
+[Development](https://raw.github.com/lodash/lodash/1.3.1/dist/lodash.underscore.js) &
+[Production](https://raw.github.com/lodash/lodash/1.3.1/dist/lodash.underscore.min.js)
 
 CDN copies are available on [cdnjs](http://cdnjs.com/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.
@@ -23,7 +23,7 @@ For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) 
 
 There’s plenty of [documentation](http://lodash.com/docs), [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).
 
-For a list of upcoming features, check out our [roadmap](https://github.com/bestiejs/lodash/wiki/Roadmap).
+For a list of upcoming features, check out our [roadmap](https://github.com/lodash/lodash/wiki/Roadmap).
 
 ## Features *not* in Underscore
 
@@ -130,7 +130,7 @@ require({
  * Increased the `maxPoolSize` value
  * Optimized `releaseArray` & `releaseObject`
 
-The full changelog is available [here](https://github.com/bestiejs/lodash/wiki/Changelog).
+The full changelog is available [here](https://github.com/lodash/lodash/wiki/Changelog).
 
 ## BestieJS
 

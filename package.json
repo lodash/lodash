@@ -26,14 +26,19 @@
       "url": "http://allyoucanleet.com/"
     },
     {
-      "name": "Mathias Bynens",
-      "email": "mathias@qiwi.be",
-      "url": "http://mathiasbynens.be/"
+      "name": "Blaine Bublitz",
+      "email": "blaine@iceddev.com",
+      "url": "http://iceddev.com/"
     },
     {
       "name": "Kit Cambridge",
       "email": "github@kitcambridge.be",
       "url": "http://kitcambridge.be/"
+    },
+    {
+      "name": "Mathias Bynens",
+      "email": "mathias@qiwi.be",
+      "url": "http://mathiasbynens.be/"
     }
   ],
   "bugs": {
@@ -63,9 +68,6 @@
   ],
   "jam": {
     "main": "./dist/lodash.compat.js"
-  },
-  "scripts": {
-    "test": "node test/test.js"
   },
   "volo": {
     "type": "directory",

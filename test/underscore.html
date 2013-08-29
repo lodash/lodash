@@ -89,17 +89,13 @@
 					return;
 				}
 				var reBasename = /[\w.-]+$/,
-				    basePath = ('//' + location.hostname + location.pathname).replace(/\btest\/$/, ''),
+				    basePath = ('//' + location.hostname + ':' + location.port + location.pathname).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
 				    moduleMain = modulePath.match(reBasename)[0];
 
 				var locationPath = /modularize/.test(ui.urlParams.build)
 					? '../modularize'
 					: modulePath.replace(reBasename, '');
-
-				var pluginPath = window.curl
-					? ui.loaderPath.replace(reBasename, 'curl/plugin/js!')
-					: '';
 
 				QUnit.config.autostart = false;
 
@@ -112,18 +108,26 @@
 							'name': 'lodash',
 							'location': locationPath,
 							'main': moduleMain
+						},
+						{
+							'name': 'test',
+							'location': '../vendor/underscore/test',
+							'config': {
+								'loader': 'curl/loader/legacy',
+								'exports': 'QUnit' // cheat to work around no global being exported, won't be able to detect 404s in IE
+							}
 						}
 					]
 				},
 				['lodash'], function(lodash) {
 					init(lodash);
 					require([
-						pluginPath + basePath + '/vendor/underscore/test/collections.js',
-						pluginPath + basePath + '/vendor/underscore/test/arrays.js',
-						pluginPath + basePath + '/vendor/underscore/test/functions.js',
-						pluginPath + basePath + '/vendor/underscore/test/objects.js',
-						pluginPath + basePath + '/vendor/underscore/test/utility.js',
-						pluginPath + basePath + '/vendor/underscore/test/chaining.js'
+						'test/collections',
+						'test/arrays',
+						'test/functions',
+						'test/objects',
+						'test/utility',
+						'test/chaining'
 					], function() {
 						QUnit.start();
 					});

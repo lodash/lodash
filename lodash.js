@@ -6022,7 +6022,7 @@
      *  is given, else it returns the interpolated text.
      * @example
      *
-     * // using a compiled template
+     * // using the "interpolate" delimiter to create a compiled template
      * var compiled = _.template('hello <%= name %>');
      * compiled({ 'name': 'moe' });
      * // => 'hello moe'
@@ -6032,7 +6032,7 @@
      * // => '<b>&lt;script&gt;</b>'
      *
      * // using the "evaluate" delimiter to generate HTML
-     * var list = '<% _.forEach(people, function(name) { %><li><%= name %></li><% }); %>';
+     * var list = '<% _.forEach(people, function(name) { %><li><%- name %></li><% }); %>';
      * _.template(list, { 'people': ['moe', 'larry'] });
      * // => '<li>moe</li><li>larry</li>'
      *

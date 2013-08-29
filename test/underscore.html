@@ -89,7 +89,7 @@
 					return;
 				}
 				var reBasename = /[\w.-]+$/,
-				    basePath = ('//' + location.hostname + ':' + location.port + location.pathname).replace(/\btest\/$/, ''),
+				    basePath = ('//' + location.host + location.pathname).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
 				    moduleMain = modulePath.match(reBasename)[0];
 
@@ -113,8 +113,9 @@
 							'name': 'test',
 							'location': '../vendor/underscore/test',
 							'config': {
-								'loader': 'curl/loader/legacy',
-								'exports': 'QUnit' // cheat to work around no global being exported, won't be able to detect 404s in IE
+								// work around no global being exported
+								'exports': 'QUnit',
+								'loader': 'curl/loader/legacy'
 							}
 						}
 					]

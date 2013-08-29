@@ -4807,6 +4807,43 @@
     }
 
     /**
+     * Repeats an argument the specified number of times. If `toRepeat` is a single element,
+     * it will be repeated `count` times. If `toRepeat` is an array, then the array will
+     * be repeated `count` times, and it will be flattened into a single return array.
+     * 
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {Array|*} toRepeat an array of elements of a single element to be repeated
+     * @param {number} count the number of times to repeat
+     * @returns {Array} a new array of repeated elements
+     * @example
+     *
+     * _.repeat('a', 4);
+     * // =>['a', 'a', 'a', 'a']
+     *
+     * _.repeat(['c', 'd'], 2);
+     * // =>['c', 'd', 'c', 'd']
+     *
+     * _.repeat(['e', ['f']], 2);
+     * // =>['e', ['f'], 'e', ['f']]
+     *
+     * _.repeat({foo: 'bar'}, 3);
+     * // =>[{foo: 'bar'}, {foo: 'bar'}, {foo: 'bar'}]
+     */
+    function repeat(toRepeat, count) {
+      var toRepeatAsArray = [].concat(toRepeat);
+
+      return lodash(count)
+        .range()
+        .map(function() {
+          return toRepeatAsArray
+        })
+        .flatten(true)
+        .value();
+    }
+
+    /**
      * The opposite of `_.initial` this method gets all but the first element or
      * first `n` elements of an array. If a callback function is provided elements
      * at the beginning of the array are excluded from the result as long as the
@@ -6418,6 +6455,7 @@
     lodash.range = range;
     lodash.reject = reject;
     lodash.remove = remove;
+    lodash.repeat = repeat;
     lodash.rest = rest;
     lodash.shuffle = shuffle;
     lodash.sortBy = sortBy;

@@ -3132,6 +3132,28 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.repeat');
+
+  (function() {
+    test('should repeat a single element', function() {
+      deepEqual(_.repeat('a', 4), ['a', 'a', 'a', 'a']);
+    });
+
+    test('should repeat a list', function() {
+      deepEqual(_.repeat(['c', 'd'], 2), ['c', 'd', 'c', 'd']);
+    });
+
+    test('should repeat a list of lists', function() {
+      deepEqual(_.repeat(['e', ['f']], 2), ['e', ['f'], 'e', ['f']]);
+    });
+
+    test('should repeat an object', function() {
+      deepEqual(_.repeat({foo: 'bar'}, 3), [{foo: 'bar'}, {foo: 'bar'}, {foo: 'bar'}]);
+    });
+  })();
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.result');
 
   (function() {

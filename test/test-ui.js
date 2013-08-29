@@ -64,7 +64,7 @@
   ui.loaderPath = (function() {
     var result;
     switch (loader) {
-      case 'curl':      result = 'vendor/curl/src/curl.js'; break;
+      case 'curl':      result = 'vendor/curl/curl.js'; break;
       case 'dojo':      result = 'vendor/dojo/dojo.js'; break;
       case 'requirejs':
       case  undefined:  result = 'vendor/requirejs/require.js'; break;

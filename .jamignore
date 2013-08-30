@@ -1,12 +1,8 @@
 .*
 *.custom.*
 *.min.*
-*.template.*
-*.d.ts
-*.map
 *.md
 *.txt
-build.js
 lodash.js
 index.js
 bower.json

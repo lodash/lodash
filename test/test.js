@@ -3396,7 +3396,7 @@
   QUnit.module('lodash.some');
 
   (function() {
-    test('should return `true` as soon as the `callback` result is truthy', function() {
+    test('should return `true` as soon as the `callback` result is truey', function() {
       strictEqual(_.some([null, true, null], _.identity), true);
     });
   }());

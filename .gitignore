@@ -1,5 +1,7 @@
 .DS_Store
 *.custom.*
 *.min.*
+*.template.*
+*.map
 modularize
 node_modules

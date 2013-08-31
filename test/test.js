@@ -101,7 +101,7 @@
   });
 
   /** Used to indicate testing a modularized build */
-  var isModularize = /modularize/.test([ui.buildPath, ui.urlParams.build]);
+  var isModularize = /\b(?:lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build]);
 
   /*--------------------------------------------------------------------------*/
 

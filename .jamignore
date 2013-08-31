@@ -1,6 +1,8 @@
 .*
 *.custom.*
 *.min.*
+*.template.*
+*.map
 *.md
 *.txt
 lodash.js

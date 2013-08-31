@@ -57,8 +57,6 @@
     "dist/lodash.min.js",
     "dist/lodash.compat.js",
     "dist/lodash.compat.min.js",
-    "dist/lodash.mobile.js",
-    "dist/lodash.mobile.min.js",
     "dist/lodash.underscore.js",
     "dist/lodash.underscore.min.js"
   ],
@@ -72,7 +70,6 @@
       "*.custom.*",
       "*.min.*",
       "*.template.*",
-      "*.d.ts",
       "*.map",
       "*.md",
       "*.txt",

@@ -53,6 +53,7 @@
     "rhino"
   ],
   "files": [
+    "LICENSE.txt",
     "dist/lodash.js",
     "dist/lodash.min.js",
     "dist/lodash.compat.js",

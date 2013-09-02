@@ -16,4 +16,4 @@ branches:
 before_script:
   - "npm install -g istanbul"
 script:
-  $TEST_COMMAND
+  - $TEST_COMMAND

@@ -49,11 +49,11 @@
       case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
       case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
       case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
+      case 'lodash-modularize': result = 'modularize/lodash.js'; break;
       case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'lodash-compat-dev':
-      case 'lodash-modularize':
       case  undefined:          result = 'lodash.js'; break;
       default:                  return build;
     }
@@ -72,6 +72,9 @@
     }
     return basePath + result;
   }());
+
+  // used to indicate testing a modularized build
+  ui.isModularize = /\b(?:lodash-(?:amd|node)|modularize)\b/.test(ui.buildPath);
 
   // initialize controls
   addListener(window, 'load', function() {

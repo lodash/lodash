@@ -22,7 +22,7 @@
 			Object.keys = function() { return []; };
 
 			// load Lo-Dash and expose it to the bad `Object.keys` shim
-			document.write('<script src="' + ui.buildPath + '"><\/script>');
+			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 		</script>
 		<script>
 			// store Lo-Dash to test for bad shim detection
@@ -33,7 +33,7 @@
 			delete Object._keys;
 
 			// load Lo-Dash again to overwrite the existing `_` value
-			document.write('<script src="' + ui.buildPath + '"><\/script>');
+			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 
 			// load test.js if not using require.js
 			document.write(ui.urlParams.loader != 'none'
@@ -55,13 +55,9 @@
 				}
 				var reBasename = /[\w.-]+$/,
 				    basePath = ('//' + location.host + location.pathname).replace(/\btest\/$/, ''),
-				    isModularize = /modularize/.test(ui.urlParams.build),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
+				    locationPath = modulePath.replace(reBasename, ''),
 				    moduleMain = modulePath.match(reBasename)[0];
-
-				var locationPath = isModularize
-					? '../modularize'
-					: modulePath.replace(reBasename, '');
 
 				QUnit.config.autostart = false;
 
@@ -69,18 +65,20 @@
 				require({
 					'baseUrl': './',
 					'urlArgs': 't=' + (+new Date),
-					'paths': {
-						'shimmed': './abc/../' + modulePath,
-						'underscore': './xyz/../' + modulePath
-					},
-					'aliases': [
-						['shimmed', 'lodash'],
-						['underscore', 'lodash']
-					],
 					'packages': [
 						{
 							'name': 'lodash',
 							'location': locationPath,
+							'main': moduleMain
+						},
+						{
+							'name': 'shimmed',
+							'location': './abc/../' + locationPath,
+							'main': moduleMain
+						},
+						{
+							'name': 'underscore',
+							'location': './xyz/../' + locationPath,
 							'main': moduleMain
 						},
 						{
@@ -113,7 +111,7 @@
 						lodashModule = lodash.noConflict();
 						lodashModule.moduleName = 'lodash';
 					}
-					if (isModularize) {
+					if (ui.isModularize) {
 						window._ = lodash;
 					}
 					require(['test'], function() {

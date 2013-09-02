@@ -34,7 +34,7 @@
       : '../lodash.js';
 
     try {
-      return global.require('fs').realpathSync(result);
+      return typeof define == 'undefined' && require('fs').realpathSync(result);
     } catch(e) {
       return result;
     }

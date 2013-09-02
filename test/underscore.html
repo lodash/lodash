@@ -64,7 +64,7 @@
 			}
 
 			// load Lo-Dash again to overwrite the existing `_` value
-			document.write('<script src="' + ui.buildPath + '"><\/script>');
+			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 
 			// load test.js if not using require.js
 			document.write(ui.urlParams.loader != 'none'
@@ -91,11 +91,8 @@
 				var reBasename = /[\w.-]+$/,
 				    basePath = ('//' + location.host + location.pathname).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
+				    locationPath = modulePath.replace(reBasename, ''),
 				    moduleMain = modulePath.match(reBasename)[0];
-
-				var locationPath = /modularize/.test(ui.urlParams.build)
-					? '../modularize'
-					: modulePath.replace(reBasename, '');
 
 				QUnit.config.autostart = false;
 

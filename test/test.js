@@ -1,37 +1,30 @@
 ;(function(window, undefined) {
   'use strict';
 
-  /** Method and object shortcuts */
+  /** Object shortcuts */
   var phantom = window.phantom,
-      document = !phantom && window.document,
-      amd = window.define && define.amd,
-      body = document && document.body,
-      create = Object.create,
-      freeze = Object.freeze,
       process = window.process,
-      push = Array.prototype.push,
-      slice = Array.prototype.slice,
-      system = window.system,
-      toString = Object.prototype.toString,
-      Worker = !phantom && window.Worker;
-
-  /** Use a single "load" function */
-  var load = !amd && typeof require == 'function' ? require : window.load;
+      system = window.system;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
-    var min = 0;
-    var result = phantom
-      ? phantom.args
-      : (system
-          ? (min = 1, system.args)
-          : (process ? (min = 2, process.argv) : (window.arguments || []))
-        );
+    var min = 0,
+        args = window.arguments,
+        result = [];
 
+    if (phantom) {
+      result = phantom.args;
+    } else if (system) {
+      min = 1;
+      result = system.args;
+    } else if (process) {
+      min = 2;
+      result = process.argv;
+    } else if (args) {
+      result = args;
+    }
     var last = result[result.length - 1];
-    result = (result.length > min && !/test(?:\.js)?$/.test(last))
-      ? last
-      : '../lodash.js';
+    result = (result.length > min && !/test(?:\.js)?$/.test(last)) ? last : '../lodash.js';
 
     try {
       return typeof define == 'undefined' && require('fs').realpathSync(result);
@@ -39,6 +32,71 @@
       return result;
     }
   }());
+
+  /** The `ui` object */
+  var ui = window.ui || (window.ui = {
+    'buildPath': filePath,
+    'loaderPath': '',
+    'urlParams': {}
+  });
+
+  /** Used to indicate testing a modularized build */
+  var isModularize = /\b(?:lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build]);
+
+  /*--------------------------------------------------------------------------*/
+
+  // exit early if running tests in phantomjs page
+  if (phantom && isModularize) {
+    var page = require('webpage').create();
+    page.open(filePath, function(status) {
+      if (status !== 'success') {
+	phantom.exit(1);
+      }
+    });
+
+    page.onCallback = function(details) {
+      phantom.exit(details.failed ? 1 : 0);
+    };
+
+    page.onConsoleMessage = function(message) {
+      console.log(message);
+    };
+
+    page.onInitialized = function() {
+      page.evaluate(function() {
+        document.addEventListener('DOMContentLoaded', function() {
+          var xhr = new XMLHttpRequest;
+          xhr.open('GET', '../vendor/qunit-clib/qunit-clib.js');
+          xhr.onload = function() {
+            var script = document.createElement('script');
+            script.text = xhr.responseText;
+            document.head.appendChild(script);
+            QUnit.done(callPhantom);
+          };
+
+          xhr.send(null);
+        }, false);
+      });
+    };
+
+    return;
+  }
+
+  /*--------------------------------------------------------------------------*/
+
+  /** Method and object shortcuts */
+  var document = !phantom && window.document,
+      amd = window.define && define.amd,
+      body = document && document.body,
+      create = Object.create,
+      freeze = Object.freeze,
+      push = Array.prototype.push,
+      slice = Array.prototype.slice,
+      toString = Object.prototype.toString,
+      Worker = !phantom && window.Worker;
+
+  /** Use a single "load" function */
+  var load = !amd && typeof require == 'function' ? require : window.load;
 
   /** The basename of the Lo-Dash file to test */
   var basename = /[\w.-]+$/.exec(filePath)[0];
@@ -92,16 +150,6 @@
 
   /** Used to check problem JScript properties too */
   var shadowedObject = _.invert(shadowedProps);
-
-  /** The `ui` object */
-  var ui = window.ui || (window.ui = {
-    'buildPath': filePath,
-    'loaderPath': '',
-    'urlParams': {}
-  });
-
-  /** Used to indicate testing a modularized build */
-  var isModularize = /\b(?:lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build]);
 
   /*--------------------------------------------------------------------------*/
 

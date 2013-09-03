@@ -4,16 +4,16 @@
  * Based on a gist by Jörn Zaefferer <https://gist.github.com/722381>
  * Available under MIT license <http://mths.be/mit>
  */
-;(function(window) {
+;(function(root) {
   'use strict';
 
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports;
 
-  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
+  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `root` */
   var freeGlobal = typeof global == 'object' && global;
   if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-    window = freeGlobal;
+    root = freeGlobal;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -284,9 +284,9 @@
   /*--------------------------------------------------------------------------*/
 
   // expose QUnit CLIB
-  if (freeExports) {
+  if (freeExports && !freeExports.nodeType) {
     freeExports.runInContext = runInContext;
   } else {
-    runInContext(window);
+    runInContext(root);
   }
 }(this));

@@ -27,10 +27,12 @@
     result = (result.length > min && !/test(?:\.js)?$/.test(last)) ? last : '../lodash.js';
 
     try {
-      return typeof define == 'undefined' && require('fs').realpathSync(result);
-    } catch(e) {
-      return result;
-    }
+      if (typeof define == 'undefined') {
+        return require('fs').realpathSync(result);
+      }
+    } catch(e) { }
+
+    return result;
   }());
 
   /** The `ui` object */
@@ -41,11 +43,11 @@
   });
 
   /** Used to indicate testing a modularized build */
-  var isModularize = /\b(?:lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build]);
+  var isModularize = ui.isModularize || /\b(?:lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build]);
 
   /*--------------------------------------------------------------------------*/
 
-  // exit early if running tests in phantomjs page
+  // exit early if going to run tests in a PhantomJS web page
   if (phantom && isModularize) {
     var page = require('webpage').create();
     page.open(filePath, function(status) {
@@ -94,6 +96,9 @@
       slice = Array.prototype.slice,
       toString = Object.prototype.toString,
       Worker = !phantom && window.Worker;
+
+  /** Detects if running in a PhantomJS web page */
+  var isPhantomPage = typeof callPhantom == 'function';
 
   /** Use a single "load" function */
   var load = !amd && typeof require == 'function' ? require : window.load;
@@ -1983,7 +1988,11 @@
     });
 
     test('should work with `arguments` objects (test in IE < 9)', function() {
-      strictEqual(_.isEmpty(args), false);
+      if (!isPhantomPage) {
+        strictEqual(_.isEmpty(args), false);
+      } else {
+        skipTest();
+      }
     });
   }(1, 2, 3));
 
@@ -1997,8 +2006,12 @@
           args2 = (function() { return arguments; }(1, 2, 3)),
           args3 = (function() { return arguments; }(1, 2));
 
-      strictEqual(_.isEqual(args1, args2), true);
-      strictEqual(_.isEqual(args1, args3), false);
+      if (!isPhantomPage) {
+        strictEqual(_.isEqual(args1, args2), true);
+        strictEqual(_.isEqual(args1, args3), false);
+      } else {
+        skipTest(2);
+      }
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
@@ -2239,7 +2252,11 @@
     var args = arguments;
 
     test('should work with `arguments` objects (test in IE < 9)', function() {
-      deepEqual(_.keys(args), ['0', '1', '2']);
+      if (!isPhantomPage) {
+        deepEqual(_.keys(args), ['0', '1', '2']);
+      } else {
+        skipTest();
+      }
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
@@ -3421,7 +3438,11 @@
     });
 
     test('should work with `arguments` objects (test in IE < 9)', function() {
-      equal(_.size(args), 3);
+      if (!isPhantomPage) {
+        equal(_.size(args), 3);
+      } else {
+        skipTest();
+      }
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', function() {
@@ -4434,7 +4455,7 @@
       deepEqual([args[0], args[1], args[2]], [1, [3], 5], message('pull'));
 
       _.remove(args, function(value) { return typeof value == 'number'; });
-      deepEqual(_.values(args), [[3]], message('remove'));
+      ok(args.length == 1 && _.isEqual(args[0], [3]), message('remove'));
     });
 
     test('should accept falsey primary arguments', function() {

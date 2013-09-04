@@ -14,32 +14,12 @@
     "speed",
     "util"
   ],
-  "author": {
-    "name": "John-David Dalton",
-    "email": "john.david.dalton@gmail.com",
-    "url": "http://allyoucanleet.com/"
-  },
+  "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
-    {
-      "name": "John-David Dalton",
-      "email": "john.david.dalton@gmail.com",
-      "url": "http://allyoucanleet.com/"
-    },
-    {
-      "name": "Blaine Bublitz",
-      "email": "blaine@iceddev.com",
-      "url": "http://iceddev.com/"
-    },
-    {
-      "name": "Kit Cambridge",
-      "email": "github@kitcambridge.be",
-      "url": "http://kitcambridge.be/"
-    },
-    {
-      "name": "Mathias Bynens",
-      "email": "mathias@qiwi.be",
-      "url": "http://mathiasbynens.be/"
-    }
+    "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+    "Blaine Bublitz <blaine@iceddev.com> (http://iceddev.com/)",
+    "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
+    "Mathias Bynens <mathias@qiwi.be> (http://mathiasbynens.be/)"
   ],
   "bugs": {
     "url": "https://github.com/lodash/lodash/issues"

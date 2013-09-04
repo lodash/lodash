@@ -52,7 +52,8 @@
     var page = require('webpage').create();
     page.open(filePath, function(status) {
       if (status !== 'success') {
-	phantom.exit(1);
+        console.log('PhantomJS failed to load page: ' + filePath);
+        phantom.exit(1);
       }
     });
 

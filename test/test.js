@@ -1,15 +1,15 @@
-;(function(window, undefined) {
+;(function(root, undefined) {
   'use strict';
 
   /** Object shortcuts */
-  var phantom = window.phantom,
-      process = window.process,
-      system = window.system;
+  var phantom = root.phantom,
+      process = root.process,
+      system = root.system;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
     var min = 0,
-        args = window.arguments,
+        args = root.arguments,
         result = [];
 
     if (phantom) {
@@ -36,7 +36,7 @@
   }());
 
   /** The `ui` object */
-  var ui = window.ui || (window.ui = {
+  var ui = root.ui || (root.ui = {
     'buildPath': filePath,
     'loaderPath': '',
     'urlParams': {}
@@ -87,21 +87,21 @@
   /*--------------------------------------------------------------------------*/
 
   /** Method and object shortcuts */
-  var document = !phantom && window.document,
-      amd = window.define && define.amd,
+  var document = !phantom && root.document,
+      amd = root.define && define.amd,
       body = document && document.body,
       create = Object.create,
       freeze = Object.freeze,
       push = Array.prototype.push,
       slice = Array.prototype.slice,
       toString = Object.prototype.toString,
-      Worker = !phantom && window.Worker;
+      Worker = !phantom && root.Worker;
 
   /** Detects if running in a PhantomJS web page */
   var isPhantomPage = typeof callPhantom == 'function';
 
   /** Use a single "load" function */
-  var load = !amd && typeof require == 'function' ? require : window.load;
+  var load = !amd && typeof require == 'function' ? require : root.load;
 
   /** The basename of the Lo-Dash file to test */
   var basename = /[\w.-]+$/.exec(filePath)[0];
@@ -109,21 +109,21 @@
   /** The unit testing framework */
   var QUnit = (function() {
     var noop = Function.prototype;
-    return  window.QUnit || (
-      window.addEventListener || (window.addEventListener = noop),
-      window.setTimeout || (window.setTimeout = noop),
-      window.QUnit = load('../vendor/qunit/qunit/qunit.js') || window.QUnit,
-      (load('../vendor/qunit-clib/qunit-clib.js') || { 'runInContext': noop }).runInContext(window),
-      addEventListener === noop && delete window.addEventListener,
-      window.QUnit
+    return  root.QUnit || (
+      root.addEventListener || (root.addEventListener = noop),
+      root.setTimeout || (root.setTimeout = noop),
+      root.QUnit = load('../vendor/qunit/qunit/qunit.js') || root.QUnit,
+      (load('../vendor/qunit-clib/qunit-clib.js') || { 'runInContext': noop }).runInContext(root),
+      addEventListener === noop && delete root.addEventListener,
+      root.QUnit
     );
   }());
 
   /** The `lodash` function to test */
-  var _ = window._ || (window._ = (
-    _ = load(filePath) || window._,
+  var _ = root._ || (root._ = (
+    _ = load(filePath) || root._,
     _ = _._ || _,
-    (_.runInContext ? _.runInContext(window) : _)
+    (_.runInContext ? _.runInContext(root) : _)
   ));
 
   /** Used to pass falsey values to methods */
@@ -2178,7 +2178,7 @@
       strictEqual(_.isPlainObject(arguments), false);
       strictEqual(_.isPlainObject(Error), false);
       strictEqual(_.isPlainObject(Math), false);
-      strictEqual(_.isPlainObject(window), false);
+      strictEqual(_.isPlainObject(root), false);
     });
   }());
 
@@ -2232,7 +2232,7 @@
     test('should return `false` for subclassed values', function() {
       _.forEach(['isArray', 'isBoolean', 'isDate', 'isFunction', 'isNumber', 'isRegExp', 'isString'], function(methodName) {
         function Foo() {}
-        Foo.prototype = window[methodName.slice(2)].prototype;
+        Foo.prototype = root[methodName.slice(2)].prototype;
 
         var object = new Foo;
         if (toString.call(object) == '[object Object]') {
@@ -3750,7 +3750,7 @@
         var callCount = 0,
             dateCount = 0;
 
-        var lodash = _.runInContext(_.assign({}, window, {
+        var lodash = _.runInContext(_.assign({}, root, {
           'Date': function() {
             return ++dateCount < 3 ? new Date : Object(Infinity);
           }
@@ -4537,8 +4537,8 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     test('should accept falsey arguments', function() {
-      var isExported = '_' in window,
-          oldDash = window._;
+      var isExported = '_' in root,
+          oldDash = root._;
 
 
       _.forEach(acceptFalsey, function(methodName) {
@@ -4557,9 +4557,9 @@
 
         if (methodName == 'noConflict') {
           if (isExported) {
-            window._ = oldDash;
+            root._ = oldDash;
           } else {
-            delete window._;
+            delete root._;
           }
         }
         if (_.indexOf(returnArrays, methodName) > -1) {

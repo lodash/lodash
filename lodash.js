@@ -6046,8 +6046,8 @@
      * // => 'hello curly'
      *
      * // using the internal `print` function in "evaluate" delimiters
-     * _.template('<% print("hello " + epithet); %>!', { 'epithet': 'stooge' });
-     * // => 'hello stooge!'
+     * _.template('<% print("hello " + name); %>!', { 'name': 'larry' });
+     * // => 'hello larry!'
      *
      * // using a custom template delimiters
      * _.templateSettings = {
@@ -6164,9 +6164,7 @@
         source +
         'return __p\n}';
 
-      // Use a sourceURL for easier debugging and wrap in a multi-line comment to
-      // avoid issues with Narwhal, IE conditional compilation, and the JS engine
-      // embedded in Adobe products.
+      // Use a sourceURL for easier debugging.
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
       var sourceURL = '\n/*\n//# sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']') + '\n*/';
 

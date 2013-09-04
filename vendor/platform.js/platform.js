@@ -3,18 +3,18 @@
  * Copyright 2010-2013 John-David Dalton <http://allyoucanleet.com/>
  * Available under MIT license <http://mths.be/mit>
  */
-;(function(window) {
+;(function(root) {
   'use strict';
 
-  /** Backup possible window/global object */
-  var oldWin = window;
+  /** Backup possible global object */
+  var oldRoot = root;
 
   /** Detect free variable `exports` */
   var freeExports = typeof exports == 'object' && exports;
 
   /** Detect free variable `global` */
   var freeGlobal = typeof global == 'object' && global &&
-    (global == global.global ? (window = global) : global);
+    (global == global.global ? (root = global) : global);
 
   /** Opera regexp */
   var reOpera = /Opera/;
@@ -23,10 +23,10 @@
   var toString = Object.prototype.toString;
 
   /** Detect Java environment */
-  var java = /Java/.test(getClassOf(window.java)) && window.java;
+  var java = /Java/.test(getClassOf(root.java)) && root.java;
 
   /** Detect Rhino */
-  var rhino = java && getClassOf(window.environment) == 'Environment';
+  var rhino = java && getClassOf(root.environment) == 'Environment';
 
   /** A character to represent alpha */
   var alpha = java ? 'a' : '\u03b1';
@@ -35,20 +35,20 @@
   var beta = java ? 'b' : '\u03b2';
 
   /** Browser document object */
-  var doc = window.document || {};
+  var doc = root.document || {};
 
   /** Used to check for own properties of an object */
   var hasOwnProperty = {}.hasOwnProperty;
 
   /** Browser navigator object */
-  var nav = window.navigator || {};
+  var nav = root.navigator || {};
 
   /**
    * Detect Opera browser
    * http://www.howtocreate.co.uk/operaStuff/operaObject.html
    * http://dev.opera.com/articles/view/opera-mini-web-content-authoring-guidelines/#operamini
    */
-  var opera = window.operamini || window.opera;
+  var opera = root.operamini || root.opera;
 
   /** Opera [[Class]] */
   var operaClass = reOpera.test(operaClass = getClassOf(opera)) ? operaClass : (opera = null);
@@ -597,7 +597,7 @@
     if (useFeatures) {
       // detect server-side environments
       // Rhino has a global function while others have a global object
-      if (isHostType(window, 'global')) {
+      if (isHostType(root, 'global')) {
         if (java) {
           data = java.lang.System;
           arch = data.getProperty('os.arch');
@@ -605,7 +605,7 @@
         }
         if (freeExports) {
           // if `thisBinding` is the [ModuleScope]
-          if (thisBinding == oldWin && typeof system == 'object' && (data = [system])[0]) {
+          if (thisBinding == oldRoot && typeof system == 'object' && (data = [system])[0]) {
             os || (os = data[0].os || null);
             try {
               data[1] = require('ringo/engine').version;
@@ -632,12 +632,12 @@
         }
       }
       // detect Adobe AIR
-      else if (getClassOf((data = window.runtime)) == 'ScriptBridgingProxyObject') {
+      else if (getClassOf((data = root.runtime)) == 'ScriptBridgingProxyObject') {
         name = 'Adobe AIR';
         os = data.flash.system.Capabilities.os;
       }
       // detect PhantomJS
-      else if (getClassOf((data = window.phantom)) == 'RuntimeObject') {
+      else if (getClassOf((data = root.phantom)) == 'RuntimeObject') {
         name = 'PhantomJS';
         version = (data = data.version || null) && (data.major + '.' + data.minor + '.' + data.patch);
       }
@@ -1002,6 +1002,6 @@
   }
   // in a browser or Rhino
   else {
-    window.platform = parse();
+    root.platform = parse();
   }
 }(this));

@@ -5,7 +5,7 @@
  * Modified by John-David Dalton <http://allyoucanleet.com/>
  * Available under MIT license <http://mths.be/mit>
  */
-;(function(window, undefined) {
+;(function(root, undefined) {
   'use strict';
 
   /** Detect free variable `define` */
@@ -21,10 +21,10 @@
   /** Detect free variable `require` */
   var freeRequire = typeof require == 'function' && require;
 
-  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `window` */
+  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `root` */
   var freeGlobal = typeof global == 'object' && global;
   if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-    window = freeGlobal;
+    root = freeGlobal;
   }
 
   /** Used to assign each benchmark an incrimented id */
@@ -105,12 +105,12 @@
    *
    * @static
    * @memberOf Benchmark
-   * @param {Object} [context=window] The context object.
+   * @param {Object} [context=root] The context object.
    * @returns {Function} Returns the `Benchmark` function.
    */
   function runInContext(context) {
     // exit early if unable to acquire lodash
-    var _ = context && context._ || req('lodash') || window._;
+    var _ = context && context._ || req('lodash') || root._;
     if (!_) {
       Benchmark.runInContext = runInContext;
       return Benchmark;
@@ -119,7 +119,7 @@
     // after built-in constructors like `Object`, for the creation of literals.
     // ES5 clears this up by stating that literals must use built-in constructors.
     // See http://es5.github.io/#x11.1.5.
-    context = context ? _.defaults(window.Object(), context, _.pick(window, contextProps)) : window;
+    context = context ? _.defaults(root.Object(), context, _.pick(root, contextProps)) : root;
 
     /** Native constructor references */
     var Array = context.Array,
@@ -2867,7 +2867,7 @@
     }
     // in a browser or Rhino
     else {
-      window.Benchmark = Benchmark;
+      root.Benchmark = Benchmark;
     }
   }
 }(this));

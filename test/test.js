@@ -4656,8 +4656,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // configure QUnit and call `QUnit.start()` for
-  // Narwhal, Node.js, PhantomJS, Rhino, and RingoJS
   if (!document) {
     QUnit.config.noglobals = true;
     QUnit.start();

@@ -276,9 +276,11 @@
       context[methodName] = QUnit[methodName];
     });
 
-    // must call `QUnit.start()` in the test file if using QUnit < 1.3.0 with
-    // Node.js or any version of QUnit with Narwhal, PhantomJS, Rhino, or RingoJS
-    QUnit.init();
+    // must call `QUnit.start()` in the test file if not loaded in a browser
+    if (!context.document || context.phantom) {
+      QUnit.config.autostart = false;
+      QUnit.init();
+    }
   }
 
   /*--------------------------------------------------------------------------*/

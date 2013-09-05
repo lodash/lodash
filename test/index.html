@@ -36,9 +36,9 @@
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 
 			// load test.js if not using require.js
-			document.write(ui.urlParams.loader != 'none'
-				? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
-				: '<script src="test.js"><\/script>'
+			document.write(ui.urlParams.loader == 'none'
+				? '<script src="test.js"><\/script>'
+				: '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
 			);
 		</script>
 		<script>

@@ -4,7 +4,7 @@
   "description": "A utility library delivering consistency, customization, performance, and extras.",
   "homepage": "http://lodash.com/",
   "license": "MIT",
-  "main": "./dist/lodash.js",
+  "main": "dist/lodash.js",
   "keywords": [
     "browser",
     "client",
@@ -21,9 +21,7 @@
     "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
     "Mathias Bynens <mathias@qiwi.be> (http://mathiasbynens.be/)"
   ],
-  "bugs": {
-    "url": "https://github.com/lodash/lodash/issues"
-  },
+  "bugs": "https://github.com/lodash/lodash/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/lodash/lodash.git"
@@ -42,7 +40,7 @@
     "dist/lodash.underscore.min.js"
   ],
   "jam": {
-    "main": "./dist/lodash.compat.js"
+    "main": "dist/lodash.compat.js"
   },
   "volo": {
     "type": "directory",

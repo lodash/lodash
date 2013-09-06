@@ -2,7 +2,8 @@
   'use strict';
 
   /** Object shortcuts */
-  var phantom = root.phantom,
+  var amd = root.define && define.amd,
+      phantom = root.phantom,
       process = root.process,
       system = root.system;
 
@@ -27,7 +28,7 @@
     result = (result.length > min && !/test(?:\.js)?$/.test(last)) ? last : '../lodash.js';
 
     try {
-      if (typeof define == 'undefined') {
+      if (!amd) {
         return require('fs').realpathSync(result);
       }
     } catch(e) { }
@@ -51,7 +52,7 @@
   if (phantom && isModularize) {
     var page = require('webpage').create();
     page.open(filePath, function(status) {
-      if (status !== 'success') {
+      if (status != 'success') {
         console.log('PhantomJS failed to load page: ' + filePath);
         phantom.exit(1);
       }
@@ -68,17 +69,11 @@
     page.onInitialized = function() {
       page.evaluate(function() {
         document.addEventListener('DOMContentLoaded', function() {
-          var xhr = new XMLHttpRequest;
-          xhr.open('GET', '../vendor/qunit-clib/qunit-clib.js');
-          xhr.onload = function() {
-            var script = document.createElement('script');
-            script.text = xhr.responseText;
-            document.head.appendChild(script);
-            QUnit.done(callPhantom);
-          };
-
-          xhr.send(null);
-        }, false);
+          var script = document.createElement('script');
+          script.src = '../vendor/qunit-clib/qunit-clib.js';
+          document.head.appendChild(script);
+          QUnit.done(callPhantom);
+        });
       });
     };
 
@@ -89,14 +84,13 @@
 
   /** Method and object shortcuts */
   var document = !phantom && root.document,
-      amd = root.define && define.amd,
       body = document && document.body,
       create = Object.create,
       freeze = Object.freeze,
       push = Array.prototype.push,
       slice = Array.prototype.slice,
       toString = Object.prototype.toString,
-      Worker = !phantom && root.Worker;
+      Worker = document && root.Worker;
 
   /** Detects if running in a PhantomJS web page */
   var isPhantomPage = typeof callPhantom == 'function';

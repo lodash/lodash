@@ -5489,7 +5489,9 @@
         thisArg = this;
         trailingCall = trailing && (timeoutId || !leading);
 
-        if (maxWait !== false) {
+        if (maxWait === false) {
+          var leadingCall = leading && !timeoutId;
+        } else {
           if (!maxTimeoutId && !leading) {
             lastCalled = stamp;
           }
@@ -5505,11 +5507,11 @@
             maxTimeoutId = setTimeout(maxDelayed, remaining);
           }
         }
-        else if (leading && !timeoutId) {
-          result = func.apply(thisArg, args);
-        }
         if (!timeoutId && wait !== maxWait) {
           timeoutId = setTimeout(delayed, wait);
+        }
+        if (leadingCall) {
+          result = func.apply(thisArg, args);
         }
         return result;
       };

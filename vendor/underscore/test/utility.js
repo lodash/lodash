@@ -73,7 +73,7 @@ $(document).ready(function() {
 
   test("_.escape", function() {
     equal(_.escape("Curly & Moe"), "Curly &amp; Moe");
-    equal(_.escape('<a href="http://moe.com">Curly & Moe\'s</a>'), '&lt;a href=&quot;http:&#x2F;&#x2F;moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;&#x2F;a&gt;');
+    equal(_.escape('<a href="http://moe.com">Curly & Moe\'s</a>'), '&lt;a href=&quot;http://moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;/a&gt;');
     equal(_.escape("Curly &amp; Moe"), "Curly &amp;amp; Moe");
     equal(_.escape(null), '');
   });
@@ -81,7 +81,7 @@ $(document).ready(function() {
   test("_.unescape", function() {
     var string = "Curly & Moe";
     equal(_.unescape("Curly &amp; Moe"), string);
-    equal(_.unescape('&lt;a href=&quot;http:&#x2F;&#x2F;moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;&#x2F;a&gt;'), '<a href="http://moe.com">Curly & Moe\'s</a>');
+    equal(_.unescape('&lt;a href=&quot;http://moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;/a&gt;'), '<a href="http://moe.com">Curly & Moe\'s</a>');
     equal(_.unescape("Curly &amp;amp; Moe"), "Curly &amp; Moe");
     equal(_.unescape(null), '');
     equal(_.unescape(_.escape(string)), string);

@@ -854,8 +854,7 @@
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#x27;',
-    '/': '&#x2F;'
+    "'": '&#x27;'
   };
 
   /** Used to convert HTML entities to characters */
@@ -2018,6 +2017,49 @@
   });
 
   /**
+   * Creates an object composed of keys generated from the results of running
+   * each element of the collection through the given callback. The corresponding
+   * value of each key is the last element responsible for generating the key.
+   * The callback is bound to `thisArg` and invoked with three arguments;
+   * (value, index|key, collection).
+   *
+   * If a property name is provided for `callback` the created "_.pluck" style
+   * callback will return the property value of the given element.
+   *
+   * If an object is provided for `callback` the created "_.where" style callback
+   * will return `true` for elements that have the properties of the given object,
+   * else `false`.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|string} collection The collection to iterate over.
+   * @param {Function|Object|string} [callback=identity] The function called
+   *  per iteration. If a property name or object is provided it will be used
+   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {*} [thisArg] The `this` binding of `callback`.
+   * @returns {Object} Returns the composed aggregate object.
+   * @example
+   *
+   * var keys = [
+   *   { 'dir': 'left', 'code': 97 },
+   *   { 'dir': 'right', 'code': 100 }
+   * ];
+   *
+   * _.indexBy(keys, 'dir');
+   * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
+   *
+   * _.indexBy(keys, function(key) { return String.fromCharCode(key.code); });
+   * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
+   *
+   * _.indexBy(stooges, function(key) { this.fromCharCode(key.code); }, String);
+   * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
+   */
+  var indexBy = createAggregator(function(result, value, key) {
+    result[key] = value;
+  });
+
+  /**
    * Invokes the method named by `methodName` on each element in the `collection`
    * returning an array of the results of each invoked method. Additional arguments
    * will be provided to each invoked method. If `methodName` is a function it
@@ -2405,6 +2447,37 @@
     return filter(collection, function(value, index, collection) {
       return !callback(value, index, collection);
     });
+  }
+
+  /**
+   * Retrieves a random element or `n` random elements from a collection.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|string} collection The collection to sample.
+   * @param {number} [n] The number of elements to sample.
+   * @param- {Object} [guard] Allows working with functions, like `_.map`,
+   *  without using their `key` and `object` arguments as sources.
+   * @returns {Array} Returns the random sample(s) of `collection`.
+   * @example
+   *
+   * _.sample([1, 2, 3, 4]);
+   * // => 2
+   *
+   * _.sample([1, 2, 3, 4], 2);
+   * // => [3, 1]
+   */
+  function sample(collection, n, guard) {
+    if (!isArray(collection)) {
+      collection = toArray(collection);
+    }
+    if (n == null || guard) {
+      return collection[random(collection.length - 1)];
+    }
+    var result = shuffle(collection);
+    result.length = nativeMin(nativeMax(0, n), result.length);
+    return result;
   }
 
   /**
@@ -3666,37 +3739,36 @@
    */
   function debounce(func, wait, options) {
     var args,
+        maxTimeoutId,
         result,
         stamp,
         thisArg,
-        callCount = 0,
+        timeoutId,
+        trailingCall,
         lastCalled = 0,
         maxWait = false,
-        maxTimeoutId = null,
-        timeoutId = null,
         trailing = true;
 
     if (!isFunction(func)) {
       throw new TypeError;
     }
-    wait = nativeMax(0, wait || 0);
+    wait = nativeMax(0, wait) || 0;
     if (options === true) {
       var leading = true;
       trailing = false;
     } else if (isObject(options)) {
       leading = options.leading;
-      maxWait = 'maxWait' in options && nativeMax(wait, options.maxWait || 0);
+      maxWait = 'maxWait' in options && (nativeMax(wait, options.maxWait) || 0);
       trailing = 'trailing' in options ? options.trailing : trailing;
     }
     var delayed = function() {
       var remaining = wait - (new Date - stamp);
       if (remaining <= 0) {
-        var isCalled = trailing && (!leading || callCount > 1);
         if (maxTimeoutId) {
           clearTimeout(maxTimeoutId);
         }
-        callCount = 0;
-        maxTimeoutId = timeoutId = null;
+        var isCalled = trailingCall;
+        maxTimeoutId = timeoutId = trailingCall = undefined;
         if (isCalled) {
           lastCalled = +new Date;
           result = func.apply(thisArg, args);
@@ -3710,8 +3782,7 @@
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      callCount = 0;
-      maxTimeoutId = timeoutId = null;
+      maxTimeoutId = timeoutId = trailingCall = undefined;
       if (trailing || (maxWait !== wait)) {
         lastCalled = +new Date;
         result = func.apply(thisArg, args);
@@ -3722,12 +3793,10 @@
       args = arguments;
       stamp = +new Date;
       thisArg = this;
-      callCount++;
+      trailingCall = trailing && (timeoutId || !leading);
 
       if (maxWait === false) {
-        if (leading && callCount < 2) {
-          result = func.apply(thisArg, args);
-        }
+        var leadingCall = leading && !timeoutId;
       } else {
         if (!maxTimeoutId && !leading) {
           lastCalled = stamp;
@@ -3735,8 +3804,7 @@
         var remaining = maxWait - (stamp - lastCalled);
         if (remaining <= 0) {
           if (maxTimeoutId) {
-            clearTimeout(maxTimeoutId);
-            maxTimeoutId = null;
+            maxTimeoutId = clearTimeout(maxTimeoutId);
           }
           lastCalled = stamp;
           result = func.apply(thisArg, args);
@@ -3747,6 +3815,9 @@
       }
       if (!timeoutId && wait !== maxWait) {
         timeoutId = setTimeout(delayed, wait);
+      }
+      if (leadingCall) {
+        result = func.apply(thisArg, args);
       }
       return result;
     };
@@ -3837,7 +3908,7 @@
   function memoize(func, resolver) {
     var cache = {};
     return function() {
-      var key = keyPrefix + (resolver ? resolver.apply(this, arguments) : arguments[0]);
+      var key = resolver ? resolver.apply(this, arguments) : keyPrefix + arguments[0];
       return hasOwnProperty.call(cache, key)
         ? cache[key]
         : (cache[key] = func.apply(this, arguments));
@@ -3938,6 +4009,9 @@
     var leading = true,
         trailing = true;
 
+    if (!isFunction(func)) {
+      throw new TypeError;
+    }
     if (options === false) {
       leading = false;
     } else if (isObject(options)) {
@@ -4196,8 +4270,8 @@
    * // => 'hello curly'
    *
    * // using the internal `print` function in "evaluate" delimiters
-   * _.template('<% print("hello " + epithet); %>!', { 'epithet': 'stooge' });
-   * // => 'hello stooge!'
+   * _.template('<% print("hello " + name); %>!', { 'name': 'larry' });
+   * // => 'hello larry!'
    *
    * // using a custom template delimiters
    * _.templateSettings = {
@@ -4479,6 +4553,7 @@
   lodash.forEach = forEach;
   lodash.functions = functions;
   lodash.groupBy = groupBy;
+  lodash.indexBy = indexBy;
   lodash.initial = initial;
   lodash.intersection = intersection;
   lodash.invert = invert;
@@ -4578,6 +4653,7 @@
   // add functions capable of returning wrapped and unwrapped values when chaining
   lodash.first = first;
   lodash.last = last;
+  lodash.sample = sample;
 
   // add aliases
   lodash.take = first;

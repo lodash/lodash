@@ -3888,11 +3888,14 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      if (!isArray(collection)) {
-        collection = toArray(collection);
+      var length = collection ? collection.length : 0;
+      if (typeof length != 'number') {
+        collection = values(collection);
+      } else if (support.unindexedChars && isString(collection)) {
+        collection = collection.split('');
       }
       if (n == null || guard) {
-        return collection[random(collection.length - 1)];
+        return collection[random(length - 1)];
       }
       var result = shuffle(collection);
       result.length = nativeMin(nativeMax(0, n), result.length);

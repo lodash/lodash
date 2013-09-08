@@ -3895,7 +3895,7 @@
         collection = collection.split('');
       }
       if (n == null || guard) {
-        return collection[random(length - 1)];
+        return collection ? collection[random(length - 1)] : undefined;
       }
       var result = shuffle(collection);
       result.length = nativeMin(nativeMax(0, n), result.length);

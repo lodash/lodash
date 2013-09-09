@@ -1718,7 +1718,7 @@
       forIn(value, function(value, key) {
         result = key;
       });
-      return result === undefined || hasOwnProperty.call(value, result);
+      return typeof result == 'undefined' || hasOwnProperty.call(value, result);
     }
 
     /**
@@ -4385,7 +4385,7 @@
       // juggle arguments
       if (typeof isShallow != 'boolean' && isShallow != null) {
         thisArg = callback;
-        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : undefined;
+        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : null;
         isShallow = false;
       }
       if (callback != null) {
@@ -5013,7 +5013,7 @@
       // juggle arguments
       if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = callback;
-        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : undefined;
+        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : null;
         isSorted = false;
       }
       if (callback != null) {
@@ -5995,8 +5995,10 @@
      * // => 'nonsense'
      */
     function result(object, property) {
-      var value = object ? object[property] : undefined;
-      return isFunction(value) ? object[property]() : value;
+      if (object) {
+        var value = object[property];
+        return isFunction(value) ? object[property]() : value;
+      }
     }
 
     /**

@@ -4380,7 +4380,7 @@
     ];
 
     _.forEach(funcs, function(methodName) {
-      test('`_.' + methodName + '` should return an unwrapped value', function() {
+      test('`_(...).' + methodName + '` should return an unwrapped value', function() {
         var result = methodName == 'reduceRight'
           ? wrapped[methodName](_.identity)
           : wrapped[methodName]();
@@ -4400,16 +4400,45 @@
 
     var funcs = [
       'first',
-      'last'
+      'last',
+      'sample'
     ];
 
     _.forEach(funcs, function(methodName) {
-      test('`_.' + methodName + '` should return an unwrapped value', function() {
+      test('`_(...).' + methodName + '` called without an `n` argument should return an unwrapped value', function() {
         equal(typeof wrapped[methodName](), 'number');
       });
 
-      test('`_.' + methodName + '` should return a wrapped value', function() {
+      test('`_(...).' + methodName + '` called with an `n` argument should return a wrapped value', function() {
         ok(wrapped[methodName](1) instanceof _);
+      });
+
+      test('`_.' + methodName + '` should return `undefined` when querying falsey arguments without an `n` argument', function() {
+        var actual = [],
+            expected = _.map(falsey, function() { return undefined; }),
+            func = _[methodName];
+
+        _.forEach(falsey, function(value, index) {
+          try {
+            actual.push(index ? func(value) : func());
+          } catch(e) { console.log(e)}
+        });
+
+        deepEqual(actual, expected);
+      });
+
+      test('`_.' + methodName + '` should return an empty array when querying falsey arguments with an `n` argument', function() {
+        var actual = [],
+            expected = _.map(falsey, function() { return []; }),
+            func = _[methodName];
+
+        _.forEach(falsey, function(value, index) {
+          try {
+            actual.push(func(value, 2));
+          } catch(e) { }
+        });
+
+        deepEqual(actual, expected);
       });
     });
   }());

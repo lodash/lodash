@@ -4320,24 +4320,22 @@
      * // => [{ 'name': 'apple', 'type': 'fruit' }, { 'name': 'banana', 'type': 'fruit' }]
      */
     function first(array, callback, thisArg) {
-      if (array) {
-        var n = 0,
-            length = array.length;
+      var n = 0,
+          length = array ? array.length : 0;
 
-        if (typeof callback != 'number' && callback != null) {
-          var index = -1;
-          callback = lodash.createCallback(callback, thisArg, 3);
-          while (++index < length && callback(array[index], index, array)) {
-            n++;
-          }
-        } else {
-          n = callback;
-          if (n == null || thisArg) {
-            return array[0];
-          }
+      if (typeof callback != 'number' && callback != null) {
+        var index = -1;
+        callback = lodash.createCallback(callback, thisArg, 3);
+        while (++index < length && callback(array[index], index, array)) {
+          n++;
         }
-        return slice(array, 0, nativeMin(nativeMax(0, n), length));
+      } else {
+        n = callback;
+        if (n == null || thisArg) {
+          return array ? array[0] : undefined;
+        }
       }
+      return slice(array, 0, nativeMin(nativeMax(0, n), length));
     }
 
     /**
@@ -4485,11 +4483,8 @@
      * // => [{ 'name': 'banana', 'type': 'fruit' }]
      */
     function initial(array, callback, thisArg) {
-      if (!array) {
-        return [];
-      }
       var n = 0,
-          length = array.length;
+          length = array ? array.length : 0;
 
       if (typeof callback != 'number' && callback != null) {
         var index = length;
@@ -4618,24 +4613,22 @@
      * // => [{ 'name': 'beet', 'type': 'vegetable' }, { 'name': 'carrot', 'type': 'vegetable' }]
      */
     function last(array, callback, thisArg) {
-      if (array) {
-        var n = 0,
-            length = array.length;
+      var n = 0,
+          length = array ? array.length : 0;
 
-        if (typeof callback != 'number' && callback != null) {
-          var index = length;
-          callback = lodash.createCallback(callback, thisArg, 3);
-          while (index-- && callback(array[index], index, array)) {
-            n++;
-          }
-        } else {
-          n = callback;
-          if (n == null || thisArg) {
-            return array[length - 1];
-          }
+      if (typeof callback != 'number' && callback != null) {
+        var index = length;
+        callback = lodash.createCallback(callback, thisArg, 3);
+        while (index-- && callback(array[index], index, array)) {
+          n++;
         }
-        return slice(array, nativeMax(0, length - n));
+      } else {
+        n = callback;
+        if (n == null || thisArg) {
+          return array ? array[length - 1] : undefined;
+        }
       }
+      return slice(array, nativeMax(0, length - n));
     }
 
     /**

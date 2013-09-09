@@ -719,20 +719,20 @@
   suites.push(
     Benchmark.Suite('`_.contains` iterating an array')
       .add(buildName, '\
-        lodash.contains(numbers, 19)'
+        lodash.contains(numbers, limit - 1)'
       )
       .add(otherName, '\
-        _.contains(numbers, 19)'
+        _.contains(numbers, limit - 1)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.contains` iterating an object')
       .add(buildName, '\
-        lodash.contains(object, 19)'
+        lodash.contains(object, limit - 1)'
       )
       .add(otherName, '\
-        _.contains(object, 19)'
+        _.contains(object, limit - 1)'
       )
   );
 
@@ -974,12 +974,12 @@
     Benchmark.Suite('`_.find` iterating an array')
       .add(buildName, '\
         lodash.find(numbers, function(num) {\
-          return num === 19;\
+          return num === (limit - 1);\
         })'
       )
       .add(otherName, '\
         _.find(numbers, function(num) {\
-          return num === 19;\
+          return num === (limit - 1);\
         })'
       )
   );
@@ -1592,6 +1592,18 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.sample` with an `n`')
+      .add(buildName, '\
+        lodash.sample(numbers, limit / 2)'
+      )
+      .add(otherName, '\
+        _.sample(numbers, limit / 2)'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.shuffle`')
       .add(buildName, '\
         lodash.shuffle(numbers)'
@@ -1619,12 +1631,12 @@
     Benchmark.Suite('`_.some` iterating an array')
       .add(buildName, '\
         lodash.some(numbers, function(num) {\
-          return num == 19;\
+          return num == (limit - 1);\
         })'
       )
       .add(otherName, '\
         _.some(numbers, function(num) {\
-          return num == 19;\
+          return num == (limit - 1);\
         })'
       )
   );
@@ -1633,12 +1645,12 @@
     Benchmark.Suite('`_.some` with `thisArg` iterating an array (slow path)')
       .add(buildName, '\
         lodash.some(objects, function(value, index) {\
-          return this["key" + index] == 19;\
+          return this["key" + index] == (limit - 1);\
         }, object)'
       )
       .add(otherName, '\
         _.some(objects, function(value, index) {\
-          return this["key" + index] == 19;\
+          return this["key" + index] == (limit - 1);\
         }, object)'
       )
   );
@@ -1647,12 +1659,12 @@
     Benchmark.Suite('`_.some` iterating an object')
       .add(buildName, '\
         lodash.some(object, function(num) {\
-          return num == 19;\
+          return num == (limit - 1);\
         })'
       )
       .add(otherName, '\
         _.some(object, function(num) {\
-          return num == 19;\
+          return num == (limit - 1);\
         })'
       )
   );

@@ -1354,7 +1354,7 @@
       forIn(value, function(value, key) {
         result = key;
       });
-      return result === undefined || hasOwnProperty.call(value, result);
+      return typeof result == 'undefined' || hasOwnProperty.call(value, result);
     }
 
     /**
@@ -3526,11 +3526,12 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      if (!isArray(collection)) {
-        collection = toArray(collection);
+      var length = collection ? collection.length : 0;
+      if (typeof length != 'number') {
+        collection = values(collection);
       }
       if (n == null || guard) {
-        return collection[random(collection.length - 1)];
+        return collection ? collection[random(length - 1)] : undefined;
       }
       var result = shuffle(collection);
       result.length = nativeMin(nativeMax(0, n), result.length);
@@ -3953,24 +3954,22 @@
      * // => [{ 'name': 'apple', 'type': 'fruit' }, { 'name': 'banana', 'type': 'fruit' }]
      */
     function first(array, callback, thisArg) {
-      if (array) {
-        var n = 0,
-            length = array.length;
+      var n = 0,
+          length = array ? array.length : 0;
 
-        if (typeof callback != 'number' && callback != null) {
-          var index = -1;
-          callback = lodash.createCallback(callback, thisArg, 3);
-          while (++index < length && callback(array[index], index, array)) {
-            n++;
-          }
-        } else {
-          n = callback;
-          if (n == null || thisArg) {
-            return array[0];
-          }
+      if (typeof callback != 'number' && callback != null) {
+        var index = -1;
+        callback = lodash.createCallback(callback, thisArg, 3);
+        while (++index < length && callback(array[index], index, array)) {
+          n++;
         }
-        return slice(array, 0, nativeMin(nativeMax(0, n), length));
+      } else {
+        n = callback;
+        if (n == null || thisArg) {
+          return array ? array[0] : undefined;
+        }
       }
+      return slice(array, 0, nativeMin(nativeMax(0, n), length));
     }
 
     /**
@@ -4018,7 +4017,7 @@
       // juggle arguments
       if (typeof isShallow != 'boolean' && isShallow != null) {
         thisArg = callback;
-        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : undefined;
+        callback = !(thisArg && thisArg[isShallow] === array) ? isShallow : null;
         isShallow = false;
       }
       if (callback != null) {
@@ -4118,11 +4117,8 @@
      * // => [{ 'name': 'banana', 'type': 'fruit' }]
      */
     function initial(array, callback, thisArg) {
-      if (!array) {
-        return [];
-      }
       var n = 0,
-          length = array.length;
+          length = array ? array.length : 0;
 
       if (typeof callback != 'number' && callback != null) {
         var index = length;
@@ -4251,24 +4247,22 @@
      * // => [{ 'name': 'beet', 'type': 'vegetable' }, { 'name': 'carrot', 'type': 'vegetable' }]
      */
     function last(array, callback, thisArg) {
-      if (array) {
-        var n = 0,
-            length = array.length;
+      var n = 0,
+          length = array ? array.length : 0;
 
-        if (typeof callback != 'number' && callback != null) {
-          var index = length;
-          callback = lodash.createCallback(callback, thisArg, 3);
-          while (index-- && callback(array[index], index, array)) {
-            n++;
-          }
-        } else {
-          n = callback;
-          if (n == null || thisArg) {
-            return array[length - 1];
-          }
+      if (typeof callback != 'number' && callback != null) {
+        var index = length;
+        callback = lodash.createCallback(callback, thisArg, 3);
+        while (index-- && callback(array[index], index, array)) {
+          n++;
         }
-        return slice(array, nativeMax(0, length - n));
+      } else {
+        n = callback;
+        if (n == null || thisArg) {
+          return array ? array[length - 1] : undefined;
+        }
       }
+      return slice(array, nativeMax(0, length - n));
     }
 
     /**
@@ -4646,7 +4640,7 @@
       // juggle arguments
       if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = callback;
-        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : undefined;
+        callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : null;
         isSorted = false;
       }
       if (callback != null) {
@@ -5628,8 +5622,10 @@
      * // => 'nonsense'
      */
     function result(object, property) {
-      var value = object ? object[property] : undefined;
-      return isFunction(value) ? object[property]() : value;
+      if (object) {
+        var value = object[property];
+        return isFunction(value) ? object[property]() : value;
+      }
     }
 
     /**

@@ -101,7 +101,7 @@ var _ = require('lodash/dist/lodash.underscore');
 
 **Notes:**
  * Don’t assign values to [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL
- * If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory before requiring it
+ * If Lo-Dash is installed globally, run [`npm link lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory *before* requiring it
  * Node.js 0.10.8-0.10.11 [have](https://github.com/joyent/node/issues/5622) [bugs](https://github.com/joyent/node/issues/5688) preventing minified builds
 
 In [Rhino](http://www.mozilla.org/rhino/):
@@ -134,7 +134,7 @@ The full changelog is available [here](https://github.com/lodash/lodash/wiki/Cha
 
 ## BestieJS
 
-Lo-Dash is part of the BestieJS *“Best in Class”* module collection. This means it promotes solid environment support, ES5+ precedents, unit testing, & plenty of documentation.
+Lo-Dash is part of the [BestieJS](https://github.com/bestiejs) *“Best in Class”* module collection. This means it promotes solid environment support, ES5+ precedents, unit testing, & plenty of documentation.
 
 ## Author
 

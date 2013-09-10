@@ -51,7 +51,6 @@
       "*.template.*",
       "*.map",
       "*.md",
-      "*.txt",
       "lodash.js",
       "index.js",
       "bower.json",

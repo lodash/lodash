@@ -5,15 +5,7 @@
   "homepage": "http://lodash.com/",
   "license": "MIT",
   "main": "dist/lodash.js",
-  "keywords": [
-    "browser",
-    "client",
-    "functional",
-    "performance",
-    "server",
-    "speed",
-    "util"
-  ],
+  "keywords": ["amd", "browser", "client", "customize", "functional", "performance", "server", "speed", "util"],
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
@@ -22,14 +14,8 @@
     "Mathias Bynens <mathias@qiwi.be> (http://mathiasbynens.be/)"
   ],
   "bugs": "https://github.com/lodash/lodash/issues",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lodash/lodash.git"
-  },
-  "engines": [
-    "node",
-    "rhino"
-  ],
+  "repository": { "type": "git", "url": "https://github.com/lodash/lodash.git" },
+  "engines": ["node", "rhino"],
   "files": [
     "LICENSE.txt",
     "dist/lodash.js",

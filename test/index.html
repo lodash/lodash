@@ -46,10 +46,10 @@
 			    shimmedModule,
 			    underscoreModule;
 
-			if (window.curl) {
-				var require = curl;
-			}
 			(function() {
+				if (window.curl) {
+					curl.config({ 'apiName': 'require' });
+				}
 				if (!window.require) {
 					return;
 				}

@@ -21,7 +21,7 @@
   // generate Markdown
   $markdown = docdown(array(
     'path'  => '../' . $file,
-    'title' => 'Lo-Dash <span>v1.3.1</span>',
+    'title' => 'Lo-Dash <span>v2.0.0</span>',
     'toc'   => 'categories',
     'url'   => 'https://github.com/bestiejs/lodash/blob/master/lodash.js'
   ));

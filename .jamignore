@@ -1,10 +1,6 @@
 .*
-*.custom.*
-*.min.*
-*.template.*
-*.map
 *.md
-lodash.js
+/lodash.js
 index.js
 bower.json
 component.json

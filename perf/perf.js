@@ -591,13 +591,13 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.bind` with partially applied arguments (uses native `Function#bind` if available and inferred fast)')
+    Benchmark.Suite('`_.bind` (uses native `Function#bind` if available and inferred fast)')
       .add(buildName, {
-        'fn': 'lodash.bind(func, { "name": "moe" }, "hi")',
+        'fn': 'lodash.bind(func, { "name": "moe" })',
         'teardown': 'function bind(){}'
       })
       .add(otherName, {
-        'fn': '_.bind(func, { "name": "moe" }, "hi")',
+        'fn': '_.bind(func, { "name": "moe" })',
         'teardown': 'function bind(){}'
       })
   );

@@ -7,3 +7,4 @@ modularize
 node_modules
 dist/*.backbone.*
 dist/*.legacy.*
+dist/*.mobile.*

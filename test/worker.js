@@ -3,4 +3,4 @@ addEventListener('message', function(e) {
     importScripts(e.data);
     postMessage(_.VERSION);
   }
-});
+}, false);

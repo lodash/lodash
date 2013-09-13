@@ -666,15 +666,18 @@
         var args = arguments,
             thisBinding = isBind ? thisArg : this;
 
-        if (isPartial) {
-          unshift.apply(args, partialArgs);
-        }
-        if (isPartialRight) {
-          push.apply(args, partialRightArgs);
-        }
-        if (isCurry && args.length < arity) {
-          bitmask |= 16 & ~32;
-          return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
+        if (isCurry || isPartial || isPartialRight) {
+          args = nativeSlice.call(args);
+          if (isPartial) {
+            unshift.apply(args, partialArgs);
+          }
+          if (isPartialRight) {
+            push.apply(args, partialRightArgs);
+          }
+          if (isCurry && args.length < arity) {
+            bitmask |= 16 & ~32;
+            return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
+          }
         }
         if (isBindKey) {
           func = thisBinding[key];

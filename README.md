@@ -46,7 +46,7 @@ For a list of upcoming features, check out our [roadmap](https://github.com/loda
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.partialRight](http://lodash.com/docs#partialRight) for [partial application](http://lodash.com/docs#partial) from the right
- * [_.pull](http://lodash.com/docs#pull) and [_.remove](http://lodash.com/docs#remove) for mutating arrays
+ * [_.pull](http://lodash.com/docs#pull) & [_.remove](http://lodash.com/docs#remove) for mutating arrays
  * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking
  * [_.support](http://lodash.com/docs#support) for flagging environment features
  * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6)
@@ -59,7 +59,8 @@ For a list of upcoming features, check out our [roadmap](https://github.com/loda
    [more](http://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.forEach, _.forEachRight, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy, _.where") accept strings
  * [_.filter](http://lodash.com/docs#filter), [_.map](http://lodash.com/docs#map), &
    [more](http://lodash.com/docs "_.countBy, _.every, _.find, _.findKey, _.findLast, _.findLastIndex, _.findLastKey, _.first, _.groupBy, _.initial, _.last, _.max, _.min, _.reject, _.rest, _.some, _.sortBy, _.sortedIndex, _.uniq") support *“_.pluck”* & *“_.where”* shorthands
- * [_.findLast](http://lodash.com/docs#findLast), [_.findLastIndex](http://lodash.com/docs#findLastIndex), & [more](http://lodash.com/docs "_.findLastKey, _.forEachRight, _.forInRight, _.forOwnRight") right-associative methods
+ * [_.findLast](http://lodash.com/docs#findLast), [_.findLastIndex](http://lodash.com/docs#findLastIndex), &
+   [more](http://lodash.com/docs "_.findLastKey, _.forEachRight, _.forInRight, _.forOwnRight") right-associative methods
 
 ## Resources
 

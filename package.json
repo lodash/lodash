@@ -18,6 +18,7 @@
   "engines": ["node", "rhino"],
   "files": [
     "LICENSE.txt",
+    "lodash.js",
     "dist/lodash.js",
     "dist/lodash.min.js",
     "dist/lodash.compat.js",

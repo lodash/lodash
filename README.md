@@ -15,7 +15,7 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 [Development](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.underscore.js) &
 [Production](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.underscore.min.js)
 
-Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-node](https://npmjs.org/package/lodash-node), and [npm packages](https://npmjs.org/~jdalton) per method.
+Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-node](https://npmjs.org/package/lodash-node), and [npm packages](https://npmjs.org/browse/author/jdalton) per method.
 
 CDN copies are available on [cdnjs](http://cdnjs.com/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.

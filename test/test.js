@@ -1300,6 +1300,18 @@
       deepEqual(actual2, expected);
       ok(4 in actual2);
     });
+
+    test('should work with extremely large arrays', function() {
+      var expected = Array(5e5),
+          pass = true;
+
+      try {
+        var actual = _.flatten([expected]);
+      } catch(e) {
+        pass = false;
+      }
+      deepEqual(pass && actual, expected);
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

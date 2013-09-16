@@ -1310,7 +1310,11 @@
       } catch(e) {
         pass = false;
       }
-      deepEqual(pass && actual, expected);
+      if (pass) {
+        deepEqual(actual, expected);
+      } else {
+        ok(pass);
+      }
     });
   }(1, 2, 3));
 

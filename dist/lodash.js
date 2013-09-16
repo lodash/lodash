@@ -189,7 +189,7 @@
   }
 
   /**
-   * Adds a given `value` to the corresponding cache object.
+   * Adds a given value to the corresponding cache object.
    *
    * @private
    * @param {*} value The value to add to the cache.
@@ -409,7 +409,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Create a new `lodash` function using the given `context` object.
+   * Create a new `lodash` function using the given context object.
    *
    * @static
    * @memberOf _
@@ -3755,7 +3755,7 @@
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Object} properties The object of property values to filter by.
-     * @returns {Array} Returns a new array of elements that have the given `properties`.
+     * @returns {Array} Returns a new array of elements that have the given properties.
      * @example
      *
      * var stooges = [
@@ -5548,7 +5548,7 @@
     }
 
     /**
-     * Converts the given `value` into an integer of the specified `radix`.
+     * Converts the given value into an integer of the specified radix.
      * If `radix` is `undefined` or `0` a `radix` of `10` is used unless the
      * `value` is a hexadecimal, in which case a `radix` of `16` is used.
      *
@@ -5905,7 +5905,7 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object that wraps the given `value`.
+     * Creates a `lodash` object that wraps the given value.
      *
      * @static
      * @memberOf _

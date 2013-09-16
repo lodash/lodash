@@ -1892,7 +1892,7 @@
 
   /**
    * Examines each element in a `collection`, returning the first that
-   * has the given `properties`. When checking `properties`, this method
+   * has the given properties. When checking `properties`, this method
    * performs a deep comparison between values to determine if they are
    * equivalent to each other.
    *
@@ -2700,7 +2700,7 @@
    * @category Collections
    * @param {Array|Object|string} collection The collection to iterate over.
    * @param {Object} properties The object of property values to filter by.
-   * @returns {Array} Returns a new array of elements that have the given `properties`.
+   * @returns {Array} Returns a new array of elements that have the given properties.
    * @example
    *
    * var stooges = [
@@ -4451,7 +4451,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a `lodash` object that wraps the given `value`.
+   * Creates a `lodash` object that wraps the given value.
    *
    * @static
    * @memberOf _

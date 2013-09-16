@@ -554,20 +554,6 @@
     }
 
     /**
-     * Computes the geometric mean (log-average) of a sample.
-     * See http://en.wikipedia.org/wiki/Geometric_mean#Relationship_with_arithmetic_mean_of_logarithms.
-     *
-     * @private
-     * @param {Array} sample The sample.
-     * @returns {number} The geometric mean.
-     */
-    function getGeometricMean(sample) {
-      return pow(Math.E, _.reduce(sample, function(sum, x) {
-        return sum + log(x);
-      }) / sample.length) || 0;
-    }
-
-    /**
      * Computes the arithmetic mean of a sample.
      *
      * @private

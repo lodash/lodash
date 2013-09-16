@@ -107,14 +107,14 @@
 * [`_.compose`](#_composefunc)
 * [`_.createCallback`](#_createcallbackfuncidentity--thisarg--argcount)
 * [`_.curry`](#_curryfunc--arityfunclength)
-* [`_.debounce`](#_debouncefunc-wait--options--optionsleadingfalse--optionsmaxwait--optionstrailingtrue)
+* [`_.debounce`](#_debouncefunc-wait--options--optionsmaxwait)
 * [`_.defer`](#_deferfunc--arg)
 * [`_.delay`](#_delayfunc-wait--arg)
 * [`_.memoize`](#_memoizefunc--resolver)
 * [`_.once`](#_oncefunc)
 * [`_.partial`](#_partialfunc--arg)
 * [`_.partialRight`](#_partialrightfunc--arg)
-* [`_.throttle`](#_throttlefunc-wait--options--optionsleadingtrue--optionstrailingtrue)
+* [`_.throttle`](#_throttlefunc-wait--options)
 * [`_.wrap`](#_wrapvalue-wrapper)
 
 <!-- /div -->
@@ -2388,8 +2388,8 @@ curried(1, 2, 3);
 
 <!-- div -->
 
-### <a id="_debouncefunc-wait--options--optionsleadingfalse--optionsmaxwait--optionstrailingtrue"></a>`_.debounce(func, wait, [options], [options.leading=false], [options.maxWait], [options.trailing=true])`
-<a href="#_debouncefunc-wait--options--optionsleadingfalse--optionsmaxwait--optionstrailingtrue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5433 "View in source") [&#x24C9;][1]
+### <a id="_debouncefunc-wait--options--optionsmaxwait"></a>`_.debounce(func, wait, [options], [options.maxWait])`
+<a href="#_debouncefunc-wait--options--optionsmaxwait">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5433 "View in source") [&#x24C9;][1]
 
 Creates a function that will delay the execution of `func` until after `wait` milliseconds have elapsed since the last time it was invoked. Provide an options object to indicate that `func` should be invoked on the leading and/or trailing edge of the `wait` timeout. Subsequent calls to the debounced function will return the result of the last `func` call.
 
@@ -2614,8 +2614,8 @@ options.imports
 
 <!-- div -->
 
-### <a id="_throttlefunc-wait--options--optionsleadingtrue--optionstrailingtrue"></a>`_.throttle(func, wait, [options], [options.leading=true], [options.trailing=true])`
-<a href="#_throttlefunc-wait--options--optionsleadingtrue--optionstrailingtrue">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5747 "View in source") [&#x24C9;][1]
+### <a id="_throttlefunc-wait--options"></a>`_.throttle(func, wait, [options])`
+<a href="#_throttlefunc-wait--options">#</a> [&#x24C8;](https://github.com/bestiejs/lodash/blob/master/lodash.js#L5747 "View in source") [&#x24C9;][1]
 
 Creates a function that, when executed, will only call the `func` function at most once per every `wait` milliseconds. Provide an options object to indicate that `func` should be invoked on the leading and/or trailing edge of the `wait` timeout. Subsequent calls to the throttled function will return the result of the last `func` call.
 

@@ -142,7 +142,10 @@ class Entry {
       $params = $this->getParams();
 
       foreach ($params as $param) {
-        $result[] = $param[1];
+        // skip params that are properties of other params (e.g. `options.leading`)
+        if (!preg_match('/\w+\.[\w.]+\s*=/', $param[1])) {
+          $result[] = $param[1];
+        }
       }
       // format
       $result = $name .'('. implode(array_slice($result, 1), ', ') .')';

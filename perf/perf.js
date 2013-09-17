@@ -270,6 +270,7 @@
           numbers = Array(limit),\
           fourNumbers = [5, 25, 10, 30],\
           nestedNumbers = [1, [2], [3, [[4]]]],\
+          nestedObjects = [{}, [{}], [{}, [[{}]]]],\
           twoNumbers = [12, 23];\
       \
       for (index = 0; index < limit; index++) {\
@@ -1022,6 +1023,16 @@
       )
       .add(otherName, '\
         _.flatten(nestedNumbers)'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.flatten` with objects')
+      .add(buildName, '\
+        lodash.flatten(nestedObjects)'
+      )
+      .add(otherName, '\
+        _.flatten(nestedObjects)'
       )
   );
 

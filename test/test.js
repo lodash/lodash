@@ -255,10 +255,30 @@
     });
 
     test('avoids overwritten native methods', function() {
+      function message(methodName) {
+        return '`_.' + methodName + '` should avoid overwritten native methods';
+      }
+
+      var object = { 'a': true };
+
       if (document) {
-        notDeepEqual(lodashBadShim.keys({ 'a': 1 }), []);
-      } else {
-        skipTest();
+        try {
+          var actual = lodashBadShim.bind(function() { return this.a; }, object)();
+        } catch(e) { }
+        ok(actual, message('bind'));
+
+        try {
+          actual = lodashBadShim.isArray([]);
+        } catch(e) { }
+        ok(actual, message('isArray'));
+
+        try {
+          actual = lodashBadShim.keys(object);
+        } catch(e) { }
+        deepEqual(actual, ['a'], message('keys'));
+      }
+      else {
+        skipTest(3);
       }
     });
   }());
@@ -604,7 +624,7 @@
       });
 
       test('`_.' + methodName + '` should handle cloning if `callback` returns `undefined`', function() {
-        var actual = _.clone({ 'a': { 'b': 'c' } }, function() { });
+        var actual = _.clone({ 'a': { 'b': 'c' } }, function() {});
         deepEqual(actual, { 'a': { 'b': 'c' } });
       });
     });
@@ -2077,7 +2097,7 @@
     });
 
     test('should handle comparisons if `callback` returns `undefined`', function() {
-      var actual = _.isEqual('a', 'a', function() { });
+      var actual = _.isEqual('a', 'a', function() {});
       strictEqual(actual, true);
     });
 
@@ -2596,7 +2616,7 @@
     });
 
     test('should handle merging if `callback` returns `undefined`', function() {
-      var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, function() { });
+      var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, function() {});
       deepEqual(actual, { 'a': { 'b': [0, 1] } });
     });
 
@@ -4437,7 +4457,7 @@
         _.forEach(falsey, function(value, index) {
           try {
             actual.push(index ? func(value) : func());
-          } catch(e) { console.log(e)}
+          } catch(e) { }
         });
 
         deepEqual(actual, expected);

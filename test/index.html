@@ -38,16 +38,26 @@
 			var lodashBadShim = window._;
 
 			// restore native methods
-			Array.isArray = Array._isArray;
+			delete Array.isArray;
+			delete Function.prototype.bind;
+			delete Object.defineProperty;
+			delete Object.keys;
+
+			if (Array._isArray) {
+				Array.isArray = Array._isArray;
+			}
+			if (Function.prototype._bind) {
+				Function.prototype.bind = Function.prototype._bind;
+			}
+			if (Object._defineProperty) {
+				Object.defineProperty = Object._defineProperty;
+			}
+			if (Object._keys) {
+				Object.keys = Object._keys;
+			}
 			delete Array._isArray;
-
-			Function.prototype.bind = Function.prototype._bind;
 			delete Function.prototype._bind;
-
-			Object.defineProperty = Object._defineProperty;
 			delete Object._defineProperty;
-
-			Object.keys = Object._keys;
 			delete Object._keys;
 
 			// load Lo-Dash again to overwrite the existing `_` value

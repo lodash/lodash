@@ -51,7 +51,7 @@
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'lodash-modern':
-      case  null:               result = 'dist/lodash.min.js'; break;
+      case null:                result = 'dist/lodash.min.js'; break;
       default:                  return build;
     }
     return basePath + result;
@@ -70,7 +70,7 @@
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
       case 'underscore':
-      case  null:               result = 'vendor/underscore/underscore-min.js'; break;
+      case null:                result = 'vendor/underscore/underscore-min.js'; break;
       default:                  return other;
     }
     return basePath + result;

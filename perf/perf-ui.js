@@ -5,10 +5,10 @@
   var basePath = '../';
 
   /** The Lo-Dash build to load */
-  var build = (/build=([^&]+)/.exec(location.search) || [])[1];
+  var build = (build = /build=([^&]+)/.exec(location.search)) && decodeURIComponent(build[1]);
 
   /** The other library to load */
-  var other = (/other=([^&]+)/.exec(location.search) || [])[1];
+  var other = (other = /other=([^&]+)/.exec(location.search)) && decodeURIComponent(other[1]);
 
   /** The `ui` object */
   var ui = {};
@@ -51,7 +51,7 @@
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'lodash-modern':
-      case  undefined:          result = 'dist/lodash.min.js'; break;
+      case  null:               result = 'dist/lodash.min.js'; break;
       default:                  return build;
     }
     return basePath + result;
@@ -70,7 +70,7 @@
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
       case 'underscore':
-      case  undefined:          result = 'vendor/underscore/underscore-min.js'; break;
+      case  null:               result = 'vendor/underscore/underscore-min.js'; break;
       default:                  return other;
     }
     return basePath + result;
@@ -141,7 +141,7 @@
         case 'lodash-custom-dev': return 5;
         case 'lodash-custom':     return 6;
         case 'lodash-modern':
-        case undefined:           return 3;
+        case null:                return 3;
       }
       return -1;
     }());
@@ -157,7 +157,7 @@
         case 'lodash-custom-dev': return 7;
         case 'lodash-custom':     return 8;
         case 'underscore':
-        case undefined:           return 1;
+        case null:                return 1;
       }
       return -1;
     }());

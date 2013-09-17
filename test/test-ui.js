@@ -5,10 +5,10 @@
   var basePath = '../';
 
   /** The Lo-Dash build to load */
-  var build = (/build=([^&]+)/.exec(location.search) || [])[1];
+  var build = (build = /build=([^&]+)/.exec(location.search)) && decodeURIComponent(build[1]);
 
   /** The module loader to use */
-  var loader = (/loader=([^&]+)/.exec(location.search) || [])[1];
+  var loader = (loader = /loader=([^&]+)/.exec(location.search)) && decodeURIComponent(loader[1]);
 
   /** The `ui` object */
   var ui = {};
@@ -54,7 +54,7 @@
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'lodash-compat-dev':
-      case  undefined:          result = 'lodash.js'; break;
+      case  null:               result = 'lodash.js'; break;
       default:                  return build;
     }
     return basePath + result;
@@ -67,7 +67,7 @@
       case 'curl':      result = 'vendor/curl/dist/curl-kitchen-sink/curl.js'; break;
       case 'dojo':      result = 'vendor/dojo/dojo.js'; break;
       case 'requirejs':
-      case  undefined:  result = 'vendor/requirejs/require.js'; break;
+      case  null:       result = 'vendor/requirejs/require.js'; break;
       default:          return loader;
     }
     return basePath + result;
@@ -113,7 +113,7 @@
             case 'lodash-custom-dev': return 8;
             case 'lodash-custom':     return 9;
             case 'lodash-compat-dev':
-            case undefined:           return 0;
+            case null:                return 0;
           }
           return -1;
         }());
@@ -124,7 +124,7 @@
             case 'curl':      return 1;
             case 'dojo':      return 2;
             case 'requirejs':
-            case undefined:   return 3;
+            case null:        return 3;
           }
           return -1;
         }());

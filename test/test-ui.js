@@ -54,7 +54,7 @@
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'lodash-compat-dev':
-      case  null:               result = 'lodash.js'; break;
+      case null:                result = 'lodash.js'; break;
       default:                  return build;
     }
     return basePath + result;
@@ -67,7 +67,7 @@
       case 'curl':      result = 'vendor/curl/dist/curl-kitchen-sink/curl.js'; break;
       case 'dojo':      result = 'vendor/dojo/dojo.js'; break;
       case 'requirejs':
-      case  null:       result = 'vendor/requirejs/require.js'; break;
+      case null:        result = 'vendor/requirejs/require.js'; break;
       default:          return loader;
     }
     return basePath + result;

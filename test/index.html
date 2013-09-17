@@ -17,7 +17,16 @@
 		<div id="qunit"></div>
 		<div id="exports"></div>
 		<script>
-			// set a bad shim
+			// set bad shims
+			Array._isArray = Array.isArray;
+			Array.isArray = function() { return false; };
+
+			Function.prototype._bind = Function.prototype.bind;
+			Function.prototype.bind = function() { return function() {}; };
+
+			Object._defineProperty = Object.defineProperty;
+			Object.defineProperty = function() {};
+
 			Object._keys = Object.keys;
 			Object.keys = function() { return []; };
 
@@ -28,7 +37,16 @@
 			// store Lo-Dash to test for bad shim detection
 			var lodashBadShim = window._;
 
-			// restore nativeKeys
+			// restore native methods
+			Array.isArray = Array._isArray;
+			delete Array._isArray;
+
+			Function.prototype.bind = Function.prototype._bind;
+			delete Function.prototype._bind;
+
+			Object.defineProperty = Object._defineProperty;
+			delete Object._defineProperty;
+
 			Object.keys = Object._keys;
 			delete Object._keys;
 

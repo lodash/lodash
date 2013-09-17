@@ -419,8 +419,8 @@
     while (++index < length) {
       var value = array[index];
 
-      // recursively flatten arrays (susceptible to call stack limits)
-      if (value && typeof value == 'object' && (isArray(value) || isArguments(value))) {
+      if (value && typeof value == 'object' && value.length && (isArray(value) || isArguments(value))) {
+        // recursively flatten arrays (susceptible to call stack limits)
         if (!isShallow) {
           value = baseFlatten(value, isShallow, isArgArrays);
         }
@@ -784,12 +784,14 @@
    * // => false
    */
   function isArguments(value) {
-    return (value && typeof value == 'object') ? toString.call(value) == argsClass : false;
+    return value && typeof value == 'object' && typeof value.length == 'number' &&
+      toString.call(value) == argsClass || false;
   }
   // fallback for browsers that can't detect `arguments` objects by [[Class]]
   if (!isArguments(arguments)) {
     isArguments = function(value) {
-      return (value && typeof value == 'object') ? hasOwnProperty.call(value, 'callee') : false;
+      return value && typeof value == 'object' && typeof value.length == 'number' &&
+        hasOwnProperty.call(value, 'callee') || false;
     };
   }
 
@@ -811,7 +813,8 @@
    * // => true
    */
   var isArray = nativeIsArray || function(value) {
-    return (value && typeof value == 'object') ? toString.call(value) == arrayClass : false;
+    return value && typeof value == 'object' && typeof value.length == 'number' &&
+      toString.call(value) == arrayClass || false;
   };
 
   /**

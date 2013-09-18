@@ -3600,10 +3600,11 @@
     }
 
     /**
-     * Retrieves the maximum value of an array. If a callback is provided it
-     * will be executed for each value in the array to generate the criterion by
-     * which the value is ranked. The callback is bound to `thisArg` and invoked
-     * with three arguments; (value, index, collection).
+     * Retrieves the maximum value of a collection. If the collection is empty or
+     * falsey `-Infinity` is returned. If a callback is provided it will be executed
+     * for each value in the collection to generate the criterion by which the value
+     * is ranked. The callback is bound to `thisArg` and invoked with three
+     * arguments; (value, index, collection).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -3669,10 +3670,11 @@
     }
 
     /**
-     * Retrieves the minimum value of an array. If a callback is provided it
-     * will be executed for each value in the array to generate the criterion by
-     * which the value is ranked. The callback is bound to `thisArg` and invoked
-     * with three arguments; (value, index, collection).
+     * Retrieves the minimum value of a collection. If the collection is empty or
+     * falsey `Infinity` is returned. If a callback is provided it will be executed
+     * for each value in the collection to generate the criterion by which the value
+     * is ranked. The callback is bound to `thisArg` and invoked with three
+     * arguments; (value, index, collection).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
      * callback will return the property value of the given element.

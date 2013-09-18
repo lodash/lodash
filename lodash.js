@@ -1131,7 +1131,8 @@
       while (++index < length) {
         var value = array[index];
 
-        if (value && typeof value == 'object' && value.length && (isArray(value) || isArguments(value))) {
+        if (value && typeof value == 'object' && typeof value.length == 'number'
+            && (isArray(value) || isArguments(value))) {
           // recursively flatten arrays (susceptible to call stack limits)
           if (!isShallow) {
             value = baseFlatten(value, isShallow, isArgArrays);

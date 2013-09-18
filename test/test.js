@@ -1336,6 +1336,11 @@
         ok(pass);
       }
     });
+
+    test('should work with empty arrays', function() {
+      var actual = _.flatten([[], [[]], [[], [[[]]]]]);
+      deepEqual(actual, []);
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

@@ -4649,7 +4649,12 @@
         _.forEach(falsey, function(value, index) {
           var pass = false;
           try {
-            index ? func(value) : func();
+            if (index) {
+              func(value);
+            } else {
+              func();
+              pass = methodName == 'compose';
+            }
           } catch(e) {
             pass = true;
           }

@@ -4920,7 +4920,7 @@
      */
     function compose() {
       var funcs = arguments,
-          length = funcs.length || 1;
+          length = funcs.length;
 
       while (length--) {
         if (!isFunction(funcs[length])) {

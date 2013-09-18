@@ -4647,16 +4647,11 @@
             func = _[methodName];
 
         _.forEach(falsey, function(value, index) {
-          var pass = false;
+          var pass = !index && methodName == 'compose';
           try {
-            if (index) {
-              func(value);
-            } else {
-              func();
-              pass = methodName == 'compose';
-            }
+            index ? func(value) : func();
           } catch(e) {
-            pass = true;
+            pass = !pass;
           }
           actual.push(pass);
         });

@@ -38,22 +38,25 @@
 			var lodashBadShim = window._;
 
 			// restore native methods
-			delete Array.isArray;
-			delete Function.prototype.bind;
-			delete Object.defineProperty;
-			delete Object.keys;
-
 			if (Array._isArray) {
 				Array.isArray = Array._isArray;
+			} else {
+				delete Array.isArray;
 			}
 			if (Function.prototype._bind) {
 				Function.prototype.bind = Function.prototype._bind;
+			} else {
+				delete Function.prototype.bind;
 			}
 			if (Object._defineProperty) {
 				Object.defineProperty = Object._defineProperty;
+			} else {
+				delete Object.defineProperty;
 			}
 			if (Object._keys) {
 				Object.keys = Object._keys;
+			} else {
+				delete Object.keys;
 			}
 			delete Array._isArray;
 			delete Function.prototype._bind;

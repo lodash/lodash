@@ -3609,27 +3609,27 @@
 
   (function() {
     test('should contain properties with boolean values', function() {
+      ok(_.every(_.values(_.support), _.isBoolean));
+    });
+
+    test('should not contain minified properties (test production builds)', function() {
       var props = [
-        'argsObject',
         'argsClass',
+        'argsObject',
+        'enumErrorProps',
         'enumPrototypes',
         'fastBind',
-        'fastKeys',
+        'funcDecomp',
+        'funcNames',
         'ownLast',
+        'nodeClass',
         'nonEnumArgs',
         'nonEnumShadows',
         'spliceObjects',
-        'unindexedChars',
-        'nodeClass'
+        'unindexedChars'
       ];
 
-      _.forEach(props, function(prop) {
-        if (_.has(_.support, prop)) {
-          equal(typeof _.support[prop], 'boolean');
-        } else {
-          skipTest();
-        }
-      });
+      ok(!_.size(_.difference(_.keys(_.support), props)));
     });
   }());
 

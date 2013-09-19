@@ -10,7 +10,6 @@ env:
   - BIN="node"      BUILD="legacy" MAKE=true
   - BIN="node"      BUILD="mobile" MAKE=true
   - BIN="phantomjs" BUILD="compat" MAKE=false
-  - BIN="phantomjs" BUILD="modern" MAKE=false
   - BIN="phantomjs" BUILD="legacy" MAKE=true
   - BIN="phantomjs" BUILD="mobile" MAKE=true
 git:

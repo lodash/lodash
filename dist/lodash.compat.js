@@ -70,7 +70,7 @@
   var reNoMatch = /($^)/;
 
   /** Used to detect functions containing a `this` reference */
-  var reThis = (reThis = /\bthis\b/) && reThis.test(runInContext) && reThis;
+  var reThis = /\bthis\b/;
 
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
@@ -716,6 +716,15 @@
       support.fastBind = nativeBind && !isV8;
 
       /**
+       * Detect if functions can be decompiled by `Function#toString`
+       * (all but PS3 and older Opera mobile browsers & avoided in Windows 8 apps).
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      support.funcDecomp = !reNative.test(context.WinRTError) && reThis.test(runInContext);
+
+      /**
        * Detect if `Function#name` is supported (all but IE).
        *
        * @memberOf _.support
@@ -1070,7 +1079,7 @@
         }
         if (support.funcNames || !bindData) {
           // checks if `func` references the `this` keyword and stores the result
-          bindData = !reThis || reThis.test(source);
+          bindData = !support.funcDecomp || reThis.test(source);
           setBindData(func, bindData);
         }
       }
@@ -6056,8 +6065,8 @@
      * // => 'hello mustache!'
      *
      * // using the `imports` option to import jQuery
-     * var list = '<% $.each(people, function(name) { %><li><%= name %></li><% }); %>';
-     * _.template(list, { 'people': ['moe', 'larry'] }, { 'imports': { '$': jQuery });
+     * var list = '<% $.each(people, function(name) { %><li><%- name %></li><% }); %>';
+     * _.template(list, { 'people': ['moe', 'larry'] }, { 'imports': { '$': jQuery } });
      * // => '<li>moe</li><li>larry</li>'
      *
      * // using the `sourceURL` option to specify a custom sourceURL for the template
@@ -6175,7 +6184,7 @@
       if (data) {
         return result(data);
       }
-      // provide the compiled function's source via its `toString` method, in
+      // provide the compiled function's source by its `toString` method, in
       // supported environments, or the `source` property as a convenience for
       // inlining compiled templates during the build process
       result.source = source;
@@ -6634,7 +6643,7 @@
     // Expose Lo-Dash to the global object even when an AMD loader is present in
     // case Lo-Dash was injected by a third-party script and not intended to be
     // loaded as a module. The global assignment can be reverted in the Lo-Dash
-    // module via its `noConflict()` method.
+    // module by its `noConflict()` method.
     root._ = _;
 
     // define as an anonymous module so, through path mapping, it can be

@@ -27,6 +27,9 @@
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
 
+  /** Used to detect functions containing a `this` reference */
+  var reThis = /\bthis\b/;
+
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
@@ -303,6 +306,15 @@
      * @type boolean
      */
     support.fastBind = nativeBind && !isV8;
+
+    /**
+     * Detect if functions can be decompiled by `Function#toString`
+     * (all but PS3 and older Opera mobile browsers & avoided in Windows 8 apps).
+     *
+     * @memberOf _.support
+     * @type boolean
+     */
+    support.funcDecomp = !reNative.test(root.WinRTError) && reThis.test(function() { return this; });
 
     /**
      * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
@@ -4298,8 +4310,8 @@
    * // => 'hello mustache!'
    *
    * // using the `imports` option to import jQuery
-   * var list = '<% $.each(people, function(name) { %><li><%= name %></li><% }); %>';
-   * _.template(list, { 'people': ['moe', 'larry'] }, { 'imports': { '$': jQuery });
+   * var list = '<% $.each(people, function(name) { %><li><%- name %></li><% }); %>';
+   * _.template(list, { 'people': ['moe', 'larry'] }, { 'imports': { '$': jQuery } });
    * // => '<li>moe</li><li>larry</li>'
    *
    * // using the `sourceURL` option to specify a custom sourceURL for the template
@@ -4731,7 +4743,7 @@
     // Expose Lo-Dash to the global object even when an AMD loader is present in
     // case Lo-Dash was injected by a third-party script and not intended to be
     // loaded as a module. The global assignment can be reverted in the Lo-Dash
-    // module via its `noConflict()` method.
+    // module by its `noConflict()` method.
     root._ = lodash;
 
     // define as an anonymous module so, through path mapping, it can be

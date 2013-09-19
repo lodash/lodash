@@ -2116,7 +2116,7 @@ Performs a deep comparison of each element in a `collection` to the given `prope
 ```js
 var stooges = [
   { 'name': 'curly', 'age': 30, 'quotes': ['Oh, a wise guy, eh?', 'Poifect!'] },
-  { 'name': 'moe', 'age': '40', 'quotes': ['Spread out!', 'You knucklehead!'] }
+  { 'name': 'moe', 'age': 40, 'quotes': ['Spread out!', 'You knucklehead!'] }
 ];
 
 _.where(stooges, { 'age': 40 });

@@ -3,20 +3,20 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 ## Download
 
-* Modern builds:
+* Modern builds perfect for newer browsers/environments:<br>
 [Development](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.js) &
 [Production](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.min.js)
 
-* Compatibility builds:
+* Compatibility builds for older environment support too:<br>
 [Development](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.compat.js) &
 [Production](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.compat.min.js)
 
-* Underscore builds:
+* Underscore builds to use as a drop-in replacement:<br>
 [Development](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.underscore.js) &
 [Production](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.underscore.min.js)
 
-CDN copies are available on [cdnjs](http://cdnjs.com/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
-For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.
+CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
+For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.<br>
 Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-node](https://npmjs.org/package/lodash-node), and [npm packages](https://npmjs.org/browse/author/jdalton) per method.
 
 ## Dive in
@@ -77,7 +77,7 @@ For a list of upcoming features, check out our [roadmap](https://github.com/loda
 
 ## Support
 
-Tested in Chrome 5~29, Firefox 2~23, IE 6-10, Opera 9.25~15, Safari 3-6, Node.js 0.6.8-0.10.18, Narwhal 0.3.2, PhantomJS 1.9.1, RingoJS 0.9, & Rhino 1.7RC5.
+Tested in Chrome 5~29, Firefox 2~23, IE 6-10, Opera 9.25~15, Safari 3-6, Node.js 0.6.8-0.10.18, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
 
 ## Installation & usage
 

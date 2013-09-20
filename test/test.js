@@ -3065,6 +3065,17 @@
       ok(actual % 1);
       ok(actual >= min && actual <= max);
     });
+
+    test('supports passing a `floating` argument', function() {
+      var actual = _.random(true);
+      ok(actual % 1 && actual >= 0 && actual <= 1);
+
+      actual = _.random(2, true);
+      ok(actual % 1 && actual >= 0 && actual <= 2);
+
+      actual = _.random(2, 4, true);
+      ok(actual % 1 && actual >= 2 && actual <= 4);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

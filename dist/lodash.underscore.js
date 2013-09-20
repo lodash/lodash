@@ -952,7 +952,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to clone.
-   * @param {boolean} [deep=false] A flag to indicate a deep clone.
+   * @param {boolean} [deep=false] Specify a deep clone.
    * @param {Function} [callback] The function to customize cloning values.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {*} Returns the cloned `value`.
@@ -4183,21 +4183,29 @@
   /**
    * Produces a random number between `min` and `max` (inclusive). If only one
    * argument is provided a number between `0` and the given number will be
-   * returned.
+   * returned. If `floating` is truey or either `min` or `max` are floats a
+   * floating-point number will be returned instead of an integer.
    *
    * @static
    * @memberOf _
    * @category Utilities
    * @param {number} [min=0] The minimum possible value.
    * @param {number} [max=1] The maximum possible value.
+   * @param {boolean} [floating=false] Specify returning a floating-point number.
    * @returns {number} Returns a random number.
    * @example
    *
    * _.random(0, 5);
-   * // => a number between 0 and 5
+   * // => an integer between 0 and 5
    *
    * _.random(5);
-   * // => also a number between 0 and 5
+   * // => also an integer between 0 and 5
+   *
+   * _.random(5, true);
+   * // => a floating-point number between 0 and 5
+   *
+   * _.random(1.2, 5.2);
+   * // => a floating-point number between 1.2 and 5.2
    */
   function random(min, max) {
     if (min == null && max == null) {
@@ -4210,10 +4218,7 @@
     } else {
       max = +max || 0;
     }
-    var rand = nativeRandom();
-    return (min % 1 || max % 1)
-      ? min + nativeMin(rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1))), max)
-      : min + floor(rand * (max - min + 1));
+    return min + floor(nativeRandom() * (max - min + 1));
   }
 
   /**

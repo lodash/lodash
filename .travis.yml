@@ -4,14 +4,17 @@ node_js:
   - "0.8"
   - "0.10"
 env:
-  - BIN="istanbul"  BUILD=false    MAKE=false
-  - BIN="node"      BUILD="compat" MAKE=false
-  - BIN="node"      BUILD="modern" MAKE=false
-  - BIN="node"      BUILD="legacy" MAKE=true
-  - BIN="node"      BUILD="mobile" MAKE=true
-  - BIN="phantomjs" BUILD="compat" MAKE=false
-  - BIN="phantomjs" BUILD="legacy" MAKE=true
-  - BIN="phantomjs" BUILD="mobile" MAKE=true
+  global:
+    - BUILD=false MAKE=false
+  matrix:
+    - BIN="istanbul"
+    - BIN="node"      BUILD="compat"
+    - BIN="node"      BUILD="modern"
+    - BIN="node"      BUILD="legacy" MAKE=true
+    - BIN="node"      BUILD="mobile" MAKE=true
+    - BIN="phantomjs" BUILD="compat"
+    - BIN="phantomjs" BUILD="legacy" MAKE=true
+    - BIN="phantomjs" BUILD="mobile" MAKE=true
 git:
   depth: 1
 branches:

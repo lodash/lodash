@@ -21,9 +21,9 @@ Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/packag
 
 ## Dive in
 
-There’s plenty of [documentation](http://lodash.com/docs), [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).
-
-For a list of upcoming features, check out our [roadmap](https://github.com/lodash/lodash/wiki/Roadmap).
+There’s plenty of [documentation](http://lodash.com/docs), [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).<br>
+For a list of upcoming features, check out our [roadmap](https://github.com/lodash/lodash/wiki/Roadmap).<br>
+The full changelog for this release is available on our [wiki](https://github.com/lodash/lodash/wiki/Changelog).
 
 ## Features *not* in Underscore
 
@@ -90,10 +90,10 @@ In browsers:
 Using [`npm`](http://npmjs.org/):
 
 ```bash
-npm i lodash
+npm i --save lodash
 
 {sudo} npm i -g lodash
-npm link lodash
+npm ln lodash
 ```
 
 In [Node.js](http://nodejs.org/) & [Ringo](http://ringojs.org/):
@@ -127,60 +127,6 @@ require({
   console.log(_.VERSION);
 });
 ```
-
-## Release Notes
-
-### <sup>v2.0.0</sup>
-
-#### Compatibility Warnings
-
- * Aligned `_.after` with Underscore 1.5.0, making it always return a function
-
-#### Noteable Changes
-
- * Created Lo-Dash methods as `npm` packages & AMD/Node.js modules
- * Made `_.chain` force chaining for all methods, even those that normally return unwrapped values
- * Moved the build utility to [lodash-cli](https://npmjs.org/package/lodash-cli)
- * Optimized `_.contains`, `_.debounce`, `_.isArguments`, `_.throttle`, `_.where`,<br>
-    & functions created by `_.bind`, `_.bindKey`, `_.curry`, `_.partial`, & `_.partialRight`
- * Added [`_.curry`](http://lodash.com/docs#curry), [`_.forEachRight`](http://lodash.com/docs#forEachRight),
-   [`_.indexBy`](http://lodash.com/docs#indexBy), [`_.findLast`](http://lodash.com/docs#findLast),
-   [`_.findLastIndex`](http://lodash.com/docs#findLastIndex),<br>
-   [`_.findLastKey`](http://lodash.com/docs#findLastKey), [`_.forInRight`](http://lodash.com/docs#forInRight),
-   [`_.forOwnRight`](http://lodash.com/docs#forOwnRight), [`_.pull`](http://lodash.com/docs#pull),
-   [`_.remove`](http://lodash.com/docs#remove), & [`_.sample`](http://lodash.com/docs#sample)
-
-#### Other Changes
-
- * Added Curl & Dojo module loaders to the unit tests
- * Added the `modularize` build option
- * Added support for the `iife` command to be used without an `%output%` token
- * Added support for `_.mixin` to accept a destination object
- * Added support for `_.range` to accept a `step` of `0`
- * Added `_.eachRight` as an alias for `_.forEachRight`
- * Ensured *“Arrays”* methods support `arguments` objects
- * Ensured *“Functions”* methods throw when not passed functions
- * Ensured `_.at` works as a `callback` for `_.map`
- * Ensured `_.createCallback` works when no `argCount` is specified
- * Ensured `_.first` & `_.last` return arrays when passed a falsey `array` with an `n` value
- * Ensured `_.flatten` works with `arguments` objects
- * Ensured minified files work with Dojo’s builder
- * Ensured `_.zipObject` skips falsey elements
- * Improved dead code removal from builds
- * Improved JSDoc syntax
- * Made `_.memoize` avoid prefixing `cache` keys when using a `resolver` function
- * Made `_.unzip` an alias of `_.zip`
- * Removed local `clearTimeout` & `setTimeout` variables from the `underscore` build
- * Reduced the size of the repo & `npm` package
- * Simplified the bailout in `createCache`
- * Updated sourceURL & sourceMappingURL syntax
- * Updated `underscore` build compatibility to v1.5.2
-
-The full changelog is available [here](https://github.com/lodash/lodash/wiki/Changelog).
-
-## BestieJS
-
-Lo-Dash is part of the [BestieJS](https://github.com/bestiejs) *“Best in Class”* module collection. This means it promotes solid environment support, ES5+ precedents, unit testing, & plenty of documentation.
 
 ## Author
 

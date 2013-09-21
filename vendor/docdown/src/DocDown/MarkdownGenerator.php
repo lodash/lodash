@@ -349,7 +349,7 @@ class MarkdownGenerator {
       $entry->href = $this->getLineUrl($entry);
 
       $member = $entry->getMembers(0);
-      $member = ($member ? $member . ($entry->isPlugin() ? '.prototype.' : '.') : '') . $entry->getName();
+      $member = ($member ? $member . $this->getSeparator($entry) : '') . $entry->getName();
       $entry->member = preg_replace('/' . $entry->getName() . '$/', '', $member);
 
       // add properties to static and plugin sub-entries

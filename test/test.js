@@ -3632,10 +3632,10 @@
         'fastBind',
         'funcDecomp',
         'funcNames',
-        'ownLast',
         'nodeClass',
         'nonEnumArgs',
         'nonEnumShadows',
+        'ownLast',
         'spliceObjects',
         'unindexedChars'
       ];

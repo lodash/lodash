@@ -1,8 +1,8 @@
 {
   "name": "lodash",
   "repo": "lodash/lodash",
-  "version": "2.0.0",
-  "description": "A utility library delivering consistency, customization, performance, and extras.",
+  "version": "2.1.0",
+  "description": "A utility library delivering consistency, customization, performance, & extras.",
   "license": "MIT",
   "keywords": ["amd", "browser", "client", "customize", "functional", "performance", "server", "speed", "util"],
   "scripts": [

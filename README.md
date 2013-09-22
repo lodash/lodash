@@ -1,19 +1,19 @@
-# Lo-Dash v2.0.0
+# Lo-Dash v2.1.0
 A utility library delivering consistency, [customization](http://lodash.com/custom-builds), [performance](http://lodash.com/benchmarks), & [extras](http://lodash.com/#features).
 
 ## Download
 
 * Modern builds perfect for newer browsers/environments:<br>
-[Development](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.js) &
-[Production](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.js) &
+[Production](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.min.js)
 
 * Compatibility builds for older environment support too:<br>
-[Development](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.compat.js) &
-[Production](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.compat.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.compat.js) &
+[Production](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.compat.min.js)
 
 * Underscore builds to use as a drop-in replacement:<br>
-[Development](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.underscore.js) &
-[Production](https://raw.github.com/lodash/lodash/2.0.0/dist/lodash.underscore.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.underscore.js) &
+[Production](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.underscore.min.js)
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.<br>
@@ -46,6 +46,7 @@ The full changelog for this release is available on our [wiki](https://github.co
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.partialRight](http://lodash.com/docs#partialRight) for [partial application](http://lodash.com/docs#partial) from the right
  * [_.pull](http://lodash.com/docs#pull) & [_.remove](http://lodash.com/docs#remove) for mutating arrays
+ * [_.random](http://lodash.com/docs#random) supports returning floating-point numbers
  * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking
  * [_.support](http://lodash.com/docs#support) for flagging environment features
  * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6)
@@ -77,7 +78,7 @@ The full changelog for this release is available on our [wiki](https://github.co
 
 ## Support
 
-Tested in Chrome 5~29, Firefox 2~23, IE 6-10, Opera 9.25~15, Safari 3-6, Node.js 0.6.8-0.10.18, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
+Tested in Chrome 5~29, Firefox 2~24, IE 6-10, Opera 9.25~16, Safari 3-6, Node.js 0.6.8-0.10.18, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
 
 ## Installation & usage
 

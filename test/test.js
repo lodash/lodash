@@ -1325,15 +1325,19 @@
       var expected = Array(5e5),
           pass = true;
 
-      try {
-        var actual = _.flatten([expected]);
-      } catch(e) {
-        pass = false;
-      }
-      if (pass) {
-        deepEqual(actual, expected);
+      if (freeze) {
+        try {
+          var actual = _.flatten([expected]);
+        } catch(e) {
+          pass = false;
+        }
+        if (pass) {
+          deepEqual(actual, expected);
+        } else {
+          ok(pass);
+        }
       } else {
-        ok(pass);
+        skipTest();
       }
     });
 
@@ -4649,6 +4653,11 @@
         }
         ok(pass, '`_.' + methodName + '` accepts falsey arguments');
       });
+
+      // add a skipped test for `_.runInContext` which is abscent from modularized builds
+      if (isModularize) {
+        skipTest();
+      }
     });
 
     test('should reject falsey arguments', function() {

@@ -49,7 +49,7 @@
       case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
       case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
       case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
-      case 'lodash-modularize': result = 'modularize/lodash.js'; break;
+      case 'lodash-modularize': result = 'modularize/main.js'; break;
       case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;

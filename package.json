@@ -1,7 +1,7 @@
 {
   "name": "lodash",
-  "version": "2.0.0",
-  "description": "A utility library delivering consistency, customization, performance, and extras.",
+  "version": "2.1.0",
+  "description": "A utility library delivering consistency, customization, performance, & extras.",
   "homepage": "http://lodash.com/",
   "license": "MIT",
   "main": "dist/lodash.js",
@@ -27,7 +27,16 @@
     "dist/lodash.underscore.min.js"
   ],
   "jam": {
-    "main": "dist/lodash.compat.js"
+    "main": "dist/lodash.compat.js",
+    "include": [
+      "LICENSE.txt",
+      "dist/lodash.js",
+      "dist/lodash.min.js",
+      "dist/lodash.compat.js",
+      "dist/lodash.compat.min.js",
+      "dist/lodash.underscore.js",
+      "dist/lodash.underscore.min.js"
+    ]
   },
   "volo": {
     "type": "directory",

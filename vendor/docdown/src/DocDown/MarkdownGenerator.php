@@ -195,7 +195,7 @@ class MarkdownGenerator {
       if (count($aliases = $entry->getAliases())) {
         array_push($result, '', '#### Aliases');
         foreach ($aliases as $index => $alias) {
-          $aliases[$index] = $alias->getName();
+          $aliases[$index] = MarkdownGenerator::interpolate('#{member}#{separator}#{name}', $alias);
         }
         $result[] = '*' . implode(', ', $aliases) . '*';
       }

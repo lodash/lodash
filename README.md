@@ -17,7 +17,7 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.<br>
-Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-node](https://npmjs.org/package/lodash-node), and [npm packages](https://npmjs.org/browse/author/jdalton) per method.
+Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-node](https://npmjs.org/package/lodash-node), and [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
 
 ## Dive in
 

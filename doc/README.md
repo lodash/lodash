@@ -347,7 +347,7 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
-*head, take*
+*_.head, _.take*
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
@@ -753,7 +753,7 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
-*drop, tail*
+*_.drop, _.tail*
 
 #### Arguments
 1. `array` *(Array)*: The array to query.
@@ -886,7 +886,7 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
-*unique*
+*_.unique*
 
 #### Arguments
 1. `array` *(Array)*: The array to process.
@@ -954,7 +954,7 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 Creates an array of grouped elements, the first of which contains the first elements of the given arrays, the second of which contains the second elements of the given arrays, and so on.
 
 #### Aliases
-*unzip*
+*_.unzip*
 
 #### Arguments
 1. `[array]` *(...Array)*: Arrays to process.
@@ -981,7 +981,7 @@ _.zip(['moe', 'larry'], [30, 40], [true, false]);
 Creates an object composed from arrays of `keys` and `values`. Provide either a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]` or two arrays, one of `keys` and one of corresponding `values`.
 
 #### Aliases
-*object*
+*_.object*
 
 #### Arguments
 1. `keys` *(Array)*: The array of keys.
@@ -1177,7 +1177,7 @@ _([1, 2, 3]).toString();
 Extracts the wrapped value.
 
 #### Aliases
-*value*
+*_.prototype.value*
 
 #### Returns
 *(\*)*: Returns the wrapped value.
@@ -1236,7 +1236,7 @@ _.at(['moe', 'larry', 'curly'], 0, 2);
 Checks if a given value is present in a collection using strict equality for comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the offset from the end of the collection.
 
 #### Aliases
-*include*
+*_.include*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -1314,7 +1314,7 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
-*all*
+*_.all*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -1360,7 +1360,7 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
-*select*
+*_.select*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -1406,7 +1406,7 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
-*detect, findWhere*
+*_.detect, _.findWhere*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -1479,7 +1479,7 @@ _.findLast([1, 2, 3, 4], function(num) {
 Iterates over elements of a collection, executing the callback for each element. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*. Callbacks may exit iteration early by explicitly returning `false`.
 
 #### Aliases
-*each*
+*_.each*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -1511,7 +1511,7 @@ _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { console.log(num); 
 This method is like `_.forEach` except that it iterates over elements of a `collection` from right to left.
 
 #### Aliases
-*eachRight*
+*_.eachRight*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -1651,7 +1651,7 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
-*collect*
+*_.collect*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -1806,7 +1806,7 @@ _.pluck(stooges, 'name');
 Reduces a collection to a value which is the accumulated result of running each element in the collection through the callback, where each successive callback execution consumes the return value of the previous execution. If `accumulator` is not provided the first element of the collection will be used as the initial `accumulator` value. The callback is bound to `thisArg` and invoked with four arguments; *(accumulator, value, index|key, collection)*.
 
 #### Aliases
-*foldl, inject*
+*_.foldl, _.inject*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -1844,7 +1844,7 @@ var mapped = _.reduce({ 'a': 1, 'b': 2, 'c': 3 }, function(result, num, key) {
 This method is like `_.reduce` except that it iterates over elements of a `collection` from right to left.
 
 #### Aliases
-*foldr*
+*_.foldr*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -2004,7 +2004,7 @@ If a property name is provided for `callback` the created "_.pluck" style callba
 If an object is provided for `callback` the created "_.where" style callback will return `true` for elements that have the properties of the given object, else `false`.
 
 #### Aliases
-*any*
+*_.any*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
@@ -2693,7 +2693,7 @@ hello();
 Assigns own enumerable properties of source object(s) to the destination object. Subsequent sources will overwrite property assignments of previous sources. If a callback is provided it will be executed to produce the assigned values. The callback is bound to `thisArg` and invoked with two arguments; *(objectValue, sourceValue)*.
 
 #### Aliases
-*extend*
+*_.extend*
 
 #### Arguments
 1. `object` *(Object)*: The destination object.
@@ -3034,7 +3034,7 @@ _.forOwnRight({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
 Creates a sorted array of property names of all enumerable properties, own and inherited, of `object` that have function values.
 
 #### Aliases
-*methods*
+*_.methods*
 
 #### Arguments
 1. `object` *(Object)*: The object to inspect.

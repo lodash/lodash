@@ -101,6 +101,21 @@
   cloneableClasses[numberClass] = cloneableClasses[objectClass] =
   cloneableClasses[regexpClass] = cloneableClasses[stringClass] = true;
 
+  /** Used as an internal `_.debounce` options object */
+  var debounceOptions = {
+    'leading': false,
+    'maxWait': 0,
+    'trailing': false
+  };
+
+  /** Used as the property descriptor for `__bindData__` */
+  var descriptor = {
+    'configurable': false,
+    'enumerable': false,
+    'value': null,
+    'writable': false
+  };
+
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
     'boolean': false,
@@ -324,23 +339,17 @@
     return objectPool.pop() || {
       'array': null,
       'cache': null,
-      'configurable': false,
       'criteria': null,
-      'enumerable': false,
       'false': false,
       'index': 0,
-      'leading': false,
-      'maxWait': 0,
       'null': false,
       'number': null,
       'object': null,
       'push': null,
       'string': null,
-      'trailing': false,
       'true': false,
       'undefined': false,
-      'value': null,
-      'writable': false
+      'value': null
     };
   }
 
@@ -1352,10 +1361,8 @@
      * @param {*} value The value to set.
      */
     var setBindData = !defineProperty ? noop : function(func, value) {
-      var descriptor = getObject();
       descriptor.value = value;
       defineProperty(func, '__bindData__', descriptor);
-      releaseObject(descriptor);
     };
 
     /**
@@ -5421,13 +5428,11 @@
         leading = 'leading' in options ? options.leading : leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
-      options = getObject();
-      options.leading = leading;
-      options.maxWait = wait;
-      options.trailing = trailing;
+      debounceOptions.leading = leading;
+      debounceOptions.maxWait = wait;
+      debounceOptions.trailing = trailing;
 
-      var result = debounce(func, wait, options);
-      releaseObject(options);
+      var result = debounce(func, wait, debounceOptions);
       return result;
     }
 

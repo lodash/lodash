@@ -110,6 +110,36 @@
   cloneableClasses[numberClass] = cloneableClasses[objectClass] =
   cloneableClasses[regexpClass] = cloneableClasses[stringClass] = true;
 
+  /** Used as an internal `_.debounce` options object */
+  var debounceOptions = {
+    'leading': false,
+    'maxWait': 0,
+    'trailing': false
+  };
+
+  /** Used as the property descriptor for `__bindData__` */
+  var descriptor = {
+    'configurable': false,
+    'enumerable': false,
+    'value': null,
+    'writable': false
+  };
+
+  /** Used as the data object for `iteratorTemplate` */
+  var iteratorData = {
+    'args': '',
+    'array': null,
+    'bottom': '',
+    'firstArg': '',
+    'init': '',
+    'keys': null,
+    'loop': '',
+    'shadowedProps': null,
+    'support': null,
+    'top': '',
+    'useHas': false
+  };
+
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
     'boolean': false,
@@ -331,35 +361,19 @@
    */
   function getObject() {
     return objectPool.pop() || {
-      'args': '',
       'array': null,
-      'bottom': '',
       'cache': null,
-      'configurable': false,
       'criteria': null,
-      'enumerable': false,
       'false': false,
-      'firstArg': '',
       'index': 0,
-      'init': '',
-      'keys': null,
-      'leading': false,
-      'loop': '',
-      'maxWait': 0,
       'null': false,
       'number': null,
       'object': null,
       'push': null,
-      'shadowedProps': null,
       'string': null,
-      'support': null,
-      'top': '',
-      'trailing': false,
       'true': false,
       'undefined': false,
-      'useHas': false,
-      'value': null,
-      'writable': false
+      'value': null
     };
   }
 
@@ -1611,40 +1625,36 @@
      * @returns {Function} Returns the compiled function.
      */
     function createIterator() {
-      var data = getObject();
-
       // data properties
-      data.shadowedProps = shadowedProps;
-      data.support = support;
+      iteratorData.shadowedProps = shadowedProps;
+      iteratorData.support = support;
 
       // iterator options
-      data.array = data.bottom = data.loop = data.top = '';
-      data.init = 'iterable';
-      data.useHas = true;
+      iteratorData.array = iteratorData.bottom = iteratorData.loop = iteratorData.top = '';
+      iteratorData.init = 'iterable';
+      iteratorData.useHas = true;
 
       // merge options into a template data object
       for (var object, index = 0; object = arguments[index]; index++) {
         for (var key in object) {
-          data[key] = object[key];
+          iteratorData[key] = object[key];
         }
       }
-      var args = data.args;
-      data.firstArg = /^[^,]+/.exec(args)[0];
+      var args = iteratorData.args;
+      iteratorData.firstArg = /^[^,]+/.exec(args)[0];
 
       // create the function factory
       var factory = Function(
           'baseCreateCallback, errorClass, errorProto, hasOwnProperty, ' +
           'indicatorObject, isArguments, isArray, isString, keys, objectProto, ' +
           'objectTypes, nonEnumProps, stringClass, stringProto, toString',
-        'return function(' + args + ') {\n' + iteratorTemplate(data) + '\n}'
+        'return function(' + args + ') {\n' + iteratorTemplate(iteratorData) + '\n}'
       );
-
-      releaseObject(data);
 
       // return the compiled function
       return factory(
         baseCreateCallback, errorClass, errorProto, hasOwnProperty,
-        indicatorObject, isArguments, isArray, isString, data.keys, objectProto,
+        indicatorObject, isArguments, isArray, isString, iteratorData.keys, objectProto,
         objectTypes, nonEnumProps, stringClass, stringProto, toString
       );
     }
@@ -1703,10 +1713,8 @@
      * @param {*} value The value to set.
      */
     var setBindData = !defineProperty ? noop : function(func, value) {
-      var descriptor = getObject();
       descriptor.value = value;
       defineProperty(func, '__bindData__', descriptor);
-      releaseObject(descriptor);
     };
 
     /**
@@ -5787,13 +5795,11 @@
         leading = 'leading' in options ? options.leading : leading;
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
-      options = getObject();
-      options.leading = leading;
-      options.maxWait = wait;
-      options.trailing = trailing;
+      debounceOptions.leading = leading;
+      debounceOptions.maxWait = wait;
+      debounceOptions.trailing = trailing;
 
-      var result = debounce(func, wait, options);
-      releaseObject(options);
+      var result = debounce(func, wait, debounceOptions);
       return result;
     }
 

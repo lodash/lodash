@@ -185,6 +185,7 @@
   var ceil = Math.ceil,
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
+      now = reNative.test(now = Date.now) && now || function() { return +new Date; },
       push = arrayRef.push,
       toString = objectProto.toString,
       unshift = arrayRef.unshift;
@@ -3791,7 +3792,7 @@
       trailing = 'trailing' in options ? options.trailing : trailing;
     }
     var delayed = function() {
-      var remaining = wait - (new Date - stamp);
+      var remaining = wait - (now() - stamp);
       if (remaining <= 0) {
         if (maxTimeoutId) {
           clearTimeout(maxTimeoutId);
@@ -3799,7 +3800,7 @@
         var isCalled = trailingCall;
         maxTimeoutId = timeoutId = trailingCall = undefined;
         if (isCalled) {
-          lastCalled = +new Date;
+          lastCalled = now();
           result = func.apply(thisArg, args);
         }
       } else {
@@ -3813,14 +3814,14 @@
       }
       maxTimeoutId = timeoutId = trailingCall = undefined;
       if (trailing || (maxWait !== wait)) {
-        lastCalled = +new Date;
+        lastCalled = now();
         result = func.apply(thisArg, args);
       }
     };
 
     return function() {
       args = arguments;
-      stamp = +new Date;
+      stamp = now();
       thisArg = this;
       trailingCall = trailing && (timeoutId || !leading);
 

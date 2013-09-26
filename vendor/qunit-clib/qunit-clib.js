@@ -108,14 +108,18 @@
 
     /*------------------------------------------------------------------------*/
 
+    /** Used to report the test module for failing tests */
+    var moduleName,
+        modulePrinted;
+
     /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
     var console = context.console || (context.console = { 'log': context.print });
 
-    /** Shorten `context.QUnit.QUnit` to `context.QUnit` */
-    var QUnit = context.QUnit = context.QUnit.QUnit || context.QUnit;
-
     /** Used as a horizontal rule in console output */
     var hr = '----------------------------------------';
+
+    /** Shorten `context.QUnit.QUnit` to `context.QUnit` */
+    var QUnit = context.QUnit = context.QUnit.QUnit || context.QUnit;
 
     /**
      * A logging callback triggered when all testing is completed.
@@ -186,9 +190,11 @@
      * @param {Object} details An object with property `name`.
      */
     QUnit.moduleStart(function(details) {
-      console.log(hr);
-      console.log(details.name);
-      console.log(hr);
+      var newModuleName = details.name;
+      if (moduleName != newModuleName) {
+        moduleName = newModuleName;
+        modulePrinted = false;
+      }
     });
 
     /**
@@ -224,13 +230,16 @@
           testName = details.name;
 
       if (details.failed > 0) {
+        if (!modulePrinted) {
+          modulePrinted = true;
+          console.log(hr);
+          console.log(moduleName);
+          console.log(hr);
+        }
         console.log(' FAIL - '+ testName);
         assertions.forEach(function(value) {
           console.log('    ' + value);
         });
-      }
-      else {
-        console.log(' PASS - ' + testName);
       }
       assertions.length = 0;
     });
@@ -244,7 +253,7 @@
     QUnit.config.testStats = {
 
       /**
-       * An array of test summaries (pipe separated).
+       * An array of test summaries.
        *
        * @memberOf QUnit.config.testStats
        * @type Array

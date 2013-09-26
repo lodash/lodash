@@ -21,6 +21,10 @@ matrix:
     - node_js: "0.10"
       env: BIN="istanbul"
     - node_js: "0.10"
+      env: BIN="narwhal" BUILD="compat"
+    - node_js: "0.10"
+      env: BIN="narwhal" BUILD="legacy" MAKE=true
+    - node_js: "0.10"
       env: BIN="rhino"   BUILD="compat"
     - node_js: "0.10"
       env: BIN="rhino"   BUILD="legacy" MAKE=true
@@ -28,10 +32,6 @@ matrix:
       env: BIN="rhino"   BUILD="compat" OPTION="-require"
     - node_js: "0.10"
       env: BIN="rhino"   BUILD="legacy" MAKE=true OPTION="-require"
-    - node_js: "0.10"
-      env: BIN="narwhal" BUILD="compat"
-    - node_js: "0.10"
-      env: BIN="narwhal" BUILD="legacy" MAKE=true
     - node_js: "0.10"
       env: BIN="ringo"   BUILD="compat"
     - node_js: "0.10"
@@ -45,7 +45,7 @@ before_script:
   - "[ $BIN == 'istanbul' ] && npm install -g istanbul || true"
   - "[ $BIN == 'narwhal' ] && wget https://github.com/280north/narwhal/archive/v0.3.2.zip && sudo unzip v0.3.2 -d /opt/ && rm v0.3.2.zip || true"
   - "[ $BIN == 'narwhal' ] && sudo ln -s /opt/narwhal-0.3.2/bin/narwhal /usr/local/bin/narwhal && sudo chmod +x /usr/local/bin/narwhal || true"
-  - "[ $BIN == 'rhino' ] && sudo mkdir /opt/rhino-1.7R5 && sudo wget -O /opt/rhino-1.7R5/run.jar https://oss.sonatype.org/content/repositories/snapshots/org/mozilla/rhino/1.7R5-SNAPSHOT/$PACKAGE-20120629.144839-4.jar || true"
+  - "[ $BIN == 'rhino' ] && sudo mkdir /opt/rhino-1.7R5 && sudo wget -O /opt/rhino-1.7R5/js.jar https://oss.sonatype.org/content/repositories/snapshots/org/mozilla/rhino/1.7R5-SNAPSHOT/rhino-1.7R5-20120629.144839-4.jar || true"
   - "[ $BIN == 'rhino' ] && echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7R5/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino || true"
   - "[ $BIN == 'ringo' ] && wget http://ringojs.org/downloads/ringojs-0.9.zip && sudo unzip ringojs-0.9 -d /opt && rm ringojs-0.9.zip || true"
   - "[ $BIN == 'ringo' ] && sudo ln -s /opt/ringojs-0.9/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo || true"

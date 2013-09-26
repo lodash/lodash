@@ -6016,7 +6016,7 @@
       }
       var rand = nativeRandom();
       return (floating || min % 1 || max % 1)
-        ? min + nativeMin(rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1))), max)
+        ? nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1)))), max)
         : min + floor(rand * (max - min + 1));
     }
 

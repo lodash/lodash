@@ -7,7 +7,7 @@ jdk:
   - "openjdk6"
 env:
   global:
-    - BIN="node" BUILD=false MAKE=false
+    - BIN="node" BUILD=false MAKE=false OPTION=""
   matrix:
     - BUILD="compat"
     - BUILD="modern"
@@ -19,28 +19,41 @@ env:
 matrix:
   include:
     - node_js: "0.10"
-      env:
-        - BIN="istanbul"
-        - BIN="ringo"   BUILD="compat"
-        - BIN="narwhal" BUILD="compat"
+      env: BIN="istanbul"
+    - node_js: "0.10"
+      env: BIN="rhino"   BUILD="compat"
+    - node_js: "0.10"
+      env: BIN="rhino"   BUILD="legacy" MAKE=true
+    - node_js: "0.10"
+      env: BIN="rhino"   BUILD="compat" OPTION="-require"
+    - node_js: "0.10"
+      env: BIN="rhino"   BUILD="legacy" MAKE=true OPTION="-require"
+    - node_js: "0.10"
+      env: BIN="narwhal" BUILD="compat"
+    - node_js: "0.10"
+      env: BIN="narwhal" BUILD="legacy" MAKE=true
+    - node_js: "0.10"
+      env: BIN="ringo"   BUILD="compat"
+    - node_js: "0.10"
+      env: BIN="ringo"   BUILD="legacy" MAKE=true
 git:
   depth: 1
 branches:
   only:
     - master
 before_script:
-  - "npm install -g istanbul"
-  - "PACKAGE=ringojs-0.9; wget http://ringojs.org/downloads/$PACKAGE.zip && sudo unzip $PACKAGE -d /opt && rm $PACKAGE.zip"
-  - "PACKAGE=ringojs-0.9; sudo ln -s /opt/$PACKAGE/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo"
-  - "PACKAGE=rhino-1.7R5; sudo mkdir /opt/$PACKAGE && sudo wget -O /opt/$PACKAGE/run.jar https://oss.sonatype.org/content/repositories/snapshots/org/mozilla/rhino/1.7R5-SNAPSHOT/$PACKAGE-20120629.144839-4.jar"
-  - "PACKAGE=rhino-1.7R5; echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7R5/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino"
-  - "PACKAGE=v0.3.2; wget https://github.com/280north/narwhal/archive/$PACKAGE.zip && sudo unzip $PACKAGE -d /opt/ && rm $PACKAGE.zip"
-  - "PACKAGE=narwhal-0.3.2; sudo ln -s /opt/$PACKAGE/bin/narwhal /usr/local/bin/narwhal && sudo chmod +x /usr/local/bin/narwhal"
+  - "[ $BIN == 'istanbul' ] && npm install -g istanbul || true"
+  - "[ $BIN == 'narwhal' ] && wget https://github.com/280north/narwhal/archive/v0.3.2.zip && sudo unzip v0.3.2 -d /opt/ && rm v0.3.2.zip || true"
+  - "[ $BIN == 'narwhal' ] && sudo ln -s /opt/narwhal-0.3.2/bin/narwhal /usr/local/bin/narwhal && sudo chmod +x /usr/local/bin/narwhal || true"
+  - "[ $BIN == 'rhino' ] && sudo mkdir /opt/rhino-1.7R5 && sudo wget -O /opt/rhino-1.7R5/run.jar https://oss.sonatype.org/content/repositories/snapshots/org/mozilla/rhino/1.7R5-SNAPSHOT/$PACKAGE-20120629.144839-4.jar || true"
+  - "[ $BIN == 'rhino' ] && echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7R5/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino || true"
+  - "[ $BIN == 'ringo' ] && wget http://ringojs.org/downloads/ringojs-0.9.zip && sudo unzip ringojs-0.9 -d /opt && rm ringojs-0.9.zip || true"
+  - "[ $BIN == 'ringo' ] && sudo ln -s /opt/ringojs-0.9/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo || true"
 script:
   - "[ $BIN == 'istanbul' ] && $BIN cover ./test/test.js || true"
   - "[ $MAKE != false ] && git clone --depth=1 --branch=master git://github.com/lodash/lodash-cli.git ./node_modules/lodash-cli || true"
   - "[ $MAKE != false ] && mkdir ./node_modules/lodash-cli/node_modules && cd ./node_modules/lodash-cli/node_modules/ && ln -s ../../../ ./lodash && cd ../ && npm i . && cd ../../ || true"
   - "[ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
   - "[ $BUILD != false ] && cd ./test || true" 
-  - "[ $BUILD != false ] && $BIN ./test.js ../dist/lodash.$BUILD.js || true"
-  - "[ $BUILD != false ] && $BIN ./test.js ../dist/lodash.$BUILD.min.js || true"
+  - "[ $BUILD != false ] && $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js || true"
+  - "[ $BUILD != false ] && $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js || true"

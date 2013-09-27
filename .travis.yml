@@ -3,8 +3,6 @@ node_js:
   - "0.6"
   - "0.8"
   - "0.10"
-jdk:
-  - "openjdk6"
 env:
   global:
     - BIN="node" BUILD=false MAKE=false OPTION=""

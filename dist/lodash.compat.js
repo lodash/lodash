@@ -992,46 +992,41 @@
      * @param {Function} [callback] The function to customize cloning values.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
      * @param {Array} [stackB=[]] Associates clones with source counterparts.
-     * @returns {*} Returns the cloned `value`.
+     * @returns {*} Returns the cloned value.
      */
     function baseClone(value, deep, callback, stackA, stackB) {
-      var result = value;
-
       if (callback) {
-        result = callback(result);
+        var result = callback(value);
         if (typeof result != 'undefined') {
           return result;
         }
-        result = value;
       }
       // inspect [[Class]]
-      var isObj = isObject(result);
+      var isObj = isObject(value);
       if (isObj) {
-        var className = toString.call(result);
-        if (!cloneableClasses[className] || (!support.nodeClass && isNode(result))) {
-          return result;
+        var className = toString.call(value);
+        if (!cloneableClasses[className] || (!support.nodeClass && isNode(value))) {
+          return value;
         }
-        var ctor = ctorByClass[className],
-            isArr = isArray(result);
-
+        var ctor = ctorByClass[className];
         switch (className) {
           case boolClass:
           case dateClass:
-            return new ctor(+result);
+            return new ctor(+value);
 
           case numberClass:
           case stringClass:
-            return new ctor(result);
+            return new ctor(value);
 
           case regexpClass:
-            var lastIndex = result.lastIndex;
-            result = ctor(result.source, reFlags.exec(result));
-            result.lastIndex = lastIndex;
+            result = ctor(value.source, reFlags.exec(value));
+            result.lastIndex = value.lastIndex;
             return result;
         }
       } else {
-        return result;
+        return value;
       }
+      var isArr = isArray(value);
       if (deep) {
         // check for circular references and return corresponding clone
         var initedStack = !stackA;
@@ -1044,11 +1039,10 @@
             return stackB[length];
           }
         }
-        // init cloned object
-        result = isArr ? ctor(result.length) : {};
+        result = isArr ? ctor(value.length) : {};
       }
       else {
-        result = isArr ? slice(result) : assign({}, result);
+        result = isArr ? slice(value) : assign({}, value);
       }
       // add array properties assigned by `RegExp#exec`
       if (isArr) {
@@ -1979,7 +1973,7 @@
      * @param {boolean} [deep=false] Specify a deep clone.
      * @param {Function} [callback] The function to customize cloning values.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the cloned `value`.
+     * @returns {*} Returns the cloned value.
      * @example
      *
      * var stooges = [
@@ -2033,7 +2027,7 @@
      * @param {*} value The value to deep clone.
      * @param {Function} [callback] The function to customize cloning values.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {*} Returns the deep cloned `value`.
+     * @returns {*} Returns the deep cloned value.
      * @example
      *
      * var stooges = [

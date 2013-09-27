@@ -542,42 +542,22 @@
 
     objects['an array'].length = 5;
 
-    _.forOwn(objects, function(object, key) {
-      test('should deep clone ' + key, function() {
-        var clone = _.cloneDeep(object);
-        strictEqual(_.isEqual(object, clone), true);
+    test('`_.clone` should shallow clone by default', function() {
+      var expected = [{ 'a': 0 }, { 'b': 1 }],
+          actual = _.clone(expected);
 
-        if (_.isObject(object)) {
-          notEqual(clone, object);
-        } else {
-          skipTest();
-        }
-      });
+      deepEqual(actual, expected);
+      ok(actual != expected && actual[0] === expected[0]);
     });
 
-    _.forOwn(nonCloneable, function(object, key) {
-      test('should not clone ' + key, function() {
-        strictEqual(_.clone(object), object);
-        strictEqual(_.cloneDeep(object), object);
-      });
-    });
-
-    test('should perform a shallow clone when used as `callback` for `_.map`', function() {
+    test('`_.clone` should perform a shallow clone when used as `callback` for `_.map`', function() {
       var expected = [{ 'a': [0] }, { 'b': [1] }],
           actual = _.map(expected, _.clone);
 
       ok(actual[0] != expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
     });
 
-    test('should deep clone `index` and `input` array properties', function() {
-      var array = /x/.exec('x'),
-          actual = _.cloneDeep(array);
-
-      strictEqual(actual.index, 0);
-      equal(actual.input, 'x');
-    });
-
-    test('should deep clone objects with circular references', function() {
+    test('`_.cloneDeep` should deep clone objects with circular references', function() {
       var object = {
         'foo': { 'b': { 'foo': { 'c': { } } } },
         'bar': { }
@@ -590,13 +570,6 @@
       ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c && clone !== object);
     });
 
-    test('should clone problem JScript properties (test in IE < 9)', function() {
-      deepEqual(_.clone(shadowedObject), shadowedObject);
-      notEqual(_.clone(shadowedObject), shadowedObject);
-      deepEqual(_.cloneDeep(shadowedObject), shadowedObject);
-      notEqual(_.cloneDeep(shadowedObject), shadowedObject);
-    });
-
     _.forEach([
       'clone',
       'cloneDeep'
@@ -604,6 +577,30 @@
     function(methodName) {
       var func = _[methodName],
           klass = new Klass;
+
+      _.forOwn(objects, function(object, key) {
+        test('`_.' + methodName + '` should clone ' + key, function() {
+          var clone = func(object);
+          strictEqual(_.isEqual(object, clone), true);
+
+          if (_.isObject(object)) {
+            notEqual(clone, object);
+          } else {
+            strictEqual(clone, object);
+          }
+        });
+      });
+
+      _.forOwn(nonCloneable, function(object, key) {
+        test('`_.' + methodName + '` should not clone ' + key, function() {
+          strictEqual(func(object), object);
+        });
+      });
+
+      test('`_.' + methodName + '` should clone problem JScript properties (test in IE < 9)', function() {
+        deepEqual(func(shadowedObject), shadowedObject);
+        notEqual(func(shadowedObject), shadowedObject);
+      });
 
       test('`_.' + methodName + '` should pass the correct `callback` arguments', function() {
         var args;
@@ -624,10 +621,26 @@
       });
 
       test('`_.' + methodName + '` should handle cloning if `callback` returns `undefined`', function() {
-        var actual = _.clone({ 'a': { 'b': 'c' } }, function() {});
+        var actual = func({ 'a': { 'b': 'c' } }, function() {});
         deepEqual(actual, { 'a': { 'b': 'c' } });
       });
-    });
+
+      test('`_.' + methodName + '` should deep clone `index` and `input` array properties', function() {
+        var array = /x/.exec('vwxyz'),
+            actual = func(array);
+
+        strictEqual(actual.index, 2);
+        equal(actual.input, 'vwxyz');
+      });
+
+      test('`_.' + methodName + '` should deep clone `lastIndex` regexp property', function() {
+        var regexp = /x/g;
+        regexp.test('vwxyz');
+
+        var actual = func(regexp);
+        equal(actual.lastIndex, 3);
+      });
+    })
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

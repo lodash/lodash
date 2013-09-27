@@ -735,41 +735,45 @@
         if (!cloneableClasses[className]) {
           return result;
         }
-        var isArr = isArray(result);
-      }
-      // shallow clone
-      if (!isObj || !deep) {
-        return isObj
-          ? (isArr ? slice(result) : assign({}, result))
-          : result;
-      }
-      var ctor = ctorByClass[className];
-      switch (className) {
-        case boolClass:
-        case dateClass:
-          return new ctor(+result);
+        var ctor = ctorByClass[className],
+            isArr = isArray(result);
 
-        case numberClass:
-        case stringClass:
-          return new ctor(result);
+        switch (className) {
+          case boolClass:
+          case dateClass:
+            return new ctor(+result);
 
-        case regexpClass:
-          return ctor(result.source, reFlags.exec(result));
-      }
-      // check for circular references and return corresponding clone
-      var initedStack = !stackA;
-      stackA || (stackA = getArray());
-      stackB || (stackB = getArray());
+          case numberClass:
+          case stringClass:
+            return new ctor(result);
 
-      var length = stackA.length;
-      while (length--) {
-        if (stackA[length] == value) {
-          return stackB[length];
+          case regexpClass:
+            var lastIndex = result.lastIndex;
+            result = ctor(result.source, reFlags.exec(result));
+            result.lastIndex = lastIndex;
+            return result;
         }
+      } else {
+        return result;
       }
-      // init cloned object
-      result = isArr ? ctor(result.length) : {};
+      if (deep) {
+        // check for circular references and return corresponding clone
+        var initedStack = !stackA;
+        stackA || (stackA = getArray());
+        stackB || (stackB = getArray());
 
+        var length = stackA.length;
+        while (length--) {
+          if (stackA[length] == value) {
+            return stackB[length];
+          }
+        }
+        // init cloned object
+        result = isArr ? ctor(result.length) : {};
+      }
+      else {
+        result = isArr ? slice(result) : assign({}, result);
+      }
       // add array properties assigned by `RegExp#exec`
       if (isArr) {
         if (hasOwnProperty.call(value, 'index')) {
@@ -778,6 +782,10 @@
         if (hasOwnProperty.call(value, 'input')) {
           result.input = value.input;
         }
+      }
+      // exit for shallow clone
+      if (!deep) {
+        return result;
       }
       // add the source value to the stack of traversed objects
       // and associate it with its clone
@@ -5649,7 +5657,7 @@
       }
       var rand = nativeRandom();
       return (floating || min % 1 || max % 1)
-        ? min + nativeMin(rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1))), max)
+        ? nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1)))), max)
         : min + floor(rand * (max - min + 1));
     }
 

@@ -36,6 +36,9 @@
     return result;
   }());
 
+  /** The basename of the Lo-Dash file to test */
+  var basename = /[\w.-]+$/.exec(filePath)[0];
+
   /** The `ui` object */
   var ui = root.ui || (root.ui = {
     'buildPath': filePath,
@@ -44,7 +47,7 @@
   });
 
   /** Used to indicate testing a modularized build */
-  var isModularize = ui.isModularize || /\b(?:lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build]);
+  var isModularize = ui.isModularize || /\b(?:commonjs|index\.js|lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
 
   /*--------------------------------------------------------------------------*/
 
@@ -103,9 +106,6 @@
 
   /** Use a single "load" function */
   var load = !amd && typeof require == 'function' ? require : root.load;
-
-  /** The basename of the Lo-Dash file to test */
-  var basename = /[\w.-]+$/.exec(filePath)[0];
 
   /** The unit testing framework */
   var QUnit = (function() {

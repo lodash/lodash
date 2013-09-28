@@ -6660,7 +6660,7 @@
     });
 
     // avoid array-like object bugs with `Array#shift` and `Array#splice`
-    // in Firefox < 10 and IE < 9
+    // in IE < 9, Firefox < 10, Narwhal, and RingoJS
     if (!support.spliceObjects) {
       baseEach(['pop', 'shift', 'splice'], function(methodName) {
         var func = arrayRef[methodName],

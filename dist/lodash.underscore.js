@@ -27,9 +27,6 @@
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
 
-  /** Used to detect functions containing a `this` reference */
-  var reThis = /\bthis\b/;
-
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
@@ -310,15 +307,6 @@
      * @type boolean
      */
     support.fastBind = nativeBind && !isV8;
-
-    /**
-     * Detect if functions can be decompiled by `Function#toString`
-     * (all but PS3 and older Opera mobile browsers & avoided in Windows 8 apps).
-     *
-     * @memberOf _.support
-     * @type boolean
-     */
-    support.funcDecomp = !reNative.test(root.WinRTError) && reThis.test(function() { return this; });
 
     /**
      * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.

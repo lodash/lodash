@@ -1,23 +1,23 @@
-# Lo-Dash v2.1.0
+# Lo-Dash v2.2.0
 A utility library delivering consistency, [customization](http://lodash.com/custom-builds), [performance](http://lodash.com/benchmarks), & [extras](http://lodash.com/#features).
 
 ## Download
 
 * Modern builds perfect for newer browsers/environments:<br>
-[Development](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.js) &
-[Production](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.2.0/dist/lodash.js) &
+[Production](https://raw.github.com/lodash/lodash/2.2.0/dist/lodash.min.js)
 
 * Compatibility builds for older environment support too:<br>
-[Development](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.compat.js) &
-[Production](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.compat.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.2.0/dist/lodash.compat.js) &
+[Production](https://raw.github.com/lodash/lodash/2.2.0/dist/lodash.compat.min.js)
 
 * Underscore builds to use as a drop-in replacement:<br>
-[Development](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.underscore.js) &
-[Production](https://raw.github.com/lodash/lodash/2.1.0/dist/lodash.underscore.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.2.0/dist/lodash.underscore.js) &
+[Production](https://raw.github.com/lodash/lodash/2.2.0/dist/lodash.underscore.min.js)
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.<br>
-Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-node](https://npmjs.org/package/lodash-node), and [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
+Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
 
 ## Dive in
 
@@ -31,6 +31,7 @@ The full changelog for this release is available on our [wiki](https://github.co
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
  * [_.at](http://lodash.com/docs#at) for cherry-picking collection values
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods
+ * [_.clone](http://lodash.com/docs#clone) supports cloning `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
  * [_.createCallback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins

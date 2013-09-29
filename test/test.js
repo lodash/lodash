@@ -47,7 +47,7 @@
   });
 
   /** Used to indicate testing a modularized build */
-  var isModularize = ui.isModularize || /\b(?:commonjs|index\.js|lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
+  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
 
   /*--------------------------------------------------------------------------*/
 
@@ -638,7 +638,8 @@
       });
 
       test('`_.' + methodName + '` should deep clone `lastIndex` regexp property', 1, function() {
-        var regexp = /x/g;
+        // avoid regexp literal here for older Opera
+        var regexp = RegExp('x', 'g');
         regexp.test('vwxyz');
 
         var actual = func(regexp);

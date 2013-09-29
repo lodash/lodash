@@ -31,7 +31,7 @@ The full changelog for this release is available on our [wiki](https://github.co
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
  * [_.at](http://lodash.com/docs#at) for cherry-picking collection values
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods
- * [_.clone](http://lodash.com/docs#clone) supports cloning `Date` & `RegExp` objects
+ * [_.clone](http://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
  * [_.createCallback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins

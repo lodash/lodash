@@ -49,7 +49,6 @@
       case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
       case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
       case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
-      case 'lodash-modularize': result = 'modularize/main.js'; break;
       case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
@@ -74,7 +73,7 @@
   }());
 
   // used to indicate testing a modularized build
-  ui.isModularize = /\b(?:lodash-(?:amd|node)|modularize)\b/.test([location.pathname, location.search, ui.buildPath]);
+  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize)\b/.test([location.pathname, location.search, ui.buildPath]);
 
   // initialize controls
   addListener(window, 'load', function() {
@@ -108,10 +107,9 @@
             case 'lodash-modern':     return 3;
             case 'lodash-legacy':     return 4;
             case 'lodash-mobile':     return 5;
-            case 'lodash-modularize': return 6;
-            case 'lodash-underscore': return 7;
-            case 'lodash-custom-dev': return 8;
-            case 'lodash-custom':     return 9;
+            case 'lodash-underscore': return 6;
+            case 'lodash-custom-dev': return 7;
+            case 'lodash-custom':     return 8;
             case 'lodash-compat-dev':
             case null:                return 0;
           }
@@ -148,7 +146,6 @@
       '<option value="lodash-modern">Lo-Dash (modern production)</option>' +
       '<option value="lodash-legacy">Lo-Dash (legacy)</option>' +
       '<option value="lodash-mobile">Lo-Dash (mobile)</option>' +
-      '<option value="lodash-modularize">Lo-Dash (modularize)</option>' +
       '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
       '<option value="lodash-custom-dev">Lo-Dash (custom development)</option>' +
       '<option value="lodash-custom">Lo-Dash (custom production)</option>' +

@@ -4766,7 +4766,7 @@
       });
 
       // add a skipped test for `_.runInContext` which is abscent from modularized builds
-      if (isModularize) {
+      if (!_.runInContext) {
         skipTest();
       }
     });

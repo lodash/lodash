@@ -638,9 +638,9 @@
       });
 
       test('`_.' + methodName + '` should deep clone `lastIndex` regexp property', 1, function() {
-        // avoid regexp literal here for older Opera
+        // avoid a regexp literal for older Opera and use `exec` for older Safari
         var regexp = RegExp('x', 'g');
-        regexp.test('vwxyz');
+        regexp.exec('vwxyz');
 
         var actual = func(regexp);
         equal(actual.lastIndex, 3);

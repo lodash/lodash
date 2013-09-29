@@ -104,6 +104,9 @@
   /** Detects if running in a PhantomJS web page */
   var isPhantomPage = typeof callPhantom == 'function';
 
+  /** Detect if running in Rhino */
+  var isRhino = root.java && typeof global == 'function' && global().Array === root.Array;
+
   /** Use a single "load" function */
   var load = !amd && typeof require == 'function' ? require : root.load;
 
@@ -830,125 +833,160 @@
 
   (function() {
     test('subsequent "immediate" debounced calls return the last `func` result', function() {
-      var debounced = _.debounce(_.identity, 32, true),
-          result = [debounced('x'), debounced('y')];
+      if (!(isRhino && isModularize)) {
+        var debounced = _.debounce(_.identity, 32, true),
+            result = [debounced('x'), debounced('y')];
 
-      deepEqual(result, ['x', 'x']);
+        deepEqual(result, ['x', 'x']);
+      }
+      else {
+        skipTest();
+      }
     });
 
     asyncTest('subsequent debounced calls return the last `func` result', function() {
-      var debounced = _.debounce(_.identity, 32);
-      debounced('x');
+      if (!(isRhino && isModularize)) {
+        var debounced = _.debounce(_.identity, 32);
+        debounced('x');
 
-      setTimeout(function() {
-        equal(debounced('y'), 'x');
+        setTimeout(function() {
+          equal(debounced('y'), 'x');
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest();
         QUnit.start();
-      }, 64);
+      }
     });
 
     asyncTest('should apply default options correctly', function() {
-      var count = 0;
+      if (!(isRhino && isModularize)) {
+        var count = 0;
 
-      var debounced = _.debounce(function(value) {
-        count++;
-        return value;
-      }, 32, {});
+        var debounced = _.debounce(function(value) {
+          count++;
+          return value;
+        }, 32, {});
 
-      strictEqual(debounced('x'), undefined);
+        strictEqual(debounced('x'), undefined);
 
-      setTimeout(function() {
-        strictEqual(count, 1);
+        setTimeout(function() {
+          strictEqual(count, 1);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest(2);
         QUnit.start();
-      }, 64);
+      }
     });
 
     asyncTest('should work with `leading` option', function() {
-      var withLeadingAndTrailing,
-          counts = [0, 0, 0];
+      if (!(isRhino && isModularize)) {
+        var withLeadingAndTrailing,
+            counts = [0, 0, 0];
 
-      _.forEach([true, { 'leading': true }], function(options, index) {
-        var debounced = _.debounce(function(value) {
-          counts[index]++;
-          return value;
-        }, 32, options);
+        _.forEach([true, { 'leading': true }], function(options, index) {
+          var debounced = _.debounce(function(value) {
+            counts[index]++;
+            return value;
+          }, 32, options);
 
-        if (index == 1) {
-          withLeadingAndTrailing = debounced;
-        }
-        equal(debounced('x'), 'x');
-      });
+          if (index == 1) {
+            withLeadingAndTrailing = debounced;
+          }
+          equal(debounced('x'), 'x');
+        });
 
-      _.times(2, _.debounce(function() { counts[2]++; }, 32, { 'leading': true }));
-      strictEqual(counts[2], 1);
+        _.times(2, _.debounce(function() { counts[2]++; }, 32, { 'leading': true }));
+        strictEqual(counts[2], 1);
 
-      _.forEach([false, { 'leading': false }], function(options) {
-        var withoutLeading = _.debounce(_.identity, 32, options);
-        strictEqual(withoutLeading('x'), undefined);
-      });
+        _.forEach([false, { 'leading': false }], function(options) {
+          var withoutLeading = _.debounce(_.identity, 32, options);
+          strictEqual(withoutLeading('x'), undefined);
+        });
 
-      setTimeout(function() {
-        deepEqual(counts, [1, 1, 2]);
+        setTimeout(function() {
+          deepEqual(counts, [1, 1, 2]);
 
-        withLeadingAndTrailing('x');
-        equal(counts[1], 2);
+          withLeadingAndTrailing('x');
+          equal(counts[1], 2);
 
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest(5);
         QUnit.start();
-      }, 64);
+      }
     });
 
     asyncTest('should work with `trailing` option', function() {
-      var withCount = 0,
-          withoutCount = 0;
+      if (!(isRhino && isModularize)) {
+        var withCount = 0,
+            withoutCount = 0;
 
-      var withTrailing = _.debounce(function(value) {
-        withCount++;
-        return value;
-      }, 32, { 'trailing': true });
+        var withTrailing = _.debounce(function(value) {
+          withCount++;
+          return value;
+        }, 32, { 'trailing': true });
 
-      var withoutTrailing = _.debounce(function(value) {
-        withoutCount++;
-        return value;
-      }, 32, { 'trailing': false });
+        var withoutTrailing = _.debounce(function(value) {
+          withoutCount++;
+          return value;
+        }, 32, { 'trailing': false });
 
-      strictEqual(withTrailing('x'), undefined);
-      strictEqual(withoutTrailing('x'), undefined);
+        strictEqual(withTrailing('x'), undefined);
+        strictEqual(withoutTrailing('x'), undefined);
 
-      setTimeout(function() {
-        strictEqual(withCount, 1);
-        strictEqual(withoutCount, 0);
+        setTimeout(function() {
+          strictEqual(withCount, 1);
+          strictEqual(withoutCount, 0);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest(4);
         QUnit.start();
-      }, 64);
+      }
     });
 
     asyncTest('should work with `maxWait` option', function() {
-      var limit = 100,
-          withCount = 0,
-          withoutCount = 0;
+      if (!(isRhino && isModularize)) {
+        var limit = 100,
+            withCount = 0,
+            withoutCount = 0;
 
-      var withMaxWait = _.debounce(function() {
-        withCount++;
-      }, 32, { 'maxWait': 64 });
+        var withMaxWait = _.debounce(function() {
+          withCount++;
+        }, 32, { 'maxWait': 64 });
 
-      var withoutMaxWait = _.debounce(function() {
-        withoutCount++;
-      }, 32);
+        var withoutMaxWait = _.debounce(function() {
+          withoutCount++;
+        }, 32);
 
-      var start = new Date;
-      while ((new Date - start) < limit) {
-        withMaxWait();
-        withoutMaxWait();
+        var start = new Date;
+        while ((new Date - start) < limit) {
+          withMaxWait();
+          withoutMaxWait();
+        }
+        strictEqual(withCount, 1);
+        strictEqual(withoutCount, 0);
+
+        var lastWithCount = withCount,
+            lastWithoutCount = withoutCount;
+
+        setTimeout(function() {
+          ok(withCount > lastWithCount);
+          ok(withoutCount > lastWithoutCount && withoutCount < withCount);
+          QUnit.start();
+        }, 64);
       }
-      strictEqual(withCount, 1);
-      strictEqual(withoutCount, 0);
-
-      var lastWithCount = withCount,
-          lastWithoutCount = withoutCount;
-
-      setTimeout(function() {
-        ok(withCount > lastWithCount);
-        ok(withoutCount > lastWithoutCount && withoutCount < withCount);
+      else {
+        skipTest(4);
         QUnit.start();
-      }, 64);
+      }
     });
   }());
 
@@ -974,10 +1012,15 @@
 
   (function() {
     asyncTest('should accept additional arguments', function() {
-      _.defer(function() {
-        deepEqual(slice.call(arguments), [1, 2, 3]);
+      if (!(isRhino && isModularize)) {
+        _.defer(function() {
+          deepEqual(slice.call(arguments), [1, 2, 3]);
+          QUnit.start();
+        }, 1, 2, 3);
+      } else {
+        skipTest();
         QUnit.start();
-      }, 1, 2, 3);
+      }
     });
   }());
 
@@ -3809,10 +3852,15 @@
 
   (function() {
     test('subsequent calls should return the result of the first call', function() {
-      var throttled = _.throttle(function(value) { return value; }, 32),
-          result = [throttled('x'), throttled('y')];
+      if (!(isRhino && isModularize)) {
+        var throttled = _.throttle(function(value) { return value; }, 32),
+            result = [throttled('x'), throttled('y')];
 
-      deepEqual(result, ['x', 'x']);
+        deepEqual(result, ['x', 'x']);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should clear timeout when `func` is called', function() {
@@ -3842,127 +3890,168 @@
     });
 
     asyncTest('supports recursive calls', function() {
-      var count = 0;
-      var throttled = _.throttle(function() {
-        count++;
-        if (count < 10) {
-          throttled();
-        }
-      }, 32);
+      if (!(isRhino && isModularize)) {
+        var count = 0;
+        var throttled = _.throttle(function() {
+          count++;
+          if (count < 10) {
+            throttled();
+          }
+        }, 32);
 
-      throttled();
-      equal(count, 1);
+        throttled();
+        equal(count, 1);
 
-      setTimeout(function() {
-        ok(count < 3)
+        setTimeout(function() {
+          ok(count < 3)
+          QUnit.start();
+        }, 32);
+      }
+      else {
+        skipTest(2);
         QUnit.start();
-      }, 32);
+      }
     });
 
     asyncTest('should not trigger a trailing call when invoked once', function() {
-      var count = 0,
-          throttled = _.throttle(function() { count++; }, 32);
+      if (!(isRhino && isModularize)) {
+        var count = 0,
+            throttled = _.throttle(function() { count++; }, 32);
 
-      throttled();
-      equal(count, 1);
-
-      setTimeout(function() {
+        throttled();
         equal(count, 1);
+
+        setTimeout(function() {
+          equal(count, 1);
+          QUnit.start();
+        }, 96);
+      }
+      else {
+        skipTest(2);
         QUnit.start();
-      }, 96);
+      }
     });
 
     _.times(2, function(index) {
       asyncTest('should trigger trailing call when invoked repeatedly' + (index ? ' and `leading` is `false`' : '') , function() {
-        var count = 0,
-            limit = 160,
-            options = index ? { 'leading': false } : {},
-            throttled = _.throttle(function() { count++; }, 64, options),
-            start = new Date;
+        if (!(isRhino && isModularize)) {
+          var count = 0,
+              limit = 160,
+              options = index ? { 'leading': false } : {},
+              throttled = _.throttle(function() { count++; }, 64, options),
+              start = new Date;
 
-        while ((new Date - start) < limit) {
-          throttled();
+          while ((new Date - start) < limit) {
+            throttled();
+          }
+          var lastCount = count;
+          ok(count > 1);
+
+          setTimeout(function() {
+            ok(count > lastCount);
+            QUnit.start();
+          }, 96);
         }
-        var lastCount = count;
-        ok(count > 1);
-
-        setTimeout(function() {
-          ok(count > lastCount);
+        else {
+          skipTest(2);
           QUnit.start();
-        }, 96);
+        }
       });
     });
 
     asyncTest('should apply default options correctly', function() {
-      var count = 0;
+      if (!(isRhino && isModularize)) {
+        var count = 0;
 
-      var throttled = _.throttle(function(value) {
-        count++;
-        return value;
-      }, 32, {});
+        var throttled = _.throttle(function(value) {
+          count++;
+          return value;
+        }, 32, {});
 
-      _.times(2, function() {
-        equal(throttled('x'), 'x');
-      });
+        _.times(2, function() {
+          equal(throttled('x'), 'x');
+        });
 
-      setTimeout(function() {
-        strictEqual(count, 2);
+        setTimeout(function() {
+          strictEqual(count, 2);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest(3);
         QUnit.start();
-      }, 64);
+      }
     });
 
     test('should work with `leading` option', function() {
-      _.forEach([true, { 'leading': true }], function(options) {
-        var withLeading = _.throttle(_.identity, 32, options);
-        equal(withLeading('x'), 'x');
-      });
+      if (!(isRhino && isModularize)) {
+        _.forEach([true, { 'leading': true }], function(options) {
+          var withLeading = _.throttle(_.identity, 32, options);
+          equal(withLeading('x'), 'x');
+        });
 
-      _.forEach([false, { 'leading': false }], function(options) {
-        var withoutLeading = _.throttle(_.identity, 32, options);
-        strictEqual(withoutLeading('x'), undefined);
-      });
+        _.forEach([false, { 'leading': false }], function(options) {
+          var withoutLeading = _.throttle(_.identity, 32, options);
+          strictEqual(withoutLeading('x'), undefined);
+        });
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     asyncTest('should work with `trailing` option', function() {
-      var withCount = 0,
-          withoutCount = 0;
+      if (!(isRhino && isModularize)) {
+        var withCount = 0,
+            withoutCount = 0;
 
-      var withTrailing = _.throttle(function(value) {
-        withCount++;
-        return value;
-      }, 32, { 'trailing': true });
+        var withTrailing = _.throttle(function(value) {
+          withCount++;
+          return value;
+        }, 32, { 'trailing': true });
 
-      var withoutTrailing = _.throttle(function(value) {
-        withoutCount++;
-        return value;
-      }, 32, { 'trailing': false });
+        var withoutTrailing = _.throttle(function(value) {
+          withoutCount++;
+          return value;
+        }, 32, { 'trailing': false });
 
-      _.times(2, function() {
-        equal(withTrailing('x'), 'x');
-        equal(withoutTrailing('x'), 'x');
-      });
+        _.times(2, function() {
+          equal(withTrailing('x'), 'x');
+          equal(withoutTrailing('x'), 'x');
+        });
 
-      setTimeout(function() {
-        equal(withCount, 2);
-        strictEqual(withoutCount, 1);
+        setTimeout(function() {
+          equal(withCount, 2);
+          strictEqual(withoutCount, 1);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest(6);
         QUnit.start();
-      }, 64);
+      }
     });
 
     asyncTest('should not update `lastCalled`, at the end of the timeout, when `trailing` is `false`', function() {
-      var count = 0;
+      if (!(isRhino && isModularize)) {
+        var count = 0;
 
-      var throttled = _.throttle(function() {
-        count++;
-      }, 64, { 'trailing': false });
+        var throttled = _.throttle(function() {
+          count++;
+        }, 64, { 'trailing': false });
 
-      _.times(2, throttled);
-      setTimeout(function() { _.times(2, throttled); }, 100);
+        _.times(2, throttled);
+        setTimeout(function() { _.times(2, throttled); }, 100);
 
-      setTimeout(function() {
-        equal(count, 2);
+        setTimeout(function() {
+          equal(count, 2);
+          QUnit.start();
+        }, 128);
+      }
+      else {
+        skipTest();
         QUnit.start();
-      }, 128);
+      }
     });
   }());
 

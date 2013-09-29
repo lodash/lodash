@@ -23,7 +23,7 @@
     'path'  => '../' . $file,
     'title' => 'Lo-Dash <span>v2.2.0</span>',
     'toc'   => 'categories',
-    'url'   => 'https://github.com/lodash/lodash/blob/master/lodash.js'
+    'url'   => 'https://github.com/lodash/lodash/blob/2.2.0/lodash.js'
   ));
 
   // save to a .md file

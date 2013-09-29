@@ -132,7 +132,8 @@
      */
     var logInline = (function() {
       // exit early if not Node.js
-      if (!(typeof process == 'object' && process && process.on && process.stdout)) {
+      if (!(typeof process == 'object' && process &&
+          process.on && process.stdout && process.platform != 'win32')) {
         return function() {};
       }
       // cleanup any inline logs when exited via `ctrl+c`
@@ -172,7 +173,7 @@
         console.log('    Finished in ' + details.runtime + ' milliseconds.');
         console.log(hr);
 
-        // exit out of Narhwal, Rhino, or Ringo
+        // exit out of Narhwal, Rhino, or RingoJS
         try {
           quit();
         } catch(e) { }

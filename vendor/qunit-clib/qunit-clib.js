@@ -118,8 +118,37 @@
     /** Used as a horizontal rule in console output */
     var hr = '----------------------------------------';
 
+    /** Used by `logInline` to clear previously logged messages */
+    var prevLine = '';
+
     /** Shorten `context.QUnit.QUnit` to `context.QUnit` */
     var QUnit = context.QUnit = context.QUnit.QUnit || context.QUnit;
+
+    /**
+     * Logs an inline message to standard output.
+     *
+     * @private
+     * @param {string} text The text to log.
+     */
+    var logInline = (function() {
+      // exit early if not Node.js
+      if (!(typeof process == 'object' && process && process.on && process.stdout)) {
+        return function() {};
+      }
+      // cleanup any inline logs when exited via `ctrl+c`
+      process.on('SIGINT', function() {
+        logInline('');
+        process.exit();
+      });
+      return function(text) {
+        var blankLine = Array(prevLine.length + 1).join(' ');
+        if (text.length > hr.length) {
+          text = text.slice(0, hr.length - 3) + '...';
+        }
+        prevLine = text;
+        process.stdout.write(text + blankLine.slice(text.length) + '\r');
+      }
+    }());
 
     /**
      * A logging callback triggered when all testing is completed.
@@ -137,6 +166,7 @@
         }
         ran = true;
 
+        logInline('');
         console.log(hr);
         console.log('    PASS: ' + details.passed + '  FAIL: ' + details.failed + '  TOTAL: ' + details.total);
         console.log('    Finished in ' + details.runtime + ' milliseconds.');
@@ -230,6 +260,7 @@
           testName = details.name;
 
       if (details.failed > 0) {
+        logInline('');
         if (!modulePrinted) {
           modulePrinted = true;
           console.log(hr);
@@ -240,6 +271,8 @@
         assertions.forEach(function(value) {
           console.log('    ' + value);
         });
+      } else {
+        logInline('Testing ' + moduleName + '...');
       }
       assertions.length = 0;
     });

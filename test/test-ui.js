@@ -73,7 +73,7 @@
   }());
 
   // used to indicate testing a modularized build
-  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize)\b/.test([location.pathname, location.search, ui.buildPath]);
+  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node|npm)|modularize)\b/.test([location.pathname, location.search, ui.buildPath]);
 
   // initialize controls
   addListener(window, 'load', function() {

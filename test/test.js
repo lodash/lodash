@@ -47,7 +47,7 @@
   });
 
   /** Used to indicate testing a modularized build */
-  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
+  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node|npm)|modularize)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
 
   /*--------------------------------------------------------------------------*/
 
@@ -100,6 +100,9 @@
       slice = Array.prototype.slice,
       toString = Object.prototype.toString,
       Worker = document && root.Worker;
+
+  /** Detect if testing `npm` modules */
+  var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
   /** Detects if running in a PhantomJS web page */
   var isPhantomPage = typeof callPhantom == 'function';
@@ -489,26 +492,41 @@
 
   (function() {
     test('should return a wrapped value', 1, function() {
-      var actual = _.chain({ 'a': 0 });
-      ok(actual instanceof _);
+      if (!isNpm) {
+        var actual = _.chain({ 'a': 0 });
+        ok(actual instanceof _);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should return the existing wrapper when chaining', 1, function() {
-      var wrapper = _({ 'a': 0 });
-      equal(wrapper.chain(), wrapper);
+      if (!isNpm) {
+        var wrapper = _({ 'a': 0 });
+        equal(wrapper.chain(), wrapper);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should enable chaining of methods that return unwrapped values by default', 6, function() {
-      var array = ['abc'];
+      if (!isNpm) {
+        var array = ['abc'];
 
-      ok(_.chain(array).first() instanceof _);
-      ok(_(array).chain().first() instanceof _);
+        ok(_.chain(array).first() instanceof _);
+        ok(_(array).chain().first() instanceof _);
 
-      ok(_.chain(array).isArray() instanceof _);
-      ok(_(array).chain().isArray() instanceof _);
+        ok(_.chain(array).isArray() instanceof _);
+        ok(_(array).chain().isArray() instanceof _);
 
-      ok(_.chain(array).first().first() instanceof _);
-      ok(_(array).chain().first().first() instanceof _);
+        ok(_.chain(array).first().first() instanceof _);
+        ok(_(array).chain().first().first() instanceof _);
+      }
+      else {
+        skipTest(6);
+      }
     });
   }());
 
@@ -1276,26 +1294,36 @@
     });
 
     test('should chain when passing `n`, `callback`, or `thisArg`', 3, function() {
-      var actual = _(array).first(2);
+      if (!isNpm) {
+        var actual = _(array).first(2);
 
-      ok(actual instanceof _);
+        ok(actual instanceof _);
 
-      actual = _(array).first(function(num) {
-        return num < 3;
-      });
+        actual = _(array).first(function(num) {
+          return num < 3;
+        });
 
-      ok(actual instanceof _);
+        ok(actual instanceof _);
 
-      actual = _(array).first(function(num, index) {
-        return this[index] < 3;
-      }, array);
+        actual = _(array).first(function(num, index) {
+          return this[index] < 3;
+        }, array);
 
-      ok(actual instanceof _);
+        ok(actual instanceof _);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should not chain when arguments are not provided', 1, function() {
-      var actual = _(array).first();
-      strictEqual(actual, 1);
+      if (!isNpm) {
+        var actual = _(array).first();
+        strictEqual(actual, 1);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should work with an object for `callback`', 1, function() {
@@ -1419,8 +1447,13 @@
     });
 
     test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
-      var wrapper = _([1, 2, 3]);
-      equal(wrapper[methodName](Boolean), wrapper);
+      if (!isNpm) {
+        var wrapper = _([1, 2, 3]);
+        equal(wrapper[methodName](Boolean), wrapper);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('`_.' + methodName + '` should support the `thisArg` argument', 2, function() {
@@ -1576,8 +1609,13 @@
     var func = _[methodName];
 
     test('should return the existing wrapper when chaining', 1, function() {
-      var wrapper = _({ 'a': 1 });
-      equal(wrapper[methodName]({ 'b': 2 }), wrapper);
+      if (!isNpm) {
+        var wrapper = _({ 'a': 1 });
+        equal(wrapper[methodName]({ 'b': 2 }), wrapper);
+      }
+      else {
+        skipTest();
+      }
     });
 
 
@@ -2463,26 +2501,36 @@
     });
 
     test('should chain when passing `n`, `callback`, or `thisArg`', 3, function() {
-      var actual = _(array).last(2);
+      if (!isNpm) {
+        var actual = _(array).last(2);
 
-      ok(actual instanceof _);
+        ok(actual instanceof _);
 
-      actual = _(array).last(function(num) {
-        return num > 1;
-      });
+        actual = _(array).last(function(num) {
+          return num > 1;
+        });
 
-      ok(actual instanceof _);
+        ok(actual instanceof _);
 
-      actual = _(array).last(function(num, index) {
-        return this[index] > 1;
-      }, array);
+        actual = _(array).last(function(num, index) {
+          return this[index] > 1;
+        }, array);
 
-      ok(actual instanceof _);
+        ok(actual instanceof _);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should not chain when arguments are not provided', 1, function() {
-      var actual = _(array).last();
-      equal(actual, 3);
+      if (!isNpm) {
+        var actual = _(array).last();
+        equal(actual, 3);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should work with an object for `callback`', 1, function() {
@@ -2582,8 +2630,13 @@
 
   _.forEach(['max', 'min'], function(methodName) {
     test('`_.' + methodName + '` should resolve the correct value when provided an array containing only one value', 1, function() {
-      var actual = _([40])[methodName]().value();
-      strictEqual(actual, 40);
+      if (!isNpm) {
+        var actual = _([40])[methodName]().value();
+        strictEqual(actual, 40);
+      }
+      else {
+        skipTest();
+      }
     });
   });
 
@@ -2732,10 +2785,8 @@
         this.__wrapped__ = value;
       }
 
-      lodash.prototype.value = _.prototype.value;
-
       _.mixin(lodash, { 'a': function(a) { return a[0]; } });
-      strictEqual(lodash(['a']).a().value(), 'a');
+      strictEqual(lodash(['a']).a().__wrapped__, 'a');
     });
   }());
 
@@ -3490,13 +3541,23 @@
     });
 
     test('should chain when passing `n`', 1, function() {
-      var actual = _(array).sample(2);
-      ok(actual instanceof _);
+      if (!isNpm) {
+        var actual = _(array).sample(2);
+        ok(actual instanceof _);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should not chain when arguments are not provided', 1, function() {
-      var actual = _(array).sample();
-      ok(_.contains(array, actual));
+      if (!isNpm) {
+        var actual = _(array).sample();
+        ok(_.contains(array, actual));
+      }
+      else {
+        skipTest();
+      }
     });
 
     _.forEach({
@@ -4441,11 +4502,16 @@
 
   (function() {
     test('should remove the value at index `0` when length is `0` (test in IE 8 compatibility mode)', 2, function() {
-      var wrapped = _({ '0': 1, 'length': 1 });
-      wrapped.shift();
+      if (!isNpm) {
+        var wrapped = _({ '0': 1, 'length': 1 });
+        wrapped.shift();
 
-      deepEqual(wrapped.keys().value(), ['length']);
-      equal(wrapped.first(), undefined);
+        deepEqual(wrapped.keys().value(), ['length']);
+        equal(wrapped.first(), undefined);
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -4455,11 +4521,16 @@
 
   (function() {
     test('should remove the value at index `0` when length is `0` (test in IE < 9, and in compatibility mode for IE9)', 2, function() {
-      var wrapped = _({ '0': 1, 'length': 1 });
-      wrapped.splice(0, 1);
+      if (!isNpm) {
+        var wrapped = _({ '0': 1, 'length': 1 });
+        wrapped.splice(0, 1);
 
-      deepEqual(wrapped.keys().value(), ['length']);
-      equal(wrapped.first(), undefined);
+        deepEqual(wrapped.keys().value(), ['length']);
+        equal(wrapped.first(), undefined);
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -4469,8 +4540,13 @@
 
   (function() {
     test('should return the `toString` result of the wrapped value', 1, function() {
-      var wrapped = _([1, 2, 3]);
-      equal(String(wrapped), '1,2,3');
+      if (!isNpm) {
+        var wrapped = _([1, 2, 3]);
+        equal(String(wrapped), '1,2,3');
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -4480,8 +4556,13 @@
 
   (function() {
     test('should return the `valueOf` result of the wrapped value', 1, function() {
-      var wrapped = _(123);
-      equal(Number(wrapped), 123);
+      if (!isNpm) {
+        var wrapped = _(123);
+        equal(Number(wrapped), 123);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -4500,7 +4581,12 @@
 
     _.forEach(funcs, function(methodName) {
       test('`_.' + methodName + '` should return a wrapped value', 1, function() {
-        ok(wrapped[methodName]() instanceof _);
+        if (!isNpm) {
+          ok(wrapped[methodName]() instanceof _);
+        }
+        else {
+          skipTest();
+        }
       });
     });
   }());
@@ -4548,11 +4634,16 @@
 
     _.forEach(funcs, function(methodName) {
       test('`_(...).' + methodName + '` should return an unwrapped value', 1, function() {
-        var result = methodName == 'reduceRight'
-          ? wrapped[methodName](_.identity)
-          : wrapped[methodName]();
+        if (!isNpm) {
+          var result = methodName == 'reduceRight'
+            ? wrapped[methodName](_.identity)
+            : wrapped[methodName]();
 
-        equal(result instanceof _, false);
+          equal(result instanceof _, false);
+        }
+        else {
+          skipTest();
+        }
       });
     });
   }());
@@ -4573,39 +4664,59 @@
 
     _.forEach(funcs, function(methodName) {
       test('`_(...).' + methodName + '` called without an `n` argument should return an unwrapped value', 1, function() {
-        equal(typeof wrapped[methodName](), 'number');
+        if (!isNpm) {
+          equal(typeof wrapped[methodName](), 'number');
+        }
+        else {
+          skipTest();
+        }
       });
 
       test('`_(...).' + methodName + '` called with an `n` argument should return a wrapped value', 1, function() {
-        ok(wrapped[methodName](1) instanceof _);
+        if (!isNpm) {
+          ok(wrapped[methodName](1) instanceof _);
+        }
+        else {
+          skipTest();
+        }
       });
 
       test('`_.' + methodName + '` should return `undefined` when querying falsey arguments without an `n` argument', 1, function() {
-        var actual = [],
-            expected = _.map(falsey, function() { return undefined; }),
-            func = _[methodName];
+        if (!isNpm) {
+          var actual = [],
+              expected = _.map(falsey, function() { return undefined; }),
+              func = _[methodName];
 
-        _.forEach(falsey, function(value, index) {
-          try {
-            actual.push(index ? func(value) : func());
-          } catch(e) { }
-        });
+          _.forEach(falsey, function(value, index) {
+            try {
+              actual.push(index ? func(value) : func());
+            } catch(e) { }
+          });
 
-        deepEqual(actual, expected);
+          deepEqual(actual, expected);
+        }
+        else {
+          skipTest();
+        }
       });
 
       test('`_.' + methodName + '` should return an empty array when querying falsey arguments with an `n` argument', 1, function() {
-        var actual = [],
-            expected = _.map(falsey, function() { return []; }),
-            func = _[methodName];
+        if (!isNpm) {
+          var actual = [],
+              expected = _.map(falsey, function() { return []; }),
+              func = _[methodName];
 
-        _.forEach(falsey, function(value, index) {
-          try {
-            actual.push(func(value, 2));
-          } catch(e) { }
-        });
+          _.forEach(falsey, function(value, index) {
+            try {
+              actual.push(func(value, 2));
+            } catch(e) { }
+          });
 
-        deepEqual(actual, expected);
+          deepEqual(actual, expected);
+        }
+        else {
+          skipTest();
+        }
       });
     });
   }());
@@ -4765,10 +4876,12 @@
         ok(pass, '`_.' + methodName + '` accepts falsey arguments');
       });
 
-      // add a skipped test for `_.runInContext` which is abscent from modularized builds
-      if (!_.runInContext) {
-        skipTest();
-      }
+      // skip tests for missing methods of modularized builds
+      _.each(['runInContext', 'tap'], function(methodName) {
+        if (!_[methodName]) {
+          skipTest();
+        }
+      });
     });
 
     test('should reject falsey arguments', 14, function() {

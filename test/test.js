@@ -47,7 +47,7 @@
   });
 
   /** Used to indicate testing a modularized build */
-  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node|npm)|modularize)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
+  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
 
   /*--------------------------------------------------------------------------*/
 

@@ -199,7 +199,7 @@
     if (!Worker || isModularize) {
       return;
     }
-    var worker = new Worker('./worker.js');
+    var worker = new Worker('./asset/worker.js?t=' + (+new Date));
     worker.addEventListener('message', function(e) {
       _._VERSION = e.data || '';
     }, false);

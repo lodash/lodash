@@ -9,11 +9,11 @@ env:
   matrix:
     - BUILD="compat"
     - BUILD="modern"
-    - BUILD="legacy"  MAKE=true
-    - BUILD="mobile"  MAKE=true
+    - BUILD="legacy"
+    - BUILD="mobile"
     - BIN="phantomjs" BUILD="compat"
-    - BIN="phantomjs" BUILD="legacy" MAKE=true
-    - BIN="phantomjs" BUILD="mobile" MAKE=true
+    - BIN="phantomjs" BUILD="legacy"
+    - BIN="phantomjs" BUILD="mobile"
 matrix:
   include:
     - node_js: "0.10"
@@ -21,19 +21,19 @@ matrix:
     - node_js: "0.10"
       env: BIN="narwhal" BUILD="compat"
     - node_js: "0.10"
-      env: BIN="narwhal" BUILD="legacy" MAKE=true
+      env: BIN="narwhal" BUILD="legacy"
     - node_js: "0.10"
       env: BIN="rhino"   BUILD="compat"
     - node_js: "0.10"
-      env: BIN="rhino"   BUILD="legacy" MAKE=true
+      env: BIN="rhino"   BUILD="legacy"
     - node_js: "0.10"
       env: BIN="rhino"   BUILD="compat" OPTION="-require"
     - node_js: "0.10"
-      env: BIN="rhino"   BUILD="legacy" MAKE=true OPTION="-require"
+      env: BIN="rhino"   BUILD="legacy" OPTION="-require"
     - node_js: "0.10"
       env: BIN="ringo"   BUILD="compat"
     - node_js: "0.10"
-      env: BIN="ringo"   BUILD="legacy" MAKE=true
+      env: BIN="ringo"   BUILD="legacy"
 git:
   depth: 1
 branches:
@@ -49,6 +49,7 @@ before_install:
   - "[ $BIN == 'ringo' ] && sudo ln -s /opt/ringojs-0.9/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo || true"
 script:
   - "[ $BIN == 'istanbul' ] && $BIN cover ./test/test.js || true"
+  - "[ $BUILD != false ] && [ $BUILD != 'compat' ] && [ $BUILD != 'modern' ] && MAKE=true || true"
   - "[ $MAKE != false ] && git clone --depth=1 --branch=master git://github.com/lodash/lodash-cli.git ./node_modules/lodash-cli || true"
   - "[ $MAKE != false ] && mkdir ./node_modules/lodash-cli/node_modules && cd ./node_modules/lodash-cli/node_modules/ && ln -s ../../../ ./lodash && cd ../ && npm i . && cd ../../ || true"
   - "[ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"

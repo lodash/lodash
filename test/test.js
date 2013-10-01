@@ -1,28 +1,36 @@
 ;(function(root, undefined) {
   'use strict';
 
-  /** Object shortcuts */
-  var amd = root.define && define.amd,
-      phantom = root.phantom,
+  /** Method and object shortcuts */
+  var phantom = root.phantom,
+      amd = root.define && define.amd,
+      document = !phantom && root.document,
+      body = document && document.body,
+      create = Object.create,
+      freeze = Object.freeze,
+      params = root.arguments,
       process = root.process,
-      system = root.system;
+      push = Array.prototype.push,
+      slice = Array.prototype.slice,
+      system = root.system,
+      toString = Object.prototype.toString,
+      Worker = document && root.Worker;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
     var min = 0,
-        args = root.arguments,
         result = [];
 
     if (phantom) {
-      result = phantom.args;
+      result = params = phantom.args;
     } else if (system) {
       min = 1;
-      result = system.args;
+      result = params = system.args;
     } else if (process) {
       min = 2;
-      result = process.argv;
-    } else if (args) {
-      result = args;
+      result = params = process.argv;
+    } else if (params) {
+      result = params;
     }
     var last = result[result.length - 1];
     result = (result.length > min && !/test(?:\.js)?$/.test(last)) ? last : '../lodash.js';
@@ -36,9 +44,6 @@
     return result;
   }());
 
-  /** The basename of the Lo-Dash file to test */
-  var basename = /[\w.-]+$/.exec(filePath)[0];
-
   /** The `ui` object */
   var ui = root.ui || (root.ui = {
     'buildPath': filePath,
@@ -46,11 +51,43 @@
     'urlParams': {}
   });
 
+  /** The basename of the Lo-Dash file to test */
+  var basename = /[\w.-]+$/.exec(filePath)[0];
+
   /** Used to indicate testing a modularized build */
   var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
 
+  /** Detect if testing `npm` modules */
+  var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
+
+  /** Detects if running in a PhantomJS web page */
+  var isPhantomPage = typeof callPhantom == 'function';
+
+  /** Detect if running in Rhino */
+  var isRhino = root.java && typeof global == 'function' && global().Array === root.Array;
+
+  /** Use a single "load" function */
+  var load = !amd && typeof require == 'function' ? require : root.load;
+
+  /** The unit testing framework */
+  var QUnit = (function() {
+    var noop = Function.prototype;
+    return  root.QUnit || (
+      root.addEventListener || (root.addEventListener = noop),
+      root.setTimeout || (root.setTimeout = noop),
+      root.QUnit = load('../vendor/qunit/qunit/qunit.js') || root.QUnit,
+      (load('../vendor/qunit-clib/qunit-clib.js') || { 'runInContext': noop }).runInContext(root),
+      addEventListener === noop && delete root.addEventListener,
+      root.QUnit
+    );
+  }());
+
   /*--------------------------------------------------------------------------*/
 
+  // log params passed to `test.js`
+  if (params) {
+    console.log('test.js invoked with arguments: ' + JSON.stringify(slice.call(params)));
+  }
   // exit early if going to run tests in a PhantomJS web page
   if (phantom && isModularize) {
     var page = require('webpage').create();
@@ -91,41 +128,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** Method and object shortcuts */
-  var document = !phantom && root.document,
-      body = document && document.body,
-      create = Object.create,
-      freeze = Object.freeze,
-      push = Array.prototype.push,
-      slice = Array.prototype.slice,
-      toString = Object.prototype.toString,
-      Worker = document && root.Worker;
-
-  /** Detect if testing `npm` modules */
-  var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
-
-  /** Detects if running in a PhantomJS web page */
-  var isPhantomPage = typeof callPhantom == 'function';
-
-  /** Detect if running in Rhino */
-  var isRhino = root.java && typeof global == 'function' && global().Array === root.Array;
-
-  /** Use a single "load" function */
-  var load = !amd && typeof require == 'function' ? require : root.load;
-
-  /** The unit testing framework */
-  var QUnit = (function() {
-    var noop = Function.prototype;
-    return  root.QUnit || (
-      root.addEventListener || (root.addEventListener = noop),
-      root.setTimeout || (root.setTimeout = noop),
-      root.QUnit = load('../vendor/qunit/qunit/qunit.js') || root.QUnit,
-      (load('../vendor/qunit-clib/qunit-clib.js') || { 'runInContext': noop }).runInContext(root),
-      addEventListener === noop && delete root.addEventListener,
-      root.QUnit
-    );
-  }());
-
   /** The `lodash` function to test */
   var _ = root._ || (root._ = (
     _ = load(filePath) || root._,
@@ -162,8 +164,6 @@
 
   /** Used to check problem JScript properties too */
   var shadowedObject = _.invert(shadowedProps);
-
-  /*--------------------------------------------------------------------------*/
 
   /**
    * Skips a given number of tests with a passing result.

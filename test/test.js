@@ -261,7 +261,7 @@
       }
     });
 
-    test('avoids overwritten native methods', 3, function() {
+    test('avoids overwritten native methods', 4, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
@@ -271,21 +271,40 @@
       if (document) {
         try {
           var actual = lodashBadShim.bind(function() { return this.a; }, object)();
-        } catch(e) { }
+        } catch(e) {
+          actual = null;
+        }
         ok(actual, message('bind'));
 
         try {
           actual = lodashBadShim.isArray([]);
-        } catch(e) { }
+        } catch(e) {
+          actual = null;
+        }
         ok(actual, message('isArray'));
 
         try {
           actual = lodashBadShim.keys(object);
-        } catch(e) { }
+        } catch(e) {
+          actual = null;
+        }
         deepEqual(actual, ['a'], message('keys'));
+
+        try {
+          var Foo = function() {
+            this.a = 2;
+          };
+
+          var actual = _.transform(new Foo, function(result, value, key) {
+            result[key] = value * value;
+          });
+        } catch(e) {
+          actual = null;
+        }
+        ok(actual instanceof Foo, message('transform'));
       }
       else {
-        skipTest(3);
+        skipTest(4);
       }
     });
   }());

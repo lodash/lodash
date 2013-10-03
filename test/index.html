@@ -24,6 +24,9 @@
 			Function.prototype._bind = Function.prototype.bind;
 			Function.prototype.bind = function() { return function() {}; };
 
+			Object._create = Object.create;
+			Object.create = function() {};
+
 			Object._defineProperty = Object.defineProperty;
 			Object.defineProperty = function() {};
 
@@ -48,6 +51,11 @@
 			} else {
 				delete Function.prototype.bind;
 			}
+			if (Object._create) {
+				Object.create = Object._create;
+			} else {
+				delete Object.create;
+			}
 			if (Object._defineProperty) {
 				Object.defineProperty = Object._defineProperty;
 			} else {
@@ -60,6 +68,7 @@
 			}
 			delete Array._isArray;
 			delete Function.prototype._bind;
+			delete Object._create;
 			delete Object._defineProperty;
 			delete Object._keys;
 

@@ -1332,6 +1332,17 @@
     function createObject(prototype) {
       return isObject(prototype) ? nativeCreate(prototype) : {};
     }
+    // fallback for browsers without `Object.create`
+    if (!nativeCreate) {
+      createObject = function(prototype) {
+        if (isObject(prototype)) {
+          noop.prototype = prototype;
+          var result = new noop;
+          noop.prototype = null;
+        }
+        return result || {};
+      };
+    }
 
     /**
      * Used by `escape` to convert characters to HTML entities.

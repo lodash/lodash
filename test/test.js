@@ -513,7 +513,7 @@
 
     test('should enable chaining of methods that return unwrapped values by default', 6, function() {
       if (!isNpm) {
-        var array = ['abc'];
+        var array = ['c', 'b', 'a'];
 
         ok(_.chain(array).first() instanceof _);
         ok(_(array).chain().first() instanceof _);
@@ -521,8 +521,8 @@
         ok(_.chain(array).isArray() instanceof _);
         ok(_(array).chain().isArray() instanceof _);
 
-        ok(_.chain(array).first().first() instanceof _);
-        ok(_(array).chain().first().first() instanceof _);
+        ok(_.chain(array).sortBy().first() instanceof _);
+        ok(_(array).chain().sortBy().first() instanceof _);
       }
       else {
         skipTest(6);

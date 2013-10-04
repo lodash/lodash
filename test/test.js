@@ -3857,7 +3857,7 @@
       var compiled = _.template('<% var b = a; %><%= b.value %>'),
           data = { 'a': { 'value': 1 } };
 
-      equal(compiled(data), '1');
+      strictEqual(compiled(data), '1');
     });
 
     test('should work when passing `options.variable`', 1, function() {
@@ -3870,7 +3870,7 @@
       var data = { 'a': [1, 2, 3] };
 
       try {
-        equal(compiled(data), '123');
+        strictEqual(compiled(data), '123');
       } catch(e) {
         ok(false);
       }
@@ -3923,7 +3923,7 @@
 
     test('should parse ES6 template delimiters', 2, function() {
       var data = { 'value': 2 };
-      equal(_.template('1${value}3', data), '123');
+      strictEqual(_.template('1${value}3', data), '123');
       equal(_.template('${"{" + value + "\\}"}', data), '{2}');
     });
 
@@ -3931,7 +3931,14 @@
       var options = { 'imports': { 'a': 1 } },
           compiled = _.template('<%= a %>', null, options);
 
-      equal(compiled({}), '1');
+      strictEqual(compiled({}), '1');
+    });
+
+    test('should coerce `text` argument to a string', function() {
+      var data = { 'a': 1 },
+          object = { 'toString': function() { return '<%= a %>'; } };
+
+      strictEqual(_.template(object, data), '1');
     });
   }());
 

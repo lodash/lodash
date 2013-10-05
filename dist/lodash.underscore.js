@@ -385,8 +385,8 @@
     if (typeof func != 'function') {
       return identity;
     }
-    // exit early if there is no `thisArg`
-    if (typeof thisArg == 'undefined') {
+    // exit early for no `thisArg` or already bound by `Function#bind`
+    if (typeof thisArg == 'undefined' || !('prototype' in func)) {
       return func;
     }
     switch (argCount) {

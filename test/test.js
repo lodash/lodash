@@ -625,7 +625,7 @@
           strictEqual(_.isEqual(object, clone), true);
 
           if (_.isObject(object)) {
-            notEqual(clone, object);
+            notStrictEqual(clone, object);
           } else {
             strictEqual(clone, object);
           }
@@ -640,7 +640,7 @@
 
       test('`_.' + methodName + '` should clone problem JScript properties (test in IE < 9)', 2, function() {
         deepEqual(func(shadowedObject), shadowedObject);
-        notEqual(func(shadowedObject), shadowedObject);
+        notStrictEqual(func(shadowedObject), shadowedObject);
       });
 
       test('`_.' + methodName + '` should pass the correct `callback` arguments', 1, function() {
@@ -808,6 +808,47 @@
 
       callback.apply(null, expected);
       deepEqual(args, expected);
+    });
+
+    test('should return the passed function if already bound with `Function#bind`', 1, function() {
+      function a() {}
+
+      if (Function.prototype.bind) {
+        var bound = a.bind();
+        strictEqual(_.createCallback(bound, {}), bound);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return the passed function when there is no `this` reference', 2, function() {
+      function a() {}
+      function b() { return this.b; }
+
+      if (_.support.funcDecomp) {
+        strictEqual(_.createCallback(a, {}), a);
+        notStrictEqual(_.createCallback(b, {}), b);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('should only write `__bindData__` to named functions', 2, function() {
+      function a() {};
+      var b = function() {};
+
+      if (_.support.funcNames || _.support.funcDecomp) {
+        _.createCallback(a, {});
+        ok('__bindData__' in a)
+
+        _.createCallback(b, {});
+        ok(!('__bindData__' in b));
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -4272,7 +4313,7 @@
           result[key] = this[key];
         }, null, object);
 
-        notEqual(actual, object);
+        notStrictEqual(actual, object);
         deepEqual(actual, object);
       });
     });

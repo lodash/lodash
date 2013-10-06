@@ -3975,11 +3975,16 @@
       strictEqual(compiled({}), '1');
     });
 
-    test('should coerce `text` argument to a string', function() {
+    test('should coerce `text` argument to a string', 1, function() {
       var data = { 'a': 1 },
           object = { 'toString': function() { return '<%= a %>'; } };
 
       strictEqual(_.template(object, data), '1');
+    });
+
+    test('should support single line comments in "evaluate" delimiters (test production builds)', 1, function() {
+      var compiled = _.template('<% // comment %><% if (value) { %>yap<% } else { %>nope<% } %>');
+      equal(compiled({ 'value': true }), 'yap');
     });
   }());
 

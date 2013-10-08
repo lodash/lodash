@@ -687,6 +687,17 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.compact');
+
+  (function() {
+    test('should filter falsey values', 1, function() {
+      var array = ['0', '1', '2'];
+      deepEqual(_.compact(falsey.concat(array)), array);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.contains');
 
   (function() {
@@ -1110,6 +1121,14 @@
   QUnit.module('lodash.difference');
 
   (function() {
+    test('should return the difference of the given arrays', 2, function() {
+      var actual = _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
+      deepEqual(actual, [1, 3, 4]);
+
+      actual = _.difference([1, 2, 3, 4, 5], [5, 2, 10], [8, 4]);
+      deepEqual(actual, [1, 3]);
+    });
+
     test('should work with large arrays', 1, function() {
       var array1 = _.range(largeArraySize),
           array2 = array1.slice(),
@@ -1305,13 +1324,13 @@
     });
 
     test('should return an empty array when `n` < `1`', 3, function() {
-      _.each([0, -1, -2], function(n) {
+      _.forEach([0, -1, -2], function(n) {
         deepEqual(_.first(array, n), []);
       });
     });
 
     test('should return all elements when `n` >= `array.length`', 2, function() {
-      _.each([3, 4], function(n) {
+      _.forEach([3, 4], function(n) {
         deepEqual(_.first(array, n), array.slice());
       });
     });
@@ -1392,6 +1411,11 @@
 
     test('should work with a string for `callback`', 1, function() {
       deepEqual(_.first(objects, 'b'), objects.slice(0, 2));
+    });
+
+    test('should be aliases as `_.head` and `_.take`', 2, function() {
+      strictEqual(_.head, _.first);
+      strictEqual(_.take, _.first);
     });
   }());
 
@@ -1491,6 +1515,27 @@
     test('should work with empty arrays', 1, function() {
       var actual = _.flatten([[], [[]], [[], [[[]]]]]);
       deepEqual(actual, []);
+    });
+
+    test('should flatten nested arrays', 1, function() {
+      var array = [1, [2], [3, [[4]]]],
+          expected = [1, 2, 3, 4];
+
+      deepEqual(_.flatten(array), expected);
+    });
+
+    test('should support shallow flattening nested arrays', 1, function() {
+      var array = [1, [2], [3, [4]]],
+          expected = [1, 2, 3, [4]];
+
+      deepEqual(_.flatten(array, true), expected);
+    });
+
+    test('should support shallow flattening arrays of other arrays', 1, function() {
+      var array = [[1], [2], [3], [[4]]],
+          expected = [1, 2, 3, [4]];
+
+      deepEqual(_.flatten(array, true), expected);
     });
   }(1, 2, 3));
 
@@ -1868,6 +1913,18 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.has');
+
+  (function() {
+    test('should return `false` for primitives', 9, function() {
+      _.forEach(falsey.concat(1, 'a'), function(value) {
+        strictEqual(_.has(value, 'valueOf'), false);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.indexBy');
 
   (function() {
@@ -1915,22 +1972,18 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.has');
-
-  (function() {
-    test('should return `false` for primitives', 9, function() {
-      _.forEach(falsey.concat(1, 'a'), function(value) {
-        strictEqual(_.has(value, 'valueOf'), false);
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.indexOf');
 
   (function() {
     var array = [1, 2, 3, 1, 2, 3];
+
+    test('should return the index of the first matched value', 1, function() {
+      equal(_.indexOf(array, 3), 2);
+    });
+
+    test('should return `-1` for an unmatched value', 1, function() {
+      equal(_.indexOf(array, 4), -1);
+    });
 
     test('should work with a positive `fromIndex`', 1, function() {
       equal(_.indexOf(array, 1, 2), 3);
@@ -2061,13 +2114,17 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    test('should accept a falsey `array` argument', 7, function() {
-      _.forEach(falsey, function(index, value) {
+    test('should accept a falsey `array` argument', 1, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return []; });
+
+      _.forEach(falsey, function(value, index) {
         try {
-          var actual = index ? _.initial(value) : _.initial();
+          actual.push(index ? _.initial(value) : _.initial());
         } catch(e) { }
-        deepEqual(actual, []);
-      })
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should exclude last element', 1, function() {
@@ -2083,13 +2140,13 @@
     });
 
     test('should return all elements when `n` < `1`', 3, function() {
-      _.each([0, -1, -2], function(n) {
+      _.forEach([0, -1, -2], function(n) {
         deepEqual(_.initial(array, n), array.slice());
       });
     });
 
     test('should return an empty array when `n` >= `array.length`', 2, function() {
-      _.each([3, 4], function(n) {
+      _.forEach([3, 4], function(n) {
         deepEqual(_.initial(array, n), []);
       });
     });
@@ -2133,6 +2190,33 @@
 
     test('should work with a string for `callback`', 1, function() {
       deepEqual(_.initial(objects, 'b'), objects.slice(0, 1));
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.intersection');
+
+  (function() {
+    test('should return the intersection of the given arrays', 1, function() {
+      var actual = _.intersection([1, 3, 2], [101, 2, 1, 10], [2, 1]);
+      deepEqual(actual, [1, 2]);
+    });
+
+    test('should return an array of unique values', 1, function() {
+      var actual = _.intersection([1, 1, 3, 2, 2], [101, 2, 2, 1, 101], [2, 1, 1]);
+      deepEqual(actual, [1, 2]);
+    });
+
+    test('should return a wrapped value when chaining', 2, function() {
+      if (!isNpm) {
+        var actual = _([1, 3, 2]).intersection([101, 2, 1, 10]);
+        ok(actual instanceof _);
+        deepEqual(actual.value(), [1, 2]);
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -2512,13 +2596,13 @@
     });
 
     test('should return an empty array when `n` < `1`', 3, function() {
-      _.each([0, -1, -2], function(n) {
+      _.forEach([0, -1, -2], function(n) {
         deepEqual(_.last(array, n), []);
       });
     });
 
     test('should return all elements when `n` >= `array.length`', 2, function() {
-      _.each([3, 4], function(n) {
+      _.forEach([3, 4], function(n) {
         deepEqual(_.last(array, n), array.slice());
       });
     });
@@ -2609,6 +2693,14 @@
   (function() {
     var array = [1, 2, 3, 1, 2, 3];
 
+    test('should return the index of the last matched value', 1, function() {
+      equal(_.lastIndexOf(array, 3), 5);
+    });
+
+    test('should return `-1` for an unmatched value', 1, function() {
+      equal(_.lastIndexOf(array, 4), -1);
+    });
+
     test('should work with a positive `fromIndex`', 1, function() {
       strictEqual(_.lastIndexOf(array, 1, 2), 0);
     });
@@ -2632,6 +2724,29 @@
     test('should ignore non-number `fromIndex` values', 2, function() {
       equal(_.lastIndexOf([1, 2, 3], 3, '1'), 2);
       equal(_.lastIndexOf([1, 2, 3], 3, true), 2);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('indexOf methods');
+
+  (function() {
+    _.forEach(['indexOf', 'lastIndexOf'], function(methodName) {
+      var func = _[methodName];
+
+      test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
+        var actual = [],
+            expected = _.map(falsey, function() { return -1; });
+
+        _.forEach(falsey, function(value, index) {
+          try {
+            actual.push(index ? func(value) : func());
+          } catch(e) { }
+        });
+
+        deepEqual(actual, expected);
+      });
     });
   }());
 
@@ -3264,6 +3379,31 @@
   (function() {
     var func = _.range;
 
+    test('should work when passing a single `end` argument', 1, function() {
+      deepEqual(_.range(4), [0, 1, 2, 3]);
+    });
+
+    test('should work when passing `start` and `end` arguments', 1, function() {
+      deepEqual(_.range(1, 5), [1, 2, 3, 4]);
+    });
+
+    test('should work when passing `start`, `end`, and `step` arguments', 1, function() {
+      deepEqual(_.range(1, 20, 5), [0, 5, 10, 15]);
+    });
+
+    test('should support a `step` of `0`', 1, function() {
+      deepEqual(_.range(1, 4, 0), [1, 1, 1]);
+    });
+
+    test('should work when passing `step` larger than `end`', 1, function() {
+      deepEqual(_.range(1, 5, 20), [1]);
+    });
+
+    test('should work when passing a negative `step` argument', 2, function() {
+      deepEqual(_.range(0, -4, -1), [0, -1, -2, -3]);
+      deepEqual(_.range(21, 10, -3), [21, 18, 15, 12]);
+    });
+
     test('should treat falsey `start` arguments as `0`', 13, function() {
       _.forEach(falsey, function(value, index) {
         if (index) {
@@ -3278,10 +3418,6 @@
     test('should coerce arguments to numbers', 1, function() {
       var actual = [func('0',1), func('1'), func(0, 1, '1')];
       deepEqual(actual, [[0], [0], [0]]);
-    });
-
-    test('should support a `step` of `0`', 1, function() {
-      deepEqual(_.range(1, 4, 0), [1, 1, 1]);
     });
   }());
 
@@ -3468,13 +3604,13 @@
     });
 
     test('should return all elements when `n` < `1`', 3, function() {
-      _.each([0, -1, -2], function(n) {
+      _.forEach([0, -1, -2], function(n) {
         deepEqual(_.rest(array, n), [1, 2, 3]);
       });
     });
 
     test('should return an empty array when `n` >= `array.length`', 2, function() {
-      _.each([3, 4], function(n) {
+      _.forEach([3, 4], function(n) {
         deepEqual(_.rest(array, n), []);
       });
     });
@@ -3523,6 +3659,11 @@
     test('should work with a string for `callback`', 1, function() {
       deepEqual(_.rest(objects, 'b'), objects.slice(-1));
     });
+
+    test('should be aliases as `_.drop` and `_.tail`', 2, function() {
+      strictEqual(_.drop, _.rest);
+      strictEqual(_.tail, _.rest);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3566,13 +3707,13 @@
     });
 
     test('should return an empty array when `n` < `1`', 3, function() {
-      _.each([0, -1, -2], function(n) {
+      _.forEach([0, -1, -2], function(n) {
         deepEqual(_.sample(array, n), []);
       });
     });
 
     test('should return all elements when `n` >= `array.length`', 2, function() {
-      _.each([3, 4], function(n) {
+      _.forEach([3, 4], function(n) {
         deepEqual(_.sample(array, n).sort(), array.slice());
       });
     });
@@ -4355,6 +4496,16 @@
   QUnit.module('lodash.union');
 
   (function() {
+    test('should return the union of the given arrays', 1, function() {
+      var actual = _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+      deepEqual(actual, [1, 2, 3, 101, 10]);
+    });
+
+    test('should not flatten nested arrays', 1, function() {
+      var actual = _.union([1, 2, 3], [1, [4]], [2, [5]]);
+      deepEqual(actual, [1, 2, 3, [4], [5]]);
+    });
+
     test('should produce correct results when provided a falsey `array` argument', 1, function() {
       var expected = [1, 2, 3],
           actual = _.union(null, expected);
@@ -4372,6 +4523,34 @@
   QUnit.module('lodash.uniq');
 
   (function() {
+    var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+
+    test('should return unique values of an unsorted array', 1, function() {
+      var array = [2, 3, 1, 2, 3, 1];
+      deepEqual(_.uniq(array), [2, 3, 1]);
+    });
+
+    test('should return unique values of a sorted array', 1, function() {
+      var array = [1, 1, 2, 2, 3];
+      deepEqual(_.uniq(array), [1, 2, 3]);
+    });
+
+    test('should work with a `callback`', 1, function() {
+      var actual = _.uniq(objects, false, function(object) {
+        return object.a;
+      });
+
+      deepEqual(actual, objects.slice(0, 3));
+    });
+
+    test('should work with a `callback` without specifying `isSorted`', 1, function() {
+      var actual = _.uniq(objects, function(object) {
+        return object.a;
+      });
+
+      deepEqual(actual, objects.slice(0, 3));
+    });
+
     test('should support the `thisArg` argument', 1, function() {
       var actual = _.uniq([1, 2, 1.5, 3, 2.5], function(num) {
         return this.floor(num);
@@ -4506,6 +4685,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.without');
+
+  (function() {
+    test('should use strict equality to determine the values to reject', 2, function() {
+      var object1 = { 'a': 1 },
+          object2 = { 'b': 2 },
+          array = [object1, object2];
+
+      deepEqual(_.without(array, { 'a': 1 }), array);
+      deepEqual(_.without(array, object1), [object2]);
+    });
+
+    test('should remove all occurrences of each value from an array', 1, function() {
+      var array = [1, 2, 3, 1, 2, 3];
+      deepEqual(_.without(array, 1, 2), [3, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.zip');
 
   (function() {
@@ -4551,7 +4750,7 @@
       deepEqual(actual, [['moe', 30, undefined], ['larry', 40, false]]);
     });
 
-    test('should correctly consume it\'s output', 1, function() {
+    test('should support consuming it\'s return value', 1, function() {
       var expected = [['moe', 'larry'], [30, 40]];
       deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);
     });
@@ -4562,9 +4761,39 @@
   QUnit.module('lodash.zipObject');
 
   (function() {
+    var object = { 'moe': 30, 'larry': 40 },
+        array = [['moe', 30], ['larry', 40]];
+
     test('should skip falsey elements in a given two dimensional array', 1, function() {
-      var actual = _.zipObject([['a', 1], ['b', 2]].concat(falsey));
-      deepEqual(actual, { 'a': 1, 'b': 2 });
+      var actual = _.zipObject(array.concat(falsey));
+      deepEqual(actual, object);
+    });
+
+    test('should zip together key/value arrays into an object', 1, function() {
+      var actual = _.zipObject(['moe', 'larry'], [30, 40]);
+      deepEqual(actual, object);
+    });
+
+    test('should accept a two dimensional array', 1, function() {
+      var actual = _.zipObject(array);
+      deepEqual(actual, object);
+    });
+
+    test('should accept a falsey `array` argument', 1, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return {}; });
+
+      _.forEach(falsey, function(value, index) {
+        try {
+          actual.push(index ? _.zipObject(value) : _.zipObject());
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should support consuming the return value of `_.pairs`', 1, function() {
+      deepEqual(_.zipObject(_.pairs(object)), object);
     });
   }());
 
@@ -4949,7 +5178,7 @@
       });
 
       // skip tests for missing methods of modularized builds
-      _.each(['runInContext', 'tap'], function(methodName) {
+      _.forEach(['runInContext', 'tap'], function(methodName) {
         if (!_[methodName]) {
           skipTest();
         }

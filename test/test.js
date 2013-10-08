@@ -3388,7 +3388,7 @@
     });
 
     test('should work when passing `start`, `end`, and `step` arguments', 1, function() {
-      deepEqual(_.range(1, 20, 5), [0, 5, 10, 15]);
+      deepEqual(_.range(0, 20, 5), [0, 5, 10, 15]);
     });
 
     test('should support a `step` of `0`', 1, function() {

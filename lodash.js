@@ -5809,8 +5809,7 @@
       debounceOptions.maxWait = wait;
       debounceOptions.trailing = trailing;
 
-      var result = debounce(func, wait, debounceOptions);
-      return result;
+      return debounce(func, wait, debounceOptions);
     }
 
     /**

@@ -739,6 +739,10 @@
         strictEqual(_.contains(collection, 'd'), false);
       });
     });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.include, _.contains);
+    });
   }(1, 2, 3, 1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -1175,6 +1179,10 @@
     test('should return `false` as soon as the `callback` result is falsey', 1, function() {
       strictEqual(_.every([true, null, true], _.identity), false);
     });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.all, _.every);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1249,12 +1257,16 @@
   QUnit.module('lodash.filter');
 
   (function() {
-    test('should not modify the resulting value from within `callback`', 1, function() {
-      var actual = _.filter([0], function(num, index, array) {
-        return (array[index] = 1);
+    test('should return elements the `callback` returns truey for', 1, function() {
+      var actual = _.filter([1, 2, 3], function(num) {
+        return num % 2;
       });
 
-      deepEqual(actual, [0]);
+      deepEqual(actual, [1, 3]);
+    });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.select, _.filter);
     });
   }());
 
@@ -1299,6 +1311,12 @@
       test('should work with a string for `callback`', 1, function() {
         strictEqual(func(objects, 'b'), expected[3]);
       });
+
+      if (methodName == 'find') {
+        test('should be aliased', 1, function() {
+          strictEqual(_.detect, func);
+        });
+      }
     });
   }());
 
@@ -1413,7 +1431,7 @@
       deepEqual(_.first(objects, 'b'), objects.slice(0, 2));
     });
 
-    test('should be aliases as `_.head` and `_.take`', 2, function() {
+    test('should be aliased', 2, function() {
       strictEqual(_.head, _.first);
       strictEqual(_.take, _.first);
     });
@@ -1546,35 +1564,6 @@
   _.forEach(['forEach', 'forEachRight'], function(methodName) {
     var func = _[methodName];
 
-    test('`_.' + methodName + '` should return the collection', 1, function() {
-      var collection = [1, 2, 3];
-      equal(func(collection, Boolean), collection);
-    });
-
-    test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
-      if (!isNpm) {
-        var wrapper = _([1, 2, 3]);
-        equal(wrapper[methodName](Boolean), wrapper);
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.' + methodName + '` should support the `thisArg` argument', 2, function() {
-      var actual;
-
-      function callback(num, index) {
-        actual = this[index];
-      }
-
-      func([1], callback, [2]);
-      equal(actual, 2);
-
-      func({ 'a': 1 }, callback, { 'a': 2 });
-      equal(actual, 2);
-    });
-
     _.forEach({
       'literal': 'abc',
       'object': Object('abc')
@@ -1597,6 +1586,14 @@
           deepEqual(values, ['c', 'b', 'a']);
         }
       });
+    });
+
+    test('`_.' + methodName + '` should be aliased', 1, function() {
+      if (methodName == 'forEach') {
+        strictEqual(_.each, _.forEach);
+      } else {
+        strictEqual(_.eachRight, _.forEachRight);
+      }
     });
   });
 
@@ -1645,6 +1642,143 @@
       deepEqual(props.sort(), ['0', '1', 'length']);
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('iteration methods');
+
+  (function() {
+    var methods = [
+      'every',
+      'filter',
+      'forEach',
+      'forEachRight',
+      'forIn',
+      'forInRight',
+      'forOwn',
+      'forOwnRight',
+      'map',
+      'reject',
+      'some'
+    ];
+
+    var boolMethods = [
+      'every',
+      'some'
+    ];
+
+    var forInMethods = [
+      'forIn',
+      'forInRight'
+    ];
+
+    var iterationMethods = [
+      'forEach',
+      'forEachRight',
+      'forIn',
+      'forInRight',
+      'forOwn',
+      'forOwnRight'
+    ]
+
+    var objectMethods = [
+      'forIn',
+      'forInRight',
+      'forOwn',
+      'forOwnRight'
+    ];
+
+    var rightMethods = [
+      'forEachRight',
+      'forInRight',
+      'forOwnRight'
+    ];
+
+    _.forEach(methods, function(methodName) {
+      var array = [1, 2, 3],
+          func = _[methodName];
+
+      test('`_.' + methodName + '` should pass the correct `callback` arguments', 1, function() {
+        var args,
+            expected = [1, 0, array];
+
+        func(array, function() {
+          args || (args = slice.call(arguments));
+        });
+
+        if (_.contains(rightMethods, methodName)) {
+          expected[0] = 3;
+          expected[1] = 2;
+        }
+        if (_.contains(objectMethods, methodName)) {
+          expected[1] += '';
+        }
+        deepEqual(args, expected);
+      });
+
+      test('`_.' + methodName + '` should support the `thisArg` argument', 2, function() {
+        var actual;
+
+        function callback(num, index) {
+          actual = this[index];
+        }
+
+        func([1], callback, [2]);
+        equal(actual, 2);
+
+        func({ 'a': 1 }, callback, { 'a': 2 });
+        equal(actual, 2);
+      });
+    });
+
+    _.forEach(_.difference(methods, boolMethods), function(methodName) {
+      var array = [1, 2, 3],
+          func = _[methodName];
+
+      test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
+        if (!isNpm) {
+          var actual = _(array)[methodName](Boolean);
+          ok(actual instanceof _);
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+
+    _.forEach(_.difference(methods, forInMethods), function(methodName) {
+      var array = [1, 2, 3],
+          func = _[methodName];
+
+      test('`_.' + methodName + '` iterates over own properties of objects', 1, function() {
+        function Foo() { this.a = 1; }
+        Foo.prototype.b = 2;
+
+        var keys = [];
+        func(new Foo, function(value, key) { keys.push(key); });
+        deepEqual(keys, ['a']);
+      });
+    });
+
+    _.forEach(iterationMethods, function(methodName) {
+      var array = [1, 2, 3],
+          func = _[methodName];
+
+      test('`_.' + methodName + '` should return the collection', 1, function() {
+        equal(func(array, Boolean), array);
+      });
+
+      test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
+        if (!isNpm) {
+          var wrapper = _(array);
+          equal(wrapper[methodName](Boolean), wrapper);
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -1773,6 +1907,7 @@
 
     test('`_.' + methodName + '` should pass the correct `callback` arguments', 2, function() {
       var args;
+
       func({ 'a': 1 }, { 'a': 2 }, function() {
         args || (args = slice.call(arguments));
       });
@@ -2755,9 +2890,41 @@
   QUnit.module('lodash.map');
 
   (function() {
-    test('should return the correct result when iterating an object', 1, function() {
+    var array = [1, 2, 3];
+
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.map(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 0, array]);
+    });
+
+    test('should support the `thisArg` argument', 2, function() {
+      function callback(num, index) {
+        return this[index];
+      }
+
+      var actual = _.map([1], callback, [2]);
+      equal(actual, 2);
+
+      actual = _.map({ 'a': 1 }, callback, { 'a': 2 });
+      equal(actual, 2);
+    });
+
+    test('should iterate over own properties of objects', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var keys = _.map(new Foo, function(value, key) { return key; });
+      deepEqual(keys, ['a']);
+    });
+
+    test('should work on an object with no `callback`', 1, function() {
       var actual = _.map({ 'a': 1, 'b': 2, 'c': 3 });
-      deepEqual(actual, [1, 2, 3]);
+      deepEqual(actual, array);
     });
 
     test('should handle object arguments with non-numeric length properties', 1, function() {
@@ -2768,6 +2935,45 @@
       } else {
         skipTest();
       }
+    });
+
+    test('should return a wrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(array).map(Boolean) instanceof _);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should treat a nodelist as an array-like object', 1, function() {
+      if (document) {
+        var actual = _.map(document.getElementsByTagName('body'), function(element) {
+          return element.nodeName.toLowerCase();
+        });
+
+        deepEqual(actual, ['body']);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should accept a falsey `array` argument', 1, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return []; });
+
+      _.forEach(falsey, function(value, index) {
+        try {
+          actual.push(index ? _.map(value) : _.map());
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.collect, _.map);
     });
   }());
 
@@ -3426,15 +3632,54 @@
   QUnit.module('lodash.reduce');
 
   (function() {
-    test('should pass the correct `callback` arguments', 1, function() {
-      var args,
-          array = [1, 2, 3];
+    var array = [1, 2, 3];
 
+    test('should use the first element of a collection as the default `accumulator`', 1, function() {
+      strictEqual(_.reduce(array), 1);
+    });
+
+    test('should pass the correct `callback` arguments when iterating an array', 2, function() {
+      var args;
+
+      _.reduce(array, function() {
+        args || (args = slice.call(arguments));
+      }, 0);
+
+      deepEqual(args, [0, 1, 0, array]);
+
+      args = null;
       _.reduce(array, function() {
         args || (args = slice.call(arguments));
       });
 
       deepEqual(args, [1, 2, 1, array]);
+    });
+
+    test('should pass the correct `callback` arguments when iterating an object', 2, function() {
+      var args,
+          object = { 'a': 1, 'b': 2 },
+          firstKey = _.first(_.keys(object));
+
+      var expected = firstKey == 'a'
+        ? [0, 1, 'a', object]
+        : [0, 2, 'b', object];
+
+      _.reduce(object, function() {
+        args || (args = slice.call(arguments));
+      }, 0);
+
+      deepEqual(args, expected);
+
+      args = null;
+      expected = firstKey == 'a'
+        ? [1, 2, 'b', object]
+        : [2, 1, 'a', object];
+
+      _.reduce(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, expected);
     });
 
     _.forEach({
@@ -3454,6 +3699,11 @@
         equal(actual, 'abc');
       });
     });
+
+    test('should be aliased', 2, function() {
+      strictEqual(_.foldl, _.reduce);
+      strictEqual(_.inject, _.reduce);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3461,10 +3711,22 @@
   QUnit.module('lodash.reduceRight');
 
   (function() {
-    test('should pass the correct `callback` arguments when iterating an array', 1, function() {
-      var args,
-          array = [1, 2, 3];
+    var array = [1, 2, 3];
 
+    test('should use the last element of a collection as the default `accumulator`', 1, function() {
+      equal(_.reduceRight(array), 3);
+    });
+
+    test('should pass the correct `callback` arguments when iterating an array', 2, function() {
+      var args;
+
+      _.reduceRight(array, function() {
+        args || (args = slice.call(arguments));
+      }, 0);
+
+      deepEqual(args, [0, 3, 2, array]);
+
+      args = null;
       _.reduceRight(array, function() {
         args || (args = slice.call(arguments));
       });
@@ -3472,12 +3734,23 @@
       deepEqual(args, [3, 2, 1, array]);
     });
 
-    test('should pass the correct `callback` arguments when iterating an object', 1, function() {
+    test('should pass the correct `callback` arguments when iterating an object', 2, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
-          lastKey = _.keys(object).pop();
+          lastKey = _.last(_.keys(object));
 
       var expected = lastKey == 'b'
+        ? [0, 2, 'b', object]
+        : [0, 1, 'a', object];
+
+      _.reduceRight(object, function() {
+        args || (args = slice.call(arguments));
+      }, 0);
+
+      deepEqual(args, expected);
+
+      args = null;
+      expected = lastKey == 'b'
         ? [2, 1, 'a', object]
         : [1, 2, 'b', object];
 
@@ -3505,7 +3778,114 @@
         equal(actual, 'cba');
       });
     });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.foldr, _.reduceRight);
+    });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('reduce methods');
+
+  _.forEach(['reduce', 'reduceRight'], function(methodName) {
+    var array = [1, 2, 3],
+        empties = [[]].concat(falsey.slice(1)),
+        func = _[methodName],
+        noop = function() {};
+
+    test('`_.' + methodName + '` should reduce a collection to a single value', 1, function() {
+      var actual = func(['a', 'b', 'c'], function(accumulator, value) {
+        return accumulator + value;
+      }, '');
+
+      equal(actual, methodName == 'reduce' ? 'abc' : 'cba');
+    });
+
+    test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
+      var actual = func(array, function(sum, num, index) {
+        return sum + this[index];
+      }, 0, array);
+
+      deepEqual(actual, 6);
+    });
+
+    test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        var actual = _(array)[methodName](function(sum, num) {
+          return sum + num;
+        });
+
+        equal(actual, 6);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.' + methodName + '` should support empty or falsey collections without an initial `accumulator` value', 1, function() {
+      var actual = [],
+          expected = _.map(empties, function() { return undefined; });
+
+      _.forEach(empties, function(value) {
+        try {
+          actual.push(func(value, noop));
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should support empty or falsey collections with an initial `accumulator` value', 1, function() {
+      var actual = [],
+          expected = _.map(empties, function() { return 'x'; });
+
+      _.forEach(empties, function(value) {
+        try {
+          actual.push(func(value, noop, 'x'));
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should handle an initial `accumulator` value of `undefined`', 1, function() {
+      var actual = func([], noop, undefined);
+      strictEqual(actual, undefined);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.reject');
+
+  (function() {
+    test('should return elements the `callback` returns falsey for', 1, function() {
+      var actual = _.reject([1, 2, 3], function(num) {
+        return num % 2;
+      });
+
+      deepEqual(actual, [2]);
+    });
+  }());
+
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('filter methods');
+
+  _.forEach(['filter', 'reject'], function(methodNames) {
+    var func = _[methodNames];
+
+    test('`_.' + methodNames + '` should not modify the resulting value from within `callback`', 1, function() {
+      var actual = func([0], function(num, index, array) {
+        array[index] = 1;
+        return methodNames == 'filter';
+      });
+
+      deepEqual(actual, [0]);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -3586,13 +3966,17 @@
       { 'a': 0, 'b': 0 }
     ];
 
-    test('should accept a falsey `array` argument', 7, function() {
-      _.forEach(falsey, function(index, value) {
+    test('should accept a falsey `array` argument', 1, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return []; });
+
+      _.forEach(falsey, function(value, index) {
         try {
-          var actual = index ? _.rest(value) : _.rest();
+          actual.push(index ? _.rest(value) : _.rest());
         } catch(e) { }
-        deepEqual(actual, []);
-      })
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should exclude the first element', 1, function() {
@@ -3660,7 +4044,7 @@
       deepEqual(_.rest(objects, 'b'), objects.slice(-1));
     });
 
-    test('should be aliases as `_.drop` and `_.tail`', 2, function() {
+    test('should be aliased', 2, function() {
       strictEqual(_.drop, _.rest);
       strictEqual(_.tail, _.rest);
     });
@@ -3805,13 +4189,17 @@
   (function() {
     var args = arguments;
 
-    test('should accept a falsey `object` argument', 7, function() {
-      _.forEach(falsey, function(index, value) {
+    test('should accept a falsey `object` argument', 1, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return 0; });
+
+      _.forEach(falsey, function(value, index) {
         try {
-          var actual = index ? _.size(value) : _.size();
+          actual.push(index ? _.size(value) : _.size());
         } catch(e) { }
-        strictEqual(actual, 0);
-      })
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should work with jQuery/MooTools DOM query collections', 1, function() {
@@ -3851,6 +4239,10 @@
   (function() {
     test('should return `true` as soon as the `callback` result is truey', 1, function() {
       strictEqual(_.some([null, true, null], _.identity), true);
+    });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.any, _.some);
     });
   }());
 
@@ -5178,7 +5570,7 @@
       });
 
       // skip tests for missing methods of modularized builds
-      _.forEach(['runInContext', 'tap'], function(methodName) {
+      _.forEach(['noConflict', 'runInContext', 'tap'], function(methodName) {
         if (!_[methodName]) {
           skipTest();
         }

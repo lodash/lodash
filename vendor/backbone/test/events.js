@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   module("Backbone.Events");
 
@@ -150,6 +150,31 @@ $(document).ready(function() {
     e.trigger("foo");
     e.stopListening();
     e.trigger("foo");
+  });
+
+  test("stopListening cleans up references", 4, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var fn = function() {};
+    a.listenTo(b, 'all', fn).stopListening();
+    equal(_.size(a._listeningTo), 0);
+    a.listenTo(b, 'all', fn).stopListening(b);
+    equal(_.size(a._listeningTo), 0);
+    a.listenTo(b, 'all', fn).stopListening(null, 'all');
+    equal(_.size(a._listeningTo), 0);
+    a.listenTo(b, 'all', fn).stopListening(null, null, fn);
+    equal(_.size(a._listeningTo), 0);
+  });
+
+  test("listenTo and stopListening cleaning up references", 2, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenTo(b, 'all', function(){ ok(true); });
+    b.trigger('anything');
+    a.listenTo(b, 'other', function(){ ok(false); });
+    a.stopListening(b, 'other');
+    a.stopListening(b, 'all');
+    equal(_.keys(a._listeningTo).length, 0);
   });
 
   test("listenTo with empty callback doesn't throw an error", 1, function(){
@@ -449,4 +474,4 @@ $(document).ready(function() {
     equal(obj, obj.stopListening());
   });
 
-});
+})();

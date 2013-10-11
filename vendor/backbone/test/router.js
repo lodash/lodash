@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var router = null;
   var location = null;
@@ -75,6 +75,8 @@ $(document).ready(function() {
       "counter":                    "counter",
       "search/:query":              "search",
       "search/:query/p:page":       "search",
+      "charñ":                      "charUTF",
+      "char%C3%B1":                 "charEscaped",
       "contacts":                   "contacts",
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
@@ -103,9 +105,17 @@ $(document).ready(function() {
       this.count++;
     },
 
-    search : function(query, page) {
+    search: function(query, page) {
       this.query = query;
       this.page = page;
+    },
+
+    charUTF: function() {
+      this.charType = 'UTF';
+    },
+
+    charEscaped: function() {
+      this.charType = 'escaped';
     },
 
     contacts: function(){
@@ -202,6 +212,10 @@ $(document).ready(function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equal(router.query, 'manhattan');
     equal(router.page, '20');
+  });
+
+  test("reports matched route via nagivate", 1, function() {
+    ok(Backbone.history.navigate('search/manhattan/p20', true));
   });
 
   test("route precedence via navigate", 6, function(){
@@ -347,6 +361,13 @@ $(document).ready(function() {
     equal(router.query, 'fat');
     equal(router.page, void 0);
     equal(lastRoute, 'search');
+  });
+
+  test("#2666 - Hashes with UTF8 in them.", 2, function() {
+    Backbone.history.navigate('charñ', {trigger: true});
+    equal(router.charType, 'UTF');
+    Backbone.history.navigate('char%C3%B1', {trigger: true});
+    equal(router.charType, 'escaped');
   });
 
   test("#1185 - Use pathname when hashChange is not wanted.", 1, function() {
@@ -609,4 +630,100 @@ $(document).ready(function() {
     deepEqual({home: "root", index: "index.html", show: "show", search: "search"}, router.routes);
   });
 
-});
+  test("#2538 - hashChange to pushState only if both requested.", 0, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root?a=b#x/y');
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){ ok(false); }
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true,
+      hashChange: false
+    });
+  });
+
+  test('No hash fallback.', 0, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+
+    var Router = Backbone.Router.extend({
+      routes: {
+        hash: function() { ok(false); }
+      }
+    });
+    var router = new Router;
+
+    location.replace('http://example.com/');
+    Backbone.history.start({
+      pushState: true,
+      hashChange: false
+    });
+    location.replace('http://example.com/nomatch#hash');
+    Backbone.history.checkUrl();
+  });
+
+  test('#2656 - No trailing slash on root.', 1, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url){
+          strictEqual(url, '/root');
+        }
+      }
+    });
+    location.replace('http://example.com/root/path');
+    Backbone.history.start({pushState: true, root: 'root'});
+    Backbone.history.navigate('');
+  });
+
+  test('#2656 - No trailing slash on root.', 1, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/');
+        }
+      }
+    });
+    location.replace('http://example.com/path');
+    Backbone.history.start({pushState: true});
+    Backbone.history.navigate('');
+  });
+
+  test('#2765 - Fragment matching sans query/hash.', 2, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/path?query#hash');
+        }
+      }
+    });
+
+    var Router = Backbone.Router.extend({
+      routes: {
+        path: function() { ok(true); }
+      }
+    });
+    var router = new Router;
+
+    location.replace('http://example.com/');
+    Backbone.history.start({pushState: true});
+    Backbone.history.navigate('path?query#hash', true);
+  });
+
+})();

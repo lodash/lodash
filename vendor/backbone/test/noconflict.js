@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   module("Backbone.noConflict");
 
@@ -9,4 +9,4 @@ $(document).ready(function() {
     equal(window.Backbone, noconflictBackbone, 'Backbone is still pointing to the original Backbone');
   });
 
-});
+})();

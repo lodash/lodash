@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var view;
 
@@ -14,13 +14,10 @@ $(document).ready(function() {
 
   });
 
-  test("constructor", 6, function() {
+  test("constructor", 3, function() {
     equal(view.el.id, 'test-view');
     equal(view.el.className, 'test-view');
     equal(view.el.other, void 0);
-    equal(view.options.id, 'test-view');
-    equal(view.options.className, 'test-view');
-    equal(view.options.other, 'non-special-option');
   });
 
   test("jQuery", 1, function() {
@@ -154,30 +151,6 @@ $(document).ready(function() {
 
     strictEqual(new View().el.className, 'className');
     strictEqual(new View().el.id, 'id');
-  });
-
-  test("with options function", 3, function() {
-    var View1 = Backbone.View.extend({
-      options: function() {
-        return {
-          title: 'title1',
-          acceptText: 'confirm'
-        };
-      }
-    });
-
-    var View2 = View1.extend({
-      options: function() {
-        return _.extend(View1.prototype.options.call(this), {
-          title: 'title2',
-          fixed: true
-        });
-      }
-    });
-
-    strictEqual(new View2().options.title, 'title2');
-    strictEqual(new View2().options.acceptText, 'confirm');
-    strictEqual(new View2().options.fixed, true);
   });
 
   test("with attributes", 2, function() {
@@ -319,7 +292,7 @@ $(document).ready(function() {
     view.collection.trigger('x');
   });
 
-  test("Provide function for el.", 1, function() {
+  test("Provide function for el.", 2, function() {
     var View = Backbone.View.extend({
       el: function() {
         return "<p><a></a></p>";
@@ -327,7 +300,8 @@ $(document).ready(function() {
     });
 
     var view = new View;
-    ok(view.$el.is('p:has(a)'));
+    ok(view.$el.is('p'));
+    ok(view.$el.has('a'));
   });
 
   test("events passed in options", 2, function() {
@@ -354,4 +328,4 @@ $(document).ready(function() {
     equal(counter, 4);
   });
 
-});
+})();

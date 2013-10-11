@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var Library = Backbone.Collection.extend({
     url : function() { return '/library'; }
@@ -11,20 +11,18 @@ $(document).ready(function() {
     length : 123
   };
 
-  module("Backbone.sync", _.extend(new Environment, {
+  module("Backbone.sync", {
 
     setup : function() {
-      Environment.prototype.setup.apply(this, arguments);
       library = new Library;
       library.create(attrs, {wait: false});
     },
 
     teardown: function() {
-      Environment.prototype.teardown.apply(this, arguments);
       Backbone.emulateHTTP = false;
     }
 
-  }));
+  });
 
   test("read", 4, function() {
     library.fetch();
@@ -209,4 +207,4 @@ $(document).ready(function() {
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
-});
+})();

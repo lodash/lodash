@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var proxy = Backbone.Model.extend();
   var klass = Backbone.Collection.extend({
@@ -6,10 +6,9 @@ $(document).ready(function() {
   });
   var doc, collection;
 
-  module("Backbone.Model", _.extend(new Environment, {
+  module("Backbone.Model", {
 
     setup: function() {
-      Environment.prototype.setup.apply(this, arguments);
       doc = new proxy({
         id     : '1-the-tempest',
         title  : "The Tempest",
@@ -20,7 +19,7 @@ $(document).ready(function() {
       collection.add(doc);
     }
 
-  }));
+  });
 
   test("initialize", 3, function() {
     var Model = Backbone.Model.extend({
@@ -109,13 +108,6 @@ $(document).ready(function() {
     equal(model.url(), '/nested/1/collection');
     model.set({id: 2});
     equal(model.url(), '/nested/1/collection/2');
-  });
-
-  test('url and urlRoot are directly attached if passed in the options', 2, function () {
-    var model = new Backbone.Model({a: 1}, {url: '/test'});
-    var model2 = new Backbone.Model({a: 2}, {urlRoot: '/test2'});
-    equal(model.url, '/test');
-    equal(model2.urlRoot, '/test2');
   });
 
   test("underscore methods", 5, function() {
@@ -712,6 +704,22 @@ $(document).ready(function() {
     ok(this.syncArgs.model === model);
   });
 
+  test("save without `wait` doesn't set invalid attributes", function () {
+    var model = new Backbone.Model();
+    model.validate = function () { return 1; }
+    model.save({a: 1});
+    equal(model.get('a'), void 0);
+  });
+
+  test("save doesn't validate twice", function () {
+    var model = new Backbone.Model();
+    var times = 0;
+    model.sync = function () {};
+    model.validate = function () { ++times; }
+    model.save({});
+    equal(times, 1);
+  });
+
   test("`hasChanged` for falsey keys", 2, function() {
     var model = new Backbone.Model();
     model.set({x: true}, {silent: true});
@@ -1099,4 +1107,4 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
-});
+})();

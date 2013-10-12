@@ -138,6 +138,9 @@
   /** Used to pass falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
+  /** Used to pass empty values to methods */
+  var empties = [[]].concat(falsey.slice(1));
+
   /** Used as the size when optimizations are enabled for large arrays */
   var largeArraySize = 75;
 
@@ -708,6 +711,14 @@
       'a string': '123123'
     },
     function(collection, key) {
+      test('should work with ' + key + ' and  return `true` for  matched values', 1, function() {
+        strictEqual(_.contains(collection, 3), true);
+      });
+
+      test('should work with ' + key + ' and  return `false` for unmatched values', 1, function() {
+        strictEqual(_.contains(collection, 4), false);
+      });
+
       test('should work with ' + key + ' and a positive `fromIndex`', 1, function() {
         strictEqual(_.contains(collection, 1, 2), true);
       });
@@ -726,6 +737,15 @@
       test('should work with ' + key + ' and a negative `fromIndex` <= negative collection\'s length', 2, function() {
         strictEqual(_.contains(collection, 1, -6), true);
         strictEqual(_.contains(collection, 2, -8), true);
+      });
+
+      test('should work with ' + key + ' and return an unwrapped value when chaining', 1, function() {
+        if (!isNpm) {
+          strictEqual(_(collection).contains(3), true);
+        }
+        else {
+          skipTest();
+        }
       });
     });
 
@@ -1176,12 +1196,38 @@
   QUnit.module('lodash.every');
 
   (function() {
-    test('should return `false` as soon as the `callback` result is falsey', 1, function() {
+    test('should return `true` for empty or falsey collections', 1, function() {
+      var actual = [],
+          expected = _.map(empties, function() { return true; });
+
+      _.forEach(empties, function(value) {
+        try {
+          actual.push(_.every(value, _.identity));
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `true` if the callback returns truey for all elements in the collection', 1, function() {
+      strictEqual(_.every([true, 1, 'x'], _.identity), true);
+    });
+
+    test('should return `false` as soon as the callback result is falsey', 1, function() {
       strictEqual(_.every([true, null, true], _.identity), false);
+    });
+
+    test('should work with collections of `undefined` values (test in IE < 9)', 1, function() {
+      strictEqual(_.every([undefined, undefined, undefined], _.identity), false);
     });
 
     test('should be aliased', 1, function() {
       strictEqual(_.all, _.every);
+    });
+
+    test('should use `_.identity` when no callback is provided', 2, function() {
+      strictEqual(_.every([0]), false);
+      strictEqual(_.every([1]), true);
     });
   }());
 
@@ -1310,6 +1356,19 @@
 
       test('should work with a string for `callback`', 1, function() {
         strictEqual(func(objects, 'b'), expected[3]);
+      });
+
+      test('should return `' + expected[1] + '` for empty or falsey collections', 1, function() {
+        var actual = [],
+            expecting = _.map(empties, function() { return expected[1]; });
+
+        _.forEach(empties, function(value) {
+          try {
+            actual.push(func(value, { 'a': 3 }));
+          } catch(e) { }
+        });
+
+        deepEqual(actual, expecting);
       });
 
       if (methodName == 'find') {
@@ -1847,7 +1906,7 @@
   _.forEach(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
-    test('should return the existing wrapper when chaining', 1, function() {
+    test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
       if (!isNpm) {
         var wrapper = _({ 'a': 1 });
         equal(wrapper[methodName]({ 'b': 2 }), wrapper);
@@ -1856,7 +1915,6 @@
         skipTest();
       }
     });
-
 
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
       var object = {
@@ -2360,6 +2418,19 @@
   QUnit.module('lodash.invoke');
 
   (function() {
+    test('should invoke a methods on each element of a collection', 1, function() {
+      var actual = _.invoke(['a', 'b', 'c'], 'toUpperCase');
+      deepEqual(actual, ['A', 'B', 'C']);
+    });
+
+    test('should work with a function `methodName` argument', 1, function() {
+      var actual = _.invoke(['a', 'b', 'c'], function() {
+        return this.toUpperCase();
+      });
+
+      deepEqual(actual, ['A', 'B', 'C']);
+    });
+
     test('should work with an object for `collection`', 1, function() {
       var object = { 'a': 1, 'b': 2, 'c': 3 };
       deepEqual(_.invoke(object, 'toFixed', 1), ['1.0', '2.0', '3.0']);
@@ -3480,6 +3551,13 @@
   QUnit.module('lodash.pluck');
 
   (function() {
+    test('should return an array of property values from each element of a collection', 1, function() {
+      var objects = [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }],
+          actual = _.pluck(objects, 'name');
+
+      deepEqual(actual, ['moe', 'larry']);
+    });
+
     test('should work with an object for `collection`', 1, function() {
       var object = { 'a': [1], 'b': [1, 2], 'c': [1, 2, 3] };
       deepEqual(_.pluck(object, 'length'), [1, 2, 3]);
@@ -3790,7 +3868,6 @@
 
   _.forEach(['reduce', 'reduceRight'], function(methodName) {
     var array = [1, 2, 3],
-        empties = [[]].concat(falsey.slice(1)),
         func = _[methodName],
         noop = function() {};
 
@@ -4237,12 +4314,40 @@
   QUnit.module('lodash.some');
 
   (function() {
+    test('should return `false` for empty or falsey collections', 1, function() {
+      var actual = [],
+          expected = _.map(empties, function() { return false; });
+
+      _.forEach(empties, function(value) {
+        try {
+          actual.push(_.some(value, _.identity));
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `true` if the callback returns truey for any element in the collection', 2, function() {
+      strictEqual(_.some([false, 1, ''], _.identity), true);
+      strictEqual(_.some([null, 'x', 0], _.identity), true);
+    });
+
+    test('should return `false` if the callback returns falsey for all elements in the collection', 2, function() {
+      strictEqual(_.some([false, false, false], _.identity), false);
+      strictEqual(_.some([null, 0, ''], _.identity), false);
+    });
+
     test('should return `true` as soon as the `callback` result is truey', 1, function() {
       strictEqual(_.some([null, true, null], _.identity), true);
     });
 
     test('should be aliased', 1, function() {
       strictEqual(_.any, _.some);
+    });
+
+    test('should use `_.identity` when no callback is provided', 2, function() {
+      strictEqual(_.some([0, 1]), true);
+      strictEqual(_.some([0, 0]), false);
     });
   }());
 

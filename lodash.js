@@ -1424,6 +1424,19 @@
     }
 
     /**
+     * The base implementation of `_.random` without argument juggling or support
+     * for ruturning floating-point numbers.
+     *
+     * @private
+     * @param {number} min The minimum possible value.
+     * @param {number} max The maximum possible value.
+     * @returns {number} Returns a random number.
+     */
+    function baseRandom(min, max) {
+      return min + floor(nativeRandom() * (max - min + 1));
+    }
+
+    /**
      * The base implementation of `_.uniq` without support for callback shorthands
      * or `thisArg` binding.
      *
@@ -3981,14 +3994,13 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      var length = collection ? collection.length : 0;
-      if (typeof length != 'number') {
+      if (collection && typeof collection.length != 'number') {
         collection = values(collection);
       } else if (support.unindexedChars && isString(collection)) {
         collection = collection.split('');
       }
       if (n == null || guard) {
-        return collection ? collection[random(length - 1)] : undefined;
+        return collection ? collection[baseRandom(0, collection.length - 1)] : undefined;
       }
       var result = shuffle(collection);
       result.length = nativeMin(nativeMax(0, n), result.length);
@@ -4015,7 +4027,7 @@
           result = Array(typeof length == 'number' ? length : 0);
 
       forEach(collection, function(value) {
-        var rand = random(++index);
+        var rand = baseRandom(0, ++index);
         result[index] = result[rand];
         result[rand] = value;
       });
@@ -6097,10 +6109,11 @@
       } else {
         max = +max || 0;
       }
-      var rand = nativeRandom();
-      return (floating || min % 1 || max % 1)
-        ? nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1)))), max)
-        : min + floor(rand * (max - min + 1));
+      if (floating || min % 1 || max % 1) {
+        var rand = nativeRandom();
+        return nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1)))), max);
+      }
+      return baseRandom(min, max);
     }
 
     /**

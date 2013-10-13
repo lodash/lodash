@@ -491,19 +491,19 @@
   (function() {
     test('should work when the target function is overwritten', 2, function() {
       var object = {
-        'name': 'moe',
+        'name': 'fred',
         'greet': function(greeting) {
-          return greeting + ': ' + this.name;
+          return greeting + ' ' + this.name;
         }
       };
 
       var func = _.bindKey(object, 'greet', 'hi');
-      equal(func(), 'hi: moe');
+      equal(func(), 'hi fred');
 
       object.greet = function(greeting) {
         return greeting + ' ' + this.name + '!';
       };
-      equal(func(), 'hi moe!');
+      equal(func(), 'hi fred!');
     });
   }());
 
@@ -3117,30 +3117,30 @@
 
     test('should merge `source` into the destination object', 1, function() {
       var names = {
-        'stooges': [
-          { 'name': 'moe' },
-          { 'name': 'larry' }
+        'characters': [
+          { 'name': 'barney' },
+          { 'name': 'fred' }
         ]
       };
 
       var ages = {
-        'stooges': [
-          { 'age': 40 },
-          { 'age': 50 }
+        'characters': [
+          { 'age': 36 },
+          { 'age': 40 }
         ]
       };
 
       var heights = {
-        'stooges': [
+        'characters': [
           { 'height': '5\'4"' },
           { 'height': '5\'5"' }
         ]
       };
 
       var expected = {
-        'stooges': [
-          { 'name': 'moe', 'age': 40, 'height': '5\'4"' },
-          { 'name': 'larry', 'age': 50, 'height': '5\'5"' }
+        'characters': [
+          { 'name': 'barney', 'age': 36, 'height': '5\'4"' },
+          { 'name': 'fred', 'age': 40, 'height': '5\'5"' }
         ]
       };
 
@@ -3552,10 +3552,10 @@
 
   (function() {
     test('should return an array of property values from each element of a collection', 1, function() {
-      var objects = [{ 'name': 'moe', 'age': 40 }, { 'name': 'larry', 'age': 50 }],
+      var objects = [{ 'name': 'barney', 'age': 36 }, { 'name': 'fred', 'age': 40 }],
           actual = _.pluck(objects, 'name');
 
-      deepEqual(actual, ['moe', 'larry']);
+      deepEqual(actual, ['barney', 'fred']);
     });
 
     test('should work with an object for `collection`', 1, function() {
@@ -5215,12 +5215,12 @@
         []
       ],
       '2-tuples': [
-        [['moe', 'larry'], [30, 40]],
-        [['moe', 30], ['larry', 40]]
+        [['barney', 'fred'], [36, 40]],
+        [['barney', 36], ['fred', 40]]
       ],
       '3-tuples': [
-        [['moe', 'larry'], [30, 40], [true, false]],
-        [['moe', 30, true], ['larry', 40, false]]
+        [['barney', 'fred'], [36, 40], [true, false]],
+        [['barney', 36, true], ['fred', 40, false]]
       ]
     };
 
@@ -5234,8 +5234,8 @@
 
     test('should work with tuples of different lengths', 4, function() {
       var pair = [
-        [['moe', 30], ['larry', 40, false]],
-        [['moe', 'larry'], [30, 40], [undefined, false]]
+        [['barney', 36], ['fred', 40, false]],
+        [['barney', 'fred'], [36, 40], [undefined, false]]
       ];
 
       var actual = _.zip(pair[0]);
@@ -5244,11 +5244,11 @@
 
       actual = _.zip.apply(_, actual);
       ok(2 in actual[0]);
-      deepEqual(actual, [['moe', 30, undefined], ['larry', 40, false]]);
+      deepEqual(actual, [['barney', 36, undefined], ['fred', 40, false]]);
     });
 
     test('should support consuming it\'s return value', 1, function() {
-      var expected = [['moe', 'larry'], [30, 40]];
+      var expected = [['barney', 'fred'], [36, 40]];
       deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);
     });
   }());
@@ -5258,8 +5258,8 @@
   QUnit.module('lodash.zipObject');
 
   (function() {
-    var object = { 'moe': 30, 'larry': 40 },
-        array = [['moe', 30], ['larry', 40]];
+    var object = { 'barney': 36, 'fred': 40 },
+        array = [['barney', 36], ['fred', 40]];
 
     test('should skip falsey elements in a given two dimensional array', 1, function() {
       var actual = _.zipObject(array.concat(falsey));
@@ -5267,7 +5267,7 @@
     });
 
     test('should zip together key/value arrays into an object', 1, function() {
-      var actual = _.zipObject(['moe', 'larry'], [30, 40]);
+      var actual = _.zipObject(['barney', 'fred'], [36, 40]);
       deepEqual(actual, object);
     });
 

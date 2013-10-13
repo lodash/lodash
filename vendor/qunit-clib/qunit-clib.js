@@ -173,20 +173,26 @@
         console.log('    Finished in ' + details.runtime + ' milliseconds.');
         console.log(hr);
 
-        // exit out of Narhwal, Rhino, or RingoJS
-        try {
-          quit();
-        } catch(e) { }
+        var fails = details.failed,
+            error = fails + ' of ' + details.total + ' tests failed.';
 
         // exit out of Node.js or PhantomJS
         try {
           var process = context.process || context.phantom;
-          if (details.failed) {
-            console.error('Error: ' + details.failed + ' of ' + details.total + ' tests failed.');
+          if (fails) {
+            console.error('Error: ' + error);
             process.exit(1);
           } else {
             process.exit(0);
           }
+        } catch(e) {
+          if (fails) {
+            throw new Error(error);
+          }
+        }
+        // exit out of Narhwal, Rhino, or RingoJS
+        try {
+          quit();
         } catch(e) { }
       };
     }());

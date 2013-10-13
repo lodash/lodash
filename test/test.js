@@ -1372,8 +1372,9 @@
       });
 
       if (methodName == 'find') {
-        test('should be aliased', 1, function() {
+        test('should be aliased', 2, function() {
           strictEqual(_.detect, func);
+          strictEqual(_.findWhere, func);
         });
       }
     });

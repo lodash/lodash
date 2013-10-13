@@ -1425,7 +1425,7 @@
 
     /**
      * The base implementation of `_.random` without argument juggling or support
-     * for ruturning floating-point numbers.
+     * for returning floating-point numbers.
      *
      * @private
      * @param {number} min The minimum possible value.

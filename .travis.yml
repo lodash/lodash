@@ -54,5 +54,5 @@ script:
   - "[ $MAKE != false ] && mkdir ./node_modules/lodash-cli/node_modules && cd ./node_modules/lodash-cli/node_modules/ && ln -s ../../../ ./lodash && cd ../ && npm i . && cd ../../ || true"
   - "[ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
   - "[ $BUILD != false ] && cd ./test || true" 
-  - "[ $BUILD != false ] && $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js || true"
-  - "[ $BUILD != false ] && $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js || true"
+  - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
+  - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"

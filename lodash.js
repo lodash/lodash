@@ -2124,11 +2124,11 @@
      * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney',  'age': 36, 'blocked': false },
-     *   { 'name': 'fred',    'age': 40, 'blocked': true },
-     *   { 'name': 'pebbles', 'age': 1,  'blocked': false }
-     * ];
+     * var characters = {
+     *   'barney': {  'age': 36, 'blocked': false },
+     *   'fred': {    'age': 40, 'blocked': true },
+     *   'pebbles': { 'age': 1,  'blocked': false }
+     * };
      *
      * _.findKey(characters, function(chr) {
      *   return chr.age < 40;
@@ -2177,11 +2177,11 @@
      * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney',  'age': 36, 'blocked': true },
-     *   { 'name': 'fred',    'age': 40, 'blocked': false },
-     *   { 'name': 'pebbles', 'age': 1,  'blocked': true }
-     * ];
+     * var characters = {
+     *   'barney': {  'age': 36, 'blocked': true },
+     *   'fred': {    'age': 40, 'blocked': false },
+     *   'pebbles': { 'age': 1,  'blocked': true }
+     * };
      *
      * _.findLastKey(characters, function(chr) {
      *   return chr.age < 40;
@@ -3214,7 +3214,7 @@
      *  else `false`.
      * @example
      *
-     * _.every([true, 1, null, 'yes'], Boolean);
+     * _.every([true, 1, null, 'yes']);
      * // => false
      *
      * var characters = [
@@ -3650,7 +3650,7 @@
      *
      * // using "_.pluck" callback shorthand
      * _.map(characters, 'name');
-     * // => ['fred', 'barney']
+     * // => ['barney', 'fred']
      */
     function map(collection, callback, thisArg) {
       var index = -1,
@@ -3703,12 +3703,12 @@
      *   { 'name': 'fred',   'age': 40 }
      * ];
      *
-     * _.max(characters, function(stooge) { return stooge.age; });
-     * // => { 'name': 'barney', 'age': 36 };
+     * _.max(characters, function(chr) { return chr.age; });
+     * // => { 'name': 'fred', 'age': 40 };
      *
      * // using "_.pluck" callback shorthand
      * _.max(characters, 'age');
-     * // => { 'name': 'barney', 'age': 36 };
+     * // => { 'name': 'fred', 'age': 40 };
      */
     function max(collection, callback, thisArg) {
       var computed = -Infinity,
@@ -3773,12 +3773,12 @@
      *   { 'name': 'fred',   'age': 40 }
      * ];
      *
-     * _.min(characters, function(stooge) { return stooge.age; });
-     * // => { 'name': 'fred', 'age': 40 };
+     * _.min(characters, function(chr) { return chr.age; });
+     * // => { 'name': 'barney', 'age': 36 };
      *
      * // using "_.pluck" callback shorthand
      * _.min(characters, 'age');
-     * // => { 'name': 'fred', 'age': 40 };
+     * // => { 'name': 'barney', 'age': 36 };
      */
     function min(collection, callback, thisArg) {
       var computed = Infinity,
@@ -3828,7 +3828,7 @@
      * ];
      *
      * _.pluck(characters, 'name');
-     * // => ['fred', 'barney']
+     * // => ['barney', 'fred']
      */
     var pluck = map;
 
@@ -3951,7 +3951,7 @@
      * // => [{ 'name': 'barney', 'age': 36, 'blocked': false }]
      *
      * // using "_.where" callback shorthand
-     * _.reject(characters, { 'age': 40 });
+     * _.reject(characters, { 'age': 36 });
      * // => [{ 'name': 'fred', 'age': 40, 'blocked': true }]
      */
     function reject(collection, callback, thisArg) {
@@ -4205,12 +4205,12 @@
      * @example
      *
      * var characters = [
-     *   { 'name': 'barney', 'age': 30, 'pets': ['hoppy'] },
+     *   { 'name': 'barney', 'age': 36, 'pets': ['hoppy'] },
      *   { 'name': 'fred',   'age': 40, 'pets': ['baby puss', 'dino'] }
      * ];
      *
-     * _.where(characters, { 'age': 30 });
-     * // => [{ 'name': 'barney', 'age': 30, 'pets': ['hoppy'] }]
+     * _.where(characters, { 'age': 36 });
+     * // => [{ 'name': 'barney', 'age': 36, 'pets': ['hoppy'] }]
      *
      * _.where(characters, { 'pets': ['dino'] });
      * // => [{ 'name': 'fred', 'age': 40, 'pets': ['baby puss', 'dino'] }]
@@ -4436,14 +4436,14 @@
      * // => [1, 2]
      *
      * var characters = [
-     *   { 'name': 'barney',  'age': 36, 'blocked': true,  'employer': 'slate' },
-     *   { 'name': 'fred',    'age': 40, 'blocked': false, 'employer': 'slate' },
-     *   { 'name': 'pebbles', 'age': 1,  'blocked': true,  'employer': 'na' }
+     *   { 'name': 'barney',  'blocked': true,  'employer': 'slate' },
+     *   { 'name': 'fred',    'blocked': false, 'employer': 'slate' },
+     *   { 'name': 'pebbles', 'blocked': true,  'employer': 'na' }
      * ];
      *
      * // using "_.pluck" callback shorthand
      * _.first(characters, 'blocked');
-     * // => [{ 'name': 'barney', 'age': 36, 'blocked': true, 'employer': 'slate' }]
+     * // => [{ 'name': 'barney', 'blocked': true, 'employer': 'slate' }]
      *
      * // using "_.where" callback shorthand
      * _.pluck(_.first(characters, { 'employer': 'slate' }), 'name');
@@ -4593,24 +4593,19 @@
      * });
      * // => [1]
      *
-     * var food = [
-     *   { 'name': 'beet',   'organic': false },
-     *   { 'name': 'carrot', 'organic': true }
+     * var characters = [
+     *   { 'name': 'barney',  'blocked': false, 'employer': 'slate' },
+     *   { 'name': 'fred',    'blocked': true,  'employer': 'slate' },
+     *   { 'name': 'pebbles', 'blocked': true,  'employer': 'na' }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.initial(food, 'organic');
-     * // => [{ 'name': 'beet',   'organic': false }]
-     *
-     * var food = [
-     *   { 'name': 'banana', 'type': 'fruit' },
-     *   { 'name': 'beet',   'type': 'vegetable' },
-     *   { 'name': 'carrot', 'type': 'vegetable' }
-     * ];
+     * _.initial(characters, 'blocked');
+     * // => [{ 'name': 'barney',  'blocked': false, 'employer': 'slate' }]
      *
      * // using "_.where" callback shorthand
-     * _.initial(food, { 'type': 'vegetable' });
-     * // => [{ 'name': 'banana', 'type': 'fruit' }]
+     * _.pluck(_.initial(characters, { 'employer': 'na' }), 'name');
+     * // => ['barney', 'fred']
      */
     function initial(array, callback, thisArg) {
       var n = 0,
@@ -4724,9 +4719,9 @@
      * // => [2, 3]
      *
      * var characters = [
-     *   { 'name': 'barney',  'age': 36, 'blocked': false, 'employer': 'slate' },
-     *   { 'name': 'fred',    'age': 40, 'blocked': true,  'employer': 'slate' },
-     *   { 'name': 'pebbles', 'age': 1,  'blocked': true,  'employer': 'na' }
+     *   { 'name': 'barney',  'blocked': false, 'employer': 'slate' },
+     *   { 'name': 'fred',    'blocked': true,  'employer': 'slate' },
+     *   { 'name': 'pebbles', 'blocked': true,  'employer': 'na' }
      * ];
      *
      * // using "_.pluck" callback shorthand
@@ -4735,7 +4730,7 @@
      *
      * // using "_.where" callback shorthand
      * _.last(characters, { 'employer': 'na' });
-     * // => [{ 'name': 'pebbles', 'age': 1,  'blocked': true, 'employer': 'na' }]
+     * // => [{ 'name': 'pebbles', 'blocked': true, 'employer': 'na' }]
      */
     function last(array, callback, thisArg) {
       var n = 0,
@@ -4972,24 +4967,19 @@
      * });
      * // => [3]
      *
-     * var food = [
-     *   { 'name': 'banana', 'organic': true },
-     *   { 'name': 'beet',   'organic': false },
+     * var characters = [
+     *   { 'name': 'barney',  'blocked': true,  'employer': 'slate' },
+     *   { 'name': 'fred',    'blocked': false,  'employer': 'slate' },
+     *   { 'name': 'pebbles', 'blocked': true, 'employer': 'na' }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.rest(food, 'organic');
-     * // => [{ 'name': 'beet', 'organic': false }]
-     *
-     * var food = [
-     *   { 'name': 'apple',  'type': 'fruit' },
-     *   { 'name': 'banana', 'type': 'fruit' },
-     *   { 'name': 'beet',   'type': 'vegetable' }
-     * ];
+     * _.pluck(_.rest(characters, 'blocked'), 'name');
+     * // => ['fred', 'pebbles']
      *
      * // using "_.where" callback shorthand
-     * _.rest(food, { 'type': 'fruit' });
-     * // => [{ 'name': 'beet', 'type': 'vegetable' }]
+     * _.rest(characters, { 'employer': 'slate' });
+     * // => [{ 'name': 'pebbles', 'blocked': true, 'employer': 'na' }]
      */
     function rest(array, callback, thisArg) {
       if (typeof callback != 'number' && callback != null) {
@@ -6483,14 +6473,14 @@
      *
      * // without explicit chaining
      * _(characters).first();
-     * // => { 'name': 'fred', 'age': 40 }
+     * // => { 'name': 'barney', 'age': 36 }
      *
      * // with explicit chaining
      * _(characters).chain()
      *   .first()
      *   .pick('age')
      *   .value()
-     * // => { 'age': 40 }
+     * // => { 'age': 36 }
      */
     function wrapperChain() {
       this.__chain__ = true;

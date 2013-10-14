@@ -139,7 +139,7 @@
   var falsey = [, '', 0, false, NaN, null, undefined];
 
   /** Used to pass empty values to methods */
-  var empties = [[]].concat(falsey.slice(1));
+  var empties = [[], {}].concat(falsey.slice(1));
 
   /** Used as the size when optimizations are enabled for large arrays */
   var largeArraySize = 75;
@@ -656,7 +656,7 @@
         deepEqual(args, [klass]);
       });
 
-      test('`_.' + methodName + '` should correct set the `this` binding', 1, function() {
+      test('`_.' + methodName + '`should support the `thisArg` argument', 1, function() {
         var actual = func('a', function(value) {
           return this[value];
         }, { 'a': 'A' });
@@ -770,13 +770,33 @@
   QUnit.module('lodash.countBy');
 
   (function() {
+    var array = [4.2, 6.1, 6.4];
+
+    test('should work with a `callback`', 1, function() {
+      var actual = _.countBy(array, function(num) {
+        return Math.floor(num);
+      }, Math);
+
+      deepEqual(actual, { '4': 1, '6': 2 });
+    });
+
     test('should use `_.identity` when no `callback` is provided', 1, function() {
       var actual = _.countBy([4, 6, 6]);
       deepEqual(actual, { '4': 1, '6':  2 });
     });
 
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.countBy(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [4.2, 0, array]);
+    });
+
     test('should support the `thisArg` argument', 1, function() {
-      var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
+      var actual = _.countBy(array, function(num) {
         return this.floor(num);
       }, Math);
 
@@ -790,6 +810,11 @@
 
       deepEqual(actual.constructor, 1);
       deepEqual(actual.hasOwnProperty, 2);
+    });
+
+    test('should work with a string for `callback`', 1, function() {
+      var actual = _.countBy(['one', 'two', 'three'], 'length');
+      deepEqual(actual, { '3': 2, '5': 1 });
     });
 
     test('should work with an object for `collection`', 1, function() {
@@ -1360,9 +1385,10 @@
 
       test('should return `' + expected[1] + '` for empty or falsey collections', 1, function() {
         var actual = [],
-            expecting = _.map(empties, function() { return expected[1]; });
+            emptyValues = /Index/.test(methodName) ? _.reject(empties, _.isPlainObject) : empties,
+            expecting = _.map(emptyValues, function() { return expected[1]; });
 
-        _.forEach(empties, function(value) {
+        _.forEach(emptyValues, function(value) {
           try {
             actual.push(func(value, { 'a': 3 }));
           } catch(e) { }
@@ -1409,7 +1435,7 @@
 
     test('should return all elements when `n` >= `array.length`', 2, function() {
       _.forEach([3, 4], function(n) {
-        deepEqual(_.first(array, n), array.slice());
+        deepEqual(_.first(array, n), array);
       });
     });
 
@@ -1984,7 +2010,7 @@
       deepEqual(args, [array, object], 'non-primitive property values');
     });
 
-    test('`_.' + methodName + '` should correct set the `this` binding', 1, function() {
+    test('`_.' + methodName + '`should support the `thisArg` argument', 1, function() {
       var actual = func({}, { 'a': 0 }, function(a, b) {
         return this[b];
       }, [2]);
@@ -2063,13 +2089,25 @@
   QUnit.module('lodash.groupBy');
 
   (function() {
+    var array = [4.2, 6.1, 6.4];
+
     test('should use `_.identity` when no `callback` is provided', 1, function() {
       var actual = _.groupBy([4, 6, 6]);
       deepEqual(actual, { '4': [4], '6':  [6, 6] });
     });
 
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.groupBy(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [4.2, 0, array]);
+    });
+
     test('should support the `thisArg` argument', 1, function() {
-      var actual = _.groupBy([4.2, 6.1, 6.4], function(num) {
+      var actual = _.groupBy(array, function(num) {
         return this.floor(num);
       }, Math);
 
@@ -2102,6 +2140,11 @@
 
       deepEqual(_.groupBy(array, 0), { '1': [[1 , 'a']], '2': [[2, 'a'], [2, 'b']] });
       deepEqual(_.groupBy(array, 1), { 'a': [[1 , 'a'], [2, 'a']], 'b': [[2, 'b']] });
+    });
+
+    test('should work with a string for `callback`', 1, function() {
+      var actual = _.groupBy(['one', 'two', 'three'], 'length');
+      deepEqual(actual, { '3': ['one', 'two'], '5': ['three'] });
     });
   }());
 
@@ -2335,7 +2378,7 @@
 
     test('should return all elements when `n` < `1`', 3, function() {
       _.forEach([0, -1, -2], function(n) {
-        deepEqual(_.initial(array, n), array.slice());
+        deepEqual(_.initial(array, n), array);
       });
     });
 
@@ -2437,6 +2480,38 @@
       deepEqual(_.invoke(object, 'toFixed', 1), ['1.0', '2.0', '3.0']);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isArguments');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for `arguments` objects', 1, function() {
+      strictEqual(_.isArguments(args), true);
+    });
+
+    test('should return `false` for arrays', 1, function() {
+      strictEqual(_.isArguments([1, 2, 3]), false);
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isArray');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for arrays', 1, function() {
+      strictEqual(_.isArray([1, 2, 3]), true);
+    });
+
+    test('should return `false` for `arguments` objects', 1, function() {
+      strictEqual(_.isArray(args), false);
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -2810,7 +2885,7 @@
 
     test('should return all elements when `n` >= `array.length`', 2, function() {
       _.forEach([3, 4], function(n) {
-        deepEqual(_.last(array, n), array.slice());
+        deepEqual(_.last(array, n), array);
       });
     });
 
@@ -3051,47 +3126,40 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.max and lodash.min object iteration');
+  QUnit.module('lodash.max');
 
-  _.forEach(['max', 'min'], function(methodName) {
-    var func = _[methodName];
-
-    test('`_.' + methodName + '` should iterate an object', 1, function() {
-      var actual = func({ 'a': 1, 'b': 2, 'c': 3 });
-      equal(actual, methodName == 'max' ? 3 : 1);
+  (function() {
+    test('should return the largest value from a collection', 1, function() {
+      equal(3, _.max([1, 2, 3]));
     });
-  });
 
-  /*--------------------------------------------------------------------------*/
+    test('should return `-Infinity` for empty collections', 1, function() {
+      var actual = [],
+          expected = _.map(empties, function() { return -Infinity; });
 
-  QUnit.module('lodash.max and lodash.min string iteration');
-
-  _.forEach(['max', 'min'], function(methodName) {
-    var func = _[methodName];
-
-    test('`_.' + methodName + '` should iterate a string', 2, function() {
-      _.forEach(['abc', Object('abc')], function(value) {
-        var actual = func(value);
-        equal(actual, methodName == 'max' ? 'c' : 'a');
+      _.forEach(empties, function(value) {
+        try {
+          actual.push(_.max(value));
+        } catch(e) { }
       });
+
+      deepEqual(actual, expected);
     });
-  });
 
-  /*--------------------------------------------------------------------------*/
+    test('should return `-Infinity` for non-numeric collection values', 1, function() {
+      var actual = [],
+          collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
+          expected = _.map(collections, function() { return -Infinity; });
 
-  QUnit.module('lodash.max and lodash.min chaining');
+      _.forEach(collections, function(value) {
+        try {
+          actual.push(_.max(value));
+        } catch(e) { }
+      });
 
-  _.forEach(['max', 'min'], function(methodName) {
-    test('`_.' + methodName + '` should resolve the correct value when provided an array containing only one value', 1, function() {
-      if (!isNpm) {
-        var actual = _([40])[methodName]().value();
-        strictEqual(actual, 40);
-      }
-      else {
-        skipTest();
-      }
+      deepEqual(actual, expected);
     });
-  });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -3218,6 +3286,128 @@
       deepEqual(argsList, [[array, object], [undefined, 2]]);
     });
   }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.min');
+
+  (function() {
+    test('should return the smallest value from a collection', 1, function() {
+      equal(1, _.min([1, 2, 3]));
+    });
+
+    test('should return `Infinity` for empty collections', 1, function() {
+      var actual = [],
+          expected = _.map(empties, function() { return Infinity; });
+
+      _.forEach(empties, function(value) {
+        try {
+          actual.push(_.min(value));
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `Infinity` for non-numeric collection values', 1, function() {
+      var actual = [],
+          collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
+          expected = _.map(collections, function() { return Infinity; });
+
+      _.forEach(collections, function(value) {
+        try {
+          actual.push(_.min(value));
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.max and lodash.min');
+
+  _.forEach(['max', 'min'], function(methodName) {
+    var array = [1, 2, 3],
+        func = _[methodName];
+
+    test('`_.' + methodName + '` should work with Date objects', 1, function() {
+      var now = new Date,
+          past = new Date(0);
+
+      equal(func([now, past]), methodName == 'max' ? now : past);
+    });
+
+    test('`_.' + methodName + '` should work with a `callback` argument', 1, function() {
+      var actual = func(array, function(num) {
+        return -num;
+      });
+
+      equal(actual, methodName == 'max' ? 1 : 3);
+    });
+
+    test('`_.' + methodName + '` should pass the correct `callback` arguments when iterating an array', 1, function() {
+      var args;
+
+      func(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 0, array]);
+    });
+
+    test('`_.' + methodName + '` should pass the correct `callback` arguments when iterating an object', 1, function() {
+      var args,
+          object = { 'a': 1, 'b': 2 },
+          firstKey = _.first(_.keys(object));
+
+      var expected = firstKey == 'a'
+        ? [1, 'a', object]
+        : [2, 'b', object];
+
+      func(object, function() {
+        args || (args = slice.call(arguments));
+      }, 0);
+
+      deepEqual(args, expected);
+    });
+
+    test('`_.' + methodName + '`should support the `thisArg` argument', 1, function() {
+      var actual = func(array, function(num, index) {
+        return -this[index];
+      }, array);
+
+      equal(actual, methodName == 'max' ? 1 : 3);
+    });
+
+    test('`_.' + methodName + '` should iterate an object', 1, function() {
+      var actual = func({ 'a': 1, 'b': 2, 'c': 3 });
+      equal(actual, methodName == 'max' ? 3 : 1);
+    });
+
+    test('`_.' + methodName + '` should iterate a string', 2, function() {
+      _.forEach(['abc', Object('abc')], function(value) {
+        var actual = func(value);
+        equal(actual, methodName == 'max' ? 'c' : 'a');
+      });
+    });
+
+    test('`_.' + methodName + '` should resolve the correct value when provided an array containing only one value', 1, function() {
+      if (!isNpm) {
+        var actual = _([40])[methodName]().value();
+        strictEqual(actual, 40);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
+      var array = _.range(0, 5e5);
+      equal(func(array), methodName == 'max' ? 499999 : 0);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -4168,6 +4358,11 @@
       ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
     });
 
+    test('should contain elements of the collection', 1, function() {
+      var actual = _.sample(array, array.length);
+      deepEqual(actual.sort(), array);
+    });
+
     test('should return an empty array when `n` < `1`', 3, function() {
       _.forEach([0, -1, -2], function(n) {
         deepEqual(_.sample(array, n), []);
@@ -4176,12 +4371,28 @@
 
     test('should return all elements when `n` >= `array.length`', 2, function() {
       _.forEach([3, 4], function(n) {
-        deepEqual(_.sample(array, n).sort(), array.slice());
+        deepEqual(_.sample(array, n).sort(), array);
       });
     });
 
     test('should return `undefined` when sampling an empty array', 1, function() {
       strictEqual(_.sample([]), undefined);
+    });
+
+    test('should return an empty array for empty or falsey collections', 1, function() {
+      var actual = [];
+
+      var expected = _.transform(empties, function(result) {
+        result.push([], []);
+      });
+
+      _.forEach(empties, function(value) {
+        try {
+          actual.push(_.shuffle(value), _.shuffle(value, 1));
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should sample an object', 2, function() {
@@ -4243,9 +4454,21 @@
   QUnit.module('lodash.shuffle');
 
   (function() {
+    var array = [1, 2, 3],
+        object = { 'a': 1, 'b': 2, 'c': 3 };
+
+    test('should return a new array', 1, function() {
+      notStrictEqual(_.shuffle(array), array);
+    });
+
+    test('should contain the same elements after a collection is shuffled', 2, function() {
+      deepEqual(_.shuffle(array).sort(), array);
+      deepEqual(_.shuffle(object).sort(), array);
+    });
+
     test('should shuffle an object', 1, function() {
-      var actual = _.shuffle({ 'a': 1, 'b': 2, 'c': 3 });
-      deepEqual(actual.sort(), [1, 2, 3]);
+      var actual = _.shuffle(object);
+      deepEqual(actual.sort(), array);
     });
 
     _.forEach({
@@ -4265,7 +4488,16 @@
   QUnit.module('lodash.size');
 
   (function() {
-    var args = arguments;
+    var args = arguments,
+        array = [1, 2, 3];
+
+    test('should return the number of own enumerable properties of an object', 1, function() {
+      equal(_.size({ 'one': 1, 'two': 2, 'three': 3 }), 3);
+    });
+
+    test('should return the length of an array', 1, function() {
+      equal(_.size(array), 3);
+    });
 
     test('should accept a falsey `object` argument', 1, function() {
       var actual = [],
@@ -4284,7 +4516,7 @@
       function Foo(elements) { push.apply(this, elements); }
       Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
 
-      equal(_.size(new Foo([1, 2, 3])), 3);
+      equal(_.size(new Foo(array)), 3);
     });
 
     test('should work with `arguments` objects (test in IE < 9)', 1, function() {
@@ -4357,16 +4589,20 @@
   QUnit.module('lodash.sortBy');
 
   (function() {
+    var objects = [
+      { 'num': 991 },
+      { 'num': 212 },
+      { 'num': 11 },
+      { 'num': 16 },
+      { 'num': 74 },
+      { 'num': 0 },
+      { 'num': 1515 }
+    ];
+
     test('should sort in ascending order', 1, function() {
-      var actual = _.pluck(_.sortBy([
-        { 'num': 991 },
-        { 'num': 212 },
-        { 'num': 11 },
-        { 'num': 16 },
-        { 'num': 74 },
-        { 'num': 0 },
-        { 'num': 1515 }
-      ], 'num'), 'num');
+      var actual = _.pluck(_.sortBy(objects, function(object) {
+        return object.num;
+      }), 'num');
 
       deepEqual(actual, [0, 11, 16, 74, 212, 991, 1515]);
     });
@@ -4396,9 +4632,24 @@
       deepEqual(actual, collection);
     });
 
+    test('should work with `undefined` values', 1, function() {
+      var array = [undefined, 4, 1, undefined, 3, 2];
+      deepEqual(_.sortBy(array, _.identity), [1, 2, 3, 4, undefined, undefined]);
+    });
+
     test('should use `_.identity` when no `callback` is provided', 1, function() {
       var actual = _.sortBy([3, 2, 1]);
       deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.sortBy(objects, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [objects[0], 0, objects]);
     });
 
     test('should support the `thisArg` argument', 1, function() {
@@ -4407,6 +4658,11 @@
       }, Math);
 
       deepEqual(actual, [3, 1, 2]);
+    });
+
+    test('should work with a string for `callback`', 1, function() {
+      var actual = _.pluck(_.sortBy(objects, 'num'), 'num');
+      deepEqual(actual, [0, 11, 16, 74, 212, 991, 1515]);
     });
 
     test('should work with an object for `collection`', 1, function() {
@@ -4423,12 +4679,35 @@
   QUnit.module('lodash.sortedIndex');
 
   (function() {
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.sortedIndex([1, 2, 3], 4, function(num) {
-        return this.sin(num);
-      }, Math);
+    var array = [20, 30, 50],
+        objects = [{ 'x': 20 }, { 'x': 30 }, { 'x': 50 }];
 
-      strictEqual(actual, 0);
+    test('should return the insert index of a given value', 2, function() {
+      equal(_.sortedIndex(array, 40), 2);
+      equal(_.sortedIndex(array, 30), 1);
+    });
+
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.sortedIndex(array, 40, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [40]);
+    });
+
+    test('should support the `thisArg` argument', 1, function() {
+      var actual = _.sortedIndex(array, 40, function(num) {
+        return this[num];
+      }, { '20': 20, '30': 30, '40': 40 });
+
+      strictEqual(actual, 2);
+    });
+
+    test('should work with a string for `callback`', 1, function() {
+      var actual = _.sortedIndex(objects, { 'x': 40 }, 'x');
+      equal(actual, 2);
     });
 
     test('supports arrays with lengths larger than `Math.pow(2, 31) - 1`', 1, function() {
@@ -4841,23 +5120,35 @@
   QUnit.module('lodash.toArray');
 
   (function() {
-    var args = arguments;
+    var args = arguments,
+        array = [1, 2, 3];
 
     test('should return a dense array', 3, function() {
-      var array = Array(3);
-      array[1] = 2;
+      var sparse = Array(3);
+      sparse[1] = 2;
 
-      var actual = _.toArray(array);
+      var actual = _.toArray(sparse);
 
       ok(0 in actual);
       ok(2 in actual);
-      deepEqual(actual, array);
+      deepEqual(actual, sparse);
     });
 
     test('should treat array-like objects like arrays', 2, function() {
       var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
       deepEqual(_.toArray(object), ['a', 'b', 'c']);
-      deepEqual(_.toArray(args), [1, 2, 3]);
+      deepEqual(_.toArray(args), array);
+    });
+
+    test('should return a shallow clone of arrays', 2, function() {
+      var actual = _.toArray(array);
+      notStrictEqual(actual, array);
+      deepEqual(_.toArray(array), array);
+    });
+
+    test('should return the values of objects', 1, function() {
+      var object = { 'a': 1, 'b': 2, 'c': 3 };
+      deepEqual(_.toArray(object), array);
     });
 
     test('should work with a string for `collection` (test in Opera < 10.52)', 2, function() {
@@ -5764,6 +6055,12 @@
           equal(thisArg, expected, message);
         }
       });
+    });
+
+    test('should not contain minified method names (test production builds)', 1, function() {
+      ok(_.every(_.functions(_), function(methodName) {
+        return methodName.length > 2 || methodName == 'at';
+      }));
     });
   }());
 

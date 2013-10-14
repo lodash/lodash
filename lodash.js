@@ -1973,15 +1973,15 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * _.assign({ 'name': 'fred' }, { 'age': 40 });
-     * // => { 'name': 'fred', 'age': 40 }
+     * _.assign({ 'name': 'fred' }, { 'employer': 'slate' });
+     * // => { 'name': 'fred', 'employer': 'slate' }
      *
      * var defaults = _.partialRight(_.assign, function(a, b) {
      *   return typeof a == 'undefined' ? b : a;
      * });
      *
-     * var person = { 'name': 'barney' };
-     * defaults(person, { 'name': 'fred', 'employer': 'slate' });
+     * var object = { 'name': 'barney' };
+     * defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     var assign = createIterator(defaultsIteratorOptions, {
@@ -2109,8 +2109,8 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * var person = { 'name': 'barney' };
-     * _.defaults(person, { 'name': 'fred', 'employer': 'slate' });
+     * var object = { 'name': 'barney' };
+     * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     var defaults = createIterator(defaultsIteratorOptions);
@@ -2530,13 +2530,13 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
-     * var fred = { 'name': 'fred', 'age': 40 };
-     * var copy = { 'name': 'fred', 'age': 40 };
+     * var object = { 'name': 'fred' };
+     * var copy = { 'name': 'fred' };
      *
-     * fred == copy;
+     * object == copy;
      * // => false
      *
-     * _.isEqual(fred, copy);
+     * _.isEqual(object, copy);
      * // => true
      *
      * var words = ['hello', 'goodbye'];
@@ -5359,11 +5359,11 @@
      * // => 'hi fred'
      *
      * object.greet = function(greeting) {
-     *   return greeting + ', ' + this.name + '!';
+     *   return greeting + 'ya ' + this.name + '!';
      * };
      *
      * func();
-     * // => 'hi, fred!'
+     * // => 'hiya fred!'
      */
     function bindKey(object, key) {
       return arguments.length > 2
@@ -5957,8 +5957,8 @@
      * @returns {*} Returns `value`.
      * @example
      *
-     * var fred = { 'name': 'fred' };
-     * fred === _.identity(fred);
+     * var object = { 'name': 'fred' };
+     * object === _.identity(object);
      * // => true
      */
     function identity(value) {

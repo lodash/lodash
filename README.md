@@ -71,6 +71,7 @@ The full changelog for this release is available on our [wiki](https://github.co
  * Posts
   - [Say “Hello” to Lo-Dash](http://kitcambridge.be/blog/say-hello-to-lo-dash/)
   - [Custom builds in Lo-Dash 2.0](http://kitcambridge.be/blog/custom-builds-in-lo-dash-2-dot-0/)
+  - [Applicative Programming In JavaScript With lodash.js](http://tech.pro/tutorial/1611/functional-javascript)
 
  * Videos
   - [Introduction](https://vimeo.com/44154599)

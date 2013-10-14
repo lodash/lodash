@@ -65,6 +65,9 @@ The full changelog for this release is available on our [wiki](https://github.co
 
 ## Resources
 
+ * Podcasts
+  - [JavaScript Jabber](http://javascriptjabber.com/079-jsj-lo-dash-with-john-david-dalton/)
+
  * Posts
   - [Say “Hello” to Lo-Dash](http://kitcambridge.be/blog/say-hello-to-lo-dash/)
   - [Custom builds in Lo-Dash 2.0](http://kitcambridge.be/blog/custom-builds-in-lo-dash-2-dot-0/)

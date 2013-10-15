@@ -550,6 +550,55 @@
         skipTest(6);
       }
     });
+
+    test('should chain multiple methods', 6, function() {
+      if (!isNpm) {
+        _.times(2, function(index) {
+          var array = ['one two three four', 'five six seven eight', 'nine ten eleven twelve'],
+              expected = { ' ': 9, 'e': 14, 'f': 2, 'g': 1, 'h': 2, 'i': 4, 'l': 2, 'n': 6, 'o': 3, 'r': 2, 's': 2, 't': 5, 'u': 1, 'v': 4, 'w': 2, 'x': 1 },
+              wrapper = index ? _(array).chain() : _.chain(array);
+
+          var actual = wrapper
+            .chain()
+            .map(function(value) { return value.split(''); })
+            .flatten()
+            .reduce(function(object, chr) {
+              object[chr] || (object[chr] = 0);
+              object[chr]++;
+              return object;
+            }, {})
+            .value();
+
+          deepEqual(actual, expected);
+
+          array = [1, 2, 3, 4, 5, 6];
+          wrapper = index ? _(array).chain() : _.chain(array);
+          actual = wrapper
+            .chain()
+            .filter(function(n) { return n % 2; })
+            .reject(function(n) { return n % 3 == 0; })
+            .sortBy(function(n) { return -n; })
+            .value();
+
+          deepEqual(actual, [5, 1]);
+
+          array = [3, 4];
+          wrapper = index ? _(array).chain() : _.chain(array);
+          actual = wrapper
+            .reverse()
+            .concat([2, 1])
+            .unshift(5)
+            .tap(function(value) { value.pop(); })
+            .map(function(n) { return n * n; })
+            .value();
+
+          deepEqual(actual,[25, 16, 9, 4]);
+        });
+      }
+      else {
+        skipTest(6);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1334,6 +1383,27 @@
       });
 
       deepEqual(actual, [1, 3]);
+    });
+
+    test('should not modify wrapped values', 2, function() {
+      if (!isNpm) {
+        var wrapped = _([1, 2, 3, 4]);
+
+        var actual = wrapped.filter(function(num) {
+          return num < 3;
+        });
+
+        deepEqual(actual.value(), [1, 2]);
+
+        actual = wrapped.filter(function(num) {
+          return num > 2;
+        });
+
+        deepEqual(actual.value(), [3, 4]);
+      }
+      else {
+        skipTest(2);
+      }
     });
 
     test('should be aliased', 1, function() {

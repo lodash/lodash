@@ -80,6 +80,8 @@ The full changelog for this release is available on our [wiki](https://github.co
   - [Testing](https://vimeo.com/45865290)
   - [CascadiaJS ’12](http://www.youtube.com/watch?v=dpPy4f_SeEk)
 
+ For a list of other community created podcasts, posts, and videos please check out our [wiki](https://github.com/lodash/lodash/wiki/Resources).
+
 ## Support
 
 Tested in Chrome 5~30, Firefox 2~24, IE 6-10, Opera 9.25~16, Safari 3-6, Node.js 0.6.8-0.10.20, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.

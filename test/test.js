@@ -5415,6 +5415,10 @@
         object = { 'a': 1, 'b': 2 },
         expected = [2];
 
+    test('should work without secondary arguments', 1, function() {
+      deepEqual(_.values(object), [1, 2]);
+    });
+
     test('should iterate over inherited properties', 1, function() {
       function Foo() {}
       Foo.prototype = object;

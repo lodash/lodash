@@ -3053,26 +3053,41 @@
     }
 
     /**
-     * Creates an array composed of the own enumerable property values of `object`.
+     * Creates an array composed of some own enumerable property values of `object`.
      *
      * @static
      * @memberOf _
      * @category Objects
-     * @param {Object} object The object to inspect.
-     * @returns {Array} Returns an array of property values.
+     * @param {Object} object The source object.
+     * @param {Function|...string|string[]} [callback] The function called per
+     *  iteration or property names to pick, specified as individual property
+     *  names or arrays of property names.
+     * @param {*} [thisArg] The `this` binding of `callback`.
+     * @returns {Array} Returns an array of selected property values.
      * @example
      *
      * _.values({ 'one': 1, 'two': 2, 'three': 3 });
      * // => [1, 2, 3] (property order is not guaranteed across environments)
+     *
+     * _.values({ 'one': 1, 'two': 2, 'three': 3 }, 'three', 'two', 'three');
+     * // => [3, 2, 3]
      */
-    function values(object) {
-      var index = -1,
-          props = keys(object),
-          length = props.length,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = object[props[index]];
+    function values(object, callback, thisArg) {
+      var result = [];
+      if (typeof callback != 'function') {
+        var props = baseFlatten(arguments, true, false, 1), item;
+        props = !props[0] ? _.keys(object) : (_.isArray(props[0]) ? props[0] : props);
+        
+        for (var i = 0, len = props.length; i < len; i++) {
+          if (item = object[props[i]]) result.push(item);
+        }
+      } else {
+        callback = lodash.createCallback(callback, thisArg, 3);
+        forIn(object, function(value, key, object) {
+          if (callback(value, key, object)) {
+            result.push(value);
+          }
+        });
       }
       return result;
     }

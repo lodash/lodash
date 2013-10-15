@@ -5408,6 +5408,66 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.values');
+
+  (function() {
+    var args = arguments,
+        object = { 'a': 1, 'b': 2 },
+        expected = [2];
+
+    test('should iterate over inherited properties', 1, function() {
+      function Foo() {}
+      Foo.prototype = object;
+
+      deepEqual(_.values(new Foo, 'b'), expected);
+    });
+
+    test('should work with `arguments` objects as secondary arguments', 1, function() {
+      deepEqual(_.values(object, args), expected);
+    });
+
+    test('should work with an array `object` argument', 1, function() {
+      deepEqual(_.values([1, 2, 3], '1'), [2]);
+    });
+
+    test('should work with properties as an array', 1, function() {
+      deepEqual(_.values([1, 2, 3], ['1', '2']), [2, 3]);
+    });
+
+    test('should work with a `callback` argument', 1, function() {
+      var actual = _.values(object, function(num) {
+        return num === 2;
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args,
+          lastKey = _.keys(object).pop();
+
+      var expected = lastKey == 'b'
+        ? [1, 'a', object]
+        : [2, 'b', object];
+
+      _.values(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, expected);
+    });
+
+    test('should correct set the `this` binding', 1, function() {
+      var actual = _.values(object, function(num) {
+        return num === this.b;
+      }, { 'b': 2 });
+
+      deepEqual(actual, expected);
+    });
+  }('b'));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.where');
 
   (function() {

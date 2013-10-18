@@ -4736,6 +4736,54 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.append');
+
+  (function () {
+    test('should append an element into the array', 2, function() {
+      var array = [1, 2];
+
+      var actual = _.append(array, 3);
+
+      equal(actual, array);
+      deepEqual(array, [1, 2, 3]);
+    });
+
+    test('should append multiple elements into the array', 2, function() {
+      var array = [1, 2];
+
+      var actual = _.append(array, [3, 4]);
+
+      equal(actual, array);
+      deepEqual(array, [1, 2, 3, 4]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.prepend');
+
+  (function () {
+    test('should prepend an element into the array', 2, function() {
+      var array = [2, 3];
+
+      var actual = _.prepend(array, 1);
+
+      equal(actual, array);
+      deepEqual(array, [1, 2, 3]);
+    });
+
+    test('should prepend multiple elements into the array', 2, function() {
+      var array = [3, 4];
+
+      var actual = _.prepend(array, [1, 2]);
+
+      equal(actual, array);
+      deepEqual(array, [1, 2, 3, 4]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.result');
 
   (function() {
@@ -6636,9 +6684,10 @@
 
  (function() {
     var args = arguments,
-        array = [1, 2, 3, 4, 5, 6];
+        array = [1, 2, 3, 4, 5, 6],
+        array2 = [1];
 
-    test('should work with `arguments` objects', 23, function() {
+    test('should work with `arguments` objects', 27, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should work with `arguments` objects';
       }
@@ -6673,6 +6722,16 @@
 
       _.remove(args, function(value) { return typeof value == 'number'; });
       ok(args.length == 1 && _.isEqual(args[0], [3]), message('remove'));
+
+      _.append(args, 1);
+      deepEqual([args[0], args[1]], [[3], 1], message('append'));
+      _.append(array2, args);
+      deepEqual(array2, [1, [3], 1], '_.append should work with `arguments` objects as secondary arguments');
+
+      _.prepend(args, 4);
+      deepEqual([args[0], args[1], args[2]], [4, [3], 1], message('prepend'));
+      _.prepend(array2, args);
+      deepEqual(array2, [4, [3], 1, 1, [3], 1], '_.prepend should work with `arguments` objects as secondary arguments');
     });
 
     test('should accept falsey primary arguments', 3, function() {
@@ -6753,7 +6812,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 148, function() {
+    test('should accept falsey arguments', 150, function() {
       var isExported = '_' in root,
           oldDash = root._;
 

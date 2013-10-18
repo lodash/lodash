@@ -1187,7 +1187,8 @@
    * // => false
    */
   function isBoolean(value) {
-    return value === true || value === false || toString.call(value) == boolClass;
+    return value === true || value === false ||
+      value && typeof value == 'object' && toString.call(value) == boolClass || false;
   }
 
   /**
@@ -1204,7 +1205,7 @@
    * // => true
    */
   function isDate(value) {
-    return value ? (typeof value == 'object' && toString.call(value) == dateClass) : false;
+    return value && typeof value == 'object' && toString.call(value) == dateClass || false;
   }
 
   /**
@@ -1221,7 +1222,7 @@
    * // => true
    */
   function isElement(value) {
-    return value ? value.nodeType === 1 : false;
+    return value && value.nodeType === 1 || false;
   }
 
   /**
@@ -1452,7 +1453,8 @@
    * // => true
    */
   function isNumber(value) {
-    return typeof value == 'number' || toString.call(value) == numberClass;
+    return typeof value == 'number' ||
+      value && typeof value == 'object' && toString.call(value) == numberClass || false;
   }
 
   /**
@@ -1469,7 +1471,7 @@
    * // => true
    */
   function isRegExp(value) {
-    return (value && objectTypes[typeof value]) ? toString.call(value) == regexpClass : false;
+    return value && objectTypes[typeof value] && toString.call(value) == regexpClass || false;
   }
 
   /**
@@ -1486,7 +1488,8 @@
    * // => true
    */
   function isString(value) {
-    return typeof value == 'string' || toString.call(value) == stringClass;
+    return typeof value == 'string' ||
+      value && typeof value == 'object' && toString.call(value) == stringClass || false;
   }
 
   /**
@@ -4063,12 +4066,11 @@
    * @returns {Function} Returns the new function.
    * @example
    *
-   * var hello = function(name) { return 'hello ' + name; };
-   * hello = _.wrap(hello, function(func) {
-   *   return 'before, ' + func('fred') + ', after';
+   * var pre= _.wrap(_.escape, function(func, text) {
+   *   return '<div>' + func(text) + '</div>';
    * });
-   * hello();
-   * // => 'before, hello fred, after'
+   * pre('Fred, Wilma, & Pebbles');
+   * // => '<div>Fred, Wilma, &amp; Pebbles</div>'
    */
   function wrap(value, wrapper) {
     if (!isFunction(wrapper)) {
@@ -4112,7 +4114,7 @@
    * @example
    *
    * var object = { 'name': 'fred' };
-   * object === _.identity(object);
+   * _.identity(object) === object;
    * // => true
    */
   function identity(value) {

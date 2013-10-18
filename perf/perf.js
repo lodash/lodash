@@ -537,6 +537,18 @@
             lodashFindWhere = lodash.findWhere || lodash.find,\
             whereObject = { "num": 9 };\
       }\
+      if (typeof wrap != "undefined") {\
+        var add = function(a, b) {\
+          return a + b;\
+        };\
+        \
+        var average = function(func, a, b) {\
+          return (func(a, b) / 2).toFixed(2);\
+        };\
+        \
+        var _wrapped = _.wrap(add, average);\
+            lodashWrapped = lodash.wrap(add, average);\
+      }\
       if (typeof zip != "undefined") {\
         var unzipped = [["a", "b", "c"], [1, 2, 3], [true, false, true]];\
       }'
@@ -1942,6 +1954,20 @@
       .add(otherName, '\
         _.without(numbers, 9, 12, 14, 15)'
       )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.wrap` result called')
+      .add(buildName, {
+        'fn': 'lodashWrapped(2, 5)',
+        'teardown': 'function wrap(){}'
+      })
+      .add(otherName, {
+        'fn': '_wrapped(2, 5)',
+        'teardown': 'function wrap(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/

@@ -5567,14 +5567,7 @@
      * // => '<div>Fred, Wilma, &amp; Pebbles</div>'
      */
     function wrap(value, wrapper) {
-      if (!isFunction(wrapper)) {
-        throw new TypeError;
-      }
-      return function() {
-        var args = [value];
-        push.apply(args, arguments);
-        return wrapper.apply(this, args);
-      };
+      return createBound(wrapper, 16, [value]);
     }
 
     /*--------------------------------------------------------------------------*/

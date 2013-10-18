@@ -985,10 +985,10 @@
             ctorB = b.constructor;
 
         // non `Object` object instances with different constructors are not equal
-        if (ctorA != ctorB && !(
-              isFunction(ctorA) && ctorA instanceof ctorA &&
-              isFunction(ctorB) && ctorB instanceof ctorB
-            )) {
+        if (ctorA != ctorB &&
+              !(isFunction(ctorA) && ctorA instanceof ctorA && isFunction(ctorB) && ctorB instanceof ctorB) &&
+              (!nativeCreate || ('constructor' in a && 'constructor' in b))
+            ) {
           return false;
         }
       }
@@ -1568,15 +1568,15 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * _.assign({ 'name': 'fred' }, { 'age': 40 });
-     * // => { 'name': 'fred', 'age': 40 }
+     * _.assign({ 'name': 'fred' }, { 'employer': 'slate' });
+     * // => { 'name': 'fred', 'employer': 'slate' }
      *
      * var defaults = _.partialRight(_.assign, function(a, b) {
      *   return typeof a == 'undefined' ? b : a;
      * });
      *
-     * var person = { 'name': 'barney' };
-     * defaults(person, { 'name': 'fred', 'employer': 'slate' });
+     * var object = { 'name': 'barney' };
+     * defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     var assign = function(object, source, guard) {
@@ -1718,8 +1718,8 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * var person = { 'name': 'barney' };
-     * _.defaults(person, { 'name': 'fred', 'employer': 'slate' });
+     * var object = { 'name': 'barney' };
+     * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     var defaults = function(object, source, guard) {
@@ -2179,13 +2179,13 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
-     * var fred = { 'name': 'fred', 'age': 40 };
-     * var copy = { 'name': 'fred', 'age': 40 };
+     * var object = { 'name': 'fred' };
+     * var copy = { 'name': 'fred' };
      *
-     * fred == copy;
+     * object == copy;
      * // => false
      *
-     * _.isEqual(fred, copy);
+     * _.isEqual(object, copy);
      * // => true
      *
      * var words = ['hello', 'goodbye'];
@@ -3073,6 +3073,10 @@
      * element. The callback is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection). Callbacks may exit iteration early by
      * explicitly returning `false`.
+     *
+     * Note: As with other "Collections" methods, objects with a `length` property
+     * are iterated like arrays. To avoid this behavior `_.forIn` or `_.forOwn`
+     * may be used for object iteration.
      *
      * @static
      * @memberOf _
@@ -5003,11 +5007,11 @@
      * // => 'hi fred'
      *
      * object.greet = function(greeting) {
-     *   return greeting + ', ' + this.name + '!';
+     *   return greeting + 'ya ' + this.name + '!';
      * };
      *
      * func();
-     * // => 'hi, fred!'
+     * // => 'hiya fred!'
      */
     function bindKey(object, key) {
       return arguments.length > 2
@@ -5601,8 +5605,8 @@
      * @returns {*} Returns `value`.
      * @example
      *
-     * var fred = { 'name': 'fred' };
-     * fred === _.identity(fred);
+     * var object = { 'name': 'fred' };
+     * object === _.identity(object);
      * // => true
      */
     function identity(value) {

@@ -429,7 +429,7 @@
         this.a = function() { return this._a; };
       };
 
-      Foo.prototype.b = function() {return this._b; };
+      Foo.prototype.b = function() { return this._b; };
 
       var object = new Foo;
       _.bindAll(object);
@@ -2744,7 +2744,24 @@
           actual = _.every([array, [1, 0, 3]], eq);
 
       strictEqual(actual, false);
-    })
+    });
+
+    test('should treat objects created by `Object.create(null)` like any other plain object', 2, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.constructor = null;
+
+      var other = { 'a': 1 };
+      strictEqual(_.isEqual(new Foo, other), false);
+
+      if (create)  {
+        var object = Object.create(null);
+        object.a = 1;
+        strictEqual(_.isEqual(object, other), true);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

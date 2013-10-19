@@ -1078,6 +1078,29 @@
     }
 
     /**
+     * The base implementation of `_.create` without support for assigning
+     * properties to the created object.
+     *
+     * @private
+     * @param {Object} prototype The object to inherit from.
+     * @returns {Object} Returns the new object.
+     */
+    function baseCreate(prototype, properties) {
+      return isObject(prototype) ? nativeCreate(prototype) : {};
+    }
+    // fallback for browsers without `Object.create`
+    if (!nativeCreate) {
+      baseCreate = function(prototype) {
+        if (isObject(prototype)) {
+          noop.prototype = prototype;
+          var result = new noop;
+          noop.prototype = null;
+        }
+        return result || {};
+      };
+    }
+
+    /**
      * The base implementation of `_.createCallback` without support for creating
      * "_.pluck" or "_.where" style callbacks.
      *
@@ -1604,7 +1627,7 @@
           }
           if (this instanceof bound) {
             // ensure `new bound` is an instance of `func`
-            thisBinding = create(func.prototype);
+            thisBinding = baseCreate(func.prototype);
 
             // mimic the constructor's `return` behavior
             // http://es5.github.io/#x13.2.2
@@ -2087,20 +2110,8 @@
      * // => true
      */
     function create(prototype, properties) {
-      var result = isObject(prototype) ? nativeCreate(prototype) : {};
+      var result = baseCreate(prototype);
       return properties ? assign(result, properties) : result;
-    }
-    // fallback for browsers without `Object.create`
-    if (!nativeCreate) {
-      create = function(prototype) {
-        if (isObject(prototype)) {
-          noop.prototype = prototype;
-          var result = new noop;
-          noop.prototype = null;
-        }
-        result || (result = {});
-        return properties ? assign(result, properties) : result;
-      };
     }
 
     /**
@@ -3058,7 +3069,7 @@
           var ctor = object && object.constructor,
               proto = ctor && ctor.prototype;
 
-          accumulator = create(proto);
+          accumulator = baseCreate(proto);
         }
       }
       if (callback) {

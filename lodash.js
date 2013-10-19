@@ -2073,12 +2073,15 @@
     }
 
     /**
-     * Creates a new object with the specified `prototype` object.
+     * Creates an object that inherits from the given `prototype` object. If a
+     * `properties` object is provided its own enumerable properties are assigned
+     * to the created object.
      *
      * @static
      * @memberOf _
      * @category Objects
-     * @param {Object} prototype The prototype object.
+     * @param {Object} prototype The object to inherit from.
+     * @param {Object} [properties] The properties to assign to the object.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -2091,8 +2094,7 @@
      *   Shape.call(this);
      * }
      *
-     * Circle.prototype = _.create(Shape.prototype);
-     * Circle.prototype.constructor = Circle;
+     * Circle.prototype = _.create(Shape.prototype, { 'constructor': Circle });
      *
      * var circle = new Circle;
      * circle instanceof Circle
@@ -2101,8 +2103,9 @@
      * circle instanceof Shape
      * // => true
      */
-    function create(prototype) {
-      return isObject(prototype) ? nativeCreate(prototype) : {};
+    function create(prototype, properties) {
+      var result = isObject(prototype) ? nativeCreate(prototype) : {};
+      return properties ? assign(result, properties) : result;
     }
     // fallback for browsers without `Object.create`
     if (!nativeCreate) {
@@ -2112,7 +2115,8 @@
           var result = new noop;
           noop.prototype = null;
         }
-        return result || {};
+        result || (result = {});
+        return properties ? assign(result, properties) : result;
       };
     }
 

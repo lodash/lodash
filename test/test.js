@@ -895,7 +895,7 @@
   QUnit.module('lodash.create');
 
   (function() {
-    test('should create a new object with the given `prototype`', 3, function() {
+    test('should create an object that inherits from the given `prototype` object', 3, function() {
       function Shape() {
         this.x = 0;
         this.y = 0;
@@ -908,11 +908,31 @@
       Circle.prototype = _.create(Shape.prototype);
       Circle.prototype.constructor = Circle;
 
-      var circle = new Circle;
+      var actual = new Circle;
 
-      ok(circle instanceof Circle);
-      ok(circle instanceof Shape);
+      ok(actual instanceof Circle);
+      ok(actual instanceof Shape);
       notStrictEqual(Circle.prototype, Shape.prototype);
+    });
+
+    test('should assign `properties` to the created object', 3, function() {
+      function Shape() {
+        this.x = 0;
+        this.y = 0;
+      }
+
+      function Circle() {
+        Shape.call(this);
+      }
+
+      var expected = { 'constructor': Circle, 'radius': 0 };
+      Circle.prototype = _.create(Shape.prototype, expected);
+
+      var actual = new Circle;
+
+      ok(actual instanceof Circle);
+      ok(actual instanceof Shape);
+      deepEqual(Circle.prototype, expected);
     });
 
     test('should accept a falsey `object` argument', 1, function() {

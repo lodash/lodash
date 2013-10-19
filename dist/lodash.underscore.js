@@ -715,7 +715,7 @@
         }
         if (this instanceof bound) {
           // ensure `new bound` is an instance of `func`
-          thisBinding = createObject(func.prototype);
+          thisBinding = create(func.prototype);
 
           // mimic the constructor's `return` behavior
           // http://es5.github.io/#x13.2.2
@@ -726,28 +726,6 @@
       };
     }
     return bound;
-  }
-
-  /**
-   * Creates a new object with the specified `prototype`.
-   *
-   * @private
-   * @param {Object} prototype The prototype object.
-   * @returns {Object} Returns the new object.
-   */
-  function createObject(prototype) {
-    return isObject(prototype) ? nativeCreate(prototype) : {};
-  }
-  // fallback for browsers without `Object.create`
-  if (!nativeCreate) {
-    createObject = function(prototype) {
-      if (isObject(prototype)) {
-        noop.prototype = prototype;
-        var result = new noop;
-        noop.prototype = null;
-      }
-      return result || {};
-    };
   }
 
   /**
@@ -995,6 +973,50 @@
   }
 
   /**
+   * Creates a new object with the specified `prototype`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} prototype The prototype object.
+   * @returns {Object} Returns the new object.
+   * @example
+   *
+   * function Shape() {
+   *   this.x = 0;
+   *   this.y = 0;
+   * }
+   *
+   * function Circle() {
+   *   Shape.call(this);
+   * }
+   *
+   * Circle.prototype = _.create(Shape.prototype);
+   * Circle.prototype.constructor = Circle;
+   *
+   * var circle = new Circle;
+   * circle instanceof Circle
+   * // => true
+   *
+   * circle instanceof Shape
+   * // => true
+   */
+  function create(prototype) {
+    return isObject(prototype) ? nativeCreate(prototype) : {};
+  }
+  // fallback for browsers without `Object.create`
+  if (!nativeCreate) {
+    create = function(prototype) {
+      if (isObject(prototype)) {
+        noop.prototype = prototype;
+        var result = new noop;
+        noop.prototype = null;
+      }
+      return result || {};
+    };
+  }
+
+  /**
    * Assigns own enumerable properties of source object(s) to the destination
    * object for all destination properties that resolve to `undefined`. Once a
    * property is set, additional defaults of the same property will be ignored.
@@ -1047,18 +1069,20 @@
    * @returns {Object} Returns `object`.
    * @example
    *
-   * function Dog(name) {
-   *   this.name = name;
+   * function Shape() {
+   *   this.x = 0;
+   *   this.y = 0;
    * }
    *
-   * Dog.prototype.bark = function() {
-   *   console.log('Woof, woof!');
+   * Shape.prototype.move = function(x, y) {
+   *   this.x += x;
+   *   this.y += y;
    * };
    *
-   * _.forIn(new Dog('Dagny'), function(value, key) {
+   * _.forIn(new Shape, function(value, key) {
    *   console.log(key);
    * });
-   * // => logs 'bark' and 'name' (property order is not guaranteed across environments)
+   * // => logs 'x', 'y', and 'move' (property order is not guaranteed across environments)
    */
   var forIn = function(collection, callback) {
     var index, iterable = collection, result = iterable;
@@ -4578,6 +4602,7 @@
   lodash.compact = compact;
   lodash.compose = compose;
   lodash.countBy = countBy;
+  lodash.create = create;
   lodash.debounce = debounce;
   lodash.defaults = defaults;
   lodash.defer = defer;

@@ -507,7 +507,7 @@
 
       if (ctorA != ctorB &&
             !(isFunction(ctorA) && ctorA instanceof ctorA && isFunction(ctorB) && ctorB instanceof ctorB) &&
-            (!nativeCreate || ('constructor' in a && 'constructor' in b))
+            ('constructor' in a && 'constructor' in b)
           ) {
         return false;
       }
@@ -4602,7 +4602,6 @@
   lodash.compact = compact;
   lodash.compose = compose;
   lodash.countBy = countBy;
-  lodash.create = create;
   lodash.debounce = debounce;
   lodash.defaults = defaults;
   lodash.defer = defer;

@@ -339,6 +339,10 @@
         ok(false);
       }
     });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.extend, _.assign);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -888,6 +892,43 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.create');
+
+  (function() {
+    test('should create a new object with the given `prototype`', 3, function() {
+      function Shape() {
+        this.x = 0;
+        this.y = 0;
+      }
+
+      function Circle() {
+        Shape.call(this);
+      }
+
+      Circle.prototype = _.create(Shape.prototype);
+      Circle.prototype.constructor = Circle;
+
+      var circle = new Circle;
+
+      ok(circle instanceof Circle);
+      ok(circle instanceof Shape);
+      notStrictEqual(Circle.prototype, Shape.prototype);
+    });
+
+    test('should accept a falsey `object` argument', 1, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return {}; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.create(value) : _.create());
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.createCallback');
 
   (function() {
@@ -1298,13 +1339,13 @@
       strictEqual(_.every([undefined, undefined, undefined], _.identity), false);
     });
 
-    test('should be aliased', 1, function() {
-      strictEqual(_.all, _.every);
-    });
-
     test('should use `_.identity` when no callback is provided', 2, function() {
       strictEqual(_.every([0]), false);
       strictEqual(_.every([1]), true);
+    });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.all, _.every);
     });
   }());
 
@@ -2154,6 +2195,16 @@
       memoized('__proto__');
       memoized('__proto__');
       strictEqual(count, 1);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.function');
+
+  (function() {
+    test('should be aliased', 1, function() {
+      strictEqual(_.methods, _.functions);
     });
   }());
 
@@ -4725,13 +4776,13 @@
       strictEqual(_.some([null, true, null], _.identity), true);
     });
 
-    test('should be aliased', 1, function() {
-      strictEqual(_.any, _.some);
-    });
-
     test('should use `_.identity` when no callback is provided', 2, function() {
       strictEqual(_.some([0, 1]), true);
       strictEqual(_.some([0, 0]), false);
+    });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.any, _.some);
     });
   }());
 
@@ -5406,6 +5457,11 @@
       deepEqual(actual, ['undefined']);
     });
 
+    test('should work without a `callback` argument', 1, function() {
+      function Foo() {}
+      ok(_.transform(new Foo) instanceof Foo);
+    });
+
     _.forEach({
       'array': [1, 2, 3],
       'object': { 'a': 1, 'b': 2, 'c': 3 }
@@ -5574,6 +5630,10 @@
         deepEqual(actual, [['a'], ['b']]);
       });
     });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.unique, _.uniq);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -5737,6 +5797,10 @@
       var expected = [['barney', 'fred'], [36, 40]];
       deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);
     });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.unzip, _.zip);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -5777,6 +5841,10 @@
 
     test('should support consuming the return value of `_.pairs`', 1, function() {
       deepEqual(_.zipObject(_.pairs(object)), object);
+    });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.object, _.zipObject);
     });
   }());
 
@@ -6128,7 +6196,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 147, function() {
+    test('should accept falsey arguments', 148, function() {
       var isExported = '_' in root,
           oldDash = root._;
 

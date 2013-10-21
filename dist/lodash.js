@@ -1296,6 +1296,7 @@
       }
       var bindData = func && func.__bindData__;
       if (bindData && bindData !== true) {
+        bindData = nativeSlice.call(bindData);
         if (isBind && !(bindData[1] & 1)) {
           bindData[4] = thisArg;
         }
@@ -5079,7 +5080,7 @@
      * @example
      *
      * var realNameMap = {
-     *   'pebbles': 'jerome'
+     *   'pebbles': 'penelope'
      * };
      *
      * var format = function(name) {
@@ -5093,7 +5094,7 @@
      *
      * var welcome = _.compose(greet, format);
      * welcome('pebbles');
-     * // => 'Hiya Jerome!'
+     * // => 'Hiya Penelope!'
      */
     function compose() {
       var funcs = arguments,
@@ -5603,11 +5604,12 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var pre= _.wrap(_.escape, function(func, text) {
-     *   return '<div>' + func(text) + '</div>';
+     * var p = _.wrap(_.escape, function(func, text) {
+     *   return '<p>' + func(text) + '</p>';
      * });
-     * pre('Fred, Wilma, & Pebbles');
-     * // => '<div>Fred, Wilma, &amp; Pebbles</div>'
+     *
+     * p('Fred, Wilma, & Pebbles');
+     * // => '<p>Fred, Wilma, &amp; Pebbles</p>'
      */
     function wrap(value, wrapper) {
       return createBound(wrapper, 16, [value]);

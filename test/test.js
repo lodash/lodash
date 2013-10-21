@@ -1336,12 +1336,79 @@
   QUnit.module('lodash.defer');
 
   (function() {
+    asyncTest('should defer `func` execution', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var pass = false;
+        _.defer(function(){ pass = true; });
+
+        setTimeout(function() {
+          ok(pass);
+          QUnit.start();
+        }, 32);
+      }
+      else {
+        skipTest();
+        QUnit.start();
+      }
+    });
+
     asyncTest('should accept additional arguments', 1, function() {
       if (!(isRhino && isModularize)) {
+        var args;
+
         _.defer(function() {
-          deepEqual(slice.call(arguments), [1, 2, 3]);
-          QUnit.start();
+          args = slice.call(arguments);
         }, 1, 2, 3);
+
+        setTimeout(function() {
+          deepEqual(args, [1, 2, 3]);
+          QUnit.start();
+        }, 32);
+      }
+      else {
+        skipTest();
+        QUnit.start();
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.delay');
+
+  (function() {
+    asyncTest('should delay `func` execution', 2, function() {
+      if (!(isRhino && isModularize)) {
+        var pass = false;
+        _.delay(function(){ pass = true; }, 64);
+
+        setTimeout(function() {
+          ok(!pass);
+        }, 32);
+
+        setTimeout(function() {
+          ok(pass);
+          QUnit.start();
+        }, 96);
+      }
+      else {
+        skipTest(2);
+        QUnit.start();
+      }
+    });
+
+    asyncTest('should accept additional arguments', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var args;
+
+        _.delay(function() {
+          args = slice.call(arguments);
+        }, 32, 1, 2, 3);
+
+        setTimeout(function() {
+          deepEqual(args, [1, 2, 3]);
+          QUnit.start();
+        }, 64);
       }
       else {
         skipTest();
@@ -3419,6 +3486,46 @@
   QUnit.module('lodash.memoize');
 
   (function() {
+    test('should memoize results based on the first argument passed', 2, function() {
+      var memoized = _.memoize(function(a, b, c) {
+        return a + b + c;
+      });
+
+      equal(memoized(1, 2, 3), 6);
+      equal(memoized(1, 3, 5), 6);
+    });
+
+    test('should support a `resolver` argument', 2, function() {
+      function func(a, b, c) {
+        return a + b + c;
+      }
+
+      var memoized = _.memoize(func, func);
+      equal(memoized(1, 2, 3), 6);
+      equal(memoized(1, 3, 5), 9);
+    });
+
+    test('should not set a `this` binding', 2, function() {
+      var memoized = _.memoize(function(a, b, c) {
+        return a + this.b + this.c;
+      });
+
+      var object = { 'b': 2, 'c': 3, 'memoized': memoized };
+      equal(object.memoized(1), 6);
+      equal(object.memoized(2), 7);
+    });
+
+    test('should check cache for own properties', 1, function() {
+      var actual = [],
+          memoized = _.memoize(_.identity);
+
+      _.each(shadowedProps, function(value) {
+        actual.push(memoized(value));
+      });
+
+      deepEqual(actual, shadowedProps);
+    });
+
     test('should expose a `cache` object on the `memoized` function', 2, function() {
       var memoized = _.memoize(_.identity, _.identity);
 
@@ -3783,6 +3890,24 @@
   QUnit.module('lodash.once');
 
   (function() {
+    test('should execute `func` once', 1, function() {
+      var count = 0,
+          func = _.once(function() { count++; });
+
+      func();
+      func();
+      strictEqual(count, 1);
+    });
+
+    test('should not set a `this` binding', 1, function() {
+      var func = _.once(function() { this.count++; }),
+          object = { 'count': 0, 'once': func };
+
+      object.once();
+      object.once();
+      strictEqual(object.count, 1);
+    });
+
     test('should ignore recursive calls', 1, function() {
       var count = 0;
 

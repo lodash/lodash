@@ -935,12 +935,24 @@
       deepEqual(Circle.prototype, expected);
     });
 
-    test('should accept a falsey `object` argument', 1, function() {
+    test('should accept a falsey `prototype` argument', 1, function() {
       var actual = [],
           expected = _.map(falsey, function() { return {}; });
 
       _.forEach(falsey, function(value, index) {
         actual.push(index ? _.create(value) : _.create());
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should ignore primitive `prototype` arguments and use an empty object instead', 1, function() {
+      var actual = [],
+          primitives = [1, true, 'a'],
+          expected = _.map(primitives, function() { return true; });
+
+      _.forEach(primitives, function(value, index) {
+        actual.push(_.isPlainObject(index ? _.create(value) : _.create()));
       });
 
       deepEqual(actual, expected);
@@ -4979,6 +4991,125 @@
   QUnit.module('lodash.template');
 
   (function() {
+    test('should use a `with` statement by default', 1, function() {
+      var compiled = _.template('<%= index %><%= collection[index] %><% _.each(collection, function(value, index) { %><%= index %><% }); %>'),
+          actual = compiled({ 'index': 1, 'collection': ['a', 'b', 'c'] });
+
+      equal(actual, '1b012');
+    });
+
+    test('should interpolate data object properties', 1, function() {
+      var compiled = _.template('<%= a %>BC');
+      equal(compiled({ 'a': 'A' }), 'ABC');
+    });
+
+    test('should work correct with `this` references', 2, function() {
+      var compiled = _.template('a<%= this.b %>c');
+
+      root.b = 'b';
+      equal(compiled(), 'abc');
+      delete root.b;
+
+      var object = { 'b': 'B' };
+      object.compiled = _.template('A<%= this.b %>C', null, { 'variable': 'obj' });
+      equal(object.compiled(), 'ABC');
+    });
+
+    test('should work with backslashes', 1, function() {
+      var compiled = _.template('<%= a %> \\b');
+      equal(compiled({ 'a': 'A' }), 'A \\b');
+    });
+
+    test('should support escaped values in "interpolation" delimiters', 1, function() {
+      var compiled = _.template('<%= a ? "a=\\"A\\"" : "" %>');
+      equal(compiled({ 'a': true }), 'a="A"');
+    });
+
+    test('should evaluate JavaScript in "evaluate" delimiters', 1, function() {
+      var compiled = _.template(
+        '<ul><%\
+        for (var key in collection) {\
+          %><li><%= collection[key] %></li><%\
+        } %></ul>'
+      );
+
+      var actual = compiled({ 'collection': { 'a': 'A', 'b': 'B' } });
+      equal(actual, '<ul><li>A</li><li>B</li></ul>');
+    });
+
+    test('should work with escaped characters in string literals', 2, function() {
+      var compiled = _.template('<% print("\'\\n\\r\\t\\u2028\\u2029\\\\") %>');
+      equal(compiled(), "'\n\r\t\u2028\u2029\\");
+
+      compiled = _.template('\'\n\r\t<%= a %>\u2028\u2029\\"');
+      equal(compiled({ 'a': 'A' }), '\'\n\r\tA\u2028\u2029\\"');
+    });
+
+    test('should work with no delimiters', 1, function() {
+      var expected = 'abc';
+      equal(_.template(expected, {}), expected);
+    });
+
+    test('should work with statements containing quotes', 1, function() {
+      var compiled = _.template("<%\
+        if (a == 'A' || a == \"a\") {\
+          %>'a',\"A\"<%\
+        } %>"
+      );
+
+      equal(compiled({ 'a': 'A' }), "'a',\"A\"");
+    });
+
+    test('should escape values in "escape" delimiters', 1, function() {
+      var escaped = '<p>&amp;&lt;&gt;&quot;&#39;\/</p>',
+          unescaped = '&<>"\'\/';
+
+      var compiled = _.template('<p><%- value %></p>');
+      equal(compiled({ 'value': unescaped }), escaped);
+    });
+
+    test('should work with templates containing newlines and comments', 1, function() {
+      var compiled = _.template('<%\n\
+	// comment\n\
+	if (value) { value += 3; }\n\
+        %><p><%= value %></p>'
+      );
+
+      equal(compiled({ 'value': 3 }), '<p>6</p>');
+    });
+
+    test('should work with custom `_.templateSettings` delimiters', 1, function() {
+      var settings = _.clone(_.templateSettings);
+
+      _.templateSettings = {
+        'escape': /\{\{-([\s\S]+?)\}\}/g,
+        'evaluate': /\{\{([\s\S]+?)\}\}/g,
+        'interpolate': /\{\{=([\s\S]+?)\}\}/g
+      };
+
+      var compiled = _.template('<ul>{{ _.each(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>'),
+          expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
+
+      equal(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
+      _.extend(_.templateSettings, settings);
+    });
+
+    test('should work with `_.templateSettings` delimiters containing special characters', 1, function() {
+      var settings = _.clone(_.templateSettings);
+
+      _.templateSettings = {
+        'escape': /<\?-([\s\S]+?)\?>/g,
+        'evaluate': /<\?([\s\S]+?)\?>/g,
+        'interpolate': /<\?=([\s\S]+?)\?>/g
+      };
+
+      var compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>'),
+          expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
+
+      equal(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
+      _.extend(_.templateSettings, settings);
+    });
+
     test('supports recursive calls', 1, function() {
       var compiled = _.template('<%= a %><% a = _.template(c, obj) %><%= a %>'),
           data = { 'a': 'A', 'b': 'B', 'c': '<%= b %>' };
@@ -4986,9 +5117,18 @@
       equal(compiled(data), 'AB');
     });
 
+    test('should not modify `_.templateSettings` when `options` are provided', 2, function() {
+      equal('a' in _.templateSettings, false);
+
+      _.template('', {}, { 'a': 1 });
+      equal('a' in _.templateSettings, false);
+
+      delete _.templateSettings.a;
+    });
+
     test('should not augment the `options` object', 1, function() {
       var options = {};
-      _.template('', null, options);
+      _.template('', {}, options);
       deepEqual(options, {});
     });
 
@@ -5048,9 +5188,8 @@
         '<% }) %>', null, { 'variable': 'data' }
       );
 
-      var data = { 'a': [1, 2, 3] };
-
       try {
+        var data = { 'a': [1, 2, 3] };
         strictEqual(compiled(data), '123');
       } catch(e) {
         ok(false);
@@ -5094,6 +5233,14 @@
       equal(actual, 'function');
     });
 
+    test('should evaluate delimiters once', 1, function() {
+      var actual = [],
+          compiled = _.template('<%= func("a") %><%- func("b") %><% func("c") %>');
+
+      compiled({ 'func': function(value) { actual.push(value); } });
+      deepEqual(actual, ['a', 'b', 'c']);
+    });
+
     test('should parse delimiters with newlines', 1, function() {
       var expected = '<<\nprint("<p>" + (value ? "yes" : "no") + "</p>")\n>>',
           compiled = _.template(expected, null, { 'evaluate': /<<(.+?)>>/g }),
@@ -5122,9 +5269,29 @@
       strictEqual(_.template(object, data), '1');
     });
 
+    test('should handle \\u2028 & \\u2029 characters', 1, function() {
+      var compiled = _.template('\u2028<%= "\\u2028\\u2029" %>\u2029');
+      strictEqual(compiled(), '\u2028\u2028\u2029\u2029');
+    });
+
+    test('should resolve `null` and `undefined` values to empty strings', 4, function() {
+      var compiled = _.template('<%= a %><%- a %>');
+      strictEqual(compiled({ 'a': null }), '');
+      strictEqual(compiled({ 'a': undefined }), '');
+
+      compiled = _.template('<%= a.b %><%- a.b %>');
+      strictEqual(compiled({ 'a': {} }), '');
+      strictEqual(compiled({ 'a': {} }), '');
+    });
+
     test('should support single line comments in "evaluate" delimiters (test production builds)', 1, function() {
       var compiled = _.template('<% // comment %><% if (value) { %>yap<% } else { %>nope<% } %>');
       equal(compiled({ 'value': true }), 'yap');
+    });
+
+    test('should match delimiters before escaping text', 1, function() {
+      var compiled = _.template('<<\n a \n>>', null, { 'evaluate': /<<(.*?)>>/g });
+      equal(compiled(), '<<\n a \n>>');
     });
   }());
 

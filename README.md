@@ -34,6 +34,7 @@ The full changelog for this release is available on our [wiki](https://github.co
  * [_.clone](http://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
+ * [_.create](http://lodash.com/docs#create) for easier object inheritance
  * [_.createCallback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins
  * [_.curry](http://lodash.com/docs#curry) for creating [curried](http://hughfdjackson.com/javascript/2013/07/06/why-curry-helps/) functions
  * [_.debounce](http://lodash.com/docs#debounce) & [_.throttle](http://lodash.com/docs#throttle) accept additional `options` for more control
@@ -84,7 +85,7 @@ The full changelog for this release is available on our [wiki](https://github.co
 
 ## Support
 
-Tested in Chrome 5~30, Firefox 2~24, IE 6-10, Opera 9.25~16, Safari 3-6, Node.js 0.6.8-0.10.20, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
+Tested in Chrome 5~30, Firefox 2~24, IE 6-11, Opera 9.25~16, Safari 3-6, Node.js 0.6.8-0.10.21, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
 
 ## Installation & usage
 

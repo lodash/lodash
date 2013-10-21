@@ -329,6 +329,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.after');
+
+  (function() {
+    test('should create a function that executes `func` after `n` calls', 4, function() {
+      function after(n, times) {
+        var count = 0;
+        _.times(times, _.after(n, function() { count++; }));
+        return count;
+      }
+
+      strictEqual(after(5, 5), 1, 'after(n) should execute `func` after being called `n` times');
+      strictEqual(after(5, 4), 0, 'after(n) should not execute `func` unless called `n` times');
+      strictEqual(after(0, 0), 0, 'after(0) should not execute `func` immediately');
+      strictEqual(after(0, 1), 1, 'after(0) should execute `func` when called once');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.assign');
 
   (function() {
@@ -749,6 +768,30 @@
     test('should filter falsey values', 1, function() {
       var array = ['0', '1', '2'];
       deepEqual(_.compact(falsey.concat(array)), array);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.compose');
+
+  (function() {
+    test('should create a function that is the composition of the provided functions', 1, function() {
+      var realNameMap = {
+        'pebbles': 'penelope'
+      };
+
+      var format = function(name) {
+        name = realNameMap[name.toLowerCase()] || name;
+        return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      };
+
+      var greet = function(formatted) {
+        return 'Hiya ' + formatted + '!';
+      };
+
+      var welcome = _.compose(greet, format);
+      equal(welcome('pebbles'), 'Hiya Penelope!');
     });
   }());
 
@@ -2798,7 +2841,7 @@
       deepEqual(args, ['a', 'b']);
     });
 
-    test('should correct set the `this` binding', 1, function() {
+    test('should correctly set the `this` binding', 1, function() {
       var actual = _.isEqual('a', 'b', function(a, b) {
         return this[a] == this[b];
       }, { 'a': 1, 'b': 1 });
@@ -3706,7 +3749,7 @@
       deepEqual(args, expected);
     });
 
-    test('should correct set the `this` binding', 1, function() {
+    test('should correctly set the `this` binding', 1, function() {
       var actual = _.omit(object, function(num) {
         return num === this.a;
       }, { 'a': 1 });
@@ -3942,7 +3985,7 @@
       deepEqual(args, expected);
     });
 
-    test('should correct set the `this` binding', 1, function() {
+    test('should correctly set the `this` binding', 1, function() {
       var actual = _.pick(object, function(num) {
         return num === this.b;
       }, { 'b': 2 });
@@ -5003,7 +5046,7 @@
       equal(compiled({ 'a': 'A' }), 'ABC');
     });
 
-    test('should work correct with `this` references', 2, function() {
+    test('should work correctly with `this` references', 2, function() {
       var compiled = _.template('a<%= this.b %>c');
 
       root.b = 'b';
@@ -5930,6 +5973,40 @@
     test('should remove all occurrences of each value from an array', 1, function() {
       var array = [1, 2, 3, 1, 2, 3];
       deepEqual(_.without(array, 1, 2), [3, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.wrap');
+
+  (function() {
+    test('should create a wrapped function', 1, function() {
+      var p = _.wrap(_.escape, function(func, text) {
+        return '<p>' + func(text) + '</p>';
+      });
+
+      equal(p('Fred, Wilma, & Pebbles'), '<p>Fred, Wilma, &amp; Pebbles</p>');
+    });
+
+    test('should pass the correct `wrapper` arguments', 1, function() {
+      var args;
+
+      var wrapped = _.wrap(_.noop, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      wrapped(1, 2, 3);
+      deepEqual(args, [_.noop, 1, 2, 3]);
+    });
+
+    test('should not set a `this` binding', 1, function() {
+      var p = _.wrap(_.escape, function(func) {
+        return '<p>' + func(this.text) + '</p>';
+      });
+
+      var object = { 'p': p, 'text': 'Fred, Wilma, & Pebbles' };
+      equal(object.p(), '<p>Fred, Wilma, &amp; Pebbles</p>');
     });
   }());
 

@@ -1588,6 +1588,7 @@
       }
       var bindData = func && func.__bindData__;
       if (bindData && bindData !== true) {
+        bindData = nativeSlice.call(bindData);
         if (isBind && !(bindData[1] & 1)) {
           bindData[4] = thisArg;
         }

@@ -436,6 +436,26 @@
     test('should throw a TypeError if `func` is not a function', 1, function() {
       raises(function() { _.bind(); }, TypeError);
     });
+
+    test('should rebind functions correctly', 3, function() {
+      function func() {
+        var args = [this];
+        push.apply(args, arguments);
+        return args;
+      }
+
+      var object1 = {},
+          object2 = {},
+          object3 = {};
+
+      var bound1 = _.bind(func, object1),
+          bound2 = _.bind(bound1, object2, 'a'),
+          bound3 = _.bind(bound1, object3, 'b');
+
+      deepEqual(bound1(), [object1]);
+      deepEqual(bound2(), [object1, 'a']);
+      deepEqual(bound3(), [object1, 'b']);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

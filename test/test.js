@@ -418,12 +418,74 @@
   QUnit.module('lodash.bind');
 
   (function() {
-    test('should append array arguments to partially applied arguments (test in IE < 9)', 1, function() {
-      var args,
-          bound = _.bind(function() { args = slice.call(arguments); }, {}, 'a');
+    function func() {
+      var args = [this];
+      push.apply(args, arguments);
+      return args;
+    }
 
-      bound(['b'], 'c');
-      deepEqual(args, ['a', ['b'], 'c']);
+    test('should bind a function to an object', 1, function() {
+      var object = {},
+          bound = _.bind(func, object);
+
+      deepEqual(bound('a'), [object, 'a']);
+    });
+
+    test('should accept a falsey `thisArg` argument', 1, function() {
+      var actual = [],
+          values = falsey.slice(1),
+          expected = _.map(values, function(value) { return [value]; });
+
+      _.forEach(values, function(value, index) {
+        try {
+          var bound = _.bind(func, value);
+          actual.push(bound());
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should bind a function to `null` or `undefined`', 2, function() {
+      var bound = _.bind(func, null);
+      deepEqual(bound('a'), [null, 'a']);
+
+      bound = _.bind(func, undefined);
+      deepEqual(bound('b'), [undefined, 'b']);
+    });
+
+    test('should partially apply arguments ', 4, function() {
+      var object = {},
+          bound = _.bind(func, object, 'a');
+
+      deepEqual(bound(), [object, 'a']);
+
+      bound = _.bind(func, object, 'a');
+      deepEqual(bound('b'), [object, 'a', 'b']);
+
+      bound = _.bind(func, object, 'a', 'b');
+      deepEqual(bound(), [object, 'a', 'b']);
+      deepEqual(bound('c', 'd'), [object, 'a', 'b', 'c', 'd']);
+    });
+
+    test('should ignore binding when called with the `new` operator', 3, function() {
+      function Foo() {
+        return this;
+      }
+
+      var bound = _.bind(Foo, { 'a': 1 }),
+          newBound = new bound;
+
+      strictEqual(newBound.a, undefined);
+      strictEqual(bound().a, 1);
+      ok(newBound instanceof Foo);
+    });
+
+    test('should append array arguments to partially applied arguments (test in IE < 9)', 1, function() {
+      var object = {},
+          bound = _.bind(func, object, 'a');
+
+      deepEqual(bound(['b'], 'c'), [object, 'a', ['b'], 'c']);
     });
 
     test('ensure `new bound` is an instance of `func`', 1, function() {
@@ -437,13 +499,22 @@
       raises(function() { _.bind(); }, TypeError);
     });
 
-    test('should rebind functions correctly', 3, function() {
-      function func() {
-        var args = [this];
-        push.apply(args, arguments);
-        return args;
-      }
+    test('should return a wrapped value when chaining', 2, function() {
+      if (!isNpm) {
+        var object = {},
+            bound = _(func).bind({}, 'a', 'b');
 
+        ok(bound instanceof _);
+
+        var actual = bound.value()('c');
+        deepEqual(actual, [object, 'a', 'b', 'c']);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('should rebind functions correctly', 3, function() {
       var object1 = {},
           object2 = {},
           object3 = {};
@@ -484,6 +555,25 @@
       deepEqual(actual, [1, 2]);
     });
 
+    test('should accept individual method names', 1, function() {
+      var object = {
+        '_a': 1,
+        '_b': 2,
+        '_c': 3,
+        'a': function() { return this._a; },
+        'b': function() { return this._b; },
+        'c': function() { return this._c; }
+      };
+
+      _.bindAll(object, 'a', 'b');
+
+      var actual = _.map(_.functions(object), function(methodName) {
+        return object[methodName].call({});
+      });
+
+      deepEqual(actual, [1, 2, undefined]);
+    });
+
     test('should accept arrays of method names', 1, function() {
       var object = {
         '_a': 1,
@@ -508,7 +598,7 @@
     test('should work with an array `object` argument', 1, function() {
       var array = ['push', 'pop'];
       _.bindAll(array);
-      equal(array.pop, Array.prototype.pop);
+      strictEqual(array.pop, Array.prototype.pop);
     });
 
     test('should work with `arguments` objects as secondary arguments', 1, function() {
@@ -1157,31 +1247,62 @@
   QUnit.module('lodash.debounce');
 
   (function() {
-    test('subsequent "immediate" debounced calls return the last `func` result', 1, function() {
+    asyncTest('should debounce a function', 2, function() {
       if (!(isRhino && isModularize)) {
-        var debounced = _.debounce(_.identity, 32, true),
-            result = [debounced('x'), debounced('y')];
+        var count = 0;
+        var debounced = _.debounce(function() { count++; }, 32);
 
-        deepEqual(result, ['x', 'x']);
+        debounced();
+        debounced();
+        debounced();
+
+        equal(count, 0);
+
+        setTimeout(function() {
+          equal(count, 1);
+          QUnit.start();
+        }, 64);
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 
-    asyncTest('subsequent debounced calls return the last `func` result', 1, function() {
+    asyncTest('subsequent debounced calls return the last `func` result',2, function() {
       if (!(isRhino && isModularize)) {
         var debounced = _.debounce(_.identity, 32);
         debounced('x');
 
         setTimeout(function() {
           equal(debounced('y'), 'x');
+        }, 64);
+
+        setTimeout(function() {
+          equal(debounced('z'), 'y');
+          QUnit.start();
+        }, 128);
+      }
+      else {
+        skipTest(2);
+        QUnit.start();
+      }
+    });
+
+    asyncTest('subsequent "immediate" debounced calls return the last `func` result', 2, function() {
+      if (!(isRhino && isModularize)) {
+        var debounced = _.debounce(_.identity, 32, true),
+            result = [debounced('x'), debounced('y')];
+
+        deepEqual(result, ['x', 'x']);
+
+        setTimeout(function() {
+          var result = [debounced('a'), debounced('b')];
+          deepEqual(result, ['a', 'a']);
           QUnit.start();
         }, 64);
       }
       else {
-        skipTest();
-        QUnit.start();
+        skipTest(2);
       }
     });
 
@@ -3969,14 +4090,14 @@
   _.forEach(['partial', 'partialRight'], function(methodName) {
     var func = _[methodName];
 
-    test('`_.' + methodName + '` partially applies an argument, without additional arguments', 1, function() {
+    test('`_.' + methodName + '` partially applies without additional arguments', 1, function() {
       var arg = 'a',
           fn = function(x) { return x; };
 
       equal(func(fn, arg)(), arg);
     });
 
-    test('`_.' + methodName + '` partially applies an argument, with additional arguments', 1, function() {
+    test('`_.' + methodName + '` partially applies with additional arguments', 1, function() {
       var arg1 = 'a',
           arg2 = 'b',
           expected = [arg1, arg2],
@@ -5488,15 +5609,42 @@
   QUnit.module('lodash.throttle');
 
   (function() {
-    test('subsequent calls should return the result of the first call', 1, function() {
+    asyncTest('should throttle a function', 2, function() {
+      if (!(isRhino && isModularize)) {
+        var count = 0;
+        var throttled = _.throttle(function() { count++; }, 32);
+
+        throttled();
+        throttled();
+        throttled();
+
+        equal(count, 1);
+
+        setTimeout(function() {
+          equal(count, 2);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    asyncTest('subsequent calls should return the result of the first call', 2, function() {
       if (!(isRhino && isModularize)) {
         var throttled = _.throttle(function(value) { return value; }, 32),
             result = [throttled('x'), throttled('y')];
 
         deepEqual(result, ['x', 'x']);
+
+        setTimeout(function() {
+          var result = [throttled('a'), throttled('b')];
+          deepEqual(result, ['a', 'a']);
+          QUnit.start();
+        }, 64);
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 

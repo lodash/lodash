@@ -246,7 +246,7 @@ class MarkdownGenerator {
     $result = ($member ? $member . ($entry->isPlugin() ? 'prototype' : '') : '') . $entry->getCall();
     $result = preg_replace('/\(\[|\[\]/', '', $result);
     $result = preg_replace('/[\t =|\'"{}.()\]]/', '', $result);
-    $result = preg_replace('/[[#,]/', '-', $result);
+    $result = preg_replace('/[\[#,]+/', '-', $result);
     return strtolower($result);
   }
 

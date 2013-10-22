@@ -5802,7 +5802,7 @@
           var result = [throttled('a'), throttled('b')];
           deepEqual(result, ['a', 'a']);
           QUnit.start();
-        }, 64);
+        }, 96);
       }
       else {
         skipTest(2);

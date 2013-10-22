@@ -351,12 +351,68 @@
   QUnit.module('lodash.assign');
 
   (function() {
+    test('should assign properties of a source object to the destination object', 1, function() {
+      deepEqual(_.assign({ 'a': 1 }, { 'b': 2 }), { 'a': 1, 'b': 2 });
+    });
+
+    test('should assign own source properties', 1, function() {
+      function Foo() {
+        this.a = 1;
+        this.c = 3;
+      }
+
+      Foo.prototype.b = 2;
+      deepEqual(_.assign({}, new Foo), { 'a': 1, 'c': 3 });
+    });
+
+    test('should accept multiple source objects', 2, function() {
+      var expected = { 'a': 1, 'b': 2, 'c': 3 };
+      deepEqual(_.assign({ 'a': 1 }, { 'b': 2 }, { 'c': 3 }), expected);
+      deepEqual(_.assign({ 'a': 1 }, { 'b': 2, 'c': 2 }, { 'c': 3 }), expected);
+    });
+
+    test('should overwrite source properties', 1, function() {
+      var expected = { 'a': 3, 'b': 2, 'c': 1 };
+      deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
+    });
+
+    test('should assign source properties with `null` and `undefined` values', 1, function() {
+      var expected = { 'a': null, 'b': undefined, 'c': null };
+      deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
+    });
+
     test('should not error on `null` or `undefined` sources (test in IE < 9)', 1, function() {
       try {
         deepEqual(_.assign({}, null, undefined, { 'a': 1 }), { 'a': 1 });
       } catch(e) {
         ok(false);
       }
+    });
+
+    test('should work with a `callback`', 1, function() {
+      var actual = _.assign({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
+        return typeof a == 'undefined' ? b : a;
+      });
+
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
+    });
+
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.assign({ 'a': 1 }, { 'b': 2 }, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [undefined, 2]);
+    });
+
+    test('should support the `thisArg` argument', 1, function() {
+      var actual = _.assign({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
+        return typeof this[a] == 'undefined' ? this[b] : this[a];
+      }, { '1': 1, '2': 2, '3': 3 });
+
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
 
     test('should be aliased', 1, function() {
@@ -1441,6 +1497,26 @@
   QUnit.module('lodash.defaults');
 
   (function() {
+    test('should assign properties of a source object if missing on the destination object', 1, function() {
+      deepEqual(_.defaults({ 'a': 1 }, { 'a': 2, 'b': 2 }), { 'a': 1, 'b': 2 });
+    });
+
+    test('should assign own source properties', 1, function() {
+      function Foo() {
+        this.a = 1;
+        this.c = 3;
+      }
+
+      Foo.prototype.b = 2;
+      deepEqual(_.defaults({ 'c': 2 }, new Foo), { 'a': 1, 'c': 2 });
+    });
+
+    test('should accept multiple source objects', 2, function() {
+      var expected = { 'a': 1, 'b': 2, 'c': 3 };
+      deepEqual(_.defaults({ 'a': 1, 'b': 2 }, { 'b': 3 }, { 'c': 3 }), expected);
+      deepEqual(_.defaults({ 'a': 1, 'b': 2 }, { 'b': 3, 'c': 3 }, { 'c': 2 }), expected);
+    });
+
     test('should not overwrite `null` values', 1, function() {
       var actual = _.defaults({ 'a': null }, { 'a': 1 });
       strictEqual(actual.a, null);
@@ -1449,6 +1525,14 @@
     test('should overwrite `undefined` values', 1, function() {
       var actual = _.defaults({ 'a': undefined }, { 'a': 1 });
       strictEqual(actual.a, 1);
+    });
+
+    test('should not error on `null` or `undefined` sources (test in IE < 9)', 1, function() {
+      try {
+        deepEqual(_.defaults({ 'a': 1 }, null, undefined, { 'a': 2, 'b': 2 }), { 'a': 1, 'b': 2 });
+      } catch(e) {
+        ok(false);
+      }
     });
   }());
 
@@ -2483,9 +2567,24 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.function');
+  QUnit.module('lodash.functions');
 
   (function() {
+    test('should return the function names of an object', 1, function() {
+      var object = { 'a': 'a', 'b': _.identity, 'c': /x/, 'd': _.each };
+      deepEqual(_.functions(object), ['b', 'd']);
+    });
+
+    test('should include inherited functions', 1, function() {
+      function Foo() {
+        this.a = _.identity;
+        this.b = 'b'
+      }
+
+      Foo.prototype.c = function() {};
+      deepEqual(_.functions(new Foo), ['a', 'c']);
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.methods, _.functions);
     });
@@ -2883,6 +2982,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.invert');
+
+  (function() {
+    test('should invert an object', 2, function() {
+      var object = { 'a': 1, 'b': 2 },
+          actual = _.invert(object);
+
+      deepEqual(actual, { '1': 'a', '2': 'b' });
+      deepEqual(_.invert(actual), { 'a': '1', 'b': '2' });
+    });
+
+    test('should work with an object that has a `length` property', 1, function() {
+      var object = { '0': 'a', '1': 'b', 'length': 2 };
+      deepEqual(_.invert(object), { 'a': '0', 'b': '1', '2': 'length' });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.invoke');
 
   (function() {
@@ -3265,6 +3383,17 @@
 
   (function() {
     var args = arguments;
+
+    test('should return the keys of an object', 1, function() {
+      var object = { 'a': 1, 'b': 1 };
+      deepEqual(_.keys(object), ['a', 'b']);
+    });
+
+    test('should work with sparse arrays', 1, function() {
+      var array = [1];
+      array[2] = 3;
+      deepEqual(_.keys(array), ['0', '2']);
+    });
 
     test('should work with `arguments` objects (test in IE < 9)', 1, function() {
       if (!isPhantomPage) {
@@ -3944,18 +4073,19 @@
 
   (function() {
     var args = arguments,
-        object = { 'a': 1, 'b': 2 },
+        object = { 'a': 1, 'b': 2, 'c': 3 },
         expected = { 'b': 2 };
 
-    test('should accept individual property names', 1, function() {
-      deepEqual(_.omit(object, 'a'), expected);
+    test('should create an object with omitted properties', 2, function() {
+      deepEqual(_.omit(object, 'a'), { 'b': 2, 'c': 3 });
+      deepEqual(_.omit(object, 'a', 'c'), expected);
     });
 
-    test('should accept an array of property names', 1, function() {
+    test('should support picking an array of properties', 1, function() {
       deepEqual(_.omit(object, ['a', 'c']), expected);
     });
 
-    test('should accept mixes of individual and arrays of property names', 1, function() {
+    test('should support picking an array of properties and individual properties', 1, function() {
       deepEqual(_.omit(object, ['a'], 'c'), expected);
     });
 
@@ -3963,7 +4093,7 @@
       function Foo() {}
       Foo.prototype = object;
 
-      deepEqual(_.omit(new Foo, 'a'), expected);
+      deepEqual(_.omit(new Foo, 'a', 'c'), expected);
     });
 
     test('should work with `arguments` objects as secondary arguments', 1, function() {
@@ -3976,7 +4106,7 @@
 
     test('should work with a `callback` argument', 1, function() {
       var actual = _.omit(object, function(num) {
-        return num === 1;
+        return num != 2;
       });
 
       deepEqual(actual, expected);
@@ -3984,6 +4114,7 @@
 
     test('should pass the correct `callback` arguments', 1, function() {
       var args,
+          object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();
 
       var expected = lastKey == 'b'
@@ -3999,12 +4130,12 @@
 
     test('should correctly set the `this` binding', 1, function() {
       var actual = _.omit(object, function(num) {
-        return num === this.a;
-      }, { 'a': 1 });
+        return num != this.b;
+      }, { 'b': 2 });
 
       deepEqual(actual, expected);
     });
-  }('a'));
+  }('a', 'c'));
 
   /*--------------------------------------------------------------------------*/
 
@@ -4056,6 +4187,22 @@
         pass = false;
       }
       ok(pass);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.pairs');
+
+  (function() {
+    test('should create a two dimensional array of an object\'s key-value pairs', 1, function() {
+      var object = { 'a': 1, 'b': 2 };
+      deepEqual(_.pairs(object), [['a', 1], ['b', 2]]);
+    });
+
+    test('should work with an object that has a `length` property', 1, function() {
+      var object = { '0': 'a', '1': 'b', 'length': 2 };
+      deepEqual(_.pairs(object), [['0', 'a'], ['1', 'b'], ['length', 2]]);
     });
   }());
 
@@ -4210,14 +4357,27 @@
 
   (function() {
     var args = arguments,
-        object = { 'a': 1, 'b': 2 },
-        expected = { 'b': 2 };
+        object = { 'a': 1, 'b': 2, 'c': 3 },
+        expected = { 'a': 1, 'c': 3 };
+
+    test('should create an object of picked properties', 2, function() {
+      deepEqual(_.pick(object, 'a'), { 'a': 1 });
+      deepEqual(_.pick(object, 'a', 'c'), expected);
+    });
+
+    test('should support picking an array of properties', 1, function() {
+      deepEqual(_.pick(object, ['a', 'c']), expected);
+    });
+
+    test('should support picking an array of properties and individual properties', 1, function() {
+      deepEqual(_.pick(object, ['a'], 'c'), expected);
+    });
 
     test('should iterate over inherited properties', 1, function() {
       function Foo() {}
       Foo.prototype = object;
 
-      deepEqual(_.pick(new Foo, 'b'), expected);
+      deepEqual(_.pick(new Foo, 'a', 'c'), expected);
     });
 
     test('should work with `arguments` objects as secondary arguments', 1, function() {
@@ -4230,7 +4390,7 @@
 
     test('should work with a `callback` argument', 1, function() {
       var actual = _.pick(object, function(num) {
-        return num === 2;
+        return num != 2;
       });
 
       deepEqual(actual, expected);
@@ -4238,6 +4398,7 @@
 
     test('should pass the correct `callback` arguments', 1, function() {
       var args,
+          object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();
 
       var expected = lastKey == 'b'
@@ -4253,12 +4414,12 @@
 
     test('should correctly set the `this` binding', 1, function() {
       var actual = _.pick(object, function(num) {
-        return num === this.b;
+        return num != this.b;
       }, { 'b': 2 });
 
       deepEqual(actual, expected);
     });
-  }('b'));
+  }('a', 'c'));
 
   /*--------------------------------------------------------------------------*/
 
@@ -6184,6 +6345,20 @@
   }());
 
   /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.values');
+
+  (function() {
+    test('should get the values of an object', 1, function() {
+      var object = { 'a': 1, 'b': 2 };
+      deepEqual(_.values(object), [1, 2]);
+    });
+
+    test('should work with an object that has a `length` property', 1, function() {
+      var object = { '0': 'a', '1': 'b', 'length': 2 };
+      deepEqual(_.values(object), ['a', 'b', 2]);
+    });
+  }());
 
   QUnit.module('lodash.where');
 

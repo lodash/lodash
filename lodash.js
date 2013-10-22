@@ -2121,10 +2121,10 @@
      * Circle.prototype = _.create(Shape.prototype, { 'constructor': Circle });
      *
      * var circle = new Circle;
-     * circle instanceof Circle
+     * circle instanceof Circle;
      * // => true
      *
-     * circle instanceof Shape
+     * circle instanceof Shape;
      * // => true
      */
     function create(prototype, properties) {

@@ -133,6 +133,21 @@ class MarkdownGenerator {
   }
 
   /**
+   * Escapes special Markdown characters.
+   *
+   * @private
+   * @memberOf Entry
+   * @param {string} $string The string to escape.
+   * @returns {string} Returns the escaped string.
+   */
+  private function escape( $string ) {
+    $string = preg_replace('/(?<!\\\)\*/', '&#42;', $string);
+    $string = preg_replace('/(?<!\\\)\[/', '&#91;', $string);
+    $string = preg_replace('/(?<!\\\)\]/', '&#93;', $string);
+    return $string;
+  }
+
+  /**
    * Modify a string by replacing named tokens with matching assoc. array values.
    *
    * @private
@@ -188,7 +203,14 @@ class MarkdownGenerator {
       array_push(
         $result,
         $this->openTag,
-        MarkdownGenerator::interpolate("### <a id=\"#{hash}\"></a>`#{member}#{separator}#{call}`\n<a href=\"##{hash}\">#</a> [&#x24C8;](#{href} \"View in source\") [&#x24C9;][1]\n\n#{desc}", $entry)
+        MarkdownGenerator::interpolate("### <a id=\"#{hash}\"></a>`#{member}#{separator}#{call}`\n<a href=\"##{hash}\">#</a> [&#x24C8;](#{href} \"View in source\") [&#x24C9;][1]\n\n#{desc}", array(
+          'call' => $entry->getCall(),
+          'desc' => $this->escape($entry->getDesc()),
+          'hash' => $entry->hash,
+          'href' => $entry->href,
+          'member' => $entry->member,
+          'separator' => $entry->separator
+        ))
       );
 
       // @alias
@@ -204,10 +226,10 @@ class MarkdownGenerator {
         array_push($result, '', '#### Arguments');
         foreach ($params as $index => $param) {
           $result[] = MarkdownGenerator::interpolate('#{num}. `#{name}` (#{type}): #{desc}', array(
-            'desc' => $param[2],
+            'desc' => $this->escape($param[2]),
             'name' => $param[1],
             'num'  => $index + 1,
-            'type' => preg_replace('/(?<!\\\)(\*)/', '\\\$1', $param[0])
+            'type' => $this->escape($param[0])
           ));
         }
       }
@@ -217,8 +239,8 @@ class MarkdownGenerator {
           $result, '',
           '#### Returns',
           MarkdownGenerator::interpolate('(#{type}): #{desc}', array(
-            'desc' => $returns[1],
-            'type' => preg_replace('/(?<!\\\)(\*)/', '\\\$1', $returns[0])
+            'desc' => $this->escape($returns[1]),
+            'type' => $this->escape($returns[0])
           ))
         );
       }
@@ -347,6 +369,7 @@ class MarkdownGenerator {
     foreach ($api as $entry) {
       $entry->hash = $this->getHash($entry);
       $entry->href = $this->getLineUrl($entry);
+      $entry->separator = '';
 
       $member = $entry->getMembers(0);
       $member = ($member ? $member . $this->getSeparator($entry) : '') . $entry->getName();
@@ -448,7 +471,7 @@ class MarkdownGenerator {
         }
         // assign TOC hash
         if (count($result) == 2) {
-          $toc = $category;
+          $toc = strtolower($category);
         }
         // add category
         array_push(

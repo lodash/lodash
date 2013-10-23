@@ -47,7 +47,7 @@ The full changelog for this release is available on our [wiki](https://github.co
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.partialRight](http://lodash.com/docs#partialRight) for [partial application](http://lodash.com/docs#partial) from the right
- * [_.pull](http://lodash.com/docs#pull) & [_.remove](http://lodash.com/docs#remove) for mutating arrays
+ * [_.pull](http://lodash.com/docs#pull), [_.remove](http://lodash.com/docs#remove), [_.append](http://lodash.com/docs#append) & [_.prepend](http://lodash.com/docs#prepend) for mutating arrays
  * [_.random](http://lodash.com/docs#random) supports returning floating-point numbers
  * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking
  * [_.support](http://lodash.com/docs#support) for flagging environment features

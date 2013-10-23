@@ -5000,6 +5000,75 @@
     }
 
     /**
+     * Appends an element or array of elements into `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to modify.
+     * @param {Array|*} The element or array of elements to append into array.
+     * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [1, 2];
+     * _.append(array, 3);
+     *
+     *
+     * console.log(array);
+     * // => [1, 2, 3]
+     *
+     * _.append(array, [4, 5]);
+     *
+     * console.log();
+     * // => [1, 2, 3, 4, 5]]
+     */
+    function append(array, data) {
+      if (!(isArray(array) || isArguments(array))) {
+        return array;
+      } else if (isArray(data) || isArguments(data)) {
+        push.apply(array, data);
+      } else {
+        push.call(array, data);
+      }
+
+      return array;
+    }
+
+    /**
+     * Prepend an element or array of elements into `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to modify.
+     * @param {Array|*} The element or array of elements to prepend into array.
+     * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [4, 5];
+     * _.prepend(array, 3);
+     *
+     * console.log(array);
+     * // => [3, 4, 5];
+     *
+     * _.prepend(array, [1, 2]);
+     *
+     * console.log(array);
+     * // => [1, 2, 3, 4, 5];
+     */
+    function prepend(array, data) {
+      if (!(isArray(array) || isArguments(array))) {
+        return array;
+      } else if (isArray(data) || isArguments(data)) {
+        unshift.apply(array, data);
+      } else {
+        unshift.call(array, data);
+      }
+
+      return array;
+    }
+
+    /**
      * The opposite of `_.initial` this method gets all but the first element or
      * first `n` elements of an array. If a callback function is provided elements
      * at the beginning of the array are excluded from the result as long as the
@@ -6640,6 +6709,8 @@
     lodash.range = range;
     lodash.reject = reject;
     lodash.remove = remove;
+    lodash.append = append;
+    lodash.prepend = prepend;
     lodash.rest = rest;
     lodash.shuffle = shuffle;
     lodash.sortBy = sortBy;

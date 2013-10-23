@@ -5,7 +5,7 @@ node_js:
   - "0.10"
 env:
   global:
-    - BIN="node" BUILD=false MAKE=false OPTION=""
+    - BIN="node" BUILD=false MAKE=false OPTION="" SAUCELABS_BROWSER=false
   matrix:
     - BUILD="compat"
     - BUILD="modern"
@@ -14,6 +14,7 @@ env:
     - BIN="phantomjs" BUILD="compat"
     - BIN="phantomjs" BUILD="legacy"
     - BIN="phantomjs" BUILD="mobile"
+    - SAUCELABS_BROWSER="['Windows 7', 'firefox', '20']"
 matrix:
   include:
     - node_js: "0.10"
@@ -47,6 +48,7 @@ before_install:
   - "[ $BIN == 'rhino' ] && echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7R5/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino || true"
   - "[ $BIN == 'ringo' ] && wget http://ringojs.org/downloads/ringojs-0.9.zip && sudo unzip ringojs-0.9 -d /opt && rm ringojs-0.9.zip || true"
   - "[ $BIN == 'ringo' ] && sudo ln -s /opt/ringojs-0.9/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo || true"
+  - "[ '$SAUCELABS_BROWSER' != false ] && npm install connect request || true"
 script:
   - "[ $BIN == 'istanbul' ] && $BIN cover ./test/test.js || true"
   - "[ $BUILD != false ] && [ $BUILD != 'compat' ] && MAKE=true || true"
@@ -56,3 +58,4 @@ script:
   - "[ $BUILD != false ] && cd ./test || true" 
   - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
+  - "[ '$SAUCELABS_BROWSER' != false ] && node ./saucelabs.js || true"

@@ -3,6 +3,11 @@ node_js:
   - "0.6"
   - "0.8"
   - "0.10"
+addons:
+  sauce_connect:
+    username: "jdalton"
+    access_key:
+      secure: "YlDT8IjzhjM6jaCjALNpICbyV6Uo85Nld5xgn8K0iDt/buoURhhczAxCpkZ0cmqSEVAwq249k80Xj/ZP86gYfVI7BxjdNc7TbozqenM5GRk7JwfuV6iDYjinPA9GYV6u0xYeiobV0frxc57om4ji0gyfVbBIYkfp1ANulGAxNjc="
 env:
   global:
     - BIN="node" BUILD=false MAKE=false OPTION=""

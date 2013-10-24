@@ -546,8 +546,7 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random,
-        nativeSlice = arrayRef.slice;
+        nativeRandom = Math.random;
 
     /** Detect various environments */
     var isIeOpera = reNative.test(context.attachEvent),
@@ -1588,7 +1587,7 @@
       }
       var bindData = func && func.__bindData__;
       if (bindData && bindData !== true) {
-        bindData = nativeSlice.call(bindData);
+        bindData = bindData.slice();
 
         // set `thisBinding` is not previously bound
         if (isBind && !(bindData[1] & 1)) {
@@ -1634,7 +1633,7 @@
               thisBinding = isBind ? thisArg : this;
 
           if (isCurry || isPartial || isPartialRight) {
-            args = nativeSlice.call(args);
+            args = slice(args);
             if (isPartial) {
               unshift.apply(args, partialArgs);
             }
@@ -1661,7 +1660,7 @@
           return func.apply(thisBinding, args);
         };
       }
-      setBindData(bound, nativeSlice.call(arguments));
+      setBindData(bound, slice(arguments));
       return bound;
     }
 
@@ -2916,7 +2915,7 @@
       } else if (length > 2 && typeof args[length - 1] == 'function') {
         callback = args[--length];
       }
-      var sources = nativeSlice.call(arguments, 1, length),
+      var sources = slice(arguments, 1, length),
           index = -1,
           stackA = getArray(),
           stackB = getArray();
@@ -3672,7 +3671,7 @@
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
     function invoke(collection, methodName) {
-      var args = nativeSlice.call(arguments, 2),
+      var args = slice(arguments, 2),
           index = -1,
           isFunc = typeof methodName == 'function',
           length = collection ? collection.length : 0,
@@ -5223,7 +5222,7 @@
      * // => [2, 3, 4]
      */
     function without(array) {
-      return difference(array, nativeSlice.call(arguments, 1));
+      return difference(array, slice(arguments, 1));
     }
 
     /**
@@ -5349,7 +5348,7 @@
      */
     function bind(func, thisArg) {
       return arguments.length > 2
-        ? createBound(func, 17, nativeSlice.call(arguments, 2), null, thisArg)
+        ? createBound(func, 17, slice(arguments, 2), null, thisArg)
         : createBound(func, 1, null, null, thisArg);
     }
 
@@ -5425,7 +5424,7 @@
      */
     function bindKey(object, key) {
       return arguments.length > 2
-        ? createBound(key, 19, nativeSlice.call(arguments, 2), null, object)
+        ? createBound(key, 19, slice(arguments, 2), null, object)
         : createBound(key, 3, null, null, object);
     }
 
@@ -5724,7 +5723,7 @@
       if (!isFunction(func)) {
         throw new TypeError;
       }
-      var args = nativeSlice.call(arguments, 1);
+      var args = slice(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
     }
     // use `setImmediate` if available in Node.js
@@ -5758,7 +5757,7 @@
       if (!isFunction(func)) {
         throw new TypeError;
       }
-      var args = nativeSlice.call(arguments, 2);
+      var args = slice(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
     }
 
@@ -5871,7 +5870,7 @@
      * // => 'hi fred'
      */
     function partial(func) {
-      return createBound(func, 16, nativeSlice.call(arguments, 1));
+      return createBound(func, 16, slice(arguments, 1));
     }
 
     /**
@@ -5902,7 +5901,7 @@
      * // => { '_': _, 'jq': $ }
      */
     function partialRight(func) {
-      return createBound(func, 32, null, nativeSlice.call(arguments, 1));
+      return createBound(func, 32, null, slice(arguments, 1));
     }
 
     /**
@@ -6512,12 +6511,10 @@
      * @example
      *
      * _([1, 2, 3, 4])
-     *  .filter(function(num) { return num % 2 == 0; })
-     *  .tap(function(array) { console.log(array); })
-     *  .map(function(num) { return num * num; })
+     *  .tap(function(array) { array.pop(); })
+     *  .reverse()
      *  .value();
-     * // => // [2, 4] (logged)
-     * // => [4, 16]
+     * // => [3, 2, 1]
      */
     function tap(value, interceptor) {
       interceptor(value);

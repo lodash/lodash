@@ -524,13 +524,13 @@
       var bound = _.bind(func, null),
           actual = bound('a');
 
-      ok(actual[0] === null || actual[0] === root);
+      ok(actual[0] === null || actual[0] && actual[0].Array);
       equal(actual[1], 'a');
 
       bound = _.bind(func, undefined);
       actual = bound('b');
 
-      ok(actual[0] === undefined || actual[0] === root);
+      ok(actual[0] === undefined || actual[0] && actual[0].Array);
       equal(actual[1], 'b');
     });
 
@@ -6008,33 +6008,33 @@
     test('should work with custom `_.templateSettings` delimiters', 1, function() {
       var settings = _.clone(_.templateSettings);
 
-      _.templateSettings = {
+      _.assign(_.templateSettings, {
         'escape': /\{\{-([\s\S]+?)\}\}/g,
         'evaluate': /\{\{([\s\S]+?)\}\}/g,
         'interpolate': /\{\{=([\s\S]+?)\}\}/g
-      };
+      });
 
       var compiled = _.template('<ul>{{ _.each(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>'),
           expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
       equal(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
-      _.extend(_.templateSettings, settings);
+      _.assign(_.templateSettings, settings);
     });
 
     test('should work with `_.templateSettings` delimiters containing special characters', 1, function() {
       var settings = _.clone(_.templateSettings);
 
-      _.templateSettings = {
+      _.assign(_.templateSettings, {
         'escape': /<\?-([\s\S]+?)\?>/g,
         'evaluate': /<\?([\s\S]+?)\?>/g,
         'interpolate': /<\?=([\s\S]+?)\?>/g
-      };
+      });
 
       var compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>'),
           expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
       equal(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
-      _.extend(_.templateSettings, settings);
+      _.assign(_.templateSettings, settings);
     });
 
     test('supports recursive calls', 1, function() {

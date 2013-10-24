@@ -173,26 +173,23 @@
         console.log('    Finished in ' + details.runtime + ' milliseconds.');
         console.log(hr);
 
-        var fails = details.failed,
-            error = fails + ' of ' + details.total + ' tests failed.';
-
         // exit out of Node.js or PhantomJS
         try {
           var process = context.process || context.phantom;
-          if (fails) {
-            console.error('Error: ' + error);
+          if (details.failed) {
             process.exit(1);
           } else {
             process.exit(0);
           }
-        } catch(e) {
-          if (fails) {
-            throw new Error(error);
-          }
-        }
-        // exit out of Narhwal, Rhino, or RingoJS
+        } catch(e) { }
+
+        // exit out of Narwhal, Rhino, or RingoJS
         try {
-          quit();
+          if (details.failed) {
+            java.lang.System.exit(1);
+          } else {
+            quit();
+          }
         } catch(e) { }
       };
     }());

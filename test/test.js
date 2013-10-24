@@ -505,7 +505,7 @@
 
     test('should accept a falsey `thisArg` argument', 1, function() {
       var actual = [],
-          values = falsey.slice(1),
+          values = _.reject(falsey.slice(1), function(value) { return value == null; }),
           expected = _.map(values, function(value) { return [value]; });
 
       _.forEach(values, function(value, index) {
@@ -515,15 +515,23 @@
         } catch(e) { }
       });
 
-      deepEqual(actual, expected);
+      ok(_.every(actual, function(value, index) {
+        return _.isEqual(value, expected[index]);
+      }));
     });
 
-    test('should bind a function to `null` or `undefined`', 2, function() {
-      var bound = _.bind(func, null);
-      deepEqual(bound('a'), [null, 'a']);
+    test('should bind a function to `null` or `undefined`', 4, function() {
+      var bound = _.bind(func, null),
+          actual = bound('a');
+
+      ok(actual[0] === null || actual[0] === root);
+      equal(actual[1], 'a');
 
       bound = _.bind(func, undefined);
-      deepEqual(bound('b'), [undefined, 'b']);
+      actual = bound('b');
+
+      ok(actual[0] === undefined || actual[0] === root);
+      equal(actual[1], 'b');
     });
 
     test('should partially apply arguments ', 4, function() {
@@ -3072,7 +3080,7 @@
       strictEqual(_.isArguments(args), true);
     });
 
-    test('should return `false` for non `arguments` objects', 7, function() {
+    test('should return `false` for non `arguments` objects', 8, function() {
       var actual = [],
           expected = _.map(falsey, function() { return false; });
 
@@ -3083,6 +3091,7 @@
       strictEqual(_.isArguments([1, 2, 3]), false);
       strictEqual(_.isArguments(true), false);
       strictEqual(_.isArguments(new Date), false);
+      strictEqual(_.isArguments(_), false);
       strictEqual(_.isArguments({ '0': 1, 'length': 1 }), false);
       strictEqual(_.isArguments(/x/), false);
       strictEqual(_.isArguments('a'), false);
@@ -3111,7 +3120,7 @@
       strictEqual(_.isArray([1, 2, 3]), true);
     });
 
-    test('should return `false` for non arrays', 7, function() {
+    test('should return `false` for non arrays', 8, function() {
       var actual = [],
           expected = _.map(falsey, function() { return false; });
 
@@ -3122,6 +3131,7 @@
       strictEqual(_.isArray(args), false);
       strictEqual(_.isArray(true), false);
       strictEqual(_.isArray(new Date), false);
+      strictEqual(_.isArray(_), false);
       strictEqual(_.isArray({ '0': 1, 'length': 1 }), false);
       strictEqual(_.isArray(/x/), false);
       strictEqual(_.isArray('a'), false);
@@ -3132,6 +3142,91 @@
     test('should work with arrays from an iframe', 1, function() {
       if (document) {
         strictEqual(_.isArray(_._array), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isBoolean');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for booleans', 4, function() {
+      strictEqual(_.isBoolean(true), true);
+      strictEqual(_.isBoolean(false), true);
+      strictEqual(_.isBoolean(new Boolean(true)), true);
+      strictEqual(_.isBoolean(new Boolean(false)), true);
+    });
+
+    test('should return `false` for non booleans', 9, function() {
+      var actual = [],
+          expected = _.map(falsey, function(value) { return value === false; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isBoolean(value) : _.isBoolean());
+      });
+
+      strictEqual(_.isBoolean(args), false);
+      strictEqual(_.isBoolean([1, 2, 3]), false);
+      strictEqual(_.isBoolean(new Date), false);
+      strictEqual(_.isBoolean(_), false);
+      strictEqual(_.isBoolean({ 'a': 1 }), false);
+      strictEqual(_.isBoolean(0), false);
+      strictEqual(_.isBoolean(/x/), false);
+      strictEqual(_.isBoolean('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with boolean from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isBoolean(_._boolean), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isDate');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for dates', 1, function() {
+      strictEqual(_.isDate(new Date), true);
+    });
+
+    test('should return `false` for non dates', 9, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return false; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isDate(value) : _.isDate());
+      });
+
+      strictEqual(_.isDate(args), false);
+      strictEqual(_.isDate([1, 2, 3]), false);
+      strictEqual(_.isDate(true), false);
+      strictEqual(_.isDate(_), false);
+      strictEqual(_.isDate({ 'a': 1 }), false);
+      strictEqual(_.isDate(0), false);
+      strictEqual(_.isDate(/x/), false);
+      strictEqual(_.isDate('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with arrays from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isDate(_._date), true);
       }
       else {
         skipTest();
@@ -3153,6 +3248,15 @@
       strictEqual(_.isElement({ 'nodeType': [1] }), false);
       strictEqual(_.isElement({ 'nodeType': '1' }), false);
       strictEqual(_.isElement({ 'nodeType': '001' }), false);
+    });
+
+    test('should work with elements from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isElement(_._element), true);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -3365,23 +3469,43 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.isObject');
+  QUnit.module('lodash.isFunction');
 
   (function() {
-    test('should avoid V8 bug #2291', 1, function() {
-      // trigger V8 bug
-      // http://code.google.com/p/v8/issues/detail?id=2291
-      var obj = {},
-          str = 'foo';
+    var args = arguments;
 
-      // 1: Useless comparison statement, this is half the trigger
-      obj == obj;
-      // 2: Initial check with object, this is the other half of the trigger
-      _.isObject(obj);
-
-      equal(_.isObject(str), false);
+    test('should return `true` for functions', 1, function() {
+      strictEqual(_.isFunction(_), true);
     });
-  }());
+
+    test('should return `false` for non functions', 8, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return false; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isFunction(value) : _.isFunction());
+      });
+
+      strictEqual(_.isFunction(args), false);
+      strictEqual(_.isFunction([1, 2, 3]), false);
+      strictEqual(_.isFunction(true), false);
+      strictEqual(_.isFunction({ 'a': 1 }), false);
+      strictEqual(_.isFunction(0), false);
+      strictEqual(_.isFunction(/x/), false);
+      strictEqual(_.isFunction('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with arrays from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isFunction(_._function), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -3398,10 +3522,46 @@
   QUnit.module('lodash.isNumber');
 
   (function() {
+    var args = arguments;
+
+    test('should return `true` for numbers', 2, function() {
+      strictEqual(_.isNumber(0), true);
+      strictEqual(_.isNumber(new Number(0)), true);
+    });
+
+    test('should return `false` for non numbers', 9, function() {
+      var actual = [],
+          expected = _.map(falsey, function(value) { return typeof value == 'number'; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isNumber(value) : _.isNumber());
+      });
+
+      strictEqual(_.isNumber(args), false);
+      strictEqual(_.isNumber([1, 2, 3]), false);
+      strictEqual(_.isNumber(true), false);
+      strictEqual(_.isNumber(new Date), false);
+      strictEqual(_.isNumber(_), false);
+      strictEqual(_.isNumber({ 'a': 1 }), false);
+      strictEqual(_.isNumber(/x/), false);
+      strictEqual(_.isNumber('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with arrays from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isNumber(_._number), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+
     test('should avoid `[xpconnect wrapped native prototype]` in Firefox', 1, function() {
       strictEqual(_.isNumber(+"2"), true);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -3410,7 +3570,7 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for object', 10, function() {
+    test('should return `true` for objects', 10, function() {
       strictEqual(_.isObject(args), true);
       strictEqual(_.isObject([1, 2, 3]), true);
       strictEqual(_.isObject(new Boolean(false)), true);
@@ -3441,17 +3601,34 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with arrays from an iframe', 5, function() {
+    test('should work with arrays from an iframe', 8, function() {
       if (document) {
         strictEqual(_.isObject(_._object), true);
         strictEqual(_.isObject(_._boolean), true);
+        strictEqual(_.isObject(_._date), true);
         strictEqual(_.isObject(_._element), true);
+        strictEqual(_.isObject(_._function), true);
         strictEqual(_.isObject(_._number), true);
+        strictEqual(_.isObject(_._regexp), true);
         strictEqual(_.isObject(_._string), true);
       }
       else {
         skipTest(5);
       }
+    });
+
+    test('should avoid V8 bug #2291', 1, function() {
+      // trigger V8 bug
+      // http://code.google.com/p/v8/issues/detail?id=2291
+      var obj = {},
+          str = 'foo';
+
+      // 1: Useless comparison statement, this is half the trigger
+      obj == obj;
+      // 2: Initial check with object, this is the other half of the trigger
+      _.isObject(obj);
+
+      equal(_.isObject(str), false);
     });
   }(1, 2, 3));
 
@@ -3495,49 +3672,47 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('isType checks');
+  QUnit.module('lodash.isString');
 
-  _.forEach([
-    'isArguments',
-    'isArray',
-    'isBoolean',
-    'isDate',
-    'isElement',
-    'isEmpty',
-    'isEqual',
-    'isFinite',
-    'isFunction',
-    'isNaN',
-    'isNull',
-    'isNumber',
-    'isObject',
-    'isRegExp',
-    'isString',
-    'isUndefined'
-  ],
-  function(methodName) {
-    var func = _[methodName];
+  (function() {
+    var args = arguments;
 
-    test('`_.' + methodName + '` should return a boolean', 15, function() {
-      var expected = 'boolean';
-
-      equal(typeof func(arguments), expected);
-      equal(typeof func([]), expected);
-      equal(typeof func(true), expected);
-      equal(typeof func(false), expected);
-      equal(typeof func(new Date), expected);
-      equal(typeof func(body), expected);
-      equal(typeof func({}), expected);
-      equal(typeof func(undefined), expected);
-      equal(typeof func(Infinity), expected);
-      equal(typeof func(_), expected);
-      equal(typeof func(NaN), expected);
-      equal(typeof func(null), expected);
-      equal(typeof func(0), expected);
-      equal(typeof func({ 'a': 1 }), expected);
-      equal(typeof func('a'), expected);
+    test('should return `true` for strings', 2, function() {
+      strictEqual(_.isString('a'), true);
+      strictEqual(_.isString(new String('a')), true);
     });
-  });
+
+    test('should return `false` for non strings', 9, function() {
+      var actual = [],
+          expected = _.map(falsey, function(value) { return value === ''; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isString(value) : _.isString());
+      });
+
+      strictEqual(_.isString(args), false);
+      strictEqual(_.isString([1, 2, 3]), false);
+      strictEqual(_.isString(true), false);
+      strictEqual(_.isString(new Date), false);
+      strictEqual(_.isString(_), false);
+      strictEqual(_.isString({ '0': 1, 'length': 1 }), false);
+      strictEqual(_.isString(0), false);
+      strictEqual(_.isString(/x/), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with arrays from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isString(_._string), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
 
   (function() {
     test('should return `false` for subclassed values', 7, function() {
@@ -5640,14 +5815,19 @@
 
   (function() {
     test('should intercept and return the given value', 2, function() {
-      var intercepted;
+      if (!isNpm) {
+        var intercepted;
 
-      var actual = _.tap('a', function(value) {
-        intercepted = value;
-      });
+        var actual = _.tap('a', function(value) {
+          intercepted = value;
+        });
 
-      equal(actual, 'a');
-      equal(intercepted, 'a');
+        equal(actual, 'a');
+        equal(intercepted, 'a');
+      }
+      else {
+        skipTest(2);
+      }
     });
 
     test('should return intercept unwrapped values and return wrapped values when chaining', 2, function() {
@@ -5687,11 +5867,8 @@
     });
 
     test('should work correctly with `this` references', 2, function() {
-      var compiled = _.template('a<%= this.b %>c');
-
-      root.b = 'b';
+      var compiled = _.template('a<%= this.String("b") %>c');
       equal(compiled(), 'abc');
-      delete root.b;
 
       var object = { 'b': 'B' };
       object.compiled = _.template('A<%= this.b %>C', null, { 'variable': 'obj' });
@@ -6015,7 +6192,7 @@
           var result = [throttled('a'), throttled('b')];
           deepEqual(result, ['a', 'a']);
           QUnit.start();
-        }, 96);
+        }, 128);
       }
       else {
         skipTest(2);

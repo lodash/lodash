@@ -3183,7 +3183,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with boolean from an iframe', 1, function() {
+    test('should work with booleans from an iframe', 1, function() {
       if (document) {
         strictEqual(_.isBoolean(_._boolean), true);
       }
@@ -3224,7 +3224,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with arrays from an iframe', 1, function() {
+    test('should work with dates from an iframe', 1, function() {
       if (document) {
         strictEqual(_.isDate(_._date), true);
       }
@@ -3451,10 +3451,26 @@
   QUnit.module('lodash.isFinite');
 
   (function() {
-    test('should return `false` for non-numeric values', 6, function() {
+    test('should return `true` for finite values', 5, function() {
+      strictEqual(_.isFinite(0), true);
+      strictEqual(_.isFinite(1), true);
+      strictEqual(_.isFinite(3.14), true);
+      strictEqual(_.isFinite(-1), true);
+      strictEqual(_.isFinite(new Number(0)), true);
+    });
+
+    test('should return `false` for non-finite values', 3, function() {
+      strictEqual(_.isFinite(NaN), false);
+      strictEqual(_.isFinite(Infinity), false);
+      strictEqual(_.isFinite(-Infinity), false);
+    });
+
+    test('should return `false` for non-numeric values', 8, function() {
       strictEqual(_.isFinite(null), false);
+      strictEqual(_.isFinite(undefined), false);
       strictEqual(_.isFinite([]), false);
       strictEqual(_.isFinite(true), false);
+      strictEqual(_.isFinite(new Date), false);
       strictEqual(_.isFinite(''), false);
       strictEqual(_.isFinite(' '), false);
       strictEqual(_.isFinite('2px'), false);
@@ -3464,6 +3480,15 @@
       strictEqual(_.isFinite('2'), true);
       strictEqual(_.isFinite('0'), true);
       strictEqual(_.isFinite('08'), true);
+    });
+
+    test('should work with numbers from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isFinite(_._number), true);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -3497,7 +3522,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with arrays from an iframe', 1, function() {
+    test('should work with functions from an iframe', 1, function() {
       if (document) {
         strictEqual(_.isFunction(_._function), true);
       }
@@ -3549,7 +3574,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with arrays from an iframe', 1, function() {
+    test('should work with numbers from an iframe', 1, function() {
       if (document) {
         strictEqual(_.isNumber(_._number), true);
       }
@@ -3601,7 +3626,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with arrays from an iframe', 8, function() {
+    test('should work with objects from an iframe', 8, function() {
       if (document) {
         strictEqual(_.isObject(_._object), true);
         strictEqual(_.isObject(_._boolean), true);
@@ -3613,7 +3638,7 @@
         strictEqual(_.isObject(_._string), true);
       }
       else {
-        skipTest(5);
+        skipTest(8);
       }
     });
 
@@ -3672,6 +3697,48 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isRegExp');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for regexes', 2, function() {
+      strictEqual(_.isRegExp(/x/), true);
+      strictEqual(_.isRegExp(RegExp('x')), true);
+    });
+
+    test('should return `false` for non regexes', 9, function() {
+      var actual = [],
+          expected = _.map(falsey, function(value) { return false; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isRegExp(value) : _.isRegExp());
+      });
+
+      strictEqual(_.isRegExp(args), false);
+      strictEqual(_.isRegExp([1, 2, 3]), false);
+      strictEqual(_.isRegExp(true), false);
+      strictEqual(_.isRegExp(new Date), false);
+      strictEqual(_.isRegExp(_), false);
+      strictEqual(_.isRegExp({ 'a': 1 }), false);
+      strictEqual(_.isRegExp(0), false);
+      strictEqual(_.isRegExp('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with regexes from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isRegExp(_._regexp), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isString');
 
   (function() {
@@ -3702,7 +3769,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with arrays from an iframe', 1, function() {
+    test('should work with strings from an iframe', 1, function() {
       if (document) {
         strictEqual(_.isString(_._string), true);
       }

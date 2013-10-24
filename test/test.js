@@ -193,7 +193,23 @@
     body.appendChild(iframe);
 
     var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
-    idoc.write("<script>parent._._object = { 'a': 1, 'b': 2, 'c': 3 };<\/script>");
+    idoc.write([
+      '<script>',
+      'parent._._arguments = (function() { return arguments; }(1, 2, 3));',
+      'parent._._array = [1, 2, 3];',
+      'parent._._boolean = new Boolean(false);',
+      'parent._._date = new Date;',
+      "parent._._element = document.createElement('div');",
+      'parent._._function = function() {};',
+      'parent._._nan = NaN;',
+      'parent._._null = null;',
+      'parent._._number = new Number(0);',
+      "parent._._object = { 'a': 1, 'b': 2, 'c': 3 };",
+      'parent._._regexp = /x/;',
+      "parent._._string = new String('a');",
+      'parent._._undefined = undefined;',
+      '<\/script>'
+    ].join('\n'));
     idoc.close();
   }());
 
@@ -923,7 +939,7 @@
         var actual = func(regexp);
         equal(actual.lastIndex, 3);
       });
-    })
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -2659,6 +2675,28 @@
   QUnit.module('lodash.has');
 
   (function() {
+    test('should check for own properties', 2, function() {
+      var object = { 'a': 1 };
+      strictEqual(_.has(object, 'a'), true);
+      strictEqual(_.has(object, 'b'), false);
+    });
+
+    test('should not use the `hasOwnProperty` method of the object', 1, function() {
+      var object = { 'hasOwnProperty': null, 'a': 1 };
+      strictEqual(_.has(object, 'a'), true);
+    });
+
+    test('should not check for inherited properties', 1, function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+      strictEqual(_.has(new Foo, 'a'), false);
+    });
+
+    test('should work with functions', 1, function() {
+      function Foo() {}
+      strictEqual(_.has(Foo, 'prototype'), true);
+    });
+
     test('should return `false` for primitives', 1, function() {
       var actual = [],
           values = falsey.concat(1, 'a'),
@@ -3034,8 +3072,31 @@
       strictEqual(_.isArguments(args), true);
     });
 
-    test('should return `false` for arrays', 1, function() {
+    test('should return `false` for non `arguments` objects', 7, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return false; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isArguments(value) : _.isArguments());
+      });
+
       strictEqual(_.isArguments([1, 2, 3]), false);
+      strictEqual(_.isArguments(true), false);
+      strictEqual(_.isArguments(new Date), false);
+      strictEqual(_.isArguments({ '0': 1, 'length': 1 }), false);
+      strictEqual(_.isArguments(/x/), false);
+      strictEqual(_.isArguments('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with `arguments` objects from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isArguments(_._arguments), true);
+      }
+      else {
+        skipTest();
+      }
     });
   }(1, 2, 3));
 
@@ -3050,8 +3111,31 @@
       strictEqual(_.isArray([1, 2, 3]), true);
     });
 
-    test('should return `false` for `arguments` objects', 1, function() {
+    test('should return `false` for non arrays', 7, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return false; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isArray(value) : _.isArray());
+      });
+
       strictEqual(_.isArray(args), false);
+      strictEqual(_.isArray(true), false);
+      strictEqual(_.isArray(new Date), false);
+      strictEqual(_.isArray({ '0': 1, 'length': 1 }), false);
+      strictEqual(_.isArray(/x/), false);
+      strictEqual(_.isArray('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with arrays from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isArray(_._array), true);
+      }
+      else {
+        skipTest();
+      }
     });
   }(1, 2, 3));
 
@@ -3078,6 +3162,25 @@
 
   (function() {
     var args = arguments;
+
+    test('should return `true` for empty or falsey values', 3, function() {
+      var actual = [],
+          expected = _.map(empties, function() { return true; });
+
+      _.forEach(empties, function(value) {
+        actual.push(_.isEmpty(value));
+      });
+
+      strictEqual(_.isEmpty(), true);
+      strictEqual(_.isEmpty(/x/), true);
+      deepEqual(actual, expected);
+    });
+
+    test('should return `false` for non-empty values', 3, function() {
+      strictEqual(_.isEmpty([0]), false);
+      strictEqual(_.isEmpty({ 'a': 0 }), false);
+      strictEqual(_.isEmpty('a'), false);
+    });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
       equal(_.isEmpty(shadowedObject), false);
@@ -3110,6 +3213,24 @@
         skipTest();
       }
     });
+
+    test('should return an unwrapped value when intuitively chaining', 1, function() {
+      if (!isNpm) {
+        strictEqual(_({}).isEmpty(), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_({}).chain().isEmpty() instanceof _);
+      }
+      else {
+        skipTest();
+      }
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -3136,10 +3257,11 @@
 
     test('should return `true` for like-objects from different documents', 1, function() {
       // ensure `_._object` is assigned (unassigned in Opera 10.00)
-      if (_._object) {
+      if (document) {
         var object = { 'a': 1, 'b': 2, 'c': 3 };
         strictEqual(_.isEqual(object, _._object), true);
-      } else {
+      }
+      else {
         skipTest();
       }
     });
@@ -3180,14 +3302,18 @@
       strictEqual(actual, true);
     });
 
-    test('should return a boolean value even if `callback` does not', 8, function() {
+    test('should return a boolean value even if `callback` does not', 2, function() {
       var actual = _.isEqual('a', 'a', function() { return 'a'; });
       strictEqual(actual, true);
 
+      var expected = _.map(falsey, function() { return false; });
+      actual = [];
+
       _.forEach(falsey, function(value) {
-        var actual = _.isEqual('a', 'b', function() { return value; });
-        strictEqual(actual, false);
+        actual.push(_.isEqual('a', 'b', function() { return value; }));
       });
+
+      deepEqual(actual, expected);
     });
 
     test('should ensure `callback` is a function', 1, function() {
@@ -3276,6 +3402,58 @@
       strictEqual(_.isNumber(+"2"), true);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isObject');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for object', 10, function() {
+      strictEqual(_.isObject(args), true);
+      strictEqual(_.isObject([1, 2, 3]), true);
+      strictEqual(_.isObject(new Boolean(false)), true);
+      strictEqual(_.isObject(new Date), true);
+      strictEqual(_.isObject(_), true);
+      strictEqual(_.isObject({ 'a': 1 }), true);
+      strictEqual(_.isObject(new Number(0)), true);
+      strictEqual(_.isObject(/x/), true);
+      strictEqual(_.isObject(new String('a')), true);
+
+      if (document) {
+        strictEqual(_.isObject(body), true);
+      } else {
+        skipTest(1);
+      }
+    });
+
+    test('should return `false` for non objects', 3, function() {
+      var actual = [],
+          expected = _.map(falsey, function() { return false; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isObject(value) : _.isObject());
+      });
+
+      strictEqual(_.isObject(true), false);
+      strictEqual(_.isObject('a'), false);
+      deepEqual(actual, expected);
+    });
+
+    test('should work with arrays from an iframe', 5, function() {
+      if (document) {
+        strictEqual(_.isObject(_._object), true);
+        strictEqual(_.isObject(_._boolean), true);
+        strictEqual(_.isObject(_._element), true);
+        strictEqual(_.isObject(_._number), true);
+        strictEqual(_.isObject(_._string), true);
+      }
+      else {
+        skipTest(5);
+      }
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -5453,6 +5631,41 @@
       ];
 
       ok(!_.size(_.difference(_.keys(_.support), props)));
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.tap');
+
+  (function() {
+    test('should intercept and return the given value', 2, function() {
+      var intercepted;
+
+      var actual = _.tap('a', function(value) {
+        intercepted = value;
+      });
+
+      equal(actual, 'a');
+      equal(intercepted, 'a');
+    });
+
+    test('should return intercept unwrapped values and return wrapped values when chaining', 2, function() {
+      if (!isNpm) {
+        var intercepted,
+            array = [1, 2, 3, 4];
+
+        var actual = _(array).tap(function(value) {
+          intercepted = value;
+          value.pop();
+        });
+
+        ok(actual instanceof _);
+        strictEqual(intercepted, array);
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 

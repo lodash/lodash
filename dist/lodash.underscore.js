@@ -155,6 +155,34 @@
     // no operation performed
   }
 
+  /**
+   * Slices the `collection` from the `start` index up to, but not including,
+   * the `end` index.
+   *
+   * Note: This function is used instead of `Array#slice` to support node lists
+   * in IE < 9 and to ensure dense arrays are returned.
+   *
+   * @private
+   * @param {Array|Object|string} collection The collection to slice.
+   * @param {number} start The start index.
+   * @param {number} end The end index.
+   * @returns {Array} Returns the new array.
+   */
+  function slice(array, start, end) {
+    start || (start = 0);
+    if (typeof end == 'undefined') {
+      end = array ? array.length : 0;
+    }
+    var index = -1,
+        length = end - start || 0,
+        result = Array(length < 0 ? 0 : length);
+
+    while (++index < length) {
+      result[index] = array[start + index];
+    }
+    return result;
+  }
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -196,8 +224,7 @@
       nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
-      nativeRandom = Math.random,
-      nativeSlice = arrayRef.slice;
+      nativeRandom = Math.random;
 
   /** Detect various environments */
   var isIeOpera = reNative.test(root.attachEvent),
@@ -722,7 +749,7 @@
             thisBinding = isBind ? thisArg : this;
 
         if (isCurry || isPartial || isPartialRight) {
-          args = nativeSlice.call(args);
+          args = slice(args);
           if (isPartial) {
             unshift.apply(args, partialArgs);
           }
@@ -992,7 +1019,7 @@
    */
   function clone(value) {
     return isObject(value)
-      ? (isArray(value) ? nativeSlice.call(value) : assign({}, value))
+      ? (isArray(value) ? slice(value) : assign({}, value))
       : value;
   }
 
@@ -2130,7 +2157,7 @@
    * // => [['1', '2', '3'], ['4', '5', '6']]
    */
   function invoke(collection, methodName) {
-    var args = nativeSlice.call(arguments, 2),
+    var args = slice(arguments, 2),
         index = -1,
         isFunc = typeof methodName == 'function',
         length = collection ? collection.length : 0,
@@ -2717,7 +2744,7 @@
    */
   function toArray(collection) {
     if (isArray(collection)) {
-      return nativeSlice.call(collection);
+      return slice(collection);
     }
     if (collection && typeof collection.length == 'number') {
       return map(collection);
@@ -2884,7 +2911,7 @@
         return array ? array[0] : undefined;
       }
     }
-    return nativeSlice.call(array, 0, nativeMin(nativeMax(0, n), length));
+    return slice(array, 0, nativeMin(nativeMax(0, n), length));
   }
 
   /**
@@ -3030,7 +3057,7 @@
     } else {
       n = (callback == null || thisArg) ? 1 : callback || n;
     }
-    return nativeSlice.call(array, 0, nativeMin(nativeMax(0, length - n), length));
+    return slice(array, 0, nativeMin(nativeMax(0, length - n), length));
   }
 
   /**
@@ -3137,7 +3164,7 @@
         return array ? array[length - 1] : undefined;
       }
     }
-    return nativeSlice.call(array, nativeMax(0, length - n));
+    return slice(array, nativeMax(0, length - n));
   }
 
   /**
@@ -3298,7 +3325,7 @@
     } else {
       n = (callback == null || thisArg) ? 1 : nativeMax(0, callback);
     }
-    return nativeSlice.call(array, n);
+    return slice(array, n);
   }
 
   /**
@@ -3457,7 +3484,7 @@
    * // => [2, 3, 4]
    */
   function without(array) {
-    return difference(array, nativeSlice.call(arguments, 1));
+    return difference(array, slice(arguments, 1));
   }
 
   /**
@@ -3582,7 +3609,7 @@
    */
   function bind(func, thisArg) {
     return arguments.length > 2
-      ? createBound(func, 17, nativeSlice.call(arguments, 2), null, thisArg)
+      ? createBound(func, 17, slice(arguments, 2), null, thisArg)
       : createBound(func, 1, null, null, thisArg);
   }
 
@@ -3872,7 +3899,7 @@
     if (!isFunction(func)) {
       throw new TypeError;
     }
-    var args = nativeSlice.call(arguments, 1);
+    var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
   }
 
@@ -3897,7 +3924,7 @@
     if (!isFunction(func)) {
       throw new TypeError;
     }
-    var args = nativeSlice.call(arguments, 2);
+    var args = slice(arguments, 2);
     return setTimeout(function() { func.apply(undefined, args); }, wait);
   }
 
@@ -3921,19 +3948,22 @@
    *   return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
    * });
    *
+   * fibonacci(9)
+   * // => 34
+   *
    * var data = {
    *   'fred': { 'name': 'fred', 'age': 40 },
-   *   'pebbles': { 'name': 'pebbles', 'age': 60 }
+   *   'pebbles': { 'name': 'pebbles', 'age': 1 }
    * };
    *
    * // modifying the result cache
-   * var stooge = _.memoize(function(name) { return data[name]; }, _.identity);
-   * stooge('pebbles');
-   * // => { 'name': 'pebbles', 'age': 60 }
+   * var get = _.memoize(function(name) { return data[name]; }, _.identity);
+   * get('pebbles');
+   * // => { 'name': 'pebbles', 'age': 1 }
    *
-   * stooge.cache.pebbles.name = 'jerome';
-   * stooge('pebbles');
-   * // => { 'name': 'jerome', 'age': 60 }
+   * get.cache.pebbles.name = 'penelope';
+   * get('pebbles');
+   * // => { 'name': 'penelope', 'age': 1 }
    */
   function memoize(func, resolver) {
     var cache = {};
@@ -4001,7 +4031,7 @@
    * // => 'hi fred'
    */
   function partial(func) {
-    return createBound(func, 16, nativeSlice.call(arguments, 1));
+    return createBound(func, 16, slice(arguments, 1));
   }
 
   /**
@@ -4488,7 +4518,7 @@
    *
    * var youngest = _.chain(characters)
    *     .sortBy('age')
-   *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
+   *     .map(function(chr) { return chr.name + ' is ' + chr.age; })
    *     .first()
    *     .value();
    * // => 'pebbles is 1'
@@ -4514,12 +4544,10 @@
    * @example
    *
    * _([1, 2, 3, 4])
-   *  .filter(function(num) { return num % 2 == 0; })
-   *  .tap(function(array) { console.log(array); })
-   *  .map(function(num) { return num * num; })
+   *  .tap(function(array) { array.pop(); })
+   *  .reverse()
    *  .value();
-   * // => // [2, 4] (logged)
-   * // => [4, 16]
+   * // => [3, 2, 1]
    */
   function tap(value, interceptor) {
     interceptor(value);

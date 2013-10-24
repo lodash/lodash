@@ -547,8 +547,7 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random,
-        nativeSlice = arrayRef.slice;
+        nativeRandom = Math.random;
 
     /** Detect various environments */
     var isIeOpera = reNative.test(context.attachEvent),
@@ -1572,22 +1571,29 @@
       }
       var bindData = func && func.__bindData__;
       if (bindData && bindData !== true) {
-        bindData = nativeSlice.call(bindData);
+        bindData = bindData.slice();
+
+        // set `thisBinding` is not previously bound
         if (isBind && !(bindData[1] & 1)) {
           bindData[4] = thisArg;
         }
+        // set if previously bound but not currently (subsequent curried functions)
         if (!isBind && bindData[1] & 1) {
           bitmask |= 8;
         }
+        // set curried arity if not yet set
         if (isCurry && !(bindData[1] & 4)) {
           bindData[5] = arity;
         }
+        // append partial left arguments
         if (isPartial) {
           push.apply(bindData[2] || (bindData[2] = []), partialArgs);
         }
+        // append partial right arguments
         if (isPartialRight) {
           push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
         }
+        // merge flags
         bindData[1] |= bitmask;
         return createBound.apply(null, bindData);
       }
@@ -1611,7 +1617,7 @@
               thisBinding = isBind ? thisArg : this;
 
           if (isCurry || isPartial || isPartialRight) {
-            args = nativeSlice.call(args);
+            args = slice(args);
             if (isPartial) {
               unshift.apply(args, partialArgs);
             }
@@ -1638,7 +1644,7 @@
           return func.apply(thisBinding, args);
         };
       }
-      setBindData(bound, nativeSlice.call(arguments));
+      setBindData(bound, slice(arguments));
       return bound;
     }
 
@@ -2104,10 +2110,10 @@
      * Circle.prototype = _.create(Shape.prototype, { 'constructor': Circle });
      *
      * var circle = new Circle;
-     * circle instanceof Circle
+     * circle instanceof Circle;
      * // => true
      *
-     * circle instanceof Shape
+     * circle instanceof Shape;
      * // => true
      */
     function create(prototype, properties) {
@@ -2892,7 +2898,7 @@
       } else if (length > 2 && typeof args[length - 1] == 'function') {
         callback = args[--length];
       }
-      var sources = nativeSlice.call(arguments, 1, length),
+      var sources = slice(arguments, 1, length),
           index = -1,
           stackA = getArray(),
           stackB = getArray();
@@ -3648,7 +3654,7 @@
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
     function invoke(collection, methodName) {
-      var args = nativeSlice.call(arguments, 2),
+      var args = slice(arguments, 2),
           index = -1,
           isFunc = typeof methodName == 'function',
           length = collection ? collection.length : 0,
@@ -5199,7 +5205,7 @@
      * // => [2, 3, 4]
      */
     function without(array) {
-      return difference(array, nativeSlice.call(arguments, 1));
+      return difference(array, slice(arguments, 1));
     }
 
     /**
@@ -5325,7 +5331,7 @@
      */
     function bind(func, thisArg) {
       return arguments.length > 2
-        ? createBound(func, 17, nativeSlice.call(arguments, 2), null, thisArg)
+        ? createBound(func, 17, slice(arguments, 2), null, thisArg)
         : createBound(func, 1, null, null, thisArg);
     }
 
@@ -5401,7 +5407,7 @@
      */
     function bindKey(object, key) {
       return arguments.length > 2
-        ? createBound(key, 19, nativeSlice.call(arguments, 2), null, object)
+        ? createBound(key, 19, slice(arguments, 2), null, object)
         : createBound(key, 3, null, null, object);
     }
 
@@ -5700,7 +5706,7 @@
       if (!isFunction(func)) {
         throw new TypeError;
       }
-      var args = nativeSlice.call(arguments, 1);
+      var args = slice(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
     }
     // use `setImmediate` if available in Node.js
@@ -5734,7 +5740,7 @@
       if (!isFunction(func)) {
         throw new TypeError;
       }
-      var args = nativeSlice.call(arguments, 2);
+      var args = slice(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
     }
 
@@ -5758,19 +5764,22 @@
      *   return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
      * });
      *
+     * fibonacci(9)
+     * // => 34
+     *
      * var data = {
      *   'fred': { 'name': 'fred', 'age': 40 },
-     *   'pebbles': { 'name': 'pebbles', 'age': 60 }
+     *   'pebbles': { 'name': 'pebbles', 'age': 1 }
      * };
      *
      * // modifying the result cache
-     * var stooge = _.memoize(function(name) { return data[name]; }, _.identity);
-     * stooge('pebbles');
-     * // => { 'name': 'pebbles', 'age': 60 }
+     * var get = _.memoize(function(name) { return data[name]; }, _.identity);
+     * get('pebbles');
+     * // => { 'name': 'pebbles', 'age': 1 }
      *
-     * stooge.cache.pebbles.name = 'jerome';
-     * stooge('pebbles');
-     * // => { 'name': 'jerome', 'age': 60 }
+     * get.cache.pebbles.name = 'penelope';
+     * get('pebbles');
+     * // => { 'name': 'penelope', 'age': 1 }
      */
     function memoize(func, resolver) {
       if (!isFunction(func)) {
@@ -5844,7 +5853,7 @@
      * // => 'hi fred'
      */
     function partial(func) {
-      return createBound(func, 16, nativeSlice.call(arguments, 1));
+      return createBound(func, 16, slice(arguments, 1));
     }
 
     /**
@@ -5875,7 +5884,7 @@
      * // => { '_': _, 'jq': $ }
      */
     function partialRight(func) {
-      return createBound(func, 32, null, nativeSlice.call(arguments, 1));
+      return createBound(func, 32, null, slice(arguments, 1));
     }
 
     /**
@@ -6459,7 +6468,7 @@
      *
      * var youngest = _.chain(characters)
      *     .sortBy('age')
-     *     .map(function(stooge) { return stooge.name + ' is ' + stooge.age; })
+     *     .map(function(chr) { return chr.name + ' is ' + chr.age; })
      *     .first()
      *     .value();
      * // => 'pebbles is 1'
@@ -6485,12 +6494,10 @@
      * @example
      *
      * _([1, 2, 3, 4])
-     *  .filter(function(num) { return num % 2 == 0; })
-     *  .tap(function(array) { console.log(array); })
-     *  .map(function(num) { return num * num; })
+     *  .tap(function(array) { array.pop(); })
+     *  .reverse()
      *  .value();
-     * // => // [2, 4] (logged)
-     * // => [4, 16]
+     * // => [3, 2, 1]
      */
     function tap(value, interceptor) {
       interceptor(value);

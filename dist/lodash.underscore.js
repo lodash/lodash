@@ -199,11 +199,14 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = root._;
 
+  /** Used to resolve the internal [[Class]] of values */
+  var toString = objectProto.toString;
+
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
-    String(objectProto.valueOf)
+    String(toString)
       .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
+      .replace(/toString| for [^\]]+/g, '.*?') + '$'
   );
 
   /** Native method shortcuts */
@@ -212,12 +215,10 @@
       hasOwnProperty = objectProto.hasOwnProperty,
       now = reNative.test(now = Date.now) && now || function() { return +new Date; },
       push = arrayRef.push,
-      toString = objectProto.toString,
       unshift = arrayRef.unshift;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
-  var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
-      nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
+  var nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
       nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = root.isFinite,
       nativeIsNaN = root.isNaN,
@@ -225,6 +226,15 @@
       nativeMax = Math.max,
       nativeMin = Math.min,
       nativeRandom = Math.random;
+
+  var nativeBind = (function() {
+    // Narwhal doesn't accept `undefined` as the `thisArg`
+    try {
+      var result = toString.bind;
+      return reNative.test(result) && result.bind() && result;
+    } catch(e) { }
+    return false;
+  }());
 
   /** Detect various environments */
   var isIeOpera = reNative.test(root.attachEvent),

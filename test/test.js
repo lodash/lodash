@@ -1228,8 +1228,9 @@
     test('should return the function provided if already bound with `Function#bind`', 1, function() {
       function a() {}
 
-      if (Function.prototype.bind) {
-        var bound = a.bind();
+      var bound = a.bind && a.bind({});
+      if (bound && !bound.prototype) {
+        var bound = a.bind({});
         strictEqual(_.createCallback(bound, {}), bound);
       }
       else {
@@ -1254,7 +1255,7 @@
       function a() {};
       var b = function() {};
 
-      if (_.support.funcNames || _.support.funcDecomp) {
+      if (defineProperty && _.support.funcDecomp) {
         _.createCallback(a, {});
         ok('__bindData__' in a)
 

@@ -505,11 +505,14 @@
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
 
+    /** Used to resolve the internal [[Class]] of values */
+    var toString = objectProto.toString;
+
     /** Used to detect if a method is native */
     var reNative = RegExp('^' +
-      String(objectProto.valueOf)
+      String(toString)
         .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        .replace(/valueOf|for [^\]]+/g, '.+?') + '$'
+        .replace(/toString| for [^\]]+/g, '.*?') + '$'
     );
 
     /** Native method shortcuts */
@@ -525,10 +528,10 @@
         setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
         splice = arrayRef.splice,
-        toString = objectProto.toString,
         unshift = arrayRef.unshift;
 
     var defineProperty = (function() {
+      // IE 8 that only accepts DOM elements
       try {
         var o = {},
             func = reNative.test(func = Object.defineProperty) && func,
@@ -538,8 +541,7 @@
     }());
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
-    var nativeBind = reNative.test(nativeBind = toString.bind) && nativeBind,
-        nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
+    var nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
@@ -548,6 +550,15 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
+
+    var nativeBind = (function() {
+      // Narwhal doesn't accept `undefined` as the `thisArg`
+      try {
+        var result = toString.bind;
+        return reNative.test(result) && result.bind() && result;
+      } catch(e) { }
+      return false;
+    }());
 
     /** Detect various environments */
     var isIeOpera = reNative.test(context.attachEvent),

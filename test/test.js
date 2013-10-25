@@ -3083,7 +3083,7 @@
       strictEqual(_.isArguments(args), true);
     });
 
-    test('should return `false` for non `arguments` objects', 8, function() {
+    test('should return `false` for non `arguments` objects', 9, function() {
       var actual = [],
           expected = _.map(falsey, function() { return false; });
 
@@ -3096,6 +3096,7 @@
       strictEqual(_.isArguments(new Date), false);
       strictEqual(_.isArguments(_), false);
       strictEqual(_.isArguments({ '0': 1, 'length': 1 }), false);
+      strictEqual(_.isArguments(0), false);
       strictEqual(_.isArguments(/x/), false);
       strictEqual(_.isArguments('a'), false);
 
@@ -3123,7 +3124,7 @@
       strictEqual(_.isArray([1, 2, 3]), true);
     });
 
-    test('should return `false` for non arrays', 8, function() {
+    test('should return `false` for non arrays', 9, function() {
       var actual = [],
           expected = _.map(falsey, function() { return false; });
 
@@ -3136,6 +3137,7 @@
       strictEqual(_.isArray(new Date), false);
       strictEqual(_.isArray(_), false);
       strictEqual(_.isArray({ '0': 1, 'length': 1 }), false);
+      strictEqual(_.isArray(0), false);
       strictEqual(_.isArray(/x/), false);
       strictEqual(_.isArray('a'), false);
 
@@ -3506,7 +3508,7 @@
       strictEqual(_.isFunction(_), true);
     });
 
-    test('should return `false` for non functions', 8, function() {
+    test('should return `false` for non functions', 9, function() {
       var actual = [],
           expected = _.map(falsey, function() { return false; });
 
@@ -3517,6 +3519,7 @@
       strictEqual(_.isFunction(args), false);
       strictEqual(_.isFunction([1, 2, 3]), false);
       strictEqual(_.isFunction(true), false);
+      strictEqual(_.isFunction(new Date), false);
       strictEqual(_.isFunction({ 'a': 1 }), false);
       strictEqual(_.isFunction(0), false);
       strictEqual(_.isFunction(/x/), false);
@@ -3540,10 +3543,85 @@
   QUnit.module('lodash.isNaN');
 
   (function() {
-    test('returns `true` for `new Number(NaN)`', 1, function() {
+    var args = arguments;
+
+    test('should return `true` for NaNs', 2, function() {
+      strictEqual(_.isNaN(NaN), true);
       strictEqual(_.isNaN(new Number(NaN)), true);
     });
-  }());
+
+    test('should return `false` for non NaNs', 10, function() {
+      var actual = [],
+          expected = _.map(falsey, function(value) { return value !== value; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isNaN(value) : _.isNaN());
+      });
+
+      strictEqual(_.isNaN(args), false);
+      strictEqual(_.isNaN([1, 2, 3]), false);
+      strictEqual(_.isNaN(true), false);
+      strictEqual(_.isNaN(new Date), false);
+      strictEqual(_.isNaN(_), false);
+      strictEqual(_.isNaN({ 'a': 1 }), false);
+      strictEqual(_.isNaN(0), false);
+      strictEqual(_.isNaN(/x/), false);
+      strictEqual(_.isNaN('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with NaNs from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isNaN(_._nan), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isNull');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for nulls', 1, function() {
+      strictEqual(_.isNull(null), true);
+    });
+
+    test('should return `false` for non nulls', 10, function() {
+      var actual = [],
+          expected = _.map(falsey, function(value) { return value === null; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(index ? _.isNull(value) : _.isNull());
+      });
+
+      strictEqual(_.isNull(args), false);
+      strictEqual(_.isNull([1, 2, 3]), false);
+      strictEqual(_.isNull(true), false);
+      strictEqual(_.isNull(new Date), false);
+      strictEqual(_.isNull(_), false);
+      strictEqual(_.isNull({ 'a': 1 }), false);
+      strictEqual(_.isNull(0), false);
+      strictEqual(_.isNull(/x/), false);
+      strictEqual(_.isNull('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with nulls from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isNull(_._null), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -3784,9 +3862,59 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isUndefined');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for `undefined` values', 2, function() {
+      strictEqual(_.isUndefined(), true);
+      strictEqual(_.isUndefined(undefined), true);
+    });
+
+    test('should return `false` for non `undefined` values', 10, function() {
+      var actual = [],
+          expected = _.map(falsey, function(value) { return value === undefined; });
+
+      _.forEach(falsey, function(value, index) {
+        actual.push(_.isUndefined(value));
+      });
+
+      strictEqual(_.isUndefined(args), false);
+      strictEqual(_.isUndefined([1, 2, 3]), false);
+      strictEqual(_.isUndefined(true), false);
+      strictEqual(_.isUndefined(new Date), false);
+      strictEqual(_.isUndefined(_), false);
+      strictEqual(_.isUndefined({ 'a': 1 }), false);
+      strictEqual(_.isUndefined(0), false);
+      strictEqual(_.isUndefined(/x/), false);
+      strictEqual(_.isUndefined('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with `undefined` from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isUndefined(_._undefined), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('isType checks');
+
   (function() {
     test('should return `false` for subclassed values', 7, function() {
-      _.forEach(['isArray', 'isBoolean', 'isDate', 'isFunction', 'isNumber', 'isRegExp', 'isString'], function(methodName) {
+      var funcs = [
+        'isArray', 'isBoolean', 'isDate', 'isFunction',
+        'isNumber', 'isRegExp', 'isString'
+      ];
+
+      _.forEach(funcs, function(methodName) {
         function Foo() {}
         Foo.prototype = root[methodName.slice(2)].prototype;
 
@@ -3797,6 +3925,32 @@
           skipTest();
         }
       });
+    });
+
+    test('should not error on host objects (test in IE)', 12, function() {
+      try {
+        var xml = new ActiveXObject('Microsoft.XMLDOM');
+      } catch(e) { }
+
+      if (xml) {
+        var funcs = [
+          'isArray', 'isArguments', 'isBoolean', 'isDate', 'isElement', 'isFunction',
+          'isObject', 'isNull', 'isNumber', 'isRegExp', 'isString', 'isUndefined'
+        ];
+
+        _.forEach(funcs, function(methodName) {
+          var pass = true;
+          try {
+            _[methodName](xml);
+          } catch(e) {
+            pass = false;
+          }
+          ok(pass, '`_.' + methodName + '` should not error');
+        });
+      }
+      else {
+        skipTest(12)
+      }
     });
   }());
 
@@ -4192,7 +4346,7 @@
       var actual = [],
           memoized = _.memoize(_.identity);
 
-      _.each(shadowedProps, function(value) {
+      _.forEach(shadowedProps, function(value) {
         actual.push(memoized(value));
       });
 

@@ -1346,6 +1346,7 @@
       }
       else {
         skipTest(2);
+        QUnit.start();
       }
     });
 
@@ -1384,6 +1385,7 @@
       }
       else {
         skipTest(2);
+        QUnit.start();
       }
     });
 
@@ -6246,6 +6248,7 @@
       }
       else {
         skipTest(2);
+        QUnit.start();
       }
     });
 
@@ -6264,6 +6267,7 @@
       }
       else {
         skipTest(2);
+        QUnit.start();
       }
     });
 

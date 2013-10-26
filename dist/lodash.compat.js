@@ -560,9 +560,8 @@
       return false;
     }());
 
-    /** Detect various environments */
-    var isIeOpera = reNative.test(context.attachEvent),
-        isV8 = nativeBind && !/\n|true/.test(nativeBind + isIeOpera);
+    /** Used to enable optimizations for V8 */
+    var isV8 = nativeBind && !/\n/.test(nativeBind) && !reNative.test(context.attachEvent);
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};

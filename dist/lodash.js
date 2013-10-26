@@ -5464,7 +5464,14 @@
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));
       }
+
+      each(func, function(value, key) {
+        memoized[key] = value;
+      });
+
       memoized.cache = {};
+      memoized.prototype = func.prototype;
+
       return memoized;
     }
 

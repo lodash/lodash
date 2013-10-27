@@ -19,7 +19,6 @@ env:
     - BIN="phantomjs" BUILD="compat"
     - BIN="phantomjs" BUILD="legacy"
     - BIN="phantomjs" BUILD="mobile"
-    - SAUCELABS=true
 matrix:
   include:
     - node_js: "0.10"
@@ -40,6 +39,8 @@ matrix:
       env: BIN="ringo"   BUILD="compat"
     - node_js: "0.10"
       env: BIN="ringo"   BUILD="legacy"
+    - node_js: "0.10"
+      env: SAUCELABS=true
 git:
   depth: 1
 branches:

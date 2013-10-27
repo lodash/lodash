@@ -64,4 +64,4 @@ script:
   - "[ $BUILD != false ] && cd ./test || true" 
   - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
-  - "[ $SAUCELABS == false ] && true || node ./saucelabs.js"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js"

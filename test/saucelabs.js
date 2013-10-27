@@ -1,4 +1,5 @@
 var connect = require('connect');
+var path = require('path');
 var SauceTunnel = require('sauce-tunnel');
 var request = require('request');
 
@@ -13,7 +14,7 @@ var platforms = [
 
 // Create a web server for the local dir
 var server = connect.createServer(
-    connect.static(__dirname)
+    connect.static(path.resolve(__dirname, '..'))
 ).listen(port);
 
 // Set up sauce connect so we can use this server from saucelabs

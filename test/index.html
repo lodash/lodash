@@ -16,13 +16,6 @@
 		<script src="./asset/test-ui.js"></script>
 		<div id="qunit"></div>
 		<div id="exports"></div>
-        <script>
-            // Report test results in a global, for saucelabs
-            window.global_test_results = null;
-            QUnit.done(function (results) {
-               window.global_test_results = results;
-            });
-        </script>
 		<script>
 			// set bad shims
 			Array._isArray = Array.isArray;
@@ -78,6 +71,12 @@
 			delete Object._create;
 			delete Object._defineProperty;
 			delete Object._keys;
+
+			// report test results in a global for Sauce Labs
+			var global_test_results;
+			QUnit.done(function(results) {
+				global_test_results = results;
+			});
 
 			// load Lo-Dash again to overwrite the existing `_` value
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');

@@ -504,14 +504,13 @@
     });
 
     test('should accept a falsey `thisArg` argument', 1, function() {
-      var actual = [],
-          values = _.reject(falsey.slice(1), function(value) { return value == null; }),
+      var values = _.reject(falsey.slice(1), function(value) { return value == null; }),
           expected = _.map(values, function(value) { return [value]; });
 
-      _.forEach(values, function(value, index) {
+      var actual = _.map(values, function(value, index) {
         try {
           var bound = _.bind(func, value);
-          actual.push(bound());
+          return bound();
         } catch(e) { }
       });
 
@@ -1169,23 +1168,21 @@
     });
 
     test('should accept a falsey `prototype` argument', 1, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return {}; });
+      var expected = _.map(falsey, function() { return {}; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.create(value) : _.create());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.create(value) : _.create();
       });
 
       deepEqual(actual, expected);
     });
 
     test('should ignore primitive `prototype` arguments and use an empty object instead', 1, function() {
-      var actual = [],
-          primitives = [1, true, 'a'],
+      var primitives = [true, null, 1, 'a', undefined],
           expected = _.map(primitives, function() { return true; });
 
-      _.forEach(primitives, function(value, index) {
-        actual.push(_.isPlainObject(index ? _.create(value) : _.create()));
+      var actual = _.map(primitives, function(value, index) {
+        return _.isPlainObject(index ? _.create(value) : _.create());
       });
 
       deepEqual(actual, expected);
@@ -1709,12 +1706,11 @@
 
   (function() {
     test('should return `true` for empty or falsey collections', 1, function() {
-      var actual = [],
-          expected = _.map(empties, function() { return true; });
+      var expected = _.map(empties, function() { return true; });
 
-      _.forEach(empties, function(value) {
+      var actual = _.map(empties, function(value) {
         try {
-          actual.push(_.every(value, _.identity));
+          return _.every(value, _.identity);
         } catch(e) { }
       });
 
@@ -2709,12 +2705,11 @@
     });
 
     test('should return `false` for primitives', 1, function() {
-      var actual = [],
-          values = falsey.concat(1, 'a'),
+      var values = falsey.concat(1, 'a'),
           expected = _.map(values, function() { return false; });
 
-      _.forEach(values, function(value) {
-        actual.push(_.has(value, 'valueOf'));
+      var actual = _.map(values, function(value) {
+        return _.has(value, 'valueOf');
       });
 
       deepEqual(actual, expected);
@@ -2924,12 +2919,11 @@
     ];
 
     test('should accept a falsey `array` argument', 1, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return []; });
+      var expected = _.map(falsey, function() { return []; });
 
-      _.forEach(falsey, function(value, index) {
+      var actual = _.map(falsey, function(value, index) {
         try {
-          actual.push(index ? _.initial(value) : _.initial());
+          return index ? _.initial(value) : _.initial();
         } catch(e) { }
       });
 
@@ -3084,11 +3078,10 @@
     });
 
     test('should return `false` for non `arguments` objects', 9, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, function() { return false; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isArguments(value) : _.isArguments());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isArguments(value) : _.isArguments();
       });
 
       strictEqual(_.isArguments([1, 2, 3]), false);
@@ -3125,11 +3118,10 @@
     });
 
     test('should return `false` for non arrays', 9, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, function() { return false; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isArray(value) : _.isArray());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isArray(value) : _.isArray();
       });
 
       strictEqual(_.isArray(args), false);
@@ -3169,11 +3161,10 @@
     });
 
     test('should return `false` for non booleans', 9, function() {
-      var actual = [],
-          expected = _.map(falsey, function(value) { return value === false; });
+      var expected = _.map(falsey, function(value) { return value === false; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isBoolean(value) : _.isBoolean());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isBoolean(value) : _.isBoolean();
       });
 
       strictEqual(_.isBoolean(args), false);
@@ -3210,11 +3201,10 @@
     });
 
     test('should return `false` for non dates', 9, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, function() { return false; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isDate(value) : _.isDate());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isDate(value) : _.isDate();
       });
 
       strictEqual(_.isDate(args), false);
@@ -3273,11 +3263,10 @@
     var args = arguments;
 
     test('should return `true` for empty or falsey values', 3, function() {
-      var actual = [],
-          expected = _.map(empties, function() { return true; });
+      var expected = _.map(empties, function() { return true; });
 
-      _.forEach(empties, function(value) {
-        actual.push(_.isEmpty(value));
+      var actual = _.map(empties, function(value) {
+        return _.isEmpty(value);
       });
 
       strictEqual(_.isEmpty(), true);
@@ -3347,6 +3336,109 @@
   QUnit.module('lodash.isEqual');
 
   (function() {
+    test('should perform comparisons between primitive values', 1, function() {
+      var pairs = [
+        [1, 1, true], [1, new Number(1), true], [1, '1', false], [1, 2, false],
+        [-0, -0, true], [0, 0, true], [0, new Number(0), true], [new Number(0), new Number(0), true], [-0, 0, false], [0, '0', false], [0, null, false],
+        [NaN, NaN, true], [NaN, new Number(NaN), true], [new Number(NaN), new Number(NaN), true], [NaN, 'a', false], [NaN, Infinity, false],
+        ['a', 'a', true], ['a', new String('a'), true], [new String('a'), new String('a'), true], ['a', 'b', false], ['a', ['a'], false],
+        [true, true, true], [true, new Boolean(true), true], [new Boolean(true), new Boolean(true), true], [true, 1, false], [true, 'a', false],
+        [false, false, true], [false, new Boolean(false), true], [new Boolean(false), new Boolean(false), true], [false, 0, false], [false, '', false],
+        [null, null, true], [null, undefined, false], [null, {}, false], [null, '', false],
+        [undefined, undefined, true], [undefined, null, false], [undefined, '', false],
+      ];
+
+      var expected = _.map(pairs, function(pair) {
+        return pair[2];
+      });
+
+      var actual = _.map(pairs, function(pair) {
+        return _.isEqual(pair[0], pair[1]);
+      })
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `false` for objects with custom `toString` methods', 1, function() {
+      var primitive,
+          object = { 'toString': function() { return primitive; } },
+          values = [true, null, 1, 'a', undefined],
+          expected = _.map(values, function() { return false; });
+
+      var actual = _.map(values, function(value) {
+        primitive = value;
+        return _.isEqual(object, value);
+      });
+
+      ok(actual, expected);
+    });
+
+    test('should perform a deep comparison between date objects', 4, function() {
+      strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2012, 4, 23)), true);
+      strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2013, 3, 25)), false);
+      strictEqual(_.isEqual(new Date(2012, 4, 23), { 'getTime': function() { return 1337756400000; } }), false);
+      strictEqual(_.isEqual(new Date('a'), new Date('a')), false);
+    });
+
+    test('should perform a deep comparison between functions', 2, function() {
+      function a() { return 1 + 2; }
+      function b() { return 1 + 2; }
+
+      strictEqual(_.isEqual(a, a), true);
+      strictEqual(_.isEqual(a, b), false);
+    });
+
+    test('should perform a deep comparison between plain objects', 5, function() {
+      var object1 = { 'a': true, 'b': null, 'c': 1, 'd': 'a', 'e': undefined },
+          object2 = { 'a': true, 'b': null, 'c': 1, 'd': 'a', 'e': undefined };
+
+      strictEqual(_.isEqual(object1, object2), true);
+
+      object1 = { 'a': [1, 2, 3], 'b': new Date(2012, 4, 23), 'c': /x/, 'd': { 'e': 1 } },
+      object2 = { 'a': [1, 2, 3], 'b': new Date(2012, 4, 23), 'c': /x/, 'd': { 'e': 1 } };
+
+      strictEqual(_.isEqual(object1, object2), true);
+
+      object1 = { 'a': 1, 'b': 2, 'c': 3 };
+      object2 = { 'a': 3, 'b': 2, 'c': 1 };
+
+      strictEqual(_.isEqual(object1, object2), false);
+
+      object1 = { 'a': 1, 'b': 2, 'c': 3 };
+      object2 = { 'd': 1, 'e': 2, 'f': 3 };
+
+      strictEqual(_.isEqual(object1, object2), false);
+
+      object1 = { 'a': 1, 'b': 2 };
+      object2 = { 'a': 1, 'b': 2, 'c':3 };
+
+      strictEqual(_.isEqual(object1, object2), false);
+    });
+
+    test('should perform a deep comparison between regex objects', 4, function() {
+      strictEqual(_.isEqual(/x/gim, /x/gim), true);
+      strictEqual(_.isEqual(/x/gi, /x/g), false);
+      strictEqual(_.isEqual(/x/, /y/), false);
+      strictEqual(_.isEqual(/x/g, { 'global': true, 'ignoreCase': false, 'multiline': false, 'source': 'x' }), false);
+    });
+
+    test('should avoid common type coercions', 9, function() {
+      strictEqual(_.isEqual(true, new Boolean(false)), false);
+      strictEqual(_.isEqual(new Boolean(false), new Number(0)), false);
+      strictEqual(_.isEqual(false, new String('')), false);
+      strictEqual(_.isEqual(new Number(36), new String(36)), false);
+      strictEqual(_.isEqual(0, ''), false);
+      strictEqual(_.isEqual(1, true), false);
+      strictEqual(_.isEqual(1337756400000, new Date(2012, 4, 23)), false);
+      strictEqual(_.isEqual('36', 36), false);
+      strictEqual(_.isEqual(36, '36'), false);
+    });
+
+    test('should work with sparse arrays', 2, function() {
+      strictEqual(_.isEqual(Array(3), Array(3)), true);
+      strictEqual(_.isEqual(Array(3), Array(6)), false);
+    });
+
     test('should work with `arguments` objects (test in IE < 9)', 2, function() {
       var args1 = (function() { return arguments; }(1, 2, 3)),
           args2 = (function() { return arguments; }(1, 2, 3)),
@@ -3449,6 +3541,15 @@
         skipTest();
       }
     });
+
+    test('should work with objects from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isEqual(_._object, { 'a': 1, 'b': 2, 'c': 3 }), true);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3509,11 +3610,10 @@
     });
 
     test('should return `false` for non functions', 9, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, function() { return false; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isFunction(value) : _.isFunction());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isFunction(value) : _.isFunction();
       });
 
       strictEqual(_.isFunction(args), false);
@@ -3551,11 +3651,10 @@
     });
 
     test('should return `false` for non NaNs', 10, function() {
-      var actual = [],
-          expected = _.map(falsey, function(value) { return value !== value; });
+      var expected = _.map(falsey, function(value) { return value !== value; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isNaN(value) : _.isNaN());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isNaN(value) : _.isNaN();
       });
 
       strictEqual(_.isNaN(args), false);
@@ -3593,11 +3692,10 @@
     });
 
     test('should return `false` for non nulls', 10, function() {
-      var actual = [],
-          expected = _.map(falsey, function(value) { return value === null; });
+      var expected = _.map(falsey, function(value) { return value === null; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isNull(value) : _.isNull());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isNull(value) : _.isNull();
       });
 
       strictEqual(_.isNull(args), false);
@@ -3636,11 +3734,10 @@
     });
 
     test('should return `false` for non numbers', 9, function() {
-      var actual = [],
-          expected = _.map(falsey, function(value) { return typeof value == 'number'; });
+      var expected = _.map(falsey, function(value) { return typeof value == 'number'; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isNumber(value) : _.isNumber());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isNumber(value) : _.isNumber();
       });
 
       strictEqual(_.isNumber(args), false);
@@ -3695,11 +3792,10 @@
     });
 
     test('should return `false` for non objects', 3, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, function() { return false; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isObject(value) : _.isObject());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isObject(value) : _.isObject();
       });
 
       strictEqual(_.isObject(true), false);
@@ -3774,6 +3870,27 @@
       strictEqual(_.isPlainObject(Math), false);
       strictEqual(_.isPlainObject(root), false);
     });
+
+    test('should return `false` for non objects', 3, function() {
+      var expected = _.map(falsey, function() { return false; });
+
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isPlainObject(value) : _.isPlainObject();
+      });
+
+      strictEqual(_.isPlainObject(true), false);
+      strictEqual(_.isPlainObject('a'), false);
+      deepEqual(actual, expected);
+    });
+
+    test('should work with objects from an iframe', 1, function() {
+      if (document) {
+        strictEqual(_.isPlainObject(_._object), true);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3789,11 +3906,10 @@
     });
 
     test('should return `false` for non regexes', 9, function() {
-      var actual = [],
-          expected = _.map(falsey, function(value) { return false; });
+      var expected = _.map(falsey, function(value) { return false; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isRegExp(value) : _.isRegExp());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isRegExp(value) : _.isRegExp();
       });
 
       strictEqual(_.isRegExp(args), false);
@@ -3831,11 +3947,10 @@
     });
 
     test('should return `false` for non strings', 9, function() {
-      var actual = [],
-          expected = _.map(falsey, function(value) { return value === ''; });
+      var expected = _.map(falsey, function(value) { return value === ''; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.isString(value) : _.isString());
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isString(value) : _.isString();
       });
 
       strictEqual(_.isString(args), false);
@@ -3873,11 +3988,10 @@
     });
 
     test('should return `false` for non `undefined` values', 10, function() {
-      var actual = [],
-          expected = _.map(falsey, function(value) { return value === undefined; });
+      var expected = _.map(falsey, function(value) { return value === undefined; });
 
-      _.forEach(falsey, function(value, index) {
-        actual.push(_.isUndefined(value));
+      var actual = _.map(falsey, function(value, index) {
+        return _.isUndefined(value);
       });
 
       strictEqual(_.isUndefined(args), false);
@@ -4165,12 +4279,11 @@
       var func = _[methodName];
 
       test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
-        var actual = [],
-            expected = _.map(falsey, function() { return -1; });
+        var expected = _.map(falsey, function() { return -1; });
 
-        _.forEach(falsey, function(value, index) {
+        var actual = _.map(falsey, function(value, index) {
           try {
-            actual.push(index ? func(value) : func());
+            return index ? func(value) : func();
           } catch(e) { }
         });
 
@@ -4254,12 +4367,11 @@
     });
 
     test('should accept a falsey `array` argument', 1, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return []; });
+      var expected = _.map(falsey, function() { return []; });
 
-      _.forEach(falsey, function(value, index) {
+      var actual = _.map(falsey, function(value, index) {
         try {
-          actual.push(index ? _.map(value) : _.map());
+          return index ? _.map(value) : _.map();
         } catch(e) { }
       });
 
@@ -4281,12 +4393,11 @@
     });
 
     test('should return `-Infinity` for empty collections', 1, function() {
-      var actual = [],
-          expected = _.map(empties, function() { return -Infinity; });
+      var expected = _.map(empties, function() { return -Infinity; });
 
-      _.forEach(empties, function(value) {
+      var actual = _.map(empties, function(value) {
         try {
-          actual.push(_.max(value));
+          return _.max(value);
         } catch(e) { }
       });
 
@@ -4294,13 +4405,12 @@
     });
 
     test('should return `-Infinity` for non-numeric collection values', 1, function() {
-      var actual = [],
-          collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
+      var collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
           expected = _.map(collections, function() { return -Infinity; });
 
-      _.forEach(collections, function(value) {
+      var actual = _.map(collections, function(value) {
         try {
-          actual.push(_.max(value));
+          return _.max(value);
         } catch(e) { }
       });
 
@@ -4484,12 +4594,11 @@
     });
 
     test('should return `Infinity` for empty collections', 1, function() {
-      var actual = [],
-          expected = _.map(empties, function() { return Infinity; });
+      var expected = _.map(empties, function() { return Infinity; });
 
-      _.forEach(empties, function(value) {
+      var actual = _.map(empties, function(value) {
         try {
-          actual.push(_.min(value));
+          return _.min(value);
         } catch(e) { }
       });
 
@@ -4497,13 +4606,12 @@
     });
 
     test('should return `Infinity` for non-numeric collection values', 1, function() {
-      var actual = [],
-          collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
+      var collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
           expected = _.map(collections, function() { return Infinity; });
 
-      _.forEach(collections, function(value) {
+      var actual = _.map(collections, function(value) {
         try {
-          actual.push(_.min(value));
+          return _.min(value);
         } catch(e) { }
       });
 
@@ -5366,12 +5474,11 @@
     });
 
     test('`_.' + methodName + '` should support empty or falsey collections with an initial `accumulator` value', 1, function() {
-      var actual = [],
-          expected = _.map(empties, function() { return 'x'; });
+      var expected = _.map(empties, function() { return 'x'; });
 
-      _.forEach(empties, function(value) {
+      var actual = _.map(empties, function(value) {
         try {
-          actual.push(func(value, noop, 'x'));
+          return func(value, noop, 'x');
         } catch(e) { }
       });
 
@@ -5516,12 +5623,11 @@
     ];
 
     test('should accept a falsey `array` argument', 1, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return []; });
+      var expected = _.map(falsey, function() { return []; });
 
-      _.forEach(falsey, function(value, index) {
+      var actual = _.map(falsey, function(value, index) {
         try {
-          actual.push(index ? _.rest(value) : _.rest());
+          return index ? _.rest(value) : _.rest();
         } catch(e) { }
       });
 
@@ -5781,12 +5887,11 @@
     });
 
     test('should accept a falsey `object` argument', 1, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return 0; });
+      var expected = _.map(falsey, function() { return 0; });
 
-      _.forEach(falsey, function(value, index) {
+      var actual = _.map(falsey, function(value, index) {
         try {
-          actual.push(index ? _.size(value) : _.size());
+          return index ? _.size(value) : _.size();
         } catch(e) { }
       });
 
@@ -5829,12 +5934,11 @@
 
   (function() {
     test('should return `false` for empty or falsey collections', 1, function() {
-      var actual = [],
-          expected = _.map(empties, function() { return false; });
+      var expected = _.map(empties, function() { return false; });
 
-      _.forEach(empties, function(value) {
+      var actual = _.map(empties, function(value) {
         try {
-          actual.push(_.some(value, _.identity));
+          return _.some(value, _.identity);
         } catch(e) { }
       });
 
@@ -6706,12 +6810,11 @@
     });
 
     test('should return an empty array for falsey and negative `n` arguments', 1, function() {
-      var actual = [],
-          values = falsey.concat(-1, -Infinity),
+      var values = falsey.concat(-1, -Infinity),
           expected = _.map(values, function() { return []; });
 
-      _.forEach(values, function(value, index) {
-        actual.push(index ? _.times(value) : _.times());
+      var actual = _.map(values, function(value, index) {
+        return index ? _.times(value) : _.times();
       });
 
       deepEqual(actual, expected);
@@ -7175,12 +7278,11 @@
     });
 
     test('should accept a falsey `array` argument', 1, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return {}; });
+      var expected = _.map(falsey, function() { return {}; });
 
-      _.forEach(falsey, function(value, index) {
+      var actual = _.map(falsey, function(value, index) {
         try {
-          actual.push(index ? _.zipObject(value) : _.zipObject());
+          return index ? _.zipObject(value) : _.zipObject();
         } catch(e) { }
       });
 
@@ -7402,13 +7504,12 @@
 
       test('`_.' + methodName + '` should return an empty array when querying falsey arguments with an `n` argument', 1, function() {
         if (!isNpm) {
-          var actual = [],
-              expected = _.map(falsey, function() { return []; }),
+          var expected = _.map(falsey, function() { return []; }),
               func = _[methodName];
 
-          _.forEach(falsey, function(value, index) {
+          var actual = _.map(falsey, function(value, index) {
             try {
-              actual.push(func(value, 2));
+              return func(value, 2);
             } catch(e) { }
           });
 
@@ -7550,14 +7651,13 @@
 
 
       _.forEach(acceptFalsey, function(methodName) {
-        var actual = [],
-            expected = _.map(falsey, function() { return []; }),
+        var expected = _.map(falsey, function() { return []; }),
             func = _[methodName],
             pass = true;
 
-        _.forEach(falsey, function(value, index) {
+        var actual = _.map(falsey, function(value, index) {
           try {
-            actual.push(index ? func(value) : func());
+            return index ? func(value) : func();
           } catch(e) {
             pass = false;
           }
@@ -7586,18 +7686,17 @@
 
     test('should reject falsey arguments', 14, function() {
       _.forEach(rejectFalsey, function(methodName) {
-        var actual = [],
-            expected = _.map(falsey, function() { return true; }),
+        var expected = _.map(falsey, function() { return true; }),
             func = _[methodName];
 
-        _.forEach(falsey, function(value, index) {
+        var actual = _.map(falsey, function(value, index) {
           var pass = !index && methodName == 'compose';
           try {
             index ? func(value) : func();
           } catch(e) {
             pass = !pass;
           }
-          actual.push(pass);
+          return pass;
         });
 
         deepEqual(actual, expected, '`_.' + methodName + '` rejects falsey arguments');

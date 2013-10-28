@@ -16,6 +16,13 @@
 		<script src="./asset/test-ui.js"></script>
 		<div id="qunit"></div>
 		<div id="exports"></div>
+        <script>
+            // Report test results in a global, for saucelabs
+            window.global_test_results = null;
+            QUnit.done(function (results) {
+               window.global_test_results = results;
+            });
+        </script>
 		<script>
 			// set bad shims
 			Array._isArray = Array.isArray;

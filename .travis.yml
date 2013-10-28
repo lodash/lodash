@@ -5,7 +5,12 @@ node_js:
   - "0.10"
 env:
   global:
-    - BIN="node" BUILD=false MAKE=false OPTION=""
+    - BIN="node" BUILD=false MAKE=false OPTION="" SAUCELABS=false
+
+    # SauceLabs credentials:
+    - SAUCE_USERNAME="pimterry"
+    - secure: "KBETrs7sRrU3V8itVgLzBUVkzP9XXpAEZVjbd8icoNL9eVW3h4Kk5g/bOa06IAml0ThnMZztIwMKkplCIam6W/Cv+eIOiQT2kkG32lHFwbVXEkbq+rKj8XmpRmXBf/Th63V+u5GMVmQlYrIfdXju6cFfSEZ2uG8SHVg9hFyyf8c="
+
   matrix:
     - BUILD="compat"
     - BUILD="modern"
@@ -34,6 +39,8 @@ matrix:
       env: BIN="ringo"   BUILD="compat"
     - node_js: "0.10"
       env: BIN="ringo"   BUILD="legacy"
+    - node_js: "0.10"
+      env: SAUCELABS=true
 git:
   depth: 1
 branches:
@@ -47,6 +54,7 @@ before_install:
   - "[ $BIN == 'rhino' ] && echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7R5/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino || true"
   - "[ $BIN == 'ringo' ] && wget http://ringojs.org/downloads/ringojs-0.9.zip && sudo unzip ringojs-0.9 -d /opt && rm ringojs-0.9.zip || true"
   - "[ $BIN == 'ringo' ] && sudo ln -s /opt/ringojs-0.9/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo || true"
+  - "[ $SAUCELABS != false ] && npm install connect request sauce-tunnel || true"
 script:
   - "[ $BIN == 'istanbul' ] && $BIN cover ./test/test.js || true"
   - "[ $BUILD != false ] && [ $BUILD != 'compat' ] && MAKE=true || true"
@@ -56,3 +64,4 @@ script:
   - "[ $BUILD != false ] && cd ./test || true" 
   - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js"

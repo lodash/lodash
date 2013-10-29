@@ -917,7 +917,7 @@
         deepEqual(args, [klass]);
       });
 
-      test('`_.' + methodName + '`should support the `thisArg` argument', 1, function() {
+      test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
         var actual = func('a', function(value) {
           return this[value];
         }, { 'a': 'A' });
@@ -4668,12 +4668,19 @@
       deepEqual(args, expected);
     });
 
-    test('`_.' + methodName + '`should support the `thisArg` argument', 1, function() {
+    test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
       var actual = func(array, function(num, index) {
         return -this[index];
       }, array);
 
       equal(actual, methodName == 'max' ? 1 : 3);
+    });
+
+    test('`_.' + methodName + '` should work when used as `callback` for `_.map`', 1, function() {
+      var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
+          actual = _.map(array, func);
+
+      deepEqual(actual, methodName == 'max' ? [3, 6, 9] : [1, 4, 7]);
     });
 
     test('`_.' + methodName + '` should iterate an object', 1, function() {

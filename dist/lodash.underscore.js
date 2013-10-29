@@ -2278,10 +2278,15 @@
     var computed = -Infinity,
         result = computed;
 
+    // allows working with functions like `_.map` without using
+    // their `index` argument as a callback
+    if (typeof callback != 'function' && thisArg && thisArg[callback] === collection) {
+      callback = null;
+    }
     var index = -1,
         length = collection ? collection.length : 0;
 
-    if (!callback && typeof length == 'number') {
+    if (callback == null && typeof length == 'number') {
       while (++index < length) {
         var value = collection[index];
         if (value > result) {
@@ -2289,7 +2294,9 @@
         }
       }
     } else {
-      callback = createCallback(callback, thisArg, 3);
+      callback = (callback == null && isString(collection))
+        ? charAtCallback
+        : createCallback(callback, thisArg, 3);
 
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -2346,10 +2353,15 @@
     var computed = Infinity,
         result = computed;
 
+    // allows working with functions like `_.map` without using
+    // their `index` argument as a callback
+    if (typeof callback != 'function' && thisArg && thisArg[callback] === collection) {
+      callback = null;
+    }
     var index = -1,
         length = collection ? collection.length : 0;
 
-    if (!callback && typeof length == 'number') {
+    if (callback == null && typeof length == 'number') {
       while (++index < length) {
         var value = collection[index];
         if (value < result) {
@@ -2357,7 +2369,9 @@
         }
       }
     } else {
-      callback = createCallback(callback, thisArg, 3);
+      callback = (callback == null && isString(collection))
+        ? charAtCallback
+        : createCallback(callback, thisArg, 3);
 
       forEach(collection, function(value, index, collection) {
         var current = callback(value, index, collection);
@@ -2541,8 +2555,8 @@
    * @category Collections
    * @param {Array|Object|string} collection The collection to sample.
    * @param {number} [n] The number of elements to sample.
-   * @param- {Object} [guard] Allows working with functions, like `_.map`,
-   *  without using their `key` and `object` arguments as sources.
+   * @param- {Object} [guard] Allows working with functions like `_.map`
+   *  without using their `index` arguments as `n`.
    * @returns {Array} Returns the random sample(s) of `collection`.
    * @example
    *
@@ -3254,7 +3268,7 @@
       end = start;
       start = 0;
     }
-    // use `Array(length)` so engines, like Chakra and V8, avoid slower modes
+    // use `Array(length)` so engines like Chakra and V8 avoid slower modes
     // http://youtu.be/XAqIpGU8ZZk#t=17m25s
     var index = -1,
         length = nativeMax(0, ceil((end - start) / step)),
@@ -3466,7 +3480,7 @@
     // juggle arguments
     if (typeof isSorted != 'boolean' && isSorted != null) {
       thisArg = callback;
-      callback = !(thisArg && thisArg[isSorted] === array) ? isSorted : null;
+      callback = (typeof isSorted != 'function' && thisArg && thisArg[isSorted] === array) ? null : isSorted;
       isSorted = false;
     }
     if (callback != null) {
@@ -4785,7 +4799,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // some AMD build optimizers, like r.js, check for condition patterns like the following:
+  // some AMD build optimizers like r.js check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
     // Expose Lo-Dash to the global object even when an AMD loader is present in
     // case Lo-Dash was injected by a third-party script and not intended to be

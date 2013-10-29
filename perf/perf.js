@@ -280,11 +280,11 @@
       }\
       \
       if (typeof bind != "undefined") {\
-        var thisArg = { "name": "moe" },\
+        var thisArg = { "name": "fred" },\
             ctor = function() {};\
         \
         var func = function(greeting, punctuation) {\
-          return greeting + ", " + this.name + (punctuation || ".");\
+          return greeting + " " + this.name + (punctuation || ".");\
         };\
         \
         var _boundNormal = _.bind(func, thisArg),\
@@ -296,8 +296,8 @@
             lodashBoundPartial = lodash.bind(func, thisArg, "hi");\
         \
         for (index = 0; index < 10; index++) {\
-          _boundMultiple = _.bind(_boundMultiple, { "name": "moe" + index });\
-          lodashBoundMultiple = lodash.bind(lodashBoundMultiple, { "name": "moe" + index });\
+          _boundMultiple = _.bind(_boundMultiple, { "name": "fred" + index });\
+          lodashBoundMultiple = lodash.bind(lodashBoundMultiple, { "name": "fred" + index });\
         }\
       }\
       \
@@ -604,13 +604,13 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.bind` (uses native `Function#bind` if available and inferred fast)')
+    Benchmark.Suite('`_.bind`')
       .add(buildName, {
-        'fn': 'lodash.bind(func, { "name": "moe" })',
+        'fn': 'lodash.bind(func, { "name": "fred" })',
         'teardown': 'function bind(){}'
       })
       .add(otherName, {
-        'fn': '_.bind(func, { "name": "moe" })',
+        'fn': '_.bind(func, { "name": "fred" })',
         'teardown': 'function bind(){}'
       })
   );
@@ -640,7 +640,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('bound and partially applied call (uses native `Function#bind` if available)')
+    Benchmark.Suite('bound and partially applied call')
       .add(buildName, {
         'fn': 'lodashBoundPartial()',
         'teardown': 'function bind(){}'
@@ -652,7 +652,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('bound and partially applied call with arguments (uses native `Function#bind` if available)')
+    Benchmark.Suite('bound and partially applied call with arguments')
       .add(buildName, {
         'fn': 'lodashBoundPartial("!")',
         'teardown': 'function bind(){}'

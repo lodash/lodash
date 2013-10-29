@@ -6101,9 +6101,14 @@
           array = Array(length),
           steps = 0;
 
-      array[index] = index;
-      _.sortedIndex(array, index, function() { steps++; });
-      equal(steps, 33);
+      if (array.length == length) {
+        array[index] = index;
+        _.sortedIndex(array, index, function() { steps++; });
+        equal(steps, 33);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 

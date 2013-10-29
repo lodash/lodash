@@ -3345,7 +3345,7 @@
         [true, true, true], [true, new Boolean(true), true], [new Boolean(true), new Boolean(true), true], [true, 1, false], [true, 'a', false],
         [false, false, true], [false, new Boolean(false), true], [new Boolean(false), new Boolean(false), true], [false, 0, false], [false, '', false],
         [null, null, true], [null, undefined, false], [null, {}, false], [null, '', false],
-        [undefined, undefined, true], [undefined, null, false], [undefined, '', false],
+        [undefined, undefined, true], [undefined, null, false], [undefined, '', false]
       ];
 
       var expected = _.map(pairs, function(pair) {

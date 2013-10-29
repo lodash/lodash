@@ -528,10 +528,6 @@
         splice = arrayRef.splice,
         unshift = arrayRef.unshift;
 
-    /** Used to detect `setImmediate` in Node.js */
-    var isV8 = nativeCreate && !/\n/.test(nativeCreate) && !reNative.test(context.attachEvent),
-        setImmediate = typeof (setImmediate = isV8 && moduleExports && context.setImmediate) == 'function' && setImmediate;
-
     /** Used to set meta data */
     var defineProperty = (function() {
       // IE 8 only accepts DOM elements
@@ -553,6 +549,10 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
+
+    /** Used to detect `setImmediate` in Node.js */
+    var isV8 = nativeCreate && !/\n/.test(nativeCreate) && !reNative.test(context.attachEvent),
+        setImmediate = typeof (setImmediate = isV8 && moduleExports && context.setImmediate) == 'function' && setImmediate;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};

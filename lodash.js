@@ -524,13 +524,17 @@
         now = reNative.test(now = Date.now) && now || function() { return +new Date; },
         push = arrayRef.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
-        setImmediate = context.setImmediate,
         setTimeout = context.setTimeout,
         splice = arrayRef.splice,
         unshift = arrayRef.unshift;
 
+    /** Used to detect `setImmediate` in Node.js */
+    var isV8 = nativeCreate && !/\n/.test(nativeCreate) && !reNative.test(context.attachEvent),
+        setImmediate = typeof (setImmediate = isV8 && moduleExports && context.setImmediate) == 'function' && setImmediate;
+
+    /** Used to set meta data */
     var defineProperty = (function() {
-      // IE 8 that only accepts DOM elements
+      // IE 8 only accepts DOM elements
       try {
         var o = {},
             func = reNative.test(func = Object.defineProperty) && func,
@@ -549,18 +553,6 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
-
-    var nativeBind = (function() {
-      // Narwhal doesn't accept `undefined` as the `thisArg`
-      try {
-        var result = toString.bind;
-        return reNative.test(result) && result.bind() && result;
-      } catch(e) { }
-      return false;
-    }());
-
-    /** Used to enable optimizations for V8 */
-    var isV8 = nativeBind && !/\n/.test(nativeBind) && !reNative.test(context.attachEvent);
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -736,14 +728,6 @@
        * @type boolean
        */
       support.enumPrototypes = propertyIsEnumerable.call(ctor, 'prototype');
-
-      /**
-       * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.fastBind = nativeBind && !isV8;
 
       /**
        * Detect if functions can be decompiled by `Function#toString`
@@ -1009,6 +993,37 @@
     );
 
     /*--------------------------------------------------------------------------*/
+
+    /**
+     * The base implementation of `_.bind` without `func` type checking or support
+     * for setting meta data.
+     *
+     * @private
+     * @param {Function} func The function to bind.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {Array} [partialArgs] An array of arguments to be partially applied.
+     * @returns {Function} Returns the new bound function.
+     */
+    function baseBind(func, thisArg, partialArgs) {
+      function bound() {
+        // `Function#bind` spec
+        // http://es5.github.io/#x15.3.4.5
+        if (partialArgs) {
+          var args = partialArgs.slice();
+          push.apply(args, arguments);
+        }
+        // mimic the constructor's `return` behavior
+        // http://es5.github.io/#x13.2.2
+        if (this instanceof bound) {
+          // ensure `new bound` is an instance of `func`
+          var thisBinding = baseCreate(func.prototype),
+              result = func.apply(thisBinding, args || arguments);
+          return isObject(result) ? result : thisBinding;
+        }
+        return func.apply(thisArg, args || arguments);
+      }
+      return bound;
+    }
 
     /**
      * The base implementation of `_.clone` without argument juggling or support
@@ -1623,54 +1638,42 @@
         bindData[1] |= bitmask;
         return createBound.apply(null, bindData);
       }
-      // use `Function#bind` if it exists and is fast
-      // (in V8 `Function#bind` is slower except when partially applied)
-      if (isBind && !(isBindKey || isCurry || isPartialRight) &&
-          (support.fastBind || (nativeBind && isPartial))) {
-        if (isPartial) {
-          var args = [thisArg];
-          push.apply(args, partialArgs);
-        }
-        var bound = isPartial
-          ? nativeBind.apply(func, args)
-          : nativeBind.call(func, thisArg);
+      // fast path for `_.bind`
+      if (bitmask == 1 || bitmask === 17) {
+        var bound = baseBind(func, thisArg, partialArgs);
       }
       else {
         bound = function() {
-          // `Function#bind` spec
-          // http://es5.github.io/#x15.3.4.5
-          var args = arguments,
-              thisBinding = isBind ? thisArg : this;
-
+          var thisBinding = isBind ? thisArg : this;
           if (isCurry || isPartial || isPartialRight) {
-            args = slice(args);
             if (isPartial) {
-              unshift.apply(args, partialArgs);
+              var args = partialArgs.slice();
+              push.apply(args, arguments);
             }
-            if (isPartialRight) {
-              push.apply(args, partialRightArgs);
-            }
-            if (isCurry && args.length < arity) {
-              bitmask |= 16 & ~32;
-              return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
+            if (isPartialRight || isCurry) {
+              args || (args = slice(arguments));
+              if (isPartialRight) {
+                push.apply(args, partialRightArgs);
+              }
+              if (isCurry && args.length < arity) {
+                bitmask |= 16 & ~32;
+                return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
+              }
             }
           }
+          args || (args = arguments);
           if (isBindKey) {
             func = thisBinding[key];
           }
           if (this instanceof bound) {
-            // ensure `new bound` is an instance of `func`
             thisBinding = baseCreate(func.prototype);
-
-            // mimic the constructor's `return` behavior
-            // http://es5.github.io/#x13.2.2
             var result = func.apply(thisBinding, args);
             return isObject(result) ? result : thisBinding;
           }
           return func.apply(thisBinding, args);
         };
       }
-      setBindData(bound, slice(arguments));
+      setBindData(bound, [func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
       return bound;
     }
 
@@ -5737,7 +5740,7 @@
       return setTimeout(function() { func.apply(undefined, args); }, 1);
     }
     // use `setImmediate` if available in Node.js
-    if (isV8 && moduleExports && typeof setImmediate == 'function') {
+    if (setImmediate) {
       defer = function(func) {
         if (!isFunction(func)) {
           throw new TypeError;

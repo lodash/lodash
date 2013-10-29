@@ -8,9 +8,22 @@ var port = 8081,
     accessKey = process.env.SAUCE_ACCESS_KEY;
 
 var platforms = [
-  ['Windows 7', 'chrome', ''],
-  ['Windows 7', 'firefox', '24'],
-  ['Windows 7', 'internet explorer', '9']
+  ['Windows 8', 'chrome', ''],
+  ['Windows 8', 'firefox', '24'],
+  ['Windows 8', 'firefox', '20'],
+  ['Windows 8', 'firefox', '10'],
+  ['Windows 8', 'firefox', '6'],
+  ['Windows 8', 'firefox', '4'],
+  ['Windows 8', 'firefox', '3'],
+  ['Windows 8', 'internet explorer', '10'],
+  ['Windows 7', 'internet explorer', '9'],
+  ['Windows XP', 'internet explorer', '8'],
+  ['Windows XP', 'internet explorer', '7'],
+  ['Windows XP', 'internet explorer', '6'],
+  ['Windows 7', 'opera', '12'],
+  ['Windows 7', 'opera', '11'],
+  ['OS X 10.8', 'safari', '6'],
+  ['OS X 10.6', 'safari', '5']
 ];
 
 // create a web server for the local dir

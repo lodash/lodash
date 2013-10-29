@@ -214,8 +214,7 @@
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       now = reNative.test(now = Date.now) && now || function() { return +new Date; },
-      push = arrayRef.push,
-      unshift = arrayRef.unshift;
+      push = arrayRef.push;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
@@ -226,18 +225,6 @@
       nativeMax = Math.max,
       nativeMin = Math.min,
       nativeRandom = Math.random;
-
-  var nativeBind = (function() {
-    // Narwhal doesn't accept `undefined` as the `thisArg`
-    try {
-      var result = toString.bind;
-      return reNative.test(result) && result.bind() && result;
-    } catch(e) { }
-    return false;
-  }());
-
-  /** Used to enable optimizations for V8 */
-  var isV8 = nativeBind && !/\n/.test(nativeBind) && !reNative.test(root.attachEvent);
 
   /*--------------------------------------------------------------------------*/
 
@@ -340,14 +327,6 @@
     var object = { '0': 1, 'length': 1 };
 
     /**
-     * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
-     *
-     * @memberOf _.support
-     * @type boolean
-     */
-    support.fastBind = nativeBind && !isV8;
-
-    /**
      * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
      *
      * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
@@ -407,6 +386,37 @@
   };
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * The base implementation of `_.bind` without `func` type checking or support
+   * for setting meta data.
+   *
+   * @private
+   * @param {Function} func The function to bind.
+   * @param {*} [thisArg] The `this` binding of `func`.
+   * @param {Array} [partialArgs] An array of arguments to be partially applied.
+   * @returns {Function} Returns the new bound function.
+   */
+  function baseBind(func, thisArg, partialArgs) {
+    function bound() {
+      // `Function#bind` spec
+      // http://es5.github.io/#x15.3.4.5
+      if (partialArgs) {
+        var args = partialArgs.slice();
+        push.apply(args, arguments);
+      }
+      // mimic the constructor's `return` behavior
+      // http://es5.github.io/#x13.2.2
+      if (this instanceof bound) {
+        // ensure `new bound` is an instance of `func`
+        var thisBinding = baseCreate(func.prototype),
+            result = func.apply(thisBinding, args || arguments);
+        return isObject(result) ? result : thisBinding;
+      }
+      return func.apply(thisArg, args || arguments);
+    }
+    return bound;
+  }
 
   /**
    * The base implementation of `_.create` without support for assigning
@@ -738,47 +748,35 @@
       bitmask &= ~32;
       isPartialRight = partialRightArgs = false;
     }
-    // use `Function#bind` if it exists and is fast
-    // (in V8 `Function#bind` is slower except when partially applied)
-    if (isBind && !(isBindKey || isCurry || isPartialRight) &&
-        (support.fastBind || (nativeBind && isPartial))) {
-      if (isPartial) {
-        var args = [thisArg];
-        push.apply(args, partialArgs);
-      }
-      var bound = isPartial
-        ? nativeBind.apply(func, args)
-        : nativeBind.call(func, thisArg);
+    // fast path for `_.bind`
+    if (bitmask == 1 || bitmask === 17) {
+      var bound = baseBind(func, thisArg, partialArgs);
     }
     else {
       bound = function() {
-        // `Function#bind` spec
-        // http://es5.github.io/#x15.3.4.5
-        var args = arguments,
-            thisBinding = isBind ? thisArg : this;
-
+        var thisBinding = isBind ? thisArg : this;
         if (isCurry || isPartial || isPartialRight) {
-          args = slice(args);
           if (isPartial) {
-            unshift.apply(args, partialArgs);
+            var args = partialArgs.slice();
+            push.apply(args, arguments);
           }
-          if (isPartialRight) {
-            push.apply(args, partialRightArgs);
-          }
-          if (isCurry && args.length < arity) {
-            bitmask |= 16 & ~32;
-            return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
+          if (isPartialRight || isCurry) {
+            args || (args = slice(arguments));
+            if (isPartialRight) {
+              push.apply(args, partialRightArgs);
+            }
+            if (isCurry && args.length < arity) {
+              bitmask |= 16 & ~32;
+              return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
+            }
           }
         }
+        args || (args = arguments);
         if (isBindKey) {
           func = thisBinding[key];
         }
         if (this instanceof bound) {
-          // ensure `new bound` is an instance of `func`
           thisBinding = baseCreate(func.prototype);
-
-          // mimic the constructor's `return` behavior
-          // http://es5.github.io/#x13.2.2
           var result = func.apply(thisBinding, args);
           return isObject(result) ? result : thisBinding;
         }

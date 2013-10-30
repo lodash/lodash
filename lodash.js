@@ -1126,7 +1126,6 @@
     if (!nativeCreate) {
       baseCreate = (function() {
         function Object() {}
-
         return function(prototype) {
           if (isObject(prototype)) {
             Object.prototype = prototype;

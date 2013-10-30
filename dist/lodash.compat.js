@@ -528,6 +528,10 @@
         setTimeout = context.setTimeout,
         splice = arrayRef.splice;
 
+    /** Used to detect `setImmediate` in Node.js */
+    var setImmediate = typeof (setImmediate = freeGlobal && moduleExports && freeGlobal.setImmediate) == 'function' &&
+      !reNative.test(setImmediate) && setImmediate;
+
     /** Used to set meta data */
     var defineProperty = (function() {
       // IE 8 only accepts DOM elements
@@ -549,10 +553,6 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
-
-    /** Used to detect `setImmediate` in Node.js */
-    var isV8 = nativeCreate && !/\n/.test(nativeCreate) && !reNative.test(context.attachEvent),
-        setImmediate = typeof (setImmediate = isV8 && moduleExports && context.setImmediate) == 'function' && setImmediate;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -978,16 +978,18 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * The base implementation of `_.bind` without `func` type checking or support
-     * for setting meta data.
+     * The base implementation of `_.bind` that creates the bound function and
+     * sets its meta data.
      *
      * @private
-     * @param {Function} func The function to bind.
-     * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {Array} [partialArgs] An array of arguments to be partially applied.
+     * @param {Array} bindData The bind data array.
      * @returns {Function} Returns the new bound function.
      */
-    function baseBind(func, thisArg, partialArgs) {
+    function baseBind(bindData) {
+      var func = bindData[0],
+          partialArgs = bindData[2],
+          thisArg = bindData[4];
+
       function bound() {
         // `Function#bind` spec
         // http://es5.github.io/#x15.3.4.5
@@ -1005,6 +1007,7 @@
         }
         return func.apply(thisArg, args || arguments);
       }
+      setBindData(bound, bindData);
       return bound;
     }
 
@@ -1181,44 +1184,42 @@
     }
 
     /**
-     * The base implementation of `createWrapper` without `func` type checking
-     * or support for setting meta data.
+     * The base implementation of `createWrapper` that creates the wrapper and
+     * sets its meta data.
      *
      * @private
-     * @param {Function|string} func The function or method name to reference.
-     * @param {number} bitmask The bitmask of method flags to compose.
-     * @param {Array} [partialArgs] An array of arguments to prepend to those
-     *  provided to the new function.
-     * @param {Array} [partialRightArgs] An array of arguments to append to those
-     *  provided to the new function.
-     * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {number} [arity] The arity of `func`.
+     * @param {Array} bindData The bind data array.
      * @returns {Function} Returns the new function.
      */
-    function baseCreateWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
+    function baseCreateWrapper(bindData) {
+      var func = bindData[0],
+          bitmask = bindData[1],
+          partialArgs = bindData[2],
+          partialRightArgs = bindData[3],
+          thisArg = bindData[4],
+          arity = bindData[5];
+
       var isBind = bitmask & 1,
           isBindKey = bitmask & 2,
           isCurry = bitmask & 4,
           isCurryBound = bitmask & 8,
-          isPartial = bitmask & 16,
-          isPartialRight = bitmask & 32,
           key = func;
 
       function bound() {
         var thisBinding = isBind ? thisArg : this;
-        if (isCurry || isPartial || isPartialRight) {
-          if (isPartial) {
+        if (isCurry || partialArgs || partialRightArgs) {
+          if (partialArgs) {
             var args = partialArgs.slice();
             push.apply(args, arguments);
           }
-          if (isPartialRight || isCurry) {
+          if (partialRightArgs || isCurry) {
             args || (args = slice(arguments));
-            if (isPartialRight) {
+            if (partialRightArgs) {
               push.apply(args, partialRightArgs);
             }
             if (isCurry && args.length < arity) {
               bitmask |= 16 & ~32;
-              return createWrapper(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
+              return baseCreateWrapper([func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity]);
             }
           }
         }
@@ -1233,6 +1234,7 @@
         }
         return func.apply(thisBinding, args);
       }
+      setBindData(bound, bindData);
       return bound;
     }
 
@@ -1677,12 +1679,8 @@
         return createWrapper.apply(null, bindData);
       }
       // fast path for `_.bind`
-      var result = (bitmask == 1 || bitmask === 17)
-        ? baseBind(func, thisArg, partialArgs)
-        : baseCreateWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, arity);
-
-      setBindData(result, [func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
-      return result;
+      var creater = (bitmask == 1 || bitmask === 17) ? baseBind : baseCreateWrapper;
+      return creater([func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
     }
 
     /**
@@ -1762,7 +1760,7 @@
      *
      * @private
      * @param {Function} func The function to set data on.
-     * @param {*} value The value to set.
+     * @param {Array} value The data array to set.
      */
     var setBindData = !defineProperty ? noop : function(func, value) {
       descriptor.value = value;

@@ -3791,15 +3791,14 @@
       }
     });
 
-    test('should return `false` for non objects', 3, function() {
-      var expected = _.map(falsey, function() { return false; });
+    test('should return `false` for non objects', 1, function() {
+      var values = falsey.concat('a', true),
+          expected = _.map(values, function() { return false; });
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(values, function(value, index) {
         return index ? _.isObject(value) : _.isObject();
       });
 
-      strictEqual(_.isObject(true), false);
-      strictEqual(_.isObject('a'), false);
       deepEqual(actual, expected);
     });
 
@@ -4761,6 +4760,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.noop');
+
+  (function() {
+    test('should always return `undefined`', 1, function() {
+      var values = falsey.concat([], true, new Date, _, {}, /x/, 'a'),
+          expected = _.map(values, function() { return undefined; });
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.noop(value) : _.noop();
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.omit');
 
   (function() {
@@ -5609,7 +5625,9 @@
           expected = _.map(falsey, function() { return undefined; });
 
       _.forEach(falsey, function(value, index) {
-        actual.push(index ? _.result(value) : _.result());
+        try {
+          actual.push(index ? _.result(value) : _.result());
+        } catch(e) { }
       });
 
       deepEqual(actual, expected);
@@ -7657,7 +7675,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 148, function() {
+    test('should accept falsey arguments', 149, function() {
       var isExported = '_' in root,
           oldDash = root._;
 

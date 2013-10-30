@@ -376,7 +376,7 @@ _.findLastIndex(characters, 'blocked');
 ### <a id="_firstarray-callback-thisarg"></a>`_.first(array, [callback], [thisArg])`
 <a href="#_firstarray-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4534 "View in source") [&#x24C9;][1]
 
-Gets the first element or first `n` elements of an array. If a callback is provided elements at the beginning of the array are returned as long as the callback returns truey. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
+Gets the first element or first `n` elements of an array. If a callback is provided elements at the beginning of the array are returned as long as the callback returns true. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -431,7 +431,7 @@ _.pluck(_.first(characters, { 'employer': 'slate' }), 'name');
 ### <a id="_flattenarray-isshallowfalse-callbackidentity-thisarg"></a>`_.flatten(array, [isShallow=false], [callback=identity], [thisArg])`
 <a href="#_flattenarray-isshallowfalse-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4594 "View in source") [&#x24C9;][1]
 
-Flattens a nested array *(the nesting can be to any depth)*. If `isShallow` is truey, the array will only be flattened a single level. If a callback is provided each element of the array is passed through the callback before flattening. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
+Flattens a nested array *(the nesting can be to any depth)*. If `isShallow` is true, the array will only be flattened a single level. If a callback is provided each element of the array is passed through the callback before flattening. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -506,7 +506,7 @@ _.indexOf([1, 1, 2, 2, 3, 3], 2, true);
 ### <a id="_initialarray-callback1-thisarg"></a>`_.initial(array, [callback=1], [thisArg])`
 <a href="#_initialarray-callback1-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4692 "View in source") [&#x24C9;][1]
 
-Gets all but the last element or last `n` elements of an array. If a callback is provided elements at the end of the array are excluded from the result as long as the callback returns truey. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
+Gets all but the last element or last `n` elements of an array. If a callback is provided elements at the end of the array are excluded from the result as long as the callback returns true. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -582,7 +582,7 @@ _.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 ### <a id="_lastarray-callback-thisarg"></a>`_.last(array, [callback], [thisArg])`
 <a href="#_lastarray-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4817 "View in source") [&#x24C9;][1]
 
-Gets the last element or last `n` elements of an array. If a callback is provided elements at the end of the array are returned as long as the callback returns truey. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
+Gets the last element or last `n` elements of an array. If a callback is provided elements at the end of the array are returned as long as the callback returns true. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -735,7 +735,7 @@ _.range(0);
 ### <a id="_removearray-callbackidentity-thisarg"></a>`_.remove(array, [callback=identity], [thisArg])`
 <a href="#_removearray-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4997 "View in source") [&#x24C9;][1]
 
-Removes all elements from an array that the callback returns truey for and returns an array of removed elements. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
+Removes all elements from an array that the callback returns true for and returns an array of removed elements. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -771,7 +771,7 @@ console.log(evens);
 ### <a id="_restarray-callback1-thisarg"></a>`_.rest(array, [callback=1], [thisArg])`
 <a href="#_restarray-callback1-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5066 "View in source") [&#x24C9;][1]
 
-The opposite of `_.initial` this method gets all but the first element or first `n` elements of an array. If a callback function is provided elements at the beginning of the array are excluded from the result as long as the callback returns truey. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
+The opposite of `_.initial` this method gets all but the first element or first `n` elements of an array. If a callback function is provided elements at the beginning of the array are excluded from the result as long as the callback returns true. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -1338,7 +1338,7 @@ _.countBy(['one', 'two', 'three'], 'length');
 ### <a id="_everycollection-callbackidentity-thisarg"></a>`_.every(collection, [callback=identity], [thisArg])`
 <a href="#_everycollection-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L3312 "View in source") [&#x24C9;][1]
 
-Checks if the given callback returns truey value for &#42;&#42;all&#42;&#42; elements of a collection. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*.
+Checks if the given callback returns true value for &#42;&#42;all&#42;&#42; elements of a collection. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -1384,7 +1384,7 @@ _.every(characters, { 'age': 36 });
 ### <a id="_filtercollection-callbackidentity-thisarg"></a>`_.filter(collection, [callback=identity], [thisArg])`
 <a href="#_filtercollection-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L3373 "View in source") [&#x24C9;][1]
 
-Iterates over elements of a collection, returning an array of all elements the callback returns truey for. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*.
+Iterates over elements of a collection, returning an array of all elements the callback returns true for. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -1430,7 +1430,7 @@ _.filter(characters, { 'age': 36 });
 ### <a id="_findcollection-callbackidentity-thisarg"></a>`_.find(collection, [callback=identity], [thisArg])`
 <a href="#_findcollection-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L3440 "View in source") [&#x24C9;][1]
 
-Iterates over elements of a collection, returning the first element that the callback returns truey for. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*.
+Iterates over elements of a collection, returning the first element that the callback returns true for. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -1905,7 +1905,7 @@ var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
 ### <a id="_rejectcollection-callbackidentity-thisarg"></a>`_.reject(collection, [callback=identity], [thisArg])`
 <a href="#_rejectcollection-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4040 "View in source") [&#x24C9;][1]
 
-The opposite of `_.filter` this method returns the elements of a collection that the callback does &#42;&#42;not&#42;&#42; return truey for.
+The opposite of `_.filter` this method returns the elements of a collection that the callback does &#42;&#42;not&#42;&#42; return true for.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -2030,7 +2030,7 @@ _.size('pebbles');
 ### <a id="_somecollection-callbackidentity-thisarg"></a>`_.some(collection, [callback=identity], [thisArg])`
 <a href="#_somecollection-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4174 "View in source") [&#x24C9;][1]
 
-Checks if the callback returns a truey value for &#42;&#42;any&#42;&#42; element of a collection. The function returns as soon as it finds a passing value and does not iterate over the entire collection. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*.
+Checks if the callback returns a true value for &#42;&#42;any&#42;&#42; element of a collection. The function returns as soon as it finds a passing value and does not iterate over the entire collection. The callback is bound to `thisArg` and invoked with three arguments; *(value, index|key, collection)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 
@@ -3791,7 +3791,7 @@ _.merge(food, otherFood, function(a, b) {
 ### <a id="_omitobject-callback-thisarg"></a>`_.omit(object, [callback], [thisArg])`
 <a href="#_omitobject-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L2970 "View in source") [&#x24C9;][1]
 
-Creates a shallow clone of `object` excluding the specified properties. Property names may be specified as individual arguments or as arrays of property names. If a callback is provided it will be executed for each property of `object` omitting the properties the callback returns truey for. The callback is bound to `thisArg` and invoked with three arguments; *(value, key, object)*.
+Creates a shallow clone of `object` excluding the specified properties. Property names may be specified as individual arguments or as arrays of property names. If a callback is provided it will be executed for each property of `object` omitting the properties the callback returns true for. The callback is bound to `thisArg` and invoked with three arguments; *(value, key, object)*.
 
 #### Arguments
 1. `object` *(Object)*: The source object.
@@ -3846,7 +3846,7 @@ _.pairs({ 'barney': 36, 'fred': 40 });
 ### <a id="_pickobject-callback-thisarg"></a>`_.pick(object, [callback], [thisArg])`
 <a href="#_pickobject-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L3045 "View in source") [&#x24C9;][1]
 
-Creates a shallow clone of `object` composed of the specified properties. Property names may be specified as individual arguments or as arrays of property names. If a callback is provided it will be executed for each property of `object` picking the properties the callback returns truey for. The callback is bound to `thisArg` and invoked with three arguments; *(value, key, object)*.
+Creates a shallow clone of `object` composed of the specified properties. Property names may be specified as individual arguments or as arrays of property names. If a callback is provided it will be executed for each property of `object` picking the properties the callback returns true for. The callback is bound to `thisArg` and invoked with three arguments; *(value, key, object)*.
 
 #### Arguments
 1. `object` *(Object)*: The source object.
@@ -4072,7 +4072,7 @@ _.parseInt('08');
 ### <a id="_randommin0-max1-floatingfalse"></a>`_.random([min=0], [max=1], [floating=false])`
 <a href="#_randommin0-max1-floatingfalse">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6154 "View in source") [&#x24C9;][1]
 
-Produces a random number between `min` and `max` *(inclusive)*. If only one argument is provided a number between `0` and the given number will be returned. If `floating` is truey or either `min` or `max` are floats a floating-point number will be returned instead of an integer.
+Produces a random number between `min` and `max` *(inclusive)*. If only one argument is provided a number between `0` and the given number will be returned. If `floating` is true or either `min` or `max` are floats a floating-point number will be returned instead of an integer.
 
 #### Arguments
 1. `[min=0]` *(number)*: The minimum possible value.

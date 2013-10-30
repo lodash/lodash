@@ -1461,7 +1461,7 @@
   );
 
   /*--------------------------------------------------------------------------*/
-suites.length = 0;
+
   suites.push(
     Benchmark.Suite('`_.partial`')
       .add(buildName, {

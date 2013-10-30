@@ -3088,7 +3088,7 @@
       strictEqual(_.isArguments(true), false);
       strictEqual(_.isArguments(new Date), false);
       strictEqual(_.isArguments(_), false);
-      strictEqual(_.isArguments({ '0': 1, 'length': 1 }), false);
+      strictEqual(_.isArguments({ '0': 1, 'callee': _.noop, 'length': 1 }), false);
       strictEqual(_.isArguments(0), false);
       strictEqual(_.isArguments(/x/), false);
       strictEqual(_.isArguments('a'), false);

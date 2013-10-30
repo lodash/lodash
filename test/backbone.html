@@ -29,6 +29,8 @@
 			document.write('<script src="' + ui.buildPath + '"><\/script>');
 		</script>
 		<script>
+			QUnit.config.hidepassed = true;
+
 			_.mixin({
 				'debounce': _.debounce || lodash.debounce,
 				'defer': _.defer || lodash.defer,

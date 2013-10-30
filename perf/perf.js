@@ -280,8 +280,7 @@
       }\
       \
       if (typeof bind != "undefined") {\
-        var thisArg = { "name": "fred" },\
-            ctor = function() {};\
+        var thisArg = { "name": "fred" };\
         \
         var func = function(greeting, punctuation) {\
           return greeting + " " + this.name + (punctuation || ".");\
@@ -483,6 +482,15 @@
         }\
       }\
       \
+      if (typeof partial != "undefined") {\
+        var func = function(greeting, punctuation) {\
+          return greeting + " fred" + (punctuation || ".");\
+        };\
+        \
+        var _partial = _.partial(func, "hi"),\
+            lodashPartial = lodash.partial(func, "hi");\
+      }\
+      \
       if (typeof template != "undefined") {\
         var tplData = {\
           "header1": "Header1",\
@@ -616,18 +624,6 @@
   );
 
   suites.push(
-    Benchmark.Suite('bound call')
-      .add(buildName, {
-        'fn': 'lodashBoundNormal()',
-        'teardown': 'function bind(){}'
-      })
-      .add(otherName, {
-        'fn': '_boundNormal()',
-        'teardown': 'function bind(){}'
-      })
-  );
-
-  suites.push(
     Benchmark.Suite('bound call with arguments')
       .add(buildName, {
         'fn': 'lodashBoundNormal("hi", "!")',
@@ -635,18 +631,6 @@
       })
       .add(otherName, {
         'fn': '_boundNormal("hi", "!")',
-        'teardown': 'function bind(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('bound and partially applied call')
-      .add(buildName, {
-        'fn': 'lodashBoundPartial()',
-        'teardown': 'function bind(){}'
-      })
-      .add(otherName, {
-        'fn': '_boundPartial()',
         'teardown': 'function bind(){}'
       })
   );
@@ -1474,6 +1458,32 @@
       .add(otherName, '\
         _.pairs(object)'
       )
+  );
+
+  /*--------------------------------------------------------------------------*/
+suites.length = 0;
+  suites.push(
+    Benchmark.Suite('`_.partial`')
+      .add(buildName, {
+        'fn': 'lodash.partial(func, "hi")',
+        'teardown': 'function partial(){}'
+      })
+      .add(otherName, {
+        'fn': '_.partial(func, "hi")',
+        'teardown': 'function partial(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('partially applied call with arguments')
+      .add(buildName, {
+        'fn': 'lodashPartial("!")',
+        'teardown': 'function partial(){}'
+      })
+      .add(otherName, {
+        'fn': '_partial("!")',
+        'teardown': 'function partial(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/

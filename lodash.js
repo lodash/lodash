@@ -528,6 +528,10 @@
         splice = arrayRef.splice,
         unshift = arrayRef.unshift;
 
+    /** Used to detect `setImmediate` in Node.js */
+    var setImmediate = typeof (setImmediate = freeGlobal && moduleExports && freeGlobal.setImmediate) == 'function' &&
+      !reNative.test(setImmediate) && setImmediate;
+
     /** Used to set meta data */
     var defineProperty = (function() {
       // IE 8 only accepts DOM elements
@@ -549,10 +553,6 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
-
-    /** Used to detect `setImmediate` in Node.js */
-    var isV8 = nativeCreate && !/\n/.test(nativeCreate) && !reNative.test(context.attachEvent),
-        setImmediate = typeof (setImmediate = isV8 && moduleExports && context.setImmediate) == 'function' && setImmediate;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -995,16 +995,18 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * The base implementation of `_.bind` without `func` type checking or support
-     * for setting meta data.
+     * The base implementation of `_.bind` that creates the bound function and
+     * sets its meta data.
      *
      * @private
-     * @param {Function} func The function to bind.
-     * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {Array} [partialArgs] An array of arguments to be partially applied.
+     * @param {Array} bindData The bind data array.
      * @returns {Function} Returns the new bound function.
      */
-    function baseBind(func, thisArg, partialArgs) {
+    function baseBind(bindData) {
+      var func = bindData[0],
+          partialArgs = bindData[2],
+          thisArg = bindData[4];
+
       function bound() {
         // `Function#bind` spec
         // http://es5.github.io/#x15.3.4.5
@@ -1022,6 +1024,7 @@
         }
         return func.apply(thisArg, args || arguments);
       }
+      setBindData(bound, bindData);
       return bound;
     }
 
@@ -1195,6 +1198,61 @@
         };
       }
       return bind(func, thisArg);
+    }
+
+    /**
+     * The base implementation of `createWrapper` that creates the wrapper and
+     * sets its meta data.
+     *
+     * @private
+     * @param {Array} bindData The bind data array.
+     * @returns {Function} Returns the new function.
+     */
+    function baseCreateWrapper(bindData) {
+      var func = bindData[0],
+          bitmask = bindData[1],
+          partialArgs = bindData[2],
+          partialRightArgs = bindData[3],
+          thisArg = bindData[4],
+          arity = bindData[5];
+
+      var isBind = bitmask & 1,
+          isBindKey = bitmask & 2,
+          isCurry = bitmask & 4,
+          isCurryBound = bitmask & 8,
+          key = func;
+
+      function bound() {
+        var thisBinding = isBind ? thisArg : this;
+        if (isCurry || partialArgs || partialRightArgs) {
+          if (partialArgs) {
+            var args = partialArgs.slice();
+            push.apply(args, arguments);
+          }
+          if (partialRightArgs || isCurry) {
+            args || (args = slice(arguments));
+            if (partialRightArgs) {
+              push.apply(args, partialRightArgs);
+            }
+            if (isCurry && args.length < arity) {
+              bitmask |= 16 & ~32;
+              return baseCreateWrapper([func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity]);
+            }
+          }
+        }
+        args || (args = arguments);
+        if (isBindKey) {
+          func = thisBinding[key];
+        }
+        if (this instanceof bound) {
+          thisBinding = baseCreate(func.prototype);
+          var result = func.apply(thisBinding, args);
+          return isObject(result) ? result : thisBinding;
+        }
+        return func.apply(thisBinding, args);
+      }
+      setBindData(bound, bindData);
+      return bound;
     }
 
     /**
@@ -1588,16 +1646,15 @@
      *  provided to the new function.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {number} [arity] The arity of `func`.
-     * @returns {Function} Returns the new bound function.
+     * @returns {Function} Returns the new function.
      */
-    function createBound(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
+    function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
       var isBind = bitmask & 1,
           isBindKey = bitmask & 2,
           isCurry = bitmask & 4,
           isCurryBound = bitmask & 8,
           isPartial = bitmask & 16,
-          isPartialRight = bitmask & 32,
-          key = func;
+          isPartialRight = bitmask & 32;
 
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError;
@@ -1636,45 +1693,11 @@
         }
         // merge flags
         bindData[1] |= bitmask;
-        return createBound.apply(null, bindData);
+        return createWrapper.apply(null, bindData);
       }
       // fast path for `_.bind`
-      if (bitmask == 1 || bitmask === 17) {
-        var bound = baseBind(func, thisArg, partialArgs);
-      }
-      else {
-        bound = function() {
-          var thisBinding = isBind ? thisArg : this;
-          if (isCurry || isPartial || isPartialRight) {
-            if (isPartial) {
-              var args = partialArgs.slice();
-              push.apply(args, arguments);
-            }
-            if (isPartialRight || isCurry) {
-              args || (args = slice(arguments));
-              if (isPartialRight) {
-                push.apply(args, partialRightArgs);
-              }
-              if (isCurry && args.length < arity) {
-                bitmask |= 16 & ~32;
-                return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
-              }
-            }
-          }
-          args || (args = arguments);
-          if (isBindKey) {
-            func = thisBinding[key];
-          }
-          if (this instanceof bound) {
-            thisBinding = baseCreate(func.prototype);
-            var result = func.apply(thisBinding, args);
-            return isObject(result) ? result : thisBinding;
-          }
-          return func.apply(thisBinding, args);
-        };
-      }
-      setBindData(bound, [func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
-      return bound;
+      var creater = (bitmask == 1 || bitmask === 17) ? baseBind : baseCreateWrapper;
+      return creater([func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
     }
 
     /**
@@ -1755,7 +1778,7 @@
      *
      * @private
      * @param {Function} func The function to set data on.
-     * @param {*} value The value to set.
+     * @param {Array} value The data array to set.
      */
     var setBindData = !defineProperty ? noop : function(func, value) {
       descriptor.value = value;
@@ -5372,8 +5395,8 @@
      */
     function bind(func, thisArg) {
       return arguments.length > 2
-        ? createBound(func, 17, slice(arguments, 2), null, thisArg)
-        : createBound(func, 1, null, null, thisArg);
+        ? createWrapper(func, 17, slice(arguments, 2), null, thisArg)
+        : createWrapper(func, 1, null, null, thisArg);
     }
 
     /**
@@ -5407,7 +5430,7 @@
 
       while (++index < length) {
         var key = funcs[index];
-        object[key] = createBound(object[key], 1, null, null, object);
+        object[key] = createWrapper(object[key], 1, null, null, object);
       }
       return object;
     }
@@ -5448,8 +5471,8 @@
      */
     function bindKey(object, key) {
       return arguments.length > 2
-        ? createBound(key, 19, slice(arguments, 2), null, object)
-        : createBound(key, 3, null, null, object);
+        ? createWrapper(key, 19, slice(arguments, 2), null, object)
+        : createWrapper(key, 3, null, null, object);
     }
 
     /**
@@ -5600,7 +5623,7 @@
      */
     function curry(func, arity) {
       arity = typeof arity == 'number' ? arity : (+arity || func.length);
-      return createBound(func, 4, null, null, null, arity);
+      return createWrapper(func, 4, null, null, null, arity);
     }
 
     /**
@@ -5894,7 +5917,7 @@
      * // => 'hi fred'
      */
     function partial(func) {
-      return createBound(func, 16, slice(arguments, 1));
+      return createWrapper(func, 16, slice(arguments, 1));
     }
 
     /**
@@ -5925,7 +5948,7 @@
      * // => { '_': _, 'jq': $ }
      */
     function partialRight(func) {
-      return createBound(func, 32, null, slice(arguments, 1));
+      return createWrapper(func, 32, null, slice(arguments, 1));
     }
 
     /**
@@ -6001,7 +6024,7 @@
      * // => '<p>Fred, Wilma, &amp; Pebbles</p>'
      */
     function wrap(value, wrapper) {
-      return createBound(wrapper, 16, [value]);
+      return createWrapper(wrapper, 16, [value]);
     }
 
     /*--------------------------------------------------------------------------*/

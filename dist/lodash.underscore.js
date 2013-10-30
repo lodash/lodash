@@ -147,15 +147,6 @@
   }
 
   /**
-   * A no-operation function.
-   *
-   * @private
-   */
-  function noop() {
-    // no operation performed
-  }
-
-  /**
    * Slices the `collection` from the `start` index up to, but not including,
    * the `end` index.
    *
@@ -214,7 +205,8 @@
       floor = Math.floor,
       hasOwnProperty = objectProto.hasOwnProperty,
       now = reNative.test(now = Date.now) && now || function() { return +new Date; },
-      push = arrayRef.push;
+      push = arrayRef.push,
+      propertyIsEnumerable = objectProto.propertyIsEnumerable;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
@@ -433,14 +425,17 @@
   }
   // fallback for browsers without `Object.create`
   if (!nativeCreate) {
-    baseCreate = function(prototype) {
-      if (isObject(prototype)) {
-        noop.prototype = prototype;
-        var result = new noop;
-        noop.prototype = null;
-      }
-      return result || {};
-    };
+    baseCreate = (function() {
+      function Object() {}
+      return function(prototype) {
+        if (isObject(prototype)) {
+          Object.prototype = prototype;
+          var result = new Object;
+          Object.prototype = null;
+        }
+        return result || root.Object();
+      };
+    }());
   }
 
   /**
@@ -869,7 +864,7 @@
   if (!isArguments(arguments)) {
     isArguments = function(value) {
       return value && typeof value == 'object' && typeof value.length == 'number' &&
-        hasOwnProperty.call(value, 'callee') || false;
+        hasOwnProperty.call(value, 'callee') && propertyIsEnumerable.call(value, 'callee') || false;
     };
   }
 
@@ -4249,6 +4244,22 @@
   }
 
   /**
+   * A no-operation function.
+   *
+   * @static
+   * @memberOf _
+   * @category Utilities
+   * @example
+   *
+   * var object = { 'name': 'fred' };
+   * _.noop(object) === undefined;
+   * // => true
+   */
+  function noop() {
+    // no operation performed
+  }
+
+  /**
    * Produces a random number between `min` and `max` (inclusive). If only one
    * argument is provided a number between `0` and the given number will be
    * returned. If `floating` is truey or either `min` or `max` are floats a
@@ -4738,6 +4749,7 @@
   lodash.lastIndexOf = lastIndexOf;
   lodash.mixin = mixin;
   lodash.noConflict = noConflict;
+  lodash.noop = noop;
   lodash.random = random;
   lodash.reduce = reduce;
   lodash.reduceRight = reduceRight;

@@ -905,6 +905,62 @@
     }
 
     /**
+     * The base implementation of `createWrapper` without `func` type checking
+     * or support for setting meta data.
+     *
+     * @private
+     * @param {Function|string} func The function or method name to reference.
+     * @param {number} bitmask The bitmask of method flags to compose.
+     * @param {Array} [partialArgs] An array of arguments to prepend to those
+     *  provided to the new function.
+     * @param {Array} [partialRightArgs] An array of arguments to append to those
+     *  provided to the new function.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {number} [arity] The arity of `func`.
+     * @returns {Function} Returns the new function.
+     */
+    function baseCreateWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
+      var isBind = bitmask & 1,
+          isBindKey = bitmask & 2,
+          isCurry = bitmask & 4,
+          isCurryBound = bitmask & 8,
+          isPartial = bitmask & 16,
+          isPartialRight = bitmask & 32,
+          key = func;
+
+      function bound() {
+        var thisBinding = isBind ? thisArg : this;
+        if (isCurry || isPartial || isPartialRight) {
+          if (isPartial) {
+            var args = partialArgs.slice();
+            push.apply(args, arguments);
+          }
+          if (isPartialRight || isCurry) {
+            args || (args = slice(arguments));
+            if (isPartialRight) {
+              push.apply(args, partialRightArgs);
+            }
+            if (isCurry && args.length < arity) {
+              bitmask |= 16 & ~32;
+              return createWrapper(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
+            }
+          }
+        }
+        args || (args = arguments);
+        if (isBindKey) {
+          func = thisBinding[key];
+        }
+        if (this instanceof bound) {
+          thisBinding = baseCreate(func.prototype);
+          var result = func.apply(thisBinding, args);
+          return isObject(result) ? result : thisBinding;
+        }
+        return func.apply(thisBinding, args);
+      }
+      return bound;
+    }
+
+    /**
      * The base implementation of `_.flatten` without support for callback
      * shorthands or `thisArg` binding.
      *
@@ -1295,16 +1351,15 @@
      *  provided to the new function.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {number} [arity] The arity of `func`.
-     * @returns {Function} Returns the new bound function.
+     * @returns {Function} Returns the new function.
      */
-    function createBound(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
+    function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
       var isBind = bitmask & 1,
           isBindKey = bitmask & 2,
           isCurry = bitmask & 4,
           isCurryBound = bitmask & 8,
           isPartial = bitmask & 16,
-          isPartialRight = bitmask & 32,
-          key = func;
+          isPartialRight = bitmask & 32;
 
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError;
@@ -1343,45 +1398,15 @@
         }
         // merge flags
         bindData[1] |= bitmask;
-        return createBound.apply(null, bindData);
+        return createWrapper.apply(null, bindData);
       }
       // fast path for `_.bind`
-      if (bitmask == 1 || bitmask === 17) {
-        var bound = baseBind(func, thisArg, partialArgs);
-      }
-      else {
-        bound = function() {
-          var thisBinding = isBind ? thisArg : this;
-          if (isCurry || isPartial || isPartialRight) {
-            if (isPartial) {
-              var args = partialArgs.slice();
-              push.apply(args, arguments);
-            }
-            if (isPartialRight || isCurry) {
-              args || (args = slice(arguments));
-              if (isPartialRight) {
-                push.apply(args, partialRightArgs);
-              }
-              if (isCurry && args.length < arity) {
-                bitmask |= 16 & ~32;
-                return createBound(func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity);
-              }
-            }
-          }
-          args || (args = arguments);
-          if (isBindKey) {
-            func = thisBinding[key];
-          }
-          if (this instanceof bound) {
-            thisBinding = baseCreate(func.prototype);
-            var result = func.apply(thisBinding, args);
-            return isObject(result) ? result : thisBinding;
-          }
-          return func.apply(thisBinding, args);
-        };
-      }
-      setBindData(bound, [func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
-      return bound;
+      var result = (bitmask == 1 || bitmask === 17)
+        ? baseBind(func, thisArg, partialArgs)
+        : baseCreateWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, arity);
+
+      setBindData(result, [func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
+      return result;
     }
 
     /**
@@ -5015,8 +5040,8 @@
      */
     function bind(func, thisArg) {
       return arguments.length > 2
-        ? createBound(func, 17, slice(arguments, 2), null, thisArg)
-        : createBound(func, 1, null, null, thisArg);
+        ? createWrapper(func, 17, slice(arguments, 2), null, thisArg)
+        : createWrapper(func, 1, null, null, thisArg);
     }
 
     /**
@@ -5050,7 +5075,7 @@
 
       while (++index < length) {
         var key = funcs[index];
-        object[key] = createBound(object[key], 1, null, null, object);
+        object[key] = createWrapper(object[key], 1, null, null, object);
       }
       return object;
     }
@@ -5091,8 +5116,8 @@
      */
     function bindKey(object, key) {
       return arguments.length > 2
-        ? createBound(key, 19, slice(arguments, 2), null, object)
-        : createBound(key, 3, null, null, object);
+        ? createWrapper(key, 19, slice(arguments, 2), null, object)
+        : createWrapper(key, 3, null, null, object);
     }
 
     /**
@@ -5243,7 +5268,7 @@
      */
     function curry(func, arity) {
       arity = typeof arity == 'number' ? arity : (+arity || func.length);
-      return createBound(func, 4, null, null, null, arity);
+      return createWrapper(func, 4, null, null, null, arity);
     }
 
     /**
@@ -5537,7 +5562,7 @@
      * // => 'hi fred'
      */
     function partial(func) {
-      return createBound(func, 16, slice(arguments, 1));
+      return createWrapper(func, 16, slice(arguments, 1));
     }
 
     /**
@@ -5568,7 +5593,7 @@
      * // => { '_': _, 'jq': $ }
      */
     function partialRight(func) {
-      return createBound(func, 32, null, slice(arguments, 1));
+      return createWrapper(func, 32, null, slice(arguments, 1));
     }
 
     /**
@@ -5644,7 +5669,7 @@
      * // => '<p>Fred, Wilma, &amp; Pebbles</p>'
      */
     function wrap(value, wrapper) {
-      return createBound(wrapper, 16, [value]);
+      return createWrapper(wrapper, 16, [value]);
     }
 
     /*--------------------------------------------------------------------------*/

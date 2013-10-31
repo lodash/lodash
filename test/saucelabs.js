@@ -6,7 +6,7 @@ var connect = require('connect'),
 var port = 8081,
     username = process.env.SAUCE_USERNAME,
     accessKey = process.env.SAUCE_ACCESS_KEY;
-
+console.log(process.env)
 var platforms = [
   ['Windows 7', 'chrome', ''],
   ['Windows 7', 'firefox', '24'],

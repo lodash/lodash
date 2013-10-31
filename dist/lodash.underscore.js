@@ -617,8 +617,11 @@
     }
     var isArr = className == arrayClass;
     if (!isArr) {
-      if (hasOwnProperty.call(a, '__wrapped__ ') || b instanceof lodash) {
-        return baseIsEqual(a.__wrapped__ || a, b.__wrapped__ || b, stackA, stackB);
+      var aWrapped = a instanceof lodash,
+          bWrapped = b instanceof lodash;
+
+      if (aWrapped || bWrapped) {
+        return baseIsEqual(aWrapped ? a.__wrapped__ : a, bWrapped ? b.__wrapped__ : b, stackA, stackB);
       }
       if (className != objectClass) {
         return false;

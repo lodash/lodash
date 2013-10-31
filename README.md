@@ -17,7 +17,7 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.<br>
-Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
+Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-es6](https://npmjs.org/package/lodash-es6), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
 
 ## Dive in
 
@@ -45,6 +45,7 @@ The full changelog for this release is available on our [wiki](https://github.co
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) for checking if values are created by `Object`
  * [_.memoize](http://lodash.com/docs#memoize) exposes the `cache` of memoized functions
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
+ * [_.noop](http://lodash.com/docs#noop) for function placeholders
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.partialRight](http://lodash.com/docs#partialRight) for [partial application](http://lodash.com/docs#partial) from the right
  * [_.pull](http://lodash.com/docs#pull) & [_.remove](http://lodash.com/docs#remove) for mutating arrays
@@ -81,11 +82,11 @@ The full changelog for this release is available on our [wiki](https://github.co
   - [Testing](https://vimeo.com/45865290)
   - [CascadiaJS ’12](http://www.youtube.com/watch?v=dpPy4f_SeEk)
 
- For a list of other community created podcasts, posts, and videos please check out our [wiki](https://github.com/lodash/lodash/wiki/Resources).
+ For a list of other community created podcasts, posts, & videos please check out our [wiki](https://github.com/lodash/lodash/wiki/Resources).
 
 ## Support
 
-Tested in Chrome 5~30, Firefox 2~24, IE 6-11, Opera 9.25~16, Safari 3-6, Node.js 0.6.8-0.10.21, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
+Tested in Chrome 5~30, Firefox 2~25, IE 6-11, Opera 9.25~17, Safari 3-7, Node.js 0.6.8-0.10.21, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
 
 ## Installation & usage
 

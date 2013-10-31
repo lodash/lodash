@@ -523,7 +523,7 @@
     var setImmediate = typeof (setImmediate = freeGlobal && moduleExports && freeGlobal.setImmediate) == 'function' &&
       !reNative.test(setImmediate) && setImmediate;
 
-    /** Used to set meta data */
+    /** Used to set meta data on functions */
     var defineProperty = (function() {
       // IE 8 only accepts DOM elements
       try {

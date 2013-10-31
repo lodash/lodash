@@ -4185,7 +4185,7 @@ A micro-templating method that handles arbitrary delimiters, preserves whitespac
 Note: In the development build, `_.template` utilizes sourceURLs for easier debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
 
 For more information on precompiling templates see:<br>
-http://lodash.com/#custom-builds
+http://lodash.com/custom-builds
 
 For more information on Chrome extension sandboxes see:<br>
 http://developer.chrome.com/stable/extensions/sandboxingEval.html

@@ -1347,22 +1347,23 @@
       }
     });
 
-    asyncTest('subsequent debounced calls return the last `func` result',2, function() {
+    asyncTest('subsequent debounced calls return the last `func` result', 3, function() {
       if (!(isRhino && isModularize)) {
         var debounced = _.debounce(_.identity, 32);
         debounced('x');
 
         setTimeout(function() {
-          equal(debounced('y'), 'x');
+          notEqual(debounced('y'), 'y');
         }, 64);
 
         setTimeout(function() {
-          equal(debounced('z'), 'y');
+          notEqual(debounced('z'), 'z');
+          notStrictEqual(debounced('z'), undefined);
           QUnit.start();
         }, 128);
       }
       else {
-        skipTest(2);
+        skipTest(3);
         QUnit.start();
       }
     });

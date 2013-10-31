@@ -481,7 +481,7 @@
     var setImmediate = typeof (setImmediate = freeGlobal && moduleExports && freeGlobal.setImmediate) == 'function' &&
       !reNative.test(setImmediate) && setImmediate;
 
-    /** Used to set meta data */
+    /** Used to set meta data on functions */
     var defineProperty = (function() {
       // IE 8 only accepts DOM elements
       try {
@@ -1072,8 +1072,11 @@
       var isArr = className == arrayClass;
       if (!isArr) {
         // unwrap any `lodash` wrapped values
-        if (hasOwnProperty.call(a, '__wrapped__ ') || hasOwnProperty.call(b, '__wrapped__')) {
-          return baseIsEqual(a.__wrapped__ || a, b.__wrapped__ || b, callback, isWhere, stackA, stackB);
+        var aWrapped = hasOwnProperty.call(a, '__wrapped__'),
+            bWrapped = hasOwnProperty.call(b, '__wrapped__');
+
+        if (aWrapped || bWrapped) {
+          return baseIsEqual(aWrapped ? a.__wrapped__ : a, bWrapped ? b.__wrapped__ : b, callback, isWhere, stackA, stackB);
         }
         // exit for functions and DOM nodes
         if (className != objectClass) {

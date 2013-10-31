@@ -3098,7 +3098,7 @@
     });
 
     test('should work with `arguments` objects from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isArguments(_._arguments), true);
       }
       else {
@@ -3138,7 +3138,7 @@
     });
 
     test('should work with arrays from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isArray(_._array), true);
       }
       else {
@@ -3181,7 +3181,7 @@
     });
 
     test('should work with booleans from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isBoolean(_._boolean), true);
       }
       else {
@@ -3221,7 +3221,7 @@
     });
 
     test('should work with dates from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isDate(_._date), true);
       }
       else {
@@ -3247,7 +3247,7 @@
     });
 
     test('should work with elements from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isElement(_._element), true);
       }
       else {
@@ -3374,14 +3374,73 @@
       ok(actual, expected);
     });
 
-    test('should perform a deep comparison between date objects', 4, function() {
+    test('should perform comparisons between arrays', 6, function() {
+      var array1 = [true, null, 1, 'a', undefined],
+          array2 = [true, null, 1, 'a', undefined];
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1 = [[1, 2, 3], new Date(2012, 4, 23), /x/, { 'e': 1 }];
+      array2 = [[1, 2, 3], new Date(2012, 4, 23), /x/, { 'e': 1 }];
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1 = [1];
+      array1[2] = 3;
+
+      array2 = [1];
+      array2[1] = undefined;
+      array2[2] = 3;
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1 = [new Number(1), false, new String('a'), /x/, new Date(2012, 4, 23), ['a', 'b', [new String('c')]], { 'a': 1 }];
+      array2 = [1, new Boolean(false), 'a', /x/, new Date(2012, 4, 23), ['a', new String('b'), ['c']], { 'a': 1 }];
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1 = [1, 2, 3];
+      array2 = [3, 2, 1];
+
+      strictEqual(_.isEqual(array1, array2), false);
+
+      array1 = [1, 2];
+      array2 = [1, 2, 3];
+
+      strictEqual(_.isEqual(array1, array2), false);
+    });
+
+    test('should treat arrays with identical values but different non-numeric properties as equal', 3, function() {
+      var array1 = [1, 2, 3],
+          array2 = [1, 2, 3];
+
+      array1.every = array1.filter = array1.forEach = array1.indexOf = array1.lastIndexOf = array1.map = array1.some = array1.reduce = array1.reduceRight = null;
+      array2.concat = array2.join = array2.pop = array2.reverse = array2.shift = array2.slice = array2.sort = array2.splice = array2.unshift = null;
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1 = [1, 2, 3];
+      array1.a = 1;
+
+      array2 = [1, 2, 3];
+      array2.b = 1;
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1 = /x/.exec('vwxyz');
+      array2 = ['x'];
+
+      strictEqual(_.isEqual(array1, array2), true);
+    });
+
+    test('should perform comparisons between date objects', 4, function() {
       strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2012, 4, 23)), true);
       strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2013, 3, 25)), false);
       strictEqual(_.isEqual(new Date(2012, 4, 23), { 'getTime': function() { return 1337756400000; } }), false);
       strictEqual(_.isEqual(new Date('a'), new Date('a')), false);
     });
 
-    test('should perform a deep comparison between functions', 2, function() {
+    test('should perform comparisons between functions', 2, function() {
       function a() { return 1 + 2; }
       function b() { return 1 + 2; }
 
@@ -3389,13 +3448,13 @@
       strictEqual(_.isEqual(a, b), false);
     });
 
-    test('should perform a deep comparison between plain objects', 5, function() {
+    test('should perform comparisons between plain objects', 5, function() {
       var object1 = { 'a': true, 'b': null, 'c': 1, 'd': 'a', 'e': undefined },
           object2 = { 'a': true, 'b': null, 'c': 1, 'd': 'a', 'e': undefined };
 
       strictEqual(_.isEqual(object1, object2), true);
 
-      object1 = { 'a': [1, 2, 3], 'b': new Date(2012, 4, 23), 'c': /x/, 'd': { 'e': 1 } },
+      object1 = { 'a': [1, 2, 3], 'b': new Date(2012, 4, 23), 'c': /x/, 'd': { 'e': 1 } };
       object2 = { 'a': [1, 2, 3], 'b': new Date(2012, 4, 23), 'c': /x/, 'd': { 'e': 1 } };
 
       strictEqual(_.isEqual(object1, object2), true);
@@ -3411,12 +3470,61 @@
       strictEqual(_.isEqual(object1, object2), false);
 
       object1 = { 'a': 1, 'b': 2 };
-      object2 = { 'a': 1, 'b': 2, 'c':3 };
+      object2 = { 'a': 1, 'b': 2, 'c': 3 };
 
       strictEqual(_.isEqual(object1, object2), false);
     });
 
-    test('should perform a deep comparison between regex objects', 4, function() {
+    test('should perform comparisons of nested objects', 1, function() {
+      var object1 = {
+        'a': [1, 2, 3],
+        'b': true,
+        'c': new Number(1),
+        'd': 'a',
+        'e': {
+          'f': ['a', new String('b'), 'c'],
+          'g': new Boolean(false),
+          'h': new Date(2012, 4, 23),
+          'i': _.noop,
+          'j': 'a'
+        }
+      };
+
+      var object2 = {
+        'a': [1, new Number(2), 3],
+        'b': new Boolean(true),
+        'c': 1,
+        'd': new String('a'),
+        'e': {
+          'f': ['a', 'b', 'c'],
+          'g': false,
+          'h': new Date(2012, 4, 23),
+          'i': _.noop,
+          'j': 'a'
+        }
+      };
+
+      strictEqual(_.isEqual(object1, object2), true);
+    });
+
+    test('should perform comparisons between object instances', 4, function() {
+      function Foo() {
+        this.value = 1;
+      }
+      Foo.prototype.value = 1;
+
+      function Bar() {
+        this.value = 1;
+      }
+      Bar.prototype.value = 2;
+
+      strictEqual(_.isEqual(new Foo, new Foo), true);
+      strictEqual(_.isEqual(new Foo, new Bar), false);
+      strictEqual(_.isEqual({ 'value': 1 }, new Foo), false);
+      strictEqual(_.isEqual({ 'value': 2 }, new Bar), false);
+    });
+
+    test('should perform comparisons between regexes', 4, function() {
       strictEqual(_.isEqual(/x/gim, /x/gim), true);
       strictEqual(_.isEqual(/x/gi, /x/g), false);
       strictEqual(_.isEqual(/x/, /y/), false);
@@ -3459,7 +3567,7 @@
 
     test('should return `true` for like-objects from different documents', 1, function() {
       // ensure `_._object` is assigned (unassigned in Opera 10.00)
-      if (document) {
+      if (_._object) {
         var object = { 'a': 1, 'b': 2, 'c': 3 };
         strictEqual(_.isEqual(object, _._object), true);
       }
@@ -3543,8 +3651,47 @@
       }
     });
 
+    test('should return an unwrapped value when intuitively chaining', 1, function() {
+      if (!isNpm) {
+        strictEqual(_('a').isEqual('a'), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_('a').chain().isEqual('a') instanceof _);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should perform comparisons between wrapped values', 4, function() {
+      if (!isNpm) {
+        var object1 = _({ 'a': 1, 'b': 2 }),
+            object2 = _({ 'a': 1, 'b': 2 }),
+            actual = object1.isEqual(object2);
+
+        strictEqual(actual, true);
+        strictEqual(_.isEqual(_(actual), _(true)), true);
+
+        object1 = _({ 'a': 1, 'b': 2 });
+        object2 = _({ 'a': 1, 'b': 1 });
+
+        actual = object1.isEqual(object2);
+        strictEqual(actual, false);
+        strictEqual(_.isEqual(_(actual), _(false)), true);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
     test('should work with objects from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isEqual(_._object, { 'a': 1, 'b': 2, 'c': 3 }), true);
       }
       else {
@@ -3590,7 +3737,7 @@
     });
 
     test('should work with numbers from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isFinite(_._number), true);
       }
       else {
@@ -3630,7 +3777,7 @@
     });
 
     test('should work with functions from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isFunction(_._function), true);
       }
       else {
@@ -3672,7 +3819,7 @@
     });
 
     test('should work with NaNs from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isNaN(_._nan), true);
       }
       else {
@@ -3713,7 +3860,7 @@
     });
 
     test('should work with nulls from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isNull(_._null), true);
       }
       else {
@@ -3754,7 +3901,7 @@
     });
 
     test('should work with numbers from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isNumber(_._number), true);
       }
       else {
@@ -3804,7 +3951,7 @@
     });
 
     test('should work with objects from an iframe', 8, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isObject(_._object), true);
         strictEqual(_.isObject(_._boolean), true);
         strictEqual(_.isObject(_._date), true);
@@ -3884,7 +4031,7 @@
     });
 
     test('should work with objects from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isPlainObject(_._object), true);
       }
       else {
@@ -3925,7 +4072,7 @@
     });
 
     test('should work with regexes from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isRegExp(_._regexp), true);
       }
       else {
@@ -3966,7 +4113,7 @@
     });
 
     test('should work with strings from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isString(_._string), true);
       }
       else {
@@ -4008,7 +4155,7 @@
     });
 
     test('should work with `undefined` from an iframe', 1, function() {
-      if (document) {
+      if (_._object) {
         strictEqual(_.isUndefined(_._undefined), true);
       }
       else {

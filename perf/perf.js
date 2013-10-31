@@ -1,16 +1,16 @@
-(function(window) {
+;(function(root) {
 
   /** Use a single "load" function */
-  var load = typeof require == 'function' ? require : window.load;
+  var load = typeof require == 'function' ? require : root.load;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
     var min = 0;
-    var result = window.phantom
+    var result = root.phantom
       ? phantom.args
-      : (window.system
+      : (root.system
           ? (min = 1, system.args)
-          : (window.process ? (min = 2, process.argv) : (window.arguments || []))
+          : (root.process ? (min = 2, process.argv) : (root.arguments || []))
         );
 
     var last = result[result.length - 1];
@@ -26,22 +26,22 @@
   }());
 
   /** Load Lo-Dash */
-  var lodash = window.lodash || (window.lodash = (
-    lodash = load(filePath) || window._,
+  var lodash = root.lodash || (root.lodash = (
+    lodash = load(filePath) || root._,
     lodash = lodash._ || lodash,
     lodash.noConflict()
   ));
 
   /** Load Benchmark.js */
-  var Benchmark = window.Benchmark || (window.Benchmark = (
-    Benchmark = load('../vendor/benchmark.js/benchmark.js') || window.Benchmark,
+  var Benchmark = root.Benchmark || (root.Benchmark = (
+    Benchmark = load('../vendor/benchmark.js/benchmark.js') || root.Benchmark,
     Benchmark = Benchmark.Benchmark || Benchmark,
-    Benchmark.runInContext(lodash.extend({}, window, { '_': lodash }))
+    Benchmark.runInContext(lodash.extend({}, root, { '_': lodash }))
   ));
 
   /** Load Underscore */
-  var _ = window._ || (window._ = (
-    _ = load('../vendor/underscore/underscore.js') || window._,
+  var _ = root._ || (root._ = (
+    _ = load('../vendor/underscore/underscore.js') || root._,
     _._ || _
   ));
 
@@ -67,28 +67,28 @@
   var toString = Object.prototype.toString;
 
   /** The `ui` object */
-  var ui = window.ui || (window.ui = {
+  var ui = root.ui || (root.ui = {
     'buildPath': basename(filePath, '.js'),
     'otherPath': 'underscore'
   });
 
   /** The Lo-Dash build basename */
-  var buildName = window.buildName = basename(ui.buildPath, '.js');
+  var buildName = root.buildName = basename(ui.buildPath, '.js');
 
   /** The other library basename */
-  var otherName = window.otherName = (function() {
+  var otherName = root.otherName = (function() {
     var result = basename(ui.otherPath, '.js');
     return result + (result == buildName ? ' (2)' : '');
   }());
 
   /** Detect if in a browser environment */
-  var isBrowser = isHostType(window, 'document') && isHostType(window, 'navigator');
+  var isBrowser = isHostType(root, 'document') && isHostType(root, 'navigator');
 
   /** Detect Java environment */
-  var isJava = !isBrowser && /Java/.test(toString.call(window.java));
+  var isJava = !isBrowser && /Java/.test(toString.call(root.java));
 
   /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
-  var console = window.console || (window.console = { 'log': window.print });
+  var console = root.console || (root.console = { 'log': root.print });
 
   /*--------------------------------------------------------------------------*/
 
@@ -173,7 +173,7 @@
    * @private (@public in the browser)
    */
   function run() {
-    fbPanel = (fbPanel = window.document && document.getElementById('FirebugUI')) &&
+    fbPanel = (fbPanel = root.document && document.getElementById('FirebugUI')) &&
       (fbPanel = (fbPanel = fbPanel.contentWindow || fbPanel.contentDocument).document || fbPanel) &&
       fbPanel.getElementById('fbPanel1');
 
@@ -257,8 +257,8 @@
   lodash.extend(Benchmark.options, {
     'async': true,
     'setup': '\
-      var _ = window._,\
-          lodash = window.lodash,\
+      var _ = global._,\
+          lodash = global.lodash,\
           belt = this.name == buildName ? lodash : _;\
       \
       var index,\
@@ -2000,8 +2000,8 @@
     log(Benchmark.platform);
   }
   // in the browser, expose `run` to be called later
-  if (window.document && !window.phantom) {
-    window.run = run;
+  if (root.document && !root.phantom) {
+    root.run = run;
   } else {
     run();
   }

@@ -3565,15 +3565,96 @@
       strictEqual(_.isEqual(shadowedObject, {}), false);
     });
 
-    test('should return `true` for like-objects from different documents', 1, function() {
-      // ensure `_._object` is assigned (unassigned in Opera 10.00)
-      if (_._object) {
-        var object = { 'a': 1, 'b': 2, 'c': 3 };
-        strictEqual(_.isEqual(object, _._object), true);
-      }
-      else {
-        skipTest();
-      }
+    test('should perform comparisons between arrays with circular references', 4, function() {
+      var array1 = [],
+          array2 = [];
+
+      array1.push(array1);
+      array2.push(array2);
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1.push('a');
+      array2.push('a');
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1.push('b');
+      array2.push('c');
+
+      strictEqual(_.isEqual(array1, array2), false);
+
+      array1 = ['a','b', 'c'];
+      array1[1] = array1;
+      array2 = ['a', ['b', 'b'], 'c'];
+
+      strictEqual(_.isEqual(array1, array2), false);
+    });
+
+    test('should perform comparisons between objects with circular references', 4, function() {
+      var object1 = {},
+          object2 = {};
+
+      object1.a = object1;
+      object2.a = object2;
+
+      strictEqual(_.isEqual(object1, object2), true);
+
+      object1.b = 0;
+      object2.b = new Number(0);
+
+      strictEqual(_.isEqual(object1, object2), true);
+
+      object1.c = new Number(1);
+      object2.c = new Number(2);
+
+      strictEqual(_.isEqual(object1, object2), false);
+
+      object1 = { 'a': 1, 'b': 2, 'c': 3 };
+      object1.b = object1;
+      object2 = { 'a': 1, 'b': { 'b': 2 }, 'c': 3 };
+
+      strictEqual(_.isEqual(object1, object2), false);
+    });
+
+    test('should perform comparisons between objects with multiple circular references', 3, function() {
+      var array1 = [{}],
+          array2 = [{}];
+
+      (array1[0].a = array1).push(array1);
+      (array2[0].a = array2).push(array2);
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1[0].b = 0;
+      array2[0].b = new Number(0);
+
+      strictEqual(_.isEqual(array1, array2), true);
+
+      array1[0].c = new Number(1);
+      array2[0].c = new Number(2);
+
+      strictEqual(_.isEqual(array1, array2), false);
+    });
+
+    test('should perform comparisons between objects with complex circular references', 1, function() {
+      var object1 = {
+        'foo': { 'b': { 'foo': { 'c': { } } } },
+        'bar': { 'a': 2 }
+      };
+
+      var object2 = {
+        'foo': { 'b': { 'foo': { 'c': { } } } },
+        'bar': { 'a': 2 }
+      };
+
+      object1.foo.b.foo.c = object1;
+      object1.bar.b = object1.foo.b;
+
+      object2.foo.b.foo.c = object2;
+      object2.bar.b = object2.foo.b;
+
+      strictEqual(_.isEqual(object1, object2), true);
     });
 
     test('should return `false` when comparing values with circular references to unlike values', 2, function() {
@@ -3690,9 +3771,11 @@
       }
     });
 
-    test('should work with objects from an iframe', 1, function() {
+    test('should return `true` for like-objects from different documents', 1, function() {
+      // ensure `_._object` is assigned (unassigned in Opera 10.00)
       if (_._object) {
-        strictEqual(_.isEqual(_._object, { 'a': 1, 'b': 2, 'c': 3 }), true);
+        var object = { 'a': 1, 'b': 2, 'c': 3 };
+        strictEqual(_.isEqual(object, _._object), true);
       }
       else {
         skipTest();

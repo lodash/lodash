@@ -137,7 +137,7 @@
             logInline('Please wait' + repeat('.', (++attempts % 3) + 1));
             setTimeout(function() {
               waitForTestCompletion(testIdentifier);
-            }, 15000);
+            }, 5000);
           }
         } else {
           logInline('');

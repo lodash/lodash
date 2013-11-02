@@ -14,7 +14,7 @@
   var port = 8081,
       username = process.env.SAUCE_USERNAME,
       accessKey = process.env.SAUCE_ACCESS_KEY,
-      tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
+      tunnelId = 'lodash' + process.env.TRAVIS_JOB_NUMBER.replace(/\./g, '');
 
   var runnerPathname = (function() {
     var args = process.argv;

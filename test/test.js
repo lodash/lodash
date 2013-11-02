@@ -3771,6 +3771,25 @@
       }
     });
 
+    test('should perform comparisons between wrapped and non-wrapped values', 4, function() {
+      if (!isNpm) {
+        var object1 = _({ 'a': 1, 'b': 2 }),
+            object2 = { 'a': 1, 'b': 2 };
+
+        strictEqual(object1.isEqual(object2), true);
+        strictEqual(_.isEqual(object1, object2), true);
+
+        object1 = _({ 'a': 1, 'b': 2 });
+        object2 = { 'a': 1, 'b': 1 };
+
+        strictEqual(object1.isEqual(object2), false);
+        strictEqual(_.isEqual(object1, object2), false);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
     test('should return `true` for like-objects from different documents', 1, function() {
       // ensure `_._object` is assigned (unassigned in Opera 10.00)
       if (_._object) {

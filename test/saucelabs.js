@@ -1,8 +1,10 @@
 ;(function() {
   'use strict';
 
-  var connect = require('connect'),
+  var ecstatic = require('ecstatic'),
+      http = require('http'),
       path = require('path'),
+      url = require('url'),
       request = require('request'),
       SauceTunnel = require('sauce-tunnel');
 
@@ -28,9 +30,18 @@
   ];
 
   // create a web server for the local dir
-  var server = connect.createServer(
-    connect.static(path.resolve(__dirname, '..'))
-  ).listen(port);
+  var mount = ecstatic({
+    root: path.resolve(__dirname, '..'),
+    cache: false
+  });
+  http.createServer(function(req, res) {
+    var parsedUrl = url.parse(req.url, true);
+    var compat = parsedUrl.query.compat;
+    if (compat) {
+      res.setHeader('X-UA-Compatible', 'IE=' + compat);
+    }
+    mount(req, res);
+  }).listen(port);
 
   // set up sauce connect so we can use this server from saucelabs
   var tunnelTimeout = 10000,
@@ -43,7 +54,7 @@
       console.log('Sauce connect tunnel opened');
       runTests();
     } else {
-      console.error('Failed to open sauce connect tunnel')
+      console.error('Failed to open sauce connect tunnel');
       process.exit(2);
     }
   });

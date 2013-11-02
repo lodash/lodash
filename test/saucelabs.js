@@ -8,9 +8,13 @@
       SauceTunnel = require('sauce-tunnel'),
       url = require('url');
 
+  var attempts = -1,
+      prevLine = '';
+
   var port = 8081,
       username = process.env.SAUCE_USERNAME,
-      accessKey = process.env.SAUCE_ACCESS_KEY;
+      accessKey = process.env.SAUCE_ACCESS_KEY,
+      tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
 
   var runnerPathname = (function() {
     var args = process.argv;
@@ -64,7 +68,7 @@
 
   // set up sauce connect so we can use this server from saucelabs
   var tunnelTimeout = 10000,
-      tunnel = new SauceTunnel(username, accessKey, null, true, tunnelTimeout);
+      tunnel = new SauceTunnel(username, accessKey, tunnelId, true, tunnelTimeout);
 
   console.log('Opening sauce connect tunnel...');
 
@@ -79,10 +83,28 @@
     }
   });
 
+  /*--------------------------------------------------------------------------*/
+
+  function logInline(text) {
+    var blankLine = repeat(' ', prevLine.length);
+    if (text.length > 40) {
+      text = text.slice(0, 37) + '...';
+    }
+    prevLine = text;
+    process.stdout.write(text + blankLine.slice(text.length) + '\r');
+  }
+
+  function repeat(text, times) {
+    return Array(times + 1).join(text);
+  }
+
+  /*--------------------------------------------------------------------------*/
+
   function runTests() {
     var testDefinition = {
       'framework': 'qunit',
       'platforms': platforms,
+      'tunnel': 'tunnel-identifier:' + tunnelId,
       'url': 'http://localhost:' + port + runnerPathname
     };
 
@@ -95,7 +117,7 @@
       if (response.statusCode == 200) {
         waitForTestCompletion(body);
       } else {
-        console.error('Failed to submit test to Sauce Labs, status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
+        console.error('Failed to submit test to Sauce Labs; status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
         process.exit(3);
       }
     });
@@ -108,12 +130,18 @@
     }, function(error, response, body) {
         if (response.statusCode == 200) {
           if (body.completed) {
+            logInline('');
             handleTestResults(body['js tests']);
-          } else {
-            waitForTestCompletion(testIdentifier);
+          }
+          else {
+            logInline('Please wait' + repeat('.', (++attempts % 3) + 1));
+            setTimeout(function() {
+              waitForTestCompletion(testIdentifier);
+            }, 15000);
           }
         } else {
-          console.error('Failed to check test status on Sauce Labs, status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
+          logInline('');
+          console.error('Failed to check test status on Sauce Labs; status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
           process.exit(4);
         }
     });

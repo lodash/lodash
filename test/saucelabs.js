@@ -13,7 +13,8 @@
 
   var port = 8081,
       username = process.env.SAUCE_USERNAME,
-      accessKey = process.env.SAUCE_ACCESS_KEY;
+      accessKey = process.env.SAUCE_ACCESS_KEY,
+      tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
 
   var runnerPathname = (function() {
     var args = process.argv;
@@ -67,7 +68,7 @@
 
   // set up sauce connect so we can use this server from saucelabs
   var tunnelTimeout = 10000,
-      tunnel = new SauceTunnel(username, accessKey, null, true, tunnelTimeout);
+      tunnel = new SauceTunnel(username, accessKey, tunnelId, true, tunnelTimeout);
 
   console.log('Opening sauce connect tunnel...');
 
@@ -103,6 +104,7 @@
     var testDefinition = {
       'framework': 'qunit',
       'platforms': platforms,
+      'tunnel': 'tunnel-identifier:' + tunnelId,
       'url': 'http://localhost:' + port + runnerPathname
     };
 

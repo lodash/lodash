@@ -4,9 +4,9 @@
   var ecstatic = require('ecstatic'),
       http = require('http'),
       path = require('path'),
-      url = require('url'),
       request = require('request'),
-      SauceTunnel = require('sauce-tunnel');
+      SauceTunnel = require('sauce-tunnel'),
+      url = require('url');
 
   var port = 8081,
       username = process.env.SAUCE_USERNAME,
@@ -20,6 +20,7 @@
     ['Windows 7', 'firefox', '6'],
     ['Windows 7', 'firefox', '4'],
     ['Windows 7', 'firefox', '3'],
+    ['WIN8.1', 'internet explorer', '11']
     ['Windows 7', 'internet explorer', '10'],
     ['Windows 7', 'internet explorer', '9'],
     ['Windows 7', 'internet explorer', '8'],
@@ -34,10 +35,12 @@
     root: path.resolve(__dirname, '..'),
     cache: false
   });
+
   http.createServer(function(req, res) {
     var parsedUrl = url.parse(req.url, true);
     var compat = parsedUrl.query.compat;
     if (compat) {
+      // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
       res.setHeader('X-UA-Compatible', 'IE=' + compat);
     }
     mount(req, res);
@@ -54,8 +57,9 @@
       console.log('Sauce connect tunnel opened');
       runTests();
     } else {
+      // fail without an exit code for pull requests
       console.error('Failed to open sauce connect tunnel');
-      process.exit(2);
+      process.exit(0);
     }
   });
 
@@ -73,10 +77,9 @@
       'json': testDefinition
     }, function(error, response, body) {
       if (response.statusCode == 200) {
-        var testIdentifier = body;
-        waitForTestCompletion(testIdentifier);
+        waitForTestCompletion(body);
       } else {
-        console.error('Failed to submit test to SauceLabs, status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
+        console.error('Failed to submit test to Sauce Labs, status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
         process.exit(3);
       }
     });
@@ -94,37 +97,36 @@
             waitForTestCompletion(testIdentifier);
           }
         } else {
-          console.error('Failed to check test status on SauceLabs, status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
+          console.error('Failed to check test status on Sauce Labs, status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
           process.exit(4);
         }
     });
   }
 
   function handleTestResults(results) {
-    var allTestsSuccessful = results.every(function(test) {
-      return !test.result.failed;
+    var failingTests = results.filter(function(test) {
+      return !test.result || test.result.failed;
     });
 
-    if (allTestsSuccessful) {
+    var failingPlatforms = failingTests.map(function(test) {
+      return test.platform;
+    });
+
+    if (!failingTests.length) {
       console.log('Tests passed');
     }
     else {
-      var failingTests = results.filter(function(test) {
-        return test.result.failed;
-      });
-
-      var failingPlatforms = failingTests.map(function(test) {
-        return test.platform;
-      });
-
       console.error('Tests failed on platforms: ' + JSON.stringify(failingPlatforms));
 
       failingTests.forEach(function(test) {
-        var platform = JSON.stringify(test.platform);
-        if (test.result.failed) {
-          console.error(test.result.failed + ' failures on ' + platform + '. See ' + test.url + ' for details.');
+        var details =  'See ' + test.url + ' for details.',
+            platform = JSON.stringify(test.platform),
+            result = test.result;
+
+        if (result && result.failed) {
+          console.error(result.failed + ' failures on ' + platform + '. ' + details);
         } else {
-          console.error('Testing on ' + platform + ' failed; no results available. See ' + test.url + ' for details.');
+          console.error('Testing on ' + platform + ' failed; no results available. ' + details);
         }
       });
     }

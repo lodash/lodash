@@ -38,6 +38,8 @@ matrix:
       env: BIN="ringo"   BUILD="legacy"
     - node_js: "0.10"
       env: SAUCELABS=true
+    - node_js: "0.10"
+      env: SAUCELABS=true OPTION="./test/index.html?compat=7"
 git:
   depth: 1
 branches:
@@ -61,4 +63,4 @@ script:
   - "[ $BUILD != false ] && cd ./test || true"
   - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js $OPTION"

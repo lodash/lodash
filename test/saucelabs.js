@@ -12,6 +12,13 @@
       username = process.env.SAUCE_USERNAME,
       accessKey = process.env.SAUCE_ACCESS_KEY;
 
+  var runnerPathname = (function() {
+    var args = process.argv;
+    return args.length > 2
+      ? '/' + args[args.length - 1].replace(/^\W+/, '')
+      : '/test/index.html';
+  }());
+
   var platforms = [
     ['Windows 7', 'chrome', ''],
     ['Windows 7', 'firefox', '25'],
@@ -29,6 +36,15 @@
     ['OS X 10.8', 'safari', '6'],
     ['Windows 7', 'safari', '5']
   ];
+
+  if (url.parse(runnerPathname, true).query.compat) {
+    platforms = [
+      ['WIN8.1', 'internet explorer', '11'],
+      ['Windows 7', 'internet explorer', '10'],
+      ['Windows 7', 'internet explorer', '9'],
+      ['Windows 7', 'internet explorer', '8']
+    ];
+  }
 
   // create a web server for the local dir
   var mount = ecstatic({
@@ -67,7 +83,7 @@
     var testDefinition = {
       'framework': 'qunit',
       'platforms': platforms,
-      'url': 'http://localhost:' + port + '/test/index.html'
+      'url': 'http://localhost:' + port + runnerPathname
     };
 
     console.log('Starting saucelabs tests: ' + JSON.stringify(testDefinition));
@@ -105,7 +121,8 @@
 
   function handleTestResults(results) {
     var failingTests = results.filter(function(test) {
-      return !test.result || test.result.failed;
+      var result = test.result;
+      return !result || result.failed || /\berror\b/i.test(result.message);
     });
 
     var failingPlatforms = failingTests.map(function(test) {

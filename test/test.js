@@ -1619,7 +1619,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 96);
+        }, 192);
       }
       else {
         skipTest(2);
@@ -6902,7 +6902,7 @@
           setTimeout(function() {
             ok(count > lastCount);
             QUnit.start();
-          }, 96);
+          }, 192);
         }
         else {
           skipTest(2);
@@ -6998,7 +6998,7 @@
         setTimeout(function() {
           equal(count, 2);
           QUnit.start();
-        }, 128);
+        }, 192);
       }
       else {
         skipTest();

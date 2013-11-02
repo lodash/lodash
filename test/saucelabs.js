@@ -20,7 +20,7 @@
     ['Windows 7', 'firefox', '6'],
     ['Windows 7', 'firefox', '4'],
     ['Windows 7', 'firefox', '3'],
-    ['WIN8.1', 'internet explorer', '11']
+    ['WIN8.1', 'internet explorer', '11'],
     ['Windows 7', 'internet explorer', '10'],
     ['Windows 7', 'internet explorer', '9'],
     ['Windows 7', 'internet explorer', '8'],
@@ -134,7 +134,7 @@
     console.log('Shutting down sauce connect tunnel...');
 
     tunnel.stop(function() {
-      process.exit(allTestsSuccessful ? 0 : 1);
+      process.exit(failingTests.length ? 1 : 0);
     });
   }
 }());

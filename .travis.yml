@@ -39,7 +39,7 @@ matrix:
     - node_js: "0.10"
       env: SAUCELABS=true
 git:
-  depth: 1
+  depth: 10
 branches:
   only:
     - master

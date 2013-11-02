@@ -23,6 +23,10 @@
       : '/test/index.html';
   }());
 
+  var runnerQuery = url.parse(runnerPathname, true).query,
+      isMobile = /\bmobile\b/i.test(runnerQuery.build),
+      isModern = /\bmodern\b/i.test(runnerQuery.build);
+
   var platforms = [
     ['Windows 7', 'chrome', ''],
     ['Windows 7', 'firefox', '25'],
@@ -41,13 +45,28 @@
     ['Windows 7', 'safari', '5']
   ];
 
-  if (url.parse(runnerPathname, true).query.compat) {
+  // test IE compat mode
+  if (runnerQuery.compat) {
     platforms = [
       ['WIN8.1', 'internet explorer', '11'],
       ['Windows 7', 'internet explorer', '10'],
       ['Windows 7', 'internet explorer', '9'],
       ['Windows 7', 'internet explorer', '8']
     ];
+  }
+  // test mobile & modern browsers
+  if (isMobile || isModern) {
+    platforms = platforms.filter(function(platform) {
+      var browser = platform[1],
+          version = +platform[2];
+
+      switch (browser) {
+        case 'firefox': return version >= 10;
+        case 'internet explorer': return version >= 9;
+        case 'safari': return version >= (isMobile ? 5 : 6);
+      }
+      return true
+    });
   }
 
   // create a web server for the local dir

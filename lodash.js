@@ -3984,7 +3984,8 @@
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|string} [callback=identity] The function called per iteration. If a method name is provided,
-     *  that method of the accumulator will be called on each iterated value.
+     *  that method of the accumulator will be called on each iterated value. If an operator as a string is
+     *  provided, that operator will be used to reduce the collection.
      * @param {*} [accumulator] Initial value of the accumulator.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {*} Returns the accumulated value.
@@ -4003,6 +4004,9 @@
      *
      * var concatted = _.reduce([['foo', 'bar'], ['baz'], ['batz']], 'concat');
      * // => ['foo', 'bar', 'baz', 'batz']
+     *
+     * var product = _.reduce([2, 4, 8], '*');
+     * // => 64
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;

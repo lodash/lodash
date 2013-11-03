@@ -3946,6 +3946,12 @@
      */
     var pluck = map;
 
+    function createMethodCallback(methodName) {
+      return function(a, b) {
+        return a[methodName](b)
+      };
+    }
+
     /**
      * Reduces a collection to a value which is the accumulated result of running
      * each element in the collection through the callback, where each successive
@@ -3959,7 +3965,8 @@
      * @alias foldl, inject
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Function|string} [callback=identity] The function called per iteration. If a method name is provided,
+     *  that method of the accumulator will be called on each iterated value.
      * @param {*} [accumulator] Initial value of the accumulator.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {*} Returns the accumulated value.
@@ -3975,10 +3982,13 @@
      *   return result;
      * }, {});
      * // => { 'a': 3, 'b': 6, 'c': 9 }
+     *
+     * var concatted = _.reduce([['foo', 'bar'], ['baz'], ['batz']], 'concat');
+     * // => ['foo', 'bar', 'baz', 'batz']
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-      callback = baseCreateCallback(callback, thisArg, 4);
+      callback = isString(callback) ? createMethodCallback(callback) : baseCreateCallback(callback, thisArg, 4);
 
       if (isArray(collection)) {
         var index = -1,

@@ -76,7 +76,7 @@
 
   // create a web server for the local dir
   var mount = ecstatic({
-    root: path.resolve(__dirname, '..'),
+    root: process.cwd(),
     cache: false
   });
 

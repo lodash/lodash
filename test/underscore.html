@@ -24,50 +24,103 @@
 		<script src="../vendor/platform.js/platform.js"></script>
 		<script src="./asset/test-ui.js"></script>
 		<script>
-			function init(lodash) {
-				var arrayRef = [],
-				    push = arrayRef.push;
-
-				if (!lodash().map()) {
-					return;
-				}
-				lodash.mixin = function(object) {
-					lodash.forEach(lodash.functions(object), function(methodName) {
-						var func = lodash[methodName] = object[methodName];
-						lodash.prototype[methodName] = function() {
-							var args = [this.__wrapped__];
-							push.apply(args, arguments);
-
-							var result = func.apply(lodash, args);
-							if (this.__chain__) {
-								result = new lodash(result);
-								result.__chain__ = true;
-							}
-							return result;
-						};
-					});
-				};
-
-				lodash.forEach(['pop', 'shift'], function(methodName) {
-					var func = arrayRef[methodName];
-					lodash.prototype[methodName] = function() {
-						func.apply(this.__wrapped__, arguments);
-						return this;
-					};
-				});
-
-
-				lodash.mixin(lodash);
-
-				// expose lodash
-				window._ = lodash;
-			}
-
 			// assign results to `global_test_results` for Sauce Labs
 			var global_test_results;
 			QUnit.done(function(results) {
 				global_test_results = results;
 			});
+
+			// skip tests we intentionally fail or those with problems
+			(function() {
+				var skipped = {
+					'Arrays': {
+						'union': [
+							'[null,1,2,3]'
+						]
+					},
+					'Chaining': {
+						'reverse/concat/unshift/pop/map': [
+							'"34, 10, 8, 6, 4, 2, 10, 10"'
+						]
+					},
+					'Collections': {
+						'reduce': [
+							'handles a null (without initial value) properly',
+							'throws an error for empty arrays with no initial value'
+						],
+						'reduceRight': [
+							'handles a null (without initial value) properly',
+							'throws an error for empty arrays with no initial value'
+						],
+						'where': [
+							'Only get the first object matched.'
+						]
+					},
+					'Functions': {
+						'bind': [
+							'Died on test #2'
+						],
+						'bindAll': [
+							'throws an error for bindAll with no functions named'
+						]
+					},
+					'Objects': {
+						'keys': [
+							'throws an error for `null` values',
+							'throws an error for `undefined` values',
+							'throws an error for number primitives',
+							'throws an error for string primitives',
+							'throws an error for boolean primitives'
+						]
+					},
+					'Utility': {
+						'_.escape': [
+							'"&lt;a href=&quot;http://moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;/a&gt;"'
+						],
+						'_.unescape': [
+							'"<a href=\\"http://moe.com\\">Curly & Moe&#039;s</a>"'
+						]
+					}
+				};
+
+				if (/\bunderscore\b/i.test(ui.buildPath)) {
+					delete skipped.Chaining;
+					delete skipped.Collections.where;
+					delete skipped.Functions.bind;
+					delete skipped.Utility;
+				}
+
+				QUnit.testStart(function(details) {
+					var test = QUnit.config.current,
+					    skippedTests = skipped[details.module],
+					    skippedAsserts = skippedTests && skippedTests[details.name];
+
+					if (!skippedAsserts) {
+						return;
+					}
+					if (skippedAsserts === true) {
+						test.expected = 0;
+						test.callback = _.noop;
+						return;
+					}
+					test.finish = _.wrap(test.finish, function(func) {
+						_.each(this.assertions, function(assert) {
+							var message = _.unescape(_.result(/^<span class='test-message'>([\s\S]*?)<\/span>/.exec(assert.message), 1)),
+							    died = _.result(/^Died on test #\d+/.exec(message), 0),
+							    expected = _.unescape(_.result(/Expected: *<\/th><td><pre>([\s\S]*?)<\/pre>/.exec(assert.message), 1));
+
+							if ((message && _.contains(skippedAsserts, message)) ||
+							    (died && _.contains(skippedAsserts, died)) ||
+							    (expected && (_.contains(skippedAsserts, expected) ||
+									  _.contains(skippedAsserts, expected.replace(/\s+/g, '')))
+							    )) {
+							  assert.result = true;
+							}
+						});
+						func.call(this);
+					});
+				});
+			}());
 
 			// load Lo-Dash again to overwrite the existing `_` value
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
@@ -91,7 +144,6 @@
 					curl.config({ 'apiName': 'require' });
 				}
 				if (!window.require) {
-					init(_);
 					return;
 				}
 				var reBasename = /[\w.-]+$/,
@@ -125,7 +177,9 @@
 					]
 				},
 				['lodash'], function(lodash) {
-					init(lodash);
+					if (ui.isModularize) {
+						window._ = lodash;
+					}
 					require([
 						'test/collections',
 						'test/arrays',

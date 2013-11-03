@@ -16,6 +16,11 @@
       accessKey = process.env.SAUCE_ACCESS_KEY,
       tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
 
+  if (!accessKey) {
+    console.error('Testing skipped for pull requests');
+    process.exit(0);
+  }
+
   var runnerPathname = (function() {
     var args = process.argv;
     return args.length > 2
@@ -85,20 +90,19 @@
     mount(req, res);
   }).listen(port);
 
-  // set up sauce connect so we can use this server from saucelabs
+  // set up Sauce Connect so we can use this server from Sauce Labs
   var tunnelTimeout = 10000,
       tunnel = new SauceTunnel(username, accessKey, tunnelId, true, tunnelTimeout);
 
-  console.log('Opening sauce connect tunnel...');
+  console.log('Opening Sauce Connect tunnel...');
 
   tunnel.start(function(success) {
     if (success) {
-      console.log('Sauce connect tunnel opened');
+      console.log('Sauce Connect tunnel opened');
       runTests();
     } else {
-      // fail without an exit code for pull requests
-      console.error('Failed to open sauce connect tunnel');
-      process.exit(0);
+      console.error('Failed to open Sauce Connect tunnel');
+      process.exit(2);
     }
   });
 
@@ -195,7 +199,7 @@
       });
     }
 
-    console.log('Shutting down sauce connect tunnel...');
+    console.log('Shutting down Sauce Connect tunnel...');
 
     tunnel.stop(function() {
       process.exit(failingTests.length ? 1 : 0);

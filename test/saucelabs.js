@@ -29,6 +29,7 @@
   }());
 
   var runnerQuery = url.parse(runnerPathname, true).query,
+      isBackbone = /\bbackbone\b/i.test(runnerPathname),
       isMobile = /\bmobile\b/i.test(runnerQuery.build),
       isModern = /\bmodern\b/i.test(runnerQuery.build);
 
@@ -59,7 +60,20 @@
       ['Windows 7', 'internet explorer', '8']
     ];
   }
-  // test mobile & modern browsers
+  // platforms for backbone tests
+  if (isBackbone) {
+    platforms = platforms.filter(function(platform) {
+      var browser = platform[1],
+          version = +platform[2];
+
+      switch (browser) {
+        case 'firefox': return version >= 4;
+        case 'internet explorer': return version >= 8;
+      }
+      return true
+    });
+  }
+  // platforms for mobile and modern builds
   if (isMobile || isModern) {
     platforms = platforms.filter(function(platform) {
       var browser = platform[1],

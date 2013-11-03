@@ -50,8 +50,9 @@
 						return;
 					}
 					if (skippedAsserts === true) {
-						test.expected = 0;
+						test.async = false;
 						test.callback = _.noop;
+						test.expected = 0;
 						return;
 					}
 					test.finish = _.wrap(test.finish, function(func) {

@@ -16,6 +16,9 @@
   "bugs": "https://github.com/lodash/lodash/issues",
   "repository": { "type": "git", "url": "https://github.com/lodash/lodash.git" },
   "engines": ["node", "rhino"],
+  "scripts": {
+    "test": "node test/test.js"
+  },
   "files": [
     "LICENSE.txt",
     "lodash.js",

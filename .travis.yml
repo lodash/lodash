@@ -37,7 +37,7 @@ matrix:
     - node_js: "0.10"
       env: BIN="ringo"   BUILD="legacy"
     - node_js: "0.8"
-      env: SAUCELABS=true
+      env: SAUCELABS=true MAKE=true
 git:
   depth: 10
 branches:
@@ -55,11 +55,23 @@ before_install:
   - "[ $BIN == 'ringo' ] && sudo ln -s /opt/ringojs-0.9/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo || true"
   - "[ $MAKE != false ] && git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli.git ./node_modules/lodash-cli || true"
   - "[ $MAKE != false ] && mkdir ./node_modules/lodash-cli/node_modules && cd ./node_modules/lodash-cli/node_modules/ && ln -s ../../../ ./lodash && cd ../ && npm i . && cd ../../ || true"
-  - "[ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
+  - "[ $SAUCELABS == false ] && [ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
+  - "[ $SAUCELABS != false ] && node ./node_modules/lodash-cli/bin/lodash legacy -o ./dist/lodash.legacy.js || true"
+  - "[ $SAUCELABS != false ] && node ./node_modules/lodash-cli/bin/lodash mobile -o ./dist/lodash.mobile.js || true"
 script:
   - "[ $BIN == 'istanbul' ] && $BIN cover ./test/test.js || true"
   - "[ $BUILD != false ] && cd ./test || true"
-  - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
-  - "[ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js"
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?compat=7"
+  - "[ $SAUCELABS != false ] && true || [ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
+  - "[ $SAUCELABS != false ] && true || [ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-compat-dev"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-compat-dev&compat=7"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-compat"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-compat&compat=7"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-modern-dev"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-modern"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-legacy-dev"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-legacy-dev&compat=7"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-legacy"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-legacy&compat=7"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-mobile-dev"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js ./test/index.html?build=lodash-mobile"

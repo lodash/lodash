@@ -5615,6 +5615,14 @@
       strictEqual(_.foldl, _.reduce);
       strictEqual(_.inject, _.reduce);
     });
+
+    test('should accept a string referring to a function name', function() {
+
+      var arrays = [['foo', 'bar'], ['baz'], ['asdf', 'qux']];
+      deepEqual(_.reduce(arrays, 'concat'), _.flatten(arrays));
+
+    });
+
   }());
 
   /*--------------------------------------------------------------------------*/

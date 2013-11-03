@@ -3946,6 +3946,24 @@
      */
     var pluck = map;
 
+    function createOperatorCallback(operatorName) {
+      var operatorsAsFunctions = {
+        '+': function(a, b) { return a + b; },
+        '-': function(a, b) { return a - b; },
+        '/': function(a, b) { return a / b; },
+        '*': function(a, b) { return a * b; },
+        '%': function(a, b) { return a % b; },
+        '&': function(a, b) { return a & b; },
+        '|': function(a, b) { return a | b; },
+        '^': function(a, b) { return a ^ b; },
+        '<<': function(a, b) { return a << b; },
+        '>>': function(a, b) { return a >> b; },
+        '>>>': function(a, b) { return a >>> b; }
+      };
+
+      return operatorsAsFunctions[operatorName];
+    }
+
     function createMethodCallback(methodName) {
       return function(a, b) {
         return a[methodName](b)
@@ -3988,7 +4006,8 @@
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-      callback = isString(callback) ? createMethodCallback(callback) : baseCreateCallback(callback, thisArg, 4);
+      callback = isString(callback) ? createOperatorCallback(callback) || createMethodCallback(callback) :
+        baseCreateCallback(callback, thisArg, 4);
 
       if (isArray(collection)) {
         var index = -1,

@@ -259,7 +259,7 @@
 
     asyncTest('supports loading ' + basename + ' in a web worker', 1, function() {
       if (Worker && !isModularize) {
-        var limit = 1000,
+        var limit = 2000,
             start = new Date;
 
         var attempt = function() {
@@ -5443,7 +5443,6 @@
 
     test('supports not passing a `max` argument', 1, function() {
       var actual = _.random(5),
-          limit = 60,
           start = new Date;
 
       ok(_.some(array, function() {
@@ -6902,7 +6901,7 @@
           setTimeout(function() {
             ok(count > lastCount);
             QUnit.start();
-          }, 192);
+          }, 256);
         }
         else {
           skipTest(2);

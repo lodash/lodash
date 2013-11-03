@@ -63,6 +63,12 @@
 				window._ = lodash;
 			}
 
+			// assign results to `global_test_results` for Sauce Labs
+			var global_test_results;
+			QUnit.done(function(results) {
+				global_test_results = results;
+			});
+
 			// load Lo-Dash again to overwrite the existing `_` value
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 

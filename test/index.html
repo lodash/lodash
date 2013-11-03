@@ -72,7 +72,7 @@
 			delete Object._defineProperty;
 			delete Object._keys;
 
-			// report test results in a global for Sauce Labs
+			// assign results to `global_test_results` for Sauce Labs
 			var global_test_results;
 			QUnit.done(function(results) {
 				global_test_results = results;

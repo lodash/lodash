@@ -26,6 +26,14 @@
 		<script src="../lodash.js"></script>
 		<script>
 			var lodash = _.noConflict();
+
+			// assign results to `global_test_results` for Sauce Labs
+			var global_test_results;
+			QUnit.done(function(results) {
+				global_test_results = results;
+			});
+
+			// load Lo-Dash again to overwrite the existing `_` value
 			document.write('<script src="' + ui.buildPath + '"><\/script>');
 		</script>
 		<script>

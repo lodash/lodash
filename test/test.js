@@ -1339,7 +1339,7 @@
         setTimeout(function() {
           equal(count, 1);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(2);
@@ -1360,7 +1360,7 @@
           notEqual(debounced('z'), 'z');
           notStrictEqual(debounced('z'), undefined);
           QUnit.start();
-        }, 128);
+        }, 256);
       }
       else {
         skipTest(3);
@@ -1379,7 +1379,7 @@
           var result = [debounced('a'), debounced('b')];
           deepEqual(result, ['a', 'a']);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(2);
@@ -1401,7 +1401,7 @@
         setTimeout(function() {
           strictEqual(count, 1);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(2);
@@ -1441,7 +1441,7 @@
           equal(counts[1], 2);
 
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(7);
@@ -1471,7 +1471,7 @@
           strictEqual(withCount, 1);
           strictEqual(withoutCount, 0);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(4);
@@ -1511,7 +1511,7 @@
           ok(withCount > lastWithCount);
           ok(withoutCount > lastWithoutCount && withoutCount < withCount);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(4);
@@ -1577,7 +1577,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 32);
+        }, 128);
       }
       else {
         skipTest();
@@ -1596,7 +1596,7 @@
         setTimeout(function() {
           deepEqual(args, [1, 2, 3]);
           QUnit.start();
-        }, 32);
+        }, 128);
       }
       else {
         skipTest();
@@ -1622,7 +1622,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 192);
+        }, 256);
       }
       else {
         skipTest(2);
@@ -1641,7 +1641,7 @@
         setTimeout(function() {
           deepEqual(args, [1, 2, 3]);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest();
@@ -6782,7 +6782,7 @@
         setTimeout(function() {
           equal(count, 2);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(2);
@@ -6908,7 +6908,7 @@
           setTimeout(function() {
             ok(count > lastCount);
             QUnit.start();
-          }, 64);
+          }, 128);
         }
         else {
           skipTest(2);
@@ -6933,7 +6933,7 @@
         setTimeout(function() {
           strictEqual(count, 2);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(3);
@@ -6982,7 +6982,7 @@
           equal(withCount, 2);
           strictEqual(withoutCount, 1);
           QUnit.start();
-        }, 64);
+        }, 128);
       }
       else {
         skipTest(6);
@@ -7004,7 +7004,7 @@
         setTimeout(function() {
           equal(count, 2);
           QUnit.start();
-        }, 192);
+        }, 256);
       }
       else {
         skipTest();

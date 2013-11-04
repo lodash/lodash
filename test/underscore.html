@@ -58,6 +58,7 @@
 					},
 					'Functions': {
 						'bind': [
+							'can bind without specifying a context',
 							'Died on test #2'
 						],
 						'bindAll': [
@@ -66,6 +67,9 @@
 						'throttle triggers trailing call when invoked repeatedly': true
 					},
 					'Objects': {
+						'isEqual': [
+							'Died on test #78'
+						],
 						'keys': [
 							'throws an error for `null` values',
 							'throws an error for `undefined` values',
@@ -80,6 +84,12 @@
 						],
 						'_.unescape': [
 							'"<a href=\\"http://moe.com\\">Curly & Moe&#039;s</a>"'
+						],
+						'uniqueId': [
+							'Died on test #1'
+						],
+						'times': [
+							'Died on test #1'
 						]
 					}
 				};
@@ -87,8 +97,8 @@
 				if (/\bunderscore\b/i.test(ui.buildPath)) {
 					delete skipped.Chaining;
 					delete skipped.Collections.where;
-					delete skipped.Functions.bind;
-					delete skipped.Utility;
+					delete skipped.Utility['_.escape'];
+					delete skipped.Utility['_.unescape'];
 				}
 
 				QUnit.testStart(function(details) {

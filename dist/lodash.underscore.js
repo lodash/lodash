@@ -2470,7 +2470,7 @@
   function reduce(collection, callback, accumulator, thisArg) {
     if (!collection) return accumulator;
     var noaccum = arguments.length < 3;
-    callback = baseCreateCallback(callback, thisArg, 4);
+    callback = createCallback(callback, thisArg, 4);
 
     var index = -1,
         length = collection.length;
@@ -2513,7 +2513,7 @@
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-    callback = baseCreateCallback(callback, thisArg, 4);
+    callback = createCallback(callback, thisArg, 4);
     forEachRight(collection, function(value, index, collection) {
       accumulator = noaccum
         ? (noaccum = false, value)

@@ -103,6 +103,7 @@
 
 				QUnit.testStart(function(details) {
 					var test = QUnit.config.current,
+					    finish = test.finish,
 					    skippedTests = skipped[details.module],
 					    skippedAsserts = skippedTests && skippedTests[details.name];
 
@@ -115,9 +116,14 @@
 						test.expected = 0;
 						return;
 					}
-					test.finish = _.wrap(test.finish, function(func) {
-						_.each(this.assertions, function(assert) {
-							var message = _.unescape(_.result(/^<span class='test-message'>([\s\S]*?)<\/span>/.exec(assert.message), 1)),
+					test.finish = function() {
+						var index = -1,
+						    asserts = this.assertions,
+						    length = assertions.length;
+
+						while (++index < length) {
+							var assert = asserts[index],
+							    message = _.unescape(_.result(/^<span class='test-message'>([\s\S]*?)<\/span>/.exec(assert.message), 1)),
 							    died = _.result(/^Died on test #\d+/.exec(message), 0),
 							    expected = _.unescape(_.result(/Expected: *<\/th><td><pre>([\s\S]*?)<\/pre>/.exec(assert.message), 1));
 
@@ -128,9 +134,9 @@
 							    )) {
 							  assert.result = true;
 							}
-						});
-						func.call(this);
-					});
+						}
+						finish.call(this);
+					};
 				});
 			}());
 

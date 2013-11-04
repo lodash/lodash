@@ -3,6 +3,8 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 ## Download
 
+Check out our [wiki]([https://github.com/lodash/lodash/wiki/build-differences]) for details over the differences between builds.
+
 * Modern builds perfect for newer browsers/environments:<br>
 [Development](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.js) &
 [Production](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.min.js)
@@ -82,7 +84,7 @@ The full changelog for this release is available on our [wiki](https://github.co
   - [Testing](https://vimeo.com/45865290)
   - [CascadiaJS ’12](http://www.youtube.com/watch?v=dpPy4f_SeEk)
 
- For a list of other community created podcasts, posts, & videos please check out our [wiki](https://github.com/lodash/lodash/wiki/Resources).
+ For a list of other community created podcasts, posts, & videos please head on over to our [wiki](https://github.com/lodash/lodash/wiki/Resources).
 
 ## Support
 

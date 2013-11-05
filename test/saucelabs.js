@@ -66,9 +66,8 @@
       var browser = platform[1],
           version = +platform[2];
 
-      switch (browser) {
-        case 'firefox': return version >= 4;
-        case 'internet explorer': return version >= 8;
+      if (browser == 'firefox') {
+        return version >= 4;
       }
       return true
     });

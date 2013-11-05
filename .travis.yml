@@ -44,6 +44,8 @@ matrix:
       env: SAUCE_LABS=true BUILD="legacy"
     - node_js: "0.8"
       env: SAUCE_LABS=true BUILD="mobile"
+    - node_js: "0.8"
+      env: SAUCE_LABS=true BUILD="underscore"
 git:
   depth: 10
 branches:
@@ -68,11 +70,11 @@ script:
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || cd ./test"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
-  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=lodash-$BUILD\""
-  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=../dist/lodash.$BUILD.js\""
+  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ]) && true || node ./test/saucelabs.js \"test/index.html?build=lodash-$BUILD\""
+  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ]) && true || node ./test/saucelabs.js \"test/index.html?build=../dist/lodash.$BUILD.js\""
   - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=lodash-$BUILD\""
   - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=../dist/lodash.$BUILD.js\""
   - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=lodash-$BUILD\""
   - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=../dist/lodash.$BUILD.js\""
-  - "([ $SAUCE_LABS == false ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js \"test/index.html?build=lodash-$BUILD&compat=7\""
-  - "([ $SAUCE_LABS == false ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js \"test/index.html?build=../dist/lodash.$BUILD.js&compat=7\""
+  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js \"test/index.html?build=lodash-$BUILD&compat=7\""
+  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js \"test/index.html?build=../dist/lodash.$BUILD.js&compat=7\""

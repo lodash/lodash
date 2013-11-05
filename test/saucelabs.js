@@ -51,7 +51,7 @@
     ['Windows 7', 'safari', '5']
   ];
 
-  // test IE compat mode
+  // platforms to test IE compat mode
   if (runnerQuery.compat) {
     platforms = [
       ['WIN8.1', 'internet explorer', '11'],
@@ -86,13 +86,12 @@
 
   // create a web server for the local dir
   var mount = ecstatic({
-    root: process.cwd(),
-    cache: false
+    'root': process.cwd(),
+    'cache': false
   });
 
   http.createServer(function(req, res) {
-    var parsedUrl = url.parse(req.url, true);
-    var compat = parsedUrl.query.compat;
+    var compat = url.parse(req.url, true).query.compat;
     if (compat) {
       // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
       res.setHeader('X-UA-Compatible', 'IE=' + compat);

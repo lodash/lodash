@@ -38,8 +38,16 @@
 				var skipped = {
 					'Backbone.Collection': {
 						'set with many models does not overflow the stack': true
+					},
+					'Backbone.Router': {
+						'#2656 - No trailing slash on root.': true,
+						'#2765 - Fragment matching sans query/hash.': true
 					}
 				};
+
+				if (!(document.attachEvent && (document.documentMode || 0) < 8)) {
+					delete skipped['Backbone.Router'];
+				}
 
 				QUnit.testStart(function(details) {
 					var test = QUnit.config.current,

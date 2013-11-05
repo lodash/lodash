@@ -45,6 +45,7 @@
 					}
 				};
 
+				// only skip `Backbone.Router` tests in IE < 8
 				if (!(document.attachEvent && (document.documentMode || 0) < 8)) {
 					delete skipped['Backbone.Router'];
 				}

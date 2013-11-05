@@ -60,7 +60,7 @@
       ['Windows 7', 'internet explorer', '8']
     ];
   }
-  // platforms for backbone tests
+  // platforms for Backbone tests
   if (isBackbone) {
     platforms = platforms.filter(function(platform) {
       var browser = platform[1],

@@ -547,6 +547,13 @@
       deepEqual(bound('c', 'd'), [object, 'a', 'b', 'c', 'd']);
     });
 
+    test('bound functions should have a `length` of `0`', 1, function() {
+      var func = function(a, b, c) {},
+          bound = _.bind(func, {});
+
+      strictEqual(bound.length, 0);
+    });
+
     test('should ignore binding when called with the `new` operator', 3, function() {
       function Foo() {
         return this;
@@ -560,18 +567,18 @@
       ok(newBound instanceof Foo);
     });
 
-    test('should append array arguments to partially applied arguments (test in IE < 9)', 1, function() {
-      var object = {},
-          bound = _.bind(func, object, 'a');
-
-      deepEqual(bound(['b'], 'c'), [object, 'a', ['b'], 'c']);
-    });
-
     test('ensure `new bound` is an instance of `func`', 1, function() {
       var func = function() {},
           bound = _.bind(func, {});
 
       ok(new bound instanceof func);
+    });
+
+    test('should append array arguments to partially applied arguments (test in IE < 9)', 1, function() {
+      var object = {},
+          bound = _.bind(func, object, 'a');
+
+      deepEqual(bound(['b'], 'c'), [object, 'a', ['b'], 'c']);
     });
 
     test('should throw a TypeError if `func` is not a function', 1, function() {
@@ -1270,11 +1277,11 @@
   QUnit.module('lodash.curry');
 
   (function() {
-    test('should curry based on the number of arguments provided', 3, function() {
-      function func(a, b, c) {
-        return a + b + c;
-      }
+    function func(a, b, c) {
+      return a + b + c;
+    }
 
+    test('should curry based on the number of arguments provided', 3, function() {
       var curried = _.curry(func);
 
       equal(curried(1)(2)(3), 6);
@@ -1283,10 +1290,6 @@
     });
 
     test('should work with partial methods', 2, function() {
-      function func(a, b, c) {
-        return a + b + c;
-      }
-
       var curried = _.curry(func),
           a = _.partial(curried, 1),
           b = _.partialRight(a, 3),
@@ -1294,6 +1297,16 @@
 
       equal(b(2), 6);
       equal(c(), 6);
+    });
+
+    test('should return a function with a `length` of `0`', 6, function() {
+      _.times(2, function(index) {
+        var curried = index ? _.curry(func, 4) : _.curry(func);
+
+        strictEqual(curried.length, 0);
+        strictEqual(curried(1).length, 0);
+        strictEqual(curried(1, 2).length, 0);
+      });
     });
 
     test('should not alter the `this` binding', 9, function() {
@@ -5237,6 +5250,13 @@
 
       object.fn = func(fn);
       strictEqual(object.fn(), object.a);
+    });
+
+    test('`_.' + methodName + '` returns a function with a `length` of `0`', 1, function() {
+      var func = function(a, b, c) {},
+          actual = _.partial(func, 'a');
+
+      strictEqual(actual.length, 0);
     });
   });
 

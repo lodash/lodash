@@ -5,7 +5,7 @@ node_js:
   - "0.10"
 env:
   global:
-    - BIN="node" BUILD=false MAKE=false OPTION="" SAUCELABS=false
+    - BIN="node" BUILD=false BUILD_PARAM=false COMPAT=false MAKE=false OPTION="" SAUCELABS=false
     - SAUCE_USERNAME="jdalton"
     - secure: "woILQltl1pI3DgadZ5NrcqntdPvnRmQBwIVNZL91Ht5d9snIhgyAixI6xNAS8F8BzD9RzqzVPHay5sHfn+GhNaojcaiHs1nXAbdyclevMyfP+3MQ1HGfMSU0bv1GdT35LJ+C0u4Y3SuuZSbBlNEeLXRPMngPZahf4xL8RsZz/is="
   matrix:
@@ -37,7 +37,21 @@ matrix:
     - node_js: "0.10"
       env: BIN="ringo"   BUILD="legacy"
     - node_js: "0.8"
-      env: SAUCELABS=true MAKE=true
+      env: SAUCELABS=true BUILD="compat" BUILD_PARAM="lodash-$BUILD"
+    - node_js: "0.8"
+      env: SAUCELABS=true BUILD="modern" BUILD_PARAM="lodash-$BUILD"
+    - node_js: "0.8"
+      env: SAUCELABS=true BUILD="legacy" BUILD_PARAM="lodash-$BUILD"
+    - node_js: "0.8"
+      env: SAUCELABS=true BUILD="mobile" BUILD_PARAM="lodash-$BUILD"
+    - node_js: "0.8"
+      env: SAUCELABS=true BUILD="compat" BUILD_PARAM="../dist/lodash.$BUILD.js"
+    - node_js: "0.8"
+      env: SAUCELABS=true BUILD="modern" BUILD_PARAM="../dist/lodash.$BUILD.js"
+    - node_js: "0.8"
+      env: SAUCELABS=true BUILD="legacy" BUILD_PARAM="../dist/lodash.$BUILD.js"
+    - node_js: "0.8"
+      env: SAUCELABS=true BUILD="mobile" BUILD_PARAM="../dist/lodash.$BUILD.js"
 git:
   depth: 10
 branches:
@@ -45,8 +59,9 @@ branches:
     - master
 before_install:
   - "[ $BUILD != false ] && [ $BUILD != 'compat' ] && MAKE=true || true"
-  - "[ $SAUCELABS != false ] && npm i ecstatic request sauce-tunnel || true"
-  - "[ $BIN == 'istanbul' ] && npm i -g istanbul || true"
+  - "[ $BUILD != 'mobile' ] && [ $BUILD != 'modern' ] && COMPAT=true || true"
+  - "[ $SAUCELABS != false ] && npm i ecstatic@\"~0.4.0\" request@\"~2.27.0\" sauce-tunnel@\"~1.1.0\" || true"
+  - "[ $BIN == 'istanbul' ] && npm i -g istanbul@\"~0.1.0\" || true"
   - "[ $BIN == 'narwhal' ] && wget https://github.com/280north/narwhal/archive/v0.3.2.zip && sudo unzip v0.3.2 -d /opt/ && rm v0.3.2.zip || true"
   - "[ $BIN == 'narwhal' ] && sudo ln -s /opt/narwhal-0.3.2/bin/narwhal /usr/local/bin/narwhal && sudo chmod +x /usr/local/bin/narwhal || true"
   - "[ $BIN == 'rhino' ] && sudo mkdir /opt/rhino-1.7R5 && sudo wget -O /opt/rhino-1.7R5/js.jar https://oss.sonatype.org/content/repositories/snapshots/org/mozilla/rhino/1.7R5-SNAPSHOT/rhino-1.7R5-20120629.144839-4.jar || true"
@@ -55,27 +70,13 @@ before_install:
   - "[ $BIN == 'ringo' ] && sudo ln -s /opt/ringojs-0.9/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo || true"
   - "[ $MAKE != false ] && git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli.git ./node_modules/lodash-cli || true"
   - "[ $MAKE != false ] && mkdir ./node_modules/lodash-cli/node_modules && cd ./node_modules/lodash-cli/node_modules/ && ln -s ../../../ ./lodash && cd ../ && npm i . && cd ../../ || true"
-  - "[ $SAUCELABS == false ] && [ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
-  - "[ $SAUCELABS != false ] && node ./node_modules/lodash-cli/bin/lodash legacy -o ./dist/lodash.legacy.js || true"
-  - "[ $SAUCELABS != false ] && node ./node_modules/lodash-cli/bin/lodash mobile -o ./dist/lodash.mobile.js || true"
+  - "[ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
 script:
   - "[ $BIN == 'istanbul' ] && $BIN cover ./test/test.js || true"
-  - "[ $BUILD != false ] && cd ./test || true"
-  - "[ $SAUCELABS != false ] && true || [ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
-  - "[ $SAUCELABS != false ] && true || [ $BUILD == false ] && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=lodash-compat\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=lodash-compat&compat=7\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=lodash-compat\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=lodash-compat\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=lodash-modern\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=lodash-modern\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=lodash-modern\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=lodash-legacy\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=lodash-legacy&compat=7\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=lodash-legacy\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=lodash-legacy\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=lodash-mobile\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=lodash-mobile\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=lodash-mobile\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=lodash-underscore\""
-  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=lodash-underscore\""
+  - "([ $SAUCELABS != false ] || [ $BUILD == false ]) && true || cd ./test"
+  - "([ $SAUCELABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
+  - "([ $SAUCELABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/index.html?build=$BUILD_PARAM\""
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=$BUILD_PARAM\""
+  - "[ $SAUCELABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=$BUILD_PARAM\""
+  - "([ $SAUCELABS == false ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js \"test/index.html?build=$BUILD_PARAM&compat=7\""

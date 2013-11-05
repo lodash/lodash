@@ -66,10 +66,7 @@
       var browser = platform[1],
           version = +platform[2];
 
-      if (browser == 'firefox') {
-        return version >= 4;
-      }
-      return true
+      return browser != 'firefox' || version >= 4;
     });
   }
   // platforms for mobile and modern builds
@@ -83,7 +80,7 @@
         case 'internet explorer': return version >= 9;
         case 'safari': return version >= (isMobile ? 5 : 6);
       }
-      return true
+      return true;
     });
   }
 

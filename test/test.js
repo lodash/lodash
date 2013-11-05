@@ -259,7 +259,7 @@
 
     asyncTest('supports loading ' + basename + ' in a web worker', 1, function() {
       if (Worker && !isModularize) {
-        var limit = 2000,
+        var limit = 15000,
             start = +new Date;
 
         var attempt = function() {
@@ -1347,7 +1347,7 @@
       }
     });
 
-    asyncTest('subsequent debounced calls return the last `func` result', 3, function() {
+    asyncTest('subsequent debounced calls return the last `func` result', 2, function() {
       if (!(isRhino && isModularize)) {
         var debounced = _.debounce(_.identity, 32);
         debounced('x');
@@ -1358,12 +1358,11 @@
 
         setTimeout(function() {
           notEqual(debounced('z'), 'z');
-          notStrictEqual(debounced('z'), undefined);
           QUnit.start();
-        }, 256);
+        }, 128);
       }
       else {
-        skipTest(3);
+        skipTest(2);
         QUnit.start();
       }
     });

@@ -97,20 +97,32 @@
 						'_.unescape': [
 							'"<a href=\\"http://moe.com\\">Curly & Moe&#039;s</a>"'
 						],
-						'uniqueId': [
+						'times': [
 							'Died on test #1'
 						],
-						'times': [
+						'uniqueId': [
 							'Died on test #1'
 						]
 					}
 				};
 
+				// only skip in non-Underscore builds
 				if (/\bunderscore\b/i.test(ui.buildPath)) {
 					delete skipped.Chaining;
 					delete skipped.Collections.where;
 					delete skipped.Utility['_.escape'];
 					delete skipped.Utility['_.unescape'];
+				}
+				// only skip in Sauce Labs
+				if (location.port != '8081') {
+					for (var key in skipped.Functions) {
+						if (/\b(debounce|throttl)/.test(key)) {
+							delete skipped.Functions[key];
+						}
+					}
+					delete skipped.Objects.isEqual;
+					delete skipped.Utility.times;
+					delete skipped.Utility.uniqueId;
 				}
 
 				QUnit.testStart(function(details) {

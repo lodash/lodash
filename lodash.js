@@ -5728,14 +5728,15 @@
           if (!maxTimeoutId && !leading) {
             lastCalled = stamp;
           }
-          var remaining = maxWait - (stamp - lastCalled);
-          if (remaining <= 0) {
+          var remaining = maxWait - (stamp - lastCalled),
+              isCalled = remaining <= 0;
+
+          if (isCalled) {
             if (maxTimeoutId) {
               maxTimeoutId = clearTimeout(maxTimeoutId);
             }
             lastCalled = stamp;
             result = func.apply(thisArg, args);
-            args = thisArg = null;
           }
           else if (!maxTimeoutId) {
             maxTimeoutId = setTimeout(maxDelayed, remaining);
@@ -5745,7 +5746,10 @@
           timeoutId = setTimeout(delayed, wait);
         }
         if (leadingCall) {
+          isCalled = true;
           result = func.apply(thisArg, args);
+        }
+        if (isCalled && !timeoutId && !maxTimeoutId) {
           args = thisArg = null;
         }
         return result;

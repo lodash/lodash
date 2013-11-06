@@ -1531,7 +1531,7 @@
       }
     });
 
-    asyncTest('should call `trailing` with the correct `arguments` and `this` binding', 2, function() {
+    asyncTest('should execute the `trailing` call with the correct arguments and `this` binding', 2, function() {
       if (!(isRhino && isModularize)) {
         var args,
             count = 0,

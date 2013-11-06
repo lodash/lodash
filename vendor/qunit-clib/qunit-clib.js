@@ -309,10 +309,23 @@
           slice = Array.prototype.slice,
           timer = new java.util.Timer;
 
-      context.clearInterval =
-      context.clearTimeout = clearTimer;
-      context.setInterval = setInterval;
-      context.setTimeout = setTimeout;
+      (function() {
+        var getDescriptor = Object.getOwnPropertyDescriptor || function() {
+          return { 'writable': true };
+        };
+
+        var descriptor;
+        if ((!context.clearInterval || ((descriptor = getDescriptor(context, 'clearInterval')) && (descriptor.writable || descriptor.set))) &&
+            (!context.setInterval   || ((descriptor = getDescriptor(context, 'setInterval'))   && (descriptor.writable || descriptor.set)))) {
+          context.clearInterval = clearTimer;
+          context.setInterval = setInterval;
+        }
+        if ((!context.clearTimeout || ((descriptor = getDescriptor(context, 'clearTimeout')) && (descriptor.writable || descriptor.set))) &&
+            (!context.setTimeout   || ((descriptor = getDescriptor(context, 'setTimeout'))   && (descriptor.writable || descriptor.set)))) {
+          context.clearTimeout = clearTimer;
+          context.setTimeout = setTimeout;
+        }
+      }());
     } catch(e) { }
 
     // expose shortcuts

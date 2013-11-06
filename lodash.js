@@ -5697,7 +5697,9 @@
           if (isCalled) {
             lastCalled = now();
             result = func.apply(thisArg, args);
-            args = thisArg = null;
+            if (!timeoutId && !maxTimeoutId) {
+              args = thisArg = null;
+            }
           }
         } else {
           timeoutId = setTimeout(delayed, remaining);
@@ -5712,7 +5714,9 @@
         if (trailing || (maxWait !== wait)) {
           lastCalled = now();
           result = func.apply(thisArg, args);
-          args = thisArg = null;
+          if (!timeoutId && !maxTimeoutId) {
+            args = thisArg = null;
+          }
         }
       };
 
@@ -5737,7 +5741,6 @@
             }
             lastCalled = stamp;
             result = func.apply(thisArg, args);
-            args = thisArg = null;
           }
           else if (!maxTimeoutId) {
             maxTimeoutId = setTimeout(maxDelayed, remaining);
@@ -5750,7 +5753,11 @@
           timeoutId = setTimeout(delayed, wait);
         }
         if (leadingCall) {
+          isCalled = true;
           result = func.apply(thisArg, args);
+        }
+        if (isCalled && !timeoutId && !maxTimeoutId) {
+          args = thisArg = null;
         }
         return result;
       };

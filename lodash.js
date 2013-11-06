@@ -5743,14 +5743,13 @@
             maxTimeoutId = setTimeout(maxDelayed, remaining);
           }
         }
-        if (isCalled & timeoutId) {
+        if (isCalled && timeoutId) {
           timeoutId = clearTimeout(timeoutId);
         }
         else if (!timeoutId && wait !== maxWait) {
           timeoutId = setTimeout(delayed, wait);
         }
         if (leadingCall) {
-          isCalled = true;
           result = func.apply(thisArg, args);
         }
         return result;

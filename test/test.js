@@ -6889,26 +6889,32 @@
       }
     });
 
-    asyncTest('supports recursive calls', 2, function() {
+    asyncTest('supports recursive calls', 3, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0;
-        var throttled = _.throttle(function() {
+        var args,
+            count = 0,
+            object = {};
+
+        var throttled = _.throttle(function(value) {
           count++;
+          args = [this];
+          push.apply(args, arguments);
           if (count < 10) {
-            throttled();
+            throttled.call(this, value);
           }
         }, 32);
 
-        throttled();
+        throttled.call(object, 'a');
         equal(count, 1);
 
         setTimeout(function() {
-          ok(count < 3)
+          ok(count < 3);
+          deepEqual(args, [object, 'a']);
           QUnit.start();
         }, 32);
       }
       else {
-        skipTest(2);
+        skipTest(3);
         QUnit.start();
       }
     });

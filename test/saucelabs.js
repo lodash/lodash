@@ -16,7 +16,7 @@
       accessKey = process.env.SAUCE_ACCESS_KEY,
       tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
 
-  if (!accessKey) {
+  if (isFinite(process.env.TRAVIS_PULL_REQUEST)) {
     console.error('Testing skipped for pull requests');
     process.exit(0);
   }

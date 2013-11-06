@@ -34,44 +34,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // expose `ui.urlParams` properties
-  ui.urlParams = {
-    'build': build,
-    'loader': loader
-  };
-
-  // expose Lo-Dash build file path
-  ui.buildPath = (function() {
-    var result;
-    switch (build) {
-      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
-      case 'lodash-modern-dev': result = 'dist/lodash.js'; break;
-      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
-      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
-      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
-      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
-      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
-      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
-      case 'lodash-compat-dev':
-      case null:                result = 'lodash.js'; break;
-      default:                  return build;
-    }
-    return basePath + result;
-  }());
-
-  // expose module loader file path
-  ui.loaderPath = (function() {
-    var result;
-    switch (loader) {
-      case 'curl':      result = 'vendor/curl/dist/curl-kitchen-sink/curl.js'; break;
-      case 'dojo':      result = 'vendor/dojo/dojo.js'; break;
-      case 'requirejs':
-      case null:        result = 'vendor/requirejs/require.js'; break;
-      default:          return loader;
-    }
-    return basePath + result;
-  }());
-
   // used to indicate testing a modularized build
   ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([location.pathname, location.search, ui.buildPath]);
 
@@ -118,11 +80,11 @@
 
         loaderList.selectedIndex = (function() {
           switch (loader) {
-            case 'none':      return 0
             case 'curl':      return 1;
             case 'dojo':      return 2;
-            case 'requirejs':
-            case null:        return 3;
+            case 'requirejs': return 3;
+            case 'none':
+            case null:        return 0;
           }
           return -1;
         }());
@@ -167,6 +129,44 @@
 
     init();
   });
+
+  // expose Lo-Dash build file path
+  ui.buildPath = (function() {
+    var result;
+    switch (build) {
+      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-modern-dev': result = 'dist/lodash.js'; break;
+      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
+      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
+      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
+      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
+      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
+      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
+      case null:                build = 'lodash-compat-dev';
+      case 'lodash-compat-dev': result = 'lodash.js'; break;
+      default:                  return build;
+    }
+    return basePath + result;
+  }());
+
+  // expose module loader file path
+  ui.loaderPath = (function() {
+    var result;
+    switch (loader) {
+      case 'curl':      result = 'vendor/curl/dist/curl-kitchen-sink/curl.js'; break;
+      case 'dojo':      result = 'vendor/dojo/dojo.js'; break;
+      case 'requirejs': result = 'vendor/requirejs/require.js'; break;
+      case null:        loader = 'none'; return '';
+      default:          return loader;
+    }
+    return basePath + result;
+  }());
+
+  // expose `ui.urlParams` properties
+  ui.urlParams = {
+    'build': build,
+    'loader': loader
+  };
 
   // expose `ui`
   window.ui = ui;

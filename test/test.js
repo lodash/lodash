@@ -1530,6 +1530,34 @@
         QUnit.start();
       }
     });
+
+    asyncTest('should call `trailing` with the correct `arguments` and `this` binding', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var args,
+            count = 0,
+            object = {};
+
+        var debounced = _.debounce(function(value) {
+          args = [this];
+          push.apply(args, arguments);
+          return ++count != 2;
+        }, 32, { 'leading': true, 'maxWait': 64 });
+
+        while (true) {
+          if (!debounced.call(object, 'a')) {
+            break;
+          }
+        }
+        setTimeout(function() {
+          deepEqual(args, [object, 'a']);
+          QUnit.start();
+        }, 256);
+      }
+      else {
+        skipTest(1);
+        QUnit.start();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

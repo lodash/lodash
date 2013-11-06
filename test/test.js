@@ -1531,7 +1531,7 @@
       }
     });
 
-    asyncTest('should call `trailing` with the correct `arguments` and `this` binding', 1, function() {
+    asyncTest('should call `trailing` with the correct `arguments` and `this` binding', 2, function() {
       if (!(isRhino && isModularize)) {
         var args,
             count = 0,
@@ -1549,12 +1549,13 @@
           }
         }
         setTimeout(function() {
+          equal(count, 2);
           deepEqual(args, [object, 'a']);
           QUnit.start();
         }, 256);
       }
       else {
-        skipTest(1);
+        skipTest(2);
         QUnit.start();
       }
     });

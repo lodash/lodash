@@ -1087,7 +1087,7 @@ _.isArray(squares.value());
 <!-- div -->
 
 ### <a id="_chainvalue"></a>`_.chain(value)`
-<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6561 "View in source") [&#x24C9;][1]
+<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6568 "View in source") [&#x24C9;][1]
 
 Creates a `lodash` object that wraps the given value with explicit method chaining enabled.
 
@@ -1121,7 +1121,7 @@ var youngest = _.chain(characters)
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6587 "View in source") [&#x24C9;][1]
+<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6594 "View in source") [&#x24C9;][1]
 
 Invokes `interceptor` with the `value` as the first argument and then returns `value`. The purpose of this method is to "tap into" a method chain in order to perform operations on intermediate results within the chain.
 
@@ -1149,7 +1149,7 @@ _([1, 2, 3, 4])
 <!-- div -->
 
 ### <a id="_prototypechain"></a>`_.prototype.chain()`
-<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6617 "View in source") [&#x24C9;][1]
+<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6624 "View in source") [&#x24C9;][1]
 
 Enables explicit method chaining on the wrapper object.
 
@@ -1183,7 +1183,7 @@ _(characters).chain()
 <!-- div -->
 
 ### <a id="_prototypetostring"></a>`_.prototype.toString()`
-<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6634 "View in source") [&#x24C9;][1]
+<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6641 "View in source") [&#x24C9;][1]
 
 Produces the `toString` result of the wrapped value.
 
@@ -1204,7 +1204,7 @@ _([1, 2, 3]).toString();
 <!-- div -->
 
 ### <a id="_prototypevalueof"></a>`_.prototype.valueOf()`
-<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6651 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6658 "View in source") [&#x24C9;][1]
 
 Extracts the wrapped value.
 
@@ -2468,7 +2468,7 @@ source.addEventListener('message', _.debounce(batchLog, 250, {
 <!-- div -->
 
 ### <a id="_deferfunc-arg"></a>`_.defer(func, [arg])`
-<a href="#_deferfunc-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5774 "View in source") [&#x24C9;][1]
+<a href="#_deferfunc-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5781 "View in source") [&#x24C9;][1]
 
 Defers executing the `func` function until the current call stack has cleared. Additional arguments will be provided to `func` when it is invoked.
 
@@ -2493,7 +2493,7 @@ _.defer(function() { console.log('deferred'); });
 <!-- div -->
 
 ### <a id="_delayfunc-wait-arg"></a>`_.delay(func, wait, [arg])`
-<a href="#_delayfunc-wait-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5808 "View in source") [&#x24C9;][1]
+<a href="#_delayfunc-wait-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5815 "View in source") [&#x24C9;][1]
 
 Executes the `func` function after `wait` milliseconds. Additional arguments will be provided to `func` when it is invoked.
 
@@ -2520,7 +2520,7 @@ _.delay(log, 1000, 'logged later');
 <!-- div -->
 
 ### <a id="_memoizefunc-resolver"></a>`_.memoize(func, [resolver])`
-<a href="#_memoizefunc-resolver">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5853 "View in source") [&#x24C9;][1]
+<a href="#_memoizefunc-resolver">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5860 "View in source") [&#x24C9;][1]
 
 Creates a function that memoizes the result of `func`. If `resolver` is provided it will be used to determine the cache key for storing the result based on the arguments provided to the memoized function. By default, the first argument provided to the memoized function is used as the cache key. The `func` is executed with the `this` binding of the memoized function. The result cache is exposed as the `cache` property on the memoized function.
 
@@ -2563,7 +2563,7 @@ get('pebbles');
 <!-- div -->
 
 ### <a id="_oncefunc"></a>`_.once(func)`
-<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5886 "View in source") [&#x24C9;][1]
+<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5893 "View in source") [&#x24C9;][1]
 
 Creates a function that is restricted to execute `func` once. Repeat calls to the function will return the value of the first call. The `func` is executed with the `this` binding of the created function.
 
@@ -2589,7 +2589,7 @@ initialize();
 <!-- div -->
 
 ### <a id="_partialfunc-arg"></a>`_.partial(func, [arg])`
-<a href="#_partialfunc-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5924 "View in source") [&#x24C9;][1]
+<a href="#_partialfunc-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5931 "View in source") [&#x24C9;][1]
 
 Creates a function that, when called, invokes `func` with any additional `partial` arguments prepended to those provided to the new function. This method is similar to `_.bind` except it does &#42;&#42;not&#42;&#42; alter the `this` binding.
 
@@ -2616,7 +2616,7 @@ hi('fred');
 <!-- div -->
 
 ### <a id="_partialrightfunc-arg"></a>`_.partialRight(func, [arg])`
-<a href="#_partialrightfunc-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5955 "View in source") [&#x24C9;][1]
+<a href="#_partialrightfunc-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5962 "View in source") [&#x24C9;][1]
 
 This method is like `_.partial` except that `partial` arguments are appended to those provided to the new function.
 
@@ -2653,7 +2653,7 @@ options.imports
 <!-- div -->
 
 ### <a id="_throttlefunc-wait-options"></a>`_.throttle(func, wait, [options])`
-<a href="#_throttlefunc-wait-options">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5990 "View in source") [&#x24C9;][1]
+<a href="#_throttlefunc-wait-options">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5997 "View in source") [&#x24C9;][1]
 
 Creates a function that, when executed, will only call the `func` function at most once per every `wait` milliseconds. Provide an options object to indicate that `func` should be invoked on the leading and/or trailing edge of the `wait` timeout. Subsequent calls to the throttled function will return the result of the last `func` call.
 
@@ -2689,7 +2689,7 @@ jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
 <!-- div -->
 
 ### <a id="_wrapvalue-wrapper"></a>`_.wrap(value, wrapper)`
-<a href="#_wrapvalue-wrapper">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6031 "View in source") [&#x24C9;][1]
+<a href="#_wrapvalue-wrapper">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6038 "View in source") [&#x24C9;][1]
 
 Creates a function that provides `value` to the wrapper function as its first argument. Additional arguments provided to the function are appended to those provided to the wrapper function. The wrapper is executed with the `this` binding of the created function.
 
@@ -3944,7 +3944,7 @@ _.values({ 'one': 1, 'two': 2, 'three': 3 });
 <!-- div -->
 
 ### <a id="_noop"></a>`_.noop`
-<a href="#_noop">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6154 "View in source") [&#x24C9;][1]
+<a href="#_noop">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6161 "View in source") [&#x24C9;][1]
 
 *(unknown)*: A no-operation function.
 
@@ -3963,7 +3963,7 @@ _.noop(object) === undefined;
 <!-- div -->
 
 ### <a id="_escapestring"></a>`_.escape(string)`
-<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6051 "View in source") [&#x24C9;][1]
+<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6058 "View in source") [&#x24C9;][1]
 
 Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their corresponding HTML entities.
 
@@ -3987,7 +3987,7 @@ _.escape('Fred, Wilma, & Pebbles');
 <!-- div -->
 
 ### <a id="_identityvalue"></a>`_.identity(value)`
-<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6069 "View in source") [&#x24C9;][1]
+<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6076 "View in source") [&#x24C9;][1]
 
 This method returns the first argument provided to it.
 
@@ -4012,7 +4012,7 @@ _.identity(object) === object;
 <!-- div -->
 
 ### <a id="_mixinobject-object"></a>`_.mixin(object, object)`
-<a href="#_mixinobject-object">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6096 "View in source") [&#x24C9;][1]
+<a href="#_mixinobject-object">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6103 "View in source") [&#x24C9;][1]
 
 Adds function properties of a source object to the `lodash` function and chainable wrapper.
 
@@ -4043,7 +4043,7 @@ _('fred').capitalize();
 <!-- div -->
 
 ### <a id="_noconflict"></a>`_.noConflict()`
-<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6137 "View in source") [&#x24C9;][1]
+<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6144 "View in source") [&#x24C9;][1]
 
 Reverts the '_' variable to its previous value and returns a reference to the `lodash` function.
 
@@ -4063,7 +4063,7 @@ var lodash = _.noConflict();
 <!-- div -->
 
 ### <a id="_parseintvalue-radix"></a>`_.parseInt(value, [radix])`
-<a href="#_parseintvalue-radix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6177 "View in source") [&#x24C9;][1]
+<a href="#_parseintvalue-radix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6184 "View in source") [&#x24C9;][1]
 
 Converts the given value into an integer of the specified radix. If `radix` is `undefined` or `0` a `radix` of `10` is used unless the `value` is a hexadecimal, in which case a `radix` of `16` is used.
 
@@ -4090,7 +4090,7 @@ _.parseInt('08');
 <!-- div -->
 
 ### <a id="_randommin0-max1-floatingfalse"></a>`_.random([min=0], [max=1], [floating=false])`
-<a href="#_randommin0-max1-floatingfalse">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6209 "View in source") [&#x24C9;][1]
+<a href="#_randommin0-max1-floatingfalse">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6216 "View in source") [&#x24C9;][1]
 
 Produces a random number between `min` and `max` *(inclusive)*. If only one argument is provided a number between `0` and the given number will be returned. If `floating` is truey or either `min` or `max` are floats a floating-point number will be returned instead of an integer.
 
@@ -4125,7 +4125,7 @@ _.random(1.2, 5.2);
 <!-- div -->
 
 ### <a id="_resultobject-property"></a>`_.result(object, property)`
-<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6267 "View in source") [&#x24C9;][1]
+<a href="#_resultobject-property">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6274 "View in source") [&#x24C9;][1]
 
 Resolves the value of `property` on `object`. If `property` is a function it will be invoked with the `this` binding of `object` and its result returned, else the property value is returned. If `object` is falsey then `undefined` is returned.
 
@@ -4178,7 +4178,7 @@ Create a new `lodash` function using the given context object.
 <!-- div -->
 
 ### <a id="_templatetext-data-options-optionsescape-optionsevaluate-optionsimports-optionsinterpolate-sourceurl-variable"></a>`_.template(text, data, [options], [options.escape], [options.evaluate], [options.imports], [options.interpolate], [sourceURL], [variable])`
-<a href="#_templatetext-data-options-optionsescape-optionsevaluate-optionsimports-optionsinterpolate-sourceurl-variable">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6360 "View in source") [&#x24C9;][1]
+<a href="#_templatetext-data-options-optionsescape-optionsevaluate-optionsimports-optionsinterpolate-sourceurl-variable">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6367 "View in source") [&#x24C9;][1]
 
 A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.
 
@@ -4272,7 +4272,7 @@ fs.writeFileSync(path.join(cwd, 'jst.js'), '\
 <!-- div -->
 
 ### <a id="_timesn-callback-thisarg"></a>`_.times(n, callback, [thisArg])`
-<a href="#_timesn-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6483 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6490 "View in source") [&#x24C9;][1]
 
 Executes the callback `n` times, returning an array of the results of each callback execution. The callback is bound to `thisArg` and invoked with one argument; *(index)*.
 
@@ -4304,7 +4304,7 @@ _.times(3, function(n) { this.cast(n); }, mage);
 <!-- div -->
 
 ### <a id="_unescapestring"></a>`_.unescape(string)`
-<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6510 "View in source") [&#x24C9;][1]
+<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6517 "View in source") [&#x24C9;][1]
 
 The inverse of `_.escape` this method converts the HTML entities `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their corresponding characters.
 
@@ -4328,7 +4328,7 @@ _.unescape('Fred, Barney &amp; Pebbles');
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6530 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6537 "View in source") [&#x24C9;][1]
 
 Generates a unique ID. If `prefix` is provided the ID will be appended to it.
 
@@ -4381,7 +4381,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6851 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6858 "View in source") [&#x24C9;][1]
 
 *(string)*: The semantic version number.
 

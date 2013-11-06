@@ -34,48 +34,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // expose `ui.urlParams` properties
-  ui.urlParams = {
-    'build': build,
-    'other': other
-  };
-
-  // expose Lo-Dash build file path
-  ui.buildPath = (function() {
-    var result;
-    switch (build) {
-      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
-      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
-      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
-      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
-      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
-      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
-      case 'lodash-modern':
-      case null:                result = 'dist/lodash.min.js'; break;
-      default:                  return build;
-    }
-    return basePath + result;
-  }());
-
-  // expose other library file path
-  ui.otherPath = (function() {
-    var result;
-    switch (other) {
-      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
-      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
-      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
-      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
-      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
-      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
-      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
-      case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
-      case 'underscore':
-      case null:                result = 'vendor/underscore/underscore-min.js'; break;
-      default:                  return other;
-    }
-    return basePath + result;
-  }());
-
   // initialize controls
   addListener(window, 'load', function() {
     function eventHandler(event) {
@@ -165,6 +123,48 @@
     addListener(buildList, 'change', eventHandler);
     addListener(otherList, 'change', eventHandler);
   });
+
+  // expose Lo-Dash build file path
+  ui.buildPath = (function() {
+    var result;
+    switch (build) {
+      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
+      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
+      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
+      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
+      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
+      case null:                build = 'lodash-modern';
+      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
+      default:                  return build;
+    }
+    return basePath + result;
+  }());
+
+  // expose other library file path
+  ui.otherPath = (function() {
+    var result;
+    switch (other) {
+      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
+      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
+      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
+      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
+      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
+      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
+      case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
+      case null:                other = 'underscore';
+      case 'underscore':        result = 'vendor/underscore/underscore-min.js'; break;
+      default:                  return other;
+    }
+    return basePath + result;
+  }());
+
+  // expose `ui.urlParams` properties
+  ui.urlParams = {
+    'build': build,
+    'other': other
+  };
 
   // expose `ui`
   window.ui = ui;

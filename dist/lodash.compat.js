@@ -5679,6 +5679,7 @@
           if (isCalled) {
             lastCalled = now();
             result = func.apply(thisArg, args);
+            args = thisArg = null;
           }
         } else {
           timeoutId = setTimeout(delayed, remaining);
@@ -5693,6 +5694,7 @@
         if (trailing || (maxWait !== wait)) {
           lastCalled = now();
           result = func.apply(thisArg, args);
+          args = thisArg = null;
         }
       };
 
@@ -5708,19 +5710,25 @@
           if (!maxTimeoutId && !leading) {
             lastCalled = stamp;
           }
-          var remaining = maxWait - (stamp - lastCalled);
-          if (remaining <= 0) {
+          var remaining = maxWait - (stamp - lastCalled),
+              isCalled = remaining <= 0;
+
+          if (isCalled) {
             if (maxTimeoutId) {
               maxTimeoutId = clearTimeout(maxTimeoutId);
             }
             lastCalled = stamp;
             result = func.apply(thisArg, args);
+            args = thisArg = null;
           }
           else if (!maxTimeoutId) {
             maxTimeoutId = setTimeout(maxDelayed, remaining);
           }
         }
-        if (!timeoutId && wait !== maxWait) {
+        if (isCalled && timeoutId) {
+          timeoutId = clearTimeout(timeoutId);
+        }
+        else if (!timeoutId && wait !== maxWait) {
           timeoutId = setTimeout(delayed, wait);
         }
         if (leadingCall) {

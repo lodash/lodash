@@ -6973,8 +6973,8 @@
           return value;
         }, 32, {});
 
-        _.times(2, function() {
-          equal(throttled('x'), 'x');
+        _.times(2, function(index) {
+          equal(throttled(index ? 'y': 'x'), 'x');
         });
 
         setTimeout(function() {
@@ -7020,9 +7020,9 @@
           return value;
         }, 32, { 'trailing': false });
 
-        _.times(2, function() {
-          equal(withTrailing('x'), 'x');
-          equal(withoutTrailing('x'), 'x');
+        _.times(2, function(index) {
+          equal(withTrailing(index ? 'y' : 'x'), 'x');
+          equal(withoutTrailing(index ? 'y' : 'x'), 'x');
         });
 
         setTimeout(function() {

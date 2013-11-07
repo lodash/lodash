@@ -566,10 +566,10 @@
     (function() {
       var length = shadowedProps.length;
       while (length--) {
-        var prop = shadowedProps[length];
+        var key = shadowedProps[length];
         for (var className in nonEnumProps) {
-          if (hasOwnProperty.call(nonEnumProps, className) && !hasOwnProperty.call(nonEnumProps[className], prop)) {
-            nonEnumProps[className][prop] = false;
+          if (hasOwnProperty.call(nonEnumProps, className) && !hasOwnProperty.call(nonEnumProps[className], key)) {
+            nonEnumProps[className][key] = false;
           }
         }
       }
@@ -679,8 +679,8 @@
           props = [];
 
       ctor.prototype = { 'valueOf': 1, 'y': 1 };
-      for (var prop in new ctor) { props.push(prop); }
-      for (prop in arguments) { }
+      for (var key in new ctor) { props.push(key); }
+      for (key in arguments) { }
 
       /**
        * Detect if an `arguments` object's [[Class]] is resolvable (all but Firefox < 4, IE < 9).
@@ -744,7 +744,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.nonEnumArgs = prop != 0;
+      support.nonEnumArgs = key != 0;
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
@@ -2989,23 +2989,29 @@
      * // => { 'name': 'fred' }
      */
     function omit(object, callback, thisArg) {
-      var indexOf = getIndexOf(),
-          isFunc = typeof callback == 'function',
-          result = {};
+      var result = {};
+      if (typeof callback != 'function') {
+        var props = [];
+        forIn(object, function(value, key) {
+          props.push(key);
+        });
+        props = difference(props, baseFlatten(arguments, true, false, 1));
 
-      if (isFunc) {
-        callback = lodash.createCallback(callback, thisArg, 3);
-      } else {
-        var props = baseFlatten(arguments, true, false, 1);
-      }
-      forIn(object, function(value, key, object) {
-        if (isFunc
-              ? !callback(value, key, object)
-              : indexOf(props, key) < 0
-            ) {
-          result[key] = value;
+        var index = -1,
+            length = props.length;
+
+        while (++index < length) {
+          var key = props[index];
+          result[key] = object[key];
         }
-      });
+      } else {
+        callback = lodash.createCallback(callback, thisArg, 3);
+        forIn(object, function(value, key, object) {
+          if (!callback(value, key, object)) {
+            result[key] = value;
+          }
+        });
+      }
       return result;
     }
 

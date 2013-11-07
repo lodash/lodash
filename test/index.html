@@ -72,6 +72,8 @@
 			delete Object._defineProperty;
 			delete Object._keys;
 
+			QUnit.config.hidepassed = true;
+
 			// assign results to `global_test_results` for Sauce Labs
 			var global_test_results;
 			QUnit.done(function(results) {
@@ -106,7 +108,6 @@
 				    moduleMain = modulePath.match(reBasename)[0];
 
 				QUnit.config.autostart = false;
-				QUnit.config.hidepassed = true;
 
 				// load Lo-Dash as a module
 				require({

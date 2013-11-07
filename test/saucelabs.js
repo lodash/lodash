@@ -146,10 +146,14 @@
       'auth': { 'user': username, 'pass': accessKey },
       'json': testDefinition
     }, function(error, response, body) {
-      if (response.statusCode == 200) {
+      var statusCode = response && response.statusCode;
+      if (statusCode == 200) {
         waitForTestCompletion(body);
       } else {
-        console.error('Failed to submit test to Sauce Labs; status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
+        console.error('Failed to submit test to Sauce Labs; status: ' +  statusCode + ', body:\n' + JSON.stringify(body));
+        if (error) {
+          console.error(error);
+        }
         process.exit(3);
       }
     });
@@ -160,7 +164,8 @@
       'auth': { 'user': username, 'pass': accessKey },
       'json': testIdentifier
     }, function(error, response, body) {
-        if (response.statusCode == 200) {
+        var statusCode = response && response.statusCode;
+        if (statusCode == 200) {
           if (body.completed) {
             logInline('');
             handleTestResults(body['js tests']);
@@ -173,7 +178,10 @@
           }
         } else {
           logInline('');
-          console.error('Failed to check test status on Sauce Labs; status ' + response.statusCode + ', body:\n' + JSON.stringify(body));
+          console.error('Failed to check test status on Sauce Labs; status: ' + statusCode + ', body:\n' + JSON.stringify(body));
+          if (error) {
+            console.error(error);
+          }
           process.exit(4);
         }
     });

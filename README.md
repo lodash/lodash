@@ -19,13 +19,16 @@ Check out our [wiki]([https://github.com/lodash/lodash/wiki/build-differences]) 
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.<br>
+
 Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-es6](https://npmjs.org/package/lodash-es6), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
 
 ## Dive in
 
 There’s plenty of [documentation](http://lodash.com/docs), [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).<br>
-For a list of upcoming features, check out our [roadmap](https://github.com/lodash/lodash/wiki/Roadmap).<br>
-The full changelog for this release is available on our [wiki](https://github.com/lodash/lodash/wiki/Changelog).
+Check out <a href="http://devdocs.io/lodash/">DevDocs</a> as fast, organized, & searchable interface to our documentation.
+
+The full changelog for this release is available on our [wiki](https://github.com/lodash/lodash/wiki/Changelog).<br>
+A list of upcoming features is available on our [roadmap](https://github.com/lodash/lodash/wiki/Roadmap).
 
 ## Features *not* in Underscore
 
@@ -84,7 +87,7 @@ The full changelog for this release is available on our [wiki](https://github.co
   - [Testing](https://vimeo.com/45865290)
   - [CascadiaJS ’12](http://www.youtube.com/watch?v=dpPy4f_SeEk)
 
- For a list of other community created podcasts, posts, & videos please head on over to our [wiki](https://github.com/lodash/lodash/wiki/Resources).
+ A list of other community created podcasts, posts, & videos is available on our [wiki](https://github.com/lodash/lodash/wiki/Resources).
 
 ## Support
 

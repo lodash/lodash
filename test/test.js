@@ -7056,7 +7056,7 @@
         setTimeout(function() { _.times(2, throttled); }, 100);
 
         setTimeout(function() {
-          equal(count, 2);
+          ok(count > 1);
           QUnit.start();
         }, 512);
       }

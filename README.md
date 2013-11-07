@@ -90,6 +90,9 @@ The full changelog for this release is available on our [wiki](https://github.co
 
 Tested in Chrome 5~30, Firefox 2~25, IE 6-11, Opera 9.25~17, Safari 3-7, Node.js 0.6.8-0.10.21, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
 
+Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.<br>
+[![Sauce Labs](http://lodash.com/_img/sauce.png)](https://saucelabs.com/ "Sauce Labs: Selenium Testing & More")
+
 ## Installation & usage
 
 In browsers:

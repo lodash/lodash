@@ -1618,7 +1618,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 256);
+        }, 128);
       }
       else {
         skipTest();
@@ -1637,7 +1637,7 @@
         setTimeout(function() {
           deepEqual(args, [1, 2, 3]);
           QUnit.start();
-        }, 256);
+        }, 128);
       }
       else {
         skipTest();
@@ -1654,7 +1654,7 @@
     asyncTest('should delay `func` execution', 2, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.delay(function(){ pass = true; }, 128);
+        _.delay(function(){ pass = true; }, 100);
 
         setTimeout(function() {
           ok(!pass);
@@ -1663,7 +1663,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 512);
+        }, 256);
       }
       else {
         skipTest(2);
@@ -1682,7 +1682,7 @@
         setTimeout(function() {
           deepEqual(args, [1, 2, 3]);
           QUnit.start();
-        }, 512);
+        }, 128);
       }
       else {
         skipTest();

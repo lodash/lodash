@@ -1654,7 +1654,7 @@
     asyncTest('should delay `func` execution', 2, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.delay(function(){ pass = true; }, 64);
+        _.delay(function(){ pass = true; }, 128);
 
         setTimeout(function() {
           ok(!pass);
@@ -1682,7 +1682,7 @@
         setTimeout(function() {
           deepEqual(args, [1, 2, 3]);
           QUnit.start();
-        }, 256);
+        }, 512);
       }
       else {
         skipTest();

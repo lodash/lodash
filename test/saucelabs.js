@@ -47,8 +47,8 @@
     ['Windows 7', 'internet explorer', '8'],
     ['Windows XP', 'internet explorer', '7'],
     ['Windows XP', 'internet explorer', '6'],
-    ['Windows 7', 'opera', '12'],
-    ['Windows 7', 'opera', '11'],
+    //['Windows 7', 'opera', '12'],
+    //['Windows 7', 'opera', '11'],
     ['OS X 10.8', 'safari', '6'],
     ['Windows 7', 'safari', '5']
   ];

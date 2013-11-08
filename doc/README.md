@@ -124,7 +124,7 @@
 
 ## `Objects`
 * [`_.assign`](#_assignobject-source-callback-thisarg)
-* [`_.clone`](#_clonevalue-deepfalse-callback-thisarg)
+* [`_.clone`](#_clonevalue-isdeepfalse-callback-thisarg)
 * [`_.cloneDeep`](#_clonedeepvalue-callback-thisarg)
 * [`_.create`](#_createprototype-properties)
 * [`_.defaults`](#_defaultsobject-source)
@@ -2762,14 +2762,14 @@ defaults(object, { 'name': 'fred', 'employer': 'slate' });
 
 <!-- div -->
 
-### <a id="_clonevalue-deepfalse-callback-thisarg"></a>`_.clone(value, [deep=false], [callback], [thisArg])`
-<a href="#_clonevalue-deepfalse-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L2082 "View in source") [&#x24C9;][1]
+### <a id="_clonevalue-isdeepfalse-callback-thisarg"></a>`_.clone(value, [isDeep=false], [callback], [thisArg])`
+<a href="#_clonevalue-isdeepfalse-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L2082 "View in source") [&#x24C9;][1]
 
-Creates a clone of `value`. If `deep` is `true` nested objects will also be cloned, otherwise they will be assigned by reference. If a callback is provided it will be executed to produce the cloned values. If the callback returns `undefined` cloning will be handled by the method instead. The callback is bound to `thisArg` and invoked with one argument; *(value)*.
+Creates a clone of `value`. If `isDeep` is `true` nested objects will also be cloned, otherwise they will be assigned by reference. If a callback is provided it will be executed to produce the cloned values. If the callback returns `undefined` cloning will be handled by the method instead. The callback is bound to `thisArg` and invoked with one argument; *(value)*.
 
 #### Arguments
 1. `value` *(&#42;)*: The value to clone.
-2. `[deep=false]` *(boolean)*: Specify a deep clone.
+2. `[isDeep=false]` *(boolean)*: Specify a deep clone.
 3. `[callback]` *(Function)*: The function to customize cloning values.
 4. `[thisArg]` *(&#42;)*: The `this` binding of `callback`.
 

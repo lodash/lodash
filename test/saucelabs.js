@@ -47,6 +47,8 @@
     ['Windows 7', 'internet explorer', '8'],
     ['Windows XP', 'internet explorer', '7'],
     ['Windows XP', 'internet explorer', '6'],
+    ['Windows 7', 'opera', '12'],
+    ['Windows 7', 'opera', '11'],
     ['OS X 10.8', 'safari', '6'],
     ['Windows 7', 'safari', '5']
   ];
@@ -66,7 +68,11 @@
       var browser = platform[1],
           version = +platform[2];
 
-      return browser != 'firefox' || version >= 4;
+      switch (browser) {
+        case 'firefox': return version >= 4;
+        case 'opera': return version >= 12;
+      }
+      return true;
     });
   }
   // platforms for mobile and modern builds
@@ -78,6 +84,7 @@
       switch (browser) {
         case 'firefox': return version >= 10;
         case 'internet explorer': return version >= 9;
+        case 'opera': return version >= 12;
         case 'safari': return version >= (isMobile ? 5 : 6);
       }
       return true;

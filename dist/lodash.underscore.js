@@ -534,11 +534,11 @@
    * @private
    * @param {Array} array The array to flatten.
    * @param {boolean} [isShallow=false] A flag to restrict flattening to a single level.
-   * @param {boolean} [isArgArrays=false] A flag to restrict flattening to arrays and `arguments` objects.
+   * @param {boolean} [isStrict=false] A flag to restrict flattening to arrays and `arguments` objects.
    * @param {number} [fromIndex=0] The index to start from.
    * @returns {Array} Returns a new flattened array.
    */
-  function baseFlatten(array, isShallow, isArgArrays, fromIndex) {
+  function baseFlatten(array, isShallow, isStrict, fromIndex) {
     var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0,
         result = [];
@@ -550,7 +550,7 @@
           && (isArray(value) || isArguments(value))) {
         // recursively flatten arrays (susceptible to call stack limits)
         if (!isShallow) {
-          value = baseFlatten(value, isShallow, isArgArrays);
+          value = baseFlatten(value, isShallow, isStrict);
         }
         var valIndex = -1,
             valLength = value.length,
@@ -560,7 +560,7 @@
         while (++valIndex < valLength) {
           result[resIndex++] = value[valIndex];
         }
-      } else if (!isArgArrays) {
+      } else if (!isStrict) {
         result.push(value);
       }
     }
@@ -1005,7 +1005,7 @@
   }
 
   /**
-   * Creates a clone of `value`. If `deep` is `true` nested objects will also
+   * Creates a clone of `value`. If `isDeep` is `true` nested objects will also
    * be cloned, otherwise they will be assigned by reference. If a callback
    * is provided it will be executed to produce the cloned values. If the
    * callback returns `undefined` cloning will be handled by the method instead.
@@ -1015,7 +1015,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to clone.
-   * @param {boolean} [deep=false] Specify a deep clone.
+   * @param {boolean} [isDeep=false] Specify a deep clone.
    * @param {Function} [callback] The function to customize cloning values.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {*} Returns the cloned value.
@@ -1731,7 +1731,7 @@
    * _.contains({ 'name': 'fred', 'age': 40 }, 'fred');
    * // => true
    *
-   * _.contains('pebbles', 'ur');
+   * _.contains('pebbles', 'eb');
    * // => true
    */
   function contains(collection, target) {

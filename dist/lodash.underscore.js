@@ -105,6 +105,60 @@
   }
 
   /**
+   * An implementation of `_.contains` for cache objects that mimics the return
+   * signature of `_.indexOf` by returning `0` if the value is found, else `-1`.
+   *
+   * @private
+   * @param {Object} cache The cache object to inspect.
+   * @param {*} value The value to search for.
+   * @returns {number} Returns `0` if `value` is found, else `-1`.
+   */
+  function cacheIndexOf(cache, value) {
+    var type = typeof value;
+    cache = cache.cache;
+
+    if (type == 'boolean' || value == null) {
+      return cache[value] ? 0 : -1;
+    }
+    if (type != 'number' && type != 'string') {
+      type = 'object';
+    }
+    var key = type == 'number' ? value : keyPrefix + value;
+    cache = (cache = cache[type]) && cache[key];
+
+    return type == 'object'
+      ? (cache && baseIndexOf(cache, value) > -1 ? 0 : -1)
+      : (cache ? 0 : -1);
+  }
+
+  /**
+   * Adds a given value to the corresponding cache object.
+   *
+   * @private
+   * @param {*} value The value to add to the cache.
+   */
+  function cachePush(value) {
+    var cache = this.cache,
+        type = typeof value;
+
+    if (type == 'boolean' || value == null) {
+      cache[value] = true;
+    } else {
+      if (type != 'number' && type != 'string') {
+        type = 'object';
+      }
+      var key = type == 'number' ? value : keyPrefix + value,
+          typeCache = cache[type] || (cache[type] = {});
+
+      if (type == 'object') {
+        (typeCache[key] || (typeCache[key] = [])).push(value);
+      } else {
+        typeCache[key] = true;
+      }
+    }
+  }
+
+  /**
    * Used by `sortBy` to compare transformed `collection` elements, stable sorting
    * them in ascending order.
    *
@@ -132,6 +186,38 @@
     // to return the same value for `a` and `b`.
     // See https://github.com/jashkenas/underscore/pull/1247
     return a.index - b.index;
+  }
+
+  /**
+   * Creates a cache object to optimize linear searches of large arrays.
+   *
+   * @private
+   * @param {Array} [array=[]] The array to search.
+   * @returns {null|Object} Returns the cache object or `null` if caching should not be used.
+   */
+  function createCache(array) {
+    var index = -1,
+        length = array.length,
+        first = array[0],
+        mid = array[(length / 2) | 0],
+        last = array[length - 1];
+
+    if (first && typeof first == 'object' &&
+        mid && typeof mid == 'object' && last && typeof last == 'object') {
+      return false;
+    }
+    var cache = getObject();
+    cache['false'] = cache['null'] = cache['true'] = cache['undefined'] = false;
+
+    var result = getObject();
+    result.array = array;
+    result.cache = cache;
+    result.push = cachePush;
+
+    while (++index < length) {
+      result.push(array[index]);
+    }
+    return result;
   }
 
   /**
@@ -525,6 +611,30 @@
       return func.apply(thisBinding, args);
     }
     return bound;
+  }
+
+  /**
+   * The base implementation of `_.difference` that accepts a single array
+   * of values to exclude.
+   *
+   * @private
+   * @param {Array} array The array to process.
+   * @param {Array} [values] The array of values to exclude.
+   * @returns {Array} Returns a new array of filtered values.
+   */
+  function baseDifference(array, values) {
+    var index = -1,
+        indexOf = getIndexOf(),
+        length = array ? array.length : 0,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      if (indexOf(values, value) < 0) {
+        result.push(value);
+      }
+    }
+    return result;
   }
 
   /**
@@ -2863,7 +2973,7 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to process.
-   * @param {...Array} [array] The arrays of values to exclude.
+   * @param {...Array} [values] The arrays of values to exclude.
    * @returns {Array} Returns a new array of filtered values.
    * @example
    *
@@ -2871,19 +2981,7 @@
    * // => [1, 3, 4]
    */
   function difference(array) {
-    var index = -1,
-        indexOf = getIndexOf(),
-        length = array ? array.length : 0,
-        flattened = baseFlatten(arguments, true, true, 1),
-        result = [];
-
-    while (++index < length) {
-      var value = array[index];
-      if (indexOf(flattened, value) < 0) {
-        result.push(value);
-      }
-    }
-    return result;
+    return baseDifference(array, baseFlatten(arguments, true, true, 1));
   }
 
   /**
@@ -3526,7 +3624,7 @@
    * // => [2, 3, 4]
    */
   function without(array) {
-    return difference(array, slice(arguments, 1));
+    return baseDifference(array, slice(arguments, 1));
   }
 
   /**

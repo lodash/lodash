@@ -497,20 +497,18 @@
 
     function bound() {
       var thisBinding = isBind ? thisArg : this;
-      if (isCurry || partialArgs || partialRightArgs) {
-        if (partialArgs) {
-          var args = partialArgs.slice();
-          push.apply(args, arguments);
+      if (partialArgs) {
+        var args = partialArgs.slice();
+        push.apply(args, arguments);
+      }
+      if (partialRightArgs || isCurry) {
+        args || (args = slice(arguments));
+        if (partialRightArgs) {
+          push.apply(args, partialRightArgs);
         }
-        if (partialRightArgs || isCurry) {
-          args || (args = slice(arguments));
-          if (partialRightArgs) {
-            push.apply(args, partialRightArgs);
-          }
-          if (isCurry && args.length < arity) {
-            bitmask |= 16 & ~32;
-            return baseCreateWrapper([func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity]);
-          }
+        if (isCurry && args.length < arity) {
+          bitmask |= 16 & ~32;
+          return baseCreateWrapper([func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity]);
         }
       }
       args || (args = arguments);

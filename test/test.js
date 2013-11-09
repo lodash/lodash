@@ -1491,17 +1491,14 @@
       }
     });
 
-    asyncTest('should work with `maxWait` option', 4, function() {
+    test('should work with `maxWait` option', 2, function() {
       if (!(isRhino && isModularize)) {
-        var now,
-            stamp,
-            limit = 100,
+        var limit = 256,
             withCount = 0,
             withoutCount = 0;
 
         var withMaxWait = _.debounce(function() {
           withCount++;
-          stamp = +new Date;
         }, 32, { 'maxWait': 64 });
 
         var withoutMaxWait = _.debounce(function() {
@@ -1509,25 +1506,15 @@
         }, 32);
 
         var start = +new Date;
-        while (((now = +new Date) - start) < limit || now == stamp) {
+        while ((new Date - start) < limit) {
           withMaxWait();
           withoutMaxWait();
         }
         ok(withCount > 0);
-        strictEqual(withoutCount, 0);
-
-        var lastWithCount = withCount,
-            lastWithoutCount = withoutCount;
-
-        setTimeout(function() {
-          ok(withCount > lastWithCount);
-          ok(withoutCount > lastWithoutCount && withoutCount < withCount);
-          QUnit.start();
-        }, 256);
+        ok(!withoutCount);
       }
       else {
-        skipTest(4);
-        QUnit.start();
+        skipTest(2);
       }
     });
 
@@ -6939,34 +6926,25 @@
     });
 
     _.times(2, function(index) {
-      asyncTest('should trigger trailing call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), 2, function() {
+      test('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), 1, function() {
         if (!(isRhino && isModularize)) {
-          var now,
-              stamp,
-              count = 0,
-              limit = 100,
+          var count = 0,
+              limit = 256,
               options = index ? { 'leading': false } : {};
 
           var throttled = _.throttle(function() {
             count++;
-            stamp = +new Date;
           }, 32, options);
 
           var start = +new Date;
-          while (((now = +new Date) - start) < limit || now == stamp) {
+          while ((new Date - start) < limit) {
             throttled();
           }
           var lastCount = count;
           ok(count > 1);
-
-          setTimeout(function() {
-            ok(count > lastCount);
-            QUnit.start();
-          }, 256);
         }
         else {
-          skipTest(2);
-          QUnit.start();
+          skipTest(1);
         }
       });
     });

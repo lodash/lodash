@@ -1340,8 +1340,8 @@
   (function() {
     asyncTest('should debounce a function', 2, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0;
-        var debounced = _.debounce(function() { count++; }, 32);
+        var count = 0,
+            debounced = _.debounce(function() { count++; }, 32);
 
         debounced();
         debounced();
@@ -1423,7 +1423,7 @@
 
     asyncTest('should work with `leading` option', 7, function() {
       if (!(isRhino && isModularize)) {
-        var withLeadingAndTrailing,
+        var withLeading,
             counts = [0, 0, 0];
 
         _.forEach([true, { 'leading': true }], function(options, index) {
@@ -1433,23 +1433,29 @@
           }, 32, options);
 
           if (index == 1) {
-            withLeadingAndTrailing = debounced;
+            withLeading = debounced;
           }
           equal(debounced('x'), 'x');
         });
-
-        _.times(2, _.debounce(function() { counts[2]++; }, 32, { 'leading': true }));
-        strictEqual(counts[2], 1);
 
         _.forEach([false, { 'leading': false }], function(options) {
           var withoutLeading = _.debounce(_.identity, 32, options);
           strictEqual(withoutLeading('x'), undefined);
         });
 
+        var withLeadingAndTrailing = _.debounce(function() {
+          counts[2]++;
+        }, 32, { 'leading': true });
+
+        withLeadingAndTrailing();
+        withLeadingAndTrailing();
+
+        strictEqual(counts[2], 1);
+
         setTimeout(function() {
           deepEqual(counts, [1, 1, 2]);
 
-          withLeadingAndTrailing('x');
+          withLeading('x');
           equal(counts[1], 2);
 
           QUnit.start();
@@ -6812,10 +6818,11 @@
         throttled();
         throttled();
 
-        equal(count, 1);
+        var lastCount = count;
+        ok(count > 0);
 
         setTimeout(function() {
-          equal(count, 2);
+          ok(count > lastCount);
           QUnit.start();
         }, 256);
       }
@@ -6940,7 +6947,6 @@
           while ((new Date - start) < limit) {
             throttled();
           }
-          var lastCount = count;
           ok(count > 1);
         }
         else {
@@ -6958,9 +6964,8 @@
           return value;
         }, 32, {});
 
-        _.times(2, function(index) {
-          equal(throttled(index ? 'y': 'x'), 'x');
-        });
+        equal(throttled('x'), 'x');
+        equal(throttled('y'), 'x');
 
         setTimeout(function() {
           strictEqual(count, 2);
@@ -7005,10 +7010,11 @@
           return value;
         }, 32, { 'trailing': false });
 
-        _.times(2, function(index) {
-          equal(withTrailing(index ? 'y' : 'x'), 'x');
-          equal(withoutTrailing(index ? 'y' : 'x'), 'x');
-        });
+        equal(withTrailing('x'), 'x');
+        equal(withTrailing('y'), 'x');
+
+        equal(withoutTrailing('x'), 'x');
+        equal(withoutTrailing('y'), 'x');
 
         setTimeout(function() {
           equal(withCount, 2);
@@ -7030,8 +7036,13 @@
           count++;
         }, 64, { 'trailing': false });
 
-        _.times(2, throttled);
-        setTimeout(function() { _.times(2, throttled); }, 100);
+        throttled();
+        throttled();
+
+        setTimeout(function() {
+          throttled();
+          throttled();
+        }, 100);
 
         setTimeout(function() {
           ok(count > 1);

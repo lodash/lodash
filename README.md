@@ -17,15 +17,14 @@ Check out our [wiki]([https://github.com/lodash/lodash/wiki/build-differences]) 
 [Development](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.underscore.js) &
 [Production](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.underscore.min.js)
 
-CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
-For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.<br>
+CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash). For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.
 
 Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/package/lodash-amd), [lodash-es6](https://npmjs.org/package/lodash-es6), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
 
 ## Dive in
 
-There’s plenty of [documentation](http://lodash.com/docs), [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).<br>
-Check out <a href="http://devdocs.io/lodash/">DevDocs</a> as fast, organized, & searchable interface to our documentation.
+There’s plenty of **[documentation](http://lodash.com/docs)**, [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).<br>
+Check out <a href="http://devdocs.io/lodash/">DevDocs</a> as a fast, organized, & searchable interface for our documentation.
 
 The full changelog for this release is available on our [wiki](https://github.com/lodash/lodash/wiki/Changelog).<br>
 A list of upcoming features is available on our [roadmap](https://github.com/lodash/lodash/wiki/Roadmap).

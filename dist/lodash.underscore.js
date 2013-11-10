@@ -4778,7 +4778,6 @@
   lodash.lastIndexOf = lastIndexOf;
   lodash.mixin = mixin;
   lodash.noConflict = noConflict;
-  lodash.noop = noop;
   lodash.random = random;
   lodash.reduce = reduce;
   lodash.reduceRight = reduceRight;

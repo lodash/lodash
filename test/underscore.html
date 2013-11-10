@@ -138,7 +138,7 @@
 					}
 					if (skippedAsserts === true) {
 						test.async = false;
-						test.callback = _.noop;
+						test.callback = function() {};
 						test.expected = 0;
 						return;
 					}

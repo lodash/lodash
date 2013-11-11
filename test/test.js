@@ -1233,7 +1233,7 @@
       function a() {}
 
       var bound = a.bind && a.bind({});
-      if (bound && !bound.prototype) {
+      if (bound && !('prototype' in bound)) {
         var bound = a.bind({});
         strictEqual(_.createCallback(bound, {}), bound);
       }

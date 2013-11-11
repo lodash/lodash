@@ -7895,11 +7895,16 @@
       deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));
 
-      _.pull(args, null);
-      deepEqual([args[0], args[1], args[2]], [1, [3], 5], message('pull'));
+      if (_.support.argsClass && _.support.argsObject && !_.support.nonEnumArgs) {
+        _.pull(args, null);
+        deepEqual([args[0], args[1], args[2]], [1, [3], 5], message('pull'));
 
-      _.remove(args, function(value) { return typeof value == 'number'; });
-      ok(args.length == 1 && _.isEqual(args[0], [3]), message('remove'));
+        _.remove(args, function(value) { return typeof value == 'number'; });
+        ok(args.length == 1 && _.isEqual(args[0], [3]), message('remove'));
+      }
+      else {
+        skipTest(2)
+      }
     });
 
     test('should accept falsey primary arguments', 3, function() {

@@ -1475,12 +1475,12 @@
         var withTrailing = _.debounce(function(value) {
           withCount++;
           return value;
-        }, 32, { 'trailing': true });
+        }, 64, { 'trailing': true });
 
         var withoutTrailing = _.debounce(function(value) {
           withoutCount++;
           return value;
-        }, 32, { 'trailing': false });
+        }, 64, { 'trailing': false });
 
         strictEqual(withTrailing('x'), undefined);
         strictEqual(withoutTrailing('x'), undefined);
@@ -1499,17 +1499,17 @@
 
     test('should work with `maxWait` option', 2, function() {
       if (!(isRhino && isModularize)) {
-        var limit = 256,
+        var limit = 512,
             withCount = 0,
             withoutCount = 0;
 
         var withMaxWait = _.debounce(function() {
           withCount++;
-        }, 32, { 'maxWait': 64 });
+        }, 64, { 'maxWait': 128 });
 
         var withoutMaxWait = _.debounce(function() {
           withoutCount++;
-        }, 32);
+        }, 64);
 
         var start = +new Date;
         while ((new Date - start) < limit) {
@@ -7003,12 +7003,12 @@
         var withTrailing = _.throttle(function(value) {
           withCount++;
           return value;
-        }, 32, { 'trailing': true });
+        }, 64, { 'trailing': true });
 
         var withoutTrailing = _.throttle(function(value) {
           withoutCount++;
           return value;
-        }, 32, { 'trailing': false });
+        }, 64, { 'trailing': false });
 
         equal(withTrailing('x'), 'x');
         equal(withTrailing('y'), 'x');

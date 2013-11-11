@@ -34,9 +34,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // used to indicate testing a modularized build
-  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([location.pathname, location.search, ui.buildPath]);
-
   // initialize controls
   addListener(window, 'load', function() {
     function eventHandler(event) {
@@ -167,6 +164,9 @@
     'build': build,
     'loader': loader
   };
+
+  // used to indicate testing a modularized build
+  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([location.pathname, location.search, ui.buildPath]);
 
   // expose `ui`
   window.ui = ui;

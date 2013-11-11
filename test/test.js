@@ -6962,7 +6962,7 @@
         var throttled = _.throttle(function(value) {
           count++;
           return value;
-        }, 32, {});
+        }, 64, {});
 
         equal(throttled('x'), 'x');
         equal(throttled('y'), 'x');
@@ -7003,12 +7003,12 @@
         var withTrailing = _.throttle(function(value) {
           withCount++;
           return value;
-        }, 64, { 'trailing': true });
+        }, 128, { 'trailing': true });
 
         var withoutTrailing = _.throttle(function(value) {
           withoutCount++;
           return value;
-        }, 64, { 'trailing': false });
+        }, 128, { 'trailing': false });
 
         equal(withTrailing('x'), 'x');
         equal(withTrailing('y'), 'x');
@@ -7020,7 +7020,7 @@
           equal(withCount, 2);
           strictEqual(withoutCount, 1);
           QUnit.start();
-        }, 256);
+        }, 512);
       }
       else {
         skipTest(6);

@@ -57,7 +57,7 @@
   var reFlags = /\w*$/;
 
   /** Used to detected named functions */
-  var reFuncName = /^function[ \n\r\t]+\w/;
+  var reFuncName = /^\s*function[ \n\r\t]+\w/;
 
   /** Used to match "interpolate" template delimiters */
   var reInterpolate = /<%=([\s\S]+?)%>/g;

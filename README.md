@@ -1,4 +1,4 @@
-# Lo-Dash v2.2.1
+# Lo-Dash v2.3.0
 A utility library delivering consistency, [customization](http://lodash.com/custom-builds), [performance](http://lodash.com/benchmarks), & [extras](http://lodash.com/#features).
 
 ## Download
@@ -6,16 +6,16 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 Check out our [wiki]([https://github.com/lodash/lodash/wiki/build-differences]) for details over the differences between builds.
 
 * Modern builds perfect for newer browsers/environments:<br>
-[Development](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.js) &
-[Production](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.3.0/dist/lodash.js) &
+[Production](https://raw.github.com/lodash/lodash/2.3.0/dist/lodash.min.js)
 
 * Compatibility builds for older environment support too:<br>
-[Development](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.compat.js) &
-[Production](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.compat.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.3.0/dist/lodash.compat.js) &
+[Production](https://raw.github.com/lodash/lodash/2.3.0/dist/lodash.compat.min.js)
 
 * Underscore builds to use as a drop-in replacement:<br>
-[Development](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.underscore.js) &
-[Production](https://raw.github.com/lodash/lodash/2.2.1/dist/lodash.underscore.min.js)
+[Development](https://raw.github.com/lodash/lodash/2.3.0/dist/lodash.underscore.js) &
+[Production](https://raw.github.com/lodash/lodash/2.3.0/dist/lodash.underscore.min.js)
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash). For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.
 

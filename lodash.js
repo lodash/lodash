@@ -4194,7 +4194,7 @@
      * // => 3
      *
      * _.size('pebbles');
-     * // => 5
+     * // => 7
      */
     function size(collection) {
       var length = collection ? collection.length : 0;

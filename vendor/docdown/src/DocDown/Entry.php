@@ -77,7 +77,8 @@ class Entry {
         $this->isCtor() ||
         count($this->getParams()) ||
         count($this->getReturns()) ||
-        preg_match('/\*[\t ]*@function\b/', $this->entry)
+        preg_match('/\*[\t ]*@function\b/', $this->entry) ||
+        preg_match('#\*/\s*function #', $this->entry)
       );
     }
     return $this->_isFunction;

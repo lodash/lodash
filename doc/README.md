@@ -170,11 +170,11 @@
 <!-- div -->
 
 ## `Utilities`
-* [`_.noop`](#_noop)
 * [`_.escape`](#_escapestring)
 * [`_.identity`](#_identityvalue)
 * [`_.mixin`](#_mixinobject-object)
 * [`_.noConflict`](#_noconflict)
+* [`_.noop`](#_noop)
 * [`_.parseInt`](#_parseintvalue-radix)
 * [`_.random`](#_randommin0-max1-floatingfalse)
 * [`_.result`](#_resultobject-property)
@@ -3943,25 +3943,6 @@ _.values({ 'one': 1, 'two': 2, 'three': 3 });
 
 <!-- div -->
 
-### <a id="_noop"></a>`_.noop`
-<a href="#_noop">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6176 "View in source") [&#x24C9;][1]
-
-*(unknown)*: A no-operation function.
-
-#### Example
-```js
-var object = { 'name': 'fred' };
-_.noop(object) === undefined;
-// => true
-```
-
-* * *
-
-<!-- /div -->
-
-
-<!-- div -->
-
 ### <a id="_escapestring"></a>`_.escape(string)`
 <a href="#_escapestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6073 "View in source") [&#x24C9;][1]
 
@@ -4053,6 +4034,25 @@ Reverts the '_' variable to its previous value and returns a reference to the `l
 #### Example
 ```js
 var lodash = _.noConflict();
+```
+
+* * *
+
+<!-- /div -->
+
+
+<!-- div -->
+
+### <a id="_noop"></a>`_.noop()`
+<a href="#_noop">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6176 "View in source") [&#x24C9;][1]
+
+A no-operation function.
+
+#### Example
+```js
+var object = { 'name': 'fred' };
+_.noop(object) === undefined;
+// => true
 ```
 
 * * *

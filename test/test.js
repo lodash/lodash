@@ -5742,8 +5742,7 @@
 
   _.forEach(['reduce', 'reduceRight'], function(methodName) {
     var array = [1, 2, 3],
-        func = _[methodName],
-        noop = function() {};
+        func = _[methodName];
 
     test('`_.' + methodName + '` should reduce a collection to a single value', 1, function() {
       var actual = func(['a', 'b', 'c'], function(accumulator, value) {
@@ -5780,7 +5779,7 @@
 
       _.forEach(empties, function(value) {
         try {
-          actual.push(func(value, noop));
+          actual.push(func(value, _.noop));
         } catch(e) { }
       });
 
@@ -5792,7 +5791,7 @@
 
       var actual = _.map(empties, function(value) {
         try {
-          return func(value, noop, 'x');
+          return func(value, _.noop, 'x');
         } catch(e) { }
       });
 
@@ -5800,7 +5799,7 @@
     });
 
     test('`_.' + methodName + '` should handle an initial `accumulator` value of `undefined`', 1, function() {
-      var actual = func([], noop, undefined);
+      var actual = func([], _.noop, undefined);
       strictEqual(actual, undefined);
     });
   });
@@ -6970,7 +6969,7 @@
         setTimeout(function() {
           strictEqual(count, 2);
           QUnit.start();
-        }, 256);
+        }, 512);
       }
       else {
         skipTest(3);

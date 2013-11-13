@@ -56,7 +56,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.random](http://lodash.com/docs#random) supports returning floating-point numbers
  * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking
  * [_.support](http://lodash.com/docs#support) for flagging environment features
- * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-7.8.6)
+ * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-literals-string-literals)
  * [_.transform](http://lodash.com/docs#transform) as a powerful alternative to [_.reduce](http://lodash.com/docs#reduce) for transforming objects
  * [_.where](http://lodash.com/docs#where) supports deep object comparisons
  * [_.zip](http://lodash.com/docs#zip) is capable of unzipping values

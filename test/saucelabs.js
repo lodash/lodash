@@ -28,7 +28,10 @@
       tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
 
   var runner = process.argv.reduce(function(result, value) {
-    return optionToValue('runner', value) || result;
+    value = optionToValue('runner', value);
+    return value == null
+      ? result
+      : '/' + value.replace(/^\W+/, '');
   }, '/test/index.html');
 
   var sessionName = process.argv.reduce(function(result, value) {
@@ -36,7 +39,10 @@
   }, 'lodash tests');
 
   var tags = process.argv.reduce(function(result, value) {
-    return optionToArray('tags', value) || result;
+    value = optionToArray('tags', value);
+    return value.length
+      ? _.union(result, value)
+      : result;
   }, []);
 
   /** List of platforms to load the runner on */

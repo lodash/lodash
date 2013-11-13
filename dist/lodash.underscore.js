@@ -1237,7 +1237,7 @@
    * @returns {Object} Returns the created inverted object.
    * @example
    *
-   *  _.invert({ 'first': 'fred', 'second': 'barney' });
+   * _.invert({ 'first': 'fred', 'second': 'barney' });
    * // => { 'fred': 'first', 'barney': 'second' }
    */
   function invert(object) {
@@ -3681,8 +3681,8 @@
    * @example
    *
    * var view = {
-   *  'label': 'docs',
-   *  'onClick': function() { console.log('clicked ' + this.label); }
+   *   'label': 'docs',
+   *   'onClick': function() { console.log('clicked ' + this.label); }
    * };
    *
    * _.bindAll(view);
@@ -4423,8 +4423,8 @@
    * // => 'hello mustache!'
    *
    * // using the `imports` option to import jQuery
-   * var list = '<% $.each(people, function(name) { %><li><%- name %></li><% }); %>';
-   * _.template(list, { 'people': ['fred', 'barney'] }, { 'imports': { '$': jQuery } });
+   * var list = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';
+   * _.template(list, { 'people': ['fred', 'barney'] }, { 'imports': { 'jq': jQuery } });
    * // => '<li>fred</li><li>barney</li>'
    *
    * // using the `sourceURL` option to specify a custom sourceURL for the template

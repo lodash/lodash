@@ -6,8 +6,8 @@ node_js:
 env:
   global:
     - BIN="node" BUILD=false COMPAT=false MAKE=false OPTION="" SAUCE_LABS=false
-    - SAUCE_USERNAME="jdalton"
-    - secure: "woILQltl1pI3DgadZ5NrcqntdPvnRmQBwIVNZL91Ht5d9snIhgyAixI6xNAS8F8BzD9RzqzVPHay5sHfn+GhNaojcaiHs1nXAbdyclevMyfP+3MQ1HGfMSU0bv1GdT35LJ+C0u4Y3SuuZSbBlNEeLXRPMngPZahf4xL8RsZz/is="
+    - SAUCE_USERNAME="lodash"
+    - secure: "LGVeh7z/x6hxGCtr1BfgCSRva691ChX+1bs4ecJE71QwsDNJwknqmblZm7hFSTkq7msSapSDV5P9sgr6fsmmHuY3311Vl04sneRpz8ge1ZUIbmMODI+tZAasxyvyjZJdOrTFZr89BWN6e/SddDxDKNF4n0O1DgUF4irrT+aUxUE="
   matrix:
     - BUILD="compat"
     - BUILD="modern"
@@ -70,11 +70,11 @@ script:
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || cd ./test"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
-  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ]) && true || node ./test/saucelabs.js \"test/index.html?build=lodash-$BUILD\""
-  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ]) && true || node ./test/saucelabs.js \"test/index.html?build=../dist/lodash.$BUILD.js\""
-  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=lodash-$BUILD\""
-  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/backbone.html?build=../dist/lodash.$BUILD.js\""
-  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=lodash-$BUILD\""
-  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js \"test/underscore.html?build=../dist/lodash.$BUILD.js\""
-  - "([ $SAUCE_LABS == false ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js \"test/index.html?build=lodash-$BUILD&compat=7\""
-  - "([ $SAUCE_LABS == false ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js \"test/index.html?build=../dist/lodash.$BUILD.js&compat=7\""
+  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ]) && true || node ./test/saucelabs.js runner=\"test/index.html?build=lodash-$BUILD\" tags=\"$BUILD,production\""
+  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ]) && true || node ./test/saucelabs.js runner=\"test/index.html?build=../dist/lodash.$BUILD.js\" tags=\"$BUILD,development\""
+  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js name=\"backbone tests\" runner=\"test/backbone.html?build=lodash-$BUILD\" tags=\"$BUILD,production,backbone\""
+  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js name=\"backbone tests\" runner=\"test/backbone.html?build=../dist/lodash.$BUILD.js\" tags=\"$BUILD,development,backbone\""
+  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js name=\"underscore tests\" runner=\"test/underscore.html?build=lodash-$BUILD\" tags=\"$BUILD,production,underscore\""
+  - "[ $SAUCE_LABS == false ] && true || node ./test/saucelabs.js name=\"underscore tests\" runner=\"test/underscore.html?build=../dist/lodash.$BUILD.js\" tags=\"$BUILD,development,underscore\""
+  - "([ $SAUCE_LABS == false ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js runner=\"test/index.html?build=lodash-$BUILD&compat=7\" tags=\"$BUILD,production,ie-compat-mode\""
+  - "([ $SAUCE_LABS == false ] || [ $COMPAT == false ]) && true || node ./test/saucelabs.js runner=\"test/index.html?build=../dist/lodash.$BUILD.js&compat=7\" tags=\"$BUILD,development,ie-compat-mode\""

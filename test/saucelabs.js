@@ -1,38 +1,45 @@
 ;(function() {
   'use strict';
 
-  var ecstatic = require('ecstatic'),
-      http = require('http'),
-      path = require('path'),
-      request = require('request'),
-      SauceTunnel = require('sauce-tunnel'),
-      url = require('url');
-
-  var attempts = -1,
-      prevLine = '';
-
-  var port = 8081,
-      username = process.env.SAUCE_USERNAME,
-      accessKey = process.env.SAUCE_ACCESS_KEY,
-      tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
-
   if (isFinite(process.env.TRAVIS_PULL_REQUEST)) {
     console.error('Testing skipped for pull requests');
     process.exit(0);
   }
 
-  var runnerPathname = (function() {
-    var args = process.argv;
-    return args.length > 2
-      ? '/' + args[args.length - 1].replace(/^\W+/, '')
-      : '/test/index.html';
-  }());
+  /** Load Node.js modules */
+  var http = require('http'),
+      path = require('path'),
+      url = require('url');
 
-  var runnerQuery = url.parse(runnerPathname, true).query,
-      isBackbone = /\bbackbone\b/i.test(runnerPathname),
-      isMobile = /\bmobile\b/i.test(runnerQuery.build),
-      isModern = /\bmodern\b/i.test(runnerQuery.build);
+  /** Load other modules */
+  var _ = require('../lodash'),
+      ecstatic = require('ecstatic'),
+      request = require('request'),
+      SauceTunnel = require('sauce-tunnel');
 
+  /** Used by `logInline` */
+  var attempts = -1,
+      prevLine = '';
+
+  /** Used as request `auth` and `options` values */
+  var port = 8081,
+      username = process.env.SAUCE_USERNAME,
+      accessKey = process.env.SAUCE_ACCESS_KEY,
+      tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
+
+  var runner = process.argv.reduce(function(result, value) {
+    return optionToValue('runner', value) || result;
+  }, '/test/index.html');
+
+  var sessionName = process.argv.reduce(function(result, value) {
+    return optionToValue('name', value) || result;
+  }, 'lodash tests');
+
+  var tags = process.argv.reduce(function(result, value) {
+    return optionToArray('tags', value) || result;
+  }, []);
+
+  /** List of platforms to load the runner on */
   var platforms = [
     ['Windows 7', 'chrome', ''],
     ['Windows 7', 'firefox', '25'],
@@ -52,6 +59,12 @@
     ['OS X 10.8', 'safari', '6'],
     ['Windows 7', 'safari', '5']
   ];
+
+  /** Used to tailor the `platforms` array */
+  var runnerQuery = url.parse(runner, true).query,
+      isBackbone = /\bbackbone\b/i.test(runner),
+      isMobile = /\bmobile\b/i.test(runnerQuery.build),
+      isModern = /\bmodern\b/i.test(runnerQuery.build);
 
   // platforms to test IE compat mode
   if (runnerQuery.compat) {
@@ -91,39 +104,14 @@
     });
   }
 
-  // create a web server for the local dir
-  var mount = ecstatic({
-    'root': process.cwd(),
-    'cache': false
-  });
-
-  http.createServer(function(req, res) {
-    var compat = url.parse(req.url, true).query.compat;
-    if (compat) {
-      // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
-      res.setHeader('X-UA-Compatible', 'IE=' + compat);
-    }
-    mount(req, res);
-  }).listen(port);
-
-  // set up Sauce Connect so we can use this server from Sauce Labs
-  var tunnelTimeout = 10000,
-      tunnel = new SauceTunnel(username, accessKey, tunnelId, true, tunnelTimeout);
-
-  console.log('Opening Sauce Connect tunnel...');
-
-  tunnel.start(function(success) {
-    if (success) {
-      console.log('Sauce Connect tunnel opened');
-      runTests();
-    } else {
-      console.error('Failed to open Sauce Connect tunnel');
-      process.exit(2);
-    }
-  });
-
   /*--------------------------------------------------------------------------*/
 
+  /**
+   * Logs an inline message to standard output.
+   *
+   * @private
+   * @param {string} text The text to log.
+   */
   function logInline(text) {
     var blankLine = repeat(' ', prevLine.length);
     if (text.length > 40) {
@@ -133,67 +121,54 @@
     process.stdout.write(text + blankLine.slice(text.length) + '\r');
   }
 
-  function repeat(text, times) {
-    return Array(times + 1).join(text);
+  /**
+   * Converts a comma separated option value into an array.
+   *
+   * @private
+   * @param {string} name The name of the option to inspect.
+   * @param {string} string The options string.
+   * @returns {Array} Returns the new converted array.
+   */
+  function optionToArray(name, string) {
+    return _.compact(_.isArray(string)
+      ? string
+      : _.invoke((optionToValue(name, string) || '').split(/, */), 'trim')
+    );
+  }
+
+  /**
+   * Extracts the option value from an option string.
+   *
+   * @private
+   * @param {string} name The name of the option to inspect.
+   * @param {string} string The options string.
+   * @returns {string|undefined} Returns the option value, else `undefined`.
+   */
+  function optionToValue(name, string) {
+    var result = (result = string.match(RegExp('^' + name + '=([\\s\\S]+)$'))) && result[1].trim();
+    return result || undefined;
+  }
+
+  /**
+   * Creates a string with `text` repeated `n` number of times.
+   *
+   * @private
+   * @param {string} text The text to repeat.
+   * @param {number} n The number of times to repeat `text`.
+   * @returns {string} The created string.
+   */
+  function repeat(text, n) {
+    return Array(n + 1).join(text);
   }
 
   /*--------------------------------------------------------------------------*/
 
-  function runTests() {
-    var testDefinition = {
-      'framework': 'qunit',
-      'platforms': platforms,
-      'tunnel': 'tunnel-identifier:' + tunnelId,
-      'url': 'http://localhost:' + port + runnerPathname
-    };
-
-    console.log('Starting saucelabs tests: ' + JSON.stringify(testDefinition));
-
-    request.post('https://saucelabs.com/rest/v1/' + username + '/js-tests', {
-      'auth': { 'user': username, 'pass': accessKey },
-      'json': testDefinition
-    }, function(error, response, body) {
-      var statusCode = response && response.statusCode;
-      if (statusCode == 200) {
-        waitForTestCompletion(body);
-      } else {
-        console.error('Failed to submit test to Sauce Labs; status: ' +  statusCode + ', body:\n' + JSON.stringify(body));
-        if (error) {
-          console.error(error);
-        }
-        process.exit(3);
-      }
-    });
-  }
-
-  function waitForTestCompletion(testIdentifier) {
-    request.post('https://saucelabs.com/rest/v1/' + username + '/js-tests/status', {
-      'auth': { 'user': username, 'pass': accessKey },
-      'json': testIdentifier
-    }, function(error, response, body) {
-        var statusCode = response && response.statusCode;
-        if (statusCode == 200) {
-          if (body.completed) {
-            logInline('');
-            handleTestResults(body['js tests']);
-          }
-          else {
-            logInline('Please wait' + repeat('.', (++attempts % 3) + 1));
-            setTimeout(function() {
-              waitForTestCompletion(testIdentifier);
-            }, 5000);
-          }
-        } else {
-          logInline('');
-          console.error('Failed to check test status on Sauce Labs; status: ' + statusCode + ', body:\n' + JSON.stringify(body));
-          if (error) {
-            console.error(error);
-          }
-          process.exit(4);
-        }
-    });
-  }
-
+  /**
+   * Processes the result object of the test session.
+   *
+   * @private
+   * @param {Object} results The result object to process.
+   */
   function handleTestResults(results) {
     var failingTests = results.filter(function(test) {
       var result = test.result;
@@ -229,4 +204,110 @@
       process.exit(failingTests.length ? 1 : 0);
     });
   }
+
+  /**
+   * Makes a request for Sauce Labs to start the test session.
+   *
+   * @private
+   */
+  function runTests() {
+    var options = {
+      'framework': 'qunit',
+      'name': sessionName,
+      'public': 'public',
+      'platforms': platforms,
+      'record-screenshots': false,
+      'tags': tags,
+      'tunnel': 'tunnel-identifier:' + tunnelId,
+      'url': 'http://localhost:' + port + runner,
+      'video-upload-on-pass': false
+    };
+
+    console.log('Starting saucelabs tests: ' + JSON.stringify(options));
+
+    request.post('https://saucelabs.com/rest/v1/' + username + '/js-tests', {
+      'auth': { 'user': username, 'pass': accessKey },
+      'json': options
+    }, function(error, response, body) {
+      var statusCode = response && response.statusCode;
+      if (statusCode == 200) {
+        waitForTestCompletion(body);
+      } else {
+        console.error('Failed to submit test to Sauce Labs; status: ' +  statusCode + ', body:\n' + JSON.stringify(body));
+        if (error) {
+          console.error(error);
+        }
+        process.exit(3);
+      }
+    });
+  }
+
+  /**
+   * Checks the status of the test session. If the session has completed it
+   * passes the result object to `handleTestResults`, else it checks the status
+   * again in five seconds.
+   *
+   * @private
+   * @param {Object} testIdentifier The object used to identify the session.
+   */
+  function waitForTestCompletion(testIdentifier) {
+    request.post('https://saucelabs.com/rest/v1/' + username + '/js-tests/status', {
+      'auth': { 'user': username, 'pass': accessKey },
+      'json': testIdentifier
+    }, function(error, response, body) {
+        var statusCode = response && response.statusCode;
+        if (statusCode == 200) {
+          if (body.completed) {
+            logInline('');
+            handleTestResults(body['js tests']);
+          }
+          else {
+            logInline('Please wait' + repeat('.', (++attempts % 3) + 1));
+            setTimeout(function() {
+              waitForTestCompletion(testIdentifier);
+            }, 5000);
+          }
+        } else {
+          logInline('');
+          console.error('Failed to check test status on Sauce Labs; status: ' + statusCode + ', body:\n' + JSON.stringify(body));
+          if (error) {
+            console.error(error);
+          }
+          process.exit(4);
+        }
+    });
+  }
+
+  /*--------------------------------------------------------------------------*/
+
+  // create a web server for the local dir
+  var mount = ecstatic({
+    'root': process.cwd(),
+    'cache': false
+  });
+
+  http.createServer(function(req, res) {
+    var compat = url.parse(req.url, true).query.compat;
+    if (compat) {
+      // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
+      res.setHeader('X-UA-Compatible', 'IE=' + compat);
+    }
+    mount(req, res);
+  }).listen(port);
+
+  // set up Sauce Connect so we can use this server from Sauce Labs
+  var tunnelTimeout = 10000,
+      tunnel = new SauceTunnel(username, accessKey, tunnelId, true, tunnelTimeout);
+
+  console.log('Opening Sauce Connect tunnel...');
+
+  tunnel.start(function(success) {
+    if (success) {
+      console.log('Sauce Connect tunnel opened');
+      runTests();
+    } else {
+      console.error('Failed to open Sauce Connect tunnel');
+      process.exit(2);
+    }
+  });
 }());

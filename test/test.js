@@ -35,12 +35,11 @@
     var last = result[result.length - 1];
     result = (result.length > min && !/test(?:\.js)?$/.test(last)) ? last : '../lodash.js';
 
-    try {
-      if (!amd) {
+    if (!amd) {
+      try {
         return require('fs').realpathSync(result);
-      }
-    } catch(e) { }
-
+      } catch(e) { }
+    }
     return result;
   }());
 
@@ -185,25 +184,26 @@
 
   // add values from other realms
   (function() {
-    try {
-      _.extend(_, require('vm').runInNewContext([
-        '({',
-        "'_arguments': (function() { return arguments; }(1, 2, 3)),",
-        "'_array': [1, 2, 3],",
-        "'_boolean': new Boolean(false),",
-        "'_date': new Date,",
-        "'_function': function() {},",
-        "'_nan': NaN,",
-        "'_null': null,",
-        "'_number': new Number(0),",
-        "'_object': { 'a': 1, 'b': 2, 'c': 3 },",
-        "'_regexp': /x/,",
-        "'_string': new String('a'),",
-        "'_undefined': undefined,",
-        '})'
-      ].join('\n')));
-    } catch(e) { }
-
+    if (!amd) {
+      try {
+        _.extend(_, require('vm').runInNewContext([
+          '({',
+          "'_arguments': (function() { return arguments; }(1, 2, 3)),",
+          "'_array': [1, 2, 3],",
+          "'_boolean': new Boolean(false),",
+          "'_date': new Date,",
+          "'_function': function() {},",
+          "'_nan': NaN,",
+          "'_null': null,",
+          "'_number': new Number(0),",
+          "'_object': { 'a': 1, 'b': 2, 'c': 3 },",
+          "'_regexp': /x/,",
+          "'_string': new String('a'),",
+          "'_undefined': undefined,",
+          '})'
+        ].join('\n')));
+      } catch(e) { }
+    }
     if (!_._object && document) {
       var iframe = document.createElement('iframe');
       iframe.frameBorder = iframe.height = iframe.width = 0;

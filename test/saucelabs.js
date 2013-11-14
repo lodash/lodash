@@ -27,6 +27,10 @@
       accessKey = process.env.SAUCE_ACCESS_KEY,
       tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
 
+  var compatMode = process.argv.reduce(function(result, value) {
+    return optionToValue('compatMode', value) || result;
+  }, null);
+
   var runner = process.argv.reduce(function(result, value) {
     value = optionToValue('runner', value);
     return value == null
@@ -73,7 +77,7 @@
       isModern = /\bmodern\b/i.test(runnerQuery.build);
 
   // platforms to test IE compat mode
-  if (runnerQuery.compat) {
+  if (compatMode) {
     platforms = [
       ['WIN8.1', 'internet explorer', '11'],
       ['Windows 7', 'internet explorer', '10'],
@@ -293,10 +297,9 @@
   });
 
   http.createServer(function(req, res) {
-    var compat = url.parse(req.url, true).query.compat;
-    if (compat) {
-      // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
-      res.setHeader('X-UA-Compatible', 'IE=' + compat);
+    // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
+    if (compatMode && path.extname(url.parse(req.url).pathname) == '.html') {
+      res.setHeader('X-UA-Compatible', 'IE=' + compatMode);
     }
     mount(req, res);
   }).listen(port);

@@ -183,34 +183,52 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // add object from iframe
+  // add values from other realms
   (function() {
-    if (!document) {
-      return;
-    }
-    var iframe = document.createElement('iframe');
-    iframe.frameBorder = iframe.height = iframe.width = 0;
-    body.appendChild(iframe);
+    try {
+      _.extend(_, require('vm').runInNewContext([
+        '({',
+        "'_arguments': (function() { return arguments; }(1, 2, 3)),",
+        "'_array': [1, 2, 3],",
+        "'_boolean': new Boolean(false),",
+        "'_date': new Date,",
+        "'_function': function() {},",
+        "'_nan': NaN,",
+        "'_null': null,",
+        "'_number': new Number(0),",
+        "'_object': { 'a': 1, 'b': 2, 'c': 3 },",
+        "'_regexp': /x/,",
+        "'_string': new String('a'),",
+        "'_undefined': undefined,",
+        '})'
+      ].join('\n')));
+    } catch(e) { }
 
-    var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
-    idoc.write([
-      '<script>',
-      'parent._._arguments = (function() { return arguments; }(1, 2, 3));',
-      'parent._._array = [1, 2, 3];',
-      'parent._._boolean = new Boolean(false);',
-      'parent._._date = new Date;',
-      "parent._._element = document.createElement('div');",
-      'parent._._function = function() {};',
-      'parent._._nan = NaN;',
-      'parent._._null = null;',
-      'parent._._number = new Number(0);',
-      "parent._._object = { 'a': 1, 'b': 2, 'c': 3 };",
-      'parent._._regexp = /x/;',
-      "parent._._string = new String('a');",
-      'parent._._undefined = undefined;',
-      '<\/script>'
-    ].join('\n'));
-    idoc.close();
+    if (!_._object && document) {
+      var iframe = document.createElement('iframe');
+      iframe.frameBorder = iframe.height = iframe.width = 0;
+      body.appendChild(iframe);
+
+      var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
+      idoc.write([
+        '<script>',
+        'parent._._arguments = (function() { return arguments; }(1, 2, 3));',
+        'parent._._array = [1, 2, 3];',
+        'parent._._boolean = new Boolean(false);',
+        'parent._._date = new Date;',
+        "parent._._element = document.createElement('div');",
+        'parent._._function = function() {};',
+        'parent._._nan = NaN;',
+        'parent._._null = null;',
+        'parent._._number = new Number(0);',
+        "parent._._object = { 'a': 1, 'b': 2, 'c': 3 };",
+        'parent._._regexp = /x/;',
+        "parent._._string = new String('a');",
+        'parent._._undefined = undefined;',
+        '<\/script>'
+      ].join('\n'));
+      idoc.close();
+    }
   }());
 
   // add web worker
@@ -3134,7 +3152,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with `arguments` objects from an iframe', 1, function() {
+    test('should work with `arguments` objects from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isArguments(_._arguments), true);
       }
@@ -3174,7 +3192,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with arrays from an iframe', 1, function() {
+    test('should work with arrays from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isArray(_._array), true);
       }
@@ -3217,7 +3235,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with booleans from an iframe', 1, function() {
+    test('should work with booleans from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isBoolean(_._boolean), true);
       }
@@ -3257,7 +3275,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with dates from an iframe', 1, function() {
+    test('should work with dates from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isDate(_._date), true);
       }
@@ -3283,8 +3301,8 @@
       strictEqual(_.isElement({ 'nodeType': '001' }), false);
     });
 
-    test('should work with elements from an iframe', 1, function() {
-      if (_._object) {
+    test('should work with elements from another realm', 1, function() {
+      if (_._element) {
         strictEqual(_.isElement(_._element), true);
       }
       else {
@@ -3875,7 +3893,7 @@
       strictEqual(_.isFinite('08'), true);
     });
 
-    test('should work with numbers from an iframe', 1, function() {
+    test('should work with numbers from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isFinite(_._number), true);
       }
@@ -3915,7 +3933,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with functions from an iframe', 1, function() {
+    test('should work with functions from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isFunction(_._function), true);
       }
@@ -3957,7 +3975,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with NaNs from an iframe', 1, function() {
+    test('should work with NaNs from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isNaN(_._nan), true);
       }
@@ -3998,7 +4016,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with nulls from an iframe', 1, function() {
+    test('should work with nulls from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isNull(_._null), true);
       }
@@ -4039,7 +4057,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with numbers from an iframe', 1, function() {
+    test('should work with numbers from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isNumber(_._number), true);
       }
@@ -4089,19 +4107,24 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with objects from an iframe', 8, function() {
+    test('should work with objects from another realm', 8, function() {
+      if (_._element) {
+        strictEqual(_.isObject(_._element), true);
+      }
+      else {
+        skipTest();
+      }
       if (_._object) {
         strictEqual(_.isObject(_._object), true);
         strictEqual(_.isObject(_._boolean), true);
         strictEqual(_.isObject(_._date), true);
-        strictEqual(_.isObject(_._element), true);
         strictEqual(_.isObject(_._function), true);
         strictEqual(_.isObject(_._number), true);
         strictEqual(_.isObject(_._regexp), true);
         strictEqual(_.isObject(_._string), true);
       }
       else {
-        skipTest(8);
+        skipTest(7);
       }
     });
 
@@ -4169,7 +4192,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with objects from an iframe', 1, function() {
+    test('should work with objects from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isPlainObject(_._object), true);
       }
@@ -4210,7 +4233,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with regexes from an iframe', 1, function() {
+    test('should work with regexes from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isRegExp(_._regexp), true);
       }
@@ -4251,7 +4274,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with strings from an iframe', 1, function() {
+    test('should work with strings from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isString(_._string), true);
       }
@@ -4293,7 +4316,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with `undefined` from an iframe', 1, function() {
+    test('should work with `undefined` from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isUndefined(_._undefined), true);
       }

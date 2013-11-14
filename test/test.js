@@ -1459,7 +1459,7 @@
           equal(counts[1], 2);
 
           QUnit.start();
-        }, 256);
+        }, 512);
       }
       else {
         skipTest(7);
@@ -1647,7 +1647,7 @@
     asyncTest('should delay `func` execution', 2, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.delay(function(){ pass = true; }, 100);
+        _.delay(function(){ pass = true; }, 128);
 
         setTimeout(function() {
           ok(!pass);
@@ -1656,7 +1656,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 256);
+        }, 512);
       }
       else {
         skipTest(2);
@@ -7041,7 +7041,7 @@
         setTimeout(function() {
           throttled();
           throttled();
-        }, 100);
+        }, 96);
 
         setTimeout(function() {
           ok(count > 1);

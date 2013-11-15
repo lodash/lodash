@@ -27,7 +27,6 @@ class MarkdownGenerator {
   /**
    * The HTML for the open tag.
    *
-   * @static
    * @memberOf MarkdownGenerator
    * @type string
    */
@@ -48,6 +47,15 @@ class MarkdownGenerator {
    * @type string
    */
   public $source = '';
+
+  /**
+   * The array of code snippets that are tokenized by `escape`.
+   *
+   * @private
+   * @memberOf MarkdownGenerator
+   * @type Array
+   */
+  private $snippets = array();
 
   /*--------------------------------------------------------------------------*/
 
@@ -130,21 +138,6 @@ class MarkdownGenerator {
     }
 
     return trim($string);
-  }
-
-  /**
-   * Escapes special Markdown characters.
-   *
-   * @private
-   * @memberOf Entry
-   * @param {string} $string The string to escape.
-   * @returns {string} Returns the escaped string.
-   */
-  private function escape( $string ) {
-    $string = preg_replace('/(?<!\\\)\*/', '&#42;', $string);
-    $string = preg_replace('/(?<!\\\)\[/', '&#91;', $string);
-    $string = preg_replace('/(?<!\\\)\]/', '&#93;', $string);
-    return $string;
   }
 
   /**
@@ -253,6 +246,23 @@ class MarkdownGenerator {
   }
 
   /**
+   * Escapes special Markdown characters.
+   *
+   * @private
+   * @memberOf Entry
+   * @param {string} $string The string to escape.
+   * @returns {string} Returns the escaped string.
+   */
+  private function escape( $string ) {
+    $string = preg_replace_callback('/`.*?\`/', array($this, 'swapSnippetsToTokens'), $string);
+    $string = preg_replace('/(?<!\\\)\*/', '&#42;', $string);
+    $string = preg_replace('/(?<!\\\)\[/', '&#91;', $string);
+    $string = preg_replace('/(?<!\\\)\]/', '&#93;', $string);
+    $string = preg_replace_callback('/@@token@@/', array($this, 'swapTokensToSnippets'), $string);
+    return $string;
+  }
+
+  /**
    * Resolves the entry's hash used to navigate the documentation.
    *
    * @private
@@ -296,6 +306,32 @@ class MarkdownGenerator {
   private function getSeparator( $entry ) {
     $entry = is_numeric($entry) ? $this->entries($entry) : $entry;
     return $entry->isPlugin() ? '.prototype.' : '.';
+  }
+
+  /**
+   * Swaps code snippets with tokens as a `preg_replace_callback` callback
+   * used by `escape`.
+   *
+   * @private
+   * @memberOf Entry
+   * @param {Array} $matches The array of regexp matches.
+   * @returns {string} Returns the token.
+   */
+  private function swapSnippetsToTokens( $matches ) {
+    $this->snippets[] = $matches[0];
+    return '@@token@@';
+  }
+
+  /**
+   * Swaps tokens with code snippets as a `preg_replace_callback` callback
+   * used by `escape`.
+   *
+   * @private
+   * @memberOf Entry
+   * @returns {string} Returns the code snippet.
+   */
+  private function swapTokensToSnippets() {
+    return array_shift($this->snippets);
   }
 
   /*--------------------------------------------------------------------------*/

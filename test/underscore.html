@@ -22,149 +22,93 @@
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="../vendor/jquery/jquery.js"></script>
 		<script src="../vendor/platform.js/platform.js"></script>
+		<script src="./asset/qunit-extras.js"></script>
 		<script src="./asset/test-ui.js"></script>
 		<script>
+			QUnit.config.asyncRetries = 3;
 			QUnit.config.hidepassed = true;
+
+			// excuse tests we intentionally fail or those with problems
+			QUnit.config.excused = {
+				'Arrays': {
+					'union': [
+						'[null,1,2,3]'
+					]
+				},
+				'Chaining': {
+					'reverse/concat/unshift/pop/map': [
+						'"34, 10, 8, 6, 4, 2, 10, 10"'
+					]
+				},
+				'Collections': {
+					'reduce': [
+						'handles a null (without initial value) properly',
+						'throws an error for empty arrays with no initial value'
+					],
+					'reduceRight': [
+						'handles a null (without initial value) properly',
+						'throws an error for empty arrays with no initial value'
+					],
+					'where': [
+						'Only get the first object matched.'
+					]
+				},
+				'Functions': {
+					'bind': [
+						'can bind without specifying a context',
+						'Died on test #2'
+					],
+					'bindAll': [
+						'throws an error for bindAll with no functions named'
+					]
+				},
+				'Objects': {
+					'isEqual': [
+						'Died on test #78'
+					],
+					'keys': [
+						'throws an error for `null` values',
+						'throws an error for `undefined` values',
+						'throws an error for number primitives',
+						'throws an error for string primitives',
+						'throws an error for boolean primitives'
+					]
+				},
+				'Utility': {
+					'_.escape': [
+						'"&lt;a href=&quot;http://moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;/a&gt;"'
+					],
+					'_.unescape': [
+						'"<a href=\\"http://moe.com\\">Curly & Moe&#039;s</a>"'
+					],
+					'times': [
+						'Died on test #1'
+					],
+					'uniqueId': [
+						'Died on test #1'
+					]
+				}
+			};
+
+			// only excuse in non-Underscore builds
+			if (/\bunderscore\b/i.test(ui.buildPath)) {
+				delete QUnit.config.excused.Chaining;
+				delete QUnit.config.excused.Collections.where;
+				delete QUnit.config.excused.Utility['_.escape'];
+				delete QUnit.config.excused.Utility['_.unescape'];
+			}
+			// only excuse in Sauce Labs
+			if (location.port != '8081') {
+				delete QUnit.config.excused.Objects.isEqual;
+				delete QUnit.config.excused.Utility.times;
+				delete QUnit.config.excused.Utility.uniqueId;
+			}
 
 			// assign results to `global_test_results` for Sauce Labs
 			var global_test_results;
 			QUnit.done(function(results) {
 				global_test_results = results;
 			});
-
-			// skip tests we intentionally fail or those with problems
-			(function() {
-				var skipped = {
-					'Arrays': {
-						'union': [
-							'[null,1,2,3]'
-						]
-					},
-					'Chaining': {
-						'reverse/concat/unshift/pop/map': [
-							'"34, 10, 8, 6, 4, 2, 10, 10"'
-						]
-					},
-					'Collections': {
-						'reduce': [
-							'handles a null (without initial value) properly',
-							'throws an error for empty arrays with no initial value'
-						],
-						'reduceRight': [
-							'handles a null (without initial value) properly',
-							'throws an error for empty arrays with no initial value'
-						],
-						'where': [
-							'Only get the first object matched.'
-						]
-					},
-					'Functions': {
-						'bind': [
-							'can bind without specifying a context',
-							'Died on test #2'
-						],
-						'bindAll': [
-							'throws an error for bindAll with no functions named'
-						],
-						'throttle': true,
-						'throttle arguments': true,
-						'throttle once': true,
-						'throttle twice': true,
-						'more throttling': true,
-						'throttle repeatedly with results': true,
-						'throttle triggers trailing call when invoked repeatedly': true,
-						'throttle does not trigger leading call when leading is set to false': true,
-						'more throttle does not trigger leading call when leading is set to false': true,
-						'throttle does not trigger trailing call when trailing is set to false': true,
-						'debounce': true,
-						'debounce asap': true,
-						'debounce asap recursively': true
-					},
-					'Objects': {
-						'isEqual': [
-							'Died on test #78'
-						],
-						'keys': [
-							'throws an error for `null` values',
-							'throws an error for `undefined` values',
-							'throws an error for number primitives',
-							'throws an error for string primitives',
-							'throws an error for boolean primitives'
-						]
-					},
-					'Utility': {
-						'_.escape': [
-							'"&lt;a href=&quot;http://moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;/a&gt;"'
-						],
-						'_.unescape': [
-							'"<a href=\\"http://moe.com\\">Curly & Moe&#039;s</a>"'
-						],
-						'times': [
-							'Died on test #1'
-						],
-						'uniqueId': [
-							'Died on test #1'
-						]
-					}
-				};
-
-				// only skip in non-Underscore builds
-				if (/\bunderscore\b/i.test(ui.buildPath)) {
-					delete skipped.Chaining;
-					delete skipped.Collections.where;
-					delete skipped.Utility['_.escape'];
-					delete skipped.Utility['_.unescape'];
-				}
-				// only skip in Sauce Labs
-				if (location.port != '8081') {
-					for (var key in skipped.Functions) {
-						if (/\b(debounce|throttl)/.test(key)) {
-							delete skipped.Functions[key];
-						}
-					}
-					delete skipped.Objects.isEqual;
-					delete skipped.Utility.times;
-					delete skipped.Utility.uniqueId;
-				}
-
-				QUnit.testStart(function(details) {
-					var test = QUnit.config.current,
-					    finish = test.finish,
-					    skippedTests = skipped[details.module],
-					    skippedAsserts = skippedTests && skippedTests[details.name];
-
-					if (!skippedAsserts) {
-						return;
-					}
-					if (skippedAsserts === true) {
-						test.async = false;
-						test.callback = function() {};
-						test.expected = 0;
-						return;
-					}
-					test.finish = function() {
-						var index = -1,
-						    asserts = this.assertions,
-						    length = asserts.length;
-
-						while (++index < length) {
-							var assert = asserts[index],
-							    message = _.unescape(_.result(/^<span class='test-message'>([\s\S]*?)<\/span>/.exec(assert.message), 1)),
-							    died = _.result(/^Died on test #\d+/.exec(message), 0),
-							    expected = _.unescape(_.result(/Expected: *<\/th><td><pre>([\s\S]*?)<\/pre>/.exec(assert.message), 1));
-
-							if ((message && _.contains(skippedAsserts, message)) ||
-							    (died && _.contains(skippedAsserts, died)) ||
-							    (expected && (_.contains(skippedAsserts, expected) ||
-									  _.contains(skippedAsserts, expected.replace(/\s+/g, '')))
-							    )) {
-							  assert.result = true;
-							}
-						}
-						finish.call(this);
-					};
-				});
-			}());
 
 			// load Lo-Dash again to overwrite the existing `_` value
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');

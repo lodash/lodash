@@ -13,6 +13,7 @@
 	<body>
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="../vendor/platform.js/platform.js"></script>
+		<script src="./asset/qunit-extras.js"></script>
 		<script src="./asset/test-ui.js"></script>
 		<div id="qunit"></div>
 		<div id="exports"></div>
@@ -72,6 +73,7 @@
 			delete Object._defineProperty;
 			delete Object._keys;
 
+			QUnit.config.asyncRetries = 3;
 			QUnit.config.hidepassed = true;
 
 			// assign results to `global_test_results` for Sauce Labs

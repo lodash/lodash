@@ -7634,6 +7634,11 @@
       deepEqual(actual, object);
     });
 
+    test('should not assume `keys` is two dimensional if `values` is not provided', 1, function() {
+      var actual = _.zipObject(['barney', 'fred']);
+      deepEqual(actual, { 'barney': undefined, 'fred': undefined });
+    });
+
     test('should accept a falsey `array` argument', 1, function() {
       var expected = _.map(falsey, function() { return {}; });
 

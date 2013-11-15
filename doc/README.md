@@ -999,7 +999,7 @@ _.zip(['fred', 'barney'], [30, 40], [true, false]);
 ### <a id="_zipobjectkeys-values"></a>`_.zipObject(keys, [values=[]])`
 <a href="#_zipobjectkeys-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5333 "View in source") [&#x24C9;][1]
 
-Creates an object composed from arrays of `keys` and `values`. Provide either a single two dimensional array, i.e. `&#91;&#91;key1, value1&#93;, &#91;key2, value2&#93;&#93;` or two arrays, one of `keys` and one of corresponding `values`.
+Creates an object composed from arrays of `keys` and `values`. Provide either a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]` or two arrays, one of `keys` and one of corresponding `values`.
 
 #### Aliases
 *_.object*
@@ -2273,7 +2273,7 @@ jQuery('#docs').on('click', view.onClick);
 ### <a id="_bindkeyobject-key-arg"></a>`_.bindKey(object, key, [arg])`
 <a href="#_bindkeyobject-key-arg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5484 "View in source") [&#x24C9;][1]
 
-Creates a function that, when called, invokes the method at `object&#91;key&#93;` and prepends any additional `bindKey` arguments to those provided to the bound function. This method differs from `_.bind` by allowing bound functions to reference methods that will be redefined or don't yet exist. See http://michaux.ca/articles/lazy-function-definition-pattern.
+Creates a function that, when called, invokes the method at `object[key]` and prepends any additional `bindKey` arguments to those provided to the bound function. This method differs from `_.bind` by allowing bound functions to reference methods that will be redefined or don't yet exist. See http://michaux.ca/articles/lazy-function-definition-pattern.
 
 #### Arguments
 1. `object` *(Object)*: The object the method belongs to.
@@ -3823,7 +3823,7 @@ _.omit({ 'name': 'fred', 'age': 40 }, function(value) {
 ### <a id="_pairsobject"></a>`_.pairs(object)`
 <a href="#_pairsobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L3067 "View in source") [&#x24C9;][1]
 
-Creates a two dimensional array of an object's key-value pairs, i.e. `&#91;&#91;key1, value1&#93;, &#91;key2, value2&#93;&#93;`.
+Creates a two dimensional array of an object's key-value pairs, i.e. `[[key1, value1], [key2, value2]]`.
 
 #### Arguments
 1. `object` *(Object)*: The object to inspect.
@@ -4521,7 +4521,7 @@ In IE < `9` an objects own properties, shadowing non-enumerable ones, are made n
 
 *(boolean)*: Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
 
-Firefox < `10`, IE compatibility mode, and IE < `9` have buggy Array `shift()` and `splice()` functions that fail to remove the last element, `value&#91;0&#93;`, of array-like objects even though the `length` property is set to `0`. The `shift()` method is buggy in IE `8` compatibility mode, while `splice()` is buggy regardless of mode in IE < `9` and buggy in compatibility mode in IE `9`.
+Firefox < `10`, IE compatibility mode, and IE < `9` have buggy Array `shift()` and `splice()` functions that fail to remove the last element, `value[0]`, of array-like objects even though the `length` property is set to `0`. The `shift()` method is buggy in IE `8` compatibility mode, while `splice()` is buggy regardless of mode in IE < `9` and buggy in compatibility mode in IE `9`.
 
 * * *
 

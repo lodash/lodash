@@ -73,7 +73,7 @@
 			delete Object._defineProperty;
 			delete Object._keys;
 
-			QUnit.config.asyncRetries = 3;
+			QUnit.config.asyncRetries = 5;
 			QUnit.config.hidepassed = true;
 
 			// assign results to `global_test_results` for Sauce Labs
@@ -83,7 +83,7 @@
 			});
 
 			// clear existing `_` value
-			var _ = undefined;
+			window._ = undefined;
 
 			// load the non-modularized build of Lo-Dash
 			if (!ui.isModularize) {

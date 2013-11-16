@@ -82,9 +82,13 @@
 				global_test_results = results;
 			});
 
-			// load Lo-Dash again to overwrite the existing `_` value
-			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
+			// clear existing `_` value
+			var _ = undefined;
 
+			// load the non-modularized build of Lo-Dash
+			if (!ui.isModularize) {
+				document.write('<script src="' + ui.buildPath + '"><\/script>');
+			}
 			// load test.js if not using require.js
 			document.write(ui.urlParams.loader == 'none'
 				? '<script src="test.js"><\/script>'

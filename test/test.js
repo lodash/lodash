@@ -1370,7 +1370,7 @@
         setTimeout(function() {
           equal(count, 1);
           QUnit.start();
-        }, 256);
+        }, 96);
       }
       else {
         skipTest(2);
@@ -1390,7 +1390,7 @@
         setTimeout(function() {
           notEqual(debounced('z'), 'z');
           QUnit.start();
-        }, 256);
+        }, 128);
       }
       else {
         skipTest(2);
@@ -1409,7 +1409,7 @@
           var result = [debounced('a'), debounced('b')];
           deepEqual(result, ['a', 'a']);
           QUnit.start();
-        }, 256);
+        }, 64);
       }
       else {
         skipTest(2);
@@ -1431,7 +1431,7 @@
         setTimeout(function() {
           strictEqual(count, 1);
           QUnit.start();
-        }, 256);
+        }, 64);
       }
       else {
         skipTest(2);
@@ -1477,7 +1477,7 @@
           equal(counts[1], 2);
 
           QUnit.start();
-        }, 512);
+        }, 64);
       }
       else {
         skipTest(7);
@@ -1493,12 +1493,12 @@
         var withTrailing = _.debounce(function(value) {
           withCount++;
           return value;
-        }, 64, { 'trailing': true });
+        }, 32, { 'trailing': true });
 
         var withoutTrailing = _.debounce(function(value) {
           withoutCount++;
           return value;
-        }, 64, { 'trailing': false });
+        }, 32, { 'trailing': false });
 
         strictEqual(withTrailing('x'), undefined);
         strictEqual(withoutTrailing('x'), undefined);
@@ -1507,7 +1507,7 @@
           strictEqual(withCount, 1);
           strictEqual(withoutCount, 0);
           QUnit.start();
-        }, 256);
+        }, 64);
       }
       else {
         skipTest(4);
@@ -1563,7 +1563,7 @@
           equal(count, 2);
           deepEqual(args, [object, 'a']);
           QUnit.start();
-        }, 256);
+        }, 64);
       }
       else {
         skipTest(2);
@@ -1665,7 +1665,7 @@
     asyncTest('should delay `func` execution', 2, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.delay(function(){ pass = true; }, 128);
+        _.delay(function(){ pass = true; }, 96);
 
         setTimeout(function() {
           ok(!pass);
@@ -1674,7 +1674,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 512);
+        }, 160);
       }
       else {
         skipTest(2);
@@ -6846,7 +6846,7 @@
         setTimeout(function() {
           ok(count > lastCount);
           QUnit.start();
-        }, 256);
+        }, 64);
       }
       else {
         skipTest(2);
@@ -6871,7 +6871,7 @@
           notStrictEqual(result[1], undefined);
 
           QUnit.start();
-        }, 256);
+        }, 64);
       }
       else {
         skipTest(5);
@@ -6946,7 +6946,7 @@
         setTimeout(function() {
           equal(count, 1);
           QUnit.start();
-        }, 256);
+        }, 64);
       }
       else {
         skipTest(2);
@@ -6958,7 +6958,7 @@
       test('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), 1, function() {
         if (!(isRhino && isModularize)) {
           var count = 0,
-              limit = 256,
+              limit = 512,
               options = index ? { 'leading': false } : {};
 
           var throttled = _.throttle(function() {
@@ -6984,7 +6984,7 @@
         var throttled = _.throttle(function(value) {
           count++;
           return value;
-        }, 64, {});
+        }, 32, {});
 
         equal(throttled('x'), 'x');
         equal(throttled('y'), 'x');
@@ -6992,7 +6992,7 @@
         setTimeout(function() {
           strictEqual(count, 2);
           QUnit.start();
-        }, 512);
+        }, 256);
       }
       else {
         skipTest(3);
@@ -7025,12 +7025,12 @@
         var withTrailing = _.throttle(function(value) {
           withCount++;
           return value;
-        }, 128, { 'trailing': true });
+        }, 64, { 'trailing': true });
 
         var withoutTrailing = _.throttle(function(value) {
           withoutCount++;
           return value;
-        }, 128, { 'trailing': false });
+        }, 64, { 'trailing': false });
 
         equal(withTrailing('x'), 'x');
         equal(withTrailing('y'), 'x');
@@ -7042,7 +7042,7 @@
           equal(withCount, 2);
           strictEqual(withoutCount, 1);
           QUnit.start();
-        }, 512);
+        }, 256);
       }
       else {
         skipTest(6);
@@ -7069,7 +7069,7 @@
         setTimeout(function() {
           ok(count > 1);
           QUnit.start();
-        }, 512);
+        }, 192);
       }
       else {
         skipTest();

@@ -12,7 +12,7 @@
       url = require('url');
 
   /** Load other modules */
-  var _ = require('../lodash'),
+  var _ = require('../lodash.js'),
       ecstatic = require('ecstatic'),
       request = require('request'),
       SauceTunnel = require('sauce-tunnel');

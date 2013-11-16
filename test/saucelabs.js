@@ -17,9 +17,13 @@
       request = require('request'),
       SauceTunnel = require('sauce-tunnel');
 
-  /** Used by `logInline` */
-  var attempts = -1,
-      prevLine = '';
+  /** Used by `logInline` to clear previously logged messages */
+  var prevLine = '';
+
+  /** Used to display the wait throbber */
+  var throbberId,
+      throbberDelay = 500,
+      waitCount = -1;
 
   /** Used as request `auth` and `options` values */
   var port = 8081,
@@ -132,6 +136,15 @@
   }
 
   /**
+   * Writes the wait throbber to standard output.
+   *
+   * @private
+   */
+  function logThrobber() {
+    logInline('Please wait' + repeat('.', (++waitCount % 3) + 1));
+  }
+
+  /**
    * Converts a comma separated option value into an array.
    *
    * @private
@@ -208,6 +221,7 @@
       });
     }
 
+    clearInterval(throbberId);
     console.log('Shutting down Sauce Connect tunnel...');
 
     tunnel.stop(function() {
@@ -250,6 +264,12 @@
         process.exit(3);
       }
     });
+
+    // initialize the wait throbber
+    if (!throbberId) {
+      throbberId = setInterval(logThrobber, throbberDelay);
+      logThrobber();
+    }
   }
 
   /**
@@ -272,7 +292,6 @@
             handleTestResults(body['js tests']);
           }
           else {
-            logInline('Please wait' + repeat('.', (++attempts % 3) + 1));
             setTimeout(function() {
               waitForTestCompletion(testIdentifier);
             }, 5000);

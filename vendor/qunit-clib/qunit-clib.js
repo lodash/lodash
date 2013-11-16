@@ -30,6 +30,29 @@
       return;
     }
 
+    /** Used to report the test module for failing tests */
+    var moduleName,
+        modulePrinted;
+
+    /** Used to display the wait throbber */
+    var throbberId,
+        throbberDelay = 500,
+        waitCount = -1;
+
+    /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
+    var console = context.console || (context.console = { 'log': context.print });
+
+    /** Used as a horizontal rule in console output */
+    var hr = '----------------------------------------';
+
+    /** Used by `logInline` to clear previously logged messages */
+    var prevLine = '';
+
+    /** Shorten `context.QUnit.QUnit` to `context.QUnit` */
+    var QUnit = context.QUnit = context.QUnit.QUnit || context.QUnit;
+
+    /*------------------------------------------------------------------------*/
+
     /**
      * Schedules timer-based callbacks.
      *
@@ -108,24 +131,8 @@
 
     /*------------------------------------------------------------------------*/
 
-    /** Used to report the test module for failing tests */
-    var moduleName,
-        modulePrinted;
-
-    /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
-    var console = context.console || (context.console = { 'log': context.print });
-
-    /** Used as a horizontal rule in console output */
-    var hr = '----------------------------------------';
-
-    /** Used by `logInline` to clear previously logged messages */
-    var prevLine = '';
-
-    /** Shorten `context.QUnit.QUnit` to `context.QUnit` */
-    var QUnit = context.QUnit = context.QUnit.QUnit || context.QUnit;
-
     /**
-     * Logs an inline message to standard output.
+     * Writes an inline message to standard output.
      *
      * @private
      * @param {string} text The text to log.
@@ -142,7 +149,7 @@
         process.exit();
       });
       return function(text) {
-        var blankLine = Array(prevLine.length + 1).join(' ');
+        var blankLine = repeat(' ', prevLine.length);
         if (text.length > hr.length) {
           text = text.slice(0, hr.length - 3) + '...';
         }
@@ -150,6 +157,29 @@
         process.stdout.write(text + blankLine.slice(text.length) + '\r');
       }
     }());
+
+    /**
+     * Writes the wait throbber to standard output.
+     *
+     * @private
+     */
+    function logThrobber() {
+      logInline('Please wait' + repeat('.', (++waitCount % 3) + 1));
+    }
+
+    /**
+     * Creates a string with `text` repeated `n` number of times.
+     *
+     * @private
+     * @param {string} text The text to repeat.
+     * @param {number} n The number of times to repeat `text`.
+     * @returns {string} The created string.
+     */
+    function repeat(text, n) {
+      return Array(n + 1).join(text);
+    }
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * A logging callback triggered when all testing is completed.
@@ -224,10 +254,16 @@
      * @param {Object} details An object with property `name`.
      */
     QUnit.moduleStart(function(details) {
+      // reset the `modulePrinted` flag
       var newModuleName = details.name;
       if (moduleName != newModuleName) {
         moduleName = newModuleName;
         modulePrinted = false;
+      }
+      // initialize the wait throbber
+      if (!throbberId) {
+        throbberId = context.setInterval(logThrobber, throbberDelay);
+        logThrobber();
       }
     });
 
@@ -275,8 +311,6 @@
         assertions.forEach(function(value) {
           console.log('    ' + value);
         });
-      } else {
-        logInline('Testing ' + moduleName + '...');
       }
       assertions.length = 0;
     });

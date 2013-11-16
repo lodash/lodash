@@ -121,7 +121,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Logs an inline message to standard output.
+   * Writes an inline message to standard output.
    *
    * @private
    * @param {string} text The text to log.

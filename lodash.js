@@ -2495,22 +2495,22 @@
     }
 
     /**
-     * Checks if the specified object `property` exists and is a direct property,
+     * Checks if the specified property name exists as a direct property of `object`,
      * instead of an inherited property.
      *
      * @static
      * @memberOf _
      * @category Objects
-     * @param {Object} object The object to check.
-     * @param {string} property The property to check for.
+     * @param {Object} object The object to inspect.
+     * @param {string} prop The name of the property to check.
      * @returns {boolean} Returns `true` if key is a direct property, else `false`.
      * @example
      *
      * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
      * // => true
      */
-    function has(object, property) {
-      return object ? hasOwnProperty.call(object, property) : false;
+    function has(object, prop) {
+      return object ? hasOwnProperty.call(object, prop) : false;
     }
 
     /**
@@ -3973,7 +3973,7 @@
      * @type Function
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {string} property The property to pluck.
+     * @param {string} property The name of the property to pluck.
      * @returns {Array} Returns a new array of property values.
      * @example
      *
@@ -4354,7 +4354,7 @@
      * @type Function
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Object} properties The object of property values to filter by.
+     * @param {Object} props The object of property values to filter by.
      * @returns {Array} Returns a new array of elements that have the given properties.
      * @example
      *
@@ -5578,9 +5578,7 @@
       }
       // handle "_.pluck" style callback shorthands
       if (type != 'object') {
-        return function(object) {
-          return object[func];
-        };
+        return property(func);
       }
       var props = keys(func),
           key = props[0],
@@ -5982,6 +5980,36 @@
     }
 
     /**
+     * Creates a "_.pluck" style function, which returns the `prop` value of a
+     * given object.
+     *
+     * @static
+     * @memberOf _
+     * @category Functions
+     * @param {string} prop The name of the property to retrieve.
+     * @returns {*} Returns the new function.
+     * @example
+     *
+     * var characters = [
+     *   { 'name': 'fred',   'age': 40 },
+     *   { 'name': 'barney', 'age': 36 }
+     * ];
+     *
+     * var getName = _.property('name');
+     *
+     * _.map(characters, getName);
+     * // => ['barney', 'fred']
+     *
+     * _.sortBy(characters, getName);
+     * // => [{ 'name': 'barney', 'age': 36 }, { 'name': 'fred',   'age': 40 }]
+     */
+    function property(prop) {
+      return function(object) {
+        return object[prop];
+      };
+    }
+
+    /**
      * Creates a function that, when executed, will only call the `func` function
      * at most once per every `wait` milliseconds. Provide an options object to
      * indicate that `func` should be invoked on the leading and/or trailing edge
@@ -6263,7 +6291,7 @@
     }
 
     /**
-     * Resolves the value of `property` on `object`. If `property` is a function
+     * Resolves the value of `prop` on `object`. If `prop` is a function
      * it will be invoked with the `this` binding of `object` and its result returned,
      * else the property value is returned. If `object` is falsey then `undefined`
      * is returned.
@@ -6272,7 +6300,7 @@
      * @memberOf _
      * @category Utilities
      * @param {Object} object The object to inspect.
-     * @param {string} property The property to get the value of.
+     * @param {string} prop The name of the property to resolve.
      * @returns {*} Returns the resolved value.
      * @example
      *
@@ -6289,10 +6317,10 @@
      * _.result(object, 'stuff');
      * // => 'nonsense'
      */
-    function result(object, property) {
+    function result(object, prop) {
       if (object) {
-        var value = object[property];
-        return isFunction(value) ? object[property]() : value;
+        var value = object[prop];
+        return isFunction(value) ? object[prop]() : value;
       }
     }
 
@@ -6726,6 +6754,7 @@
     lodash.partialRight = partialRight;
     lodash.pick = pick;
     lodash.pluck = pluck;
+    lodash.property = property;
     lodash.pull = pull;
     lodash.range = range;
     lodash.reject = reject;

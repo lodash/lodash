@@ -5466,6 +5466,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.property');
+
+  (function() {
+    test('should great a function that plucks a property value of a given object', 3, function() {
+      var object = { 'a': 1, 'b': 2 },
+          actual = _.property('a');
+
+      equal(actual.length, 1);
+      strictEqual(actual(object), 1);
+
+      actual =  _.property('b');
+      strictEqual(actual(object), 2);
+    });
+
+    test('should work with non-string `prop` arguments', 1, function() {
+      var array = [1, 2, 3],
+          actual = _.property(1);
+
+      equal(actual(array), 2);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.pull');
 
   (function() {
@@ -8012,7 +8036,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 149, function() {
+    test('should accept falsey arguments', 150, function() {
       var isExported = '_' in root,
           oldDash = root._;
 

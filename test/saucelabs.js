@@ -1,7 +1,10 @@
 ;(function() {
   'use strict';
 
-  if (isFinite(process.env.TRAVIS_PULL_REQUEST)) {
+  /** Environment shortcut */
+  var env = process.env;
+
+  if (isFinite(env.TRAVIS_PULL_REQUEST)) {
     console.error('Testing skipped for pull requests');
     process.exit(0);
   }
@@ -26,10 +29,11 @@
       waitCount = -1;
 
   /** Used as request `auth` and `options` values */
-  var port = 8081,
-      username = process.env.SAUCE_USERNAME,
-      accessKey = process.env.SAUCE_ACCESS_KEY,
-      tunnelId = 'lodash_' + process.env.TRAVIS_JOB_NUMBER;
+  var accessKey = env.SAUCE_ACCESS_KEY,
+      build = env.TRAVIS_COMMIT,
+      port = 8081,
+      tunnelId = 'lodash_' + env.TRAVIS_JOB_NUMBER,
+      username = env.SAUCE_USERNAME;
 
   var compatMode = process.argv.reduce(function(result, value) {
     return optionToValue('compatMode', value) || result;
@@ -236,6 +240,7 @@
    */
   function runTests() {
     var options = {
+      'build': build,
       'framework': 'qunit',
       'name': sessionName,
       'public': 'public',
@@ -311,8 +316,8 @@
 
   // create a web server for the local dir
   var mount = ecstatic({
-    'root': process.cwd(),
-    'cache': false
+    'cache': false,
+    'root': process.cwd()
   });
 
   http.createServer(function(req, res) {

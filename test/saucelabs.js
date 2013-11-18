@@ -59,15 +59,17 @@
 
   /** List of platforms to load the runner on */
   var platforms = [
-    ['Windows 7', 'chrome', ''],
-    ['Windows 7', 'firefox', '25'],
-    ['Windows 7', 'firefox', '20'],
-    ['Windows 7', 'firefox', '10'],
-    ['Windows 7', 'firefox', '6'],
-    ['Windows 7', 'firefox', '4'],
-    ['Windows 7', 'firefox', '3'],
-    ['WIN8.1', 'internet explorer', '11'],
-    ['Windows 7', 'internet explorer', '10'],
+    ['Windows 8.1', 'chrome', '31'],
+    ['Windows 8.1', 'chrome', '28'],
+    ['Windows 8.1', 'chrome', '26'],
+    ['OS X 10.6', 'firefox', '25'],
+    ['OS X 10.6', 'firefox', '20'],
+    ['OS X 10.6', 'firefox', '10'],
+    ['OS X 10.6', 'firefox', '6'],
+    ['OS X 10.6', 'firefox', '4'],
+    ['Windows 7', 'firefox', '3.6'],
+    ['Windows 8.1', 'internet explorer', '11'],
+    ['Windows 8', 'internet explorer', '10'],
     ['Windows 7', 'internet explorer', '9'],
     ['Windows 7', 'internet explorer', '8'],
     ['Windows XP', 'internet explorer', '7'],
@@ -75,7 +77,8 @@
     //['Windows 7', 'opera', '12'],
     //['Windows 7', 'opera', '11'],
     ['OS X 10.8', 'safari', '6'],
-    ['Windows 7', 'safari', '5']
+    ['Windows 7', 'safari', '5'],
+    ['Windows XP', 'safari', '4']
   ];
 
   /** Used to tailor the `platforms` array */
@@ -87,8 +90,8 @@
   // platforms to test IE compat mode
   if (compatMode) {
     platforms = [
-      ['WIN8.1', 'internet explorer', '11'],
-      ['Windows 7', 'internet explorer', '10'],
+      ['Windows 8.1', 'internet explorer', '11'],
+      ['Windows 8', 'internet explorer', '10'],
       ['Windows 7', 'internet explorer', '9'],
       ['Windows 7', 'internet explorer', '8']
     ];
@@ -116,7 +119,7 @@
         case 'firefox': return version >= 10;
         case 'internet explorer': return version >= 9;
         case 'opera': return version >= 12;
-        case 'safari': return version >= (isMobile ? 5 : 6);
+        case 'safari': return version >= (isMobile ? 3 : 6);
       }
       return true;
     });

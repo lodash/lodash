@@ -1471,6 +1471,11 @@
                 destination = data.destination,
                 currValue = destination[key];
 
+            // skip pseudo private properties like `_timerId` which could be a
+            // Java object in environments like RingoJS
+            if (key.charAt(0) == '_') {
+              return;
+            }
             if (value && typeof value == 'object') {
               if (_.isArray(value)) {
                 // check if an array value has changed to a non-array value

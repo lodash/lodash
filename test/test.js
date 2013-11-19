@@ -5091,7 +5091,8 @@
 
   (function() {
     test('should return the number of milliseconds that have elapsed since the Unix epoch', 1, function() {
-      strictEqual(_.now(), +new Date);
+      var actual = _.now();
+      ok(new Date - actual < 4);
     });
   }());
 
@@ -6918,13 +6919,13 @@
         var callCount = 0,
             dateCount = 0;
 
+        var getTime = function() {
+          return ++dateCount < 3 ? +new Date : Infinity;
+        };
+
         var lodash = _.runInContext(_.assign({}, root, {
           'Date': function() {
-            return {
-              'getTime': function() {
-                return ++dateCount < 3 ? new Date : Object(Infinity);
-              }
-            };
+            return { 'getTime': getTime, 'valueOf': getTime };
           }
         }));
 

@@ -110,14 +110,11 @@
 				global_test_results = results;
 			});
 
-			// load the non-modularized build of Lo-Dash
-			if (!ui.isModularize) {
-				document.write('<script src="' + ui.buildPath + '"><\/script>');
-			}
-			// load test.js if not using require.js
+			// load Lo-Dash and test scripts
 			document.write(ui.urlParams.loader != 'none'
 				? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
 				: ([
+					'<script src="' + ui.buildPath + '"><\/script>',
 					'<script src="../vendor/underscore/test/collections.js"><\/script>',
 					'<script src="../vendor/underscore/test/arrays.js"><\/script>',
 					'<script src="../vendor/underscore/test/functions.js"><\/script>',

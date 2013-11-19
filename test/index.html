@@ -85,13 +85,9 @@
 			// clear existing `_` value
 			window._ = undefined;
 
-			// load the non-modularized build of Lo-Dash
-			if (!ui.isModularize) {
-				document.write('<script src="' + ui.buildPath + '"><\/script>');
-			}
-			// load test.js if not using require.js
+			// load Lo-Dash and test scripts
 			document.write(ui.urlParams.loader == 'none'
-				? '<script src="test.js"><\/script>'
+				? '<script src="' + ui.buildPath + '"><\/script><script src="test.js"><\/script>'
 				: '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
 			);
 		</script>
@@ -161,8 +157,8 @@
 						underscoreModule = underscore.noConflict();
 						underscoreModule.moduleName = 'underscore';
 					}
-					if (lodash && lodash.noConflict) {
-						lodashModule = lodash.noConflict();
+					if (lodash) {
+						lodashModule = lodash;
 						lodashModule.moduleName = 'lodash';
 					}
 					if (ui.isModularize) {

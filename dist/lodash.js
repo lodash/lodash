@@ -472,7 +472,6 @@
         fnToString = Function.prototype.toString,
         getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
-        now = reNative.test(now = Date.now) && now || function() { return +new Date; },
         push = arrayRef.push,
         setTimeout = context.setTimeout,
         splice = arrayRef.splice;
@@ -5423,8 +5422,8 @@
      * @returns {number} Returns the timer id.
      * @example
      *
-     * _.defer(function() { console.log('deferred'); });
-     * // returns from the function before 'deferred' is logged
+     * _.defer(function(text) { console.log(text); }, 'deferred');
+     * // logs 'deferred' after one or more milliseconds
      */
     function defer(func) {
       if (!isFunction(func)) {
@@ -5456,9 +5455,8 @@
      * @returns {number} Returns the timer id.
      * @example
      *
-     * var log = _.bind(console.log, console);
-     * _.delay(log, 1000, 'logged later');
-     * // => 'logged later' (Appears after one second.)
+     * _.delay(function(text) { console.log(text); }, 1000, 'later');
+     * // => logs 'later' after one second
      */
     function delay(func, wait) {
       if (!isFunction(func)) {
@@ -5839,6 +5837,23 @@
     function noop() {
       // no operation performed
     }
+
+    /**
+     * Gets the number of milliseconds that have elapsed since the Unix epoch
+     * (1 January 1970 00:00:00 UTC).
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @example
+     *
+     * var stamp = _.now();
+     * _.defer(function() { console.log(_.now() - stamp); });
+     * // => logs the number of milliseconds it took for the deferred function to be called
+     */
+    var now = reNative.test(now = Date.now) && now || function() {
+      return new Date().getTime();
+    };
 
     /**
      * Converts the given value into an integer of the specified radix.
@@ -6462,6 +6477,7 @@
     lodash.mixin = mixin;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
+    lodash.now = now;
     lodash.parseInt = parseInt;
     lodash.random = random;
     lodash.reduce = reduce;

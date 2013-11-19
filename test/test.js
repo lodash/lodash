@@ -5087,6 +5087,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.now');
+
+  (function() {
+    test('should return the number of milliseconds that have elapsed since the Unix epoch', 1, function() {
+      strictEqual(_.now(), +new Date);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.omit');
 
   (function() {
@@ -6910,7 +6920,11 @@
 
         var lodash = _.runInContext(_.assign({}, root, {
           'Date': function() {
-            return ++dateCount < 3 ? new Date : Object(Infinity);
+            return {
+              'getTime': function() {
+                return ++dateCount < 3 ? new Date : Object(Infinity);
+              }
+            };
           }
         }));
 
@@ -8036,7 +8050,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 150, function() {
+    test('should accept falsey arguments', 151, function() {
       var isExported = '_' in root,
           oldDash = root._;
 

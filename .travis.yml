@@ -52,7 +52,7 @@ branches:
   only:
     - master
 before_install:
-  - "([ $BUILD == 'legacy' ] || [ $BUILD == 'mobile' ] || [ $BUILD == 'modern' ]) && MAKE=true || true"
+  - "([ $BUILD == 'legacy' ] || [ $BUILD == 'mobile' ] || [ $BUILD == 'modern' ] || [ $BIN == 'istanbul' ]) && MAKE=true || true"
   - "([ $BUILD == 'compat' ] || [ $BUILD == 'legacy' ]) && COMPAT=true || true"
   - "[ $SAUCE_LABS != false ] && npm i ecstatic@\"~0.4.0\" request@\"~2.27.0\" sauce-tunnel@\"~1.1.0\" || true"
   - "[ $BIN == 'istanbul' ] && npm i -g coveralls@\"~2.3.0\" istanbul@\"~0.1.0\" || true"
@@ -64,9 +64,10 @@ before_install:
   - "[ $BIN == 'ringo' ] && sudo ln -s /opt/ringojs-0.9/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo || true"
   - "[ $MAKE != false ] && git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli.git ./node_modules/lodash-cli || true"
   - "[ $MAKE != false ] && mkdir ./node_modules/lodash-cli/node_modules && cd ./node_modules/lodash-cli/node_modules/ && ln -s ../../../ ./lodash && cd ../ && npm i . && cd ../../ || true"
-  - "[ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
+  - "[ $MAKE != false ] && [ $BIN != 'istanbul' ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
+  - "[ $BIN == 'istanbul' ] && node ./node_modules/lodash-cli/bin/lodash legacy exports=node -o ./dist/lodash.istanbul.js || true"
 script:
-  - "[ $BIN == 'istanbul' ] && $BIN cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.js && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage || true"
+  - "[ $BIN == 'istanbul' ] && $BIN cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.istanbul.js && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage || true"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || cd ./test"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"

@@ -21,6 +21,15 @@
     '&#39;': "'"
   };
 
+  /** Detect free variable `exports` */
+  var freeExports = typeof exports == 'object' && exports;
+
+  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `root` */
+  var freeGlobal = typeof global == 'object' && global;
+  if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+    root = freeGlobal;
+  }
+
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -82,83 +91,108 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** The number of retries async tests have to succeed */
-  QUnit.config.asyncRetries = 0;
-
-  /** An object of excused tests and assertions */
-  QUnit.config.excused = {};
-
   /**
-   * A callback triggered at the start of every test.
+   * Installs the QUnit additions on the given `context` object.
    *
-   * @memberOf QUnit
-   * @param {Object} details An object with `module` and `name` properties.
+   * @memberOf exports
+   * @param {Object} context The context object.
    */
-  QUnit.testStart(function(details) {
-    var excused = QUnit.config.excused || {},
-        excusedTests = excused[details.module],
-        excusedAsserts = excusedTests && excusedTests[details.name];
+  function runInContext(context) {
+    // exit early if no `context` is provided or if `QUnit` does not exist
+    if (!context || !context.QUnit) {
+      return;
+    }
 
-    var test = QUnit.config.current,
-        finish = test.finish;
+    /** Shorten `context.QUnit.QUnit` to `context.QUnit` */
+    var QUnit = context.QUnit = context.QUnit.QUnit || context.QUnit;
 
-    // allow async tests to retry
-    if (test.async && !test.retries) {
-      test.retries = 0;
+    /** The number of retries async tests have to succeed */
+    QUnit.config.asyncRetries = 0;
+
+    /** An object of excused tests and assertions */
+    QUnit.config.excused = {};
+
+    /**
+     * A callback triggered at the start of every test.
+     *
+     * @memberOf QUnit
+     * @param {Object} details An object with `module` and `name` properties.
+     */
+    QUnit.testStart(function(details) {
+      var excused = QUnit.config.excused || {},
+          excusedTests = excused[details.module],
+          excusedAsserts = excusedTests && excusedTests[details.name];
+
+      var test = QUnit.config.current,
+          finish = test.finish;
+
+      // allow async tests to retry
+      if (test.async && !test.retries) {
+        test.retries = 0;
+        test.finish = function() {
+          var asserts = this.assertions,
+              index = -1,
+              length = asserts.length,
+              queue = QUnit.config.queue;
+
+          while (++index < length) {
+            var assert = asserts[index];
+            if (!assert.result && this.retries < QUnit.config.asyncRetries) {
+              this.retries++;
+              asserts.length = 0;
+
+              var oldLength = queue.length;
+              this.queue();
+              unshift.apply(queue, queue.splice(oldLength, queue.length - oldLength));
+              return;
+            }
+          }
+          finish.call(this);
+        };
+      }
+      // nothing to excuse
+      if (!excusedAsserts) {
+        return;
+      }
+      // excuse the entire test
+      if (excusedAsserts === true) {
+        test.async = false;
+        test.callback = function() {};
+        test.expected = 0;
+        return;
+      }
+      // excuse specific assertions
       test.finish = function() {
         var asserts = this.assertions,
             index = -1,
-            length = asserts.length,
-            queue = QUnit.config.queue;
+            length = asserts.length;
 
         while (++index < length) {
-          var assert = asserts[index];
-          if (!assert.result && this.retries < QUnit.config.asyncRetries) {
-            this.retries++;
-            asserts.length = 0;
+          var assert = asserts[index],
+              message = unescape(result(reMessage.exec(assert.message), 1)),
+              died = result(reDied.exec(message), 0),
+              expected = unescape(result(reExpected.exec(assert.message), 1));
 
-            var oldLength = queue.length;
-            this.queue();
-            unshift.apply(queue, queue.splice(oldLength, queue.length - oldLength));
-            return;
+          if ((message && contains(excusedAsserts, message)) ||
+              (died && contains(excusedAsserts, died)) ||
+              (expected && (
+                contains(excusedAsserts, expected) ||
+                contains(excusedAsserts, expected.replace(/\s+/g, ''))
+              ))) {
+            assert.result = true;
           }
         }
         finish.call(this);
       };
-    }
-    // nothing to excuse
-    if (!excusedAsserts) {
-      return;
-    }
-    // excuse the entire test
-    if (excusedAsserts === true) {
-      test.async = false;
-      test.callback = function() {};
-      test.expected = 0;
-      return;
-    }
-    // excuse specific assertions
-    test.finish = function() {
-      var asserts = this.assertions,
-          index = -1,
-          length = asserts.length;
+    });
+  }
 
-      while (++index < length) {
-        var assert = asserts[index],
-            message = unescape(result(reMessage.exec(assert.message), 1)),
-            died = result(reDied.exec(message), 0),
-            expected = unescape(result(reExpected.exec(assert.message), 1));
+  /*--------------------------------------------------------------------------*/
 
-        if ((message && contains(excusedAsserts, message)) ||
-            (died && contains(excusedAsserts, died)) ||
-            (expected && (
-              contains(excusedAsserts, expected) ||
-              contains(excusedAsserts, expected.replace(/\s+/g, ''))
-            ))) {
-          assert.result = true;
-        }
-      }
-      finish.call(this);
-    };
-  });
+  // expose QUnit extras
+  if (freeExports && !freeExports.nodeType) {
+    freeExports.runInContext = runInContext;
+  } else {
+    runInContext(root);
+  }
 }(this));

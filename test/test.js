@@ -8,6 +8,7 @@
       body = document && document.body,
       create = Object.create,
       freeze = Object.freeze,
+      noop = function() {},
       params = root.arguments,
       process = root.process,
       push = Array.prototype.push,
@@ -59,18 +60,22 @@
   /** Detect if testing `npm` modules */
   var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
+  /** Detect if running in Java */
+  var isJava = !document && !!root.java;
+
   /** Detects if running in a PhantomJS web page */
   var isPhantomPage = typeof callPhantom == 'function';
 
   /** Detect if running in Rhino */
-  var isRhino = root.java && typeof global == 'function' && global().Array === root.Array;
+  var isRhino = isJava && typeof global == 'function' && global().Array === root.Array;
 
   /** Use a single "load" function */
-  var load = !amd && typeof require == 'function' ? require : root.load;
+  var load = (typeof require == 'function' && !amd)
+    ? require
+    : (isJava && root.load);
 
   /** The unit testing framework */
   var QUnit = (function() {
-    var noop = Function.prototype;
     return  root.QUnit || (
       root.addEventListener || (root.addEventListener = noop),
       root.setTimeout || (root.setTimeout = noop),
@@ -83,6 +88,10 @@
 
   /*--------------------------------------------------------------------------*/
 
+  // load QUnit extras
+  if (load) {
+    (load('./asset/qunit-extras.js') || { 'runInContext': noop }).runInContext(root);
+  }
   // log params passed to `test.js`
   if (params) {
     console.log('test.js invoked with arguments: ' + JSON.stringify(slice.call(params)));
@@ -586,10 +595,9 @@
     });
 
     test('ensure `new bound` is an instance of `func`', 1, function() {
-      var func = function() {},
-          bound = _.bind(func, {});
+      var bound = _.bind(noop, {});
 
-      ok(new bound instanceof func);
+      ok(new bound instanceof noop);
     });
 
     test('should append array arguments to partially applied arguments (test in IE < 9)', 1, function() {
@@ -2660,7 +2668,7 @@
         this.b = 'b'
       }
 
-      Foo.prototype.c = function() {};
+      Foo.prototype.c = noop;
       deepEqual(_.functions(new Foo), ['a', 'c']);
     });
 
@@ -3144,7 +3152,7 @@
       strictEqual(_.isArguments(true), false);
       strictEqual(_.isArguments(new Date), false);
       strictEqual(_.isArguments(_), false);
-      strictEqual(_.isArguments({ '0': 1, 'callee': _.noop, 'length': 1 }), false);
+      strictEqual(_.isArguments({ '0': 1, 'callee': noop, 'length': 1 }), false);
       strictEqual(_.isArguments(0), false);
       strictEqual(_.isArguments(/x/), false);
       strictEqual(_.isArguments('a'), false);
@@ -3540,7 +3548,7 @@
           'f': ['a', new String('b'), 'c'],
           'g': new Boolean(false),
           'h': new Date(2012, 4, 23),
-          'i': _.noop,
+          'i': noop,
           'j': 'a'
         }
       };
@@ -3554,7 +3562,7 @@
           'f': ['a', 'b', 'c'],
           'g': false,
           'h': new Date(2012, 4, 23),
-          'i': _.noop,
+          'i': noop,
           'j': 'a'
         }
       };
@@ -5837,7 +5845,7 @@
 
       _.forEach(empties, function(value) {
         try {
-          actual.push(func(value, _.noop));
+          actual.push(func(value, noop));
         } catch(e) { }
       });
 
@@ -5849,7 +5857,7 @@
 
       var actual = _.map(empties, function(value) {
         try {
-          return func(value, _.noop, 'x');
+          return func(value, noop, 'x');
         } catch(e) { }
       });
 
@@ -5857,7 +5865,7 @@
     });
 
     test('`_.' + methodName + '` should handle an initial `accumulator` value of `undefined`', 1, function() {
-      var actual = func([], _.noop, undefined);
+      var actual = func([], noop, undefined);
       strictEqual(actual, undefined);
     });
   });
@@ -7605,12 +7613,12 @@
     test('should pass the correct `wrapper` arguments', 1, function() {
       var args;
 
-      var wrapped = _.wrap(_.noop, function() {
+      var wrapped = _.wrap(noop, function() {
         args || (args = slice.call(arguments));
       });
 
       wrapped(1, 2, 3);
-      deepEqual(args, [_.noop, 1, 2, 3]);
+      deepEqual(args, [noop, 1, 2, 3]);
     });
 
     test('should not set a `this` binding', 1, function() {

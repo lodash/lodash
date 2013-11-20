@@ -6,34 +6,34 @@
 <!-- div -->
 
 ## <a id="arrays"></a>`Arrays`
-* [`_.compact`](#_compactarray)
-* [`_.difference`](#_differencearray-values)
-* [`_.drop`](#_restarray-callback1-thisarg)
-* [`_.findIndex`](#_findindexarray-callbackidentity-thisarg)
-* [`_.findLastIndex`](#_findlastindexarray-callbackidentity-thisarg)
-* [`_.first`](#_firstarray-callback-thisarg)
-* [`_.flatten`](#_flattenarray-isshallowfalse-callbackidentity-thisarg)
-* [`_.head`](#_firstarray-callback-thisarg)
-* [`_.indexOf`](#_indexofarray-value-fromindex0)
-* [`_.initial`](#_initialarray-callback1-thisarg)
-* [`_.intersection`](#_intersectionarray)
-* [`_.last`](#_lastarray-callback-thisarg)
-* [`_.lastIndexOf`](#_lastindexofarray-value-fromindexarraylength-1)
-* [`_.object`](#_zipobjectkeys-values)
-* [`_.pull`](#_pullarray-value)
-* [`_.range`](#_rangestart0-end-step1)
-* [`_.remove`](#_removearray-callbackidentity-thisarg)
-* [`_.rest`](#_restarray-callback1-thisarg)
-* [`_.sortedIndex`](#_sortedindexarray-value-callbackidentity-thisarg)
-* [`_.tail`](#_restarray-callback1-thisarg)
-* [`_.take`](#_firstarray-callback-thisarg)
-* [`_.union`](#_unionarray)
-* [`_.uniq`](#_uniqarray-issortedfalse-callbackidentity-thisarg)
-* [`_.unique`](#_uniqarray-issortedfalse-callbackidentity-thisarg)
-* [`_.unzip`](#_ziparray)
-* [`_.without`](#_withoutarray-value)
-* [`_.zip`](#_ziparray)
-* [`_.zipObject`](#_zipobjectkeys-values)
+* <a href="#_compactarray">`_.compact`</a>
+* <a href="#_differencearray-values">`_.difference`</a>
+* <a href="#_restarray-callback1-thisarg" class="alias">`_.drop -> rest`</a>
+* <a href="#_findindexarray-callbackidentity-thisarg">`_.findIndex`</a>
+* <a href="#_findlastindexarray-callbackidentity-thisarg">`_.findLastIndex`</a>
+* <a href="#_firstarray-callback-thisarg">`_.first`</a>
+* <a href="#_flattenarray-isshallowfalse-callbackidentity-thisarg">`_.flatten`</a>
+* <a href="#_firstarray-callback-thisarg" class="alias">`_.head -> first`</a>
+* <a href="#_indexofarray-value-fromindex0">`_.indexOf`</a>
+* <a href="#_initialarray-callback1-thisarg">`_.initial`</a>
+* <a href="#_intersectionarray">`_.intersection`</a>
+* <a href="#_lastarray-callback-thisarg">`_.last`</a>
+* <a href="#_lastindexofarray-value-fromindexarraylength-1">`_.lastIndexOf`</a>
+* <a href="#_zipobjectkeys-values" class="alias">`_.object -> zipObject`</a>
+* <a href="#_pullarray-value">`_.pull`</a>
+* <a href="#_rangestart0-end-step1">`_.range`</a>
+* <a href="#_removearray-callbackidentity-thisarg">`_.remove`</a>
+* <a href="#_restarray-callback1-thisarg">`_.rest`</a>
+* <a href="#_sortedindexarray-value-callbackidentity-thisarg">`_.sortedIndex`</a>
+* <a href="#_restarray-callback1-thisarg" class="alias">`_.tail -> rest`</a>
+* <a href="#_firstarray-callback-thisarg" class="alias">`_.take -> first`</a>
+* <a href="#_unionarray">`_.union`</a>
+* <a href="#_uniqarray-issortedfalse-callbackidentity-thisarg">`_.uniq`</a>
+* <a href="#_uniqarray-issortedfalse-callbackidentity-thisarg" class="alias">`_.unique -> uniq`</a>
+* <a href="#_ziparray" class="alias">`_.unzip -> zip`</a>
+* <a href="#_withoutarray-value">`_.without`</a>
+* <a href="#_ziparray">`_.zip`</a>
+* <a href="#_zipobjectkeys-values">`_.zipObject`</a>
 
 <!-- /div -->
 
@@ -41,13 +41,13 @@
 <!-- div -->
 
 ## `Chaining`
-* [`_`](#_value)
-* [`_.chain`](#_chainvalue)
-* [`_.tap`](#_tapvalue-interceptor)
-* [`_.prototype.chain`](#_prototypechain)
-* [`_.prototype.toString`](#_prototypetostring)
-* [`_.prototype.value`](#_prototypevalueof)
-* [`_.prototype.valueOf`](#_prototypevalueof)
+* <a href="#_value">`_`</a>
+* <a href="#_chainvalue">`_.chain`</a>
+* <a href="#_tapvalue-interceptor">`_.tap`</a>
+* <a href="#_prototypechain">`_.prototype.chain`</a>
+* <a href="#_prototypetostring">`_.prototype.toString`</a>
+* <a href="#_prototypevalueof" class="alias">`_.prototype.value -> valueOf`</a>
+* <a href="#_prototypevalueof">`_.prototype.valueOf`</a>
 
 <!-- /div -->
 
@@ -55,44 +55,44 @@
 <!-- div -->
 
 ## `Collections`
-* [`_.all`](#_everycollection-callbackidentity-thisarg)
-* [`_.any`](#_somecollection-callbackidentity-thisarg)
-* [`_.at`](#_atcollection-index)
-* [`_.collect`](#_mapcollection-callbackidentity-thisarg)
-* [`_.contains`](#_containscollection-target-fromindex0)
-* [`_.countBy`](#_countbycollection-callbackidentity-thisarg)
-* [`_.detect`](#_findcollection-callbackidentity-thisarg)
-* [`_.each`](#_foreachcollection-callbackidentity-thisarg)
-* [`_.eachRight`](#_foreachrightcollection-callbackidentity-thisarg)
-* [`_.every`](#_everycollection-callbackidentity-thisarg)
-* [`_.filter`](#_filtercollection-callbackidentity-thisarg)
-* [`_.find`](#_findcollection-callbackidentity-thisarg)
-* [`_.findLast`](#_findlastcollection-callbackidentity-thisarg)
-* [`_.findWhere`](#_findcollection-callbackidentity-thisarg)
-* [`_.foldl`](#_reducecollection-callbackidentity-accumulator-thisarg)
-* [`_.foldr`](#_reducerightcollection-callbackidentity-accumulator-thisarg)
-* [`_.forEach`](#_foreachcollection-callbackidentity-thisarg)
-* [`_.forEachRight`](#_foreachrightcollection-callbackidentity-thisarg)
-* [`_.groupBy`](#_groupbycollection-callbackidentity-thisarg)
-* [`_.include`](#_containscollection-target-fromindex0)
-* [`_.indexBy`](#_indexbycollection-callbackidentity-thisarg)
-* [`_.inject`](#_reducecollection-callbackidentity-accumulator-thisarg)
-* [`_.invoke`](#_invokecollection-methodname-arg)
-* [`_.map`](#_mapcollection-callbackidentity-thisarg)
-* [`_.max`](#_maxcollection-callbackidentity-thisarg)
-* [`_.min`](#_mincollection-callbackidentity-thisarg)
-* [`_.pluck`](#_pluckcollection-property)
-* [`_.reduce`](#_reducecollection-callbackidentity-accumulator-thisarg)
-* [`_.reduceRight`](#_reducerightcollection-callbackidentity-accumulator-thisarg)
-* [`_.reject`](#_rejectcollection-callbackidentity-thisarg)
-* [`_.sample`](#_samplecollection-n)
-* [`_.select`](#_filtercollection-callbackidentity-thisarg)
-* [`_.shuffle`](#_shufflecollection)
-* [`_.size`](#_sizecollection)
-* [`_.some`](#_somecollection-callbackidentity-thisarg)
-* [`_.sortBy`](#_sortbycollection-callbackidentity-thisarg)
-* [`_.toArray`](#_toarraycollection)
-* [`_.where`](#_wherecollection-props)
+* <a href="#_everycollection-callbackidentity-thisarg" class="alias">`_.all -> every`</a>
+* <a href="#_somecollection-callbackidentity-thisarg" class="alias">`_.any -> some`</a>
+* <a href="#_atcollection-index">`_.at`</a>
+* <a href="#_mapcollection-callbackidentity-thisarg" class="alias">`_.collect -> map`</a>
+* <a href="#_containscollection-target-fromindex0">`_.contains`</a>
+* <a href="#_countbycollection-callbackidentity-thisarg">`_.countBy`</a>
+* <a href="#_findcollection-callbackidentity-thisarg" class="alias">`_.detect -> find`</a>
+* <a href="#_foreachcollection-callbackidentity-thisarg" class="alias">`_.each -> forEach`</a>
+* <a href="#_foreachrightcollection-callbackidentity-thisarg" class="alias">`_.eachRight -> forEachRight`</a>
+* <a href="#_everycollection-callbackidentity-thisarg">`_.every`</a>
+* <a href="#_filtercollection-callbackidentity-thisarg">`_.filter`</a>
+* <a href="#_findcollection-callbackidentity-thisarg">`_.find`</a>
+* <a href="#_findlastcollection-callbackidentity-thisarg">`_.findLast`</a>
+* <a href="#_findcollection-callbackidentity-thisarg" class="alias">`_.findWhere -> find`</a>
+* <a href="#_reducecollection-callbackidentity-accumulator-thisarg" class="alias">`_.foldl -> reduce`</a>
+* <a href="#_reducerightcollection-callbackidentity-accumulator-thisarg" class="alias">`_.foldr -> reduceRight`</a>
+* <a href="#_foreachcollection-callbackidentity-thisarg">`_.forEach`</a>
+* <a href="#_foreachrightcollection-callbackidentity-thisarg">`_.forEachRight`</a>
+* <a href="#_groupbycollection-callbackidentity-thisarg">`_.groupBy`</a>
+* <a href="#_containscollection-target-fromindex0" class="alias">`_.include -> contains`</a>
+* <a href="#_indexbycollection-callbackidentity-thisarg">`_.indexBy`</a>
+* <a href="#_reducecollection-callbackidentity-accumulator-thisarg" class="alias">`_.inject -> reduce`</a>
+* <a href="#_invokecollection-methodname-arg">`_.invoke`</a>
+* <a href="#_mapcollection-callbackidentity-thisarg">`_.map`</a>
+* <a href="#_maxcollection-callbackidentity-thisarg">`_.max`</a>
+* <a href="#_mincollection-callbackidentity-thisarg">`_.min`</a>
+* <a href="#_pluckcollection-property">`_.pluck`</a>
+* <a href="#_reducecollection-callbackidentity-accumulator-thisarg">`_.reduce`</a>
+* <a href="#_reducerightcollection-callbackidentity-accumulator-thisarg">`_.reduceRight`</a>
+* <a href="#_rejectcollection-callbackidentity-thisarg">`_.reject`</a>
+* <a href="#_samplecollection-n">`_.sample`</a>
+* <a href="#_filtercollection-callbackidentity-thisarg" class="alias">`_.select -> filter`</a>
+* <a href="#_shufflecollection">`_.shuffle`</a>
+* <a href="#_sizecollection">`_.size`</a>
+* <a href="#_somecollection-callbackidentity-thisarg">`_.some`</a>
+* <a href="#_sortbycollection-callbackidentity-thisarg">`_.sortBy`</a>
+* <a href="#_toarraycollection">`_.toArray`</a>
+* <a href="#_wherecollection-props">`_.where`</a>
 
 <!-- /div -->
 
@@ -100,23 +100,23 @@
 <!-- div -->
 
 ## `Functions`
-* [`_.after`](#_aftern-func)
-* [`_.bind`](#_bindfunc-thisarg-arg)
-* [`_.bindAll`](#_bindallobject-methodname)
-* [`_.bindKey`](#_bindkeyobject-key-arg)
-* [`_.compose`](#_composefunc)
-* [`_.createCallback`](#_createcallbackfuncidentity-thisarg-argcount)
-* [`_.curry`](#_curryfunc-arityfunclength)
-* [`_.debounce`](#_debouncefunc-wait-options-optionsmaxwait)
-* [`_.defer`](#_deferfunc-arg)
-* [`_.delay`](#_delayfunc-wait-arg)
-* [`_.memoize`](#_memoizefunc-resolver)
-* [`_.once`](#_oncefunc)
-* [`_.partial`](#_partialfunc-arg)
-* [`_.partialRight`](#_partialrightfunc-arg)
-* [`_.property`](#_propertyprop)
-* [`_.throttle`](#_throttlefunc-wait-options)
-* [`_.wrap`](#_wrapvalue-wrapper)
+* <a href="#_aftern-func">`_.after`</a>
+* <a href="#_bindfunc-thisarg-arg">`_.bind`</a>
+* <a href="#_bindallobject-methodname">`_.bindAll`</a>
+* <a href="#_bindkeyobject-key-arg">`_.bindKey`</a>
+* <a href="#_composefunc">`_.compose`</a>
+* <a href="#_createcallbackfuncidentity-thisarg-argcount">`_.createCallback`</a>
+* <a href="#_curryfunc-arityfunclength">`_.curry`</a>
+* <a href="#_debouncefunc-wait-options-optionsmaxwait">`_.debounce`</a>
+* <a href="#_deferfunc-arg">`_.defer`</a>
+* <a href="#_delayfunc-wait-arg">`_.delay`</a>
+* <a href="#_memoizefunc-resolver">`_.memoize`</a>
+* <a href="#_oncefunc">`_.once`</a>
+* <a href="#_partialfunc-arg">`_.partial`</a>
+* <a href="#_partialrightfunc-arg">`_.partialRight`</a>
+* <a href="#_propertyprop">`_.property`</a>
+* <a href="#_throttlefunc-wait-options">`_.throttle`</a>
+* <a href="#_wrapvalue-wrapper">`_.wrap`</a>
 
 <!-- /div -->
 
@@ -124,46 +124,46 @@
 <!-- div -->
 
 ## `Objects`
-* [`_.assign`](#_assignobject-source-callback-thisarg)
-* [`_.clone`](#_clonevalue-isdeepfalse-callback-thisarg)
-* [`_.cloneDeep`](#_clonedeepvalue-callback-thisarg)
-* [`_.create`](#_createprototype-properties)
-* [`_.defaults`](#_defaultsobject-source)
-* [`_.extend`](#_assignobject-source-callback-thisarg)
-* [`_.findKey`](#_findkeyobject-callbackidentity-thisarg)
-* [`_.findLastKey`](#_findlastkeyobject-callbackidentity-thisarg)
-* [`_.forIn`](#_forinobject-callbackidentity-thisarg)
-* [`_.forInRight`](#_forinrightobject-callbackidentity-thisarg)
-* [`_.forOwn`](#_forownobject-callbackidentity-thisarg)
-* [`_.forOwnRight`](#_forownrightobject-callbackidentity-thisarg)
-* [`_.functions`](#_functionsobject)
-* [`_.has`](#_hasobject-prop)
-* [`_.invert`](#_invertobject)
-* [`_.isArguments`](#_isargumentsvalue)
-* [`_.isArray`](#_isarrayvalue)
-* [`_.isBoolean`](#_isbooleanvalue)
-* [`_.isDate`](#_isdatevalue)
-* [`_.isElement`](#_iselementvalue)
-* [`_.isEmpty`](#_isemptyvalue)
-* [`_.isEqual`](#_isequala-b-callback-thisarg)
-* [`_.isFinite`](#_isfinitevalue)
-* [`_.isFunction`](#_isfunctionvalue)
-* [`_.isNaN`](#_isnanvalue)
-* [`_.isNull`](#_isnullvalue)
-* [`_.isNumber`](#_isnumbervalue)
-* [`_.isObject`](#_isobjectvalue)
-* [`_.isPlainObject`](#_isplainobjectvalue)
-* [`_.isRegExp`](#_isregexpvalue)
-* [`_.isString`](#_isstringvalue)
-* [`_.isUndefined`](#_isundefinedvalue)
-* [`_.keys`](#_keysobject)
-* [`_.merge`](#_mergeobject-source-callback-thisarg)
-* [`_.methods`](#_functionsobject)
-* [`_.omit`](#_omitobject-callback-thisarg)
-* [`_.pairs`](#_pairsobject)
-* [`_.pick`](#_pickobject-callback-thisarg)
-* [`_.transform`](#_transformobject-callbackidentity-accumulator-thisarg)
-* [`_.values`](#_valuesobject)
+* <a href="#_assignobject-source-callback-thisarg">`_.assign`</a>
+* <a href="#_clonevalue-isdeepfalse-callback-thisarg">`_.clone`</a>
+* <a href="#_clonedeepvalue-callback-thisarg">`_.cloneDeep`</a>
+* <a href="#_createprototype-properties">`_.create`</a>
+* <a href="#_defaultsobject-source">`_.defaults`</a>
+* <a href="#_assignobject-source-callback-thisarg" class="alias">`_.extend -> assign`</a>
+* <a href="#_findkeyobject-callbackidentity-thisarg">`_.findKey`</a>
+* <a href="#_findlastkeyobject-callbackidentity-thisarg">`_.findLastKey`</a>
+* <a href="#_forinobject-callbackidentity-thisarg">`_.forIn`</a>
+* <a href="#_forinrightobject-callbackidentity-thisarg">`_.forInRight`</a>
+* <a href="#_forownobject-callbackidentity-thisarg">`_.forOwn`</a>
+* <a href="#_forownrightobject-callbackidentity-thisarg">`_.forOwnRight`</a>
+* <a href="#_functionsobject">`_.functions`</a>
+* <a href="#_hasobject-prop">`_.has`</a>
+* <a href="#_invertobject">`_.invert`</a>
+* <a href="#_isargumentsvalue">`_.isArguments`</a>
+* <a href="#_isarrayvalue">`_.isArray`</a>
+* <a href="#_isbooleanvalue">`_.isBoolean`</a>
+* <a href="#_isdatevalue">`_.isDate`</a>
+* <a href="#_iselementvalue">`_.isElement`</a>
+* <a href="#_isemptyvalue">`_.isEmpty`</a>
+* <a href="#_isequala-b-callback-thisarg">`_.isEqual`</a>
+* <a href="#_isfinitevalue">`_.isFinite`</a>
+* <a href="#_isfunctionvalue">`_.isFunction`</a>
+* <a href="#_isnanvalue">`_.isNaN`</a>
+* <a href="#_isnullvalue">`_.isNull`</a>
+* <a href="#_isnumbervalue">`_.isNumber`</a>
+* <a href="#_isobjectvalue">`_.isObject`</a>
+* <a href="#_isplainobjectvalue">`_.isPlainObject`</a>
+* <a href="#_isregexpvalue">`_.isRegExp`</a>
+* <a href="#_isstringvalue">`_.isString`</a>
+* <a href="#_isundefinedvalue">`_.isUndefined`</a>
+* <a href="#_keysobject">`_.keys`</a>
+* <a href="#_mergeobject-source-callback-thisarg">`_.merge`</a>
+* <a href="#_functionsobject" class="alias">`_.methods -> functions`</a>
+* <a href="#_omitobject-callback-thisarg">`_.omit`</a>
+* <a href="#_pairsobject">`_.pairs`</a>
+* <a href="#_pickobject-callback-thisarg">`_.pick`</a>
+* <a href="#_transformobject-callbackidentity-accumulator-thisarg">`_.transform`</a>
+* <a href="#_valuesobject">`_.values`</a>
 
 <!-- /div -->
 
@@ -171,20 +171,20 @@
 <!-- div -->
 
 ## `Utilities`
-* [`_.now`](#_now)
-* [`_.escape`](#_escapestring)
-* [`_.identity`](#_identityvalue)
-* [`_.mixin`](#_mixinobject-object)
-* [`_.noConflict`](#_noconflict)
-* [`_.noop`](#_noop)
-* [`_.parseInt`](#_parseintvalue-radix)
-* [`_.random`](#_randommin0-max1-floatingfalse)
-* [`_.result`](#_resultobject-prop)
-* [`_.runInContext`](#_runincontextcontextroot)
-* [`_.template`](#_templatetext-data-options-optionsescape-optionsevaluate-optionsimports-optionsinterpolate-sourceurl-variable)
-* [`_.times`](#_timesn-callback-thisarg)
-* [`_.unescape`](#_unescapestring)
-* [`_.uniqueId`](#_uniqueidprefix)
+* <a href="#_now">`_.now`</a>
+* <a href="#_escapestring">`_.escape`</a>
+* <a href="#_identityvalue">`_.identity`</a>
+* <a href="#_mixinobject-object">`_.mixin`</a>
+* <a href="#_noconflict">`_.noConflict`</a>
+* <a href="#_noop">`_.noop`</a>
+* <a href="#_parseintvalue-radix">`_.parseInt`</a>
+* <a href="#_randommin0-max1-floatingfalse">`_.random`</a>
+* <a href="#_resultobject-prop">`_.result`</a>
+* <a href="#_runincontextcontextroot">`_.runInContext`</a>
+* <a href="#_templatetext-data-options-optionsescape-optionsevaluate-optionsimports-optionsinterpolate-sourceurl-variable">`_.template`</a>
+* <a href="#_timesn-callback-thisarg">`_.times`</a>
+* <a href="#_unescapestring">`_.unescape`</a>
+* <a href="#_uniqueidprefix">`_.uniqueId`</a>
 
 <!-- /div -->
 
@@ -192,7 +192,7 @@
 <!-- div -->
 
 ## `Methods`
-* [`_.templateSettings.imports._`](#_templatesettingsimports_)
+* <a href="#_templatesettingsimports_">`_.templateSettings.imports._`</a>
 
 <!-- /div -->
 
@@ -200,25 +200,25 @@
 <!-- div -->
 
 ## `Properties`
-* [`_.VERSION`](#_version)
-* [`_.support`](#_support)
-* [`_.support.argsClass`](#_supportargsclass)
-* [`_.support.argsObject`](#_supportargsobject)
-* [`_.support.enumErrorProps`](#_supportenumerrorprops)
-* [`_.support.enumPrototypes`](#_supportenumprototypes)
-* [`_.support.funcDecomp`](#_supportfuncdecomp)
-* [`_.support.funcNames`](#_supportfuncnames)
-* [`_.support.nonEnumArgs`](#_supportnonenumargs)
-* [`_.support.nonEnumShadows`](#_supportnonenumshadows)
-* [`_.support.ownLast`](#_supportownlast)
-* [`_.support.spliceObjects`](#_supportspliceobjects)
-* [`_.support.unindexedChars`](#_supportunindexedchars)
-* [`_.templateSettings`](#_templatesettings)
-* [`_.templateSettings.escape`](#_templatesettingsescape)
-* [`_.templateSettings.evaluate`](#_templatesettingsevaluate)
-* [`_.templateSettings.interpolate`](#_templatesettingsinterpolate)
-* [`_.templateSettings.variable`](#_templatesettingsvariable)
-* [`_.templateSettings.imports`](#_templatesettingsimports)
+* <a href="#_version">`_.VERSION`</a>
+* <a href="#_support">`_.support`</a>
+* <a href="#_supportargsclass">`_.support.argsClass`</a>
+* <a href="#_supportargsobject">`_.support.argsObject`</a>
+* <a href="#_supportenumerrorprops">`_.support.enumErrorProps`</a>
+* <a href="#_supportenumprototypes">`_.support.enumPrototypes`</a>
+* <a href="#_supportfuncdecomp">`_.support.funcDecomp`</a>
+* <a href="#_supportfuncnames">`_.support.funcNames`</a>
+* <a href="#_supportnonenumargs">`_.support.nonEnumArgs`</a>
+* <a href="#_supportnonenumshadows">`_.support.nonEnumShadows`</a>
+* <a href="#_supportownlast">`_.support.ownLast`</a>
+* <a href="#_supportspliceobjects">`_.support.spliceObjects`</a>
+* <a href="#_supportunindexedchars">`_.support.unindexedChars`</a>
+* <a href="#_templatesettings">`_.templateSettings`</a>
+* <a href="#_templatesettingsescape">`_.templateSettings.escape`</a>
+* <a href="#_templatesettingsevaluate">`_.templateSettings.evaluate`</a>
+* <a href="#_templatesettingsinterpolate">`_.templateSettings.interpolate`</a>
+* <a href="#_templatesettingsvariable">`_.templateSettings.variable`</a>
+* <a href="#_templatesettingsimports">`_.templateSettings.imports`</a>
 
 <!-- /div -->
 

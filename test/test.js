@@ -5876,7 +5876,6 @@
     });
   }());
 
-
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('filter methods');
@@ -7116,6 +7115,37 @@
       }
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.debounce and lodash.throttle');
+
+  _.forEach(['debounce', 'throttle'], function(methodName) {
+    var func = _[methodName];
+
+    asyncTest('_.' + methodName + ' should call `func` with the correct `this` binding', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var actual = [];
+
+        var object = {
+          'func': func(function() { actual.push(this); }, 32)
+        };
+
+        object.func();
+        if (methodName == 'throttle') {
+          object.func();
+        }
+        setTimeout(function() {
+          deepEqual(actual, methodName == 'throttle' ? [object, object] : [object]);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest(1);
+        QUnit.start();
+      }
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

@@ -8,29 +8,29 @@
 ## <a id="arrays"></a>`Arrays`
 * <a href="#_compactarray">`_.compact`</a>
 * <a href="#_differencearray-values">`_.difference`</a>
-* <a href="#_restarray-callback1-thisarg" class="alias">`_.drop -> rest`</a>
+* <a href="#_restarray-callback1-thisarg" class="alias">`_.drop` -> `rest`</a>
 * <a href="#_findindexarray-callbackidentity-thisarg">`_.findIndex`</a>
 * <a href="#_findlastindexarray-callbackidentity-thisarg">`_.findLastIndex`</a>
 * <a href="#_firstarray-callback-thisarg">`_.first`</a>
 * <a href="#_flattenarray-isshallowfalse-callbackidentity-thisarg">`_.flatten`</a>
-* <a href="#_firstarray-callback-thisarg" class="alias">`_.head -> first`</a>
+* <a href="#_firstarray-callback-thisarg" class="alias">`_.head` -> `first`</a>
 * <a href="#_indexofarray-value-fromindex0">`_.indexOf`</a>
 * <a href="#_initialarray-callback1-thisarg">`_.initial`</a>
 * <a href="#_intersectionarray">`_.intersection`</a>
 * <a href="#_lastarray-callback-thisarg">`_.last`</a>
 * <a href="#_lastindexofarray-value-fromindexarraylength-1">`_.lastIndexOf`</a>
-* <a href="#_zipobjectkeys-values" class="alias">`_.object -> zipObject`</a>
+* <a href="#_zipobjectkeys-values" class="alias">`_.object` -> `zipObject`</a>
 * <a href="#_pullarray-value">`_.pull`</a>
 * <a href="#_rangestart0-end-step1">`_.range`</a>
 * <a href="#_removearray-callbackidentity-thisarg">`_.remove`</a>
 * <a href="#_restarray-callback1-thisarg">`_.rest`</a>
 * <a href="#_sortedindexarray-value-callbackidentity-thisarg">`_.sortedIndex`</a>
-* <a href="#_restarray-callback1-thisarg" class="alias">`_.tail -> rest`</a>
-* <a href="#_firstarray-callback-thisarg" class="alias">`_.take -> first`</a>
+* <a href="#_restarray-callback1-thisarg" class="alias">`_.tail` -> `rest`</a>
+* <a href="#_firstarray-callback-thisarg" class="alias">`_.take` -> `first`</a>
 * <a href="#_unionarray">`_.union`</a>
 * <a href="#_uniqarray-issortedfalse-callbackidentity-thisarg">`_.uniq`</a>
-* <a href="#_uniqarray-issortedfalse-callbackidentity-thisarg" class="alias">`_.unique -> uniq`</a>
-* <a href="#_ziparray" class="alias">`_.unzip -> zip`</a>
+* <a href="#_uniqarray-issortedfalse-callbackidentity-thisarg" class="alias">`_.unique` -> `uniq`</a>
+* <a href="#_ziparray" class="alias">`_.unzip` -> `zip`</a>
 * <a href="#_withoutarray-value">`_.without`</a>
 * <a href="#_xorarray">`_.xor`</a>
 * <a href="#_ziparray">`_.zip`</a>
@@ -47,7 +47,7 @@
 * <a href="#_tapvalue-interceptor">`_.tap`</a>
 * <a href="#_prototypechain">`_.prototype.chain`</a>
 * <a href="#_prototypetostring">`_.prototype.toString`</a>
-* <a href="#_prototypevalueof" class="alias">`_.prototype.value -> valueOf`</a>
+* <a href="#_prototypevalueof" class="alias">`_.prototype.value` -> `valueOf`</a>
 * <a href="#_prototypevalueof">`_.prototype.valueOf`</a>
 
 <!-- /div -->
@@ -56,28 +56,28 @@
 <!-- div -->
 
 ## `Collections`
-* <a href="#_everycollection-callbackidentity-thisarg" class="alias">`_.all -> every`</a>
-* <a href="#_somecollection-callbackidentity-thisarg" class="alias">`_.any -> some`</a>
+* <a href="#_everycollection-callbackidentity-thisarg" class="alias">`_.all` -> `every`</a>
+* <a href="#_somecollection-callbackidentity-thisarg" class="alias">`_.any` -> `some`</a>
 * <a href="#_atcollection-index">`_.at`</a>
-* <a href="#_mapcollection-callbackidentity-thisarg" class="alias">`_.collect -> map`</a>
+* <a href="#_mapcollection-callbackidentity-thisarg" class="alias">`_.collect` -> `map`</a>
 * <a href="#_containscollection-target-fromindex0">`_.contains`</a>
 * <a href="#_countbycollection-callbackidentity-thisarg">`_.countBy`</a>
-* <a href="#_findcollection-callbackidentity-thisarg" class="alias">`_.detect -> find`</a>
-* <a href="#_foreachcollection-callbackidentity-thisarg" class="alias">`_.each -> forEach`</a>
-* <a href="#_foreachrightcollection-callbackidentity-thisarg" class="alias">`_.eachRight -> forEachRight`</a>
+* <a href="#_findcollection-callbackidentity-thisarg" class="alias">`_.detect` -> `find`</a>
+* <a href="#_foreachcollection-callbackidentity-thisarg" class="alias">`_.each` -> `forEach`</a>
+* <a href="#_foreachrightcollection-callbackidentity-thisarg" class="alias">`_.eachRight` -> `forEachRight`</a>
 * <a href="#_everycollection-callbackidentity-thisarg">`_.every`</a>
 * <a href="#_filtercollection-callbackidentity-thisarg">`_.filter`</a>
 * <a href="#_findcollection-callbackidentity-thisarg">`_.find`</a>
 * <a href="#_findlastcollection-callbackidentity-thisarg">`_.findLast`</a>
-* <a href="#_findcollection-callbackidentity-thisarg" class="alias">`_.findWhere -> find`</a>
-* <a href="#_reducecollection-callbackidentity-accumulator-thisarg" class="alias">`_.foldl -> reduce`</a>
-* <a href="#_reducerightcollection-callbackidentity-accumulator-thisarg" class="alias">`_.foldr -> reduceRight`</a>
+* <a href="#_findcollection-callbackidentity-thisarg" class="alias">`_.findWhere` -> `find`</a>
+* <a href="#_reducecollection-callbackidentity-accumulator-thisarg" class="alias">`_.foldl` -> `reduce`</a>
+* <a href="#_reducerightcollection-callbackidentity-accumulator-thisarg" class="alias">`_.foldr` -> `reduceRight`</a>
 * <a href="#_foreachcollection-callbackidentity-thisarg">`_.forEach`</a>
 * <a href="#_foreachrightcollection-callbackidentity-thisarg">`_.forEachRight`</a>
 * <a href="#_groupbycollection-callbackidentity-thisarg">`_.groupBy`</a>
-* <a href="#_containscollection-target-fromindex0" class="alias">`_.include -> contains`</a>
+* <a href="#_containscollection-target-fromindex0" class="alias">`_.include` -> `contains`</a>
 * <a href="#_indexbycollection-callbackidentity-thisarg">`_.indexBy`</a>
-* <a href="#_reducecollection-callbackidentity-accumulator-thisarg" class="alias">`_.inject -> reduce`</a>
+* <a href="#_reducecollection-callbackidentity-accumulator-thisarg" class="alias">`_.inject` -> `reduce`</a>
 * <a href="#_invokecollection-methodname-arg">`_.invoke`</a>
 * <a href="#_mapcollection-callbackidentity-thisarg">`_.map`</a>
 * <a href="#_maxcollection-callbackidentity-thisarg">`_.max`</a>
@@ -87,7 +87,7 @@
 * <a href="#_reducerightcollection-callbackidentity-accumulator-thisarg">`_.reduceRight`</a>
 * <a href="#_rejectcollection-callbackidentity-thisarg">`_.reject`</a>
 * <a href="#_samplecollection-n">`_.sample`</a>
-* <a href="#_filtercollection-callbackidentity-thisarg" class="alias">`_.select -> filter`</a>
+* <a href="#_filtercollection-callbackidentity-thisarg" class="alias">`_.select` -> `filter`</a>
 * <a href="#_shufflecollection">`_.shuffle`</a>
 * <a href="#_sizecollection">`_.size`</a>
 * <a href="#_somecollection-callbackidentity-thisarg">`_.some`</a>
@@ -128,7 +128,7 @@
 * <a href="#_clonedeepvalue-callback-thisarg">`_.cloneDeep`</a>
 * <a href="#_createprototype-properties">`_.create`</a>
 * <a href="#_defaultsobject-source">`_.defaults`</a>
-* <a href="#_assignobject-source-callback-thisarg" class="alias">`_.extend -> assign`</a>
+* <a href="#_assignobject-source-callback-thisarg" class="alias">`_.extend` -> `assign`</a>
 * <a href="#_findkeyobject-callbackidentity-thisarg">`_.findKey`</a>
 * <a href="#_findlastkeyobject-callbackidentity-thisarg">`_.findLastKey`</a>
 * <a href="#_forinobject-callbackidentity-thisarg">`_.forIn`</a>
@@ -158,7 +158,7 @@
 * <a href="#_keysobject">`_.keys`</a>
 * <a href="#_mapvaluesobject-callbackidentity-thisarg">`_.mapValues`</a>
 * <a href="#_mergeobject-source-callback-thisarg">`_.merge`</a>
-* <a href="#_functionsobject" class="alias">`_.methods -> functions`</a>
+* <a href="#_functionsobject" class="alias">`_.methods` -> `functions`</a>
 * <a href="#_omitobject-callback-thisarg">`_.omit`</a>
 * <a href="#_pairsobject">`_.pairs`</a>
 * <a href="#_pickobject-callback-thisarg">`_.pick`</a>

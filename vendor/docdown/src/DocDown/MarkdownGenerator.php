@@ -517,7 +517,7 @@ class MarkdownGenerator {
         // add entries
         foreach ($entries as $entry) {
           if ($entry->isAlias()) {
-            $result[] = MarkdownGenerator::interpolate('* <a href="##{hash}" class="alias">`#{member}#{separator}#{name} -> #{realName}`</a>', array(
+            $result[] = MarkdownGenerator::interpolate('* <a href="##{hash}" class="alias">`#{member}#{separator}#{name}` -> `#{realName}`</a>', array(
               'hash'      => $entry->hash,
               'member'    => $entry->member,
               'name'      => $entry->getName(),
@@ -565,7 +565,7 @@ class MarkdownGenerator {
           foreach ($entry->{$kind} as $subentry) {
             $subentry->member = $member;
             if ($subentry->isAlias()) {
-              $result[] = MarkdownGenerator::interpolate('* <a href="##{hash}" class="alias">`#{member}#{separator}#{name} -> #{realName}`</a>', array(
+              $result[] = MarkdownGenerator::interpolate('* <a href="##{hash}" class="alias">`#{member}#{separator}#{name}` -> `#{realName}`</a>', array(
                 'hash'      => $subentry->hash,
                 'member'    => $subentry->member,
                 'name'      => $subentry->getName(),

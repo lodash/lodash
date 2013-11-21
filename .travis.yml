@@ -66,7 +66,7 @@ before_install:
   - "[ $MAKE != false ] && mkdir ./node_modules/lodash-cli/node_modules && cd ./node_modules/lodash-cli/node_modules/ && ln -s ../../../ ./lodash && cd ../ && npm i . && cd ../../ || true"
   - "[ $MAKE != false ] && node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js || true"
 script:
-  - "[ $BIN == 'istanbul' ] && $BIN cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.min.js && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage || true"
+  - "[ $BIN == 'istanbul' ] && $BIN cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.js && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage || true"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || cd ./test"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "([ $SAUCE_LABS != false ] || [ $BUILD == false ]) && true || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"

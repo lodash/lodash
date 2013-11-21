@@ -8219,6 +8219,8 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.config.asyncRetries = 5;
+
   if (!document) {
     QUnit.config.noglobals = true;
     QUnit.start();

@@ -1019,6 +1019,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.constant');
+
+  (function() {
+    test('should create a function that always returns `value`', 1, function() {
+      var object = { 'a': 1 },
+          values = falsey.concat(1, 'a'),
+          constant = _.constant(object),
+          expected = _.map(values, function() { return object; });
+
+      var actual = _.map(values, function(value, index) {
+        return index ? constant(value) : constant();
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.contains');
 
   (function() {
@@ -1736,7 +1755,7 @@
       deepEqual(_.difference(array1, array2), []);
     });
 
-    test('should not accept individual secondary values', 1, function() {
+    test('should ignore individual secondary values', 1, function() {
       var array = [1, null, 3];
       deepEqual(_.difference(array, null, 3), array);
     });
@@ -2391,7 +2410,7 @@
 
       test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
         if (!isNpm) {
-          var actual = _(array)[methodName](Boolean);
+          var actual = _(array)[methodName](noop);
           ok(actual instanceof _);
         }
         else {
@@ -2425,7 +2444,7 @@
       test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
         if (!isNpm) {
           var wrapper = _(array);
-          equal(wrapper[methodName](Boolean), wrapper);
+          equal(wrapper[methodName](noop), wrapper);
         }
         else {
           skipTest();
@@ -3066,24 +3085,28 @@
 
   (function() {
     test('should return the intersection of the given arrays', 1, function() {
-      var actual = _.intersection([1, 3, 2], [101, 2, 1, 10], [2, 1]);
+      var actual = _.intersection([1, 3, 2], [5, 2, 1, 4], [2, 1]);
       deepEqual(actual, [1, 2]);
     });
 
     test('should return an array of unique values', 1, function() {
-      var actual = _.intersection([1, 1, 3, 2, 2], [101, 2, 2, 1, 101], [2, 1, 1]);
+      var actual = _.intersection([1, 1, 3, 2, 2], [5, 2, 2, 1, 4], [2, 1, 1]);
       deepEqual(actual, [1, 2]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _([1, 3, 2]).intersection([101, 2, 1, 10]);
+        var actual = _([1, 3, 2]).intersection([5, 2, 1, 4]);
         ok(actual instanceof _);
         deepEqual(actual.value(), [1, 2]);
       }
       else {
         skipTest(2);
       }
+    });
+
+    test('should ignore individual secondary values', 1, function() {
+      deepEqual(_.intersection([1, null, 3], 3, null), []);
     });
   }());
 
@@ -4628,22 +4651,22 @@
 
     test('should support the `thisArg` argument', 2, function() {
       function callback(num, index) {
-        return this[index];
+        return this[index] + num;
       }
 
       var actual = _.map([1], callback, [2]);
-      equal(actual, 2);
+      deepEqual(actual, [3]);
 
       actual = _.map({ 'a': 1 }, callback, { 'a': 2 });
-      equal(actual, 2);
+      deepEqual(actual, [3]);
     });
 
     test('should iterate over own properties of objects', 1, function() {
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
 
-      var keys = _.map(new Foo, function(value, key) { return key; });
-      deepEqual(keys, ['a']);
+      var actual = _.map(new Foo, function(value, key) { return key; });
+      deepEqual(actual, ['a']);
     });
 
     test('should work on an object with no `callback`', 1, function() {
@@ -4663,7 +4686,7 @@
 
     test('should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        ok(_(array).map(Boolean) instanceof _);
+        ok(_(array).map(noop) instanceof _);
       }
       else {
         skipTest();
@@ -4697,6 +4720,70 @@
 
     test('should be aliased', 1, function() {
       strictEqual(_.collect, _.map);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.mapValues');
+
+  (function() {
+    var object = { 'a': 1, 'b': 2, 'c': 3 };
+
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.mapValues(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 'a', object]);
+    });
+
+    test('should support the `thisArg` argument', 2, function() {
+      function callback(num, key) {
+        return this[key] + num;
+      }
+
+      var actual = _.mapValues({ 'a': 1 }, callback, { 'a': 2 });
+      deepEqual(actual, { 'a': 3 });
+
+      actual = _.mapValues([1], callback, [2]);
+      deepEqual(actual, { '0': 3 });
+    });
+
+    test('should iterate over own properties of objects', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var actual = _.mapValues(new Foo, function(value, key) { return key; });
+      deepEqual(actual, { 'a': 'a' });
+    });
+
+    test('should work on an object with no `callback`', 1, function() {
+      var actual = _.mapValues({ 'a': 1, 'b': 2, 'c': 3 });
+      deepEqual(actual, object);
+    });
+
+    test('should return a wrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(object).mapValues(noop) instanceof _);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should accept a falsey `object` argument', 1, function() {
+      var expected = _.map(falsey, function() { return {}; });
+
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          return index ? _.mapValues(value) : _.mapValues();
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 
@@ -5488,7 +5575,7 @@
   QUnit.module('lodash.property');
 
   (function() {
-    test('should great a function that plucks a property value of a given object', 3, function() {
+    test('should create a function that plucks a property value of a given object', 3, function() {
       var object = { 'a': 1, 'b': 2 },
           actual = _.property('a');
 
@@ -7364,13 +7451,13 @@
 
   (function() {
     test('should return the union of the given arrays', 1, function() {
-      var actual = _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
-      deepEqual(actual, [1, 2, 3, 101, 10]);
+      var actual = _.union([1, 2, 3], [5, 2, 1, 4], [2, 1]);
+      deepEqual(actual, [1, 2, 3, 5, 4]);
     });
 
     test('should not flatten nested arrays', 1, function() {
-      var actual = _.union([1, 2, 3], [1, [4]], [2, [5]]);
-      deepEqual(actual, [1, 2, 3, [4], [5]]);
+      var actual = _.union([1, 2, 3], [1, [5]], [2, [4]]);
+      deepEqual(actual, [1, 2, 3, [5], [4]]);
     });
 
     test('should produce correct results when provided a falsey `array` argument', 1, function() {
@@ -7380,8 +7467,9 @@
       deepEqual(actual, expected);
     });
 
-    test('should not accept individual secondary values', 1, function() {
-      deepEqual(_.union([1], 1, 2, 3), [1]);
+    test('should ignore individual secondary values', 1, function() {
+      var array = [1];
+      deepEqual(_.union(array, 1, 2, 3), array);
     });
   }());
 
@@ -7628,6 +7716,38 @@
 
       var object = { 'p': p, 'text': 'Fred, Wilma, & Pebbles' };
       equal(object.p(), '<p>Fred, Wilma, &amp; Pebbles</p>');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.xor');
+
+  (function() {
+    test('should return the symmetric difference of the given arrays', 1, function() {
+      var actual = _.xor([1, 2, 5], [2, 3, 5], [3, 4, 5]);
+      deepEqual(actual, [1, 4, 5]);
+    });
+
+    test('should return an array of unique values', 1, function() {
+      var actual = _.xor([1, 1, 2, 5], [2, 2, 3, 5], [3, 4, 5, 5]);
+      deepEqual(actual, [1, 4, 5]);
+    });
+
+    test('should return a wrapped value when chaining', 2, function() {
+      if (!isNpm) {
+        var actual = _([1, 2, 3]).xor([5, 2, 1, 4]);
+        ok(actual instanceof _);
+        deepEqual(actual.value(), [3, 5, 4]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('should ignore individual secondary values', 1, function() {
+      var array = [1, null, 3];
+      deepEqual(_.xor(array, 3, null), array);
     });
   }());
 
@@ -8067,6 +8187,7 @@
       'values',
       'where',
       'without',
+      'xor',
       'zip'
     ];
 
@@ -8089,7 +8210,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 151, function() {
+    test('should accept falsey arguments', 155, function() {
       var isExported = '_' in root,
           oldDash = root._;
 

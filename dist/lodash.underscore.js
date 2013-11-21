@@ -1215,15 +1215,15 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The object to inspect.
-   * @param {string} prop The name of the property to check.
+   * @param {string} key The name of the property to check.
    * @returns {boolean} Returns `true` if key is a direct property, else `false`.
    * @example
    *
    * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
    * // => true
    */
-  function has(object, prop) {
-    return object ? hasOwnProperty.call(object, prop) : false;
+  function has(object, key) {
+    return object ? hasOwnProperty.call(object, key) : false;
   }
 
   /**
@@ -3108,15 +3108,24 @@
    * @memberOf _
    * @category Arrays
    * @param {...Array} [array] The arrays to inspect.
-   * @returns {Array} Returns an array of composite values.
+   * @returns {Array} Returns an array of shared values.
    * @example
    *
-   * _.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
+   * _.intersection([1, 2, 3], [5, 2, 1, 4], [2, 1]);
    * // => [1, 2]
    */
-  function intersection(array) {
-    var args = arguments,
-        argsLength = args.length,
+  function intersection() {
+    var args = [],
+        argsIndex = -1,
+        argsLength = arguments.length;
+
+    while (++argsIndex < argsLength) {
+      var value = arguments[argsIndex];
+       if (isArray(value) || isArguments(value)) {
+         args.push(value);
+       }
+    }
+    var array = args[0],
         index = -1,
         indexOf = getIndexOf(),
         length = array ? array.length : 0,
@@ -3124,7 +3133,7 @@
 
     outer:
     while (++index < length) {
-      var value = array[index];
+      value = array[index];
       if (indexOf(result, value) < 0) {
         var argsIndex = argsLength;
         while (--argsIndex) {
@@ -3441,13 +3450,13 @@
    * @memberOf _
    * @category Arrays
    * @param {...Array} [array] The arrays to inspect.
-   * @returns {Array} Returns an array of composite values.
+   * @returns {Array} Returns an array of combined values.
    * @example
    *
-   * _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
-   * // => [1, 2, 3, 101, 10]
+   * _.union([1, 2, 3], [5, 2, 1, 4], [2, 1]);
+   * // => [1, 2, 3, 5, 4]
    */
-  function union(array) {
+  function union() {
     return baseUniq(baseFlatten(arguments, true, true));
   }
 
@@ -4294,14 +4303,14 @@
   };
 
   /**
-   * Creates a "_.pluck" style function, which returns the `prop` value of a
+   * Creates a "_.pluck" style function, which returns the `key` value of a
    * given object.
    *
    * @static
    * @memberOf _
    * @category Utilities
-   * @param {string} prop The name of the property to retrieve.
-   * @returns {*} Returns the new function.
+   * @param {string} key The name of the property to retrieve.
+   * @returns {Function} Returns the new function.
    * @example
    *
    * var characters = [
@@ -4317,9 +4326,9 @@
    * _.sortBy(characters, getName);
    * // => [{ 'name': 'barney', 'age': 36 }, { 'name': 'fred',   'age': 40 }]
    */
-  function property(prop) {
+  function property(key) {
     return function(object) {
-      return object[prop];
+      return object[key];
     };
   }
 
@@ -4365,7 +4374,7 @@
   }
 
   /**
-   * Resolves the value of `prop` on `object`. If `prop` is a function
+   * Resolves the value of property `key` on `object`. If `key` is a function
    * it will be invoked with the `this` binding of `object` and its result returned,
    * else the property value is returned. If `object` is falsey then `undefined`
    * is returned.
@@ -4374,7 +4383,7 @@
    * @memberOf _
    * @category Utilities
    * @param {Object} object The object to inspect.
-   * @param {string} prop The name of the property to resolve.
+   * @param {string} key The name of the property to resolve.
    * @returns {*} Returns the resolved value.
    * @example
    *
@@ -4391,10 +4400,10 @@
    * _.result(object, 'stuff');
    * // => 'nonsense'
    */
-  function result(object, prop) {
+  function result(object, key) {
     if (object) {
-      var value = object[prop];
-      return isFunction(value) ? object[prop]() : value;
+      var value = object[key];
+      return isFunction(value) ? object[key]() : value;
     }
   }
 

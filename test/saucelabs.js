@@ -30,8 +30,8 @@
 
   /** Used as request `auth` and `options` values */
   var accessKey = env.SAUCE_ACCESS_KEY,
-      build = env.TRAVIS_COMMIT,
-      port = 8081,
+      build = env.TRAVIS_COMMIT.slice(0, 10),
+      port = 9001,
       tunnelId = 'lodash_' + env.TRAVIS_JOB_NUMBER,
       username = env.SAUCE_USERNAME;
 
@@ -74,8 +74,8 @@
     ['Windows 7', 'internet explorer', '8'],
     ['Windows XP', 'internet explorer', '7'],
     ['Windows XP', 'internet explorer', '6'],
-    //['Windows 7', 'opera', '12'],
-    //['Windows 7', 'opera', '11'],
+    ['Windows 7', 'opera', '12'],
+    ['Windows 7', 'opera', '11'],
     ['OS X 10.8', 'safari', '6'],
     ['Windows 7', 'safari', '5'],
     ['Windows XP', 'safari', '4']

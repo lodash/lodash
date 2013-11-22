@@ -6512,6 +6512,18 @@
       deepEqual(actual, [3, 1, 2]);
     });
 
+    test('should work with an array for `callback`', 1, function() {
+      var objects = [
+        { 'a': 'x', 'b': 3 },
+        { 'a': 'y', 'b': 4 },
+        { 'a': 'x', 'b': 1 },
+        { 'a': 'y', 'b': 2 }
+      ];
+
+      var actual = _.sortBy(objects, ['a', 'b']);
+      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
+    });
+
     test('should work with a string for `callback`', 1, function() {
       var actual = _.pluck(_.sortBy(objects, 'num'), 'num');
       deepEqual(actual, [0, 11, 16, 74, 212, 991, 1515]);

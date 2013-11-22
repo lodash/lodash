@@ -4127,7 +4127,7 @@ _.mixin({
 _.capitalize('fred');
 // => 'Fred'
 
-_('fred').capitalize();
+_('fred').capitalize().value();
 // => 'Fred'
 ```
 

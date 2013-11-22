@@ -36,6 +36,9 @@
 					]
 				},
 				'Chaining': {
+					'select/reject/sortBy': [
+						'Died on test #1'
+					],
 					'reverse/concat/unshift/pop/map': [
 						'"34, 10, 8, 6, 4, 2, 10, 10"'
 					]
@@ -64,7 +67,7 @@
 				},
 				'Objects': {
 					'isEqual': [
-						'Died on test #78'
+						'Died on test #63'
 					],
 					'keys': [
 						'throws an error for `null` values',
@@ -98,7 +101,7 @@
 				delete QUnit.config.excused.Utility['_.unescape'];
 			}
 			// only excuse in Sauce Labs
-			if (location.port != '8081') {
+			if (location.port != '9001') {
 				delete QUnit.config.excused.Objects.isEqual;
 				delete QUnit.config.excused.Utility.times;
 				delete QUnit.config.excused.Utility.uniqueId;

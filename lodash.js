@@ -6248,7 +6248,9 @@
      * _('fred').capitalize().value();
      * // => 'Fred'
      */
-    function mixin(object, source) {
+    function mixin(object, source, options) {
+      options = defaults({}, options || {}, { wrap: true });
+
       var ctor = object,
           isFunc = !source || isFunction(ctor);
 
@@ -6269,8 +6271,10 @@
             if (value && typeof value == 'object' && value === result) {
               return this;
             }
-            result = new ctor(result);
-            result.__chain__ = this.__chain__;
+            if (options.wrap || this.__chain__) {
+              result = new ctor(result);
+              result.__chain__ = this.__chain__;
+            }
             return result;
           };
         }

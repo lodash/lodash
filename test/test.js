@@ -7020,7 +7020,7 @@
       }
     });
 
-    test('should clear timeout when `func` is called', 1, function() {
+    asyncTest('should clear timeout when `func` is called', 1, function() {
       if (!isModularize) {
         var callCount = 0,
             dateCount = 0;
@@ -7043,7 +7043,10 @@
         throttled();
         throttled();
 
-        equal(callCount, 2);
+        setTimeout(function() {
+          equal(callCount, 2);
+          QUnit.start();
+        }, 64);
       }
       else {
         skipTest();
@@ -8352,7 +8355,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.config.asyncRetries = 5;
+  QUnit.config.asyncRetries = 10;
 
   if (!document) {
     QUnit.config.noglobals = true;

@@ -79,7 +79,7 @@
   var contextProps = [
     'Array', 'Boolean', 'Date', 'Error', 'Function', 'Math', 'Number', 'Object',
     'RegExp', 'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN',
-    'parseInt', 'setImmediate', 'setTimeout'
+    'parseInt', 'setTimeout'
   ];
 
   /** Used to fix the JScript [[DontEnum]] bug */
@@ -524,10 +524,6 @@
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
         splice = arrayRef.splice;
-
-    /** Used to detect `setImmediate` in Node.js */
-    var setImmediate = typeof (setImmediate = freeGlobal && moduleExports && freeGlobal.setImmediate) == 'function' &&
-      !reNative.test(setImmediate) && setImmediate;
 
     /** Used to set meta data on functions */
     var defineProperty = (function() {
@@ -5830,15 +5826,6 @@
       var args = slice(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
     }
-    // use `setImmediate` if available in Node.js
-    if (setImmediate) {
-      defer = function(func) {
-        if (!isFunction(func)) {
-          throw new TypeError;
-        }
-        return setImmediate.apply(context, arguments);
-      };
-    }
 
     /**
      * Executes the `func` function after `wait` milliseconds. Additional arguments
@@ -6796,7 +6783,7 @@
      * _(characters).chain()
      *   .first()
      *   .pick('age')
-     *   .value()
+     *   .value();
      * // => { 'age': 36 }
      */
     function wrapperChain() {

@@ -39,6 +39,9 @@
 					'select/reject/sortBy': [
 						'Died on test #1'
 					],
+					'select/reject/sortBy in functional style': [
+						'Died on test #1'
+					],
 					'reverse/concat/unshift/pop/map': [
 						'"34, 10, 8, 6, 4, 2, 10, 10"'
 					]
@@ -67,6 +70,7 @@
 				},
 				'Objects': {
 					'isEqual': [
+						'Died on test #60',
 						'Died on test #63'
 					],
 					'keys': [
@@ -93,18 +97,20 @@
 				}
 			};
 
+			// only excuse in Sauce Labs (buggy Safari)
+			if (location.port != '9001') {
+				delete QUnit.config.excused.Chaining['select/reject/sortBy'];
+				delete QUnit.config.excused.Chaining['select/reject/sortBy in functional style'];
+				delete QUnit.config.excused.Objects.isEqual;
+				delete QUnit.config.excused.Utility.times;
+				delete QUnit.config.excused.Utility.uniqueId;
+			}
 			// only excuse in non-Underscore builds
 			if (/\bunderscore\b/i.test(ui.buildPath)) {
 				delete QUnit.config.excused.Chaining;
 				delete QUnit.config.excused.Collections.where;
 				delete QUnit.config.excused.Utility['_.escape'];
 				delete QUnit.config.excused.Utility['_.unescape'];
-			}
-			// only excuse in Sauce Labs
-			if (location.port != '9001') {
-				delete QUnit.config.excused.Objects.isEqual;
-				delete QUnit.config.excused.Utility.times;
-				delete QUnit.config.excused.Utility.uniqueId;
 			}
 
 			// assign results to `global_test_results` for Sauce Labs

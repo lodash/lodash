@@ -1682,6 +1682,27 @@
         QUnit.start();
       }
     });
+
+    asyncTest('should be cancelable', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var pass = true;
+
+        var timerId = _.defer(function() {
+          pass = false;
+        });
+
+        clearTimeout(timerId);
+
+        setTimeout(function() {
+          ok(pass);
+          QUnit.start();
+        }, 128);
+      }
+      else {
+        skipTest();
+        QUnit.start();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1719,6 +1740,27 @@
 
         setTimeout(function() {
           deepEqual(args, [1, 2, 3]);
+          QUnit.start();
+        }, 128);
+      }
+      else {
+        skipTest();
+        QUnit.start();
+      }
+    });
+
+    asyncTest('should be cancelable', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var pass = true;
+
+        var timerId = _.delay(function() {
+          pass = false;
+        }, 32);
+
+        clearTimeout(timerId);
+
+        setTimeout(function() {
+          ok(pass);
           QUnit.start();
         }, 128);
       }
@@ -7945,7 +7987,34 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...) methods that return wrapped values');
+  QUnit.module('lodash(...) methods that return existing wrapped values');
+
+  (function() {
+    var array = [1, 2, 3],
+        wrapped = _(array);
+
+    var funcs = [
+      'push',
+      'reverse',
+      'sort',
+      'unshift'
+    ];
+
+    _.forEach(funcs, function(methodName) {
+      test('`_(...).' + methodName + '` should return the existing wrapped value', 1, function() {
+        if (!isNpm) {
+          strictEqual(wrapped[methodName](), wrapped);
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...) methods that return new wrapped values');
 
   (function() {
     var array = [1, 2, 3],
@@ -7953,11 +8022,12 @@
 
     var funcs = [
       'concat',
+      'slice',
       'splice'
     ];
 
     _.forEach(funcs, function(methodName) {
-      test('`_.' + methodName + '` should return a wrapped value', 1, function() {
+      test('`_(...).' + methodName + '` should return a new wrapped value', 1, function() {
         if (!isNpm) {
           ok(wrapped[methodName]() instanceof _);
         }

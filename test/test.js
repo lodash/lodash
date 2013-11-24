@@ -7050,6 +7050,7 @@
       }
       else {
         skipTest();
+        QUnit.start();
       }
     });
 

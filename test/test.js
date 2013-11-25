@@ -5162,29 +5162,40 @@
   QUnit.module('lodash.mixin');
 
   (function() {
+    function wrapper(value) {
+      if (!(this instanceof wrapper)) {
+        return new wrapper(value);
+      }
+      this.__wrapped__ = value;
+    }
+
+    var value = ['a'],
+        source = { 'a': function(array) { return array[0]; } };
+
     test('should accept an `object` argument', 1, function() {
       var lodash = {};
-      _.mixin(lodash, { 'a': function(a) { return a[0]; } });
-      strictEqual(lodash.a(['a']), 'a');
+      _.mixin(lodash, source);
+      strictEqual(lodash.a(value), 'a');
     });
 
-    test('should accept a function `object` argument', 1, function() {
-      function lodash(value) {
-        if (!(this instanceof lodash)) {
-          return new lodash(value);
-        }
-        this.__wrapped__ = value;
-      }
+    test('should accept a function `object` argument', 2, function() {
+      _.mixin(wrapper, source);
 
-      _.mixin(lodash, { 'a': function(a) { return a[0]; } });
-      strictEqual(lodash(['a']).a().__wrapped__, 'a');
+      var wrapped = wrapper(value),
+          actual = wrapped.a();
+
+      strictEqual(actual.__wrapped__, 'a');
+      ok(actual instanceof wrapper);
+
+      delete wrapper.a;
+      delete wrapper.prototype.a;
     });
 
     test('should mixin `source` methods into lodash', 4, function() {
       if (!isNpm) {
         _.mixin({
           'a': 'a',
-          'A': function(a) { return a.toUpperCase(); }
+          'A': function(string) { return string.toUpperCase(); }
         });
 
         equal('a' in _, false);
@@ -5202,6 +5213,57 @@
       else {
         skipTest(4);
       }
+    });
+
+    test('should accept an `options` argument', 16, function() {
+      function message(func, chain) {
+        return (func === _ ? 'lodash' : 'provided') + ' function should ' + (chain ? '' : 'not ') + 'chain';
+      }
+
+      _.forEach([_, wrapper], function(func) {
+        _.forEach([false, true, { 'chain': false }, { 'chain': true }], function(options) {
+          if (func === _) {
+            _.mixin(source, options);
+          } else {
+            _.mixin(func, source, options);
+          }
+          var wrapped = func(value),
+              actual = wrapped.a();
+
+          if (options && (options === true || options.chain)) {
+            strictEqual(actual.__wrapped__, 'a', message(func, true));
+            ok(actual instanceof func, message(func, true));
+          } else {
+            strictEqual(actual, 'a', message(func, false));
+            equal(actual instanceof func, false, message(func, false));
+          }
+          delete func.a;
+          delete func.prototype.a;
+        });
+      });
+    });
+
+    test('should not error when passed non-object `options` values', 2, function() {
+      var pass = true;
+
+      try {
+        _.mixin({}, source, 1);
+      } catch(e) {
+        pass = false;
+      }
+      ok(pass);
+
+      pass = true;
+
+      try {
+        _.mixin(source, 1);
+      } catch(e) {
+        pass = false;
+      }
+      delete _.a;
+      delete _.prototype.a;
+
+      ok(pass);
     });
   }());
 
@@ -7007,6 +7069,26 @@
       var compiled = _.template('<<\n a \n>>', null, { 'evaluate': /<<(.*?)>>/g });
       equal(compiled(), '<<\n a \n>>');
     });
+
+    test('should not error when passed non-object `data` and `options` values', 2, function() {
+      var pass = true;
+
+      try {
+        _.template('', 1);
+      } catch(e) {
+        pass = false;
+      }
+      ok(pass);
+
+      pass = true;
+
+      try {
+        _.template('', 1, 1);
+      } catch(e) {
+        pass = false;
+      }
+      ok(pass);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -7275,6 +7357,17 @@
 
   _.forEach(['debounce', 'throttle'], function(methodName) {
     var func = _[methodName];
+
+    test('_.' + methodName + ' should not error when passed non-object `options` values', 1, function() {
+      var pass = true;
+
+      try {
+        func(noop, 32, 1);
+      } catch(e) {
+        pass = false;
+      }
+      ok(pass);
+    });
 
     asyncTest('_.' + methodName + ' should call `func` with the correct `this` binding', 1, function() {
       if (!(isRhino && isModularize)) {

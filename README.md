@@ -37,8 +37,8 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods
  * [_.clone](http://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
+ * [_.constant](http://lodash.com/docs#constant) & [_.property](http://lodash.com/docs#property) function generators for composing functions
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
- * [_.constant](http://lodash.com/docs#constant) and [_.property](http://lodash.com/docs#property) function generators for composing functions
  * [_.create](http://lodash.com/docs#create) for easier object inheritance
  * [_.createCallback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins
  * [_.curry](http://lodash.com/docs#curry) for creating [curried](http://hughfdjackson.com/javascript/2013/07/06/why-curry-helps/) functions

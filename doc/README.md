@@ -977,7 +977,7 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 ### <a id="_xorarray"></a>`_.xor([array])`
 <a href="#_xorarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5380 "View in source") [&#x24C9;][1]
 
-Creates an array that is the smymetric difference of the provided arrays. See http://en.wikipedia.org/wiki/Symmetric_difference.
+Creates an array that is the symmetric difference of the provided arrays. See http://en.wikipedia.org/wiki/Symmetric_difference.
 
 #### Arguments
 1. `[array]` *(...Array)*: The arrays to inspect.

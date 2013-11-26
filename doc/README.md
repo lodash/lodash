@@ -1,4 +1,4 @@
-# Lo-Dash <span>v2.3.0</span>
+# Lo-Dash <span>v2.4.0</span>
 
 <!-- div -->
 

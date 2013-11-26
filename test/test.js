@@ -6546,21 +6546,18 @@
 
   (function() {
     var objects = [
-      { 'num': 991 },
-      { 'num': 212 },
-      { 'num': 11 },
-      { 'num': 16 },
-      { 'num': 74 },
-      { 'num': 0 },
-      { 'num': 1515 }
+      { 'a': 'x', 'b': 3 },
+      { 'a': 'y', 'b': 4 },
+      { 'a': 'x', 'b': 1 },
+      { 'a': 'y', 'b': 2 }
     ];
 
     test('should sort in ascending order', 1, function() {
       var actual = _.pluck(_.sortBy(objects, function(object) {
-        return object.num;
-      }), 'num');
+        return object.b;
+      }), 'b');
 
-      deepEqual(actual, [0, 11, 16, 74, 212, 991, 1515]);
+      deepEqual(actual, [1, 2, 3, 4]);
     });
 
     test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
@@ -6617,20 +6614,23 @@
     });
 
     test('should work with an array for `callback`', 1, function() {
-      var objects = [
-        { 'a': 'x', 'b': 3 },
-        { 'a': 'y', 'b': 4 },
-        { 'a': 'x', 'b': 1 },
-        { 'a': 'y', 'b': 2 }
-      ];
-
       var actual = _.sortBy(objects, ['a', 'b']);
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
     });
 
+    test('should coerce arrays returned from a `callback`', 1, function() {
+      var actual = _.sortBy(objects, function(object) {
+        var result = [object.a, object.b];
+        result.toString = function() { return String(this[0]); };
+        return result;
+      });
+
+      deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
+    });
+
     test('should work with a string for `callback`', 1, function() {
-      var actual = _.pluck(_.sortBy(objects, 'num'), 'num');
-      deepEqual(actual, [0, 11, 16, 74, 212, 991, 1515]);
+      var actual = _.pluck(_.sortBy(objects, 'b'), 'b');
+      deepEqual(actual, [1, 2, 3, 4]);
     });
 
     test('should work with an object for `collection`', 1, function() {

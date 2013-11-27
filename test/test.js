@@ -2954,9 +2954,7 @@
 
       while (++index < length) {
         var other = array[index];
-        if (other === value ||
-            (_.isObject(value) && other instanceof Foo) ||
-            (other === 'x' && /[13]/.test(value))) {
+        if (other === value || (value instanceof Foo && other instanceof Foo)) {
           return index;
         }
       }
@@ -2994,17 +2992,6 @@
       if (!isModularize) {
         _.indexOf = custom;
         deepEqual(_.intersection(array, [new Foo]), [array[1]]);
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.omit` should work with a custom `_.indexOf` method', 1, function() {
-      if (!isModularize) {
-        _.indexOf = custom;
-        deepEqual(_.omit(array, ['x']), { '0': 1, '2': 3 });
         _.indexOf = indexOf;
       }
       else {

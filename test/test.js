@@ -5495,10 +5495,22 @@
     });
 
     test('`_.' + methodName + '` returns a function with a `length` of `0`', 1, function() {
-      var func = function(a, b, c) {},
-          actual = _.partial(func, 'a');
+      var fn = function(a, b, c) {},
+          actual = func(fn, 'a');
 
       strictEqual(actual.length, 0);
+    });
+    
+    test('`_.' + methodName + '` should clone `__bindData__` for created functions', 2, function() {
+      function greet(greeting, name) {
+        return greeting + ' ' + name;
+      }
+      var par1 = func(greet, 'hi'),
+          par2 = func(par1, 'barney'),
+          par3 = func(par1, 'pebbles');
+      
+      equal(par2(), 'hi barney');
+      equal(par3(), 'hi pebbles');
     });
   });
 
@@ -5519,7 +5531,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('methods using `createBound`');
+  QUnit.module('methods using `createWrapper`');
 
   (function() {
     test('combinations of partial functions should work', 1, function() {

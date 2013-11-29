@@ -5450,7 +5450,8 @@
   QUnit.module('partial methods');
 
   _.forEach(['partial', 'partialRight'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        isPartial = methodName == 'partial';
 
     test('`_.' + methodName + '` partially applies without additional arguments', 1, function() {
       var arg = 'a',
@@ -5465,7 +5466,7 @@
           expected = [arg1, arg2],
           fn = function(x, y) { return [x, y]; };
 
-      if (methodName == 'partialRight') {
+      if (!isPartial) {
         expected.reverse();
       }
       deepEqual(func(fn, arg1)(arg2), expected);
@@ -5501,7 +5502,7 @@
       strictEqual(actual.length, 0);
     });
     
-    test('`_.' + methodName + '` should clone `__bindData__` for created functions', 2, function() {
+    test('`_.' + methodName + '` should clone `__bindData__` for created functions', 3, function() {
       function greet(greeting, name) {
         return greeting + ' ' + name;
       }
@@ -5509,8 +5510,9 @@
           par2 = func(par1, 'barney'),
           par3 = func(par1, 'pebbles');
       
-      equal(par2(), 'hi barney');
-      equal(par3(), 'hi pebbles');
+      equal(par1('fred'), isPartial ? 'hi fred' : 'fred hi')
+      equal(par2(), isPartial ? 'hi barney'  : 'barney hi');
+      equal(par3(), isPartial ? 'hi pebbles' : 'pebbles hi');
     });
   });
 

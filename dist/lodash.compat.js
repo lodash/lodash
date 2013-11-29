@@ -523,7 +523,8 @@
         push = arrayRef.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
-        splice = arrayRef.splice;
+        splice = arrayRef.splice,
+        unshift = arrayRef.unshift;
 
     /** Used to set meta data on functions */
     var defineProperty = (function() {
@@ -1712,7 +1713,7 @@
         }
         // append partial right arguments
         if (isPartialRight) {
-          push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
+          unshift.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
         }
         // merge flags
         bindData[1] |= bitmask;

@@ -1729,7 +1729,7 @@
         }
         // append partial right arguments
         if (isPartialRight) {
-          push.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
+          unshift.apply(bindData[3] || (bindData[3] = []), partialRightArgs);
         }
         // merge flags
         bindData[1] |= bitmask;

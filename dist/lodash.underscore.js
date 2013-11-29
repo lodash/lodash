@@ -402,7 +402,7 @@
       // `Function#bind` spec
       // http://es5.github.io/#x15.3.4.5
       if (partialArgs) {
-        var args = partialArgs.slice();
+        var args = slice(partialArgs);
         push.apply(args, arguments);
       }
       // mimic the constructor's `return` behavior
@@ -504,7 +504,7 @@
     function bound() {
       var thisBinding = isBind ? thisArg : this;
       if (partialArgs) {
-        var args = partialArgs.slice();
+        var args = slice(partialArgs);
         push.apply(args, arguments);
       }
       if (partialRightArgs || isCurry) {

@@ -1686,8 +1686,14 @@
       }
       var bindData = func && func.__bindData__;
       if (bindData && bindData !== true) {
+        // clone `bindData`
         bindData = bindData.slice();
-
+        if (bindData[2]) {
+          bindData[2] = bindData[2].slice();
+        }
+        if (bindData[3]) {
+          bindData[3] = bindData[3].slice();
+        }
         // set `thisBinding` is not previously bound
         if (isBind && !(bindData[1] & 1)) {
           bindData[4] = thisArg;

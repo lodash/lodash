@@ -7,7 +7,8 @@ env:
   global:
     - BIN="node" BUILD=false COMPAT=false MAKE=false OPTION="" SAUCE_LABS=false
     - SAUCE_USERNAME="lodash"
-    - secure: "plVqEIVyk6ULaWNWPg1ddaUnbAwSR+2GY9EakfjjZ+ccXL7Kyra5azdZ1C0yDU9UwM9ltiiZ0STMAQaNdVzOsStNQ2iMAAk29eAh0RBYbISUJ7mqlIahQz5R97dU92SNX/NXEqc91ePvHxXEwIloJ35+luRN6dXQhh2Y7O307OE="
+    - secure: "KtDS/UyWv11g9SWk8ylg7VKhMXxGIA06Pe6vBvIm+uhiMgRhUcy78TbFYwspa1wZbIzAoOfYsAXkwu4f8KHsnu80dnUeBzlnW825H6G2xMSU7Zox9aooznVFh3GIFGc+K5zfr78KWK/7lcH6FiVstodup7U5K6GTjgKHqFAHIUE="
+    - secure: "rYIm0IRvJg4KT+ODO3E3AChRBmq4ruKc6wPDlvPzmtWoa1zChFKwo9kERSFxQ9F+1xMo18NnYiJl6MD6oXQaXwYQF1eULr+yNCAT6GsiiWN40xVyxmdk3wgdcpvotqvTebooMaf/Ey5n6y4s07iAzMXxjWAcsWjb9xWMmtn9ssc="
   matrix:
     - BUILD="compat"
     - BUILD="modern"

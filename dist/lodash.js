@@ -1305,13 +1305,8 @@
 
       if (isLarge) {
         var cache = createCache(seen);
-        if (cache) {
-          indexOf = cacheIndexOf;
-          seen = cache;
-        } else {
-          isLarge = false;
-          seen = callback ? seen : (releaseArray(seen), result);
-        }
+        indexOf = cacheIndexOf;
+        seen = cache;
       }
       while (++index < length) {
         var value = array[index],
@@ -2513,7 +2508,7 @@
      * _.isPlainObject({ 'x': 0, 'y': 0 });
      * // => true
      */
-    var isPlainObject = function(value) {
+    var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
       if (!(value && toString.call(value) == objectClass)) {
         return false;
       }

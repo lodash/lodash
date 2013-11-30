@@ -1581,13 +1581,8 @@
 
       if (isLarge) {
         var cache = createCache(seen);
-        if (cache) {
-          indexOf = cacheIndexOf;
-          seen = cache;
-        } else {
-          isLarge = false;
-          seen = callback ? seen : (releaseArray(seen), result);
-        }
+        indexOf = cacheIndexOf;
+        seen = cache;
       }
       while (++index < length) {
         var value = array[index],

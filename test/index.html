@@ -34,6 +34,9 @@
 			Object._defineProperty = Object.defineProperty;
 			Object.defineProperty = function() {};
 
+			Object._getPrototypeOf = Object.getPrototypeOf;
+			Object.getPrototypeOf = function() {};
+
 			Object._keys = Object.keys;
 			Object.keys = function() { return []; };
 
@@ -69,6 +72,11 @@
 				Object.defineProperty = Object._defineProperty;
 			} else {
 				delete Object.defineProperty;
+			}
+			if (Object._getPrototypeOf) {
+				Object.getPrototypeOf = Object._getPrototypeOf;
+			} else {
+				delete Object.getPrototypeOf;
 			}
 			if (Object._keys) {
 				Object.keys = Object._keys;

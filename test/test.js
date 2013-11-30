@@ -249,7 +249,7 @@
         Object.keys = function() { return []; };
 
         // load Lo-Dash and expose it to the bad shims
-        lodashBadShim = require(filePath);
+        lodashBadShim = require(filePath)._;
 
         // restore native methods
         Array.isArray = Array._isArray;

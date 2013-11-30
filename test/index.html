@@ -22,6 +22,9 @@
 			Array._isArray = Array.isArray;
 			Array.isArray = function() { return false; };
 
+			Date._now = Date.now;
+			Date.now = function() {};
+
 			Function.prototype._bind = Function.prototype.bind;
 			Function.prototype.bind = function() { return function() {}; };
 
@@ -34,7 +37,7 @@
 			Object._keys = Object.keys;
 			Object.keys = function() { return []; };
 
-			// load Lo-Dash and expose it to the bad `Object.keys` shim
+			// load Lo-Dash and expose it to the bad shims
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 		</script>
 		<script>
@@ -46,6 +49,11 @@
 				Array.isArray = Array._isArray;
 			} else {
 				delete Array.isArray;
+			}
+			if (Date._now) {
+				Date.now = Date._now;
+			} else {
+				delete Date.now;
 			}
 			if (Function.prototype._bind) {
 				Function.prototype.bind = Function.prototype._bind;
@@ -68,6 +76,7 @@
 				delete Object.keys;
 			}
 			delete Array._isArray;
+			delete Date._now;
 			delete Function.prototype._bind;
 			delete Object._create;
 			delete Object._defineProperty;

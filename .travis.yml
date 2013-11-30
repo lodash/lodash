@@ -7,7 +7,7 @@ env:
   global:
     - BIN="node" BUILD=false COMPAT=false MAKE=false OPTION="" SAUCE_LABS=false
     - SAUCE_USERNAME="lodash"
-    - secure: "aFxaPI4NvlZHgXvfmNtUlYCIeiVpC4QzkdevGHc2FK27BJLnNTKNno9sBhaygURbQ83bYzfQ+fe8SMIzE7aLramAGILrT4DiWqfO+ihuB3EK1cahCbB6OionbIUI27Xzy+YukO+5lQmMP/dpVlwhIfR3qxmN4m7wXI+ExEemjZg="
+    - secure: "plVqEIVyk6ULaWNWPg1ddaUnbAwSR+2GY9EakfjjZ+ccXL7Kyra5azdZ1C0yDU9UwM9ltiiZ0STMAQaNdVzOsStNQ2iMAAk29eAh0RBYbISUJ7mqlIahQz5R97dU92SNX/NXEqc91ePvHxXEwIloJ35+luRN6dXQhh2Y7O307OE="
   matrix:
     - BUILD="compat"
     - BUILD="modern"
@@ -55,7 +55,7 @@ before_install:
   - "([ $BUILD == 'legacy' ] || [ $BUILD == 'mobile' ] || [ $BUILD == 'modern' ]) && MAKE=true || true"
   - "([ $BUILD == 'compat' ] || [ $BUILD == 'legacy' ]) && COMPAT=true || true"
   - "[ $SAUCE_LABS != false ] && npm i ecstatic@\"~0.4.0\" request@\"~2.27.0\" sauce-tunnel@\"~1.1.0\" || true"
-  - "[ $BIN == 'istanbul' ] && sudo npm i -g coveralls@\"~2.5.0\" istanbul@\"~0.1.0\" || true"
+  - "[ $BIN == 'istanbul' ] && npm i -g coveralls@\"~2.5.0\" istanbul@\"~0.1.0\" || true"
   - "[ $BIN == 'narwhal' ] && wget https://github.com/280north/narwhal/archive/v0.3.2.zip && sudo unzip v0.3.2 -d /opt/ && rm v0.3.2.zip || true"
   - "[ $BIN == 'narwhal' ] && sudo ln -s /opt/narwhal-0.3.2/bin/narwhal /usr/local/bin/narwhal && sudo chmod +x /usr/local/bin/narwhal || true"
   - "[ $BIN == 'rhino' ] && sudo mkdir /opt/rhino-1.7R5 && sudo wget -O /opt/rhino-1.7R5/js.jar https://oss.sonatype.org/content/repositories/snapshots/org/mozilla/rhino/1.7R5-SNAPSHOT/rhino-1.7R5-20120629.144839-4.jar || true"

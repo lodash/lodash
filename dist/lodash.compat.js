@@ -518,7 +518,7 @@
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
         fnToString = Function.prototype.toString,
-        getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
+        getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayRef.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
@@ -531,18 +531,18 @@
       // IE 8 only accepts DOM elements
       try {
         var o = {},
-            func = reNative.test(func = Object.defineProperty) && func,
+            func = isNative(func = Object.defineProperty) && func,
             result = func(o, o, o) && func;
       } catch(e) { }
       return result;
     }());
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
-    var nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
-        nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
+    var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
+        nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
-        nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
+        nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
@@ -730,7 +730,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.funcDecomp = !reNative.test(context.WinRTError) && reThis.test(runInContext);
+      support.funcDecomp = !isNative(context.WinRTError) && reThis.test(runInContext);
 
       /**
        * Detect if `Function#name` is supported (all but IE).
@@ -1797,6 +1797,17 @@
     }
 
     /**
+     * Checks if `value` is a native function.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if the `value` is a native function, else `false`.
+     */
+    function isNative(value) {
+      return typeof value == 'function' && reNative.test(value);
+    }
+
+    /**
      * Sets `this` binding data on a given function.
      *
      * @private
@@ -2847,7 +2858,7 @@
         return false;
       }
       var valueOf = value.valueOf,
-          objProto = typeof valueOf == 'function' && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
+          objProto = isNative(valueOf) && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
 
       return objProto
         ? (value == objProto || getPrototypeOf(value) == objProto)
@@ -6319,7 +6330,7 @@
      * _.defer(function() { console.log(_.now() - stamp); });
      * // => logs the number of milliseconds it took for the deferred function to be called
      */
-    var now = reNative.test(now = Date.now) && now || function() {
+    var now = isNative(now = Date.now) && now || function() {
       return new Date().getTime();
     };
 

@@ -7,13 +7,13 @@
   /** Method and object shortcuts */
   var phantom = root.phantom,
       amd = root.define && define.amd,
+      argv = root.process && process.argv,
       document = !phantom && root.document,
       body = document && document.body,
       create = Object.create,
       freeze = Object.freeze,
       noop = function() {},
       params = root.arguments,
-      process = root.process,
       push = Array.prototype.push,
       slice = Array.prototype.slice,
       system = root.system,
@@ -30,9 +30,9 @@
     } else if (system) {
       min = 1;
       result = params = system.args;
-    } else if (process) {
+    } else if (argv) {
       min = 2;
-      result = params = process.argv;
+      result = params = argv;
     } else if (params) {
       result = params;
     }
@@ -249,7 +249,7 @@
         Object.getPrototypeOf = function() {};
 
         Object._keys = Object.keys;
-        Object.keys = function() { return []; };
+        Object.keys = function() {};
 
         // load Lo-Dash and expose it to the bad shims
         lodashBadShim = (lodashBadShim = require(filePath))._ || lodashBadShim;
@@ -403,11 +403,11 @@
         ok(actual, message('Object.defineProperty'));
 
         try {
-          actual = lodashBadShim.isPlainObject({});
+          actual = [lodashBadShim.isPlainObject({}), lodashBadShim.isPlainObject([])];
         } catch(e) {
           actual = null;
         }
-        ok(actual, message('Object.getPrototypeOf'));
+        deepEqual(actual, [true, false], message('Object.getPrototypeOf'));
 
         try {
           actual = lodashBadShim.keys(object);
@@ -1642,7 +1642,7 @@
 
     test('should work with `maxWait` option', 2, function() {
       if (!(isRhino && isModularize)) {
-        var limit = 512,
+        var limit = argv ? 1000 : 500,
             withCount = 0,
             withoutCount = 0;
 
@@ -1652,7 +1652,7 @@
 
         var withoutMaxWait = _.debounce(function() {
           withoutCount++;
-        }, 64);
+        }, 96);
 
         var start = +new Date;
         while ((new Date - start) < limit) {
@@ -1664,6 +1664,27 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    asyncTest('should cancel `maxDelayed` when `delayed` is executed', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var count = 0;
+
+        var debounced = _.debounce(function() {
+          count++;
+        }, 32, { 'maxWait': 64 });
+
+        debounced();
+
+        setTimeout(function() {
+          strictEqual(count, 1);
+          QUnit.start();
+        }, 128);
+      }
+      else {
+        skipTest(1);
+        QUnit.start();
       }
     });
 
@@ -7386,7 +7407,7 @@
       test('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), 1, function() {
         if (!(isRhino && isModularize)) {
           var count = 0,
-              limit = 512,
+              limit = 500,
               options = index ? { 'leading': false } : {};
 
           var throttled = _.throttle(function() {

@@ -38,7 +38,7 @@
 			Object.getPrototypeOf = function() {};
 
 			Object._keys = Object.keys;
-			Object.keys = function() { return []; };
+			Object.keys = function() {};
 
 			// load Lo-Dash and expose it to the bad shims
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');

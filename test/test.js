@@ -2,7 +2,7 @@
   'use strict';
 
   /** Used to store Lo-Dash to test for bad shim detection */
-  var lodashBadShim;
+  var lodashBadShim = root.lodashBadShim;
 
   /** Method and object shortcuts */
   var phantom = root.phantom,
@@ -245,11 +245,14 @@
         Object._defineProperty = Object.defineProperty;
         Object.defineProperty = function() {};
 
+        Object._getPrototypeOf = Object.getPrototypeOf;
+        Object.getPrototypeOf = function() {};
+
         Object._keys = Object.keys;
         Object.keys = function() { return []; };
 
         // load Lo-Dash and expose it to the bad shims
-        lodashBadShim = require(filePath)._;
+        lodashBadShim = (lodashBadShim = require(filePath))._ || lodashBadShim;
 
         // restore native methods
         Array.isArray = Array._isArray;
@@ -257,6 +260,7 @@
         Function.prototype.bind = Function.prototype._bind;
         Object.create = Object._create;
         Object.defineProperty = Object._defineProperty;
+        Object.getPrototypeOf = Object._getPrototypeOf;
         Object.keys = Object._keys;
 
         delete Array._isArray;
@@ -360,7 +364,7 @@
       }
     });
 
-    test('avoids overwritten native methods', 5, function() {
+    test('avoids overwritten native methods', 6, function() {
       function Foo() {}
 
       function message(methodName) {
@@ -371,42 +375,49 @@
 
       if (lodashBadShim) {
         try {
-          var actual = lodashBadShim.bind(function() { return this.a; }, object)();
-        } catch(e) {
-          actual = null;
-        }
-        ok(actual, message('bind'));
-
-        try {
-          actual = lodashBadShim.create(Foo.prototype, object);
-        } catch(e) {
-          actual = null;
-        }
-        ok(actual instanceof Foo, message('create'));
-
-        try {
           actual = lodashBadShim.isArray([]);
         } catch(e) {
           actual = null;
         }
-        ok(actual, message('isArray'));
-
-        try {
-          actual = lodashBadShim.keys(object);
-        } catch(e) {
-          actual = null;
-        }
-        deepEqual(actual, ['a'], message('keys'));
+        ok(actual, message('Array.isArray'));
 
         try {
           actual = lodashBadShim.now();
         } catch(e) {
           actual = null;
         }
-        ok(typeof actual == 'number', message('now'));
+        ok(typeof actual == 'number', message('Date.now'));
+
+        try {
+          actual = lodashBadShim.create(Foo.prototype, object);
+        } catch(e) {
+          actual = null;
+        }
+        ok(actual instanceof Foo, message('Object.create'));
+
+        try {
+          var actual = lodashBadShim.bind(function() { return this.a; }, object)();
+        } catch(e) {
+          actual = null;
+        }
+        ok(actual, message('Object.defineProperty'));
+
+        try {
+          actual = lodashBadShim.isPlainObject({});
+        } catch(e) {
+          actual = null;
+        }
+        ok(actual, message('Object.getPrototypeOf'));
+
+        try {
+          actual = lodashBadShim.keys(object);
+        } catch(e) {
+          actual = null;
+        }
+        deepEqual(actual, ['a'], message('Object.keys'));
       }
       else {
-        skipTest(5);
+        skipTest(6);
       }
     });
   }());
@@ -7785,14 +7796,18 @@
       deepEqual(_.uniq(array), [1, 2, 3]);
     });
 
-    test('should work with large arrays of objects', 1, function() {
+    test('should work with large arrays', 1, function() {
       var object = {};
 
-      var largeArray = _.times(largeArraySize, function() {
-        return object;
+      var largeArray = _.times(largeArraySize, function(index) {
+        switch (index % 3) {
+          case 0: return 0;
+          case 1: return 'a';
+          case 2: return object;
+        }
       });
 
-      deepEqual(_.uniq(largeArray), [object]);
+      deepEqual(_.uniq(largeArray), [0, 'a', object]);
     });
 
     test('should work with a `callback`', 1, function() {

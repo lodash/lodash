@@ -215,11 +215,11 @@
       propertyIsEnumerable = objectProto.propertyIsEnumerable;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
-  var nativeCreate = reNative.test(nativeCreate = Object.create) && nativeCreate,
-      nativeIsArray = reNative.test(nativeIsArray = Array.isArray) && nativeIsArray,
+  var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
+      nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = root.isFinite,
       nativeIsNaN = root.isNaN,
-      nativeKeys = reNative.test(nativeKeys = Object.keys) && nativeKeys,
+      nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
       nativeRandom = Math.random;
@@ -856,6 +856,17 @@
   function getIndexOf() {
     var result = (result = lodash.indexOf) === indexOf ? baseIndexOf : result;
     return result;
+  }
+
+  /**
+   * Checks if `value` is a native function.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if the `value` is a native function, else `false`.
+   */
+  function isNative(value) {
+    return typeof value == 'function' && reNative.test(value);
   }
 
   /**
@@ -4324,7 +4335,7 @@
    * _.defer(function() { console.log(_.now() - stamp); });
    * // => logs the number of milliseconds it took for the deferred function to be called
    */
-  var now = reNative.test(now = Date.now) && now || function() {
+  var now = isNative(now = Date.now) && now || function() {
     return new Date().getTime();
   };
 

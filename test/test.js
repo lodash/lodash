@@ -116,16 +116,7 @@
     page.onInitialized = function() {
       page.evaluate(function() {
         document.addEventListener('DOMContentLoaded', function() {
-          var xhr = new XMLHttpRequest;
-          xhr.open('get', '../vendor/qunit-clib/qunit-clib.js');
-          xhr.onload = function() {
-            var script = document.createElement('script');
-            script.text = xhr.responseText;
-            document.head.appendChild(script);
-            QUnit.done(callPhantom);
-          };
-
-          xhr.send(null);
+          QUnit.done(callPhantom);
         });
       });
     };

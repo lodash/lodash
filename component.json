@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "repo": "lodash/lodash",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "A utility library delivering consistency, customization, performance, & extras.",
   "license": "MIT",
   "keywords": ["amd", "browser", "client", "functional", "server", "util"],

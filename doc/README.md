@@ -1,4 +1,4 @@
-# <a href="http://lodash.com/">Lo-Dash</a> <span>v2.4.0</span>
+# <a href="http://lodash.com/">Lo-Dash</a> <span>v2.4.1</span>
 
 <!-- div -->
 

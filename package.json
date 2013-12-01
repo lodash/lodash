@@ -1,8 +1,8 @@
 {
   "name": "lodash",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "A utility library delivering consistency, customization, performance, & extras.",
-  "homepage": "http://lodash.com/",
+  "homepage": "https://lodash.com/",
   "license": "MIT",
   "main": "dist/lodash.js",
   "keywords": ["amd", "browser", "client", "customize", "functional", "server", "util"],
@@ -11,11 +11,9 @@
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
     "Blaine Bublitz <blaine@iceddev.com> (http://www.iceddev.com/)",
     "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
-    "Mathias Bynens <mathias@qiwi.be> (http://mathiasbynens.be/)"
+    "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
-  "bugs": "https://github.com/lodash/lodash/issues",
-  "repository": { "type": "git", "url": "https://github.com/lodash/lodash.git" },
-  "engines": ["node", "rhino"],
+  "repository": "lodash/lodash",
   "files": [
     "LICENSE.txt",
     "lodash.js",

@@ -247,6 +247,7 @@
     var options = {
       'build': build,
       'framework': 'qunit',
+      'idle-timeout': 300,
       'name': sessionName,
       'public': 'public',
       'platforms': platforms,

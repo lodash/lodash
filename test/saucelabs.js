@@ -216,14 +216,16 @@
       console.error('Tests failed on platforms: ' + JSON.stringify(failingPlatforms));
 
       failingTests.forEach(function(test) {
-        var details =  'See ' + test.url + ' for details.',
-            platform = JSON.stringify(test.platform),
-            result = test.result;
+        var result = test.result || {},
+            details = 'See ' + test.url + ' for details.',
+            failed = result.failed,
+            platform = JSON.stringify(test.platform);
 
-        if (result && result.failed) {
-          console.error(result.failed + ' failures on ' + platform + '. ' + details);
+        if (failed) {
+          console.error(failed + ' failures on ' + platform + '. ' + details);
         } else {
-          console.error('Testing on ' + platform + ' failed; no results available. ' + details);
+          var message = result.message || 'no results available. ' + details;
+          console.error('Testing on ' + platform + ' failed; ' + message);
         }
       });
     }

@@ -129,8 +129,13 @@
         modulePrinted;
 
     /** Object shortcuts */
-    var phantom = context.phantom,
+    var console = context.console,
+        phantom = context.phantom,
+        process = phantom || context.process,
         document = !phantom && context.document;
+
+    /** Detects if running in a PhantomJS web page */
+    var isPhantomPage = typeof context.callPhantom == 'function';
 
     /** Used to display the wait throbber */
     var throbberId,
@@ -369,11 +374,8 @@
 
     /*------------------------------------------------------------------------*/
 
-    // add CLI extras
-    if (!document) {
-
-      /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
-      var console = context.console || (context.console = { 'log': context.print });
+    // add logging extras
+    if (isPhantomPage || !document) {
 
       /**
        * A logging callback triggered when all testing is completed.
@@ -399,7 +401,6 @@
 
           // exit out of Node.js or PhantomJS
           try {
-            var process = context.process || context.phantom;
             if (details.failed) {
               process.exit(1);
             } else {
@@ -508,9 +509,12 @@
           return func(object);
         };
       }());
+    }
 
-      /*----------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------*/
 
+    // add CLI extras
+    if (!document) {
       // Timeout fallbacks based on the work of Andrea Giammarchi and Weston C.
       // https://github.com/WebReflection/wru/blob/master/src/rhinoTimers.js
       // http://stackoverflow.com/questions/2261705/how-to-run-a-javascript-function-asynchronously-without-using-settimeout
@@ -539,6 +543,9 @@
         }());
       } catch(e) { }
 
+      // add `console.log` support to Narwhal, Rhino, and RingoJS
+      console || (console = context.console = { 'log': context.print });
+
       // expose shortcuts
       // exclude `module` because some environments have it as a built-in object
       ('asyncTest deepEqual equal equals expect notDeepEqual notEqual notStrictEqual ' +
@@ -546,7 +553,7 @@
         context[methodName] = QUnit[methodName];
       });
 
-      // must call `QUnit.start()` in the test file if not loaded in a browser
+      // must call `QUnit.start` in the test file if not loaded in a browser
       QUnit.config.autostart = false;
       QUnit.init();
     }

@@ -26,7 +26,7 @@
     'path'  => '../' . $filePath,
     'title' => '<a href="http://lodash.com/">Lo-Dash</a> <span>v' . $version . '</span>',
     'toc'   => 'categories',
-    'url'   => 'https://github.com/lodash/lodash/blob/master/lodash.js'
+    'url'   => 'https://github.com/lodash/lodash/blob/' . $version . '/lodash.js'
   ));
 
   // save to a `.md` file

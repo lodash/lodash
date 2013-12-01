@@ -1527,7 +1527,7 @@ This method is like `_.find` except that it iterates over elements of a `collect
 _.findLast([1, 2, 3, 4], function(num) {
   return num % 2 == 1;
 });
-// => 3
+// => [3, 1]
 ```
 
 * * *

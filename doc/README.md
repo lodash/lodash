@@ -365,11 +365,11 @@ _.findLastIndex(characters, function(chr) {
 
 // using "_.where" callback shorthand
 _.findLastIndex(characters, { 'age': 36 });
-// => 0
+// => 2
 
 // using "_.pluck" callback shorthand
 _.findLastIndex(characters, 'blocked');
-// => 2
+// => 0
 ```
 
 * * *

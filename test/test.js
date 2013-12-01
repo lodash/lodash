@@ -218,7 +218,7 @@
 
         // set bad shims
         Array._isArray = Array.isArray;
-        Array.isArray = function() { return false; };
+        Array.isArray = function() {};
 
         Date._now = Date.now;
         Date.now = function() {};
@@ -251,9 +251,11 @@
         Object.keys = Object._keys;
 
         delete Array._isArray;
+        delete Date._now;
         delete Function.prototype._bind;
         delete Object._create;
         delete Object._defineProperty;
+        delete Object._getPrototypeOf;
         delete Object._keys;
       } catch(e) { }
     }

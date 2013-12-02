@@ -5429,9 +5429,22 @@
   QUnit.module('lodash.now');
 
   (function() {
-    test('should return the number of milliseconds that have elapsed since the Unix epoch', 1, function() {
-      var actual = _.now();
-      ok(new Date - actual < 4);
+    asyncTest('should return the number of milliseconds that have elapsed since the Unix epoch', 2, function() {
+      var stamp = +new Date,
+          actual = _.now();
+           
+      ok(actual >= stamp);
+      
+      if (!(isRhino && isModularize)) {
+        setTimeout(function() {
+          ok(_.now() > actual);
+          QUnit.start();
+        }, 32);
+      }
+      else {
+      	skipTest();
+      	QUnit.start();
+      }
     });
   }());
 

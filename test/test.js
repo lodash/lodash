@@ -353,22 +353,21 @@
       }
     });
 
-    test('avoids overwritten native methods', 6, function() {
+    test('avoids overwritten native methods', 7, function() {
       function Foo() {}
 
       function message(methodName) {
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
-
       var object = { 'a': true };
 
       if (lodashBadShim) {
         try {
-          actual = lodashBadShim.isArray([]);
+          actual = [lodashBadShim.isArray([]), lodashBadShim.isArray({ 'length': 0 })];
         } catch(e) {
           actual = null;
         }
-        ok(actual, message('Array.isArray'));
+        deepEqual(actual, [true, false], message('Array.isArray'));
 
         try {
           actual = lodashBadShim.now();
@@ -378,11 +377,12 @@
         ok(typeof actual == 'number', message('Date.now'));
 
         try {
-          actual = lodashBadShim.create(Foo.prototype, object);
+          actual = [lodashBadShim.create(Foo.prototype, object), lodashBadShim.create()];
         } catch(e) {
           actual = null;
         }
-        ok(actual instanceof Foo, message('Object.create'));
+        ok(actual[0] instanceof Foo, message('Object.create'));
+        deepEqual(actual[1], {}, message('Object.create'));
 
         try {
           var actual = lodashBadShim.bind(function() { return this.a; }, object)();
@@ -399,14 +399,14 @@
         deepEqual(actual, [true, false], message('Object.getPrototypeOf'));
 
         try {
-          actual = lodashBadShim.keys(object);
+          actual = [lodashBadShim.keys(object), lodashBadShim.keys()];
         } catch(e) {
           actual = null;
         }
-        deepEqual(actual, ['a'], message('Object.keys'));
+        deepEqual(actual, [['a'], []], message('Object.keys'));
       }
       else {
-        skipTest(6);
+        skipTest(7);
       }
     });
   }());
@@ -5432,9 +5432,9 @@
     asyncTest('should return the number of milliseconds that have elapsed since the Unix epoch', 2, function() {
       var stamp = +new Date,
           actual = _.now();
-           
+
       ok(actual >= stamp);
-      
+
       if (!(isRhino && isModularize)) {
         setTimeout(function() {
           ok(_.now() > actual);

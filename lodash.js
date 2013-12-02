@@ -1003,8 +1003,8 @@
       function bound() {
         // `Function#bind` spec
         // http://es5.github.io/#x15.3.4.5
+        var args = partialArgs ? slice(partialArgs) : arguments;
         if (partialArgs) {
-          var args = slice(partialArgs);
           push.apply(args, arguments);
         }
         // mimic the constructor's `return` behavior
@@ -1012,10 +1012,10 @@
         if (this instanceof bound) {
           // ensure `new bound` is an instance of `func`
           var thisBinding = baseCreate(func.prototype),
-              result = func.apply(thisBinding, args || arguments);
+              result = func.apply(thisBinding, args);
           return isObject(result) ? result : thisBinding;
         }
-        return func.apply(thisArg, args || arguments);
+        return func.apply(thisArg, args);
       }
       setBindData(bound, bindData);
       return bound;

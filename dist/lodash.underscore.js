@@ -402,6 +402,9 @@
       // `Function#bind` spec
       // http://es5.github.io/#x15.3.4.5
       if (partialArgs) {
+        // avoid `arguments` object deoptimizations by using `slice` instead
+        // of `Array.prototype.slice.call` and not assigning `arguments` to a
+        // variable as a ternary expression
         var args = slice(partialArgs);
         push.apply(args, arguments);
       }

@@ -3836,9 +3836,9 @@
 
       strictEqual(_.isEqual(array1, array2), false);
 
-      array1 = ['a','b', 'c'];
+      array1 = ['a', 'b', 'c'];
       array1[1] = array1;
-      array2 = ['a', ['b', 'b'], 'c'];
+      array2 = ['a', ['a', 'b', 'c'], 'c'];
 
       strictEqual(_.isEqual(array1, array2), false);
     });
@@ -3864,7 +3864,7 @@
 
       object1 = { 'a': 1, 'b': 2, 'c': 3 };
       object1.b = object1;
-      object2 = { 'a': 1, 'b': { 'b': 2 }, 'c': 3 };
+      object2 = { 'a': 1, 'b': { 'a': 1, 'b': 2, 'c': 3 }, 'c': 3 };
 
       strictEqual(_.isEqual(object1, object2), false);
     });
@@ -3909,17 +3909,19 @@
       strictEqual(_.isEqual(object1, object2), true);
     });
 
-    test('should return `false` when comparing values with circular references to unlike values', 2, function() {
-      var array1 = ['a', null, 'c'],
-          array2 = ['a', [], 'c'],
-          object1 = { 'a': 1, 'b': null, 'c': 3 },
-          object2 = { 'a': 1, 'b': {}, 'c': 3 };
+    test('should perform comparisons between objects with shared property values', function() {
+      var object1 = {
+        'a': [1, 2]
+      };
 
-      array1[1] = array1;
-      strictEqual(_.isEqual(array1, array2), false);
+      var object2 = {
+        'a': [1, 2],
+        'b': [1, 2]
+      };
 
-      object1.b = object1;
-      strictEqual(_.isEqual(object1, object2), false);
+      object1.b = object1.a;
+
+      strictEqual(_.isEqual(object1, object2), true);
     });
 
     test('should pass the correct `callback` arguments', 1, function() {

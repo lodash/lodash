@@ -690,22 +690,25 @@
           }
         }
       }
-      return result;
     }
-    forIn(b, function(value, key, b) {
-      if (hasOwnProperty.call(b, key)) {
-        size++;
-        return !(result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, stackA, stackB)) && indicatorObject;
-      }
-    });
-
-    if (result) {
-      forIn(a, function(value, key, a) {
-        if (hasOwnProperty.call(a, key)) {
-          return !(result = --size > -1) && indicatorObject;
+    else {
+      forIn(b, function(value, key, b) {
+        if (hasOwnProperty.call(b, key)) {
+          size++;
+          return !(result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, stackA, stackB)) && indicatorObject;
         }
       });
+
+      if (result) {
+        forIn(a, function(value, key, a) {
+          if (hasOwnProperty.call(a, key)) {
+            return !(result = --size > -1) && indicatorObject;
+          }
+        });
+      }
     }
+    stackA.pop();
+    stackB.pop();
     return result;
   }
 

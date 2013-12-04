@@ -7176,6 +7176,10 @@
       freeExports._ = _;
     }
   }
+  else if (!!process) {
+    // in node-webkit
+    if (!!process.versions['node-webkit']) window._ = _;
+  }
   else {
     // in a browser or Rhino
     root._ = _;

@@ -5,17 +5,9 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 Check out our [wiki]([https://github.com/lodash/lodash/wiki/build-differences]) for details over the differences between builds.
 
-* Modern builds perfect for newer browsers/environments:<br>
-[Development](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) &
-[Production](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js)
-
-* Compatibility builds for older environment support too:<br>
-[Development](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.js) &
-[Production](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.min.js)
-
-* Underscore builds to use as a drop-in replacement:<br>
-[Development](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.js) &
-[Production](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js)
+* [Modern build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js)) perfect for new environments
+* [Compatibility build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.min.js)) for old environments too
+* [Underscore build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js)) as a drop-in replacement
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash). For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.
 
@@ -23,7 +15,7 @@ Love modules? We’ve got you covered with [lodash-amd](https://npmjs.org/packag
 
 ## Dive in
 
-There’s plenty of **[documentation](http://lodash.com/docs)**, [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).<br>
+There’s plenty of **[API documentation](http://lodash.com/docs)**, [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).<br>
 Check out <a href="http://devdocs.io/lodash/">DevDocs</a> as a fast, organized, & searchable interface for our documentation.
 
 The full changelog for this release is available on our [wiki](https://github.com/lodash/lodash/wiki/Changelog).<br>
@@ -31,6 +23,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
 
 ## Features *not* in Underscore
 
+ * 100% [code coverage](https://coveralls.io/r/lodash)
  * AMD loader support ([curl](https://github.com/cujojs/curl), [dojo](http://dojotoolkit.org/), [requirejs](http://requirejs.org/), etc.)
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
  * [_.at](http://lodash.com/docs#at) for cherry-picking collection values

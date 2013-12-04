@@ -248,7 +248,7 @@
       'build': build,
       'framework': 'qunit',
       'idle-timeout': 300,
-      'max-duration': 600,
+      'max-duration': 480,
       'name': sessionName,
       'public': 'public',
       'platforms': platforms,

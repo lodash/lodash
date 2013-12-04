@@ -8143,7 +8143,7 @@
       deepEqual(actual, [['barney', 36, undefined], ['fred', 40, false]]);
     });
 
-    test('should support consuming it\'s return value', 1, function() {
+    test('should support consuming its return value', 1, function() {
       var expected = [['barney', 'fred'], [36, 40]];
       deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);
     });

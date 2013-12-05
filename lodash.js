@@ -6971,7 +6971,7 @@
     lodash.unzip = zip;
 
     // add functions to `lodash.prototype`
-    mixin(lodash);
+    mixin(assign({}, lodash));
 
     /*--------------------------------------------------------------------------*/
 

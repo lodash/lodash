@@ -3307,11 +3307,15 @@
       deepEqual(_.invert(object), { 'a': '0', 'b': '1', '2': 'length' });
     });
 
-    test('should accept the one-to-many flag', 1, function() {
-      var object = { '0': 'a', '1': 'b', '2': 'a' };
-      deepEqual(_.invert(object, true), { 'a': ['0', '2'], 'b': ['1'] });
+    test('should accept a `multiValue` flag', 1, function() {
+      var object = { 'a': 1, 'b': 2, 'c': 1 };
+      deepEqual(_.invert(object, true), { '1': ['a', 'c'], '2': 'b' });
     });
 
+    test('should only add multiple values to own, not inherited, properties', 1, function() {
+      var object = { 'a': 'hasOwnProperty', 'b': 'constructor' };
+      deepEqual(_.invert(object, true), { 'hasOwnProperty': 'a', 'constructor': 'b' });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

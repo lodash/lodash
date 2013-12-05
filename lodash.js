@@ -2534,21 +2534,31 @@
     }
 
     /**
-     * Creates an object composed of the inverted keys and values of the given object.
+     * Creates an object composed of the inverted keys and values of the given
+     * object. If an object contains duplicate values, subsequent values will
+     * overwrite property assignments of previous values unless `multiValue`
+     * is `true`.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to invert.
-     * @param {boolean} oneToMany Allow multiple values for each key in the inverted result
+     * @param {boolean} [multiValue=false] Allow multiple values per key in the inverted object.
      * @returns {Object} Returns the created inverted object.
      * @example
      *
      * _.invert({ 'first': 'fred', 'second': 'barney' });
      * // => { 'fred': 'first', 'barney': 'second' }
      *
-n     */
-    function invert(object, oneToMany) {
+     * // without `multiValue`
+     * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' });
+     * // => { 'fred': 'third', 'barney': 'second' }
+     *
+     * // with `multiValue`
+     * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
+     * // => { 'fred': ['first', 'third'], 'barney': 'second' }
+     */
+    function invert(object, multiValue) {
       var index = -1,
           props = keys(object),
           length = props.length,
@@ -2557,10 +2567,14 @@ n     */
       while (++index < length) {
         var key = props[index],
             value = object[key];
-        if (oneToMany) {
-          result[value] = result[value] || [];
+
+        if (multiValue && hasOwnProperty.call(result, value)) {
+          if (typeof result[value] == 'string') {
+            result[value] = [result[value]];
+          }
           result[value].push(key);
-        } else {
+        }
+        else {
           result[value] = key;
         }
       }

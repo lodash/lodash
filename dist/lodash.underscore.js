@@ -853,7 +853,7 @@
 
   /**
    * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
-   * customized, this method returns the custom method, otherwise it returns
+   * customized this method returns the custom method, otherwise it returns
    * the `baseIndexOf` function.
    *
    * @private
@@ -1251,27 +1251,49 @@
   }
 
   /**
-   * Creates an object composed of the inverted keys and values of the given object.
+   * Creates an object composed of the inverted keys and values of the given
+   * object. If an object contains duplicate values, subsequent values will
+   * overwrite property assignments of previous values unless `multiValue`
+   * is `true`.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {Object} object The object to invert.
+   * @param {boolean} [multiValue=false] Allow multiple values per key in the inverted object.
    * @returns {Object} Returns the created inverted object.
    * @example
    *
    * _.invert({ 'first': 'fred', 'second': 'barney' });
    * // => { 'fred': 'first', 'barney': 'second' }
+   *
+   * // without `multiValue`
+   * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' });
+   * // => { 'fred': 'third', 'barney': 'second' }
+   *
+   * // with `multiValue`
+   * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
+   * // => { 'fred': ['first', 'third'], 'barney': 'second' }
    */
-  function invert(object) {
+  function invert(object, multiValue) {
     var index = -1,
         props = keys(object),
         length = props.length,
         result = {};
 
     while (++index < length) {
-      var key = props[index];
-      result[object[key]] = key;
+      var key = props[index],
+          value = object[key];
+
+      if (multiValue && hasOwnProperty.call(result, value)) {
+        if (typeof result[value] == 'string') {
+          result[value] = [result[value]];
+        }
+        result[value].push(key);
+      }
+      else {
+        result[value] = key;
+      }
     }
     return result;
   }
@@ -3575,9 +3597,10 @@
   }
 
   /**
-   * Creates an array of grouped elements, the first of which contains the first
-   * elements of the given arrays, the second of which contains the second
-   * elements of the given arrays, and so on.
+   * Creates an array of grouped elements, the first of which contains the
+   * first elements of the given arrays, the second of which contains the second
+   * elements of the given arrays, and so on. If a zipped value is provided its
+   * corresponding unzipped value will be returned.
    *
    * @static
    * @memberOf _
@@ -3589,6 +3612,9 @@
    *
    * _.zip(['fred', 'barney'], [30, 40], [true, false]);
    * // => [['fred', 30, true], ['barney', 40, false]]
+   *
+   * _.unzip([['fred', 30, true], ['barney', 40, false]]);
+   * // => [['fred', 'barney'], [30, 40], [true, false]]
    */
   function zip() {
     var index = -1,
@@ -4900,7 +4926,7 @@
   /*--------------------------------------------------------------------------*/
 
   // add functions to `lodash.prototype`
-  mixin(lodash);
+  mixin(assign({}, lodash));
 
   /**
    * The semantic version number.

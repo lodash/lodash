@@ -3306,6 +3306,12 @@
       var object = { '0': 'a', '1': 'b', 'length': 2 };
       deepEqual(_.invert(object), { 'a': '0', 'b': '1', '2': 'length' });
     });
+
+    test('should accept the one-to-many flag', 1, function() {
+      var object = { '0': 'a', '1': 'b', '2': 'a' };
+      deepEqual(_.invert(object, true), { 'a': ['0', '2'], 'b': ['1'] });
+    });
+
   }());
 
   /*--------------------------------------------------------------------------*/

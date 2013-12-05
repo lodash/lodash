@@ -2540,7 +2540,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to invert.
-     * @param {boolean} oneToMany allow multiple values for each key in the inverted result
+     * @param {boolean} oneToMany Allow multiple values for each key in the inverted result
      * @returns {Object} Returns the created inverted object.
      * @example
      *

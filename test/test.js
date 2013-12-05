@@ -1,8 +1,8 @@
 ;(function(root, undefined) {
   'use strict';
 
-  /** Used to store Lo-Dash to test for bad shim detection */
-  var lodashBadShim = root.lodashBadShim;
+  /** Used to store Lo-Dash to test for bad extensions/shims */
+  var lodashBizarro = root.lodashBizarro;
 
   /** Method and object shortcuts */
   var phantom = root.phantom,
@@ -216,6 +216,9 @@
           '})'
         ].join('\n')));
 
+        // add extensions
+        Function.prototype._method = function() {};
+
         // set bad shims
         Array._isArray = Array.isArray;
         Array.isArray = function() {};
@@ -238,8 +241,8 @@
         Object._keys = Object.keys;
         Object.keys = function() {};
 
-        // load Lo-Dash and expose it to the bad shims
-        lodashBadShim = (lodashBadShim = require(filePath))._ || lodashBadShim;
+        // load Lo-Dash and expose it to the bad extensions/shims
+        lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
 
         // restore native methods
         Array.isArray = Array._isArray;
@@ -253,6 +256,7 @@
         delete Array._isArray;
         delete Date._now;
         delete Function.prototype._bind;
+        delete Function.prototype._method;
         delete Object._create;
         delete Object._defineProperty;
         delete Object._getPrototypeOf;
@@ -353,7 +357,16 @@
       }
     });
 
-    test('avoids overwritten native methods', 7, function() {
+    test('should not add `Function.prototype` extensions to lodash', 1, function() {
+      if (lodashBizarro) {
+        equal('_method' in lodashBizarro, false);
+      }
+      else {
+        skipTest(1);
+      }
+    });
+
+    test('should avoid overwritten native methods', 7, function() {
       function Foo() {}
 
       function message(methodName) {
@@ -361,23 +374,23 @@
       }
       var object = { 'a': true };
 
-      if (lodashBadShim) {
+      if (lodashBizarro) {
         try {
-          actual = [lodashBadShim.isArray([]), lodashBadShim.isArray({ 'length': 0 })];
+          actual = [lodashBizarro.isArray([]), lodashBizarro.isArray({ 'length': 0 })];
         } catch(e) {
           actual = null;
         }
         deepEqual(actual, [true, false], message('Array.isArray'));
 
         try {
-          actual = lodashBadShim.now();
+          actual = lodashBizarro.now();
         } catch(e) {
           actual = null;
         }
         ok(typeof actual == 'number', message('Date.now'));
 
         try {
-          actual = [lodashBadShim.create(Foo.prototype, object), lodashBadShim.create()];
+          actual = [lodashBizarro.create(Foo.prototype, object), lodashBizarro.create()];
         } catch(e) {
           actual = null;
         }
@@ -385,21 +398,21 @@
         deepEqual(actual[1], {}, message('Object.create'));
 
         try {
-          var actual = lodashBadShim.bind(function() { return this.a; }, object)();
+          var actual = lodashBizarro.bind(function() { return this.a; }, object)();
         } catch(e) {
           actual = null;
         }
         ok(actual, message('Object.defineProperty'));
 
         try {
-          actual = [lodashBadShim.isPlainObject({}), lodashBadShim.isPlainObject([])];
+          actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
         } catch(e) {
           actual = null;
         }
         deepEqual(actual, [true, false], message('Object.getPrototypeOf'));
 
         try {
-          actual = [lodashBadShim.keys(object), lodashBadShim.keys()];
+          actual = [lodashBizarro.keys(object), lodashBizarro.keys()];
         } catch(e) {
           actual = null;
         }
@@ -1372,10 +1385,10 @@
 
       if (defineProperty && _.support.funcDecomp) {
         _.createCallback(a, object);
-        ok('__bindData__' in a)
+        ok('__bindData__' in a);
 
         _.createCallback(b, object);
-        ok(!('__bindData__' in b));
+        equal('__bindData__' in b, false);
 
         if (_.support.funcNames) {
           _.support.funcNames = false;
@@ -4388,11 +4401,10 @@
       strictEqual(_.isPlainObject({}), true);
     });
 
-    test('should return `false` for Object objects without a [[Class]] of "Object"', 4, function() {
+    test('should return `false` for Object objects without a [[Class]] of "Object"', 3, function() {
       strictEqual(_.isPlainObject(arguments), false);
       strictEqual(_.isPlainObject(Error), false);
       strictEqual(_.isPlainObject(Math), false);
-      strictEqual(_.isPlainObject(root), false);
     });
 
     test('should return `false` for non objects', 3, function() {

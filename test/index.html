@@ -18,6 +18,9 @@
 		<div id="qunit"></div>
 		<div id="exports"></div>
 		<script>
+			// add extensions
+			Function.prototype._method = function() {};
+
 			// set bad shims
 			Array._isArray = Array.isArray;
 			Array.isArray = function() {};
@@ -40,12 +43,12 @@
 			Object._keys = Object.keys;
 			Object.keys = function() {};
 
-			// load Lo-Dash and expose it to the bad shims
+			// load Lo-Dash and expose it to the bad extensions/shims
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 		</script>
 		<script>
-			// store Lo-Dash to test for bad shim detection
-			var lodashBadShim = window._;
+			// store Lo-Dash to test for bad extensions/shims
+			var lodashBizarro = window._;
 
 			// restore native methods
 			if (Array._isArray) {
@@ -86,6 +89,7 @@
 			delete Array._isArray;
 			delete Date._now;
 			delete Function.prototype._bind;
+			delete Function.prototype._method;
 			delete Object._create;
 			delete Object._defineProperty;
 			delete Object._getPrototypeOf;

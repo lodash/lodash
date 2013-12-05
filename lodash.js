@@ -2540,21 +2540,31 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to invert.
+     * @param {boolean} oneToMany allow multiple values for each key in the inverted result
      * @returns {Object} Returns the created inverted object.
      * @example
      *
      * _.invert({ 'first': 'fred', 'second': 'barney' });
      * // => { 'fred': 'first', 'barney': 'second' }
+     *
+     * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
+     * // => { 'fred': ['first', 'third'], 'barney': ['second'] }
      */
-    function invert(object) {
+    function invert(object, oneToMany) {
       var index = -1,
           props = keys(object),
           length = props.length,
           result = {};
 
       while (++index < length) {
-        var key = props[index];
-        result[object[key]] = key;
+        var key = props[index],
+            value = object[key];
+        if (oneToMany) {
+          result[value] = result[value] || [];
+          result[value].push(key);
+        } else {
+          result[value] = key;
+        }
       }
       return result;
     }

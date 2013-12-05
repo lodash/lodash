@@ -1786,7 +1786,7 @@
 
     /**
      * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
-     * customized this method returns the custom method, otherwise it returns
+     * customized, this method returns the custom method, otherwise it returns
      * the `baseIndexOf` function.
      *
      * @private
@@ -5394,10 +5394,9 @@
     }
 
     /**
-     * Creates an array of grouped elements, the first of which contains the
-     * first elements of the given arrays, the second of which contains the second
-     * elements of the given arrays, and so on. If a zipped value is provided its
-     * corresponding unzipped value will be returned.
+     * Creates an array of grouped elements, the first of which contains the first
+     * elements of the given arrays, the second of which contains the second
+     * elements of the given arrays, and so on.
      *
      * @static
      * @memberOf _
@@ -5409,9 +5408,6 @@
      *
      * _.zip(['fred', 'barney'], [30, 40], [true, false]);
      * // => [['fred', 30, true], ['barney', 40, false]]
-     *
-     * _.unzip([['fred', 30, true], ['barney', 40, false]]);
-     * // => [['fred', 'barney'], [30, 40], [true, false]]
      */
     function zip() {
       var array = arguments.length > 1 ? arguments : arguments[0],
@@ -6954,7 +6950,7 @@
     lodash.unzip = zip;
 
     // add functions to `lodash.prototype`
-    mixin(assign({}, lodash));
+    mixin(lodash);
 
     /*--------------------------------------------------------------------------*/
 

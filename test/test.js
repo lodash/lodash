@@ -1942,12 +1942,16 @@
     var escaped = '&amp;&lt;&gt;&quot;&#39;\/',
         unescaped = '&<>"\'\/';
 
+    test('should escape values', 1, function() {
+      equal(_.escape(unescaped), escaped);
+    });
+
     test('should not escape the "/" character', 1, function() {
       equal(_.escape('/'), '/');
     });
 
-    test('should escape values', 1, function() {
-      equal(_.escape(unescaped), escaped);
+    test('should handle strings with nothing to escape', 1, function() {
+      equal(_.escape('abc'), 'abc');
     });
 
     test('should return an empty string when provided `null` or `undefined`', 2, function() {
@@ -7786,6 +7790,14 @@
 
     test('should unescape the proper entities', 1, function() {
       equal(_.unescape(escaped), unescaped);
+    });
+
+    test('should not unescape the "&#x2F;" entity', 1, function() {
+      equal(_.unescape('&#x2F;'), '&#x2F;');
+    });
+
+    test('should handle strings with nothing to unescape', 1, function() {
+      equal(_.unescape('abc'), 'abc');
     });
 
     test('should unescape the same characters escaped by `_.escape`', 1, function() {

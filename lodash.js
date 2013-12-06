@@ -6778,7 +6778,11 @@
      * // => 'Fred, Barney & Pebbles'
      */
     function unescape(string) {
-      return string == null ? '' : String(string).replace(reEscapedHtml, unescapeHtmlChar);
+      if (string == null) {
+        return '';
+      }
+      string = String(string);
+      return string.indexOf(';') < 0 ? string : string.replace(reEscapedHtml, unescapeHtmlChar);
     }
 
     /**

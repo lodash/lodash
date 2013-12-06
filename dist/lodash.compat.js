@@ -2518,15 +2518,15 @@
 
     /**
      * Creates an object composed of the inverted keys and values of the given
-     * object. If an object contains duplicate values, subsequent values will
-     * overwrite property assignments of previous values unless `multiValue`
+     * object. If the given object contains duplicate values, subsequent values
+     * will overwrite property assignments of previous values unless `multiValue`
      * is `true`.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to invert.
-     * @param {boolean} [multiValue=false] Allow multiple values per key in the inverted object.
+     * @param {boolean} [multiValue=false] Allow multiple values per key.
      * @returns {Object} Returns the created inverted object.
      * @example
      *
@@ -4649,9 +4649,11 @@
      * _.first([1, 2, 3]);
      * // => 1
      *
+     * // returns the first two elements
      * _.first([1, 2, 3], 2);
      * // => [1, 2]
      *
+     * // returns elements from the beginning until the callback result is falsey
      * _.first([1, 2, 3], function(num) {
      *   return num < 3;
      * });
@@ -4719,6 +4721,7 @@
      * _.flatten([1, [2], [3, [[4]]]]);
      * // => [1, 2, 3, 4];
      *
+     * // using `isShallow`
      * _.flatten([1, [2], [3, [[4]]]], true);
      * // => [1, 2, 3, [[4]]];
      *
@@ -4762,9 +4765,11 @@
      * _.indexOf([1, 2, 3, 1, 2, 3], 2);
      * // => 1
      *
+     * // using `fromIndex`
      * _.indexOf([1, 2, 3, 1, 2, 3], 2, 3);
      * // => 4
      *
+     * // performing a binary search
      * _.indexOf([1, 1, 2, 2, 3, 3], 2, true);
      * // => 2
      */
@@ -4807,9 +4812,11 @@
      * _.initial([1, 2, 3]);
      * // => [1, 2]
      *
+     * // excludes the last two elements
      * _.initial([1, 2, 3], 2);
      * // => [1]
      *
+     * // excludes elements from the end until the callback fails
      * _.initial([1, 2, 3], function(num) {
      *   return num > 1;
      * });
@@ -4937,9 +4944,11 @@
      * _.last([1, 2, 3]);
      * // => 3
      *
+     * // returns the last two elements
      * _.last([1, 2, 3], 2);
      * // => [2, 3]
      *
+     * // returns elements from the end until the callback fails
      * _.last([1, 2, 3], function(num) {
      *   return num > 1;
      * });
@@ -5002,6 +5011,7 @@
      * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2);
      * // => 4
      *
+     * // using `fromIndex`
      * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2, 3);
      * // => 1
      */
@@ -5186,9 +5196,11 @@
      * _.rest([1, 2, 3]);
      * // => [2, 3]
      *
+     * // excludes the first two elements
      * _.rest([1, 2, 3], 2);
      * // => [3]
      *
+     * // excludes elements from the beginning until the callback fails
      * _.rest([1, 2, 3], function(num) {
      *   return num < 3;
      * });
@@ -5254,22 +5266,24 @@
      * _.sortedIndex([20, 30, 50], 40);
      * // => 2
      *
-     * // using "_.pluck" callback shorthand
-     * _.sortedIndex([{ 'x': 20 }, { 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
-     * // => 2
-     *
      * var dict = {
      *   'wordToNumber': { 'twenty': 20, 'thirty': 30, 'fourty': 40, 'fifty': 50 }
      * };
      *
+     * // using `callback`
      * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
      *   return dict.wordToNumber[word];
      * });
      * // => 2
      *
+     * // using `callback` with `thisArg`
      * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
      *   return this.wordToNumber[word];
      * }, dict);
+     * // => 2
+     *
+     * // using "_.pluck" callback shorthand
+     * _.sortedIndex([{ 'x': 20 }, { 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
      * // => 2
      */
     function sortedIndex(array, value, callback, thisArg) {
@@ -5338,12 +5352,15 @@
      * _.uniq([1, 2, 1, 3, 1]);
      * // => [1, 2, 3]
      *
+     * // using `isSorted`
      * _.uniq([1, 1, 2, 2, 3], true);
      * // => [1, 2, 3]
      *
+     * // using `callback`
      * _.uniq(['A', 'b', 'C', 'a', 'B', 'c'], function(letter) { return letter.toLowerCase(); });
      * // => ['A', 'b', 'C']
      *
+     * // using `callback` with `thisArg`
      * _.uniq([1, 2.5, 3, 1.5, 2, 3.5], function(num) { return this.floor(num); }, Math);
      * // => [1, 2.5, 3]
      *

@@ -4501,12 +4501,13 @@
     function compact(array) {
       var index = -1,
           length = array ? array.length : 0,
-          result = [];
+          result = [],
+          cur = 0,
+          value;
 
       while (++index < length) {
-        var value = array[index];
-        if (value) {
-          result.push(value);
+        if (value = array[index]) {
+          result[cur++] = value;
         }
       }
       return result;

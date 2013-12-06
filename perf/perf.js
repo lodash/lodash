@@ -885,12 +885,12 @@
     Benchmark.Suite('`_.every` iterating an array')
       .add(buildName, '\
         lodash.every(numbers, function(num) {\
-          return num + "";\
+          return num;\
         })'
       )
       .add(otherName, '\
         _.every(numbers, function(num) {\
-          return num + "";\
+          return num;\
         })'
       )
   );
@@ -899,12 +899,12 @@
     Benchmark.Suite('`_.every` iterating an object')
       .add(buildName, '\
         lodash.every(object, function(num) {\
-          return num + "";\
+          return num;\
         })'
       )
       .add(otherName, '\
         _.every(object, function(num) {\
-          return num + "";\
+          return num;\
         })'
       )
   );
@@ -1839,6 +1839,28 @@
       )
       .add(otherName, '\
         _.toArray(object)'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.unescape` string without html entities')
+      .add(buildName, '\
+        lodash.unescape("`&`, `<`, `>`, `\\"`, and `\'`")'
+      )
+      .add(otherName, '\
+        _.unescape("`&`, `<`, `>`, `\\"`, and `\'`")'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.unescape` string with html entities')
+      .add(buildName, '\
+        lodash.unescape("`&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;`")'
+      )
+      .add(otherName, '\
+        _.unescape("`&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;`")'
       )
   );
 

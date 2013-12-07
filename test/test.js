@@ -91,7 +91,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // log params passed to `test.js`
+  // log params provided to `test.js`
   if (params) {
     console.log('test.js invoked with arguments: ' + JSON.stringify(slice.call(params)));
   }
@@ -5037,7 +5037,7 @@
   QUnit.module('lodash.memoize');
 
   (function() {
-    test('should memoize results based on the first argument passed', 2, function() {
+    test('should memoize results based on the first argument provided', 2, function() {
       var memoized = _.memoize(function(a, b, c) {
         return a + b + c;
       });
@@ -5411,7 +5411,7 @@
       });
     });
 
-    test('should not error when passed non-object `options` values', 2, function() {
+    test('should not error for non-object `options` values', 2, function() {
       var pass = true;
 
       try {
@@ -7276,7 +7276,7 @@
       equal(compiled(), '<<\n a \n>>');
     });
 
-    test('should not error when passed non-object `data` and `options` values', 2, function() {
+    test('should not error for non-object `data` and `options` values', 2, function() {
       var pass = true;
 
       try {
@@ -7564,7 +7564,7 @@
   _.forEach(['debounce', 'throttle'], function(methodName) {
     var func = _[methodName];
 
-    test('_.' + methodName + ' should not error when passed non-object `options` values', 1, function() {
+    test('_.' + methodName + ' should not error for non-object `options` values', 1, function() {
       var pass = true;
 
       try {
@@ -8111,7 +8111,14 @@
     test('should return an array of unique values', 2, function() {
       var actual = _.xor([1, 1, 2, 5], [2, 2, 3, 5], [3, 4, 5, 5]);
       deepEqual(actual, [1, 4, 5]);
-      deepEqual(_.xor([1, 1]), [1]);
+
+      actual = _.xor([1, 1]);
+      deepEqual(actual, [1]);
+    });
+
+    test('should return a new array when a single array is provided', 1, function() {
+      var array = [1];
+      notStrictEqual(_.xor(array), array);
     });
 
     test('should return a wrapped value when chaining', 2, function() {

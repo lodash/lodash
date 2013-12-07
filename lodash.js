@@ -5436,18 +5436,17 @@
      * // => [1, 4, 5]
      */
     function xor() {
-      var index = -1,
+      var result,
+          index = -1,
           length = arguments.length;
 
       while (++index < length) {
         var array = arguments[index];
         if (isArray(array) || isArguments(array)) {
-          var result = result
-            ? baseUniq(baseDifference(result, array).concat(baseDifference(array, result)))
-            : array;
+          result = result ? baseDifference(result, array).concat(baseDifference(array, result)) : array;
         }
       }
-      return result || [];
+      return result ? baseUniq(result) : [];
     }
 
     /**

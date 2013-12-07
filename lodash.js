@@ -5436,14 +5436,15 @@
      * // => [1, 4, 5]
      */
     function xor() {
-      var result,
-          index = -1,
+      var index = -1,
           length = arguments.length;
 
       while (++index < length) {
         var array = arguments[index];
         if (isArray(array) || isArguments(array)) {
-          result = result ? baseDifference(result, array).concat(baseDifference(array, result)) : array;
+          var result = result
+            ? baseDifference(result, array).concat(baseDifference(array, result))
+            : array;
         }
       }
       return result ? baseUniq(result) : [];

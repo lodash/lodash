@@ -8108,9 +8108,10 @@
       deepEqual(actual, [1, 4, 5]);
     });
 
-    test('should return an array of unique values', 1, function() {
+    test('should return an array of unique values', 2, function() {
       var actual = _.xor([1, 1, 2, 5], [2, 2, 3, 5], [3, 4, 5, 5]);
       deepEqual(actual, [1, 4, 5]);
+      deepEqual(_.xor([1, 1]), [1]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {

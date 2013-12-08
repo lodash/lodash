@@ -106,6 +106,14 @@
     });
 
     page.onCallback = function(details) {
+      var coverage = details.coverage;
+      if (coverage) {
+        var fs = require('fs'),
+            cwd = fs.workingDirectory,
+            sep = fs.separator;
+
+        fs.write([cwd, 'coverage', 'coverage.json'].join(sep), JSON.stringify(coverage));
+      }
       phantom.exit(details.failed ? 1 : 0);
     };
 
@@ -116,7 +124,10 @@
     page.onInitialized = function() {
       page.evaluate(function() {
         document.addEventListener('DOMContentLoaded', function() {
-          QUnit.done(callPhantom);
+          QUnit.done(function(details) {
+            details.coverage = window.__coverage__;
+            callPhantom(details);
+          });
         });
       });
     };

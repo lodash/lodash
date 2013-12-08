@@ -1,9 +1,11 @@
 .coveralls.yml
 .DS_Store
+npm-debug.log
 *.custom.*
 *.template.*
 *.map
 /*.min.*
+coverage
 modularize
 node_modules
 dist/*.backbone.*

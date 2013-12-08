@@ -3843,11 +3843,13 @@
           args2 = (function() { return arguments; }(1, 2, 3)),
           args3 = (function() { return arguments; }(1, 2));
 
+      strictEqual(_.isEqual(args1, args2), true);
+
       if (!isPhantomPage) {
-        strictEqual(_.isEqual(args1, args2), true);
         strictEqual(_.isEqual(args1, args3), false);
-      } else {
-        skipTest(2);
+      }
+      else {
+        skipTest();
       }
     });
 

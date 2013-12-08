@@ -18,83 +18,85 @@
 		<div id="qunit"></div>
 		<div id="exports"></div>
 		<script>
-			// add extensions
-			Function.prototype._method = function() {};
+			function addBizarroMethods() {
+				// add extensions
+				Function.prototype._method = function() {};
 
-			// set bad shims
-			Array._isArray = Array.isArray;
-			Array.isArray = function() {};
+				// set bad shims
+				Array._isArray = Array.isArray;
+				Array.isArray = function() {};
 
-			Date._now = Date.now;
-			Date.now = function() {};
+				Date._now = Date.now;
+				Date.now = function() {};
 
-			Function.prototype._bind = Function.prototype.bind;
-			Function.prototype.bind = function() { return function() {}; };
+				Function.prototype._bind = Function.prototype.bind;
+				Function.prototype.bind = function() { return function() {}; };
 
-			Object._create = Object.create;
-			Object.create = function() {};
+				Object._create = Object.create;
+				Object.create = function() {};
 
-			Object._defineProperty = Object.defineProperty;
-			Object.defineProperty = function() {};
+				Object._defineProperty = Object.defineProperty;
+				Object.defineProperty = function() {};
 
-			Object._getPrototypeOf = Object.getPrototypeOf;
-			Object.getPrototypeOf = function() {};
+				Object._getPrototypeOf = Object.getPrototypeOf;
+				Object.getPrototypeOf = function() {};
 
-			Object._keys = Object.keys;
-			Object.keys = function() {};
+				Object._keys = Object.keys;
+				Object.keys = function() {};
+			}
+
+			function removeBizarroMethods() {
+				if (Array._isArray) {
+					Array.isArray = Array._isArray;
+				} else {
+					delete Array.isArray;
+				}
+				if (Date._now) {
+					Date.now = Date._now;
+				} else {
+					delete Date.now;
+				}
+				if (Function.prototype._bind) {
+					Function.prototype.bind = Function.prototype._bind;
+				} else {
+					delete Function.prototype.bind;
+				}
+				if (Object._create) {
+					Object.create = Object._create;
+				} else {
+					delete Object.create;
+				}
+				if (Object._defineProperty) {
+					Object.defineProperty = Object._defineProperty;
+				} else {
+					delete Object.defineProperty;
+				}
+				if (Object._getPrototypeOf) {
+					Object.getPrototypeOf = Object._getPrototypeOf;
+				} else {
+					delete Object.getPrototypeOf;
+				}
+				if (Object._keys) {
+					Object.keys = Object._keys;
+				} else {
+					delete Object.keys;
+				}
+				delete Array._isArray;
+				delete Date._now;
+				delete Function.prototype._bind;
+				delete Function.prototype._method;
+				delete Object._create;
+				delete Object._defineProperty;
+				delete Object._getPrototypeOf;
+				delete Object._keys;
+			}
+
+			addBizarroMethods();
 
 			// load Lo-Dash and expose it to the bad extensions/shims
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 		</script>
 		<script>
-			// store Lo-Dash to test for bad extensions/shims
-			var lodashBizarro = window._;
-
-			// restore native methods
-			if (Array._isArray) {
-				Array.isArray = Array._isArray;
-			} else {
-				delete Array.isArray;
-			}
-			if (Date._now) {
-				Date.now = Date._now;
-			} else {
-				delete Date.now;
-			}
-			if (Function.prototype._bind) {
-				Function.prototype.bind = Function.prototype._bind;
-			} else {
-				delete Function.prototype.bind;
-			}
-			if (Object._create) {
-				Object.create = Object._create;
-			} else {
-				delete Object.create;
-			}
-			if (Object._defineProperty) {
-				Object.defineProperty = Object._defineProperty;
-			} else {
-				delete Object.defineProperty;
-			}
-			if (Object._getPrototypeOf) {
-				Object.getPrototypeOf = Object._getPrototypeOf;
-			} else {
-				delete Object.getPrototypeOf;
-			}
-			if (Object._keys) {
-				Object.keys = Object._keys;
-			} else {
-				delete Object.keys;
-			}
-			delete Array._isArray;
-			delete Date._now;
-			delete Function.prototype._bind;
-			delete Function.prototype._method;
-			delete Object._create;
-			delete Object._defineProperty;
-			delete Object._getPrototypeOf;
-			delete Object._keys;
-
 			QUnit.config.hidepassed = true;
 
 			// assign results to `global_test_results` for Sauce Labs
@@ -103,8 +105,10 @@
 				global_test_results = results;
 			});
 
-			// clear existing `_` value
+			// store Lo-Dash to test for bad extensions/shims
+			var lodashBizarro = window._;
 			window._ = undefined;
+			removeBizarroMethods();
 
 			// load Lo-Dash and test scripts
 			document.write(ui.urlParams.loader == 'none'
@@ -132,63 +136,80 @@
 
 				QUnit.config.autostart = false;
 
-				// load Lo-Dash as a module
-				require({
-					'baseUrl': './',
-					'urlArgs': 't=' + (+new Date),
-					'packages': [
-						{
-							'name': 'lodash',
-							'location': locationPath,
-							'main': moduleMain
-						},
-						{
-							'name': 'shimmed',
-							'location': './abc/../' + locationPath,
-							'main': moduleMain
-						},
-						{
-							'name': 'underscore',
-							'location': './xyz/../' + locationPath,
-							'main': moduleMain
-						},
-						{
-							'name': 'test',
-							'location': basePath + '/test',
-							'main': 'test',
-							'config': {
-								// work around no global being exported
-								'exports': 'QUnit',
-								'loader': 'curl/loader/legacy'
+				function getConfig() {
+					return {
+						'baseUrl': './',
+						'urlArgs': 't=' + (+new Date),
+						'packages': [
+							{
+								'name': 'lodash',
+								'location': locationPath,
+								'main': moduleMain
+							},
+							{
+								'name': 'shimmed',
+								'location': './abc/../' + locationPath,
+								'main': moduleMain
+							},
+							{
+								'name': 'underscore',
+								'location': './xyz/../' + locationPath,
+								'main': moduleMain
+							},
+							{
+								'name': 'test',
+								'location': basePath + '/test',
+								'main': 'test',
+								'config': {
+									// work around no global being exported
+									'exports': 'QUnit',
+									'loader': 'curl/loader/legacy'
+								}
+							}
+						],
+						'shim': {
+							'shimmed': {
+								'exports': '_'
 							}
 						}
-					],
-					'shim': {
-						'shimmed': {
-							'exports': '_'
+					};
+				}
+
+				function loadModulesAndTests() {
+					require(getConfig(), ['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
+						if (shimmed && shimmed.noConflict) {
+							shimmedModule = shimmed.noConflict();
+							shimmedModule.moduleName = 'shimmed';
 						}
-					}
-				},
-				['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
-					if (shimmed && shimmed.noConflict) {
-						shimmedModule = shimmed.noConflict();
-						shimmedModule.moduleName = 'shimmed';
-					}
-					if (underscore && underscore.noConflict) {
-						underscoreModule = underscore.noConflict();
-						underscoreModule.moduleName = 'underscore';
-					}
-					if (lodash) {
-						lodashModule = lodash;
-						lodashModule.moduleName = 'lodash';
-					}
-					if (ui.isModularize) {
-						window._ = lodash;
-					}
-					require(['test'], function() {
-						QUnit.start();
+						if (underscore && underscore.noConflict) {
+							underscoreModule = underscore.noConflict();
+							underscoreModule.moduleName = 'underscore';
+						}
+						if (lodash) {
+							lodashModule = lodash;
+							lodashModule.moduleName = 'lodash';
+						}
+						if (ui.isModularize) {
+							window._ = lodash;
+						}
+						require(['test'], function() {
+							QUnit.start();
+						});
 					});
-				});
+				}
+				if (window.requirejs) {
+					addBizarroMethods();
+
+					require(getConfig(), ['lodash'], function(lodash) {
+						lodashBizarro = lodash;
+						delete requirejs.s.contexts._;
+
+						removeBizarroMethods();
+						loadModulesAndTests();
+					});
+				} else {
+					loadModulesAndTests();
+				}
 			}());
 
 			// set a more readable browser name

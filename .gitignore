@@ -1,8 +1,8 @@
 .coveralls.yml
 .DS_Store
-npm-debug.log
 *.custom.*
 *.template.*
+*.log
 *.map
 /*.min.*
 coverage

@@ -25,6 +25,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
 
  * 100% [code coverage](https://coveralls.io/r/lodash)
  * AMD loader support ([curl](https://github.com/cujojs/curl), [dojo](http://dojotoolkit.org/), [requirejs](http://requirejs.org/), etc.)
+ * Follows [semantic versioning](http://semver.org/) for releases
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
  * [_.at](http://lodash.com/docs#at) for cherry-picking collection values
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods

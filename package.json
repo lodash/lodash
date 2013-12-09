@@ -53,6 +53,7 @@
       "bower.json",
       "component.json",
       "doc",
+      "coverage",
       "modularize",
       "node_modules",
       "perf",

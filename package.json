@@ -45,6 +45,7 @@
       "*.custom.*",
       "*.min.*",
       "*.template.*",
+      "*.log",
       "*.map",
       "*.md",
       "lodash.js",

@@ -6242,6 +6242,9 @@
      * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
      * corresponding HTML entities.
      *
+     * Note: No other characters are escaped. To HTML-escape other characters as
+     * well, use a third-party library like [_he_](http://mths.be/he).
+     *
      * @static
      * @memberOf _
      * @category Utilities
@@ -6764,9 +6767,12 @@
     }
 
     /**
-     * The inverse of `_.escape` this method converts the HTML entities
+     * The inverse of `_.escape`; this method converts the HTML entities
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
      * corresponding characters.
+     *
+     * Note: No other HTML entities are unescaped. To HTML-unescape other
+     * entities as well, use a third-party library like [_he_](http://mths.be/he).
      *
      * @static
      * @memberOf _

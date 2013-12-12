@@ -4159,7 +4159,7 @@
     }
 
     /**
-     * The opposite of `_.filter` this method returns the elements of a
+     * The opposite of `_.filter`; this method returns the elements of a
      * collection that the callback does **not** return truey for.
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -5185,7 +5185,7 @@
     }
 
     /**
-     * The opposite of `_.initial` this method gets all but the first element or
+     * The opposite of `_.initial`; this method gets all but the first element or
      * first `n` elements of an array. If a callback function is provided elements
      * at the beginning of the array are excluded from the result as long as the
      * callback returns truey. The callback is bound to `thisArg` and invoked
@@ -6242,8 +6242,8 @@
      * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
      * corresponding HTML entities.
      *
-     * Note: No other characters are escaped. To HTML-escape other characters as
-     * well, use a third-party library like [_he_](http://mths.be/he).
+     * Note: No other characters are escaped. To escape additional characters
+     * use a third-party library like [_he_](http://mths.be/he).
      *
      * @static
      * @memberOf _
@@ -6771,8 +6771,8 @@
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
      * corresponding characters.
      *
-     * Note: No other HTML entities are unescaped. To HTML-unescape other
-     * entities as well, use a third-party library like [_he_](http://mths.be/he).
+     * Note: No other HTML entities are unescaped. To unescape additional HTML
+     * entities use a third-party library like [_he_](http://mths.be/he).
      *
      * @static
      * @memberOf _

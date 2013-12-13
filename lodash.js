@@ -950,8 +950,8 @@
       // iterate own properties using `Object.keys`
       '  <% if (useHas && keys) { %>\n' +
       '  var ownIndex = -1,\n' +
-      '      ownProps = objectTypes[typeof iterable] && keys(iterable),\n' +
-      '      length = ownProps ? ownProps.length : 0;\n\n' +
+      '      ownProps = keys(iterable),\n' +
+      '      length = ownProps.length;\n\n' +
       '  while (++ownIndex < length) {\n' +
       '    index = ownProps[ownIndex];\n<%' +
       "    if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
@@ -2001,27 +2001,6 @@
       'loop': 'if (callback(iterable[index], index, collection) === false) return result'
     };
 
-    /** Reusable iterator options for `assign` and `defaults` */
-    var defaultsIteratorOptions = {
-      'args': 'object, source, guard',
-      'top':
-        'var args = arguments,\n' +
-        '    argsIndex = 0,\n' +
-        "    argsLength = typeof guard == 'number' ? 2 : args.length;\n" +
-        'while (++argsIndex < argsLength) {\n' +
-        '  iterable = args[argsIndex];\n' +
-        '  if (iterable && objectTypes[typeof iterable]) {',
-      'keys': keys,
-      'loop': "if (typeof result[index] == 'undefined') result[index] = iterable[index]",
-      'bottom': '  }\n}'
-    };
-
-    /** Reusable iterator options for `forIn` and `forOwn` */
-    var forOwnIteratorOptions = {
-      'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
-      'array': false
-    };
-
     /**
      * Used to convert characters to HTML entities:
      *
@@ -2093,18 +2072,31 @@
      * defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    var assign = createIterator(defaultsIteratorOptions, {
-      'top':
-        defaultsIteratorOptions.top.replace(';',
-          ';\n' +
-          "if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {\n" +
-          '  var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);\n' +
-          "} else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {\n" +
-          '  callback = args[--argsLength];\n' +
-          '}'
-        ),
-      'loop': 'result[index] = callback ? callback(result[index], iterable[index]) : iterable[index]'
-    });
+    function assign(object, source, guard) {
+      var args = arguments,
+          argsIndex = 0,
+          argsLength = typeof guard == 'number' ? 2 : args.length;
+
+      if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
+        var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);
+      } else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {
+        callback = args[--argsLength];
+      }
+      while (++argsIndex < argsLength) {
+        source = args[argsIndex];
+        if (isObject(source)) {
+          var index = -1,
+              props = keys(source),
+              length = props.length;
+
+          while (++index < length) {
+            var key = props[index];
+            object[key] = callback ? callback(object[key], source[key]) : source[key];
+          }
+        }
+      }
+      return object;
+    }
 
     /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects will also
@@ -2258,7 +2250,28 @@
      * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    var defaults = createIterator(defaultsIteratorOptions);
+    function defaults(object, source, guard) {
+      var args = arguments,
+          argsIndex = 0,
+          argsLength = typeof guard == 'number' ? 2 : args.length;
+
+      while (++argsIndex < argsLength) {
+        source = args[argsIndex];
+        if (isObject(source)) {
+          var index = -1,
+              props = keys(source),
+              length = props.length;
+
+          while (++index < length) {
+            var key = props[index];
+            if (typeof object[key] == 'undefined') {
+              object[key] = source[key];
+            }
+          }
+        }
+      }
+      return object;
+    }
 
     /**
      * This method is like `_.findIndex` except that it returns the key of the
@@ -2397,7 +2410,9 @@
      * });
      * // => logs 'x', 'y', and 'move' (property order is not guaranteed across environments)
      */
-    var forIn = createIterator(eachIteratorOptions, forOwnIteratorOptions, {
+    var forIn = createIterator(eachIteratorOptions, {
+      'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
+      'array': false,
       'useHas': false
     });
 
@@ -2467,7 +2482,20 @@
      * });
      * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
      */
-    var forOwn = createIterator(eachIteratorOptions, forOwnIteratorOptions);
+    function forOwn(object, callback, thisArg) {
+      var index = -1,
+          props = keys(object),
+          length = props.length;
+
+      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      while (++index < length) {
+        var key = props[index];
+        if (callback(object[key], key, object) === false) {
+          break;
+        }
+      }
+      return object;
+    }
 
     /**
      * This method is like `_.forOwn` except that it iterates over elements

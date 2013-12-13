@@ -9,7 +9,7 @@
       amd = root.define && define.amd,
       argv = root.process && process.argv,
       document = !phantom && root.document,
-      body = document && document.body,
+      body = root.document && root.document.body,
       create = Object.create,
       freeze = Object.freeze,
       noop = function() {},
@@ -227,51 +227,59 @@
           '})'
         ].join('\n')));
 
+        // fake dom
+        var window = global.window = {};
+        window.document = {};
+        window.window = window;
+
         // add extensions
         Function.prototype._method = function() {};
 
         // set bad shims
-        Array._isArray = Array.isArray;
+        var _isArray = Array.isArray;
         Array.isArray = function() {};
 
-        Date._now = Date.now;
+        var _now = Date.now;
         Date.now = function() {};
 
-        Function.prototype._bind = Function.prototype.bind;
+        var _bind = Function.prototype.bind;
         Function.prototype.bind = function() { return function() {}; };
 
-        Object._create = Object.create;
+        var _create = Object.create;
         Object.create = function() {};
 
-        Object._defineProperty = Object.defineProperty;
+        var _defineProperty = Object.defineProperty;
         Object.defineProperty = function() {};
 
-        Object._getPrototypeOf = Object.getPrototypeOf;
+        var _getPrototypeOf = Object.getPrototypeOf;
         Object.getPrototypeOf = function() {};
 
-        Object._keys = Object.keys;
+        var _keys = Object.keys;
         Object.keys = function() {};
+
+        var _clearTimeout = global.clearTimeout;
+        global.clearTimeout = function() {};
+
+        var _setTimeout = global.setTimeout;
+        global.setTimeout = function() {};
 
         // load Lo-Dash and expose it to the bad extensions/shims
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
 
         // restore native methods
-        Array.isArray = Array._isArray;
-        Date.now = Date._now;
-        Function.prototype.bind = Function.prototype._bind;
-        Object.create = Object._create;
-        Object.defineProperty = Object._defineProperty;
-        Object.getPrototypeOf = Object._getPrototypeOf;
-        Object.keys = Object._keys;
+        Array.isArray = _isArray;
+        Date.now = _now;
+        Function.prototype.bind = _bind;
+        Object.create = _create;
+        Object.defineProperty = _defineProperty;
+        Object.getPrototypeOf = _getPrototypeOf;
+        Object.keys = _keys;
 
-        delete Array._isArray;
-        delete Date._now;
-        delete Function.prototype._bind;
+        global.clearTimeout = _clearTimeout;
+        global.setTimeout = _setTimeout;
+
+        delete global.window;
         delete Function.prototype._method;
-        delete Object._create;
-        delete Object._defineProperty;
-        delete Object._getPrototypeOf;
-        delete Object._keys;
       } catch(e) { }
     }
     if (!_._object && document) {
@@ -3525,15 +3533,30 @@
   QUnit.module('lodash.isElement');
 
   (function() {
-    test('should use strict equality in its duck type check', 6, function() {
-      var element = body || { 'nodeType': 1 };
+    function Element() {
+      this.nodeType = 1;
+    }
+
+    test('should use robust check', 7, function() {
+      var element = body || new Element;
 
       strictEqual(_.isElement(element), true);
+      strictEqual(_.isElement({ 'nodeType': 1 }), false);
       strictEqual(_.isElement({ 'nodeType': new Number(1) }), false);
       strictEqual(_.isElement({ 'nodeType': true }), false);
       strictEqual(_.isElement({ 'nodeType': [1] }), false);
       strictEqual(_.isElement({ 'nodeType': '1' }), false);
       strictEqual(_.isElement({ 'nodeType': '001' }), false);
+    });
+
+    test('should use a stronger check in browsers', 1, function() {
+      var lodash = document ? _ : lodashBizarro;
+      if (lodash) {
+        strictEqual(lodash.isElement(new Element), false);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should work with elements from another realm', 1, function() {
@@ -6927,6 +6950,7 @@
       var props = [
         'argsClass',
         'argsObject',
+        'dom',
         'enumErrorProps',
         'enumPrototypes',
         'fastBind',

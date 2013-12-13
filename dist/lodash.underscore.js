@@ -1195,17 +1195,19 @@
    * });
    * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
    */
-  var forOwn = function(collection, callback) {
-    var index, iterable = collection, result = iterable;
-    if (!iterable) return result;
-    if (!objectTypes[typeof iterable]) return result;
-      for (index in iterable) {
-        if (hasOwnProperty.call(iterable, index)) {
-          if (callback(iterable[index], index, collection) === indicatorObject) return result;
-        }
+  function forOwn(object, callback) {
+    var index = -1,
+        props = keys(object),
+        length = props.length;
+
+    while (++index < length) {
+      var key = props[index];
+      if (callback(object[key], key, object) === indicatorObject) {
+        break;
       }
-    return result
-  };
+    }
+    return object;
+  }
 
   /**
    * Creates a sorted array of property names of all enumerable properties,

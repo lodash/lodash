@@ -1688,32 +1688,31 @@
      * defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    var assign = function(object, source, guard) {
-      var index, iterable = object, result = iterable;
-      if (!iterable) return result;
+    function assign(object, source, guard) {
       var args = arguments,
           argsIndex = 0,
           argsLength = typeof guard == 'number' ? 2 : args.length;
+
       if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
         var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);
       } else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {
         callback = args[--argsLength];
       }
       while (++argsIndex < argsLength) {
-        iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {
-        var ownIndex = -1,
-            ownProps = objectTypes[typeof iterable] && keys(iterable),
-            length = ownProps ? ownProps.length : 0;
+        source = args[argsIndex];
+        if (isObject(source)) {
+          var index = -1,
+              props = keys(source),
+              length = props.length;
 
-        while (++ownIndex < length) {
-          index = ownProps[ownIndex];
-          result[index] = callback ? callback(result[index], iterable[index]) : iterable[index];
-        }
+          while (++index < length) {
+            var key = props[index];
+            object[key] = callback ? callback(object[key], source[key]) : source[key];
+          }
         }
       }
-      return result
-    };
+      return object;
+    }
 
     /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects will also
@@ -1867,27 +1866,28 @@
      * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    var defaults = function(object, source, guard) {
-      var index, iterable = object, result = iterable;
-      if (!iterable) return result;
+    function defaults(object, source, guard) {
       var args = arguments,
           argsIndex = 0,
           argsLength = typeof guard == 'number' ? 2 : args.length;
-      while (++argsIndex < argsLength) {
-        iterable = args[argsIndex];
-        if (iterable && objectTypes[typeof iterable]) {
-        var ownIndex = -1,
-            ownProps = objectTypes[typeof iterable] && keys(iterable),
-            length = ownProps ? ownProps.length : 0;
 
-        while (++ownIndex < length) {
-          index = ownProps[ownIndex];
-          if (typeof result[index] == 'undefined') result[index] = iterable[index];
-        }
+      while (++argsIndex < argsLength) {
+        source = args[argsIndex];
+        if (isObject(source)) {
+          var index = -1,
+              props = keys(source),
+              length = props.length;
+
+          while (++index < length) {
+            var key = props[index];
+            if (typeof object[key] == 'undefined') {
+              object[key] = source[key];
+            }
+          }
         }
       }
-      return result
-    };
+      return object;
+    }
 
     /**
      * This method is like `_.findIndex` except that it returns the key of the
@@ -2103,21 +2103,20 @@
      * });
      * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
      */
-    var forOwn = function(collection, callback, thisArg) {
-      var index, iterable = collection, result = iterable;
-      if (!iterable) return result;
-      if (!objectTypes[typeof iterable]) return result;
-      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-        var ownIndex = -1,
-            ownProps = objectTypes[typeof iterable] && keys(iterable),
-            length = ownProps ? ownProps.length : 0;
+    function forOwn(object, callback, thisArg) {
+      var index = -1,
+          props = keys(object),
+          length = props.length;
 
-        while (++ownIndex < length) {
-          index = ownProps[ownIndex];
-          if (callback(iterable[index], index, collection) === false) return result;
+      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      while (++index < length) {
+        var key = props[index];
+        if (callback(object[key], key, object) === false) {
+          break;
         }
-      return result
-    };
+      }
+      return object;
+    }
 
     /**
      * This method is like `_.forOwn` except that it iterates over elements

@@ -75,8 +75,8 @@
   /** Used to assign default `context` object properties */
   var contextProps = [
     'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object',
-    'RegExp', 'String', '_', 'attachEvent', 'clearTimeout', 'isFinite', 'isNaN',
-    'parseInt', 'setTimeout'
+    'RegExp', 'String', '_', 'clearTimeout', 'document', 'isFinite', 'isNaN',
+    'parseInt', 'setTimeout', 'TypeError', 'window', 'WinRTError'
   ];
 
   /** Used to make template sourceURLs easier to identify */
@@ -459,6 +459,10 @@
     /** Used for native method references */
     var objectProto = Object.prototype;
 
+    /** Used to detect DOM support */
+    var window = context.window,
+        document = window && window.document;
+
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
 
@@ -614,6 +618,14 @@
      * @type Object
      */
     var support = lodash.support = {};
+
+    /**
+     * Detect if the DOM is supported.
+     *
+     * @memberOf _.support
+     * @type boolean
+     */
+    support.dom = !!document && typeof document == 'object' && reNative.test(clearTimeout) && reNative.test(setTimeout);
 
     /**
      * Detect if functions can be decompiled by `Function#toString`
@@ -1481,7 +1493,7 @@
      * @returns {boolean} Returns `true` if the `value` is a native function, else `false`.
      */
     function isNative(value) {
-      return typeof value == 'function' && reNative.test(value);
+      return typeof value == 'function' && reNative.test(fnToString.call(value));
     }
 
     /**
@@ -2280,7 +2292,15 @@
      * // => true
      */
     function isElement(value) {
-      return value && value.nodeType === 1 || false;
+      return value && typeof value == 'object' && value.nodeType === 1 &&
+        toString.call(value).indexOf('Element') > -1 || false;
+    }
+    // fallback for environments without DOM support
+    if (!support.dom) {
+      isElement = function(value) {
+        return value && typeof value == 'object' && value.nodeType === 1 &&
+          !isPlainObject(value) || false;
+      };
     }
 
     /**
@@ -3796,7 +3816,7 @@
     }
 
     /**
-     * The opposite of `_.filter` this method returns the elements of a
+     * The opposite of `_.filter`; this method returns the elements of a
      * collection that the callback does **not** return truey for.
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -4818,7 +4838,7 @@
     }
 
     /**
-     * The opposite of `_.initial` this method gets all but the first element or
+     * The opposite of `_.initial`; this method gets all but the first element or
      * first `n` elements of an array. If a callback function is provided elements
      * at the beginning of the array are excluded from the result as long as the
      * callback returns truey. The callback is bound to `thisArg` and invoked
@@ -5875,6 +5895,9 @@
      * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
      * corresponding HTML entities.
      *
+     * Note: No other characters are escaped. To escape additional characters
+     * use a third-party library like [_he_](http://mths.be/he).
+     *
      * @static
      * @memberOf _
      * @category Utilities
@@ -6397,9 +6420,12 @@
     }
 
     /**
-     * The inverse of `_.escape` this method converts the HTML entities
+     * The inverse of `_.escape`; this method converts the HTML entities
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
      * corresponding characters.
+     *
+     * Note: No other HTML entities are unescaped. To unescape additional HTML
+     * entities use a third-party library like [_he_](http://mths.be/he).
      *
      * @static
      * @memberOf _

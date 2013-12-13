@@ -43,6 +43,12 @@
 
 				Object._keys = Object.keys;
 				Object.keys = function() {};
+
+				window._clearTimeout = clearTimeout;
+				window.clearTimeout = function() {};
+
+				window._setTimeout = setTimeout;
+				window.setTimeout = function() {};
 			}
 
 			function removeBizarroMethods() {
@@ -81,6 +87,12 @@
 				} else {
 					delete Object.keys;
 				}
+				window.clearTimeout = _clearTimeout;
+				window._clearTimeout = undefined;
+
+				window.setTimeout = _setTimeout;
+				window._setTimeout = undefined;
+
 				delete Array._isArray;
 				delete Date._now;
 				delete Function.prototype._bind;

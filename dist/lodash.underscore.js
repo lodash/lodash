@@ -210,6 +210,7 @@
   /** Native method shortcuts */
   var ceil = Math.ceil,
       floor = Math.floor,
+      fnToString = Function.prototype.toString,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
       propertyIsEnumerable = objectProto.propertyIsEnumerable;
@@ -872,7 +873,7 @@
    * @returns {boolean} Returns `true` if the `value` is a native function, else `false`.
    */
   function isNative(value) {
-    return typeof value == 'function' && reNative.test(value);
+    return typeof value == 'function' && reNative.test(fnToString.call(value));
   }
 
   /**
@@ -2580,7 +2581,7 @@
   }
 
   /**
-   * The opposite of `_.filter` this method returns the elements of a
+   * The opposite of `_.filter`; this method returns the elements of a
    * collection that the callback does **not** return truey for.
    *
    * If a property name is provided for `callback` the created "_.pluck" style
@@ -3381,7 +3382,7 @@
   }
 
   /**
-   * The opposite of `_.initial` this method gets all but the first element or
+   * The opposite of `_.initial`; this method gets all but the first element or
    * first `n` elements of an array. If a callback function is provided elements
    * at the beginning of the array are excluded from the result as long as the
    * callback returns truey. The callback is bound to `thisArg` and invoked
@@ -4263,6 +4264,9 @@
    * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
    * corresponding HTML entities.
    *
+   * Note: No other characters are escaped. To escape additional characters
+   * use a third-party library like [_he_](http://mths.be/he).
+   *
    * @static
    * @memberOf _
    * @category Utilities
@@ -4672,9 +4676,12 @@
   }
 
   /**
-   * The inverse of `_.escape` this method converts the HTML entities
+   * The inverse of `_.escape`; this method converts the HTML entities
    * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
    * corresponding characters.
+   *
+   * Note: No other HTML entities are unescaped. To unescape additional HTML
+   * entities use a third-party library like [_he_](http://mths.be/he).
    *
    * @static
    * @memberOf _

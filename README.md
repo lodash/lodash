@@ -3,7 +3,7 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 ## Download
 
-Check out our [wiki]([https://github.com/lodash/lodash/wiki/build-differences]) for details over the differences between builds.
+Check out our [wiki](https://github.com/lodash/lodash/wiki/build-differences) for details over the differences between builds.
 
 * [Modern build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js)) perfect for new environments
 * [Compatibility build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.min.js)) for old environments too

@@ -232,6 +232,12 @@
         window.document = {};
         window.window = window;
 
+        var _clearTimeout = global.clearTimeout;
+        global.clearTimeout = Number;
+
+        var _setTimeout = global.setTimeout;
+        global.setTimeout = Number;
+
         // add extensions
         Function.prototype._method = function() {};
 
@@ -256,12 +262,6 @@
 
         var _keys = Object.keys;
         Object.keys = function() {};
-
-        var _clearTimeout = global.clearTimeout;
-        global.clearTimeout = function() {};
-
-        var _setTimeout = global.setTimeout;
-        global.setTimeout = function() {};
 
         // load Lo-Dash and expose it to the bad extensions/shims
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;

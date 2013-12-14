@@ -949,14 +949,14 @@
    * @returns {Array} Returns an array of property names.
    */
   var shimKeys = function(object) {
-    var index, iterable = object, result = [];
-    if (!iterable) return result;
+    var result = [];
+    if (!(object && objectTypes[typeof object])) return result;
     if (!(objectTypes[typeof object])) return result;
-      for (index in iterable) {
-        if (hasOwnProperty.call(iterable, index)) {
-          result.push(index);
+    for (var key in object) {
+        if (hasOwnProperty.call(object, key)) {
+        result.push(key);
         }
-      }
+    }
     return result
   };
 
@@ -1014,7 +1014,6 @@
    *
    * @static
    * @memberOf _
-   * @type Function
    * @alias extend
    * @category Objects
    * @param {Object} object The destination object.
@@ -1040,10 +1039,10 @@
       return object;
     }
     for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {
-      var iterable = arguments[argsIndex];
-      if (iterable) {
-        for (var key in iterable) {
-          object[key] = iterable[key];
+      var source = arguments[argsIndex];
+      if (source) {
+        for (var key in source) {
+          object[key] = source[key];
         }
       }
     }
@@ -1103,7 +1102,6 @@
    *
    * @static
    * @memberOf _
-   * @type Function
    * @category Objects
    * @param {Object} object The destination object.
    * @param {...Object} [source] The source objects.
@@ -1121,11 +1119,11 @@
       return object;
     }
     for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {
-      var iterable = arguments[argsIndex];
-      if (iterable) {
-        for (var key in iterable) {
+      var source = arguments[argsIndex];
+      if (source) {
+        for (var key in source) {
           if (typeof object[key] == 'undefined') {
-            object[key] = iterable[key];
+            object[key] = source[key];
           }
         }
       }
@@ -1164,13 +1162,12 @@
    * });
    * // => logs 'x', 'y', and 'move' (property order is not guaranteed across environments)
    */
-  var forIn = function(collection, callback) {
-    var index, iterable = collection, result = iterable;
-    if (!iterable) return result;
-    if (!objectTypes[typeof iterable]) return result;
-      for (index in iterable) {
-        if (callback(iterable[index], index, collection) === indicatorObject) return result;
-      }
+  var forIn = function(object, callback) {
+    var result = object;
+    if (!(object && objectTypes[typeof object])) return result;
+    for (var key in object) {
+      if (callback(object[key], key, object) === indicatorObject) return result;
+    }
     return result
   };
 
@@ -1182,7 +1179,6 @@
    *
    * @static
    * @memberOf _
-   * @type Function
    * @category Objects
    * @param {Object} object The object to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.

@@ -1602,14 +1602,14 @@
      * @returns {Array} Returns an array of property names.
      */
     var shimKeys = function(object) {
-      var index, iterable = object, result = [];
-      if (!iterable) return result;
+      var result = [];
+      if (!(object && objectTypes[typeof object])) return result;
       if (!(objectTypes[typeof object])) return result;
-        for (index in iterable) {
-          if (hasOwnProperty.call(iterable, index)) {
-            result.push(index);
+      for (var key in object) {
+          if (hasOwnProperty.call(object, key)) {
+          result.push(key);
           }
-        }
+      }
       return result
     };
 
@@ -1667,7 +1667,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @alias extend
      * @category Objects
      * @param {Object} object The destination object.
@@ -1853,7 +1852,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Objects
      * @param {Object} object The destination object.
      * @param {...Object} [source] The source objects.
@@ -2026,14 +2024,13 @@
      * });
      * // => logs 'x', 'y', and 'move' (property order is not guaranteed across environments)
      */
-    var forIn = function(collection, callback, thisArg) {
-      var index, iterable = collection, result = iterable;
-      if (!iterable) return result;
-      if (!objectTypes[typeof iterable]) return result;
+    var forIn = function(object, callback, thisArg) {
+      var result = object;
+      if (!(object && objectTypes[typeof object])) return result;
       callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-        for (index in iterable) {
-          if (callback(iterable[index], index, collection) === false) return result;
-        }
+      for (var key in object) {
+        if (callback(object[key], key, object) === false) return result;
+      }
       return result
     };
 
@@ -2090,7 +2087,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Objects
      * @param {Object} object The object to iterate over.
      * @param {Function} [callback=identity] The function called per iteration.

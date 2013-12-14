@@ -125,21 +125,6 @@
     'writable': false
   };
 
-  /** Used as the data object for `iteratorTemplate` */
-  var iteratorData = {
-    'args': '',
-    'array': null,
-    'bottom': '',
-    'firstArg': '',
-    'init': '',
-    'keys': null,
-    'loop': '',
-    'shadowedProps': null,
-    'support': null,
-    'top': '',
-    'useHas': false
-  };
-
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
     'boolean': false,
@@ -890,110 +875,72 @@
      * @returns {string} Returns the interpolated text.
      */
     var iteratorTemplate = template(
-      // the `iterable` may be reassigned by the `top` snippet
-      'var index, iterable = <%= firstArg %>, ' +
       // assign the `result` variable an initial value
-      'result = <%= init %>;\n' +
-      // exit early if the first argument is falsey
-      'if (!iterable) return result;\n' +
+      'var result = <%= init %>;\n' +
+      // exit early if the first argument is not an object
+      'if (!(object && objectTypes[typeof object])) return result;\n' +
       // add code before the iteration branches
       '<%= top %>;' +
 
-      // array-like iteration:
-      '<% if (array) { %>\n' +
-      'var length = iterable.length; index = -1;\n' +
-      'if (<%= array %>) {' +
-
-      // add support for accessing string characters by index if needed
-      '  <% if (support.unindexedChars) { %>\n' +
-      '  if (isString(iterable)) {\n' +
-      "    iterable = iterable.split('')\n" +
-      '  }' +
-      '  <% } %>\n' +
-
-      // iterate over the array-like value
-      '  while (++index < length) {\n' +
+      // add support for iterating over `arguments` objects if needed
+      '<% if (support.nonEnumArgs) { %>\n' +
+      'var length = object.length;\n' +
+      'if (length && isArguments(object)) {\n' +
+      '  key = -1;\n' +
+      '  while (++key < length) {\n' +
+      "    key += '';\n" +
       '    <%= loop %>;\n' +
       '  }\n' +
-      '}\n' +
-      'else {' +
-
-      // object iteration:
-      // add support for iterating over `arguments` objects if needed
-      '  <% } else if (support.nonEnumArgs) { %>\n' +
-      '  var length = iterable.length; index = -1;\n' +
-      '  if (length && isArguments(iterable)) {\n' +
-      '    while (++index < length) {\n' +
-      "      index += '';\n" +
-      '      <%= loop %>;\n' +
-      '    }\n' +
-      '  } else {' +
-      '  <% } %>' +
+      '  return result\n' +
+      '}' +
+      '<% } %>' +
 
       // avoid iterating over `prototype` properties in older Firefox, Opera, and Safari
-      '  <% if (support.enumPrototypes) { %>\n' +
-      "  var skipProto = typeof iterable == 'function';\n" +
-      '  <% } %>' +
+      '<% if (support.enumPrototypes) { %>\n' +
+      "var skipProto = typeof object == 'function';\n" +
+      '<% } %>' +
 
       // avoid iterating over `Error.prototype` properties in older IE and Safari
-      '  <% if (support.enumErrorProps) { %>\n' +
-      '  var skipErrorProps = iterable === errorProto || iterable instanceof Error;\n' +
-      '  <% } %>' +
+      '<% if (support.enumErrorProps) { %>\n' +
+      'var skipErrorProps = object === errorProto || object instanceof Error;\n' +
+      '<% } %>' +
 
       // define conditions used in the loop
-      '  <%' +
-      '    var conditions = [];' +
-      '    if (support.enumPrototypes) { conditions.push(\'!(skipProto && index == "prototype")\'); }' +
-      '    if (support.enumErrorProps)  { conditions.push(\'!(skipErrorProps && (index == "message" || index == "name"))\'); }' +
-      '  %>' +
-
-      // iterate own properties using `Object.keys`
-      '  <% if (useHas && keys) { %>\n' +
-      '  var ownIndex = -1,\n' +
-      '      ownProps = keys(iterable),\n' +
-      '      length = ownProps.length;\n\n' +
-      '  while (++ownIndex < length) {\n' +
-      '    index = ownProps[ownIndex];\n<%' +
-      "    if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
-      '    <%= loop %>;' +
-      '    <% if (conditions.length) { %>\n    }<% } %>\n' +
-      '  }' +
+      '<%' +
+      'var conditions = [];\n' +
+      "if (support.enumPrototypes) { conditions.push('!(skipProto && key == \\'prototype\\')'); }\n" +
+      "if (support.enumErrorProps) { conditions.push('!(skipErrorProps && (key == \\'message\\' || key == \\'name\\'))'); }" +
+      '%>\n' +
 
       // else using a for-in loop
-      '  <% } else { %>\n' +
-      '  for (index in iterable) {\n<%' +
-      '    if (useHas) { conditions.push("hasOwnProperty.call(iterable, index)"); }' +
-      "    if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
-      '    <%= loop %>;' +
-      '    <% if (conditions.length) { %>\n    }<% } %>\n' +
-      '  }' +
+      'for (var key in object) {\n<%' +
+      "  if (useHas) { conditions.push('hasOwnProperty.call(object, key)'); }\n" +
+      "  if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
+      '  <%= loop %>;' +
+      '  <% if (conditions.length) { %>\n    }<% } %>\n' +
+      '}\n' +
 
       // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
       // existing property and the `constructor` property of a prototype
       // defaults to non-enumerable, Lo-Dash skips the `constructor`
       // property when it infers it's iterating over a `prototype` object.
-      '    <% if (support.nonEnumShadows) { %>\n\n' +
-      '  if (iterable !== objectProto) {\n' +
-      "    var ctor = iterable.constructor,\n" +
-      '        isProto = iterable === (ctor && ctor.prototype),\n' +
-      '        className = iterable === stringProto ? stringClass : iterable === errorProto ? errorClass : toString.call(iterable),\n' +
-      '        nonEnum = nonEnumProps[className];\n' +
-      '      <% for (k = 0; k < 7; k++) { %>\n' +
-      "    index = '<%= shadowedProps[k] %>';\n" +
-      '    if ((!(isProto && nonEnum[index]) && hasOwnProperty.call(iterable, index))<%' +
-      '        if (!useHas) { %> || (!nonEnum[index] && iterable[index] !== objectProto[index])<% }' +
-      '      %>) {\n' +
-      '      <%= loop %>;\n' +
-      '    }' +
-      '      <% } %>\n' +
+      '<% if (support.nonEnumShadows) { %>\n' +
+      'if (object !== objectProto) {\n' +
+      "  var ctor = object.constructor,\n" +
+      '      isProto = object === (ctor && ctor.prototype),\n' +
+      '      className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),\n' +
+      '      nonEnum = nonEnumProps[className];\n' +
+      '    <% for (var index = 0; index < 7; index++) { %>\n' +
+      "  key = '<%= shadowedProps[index] %>';\n" +
+      '  if ((!(isProto && nonEnum[key]) && hasOwnProperty.call(object, key))<%' +
+      '      if (!useHas) { %> || (!nonEnum[key] && object[key] !== objectProto[key])<% }' +
+      '    %>) {\n' +
+      '    <%= loop %>;\n' +
       '  }' +
-      '    <% } %>' +
-      '  <% } %>' +
-      '  <% if (array || support.nonEnumArgs) { %>\n}<% } %>\n' +
+      '    <% } %>\n' +
+      '}' +
+      '<% } %>\n' +
 
-      // add code to the bottom of the iteration function
-      '<%= bottom %>;\n' +
-      // finally, return the `result`
       'return result'
     );
 
@@ -1299,6 +1246,41 @@
         releaseObject(values);
       }
       return result;
+    }
+
+
+    /**
+     * Iterates `arguments` objects, arrays, objects, and strings consistently
+     * across environments, executing the callback for each element in the
+     * collection. The callback is bound to `thisArg` and invoked with three
+     * arguments; (value, index|key, collection). Callbacks may exit iteration
+     * early by explicitly returning `false`.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {*} [thisArg] The `this` binding of `callback`.
+     * @returns {Array|Object|string} Returns `collection`.
+     */
+    function baseEach(collection, callback, thisArg) {
+      var index = -1,
+          iterable = collection,
+          length = collection ? collection.length : 0;
+
+      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      if (typeof length == 'number') {
+        if (support.unindexedChars && isString(iterable)) {
+          iterable = iterable.split('');
+        }
+        while (++index < length) {
+          if (callback(iterable[index], index, collection) === false) {
+            break;
+          }
+        }
+      } else {
+        forOwn(collection, callback);
+      }
+      return collection;
     }
 
     /**
@@ -1757,48 +1739,28 @@
      * Creates compiled iteration functions.
      *
      * @private
-     * @param {...Object} [options] The compile options object(s).
-     * @param {string} [options.array] Code to determine if the iterable is an array or array-like.
-     * @param {boolean} [options.useHas] Specify using `hasOwnProperty` checks in the object loop.
-     * @param {Function} [options.keys] A reference to `_.keys` for use in own property iteration.
+     * @param {Object} [options] The compile options object.
      * @param {string} [options.args] A comma separated string of iteration function arguments.
      * @param {string} [options.top] Code to execute before the iteration branches.
      * @param {string} [options.loop] Code to execute in the object loop.
-     * @param {string} [options.bottom] Code to execute after the iteration branches.
+     * @param {boolean} [options.useHas] Specify using `hasOwnProperty` checks in the object loop.
      * @returns {Function} Returns the compiled function.
      */
-    function createIterator() {
-      // data properties
-      iteratorData.shadowedProps = shadowedProps;
-      iteratorData.support = support;
-
-      // iterator options
-      iteratorData.array = iteratorData.bottom = iteratorData.loop = iteratorData.top = '';
-      iteratorData.init = 'iterable';
-      iteratorData.useHas = true;
-
-      // merge options into a template data object
-      for (var object, index = 0; object = arguments[index]; index++) {
-        for (var key in object) {
-          iteratorData[key] = object[key];
-        }
-      }
-      var args = iteratorData.args;
-      iteratorData.firstArg = /^[^,]+/.exec(args)[0];
+    function createIterator(options) {
+      options.shadowedProps = shadowedProps;
+      options.support = support;
 
       // create the function factory
       var factory = Function(
-          'baseCreateCallback, errorClass, errorProto, hasOwnProperty, ' +
-          'indicatorObject, isArguments, isArray, isString, keys, objectProto, ' +
-          'objectTypes, nonEnumProps, stringClass, stringProto, toString',
-        'return function(' + args + ') {\n' + iteratorTemplate(iteratorData) + '\n}'
+          'baseCreateCallback, errorClass, errorProto, hasOwnProperty, isArguments, ' +
+          'objectProto, objectTypes, nonEnumProps, stringClass, stringProto, toString',
+        'return function(' + options.args + ') {\n' + iteratorTemplate(options) + '\n}'
       );
 
       // return the compiled function
       return factory(
-        baseCreateCallback, errorClass, errorProto, hasOwnProperty,
-        indicatorObject, isArguments, isArray, isString, iteratorData.keys, objectProto,
-        objectTypes, nonEnumProps, stringClass, stringProto, toString
+        baseCreateCallback, errorClass, errorProto, hasOwnProperty, isArguments,
+        objectProto, objectTypes, nonEnumProps, stringClass, stringProto, toString
       );
     }
 
@@ -1965,7 +1927,8 @@
       'args': 'object',
       'init': '[]',
       'top': 'if (!(objectTypes[typeof object])) return result',
-      'loop': 'result.push(index)'
+      'loop': 'result.push(key)',
+      'useHas': true
     });
 
     /**
@@ -1992,15 +1955,6 @@
       return nativeKeys(object);
     };
 
-    /** Reusable iterator options shared by `each`, `forIn`, and `forOwn` */
-    var eachIteratorOptions = {
-      'args': 'collection, callback, thisArg',
-      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3)",
-      'array': "typeof length == 'number'",
-      'keys': keys,
-      'loop': 'if (callback(iterable[index], index, collection) === false) return result'
-    };
-
     /**
      * Used to convert characters to HTML entities:
      *
@@ -2024,22 +1978,6 @@
     var reEscapedHtml = RegExp('(' + keys(htmlUnescapes).join('|') + ')', 'g'),
         reUnescapedHtml = RegExp('[' + keys(htmlEscapes).join('') + ']', 'g');
 
-    /**
-     * A function compiled to iterate `arguments` objects, arrays, objects, and
-     * strings consistenly across environments, executing the callback for each
-     * element in the collection. The callback is bound to `thisArg` and invoked
-     * with three arguments; (value, index|key, collection). Callbacks may exit
-     * iteration early by explicitly returning `false`.
-     *
-     * @private
-     * @type Function
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [callback=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {Array|Object|string} Returns `collection`.
-     */
-    var baseEach = createIterator(eachIteratorOptions);
-
     /*--------------------------------------------------------------------------*/
 
     /**
@@ -2051,7 +1989,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @alias extend
      * @category Objects
      * @param {Object} object The destination object.
@@ -2237,7 +2174,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Objects
      * @param {Object} object The destination object.
      * @param {...Object} [source] The source objects.
@@ -2410,9 +2346,11 @@
      * });
      * // => logs 'x', 'y', and 'move' (property order is not guaranteed across environments)
      */
-    var forIn = createIterator(eachIteratorOptions, {
-      'top': 'if (!objectTypes[typeof iterable]) return result;\n' + eachIteratorOptions.top,
-      'array': false,
+    var forIn = createIterator({
+      'args': 'object, callback, thisArg',
+      'init': 'object',
+      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3)",
+      'loop': 'if (callback(object[key], key, object) === false) return result',
       'useHas': false
     });
 
@@ -2469,7 +2407,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Objects
      * @param {Object} object The object to iterate over.
      * @param {Function} [callback=identity] The function called per iteration.
@@ -3768,7 +3705,7 @@
         } else if (support.unindexedChars && isString(collection)) {
           iterable = collection.split('');
         }
-        baseEach(collection, function(value, key, collection) {
+        baseEach(iterable, function(value, key) {
           key = props ? props[--length] : --length;
           return callback(iterable[key], key, collection);
         });
@@ -7238,7 +7175,6 @@
     }
 
     // add pseudo private property to be used and removed during the build process
-    lodash._baseEach = baseEach;
     lodash._iteratorTemplate = iteratorTemplate;
     lodash._shimKeys = shimKeys;
 

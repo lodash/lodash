@@ -460,8 +460,7 @@
     var objectProto = Object.prototype;
 
     /** Used to detect DOM support */
-    var window = context.window,
-        document = window && window.document;
+    var document = context.window && context.window.document;
 
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;

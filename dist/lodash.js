@@ -460,7 +460,7 @@
     var objectProto = Object.prototype;
 
     /** Used to detect DOM support */
-    var document = context.window && context.window.document;
+    var document = (document = context.window) && document.document;
 
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
@@ -1772,7 +1772,8 @@
      * Note: This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
      * objects created by constructors other than `Object` are cloned to plain `Object` objects.
-     * See http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm.
+     * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -2382,7 +2383,8 @@
      * Checks if `value` is, or can be coerced to, a finite number.
      *
      * Note: This is not the same as native `isFinite` which will return true for
-     * booleans and empty strings. See http://es5.github.io/#x15.1.2.5.
+     * booleans and empty strings. See the [ES5 spec](http://es5.github.io/#x15.1.2.5)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -2459,7 +2461,8 @@
      * Checks if `value` is `NaN`.
      *
      * Note: This is not the same as native `isNaN` which will return `true` for
-     * `undefined` and other non-numeric values. See http://es5.github.io/#x15.1.2.4.
+     * `undefined` and other non-numeric values. See the [ES5 spec](http://es5.github.io/#x15.1.2.4)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -2509,7 +2512,8 @@
     /**
      * Checks if `value` is a number.
      *
-     * Note: `NaN` is considered a number. See http://es5.github.io/#x8.5.
+     * Note: `NaN` is considered a number. See the [ES5 spec](http://es5.github.io/#x8.5)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3887,7 +3891,7 @@
 
     /**
      * Creates an array of shuffled values, using a version of the Fisher-Yates
-     * shuffle. See http://en.wikipedia.org/wiki/Fisher-Yates_shuffle.
+     * shuffle. See [Wikipedia](http://en.wikipedia.org/wiki/Fisher-Yates_shuffle) for more details.
      *
      * @static
      * @memberOf _
@@ -5067,7 +5071,7 @@
 
     /**
      * Creates an array that is the symmetric difference of the provided arrays.
-     * See http://en.wikipedia.org/wiki/Symmetric_difference.
+     * See [Wikipedia](http://en.wikipedia.org/wiki/Symmetric_difference) for more details.
      *
      * @static
      * @memberOf _
@@ -5272,7 +5276,8 @@
      * and prepends any additional `bindKey` arguments to those provided to the bound
      * function. This method differs from `_.bind` by allowing bound functions to
      * reference methods that will be redefined or don't yet exist.
-     * See http://michaux.ca/articles/lazy-function-definition-pattern.
+     * See [Peter Michaux's article](http://michaux.ca/articles/lazy-function-definition-pattern)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -6052,7 +6057,8 @@
      * `value` is a hexadecimal, in which case a `radix` of `16` is used.
      *
      * Note: This method avoids differences in native ES3 and ES5 `parseInt`
-     * implementations. See http://es5.github.io/#E.
+     * implementations. See the [ES5 spec](http://es5.github.io/#E)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -6197,13 +6203,13 @@
      * whitespace, and correctly escapes quotes within interpolated code.
      *
      * Note: In the development build, `_.template` utilizes sourceURLs for easier
-     * debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
+     * debugging. See [HTML5 Rocks' article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl).
      *
-     * For more information on precompiling templates see:
-     * http://lodash.com/custom-builds
+     * For more information on precompiling templates see
+     * [Lo-Dash's custom builds documentation](http://lodash.com/custom-builds).
      *
-     * For more information on Chrome extension sandboxes see:
-     * http://developer.chrome.com/stable/extensions/sandboxingEval.html
+     * For more information on Chrome extension sandboxes see
+     * [Chrome's extensions documentation](http://developer.chrome.com/stable/extensions/sandboxingEval.html).
      *
      * @static
      * @memberOf _

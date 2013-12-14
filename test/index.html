@@ -44,11 +44,19 @@
 				Object._keys = Object.keys;
 				Object.keys = function() {};
 
-				window._clearTimeout = clearTimeout;
-				window.clearTimeout = function() {};
+				window.clearTimeout = (function(fn) {
+					window._clearTimeout = fn;
+					return function(id) {
+						return fn(id);
+					};
+				}(clearTimeout));
 
-				window._setTimeout = setTimeout;
-				window.setTimeout = function() {};
+				window.setTimeout = (function(fn) {
+					window._setTimeout = fn;
+					return function(func, wait) {
+						return fn(func, wait);
+					};
+				}(setTimeout));
 			}
 
 			function removeBizarroMethods() {
@@ -211,7 +219,6 @@
 				}
 				if (window.requirejs) {
 					addBizarroMethods();
-
 					require(getConfig(), ['lodash'], function(lodash) {
 						lodashBizarro = lodash;
 						delete requirejs.s.contexts._;

@@ -59,8 +59,10 @@
   /** Used to detected named functions */
   var reFuncName = /^\s*function[ \n\r\t]+\w/;
 
-  /** Used to match "interpolate" template delimiters */
-  var reInterpolate = /<%=([\s\S]+?)%>/g;
+  /** Used to match template delimiters */
+  var reEscape = /<%-([\s\S]+?)%>/g,
+      reEvaluate = /<%([\s\S]+?)%>/g,
+      reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /** Used to match leading whitespace and zeros to be removed */
   var reLeadingSpacesAndZeros = RegExp('^[' + whitespace + ']*0+(?=.$)');
@@ -580,16 +582,16 @@
      *
      * The chainable wrapper functions are:
      * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
-     * `compose`, `concat`, `countBy`, `create`, `createCallback`, `curry`,
-     * `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`,
-     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
-     * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
-     * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
-     * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `pull`, `push`,
-     * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
-     * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
-     * `union`, `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`,
-     * and `zip`
+     * `compose`, `concat`, `constant`, `countBy`, `create`, `createCallback`,
+     * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
+     * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
+     * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
+     * `invert`, `invoke`, `keys`, `map`, `mapValues`, `max`, `memoize`, `merge`,
+     * `min`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
+     * `pick`, `pluck`, `property`, `pull`, `push`, `range`, `reject`, `remove`,
+     * `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `tap`,
+     * `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+     * `unzip`, `values`, `where`, `without`, `wrap`, `xor`, and `zip`
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `findIndex`,
@@ -597,12 +599,12 @@
      * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
      * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
      * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
-     * `lastIndexOf`, `mixin`, `noConflict`, `parseInt`, `pop`, `random`, `reduce`,
-     * `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`, `runInContext`,
-     * `template`, `unescape`, `uniqueId`, and `value`
+     * `lastIndexOf`, `mixin`, `noConflict`, `now`, `parseInt`, `pop`, `random`,
+     * `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`,
+     * `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
      *
-     * The wrapper functions `first` and `last` return wrapped values when `n` is
-     * provided, otherwise they return unwrapped values.
+     * The wrapper functions `first`, `last`, and `sample` return wrapped values
+     * when `n` is provided, otherwise they return unwrapped values.
      *
      * Explicit chaining can be enabled by using the `_.chain` method.
      *
@@ -820,7 +822,7 @@
        * @memberOf _.templateSettings
        * @type RegExp
        */
-      'escape': /<%-([\s\S]+?)%>/g,
+      'escape': reEscape,
 
       /**
        * Used to detect code to be evaluated.
@@ -828,7 +830,7 @@
        * @memberOf _.templateSettings
        * @type RegExp
        */
-      'evaluate': /<%([\s\S]+?)%>/g,
+      'evaluate': reEvaluate,
 
       /**
        * Used to detect `data` property values to inject.
@@ -876,8 +878,12 @@
     var iteratorTemplate = template(
       // assign the `result` variable an initial value
       'var result = <%= init %>;\n' +
+
       // exit early if the first argument is not an object
-      'if (!(object && objectTypes[typeof object])) return result;\n' +
+      'if (!(object && objectTypes[typeof object])) {\n' +
+      '  return result;\n' +
+      '}\n' +
+
       // add code before the iteration branches
       '<%= top %>;' +
 
@@ -890,7 +896,7 @@
       "    key += '';\n" +
       '    <%= loop %>;\n' +
       '  }\n' +
-      '  return result\n' +
+      '  return result;\n' +
       '}' +
       '<% } %>' +
 
@@ -914,9 +920,9 @@
       // else using a for-in loop
       'for (var key in object) {\n<%' +
       "  if (useHas) { conditions.push('hasOwnProperty.call(object, key)'); }\n" +
-      "  if (conditions.length) { %>    if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
+      "  if (conditions.length) { %>  if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
       '  <%= loop %>;' +
-      '  <% if (conditions.length) { %>\n    }<% } %>\n' +
+      '  <% if (conditions.length) { %>\n  }<% } %>\n' +
       '}\n' +
 
       // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
@@ -929,18 +935,18 @@
       '      isProto = object === (ctor && ctor.prototype),\n' +
       '      className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),\n' +
       '      nonEnum = nonEnumProps[className];\n' +
-      '    <% for (var index = 0; index < 7; index++) { %>\n' +
+      '  <% for (var index = 0; index < 7; index++) { %>\n' +
       "  key = '<%= shadowedProps[index] %>';\n" +
       '  if ((!(isProto && nonEnum[key]) && hasOwnProperty.call(object, key))<%' +
       '      if (!useHas) { %> || (!nonEnum[key] && object[key] !== objectProto[key])<% }' +
       '    %>) {\n' +
       '    <%= loop %>;\n' +
       '  }' +
-      '    <% } %>\n' +
+      '  <% } %>\n' +
       '}' +
       '<% } %>\n' +
 
-      'return result'
+      'return result;'
     );
 
     /*--------------------------------------------------------------------------*/
@@ -1925,7 +1931,7 @@
     var shimKeys = createIterator({
       'args': 'object',
       'init': '[]',
-      'top': 'if (!(objectTypes[typeof object])) return result',
+      'top': '',
       'loop': 'result.push(key)',
       'useHas': true
     });
@@ -2350,7 +2356,7 @@
       'args': 'object, callback, thisArg',
       'init': 'object',
       'top': "callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3)",
-      'loop': 'if (callback(object[key], key, object) === false) return result',
+      'loop': 'if (callback(object[key], key, object) === false) {\n    return result;\n  }',
       'useHas': false
     });
 

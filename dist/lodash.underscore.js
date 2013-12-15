@@ -21,8 +21,10 @@
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
-  /** Used to match "interpolate" template delimiters */
-  var reInterpolate = /<%=([\s\S]+?)%>/g;
+  /** Used to match template delimiters */
+  var reEscape = /<%-([\s\S]+?)%>/g,
+      reEvaluate = /<%([\s\S]+?)%>/g,
+      reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
@@ -240,16 +242,16 @@
    *
    * The chainable wrapper functions are:
    * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
-   * `compose`, `concat`, `countBy`, `create`, `createCallback`, `curry`,
-   * `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`,
-   * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
-   * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
-   * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
-   * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `pull`, `push`,
-   * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
-   * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
-   * `union`, `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`,
-   * and `zip`
+   * `compose`, `concat`, `constant`, `countBy`, `create`, `createCallback`,
+   * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
+   * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
+   * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
+   * `invert`, `invoke`, `keys`, `map`, `mapValues`, `max`, `memoize`, `merge`,
+   * `min`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
+   * `pick`, `pluck`, `property`, `pull`, `push`, `range`, `reject`, `remove`,
+   * `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `tap`,
+   * `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+   * `unzip`, `values`, `where`, `without`, `wrap`, `xor`, and `zip`
    *
    * The non-chainable wrapper functions are:
    * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `findIndex`,
@@ -257,12 +259,12 @@
    * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
    * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
    * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
-   * `lastIndexOf`, `mixin`, `noConflict`, `parseInt`, `pop`, `random`, `reduce`,
-   * `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`, `runInContext`,
-   * `template`, `unescape`, `uniqueId`, and `value`
+   * `lastIndexOf`, `mixin`, `noConflict`, `now`, `parseInt`, `pop`, `random`,
+   * `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`,
+   * `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
    *
-   * The wrapper functions `first` and `last` return wrapped values when `n` is
-   * provided, otherwise they return unwrapped values.
+   * The wrapper functions `first`, `last`, and `sample` return wrapped values
+   * when `n` is provided, otherwise they return unwrapped values.
    *
    * Explicit chaining can be enabled by using the `_.chain` method.
    *
@@ -357,7 +359,7 @@
      * @memberOf _.templateSettings
      * @type RegExp
      */
-    'escape': /<%-([\s\S]+?)%>/g,
+    'escape': reEscape,
 
     /**
      * Used to detect code to be evaluated.
@@ -365,7 +367,7 @@
      * @memberOf _.templateSettings
      * @type RegExp
      */
-    'evaluate': /<%([\s\S]+?)%>/g,
+    'evaluate': reEvaluate,
 
     /**
      * Used to detect `data` property values to inject.
@@ -950,14 +952,15 @@
    */
   var shimKeys = function(object) {
     var result = [];
-    if (!(object && objectTypes[typeof object])) return result;
-    if (!(objectTypes[typeof object])) return result;
-    for (var key in object) {
-        if (hasOwnProperty.call(object, key)) {
-        result.push(key);
-        }
+    if (!(object && objectTypes[typeof object])) {
+      return result;
     }
-    return result
+    for (var key in object) {
+      if (hasOwnProperty.call(object, key)) {
+        result.push(key);
+      }
+    }
+    return result;
   };
 
   /**
@@ -1164,11 +1167,15 @@
    */
   var forIn = function(object, callback) {
     var result = object;
-    if (!(object && objectTypes[typeof object])) return result;
-    for (var key in object) {
-      if (callback(object[key], key, object) === indicatorObject) return result;
+    if (!(object && objectTypes[typeof object])) {
+      return result;
     }
-    return result
+    for (var key in object) {
+      if (callback(object[key], key, object) === indicatorObject) {
+        return result;
+      }
+    }
+    return result;
   };
 
   /**

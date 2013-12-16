@@ -3549,10 +3549,12 @@
       strictEqual(_.isElement({ 'nodeType': '001' }), false);
     });
 
-    test('should use a stronger check in browsers', 1, function() {
-      var lodash = document ? _ : lodashBizarro;
-      if (lodash) {
-        strictEqual(lodash.isElement(new Element), false);
+    test('should use a stronger check in browsers', 2, function() {
+      var expected = !body;
+      strictEqual(_.isElement(new Element), expected);
+
+      if (lodashBizarro) {
+        strictEqual(lodashBizarro.isElement(new Element), !expected);
       }
       else {
         skipTest();

@@ -44,7 +44,7 @@
 ## `Chaining`
 * <a href="#_value">`_`</a>
 * <a href="#_chainvalue">`_.chain`</a>
-* <a href="#_tapvalue-interceptor">`_.tap`</a>
+* <a href="#_tapvalue-interceptor-thisarg">`_.tap`</a>
 * <a href="#_prototypechain">`_.prototype.chain`</a>
 * <a href="#_prototypetostring">`_.prototype.toString`</a>
 * <a href="#_prototypevalueof" class="alias">`_.prototype.value` -> `valueOf`</a>
@@ -1173,14 +1173,15 @@ var youngest = _.chain(characters)
 
 <!-- div -->
 
-### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6864 "View in source") [&#x24C9;][1]
+### <a id="_tapvalue-interceptor-thisarg"></a>`_.tap(value, interceptor, [thisArg])`
+<a href="#_tapvalue-interceptor-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6865 "View in source") [&#x24C9;][1]
 
-Invokes `interceptor` with the `value` as the first argument and then returns `value`. The purpose of this method is to "tap into" a method chain in order to perform operations on intermediate results within the chain.
+This method invokes `interceptor` and returns `value`. The interceptor is bound to `thisArg` and invoked with one argument; *(value)*. The purpose of this method is to "tap into" a method chain in order to perform operations on intermediate results within the chain.
 
 #### Arguments
 1. `value` *(&#42;)*: The value to provide to `interceptor`.
 2. `interceptor` *(Function)*: The function to invoke.
+3. `[thisArg]` *(&#42;)*: The `this` binding of `interceptor`.
 
 #### Returns
 *(&#42;)*: Returns `value`.
@@ -1202,7 +1203,7 @@ _([1, 2, 3, 4])
 <!-- div -->
 
 ### <a id="_prototypechain"></a>`_.prototype.chain()`
-<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6894 "View in source") [&#x24C9;][1]
+<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6895 "View in source") [&#x24C9;][1]
 
 Enables explicit method chaining on the wrapper object.
 
@@ -1236,7 +1237,7 @@ _(characters).chain()
 <!-- div -->
 
 ### <a id="_prototypetostring"></a>`_.prototype.toString()`
-<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6911 "View in source") [&#x24C9;][1]
+<a href="#_prototypetostring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6912 "View in source") [&#x24C9;][1]
 
 Produces the `toString` result of the wrapped value.
 
@@ -1257,7 +1258,7 @@ _([1, 2, 3]).toString();
 <!-- div -->
 
 ### <a id="_prototypevalueof"></a>`_.prototype.valueOf()`
-<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6928 "View in source") [&#x24C9;][1]
+<a href="#_prototypevalueof">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6929 "View in source") [&#x24C9;][1]
 
 Extracts the wrapped value.
 
@@ -2009,7 +2010,7 @@ Retrieves a random element or `n` random elements from a collection.
 2. `[n]` *(number)*: The number of elements to sample.
 
 #### Returns
-*(Array)*: Returns the random sample(s) of `collection`.
+*(&#42;)*: Returns the random sample(s) of `collection`.
 
 #### Example
 ```js
@@ -3783,7 +3784,7 @@ If an object is provided for `callback` the created "_.where" style callback wil
 3. `[thisArg]` *(&#42;)*: The `this` binding of `callback`.
 
 #### Returns
-*(Array)*: Returns a new object with values of the results of each `callback` execution.
+*(Object)*: Returns a new object with values of the results of each `callback` execution.
 
 #### Example
 ```js
@@ -4580,7 +4581,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7128 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7129 "View in source") [&#x24C9;][1]
 
 *(string)*: The semantic version number.
 

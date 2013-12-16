@@ -2643,7 +2643,7 @@
    * @param {number} [n] The number of elements to sample.
    * @param- {Object} [guard] Allows working with functions like `_.map`
    *  without using their `index` arguments as `n`.
-   * @returns {Array} Returns the random sample(s) of `collection`.
+   * @returns {*} Returns the random sample(s) of `collection`.
    * @example
    *
    * _.sample([1, 2, 3, 4]);
@@ -4763,16 +4763,17 @@
   }
 
   /**
-   * Invokes `interceptor` with the `value` as the first argument and then
-   * returns `value`. The purpose of this method is to "tap into" a method
-   * chain in order to perform operations on intermediate results within
-   * the chain.
+   * This method invokes `interceptor` and returns `value`. The interceptor is
+   * bound to `thisArg` and invoked with one argument; (value). The purpose of
+   * this method is to "tap into" a method chain in order to perform operations
+   * on intermediate results within the chain.
    *
    * @static
    * @memberOf _
    * @category Chaining
    * @param {*} value The value to provide to `interceptor`.
    * @param {Function} interceptor The function to invoke.
+   * @param {*} [thisArg] The `this` binding of `interceptor`.
    * @returns {*} Returns `value`.
    * @example
    *

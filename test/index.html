@@ -162,14 +162,16 @@
 				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
 				    locationPath = modulePath.replace(reBasename, ''),
-				    moduleMain = modulePath.match(reBasename)[0];
+				    moduleMain = modulePath.match(reBasename)[0],
+				    uid = +new Date;
 
 				QUnit.config.autostart = false;
 
 				function getConfig() {
 					return {
 						'baseUrl': './',
-						'urlArgs': 't=' + (+new Date),
+						'urlArgs': 't=' + uid++,
+						'waitSeconds': 0,
 						'packages': [
 							{
 								'name': 'lodash',
@@ -230,7 +232,7 @@
 				if (window.requirejs) {
 					addBizarroMethods();
 					require(getConfig(), ['lodash'], function(lodash) {
-						lodashBizarro = lodash;
+						lodashBizarro = lodash.noConflict();
 						delete requirejs.s.contexts._;
 
 						removeBizarroMethods();

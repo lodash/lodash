@@ -2972,7 +2972,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {Array} Returns a new object with values of the results of each `callback` execution.
+     * @returns {Object} Returns a new object with values of the results of each `callback` execution.
      * @example
      *
      * _.mapValues({ 'a': 1, 'b': 2, 'c': 3} , function(num) { return num * 3; });
@@ -4207,7 +4207,7 @@
      * @param {number} [n] The number of elements to sample.
      * @param- {Object} [guard] Allows working with functions like `_.map`
      *  without using their `index` arguments as `n`.
-     * @returns {Array} Returns the random sample(s) of `collection`.
+     * @returns {*} Returns the random sample(s) of `collection`.
      * @example
      *
      * _.sample([1, 2, 3, 4]);

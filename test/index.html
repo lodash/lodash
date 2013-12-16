@@ -44,6 +44,8 @@
 				Object._keys = Object.keys;
 				Object.keys = function() {};
 
+				window.WinRTError = Error;
+
 				window.clearTimeout = (function(fn) {
 					window._clearTimeout = fn;
 					return function(id) {
@@ -95,6 +97,8 @@
 				} else {
 					delete Object.keys;
 				}
+				window.WinRTError = undefined;
+
 				window.clearTimeout = _clearTimeout;
 				window._clearTimeout = undefined;
 

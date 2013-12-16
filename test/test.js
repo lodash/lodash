@@ -6994,14 +6994,15 @@
   (function() {
     test('should intercept and return the given value', 2, function() {
       if (!isNpm) {
-        var intercepted;
+        var intercepted,
+            array = [1, 2, 3];
 
-        var actual = _.tap('a', function(value) {
+        var actual = _.tap(array, function(value) {
           intercepted = value;
         });
 
-        equal(actual, 'a');
-        equal(intercepted, 'a');
+        strictEqual(actual, array);
+        strictEqual(intercepted, array);
       }
       else {
         skipTest(2);
@@ -7011,7 +7012,7 @@
     test('should return intercept unwrapped values and return wrapped values when chaining', 2, function() {
       if (!isNpm) {
         var intercepted,
-            array = [1, 2, 3, 4];
+            array = [1, 2, 3];
 
         var actual = _(array).tap(function(value) {
           intercepted = value;
@@ -7023,6 +7024,21 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should support the `thisArg` argument', 1, function() {
+      if (!isNpm) {
+        var array = [1, 2];
+
+        var actual = _(array.slice()).tap(function(value) {
+          value.push(this[0]);
+        }, array);
+
+        deepEqual(actual.value(), [1, 2, 1]);
+      }
+      else {
+        skipTest();
       }
     });
   }());

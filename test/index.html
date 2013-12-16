@@ -116,8 +116,8 @@
 			}
 
 			// Avoid a bug in IE compat mode where, under certain
-			// circumstances, timer API like `setTimeout` maybe
-			// not be the same as `window.setTimeout`.
+			// circumstances, timer API like `setTimeout` may not
+			// be the same reference as `window.setTimeout`.
 			window.clearTimeout = window.clearTimeout;
 			window.setTimeout = window.setTimeout;
 

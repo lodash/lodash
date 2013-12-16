@@ -8620,18 +8620,23 @@
       'compact',
       'difference',
       'filter',
+      'first',
       'flatten',
       'functions',
       'initial',
       'intersection',
       'invoke',
+      'last',
       'keys',
       'map',
       'pairs',
       'pluck',
+      'pull',
       'range',
       'reject',
+      'remove',
       'rest',
+      'sample',
       'shuffle',
       'sortBy',
       'times',
@@ -8664,13 +8669,13 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 155, function() {
-      var isExported = '_' in root,
+    test('should accept falsey arguments', 157, function() {
+      var emptyArrays = _.map(falsey, function() { return []; }),
+          isExported = '_' in root,
           oldDash = root._;
 
-
       _.forEach(acceptFalsey, function(methodName) {
-        var expected = _.map(falsey, function() { return []; }),
+        var expected = emptyArrays,
             func = _[methodName],
             pass = true;
 
@@ -8689,7 +8694,11 @@
             delete root._;
           }
         }
-        if (_.indexOf(returnArrays, methodName) > -1) {
+        else if (methodName == 'pull') {
+          expected = falsey;
+        }
+        if (_.contains(returnArrays, methodName) &&
+            !_.contains(['first', 'last', 'sample'], methodName)) {
           deepEqual(actual, expected, '_.' + methodName + ' returns an array');
         }
         ok(pass, '`_.' + methodName + '` accepts falsey arguments');
@@ -8700,6 +8709,32 @@
         if (!_[methodName]) {
           skipTest();
         }
+      });
+    });
+
+    test('should return an array', 64, function() {
+      var array = [1, 2, 3];
+
+      _.forEach(returnArrays, function(methodName) {
+        var actual,
+            func = _[methodName];
+
+        switch (methodName) {
+          case 'invoke':
+             actual = func(array, 'toFixed');
+             break;
+          case 'first':
+          case 'last':
+          case 'sample':
+            actual = func(array, 1);
+            break;
+          default:
+            actual = func(array);
+        }
+        ok(_.isArray(actual), '_.' + methodName + ' returns an array');
+
+        var isPull = methodName == 'pull';
+        equal(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
       });
     });
 

@@ -111,6 +111,12 @@
 				delete Object._keys;
 			}
 
+			// Avoid a bug in IE compat mode where, under certain
+			// circumstances, timer API like `setTimeout` maybe
+			// not be the same as `window.setTimeout`.
+			window.clearTimeout = window.clearTimeout;
+			window.setTimeout = window.setTimeout;
+
 			addBizarroMethods();
 
 			// load Lo-Dash and expose it to the bad extensions/shims

@@ -1663,7 +1663,7 @@
 
     test('should work with `maxWait` option', 2, function() {
       if (!(isRhino && isModularize)) {
-        var limit = argv ? 1000 : 500,
+        var limit = argv ? 1000 : 256,
             withCount = 0,
             withoutCount = 0;
 
@@ -7476,7 +7476,7 @@
       test('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), 1, function() {
         if (!(isRhino && isModularize)) {
           var count = 0,
-              limit = 500,
+              limit = 256,
               options = index ? { 'leading': false } : {};
 
           var throttled = _.throttle(function() {

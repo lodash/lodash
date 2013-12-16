@@ -917,7 +917,7 @@
       "if (support.enumErrorProps) { conditions.push('!(skipErrorProps && (key == \\'message\\' || key == \\'name\\'))'); }" +
       '%>\n' +
 
-      // else using a for-in loop
+      // iterate over the object
       'for (var key in object) {\n<%' +
       "  if (useHas) { conditions.push('hasOwnProperty.call(object, key)'); }\n" +
       "  if (conditions.length) { %>  if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
@@ -925,10 +925,10 @@
       '  <% if (conditions.length) { %>\n  }<% } %>\n' +
       '}\n' +
 
-      // Because IE < 9 can't set the `[[Enumerable]]` attribute of an
-      // existing property and the `constructor` property of a prototype
-      // defaults to non-enumerable, Lo-Dash skips the `constructor`
-      // property when it infers it's iterating over a `prototype` object.
+      // Lo-Dash skips the `constructor` property when it infers it's iterating
+      // over a `prototype` objecte bcause IE < 9 can't set the `[[Enumerable]]`
+      // attribute of an existing property and the `constructor` property of a
+      // prototype defaults to non-enumerable.
       '<% if (support.nonEnumShadows) { %>\n' +
       'if (object !== objectProto) {\n' +
       "  var ctor = object.constructor,\n" +

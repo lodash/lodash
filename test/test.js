@@ -227,6 +227,9 @@
           '})'
         ].join('\n')));
 
+        // fake `WinRTError`
+        global.WinRTError = Error;
+
         // fake dom
         var window = global.window = {};
         window.document = {};
@@ -279,6 +282,7 @@
         global.setTimeout = _setTimeout;
 
         delete global.window;
+        delete global.WinRTError;
         delete Function.prototype._method;
       } catch(e) { }
     }
@@ -1412,6 +1416,7 @@
         if (_.support.funcNames) {
           _.support.funcNames = false;
           _.createCallback(c, object);
+
           ok('__bindData__' in c);
           _.support.funcNames = true;
         }
@@ -1421,6 +1426,18 @@
       }
       else {
         skipTest(3);
+      }
+    });
+
+    test('should not write `__bindData__` when `_.support.funcDecomp` is `false`', 1, function() {
+      function a() {};
+
+      if (defineProperty && lodashBizarro) {
+        lodashBizarro.createCallback(a, {});
+        equal('__bindData__' in a, false);
+      }
+      else {
+        skipTest();
       }
     });
   }());

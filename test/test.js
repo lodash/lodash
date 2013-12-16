@@ -8704,7 +8704,7 @@
 
     test('should accept falsey arguments', 157, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
-          isExported = '_' in root,
+          isExposed = '_' in root,
           oldDash = root._;
 
       _.forEach(acceptFalsey, function(methodName) {
@@ -8721,7 +8721,7 @@
         });
 
         if (methodName == 'noConflict') {
-          if (isExported) {
+          if (isExposed) {
             root._ = oldDash;
           } else {
             delete root._;

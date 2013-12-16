@@ -76,6 +76,8 @@
     ['Windows XP', 'internet explorer', '6'],
     ['Windows 7', 'opera', '12'],
     ['Windows 7', 'opera', '11'],
+    ['Windows 7', 'opera', '10'],
+    ['Windows 7', 'opera', '9'],
     ['OS X 10.8', 'safari', '6'],
     ['Windows 7', 'safari', '5'],
     ['Windows XP', 'safari', '4']
@@ -95,6 +97,18 @@
       ['Windows 7', 'internet explorer', '9'],
       ['Windows 7', 'internet explorer', '8']
     ];
+  }
+  // platforms for AMD tests
+  if (_.contains(tags, 'amd')) {
+    platforms = platforms.filter(function(platform) {
+      var browser = platform[1],
+          version = +platform[2];
+
+      if (browser == 'opera') {
+        return version >= 10;
+      }
+      return true;
+    });
   }
   // platforms for Backbone tests
   if (isBackbone) {

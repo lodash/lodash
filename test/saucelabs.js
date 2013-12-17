@@ -76,8 +76,6 @@
     ['Windows XP', 'internet explorer', '6'],
     ['Windows 7', 'opera', '12'],
     ['Windows 7', 'opera', '11'],
-    //['Windows 7', 'opera', '10'],
-    ['Windows 7', 'opera', '9'],
     ['OS X 10.8', 'safari', '6'],
     ['Windows 7', 'safari', '5'],
     ['Windows XP', 'safari', '4']

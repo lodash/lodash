@@ -206,7 +206,7 @@
   var reNative = RegExp('^' +
     String(toString)
       .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      .replace(/toString| for [^\]]+/g, '.*?') + '$'
+      .replace(/\b(function)\b.*?(?=\\\()| for .+?(?=\\\])|\btoString\b/g, '$1.*?') + '$'
   );
 
   /** Native method shortcuts */

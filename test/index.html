@@ -46,19 +46,8 @@
 
 				window.WinRTError = Error;
 
-				window.clearTimeout = (function(fn) {
-					window._clearTimeout = fn;
-					return function(id) {
-						return fn(id);
-					};
-				}(clearTimeout));
-
-				window.setTimeout = (function(fn) {
-					window._setTimeout = fn;
-					return function(func, wait) {
-						return fn(func, wait);
-					};
-				}(setTimeout));
+				document._createDocumentFragment = document.createDocumentFragment;
+				document.createDocumentFragment = function() {};
 			}
 
 			function removeBizarroMethods() {
@@ -99,11 +88,8 @@
 				}
 				window.WinRTError = undefined;
 
-				window.clearTimeout = _clearTimeout;
-				window._clearTimeout = undefined;
-
-				window.setTimeout = _setTimeout;
-				window._setTimeout = undefined;
+				document.createDocumentFragment = document._createDocumentFragment;
+				document._createDocumentFragment = undefined;
 
 				delete Array._isArray;
 				delete Date._now;

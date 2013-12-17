@@ -231,15 +231,13 @@
         global.WinRTError = Error;
 
         // fake dom
-        var window = global.window = {};
-        window.document = {};
-        window.window = window;
-
-        var _clearTimeout = global.clearTimeout;
-        global.clearTimeout = Number;
-
-        var _setTimeout = global.setTimeout;
-        global.setTimeout = Number;
+        global.window = {
+          'document': {
+            'createDocumentFragment': function() {
+              return { 'nodeType': 11 };
+            }
+          }
+        };
 
         // add extensions
         Function.prototype._method = function() {};
@@ -277,9 +275,6 @@
         Object.defineProperty = _defineProperty;
         Object.getPrototypeOf = _getPrototypeOf;
         Object.keys = _keys;
-
-        global.clearTimeout = _clearTimeout;
-        global.setTimeout = _setTimeout;
 
         delete global.window;
         delete global.WinRTError;

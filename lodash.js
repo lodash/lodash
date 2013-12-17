@@ -930,7 +930,7 @@
       '}\n' +
 
       // Lo-Dash skips the `constructor` property when it infers it's iterating
-      // over a `prototype` objecte bcause IE < 9 can't set the `[[Enumerable]]`
+      // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
       // attribute of an existing property and the `constructor` property of a
       // prototype defaults to non-enumerable.
       '<% if (support.nonEnumShadows) { %>\n' +

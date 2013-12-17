@@ -1675,7 +1675,7 @@
 
     test('should work with `maxWait` option', 2, function() {
       if (!(isRhino && isModularize)) {
-        var limit = argv ? 1000 : 256,
+        var limit = (argv || isPhantomPage) ? 1000 : 256,
             withCount = 0,
             withoutCount = 0;
 

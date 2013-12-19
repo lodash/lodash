@@ -261,8 +261,7 @@
           lodash = global.lodash,\
           belt = this.name == buildName ? lodash : _;\
       \
-      var index,\
-          date = new Date,\
+      var date = new Date,\
           limit = 20,\
           regexp = /x/,\
           object = {},\
@@ -273,11 +272,12 @@
           nestedObjects = [{}, [{}], [{}, [[{}]]]],\
           twoNumbers = [12, 23];\
       \
-      for (index = 0; index < limit; index++) {\
+      for (var index = 0; index < limit; index++) {\
         numbers[index] = index;\
         object["key" + index] = index;\
         objects[index] = { "num": index };\
       }\
+      var strNumbers = numbers + "";\
       \
       if (typeof bind != "undefined") {\
         var thisArg = { "name": "fred" };\
@@ -299,7 +299,6 @@
           lodashBoundMultiple = lodash.bind(lodashBoundMultiple, { "name": "fred" + index });\
         }\
       }\
-      \
       if (typeof bindAll != "undefined") {\
         var bindAllCount = -1,\
             bindAllObjects = Array(this.count);\
@@ -326,7 +325,6 @@
         uncompacted[6] = null;\
         uncompacted[18] = "";\
       }\
-      \
       if (typeof countBy != "undefined" || typeof omit != "undefined") {\
         var wordToNumber = {\
           "one": 1,\
@@ -373,7 +371,6 @@
         \
         var words = belt.keys(wordToNumber).slice(0, limit);\
       }\
-      \
       if (typeof isEqual != "undefined") {\
         var objectOfPrimitives = {\
           "boolean": true,\
@@ -404,7 +401,6 @@
           numbers2[index] = index;\
         }\
       }\
-      \
       if (typeof multiArrays != "undefined") {\
         var twentyValues = Array(20),\
             twentyValues2 = Array(20),\
@@ -481,7 +477,6 @@
           }\
         }\
       }\
-      \
       if (typeof partial != "undefined") {\
         var func = function(greeting, punctuation) {\
           return greeting + " fred" + (punctuation || ".");\
@@ -490,7 +485,6 @@
         var _partial = _.partial(func, "hi"),\
             lodashPartial = lodash.partial(func, "hi");\
       }\
-      \
       if (typeof template != "undefined") {\
         var tplData = {\
           "header1": "Header1",\
@@ -732,6 +726,18 @@
         _.contains(object, limit - 1)'
       )
   );
+
+  if (lodash.contains('ab', 'ab') && _.contains('ab', 'ab')) {
+    suites.push(
+      Benchmark.Suite('`_.contains` iterating a string')
+        .add(buildName, '\
+          lodash.contains(strNumbers, "," + (limit - 1))'
+        )
+        .add(otherName, '\
+          _.contains(strNumbers, "," + (limit - 1))'
+        )
+    );
+  }
 
   /*--------------------------------------------------------------------------*/
 

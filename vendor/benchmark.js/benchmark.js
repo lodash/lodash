@@ -5,27 +5,39 @@
  * Modified by John-David Dalton <http://allyoucanleet.com/>
  * Available under MIT license <http://mths.be/mit>
  */
-;(function(root, undefined) {
+;(function(undefined) {
   'use strict';
 
+  /** Used to determine if values are of the language type Object */
+  var objectTypes = {
+    'boolean': false,
+    'function': true,
+    'object': true,
+    'number': false,
+    'string': false,
+    'undefined': false
+  };
+
+  /** Used as a reference to the global object */
+  var root = (objectTypes[typeof window] && window) || this;
+
   /** Detect free variable `define` */
-  var freeDefine = typeof define == 'function' &&
-    typeof define.amd == 'object' && define.amd && define;
+  var freeDefine = typeof define == 'function' && typeof define.amd == 'object' && define.amd && define;
 
   /** Detect free variable `exports` */
-  var freeExports = typeof exports == 'object' && exports;
+  var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
+
+  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `root` */
+  var freeGlobal = objectTypes[typeof global] && global;
+  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
+    root = freeGlobal;
+  }
 
   /** Detect free variable `module` */
-  var freeModule = typeof module == 'object' && module && module.exports == freeExports && module;
+  var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
 
   /** Detect free variable `require` */
   var freeRequire = typeof require == 'function' && require;
-
-  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `root` */
-  var freeGlobal = typeof global == 'object' && global;
-  if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-    root = freeGlobal;
-  }
 
   /** Used to assign each benchmark an incrimented id */
   var counter = 0;
@@ -2864,4 +2876,4 @@
       root.Benchmark = Benchmark;
     }
   }
-}(this));
+}.call(this));

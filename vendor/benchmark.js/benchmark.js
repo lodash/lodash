@@ -30,11 +30,14 @@
   /** Used to assign each benchmark an incrimented id */
   var counter = 0;
 
-  /** Used to make every compiled test unique */
-  var uidCounter = 0;
+  /** Detect the popular CommonJS extension `module.exports` */
+  var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
 
   /** Used to detect primitive types */
   var rePrimitive = /^(?:boolean|number|string|undefined)$/;
+
+  /** Used to make every compiled test unique */
+  var uidCounter = 0;
 
   /** Used to assign default `context` object properties */
   var contextProps = [
@@ -2846,18 +2849,18 @@
     var Benchmark = runInContext();
 
     // check for `exports` after `define` in case a build optimizer adds an `exports` object
-    if (freeExports && !freeExports.nodeType) {
-      // in Node.js or RingoJS v0.8.0+
-      if (freeModule) {
+    if (freeExports && freeModule) {
+      // in Node.js or RingoJS
+      if (moduleExports) {
         (freeModule.exports = Benchmark).Benchmark = Benchmark;
       }
-      // in Narwhal or RingoJS v0.7.0-
+      // in Narwhal or Rhino -require
       else {
         freeExports.Benchmark = Benchmark;
       }
     }
-    // in a browser or Rhino
     else {
+      // in a browser or Rhino
       root.Benchmark = Benchmark;
     }
   }

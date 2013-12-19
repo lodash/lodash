@@ -18,7 +18,7 @@
 * <a href="#_initialarray-callback1-thisarg">`_.initial`</a>
 * <a href="#_intersectionarray">`_.intersection`</a>
 * <a href="#_lastarray-callback-thisarg">`_.last`</a>
-* <a href="#_lastindexofarray-value-fromindexarraylength-1">`_.lastIndexOf`</a>
+* <a href="#_lastindexofarray-value">`_.lastIndexOf`</a>
 * <a href="#_zipobjectkeys-values" class="alias">`_.object` -> `zipObject`</a>
 * <a href="#_pullarray-value">`_.pull`</a>
 * <a href="#_rangestart0-end-step1">`_.range`</a>
@@ -106,8 +106,8 @@
 * <a href="#_bindallobject-methodname">`_.bindAll`</a>
 * <a href="#_bindkeyobject-key-arg">`_.bindKey`</a>
 * <a href="#_composefunc">`_.compose`</a>
-* <a href="#_curryfunc-arityfunclength">`_.curry`</a>
-* <a href="#_debouncefunc-wait-options-optionsmaxwait">`_.debounce`</a>
+* <a href="#_curryfunc">`_.curry`</a>
+* <a href="#_debouncefunc-wait-options">`_.debounce`</a>
 * <a href="#_deferfunc-arg">`_.defer`</a>
 * <a href="#_delayfunc-wait-arg">`_.delay`</a>
 * <a href="#_memoizefunc-resolver">`_.memoize`</a>
@@ -184,7 +184,7 @@
 * <a href="#_randommin0-max1-floatingfalse">`_.random`</a>
 * <a href="#_resultobject-key">`_.result`</a>
 * <a href="#_runincontextcontextroot">`_.runInContext`</a>
-* <a href="#_templatetext-data-options-optionsescape-optionsevaluate-optionsimports-optionsinterpolate-sourceurl-variable">`_.template`</a>
+* <a href="#_templatetext-data-options">`_.template`</a>
 * <a href="#_timesn-callback-thisarg">`_.times`</a>
 * <a href="#_unescapestring">`_.unescape`</a>
 * <a href="#_uniqueidprefix">`_.uniqueId`</a>
@@ -646,8 +646,8 @@ _.last(characters, { 'employer': 'na' });
 
 <!-- div -->
 
-### <a id="_lastindexofarray-value-fromindexarraylength-1"></a>`_.lastIndexOf(array, value, [fromIndex=array.length-1])`
-<a href="#_lastindexofarray-value-fromindexarraylength-1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5043 "View in source") [&#x24C9;][1]
+### <a id="_lastindexofarray-value"></a>`_.lastIndexOf(array, value)`
+<a href="#_lastindexofarray-value">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5043 "View in source") [&#x24C9;][1]
 
 Gets the index at which the last occurrence of `value` is found using strict equality for comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the offset from the end of the collection.
 
@@ -2415,8 +2415,8 @@ welcome('pebbles');
 
 <!-- div -->
 
-### <a id="_curryfunc-arityfunclength"></a>`_.curry(func, [arity=func.length])`
-<a href="#_curryfunc-arityfunclength">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5749 "View in source") [&#x24C9;][1]
+### <a id="_curryfunc"></a>`_.curry(func)`
+<a href="#_curryfunc">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5749 "View in source") [&#x24C9;][1]
 
 Creates a function which accepts one or more arguments of `func` that when invoked either executes `func` returning its result, if all `func` arguments have been provided, or returns a function that accepts one or more of the remaining `func` arguments, and so on. The arity of `func` can be specified if `func.length` is not sufficient.
 
@@ -2450,8 +2450,8 @@ curried(1, 2, 3);
 
 <!-- div -->
 
-### <a id="_debouncefunc-wait-options-optionsmaxwait"></a>`_.debounce(func, wait, [options], [options.maxWait])`
-<a href="#_debouncefunc-wait-options-optionsmaxwait">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5793 "View in source") [&#x24C9;][1]
+### <a id="_debouncefunc-wait-options"></a>`_.debounce(func, wait, [options])`
+<a href="#_debouncefunc-wait-options">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L5793 "View in source") [&#x24C9;][1]
 
 Creates a function that will delay the execution of `func` until after `wait` milliseconds have elapsed since the last time it was invoked. Provide an options object to indicate that `func` should be invoked on the leading and/or trailing edge of the `wait` timeout. Subsequent calls to the debounced function will return the result of the last `func` call.
 
@@ -4376,8 +4376,8 @@ Create a new `lodash` function using the given context object.
 
 <!-- div -->
 
-### <a id="_templatetext-data-options-optionsescape-optionsevaluate-optionsimports-optionsinterpolate-sourceurl-variable"></a>`_.template(text, data, [options], [options.escape], [options.evaluate], [options.imports], [options.interpolate], [sourceURL], [variable])`
-<a href="#_templatetext-data-options-optionsescape-optionsevaluate-optionsimports-optionsinterpolate-sourceurl-variable">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6643 "View in source") [&#x24C9;][1]
+### <a id="_templatetext-data-options"></a>`_.template(text, data, [options])`
+<a href="#_templatetext-data-options">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L6643 "View in source") [&#x24C9;][1]
 
 A micro-templating method that handles arbitrary delimiters, preserves whitespace, and correctly escapes quotes within interpolated code.
 
@@ -4395,8 +4395,8 @@ For more information on Chrome extension sandboxes see &#91;Chrome's extensions 
 5. `[options.evaluate]` *(RegExp)*: The "evaluate" delimiter.
 6. `[options.imports]` *(Object)*: An object to import into the template as local variables.
 7. `[options.interpolate]` *(RegExp)*: The "interpolate" delimiter.
-8. `[sourceURL]` *(string)*: The sourceURL of the template's compiled source.
-9. `[variable]` *(string)*: The data object variable name.
+8. `[options.sourceURL]` *(string)*: The sourceURL of the template's compiled source.
+9. `[options.variable]` *(string)*: The data object variable name.
 
 #### Returns
 *(Function, string)*: Returns a compiled function when no `data` object  is given, else it returns the interpolated text.

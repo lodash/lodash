@@ -249,9 +249,6 @@
         var _now = Date.now;
         Date.now = function() {};
 
-        var _bind = Function.prototype.bind;
-        Function.prototype.bind = function() { return function() {}; };
-
         var _create = Object.create;
         Object.create = function() {};
 
@@ -264,18 +261,25 @@
         var _keys = Object.keys;
         Object.keys = function() {};
 
+        var _contains = String.prototype.contains;
+        String.prototype.contains = function() {};
+
         // load Lo-Dash and expose it to the bad extensions/shims
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
 
         // restore native methods
         Array.isArray = _isArray;
         Date.now = _now;
-        Function.prototype.bind = _bind;
         Object.create = _create;
         Object.defineProperty = _defineProperty;
         Object.getPrototypeOf = _getPrototypeOf;
         Object.keys = _keys;
 
+        if (String.prototype._contains) {
+          String.prototype.contains = String.prototype._contains;
+        } else {
+          delete String.prototype.contains;
+        }
         delete global.window;
         delete global.WinRTError;
         delete Function.prototype._method;
@@ -384,7 +388,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 7, function() {
+    test('should avoid overwritten native methods', 8, function() {
       function Foo() {}
 
       function message(methodName) {
@@ -416,11 +420,11 @@
         deepEqual(actual[1], {}, message('Object.create'));
 
         try {
-          var actual = lodashBizarro.bind(function() { return this.a; }, object)();
+          var actual = lodashBizarro.bind(function() { return this.a; }, object);
         } catch(e) {
           actual = null;
         }
-        ok(actual, message('Object.defineProperty'));
+        equal('__bindData__' in actual, false, message('Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -435,9 +439,16 @@
           actual = null;
         }
         deepEqual(actual, [['a'], []], message('Object.keys'));
+
+        try {
+          actual = lodashBizarro.contains('abc', 'bc');
+        } catch(e) {
+          actual = null;
+        }
+        strictEqual(actual, true, message('String#contains'));
       }
       else {
-        skipTest(7);
+        skipTest(8);
       }
     });
   }());

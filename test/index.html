@@ -29,9 +29,6 @@
 				Date._now = Date.now;
 				Date.now = function() {};
 
-				Function.prototype._bind = Function.prototype.bind;
-				Function.prototype.bind = function() { return function() {}; };
-
 				Object._create = Object.create;
 				Object.create = function() {};
 
@@ -43,6 +40,9 @@
 
 				Object._keys = Object.keys;
 				Object.keys = function() {};
+
+				String.prototype._contains = String.prototype.contains;
+				String.prototype.contains = function() {};
 
 				window.WinRTError = Error;
 
@@ -60,11 +60,6 @@
 					Date.now = Date._now;
 				} else {
 					delete Date.now;
-				}
-				if (Function.prototype._bind) {
-					Function.prototype.bind = Function.prototype._bind;
-				} else {
-					delete Function.prototype.bind;
 				}
 				if (Object._create) {
 					Object.create = Object._create;
@@ -86,6 +81,11 @@
 				} else {
 					delete Object.keys;
 				}
+				if (String.prototype._contains) {
+					String.prototype.contains = String.prototype._contains;
+				} else {
+					delete String.prototype.contains;
+				}
 				window.WinRTError = undefined;
 
 				document.createDocumentFragment = document._createDocumentFragment;
@@ -93,12 +93,12 @@
 
 				delete Array._isArray;
 				delete Date._now;
-				delete Function.prototype._bind;
 				delete Function.prototype._method;
 				delete Object._create;
 				delete Object._defineProperty;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
+				delete String.prototype._contains;
 			}
 
 			addBizarroMethods();

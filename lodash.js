@@ -6577,8 +6577,8 @@
      * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
      * @param {Object} [options.imports] An object to import into the template as local variables.
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
-     * @param {string} [sourceURL] The sourceURL of the template's compiled source.
-     * @param {string} [variable] The data object variable name.
+     * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
+     * @param {string} [options.variable] The data object variable name.
      * @returns {Function|string} Returns a compiled function when no `data` object
      *  is given, else it returns the interpolated text.
      * @example

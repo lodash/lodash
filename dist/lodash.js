@@ -459,7 +459,8 @@
     var arrayRef = [];
 
     /** Used for native method references */
-    var objectProto = Object.prototype;
+    var objectProto = Object.prototype,
+        stringProto = String.prototype;
 
     /** Used to detect DOM support */
     var document = (document = context.window) && document.document;
@@ -501,7 +502,8 @@
     }());
 
     /* Native method shortcuts for methods with the same name as other `lodash` methods */
-    var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
+    var nativeContains = isNative(nativeContains = stringProto.contains) && nativeContains,
+        nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeIsNaN = context.isNaN,
@@ -3028,23 +3030,31 @@
      * // => true
      */
     function contains(collection, target, fromIndex) {
+      var length = collection ? collection.length : 0;
+      fromIndex = typeof fromIndex == 'number' ? fromIndex : 0;
+
+      if (typeof length == 'number') {
+        if (fromIndex >= length) {
+          return false;
+        }
+        if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
+          return nativeContains
+            ? nativeContains.call(collection, target, fromIndex)
+            : collection.indexOf(target, fromIndex) > -1;
+        }
+        var indexOf = getIndexOf();
+        fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
+        return indexOf(collection, target, fromIndex) > -1;
+      }
       var index = -1,
-          indexOf = getIndexOf(),
-          length = collection ? collection.length : 0,
           result = false;
 
-      fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
-      if (isArray(collection)) {
-        result = indexOf(collection, target, fromIndex) > -1;
-      } else if (typeof length == 'number') {
-        result = (isString(collection) ? collection.indexOf(target, fromIndex) : indexOf(collection, target, fromIndex)) > -1;
-      } else {
-        forOwn(collection, function(value) {
-          if (++index >= fromIndex) {
-            return !(result = value === target);
-          }
-        });
-      }
+      forOwn(collection, function(value) {
+        if (++index >= fromIndex) {
+          return !(result = value === target);
+        }
+      });
+
       return result;
     }
 

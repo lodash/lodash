@@ -1151,18 +1151,20 @@
         strictEqual(_.contains(collection, 1, 2), true);
       });
 
-      test('should work with ' + key + ' and a `fromIndex` >= collection\'s length', 4, function() {
+      test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', 6, function() {
         strictEqual(_.contains(collection, 1, 6), false);
         strictEqual(_.contains(collection, undefined, 6), false);
+        strictEqual(_.contains(collection, '', 6), false);
         strictEqual(_.contains(collection, 1, 8), false);
         strictEqual(_.contains(collection, undefined, 8), false);
+        strictEqual(_.contains(collection, '', 8), false);
       });
 
       test('should work with ' + key + ' and a negative `fromIndex`', 1, function() {
         strictEqual(_.contains(collection, 2, -3), true);
       });
 
-      test('should work with ' + key + ' and a negative `fromIndex` <= negative collection\'s length', 2, function() {
+      test('should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', 2, function() {
         strictEqual(_.contains(collection, 1, -6), true);
         strictEqual(_.contains(collection, 2, -8), true);
       });
@@ -1186,6 +1188,10 @@
         strictEqual(_.contains(collection, 'bc'), true);
         strictEqual(_.contains(collection, 'd'), false);
       });
+    });
+
+    test('should not be possible to perform a binary search', function() {
+      strictEqual(_.contains([3, 2, 1], 3, true), true);
     });
 
     test('should be aliased', 1, function() {

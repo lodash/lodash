@@ -141,12 +141,16 @@ class Entry {
       // compose parts
       $result = array($result);
       $params = $this->getParams();
+      $paramNames = array();
 
       foreach ($params as $param) {
         // skip params that are properties of other params (e.g. `options.leading`)
-        if (!preg_match('/\w+\.[\w.]+\s*=/', $param[1])) {
+        preg_match('/\w+(?=\.[\w.]+)/', $param[1], $parentParam);
+        $parentParam = $parentParam[0];
+        if (!in_array($parentParam, $paramNames)) {
           $result[] = $param[1];
         }
+        $paramNames[] = preg_replace('/^\[|\]$/', '', $param[1]);
       }
       // format
       $result = $name .'('. implode(array_slice($result, 1), ', ') .')';

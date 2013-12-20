@@ -262,7 +262,7 @@
         Object.keys = function() {};
 
         var _contains = String.prototype.contains;
-        String.prototype.contains = function() {};
+        String.prototype.contains = _contains ? function() {} : Boolean;
 
         // load Lo-Dash and expose it to the bad extensions/shims
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
@@ -275,8 +275,8 @@
         Object.getPrototypeOf = _getPrototypeOf;
         Object.keys = _keys;
 
-        if (String.prototype._contains) {
-          String.prototype.contains = String.prototype._contains;
+        if (_contains) {
+          String.prototype.contains = _contains;
         } else {
           delete String.prototype.contains;
         }

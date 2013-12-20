@@ -42,7 +42,7 @@
 				Object.keys = function() {};
 
 				String.prototype._contains = String.prototype.contains;
-				String.prototype.contains = function() {};
+				String.prototype.contains = String.prototype._contains ? function() {} : Boolean;
 
 				window.WinRTError = Error;
 

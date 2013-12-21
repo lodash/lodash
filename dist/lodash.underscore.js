@@ -27,7 +27,7 @@
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g,
       reUnescapedHtml = /[&<>"']/g;
 
   /** Used to ensure capturing order of template delimiters */

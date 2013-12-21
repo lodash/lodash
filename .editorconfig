@@ -7,11 +7,14 @@ root = true
 end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
-insert_final_newline = true
 
 [**.{js,json,md}]
 indent_style = space
 indent_size = 2
+insert_final_newline = true
+
+[**.{html,php}]
+insert_final_newline = false
 
 [**.html]
 indent_style = tab

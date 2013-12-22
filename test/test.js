@@ -1126,12 +1126,30 @@
   (function() {
     test('should create a function that always returns `value`', 1, function() {
       var object = { 'a': 1 },
-          values = falsey.concat(1, 'a'),
+          values = falsey.concat(null, null, 1, 'a'),
           constant = _.constant(object),
-          expected = _.map(values, function() { return object; });
+          expected = _.map(values, function() { return true; });
 
       var actual = _.map(values, function(value, index) {
-        return index ? constant(value) : constant();
+        if (index == 0) {
+          var result = constant();
+        } else if (index == 1) {
+          result = constant.call({});
+        } else {
+          result = constant(value);
+        }
+        return result === object;
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with falsey values', 1, function() {
+      var expected = _.map(falsey, function() { return true; });
+
+      var actual = _.map(falsey, function(value, index) {
+        var constant = index ? _.constant(value) : _.constant();
+        return constant() === value || _.isNaN(value);
       });
 
       deepEqual(actual, expected);

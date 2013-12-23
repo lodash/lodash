@@ -4057,7 +4057,7 @@
      * @type Function
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {string} property The name of the property to pluck.
+     * @param {string} prop The name of the property to pluck.
      * @returns {Array} Returns a new array of property values.
      * @example
      *
@@ -6250,8 +6250,9 @@
     }
 
     /**
-     * Creates a "_.where" style function, which returns `true` for a given object
-     * if it has the equivalent property values of the `props` object, else `false`.
+     * Creates a "_.where" style function, which performs a deep comparison
+     * between a given object and the `props` object, returning `true` if the
+     * given object has equivalent property values, else `false`.
      *
      * @static
      * @memberOf _

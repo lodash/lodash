@@ -616,12 +616,13 @@
      * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
      * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
      * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
-     * `invert`, `invoke`, `keys`, `map`, `mapValues`, `max`, `memoize`, `merge`,
-     * `min`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
-     * `pick`, `pluck`, `property`, `pull`, `push`, `range`, `reject`, `remove`,
-     * `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `tap`,
-     * `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
-     * `unzip`, `values`, `where`, `without`, `wrap`, `xor`, and `zip`
+     * `invert`, `invoke`, `keys`, `map`, `mapValues`, `match`, `max`, `memoize`,
+     * `merge`, `min`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
+     * `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`, `range`,
+     * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
+     * `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`, `union`,
+     * `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`, `xor`,
+     * and `zip`
      *
      * The non-chainable wrapper functions are:
      * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `findIndex`,
@@ -4469,8 +4470,8 @@
     }
 
     /**
-     * Performs a deep comparison of each element in a `collection` to the given
-     * `properties` object, returning an array of all elements that have equivalent
+     * Performs a deep comparison between each element in `collection` and the
+     * `props` object, returning an array of all elements that have equivalent
      * property values.
      *
      * @static
@@ -6222,34 +6223,8 @@
       if (func == null || type == 'function') {
         return baseCreateCallback(func, thisArg, argCount);
       }
-      // handle "_.pluck" style callback shorthands
-      if (type != 'object') {
-        return property(func);
-      }
-      var props = keys(func),
-          key = props[0],
-          a = func[key];
-
-      // handle "_.where" style callback shorthands
-      if (props.length == 1 && a === a && !isObject(a)) {
-        // fast path the common case of providing an object with a single
-        // property containing a primitive value
-        return function(object) {
-          var b = object[key];
-          return a === b && (a !== 0 || (1 / a == 1 / b));
-        };
-      }
-      return function(object) {
-        var length = props.length,
-            result = false;
-
-        while (length--) {
-          if (!(result = baseIsEqual(object[props[length]], func[props[length]], null, true))) {
-            break;
-          }
-        }
-        return result;
-      };
+      // handle "_.pluck" and "_.where" style callback shorthands
+      return type != 'object' ? property(func) : match(func);
     }
 
     /**
@@ -6289,6 +6264,58 @@
      */
     function identity(value) {
       return value;
+    }
+
+    /**
+     * Creates a "_.where" style function, which returns `true` for a given object
+     * if it has the equivalent property values of the `props` object, else `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {Object} props The object of property values to match.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var characters = [
+     *   { 'name': 'fred',   'age': 40 },
+     *   { 'name': 'barney', 'age': 36 }
+     * ];
+     *
+     * var matchAge = _.match({ 'age': 36 });
+     *
+     * _.filter(characters, matchAge);
+     * // => [{ 'name': 'barney', 'age': 36 }]
+     *
+     * _.find(characters, matchAge);
+     * // => { 'name': 'barney', 'age': 36 }
+     */
+    function match(source) {
+      source || (source = {});
+
+      var props = keys(source),
+          key = props[0],
+          a = source[key];
+
+      // fast path the common case of providing an object with a single
+      // property containing a primitive value
+      if (props.length == 1 && a === a && !isObject(a)) {
+        return function(object) {
+          var b = object[key];
+          return a === b && (a !== 0 || (1 / a == 1 / b));
+        };
+      }
+      return function(object) {
+        var length = props.length,
+            result = false;
+
+        while (length--) {
+          if (!(result = baseIsEqual(object[props[length]], source[props[length]], null, true))) {
+            break;
+          }
+        }
+        return result;
+      };
     }
 
     /**
@@ -6989,6 +7016,7 @@
     lodash.keys = keys;
     lodash.map = map;
     lodash.mapValues = mapValues;
+    lodash.match = match;
     lodash.max = max;
     lodash.memoize = memoize;
     lodash.merge = merge;

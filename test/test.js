@@ -6367,6 +6367,20 @@
       var actual = func([], noop, undefined);
       strictEqual(actual, undefined);
     });
+
+    test('`_.' + methodName + '` should return `undefined` for empty collections when no `accumulator` is provided (test in IE > 9 and modern browsers)', 2, function() {
+      var array = [],
+          object = { '0': 1, 'length': 0 };
+
+      if ('__proto__' in array) {
+        array.__proto__ = object;
+        strictEqual(_.reduce(array, noop), undefined);
+      }
+      else {
+        skipTest();
+      }
+      strictEqual(_.reduce(object, noop), undefined);
+    });
   });
 
   /*--------------------------------------------------------------------------*/

@@ -4109,7 +4109,7 @@
         var index = -1,
             length = collection.length;
 
-        if (noaccum) {
+        if (noaccum && length) {
           accumulator = collection[++index];
         }
         while (++index < length) {

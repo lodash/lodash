@@ -6511,17 +6511,18 @@
           noMax = max == null;
 
       if (floating == null) {
-        if (typeof min == 'boolean' && noMax) {
+        if (noMax && typeof min == 'boolean') {
           floating = min;
           min = 1;
         }
-        else if (!noMax && typeof max == 'boolean') {
+        else if (typeof max == 'boolean') {
           floating = max;
           noMax = true;
         }
       }
       if (noMin && noMax) {
         max = 1;
+        noMax = false;
       }
       min = +min || 0;
       if (noMax) {

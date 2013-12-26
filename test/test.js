@@ -6046,12 +6046,14 @@
     var array = Array(1000);
 
     test('should return `0` or `1` when arguments are not provided', 1, function() {
-      var actual = _.random();
-      ok(actual === 0 || actual === 1);
+      var actual = _.map(array, function() {
+        return _.random();
+      });
+
+      deepEqual(_.uniq(actual).sort(), [0, 1]);
     });
 
     test('supports not passing a `max` argument', 1, function() {
-      var actual = _.random(5);
       ok(_.some(array, function() {
         return _.random(5) != 5;
       }));

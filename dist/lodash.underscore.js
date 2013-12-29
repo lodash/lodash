@@ -114,6 +114,27 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * The base implementation of `compareAscending` used to compare values and
+   * sort them in ascending order without guaranteeing a stable sort.
+   *
+   * @private
+   * @param {*} a The value to compare to `b`.
+   * @param {*} b The value to compare to `a`.
+   * @returns {number} Returns the sort order indicator for `a`.
+   */
+  function baseCompareAscending(a, b) {
+    if (a !== b) {
+      if (a > b || typeof a == 'undefined') {
+        return 1;
+      }
+      if (a < b || typeof b == 'undefined') {
+        return -1;
+      }
+    }
+    return 0;
+  }
+
+  /**
    * The base implementation of `_.indexOf` without support for binary searches
    * or `fromIndex` constraints.
    *
@@ -136,40 +157,16 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed `collection` elements, stable sorting
-   * them in ascending order.
+   * Used by `sortBy` to compare transformed elements of a collection and stable
+   * sort them in ascending order.
    *
    * @private
    * @param {Object} a The object to compare to `b`.
    * @param {Object} b The object to compare to `a`.
-   * @returns {number} Returns the sort order indicator of `1` or `-1`.
+   * @returns {number} Returns the sort order indicator for `a`.
    */
   function compareAscending(a, b) {
-    var ac = a.criteria,
-        bc = b.criteria,
-        index = -1,
-        length = ac.length;
-
-    while (++index < length) {
-      var value = ac[index],
-          other = bc[index];
-
-      if (value !== other) {
-        if (value > other || typeof value == 'undefined') {
-          return 1;
-        }
-        if (value < other || typeof other == 'undefined') {
-          return -1;
-        }
-      }
-    }
-    // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
-    // that causes it, under certain circumstances, to return the same value for
-    // `a` and `b`. See https://github.com/jashkenas/underscore/pull/1247
-    //
-    // This also ensures a stable sort in V8 and other engines.
-    // See http://code.google.com/p/v8/issues/detail?id=90
-    return a.index - b.index;
+    return baseCompareAscending(a.criteria, b.criteria) || a.index - b.index;
   }
 
   /**
@@ -2694,6 +2691,7 @@
       result[index] = result[rand];
       result[rand] = value;
     });
+
     return result;
   }
 
@@ -2842,7 +2840,7 @@
     callback = createCallback(callback, thisArg, 3);
     forEach(collection, function(value, key, collection) {
       result[++index] = {
-        'criteria': [callback(value, key, collection)],
+        'criteria': callback(value, key, collection),
         'index': index,
         'value': value
       };

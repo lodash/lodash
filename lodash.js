@@ -198,6 +198,27 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * The base implementation of `compareAscending` used to compare values and
+   * sort them in ascending order without guaranteeing a stable sort.
+   *
+   * @private
+   * @param {*} a The value to compare to `b`.
+   * @param {*} b The value to compare to `a`.
+   * @returns {number} Returns the sort order indicator for `a`.
+   */
+  function baseCompareAscending(a, b) {
+    if (a !== b) {
+      if (a > b || typeof a == 'undefined') {
+        return 1;
+      }
+      if (a < b || typeof b == 'undefined') {
+        return -1;
+      }
+    }
+    return 0;
+  }
+
+  /**
    * The base implementation of `_.indexOf` without support for binary searches
    * or `fromIndex` constraints.
    *
@@ -286,36 +307,42 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed `collection` elements, stable sorting
-   * them in ascending order.
+   * Used by `sortBy` to compare transformed elements of a collection and stable
+   * sort them in ascending order.
    *
    * @private
    * @param {Object} a The object to compare to `b`.
    * @param {Object} b The object to compare to `a`.
-   * @returns {number} Returns the sort order indicator of `1` or `-1`.
+   * @returns {number} Returns the sort order indicator for `a`.
    */
   function compareAscending(a, b) {
+    return baseCompareAscending(a.criteria, b.criteria) || a.index - b.index;
+  }
+
+  /**
+   * Used by `sortBy` to compare multiple properties of each element in a
+   * collection and stable sort them in ascending order.
+   *
+   * @private
+   * @param {Object} a The object to compare to `b`.
+   * @param {Object} b The object to compare to `a`.
+   * @returns {number} Returns the sort order indicator for `a`.
+   */
+  function compareMultipleAscending(a, b) {
     var ac = a.criteria,
         bc = b.criteria,
         index = -1,
         length = ac.length;
 
     while (++index < length) {
-      var value = ac[index],
-          other = bc[index];
-
-      if (value !== other) {
-        if (value > other || typeof value == 'undefined') {
-          return 1;
-        }
-        if (value < other || typeof other == 'undefined') {
-          return -1;
-        }
+      var result = baseCompareAscending(ac[index], bc[index]);
+      if (result) {
+        return result;
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
-    // that causes it, under certain circumstances, to return the same value for
-    // `a` and `b`. See https://github.com/jashkenas/underscore/pull/1247
+    // that causes it, under certain circumstances, to provided the same value
+    // for `a` and `b`. See https://github.com/jashkenas/underscore/pull/1247
     //
     // This also ensures a stable sort in V8 and other engines.
     // See http://code.google.com/p/v8/issues/detail?id=90
@@ -4274,6 +4301,7 @@
         result[index] = result[rand];
         result[rand] = value;
       });
+
       return result;
     }
 
@@ -4416,32 +4444,27 @@
      */
     function sortBy(collection, callback, thisArg) {
       var index = -1,
-          isArr = isArray(callback),
+          multi = callback && isArray(callback),
           length = collection ? collection.length : 0,
           result = Array(typeof length == 'number' ? length : 0);
 
-      if (!isArr) {
+      if (!multi) {
         callback = lodash.createCallback(callback, thisArg, 3);
       }
       forEach(collection, function(value, key, collection) {
         var object = result[++index] = getObject();
-        if (isArr) {
-          object.criteria = map(callback, function(key) { return value[key]; });
-        } else {
-          (object.criteria = getArray())[0] = callback(value, key, collection);
-        }
         object.index = index;
         object.value = value;
+        object.criteria = multi
+          ? map(callback, function(key) { return value[key]; })
+          : callback(value, key, collection);
       });
 
       length = result.length;
-      result.sort(compareAscending);
+      result.sort(multi ? compareMultipleAscending : compareAscending);
       while (length--) {
         var object = result[length];
         result[length] = object.value;
-        if (!isArr) {
-          releaseArray(object.criteria);
-        }
         releaseObject(object);
       }
       return result;

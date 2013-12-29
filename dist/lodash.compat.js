@@ -530,16 +530,9 @@
         String = context.String,
         TypeError = context.TypeError;
 
-    /**
-     * Used for `Array` method references.
-     *
-     * Normally `Array.prototype` would suffice, however, using an array literal
-     * avoids issues in Narwhal.
-     */
-    var arrayRef = [];
-
     /** Used for native method references */
-    var errorProto = Error.prototype,
+    var arrayRef = Array.prototype,
+        errorProto = Error.prototype,
         objectProto = Object.prototype,
         stringProto = String.prototype;
 
@@ -828,7 +821,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
+      support.spliceObjects = (splice.call(object, 0, 1), !object[0]);
 
       /**
        * Detect lack of support for accessing string characters by index.

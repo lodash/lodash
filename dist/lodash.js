@@ -506,16 +506,9 @@
         String = context.String,
         TypeError = context.TypeError;
 
-    /**
-     * Used for `Array` method references.
-     *
-     * Normally `Array.prototype` would suffice, however, using an array literal
-     * avoids issues in Narwhal.
-     */
-    var arrayRef = [];
-
     /** Used for native method references */
-    var objectProto = Object.prototype,
+    var arrayRef = Array.prototype,
+        objectProto = Object.prototype,
         stringProto = String.prototype;
 
     /** Used to detect DOM support */

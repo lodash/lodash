@@ -211,16 +211,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /**
-   * Used for `Array` method references.
-   *
-   * Normally `Array.prototype` would suffice, however, using an array literal
-   * avoids issues in Narwhal.
-   */
-  var arrayRef = [];
-
   /** Used for native method references */
-  var objectProto = Object.prototype;
+  var arrayRef = Array.prototype,
+      objectProto = Object.prototype;
 
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = root._;
@@ -241,7 +234,8 @@
       fnToString = Function.prototype.toString,
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
-      propertyIsEnumerable = objectProto.propertyIsEnumerable;
+      propertyIsEnumerable = objectProto.propertyIsEnumerable,
+      splice = arrayRef.splice;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
@@ -366,7 +360,7 @@
      * @memberOf _.support
      * @type boolean
      */
-    support.spliceObjects = (arrayRef.splice.call(object, 0, 1), !object[0]);
+    support.spliceObjects = (splice.call(object, 0, 1), !object[0]);
   }(1));
 
   /**

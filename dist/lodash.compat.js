@@ -31,7 +31,7 @@
   /** Used as the max size of the `arrayPool` and `objectPool` */
   var maxPoolSize = 40;
 
-  /** Used to detect and test whitespace */
+  /** Used to detect and test whitespace (unicode 6.3.0) */
   var whitespace = (
     // whitespace
     ' \t\x0B\f\xA0\ufeff' +
@@ -40,13 +40,22 @@
     '\n\r\u2028\u2029' +
 
     // unicode category "Zs" space separators
-    '\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
+    '\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
   );
 
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
+
+  /** Used to match HTML entities and HTML characters */
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
+      reUnescapedHtml = /[&<>"']/g;
+
+  /** Used to match template delimiters */
+  var reEscape = /<%-([\s\S]+?)%>/g,
+      reEvaluate = /<%([\s\S]+?)%>/g,
+      reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /**
    * Used to match ES6 template delimiters
@@ -60,17 +69,8 @@
   /** Used to detected named functions */
   var reFuncName = /^\s*function[ \n\r\t]+\w/;
 
-  /** Used to match template delimiters */
-  var reEscape = /<%-([\s\S]+?)%>/g,
-      reEvaluate = /<%([\s\S]+?)%>/g,
-      reInterpolate = /<%=([\s\S]+?)%>/g;
-
-  /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
-      reUnescapedHtml = /[&<>"']/g;
-
-  /** Used to match leading whitespace and zeros to be removed */
-  var reLeadingSpacesAndZeros = RegExp('^[' + whitespace + ']*0+(?=.$)');
+  /** Used to detect hexadecimal string values */
+  var reHexPrefix = /^0[xX]/;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
@@ -586,7 +586,8 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random;
+        nativeRandom = Math.random,
+        nativeTrim = isNative(nativeTrim = stringProto.trim) && nativeTrim;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -1131,7 +1132,7 @@
     function baseCreate(prototype, properties) {
       return isObject(prototype) ? nativeCreate(prototype) : {};
     }
-    // fallback for browsers without `Object.create`
+    // fallback for environments without `Object.create`
     if (!nativeCreate) {
       baseCreate = (function() {
         function Object() {}
@@ -1895,6 +1896,32 @@
     }
 
     /**
+     * Removes leading and trailing whitespace from a given string.
+     *
+     * @private
+     * @param {string} string The string to trim.
+     * @returns {string} Returns the trimmed string.
+     */
+    function trim(string) {
+      return string == null ? '' : nativeTrim.call(string);
+    }
+    // fallback for environments without a proper `String#trim`
+    if (!nativeTrim || nativeTrim.call(whitespace)) {
+      trim = function(string) {
+        var start = -1,
+            end = string ? string.length : 0;
+
+        if (!end || string == null) {
+          return '';
+        }
+        string = String(string);
+        while (whitespace.indexOf(string.charAt(++start)) > -1) { }
+        while (whitespace.indexOf(string.charAt(--end)) > -1) { }
+        return string.slice(start, end + 1);
+      };
+    }
+
+    /**
      * Used by `unescape` to convert HTML entities to characters.
      *
      * @private
@@ -1927,7 +1954,7 @@
       return value && typeof value == 'object' && typeof value.length == 'number' &&
         toString.call(value) == argsClass || false;
     }
-    // fallback for browsers that can't detect `arguments` objects by [[Class]]
+    // fallback for environments that can't detect `arguments` objects by [[Class]]
     if (!support.argsClass) {
       isArguments = function(value) {
         return value && typeof value == 'object' && typeof value.length == 'number' &&
@@ -6461,8 +6488,10 @@
      * // => 8
      */
     var parseInt = nativeParseInt(whitespace + '08') == 8 ? nativeParseInt : function(value, radix) {
-      // Firefox < 21 and Opera < 15 follow the ES3 specified implementation of `parseInt`
-      return nativeParseInt(isString(value) ? value.replace(reLeadingSpacesAndZeros, '') : value, radix || 0);
+      // Chrome fails to trim leading <BOM> whitespace characters.
+      // Firefox < 21 and Opera < 15 follow the ES3 specified implementation of `parseInt`.
+      value = trim(value);
+      return nativeParseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
     };
 
     /**

@@ -2928,7 +2928,7 @@
 
   (function() {
     test('should return the function names of an object', 1, function() {
-      var object = { 'a': 'a', 'b': _.identity, 'c': /x/, 'd': _.each };
+      var object = { 'a': 'a', 'b': _.identity, 'c': /x/, 'd': _.forEach };
       deepEqual(_.functions(object), ['b', 'd']);
     });
 
@@ -5722,22 +5722,56 @@
   QUnit.module('lodash.parseInt');
 
   (function() {
-    test('should parse strings with leading whitespace and zeros with a `radix` of 10 by default (test in Chrome, Firefox, and Opera)', 2, function() {
-      var whitespace = ' \x09\x0B\x0C\xA0\ufeff\x0A\x0D\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
-      equal(_.parseInt('08'), 8);
-      equal(_.parseInt(whitespace + '08'), 8);
+    var whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
+
+    test('should accept a `radix` argument', function() {
+      var expected = _.range(2, 37);
+
+      var actual = _.map(expected, function(radix) {
+        return _.parseInt('10', radix);
+      });
+
+      deepEqual(actual, expected);
     });
 
-    test('should use a radix of `10`, for non-hexadecimals, if `radix` is `undefined` or `0`', 3, function() {
-      equal(_.parseInt('10', 0), 10);
-      equal(_.parseInt('10'), 10);
-      equal(_.parseInt('10', undefined), 10);
+    test('should use a radix of `10`, for non-hexadecimals, if `radix` is `undefined` or `0`', 4, function() {
+      strictEqual(_.parseInt('10'), 10);
+      strictEqual(_.parseInt('10', 0), 10);
+      strictEqual(_.parseInt('10', 10), 10);
+      strictEqual(_.parseInt('10', undefined), 10);
     });
 
-    test('should use a radix of `16`, for hexadecimals, if `radix` is `undefined` or `0`', 3, function() {
-      equal(_.parseInt('0x20', 0), 32);
-      equal(_.parseInt('0x20'), 32);
-      equal(_.parseInt('0x20', undefined), 32);
+    test('should use a radix of `16`, for hexadecimals, if `radix` is `undefined` or `0`', 8, function() {
+      _.forEach(['0x20', '0X20'], function(string) {
+        strictEqual(_.parseInt(string), 32);
+        strictEqual(_.parseInt(string, 0), 32);
+        strictEqual(_.parseInt(string, 16), 32);
+        strictEqual(_.parseInt(string, undefined), 32);
+      });
+    });
+
+    test('should use a radix of `10` for string with leading zeros', 2, function() {
+      strictEqual(_.parseInt('08'), 8);
+      strictEqual(_.parseInt('08', 10), 8);
+    });
+
+    test('should parse strings with leading whitespace (test in Chrome, Firefox, and Opera)', 8, function() {
+      strictEqual(_.parseInt(whitespace + '10'), 10);
+      strictEqual(_.parseInt(whitespace + '10', 10), 10);
+
+      strictEqual(_.parseInt(whitespace + '08'), 8);
+      strictEqual(_.parseInt(whitespace + '08', 10), 8);
+
+      _.forEach(['0x20', '0X20'], function(string) {
+        strictEqual(_.parseInt(whitespace + string), 32);
+        strictEqual(_.parseInt(whitespace + string, 16), 32);
+      });
+    });
+
+    test('should coerce `radix` to a number', function() {
+      var object = { 'valueOf': function() { return 0; } };
+      strictEqual(_.parseInt('08', object), 8);
+      strictEqual(_.parseInt('0x20', object), 32);
     });
   }());
 
@@ -7112,7 +7146,7 @@
 
   (function() {
     test('should use a `with` statement by default', 1, function() {
-      var compiled = _.template('<%= index %><%= collection[index] %><% _.each(collection, function(value, index) { %><%= index %><% }); %>'),
+      var compiled = _.template('<%= index %><%= collection[index] %><% _.forEach(collection, function(value, index) { %><%= index %><% }); %>'),
           actual = compiled({ 'index': 1, 'collection': ['a', 'b', 'c'] });
 
       equal(actual, '1b012');
@@ -7204,7 +7238,7 @@
         'interpolate': /\{\{=([\s\S]+?)\}\}/g
       });
 
-      var compiled = _.template('<ul>{{ _.each(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>'),
+      var compiled = _.template('<ul>{{ _.forEach(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>'),
           expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
       equal(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
@@ -7220,7 +7254,7 @@
         'interpolate': /<\?=([\s\S]+?)\?>/g
       });
 
-      var compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>'),
+      var compiled = _.template('<ul><? _.forEach(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>'),
           expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
       equal(compiled({ 'collection': ['a & A', 'b & B'] }), expected);

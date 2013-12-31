@@ -21,14 +21,14 @@
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
   var keyPrefix = +new Date + '';
 
+  /** Used to match HTML entities and HTML characters */
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g,
+      reUnescapedHtml = /[&<>"']/g;
+
   /** Used to match template delimiters */
   var reEscape = /<%-([\s\S]+?)%>/g,
       reEvaluate = /<%([\s\S]+?)%>/g,
       reInterpolate = /<%=([\s\S]+?)%>/g;
-
-  /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g,
-      reUnescapedHtml = /[&<>"']/g;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
@@ -456,7 +456,7 @@
   function baseCreate(prototype, properties) {
     return isObject(prototype) ? nativeCreate(prototype) : {};
   }
-  // fallback for browsers without `Object.create`
+  // fallback for environments without `Object.create`
   if (!nativeCreate) {
     baseCreate = (function() {
       function Object() {}
@@ -932,7 +932,7 @@
     return value && typeof value == 'object' && typeof value.length == 'number' &&
       toString.call(value) == argsClass || false;
   }
-  // fallback for browsers that can't detect `arguments` objects by [[Class]]
+  // fallback for environments that can't detect `arguments` objects by [[Class]]
   if (!isArguments(arguments)) {
     isArguments = function(value) {
       return value && typeof value == 'object' && typeof value.length == 'number' &&

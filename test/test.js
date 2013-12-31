@@ -264,6 +264,9 @@
         var _contains = String.prototype.contains;
         String.prototype.contains = _contains ? function() {} : Boolean;
 
+        var _trim = String.prototype.trim;
+        String.prototype.trim = _trim ? function() {} : Boolean;
+
         // load Lo-Dash and expose it to the bad extensions/shims
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
 
@@ -279,6 +282,18 @@
           String.prototype.contains = _contains;
         } else {
           delete String.prototype.contains;
+        }
+        if (_trim) {
+          // avoid a bug where overwriting non-enumerable built-ins makes them enumerable
+          // https://code.google.com/p/v8/issues/detail?id=1623
+          defineProperty(String.prototype, 'trim', {
+            'configurable': true,
+            'enumerable': false,
+            'writable': true,
+            'value': _trim
+          });
+        } else {
+          delete String.prototype.trim;
         }
         delete global.window;
         delete global.WinRTError;
@@ -388,7 +403,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 8, function() {
+    test('should avoid overwritten native methods', 9, function() {
       function Foo() {}
 
       function message(methodName) {
@@ -446,9 +461,16 @@
           actual = null;
         }
         strictEqual(actual, true, message('String#contains'));
+
+        try {
+          actual = lodashBizarro.parseInt(' 08 ');
+        } catch(e) {
+          actual = null;
+        }
+        strictEqual(actual, 8, message('String#trim'));
       }
       else {
-        skipTest(8);
+        skipTest(9);
       }
     });
   }());

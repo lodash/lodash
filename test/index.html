@@ -44,6 +44,9 @@
 				String.prototype._contains = String.prototype.contains;
 				String.prototype.contains = String.prototype._contains ? function() {} : Boolean;
 
+				String.prototype._trim = String.prototype.trim;
+				String.prototype.trim = function() {};
+
 				window.WinRTError = Error;
 
 				document._createDocumentFragment = document.createDocumentFragment;
@@ -86,6 +89,20 @@
 				} else {
 					delete String.prototype.contains;
 				}
+				if (String.prototype._trim) {
+					if (Object.defineProperty) {
+						Object.defineProperty(String.prototype, 'trim', {
+							'configurable': true,
+							'enumerable': false,
+							'writable': true,
+							'value': String.prototype._trim
+						});
+					} else {
+						String.prototype.trim = String.prototype._trim;
+					}
+				} else {
+					delete String.prototype.trim;
+				}
 				window.WinRTError = undefined;
 
 				document.createDocumentFragment = document._createDocumentFragment;
@@ -99,6 +116,7 @@
 				delete Object._getPrototypeOf;
 				delete Object._keys;
 				delete String.prototype._contains;
+				delete String.prototype._trim;
 			}
 
 			addBizarroMethods();

@@ -1,6 +1,6 @@
 /*!
  * QUnit Extras v1.0.0
- * Copyright 2011-2012 John-David Dalton <http://allyoucanleet.com/>
+ * Copyright 2011-2014 John-David Dalton <http://allyoucanleet.com/>
  * Based on a gist by Jörn Zaefferer <https://gist.github.com/722381>
  * Available under MIT license <http://mths.be/mit>
  */

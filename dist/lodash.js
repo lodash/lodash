@@ -419,23 +419,6 @@
   }
 
   /**
-   * Checks the given string to determine if the character at the specified
-   * index is whitespace.
-   *
-   * @private
-   * @param {string} string The string to inspect.
-   * @param {number} index The character index.
-   * @returns {boolean} Returns `true` if specifed character is whitespace, else `false`.
-   */
-  function isWhitespaceAt(string, index) {
-    var c = string.charCodeAt(index);
-    return (
-      (c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
-      (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279))
-    );
-  }
-
-  /**
    * Releases the given array back to the array pool.
    *
    * @private
@@ -491,6 +474,46 @@
       result[index] = array[start + index];
     }
     return result;
+  }
+
+  /**
+   * Gets the index of the first non-whitespace character of a given string.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the index of the first non-whitespace character.
+   */
+  function trimmedLeftIndex(string) {
+    var index = -1,
+        length = string.length;
+
+    while (++index < length) {
+      var c = string.charCodeAt(index);
+      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
+          (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)))) {
+        break;
+      }
+    }
+    return index;
+  }
+
+  /**
+   * Gets the index of the last non-whitespace character of a given string.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the index of the last non-whitespace character.
+   */
+  function trimmedRightIndex(string) {
+    var index = string.length;
+    while (index--) {
+      var c = string.charCodeAt(index);
+      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
+          (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)))) {
+        break;
+      }
+    }
+    return index;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -1624,16 +1647,10 @@
     // fallback for environments without a proper `String#trim`
     if (!nativeTrim || nativeTrim.call(whitespace)) {
       trim = function(string) {
-        var start = -1,
-            end = string ? string.length : 0;
-
-        if (!end || string == null) {
-          return '';
-        }
-        string = String(string);
-        while (++start < end && isWhitespaceAt(string, start)) { }
-        while (end-- && isWhitespaceAt(string, end)) { }
-        return string.slice(start, end + 1);
+        string = string == null ? '' : String(string);
+        return string
+          ? string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1)
+          : string;
       };
     }
 

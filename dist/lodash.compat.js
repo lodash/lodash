@@ -442,6 +442,23 @@
   }
 
   /**
+   * Checks the given string to determine if the character at the specified
+   * index is whitespace.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @param {number} index The character index.
+   * @returns {boolean} Returns `true` if specifed character is whitespace, else `false`.
+   */
+  function isWhitespaceAt(string, index) {
+    var c = string.charCodeAt(index);
+    return (
+      (c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
+      (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279))
+    );
+  }
+
+  /**
    * Releases the given array back to the array pool.
    *
    * @private
@@ -1915,8 +1932,8 @@
           return '';
         }
         string = String(string);
-        while (whitespace.indexOf(string.charAt(++start)) > -1) { }
-        while (whitespace.indexOf(string.charAt(--end)) > -1) { }
+        while (++start < end && isWhitespaceAt(string, start)) { }
+        while (end-- && isWhitespaceAt(string, end)) { }
         return string.slice(start, end + 1);
       };
     }

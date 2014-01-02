@@ -4361,20 +4361,26 @@
    * _('fred').capitalize();
    * // => 'Fred'
    */
-  function mixin(object) {
-    forEach(functions(object), function(methodName) {
-      var func = lodash[methodName] = object[methodName];
+  function mixin(source) {
+    var index = -1,
+        methodNames = functions(source),
+        length = methodNames.length;
 
-      lodash.prototype[methodName] = function() {
-        var args = [this.__wrapped__];
-        push.apply(args, arguments);
+    while (++index < length) {
+      var methodName = methodNames[index];
+      lodash.prototype[methodName] = (function() {
+        var func = lodash[methodName] = source[methodName];
+        return function() {
+          var args = [this.__wrapped__];
+          push.apply(args, arguments);
 
-        var result = func.apply(lodash, args);
-        return this.__chain__
-          ? new lodashWrapper(result, true)
-          : result;
-      };
-    });
+          var result = func.apply(lodash, args);
+          return this.__chain__
+            ? new lodashWrapper(result, true)
+            : result;
+        };
+      }());
+    }
   }
 
   /**

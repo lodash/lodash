@@ -40,7 +40,7 @@
     '\n\r\u2028\u2029' +
 
     // unicode category "Zs" space separators
-    '\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
+    '\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
   );
 
   /** Used to match empty string literals in compiled template source */
@@ -6415,7 +6415,6 @@
         if (options == null) {
           options = source;
         }
-        ctor = lodashWrapper;
         source = object;
         object = lodash;
         methodNames = functions(source);
@@ -6425,30 +6424,35 @@
       } else if (isObject(options) && 'chain' in options) {
         chain = options.chain;
       }
-      var ctor = object,
-          isFunc = isFunction(ctor);
+      var index = -1,
+          isFunc = isFunction(object),
+          length = methodNames ? methodNames.length : 0;
 
-      forEach(methodNames, function(methodName) {
-        var func = object[methodName] = source[methodName];
+      while (++index < length) {
+        var methodName = methodNames[index],
+            func = object[methodName] = source[methodName];
+
         if (isFunc) {
-          ctor.prototype[methodName] = function() {
-            var chainAll = this.__chain__,
-                value = this.__wrapped__,
-                args = [value];
+          object.prototype[methodName] = (function(func) {
+            return function() {
+              var chainAll = this.__chain__,
+                  value = this.__wrapped__,
+                  args = [value];
 
-            push.apply(args, arguments);
-            var result = func.apply(object, args);
-            if (chain || chainAll) {
-              if (value === result && isObject(result)) {
-                return this;
+              push.apply(args, arguments);
+              var result = func.apply(object, args);
+              if (chain || chainAll) {
+                if (value === result && isObject(result)) {
+                  return this;
+                }
+                result = new object(result);
+                result.__chain__ = chainAll;
               }
-              result = new ctor(result);
-              result.__chain__ = chainAll;
-            }
-            return result;
-          };
+              return result;
+            };
+          }(func));
         }
-      });
+      }
     }
 
     /**

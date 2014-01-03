@@ -268,13 +268,13 @@
         String.prototype.contains = _contains ? function() {} : Boolean;
 
         var _trim = String.prototype.trim;
-        String.prototype.trim = _trim ? function() {} : Boolean;
+        String.prototype.trim = _trim ? function() {} : String;
 
         var _trimLeft = String.prototype.trimLeft;
-        String.prototype.trimLeft = _trimLeft ? function() {} : Boolean;
+        String.prototype.trimLeft = _trimLeft ? function() {} : String;
 
         var _trimRight = String.prototype.trimRight;
-        String.prototype.trimRight = _trimRight ? function() {} : Boolean;
+        String.prototype.trimRight = _trimRight ? function() {} : String;
 
         // load Lo-Dash and expose it to the bad extensions/shims
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
@@ -422,8 +422,7 @@
       function message(methodName) {
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
-      var object = { 'a': true },
-          string = whitespace + 'a b c' + whitespace;
+      var object = { 'a': true };
 
       if (lodashBizarro) {
         try {
@@ -476,26 +475,14 @@
         }
         strictEqual(actual, true, message('String#contains'));
 
-        try {
-          actual = lodashBizarro.trim(string);
-        } catch(e) {
-          actual = null;
-        }
-        strictEqual(actual, 'a b c', message('String#trim'));
-
-        try {
-          actual = lodashBizarro.trimLeft(string);
-        } catch(e) {
-          actual = null;
-        }
-        strictEqual(actual, 'a b c' + whitespace, message('String#trimLeft'));
-
-        try {
-          actual = lodashBizarro.trimRight(string);
-        } catch(e) {
-          actual = null;
-        }
-        strictEqual(actual, whitespace + 'a b c', message('String#trimRight'));
+        _.forEach(['trim', 'trimLeft', 'trimRight'], function(methodName) {
+          try {
+            var actual = lodashBizarro[methodName](whitespace + 'a b c' + whitespace);
+          } catch(e) {
+            actual = null;
+          }
+          equal(typeof actual, 'string', message('String#' + methodName));
+        });
       }
       else {
         skipTest(11);

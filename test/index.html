@@ -45,13 +45,13 @@
 				String.prototype.contains = String.prototype._contains ? function() {} : Boolean;
 
 				String.prototype._trim = String.prototype.trim;
-				String.prototype.trim = String.prototype._trim ? function() {} : Boolean;
+				String.prototype.trim = String.prototype._trim ? function() {} : String;
 
 				String.prototype._trimLeft = String.prototype.trimLeft;
-				String.prototype.trimLeft = String.prototype._trimLeft ? function() {} : Boolean;
+				String.prototype.trimLeft = String.prototype._trimLeft ? function() {} : String;
 
 				String.prototype._trimRight = String.prototype.trimRight;
-				String.prototype.trimRight = String.prototype._trimRight ? function() {} : Boolean;
+				String.prototype.trimRight = String.prototype._trimRight ? function() {} : String;
 
 				window.WinRTError = Error;
 

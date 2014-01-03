@@ -1866,6 +1866,7 @@
      * @private
      * @param {Object} [options] The compile options object.
      * @param {string} [options.args] A comma separated string of iteration function arguments.
+     * @param {string} [options.init] The string representation of the initial `result` value.
      * @param {string} [options.top] Code to execute before the iteration branches.
      * @param {string} [options.loop] Code to execute in the object loop.
      * @param {boolean} [options.useHas] Specify using `hasOwnProperty` checks in the object loop.

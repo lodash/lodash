@@ -648,7 +648,9 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
-        nativeTrim = isNative(nativeTrim = stringProto.trim) && nativeTrim;
+        nativeTrim = isNative(nativeTrim = stringProto.trim) && nativeTrim,
+        nativeTrimLeft = isNative(nativeTrimLeft = stringProto.trimLeft) && nativeTrimLeft,
+        nativeTrimRight = isNative(nativeTrimRight = stringProto.trimRight) && nativeTrimRight;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -4987,8 +4989,8 @@
      *   return '<p>' + func(text) + '</p>';
      * });
      *
-     * p('Fred, Wilma, & Pebbles');
-     * // => '<p>Fred, Wilma, &amp; Pebbles</p>'
+     * p('fred, barney, & pebbles');
+     * // => '<p>fred, barney, &amp; pebbles</p>'
      */
     function wrap(value, wrapper) {
       return createWrapper(wrapper, 16, [value]);
@@ -6360,8 +6362,8 @@
      * @returns {string} Returns the escaped string.
      * @example
      *
-     * _.escape('Fred, Wilma, & Pebbles');
-     * // => 'Fred, Wilma, &amp; Pebbles'
+     * _.escape('fred, barney, & pebbles');
+     * // => 'fred, barney, &amp; pebbles'
      */
     function escape(string) {
       return string == null ? '' : String(string).replace(reUnescapedHtml, escapeHtmlChar);
@@ -6561,6 +6563,10 @@
      * @category Strings
      * @param {string} string The string to trim.
      * @returns {string} Returns the trimmed string.
+     * @example
+     *
+     * _.trim('  fred  ');
+     * // => 'fred'
      */
     function trim(string) {
       return string == null ? '' : nativeTrim.call(string);
@@ -6571,6 +6577,58 @@
         string = string == null ? '' : String(string);
         return string
           ? string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1)
+          : string;
+      };
+    }
+
+    /**
+     * Removes leading whitespace from a given string.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} string The string to trim.
+     * @returns {string} Returns the trimmed string.
+     * @example
+     *
+     * _.trimLeft('  fred  ');
+     * // => 'fred  '
+     */
+    function trimLeft(string) {
+      return string == null ? '' : nativeTrimLeft.call(string);
+    }
+    // fallback for environments without a proper `String#trimLeft`
+    if (!nativeTrimLeft || nativeTrimLeft.call(whitespace)) {
+      trimLeft = function(string) {
+        string = string == null ? '' : String(string);
+        return string
+          ? string.slice(trimmedLeftIndex(string))
+          : string;
+      };
+    }
+
+    /**
+     * Removes trailing whitespace from a given string.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} string The string to trim.
+     * @returns {string} Returns the trimmed string.
+     * @example
+     *
+     * _.trimRight('  fred  ');
+     * // => '  fred'
+     */
+    function trimRight(string) {
+      return string == null ? '' : nativeTrimRight.call(string);
+    }
+    // fallback for environments without a proper `String#trimRight`
+    if (!nativeTrimRight || nativeTrimRight.call(whitespace)) {
+      trimRight = function(string) {
+        string = string == null ? '' : String(string);
+        return string
+          ? string.slice(0, trimmedRightIndex(string) + 1)
           : string;
       };
     }
@@ -6590,8 +6648,8 @@
      * @returns {string} Returns the unescaped string.
      * @example
      *
-     * _.unescape('Fred, Barney &amp; Pebbles');
-     * // => 'Fred, Barney & Pebbles'
+     * _.unescape('fred, barney &amp; pebbles');
+     * // => 'fred, barney & pebbles'
      */
     function unescape(string) {
       if (string == null) {
@@ -7207,6 +7265,9 @@
     lodash.some = some;
     lodash.sortedIndex = sortedIndex;
     lodash.template = template;
+    lodash.trim = trim;
+    lodash.trimLeft = trimLeft;
+    lodash.trimRight = trimRight;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
 

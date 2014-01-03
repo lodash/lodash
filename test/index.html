@@ -45,7 +45,13 @@
 				String.prototype.contains = String.prototype._contains ? function() {} : Boolean;
 
 				String.prototype._trim = String.prototype.trim;
-				String.prototype.trim = function() {};
+				String.prototype.trim = String.prototype._trim ? function() {} : Boolean;
+
+				String.prototype._trimLeft = String.prototype.trimLeft;
+				String.prototype.trimLeft = String.prototype._trimLeft ? function() {} : Boolean;
+
+				String.prototype._trimRight = String.prototype.trimRight;
+				String.prototype.trimRight = String.prototype._trimRight ? function() {} : Boolean;
 
 				window.WinRTError = Error;
 
@@ -84,24 +90,28 @@
 				} else {
 					delete Object.keys;
 				}
-				if (String.prototype._contains) {
-					String.prototype.contains = String.prototype._contains;
-				} else {
-					delete String.prototype.contains;
-				}
-				if (String.prototype._trim) {
-					if (Object.defineProperty) {
-						Object.defineProperty(String.prototype, 'trim', {
-							'configurable': true,
-							'enumerable': false,
-							'writable': true,
-							'value': String.prototype._trim
-						});
+				for (var key in {
+					'contains': true,
+					'trim': true,
+					'trimLeft': true,
+					'trimRight': true
+				}) {
+					var func = String.prototype['_' + key];
+					if (func) {
+						if (Object.defineProperty) {
+							Object.defineProperty(String.prototype, key, {
+								'configurable': true,
+								'enumerable': false,
+								'writable': true,
+								'value': func
+							});
+						} else {
+							String.prototype[key] = func;
+						}
 					} else {
-						String.prototype.trim = String.prototype._trim;
+						delete String.prototype[key];
 					}
-				} else {
-					delete String.prototype.trim;
+					delete String.prototype['_' + key];
 				}
 				window.WinRTError = undefined;
 
@@ -115,8 +125,6 @@
 				delete Object._defineProperty;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
-				delete String.prototype._contains;
-				delete String.prototype._trim;
 			}
 
 			addBizarroMethods();

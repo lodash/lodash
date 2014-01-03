@@ -177,6 +177,9 @@
   /** Used to check problem JScript properties too */
   var shadowedObject = _.invert(shadowedProps);
 
+  /** Used to check for problems removing whitespace */
+  var whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
+
   /**
    * Removes all own enumerable properties from a given object.
    *
@@ -230,7 +233,7 @@
         // fake `WinRTError`
         global.WinRTError = Error;
 
-        // fake dom
+        // fake DOM
         global.window = {
           'document': {
             'createDocumentFragment': function() {
@@ -267,6 +270,12 @@
         var _trim = String.prototype.trim;
         String.prototype.trim = _trim ? function() {} : Boolean;
 
+        var _trimLeft = String.prototype.trimLeft;
+        String.prototype.trimLeft = _trimLeft ? function() {} : Boolean;
+
+        var _trimRight = String.prototype.trimRight;
+        String.prototype.trimRight = _trimRight ? function() {} : Boolean;
+
         // load Lo-Dash and expose it to the bad extensions/shims
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
 
@@ -278,23 +287,27 @@
         Object.getPrototypeOf = _getPrototypeOf;
         Object.keys = _keys;
 
-        if (_contains) {
-          String.prototype.contains = _contains;
-        } else {
-          delete String.prototype.contains;
-        }
-        if (_trim) {
-          // avoid a bug where overwriting non-enumerable built-ins makes them enumerable
-          // https://code.google.com/p/v8/issues/detail?id=1623
-          defineProperty(String.prototype, 'trim', {
-            'configurable': true,
-            'enumerable': false,
-            'writable': true,
-            'value': _trim
-          });
-        } else {
-          delete String.prototype.trim;
-        }
+        _.forOwn({
+          'contains': _contains,
+          'trim': _trim,
+          'trimLeft': _trimLeft,
+          'trimRight': _trimRight
+        },
+        function(func, key) {
+          if (func) {
+            // avoid a bug where overwriting non-enumerable built-ins makes them enumerable
+            // https://code.google.com/p/v8/issues/detail?id=1623
+            defineProperty(String.prototype, key, {
+              'configurable': true,
+              'enumerable': false,
+              'writable': true,
+              'value': func
+            });
+          } else {
+            delete String.prototype[key];
+          }
+        });
+
         delete global.window;
         delete global.WinRTError;
         delete Function.prototype._method;
@@ -403,13 +416,14 @@
       }
     });
 
-    test('should avoid overwritten native methods', 9, function() {
+    test('should avoid overwritten native methods', 11, function() {
       function Foo() {}
 
       function message(methodName) {
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
-      var object = { 'a': true };
+      var object = { 'a': true },
+          string = whitespace + 'a b c' + whitespace;
 
       if (lodashBizarro) {
         try {
@@ -456,21 +470,35 @@
         deepEqual(actual, [['a'], []], message('Object.keys'));
 
         try {
-          actual = lodashBizarro.contains('abc', 'bc');
+          actual = lodashBizarro.contains('abc', 'c');
         } catch(e) {
           actual = null;
         }
         strictEqual(actual, true, message('String#contains'));
 
         try {
-          actual = lodashBizarro.parseInt(' 08 ');
+          actual = lodashBizarro.trim(string);
         } catch(e) {
           actual = null;
         }
-        strictEqual(actual, 8, message('String#trim'));
+        strictEqual(actual, 'a b c', message('String#trim'));
+
+        try {
+          actual = lodashBizarro.trimLeft(string);
+        } catch(e) {
+          actual = null;
+        }
+        strictEqual(actual, 'a b c' + whitespace, message('String#trimLeft'));
+
+        try {
+          actual = lodashBizarro.trimRight(string);
+        } catch(e) {
+          actual = null;
+        }
+        strictEqual(actual, whitespace + 'a b c', message('String#trimRight'));
       }
       else {
-        skipTest(9);
+        skipTest(11);
       }
     });
   }());
@@ -1241,7 +1269,7 @@
       });
     });
 
-    test('should not be possible to perform a binary search', function() {
+    test('should not be possible to perform a binary search', 1, function() {
       strictEqual(_.contains([3, 2, 1], 3, true), true);
     });
 
@@ -2752,13 +2780,13 @@
         'RegExp': RegExp.prototype,
         'String': String.prototype
       },
-      function(object, builtin) {
-        var message = 'non-enumerable properties on ' + builtin + '.prototype',
+      function(proto, key) {
+        var message = 'non-enumerable properties on ' + key + '.prototype',
             props = [];
 
-        func(object, function(value, prop) { props.push(prop); });
+        func(proto, function(value, prop) { props.push(prop); });
 
-        if (/Error/.test(builtin)) {
+        if (/Error/.test(key)) {
           ok(_.every(['constructor', 'toString'], function(prop) {
             return !_.contains(props, prop);
           }), message);
@@ -4043,7 +4071,7 @@
       strictEqual(_.isEqual(object1, object2), true);
     });
 
-    test('should perform comparisons between objects with shared property values', function() {
+    test('should perform comparisons between objects with shared property values', 1, function() {
       var object1 = {
         'a': [1, 2]
       };
@@ -5744,9 +5772,7 @@
   QUnit.module('lodash.parseInt');
 
   (function() {
-    var whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
-
-    test('should accept a `radix` argument', function() {
+    test('should accept a `radix` argument', 1, function() {
       var expected = _.range(2, 37);
 
       var actual = _.map(expected, function(radix) {
@@ -5790,7 +5816,7 @@
       });
     });
 
-    test('should coerce `radix` to a number', function() {
+    test('should coerce `radix` to a number', 2, function() {
       var object = { 'valueOf': function() { return 0; } };
       strictEqual(_.parseInt('08', object), 8);
       strictEqual(_.parseInt('0x20', object), 32);
@@ -7969,6 +7995,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('trim methods');
+
+  (function() {
+    var string = whitespace + 'a b c' + whitespace;
+
+    test('`_.trim` should remove leading and trailing whitespace', 1, function() {
+      strictEqual(_.trim(string), 'a b c');
+    });
+
+    test('`_.trimLeft` should remove leading whitespace', 1, function() {
+      strictEqual(_.trimLeft(string), 'a b c' + whitespace);
+    });
+
+    test('`_.trimRight` should remove trailing whitespace', 1, function() {
+      strictEqual(_.trimRight(string), whitespace + 'a b c');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.unescape');
 
   (function() {
@@ -8267,7 +8313,7 @@
         return '<p>' + func(text) + '</p>';
       });
 
-      equal(p('Fred, Wilma, & Pebbles'), '<p>Fred, Wilma, &amp; Pebbles</p>');
+      equal(p('fred, barney, & pebbles'), '<p>fred, barney, &amp; pebbles</p>');
     });
 
     test('should pass the correct `wrapper` arguments', 1, function() {
@@ -8286,8 +8332,8 @@
         return '<p>' + func(this.text) + '</p>';
       });
 
-      var object = { 'p': p, 'text': 'Fred, Wilma, & Pebbles' };
-      equal(object.p(), '<p>Fred, Wilma, &amp; Pebbles</p>');
+      var object = { 'p': p, 'text': 'fred, barney, & pebbles' };
+      equal(object.p(), '<p>fred, barney, &amp; pebbles</p>');
     });
   }());
 
@@ -8823,7 +8869,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 158, function() {
+    test('should accept falsey arguments', 161, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
           isExposed = '_' in root,
           oldDash = root._;

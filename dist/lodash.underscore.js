@@ -3491,8 +3491,8 @@
    *   return '<p>' + func(text) + '</p>';
    * });
    *
-   * p('Fred, Wilma, & Pebbles');
-   * // => '<p>Fred, Wilma, &amp; Pebbles</p>'
+   * p('fred, barney, & pebbles');
+   * // => '<p>fred, barney, &amp; pebbles</p>'
    */
   function wrap(value, wrapper) {
     return createWrapper(wrapper, 16, [value]);
@@ -4331,8 +4331,8 @@
    * @returns {string} Returns the escaped string.
    * @example
    *
-   * _.escape('Fred, Wilma, & Pebbles');
-   * // => 'Fred, Wilma, &amp; Pebbles'
+   * _.escape('fred, barney, & pebbles');
+   * // => 'fred, barney, &amp; pebbles'
    */
   function escape(string) {
     return string == null ? '' : String(string).replace(reUnescapedHtml, escapeHtmlChar);
@@ -4495,8 +4495,8 @@
    * @returns {string} Returns the unescaped string.
    * @example
    *
-   * _.unescape('Fred, Barney &amp; Pebbles');
-   * // => 'Fred, Barney & Pebbles'
+   * _.unescape('fred, barney &amp; pebbles');
+   * // => 'fred, barney & pebbles'
    */
   function unescape(string) {
     if (string == null) {

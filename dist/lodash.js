@@ -278,7 +278,12 @@
           typeCache = cache[type] || (cache[type] = {});
 
       if (type == 'object') {
-        (typeCache[key] || (typeCache[key] = [])).push(value);
+        var array = typeCache[key];
+        if (array) {
+          array.push(value);
+        } else {
+          typeCache[key] = [value];
+        }
       } else {
         typeCache[key] = true;
       }
@@ -3322,7 +3327,11 @@
      * // => { '3': ['one', 'two'], '5': ['three'] }
      */
     var groupBy = createAggregator(function(result, value, key) {
-      (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
+      if (hasOwnProperty.call(result, key)) {
+        result[key].push(value);
+      } else {
+        result[key] = [value];
+      }
     });
 
     /**

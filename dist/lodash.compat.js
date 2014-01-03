@@ -288,7 +288,12 @@
           typeCache = cache[type] || (cache[type] = {});
 
       if (type == 'object') {
-        (typeCache[key] || (typeCache[key] = [])).push(value);
+        var array = typeCache[key];
+        if (array) {
+          array.push(value);
+        } else {
+          typeCache[key] = [value];
+        }
       } else {
         typeCache[key] = true;
       }
@@ -1850,6 +1855,7 @@
      * @private
      * @param {Object} [options] The compile options object.
      * @param {string} [options.args] A comma separated string of iteration function arguments.
+     * @param {string} [options.init] The string representation of the initial `result` value.
      * @param {string} [options.top] Code to execute before the iteration branches.
      * @param {string} [options.loop] Code to execute in the object loop.
      * @param {boolean} [options.useHas] Specify using `hasOwnProperty` checks in the object loop.
@@ -3633,7 +3639,11 @@
      * // => { '3': ['one', 'two'], '5': ['three'] }
      */
     var groupBy = createAggregator(function(result, value, key) {
-      (hasOwnProperty.call(result, key) ? result[key] : result[key] = []).push(value);
+      if (hasOwnProperty.call(result, key)) {
+        result[key].push(value);
+      } else {
+        result[key] = [value];
+      }
     });
 
     /**

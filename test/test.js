@@ -4519,17 +4519,17 @@
         this.a = 1;
       }
 
-      strictEqual(_.isPlainObject(new Foo(1)), false);
-      strictEqual(_.isPlainObject([1, 2, 3]), false);
+      strictEqual(_.isPlainObject({}), true);
       strictEqual(_.isPlainObject({ 'a': 1 }), true);
+      strictEqual(_.isPlainObject({ 'constructor': Foo }), true);
 
+      strictEqual(_.isPlainObject([1, 2, 3]), false);
+      strictEqual(_.isPlainObject(new Foo(1)), false);
+    });
+
+    test('should return `true` for objects a [[Prototype]] of `null`', 1, function() {
       if (create) {
         strictEqual(_.isPlainObject(create(null)), true);
-      } else {
-        skipTest();
-      }
-      if (element) {
-        strictEqual(_.isPlainObject(element), false);
       } else {
         skipTest();
       }
@@ -4549,8 +4549,12 @@
       }
     });
 
-    test('should return `true` for empty objects', 1, function() {
-      strictEqual(_.isPlainObject({}), true);
+    test('should return `false` for DOM elements', 1, function() {
+      if (element) {
+        strictEqual(_.isPlainObject(element), false);
+      } else {
+        skipTest();
+      }
     });
 
     test('should return `false` for Object objects without a [[Class]] of "Object"', 3, function() {

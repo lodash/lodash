@@ -30,7 +30,7 @@
   /** Used as the max size of the `arrayPool` and `objectPool` */
   var maxPoolSize = 40;
 
-  /** Used to detect and test whitespace (unicode 6.3.0) */
+  /** Used to detect and test whitespace */
   var whitespace = (
     // whitespace
     ' \t\x0B\f\xA0\ufeff' +
@@ -6359,8 +6359,29 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
-     * corresponding HTML entities.
+     * Converts the first character of a given string to upper case.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} string The string to capitalize.
+     * @returns {string} Returns the capitalized string.
+     * @example
+     *
+     * _.capitalize('fred');
+     * // => 'Fred'
+     */
+    function capitalize(string) {
+      if (string == null) {
+        return '';
+      }
+      string = String(string);
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    /**
+     * Converts the characters `&`, `<`, `>`, `"`, and `'` in a given string to
+     * their corresponding HTML entities.
      *
      * Note: No other characters are escaped. To escape additional characters
      * use a third-party library like [_he_](http://mths.be/he).
@@ -6645,7 +6666,7 @@
 
     /**
      * The inverse of `_.escape`; this method converts the HTML entities
-     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
+     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in a given string to their
      * corresponding characters.
      *
      * Note: No other HTML entities are unescaped. To unescape additional HTML
@@ -6816,20 +6837,22 @@
      * @param {boolean} [options.chain=true] Specify whether the functions added are chainable.
      * @example
      *
-     * function capitalize(string) {
-     *   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+     * function vowels(string) {
+     *   return _.filter(string, function(v) {
+     *     return /[aeiou]/i.test(v);
+     *   });
      * }
      *
-     * _.mixin({ 'capitalize': capitalize });
-     * _.capitalize('fred');
-     * // => 'Fred'
+     * _.mixin({ 'vowels': vowels });
+     * _.vowels('fred');
+     * // => ['e']
      *
-     * _('fred').capitalize().value();
-     * // => 'Fred'
+     * _('fred').vowels().value();
+     * // => ['e']
      *
-     * _.mixin({ 'capitalize': capitalize }, { 'chain': false });
-     * _('fred').capitalize();
-     * // => 'Fred'
+     * _.mixin({ 'vowels': vowels }, { 'chain': false });
+     * _('fred').vowels();
+     * // => ['e']
      */
     function mixin(object, source, options) {
       var chain = true,
@@ -6930,9 +6953,9 @@
     };
 
     /**
-     * Converts the given value into an integer of the specified radix.
-     * If `radix` is `undefined` or `0` a `radix` of `10` is used unless the
-     * `value` is a hexadecimal, in which case a `radix` of `16` is used.
+     * Converts the given value to an integer of the specified radix. If `radix`
+     * is `undefined` or `0` a `radix` of `10` is used unless the `value` is a
+     * hexadecimal, in which case a `radix` of `16` is used.
      *
      * Note: This method avoids differences in native ES3 and ES5 `parseInt`
      * implementations. See the [ES5 spec](http://es5.github.io/#E)
@@ -7229,6 +7252,7 @@
     /*--------------------------------------------------------------------------*/
 
     // add functions that return unwrapped values when chaining
+    lodash.capitalize = capitalize;
     lodash.clone = clone;
     lodash.cloneDeep = cloneDeep;
     lodash.contains = contains;

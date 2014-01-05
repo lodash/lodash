@@ -31,7 +31,7 @@
   /** Used as the max size of the `arrayPool` and `objectPool` */
   var maxPoolSize = 40;
 
-  /** Used to detect and test whitespace (unicode 6.3.0) */
+  /** Used to detect and test whitespace */
   var whitespace = (
     // whitespace
     ' \t\x0B\f\xA0\ufeff' +
@@ -458,7 +458,7 @@
   }
 
   /**
-   * Releases the given array back to the array pool.
+   * Releases `array` back to the array pool.
    *
    * @private
    * @param {Array} [array] The array to release.
@@ -471,7 +471,7 @@
   }
 
   /**
-   * Releases the given object back to the object pool.
+   * Releases `object` back to the object pool.
    *
    * @private
    * @param {Object} [object] The object to release.
@@ -516,7 +516,7 @@
   }
 
   /**
-   * Gets the index of the first non-whitespace character of a given string.
+   * Gets the index of the first non-whitespace character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -537,7 +537,7 @@
   }
 
   /**
-   * Gets the index of the last non-whitespace character of a given string.
+   * Gets the index of the last non-whitespace character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -716,14 +716,15 @@
      * and `zip`
      *
      * The non-chainable wrapper functions are:
-     * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `findIndex`,
-     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `has`, `identity`,
-     * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
-     * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
-     * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
-     * `lastIndexOf`, `mixin`, `noConflict`, `now`, `parseInt`, `pop`, `random`,
-     * `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`,
-     * `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
+     * `capitalize`, `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`,
+     * `findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `has`,
+     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
+     * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
+     * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
+     * `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `now`,
+     * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`,
+     * `size`, `some`, `sortedIndex`, `runInContext`, `template`, `trim`,
+     * `trimLeft`, `trimRight`, `unescape`, `uniqueId`, and `value`
      *
      * The wrapper functions `first`, `last`, and `sample` return wrapped values
      * when `n` is provided, otherwise they return unwrapped values.
@@ -2566,7 +2567,7 @@
     }
 
     /**
-     * Removes all provided values from the given array using strict equality for
+     * Removes all provided values from `array` using strict equality for
      * comparisons, i.e. `===`.
      *
      * @static
@@ -3041,8 +3042,8 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object that wraps the given value with explicit
-     * method chaining enabled.
+     * Creates a `lodash` object that wraps `value` with explicit method
+     * chaining enabled.
      *
      * @static
      * @memberOf _
@@ -3293,8 +3294,8 @@
     });
 
     /**
-     * Checks if the given callback returns truey value for **all** elements of
-     * a collection. The callback is bound to `thisArg` and invoked with three
+     * Checks if the callback returns truey value for **all** elements of a
+     * collection. The callback is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -6340,8 +6341,29 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
-     * corresponding HTML entities.
+     * Converts the first character of `string` to upper case.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} string The string to capitalize.
+     * @returns {string} Returns the capitalized string.
+     * @example
+     *
+     * _.capitalize('fred');
+     * // => 'Fred'
+     */
+    function capitalize(string) {
+      if (string == null) {
+        return '';
+      }
+      string = String(string);
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    /**
+     * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to
+     * their corresponding HTML entities.
      *
      * Note: No other characters are escaped. To escape additional characters
      * use a third-party library like [_he_](http://mths.be/he).
@@ -6547,7 +6569,7 @@
     }
 
     /**
-     * Removes leading and trailing whitespace from a given string.
+     * Removes leading and trailing whitespace from `string`.
      *
      * @static
      * @memberOf _
@@ -6573,7 +6595,7 @@
     }
 
     /**
-     * Removes leading whitespace from a given string.
+     * Removes leading whitespace from `string`.
      *
      * @static
      * @memberOf _
@@ -6599,7 +6621,7 @@
     }
 
     /**
-     * Removes trailing whitespace from a given string.
+     * Removes trailing whitespace from `string`.
      *
      * @static
      * @memberOf _
@@ -6797,20 +6819,22 @@
      * @param {boolean} [options.chain=true] Specify whether the functions added are chainable.
      * @example
      *
-     * function capitalize(string) {
-     *   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+     * function vowels(string) {
+     *   return _.filter(string, function(v) {
+     *     return /[aeiou]/i.test(v);
+     *   });
      * }
      *
-     * _.mixin({ 'capitalize': capitalize });
-     * _.capitalize('fred');
-     * // => 'Fred'
+     * _.mixin({ 'vowels': vowels });
+     * _.vowels('fred');
+     * // => ['e']
      *
-     * _('fred').capitalize().value();
-     * // => 'Fred'
+     * _('fred').vowels().value();
+     * // => ['e']
      *
-     * _.mixin({ 'capitalize': capitalize }, { 'chain': false });
-     * _('fred').capitalize();
-     * // => 'Fred'
+     * _.mixin({ 'vowels': vowels }, { 'chain': false });
+     * _('fred').vowels();
+     * // => ['e']
      */
     function mixin(object, source, options) {
       var chain = true,
@@ -6911,9 +6935,9 @@
     };
 
     /**
-     * Converts the given value into an integer of the specified radix.
-     * If `radix` is `undefined` or `0` a `radix` of `10` is used unless the
-     * `value` is a hexadecimal, in which case a `radix` of `16` is used.
+     * Converts `value` to an integer of the specified radix. If `radix` is
+     * `undefined` or `0` a `radix` of `10` is used unless the `value` is a
+     * hexadecimal, in which case a `radix` of `16` is used.
      *
      * Note: This method avoids differences in native ES3 and ES5 `parseInt`
      * implementations. See the [ES5 spec](http://es5.github.io/#E)
@@ -7210,6 +7234,7 @@
     /*--------------------------------------------------------------------------*/
 
     // add functions that return unwrapped values when chaining
+    lodash.capitalize = capitalize;
     lodash.clone = clone;
     lodash.cloneDeep = cloneDeep;
     lodash.contains = contains;

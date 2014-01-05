@@ -297,14 +297,15 @@
    * and `zip`
    *
    * The non-chainable wrapper functions are:
-   * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `findIndex`,
-   * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `has`, `identity`,
-   * `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
-   * `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`, `isNull`, `isNumber`,
-   * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
-   * `lastIndexOf`, `mixin`, `noConflict`, `now`, `parseInt`, `pop`, `random`,
-   * `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`, `sortedIndex`,
-   * `runInContext`, `template`, `unescape`, `uniqueId`, and `value`
+   * `capitalize`, `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`,
+   * `findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `has`,
+   * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
+   * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
+   * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
+   * `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `now`,
+   * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`,
+   * `size`, `some`, `sortedIndex`, `runInContext`, `template`, `trim`,
+   * `trimLeft`, `trimRight`, `unescape`, `uniqueId`, and `value`
    *
    * The wrapper functions `first`, `last`, and `sample` return wrapped values
    * when `n` is provided, otherwise they return unwrapped values.
@@ -1752,8 +1753,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a `lodash` object that wraps the given value with explicit
-   * method chaining enabled.
+   * Creates a `lodash` object that wraps `value` with explicit method
+   * chaining enabled.
    *
    * @static
    * @memberOf _
@@ -1936,8 +1937,8 @@
   });
 
   /**
-   * Checks if the given callback returns truey value for **all** elements of
-   * a collection. The callback is bound to `thisArg` and invoked with three
+   * Checks if the callback returns truey value for **all** elements of a
+   * collection. The callback is bound to `thisArg` and invoked with three
    * arguments; (value, index|key, collection).
    *
    * If a property name is provided for `callback` the created "_.pluck" style
@@ -4322,8 +4323,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
-   * corresponding HTML entities.
+   * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to
+   * their corresponding HTML entities.
    *
    * Note: No other characters are escaped. To escape additional characters
    * use a third-party library like [_he_](http://mths.be/he).
@@ -4625,20 +4626,22 @@
    * @param {boolean} [options.chain=true] Specify whether the functions added are chainable.
    * @example
    *
-   * function capitalize(string) {
-   *   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+   * function vowels(string) {
+   *   return _.filter(string, function(v) {
+   *     return /[aeiou]/i.test(v);
+   *   });
    * }
    *
-   * _.mixin({ 'capitalize': capitalize });
-   * _.capitalize('fred');
-   * // => 'Fred'
+   * _.mixin({ 'vowels': vowels });
+   * _.vowels('fred');
+   * // => ['e']
    *
-   * _('fred').capitalize().value();
-   * // => 'Fred'
+   * _('fred').vowels().value();
+   * // => ['e']
    *
-   * _.mixin({ 'capitalize': capitalize }, { 'chain': false });
-   * _('fred').capitalize();
-   * // => 'Fred'
+   * _.mixin({ 'vowels': vowels }, { 'chain': false });
+   * _('fred').vowels();
+   * // => ['e']
    */
   function mixin(source) {
     var index = -1,

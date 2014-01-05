@@ -891,6 +891,22 @@
     });
   }());
 
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.capitalize');
+
+  (function() {
+    test('should capitalize the first character of a string', 3, function() {
+      equal(_.capitalize('fred'), 'Fred');
+      equal(_.capitalize('Fred'), 'Fred');
+      equal(_.capitalize(' fred'), ' fred');
+    });
+
+    test('should return an empty string when provided `null` or `undefined`', 2, function() {
+      strictEqual(_.capitalize(null), '');
+      strictEqual(_.capitalize(undefined), '');
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -2058,8 +2074,8 @@
     });
 
     test('should return an empty string when provided `null` or `undefined`', 2, function() {
-      equal(_.escape(null), '');
-      equal(_.escape(undefined), '');
+      strictEqual(_.escape(null), '');
+      strictEqual(_.escape(undefined), '');
     });
   }());
 
@@ -7998,6 +8014,15 @@
     test('`_.trimRight` should remove trailing whitespace', 1, function() {
       strictEqual(_.trimRight(string), whitespace + 'a b c');
     });
+
+    _.forEach(['trim', 'trimLeft', 'trimRight'], function(methodName) {
+      var func = _[methodName];
+
+      test('`_.' + methodName + '` should return an empty string when provided `null` or `undefined`', 2, function() {
+        strictEqual(func(null), '');
+        strictEqual(func(undefined), '');
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -8029,8 +8054,8 @@
     });
 
     test('should return an empty string when provided `null` or `undefined`', 2, function() {
-      equal(_.unescape(null), '');
-      equal(_.unescape(undefined), '');
+      strictEqual(_.unescape(null), '');
+      strictEqual(_.unescape(undefined), '');
     });
   }());
 
@@ -8856,7 +8881,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 161, function() {
+    test('should accept falsey arguments', 162, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
           isExposed = '_' in root,
           oldDash = root._;

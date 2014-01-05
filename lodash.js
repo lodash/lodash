@@ -457,7 +457,7 @@
   }
 
   /**
-   * Releases the given array back to the array pool.
+   * Releases `array` back to the array pool.
    *
    * @private
    * @param {Array} [array] The array to release.
@@ -470,7 +470,7 @@
   }
 
   /**
-   * Releases the given object back to the object pool.
+   * Releases `object` back to the object pool.
    *
    * @private
    * @param {Object} [object] The object to release.
@@ -515,7 +515,7 @@
   }
 
   /**
-   * Gets the index of the first non-whitespace character of a given string.
+   * Gets the index of the first non-whitespace character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -536,7 +536,7 @@
   }
 
   /**
-   * Gets the index of the last non-whitespace character of a given string.
+   * Gets the index of the last non-whitespace character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -2583,7 +2583,7 @@
     }
 
     /**
-     * Removes all provided values from the given array using strict equality for
+     * Removes all provided values from `array` using strict equality for
      * comparisons, i.e. `===`.
      *
      * @static
@@ -3058,8 +3058,8 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object that wraps the given value with explicit
-     * method chaining enabled.
+     * Creates a `lodash` object that wraps `value` with explicit method
+     * chaining enabled.
      *
      * @static
      * @memberOf _
@@ -3311,8 +3311,8 @@
     });
 
     /**
-     * Checks if the given callback returns truey value for **all** elements of
-     * a collection. The callback is bound to `thisArg` and invoked with three
+     * Checks if the callback returns truey value for **all** elements of a
+     * collection. The callback is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -6359,7 +6359,7 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Converts the first character of a given string to upper case.
+     * Converts the first character of `string` to upper case.
      *
      * @static
      * @memberOf _
@@ -6380,7 +6380,7 @@
     }
 
     /**
-     * Converts the characters `&`, `<`, `>`, `"`, and `'` in a given string to
+     * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to
      * their corresponding HTML entities.
      *
      * Note: No other characters are escaped. To escape additional characters
@@ -6587,7 +6587,7 @@
     }
 
     /**
-     * Removes leading and trailing whitespace from a given string.
+     * Removes leading and trailing whitespace from `string`.
      *
      * @static
      * @memberOf _
@@ -6613,7 +6613,7 @@
     }
 
     /**
-     * Removes leading whitespace from a given string.
+     * Removes leading whitespace from `string`.
      *
      * @static
      * @memberOf _
@@ -6639,7 +6639,7 @@
     }
 
     /**
-     * Removes trailing whitespace from a given string.
+     * Removes trailing whitespace from `string`.
      *
      * @static
      * @memberOf _
@@ -6666,7 +6666,7 @@
 
     /**
      * The inverse of `_.escape`; this method converts the HTML entities
-     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in a given string to their
+     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
      * corresponding characters.
      *
      * Note: No other HTML entities are unescaped. To unescape additional HTML
@@ -6953,8 +6953,8 @@
     };
 
     /**
-     * Converts the given value to an integer of the specified radix. If `radix`
-     * is `undefined` or `0` a `radix` of `10` is used unless the `value` is a
+     * Converts `value` to an integer of the specified radix. If `radix` is
+     * `undefined` or `0` a `radix` of `10` is used unless the `value` is a
      * hexadecimal, in which case a `radix` of `16` is used.
      *
      * Note: This method avoids differences in native ES3 and ES5 `parseInt`

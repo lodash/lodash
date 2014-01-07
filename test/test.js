@@ -2588,19 +2588,6 @@
       func(new Foo, function(value, key) { keys.push(key); });
       deepEqual(keys.sort(), ['a', 'b']);
     });
-
-    test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug with inherited properties (test in IE < 9)', 1, function() {
-      function Foo() {}
-      Foo.prototype = shadowedObject;
-
-      function Bar() {}
-      Bar.prototype = new Foo;
-      Bar.prototype.constructor = Bar;
-
-      var keys = [];
-      func(new Bar, function(value, key) { keys.push(key); });
-      deepEqual(keys.sort(), shadowedProps);
-    });
   });
 
   /*--------------------------------------------------------------------------*/

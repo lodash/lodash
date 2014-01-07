@@ -488,34 +488,6 @@
   }
 
   /**
-   * Slices the `collection` from the `start` index up to, but not including,
-   * the `end` index.
-   *
-   * Note: This function is used instead of `Array#slice` to support node lists
-   * in IE < 9 and to ensure dense arrays are returned.
-   *
-   * @private
-   * @param {Array|Object|string} collection The collection to slice.
-   * @param {number} start The start index.
-   * @param {number} end The end index.
-   * @returns {Array} Returns the new array.
-   */
-  function slice(array, start, end) {
-    start || (start = 0);
-    if (typeof end == 'undefined') {
-      end = array ? array.length : 0;
-    }
-    var index = -1,
-        length = end - start || 0,
-        result = Array(length < 0 ? 0 : length);
-
-    while (++index < length) {
-      result[index] = array[start + index];
-    }
-    return result;
-  }
-
-  /**
    * Gets the index of the first non-whitespace character of `string`.
    *
    * @private
@@ -1931,7 +1903,8 @@
 
       // avoid non Object objects, `arguments` objects, and DOM elements
       if (!(value && toString.call(value) == objectClass) ||
-          (ctor = value.constructor, isFunction(ctor) && !(ctor instanceof ctor)) ||
+          (!hasOwnProperty.call(value, 'constructor') &&
+            (ctor = value.constructor, isFunction(ctor) && !(ctor instanceof ctor))) ||
           (!support.argsClass && isArguments(value)) ||
           (!support.nodeClass && isNode(value))) {
         return false;
@@ -2227,7 +2200,7 @@
           return array ? array[0] : undefined;
         }
       }
-      return slice(array, 0, nativeMin(nativeMax(0, n), length));
+      return slice(array, 0, n > 0 ? n : 0);
     }
 
     /**
@@ -2387,7 +2360,8 @@
       } else {
         n = (callback == null || thisArg) ? 1 : callback || n;
       }
-      return slice(array, 0, nativeMin(nativeMax(0, length - n), length));
+      n = length - n;
+      return slice(array, 0, n > 0 ? n : 0);
     }
 
     /**
@@ -2522,7 +2496,8 @@
           return array ? array[length - 1] : undefined;
         }
       }
-      return slice(array, nativeMax(0, length - n));
+      n = length - n;
+      return slice(array,  n > 0 ? n : 0);
     }
 
     /**
@@ -2768,10 +2743,53 @@
         while (++index < length && callback(array[index], index, array)) {
           n++;
         }
+      } else if (callback == null || thisArg) {
+        n = 1;
       } else {
-        n = (callback == null || thisArg) ? 1 : nativeMax(0, callback);
+        n = callback > 0 ? callback : 0;
       }
       return slice(array, n);
+    }
+
+    /**
+     * Slices `array` from the `start` index up to, but not including, the `end` index.
+     *
+     * Note: This function is used instead of `Array#slice` to support node lists
+     * in IE < 9 and to ensure dense arrays are returned.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to slice.
+     * @param {number} [start=0] The start index.
+     * @param {number} [end=array.length] The end index.
+     * @returns {Array} Returns the new array.
+     */
+    function slice(array, start, end) {
+      var index = -1,
+          length = array ? array.length : 0;
+
+      if (typeof start == 'undefined') {
+        start = 0;
+      } else if (start < 0) {
+        start = nativeMax(length + start, 0);
+      } else if (start > length) {
+        start = length;
+      }
+      if (typeof end == 'undefined') {
+        end = length;
+      } else if (end < 0) {
+        end = nativeMax(length + end, 0);
+      } else if (end > length) {
+        end = length;
+      }
+      length = end - start || 0;
+
+      var result = Array(length);
+      while (++index < length) {
+        result[index] = array[start + index];
+      }
+      return result;
     }
 
     /**
@@ -7199,6 +7217,7 @@
     lodash.remove = remove;
     lodash.rest = rest;
     lodash.shuffle = shuffle;
+    lodash.slice = slice;
     lodash.sortBy = sortBy;
     lodash.tap = tap;
     lodash.throttle = throttle;
@@ -7372,7 +7391,7 @@
     });
 
     // add `Array` functions that return new wrapped values
-    baseEach(['concat', 'slice', 'splice'], function(methodName) {
+    baseEach(['concat', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);

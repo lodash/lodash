@@ -1234,12 +1234,11 @@
       });
 
       test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', 6, function() {
-        strictEqual(_.contains(collection, 1, 6), false);
-        strictEqual(_.contains(collection, undefined, 6), false);
-        strictEqual(_.contains(collection, '', 6), false);
-        strictEqual(_.contains(collection, 1, 8), false);
-        strictEqual(_.contains(collection, undefined, 8), false);
-        strictEqual(_.contains(collection, '', 8), false);
+        _.forEach([6, 8], function(fromIndex) {
+          strictEqual(_.contains(collection, 1, fromIndex), false);
+          strictEqual(_.contains(collection, undefined, fromIndex), false);
+          strictEqual(_.contains(collection, '', fromIndex), false);
+        });
       });
 
       test('should work with ' + key + ' and a negative `fromIndex`', 1, function() {
@@ -2599,7 +2598,7 @@
       Bar.prototype.constructor = Bar;
 
       var keys = [];
-      func(shadowedObject, function(value, key) { keys.push(key); });
+      func(new Bar, function(value, key) { keys.push(key); });
       deepEqual(keys.sort(), shadowedProps);
     });
   });
@@ -3180,11 +3179,12 @@
       equal(_.indexOf(array, 1, 2), 3);
     });
 
-    test('should work with `fromIndex` >= `array.length`', 4, function() {
-      equal(_.indexOf(array, 1, 6), -1);
-      equal(_.indexOf(array, undefined, 6), -1);
-      equal(_.indexOf(array, 1, 8), -1);
-      equal(_.indexOf(array, undefined, 8), -1);
+    test('should work with `fromIndex` >= `array.length`', 6, function() {
+      _.forEach([6, 8], function(fromIndex) {
+        equal(_.indexOf(array, 1, fromIndex), -1);
+        equal(_.indexOf(array, undefined, fromIndex), -1);
+        equal(_.indexOf(array, '', fromIndex), -1);
+      });
     });
 
     test('should work with a negative `fromIndex`', 1, function() {
@@ -4940,11 +4940,12 @@
       strictEqual(_.lastIndexOf(array, 1, 2), 0);
     });
 
-    test('should work with `fromIndex` >= `array.length`', 4, function() {
-      equal(_.lastIndexOf(array, undefined, 6), -1);
-      equal(_.lastIndexOf(array, 1, 6), 3);
-      equal(_.lastIndexOf(array, undefined, 8), -1);
-      equal(_.lastIndexOf(array, 1, 8), 3);
+    test('should work with `fromIndex` >= `array.length`', 6, function() {
+      _.forEach([6, 8], function(fromIndex) {
+        equal(_.lastIndexOf(array, undefined, fromIndex), -1);
+        equal(_.lastIndexOf(array, 1, fromIndex), 3);
+        equal(_.lastIndexOf(array, '', fromIndex), -1);
+      });
     });
 
     test('should work with a negative `fromIndex`', 1, function() {
@@ -6912,6 +6913,55 @@
     });
   }(1, 2, 3));
 
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.slice');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    test('should work with a positive `start`', 1, function() {
+      deepEqual(_.slice(array, 1), [2, 3]);
+    });
+
+    test('should work with a `start` >= `array.length`', 2, function() {
+      _.forEach([3, 4], function(start) {
+        deepEqual(_.slice(array, start), []);
+      });
+    });
+
+    test('should work with a negative `start`', 1, function() {
+      deepEqual(_.slice(array, -1), [3]);
+    });
+
+    test('should work with a negative `start` <= negative `array.length`', 2, function() {
+      _.forEach([-3, -4], function(start) {
+        deepEqual(_.slice(array, start), [1, 2, 3]);
+      });
+    });
+
+    test('should work with a positive `end`', 1, function() {
+      deepEqual(_.slice(array, 0, 1), [1]);
+    });
+
+    test('should work with a `end` >= `array.length`', 2, function() {
+      _.forEach([3, 4], function(end) {
+        deepEqual(_.slice(array, 0, end), [1, 2, 3]);
+      });
+    });
+
+    test('should work with a negative `end`', 1, function() {
+      deepEqual(_.slice(array, 0, -1), [1, 2]);
+    });
+
+    test('should work with a negative `end` <= negative `array.length`', 2, function() {
+      _.forEach([-3, -4], function(end) {
+        deepEqual(_.slice(array, 0, end), []);
+      });
+    });
+  }());
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.some');
@@ -7828,14 +7878,34 @@
   QUnit.module('lodash.toArray');
 
   (function() {
-    var args = arguments,
-        array = [1, 2, 3];
+    test('should return the values of objects', 1, function() {
+      var array = [1, 2, 3],
+          object = { 'a': 1, 'b': 2, 'c': 3 };
+
+      deepEqual(_.toArray(object), array);
+    });
+
+    test('should work with a string for `collection` (test in Opera < 10.52)', 2, function() {
+      deepEqual(_.toArray('abc'), ['a', 'b', 'c']);
+      deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
+    });
+  }());
+
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.slice and lodash.toArray');
+
+  _.forEach(['slice', 'toArray'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        array = [1, 2, 3],
+        func = _[methodName];
 
     test('should return a dense array', 3, function() {
       var sparse = Array(3);
       sparse[1] = 2;
 
-      var actual = _.toArray(sparse);
+      var actual = func(sparse);
 
       ok(0 in actual);
       ok(2 in actual);
@@ -7844,38 +7914,28 @@
 
     test('should treat array-like objects like arrays', 2, function() {
       var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
-      deepEqual(_.toArray(object), ['a', 'b', 'c']);
-      deepEqual(_.toArray(args), array);
+      deepEqual(func(object), ['a', 'b', 'c']);
+      deepEqual(func(args), array);
     });
 
     test('should return a shallow clone of arrays', 2, function() {
-      var actual = _.toArray(array);
+      var actual = func(array);
       notStrictEqual(actual, array);
-      deepEqual(_.toArray(array), array);
-    });
-
-    test('should return the values of objects', 1, function() {
-      var object = { 'a': 1, 'b': 2, 'c': 3 };
-      deepEqual(_.toArray(object), array);
-    });
-
-    test('should work with a string for `collection` (test in Opera < 10.52)', 2, function() {
-      deepEqual(_.toArray('abc'), ['a', 'b', 'c']);
-      deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
+      deepEqual(func(array), array);
     });
 
     test('should work with a node list for `collection` (test in IE < 9)', 1, function() {
       if (document) {
         try {
           var nodeList = document.getElementsByTagName('body'),
-              actual = _.toArray(nodeList);
+              actual = func(nodeList);
         } catch(e) { }
         deepEqual(actual, [body]);
       } else {
         skipTest();
       }
     });
-  }(1, 2, 3));
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -8885,7 +8945,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 162, function() {
+    test('should accept falsey arguments', 163, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
           isExposed = '_' in root,
           oldDash = root._;

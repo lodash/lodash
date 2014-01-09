@@ -20,7 +20,7 @@
   var idCounter = 0;
 
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
-  var keyPrefix = +new Date + '';
+  var keyPrefix = '__1335248838000__';
 
   /** Used as the size when optimizations are enabled for large arrays */
   var largeArraySize = 75;

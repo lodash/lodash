@@ -19,7 +19,7 @@
   var indicatorObject = {};
 
   /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
-  var keyPrefix = +new Date + '';
+  var keyPrefix = '__1335248838000__';
 
   /** Used to match HTML entities and HTML characters */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g,

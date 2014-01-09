@@ -313,6 +313,42 @@
   }
 
   /**
+   * Gets the index of the first character of `string` that is not found in `chars`.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the index of the first non-whitespace character.
+   */
+  function charsLeftIndex(string, chars) {
+    var index = -1,
+        length = string.length;
+
+    while (++index < length) {
+      if (chars.indexOf(string.charAt(index)) < 0) {
+        break;
+      }
+    }
+    return index;
+  }
+
+  /**
+   * Gets the index of the last character of `string` that is not found in `chars`.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the index of the last non-whitespace character.
+   */
+  function charsRightIndex(string, chars) {
+    var index = string.length;
+    while (index--) {
+      if (chars.indexOf(string.charAt(index)) < 0) {
+        break;
+      }
+    }
+    return index;
+  }
+
+  /**
    * Used by `sortBy` to compare transformed elements of a collection and stable
    * sort them in ascending order.
    *
@@ -488,6 +524,69 @@
   }
 
   /**
+   * A fallback implementation of `trim` to remove leading and trailing
+   * whitespace or specified characters from `string`.
+   *
+   * @private
+   * @param {string} string The string to trim.
+   * @param {string} [chars=whitespace] The characters to trim.
+   * @returns {string} Returns the trimmed string.
+   */
+  function shimTrim(string, chars) {
+    string = string == null ? '' : String(string);
+    if (!string) {
+      return string;
+    }
+    if (chars == null) {
+      return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
+    }
+    chars = String(chars);
+    return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
+  }
+
+  /**
+   * A fallback implementation of `trimLeft` to remove leading whitespace or
+   * specified characters from `string`.
+   *
+   * @private
+   * @param {string} string The string to trim.
+   * @param {string} [chars=whitespace] The characters to trim.
+   * @returns {string} Returns the trimmed string.
+   */
+  function shimTrimLeft(string, chars) {
+    string = string == null ? '' : String(string);
+    if (!string) {
+      return string;
+    }
+    if (chars == null) {
+      return string.slice(trimmedLeftIndex(string))
+    }
+    chars = String(chars);
+    return string.slice(charsLeftIndex(string, chars));
+  }
+
+  /**
+   * A fallback implementation of `trimRight` to remove trailing whitespace or
+   * specified characters from `string`.
+   *
+   * @private
+   * @param {string} string The string to trim.
+   * @param {string} [chars=whitespace] The characters to trim.
+   * @returns {string} Returns the trimmed string.
+   */
+  function shimTrimRight(string, chars) {
+    string = string == null ? '' : String(string);
+    if (!string) {
+      return string;
+    }
+    if (chars == null) {
+      return string.slice(0, trimmedRightIndex(string) + 1)
+    }
+    chars = String(chars);
+    return string.slice(0, charsRightIndex(string, chars) + 1);
+  }
+
+  /**
    * Gets the index of the first non-whitespace character of `string`.
    *
    * @private
@@ -626,9 +725,9 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
-        nativeTrim = isNative(nativeTrim = stringProto.trim) && nativeTrim,
-        nativeTrimLeft = isNative(nativeTrimLeft = stringProto.trimLeft) && nativeTrimLeft,
-        nativeTrimRight = isNative(nativeTrimRight = stringProto.trimRight) && nativeTrimRight;
+        nativeTrim = isNative(nativeTrim = stringProto.trim) && !nativeTrim.call(whitespace) && nativeTrim,
+        nativeTrimLeft = isNative(nativeTrimLeft = stringProto.trimLeft) && !nativeTrimLeft.call(whitespace) && nativeTrimLeft,
+        nativeTrimRight = isNative(nativeTrimRight = stringProto.trimRight) && !nativeTrimRight.call(whitespace) && nativeTrimRight;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -6587,82 +6686,76 @@
     }
 
     /**
-     * Removes leading and trailing whitespace from `string`.
+     * Removes leading and trailing whitespace or specified characters from `string`.
      *
      * @static
      * @memberOf _
      * @category Strings
      * @param {string} string The string to trim.
+     * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
      * @example
      *
      * _.trim('  fred  ');
      * // => 'fred'
+     *
+     * _.trim('-_-fred-_-', '_-');
+     * // => 'fred'
      */
-    function trim(string) {
-      return string == null ? '' : nativeTrim.call(string);
-    }
-    // fallback for environments without a proper `String#trim`
-    if (!nativeTrim || nativeTrim.call(whitespace)) {
-      trim = function(string) {
-        string = string == null ? '' : String(string);
-        return string
-          ? string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1)
-          : string;
-      };
-    }
+    var trim = !nativeTrim ? shimTrim : function(string, chars) {
+      if (string == null) {
+        return '';
+      }
+      return chars == null ? nativeTrim.call(string) : shimTrim(string, chars);
+    };
 
     /**
-     * Removes leading whitespace from `string`.
+     * Removes leading whitespace or specified characters from `string`.
      *
      * @static
      * @memberOf _
      * @category Strings
      * @param {string} string The string to trim.
+     * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
      * @example
      *
      * _.trimLeft('  fred  ');
      * // => 'fred  '
+     *
+     * _.trimLeft('-_-fred-_-', '_-');
+     * // => 'fred-_-'
      */
-    function trimLeft(string) {
-      return string == null ? '' : nativeTrimLeft.call(string);
-    }
-    // fallback for environments without a proper `String#trimLeft`
-    if (!nativeTrimLeft || nativeTrimLeft.call(whitespace)) {
-      trimLeft = function(string) {
-        string = string == null ? '' : String(string);
-        return string
-          ? string.slice(trimmedLeftIndex(string))
-          : string;
-      };
-    }
+    var trimLeft = !nativeTrimLeft ? shimTrimLeft : function(string, chars) {
+      if (string == null) {
+        return '';
+      }
+      return chars == null ? nativeTrimLeft.call(string) : shimTrimLeft(string, chars);
+    };
 
     /**
-     * Removes trailing whitespace from `string`.
+     * Removes trailing whitespace or specified characters from `string`.
      *
      * @static
      * @memberOf _
      * @category Strings
      * @param {string} string The string to trim.
+     * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
      * @example
      *
      * _.trimRight('  fred  ');
      * // => '  fred'
+     *
+     * _.trimRight('-_-fred-_-', '_-');
+     * // => '-_-fred'
      */
-    function trimRight(string) {
-      return string == null ? '' : nativeTrimRight.call(string);
-    }
-    // fallback for environments without a proper `String#trimRight`
-    if (!nativeTrimRight || nativeTrimRight.call(whitespace)) {
-      trimRight = function(string) {
-        string = string == null ? '' : String(string);
-        return string
-          ? string.slice(0, trimmedRightIndex(string) + 1)
-          : string;
-      };
-    }
+    var trimRight = !nativeTrimRight ? shimTrimRight : function(string, chars) {
+      if (string == null) {
+        return '';
+      }
+      return chars == null ? nativeTrimRight.call(string) : shimTrimRight(string, chars);
+    };
 
     /**
      * The inverse of `_.escape`; this method converts the HTML entities

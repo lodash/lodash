@@ -8051,30 +8051,45 @@
 
   QUnit.module('trim methods');
 
-  (function() {
-    var string = whitespace + 'a b c' + whitespace;
+  _.forEach(['trim', 'trimLeft', 'trimRight'], function(methodName, index) {
+    var func = _[methodName];
 
-    test('`_.trim` should remove leading and trailing whitespace', 1, function() {
-      strictEqual(_.trim(string), 'a b c');
+    var parts = [];
+    if (index != 2) {
+      parts.push('leading');
+    }
+    if (index != 1) {
+      parts.push('trailing');
+    }
+    parts = parts.join(' and ');
+
+    test('`_.' + methodName + '` should remove ' + parts + ' whitespace', 1, function() {
+      var string = whitespace + 'a b c' + whitespace;
+      strictEqual(func(string), (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''));
     });
 
-    test('`_.trimLeft` should remove leading whitespace', 1, function() {
-      strictEqual(_.trimLeft(string), 'a b c' + whitespace);
+    test('`_.' + methodName + '` should coerce `string` to a string', 1, function() {
+      var object = { 'toString': function() { return whitespace + 'a b c' + whitespace; } };
+      strictEqual(func(object), (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''));
     });
 
-    test('`_.trimRight` should remove trailing whitespace', 1, function() {
-      strictEqual(_.trimRight(string), whitespace + 'a b c');
+    test('`_.' + methodName + '` should remove ' + parts + ' `chars`', 1, function() {
+      var string = '-_-a-b-c-_-';
+      strictEqual(func(string, '_-'), (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : ''));
     });
 
-    _.forEach(['trim', 'trimLeft', 'trimRight'], function(methodName) {
-      var func = _[methodName];
+    test('`_.' + methodName + '` should coerce `chars` to a string', 1, function() {
+      var object = { 'toString': function() { return '_-'; } },
+          string = '-_-a-b-c-_-';
 
-      test('`_.' + methodName + '` should return an empty string when provided `null` or `undefined`', 2, function() {
-        strictEqual(func(null), '');
-        strictEqual(func(undefined), '');
-      });
+      strictEqual(func(string, object), (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : ''));
     });
-  }());
+
+    test('`_.' + methodName + '` should return an empty string when provided `null` or `undefined`', 2, function() {
+      strictEqual(func(null), '');
+      strictEqual(func(undefined), '');
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

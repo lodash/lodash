@@ -5169,10 +5169,10 @@
      * defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function assign(object, source, guard) {
+    function assign(object, source) {
       var args = arguments,
           argsIndex = 0,
-          argsLength = typeof guard == 'number' ? 2 : args.length;
+          argsLength = args[3] && args[3][args[2]] === source ? 2 : args.length;
 
       if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
         var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);
@@ -5338,8 +5338,6 @@
      * @category Objects
      * @param {Object} object The destination object.
      * @param {...Object} [source] The source objects.
-     * @param- {Object} [guard] Allows working with `_.reduce` without using its
-     *  `key` and `object` arguments as sources.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -5347,10 +5345,10 @@
      * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function defaults(object, source, guard) {
+    function defaults(object, source) {
       var args = arguments,
           argsIndex = 0,
-          argsLength = typeof guard == 'number' ? 2 : args.length;
+          argsLength = args[3] && args[3][args[2]] === source ? 2 : args.length;
 
       while (++argsIndex < argsLength) {
         source = args[argsIndex];

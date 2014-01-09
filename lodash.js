@@ -4535,6 +4535,9 @@
      * binding of `thisArg` and prepends any additional `bind` arguments to those
      * provided to the bound function.
      *
+     * Note: Unlike native `Function#bind` this method does not set the `length`
+     * property of bound functions.
+     *
      * @static
      * @memberOf _
      * @category Functions
@@ -4563,6 +4566,8 @@
      * method. Method names may be specified as individual arguments or as arrays
      * of method names. If no method names are provided all the function properties
      * of `object` will be bound.
+     *
+     * Note: This method does not set the `length` property of bound functions.
      *
      * @static
      * @memberOf _
@@ -4691,6 +4696,8 @@
      * have been provided, or returns a function that accepts one or more of the
      * remaining `func` arguments, and so on. The arity of `func` can be specified
      * if `func.length` is not sufficient.
+     *
+     * Note: This method does not set the `length` property of curried functions.
      *
      * @static
      * @memberOf _
@@ -5000,6 +5007,9 @@
      * `partial` arguments prepended to those provided to the new function. This
      * method is similar to `_.bind` except it does **not** alter the `this` binding.
      *
+     * Note: This method does not set the `length` property of partially applied
+     * functions.
+     *
      * @static
      * @memberOf _
      * @category Functions
@@ -5020,6 +5030,9 @@
     /**
      * This method is like `_.partial` except that `partial` arguments are
      * appended to those provided to the new function.
+     *
+     * Note: This method does not set the `length` property of partially applied
+     * functions.
      *
      * @static
      * @memberOf _
@@ -5873,8 +5886,8 @@
     /**
      * Checks if `value` is, or can be coerced to, a finite number.
      *
-     * Note: This is not the same as native `isFinite` which will return true for
-     * booleans and empty strings. See the [ES5 spec](http://es5.github.io/#x15.1.2.5)
+     * Note: This method is not the same as native `isFinite` which will return
+     * `true` for booleans and empty strings. See the [ES5 spec](http://es5.github.io/#x15.1.2.5)
      * for more details.
      *
      * @static
@@ -5957,8 +5970,8 @@
     /**
      * Checks if `value` is `NaN`.
      *
-     * Note: This is not the same as native `isNaN` which will return `true` for
-     * `undefined` and other non-numeric values. See the [ES5 spec](http://es5.github.io/#x15.1.2.4)
+     * Note: This method is not the same as native `isNaN` which will return `true`
+     * for `undefined` and other non-numeric values. See the [ES5 spec](http://es5.github.io/#x15.1.2.4)
      * for more details.
      *
      * @static
@@ -6398,7 +6411,7 @@
     }
 
     /**
-     * An alternative to `_.reduce` this method transforms `object` to a new
+     * An alternative to `_.reduce`; this method transforms `object` to a new
      * `accumulator` object which is the result of running each of its own
      * enumerable properties through a callback, with each callback execution
      * potentially mutating the `accumulator` object. The callback is bound to

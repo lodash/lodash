@@ -230,7 +230,7 @@
       /**
        * Detect if `Array#unshift` returns the new length of the array (all but IE < 8).
        *
-       * @memberOf _.support
+       * @memberOf Benchmark.support
        * @type boolean
        */
       support.unshiftResult = !![].unshift(1);

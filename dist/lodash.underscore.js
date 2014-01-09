@@ -3041,6 +3041,9 @@
    * binding of `thisArg` and prepends any additional `bind` arguments to those
    * provided to the bound function.
    *
+   * Note: Unlike native `Function#bind` this method does not set the `length`
+   * property of bound functions.
+   *
    * @static
    * @memberOf _
    * @category Functions
@@ -3069,6 +3072,8 @@
    * method. Method names may be specified as individual arguments or as arrays
    * of method names. If no method names are provided all the function properties
    * of `object` will be bound.
+   *
+   * Note: This method does not set the `length` property of bound functions.
    *
    * @static
    * @memberOf _
@@ -3426,6 +3431,9 @@
    * `partial` arguments prepended to those provided to the new function. This
    * method is similar to `_.bind` except it does **not** alter the `this` binding.
    *
+   * Note: This method does not set the `length` property of partially applied
+   * functions.
+   *
    * @static
    * @memberOf _
    * @category Functions
@@ -3622,8 +3630,6 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {...Object} [source] The source objects.
-   * @param- {Object} [guard] Allows working with `_.reduce` without using its
-   *  `key` and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -3973,8 +3979,8 @@
   /**
    * Checks if `value` is, or can be coerced to, a finite number.
    *
-   * Note: This is not the same as native `isFinite` which will return true for
-   * booleans and empty strings. See the [ES5 spec](http://es5.github.io/#x15.1.2.5)
+   * Note: This method is not the same as native `isFinite` which will return
+   * `true` for booleans and empty strings. See the [ES5 spec](http://es5.github.io/#x15.1.2.5)
    * for more details.
    *
    * @static
@@ -4057,8 +4063,8 @@
   /**
    * Checks if `value` is `NaN`.
    *
-   * Note: This is not the same as native `isNaN` which will return `true` for
-   * `undefined` and other non-numeric values. See the [ES5 spec](http://es5.github.io/#x15.1.2.4)
+   * Note: This method is not the same as native `isNaN` which will return `true`
+   * for `undefined` and other non-numeric values. See the [ES5 spec](http://es5.github.io/#x15.1.2.4)
    * for more details.
    *
    * @static

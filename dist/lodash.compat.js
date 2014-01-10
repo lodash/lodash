@@ -1601,6 +1601,7 @@
 
         // non `Object` object instances with different constructors are not equal
         if (ctorA != ctorB &&
+              !(hasOwnProperty.call(a, 'constructor') && hasOwnProperty.call(b, 'constructor')) &&
               !(isFunction(ctorA) && ctorA instanceof ctorA && isFunction(ctorB) && ctorB instanceof ctorB) &&
               ('constructor' in a && 'constructor' in b)
             ) {
@@ -5673,7 +5674,7 @@
      *
      * // with `multiValue`
      * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
-     * // => { 'fred': ['first', 'third'], 'barney': 'second' }
+     * // => { 'fred': ['first', 'third'], 'barney': ['second'] }
      */
     function invert(object, multiValue) {
       var index = -1,
@@ -5685,11 +5686,12 @@
         var key = props[index],
             value = object[key];
 
-        if (multiValue && hasOwnProperty.call(result, value)) {
-          if (typeof result[value] == 'string') {
-            result[value] = [result[value]];
+        if (multiValue) {
+          if (hasOwnProperty.call(result, value)) {
+            result[value].push(key);
+          } else {
+            result[value] = [key];
           }
-          result[value].push(key);
         }
         else {
           result[value] = key;

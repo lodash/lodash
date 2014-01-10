@@ -156,6 +156,16 @@
     '&#39;': "'"
   };
 
+  /** Used to determine if values are an indexes or keys */
+  var indexTypes = {
+    'boolean': false,
+    'function': false,
+    'object': false,
+    'number': true,
+    'string': true,
+    'undefined': false
+  };
+
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
     'boolean': false,
@@ -2366,7 +2376,7 @@
       // juggle arguments
       if (typeof isShallow != 'boolean' && isShallow != null) {
         thisArg = callback;
-        callback = (typeof isShallow != 'function' && thisArg && thisArg[isShallow] === array) ? null : isShallow;
+        callback = (indexTypes[typeof isShallow] && thisArg && thisArg[isShallow] === array) ? null : isShallow;
         isShallow = false;
       }
       if (callback != null) {
@@ -3045,7 +3055,7 @@
       // juggle arguments
       if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = callback;
-        callback = (typeof isSorted != 'function' && thisArg && thisArg[isSorted] === array) ? null : isSorted;
+        callback = (indexTypes[typeof isSorted] && thisArg && thisArg[isSorted] === array) ? null : isSorted;
         isSorted = false;
       }
       if (callback != null) {
@@ -3319,11 +3329,11 @@
      * _.at(['fred', 'barney', 'pebbles'], 0, 2);
      * // => ['fred', 'pebbles']
      */
-    function at(collection) {
+    function at(collection, guard) {
       var args = arguments,
           index = -1,
           props = baseFlatten(args, true, false, 1),
-          length = (args[2] && args[2][args[1]] === collection) ? 1 : props.length,
+          length = (indexTypes[typeof guard] && args[2] && args[2][guard] === collection) ? 1 : props.length,
           result = Array(length);
 
       if (support.unindexedChars && isString(collection)) {
@@ -3964,7 +3974,7 @@
 
       // allows working with functions like `_.map` without using
       // their `index` argument as a callback
-      if (typeof callback != 'function' && thisArg && thisArg[callback] === collection) {
+      if (indexTypes[typeof callback] && thisArg && thisArg[callback] === collection) {
         callback = null;
       }
       if (callback == null && isArray(collection)) {
@@ -4039,7 +4049,7 @@
 
       // allows working with functions like `_.map` without using
       // their `index` argument as a callback
-      if (typeof callback != 'function' && thisArg && thisArg[callback] === collection) {
+      if (indexTypes[typeof callback] && thisArg && thisArg[callback] === collection) {
         callback = null;
       }
       if (callback == null && isArray(collection)) {
@@ -5170,11 +5180,12 @@
      * defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function assign(object, source) {
+    function assign(object, source, guard) {
       var args = arguments,
           argsIndex = 0,
-          argsLength = args[3] && args[3][args[2]] === source ? 2 : args.length;
+          argsLength = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
 
+      // juggle arguments
       if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
         var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);
       } else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {
@@ -5237,11 +5248,10 @@
      * // => 0
      */
     function clone(value, isDeep, callback, thisArg) {
-      // allows working with "Collections" methods without using their `index`
-      // and `collection` arguments for `isDeep` and `callback`
+      // juggle arguments
       if (typeof isDeep != 'boolean' && isDeep != null) {
         thisArg = callback;
-        callback = isDeep;
+        callback = (indexTypes[typeof isDeep] && thisArg && thisArg[isDeep] === value) ? null : isDeep;
         isDeep = false;
       }
       return baseClone(value, isDeep, typeof callback == 'function' && baseCreateCallback(callback, thisArg, 1));
@@ -5339,6 +5349,8 @@
      * @category Objects
      * @param {Object} object The destination object.
      * @param {...Object} [source] The source objects.
+     * @param- {Object} [guard] Allows working with `_.reduce` without using its
+     *  `key` and `object` arguments as sources.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -5346,10 +5358,10 @@
      * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function defaults(object, source) {
+    function defaults(object, source, guard) {
       var args = arguments,
           argsIndex = 0,
-          argsLength = args[3] && args[3][args[2]] === source ? 2 : args.length;
+          argsLength = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
 
       while (++argsIndex < argsLength) {
         source = args[argsIndex];
@@ -6249,18 +6261,14 @@
      * });
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot] }
      */
-    function merge(object) {
-      var args = arguments,
-          length = 2;
-
+    function merge(object, source, guard) {
       if (!isObject(object)) {
         return object;
       }
-      // allows working with `_.reduce` and `_.reduceRight` without using
-      // their `index` and `collection` arguments
-      if (typeof args[2] != 'number') {
-        length = args.length;
-      }
+      var args = arguments,
+          length = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
+
+      // juggle arguments
       if (length > 3 && typeof args[length - 2] == 'function') {
         var callback = baseCreateCallback(args[--length - 1], args[length--], 2);
       } else if (length > 2 && typeof args[length - 1] == 'function') {

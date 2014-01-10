@@ -676,14 +676,22 @@
       if (className != objectClass) {
         return false;
       }
-      var ctorA = a.constructor,
-          ctorB = b.constructor;
+      var ownCtorA = hasOwnProperty.call(a, 'constructor'),
+          ownCtorB = hasOwnProperty.call(b, 'constructor');
 
-      if (ctorA != ctorB &&
-            !(isFunction(ctorA) && ctorA instanceof ctorA && isFunction(ctorB) && ctorB instanceof ctorB) &&
-            ('constructor' in a && 'constructor' in b)
-          ) {
+      if (ownCtorA !== ownCtorB) {
         return false;
+      }
+      if (!ownCtorA) {
+        var ctorA = a.constructor,
+            ctorB = b.constructor;
+
+        if (ctorA != ctorB &&
+              !(isFunction(ctorA) && ctorA instanceof ctorA && isFunction(ctorB) && ctorB instanceof ctorB) &&
+              ('constructor' in a && 'constructor' in b)
+            ) {
+          return false;
+        }
       }
     }
     stackA || (stackA = []);
@@ -3799,7 +3807,7 @@
    *
    * // with `multiValue`
    * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
-   * // => { 'fred': ['first', 'third'], 'barney': 'second' }
+   * // => { 'fred': ['first', 'third'], 'barney': ['second'] }
    */
   function invert(object, multiValue) {
     var index = -1,
@@ -3811,11 +3819,12 @@
       var key = props[index],
           value = object[key];
 
-      if (multiValue && hasOwnProperty.call(result, value)) {
-        if (typeof result[value] == 'string') {
-          result[value] = [result[value]];
+      if (multiValue) {
+        if (hasOwnProperty.call(result, value)) {
+          result[value].push(key);
+        } else {
+          result[value] = [key];
         }
-        result[value].push(key);
       }
       else {
         result[value] = key;

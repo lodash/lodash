@@ -1074,7 +1074,7 @@
       _.forOwn(objects, function(object, key) {
         test('`_.' + methodName + '` should clone ' + key, 2, function() {
           var clone = func(object);
-          strictEqual(_.isEqual(object, clone), true);
+          ok(_.isEqual(object, clone));
 
           if (_.isObject(object)) {
             notStrictEqual(clone, object);
@@ -3419,12 +3419,13 @@
 
     test('should accept a `multiValue` flag', 1, function() {
       var object = { 'a': 1, 'b': 2, 'c': 1 };
-      deepEqual(_.invert(object, true), { '1': ['a', 'c'], '2': 'b' });
+      deepEqual(_.invert(object, true), { '1': ['a', 'c'], '2': ['b'] });
     });
 
-    test('should only add multiple values to own, not inherited, properties', 1, function() {
+    test('should only add multiple values to own, not inherited, properties', 2, function() {
       var object = { 'a': 'hasOwnProperty', 'b': 'constructor' };
-      deepEqual(_.invert(object, true), { 'hasOwnProperty': 'a', 'constructor': 'b' });
+      deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
+      ok(_.isEqual(_.invert(object, true), { 'hasOwnProperty': ['a'], 'constructor': ['b'] }));
     });
   }());
 
@@ -3967,6 +3968,14 @@
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
       strictEqual(_.isEqual(shadowedObject, {}), false);
+    });
+
+    test('should perform comparisons between objects with constructor properties', 5, function() {
+      strictEqual(_.isEqual({ 'constructor': 1 },   { 'constructor': 1 }), true);
+      strictEqual(_.isEqual({ 'constructor': 1 },   { 'constructor': '1' }), false);
+      strictEqual(_.isEqual({ 'constructor': [1] }, { 'constructor': [1] }), true);
+      strictEqual(_.isEqual({ 'constructor': [1] }, { 'constructor': ['1'] }), false);
+      strictEqual(_.isEqual({ 'constructor': Object }, {}), false);
     });
 
     test('should perform comparisons between arrays with circular references', 4, function() {

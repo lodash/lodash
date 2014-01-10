@@ -72,6 +72,16 @@
     '&#x27;': "'"
   };
 
+  /** Used to determine if values are an indexes or keys */
+  var indexTypes = {
+    'boolean': false,
+    'function': false,
+    'object': false,
+    'number': true,
+    'string': true,
+    'undefined': false
+  };
+
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
     'boolean': false,
@@ -1679,7 +1689,7 @@
     // juggle arguments
     if (typeof isSorted != 'boolean' && isSorted != null) {
       thisArg = callback;
-      callback = (typeof isSorted != 'function' && thisArg && thisArg[isSorted] === array) ? null : isSorted;
+      callback = (indexTypes[typeof isSorted] && thisArg && thisArg[isSorted] === array) ? null : isSorted;
       isSorted = false;
     }
     if (callback != null) {
@@ -2484,7 +2494,7 @@
 
     // allows working with functions like `_.map` without using
     // their `index` argument as a callback
-    if (typeof callback != 'function' && thisArg && thisArg[callback] === collection) {
+    if (indexTypes[typeof callback] && thisArg && thisArg[callback] === collection) {
       callback = null;
     }
     var index = -1,
@@ -2557,7 +2567,7 @@
 
     // allows working with functions like `_.map` without using
     // their `index` argument as a callback
-    if (typeof callback != 'function' && thisArg && thisArg[callback] === collection) {
+    if (indexTypes[typeof callback] && thisArg && thisArg[callback] === collection) {
       callback = null;
     }
     var index = -1,
@@ -3567,12 +3577,16 @@
    * defaults(object, { 'name': 'fred', 'employer': 'slate' });
    * // => { 'name': 'barney', 'employer': 'slate' }
    */
-  function assign(object) {
+  function assign(object, source, guard) {
     if (!object) {
       return object;
     }
-    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {
-      var source = arguments[argsIndex];
+    var args = arguments,
+        argsIndex = 0,
+        argsLength = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
+
+    while (++argsIndex < argsLength) {
+      source = args[argsIndex];
       if (source) {
         for (var key in source) {
           object[key] = source[key];
@@ -3638,6 +3652,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {...Object} [source] The source objects.
+   * @param- {Object} [guard] Allows working with `_.reduce` without using its
+   *  `key` and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -3645,12 +3661,16 @@
    * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
    * // => { 'name': 'barney', 'employer': 'slate' }
    */
-  function defaults(object) {
+  function defaults(object, source, guard) {
     if (!object) {
       return object;
     }
-    for (var argsIndex = 1, argsLength = arguments.length; argsIndex < argsLength; argsIndex++) {
-      var source = arguments[argsIndex];
+    var args = arguments,
+        argsIndex = 0,
+        argsLength = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
+
+    while (++argsIndex < argsLength) {
+      source = args[argsIndex];
       if (source) {
         for (var key in source) {
           if (typeof object[key] == 'undefined') {

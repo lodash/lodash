@@ -15,11 +15,8 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
-  /** Used internally to indicate various things */
-  var indicatorObject = {};
-
-  /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
-  var keyPrefix = '__1335248838000__';
+  /** Used by methods to exit iteration */
+  var breakIndicator = '__lodash_break_1335248838000__';
 
   /** Used to match HTML entities and HTML characters */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g,
@@ -145,8 +142,7 @@
   }
 
   /**
-   * The base implementation of `_.indexOf` without support for binary searches
-   * or `fromIndex` constraints.
+   * The base implementation of `_.indexOf` without support for binary searches.
    *
    * @private
    * @param {Array} array The array to search.
@@ -331,7 +327,7 @@
    *
    * @private
    * @param {*} value The value to wrap in a `lodash` instance.
-   * @param {boolean} chainAll A flag to enable chaining for all methods
+   * @param {boolean} [chainAll=false] A flag to enable chaining for all methods
    * @returns {Object} Returns a `lodash` instance.
    */
   function lodashWrapper(value, chainAll) {
@@ -458,7 +454,7 @@
    * @param {Object} prototype The object to inherit from.
    * @returns {Object} Returns the new object.
    */
-  function baseCreate(prototype, properties) {
+  function baseCreate(prototype) {
     return isObject(prototype) ? nativeCreate(prototype) : {};
   }
   // fallback for environments without `Object.create`
@@ -735,14 +731,14 @@
       forIn(b, function(value, key, b) {
         if (hasOwnProperty.call(b, key)) {
           size++;
-          return !(result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, stackA, stackB)) && indicatorObject;
+          return !(result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, stackA, stackB)) && breakIndicator;
         }
       });
 
       if (result) {
         forIn(a, function(value, key, a) {
           if (hasOwnProperty.call(a, key)) {
-            return !(result = --size > -1) && indicatorObject;
+            return !(result = --size > -1) && breakIndicator;
           }
         });
       }
@@ -1927,7 +1923,7 @@
       result = indexOf(collection, target) > -1;
     } else {
       forOwn(collection, function(value) {
-        return (result = value === target) && indicatorObject;
+        return (result = value === target) && breakIndicator;
       });
     }
     return result;
@@ -2027,7 +2023,7 @@
       }
     } else {
       forOwn(collection, function(value, index, collection) {
-        return !(result = !!callback(value, index, collection)) && indicatorObject;
+        return !(result = !!callback(value, index, collection)) && breakIndicator;
       });
     }
     return result;
@@ -2158,7 +2154,7 @@
       forOwn(collection, function(value, index, collection) {
         if (callback(value, index, collection)) {
           result = value;
-          return indicatorObject;
+          return breakIndicator;
         }
       });
       return result;
@@ -2225,7 +2221,7 @@
     callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
     if (typeof length == 'number') {
       while (++index < length) {
-        if (callback(collection[index], index, collection) === indicatorObject) {
+        if (callback(collection[index], index, collection) === breakIndicator) {
           break;
         }
       }
@@ -2264,7 +2260,7 @@
       length = props.length;
       forOwn(collection, function(value, key, collection) {
         key = props ? props[--length] : --length;
-        return callback(collection[key], key, collection) === false && indicatorObject;
+        return callback(collection[key], key, collection) === false && breakIndicator;
       });
     }
   }
@@ -2367,7 +2363,7 @@
    * @param {Array|Object|string} collection The collection to iterate over.
    * @param {Function|string} methodName The name of the method to invoke or
    *  the function invoked per iteration.
-   * @param {...*} [arg] Arguments to invoke the method with.
+   * @param {...*} [args] Arguments to invoke the method with.
    * @returns {Array} Returns a new array of the results of each invoked method.
    * @example
    *
@@ -2886,7 +2882,7 @@
       }
     } else {
       forOwn(collection, function(value, index, collection) {
-        return (result = callback(value, index, collection)) && indicatorObject;
+        return (result = callback(value, index, collection)) && breakIndicator;
       });
     }
     return !!result;
@@ -3067,7 +3063,7 @@
    * @category Functions
    * @param {Function} func The function to bind.
    * @param {*} [thisArg] The `this` binding of `func`.
-   * @param {...*} [arg] Arguments to be partially applied.
+   * @param {...*} [args] Arguments to be partially applied.
    * @returns {Function} Returns the new bound function.
    * @example
    *
@@ -3321,7 +3317,7 @@
    * @memberOf _
    * @category Functions
    * @param {Function} func The function to defer.
-   * @param {...*} [arg] Arguments to invoke the function with.
+   * @param {...*} [args] Arguments to invoke the function with.
    * @returns {number} Returns the timer id.
    * @example
    *
@@ -3345,7 +3341,7 @@
    * @category Functions
    * @param {Function} func The function to delay.
    * @param {number} wait The number of milliseconds to delay execution.
-   * @param {...*} [arg] Arguments to invoke the function with.
+   * @param {...*} [args] Arguments to invoke the function with.
    * @returns {number} Returns the timer id.
    * @example
    *
@@ -3456,7 +3452,7 @@
    * @memberOf _
    * @category Functions
    * @param {Function} func The function to partially apply arguments to.
-   * @param {...*} [arg] Arguments to be partially applied.
+   * @param {...*} [args] Arguments to be partially applied.
    * @returns {Function} Returns the new partially applied function.
    * @example
    *
@@ -3719,7 +3715,7 @@
       return result;
     }
     for (var key in object) {
-      if (callback(object[key], key, object) === indicatorObject) {
+      if (callback(object[key], key, object) === breakIndicator) {
         return result;
       }
     }
@@ -3753,7 +3749,7 @@
 
     while (++index < length) {
       var key = props[index];
-      if (callback(object[key], key, object) === indicatorObject) {
+      if (callback(object[key], key, object) === breakIndicator) {
         break;
       }
     }
@@ -3829,26 +3825,15 @@
    * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
    * // => { 'fred': ['first', 'third'], 'barney': ['second'] }
    */
-  function invert(object, multiValue) {
+  function invert(object) {
     var index = -1,
         props = keys(object),
         length = props.length,
         result = {};
 
     while (++index < length) {
-      var key = props[index],
-          value = object[key];
-
-      if (multiValue) {
-        if (hasOwnProperty.call(result, value)) {
-          result[value].push(key);
-        } else {
-          result[value] = [key];
-        }
-      }
-      else {
-        result[value] = key;
-      }
+      var key = props[index];
+      result[object[key]] = key;
     }
     return result;
   }

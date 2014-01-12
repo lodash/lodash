@@ -19,9 +19,6 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
-  /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
-  var keyPrefix = '__1335248838000__';
-
   /** Used as the size when optimizations are enabled for large arrays */
   var largeArraySize = 75;
 
@@ -220,8 +217,7 @@
   }
 
   /**
-   * The base implementation of `_.indexOf` without support for binary searches
-   * or `fromIndex` constraints.
+   * The base implementation of `_.indexOf` without support for binary searches.
    *
    * @private
    * @param {Array} array The array to search.
@@ -260,7 +256,7 @@
     if (type != 'number' && type != 'string') {
       type = 'object';
     }
-    var key = type == 'number' ? value : keyPrefix + value;
+    var key = type == 'number' ? value : '_' + value;
     cache = (cache = cache[type]) && cache[key];
 
     return type == 'object'
@@ -284,7 +280,7 @@
       if (type != 'number' && type != 'string') {
         type = 'object';
       }
-      var key = type == 'number' ? value : keyPrefix + value,
+      var key = type == 'number' ? value : '_' + value,
           typeCache = cache[type] || (cache[type] = {});
 
       if (type == 'object') {
@@ -317,7 +313,7 @@
    *
    * @private
    * @param {string} string The string to inspect.
-   * @returns {number} Returns the index of the first non-whitespace character.
+   * @returns {number} Returns the index of the first character not found in `chars`.
    */
   function charsLeftIndex(string, chars) {
     var index = -1,
@@ -336,7 +332,7 @@
    *
    * @private
    * @param {string} string The string to inspect.
-   * @returns {number} Returns the index of the last non-whitespace character.
+   * @returns {number} Returns the index of the last character not found in `chars`.
    */
   function charsRightIndex(string, chars) {
     var index = string.length;
@@ -484,7 +480,7 @@
    * Releases `array` back to the array pool.
    *
    * @private
-   * @param {Array} [array] The array to release.
+   * @param {Array} array The array to release.
    */
   function releaseArray(array) {
     array.length = 0;
@@ -497,7 +493,7 @@
    * Releases `object` back to the object pool.
    *
    * @private
-   * @param {Object} [object] The object to release.
+   * @param {Object} object The object to release.
    */
   function releaseObject(object) {
     var cache = object.cache;
@@ -805,7 +801,7 @@
      *
      * @private
      * @param {*} value The value to wrap in a `lodash` instance.
-     * @param {boolean} chainAll A flag to enable chaining for all methods
+     * @param {boolean} [chainAll=false] A flag to enable chaining for all methods
      * @returns {Object} Returns a `lodash` instance.
      */
     function lodashWrapper(value, chainAll) {
@@ -1053,7 +1049,7 @@
      * @param {Object} prototype The object to inherit from.
      * @returns {Object} Returns the new object.
      */
-    function baseCreate(prototype, properties) {
+    function baseCreate(prototype) {
       return isObject(prototype) ? nativeCreate(prototype) : {};
     }
     // fallback for environments without `Object.create`
@@ -3518,7 +3514,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|string} methodName The name of the method to invoke or
      *  the function invoked per iteration.
-     * @param {...*} [arg] Arguments to invoke the method with.
+     * @param {...*} [args] Arguments to invoke the method with.
      * @returns {Array} Returns a new array of the results of each invoked method.
      * @example
      *
@@ -4221,7 +4217,7 @@
      * @category Functions
      * @param {Function} func The function to bind.
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {...*} [arg] Arguments to be partially applied.
+     * @param {...*} [args] Arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
      *
@@ -4290,7 +4286,7 @@
      * @category Functions
      * @param {Object} object The object the method belongs to.
      * @param {string} key The key of the method.
-     * @param {...*} [arg] Arguments to be partially applied.
+     * @param {...*} [args] Arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
      *
@@ -4551,7 +4547,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to defer.
-     * @param {...*} [arg] Arguments to invoke the function with.
+     * @param {...*} [args] Arguments to invoke the function with.
      * @returns {number} Returns the timer id.
      * @example
      *
@@ -4575,7 +4571,7 @@
      * @category Functions
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay execution.
-     * @param {...*} [arg] Arguments to invoke the function with.
+     * @param {...*} [args] Arguments to invoke the function with.
      * @returns {number} Returns the timer id.
      * @example
      *
@@ -4633,7 +4629,7 @@
       }
       var memoized = function() {
         var cache = memoized.cache,
-            key = resolver ? resolver.apply(this, arguments) : keyPrefix + arguments[0];
+            key = resolver ? resolver.apply(this, arguments) : '_' + arguments[0];
 
         return hasOwnProperty.call(cache, key)
           ? cache[key]
@@ -4692,7 +4688,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [arg] Arguments to be partially applied.
+     * @param {...*} [args] Arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
@@ -4716,7 +4712,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [arg] Arguments to be partially applied.
+     * @param {...*} [args] Arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
      * @example
      *

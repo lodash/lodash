@@ -69,24 +69,10 @@
     '&#x27;': "'"
   };
 
-  /** Used to determine if values are an indexes or keys */
-  var indexTypes = {
-    'boolean': false,
-    'function': false,
-    'object': false,
-    'number': true,
-    'string': true,
-    'undefined': false
-  };
-
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
-    'boolean': false,
     'function': true,
-    'object': true,
-    'number': false,
-    'string': false,
-    'undefined': false
+    'object': true
   };
 
   /** Used to escape characters for inclusion in compiled string literals */
@@ -644,8 +630,8 @@
         otherType = typeof b;
 
     if (a === a &&
-        !(a && objectTypes[type]) &&
-        !(b && objectTypes[otherType])) {
+        !(a && (type == 'function' || type == 'object')) &&
+        !(b && (otherType == 'function' || otherType == 'object'))) {
       return false;
     }
     if (a == null || b == null) {
@@ -938,7 +924,7 @@
    */
   var shimKeys = function(object) {
     var result = [];
-    if (!(object && objectTypes[typeof object])) {
+    if (!isObject(object)) {
       return result;
     }
     for (var key in object) {
@@ -1682,11 +1668,19 @@
    * // => [{ 'x': 1 }, { 'x': 2 }]
    */
   function uniq(array, isSorted, callback, thisArg) {
+    var type = typeof isSorted;
+
     // juggle arguments
-    if (typeof isSorted != 'boolean' && isSorted != null) {
+    if (type != 'boolean' && isSorted != null) {
       thisArg = callback;
-      callback = (indexTypes[typeof isSorted] && thisArg && thisArg[isSorted] === array) ? null : isSorted;
+      callback = isSorted;
       isSorted = false;
+
+      // allows working with functions like `_.map` without using
+      // their `index` argument as a callback
+      if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === array) {
+        callback = null;
+      }
     }
     if (callback != null) {
       callback = createCallback(callback, thisArg, 3);
@@ -2486,11 +2480,12 @@
    */
   function max(collection, callback, thisArg) {
     var computed = -Infinity,
-        result = computed;
+        result = computed,
+        type = typeof callback;
 
     // allows working with functions like `_.map` without using
     // their `index` argument as a callback
-    if (indexTypes[typeof callback] && thisArg && thisArg[callback] === collection) {
+    if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === collection) {
       callback = null;
     }
     var index = -1,
@@ -2559,11 +2554,12 @@
    */
   function min(collection, callback, thisArg) {
     var computed = Infinity,
-        result = computed;
+        result = computed,
+        type = typeof callback;
 
     // allows working with functions like `_.map` without using
     // their `index` argument as a callback
-    if (indexTypes[typeof callback] && thisArg && thisArg[callback] === collection) {
+    if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === collection) {
       callback = null;
     }
     var index = -1,
@@ -3579,8 +3575,12 @@
     }
     var args = arguments,
         argsIndex = 0,
-        argsLength = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
+        argsLength = args.length,
+        type = typeof guard;
 
+    if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
+      argsLength = 2;
+    }
     while (++argsIndex < argsLength) {
       source = args[argsIndex];
       if (source) {
@@ -3648,8 +3648,8 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {...Object} [source] The source objects.
-   * @param- {Object} [guard] Allows working with `_.reduce` without using its
-   *  `key` and `object` arguments as sources.
+   * @param- {Object} [guard] Allows working with functions like `_.reduce`
+   *   without using their `key` and `object` arguments as sources.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -3663,8 +3663,12 @@
     }
     var args = arguments,
         argsIndex = 0,
-        argsLength = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
+        argsLength = args.length,
+        type = typeof guard;
 
+    if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
+      argsLength = 2;
+    }
     while (++argsIndex < argsLength) {
       source = args[argsIndex];
       if (source) {
@@ -3711,7 +3715,7 @@
    */
   var forIn = function(object, callback) {
     var result = object;
-    if (!(object && objectTypes[typeof object])) {
+    if (!isObject(object)) {
       return result;
     }
     for (var key in object) {
@@ -4071,7 +4075,8 @@
     // http://es5.github.io/#x8
     // and avoid a V8 bug
     // http://code.google.com/p/v8/issues/detail?id=2291
-    return !!(value && objectTypes[typeof value]);
+    var type = typeof value;
+    return value && (type == 'function' || type == 'object') || false;
   }
 
   /**
@@ -4143,8 +4148,9 @@
    * // => true
    */
   function isNumber(value) {
-    return typeof value == 'number' ||
-      value && typeof value == 'object' && toString.call(value) == numberClass || false;
+    var type = typeof value;
+    return type == 'number' ||
+      value && type == 'object' && toString.call(value) == numberClass || false;
   }
 
   /**
@@ -4161,7 +4167,9 @@
    * // => true
    */
   function isRegExp(value) {
-    return value && objectTypes[typeof value] && toString.call(value) == regexpClass || false;
+    var type = typeof value;
+    return value && (type == 'function' || type == 'object') &&
+      toString.call(value) == regexpClass || false;
   }
 
   /**

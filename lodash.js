@@ -18,12 +18,6 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
-  /** Used internally to indicate various things */
-  var indicatorObject = {};
-
-  /** Used to prefix keys to avoid issues with `__proto__` and properties on `Object.prototype` */
-  var keyPrefix = '__1335248838000__';
-
   /** Used as the size when optimizations are enabled for large arrays */
   var largeArraySize = 75;
 
@@ -268,7 +262,7 @@
     if (type != 'number' && type != 'string') {
       type = 'object';
     }
-    var key = type == 'number' ? value : keyPrefix + value;
+    var key = type == 'number' ? value : '_' + value;
     cache = (cache = cache[type]) && cache[key];
 
     return type == 'object'
@@ -292,7 +286,7 @@
       if (type != 'number' && type != 'string') {
         type = 'object';
       }
-      var key = type == 'number' ? value : keyPrefix + value,
+      var key = type == 'number' ? value : '_' + value,
           typeCache = cache[type] || (cache[type] = {});
 
       if (type == 'object') {
@@ -4965,7 +4959,7 @@
       }
       var memoized = function() {
         var cache = memoized.cache,
-            key = resolver ? resolver.apply(this, arguments) : keyPrefix + arguments[0];
+            key = resolver ? resolver.apply(this, arguments) : '_' + arguments[0];
 
         return hasOwnProperty.call(cache, key)
           ? cache[key]

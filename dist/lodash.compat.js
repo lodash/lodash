@@ -151,24 +151,10 @@
     '&#39;': "'"
   };
 
-  /** Used to determine if values are an indexes or keys */
-  var indexTypes = {
-    'boolean': false,
-    'function': false,
-    'object': false,
-    'number': true,
-    'string': true,
-    'undefined': false
-  };
-
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
-    'boolean': false,
     'function': true,
-    'object': true,
-    'number': false,
-    'string': false,
-    'undefined': false
+    'object': true
   };
 
   /** Used to escape characters for inclusion in compiled string literals */
@@ -1080,7 +1066,7 @@
 
       var __p = 'var result = ' +
       (obj.init) +
-      ';\nif (!(object && objectTypes[typeof object])) {\n  return result;\n}\n' +
+      ';\nif (!isObject(object)) {\n  return result;\n}\n' +
       (obj.top) +
       ';';
        if (support.nonEnumArgs) {
@@ -1543,8 +1529,8 @@
 
       // exit early for unlike primitive values
       if (a === a &&
-          !(a && objectTypes[type]) &&
-          !(b && objectTypes[otherType])) {
+          !(a && (type == 'function' || type == 'object')) &&
+          !(b && (otherType == 'function' || otherType == 'object'))) {
         return false;
       }
       // exit early for `null` and `undefined` avoiding ES3's Function#call behavior
@@ -1943,14 +1929,14 @@
       // create the function factory
       var factory = Function(
           'baseCreateCallback, errorClass, errorProto, hasOwnProperty, isArguments, ' +
-          'objectProto, objectTypes, nonEnumProps, stringClass, stringProto, toString',
+          'isObject, objectProto, nonEnumProps, stringClass, stringProto, toString',
         'return function(' + options.args + ') {\n' + iteratorTemplate(options) + '\n}'
       );
 
       // return the compiled function
       return factory(
         baseCreateCallback, errorClass, errorProto, hasOwnProperty, isArguments,
-        objectProto, objectTypes, nonEnumProps, stringClass, stringProto, toString
+        isObject, objectProto, nonEnumProps, stringClass, stringProto, toString
       );
     }
 
@@ -2349,11 +2335,19 @@
      * // => ['hoppy', 'baby puss', 'dino']
      */
     function flatten(array, isShallow, callback, thisArg) {
+      var type = typeof isShallow;
+
       // juggle arguments
-      if (typeof isShallow != 'boolean' && isShallow != null) {
+      if (type != 'boolean' && isShallow != null) {
         thisArg = callback;
-        callback = (indexTypes[typeof isShallow] && thisArg && thisArg[isShallow] === array) ? null : isShallow;
+        callback = isShallow;
         isShallow = false;
+
+        // allows working with functions like `_.map` without using
+        // their `index` argument as a callback
+        if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === array) {
+          callback = null;
+        }
       }
       if (callback != null) {
         array = map(array, callback, thisArg);
@@ -3028,11 +3022,19 @@
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
     function uniq(array, isSorted, callback, thisArg) {
+      var type = typeof isSorted;
+
       // juggle arguments
-      if (typeof isSorted != 'boolean' && isSorted != null) {
+      if (type != 'boolean' && isSorted != null) {
         thisArg = callback;
-        callback = (indexTypes[typeof isSorted] && thisArg && thisArg[isSorted] === array) ? null : isSorted;
+        callback = isSorted;
         isSorted = false;
+
+        // allows working with functions like `_.map` without using
+        // their `index` argument as a callback
+        if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === array) {
+          callback = null;
+        }
       }
       if (callback != null) {
         callback = lodash.createCallback(callback, thisArg, 3);
@@ -3308,12 +3310,18 @@
       var args = arguments,
           index = -1,
           props = baseFlatten(args, true, false, 1),
-          length = (indexTypes[typeof guard] && args[2] && args[2][guard] === collection) ? 1 : props.length,
-          result = Array(length);
+          length = props.length,
+          type = typeof guard;
 
+      // allows working with functions like `_.map` without using
+      // their `index` arguments
+      if ((type == 'number' || type == 'string') && args[2] && args[2][guard] === collection) {
+        length = 1;
+      }
       if (support.unindexedChars && isString(collection)) {
         collection = collection.split('');
       }
+      var result = Array(length);
       while(++index < length) {
         result[index] = collection[props[index]];
       }
@@ -3945,11 +3953,12 @@
      */
     function max(collection, callback, thisArg) {
       var computed = -Infinity,
-          result = computed;
+          result = computed,
+          type = typeof callback;
 
       // allows working with functions like `_.map` without using
       // their `index` argument as a callback
-      if (indexTypes[typeof callback] && thisArg && thisArg[callback] === collection) {
+      if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === collection) {
         callback = null;
       }
       if (callback == null && isArray(collection)) {
@@ -4020,11 +4029,12 @@
      */
     function min(collection, callback, thisArg) {
       var computed = Infinity,
-          result = computed;
+          result = computed,
+          type = typeof callback;
 
       // allows working with functions like `_.map` without using
       // their `index` argument as a callback
-      if (indexTypes[typeof callback] && thisArg && thisArg[callback] === collection) {
+      if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === collection) {
         callback = null;
       }
       if (callback == null && isArray(collection)) {
@@ -5157,8 +5167,14 @@
     function assign(object, source, guard) {
       var args = arguments,
           argsIndex = 0,
-          argsLength = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
+          argsLength = args.length,
+          type = typeof guard;
 
+      // allows working with functions like `_.reduce` without using their
+      // `key` and `object` arguments as sources
+      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
+        argsLength = 2;
+      }
       // juggle arguments
       if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
         var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);
@@ -5222,11 +5238,19 @@
      * // => 0
      */
     function clone(value, isDeep, callback, thisArg) {
+      var type = typeof isDeep;
+
       // juggle arguments
-      if (typeof isDeep != 'boolean' && isDeep != null) {
+      if (type != 'boolean' && isDeep != null) {
         thisArg = callback;
-        callback = (indexTypes[typeof isDeep] && thisArg && thisArg[isDeep] === value) ? null : isDeep;
+        callback = isDeep;
         isDeep = false;
+
+        // allows working with functions like `_.map` without using
+        // their `index` argument as a callback
+        if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === value) {
+          callback = null;
+        }
       }
       return baseClone(value, isDeep, typeof callback == 'function' && baseCreateCallback(callback, thisArg, 1));
     }
@@ -5323,8 +5347,8 @@
      * @category Objects
      * @param {Object} object The destination object.
      * @param {...Object} [source] The source objects.
-     * @param- {Object} [guard] Allows working with `_.reduce` without using its
-     *  `key` and `object` arguments as sources.
+     * @param- {Object} [guard] Allows working with functions like `_.reduce`
+     *   without using their `key` and `object` arguments as sources.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -5335,8 +5359,14 @@
     function defaults(object, source, guard) {
       var args = arguments,
           argsIndex = 0,
-          argsLength = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
+          argsLength = args.length,
+          type = typeof guard;
 
+      // allows working with functions like `_.reduce` without using their
+      // `key` and `object` arguments as sources
+      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
+        argsLength = 2;
+      }
       while (++argsIndex < argsLength) {
         source = args[argsIndex];
         if (isObject(source)) {
@@ -5950,7 +5980,8 @@
       // http://es5.github.io/#x8
       // and avoid a V8 bug
       // http://code.google.com/p/v8/issues/detail?id=2291
-      return !!(value && objectTypes[typeof value]);
+      var type = typeof value;
+      return value && (type == 'function' || type == 'object') || false;
     }
 
     /**
@@ -6022,8 +6053,9 @@
      * // => true
      */
     function isNumber(value) {
-      return typeof value == 'number' ||
-        value && typeof value == 'object' && toString.call(value) == numberClass || false;
+      var type = typeof value;
+      return type == 'number' ||
+        value && type == 'object' && toString.call(value) == numberClass || false;
     }
 
     /**
@@ -6076,7 +6108,9 @@
      * // => true
      */
     function isRegExp(value) {
-      return value && objectTypes[typeof value] && toString.call(value) == regexpClass || false;
+      var type = typeof value;
+      return value && (type == 'function' || type == 'object') &&
+        toString.call(value) == regexpClass || false;
     }
 
     /**
@@ -6240,8 +6274,14 @@
         return object;
       }
       var args = arguments,
-          length = indexTypes[typeof guard] && args[3] && args[3][guard] === source ? 2 : args.length;
+          length = args.length,
+          type = typeof guard;
 
+      // allows working with functions like `_.reduce` without using their
+      // `key` and `object` arguments as sources
+      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
+        length = 2;
+      }
       // juggle arguments
       if (length > 3 && typeof args[length - 2] == 'function') {
         var callback = baseCreateCallback(args[--length - 1], args[length--], 2);

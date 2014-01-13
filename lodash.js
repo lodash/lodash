@@ -7114,7 +7114,7 @@
      * _.defer(function() { console.log(_.now() - stamp); });
      * // => logs the number of milliseconds it took for the deferred function to be called
      */
-    var now = isNative(now = Date.now) && now || function() {
+    var now = isNative(Date.now) ? function() {return Date.now();}  : function() {
       return new Date().getTime();
     };
 

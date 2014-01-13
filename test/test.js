@@ -477,11 +477,16 @@
 
         _.forEach(['trim', 'trimLeft', 'trimRight'], function(methodName) {
           try {
-            var actual = lodashBizarro[methodName](whitespace + 'a b c' + whitespace);
+            var actual = [
+              lodashBizarro[methodName](whitespace + 'a b c' + whitespace),
+              lodashBizarro[methodName](''),
+              lodashBizarro[methodName]('-_-a-b-c-_-', '_-'),
+              lodashBizarro[methodName]('', '_-')
+            ];
           } catch(e) {
             actual = null;
           }
-          equal(typeof actual, 'string', message('String#' + methodName));
+          ok(_.every(actual, _.isString), message('String#' + methodName));
         });
       }
       else {
@@ -902,9 +907,10 @@
       equal(_.capitalize(' fred'), ' fred');
     });
 
-    test('should return an empty string when provided `null` or `undefined`', 2, function() {
+    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
       strictEqual(_.capitalize(null), '');
       strictEqual(_.capitalize(undefined), '');
+      strictEqual(_.capitalize(''), '');
     });
   }());
 
@@ -2072,9 +2078,10 @@
       equal(_.escape('abc'), 'abc');
     });
 
-    test('should return an empty string when provided `null` or `undefined`', 2, function() {
+    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
       strictEqual(_.escape(null), '');
       strictEqual(_.escape(undefined), '');
+      strictEqual(_.escape(''), '');
     });
   }());
 
@@ -7004,11 +7011,29 @@
   QUnit.module('lodash.sortBy');
 
   (function() {
+    function Pair(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+
     var objects = [
       { 'a': 'x', 'b': 3 },
       { 'a': 'y', 'b': 4 },
       { 'a': 'x', 'b': 1 },
       { 'a': 'y', 'b': 2 }
+    ];
+
+    var stableOrder = [
+      new Pair(1, 1),
+      new Pair(1, 1), new Pair(1, 2),
+      new Pair(1, 3), new Pair(1, 4),
+      new Pair(1, 5), new Pair(1, 6),
+      new Pair(2, 1), new Pair(2, 2),
+      new Pair(2, 3), new Pair(2, 4),
+      new Pair(2, 5), new Pair(2, 6),
+      new Pair(undefined, 1), new Pair(undefined, 2),
+      new Pair(undefined, 3), new Pair(undefined, 4),
+      new Pair(undefined, 5), new Pair(undefined, 6)
     ];
 
     test('should sort in ascending order', 1, function() {
@@ -7020,28 +7045,11 @@
     });
 
     test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
-      function Pair(x, y) {
-        this.x = x;
-        this.y = y;
-      }
-
-      var collection = [
-        new Pair(1, 1), new Pair(1, 2),
-        new Pair(1, 3), new Pair(1, 4),
-        new Pair(1, 5), new Pair(1, 6),
-        new Pair(2, 1), new Pair(2, 2),
-        new Pair(2, 3), new Pair(2, 4),
-        new Pair(2, 5), new Pair(2, 6),
-        new Pair(undefined, 1), new Pair(undefined, 2),
-        new Pair(undefined, 3), new Pair(undefined, 4),
-        new Pair(undefined, 5), new Pair(undefined, 6)
-      ];
-
-      var actual = _.sortBy(collection, function(pair) {
+      var actual = _.sortBy(stableOrder, function(pair) {
         return pair.x;
       });
 
-      deepEqual(actual, collection);
+      deepEqual(actual, stableOrder);
     });
 
     test('should work with `undefined` values', 1, function() {
@@ -7072,21 +7080,6 @@
       deepEqual(actual, [3, 1, 2]);
     });
 
-    test('should work with an array for `callback`', 1, function() {
-      var actual = _.sortBy(objects, ['a', 'b']);
-      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
-    });
-
-    test('should coerce arrays returned from a `callback`', 1, function() {
-      var actual = _.sortBy(objects, function(object) {
-        var result = [object.a, object.b];
-        result.toString = function() { return String(this[0]); };
-        return result;
-      });
-
-      deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
-    });
-
     test('should work with a string for `callback`', 1, function() {
       var actual = _.pluck(_.sortBy(objects, 'b'), 'b');
       deepEqual(actual, [1, 2, 3, 4]);
@@ -7098,6 +7091,26 @@
       });
 
       deepEqual(actual, [3, 1, 2]);
+    });
+
+    test('should support sorting by an array of properties', 1, function() {
+      var actual = _.sortBy(objects, ['a', 'b']);
+      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
+    });
+
+    test('should perform a stable sort when sorting by multiple properties (test in IE > 8, Opera, and V8)', 1, function() {
+      var actual = _.sortBy(stableOrder, ['x', 'y']);
+      deepEqual(actual, stableOrder);
+    });
+
+    test('should coerce arrays returned from a `callback`', 1, function() {
+      var actual = _.sortBy(objects, function(object) {
+        var result = [object.a, object.b];
+        result.toString = function() { return String(this[0]); };
+        return result;
+      });
+
+      deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
     });
   }());
 
@@ -8094,9 +8107,12 @@
       strictEqual(func(string, object), (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : ''));
     });
 
-    test('`_.' + methodName + '` should return an empty string when provided `null` or `undefined`', 2, function() {
-      strictEqual(func(null), '');
-      strictEqual(func(undefined), '');
+    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 6, function() {
+      _.forEach([null, '_-'], function(arg) {
+        strictEqual(func.call(_, null, arg), '');
+        strictEqual(func.call(_, undefined, arg), '');
+        strictEqual(func.call(_, '', arg), '');
+      });
     });
   });
 
@@ -8128,9 +8144,10 @@
       equal(_.unescape(_.escape(unescaped)), unescaped);
     });
 
-    test('should return an empty string when provided `null` or `undefined`', 2, function() {
+    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
       strictEqual(_.unescape(null), '');
       strictEqual(_.unescape(undefined), '');
+      strictEqual(_.unescape(''), '');
     });
   }());
 

@@ -7024,7 +7024,7 @@
     ];
 
     var stableOrder = [
-      new Pair(1, 1),
+      new Pair(1, 1), new Pair(1, 2),
       new Pair(1, 1), new Pair(1, 2),
       new Pair(1, 3), new Pair(1, 4),
       new Pair(1, 5), new Pair(1, 6),
@@ -7099,8 +7099,10 @@
     });
 
     test('should perform a stable sort when sorting by multiple properties (test in IE > 8, Opera, and V8)', 1, function() {
-      var actual = _.sortBy(stableOrder, ['x', 'y']);
-      deepEqual(actual, stableOrder);
+      var actual = _.sortBy(stableOrder, ['x', 'y']),
+          expected = [stableOrder[0], stableOrder[2], stableOrder[1], stableOrder[3]].concat(stableOrder.slice(4));
+
+      deepEqual(actual, expected);
     });
 
     test('should coerce arrays returned from a `callback`', 1, function() {

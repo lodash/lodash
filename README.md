@@ -23,7 +23,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
 
 ## Features *not* in Underscore
 
- * 100% [code coverage](https://coveralls.io/r/lodash)
+ * ~100% [code coverage](https://coveralls.io/r/lodash)
  * AMD loader support ([curl](https://github.com/cujojs/curl), [dojo](http://dojotoolkit.org/), [requirejs](http://requirejs.org/), etc.)
  * Module collections for [AMD](https://github.com/lodash/lodash-amd/tree/2.4.1), [Node.js](https://npmjs.org/package/lodash-node), & as [npm packages](https://npmjs.org/browse/keyword/lodash-modularized)
  * [Semantic versioning](http://semver.org/) support for releases

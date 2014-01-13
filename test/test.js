@@ -7011,9 +7011,10 @@
   QUnit.module('lodash.sortBy');
 
   (function() {
-    function Pair(x, y) {
-      this.x = x;
-      this.y = y;
+    function Pair(a, b, c) {
+      this.a = a;
+      this.b = b;
+      this.c = c;
     }
 
     var objects = [
@@ -7024,16 +7025,16 @@
     ];
 
     var stableOrder = [
-      new Pair(1, 1),
-      new Pair(1, 1), new Pair(1, 2),
-      new Pair(1, 3), new Pair(1, 4),
-      new Pair(1, 5), new Pair(1, 6),
-      new Pair(2, 1), new Pair(2, 2),
-      new Pair(2, 3), new Pair(2, 4),
-      new Pair(2, 5), new Pair(2, 6),
-      new Pair(undefined, 1), new Pair(undefined, 2),
-      new Pair(undefined, 3), new Pair(undefined, 4),
-      new Pair(undefined, 5), new Pair(undefined, 6)
+      new Pair(1, 1, 1), new Pair(1, 2, 1),
+      new Pair(1, 1, 1), new Pair(1, 2, 1),
+      new Pair(1, 3, 1), new Pair(1, 4, 1),
+      new Pair(1, 5, 1), new Pair(1, 6, 1),
+      new Pair(2, 1, 2), new Pair(2, 2, 2),
+      new Pair(2, 3, 2), new Pair(2, 4, 2),
+      new Pair(2, 5, 2), new Pair(2, 6, 2),
+      new Pair(undefined, 1, 1), new Pair(undefined, 2, 1),
+      new Pair(undefined, 3, 1), new Pair(undefined, 4, 1),
+      new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
     ];
 
     test('should sort in ascending order', 1, function() {
@@ -7046,7 +7047,7 @@
 
     test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
       var actual = _.sortBy(stableOrder, function(pair) {
-        return pair.x;
+        return pair.a;
       });
 
       deepEqual(actual, stableOrder);
@@ -7099,7 +7100,7 @@
     });
 
     test('should perform a stable sort when sorting by multiple properties (test in IE > 8, Opera, and V8)', 1, function() {
-      var actual = _.sortBy(stableOrder, ['x', 'y']);
+      var actual = _.sortBy(stableOrder, ['a', 'c']);
       deepEqual(actual, stableOrder);
     });
 

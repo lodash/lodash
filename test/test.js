@@ -5637,6 +5637,13 @@
       	QUnit.start();
       }
     });
+
+    test('should allow overriding Date.now', 1, function() {
+      var _now = Date.now;
+      Date.now = function() {return -1;};
+      equal(_.now(), Date.now());
+      Date.now = _now;
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

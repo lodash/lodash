@@ -2404,7 +2404,7 @@
         fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0);
       } else if (fromIndex) {
         var index = sortedIndex(array, value);
-        return array[index] === value ? index : -1;
+        return (array[index] === value && array.length ? index : -1);
       }
       return baseIndexOf(array, value, fromIndex);
     }

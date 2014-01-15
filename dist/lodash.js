@@ -2081,12 +2081,12 @@
      * // => 2
      */
     function indexOf(array, value, fromIndex) {
+      var length = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
-        var length = array ? array.length : 0;
         fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0);
       } else if (fromIndex) {
         var index = sortedIndex(array, value);
-        return array[index] === value ? index : -1;
+        return (length && array[index] === value) ? index : -1;
       }
       return baseIndexOf(array, value, fromIndex);
     }

@@ -3165,9 +3165,13 @@
       equal(_.indexOf(array, 3), 2);
     });
 
-    test('should return `-1` for an unmatched value', 2, function() {
+    test('should return `-1` for an unmatched value', 4, function() {
       equal(_.indexOf(array, 4), -1);
-      equal(_.indexOf([], undefined, true), -1);
+      equal(_.indexOf(array, 4, true), -1);
+
+      var empty = [];
+      equal(_.indexOf(empty, undefined), -1);
+      equal(_.indexOf(empty, undefined, true), -1);
     });
 
     test('should work with a positive `fromIndex`', 1, function() {
@@ -3198,7 +3202,6 @@
     test('should work with `isSorted`', 1, function() {
       strictEqual(_.indexOf([1, 2, 3], 1, true), 0);
     });
-
   }());
 
   /*--------------------------------------------------------------------------*/

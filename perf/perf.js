@@ -579,7 +579,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_(...)` with an object')
+    Benchmark.Suite('`_(...)` with an object (slow path)')
       .add(buildName, '\
         lodash(object)'
       )

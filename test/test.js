@@ -3059,6 +3059,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.get');
+
+  (function() {
+    test('should return return the existing value', 1, function() {
+      var object = { 'a': 1 };
+      strictEqual(_.get(object, 'a', 42), 1);
+    });
+
+    test('should return the default value if the propoerty is not set', 1, function() {
+      var object = { 'a': 1 };
+      strictEqual(_.get(object, 'b', 42), 42);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.has');
 
   (function() {
@@ -8979,7 +8995,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 163, function() {
+    test('should accept falsey arguments', 164, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
           isExposed = '_' in root,
           oldDash = root._;

@@ -784,8 +784,8 @@
      *
      * The non-chainable wrapper functions are:
      * `capitalize`, `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`,
-     * `findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `has`,
-     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
+     * `findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `get`,
+     * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
      * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
      * `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `now`,
@@ -5696,6 +5696,29 @@
     }
 
     /**
+     * Returns the specified property if `object` has it, else returns the default
+     * value provided
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {Object} object The object to inspect.
+     * @param {string} key The name of the property to get.
+     * @param {Object} defaultValue The value to return if object doesn't have key
+     * @returns {Object} object.key or defaultValue.
+     * @example
+     *
+     * _.get({ 'a': 1, 'b': 2, 'c': 3 }, 'b', 42);
+     * // => 2
+     *
+     * _.get({ 'a': 1, 'b': 2, 'c': 3 }, 'd', 42);
+     * // => 42
+     */
+    function get(object, key, defaultValue) {
+      return has(object, key) ? object[key] : defaultValue;
+    }
+
+    /**
      * Checks if the specified property name exists as a direct property of `object`,
      * instead of an inherited property.
      *
@@ -7440,6 +7463,7 @@
     lodash.findLast = findLast;
     lodash.findLastIndex = findLastIndex;
     lodash.findLastKey = findLastKey;
+    lodash.get = get;
     lodash.has = has;
     lodash.identity = identity;
     lodash.indexOf = indexOf;

@@ -18,6 +18,14 @@
   /** Used by methods to exit iteration */
   var breakIndicator = '__lodash_break_1335248838000__';
 
+  /** Used to compose bitmasks for `__bindData__` */
+  var BIND_FLAG = 1,
+      BIND_KEY_FLAG = 2,
+      CURRY_FLAG = 4,
+      CURRY_BOUND_FLAG = 8,
+      PARTIAL_FLAG = 16,
+      PARTIAL_RIGHT_FLAG = 32;
+
   /** Used to match HTML entities and HTML characters */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#x27);/g,
       reUnescapedHtml = /[&<>"']/g;
@@ -509,10 +517,10 @@
         thisArg = bindData[4],
         arity = bindData[5];
 
-    var isBind = bitmask & 1,
-        isBindKey = bitmask & 2,
-        isCurry = bitmask & 4,
-        isCurryBound = bitmask & 8,
+    var isBind = bitmask & BIND_FLAG,
+        isBindKey = bitmask & BIND_KEY_FLAG,
+        isCurry = bitmask & CURRY_FLAG,
+        isCurryBound = bitmask & CURRY_BOUND_FLAG,
         key = func;
 
     function bound() {
@@ -527,8 +535,9 @@
           push.apply(args, partialRightArgs);
         }
         if (isCurry && args.length < arity) {
-          bitmask |= 16 & ~32;
-          return baseCreateWrapper([func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity]);
+          bitmask |= PARTIAL_FLAG;
+          bitmask &= ~PARTIAL_RIGHT_FLAG;
+          return baseCreateWrapper([func, (isCurryBound ? bitmask : bitmask & ~(BIND_FLAG | BIND_KEY_FLAG)), args, null, thisArg, arity]);
         }
       }
       args || (args = arguments);
@@ -819,7 +828,7 @@
    *
    * @private
    * @param {Function|string} func The function or method name to reference.
-   * @param {number} bitmask The bitmask of method flags to compose.
+   * @param {number} bitmask The bitmask of flags to compose.
    *  The bitmask may be composed of the following flags:
    *  1 - `_.bind`
    *  2 - `_.bindKey`
@@ -836,12 +845,12 @@
    * @returns {Function} Returns the new function.
    */
   function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
-    var isBind = bitmask & 1,
-        isBindKey = bitmask & 2,
-        isCurry = bitmask & 4,
-        isCurryBound = bitmask & 8,
-        isPartial = bitmask & 16,
-        isPartialRight = bitmask & 32;
+    var isBind = bitmask & BIND_FLAG,
+        isBindKey = bitmask & BIND_KEY_FLAG,
+        isCurry = bitmask & CURRY_FLAG,
+        isCurryBound = bitmask & CURRY_BOUND_FLAG,
+        isPartial = bitmask & PARTIAL_FLAG,
+        isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
     if (!isBindKey && !isFunction(func)) {
       throw new TypeError;
@@ -855,7 +864,7 @@
       isPartialRight = partialRightArgs = false;
     }
     // fast path for `_.bind`
-    var creater = (bitmask == 1 || bitmask === 17) ? baseBind : baseCreateWrapper;
+    var creater = (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) ? baseBind : baseCreateWrapper;
     return creater([func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
   }
 
@@ -3073,8 +3082,8 @@
    */
   function bind(func, thisArg) {
     return arguments.length > 2
-      ? createWrapper(func, 17, slice(arguments, 2), null, thisArg)
-      : createWrapper(func, 1, null, null, thisArg);
+      ? createWrapper(func, BIND_FLAG | PARTIAL_FLAG, slice(arguments, 2), null, thisArg)
+      : createWrapper(func, BIND_FLAG, null, null, thisArg);
   }
 
   /**
@@ -3110,7 +3119,7 @@
 
     while (++index < length) {
       var key = funcs[index];
-      object[key] = createWrapper(object[key], 1, null, null, object);
+      object[key] = createWrapper(object[key], BIND_FLAG, null, null, object);
     }
     return object;
   }
@@ -3458,7 +3467,7 @@
    * // => 'hi fred'
    */
   function partial(func) {
-    return createWrapper(func, 16, slice(arguments, 1));
+    return createWrapper(func, PARTIAL_FLAG, slice(arguments, 1));
   }
 
   /**
@@ -3535,7 +3544,7 @@
    * // => '<p>fred, barney, &amp; pebbles</p>'
    */
   function wrap(value, wrapper) {
-    return createWrapper(wrapper, 16, [value]);
+    return createWrapper(wrapper, PARTIAL_FLAG, [value]);
   }
 
   /*--------------------------------------------------------------------------*/

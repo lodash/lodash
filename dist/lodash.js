@@ -19,11 +19,19 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
+  /** Used to compose bitmasks for `__bindData__` */
+  var BIND_FLAG = 1,
+      BIND_KEY_FLAG = 2,
+      CURRY_FLAG = 4,
+      CURRY_BOUND_FLAG = 8,
+      PARTIAL_FLAG = 16,
+      PARTIAL_RIGHT_FLAG = 32;
+
   /** Used as the size when optimizations are enabled for large arrays */
-  var largeArraySize = 75;
+  var LARGE_ARRAY_SIZE = 75;
 
   /** Used as the max size of the `arrayPool` and `objectPool` */
-  var maxPoolSize = 40;
+  var MAX_POOL_SIZE = 40;
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -470,7 +478,7 @@
    */
   function releaseArray(array) {
     array.length = 0;
-    if (arrayPool.length < maxPoolSize) {
+    if (arrayPool.length < MAX_POOL_SIZE) {
       arrayPool.push(array);
     }
   }
@@ -487,7 +495,7 @@
       releaseObject(cache);
     }
     object.array = object.cache = object.criteria = object.object = object.number = object.string = object.value = null;
-    if (objectPool.length < maxPoolSize) {
+    if (objectPool.length < MAX_POOL_SIZE) {
       objectPool.push(object);
     }
   }
@@ -1126,10 +1134,10 @@
           thisArg = bindData[4],
           arity = bindData[5];
 
-      var isBind = bitmask & 1,
-          isBindKey = bitmask & 2,
-          isCurry = bitmask & 4,
-          isCurryBound = bitmask & 8,
+      var isBind = bitmask & BIND_FLAG,
+          isBindKey = bitmask & BIND_KEY_FLAG,
+          isCurry = bitmask & CURRY_FLAG,
+          isCurryBound = bitmask & CURRY_BOUND_FLAG,
           key = func;
 
       function bound() {
@@ -1144,8 +1152,9 @@
             push.apply(args, partialRightArgs);
           }
           if (isCurry && args.length < arity) {
-            bitmask |= 16 & ~32;
-            return baseCreateWrapper([func, (isCurryBound ? bitmask : bitmask & ~3), args, null, thisArg, arity]);
+            bitmask |= PARTIAL_FLAG;
+            bitmask &= ~PARTIAL_RIGHT_FLAG;
+            return baseCreateWrapper([func, (isCurryBound ? bitmask : bitmask & ~(BIND_FLAG | BIND_KEY_FLAG)), args, null, thisArg, arity]);
           }
         }
         args || (args = arguments);
@@ -1176,7 +1185,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          isLarge = length >= largeArraySize && indexOf === baseIndexOf,
+          isLarge = length >= LARGE_ARRAY_SIZE && indexOf === baseIndexOf,
           result = [];
 
       if (isLarge) {
@@ -1510,7 +1519,7 @@
           length = array ? array.length : 0,
           result = [];
 
-      var isLarge = !isSorted && length >= largeArraySize && indexOf === baseIndexOf,
+      var isLarge = !isSorted && length >= LARGE_ARRAY_SIZE && indexOf === baseIndexOf,
           seen = (callback || isLarge) ? getArray() : result;
 
       if (isLarge) {
@@ -1579,7 +1588,7 @@
      *
      * @private
      * @param {Function|string} func The function or method name to reference.
-     * @param {number} bitmask The bitmask of method flags to compose.
+     * @param {number} bitmask The bitmask of flags to compose.
      *  The bitmask may be composed of the following flags:
      *  1 - `_.bind`
      *  2 - `_.bindKey`
@@ -1596,12 +1605,12 @@
      * @returns {Function} Returns the new function.
      */
     function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, arity) {
-      var isBind = bitmask & 1,
-          isBindKey = bitmask & 2,
-          isCurry = bitmask & 4,
-          isCurryBound = bitmask & 8,
-          isPartial = bitmask & 16,
-          isPartialRight = bitmask & 32;
+      var isBind = bitmask & BIND_FLAG,
+          isBindKey = bitmask & BIND_KEY_FLAG,
+          isCurry = bitmask & CURRY_FLAG,
+          isCurryBound = bitmask & CURRY_BOUND_FLAG,
+          isPartial = bitmask & PARTIAL_FLAG,
+          isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError;
@@ -1625,15 +1634,15 @@
           bindData[3] = slice(bindData[3]);
         }
         // set `thisBinding` is not previously bound
-        if (isBind && !(bindData[1] & 1)) {
+        if (isBind && !(bindData[1] & BIND_FLAG)) {
           bindData[4] = thisArg;
         }
         // set if previously bound but not currently (subsequent curried functions)
-        if (!isBind && bindData[1] & 1) {
+        if (!isBind && bindData[1] & BIND_FLAG) {
           bitmask |= 8;
         }
         // set curried arity if not yet set
-        if (isCurry && !(bindData[1] & 4)) {
+        if (isCurry && !(bindData[1] & CURRY_FLAG)) {
           bindData[5] = arity;
         }
         // append partial left arguments
@@ -1649,7 +1658,7 @@
         return createWrapper.apply(null, bindData);
       }
       // fast path for `_.bind`
-      var creater = (bitmask == 1 || bitmask === 17) ? baseBind : baseCreateWrapper;
+      var creater = (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) ? baseBind : baseCreateWrapper;
       return creater([func, bitmask, partialArgs, partialRightArgs, thisArg, arity]);
     }
 
@@ -2187,7 +2196,7 @@
         var value = arguments[argsIndex];
         if (isArray(value) || isArguments(value)) {
           args.push(value);
-          caches.push(trustIndexOf && value.length >= largeArraySize &&
+          caches.push(trustIndexOf && value.length >= LARGE_ARRAY_SIZE &&
             createCache(argsIndex ? args[argsIndex] : seen));
         }
       }
@@ -4241,8 +4250,8 @@
      */
     function bind(func, thisArg) {
       return arguments.length > 2
-        ? createWrapper(func, 17, slice(arguments, 2), null, thisArg)
-        : createWrapper(func, 1, null, null, thisArg);
+        ? createWrapper(func, BIND_FLAG | PARTIAL_FLAG, slice(arguments, 2), null, thisArg)
+        : createWrapper(func, BIND_FLAG, null, null, thisArg);
     }
 
     /**
@@ -4278,7 +4287,7 @@
 
       while (++index < length) {
         var key = funcs[index];
-        object[key] = createWrapper(object[key], 1, null, null, object);
+        object[key] = createWrapper(object[key], BIND_FLAG, null, null, object);
       }
       return object;
     }
@@ -4320,8 +4329,8 @@
      */
     function bindKey(object, key) {
       return arguments.length > 2
-        ? createWrapper(key, 19, slice(arguments, 2), null, object)
-        : createWrapper(key, 3, null, null, object);
+        ? createWrapper(key, BIND_FLAG | BIND_KEY_FLAG | PARTIAL_FLAG, slice(arguments, 2), null, object)
+        : createWrapper(key, BIND_FLAG | BIND_KEY_FLAG, null, null, object);
     }
 
     /**
@@ -4406,7 +4415,7 @@
      */
     function curry(func, arity) {
       arity = typeof arity == 'number' ? arity : (+arity || func.length);
-      return createWrapper(func, 4, null, null, null, arity);
+      return createWrapper(func, CURRY_FLAG, null, null, null, arity);
     }
 
     /**
@@ -4708,7 +4717,7 @@
      * // => 'hi fred'
      */
     function partial(func) {
-      return createWrapper(func, 16, slice(arguments, 1));
+      return createWrapper(func, PARTIAL_FLAG, slice(arguments, 1));
     }
 
     /**
@@ -4742,7 +4751,7 @@
      * // => { '_': _, 'jq': $ }
      */
     function partialRight(func) {
-      return createWrapper(func, 32, null, slice(arguments, 1));
+      return createWrapper(func, PARTIAL_RIGHT_FLAG, null, slice(arguments, 1));
     }
 
     /**
@@ -4818,7 +4827,7 @@
      * // => '<p>fred, barney, &amp; pebbles</p>'
      */
     function wrap(value, wrapper) {
-      return createWrapper(wrapper, 16, [value]);
+      return createWrapper(wrapper, PARTIAL_FLAG, [value]);
     }
 
     /*--------------------------------------------------------------------------*/

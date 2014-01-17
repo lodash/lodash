@@ -6575,42 +6575,28 @@
   QUnit.module('lodash.result');
 
   (function() {
-    test('should resolve property values', 4, function() {
-      var object = {
-        'a': 1,
-        'b': 2,
-        'c': function(){ return this.b; }
-      };
+    var object = {
+      'a': 1,
+      'b': 2,
+      'c': function(){ return this.b; }
+    };
 
+    test('should resolve property values', 4, function() {
       strictEqual(_.result(object, 'a'), 1);
       strictEqual(_.result(object, 'b'), 2);
       strictEqual(_.result(object, 'c'), 2);
       strictEqual(_.result(object, 'd'), undefined);
     });
 
-    test('should return `undefined` when provided a falsey `object` argument', 1, function() {
-      var actual = [],
-          expected = _.map(falsey, function() { return undefined; });
-
-      _.forEach(falsey, function(value, index) {
-        try {
-          actual.push(index ? _.result(value) : _.result());
-        } catch(e) { }
-      });
-
-      deepEqual(actual, expected);
+    test('should return `undefined` when `object` is `null` or `undefined`', 2, function() {
+      strictEqual(_.result(null, 'a'), undefined);
+      strictEqual(_.result(undefined, 'a'), undefined);
     });
 
-    test('should return the default value if key is not found', 2, function() {
-      var object = {
-        'a': 1,
-        'b': 2
-      }
-
-      strictEqual(_.result(object, 'c', 3), 3);
-      strictEqual(_.result(object, 'c'), undefined);
+    test('should return the specified default value for undefined properties', 2, function() {
+      strictEqual(_.result(object, 'd', 3), 3);
+      strictEqual(_.result(null, 'd', 3), 3);
     });
-
   }());
 
   /*--------------------------------------------------------------------------*/

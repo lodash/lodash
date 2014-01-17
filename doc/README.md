@@ -197,7 +197,7 @@
 * <a href="#_parseintvalue-radix">`_.parseInt`</a>
 * <a href="#_propertykey">`_.property`</a>
 * <a href="#_randommin0-max1-floatingfalse">`_.random`</a>
-* <a href="#_resultobject-key">`_.result`</a>
+* <a href="#_resultobject-key-defaultvalue">`_.result`</a>
 * <a href="#_runincontextcontextroot">`_.runInContext`</a>
 * <a href="#_timesn-callback-thisarg">`_.times`</a>
 * <a href="#_uniqueidprefix">`_.uniqueId`</a>
@@ -4637,14 +4637,15 @@ _.random(1.2, 5.2);
 
 <!-- div -->
 
-### <a id="_resultobject-key"></a>`_.result(object, key)`
-<a href="#_resultobject-key">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7273 "View in source") [&#x24C9;][1]
+### <a id="_resultobject-key-defaultvalue"></a>`_.result(object, key, [defaultValue])`
+<a href="#_resultobject-key-defaultvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7279 "View in source") [&#x24C9;][1]
 
-Resolves the value of property `key` on `object`. If `key` is a function it will be invoked with the `this` binding of `object` and its result returned, else the property value is returned. If `object` is falsey then `undefined` is returned.
+Resolves the value of property `key` on `object`. If `key` is a function it will be invoked with the `this` binding of `object` and its result returned, else the property value is returned. If `object` is `null` or `undefined` then `undefined` is returned. If a default value is provided it will be returned if the property value resolves to `undefined`.
 
 #### Arguments
 1. `object` *(Object)*: The object to inspect.
 2. `key` *(string)*: The name of the property to resolve.
+3. `[defaultValue]` *(&#42;)*: The value returned if the property value resolves to `undefined`.
 
 #### Returns
 *(&#42;)*: Returns the resolved value.
@@ -4652,17 +4653,20 @@ Resolves the value of property `key` on `object`. If `key` is a function it will
 #### Example
 ```js
 var object = {
-  'cheese': 'crumpets',
-  'stuff': function() {
-    return 'nonsense';
+  'name': 'fred',
+  'age': function() {
+    return 40;
   }
 };
 
-_.result(object, 'cheese');
-// => 'crumpets'
+_.result(object, 'name');
+// => 'fred'
 
-_.result(object, 'stuff');
-// => 'nonsense'
+_.result(object, 'age');
+// => 40
+
+_.result(object, 'employer', 'slate');
+// => 'slate'
 ```
 
 * * *
@@ -4691,7 +4695,7 @@ Create a new `lodash` function using the given context object.
 <!-- div -->
 
 ### <a id="_timesn-callback-thisarg"></a>`_.times(n, callback, [thisArg])`
-<a href="#_timesn-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7303 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7310 "View in source") [&#x24C9;][1]
 
 Executes the callback `n` times, returning an array of the results of each callback execution. The callback is bound to `thisArg` and invoked with one argument; *(index)*.
 
@@ -4723,7 +4727,7 @@ _.times(3, function(n) { this.cast(n); }, mage);
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7331 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7338 "View in source") [&#x24C9;][1]
 
 Generates a unique ID. If `prefix` is provided the ID will be appended to it.
 
@@ -4776,7 +4780,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7538 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7545 "View in source") [&#x24C9;][1]
 
 *(string)*: The semantic version number.
 

@@ -7245,40 +7245,43 @@
 
     /**
      * Resolves the value of property `key` on `object`. If `key` is a function
-     * it will be invoked with the `this` binding of `object` and its result returned,
-     * else the property value is returned. If `object` is falsey then `undefined`
-     * is returned. If property `key` is not set, return defaultValue if defined;
+     * it will be invoked with the `this` binding of `object` and its result
+     * returned, else the property value is returned. If `object` is `null` or
+     * `undefined` then `undefined` is returned. If a default value is provided
+     * it will be returned if the property value resolves to `undefined`.
      *
      * @static
      * @memberOf _
      * @category Utilities
      * @param {Object} object The object to inspect.
      * @param {string} key The name of the property to resolve.
-     * @param {*} [defaultValue] The value to return if object doesn't have key.
+     * @param {*} [defaultValue] The value returned if the property value
+     *  resolves to `undefined`.
      * @returns {*} Returns the resolved value.
      * @example
      *
      * var object = {
-     *   'cheese': 'crumpets',
-     *   'stuff': function() {
-     *     return 'nonsense';
+     *   'name': 'fred',
+     *   'age': function() {
+     *     return 40;
      *   }
      * };
      *
-     * _.result(object, 'cheese');
-     * // => 'crumpets'
+     * _.result(object, 'name');
+     * // => 'fred'
      *
-     * _.result(object, 'stuff');
-     * // => 'nonsense'
-
-     * _.result(object, 'pizza', 'spaghetti');
-     * // => 'spaghetti'
+     * _.result(object, 'age');
+     * // => 40
+     *
+     * _.result(object, 'employer', 'slate');
+     * // => 'slate'
      */
     function result(object, key, defaultValue) {
-      if (object) {
-        var value = typeof object[key] !== 'undefined' ? object[key] : defaultValue;
-        return isFunction(value) ? object[key]() : value;
+      if (object == null) {
+        return defaultValue;
       }
+      var value = typeof object[key] != 'undefined' ? object[key] : defaultValue;
+      return isFunction(value) ? object[key]() : value;
     }
 
     /**

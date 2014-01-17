@@ -6600,6 +6600,17 @@
 
       deepEqual(actual, expected);
     });
+
+    test('should return the default value if key is not found', 2, function() {
+      var object = {
+        'a': 1,
+        'b': 2
+      }
+
+      strictEqual(_.result(object, 'c', 3), 3);
+      strictEqual(_.result(object, 'c'), undefined);
+    });
+
   }());
 
   /*--------------------------------------------------------------------------*/

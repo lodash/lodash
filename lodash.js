@@ -7247,13 +7247,14 @@
      * Resolves the value of property `key` on `object`. If `key` is a function
      * it will be invoked with the `this` binding of `object` and its result returned,
      * else the property value is returned. If `object` is falsey then `undefined`
-     * is returned.
+     * is returned. If property `key` is not set, return defaultValue if defined;
      *
      * @static
      * @memberOf _
      * @category Utilities
      * @param {Object} object The object to inspect.
      * @param {string} key The name of the property to resolve.
+     * @param {*} [defaultValue] The value to return if object doesn't have key.
      * @returns {*} Returns the resolved value.
      * @example
      *
@@ -7269,10 +7270,13 @@
      *
      * _.result(object, 'stuff');
      * // => 'nonsense'
+
+     * _.result(object, 'pizza', 'spaghetti');
+     * // => 'spaghetti'
      */
-    function result(object, key) {
+    function result(object, key, defaultValue) {
       if (object) {
-        var value = object[key];
+        var value = typeof object[key] !== 'undefined' ? object[key] : defaultValue;
         return isFunction(value) ? object[key]() : value;
       }
     }

@@ -1337,7 +1337,7 @@
         }
       }
       // exit early if there are no `this` references or `func` is bound
-      if (bindData === false || (bindData !== true && bindData[1] & 1)) {
+      if (bindData === false || (bindData !== true && bindData[1] & BIND_FLAG)) {
         return func;
       }
       switch (argCount) {

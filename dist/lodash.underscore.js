@@ -239,6 +239,7 @@
       nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
+      nativeNow = isNative(nativeNow = Date.now) && nativeNow,
       nativeRandom = Math.random;
 
   /*--------------------------------------------------------------------------*/
@@ -4765,7 +4766,7 @@
    * _.defer(function() { console.log(_.now() - stamp); });
    * // => logs the number of milliseconds it took for the deferred function to be called
    */
-  var now = isNative(now = Date.now) && now || function() {
+  var now = nativeNow || function() {
     return new Date().getTime();
   };
 

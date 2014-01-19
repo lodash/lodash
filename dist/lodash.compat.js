@@ -984,9 +984,7 @@
 
       var __p = 'var result = ' +
       (obj.init) +
-      ';\nif (!isObject(object)) {\n  return result;\n}\n' +
-      (obj.top) +
-      ';';
+      ';\nif (!isObject(object)) {\n  return result;\n}';
        if (support.nonEnumArgs) {
       __p += '\nvar length = object.length;\nif (length && isArguments(object)) {\n  key = -1;\n  while (++key < length) {\n    key += \'\';\n    ' +
       (obj.loop) +
@@ -1158,7 +1156,7 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? baseEach : forOwn)(value, function(objValue, key) {
+      (isArr ? baseEach : baseForOwn)(value, function(objValue, key) {
         result[key] = baseClone(objValue, isDeep, callback, stackA, stackB);
       });
 
@@ -1335,24 +1333,19 @@
     }
 
     /**
-     * Iterates `arguments` objects, arrays, objects, and strings consistently
-     * across environments, executing the callback for each element in the
-     * collection. The callback is bound to `thisArg` and invoked with three
-     * arguments; (value, index|key, collection). Callbacks may exit iteration
-     * early by explicitly returning `false`.
+     * The base implementation of `_.forEach` without support for callback
+     * shorthands or `thisArg` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [callback=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `callback`.
+     * @param {Function} callback The function called per iteration.
      * @returns {Array|Object|string} Returns `collection`.
      */
-    function baseEach(collection, callback, thisArg) {
+    function baseEach(collection, callback) {
       var index = -1,
           iterable = collection,
           length = collection ? collection.length : 0;
 
-      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
       if (typeof length == 'number') {
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
@@ -1363,7 +1356,7 @@
           }
         }
       } else {
-        forOwn(collection, callback);
+        baseForOwn(collection, callback);
       }
       return collection;
     }
@@ -1406,6 +1399,29 @@
         }
       }
       return result;
+    }
+
+    /**
+     * The base implementation of `_.forOwn` without support for callback
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Object} Returns `object`.
+     */
+    function baseForOwn(object, callback) {
+      var index = -1,
+          props = keys(object),
+          length = props.length;
+
+      while (++index < length) {
+        var key = props[index];
+        if (callback(object[key], key, object) === false) {
+          break;
+        }
+      }
+      return object;
     }
 
     /**
@@ -1555,7 +1571,7 @@
       else {
         // deep compare objects using `forIn`, instead of `forOwn`, to avoid `Object.keys`
         // which, in this case, is more costly
-        forIn(b, function(value, key, b) {
+        baseForIn(b, function(value, key, b) {
           if (hasOwnProperty.call(b, key)) {
             // count the number of properties.
             size++;
@@ -1566,7 +1582,7 @@
 
         if (result && !isWhere) {
           // ensure both objects have the same number of properties
-          forIn(a, function(value, key, a) {
+          baseForIn(a, function(value, key, a) {
             if (hasOwnProperty.call(a, key)) {
               // `size` will be `-1` if `a` has more properties than `b`
               return (result = --size > -1);
@@ -1596,7 +1612,7 @@
      * @param {Array} [stackB=[]] Associates values with source counterparts.
      */
     function baseMerge(object, source, callback, stackA, stackB) {
-      (isArray(source) ? forEach : forOwn)(source, function(source, key) {
+      (isArray(source) ? baseEach : baseForOwn)(source, function(source, key) {
         var found,
             isArr,
             result = source,
@@ -1842,7 +1858,6 @@
      * @param {Object} [options] The compile options object.
      * @param {string} [options.args] A comma separated string of iteration function arguments.
      * @param {string} [options.init] The string representation of the initial `result` value.
-     * @param {string} [options.top] Code to execute before the iteration branches.
      * @param {string} [options.loop] Code to execute in the object loop.
      * @param {boolean} [options.useHas] Specify using `hasOwnProperty` checks in the object loop.
      * @returns {Function} Returns the compiled function.
@@ -1852,15 +1867,15 @@
 
       // create the function factory
       var factory = Function(
-          'baseCreateCallback, errorClass, errorProto, hasOwnProperty, isArguments, ' +
-          'isObject, objectProto, nonEnumProps, stringClass, stringProto, toString',
+          'errorClass, errorProto, hasOwnProperty, isArguments, isObject, objectProto, ' +
+          'nonEnumProps, stringClass, stringProto, toString',
         'return function(' + options.args + ') {\n' + iteratorTemplate(options) + '\n}'
       );
 
       // return the compiled function
       return factory(
-        baseCreateCallback, errorClass, errorProto, hasOwnProperty, isArguments,
-        isObject, objectProto, nonEnumProps, stringClass, stringProto, toString
+        errorClass, errorProto, hasOwnProperty, isArguments, isObject, objectProto,
+        nonEnumProps, stringClass, stringProto, toString
       );
     }
 
@@ -1926,7 +1941,7 @@
       // iterated property is an object's own property then there are no inherited
       // enumerable properties.
       if (support.ownLast) {
-        forIn(value, function(value, key, object) {
+        baseForIn(value, function(value, key, object) {
           result = hasOwnProperty.call(object, key);
           return false;
         });
@@ -1935,7 +1950,7 @@
       // In most environments an object's own properties are iterated before
       // its inherited properties. If the last iterated property is an object's
       // own property then there are no inherited enumerable properties.
-      forIn(value, function(value, key) {
+      baseForIn(value, function(value, key) {
         result = key;
       });
       return typeof result == 'undefined' || hasOwnProperty.call(value, result);
@@ -1972,6 +1987,22 @@
     }
 
     /**
+     * The base implementation of `_.forIn` without support for callback
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Object} Returns `object`.
+     */
+    var baseForIn = createIterator({
+      'args': 'object, callback',
+      'init': 'object',
+      'loop': 'if (callback(object[key], key, object) === false) {\n    return result;\n  }',
+      'useHas': false
+    });
+
+    /**
      * A fallback implementation of `Object.keys` which produces an array of the
      * given object's own enumerable property names.
      *
@@ -1983,7 +2014,6 @@
     var shimKeys = createIterator({
       'args': 'object',
       'init': '[]',
-      'top': '',
       'loop': 'result.push(key)',
       'useHas': true
     });
@@ -3603,7 +3633,7 @@
           }
         }
       } else {
-        baseEach(collection, callback, thisArg);
+        baseEach(collection, baseCreateCallback(callback, thisArg, 3));
       }
       return collection;
     }
@@ -3766,7 +3796,7 @@
           length = collection ? collection.length : 0,
           result = Array(typeof length == 'number' ? length : 0);
 
-      forEach(collection, function(value) {
+      baseEach(collection, function(value) {
         result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
       });
       return result;
@@ -4184,7 +4214,7 @@
           length = collection ? collection.length : 0,
           result = Array(typeof length == 'number' ? length : 0);
 
-      forEach(collection, function(value) {
+      baseEach(collection, function(value) {
         var rand = baseRandom(0, ++index);
         result[index] = result[rand];
         result[rand] = value;
@@ -4339,7 +4369,7 @@
       if (!multi) {
         callback = lodash.createCallback(callback, thisArg, 3);
       }
-      forEach(collection, function(value, key, collection) {
+      baseEach(collection, function(value, key, collection) {
         var object = result[++index] = getObject();
         object.index = index;
         object.value = value;
@@ -5347,7 +5377,7 @@
     function findKey(object, callback, thisArg) {
       var result;
       callback = lodash.createCallback(callback, thisArg, 3);
-      forOwn(object, function(value, key, object) {
+      baseForOwn(object, function(value, key, object) {
         if (callback(value, key, object)) {
           result = key;
           return false;
@@ -5440,13 +5470,10 @@
      * });
      * // => logs 'x', 'y', and 'move' (property order is not guaranteed across environments)
      */
-    var forIn = createIterator({
-      'args': 'object, callback, thisArg',
-      'init': 'object',
-      'top': "callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3)",
-      'loop': 'if (callback(object[key], key, object) === false) {\n    return result;\n  }',
-      'useHas': false
-    });
+    function forIn(object, callback, thisArg) {
+      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      return baseForIn(object, callback);
+    }
 
     /**
      * This method is like `_.forIn` except that it iterates over elements
@@ -5479,7 +5506,7 @@
     function forInRight(object, callback, thisArg) {
       var pairs = [];
 
-      forIn(object, function(value, key) {
+      baseForIn(object, function(value, key) {
         pairs.push(key, value);
       });
 
@@ -5514,18 +5541,8 @@
      * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
      */
     function forOwn(object, callback, thisArg) {
-      var index = -1,
-          props = keys(object),
-          length = props.length;
-
       callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-      while (++index < length) {
-        var key = props[index];
-        if (callback(object[key], key, object) === false) {
-          break;
-        }
-      }
-      return object;
+      return baseForOwn(object, callback);
     }
 
     /**
@@ -5577,7 +5594,7 @@
      */
     function functions(object) {
       var result = [];
-      forIn(object, function(value, key) {
+      baseForIn(object, function(value, key) {
         if (isFunction(value)) {
           result.push(key);
         }
@@ -5769,7 +5786,7 @@
           (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
         return !length;
       }
-      forOwn(value, function() {
+      baseForOwn(value, function() {
         return (result = false);
       });
       return result;
@@ -6130,7 +6147,7 @@
       var result = {};
       callback = lodash.createCallback(callback, thisArg, 3);
 
-      forOwn(object, function(value, key, object) {
+      baseForOwn(object, function(value, key, object) {
         result[key] = callback(value, key, object);
       });
       return result;
@@ -6249,7 +6266,7 @@
       var result = {};
       if (typeof callback != 'function') {
         var props = [];
-        forIn(object, function(value, key) {
+        baseForIn(object, function(value, key) {
           props.push(key);
         });
         props = baseDifference(props, baseFlatten(arguments, true, false, 1));
@@ -6263,7 +6280,7 @@
         }
       } else {
         callback = lodash.createCallback(callback, thisArg, 3);
-        forIn(object, function(value, key, object) {
+        baseForIn(object, function(value, key, object) {
           if (!callback(value, key, object)) {
             result[key] = value;
           }
@@ -6341,7 +6358,7 @@
         }
       } else {
         callback = lodash.createCallback(callback, thisArg, 3);
-        forIn(object, function(value, key, object) {
+        baseForIn(object, function(value, key, object) {
           if (callback(value, key, object)) {
             result[key] = value;
           }
@@ -6395,7 +6412,7 @@
       }
       if (callback) {
         callback = lodash.createCallback(callback, thisArg, 4);
-        (isArr ? baseEach : forOwn)(object, function(value, index, object) {
+        (isArr ? baseEach : baseForOwn)(object, function(value, index, object) {
           return callback(accumulator, value, index, object);
         });
       }
@@ -7390,7 +7407,7 @@
 
     mixin(function() {
       var source = {}
-      forOwn(lodash, function(func, methodName) {
+      baseForOwn(lodash, function(func, methodName) {
         if (!lodash.prototype[methodName]) {
           source[methodName] = func;
         }
@@ -7409,7 +7426,7 @@
     lodash.take = first;
     lodash.head = first;
 
-    forOwn(lodash, function(func, methodName) {
+    baseForOwn(lodash, function(func, methodName) {
       var callbackable = methodName !== 'sample';
       if (!lodash.prototype[methodName]) {
         lodash.prototype[methodName]= function(n, guard) {

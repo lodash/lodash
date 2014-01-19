@@ -3019,7 +3019,7 @@
         result = Array(typeof length == 'number' ? length : 0);
 
     callback = createCallback(callback, thisArg, 3);
-    forEach(collection, function(value, key, collection) {
+    baseEach(collection, function(value, key, collection) {
       result[++index] = {
         'criteria': callback(value, key, collection),
         'index': index,

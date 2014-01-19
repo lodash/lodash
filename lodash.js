@@ -1333,7 +1333,7 @@
           length = array ? array.length : 0,
           result = [];
 
-      if (Set && length >= LARGE_ARRAY_SIZE && indexOf === baseIndexOf) {
+      if (createCache && indexOf === baseIndexOf && length >= LARGE_ARRAY_SIZE) {
         indexOf = cacheIndexOf;
         values = createCache(values);
       }
@@ -1706,7 +1706,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          isLarge = Set && !isSorted && length >= LARGE_ARRAY_SIZE && indexOf === baseIndexOf,
+          isLarge = createCache && !isSorted && indexOf === baseIndexOf && length >= LARGE_ARRAY_SIZE,
           result = [];
 
       if (isLarge) {
@@ -1774,7 +1774,7 @@
      * @param {Array} [array=[]] The array to search.
      * @returns {Object} Returns the cache object.
      */
-    function createCache(array) {
+    var createCache = Set && function(array) {
       var cache = new Set,
           length = array ? array.length : 0;
 
@@ -1783,7 +1783,7 @@
         cache.push(array[length]);
       }
       return cache;
-    }
+    };
 
     /**
      * Creates a function that, when called, either curries or invokes `func`
@@ -2450,7 +2450,7 @@
           argsLength = arguments.length,
           caches = getArray(),
           indexOf = getIndexOf(),
-          largePrereq = Set && indexOf === baseIndexOf,
+          largePrereq = createCache && indexOf === baseIndexOf,
           seen = getArray();
 
       while (++argsIndex < argsLength) {

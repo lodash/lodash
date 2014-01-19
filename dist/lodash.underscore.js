@@ -4866,12 +4866,11 @@
    * _.result(object, 'employer', 'slate');
    * // => 'slate'
    */
-  function result(object, key, defaultValue) {
-    if (object == null) {
-      return defaultValue;
+  function result(object, key) {
+    if (object != null) {
+      var value = object[key];
+      return isFunction(value) ? object[key]() : value;
     }
-    var value = typeof object[key] != 'undefined' ? object[key] : defaultValue;
-    return isFunction(value) ? object[key]() : value;
   }
 
   /**

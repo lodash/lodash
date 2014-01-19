@@ -86,7 +86,7 @@
   /** Used to assign default `context` object properties */
   var contextProps = [
     'Array', 'Boolean', 'Date', 'Function', 'Math', 'Number', 'Object',
-    'RegExp', 'String', '_', 'clearTimeout', 'document', 'isFinite', 'isNaN',
+    'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document', 'isFinite', 'isNaN',
     'parseInt', 'setTimeout', 'TypeError', 'window', 'WinRTError'
   ];
 
@@ -241,53 +241,7 @@
    * @returns {number} Returns `0` if `value` is found, else `-1`.
    */
   function cacheIndexOf(cache, value) {
-    var type = typeof value;
-    cache = cache.cache;
-
-    if (type == 'boolean' || value == null) {
-      return cache[value] ? 0 : -1;
-    }
-    if (type != 'number' && type != 'string') {
-      type = 'object';
-    }
-    var key = type == 'number' ? value : '_' + value;
-    cache = (cache = cache[type]) && cache[key];
-
-    return type == 'object'
-      ? (cache && baseIndexOf(cache, value) > -1 ? 0 : -1)
-      : (cache ? 0 : -1);
-  }
-
-  /**
-   * Adds a given value to the corresponding cache object.
-   *
-   * @private
-   * @param {*} value The value to add to the cache.
-   */
-  function cachePush(value) {
-    var cache = this.cache,
-        type = typeof value;
-
-    if (type == 'boolean' || value == null) {
-      cache[value] = true;
-    } else {
-      if (type != 'number' && type != 'string') {
-        type = 'object';
-      }
-      var key = type == 'number' ? value : '_' + value,
-          typeCache = cache[type] || (cache[type] = {});
-
-      if (type == 'object') {
-        var array = typeCache[key];
-        if (array) {
-          array.push(value);
-        } else {
-          typeCache[key] = [value];
-        }
-      } else {
-        typeCache[key] = true;
-      }
-    }
+    return cache.has(value) ? 0 : -1;
   }
 
   /**
@@ -382,38 +336,6 @@
   }
 
   /**
-   * Creates a cache object to optimize linear searches of large arrays.
-   *
-   * @private
-   * @param {Array} [array=[]] The array to search.
-   * @returns {null|Object} Returns the cache object or `null` if caching should not be used.
-   */
-  function createCache(array) {
-    var index = -1,
-        length = array.length,
-        first = array[0],
-        mid = array[(length / 2) | 0],
-        last = array[length - 1];
-
-    if (first && typeof first == 'object' &&
-        mid && typeof mid == 'object' && last && typeof last == 'object') {
-      return false;
-    }
-    var cache = getObject();
-    cache['false'] = cache['null'] = cache['true'] = cache['undefined'] = false;
-
-    var result = getObject();
-    result.array = array;
-    result.cache = cache;
-    result.push = cachePush;
-
-    while (++index < length) {
-      result.push(array[index]);
-    }
-    return result;
-  }
-
-  /**
    * Used by `escape` to convert characters to HTML entities.
    *
    * @private
@@ -454,18 +376,8 @@
    */
   function getObject() {
     return objectPool.pop() || {
-      'array': null,
-      'cache': null,
       'criteria': null,
-      'false': false,
       'index': 0,
-      'null': false,
-      'number': null,
-      'object': null,
-      'push': null,
-      'string': null,
-      'true': false,
-      'undefined': false,
       'value': null
     };
   }
@@ -490,11 +402,7 @@
    * @param {Object} object The object to release.
    */
   function releaseObject(object) {
-    var cache = object.cache;
-    if (cache) {
-      releaseObject(cache);
-    }
-    object.array = object.cache = object.criteria = object.object = object.number = object.string = object.value = null;
+    object.criteria = object.value = null;
     if (objectPool.length < MAX_POOL_SIZE) {
       objectPool.push(object);
     }
@@ -673,6 +581,7 @@
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayRef.push,
+        Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
         splice = arrayRef.splice,
         unshift = arrayRef.unshift;
@@ -697,6 +606,7 @@
         nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
         nativeMax = Math.max,
         nativeMin = Math.min,
+        nativeNow = isNative(nativeNow = Date.now) && nativeNow,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
         nativeTrim = isNative(nativeTrim = stringProto.trim) && !nativeTrim.call(whitespace) && nativeTrim,
@@ -1185,26 +1095,17 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
-          isLarge = length >= LARGE_ARRAY_SIZE && indexOf === baseIndexOf,
           result = [];
 
-      if (isLarge) {
-        var cache = createCache(values);
-        if (cache) {
-          indexOf = cacheIndexOf;
-          values = cache;
-        } else {
-          isLarge = false;
-        }
+      if (Set && length >= LARGE_ARRAY_SIZE && indexOf === baseIndexOf) {
+        indexOf = cacheIndexOf;
+        values = createCache(values);
       }
       while (++index < length) {
         var value = array[index];
         if (indexOf(values, value) < 0) {
           result.push(value);
         }
-      }
-      if (isLarge) {
-        releaseObject(values);
       }
       return result;
     }
@@ -1517,15 +1418,14 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array ? array.length : 0,
+          isLarge = Set && !isSorted && length >= LARGE_ARRAY_SIZE && indexOf === baseIndexOf,
           result = [];
 
-      var isLarge = !isSorted && length >= LARGE_ARRAY_SIZE && indexOf === baseIndexOf,
-          seen = (callback || isLarge) ? getArray() : result;
-
       if (isLarge) {
-        var cache = createCache(seen);
+        var seen = createCache();
         indexOf = cacheIndexOf;
-        seen = cache;
+      } else {
+        seen = callback ? getArray() : result;
       }
       while (++index < length) {
         var value = array[index],
@@ -1541,10 +1441,7 @@
           result.push(value);
         }
       }
-      if (isLarge) {
-        releaseArray(seen.array);
-        releaseObject(seen);
-      } else if (callback) {
+      if (!isLarge && callback) {
         releaseArray(seen);
       }
       return result;
@@ -1580,6 +1477,24 @@
         }
         return result;
       };
+    }
+
+    /**
+     * Creates a cache object to optimize linear searches of large arrays.
+     *
+     * @private
+     * @param {Array} [array=[]] The array to search.
+     * @returns {Object} Returns the cache object.
+     */
+    function createCache(array) {
+      var cache = new Set,
+          length = array ? array.length : 0;
+
+      cache.push = cache.add;
+      while (length--) {
+        cache.push(array[length]);
+      }
+      return cache;
     }
 
     /**
@@ -2189,14 +2104,14 @@
           argsLength = arguments.length,
           caches = getArray(),
           indexOf = getIndexOf(),
-          trustIndexOf = indexOf === baseIndexOf,
+          largePrereq = Set && indexOf === baseIndexOf,
           seen = getArray();
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
         if (isArray(value) || isArguments(value)) {
           args.push(value);
-          caches.push(trustIndexOf && value.length >= LARGE_ARRAY_SIZE &&
+          caches.push(largePrereq && value.length >= LARGE_ARRAY_SIZE &&
             createCache(argsIndex ? args[argsIndex] : seen));
         }
       }
@@ -2220,12 +2135,6 @@
             }
           }
           result.push(value);
-        }
-      }
-      while (argsLength--) {
-        cache = caches[argsLength];
-        if (cache) {
-          releaseObject(cache);
         }
       }
       releaseArray(caches);
@@ -6785,7 +6694,7 @@
      * _.defer(function() { console.log(_.now() - stamp); });
      * // => logs the number of milliseconds it took for the deferred function to be called
      */
-    var now = isNative(now = Date.now) && now || function() {
+    var now = nativeNow || function() {
       return new Date().getTime();
     };
 

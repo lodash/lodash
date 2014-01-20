@@ -1097,7 +1097,7 @@
           length = array ? array.length : 0,
           result = [];
 
-      if (createCache && indexOf === baseIndexOf && length >= LARGE_ARRAY_SIZE) {
+      if (createCache && values && indexOf === baseIndexOf && values.length >= LARGE_ARRAY_SIZE) {
         indexOf = cacheIndexOf;
         values = createCache(values);
       }
@@ -7208,7 +7208,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // expose Lo-Dash
+  // export Lo-Dash
   var _ = runInContext();
 
   // some AMD build optimizers like r.js check for condition patterns like the following:

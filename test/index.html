@@ -18,77 +18,121 @@
 		<div id="qunit"></div>
 		<div id="exports"></div>
 		<script>
+			var setProperty = (function() {
+				var defineProperty = (function() {
+					try {
+						var o = {},
+						    func = Object.defineProperty,
+						    result = func(o, o, o) && func;
+					} catch(e) { }
+					return result;
+				}());
+
+				if (!defineProperty) {
+					return function(object, key, value) {
+						object[key] = value;
+					};
+				}
+				return function(object, key, value) {
+					// avoid a bug where overwriting non-enumerable built-ins makes them enumerable
+					// https://code.google.com/p/v8/issues/detail?id=1623
+					defineProperty(object, key, {
+						'configurable': true,
+						'enumerable': false,
+						'writable': true,
+						'value': value
+					});
+
+				}
+			}());
+
 			function addBizarroMethods() {
 				// add extensions
 				Function.prototype._method = function() {};
 
+				// allow bypassing native checks
+				setProperty(Function.prototype, '_toString',  _fnToString);
+				setProperty(Function.prototype, 'toString', (function() {
+					var func = Function.prototype.toString;
+					function toString() {
+						return this.toString !== toString ? this.toString() : func.call(this);
+					}
+					return toString;
+				}()));
+
 				// set bad shims
-				Array._isArray = Array.isArray;
-				Array.isArray = function() {};
+				setProperty(Array, '_isArray', Array.isArray);
+				setProperty(Array, 'isArray', function() {});
 
-				Date._now = Date.now;
-				Date.now = function() {};
+				setProperty(Date, '_now', Date.now);
+				setProperty(Date, 'now', function() {});
 
-				Object._create = Object.create;
-				Object.create = function() {};
+				setProperty(Object, '_create', Object.create);
+				setProperty(Object, 'create', function() {});
 
-				Object._defineProperty = Object.defineProperty;
-				Object.defineProperty = function() {};
+				setProperty(Object, '_defineProperty', Object.defineProperty);
+				setProperty(Object, 'defineProperty', function() {});
 
-				Object._getPrototypeOf = Object.getPrototypeOf;
-				Object.getPrototypeOf = function() {};
+				setProperty(Object, '_getPrototypeOf', Object.getPrototypeOf);
+				setProperty(Object, 'getPrototypeOf', function() {});
 
-				Object._keys = Object.keys;
-				Object.keys = function() {};
+				setProperty(Object, '_keys', Object.keys);
+				setProperty(Object, 'keys', function() {});
 
-				String.prototype._contains = String.prototype.contains;
-				String.prototype.contains = String.prototype._contains ? function() {} : Boolean;
+				setProperty(String.prototype, '_contains', String.prototype.contains);
+				setProperty(String.prototype, 'contains', String.prototype._contains ? function() {} : Boolean);
 
-				String.prototype._trim = String.prototype.trim;
-				String.prototype.trim = String.prototype._trim ? function() {} : String;
+				setProperty(String.prototype, '_trim', String.prototype.trim);
+				setProperty(String.prototype, 'trim', String.prototype._trim ? function() {} : String);
 
-				String.prototype._trimLeft = String.prototype.trimLeft;
-				String.prototype.trimLeft = String.prototype._trimLeft ? function() {} : String;
+				setProperty(String.prototype, '_trimLeft', String.prototype.trimLeft);
+				setProperty(String.prototype, 'trimLeft', String.prototype._trimLeft ? function() {} : String);
 
-				String.prototype._trimRight = String.prototype.trimRight;
-				String.prototype.trimRight = String.prototype._trimRight ? function() {} : String;
+				setProperty(String.prototype, '_trimRight', String.prototype.trimRight);
+				setProperty(String.prototype, 'trimRight', String.prototype._trimRight ? function() {} : String);
 
-				window.WinRTError = Error;
+				setProperty(window, '_Set', window.Set);
+				setProperty(window, 'WinRTError', Error);
 
-				document._createDocumentFragment = document.createDocumentFragment;
+				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
 				document.createDocumentFragment = function() {};
 			}
 
 			function removeBizarroMethods() {
 				if (Array._isArray) {
-					Array.isArray = Array._isArray;
+					setProperty(Array, 'isArray', Array._isArray);
 				} else {
 					delete Array.isArray;
 				}
 				if (Date._now) {
-					Date.now = Date._now;
+					setProperty(Date, 'now', Date._now);
 				} else {
 					delete Date.now;
 				}
 				if (Object._create) {
-					Object.create = Object._create;
+					setProperty(Object, 'create', Object._create);
 				} else {
 					delete Object.create;
 				}
 				if (Object._defineProperty) {
-					Object.defineProperty = Object._defineProperty;
+					setProperty(Object, 'defineProperty', Object._defineProperty);
 				} else {
 					delete Object.defineProperty;
 				}
 				if (Object._getPrototypeOf) {
-					Object.getPrototypeOf = Object._getPrototypeOf;
+					setProperty(Object, 'getPrototypeOf', Object._getPrototypeOf);
 				} else {
 					delete Object.getPrototypeOf;
 				}
 				if (Object._keys) {
-					Object.keys = Object._keys;
+					setProperty(Object, 'keys', Object._keys);
 				} else {
 					delete Object.keys;
+				}
+				if (window._Set) {
+					setProperty(window, 'Set', _Set);
+				} else {
+					setProperty(window, 'Set', undefined);
 				}
 				for (var key in {
 					'contains': true,
@@ -98,29 +142,22 @@
 				}) {
 					var func = String.prototype['_' + key];
 					if (func) {
-						if (Object.defineProperty) {
-							Object.defineProperty(String.prototype, key, {
-								'configurable': true,
-								'enumerable': false,
-								'writable': true,
-								'value': func
-							});
-						} else {
-							String.prototype[key] = func;
-						}
+						setProperty(String.prototype, key, func);
 					} else {
 						delete String.prototype[key];
 					}
 					delete String.prototype['_' + key];
 				}
-				window.WinRTError = undefined;
+				setProperty(window, 'WinRTError', undefined);
+				setProperty(Function.prototype, 'toString', Function.prototype._toString);
 
 				document.createDocumentFragment = document._createDocumentFragment;
-				document._createDocumentFragment = undefined;
+				setProperty(document, '_createDocumentFragment', undefined);
 
 				delete Array._isArray;
 				delete Date._now;
 				delete Function.prototype._method;
+				delete Function.prototype._toString;
 				delete Object._create;
 				delete Object._defineProperty;
 				delete Object._getPrototypeOf;
@@ -130,6 +167,7 @@
 			addBizarroMethods();
 
 			// load Lo-Dash and expose it to the bad extensions/shims
+			document.write('<script src="./asset/set.js"><\/script>');
 			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
 		</script>
 		<script>

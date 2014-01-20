@@ -51,12 +51,12 @@
 				Function.prototype._method = function() {};
 
 				// allow bypassing native checks
-				setProperty(Function.prototype, '_toString',  _fnToString);
 				setProperty(Function.prototype, 'toString', (function() {
-					var func = Function.prototype.toString;
 					function toString() {
 						return this.toString !== toString ? this.toString() : func.call(this);
 					}
+					var func = Function.prototype.toString;
+					setProperty(Function.prototype, '_toString',  func);
 					return toString;
 				}()));
 

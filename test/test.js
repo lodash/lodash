@@ -151,7 +151,7 @@
   var empties = [[], {}].concat(falsey.slice(1));
 
   /** Used as the size when optimizations are enabled for large arrays */
-  var largeArraySize = 75;
+  var LARGE_ARRAY_SIZE = 75;
 
   /** Used to set property descriptors */
   var defineProperty = (function() {
@@ -193,6 +193,32 @@
   }
 
   /**
+   * Sets a non-enumerable property value on `object`.
+   *
+   * @private
+   * @param {Object} object The object augment.
+   * @param {string} key The name of the property to set.
+   * @param {*} value The property value.
+   */
+  var setProperty = (function() {
+    if (!defineProperty) {
+      return function(object, key, value) {
+        object[key] = value;
+      };
+    }
+    return function(object, key, value) {
+      // avoid a bug where overwriting non-enumerable built-ins makes them enumerable
+      // https://code.google.com/p/v8/issues/detail?id=1623
+      defineProperty(object, key, {
+        'configurable': true,
+        'enumerable': false,
+        'writable': true,
+        'value': value
+      });
+    };
+  }());
+
+  /**
    * Skips a given number of tests with a passing result.
    *
    * @private
@@ -211,8 +237,6 @@
   (function() {
     if (!amd) {
       try {
-        emptyObject(require.cache);
-
         _.extend(_, require('vm').runInNewContext([
           '({',
           "'_arguments': (function() { return arguments; }(1, 2, 3)),",
@@ -231,61 +255,60 @@
         ].join('\n')));
 
         // fake `WinRTError`
-        global.WinRTError = Error;
+        setProperty(global, 'WinRTError', Error);
 
         // fake DOM
-        global.window = {
-          'document': {
-            'createDocumentFragment': function() {
-              return { 'nodeType': 11 };
-            }
-          }
-        };
+        setProperty(global, 'window', {});
+        setProperty(global.window, 'document', {});
+        setProperty(global.window.document, 'createDocumentFragment', function() {
+          return { 'nodeType': 11 };
+        });
 
         // add extensions
         Function.prototype._method = function() {};
 
         // set bad shims
         var _isArray = Array.isArray;
-        Array.isArray = function() {};
+        setProperty(Array, 'isArray', function() {});
 
         var _now = Date.now;
-        Date.now = function() {};
+        setProperty(Date, 'now', function() {});
 
         var _create = Object.create;
-        Object.create = function() {};
+        setProperty(Object, 'create', function() {});
 
         var _defineProperty = Object.defineProperty;
-        Object.defineProperty = function() {};
+        setProperty(Object, 'defineProperty', function() {});
 
         var _getPrototypeOf = Object.getPrototypeOf;
-        Object.getPrototypeOf = function() {};
+        setProperty(Object, 'getPrototypeOf', function() {});
 
         var _keys = Object.keys;
-        Object.keys = function() {};
+        setProperty(Object, 'keys', function() {});
 
         var _contains = String.prototype.contains;
-        String.prototype.contains = _contains ? function() {} : Boolean;
+        setProperty(String.prototype, 'contains',  _contains ? function() {} : Boolean);
 
         var _trim = String.prototype.trim;
-        String.prototype.trim = _trim ? function() {} : String;
+        setProperty(String.prototype, 'trim', _trim ? function() {} : String);
 
         var _trimLeft = String.prototype.trimLeft;
-        String.prototype.trimLeft = _trimLeft ? function() {} : String;
+        setProperty(String.prototype, 'trimLeft', _trimLeft ? function() {} : String);
 
         var _trimRight = String.prototype.trimRight;
-        String.prototype.trimRight = _trimRight ? function() {} : String;
+        setProperty(String.prototype, 'trimRight',  _trimRight ? function() {} : String);
 
         // load Lo-Dash and expose it to the bad extensions/shims
+        emptyObject(require.cache);
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
 
         // restore native methods
-        Array.isArray = _isArray;
-        Date.now = _now;
-        Object.create = _create;
-        Object.defineProperty = _defineProperty;
-        Object.getPrototypeOf = _getPrototypeOf;
-        Object.keys = _keys;
+        setProperty(Array,  'isArray', _isArray);
+        setProperty(Date,   'now', _now);
+        setProperty(Object, 'create', _create);
+        setProperty(Object, 'defineProperty', _defineProperty);
+        setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
+        setProperty(Object, 'keys', _keys);
 
         _.forOwn({
           'contains': _contains,
@@ -295,14 +318,7 @@
         },
         function(func, key) {
           if (func) {
-            // avoid a bug where overwriting non-enumerable built-ins makes them enumerable
-            // https://code.google.com/p/v8/issues/detail?id=1623
-            defineProperty(String.prototype, key, {
-              'configurable': true,
-              'enumerable': false,
-              'writable': true,
-              'value': func
-            });
+            setProperty(String.prototype, key, func);
           } else {
             delete String.prototype[key];
           }
@@ -2030,7 +2046,7 @@
     });
 
     test('should work with large arrays', 1, function() {
-      var array1 = _.range(largeArraySize),
+      var array1 = _.range(LARGE_ARRAY_SIZE),
           array2 = array1.slice(),
           a = {},
           b = {},
@@ -2045,7 +2061,7 @@
     test('should work with large arrays of objects', 1, function() {
       var object = {};
 
-      var largeArray = _.times(largeArraySize, function() {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
         return object;
       });
 
@@ -2948,7 +2964,7 @@
           stringObject = Object(stringLiteral),
           expected = [stringLiteral, stringObject];
 
-      var largeArray = _.times(largeArraySize, function(count) {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, function(count) {
         return count % 2 ? stringObject : stringLiteral;
       });
 
@@ -3227,6 +3243,10 @@
     var array = [1, new Foo, 3, new Foo],
         indexOf = _.indexOf;
 
+    var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
+      return new Foo;
+    });
+
     test('`_.contains` should work with a custom `_.indexOf` method', 1, function() {
       if (!isModularize) {
         _.indexOf = custom;
@@ -3238,25 +3258,27 @@
       }
     });
 
-    test('`_.difference` should work with a custom `_.indexOf` method', 1, function() {
+    test('`_.difference` should work with a custom `_.indexOf` method', 2, function() {
       if (!isModularize) {
         _.indexOf = custom;
         deepEqual(_.difference(array, [new Foo]), [1, 3]);
+        deepEqual(_.difference(array, largeArray), [1, 3]);
         _.indexOf = indexOf;
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 
-    test('`_.intersection` should work with a custom `_.indexOf` method', 1, function() {
+    test('`_.intersection` should work with a custom `_.indexOf` method', 2, function() {
       if (!isModularize) {
         _.indexOf = custom;
         deepEqual(_.intersection(array, [new Foo]), [array[1]]);
+        deepEqual(_.intersection(largeArray, [new Foo]), [array[1]]);
         _.indexOf = indexOf;
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 
@@ -3264,11 +3286,6 @@
       if (!isModularize) {
         _.indexOf = custom;
         deepEqual(_.uniq(array), array.slice(0, 3));
-
-        var largeArray = _.times(largeArraySize, function() {
-          return new Foo;
-        });
-
         deepEqual(_.uniq(largeArray), [largeArray[0]]);
         _.indexOf = indexOf;
       }
@@ -3388,7 +3405,7 @@
       var object = {},
           expected = [object];
 
-      var largeArray = _.times(largeArraySize, function() {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
         return object;
       });
 
@@ -8202,7 +8219,7 @@
     test('should work with large arrays', 1, function() {
       var object = {};
 
-      var largeArray = _.times(largeArraySize, function(index) {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, function(index) {
         switch (index % 3) {
           case 0: return 0;
           case 1: return 'a';
@@ -8247,7 +8264,7 @@
     test('should work with large arrays of boolean, `null`, and `undefined` values', 1, function() {
       var array = [],
           expected = [true, false, null, undefined],
-          count = Math.ceil(largeArraySize / expected.length);
+          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
       _.times(count, function() {
         push.apply(array, expected);
@@ -8258,7 +8275,7 @@
     test('should distinguish between numbers and numeric strings', 1, function() {
       var array = [],
           expected = ['2', 2, Object('2'), Object(2)],
-          count = Math.ceil(largeArraySize / expected.length);
+          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
       _.times(count, function() {
         push.apply(array, expected);

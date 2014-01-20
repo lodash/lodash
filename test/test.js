@@ -2879,11 +2879,8 @@
     });
 
     test('`_.' + methodName + '` should work with `_.reduce`', 1, function() {
-      var actual = { 'a': 1},
-          array = [{ 'b': 2 }, { 'c': 3 }];
-
-      _.reduce(array, func, actual);
-      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3});
+      var array = [{ 'b': 2 }, { 'c': 3 }];
+      deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
     });
   });
 

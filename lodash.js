@@ -4715,7 +4715,7 @@
      */
     function curry(func, arity) {
       if (typeof arity != 'number') {
-        arity = +arity || null;
+        arity = +arity || (func ? func.length : 0);
       }
       return createWrapper(func, CURRY_FLAG, arity);
     }

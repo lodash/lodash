@@ -1,6 +1,9 @@
 ;(function(root, undefined) {
   'use strict';
 
+  /** Used as the size when optimizations are enabled for arrays */
+  var LARGE_ARRAY_SIZE = 75;
+
   /** Used to store Lo-Dash to test for bad extensions/shims */
   var lodashBizarro = root.lodashBizarro;
 
@@ -144,14 +147,14 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
+  /** Used as the property name for wrapper metadata */
+  var expando = '__lodash@'  + _.VERSION + '__';
+
   /** Used to pass falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
   /** Used to pass empty values to methods */
   var empties = [[], {}].concat(falsey.slice(1));
-
-  /** Used as the size when optimizations are enabled for large arrays */
-  var LARGE_ARRAY_SIZE = 75;
 
   /** Used to set property descriptors */
   var defineProperty = (function() {
@@ -468,7 +471,7 @@
         } catch(e) {
           actual = null;
         }
-        equal('__bindData__' in actual, false, message('Object.defineProperty'));
+        equal(expando in actual, false, message('Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -1503,7 +1506,7 @@
       }
     });
 
-    test('should only write `__bindData__` to named functions', 3, function() {
+    test('should only write metadata to named functions', 3, function() {
       function a() {};
       function c() {};
 
@@ -1512,16 +1515,16 @@
 
       if (defineProperty && _.support.funcDecomp) {
         _.createCallback(a, object);
-        ok('__bindData__' in a);
+        ok(expando in a);
 
         _.createCallback(b, object);
-        equal('__bindData__' in b, false);
+        equal(expando in b, false);
 
         if (_.support.funcNames) {
           _.support.funcNames = false;
           _.createCallback(c, object);
 
-          ok('__bindData__' in c);
+          ok(expando in c);
           _.support.funcNames = true;
         }
         else {
@@ -1533,12 +1536,12 @@
       }
     });
 
-    test('should not write `__bindData__` when `_.support.funcDecomp` is `false`', 1, function() {
+    test('should not write metadata when `_.support.funcDecomp` is `false`', 1, function() {
       function a() {};
 
       if (defineProperty && lodashBizarro) {
         lodashBizarro.createCallback(a, {});
-        equal('__bindData__' in a, false);
+        equal(expando in a, false);
       }
       else {
         skipTest();
@@ -1557,13 +1560,12 @@
 
     test('should curry based on the number of arguments provided', 3, function() {
       var curried = _.curry(func);
-
       equal(curried(1)(2)(3), 6);
       equal(curried(1, 2)(3), 6);
       equal(curried(1, 2, 3), 6);
     });
 
-    test('should work with partial methods', 2, function() {
+    test('should work with partialed methods', 2, function() {
       var curried = _.curry(func),
           a = _.partial(curried, 1),
           b = _.partialRight(a, 3),
@@ -1576,7 +1578,6 @@
     test('should return a function with a `length` of `0`', 6, function() {
       _.times(2, function(index) {
         var curried = index ? _.curry(func, 4) : _.curry(func);
-
         strictEqual(curried.length, 0);
         strictEqual(curried(1).length, 0);
         strictEqual(curried(1, 2).length, 0);
@@ -1599,9 +1600,7 @@
         var value = this || {};
         return value[a] + value[b] + value[c];
       }
-
       var object = { 'a': 1, 'b': 2, 'c': 3 };
-
       equal(_.curry(_.bind(func, object), 3)('a')('b')('c'), 6);
       equal(_.curry(_.bind(func, object), 3)('a', 'b')('c'), 6);
       equal(_.curry(_.bind(func, object), 3)('a', 'b', 'c'), 6);
@@ -1611,7 +1610,6 @@
       equal(_.bind(_.curry(func), object)('a', 'b', 'c'), 6);
 
       object.func = _.curry(func);
-
       ok(_.isEqual(object.func('a')('b')('c'), NaN));
       ok(_.isEqual(object.func('a', 'b')('c'), NaN));
       equal(object.func('a', 'b', 'c'), 6);
@@ -5862,22 +5860,18 @@
         isPartial = methodName == 'partial';
 
     test('`_.' + methodName + '` partially applies without additional arguments', 1, function() {
-      var arg = 'a',
-          fn = function(x) { return x; };
-
-      equal(func(fn, arg)(), arg);
+      var fn = function(a) { return a; };
+      equal(func(fn, 'a')(), 'a');
     });
 
     test('`_.' + methodName + '` partially applies with additional arguments', 1, function() {
-      var arg1 = 'a',
-          arg2 = 'b',
-          expected = [arg1, arg2],
-          fn = function(x, y) { return [x, y]; };
+      var expected = ['a', 'b'],
+          fn = function(a, b) { return [a, b]; };
 
       if (!isPartial) {
         expected.reverse();
       }
-      deepEqual(func(fn, arg1)(arg2), expected);
+      deepEqual(func(fn, 'a')('b'), expected);
     });
 
     test('`_.' + methodName + '` works without partially applying arguments, without additional arguments', 1, function() {
@@ -5886,10 +5880,8 @@
     });
 
     test('`_.' + methodName + '` works without partially applying arguments, with additional arguments', 1, function() {
-      var arg = 'a',
-          fn = function(x) { return x; };
-
-      equal(func(fn)(arg), arg);
+      var fn = function(a) { return a; };
+      equal(func(fn)('a'), 'a');
     });
 
     test('`_.' + methodName + '` should not alter the `this` binding', 3, function() {
@@ -5910,7 +5902,7 @@
       strictEqual(actual.length, 0);
     });
 
-    test('ensure `new bound` is an instance of `func`', 2, function() {
+    test('`_.' + methodName + '` ensure `new bound` is an instance of `func`', 2, function() {
       function Foo(value) {
         return value && object;
       }
@@ -5921,7 +5913,7 @@
       strictEqual(new bound(true), object);
     });
 
-    test('`_.' + methodName + '` should clone `__bindData__` for created functions', 3, function() {
+    test('`_.' + methodName + '` should clone metadata for created functions', 3, function() {
       function greet(greeting, name) {
         return greeting + ' ' + name;
       }
@@ -5932,6 +5924,14 @@
       equal(par1('fred'), isPartial ? 'hi fred' : 'fred hi')
       equal(par2(), isPartial ? 'hi barney'  : 'barney hi');
       equal(par3(), isPartial ? 'hi pebbles' : 'pebbles hi');
+    });
+
+    test('`_.' + methodName + '` should work with curried methods', 2, function() {
+      var fn = function(a, b, c) { return a + b + c; },
+          curried = _.curry(func(fn, 1));
+
+      equal(curried(2, 3), 6);
+      equal(curried(2)(3), 6);
     });
   });
 

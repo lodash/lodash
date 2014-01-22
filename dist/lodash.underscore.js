@@ -4597,6 +4597,7 @@
    *
    * @static
    * @memberOf _
+   * @alias callback
    * @category Utilities
    * @param {*} [func=identity] The value to convert to a callback.
    * @param {*} [thisArg] The `this` binding of the created callback.
@@ -5011,7 +5012,6 @@
   lodash.wrap = wrap;
   lodash.zip = zip;
 
-  // add aliases
   lodash.collect = map;
   lodash.drop = rest;
   lodash.each = forEach;

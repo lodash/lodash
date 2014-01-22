@@ -5012,6 +5012,7 @@
   lodash.wrap = wrap;
   lodash.zip = zip;
 
+  // add aliases
   lodash.collect = map;
   lodash.drop = rest;
   lodash.each = forEach;

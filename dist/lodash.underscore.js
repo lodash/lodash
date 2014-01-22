@@ -41,14 +41,8 @@
       reEvaluate = /<%([\s\S]+?)%>/g,
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
-  /** Used to detected named functions */
-  var reFuncName = /^\s*function[ \n\r\t]+\w/;
-
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
-
-  /** Used to detect functions containing a `this` reference */
-  var reThis = /\bthis\b/;
 
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
@@ -63,14 +57,6 @@
       objectClass = '[object Object]',
       regexpClass = '[object RegExp]',
       stringClass = '[object String]';
-
-  /** Used as the property descriptor for wrapper metadata */
-  var descriptor = {
-    'configurable': false,
-    'enumerable': false,
-    'value': null,
-    'writable': false
-  };
 
   /**
    * Used to convert characters to HTML entities:
@@ -249,19 +235,7 @@
       hasOwnProperty = objectProto.hasOwnProperty,
       push = arrayRef.push,
       propertyIsEnumerable = objectProto.propertyIsEnumerable,
-      splice = arrayRef.splice,
-      unshift = arrayRef.unshift;
-
-  /** Used to set meta data on functions */
-  var defineProperty = (function() {
-    // IE 8 only accepts DOM elements
-    try {
-      var o = {},
-          func = isNative(func = Object.defineProperty) && func,
-          result = func(o, o, o) && func;
-    } catch(e) { }
-    return result;
-  }());
+      splice = arrayRef.splice;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
@@ -470,7 +444,6 @@
       }
       return func.apply(thisArg, args || arguments);
     }
-    setData(bound, data);
     return bound;
   }
 
@@ -516,28 +489,6 @@
     }
     // exit early for no `thisArg` or already bound by `Function#bind`
     if (typeof thisArg == 'undefined' || !('prototype' in func)) {
-      return func;
-    }
-    var data = func[expando];
-    if (typeof data == 'undefined') {
-      if (support.funcNames) {
-        data = !func.name;
-      }
-      data = data || !support.funcDecomp;
-      if (!data) {
-        var source = fnToString.call(func);
-        if (!support.funcNames) {
-          data = !reFuncName.test(source);
-        }
-        if (!data) {
-          // checks if `func` references the `this` keyword and stores the result
-          data = reThis.test(source);
-          setData(func, data);
-        }
-      }
-    }
-    // exit early if there are no `this` references or `func` is bound
-    if (data === false || (data !== true && data[1] & BIND_FLAG)) {
       return func;
     }
     switch (argCount) {
@@ -612,7 +563,6 @@
       }
       return func.apply(thisBinding, args);
     }
-    setData(bound, data);
     return bound;
   }
 
@@ -971,62 +921,16 @@
       bitmask &= ~PARTIAL_RIGHT_FLAG;
       isPartialRight = partialRightArgs = false;
     }
-    var data = !isBindKey && func[expando];
-    if (data && data !== true) {
-      // shallow clone `data`
-      data = slice(data);
-
-      // clone partial left arguments
-      if (data[4]) {
-        data[4] = slice(data[4]);
-      }
-      // clone partial right arguments
-      if (data[5]) {
-        data[5] = slice(data[5]);
-      }
-      // set arity if provided
-      if (typeof arity == 'number') {
-        data[2] = arity;
-      }
-      // set `thisArg` if not previously bound
-      var bound = data[1] & BIND_FLAG;
-      if (isBind && !bound) {
-        data[3] = thisArg;
-      }
-      // set if currying a bound function
-      if (!isBind && bound) {
-        bitmask |= CURRY_BOUND_FLAG;
-      }
-      // append partial left arguments
-      if (isPartial) {
-        if (data[4]) {
-          push.apply(data[4], partialArgs);
-        } else {
-          data[4] = partialArgs;
-        }
-      }
-      // prepend partial right arguments
-      if (isPartialRight) {
-        if (data[5]) {
-          unshift.apply(data[5], partialRightArgs);
-        } else {
-          data[5] = partialRightArgs;
-        }
-      }
-      // merge flags
-      data[1] |= bitmask;
-      return createWrapper.apply(null, data);
-    }
     if (arity == null) {
       arity = isBindKey ? 0 : func.length;
     } else if (arity < 0) {
       arity = 0;
     }
     // fast path for `_.bind`
-    data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs];
+    var newData = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs];
     return (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG))
-      ? baseBind(data)
-      : baseCreateWrapper(data);
+      ? baseBind(newData)
+      : baseCreateWrapper(newData);
   }
 
   /**
@@ -1052,18 +956,6 @@
   function isNative(value) {
     return typeof value == 'function' && reNative.test(fnToString.call(value));
   }
-
-  /**
-   * Sets wrapper metadata on a given function.
-   *
-   * @private
-   * @param {Function} func The function to set data on.
-   * @param {Array} value The data array to set.
-   */
-  var setData = !defineProperty ? noop : function(func, value) {
-    descriptor.value = value;
-    defineProperty(func, expando, descriptor);
-  };
 
   /*--------------------------------------------------------------------------*/
 

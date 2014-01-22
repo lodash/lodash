@@ -1648,10 +1648,10 @@
         arity = 0;
       }
       // fast path for `_.bind`
-      data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs];
+      var newData = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs];
       return (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG))
-        ? baseBind(data)
-        : baseCreateWrapper(data);
+        ? baseBind(newData)
+        : baseCreateWrapper(newData);
     }
 
     /**
@@ -4428,7 +4428,7 @@
      */
     function curry(func, arity) {
       if (typeof arity != 'number') {
-        arity = +arity || null;
+        arity = +arity || (func ? func.length : 0);
       }
       return createWrapper(func, CURRY_FLAG, arity);
     }

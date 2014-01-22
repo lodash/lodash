@@ -5928,7 +5928,7 @@
 
     test('`_.' + methodName + '` should work with curried methods', 2, function() {
       var fn = function(a, b, c) { return a + b + c; },
-          curried = _.curry(func(fn, 1));
+          curried = _.curry(func(fn, 1), 2);
 
       equal(curried(2, 3), 6);
       equal(curried(2)(3), 6);

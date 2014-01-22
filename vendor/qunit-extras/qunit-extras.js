@@ -155,7 +155,7 @@
      * @param {number} delay The number of milliseconds to delay the `fn` call.
      * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
      * @param {boolean} repeated A flag to specify whether `fn` is called repeatedly.
-     * @returns {number} The the ID of the timeout.
+     * @returns {number} The ID of the timeout.
      */
     function schedule(fn, delay, args, repeated) {
       // Rhino 1.7RC4 will error assigning `task` below
@@ -204,7 +204,7 @@
      * @param {Function|string} fn The function to call or string to evaluate.
      * @param {number} delay The number of milliseconds to delay each `fn` call.
      * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
-     * @returns {number} The the ID of the timeout.
+     * @returns {number} The ID of the timeout.
      */
     function setInterval(fn, delay) {
       return schedule(fn, delay, slice.call(arguments, 2), true);
@@ -217,7 +217,7 @@
      * @param {Function|string} fn The function to call or string to evaluate.
      * @param {number} delay The number of milliseconds to delay the `fn` call.
      * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
-     * @returns {number} The the ID of the timeout.
+     * @returns {number} The ID of the timeout.
      */
     function setTimeout(fn, delay) {
       return schedule(fn, delay, slice.call(arguments, 2));

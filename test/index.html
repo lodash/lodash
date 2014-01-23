@@ -52,11 +52,18 @@
 				Function.prototype._method = function() {};
 
 				// allow bypassing native checks
-				var _toString = Function.prototype.toString;
-				setProperty(Function.prototype, '_toString', _toString);
-				setProperty(Function.prototype, 'toString', function() {
-					return this === Set ? this.toString() : _toString.call(this);
-				});
+				var _fnToString = Function.prototype.toString;
+				setProperty(Function.prototype, '_toString', _fnToString);
+
+				setProperty(Function.prototype, 'toString', (function() {
+					function fnToString() {
+						setProperty(Function.prototype, 'toString', _fnToString);
+						var result = this === Set ? this.toString() : _fnToString.call(this);
+						setProperty(Function.prototype, 'toString', fnToString);
+						return result;
+					}
+					return fnToString;
+				}()));
 
 				// set bad shims
 				setProperty(Array, '_isArray', Array.isArray);
@@ -198,7 +205,7 @@
 				var reBasename = /[\w.-]+$/,
 				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
-				    locationPath = modulePath.replace(reBasename, ''),
+				    locationPath = modulePath.replace(reBasename, '').replace(/\/$/, ''),
 				    moduleMain = modulePath.match(reBasename)[0],
 				    uid = +new Date;
 
@@ -227,7 +234,7 @@
 							},
 							{
 								'name': 'test',
-								'location': basePath + '/test',
+								'location': basePath + 'test',
 								'main': 'test',
 								'config': {
 									// work around no global being exported

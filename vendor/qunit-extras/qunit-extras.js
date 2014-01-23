@@ -4,8 +4,14 @@
  * Based on a gist by Jörn Zaefferer <https://gist.github.com/722381>
  * Available under MIT license <http://mths.be/mit>
  */
-;(function(root, undefined) {
+;(function() {
   'use strict';
+
+  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  var undefined;
+
+  /** Used as a horizontal rule in console output */
+  var hr = '----------------------------------------';
 
   /** Native method shortcut */
   var unshift = Array.prototype.unshift;
@@ -27,15 +33,21 @@
     '&#39;': "'"
   };
 
-  /** Used as a horizontal rule in console output */
-  var hr = '----------------------------------------';
+  /** Used to determine if values are of the language type Object */
+  var objectTypes = {
+    'function': true,
+    'object': true
+  };
+
+  /** Used as a reference to the global object */
+  var root = (objectTypes[typeof window] && window) || this;
 
   /** Detect free variable `exports` */
-  var freeExports = typeof exports == 'object' && exports;
+  var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
 
-  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `root` */
-  var freeGlobal = typeof global == 'object' && global;
-  if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
+  var freeGlobal = objectTypes[typeof global] && global;
+  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
     root = freeGlobal;
   }
 
@@ -562,9 +574,9 @@
   /*--------------------------------------------------------------------------*/
 
   // expose QUnit extras
-  if (freeExports && !freeExports.nodeType) {
+  if (freeExports) {
     freeExports.runInContext = runInContext;
   } else {
     runInContext(root);
   }
-}(this));
+}.call(this));

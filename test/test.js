@@ -272,10 +272,16 @@
         });
 
         // allow bypassing native checks
-        var _toString = Function.prototype.toString;
-        setProperty(Function.prototype, 'toString', function() {
-          return this === Set ? this.toString() : _toString.call(this);
-        });
+        var _fnToString = Function.prototype.toString;
+        setProperty(Function.prototype, 'toString', (function() {
+          function fnToString() {
+            setProperty(Function.prototype, 'toString', _fnToString);
+            var result = this === Set ? this.toString() : _fnToString.call(this);
+            setProperty(Function.prototype, 'toString', fnToString);
+            return result;
+          }
+          return fnToString;
+        }()));
 
         // add extensions
         Function.prototype._method = function() {};
@@ -325,7 +331,7 @@
         setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
         setProperty(Object, 'keys', _keys);
 
-        setProperty(Function.prototype, 'toString', _toString);
+        setProperty(Function.prototype, 'toString', _fnToString);
 
         _.forOwn({
           'contains': _contains,

@@ -14,6 +14,7 @@
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="../vendor/qunit-extras/qunit-extras.js"></script>
 		<script src="../vendor/platform.js/platform.js"></script>
+		<script src="./asset/set.js"></script>
 		<script src="./asset/test-ui.js"></script>
 		<div id="qunit"></div>
 		<div id="exports"></div>
@@ -51,14 +52,11 @@
 				Function.prototype._method = function() {};
 
 				// allow bypassing native checks
-				setProperty(Function.prototype, 'toString', (function() {
-					function toString() {
-						return this.toString !== toString ? this.toString() : func.call(this);
-					}
-					var func = Function.prototype.toString;
-					setProperty(Function.prototype, '_toString',  func);
-					return toString;
-				}()));
+				var _toString = Function.prototype.toString;
+				setProperty(Function.prototype, '_toString', _toString);
+				setProperty(Function.prototype, 'toString', function() {
+					return this === Set ? this.toString() : _toString.call(this);
+				});
 
 				// set bad shims
 				setProperty(Array, '_isArray', Array.isArray);
@@ -91,7 +89,6 @@
 				setProperty(String.prototype, '_trimRight', String.prototype.trimRight);
 				setProperty(String.prototype, 'trimRight', String.prototype._trimRight ? function() {} : String);
 
-				setProperty(window, '_Set', window.Set);
 				setProperty(window, 'WinRTError', Error);
 
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
@@ -129,11 +126,6 @@
 				} else {
 					delete Object.keys;
 				}
-				if (window._Set) {
-					setProperty(window, 'Set', _Set);
-				} else {
-					setProperty(window, 'Set', undefined);
-				}
 				for (var key in {
 					'contains': true,
 					'trim': true,
@@ -164,11 +156,11 @@
 				delete Object._keys;
 			}
 
-			addBizarroMethods();
-
 			// load Lo-Dash and expose it to the bad extensions/shims
-			document.write('<script src="./asset/set.js"><\/script>');
-			document.write('<script src="' + (ui.isModularize ? '../lodash.js' : ui.buildPath) + '"><\/script>');
+			if (!ui.isModularize) {
+				addBizarroMethods();
+				document.write('<script src="' + ui.buildPath + '"><\/script>');
+			}
 		</script>
 		<script>
 			QUnit.config.hidepassed = true;
@@ -180,10 +172,11 @@
 			});
 
 			// store Lo-Dash to test for bad extensions/shims
-			var lodashBizarro = window._;
-			window._ = undefined;
-			removeBizarroMethods();
-
+			if (!ui.isModularize) {
+				var lodashBizarro = window._;
+				window._ = undefined;
+				removeBizarroMethods();
+			}
 			// load Lo-Dash and test scripts
 			document.write(ui.urlParams.loader == 'none'
 				? '<script src="' + ui.buildPath + '"><\/script><script src="test.js"><\/script>'

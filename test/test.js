@@ -240,6 +240,7 @@
   (function() {
     if (!amd) {
       try {
+        // add values from a different realm
         _.extend(_, require('vm').runInNewContext([
           '({',
           "'_arguments': (function() { return arguments; }(1, 2, 3)),",
@@ -257,6 +258,9 @@
           '})'
         ].join('\n')));
 
+        // load ES6 Set shim
+        require('./asset/set');
+
         // fake `WinRTError`
         setProperty(global, 'WinRTError', Error);
 
@@ -265,6 +269,12 @@
         setProperty(global.window, 'document', {});
         setProperty(global.window.document, 'createDocumentFragment', function() {
           return { 'nodeType': 11 };
+        });
+
+        // allow bypassing native checks
+        var _toString = Function.prototype.toString;
+        setProperty(Function.prototype, 'toString', function() {
+          return this === Set ? this.toString() : _toString.call(this);
         });
 
         // add extensions
@@ -301,8 +311,10 @@
         var _trimRight = String.prototype.trimRight;
         setProperty(String.prototype, 'trimRight',  _trimRight ? function() {} : String);
 
-        // load Lo-Dash and expose it to the bad extensions/shims
+        // clear cache so Lo-Dash can be reloaded
         emptyObject(require.cache);
+
+        // load Lo-Dash and expose it to the bad extensions/shims
         lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
 
         // restore native methods
@@ -312,6 +324,8 @@
         setProperty(Object, 'defineProperty', _defineProperty);
         setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
         setProperty(Object, 'keys', _keys);
+
+        setProperty(Function.prototype, 'toString', _toString);
 
         _.forOwn({
           'contains': _contains,
@@ -435,13 +449,17 @@
       }
     });
 
-    test('should avoid overwritten native methods', 11, function() {
+    test('should avoid overwritten native methods', 12, function() {
       function Foo() {}
 
       function message(methodName) {
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
       var object = { 'a': true };
+
+      var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
+        return object;
+      });
 
       if (lodashBizarro) {
         try {
@@ -488,6 +506,17 @@
         deepEqual(actual, [['a'], []], message('Object.keys'));
 
         try {
+          actual = [
+            lodashBizarro.difference([object], largeArray),
+            lodashBizarro.intersection(largeArray, [object]),
+            lodashBizarro.uniq(largeArray)
+          ];
+        } catch(e) {
+          actual = null;
+        }
+        deepEqual(actual, [[], [object], [object]], message('Set'));
+
+        try {
           actual = lodashBizarro.contains('abc', 'c');
         } catch(e) {
           actual = null;
@@ -509,7 +538,7 @@
         });
       }
       else {
-        skipTest(11);
+        skipTest(12);
       }
     });
   }());

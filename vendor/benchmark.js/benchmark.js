@@ -5,17 +5,16 @@
  * Modified by John-David Dalton <http://allyoucanleet.com/>
  * Available under MIT license <http://mths.be/mit>
  */
-;(function(undefined) {
+;(function() {
   'use strict';
+
+  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  var undefined;
 
   /** Used to determine if values are of the language type Object */
   var objectTypes = {
-    'boolean': false,
     'function': true,
-    'object': true,
-    'number': false,
-    'string': false,
-    'undefined': false
+    'object': true
   };
 
   /** Used as a reference to the global object */
@@ -27,9 +26,9 @@
   /** Detect free variable `exports` */
   var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
 
-  /** Detect free variable `global`, from Node.js or Browserified code, and use it as `root` */
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
   var freeGlobal = objectTypes[typeof global] && global;
-  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
+  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
     root = freeGlobal;
   }
 

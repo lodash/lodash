@@ -55,74 +55,73 @@
 
     function init() {
       var toolbar = document.getElementById('qunit-testrunner-toolbar');
-      if (toolbar) {
-        toolbar.appendChild(span1);
-        toolbar.appendChild(span2);
-
-        buildList.selectedIndex = (function() {
-          switch (build) {
-            case 'lodash-compat':     return 1;
-            case 'lodash-modern-dev': return 2;
-            case 'lodash-modern':     return 3;
-            case 'lodash-legacy':     return 4;
-            case 'lodash-mobile':     return 5;
-            case 'lodash-underscore': return 6;
-            case 'lodash-custom-dev': return 7;
-            case 'lodash-custom':     return 8;
-            case 'lodash-compat-dev':
-            case null:                return 0;
-          }
-          return -1;
-        }());
-
-        loaderList.selectedIndex = (function() {
-          switch (loader) {
-            case 'curl':      return 1;
-            case 'dojo':      return 2;
-            case 'requirejs': return 3;
-            case 'none':
-            case null:        return 0;
-          }
-          return -1;
-        }());
-
-        addListener(buildList, 'change', eventHandler);
-        addListener(loaderList, 'change', eventHandler);
-      }
-      else {
+      if (!toolbar) {
         setTimeout(init, 15);
+        return;
       }
+      var span1 = document.createElement('span');
+      span1.style.cssText = 'float:right';
+      span1.innerHTML =
+        '<label for="qunit-build">Build: </label>' +
+        '<select id="qunit-build">' +
+        '<option value="lodash-compat-dev">Lo-Dash (compat development)</option>' +
+        '<option value="lodash-compat">Lo-Dash (compat production)</option>' +
+        '<option value="lodash-modern-dev">Lo-Dash (modern development)</option>' +
+        '<option value="lodash-modern">Lo-Dash (modern production)</option>' +
+        '<option value="lodash-legacy">Lo-Dash (legacy)</option>' +
+        '<option value="lodash-mobile">Lo-Dash (mobile)</option>' +
+        '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
+        '<option value="lodash-custom-dev">Lo-Dash (custom development)</option>' +
+        '<option value="lodash-custom">Lo-Dash (custom production)</option>' +
+        '</select>';
+
+      var span2 = document.createElement('span');
+      span2.style.cssText = 'float:right';
+      span2.innerHTML =
+        '<label for="qunit-loader">Loader: </label>' +
+        '<select id="qunit-loader">' +
+        '<option value="none">None</option>' +
+        '<option value="curl">Curl</option>' +
+        '<option value="dojo">Dojo</option>' +
+        '<option value="requirejs">RequireJS</option>' +
+        '</select>';
+
+      var buildList = span1.lastChild,
+          loaderList = span2.lastChild;
+
+      buildList.selectedIndex = (function() {
+        switch (build) {
+          case 'lodash-compat':     return 1;
+          case 'lodash-modern-dev': return 2;
+          case 'lodash-modern':     return 3;
+          case 'lodash-legacy':     return 4;
+          case 'lodash-mobile':     return 5;
+          case 'lodash-underscore': return 6;
+          case 'lodash-custom-dev': return 7;
+          case 'lodash-custom':     return 8;
+          case 'lodash-compat-dev':
+          case null:                return 0;
+        }
+        return -1;
+      }());
+
+      loaderList.selectedIndex = (function() {
+        switch (loader) {
+          case 'curl':      return 1;
+          case 'dojo':      return 2;
+          case 'requirejs': return 3;
+          case 'none':
+          case null:        return 0;
+        }
+        return -1;
+      }());
+
+      toolbar.appendChild(span1);
+      toolbar.appendChild(span2);
+
+      addListener(buildList, 'change', eventHandler);
+      addListener(loaderList, 'change', eventHandler);
     }
-
-    var span1 = document.createElement('span');
-    span1.style.cssText = 'float:right';
-    span1.innerHTML =
-      '<label for="qunit-build">Build: </label>' +
-      '<select id="qunit-build">' +
-      '<option value="lodash-compat-dev">Lo-Dash (compat development)</option>' +
-      '<option value="lodash-compat">Lo-Dash (compat production)</option>' +
-      '<option value="lodash-modern-dev">Lo-Dash (modern development)</option>' +
-      '<option value="lodash-modern">Lo-Dash (modern production)</option>' +
-      '<option value="lodash-legacy">Lo-Dash (legacy)</option>' +
-      '<option value="lodash-mobile">Lo-Dash (mobile)</option>' +
-      '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
-      '<option value="lodash-custom-dev">Lo-Dash (custom development)</option>' +
-      '<option value="lodash-custom">Lo-Dash (custom production)</option>' +
-      '</select>';
-
-    var span2 = document.createElement('span');
-    span2.style.cssText = 'float:right';
-    span2.innerHTML =
-      '<label for="qunit-loader">Loader: </label>' +
-      '<select id="qunit-loader">' +
-      '<option value="none">None</option>' +
-      '<option value="curl">Curl</option>' +
-      '<option value="dojo">Dojo</option>' +
-      '<option value="requirejs">RequireJS</option>' +
-      '</select>';
-
-    var buildList = span1.lastChild,
-        loaderList = span2.lastChild;
 
     init();
   });

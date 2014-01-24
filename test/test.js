@@ -1486,12 +1486,12 @@
   (function() {
     test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
       function func() {
-        var result = [this.x];
+        var result = [this.a];
         push.apply(result, arguments);
         return result;
       }
       var expected = [1, 2, 3],
-          object = { 'x': 1 },
+          object = { 'a': 1 },
           callback = _.createCallback(_.partial(func, 2), object);
 
       deepEqual(callback(3), expected);
@@ -1514,9 +1514,10 @@
 
     test('should return the function provided if already bound with `Function#bind`', 1, function() {
       function a() {}
-      var object = {};
 
-      var bound = a.bind && a.bind(object);
+      var object = {},
+          bound = a.bind && a.bind(object);
+
       if (bound && !('prototype' in bound)) {
         var bound = a.bind(object);
         strictEqual(_.createCallback(bound, object), bound);
@@ -5292,14 +5293,16 @@
       deepEqual(actual, shadowedProps);
     });
 
-    test('should expose a `cache` object on the `memoized` function', 2, function() {
-      var memoized = _.memoize(_.identity, _.identity);
+    test('should expose a `cache` object on the `memoized` function', 4, function() {
+      _.forEach(['_a', 'a'], function(key, index) {
+        var memoized = _.memoize(_.identity, index && _.identity);
 
-      memoized('x');
-      equal(memoized.cache.x, 'x');
+        memoized('a');
+        equal(memoized.cache[key], 'a');
 
-      memoized.cache.x = 'y';
-      equal(memoized('x'), 'y');
+        memoized.cache[key] = 'b';
+        equal(memoized('a'), 'b');
+      });
     });
   }());
 
@@ -5900,8 +5903,8 @@
     });
 
     test('`_.' + methodName + '` partially applies with additional arguments', 1, function() {
-      var expected = ['a', 'b'],
-          fn = function(a, b) { return [a, b]; };
+      var fn = function(a, b) { return [a, b]; },
+          expected = ['a', 'b'];
 
       if (!isPartial) {
         expected.reverse();
@@ -5920,8 +5923,8 @@
     });
 
     test('`_.' + methodName + '` should not alter the `this` binding', 3, function() {
-      var object = { 'a': 1 },
-          fn = function() { return this.a; };
+      var fn = function() { return this.a; },
+          object = { 'a': 1 };
 
       strictEqual(func(_.bind(fn, object))(), object.a);
       strictEqual(_.bind(func(fn), object)(), object.a);
@@ -6003,12 +6006,12 @@
 
     test('combinations of bound and partial functions should work', 3, function() {
       function func() {
-        var result = [this.x];
+        var result = [this.a];
         push.apply(result, arguments);
         return result;
       }
       var expected = [1, 2, 3, 4],
-          object = { 'func': func, 'x': 1 };
+          object = { 'a': 1, 'func': func };
 
       var a = _.bindKey(object, 'func'),
           b = _.partialRight(a, 4),
@@ -6031,11 +6034,11 @@
 
     test('recursively bound functions should work', 1, function() {
       function func() {
-        return this.x;
+        return this.a;
       }
-      var a = _.bind(func, { 'x': 1 }),
-          b = _.bind(a, { 'x': 2 }),
-          c = _.bind(b, { 'x': 3 });
+      var a = _.bind(func, { 'a': 1 }),
+          b = _.bind(a,    { 'a': 2 }),
+          c = _.bind(b,    { 'a': 3 });
 
       strictEqual(c(), 1);
     });
@@ -7663,19 +7666,17 @@
     asyncTest('subsequent calls should return the result of the first call', 5, function() {
       if (!(isRhino && isModularize)) {
         var throttled = _.throttle(function(value) { return value; }, 32),
-            result = [throttled('x'), throttled('y')];
+            result = [throttled('a'), throttled('b')];
 
-        deepEqual(result, ['x', 'x']);
+        deepEqual(result, ['a', 'a']);
 
         setTimeout(function() {
-          var result = [throttled('a'), throttled('b')];
-
+          var result = [throttled('x'), throttled('y')];
           notEqual(result[0], 'x');
           notStrictEqual(result[0], undefined);
 
-          notEqual(result[1], 'b');
+          notEqual(result[1], 'y');
           notStrictEqual(result[1], undefined);
-
           QUnit.start();
         }, 64);
       }
@@ -7800,8 +7801,8 @@
           return value;
         }, 32, {});
 
-        equal(throttled('x'), 'x');
-        equal(throttled('y'), 'x');
+        equal(throttled('a'), 'a');
+        equal(throttled('b'), 'a');
 
         setTimeout(function() {
           strictEqual(count, 2);
@@ -7818,12 +7819,12 @@
       if (!(isRhino && isModularize)) {
         _.forEach([true, { 'leading': true }], function(options) {
           var withLeading = _.throttle(_.identity, 32, options);
-          equal(withLeading('x'), 'x');
+          equal(withLeading('a'), 'a');
         });
 
         _.forEach([false, { 'leading': false }], function(options) {
           var withoutLeading = _.throttle(_.identity, 32, options);
-          strictEqual(withoutLeading('x'), undefined);
+          strictEqual(withoutLeading('a'), undefined);
         });
       }
       else {
@@ -7846,11 +7847,11 @@
           return value;
         }, 64, { 'trailing': false });
 
-        equal(withTrailing('x'), 'x');
-        equal(withTrailing('y'), 'x');
+        equal(withTrailing('a'), 'a');
+        equal(withTrailing('b'), 'a');
 
-        equal(withoutTrailing('x'), 'x');
-        equal(withoutTrailing('y'), 'x');
+        equal(withoutTrailing('a'), 'a');
+        equal(withoutTrailing('b'), 'a');
 
         setTimeout(function() {
           equal(withCount, 2);

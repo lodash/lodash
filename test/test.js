@@ -83,7 +83,7 @@
   /** Use a single "load" function */
   var load = (typeof require == 'function' && !amd)
     ? require
-    : (isJava && root.load);
+    : (isJava && root.load) || noop;
 
   /** The unit testing framework */
   var QUnit = (function() {
@@ -91,11 +91,16 @@
       root.addEventListener || (root.addEventListener = noop),
       root.setTimeout || (root.setTimeout = noop),
       root.QUnit = load('../vendor/qunit/qunit/qunit.js') || root.QUnit,
-      (load('../vendor/qunit-extras/qunit-extras.js') || { 'runInContext': noop }).runInContext(root),
       addEventListener === noop && delete root.addEventListener,
       root.QUnit
     );
   }());
+
+  /** Load and install QUnit Extras */
+  var qa = load('../vendor/qunit-extras/qunit-extras.js');
+  if (qa) {
+    qa.runInContext(root);
+  }
 
   /*--------------------------------------------------------------------------*/
 

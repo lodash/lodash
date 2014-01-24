@@ -5,7 +5,6 @@
  * Available under MIT license <http://mths.be/mit>
  */
 ;(function() {
-  'use strict';
 
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
@@ -294,20 +293,20 @@
     QUnit.config.excused = {};
 
     /**
-     * An object used to hold information about the current running test.
+     * An object used to hold "extras" information about the current running test.
      *
      * @memberOf QUnit.config
      * @type Object
      */
-    QUnit.config.testStats = {
+    QUnit.config.extrasData = {
 
       /**
-       * An array of test summaries.
+       * An array of assertion logs.
        *
-       * @memberOf QUnit.config.testStats
+       * @memberOf QUnit.config.extrasData
        * @type Array
        */
-      'assertions': []
+      'logs': []
     };
 
     /**
@@ -329,14 +328,16 @@
         test.retries = 0;
         test.finish = function() {
           var asserts = this.assertions,
+              config = QUnit.config,
               index = -1,
               length = asserts.length,
-              queue = QUnit.config.queue;
+              queue = config.queue;
 
           while (++index < length) {
             var assert = asserts[index];
-            if (!assert.result && this.retries < QUnit.config.asyncRetries) {
+            if (!assert.result && this.retries < config.asyncRetries) {
               this.retries++;
+              config.extrasData.logs.length -= asserts.length;
               asserts.length = 0;
 
               var oldLength = queue.length;
@@ -442,16 +443,16 @@
             result = details.result,
             type = typeof expected != 'undefined' ? 'EQ' : 'OK';
 
-        var assertion = [
+        var message = [
           result ? 'PASS' : 'FAIL',
           type,
           details.message || 'ok'
         ];
 
         if (!result && type == 'EQ') {
-          assertion.push('Expected: ' + expected + ', Actual: ' + details.actual);
+          message.push('Expected: ' + expected + ', Actual: ' + details.actual);
         }
-        QUnit.config.testStats.assertions.push(assertion.join(' | '));
+        QUnit.config.extrasData.logs.push(message.join(' | '));
       });
 
       /**
@@ -481,7 +482,7 @@
        * @param {Object} details An object with properties `failed`, `name`, `passed`, and `total`.
        */
       QUnit.testDone(function(details) {
-        var assertions = QUnit.config.testStats.assertions,
+        var logs = QUnit.config.extrasData.logs,
             testName = details.name;
 
         if (details.failed > 0) {
@@ -492,12 +493,15 @@
             console.log(moduleName);
             console.log(hr);
           }
-          console.log(' FAIL - '+ testName);
-          assertions.forEach(function(value) {
-            console.log('    ' + value);
-          });
+          var index = -1,
+              length = logs.length;
+
+          console.log(' FAIL - ' + testName);
+          while(++index < length) {
+            console.log('    ' + logs[index]);
+          }
         }
-        assertions.length = 0;
+        logs.length = 0;
       });
 
       /**

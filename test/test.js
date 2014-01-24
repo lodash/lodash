@@ -1,8 +1,13 @@
-;(function(root, undefined) {
-  'use strict';
+;(function() {
+
+  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  var undefined;
 
   /** Used as the size when optimizations are enabled for arrays */
   var LARGE_ARRAY_SIZE = 75;
+
+  /** Used as a reference to the global object */
+  var root = typeof global == 'object' && global || this;
 
   /** Used to store Lo-Dash to test for bad extensions/shims */
   var lodashBizarro = root.lodashBizarro;
@@ -9192,4 +9197,4 @@
     QUnit.config.noglobals = true;
     QUnit.start();
   }
-}(typeof global == 'object' && global || this));
+}.call(this));

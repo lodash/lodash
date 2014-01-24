@@ -7677,7 +7677,7 @@
 
         setTimeout(function() {
           var result = [throttled('x'), throttled('y')];
-          notEqual(result[0], 'x');
+          notEqual(result[0], 'a');
           notStrictEqual(result[0], undefined);
 
           notEqual(result[1], 'y');

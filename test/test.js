@@ -243,147 +243,159 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // add values from other realms
+  // setup values for Node.js
   (function() {
-    if (!amd) {
-      try {
-        // add values from a different realm
-        _.extend(_, require('vm').runInNewContext([
-          '({',
-          "'_arguments': (function() { return arguments; }(1, 2, 3)),",
-          "'_array': [1, 2, 3],",
-          "'_boolean': new Boolean(false),",
-          "'_date': new Date,",
-          "'_function': function() {},",
-          "'_nan': NaN,",
-          "'_null': null,",
-          "'_number': new Number(0),",
-          "'_object': { 'a': 1, 'b': 2, 'c': 3 },",
-          "'_regexp': /x/,",
-          "'_string': new String('a'),",
-          "'_undefined': undefined,",
-          '})'
-        ].join('\n')));
+    if (amd) {
+      return;
+    }
+    try {
+      // add values from a different realm
+      _.extend(_, require('vm').runInNewContext([
+        '({',
+        "'_arguments': (function() { return arguments; }(1, 2, 3)),",
+        "'_array': [1, 2, 3],",
+        "'_boolean': new Boolean(false),",
+        "'_date': new Date,",
+        "'_function': function() {},",
+        "'_nan': NaN,",
+        "'_null': null,",
+        "'_number': new Number(0),",
+        "'_object': { 'a': 1, 'b': 2, 'c': 3 },",
+        "'_regexp': /x/,",
+        "'_string': new String('a'),",
+        "'_undefined': undefined,",
+        '})'
+      ].join('\n')));
+    }
+    catch(e) {
+      return;
+    }
+    // load ES6 Set shim
+    require('./asset/set');
 
-        // load ES6 Set shim
-        require('./asset/set');
-
-        // fake `WinRTError`
-        setProperty(global, 'WinRTError', Error);
-
-        // fake DOM
-        setProperty(global, 'window', {});
-        setProperty(global.window, 'document', {});
-        setProperty(global.window.document, 'createDocumentFragment', function() {
-          return { 'nodeType': 11 };
-        });
-
-        // allow bypassing native checks
-        var _fnToString = Function.prototype.toString;
-        setProperty(Function.prototype, 'toString', (function() {
-          function fnToString() {
-            setProperty(Function.prototype, 'toString', _fnToString);
-            var result = this === Set ? this.toString() : _fnToString.call(this);
-            setProperty(Function.prototype, 'toString', fnToString);
-            return result;
-          }
-          return fnToString;
-        }()));
-
-        // add extensions
-        Function.prototype._method = function() {};
-
-        // set bad shims
-        var _isArray = Array.isArray;
-        setProperty(Array, 'isArray', function() {});
-
-        var _now = Date.now;
-        setProperty(Date, 'now', function() {});
-
-        var _create = Object.create;
-        setProperty(Object, 'create', function() {});
-
-        var _defineProperty = Object.defineProperty;
-        setProperty(Object, 'defineProperty', function() {});
-
-        var _getPrototypeOf = Object.getPrototypeOf;
-        setProperty(Object, 'getPrototypeOf', function() {});
-
-        var _keys = Object.keys;
-        setProperty(Object, 'keys', function() {});
-
-        var _contains = String.prototype.contains;
-        setProperty(String.prototype, 'contains',  _contains ? function() {} : Boolean);
-
-        var _trim = String.prototype.trim;
-        setProperty(String.prototype, 'trim', _trim ? function() {} : String);
-
-        var _trimLeft = String.prototype.trimLeft;
-        setProperty(String.prototype, 'trimLeft', _trimLeft ? function() {} : String);
-
-        var _trimRight = String.prototype.trimRight;
-        setProperty(String.prototype, 'trimRight',  _trimRight ? function() {} : String);
-
-        // clear cache so Lo-Dash can be reloaded
-        emptyObject(require.cache);
-
-        // load Lo-Dash and expose it to the bad extensions/shims
-        lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
-
-        // restore native methods
-        setProperty(Array,  'isArray', _isArray);
-        setProperty(Date,   'now', _now);
-        setProperty(Object, 'create', _create);
-        setProperty(Object, 'defineProperty', _defineProperty);
-        setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
-        setProperty(Object, 'keys', _keys);
-
+    // expose `baseEach`
+    if (isModularize && !isNpm) {
+      var path = require('path');
+      _._baseEach = require(path.join(path.dirname(filePath), 'internals', 'baseEach.js'));
+    }
+    // allow bypassing native checks
+    var _fnToString = Function.prototype.toString;
+    setProperty(Function.prototype, 'toString', (function() {
+      function fnToString() {
         setProperty(Function.prototype, 'toString', _fnToString);
+        var result = this === Set ? this.toString() : _fnToString.call(this);
+        setProperty(Function.prototype, 'toString', fnToString);
+        return result;
+      }
+      return fnToString;
+    }()));
 
-        _.forOwn({
-          'contains': _contains,
-          'trim': _trim,
-          'trimLeft': _trimLeft,
-          'trimRight': _trimRight
-        },
-        function(func, key) {
-          if (func) {
-            setProperty(String.prototype, key, func);
-          } else {
-            delete String.prototype[key];
-          }
-        });
+    // fake DOM
+    setProperty(global, 'window', {});
+    setProperty(global.window, 'document', {});
+    setProperty(global.window.document, 'createDocumentFragment', function() {
+      return { 'nodeType': 11 };
+    });
 
-        delete global.window;
-        delete global.WinRTError;
-        delete Function.prototype._method;
-      } catch(e) { }
+    // fake `WinRTError`
+    setProperty(global, 'WinRTError', Error);
+
+    // add extensions
+    Function.prototype._method = function() {};
+
+    // set bad shims
+    var _isArray = Array.isArray;
+    setProperty(Array, 'isArray', function() {});
+
+    var _now = Date.now;
+    setProperty(Date, 'now', function() {});
+
+    var _create = Object.create;
+    setProperty(Object, 'create', function() {});
+
+    var _defineProperty = Object.defineProperty;
+    setProperty(Object, 'defineProperty', function() {});
+
+    var _getPrototypeOf = Object.getPrototypeOf;
+    setProperty(Object, 'getPrototypeOf', function() {});
+
+    var _keys = Object.keys;
+    setProperty(Object, 'keys', function() {});
+
+    var _contains = String.prototype.contains;
+    setProperty(String.prototype, 'contains',  _contains ? function() {} : Boolean);
+
+    var _trim = String.prototype.trim;
+    setProperty(String.prototype, 'trim', _trim ? function() {} : String);
+
+    var _trimLeft = String.prototype.trimLeft;
+    setProperty(String.prototype, 'trimLeft', _trimLeft ? function() {} : String);
+
+    var _trimRight = String.prototype.trimRight;
+    setProperty(String.prototype, 'trimRight',  _trimRight ? function() {} : String);
+
+    // clear cache so Lo-Dash can be reloaded
+    emptyObject(require.cache);
+
+    // load Lo-Dash and expose it to the bad extensions/shims
+    lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
+
+    // restore native methods
+    setProperty(Array,  'isArray', _isArray);
+    setProperty(Date,   'now', _now);
+    setProperty(Object, 'create', _create);
+    setProperty(Object, 'defineProperty', _defineProperty);
+    setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
+    setProperty(Object, 'keys', _keys);
+    setProperty(Function.prototype, 'toString', _fnToString);
+
+    _.forOwn({
+      'contains': _contains,
+      'trim': _trim,
+      'trimLeft': _trimLeft,
+      'trimRight': _trimRight
+    },
+    function(func, key) {
+      if (func) {
+        setProperty(String.prototype, key, func);
+      } else {
+        delete String.prototype[key];
+      }
+    });
+
+    delete global.window;
+    delete global.WinRTError;
+    delete Function.prototype._method;
+  }());
+
+  // add values from an iframe
+  (function() {
+    if (_._object || !document) {
+      return;
     }
-    if (!_._object && document) {
-      var iframe = document.createElement('iframe');
-      iframe.frameBorder = iframe.height = iframe.width = 0;
-      body.appendChild(iframe);
+    var iframe = document.createElement('iframe');
+    iframe.frameBorder = iframe.height = iframe.width = 0;
+    body.appendChild(iframe);
 
-      var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
-      idoc.write([
-        '<script>',
-        'parent._._arguments = (function() { return arguments; }(1, 2, 3));',
-        'parent._._array = [1, 2, 3];',
-        'parent._._boolean = new Boolean(false);',
-        'parent._._date = new Date;',
-        "parent._._element = document.createElement('div');",
-        'parent._._function = function() {};',
-        'parent._._nan = NaN;',
-        'parent._._null = null;',
-        'parent._._number = new Number(0);',
-        "parent._._object = { 'a': 1, 'b': 2, 'c': 3 };",
-        'parent._._regexp = /x/;',
-        "parent._._string = new String('a');",
-        'parent._._undefined = undefined;',
-        '<\/script>'
-      ].join('\n'));
-      idoc.close();
-    }
+    var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
+    idoc.write([
+      '<script>',
+      'parent._._arguments = (function() { return arguments; }(1, 2, 3));',
+      'parent._._array = [1, 2, 3];',
+      'parent._._boolean = new Boolean(false);',
+      'parent._._date = new Date;',
+      "parent._._element = document.createElement('div');",
+      'parent._._function = function() {};',
+      'parent._._nan = NaN;',
+      'parent._._null = null;',
+      'parent._._number = new Number(0);',
+      "parent._._object = { 'a': 1, 'b': 2, 'c': 3 };",
+      'parent._._regexp = /x/;',
+      "parent._._string = new String('a');",
+      'parent._._undefined = undefined;',
+      '<\/script>'
+    ].join('\n'));
+    idoc.close();
   }());
 
   // add web worker
@@ -2972,9 +2984,11 @@
 
   QUnit.module('exit early');
 
-  _.forEach(['forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
+  _.forEach(['_baseEach', 'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
-
+    if (!func) {
+      return;
+    }
     test('`_.' + methodName + '` can exit early when iterating arrays', 1, function() {
       var array = [1, 2, 3],
           values = [];

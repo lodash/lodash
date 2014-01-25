@@ -240,6 +240,12 @@
 					};
 				}
 
+				function loadTests() {
+					require(['test'], function() {
+						QUnit.start();
+					});
+				}
+
 				function loadModulesAndTests() {
 					require(getConfig(), ['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
 						var oldDash = window._;
@@ -259,9 +265,14 @@
 						if (oldDash || ui.isModularize) {
 							window._ = lodash;
 						}
-						require(['test'], function() {
-							QUnit.start();
-						});
+						if (ui.isModularize) {
+							require(['lodash/internals/baseEach'], function(baseEach) {
+								lodash._baseEach = baseEach;
+								loadTests();
+							});
+						} else {
+							loadTests();
+						}
 					});
 				}
 				if (window.requirejs) {

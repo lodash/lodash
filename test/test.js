@@ -208,14 +208,16 @@
   /**
    * Sets a non-enumerable property value on `object`.
    *
+   * Note: This function is used to avoid a bug in older versions of V8 where
+   * overwriting non-enumerable built-ins makes them enumerable.
+   * See https://code.google.com/p/v8/issues/detail?id=1623
+   *
    * @private
    * @param {Object} object The object augment.
    * @param {string} key The name of the property to set.
    * @param {*} value The property value.
    */
   function setProperty(object, key, value) {
-    // avoid a bug where overwriting non-enumerable built-ins makes them enumerable
-    // https://code.google.com/p/v8/issues/detail?id=1623
     try {
       defineProperty(object, key, {
         'configurable': true,
@@ -273,7 +275,7 @@
     // load ES6 Set shim
     require('./asset/set');
 
-    // expose `baseEach`
+    // expose `baseEach` for better code coverage
     if (isModularize && !isNpm) {
       var path = require('path');
       _._baseEach = require(path.join(path.dirname(filePath), 'internals', 'baseEach.js'));

@@ -22,8 +22,6 @@
 			var setProperty = (function() {
 				var _defineProperty = Object.defineProperty;
 				return function(object, key, value) {
-					// avoid a bug where overwriting non-enumerable built-ins makes them enumerable
-					// https://code.google.com/p/v8/issues/detail?id=1623
 					try {
 						_defineProperty(object, key, {
 							'configurable': true,
@@ -38,9 +36,6 @@
 			}());
 
 			function addBizarroMethods() {
-				// add extensions
-				Function.prototype._method = function() {};
-
 				// allow bypassing native checks
 				setProperty(Function.prototype, 'toString', (function() {
 					function fnToString() {
@@ -53,6 +48,9 @@
 					setProperty(Function.prototype, '_toString', _fnToString);
 					return fnToString;
 				}()));
+
+				// add extensions
+				Function.prototype._method = function() {};
 
 				// set bad shims
 				setProperty(Array, '_isArray', Array.isArray);

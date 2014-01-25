@@ -20,31 +20,21 @@
 		<div id="exports"></div>
 		<script>
 			var setProperty = (function() {
-				var defineProperty = (function() {
-					try {
-						var o = {},
-						    func = Object.defineProperty,
-						    result = func(o, o, o) && func;
-					} catch(e) { }
-					return result;
-				}());
-
-				if (!defineProperty) {
-					return function(object, key, value) {
-						object[key] = value;
-					};
-				}
+				var _defineProperty = Object.defineProperty;
 				return function(object, key, value) {
 					// avoid a bug where overwriting non-enumerable built-ins makes them enumerable
 					// https://code.google.com/p/v8/issues/detail?id=1623
-					defineProperty(object, key, {
-						'configurable': true,
-						'enumerable': false,
-						'writable': true,
-						'value': value
-					});
-
-				}
+					try {
+						_defineProperty(object, key, {
+							'configurable': true,
+							'enumerable': false,
+							'writable': true,
+							'value': value
+						});
+					} catch(e) {
+						object[key] = value;
+					}
+				};
 			}());
 
 			function addBizarroMethods() {
@@ -52,9 +42,6 @@
 				Function.prototype._method = function() {};
 
 				// allow bypassing native checks
-				var _fnToString = Function.prototype.toString;
-				setProperty(Function.prototype, '_toString', _fnToString);
-
 				setProperty(Function.prototype, 'toString', (function() {
 					function fnToString() {
 						setProperty(Function.prototype, 'toString', _fnToString);
@@ -62,6 +49,8 @@
 						setProperty(Function.prototype, 'toString', fnToString);
 						return result;
 					}
+					var _fnToString = Function.prototype.toString;
+					setProperty(Function.prototype, '_toString', _fnToString);
 					return fnToString;
 				}()));
 

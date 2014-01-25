@@ -331,13 +331,14 @@
               config = QUnit.config,
               index = -1,
               length = asserts.length,
+              logs = config.extrasData.logs,
               queue = config.queue;
 
           while (++index < length) {
             var assert = asserts[index];
             if (!assert.result && this.retries < config.asyncRetries) {
               this.retries++;
-              config.extrasData.logs.length -= asserts.length;
+              logs.length = Math.max(0, logs.length - asserts.length);
               asserts.length = 0;
 
               var oldLength = queue.length;

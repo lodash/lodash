@@ -213,23 +213,20 @@
    * @param {string} key The name of the property to set.
    * @param {*} value The property value.
    */
-  var setProperty = (function() {
-    if (!defineProperty) {
-      return function(object, key, value) {
-        object[key] = value;
-      };
-    }
-    return function(object, key, value) {
-      // avoid a bug where overwriting non-enumerable built-ins makes them enumerable
-      // https://code.google.com/p/v8/issues/detail?id=1623
+  function setProperty(object, key, value) {
+    // avoid a bug where overwriting non-enumerable built-ins makes them enumerable
+    // https://code.google.com/p/v8/issues/detail?id=1623
+    try {
       defineProperty(object, key, {
         'configurable': true,
         'enumerable': false,
         'writable': true,
         'value': value
       });
-    };
-  }());
+    } catch(e) {
+      object[key] = value;
+    }
+  }
 
   /**
    * Skips a given number of tests with a passing result.

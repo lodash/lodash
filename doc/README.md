@@ -83,7 +83,7 @@
 * <a href="#_mapcollection-callbackidentity-thisarg">`_.map`</a>
 * <a href="#_maxcollection-callbackidentity-thisarg">`_.max`</a>
 * <a href="#_mincollection-callbackidentity-thisarg">`_.min`</a>
-* <a href="#_pluckcollection-prop">`_.pluck`</a>
+* <a href="#_pluckcollection-key">`_.pluck`</a>
 * <a href="#_reducecollection-callbackidentity-accumulator-thisarg">`_.reduce`</a>
 * <a href="#_reducerightcollection-callbackidentity-accumulator-thisarg">`_.reduceRight`</a>
 * <a href="#_rejectcollection-callbackidentity-thisarg">`_.reject`</a>
@@ -1893,14 +1893,14 @@ _.min(characters, 'age');
 
 <!-- div -->
 
-### <a id="_pluckcollection-prop"></a>`_.pluck(collection, prop)`
-<a href="#_pluckcollection-prop">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4078 "View in source") [&#x24C9;][1]
+### <a id="_pluckcollection-key"></a>`_.pluck(collection, key)`
+<a href="#_pluckcollection-key">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4078 "View in source") [&#x24C9;][1]
 
 Retrieves the value of a specified property from all elements in the collection.
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
-2. `prop` *(string)*: The name of the property to pluck.
+2. `key` *(string)*: The name of the property to pluck.
 
 #### Returns
 *(Array)*: Returns a new array of property values.

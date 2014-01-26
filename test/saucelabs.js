@@ -311,7 +311,7 @@
     }, function(error, response, body) {
         var statusCode = response && response.statusCode;
         if (statusCode == 200) {
-          if (body.completed) {
+          if (body && body.completed) {
             logInline('');
             handleTestResults(body['js tests']);
           }

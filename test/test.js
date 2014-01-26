@@ -277,8 +277,10 @@
 
     // expose `baseEach` for better code coverage
     if (isModularize && !isNpm) {
-      var path = require('path');
-      _._baseEach = require(path.join(path.dirname(filePath), 'internals', 'baseEach.js'));
+      var path = require('path'),
+          baseEach = require(path.join(path.dirname(filePath), 'internals', 'baseEach.js'));
+
+      _._baseEach = baseEach.baseEach || baseEach;
     }
     // allow bypassing native checks
     var _fnToString = Function.prototype.toString;

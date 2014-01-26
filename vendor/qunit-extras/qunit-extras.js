@@ -581,7 +581,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // expose QUnit extras
+  // export QUnit Extras
   if (freeExports) {
     freeExports.runInContext = runInContext;
   } else {

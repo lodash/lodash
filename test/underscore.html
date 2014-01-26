@@ -155,34 +155,37 @@
 				    locationPath = modulePath.replace(reBasename, '').replace(/\/$/, ''),
 				    moduleMain = modulePath.match(reBasename)[0];
 
+				function getConfig() {
+					return {
+						'baseUrl': './',
+						'urlArgs': 't=' + (+new Date),
+						'packages': [
+							{
+								'name': 'lodash',
+								'location': locationPath,
+								'main': moduleMain
+							},
+							{
+								'name': 'test',
+								'location': '../vendor/underscore/test',
+								'config': {
+									// work around no global being exported
+									'exports': 'QUnit',
+									'loader': 'curl/loader/legacy'
+								}
+							}
+						]
+					};
+				}
+
 				QUnit.config.autostart = false;
 
 				// load Lo-Dash as a module
-				require({
-					'baseUrl': './',
-					'urlArgs': 't=' + (+new Date),
-					'packages': [
-						{
-							'name': 'lodash',
-							'location': locationPath,
-							'main': moduleMain
-						},
-						{
-							'name': 'test',
-							'location': '../vendor/underscore/test',
-							'config': {
-								// work around no global being exported
-								'exports': 'QUnit',
-								'loader': 'curl/loader/legacy'
-							}
-						}
-					]
-				},
-				['lodash'], function(lodash) {
+				require(getConfig(), ['lodash'], function(lodash) {
 					if (ui.isModularize) {
 						window._ = lodash;
 					}
-					require([
+					require(getConfig(), [
 						'test/collections',
 						'test/arrays',
 						'test/functions',

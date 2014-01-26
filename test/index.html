@@ -196,8 +196,6 @@
 				    moduleMain = modulePath.match(reBasename)[0],
 				    uid = +new Date;
 
-				QUnit.config.autostart = false;
-
 				function getConfig() {
 					return {
 						'baseUrl': './',
@@ -239,7 +237,7 @@
 				}
 
 				function loadTests() {
-					require(['test'], function() {
+					require(getConfig(), ['test'], function() {
 						QUnit.start();
 					});
 				}
@@ -264,7 +262,7 @@
 							window._ = lodash;
 						}
 						if (ui.isModularize) {
-							require(['lodash/internals/baseEach'], function(baseEach) {
+							require(getConfig(), ['lodash/internals/baseEach'], function(baseEach) {
 								lodash._baseEach = baseEach;
 								loadTests();
 							});
@@ -273,6 +271,9 @@
 						}
 					});
 				}
+
+				QUnit.config.autostart = false;
+
 				if (window.requirejs) {
 					addBizarroMethods();
 					require(getConfig(), ['lodash'], function(lodash) {

@@ -425,7 +425,8 @@
     test('supports loading ' + basename + ' as the "lodash" module', 1, function() {
       if (amd) {
         equal((lodashModule || {}).moduleName, 'lodash');
-      } else {
+      }
+      else {
         skipTest();
       }
     });
@@ -441,7 +442,8 @@
     test('supports loading ' + basename + ' as the "underscore" module', 1, function() {
       if (amd && !/dojo/.test(ui.loaderPath)) {
         equal((underscoreModule || {}).moduleName, 'underscore');
-      } else {
+      }
+      else {
         skipTest();
       }
     });

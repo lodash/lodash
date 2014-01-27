@@ -537,7 +537,7 @@
    * @memberOf _
    * @category Utilities
    * @param {Object} [context=root] The context object.
-   * @returns {Function} Returns the `lodash` function.
+   * @returns {Function} Returns a new `lodash` function.
    */
   function runInContext(context) {
     // Avoid issues with some ES3 environments that attempt to use values, named
@@ -6649,6 +6649,9 @@
       // property containing a primitive value
       if (props.length == 1 && a === a && !isObject(a)) {
         return function(object) {
+          if (!hasOwnProperty.call(object, key)) {
+            return false;
+          }
           var b = object[key];
           return a === b && (a !== 0 || (1 / a == 1 / b));
         };
@@ -6658,7 +6661,9 @@
             result = false;
 
         while (length--) {
-          if (!(result = baseIsEqual(object[props[length]], source[props[length]], null, true))) {
+          var key = props[length];
+          if (!(result = hasOwnProperty.call(object, key) &&
+                baseIsEqual(object[key], source[key], null, true))) {
             break;
           }
         }

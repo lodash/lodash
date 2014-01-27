@@ -8465,6 +8465,20 @@
       deepEqual(_.where(collection, { 'a': [] }), []);
       deepEqual(_.where(collection, { 'a': [2] }), expected);
     });
+
+    test('should handle `properties` with `undefined` values', 4, function() {
+      var properties = { 'b': undefined };
+      deepEqual(_.where([{ 'a': 1 }, { 'a': 1, 'b': 1 }], properties), []);
+
+      var object = { 'a': 1, 'b': undefined };
+      deepEqual(_.where([object], properties), [object]);
+
+      properties = { 'a': { 'c': undefined } };
+      deepEqual(_.where([{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }], properties), []);
+
+      object = { 'a': { 'b': 1, 'c': undefined } };
+      deepEqual(_.where([object], properties), [object]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

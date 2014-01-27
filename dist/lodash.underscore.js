@@ -4682,7 +4682,9 @@
           result = false;
 
       while (length--) {
-        if (!(result = object[props[length]] === source[props[length]])) {
+        var key = props[length];
+        if (!(result = hasOwnProperty.call(object, key) &&
+              baseIsEqual(object[key], source[key], null, true))) {
           break;
         }
       }

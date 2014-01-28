@@ -59,6 +59,9 @@
         setTimeout(init, 15);
         return;
       }
+      toolbar.appendChild(span1);
+      toolbar.appendChild(span2);
+
       buildList.selectedIndex = (function() {
         switch (build) {
           case 'lodash-compat':     return 1;
@@ -85,9 +88,6 @@
         }
         return -1;
       }());
-
-      toolbar.appendChild(span1);
-      toolbar.appendChild(span2);
 
       addListener(buildList, 'change', eventHandler);
       addListener(loaderList, 'change', eventHandler);

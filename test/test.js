@@ -1506,7 +1506,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.createCallback');
+  QUnit.module('lodash.callback');
 
   (function() {
     test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
@@ -8648,6 +8648,10 @@
     test('should zip together key/value arrays into an object', 1, function() {
       var actual = _.zipObject(['barney', 'fred'], [36, 40]);
       deepEqual(actual, object);
+    });
+
+    test('should ignore extra `values`', 1, function() {
+      deepEqual(_.zipObject(['a'], [1, 2]), { 'a': 1 });
     });
 
     test('should accept a two dimensional array', 1, function() {

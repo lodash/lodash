@@ -87,6 +87,9 @@
         otherList = span2.lastChild,
         toolbar = document.getElementById('perf-toolbar');
 
+    toolbar.appendChild(span2);
+    toolbar.appendChild(span1);
+
     buildList.selectedIndex = (function() {
       switch (build) {
         case 'lodash-compat':     return 0;
@@ -116,9 +119,6 @@
       }
       return -1;
     }());
-
-    toolbar.appendChild(span2);
-    toolbar.appendChild(span1);
 
     addListener(buildList, 'change', eventHandler);
     addListener(otherList, 'change', eventHandler);

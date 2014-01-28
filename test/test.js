@@ -55,22 +55,6 @@
     return result;
   }());
 
-  /** The `ui` object */
-  var ui = root.ui || (root.ui = {
-    'buildPath': filePath,
-    'loaderPath': '',
-    'urlParams': {}
-  });
-
-  /** The basename of the Lo-Dash file to test */
-  var basename = /[\w.-]+$/.exec(filePath)[0];
-
-  /** Used to indicate testing a modularized build */
-  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
-
-  /** Detect if testing `npm` modules */
-  var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
-
   /** Detect if running in Java */
   var isJava = !document && !!root.java;
 
@@ -157,14 +141,28 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
-  /** Used as the property name for wrapper metadata */
-  var expando = '__lodash@'  + _.VERSION + '__';
+  try {
+    filePath = require.resolve(filePath);
+  } catch(e) { }
+
+  /** The `ui` object */
+  var ui = root.ui || (root.ui = {
+    'buildPath': filePath,
+    'loaderPath': '',
+    'urlParams': {}
+  });
+
+  /** The basename of the Lo-Dash file to test */
+  var basename = _.result(/[\w.-]+$/.exec(filePath), 0, '');
 
   /** Used to pass falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
   /** Used to pass empty values to methods */
   var empties = [[], {}].concat(falsey.slice(1));
+
+  /** Used as the property name for wrapper metadata */
+  var expando = '__lodash@'  + _.VERSION + '__';
 
   /** Used to set property descriptors */
   var defineProperty = (function() {
@@ -175,6 +173,12 @@
     } catch(e) { }
     return result;
   }());
+
+  /** Used to indicate testing a modularized build */
+  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
+
+  /** Detect if testing `npm` modules */
+  var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
   /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
   var shadowedProps = [

@@ -49,14 +49,30 @@
 
     if (!amd) {
       try {
-        return require('fs').realpathSync(result);
+        return require.resolve(result);
       } catch(e) { }
     }
     return result;
   }());
 
+  /** The `ui` object */
+  var ui = root.ui || (root.ui = {
+    'buildPath': filePath,
+    'loaderPath': '',
+    'urlParams': {}
+  });
+
+  /** The basename of the Lo-Dash file to test */
+  var basename = /[\w.-]+$/.exec(filePath)[0];
+
   /** Detect if running in Java */
   var isJava = !document && !!root.java;
+
+  /** Used to indicate testing a modularized build */
+  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
+
+  /** Detect if testing `npm` modules */
+  var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
   /** Detects if running in a PhantomJS web page */
   var isPhantomPage = typeof callPhantom == 'function';
@@ -141,20 +157,6 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
-  try {
-    filePath = require.resolve(filePath);
-  } catch(e) { }
-
-  /** The `ui` object */
-  var ui = root.ui || (root.ui = {
-    'buildPath': filePath,
-    'loaderPath': '',
-    'urlParams': {}
-  });
-
-  /** The basename of the Lo-Dash file to test */
-  var basename = _.result(/[\w.-]+$/.exec(filePath), 0, '');
-
   /** Used to pass falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
@@ -173,12 +175,6 @@
     } catch(e) { }
     return result;
   }());
-
-  /** Used to indicate testing a modularized build */
-  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
-
-  /** Detect if testing `npm` modules */
-  var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
   /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
   var shadowedProps = [

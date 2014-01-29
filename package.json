@@ -60,5 +60,6 @@
       "test",
       "vendor"
     ]
-  }
+  },
+  "browser": "dist/lodash.compat.js"
 }

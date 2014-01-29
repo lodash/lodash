@@ -2655,6 +2655,7 @@
       while (++argsIndex < argsLength) {
         var index = -1,
             value = args[argsIndex];
+
         while (++index < length) {
           if (array[index] === value) {
             splice.call(array, index--, 1);
@@ -4676,6 +4677,7 @@
       return function() {
         var length = funcsLength - 1,
             result = funcs[length].apply(this, arguments);
+
         while (length--) {
           result = funcs[length].call(this, result);
         }

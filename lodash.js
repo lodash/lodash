@@ -20,7 +20,7 @@
       PARTIAL_RIGHT_FLAG = 32;
 
   /** Used as the size when optimizations are enabled for arrays */
-  var LARGE_ARRAY_SIZE = 75;
+  var LARGE_ARRAY_SIZE = 40;
 
   /** Used as the max size of the `arrayPool` and `objectPool` */
   var MAX_POOL_SIZE = 40;

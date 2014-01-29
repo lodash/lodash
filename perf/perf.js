@@ -1,5 +1,8 @@
 ;(function() {
 
+  /** Used to access the Firebug Lite panel (set by `run`) */
+  var fbPanel;
+
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
 
@@ -14,6 +17,9 @@
       noop = function() {},
       params = root.arguments,
       system = root.system;
+
+  /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
+  var console = root.console || (root.console = { 'log': root.print });
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -52,6 +58,33 @@
     'otherPath': 'underscore'
   });
 
+  /** The Lo-Dash build basename */
+  var buildName = root.buildName = basename(ui.buildPath, '.js');
+
+  /** The other library basename */
+  var otherName = root.otherName = (function() {
+    var result = basename(ui.otherPath, '.js');
+    return result + (result == buildName ? ' (2)' : '');
+  }());
+
+  /** Used to match path separators */
+  var rePathSeparator = /[\/\\]/;
+
+  /** Used to detect primitive types */
+  var rePrimitive = /^(?:boolean|number|string|undefined)$/;
+
+  /** Used to match RegExp special characters */
+  var reSpecialChars = /[.*+?^=!:${}()|[\]\/\\]/g;
+
+  /** Used to score performance */
+  var score = { 'a': [], 'b': [] };
+
+  /** Used to queue benchmark suites */
+  var suites = [];
+
+  /** Used to resolve a value's internal [[Class]] */
+  var toString = Object.prototype.toString;
+
   /** Detect if in a browser environment */
   var isBrowser = isHostType(root, 'document') && isHostType(root, 'navigator');
 
@@ -83,39 +116,6 @@
     _ = load('../vendor/underscore/underscore.js') || root._,
     _._ || _
   ));
-
-  /** Used to access the Firebug Lite panel (set by `run`) */
-  var fbPanel;
-
-  /** Used to match path separators */
-  var rePathSeparator = /[\/\\]/;
-
-  /** Used to detect primitive types */
-  var rePrimitive = /^(?:boolean|number|string|undefined)$/;
-
-  /** Used to match RegExp special characters */
-  var reSpecialChars = /[.*+?^=!:${}()|[\]\/\\]/g;
-
-  /** Used to score performance */
-  var score = { 'a': [], 'b': [] };
-
-  /** Used to queue benchmark suites */
-  var suites = [];
-
-  /** Used to resolve a value's internal [[Class]] */
-  var toString = Object.prototype.toString;
-
-  /** The Lo-Dash build basename */
-  var buildName = root.buildName = basename(ui.buildPath, '.js');
-
-  /** The other library basename */
-  var otherName = root.otherName = (function() {
-    var result = basename(ui.otherPath, '.js');
-    return result + (result == buildName ? ' (2)' : '');
-  }());
-
-  /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
-  var console = root.console || (root.console = { 'log': root.print });
 
   /*--------------------------------------------------------------------------*/
 
@@ -351,6 +351,14 @@
         uncompacted[2] = false;\
         uncompacted[6] = null;\
         uncompacted[18] = "";\
+      }\
+      if (typeof compose != "undefined") {\
+        var compAddOne = function(n) { return n + 1; },\
+            compAddTwo = function(n) { return n + 2; },\
+            compAddThree = function(n) { return n + 3; };\
+        \
+        var _composed = _.compose(compAddThree, compAddTwo, compAddOne),\
+            lodashComposed = lodash.compose(compAddThree, compAddTwo, compAddOne);\
       }\
       if (typeof countBy != "undefined" || typeof omit != "undefined") {\
         var wordToNumber = {\
@@ -697,6 +705,32 @@
       .add(otherName, {
         'fn': '_.compact(uncompacted)',
         'teardown': 'function compact(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.compose`')
+      .add(buildName, {
+        'fn': 'lodash.compose(compAddThree, compAddTwo, compAddOne)',
+        'teardown': 'function compose(){}'
+      })
+      .add(otherName, {
+        'fn': '_.compose(compAddThree, compAddTwo, compAddOne)',
+        'teardown': 'function compose(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('composed call')
+      .add(buildName, {
+        'fn': 'lodashComposed(0)',
+        'teardown': 'function compose(){}'
+      })
+      .add(otherName, {
+        'fn': '_composed(0)',
+        'teardown': 'function compose(){}'
       })
   );
 

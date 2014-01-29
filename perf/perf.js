@@ -44,7 +44,7 @@
 
     if (!amd) {
       try {
-        return require('fs').realpathSync(result);
+        return require.resolve(result);
       } catch(e) { }
     }
     return result;
@@ -70,10 +70,6 @@
     _ = load('../vendor/underscore/underscore.js') || root._,
     _._ || _
   ));
-
-  try {
-    filePath = require.resolve(filePath);
-  } catch(e) { }
 
   /** Used to access the Firebug Lite panel (set by `run`) */
   var fbPanel;

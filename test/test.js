@@ -1259,12 +1259,10 @@
       var welcome = _.compose(greet, format);
       equal(welcome('pebbles'), 'Hiya Penelope!');
     });
-    
-    test('should return original function if only one function passed', 1, function(){
-      var noop = function(){};
-      equal(_.compose(noop), noop);
-    });
 
+    test('should return a new function', 1, function() {
+      notStrictEqual(_.compose(_.noop), _.noop);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

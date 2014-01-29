@@ -4672,14 +4672,17 @@
           throw new TypeError;
         }
       }
+      var funcsLength = funcs.length;
+      if (funcsLength === 1) {
+        return funcs[0];
+      }
       return function() {
-        var args = arguments,
-            length = funcs.length;
-
+        var length = funcsLength - 1,
+            result = funcs[length].apply(this, arguments);
         while (length--) {
-          args = [funcs[length].apply(this, args)];
+          result = funcs[length].call(this, result);
         }
-        return args[0];
+        return result;
       };
     }
 

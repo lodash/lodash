@@ -15,14 +15,6 @@
       params = root.arguments,
       system = root.system;
 
-  /** Detect if running in Java */
-  var isJava = !document && !!root.java;
-
-  /** Use a single "load" function */
-  var load = (typeof require == 'function' && !amd)
-    ? require
-    : (isJava && root.load) || noop;
-
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
     var min = 0,
@@ -44,11 +36,32 @@
 
     if (!amd) {
       try {
-        return require.resolve(result);
+        result = require('fs').realpathSync(result);
+      } catch(e) { }
+
+      try {
+        result = require.resolve(result);
       } catch(e) { }
     }
     return result;
   }());
+
+  /** The `ui` object */
+  var ui = root.ui || (root.ui = {
+    'buildPath': basename(filePath, '.js'),
+    'otherPath': 'underscore'
+  });
+
+  /** Detect if in a browser environment */
+  var isBrowser = isHostType(root, 'document') && isHostType(root, 'navigator');
+
+  /** Detect if in a Java environment */
+  var isJava = !isBrowser && /Java/.test(toString.call(root.java));
+
+  /** Use a single "load" function */
+  var load = (typeof require == 'function' && !amd)
+    ? require
+    : (isJava && root.load) || noop;
 
   /** Load Lo-Dash */
   var lodash = root.lodash || (root.lodash = (
@@ -92,12 +105,6 @@
   /** Used to resolve a value's internal [[Class]] */
   var toString = Object.prototype.toString;
 
-  /** The `ui` object */
-  var ui = root.ui || (root.ui = {
-    'buildPath': basename(filePath, '.js'),
-    'otherPath': 'underscore'
-  });
-
   /** The Lo-Dash build basename */
   var buildName = root.buildName = basename(ui.buildPath, '.js');
 
@@ -106,12 +113,6 @@
     var result = basename(ui.otherPath, '.js');
     return result + (result == buildName ? ' (2)' : '');
   }());
-
-  /** Detect if in a browser environment */
-  var isBrowser = isHostType(root, 'document') && isHostType(root, 'navigator');
-
-  /** Detect Java environment */
-  var isJava = !isBrowser && /Java/.test(toString.call(root.java));
 
   /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
   var console = root.console || (root.console = { 'log': root.print });

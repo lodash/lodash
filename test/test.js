@@ -49,7 +49,11 @@
 
     if (!amd) {
       try {
-        return require.resolve(result);
+        result = require('fs').realpathSync(result);
+      } catch(e) { }
+
+      try {
+        result = require.resolve(result);
       } catch(e) { }
     }
     return result;
@@ -65,7 +69,7 @@
   /** The basename of the Lo-Dash file to test */
   var basename = /[\w.-]+$/.exec(filePath)[0];
 
-  /** Detect if running in Java */
+  /** Detect if in a Java environment */
   var isJava = !document && !!root.java;
 
   /** Used to indicate testing a modularized build */

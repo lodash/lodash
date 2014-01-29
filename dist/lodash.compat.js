@@ -21,7 +21,7 @@
       PARTIAL_RIGHT_FLAG = 32;
 
   /** Used as the size when optimizations are enabled for arrays */
-  var LARGE_ARRAY_SIZE = 75;
+  var LARGE_ARRAY_SIZE = 40;
 
   /** Used as the max size of the `arrayPool` and `objectPool` */
   var MAX_POOL_SIZE = 40;
@@ -2640,6 +2640,7 @@
       while (++argsIndex < argsLength) {
         var index = -1,
             value = args[argsIndex];
+
         while (++index < length) {
           if (array[index] === value) {
             splice.call(array, index--, 1);
@@ -4649,7 +4650,8 @@
      */
     function compose() {
       var funcs = arguments,
-          length = funcs.length;
+          funcsLength = funcs.length,
+          length = funcsLength;
 
       while (length--) {
         if (!isFunction(funcs[length])) {
@@ -4657,13 +4659,13 @@
         }
       }
       return function() {
-        var args = arguments,
-            length = funcs.length;
+        var length = funcsLength - 1,
+            result = funcs[length].apply(this, arguments);
 
         while (length--) {
-          args = [funcs[length].apply(this, args)];
+          result = funcs[length].call(this, result);
         }
-        return args[0];
+        return result;
       };
     }
 
@@ -5194,6 +5196,12 @@
      * is provided it will be executed to produce the cloned values. If the
      * callback returns `undefined` cloning will be handled by the method instead.
      * The callback is bound to `thisArg` and invoked with one argument; (value).
+     *
+     * Note: This method is loosely based on the structured clone algorithm. Functions
+     * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
+     * objects created by constructors other than `Object` are cloned to plain `Object` objects.
+     * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
+     * for more details.
      *
      * @static
      * @memberOf _

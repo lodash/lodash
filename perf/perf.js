@@ -1,27 +1,52 @@
-;(function(root) {
+;(function() {
+
+  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  var undefined;
+
+  /** Used as a reference to the global object */
+  var root = typeof global == 'object' && global || this;
+
+  /** Method and object shortcuts */
+  var phantom = root.phantom,
+      amd = root.define && define.amd,
+      argv = root.process && process.argv,
+      document = !phantom && root.document,
+      noop = function() {},
+      params = root.arguments,
+      system = root.system;
+
+  /** Detect if running in Java */
+  var isJava = !document && !!root.java;
 
   /** Use a single "load" function */
-  var load = typeof require == 'function' ? require : root.load;
+  var load = (typeof require == 'function' && !amd)
+    ? require
+    : (isJava && root.load) || noop;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
-    var min = 0;
-    var result = root.phantom
-      ? phantom.args
-      : (root.system
-          ? (min = 1, system.args)
-          : (root.process ? (min = 2, process.argv) : (root.arguments || []))
-        );
+    var min = 0,
+        result = [];
 
+    if (phantom) {
+      result = params = phantom.args;
+    } else if (system) {
+      min = 1;
+      result = params = system.args;
+    } else if (argv) {
+      min = 2;
+      result = params = argv;
+    } else if (params) {
+      result = params;
+    }
     var last = result[result.length - 1];
-    result = (result.length > min && !/perf(?:\.js)?$/.test(last))
-      ? last
-      : '../lodash.js';
+    result = (result.length > min && !/perf(?:\.js)?$/.test(last)) ? last : '../lodash.js';
 
-    try {
-      result = require('fs').realpathSync(result);
-    } catch(e) { }
-
+    if (!amd) {
+      try {
+        return require('fs').realpathSync(result);
+      } catch(e) { }
+    }
     return result;
   }());
 
@@ -29,6 +54,7 @@
   var lodash = root.lodash || (root.lodash = (
     lodash = load(filePath) || root._,
     lodash = lodash._ || lodash,
+    (lodash.runInContext ? lodash.runInContext(root) : lodash),
     lodash.noConflict()
   ));
 
@@ -44,6 +70,10 @@
     _ = load('../vendor/underscore/underscore.js') || root._,
     _._ || _
   ));
+
+  try {
+    filePath = require.resolve(filePath);
+  } catch(e) { }
 
   /** Used to access the Firebug Lite panel (set by `run`) */
   var fbPanel;
@@ -404,24 +434,16 @@
       if (typeof multiArrays != "undefined") {\
         var twentyValues = Array(20),\
             twentyValues2 = Array(20),\
-            twentyFiveValues = Array(25),\
-            twentyFiveValues2 = Array(25),\
-            thirtyValues = Array(30),\
-            thirtyValues2 = Array(30),\
             fortyValues = Array(40),\
             fortyValues2 = Array(40),\
             fiftyValues = Array(50),\
             fiftyValues2 = Array(50),\
-            seventyFiveValues = Array(75),\
-            seventyFiveValues2 = Array(75),\
-            oneHundredValues = Array(100),\
-            oneHundredValues2 = Array(100),\
-            twoHundredValues = Array(200),\
-            twoHundredValues2 = Array(200),\
+            hundredValues = Array(100),\
+            hundredValues2 = Array(100),\
             lowerChars = "abcdefghijklmnopqrstuvwxyz".split(""),\
             upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");\
         \
-        for (index = 0; index < 200; index++) {\
+        for (index = 0; index < 100; index++) {\
           if (index < 15) {\
             twentyValues[index] = lowerChars[index];\
             twentyValues2[index] = upperChars[index];\
@@ -429,33 +451,17 @@
           if (index < 20) {\
             twentyValues[index] =\
             twentyValues2[index] = index;\
-            \
-            twentyFiveValues[index] = lowerChars[index];\
-            twentyFiveValues2[index] = upperChars[index];\
           }\
           if (index < 25) {\
-            twentyFiveValues[index] =\
-            twentyFiveValues2[index] = index;\
-            \
-            thirtyValues[index] =\
             fortyValues[index] =\
             fiftyValues[index] =\
-            seventyFiveValues[index] =\
-            oneHundredValues[index] =\
-            twoHundredValues[index] = lowerChars[index];\
+            hundredValues[index] = lowerChars[index];\
             \
-            thirtyValues2[index] =\
             fortyValues2[index] =\
             fiftyValues2[index] =\
-            seventyFiveValues2[index] =\
-            oneHundredValues2[index] =\
-            twoHundredValues2[index] = upperChars[index];\
+            hundredValues2[index] = upperChars[index];\
           }\
           else {\
-            if (index < 30) {\
-              thirtyValues[index] =\
-              thirtyValues2[index] = index;\
-            }\
             if (index < 40) {\
               fortyValues[index] =\
               fortyValues2[index] = index;\
@@ -464,16 +470,8 @@
               fiftyValues[index] =\
               fiftyValues2[index] = index;\
             }\
-            if (index < 75) {\
-              seventyFiveValues[index] =\
-              seventyFiveValues2[index] = index;\
-            }\
-            if (index < 100) {\
-              oneHundredValues[index] =\
-              oneHundredValues2[index] = index;\
-            }\
-            twoHundredValues[index] =\
-            twoHundredValues2[index] = index;\
+            hundredValues[index] =\
+            hundredValues2[index] = index;\
           }\
         }\
       }\
@@ -800,25 +798,25 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 75 elements')
+    Benchmark.Suite('`_.difference` iterating 40 elements')
       .add(buildName, {
-        'fn': 'lodash.difference(seventyFiveValues, seventyFiveValues2)',
+        'fn': 'lodash.difference(twentyValues, twentyValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.difference(seventyFiveValues, seventyFiveValues2)',
+        'fn': '_.difference(twentyValues, twentyValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 200 elements')
+    Benchmark.Suite('`_.difference` iterating 100 elements')
       .add(buildName, {
-        'fn': 'lodash.difference(twoHundredValues, twoHundredValues2)',
+        'fn': 'lodash.difference(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.difference(twoHundredValues, twoHundredValues2)',
+        'fn': '_.difference(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1137,11 +1135,11 @@
   suites.push(
     Benchmark.Suite('`_.indexOf`')
       .add(buildName, {
-        'fn': 'lodash.indexOf(twoHundredValues, 199)',
+        'fn': 'lodash.indexOf(hundredValues, 99)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.indexOf(twoHundredValues, 199)',
+        'fn': '_.indexOf(hundredValues, 99)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1159,25 +1157,25 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.intersection` iterating 75 elements')
+    Benchmark.Suite('`_.intersection` iterating 40 elements')
       .add(buildName, {
-        'fn': 'lodash.intersection(seventyFiveValues, seventyFiveValues2)',
+        'fn': 'lodash.intersection(fortyValues, fortyValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.intersection(seventyFiveValues, seventyFiveValues2)',
+        'fn': '_.intersection(fortyValues, fortyValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
 
   suites.push(
-    Benchmark.Suite('`_.intersection` iterating 200 elements')
+    Benchmark.Suite('`_.intersection` iterating 100 elements')
       .add(buildName, {
-        'fn': 'lodash.intersection(twoHundredValues, twoHundredValues2)',
+        'fn': 'lodash.intersection(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.intersection(twoHundredValues, twoHundredValues2)',
+        'fn': '_.intersection(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1883,25 +1881,25 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 75 elements')
+    Benchmark.Suite('`_.union` iterating an array of 40 elements')
       .add(buildName, {
-        'fn': 'lodash.union(twentyFiveValues, fiftyValues2)',
+        'fn': 'lodash.union(twentyValues, twentyValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.union(twentyFiveValues, fiftyValues2)',
+        'fn': '_.union(twentyValues, twentyValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
 
   suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 200 elements')
+    Benchmark.Suite('`_.union` iterating an array of 100 elements')
       .add(buildName, {
-        'fn': 'lodash.union(oneHundredValues, oneHundredValues2)',
+        'fn': 'lodash.union(fiftyValues, fiftyValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.union(oneHundredValues, oneHundredValues2)',
+        'fn': '_.union(fiftyValues, fiftyValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1933,25 +1931,25 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.uniq` iterating an array of 75 elements')
+    Benchmark.Suite('`_.uniq` iterating an array of 40 elements')
       .add(buildName, {
-        'fn': 'lodash.uniq(twentyFiveValues.concat(fiftyValues2))',
+        'fn': 'lodash.uniq(fortyValues)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.uniq(twentyFiveValues.concat(fiftyValues2))',
+        'fn': '_.uniq(fortyValues)',
         'teardown': 'function multiArrays(){}'
       })
   );
 
   suites.push(
-    Benchmark.Suite('`_.uniq` iterating an array of 200 elements')
+    Benchmark.Suite('`_.uniq` iterating an array of 100 elements')
       .add(buildName, {
-        'fn': 'lodash.uniq(oneHundredValues.concat(oneHundredValues2))',
+        'fn': 'lodash.uniq(hundredValues)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.uniq(oneHundredValues.concat(oneHundredValues2))',
+        'fn': '_.uniq(hundredValues)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -2028,9 +2026,9 @@
     log(Benchmark.platform);
   }
   // in the browser, expose `run` to be called later
-  if (root.document && !root.phantom) {
+  if (document) {
     root.run = run;
   } else {
     run();
   }
-}(typeof global == 'object' && global || this));
+}.call(this));

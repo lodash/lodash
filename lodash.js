@@ -4665,16 +4665,13 @@
      */
     function compose() {
       var funcs = arguments,
-          length = funcs.length;
+          funcsLength = funcs.length,
+          length = funcsLength;
 
       while (length--) {
         if (!isFunction(funcs[length])) {
           throw new TypeError;
         }
-      }
-      var funcsLength = funcs.length;
-      if (funcsLength === 1) {
-        return funcs[0];
       }
       return function() {
         var length = funcsLength - 1,

@@ -616,6 +616,30 @@
   }
 
   /**
+   * The base implementation of `_.forEachEach` without support for callback
+   * shorthands or `thisArg` binding.
+   *
+   * @private
+   * @param {Array|Object|string} collection The collection to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @returns {Array|Object|string} Returns `collection`.
+   */
+  function baseEachRight(collection, callback) {
+    var iterable = collection,
+        length = collection ? collection.length : 0;
+
+    if (typeof length == 'number') {
+      while (length--) {
+        if (callback(iterable[length], length, collection) === breakIndicator) {
+          break;
+        }
+      }
+    } else {
+      baseForOwnRight(collection, callback);
+    }
+  }
+
+  /**
    * The base implementation of `_.flatten` without support for callback
    * shorthands or `thisArg` binding.
    *
@@ -671,6 +695,28 @@
 
     while (++index < length) {
       var key = props[index];
+      if (callback(object[key], key, object) === breakIndicator) {
+        break;
+      }
+    }
+    return object;
+  }
+
+  /**
+   * The base implementation of `_.forOwnRight` without support for callback
+   * shorthands or `thisArg` binding.
+   *
+   * @private
+   * @param {Object} object The object to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @returns {Object} Returns `object`.
+   */
+  function baseForOwnRight(object, callback) {
+    var props = keys(object),
+        length = props.length;
+
+    while (length--) {
+      var key = props[length];
       if (callback(object[key], key, object) === breakIndicator) {
         break;
       }
@@ -863,8 +909,8 @@
   function createAggregator(setter) {
     return function(collection, callback, thisArg) {
       var result = {};
-      callback = createCallback(callback, thisArg, 3);
 
+      callback = createCallback(callback, thisArg, 3);
       var index = -1,
           length = collection ? collection.length : 0;
 
@@ -2104,8 +2150,8 @@
    */
   function every(collection, callback, thisArg) {
     var result = true;
-    callback = createCallback(callback, thisArg, 3);
 
+    callback = createCallback(callback, thisArg, 3);
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2165,8 +2211,8 @@
    */
   function filter(collection, callback, thisArg) {
     var result = [];
-    callback = createCallback(callback, thisArg, 3);
 
+    callback = createCallback(callback, thisArg, 3);
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2232,7 +2278,6 @@
    */
   function find(collection, callback, thisArg) {
     callback = createCallback(callback, thisArg, 3);
-
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2321,41 +2366,6 @@
       }
     } else {
       baseEach(collection, callback);
-    }
-  }
-
-  /**
-   * This method is like `_.forEach` except that it iterates over elements
-   * of a `collection` from right to left.
-   *
-   * @static
-   * @memberOf _
-   * @alias eachRight
-   * @category Collections
-   * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function} [callback=identity] The function called per iteration.
-   * @param {*} [thisArg] The `this` binding of `callback`.
-   * @returns {Array|Object|string} Returns `collection`.
-   * @example
-   *
-   * _([1, 2, 3]).forEachRight(function(num) { console.log(num); }).join(',');
-   * // => logs each number from right to left and returns '3,2,1'
-   */
-  function forEachRight(collection, callback) {
-    var length = collection ? collection.length : 0;
-    if (typeof length == 'number') {
-      while (length--) {
-        if (callback(collection[length], length, collection) === false) {
-          break;
-        }
-      }
-    } else {
-      var props = keys(collection);
-      length = props.length;
-      baseEach(collection, function(value, key, collection) {
-        key = props ? props[--length] : --length;
-        return callback(collection[key], key, collection) === false && breakIndicator;
-      });
     }
   }
 
@@ -2740,8 +2750,8 @@
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-    callback = createCallback(callback, thisArg, 4);
 
+    callback = createCallback(callback, thisArg, 4);
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2783,8 +2793,9 @@
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
+
     callback = createCallback(callback, thisArg, 4);
-    forEachRight(collection, function(value, index, collection) {
+    baseEachRight(collection, function(value, index, collection) {
       accumulator = noaccum
         ? (noaccum = false, value)
         : callback(accumulator, value, index, collection);
@@ -2965,8 +2976,8 @@
    */
   function some(collection, callback, thisArg) {
     var result;
-    callback = createCallback(callback, thisArg, 3);
 
+    callback = createCallback(callback, thisArg, 3);
     var index = -1,
         length = collection ? collection.length : 0;
 

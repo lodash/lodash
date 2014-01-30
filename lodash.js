@@ -1387,6 +1387,34 @@
     }
 
     /**
+     * The base implementation of `_.forEachEach` without support for callback
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Array|Object|string} Returns `collection`.
+     */
+    function baseEachRight(collection, callback) {
+      var iterable = collection,
+          length = collection ? collection.length : 0;
+
+      if (typeof length == 'number') {
+        if (support.unindexedChars && isString(iterable)) {
+          iterable = iterable.split('');
+        }
+        while (length--) {
+          if (callback(iterable[length], length, collection) === false) {
+            break;
+          }
+        }
+      } else {
+        baseForOwnRight(collection, callback);
+      }
+      return collection;
+    }
+
+    /**
      * The base implementation of `_.flatten` without support for callback
      * shorthands or `thisArg` binding.
      *
@@ -1442,6 +1470,28 @@
 
       while (++index < length) {
         var key = props[index];
+        if (callback(object[key], key, object) === false) {
+          break;
+        }
+      }
+      return object;
+    }
+
+    /**
+     * The base implementation of `_.forOwnRight` without support for callback
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Object} Returns `object`.
+     */
+    function baseForOwnRight(object, callback) {
+      var props = keys(object),
+          length = props.length;
+
+      while (length--) {
+        var key = props[length];
         if (callback(object[key], key, object) === false) {
           break;
         }
@@ -3631,8 +3681,9 @@
      */
     function findLast(collection, callback, thisArg) {
       var result;
+
       callback = lodash.createCallback(callback, thisArg, 3);
-      forEachRight(collection, function(value, index, collection) {
+      baseEachRight(collection, function(value, index, collection) {
         if (callback(value, index, collection)) {
           result = value;
           return false;
@@ -3701,27 +3752,15 @@
      * // => logs each number from right to left and returns '3,2,1'
      */
     function forEachRight(collection, callback, thisArg) {
-      var iterable = collection,
-          length = collection ? collection.length : 0;
-
-      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-      if (isArray(collection)) {
+      if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
+        var length = collection.length;
         while (length--) {
           if (callback(collection[length], length, collection) === false) {
             break;
           }
         }
       } else {
-        if (typeof length != 'number') {
-          var props = keys(collection);
-          length = props.length;
-        } else if (support.unindexedChars && isString(collection)) {
-          iterable = collection.split('');
-        }
-        baseEach(iterable, function(value, key) {
-          key = props ? props[--length] : --length;
-          return callback(iterable[key], key, collection);
-        });
+        baseEachRight(collection, baseCreateCallback(callback, thisArg, 3));
       }
       return collection;
     }
@@ -4153,8 +4192,9 @@
      */
     function reduceRight(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
+
       callback = lodash.createCallback(callback, thisArg, 4);
-      forEachRight(collection, function(value, index, collection) {
+      baseEachRight(collection, function(value, index, collection) {
         accumulator = noaccum
           ? (noaccum = false, value)
           : callback(accumulator, value, index, collection);
@@ -4415,12 +4455,20 @@
         callback = lodash.createCallback(callback, thisArg, 3);
       }
       baseEach(collection, function(value, key, collection) {
+        if (multi) {
+          var length = callback.length,
+              criteria = Array(length);
+
+          while (length--) {
+            criteria[length] = value[callback[length]];
+          }
+        } else {
+          criteria = callback(value, key, collection);
+        }
         var object = result[++index] = getObject();
+        object.criteria = criteria;
         object.index = index;
         object.value = value;
-        object.criteria = multi
-          ? map(callback, function(key) { return value[key]; })
-          : callback(value, key, collection);
       });
 
       length = result.length;
@@ -5497,8 +5545,9 @@
      */
     function findLastKey(object, callback, thisArg) {
       var result;
+
       callback = lodash.createCallback(callback, thisArg, 3);
-      forOwnRight(object, function(value, key, object) {
+      baseForOwnRight(object, function(value, key, object) {
         if (callback(value, key, object)) {
           result = key;
           return false;

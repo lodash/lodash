@@ -1809,8 +1809,8 @@
     function createAggregator(setter) {
       return function(collection, callback, thisArg) {
         var result = {};
-        callback = lodash.createCallback(callback, thisArg, 3);
 
+        callback = lodash.createCallback(callback, thisArg, 3);
         if (isArray(collection)) {
           var index = -1,
               length = collection.length;
@@ -2258,6 +2258,7 @@
      */
     function findLastIndex(array, callback, thisArg) {
       var length = array ? array.length : 0;
+
       callback = lodash.createCallback(callback, thisArg, 3);
       while (length--) {
         if (callback(array[length], length, array)) {
@@ -3508,8 +3509,8 @@
      */
     function every(collection, callback, thisArg) {
       var result = true;
-      callback = lodash.createCallback(callback, thisArg, 3);
 
+      callback = lodash.createCallback(callback, thisArg, 3);
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -3569,8 +3570,8 @@
      */
     function filter(collection, callback, thisArg) {
       var result = [];
-      callback = lodash.createCallback(callback, thisArg, 3);
 
+      callback = lodash.createCallback(callback, thisArg, 3);
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -3636,7 +3637,6 @@
      */
     function find(collection, callback, thisArg) {
       callback = lodash.createCallback(callback, thisArg, 3);
-
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -4149,8 +4149,8 @@
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-      callback = lodash.createCallback(callback, thisArg, 4);
 
+      callback = lodash.createCallback(callback, thisArg, 4);
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -4377,8 +4377,8 @@
      */
     function some(collection, callback, thisArg) {
       var result;
-      callback = lodash.createCallback(callback, thisArg, 3);
 
+      callback = lodash.createCallback(callback, thisArg, 3);
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -5492,6 +5492,7 @@
      */
     function findKey(object, callback, thisArg) {
       var result;
+
       callback = lodash.createCallback(callback, thisArg, 3);
       baseForOwn(object, function(value, key, object) {
         if (callback(value, key, object)) {
@@ -5622,7 +5623,6 @@
      */
     function forInRight(object, callback, thisArg) {
       var pairs = [];
-
       baseForIn(object, function(value, key) {
         pairs.push(key, value);
       });
@@ -6262,8 +6262,8 @@
      */
     function mapValues(object, callback, thisArg) {
       var result = {};
-      callback = lodash.createCallback(callback, thisArg, 3);
 
+      callback = lodash.createCallback(callback, thisArg, 3);
       baseForOwn(object, function(value, key, object) {
         result[key] = callback(value, key, object);
       });

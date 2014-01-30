@@ -5,7 +5,7 @@ node_js:
   - "0.10"
 env:
   global:
-    - BIN="node" BUILD=false COMPAT=false ISTANBUL=false OPTION="" SAUCE_LABS=false SAUCE_USERNAME="lodash"
+    - BIN="node" BUILD="compat" COMPAT=false ISTANBUL=false OPTION="" SAUCE_LABS=false SAUCE_USERNAME="lodash"
     - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
   matrix:
     - BUILD="compat"

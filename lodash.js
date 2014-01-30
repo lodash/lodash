@@ -40,8 +40,8 @@
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
   /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
-      reUnescapedHtml = /[&<>"']/g;
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g,
+      reUnescapedHtml = /[&<>"'`]/g;
 
   /** Used to match template delimiters */
   var reEscape = /<%-([\s\S]+?)%>/g,
@@ -152,7 +152,8 @@
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;'
+    "'": '&#39;',
+    '`': '&#96;'
   };
 
   /** Used to convert HTML entities to characters */
@@ -161,7 +162,8 @@
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
-    '&#39;': "'"
+    '&#39;': "'",
+    '&#96;': '`'
   };
 
   /** Used to determine if values are of the language type Object */
@@ -6585,11 +6587,14 @@
     }
 
     /**
-     * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to
+     * Converts the characters `&`, `<`, `>`, `"`, `'`, and ``` in `string` to
      * their corresponding HTML entities.
      *
      * Note: No other characters are escaped. To escape additional characters
-     * use a third-party library like [_he_](http://mths.be/he).
+     * use a third-party library like [_he_](http://mths.be/he). When working
+     * with HTML you should always quote attribute values to reduce XSS vectors.
+     * See [Ryan Grove's article](http://wonko.com/post/html-escaping) for more
+     * details.
      *
      * @static
      * @memberOf _
@@ -6865,8 +6870,8 @@
 
     /**
      * The inverse of `_.escape`; this method converts the HTML entities
-     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
-     * corresponding characters.
+     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&#39;`, and `&#96;` in `string` to
+     * their corresponding characters.
      *
      * Note: No other HTML entities are unescaped. To unescape additional HTML
      * entities use a third-party library like [_he_](http://mths.be/he).

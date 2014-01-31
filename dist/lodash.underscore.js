@@ -614,6 +614,7 @@
     } else {
       baseForOwn(collection, callback);
     }
+    return collection;
   }
 
   /**
@@ -638,6 +639,7 @@
     } else {
       baseForOwnRight(collection, callback);
     }
+    return collection;
   }
 
   /**

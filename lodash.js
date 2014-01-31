@@ -140,12 +140,17 @@
   };
 
   /**
-   * Used to convert characters to HTML entities:
+   * Used to convert characters to HTML entities.
    *
-   * Though the `>` character is escaped for symmetry, characters like `>` and `/`
-   * don't require escaping in HTML and have no special meaning unless they're part
-   * of a tag or an unquoted attribute value.
-   * http://mathiasbynens.be/notes/ambiguous-ampersands (under "semi-related fun fact")
+   * Note: Though the `>` character is escaped for symmetry, characters like `>`
+   * and `/` don't require escaping in HTML and have no special meaning unless
+   * they're part of a tag or unquoted attribute value.
+   * See [Mathias' article](http://mathiasbynens.be/notes/ambiguous-ampersands)
+   * (under "semi-related fun fact") for more details.
+   *
+   * Backticks are escaped because IE < 9 allows them to be used as attribute
+   * value delimiters. See [Ryan Grove's article](http://wonko.com/post/html-escaping)
+   * for more details.
    */
   var htmlEscapes = {
     '&': '&amp;',
@@ -6587,14 +6592,15 @@
     }
 
     /**
-     * Converts the characters `&`, `<`, `>`, `"`, `'`, and ``` in `string` to
+     * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
      * their corresponding HTML entities.
      *
      * Note: No other characters are escaped. To escape additional characters
-     * use a third-party library like [_he_](http://mths.be/he). When working
-     * with HTML you should always quote attribute values to reduce XSS vectors.
-     * See [Ryan Grove's article](http://wonko.com/post/html-escaping) for more
-     * details.
+     * use a third-party library like [_he_](http://mths.be/he).
+     *
+     * When working with HTML you should always quote attribute values to reduce
+     * XSS vectors. See [Ryan Grove's article](http://wonko.com/post/html-escaping)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -6615,7 +6621,8 @@
      * whitespace, and correctly escapes quotes within interpolated code.
      *
      * Note: In the development build, `_.template` utilizes sourceURLs for easier
-     * debugging. See [HTML5 Rocks' article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl).
+     * debugging. See [HTML5 Rocks' article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
+     * for more details.
      *
      * For more information on precompiling templates see
      * [Lo-Dash's custom builds documentation](http://lodash.com/custom-builds).

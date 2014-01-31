@@ -41,8 +41,8 @@
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
   /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g,
-      reUnescapedHtml = /[&<>"'`]/g;
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
+      reUnescapedHtml = /[&<>"']/g;
 
   /** Used to match template delimiters */
   var reEscape = /<%-([\s\S]+?)%>/g,
@@ -136,23 +136,18 @@
   /**
    * Used to convert characters to HTML entities.
    *
-   * Note: Though the `>` character is escaped for symmetry, characters like `>`
-   * and `/` don't require escaping in HTML and have no special meaning unless
-   * they're part of a tag or unquoted attribute value.
+   * Note: Though the ">" character is escaped for symmetry, characters like
+   * ">", "`", and "/" don't require escaping in HTML and have no special meaning
+   * unless they're part of a tag or unquoted attribute value.
    * See [Mathias' article](http://mathiasbynens.be/notes/ambiguous-ampersands)
    * (under "semi-related fun fact") for more details.
-   *
-   * Backticks are escaped because IE < 9 allows them to be used as attribute
-   * value delimiters. See [Ryan Grove's article](http://wonko.com/post/html-escaping)
-   * for more details.
    */
   var htmlEscapes = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;',
-    '`': '&#96;'
+    "'": '&#39;'
   };
 
   /** Used to convert HTML entities to characters */
@@ -161,8 +156,7 @@
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
-    '&#39;': "'",
-    '&#96;': '`'
+    '&#39;': "'"
   };
 
   /** Used to determine if values are of the language type Object */
@@ -6296,7 +6290,7 @@
     }
 
     /**
-     * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
+     * Converts the characters "&", "<", ">", '"', and "'" in `string` to
      * their corresponding HTML entities.
      *
      * Note: No other characters are escaped. To escape additional characters
@@ -6581,8 +6575,8 @@
 
     /**
      * The inverse of `_.escape`; this method converts the HTML entities
-     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&#39;`, and `&#96;` in `string` to
-     * their corresponding characters.
+     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
+     * corresponding characters.
      *
      * Note: No other HTML entities are unescaped. To unescape additional HTML
      * entities use a third-party library like [_he_](http://mths.be/he).

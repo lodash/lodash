@@ -2146,8 +2146,8 @@
   QUnit.module('lodash.escape');
 
   (function() {
-    var escaped = '&amp;&lt;&gt;&quot;&#39;&#96;\/',
-        unescaped = '&<>"\'`\/';
+    var escaped = '&amp;&lt;&gt;&quot;&#39;\/',
+        unescaped = '&<>"\'\/';
 
     test('should escape values', 1, function() {
       equal(_.escape(unescaped), escaped);
@@ -8209,8 +8209,8 @@
   QUnit.module('lodash.unescape');
 
   (function() {
-    var escaped = '&amp;&lt;&gt;&quot;&#39;&#96;\/',
-        unescaped = '&<>"\'`\/';
+    var escaped = '&amp;&lt;&gt;&quot;&#39;\/',
+        unescaped = '&<>"\'\/';
 
     test('should unescape entities in the correct order', 1, function() {
       equal(_.unescape('&amp;lt;'), '&lt;');

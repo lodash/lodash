@@ -4022,8 +4022,9 @@
       strictEqual(_.isEqual({ 'value': 2 }, new Bar), false);
     });
 
-    test('should perform comparisons between regexes', 4, function() {
+    test('should perform comparisons between regexes', 5, function() {
       strictEqual(_.isEqual(/x/gim, /x/gim), true);
+      strictEqual(_.isEqual(/x/gim, /x/mgi), true);
       strictEqual(_.isEqual(/x/gi, /x/g), false);
       strictEqual(_.isEqual(/x/, /y/), false);
       strictEqual(_.isEqual(/x/g, { 'global': true, 'ignoreCase': false, 'multiline': false, 'source': 'x' }), false);

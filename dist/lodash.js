@@ -3596,15 +3596,22 @@
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
     function invoke(collection, methodName) {
-      var args = slice(arguments, 2),
-          index = -1,
+      var index = -1,
           isFunc = typeof methodName == 'function',
           length = collection ? collection.length : 0,
           result = Array(typeof length == 'number' ? length : 0);
 
-      baseEach(collection, function(value) {
-        result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
-      });
+      if (arguments.length < 3 && typeof length == 'number') {
+        while (++index < length) {
+          var value = collection[index];
+          result[index] = isFunc ? methodName.call(value) : value[methodName]();
+        }
+      } else {
+        var args = slice(arguments, 2);
+        baseEach(collection, function(value) {
+          result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
+        });
+      }
       return result;
     }
 

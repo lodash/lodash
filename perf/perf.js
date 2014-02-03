@@ -1228,30 +1228,40 @@
   suites.push(
     Benchmark.Suite('`_.invoke` iterating an array')
       .add(buildName, '\
-        lodash.invoke(numbers, "toFixed", "2")'
+        lodash.invoke(numbers, "toFixed")'
       )
       .add(otherName, '\
-        _.invoke(numbers, "toFixed", "2")'
+        _.invoke(numbers, "toFixed")'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.invoke` with arguments iterating an array')
+      .add(buildName, '\
+        lodash.invoke(numbers, "toFixed", 1)'
+      )
+      .add(otherName, '\
+        _.invoke(numbers, "toFixed", 1)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.invoke` with a function for `methodName` iterating an array')
       .add(buildName, '\
-        lodash.invoke(numbers, String.prototype.split, "")'
+        lodash.invoke(numbers, Number.prototype.toFixed, 1)'
       )
       .add(otherName, '\
-        _.invoke(numbers, String.prototype.split, "")'
+        _.invoke(numbers, Number.prototype.toFixed, 1)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.invoke` iterating an object')
       .add(buildName, '\
-        lodash.invoke(object, "toFixed", "2")'
+        lodash.invoke(object, "toFixed", 1)'
       )
       .add(otherName, '\
-        _.invoke(object, "toFixed", "2")'
+        _.invoke(object, "toFixed", 1)'
       )
   );
 

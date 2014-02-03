@@ -120,7 +120,7 @@
    * @static
    * @memberOf Benchmark
    * @param {Object} [context=root] The context object.
-   * @returns {Function} Returns the `Benchmark` function.
+   * @returns {Function} Returns a new `Benchmark` function.
    */
   function runInContext(context) {
     // exit early if unable to acquire lodash

@@ -391,6 +391,9 @@
 
     /*------------------------------------------------------------------------*/
 
+    // replace poisoned `raises` method
+    context.raises = QUnit.raises = QUnit['throws'] || QUnit.raises;
+
     // add logging extras
     if (isPhantomPage || !document) {
 

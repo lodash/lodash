@@ -4226,6 +4226,11 @@
       strictEqual(actual, false);
     });
 
+    test('should work when used as `callback` for `_.every`', 1, function() {
+      var actual = _.every([1, 1, 1], _.partial(_.isEqual, 1));
+      ok(actual);
+    });
+
     test('should treat objects created by `Object.create(null)` like any other plain object', 2, function() {
       function Foo() { this.a = 1; }
       Foo.prototype.constructor = null;

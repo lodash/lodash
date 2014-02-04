@@ -5226,8 +5226,7 @@
      *   return typeof a == 'undefined' ? b : a;
      * });
      *
-     * var object = { 'name': 'barney' };
-     * defaults(object, { 'name': 'fred', 'employer': 'slate' });
+     * defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     function assign(object, source, guard) {
@@ -5424,8 +5423,7 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * var object = { 'name': 'barney' };
-     * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
+     * _.defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     function defaults(object, source, guard) {

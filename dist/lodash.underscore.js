@@ -1825,8 +1825,7 @@
       callback = isSorted;
       isSorted = false;
 
-      // allows working with functions like `_.map` without using
-      // their `index` argument as a callback
+      // enables use as a callback for functions like `_.map`
       if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === array) {
         callback = null;
       }
@@ -2603,8 +2602,7 @@
         result = computed,
         type = typeof callback;
 
-    // allows working with functions like `_.map` without using
-    // their `index` argument as a callback
+    // enables use as a callback for functions like `_.map`
     if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === collection) {
       callback = null;
     }
@@ -2677,8 +2675,7 @@
         result = computed,
         type = typeof callback;
 
-    // allows working with functions like `_.map` without using
-    // their `index` argument as a callback
+    // enables use as a callback for functions like `_.map`
     if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === collection) {
       callback = null;
     }
@@ -2866,8 +2863,7 @@
    * @category Collections
    * @param {Array|Object|string} collection The collection to sample.
    * @param {number} [n] The number of elements to sample.
-   * @param- {Object} [guard] Allows working with functions like `_.map`
-   *  without using their `index` arguments as `n`.
+   * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
    * @returns {*} Returns the random sample(s) of `collection`.
    * @example
    *
@@ -3696,8 +3692,7 @@
    *   return typeof a == 'undefined' ? b : a;
    * });
    *
-   * var object = { 'name': 'barney' };
-   * defaults(object, { 'name': 'fred', 'employer': 'slate' });
+   * defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
    * // => { 'name': 'barney', 'employer': 'slate' }
    */
   function assign(object, source, guard) {
@@ -3785,13 +3780,11 @@
    * @category Objects
    * @param {Object} object The destination object.
    * @param {...Object} [source] The source objects.
-   * @param- {Object} [guard] Allows working with functions like `_.reduce`
-   *   without using their `key` and `object` arguments as sources.
+   * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
    * @returns {Object} Returns the destination object.
    * @example
    *
-   * var object = { 'name': 'barney' };
-   * _.defaults(object, { 'name': 'fred', 'employer': 'slate' });
+   * _.defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
    * // => { 'name': 'barney', 'employer': 'slate' }
    */
   function defaults(object, source, guard) {
@@ -4298,8 +4291,9 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Function|...string|string[]} [callback] The properties to omit or the
-   *  function called per iteration.
+   * @param {Function|...string|string[]} [callback] The function called per
+   *  iteration or property names to omit, specified as individual property
+   *  names or arrays of property names.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns an object without the omitted properties.
    * @example
@@ -4312,16 +4306,29 @@
    * });
    * // => { 'name': 'fred' }
    */
-  function omit(object) {
+  function omit(object, guard) {
+    var args = arguments,
+        result = {},
+        type = typeof guard;
+
+    if ((type == 'number' || type == 'string') && args[2] && args[2][guard] === object) {
+      args = slice(args);
+      splice.call(args, 1, 2);
+    }
+    var omitProps = baseFlatten(args, true, false, 1),
+        length = omitProps.length;
+
+    while (length--) {
+      omitProps[length] = String(omitProps[length]);
+    }
     var props = [];
     baseForIn(object, function(value, key) {
       props.push(key);
     });
-    props = baseDifference(props, baseFlatten(arguments, true, false, 1));
 
-    var index = -1,
-        length = props.length,
-        result = {};
+    var index = -1;
+    props = baseDifference(props, omitProps);
+    length = props.length;
 
     while (++index < length) {
       var key = props[index];
@@ -4384,9 +4391,16 @@
    * });
    * // => { 'name': 'fred' }
    */
-  function pick(object) {
+  function pick(object, guard) {
+    var args = arguments,
+        type = typeof guard;
+
+    if ((type == 'number' || type == 'string') && args[2] && args[2][guard] === object) {
+      args = slice(args);
+      splice.call(args, 1, 2);
+    }
     var index = -1,
-        props = baseFlatten(arguments, true, false, 1),
+        props = baseFlatten(args, true, false, 1),
         length = props.length,
         result = {};
 

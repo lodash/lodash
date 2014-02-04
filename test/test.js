@@ -717,7 +717,7 @@
       deepEqual(actual, [1, 3]);
     });
 
-    test('should work when used as `callback` for `_.map`', 1, function() {
+    test('should work when used as a callback for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.at);
 
@@ -1132,7 +1132,7 @@
       ok(actual != expected && actual[0] === expected[0]);
     });
 
-    test('`_.clone` should perform a shallow clone when used as `callback` for `_.map`', 1, function() {
+    test('`_.clone` should perform a shallow clone when used as a callback for `_.map`', 1, function() {
       var expected = [{ 'a': [0] }, { 'b': [1] }],
           actual = _.map(expected, _.clone);
 
@@ -2220,7 +2220,7 @@
       deepEqual(func({}, new Foo), {});
     });
 
-    test('should work when used as `callback` for `_.reduce`', 1, function() {
+    test('should work when used as a callback for `_.reduce`', 1, function() {
       var array = [{ 'a':  1 }, { 'b': 2 }, { 'c': 3 }],
           actual = _.reduce(array, _.merge);
 
@@ -2423,7 +2423,7 @@
       strictEqual(_.first([]), undefined);
     });
 
-    test('should work when used as `callback` for `_.map`', 1, function() {
+    test('should work when used as a callback for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.first);
 
@@ -2554,7 +2554,7 @@
       deepEqual(_.flatten(array, 'a'), [1, 2, 3]);
     });
 
-    test('should perform a deep flatten when used as `callback` for `_.map`', 1, function() {
+    test('should perform a deep flatten when used as a callback for `_.map`', 1, function() {
       var array = [[[['a']]], [[['b']]]],
           actual = _.map(array, _.flatten);
 
@@ -3410,7 +3410,7 @@
       });
     });
 
-    test('should work when used as `callback` for `_.map`', 1, function() {
+    test('should work when used as a callback for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.initial);
 
@@ -4226,7 +4226,7 @@
       strictEqual(actual, false);
     });
 
-    test('should work when used as `callback` for `_.every`', 1, function() {
+    test('should work when used as a callback for `_.every`', 1, function() {
       var actual = _.every([1, 1, 1], _.partial(_.isEqual, 1));
       ok(actual);
     });
@@ -4943,7 +4943,7 @@
       strictEqual(_.last([]), undefined);
     });
 
-    test('should work when used as `callback` for `_.map`', 1, function() {
+    test('should work when used as a callback for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.last);
 
@@ -5549,7 +5549,7 @@
       equal(actual, methodName == 'max' ? 1 : 3);
     });
 
-    test('`_.' + methodName + '` should work when used as `callback` for `_.map`', 1, function() {
+    test('`_.' + methodName + '` should work when used as a callback for `_.map`', 1, function() {
       var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
           actual = _.map(array, func);
 
@@ -5801,6 +5801,22 @@
         return num != this.b;
       }, { 'b': 2 });
 
+      deepEqual(actual, expected);
+    });
+
+    test('should coerce property names to strings', 1, function() {
+      deepEqual(_.omit({ '0': 'a' }, 0), {});
+    });
+
+    test('should work when used as a callback for `_.map`', 2, function() {
+      var callback = _.partialRight(_.omit, 'a'),
+          objects = [{ '0': 0, 'a': 0 }, { '1': 1, 'a': 1 }],
+          actual = _.map(objects, callback),
+          expected = [{ '0': 0 }, { '1': 1 }];
+
+      deepEqual(actual, expected);
+
+      actual = _.map({ '0': objects[0], '1': objects[1] }, callback);
       deepEqual(actual, expected);
     });
   }('a', 'c'));
@@ -6151,6 +6167,22 @@
         return num != this.b;
       }, { 'b': 2 });
 
+      deepEqual(actual, expected);
+    });
+
+    test('should coerce property names to strings', 1, function() {
+      deepEqual(_.pick({ '0': 'a', '1': 'b' }, 0), { '0': 'a' });
+    });
+
+    test('should work when used as a callback for `_.map`', 2, function() {
+      var callback = _.partialRight(_.pick, 'a'),
+          objects = [{ '0': 0, 'a': 0 }, { '1': 1, 'a': 1 }],
+          actual = _.map(objects, callback),
+          expected = [{ 'a': 0 }, { 'a': 1 }];
+
+      deepEqual(actual, expected);
+
+      actual = _.map({ '0': objects[0], '1': objects[1] }, callback);
       deepEqual(actual, expected);
     });
   }('a', 'c'));
@@ -6741,7 +6773,7 @@
       deepEqual(_.rest([]), []);
     });
 
-    test('should work when used as `callback` for `_.map`', 1, function() {
+    test('should work when used as a callback for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.rest);
 
@@ -6875,7 +6907,7 @@
       ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
     });
 
-    test('should work when used as `callback` for `_.map`', 1, function() {
+    test('should work when used as a callback for `_.map`', 1, function() {
       var a = [1, 2, 3],
           b = [4, 5, 6],
           c = [7, 8, 9],
@@ -8328,7 +8360,7 @@
       deepEqual(actual, [1, 2, 3]);
     });
 
-    test('should perform an unsorted uniq operation when used as `callback` for `_.map`', 1, function() {
+    test('should perform an unsorted uniq operation when used as a callback for `_.map`', 1, function() {
       var array = [[2, 1, 2], [1, 2, 1]],
           actual = _.map(array, _.uniq);
 

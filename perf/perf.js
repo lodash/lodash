@@ -52,6 +52,15 @@
     return result;
   }());
 
+  /** Used to match path separators */
+  var rePathSeparator = /[\/\\]/;
+
+  /** Used to detect primitive types */
+  var rePrimitive = /^(?:boolean|number|string|undefined)$/;
+
+  /** Used to match RegExp special characters */
+  var reSpecialChars = /[.*+?^=!:${}()|[\]\/\\]/g;
+
   /** The `ui` object */
   var ui = root.ui || (root.ui = {
     'buildPath': basename(filePath, '.js'),
@@ -66,15 +75,6 @@
     var result = basename(ui.otherPath, '.js');
     return result + (result == buildName ? ' (2)' : '');
   }());
-
-  /** Used to match path separators */
-  var rePathSeparator = /[\/\\]/;
-
-  /** Used to detect primitive types */
-  var rePrimitive = /^(?:boolean|number|string|undefined)$/;
-
-  /** Used to match RegExp special characters */
-  var reSpecialChars = /[.*+?^=!:${}()|[\]\/\\]/g;
 
   /** Used to score performance */
   var score = { 'a': [], 'b': [] };

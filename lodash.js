@@ -7338,10 +7338,10 @@
      * // => 'slate'
      */
     function result(object, key, defaultValue) {
-      if (object == null) {
+      if (object == null || typeof object[key] == 'undefined') {
         return defaultValue;
       }
-      var value = typeof object[key] != 'undefined' ? object[key] : defaultValue;
+      var value = object[key];
       return isFunction(value) ? object[key]() : value;
     }
 

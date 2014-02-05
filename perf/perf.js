@@ -310,7 +310,7 @@
         var thisArg = { "name": "fred" };\
         \
         var func = function(greeting, punctuation) {\
-          return greeting + " " + this.name + (punctuation || ".");\
+          return (greeting || "hi") + " " + this.name + (punctuation || ".");\
         };\
         \
         var _boundNormal = _.bind(func, thisArg),\

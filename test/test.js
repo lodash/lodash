@@ -6702,14 +6702,14 @@
   (function() {
     var object = {
       'a': 1,
-      'b': 2,
-      'c': function(){ return this.b; }
+      'b': null,
+      'c': function() { return this.a; }
     };
 
     test('should resolve property values', 4, function() {
       strictEqual(_.result(object, 'a'), 1);
-      strictEqual(_.result(object, 'b'), 2);
-      strictEqual(_.result(object, 'c'), 2);
+      strictEqual(_.result(object, 'b'), null);
+      strictEqual(_.result(object, 'c'), 1);
       strictEqual(_.result(object, 'd'), undefined);
     });
 
@@ -6718,9 +6718,21 @@
       strictEqual(_.result(undefined, 'a'), undefined);
     });
 
-    test('should return the specified default value for undefined properties', 2, function() {
-      strictEqual(_.result(object, 'd', 3), 3);
-      strictEqual(_.result(null, 'd', 3), 3);
+    test('should return the specified default value for undefined properties', 1, function() {
+      var values = falsey.concat(1, function() { return 1; });
+
+      var expected = _.transform(values, function(result, value) {
+        result.push(value, value);
+      });
+
+      var actual = _.transform(values, function(result, value) {
+        result.push(
+          _.result(object, 'd', value),
+          _.result(null, 'd', value)
+        );
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 

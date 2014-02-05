@@ -4598,10 +4598,12 @@
       if (arguments.length < 3) {
         return createWrapper(func, BIND_FLAG, null, thisArg);
       }
-      var arity = func && (func[expando] ? func[expando][2] : func.length),
-          partialArgs = slice(arguments, 2);
+      if (func) {
+        var arity = func[expando] ? func[expando][2] : func.length,
+            partialArgs = slice(arguments, 2);
 
-      arity -= partialArgs.length;
+        arity -= partialArgs.length;
+      }
       return createWrapper(func, BIND_FLAG | PARTIAL_FLAG, arity, thisArg, partialArgs);
     }
 
@@ -5071,10 +5073,12 @@
      * // => 'hi fred'
      */
     function partial(func) {
-      var arity = func && (func[expando] ? func[expando][2] : func.length),
-          partialArgs = slice(arguments, 1);
+      if (func) {
+        var arity = func[expando] ? func[expando][2] : func.length,
+            partialArgs = slice(arguments, 1);
 
-      arity -= partialArgs.length;
+        arity -= partialArgs.length;
+      }
       return createWrapper(func, PARTIAL_FLAG, arity, null, partialArgs);
     }
 
@@ -5109,10 +5113,12 @@
      * // => { '_': _, 'jq': $ }
      */
     function partialRight(func) {
-      var arity = func && (func[expando] ? func[expando][2] : func.length),
-          partialRightArgs = slice(arguments, 1);
+      if (func) {
+        var arity = func[expando] ? func[expando][2] : func.length,
+            partialRightArgs = slice(arguments, 1);
 
-      arity -= partialRightArgs.length;
+        arity -= partialRightArgs.length;
+      }
       return createWrapper(func, PARTIAL_RIGHT_FLAG, arity, null, null, partialRightArgs);
     }
 

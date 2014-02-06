@@ -6681,8 +6681,9 @@
      */
     function createCallback(func, thisArg, argCount) {
       var type = typeof func;
-      if (func == null || type == 'function') {
-        return baseCreateCallback(func, thisArg, argCount);
+      if (type == 'function' || func == null) {
+        return (typeof thisArg == 'undefined' || !('prototype' in func)) &&
+          func || baseCreateCallback(func, thisArg, argCount);
       }
       // handle "_.pluck" and "_.where" style callback shorthands
       return type != 'object' ? property(func) : match(func);
@@ -7042,10 +7043,10 @@
      * // => 'slate'
      */
     function result(object, key, defaultValue) {
-      if (object == null || typeof object[key] == 'undefined') {
+      var value = object == null ? undefined : object[key];
+      if (typeof value == 'undefined') {
         return defaultValue;
       }
-      var value = object[key];
       return isFunction(value) ? object[key]() : value;
     }
 

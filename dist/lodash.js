@@ -3232,8 +3232,8 @@
 
       if (typeof length == 'number') {
         while (++index < length) {
-          if (!(result = !!callback(collection[index], index, collection))) {
-            break;
+          if (!callback(collection[index], index, collection)) {
+            return false;
           }
         }
       } else {
@@ -4106,8 +4106,8 @@
 
       if (typeof length == 'number') {
         while (++index < length) {
-          if ((result = callback(collection[index], index, collection))) {
-            break;
+          if (callback(collection[index], index, collection)) {
+            return true;
           }
         }
       } else {

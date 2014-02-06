@@ -920,12 +920,12 @@
     Benchmark.Suite('`_.every` iterating an array')
       .add(buildName, '\
         lodash.every(numbers, function(num) {\
-          return num;\
+          return num < limit;\
         })'
       )
       .add(otherName, '\
         _.every(numbers, function(num) {\
-          return num;\
+          return num < limit;\
         })'
       )
   );
@@ -934,12 +934,12 @@
     Benchmark.Suite('`_.every` iterating an object')
       .add(buildName, '\
         lodash.every(object, function(num) {\
-          return num;\
+          return num < limit;\
         })'
       )
       .add(otherName, '\
         _.every(object, function(num) {\
-          return num;\
+          return num < limit;\
         })'
       )
   );

@@ -46,13 +46,6 @@
 			if (!(document.attachEvent && (document.documentMode || 0) < 8)) {
 				delete QUnit.config.excused['Backbone.Router'];
 			}
-
-			// assign results to `global_test_results` for Sauce Labs
-			var global_test_results;
-			QUnit.done(function(results) {
-				global_test_results = results;
-			});
-
 			// load the build of Lo-Dash
 			document.write('<script src="' + ui.buildPath + '"><\/script>');
 		</script>

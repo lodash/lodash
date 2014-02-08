@@ -159,12 +159,6 @@
 		<script>
 			QUnit.config.hidepassed = true;
 
-			// assign results to `global_test_results` for Sauce Labs
-			var global_test_results;
-			QUnit.done(function(results) {
-				global_test_results = results;
-			});
-
 			// store Lo-Dash to test for bad extensions/shims
 			if (!ui.isModularize) {
 				var lodashBizarro = window._;

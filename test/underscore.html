@@ -120,13 +120,6 @@
 				delete QUnit.config.excused.Utility['_.escape'];
 				delete QUnit.config.excused.Utility['_.unescape'];
 			}
-
-			// assign results to `global_test_results` for Sauce Labs
-			var global_test_results;
-			QUnit.done(function(results) {
-				global_test_results = results;
-			});
-
 			// load Lo-Dash and test scripts
 			document.write(ui.urlParams.loader != 'none'
 				? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'

@@ -7236,7 +7236,7 @@
      * // => logs the number of milliseconds it took for the deferred function to be called
      */
     var now = nativeNow || function() {
-      return new Date().getTime();
+      return +new Date;
     };
 
     /**

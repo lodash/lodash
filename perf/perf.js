@@ -1534,6 +1534,50 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.partition` iterating an array')
+      .add(buildName, '\
+        lodash.partition(numbers, function(num) {\
+          return num % 2;\
+        })'
+      )
+      .add(otherName, '\
+        _.partition(numbers, function(num) {\
+          return num % 2;\
+        })'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.partition` iterating an array with `thisArg` (slow path)')
+      .add(buildName, '\
+        lodash.partition(numbers, function(num, index) {\
+          return this["key" + index] % 2;\
+        }, object)'
+      )
+      .add(otherName, '\
+        _.partition(numbers, function(num, index) {\
+           return this["key" + index] % 2;\
+        }, object)'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.partition` iterating an object')
+      .add(buildName, '\
+        lodash.partition(object, function(num) {\
+          return num % 2;\
+        })'
+      )
+      .add(otherName, '\
+        _.partition(object, function(num) {\
+          return num % 2;\
+        })'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.pick`')
       .add(buildName, '\
         lodash.pick(object, "key6", "key13")'
@@ -1657,12 +1701,12 @@
     Benchmark.Suite('`_.reject` iterating an object')
       .add(buildName, '\
         lodash.reject(object, function(num) {\
-          return num % 2\
+          return num % 2;\
         })'
       )
       .add(otherName, '\
         _.reject(object, function(num) {\
-          return num % 2\
+          return num % 2;\
         })'
       )
   );

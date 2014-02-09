@@ -900,18 +900,20 @@
   }
 
   /**
-   * Creates a function that aggregates a collection, creating an object composed
-   * of keys generated from the results of running each element of the collection
+   * Creates a function that aggregates a collection, creating an object or
+   * array composed from the results of running each element of the collection
    * through a callback. The given `setter` function sets the keys and values
-   * of the composed object.
+   * of the composed object or array.
    *
    * @private
    * @param {Function} setter The setter function.
+   * @param {boolean} [retArray=false] A flag to indicate that the aggregator
+   *  function should return an array.
    * @returns {Function} Returns the new aggregator function.
    */
-  function createAggregator(setter) {
+  function createAggregator(setter, retArray) {
     return function(collection, callback, thisArg) {
-      var result = {};
+      var result = retArray ? [[], []] : {};
 
       callback = createCallback(callback, thisArg, 3);
       var index = -1,

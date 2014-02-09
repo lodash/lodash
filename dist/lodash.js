@@ -1877,8 +1877,8 @@
      * @returns {Array} Returns a new array of filtered values.
      * @example
      *
-     * _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
-     * // => [1, 3, 4]
+     * _.difference([1, 2, 3], [5, 2, 10]);
+     * // => [1, 3]
      */
     function difference(array) {
       return baseDifference(array, baseFlatten(arguments, true, true, 1));
@@ -1907,9 +1907,9 @@
      * @example
      *
      * var characters = [
-     *   { 'name': 'barney',  'age': 36, 'blocked': false },
+     *   { 'name': 'barney',  'age': 36 },
      *   { 'name': 'fred',    'age': 40, 'blocked': true },
-     *   { 'name': 'pebbles', 'age': 1,  'blocked': false }
+     *   { 'name': 'pebbles', 'age': 1 }
      * ];
      *
      * _.findIndex(characters, function(chr) {
@@ -1962,7 +1962,7 @@
      *
      * var characters = [
      *   { 'name': 'barney',  'age': 36, 'blocked': true },
-     *   { 'name': 'fred',    'age': 40, 'blocked': false },
+     *   { 'name': 'fred',    'age': 40 },
      *   { 'name': 'pebbles', 'age': 1,  'blocked': true }
      * ];
      *
@@ -2031,14 +2031,14 @@
      * // => [1, 2]
      *
      * var characters = [
-     *   { 'name': 'barney',  'blocked': true,  'employer': 'slate' },
-     *   { 'name': 'fred',    'blocked': false, 'employer': 'slate' },
-     *   { 'name': 'pebbles', 'blocked': true,  'employer': 'na' }
+     *   { 'name': 'barney',  'employer': 'slate', 'blocked': true },
+     *   { 'name': 'fred',    'employer': 'slate' },
+     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
      * _.first(characters, 'blocked');
-     * // => [{ 'name': 'barney', 'blocked': true, 'employer': 'slate' }]
+     * // => [{ 'name': 'barney', 'employer': 'slate', 'blocked': true }]
      *
      * // using "_.where" callback shorthand
      * _.pluck(_.first(characters, { 'employer': 'slate' }), 'name');
@@ -2201,9 +2201,9 @@
      * // => [1]
      *
      * var characters = [
-     *   { 'name': 'barney',  'blocked': false, 'employer': 'slate' },
-     *   { 'name': 'fred',    'blocked': true,  'employer': 'slate' },
-     *   { 'name': 'pebbles', 'blocked': true,  'employer': 'na' }
+     *   { 'name': 'barney',  'employer': 'slate' },
+     *   { 'name': 'fred',    'employer': 'slate', 'blocked': true },
+     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
@@ -2328,9 +2328,9 @@
      * // => [2, 3]
      *
      * var characters = [
-     *   { 'name': 'barney',  'blocked': false, 'employer': 'slate' },
-     *   { 'name': 'fred',    'blocked': true,  'employer': 'slate' },
-     *   { 'name': 'pebbles', 'blocked': true,  'employer': 'na' }
+     *   { 'name': 'barney',  'employer': 'slate' },
+     *   { 'name': 'fred',    'employer': 'slate', 'blocked': true },
+     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
@@ -2339,7 +2339,7 @@
      *
      * // using "_.where" callback shorthand
      * _.last(characters, { 'employer': 'na' });
-     * // => [{ 'name': 'pebbles', 'blocked': true, 'employer': 'na' }]
+     * // => [{ 'name': 'pebbles', 'employer': 'na', 'blocked': true }]
      */
     function last(array, callback, thisArg) {
       var n = 0,
@@ -2582,9 +2582,9 @@
      * // => [3]
      *
      * var characters = [
-     *   { 'name': 'barney',  'blocked': true,  'employer': 'slate' },
-     *   { 'name': 'fred',    'blocked': false,  'employer': 'slate' },
-     *   { 'name': 'pebbles', 'blocked': true, 'employer': 'na' }
+     *   { 'name': 'barney',  'employer': 'slate', 'blocked': true },
+     *   { 'name': 'fred',    'employer': 'slate' },
+     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
@@ -2593,7 +2593,7 @@
      *
      * // using "_.where" callback shorthand
      * _.rest(characters, { 'employer': 'slate' });
-     * // => [{ 'name': 'pebbles', 'blocked': true, 'employer': 'na' }]
+     * // => [{ 'name': 'pebbles', 'employer': 'na', 'blocked': true }]
      */
     function rest(array, callback, thisArg) {
       if (typeof callback != 'number' && callback != null) {
@@ -3268,11 +3268,11 @@
      * @returns {Array} Returns a new array of elements that passed the callback check.
      * @example
      *
-     * var evens = _.filter([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
-     * // => [2, 4, 6]
+     * var evens = _.filter([1, 2, 3, 4], function(num) { return num % 2 == 0; });
+     * // => [2, 4]
      *
      * var characters = [
-     *   { 'name': 'barney', 'age': 36, 'blocked': false },
+     *   { 'name': 'barney', 'age': 36 },
      *   { 'name': 'fred',   'age': 40, 'blocked': true }
      * ];
      *
@@ -3282,7 +3282,7 @@
      *
      * // using "_.where" callback shorthand
      * _.filter(characters, { 'age': 36 });
-     * // => [{ 'name': 'barney', 'age': 36, 'blocked': false }]
+     * // => [{ 'name': 'barney', 'age': 36 }]
      */
     function filter(collection, callback, thisArg) {
       var result = [];
@@ -3333,19 +3333,19 @@
      * @example
      *
      * var characters = [
-     *   { 'name': 'barney',  'age': 36, 'blocked': false },
+     *   { 'name': 'barney',  'age': 36 },
      *   { 'name': 'fred',    'age': 40, 'blocked': true },
-     *   { 'name': 'pebbles', 'age': 1,  'blocked': false }
+     *   { 'name': 'pebbles', 'age': 1 }
      * ];
      *
      * _.find(characters, function(chr) {
      *   return chr.age < 40;
      * });
-     * // => { 'name': 'barney', 'age': 36, 'blocked': false }
+     * // => { 'name': 'barney', 'age': 36 }
      *
      * // using "_.where" callback shorthand
      * _.find(characters, { 'age': 1 });
-     * // =>  { 'name': 'pebbles', 'age': 1, 'blocked': false }
+     * // =>  { 'name': 'pebbles', 'age': 1 }
      *
      * // using "_.pluck" callback shorthand
      * _.find(characters, 'blocked');
@@ -3496,7 +3496,7 @@
      *
      * If an object is provided for `callback` the created "_.where" style callback
      * will return `true` for elements that have the properties of the given object,
-     * else `false`
+     * else `false`.
      *
      * @static
      * @memberOf _
@@ -3949,17 +3949,17 @@
      * @returns {Array} Returns a new array of elements that failed the callback check.
      * @example
      *
-     * var odds = _.reject([1, 2, 3, 4, 5, 6], function(num) { return num % 2 == 0; });
-     * // => [1, 3, 5]
+     * var odds = _.reject([1, 2, 3, 4], function(num) { return num % 2 == 0; });
+     * // => [1, 3]
      *
      * var characters = [
-     *   { 'name': 'barney', 'age': 36, 'blocked': false },
+     *   { 'name': 'barney', 'age': 36 },
      *   { 'name': 'fred',   'age': 40, 'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
      * _.reject(characters, 'blocked');
-     * // => [{ 'name': 'barney', 'age': 36, 'blocked': false }]
+     * // => [{ 'name': 'barney', 'age': 36 }]
      *
      * // using "_.where" callback shorthand
      * _.reject(characters, { 'age': 36 });
@@ -4013,8 +4013,8 @@
      * @returns {Array} Returns a new shuffled collection.
      * @example
      *
-     * _.shuffle([1, 2, 3, 4, 5, 6]);
-     * // => [4, 1, 6, 3, 5, 2]
+     * _.shuffle([1, 2, 3, 4]);
+     * // => [4, 1, 3, 2]
      */
     function shuffle(collection) {
       var index = -1,
@@ -4085,7 +4085,7 @@
      * // => true
      *
      * var characters = [
-     *   { 'name': 'barney', 'age': 36, 'blocked': false },
+     *   { 'name': 'barney', 'age': 36 },
      *   { 'name': 'fred',   'age': 40, 'blocked': true }
      * ];
      *
@@ -5191,9 +5191,9 @@
      * @example
      *
      * var characters = {
-     *   'barney': {  'age': 36, 'blocked': false },
-     *   'fred': {    'age': 40, 'blocked': true },
-     *   'pebbles': { 'age': 1,  'blocked': false }
+     *   'barney': { 'age': 36 },
+     *   'fred': { 'age': 40, 'blocked': true },
+     *   'pebbles': { 'age': 1 }
      * };
      *
      * _.findKey(characters, function(chr) {
@@ -5245,9 +5245,9 @@
      * @example
      *
      * var characters = {
-     *   'barney': {  'age': 36, 'blocked': true },
-     *   'fred': {    'age': 40, 'blocked': false },
-     *   'pebbles': { 'age': 1,  'blocked': true }
+     *   'barney': { 'age': 36, 'blocked': true },
+     *   'fred': { 'age': 40 },
+     *   'pebbles': { 'age': 1, 'blocked': true }
      * };
      *
      * _.findLastKey(characters, function(chr) {
@@ -6232,7 +6232,7 @@
      * @returns {*} Returns the accumulated value.
      * @example
      *
-     * var squares = _.transform([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function(result, num) {
+     * var squares = _.transform([1, 2, 3, 4, 5, 6, 7, 8], function(result, num) {
      *   num *= num;
      *   if (num % 2) {
      *     return result.push(num) < 3;

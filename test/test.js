@@ -6103,6 +6103,69 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.partition');
+
+  (function() {
+    var array = [1, 0, 1];
+
+    test('should always return two groups of elements', 3, function() {
+      deepEqual(_.partition([], function(value) { return value; }), [[], []]);
+      deepEqual(_.partition(array, function(value) { return true; }), [array, []]);
+      deepEqual(_.partition(array, function(value) { return false; }), [[], array]);
+    });
+
+    test('should use `_.identity` when no `callback` is provided', 1, function() {
+      var actual = _.partition(array);
+      deepEqual(actual, [[1, 1], [0]]);
+    });
+
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.partition(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 0, array]);
+    });
+
+    test('should support the `thisArg` argument', 1, function() {
+      var actual = _.partition([1.1, 0.2, 1.3], function(num) {
+        return this.floor(num);
+      }, Math);
+
+      deepEqual(actual, [[1.1, 1.3], [0.2]]);
+    });
+
+    test('should work with an object for `collection`', 1, function() {
+      var actual = _.partition({ 'a': 1.1, 'b': 0.2, 'c': 1.3 }, function(num) {
+        return Math.floor(num);
+      });
+
+      deepEqual(actual, [[1.1, 1.3], [0.2]]);
+    });
+
+    test('should work with a number for `callback`', 2, function() {
+      var array = [
+        [1, 0],
+        [0, 1],
+        [1, 0]
+      ];
+
+      deepEqual(_.partition(array, 0), [[array[0], array[2]], [array[1]]]);
+      deepEqual(_.partition(array, 1), [[array[1]], [array[0], array[2]]]);
+    });
+
+    test('should work with a string for `callback`', 1, function() {
+      var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }],
+          actual = _.partition(objects, 'a');
+
+      deepEqual(actual, [objects.slice(0, 2), objects.slice(2)]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.pick');
 
   (function() {
@@ -9129,7 +9192,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 164, function() {
+    test('should accept falsey arguments', 165, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
           isExposed = '_' in root,
           oldDash = root._;

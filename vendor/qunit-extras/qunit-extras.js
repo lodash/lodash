@@ -61,8 +61,8 @@
    *
    * @oruvate
    * @param {Array} array The array to iterate over.
-   * @param {*} target The value to check for.
-   * @returns {boolean} Returns `true` if the `target` element is found, else `false`.
+   * @param {*} value The value to check for.
+   * @returns {boolean} Returns `true` if the `value` is found, else `false`.
    */
   function contains(array, value) {
     var index = -1,
@@ -167,7 +167,7 @@
      * @private
      * @param {Function|string} fn The function to call.
      * @param {number} delay The number of milliseconds to delay the `fn` call.
-     * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
+     * @param {Array} args Arguments to invoke `fn` with.
      * @param {boolean} repeated A flag to specify whether `fn` is called repeatedly.
      * @returns {number} The ID of the timeout.
      */
@@ -217,7 +217,7 @@
      * @memberOf context
      * @param {Function|string} fn The function to call or string to evaluate.
      * @param {number} delay The number of milliseconds to delay each `fn` call.
-     * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
+     * @param {...*} [args] Arguments to invoke `fn` with.
      * @returns {number} The ID of the timeout.
      */
     function setInterval(fn, delay) {
@@ -230,7 +230,7 @@
      * @memberOf context
      * @param {Function|string} fn The function to call or string to evaluate.
      * @param {number} delay The number of milliseconds to delay the `fn` call.
-     * @param [arg1, arg2, ...] Arguments to invoke `fn` with.
+     * @param {...*} [args] Arguments to invoke `fn` with.
      * @returns {number} The ID of the timeout.
      */
     function setTimeout(fn, delay) {
@@ -312,12 +312,13 @@
       'logs': []
     };
 
-    /**
-     * A callback triggered at the start of every test.
-     *
-     * @memberOf QUnit
-     * @param {Object} details An object with `module` and `name` properties.
-     */
+    // add a callback to be triggered when all testing has completed
+    QUnit.done(function(details) {
+      // assign results to `global_test_results` for Sauce Labs
+      context.global_test_results = details;
+    });
+
+    // add a callback to be triggered at the start of every test
     QUnit.testStart(function(details) {
       var excused = QUnit.config.excused || {},
           excusedTests = excused[details.module],
@@ -389,20 +390,14 @@
       };
     });
 
-    /*------------------------------------------------------------------------*/
-
     // replace poisoned `raises` method
     context.raises = QUnit.raises = QUnit['throws'] || QUnit.raises;
 
+    /*------------------------------------------------------------------------*/
+
     // add logging extras
     if (isPhantomPage || !document) {
-
-      /**
-       * A logging callback triggered when all testing is completed.
-       *
-       * @memberOf QUnit
-       * @param {Object} details An object with properties `failed`, `passed`, `runtime`, and `total`.
-       */
+      // add a callback to be triggered when all testing has completed
       QUnit.done(function() {
         var ran;
         return function(details) {
@@ -439,12 +434,7 @@
         };
       }());
 
-      /**
-       * A logging callback triggered after every assertion.
-       *
-       * @memberOf QUnit
-       * @param {Object} details An object with properties `actual`, `expected`, `message`, and `result`.
-       */
+      // add a callback to be triggered after every assertion
       QUnit.log(function(details) {
         var expected = details.expected,
             result = details.result,
@@ -462,12 +452,7 @@
         QUnit.config.extrasData.logs.push(message.join(' | '));
       });
 
-      /**
-       * A logging callback triggered at the start of every test module.
-       *
-       * @memberOf QUnit
-       * @param {Object} details An object with property `name`.
-       */
+      // add a callback to be triggered at the start of every test module
       QUnit.moduleStart(function(details) {
         // reset the `modulePrinted` flag
         var newModuleName = details.name;
@@ -482,12 +467,7 @@
         }
       });
 
-      /**
-       * A logging callback triggered after a test is completed.
-       *
-       * @memberOf QUnit
-       * @param {Object} details An object with properties `failed`, `name`, `passed`, and `total`.
-       */
+      // add a callback to be triggered after a test is completed
       QUnit.testDone(function(details) {
         var logs = QUnit.config.extrasData.logs,
             testName = details.name;

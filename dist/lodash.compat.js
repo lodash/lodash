@@ -3123,10 +3123,10 @@
     }
 
     /**
-     * Creates an array of grouped elements, the first of which contains the
-     * first elements of the given arrays, the second of which contains the second
-     * elements of the given arrays, and so on. If a zipped value is provided its
-     * corresponding unzipped value will be returned.
+     * Creates an array of grouped elements, the first of which contains the first
+     * elements of the given arrays, the second of which contains the second elements
+     * of the given arrays, and so on. If a zipped value is provided its corresponding
+     * unzipped value will be returned.
      *
      * @static
      * @memberOf _
@@ -4085,10 +4085,10 @@
     }
 
     /**
-     * Creates an array of grouped elements, the first of which contains elements
-     * the callback returns truey for, the second of which contains elements the
-     * callback returns falsey for. The callback is bound to `thisArg` and invoked
-     * with three arguments; (value, index|key, collection).
+     * Creates an array of elements split into two groups, the first of which
+     * contains elements the callback returns truey for, while the second of which
+     * contains elements the callback returns falsey for. The callback is bound
+     * to `thisArg` and invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
      * callback will return the property value of the given element.

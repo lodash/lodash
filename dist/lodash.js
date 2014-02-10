@@ -6136,18 +6136,10 @@
      * // => { 'name': 'fred' }
      */
     function omit(object, callback, thisArg) {
-      var result = {},
-          type = typeof callback;
+      var result = {};
 
-      if (type != 'function') {
-        // enables use as a callback for functions like `_.map`
-        // when combined with `_.partialRight`
-        var args = arguments;
-        if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === object) {
-          args = slice(args);
-          splice.call(args, 1, 2);
-        }
-        var omitProps = baseFlatten(args, true, false, 1),
+      if (typeof callback != 'function') {
+        var omitProps = baseFlatten(arguments, true, false, 1),
             length = omitProps.length;
 
         while (length--) {
@@ -6232,19 +6224,11 @@
      * // => { 'name': 'fred' }
      */
     function pick(object, callback, thisArg) {
-      var result = {},
-          type = typeof callback;
+      var result = {};
 
-      if (type != 'function') {
-        // enables use as a callback for functions like `_.map`
-        // when combined with `_.partialRight`
-        var args = arguments;
-        if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === object) {
-          args = slice(args);
-          splice.call(args, 1, 2);
-        }
+      if (typeof callback != 'function') {
         var index = -1,
-            props = baseFlatten(args, true, false, 1),
+            props = baseFlatten(arguments, true, false, 1),
             length = isObject(object) ? props.length : 0;
 
         while (++index < length) {

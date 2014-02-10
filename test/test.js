@@ -5807,18 +5807,6 @@
     test('should coerce property names to strings', 1, function() {
       deepEqual(_.omit({ '0': 'a' }, 0), {});
     });
-
-    test('should work when used as a callback for `_.map`', 2, function() {
-      var callback = _.partialRight(_.omit, 'a'),
-          objects = [{ '0': 0, 'a': 0 }, { '1': 1, 'a': 1 }],
-          actual = _.map(objects, callback),
-          expected = [{ '0': 0 }, { '1': 1 }];
-
-      deepEqual(actual, expected);
-
-      actual = _.map({ '0': objects[0], '1': objects[1] }, callback);
-      deepEqual(actual, expected);
-    });
   }('a', 'c'));
 
   /*--------------------------------------------------------------------------*/
@@ -6235,18 +6223,6 @@
 
     test('should coerce property names to strings', 1, function() {
       deepEqual(_.pick({ '0': 'a', '1': 'b' }, 0), { '0': 'a' });
-    });
-
-    test('should work when used as a callback for `_.map`', 2, function() {
-      var callback = _.partialRight(_.pick, 'a'),
-          objects = [{ '0': 0, 'a': 0 }, { '1': 1, 'a': 1 }],
-          actual = _.map(objects, callback),
-          expected = [{ 'a': 0 }, { 'a': 1 }];
-
-      deepEqual(actual, expected);
-
-      actual = _.map({ '0': objects[0], '1': objects[1] }, callback);
-      deepEqual(actual, expected);
     });
   }('a', 'c'));
 

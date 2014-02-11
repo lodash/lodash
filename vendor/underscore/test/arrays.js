@@ -1,11 +1,11 @@
-$(document).ready(function() {
+(function() {
 
-  module("Arrays");
+  module('Arrays');
 
-  test("first", function() {
+  test('first', function() {
     equal(_.first([1,2,3]), 1, 'can pull out the first element of an array');
     equal(_([1, 2, 3]).first(), 1, 'can perform OO-style "first()"');
-    equal(_.first([1,2,3], 0).join(', '), "", 'can pass an index to first');
+    equal(_.first([1,2,3], 0).join(', '), '', 'can pass an index to first');
     equal(_.first([1,2,3], 2).join(', '), '1, 2', 'can pass an index to first');
     equal(_.first([1,2,3], 5).join(', '), '1, 2, 3', 'can pass an index to first');
     var result = (function(){ return _.first(arguments); })(4, 3, 2, 1);
@@ -16,12 +16,13 @@ $(document).ready(function() {
     equal(result.join(','), '1,2', 'aliased as take');
 
     equal(_.first(null), undefined, 'handles nulls');
+    strictEqual(_.first([1, 2, 3], -1).length, 0);
   });
 
-  test("rest", function() {
+  test('rest', function() {
     var numbers = [1, 2, 3, 4];
-    equal(_.rest(numbers).join(", "), "2, 3, 4", 'working rest()');
-    equal(_.rest(numbers, 0).join(", "), "1, 2, 3, 4", 'working rest(0)');
+    equal(_.rest(numbers).join(', '), '2, 3, 4', 'working rest()');
+    equal(_.rest(numbers, 0).join(', '), '1, 2, 3, 4', 'working rest(0)');
     equal(_.rest(numbers, 2).join(', '), '3, 4', 'rest can take an index');
     var result = (function(){ return _(arguments).tail(); })(1, 2, 3, 4);
     equal(result.join(', '), '2, 3, 4', 'aliased as tail and works on arguments object');
@@ -31,18 +32,18 @@ $(document).ready(function() {
     equal(result.join(', '), '2, 3, 4', 'aliased as drop and works on arguments object');
   });
 
-  test("initial", function() {
-    equal(_.initial([1,2,3,4,5]).join(", "), "1, 2, 3, 4", 'working initial()');
-    equal(_.initial([1,2,3,4],2).join(", "), "1, 2", 'initial can take an index');
+  test('initial', function() {
+    equal(_.initial([1,2,3,4,5]).join(', '), '1, 2, 3, 4', 'working initial()');
+    equal(_.initial([1,2,3,4],2).join(', '), '1, 2', 'initial can take an index');
     var result = (function(){ return _(arguments).initial(); })(1, 2, 3, 4);
-    equal(result.join(", "), "1, 2, 3", 'initial works on arguments object');
+    equal(result.join(', '), '1, 2, 3', 'initial works on arguments object');
     result = _.map([[1,2,3],[1,2,3]], _.initial);
     equal(_.flatten(result).join(','), '1,2,1,2', 'initial works with _.map');
   });
 
-  test("last", function() {
+  test('last', function() {
     equal(_.last([1,2,3]), 3, 'can pull out the last element of an array');
-    equal(_.last([1,2,3], 0).join(', '), "", 'can pass an index to last');
+    equal(_.last([1,2,3], 0).join(', '), '', 'can pass an index to last');
     equal(_.last([1,2,3], 2).join(', '), '2, 3', 'can pass an index to last');
     equal(_.last([1,2,3], 5).join(', '), '1, 2, 3', 'can pass an index to last');
     var result = (function(){ return _(arguments).last(); })(1, 2, 3, 4);
@@ -51,15 +52,16 @@ $(document).ready(function() {
     equal(result.join(','), '3,3', 'works well with _.map');
 
     equal(_.last(null), undefined, 'handles nulls');
+    strictEqual(_.last([1, 2, 3], -1).length, 0);
   });
 
-  test("compact", function() {
+  test('compact', function() {
     equal(_.compact([0, 1, false, 2, false, 3]).length, 3, 'can trim out all falsy values');
     var result = (function(){ return _.compact(arguments).length; })(0, 1, false, 2, false, 3);
     equal(result, 3, 'works on an arguments object');
   });
 
-  test("flatten", function() {
+  test('flatten', function() {
     var list = [1, [2], [3, [[[4]]]]];
     deepEqual(_.flatten(list), [1,2,3,4], 'can flatten nested arrays');
     deepEqual(_.flatten(list, true), [1,2,3,[[[4]]]], 'can shallowly flatten nested arrays');
@@ -69,7 +71,7 @@ $(document).ready(function() {
     deepEqual(_.flatten(list, true), [1, 2, 3, [4]], 'can shallowly flatten arrays containing only other arrays');
   });
 
-  test("without", function() {
+  test('without', function() {
     var list = [1, 2, 1, 0, 3, 1, 4];
     equal(_.without(list, 0, 1).join(', '), '2, 3, 4', 'can remove all instances of an object');
     var result = (function(){ return _.without(arguments, 0, 1); })(1, 2, 1, 0, 3, 1, 4);
@@ -80,7 +82,17 @@ $(document).ready(function() {
     ok(_.without(list, list[0]).length == 1, 'ditto.');
   });
 
-  test("uniq", function() {
+  test('partition', function() {
+    var list = [0, 1, 2, 3, 4, 5];
+    function inspect(x) { return x instanceof Array ? '[' + _.map(x, inspect) + ']' : '' + x; }
+    equal(inspect(_.partition(list, function(x) { return x < 4; })), '[[0,1,2,3],[4,5]]', 'handles bool return values');
+    equal(inspect(_.partition(list, function(x) { return x & 1; })), '[[1,3,5],[0,2,4]]', 'handles 0 and 1 return values');
+    equal(inspect(_.partition(list, function(x) { return x - 3; })), '[[0,1,2,4,5],[3]]', 'handles other numeric return values');
+    equal(inspect(_.partition(list, function(x) { return x > 1 ? null : true; })), '[[0,1],[2,3,4,5]]', 'handles null return values');
+    equal(inspect(_.partition(list, function(x) { if(x < 2) return true; })), '[[0,1],[2,3,4,5]]', 'handles undefined return values');
+  });
+
+  test('uniq', function() {
     var list = [1, 2, 1, 3, 1, 4];
     equal(_.uniq(list).join(', '), '1, 2, 3, 4', 'can find the unique values of an unsorted array');
 
@@ -101,7 +113,7 @@ $(document).ready(function() {
     equal(result.join(', '), '1, 2, 3, 4', 'works on an arguments object');
   });
 
-  test("intersection", function() {
+  test('intersection', function() {
     var stooges = ['moe', 'curly', 'larry'], leaders = ['moe', 'groucho'];
     equal(_.intersection(stooges, leaders).join(''), 'moe', 'can take the set intersection of two arrays');
     equal(_(stooges).intersection(leaders).join(''), 'moe', 'can perform an OO-style intersection');
@@ -111,7 +123,7 @@ $(document).ready(function() {
     equal(_.intersection(theSixStooges, leaders).join(''), 'moe', 'returns a duplicate-free array');
   });
 
-  test("union", function() {
+  test('union', function() {
     var result = _.union([1, 2, 3], [2, 30, 1], [1, 40]);
     equal(result.join(' '), '1 2 3 30 40', 'takes the union of a list of arrays');
 
@@ -127,7 +139,7 @@ $(document).ready(function() {
     deepEqual(result, [null, 1, 2, 3]);
   });
 
-  test("difference", function() {
+  test('difference', function() {
     var result = _.difference([1, 2, 3], [2, 30, 40]);
     equal(result.join(' '), '1 3', 'takes the difference of two arrays');
 
@@ -167,7 +179,7 @@ $(document).ready(function() {
     ok(_.isEqual(_.object(null), {}), 'handles nulls');
   });
 
-  test("indexOf", function() {
+  test('indexOf', function() {
     var numbers = [1, 2, 3];
     numbers.indexOf = null;
     equal(_.indexOf(numbers, 2), 1, 'can compute indexOf, even without the native function');
@@ -193,7 +205,7 @@ $(document).ready(function() {
     equal(index, 7, 'supports the fromIndex argument');
   });
 
-  test("lastIndexOf", function() {
+  test('lastIndexOf', function() {
     var numbers = [1, 0, 1];
     equal(_.lastIndexOf(numbers, 1), 2);
 
@@ -210,7 +222,7 @@ $(document).ready(function() {
     equal(index, 1, 'supports the fromIndex argument');
   });
 
-  test("range", function() {
+  test('range', function() {
     equal(_.range(0).join(''), '', 'range with 0 as a first argument generates an empty array');
     equal(_.range(4).join(' '), '0 1 2 3', 'range with a single positive argument generates an array of elements 0,1,2,...,n-1');
     equal(_.range(5, 8).join(' '), '5 6 7', 'range with two arguments a &amp; b, a&lt;b generates an array of elements a,a+1,a+2,...,b-2,b-1');
@@ -221,4 +233,4 @@ $(document).ready(function() {
     equal(_.range(0, -10, -1).join(' '), '0 -1 -2 -3 -4 -5 -6 -7 -8 -9', 'final example in the Python docs');
   });
 
-});
+})();

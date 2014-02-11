@@ -24,7 +24,6 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
 ## Features *not* in Underscore
 
  * ~100% [code coverage](https://coveralls.io/r/lodash)
- * AMD loader support ([curl](https://github.com/cujojs/curl), [dojo](http://dojotoolkit.org/), [requirejs](http://requirejs.org/), etc.)
  * Module collections for [AMD](https://github.com/lodash/lodash-amd/tree/2.4.1), [Node.js](https://npmjs.org/package/lodash-node), & as [npm packages](https://npmjs.org/browse/keyword/lodash-modularized)
  * [Semantic versioning](http://semver.org/) support for releases
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
@@ -32,14 +31,13 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods
  * [_.clone](http://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
- * [_.constant](http://lodash.com/docs#constant) & [_.property](http://lodash.com/docs#property) function generators for composing functions
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
  * [_.create](http://lodash.com/docs#create) for easier object inheritance
  * [_.callback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins
  * [_.curry](http://lodash.com/docs#curry) for creating [curried](http://hughfdjackson.com/javascript/2013/07/06/why-curry-helps/) functions
  * [_.debounce](http://lodash.com/docs#debounce) & [_.throttle](http://lodash.com/docs#throttle) accept additional `options` for more control
  * [_.findIndex](http://lodash.com/docs#findIndex) & [_.findKey](http://lodash.com/docs#findKey) for finding indexes & keys
- * [_.forEach](http://lodash.com/docs#forEach) is chainable & supports exiting early
+ * [_.forEach](http://lodash.com/docs#forEach) supports exiting early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating own & inherited properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating own properties
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) for checking if values are created by `Object`
@@ -47,7 +45,6 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.memoize](http://lodash.com/docs#memoize) exposes the `cache` of memoized functions
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
  * [_.noop](http://lodash.com/docs#noop) for function placeholders
- * [_.now](http://lodash.com/docs#now) as a cross-browser `Date.now` alternative
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.pull](http://lodash.com/docs#pull) & [_.remove](http://lodash.com/docs#remove) for mutating arrays
  * [_.random](http://lodash.com/docs#random) supports returning floating-point numbers

@@ -5239,17 +5239,17 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.match');
+  QUnit.module('lodash.matches');
 
   (function() {
     test('should create a function that performs a deep comparison between a given object and the `props` object', 3, function() {
       var object = { 'a': 1, 'b': 2 },
-          actual = _.match({ 'a': 1 });
+          actual = _.matches({ 'a': 1 });
 
       equal(actual.length, 1);
       strictEqual(actual(object), true);
 
-      actual =  _.match({ 'b': 1 });
+      actual =  _.matches({ 'b': 1 });
       strictEqual(actual(object), false);
     });
   }());

@@ -7054,12 +7054,12 @@
      *   { 'name': 'barney', 'age': 36 }
      * ];
      *
-     * var matchAge = _.matches({ 'age': 36 });
+     * var matchesAge = _.matches({ 'age': 36 });
      *
-     * _.filter(characters, matchAge);
+     * _.filter(characters, matchesAge);
      * // => [{ 'name': 'barney', 'age': 36 }]
      *
-     * _.find(characters, matchAge);
+     * _.find(characters, matchesAge);
      * // => { 'name': 'barney', 'age': 36 }
      */
     function matches(source) {

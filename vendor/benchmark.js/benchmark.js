@@ -203,7 +203,7 @@
     (function() {
 
       /**
-       * Detect if in a browser environment.
+       * Detect if running in a browser environment.
        *
        * @memberOf Benchmark.support
        * @type boolean
@@ -235,7 +235,7 @@
       support.unshiftResult = !![].unshift(1);
 
       /**
-       * Detect if functions support decompilation.
+       * Detect if function decompilation is support.
        *
        * @name decompilation
        * @memberOf Benchmark.support
@@ -822,7 +822,7 @@
      * @memberOf Benchmark
      * @param {Array} benches Array of benchmarks to iterate over.
      * @param {Object|string} name The name of the method to invoke OR options object.
-     * @param {...*} [arg] Arguments to invoke the method with.
+     * @param {...*} [args] Arguments to invoke the method with.
      * @returns {Array} A new array of values returned from each method invoked.
      * @example
      *
@@ -1218,6 +1218,7 @@
      *
      * @memberOf Benchmark, Benchmark.Suite
      * @param {Object|string} type The event type or object.
+     * @param {...*} [args] Arguments to invoke the listener with.
      * @returns {*} Returns the return value of the last listener executed.
      */
     function emit(type) {

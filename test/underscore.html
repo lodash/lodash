@@ -56,7 +56,7 @@
 						'throws an error for empty arrays with no initial value'
 					],
 					'where': [
-						'Only get the first object matched.'
+						'4'
 					]
 				},
 				'Functions': {
@@ -67,6 +67,12 @@
 					'bindAll': [
 						'throws an error for bindAll with no functions named'
 					],
+					'partial': [
+						'can partially apply with placeholders',
+						'accepts more arguments than the number of placeholders',
+						'accepts fewer arguments than the number of placeholders',
+						'unfilled placeholders are undefined'
+					],
 					'throttle repeatedly with results': true,
 					'more throttle does not trigger leading call when leading is set to false': true,
 					'throttle does not trigger trailing call when trailing is set to false': true,
@@ -76,13 +82,6 @@
 					'isEqual': [
 						'Died on test #60',
 						'Died on test #63'
-					],
-					'keys': [
-						'throws an error for `null` values',
-						'throws an error for `undefined` values',
-						'throws an error for number primitives',
-						'throws an error for string primitives',
-						'throws an error for boolean primitives'
 					]
 				},
 				'Utility': {

@@ -268,7 +268,7 @@
    * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
    * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
    * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
-   * `invert`, `invoke`, `keys`, `map`, `mapValues`, `match`, `max`, `memoize`,
+   * `invert`, `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`,
    * `merge`, `min`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
    * `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`, `range`,
    * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
@@ -2305,33 +2305,6 @@
   }
 
   /**
-   * Examines each element in a `collection`, returning the first that
-   * has the given properties. When checking `properties`, this method
-   * performs a deep comparison between values to determine if they are
-   * equivalent to each other.
-   *
-   * @static
-   * @memberOf _
-   * @category Collections
-   * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Object} properties The object of property values to filter by.
-   * @returns {*} Returns the found element, else `undefined`.
-   * @example
-   *
-   * var food = [
-   *   { 'name': 'apple',  'organic': false, 'type': 'fruit' },
-   *   { 'name': 'banana', 'organic': true,  'type': 'fruit' },
-   *   { 'name': 'beet',   'organic': false, 'type': 'vegetable' }
-   * ];
-   *
-   * _.findWhere(food, { 'type': 'vegetable' });
-   * // => { 'name': 'beet', 'organic': false, 'type': 'vegetable' }
-   */
-  function findWhere(object, properties) {
-    return where(object, properties, true);
-  }
-
-  /**
    * Iterates over elements of a collection, executing the callback for each
    * element. The callback is bound to `thisArg` and invoked with three arguments;
    * (value, index|key, collection). Callbacks may exit iteration early by
@@ -2371,6 +2344,7 @@
     } else {
       baseEach(collection, callback);
     }
+    return collection;
   }
 
   /**
@@ -2704,6 +2678,54 @@
     }
     return result;
   }
+
+  /**
+   * Creates an array of elements split into two groups, the first of which
+   * contains elements the callback returns truey for, while the second of which
+   * contains elements the callback returns falsey for. The callback is bound
+   * to `thisArg` and invoked with three arguments; (value, index|key, collection).
+   *
+   * If a property name is provided for `callback` the created "_.pluck" style
+   * callback will return the property value of the given element.
+   *
+   * If an object is provided for `callback` the created "_.where" style callback
+   * will return `true` for elements that have the properties of the given object,
+   * else `false`.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|string} collection The collection to iterate over.
+   * @param {Function|Object|string} [callback=identity] The function called
+   *  per iteration. If a property name or object is provided it will be used
+   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {*} [thisArg] The `this` binding of `callback`.
+   * @returns {Array} Returns a new array of grouped elements.
+   * @example
+   *
+   * _.partition([1, 2, 3], function(num) { return num % 2; });
+   * // => [[1, 3], [2]]
+   *
+   * _.partition([1.2, 2.3, 3.4], function(num) { return this.floor(num) % 2; }, Math);
+   * // => [[1, 3], [2]]
+   *
+   * var characters = [
+   *   { 'name': 'barney',  'age': 36 },
+   *   { 'name': 'fred',    'age': 40, 'blocked': true },
+   *   { 'name': 'pebbles', 'age': 1 }
+   * ];
+   *
+   * // using "_.where" callback shorthand
+   * _.map(_.partition(characters, { 'age': 1 }), function(array) { return _.pluck(array, 'name'); });
+   * // => [['pebbles'], ['barney', 'fred']]
+   *
+   * // using "_.pluck" callback shorthand
+   * _.map(_.partition(characters, 'blocked'), function(array) { return _.pluck(array, 'name'); });
+   * // => [['fred'], ['barney', 'pebbles']]
+   */
+  var partition = createAggregator(function(result, value, key) {
+    result[key ? 0 : 1].push(value);
+  }, true);
 
   /**
    * Retrieves the value of a specified property from all elements in the collection.
@@ -3122,11 +3144,7 @@
    * _.where(characters, { 'pets': ['dino'] });
    * // => [{ 'name': 'fred', 'age': 40, 'pets': ['baby puss', 'dino'] }]
    */
-  function where(collection, properties, first) {
-    return (first && isEmpty(properties))
-      ? undefined
-      : (first ? find : filter)(collection, properties);
-  }
+  var where = filter;
 
   /*--------------------------------------------------------------------------*/
 
@@ -4629,6 +4647,27 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Creates a function that returns `value`.
+   *
+   * @static
+   * @memberOf _
+   * @category Utilities
+   * @param {*} value The value to return from the new function.
+   * @returns {Function} Returns the new function.
+   * @example
+   *
+   * var object = { 'name': 'fred' };
+   * var getter = _.constant(object);
+   * getter() === object;
+   * // => true
+   */
+  function constant(value) {
+    return function() {
+      return value;
+    };
+  }
+
+  /**
    * Produces a callback bound to an optional `thisArg`. If `func` is a property
    * name the created callback will return the property value for a given element.
    * If `func` is an object the created callback will return `true` for elements
@@ -4667,7 +4706,7 @@
         func || baseCreateCallback(func, thisArg, argCount);
     }
     // handle "_.pluck" and "_.where" style callback shorthands
-    return type != 'object' ? property(func) : match(func);
+    return type != 'object' ? property(func) : matches(func);
   }
 
   /**
@@ -4705,21 +4744,21 @@
    *   { 'name': 'barney', 'age': 36 }
    * ];
    *
-   * var matchAge = _.match({ 'age': 36 });
+   * var matchesAge = _.matches({ 'age': 36 });
    *
-   * _.filter(characters, matchAge);
+   * _.filter(characters, matchesAge);
    * // => [{ 'name': 'barney', 'age': 36 }]
    *
-   * _.find(characters, matchAge);
+   * _.find(characters, matchesAge);
    * // => { 'name': 'barney', 'age': 36 }
    */
-  function match(source) {
+  function matches(source) {
     source || (source = {});
 
     var props = keys(source);
     return function(object) {
       var length = props.length,
-          result = false;
+          result = true;
 
       while (length--) {
         var key = props[length];
@@ -5010,6 +5049,7 @@
   lodash.chain = chain;
   lodash.compact = compact;
   lodash.compose = compose;
+  lodash.constant = constant;
   lodash.countBy = countBy;
   lodash.debounce = debounce;
   lodash.defaults = defaults;
@@ -5028,6 +5068,7 @@
   lodash.invoke = invoke;
   lodash.keys = keys;
   lodash.map = map;
+  lodash.matches = matches;
   lodash.max = max;
   lodash.memoize = memoize;
   lodash.min = min;
@@ -5035,8 +5076,10 @@
   lodash.once = once;
   lodash.pairs = pairs;
   lodash.partial = partial;
+  lodash.partition = partition;
   lodash.pick = pick;
   lodash.pluck = pluck;
+  lodash.property = property;
   lodash.range = range;
   lodash.reject = reject;
   lodash.rest = rest;
@@ -5095,6 +5138,7 @@
   lodash.lastIndexOf = lastIndexOf;
   lodash.mixin = mixin;
   lodash.noConflict = noConflict;
+  lodash.now = now;
   lodash.random = random;
   lodash.reduce = reduce;
   lodash.reduceRight = reduceRight;
@@ -5110,7 +5154,7 @@
   lodash.all = every;
   lodash.any = some;
   lodash.detect = find;
-  lodash.findWhere = findWhere;
+  lodash.findWhere = find;
   lodash.foldl = reduce;
   lodash.foldr = reduceRight;
   lodash.include = contains;

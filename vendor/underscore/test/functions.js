@@ -1,10 +1,10 @@
-$(document).ready(function() {
+(function() {
 
-  module("Functions");
+  module('Functions');
 
-  test("bind", function() {
+  test('bind', function() {
     var context = {name : 'moe'};
-    var func = function(arg) { return "name: " + (this.name || arg); };
+    var func = function(arg) { return 'name: ' + (this.name || arg); };
     var bound = _.bind(func, context);
     equal(bound(), 'name: moe', 'can bind a function to a context');
 
@@ -33,22 +33,32 @@ $(document).ready(function() {
     // These tests are only meaningful when using a browser without a native bind function
     // To test this with a modern browser, set underscore's nativeBind to undefined
     var F = function () { return this; };
-    var Boundf = _.bind(F, {hello: "moe curly"});
+    var Boundf = _.bind(F, {hello: 'moe curly'});
     var newBoundf = new Boundf();
-    equal(newBoundf.hello, undefined, "function should not be bound to the context, to comply with ECMAScript 5");
-    equal(Boundf().hello, "moe curly", "When called without the new operator, it's OK to be bound to the context");
-    ok(newBoundf instanceof F, "a bound instance is an instance of the original function");
+    equal(newBoundf.hello, undefined, 'function should not be bound to the context, to comply with ECMAScript 5');
+    equal(Boundf().hello, 'moe curly', "When called without the new operator, it's OK to be bound to the context");
+    ok(newBoundf instanceof F, 'a bound instance is an instance of the original function');
   });
 
-  test("partial", function() {
+  test('partial', function() {
     var obj = {name: 'moe'};
     var func = function() { return this.name + ' ' + _.toArray(arguments).join(' '); };
 
     obj.func = _.partial(func, 'a', 'b');
     equal(obj.func('c', 'd'), 'moe a b c d', 'can partially apply');
+
+    obj.func = _.partial(func, _, 'b', _, 'd');
+    equal(obj.func('a', 'c'), 'moe a b c d', 'can partially apply with placeholders');
+
+    func = _.partial(function() { return arguments.length; }, _, 'b', _, 'd');
+    equal(func('a', 'c', 'e'), 5, 'accepts more arguments than the number of placeholders');
+    equal(func('a'), 4, 'accepts fewer arguments than the number of placeholders');
+
+    func = _.partial(function() { return typeof arguments[2]; }, _, 'b', _, 'd');
+    equal(func('a'), 'undefined', 'unfilled placeholders are undefined');
   });
 
-  test("bindAll", function() {
+  test('bindAll', function() {
     var curly = {name : 'curly'}, moe = {
       name    : 'moe',
       getName : function() { return 'name: ' + this.name; },
@@ -74,7 +84,7 @@ $(document).ready(function() {
     equal(curly.sayHi(), 'hi: moe');
   });
 
-  test("memoize", function() {
+  test('memoize', function() {
     var fib = function(n) {
       return n < 2 ? n : fib(n - 1) + fib(n - 2);
     };
@@ -90,59 +100,59 @@ $(document).ready(function() {
     equal(fastO('toString'), 'toString', 'checks hasOwnProperty');
   });
 
-  asyncTest("delay", 2, function() {
+  asyncTest('delay', 2, function() {
     var delayed = false;
     _.delay(function(){ delayed = true; }, 100);
     setTimeout(function(){ ok(!delayed, "didn't delay the function quite yet"); }, 50);
     setTimeout(function(){ ok(delayed, 'delayed the function'); start(); }, 150);
   });
 
-  asyncTest("defer", 1, function() {
+  asyncTest('defer', 1, function() {
     var deferred = false;
     _.defer(function(bool){ deferred = bool; }, true);
-    _.delay(function(){ ok(deferred, "deferred the function"); start(); }, 50);
+    _.delay(function(){ ok(deferred, 'deferred the function'); start(); }, 50);
   });
 
-  asyncTest("throttle", 2, function() {
+  asyncTest('throttle', 2, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 32);
     throttledIncr(); throttledIncr();
 
-    equal(counter, 1, "incr was called immediately");
-    _.delay(function(){ equal(counter, 2, "incr was throttled"); start(); }, 64);
+    equal(counter, 1, 'incr was called immediately');
+    _.delay(function(){ equal(counter, 2, 'incr was throttled'); start(); }, 64);
   });
 
-  asyncTest("throttle arguments", 2, function() {
+  asyncTest('throttle arguments', 2, function() {
     var value = 0;
     var update = function(val){ value = val; };
     var throttledUpdate = _.throttle(update, 32);
     throttledUpdate(1); throttledUpdate(2);
     _.delay(function(){ throttledUpdate(3); }, 64);
-    equal(value, 1, "updated to latest value");
-    _.delay(function(){ equal(value, 3, "updated to latest value"); start(); }, 96);
+    equal(value, 1, 'updated to latest value');
+    _.delay(function(){ equal(value, 3, 'updated to latest value'); start(); }, 96);
   });
 
-  asyncTest("throttle once", 2, function() {
+  asyncTest('throttle once', 2, function() {
     var counter = 0;
     var incr = function(){ return ++counter; };
     var throttledIncr = _.throttle(incr, 32);
     var result = throttledIncr();
     _.delay(function(){
-      equal(result, 1, "throttled functions return their value");
-      equal(counter, 1, "incr was called once"); start();
+      equal(result, 1, 'throttled functions return their value');
+      equal(counter, 1, 'incr was called once'); start();
     }, 64);
   });
 
-  asyncTest("throttle twice", 1, function() {
+  asyncTest('throttle twice', 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 32);
     throttledIncr(); throttledIncr();
-    _.delay(function(){ equal(counter, 2, "incr was called twice"); start(); }, 64);
+    _.delay(function(){ equal(counter, 2, 'incr was called twice'); start(); }, 64);
   });
 
-  asyncTest("more throttling", 3, function() {
+  asyncTest('more throttling', 3, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 30);
@@ -156,7 +166,7 @@ $(document).ready(function() {
     }, 85);
   });
 
-  asyncTest("throttle repeatedly with results", 6, function() {
+  asyncTest('throttle repeatedly with results', 6, function() {
     var counter = 0;
     var incr = function(){ return ++counter; };
     var throttledIncr = _.throttle(incr, 100);
@@ -168,17 +178,17 @@ $(document).ready(function() {
     _.delay(saveResult, 160);
     _.delay(saveResult, 230);
     _.delay(function() {
-      equal(results[0], 1, "incr was called once");
-      equal(results[1], 1, "incr was throttled");
-      equal(results[2], 1, "incr was throttled");
-      equal(results[3], 2, "incr was called twice");
-      equal(results[4], 2, "incr was throttled");
-      equal(results[5], 3, "incr was called trailing");
+      equal(results[0], 1, 'incr was called once');
+      equal(results[1], 1, 'incr was throttled');
+      equal(results[2], 1, 'incr was throttled');
+      equal(results[3], 2, 'incr was called twice');
+      equal(results[4], 2, 'incr was throttled');
+      equal(results[5], 3, 'incr was called trailing');
       start();
     }, 300);
   });
 
-  asyncTest("throttle triggers trailing call when invoked repeatedly", 2, function() {
+  asyncTest('throttle triggers trailing call when invoked repeatedly', 2, function() {
     var counter = 0;
     var limit = 48;
     var incr = function(){ counter++; };
@@ -197,7 +207,7 @@ $(document).ready(function() {
     }, 96);
   });
 
-  asyncTest("throttle does not trigger leading call when leading is set to false", 2, function() {
+  asyncTest('throttle does not trigger leading call when leading is set to false', 2, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 60, {leading: false});
@@ -211,7 +221,7 @@ $(document).ready(function() {
     }, 96);
   });
 
-  asyncTest("more throttle does not trigger leading call when leading is set to false", 3, function() {
+  asyncTest('more throttle does not trigger leading call when leading is set to false', 3, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 100, {leading: false});
@@ -232,7 +242,7 @@ $(document).ready(function() {
     }, 350);
   });
 
-  asyncTest("one more throttle with leading: false test", 2, function() {
+  asyncTest('one more throttle with leading: false test', 2, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 100, {leading: false});
@@ -247,7 +257,7 @@ $(document).ready(function() {
     }, 200);
   });
 
-  asyncTest("throttle does not trigger trailing call when trailing is set to false", 4, function() {
+  asyncTest('throttle does not trigger trailing call when trailing is set to false', 4, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 60, {trailing: false});
@@ -268,16 +278,16 @@ $(document).ready(function() {
     }, 96);
   });
 
-  asyncTest("debounce", 1, function() {
+  asyncTest('debounce', 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
     var debouncedIncr = _.debounce(incr, 32);
     debouncedIncr(); debouncedIncr();
     _.delay(debouncedIncr, 16);
-    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 96);
+    _.delay(function(){ equal(counter, 1, 'incr was debounced'); start(); }, 96);
   });
 
-  asyncTest("debounce asap", 4, function() {
+  asyncTest('debounce asap', 4, function() {
     var a, b;
     var counter = 0;
     var incr = function(){ return ++counter; };
@@ -290,21 +300,21 @@ $(document).ready(function() {
     _.delay(debouncedIncr, 16);
     _.delay(debouncedIncr, 32);
     _.delay(debouncedIncr, 48);
-    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 128);
+    _.delay(function(){ equal(counter, 1, 'incr was debounced'); start(); }, 128);
   });
 
-  asyncTest("debounce asap recursively", 2, function() {
+  asyncTest('debounce asap recursively', 2, function() {
     var counter = 0;
     var debouncedIncr = _.debounce(function(){
       counter++;
       if (counter < 10) debouncedIncr();
     }, 32, true);
     debouncedIncr();
-    equal(counter, 1, "incr was called immediately");
-    _.delay(function(){ equal(counter, 1, "incr was debounced"); start(); }, 96);
+    equal(counter, 1, 'incr was called immediately');
+    _.delay(function(){ equal(counter, 1, 'incr was debounced'); start(); }, 96);
   });
 
-  test("once", function() {
+  test('once', function() {
     var num = 0;
     var increment = _.once(function(){ num++; });
     increment();
@@ -312,7 +322,7 @@ $(document).ready(function() {
     equal(num, 1);
   });
 
-  test("Recursive onced function.", 1, function() {
+  test('Recursive onced function.', 1, function() {
     var f = _.once(function(){
       ok(true);
       f();
@@ -320,15 +330,15 @@ $(document).ready(function() {
     f();
   });
 
-  test("wrap", function() {
-    var greet = function(name){ return "hi: " + name; };
+  test('wrap', function() {
+    var greet = function(name){ return 'hi: ' + name; };
     var backwards = _.wrap(greet, function(func, name){ return func(name) + ' ' + name.split('').reverse().join(''); });
     equal(backwards('moe'), 'hi: moe eom', 'wrapped the salutation function');
 
-    var inner = function(){ return "Hello "; };
-    var obj   = {name : "Moe"};
+    var inner = function(){ return 'Hello '; };
+    var obj   = {name : 'Moe'};
     obj.hi    = _.wrap(inner, function(fn){ return fn() + this.name; });
-    equal(obj.hi(), "Hello Moe");
+    equal(obj.hi(), 'Hello Moe');
 
     var noop    = function(){};
     var wrapped = _.wrap(noop, function(fn){ return Array.prototype.slice.call(arguments, 0); });
@@ -336,8 +346,8 @@ $(document).ready(function() {
     deepEqual(ret, [noop, ['whats', 'your'], 'vector', 'victor']);
   });
 
-  test("compose", function() {
-    var greet = function(name){ return "hi: " + name; };
+  test('compose', function() {
+    var greet = function(name){ return 'hi: ' + name; };
     var exclaim = function(sentence){ return sentence + '!'; };
     var composed = _.compose(exclaim, greet);
     equal(composed('moe'), 'hi: moe!', 'can compose a function that takes another');
@@ -346,7 +356,7 @@ $(document).ready(function() {
     equal(composed('moe'), 'hi: moe!', 'in this case, the functions are also commutative');
   });
 
-  test("after", function() {
+  test('after', function() {
     var testAfter = function(afterAmount, timesCalled) {
       var afterCalled = 0;
       var after = _.after(afterAmount, function() {
@@ -356,10 +366,10 @@ $(document).ready(function() {
       return afterCalled;
     };
 
-    equal(testAfter(5, 5), 1, "after(N) should fire after being called N times");
-    equal(testAfter(5, 4), 0, "after(N) should not fire unless called N times");
-    equal(testAfter(0, 0), 0, "after(0) should not fire immediately");
-    equal(testAfter(0, 1), 1, "after(0) should fire when first invoked");
+    equal(testAfter(5, 5), 1, 'after(N) should fire after being called N times');
+    equal(testAfter(5, 4), 0, 'after(N) should not fire unless called N times');
+    equal(testAfter(0, 0), 0, 'after(0) should not fire immediately');
+    equal(testAfter(0, 1), 1, 'after(0) should fire when first invoked');
   });
 
-});
+})();

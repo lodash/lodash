@@ -1,8 +1,8 @@
-$(document).ready(function() {
+(function() {
 
-  module("Collections");
+  module('Collections');
 
-  test("each", function() {
+  test('each', function() {
     _.each([1, 2, 3], function(num, i) {
       equal(num, i + 1, 'each iterators provide value and iteration count');
     });
@@ -19,7 +19,7 @@ $(document).ready(function() {
     var obj = {one : 1, two : 2, three : 3};
     obj.constructor.prototype.four = 4;
     _.each(obj, function(value, key){ answers.push(key); });
-    equal(answers.join(", "), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
+    equal(answers.join(', '), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
     delete obj.constructor.prototype.four;
 
     var answer = null;
@@ -29,6 +29,12 @@ $(document).ready(function() {
     answers = 0;
     _.each(null, function(){ ++answers; });
     equal(answers, 0, 'handles a null properly');
+
+    _.each(false, function(){});
+
+    var a = [1, 2, 3];
+    strictEqual(_.each(a, function(){}), a);
+    strictEqual(_.each(null, function(){}), null);
   });
 
   test('map', function() {
@@ -49,11 +55,10 @@ $(document).ready(function() {
       deepEqual(ids, ['id1', 'id2'], 'Can use collection methods on NodeLists.');
     }
 
-    var ids = _.map($('#map-test').children(), function(n){ return n.id; });
-    deepEqual(ids, ['id1', 'id2'], 'Can use collection methods on jQuery Array-likes.');
-
-    var ids = _.map(document.images, function(n){ return n.id; });
-    ok(ids[0] == 'chart_image', 'can use collection methods on HTMLCollections');
+    var ids = _.map({length: 2, 0: {id: '1'}, 1: {id: '2'}}, function(n){
+      return n.id;
+    });
+    deepEqual(ids, ['1', '2'], 'Can use collection methods on Array-likes.');
 
     var ifnull = _.map(null, function(){});
     ok(_.isArray(ifnull) && ifnull.length === 0, 'handles a null properly');
@@ -93,13 +98,13 @@ $(document).ready(function() {
   });
 
   test('reduceRight', function() {
-    var list = _.reduceRight(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
+    var list = _.reduceRight(['foo', 'bar', 'baz'], function(memo, str){ return memo + str; }, '');
     equal(list, 'bazbarfoo', 'can perform right folds');
 
-    var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
+    var list = _.foldr(['foo', 'bar', 'baz'], function(memo, str){ return memo + str; }, '');
     equal(list, 'bazbarfoo', 'aliased as "foldr"');
 
-    var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; });
+    var list = _.foldr(['foo', 'bar', 'baz'], function(memo, str){ return memo + str; });
     equal(list, 'bazbarfoo', 'default initial value');
 
     var ifnull;
@@ -175,10 +180,10 @@ $(document).ready(function() {
     var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
     equal(odds.join(', '), '1, 3, 5', 'rejected each even number');
 
-    var context = "obj";
+    var context = 'obj';
 
     var evens = _.reject([1, 2, 3, 4, 5, 6], function(num){
-      equal(context, "obj");
+      equal(context, 'obj');
       return num % 2 != 0;
     }, context);
     equal(evens.join(', '), '2, 4, 6', 'rejected each odd number');
@@ -239,13 +244,13 @@ $(document).ready(function() {
       return 42;
     };
     var list = [[5, 1, 7], [3, 2, 1]];
-    var s = "foo";
-    equal(s.call(), 42, "call function exists");
+    var s = 'foo';
+    equal(s.call(), 42, 'call function exists');
     var result = _.invoke(list, 'sort');
     equal(result[0].join(', '), '1, 5, 7', 'first array sorted');
     equal(result[1].join(', '), '1, 2, 3', 'second array sorted');
     delete String.prototype.call;
-    equal(s.call, undefined, "call function removed");
+    equal(s.call, undefined, 'call function removed');
   });
 
   test('pluck', function() {
@@ -261,11 +266,8 @@ $(document).ready(function() {
     result = _.where(list, {b: 2});
     equal(result.length, 2);
     equal(result[0].a, 1);
-
-    result = _.where(list, {a: 1}, true);
-    equal(result.b, 2, "Only get the first object matched.")
-    result = _.where(list, {a: 1}, false);
-    equal(result.length, 3);
+    result = _.where(list, {});
+    equal(result.length, list.length);
   });
 
   test('findWhere', function() {
@@ -276,10 +278,10 @@ $(document).ready(function() {
     deepEqual(result, {a: 1, b: 4});
 
     result = _.findWhere(list, {c:1})
-    ok(_.isUndefined(result), "undefined when not found");
+    ok(_.isUndefined(result), 'undefined when not found');
 
     result = _.findWhere([], {c:1});
-    ok(_.isUndefined(result), "undefined when searching empty list");
+    ok(_.isUndefined(result), 'undefined when searching empty list');
   });
 
   test('max', function() {
@@ -292,7 +294,7 @@ $(document).ready(function() {
     equal(-Infinity, _.max([]), 'Maximum value of an empty array');
     equal(_.max({'a': 'a'}), -Infinity, 'Maximum value of a non-numeric collection');
 
-    equal(299999, _.max(_.range(1,300000)), "Maximum value of a too-big array");
+    equal(299999, _.max(_.range(1,300000)), 'Maximum value of a too-big array');
   });
 
   test('min', function() {
@@ -309,7 +311,7 @@ $(document).ready(function() {
     var then = new Date(0);
     equal(_.min([now, then]), then);
 
-    equal(1, _.min(_.range(1,300000)), "Minimum value of a too-big array");
+    equal(1, _.min(_.range(1,300000)), 'Minimum value of a too-big array');
   });
 
   test('sortBy', function() {
@@ -320,7 +322,7 @@ $(document).ready(function() {
     var list = [undefined, 4, 1, undefined, 3, 2];
     equal(_.sortBy(list, _.identity).join(','), '1,2,3,4,,', 'sortBy with undefined values');
 
-    var list = ["one", "two", "three", "four", "five"];
+    var list = ['one', 'two', 'three', 'four', 'five'];
     var sorted = _.sortBy(list, 'length');
     equal(sorted.join(' '), 'one two four five three', 'sorted by length');
 
@@ -346,6 +348,9 @@ $(document).ready(function() {
     });
 
     deepEqual(actual, collection, 'sortBy should be stable');
+
+    var list = ['q', 'w', 'e', 'r', 't', 'y'];
+    strictEqual(_.sortBy(list).join(''), 'eqrtwy', 'uses _.identity if iterator is not specified');
   });
 
   test('groupBy', function() {
@@ -353,7 +358,7 @@ $(document).ready(function() {
     ok('0' in parity && '1' in parity, 'created a group for each value');
     equal(parity[0].join(', '), '2, 4, 6', 'put each even number in the right group');
 
-    var list = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+    var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
     var grouped = _.groupBy(list, 'length');
     equal(grouped['3'].join(' '), 'one two six ten');
     equal(grouped['4'].join(' '), 'four five nine');
@@ -390,7 +395,7 @@ $(document).ready(function() {
     equal(parity['true'], 4);
     equal(parity['false'], 5);
 
-    var list = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+    var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
     var grouped = _.indexBy(list, 'length');
     equal(grouped['3'], 'ten');
     equal(grouped['4'], 'nine');
@@ -408,7 +413,7 @@ $(document).ready(function() {
     equal(parity['true'], 2);
     equal(parity['false'], 3);
 
-    var list = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+    var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
     var grouped = _.countBy(list, 'length');
     equal(grouped['3'], 4);
     equal(grouped['4'], 3);
@@ -468,6 +473,7 @@ $(document).ready(function() {
     notStrictEqual(_.sample([], 5), [], 'sampling empty array with a number returns an empty array');
     notStrictEqual(_.sample([1, 2, 3], 0), [], 'sampling an array with 0 picks returns an empty array');
     deepEqual(_.sample([1, 2], -1), [], 'sampling a negative number of picks returns an empty array');
+    ok(_.contains([1, 2, 3], _.sample({a: 1, b: 2, c: 3})), 'sample one value from an object');
   });
 
   test('toArray', function() {
@@ -491,7 +497,7 @@ $(document).ready(function() {
   test('size', function() {
     equal(_.size({one : 1, two : 2, three : 3}), 3, 'can compute the size of an object');
     equal(_.size([1, 2, 3]), 3, 'can compute the size of an array');
-    equal(_.size($('<div>').add('<span>').add('<span>')), 3, 'can compute the size of jQuery objects');
+    equal(_.size({length: 3, 0: 0, 1: 0, 2: 0}), 3, 'can compute the size of Array-likes');
 
     var func = function() {
       return _.size(arguments);
@@ -505,4 +511,4 @@ $(document).ready(function() {
     equal(_.size(null), 0, 'handles nulls');
   });
 
-});
+})();

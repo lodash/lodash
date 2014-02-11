@@ -691,7 +691,7 @@
      * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
      * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
      * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
-     * `invert`, `invoke`, `keys`, `map`, `mapValues`, `match`, `max`, `memoize`,
+     * `invert`, `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`,
      * `merge`, `min`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
      * `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`, `range`,
      * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
@@ -7016,7 +7016,7 @@
           func || baseCreateCallback(func, thisArg, argCount);
       }
       // handle "_.pluck" and "_.where" style callback shorthands
-      return type != 'object' ? property(func) : match(func);
+      return type != 'object' ? property(func) : matches(func);
     }
 
     /**
@@ -7054,7 +7054,7 @@
      *   { 'name': 'barney', 'age': 36 }
      * ];
      *
-     * var matchAge = _.match({ 'age': 36 });
+     * var matchAge = _.matches({ 'age': 36 });
      *
      * _.filter(characters, matchAge);
      * // => [{ 'name': 'barney', 'age': 36 }]
@@ -7062,7 +7062,7 @@
      * _.find(characters, matchAge);
      * // => { 'name': 'barney', 'age': 36 }
      */
-    function match(source) {
+    function matches(source) {
       source || (source = {});
 
       var props = keys(source),
@@ -7476,7 +7476,7 @@
     lodash.keys = keys;
     lodash.map = map;
     lodash.mapValues = mapValues;
-    lodash.match = match;
+    lodash.matches = matches;
     lodash.max = max;
     lodash.memoize = memoize;
     lodash.merge = merge;

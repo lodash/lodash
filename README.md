@@ -49,6 +49,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.pull](http://lodash.com/docs#pull) & [_.remove](http://lodash.com/docs#remove) for mutating arrays
  * [_.random](http://lodash.com/docs#random) supports returning floating-point numbers
  * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking
+ * [_.slice](http://lodash.com/docs#slice) for creating subsets of array-like values
  * [_.sortBy](http://lodash.com/docs#sortBy) supports sorting by multiple properties
  * [_.support](http://lodash.com/docs#support) for flagging environment features
  * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-literals-string-literals)
@@ -56,14 +57,16 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.where](http://lodash.com/docs#where) supports deep object comparisons
  * [_.xor](http://lodash.com/docs#xor) as a companion to [_.difference](http://lodash.com/docs#difference), [_.intersection](http://lodash.com/docs#intersection), & [_.union](http://lodash.com/docs#union)
  * [_.zip](http://lodash.com/docs#zip) is capable of unzipping values
- * [_.omit](http://lodash.com/docs#omit), [_.pick](http://lodash.com/docs#pick), &
-   [more](http://lodash.com/docs "_.assign, _.clone, _.cloneDeep, _.first, _.initial, _.isEqual, _.last, _.merge, _.rest") accept callbacks
+ * [_.capitalize](http://lodash.com/docs#capitalize), [_.trim](http://lodash.com/docs#trim), &
+   [more](http://lodash.com/docs "_.trimLeft, _.trimRight") string methods
  * [_.contains](http://lodash.com/docs#contains), [_.toArray](http://lodash.com/docs#toArray), &
    [more](http://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.forEach, _.forEachRight, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy, _.where") accept strings
  * [_.filter](http://lodash.com/docs#filter), [_.map](http://lodash.com/docs#map), &
    [more](http://lodash.com/docs "_.countBy, _.every, _.find, _.findKey, _.findLast, _.findLastIndex, _.findLastKey, _.first, _.groupBy, _.initial, _.last, _.max, _.min, _.reject, _.rest, _.some, _.sortBy, _.sortedIndex, _.uniq") support *“_.pluck”* & *“_.where”* shorthands
  * [_.findLast](http://lodash.com/docs#findLast), [_.findLastIndex](http://lodash.com/docs#findLastIndex), &
    [more](http://lodash.com/docs "_.findLastKey, _.forEachRight, _.forInRight, _.forOwnRight, _.partialRight") right-associative methods
+ * [_.omit](http://lodash.com/docs#omit), [_.pick](http://lodash.com/docs#pick), &
+   [more](http://lodash.com/docs "_.assign, _.clone, _.cloneDeep, _.first, _.initial, _.isEqual, _.last, _.merge, _.rest") accept callbacks
 
 ## Resources
 

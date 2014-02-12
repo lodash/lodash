@@ -5242,15 +5242,21 @@
   QUnit.module('lodash.matches');
 
   (function() {
-    test('should create a function that performs a deep comparison between a given object and the `props` object', 3, function() {
-      var object = { 'a': 1, 'b': 2 },
-          actual = _.matches({ 'a': 1 });
+    var object = { 'a': 1, 'b': 2 };
 
-      equal(actual.length, 1);
-      strictEqual(actual(object), true);
+    test('should create a function that performs a deep comparison between a given object and the `source` object', 3, function() {
+      var matches = _.matches({ 'a': 1 });
 
-      actual =  _.matches({ 'b': 1 });
-      strictEqual(actual(object), false);
+      equal(matches.length, 1);
+      strictEqual(matches(object), true);
+
+      matches =  _.matches({ 'b': 1 });
+      strictEqual(matches(object), false);
+    });
+
+    test('should return `false` when comparing an empty `source`', 1, function() {
+      var matches = _.matches({});
+      strictEqual(matches(object), false);
     });
   }());
 
@@ -6251,20 +6257,20 @@
   (function() {
     test('should create a function that plucks a property value of a given object', 3, function() {
       var object = { 'a': 1, 'b': 2 },
-          actual = _.property('a');
+          property = _.property('a');
 
-      equal(actual.length, 1);
-      strictEqual(actual(object), 1);
+      equal(property.length, 1);
+      strictEqual(property(object), 1);
 
-      actual =  _.property('b');
-      strictEqual(actual(object), 2);
+      property =  _.property('b');
+      strictEqual(property(object), 2);
     });
 
     test('should work with non-string `prop` arguments', 1, function() {
       var array = [1, 2, 3],
-          actual = _.property(1);
+          property = _.property(1);
 
-      equal(actual(array), 2);
+      equal(property(array), 2);
     });
   }());
 

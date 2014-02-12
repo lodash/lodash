@@ -344,7 +344,7 @@
     // for `a` and `b`. See https://github.com/jashkenas/underscore/pull/1247
     //
     // This also ensures a stable sort in V8 and other engines.
-    // See http://code.google.com/p/v8/issues/detail?id=90
+    // See https://code.google.com/p/v8/issues/detail?id=90
     return a.index - b.index;
   }
 
@@ -6083,7 +6083,7 @@
       // check if the value is the ECMAScript language type of Object
       // http://es5.github.io/#x8
       // and avoid a V8 bug
-      // http://code.google.com/p/v8/issues/detail?id=2291
+      // https://code.google.com/p/v8/issues/detail?id=2291
       var type = typeof value;
       return value && (type == 'function' || type == 'object') || false;
     }
@@ -7244,8 +7244,9 @@
      * // => 8
      */
     var parseInt = nativeParseInt(whitespace + '08') == 8 ? nativeParseInt : function(value, radix) {
+      // Firefox < 21 and Opera < 15 follow ES3  for `parseInt` and
       // Chrome fails to trim leading <BOM> whitespace characters.
-      // Firefox < 21 and Opera < 15 follow the ES3 specified implementation of `parseInt`.
+      // See https://code.google.com/p/v8/issues/detail?id=3109
       value = trim(value);
       return nativeParseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
     };

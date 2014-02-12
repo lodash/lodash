@@ -95,7 +95,7 @@
 * <a href="#_somecollection-callbackidentity-thisarg">`_.some`</a>
 * <a href="#_sortbycollection-callbackidentity-thisarg">`_.sortBy`</a>
 * <a href="#_toarraycollection">`_.toArray`</a>
-* <a href="#_wherecollection-props">`_.where`</a>
+* <a href="#_wherecollection-source">`_.where`</a>
 
 <!-- /div -->
 
@@ -192,7 +192,7 @@
 * <a href="#_constantvalue">`_.constant`</a>
 * <a href="#_createcallbackfuncidentity-thisarg-argcount">`_.createCallback`</a>
 * <a href="#_identityvalue">`_.identity`</a>
-* <a href="#_matchesprops">`_.matches`</a>
+* <a href="#_matchessource">`_.matches`</a>
 * <a href="#_mixinobjectlodash-source-options">`_.mixin`</a>
 * <a href="#_noconflict">`_.noConflict`</a>
 * <a href="#_noop">`_.noop`</a>
@@ -2285,14 +2285,14 @@ Converts the `collection` to an array.
 
 <!-- div -->
 
-### <a id="_wherecollection-props"></a>`_.where(collection, props)`
-<a href="#_wherecollection-props">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4583 "View in source") [&#x24C9;][1]
+### <a id="_wherecollection-source"></a>`_.where(collection, source)`
+<a href="#_wherecollection-source">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L4583 "View in source") [&#x24C9;][1]
 
-Performs a deep comparison between each element in `collection` and the `props` object, returning an array of all elements that have equivalent property values.
+Performs a deep comparison between each element in `collection` and the `source` object, returning an array of all elements that have equivalent property values.
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to iterate over.
-2. `props` *(Object)*: The object of property values to filter by.
+2. `source` *(Object)*: The object of property values to filter by.
 
 #### Returns
 *(Array)*: Returns a new array of elements that have the given properties.
@@ -4484,13 +4484,13 @@ _.identity(object) === object;
 
 <!-- div -->
 
-### <a id="_matchesprops"></a>`_.matches(props)`
-<a href="#_matchesprops">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7065 "View in source") [&#x24C9;][1]
+### <a id="_matchessource"></a>`_.matches(source)`
+<a href="#_matchessource">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7065 "View in source") [&#x24C9;][1]
 
-Creates a "_.where" style function, which performs a deep comparison between a given object and the `props` object, returning `true` if the given object has equivalent property values, else `false`.
+Creates a "_.where" style function, which performs a deep comparison between a given object and the `source` object, returning `true` if the given object has equivalent property values, else `false`.
 
 #### Arguments
-1. `props` *(Object)*: The object of property values to match.
+1. `source` *(Object)*: The object of property values to match.
 
 #### Returns
 *(Function)*: Returns the new function.
@@ -4623,7 +4623,7 @@ _.parseInt('08');
 <!-- div -->
 
 ### <a id="_propertykey"></a>`_.property(key)`
-<a href="#_propertykey">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7277 "View in source") [&#x24C9;][1]
+<a href="#_propertykey">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7278 "View in source") [&#x24C9;][1]
 
 Creates a "_.pluck" style function, which returns the `key` value of a given object.
 
@@ -4657,7 +4657,7 @@ _.sortBy(characters, getName);
 <!-- div -->
 
 ### <a id="_randommin0-max1-floatingfalse"></a>`_.random([min=0], [max=1], [floating=false])`
-<a href="#_randommin0-max1-floatingfalse">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7310 "View in source") [&#x24C9;][1]
+<a href="#_randommin0-max1-floatingfalse">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7311 "View in source") [&#x24C9;][1]
 
 Produces a random number between `min` and `max` *(inclusive)*. If only one argument is provided a number between `0` and the given number will be returned. If `floating` is truey or either `min` or `max` are floats a floating-point number will be returned instead of an integer.
 
@@ -4692,7 +4692,7 @@ _.random(1.2, 5.2);
 <!-- div -->
 
 ### <a id="_resultobject-key-defaultvalue"></a>`_.result(object, key, [defaultValue])`
-<a href="#_resultobject-key-defaultvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7375 "View in source") [&#x24C9;][1]
+<a href="#_resultobject-key-defaultvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7376 "View in source") [&#x24C9;][1]
 
 Resolves the value of property `key` on `object`. If `key` is a function it will be invoked with the `this` binding of `object` and its result returned, else the property value is returned. If `object` is `null` or `undefined` then `undefined` is returned. If a default value is provided it will be returned if the property value resolves to `undefined`.
 
@@ -4749,7 +4749,7 @@ Create a new `lodash` function using the given context object.
 <!-- div -->
 
 ### <a id="_timesn-callback-thisarg"></a>`_.times(n, callback, [thisArg])`
-<a href="#_timesn-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7406 "View in source") [&#x24C9;][1]
+<a href="#_timesn-callback-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7407 "View in source") [&#x24C9;][1]
 
 Executes the callback `n` times, returning an array of the results of each callback execution. The callback is bound to `thisArg` and invoked with one argument; *(index)*.
 
@@ -4781,7 +4781,7 @@ _.times(3, function(n) { this.cast(n); }, mage);
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7434 "View in source") [&#x24C9;][1]
+<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7435 "View in source") [&#x24C9;][1]
 
 Generates a unique ID. If `prefix` is provided the ID will be appended to it.
 
@@ -4834,7 +4834,7 @@ A reference to the `lodash` function.
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7643 "View in source") [&#x24C9;][1]
+<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L7644 "View in source") [&#x24C9;][1]
 
 *(string)*: The semantic version number.
 

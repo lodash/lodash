@@ -3121,7 +3121,7 @@
 
   /**
    * Performs a deep comparison between each element in `collection` and the
-   * `props` object, returning an array of all elements that have equivalent
+   * `source` object, returning an array of all elements that have equivalent
    * property values.
    *
    * @static
@@ -3129,7 +3129,7 @@
    * @type Function
    * @category Collections
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Object} props The object of property values to filter by.
+   * @param {Object} source The object of property values to filter by.
    * @returns {Array} Returns a new array of elements that have the given properties.
    * @example
    *
@@ -4150,7 +4150,7 @@
     // check if the value is the ECMAScript language type of Object
     // http://es5.github.io/#x8
     // and avoid a V8 bug
-    // http://code.google.com/p/v8/issues/detail?id=2291
+    // https://code.google.com/p/v8/issues/detail?id=2291
     var type = typeof value;
     return value && (type == 'function' || type == 'object') || false;
   }
@@ -4729,13 +4729,13 @@
 
   /**
    * Creates a "_.where" style function, which performs a deep comparison
-   * between a given object and the `props` object, returning `true` if the
+   * between a given object and the `source` object, returning `true` if the
    * given object has equivalent property values, else `false`.
    *
    * @static
    * @memberOf _
    * @category Utilities
-   * @param {Object} props The object of property values to match.
+   * @param {Object} source The object of property values to match.
    * @returns {Function} Returns the new function.
    * @example
    *

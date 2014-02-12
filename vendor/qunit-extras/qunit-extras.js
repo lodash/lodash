@@ -408,15 +408,17 @@
           }
           ran = true;
 
+          var failures = details.failed;
+
           logInline('');
           console.log(hr);
-          console.log('    PASS: ' + details.passed + '  FAIL: ' + details.failed + '  TOTAL: ' + details.total);
+          console.log('    PASS: ' + details.passed + '  FAIL: ' + failures + '  TOTAL: ' + details.total);
           console.log('    Finished in ' + details.runtime + ' milliseconds.');
           console.log(hr);
 
           // exit out of Node.js or PhantomJS
           try {
-            if (details.failed) {
+            if (failures) {
               process.exit(1);
             } else {
               process.exit(0);
@@ -425,7 +427,7 @@
 
           // exit out of Narwhal, Rhino, or RingoJS
           try {
-            if (details.failed) {
+            if (failures) {
               java.lang.System.exit(1);
             } else {
               quit();
@@ -469,10 +471,12 @@
 
       // add a callback to be triggered after a test is completed
       QUnit.testDone(function(details) {
-        var logs = QUnit.config.extrasData.logs,
+        var config = QUnit.config,
+            failures = details.failed,
+            logs = config.extrasData.logs,
             testName = details.name;
 
-        if (details.failed > 0) {
+        if (!config.hidepassed || failures) {
           logInline('');
           if (!modulePrinted) {
             modulePrinted = true;
@@ -480,12 +484,15 @@
             console.log(moduleName);
             console.log(hr);
           }
-          var index = -1,
-              length = logs.length;
+          console.log(' ' + (failures ? 'FAIL' : 'PASS') + ' - ' + testName);
 
-          console.log(' FAIL - ' + testName);
-          while(++index < length) {
-            console.log('    ' + logs[index]);
+          if (failures) {
+            var index = -1,
+                length = logs.length;
+
+            while(++index < length) {
+              console.log('    ' + logs[index]);
+            }
           }
         }
         logs.length = 0;

@@ -54,7 +54,6 @@ branches:
   only:
     - master
 before_install:
-  - "[ $TRAVIS_NODE_VERSION != '0.6' ] || npm config set ca \"\""
   - "([ $BUILD == 'compat' ] || [ $BUILD == 'legacy' ]) && COMPAT=true || true"
   - "[ $SAUCE_LABS == false ] || npm i ecstatic@\"~0.4.0\" request@\"~2.33.0\" sauce-tunnel@\"~1.1.0\""
   - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"~2.6.0\" && npm i istanbul@\"~0.2.0\")"

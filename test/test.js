@@ -9335,6 +9335,7 @@
   /*--------------------------------------------------------------------------*/
 
   QUnit.config.asyncRetries = 10;
+  QUnit.config.hidepassed = true;
 
   if (!document) {
     QUnit.config.noglobals = true;

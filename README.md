@@ -24,8 +24,8 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
 ## Features *not* in Underscore
 
  * ~100% [code coverage](https://coveralls.io/r/lodash)
- * Module collections for [AMD](https://github.com/lodash/lodash-amd/tree/2.4.1), [Node.js](https://npmjs.org/package/lodash-node), & as [npm packages](https://npmjs.org/browse/keyword/lodash-modularized)
- * [Semantic versioning](http://semver.org/) support for releases
+ * Module bundles for [AMD](https://github.com/lodash/lodash-amd/tree/2.4.1) & [Node.js](https://npmjs.org/package/lodash-node) as well as [npm packages](https://npmjs.org/browse/keyword/lodash-modularized)
+ * Follows [semantic versioning](http://semver.org/) for releases
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
  * [_.at](http://lodash.com/docs#at) for cherry-picking collection values
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods

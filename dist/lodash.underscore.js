@@ -1,7 +1,7 @@
 /**
  * @license
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash underscore exports="amd,commonjs,global,node" -o ./dist/lodash.underscore.js`
+ * Build: `lodash underscore -o ./dist/lodash.underscore.js`
  * Copyright 2012-2014 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.6.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -618,7 +618,7 @@
   }
 
   /**
-   * The base implementation of `_.forEachEach` without support for callback
+   * The base implementation of `_.forEachRight` without support for callback
    * shorthands or `thisArg` binding.
    *
    * @private
@@ -5231,7 +5231,7 @@
 
     // define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module
-    define(function() {
+    define('underscore', function() {
       return lodash;
     });
   }

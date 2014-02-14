@@ -8046,12 +8046,12 @@
         var actual = [];
 
         var object = {
-          'func': func(function() { actual.push(this); }, 32)
+          'funced': func(function() { actual.push(this); }, 32)
         };
 
-        object.func();
+        object.funced();
         if (methodName == 'throttle') {
-          object.func();
+          object.funced();
         }
         setTimeout(function() {
           deepEqual(actual, methodName == 'throttle' ? [object, object] : [object]);
@@ -8059,7 +8059,40 @@
         }, 64);
       }
       else {
-        skipTest(1);
+        skipTest();
+        QUnit.start();
+      }
+    });
+
+    asyncTest('_.' + methodName + ' should work if system time is set backwards', 1, function() {
+      if (!isModularize) {
+        var callCount = 0,
+            dateCount = 0;
+
+        var getTime = function() {
+          return ++dateCount < 2 ? +new Date : +new Date(2012, 3, 23, 23, 27, 18);
+        };
+
+        var lodash = _.runInContext(_.assign({}, root, {
+          'Date': function() {
+            return { 'getTime': getTime, 'valueOf': getTime };
+          }
+        }));
+
+        var funced = lodash[methodName](function() {
+          callCount++;
+        }, 32);
+
+        funced();
+
+        setTimeout(function() {
+          funced();
+          equal(callCount, methodName == 'throttle' ? 2 : 1);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest();
         QUnit.start();
       }
     });

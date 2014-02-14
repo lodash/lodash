@@ -480,7 +480,7 @@
         equal('_method' in lodashBizarro, false);
       }
       else {
-        skipTest(1);
+        skipTest();
       }
     });
 
@@ -1892,7 +1892,7 @@
         }, 128);
       }
       else {
-        skipTest(1);
+        skipTest();
         QUnit.start();
       }
     });
@@ -4553,7 +4553,7 @@
       if (document) {
         strictEqual(_.isObject(body), true);
       } else {
-        skipTest(1);
+        skipTest();
       }
     });
 
@@ -7825,11 +7825,11 @@
           return ++dateCount < 3 ? +new Date : Infinity;
         };
 
-        var lodash = _.runInContext(_.assign({}, root, {
+        var lodash = _.runInContext({
           'Date': function() {
             return { 'getTime': getTime, 'valueOf': getTime };
           }
-        }));
+        });
 
         var throttled = lodash.throttle(function() {
           callCount++;
@@ -7917,7 +7917,7 @@
           ok(count > 1);
         }
         else {
-          skipTest(1);
+          skipTest();
         }
       });
     });
@@ -8064,7 +8064,7 @@
       }
     });
 
-    asyncTest('_.' + methodName + ' should work if system time is set backwards', 1, function() {
+    asyncTest('_.' + methodName + ' should work if the system time is set backwards', 1, function() {
       if (!isModularize) {
         var callCount = 0,
             dateCount = 0;
@@ -8073,11 +8073,11 @@
           return ++dateCount < 2 ? +new Date : +new Date(2012, 3, 23, 23, 27, 18);
         };
 
-        var lodash = _.runInContext(_.assign({}, root, {
+        var lodash = _.runInContext({
           'Date': function() {
             return { 'getTime': getTime, 'valueOf': getTime };
           }
-        }));
+        });
 
         var funced = lodash[methodName](function() {
           callCount++;

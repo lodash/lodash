@@ -609,7 +609,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.bind`')
+    Benchmark.Suite('`_.bind` (slow path)')
       .add(buildName, {
         'fn': 'lodash.bind(func, { "name": "fred" })',
         'teardown': 'function bind(){}'
@@ -1508,7 +1508,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.partial`')
+    Benchmark.Suite('`_.partial` (slow path)')
       .add(buildName, {
         'fn': 'lodash.partial(func, "hi")',
         'teardown': 'function partial(){}'

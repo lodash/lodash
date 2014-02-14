@@ -834,7 +834,8 @@
     function baseBind(data) {
       var func = data[0],
           thisArg = data[3],
-          partialArgs = data[4];
+          partialArgs = data[4],
+          partialHolders = data[6];
 
       function bound() {
         // `Function#bind` spec
@@ -843,8 +844,7 @@
           // avoid `arguments` object deoptimizations by using `slice` instead
           // of `Array.prototype.slice.call` and not assigning `arguments` to a
           // variable as a ternary expression
-          var args = slice(partialArgs);
-          push.apply(args, arguments);
+          var args = composeArgs(partialArgs, partialHolders, arguments);
         }
         // mimic the constructor's `return` behavior
         // http://es5.github.io/#x13.2.2
@@ -1049,7 +1049,9 @@
           arity = data[2],
           thisArg = data[3],
           partialArgs = data[4],
-          partialRightArgs = data[5];
+          partialRightArgs = data[5],
+          partialHolders = data[6],
+          partialRightHolders = data[7];
 
       var isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
@@ -1060,23 +1062,22 @@
       function bound() {
         var thisBinding = isBind ? thisArg : this;
         if (partialArgs) {
-          var args = slice(partialArgs);
-          push.apply(args, arguments);
+          var args = composeArgs(partialArgs, partialHolders, arguments);
         }
-        if (partialRightArgs || isCurry) {
-          args || (args = slice(arguments));
-          if (partialRightArgs) {
-            push.apply(args, partialRightArgs);
-          }
+        if (partialRightArgs) {
+          args = composeArgsRight(partialRightArgs, partialRightHolders, args || arguments);
+        }
+        if (isCurry) {
           var argsLength = arguments.length;
-          if (isCurry && argsLength < arity) {
+          if (argsLength < arity) {
+            args || (args = slice(arguments));
             bitmask |= PARTIAL_FLAG;
             bitmask &= ~PARTIAL_RIGHT_FLAG
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
             var newArity = nativeMax(0, arity - argsLength);
-            return baseCreateWrapper([func, bitmask, newArity, thisArg, args]);
+            return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, []]);
           }
         }
         args || (args = arguments);
@@ -1149,7 +1150,7 @@
     }
 
     /**
-     * The base implementation of `_.forEachEach` without support for callback
+     * The base implementation of `_.forEachRight` without support for callback
      * shorthands or `thisArg` binding.
      *
      * @private
@@ -1556,6 +1557,68 @@
     }
 
     /**
+     * Creates an array that is the composition of partially applied arguments,
+     * placeholders, and provided arguments into a single array of arguments.
+     *
+     * @private
+     * @param {Array} partialArg An array of arguments to prepend to those provided.
+     * @param {Array} partialHolders An array of `partialArgs` placeholder indexes.
+     * @param {Array|Object} args The provided arguments.
+     * @returns {Array} Returns a new array of composed arguments.
+     */
+    function composeArgs(partialArgs, partialHolders, args) {
+      var index = -1,
+          length = partialHolders.length,
+          leftIndex = -1,
+          leftLength = partialArgs.length,
+          argsLength = nativeMax(args.length - length, 0),
+          result = Array(argsLength + leftLength);
+
+      while (++leftIndex < leftLength) {
+        result[leftIndex] = partialArgs[leftIndex];
+      }
+      while (++index < length) {
+        result[partialHolders[index]] = args[index];
+      }
+      while (length < argsLength) {
+        result[leftIndex++] = args[length++];
+      }
+      return result;
+    }
+
+    /**
+     * This function is like `composeArgs` except that the arguments composition
+     * is tailored for `_.partialRight`.
+     *
+     * @private
+     * @param {Array} partialRightArg An array of arguments to append to those provided.
+     * @param {Array} partialHolders An array of `partialRightArgs` placeholder indexes.
+     * @param {Array|Object} args The provided arguments.
+     * @returns {Array} Returns a new array of composed arguments.
+     */
+    function composeArgsRight(partialRightArgs, partialRightHolders, args) {
+      var index = -1,
+          length = partialRightHolders.length,
+          argsIndex = -1,
+          argsLength = nativeMax(args.length - length, 0),
+          rightIndex = -1,
+          rightLength = partialRightArgs.length,
+          result = Array(argsLength + rightLength);
+
+      while (++argsIndex < argsLength) {
+        result[argsIndex] = args[argsIndex];
+      }
+      var pad = argsIndex;
+      while (++rightIndex < rightLength) {
+        result[pad + rightIndex] = partialRightArgs[rightIndex];
+      }
+      while (++index < length) {
+        result[pad + partialHolders[index]] = args[argsIndex++];
+      }
+      return result;
+    }
+
+    /**
      * Creates a function that aggregates a collection, creating an object or
      * array composed from the results of running each element of the collection
      * through a callback. The given `setter` function sets the keys and values
@@ -1627,9 +1690,11 @@
      *  provided to the new function.
      * @param {Array} [partialRightArgs] An array of arguments to append to those
      *  provided to the new function.
+     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
+     * @param {Array} [partialRightArgs] An array of `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
-    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs) {
+    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders) {
       var isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isPartial = bitmask & PARTIAL_FLAG,
@@ -1697,11 +1762,37 @@
       } else if (arity < 0) {
         arity = 0;
       }
+      if (isPartial) {
+        partialHolders = getHolders(partialArgs);
+      }
+      if (isPartialRight) {
+        partialRightHolders = getHolders(partialRightArgs);
+      }
       // fast path for `_.bind`
-      data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs];
+      data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders];
       return (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG))
         ? baseBind(data)
         : baseCreateWrapper(data);
+    }
+
+    /**
+     * Finds the indexes of all placeholder elements in a given array.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @returns {Array} Returns a new array of placeholder indexes.
+     */
+    function getHolders(array) {
+      var index = -1,
+          length = array.length,
+          result = [];
+
+      while (++index < length) {
+        if (array[index] === lodash) {
+          result.push(index);
+        }
+      }
+      return result;
     }
 
     /**
@@ -4607,7 +4698,7 @@
       }
       var delayed = function() {
         var remaining = wait - (now() - stamp);
-        if (remaining <= 0) {
+        if (remaining <= 0 || remaining > wait) {
           if (maxTimeoutId) {
             clearTimeout(maxTimeoutId);
           }
@@ -4652,7 +4743,7 @@
             lastCalled = stamp;
           }
           var remaining = maxWait - (stamp - lastCalled),
-              isCalled = remaining <= 0;
+              isCalled = remaining <= 0 || remaining > maxWait;
 
           if (isCalled) {
             if (maxTimeoutId) {
@@ -4851,8 +4942,8 @@
     }
 
     /**
-     * This method is like `_.partial` except that `partial` arguments are
-     * appended to those provided to the new function.
+     * This method is like `_.partial` except that partially applied arguments
+     * are appended to those provided to the new function.
      *
      * Note: This method does not set the `length` property of partially applied
      * functions.

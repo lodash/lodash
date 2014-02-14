@@ -7825,11 +7825,11 @@
           return ++dateCount < 3 ? +new Date : Infinity;
         };
 
-        var lodash = _.runInContext({
+        var lodash = _.runInContext(_.assign({}, root, {
           'Date': function() {
             return { 'getTime': getTime, 'valueOf': getTime };
           }
-        });
+        }));
 
         var throttled = lodash.throttle(function() {
           callCount++;
@@ -8073,11 +8073,11 @@
           return ++dateCount < 2 ? +new Date : +new Date(2012, 3, 23, 23, 27, 18);
         };
 
-        var lodash = _.runInContext({
+        var lodash = _.runInContext(_.assign({}, root, {
           'Date': function() {
             return { 'getTime': getTime, 'valueOf': getTime };
           }
-        });
+        }));
 
         var funced = lodash[methodName](function() {
           callCount++;

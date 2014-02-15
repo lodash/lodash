@@ -1919,7 +1919,7 @@
      * @param {Array} [partialRightArgs] An array of arguments to append to those
      *  provided to the new function.
      * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
-     * @param {Array} [partialRightArgs] An array of `partialRightArgs` placeholder indexes.
+     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
     function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders) {
@@ -1991,10 +1991,10 @@
         arity = 0;
       }
       if (isPartial) {
-        partialHolders = getHolders(partialArgs);
+        partialHolders = [];
       }
       if (isPartialRight) {
-        partialRightHolders = getHolders(partialRightArgs);
+        partialRightHolders = [];
       }
       // fast path for `_.bind`
       data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders];
@@ -2029,26 +2029,6 @@
         errorClass, errorProto, hasOwnProperty, isArguments, isObject, objectProto,
         nonEnumProps, stringClass, stringProto, toString
       );
-    }
-
-    /**
-     * Finds the indexes of all placeholder elements in a given array.
-     *
-     * @private
-     * @param {Array} array The array to inspect.
-     * @returns {Array} Returns a new array of placeholder indexes.
-     */
-    function getHolders(array) {
-      var index = -1,
-          length = array.length,
-          result = [];
-
-      while (++index < length) {
-        if (array[index] === lodash) {
-          result.push(index);
-        }
-      }
-      return result;
     }
 
     /**

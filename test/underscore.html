@@ -143,18 +143,21 @@
 					return;
 				}
 				var reBasename = /[\w.-]+$/,
-				    basePath = ('//' + location.host + location.pathname).replace(/\btest\/$/, ''),
+				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
-				    locationPath = modulePath.replace(reBasename, '').replace(/\/$/, ''),
-				    moduleMain = modulePath.match(reBasename)[0];
+				    locationPath = modulePath.replace(reBasename, '').replace(/^\/|\/$/g, ''),
+				    moduleId = /\bunderscore\b/.test(ui.buildPath) ? 'underscore' : 'lodash',
+				    moduleMain = modulePath.match(reBasename)[0],
+				    uid = +new Date;
 
 				function getConfig() {
 					return {
 						'baseUrl': './',
-						'urlArgs': 't=' + (+new Date),
+						'urlArgs': 't=' + uid++,
+						'waitSeconds': 0,
 						'packages': [
 							{
-								'name': 'lodash',
+								'name': moduleId,
 								'location': locationPath,
 								'main': moduleMain
 							},
@@ -174,7 +177,7 @@
 				QUnit.config.autostart = false;
 
 				// load Lo-Dash as a module
-				require(getConfig(), ['lodash'], function(lodash) {
+				require(getConfig(), [moduleId], function(lodash) {
 					if (ui.isModularize) {
 						window._ = lodash;
 					}

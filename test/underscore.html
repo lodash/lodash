@@ -151,27 +151,32 @@
 				    uid = +new Date;
 
 				function getConfig() {
-					return {
+					var result = {
 						'baseUrl': './',
 						'urlArgs': 't=' + uid++,
 						'waitSeconds': 0,
-						'packages': [
-							{
-								'name': moduleId,
-								'location': locationPath,
-								'main': moduleMain
-							},
-							{
-								'name': 'test',
-								'location': '../vendor/underscore/test',
-								'config': {
-									// work around no global being exported
-									'exports': 'QUnit',
-									'loader': 'curl/loader/legacy'
-								}
+						'paths': {},
+						'packages': [{
+							'name': 'test',
+							'location': '../vendor/underscore/test',
+							'config': {
+								// work around no global being exported
+								'exports': 'QUnit',
+								'loader': 'curl/loader/legacy'
 							}
-						]
+						}]
 					};
+
+					if (ui.isModularize) {
+						result.packages.push({
+							'name': moduleId,
+							'location': locationPath,
+							'main': moduleMain
+						});
+					} else {
+						result.paths[moduleId] = modulePath;
+					}
+					return result;
 				}
 
 				QUnit.config.autostart = false;

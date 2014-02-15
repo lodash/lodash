@@ -186,48 +186,55 @@
 				var reBasename = /[\w.-]+$/,
 				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),
-				    locationPath = modulePath.replace(reBasename, '').replace(/^\/|\/$/g, ''),
 				    moduleMain = modulePath.match(reBasename)[0],
+				    locationPath = modulePath.replace(reBasename, '').replace(/^\/|\/$/g, ''),
+				    shimmedLocationPath = './abc/../' + locationPath,
+				    underscoreLocationPath = './xyz/../' + locationPath,
 				    uid = +new Date;
 
 				function getConfig() {
-					return {
+					var result = {
 						'baseUrl': './',
 						'urlArgs': 't=' + uid++,
 						'waitSeconds': 0,
-						'packages': [
-							{
-								'name': 'lodash',
-								'location': locationPath,
-								'main': moduleMain
-							},
-							{
-								'name': 'shimmed',
-								'location': './abc/../' + locationPath,
-								'main': moduleMain
-							},
-							{
-								'name': 'underscore',
-								'location': './xyz/../' + locationPath,
-								'main': moduleMain
-							},
-							{
-								'name': 'test',
-								'location': basePath + 'test',
-								'main': 'test',
-								'config': {
-									// work around no global being exported
-									'exports': 'QUnit',
-									'loader': 'curl/loader/legacy'
-								}
+						'paths': {},
+						'packages': [{
+							'name': 'test',
+							'location': basePath + 'test',
+							'main': 'test',
+							'config': {
+								// work around no global being exported
+								'exports': 'QUnit',
+								'loader': 'curl/loader/legacy'
 							}
-						],
+						}],
 						'shim': {
 							'shimmed': {
 								'exports': '_'
 							}
 						}
 					};
+
+					if (ui.isModularize) {
+						result.packages.push({
+							'name': 'lodash',
+							'location': locationPath,
+							'main': moduleMain
+						}, {
+							'name': 'shimmed',
+							'location': shimmedLocationPath,
+							'main': moduleMain
+						}, {
+							'name': 'underscore',
+							'location': underscoreLocationPath,
+							'main': moduleMain
+						});
+					} else {
+						result.paths.lodash = modulePath;
+						result.paths.shimmed = shimmedLocationPath + '/' + moduleMain;
+						result.paths.underscore = underscoreLocationPath + '/' + moduleMain;
+					}
+					return result;
 				}
 
 				function loadTests() {

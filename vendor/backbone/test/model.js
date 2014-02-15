@@ -262,6 +262,26 @@
     model.set({result: void 0});
   });
 
+  test("nested set triggers with the correct options", function() {
+    var model = new Backbone.Model();
+    var o1 = {};
+    var o2 = {};
+    var o3 = {};
+    model.on('change', function(__, options) {
+      switch (model.get('a')) {
+      case 1:
+        equal(options, o1);
+        return model.set('a', 2, o2);
+      case 2:
+        equal(options, o2);
+        return model.set('a', 3, o3);
+      case 3:
+        equal(options, o3);
+      }
+    });
+    model.set('a', 1, o1);
+  });
+
   test("multiple unsets", 1, function() {
     var i = 0;
     var counter = function(){ i++; };

@@ -305,7 +305,7 @@
 
   test("if callback is truthy but not a function, `on` should throw an error just like jQuery", 1, function() {
     var view = _.extend({}, Backbone.Events).on('test', 'noop');
-    throws(function() {
+    raises(function() {
       view.trigger('test');
     });
   });

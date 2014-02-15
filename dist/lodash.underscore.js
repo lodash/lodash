@@ -1,7 +1,7 @@
 /**
  * @license
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash underscore moduleId="none" -o ./dist/lodash.underscore.js`
+ * Build: `lodash underscore -o ./dist/lodash.underscore.js`
  * Copyright 2012-2014 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.6.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1017,7 +1017,7 @@
    * @param {Array} [partialRightArgs] An array of arguments to append to those
    *  provided to the new function.
    * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
-   * @param {Array} [partialRightArgs] An array of `partialRightArgs` placeholder indexes.
+   * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
    * @returns {Function} Returns the new function.
    */
   function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders) {
@@ -5322,7 +5322,7 @@
 
     // define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module
-    define(function() {
+    define('underscore', function() {
       return lodash;
     });
   }

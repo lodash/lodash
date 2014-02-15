@@ -1933,7 +1933,7 @@
      * @param {Array} [partialRightArgs] An array of arguments to append to those
      *  provided to the new function.
      * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
-     * @param {Array} [partialRightArgs] An array of `partialRightArgs` placeholder indexes.
+     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
     function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders) {

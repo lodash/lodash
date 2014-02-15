@@ -4,15 +4,9 @@
 		<meta charset="utf-8">
 		<title>Backbone Test Suite</title>
 		<link rel="stylesheet" href="../vendor/qunit/qunit/qunit.css">
-		<style>
-			body > #qunit-header {
-				display: none;
-			}
-		</style>
 	</head>
 	<body>
 		<div id="qunit"></div>
-		<h1 id="qunit-header"></h1>
 		<div id="qunit-fixture">
 			<div id='testElement'>
 				<h1>Test</h1>
@@ -21,49 +15,116 @@
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="../vendor/qunit-extras/qunit-extras.js"></script>
 		<script src="../vendor/json-js/json2.js"></script>
-		<script src="../vendor/jquery/jquery.js"></script>
 		<script src="../vendor/platform.js/platform.js"></script>
 		<script src="./asset/test-ui.js"></script>
 		<script src="../lodash.js"></script>
 		<script>
-			var lodash = _.noConflict();
+			var mixinPrereqs = (function() {
+				var lodash = _.noConflict();
+				return function(_) {
+					_.mixin({
+						'debounce': _.debounce || lodash.debounce,
+						'defer': _.defer || lodash.defer,
+						'pluck': _.pluck || lodash.pluck
+					});
+				};
+			}());
 
 			QUnit.config.asyncRetries = 10;
 			QUnit.config.hidepassed = true;
 
-			// excuse tests we intentionally fail or those with problems
-			QUnit.config.excused = {
-				'Backbone.Collection': {
-					'set with many models does not overflow the stack': true
-				},
-				'Backbone.Router': {
-					'#2656 - No trailing slash on root.': true,
-					'#2765 - Fragment matching sans query/hash.': true
-				}
-			};
-
-			// only excuse `Backbone.Router` tests in IE < 8
-			if (!(document.attachEvent && (document.documentMode || 0) < 8)) {
-				delete QUnit.config.excused['Backbone.Router'];
+			// load Lo-Dash
+			if (!ui.isModularize) {
+				document.write('<script src="' + ui.buildPath + '"><\/script>');
 			}
-			// load the build of Lo-Dash
-			document.write('<script src="' + ui.buildPath + '"><\/script>');
+			// load test scripts
+			document.write(ui.urlParams.loader != 'none'
+				? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
+				: ([
+					'<script src="' + ui.buildPath + '"><\/script>',
+					'<script src="../vendor/jquery/jquery.js"><\/script>',
+					'<script src="../vendor/backbone/backbone.js"><\/script>',
+					'<script src="../vendor/backbone/test/environment.js"><\/script>',
+					'<script src="../vendor/backbone/test/noconflict.js"><\/script>',
+					'<script src="../vendor/backbone/test/events.js"><\/script>',
+					'<script src="../vendor/backbone/test/model.js"><\/script>',
+					'<script src="../vendor/backbone/test/collection.js"><\/script>',
+					'<script src="../vendor/backbone/test/router.js"><\/script>',
+					'<script src="../vendor/backbone/test/view.js"><\/script>',
+					'<script src="../vendor/backbone/test/sync.js"><\/script>'
+				  ].join('\n'))
+			);
 		</script>
 		<script>
-			_.mixin({
-				'debounce': _.debounce || lodash.debounce,
-				'defer': _.defer || lodash.defer,
-				'pluck': _.pluck || lodash.pluck
-			});
+			(function() {
+				if (window.curl) {
+					curl.config({ 'apiName': 'require' });
+				}
+				if (!window.require) {
+					mixinPrereqs(_);
+					return;
+				}
+				var reBasename = /[\w.-]+$/,
+				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
+				    modulePath = ui.buildPath.replace(/\.js$/, ''),
+				    locationPath = modulePath.replace(reBasename, '').replace(/^\/|\/$/g, ''),
+				    moduleMain = modulePath.match(reBasename)[0],
+				    uid = +new Date;
+
+				function getConfig() {
+					var result = {
+						'baseUrl': './',
+						'urlArgs': 't=' + uid++,
+						'waitSeconds': 0,
+						'paths': {
+							'backbone': '../vendor/backbone/backbone',
+							'jquery': '../vendor/jquery/jquery'
+						},
+						'packages': [{
+							'name': 'test',
+							'location': '../vendor/backbone/test',
+							'config': {
+								// work around no global being exported
+								'exports': 'QUnit',
+								'loader': 'curl/loader/legacy'
+							}
+						}]
+					};
+
+					if (ui.isModularize) {
+						result.packages.push({
+							'name': 'underscore',
+							'location': locationPath,
+							'main': moduleMain
+						});
+					} else {
+						result.paths.underscore = modulePath;
+					}
+					return result;
+				}
+
+				QUnit.config.autostart = false;
+
+				require(getConfig(), ['underscore', 'backbone'], function(lodash) {
+					mixinPrereqs(lodash);
+
+					if (ui.isModularize) {
+						window._ = lodash;
+					}
+					require(getConfig(), [
+						'test/environment',
+					        'test/noconflict',
+						'test/events',
+						'test/model',
+						'test/collection',
+						'test/router',
+						'test/view',
+						'test/sync'
+					], function() {
+						QUnit.start();
+					});
+				});
+			}());
 		</script>
-		<script src="../vendor/backbone/backbone.js"></script>
-		<script src="../vendor/backbone/test/environment.js"></script>
-		<script src="../vendor/backbone/test/noconflict.js"></script>
-		<script src="../vendor/backbone/test/events.js"></script>
-		<script src="../vendor/backbone/test/model.js"></script>
-		<script src="../vendor/backbone/test/collection.js"></script>
-		<script src="../vendor/backbone/test/router.js"></script>
-		<script src="../vendor/backbone/test/view.js"></script>
-		<script src="../vendor/backbone/test/sync.js"></script>
 	</body>
 </html>

@@ -6762,7 +6762,7 @@
 
     /**
      * Creates a compiled template function that can interpolate data properties
-     * in "interpolate" delimiters, HTML escape interpolated data properties in
+     * in "interpolate" delimiters, HTML-escaped interpolated data properties in
      * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. If
      * a data object is provided the interpolated template string will be returned.
      * Data properties may be accessed as free variables in the template. If a
@@ -6791,8 +6791,8 @@
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
      * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
-     * @returns {Function|string} Returns the interpolated text if a data object
-     *  if a data object is given, else it returns a template function.
+     * @returns {Function|string} Returns the interpolated string if a data object
+     *  is provided, else it returns a template function.
      * @example
      *
      * // using the "interpolate" delimiter to create a compiled template

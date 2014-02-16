@@ -740,7 +740,7 @@
   QUnit.module('lodash.bind');
 
   (function() {
-    function func() {
+    function fn() {
       var args = [this];
       push.apply(args, arguments);
       return args;
@@ -748,7 +748,7 @@
 
     test('should bind a function to an object', 1, function() {
       var object = {},
-          bound = _.bind(func, object);
+          bound = _.bind(fn, object);
 
       deepEqual(bound('a'), [object, 'a']);
     });
@@ -759,7 +759,7 @@
 
       var actual = _.map(values, function(value, index) {
         try {
-          var bound = _.bind(func, value);
+          var bound = _.bind(fn, value);
           return bound();
         } catch(e) { }
       });
@@ -769,37 +769,39 @@
       }));
     });
 
-    test('should bind a function to `null` or `undefined`', 4, function() {
-      var bound = _.bind(func, null),
+    test('should bind a function to `null` or `undefined`', 6, function() {
+      var bound = _.bind(fn, null),
           actual = bound('a');
 
       ok(actual[0] === null || actual[0] && actual[0].Array);
       equal(actual[1], 'a');
 
-      bound = _.bind(func, undefined);
-      actual = bound('b');
+      _.times(2, function(index) {
+        bound = index ? _.bind(fn, undefined) : _.bind(fn);
+        actual = bound('b');
 
-      ok(actual[0] === undefined || actual[0] && actual[0].Array);
-      equal(actual[1], 'b');
+        ok(actual[0] === undefined || actual[0] && actual[0].Array);
+        equal(actual[1], 'b');
+      });
     });
 
     test('should partially apply arguments ', 4, function() {
       var object = {},
-          bound = _.bind(func, object, 'a');
+          bound = _.bind(fn, object, 'a');
 
       deepEqual(bound(), [object, 'a']);
 
-      bound = _.bind(func, object, 'a');
+      bound = _.bind(fn, object, 'a');
       deepEqual(bound('b'), [object, 'a', 'b']);
 
-      bound = _.bind(func, object, 'a', 'b');
+      bound = _.bind(fn, object, 'a', 'b');
       deepEqual(bound(), [object, 'a', 'b']);
       deepEqual(bound('c', 'd'), [object, 'a', 'b', 'c', 'd']);
     });
 
-    test('bound functions should have a `length` of `0`', 1, function() {
+    test('should create a function with a `length` of `0`', 1, function() {
       var func = function(a, b, c) {},
-          bound = _.bind(func, {});
+          bound = _.bind(fn, {});
 
       strictEqual(bound.length, 0);
     });
@@ -829,7 +831,7 @@
 
     test('should append array arguments to partially applied arguments (test in IE < 9)', 1, function() {
       var object = {},
-          bound = _.bind(func, object, 'a');
+          bound = _.bind(fn, object, 'a');
 
       deepEqual(bound(['b'], 'c'), [object, 'a', ['b'], 'c']);
     });
@@ -841,7 +843,7 @@
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var object = {},
-            bound = _(func).bind({}, 'a', 'b');
+            bound = _(fn).bind({}, 'a', 'b');
 
         ok(bound instanceof _);
 
@@ -858,7 +860,7 @@
           object2 = {},
           object3 = {};
 
-      var bound1 = _.bind(func, object1),
+      var bound1 = _.bind(fn, object1),
           bound2 = _.bind(bound1, object2, 'a'),
           bound3 = _.bind(bound1, object3, 'b');
 
@@ -880,7 +882,7 @@
         this._a = 1;
         this._b = 2;
         this.a = function() { return this._a; };
-      };
+      }
 
       Foo.prototype.b = function() { return this._b; };
 
@@ -1518,18 +1520,19 @@
 
   (function() {
     test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
-      function func() {
+      var fn = function() {
         var result = [this.a];
         push.apply(result, arguments);
         return result;
-      }
+      };
+
       var expected = [1, 2, 3],
           object = { 'a': 1 },
-          callback = _.createCallback(_.partial(func, 2), object);
+          callback = _.createCallback(_.partial(fn, 2), object);
 
       deepEqual(callback(3), expected);
 
-      callback = _.createCallback(_.partialRight(func, 3), object);
+      callback = _.createCallback(_.partialRight(fn, 3), object);
       deepEqual(callback(2), expected);
     });
 
@@ -1623,19 +1626,19 @@
   QUnit.module('lodash.curry');
 
   (function() {
-    function func(a, b, c) {
+    function fn(a, b, c) {
       return a + b + c;
     }
 
     test('should curry based on the number of arguments provided', 3, function() {
-      var curried = _.curry(func);
+      var curried = _.curry(fn);
       equal(curried(1)(2)(3), 6);
       equal(curried(1, 2)(3), 6);
       equal(curried(1, 2, 3), 6);
     });
 
     test('should work with partialed methods', 2, function() {
-      var curried = _.curry(func),
+      var curried = _.curry(fn),
           a = _.partial(curried, 1),
           b = _.partialRight(a, 3),
           c = _.partialRight(a(2), 3);
@@ -1646,42 +1649,43 @@
 
     test('should return a function with a `length` of `0`', 6, function() {
       _.times(2, function(index) {
-        var curried = index ? _.curry(func, 4) : _.curry(func);
+        var curried = index ? _.curry(fn, 4) : _.curry(fn);
         strictEqual(curried.length, 0);
         strictEqual(curried(1).length, 0);
         strictEqual(curried(1, 2).length, 0);
       });
     });
 
-    test('ensure `new bound` is an instance of `func`', 2, function() {
+    test('ensure `new curried` is an instance of `func`', 2, function() {
       function Foo(value) {
         return value && object;
       }
-      var bound = _.curry(Foo),
+      var curried = _.curry(Foo),
           object = {};
 
-      ok(new bound(false) instanceof Foo);
-      strictEqual(new bound(true), object);
+      ok(new curried(false) instanceof Foo);
+      strictEqual(new curried(true), object);
     });
 
     test('should not alter the `this` binding', 9, function() {
-      function func(a, b, c) {
+      var fn = function(a, b, c) {
         var value = this || {};
         return value[a] + value[b] + value[c];
-      }
+      };
+
       var object = { 'a': 1, 'b': 2, 'c': 3 };
-      equal(_.curry(_.bind(func, object), 3)('a')('b')('c'), 6);
-      equal(_.curry(_.bind(func, object), 3)('a', 'b')('c'), 6);
-      equal(_.curry(_.bind(func, object), 3)('a', 'b', 'c'), 6);
+      equal(_.curry(_.bind(fn, object), 3)('a')('b')('c'), 6);
+      equal(_.curry(_.bind(fn, object), 3)('a', 'b')('c'), 6);
+      equal(_.curry(_.bind(fn, object), 3)('a', 'b', 'c'), 6);
 
-      ok(_.isEqual(_.bind(_.curry(func), object)('a')('b')('c'), NaN));
-      ok(_.isEqual(_.bind(_.curry(func), object)('a', 'b')('c'), NaN));
-      equal(_.bind(_.curry(func), object)('a', 'b', 'c'), 6);
+      ok(_.isEqual(_.bind(_.curry(fn), object)('a')('b')('c'), NaN));
+      ok(_.isEqual(_.bind(_.curry(fn), object)('a', 'b')('c'), NaN));
+      equal(_.bind(_.curry(fn), object)('a', 'b', 'c'), 6);
 
-      object.func = _.curry(func);
-      ok(_.isEqual(object.func('a')('b')('c'), NaN));
-      ok(_.isEqual(object.func('a', 'b')('c'), NaN));
-      equal(object.func('a', 'b', 'c'), 6);
+      object.curried = _.curry(fn);
+      ok(_.isEqual(object.curried('a')('b')('c'), NaN));
+      ok(_.isEqual(object.curried('a', 'b')('c'), NaN));
+      equal(object.curried('a', 'b', 'c'), 6);
     });
   }());
 
@@ -4615,7 +4619,6 @@
       function Foo(a) {
         this.a = 1;
       }
-
       strictEqual(_.isPlainObject({}), true);
       strictEqual(_.isPlainObject({ 'a': 1 }), true);
       strictEqual(_.isPlainObject({ 'constructor': Foo }), true);
@@ -5310,11 +5313,9 @@
     });
 
     test('should support a `resolver` argument', 2, function() {
-      function func(a, b, c) {
-        return a + b + c;
-      }
+      var fn = function(a, b, c) { return a + b + c; },
+          memoized = _.memoize(fn, fn);
 
-      var memoized = _.memoize(func, func);
       equal(memoized(1, 2, 3), 6);
       equal(memoized(1, 3, 5), 9);
     });
@@ -5948,12 +5949,12 @@
     var func = _[methodName],
         isPartial = methodName == 'partial';
 
-    test('`_.' + methodName + '` partially applies without additional arguments', 1, function() {
+    test('`_.' + methodName + '` partially applies arguments', 1, function() {
       var fn = function(a) { return a; };
       equal(func(fn, 'a')(), 'a');
     });
 
-    test('`_.' + methodName + '` partially applies with additional arguments', 1, function() {
+    test('`_.' + methodName + '` creates a function that can be invoked with additional arguments', 1, function() {
       var fn = function(a, b) { return [a, b]; },
           expected = ['a', 'b'];
 
@@ -5963,12 +5964,12 @@
       deepEqual(func(fn, 'a')('b'), expected);
     });
 
-    test('`_.' + methodName + '` works without partially applying arguments, without additional arguments', 1, function() {
+    test('`_.' + methodName + '` works when there are no partially applied arguments and the created function is invoked without additional arguments', 1, function() {
       var fn = function() { return arguments.length; };
       strictEqual(func(fn)(), 0);
     });
 
-    test('`_.' + methodName + '` works without partially applying arguments, with additional arguments', 1, function() {
+    test('`_.' + methodName + '` works when there are no partially applied arguments and the created function is invoked with additional arguments', 1, function() {
       var fn = function(a) { return a; };
       equal(func(fn)('a'), 'a');
     });
@@ -5980,32 +5981,33 @@
       strictEqual(func(_.bind(fn, object))(), object.a);
       strictEqual(_.bind(func(fn), object)(), object.a);
 
-      object.fn = func(fn);
-      strictEqual(object.fn(), object.a);
+      object.partialed = func(fn);
+      strictEqual(object.partialed(), object.a);
     });
 
-    test('`_.' + methodName + '` returns a function with a `length` of `0`', 1, function() {
+    test('`_.' + methodName + '` creates a function with a `length` of `0`', 1, function() {
       var fn = function(a, b, c) {},
           actual = func(fn, 'a');
 
       strictEqual(actual.length, 0);
     });
 
-    test('`_.' + methodName + '` ensure `new bound` is an instance of `func`', 2, function() {
+    test('`_.' + methodName + '` ensure `new partialed` is an instance of `func`', 2, function() {
       function Foo(value) {
         return value && object;
       }
-      var bound = func(Foo),
+      var partialed = func(Foo),
           object = {};
 
-      ok(new bound instanceof Foo);
-      strictEqual(new bound(true), object);
+      ok(new partialed instanceof Foo);
+      strictEqual(new partialed(true), object);
     });
 
     test('`_.' + methodName + '` should clone metadata for created functions', 3, function() {
-      function greet(greeting, name) {
+      var greet = function(greeting, name) {
         return greeting + ' ' + name;
-      }
+      };
+
       var par1 = func(greet, 'hi'),
           par2 = func(par1, 'barney'),
           par3 = func(par1, 'pebbles');
@@ -6045,10 +6047,11 @@
 
   (function() {
     test('combinations of partial functions should work', 1, function() {
-      function func() {
+      var fn = function() {
         return slice.call(arguments);
-      }
-      var a = _.partial(func),
+      };
+
+      var a = _.partial(fn),
           b = _.partialRight(a, 3),
           c = _.partial(b, 1);
 
@@ -6056,27 +6059,28 @@
     });
 
     test('combinations of bound and partial functions should work', 3, function() {
-      function func() {
+      var fn = function() {
         var result = [this.a];
         push.apply(result, arguments);
         return result;
-      }
-      var expected = [1, 2, 3, 4],
-          object = { 'a': 1, 'func': func };
+      };
 
-      var a = _.bindKey(object, 'func'),
+      var expected = [1, 2, 3, 4],
+          object = { 'a': 1, 'fn': fn };
+
+      var a = _.bindKey(object, 'fn'),
           b = _.partialRight(a, 4),
           c = _.partial(b, 2);
 
       deepEqual(c(3), expected);
 
-      a = _.bind(func, object);
+      a = _.bind(fn, object);
       b = _.partialRight(a, 4);
       c = _.partial(b, 2);
 
       deepEqual(c(3), expected);
 
-      a = _.partial(func, 2);
+      a = _.partial(fn, 2);
       b = _.bind(a, object);
       c = _.partialRight(b, 4);
 
@@ -6084,12 +6088,13 @@
     });
 
     test('recursively bound functions should work', 1, function() {
-      function func() {
+      var fn = function() {
         return this.a;
-      }
-      var a = _.bind(func, { 'a': 1 }),
-          b = _.bind(a,    { 'a': 2 }),
-          c = _.bind(b,    { 'a': 3 });
+      };
+
+      var a = _.bind(fn, { 'a': 1 }),
+          b = _.bind(a,  { 'a': 2 }),
+          c = _.bind(b,  { 'a': 3 });
 
       strictEqual(c(), 1);
     });

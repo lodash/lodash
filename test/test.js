@@ -5950,57 +5950,91 @@
         isPartial = methodName == 'partial';
 
     test('`_.' + methodName + '` partially applies arguments', 1, function() {
-      var fn = function(a) { return a; };
-      equal(func(fn, 'a')(), 'a');
+      var fn = function(a) { return a; },
+          par = func(fn, 'a');
+
+      equal(par(), 'a');
     });
 
     test('`_.' + methodName + '` creates a function that can be invoked with additional arguments', 1, function() {
       var fn = function(a, b) { return [a, b]; },
-          expected = ['a', 'b'];
+          expected = ['a', 'b'],
+          par = func(fn, 'a');
 
-      if (!isPartial) {
-        expected.reverse();
-      }
-      deepEqual(func(fn, 'a')('b'), expected);
+      deepEqual(par('b'), isPartial ? expected : expected.reverse());
     });
 
     test('`_.' + methodName + '` works when there are no partially applied arguments and the created function is invoked without additional arguments', 1, function() {
-      var fn = function() { return arguments.length; };
-      strictEqual(func(fn)(), 0);
+      var fn = function() { return arguments.length; },
+          par = func(fn);
+
+      strictEqual(par(), 0);
     });
 
     test('`_.' + methodName + '` works when there are no partially applied arguments and the created function is invoked with additional arguments', 1, function() {
-      var fn = function(a) { return a; };
-      equal(func(fn)('a'), 'a');
+      var fn = function(a) { return a; },
+          par = func(fn);
+
+      equal(par('a'), 'a');
     });
 
     test('`_.' + methodName + '` should not alter the `this` binding', 3, function() {
       var fn = function() { return this.a; },
           object = { 'a': 1 };
 
-      strictEqual(func(_.bind(fn, object))(), object.a);
-      strictEqual(_.bind(func(fn), object)(), object.a);
+      var par = func(_.bind(fn, object));
+      strictEqual(par(), object.a);
 
-      object.partialed = func(fn);
-      strictEqual(object.partialed(), object.a);
+      par = _.bind(func(fn), object);
+      strictEqual(par(), object.a);
+
+      object.par = func(fn);
+      strictEqual(object.par(), object.a);
     });
 
     test('`_.' + methodName + '` creates a function with a `length` of `0`', 1, function() {
       var fn = function(a, b, c) {},
-          actual = func(fn, 'a');
+          par = func(fn, 'a');
 
-      strictEqual(actual.length, 0);
+      strictEqual(par.length, 0);
     });
 
     test('`_.' + methodName + '` ensure `new partialed` is an instance of `func`', 2, function() {
       function Foo(value) {
         return value && object;
       }
-      var partialed = func(Foo),
+      var par = func(Foo),
           object = {};
 
-      ok(new partialed instanceof Foo);
-      strictEqual(new partialed(true), object);
+      ok(new par instanceof Foo);
+      strictEqual(new par(true), object);
+    });
+
+    test('`_.' + methodName + '` should support placeholders', 4, function() {
+      if (_._iteratorTemplate) {
+        var fn = function() {
+          return _.reduce(arguments, function(string, chr) {
+            return string + (chr || '');
+          }, '');
+        };
+
+        var par = func(fn, _, 'b', _);
+        equal(par('a', 'c'), 'abc');
+        equal(par('a'), 'ab');
+
+        if (isPartial) {
+          equal(par('a', 'c', 'd'), 'abcd');
+        } else {
+          par = func(fn, _, 'c', _);
+          equal(par('a', 'b', 'd'), 'abcd');
+        }
+        fn = function() { return slice.call(arguments); };
+        par = func(fn, _, 'b', _);
+        deepEqual(par(), [undefined, 'b', undefined]);
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('`_.' + methodName + '` should clone metadata for created functions', 3, function() {

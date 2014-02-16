@@ -6724,8 +6724,13 @@
     }
 
     /**
-     * A micro-templating method that handles arbitrary delimiters, preserves
-     * whitespace, and correctly escapes quotes within interpolated code.
+     * Creates a compiled template function that can interpolate data properties
+     * in "interpolate" delimiters, HTML escape interpolated data properties in
+     * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. If
+     * a data object is provided the interpolated template string will be returned.
+     * Data properties may be accessed as free variables in the template. If a
+     * settings object is provided it will override `_.templateSettings` for the
+     * template.
      *
      * Note: In the development build, `_.template` utilizes sourceURLs for easier
      * debugging. See [HTML5 Rocks' article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
@@ -6743,14 +6748,14 @@
      * @param {string} text The template text.
      * @param {Object} [data] The data object used to populate the text.
      * @param {Object} [options] The options object.
-     * @param {RegExp} [options.escape] The "escape" delimiter.
+     * @param {RegExp} [options.escape] The HTML "escape" delimiter.
      * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
      * @param {Object} [options.imports] An object to import into the template as local variables.
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
      * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
-     * @returns {Function|string} Returns a compiled function when no `data` object
-     *  is given, else it returns the interpolated text.
+     * @returns {Function|string} Returns the interpolated text if a data object
+     *  if a data object is given, else it returns a template function.
      * @example
      *
      * // using the "interpolate" delimiter to create a compiled template
@@ -6758,11 +6763,11 @@
      * compiled({ 'name': 'fred' });
      * // => 'hello fred'
      *
-     * // using the "escape" delimiter to escape HTML in data property values
+     * // using the HTML "escape" delimiter to escape data property values
      * _.template('<b><%- value %></b>', { 'value': '<script>' });
      * // => '<b>&lt;script&gt;</b>'
      *
-     * // using the "evaluate" delimiter to generate HTML
+     * // using the "evaluate" delimiter to execute JavaScript and generate HTML
      * var list = '<% _.forEach(people, function(name) { %><li><%- name %></li><% }); %>';
      * _.template(list, { 'people': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'

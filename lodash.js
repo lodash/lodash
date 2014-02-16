@@ -1809,21 +1809,21 @@
      * @returns {Array} Returns a new array of composed arguments.
      */
     function composeArgs(partialArgs, partialHolders, args) {
-      var index = -1,
-          length = partialHolders.length,
+      var holdersLength = partialHolders.length,
+          argsIndex = -1,
+          argsLength = nativeMax(args.length - holdersLength, 0),
           leftIndex = -1,
           leftLength = partialArgs.length,
-          argsLength = nativeMax(args.length - length, 0),
           result = Array(argsLength + leftLength);
 
       while (++leftIndex < leftLength) {
         result[leftIndex] = partialArgs[leftIndex];
       }
-      while (++index < length) {
-        result[partialHolders[index]] = args[index];
+      while (++argsIndex < holdersLength) {
+        result[partialHolders[argsIndex]] = args[argsIndex];
       }
-      while (length < argsLength) {
-        result[leftIndex++] = args[length++];
+      while (argsLength--) {
+        result[leftIndex++] = args[argsIndex++];
       }
       return result;
     }
@@ -1839,10 +1839,10 @@
      * @returns {Array} Returns a new array of composed arguments.
      */
     function composeArgsRight(partialRightArgs, partialRightHolders, args) {
-      var index = -1,
-          length = partialRightHolders.length,
+      var holdersIndex = -1,
+          holdersLength = partialRightHolders.length,
           argsIndex = -1,
-          argsLength = nativeMax(args.length - length, 0),
+          argsLength = nativeMax(args.length - holdersLength, 0),
           rightIndex = -1,
           rightLength = partialRightArgs.length,
           result = Array(argsLength + rightLength);
@@ -1854,8 +1854,8 @@
       while (++rightIndex < rightLength) {
         result[pad + rightIndex] = partialRightArgs[rightIndex];
       }
-      while (++index < length) {
-        result[pad + partialHolders[index]] = args[argsIndex++];
+      while (++holdersIndex < holdersLength) {
+        result[pad + partialRightHolders[holdersIndex]] = args[argsIndex++];
       }
       return result;
     }

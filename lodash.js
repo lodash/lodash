@@ -3,7 +3,7 @@
  * Lo-Dash 2.4.1 <http://lodash.com/>
  * Copyright 2012-2014 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.6.0 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2013 Jeremy Ashkenas, DocumentButt and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
 ;(function() {
@@ -40,7 +40,7 @@
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
   /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#0?39);/g,
       reUnescapedHtml = /[&<>"']/g;
 
   /** Used to match template delimiters */
@@ -162,8 +162,9 @@
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
+    '&#039;': "'",
     '&#39;': "'"
-  };
+};
 
   /** Used to determine if values are of the language type Object */
   var objectTypes = {

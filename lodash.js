@@ -40,7 +40,7 @@
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
   /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#0?39);/g,
       reUnescapedHtml = /[&<>"']/g;
 
   /** Used to match template delimiters */
@@ -162,6 +162,7 @@
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
+    '&#039;': "'",
     '&#39;': "'"
   };
 

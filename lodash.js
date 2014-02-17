@@ -164,7 +164,7 @@
     '&quot;': '"',
     '&#039;': "'",
     '&#39;': "'"
-};
+  };
 
   /** Used to determine if values are of the language type Object */
   var objectTypes = {

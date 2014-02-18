@@ -1077,10 +1077,16 @@
         // `Function#bind` spec
         // http://es5.github.io/#x15.3.4.5
         if (partialArgs) {
-          // avoid `arguments` object deoptimizations by using `slice` instead
-          // of `Array.prototype.slice.call` and not assigning `arguments` to a
-          // variable as a ternary expression
-          var args = composeArgs(partialArgs, partialHolders, arguments);
+          // avoid `arguments` object use disqualifying optimizations by
+          // converting it to an array before passing it to `composeArgs`
+          var index = -1,
+               length = arguments.length,
+               args = Array(length);
+
+          while (++index < length) {
+            args[index] = arguments[index];
+          }
+          args = composeArgs(partialArgs, partialHolders, args);
         }
         // mimic the constructor's `return` behavior
         // http://es5.github.io/#x13.2.2
@@ -1296,27 +1302,29 @@
           key = func;
 
       function bound() {
-        var thisBinding = isBind ? thisArg : this;
+        var index = -1,
+            length = arguments.length,
+            args = Array(length);
+
+        while (++index < length) {
+          args[index] = arguments[index];
+        }
         if (partialArgs) {
-          var args = composeArgs(partialArgs, partialHolders, arguments);
+          args = composeArgs(partialArgs, partialHolders, args);
         }
         if (partialRightArgs) {
-          args = composeArgsRight(partialRightArgs, partialRightHolders, args || arguments);
+          args = composeArgsRight(partialRightArgs, partialRightHolders, args);
         }
-        if (isCurry) {
-          var argsLength = arguments.length;
-          if (argsLength < arity) {
-            args || (args = slice(arguments));
-            bitmask |= PARTIAL_FLAG;
-            bitmask &= ~PARTIAL_RIGHT_FLAG
-            if (!isCurryBound) {
-              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
-            }
-            var newArity = nativeMax(0, arity - argsLength);
-            return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, []]);
+        if (isCurry && length < arity) {
+          bitmask |= PARTIAL_FLAG;
+          bitmask &= ~PARTIAL_RIGHT_FLAG
+          if (!isCurryBound) {
+            bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
           }
+          var newArity = nativeMax(0, arity - length);
+          return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, []]);
         }
-        args || (args = arguments);
+        var thisBinding = isBind ? thisArg : this;
         if (isBindKey) {
           func = thisBinding[key];
         }
@@ -2791,14 +2799,13 @@
      * // => [1, 1]
      */
     function pull(array) {
-      var args = arguments,
-          argsIndex = 0,
-          argsLength = args.length,
+      var argsIndex = 0,
+          argsLength = arguments.length,
           length = array ? array.length : 0;
 
       while (++argsIndex < argsLength) {
         var index = -1,
-            value = args[argsIndex];
+            value = arguments[argsIndex];
 
         while (++index < length) {
           if (array[index] === value) {

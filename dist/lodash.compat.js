@@ -1063,10 +1063,16 @@
         // `Function#bind` spec
         // http://es5.github.io/#x15.3.4.5
         if (partialArgs) {
-          // avoid `arguments` object deoptimizations by using `slice` instead
-          // of `Array.prototype.slice.call` and not assigning `arguments` to a
-          // variable as a ternary expression
-          var args = composeArgs(partialArgs, partialHolders, arguments);
+          // avoid `arguments` object use disqualifying optimizations by
+          // converting it to an array before passing it to `composeArgs`
+          var index = -1,
+               length = arguments.length,
+               args = Array(length);
+
+          while (++index < length) {
+            args[index] = arguments[index];
+          }
+          args = composeArgs(partialArgs, partialHolders, args);
         }
         // mimic the constructor's `return` behavior
         // http://es5.github.io/#x13.2.2
@@ -1282,27 +1288,29 @@
           key = func;
 
       function bound() {
-        var thisBinding = isBind ? thisArg : this;
+        var index = -1,
+            length = arguments.length,
+            args = Array(length);
+
+        while (++index < length) {
+          args[index] = arguments[index];
+        }
         if (partialArgs) {
-          var args = composeArgs(partialArgs, partialHolders, arguments);
+          args = composeArgs(partialArgs, partialHolders, args);
         }
         if (partialRightArgs) {
-          args = composeArgsRight(partialRightArgs, partialRightHolders, args || arguments);
+          args = composeArgsRight(partialRightArgs, partialRightHolders, args);
         }
-        if (isCurry) {
-          var argsLength = arguments.length;
-          if (argsLength < arity) {
-            args || (args = slice(arguments));
-            bitmask |= PARTIAL_FLAG;
-            bitmask &= ~PARTIAL_RIGHT_FLAG
-            if (!isCurryBound) {
-              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
-            }
-            var newArity = nativeMax(0, arity - argsLength);
-            return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, []]);
+        if (isCurry && length < arity) {
+          bitmask |= PARTIAL_FLAG;
+          bitmask &= ~PARTIAL_RIGHT_FLAG
+          if (!isCurryBound) {
+            bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
           }
+          var newArity = nativeMax(0, arity - length);
+          return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, []]);
         }
-        args || (args = arguments);
+        var thisBinding = isBind ? thisArg : this;
         if (isBindKey) {
           func = thisBinding[key];
         }
@@ -1795,21 +1803,21 @@
      * @returns {Array} Returns a new array of composed arguments.
      */
     function composeArgs(partialArgs, partialHolders, args) {
-      var index = -1,
-          length = partialHolders.length,
+      var holdersLength = partialHolders.length,
+          argsIndex = -1,
+          argsLength = nativeMax(args.length - holdersLength, 0),
           leftIndex = -1,
           leftLength = partialArgs.length,
-          argsLength = nativeMax(args.length - length, 0),
           result = Array(argsLength + leftLength);
 
       while (++leftIndex < leftLength) {
         result[leftIndex] = partialArgs[leftIndex];
       }
-      while (++index < length) {
-        result[partialHolders[index]] = args[index];
+      while (++argsIndex < holdersLength) {
+        result[partialHolders[argsIndex]] = args[argsIndex];
       }
-      while (length < argsLength) {
-        result[leftIndex++] = args[length++];
+      while (argsLength--) {
+        result[leftIndex++] = args[argsIndex++];
       }
       return result;
     }
@@ -1825,10 +1833,10 @@
      * @returns {Array} Returns a new array of composed arguments.
      */
     function composeArgsRight(partialRightArgs, partialRightHolders, args) {
-      var index = -1,
-          length = partialRightHolders.length,
+      var holdersIndex = -1,
+          holdersLength = partialRightHolders.length,
           argsIndex = -1,
-          argsLength = nativeMax(args.length - length, 0),
+          argsLength = nativeMax(args.length - holdersLength, 0),
           rightIndex = -1,
           rightLength = partialRightArgs.length,
           result = Array(argsLength + rightLength);
@@ -1840,8 +1848,8 @@
       while (++rightIndex < rightLength) {
         result[pad + rightIndex] = partialRightArgs[rightIndex];
       }
-      while (++index < length) {
-        result[pad + partialHolders[index]] = args[argsIndex++];
+      while (++holdersIndex < holdersLength) {
+        result[pad + partialRightHolders[holdersIndex]] = args[argsIndex++];
       }
       return result;
     }
@@ -2756,14 +2764,13 @@
      * // => [1, 1]
      */
     function pull(array) {
-      var args = arguments,
-          argsIndex = 0,
-          argsLength = args.length,
+      var argsIndex = 0,
+          argsLength = arguments.length,
           length = array ? array.length : 0;
 
       while (++argsIndex < argsLength) {
         var index = -1,
-            value = args[argsIndex];
+            value = arguments[argsIndex];
 
         while (++index < length) {
           if (array[index] === value) {
@@ -6725,7 +6732,7 @@
 
     /**
      * Creates a compiled template function that can interpolate data properties
-     * in "interpolate" delimiters, HTML escape interpolated data properties in
+     * in "interpolate" delimiters, HTML-escaped interpolated data properties in
      * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. If
      * a data object is provided the interpolated template string will be returned.
      * Data properties may be accessed as free variables in the template. If a
@@ -6754,8 +6761,8 @@
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
      * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
-     * @returns {Function|string} Returns the interpolated text if a data object
-     *  if a data object is given, else it returns a template function.
+     * @returns {Function|string} Returns the interpolated string if a data object
+     *  is provided, else it returns a template function.
      * @example
      *
      * // using the "interpolate" delimiter to create a compiled template

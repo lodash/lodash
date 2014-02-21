@@ -7482,14 +7482,12 @@
   QUnit.module('lodash.template');
 
   (function() {
-    test('should interpolate data object properties', 1, function() {
-      var compiled = _.template('<%= a %>BC');
-      equal(compiled({ 'a': 'A' }), 'ABC');
-    });
+    test('should escape values in "escape" delimiters', 1, function() {
+      var escaped = '<p>&amp;&lt;&gt;&quot;&#39;\/</p>',
+          unescaped = '&<>"\'\/';
 
-    test('should support escaped values in "interpolation" delimiters', 1, function() {
-      var compiled = _.template('<%= a ? "a=\\"A\\"" : "" %>');
-      equal(compiled({ 'a': true }), 'a="A"');
+      var compiled = _.template('<p><%- value %></p>');
+      equal(compiled({ 'value': unescaped }), escaped);
     });
 
     test('should evaluate JavaScript in "evaluate" delimiters', 1, function() {
@@ -7504,12 +7502,14 @@
       equal(actual, '<ul><li>A</li><li>B</li></ul>');
     });
 
-    test('should escape values in "escape" delimiters', 1, function() {
-      var escaped = '<p>&amp;&lt;&gt;&quot;&#39;\/</p>',
-          unescaped = '&<>"\'\/';
+    test('should interpolate data object properties', 1, function() {
+      var compiled = _.template('<%= a %>BC');
+      equal(compiled({ 'a': 'A' }), 'ABC');
+    });
 
-      var compiled = _.template('<p><%- value %></p>');
-      equal(compiled({ 'value': unescaped }), escaped);
+    test('should support escaped values in "interpolation" delimiters', 1, function() {
+      var compiled = _.template('<%= a ? "a=\\"A\\"" : "" %>');
+      equal(compiled({ 'a': true }), 'a="A"');
     });
 
     test('should work with "interpolate" delimiters containing ternary operators', 1, function() {
@@ -7566,6 +7566,11 @@
       var data = { 'value': 2 };
       strictEqual(_.template('1${value}3', data), '123');
       equal(_.template('${"{" + value + "\\}"}', data), '{2}');
+    });
+
+    test('should not reference `_.escape` when "escape" delimiters are not used', 1, function() {
+      var compiled = _.template('<%= typeof __e %>');
+      equal(compiled({}), 'undefined');
     });
 
     test('should allow referencing variables declared in "evaluate" delimiters from other delimiters', 1, function() {

@@ -889,16 +889,19 @@
         indexOf = getIndexOf(),
         length = array ? array.length : 0,
         result = [],
-        seen = callback ? [] : result;
+        seen = (!isSorted && callback) ? [] : result;
 
     while (++index < length) {
       var value = array[index],
           computed = callback ? callback(value, index, array) : value;
 
-      if (isSorted
-            ? !index || seen[seen.length - 1] !== computed
-            : indexOf(seen, computed) < 0
-          ) {
+      if (isSorted) {
+        if (!index || seen !== computed) {
+          seen = computed;
+          result.push(value);
+        }
+      } else if (indexOf(seen, computed) < 0) {
+
         if (callback) {
           seen.push(computed);
         }
@@ -1382,7 +1385,7 @@
   function indexOf(array, value, fromIndex) {
     var length = array ? array.length : 0;
     if (typeof fromIndex == 'number') {
-      fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex || 0);
+      fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : (fromIndex || 0);
     } else if (fromIndex) {
       var index = sortedIndex(array, value);
       return (length && array[index] === value) ? index : -1;
@@ -4632,10 +4635,7 @@
    * // => 'hello barney!'
    *
    * // using a custom template delimiters
-   * _.templateSettings = {
-   *   'interpolate': /{{([\s\S]+?)}}/g
-   * };
-   *
+   * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
    * _.template('hello {{ name }}!', { 'name': 'mustache' });
    * // => 'hello mustache!'
    *

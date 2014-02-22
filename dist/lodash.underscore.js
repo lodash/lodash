@@ -889,7 +889,7 @@
         indexOf = getIndexOf(),
         length = array ? array.length : 0,
         result = [],
-        seen = (!isSorted && callback) ? [] : result;
+        seen = (callback && !isSorted) ? [] : result;
 
     while (++index < length) {
       var value = array[index],
@@ -1969,7 +1969,7 @@
    * @memberOf _
    * @alias unzip
    * @category Arrays
-   * @param {...Array} [array] Arrays to process.
+   * @param {...Array} [array] The arrays to process.
    * @returns {Array} Returns a new array of grouped elements.
    * @example
    *

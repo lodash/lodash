@@ -3025,8 +3025,8 @@
       while (low < high) {
         var mid = (low + high) >>> 1;
         (callback(array[mid]) < value)
-          ? low = mid + 1
-          : high = mid;
+          ? (low = mid + 1)
+          : (high = mid);
       }
       return low;
     }

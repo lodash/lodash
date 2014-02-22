@@ -23,9 +23,6 @@
   /** Used as the size when optimizations are enabled for arrays */
   var LARGE_ARRAY_SIZE = 40;
 
-  /** Used as the max size of the `arrayPool` and `objectPool` */
-  var MAX_POOL_SIZE = 40;
-
   /** Used as the semantic version number */
   var version = '2.4.1';
 
@@ -84,10 +81,6 @@
     // unicode category "Zs" space separators
     '\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
   );
-
-  /** Used to pool arrays and objects used internally */
-  var arrayPool = [],
-      objectPool = [];
 
   /** Used to assign default `context` object properties */
   var contextProps = [
@@ -373,30 +366,6 @@
   }
 
   /**
-   * Gets an array from the array pool or creates a new one if the pool is empty.
-   *
-   * @private
-   * @returns {Array} The array from the pool.
-   */
-  function getArray() {
-    return arrayPool.pop() || [];
-  }
-
-  /**
-   * Gets an object from the object pool or creates a new one if the pool is empty.
-   *
-   * @private
-   * @returns {Object} The object from the pool.
-   */
-  function getObject() {
-    return objectPool.pop() || {
-      'criteria': null,
-      'index': 0,
-      'value': null
-    };
-  }
-
-  /**
    * Checks if `value` is a DOM node in IE < 9.
    *
    * @private
@@ -407,32 +376,6 @@
     // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
     // methods that are `typeof` "string" and still can coerce nodes to strings
     return typeof value.toString != 'function' && typeof (value + '') == 'string';
-  }
-
-  /**
-   * Releases `array` back to the array pool.
-   *
-   * @private
-   * @param {Array} array The array to release.
-   */
-  function releaseArray(array) {
-    array.length = 0;
-    if (arrayPool.length < MAX_POOL_SIZE) {
-      arrayPool.push(array);
-    }
-  }
-
-  /**
-   * Releases `object` back to the object pool.
-   *
-   * @private
-   * @param {Object} object The object to release.
-   */
-  function releaseObject(object) {
-    object.criteria = object.value = null;
-    if (objectPool.length < MAX_POOL_SIZE) {
-      objectPool.push(object);
-    }
   }
 
   /**
@@ -1136,8 +1079,8 @@
       if (isDeep) {
         // check for circular references and return corresponding clone
         var initedStack = !stackA;
-        stackA || (stackA = getArray());
-        stackB || (stackB = getArray());
+        stackA || (stackA = []);
+        stackB || (stackB = []);
 
         var length = stackA.length;
         while (length--) {
@@ -1173,10 +1116,6 @@
         result[key] = baseClone(objValue, isDeep, callback, stackA, stackB);
       });
 
-      if (initedStack) {
-        releaseArray(stackA);
-        releaseArray(stackB);
-      }
       return result;
     }
 
@@ -1598,8 +1537,8 @@
       // the algorithm for detecting cyclic structures is adapted from ES 5.1
       // section 15.12.3, abstract operation `JO` (http://es5.github.io/#x15.12.3)
       var initedStack = !stackA;
-      stackA || (stackA = getArray());
-      stackB || (stackB = getArray());
+      stackA || (stackA = []);
+      stackB || (stackB = []);
 
       var length = stackA.length;
       while (length--) {
@@ -1664,10 +1603,6 @@
       stackA.pop();
       stackB.pop();
 
-      if (initedStack) {
-        releaseArray(stackA);
-        releaseArray(stackB);
-      }
       return result;
     }
 
@@ -1770,7 +1705,7 @@
         var seen = createCache();
         indexOf = cacheIndexOf;
       } else {
-        seen = (!isSorted && callback) ? getArray() : result;
+        seen = (callback && !isSorted) ? [] : result;
       }
       while (++index < length) {
         var value = array[index],
@@ -1787,9 +1722,6 @@
           }
           result.push(value);
         }
-      }
-      if (!isLarge && callback) {
-        releaseArray(seen);
       }
       return result;
     }
@@ -2595,10 +2527,10 @@
       var args = [],
           argsIndex = -1,
           argsLength = arguments.length,
-          caches = getArray(),
+          caches = [],
           indexOf = getIndexOf(),
           largePrereq = createCache && indexOf === baseIndexOf,
-          seen = getArray();
+          seen = [];
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
@@ -2630,8 +2562,6 @@
           result.push(value);
         }
       }
-      releaseArray(caches);
-      releaseArray(seen);
       return result;
     }
 
@@ -3212,7 +3142,7 @@
      * @memberOf _
      * @alias unzip
      * @category Arrays
-     * @param {...Array} [array] Arrays to process.
+     * @param {...Array} [array] The arrays to process.
      * @returns {Array} Returns a new array of grouped elements.
      * @example
      *
@@ -4581,18 +4511,13 @@
         } else {
           criteria = callback(value, key, collection);
         }
-        var object = result[++index] = getObject();
-        object.criteria = criteria;
-        object.index = index;
-        object.value = value;
+        result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
       });
 
       length = result.length;
       result.sort(multi ? compareMultipleAscending : compareAscending);
       while (length--) {
-        var object = result[length];
-        result[length] = object.value;
-        releaseObject(object);
+        result[length] = result[length].value;
       }
       return result;
     }
@@ -6456,14 +6381,12 @@
       }
       var sources = slice(arguments, 1, length),
           index = -1,
-          stackA = getArray(),
-          stackB = getArray();
+          stackA = [],
+          stackB = [];
 
       while (++index < length) {
         baseMerge(object, sources[index], callback, stackA, stackB);
       }
-      releaseArray(stackA);
-      releaseArray(stackB);
       return object;
     }
 

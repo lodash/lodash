@@ -1508,7 +1508,7 @@
           // treat `NaN` vs. `NaN` as equal
           return (a != +a)
             ? b != +b
-            // but treat `+0` vs. `-0` as not equal
+            // but treat `-0` vs. `+0` as not equal
             : (a == 0 ? (1 / a == 1 / b) : a == +b);
 
         case regexpClass:
@@ -6037,7 +6037,7 @@
       if (!callback) {
         // exit early for identical values
         if (a === b) {
-          // treat `+0` vs. `-0` as not equal
+          // treat `-0` vs. `+0` as not equal
           return a !== 0 || (1 / a == 1 / b);
         }
         var type = typeof a,
@@ -7131,7 +7131,7 @@
           if (!hasOwnProperty.call(object, key)) {
             return false;
           }
-          // treat `+0` vs. `-0` as not equal
+          // treat `-0` vs. `+0` as not equal
           var b = object[key];
           return a === b && (a !== 0 || (1 / a == 1 / b));
         };

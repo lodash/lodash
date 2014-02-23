@@ -1268,7 +1268,23 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.isEqual` comparing primitives and objects (edge case)')
+    Benchmark.Suite('`_.isEqual` comparing primitives')
+      .add(buildName, {
+        'fn': '\
+          lodash.isEqual(1, "1");\
+          lodash.isEqual(1, 1)',
+        'teardown': 'function isEqual(){}'
+      })
+      .add(otherName, {
+        'fn': '\
+          _.isEqual(1, "1");\
+          _.isEqual(1, 1);',
+        'teardown': 'function isEqual(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.isEqual` comparing primitives and their object counterparts (edge case)')
       .add(buildName, {
         'fn': 'lodash.isEqual(objectOfPrimitives, objectOfObjects)',
         'teardown': 'function isEqual(){}'

@@ -1462,7 +1462,6 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(a, b, callback, isWhere, stackA, stackB) {
-      // used to indicate that when comparing objects, `a` has at least the properties of `b`
       if (callback) {
         var result = callback(a, b);
         if (typeof result != 'undefined') {
@@ -1478,15 +1477,9 @@
           otherType = typeof b;
 
       // exit early for unlike primitive values
-      if (a === a &&
-          !(a && (type == 'function' || type == 'object')) &&
-          !(b && (otherType == 'function' || otherType == 'object'))) {
+      if (a === a && (a == null || b == null ||
+          (type != 'function' && type != 'object' && otherType != 'function' && otherType != 'object'))) {
         return false;
-      }
-      // exit early for `null` and `undefined` avoiding ES3's Function#call behavior
-      // http://es5.github.io/#x15.3.4.4
-      if (a == null || b == null) {
-        return a === b;
       }
       // compare [[Class]] names
       var className = toString.call(a),
@@ -6025,7 +6018,24 @@
      * // => true
      */
     function isEqual(a, b, callback, thisArg) {
-      return baseIsEqual(a, b, typeof callback == 'function' && baseCreateCallback(callback, thisArg, 2));
+      callback = typeof callback == 'function' && baseCreateCallback(callback, thisArg, 2);
+
+      if (!callback) {
+        // exit early for identical values
+        if (a === b) {
+          // treat `+0` vs. `-0` as not equal
+          return a !== 0 || (1 / a == 1 / b);
+        }
+        var type = typeof a,
+            otherType = typeof b;
+
+        // exit early for unlike primitive values
+        if (a === a && (a == null || b == null ||
+            (type != 'function' && type != 'object' && otherType != 'function' && otherType != 'object'))) {
+          return false;
+        }
+      }
+      return baseIsEqual(a, b, callback);
     }
 
     /**
@@ -7107,6 +7117,7 @@
           if (!hasOwnProperty.call(object, key)) {
             return false;
           }
+          // treat `+0` vs. `-0` as not equal
           var b = object[key];
           return a === b && (a !== 0 || (1 / a == 1 / b));
         };

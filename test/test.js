@@ -655,7 +655,7 @@
       }
     });
 
-    test('should work with a `callback`', 1, function() {
+    test('should work with a callback', 1, function() {
       var actual = _.assign({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
         return typeof a == 'undefined' ? b : a;
       });
@@ -1382,7 +1382,7 @@
   (function() {
     var array = [4.2, 6.1, 6.4];
 
-    test('should work with a `callback`', 1, function() {
+    test('should work with a callback', 1, function() {
       var actual = _.countBy(array, function(num) {
         return Math.floor(num);
       }, Math);
@@ -2434,7 +2434,7 @@
       deepEqual(actual, [1, 4, 7]);
     });
 
-    test('should work with a `callback`', 1, function() {
+    test('should work with a callback', 1, function() {
       var actual = _.first(array, function(num) {
         return num < 3;
       });
@@ -2520,7 +2520,7 @@
       deepEqual(actual, [1, 2, 3, 1, 2, 3]);
     });
 
-    test('should work with a `callback`', 1, function() {
+    test('should work with a callback', 1, function() {
       var actual = _.flatten(array, function(object) {
         return object.a;
       });
@@ -2991,7 +2991,7 @@
       deepEqual(actual, { 'a': 2 });
     });
 
-    test('`_.' + methodName + '` should not treat the second argument as a `callback`', 2, function() {
+    test('`_.' + methodName + '` should not treat the second argument as a callback', 2, function() {
       function callback() {}
       callback.b = 2;
 
@@ -3426,7 +3426,7 @@
       deepEqual(actual, [[1, 2], [4, 5], [7, 8]]);
     });
 
-    test('should work with a `callback`', 1, function() {
+    test('should work with a callback', 1, function() {
       var actual = _.initial(array, function(num) {
         return num > 1;
       });
@@ -4958,7 +4958,7 @@
       deepEqual(actual, [3, 6, 9]);
     });
 
-    test('should work with a `callback`', 1, function() {
+    test('should work with a callback', 1, function() {
       var actual = _.last(array, function(num) {
         return num > 1;
       });
@@ -5519,7 +5519,7 @@
       equal(func([now, past]), methodName == 'max' ? now : past);
     });
 
-    test('`_.' + methodName + '` should work with a `callback` argument', 1, function() {
+    test('`_.' + methodName + '` should work with a callback argument', 1, function() {
       var actual = func(array, function(num) {
         return -num;
       });
@@ -5784,7 +5784,7 @@
       deepEqual(_.omit([1, 2, 3], '0', '2'), { '1': 2 });
     });
 
-    test('should work with a `callback` argument', 1, function() {
+    test('should work with a callback argument', 1, function() {
       var actual = _.omit(object, function(num) {
         return num != 2;
       });
@@ -6239,7 +6239,7 @@
       deepEqual(_.pick([1, 2, 3], '1'), { '1': 2 });
     });
 
-    test('should work with a `callback` argument', 1, function() {
+    test('should work with a callback argument', 1, function() {
       var actual = _.pick(object, function(num) {
         return num != 2;
       });
@@ -6881,7 +6881,7 @@
       deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
     });
 
-    test('should work with a `callback`', 1, function() {
+    test('should work with a callback', 1, function() {
       var actual = _.rest(array, function(num) {
         return num < 3;
       });
@@ -7331,7 +7331,7 @@
       deepEqual(actual, stableOrder);
     });
 
-    test('should coerce arrays returned from a `callback`', 1, function() {
+    test('should coerce arrays returned from a callback', 1, function() {
       var actual = _.sortBy(objects, function(object) {
         var result = [object.a, object.b];
         result.toString = function() { return String(this[0]); };
@@ -8294,7 +8294,7 @@
       deepEqual(actual, ['undefined']);
     });
 
-    test('should work without a `callback` argument', 1, function() {
+    test('should work without a callback argument', 1, function() {
       function Foo() {}
       ok(_.transform(new Foo) instanceof Foo);
     });
@@ -8473,7 +8473,7 @@
       deepEqual(_.uniq(largeArray), [0, 'a', object]);
     });
 
-    test('should work with a `callback`', 1, function() {
+    test('should work with a callback', 1, function() {
       var actual = _.uniq(objects, false, function(object) {
         return object.a;
       });
@@ -8481,7 +8481,7 @@
       deepEqual(actual, objects.slice(0, 3));
     });
 
-    test('should work with a `callback` without specifying `isSorted`', 1, function() {
+    test('should work with a callback without specifying `isSorted`', 1, function() {
       var actual = _.uniq(objects, function(object) {
         return object.a;
       });

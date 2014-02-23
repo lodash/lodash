@@ -1288,9 +1288,12 @@
      * @returns {Array} Returns a new array of filtered values.
      */
     function baseDifference(array, values) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       var index = -1,
           indexOf = getIndexOf(),
-          length = array ? array.length : 0,
           result = [];
 
       if (createCache && values && indexOf === baseIndexOf && values.length >= LARGE_ARRAY_SIZE) {
@@ -1702,9 +1705,12 @@
      * @returns {Array} Returns a duplicate-value-free array.
      */
     function baseUniq(array, isSorted, callback) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       var index = -1,
           indexOf = getIndexOf(),
-          length = array ? array.length : 0,
           isLarge = createCache && !isSorted && indexOf === baseIndexOf && length >= LARGE_ARRAY_SIZE,
           result = [];
 
@@ -2412,9 +2418,12 @@
      * // => ['hoppy', 'baby puss', 'dino']
      */
     function flatten(array, isShallow, callback, thisArg) {
-      var type = typeof isShallow;
-
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       // juggle arguments
+      var type = typeof isShallow;
       if (type != 'boolean' && isShallow != null) {
         thisArg = callback;
         callback = isShallow;
@@ -3090,9 +3099,12 @@
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
     function uniq(array, isSorted, callback, thisArg) {
-      var type = typeof isSorted;
-
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       // juggle arguments
+      var type = typeof isSorted;
       if (type != 'boolean' && isSorted != null) {
         thisArg = callback;
         callback = isSorted;

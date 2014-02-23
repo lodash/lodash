@@ -756,13 +756,9 @@
     var type = typeof a,
         otherType = typeof b;
 
-    if (a === a &&
-        !(a && (type == 'function' || type == 'object')) &&
-        !(b && (otherType == 'function' || otherType == 'object'))) {
+    if (a === a && (a == null || b == null ||
+        (type != 'function' && type != 'object' && otherType != 'function' && otherType != 'object'))) {
       return false;
-    }
-    if (a == null || b == null) {
-      return a === b;
     }
     var className = toString.call(a),
         otherClass = toString.call(b);
@@ -1349,6 +1345,10 @@
    * // => ['hoppy', 'baby puss', 'dino']
    */
   function flatten(array, isShallow, guard) {
+    var length = array ? array.length : 0;
+    if (!length) {
+      return [];
+    }
     var type = typeof isShallow;
     if ((type == 'number' || type == 'string') && guard && guard[isShallow] === array) {
       isShallow = false;
@@ -1849,8 +1849,8 @@
     while (low < high) {
       var mid = (low + high) >>> 1;
       (callback(array[mid]) < value)
-        ? low = mid + 1
-        : high = mid;
+        ? (low = mid + 1)
+        : (high = mid);
     }
     return low;
   }
@@ -1921,9 +1921,12 @@
    * // => [{ 'x': 1 }, { 'x': 2 }]
    */
   function uniq(array, isSorted, callback, thisArg) {
-    var type = typeof isSorted;
-
+    var length = array ? array.length : 0;
+    if (!length) {
+      return [];
+    }
     // juggle arguments
+    var type = typeof isSorted;
     if (type != 'boolean' && isSorted != null) {
       thisArg = callback;
       callback = isSorted;
@@ -2528,7 +2531,7 @@
    * _.indexBy(keys, function(key) { return String.fromCharCode(key.code); });
    * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
    *
-   * _.indexBy(characters, function(key) { this.fromCharCode(key.code); }, String);
+   * _.indexBy(keys, function(key) { return this.fromCharCode(key.code); }, String);
    * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
    */
   var indexBy = createAggregator(function(result, value, key) {

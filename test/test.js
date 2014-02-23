@@ -8459,18 +8459,9 @@
       deepEqual(_.uniq(array), [1, 2, 3]);
     });
 
-    test('should work with large arrays', 1, function() {
-      var object = {};
-
-      var largeArray = _.times(LARGE_ARRAY_SIZE, function(index) {
-        switch (index % 3) {
-          case 0: return 0;
-          case 1: return 'a';
-          case 2: return object;
-        }
-      });
-
-      deepEqual(_.uniq(largeArray), [0, 'a', object]);
+    test('should work with `isSorted`', 1, function() {
+      var array = [1, 1, 2, 2, 3];
+      deepEqual(_.uniq([1, 1, 2, 2, 3], true), [1, 2, 3]);
     });
 
     test('should work with a callback', 1, function() {
@@ -8502,6 +8493,20 @@
           actual = _.map(array, _.uniq);
 
       deepEqual(actual, [[2, 1], [1, 2]]);
+    });
+
+    test('should work with large arrays', 1, function() {
+      var object = {};
+
+      var largeArray = _.times(LARGE_ARRAY_SIZE, function(index) {
+        switch (index % 3) {
+          case 0: return 0;
+          case 1: return 'a';
+          case 2: return object;
+        }
+      });
+
+      deepEqual(_.uniq(largeArray), [0, 'a', object]);
     });
 
     test('should work with large arrays of boolean, `null`, and `undefined` values', 1, function() {

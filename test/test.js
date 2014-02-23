@@ -2625,6 +2625,11 @@
 
       deepEqual(_.flatten(array, true), expected);
     });
+
+    test('should return an empty array for non array-like objects', 1, function() {
+      var actual = _.flatten({ 'a': 1 }, _.identity);
+      deepEqual(actual, []);
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

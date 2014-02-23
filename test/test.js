@@ -799,10 +799,28 @@
       deepEqual(bound('c', 'd'), [object, 'a', 'b', 'c', 'd']);
     });
 
-    test('should create a function with a `length` of `0`', 1, function() {
+    test('should support placeholders', 4, function() {
+      if (_._iteratorTemplate) {
+        var object = {},
+            bound = _.bind(fn, object, _, 'b', _);
+
+        deepEqual(bound('a', 'c'), [object, 'a', 'b', 'c']);
+        deepEqual(bound('a'), [object, 'a', 'b', undefined]);
+        deepEqual(bound('a', 'c', 'd'), [object, 'a', 'b', 'c', 'd']);
+        deepEqual(bound(), [object, undefined, 'b', undefined]);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
+    test('should create a function with a `length` of `0`', 2, function() {
       var func = function(a, b, c) {},
           bound = _.bind(fn, {});
 
+      strictEqual(bound.length, 0);
+
+      bound = _.bind(fn, {}, 1);
       strictEqual(bound.length, 0);
     });
 
@@ -6018,24 +6036,20 @@
     test('`_.' + methodName + '` should support placeholders', 4, function() {
       if (_._iteratorTemplate) {
         var fn = function() {
-          return _.reduce(arguments, function(string, chr) {
-            return string + (chr || '');
-          }, '');
+          return slice.call(arguments);
         };
 
         var par = func(fn, _, 'b', _);
-        equal(par('a', 'c'), 'abc');
-        equal(par('a'), 'ab');
+        deepEqual(par('a', 'c'), ['a', 'b', 'c']);
+        deepEqual(par('a'), ['a', 'b', undefined]);
+        deepEqual(par(), [undefined, 'b', undefined]);
 
         if (isPartial) {
-          equal(par('a', 'c', 'd'), 'abcd');
+          deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
         } else {
           par = func(fn, _, 'c', _);
-          equal(par('a', 'b', 'd'), 'abcd');
+          deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
         }
-        fn = function() { return slice.call(arguments); };
-        par = func(fn, _, 'b', _);
-        deepEqual(par(), [undefined, 'b', undefined]);
       }
       else {
         skipTest(4);

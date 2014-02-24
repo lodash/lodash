@@ -586,14 +586,30 @@
    * @returns {Array} Returns a new array of filtered values.
    */
   function baseDifference(array, values) {
+    var length = array ? array.length : 0;
+    if (!length) {
+      return [];
+    }
     var index = -1,
         indexOf = getIndexOf(),
-        length = array ? array.length : 0,
-        result = [];
+        isCommon = indexOf === baseIndexOf,
+        result = [],
+        valuesLength = values ? values.length : 0;
 
+    outer:
     while (++index < length) {
       var value = array[index];
-      if (indexOf(values, value) < 0) {
+
+      if (isCommon) {
+        var valuesIndex = valuesLength;
+        while (valuesIndex--) {
+          if (values[valuesIndex] === value) {
+            continue outer;
+          }
+        }
+        result.push(value);
+      }
+      else if (indexOf(values, value) < 0) {
         result.push(value);
       }
     }
@@ -881,22 +897,40 @@
    * @returns {Array} Returns a duplicate-value-free array.
    */
   function baseUniq(array, isSorted, callback) {
+    var length = array ? array.length : 0;
+    if (!length) {
+      return [];
+    }
     var index = -1,
         indexOf = getIndexOf(),
-        length = array ? array.length : 0,
+        isCommon = !isSorted && indexOf === baseIndexOf,
         result = [],
         seen = (callback && !isSorted) ? [] : result;
 
+    outer:
     while (++index < length) {
       var value = array[index],
           computed = callback ? callback(value, index, array) : value;
 
-      if (isSorted) {
+      if (isCommon) {
+        var seenIndex = seen.length;
+        while (seenIndex--) {
+          if (seen[seenIndex] === computed) {
+            continue outer;
+          }
+        }
+        if (callback) {
+          seen.push(computed);
+        }
+        result.push(value);
+      }
+      else if (isSorted) {
         if (!index || seen !== computed) {
           seen = computed;
           result.push(value);
         }
-      } else if (indexOf(seen, computed) < 0) {
+      }
+      else if (indexOf(seen, computed) < 0) {
 
         if (callback) {
           seen.push(computed);

@@ -20,9 +20,6 @@
       PARTIAL_FLAG = 16,
       PARTIAL_RIGHT_FLAG = 32;
 
-  /** Used as the size when optimizations are enabled for arrays */
-  var LARGE_ARRAY_SIZE = 40;
-
   /** Used as the semantic version number */
   var version = '2.4.1';
 
@@ -1058,15 +1055,30 @@
       }
       var index = -1,
           indexOf = getIndexOf(),
-          result = [];
+          prereq = indexOf === baseIndexOf,
+          isLarge = prereq && createCache && values && values.length >= 200,
+          isCommon = prereq && !isLarge,
+          result = [],
+          valuesLength = values ? values.length : 0;
 
-      if (createCache && values && indexOf === baseIndexOf && values.length >= LARGE_ARRAY_SIZE) {
+      if (isLarge) {
         indexOf = cacheIndexOf;
         values = createCache(values);
       }
+      outer:
       while (++index < length) {
         var value = array[index];
-        if (indexOf(values, value) < 0) {
+
+        if (isCommon) {
+          var valuesIndex = valuesLength;
+          while (valuesIndex--) {
+            if (values[valuesIndex] === value) {
+              continue outer;
+            }
+          }
+          result.push(value);
+        }
+        else if (indexOf(values, value) < 0) {
           result.push(value);
         }
       }
@@ -1469,7 +1481,9 @@
       }
       var index = -1,
           indexOf = getIndexOf(),
-          isLarge = createCache && !isSorted && indexOf === baseIndexOf && length >= LARGE_ARRAY_SIZE,
+          prereq = !isSorted && indexOf === baseIndexOf,
+          isLarge = prereq && createCache && length >= 200,
+          isCommon = prereq && !isLarge,
           result = [];
 
       if (isLarge) {
@@ -1478,16 +1492,30 @@
       } else {
         seen = (callback && !isSorted) ? [] : result;
       }
+      outer:
       while (++index < length) {
         var value = array[index],
             computed = callback ? callback(value, index, array) : value;
 
-        if (isSorted) {
+        if (isCommon) {
+          var seenIndex = seen.length;
+          while (seenIndex--) {
+            if (seen[seenIndex] === computed) {
+              continue outer;
+            }
+          }
+          if (callback) {
+            seen.push(computed);
+          }
+          result.push(value);
+        }
+        else if (isSorted) {
           if (!index || seen !== computed) {
             seen = computed;
             result.push(value);
           }
-        } else if (indexOf(seen, computed) < 0) {
+        }
+        else if (indexOf(seen, computed) < 0) {
           if (callback || isLarge) {
             seen.push(computed);
           }
@@ -2268,14 +2296,14 @@
           argsLength = arguments.length,
           caches = [],
           indexOf = getIndexOf(),
-          largePrereq = createCache && indexOf === baseIndexOf,
+          prereq = createCache && indexOf === baseIndexOf,
           seen = [];
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
         if (isArray(value) || isArguments(value)) {
           args.push(value);
-          caches.push(largePrereq && value.length >= LARGE_ARRAY_SIZE &&
+          caches.push(prereq && value.length >= 120 &&
             createCache(argsIndex ? args[argsIndex] : seen));
         }
       }

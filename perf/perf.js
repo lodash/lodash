@@ -437,48 +437,14 @@
         }\
       }\
       if (typeof multiArrays != "undefined") {\
-        var twentyValues = Array(20),\
-            twentyValues2 = Array(20),\
-            fortyValues = Array(40),\
-            fortyValues2 = Array(40),\
-            fiftyValues = Array(50),\
-            fiftyValues2 = Array(50),\
-            hundredValues = Array(100),\
-            hundredValues2 = Array(100),\
-            lowerChars = "abcdefghijklmnopqrstuvwxyz".split(""),\
-            upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");\
-        \
-        for (index = 0; index < 100; index++) {\
-          if (index < 15) {\
-            twentyValues[index] = lowerChars[index];\
-            twentyValues2[index] = upperChars[index];\
-          }\
-          if (index < 20) {\
-            twentyValues[index] =\
-            twentyValues2[index] = index;\
-          }\
-          if (index < 25) {\
-            fortyValues[index] =\
-            fiftyValues[index] =\
-            hundredValues[index] = lowerChars[index];\
-            \
-            fortyValues2[index] =\
-            fiftyValues2[index] =\
-            hundredValues2[index] = upperChars[index];\
-          }\
-          else {\
-            if (index < 40) {\
-              fortyValues[index] =\
-              fortyValues2[index] = index;\
-            }\
-            if (index < 50) {\
-              fiftyValues[index] =\
-              fiftyValues2[index] = index;\
-            }\
-            hundredValues[index] =\
-            hundredValues2[index] = index;\
-          }\
-        }\
+        var twentyValues = belt.shuffle(belt.range(20)),\
+            fortyValues = belt.shuffle(belt.range(40)),\
+            hundredValues = belt.shuffle(belt.range(100)),\
+            hundredValues2 = belt.shuffle(belt.range(100)),\
+            hundredTwentyValues = belt.shuffle(belt.range(120)),\
+            hundredTwentyValues2 = belt.shuffle(belt.range(120)),\
+            twoHundredValues = belt.shuffle(belt.range(200)),\
+            twoHundredValues2 = belt.shuffle(belt.range(200));\
       }\
       if (typeof partial != "undefined") {\
         var func = function(greeting, punctuation) {\
@@ -829,25 +795,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 40 elements')
+    Benchmark.Suite('`_.difference` iterating 200 elements')
       .add(buildName, {
-        'fn': 'lodash.difference(twentyValues, twentyValues2)',
+        'fn': 'lodash.difference(twoHundredValues, twoHundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.difference(twentyValues, twentyValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.difference` iterating 100 elements')
-      .add(buildName, {
-        'fn': 'lodash.difference(hundredValues, hundredValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.difference(hundredValues, hundredValues2)',
+        'fn': '_.difference(twoHundredValues, twoHundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -855,11 +809,11 @@
   suites.push(
     Benchmark.Suite('`_.difference` iterating 20 and 40 elements')
       .add(buildName, {
-        'fn': 'lodash.difference(twentyValues, fortyValues2)',
+        'fn': 'lodash.difference(twentyValues, fortyValues)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.difference(twentyValues, fortyValues2)',
+        'fn': '_.difference(twentyValues, fortyValues)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1188,25 +1142,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.intersection` iterating 40 elements')
+    Benchmark.Suite('`_.intersection` iterating 120 elements')
       .add(buildName, {
-        'fn': 'lodash.intersection(fortyValues, fortyValues2)',
+        'fn': 'lodash.intersection(hundredTwentyValues, hundredTwentyValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.intersection(fortyValues, fortyValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.intersection` iterating 100 elements')
-      .add(buildName, {
-        'fn': 'lodash.intersection(hundredValues, hundredValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.intersection(hundredValues, hundredValues2)',
+        'fn': '_.intersection(hundredTwentyValues, hundredTwentyValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1982,25 +1924,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 40 elements')
+    Benchmark.Suite('`_.union` iterating an array of 200 elements')
       .add(buildName, {
-        'fn': 'lodash.union(twentyValues, twentyValues2)',
+        'fn': 'lodash.union(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.union(twentyValues, twentyValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.union` iterating an array of 100 elements')
-      .add(buildName, {
-        'fn': 'lodash.union(fiftyValues, fiftyValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.union(fiftyValues, fiftyValues2)',
+        'fn': '_.union(hundredValues, hundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -2032,25 +1962,13 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.uniq` iterating an array of 40 elements')
+    Benchmark.Suite('`_.uniq` iterating an array of 200 elements')
       .add(buildName, {
-        'fn': 'lodash.uniq(fortyValues)',
+        'fn': 'lodash.uniq(twoHundredValues)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.uniq(fortyValues)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.uniq` iterating an array of 100 elements')
-      .add(buildName, {
-        'fn': 'lodash.uniq(hundredValues)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.uniq(hundredValues)',
+        'fn': '_.uniq(twoHundredValues)',
         'teardown': 'function multiArrays(){}'
       })
   );

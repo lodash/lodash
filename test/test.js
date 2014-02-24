@@ -3,8 +3,8 @@
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
 
-  /** Used as the size when optimizations are enabled for arrays */
-  var LARGE_ARRAY_SIZE = 75;
+  /** Used as the size to cover large array optimizations */
+  var LARGE_ARRAY_SIZE = 200;
 
   /** Used as a reference to the global object */
   var root = typeof global == 'object' && global || this;

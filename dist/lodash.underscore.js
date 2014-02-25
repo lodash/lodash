@@ -950,17 +950,12 @@
         isPartial = bitmask & PARTIAL_FLAG,
         isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
-    if (!isBindKey && !isFunction(func)) {
+    if (!isFunction(func)) {
       throw new TypeError;
     }
     if (isPartial && !partialArgs.length) {
       bitmask &= ~PARTIAL_FLAG;
       isPartial = partialArgs = false;
-    }
-    if (arity == null) {
-      arity = isBindKey ? 0 : func.length;
-    } else if (arity < 0) {
-      arity = 0;
     }
     if (isPartial) {
       partialHolders = getHolders(partialArgs);

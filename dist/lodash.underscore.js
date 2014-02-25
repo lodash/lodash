@@ -413,48 +413,6 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The base implementation of `_.bind` that creates the bound function and
-   * sets its meta data.
-   *
-   * @private
-   * @param {Array} data The metadata array.
-   * @returns {Function} Returns the new bound function.
-   */
-  function baseBind(data) {
-    var func = data[0],
-        thisArg = data[3],
-        partialArgs = data[4],
-        partialHolders = data[6];
-
-    function bound() {
-      // `Function#bind` spec
-      // http://es5.github.io/#x15.3.4.5
-      if (partialArgs) {
-        // avoid `arguments` object use disqualifying optimizations by
-        // converting it to an array before passing it to `composeArgs`
-        var index = -1,
-             length = arguments.length,
-             args = Array(length);
-
-        while (++index < length) {
-          args[index] = arguments[index];
-        }
-        args = composeArgs(partialArgs, partialHolders, args);
-      }
-      // mimic the constructor's `return` behavior
-      // http://es5.github.io/#x13.2.2
-      if (this instanceof bound) {
-        // ensure `new bound` is an instance of `func`
-        var thisBinding = baseCreate(func.prototype),
-            result = func.apply(thisBinding, args || arguments);
-        return isObject(result) ? result : thisBinding;
-      }
-      return func.apply(thisArg, args || arguments);
-    }
-    return bound;
-  }
-
-  /**
    * The base implementation of `_.create` without support for assigning
    * properties to the created object.
    *
@@ -550,22 +508,7 @@
       if (partialArgs) {
         args = composeArgs(partialArgs, partialHolders, args);
       }
-      if (partialRightArgs) {
-        args = composeArgsRight(partialRightArgs, partialRightHolders, args);
-      }
-      if (isCurry && length < arity) {
-        bitmask |= PARTIAL_FLAG;
-        bitmask &= ~PARTIAL_RIGHT_FLAG
-        if (!isCurryBound) {
-          bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
-        }
-        var newArity = nativeMax(0, arity - length);
-        return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, []]);
-      }
       var thisBinding = isBind ? thisArg : this;
-      if (isBindKey) {
-        func = thisBinding[key];
-      }
       if (this instanceof bound) {
         thisBinding = baseCreate(func.prototype);
         var result = func.apply(thisBinding, args);
@@ -592,24 +535,11 @@
     }
     var index = -1,
         indexOf = getIndexOf(),
-        isCommon = indexOf === baseIndexOf,
-        result = [],
-        valuesLength = values ? values.length : 0;
+        result = [];
 
-    outer:
     while (++index < length) {
       var value = array[index];
-
-      if (isCommon) {
-        var valuesIndex = valuesLength;
-        while (valuesIndex--) {
-          if (values[valuesIndex] === value) {
-            continue outer;
-          }
-        }
-        result.push(value);
-      }
-      else if (indexOf(values, value) < 0) {
+      if (indexOf(values, value) < 0) {
         result.push(value);
       }
     }
@@ -903,35 +833,20 @@
     }
     var index = -1,
         indexOf = getIndexOf(),
-        isCommon = !isSorted && indexOf === baseIndexOf,
         result = [],
         seen = (callback && !isSorted) ? [] : result;
 
-    outer:
     while (++index < length) {
       var value = array[index],
           computed = callback ? callback(value, index, array) : value;
 
-      if (isCommon) {
-        var seenIndex = seen.length;
-        while (seenIndex--) {
-          if (seen[seenIndex] === computed) {
-            continue outer;
-          }
-        }
-        if (callback) {
-          seen.push(computed);
-        }
-        result.push(value);
-      }
-      else if (isSorted) {
+      if (isSorted) {
         if (!index || seen !== computed) {
           seen = computed;
           result.push(value);
         }
       }
       else if (indexOf(seen, computed) < 0) {
-
         if (callback) {
           seen.push(computed);
         }
@@ -967,38 +882,6 @@
     }
     while (argsLength--) {
       result[leftIndex++] = args[argsIndex++];
-    }
-    return result;
-  }
-
-  /**
-   * This function is like `composeArgs` except that the arguments composition
-   * is tailored for `_.partialRight`.
-   *
-   * @private
-   * @param {Array} partialRightArg An array of arguments to append to those provided.
-   * @param {Array} partialHolders An array of `partialRightArgs` placeholder indexes.
-   * @param {Array|Object} args The provided arguments.
-   * @returns {Array} Returns a new array of composed arguments.
-   */
-  function composeArgsRight(partialRightArgs, partialRightHolders, args) {
-    var holdersIndex = -1,
-        holdersLength = partialRightHolders.length,
-        argsIndex = -1,
-        argsLength = nativeMax(args.length - holdersLength, 0),
-        rightIndex = -1,
-        rightLength = partialRightArgs.length,
-        result = Array(argsLength + rightLength);
-
-    while (++argsIndex < argsLength) {
-      result[argsIndex] = args[argsIndex];
-    }
-    var pad = argsIndex;
-    while (++rightIndex < rightLength) {
-      result[pad + rightIndex] = partialRightArgs[rightIndex];
-    }
-    while (++holdersIndex < holdersLength) {
-      result[pad + partialRightHolders[holdersIndex]] = args[argsIndex++];
     }
     return result;
   }
@@ -1074,10 +957,6 @@
       bitmask &= ~PARTIAL_FLAG;
       isPartial = partialArgs = false;
     }
-    if (isPartialRight && !partialRightArgs.length) {
-      bitmask &= ~PARTIAL_RIGHT_FLAG;
-      isPartialRight = partialRightArgs = false;
-    }
     if (arity == null) {
       arity = isBindKey ? 0 : func.length;
     } else if (arity < 0) {
@@ -1086,14 +965,9 @@
     if (isPartial) {
       partialHolders = getHolders(partialArgs);
     }
-    if (isPartialRight) {
-      partialRightHolders = getHolders(partialRightArgs);
-    }
     // fast path for `_.bind`
     var data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders];
-    return (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG))
-      ? baseBind(data)
-      : baseCreateWrapper(data);
+    return baseCreateWrapper(data);
   }
 
   /**
@@ -1317,21 +1191,9 @@
    * _.pluck(_.first(characters, { 'employer': 'slate' }), 'name');
    * // => ['barney', 'fred']
    */
-  function first(array, callback, thisArg) {
-    var n = 0,
-        length = array ? array.length : 0;
-
-    if (typeof callback != 'number' && callback != null) {
-      var index = -1;
-      callback = createCallback(callback, thisArg, 3);
-      while (++index < length && callback(array[index], index, array)) {
-        n++;
-      }
-    } else {
-      n = callback;
-      if (n == null || thisArg) {
-        return array ? array[0] : undefined;
-      }
+  function first(array, n, guard) {
+    if (n == null || guard) {
+      return array ? array[0] : undefined;
     }
     return slice(array, 0, n > 0 ? n : 0);
   }
@@ -1479,20 +1341,9 @@
    * _.pluck(_.initial(characters, { 'employer': 'na' }), 'name');
    * // => ['barney', 'fred']
    */
-  function initial(array, callback, thisArg) {
-    var n = 0,
-        length = array ? array.length : 0;
-
-    if (typeof callback != 'number' && callback != null) {
-      var index = length;
-      callback = createCallback(callback, thisArg, 3);
-      while (index-- && callback(array[index], index, array)) {
-        n++;
-      }
-    } else {
-      n = (callback == null || thisArg) ? 1 : callback || n;
-    }
-    n = length - n;
+  function initial(array, n, guard) {
+    var length = array ? array.length : 0;
+    n = length - ((n == null || guard) ? 1 : n);
     return slice(array, 0, n > 0 ? n : 0);
   }
 
@@ -1595,24 +1446,13 @@
    * _.last(characters, { 'employer': 'na' });
    * // => [{ 'name': 'pebbles', 'employer': 'na', 'blocked': true }]
    */
-  function last(array, callback, thisArg) {
-    var n = 0,
-        length = array ? array.length : 0;
-
-    if (typeof callback != 'number' && callback != null) {
-      var index = length;
-      callback = createCallback(callback, thisArg, 3);
-      while (index-- && callback(array[index], index, array)) {
-        n++;
-      }
-    } else {
-      n = callback;
-      if (n == null || thisArg) {
-        return array ? array[length - 1] : undefined;
-      }
+  function last(array, n, guard) {
+    var length = array ? array.length : 0;
+    if (n == null || guard) {
+      return array ? array[length - 1] : undefined;
     }
     n = length - n;
-    return slice(array,  n > 0 ? n : 0);
+    return slice(array, n > 0 ? n : 0);
   }
 
   /**
@@ -1763,20 +1603,11 @@
    * _.rest(characters, { 'employer': 'slate' });
    * // => [{ 'name': 'pebbles', 'employer': 'na', 'blocked': true }]
    */
-  function rest(array, callback, thisArg) {
-    if (typeof callback != 'number' && callback != null) {
-      var n = 0,
-          index = -1,
-          length = array ? array.length : 0;
-
-      callback = createCallback(callback, thisArg, 3);
-      while (++index < length && callback(array[index], index, array)) {
-        n++;
-      }
-    } else if (callback == null || thisArg) {
+  function rest(array, n, guard) {
+    if (n == null || guard) {
       n = 1;
     } else {
-      n = callback > 0 ? callback : 0;
+      n = n > 0 ? n : 0;
     }
     return slice(array, n);
   }
@@ -2202,13 +2033,14 @@
     var indexOf = getIndexOf(),
         length = collection ? collection.length : 0,
         result = false;
+
     if (length && typeof length == 'number') {
-      result = indexOf(collection, target) > -1;
-    } else {
-      baseEach(collection, function(value) {
-        return (result = value === target) && breakIndicator;
-      });
+      return indexOf(collection, target) > -1;
     }
+    baseEach(collection, function(value) {
+      return (result = value === target) && breakIndicator;
+    });
+
     return result;
   }
 
@@ -2600,17 +2432,11 @@
         length = collection ? collection.length : 0,
         result = Array(typeof length == 'number' ? length : 0);
 
-    if (arguments.length < 3 && typeof length == 'number') {
-      while (++index < length) {
-        var value = collection[index];
-        result[index] = isFunc ? methodName.call(value) : value[methodName]();
-      }
-    } else {
-      var args = slice(arguments, 2);
-      baseEach(collection, function(value) {
-        result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
-      });
-    }
+    var args = slice(arguments, 2);
+    baseEach(collection, function(value) {
+      result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
+    });
+
     return result;
   }
 
@@ -3348,16 +3174,9 @@
    * // => 'hi fred'
    */
   function bind(func, thisArg) {
-    if (arguments.length < 3) {
-      return createWrapper(func, BIND_FLAG, null, thisArg);
-    }
-    if (func) {
-      var arity = func[expando] ? func[expando][2] : func.length,
-          partialArgs = slice(arguments, 2);
-
-      arity -= partialArgs.length;
-    }
-    return createWrapper(func, BIND_FLAG | PARTIAL_FLAG, arity, thisArg, partialArgs);
+    return arguments.length < 3
+      ? createWrapper(func, BIND_FLAG, null, thisArg)
+      : createWrapper(func, BIND_FLAG | PARTIAL_FLAG, null, thisArg, slice(arguments, 2));
   }
 
   /**
@@ -3742,13 +3561,7 @@
    * // => 'hi fred'
    */
   function partial(func) {
-    if (func) {
-      var arity = func[expando] ? func[expando][2] : func.length,
-          partialArgs = slice(arguments, 1);
-
-      arity -= partialArgs.length;
-    }
-    return createWrapper(func, PARTIAL_FLAG, arity, null, partialArgs);
+    return createWrapper(func, PARTIAL_FLAG, null, null, slice(arguments, 1));
   }
 
   /**

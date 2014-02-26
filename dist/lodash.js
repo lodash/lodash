@@ -798,6 +798,7 @@
           // ensure `new bound` is an instance of `func`
           var thisBinding = baseCreate(func.prototype),
               result = func.apply(thisBinding, args || arguments);
+
           return isObject(result) ? result : thisBinding;
         }
         return func.apply(thisArg, args || arguments);
@@ -1602,8 +1603,8 @@
     function createAggregator(setter, retArray) {
       return function(collection, callback, thisArg) {
         var result = retArray ? [[], []] : {};
-
         callback = lodash.createCallback(callback, thisArg, 3);
+
         var index = -1,
             length = collection ? collection.length : 0;
 
@@ -2087,11 +2088,11 @@
      * // => ['barney', 'fred']
      */
     function first(array, callback, thisArg) {
-      var n = 0,
-          length = array ? array.length : 0;
-
       if (typeof callback != 'number' && callback != null) {
-        var index = -1;
+        var index = -1,
+            length = array ? array.length : 0,
+            n = 0;
+
         callback = lodash.createCallback(callback, thisArg, 3);
         while (++index < length && callback(array[index], index, array)) {
           n++;
@@ -2260,17 +2261,18 @@
      * // => ['barney', 'fred']
      */
     function initial(array, callback, thisArg) {
-      var n = 0,
-          length = array ? array.length : 0;
+      var length = array ? array.length : 0;
 
       if (typeof callback != 'number' && callback != null) {
-        var index = length;
+        var index = length,
+            n = 0;
+
         callback = lodash.createCallback(callback, thisArg, 3);
         while (index-- && callback(array[index], index, array)) {
           n++;
         }
       } else {
-        n = (callback == null || thisArg) ? 1 : callback || n;
+        n = (callback == null || thisArg) ? 1 : callback;
       }
       n = length - n;
       return slice(array, 0, n > 0 ? n : 0);
@@ -2385,11 +2387,12 @@
      * // => [{ 'name': 'pebbles', 'employer': 'na', 'blocked': true }]
      */
     function last(array, callback, thisArg) {
-      var n = 0,
-          length = array ? array.length : 0;
+      var length = array ? array.length : 0;
 
       if (typeof callback != 'number' && callback != null) {
-        var index = length;
+        var index = length,
+            n = 0;
+
         callback = lodash.createCallback(callback, thisArg, 3);
         while (index-- && callback(array[index], index, array)) {
           n++;
@@ -2639,9 +2642,9 @@
      */
     function rest(array, callback, thisArg) {
       if (typeof callback != 'number' && callback != null) {
-        var n = 0,
-            index = -1,
-            length = array ? array.length : 0;
+        var index = -1,
+            length = array ? array.length : 0,
+            n = 0;
 
         callback = lodash.createCallback(callback, thisArg, 3);
         while (++index < length && callback(array[index], index, array)) {
@@ -3270,8 +3273,8 @@
      */
     function every(collection, callback, thisArg) {
       var result = true;
-
       callback = lodash.createCallback(callback, thisArg, 3);
+
       var index = -1,
           length = collection ? collection.length : 0;
 
@@ -3331,8 +3334,8 @@
      */
     function filter(collection, callback, thisArg) {
       var result = [];
-
       callback = lodash.createCallback(callback, thisArg, 3);
+
       var index = -1,
           length = collection ? collection.length : 0;
 
@@ -3398,6 +3401,7 @@
      */
     function find(collection, callback, thisArg) {
       callback = lodash.createCallback(callback, thisArg, 3);
+
       var index = -1,
           length = collection ? collection.length : 0;
 
@@ -3967,8 +3971,8 @@
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-
       callback = lodash.createCallback(callback, thisArg, 4);
+
       var index = -1,
           length = collection ? collection.length : 0;
 
@@ -4192,8 +4196,8 @@
      */
     function some(collection, callback, thisArg) {
       var result;
-
       callback = lodash.createCallback(callback, thisArg, 3);
+
       var index = -1,
           length = collection ? collection.length : 0;
 

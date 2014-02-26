@@ -901,8 +901,8 @@
   function createAggregator(setter, retArray) {
     return function(collection, callback, thisArg) {
       var result = retArray ? [[], []] : {};
-
       callback = createCallback(callback, thisArg, 3);
+
       var index = -1,
           length = collection ? collection.length : 0;
 
@@ -2120,8 +2120,8 @@
    */
   function every(collection, callback, thisArg) {
     var result = true;
-
     callback = createCallback(callback, thisArg, 3);
+
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2181,8 +2181,8 @@
    */
   function filter(collection, callback, thisArg) {
     var result = [];
-
     callback = createCallback(callback, thisArg, 3);
+
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2248,6 +2248,7 @@
    */
   function find(collection, callback, thisArg) {
     callback = createCallback(callback, thisArg, 3);
+
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2741,8 +2742,8 @@
    */
   function reduce(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-
     callback = createCallback(callback, thisArg, 4);
+
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2966,8 +2967,8 @@
    */
   function some(collection, callback, thisArg) {
     var result;
-
     callback = createCallback(callback, thisArg, 3);
+
     var index = -1,
         length = collection ? collection.length : 0;
 

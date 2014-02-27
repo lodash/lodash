@@ -1644,25 +1644,26 @@
   QUnit.module('lodash.curry');
 
   (function() {
-    function fn(a, b, c) {
-      return a + b + c;
+    function fn(a, b, c, d) {
+      return a + b + c + d;
     }
 
     test('should curry based on the number of arguments provided', 3, function() {
       var curried = _.curry(fn);
-      equal(curried(1)(2)(3), 6);
-      equal(curried(1, 2)(3), 6);
-      equal(curried(1, 2, 3), 6);
+      equal(curried(1)(2)(3)(4), 10);
+      equal(curried(1, 2)(3, 4), 10);
+      equal(curried(1, 2, 3, 4), 10);
     });
 
     test('should work with partialed methods', 2, function() {
       var curried = _.curry(fn),
           a = _.partial(curried, 1),
-          b = _.partialRight(a, 3),
-          c = _.partialRight(a(2), 3);
+          b = _.bind(a, null, 2),
+          c = _.partialRight(b, 4),
+          d = _.partialRight(b(3), 4);
 
-      equal(b(2), 6);
-      equal(c(), 6);
+      equal(c(3), 10);
+      equal(d(), 10);
     });
 
     test('should return a function with a `length` of `0`', 6, function() {

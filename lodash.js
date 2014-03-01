@@ -626,7 +626,7 @@
      * implicitly or explicitly included in the build.
      *
      * The chainable wrapper functions are:
-     * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
+     * `after`, `assign`, `at`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
      * `compose`, `concat`, `constant`, `countBy`, `create`, `createCallback`,
      * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
      * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,

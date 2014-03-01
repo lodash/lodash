@@ -68,7 +68,7 @@ before_install:
   - "node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js"
 script:
   - "[ $ISTANBUL == false ]    || (nvm use 0.11 && $BIN --harmony ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.$BUILD.js)"
-  - "[ $ISTANBUL == true ] && (nvm use 0.10 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage) || true"
+  - "[ $ISTANBUL == true ] && [ $TRAVIS_PULL_REQUEST == false ] && (nvm use 0.10 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage) || true"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || cd ./test"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"

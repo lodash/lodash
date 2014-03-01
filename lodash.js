@@ -2929,14 +2929,14 @@
       }
       var result = Array(length),
           adjust = -1,
-          removal, prev;
+          removal, previous;
       while(++index < length) {
         removal = removals[index];
-        if (removal === prev) {
+        if (removal === previous) {
           result[index] = result[index - 1];
           continue;
         }
-        prev = removal;
+        previous = removal;
         result[index] = splice.call(array, removal - ++adjust, 1)[0];
       }
       return result;

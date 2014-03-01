@@ -2927,9 +2927,17 @@
       } else {
         removals.sort(baseCompareAscending);
       }
-      var result = Array(length);
+      var result = Array(length),
+          adjust = -1,
+          removal, prev;
       while(++index < length) {
-        result[index] = splice.call(array, removals[index] - index, 1)[0];
+        removal = removals[index];
+        if (removal === prev) {
+          result[index] = result[index - 1];
+          continue;
+        }
+        prev = removal;
+        result[index] = splice.call(array, removal - ++adjust, 1)[0];
       }
       return result;
     }

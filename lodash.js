@@ -2885,6 +2885,57 @@
     }
 
     /**
+     * Removes elements located at the given indexes and returns an array of 
+     * removed elements. A hybrid of "_.remove" and "_.at". Indexes may be 
+     * specified as an array of indexes or as individual arguments.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to modify.
+     * @param {...(number|number[])} [index] The indexes of `array` to remove
+     * @returns {Array} Returns a new array of removed elements.
+     * @example
+     *
+     * var array = [5, 10, 15, 20, 25, 30];
+     * var evens = _.removeAt(array, [1, 3, 5]);
+     *
+     * console.log(array);
+     * // => [5, 15, 25]
+     *
+     * console.log(evens);
+     * // => [10, 20, 30]
+     *
+     * var greeting = ('good morning').split('');
+     * var vowels = _.removeAt(greeting, 1, 2, 6, 9);
+     *
+     * console.log(greeting.join(''));
+     * // => 'gd mrnng'
+     *
+     * console.log(vowels.join(''));
+     * // => 'oooi'
+     */
+    function removeAt(array, guard) {
+      var args = arguments,
+          index = -1,
+          removals = baseFlatten(args, true, false, 1),
+          length = removals.length; 
+
+      // enables use as a callback for functions like `_.map`
+      if (typeof guard == 'number' && args[2] && args[2][guard] === array) {
+        length = 1;
+      } else {
+        removals.sort(baseCompareAscending);
+      }
+      var result = Array(length);
+      while(++index < length) {
+        result[index] = splice.call(array, removals[index] - index, 1)[0];
+      }
+      return result;
+    }
+
+
+    /**
      * The opposite of `_.initial`; this method gets all but the first element or
      * first `n` elements of an array. If a callback function is provided elements
      * at the beginning of the array are excluded from the result as long as the
@@ -7582,6 +7633,7 @@
     lodash.range = range;
     lodash.reject = reject;
     lodash.remove = remove;
+    lodash.removeAt = removeAt;
     lodash.rest = rest;
     lodash.shuffle = shuffle;
     lodash.slice = slice;

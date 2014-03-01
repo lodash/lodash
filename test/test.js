@@ -6820,6 +6820,14 @@
       deepEqual(actual, [1, 2, 4, 5]);
     });
 
+    test('should work with repeated indexes', 2, function() {
+      var array = [1, 2, 3, 4, 5];
+      var actual = _.removeAt(array, [0, 0, 1, 2, 2, 2]);
+
+      deepEqual(array, [4, 5]);
+      deepEqual(actual, [1, 1, 2, 3, 3, 3]);
+    });
+
     test('should return `undefined` for nonexistent keys', 2, function() {
       var array = ['a', 'b',  'c'];
       var actual = _.removeAt(array, [0, 2, 4]);

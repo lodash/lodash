@@ -2934,10 +2934,10 @@
         removal = removals[index];
         if (removal === previous) {
           result[index] = result[index - 1];
-          continue;
+        } else {
+          previous = removal;
+          result[index] = splice.call(array, removal - ++adjust, 1)[0];
         }
-        previous = removal;
-        result[index] = splice.call(array, removal - ++adjust, 1)[0];
       }
       return result;
     }

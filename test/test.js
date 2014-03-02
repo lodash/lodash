@@ -6801,6 +6801,68 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.removeAt');
+
+  (function() {
+    test('should modify the array and return removed elements', 2, function() {
+      var array = [1, 2, 3];
+      var actual = _.removeAt(array, [0, 1]);
+
+      deepEqual(array, [3]);
+      deepEqual(actual, [1, 2]);
+    });
+
+    test('should work with unsorted indexes', 2, function() {
+      var array = [1, 2, 3, 4, 5];
+      var actual = _.removeAt(array, [4, 1, 0, 3]);
+
+      deepEqual(array, [3]);
+      deepEqual(actual, [1, 2, 4, 5]);
+    });
+
+    test('should work with repeated indexes', 2, function() {
+      var array = [1, 2, 3, 4, 5];
+      var actual = _.removeAt(array, [0, 0, 1, 2, 2, 2]);
+
+      deepEqual(array, [4, 5]);
+      deepEqual(actual, [1, 1, 2, 3, 3, 3]);
+    });
+
+    test('should return `undefined` for nonexistent keys', 2, function() {
+      var array = ['a', 'b',  'c'];
+      var actual = _.removeAt(array, [0, 2, 4]);
+
+      deepEqual(array, ['b']);
+      deepEqual(actual, ['a', 'c', undefined]);
+    });
+
+    test('should return an empty array when no keys are provided', 2, function() {
+      var array = ['a', 'b', 'c'];
+      var actual = _.removeAt(array);
+      
+      deepEqual(array, ['a', 'b', 'c']);
+      deepEqual(actual, []);
+    });
+
+    test('should accept multiple index arguments', 2, function() {
+      var array = ['a', 'b', 'c', 'd'];
+      var actual = _.removeAt(array, 0, 2, 3);
+
+      deepEqual(array, ['b']);
+      deepEqual(actual, ['a', 'c', 'd']);
+    });
+
+    test('should work when used as a callback for `_.map`', 2, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+      var actual = _.map(array, _.removeAt);
+
+      deepEqual(array, [[2, 3], [4, 6], [7, 8]]);
+      deepEqual(actual, [[1], [5], [9]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.result');
 
   (function() {
@@ -9240,6 +9302,7 @@
       'range',
       'reject',
       'remove',
+      'removeAt',
       'rest',
       'sample',
       'shuffle',
@@ -9274,7 +9337,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 165, function() {
+    test('should accept falsey arguments', 167, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
           isExposed = '_' in root,
           oldDash = root._;
@@ -9317,7 +9380,7 @@
       });
     });
 
-    test('should return an array', 64, function() {
+    test('should return an array', 66, function() {
       var array = [1, 2, 3];
 
       _.forEach(returnArrays, function(methodName) {

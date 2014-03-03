@@ -44,6 +44,13 @@
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
 
+  /**
+   * Used to match RegExp special characters.
+   * See this [article on RegExp characters](http://www.regular-expressions.info/characters.html#special)
+   * for more details.
+   */
+  var reRegExpChars =/[.*+?^${()|[\\]/g;
+
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
@@ -180,11 +187,11 @@
    * Used by `escape` to convert characters to HTML entities.
    *
    * @private
-   * @param {string} match The matched character to escape.
+   * @param {string} chr The matched character to escape.
    * @returns {string} Returns the escaped character.
    */
-  function escapeHtmlChar(match) {
-    return htmlEscapes[match];
+  function escapeHtmlChar(chr) {
+    return htmlEscapes[chr];
   }
 
   /**
@@ -192,22 +199,22 @@
    * string literals.
    *
    * @private
-   * @param {string} match The matched character to escape.
+   * @param {string} chr The matched character to escape.
    * @returns {string} Returns the escaped character.
    */
-  function escapeStringChar(match) {
-    return '\\' + stringEscapes[match];
+  function escapeStringChar(chr) {
+    return '\\' + stringEscapes[chr];
   }
 
   /**
    * Used by `unescape` to convert HTML entities to characters.
    *
    * @private
-   * @param {string} match The matched character to unescape.
+   * @param {string} chr The matched character to unescape.
    * @returns {string} Returns the unescaped character.
    */
-  function unescapeHtmlChar(match) {
-    return htmlUnescapes[match];
+  function unescapeHtmlChar(chr) {
+    return htmlUnescapes[chr];
   }
 
   /*--------------------------------------------------------------------------*/
@@ -224,9 +231,8 @@
 
   /** Used to detect if a method is native */
   var reNative = RegExp('^' +
-    String(toString)
-      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+    escapeRegExp(toString)
+    .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
   );
 
   /** Native method shortcuts */
@@ -263,7 +269,7 @@
    * implicitly or explicitly included in the build.
    *
    * The chainable wrapper functions are:
-   * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
+   * `after`, `assign`, `at`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
    * `compose`, `concat`, `constant`, `countBy`, `create`, `createCallback`,
    * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
    * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
@@ -889,7 +895,7 @@
   /**
    * Creates a function that aggregates a collection, creating an object or
    * array composed from the results of running each element of the collection
-   * through a callback. The given `setter` function sets the keys and values
+   * through a callback. The given setter function sets the keys and values
    * of the composed object or array.
    *
    * @private
@@ -966,7 +972,7 @@
   }
 
   /**
-   * Finds the indexes of all placeholder elements in a given array.
+   * Finds the indexes of all placeholder elements in `array`.
    *
    * @private
    * @param {Array} array The array to inspect.
@@ -1212,9 +1218,9 @@
    * @category Arrays
    * @param {Array} array The array to flatten.
    * @param {boolean} [isShallow=false] A flag to restrict flattening to a single level.
-   * @param {Function|Object|string} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided it will be used
-   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {Function|Object|string} [callback] The function called per iteration.
+   *  If a property name or object is provided it will be used to create a "_.pluck"
+   *  or "_.where" style callback, respectively.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new flattened array.
    * @example
@@ -1754,9 +1760,9 @@
    * @category Arrays
    * @param {Array} array The array to process.
    * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
-   * @param {Function|Object|string} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided it will be used
-   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {Function|Object|string} [callback] The function called per iteration.
+   *  If a property name or object is provided it will be used to create a "_.pluck"
+   *  or "_.where" style callback, respectively.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a duplicate-value-free array.
    * @example
@@ -2006,10 +2012,10 @@
    * @memberOf _
    * @alias include
    * @category Collections
-   * @param {Array|Object|string} collection The collection to iterate over.
+   * @param {Array|Object|string} collection The collection to search.
    * @param {*} target The value to check for.
    * @param {number} [fromIndex=0] The index to search from.
-   * @returns {boolean} Returns `true` if the `target` element is found, else `false`.
+   * @returns {boolean} Returns `true` if the target element is found, else `false`.
    * @example
    *
    * _.contains([1, 2, 3], 1);
@@ -2219,7 +2225,7 @@
    * @memberOf _
    * @alias detect, findWhere
    * @category Collections
-   * @param {Array|Object|string} collection The collection to iterate over.
+   * @param {Array|Object|string} collection The collection to search.
    * @param {Function|Object|string} [callback=identity] The function called
    *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback, respectively.
@@ -2512,9 +2518,9 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided it will be used
-   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {Function|Object|string} [callback] The function called per iteration.
+   *  If a property name or object is provided it will be used to create a "_.pluck"
+   *  or "_.where" style callback, respectively.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {*} Returns the maximum value.
    * @example
@@ -2585,9 +2591,9 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided it will be used
-   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {Function|Object|string} [callback] The function called per iteration.
+   *  If a property name or object is provided it will be used to create a "_.pluck"
+   *  or "_.where" style callback, respectively.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {*} Returns the minimum value.
    * @example
@@ -2872,7 +2878,8 @@
 
   /**
    * Creates an array of shuffled values, using a version of the Fisher-Yates
-   * shuffle. See [Wikipedia](http://en.wikipedia.org/wiki/Fisher-Yates_shuffle) for more details.
+   * shuffle. See [Wikipedia](http://en.wikipedia.org/wiki/Fisher-Yates_shuffle)
+   * for more details.
    *
    * @static
    * @memberOf _
@@ -3007,9 +3014,9 @@
    * @memberOf _
    * @category Collections
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Array|Function|Object|string} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided it will be used
-   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {Array|Function|Object|string} [callback=identity] The function
+   *  called per iteration. If a property name or object is provided it will
+   *  be used to create a "_.pluck" or "_.where" style callback, respectively.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns a new array of sorted elements.
    * @example
@@ -3318,7 +3325,7 @@
     if (!isFunction(func)) {
       throw new TypeError;
     }
-    wait = nativeMax(0, wait) || 0;
+    wait = wait > 0 ? wait : 0;
     if (options === true) {
       var leading = true;
       trailing = false;
@@ -4232,7 +4239,7 @@
   }
 
   /**
-   * Creates an array composed of the own enumerable property names of an object.
+   * Creates an array composed of the own enumerable property names of `object`.
    *
    * @static
    * @memberOf _
@@ -4303,7 +4310,7 @@
   }
 
   /**
-   * Creates a two dimensional array of an object's key-value pairs,
+   * Creates a two dimensional array of a given object's key-value pairs,
    * i.e. `[[key1, value1], [key2, value2]]`.
    *
    * @static
@@ -4412,7 +4419,7 @@
    * @static
    * @memberOf _
    * @category Strings
-   * @param {string} string The string to escape.
+   * @param {string} [string=''] The string to escape.
    * @returns {string} Returns the escaped string.
    * @example
    *
@@ -4424,6 +4431,24 @@
   }
 
   /**
+   * Escapes the RegExp special characters "\", "^", "$", ".", "|", "?", "*",
+   * "+", "(", ")", "[", and "{" in `string`.
+   *
+   * @static
+   * @memberOf _
+   * @category Strings
+   * @param {string} [string=''] The string to escape.
+   * @returns {string} Returns the escaped string.
+   * @example
+   *
+   * _.escapeRegExp('[lodash](http://lodash.com)');
+   * // => '\[lodash]\(http://lodash\.com\)'
+   */
+  function escapeRegExp(string) {
+    return string == null ? '' : String(string).replace(reRegExpChars, '\\$&');
+  }
+
+  /**
    * Creates a compiled template function that can interpolate data properties
    * in "interpolate" delimiters, HTML-escaped interpolated data properties in
    * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. If
@@ -4432,8 +4457,8 @@
    * settings object is provided it will override `_.templateSettings` for the
    * template.
    *
-   * Note: In the development build, `_.template` utilizes sourceURLs for easier
-   * debugging. See [HTML5 Rocks' article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
+   * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
+   * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
    * for more details.
    *
    * For more information on precompiling templates see
@@ -4445,8 +4470,8 @@
    * @static
    * @memberOf _
    * @category Strings
-   * @param {string} text The template text.
-   * @param {Object} [data] The data object used to populate the text.
+   * @param {string} [string=''] The template string.
+   * @param {Object} [data] The data object used to populate the template string.
    * @param {Object} [options] The options object.
    * @param {RegExp} [options.escape] The HTML "escape" delimiter.
    * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
@@ -4512,11 +4537,11 @@
    *   };\
    * ');
    */
-  function template(text, data, options) {
+  function template(string, data, options) {
     var _ = lodash,
         settings = _.templateSettings;
 
-    text = String(text || '');
+    string = String(string == null ? '' : string);
     options = defaults({}, options, settings);
 
     var index = 0,
@@ -4529,8 +4554,8 @@
       (options.evaluate || reNoMatch).source + '|$'
     , 'g');
 
-    text.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {
-      source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);
+    string.replace(reDelimiters, function(match, escapeValue, interpolateValue, evaluateValue, offset) {
+      source += string.slice(index, offset).replace(reUnescapedString, escapeStringChar);
       if (escapeValue) {
         source += "' +\n_.escape(" + escapeValue + ") +\n'";
       }
@@ -4578,7 +4603,7 @@
    * @static
    * @memberOf _
    * @category Strings
-   * @param {string} string The string to unescape.
+   * @param {string} [string=''] The string to unescape.
    * @returns {string} Returns the unescaped string.
    * @example
    *
@@ -4942,7 +4967,7 @@
    * @memberOf _
    * @category Utilities
    * @param {number} n The number of times to execute the callback.
-   * @param {Function} callback The function called per iteration.
+   * @param {Function} [callback=identity] The function called per iteration.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns an array of the results of each `callback` execution.
    * @example

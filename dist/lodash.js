@@ -58,14 +58,27 @@
   /** Used to detect hexadecimal string values */
   var reHexPrefix = /^0[xX]/;
 
+  /** Used to match latin-1 supplement letters */
+  var reLatin1 = /[\xC0-\xFF]/g;
+
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
+
+  /**
+   * Used to match RegExp special characters.
+   * See this [article on RegExp characters](http://www.regular-expressions.info/characters.html#special)
+   * for more details.
+   */
+  var reRegExpChars =/[.*+?^${()|[\\]/g;
 
   /** Used to detect functions containing a `this` reference */
   var reThis = /\bthis\b/;
 
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
+
+  /** Used to match words to create compound words */
+  var reWords = /[a-z0-9]+/g;
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -108,7 +121,7 @@
   cloneableClasses[numberClass] = cloneableClasses[objectClass] =
   cloneableClasses[regexpClass] = cloneableClasses[stringClass] = true;
 
-  /** Used as an internal `_.debounce` options object */
+  /** Used as an internal `_.debounce` options object by `_.throttle` */
   var debounceOptions = {
     'leading': false,
     'maxWait': 0,
@@ -147,6 +160,31 @@
     '&gt;': '>',
     '&quot;': '"',
     '&#39;': "'"
+  };
+
+  /**
+   * Used to convert latin-1 supplement letters to basic latin (ASCII) letters.
+   * See [Wikipedia](http://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
+   * for more details.
+   */
+  var deburredLetters = {
+    '\xC0': 'A',  '\xC1': 'A', '\xC2': 'A', '\xC3': 'A', '\xC4': 'A', '\xC5': 'A',
+    '\xE0': 'a',  '\xE1': 'a', '\xE2': 'a', '\xE3': 'a', '\xE4': 'a', '\xE5': 'a',
+    '\xC7': 'C',  '\xE7': 'c',
+    '\xD0': 'D',  '\xF0': 'd',
+    '\xC8': 'E',  '\xC9': 'E', '\xCA': 'E', '\xCB': 'E',
+    '\xE8': 'e',  '\xE9': 'e', '\xEA': 'e', '\xEB': 'e',
+    '\xCC': 'I',  '\xCD': 'I', '\xCE': 'I', '\xCF': 'I',
+    '\xEC': 'i',  '\xED': 'i', '\xEE': 'i', '\xEF': 'i',
+    '\xD1': 'N',  '\xF1': 'n',
+    '\xD2': 'O',  '\xD3': 'O', '\xD4': 'O', '\xD5': 'O', '\xD6': 'O', '\xD8': 'O',
+    '\xF2': 'o',  '\xF3': 'o', '\xF4': 'o', '\xF5': 'o', '\xF6': 'o', '\xF8': 'o',
+    '\xD9': 'U',  '\xDA': 'U', '\xDB': 'U', '\xDC': 'U',
+    '\xF9': 'u',  '\xFA': 'u', '\xFB': 'u', '\xFC': 'u',
+    '\xDD': 'Y',  '\xFD': 'y', '\xFF': 'y',
+    '\xC6': 'AE', '\xE6': 'ae',
+    '\xDE': 'Th', '\xFE': 'th',
+    '\xDF': 'ss', '\xD7': ' ', '\xF7': ' '
   };
 
   /** Used to determine if values are of the language type Object */
@@ -333,14 +371,48 @@
   }
 
   /**
+   * Creates a function that produces compound words out of the words in a
+   * given string.
+   *
+   * @private
+   * @param {Function} callback The function called to combine each word.
+   * @returns {Function} Returns the new compounder function.
+   */
+  function createCompounder(callback) {
+    return function(string) {
+      var index = -1,
+          words = string != null && String(string).replace(reLatin1, deburrLetter).match(reWords),
+          length = words ? words.length : 0,
+          result = '';
+
+      while (++index < length) {
+        result = callback(result, words[index], index, words);
+      }
+      return result;
+    };
+  }
+
+  /**
+   * Used by `createCompounder` to convert latin-1 supplement letters to basic
+   * latin (ASCII) letters.
+   *
+   * @private
+   * @param {string} letter The matched letter to deburr.
+   * @returns {string} Returns the deburred letter.
+   */
+  function deburrLetter(letter) {
+    return deburredLetters[letter];
+  }
+
+  /**
    * Used by `escape` to convert characters to HTML entities.
    *
    * @private
-   * @param {string} match The matched character to escape.
+   * @param {string} chr The matched character to escape.
    * @returns {string} Returns the escaped character.
    */
-  function escapeHtmlChar(match) {
-    return htmlEscapes[match];
+  function escapeHtmlChar(chr) {
+    return htmlEscapes[chr];
   }
 
   /**
@@ -348,11 +420,11 @@
    * string literals.
    *
    * @private
-   * @param {string} match The matched character to escape.
+   * @param {string} chr The matched character to escape.
    * @returns {string} Returns the escaped character.
    */
-  function escapeStringChar(match) {
-    return '\\' + stringEscapes[match];
+  function escapeStringChar(chr) {
+    return '\\' + stringEscapes[chr];
   }
 
   /**
@@ -462,11 +534,11 @@
    * Used by `unescape` to convert HTML entities to characters.
    *
    * @private
-   * @param {string} match The matched character to unescape.
+   * @param {string} chr The matched character to unescape.
    * @returns {string} Returns the unescaped character.
    */
-  function unescapeHtmlChar(match) {
-    return htmlUnescapes[match];
+  function unescapeHtmlChar(chr) {
+    return htmlUnescapes[chr];
   }
 
   /*--------------------------------------------------------------------------*/
@@ -515,9 +587,8 @@
 
     /** Used to detect if a method is native */
     var reNative = RegExp('^' +
-      String(toString)
-        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+      escapeRegExp(toString)
+      .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
     /** Native method shortcuts */
@@ -585,7 +656,7 @@
      * implicitly or explicitly included in the build.
      *
      * The chainable wrapper functions are:
-     * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
+     * `after`, `assign`, `at`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
      * `compose`, `concat`, `constant`, `countBy`, `create`, `createCallback`,
      * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
      * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
@@ -1591,7 +1662,7 @@
     /**
      * Creates a function that aggregates a collection, creating an object or
      * array composed from the results of running each element of the collection
-     * through a callback. The given `setter` function sets the keys and values
+     * through a callback. The given setter function sets the keys and values
      * of the composed object or array.
      *
      * @private
@@ -1639,6 +1710,29 @@
       }
       return cache;
     };
+
+    /**
+     * Creates the pad required for `string` based on the given padding length.
+     * The `chars` string may be truncated if the number of padding characters
+     * exceeds the padding length.
+     *
+     * @private
+     * @param {string} string The string to create padding for.
+     * @param {number} [length=0] The padding length.
+     * @param {string} [chars=' '] The string used as padding.
+     * @returns {string} Returns the pad for `string`.
+     */
+    function createPad(string, length, chars) {
+      var strLength = string.length;
+      length = +length || 0;
+
+      if (strLength >= length) {
+        return '';
+      }
+      var padLength = length - strLength;
+      chars = chars == null ? ' ' : String(chars);
+      return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
+    }
 
     /**
      * Creates a function that, when called, either curries or invokes `func`
@@ -1782,10 +1876,10 @@
     };
 
     /**
-     * A fallback implementation of `isPlainObject` which checks if a given value
-     * is an object created by the `Object` constructor, assuming objects created
-     * by the `Object` constructor have no inherited enumerable properties and that
-     * there are no `Object.prototype` extensions.
+     * A fallback implementation of `isPlainObject` which checks if `value` is
+     * an object created by the `Object` constructor, assuming objects created
+     * by the `Object` constructor have no inherited enumerable properties and
+     * that there are no `Object.prototype` extensions.
      *
      * @private
      * @param {*} value The value to check.
@@ -2125,9 +2219,9 @@
      * @category Arrays
      * @param {Array} array The array to flatten.
      * @param {boolean} [isShallow=false] A flag to restrict flattening to a single level.
-     * @param {Function|Object|string} [callback=identity] The function called
-     *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Function|Object|string} [callback] The function called per iteration.
+     *  If a property name or object is provided it will be used to create a "_.pluck"
+     *  or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns a new flattened array.
      * @example
@@ -2805,9 +2899,9 @@
      * @category Arrays
      * @param {Array} array The array to process.
      * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
-     * @param {Function|Object|string} [callback=identity] The function called
-     *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Function|Object|string} [callback] The function called per iteration.
+     *  If a property name or object is provided it will be used to create a "_.pluck"
+     *  or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns a duplicate-value-free array.
      * @example
@@ -2875,7 +2969,8 @@
 
     /**
      * Creates an array that is the symmetric difference of the provided arrays.
-     * See [Wikipedia](http://en.wikipedia.org/wiki/Symmetric_difference) for more details.
+     * See [Wikipedia](http://en.wikipedia.org/wiki/Symmetric_difference) for
+     * more details.
      *
      * @static
      * @memberOf _
@@ -3145,10 +3240,10 @@
      * @memberOf _
      * @alias include
      * @category Collections
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object|string} collection The collection to search.
      * @param {*} target The value to check for.
      * @param {number} [fromIndex=0] The index to search from.
-     * @returns {boolean} Returns `true` if the `target` element is found, else `false`.
+     * @returns {boolean} Returns `true` if the target element is found, else `false`.
      * @example
      *
      * _.contains([1, 2, 3], 1);
@@ -3372,7 +3467,7 @@
      * @memberOf _
      * @alias detect, findWhere
      * @category Collections
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
@@ -3431,7 +3526,7 @@
      * @static
      * @memberOf _
      * @category Collections
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
@@ -3737,9 +3832,9 @@
      * @memberOf _
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [callback=identity] The function called
-     *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Function|Object|string} [callback] The function called per iteration.
+     *  If a property name or object is provided it will be used to create a "_.pluck"
+     *  or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {*} Returns the maximum value.
      * @example
@@ -3812,9 +3907,9 @@
      * @memberOf _
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [callback=identity] The function called
-     *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Function|Object|string} [callback] The function called per iteration.
+     *  If a property name or object is provided it will be used to create a "_.pluck"
+     *  or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {*} Returns the minimum value.
      * @example
@@ -4101,7 +4196,8 @@
 
     /**
      * Creates an array of shuffled values, using a version of the Fisher-Yates
-     * shuffle. See [Wikipedia](http://en.wikipedia.org/wiki/Fisher-Yates_shuffle) for more details.
+     * shuffle. See [Wikipedia](http://en.wikipedia.org/wiki/Fisher-Yates_shuffle)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -4236,9 +4332,9 @@
      * @memberOf _
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Array|Function|Object|string} [callback=identity] The function called
-     *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Array|Function|Object|string} [callback=identity] The function
+     *  called per iteration. If a property name or object is provided it will
+     *  be used to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns a new array of sorted elements.
      * @example
@@ -4638,7 +4734,7 @@
       if (!isFunction(func)) {
         throw new TypeError;
       }
-      wait = nativeMax(0, wait) || 0;
+      wait = wait > 0 ? wait : 0;
       if (options === true) {
         var leading = true;
         trailing = false;
@@ -4973,11 +5069,11 @@
       if (options === false) {
         leading = false;
       } else if (isObject(options)) {
-        leading = 'leading' in options ? options.leading : leading;
-        trailing = 'trailing' in options ? options.trailing : trailing;
+        leading = 'leading' in options ? !!options.leading : leading;
+        trailing = 'trailing' in options ? !!options.trailing : trailing;
       }
       debounceOptions.leading = leading;
-      debounceOptions.maxWait = wait;
+      debounceOptions.maxWait = +wait;
       debounceOptions.trailing = trailing;
 
       return debounce(func, wait, debounceOptions);
@@ -5277,9 +5373,9 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to search.
-     * @param {Function|Object|string} [callback=identity] The function called per
-     *  iteration. If a property name or object is provided it will be used to
-     *  create a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Function|Object|string} [callback=identity] The function called
+     *  per iteration. If a property name or object is provided it will be used
+     *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
@@ -5331,9 +5427,9 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to search.
-     * @param {Function|Object|string} [callback=identity] The function called per
-     *  iteration. If a property name or object is provided it will be used to
-     *  create a "_.pluck" or "_.where" style callback, respectively.
+     * @param {Function|Object|string} [callback=identity] The function called
+     *  per iteration. If a property name or object is provided it will be used
+     *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
@@ -6022,7 +6118,7 @@
     }
 
     /**
-     * Creates an array composed of the own enumerable property names of an object.
+     * Creates an array composed of the own enumerable property names of `object`.
      *
      * @static
      * @memberOf _
@@ -6229,7 +6325,7 @@
     }
 
     /**
-     * Creates a two dimensional array of an object's key-value pairs,
+     * Creates a two dimensional array of a given object's key-value pairs,
      * i.e. `[[key1, value1], [key2, value2]]`.
      *
      * @static
@@ -6387,12 +6483,36 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Converts the first character of `string` to upper case.
+     * Converts `string` to camel case.
+     * See [Wikipedia](http://en.wikipedia.org/wiki/CamelCase) for more details.
      *
      * @static
      * @memberOf _
      * @category Strings
-     * @param {string} string The string to capitalize.
+     * @param {string} [string=''] The string to camel case.
+     * @returns {string} Returns the camel cased string.
+     * @example
+     *
+     * _.camelCase('Hello world');
+     * // => 'helloWorld'
+     *
+     * _.camelCase('hello-world');
+     * // => 'helloWorld'
+     *
+     * _.camelCase('hello_world');
+     * // => 'helloWorld'
+     */
+    var camelCase = createCompounder(function(result, words, index) {
+      return result + words.charAt(0)[index ? 'toUpperCase' : 'toLowerCase']() + words.slice(1);
+    });
+
+    /**
+     * Capitalizes the first character of `string`.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to capitalize.
      * @returns {string} Returns the capitalized string.
      * @example
      *
@@ -6405,6 +6525,37 @@
       }
       string = String(string);
       return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    /**
+     * Checks if `string` ends with a given target string.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to search.
+     * @param {string} [target] The string to search for.
+     * @param {number} [position=string.length] The position to search from.
+     * @returns {boolean} Returns `true` if the given string ends with the
+     *  target string, else `false`.
+     * @example
+     *
+     * _.endsWith('abc', 'c');
+     * // => true
+     *
+     * _.endsWith('abc', 'b');
+     * // => false
+     *
+     * _.endsWith('abc', 'b', 2);
+     * // => true
+     */
+    function endsWith(string, target, position) {
+      string = string == null ? '' : String(string);
+      target = String(target);
+
+      var length = string.length;
+      position = (typeof position == 'number' ? nativeMin(nativeMax(position, 0), length) : length) - target.length;
+      return position >= 0 && string.indexOf(target, position) == position;
     }
 
     /**
@@ -6421,7 +6572,7 @@
      * @static
      * @memberOf _
      * @category Strings
-     * @param {string} string The string to escape.
+     * @param {string} [string=''] The string to escape.
      * @returns {string} Returns the escaped string.
      * @example
      *
@@ -6433,6 +6584,234 @@
     }
 
     /**
+     * Escapes the RegExp special characters "\", "^", "$", ".", "|", "?", "*",
+     * "+", "(", ")", "[", and "{" in `string`.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to escape.
+     * @returns {string} Returns the escaped string.
+     * @example
+     *
+     * _.escapeRegExp('[lodash](http://lodash.com)');
+     * // => '\[lodash]\(http://lodash\.com\)'
+     */
+    function escapeRegExp(string) {
+      return string == null ? '' : String(string).replace(reRegExpChars, '\\$&');
+    }
+
+    /**
+     * Converts `string` to kebab case (a.k.a. spinal case).
+     * See [Wikipedia](http://en.wikipedia.org/wiki/Letter_case#Computers) for
+     * more details.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to kebab case.
+     * @returns {string} Returns the kebab cased string.
+     * @example
+     *
+     * _.kebabCase('Hello world');
+     * // => 'hello-world'
+     *
+     * _.kebabCase('helloWorld');
+     * // => 'hello-world'
+     *
+     * _.kebabCase('hello_world');
+     * // => 'hello-world'
+     */
+    var kebabCase = createCompounder(function(result, words, index) {
+      return result + (index ? '-' : '') + words.toLowerCase();
+    });
+
+    /**
+     * Pads `string` on the left and right sides if it is shorter then the given
+     * padding length. The `chars` string may be truncated if the number of padding
+     * characters can't be evenly divided by the padding length.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to pad.
+     * @param {number} [length=0] The padding length.
+     * @param {string} [chars=' '] The string used as padding.
+     * @returns {string} Returns the padded string.
+     * @example
+     *
+     * _.pad('abc', 8);
+     * // => '  abc   '
+     *
+     * _.pad('abc', 8, '_-');
+     * // => '_-abc_-_'
+     *
+     * _.pad('abc', 3);
+     * // => 'abc'
+     */
+    function pad(string, length, chars) {
+      string = string == null ? '' : String(string);
+      length = +length || 0;
+
+      var strLength = string.length;
+      if (strLength >= length) {
+        return string;
+      }
+      var mid = (length - strLength) / 2,
+          leftLength = floor(mid),
+          rightLength = ceil(mid);
+
+      chars = createPad('', rightLength, chars);
+      return chars.slice(0, leftLength) + string + chars;
+    }
+
+    /**
+     * Pads `string` on the left side if it is shorter then the given padding
+     * length. The `chars` string may be truncated if the number of padding
+     * characters exceeds the padding length.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to pad.
+     * @param {number} [length=0] The padding length.
+     * @param {string} [chars=' '] The string used as padding.
+     * @returns {string} Returns the padded string.
+     * @example
+     *
+     * _.padLeft('abc', 6);
+     * // => '   abc'
+     *
+     * _.padLeft('abc', 6, '_-');
+     * // => '_-_abc'
+     *
+     * _.padLeft('abc', 3);
+     * // => 'abc'
+     */
+    function padLeft(string, length, chars) {
+      string = string == null ? '' : String(string);
+      return createPad(string, length, chars) + string;
+    }
+
+    /**
+     * Pads `string` on the right side if it is shorter then the given padding
+     * length. The `chars` string may be truncated if the number of padding
+     * characters exceeds the padding length.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to pad.
+     * @param {number} [length=0] The padding length.
+     * @param {string} [chars=' '] The string used as padding.
+     * @returns {string} Returns the padded string.
+     * @example
+     *
+     * _.padRight('abc', 6);
+     * // => 'abc   '
+     *
+     * _.padRight('abc', 6, '_-');
+     * // => 'abc_-_'
+     *
+     * _.padRight('abc', 3);
+     * // => 'abc'
+     */
+    function padRight(string, length, chars) {
+      string = string == null ? '' : String(string);
+      return string + createPad(string, length, chars);
+    }
+
+    /**
+     * Repeats the given string `n` times.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to repeat.
+     * @param {number} [n=0] The number of times to repeat the string.
+     * @returns {string} Returns the repeated string.
+     * @example
+     *
+     * _.repeat('*', 3);
+     * // => '***'
+     *
+     * _.repeat('abc', 2);
+     * // => 'abcabc'
+     *
+     * _.repeat('abc', 0);
+     * // => ''
+     */
+    function repeat(string, n) {
+      var result = '';
+      n = +n || 0;
+
+      if (n < 1 || string == null) {
+        return result;
+      }
+      string = String(string);
+      while (n > 0) {
+        if (n % 2) {
+          result += string;
+        }
+        n = floor(n / 2);
+        result += result;
+      }
+      return result;
+    }
+
+    /**
+     * Converts `string` to snake case.
+     * See [Wikipedia](http://en.wikipedia.org/wiki/Snake_case) for more details.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to snake case.
+     * @returns {string} Returns the snake cased string.
+     * @example
+     *
+     * _.snakeCase('Hello world');
+     * // => 'hello_world'
+     *
+     * _.snakeCase('hello-world');
+     * // => 'hello_world'
+     *
+     * _.snakeCase('helloWorld');
+     * // => 'hello_world'
+     */
+    var snakeCase = createCompounder(function(result, words, index) {
+      return result + (index ? '_' : '') + words.toLowerCase();
+    });
+
+    /**
+     * Checks if `string` starts with a given target string.
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to search.
+     * @param {string} [target] The string to search for.
+     * @param {number} [position=0] The position to search from.
+     * @returns {boolean} Returns `true` if the given string starts with the
+     *  target string, else `false`.
+     * @example
+     *
+     * _.startsWith('abc', 'a');
+     * // => true
+     *
+     * _.startsWith('abc', 'b');
+     * // => false
+     *
+     * _.startsWith('abc', 'b', 1);
+     * // => true
+     */
+    function startsWith(string, target, position) {
+      string = string == null ? '' : String(string);
+      position = typeof position == 'number' ? nativeMin(nativeMax(position, 0), string.length) : 0;
+      return string.lastIndexOf(target, position) == position;
+    }
+
+    /**
      * Creates a compiled template function that can interpolate data properties
      * in "interpolate" delimiters, HTML-escaped interpolated data properties in
      * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. If
@@ -6441,8 +6820,8 @@
      * settings object is provided it will override `_.templateSettings` for the
      * template.
      *
-     * Note: In the development build, `_.template` utilizes sourceURLs for easier
-     * debugging. See [HTML5 Rocks' article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
+     * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
+     * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for more details.
      *
      * For more information on precompiling templates see
@@ -6454,8 +6833,8 @@
      * @static
      * @memberOf _
      * @category Strings
-     * @param {string} text The template text.
-     * @param {Object} [data] The data object used to populate the text.
+     * @param {string} [string=''] The template string.
+     * @param {Object} [data] The data object used to populate the template string.
      * @param {Object} [options] The options object.
      * @param {RegExp} [options.escape] The HTML "escape" delimiter.
      * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
@@ -6521,13 +6900,13 @@
      *   };\
      * ');
      */
-    function template(text, data, options) {
+    function template(string, data, options) {
       // based on John Resig's `tmpl` implementation
       // http://ejohn.org/blog/javascript-micro-templating/
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
-      text = String(text || '');
+      string = String(string == null ? '' : string);
 
       // avoid missing dependencies when `iteratorTemplate` is not defined
       options = defaults({}, options, settings);
@@ -6550,11 +6929,11 @@
         (options.evaluate || reNoMatch).source + '|$'
       , 'g');
 
-      text.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
+      string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
         interpolateValue || (interpolateValue = esTemplateValue);
 
         // escape characters that cannot be included in string literals
-        source += text.slice(index, offset).replace(reUnescapedString, escapeStringChar);
+        source += string.slice(index, offset).replace(reUnescapedString, escapeStringChar);
 
         // replace delimiters with snippets
         if (escapeValue) {
@@ -6633,7 +7012,7 @@
      * @static
      * @memberOf _
      * @category Strings
-     * @param {string} string The string to trim.
+     * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
      * @example
@@ -6657,7 +7036,7 @@
      * @static
      * @memberOf _
      * @category Strings
-     * @param {string} string The string to trim.
+     * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
      * @example
@@ -6681,7 +7060,7 @@
      * @static
      * @memberOf _
      * @category Strings
-     * @param {string} string The string to trim.
+     * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
      * @example
@@ -6700,6 +7079,85 @@
     };
 
     /**
+     * Truncates `string` if it is longer than the given maximum string length.
+     * The last characters of the truncated string will be replaced with the
+     * omission string which defaults to "...".
+     *
+     * @static
+     * @memberOf _
+     * @category Strings
+     * @param {string} [string=''] The string to trim.
+     * @param {Object|number} [options] The options object or maximum string length.
+     * @param {number} [options.length=30] The maximum string length.
+     * @param {string} [options.omission='...'] The string used to indicate text is omitted.
+     * @param {RegExp|string} [options.separator] The separator pattern to truncate to.
+     * @returns {string} Returns the truncated string.
+     * @example
+     *
+     * _.truncate('hi-diddly-ho there, neighborino');
+     * // => 'hi-diddly-ho there, neighbo...'
+     *
+     * _.truncate('hi-diddly-ho there, neighborino', 24);
+     * // => 'hi-diddly-ho there, n...'
+     *
+     * _.truncate('hi-diddly-ho there, neighborino', { 'length': 24, 'separator': ' ' });
+     * // => 'hi-diddly-ho there,...'
+     *
+     * _.truncate('hi-diddly-ho there, neighborino', { 'length': 24, 'separator': /,? +/ });
+     * //=> 'hi-diddly-ho there...'
+     *
+     * _.truncate('hi-diddly-ho there, neighborino', { 'omission': ' [...]' });
+     * // => 'hi-diddly-ho there, neig [...]'
+     */
+    function truncate(string, options) {
+      var length = 30,
+          omission = '...';
+
+      if (options && isObject(options)) {
+        var separator = 'separator' in options ? options.separator : separator;
+        length = 'length' in options ? +options.length || 0 : length;
+        omission = 'omission' in options ? String(options.omission) : omission;
+      }
+      else if (options != null) {
+        length = +options || 0;
+      }
+      string = string == null ? '' : String(string);
+      if (length > string.length) {
+        return string;
+      }
+      var end = length - omission.length;
+      if (end < 1) {
+        return omission;
+      }
+      var result = string.slice(0, end);
+      if (separator == null) {
+        return result + omission;
+      }
+      if (isRegExp(separator)) {
+        if (string.slice(end).search(separator)) {
+          var match,
+              newEnd,
+              substring = string.slice(0, end);
+
+          if (!separator.global) {
+            separator = RegExp(separator.source, (reFlags.exec(separator) || '') + 'g');
+          }
+          separator.lastIndex = 0;
+          while ((match = separator.exec(substring))) {
+            newEnd = match.index;
+          }
+          result = result.slice(0, newEnd == null ? end : newEnd);
+        }
+      } else if (string.indexOf(separator, end) != end) {
+        var index = result.lastIndexOf(separator);
+        if (index > -1) {
+          result = result.slice(0, index);
+        }
+      }
+      return result + omission;
+    }
+
+    /**
      * The inverse of `_.escape`; this method converts the HTML entities
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
      * corresponding characters.
@@ -6710,7 +7168,7 @@
      * @static
      * @memberOf _
      * @category Strings
-     * @param {string} string The string to unescape.
+     * @param {string} [string=''] The string to unescape.
      * @returns {string} Returns the unescaped string.
      * @example
      *
@@ -7162,7 +7620,7 @@
      * @memberOf _
      * @category Utilities
      * @param {number} n The number of times to execute the callback.
-     * @param {Function} callback The function called per iteration.
+     * @param {Function} [callback=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns an array of the results of each `callback` execution.
      * @example
@@ -7306,11 +7764,14 @@
     /*--------------------------------------------------------------------------*/
 
     // add functions that return unwrapped values when chaining
+    lodash.camelCase = camelCase;
     lodash.capitalize = capitalize;
     lodash.clone = clone;
     lodash.cloneDeep = cloneDeep;
     lodash.contains = contains;
+    lodash.endsWith = endsWith;
     lodash.escape = escape;
+    lodash.escapeRegExp = escapeRegExp;
     lodash.every = every;
     lodash.find = find;
     lodash.findIndex = findIndex;
@@ -7338,24 +7799,32 @@
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;
     lodash.isUndefined = isUndefined;
+    lodash.kebabCase = kebabCase;
     lodash.lastIndexOf = lastIndexOf;
     lodash.mixin = mixin;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
     lodash.now = now;
+    lodash.pad = pad;
+    lodash.padLeft = padLeft;
+    lodash.padRight = padRight;
     lodash.parseInt = parseInt;
     lodash.random = random;
     lodash.reduce = reduce;
     lodash.reduceRight = reduceRight;
+    lodash.repeat = repeat;
     lodash.result = result;
     lodash.runInContext = runInContext;
     lodash.size = size;
     lodash.some = some;
     lodash.sortedIndex = sortedIndex;
+    lodash.snakeCase = snakeCase;
+    lodash.startsWith = startsWith;
     lodash.template = template;
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;
     lodash.trimRight = trimRight;
+    lodash.truncate = truncate;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
 

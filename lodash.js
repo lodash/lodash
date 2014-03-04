@@ -3461,7 +3461,6 @@
 
     /*--------------------------------------------------------------------------*/
 
-
     /**
      * Creates an array of elements from the specified indexes, or keys, of the
      * `collection`. Indexes may be specified as individual arguments or as arrays
@@ -5377,7 +5376,6 @@
     }
 
     /*--------------------------------------------------------------------------*/
-
 
     /**
      * Assigns own enumerable properties of source object(s) to the destination

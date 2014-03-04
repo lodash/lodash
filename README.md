@@ -58,7 +58,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.xor](http://lodash.com/docs#xor) as a companion to [_.difference](http://lodash.com/docs#difference), [_.intersection](http://lodash.com/docs#intersection), & [_.union](http://lodash.com/docs#union)
  * [_.zip](http://lodash.com/docs#zip) is capable of unzipping values
  * [_.capitalize](http://lodash.com/docs#capitalize), [_.trim](http://lodash.com/docs#trim), &
-   [more](http://lodash.com/docs "_.trimLeft, _.trimRight") string methods
+   [more](http://lodash.com/docs "_.camelCase, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.truncate") string methods
  * [_.contains](http://lodash.com/docs#contains), [_.toArray](http://lodash.com/docs#toArray), &
    [more](http://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.forEach, _.forEachRight, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy, _.where") accept strings
  * [_.filter](http://lodash.com/docs#filter), [_.map](http://lodash.com/docs#map), &

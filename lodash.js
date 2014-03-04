@@ -2331,6 +2331,9 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
+     * _.drop([1, 2, 3], 1);
+     * // => [2, 3]
+     *
      * _.drop([1, 2, 3], 2);
      * // => [3]
      *
@@ -2343,9 +2346,79 @@
     var drop = rest;
 
     /**
-     * Creates an array with elements dropped from the beginning of `array` as
-     * long as the predicate returns truthy. The predicate is bound to `thisArg`
-     * and invoked with three arguments; (value, index, array).
+     * Creates an array with `n` elements dropped from the end of `array`.
+     *
+     * @static
+     * @memberOf _
+     * @type Function
+     * @category Arrays
+     * @param {Array} array The array to query.
+     * @param {number} [n=1] The number of elements to drop.
+     * @returns {Array} Returns the slice of `array`.
+     * @example
+     *
+     * _.dropRight([1, 2, 3], 1);
+     * // => [1, 2]
+     *
+     * _.dropRight([1, 2, 3], 2);
+     * // => [1]
+     *
+     * _.dropRight([1, 2, 3], 5);
+     * // => []
+     *
+     * _.dropRight([1, 2, 3], 0);
+     * // => [1, 2, 3]
+     */
+    var dropRight = initial;
+
+    /**
+     * Creates an array of elements excluding those dropped from the end of `array`.
+     * Elements will be dropped until the predicate returns falsey. The predicate
+     * is bound to `thisArg`nand invoked with three arguments; (value, index, array).
+     *
+     * If a property name is provided for `predicate` the created "_.pluck" style
+     * callback will return the property value of the given element.
+     *
+     * If an object is provided for `predicate` the created "_.where" style callback
+     * will return `true` for elements that have the properties of the given object,
+     * else `false`.
+     *
+     * @static
+     * @memberOf _
+     * @type Function
+     * @category Arrays
+     * @param {Array} array The array to query.
+     * @param {Function|Object|string} [predicate=identity] The function called
+     *  per element.
+     * @returns {Array} Returns the slice of `array`.
+     * @example
+     *
+     * _.dropRightWhile([1, 2, 3], function(num) {
+     *   return num > 1;
+     * });
+     * // => [1]
+     *
+     * var characters = [
+     *   { 'name': 'barney',  'employer': 'slate' },
+     *   { 'name': 'fred',    'employer': 'slate', 'blocked': true },
+     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
+     * ];
+     *
+     * // using "_.pluck" callback shorthand
+     * _.pluck(_.dropRightWhile(characters, 'blocked'), 'name');
+     * // => ['barney']
+     *
+     * // using "_.where" callback shorthand
+     * _.pluck(_.dropRightWhile(characters, { 'employer': 'na' }), 'name');
+     * // => ['barney', 'fred']
+     */
+    var dropRightWhile = initial;
+
+    /**
+     * Creates an array of elements excluding those dropped from the beginning
+     * of `array`. Elements will be dropped until the predicate returns falsey.
+     * The predicate is bound to `thisArg` and invoked with three arguments;
+     * (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -3075,21 +3148,93 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
+     * _.take([1, 2, 3], 1);
+     * // => [2]
+     *
      * _.take([1, 2, 3], 2);
      * // => [1, 2]
      *
      * _.take([1, 2, 3], 5);
      * // => [1, 2, 3]
      *
-     * _.take([1, 2, 3], -1);
+     * _.take([1, 2, 3], 0);
      * // => []
      */
     var take = first;
 
     /**
-     * Creates an array of elements from the beginning of `array` while the
-     * predicate returns truthy. The predicate is bound to `thisArg` and invoked
-     * with three arguments; (value, index, array).
+     * Creates an array of the last `n` elements of `array`.
+     *
+     * @static
+     * @memberOf _
+     * @type Function
+     * @category Arrays
+     * @param {Array} array The array to query.
+     * @param {number} [n=1] The number of elements to take.
+     * @returns {Array} Returns the slice of `array`.
+     * @example
+     *
+     * _.takeRight([1, 2, 3], 1);
+     * // => [3]
+     *
+     * _.takeRight([1, 2, 3], 2);
+     * // => [2, 3]
+     *
+     * _.takeRight([1, 2, 3], 5);
+     * // => [1, 2, 3]
+     *
+     * _.takeRight([1, 2, 3], 0);
+     * // => []
+     */
+    var takeRight = last;
+
+    /**
+     * Creates an array of elements from the end of `array`. Elements will be
+     * taken until the predicate returns falsey. The predicate is bound to `thisArg`
+     * and invoked with three arguments; (value, index, array).
+     *
+     * If a property name is provided for `predicate` the created "_.pluck" style
+     * callback will return the property value of the given element.
+     *
+     * If an object is provided for `predicate` the created "_.where" style callback
+     * will return `true` for elements that have the properties of the given object,
+     * else `false`.
+     *
+     * @static
+     * @memberOf _
+     * @type Function
+     * @category Arrays
+     * @param {Array} array The array to query.
+     * @param {Function|Object|string} [predicate=identity] The function called
+     *  per element.
+     * @returns {Array} Returns the slice of `array`.
+     * @example
+     *
+     * _.takeRightWhile([1, 2, 3], function(num) {
+     *   return num > 1;
+     * });
+     * // => [2, 3]
+     *
+     * var characters = [
+     *   { 'name': 'barney',  'employer': 'slate' },
+     *   { 'name': 'fred',    'employer': 'slate', 'blocked': true },
+     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
+     * ];
+     *
+     * // using "_.pluck" callback shorthand
+     * _.pluck(_.takeRightWhile(characters, 'blocked'), 'name');
+     * // => ['fred', 'pebbles']
+     *
+     * // using "_.where" callback shorthand
+     * _.pluck(_.takeRightWhile(characters, { 'employer': 'na' }), 'name');
+     * // => ['pebbles']
+     */
+    var takeRightWhile = last;
+
+    /**
+     * Creates an array of elements from the beginning of `array`. Elements will
+     * be taken until the predicate returns falsey. The predicate is bound to
+     * `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -7975,6 +8120,8 @@
     lodash.delay = delay;
     lodash.difference = difference;
     lodash.drop = drop;
+    lodash.dropRight = dropRight;
+    lodash.dropRightWhile = dropRightWhile;
     lodash.dropWhile = dropWhile;
     lodash.filter = filter;
     lodash.flatten = flatten;
@@ -8141,6 +8288,8 @@
     lodash.last = last;
     lodash.sample = sample;
     lodash.take = first;
+    lodash.takeRight = last;
+    lodash.takeRightWhile = last;
     lodash.takeWhile = first;
 
     // add aliases

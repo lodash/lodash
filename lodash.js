@@ -2429,7 +2429,7 @@
     /**
      * Gets the first element or first `n` elements of an array. If a callback
      * is provided elements at the beginning of the array are returned as long
-     * as the callback returns truey. The callback is bound to `thisArg` and
+     * as the callback returns truthy. The callback is bound to `thisArg` and
      * invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -2500,7 +2500,7 @@
 
     /**
      * Flattens a nested array (the nesting can be to any depth). If `isShallow`
-     * is truey, the array will only be flattened a single level. If a callback
+     * is truthy, the array will only be flattened a single level. If a callback
      * is provided each element of the array is passed through the callback before
      * flattening. The callback is bound to `thisArg` and invoked with three
      * arguments; (value, index, array).
@@ -2603,7 +2603,7 @@
     /**
      * Gets all but the last element or last `n` elements of an array. If a
      * callback is provided elements at the end of the array are excluded from
-     * the result as long as the callback returns truey. The callback is bound
+     * the result as long as the callback returns truthy. The callback is bound
      * to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -2729,7 +2729,7 @@
     /**
      * Gets the last element or last `n` elements of an array. If a callback is
      * provided elements at the end of the array are returned as long as the
-     * callback returns truey. The callback is bound to `thisArg` and invoked
+     * callback returns truthy. The callback is bound to `thisArg` and invoked
      * with three arguments; (value, index, array).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -2930,7 +2930,7 @@
     }
 
     /**
-     * Removes all elements from an array that the callback returns truey for
+     * Removes all elements from an array that the callback returns truthy for
      * and returns an array of removed elements. The callback is bound to `thisArg`
      * and invoked with three arguments; (value, index, array).
      *
@@ -2982,7 +2982,7 @@
      * The opposite of `_.initial`; this method gets all but the first element or
      * first `n` elements of an array. If a callback function is provided elements
      * at the beginning of the array are excluded from the result as long as the
-     * callback returns truey. The callback is bound to `thisArg` and invoked
+     * callback returns truthy. The callback is bound to `thisArg` and invoked
      * with three arguments; (value, index, array).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -3628,7 +3628,7 @@
     });
 
     /**
-     * Checks if the callback returns truey value for **all** elements of a
+     * Checks if the callback returns truthy value for **all** elements of a
      * collection. The callback is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection).
      *
@@ -3691,7 +3691,7 @@
 
     /**
      * Iterates over elements of a collection, returning an array of all elements
-     * the callback returns truey for. The callback is bound to `thisArg` and
+     * the callback returns truthy for. The callback is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -3755,7 +3755,7 @@
 
     /**
      * Iterates over elements of a collection, returning the first element that
-     * the callback returns truey for. The callback is bound to `thisArg` and
+     * the callback returns truthy for. The callback is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
@@ -4263,7 +4263,7 @@
 
     /**
      * Creates an array of elements split into two groups, the first of which
-     * contains elements the callback returns truey for, while the second of which
+     * contains elements the callback returns truthy for, while the second of which
      * contains elements the callback returns falsey for. The callback is bound
      * to `thisArg` and invoked with three arguments; (value, index|key, collection).
      *
@@ -4418,7 +4418,7 @@
 
     /**
      * The opposite of `_.filter`; this method returns the elements of a
-     * collection that the callback does **not** return truey for.
+     * collection that the callback does **not** return truthy for.
      *
      * If a property name is provided for `callback` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -4548,7 +4548,7 @@
     }
 
     /**
-     * Checks if the callback returns a truey value for **any** element of a
+     * Checks if the callback returns a truthy value for **any** element of a
      * collection. The function returns as soon as it finds a passing value and
      * does not iterate over the entire collection. The callback is bound to
      * `thisArg` and invoked with three arguments; (value, index|key, collection).
@@ -6582,7 +6582,7 @@
      * Creates a shallow clone of `object` excluding the specified properties.
      * Property names may be specified as individual arguments or as arrays of
      * property names. If a callback is provided it will be executed for each
-     * property of `object` omitting the properties the callback returns truey
+     * property of `object` omitting the properties the callback returns truthy
      * for. The callback is bound to `thisArg` and invoked with three arguments;
      * (value, key, object).
      *
@@ -6670,7 +6670,7 @@
      * Creates a shallow clone of `object` composed of the specified properties.
      * Property names may be specified as individual arguments or as arrays of
      * property names. If a callback is provided it will be executed for each
-     * property of `object` picking the properties the callback returns truey
+     * property of `object` picking the properties the callback returns truthy
      * for. The callback is bound to `thisArg` and invoked with three arguments;
      * (value, key, object).
      *
@@ -7829,7 +7829,7 @@
     /**
      * Produces a random number between `min` and `max` (inclusive). If only one
      * argument is provided a number between `0` and the given number will be
-     * returned. If `floating` is truey or either `min` or `max` are floats a
+     * returned. If `floating` is truthy or either `min` or `max` are floats a
      * floating-point number will be returned instead of an integer.
      *
      * @static

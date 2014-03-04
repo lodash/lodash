@@ -2208,7 +2208,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `true` if the callback returns truey for all elements in the collection', 1, function() {
+    test('should return `true` if the callback returns truthy for all elements in the collection', 1, function() {
       strictEqual(_.every([true, 1, 'x'], _.identity), true);
     });
 
@@ -2302,7 +2302,7 @@
   QUnit.module('lodash.filter');
 
   (function() {
-    test('should return elements the `callback` returns truey for', 1, function() {
+    test('should return elements the `callback` returns truthy for', 1, function() {
       var actual = _.filter([1, 2, 3], function(num) {
         return num % 2;
       });
@@ -7224,7 +7224,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `true` if the callback returns truey for any element in the collection', 2, function() {
+    test('should return `true` if the callback returns truthy for any element in the collection', 2, function() {
       strictEqual(_.some([false, 1, ''], _.identity), true);
       strictEqual(_.some([null, 'x', 0], _.identity), true);
     });
@@ -7234,7 +7234,7 @@
       strictEqual(_.some([null, 0, ''], _.identity), false);
     });
 
-    test('should return `true` as soon as the `callback` result is truey', 1, function() {
+    test('should return `true` as soon as the `callback` result is truthy', 1, function() {
       strictEqual(_.some([null, true, null], _.identity), true);
     });
 

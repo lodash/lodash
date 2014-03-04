@@ -1151,6 +1151,9 @@
    * @returns {Array} Returns the slice of `array`.
    * @example
    *
+   * _.drop([1, 2, 3], 1);
+   * // => [2, 3]
+   *
    * _.drop([1, 2, 3], 2);
    * // => [3]
    *
@@ -1595,13 +1598,16 @@
    * @returns {Array} Returns the slice of `array`.
    * @example
    *
+   * _.take([1, 2, 3], 1);
+   * // => [2]
+   *
    * _.take([1, 2, 3], 2);
    * // => [1, 2]
    *
    * _.take([1, 2, 3], 5);
    * // => [1, 2, 3]
    *
-   * _.take([1, 2, 3], -1);
+   * _.take([1, 2, 3], 0);
    * // => []
    */
   var take = first;

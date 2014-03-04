@@ -9274,7 +9274,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 178, function() {
+    test('should accept falsey arguments', 182, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
           isExposed = '_' in root,
           oldDash = root._;

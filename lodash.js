@@ -77,7 +77,7 @@
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
   /** Used to match words to create compound words */
-  var reWords = /[a-z0-9]+/g;
+  var reWords = /[a-zA-Z0-9][a-z0-9]*/g;
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -2320,7 +2320,7 @@
     }
 
     /**
-     * Creates an array with `n` elements dropped from the beginning of `array`.
+     * Creates a slice of `array` with `n` elements dropped from the beginning.
      *
      * @static
      * @memberOf _
@@ -2346,7 +2346,7 @@
     var drop = rest;
 
     /**
-     * Creates an array with `n` elements dropped from the end of `array`.
+     * Creates a slice of `array` with `n` elements dropped from the end.
      *
      * @static
      * @memberOf _
@@ -2372,9 +2372,9 @@
     var dropRight = initial;
 
     /**
-     * Creates an array of elements excluding those dropped from the end of `array`.
+     * Creates a slice of `array` excluding elements dropped from the end.
      * Elements will be dropped until the predicate returns falsey. The predicate
-     * is bound to `thisArg`nand invoked with three arguments; (value, index, array).
+     * is bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -2415,10 +2415,9 @@
     var dropRightWhile = initial;
 
     /**
-     * Creates an array of elements excluding those dropped from the beginning
-     * of `array`. Elements will be dropped until the predicate returns falsey.
-     * The predicate is bound to `thisArg` and invoked with three arguments;
-     * (value, index, array).
+     * Creates a slice of `array` excluding elements dropped from the beginning.
+     * Elements will be dropped until the predicate returns falsey. The predicate
+     * is bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -3137,7 +3136,7 @@
     }
 
     /**
-     * Creates an array of the first `n` elements of `array`.
+     * Creates a slice of `array` with `n` elements taken from the beginning.
      *
      * @static
      * @memberOf _
@@ -3149,7 +3148,7 @@
      * @example
      *
      * _.take([1, 2, 3], 1);
-     * // => [2]
+     * // => [1]
      *
      * _.take([1, 2, 3], 2);
      * // => [1, 2]
@@ -3163,7 +3162,7 @@
     var take = first;
 
     /**
-     * Creates an array of the last `n` elements of `array`.
+     * Creates a slice of `array` with `n` elements taken from the end.
      *
      * @static
      * @memberOf _
@@ -3189,9 +3188,9 @@
     var takeRight = last;
 
     /**
-     * Creates an array of elements from the end of `array`. Elements will be
-     * taken until the predicate returns falsey. The predicate is bound to `thisArg`
-     * and invoked with three arguments; (value, index, array).
+     * Creates a slice of `array` with elements taken from the end. Elements will
+     * be taken until the predicate returns falsey. The predicate is bound to
+     * `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -3232,9 +3231,9 @@
     var takeRightWhile = last;
 
     /**
-     * Creates an array of elements from the beginning of `array`. Elements will
-     * be taken until the predicate returns falsey. The predicate is bound to
-     * `thisArg` and invoked with three arguments; (value, index, array).
+     * Creates a slice of `array` with elements taken from the beginning. Elements
+     * will be taken until the predicate returns falsey. The predicate is bound
+     * to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -6931,8 +6930,8 @@
      * _.camelCase('hello_world');
      * // => 'helloWorld'
      */
-    var camelCase = createCompounder(function(result, words, index) {
-      return result + words.charAt(0)[index ? 'toUpperCase' : 'toLowerCase']() + words.slice(1);
+    var camelCase = createCompounder(function(result, word, index) {
+      return result + word.charAt(0)[index ? 'toUpperCase' : 'toLowerCase']() + word.slice(1);
     });
 
     /**
@@ -7024,7 +7023,7 @@
      * @example
      *
      * _.escapeRegExp('[lodash](http://lodash.com)');
-     * // => '\[lodash]\(http://lodash\.com\)'
+     * // => '\[lodash\]\(http://lodash\.com\)'
      */
     function escapeRegExp(string) {
       return string == null ? '' : String(string).replace(reRegExpChars, '\\$&');
@@ -7051,8 +7050,8 @@
      * _.kebabCase('hello_world');
      * // => 'hello-world'
      */
-    var kebabCase = createCompounder(function(result, words, index) {
-      return result + (index ? '-' : '') + words.toLowerCase();
+    var kebabCase = createCompounder(function(result, word, index) {
+      return result + (index ? '-' : '') + word.toLowerCase();
     });
 
     /**
@@ -7178,13 +7177,13 @@
         return result;
       }
       string = String(string);
-      while (n > 0) {
+      do {
         if (n % 2) {
           result += string;
         }
         n = floor(n / 2);
-        result += result;
-      }
+        string += string;
+      } while (n > 0);
       return result;
     }
 
@@ -7208,8 +7207,8 @@
      * _.snakeCase('helloWorld');
      * // => 'hello_world'
      */
-    var snakeCase = createCompounder(function(result, words, index) {
-      return result + (index ? '_' : '') + words.toLowerCase();
+    var snakeCase = createCompounder(function(result, word, index) {
+      return result + (index ? '_' : '') + word.toLowerCase();
     });
 
     /**

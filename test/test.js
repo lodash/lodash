@@ -9264,6 +9264,7 @@
       'defer',
       'delay',
       'memoize',
+      'negate',
       'once',
       'partial',
       'partialRight',
@@ -9274,7 +9275,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 182, function() {
+    test('should accept falsey arguments', 184, function() {
       var emptyArrays = _.map(falsey, function() { return []; }),
           isExposed = '_' in root,
           oldDash = root._;
@@ -9343,7 +9344,7 @@
       });
     });
 
-    test('should reject falsey arguments', 14, function() {
+    test('should reject falsey arguments', 15, function() {
       _.forEach(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, function() { return true; }),
             func = _[methodName];

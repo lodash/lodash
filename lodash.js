@@ -258,7 +258,7 @@
    * @param {Array} array The array to search.
    * @param {*} value The value to search for.
    * @param {number} [fromIndex=0] The index to search from.
-   * @returns {number} Returns the index of the matched value or `-1`.
+   * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
     var index = (fromIndex || 0) - 1,
@@ -291,7 +291,7 @@
    *
    * @private
    * @param {string} value The character to inspect.
-   * @returns {number} Returns the code unit of given character.
+   * @returns {number} Returns the code unit of the given character.
    */
   function charAtCallback(value) {
     return value.charCodeAt(0);
@@ -995,7 +995,7 @@
      *
      * @private
      * @param {Object} data The data object used to populate the text.
-     * @returns {string} Returns the interpolated text.
+     * @returns {string} Returns the interpolated string.
      */
     var iteratorTemplate = template(
       // assign the `result` variable an initial value
@@ -1236,7 +1236,7 @@
      * @param {*} [func=identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
      * @param {number} [argCount] The number of arguments the callback accepts.
-     * @returns {Function} Returns a callback function.
+     * @returns {Function} Returns the new function.
      */
     function baseCreateCallback(func, thisArg, argCount) {
       if (typeof func != 'function') {
@@ -1354,7 +1354,7 @@
      * @private
      * @param {Array} array The array to process.
      * @param {Array} [values] The array of values to exclude.
-     * @returns {Array} Returns a new array of filtered values.
+     * @returns {Array} Returns the new array of filtered values.
      */
     function baseDifference(array, values) {
       var length = array ? array.length : 0;
@@ -1459,7 +1459,7 @@
      * @param {boolean} [isShallow=false] A flag to restrict flattening to a single level.
      * @param {boolean} [isStrict=false] A flag to restrict flattening to arrays and `arguments` objects.
      * @param {number} [fromIndex=0] The index to start from.
-     * @returns {Array} Returns a new flattened array.
+     * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isShallow, isStrict, fromIndex) {
       var index = (fromIndex || 0) - 1,
@@ -1772,7 +1772,7 @@
      * @private
      * @param {number} min The minimum possible value.
      * @param {number} max The maximum possible value.
-     * @returns {number} Returns a random number.
+     * @returns {number} Returns the random number.
      */
     function baseRandom(min, max) {
       return min + floor(nativeRandom() * (max - min + 1));
@@ -1786,7 +1786,7 @@
      * @param {Array} array The array to process.
      * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
      * @param {Function} [callback] The function called per iteration.
-     * @returns {Array} Returns a duplicate-value-free array.
+     * @returns {Array} Returns the new duplicate-value-free array.
      */
     function baseUniq(array, isSorted, callback) {
       var length = array ? array.length : 0;
@@ -1847,7 +1847,7 @@
      * @param {Array} partialArg An array of arguments to prepend to those provided.
      * @param {Array} partialHolders An array of `partialArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
-     * @returns {Array} Returns a new array of composed arguments.
+     * @returns {Array} Returns the new array of composed arguments.
      */
     function composeArgs(partialArgs, partialHolders, args) {
       var holdersLength = partialHolders.length,
@@ -1877,7 +1877,7 @@
      * @param {Array} partialRightArg An array of arguments to append to those provided.
      * @param {Array} partialHolders An array of `partialRightArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
-     * @returns {Array} Returns a new array of composed arguments.
+     * @returns {Array} Returns the new array of composed arguments.
      */
     function composeArgsRight(partialRightArgs, partialRightHolders, args) {
       var holdersIndex = -1,
@@ -1940,7 +1940,7 @@
      *
      * @private
      * @param {Array} [array=[]] The array to search.
-     * @returns {Object} Returns the cache object.
+     * @returns {Object} Returns the new cache object.
      */
     var createCache = Set && function(array) {
       var cache = new Set,
@@ -1977,8 +1977,8 @@
     }
 
     /**
-     * Creates a function that, when called, either curries or invokes `func`
-     * with an optional `this` binding and partially applied arguments.
+     * Creates a function that either curries or invokes `func` with an optional
+     * `this` binding and partially applied arguments.
      *
      * @private
      * @param {Function|string} func The function or method name to reference.
@@ -2090,7 +2090,7 @@
      * @param {string} [options.init] The string representation of the initial `result` value.
      * @param {string} [options.loop] Code to execute in the object loop.
      * @param {boolean} [options.useHas] Specify using `hasOwnProperty` checks in the object loop.
-     * @returns {Function} Returns the compiled function.
+     * @returns {Function} Returns the new function.
      */
     function createIterator(options) {
       options.shadowedProps = shadowedProps;
@@ -2115,7 +2115,7 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @returns {Array} Returns a new array of placeholder indexes.
+     * @returns {Array} Returns the new array of placeholder indexes.
      */
     function getHolders(array) {
       var index = -1,
@@ -2254,13 +2254,13 @@
     });
 
     /**
-     * A fallback implementation of `Object.keys` which produces an array of the
-     * given object's own enumerable property names.
+     * A fallback implementation of `Object.keys` which creates an array of the
+     * own enumerable property names of `object`.
      *
      * @private
      * @type Function
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns an array of property names.
+     * @returns {Array} Returns the array of property names.
      */
     var shimKeys = createIterator({
       'args': 'object',
@@ -2279,7 +2279,7 @@
      * @memberOf _
      * @category Arrays
      * @param {Array} array The array to compact.
-     * @returns {Array} Returns a new array of filtered values.
+     * @returns {Array} Returns the new array of filtered values.
      * @example
      *
      * _.compact([0, 1, false, 2, '', 3]);
@@ -2309,7 +2309,7 @@
      * @category Arrays
      * @param {Array} array The array to process.
      * @param {...Array} [values] The arrays of values to exclude.
-     * @returns {Array} Returns a new array of filtered values.
+     * @returns {Array} Returns the new array of filtered values.
      * @example
      *
      * _.difference([1, 2, 3], [5, 2, 10]);
@@ -2623,7 +2623,7 @@
      *  If a property name or object is provided it will be used to create a "_.pluck"
      *  or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {Array} Returns a new flattened array.
+     * @returns {Array} Returns the new flattened array.
      * @example
      *
      * _.flatten([1, [2], [3, [[4]]]]);
@@ -2677,7 +2677,7 @@
      * @param {*} value The value to search for.
      * @param {boolean|number} [fromIndex=0] The index to search from or `true`
      *  to perform a binary search on a sorted array.
-     * @returns {number} Returns the index of the matched value or `-1`.
+     * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
      * _.indexOf([1, 2, 3, 1, 2, 3], 2);
@@ -2741,7 +2741,7 @@
      * @memberOf _
      * @category Arrays
      * @param {...Array} [array] The arrays to inspect.
-     * @returns {Array} Returns an array of shared values.
+     * @returns {Array} Returns the new array of shared values.
      * @example
      *
      * _.intersection([1, 2, 3], [5, 2, 1, 4], [2, 1]);
@@ -2834,7 +2834,7 @@
      * @param {Array} array The array to search.
      * @param {*} value The value to search for.
      * @param {number} [fromIndex=array.length-1] The index to search from.
-     * @returns {number} Returns the index of the matched value or `-1`.
+     * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
      * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2);
@@ -2904,7 +2904,7 @@
      * @param {number} [start=0] The start of the range.
      * @param {number} end The end of the range.
      * @param {number} [step=1] The value to increment or decrement by.
-     * @returns {Array} Returns a new range array.
+     * @returns {Array} Returns the new array of numbers.
      * @example
      *
      * _.range(4);
@@ -2966,7 +2966,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {Array} Returns a new array of removed elements.
+     * @returns {Array} Returns the array of removed elements.
      * @example
      *
      * var array = [1, 2, 3, 4, 5, 6];
@@ -3039,7 +3039,7 @@
      * @param {Array} array The array to slice.
      * @param {number} [start=0] The start index.
      * @param {number} [end=array.length] The end index.
-     * @returns {Array} Returns the new array.
+     * @returns {Array} Returns the slice of `array`.
      */
     function slice(array, start, end) {
       var index = -1,
@@ -3281,7 +3281,7 @@
      * @memberOf _
      * @category Arrays
      * @param {...Array} [array] The arrays to inspect.
-     * @returns {Array} Returns an array of combined values.
+     * @returns {Array} Returns the new array of combined values.
      * @example
      *
      * _.union([1, 2, 3], [5, 2, 1, 4], [2, 1]);
@@ -3316,7 +3316,7 @@
      *  If a property name or object is provided it will be used to create a "_.pluck"
      *  or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {Array} Returns a duplicate-value-free array.
+     * @returns {Array} Returns the new duplicate-value-free array.
      * @example
      *
      * _.uniq([1, 2, 1, 3, 1]);
@@ -3370,7 +3370,7 @@
      * @category Arrays
      * @param {Array} array The array to filter.
      * @param {...*} [value] The values to exclude.
-     * @returns {Array} Returns a new array of filtered values.
+     * @returns {Array} Returns the new array of filtered values.
      * @example
      *
      * _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
@@ -3389,7 +3389,7 @@
      * @memberOf _
      * @category Arrays
      * @param {...Array} [array] The arrays to inspect.
-     * @returns {Array} Returns an array of values.
+     * @returns {Array} Returns the new array of values.
      * @example
      *
      * _.xor([1, 2, 3], [5, 2, 1, 4]);
@@ -3424,7 +3424,7 @@
      * @alias unzip
      * @category Arrays
      * @param {...Array} [array] The arrays to process.
-     * @returns {Array} Returns a new array of grouped elements.
+     * @returns {Array} Returns the array of grouped elements.
      * @example
      *
      * _.zip(['fred', 'barney'], [30, 40], [true, false]);
@@ -3456,8 +3456,7 @@
      * @category Arrays
      * @param {Array} keys The array of keys.
      * @param {Array} [values=[]] The array of values.
-     * @returns {Object} Returns an object composed of the given keys and
-     *  corresponding values.
+     * @returns {Object} Returns the new object.
      * @example
      *
      * _.zipObject(['fred', 'barney'], [30, 40]);
@@ -3492,7 +3491,7 @@
      * @memberOf _
      * @category Chaining
      * @param {*} value The value to wrap.
-     * @returns {Object} Returns the wrapper object.
+     * @returns {Object} Returns the new wrapper object.
      * @example
      *
      * var characters = [
@@ -3571,12 +3570,12 @@
     }
 
     /**
-     * Produces the `toString` result of the wrapped value.
+     * Produces the result of coercing the wrapped value to a string.
      *
      * @name toString
      * @memberOf _
      * @category Chaining
-     * @returns {string} Returns the string result.
+     * @returns {string} Returns the coerced string value.
      * @example
      *
      * _([1, 2, 3]).toString();
@@ -3614,10 +3613,9 @@
      * @memberOf _
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(number|number[]|string|string[])} [index] The indexes of `collection`
-     *   to retrieve, specified as individual indexes or arrays of indexes.
-     * @returns {Array} Returns a new array of elements corresponding to the
-     *  provided indexes.
+     * @param {...(number|number[]|string|string[])} [index] The indexes to retrieve,
+     *  specified as individual indexes or arrays of indexes.
+     * @returns {Array} Returns the array of picked elements.
      * @example
      *
      * _.at(['a', 'b', 'c', 'd', 'e'], [0, 2, 4]);
@@ -3824,7 +3822,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {Array} Returns a new array of elements that passed the predicate check.
+     * @returns {Array} Returns the new filtered array.
      * @example
      *
      * var evens = _.filter([1, 2, 3, 4], function(num) { return num % 2 == 0; });
@@ -4108,18 +4106,18 @@
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
-     * var keys = [
+     * var keyData = [
      *   { 'dir': 'left', 'code': 97 },
      *   { 'dir': 'right', 'code': 100 }
      * ];
      *
-     * _.indexBy(keys, 'dir');
+     * _.indexBy(keyData, 'dir');
      * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
      *
-     * _.indexBy(keys, function(key) { return String.fromCharCode(key.code); });
+     * _.indexBy(keyData, function(object) { return String.fromCharCode(object.code); });
      * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
      *
-     * _.indexBy(keys, function(key) { return this.fromCharCode(key.code); }, String);
+     * _.indexBy(keyData, function(object) { return this.fromCharCode(object.code); }, String);
      * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
      */
     var indexBy = createAggregator(function(result, value, key) {
@@ -4139,7 +4137,7 @@
      * @param {Function|string} methodName The name of the method to invoke or
      *  the function invoked per iteration.
      * @param {...*} [args] Arguments to invoke the method with.
-     * @returns {Array} Returns a new array of the results of each invoked method.
+     * @returns {Array} Returns the array of results.
      * @example
      *
      * _.invoke([[5, 1, 7], [3, 2, 1]], 'sort');
@@ -4189,7 +4187,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {Array} Returns a new array of the results of each `callback` execution.
+     * @returns {Array} Returns the new mapped array.
      * @example
      *
      * _.map([1, 2, 3], function(num) { return num * 3; });
@@ -4396,7 +4394,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {Array} Returns a new array of grouped elements.
+     * @returns {Array} Returns the array of grouped elements.
      * @example
      *
      * _.partition([1, 2, 3], function(num) { return num % 2; });
@@ -4432,7 +4430,7 @@
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {string} key The name of the property to pluck.
-     * @returns {Array} Returns a new array of property values.
+     * @returns {Array} Returns the property values.
      * @example
      *
      * var characters = [
@@ -4549,7 +4547,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {Array} Returns a new array of elements that failed the predicate check.
+     * @returns {Array} Returns the new filtered array.
      * @example
      *
      * var odds = _.reject([1, 2, 3, 4], function(num) { return num % 2 == 0; });
@@ -4584,7 +4582,7 @@
      * @param {Array|Object|string} collection The collection to sample.
      * @param {number} [n] The number of elements to sample.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
-     * @returns {*} Returns the random sample(s) of `collection`.
+     * @returns {*} Returns the random sample(s).
      * @example
      *
      * _.sample([1, 2, 3, 4]);
@@ -4616,7 +4614,7 @@
      * @memberOf _
      * @category Collections
      * @param {Array|Object|string} collection The collection to shuffle.
-     * @returns {Array} Returns a new shuffled collection.
+     * @returns {Array} Returns the new shuffled array.
      * @example
      *
      * _.shuffle([1, 2, 3, 4]);
@@ -4749,7 +4747,7 @@
      *  called per iteration. If a property name or object is provided it will
      *  be used to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {Array} Returns a new array of sorted elements.
+     * @returns {Array} Returns the new sorted array.
      * @example
      *
      * _.sortBy([1, 2, 3], function(num) { return Math.sin(num); });
@@ -4837,7 +4835,7 @@
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Object} source The object of property values to filter by.
-     * @returns {Array} Returns a new array of elements that have the given properties.
+     * @returns {Array} Returns the new filtered array.
      * @example
      *
      * var characters = [
@@ -4891,9 +4889,9 @@
     }
 
     /**
-     * Creates a function that, when called, invokes `func` with the `this`
-     * binding of `thisArg` and prepends any additional `bind` arguments to those
-     * provided to the bound function.
+     * Creates a function that invokes `func` with the `this` binding of `thisArg`
+     * and prepends any additional `bind` arguments to those provided to the bound
+     * function.
      *
      * Note: Unlike native `Function#bind` this method does not set the `length`
      * property of bound functions.
@@ -4967,10 +4965,10 @@
     }
 
     /**
-     * Creates a function that, when called, invokes the method at `object[key]`
-     * and prepends any additional `bindKey` arguments to those provided to the bound
-     * function. This method differs from `_.bind` by allowing bound functions to
-     * reference methods that will be redefined or don't yet exist.
+     * Creates a function that invokes the method at `object[key]` and prepends
+     * any additional `bindKey` arguments to those provided to the bound function.
+     * This method differs from `_.bind` by allowing bound functions to reference
+     * methods that will be redefined or don't yet exist.
      * See [Peter Michaux's article](http://michaux.ca/articles/lazy-function-definition-pattern)
      * for more details.
      *
@@ -5373,9 +5371,9 @@
     }
 
     /**
-     * Creates a function that, when called, invokes `func` with any additional
-     * `partial` arguments prepended to those provided to the new function. This
-     * method is similar to `_.bind` except it does **not** alter the `this` binding.
+     * Creates a function that invokes `func` with any additional `partial` arguments
+     * prepended to those provided to the new function. This method is similar to
+     * `_.bind` except it does **not** alter the `this` binding.
      *
      * Note: This method does not set the `length` property of partially applied
      * functions.
@@ -5902,15 +5900,12 @@
      *   this.y = 0;
      * }
      *
-     * Shape.prototype.move = function(x, y) {
-     *   this.x += x;
-     *   this.y += y;
-     * };
+     * Shape.prototype.z = 0;
      *
      * _.forIn(new Shape, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'x', 'y', and 'move' (property order is not guaranteed across environments)
+     * // => logs 'x', 'y', and 'z' (property order is not guaranteed across environments)
      */
     function forIn(object, callback, thisArg) {
       callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
@@ -6027,7 +6022,7 @@
      * @alias methods
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns an array of property names that have function values.
+     * @returns {Array} Returns the new sorted array of property names.
      * @example
      *
      * _.functions(_);
@@ -6035,6 +6030,7 @@
      */
     function functions(object) {
       var result = [];
+
       baseForIn(object, function(value, key) {
         if (isFunction(value)) {
           result.push(key);
@@ -6073,7 +6069,7 @@
      * @category Objects
      * @param {Object} object The object to invert.
      * @param {boolean} [multiValue=false] Allow multiple values per key.
-     * @returns {Object} Returns the created inverted object.
+     * @returns {Object} Returns the new inverted object.
      * @example
      *
      * _.invert({ 'first': 'fred', 'second': 'barney' });
@@ -6542,17 +6538,24 @@
     }
 
     /**
-     * Creates an array composed of the own enumerable property names of `object`.
+     * Creates an array of the own enumerable property names of `object`.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns an array of property names.
+     * @returns {Array} Returns the array of property names.
      * @example
      *
-     * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
-     * // => ['one', 'two', 'three'] (property order is not guaranteed across environments)
+     * function Shape() {
+     *   this.x = 0;
+     *   this.y = 0;
+     * }
+     *
+     * Shape.prototype.z = 0;
+     *
+     * _.keys(new Shape);
+     * // => ['x', 'y'] (property order is not guaranteed across environments)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
       if (!isObject(object)) {
@@ -6586,7 +6589,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {Object} Returns a new object with values of the results of each `callback` execution.
+     * @returns {Object} Returns the new mapped object.
      * @example
      *
      * _.mapValues({ 'a': 1, 'b': 2, 'c': 3} , function(num) { return num * 3; });
@@ -6707,7 +6710,7 @@
      *  iteration or property names to omit, specified as individual property
      *  names or arrays of property names.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {Object} Returns an object without the omitted properties.
+     * @returns {Object} Returns the new object.
      * @example
      *
      * _.omit({ 'name': 'fred', 'age': 40 }, 'age');
@@ -6795,7 +6798,7 @@
      *  iteration or property names to pick, specified as individual property
      *  names or arrays of property names.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {Object} Returns an object composed of the picked properties.
+     * @returns {Object} Returns the new object.
      * @example
      *
      * _.pick({ 'name': 'fred', '_userid': 'fred1' }, 'name');
@@ -6890,11 +6893,18 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns an array of property values.
+     * @returns {Array} Returns the new array of property values.
      * @example
      *
-     * _.values({ 'one': 1, 'two': 2, 'three': 3 });
-     * // => [1, 2, 3] (property order is not guaranteed across environments)
+     * function Shape(x, y) {
+     *   this.x = x;
+     *   this.y = y;
+     * }
+     *
+     * Shape.prototype.z = 0;
+     *
+     * _.values(new Shape(2, 1));
+     * // => [2, 1] (property order is not guaranteed across environments)
      */
     function values(object) {
       var index = -1,
@@ -7271,7 +7281,7 @@
      * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
      * @returns {Function|string} Returns the interpolated string if a data object
-     *  is provided, else it returns a template function.
+     *  is provided, else the compiled template function.
      * @example
      *
      * // using the "interpolate" delimiter to create a compiled template
@@ -7635,7 +7645,7 @@
     }
 
     /**
-     * Produces a callback bound to an optional `thisArg`. If `func` is a property
+     * Creates a function bound to an optional `thisArg`. If `func` is a property
      * name the created callback will return the property value for a given element.
      * If `func` is an object the created callback will return `true` for elements
      * that contain the equivalent object properties, otherwise it will return `false`.
@@ -7647,7 +7657,7 @@
      * @param {*} [func=identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
      * @param {number} [argCount] The number of arguments the callback accepts.
-     * @returns {Function} Returns a callback function.
+     * @returns {Function} Returns the new function.
      * @example
      *
      * var characters = [
@@ -7896,7 +7906,7 @@
      * @category Utilities
      * @param {string} value The value to parse.
      * @param {number} [radix] The radix used to interpret the value to parse.
-     * @returns {number} Returns the new integer value.
+     * @returns {number} Returns the converted integer value.
      * @example
      *
      * _.parseInt('08');
@@ -7952,7 +7962,7 @@
      * @param {number} [min=0] The minimum possible value.
      * @param {number} [max=1] The maximum possible value.
      * @param {boolean} [floating=false] Specify returning a floating-point number.
-     * @returns {number} Returns a random number.
+     * @returns {number} Returns the random number.
      * @example
      *
      * _.random(0, 5);
@@ -8051,7 +8061,7 @@
      * @param {number} n The number of times to execute the callback.
      * @param {Function} [callback=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `callback`.
-     * @returns {Array} Returns an array of the results of each `callback` execution.
+     * @returns {Array} Returns the array of results.
      * @example
      *
      * var diceRolls = _.times(3, _.partial(_.random, 1, 6));

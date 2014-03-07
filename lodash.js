@@ -991,86 +991,6 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * The template used to create iterator functions.
-     *
-     * @private
-     * @param {Object} data The data object used to populate the text.
-     * @returns {string} Returns the interpolated string.
-     */
-    var iteratorTemplate = template(
-      // assign the `result` variable an initial value
-      'var result = <%= init %>;\n' +
-
-      // exit early if the first argument is not an object
-      "if (!isObject(object)) {\n" +
-      '  return result;\n' +
-      '}' +
-
-      // add support for iterating over `arguments` objects if needed
-      '<% if (support.nonEnumArgs) { %>\n' +
-      'var length = object.length;\n' +
-      'if (length && isArguments(object)) {\n' +
-      '  key = -1;\n' +
-      '  while (++key < length) {\n' +
-      "    key += '';\n" +
-      '    <%= loop %>;\n' +
-      '  }\n' +
-      '  return result;\n' +
-      '}' +
-      '<% } %>' +
-
-      // avoid iterating over `prototype` properties in older Firefox, Opera, and Safari
-      '<% if (support.enumPrototypes) { %>\n' +
-      "var skipProto = typeof object == 'function';\n" +
-      '<% } %>' +
-
-      // avoid iterating over `Error.prototype` properties in older IE and Safari
-      '<% if (support.enumErrorProps) { %>\n' +
-      'var skipErrorProps = object === errorProto || object instanceof Error;\n' +
-      '<% } %>' +
-
-      // define conditions used in the loop
-      '<%' +
-      'var conditions = [];\n' +
-      "if (support.enumPrototypes) { conditions.push('!(skipProto && key == \\'prototype\\')'); }\n" +
-      "if (support.enumErrorProps) { conditions.push('!(skipErrorProps && (key == \\'message\\' || key == \\'name\\'))'); }" +
-      '%>\n' +
-
-      // iterate over the object
-      'for (var key in object) {\n<%' +
-      "  if (useHas) { conditions.push('hasOwnProperty.call(object, key)'); }\n" +
-      "  if (conditions.length) { %>  if (<%= conditions.join(' && ') %>) {\n  <% } %>" +
-      '  <%= loop %>;' +
-      '  <% if (conditions.length) { %>\n  }<% } %>\n' +
-      '}\n' +
-
-      // Lo-Dash skips the `constructor` property when it infers it's iterating
-      // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
-      // attribute of an existing property and the `constructor` property of a
-      // prototype defaults to non-enumerable.
-      '<% if (support.nonEnumShadows) { %>\n' +
-      'if (object !== objectProto) {\n' +
-      "  var ctor = object.constructor,\n" +
-      '      isProto = object === (ctor && ctor.prototype),\n' +
-      '      className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),\n' +
-      '      nonEnum = nonEnumProps[className];\n' +
-      '  <% for (var index = 0; index < 7; index++) { %>\n' +
-      "  key = '<%= shadowedProps[index] %>';\n" +
-      '  if ((!(isProto && nonEnum[key]) && hasOwnProperty.call(object, key))<%' +
-      '      if (!useHas) { %> || (!nonEnum[key] && object[key] !== objectProto[key])<% }' +
-      '    %>) {\n' +
-      '    <%= loop %>;\n' +
-      '  }' +
-      '  <% } %>\n' +
-      '}' +
-      '<% } %>\n' +
-
-      'return result;'
-    );
-
-    /*--------------------------------------------------------------------------*/
-
-    /**
      * The base implementation of `_.bind` that creates the bound function and
      * sets its meta data.
      *
@@ -1491,17 +1411,20 @@
     }
 
     /**
-     * The base implementation of `_.forOwn` without support for callback
-     * shorthands or `thisArg` binding.
+     * The base implementation of `baseForIn` and `baseForOwn` which iterates
+     * over `object` properties returned by `keysFunc` executing the callback
+     * for each property. Callbacks may exit iteration early by explicitly
+     * returning `false`.
      *
      * @private
      * @param {Object} object The object to iterate over.
      * @param {Function} callback The function called per iteration.
+     * @param {Function} keysFunc The function to get the keys of `object`.
      * @returns {Object} Returns `object`.
      */
-    function baseForOwn(object, callback) {
+    function baseFor(object, callback, keysFunc) {
       var index = -1,
-          props = keys(object),
+          props = keysFunc(object),
           length = props.length;
 
       while (++index < length) {
@@ -1514,16 +1437,18 @@
     }
 
     /**
-     * The base implementation of `_.forOwnRight` without support for callback
-     * shorthands or `thisArg` binding.
+     * This function is like `baseFor` except that it iterates over properties
+     * in the opposite order.
      *
      * @private
      * @param {Object} object The object to iterate over.
      * @param {Function} callback The function called per iteration.
+     * @param {Function} keysFunc The function to get the keys of `object`.
      * @returns {Object} Returns `object`.
      */
-    function baseForOwnRight(object, callback) {
-      var props = keys(object),
+    function baseForRight(object, callback, keysFunc) {
+      var index = -1,
+          props = keysFunc(object),
           length = props.length;
 
       while (length--) {
@@ -1536,8 +1461,47 @@
     }
 
     /**
-     * The base implementation of `_.isEqual`, without support for `thisArg` binding,
-     * that allows partial "_.where" style comparisons.
+     * The base implementation of `_.forIn` without support for callback
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Object} Returns `object`.
+     */
+    function baseForIn(object, callback) {
+      return baseFor(object, callback, keysIn);
+    }
+
+    /**
+     * The base implementation of `_.forOwn` without support for callback
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Object} Returns `object`.
+     */
+    function baseForOwn(object, callback) {
+      return baseFor(object, callback, keys);
+    }
+
+    /**
+     * The base implementation of `_.forOwnRight` without support for callback
+     * shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Object} Returns `object`.
+     */
+    function baseForOwnRight(object, callback) {
+      return baseForRight(object, callback, keys);
+    }
+
+    /**
+     * The base implementation of `_.isEqual`, without support for `thisArg`
+     * binding, that allows partial "_.where" style comparisons.
      *
      * @private
      * @param {*} a The value to compare.
@@ -1840,6 +1804,28 @@
     }
 
     /**
+     * The base implementation of `_.values` and `_.valuesIn` which creates an
+     * array of `object` property values corresponding to the property names
+     * returned by `keysFunc`.
+     *
+     * @private
+     * @param {Object} object The object to inspect.
+     * @param {Function} keysFunc The function to get the keys of `object`.
+     * @returns {Object} Returns the array of property values.
+     */
+    function baseValues(object, keysFunc) {
+      var index = -1,
+          props = keysFunc(object),
+          length = props.length,
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = object[props[index]];
+      }
+      return result;
+    }
+
+    /**
      * Creates an array that is the composition of partially applied arguments,
      * placeholders, and provided arguments into a single array of arguments.
      *
@@ -1903,9 +1889,9 @@
 
     /**
      * Creates a function that aggregates a collection, creating an object or
-     * array composed from the results of running each element of the collection
-     * through a callback. The given setter function sets the keys and values
-     * of the composed object or array.
+     * array composed from the results of running each element in the collection
+     * through a callback. The given setter function sets the keys and values of
+     * the composed object or array.
      *
      * @private
      * @param {Function} setter The setter function.
@@ -2082,35 +2068,6 @@
     }
 
     /**
-     * Creates compiled iteration functions.
-     *
-     * @private
-     * @param {Object} [options] The compile options object.
-     * @param {string} [options.args] A comma separated string of iteration function arguments.
-     * @param {string} [options.init] The string representation of the initial `result` value.
-     * @param {string} [options.loop] Code to execute in the object loop.
-     * @param {boolean} [options.useHas] Specify using `hasOwnProperty` checks in the object loop.
-     * @returns {Function} Returns the new function.
-     */
-    function createIterator(options) {
-      options.shadowedProps = shadowedProps;
-      options.support = support;
-
-      // create the function factory
-      var factory = Function(
-          'errorClass, errorProto, hasOwnProperty, isArguments, isObject, objectProto, ' +
-          'nonEnumProps, stringClass, stringProto, toString',
-        'return function(' + options.args + ') {\n' + iteratorTemplate(options) + '\n}'
-      );
-
-      // return the compiled function
-      return factory(
-        errorClass, errorProto, hasOwnProperty, isArguments, isObject, objectProto,
-        nonEnumProps, stringClass, stringProto, toString
-      );
-    }
-
-    /**
      * Finds the indexes of all placeholder elements in `array`.
      *
      * @private
@@ -2132,7 +2089,7 @@
 
     /**
      * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
-     * customized this method returns the custom method, otherwise it returns
+     * customized this function returns the custom method, otherwise it returns
      * the `baseIndexOf` function.
      *
      * @private
@@ -2238,22 +2195,6 @@
     }
 
     /**
-     * The base implementation of `_.forIn` without support for callback
-     * shorthands or `thisArg` binding.
-     *
-     * @private
-     * @param {Object} object The object to iterate over.
-     * @param {Function} callback The function called per iteration.
-     * @returns {Object} Returns `object`.
-     */
-    var baseForIn = createIterator({
-      'args': 'object, callback',
-      'init': 'object',
-      'loop': 'if (callback(object[key], key, object) === false) {\n    return result;\n  }',
-      'useHas': false
-    });
-
-    /**
      * A fallback implementation of `Object.keys` which creates an array of the
      * own enumerable property names of `object`.
      *
@@ -2262,12 +2203,20 @@
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the array of property names.
      */
-    var shimKeys = createIterator({
-      'args': 'object',
-      'init': '[]',
-      'loop': 'result.push(key)',
-      'useHas': true
-    });
+    function shimKeys(object) {
+      var index = -1,
+          props = keysIn(object),
+          length = props.length,
+          result = [];
+
+      while (++index < length) {
+        var key = props[index];
+        if (hasOwnProperty.call(object, key)) {
+          result.push(key);
+        }
+      }
+      return result;
+    }
 
     /*--------------------------------------------------------------------------*/
 
@@ -2513,7 +2462,7 @@
 
     /**
      * This method is like `_.findIndex` except that it iterates over elements
-     * of a `collection` from right to left.
+     * of a collection from right to left.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -2824,9 +2773,9 @@
     }
 
     /**
-     * Gets the index at which the last occurrence of `value` is found using strict
-     * equality for comparisons, i.e. `===`. If `fromIndex` is negative, it is used
-     * as the offset from the end of the collection.
+     * Gets the index at which the last occurrence of `value` is found using
+     * strict equality for comparisons, i.e. `===`. If `fromIndex` is negative,
+     * it is used as the offset from the end of the collection.
      *
      * @static
      * @memberOf _
@@ -3933,8 +3882,8 @@
     }
 
     /**
-     * This method is like `_.find` except that it iterates over elements
-     * of a `collection` from right to left.
+     * This method is like `_.find` except that it iterates over elements of a
+     * collection from right to left.
      *
      * @static
      * @memberOf _
@@ -3966,7 +3915,7 @@
     }
 
     /**
-     * Iterates over elements of a collection, executing the callback for each
+     * Iterates over elements of a collection executing the callback for each
      * element. The callback is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection). Callbacks may exit iteration early by
      * explicitly returning `false`.
@@ -4008,8 +3957,8 @@
     }
 
     /**
-     * This method is like `_.forEach` except that it iterates over elements
-     * of a `collection` from right to left.
+     * This method is like `_.forEach` except that it iterates over elements of
+     * a collection from right to left.
      *
      * @static
      * @memberOf _
@@ -4491,8 +4440,8 @@
     }
 
     /**
-     * This method is like `_.reduce` except that it iterates over elements
-     * of a `collection` from right to left.
+     * This method is like `_.reduce` except that it iterates over elements of a
+     * collection from right to left.
      *
      * @static
      * @memberOf _
@@ -5283,7 +5232,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to have its output memoized.
-     * @param {Function} [resolver] A function used to resolve the cache key.
+     * @param {Function} [resolver] The function to resolve the cache key.
      * @returns {Function} Returns the new memoizing function.
      * @example
      *
@@ -5817,8 +5766,8 @@
     }
 
     /**
-     * This method is like `_.findKey` except that it iterates over elements
-     * of a `collection` in the opposite order.
+     * This method is like `_.findKey` except that it iterates over elements of
+     * a collection in the opposite order.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -5871,10 +5820,10 @@
     }
 
     /**
-     * Iterates over own and inherited enumerable properties of an object,
-     * executing the callback for each property. The callback is bound to `thisArg`
-     * and invoked with three arguments; (value, key, object). Callbacks may exit
-     * iteration early by explicitly returning `false`.
+     * Iterates over own and inherited enumerable properties of an object executing
+     * the callback for each property. The callback is bound to `thisArg` and invoked
+     * with three arguments; (value, key, object). Callbacks may exit iteration
+     * early by explicitly returning `false`.
      *
      * @static
      * @memberOf _
@@ -5900,12 +5849,12 @@
      */
     function forIn(object, callback, thisArg) {
       callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-      return baseForIn(object, callback);
+      return baseFor(object, callback, keysIn);
     }
 
     /**
-     * This method is like `_.forIn` except that it iterates over elements
-     * of a `collection` in the opposite order.
+     * This method is like `_.forIn` except that it iterates over elements of a
+     * collection in the opposite order.
      *
      * @static
      * @memberOf _
@@ -5929,21 +5878,12 @@
      * // => logs 'z', 'y', and 'x' assuming `_.forIn ` logs 'x', 'y', and 'z'
      */
     function forInRight(object, callback, thisArg) {
-      var props = keysIn(object),
-          length = props.length;
-
       callback = baseCreateCallback(callback, thisArg, 3);
-      while (length--) {
-        var prop = props[length];
-        if (callback(object[prop], prop, object) === false) {
-          break;
-        }
-      }
-      return object;
+      return baseForRight(object, callback, keysIn);
     }
 
     /**
-     * Iterates over own enumerable properties of an object, executing the callback
+     * Iterates over own enumerable properties of an object executing the callback
      * for each property. The callback is bound to `thisArg` and invoked with three
      * arguments; (value, key, object). Callbacks may exit iteration early by
      * explicitly returning `false`.
@@ -5968,8 +5908,8 @@
     }
 
     /**
-     * This method is like `_.forOwn` except that it iterates over elements
-     * of a `collection` in the opposite order.
+     * This method is like `_.forOwn` except that it iterates over elements of a
+     * collection in the opposite order.
      *
      * @static
      * @memberOf _
@@ -5986,17 +5926,8 @@
      * // => logs 'length', '1', and '0' assuming `_.forOwn` logs '0', '1', and 'length'
      */
     function forOwnRight(object, callback, thisArg) {
-      var props = keys(object),
-          length = props.length;
-
       callback = baseCreateCallback(callback, thisArg, 3);
-      while (length--) {
-        var key = props[length];
-        if (callback(object[key], key, object) === false) {
-          break;
-        }
-      }
-      return object;
+      return baseForRight(object, callback, keys);
     }
 
     /**
@@ -6091,6 +6022,34 @@
         }
       }
       return result;
+    }
+
+    /**
+     * Checks if `value` is an `arguments` object.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
+     * @example
+     *
+     * (function() { return _.isArguments(arguments); })(1, 2, 3);
+     * // => true
+     *
+     * _.isArguments([1, 2, 3]);
+     * // => false
+     */
+    function isArguments(value) {
+      return value && typeof value == 'object' && typeof value.length == 'number' &&
+        toString.call(value) == argsClass || false;
+    }
+    // fallback for environments that can't detect `arguments` objects by [[Class]]
+    if (!support.argsClass) {
+      isArguments = function(value) {
+        return value && typeof value == 'object' && typeof value.length == 'number' &&
+          hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee') || false;
+      };
     }
 
     /**
@@ -6576,10 +6535,41 @@
      */
     function keysIn(object) {
       var result = [];
+      if (!isObject(object)) {
+        return result;
+      }
+      if (support.nonEnumArgs && typeof object.length == 'number' && isArguments(object)) {
+        object = slice(object);
+      }
+      var skipProto = support.enumPrototypes && typeof object == 'function',
+          skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error);
 
-      baseForIn(object, function(value, key) {
-        result.push(key);
-      });
+      for (var key in object) {
+        if (!(skipProto && key == 'prototype') &&
+            !(skipErrorProps && (key == 'message' || key == 'name'))) {
+          result.push(key);
+        }
+      }
+      // Lo-Dash skips the `constructor` property when it infers it's iterating
+      // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
+      // attribute of an existing property and the `constructor` property of a
+      // prototype defaults to non-enumerable.
+      if (support.nonEnumShadows && object !== objectProto) {
+        var ctor = object.constructor,
+            index = -1,
+            length = shadowedProps.length;
+
+        if (object === (ctor && ctor.prototype)) {
+          var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),
+              nonEnum = nonEnumProps[className];
+        }
+        while (++index < length) {
+          key = shadowedProps[index];
+          if (!(nonEnum && nonEnum[key]) && hasOwnProperty.call(object, key)) {
+            result.push(key);
+          }
+        }
+      }
       return result;
     }
 
@@ -6882,13 +6872,13 @@
     }
 
     /**
-     * Creates an array composed of the own enumerable property values of `object`.
+     * Creates an array of the own enumerable property values of `object`.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns the new array of property values.
+     * @returns {Array} Returns the array of property values.
      * @example
      *
      * function Shape(x, y) {
@@ -6902,26 +6892,18 @@
      * // => [2, 1] (property order is not guaranteed across environments)
      */
     function values(object) {
-      var index = -1,
-          props = keys(object),
-          length = props.length,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = object[props[index]];
-      }
-      return result;
+      return baseValues(object, keys);
     }
 
     /**
-     * Creates an array composed of the own and inherited enumerable property
-     * values of `object`.
+     * Creates an array of the own and inherited enumerable property values
+     * of `object`.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns the new array of property values.
+     * @returns {Array} Returns the array of property values.
      * @example
      *
      * function Shape(x, y) {
@@ -6935,12 +6917,7 @@
      * // => [2, 1, 0] (property order is not guaranteed across environments)
      */
     function valuesIn(object) {
-      var result = [];
-
-      baseForIn(object, function(value) {
-        result.push(value);
-      });
-      return result;
+      return baseValues(object, keysIn);
     }
 
     /*--------------------------------------------------------------------------*/
@@ -7369,14 +7346,12 @@
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
+      options = defaults({}, options, settings);
       string = String(string == null ? '' : string);
 
-      // avoid missing dependencies when `iteratorTemplate` is not defined
-      options = iteratorTemplate ? defaults({}, options, settings) : settings;
-
-      var imports = iteratorTemplate && defaults({}, options.imports, settings.imports),
-          importsKeys = iteratorTemplate ? keys(imports) : ['_'],
-          importsValues = iteratorTemplate ? values(imports) : [lodash];
+      var imports = defaults({}, options.imports, settings.imports),
+          importsKeys = keys(imports),
+          importsValues = values(imports);
 
       var isEscaping,
           isEvaluating,
@@ -8441,12 +8416,6 @@
         };
       });
     }
-
-    // add pseudo private property to be used and removed during the build process
-    lodash._baseForIn = baseForIn;
-    lodash._iteratorTemplate = iteratorTemplate;
-    lodash._shimKeys = shimKeys;
-
     return lodash;
   }
 

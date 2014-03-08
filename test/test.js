@@ -3196,7 +3196,7 @@
 
     test('should return `false` for primitives', 1, function() {
       var values = falsey.concat(1, 'a'),
-          expected = _.map(values, function() { return false; });
+          expected = _.map(values, _.constant(false));
 
       var actual = _.map(values, function(value) {
         return _.has(value, 'valueOf');
@@ -3403,7 +3403,7 @@
     ];
 
     test('should accept a falsey `array` argument', 1, function() {
-      var expected = _.map(falsey, function() { return []; });
+      var expected = _.map(falsey, _.constant([]));
 
       var actual = _.map(falsey, function(value, index) {
         try {
@@ -3588,7 +3588,7 @@
     });
 
     test('should return `false` for non `arguments` objects', 9, function() {
-      var expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isArguments(value) : _.isArguments();
@@ -3628,7 +3628,7 @@
     });
 
     test('should return `false` for non arrays', 9, function() {
-      var expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isArray(value) : _.isArray();
@@ -3711,7 +3711,7 @@
     });
 
     test('should return `false` for non dates', 9, function() {
-      var expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isDate(value) : _.isDate();
@@ -3790,7 +3790,7 @@
     var args = arguments;
 
     test('should return `true` for empty or falsey values', 3, function() {
-      var expected = _.map(empties, function() { return true; });
+      var expected = _.map(empties, _.constant(true));
 
       var actual = _.map(empties, function(value) {
         return _.isEmpty(value);
@@ -4236,7 +4236,7 @@
       var actual = _.isEqual('a', 'a', function() { return 'a'; });
       strictEqual(actual, true);
 
-      var expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, _.constant(false));
       actual = [];
 
       _.forEach(falsey, function(value) {
@@ -4404,7 +4404,7 @@
     });
 
     test('should return `false` for non functions', 9, function() {
-      var expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isFunction(value) : _.isFunction();
@@ -4587,7 +4587,7 @@
 
     test('should return `false` for non objects', 1, function() {
       var values = falsey.concat('a', true),
-          expected = _.map(values, function() { return false; });
+          expected = _.map(values, _.constant(false));
 
       var actual = _.map(values, function(value, index) {
         return index ? _.isObject(value) : _.isObject();
@@ -4688,7 +4688,7 @@
     });
 
     test('should return `false` for non objects', 3, function() {
-      var expected = _.map(falsey, function() { return false; });
+      var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isPlainObject(value) : _.isPlainObject();
@@ -4722,7 +4722,7 @@
     });
 
     test('should return `false` for non regexes', 9, function() {
-      var expected = _.map(falsey, function(value) { return false; });
+      var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isRegExp(value) : _.isRegExp();
@@ -5096,7 +5096,7 @@
       var func = _[methodName];
 
       test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
-        var expected = _.map(falsey, function() { return -1; });
+        var expected = _.map(falsey, _.constant(-1));
 
         var actual = _.map(falsey, function(value, index) {
           try {
@@ -5184,7 +5184,7 @@
     });
 
     test('should accept a falsey `array` argument', 1, function() {
-      var expected = _.map(falsey, function() { return []; });
+      var expected = _.map(falsey, _.constant([]));
 
       var actual = _.map(falsey, function(value, index) {
         try {
@@ -5252,7 +5252,7 @@
     });
 
     test('should accept a falsey `object` argument', 1, function() {
-      var expected = _.map(falsey, function() { return {}; });
+      var expected = _.map(falsey, _.constant({}));
 
       var actual = _.map(falsey, function(value, index) {
         try {
@@ -5732,7 +5732,7 @@
   (function() {
     test('should always return `undefined`', 1, function() {
       var values = falsey.concat([], true, new Date, _, {}, /x/, 'a'),
-          expected = _.map(values, function() { return undefined; });
+          expected = _.map(values, _.constant());
 
       var actual = _.map(values, function(value, index) {
         return index ? _.noop(value) : _.noop();
@@ -6669,7 +6669,7 @@
 
     test('`_.' + methodName + '` should support empty or falsey collections without an initial `accumulator` value', 1, function() {
       var actual = [],
-          expected = _.map(empties, function() { return undefined; });
+          expected = _.map(empties, _.constant());
 
       _.forEach(empties, function(value) {
         try {
@@ -6681,7 +6681,7 @@
     });
 
     test('`_.' + methodName + '` should support empty or falsey collections with an initial `accumulator` value', 1, function() {
-      var expected = _.map(empties, function() { return 'x'; });
+      var expected = _.map(empties, _.constant('x'));
 
       var actual = _.map(empties, function(value) {
         try {
@@ -6823,7 +6823,7 @@
     });
 
     test('should return the specified default value for undefined properties', 1, function() {
-      var values = falsey.concat(1, function() { return 1; });
+      var values = falsey.concat(1, _.constant(1));
 
       var expected = _.transform(values, function(result, value) {
         result.push(value, value);
@@ -6854,7 +6854,7 @@
     ];
 
     test('should accept a falsey `array` argument', 1, function() {
-      var expected = _.map(falsey, function() { return []; });
+      var expected = _.map(falsey, _.constant([]));
 
       var actual = _.map(falsey, function(value, index) {
         try {
@@ -7118,7 +7118,7 @@
     });
 
     test('should accept a falsey `object` argument', 1, function() {
-      var expected = _.map(falsey, function() { return 0; });
+      var expected = _.map(falsey, _.constant(0));
 
       var actual = _.map(falsey, function(value, index) {
         try {
@@ -7213,7 +7213,7 @@
 
   (function() {
     test('should return `false` for empty or falsey collections', 1, function() {
-      var expected = _.map(empties, function() { return false; });
+      var expected = _.map(empties, _.constant(false));
 
       var actual = _.map(empties, function(value) {
         try {
@@ -8260,7 +8260,7 @@
 
     test('should return an empty array for falsey and negative `n` arguments', 1, function() {
       var values = falsey.concat(-1, -Infinity),
-          expected = _.map(values, function() { return []; });
+          expected = _.map(values, _.constant([]));
 
       var actual = _.map(values, function(value, index) {
         return index ? _.times(value) : _.times();
@@ -8868,7 +8868,7 @@
     });
 
     test('should accept a falsey `array` argument', 1, function() {
-      var expected = _.map(falsey, function() { return {}; });
+      var expected = _.map(falsey, _.constant({}));
 
       var actual = _.map(falsey, function(value, index) {
         try {
@@ -9104,7 +9104,7 @@
       test('`_.' + methodName + '` should return `undefined` when querying falsey arguments without an `n` argument', 1, function() {
         if (!isNpm) {
           var actual = [],
-              expected = _.map(falsey, function() { return undefined; }),
+              expected = _.map(falsey, _.constant()),
               func = _[methodName];
 
           _.forEach(falsey, function(value, index) {
@@ -9122,7 +9122,7 @@
 
       test('`_.' + methodName + '` should return an empty array when querying falsey arguments with an `n` argument', 1, function() {
         if (!isNpm) {
-          var expected = _.map(falsey, function() { return []; }),
+          var expected = _.map(falsey, _.constant([])),
               func = _[methodName];
 
           var actual = _.map(falsey, function(value, index) {
@@ -9276,7 +9276,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     test('should accept falsey arguments', 184, function() {
-      var emptyArrays = _.map(falsey, function() { return []; }),
+      var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
 
@@ -9346,7 +9346,7 @@
 
     test('should reject falsey arguments', 15, function() {
       _.forEach(rejectFalsey, function(methodName) {
-        var expected = _.map(falsey, function() { return true; }),
+        var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];
 
         var actual = _.map(falsey, function(value, index) {

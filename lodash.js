@@ -5488,6 +5488,9 @@
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     function assign(object, source, guard) {
+      if (!object) {
+        return object;
+      }
       var args = arguments,
           argsIndex = 0,
           argsLength = args.length,
@@ -5505,15 +5508,13 @@
       }
       while (++argsIndex < argsLength) {
         source = args[argsIndex];
-        if (isObject(source)) {
-          var index = -1,
-              props = keys(source),
-              length = props.length;
+        var index = -1,
+            props = keys(source),
+            length = props.length;
 
-          while (++index < length) {
-            var key = props[index];
-            object[key] = callback ? callback(object[key], source[key]) : source[key];
-          }
+        while (++index < length) {
+          var key = props[index];
+          object[key] = callback ? callback(object[key], source[key]) : source[key];
         }
       }
       return object;
@@ -5684,6 +5685,9 @@
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     function defaults(object, source, guard) {
+      if (!object) {
+        return object;
+      }
       var args = arguments,
           argsIndex = 0,
           argsLength = args.length,
@@ -5695,16 +5699,14 @@
       }
       while (++argsIndex < argsLength) {
         source = args[argsIndex];
-        if (isObject(source)) {
-          var index = -1,
-              props = keys(source),
-              length = props.length;
+        var index = -1,
+            props = keys(source),
+            length = props.length;
 
-          while (++index < length) {
-            var key = props[index];
-            if (typeof object[key] == 'undefined') {
-              object[key] = source[key];
-            }
+        while (++index < length) {
+          var key = props[index];
+          if (typeof object[key] == 'undefined') {
+            object[key] = source[key];
           }
         }
       }
@@ -6503,14 +6505,11 @@
      * // => ['x', 'y'] (property order is not guaranteed across environments)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      if (!isObject(object)) {
-        return [];
-      }
       if ((support.enumPrototypes && typeof object == 'function') ||
-          (support.nonEnumArgs && object.length && isArguments(object))) {
+          (support.nonEnumArgs && object && object.length && isArguments(object))) {
         return shimKeys(object);
       }
-      return nativeKeys(object);
+      return isObject(object) ? nativeKeys(object) : [];
     };
 
     /**
@@ -6538,7 +6537,7 @@
       if (!isObject(object)) {
         return result;
       }
-      if (support.nonEnumArgs && typeof object.length == 'number' && isArguments(object)) {
+      if (support.nonEnumArgs && object.length && isArguments(object)) {
         object = slice(object);
       }
       var skipProto = support.enumPrototypes && typeof object == 'function',
@@ -6671,7 +6670,7 @@
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot] }
      */
     function merge(object, source, guard) {
-      if (!isObject(object)) {
+      if (!object) {
         return object;
       }
       var args = arguments,

@@ -647,14 +647,6 @@
       deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
     });
 
-    test('should not error on `null` or `undefined` sources (test in IE < 9)', 1, function() {
-      try {
-        deepEqual(_.assign({}, null, undefined, { 'a': 1 }), { 'a': 1 });
-      } catch(e) {
-        ok(false);
-      }
-    });
-
     test('should work with a callback', 1, function() {
       var actual = _.assign({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
         return typeof a == 'undefined' ? b : a;
@@ -1984,14 +1976,6 @@
       var actual = _.defaults({ 'a': undefined }, { 'a': 1 });
       strictEqual(actual.a, 1);
     });
-
-    test('should not error on `null` or `undefined` sources (test in IE < 9)', 1, function() {
-      try {
-        deepEqual(_.defaults({ 'a': 1 }, null, undefined, { 'a': 2, 'b': 2 }), { 'a': 1, 'b': 2 });
-      } catch(e) {
-        ok(false);
-      }
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -2976,6 +2960,28 @@
     test('`_.' + methodName + '` should work with `_.reduce`', 1, function() {
       var array = [{ 'b': 2 }, { 'c': 3 }];
       deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
+    });
+
+    test('`_.' + methodName + '` should not error on `null` or `undefined` sources (test in IE < 9)', 1, function() {
+      try {
+        deepEqual(func({ 'a': 1 }, undefined, { 'b': 2 }, null), { 'a': 1, 'b': 2 });
+      } catch(e) {
+        ok(false);
+      }
+    });
+
+    test('`_.' + methodName + '` should not error when `object` is `null` or `undefined` and source objects are provided', 1, function() {
+      var expected = _.times(2, _.constant(true));
+
+      var actual = _.map([null, undefined], function(value) {
+        try {
+          return _.isEqual(func(value, { 'a': 1 }), value);
+        } catch(e) {
+          return false;
+        }
+      });
+
+      deepEqual(actual, expected);
     });
   });
 

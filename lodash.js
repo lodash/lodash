@@ -6691,7 +6691,7 @@
       } else if (length > 2 && typeof args[length - 1] == 'function') {
         callback = args[--length];
       }
-      var sources = slice(arguments, 1, length),
+      var sources = slice(args, 1, length),
           index = -1,
           stackA = [],
           stackB = [];

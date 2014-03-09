@@ -3524,7 +3524,8 @@
     });
 
     test('should ignore individual secondary values', 1, function() {
-      deepEqual(_.intersection([1, null, 3], 3, null), []);
+      var array = [1, null, 3];
+      deepEqual(_.intersection([1, null, 3], 3, null), array);
     });
   }());
 
@@ -9212,7 +9213,7 @@
       }
 
       deepEqual(_.difference(array, null), array, message('difference'));
-      deepEqual(_.intersection(array, null), [], message('intersection'));
+      deepEqual(_.intersection(array, null), array, message('intersection'));
       deepEqual(_.union(array, null), array, message('union'));
     });
   }(1, null, [3], null, 5));

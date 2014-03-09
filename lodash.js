@@ -2696,7 +2696,10 @@
      * _.intersection([1, 2, 3], [5, 2, 1, 4], [2, 1]);
      * // => [1, 2]
      */
-    function intersection() {
+    function intersection(array) {
+      if (!array) {
+        return [];
+      }
       var args = [],
           argsIndex = -1,
           argsLength = arguments.length,
@@ -2710,9 +2713,10 @@
         if (isArray(value) || isArguments(value)) {
           args.push(value);
           caches.push(prereq && value.length >= 120 &&
-            createCache(argsIndex ? args[argsIndex] : seen));
+            createCache(argsIndex ? value : seen));
         }
       }
+      argsLength = args.length;
       var array = args[0],
           index = -1,
           length = array ? array.length : 0,

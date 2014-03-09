@@ -4154,7 +4154,9 @@
    * // => true
    */
   function isRegExp(value) {
-    return value && typeof value == 'object' && toString.call(value) == regexpClass || false;
+    var type = typeof value;
+    return value && (type == 'function' || type == 'object') &&
+      toString.call(value) == regexpClass || false;
   }
 
   /**

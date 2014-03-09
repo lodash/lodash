@@ -2148,34 +2148,6 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Checks if `value` is an `arguments` object.
-     *
-     * @static
-     * @memberOf _
-     * @category Objects
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
-     * @example
-     *
-     * (function() { return _.isArguments(arguments); })(1, 2, 3);
-     * // => true
-     *
-     * _.isArguments([1, 2, 3]);
-     * // => false
-     */
-    function isArguments(value) {
-      return value && typeof value == 'object' && typeof value.length == 'number' &&
-        toString.call(value) == argsClass || false;
-    }
-    // fallback for environments that can't detect `arguments` objects by [[Class]]
-    if (!support.argsClass) {
-      isArguments = function(value) {
-        return value && typeof value == 'object' && typeof value.length == 'number' &&
-          hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee') || false;
-      };
-    }
-
-    /**
      * A fallback implementation of `Object.keys` which creates an array of the
      * own enumerable property names of `object`.
      *
@@ -5259,6 +5231,33 @@
     }
 
     /**
+     * Creates a function that negates the result of `func`. The `func` function
+     * is executed with the `this` binding and arguments of the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Functions
+     * @param {Function} func The function to negate.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * function isEven(num) {
+     *   return num % 2 == 0;
+     * }
+     *
+     * _.filter([1, 2, 3, 4, 5, 6], _.negate(isEven));
+     * // => [1, 3, 5]
+     */
+    function negate(func) {
+      if (!isFunction(func)) {
+        throw new TypeError;
+      }
+      return function() {
+        return !func.apply(this, arguments);
+      };
+    }
+
+    /**
      * Creates a function that is restricted to execute `func` once. Repeat calls to
      * the function will return the value of the first call. The `func` is executed
      * with the `this` binding of the created function.
@@ -7824,33 +7823,6 @@
           }(func));
         }
       }
-    }
-
-    /**
-     * Creates a function that negates the result of `func`. The `func` function
-     * is executed with the `this` binding and arguments of the created function.
-     *
-     * @static
-     * @memberOf _
-     * @category Utilities
-     * @param {Function} func The function to negate.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * function isEven(num) {
-     *   return num % 2 == 0;
-     * }
-     *
-     * _.filter([1, 2, 3, 4, 5, 6], _.negate(isEven));
-     * // => [1, 3, 5]
-     */
-    function negate(func) {
-      if (!isFunction(func)) {
-        throw new TypeError;
-      }
-      return function() {
-        return !func.apply(this, arguments);
-      };
     }
 
     /**

@@ -2120,8 +2120,8 @@
     });
 
     test('should work with large arrays', 1, function() {
-      var array1 = _.range(LARGE_ARRAY_SIZE),
-          array2 = array1.slice(),
+      var array1 = _.range(LARGE_ARRAY_SIZE + 1),
+          array2 = _.range(LARGE_ARRAY_SIZE),
           a = {},
           b = {},
           c = {};
@@ -2129,17 +2129,18 @@
       array1.push(a, b, c);
       array2.push(b, c, a);
 
-      deepEqual(_.difference(array1, array2), []);
+      deepEqual(_.difference(array1, array2), [LARGE_ARRAY_SIZE]);
     });
 
     test('should work with large arrays of objects', 1, function() {
-      var object = {};
+      var object1 = {},
+          object2 = {};
 
-      var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
-        return object;
-      });
+      var largeArray = [object1].concat(_.times(LARGE_ARRAY_SIZE, function() {
+        return object2;
+      }));
 
-      deepEqual(_.difference(largeArray, [object]), []);
+      deepEqual(_.difference(largeArray, [object2]), [object1]);
     });
 
     test('should ignore individual secondary values', 1, function() {

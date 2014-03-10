@@ -5900,6 +5900,97 @@
     });
   }());
 
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.pad');
+
+  (function() {
+    test('should pad a string to a given length', 1, function() {
+      equal(_.pad('abc', 9), '   abc   ');
+    });
+
+    test('should truncate pad characters to fit the pad length', 2, function() {
+      equal(_.pad('abc', 8), '  abc   ');
+      equal(_.pad('abc', 8, '_-'), '_-abc_-_');
+    });
+
+    test('should coerce `string` to a string', 2, function() {
+      equal(_.pad(Object('abc'), 4), 'abc ');
+      equal(_.pad({ 'toString': _.constant('abc') }, 5), ' abc ');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.padLeft');
+
+  (function() {
+    test('should pad a string to a given length', 1, function() {
+      equal(_.padLeft('abc', 6), '   abc');
+    });
+
+    test('should truncate pad characters to fit the pad length', 1, function() {
+      equal(_.padLeft('abc', 6, '_-'), '_-_abc');
+    });
+
+    test('should coerce `string` to a string', 2, function() {
+      equal(_.padLeft(Object('abc'), 4), ' abc');
+      equal(_.padLeft({ 'toString': _.constant('abc') }, 5), '  abc');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.padRight');
+
+  (function() {
+    test('should pad a string to a given length', 1, function() {
+      equal(_.padRight('abc', 6), 'abc   ');
+    });
+
+    test('should truncate pad characters to fit the pad length', 1, function() {
+      equal(_.padRight('abc', 6, '_-'), 'abc_-_');
+    });
+
+    test('should coerce `string` to a string', 2, function() {
+      equal(_.padRight(Object('abc'), 4), 'abc ');
+      equal(_.padRight({ 'toString': _.constant('abc') }, 5), 'abc  ');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('pad methods');
+
+  _.forEach(['pad', 'padLeft', 'padRight'], function(methodName, index) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should not pad is string is >= `length`', 2, function() {
+      equal(func('abc', 2), 'abc');
+      equal(func('abc', 3), 'abc');
+    });
+
+    test('`_.' + methodName + '` should treat negative `length` as `0`', 2, function() {
+      _.each([0, -2], function(length) {
+        equal(func('abc', length), 'abc');
+      });
+    });
+
+    test('`_.' + methodName + '` should coerce `length` to a number', 2, function() {
+      _.each(['', '4'], function(length) {
+        var actual = length ? (index == 1 ? ' abc' : 'abc ') : 'abc';
+        equal(func('abc', length), actual);
+      });
+    });
+
+    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
+      strictEqual(func(null), '');
+      strictEqual(func(undefined, 3), '   ');
+      strictEqual(func('', 1), ' ');
+    });
+  });
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.pairs');
@@ -6803,6 +6894,39 @@
 
       _.remove(array, function(num) { return num == null; });
       deepEqual(array, [1, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.repeat');
+
+  (function() {
+    test('should repeat a string `n` times', 2, function() {
+      equal(_.repeat('*', 3), '***');
+      equal(_.repeat('abc', 2), 'abcabc');
+    });
+
+    test('should return an empty string for negative `n` or `n` of `0`', 2, function() {
+      strictEqual(_.repeat('abc', 0), '');
+      strictEqual(_.repeat('abc', -2), '');
+    });
+
+    test('should coerce `n` to a number', 3, function() {
+      strictEqual(_.repeat('abc'), '');
+      equal(_.repeat('abc', '2'), 'abcabc');
+      equal(_.repeat('*', { 'valueOf': _.constant(3) }), '***');
+    });
+
+    test('should coerce `string` to a string', 2, function() {
+      equal(_.repeat(Object('abc'), 2), 'abcabc');
+      equal(_.repeat({ 'toString': _.constant('*') }, 3), '***');
+    });
+
+    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
+      strictEqual(_.repeat(null, 1), '');
+      strictEqual(_.repeat(undefined, 2), '');
+      strictEqual(_.repeat('', 3), '');
     });
   }());
 
@@ -7837,6 +7961,66 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.truncate');
+
+  (function() {
+    var string = 'hi-diddly-ho there, neighborino';
+
+    test('should truncate to a length of `30` by default', 1, function() {
+      equal(_.truncate(string), 'hi-diddly-ho there, neighbo...');
+    });
+
+    test('should not truncate if `string` is <= `length`', 2, function() {
+      equal(_.truncate(string, string.length), string);
+      equal(_.truncate(string, string.length + 2), string);
+    });
+
+    test('should truncate string the given length', 1, function() {
+      equal(_.truncate(string, 24), 'hi-diddly-ho there, n...');
+    });
+
+    test('should support a `omission` option', 1, function() {
+      equal(_.truncate(string, { 'omission': ' [...]' }), 'hi-diddly-ho there, neig [...]');
+    });
+
+    test('should support a `length` option', 1, function() {
+      equal(_.truncate(string, { 'length': 4 }), 'h...');
+    });
+
+    test('should support a `separator` option', 2, function() {
+      equal(_.truncate(string, { 'length': 24, 'separator': ' ' }), 'hi-diddly-ho there,...');
+      equal(_.truncate(string, { 'length': 24, 'separator': /,? +/ }), 'hi-diddly-ho there...');
+    });
+
+    test('should treat negative `length` as `0`', 4, function() {
+      _.each([0, -2], function(length) {
+        equal(_.truncate(string, length), '...');
+        equal(_.truncate(string, { 'length': length }), '...');
+      });
+    });
+
+    test('should coerce `length` to a number', 4, function() {
+      _.each(['', '4'], function(length, index) {
+        var actual = index ? 'h...' : '...';
+        equal(_.truncate(string, length), actual);
+        equal(_.truncate(string, { 'length': { 'valueOf': _.constant(length) } }), actual);
+      });
+    });
+
+    test('should coerce `string` to a string', 2, function() {
+      equal(_.truncate(Object(string), 4), 'h...');
+      equal(_.truncate({ 'toString': _.constant(string) }, 5), 'hi...');
+    });
+
+    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
+      strictEqual(_.truncate(null), '');
+      strictEqual(_.truncate(undefined, 3), '');
+      strictEqual(_.truncate('', 1), '');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.throttle');
 
   (function() {
@@ -8015,7 +8199,7 @@
       }
     });
 
-    test('should work with `leading` option', 4, function() {
+    test('should support a `leading` option', 4, function() {
       if (!(isRhino && isModularize)) {
         _.forEach([true, { 'leading': true }], function(options) {
           var withLeading = _.throttle(_.identity, 32, options);
@@ -8032,7 +8216,7 @@
       }
     });
 
-    asyncTest('should work with `trailing` option', 6, function() {
+    asyncTest('should support a `trailing` option', 6, function() {
       if (!(isRhino && isModularize)) {
         var withCount = 0,
             withoutCount = 0;
@@ -8393,10 +8577,10 @@
     });
 
     test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 6, function() {
-      _.forEach([null, '_-'], function(arg) {
-        strictEqual(func.call(_, null, arg), '');
-        strictEqual(func.call(_, undefined, arg), '');
-        strictEqual(func.call(_, '', arg), '');
+      _.forEach([null, '_-'], function(chars) {
+        strictEqual(func(null, chars), '');
+        strictEqual(func(undefined, chars), '');
+        strictEqual(func('', chars), '');
       });
     });
   });

@@ -1788,7 +1788,7 @@
       }
     });
 
-    asyncTest('should work with `leading` option', 7, function() {
+    asyncTest('should support a `leading` option', 7, function() {
       if (!(isRhino && isModularize)) {
         var withLeading,
             counts = [0, 0, 0];
@@ -1834,7 +1834,7 @@
       }
     });
 
-    asyncTest('should work with `trailing` option', 4, function() {
+    asyncTest('should support a `trailing` option', 4, function() {
       if (!(isRhino && isModularize)) {
         var withCount = 0,
             withoutCount = 0;
@@ -1864,7 +1864,7 @@
       }
     });
 
-    test('should work with `maxWait` option', 2, function() {
+    test('should support a `maxWait` option', 2, function() {
       if (!(isRhino && isModularize)) {
         var limit = (argv || isPhantomPage) ? 1000 : 256,
             withCount = 0,

@@ -6111,7 +6111,13 @@
      * // => true
      */
     function isDate(value) {
-      return value && typeof value == 'object' && toString.call(value) == dateClass || false;
+      if (value && typeof value == 'object' && toString.call(value) == dateClass) {
+        return true;
+      }
+      // trim
+      value.replace(/^\s+|\s+$/gm, '');
+      dateFormat = /(^\d{1,4}[\.|\\/|-]\d{1,2}[\.|\\/|-]\d{1,4})(\s*(?:0?[1-9]:[0-5]|1(?=[012])\d:[0-5])\d\s*[ap]m)?$/;
+      return dateFormat.test(value);
     }
 
     /**

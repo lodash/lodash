@@ -1734,8 +1734,8 @@
    * _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
    * // => [2, 3, 4]
    */
-  function without(array) {
-    return baseDifference(array, slice(arguments, 1));
+  function without() {
+    return baseDifference(arguments[0], slice(arguments, 1));
   }
 
   /**

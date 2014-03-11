@@ -77,7 +77,7 @@
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
   /** Used to match words to create compound words */
-  var reWords = /[a-zA-Z0-9][a-z0-9]*/g;
+  var reWords = /[A-Z]{2,}|[a-zA-Z0-9][a-z0-9]*/g;
 
   /** Used to detect and test whitespace */
   var whitespace = (

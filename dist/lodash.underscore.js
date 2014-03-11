@@ -159,7 +159,7 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    var index = (fromIndex || 0) - 1,
+    var index = (fromIndex | 0) - 1,
         length = array ? array.length : 0;
 
     while (++index < length) {
@@ -567,6 +567,7 @@
         length = collection ? collection.length : 0;
 
     if (typeof length == 'number') {
+      length |= 0;
       while (++index < length) {
         if (callback(iterable[index], index, collection) === breakIndicator) {
           break;
@@ -592,6 +593,7 @@
         length = collection ? collection.length : 0;
 
     if (typeof length == 'number') {
+      length = (length |= 0) < 0 ? 0 : length;
       while (length--) {
         if (callback(iterable[length], length, collection) === breakIndicator) {
           break;
@@ -615,7 +617,7 @@
    * @returns {Array} Returns the new flattened array.
    */
   function baseFlatten(array, isShallow, isStrict, fromIndex) {
-    var index = (fromIndex || 0) - 1,
+    var index = (fromIndex | 0) - 1,
         length = array ? array.length : 0,
         result = [];
 
@@ -976,9 +978,9 @@
       callback = createCallback(callback, thisArg, 3);
 
       var index = -1,
-          length = collection ? collection.length : 0;
+          length = collection ? collection.length | 0 : 0;
 
-      if (typeof length == 'number') {
+      if (length > 0) {
         while (++index < length) {
           var value = collection[index];
           setter(result, value, callback(value, index, collection), collection);
@@ -1204,7 +1206,7 @@
     if (n == null || guard) {
       return array ? array[0] : undefined;
     }
-    return slice(array, 0, n > 0 ? n : 0);
+    return slice(array, 0, n < 0 ? 0 : n);
   }
 
   /**
@@ -1290,7 +1292,7 @@
   function indexOf(array, value, fromIndex) {
     var length = array ? array.length : 0;
     if (typeof fromIndex == 'number') {
-      fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : (fromIndex || 0);
+      fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) | 0;
     } else if (fromIndex) {
       var index = sortedIndex(array, value);
       return (length && array[index] === value) ? index : -1;
@@ -1314,7 +1316,7 @@
   function initial(array, n, guard) {
     var length = array ? array.length : 0;
     n = length - ((n == null || guard) ? 1 : n);
-    return slice(array, 0, n > 0 ? n : 0);
+    return slice(array, 0, n < 0 ? 0 : n);
   }
 
   /**
@@ -1384,7 +1386,7 @@
       return array ? array[length - 1] : undefined;
     }
     n = length - n;
-    return slice(array, n > 0 ? n : 0);
+    return slice(array, n < 0 ? 0 : n);
   }
 
   /**
@@ -1411,6 +1413,7 @@
   function lastIndexOf(array, value, fromIndex) {
     var index = array ? array.length : 0;
     if (typeof fromIndex == 'number') {
+      fromIndex |= 0;
       index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
     }
     while (index--) {
@@ -1492,7 +1495,7 @@
     if (n == null || guard) {
       n = 1;
     } else {
-      n = n > 0 ? n : 0;
+      n = n < 0 ? 0 : n;
     }
     return slice(array, n);
   }
@@ -1529,7 +1532,7 @@
     } else if (end > length) {
       end = length;
     }
-    length = end - start || 0;
+    length = (length = (end - start) | 0) < 0 ? 0 : length;
 
     var result = Array(length);
     while (++index < length) {
@@ -1941,10 +1944,10 @@
    */
   function contains(collection, target) {
     var indexOf = getIndexOf(),
-        length = collection ? collection.length : 0,
+        length = collection ? collection.length | 0 : 0,
         result = false;
 
-    if (length && typeof length == 'number') {
+    if (length > 0) {
       return indexOf(collection, target) > -1;
     }
     baseEach(collection, function(value) {
@@ -2037,9 +2040,9 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
-    if (typeof length == 'number') {
+    if (length > 0) {
       while (++index < length) {
         if (!predicate(collection[index], index, collection)) {
           return false;
@@ -2098,9 +2101,9 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
-    if (typeof length == 'number') {
+    if (length > 0) {
       while (++index < length) {
         var value = collection[index];
         if (predicate(value, index, collection)) {
@@ -2163,9 +2166,9 @@
   function find(collection, predicate, thisArg) {
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
-    if (typeof length == 'number') {
+    if (length > 0) {
       while (++index < length) {
         var value = collection[index];
         if (predicate(value, index, collection)) {
@@ -2212,10 +2215,10 @@
    */
   function forEach(collection, callback, thisArg) {
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
     callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-    if (typeof length == 'number') {
+    if (length > 0) {
       while (++index < length) {
         if (callback(collection[index], index, collection) === breakIndicator) {
           break;
@@ -2339,8 +2342,8 @@
     var args = slice(arguments, 2),
         index = -1,
         isFunc = typeof methodName == 'function',
-        length = collection ? collection.length : 0,
-        result = Array(typeof length == 'number' ? length : 0);
+        length = collection ? collection.length | 0 : 0,
+        result = Array(length < 0 ? 0 : length);
 
     baseEach(collection, function(value) {
       result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
@@ -2389,10 +2392,10 @@
    */
   function map(collection, callback, thisArg) {
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
     callback = createCallback(callback, thisArg, 3);
-    if (typeof length == 'number') {
+    if (length > 0) {
       var result = Array(length);
       while (++index < length) {
         result[index] = callback(collection[index], index, collection);
@@ -2456,9 +2459,9 @@
       callback = null;
     }
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
-    if (callback == null && typeof length == 'number') {
+    if (callback == null && length > 0) {
       while (++index < length) {
         var value = collection[index];
         if (value > result) {
@@ -2529,9 +2532,9 @@
       callback = null;
     }
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
-    if (callback == null && typeof length == 'number') {
+    if (callback == null && length > 0) {
       while (++index < length) {
         var value = collection[index];
         if (value < result) {
@@ -2657,9 +2660,9 @@
     callback = createCallback(callback, thisArg, 4);
 
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
-    if (typeof length == 'number') {
+    if (length > 0) {
       if (noaccum && length) {
         accumulator = collection[++index];
       }
@@ -2773,7 +2776,8 @@
       collection = values(collection);
     }
     if (n == null || guard) {
-      return collection ? collection[baseRandom(0, collection.length - 1)] : undefined;
+      var length = collection ? collection.length | 0 : 0;
+      return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
     }
     var result = shuffle(collection);
     result.length = nativeMin(nativeMax(0, n), result.length);
@@ -2797,8 +2801,8 @@
    */
   function shuffle(collection) {
     var index = -1,
-        length = collection ? collection.length : 0,
-        result = Array(typeof length == 'number' ? length : 0);
+        length = collection ? collection.length | 0 : 0,
+        result = Array(length < 0 ? 0 : length);
 
     baseEach(collection, function(value) {
       var rand = baseRandom(0, ++index);
@@ -2831,7 +2835,7 @@
    */
   function size(collection) {
     var length = collection ? collection.length : 0;
-    return typeof length == 'number' ? length : keys(collection).length;
+    return typeof length == 'number' && length > -1 ? length : keys(collection).length;
   }
 
   /**
@@ -2881,9 +2885,9 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = collection ? collection.length : 0;
+        length = collection ? collection.length | 0 : 0;
 
-    if (typeof length == 'number') {
+    if (length > 0) {
       while (++index < length) {
         if (predicate(collection[index], index, collection)) {
           return true;
@@ -2948,8 +2952,8 @@
    */
   function sortBy(collection, callback, thisArg) {
     var index = -1,
-        length = collection ? collection.length : 0,
-        result = Array(typeof length == 'number' ? length : 0);
+        length = collection ? collection.length | 0 : 0,
+        result = Array(length < 0 ? 0 : length);
 
     callback = createCallback(callback, thisArg, 3);
     baseEach(collection, function(value, key, collection) {
@@ -3229,7 +3233,7 @@
     if (!isFunction(func)) {
       throw new TypeError;
     }
-    wait = wait > 0 ? wait : 0;
+    wait = wait < 0 ? 0 : wait;
     if (options === true) {
       var leading = true;
       trailing = false;
@@ -3542,12 +3546,11 @@
       leading = 'leading' in options ? options.leading : leading;
       trailing = 'trailing' in options ? options.trailing : trailing;
     }
-    options = {};
-    options.leading = leading;
-    options.maxWait = wait;
-    options.trailing = trailing;
-
-    return debounce(func, wait, options);
+    return debounce(func, wait, {
+      'leading': leading,
+      'maxWait': wait,
+      'trailing': trailing
+    });
   }
 
   /**
@@ -4704,16 +4707,17 @@
    */
   function matches(source) {
     source || (source = {});
+    var props = keys(source),
+        propsLength = props.length;
 
-    var props = keys(source);
     return function(object) {
-      var length = props.length,
+      var length = propsLength,
           result = true;
 
       while (length--) {
         var key = props[length];
         if (!(result = hasOwnProperty.call(object, key) &&
-              object[key] === source[key])) {
+            object[key] === source[key])) {
           break;
         }
       }

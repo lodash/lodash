@@ -78,7 +78,7 @@
   var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
 
   /** Used to match words to create compound words */
-  var reWords = /[a-zA-Z0-9][a-z0-9]*/g;
+  var reWords = /[A-Z]{2,}|[a-zA-Z0-9][a-z0-9]*/g;
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -262,7 +262,7 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    var index = (fromIndex || 0) - 1,
+    var index = (fromIndex | 0) - 1,
         length = array ? array.length : 0;
 
     while (++index < length) {
@@ -1012,8 +1012,8 @@
           // avoid `arguments` object use disqualifying optimizations by
           // converting it to an array before passing it to `composeArgs`
           var index = -1,
-               length = arguments.length,
-               args = Array(length);
+              length = arguments.length,
+              args = Array(length);
 
           while (++index < length) {
             args[index] = arguments[index];
@@ -1329,6 +1329,7 @@
           length = collection ? collection.length : 0;
 
       if (typeof length == 'number') {
+        length |= 0;
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
         }
@@ -1357,6 +1358,7 @@
           length = collection ? collection.length : 0;
 
       if (typeof length == 'number') {
+        length = (length |= 0) < 0 ? 0 : length;
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
         }
@@ -1383,7 +1385,7 @@
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isShallow, isStrict, fromIndex) {
-      var index = (fromIndex || 0) - 1,
+      var index = (fromIndex | 0) - 1,
           length = array ? array.length : 0,
           result = [];
 
@@ -1953,7 +1955,7 @@
      */
     function createPad(string, length, chars) {
       var strLength = string.length;
-      length = +length || 0;
+      length |= 0;
 
       if (strLength >= length) {
         return '';
@@ -2499,7 +2501,7 @@
           return array ? array[0] : undefined;
         }
       }
-      return slice(array, 0, n > 0 ? n : 0);
+      return slice(array, 0, n < 0 ? 0 : n);
     }
 
     /**
@@ -2596,7 +2598,7 @@
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
-        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : (fromIndex || 0);
+        fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) | 0;
       } else if (fromIndex) {
         var index = sortedIndex(array, value);
         return (length && array[index] === value) ? index : -1;
@@ -2632,7 +2634,7 @@
         n = (predicate == null || thisArg) ? 1 : predicate;
       }
       n = length - n;
-      return slice(array, 0, n > 0 ? n : 0);
+      return slice(array, 0, n < 0 ? 0 : n);
     }
 
     /**
@@ -2726,7 +2728,7 @@
         }
       }
       n = length - n;
-      return slice(array,  n > 0 ? n : 0);
+      return slice(array,  n < 0 ? 0 : n);
     }
 
     /**
@@ -2753,6 +2755,7 @@
     function lastIndexOf(array, value, fromIndex) {
       var index = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
+        fromIndex |= 0;
         index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
       }
       while (index--) {
@@ -2928,7 +2931,7 @@
       } else if (predicate == null || thisArg) {
         n = 1;
       } else {
-        n = predicate > 0 ? predicate : 0;
+        n = predicate < 0 ? 0 : predicate;
       }
       return slice(array, n);
     }
@@ -2965,7 +2968,7 @@
       } else if (end > length) {
         end = length;
       }
-      length = end - start || 0;
+      length = (length = (end - start) | 0) < 0 ? 0 : length;
 
       var result = Array(length);
       while (++index < length) {
@@ -3580,9 +3583,10 @@
      */
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
-      fromIndex = typeof fromIndex == 'number' ? fromIndex : 0;
+      fromIndex = typeof fromIndex == 'number' ? fromIndex | 0 : 0;
 
       if (typeof length == 'number') {
+        length = (length |= 0) < 0 ? 0 : length;
         if (fromIndex >= length) {
           return false;
         }
@@ -3592,7 +3596,7 @@
             : collection.indexOf(target, fromIndex) > -1;
         }
         var indexOf = getIndexOf();
-        fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) || 0;
+        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex;
         return indexOf(collection, target, fromIndex) > -1;
       }
       var index = -1,
@@ -4056,8 +4060,8 @@
       var args = slice(arguments, 2),
           index = -1,
           isFunc = typeof methodName == 'function',
-          length = collection ? collection.length : 0,
-          result = Array(typeof length == 'number' ? length : 0);
+          length = collection ? collection.length | 0 : 0,
+          result = Array(length < 0 ? 0 : length);
 
       baseEach(collection, function(value) {
         result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
@@ -4106,8 +4110,8 @@
      */
     function map(collection, callback, thisArg) {
       var index = -1,
-          length = collection ? collection.length : 0,
-          result = Array(typeof length == 'number' ? length : 0);
+          length = collection ? collection.length | 0 : 0,
+          result = Array(length < 0 ? 0 : length);
 
       callback = lodash.createCallback(callback, thisArg, 3);
       if (isArray(collection)) {
@@ -4495,7 +4499,8 @@
         collection = collection.split('');
       }
       if (n == null || guard) {
-        return collection ? collection[baseRandom(0, collection.length - 1)] : undefined;
+        var length = collection ? collection.length | 0 : 0;
+        return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
       result.length = nativeMin(nativeMax(0, n), result.length);
@@ -4519,8 +4524,8 @@
      */
     function shuffle(collection) {
       var index = -1,
-          length = collection ? collection.length : 0,
-          result = Array(typeof length == 'number' ? length : 0);
+          length = collection ? collection.length | 0 : 0,
+          result = Array(length < 0 ? 0 : length);
 
       baseEach(collection, function(value) {
         var rand = baseRandom(0, ++index);
@@ -4553,7 +4558,7 @@
      */
     function size(collection) {
       var length = collection ? collection.length : 0;
-      return typeof length == 'number' ? length : keys(collection).length;
+      return typeof length == 'number' && length > -1 ? length : keys(collection).length;
     }
 
     /**
@@ -4671,8 +4676,8 @@
     function sortBy(collection, callback, thisArg) {
       var index = -1,
           multi = callback && isArray(callback),
-          length = collection ? collection.length : 0,
-          result = Array(typeof length == 'number' ? length : 0);
+          length = collection ? collection.length | 0 : 0,
+          result = Array(length < 0 ? 0 : length);
 
       if (!multi) {
         callback = lodash.createCallback(callback, thisArg, 3);
@@ -4713,7 +4718,8 @@
      * // => [2, 3, 4]
      */
     function toArray(collection) {
-      if (collection && typeof collection.length == 'number') {
+      var length = collection && collection.length;
+      if (typeof length == 'number' && length > -1) {
         return (support.unindexedChars && isString(collection))
           ? collection.split('')
           : slice(collection);
@@ -5044,7 +5050,7 @@
       if (!isFunction(func)) {
         throw new TypeError;
       }
-      wait = wait > 0 ? wait : 0;
+      wait = wait < 0 ? 0 : wait;
       if (options === true) {
         var leading = true;
         trailing = false;
@@ -6977,7 +6983,7 @@
       target = String(target);
 
       var length = string.length;
-      position = (typeof position == 'number' ? nativeMin(nativeMax(position, 0), length) : length) - target.length;
+      position = (typeof position == 'number' ? nativeMin(nativeMax(position | 0, 0), length) : length) - target.length;
       return position >= 0 && string.indexOf(target, position) == position;
     }
 
@@ -7074,7 +7080,7 @@
      */
     function pad(string, length, chars) {
       string = string == null ? '' : String(string);
-      length = +length || 0;
+      length |= 0;
 
       var strLength = string.length;
       if (strLength >= length) {
@@ -7166,7 +7172,7 @@
      */
     function repeat(string, n) {
       var result = '';
-      n = +n || 0;
+      n |= 0;
 
       if (n < 1 || string == null) {
         return result;
@@ -7178,7 +7184,7 @@
         }
         n = floor(n / 2);
         string += string;
-      } while (n > 0);
+      } while (n);
       return result;
     }
 
@@ -7230,7 +7236,7 @@
      */
     function startsWith(string, target, position) {
       string = string == null ? '' : String(string);
-      position = typeof position == 'number' ? nativeMin(nativeMax(position, 0), string.length) : 0;
+      position = typeof position == 'number' ? nativeMin(nativeMax(position | 0, 0), string.length) : 0;
       return string.lastIndexOf(target, position) == position;
     }
 
@@ -7536,11 +7542,11 @@
 
       if (options && isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
-        length = 'length' in options ? +options.length || 0 : length;
+        length = 'length' in options ? options.length | 0 : length;
         omission = 'omission' in options ? String(options.omission) : omission;
       }
       else if (options != null) {
-        length = +options || 0;
+        length = options | 0;
       }
       string = string == null ? '' : String(string);
       if (length >= string.length) {
@@ -7714,14 +7720,14 @@
      */
     function matches(source) {
       source || (source = {});
-
       var props = keys(source),
+          propsLength = props.length,
           key = props[0],
           a = source[key];
 
       // fast path the common case of providing an object with a single
       // property containing a primitive value
-      if (props.length == 1 && a === a && !isObject(a)) {
+      if (propsLength == 1 && a === a && !isObject(a)) {
         return function(object) {
           if (!hasOwnProperty.call(object, key)) {
             return false;
@@ -7732,13 +7738,13 @@
         };
       }
       return function(object) {
-        var length = props.length,
+        var length = propsLength,
             result = false;
 
         while (length--) {
           var key = props[length];
           if (!(result = hasOwnProperty.call(object, key) &&
-                baseIsEqual(object[key], source[key], null, true))) {
+              baseIsEqual(object[key], source[key], null, true))) {
             break;
           }
         }

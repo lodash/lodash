@@ -6060,6 +6060,10 @@
       strictEqual(func(undefined, 3), '   ');
       strictEqual(func('', 1), ' ');
     });
+
+    test('`_.' + methodName + '` should work with an empty string for `chars`', 1, function() {
+      equal(func('abc', 6, ''), 'abc');
+    });
   });
 
   /*--------------------------------------------------------------------------*/

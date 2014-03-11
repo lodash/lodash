@@ -993,6 +993,76 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('case methods');
+
+  _.forEach(['camel', 'kebab', 'snake'], function(caseName) {
+    var methodName = caseName + 'Case',
+        func = _[methodName];
+
+    var expected = (function() {
+      switch (caseName) {
+        case 'camel': return 'helloWorld';
+        case 'kebab': return 'hello-world';
+        case 'snake': return 'hello_world';
+      }
+    }());
+
+    var burredLetters = [
+      '\xC0', '\xC1', '\xC2', '\xC3', '\xC4', '\xC5', '\xC6', '\xC7', '\xC8', '\xC9', '\xCA', '\xCB', '\xCC', '\xCD', '\xCE', '\xCF',
+      '\xD0', '\xD1', '\xD2', '\xD3', '\xD4', '\xD5', '\xD6', '\xD7', '\xD8', '\xD9', '\xDA', '\xDB', '\xDC', '\xDD', '\xDE', '\xDF',
+      '\xE0', '\xE1', '\xE2', '\xE3', '\xE4', '\xE5', '\xE6', '\xE7', '\xE8', '\xE9', '\xEA', '\xEB', '\xEC', '\xED', '\xEE', '\xEF',
+      '\xF0', '\xF1', '\xF2', '\xF3', '\xF4', '\xF5', '\xF6', '\xF7', '\xF8', '\xF9', '\xFA', '\xFB', '\xFC', '\xFD', '\xFE', '\xFF'
+    ];
+
+    var deburredLetters = [
+      'A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
+      'D', 'N', 'O', 'O', 'O', 'O', 'O', '', 'O', 'U', 'U', 'U', 'U', 'Y', 'Th', 'ss',
+      'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
+      'd', 'n', 'o', 'o', 'o', 'o', 'o', '', 'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
+    ];
+
+    test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 3, function() {
+      _.forEach(['Hello world', 'helloWorld', 'hello-world', 'hello_world'], function(string) {
+        if (string != expected) {
+          equal(func(string), expected);
+        }
+      });
+    });
+
+    test('`_.' + methodName + '` should deburr letters', 1, function() {
+      var actual = _.map(burredLetters, function(burred, index) {
+        var isCamel = caseName == 'camel',
+            deburrLetter = deburredLetters[index];
+
+        var string = isCamel
+          ? func('z' + burred)
+          : func(burred);
+
+        var deburredString = isCamel
+          ? 'z' + deburrLetter
+          : deburrLetter.toLowerCase();
+
+        return string == deburredString;
+      });
+
+      ok(_.every(actual, _.identity));
+    });
+
+    test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
+      var string = 'Hello world';
+      equal(func(Object(string)), expected);
+      equal(func({ 'toString': _.constant(string) }), expected);
+    });
+
+    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
+      strictEqual(func(null), '');
+      strictEqual(func(undefined), '');
+      strictEqual(func(''), '');
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.capitalize');
 
   (function() {

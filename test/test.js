@@ -5973,13 +5973,13 @@
     });
 
     test('`_.' + methodName + '` should treat negative `length` as `0`', 2, function() {
-      _.each([0, -2], function(length) {
+      _.forEach([0, -2], function(length) {
         equal(func('abc', length), 'abc');
       });
     });
 
     test('`_.' + methodName + '` should coerce `length` to a number', 2, function() {
-      _.each(['', '4'], function(length) {
+      _.forEach(['', '4'], function(length) {
         var actual = length ? (index == 1 ? ' abc' : 'abc ') : 'abc';
         equal(func('abc', length), actual);
       });
@@ -7994,14 +7994,14 @@
     });
 
     test('should treat negative `length` as `0`', 4, function() {
-      _.each([0, -2], function(length) {
+      _.forEach([0, -2], function(length) {
         equal(_.truncate(string, length), '...');
         equal(_.truncate(string, { 'length': length }), '...');
       });
     });
 
     test('should coerce `length` to a number', 4, function() {
-      _.each(['', '4'], function(length, index) {
+      _.forEach(['', '4'], function(length, index) {
         var actual = index ? 'h...' : '...';
         equal(_.truncate(string, length), actual);
         equal(_.truncate(string, { 'length': { 'valueOf': _.constant(length) } }), actual);

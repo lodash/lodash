@@ -54,7 +54,7 @@
   var contextProps = [
     'Array', 'Date', 'Function', 'Math', 'Object', 'RegExp', 'String', '_',
     'clearTimeout', 'chrome', 'chromium', 'document', 'java', 'navigator',
-    'performance', 'phantom', 'platform', 'process', 'runtime', 'setTimeout'
+    'phantom', 'platform', 'process', 'runtime', 'setTimeout'
   ];
 
   /** Used to avoid hz of Infinity */
@@ -170,15 +170,6 @@
     /** Used to access Wade Simmons' Node microtime module */
     var microtimeObject = req('microtime');
 
-    /** Used to access the browser's high resolution timer */
-    var perfObject = isHostType(context, 'performance') && context.performance;
-
-    /** Used to call the browser's high resolution timer */
-    var perfName = perfObject && (
-      perfObject.now && 'now' ||
-      perfObject.webkitNow && 'webkitNow'
-    );
-
     /** Used to access Node's high resolution timer */
     var processObject = isHostType(context, 'process') && context.process;
 
@@ -186,7 +177,7 @@
     var trash = doc && doc.createElement('div');
 
     /** Used to integrity check compiled tests */
-    var uid = 'uid' + (+new Date);
+    var uid = 'uid' + _.now();
 
     /** Used to avoid infinite recursion when methods call each other */
     var calledBy = {};
@@ -249,7 +240,9 @@
         // parentheses from Function#toString results
         // http://bugzil.la/559438
         support.decompilation = Function(
-          'return (' + (function(x) { return { 'x': '' + (1 + x) + '', 'y': 0 }; }) + ')'
+          ('return (' + (function(x) { return { 'x': '' + (1 + x) + '', 'y': 0 }; }) + ')')
+          // avoid issues with code added by Istanbul
+          .replace(/__cov__[^;]+;/g, '')
         )()(0).x === '1';
       } catch(e) {
         support.decompilation = false;
@@ -296,6 +289,14 @@
 
     /**
      * The Benchmark constructor.
+     *
+     * Note: The Benchmark constructor exposes a handful of Lo-Dash methods to
+     * make working with arrays, collections, and objects easier. The Lo-Dash
+     * methods are:
+     * [`each/forEach`](http://lodash.com/docs#forEach), [`forOwn`](http://lodash.com/docs#forOwn),
+     * [`has`](http://lodash.com/docs#has), [`indexOf`](http://lodash.com/docs#indexOf),
+     * [`map`](http://lodash.com/docs#map), [`pluck`](http://lodash.com/docs#pluck),
+     * and [`reduce`](http://lodash.com/docs#reduce)
      *
      * @constructor
      * @param {string} name A name to identify the benchmark.
@@ -434,11 +435,17 @@
       }
       return (event == null || event.constructor != Event)
         ? new Event(type)
-        : _.assign(event, { 'timeStamp': +new Date }, typeof type == 'string' ? { 'type': type } : type);
+        : _.assign(event, { 'timeStamp': _.now() }, typeof type == 'string' ? { 'type': type } : type);
     }
 
     /**
      * The Suite constructor.
+     *
+     * Note: Each Suite instance has a handful of wrapped Lo-Dash methods to
+     * make working with Suites easier. The wrapped Lo-Dash methods are:
+     * [`each/forEach`](http://lodash.com/docs#forEach), [`indexOf`](http://lodash.com/docs#indexOf),
+     * [`map`](http://lodash.com/docs#map), [`pluck`](http://lodash.com/docs#pluck),
+     * and [`reduce`](http://lodash.com/docs#reduce)
      *
      * @constructor
      * @memberOf Benchmark
@@ -530,7 +537,7 @@
       };
       // fix JaegerMonkey bug
       // http://bugzil.la/639720
-      createFunction = support.browser && (createFunction('', 'return"' + uid + '"') || noop)() == uid ? createFunction : Function;
+      createFunction = support.browser && (createFunction('', 'return"' + uid + '"') || _.noop)() == uid ? createFunction : Function;
       return createFunction.apply(null, arguments);
     }
 
@@ -586,16 +593,15 @@
      *
      * @private
      * @param {Function} fn The function.
-     * @param {string} altSource A string used when a function's source code is unretrievable.
      * @returns {string} The function's source code.
      */
-    function getSource(fn, altSource) {
-      var result = altSource;
+    function getSource(fn) {
+      var result = '';
       if (isStringable(fn)) {
         result = String(fn);
       } else if (support.decompilation) {
         // escape the `{` for Firefox 1
-        result = (/^[^{]+\{([\s\S]*)\}\s*$/.exec(fn) || 0)[1];
+        result = _.result(/^[^{]+\{([\s\S]*)\}\s*$/.exec(fn), 1);
       }
       // trim string
       result = (result || '').replace(/^\s+|\s+$/g, '');
@@ -644,16 +650,7 @@
      * @returns {boolean} Returns `true` if the value can be coerced, else `false`.
      */
     function isStringable(value) {
-      return _.has(value, 'toString') || _.isString(value);
-    }
-
-    /**
-     * A no-operation function.
-     *
-     * @private
-     */
-    function noop() {
-      // no operation performed
+      return _.isString(value) || (_.has(value, 'toString') && _.isFunction(value.toString));
     }
 
     /**
@@ -860,7 +857,7 @@
           queued,
           index = -1,
           eventProps = { 'currentTarget': benches },
-          options = { 'onStart': noop, 'onCycle': noop, 'onComplete': noop },
+          options = { 'onStart': _.noop, 'onCycle': _.noop, 'onComplete': _.noop },
           result = _.toArray(benches);
 
       /**
@@ -1586,7 +1583,7 @@
         var bench = clone._original,
             stringable = isStringable(bench.fn),
             count = bench.count = clone.count,
-            decompilable = support.decompilation || stringable,
+            decompilable = stringable || (support.decompilation && (_.has(clone, 'setup') || _.has(clone, 'teardown'))),
             id = bench.id,
             name = bench.name || (typeof id == 'number' ? '<Test #' + id + '>' : id),
             result = 0;
@@ -1604,7 +1601,6 @@
             timer.ns = new applet.Packages.nano;
           }
         }
-
         // Compile in setup/teardown functions and the test loop.
         // Create a new compiled test, instead of using the cached `bench.compiled`,
         // to avoid potential engine optimizations enabled over the life of the test.
@@ -1626,7 +1622,7 @@
           : 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count,n#=t#.ns;${setup}\n${begin};' +
             'while(i#--){${fn}\n}${end};${teardown}\nreturn{elapsed:r#,uid:"${uid}"}';
 
-        var compiled = bench.compiled = clone.compiled = createCompiled(bench, deferred, funcBody),
+        var compiled = bench.compiled = clone.compiled = createCompiled(bench, decompilable, deferred, funcBody),
             isEmpty = !(templateData.fn || stringable);
 
         try {
@@ -1639,7 +1635,7 @@
             // pretest to determine if compiled code exits early, usually by a
             // rogue `return` statement, by checking for a return object with the uid
             bench.count = 1;
-            compiled = (compiled.call(bench, context, timer) || {}).uid == templateData.uid && compiled;
+            compiled = decompilable && (compiled.call(bench, context, timer) || {}).uid == templateData.uid && compiled;
             bench.count = count;
           }
         } catch(e) {
@@ -1648,16 +1644,16 @@
           bench.count = count;
         }
         // fallback when a test exits early or errors during pretest
-        if (decompilable && !compiled && !deferred && !isEmpty) {
+        if (!compiled && !deferred && !isEmpty) {
           funcBody = (
-            clone.error && !stringable
-              ? 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count'
-              : 'function f#(){${fn}\n}var r#,s#,m#=this,i#=m#.count'
+            stringable || (decompilable && !clone.error)
+              ? 'function f#(){${fn}\n}var r#,s#,m#=this,i#=m#.count'
+              : 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count'
             ) +
             ',n#=t#.ns;${setup}\n${begin};m#.f#=f#;while(i#--){m#.f#()}${end};' +
             'delete m#.f#;${teardown}\nreturn{elapsed:r#}';
 
-          compiled = createCompiled(bench, deferred, funcBody);
+          compiled = createCompiled(bench, decompilable, deferred, funcBody);
 
           try {
             // pretest one more time to check for errors
@@ -1675,7 +1671,7 @@
         }
         // if no errors run the full test loop
         if (!clone.error) {
-          compiled = bench.compiled = clone.compiled = createCompiled(bench, deferred, funcBody);
+          compiled = bench.compiled = clone.compiled = createCompiled(bench, decompilable, deferred, funcBody);
           result = compiled.call(deferred || bench, context, timer).elapsed;
         }
         return result;
@@ -1686,17 +1682,17 @@
       /**
        * Creates a compiled function from the given function `body`.
        */
-      function createCompiled(bench, deferred, body) {
+      function createCompiled(bench, decompilable, deferred, body) {
         var fn = bench.fn,
             fnArg = deferred ? getFirstArgument(fn) || 'deferred' : '';
 
         templateData.uid = uid + uidCounter++;
 
         _.assign(templateData, {
-          'setup': getSource(bench.setup, interpolate('m#.setup()')),
-          'fn': getSource(fn, interpolate('m#.fn(' + fnArg + ')')),
+          'setup': decompilable ? getSource(bench.setup) : interpolate('m#.setup()'),
+          'fn': decompilable ? getSource(fn) : interpolate('m#.fn(' + fnArg + ')'),
           'fnArg': fnArg,
-          'teardown': getSource(bench.teardown, interpolate('m#.teardown()'))
+          'teardown': decompilable ? getSource(bench.teardown) : interpolate('m#.teardown()')
         });
 
         // use API of chosen timer
@@ -1719,11 +1715,6 @@
               'begin': interpolate('s#=n#.start()'),
               'end': interpolate('r#=n#.microseconds()/1e6')
             });
-          } else if (perfName) {
-            _.assign(templateData, {
-              'begin': interpolate('s#=n#.' + perfName + '()'),
-              'end': interpolate('r#=(n#.' + perfName + '()-s#)/1e3')
-            });
           } else {
             _.assign(templateData, {
               'begin': interpolate('s#=n#()'),
@@ -1731,10 +1722,16 @@
             });
           }
         }
+        else if (timer.ns.now) {
+          _.assign(templateData, {
+            'begin': interpolate('s#=n#.now()'),
+            'end': interpolate('r#=(n#.now()-s#)/1e3')
+          });
+        }
         else {
           _.assign(templateData, {
-            'begin': interpolate('s#=new n#'),
-            'end': interpolate('r#=(new n#-s#)/1e3')
+            'begin': interpolate('s#=new n#().getTime()'),
+            'end': interpolate('r#=(new n#().getTime()-s#)/1e3')
           });
         }
         // define `timer` methods
@@ -1774,9 +1771,6 @@
             if (ns.stop) {
               ns.start();
               while (!(measured = ns.microseconds())) { }
-            } else if (ns[perfName]) {
-              divisor = 1e3;
-              measured = Function('n', 'var r,s=n.' + perfName + '();while(!(r=n.' + perfName + '()-s)){};return r')(ns);
             } else {
               begin = ns();
               while (!(measured = ns() - begin)) { }
@@ -1793,9 +1787,13 @@
               divisor = 1;
             }
           }
+          else if (ns.now) {
+            begin = ns.now();
+            while (!(measured = ns.now() - begin)) { }
+          }
           else {
-            begin = new ns;
-            while (!(measured = new ns - begin)) { }
+            begin = new ns().getTime();
+            while (!(measured = new ns().getTime() - begin)) { }
           }
           // check for broken timers (nanoTime may have issues)
           // http://alivebutsleepy.srnet.cz/unreliable-system-nanotime/
@@ -1841,25 +1839,16 @@
         }
       } catch(e) { }
 
-      // detect `performance.now` microsecond resolution timer
-      if ((timer.ns = perfName && perfObject)) {
-        timers.push({ 'ns': timer.ns, 'res': getRes('us'), 'unit': 'us' });
-      }
-
       // detect Node's nanosecond resolution timer available in Node >= 0.8
       if (processObject && typeof (timer.ns = processObject.hrtime) == 'function') {
         timers.push({ 'ns': timer.ns, 'res': getRes('ns'), 'unit': 'ns' });
       }
-
       // detect Wade Simmons' Node microtime module
       if (microtimeObject && typeof (timer.ns = microtimeObject.now) == 'function') {
         timers.push({ 'ns': timer.ns,  'res': getRes('us'), 'unit': 'us' });
       }
-
       // pick timer with highest resolution
-      timer = _.reduce(timers, function(timer, other) {
-        return other.res < timer.res ? other : timer;
-      });
+      timer = _.min(timers, 'res');
 
       // remove unused applet
       if (timer.unit != 'ns' && applet) {
@@ -1954,7 +1943,7 @@
             variance,
             clone = event.target,
             done = bench.aborted,
-            now = +new Date,
+            now = _.now(),
             size = sample.push(clone.times.period),
             maxedOut = size >= minSamples && (elapsed += now - clone.times.timeStamp) / 1e3 > bench.maxTime,
             times = bench.times,
@@ -2159,7 +2148,7 @@
       bench.running = true;
 
       bench.count = bench.initCount;
-      bench.times.timeStamp = +new Date;
+      bench.times.timeStamp = _.now();
       bench.emit(event);
 
       if (!event.cancelled) {
@@ -2499,7 +2488,7 @@
        *   }())
        * }())
        */
-      'setup': noop,
+      'setup': _.noop,
 
       /**
        * Compiled into the test and executed immediately **after** the test loop.
@@ -2507,7 +2496,7 @@
        * @memberOf Benchmark
        * @type {Function|string}
        */
-      'teardown': noop,
+      'teardown': _.noop,
 
       /**
        * An object of stats including mean, margin or error, and standard deviation.

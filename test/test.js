@@ -6641,8 +6641,8 @@
     });
 
     test('should coerce arguments to numbers', 1, function() {
-      var actual = [func('0',1), func('1'), func(0, 1, '1')];
-      deepEqual(actual, [[0], [0], [0]]);
+      var actual = [func('0',1), func('1'), func(0, 1, '1'), func(NaN), func(NaN, NaN)];
+      deepEqual(actual, [[0], [0], [0], [], []]);
     });
   }());
 

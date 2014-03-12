@@ -23,6 +23,13 @@
       reExpected = /Expected: *<\/th><td><pre>([\s\S]*?)<\/pre>/,
       reMessage = /^<span class='test-message'>([\s\S]*?)<\/span>/;
 
+  /** Used to associate color names with their corresponding codes */
+  var colorCodes = {
+    'blue': 34,
+    'green': 32,
+    'red': 31
+  };
+
   /** Used to convert HTML entities to characters */
   var htmlUnescapes = {
     '&amp;': '&',
@@ -59,7 +66,7 @@
    * Checks if a given value is present in an array using strict equality
    * for comparisons, i.e. `===`.
    *
-   * @oruvate
+   * @private
    * @param {Array} array The array to iterate over.
    * @param {*} value The value to check for.
    * @returns {boolean} Returns `true` if the `value` is found, else `false`.
@@ -146,10 +153,28 @@
     var console = context.console,
         phantom = context.phantom,
         process = phantom || context.process,
-        document = !phantom && context.document;
+        document = !phantom && context.document,
+        java = context.java;
+
+    /** Detect the OS of the platform */
+    var os = (function() {
+      if (java) {
+        return java.lang.System.getProperty('os.name');
+      }
+      if (phantom) {
+        return require('system').os.name;
+      }
+      if (process) {
+        return process.platform;
+      }
+      return '';
+    }());
 
     /** Detects if running in a PhantomJS web page */
     var isPhantomPage = typeof context.callPhantom == 'function';
+
+    /** Used to indicate if running in Windows */
+    var isWindows = /win/i.test(os);
 
     /** Used to display the wait throbber */
     var throbberId,
@@ -238,6 +263,21 @@
     }
 
     /*------------------------------------------------------------------------*/
+
+    /**
+     * Adds text color to the terminal output of `string`.
+     *
+     * @private
+     * @param {string} colorName The name of the color to add.
+     * @param {string} string The string to add colors to.
+     * @returns {string} Returns the colored string.
+     */
+    function color(colorName, string) {
+      var code = colorCodes[colorName];
+      return isWindows
+        ? string
+        : ('\x1b[' + code + 'm' + string + '\x1b[0m');
+    }
 
     /**
      * Writes an inline message to standard output.
@@ -412,8 +452,8 @@
 
           logInline('');
           console.log(hr);
-          console.log('    PASS: ' + details.passed + '  FAIL: ' + failures + '  TOTAL: ' + details.total);
-          console.log('    Finished in ' + details.runtime + ' milliseconds.');
+          console.log(color('blue', '    PASS: ' + details.passed + '  FAIL: ' + failures + '  TOTAL: ' + details.total));
+          console.log(color(failures ? 'red' : 'green','    Finished in ' + details.runtime + ' milliseconds.'));
           console.log(hr);
 
           // exit out of Node.js or PhantomJS
@@ -443,13 +483,13 @@
             type = typeof expected != 'undefined' ? 'EQ' : 'OK';
 
         var message = [
-          result ? 'PASS' : 'FAIL',
-          type,
-          details.message || 'ok'
+          result ? color('green', 'PASS') : color('red', 'FAIL'),
+          color('blue', type),
+          color('blue', details.message || 'ok')
         ];
 
         if (!result && type == 'EQ') {
-          message.push('Expected: ' + expected + ', Actual: ' + details.actual);
+          message.push(color('blue', 'Expected: ' + expected + ', Actual: ' + details.actual));
         }
         QUnit.config.extrasData.logs.push(message.join(' | '));
       });
@@ -481,10 +521,10 @@
           if (!modulePrinted) {
             modulePrinted = true;
             console.log(hr);
-            console.log(moduleName);
+            console.log(color('blue', moduleName));
             console.log(hr);
           }
-          console.log(' ' + (failures ? 'FAIL' : 'PASS') + ' - ' + testName);
+          console.log(' ' + (failures ? color('red', 'FAIL') : color('green', 'PASS')) + ' - ' + color('blue', testName));
 
           if (failures) {
             var index = -1,

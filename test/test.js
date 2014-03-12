@@ -6602,8 +6602,6 @@
   QUnit.module('lodash.range');
 
   (function() {
-    var func = _.range;
-
     test('should work when passing a single `end` argument', 1, function() {
       deepEqual(_.range(4), [0, 1, 2, 3]);
     });
@@ -6640,8 +6638,8 @@
       });
     });
 
-    test('should coerce arguments to numbers', 1, function() {
-      var actual = [func('0',1), func('1'), func(0, 1, '1'), func(NaN), func(NaN, NaN)];
+    test('should coerce arguments to finite numbers', 1, function() {
+      var actual = [_.range('0', 1), _.range('1'), _.range(0, 1, '1'), _.range(NaN), _.range(NaN, NaN)];
       deepEqual(actual, [[0], [0], [0], [], []]);
     });
   }());
@@ -7410,6 +7408,11 @@
       _.forEach([-3, -4], function(end) {
         deepEqual(_.slice(array, 0, end), []);
       });
+    });
+
+    test('should coerce `start` and `end` to finite numbers', 1, function() {
+      var actual = [_.slice(array, '0', 1), _.slice(array, 0, '1'), _.slice(array, '1'), _.slice(array, NaN, 1), _.slice(array, 1, NaN)];
+      deepEqual(actual, [[1], [1], [2, 3], [1], []]);
     });
   }());
 

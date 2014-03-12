@@ -1327,7 +1327,7 @@
           iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length == 'number') {
+      if (typeof length == 'number' && length > -1) {
         length |= 0;
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
@@ -1356,7 +1356,7 @@
       var iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length == 'number') {
+      if (typeof length == 'number' && length > -1) {
         length = (length |= 0) < 0 ? 0 : length;
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
@@ -2855,11 +2855,13 @@
      */
     function range(start, end, step) {
       start = +start || 0;
-      step = typeof step == 'number' ? step : (+step || 1);
+      step = step == null ? 1 : (+step || 0);
 
       if (end == null) {
         end = start;
         start = 0;
+      } else {
+        end = +end || 0;
       }
       // use `Array(length)` so engines like Chakra and V8 avoid slower modes
       // http://youtu.be/XAqIpGU8ZZk#t=17m25s
@@ -3602,20 +3604,19 @@
      */
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
-      fromIndex = typeof fromIndex == 'number' ? fromIndex | 0 : 0;
+      fromIndex = (typeof fromIndex == 'number' && fromIndex) | 0;
 
-      if (typeof length == 'number') {
-        length = (length |= 0) < 0 ? 0 : length;
-        if (fromIndex >= length) {
-          return false;
-        }
+      if (typeof length == 'number' && length > -1) {
         if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
+          if (fromIndex >= length) {
+            return false;
+          }
           return nativeContains
             ? nativeContains.call(collection, target, fromIndex)
             : collection.indexOf(target, fromIndex) > -1;
         }
         var indexOf = getIndexOf();
-        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex;
+        fromIndex = fromIndex < 0 ? nativeMax(0, (length | 0) + fromIndex) : fromIndex;
         return indexOf(collection, target, fromIndex) > -1;
       }
       var index = -1,
@@ -4079,7 +4080,7 @@
       var args = slice(arguments, 2),
           index = -1,
           isFunc = typeof methodName == 'function',
-          length = collection ? collection.length | 0 : 0,
+          length = (collection && collection.length) | 0,
           result = Array(length < 0 ? 0 : length);
 
       baseEach(collection, function(value) {
@@ -4129,7 +4130,7 @@
      */
     function map(collection, callback, thisArg) {
       var index = -1,
-          length = collection ? collection.length | 0 : 0,
+          length = (collection && collection.length) | 0,
           result = Array(length < 0 ? 0 : length);
 
       callback = lodash.createCallback(callback, thisArg, 3);
@@ -4518,7 +4519,7 @@
         collection = collection.split('');
       }
       if (n == null || guard) {
-        var length = collection ? collection.length | 0 : 0;
+        var length = collection && collection.length | 0;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -4543,7 +4544,7 @@
      */
     function shuffle(collection) {
       var index = -1,
-          length = collection ? collection.length | 0 : 0,
+          length = (collection && collection.length) | 0,
           result = Array(length < 0 ? 0 : length);
 
       baseEach(collection, function(value) {
@@ -4694,8 +4695,8 @@
      */
     function sortBy(collection, callback, thisArg) {
       var index = -1,
+          length = (collection && collection.length) | 0,
           multi = callback && isArray(callback),
-          length = collection ? collection.length | 0 : 0,
           result = Array(length < 0 ? 0 : length);
 
       if (!multi) {

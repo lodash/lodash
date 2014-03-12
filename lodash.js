@@ -6046,7 +6046,7 @@
      * @returns {boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
      * @example
      *
-     * (function() { return _.isArguments(arguments); })(1, 2, 3);
+     * (function() { return _.isArguments(arguments); })();
      * // => true
      *
      * _.isArguments([1, 2, 3]);
@@ -6075,11 +6075,11 @@
      * @returns {boolean} Returns `true` if the `value` is an array, else `false`.
      * @example
      *
-     * (function() { return _.isArray(arguments); })();
-     * // => false
-     *
      * _.isArray([1, 2, 3]);
      * // => true
+     *
+     * (function() { return _.isArray(arguments); })();
+     * // => false
      */
     var isArray = nativeIsArray || function(value) {
       return value && typeof value == 'object' && typeof value.length == 'number' &&
@@ -6095,6 +6095,9 @@
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if the `value` is a boolean value, else `false`.
      * @example
+     *
+     * _.isBoolean(false);
+     * // => true
      *
      * _.isBoolean(null);
      * // => false
@@ -6116,6 +6119,9 @@
      *
      * _.isDate(new Date);
      * // => true
+     *
+     * _.isDate('Wed May 23 2012');
+     * // => false
      */
     function isDate(value) {
       return value && typeof value == 'object' && toString.call(value) == dateClass || false;
@@ -6133,6 +6139,9 @@
      *
      * _.isElement(document.body);
      * // => true
+     *
+     * _.isElement('<body>');
+     * // => false
      */
     function isElement(value) {
       return value && typeof value == 'object' && value.nodeType === 1 &&
@@ -6158,14 +6167,20 @@
      * @returns {boolean} Returns `true` if the `value` is empty, else `false`.
      * @example
      *
+     * _.isEmpty(null);
+     * // => true
+     *
+     * _.isEmpty(true);
+     * // => true
+     *
+     * _.isEmpty(1);
+     * // => true
+     *
      * _.isEmpty([1, 2, 3]);
      * // => false
      *
-     * _.isEmpty({});
-     * // => true
-     *
-     * _.isEmpty('');
-     * // => true
+     * _.isEmpty({ 'a': 1 });
+     * // => false
      */
     function isEmpty(value) {
       var result = true;
@@ -6290,6 +6305,9 @@
      *
      * _.isFunction(_);
      * // => true
+     *
+     * _.isFunction(/abc/);
+     * // => false
      */
     function isFunction(value) {
       return typeof value == 'function';
@@ -6375,7 +6393,7 @@
      * _.isNull(null);
      * // => true
      *
-     * _.isNull(undefined);
+     * _.isNull(void 0);
      * // => false
      */
     function isNull(value) {
@@ -6395,8 +6413,14 @@
      * @returns {boolean} Returns `true` if the `value` is a number, else `false`.
      * @example
      *
-     * _.isNumber(8.4 * 5);
+     * _.isNumber(8.4);
      * // => true
+     *
+     * _.isNumber(NaN);
+     * // => true
+     *
+     * _.isNumber('8.4');
+     * // => false
      */
     function isNumber(value) {
       var type = typeof value;
@@ -6450,8 +6474,11 @@
      * @returns {boolean} Returns `true` if the `value` is a regular expression, else `false`.
      * @example
      *
-     * _.isRegExp(/fred/);
+     * _.isRegExp(/abc/);
      * // => true
+     *
+     * _.isRegExp('/abc/');
+     * // => false
      */
     function isRegExp(value) {
       var type = typeof value;
@@ -6469,8 +6496,11 @@
      * @returns {boolean} Returns `true` if the `value` is a string, else `false`.
      * @example
      *
-     * _.isString('fred');
+     * _.isString('abc');
      * // => true
+     *
+     * _.isString(1);
+     * // => false
      */
     function isString(value) {
       return typeof value == 'string' ||
@@ -6489,6 +6519,9 @@
      *
      * _.isUndefined(void 0);
      * // => true
+     *
+     * _.isUndefined(null);
+     * // => false
      */
     function isUndefined(value) {
       return typeof value == 'undefined';

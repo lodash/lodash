@@ -231,6 +231,18 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Used by `_.defaults` to customize its `_.assign` use.
+   *
+   * @private
+   * @param {*} objectValue The destination object property value.
+   * @param {*} sourceValue The source object property value.
+   * @returns {*} Returns the value to assign to the destination object.
+   */
+  function assignDefaults(objectValue, sourceValue) {
+    return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+  }
+
+  /**
    * The base implementation of `compareAscending` used to compare values and
    * sort them in ascending order without guaranteeing a stable sort.
    *
@@ -3837,27 +3849,12 @@
      * // => { 'name': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
-      predicate = lodash.createCallback(predicate, thisArg, 3);
       if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        while (++index < length) {
-          var value = collection[index];
-          if (predicate(value, index, collection)) {
-            return value;
-          }
-        }
-      } else {
-        var result;
-        baseEach(collection, function(value, index, collection) {
-          if (predicate(value, index, collection)) {
-            result = value;
-            return false;
-          }
-        });
-        return result;
+        var index = findIndex(collection, predicate, thisArg);
+        return index > -1 ? collection[index] : undefined;
       }
+      var key = findKey(collection, predicate, thisArg);
+      return typeof key == 'string' ? collection[key] : undefined;
     }
 
     /**
@@ -3881,16 +3878,12 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      var result;
-
-      predicate = lodash.createCallback(predicate, thisArg, 3);
-      baseEachRight(collection, function(value, index, collection) {
-        if (predicate(value, index, collection)) {
-          result = value;
-          return false;
-        }
-      });
-      return result;
+      if (isArray(collection)) {
+        var index = findLastIndex(collection, predicate, thisArg);
+        return index > -1 ? collection[index] : undefined;
+      }
+      var key = findLastKey(collection, predicate, thisArg);
+      return typeof key == 'string' ? collection[key] : undefined;
     }
 
     /**
@@ -4517,7 +4510,7 @@
         collection = collection.split('');
       }
       if (n == null || guard) {
-        var length = collection && collection.length | 0;
+        var length = (collection && collection.length) | 0;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -5692,33 +5685,10 @@
      * _.defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function defaults(object, source, guard) {
-      if (!object) {
-        return object;
-      }
-      var args = arguments,
-          argsIndex = 0,
-          argsLength = args.length,
-          type = typeof guard;
-
-      // enables use as a callback for functions like `_.reduce`
-      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
-        argsLength = 2;
-      }
-      while (++argsIndex < argsLength) {
-        source = args[argsIndex];
-        var index = -1,
-            props = keys(source),
-            length = props.length;
-
-        while (++index < length) {
-          var key = props[index];
-          if (typeof object[key] == 'undefined') {
-            object[key] = source[key];
-          }
-        }
-      }
-      return object;
+    function defaults() {
+      var args = slice(arguments);
+      args.push(assignDefaults);
+      return assign.apply(null, args);
     }
 
     /**

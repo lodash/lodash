@@ -267,7 +267,7 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    var index = (fromIndex | 0) - 1,
+    var index = (+fromIndex || 0) - 1,
         length = array ? array.length : 0;
 
     while (++index < length) {
@@ -1234,7 +1234,7 @@
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isShallow, isStrict, fromIndex) {
-      var index = (fromIndex | 0) - 1,
+      var index = (+fromIndex || 0) - 1,
           length = array ? array.length : 0,
           result = [];
 
@@ -1757,9 +1757,9 @@
         callback = lodash.createCallback(callback, thisArg, 3);
 
         var index = -1,
-            length = (collection && collection.length) | 0;
+            length = (length = collection && collection.length, length > -1 && length >>> 0);
 
-        if (length > 0) {
+        if (length) {
           while (++index < length) {
             var value = collection[index];
             setter(result, value, callback(value, index, collection), collection);
@@ -2435,7 +2435,7 @@
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
-        fromIndex = (fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex) | 0;
+        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : (fromIndex || 0);
       } else if (fromIndex) {
         var index = sortedIndex(array, value);
         return (length && array[index] === value) ? index : -1;
@@ -2738,13 +2738,13 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      start |= 0;
+      start = +start || 0;
       if (start < 0) {
         start = nativeMax(length + start, 0);
       } else if (start > length) {
         start = length;
       }
-      end = typeof end == 'undefined' ? length : (end | 0);
+      end = typeof end == 'undefined' ? length : (+end || 0);
       if (end < 0) {
         end = nativeMax(length + end, 0);
       } else if (end > length) {
@@ -3361,10 +3361,10 @@
      * // => true
      */
     function contains(collection, target, fromIndex) {
-      var length = collection ? collection.length : 0;
-      fromIndex = (typeof fromIndex == 'number' && fromIndex) | 0;
+      var length = (length = collection && collection.length, length > -1 && length >>> 0);
+      fromIndex = (typeof fromIndex == 'number' && +fromIndex) || 0;
 
-      if (typeof length == 'number' && length > -1) {
+      if (length) {
         if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
           if (fromIndex >= length) {
             return false;
@@ -3374,7 +3374,7 @@
             : collection.indexOf(target, fromIndex) > -1;
         }
         var indexOf = getIndexOf();
-        fromIndex = fromIndex < 0 ? nativeMax(0, (length | 0) + fromIndex) : fromIndex;
+        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex;
         return indexOf(collection, target, fromIndex) > -1;
       }
       var index = -1,
@@ -3473,9 +3473,9 @@
 
       predicate = lodash.createCallback(predicate, thisArg, 3);
       var index = -1,
-          length = (collection && collection.length) | 0;
+          length = (length = collection && collection.length, length > -1 && length >>> 0);
 
-      if (length > 0) {
+      if (length) {
         while (++index < length) {
           if (!predicate(collection[index], index, collection)) {
             return false;
@@ -3534,9 +3534,9 @@
 
       predicate = lodash.createCallback(predicate, thisArg, 3);
       var index = -1,
-          length = (collection && collection.length) | 0;
+          length = (length = collection && collection.length, length > -1 && length >>> 0);
 
-      if (length > 0) {
+      if (length) {
         while (++index < length) {
           var value = collection[index];
           if (predicate(value, index, collection)) {
@@ -3597,8 +3597,8 @@
      * // => { 'name': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
-      var length = (collection && collection.length) | 0;
-      if (length > 0) {
+      var length = (length = collection && collection.length, length > -1 && length >>> 0);
+      if (length) {
         var index = findIndex(collection, predicate, thisArg);
         return index > -1 ? collection[index] : undefined;
       }
@@ -3627,8 +3627,8 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      var length = (collection && collection.length) | 0;
-      if (length > 0) {
+      var length = (length = collection && collection.length, length > -1 && length >>> 0);
+      if (length) {
         var index = findLastIndex(collection, predicate, thisArg);
         return index > -1 ? collection[index] : undefined;
       }
@@ -3664,10 +3664,10 @@
      */
     function forEach(collection, callback, thisArg) {
       var index = -1,
-          length = (collection && collection.length) | 0;
+          length = (length = collection && collection.length, length > -1 && length >>> 0);
 
       callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-      if (length > 0) {
+      if (length) {
         while (++index < length) {
           if (callback(collection[index], index, collection) === false) {
             break;
@@ -3697,10 +3697,10 @@
      * // => logs each number from right to left and returns '3,2,1'
      */
     function forEachRight(collection, callback, thisArg) {
-      var length = (collection && collection.length) | 0;
+      var length = (length = collection && collection.length, length > -1 && length >>> 0);
 
       callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-      if (length > 0) {
+      if (length) {
         while (length--) {
           if (callback(collection[length], length, collection) === false) {
             break;
@@ -3824,8 +3824,8 @@
       var args = slice(arguments, 2),
           index = -1,
           isFunc = typeof methodName == 'function',
-          length = (collection && collection.length) | 0,
-          result = Array(length < 0 ? 0 : length);
+          length = collection && collection.length,
+          result = Array(length < 0 ? 0 : length >>> 0);
 
       baseEach(collection, function(value) {
         result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
@@ -3874,10 +3874,10 @@
      */
     function map(collection, callback, thisArg) {
       var index = -1,
-          length = (collection && collection.length) | 0;
+          length = (length = collection && collection.length, length > -1 && length >>> 0);
 
       callback = lodash.createCallback(callback, thisArg, 3);
-      if (length > 0) {
+      if (length) {
         var result = Array(length);
         while (++index < length) {
           result[index] = callback(collection[index], index, collection);
@@ -4146,9 +4146,9 @@
       callback = lodash.createCallback(callback, thisArg, 4);
 
       var index = -1,
-          length = (collection && collection.length) | 0;
+          length = (length = collection && collection.length, length > -1 && length >>> 0);
 
-      if (length > 0) {
+      if (length) {
         if (noaccum && length) {
           accumulator = collection[++index];
         }
@@ -4262,7 +4262,7 @@
         collection = values(collection);
       }
       if (n == null || guard) {
-        var length = (collection && collection.length) | 0;
+        var length = (length = collection && collection.length, length > -1 && length >>> 0);
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -4287,8 +4287,8 @@
      */
     function shuffle(collection) {
       var index = -1,
-          length = (collection && collection.length) | 0,
-          result = Array(length < 0 ? 0 : length);
+          length = collection && collection.length,
+          result = Array(length < 0 ? 0 : length >>> 0);
 
       baseEach(collection, function(value) {
         var rand = baseRandom(0, ++index);
@@ -4371,9 +4371,9 @@
 
       predicate = lodash.createCallback(predicate, thisArg, 3);
       var index = -1,
-          length = (collection && collection.length) | 0;
+          length = (length = collection && collection.length, length > -1 && length >>> 0);
 
-      if (length > 0) {
+      if (length) {
         while (++index < length) {
           if (predicate(collection[index], index, collection)) {
             return true;
@@ -4438,9 +4438,9 @@
      */
     function sortBy(collection, callback, thisArg) {
       var index = -1,
-          length = (collection && collection.length) | 0,
+          length = collection && collection.length,
           multi = callback && isArray(callback),
-          result = Array(length < 0 ? 0 : length);
+          result = Array(length < 0 ? 0 : length >>> 0);
 
       if (!multi) {
         callback = lodash.createCallback(callback, thisArg, 3);
@@ -6705,7 +6705,7 @@
       target = String(target);
 
       var length = string.length;
-      position = (typeof position == 'number' ? nativeMin(nativeMax(position | 0, 0), length) : length) - target.length;
+      position = (typeof position == 'number' ? nativeMin(nativeMax(+position || 0, 0), length) : length) - target.length;
       return position >= 0 && string.indexOf(target, position) == position;
     }
 
@@ -6958,7 +6958,7 @@
      */
     function startsWith(string, target, position) {
       string = string == null ? '' : String(string);
-      position = typeof position == 'number' ? nativeMin(nativeMax(position | 0, 0), string.length) : 0;
+      position = typeof position == 'number' ? nativeMin(nativeMax(+position || 0, 0), string.length) : 0;
       return string.lastIndexOf(target, position) == position;
     }
 
@@ -7264,11 +7264,11 @@
 
       if (options && isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
-        length = 'length' in options ? options.length | 0 : length;
+        length = 'length' in options ? +options.length || 0 : length;
         omission = 'omission' in options ? String(options.omission) : omission;
       }
       else if (options != null) {
-        length = options | 0;
+        length = +options || 0;
       }
       string = string == null ? '' : String(string);
       if (length >= string.length) {
